@@ -1568,6 +1568,19 @@ abstract class DBManager
      */
     public function convert($string, $type, array $additional_parameters = array())
     {
+        /*
+         * Supported conversions:
+            today		return current date
+            left		Take substring from the left
+            date_format	Format date as string, supports %Y-%m-%d, %Y-%m, %Y
+            datetime	Format date as standard-format datetime string
+            ifnull		If var is null, use default value
+            concat		Concatenate strings
+            quarter		Quarter number of the date
+            length		Length of string
+            month		Month number of the date
+            add_month	Add N months to a date
+         */
         return $string;
     }
 

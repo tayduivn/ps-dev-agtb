@@ -4460,16 +4460,10 @@ function filterInboundEmailPopSelection($protocol)
  * The varchar in MySQL, Orcale, and nvarchar in FreeTDS, we can store $length mutilbyte charaters in it. we need mb_substr to keep more info.
 * @returns the substred strings.
  */
-function sugar_substr($string, $length, $charset='UTF-8') {
-    if($GLOBALS['db']->dbType == 'mssql' && empty($GLOBALS['db']->isFreeTDS)) {
-        if(strlen($string) > $length) {
-            $string = trim(substr(trim($string),0,$length));
-        }
-    }
-    else {
-        if(mb_strlen($string,$charset) > $length) {
-            $string = trim(mb_substr(trim($string),0,$length,$charset));
-        }
+function sugar_substr($string, $length, $charset='UTF-8')
+{
+    if(mb_strlen($string,$charset) > $length) {
+        $string = trim(mb_substr(trim($string),0,$length,$charset));
     }
     return $string;
 }

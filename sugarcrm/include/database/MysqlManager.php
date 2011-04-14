@@ -581,6 +581,10 @@ class MysqlManager extends DBManager
                     return "QUARTER($string)";
             case "length":
                     return "LENGTH($string)";
+            case 'month':
+                    return "MONTH($string)";
+            case 'add_month':
+                    return "DATE_ADD($string, INTERVAL {$additional_parameters[0]} MONTH)";
         }
 
         return $string;

@@ -740,6 +740,10 @@ class OracleManager extends DBManager
                 return "TO_CHAR($string, 'Q')";
             case "length":
                 return "LENGTH($string)";
+            case 'month':
+                return "tochar($string, 'MM')";
+            case 'add_month':
+                return "ADD_MONTHS($string, {$additional_parameters[0]})";
         }
 
         return $string;

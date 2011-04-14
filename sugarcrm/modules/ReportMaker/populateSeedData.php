@@ -41,252 +41,94 @@ $query_object1->description = "Opportunities by Type";
 $query_object1->query_locked = "off";
 $query_object1->team_id = 1;
 
+$m_closed = $query_object1->db->convert('opportunities.date_closed', 'month');
+$today = $query_object1->db->convert('', 'today');
+$m_date[0] = $query_object1->db->convert($today, 'month');
+for($i=1;$i<6;$i++)
+{
+    $m_date[$i] = $query_object1->db->convert($query_object1->db->convert($today, 'add_month', array($i)), 'month');
+}
+$m_date5 = $query_object1->db->convert($today, 'add_month', array(5));
 
-
-if($query_object1->db->dbType=='oci8'){
-//BEGIN SUGARCRM flav=ent ONLY
 	$query_object1->custom_query = "(
-SELECT 
+SELECT
  'New Business' \"Opportunity Type\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc(sysdate, 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '1' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '2' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '3' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '4' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '5' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\"
+sum( case when $m_closed = $m_date[0] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
+sum( case when $m_closed = $m_date[1] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
+sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
+sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
+sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
+sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
+SUM(opportunities.amount_usdollar) AS 'Total Revenue'
 FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
+ LEFT JOIN accounts_opportunities
+ON opportunities.id=accounts_opportunities.opportunity_id
+LEFT JOIN accounts
 ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= (sysdate + INTERVAL '5' MONTH) AND  opportunities.date_closed >= sysdate AND opportunities.opportunity_type = 'New Business'
+WHERE opportunities.date_closed <= $m_date5 AND  opportunities.date_closed >= $today AND opportunities.opportunity_type = 'New Business'
 ) UNION (
 SELECT
  'Existing Business' \"Opportunity Type\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc(sysdate, 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '1' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '2' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '3' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '4' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '5' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\"
+sum( case when $m_closed = $m_date[0] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
+sum( case when $m_closed = $m_date[1] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
+sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
+sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
+sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
+sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
+SUM(opportunities.amount_usdollar) AS 'Total Revenue'
 FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
+ LEFT JOIN accounts_opportunities
+ON opportunities.id=accounts_opportunities.opportunity_id
+LEFT JOIN accounts
 ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= (sysdate + INTERVAL '5' MONTH) AND  opportunities.date_closed >= sysdate AND opportunities.opportunity_type = 'Existing Business'
+WHERE opportunities.date_closed <= $m_date5 AND  opportunities.date_closed >= $today AND opportunities.opportunity_type = 'Existing Business'
 ) UNION (
 SELECT
  'Total Revenue' \"Opportunity Type\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc(sysdate, 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '1' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '2' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '3' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '4' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '5' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\"
+sum( case when $m_closed = $m_date[0] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
+sum( case when $m_closed = $m_date[1] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
+sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
+sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
+sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
+sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
+SUM(opportunities.amount_usdollar) AS 'Total Revenue'
 FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
+ LEFT JOIN accounts_opportunities
+ON opportunities.id=accounts_opportunities.opportunity_id
+LEFT JOIN accounts
 ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= (sysdate + INTERVAL '5' MONTH) AND  opportunities.date_closed >= sysdate
+WHERE opportunities.date_closed <= $m_date5 AND  opportunities.date_closed >= $today
 )";
-	
-	
-	
-//END SUGARCRM flav=ent ONLY
-} elseif ($query_object1->db->dbType=='mssql'){	
-$query_object1->custom_query = "
-SELECT  'New Business' 'Opportunity Type',
-case MONTH(opportunities.date_closed) when MONTH(GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}0',
-case MONTH(opportunities.date_closed) when DATEADD(mm,1,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}1',
-case MONTH(opportunities.date_closed) when DATEADD(mm,2,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}2',
-case MONTH(opportunities.date_closed) when DATEADD(mm,3,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}3',
-case MONTH(opportunities.date_closed) when DATEADD(mm,4,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}4',
-case MONTH(opportunities.date_closed) when DATEADD(mm,5,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}5',
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
-FROM opportunities
-LEFT JOIN accounts_opportunities ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATEADD(mm,5,GETDATE()) AND  opportunities.date_closed >= GETDATE() AND opportunities.opportunity_type = 'New Business'
-group by opportunities.date_closed
- UNION 
-SELECT  'Existing Business' as 'Opportunity Type',
-case MONTH(opportunities.date_closed) when MONTH(GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}0',
-case MONTH(opportunities.date_closed) when DATEADD(mm,1,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}1',
-case MONTH(opportunities.date_closed) when DATEADD(mm,2,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}2',
-case MONTH(opportunities.date_closed) when DATEADD(mm,3,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}3',
-case MONTH(opportunities.date_closed) when DATEADD(mm,4,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}4',
-case MONTH(opportunities.date_closed) when DATEADD(mm,5,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}5',
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
-FROM opportunities
-LEFT JOIN accounts_opportunities ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATEADD(mm,5,GETDATE()) AND  opportunities.date_closed >= GETDATE() AND opportunities.opportunity_type = 'New Business'
-group by opportunities.date_closed
- UNION 
-SELECT 'Total Revenue' as 'Opportunity Type',
-case MONTH(opportunities.date_closed) when MONTH(GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}0',
-case MONTH(opportunities.date_closed) when DATEADD(mm,1,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}1',
-case MONTH(opportunities.date_closed) when DATEADD(mm,2,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}2',
-case MONTH(opportunities.date_closed) when DATEADD(mm,3,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}3',
-case MONTH(opportunities.date_closed) when DATEADD(mm,4,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}4',
-case MONTH(opportunities.date_closed) when DATEADD(mm,5,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}5',
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
-FROM opportunities
-LEFT JOIN accounts_opportunities ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATEADD(mm,5,GETDATE()) AND  opportunities.date_closed >= GETDATE()
-group by opportunities.date_closed
-";
-
-
-} elseif ($query_object1->db->dbType=='mysql'){	
-$query_object1->custom_query = "(
-SELECT 
- 'New Business          ' as 'Opportunity Type'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(CURDATE()), opportunities.amount_usdollar,0)) as '{sc}0{sc}0'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 1 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}1'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 2 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}2'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 3 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}3'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 4 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}4'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 5 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}5'
-,SUM(opportunities.amount_usdollar) AS 'Total Revenue'
- 
-FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
-ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATE_ADD(CURDATE(),INTERVAL 5 MONTH) AND  opportunities.date_closed >= CURDATE() AND opportunities.opportunity_type = 'New Business'
-) UNION (
-SELECT 
- 'Existing Business' as 'Opportunity Type'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(CURDATE()), opportunities.amount_usdollar,0)) as '{sc}0{sc}0'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 1 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}1'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 2 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}2'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 3 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}3'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 4 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}4'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 5 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}5'
-,SUM(opportunities.amount_usdollar) AS 'Total Revenue'
- 
-FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
-ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATE_ADD(CURDATE(),INTERVAL 5 MONTH) AND  opportunities.date_closed >= CURDATE() AND opportunities.opportunity_type = 'Existing Business'
-) UNION (
-SELECT 
- 'Total Revenue' as 'Opportunity Type'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(CURDATE()), opportunities.amount_usdollar,0)) as '{sc}0{sc}0'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 1 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}1'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 2 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}2'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 3 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}3'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 4 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}4'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 5 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}5'
-,SUM(opportunities.amount_usdollar) AS 'Total Revenue'
- 
-FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
-ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATE_ADD(CURDATE(),INTERVAL 5 MONTH) AND  opportunities.date_closed >= CURDATE() 
-)";
-
-//end if else mysql, mssql or oracle
-}
-
 $query_object1->save();
-
-
-
-
-
-
-
 
 
 $query_object2 = new CustomQuery();
 $query_object2->name = "Opportunity Query 2";
 $query_object2->description = "Opportunities by Account";
 $query_object2->query_locked = "off";
+//BEGIN SUGARCRM flav=pro ONLY
 $query_object2->team_id = 1;
-
-
-if($query_object2->db->dbType=='oci8'){
-//BEGIN SUGARCRM flav=ent ONLY
-
-
+//END SUGARCRM flav=pro ONLY
 
 $query_object2->custom_query = "SELECT
-accounts.name \"Account Name\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc(sysdate, 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '1' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '2' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '3' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '4' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
-sum( case when trunc(opportunities.date_closed, 'month') = trunc((sysdate + INTERVAL '5' MONTH), 'month') then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
-SUM(opportunities.amount_usdollar) AS \"Total Revenue\"
-FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
-ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= (sysdate + INTERVAL '5' MONTH)
-AND opportunities.date_closed >= sysdate
-GROUP BY accounts.id, accounts.name ORDER BY accounts.name
-";
-
-
-//END SUGARCRM flav=ent ONLY
-} elseif ($query_object1->db->dbType=='mssql'){
-
-
-$query_object2->custom_query = "SELECT accounts.name AS 'Account Name',
-case MONTH(opportunities.date_closed) when MONTH(GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}0',
-case MONTH(opportunities.date_closed) when DATEADD(mm,1,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}1',
-case MONTH(opportunities.date_closed) when DATEADD(mm,2,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}2',
-case MONTH(opportunities.date_closed) when DATEADD(mm,3,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}3',
-case MONTH(opportunities.date_closed) when DATEADD(mm,4,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}4',
-case MONTH(opportunities.date_closed) when DATEADD(mm,5,GETDATE()) then SUM(opportunities.amount_usdollar) else SUM(0) end '{sc}0{sc}5',
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
- 
-FROM opportunities
- LEFT JOIN accounts_opportunities ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATEADD(mm,5,GETDATE()) AND  opportunities.date_closed >= GETDATE()
-GROUP BY opportunities.date_closed, accounts.id, accounts.name order by accounts.name
-";
-
-
-}elseif ($query_object1->db->dbType=='mysql'){
-
-
-$query_object2->custom_query = "SELECT accounts.name AS 'Account Name'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(CURDATE()), opportunities.amount_usdollar,0)) as '{sc}0{sc}0'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 1 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}1'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 2 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}2'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 3 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}3'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 4 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}4'
-,SUM(IF(MONTH(opportunities.date_closed) = MONTH(DATE_ADD(CURDATE(),INTERVAL 5 MONTH)), opportunities.amount_usdollar,0)) as '{sc}0{sc}5'
-,SUM(opportunities.amount_usdollar) AS 'Total Revenue'
- 
-FROM opportunities
- LEFT JOIN accounts_opportunities 
-ON opportunities.id=accounts_opportunities.opportunity_id 
-LEFT JOIN accounts 
-ON accounts_opportunities.account_id=accounts.id
-WHERE opportunities.date_closed <= DATE_ADD(CURDATE(),INTERVAL 5 MONTH)
-AND opportunities.date_closed >= CURDATE()
-GROUP BY accounts.id ORDER BY accounts.name";
-
-//end if else mysql mssql or oracle
-}
-
+	accounts.name \"Account Name\",
+	sum( case when $m_closed = $m_date[0] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}0\",
+	sum( case when $m_closed = $m_date[1] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}1\",
+	sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}2\",
+	sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
+	sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
+	sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
+	SUM(opportunities.amount_usdollar) AS \"Total Revenue\"
+	FROM opportunities
+	 LEFT JOIN accounts_opportunities
+	ON opportunities.id=accounts_opportunities.opportunity_id
+	LEFT JOIN accounts
+	ON accounts_opportunities.account_id=accounts.id
+	WHERE opportunities.date_closed <= $m_date5
+	AND opportunities.date_closed >= $today
+	GROUP BY accounts.id, accounts.name ORDER BY accounts.name
+	";
 $query_object2->save();
-
 
 $query_id1 = $query_object1->id;
 $query_id2 = $query_object2->id;
@@ -403,66 +245,66 @@ $scalar_body_array = array(
 	$body_object = new DataSet_Attribute();
 	$body_object->parent_id = $layout_id;
 	foreach($start_body_array as $key => $value){
-		$body_object->$key = $value;	
+		$body_object->$key = $value;
 	}
 	$body_object->save();
 
-////Fill in attributes for all the scalar columns	
+////Fill in attributes for all the scalar columns
 	for ($i = 0; $i <= 5; $i++) {
 
 		$layout_id = $format_object->get_layout_id_from_parent_value("{sc}0{sc}".$i."");
 		$body_object = new DataSet_Attribute();
 		$body_object->parent_id = $layout_id;
 		foreach($scalar_body_array as $key => $value){
-			$body_object->$key = $value;	
+			$body_object->$key = $value;
 		}
-		$body_object->save();	
+		$body_object->save();
 		$head_object = new DataSet_Attribute();
 		$head_object->parent_id = $layout_id;
 		foreach($scalar_head_array as $key => $value){
-			$head_object->$key = $value;	
+			$head_object->$key = $value;
 		}
-		$head_object->save();	
+		$head_object->save();
 	//end the for loop on scalar
 	}
 
-////Fill in attributes for all the scalar columns	
+////Fill in attributes for all the scalar columns
 	for ($i = 0; $i <= 5; $i++) {
 
 		$layout_id = $format_object2->get_layout_id_from_parent_value("{sc}0{sc}".$i."");
 		$body_object = new DataSet_Attribute();
 		$body_object->parent_id = $layout_id;
 		foreach($scalar_body_array as $key => $value){
-			$body_object->$key = $value;	
+			$body_object->$key = $value;
 		}
-		$body_object->save();	
+		$body_object->save();
 		$head_object = new DataSet_Attribute();
 		$head_object->parent_id = $layout_id;
 		foreach($scalar_head_array as $key => $value){
-			$head_object->$key = $value;	
+			$head_object->$key = $value;
 		}
-		$head_object->save();	
+		$head_object->save();
 	//end the for loop on scalar
 	}
-	
-	
-//////////////////Fill the Total Revenue Columns	
+
+
+//////////////////Fill the Total Revenue Columns
 
 		$layout_id = $format_object->get_layout_id_from_parent_value("Total Revenue");
 		$body_object = new DataSet_Attribute();
 		$body_object->parent_id = $layout_id;
 		foreach($scalar_body_array as $key => $value){
-			$body_object->$key = $value;	
-		}	
+			$body_object->$key = $value;
+		}
 		$body_object->save();
-		
+
 		$layout_id = $format_object2->get_layout_id_from_parent_value("Total Revenue");
 		$body_object = new DataSet_Attribute();
 		$body_object->parent_id = $layout_id;
 		foreach($scalar_body_array as $key => $value){
-			$body_object->$key = $value;	
-		}	
-		$body_object->save();	
-	
-	
+			$body_object->$key = $value;
+		}
+		$body_object->save();
+
+
 ?>
