@@ -143,8 +143,8 @@ class quicksearchQuery {
             $query_where = $this->constructWhere($args, $focus);
            
             $list_arr = array();
-            if($focus->ACLAccess('ListView', true)) {
-            	$GLOBALS['log']->fatal($query_where);
+            if($focus->ACLAccess('ListView', true)) 
+            {
                 $curlist = $focus->get_list($query_orderby, $query_where, 0, $query_limit, -1, 0);
                 $list_return = array_merge($list_return,$curlist['list']);
             }
