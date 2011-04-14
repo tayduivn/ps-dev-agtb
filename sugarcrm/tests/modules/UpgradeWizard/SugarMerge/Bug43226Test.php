@@ -1,7 +1,7 @@
 <?php
 require_once 'include/dir_inc.php';
 
-class Bug43211Test extends Sugar_PHPUnit_Framework_TestCase  {
+class Bug43226Test extends Sugar_PHPUnit_Framework_TestCase  {
 	
 var $merge;
 
