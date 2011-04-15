@@ -52,7 +52,6 @@ function tearDown() {
 
 function testRepairTableDictionaryExtFile() 
 {	
-	require_once('modules/UpgradeWizard/uw_utils.php');
 	repairTableDictionaryExtFile();
 	
 	if(function_exists('sugar_fopen'))
@@ -80,6 +79,74 @@ function testRepairTableDictionaryExtFile()
 }
 
 
+}
+
+/**
+ * repairTableDictionaryExtFile
+ * 
+ * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file 
+ * did not exist.  This would cause warnings to appear during the upgrade.  As a result, this
+ * function scans the contents of tabledictionary.ext.php and then remove entries where the file does exist.
+ */
+function repairTableDictionaryExtFile()
+{
+	$tableDictionaryExtFiles = array('custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php', 
+	                                 'custom/application/Ext/TableDictionary/tabledictionary.ext.php');
+	
+	foreach($tableDictionaryExtFiles as $tableDictionaryExtFile)
+	{
+	
+		if(file_exists($tableDictionaryExtFile) && is_writable($tableDictionaryExtFile))
+		{
+			if(function_exists('sugar_fopen'))
+			{
+				$fp = @sugar_fopen($tableDictionaryExtFile, 'r');
+			} else {
+				$fp = fopen($tableDictionaryExtFile, 'r');
+			}			
+			
+			
+		    if($fp)
+	        {
+	             $altered = false;
+	             $contents = '';
+			     
+	             while($line = fgets($fp))
+			     {
+			    	if(preg_match('/\s*include\s*\(\s*\'(.*?)\'\s*\)\s*;/', $line, $match))
+			    	{
+			    	   if(!file_exists($match[1]))
+			    	   {
+			    	      $altered = true;
+			    	   } else {
+			    	   	  $contents .= $line;
+			    	   }
+			    	} else {
+			    	   $contents .= $line;
+			    	}
+			     }
+			     
+			     fclose($fp); 
+	        }
+	        
+	        
+		    if($altered)
+		    {
+				if(function_exists('sugar_fopen'))
+				{
+					$fp = @sugar_fopen($tableDictionaryExtFile, 'w');
+				} else {
+					$fp = fopen($tableDictionaryExtFile, 'w');
+				}		    	
+	            
+				if($fp && fwrite($fp, $contents))
+				{
+					fclose($fp);
+				}
+		    }
+		}
+
+	}
 }
 
 ?>
