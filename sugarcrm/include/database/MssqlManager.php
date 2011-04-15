@@ -1187,8 +1187,8 @@ class MssqlManager extends DBManager
                 return "LEN($string)";
             case 'month':
                 return "MONTH($string)";
-            case 'add_month':
-                return "DATEADD(mm,{$additional_parameters[0]},$string)";
+            case 'add_date':
+                return "DATEADD({$additional_parameters[1]},{$additional_parameters[0]},$string)";
             case 'add_time':
                 return "DATEADD(hh, {$additional_parameters[0]}, DATEADD(mi, {$additional_parameters[1]}, $string))";
         }

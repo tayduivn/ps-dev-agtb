@@ -50,9 +50,9 @@ $today = $query_object1->db->convert('', 'today');
 $m_date[0] = $query_object1->db->convert($today, 'month');
 for($i=1;$i<6;$i++)
 {
-    $m_date[$i] = $query_object1->db->convert($query_object1->db->convert($today, 'add_month', array($i)), 'month');
+    $m_date[$i] = $query_object1->db->convert($query_object1->db->convert($today, 'add_date', array($i, 'month')), 'month');
 }
-$m_date5 = $query_object1->db->convert($today, 'add_month', array(5));
+$m_date5 = $query_object1->db->convert($today, 'add_date', array(5, "month"));
 
 	$query_object1->custom_query = "(
 SELECT

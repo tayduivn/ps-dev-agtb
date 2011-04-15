@@ -764,8 +764,22 @@ class OracleManager extends DBManager
                 return "LENGTH($string)";
             case 'month':
                 return "TO_CHAR($string, 'MM')";
-            case 'add_month':
-                return "ADD_MONTHS($string, {$additional_parameters[0]})";
+            case 'add_date':
+                switch(strtolower($additional_parameters[1])) {
+                    case 'quarter':
+                        $additional_parameters[0] .= "*3";
+                        // break missing intentionally
+                    case 'month':
+                        return "ADD_MONTHS($string, {$additional_parameters[0]})";
+                    case 'week':
+                        $additional_parameters[0] .= "*7";
+                        // break missing intentionally
+                    case 'day':
+                        return "($string + $additional_parameters[0]})";
+                    case 'year':
+                        return "ADD_MONTHS($string, {$additional_parameters[0]}*12)";
+                }
+                break;
             case 'add_time':
                 return "$string + {$additional_parameters[0]}/24 + {$additional_parameters[1]}/1440";
         }

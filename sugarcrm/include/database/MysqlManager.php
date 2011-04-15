@@ -604,8 +604,8 @@ class MysqlManager extends DBManager
                     return "LENGTH($string)";
             case 'month':
                     return "MONTH($string)";
-            case 'add_month':
-                    return "DATE_ADD($string, INTERVAL {$additional_parameters[0]} MONTH)";
+            case 'add_date':
+                    return "DATE_ADD($string, INTERVAL {$additional_parameters[0]} {$additional_parameters[1]})";
             case 'add_time':
                     return "DATE_ADD($string, INTERVAL + CONCAT({$additional_parameters[0]}, ':', {$additional_parameters[1]}) HOUR_MINUTE)";
         }

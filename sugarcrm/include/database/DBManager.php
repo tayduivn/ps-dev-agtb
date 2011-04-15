@@ -1587,7 +1587,7 @@ abstract class DBManager
             quarter		Quarter number of the date
             length		Length of string
             month		Month number of the date
-            add_month	Add N months to a date
+            add_date	Add specified interval to a date
          */
         return $string;
     }

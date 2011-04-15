@@ -106,7 +106,7 @@ class QueryGroupBy extends QueryBuilder
     function clear_deleted ()
     {
         //if this has a column, delete the column too
-        if ($focus->groupby_axis == "Columns") 
+        if ($this->groupby_axis == "Columns")
         {
             $query = "delete from query_columns where id='$this->parent_id' and deleted=0";
             $this->db->query($query, true, "Error deleting groupby columns: ");
@@ -265,7 +265,7 @@ class QueryGroupBy extends QueryBuilder
     ////BUILDING THE QUERY PARTS//////////
     function get_select_part (& $select_array)
     {
-        global $sugar_config;
+        global $db;
         if (! empty($this->groupby_type) && $this->groupby_type == "Time")
         {
             //Calculate out time interval parts	
@@ -303,30 +303,9 @@ class QueryGroupBy extends QueryBuilder
             for ($i = 0; $i < $this->groupby_qualifier_qty; $i ++) 
             {
                 //DATEADD(m, 5, GETDATE())
-                if ($sugar_config["dbconfig"]["db_type"] == "mssql") 
-                {
-                    if ($qualifier == 'DAY') 
-                    {
-                        $qualifier = 'd';
-                    }
-                    $select_part = $this->groupby_calc_type . "(IF(";
-                    $select_part .= $field_table;
-                    $select_part .= " >= (DATE_ADD(" . $qualifier . "," . $start_interval . ", GETDATE()))";
-                    $select_part .= " AND " . $field_table;
-                    $select_part .= " < (DATE_ADD(" . $qualifier . "," . $next_interval . ", GETDATE()))";
-                    $select_part .= ", " . $calc_field_table . "";
-                    $select_part .= ",0)) as '" . $this->groupby_qualifier . "" . $i . "'";
-                }
-                else
-                {
-                    $select_part = $this->groupby_calc_type . "(IF(";
-                    $select_part .= $field_table;
-                    $select_part .= " >= (DATEADD(CURDATE(),INTERVAL " . $start_interval . " " . $qualifier . "))";
-                    $select_part .= " AND " . $field_table;
-                    $select_part .= " < (DATE_ADD(CURDATE(),INTERVAL " . $next_interval . " " . $qualifier . "))";
-                    $select_part .= ", " . $calc_field_table . "";
-                    $select_part .= ",0)) as '" . $this->groupby_qualifier . "" . $i . "'";
-                }
+                $dateexpr = "$field_table >= ".$db->convert($db->convert('', "today"), "add_date", array($start_interval, $qualifier)).
+                        " AND $field_table < ".$db->convert($db->convert('', "today"), "add_date", array($next_interval, $qualifier));
+                $select_part = $groupby_calc_type . "(IF($dateexpr, $calc_field_table, 0)) as ".$db->quoted($this->groupby_qualifier);
                 $start_interval = $next_interval;
                 $next_interval = $next_interval + $interval_multiplier;
                 array_push($select_array, $select_part);
