@@ -1442,7 +1442,7 @@ $app_list_strings = array (
     'assigned_user_id' => 'User assigned to triggered record',
     'modified_user_id' => 'User who last modified triggered record',
     'created_by' => 'User who created triggered record',
-    'current_user' => 'User who is logged-in',
+    'current_user' => 'Logged-in User',
   ),
   'wflow_adv_team_type_dom' =>
         array (
