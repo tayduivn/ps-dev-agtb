@@ -126,11 +126,12 @@ class SchedulerDaemon extends Scheduler {
 	 * @param	$controller	A controller object to monitor to keep alive
 	 */
 	function watch() {
+        global $timedate;
 		$GLOBALS['log']->debug('----->SchedulerDaemon Object running as user: ('.$this->runAsUserName.')');
 		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.$timedate->nowDb());
 
 		$sleepTil = strtotime('now +'.$this->sleepInterval.'secs');
-		$GLOBALS['log']->debug('----->sleepTil: '.$timedate->asDbTime($timetime->fromTimestamp($sleepTil)).' :: timerstarted at '.$timedate->nowDbTime());
+		$GLOBALS['log']->debug('----->sleepTil: '.$timedate->asDbTime($timedate->fromTimestamp($sleepTil)).' :: timerstarted at '.$timedate->nowDbTime());
 		
 		while($this->stop == false) {
 			usleep(250); // sleep 0.25 secs
@@ -279,7 +280,7 @@ class SchedulerDaemon extends Scheduler {
 	 */
 	function checkPendingJobs() {
 		global $sugar_config;
-		global $current_user;
+		global $timedate;
 		
 		$GLOBALS['log']->debug('');
 		$GLOBALS['log']->debug('----->Scheduler checking for qualified jobs to run.');
@@ -343,6 +344,7 @@ class SchedulerDaemon extends Scheduler {
 	 * @return	false		If we the Scheduler is not in scope, return false.
 	 */
 	function deriveDBDateTimes($focus) {
+        global $timedate;
 		$GLOBALS['log']->debug('deriveDBDateTimes got an object of type: '.$focus->object_name);
 		/* [min][hr][dates][mon][days] */
 		$dateTimes = array();

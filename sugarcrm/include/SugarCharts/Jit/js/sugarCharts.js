@@ -679,7 +679,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					offset: 5
 				  },
 				  //offsets
-				  offset: 0,
+				  offset: 20,
 				  gaugeStyle: {
 					backgroundColor: '#aaaaaa',
 					borderColor: '#999999',

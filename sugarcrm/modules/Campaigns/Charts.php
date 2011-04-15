@@ -133,6 +133,7 @@ class campaign_charts {
 							"numerical_key" => "hits",
 							"module" => 'Campaigns',
      						"group_base_text" => $outcome,
+     						"link" => $key
 							);
 					}
 
@@ -254,7 +255,7 @@ class campaign_charts {
 		$user_id = $current_user->id;
 
 		
-		$width = ($is_dashlet) ? '100%' : '720px';
+		$width = '100%';
 		
 		$return = '';
 		if (!$is_dashlet){

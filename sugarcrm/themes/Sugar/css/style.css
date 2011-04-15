@@ -972,6 +972,9 @@ border-radius: 6px;
     word-wrap: break-word;
 }
 
+#wizard .detail.view {
+	background-color: #fff;	
+}
 /* detail view */
 .detail.view {
 box-shadow: #ccc 0px 0px 10px;
