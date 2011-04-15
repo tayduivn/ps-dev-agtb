@@ -134,6 +134,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'double',
     'comment' => 'Unconverted amount of the opportunity',
     'importable' => 'required',
+    'duplicate_merge'=>'1',
     'required' => true,
   ),
   'amount_usdollar' =>
@@ -144,7 +145,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'group'=>'amount',
     'dbType' => 'double',
     'disable_num_format' => true,
-    'duplicate_merge'=>'disabled',
+    'duplicate_merge'=>'0',
     'audited'=>true,
     'comment' => 'Formatted amount of the opportunity'
   ),

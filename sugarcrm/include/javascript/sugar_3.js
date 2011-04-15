@@ -3148,6 +3148,7 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
                     if ( ( elem.name.length > 3 && elem.name.substring(elem.name.length-3) == '_id' )
+                         || ((elem.name.length > 9) && (elem.name.substring(elem.name.length - 9) == '_id_basic'))
                          || ( elem.name.length > 12 && elem.name.substring(elem.name.length-12) == '_id_advanced' ) ) {
                         elem.value = '';
                     }
