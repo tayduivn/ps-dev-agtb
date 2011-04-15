@@ -365,7 +365,7 @@ eoq;
     	foreach ($composePackage as $key => $singleCompose)
     	{
     	   if (is_string($singleCompose))
-    	       $composePackage[$key] = str_replace("'","&#039;",$singleCompose);
+    	       $composePackage[$key] = htmlspecialchars($singleCompose, ENT_QUOTES, 'UTF-8');
     	}
 
     	$quickComposeOptions = array('fullComposeUrl' => $fullLinkUrl,'composePackage' => $composePackage);
