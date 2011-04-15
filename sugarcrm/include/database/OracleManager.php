@@ -1008,6 +1008,16 @@ class OracleManager extends DBManager
     }
 
     /**
+     * Truncate table
+     * @param  $name
+     * @return string
+     */
+    public function truncateTableSQL($name)
+    {
+        return "TRUNCATE TABLE $name";
+    }
+
+    /**
      * Fixes an Oracle index name
      *
      * Oracle has a strict limit on the size of object names (30 characters). errors will

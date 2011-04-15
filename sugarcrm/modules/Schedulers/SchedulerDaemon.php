@@ -126,11 +126,12 @@ class SchedulerDaemon extends Scheduler {
 	 * @param	$controller	A controller object to monitor to keep alive
 	 */
 	function watch() {
+        global $timedate;
 		$GLOBALS['log']->debug('----->SchedulerDaemon Object running as user: ('.$this->runAsUserName.')');
 		$GLOBALS['log']->debug('----->SchedulerDaemon Object created '.$timedate->nowDb());
 
 		$sleepTil = strtotime('now +'.$this->sleepInterval.'secs');
-		$GLOBALS['log']->debug('----->sleepTil: '.$timedate->asDbTime($timetime->fromTimestamp($sleepTil)).' :: timerstarted at '.$timedate->nowDbTime());
+		$GLOBALS['log']->debug('----->sleepTil: '.$timedate->asDbTime($timedate->fromTimestamp($sleepTil)).' :: timerstarted at '.$timedate->nowDbTime());
 		
 		while($this->stop == false) {
 			usleep(250); // sleep 0.25 secs
@@ -278,8 +279,8 @@ class SchedulerDaemon extends Scheduler {
 	 * @return	$successful	Boolean flag whether a job(s) is found
 	 */
 	function checkPendingJobs() {
+		global $timedate;
 		global $sugar_config;
-		global $current_user;
 		
 		$GLOBALS['log']->debug('');
 		$GLOBALS['log']->debug('----->Scheduler checking for qualified jobs to run.');
@@ -291,24 +292,20 @@ class SchedulerDaemon extends Scheduler {
 		$fireTimePlus = $timedate->asDb($timedate->getNow()->get('+1 minute'));
 
 		// collapse list of schedulers where "catch_up" is 0 and status is "ready" (not "in progress, completed, etc.");
-		if($sugar_config['dbconfig']['db_type'] == 'oci8') {
-			//BEGIN SUGARCRM flav=ent ONLY
-			$q = '	UPDATE schedulers_times st 
+		$q = 'UPDATE schedulers_times st
 					SET st.status = \'not run\' 
-					WHERE st.execute_time < '.db_convert('\''.$fireTimeMinus.'\'', 'datetime').' 
+					WHERE st.execute_time < '.$this->db->convert($this->db->quoted($fireTimeMinus), 'datetime').'
 					AND st.status = \'ready\' 
 					AND st.scheduler_id IN (SELECT s.id FROM schedulers s WHERE st.scheduler_id = s.id AND s.catch_up = 0)';
-			//END SUGARCRM flav=ent ONLY
-		} else  {
-			$q = 'UPDATE schedulers_times st LEFT JOIN schedulers s ON st.scheduler_id = s.id SET st.status = \'not run\' WHERE st.execute_time < '.db_convert('\''.$fireTimeMinus.'\'', 'datetime').' AND st.status = \'ready\' AND s.catch_up = 0';
-		}
-		$this->db->query($q); 
+		$this->db->query($q);
 		
-		$q = 'SELECT DISTINCT st.id, st.scheduler_id, st.status, s.name, s.job FROM schedulers_times st LEFT JOIN schedulers s ON st.scheduler_id = s.id WHERE st.execute_time < '.db_convert('\''.$fireTimePlus.'\'', 'datetime').' AND st.deleted=0 AND s.deleted=0 AND st.status=\'ready\' AND s.status=\'Active\' ORDER BY s.name';
+		$q = 'SELECT DISTINCT st.id, st.scheduler_id, st.status, s.name, s.job FROM schedulers_times st
+		    LEFT JOIN schedulers s ON st.scheduler_id = s.id WHERE st.execute_time < '.$this->db->convert($this->db->quoted($fireTimeMinus), 'datetime').
+            ' AND st.deleted=0 AND s.deleted=0 AND st.status=\'ready\' AND s.status=\'Active\' ORDER BY s.name';
 		$r = $this->db->query($q);
 		$count = 0;
 		
-		if($sugar_config['dbconfig']['db_type'] == 'mysql') {
+		if($this->db->supports("select_rows")) {
 			$loopCount = $this->db->getRowCount($r);
 			$GLOBALS['log']->debug('----->Scheduler has '.$loopCount.' jobs to fire.');
 		}
@@ -343,6 +340,7 @@ class SchedulerDaemon extends Scheduler {
 	 * @return	false		If we the Scheduler is not in scope, return false.
 	 */
 	function deriveDBDateTimes($focus) {
+        global $timedate;
 		$GLOBALS['log']->debug('deriveDBDateTimes got an object of type: '.$focus->object_name);
 		/* [min][hr][dates][mon][days] */
 		$dateTimes = array();
@@ -719,13 +717,7 @@ class SchedulerDaemon extends Scheduler {
 		//END SUGARCRM flav=int ONLY
 		
 		if($truncate) {
-			if($sugar_config['dbconfig']['db_type'] == 'oci8') {
-				//BEGIN SUGARCRM flav=ent ONLY
-				$query = 'TRUNCATE TABLE schedulers_times';
-				//END SUGARCRM flav=ent ONLY
-			} else {
-				$query = 'TRUNCATE schedulers_times';
-			}
+            $query = $this->db->truncateTableSQL('schedulers_times');
 			$this->db->query($query);
 			$GLOBALS['log']->debug('----->Scheduler TRUNCATED ALL Jobs: '.$query);
 		} else {

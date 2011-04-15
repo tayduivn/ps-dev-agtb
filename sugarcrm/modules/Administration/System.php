@@ -110,39 +110,12 @@ class System extends SugarBean {
     */
     function getClientsActiveInLast30Days($where = '')
     {
-        global $sugar_config;
-        if($sugar_config['dbconfig']['db_type'] == 'mysql')
-        {
-            $query = "SELECT count( DISTINCT id ) oc_count FROM $this->table_name WHERE PERIOD_DIFF( EXTRACT(YEAR_MONTH FROM NOW( )) , EXTRACT(YEAR_MONTH FROM $this->table_name.last_connect_date) ) <=1 AND system_id != 1";
-            if(!empty($where)){
-                $query .= " AND ".$where;
-            }
-            $result=$this->db->query($query, 'fetching last active period for oc', false);
-            $row = $this->db->fetchByAssoc($result);
-            return $row['oc_count'];
-        }
-        elseif($sugar_config['dbconfig']['db_type'] == 'oci8')
-        {
-            $query = "SELECT count( DISTINCT id ) oc_count FROM $this->table_name WHERE MONTHS_BETWEEN( sysdate , $this->table_name.last_connect_date ) <= 1 AND system_id != 1";
-            if(!empty($where)){
-                $query .= " AND ".$where;
-            }
-            $result=$this->db->query($query, 'fetching last active period for oct', false);
-            $row = $this->db->fetchByAssoc($result);
-            return $row['oc_count'];
-        }elseif($sugar_config['dbconfig']['db_type'] == 'mssql')
-        {
-            $query = "SELECT count( DISTINCT id ) oc_count FROM $this->table_name WHERE DATEDIFF(MONTH, $this->table_name.last_connect_date, GETDATE()) <=1 AND system_id != 1";
-            if(!empty($where)){
-                $query .= " AND ".$where;
-            }
-            $result=$this->db->query($query, 'fetching last active period for oc', false);
-            $row = $this->db->fetchByAssoc($result);
-            return $row['oc_count'];
-        }else
-        {
-            return 0;
-        }
+        global $timedate;
+        $dates = $timedate->parseDateRange('last_30_days');
+        $date = $this->db->quoted($dates[0]->asDb());
+        $query = "SELECT count( DISTINCT id ) oc_count FROM $this->table_name
+            WHERE {$this->table_name}.last_connect_date > $date AND system_id != 1";
+        return  $this->getOne($query);
     }
 
     /*

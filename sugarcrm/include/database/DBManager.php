@@ -2425,6 +2425,16 @@ abstract class DBManager
 	}
 
     /**
+     * Truncate table
+     * @param  $name
+     * @return string
+     */
+    public function truncateTableSQL($name)
+    {
+        return "TRUNCATE $name";
+    }
+
+    /**
      * This method generates sql that deletes a column identified by fieldDef.
      *
      * @param  object $bean      Sugarbean instance

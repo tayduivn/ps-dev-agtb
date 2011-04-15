@@ -83,19 +83,6 @@ $admin_group_header[]= array('LBL_SUGAR_NETWORK_TITLE','',false,$admin_option_de
 
 //END SUGARCRM flav!=dce && flav!=sales ONLY
 
-//BEGIN SUGARCRM flav=int ONLY
-global $sugar_config;
-if($sugar_config['dbconfig']['db_type'] == 'mysql') {
-
-	$admin_option_defs=array();
-	$admin_option_defs['Administration']['er_diagram']= array('Upgrade','LBL_ER_DIAGRAM_SCHEMA','LBL_ER_DIAGRAM','./index.php?module=UpgradeWizard&action=erDiagramUI');
-	$admin_option_defs['Administration']['dbScan']= array('Upgrade','LBL_DB_SCAN','LBL_DB_SCAN_PROCESS','./index.php?module=UpgradeWizard&action=dbScanUI');
-	$admin_option_defs['Administration']['checkSchema']= array('Upgrade','LBL_CHECK_YOUR_SCHEMA','LBL_CHECK_YOUR_SCHEMA_PROCESS','./index.php?module=Administration&action=checkYourSchemaChange');
-	$admin_option_defs['Administration']['dbStats']= array('Upgrade','LBL_DATABASE_STATS','LBL_DATABASE_STATS_PROCESS','./index.php?module=UpgradeWizard&action=dbStats');
-	$admin_group_header[]= array('LBL_DATABASE_AND_SCHEMA_TITLE','',false,$admin_option_defs, 'LBL_DATABASE_AND_SCHEMA_DESC');
-}
-//END SUGARCRM flav=int ONLY
-
 //system.
 $admin_option_defs=array();
 $admin_option_defs['Administration']['configphp_settings']= array('Administration','LBL_CONFIGURE_SETTINGS_TITLE','LBL_CONFIGURE_SETTINGS','./index.php?module=Configurator&action=EditView');

@@ -379,7 +379,7 @@ function clear_implicit_access($private_teams_only, $global_team_id=1) {
         $query= "select a.id from team_memberships a " .
                 "        inner join users c on c.id = a.user_id " .
                 "        inner join teams b on  a.team_id=  b.id  " .
-                "        where " . local_db_convert("'('" , "CONCAT", array('c.user_name' , "')'")) ." = b.name and b.private=1 and c.deleted=0 and b.deleted=0 and a.deleted=0";
+                "        where " . $user->db->convert("'('" , "CONCAT", array('c.user_name' , "')'")) ." = b.name and b.private=1 and c.deleted=0 and b.deleted=0 and a.deleted=0";
         
 
         $result=$user->db->query($query);
@@ -455,44 +455,3 @@ function process_all_team_access($user,$add_to_global_team=false,$private_team=f
         }        
     }
 }
-/* upgrade wizard will not give me access to updated version of db_utils.php. Adding it here to get around that problem*/
-function local_db_convert($string, $type, $additional_parameters=array(),$additional_parameters_oracle_only=array()){
-    global $sugar_config;
-    
-    //converts the paramters array into a comma delimited string.
-    $additional_parameters_string='';
-    foreach ($additional_parameters as $value) {
-        $additional_parameters_string.=",".$value;
-    }
-    $additional_parameters_string_oracle_only='';
-    foreach ($additional_parameters_oracle_only as $value) {
-        $additional_parameters_string_oracle_only.=",".$value;
-    }
-    
-    if($sugar_config['dbconfig']['db_type']== "mysql"){
-        switch($type){
-            case 'CONCAT': return "CONCAT($string,".implode(",",$additional_parameters).")";
-            
-        }
-        return "$string";
-    }else if($sugar_config['dbconfig']['db_type']== "oci8"){
-        //BEGIN SUGARCRM flav=ent ONLY
-        if (!empty($additional_parameters_string_oracle_only)) {
-            $additional_parameters_string=$additional_parameters_string_oracle_only;
-        }   
-        switch($type){
-            case 'CONCAT': return "CONCAT($string,".implode(",",$additional_parameters).")";
-        }
-        //END SUGARCRM flav=ent ONLY
-    }elseif($sugar_config['dbconfig']['db_type']== "mssql")
-    {
-        switch($type){
-            case 'CONCAT': return "$string+".implode("+",$additional_parameters);
-    
-        }
-        return "$string";
-    }
-    
-    return "$string";
-}
-?>
