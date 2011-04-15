@@ -5848,6 +5848,51 @@ function unlinkUpgradeFiles($version)
 	   }
 	}
 	logThis('end unlinking files from previous upgrade');
+	
+	if($version < '620')
+	{
+		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php)');
+
+		//Use a md5 comparison check to see if we can just remove the file where an exact match is found
+		if($version < '610')
+		{
+			$dr_files = array(
+	         'modules/DocumentRevisions/DetailView.html' => '17ad4d308ce66643fdeb6fdb3b0172d3',
+			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
+	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
+	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
+	        );		
+		} else {
+			$dr_files = array(
+	         'modules/DocumentRevisions/DetailView.html' => 'a8356ff20cd995daffe6cb7f7b8b2340',
+			 'modules/DocumentRevisions/DetailView.php' => '20edf45dd785469c484fbddff1a3f8f2',
+	         'modules/DocumentRevisions/EditView.php' => 'fb31958496f04031b2851dcb4ce87d50',
+	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
+	        );
+		}
+	
+		foreach($dr_files as $rev_file=>$hash)
+		{
+			if(file_exists($rev_file))
+			{
+				//It's a match here so let's just remove the file
+				if (md5(file_get_contents($rev_file)) == $hash) 
+				{
+					logThis('removing file ' . $rev_file);
+					unlink($rev_file);
+				} else {
+					if(!copy($rev_file, $rev_file . '.suback.bak')) 
+					{
+					  logThis('error making backup for file ' . $rev_file);
+					} else {
+					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
+					}
+				} 
+			}
+		}
+		
+		logThis('end upgrade for DocumentRevisions classic files');
+	}	
 }
 
 /**
