@@ -1230,7 +1230,7 @@ function return_mod_list_strings_language($language,$module) {
  */
 function return_theme_language($language, $theme)
 {
-	global $mod_strings, $sugar_config, $currentModule;
+	global $mod_strings, $sugar_config, $current_language;
 
 	$language_used = $language;
 	$default_language = $sugar_config['default_language'];
@@ -2868,16 +2868,8 @@ function check_php_version($sys_php_version = '') {
 	// only the supported versions,
 	// should be mutually exclusive with $invalid_php_versions
 	$supported_php_versions = array (
-	'5.2.1', '5.2.2', '5.2.3', '5.2.4', '5.2.5', '5.2.6', '5.2.8', '5.3.0'
+    	'5.2.1', '5.2.2', '5.2.3', '5.2.4', '5.2.5', '5.2.6', '5.2.8', '5.3.0'
 	);
-	//Find out what Database the system is using.
-	global $sugar_config;
-	$dbType = '';
-	if (isset($_REQUEST['setup_db_type'])) {
-		$dbType = $_REQUEST['setup_db_type'];
-	} else if (isset ($sugar_config['dbconfig']) && isset ($sugar_config['dbconfig']['db_type'])) {
-		$dbType = $sugar_config['dbconfig']['db_type'];
-	}
 
 	// invalid versions above the $min_considered_php_version,
 	// should be mutually exclusive with $supported_php_versions

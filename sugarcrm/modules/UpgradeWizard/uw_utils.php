@@ -960,27 +960,14 @@ function checkSystemCompliance() {
 	}
 
 	// database and connect
-	switch($sugar_config['dbconfig']['db_type']){
-	    case 'mysql':
-	        // mysql version
-	        $q = "SELECT version();";
-	        $r = $db->query($q);
-	        $a = $db->fetchByAssoc($r);
-	        if(version_compare($a['version()'], '4.1.2') < 0) {
+	if($sugar_config['dbconfig']['db_type'] == 'mysql')
+    {
+        $v  = $db->version();
+        if(version_compare($v, '4.1.2') < 0) {
 	        	$ret['error_found'] = true;
-	        	$ret['mysqlVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_MYSQL_VERSION'].$a['version()']."</span></b>";
-	        }
-
-	        break;
-		case 'mssql':
-	        break;
-	    case 'oci8':
-	    	//BEGIN SUGARCRM flav=ent ONLY
-	        //END SUGARCRM flav=ent ONLY
-	        break;
+	        	$ret['mysqlVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_MYSQL_VERSION'].$v."</span></b>";
+	    }
 	}
-
-
 
 
 	// XML Parsing
@@ -1065,15 +1052,6 @@ function checkSystemCompliance() {
 	return $ret;
 }
 
-
-
-function checkMysqlConnection(){
-	global $sugar_config;
-	$configOptions = $sugar_config['dbconfig'];
-	if($sugar_config['dbconfig']['db_type'] == 'mysql'){
-    	@mysql_ping($GLOBALS['db']->database);
-    }
-}
 
 /**
  * is a file that we blow away automagically
@@ -2781,7 +2759,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 	if(!isset($_SESSION['sqlSkippedQueries'])){
 	 	$_SESSION['sqlSkippedQueries'] = array();
 	 }
-	$db = & DBManagerFactory::getInstance();
+	$db = DBManagerFactory::getInstance();
 	$is_mysql = false;
 	if($sugar_config['dbconfig']['db_type'] == 'mysql') {
 	   $is_mysql = true;
@@ -2914,7 +2892,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 
 function getAlterTable($query){
 	$query = strtolower($query);
-	if (preg_match("/^\s*alter\s+table\s+/", $query)) {
+	if (preg_match('/^\s*alter\s+table\s+/', $query)) {
 		$sqlArray = explode(" ", $query);
 		$key = array_search('table', $sqlArray);
 		return $sqlArray[($key+1)];
@@ -3261,23 +3239,12 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 	                    if(sizeof($currLine) >1){
 	                    	$qarr = explode(" ",trim($currLine[0]));
 	                    	if(strtoupper(trim($qarr[0])) == 'CREATE' && strtoupper(trim($qarr[1])) == 'TABLE'){
-	                            if(strtoupper(trim($qarr[2]) != null)){
-	                            	if($sugar_config['dbconfig']['db_type'] == 'oci8'){
-	                            		$query= "select table_name from user_tables where table_name=strtoupper(trim($qarr[2]))";
-										$result = $db->query($query);
-										$row = $db->fetchByAssociation($result);
-										if($row['table_name'] != null){
-											//already exists
-										}
-										else{
-											//create table
-											$query= $completeLine;
-											$db->query($query);
-										}
+                                $tname = strtoupper(trim($qarr[2]));
+	                            if(!empty($tname)){
+                                    if(!$db->tableExists($tname)) {
+										$db->query($completeLine);
 	                            	}
-
 	                            }
-
 	                    	}
 	                    	else{
 	                    		$qType =trim($qarr[0])." ".trim($qarr[1])." ".trim($qarr[2]);

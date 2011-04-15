@@ -467,11 +467,7 @@ class SugarFolder {
 		//END SUGARCRM flav=pro ONLY
 
 
-		if($sugar_config['dbconfig']['db_type'] == 'oci8') {
-			$rootWhere .= "AND f.parent_folder IS NULL";
-		} else {
-			$rootWhere .= "AND f.parent_folder = ''";
-		}
+    	$rootWhere .= "AND (f.parent_folder IS NULL OR f.parent_folder = '')";
 
 		if($subscribed) {
 			$q = $this->coreSubscribed.$teamSecurityClause.$this->coreWhereSubscribed."'{$user->id}' ".$rootWhere.$this->coreOrderBy;
