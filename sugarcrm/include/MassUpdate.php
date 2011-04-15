@@ -139,15 +139,10 @@ eoq;
 	function handleMassUpdate(){
 
 		require_once('include/formbase.php');
-		global $current_user, $db;
-
-		/*
-		 C.L. - Commented this out... not sure why it's here
-		if(!is_array($this->sugarbean) && $this->sugarbean->bean_implements('ACL') && !ACLController::checkAccess($this->sugarbean->module_dir, 'edit', true))
-		{
-
-		}
-        */
+		global $current_user, $db, $disable_date_format;
+		
+		//We need to disable_date_format so that date values for the beans remain in database format
+		$disable_date_format = true;
 
 		foreach($_POST as $post=>$value){
 			if(is_array($value)){
