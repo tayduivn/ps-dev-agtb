@@ -879,15 +879,15 @@ class MssqlManager extends DBManager
             $sql = strtolower($sql);
 
             //look for the location of the "from" in sql string
-            $fromLoc = strpos ( $sql,"from" );
+            $fromLoc = strpos ( $sql," from " );
             if ($fromLoc>0){
-                //found from, substring from the "FROM" string in sql to end
-                $tableEnd = substr($sql, $fromLoc+5);
+                //found from, substring from the " FROM " string in sql to end
+                $tableEnd = substr($sql, $fromLoc+6);
                 //We know that tablename will be next parameter after from, so
                 //grab the next space after table name.
                 // MFH BUG #14009: Also check to see if there are any carriage returns before the next space so that we don't grab any arbitrary joins or other tables.
-                $carriage_ret = strpos($tableEnd,"\n");
-                $next_space = strpos ( $tableEnd," " );
+                $carriage_ret = strpos($tableEnd, "\n");
+                $next_space = strpos($tableEnd, " ");
                 if ($carriage_ret < $next_space)
                     $next_space = $carriage_ret;
                 if ($next_space > 0) {
@@ -1038,6 +1038,27 @@ class MssqlManager extends DBManager
     }
 
     /**
+     * Get tables like expression
+     * @param $like string
+     * @return array
+     */
+    public function tablesLike($like)
+    {
+        if ($this->getDatabase()) {
+            $tables = array();
+            $r = $this->query('SELECT TABLE_NAME tn FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE=\'BASE TABLE\' AND TABLE_NAME LIKE '.$this->quoted($like));
+            if (!empty($r)) {
+                while ($a = $this->fetchByAssoc($r)) {
+                    $row = array_values($a);
+					$tables[]=$row[0];
+                }
+                return $tables;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @see DBManager::getTablesArray()
      */
     public function getTablesArray()
@@ -1168,6 +1189,8 @@ class MssqlManager extends DBManager
                 return "MONTH($string)";
             case 'add_month':
                 return "DATEADD(mm,{$additional_parameters[0]},$string)";
+            case 'add_time':
+                return "DATEADD(hh, {$additional_parameters[0]}, DATEADD(mi, {$additional_parameters[1]}, $string))";
         }
 
         return "$string";

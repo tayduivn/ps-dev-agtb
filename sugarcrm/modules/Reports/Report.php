@@ -1521,156 +1521,18 @@ function _check_user_permissions()
         $query .= " GROUP BY ".join(",", $this->group_by_arr);
     }
     if ( $query_name == 'summary_query') {
-      if(!empty($this->summary_order_by_arr))
-      {
-             if ($this->db->dbType == 'mssql'){
-                $groupby = '';
-                $ASC_DESC = '';
-                    //set default order by
-                    $summ_order_by_string = $this->group_by;
-                    //process summary order by if not empty
-                    if(!empty($this->summary_order_by_arr)){
-                        //reset the summary order by string
-                        $summ_order_by_string = "";
-                        //parse each summary order by and create mssql friendly order by
-                        foreach($this->summary_order_by_arr as $soba){
-                            $summ_order_by = explode(",", $soba);
-                            if (count($summ_order_by)>1){
-                                //If more than one, then create string to use in conjunction
-                                //with a charindex function.  This will make sure we can get
-                                //the order list in the defined order
-                                foreach($summ_order_by as $ob){
-                                    if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                    if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
-                                    $ob = trim($ob);
-                                    $beg_sing_pos = strpos($ob,"'");
-                                    if($beg_sing_pos>0){
-                                    $end_sing_pos = strrpos($ob,"'");
-                                    $summ_order_by_string .= substr($ob,$beg_sing_pos+1,$end_sing_pos-$beg_sing_pos-1) ."``";
-                                    }else{
-                                        if(empty($order_by_string)) $order_by_string = '';
-                                        $order_by_string .= $ob ."``";
-                                    }
-                                }
-                            }
-                        }//end foreach($this->summary_order_by_arr as $soba){
-                        //if there is a group by, create the order by string with the Charindex function
-                        if(!empty($groupby)) {
-                            $summ_order_by_string = "CharIndex(".$groupby." + '``', '". $summ_order_by_string  ."') ". $ASC_DESC ;
-                            $query .= " ORDER BY ".$summ_order_by_string;
-                        }else{
-                            //if no group by, then just define the order, no need to use charat function
-                                $query .= " ORDER BY ". implode( ',', $this->summary_order_by_arr);
-                        }
-
-                    }//end if(!empty($this->summary_order_by_arr)){
-             //end mssql
-             }else{
-                $query .= " ORDER BY ". implode( ',', $this->summary_order_by_arr);
-             }
-
-
-      }
-    }
-    else if ( $query_name == 'query')
-    {
-      if(!empty($this->order_by_arr))
-      {
-             if ($this->db->dbType == 'mssql'){
-                    $order_by_string = $this->group_by;
-                    //set default order by
-                    $order_by_string = $this->group_by;
-                    //process order by if not empty
-                    if(!empty($this->order_by_arr)){
-                        //reset the order by string
-                        $order_by_string = "";
-                        //keep track of whether there are multiple order by's in the array'
-                        $multiple_order_bys = count($this->order_by_arr);
-                        $multiple = 0;
-                        $order_by_string2 ='';
-                        $first = true;
-
-                        //parse each order by and create mssql friendly order by
-                        foreach($this->order_by_arr as $oba){
-
-                            $order_by = explode(",", $oba);
-                            $multiple = count($order_by);
-                            //if we have more than one order by columns in the current Order By Array,
-                            //then process each one, create a string to use in conjunction
-                            //with a charindex function.  This will make sure we can get
-                            //the order list in the defined order
-                            if ($multiple>1 || $multiple_order_bys >1){
-                                if(strpos($oba,'=')){
-									foreach($order_by as $ob){
-                                        if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                        if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
-                                        $ob = trim($ob);
-                                        $beg_sing_pos = strpos($ob,"'");
-                                        if($beg_sing_pos>0){
-                                            $end_sing_pos = strrpos($ob,"'");
-                                            $order_by_string .= substr($ob,$beg_sing_pos+1,$end_sing_pos-$beg_sing_pos-1) ."``";
-                                        }else{
-                                            $order_by_string .= $ob ."``";
-                                        }
-
-                                    }
-                                }else{
-                                    //there are multiple order by's, but order is not defined, so lets iterate through and
-                                    //create the order by string
-                                    $sep = strrpos($oba," ");
-                               	 	if(!$first)
-                               	 		$order_by_string2 .= ', ';
-                                    $ASC_DESC2 = (strrpos($oba,"ASC") !== false) ? "ASC":((strrpos($oba,"DESC") !== false)?"DESC": (!empty($ASC_DESC)?$ASC_DESC:"DESC"));
-                                    if($sep){
-                                        $order_by_string2 .= substr($oba,0,$sep);
-                                    }
-                                    else{
-                                    	$order_by_string2 .= $oba;
-                                    }
-                                    $first = false;
-                                }
-                        }else{
-                        //we are here because there are not more than one order by columns
-                        //in the order by array, so just grab the entire string
-                                    $order_by_string .= implode( ',', $this->order_by_arr);
-                            }
-                        }
-                        if (!empty($ASC_DESC2))
-  	                      $order_by_string2 .= ' '.$ASC_DESC2;
-                //If there were multiple order by's and a group by in the array, then create the Order By
-                //SQL string using the "CharAt" function.  If there were not, then
-                //we don't need to process as it is already defaulted to the entire string
-                if($multiple_order_bys>1 ||$multiple>1){
-                    //check to see if there is a group by
-                    if(isset($groupby)){
-                        $order_by_string = "CharIndex(".$groupby." + '``', '". $order_by_string  ."') ". $ASC_DESC ;
-                        //#27518
-                        if(!empty($order_by_string2)){
-                        	$order_by_string .= ' ,'.$order_by_string2;
-                        }
-                        //end
-                    }
-                }
-                //#26632
-                	if(empty($order_by_string) && !empty($order_by_string2)){
-                    	$query .= " ORDER BY ". $order_by_string2;
-                	}
-                	else{
-                		$query .= " ORDER BY ". $order_by_string;
-            		}
-
-                    }
-             }else{
-                $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
-             }
+      if(!empty($this->summary_order_by_arr)) {
+         $query .= " ORDER BY ". implode( ',', $this->summary_order_by_arr);
+       }
+    } else if ( $query_name == 'query')  {
+      if(!empty($this->order_by_arr))  {
+          $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
       }
     }
 
         $this->$query_name = $query;
 
         array_push($this->query_list,$this->$query_name);
-
-
     }
 
 

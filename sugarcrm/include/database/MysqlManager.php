@@ -391,7 +391,7 @@ class MysqlManager extends DBManager
      */
     public function getTablesArray()
     {
-        $GLOBALS['log']->debug('Fetching table list');
+        $this->log->debug('Fetching table list');
 
         if ($this->getDatabase()) {
             $tables = array();
@@ -421,13 +421,34 @@ class MysqlManager extends DBManager
      */
     public function tableExists($tableName)
     {
-        $GLOBALS['log']->info("tableExists: $tableName");
+        $this->log->info("tableExists: $tableName");
 
         if ($this->getDatabase()) {
             $result = $this->getOne("SHOW TABLES LIKE ".$this->quoted($tableName));
             return !empty($result);
         }
 
+        return false;
+    }
+
+    /**
+     * Get tables like expression
+     * @param $like string
+     * @return array
+     */
+    public function tablesLike($like)
+    {
+        if ($this->getDatabase()) {
+            $tables = array();
+            $r = $this->query('SHOW TABLES LIKE '.$this->quoted($like));
+            if (!empty($r)) {
+                while ($a = $this->fetchByAssoc($r)) {
+                    $row = array_values($a);
+					$tables[]=$row[0];
+                }
+                return $tables;
+            }
+        }
         return false;
     }
 
@@ -585,6 +606,8 @@ class MysqlManager extends DBManager
                     return "MONTH($string)";
             case 'add_month':
                     return "DATE_ADD($string, INTERVAL {$additional_parameters[0]} MONTH)";
+            case 'add_time':
+                    return "DATE_ADD($string, INTERVAL + CONCAT({$additional_parameters[0]}, ':', {$additional_parameters[1]}) HOUR_MINUTE)";
         }
 
         return $string;
@@ -1097,5 +1120,136 @@ class MysqlManager extends DBManager
     {
         $res = $this->getOne("EXPLAIN $query");
         return !empty($res);
+    }
+
+    protected function makeTempTableCopy($table)
+    {
+        $this->log->debug("creating temp table for [$table]...");
+        $create = $this->getOne("SHOW CREATE TABLE {$table}");
+        if(empty($create)) {
+            return false;
+        }
+        // rewrite DDL with _temp name
+        $tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $create);
+        $r2 = $this->query($tempTableQuery);
+        if(empty($r2)) {
+            return false;
+        }
+
+        // get sample data into the temp table to test for data/constraint conflicts
+        $this->log->debug('inserting temp dataset...');
+        $q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
+        $this->query($q3, false, "Preflight Failed for: {$q3}");
+        return true;
+    }
+
+    /**
+     * Tests an ALTER TABLE query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    protected function verifyAlterTable($table, $query)
+    {
+    	global $sugar_config;
+
+        $this->log->debug("verifying ALTER TABLE");
+    	// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
+	    // over to the temp tables
+	    if(strpos(strtoupper($query), 'DROP PRIMARY KEY') !== false) {
+            $this->log->debug("Skipping DROP PRIMARY KEY");
+		    return '';
+	    }
+        if(!$this->makeTempTableCopy($table)) {
+            return 'Could not create temp table copy';
+        }
+
+		// test the query on the test table
+		$this->log->debug('testing query: ['.$query.']');
+		$tempTableTestQuery = str_replace("ALTER TABLE `{$table}`", "ALTER TABLE `{$table}__uw_temp`", $query);
+		if (strpos($tempTableTestQuery, 'idx') === false) {
+			if(strpos($tempTableTestQuery, '__uw_temp') === false) {
+			    return 'Could not use a temp table to test query!';
+			}
+
+			$this->log->debug('testing query on temp table: ['.$tempTableTestQuery.']');
+			$this->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+		} else {
+			// test insertion of an index on a table
+			$tempTableTestQuery_idx = str_replace("ADD INDEX `idx_", "ADD INDEX `temp_idx_", $tempTableTestQuery);
+			$this->log->debug('testing query on temp table: ['.$tempTableTestQuery_idx.']');
+			$this->query($tempTableTestQuery_idx, false, "Preflight Failed for: {$query}");
+		}
+		$mysqlError = $this->lastError();
+		if(!empty($mysqlError)) {
+            return $mysqlError;
+		}
+        $this->dropTableName("{$table}__uw_temp");
+
+	    return '';
+    }
+
+    protected function verifyGenericReplaceQuery($querytype, $table, $query)
+    {
+        $this->log->debug("verifying $querytype statement");
+
+        if(!$this->makeTempTableCopy($table)) {
+            return 'Could not create temp table copy';
+        }
+        // test the query on the test table
+        $this->log->debug('testing query: ['.$query.']');
+        $tempTableTestQuery = str_replace("$querytype `{$table}`", "$querytype `{$table}__uw_temp`", $query);
+        if(strpos($tempTableTestQuery, '__uw_temp') === false) {
+            return 'Could not use a temp table to test query!';
+        }
+
+        $this->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+        $error = $this->lastError(); // empty on no-errors
+        $this->dropTableName("{$table}__uw_temp"); // just in case
+        return $error;
+    }
+
+    /**
+     * Tests a DROP TABLE query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyDropTable($table, $query)
+    {
+        return $this->verifyGenericReplaceQuery("DROP TABLE", $table, $query);
+    }
+
+    /**
+     * Tests an INSERT INTO query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyInsertInto($table, $query)
+    {
+        return $this->verifyGenericReplaceQuery("INSERT INTO", $table, $query);
+    }
+
+    /**
+     * Tests an UPDATE query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyUpdate($table, $query)
+    {
+        return $this->verifyGenericReplaceQuery("UPDATE", $table, $query);
+    }
+
+    /**
+     * Tests an DELETE FROM query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyDeleteFrom($table, $query)
+    {
+        return $this->verifyGenericReplaceQuery("DELETE FROM", $table, $query);
     }
 }

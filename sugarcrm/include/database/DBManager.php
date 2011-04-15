@@ -81,6 +81,7 @@ abstract class DBManager
 
     /**
      * Name of database
+     * @var resource
      */
     public $database = null;
 
@@ -131,6 +132,12 @@ abstract class DBManager
     protected $timedate;
 
     /**
+     * PHP Logger
+     * @var Logger
+     */
+    protected $log;
+
+    /**
      * Table descriptions
      * @var array
      */
@@ -173,6 +180,7 @@ abstract class DBManager
     public function __construct()
     {
         $this->timedate = TimeDate::getInstance();
+        $this->log = $GLOBALS['log'];
     }
 
     /**
@@ -2963,6 +2971,111 @@ abstract class DBManager
         return array($terms, $must_terms, $not_terms);
 	}
 
+    protected $standardQueries = array(
+        'ALTER TABLE' => 'verifyAlterTable',
+        'DROP TABLE' => 'verifyDropTable',
+        'CREATE TABLE' => 'verifyCreateTable',
+        'INSERT INTO' => 'verifyInsertInto',
+        'UPDATE' => 'verifyUpdate',
+        'DELETE FROM' => 'verifyDeleteFrom',
+    );
+
+
+    protected function extractTableName($query)
+    {
+       $query = preg_replace('/[^A-Za-z0-9_\s]/', "", $query);
+       $query = trim(str_replace(array_keys($this->standardQueries), '', $query));
+
+       $firstSpc = strpos($query, " ");
+       $end = ($firstSpc > 0) ? $firstSpc : strlen($query);
+       $table = substr($query, 0, $end);
+
+       return $table;
+    }
+
+    /**
+     * Verify SQl statement using per-DB verification function
+     * provided the function exists
+     * @param  $query string
+     * @return string
+     */
+    public function verifySQLStatement($query, $skipTables)
+    {
+        $query = trim($query);
+        foreach($this->standardQueries as $qstart => $check) {
+            if(strncasecmp($qstart, $query, strlen($qstart)) == 0) {
+                if(is_callable(array($this, $check))) {
+                    $table = $this->extractTableName($query);
+                    if(!in_array($table, $skipTables)) {
+                        return call_user_func(array($this, $check), $table, $query);
+                    } else {
+                        $this->log->debug("Skipping table $table as blacklisted");
+                    }
+                } else {
+                    $this->log->debug("No verification for $qstart on {$this->dbType}");
+                }
+                break;
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Tests an CREATE TABLE query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    protected function verifyCreateTable($table, $query)
+    {
+    	$this->log->debug('verifying CREATE statement...');
+
+		// rewrite DDL with _temp name
+		$this->log->debug('testing query: ['.$query.']');
+        $tempname = $table."__uw_temp";
+		$tempTableQuery = str_replace("CREATE TABLE {$table}", "CREATE TABLE $tempname", $query);
+
+        if(strpos($tempTableQuery, '__uw_temp') === false) {
+            return 'Could not use a temp table to test query!';
+        }
+
+		$this->query($tempTableQuery, false, "Preflight Failed for: {$query}");
+
+		$error = $this->lastError(); // empty on no-errors
+		if(!empty($error)) {
+            return $error;
+		}
+
+		// check if table exists
+		$this->log->debug('testing for table: '.$table);
+        if(!$this->tableExists($tempname)) {
+            return "Failed to create temp table!";
+		}
+
+        $this->dropTableName($tempname);
+        return '';
+    }
+
+    /**
+     * Get DB driver name used for install/upgrade scripts
+     * @return string
+     */
+    public function getScriptName()
+    {
+        return $this->dbType;
+    }
+
+    /**
+     * Get tables like expression
+     * @param $like string
+     * @return array
+     */
+    public function tablesLike($like)
+    {
+        return false;
+    }
+
+
     /**
      * Parses and runs queries
      *
@@ -3137,6 +3250,7 @@ abstract class DBManager
      * @param array  $fieldDefs
      * @param string $action
      * @param bool   $ignoreRequired Optional, true if we should ignor this being a required field
+     * @return string
 	 */
 	abstract protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false);
 
@@ -3149,13 +3263,14 @@ abstract class DBManager
 
     /**
      * Get last database error
+     * @return string
      */
     abstract public function lastError();
 
     /**
      * Check if this query is valid
      * Validates only SELECT queries
+     * @return bool
      */
     abstract public function validateQuery($query);
-
 }

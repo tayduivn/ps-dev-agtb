@@ -243,7 +243,7 @@ function copyRecursiveBetweenDirectories($from,$to){
 
 					// handle sugar_version.php
 					if(strpos($targetFile, 'sugar_version.php') !== false && !preg_match('/\/portal\/sugar_version\.php$/i', $targetFile)) {
-						logThis('Skipping "sugar_version.php" - file copy will occur at end of successful upgrade', $path);
+						logThis('Skipping "sugar_version.php" - file copy will occur at end of successful upgrade', $targetFile);
 						$_SESSION['sugar_version_file'] = $srcFile;
 						continue;
 					}
@@ -993,17 +993,17 @@ function checkSystemCompliance() {
 
 	// cURL
 	if(function_exists('curl_init')) {
-		$ret['curlStatus'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_OK']}</font></b>";
+		$ret['curlStatus'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_OK']}</span></b>";
 	} else {
-		$ret['curlStatus'] = "<b><span class=go>{$installer_mod_strings['ERR_CHECKSYS_CURL']}</font></b>";
+		$ret['curlStatus'] = "<b><span class=go>{$installer_mod_strings['ERR_CHECKSYS_CURL']}</span></b>";
 		$ret['error_found'] = false;
 	}
 
 	// mbstrings
 	if(function_exists('mb_strlen')) {
-		$ret['mbstringStatus'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_OK']}</font></b>";
+		$ret['mbstringStatus'] = "<b><span class=go>{$installer_mod_strings['LBL_CHECKSYS_OK']}</span></b>";
 	} else {
-		$ret['mbstringStatus'] = "<b><span class=stop>{$installer_mod_strings['ERR_CHECKSYS_MBSTRING']}</font></b>";
+		$ret['mbstringStatus'] = "<b><span class=stop>{$installer_mod_strings['ERR_CHECKSYS_MBSTRING']}</span></b>";
 		$ret['error_found'] = true;
 	}
 
@@ -1144,57 +1144,6 @@ function logThis($entry, $path='') {
 			fclose($fp);
 		}
 }
-
-
-/**
- * tries to validate the query based on type
- * @param string query The query to verify
- * @param string dbType The DB type
- * @return string error Non-empty string on error
- */
-function verifySqlStatement($query, $dbType, &$newTables) {
-	$error = '';
-	logThis('verifying SQL statement');
-
-	$table	= getTableFromQuery($query);
-
-	switch(strtoupper(substr($query, 0, 10))) {
-		// ignore DROPs
-		case 'ALTER TABL':
-			// get ddl
-			$error = testQueryAlter($table, $dbType, strtoupper($query), $newTables);
-		break;
-
-		case 'CREATE TAB':
-			$error = testQueryCreate($table, $dbType, $query, $newTables);
-		break;
-
-		case 'DELETE FRO':
-			$error = testQueryDelete($table, $dbType, $query);
-		break;
-
-		case 'DROP TABLE':
-			$error = testQueryDrop($table, $dbType, $query);
-		break;
-
-		case 'INSERT INT':
-			$error = testQueryInsert($table, $dbType, $query);
-		break;
-
-		case (strtoupper(substr($query, 0, 6)) == 'UPDATE'):
-			$error = testQueryUpdate($table, $dbType, $query);
-		break;
-
-		//BEGIN SUGARCRM flav=ent ONLY
-		case 'CREATE IND':
-			// todo, check index creation
-		break;
-		//END SUGARCRM flav=ent ONLY
-	}
-
-	return $error;
-}
-
 
 /**
 	*  @params : none
@@ -1534,17 +1483,6 @@ function getOracleDDL($table) {
 	}
 }
 
-function getOci8Version() {
-	global $db;
-
-	$q = 'SELECT BANNER AS B FROM V$VERSION WHERE BANNER LIKE \'%Express%\'';
-	$r = $db->query($q);
-
-	while($a = $db->fetchByAssoc($r)) {
-		return 'express';
-	}
-	return '';
-}
 
 //END SUGARCRM flav=ent ONLY
 
@@ -1565,405 +1503,6 @@ function createMSSQLTemp($table) {
 		logThis("Found {$table}__UW_TEMP - skipping temp table creation.");
 	}
 }
-
-/**
- * Tests an ALTER TABLE query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryAlter($table, $dbType, $query, $newTables) {
-	logThis('verifying ALTER statement...');
-	global $db;
-	global $sugar_config;
-
-	if(empty($db)) {
-		$db = DBManagerFactory::getInstance();
-	}
-
-	// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
-	// over to the temp tables
-	if(strpos(strtoupper($query), 'DROP PRIMARY KEY') !== false) {
-		logThis('Skipping DROP PRIMARY KEY verification');
-		return '';
-	}
-
-	if ($dbType == 'mysql'){
-		mysql_error(); // initialize errors
-	}
-	$error = '';
-
-	if(!in_array($table, $newTables)) {
-		switch($dbType) {
-			case 'mysql':
-				// get DDL
-				logThis('creating temp table for ['.$table.']...');
-				$q = "SHOW CREATE TABLE {$table}";
-				$r = $db->query($q);
-				$a = $db->fetchByAssoc($r);
-
-				// rewrite DDL with _temp name
-				$cleanQuery = cleanQuery($a['Create Table']);
-				$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-				$r2 = $db->query($tempTableQuery);
-
-				// get sample data into the temp table to test for data/constraint conflicts
-				logThis('inserting temp dataset...');
-				$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-				$r3 = $db->query($q3, false, "Preflight Failed for: {$query}");
-
-				// test the query on the test table
-				logThis('testing query: ['.$query.']');
-				$tempTableTestQuery = str_replace("ALTER TABLE `{$table}`", "ALTER TABLE `{$table}__uw_temp`", $query);
-				if (strpos($tempTableTestQuery, 'idx') === false) {
-					if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-						$error = getFormattedError('Could not use a temp table to test query!', $query);
-						return $error;
-					}
-
-					logThis('testing query on temp table: ['.$tempTableTestQuery.']');
-					$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-				}
-				else {
-					// test insertion of an index on a table
-					$tempTableTestQuery_idx = str_replace("ADD INDEX `idx_", "ADD INDEX `temp_idx_", $tempTableTestQuery);
-					logThis('testing query on temp table: ['.$tempTableTestQuery_idx.']');
-					$r4 = $db->query($tempTableTestQuery_idx, false, "Preflight Failed for: {$query}");
-				}
-				$mysqlError = mysql_error(); // empty on no-errors
-				if(!empty($mysqlError)) {
-					logThis('*** ERROR: query failed: '.$mysqlError);
-					$error = getFormattedError($mysqlError, $query);
-				}
-
-
-				// clean up moved to end of preflight
-			break;
-
-			case 'mssql':
-				logThis('mssql found: skipping test query - ['.$query.']');
-			break;
-
-			case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-		} // end switch()
-	} else {
-		logThis($table . ' is a new table');
-	}
-
-	logThis('verification done.');
-	return $error;
-}
-
-/**
- * Tests an CREATE TABLE query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryCreate($table, $dbType, $query, &$newTables) {
-	logThis('verifying CREATE statement...');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-	switch($dbType) {
-		case 'mysql':
-			// rewrite DDL with _temp name
-			logThis('testing query: ['.$query.']');
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $query);
-
-			if(isRunningAgainstTrueTable($tempTableQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $query);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableQuery, false, "Preflight Failed for: {$query}");
-
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-
-			// check if table exists
-			logThis('testing for table: '.$table);
-			$q1 = "DESC `{$table}`";
-			$r1 = $db->query($q1);
-
-			$mysqlError = mysql_error();
-			if(empty($mysqlError)) {
-				logThis('*** ERROR: table already exists!: '.$table);
-				$error = getFormattedError('table exists', $query);
-			}
-			else {
-				logThis('NEW TABLE: '.$query);
-				$newTables[] = $table;
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	return $error;
-}
-
-/**
- * Tests an DELETE FROM query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryDelete($table, $dbType, $query) {
-	logThis('verifying DELETE statements');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			logThis('creating temp table...');
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// get sample data into the temp table to test for data/constraint conflicts
-			logThis('inserting temp dataset...');
-			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-			$r3 = $db->query($q3);
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("DELETE FROM `{$table}`", "DELETE FROM `{$table}__uw_temp`", $query);
-
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-/**
- * Tests a DROP TABLE query
- *
- */
-function testQueryDrop($table, $dbType, $query) {
-	logThis('verifying DROP TABLE statement');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			logThis('creating temp table...');
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// get sample data into the temp table to test for data/constraint conflicts
-			logThis('inserting temp dataset...');
-			$query = uw_stripQuotes($query, $table);
-			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-			$r3 = $db->query($q3);
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("DROP TABLE `{$table}`", "DROP TABLE `{$table}__uw_temp`", $query);
-
-			// make sure the test query is running against a temp table
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-/**
- * Tests an INSERT INTO query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryInsert($table, $dbType, $query) {
-	logThis('verifying INSERT statement...');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("INSERT INTO `{$table}`", "INSERT INTO `{$table}__uw_temp`", $query);
-
-			// make sure the test query is running against a temp table
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-
-/**
- * Tests an UPDATE TABLE query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryUpdate($table, $dbType, $query) {
-	logThis('verifying UPDATE TABLE statement...');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// get sample data into the temp table to test for data/constraint conflicts
-			logThis('inserting temp dataset...');
-			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-			$r3 = $db->query($q3, false, "Preflight Failed for: {$query}");
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("UPDATE `{$table}`", "UPDATE `{$table}__uw_temp`", $query);
-
-			// make sure the test query is running against a temp table
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
 
 /**
  * strip queries of single and double quotes
@@ -1996,55 +1535,25 @@ function isRunningAgainstTrueTable($query) {
 	return false;
 }
 
-
-
-
-
-
-
-
-
 /**
  * cleans up temp tables created during schema test phase
  */
-function testCleanUp($dbType) {
+function testCleanUp() {
 	logThis('Cleaning up temporary tables...');
 
 	global $db;
 	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
+		$db = DBManagerFactory::getInstance();
 	}
-
-	$error = '';
-	switch($dbType) {
-		case 'mysql':
-			$q = 'SHOW TABLES LIKE "%__uw_temp"';
-			$r = $db->query($q, false, "Preflight Failed for: {$q}");
-
-			// using raw mysql_command to use integer index
-			while($a = $db->fetchByAssoc($r)) {
-				logThis('Dropping table: '.$a[0]);
-				$qClean = "DROP TABLE {$a[0]}";
-				$rClean = $db->query($qClean);
-			}
-		break;
-
-		case 'mssql':
-		break;
-
-		case 'oci8':
-		//BEGIN SUGARCRM flav=ent ONLY
-			$q = "SELECT TABLE_NAME tn FROM USER_TABLES WHERE TABLE_NAME LIKE '%__UW_TEMP'";
-			$r = $db->query($q, false, "Preflight Failed for: {$q}");
-			while($a = $db->fetchByAssoc($r)) {
-				$drop = "DROP TABLE {$a['tn']} PURGE";
-				$db->query($drop, false, '', true);
-			}
-		//END SUGARCRM flav=ent ONLY
-		break;
-	}
+    $tables = $db->tablesLike("%__uw_temp");
+    if(!empty($tables)) {
+        foreach($tables as $table) {
+            logThis('Dropping table: '.$table);
+            $db->dropTableName($table);
+        }
+    }
 	logThis('Done cleaning up temp tables.');
-	return $error;
+	return '';
 }
 
 
@@ -2978,53 +2487,12 @@ function UWrebuild() {
 function getCustomTables() {
 	global $db;
 
-	$customTables = array();
-
-    switch($db->dbType) {
-		case 'mysql':
-    		$query = "SHOW tables LIKE '%_cstm'";
-        	$result = $db->query($query);//, true, 'Error getting custom tables');
-            while ($row = $db->fetchByAssoc($result)){
-            	$customTables[] = array_pop($row);
-            }
-            break;
-	}
-    return $customTables;
+    return $db->tablesLike('%_cstm');
 }
 
 function alterCustomTables($customTables)
 {
-	global $db;
-    switch($db->dbType) {
-		case 'mysql':
-			$i = 0;
-			while( $i < count($customTables) ) {
-				$alterCustomTableSql[] = "ALTER TABLE " . $customTables[$i] . " CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci";
-				$i++;
-			}
-			break;
-		case 'oci8':
-			break;
-	}
-	return $alterCustomTableSql;
-}
-
-function executeAlterCustomTablesSql($dbType, $queries) {
-	global $db;
-
-	foreach($queries as $query){
-		if(!empty($query)){
-			logThis("Sending query: ".$query);
-	            if($db->dbType == 'oci8') {
-	    	        //BEGIN SUGARCRM flav=ent ONLY
-               		$query_result = $db->query($query);//, true, "An error has occured while performing db query.  See log file for details.<br>");
-                	//END SUGARCRM flav=ent ONLY
-     	        } else {
-                    $query_result = $db->query($query);//.';', true, "An error has occured while performing db query.  See log file for details.<br>");
-                }
-         }
-	}
-	return true;
+	return array();
 }
 
 function getAllTables() {
@@ -3050,7 +2518,7 @@ function executeConvertTablesSql($tables)
 		$query = "ALTER TABLE " . $table . " CONVERT TO CHARACTER SET utf8 COLLATE utf8_general_ci";
 		if(!empty($table)){
 			logThis("Sending query: ".$query);
-            $query_result = $db->query($query);//, true, "An error has occured while performing db query.  See log file for details.<br>");
+            $db->query($query);//, true, "An error has occured while performing db query.  See log file for details.<br>");
          }
 	}
 	return true;
@@ -4980,7 +4448,7 @@ function upgradeModulesForTeam() {
 		foreach( $allHelpFiles as $the_file ){
 	        if( is_file( $the_file ) ){
 	            unlink( $the_file );
-	            logThis("Deleted file: $the_file", $path);
+	            logThis("Deleted file: $the_file");
 	        }
 	    }
 	}
@@ -5043,17 +4511,8 @@ function upgradeModulesForTeam() {
 	function upgradeDateTimeFields($path=''){
 		//bug: 39757
 		global $db;
-		if($db->dbType == 'mysql')
-		{
-			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-		} else if($db->dbType == 'mssql') {
-			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
-			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
-		} else if ($db->dbType == 'oci8') {
-			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
-			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
-		}
+        $meetingsSql = "UPDATE meetings SET date_end = ".$db->convert('date_start', 'add_time', array('duration_hours','duration_minutes'));
+        $callsSql = "UPDATE calls SET date_end = ".$db->convert('date_start', 'add_time', array('duration_hours','duration_minutes'));
 
 		if(isset($meetingsSql) && isset($callsSql))
 		{

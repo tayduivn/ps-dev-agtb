@@ -590,4 +590,56 @@ EOSQL;
         $info = array_merge(sqlsrv_client_info(), sqlsrv_server_info());
         return $info;
     }
+
+    /**
+     * Execute data manipulation statement, then roll it back
+     * @param  $type
+     * @param  $table
+     * @param  $query
+     * @return string
+     */
+    protected function verifyGenericQueryRollback($type, $table, $query)
+    {
+        $this->log->debug("verifying $type statement");
+        if(!sqlsrv_begin_transaction($this->database)) {
+            return "Failed to create transaction";
+        }
+        $this->query($query, false);
+        $error = $this->lastError();
+        sqlsrv_rollback($this->database);
+        return $error;
+    }
+
+    /**
+     * Tests an INSERT INTO query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyInsertInto($table, $query)
+    {
+        return $this->verifyGenericQueryRollback("INSERT", $table, $query);
+    }
+
+    /**
+     * Tests an UPDATE query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyUpdate($table, $query)
+    {
+        return $this->verifyGenericQueryRollback("UPDATE", $table, $query);
+    }
+
+    /**
+     * Tests an DELETE FROM query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyDeleteFrom($table, $query)
+    {
+        return $this->verifyGenericQueryRollback("DELETE", $table, $query);
+    }
 }

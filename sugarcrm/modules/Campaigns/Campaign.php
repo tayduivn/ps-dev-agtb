@@ -276,7 +276,7 @@ class Campaign extends SugarBean {
         if (!empty($mkt_id)) $query_array['where'] = $query_array['where']. " AND marketing_id ='$mkt_id' ";
 
         //B.F. #37943
-        if( isset($query_array['group_by']) && $this->db->dbType != 'mysql' )
+        if( isset($query_array['group_by']))
         {
 			//perform the inner join with the group by if a marketing id is defined, which means we need to filter out duplicates.
 			//if no marketing id is specified then we are displaying results from multiple marketing emails and it is understood there might be duplicate target entries
@@ -287,8 +287,7 @@ class Campaign extends SugarBean {
 					on campaign_log.id = secondary.id	";
 			}
             unset($query_array['group_by']);
-        }
-        else if(isset($query_array['group_by'])) {
+        } else if(isset($query_array['group_by'])) {
            $query_array['where'] = $query_array['where'] . ' GROUP BY ' . $query_array['group_by'];
            unset($query_array['group_by']);
         }

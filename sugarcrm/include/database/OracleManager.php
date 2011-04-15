@@ -411,6 +411,28 @@ class OracleManager extends DBManager
     }
 
     /**
+     * Get tables like expression
+     * @param $like string
+     * @return array
+     */
+    public function tablesLike($like)
+    {
+        if ($this->getDatabase()) {
+            $tables = array();
+            $r = $this->query('SELECT TABLE_NAME tn FROM USER_TABLES WHERE TABLE_NAME LIKE '.strtoupper($this->quoted($like)));
+            if (!empty($r)) {
+                while ($a = $this->fetchByAssoc($r)) {
+                    $row = array_values($a);
+					$tables[]=$row[0];
+                }
+                return $tables;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * @see DBManager::update()
      */
     public function update(SugarBean $bean, array $where = array())
@@ -741,9 +763,11 @@ class OracleManager extends DBManager
             case "length":
                 return "LENGTH($string)";
             case 'month':
-                return "tochar($string, 'MM')";
+                return "TO_CHAR($string, 'MM')";
             case 'add_month':
                 return "ADD_MONTHS($string, {$additional_parameters[0]})";
+            case 'add_time':
+                return "$string + {$additional_parameters[0]}/24 + {$additional_parameters[1]}/1440";
         }
 
         return $string;
@@ -1379,9 +1403,17 @@ EOQ;
         return parent::emptyValue($type);
     }
 
+    /**
+     * Get last error message
+     * @return string
+     */
     public function lastError()
     {
-        return oci_error();
+        $err = oci_error();
+        if(is_array($err)) {
+            $err = sprintf("ERROR %d: %s in %d of [%s]", $err['code'], $err['message'], $err['offset'], $err['sqltext']);
+        }
+        return $err;
     }
 
     protected $oracle_privs = array(
@@ -1396,13 +1428,27 @@ EOQ;
         "DROP COLUMN" => "ALTER ANY TABLE",
     );
 
+    protected $is_express;
+
+    /**
+     * Check if we're running Oracle Express edition
+     * @return bool
+     */
+    protected function isExpress()
+    {
+        if(!is_null($this->is_express)) return $this->is_express;
+        $express = $this->getOne('SELECT BANNER AS B FROM V$VERSION WHERE BANNER LIKE \'%Express%\'');
+        $this->is_express = !empty($express);
+        return $this->is_express;
+    }
+
     /**
      * Check if connecting user has certain privilege
      * @param string $privilege
      */
     public function checkPrivilege($privilege)
     {
-        if(getOci8Version() == 'express') {
+        if($this->isExpress()) {
             return parent::checkPrivilege($privilege);
         }
         if(!isset($this->oracle_privs[$privilege])) {
@@ -1418,6 +1464,7 @@ EOQ;
     {
         return array(
             "Server version" => @oci_server_version($this->database),
+            "Express" => $this->isExpress(),
         );
     }
 
@@ -1483,5 +1530,71 @@ EOQ;
         }
         $condition = $this->quoted(join(" & ",$condition));
         return "CONTAINS($field, $condition, $label) > 0";
+    }
+
+    public function getScriptName()
+    {
+        return "oracle";
+    }
+
+    /**
+     * Execute data manipulation statement, then roll it back
+     * @param  $type
+     * @param  $table
+     * @param  $query
+     * @return string
+     */
+    protected function verifyGenericQueryRollback($type, $table, $query)
+    {
+        $this->log->debug("verifying $type statement");
+        $stmt = oci_parse($this->database, $query);
+        if(!$stmt) {
+            return 'Cannot parse statement';
+        }
+        if(oci_statement_type($stmt) != "SELECT") {
+            return 'Wrong statement type';
+        }
+        // try query, but don't generate result set and do not commit
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        // just in case, rollback all changes
+        $error = $this->lastError();
+        oci_rollback($this->database);
+        if(empty($res)) {
+            return 'Query failed to execute';
+        }
+        return $error;
+    }
+
+    /**
+     * Tests an INSERT INTO query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyInsertInto($table, $query)
+    {
+        return $this->verifyGenericQueryRollback("INSERT", $table, $query);
+    }
+
+    /**
+     * Tests an UPDATE query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyUpdate($table, $query)
+    {
+        return $this->verifyGenericQueryRollback("UPDATE", $table, $query);
+    }
+
+    /**
+     * Tests an DELETE FROM query
+     * @param string table The table name to get DDL
+     * @param string query The query to test.
+     * @return string Non-empty if error found
+     */
+    public function verifyDeleteFrom($table, $query)
+    {
+        return $this->verifyGenericQueryRollback("DELETE", $table, $query);
     }
 }

@@ -588,17 +588,10 @@ function preflightCheckJsonPrepSchemaCheck($persistence, $preflight=true) {
 
 	$current_version = substr(preg_replace("#[^0-9]#", "", $sugar_db_version),0,3);
 	$targetVersion =  substr(preg_replace("#[^0-9]#", "", $manifest['version']),0,3);
-	$sqlScript = $persistence['unzip_dir'].'/scripts/'.$current_version.'_to_'.$targetVersion.'_'.$db->dbType.'.sql';
+    $script_name = $db->getScriptType();
+	$sqlScript = $persistence['unzip_dir']."/scripts/{$current_version}_to_{$targetVersion}_{$script_name}.sql";
 
 	$newTables = array();
-
-	//BEGIN SUGARCRM flav=ent ONLY
-	if($db->dbType == 'oci8') {
-		if(!is_file($sqlScript)) {
-			$sqlScript = $persistence['unzip_dir'].'/scripts/'.$current_version.'_to_'.$targetVersion.'_oracle.sql';
-		}
-	}
-	//END SUGARCRM flav=ent ONLY
 
 	logThis('looking for schema script at: '.$sqlScript);
 	if(is_file($sqlScript)) {
@@ -652,11 +645,13 @@ function preflightCheckJsonSchemaCheck($persistence) {
 		if(strtoupper(substr($completeLine,1,5)) == 'CREAT')
 			$newTables[] = getTableFromQuery($completeLine);
 
-		$bad = verifySqlStatement(trim($completeLine), $db->dbType, $newTables);
+        logThis('Verifying statement: '.$completeLine);
+		$bad = $db->verifySQLStatement($completeLine, $newTables);
 
 		if(!empty($bad)) {
 			logThis('*** ERROR: schema change script has errors: '.$completeLine);
-			$persistence['sql_errors'][] = $bad;
+            logThis('*** '.$bad);
+			$persistence['sql_errors'][] = getFormattedError($bad, $completeLine);
 		}
 
 		$persistence = ajaxSqlProgress($persistence, $completeLine, 'sql_to_check');
@@ -713,16 +708,10 @@ function preflightCheckJsonFillSchema() {
 	$alterTableSchemaOut = '';
 	$current_version = substr(preg_replace("#[^0-9]#", "", $sugar_db_version),0,3);
 	$targetVersion =  substr(preg_replace("#[^0-9]#", "", $manifest['version']),0,3);
-	$sqlScript = $persistence['unzip_dir'].'/scripts/'.$current_version.'_to_'.$targetVersion.'_'.$db->dbType.'.sql';
+    $script_name = $db->getScriptType();
+	$sqlScript = $persistence['unzip_dir']."/scripts/{$current_version}_to_{$targetVersion}_{$script_name}.sql";
 	$newTables = array();
 
-	//BEGIN SUGARCRM flav=ent ONLY
-	if($db->dbType == 'oci8') {
-		if(!is_file($sqlScript)) {
-			$sqlScript = $persistence['unzip_dir'].'/scripts/'.$current_version.'_to_'.$targetVersion.'_oracle.sql';
-		}
-	}
-	//END SUGARCRM flav=ent ONLY
 	logThis('looking for SQL script for DISPLAY at '.$sqlScript);
 	if(file_exists($sqlScript)) {
 		$contents = sugar_file_get_contents($sqlScript);
