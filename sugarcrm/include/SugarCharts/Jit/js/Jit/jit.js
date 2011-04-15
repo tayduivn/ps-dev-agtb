@@ -16295,7 +16295,7 @@ $jit.GaugeChart = new Class({
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	ctx.moveTo(0,0);
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset); 
+		ctx.fillText(subtitle.text, -radius - 4, subtitle.size + subtitle.offset); 
 	}
   },
   
