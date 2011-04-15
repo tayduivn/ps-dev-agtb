@@ -5886,6 +5886,7 @@ function unlinkUpgradeFiles($version)
 					  logThis('error making backup for file ' . $rev_file);
 					} else {
 					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
+					  unlink($rev_file);
 					}
 				} 
 			}
