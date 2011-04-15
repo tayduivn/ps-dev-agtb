@@ -58,7 +58,7 @@ class ImportMapTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'Row not added');
+        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'Row not added');
     }
     
     public function testSaveEmptyEnclosure()
