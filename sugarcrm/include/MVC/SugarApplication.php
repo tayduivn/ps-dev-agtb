@@ -708,12 +708,13 @@ class SugarApplication
 			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
 		}
 		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions)){
+		    $http_host = explode(':', $_SERVER['HTTP_HOST']);
 			$whiteListActions[] = $this->controller->action;
 			$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
             if ( $dieIfInvalid ) {
                 header("Cache-Control: no-cache, must-revalidate");
                 $ss = new Sugar_Smarty;
-                $ss->assign('host',$http_ref['host']);
+                $ss->assign('host', $http_host[0]);
                 $ss->assign('action',$this->controller->action);
                 $ss->assign('whiteListString',$whiteListString);
                 $ss->display('include/MVC/View/tpls/xsrf.tpl');
