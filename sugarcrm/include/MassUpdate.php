@@ -182,6 +182,9 @@ eoq;
 		}
 
 		//We need to disable_date_format so that date values for the beans remain in database format
+		//notice we make this call after the above section since the calls to TimeDate class there could wind up
+		//making it's way to the UserPreferences objects in which case we want to enable the global date formatting
+		//to correctly retrieve the user's date format preferences
 		$old_value = $disable_date_format;
 		$disable_date_format = true;
 
