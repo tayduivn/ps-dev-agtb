@@ -512,6 +512,7 @@ class PredefinedChart{
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	function myTeamModuleUsageLast30Days() {
+        global $timedate;
 		$dateValue = db_convert("'".$timedate->getNow()->modify("-30 days")->asDb()."'" ,"datetime");
         global $current_user;
 	    $query =  "SELECT l1.user_name, tracker.module_name, count(*) count ";
