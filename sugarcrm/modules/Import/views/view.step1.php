@@ -173,8 +173,8 @@ class ImportViewStep1 extends SugarView
                         || $file == ".svn"
                         || $file == "CVS" 
                         || $file == "Attic"
-                        || sugar_is_dir("custom/modules/Import/{$file}")
-                        || !sugar_is_file("custom/modules/Import/{$file}")
+                        || !sugar_is_dir("./$dirPath".$file)
+                        || sugar_is_file("modules/Import/{$file}")
                         )
                     continue;
                 require_once("custom/modules/Import/{$file}");
