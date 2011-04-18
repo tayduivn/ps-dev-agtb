@@ -2148,7 +2148,7 @@ padding-left: 0px;
 /* for team notices and my portal dashlets */
 .teamNoticeBox 
 {
-    border-width: 0px 1px 1px 1px;
+    border-width: 0px 1px 0px 1px;
     border-style: solid;
     padding: 0;
     background: #fff;
