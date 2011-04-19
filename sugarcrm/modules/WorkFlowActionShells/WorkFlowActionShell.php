@@ -296,7 +296,7 @@ class WorkFlowActionShell extends SugarBean {
 							$temp_array['STATEMENT_NOTICE'] = $invitee_notice;
 						}
 						
-						$temp_array['COMPONENT_HREF_EDIT'] = 'index.php?action=DetailView&module=WorkFlowAlertShells&record='.$alertshell_list[0]->id.'&workflow_id='.$alertshell_list[0]->parent_id;
+						$temp_array['COMPONENT_HREF_EDIT'] = 'index.php?action=DetailView&module=WorkFlowAlertShells&module_tab=WorkFlow&record='.$alertshell_list[0]->id.'&workflow_id='.$alertshell_list[0]->parent_id;
 						$temp_array['COMPONENT_STATEMENT'] = $recipient_icon.$mod_strings['LBL_INVITEES'];
 					}
 				}
