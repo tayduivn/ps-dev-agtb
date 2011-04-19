@@ -690,6 +690,64 @@ class SugarApplication
 			$_REQUEST['action'] = $this->default_action;
 		}
 	}
+
+	/**
+	 * Actions that modify data in this controller's instance and thus require referrers
+	 * @var array
+	 */
+	protected $modifyActions = array();
+	/**
+	 * Actions that always modify data and thus require referrers
+	 * save* and delete* hardcoded as modified
+	 * @var array
+	 */
+	private $globalModifyActions = array(
+		'massupdate', 'configuredashlet', 'import', 'importvcardsave', 'inlinefieldsave',
+	    'wlsave', 'quicksave'
+	);
+
+	/**
+	 * Modules that modify data and thus require referrers for all actions
+	 */
+	private $modifyModules = array(
+		'Administration' => true,
+		'UpgradeWizard' => true,
+		'Configurator' => true,
+		'Studio' => true,
+		'ModuleBuilder' => true,
+		'Emails' => true,
+	    'DCETemplates' => true,
+		'DCEInstances' => true,
+		'DCEActions' => true,
+		'Trackers' => array('trackersettings'),
+	    'SugarFavorites' => array('tag'),
+	    'Import' => array('last', 'undo'),
+	);
+
+	protected function isModifyAction()
+	{
+	    $action = strtolower($this->controller->action);
+	    if(substr($action, 0, 4) == "save" || substr($action, 0, 6) == "delete") {
+	        return true;
+	    }
+	    if($this->modifyModules[$this->controller->module]) {
+	        if($this->modifyModules[$this->controller->module] == true) {
+	            return true;
+	        }
+	        if(in_array($this->controller->action, $this->modifyModules[$this->controller->module])) {
+	            return true;
+
+	        }
+	    }
+	    if(in_array($this->controller->action, $this->globalModifyActions)) {
+            return true;
+        }
+	    if(in_array($this->controller->action, $this->modifyActions)) {
+            return true;
+        }
+        return false;
+	}
+
 	/**
 	 *
 	 * Checks a request to ensure the request is coming from a valid source or it is for one of the white listed actions
@@ -707,7 +765,7 @@ class SugarApplication
 		if ( !empty($sugar_config['http_referer']['list']) ) {
 			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
 		}
-		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions)){
+		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions) && $this->isModifyAction()) {
 		    $http_host = explode(':', $_SERVER['HTTP_HOST']);
 			$whiteListActions[] = $this->controller->action;
 			$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
@@ -721,7 +779,8 @@ class SugarApplication
                 sugar_cleanup(true);
             }
             return false;
-		}else if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
+		} else
+		if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
 			$http_ref = parse_url($_SERVER['HTTP_REFERER']);
 			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $whiteListActions) &&
 

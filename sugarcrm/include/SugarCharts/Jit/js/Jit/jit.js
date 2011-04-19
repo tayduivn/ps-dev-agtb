@@ -216,7 +216,8 @@ $.saveImageFile = function (id,jsonfilename,imageExt) {
 			var strDataURI = oCanvas.toDataURL("image/png");
 		}
 		var handleFailure = function(o){
-			alert('failed to write image' + filename);
+			//alert('failed to write image' + filename);
+			//remove alert since chrome triggers this function when user navigates away from page before image gets written.
 		}	
 		var handleSuccess = function(o){
 		}			
