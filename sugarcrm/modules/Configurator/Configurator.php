@@ -38,7 +38,7 @@ class Configurator {
 	var $logger = NULL;
 	var $previous_sugar_override_config_array = array();
 	var $useAuthenticationClass = false;
-	
+
 	function Configurator() {
 		$this->loadConfig();
 	}
@@ -65,7 +65,7 @@ class Configurator {
             if ($v  !== null){
 			   setDeepArrayValue($this->config, $key, $value);
 			}}
-            
+
 		}
 	}
 
@@ -76,22 +76,22 @@ class Configurator {
 		$this->previous_sugar_override_config_array = $overrideArray;
 		$diffArray = deepArrayDiff($this->config, $sugar_config);
 		$overrideArray = sugarArrayMergeRecursive($overrideArray, $diffArray);
-		
+
 		// To remember checkbox state
       if (!$this->useAuthenticationClass && !$fromParseLoggerSettings) {
-         if (isset($overrideArray['authenticationClass']) && 
+         if (isset($overrideArray['authenticationClass']) &&
             $overrideArray['authenticationClass'] == 'SAMLAuthenticate') {
-      	  unset($overrideArray['authenticationClass']);	
+      	  unset($overrideArray['authenticationClass']);
       	}
       }
-		
+
 		$overideString = "<?php\n/***CONFIGURATOR***/\n";
-		
+
 		sugar_cache_put('sugar_config', $this->config);
 		$GLOBALS['sugar_config'] = $this->config;
-		
+
 		//print_r($overrideArray);
-		
+
 		foreach($overrideArray as $key => $val) {
 			if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
 				if (strcmp("$val", 'true') == 0) {
@@ -106,7 +106,7 @@ class Configurator {
 			$overideString .= override_value_to_string_recursive2('sugar_config', $key, $val);
 		}
 		$overideString .= '/***CONFIGURATOR***/';
-		
+
 		$this->saveOverride($overideString);
 		if(isset($this->config['logger']['level']) && $this->logger) $this->logger->setLevel($this->config['logger']['level']);
 	}
@@ -117,7 +117,7 @@ class Configurator {
 		$currentConfigArray = $this->readOverride();
 		foreach($currentConfigArray as $key => $val) {
 			if (in_array($key, $this->allow_undefined) || isset ($sugar_config[$key])) {
-				if (empty($val) ) {			
+				if (empty($val) ) {
 					if(!empty($this->previous_sugar_override_config_array['stack_trace_errors']) && $key == 'stack_trace_errors'){
 						require_once('include/TemplateHandler/TemplateHandler.php');
 						TemplateHandler::clearAll();
@@ -125,9 +125,9 @@ class Configurator {
 					}
 				}
 			}
-		}		
+		}
 	}
-	
+
 	function saveConfig() {
 		$this->saveImages();
 		$this->populateFromPost();
@@ -184,17 +184,10 @@ class Configurator {
 		}
 		//END SUGARCRM flav=pro ONLY
 	}
-	
-	function checkTempImage($path){
-		$exists = false;
-		if(file_exists($path)){
-			$supportedExtensions = array('jpg', 'png', 'jpeg');
-			$img_size = getimagesize($path);
-			$filetype = $img_size['mime'];
-	    	$ext = end(explode(".", $path));
-	    	$exists = true;
-		}
-    	if(!$exists || substr_count('..', $path) > 0 || $ext === $path || !in_array($ext, $supportedExtensions) || ($filetype != 'image/jpeg' && $filetype != 'image/png') ){
+
+	function checkTempImage($path)
+	{
+	    if(!verify_uploaded_image($path)) {
         	$GLOBALS['log']->fatal("A user ({$GLOBALS['current_user']->id}) attempted to use an invalid file for the logo - {$path}");
         	sugar_die('Invalid File Type');
 		}
@@ -205,7 +198,7 @@ class Configurator {
      *
      * @param string $path path to the image to set as the company logo image
      */
-	function saveCompanyLogo($path) 
+	function saveCompanyLogo($path)
     {
     	$path = $this->checkTempImage($path);
         mkdir_recursive('custom/'.SugarThemeRegistry::current()->getDefaultImagePath(), true);
