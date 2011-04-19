@@ -80,6 +80,7 @@ class QuotesViewDetail extends ViewDetail
 		    $this->dv->defs['templateMeta']['form']['links'] = array('{$MOD.PDF_FORMAT} <select name="sugarpdf" id="sugarpdf">{$LAYOUT_OPTIONS}</select></form>');
 			// Bug 41079 Check User Email Client Type
 			$userPref = $current_user->getPreference('email_link_type');
+            global $sugar_config;
 			$defaultPref = $sugar_config['email_default_client'];
 			if($userPref != '') {
 				$client = $userPref;
