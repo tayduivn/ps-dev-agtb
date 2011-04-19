@@ -187,10 +187,6 @@ EOQ;
 		if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php')) {
 			include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
         }
-
-        //rrs done for trials and survey
-        $dynamicDCActions[] = array('icon' => 'themes/Sugar/images/icon_Feedback_32.png', 'label' => 'Feedback', 'action' => "DCMenu.iFrame('http://www.surveymonkey.com/s/Sugar620Feedback', '700px', '600px');");
-        //rrs
 		
 		foreach($dynamicDCActions as $def){
 			$html .= $this->getDynamicMenuItem($def);

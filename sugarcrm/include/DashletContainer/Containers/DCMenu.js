@@ -169,7 +169,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		setBody(data, 0, parent_id);
 	}
 	DCMenu.iFrame = function(url, width, height){
-		setBody("<iframe scrolling = 'no' style='border:0px;height:" + height + ";width:" + width + "'src='" + url + "'></iframe>", '', '', '', 'Feedback');
+		setBody("<iframe style='border:0px;height:" + height + ";width:" + width + "'src='" + url + "'></iframe>");
 	}
 	//BEGIN SUGARCRM flav=pro ONLY
     DCMenu.addToFavorites = function(item, module, record){
