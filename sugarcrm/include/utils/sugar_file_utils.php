@@ -236,7 +236,17 @@ function sugar_file_get_contents($filename, $use_include_path=false, $context=nu
  */
 function sugar_touch($filename, $time=null, $atime=null) {
 
-   $result = false;
+    if (!empty($GLOBALS['sugar_config']['default_permissions']['dir_mode'])) {
+        $dirmode = sugar_chmod($filename, $GLOBALS['sugar_config']['default_permissions']['dir_mode']);
+    } else {
+        $dirmode = null;
+    }
+
+    $result = sugar_mkdir(dirname($filename), $dirmode, true);
+
+    if (!$result) {
+        return $result;
+    }
 
    if(!empty($atime) && !empty($time)) {
    	  $result = @touch($filename, $time, $atime);
