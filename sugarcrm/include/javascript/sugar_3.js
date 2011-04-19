@@ -594,7 +594,7 @@ function add_error_style(formname, input, txt, flash) {
 	// strip off the colon at the end of the warning strings
 	if ( txt.substring(txt.length-1) == ':' )
 	    txt = txt.substring(0,txt.length-1)
-	
+
 	// Bug 28249 - To help avoid duplicate messages for an element, strip off extra messages and
 	// match on the field name itself
 	requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
@@ -1802,8 +1802,16 @@ sugarListView.update_count = function(count, add) {
 			if(typeof the_form.elements[wp].name != 'undefined' && the_form.elements[wp].name == 'selectCount[]') {
 				if(add)	{
 					the_form.elements[wp].value = parseInt(the_form.elements[wp].value,10) + count;
+					if (the_form.select_entire_list.value == 1 && the_form.show_plus.value) {
+						the_form.elements[wp].value += '+';
+					}
+				} else {
+					if (the_form.select_entire_list.value == 1 && the_form.show_plus.value) {
+				        the_form.elements[wp].value = count + '+';
+				    } else {
+				        the_form.elements[wp].value = count;
+				    }
 				}
-				else the_form.elements[wp].value = count;
 			}
 		}
 	}
@@ -3217,6 +3225,7 @@ SUGAR.searchForm = function() {
                 else if ( elemType == 'hidden' ) {
                     // We only want to reset the hidden values that link to the select boxes.
                     if ( ( elem.name.length > 3 && elem.name.substring(elem.name.length-3) == '_id' )
+                         || ((elem.name.length > 9) && (elem.name.substring(elem.name.length - 9) == '_id_basic'))
                          || ( elem.name.length > 12 && elem.name.substring(elem.name.length-12) == '_id_advanced' ) ) {
                         elem.value = '';
                     }
@@ -3769,18 +3778,19 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 		+ 'module=' + module_name
 		+ '&action=Popup';
 
-	if(initial_filter != '')
-	{
+	if (initial_filter != '') {
 		URL += '&query=true' + initial_filter;
+		// Bug 41891 - Popup Window Name
+		popupName = initial_filter.replace(/[^a-z_\-0-9]+/ig, '_');
+		windowName = module_name + '_popup_window' + popupName;
+	} else {
+		windowName = module_name + '_popup_window' + popupCount;
 	}
+	popupCount++;
 
-	if(hide_clear_button)
-	{
+	if (hide_clear_button) {
 		URL += '&hide_clear_button=true';
 	}
-
-	windowName = module_name + '_popup_window' + popupCount;
-	popupCount++;
 
 	windowFeatures = 'width=' + width
 		+ ',height=' + height
@@ -4136,7 +4146,10 @@ SUGAR.util.closeActivityPanel = {
                             SUGAR.util.closeActivityPanel.panel.hide();
 
                         ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
-                        var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
+                        var args = "action=save&id=" + id + "&record=" + id + "&status=" + new_status + "&module=" + module;
+                        // 20110307 Frank Steegmans: Fix for bug 42361, Any field with a default configured in any activity will be set to this default when closed using the close dialog
+                        // TODO: Take id out and regression test. Left id in for now to not create any other unexpected problems
+                        //var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
                             {	//refresh window to show updated changes

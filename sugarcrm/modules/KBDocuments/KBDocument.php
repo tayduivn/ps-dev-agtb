@@ -129,9 +129,11 @@ class KBDocument extends SugarBean {
 		 $user_name .= $user->last_name;
 		}
 
+
+        //assign fields in notify email
 		$xtpl->assign("KBDOCUMENT_NAME", $kbdoc->kbdocument_name);
 		$xtpl->assign("KBDOCUMENT_STATUS", (isset($kbdoc->status_id) ? $app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]:""));
-		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$kbdoc->active_date);
+		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$kbdoc->fetched_row['date_entered']);
 		$xtpl->assign("KBDOCUMENT_CREATED_BY",$user_name);
 		$xtpl->assign("KBDOCUMENT_DESCRIPTION", $kbdoc->description);
         if(isset($kbdoc->status_id) && $kbdoc->status_id != null){
