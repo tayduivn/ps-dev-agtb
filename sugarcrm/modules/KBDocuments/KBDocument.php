@@ -129,19 +129,9 @@ class KBDocument extends SugarBean {
 		 $user_name .= $user->last_name;
 		}
 
-
-        //the date_entered field is unset in sugarbean logic, so grab the value from the fetched row, or from the modified date if all else fails
-        $bean_date_entered = !empty($kbdoc->fetched_row['date_entered']) ? $kbdoc->fetched_row['date_entered'] : $kbdoc->date_modified;
-
-        //now determine whether we use the active date or the date entered in the email
-        $CreatedDateForEmail = !empty($kbdoc->active_date) ? $kbdoc->active_date : $bean_date_entered;
-
-        //assign date created field in email
-		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$CreatedDateForEmail);
-
-        //assign rest of fields in email
 		$xtpl->assign("KBDOCUMENT_NAME", $kbdoc->kbdocument_name);
 		$xtpl->assign("KBDOCUMENT_STATUS", (isset($kbdoc->status_id) ? $app_list_strings['kbdocument_status_dom'][$kbdoc->status_id]:""));
+		$xtpl->assign("KBDOCUMENT_DATE_CREATED",$kbdoc->active_date);
 		$xtpl->assign("KBDOCUMENT_CREATED_BY",$user_name);
 		$xtpl->assign("KBDOCUMENT_DESCRIPTION", $kbdoc->description);
         if(isset($kbdoc->status_id) && $kbdoc->status_id != null){
