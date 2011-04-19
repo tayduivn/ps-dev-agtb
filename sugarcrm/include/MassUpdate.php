@@ -166,8 +166,8 @@ eoq;
 			    if($this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) && strlen($value) == 0){
 				    $_POST[$post] = '';
 			    }
-                if ($this->sugarbean->field_defs[$field]['type'] == 'bool') {
-                    $this->checkClearField($field, $value);
+                if ($this->sugarbean->field_defs[$post]['type'] == 'bool') {
+                    $this->checkClearField($post, $value);
                 }
 			    if($this->sugarbean->field_defs[$post]['type'] == 'date' && !empty($_POST[$post])){
 			        $_POST[$post] = $timedate->to_db_date($_POST[$post]);
