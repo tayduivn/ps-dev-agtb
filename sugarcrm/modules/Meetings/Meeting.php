@@ -425,9 +425,9 @@ class Meeting extends SugarBean {
             
             $meetingLink = '';
             if ($GLOBALS['current_user']->id == $this->assigned_user_id ) {
-                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_HOST_EXT_MEETING'].'"></a>';
+                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"></a>';
             }
-            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_JOIN_EXT_MEETING'].'"></a>';
+            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_JOIN_EXT_MEETING',$this->module_dir).'"></a>';
             
             $this->displayed_url = $meetingLink;
         }
