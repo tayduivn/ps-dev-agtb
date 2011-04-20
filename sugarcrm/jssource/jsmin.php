@@ -46,8 +46,16 @@ class SugarMin {
     }
 
     /**
-	 * jsParser will take javascript source code and
+	 * jsParser will take javascript source code and minify it.
+     *
+     * Note: There is a lot of redundant code since both passes
+     * operate similarly but with slightly differences. It will probably
+     * be a good idea to refactor the code at a later point when it is stable.
 	 *
+     * JSParser will perform 3 passses on the code. Pass 1 takes care of single
+     * line and mult-line comments. Pass 2 performs some sanitation on each of the lines
+     * and pass 3 works on stripping out unnecessary spaces.
+     *
 	 * @param string $js
 	 * @param string $currentOptions
 	 * @return void
@@ -56,28 +64,33 @@ class SugarMin {
 
         // We first perform a few operations to simplify our
         // minification process. We convert all carriage returns
-        // into line breaks and delete runs of spacees and line breaks.
-        // We also remove multi-line comments.
+        // into line breaks.
         $js = str_replace("\r\n", "\n", $js);
         $js = str_replace("\r", "\n", $js);
         $js = preg_replace("/\n+/","\n", $js);
 
         $stripped_js = '';
         $prevChar = null;
+        $lastChar = null;
 
-        // Pass 0, strip out single line and multi-line comments.
+        // Pass 1, strip out single line and multi-line comments.
         for ($i = 0; $i < strlen($js); $i++) {
             $char = $js[$i];
-            if ($stripped_js[strlen($stripped_js) - 1] != " " && $stripped_js[strlen($stripped_js) - 1] != "\n") {
-                $prevChar = $stripped_js[strlen($stripped_js) - 1];
+
+            if (strlen($stripped_js) > 0) {
+                $lastChar = $stripped_js[strlen($stripped_js) - 1];
             }
 
+            if ($lastChar != " " && $lastChar != "\n") {
+                $prevChar = $stripped_js[strlen($stripped_js) - 1];
+            }
+            
             switch ($char) {
-                case "\\":
+                case "\\": // If escape character
                     $stripped_js .= $char.$js[$i + 1];
                     $i++;
                     break;
-                case '"':
+                case '"': // If string literal
                 case "'":
                     $literal = $delimiter = $char;
 
@@ -97,9 +110,8 @@ class SugarMin {
 
                     $i = $j;
                     $stripped_js .= $literal;
-                    // echo "Literal: $literal\n\n";
                     break;
-                case "/":
+                case "/": // If comment or regex
                     if ($js[$i + 1] == "/") {
                         $comment = $char;
                         for ($j = $i + 1; $j < strlen($js); $j++) {
@@ -133,16 +145,13 @@ class SugarMin {
 
                         $i = $j + 1;
                         break;
-                    } else if (in_array($prevChar, $this->regexChars)) {
-                        // echo "Last Char: $prevChar\n";
+                    } else if (in_array($prevChar, $this->regexChars) || $prevChar == null) {
                         $nesting = 0;
                         $stripped_js .= $js[$i];
-                        $regex = '';
 
                         for ($j = $i + 1; $j < strlen($js); $j++) {
                             if ($js[$j] == "\\") {
                                 $stripped_js .= $js[$j].$js[$j + 1];
-                                $regex .=$js[$j].$js[$j + 1];
                                 $j++;
                                 continue;
                             }
@@ -154,14 +163,11 @@ class SugarMin {
                             }
 
                             $stripped_js .= $js[$j];
-                            $regex .= $js[$j];
 
                             if ($js[$j] == '/' && $nesting == 0 && $prevChar != "\\") {
                                 break;
                             }
-
                         }
-                        // echo "REGEX: ".$regex."\n\n";
                         $i = $j;
                         break;
                     }
@@ -176,8 +182,7 @@ class SugarMin {
         $input = explode("\n", $stripped_js);
         $primedInput = '';
 
-        // In the first pass we will strip out multiline comments and single line comments
-        // To allow for easier parsing / processing in the second pass.
+        // Pass 2, remove space and tabs from each line.
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
 
@@ -191,11 +196,10 @@ class SugarMin {
             $primedInput[] = $line;
         }
 
-        // Preliminary cleaning up of the code is done, now we move onto
-        // advanced parsing / stripping of spaces and literals.
         $input = $primedInput;
         $output = '';
 
+        // Pass 3, remove extra spaces
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
             $newLine = '';
@@ -203,21 +207,18 @@ class SugarMin {
 
             $nextLine = ($index < count($input) -1 ) ? $input[$index + 1] : '';
 
-            $lastChar = $line[$len - 1];
+            $lastChar = ($len > 0) ? $line[$len - 1] : $line[0];
             $nextChar = ($nextLine) ? $nextLine[0] : null;
 
             // Iterate through the string one character at a time.
             for ($i = 0; $i < $len; $i++) {
                 switch($line[$i]) {
-                    // We will need to check to see if the / is the start of a regular expression.
-                    // There is an issue if you have a pattern that follows a string, the parser will
-                    // not recognize it as a reguler expression. Example: return / someregex/;
-                    // The space in the pattern will not be preserved.
                     case "\\":
                         $newLine .= $line[$i].$line[$i + 1];
                         $i++;
                         break;
                     case '/':
+                        // Check if regular expression
                         if (in_array($newLine[strlen($newLine) - 1], $this->regexChars)) {
                             $nesting = 0;
                             $newLine .= $line[$i];
@@ -240,7 +241,6 @@ class SugarMin {
                                     break;
                                 }
                             }
-                            // echo "LINE: $line REGEX: ".$regex."\n\n";
                             $i = $j;
                         } else {
                             $newLine .= $line[$i];
