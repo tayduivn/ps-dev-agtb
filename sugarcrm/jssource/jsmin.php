@@ -81,8 +81,8 @@ class SugarMin {
                 $lastChar = $stripped_js[strlen($stripped_js) - 1];
             }
 
-            if ($lastChar != " " && $lastChar != "\n") {
-                $prevChar = $stripped_js[strlen($stripped_js) - 1];
+            if ($lastChar != " " && $lastChar != "\n" && $lastChar != null) {
+                $prevChar = $lastChar;
             }
             
             switch ($char) {
