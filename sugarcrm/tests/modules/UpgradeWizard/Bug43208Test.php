@@ -13,7 +13,6 @@ class Bug43208Test extends Sugar_PHPUnit_Framework_TestCase
 
 var $tableDictionaryExtFile = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';	
 var $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
-var $vardefExtFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_email_bean_addr_rel.php';
 
 function setUp() {
     //Create the language files with bad name
@@ -47,24 +46,12 @@ $string = <<<EOQ
  //WARNING: The contents of this file are auto-generated
  include ("modules/Accounts/Account.php");
  	include( "custom/metadata/bug43208Test_productsMetaData.php" ); 
-include("modules/Contacts/Contact.php') ;
+include("modules/Contacts/Contact.php") ;
 ?>
 EOQ;
        fputs( $fh, $string);
        fclose( $fh );
-    }     
-
-    
-    if( $fh = @fopen($this->vardefExtFile, 'w+') )
-    {
-$string = <<<EOQ
-<?php
-\$dictionary['email_addr_bean_rel']['fields']['bean_module']['len'] = '150';
-?>
-EOQ;
-       fputs( $fh, $string);
-       fclose( $fh );
-    }       
+    }        
     
 }
 
@@ -80,9 +67,6 @@ function tearDown() {
        unlink($this->corruptExtModuleFile);
     }
     
-    if(file_exists($this->vardefExtFile)) {
-       unlink($this->vardefExtFile);
-    }    
 }
 
 
@@ -143,15 +127,6 @@ function testRepairTableDictionaryExtFile()
    
    $this->assertEquals($matches, 2, 'Assert that there was two matches for correct entries in ' . $this->corruptExtModuleFile);   
    
-   $vardefContents = file_get_contents($this->vardefExtFile);
-
-$string = <<<EOQ
-<?php
-\$dictionary['email_addr_bean_rel']['fields']['bean_module']['len'] = '150';
-?>
-EOQ;
-   
-   $this->assertEquals($string, $vardefContents, 'Assert that vardef extension contents remain intact');
 }
 
 
