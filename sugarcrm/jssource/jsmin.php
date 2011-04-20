@@ -4,9 +4,6 @@ class JSMin {
     /**
      * Calls the SugarMin minify function.
      *
-     * This class is to give backwards compatability to all
-     * calls that relied on JSMin
-     *
      * @param string $js Javascript to be minified
      * @return string Minified javascript
      */
@@ -24,18 +21,9 @@ class JSMin {
 class SugarMin {
     protected $noSpaceChars = array('\\', "$", '_');
     protected $postNewLineSafeChars = array('\\', '$', '_', '{', '[', '(', '+', '-');
-    protected $regexOpeners = array('(', '=', '[', ':');
     protected $preNewLineSafeChars = array('\\', '$', '_', '}', ']', ')', '+', '-', '"', "'");
-    protected $regexChars = array('(', ',', '=', ':', '[', '!', '&', '|', '?', '{', '}', ';');
-
+    protected $regexChars = array('(', ',',  '=', ':', '[', '!', '&', '|', '?', '{', '}', ';');
     protected $compression;
-
-    // State variables
-    protected $inLiteral = false;
-    protected $inRegex = false;
-    protected $inMlComment = false;
-    protected $lastChar = null;
-    protected $lastRegexOpener = null;
 
     private function __construct() {}
 
@@ -58,12 +46,12 @@ class SugarMin {
     }
 
     /**
-     * jsParser will take javascript source code and
-     *
-     * @param string $js
-     * @param string $currentOptions
-     * @return void
-     */
+	 * jsParser will take javascript source code and
+	 *
+	 * @param string $js
+	 * @param string $currentOptions
+	 * @return void
+	 */
     protected function jsParser($js, $compression = 'light') {
 
         // We first perform a few operations to simplify our
@@ -72,20 +60,92 @@ class SugarMin {
         // We also remove multi-line comments.
         $js = str_replace("\r\n", "\n", $js);
         $js = str_replace("\r", "\n", $js);
-        $js = preg_replace("/\n+/", "\n", $js);
+        $js = preg_replace("/\n+/","\n", $js);
+
+        $stripped_js = '';
+
+        // Pass 0, strip out single line and multi-line comments.
+        for ($i = 0; $i < strlen($js); $i++) {
+            $char = $js[$i];
+
+            switch ($char) {
+                case "\\":
+                    $stripped_js .= $char.$js[$i + 1];
+                    $i++;
+                    break;
+                case '"':
+                case "'":
+                    $literal = $delimiter = $char;
+
+                    for ($j = $i + 1; $j < strlen($js); $j++) {
+                        $literal .= $js[$j];
+
+                        if ($js[$j] == "\\") {
+                            $literal .= $js[$j + 1];
+                            $j++;
+                            continue;
+                        }
+
+                        if ($js[$j] == $delimiter) {
+                            break;
+                        }
+                    }
+
+                    $i = $j;
+                    $stripped_js .= $literal;
+                    break;
+                case "/":
+                    if ($js[$i + 1] == "/") {
+                        $comment = $char;
+                        for ($j = $i + 1; $j < strlen($js); $j++) {
+                            if ($js[$j] == "\\") {
+                                $j++;
+                                continue;
+                            }
+
+                            if ($js[$j + 1] == "\n") {
+                                break;
+                            }
+
+                            $comment .= $js[$j];
+                        }
+                        $i = $j;
+                        break;
+                    } else if ($js[$i + 1] == "*") {
+                        $mlcomment = $char;
+                        for ($j = $i + 1; $j < strlen($js); $j++) {
+                            if ($js[$j] == "\\") {
+                                $j++;
+                                continue;
+                            }
+
+                            if ($js[$j] == "*" && $js[$j + 1] == "/") {
+                                break;
+                            }
+
+                            $mlcomment .= $js[$j];
+                        }
+
+                        $i = $j + 1;
+                        break;
+                    }
+                default:
+                    $stripped_js .= $char;
+                    break;
+            }
+        }
+
+        // print_r($stripped_js);
 
         // Split our string up into an array and iterate over each line
         // to do processing.
-        $input = explode("\n", $js);
+        $input = explode("\n", $stripped_js);
         $primedInput = '';
 
         // In the first pass we will strip out multiline comments and single line comments
         // To allow for easier parsing / processing in the second pass.
         for ($index = 0; $index < count($input); $index++) {
             $line = $input[$index];
-
-            // Remove comments from line.
-            $line = $this->removeComments($line);
 
             $line = trim($line, " \t");
 
@@ -99,10 +159,6 @@ class SugarMin {
 
         // Preliminary cleaning up of the code is done, now we move onto
         // advanced parsing / stripping of spaces and literals.
-
-        // Note: With inclusion of some of Brian Nelson's logic,
-        // this second pass may no longer be needed. In the event that we
-        // make this code public time shoudl be taken to refactor.
         $input = $primedInput;
         $output = '';
 
@@ -111,14 +167,52 @@ class SugarMin {
             $newLine = '';
             $len = strlen($line);
 
-            $nextLine = ($index < count($input) - 1) ? $input[$index + 1] : '';
+            $nextLine = ($index < count($input) -1 ) ? $input[$index + 1] : '';
 
             $lastChar = $line[$len - 1];
             $nextChar = ($nextLine) ? $nextLine[0] : null;
 
             // Iterate through the string one character at a time.
             for ($i = 0; $i < $len; $i++) {
-                switch ($line[$i]) {
+                switch($line[$i]) {
+                    // We will need to check to see if the / is the start of a regular expression.
+                    // There is an issue if you have a pattern that follows a string, the parser will
+                    // not recognize it as a reguler expression. Example: return / someregex/;
+                    // The space in the pattern will not be preserved.
+                    case "\\":
+                        $newLine .= $line[$i].$line[$i + 1];
+                        $i++;
+                        break;
+                    case '/':
+                        if (in_array($newLine[strlen($newLine) - 1], $this->regexChars)) {
+                            $nesting = 0;
+                            $newLine .= $line[$i];
+
+                            for ($j = $i + 1; $j < $len; $j++) {
+                                if ($line[$j] == "\\") {
+                                    $newLine .= $line[$j].$line[$j + 1];
+                                    $j++;
+                                    continue;
+                                }
+
+                                if ($line[$j] == '[') {
+                                    $nesting++;
+                                } else if ($line[$j] == ']') {
+                                    $nesting--;
+                                }
+
+                                $newLine .= $line[$j];
+                                if ($line[$j] == '/' && $nesting == 0 && $newLine[strlen($newLine) - 1] != "\\") {
+                                    break;
+                                }
+                            }
+                            // echo "LINE: $line REGEX: ".$regex."\n\n";
+                            $i = $j;
+                        } else {
+                            $newLine .= $line[$i];
+                        }
+                        break;
+                    // String literals shall be transcribed as is.
                     case '"':
                     case "'":
                         $literal = $delimiter = $line[$i];
@@ -146,7 +240,7 @@ class SugarMin {
                         $i--;
                         break;
                     case ' ':
-                        if (!((ctype_alnum($line[$i - 1]) || in_array($line[$i - 1], $this->noSpaceChars)) && (in_array($line[$i + 1], $this->noSpaceChars) || ctype_alnum($line[$i + 1])))) {
+                        if (!((ctype_alnum($line[$i - 1]) || in_array($line[$i - 1], $this->noSpaceChars)) && (in_array($line[$i+1], $this->noSpaceChars) || ctype_alnum($line[$i+1])))) {
                             // Omit space;
                             break;
                         }
@@ -166,166 +260,7 @@ class SugarMin {
         if ($compression == 'deep') {
             return trim(str_replace("\n", "", $output));
         } else {
-            return "\n" . $output . "\n";
+           return "\n".$output."\n";
         }
-    }
-
-    /**
-     * This function removes comments that are embedded
-     * within the line. It will check to make sure
-     * comment delimiters are not part of any regex literals
-     * or string literals.
-     *
-     * @returns
-     */
-    protected function removeComments($line) {
-        $this->lastChar = null;
-        $len = strlen($line);
-        $result = '';
-
-        for ($i = 0; $i < $len; $i++) {
-            $char = $line[$i];
-
-            // We need to check to see if it's valid to have a regular expression at this point.
-            // So we store away the last valid character prior to a regex.
-            if (in_array($char, $this->regexOpeners)) {
-                $this->lastRegexOpener = $char;
-            } else {
-                if (!in_array($char, array(' ', "\t", '/'))) {
-                    $this->lastRegexOpener = null;
-                }
-            }
-
-            if ($this->inMlComment) {
-                $this->checkMlComment($char);
-            } else {
-                $regex = $this->checkRegex($line, $i);
-                if ($regex !== false) {
-                    $result = $result . $regex;
-                    $i = $i + strlen($regex) - 1;
-                } else {
-                    if ($this->checkLiteral($char)) {
-                        $result = $result . $char;
-                    } else {
-                        if ($this->checkComment($char)) {
-                            // Return with the result with the / from // removed
-                            return substr($result, 0, -1);
-                        } else {
-                            if ($this->checkMlComment($char)) {
-                                // Comment started, strip the opening /
-                                $result = substr($result, 0, -1);
-                            } else {
-                                $result = $result . $char;
-                            }
-                        }
-                    }
-                }
-            }
-            $this->lastChar = $char;
-        }
-        return $result;
-    }
-
-    /**
-     * Check to see if we are starting a regular expression literal.
-     * @param  $line
-     * @param  $i
-     * @return bool|string
-     */
-    protected function checkRegex($line, $i) {
-        if ($this->lastRegexOpener !== null) {
-            $char = $line[$i];
-
-            if ($char === '/') {
-                $len = strlen($line);
-                if ($len > $i + 1) {
-                    $char2 = $line[$i + 1];
-                    if ($char2 !== '*' && $char2 !== '/') {
-                        $ret = "/";
-                        $escape = 0;
-                        for ($j = $i + 1; $j < $len; $j++) {
-                            $char = $line[$j];
-                            $ret = $ret . $char;
-                            switch ($char) {
-                                case '/':
-                                    if ($escape % 2 == 0) {
-                                        return $ret;
-                                    }
-                                    break;
-                                case '\\':
-                                    $escape++;
-                                    break;
-                                default:
-                                    $escape = 0;
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Is our character denoting the beginning of a multi-line comment?
-     *
-     * @param  $char Character
-     * @return boolean
-     */
-    protected function checkMlComment($char) {
-        if ($this->inMlComment && (($this->lastChar === '*') && ($char === '/'))) {
-            $this->inMlComment = false;
-        }
-        elseif (($this->lastChar === '/') && ($char === '*'))
-        {
-            $this->inMlComment = true;
-        }
-        return $this->inMlComment;
-    }
-
-    /**
-     * Is our character denoting the beginning of a single line comment?
-     * 
-     * @param  $char Character to check if it is a single line comment delimiter.
-     * @return boolean
-     */
-    protected function checkComment($char) {
-        if (($char === '/') && ($this->lastChar === '/')) {
-            // Reset the last char as we should be escaping out of checking now.
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check to see if the character at a certain position is inside a string literal.
-     * Returns true if the character at $position is inside a string literal and false
-     * if it isn't.
-     * @int position
-     * @return boolean
-     */
-    protected function checkLiteral($char) {
-        static $escapes = 0;
-        static $literal = '';
-
-        if ($this->inLiteral) {
-            if ($char == "\\") {
-                $escapes++;
-            } else if (($char == $literal) && ($escapes % 2 == 0)) {
-                // Flip the literal bit
-                $this->inLiteral = (!$this->inLiteral);
-            } else {
-                $escapes = 0;
-            }
-        } elseif ($char == '"' || $char == "'") {
-            $this->inLiteral = true;
-            $literal = $char;
-            $escapes = 0;
-        }
-
-        return $this->inLiteral;
-    }
+	}
 }
