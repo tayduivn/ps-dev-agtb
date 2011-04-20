@@ -11,19 +11,28 @@
 class Bug43208Test extends Sugar_PHPUnit_Framework_TestCase 
 {
 
-var $tableDictionaryExtFile = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';	
+var $tableDictionaryExtFile1 = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';		
+var $tableDictionaryExtFile2 = 'custom/application/Ext/TableDictionary/tabledictionary.ext.php';	
 var $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
 
 function setUp() {
-    //Create the language files with bad name
-    if(file_exists($this->tableDictionaryExtFile)) {
-       copy($this->tableDictionaryExtFile, $this->tableDictionaryExtFile . '.backup');
-       unlink($this->tableDictionaryExtFile);
+
+    if(file_exists($this->tableDictionaryExtFile1)) {
+       copy($this->tableDictionaryExtFile1, $this->tableDictionaryExtFile1 . '.backup');
+       unlink($this->tableDictionaryExtFile1);
     } else if(!file_exists('custom/Extension/application/Ext/TableDictionary')){
        mkdir_recursive('custom/Extension/application/Ext/TableDictionary');
     }
-	
-    if( $fh = @fopen($this->tableDictionaryExtFile, 'w+') )
+
+
+    if(file_exists($this->tableDictionaryExtFile2)) {
+       copy($this->tableDictionaryExtFile2, $this->tableDictionaryExtFile2 . '.backup');
+       unlink($this->tableDictionaryExtFile2);
+    } else if(!file_exists('custom/application/Ext/TableDictionary')){
+       mkdir_recursive('custom/application/Ext/TableDictionary');
+    }    
+    
+    if( $fh = @fopen($this->tableDictionaryExtFile2, 'w+') )
     {
 $string = <<<EOQ
 <?php
@@ -32,7 +41,7 @@ $string = <<<EOQ
 include('custom/metadata/bug43208Test_productsMetaData.php');
 
 //WARNING: The contents of this file are auto-generated
-include('modules/Contacts/Contact.php');
+include('custom/Extension/application/Ext/TableDictionary/Bug43208_module.php');
 ?>
 EOQ;
        fputs( $fh, $string);
@@ -44,9 +53,8 @@ EOQ;
 $string = <<<EOQ
 <?php
  //WARNING: The contents of this file are auto-generated
- include ("modules/Accounts/Account.php");
+ include ("custom/Extension/application/Ext/TableDictionary/Bug43208_module.php");
  	include( "custom/metadata/bug43208Test_productsMetaData.php" ); 
-include("modules/Contacts/Contact.php") ;
 ?>
 EOQ;
        fputs( $fh, $string);
@@ -56,12 +64,21 @@ EOQ;
 }
 
 function tearDown() {
-    if(file_exists($this->tableDictionaryExtFile . '.backup')) {
-       copy($this->tableDictionaryExtFile . '.backup', $this->tableDictionaryExtFile);
-       unlink($this->tableDictionaryExtFile . '.backup');  
+    if(file_exists($this->tableDictionaryExtFile1 . '.backup')) 
+    {
+       copy($this->tableDictionaryExtFile1 . '.backup', $this->tableDictionaryExtFile1);
+       unlink($this->tableDictionaryExtFile1 . '.backup');  
     } else {
-       unlink($this->tableDictionaryExtFile);
+       unlink($this->tableDictionaryExtFile1);
     }
+
+    if(file_exists($this->tableDictionaryExtFile2 . '.backup')) 
+    {
+       copy($this->tableDictionaryExtFile2 . '.backup', $this->tableDictionaryExtFile2);
+       unlink($this->tableDictionaryExtFile2 . '.backup');  
+    } else {
+       unlink($this->tableDictionaryExtFile2);
+    }    
     
     if(file_exists($this->corruptExtModuleFile)) {
        unlink($this->corruptExtModuleFile);
@@ -101,7 +118,7 @@ function testRepairTableDictionaryExtFile()
 		 fclose($fp); 
    }	
    
-   $this->assertEquals($matches, 1, 'Assert that there was one match for file modules/Contacts/Contact.php in ' . $this->tableDictionaryExtFile);
+   $this->assertEquals($matches, 1, 'Assert that there was one match for correct entries in file ' . $this->tableDictionaryExtFile);
    
    
 	if(function_exists('sugar_fopen'))
@@ -125,7 +142,7 @@ function testRepairTableDictionaryExtFile()
 		 fclose($fp); 
    }	
    
-   $this->assertEquals($matches, 2, 'Assert that there was two matches for correct entries in ' . $this->corruptExtModuleFile);   
+   $this->assertEquals($matches, 1, 'Assert that there was one match for correct entries in file ' . $this->corruptExtModuleFile);   
    
 }
 
