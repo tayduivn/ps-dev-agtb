@@ -19,7 +19,7 @@ class JSMin {
  * deep compression make sure the script has passed JSLint.
  */
 class SugarMin {
-    protected $noSpaceChars = array('\\', "$", '_');
+    protected $noSpaceChars = array('\\', "$", '_', '/');
     protected $postNewLineSafeChars = array('\\', '$', '_', '{', '[', '(', '+', '-');
     protected $preNewLineSafeChars = array('\\', '$', '_', '}', ']', ')', '+', '-', '"', "'");
     protected $regexChars = array('(', ',',  '=', ':', '[', '!', '&', '|', '?', '{', '}', ';');
@@ -63,10 +63,14 @@ class SugarMin {
         $js = preg_replace("/\n+/","\n", $js);
 
         $stripped_js = '';
+        $prevChar = null;
 
         // Pass 0, strip out single line and multi-line comments.
         for ($i = 0; $i < strlen($js); $i++) {
             $char = $js[$i];
+            if ($stripped_js[strlen($stripped_js) - 1] != " " && $stripped_js[strlen($stripped_js) - 1] != "\n") {
+                $prevChar = $stripped_js[strlen($stripped_js) - 1];
+            }
 
             switch ($char) {
                 case "\\":
@@ -93,6 +97,7 @@ class SugarMin {
 
                     $i = $j;
                     $stripped_js .= $literal;
+                    // echo "Literal: $literal\n\n";
                     break;
                 case "/":
                     if ($js[$i + 1] == "/") {
@@ -128,14 +133,43 @@ class SugarMin {
 
                         $i = $j + 1;
                         break;
+                    } else if (in_array($prevChar, $this->regexChars)) {
+                        // echo "Last Char: $prevChar\n";
+                        $nesting = 0;
+                        $stripped_js .= $js[$i];
+                        $regex = '';
+
+                        for ($j = $i + 1; $j < strlen($js); $j++) {
+                            if ($js[$j] == "\\") {
+                                $stripped_js .= $js[$j].$js[$j + 1];
+                                $regex .=$js[$j].$js[$j + 1];
+                                $j++;
+                                continue;
+                            }
+
+                            if ($js[$j] == '[') {
+                                $nesting++;
+                            } else if ($js[$j] == ']') {
+                                $nesting--;
+                            }
+
+                            $stripped_js .= $js[$j];
+                            $regex .= $js[$j];
+
+                            if ($js[$j] == '/' && $nesting == 0 && $prevChar != "\\") {
+                                break;
+                            }
+
+                        }
+                        // echo "REGEX: ".$regex."\n\n";
+                        $i = $j;
+                        break;
                     }
                 default:
                     $stripped_js .= $char;
                     break;
             }
         }
-
-        // print_r($stripped_js);
 
         // Split our string up into an array and iterate over each line
         // to do processing.
@@ -229,6 +263,10 @@ class SugarMin {
                             if ($line[$j] == $delimiter) {
                                 break;
                             }
+
+                            if ($line[$j] == "\n") {
+
+                            }
                         }
 
                         $i = $j;
@@ -240,7 +278,11 @@ class SugarMin {
                         $i--;
                         break;
                     case ' ':
-                        if (!((ctype_alnum($line[$i - 1]) || in_array($line[$i - 1], $this->noSpaceChars)) && (in_array($line[$i+1], $this->noSpaceChars) || ctype_alnum($line[$i+1])))) {
+                        if ( !(
+                                (ctype_alnum($line[$i - 1]) || in_array($line[$i - 1], $this->noSpaceChars))
+                                &&
+                                (in_array($line[$i+1], $this->noSpaceChars) || ctype_alnum($line[$i+1]))
+                            )) {
                             // Omit space;
                             break;
                         }
