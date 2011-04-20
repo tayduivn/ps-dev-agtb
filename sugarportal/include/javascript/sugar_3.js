@@ -330,7 +330,8 @@ function bothExist(item1, item2) {
 	return true;
 }
 
-var trim = function(s){
+var trim = function(s)
+           {
 		        try {
 		            return s.replace(/^\s+|\s+$/g, "");
 		        } catch(e) {
