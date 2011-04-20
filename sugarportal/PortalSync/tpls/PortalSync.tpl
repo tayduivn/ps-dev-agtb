@@ -30,43 +30,15 @@
 <head>
 {$scripts}
 {literal}
-	<link rel="stylesheet" type="text/css" href="include/javascript/yui/assets/container.css"/>
-	<link rel="stylesheet" type="text/css" href="include/javascript/yui/ext/resources/css/grid.css?1027"/>
-	<link rel="stylesheet" type="text/css" href="include/javascript/yui/ext/resources/css/toolbar.css"/>
-	<link rel="stylesheet" type="text/css" href="include/javascript/yui/ext/resources/css/tabs.css?1030"/>
-	<link rel="stylesheet" type="text/css" href="include/javascript/yui/assets/tabview/css/tabs.css">
-<link rel="stylesheet" type="text/css" href="include/javascript/yui/assets/tabview/css/round_tabs.css">
 <style type="text/css">
-#demo { width:100%; }
-#demo .yui-content {
-    padding:1em; /* pad content container */
-}
-.list {list-style:square;width:500px;padding-left:16px;}
-.list li{padding:2px;font-size:8pt;}
-
-/* hide the tab content while loading */
-.tab-content{display:none;}
-
-pre {
-   font-size:11px;
-}
-
-#tabs1 {width:100%;}
-#tabs1 .yui-ext-tabbody {border:1px solid #999;border-top:none;}
-#tabs1 .yui-ext-tabitembody {display:none;padding:10px;}
-
-/* default loading indicator for ajax calls */
-.loading-indicator {
-	font-size:8pt;
-	background-image:url('../../resources/images/grid/loading.gif');
-	background-repeat: no-repeat;
-	background-position: left;
-	padding-left:20px;
-}
+    th, td {
+        border: none;
+        padding: 0;
+    }
 </style>
 {/literal}
 </head>
-<body>
+<body class="yui-skin-sam">
 <div id='syncPortal'>
 <p>{$MOD.LBL_SECURITY_WARNING}</p>
 <table>

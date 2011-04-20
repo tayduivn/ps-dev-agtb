@@ -26,19 +26,18 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
+<!-- Individual YUI CSS files -->
+<link rel="stylesheet" type="text/css" href="include/javascript/yui/build/base/base-min.css?s={$sugar_version}&c={$js_custom_version}">
+<link rel="stylesheet" type="text/css" href="include/javascript/yui/build/container/assets/skins/sam/container.css?s={$sugar_version}&c={$js_custom_version}">
+<!-- Individual YUI JS files -->
+<script type="text/javascript" src="include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event.js?s={$sugar_version}&c={$js_custom_version}"></script>
+<script type="text/javascript" src="include/javascript/yui/build/dragdrop/dragdrop-min.js?s={$sugar_version}&c={$js_custom_version}"></script>
+<script type="text/javascript" src="include/javascript/yui/build/connection/connection_core-min.js?s={$sugar_version}&c={$js_custom_version}"></script>
+<script type="text/javascript" src="include/javascript/yui/build/json/json-min.js?s={$sugar_version}&c={$js_custom_version}"></script>
+<script type="text/javascript" src="include/javascript/yui/build/container/container-min.js?s={$sugar_version}&c={$js_custom_version}"></script>
 {literal}
-<script src="include/javascript/yui/YAHOO.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script src="include/javascript/yui/dom.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script src="include/javascript/yui/event.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script src="include/javascript/yui/connection.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script src="include/javascript/yui/animation.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script type="text/javascript" src="include/javascript/yui/ext/yui-ext.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script type="text/javascript" src="include/javascript/yui/ext/ddgrid.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script type="text/javascript" src="include/javascript/yui/container.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script type="text/javascript" src="include/javascript/yui/ext/data/XMLChildDataModel.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script type="text/javascript" src="include/javascript/yui/ext/grid/ChildGridView.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
-<script type="text/javascript" src="include/javascript/yui/tabview.js?s={/literal}{$sugar_version}{literal}&c={/literal}{$js_custom_version}{literal}"></script>
 <script>
+
  /*
         *  a reference to an instance of PackageManagerGrid
         */
@@ -56,8 +55,8 @@ if(typeof PortalSync == 'undefined') {
 	   			if(username!= '' && password != ''){
 	        		PortalSync.showWaiting('{/literal}{$MOD.MSG_LOGGING_IN}{literal}');
 	        		postData = 'to_pdf=1&method=login&user_name='+username+'&password='+password;
-					var cObj = YAHOO.util.Connect.asyncRequest('POST','HandleAjaxCall.php', 
-								  {success: PortalSync.loginComplete, failure: PortalSync.loginComplete}, postData);
+					var cObj = YAHOO.util.Connect.asyncRequest('GET','HandleAjaxCall.php?' + postData,
+							{success: PortalSync.loginComplete, failure: PortalSync.loginComplete});
 				}else{
 					alert('{/literal}{$MOD.MSG_FILL_ALL_FIELDS}{literal}');
 				}
@@ -65,12 +64,12 @@ if(typeof PortalSync == 'undefined') {
 	        beginSync: function() {
 	        	_loadingBar.setHeader('{/literal}{$MOD.MSG_SYNCING_FILES}{literal}');
 	        	postData = 'to_pdf=1&method=beginSync&session='+_session;
-				var cObj = YAHOO.util.Connect.asyncRequest('POST','HandleAjaxCall.php', 
-								  {success: PortalSync.syncComplete, failure: PortalSync.syncFailed}, postData);
+				var cObj = YAHOO.util.Connect.asyncRequest('GET','HandleAjaxCall.php?' + postData,
+								  {success: PortalSync.syncComplete, failure: PortalSync.syncFailed});
 	            _timeoutID = window.setTimeout(PortalSync.syncFailed, 5 * 60 * 1000);
 	        },
 	        loginComplete: function(data){
-	            eval(data.responseText);
+	            var result = YAHOO.lang.JSON.parse(data.responseText);
         		if(result['result'] == '-1'){
         			alert('{/literal}{$MOD.MSG_LOGIN_FAILED}{literal}');
         			PortalSync.hideWaiting();
@@ -80,7 +79,7 @@ if(typeof PortalSync == 'undefined') {
         		}
 	        },
 	        syncComplete: function(data){
-	        	eval(data.responseText);
+	        	var result = YAHOO.lang.JSON.parse(data.responseText);
 	        	if(typeof result != 'undefined') {
 	        		PortalSync.hideWaiting();
 	        		document.getElementById('syncPortal').innerHTML = '<h3>Sync Complete</h3>';
@@ -88,19 +87,20 @@ if(typeof PortalSync == 'undefined') {
 	        },
 	        showWaiting: function(msg){
 	        	_loadingBar = 
-					new YAHOO.widget.Panel("wait",  
-													{ width:"240px", 
-															  fixedcenter:true, 
-															  close:false, 
-															  draggable:false, 
-															  modal:true,
-															  visible:false,
-															  effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5} 
-															} 
-														);
+					new YAHOO.widget.Panel("wait",{
+					    width:"240px",
+                          fixedcenter:true,
+                          close:false,
+                          draggable:false,
+                          modal:true,
+                          visible:false
+                          /*,
+                          effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:0.5} */
+                        } 
+                        );
 
 					_loadingBar.setHeader(msg);
-					_loadingBar.setBody("<img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
+					_loadingBar.setBody("<img src=\"include/javascript/yui/build/assets/skins/sam/ajax-loader.gif\"/>");
 					_loadingBar.render(document.body);
 					_loadingBar.show();
 	        },

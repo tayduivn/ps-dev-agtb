@@ -35,7 +35,11 @@ class ViewPortalPreview extends SugarView
 {
 	function ViewPortalPreview()
 	{
-	    $GLOBALS['log']->debug('in ViewPortalStyleView');
+	    $this->options['show_title'] = false;
+		$this->options['show_header'] = false;
+        $this->options['show_footer'] = false;
+        $this->options['show_javascript'] = false;
+        $GLOBALS['log']->debug('in ViewPortalStyleView');
 	}
 	
 	/**
@@ -58,7 +62,7 @@ class ViewPortalPreview extends SugarView
 
 	function display() 
 	{
-        echo get_module_title($GLOBALS['mod_strings']['LBL_MODULE_TITLE'], $GLOBALS['mod_strings']['LBL_MODULE_TITLE'], true); 
+        //echo get_module_title($GLOBALS['mod_strings']['LBL_MODULE_TITLE'], $GLOBALS['mod_strings']['LBL_MODULE_TITLE'], true);
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod', $GLOBALS['mod_strings']);
         $smarty->assign('app', $GLOBALS['app_strings']);
