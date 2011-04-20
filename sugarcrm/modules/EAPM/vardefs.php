@@ -172,6 +172,17 @@ $dictionary['EAPM'] = array(
         'type' => 'bool',
 	    'default' => true,
 	  ),
+      'note' => array(
+          'name' => 'note',
+          'vname' => 'LBL_NOTE',
+          'required' => false,
+          'reportable' => false,
+          'importable' => false,
+          'massupdate' => false,
+          'studio' => 'hidden',
+          'type' => 'varchar',
+          'source' => 'non-db',
+      ),
 
 ),
 	'relationships'=>array (

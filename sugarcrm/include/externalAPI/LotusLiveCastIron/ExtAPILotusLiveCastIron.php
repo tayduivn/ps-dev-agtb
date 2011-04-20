@@ -74,14 +74,14 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
 	protected $meetingID;
     protected $joinURL;
 // Test site
-    protected $baseURL = 'https://apps.test.lotuslive.com/';
-    protected $url = 'eval-cloud2.castiron.com/envq/Staging/';
+//    protected $baseURL = 'https://apps.test.lotuslive.com/';
+//    protected $url = 'eval-cloud2.castiron.com/envq/Staging/';
 // Stage
 //    protected $baseURL = 'https://apps.stage.lotuslive.com/';
 //    protected $url = 'eval-cloud2.castiron.com/envq/Production/';
 // Production
-//    protected $baseURL = 'https://apps.lotuslive.com/';
-//    protected $url = 'provide.castiron.com/envq/Production/';
+    protected $baseURL = 'https://apps.lotuslive.com/';
+    protected $url = 'provide.castiron.com/envq/Production/';
 
     public $hostURL;
     protected $oauthReq;

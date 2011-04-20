@@ -57,11 +57,6 @@ $subpanel_layout = array(
 	 		'vname' => 'LBL_DATE_MODIFIED',
 	 		'width' => '20%',
 		),
-		'edit_button'=>array(
-			'widget_class' => 'SubPanelEditButton',
-		 	'module' => $module_name,
-	 		'width' => '4%',
-		),
 	),
 );
 
