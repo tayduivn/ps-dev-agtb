@@ -12,7 +12,9 @@ class Bug43208Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
 var $tableDictionaryExtFile = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';	
-	
+var $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
+var $vardefExtFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_email_bean_addr_rel.php';
+
 function setUp() {
     //Create the language files with bad name
     if(file_exists($this->tableDictionaryExtFile)) {
@@ -37,7 +39,33 @@ EOQ;
        fputs( $fh, $string);
        fclose( $fh );
     } 
-      
+    
+    if( $fh = @fopen($this->corruptExtModuleFile, 'w+') )
+    {
+$string = <<<EOQ
+<?php
+ //WARNING: The contents of this file are auto-generated
+ include ("modules/Accounts/Account.php");
+ 	include( "custom/metadata/bug43208Test_productsMetaData.php" ); 
+include("modules/Contacts/Contact.php') ;
+?>
+EOQ;
+       fputs( $fh, $string);
+       fclose( $fh );
+    }     
+
+    
+    if( $fh = @fopen($this->vardefExtFile, 'w+') )
+    {
+$string = <<<EOQ
+<?php
+\$dictionary['email_addr_bean_rel']['fields']['bean_module']['len'] = '150';
+?>
+EOQ;
+       fputs( $fh, $string);
+       fclose( $fh );
+    }       
+    
 }
 
 function tearDown() {
@@ -47,12 +75,26 @@ function tearDown() {
     } else {
        unlink($this->tableDictionaryExtFile);
     }
+    
+    if(file_exists($this->corruptExtModuleFile)) {
+       unlink($this->corruptExtModuleFile);
+    }
+    
+    if(file_exists($this->vardefExtFile)) {
+       unlink($this->vardefExtFile);
+    }    
 }
 
 
 function testRepairTableDictionaryExtFile() 
 {	
+	require_once('ModuleInstall/ModuleInstaller.php');
+	
 	repairTableDictionaryExtFile();
+	
+	$moduleInstaller = new ModuleInstaller();
+	$moduleInstaller->silent = true;
+	$moduleInstaller->rebuild_tabledictionary();
 	
 	if(function_exists('sugar_fopen'))
 	{
@@ -66,7 +108,7 @@ function testRepairTableDictionaryExtFile()
     {
          while($line = fgets($fp))
 	     {
-	    	if(preg_match('/\s*include\s*\(\'(.*?)\'\);/', $line, $match))
+	    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\'\"]\s*\)\s*;/', $line, $match))
 	    	{
 	    	   $matches++;
 	    	   $this->assertTrue(file_exists($match[1]), 'Assert that entry for file ' . $line . ' exists');
@@ -75,7 +117,41 @@ function testRepairTableDictionaryExtFile()
 		 fclose($fp); 
    }	
    
-   $this->assertEquals($matches, 1, 'Assert that there was one match for file modules/Contacts/Contact.php');
+   $this->assertEquals($matches, 1, 'Assert that there was one match for file modules/Contacts/Contact.php in ' . $this->tableDictionaryExtFile);
+   
+   
+	if(function_exists('sugar_fopen'))
+	{
+		$fp = @sugar_fopen($this->corruptExtModuleFile, 'r');
+	} else {
+		$fp = fopen($this->corruptExtModuleFile, 'r');
+	}			
+		
+	$matches = 0;
+    if($fp)
+    {
+         while($line = fgets($fp))
+	     {
+	    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\'\"]\s*\)\s*;/', $line, $match))
+	    	{
+	    	   $matches++;
+	    	   $this->assertTrue(file_exists($match[1]), 'Assert that entry for file ' . $line . ' exists');
+	    	}
+	     }  
+		 fclose($fp); 
+   }	
+   
+   $this->assertEquals($matches, 2, 'Assert that there was two matches for correct entries in ' . $this->corruptExtModuleFile);   
+   
+   $vardefContents = file_get_contents($this->vardefExtFile);
+
+$string = <<<EOQ
+<?php
+\$dictionary['email_addr_bean_rel']['fields']['bean_module']['len'] = '150';
+?>
+EOQ;
+   
+   $this->assertEquals($string, $vardefContents, 'Assert that vardef extension contents remain intact');
 }
 
 
@@ -90,62 +166,68 @@ function testRepairTableDictionaryExtFile()
  */
 function repairTableDictionaryExtFile()
 {
-	$tableDictionaryExtFiles = array('custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php', 
-	                                 'custom/application/Ext/TableDictionary/tabledictionary.ext.php');
+	$tableDictionaryExtDirs = array('custom/Extension/application/Ext/TableDictionary', 'custom/application/Ext/TableDictionary');
 	
-	foreach($tableDictionaryExtFiles as $tableDictionaryExtFile)
+	foreach($tableDictionaryExtDirs as $tableDictionaryExt)
 	{
 	
-		if(file_exists($tableDictionaryExtFile) && is_writable($tableDictionaryExtFile))
-		{
-			if(function_exists('sugar_fopen'))
+		if(is_dir($tableDictionaryExt) && is_writable($tableDictionaryExt)){
+			$dir = dir($tableDictionaryExt);
+			while(($entry = $dir->read()) !== false)
 			{
-				$fp = @sugar_fopen($tableDictionaryExtFile, 'r');
-			} else {
-				$fp = fopen($tableDictionaryExtFile, 'r');
-			}			
-			
-			
-		    if($fp)
-	        {
-	             $altered = false;
-	             $contents = '';
-			     
-	             while($line = fgets($fp))
-			     {
-			    	if(preg_match('/\s*include\s*\(\s*\'(.*?)\'\s*\)\s*;/', $line, $match))
-			    	{
-			    	   if(!file_exists($match[1]))
-			    	   {
-			    	      $altered = true;
-			    	   } else {
-			    	   	  $contents .= $line;
-			    	   }
-			    	} else {
-			    	   $contents .= $line;
-			    	}
-			     }
-			     
-			     fclose($fp); 
-	        }
-	        
-	        
-		    if($altered)
-		    {
-				if(function_exists('sugar_fopen'))
+				$entry = $tableDictionaryExt . '/' . $entry;
+				if(is_file($entry) && preg_match('/\.php$/i', $entry) && is_writeable($entry))
 				{
-					$fp = @sugar_fopen($tableDictionaryExtFile, 'w');
-				} else {
-					$fp = fopen($tableDictionaryExtFile, 'w');
-				}		    	
-	            
-				if($fp && fwrite($fp, $contents))
-				{
-					fclose($fp);
-				}
-		    }
-		}
-
+			
+						if(function_exists('sugar_fopen'))
+						{
+							$fp = @sugar_fopen($entry, 'r');
+						} else {
+							$fp = fopen($entry, 'r');
+						}			
+						
+						
+					    if($fp)
+				        {
+				             $altered = false;
+				             $contents = '';
+						     
+				             while($line = fgets($fp))
+						     {
+						    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\"|\']\s*\)\s*;/', $line, $match))
+						    	{
+						    	   if(!file_exists($match[1]))
+						    	   {
+						    	      $altered = true;
+						    	   } else {
+						    	   	  $contents .= $line;
+						    	   }
+						    	} else {
+						    	   $contents .= $line;
+						    	}
+						     }
+						     
+						     fclose($fp); 
+				        }
+				        
+				        
+					    if($altered)
+					    {
+							if(function_exists('sugar_fopen'))
+							{
+								$fp = @sugar_fopen($entry, 'w');
+							} else {
+								$fp = fopen($entry, 'w');
+							}		    	
+				            
+							if($fp && fwrite($fp, $contents))
+							{
+								fclose($fp);
+							}
+					    }					
+				} //if
+			} //while
+		} //if
 	}
 }
 
