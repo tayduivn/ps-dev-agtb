@@ -1677,17 +1677,16 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         //Prevent cascading saves
-        if (empty($GLOBALS['updating_relationships']))
+        global $saved_beans;
+        if (empty($saved_beans))
+            $saved_beans = array();
+        if (empty($saved_beans[$this->module_name]))
+                $saved_beans[$this->module_name] = array();
+        if (empty($saved_beans[$this->module_name][$this->id]))
         {
-            global $saved_beans;
-            if (empty($saved_beans))
-                $saved_beans = array();
-            if (empty($saved_beans[$this->module_name]))
-                    $saved_beans[$this->module_name] = array();
             $saved_beans[$this->module_name][$this->id] = true;
             $this->updateRelatedCalcFields();
         }
-
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1711,7 +1710,7 @@ class SugarBean
     function updateCalculatedFields()
     {
         require_once("include/Expressions/DependencyManager.php");
-        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false, true);
         foreach($deps as $dep)
         {
             if ($dep->getFireOnLoad())
@@ -1743,13 +1742,14 @@ class SugarBean
         }
     }
 
-    function updateRelatedCalcFields()
+    function updateRelatedCalcFields($linkName = "")
     {
         if (empty($this->id) || $this->new_with_id)
             return;
         global $dictionary, $updating_relationships, $saved_beans;
         if ($updating_relationships)
         {
+            $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");
             return;
         }
         $updating_relationships = true;
@@ -1799,12 +1799,51 @@ class SugarBean
                 }
             }
         }
-        if (!empty($dictionary[$this->object_name]['related_calc_fields'])
-            && empty($saved_beans[$this->module_name][$this->id]))
+        if (empty($saved_beans[$this->module_name][$this->id]) && $this->has_calc_field_with_link($linkName))
         {
+            //Save will updated the saved_beans array
             $this->save();
-        }
+        } 
         $updating_relationships = false;
+    }
+
+    /**
+     * Tests if the current module has a calculated field with a link.
+     * if a link name is specified, it will return true when a field uses that specific link
+     * Otherwise it will test for all link fields.
+     * @param string $linkName
+     * @return bool
+     */
+    function has_calc_field_with_link($linkName = ""){
+        $links = array();
+        if (empty($linkName))
+        {
+            foreach ($this->field_defs as $field => $def)
+            {
+                if (!empty ($def['type']) && $def['type'] == "link")
+                    $links[$field] = true;
+            }
+        }
+        else {
+            $links[$linkName] = true;
+        }
+        if (!empty($links))
+        {
+            foreach($this->field_defs as $name => $def)
+            {
+                //Look through all calculated fields for uses of this link field
+                if(!empty($def['formula']))
+                {
+                    $fields = Parser::getFieldsFromExpression($def['formula']);
+                    foreach($fields as $var)
+                    {
+                        if (!empty($links[$var]))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -3029,7 +3068,6 @@ function save_relationship_changes($is_update, $exclude=array())
         if (empty($final_query))
         {
             $subqueries = SugarBean::build_sub_queries_for_union($subpanel_list, $subpanel_def, $parentbean, $order_by);
-            //echo "<pre>" . print_r($subqueries, true) . "</pre>";
             $all_fields = array();
             foreach($subqueries as $i => $subquery)
             {
@@ -5370,10 +5408,9 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if (empty($GLOBALS['updating_relationships']) &&
-                    ($event == "after_relationship_add" || $event == "after_relationship_delete"))
+            if ($event == "after_relationship_add" || $event == "after_relationship_delete")
             {
-                $this->updateRelatedCalcFields();
+                $this->updateRelatedCalcFields($arguments['link']);
             }
             //END SUGARCRM flav=pro ONLY
         }

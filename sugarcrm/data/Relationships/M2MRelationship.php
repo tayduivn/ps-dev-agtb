@@ -64,11 +64,8 @@ class M2MRelationship extends SugarRelationship
 
         $this->addRow($dataToInsert);
 
-        $lhs->$lhsLinkName->load();
-        $rhs->$rhsLinkName->load();
-
-        $this->callAfterAdd($lhs, $rhs);
-        $this->callAfterAdd($rhs, $lhs);
+        $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+        $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
     }
 
 
@@ -95,11 +92,8 @@ class M2MRelationship extends SugarRelationship
 
         $this->removeRow($dataToRemove);
 
-        $lhs->$lhsLinkName->load();
-        $rhs->$rhsLinkName->load();
-
-        $this->callAfterDelete($lhs, $rhs);
-        $this->callAfterDelete($rhs, $lhs);
+        $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
+        $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
     }
 
     /**
