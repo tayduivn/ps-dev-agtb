@@ -36,7 +36,7 @@ $mod_strings = array (
 
 	//vardef labels
 	'LBL_REVISION_NAME' => 'Revision Number',
-	'LBL_FILENAME' => 'File',
+	'LBL_FILENAME' => 'File:',
 	'LBL_MIME' => 'Mime Type',
 	'LBL_REVISION' => 'Revision',
 	'LBL_DOCUMENT' => 'Related Document',
