@@ -74,7 +74,7 @@ class EAPMController extends SugarController
 
     protected function post_save()
     {
-        if($this->bean->active) {
+        if(!$this->bean->deleted) {
             // do not load bean here since password is already encoded
             if ( $this->api->authMethod != 'oauth' ) {
                 // OAuth beans have to be handled specially.
@@ -95,7 +95,7 @@ class EAPMController extends SugarController
         // Override the redirect location to add the hash
         $this->redirect_url = $this->redirect_url.'#tab5';
 
-        if ( $this->api->authMethod == 'oauth' && $this->bean->active ) {
+        if ( $this->api->authMethod == 'oauth' && !$this->bean->deleted ) {
             // It's OAuth, we have to handle this specially.
             // We need to create a new window to handle the OAuth, and redirect this window back to the edit view
             // So we will handle that in javascript.
@@ -152,7 +152,6 @@ class EAPMController extends SugarController
                 $this->bean->assigned_user_id = $GLOBALS['current_user']->id;
             }else{
                 $this->bean = $eapmBean;
-                $this->bean->active = 1;
             }
             $this->pre_save();
                     
@@ -175,7 +174,6 @@ class EAPMController extends SugarController
     }
 
     protected function pre_Reauthenticate(){
-        $this->bean->active = 1;
         $this->pre_save();
     }
 

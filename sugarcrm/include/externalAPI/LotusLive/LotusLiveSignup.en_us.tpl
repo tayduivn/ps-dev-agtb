@@ -7,10 +7,10 @@ LotusLive&trade; helps you collaborate seamlessly across companies with online s
 <li style="list-style-type: disc !important;">Surveys and charts</li>
 </ul>
 <br>
-Register your LotusLive&trade; account to access LotusLive&trade; web meetings and files in Sugar.
+Connect to your LotusLive&trade; account to access LotusLive&trade; web meetings and files in Sugar.
 <br>
-<button onclick="window.open('index.php?module=EAPM&action=EditView&application=LotusLive');" style="padding:2px; margin:8px;">Register</button>
+<button onclick="DCMenu.closeOverlay(); window.open('index.php?module=EAPM&action=QuickSave&application=LotusLive&closeWhenDone=1');" style="padding:2px; margin:8px;">Connect</button>
 <br>&nbsp;<br>
 Not yet a LotusLive&trade; member? Sign up to get a trial account.
 <br>
-<button onclick="window.open('https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage-sugarcrm');" style="padding:2px; margin:8px;">Free Trial</button>
+<button onclick="DCMenu.closeOverlay(); window.open('https://apps.lotuslive.com/manage/account/public/trial/showCreateTrialAccount?trialType=engage-sugarcrm');" style="padding:2px; margin:8px;">Free Trial</button>
