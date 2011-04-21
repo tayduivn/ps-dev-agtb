@@ -262,6 +262,13 @@ class HTML_Safe
     public $attributesNS = array('xml:lang', );
 
     /**
+     * URL validation callback
+     * CUSTOMIZATION
+     * @var callback
+     */
+    protected $urlCallback;
+
+    /**
      * Constructs class
      *
      * @access public
@@ -357,6 +364,11 @@ class HTML_Safe
                     "chr(hexdec('\\1'))",
                     $tempval
                 );
+
+                // CUSTOMIZATION: check URl against validator callback
+                if(in_array($name, $this->protocolAttributes) && is_callable($this->urlCallback) && !call_user_func($this->urlCallback, $name, $tempval)) {
+                    continue;
+                }
 
                 if ((in_array($name, $this->protocolAttributes))
                     && (strpos($tempval, ':') !== false)
@@ -599,6 +611,21 @@ class HTML_Safe
     public function resetAllowTags()
     {
         $this->allowTags = array();
+    }
+
+    /**
+     * Set URL validation callback
+     * CUSTOMIZATION: check URl against validator callback
+     * @param callback $callback
+     */
+    public function setUrlCallback($callback)
+    {
+        if(empty($callback)) {
+            $this->urlCallback = null;
+        } elseif(is_callable($callback)) {
+            $this->urlCallback = $callback;
+        }
+        return $this;
     }
 
     /**
