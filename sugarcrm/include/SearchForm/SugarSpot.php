@@ -132,27 +132,32 @@ EOHTML;
 	}
 
 	/**
-	 * Returns the array containing the $searchFields for a module
+	 * Returns the array containing the $searchFields for a module.  This function
+	 * first checks the default installation directories for the SearchFields.php file and then
+	 * loads any custom definition (if found)
 	 *
-	 * @param  $moduleName string
-	 * @return array
+	 * @param  $moduleName String name of module to retrieve SearchFields entries for
+	 * @return array of SearchFields
 	 */
 	protected static function getSearchFields(
 	    $moduleName
 	    )
 	{
-		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) {
-			$searchFields = array();
-		    require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
-			return $searchFields;
-		} else if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) {
-			$searchFields = array();
-		    require "modules/{$moduleName}/metadata/SearchFields.php" ;
-			return $searchFields;
-		} else {
-			return array();
+		$searchFields = array();
+
+		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) 
+		{
+		    require("modules/{$moduleName}/metadata/SearchFields.php");
 		}
+		
+		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) 
+		{
+		    require("custom/modules/{$moduleName}/metadata/SearchFields.php");
+		}
+		
+		return $searchFields;
 	}
+	
 	//BEGIN SUGARCRM flav=spotactions ONLY
 	/**
 	 * Performs a search for actions based upon the query string
@@ -228,8 +233,8 @@ EOHTML;
 	    foreach($modules as $moduleName){
 		    if (empty($primary_module)) $primary_module=$moduleName;
 
-			$searchFields = SugarSpot::getSearchFields($moduleName);
-
+			$searchFields = SugarSpot::getSearchFields($moduleName);         
+			
 			if (empty($searchFields[$moduleName])) continue;
 
 			$class = $GLOBALS['beanList'][$moduleName];
