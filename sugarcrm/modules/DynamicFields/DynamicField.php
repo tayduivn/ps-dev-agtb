@@ -753,9 +753,17 @@ class DynamicField {
         foreach($this->bean->field_defs as $name=>$data){
             if(empty($data['source']) || $data['source'] != 'custom_fields')
                 continue;
-            if(!empty($compareFieldDefs[$name])) {
+            /**
+             * @bug 43471
+             * @issue 43471
+             * @itr 23441
+             * 
+             * force the name to be lower as it needs to be lower since that is how it's put into the key
+             * in the get_columns() call above.
+             */
+            if(!empty($compareFieldDefs[strtolower($name)])) {
                 continue;
-        }
+            }
             $out .= $this->add_existing_custom_field($data, $execute);
         }
         if (!empty($out))
