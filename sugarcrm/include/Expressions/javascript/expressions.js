@@ -220,7 +220,7 @@ SUGAR.expressions.Expression.prototype.isProperType = function(variable, type) {
 	// now check for generics
 	switch(type) {
 		case see.STRING_TYPE:
-			return ( isInstance || typeof(variable) == 'string' || typeof(variable) == 'number' || variable instanceof see.TYPE_MAP[see.NUMERIC_TYPE]);
+			return ( isInstance || typeof(variable) == 'string' || typeof(variable) == 'number' || variable instanceof 				see.TYPE_MAP[see.NUMERIC_TYPE]);
 			break;
 		case see.NUMERIC_TYPE:
 			return ( isInstance || typeof(variable) == 'number' || SUGAR.expressions.isNumeric(variable));

@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('datasource-io', function(Y) {
 
@@ -60,18 +61,7 @@ Y.mix(DSIO, {
         io: {
             value: Y.io,
             cloneDefaultValue: false
-        },
-        
-        /**
-         * Default IO Config.
-         *
-         * @attribute ioConfig
-         * @type Object
-         * @default null
-         */
-         ioConfig: {
-         	value: null
-         }
+        }
     }
 });
     
@@ -87,50 +77,6 @@ Y.extend(DSIO, Y.DataSource.Local, {
         this._queue = {interval:null, conn:null, requests:[]};
     },
 
-    /**
-    * IO success callback.
-    *
-    * @method successHandler
-    * @param id {String} Transaction ID.
-    * @param response {String} Response.
-    * @param e {Event.Facade} Event facade.
-    * @private
-    */
-    successHandler: function (id, response, e) {
-        var defIOConfig = this.get("ioConfig");
-
-        delete Y.DataSource.Local.transactions[e.tId];
-
-        this.fire("data", Y.mix({data:response}, e));
-        Y.log("Received IO data response for \"" + e.request + "\"", "info", "datasource-io");
-        if (defIOConfig && defIOConfig.on && defIOConfig.on.success) {
-        	defIOConfig.on.success.apply(defIOConfig.context || Y, arguments);
-        }
-    },
-
-    /**
-    * IO failure callback.
-    *
-    * @method failureHandler
-    * @param id {String} Transaction ID.
-    * @param response {String} Response.
-    * @param e {Event.Facade} Event facade.
-    * @private
-    */
-    failureHandler: function (id, response, e) {
-        var defIOConfig = this.get("ioConfig");
-        
-        delete Y.DataSource.Local.transactions[e.tId];
-
-        e.error = new Error("IO data failure");
-        Y.log("IO data failure", "error", "datasource-io");
-        this.fire("data", Y.mix({data:response}, e));
-        Y.log("Received IO data failure for \"" + e.request + "\"", "info", "datasource-io");
-        if (defIOConfig && defIOConfig.on && defIOConfig.on.failure) {
-        	defIOConfig.on.failure.apply(defIOConfig.context || Y, arguments);
-        }
-    },
-    
     /**
     * @property _queue
     * @description Object literal to manage asynchronous request/response
@@ -171,15 +117,22 @@ Y.extend(DSIO, Y.DataSource.Local, {
     _defRequestFn: function(e) {
         var uri = this.get("source"),
             io = this.get("io"),
-            defIOConfig = this.get("ioConfig"),
             request = e.request,
-            cfg = Y.merge(defIOConfig, e.cfg, {
-                on: Y.merge(defIOConfig, {
-                    success: this.successHandler,
-                    failure: this.failureHandler
-                }),
+            cfg = Y.mix(e.cfg, {
+                on: {
+                    success: function (id, response, e) {
+                        this.fire("data", Y.mix({data:response}, e));
+                        Y.log("Received IO data response for \"" + request + "\"", "info", "datasource-io");
+                    },
+                    failure: function (id, response, e) {
+                        e.error = new Error("IO data failure");
+                        this.fire("error", Y.mix({data:response}, e));
+                        this.fire("data", Y.mix({data:response}, e));
+                        Y.log("Received IO data failure for \"" + request + "\"", "info", "datasource-io");
+                    }
+                },
                 context: this,
-                "arguments": e
+                arguments: e
             });
         
         // Support for POST transactions
@@ -191,13 +144,14 @@ Y.extend(DSIO, Y.DataSource.Local, {
                 uri += request;
             }
         }
-        Y.DataSource.Local.transactions[e.tId] = io(uri, cfg);
+        io(uri, cfg);
         return e.tId;
     }
 });
   
 Y.DataSource.IO = DSIO;
+    
 
 
 
-}, '3.3.0' ,{requires:['datasource-local', 'io-base']});
+}, '3.0.0' ,{requires:['datasource-local', 'io']});

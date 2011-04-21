@@ -1,9 +1,9 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('datasource-local', function(Y) {
 
@@ -82,30 +82,17 @@ Y.mix(DSLocal, {
     _tId: 0,
 
     /**
-     * Global in-progress transaction objects.
-     *
-     * @property DataSource.transactions
-     * @type Object
-     * @static
-     */
-    transactions: {},
-
-    /**
-     * Returns data to callback.
+     * Executes a given callback.  The third param determines whether to execute
      *
      * @method DataSource.issueCallback
-     * @param e {EventFacade} Event Facade.
-     * @param caller {DataSource} Calling DataSource instance.
+     * @param callback {Object} The callback object.
+     * @param params {Array} params to be passed to the callback method
+     * @param error {Boolean} whether an error occurred
      * @static
      */
-    issueCallback: function (e, caller) {
-        var error = (e.error || e.response.error);
-        if(error) {
-            e.error = e.error || e.response.error;
-            caller.fire("error", e);
-        }
+    issueCallback: function (e) {
         if(e.callback) {
-            var callbackFunc = (error && e.callback.failure) || e.callback.success;
+            var callbackFunc = (e.error && e.callback.failure) || e.callback.success;
             if (callbackFunc) {
                 callbackFunc(e);
             }
@@ -250,6 +237,9 @@ Y.extend(DSLocal, Y.Base, {
         if(LANG.isUndefined(data)) {
             e.error = new Error("Local source undefined");
         }
+        if(e.error) {
+            this.fire("error", e);
+        }
 
         this.fire("data", Y.mix({data:data}, e));
     },
@@ -312,37 +302,29 @@ Y.extend(DSLocal, Y.Base, {
      */
     _defResponseFn: function(e) {
         // Send the response back to the callback
-        DSLocal.issueCallback(e, this);
+        DSLocal.issueCallback(e);
     },
     
     /**
      * Generates a unique transaction ID and fires <code>request</code> event.
      *
      * @method sendRequest
-     * @param request {Object} An object literal with the following properties:
+     * @param request {Object} Request.
+     * @param callback {Object} An object literal with the following properties:
      *     <dl>
-     *     <dt><code>request</code></dt>
-     *     <dd>The request to send to the live data source, if any.</dd>
-     *     <dt><code>callback</code></dt>
-     *     <dd>An object literal with the following properties:
-     *         <dl>
-     *         <dt><code>success</code></dt>
-     *         <dd>The function to call when the data is ready.</dd>
-     *         <dt><code>failure</code></dt>
-     *         <dd>The function to call upon a response failure condition.</dd>
-     *         <dt><code>argument</code></dt>
-     *         <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
-     *         </dl>
-     *     </dd>
-     *     <dt><code>cfg</code></dt>
-     *     <dd>Configuration object, if any.</dd>
+     *     <dt><code>success</code></dt>
+     *     <dd>The function to call when the data is ready.</dd>
+     *     <dt><code>failure</code></dt>
+     *     <dd>The function to call upon a response failure condition.</dd>
+     *     <dt><code>argument</code></dt>
+     *     <dd>Arbitrary data payload that will be passed back to the success and failure handlers.</dd>
      *     </dl>
+     * @param cfg {Object} Configuration object
      * @return {Number} Transaction ID.
      */
-    sendRequest: function(request) {
-        request = request || {};
+    sendRequest: function(request, callback, cfg) {
         var tId = DSLocal._tId++;
-        this.fire("request", {tId:tId, request:request.request, callback:request.callback, cfg:request.cfg || {}});
+        this.fire("request", {tId:tId, request:request, callback:callback, cfg:cfg || {}});
         return tId;
     }
 });
@@ -351,4 +333,4 @@ Y.namespace("DataSource").Local = DSLocal;
 
 
 
-}, '3.3.0' ,{requires:['base']});
+}, '3.0.0' ,{requires:['base']});

@@ -1,11 +1,11 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
-.yui3-menu .yui3-menu {
+.yui-menu .yui-menu {
 
 	position: absolute;
 	z-index: 1;
@@ -13,7 +13,7 @@ build: 3167
 }
 
 
-.yui3-menu .yui3-shim {
+.yui-menu .yui-shim {
 
 	/* 
 		Styles for the <iframe> shim used to prevent <select> elements from poking through 
@@ -35,7 +35,7 @@ build: 3167
 
 }
 
-.yui3-menu-hidden {
+.yui-menu-hidden {
 
 	/*
 		Position hidden menus outside the viewport boundaries to prevent them from 
@@ -62,22 +62,22 @@ build: 3167
 
 }
 
-.yui3-menu li {
+.yui-menu li {
 
     list-style-type: none;    
 
 }
 
-.yui3-menu ul, 
-.yui3-menu li { 
+.yui-menu ul, 
+.yui-menu li { 
 
     margin: 0;
     padding: 0;
 
 }
 
-.yui3-menu-label,
-.yui3-menuitem-content {
+.yui-menu-label,
+.yui-menuitem-content {
 
     text-align: left;
     white-space: nowrap;
@@ -85,20 +85,20 @@ build: 3167
 
 }
 
-.yui3-menu-horizontal li {
+.yui-menu-horizontal li {
 
 	float: left;
 	width: auto;
 
 }
 
-.yui3-menu-horizontal li li {
+.yui-menu-horizontal li li {
 
 	float: none;
 
 }
 
-.yui3-menu-horizontal ul {
+.yui-menu-horizontal ul {
 
 	/*
 		Use of "zoom" sets the "hasLayout" property to "true" in IE (< 8).  When "hasLayout" is 
@@ -110,7 +110,7 @@ build: 3167
 
 }
 
-.yui3-menu-horizontal ul ul {
+.yui-menu-horizontal ul ul {
 
 	/*
 		No need to clear <ul>s of submenus of horizontal menus since <li>s of submenus
@@ -121,7 +121,7 @@ build: 3167
 
 }			
 
-.yui3-menu-horizontal>.yui3-menu-content>ul:after {
+.yui-menu-horizontal>.yui-menu-content>ul:after {
 
 	/*	Self-clearing solution for Opera, Webkit, Gecko and IE > 7	*/
 
@@ -141,14 +141,14 @@ build: 3167
 	its corresponding submenu.
 */
 
-.yui3-menu-content {
+.yui-menu-content {
 
 	*zoom: 1;
     
 }
 
 
-.yui3-menu-hidden .yui3-menu-content {
+.yui-menu-hidden .yui-menu-content {
 
 	*zoom: normal;
 
@@ -161,15 +161,15 @@ build: 3167
 	the text node of menuitem or menu label will incorrectly trigger the mouseout event.
 */
 
-.yui3-menuitem-content,
-.yui3-menu-label {
+.yui-menuitem-content,
+.yui-menu-label {
 
 	_zoom: 1;
 
 }
 
-.yui3-menu-hidden .yui3-menuitem-content,
-.yui3-menu-hidden .yui3-menu-label {
+.yui-menu-hiden .yui-menuitem-content,
+.yui-menu-hiden .yui-menu-label {
 
 	_zoom: normal;
 

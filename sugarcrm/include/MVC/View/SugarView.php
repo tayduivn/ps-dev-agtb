@@ -700,7 +700,7 @@ EOHTML;
             echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
-                
+            echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
 			//BEGIN SUGARCRM flav=pro ONLY
 	        if (!is_file("cache/Expressions/functions_cache.js")) {
 	        	$GLOBALS['updateSilent'] = true;

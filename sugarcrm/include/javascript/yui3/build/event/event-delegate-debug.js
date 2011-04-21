@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('event-delegate', function(Y) {
 
@@ -14,307 +15,357 @@ YUI.add('event-delegate', function(Y) {
  * @submodule event-delegate
  */
 
-var toArray          = Y.Array,
-    YLang            = Y.Lang,
-    isString         = YLang.isString,
-    isObject         = YLang.isObject,
-    isArray          = YLang.isArray,
-    selectorTest     = Y.Selector.test,
-    detachCategories = Y.Env.evt.handles;
+var Event = Y.Event,
+	Lang = Y.Lang,
 
-/**
- * <p>Sets up event delegation on a container element.  The delegated event
- * will use a supplied selector or filtering function to test if the event
- * references at least one node that should trigger the subscription
- * callback.</p>
- *
- * <p>Selector string filters will trigger the callback if the event originated
- * from a node that matches it or is contained in a node that matches it.
- * Function filters are called for each Node up the parent axis to the
- * subscribing container node, and receive at each level the Node and the event
- * object.  The function should return true (or a truthy value) if that Node
- * should trigger the subscription callback.  Note, it is possible for filters
- * to match multiple Nodes for a single event.  In this case, the delegate
- * callback will be executed for each matching Node.</p>
- *
- * <p>For each matching Node, the callback will be executed with its 'this'
- * object set to the Node matched by the filter (unless a specific context was
- * provided during subscription), and the provided event's
- * <code>currentTarget</code> will also be set to the matching Node.  The
- * containing Node from which the subscription was originally made can be
- * referenced as <code>e.container</code>.
- *
- * @method delegate
- * @param type {String} the event type to delegate
- * @param fn {Function} the callback function to execute.  This function
- *              will be provided the event object for the delegated event.
- * @param el {String|node} the element that is the delegation container
- * @param spec {string|Function} a selector that must match the target of the
- *              event or a function to test target and its parents for a match
- * @param context optional argument that specifies what 'this' refers to.
- * @param args* 0..n additional arguments to pass on to the callback function.
- *              These arguments will be added after the event object.
- * @return {EventHandle} the detach handle
- * @for YUI
- */
-function delegate(type, fn, el, filter) {
-    var args     = toArray(arguments, 0, true),
-        query    = isString(el) ? el : null,
-        typeBits, synth, container, categories, cat, i, len, handles, handle;
+	delegates = {},
+	
+	specialTypes = {
+		mouseenter: "mouseover",
+		mouseleave: "mouseout"
+	},
 
-    // Support Y.delegate({ click: fnA, key: fnB }, context, filter, ...);
-    // and Y.delegate(['click', 'key'], fn, context, filter, ...);
-    if (isObject(type)) {
-        handles = [];
+	resolveTextNode = function(n) {
+	    try {
+	        if (n && 3 == n.nodeType) {
+	            return n.parentNode;
+	        }
+	    } catch(e) { }
+	    return n;
+	},
 
-        if (isArray(type)) {
-            for (i = 0, len = type.length; i < len; ++i) {
-                args[0] = type[i];
-                handles.push(Y.delegate.apply(Y, args));
-            }
-        } else {
-            // Y.delegate({'click', fn}, context, filter) =>
-            // Y.delegate('click', fn, context, filter)
-            args.unshift(null); // one arg becomes two; need to make space
+    delegateHandler = function(delegateKey, e, el) {
 
-            for (i in type) {
-                if (type.hasOwnProperty(i)) {
-                    args[0] = i;
-                    args[1] = type[i];
-                    handles.push(Y.delegate.apply(Y, args));
-                }
-            }
-        }
+        var target = resolveTextNode((e.target || e.srcElement)), 
+            tests  = delegates[delegateKey],
+            spec, 
+			ename,
+			matched,
+			fn,
+			ev;
 
-        return new Y.EventHandle(handles);
-    }
 
-    typeBits = type.split(/\|/);
+		var getMatch = function(el, selector, container) {
+			
+			var returnVal;
+			
+			if (!el || el === container) {
+				returnVal = false;
+			}
+			else {
+				returnVal = Y.Selector.test(el, selector) ? el: getMatch(el.parentNode, selector, container);
+			}
+			
+			return returnVal;
+			
+		};
 
-    if (typeBits.length > 1) {
-        cat  = typeBits.shift();
-        type = typeBits.shift();
-    }
 
-    synth = Y.Node.DOM_EVENTS[type];
+        for (spec in tests) {
 
-    if (isObject(synth) && synth.delegate) {
-        handle = synth.delegate.apply(synth, arguments);
-    }
+            if (tests.hasOwnProperty(spec)) {
 
-    if (!handle) {
-        if (!type || !fn || !el || !filter) {
-            Y.log("delegate requires type, callback, parent, & filter", "warn");
-            return;
-        }
+                ename  = tests[spec];
+				fn	= tests.fn;
+				matched = null;
 
-        container = (query) ? Y.Selector.query(query, null, true) : el;
 
-        if (!container && isString(el)) {
-            handle = Y.on('available', function () {
-                Y.mix(handle, Y.delegate.apply(Y, args), true);
-            }, el);
-        }
+				if (Y.Selector.test(target, spec, el)) {
+					matched = target;
+				}
+				else if (Y.Selector.test(target, ((spec.replace(/,/gi, " *,")) + " *"), el)) {
+						
+					//	The target is a descendant of an element matching 
+					//	the selector, so crawl up to find the ancestor that 
+					//	matches the selector
+					
+					matched = getMatch(target, spec, el);
+					
+				}
 
-        if (!handle && container) {
-            args.splice(2, 2, container); // remove the filter
 
-            handle = Y.Event._attach(args, { facade: false });
-            handle.sub.filter  = filter;
-            handle.sub._notify = delegate.notifySub;
-        }
-    }
+				if (matched) {
 
-    if (handle && cat) {
-        categories = detachCategories[cat]  || (detachCategories[cat] = {});
-        categories = categories[type] || (categories[type] = []);
-        categories.push(handle);
-    }
+                    if (!ev) {
+                        ev = new Y.DOMEventFacade(e, el);
+                        ev.container = ev.currentTarget;
+                    }
 
-    return handle;
-}
+                    ev.currentTarget = Y.Node.get(matched);
 
-/**
- * Overrides the <code>_notify</code> method on the normal DOM subscription to
- * inject the filtering logic and only proceed in the case of a match.
- * 
- * @method delegate.notifySub
- * @param thisObj {Object} default 'this' object for the callback
- * @param args {Array} arguments passed to the event's <code>fire()</code>
- * @param ce {CustomEvent} the custom event managing the DOM subscriptions for
- *              the subscribed event on the subscribing node.
- * @return {Boolean} false if the event was stopped
- * @private
- * @static
- * @since 3.2.0
- */
-delegate.notifySub = function (thisObj, args, ce) {
-    // Preserve args for other subscribers
-    args = args.slice();
-    if (this.args) {
-        args.push.apply(args, this.args);
-    }
+					Y.publish(ename, {
+			               contextFn: function() {
+			                   return ev.currentTarget;
+			               }
+			           });
 
-    // Only notify subs if the event occurred on a targeted element
-    var currentTarget = delegate._applyFilter(this.filter, args, ce),
-        //container     = e.currentTarget,
-        e, i, len, ret;
+					if (fn) {
+						fn(ev, ename);
+					}
+					else {
+                    	Y.fire(ename, ev);								
+					}
+					
+				}
 
-    if (currentTarget) {
-        // Support multiple matches up the the container subtree
-        currentTarget = toArray(currentTarget);
-
-        // The second arg is the currentTarget, but we'll be reusing this
-        // facade, replacing the currentTarget for each use, so it doesn't
-        // matter what element we seed it with.
-        e = args[0] = new Y.DOMEventFacade(args[0], ce.el, ce);
-
-        e.container = Y.one(ce.el);
-    
-        for (i = 0, len = currentTarget.length; i < len && !e.stopped; ++i) {
-            e.currentTarget = Y.one(currentTarget[i]);
-
-            ret = this.fn.apply(this.context || e.currentTarget, args);
-
-            if (ret === false) { // stop further notifications
-                break;
             }
         }
 
-        return ret;
-    }
-};
+    },
 
-/**
- * <p>Compiles a selector string into a filter function to identify whether
- * Nodes along the parent axis of an event's target should trigger event
- * notification.</p>
- *
- * <p>This function is memoized, so previously compiled filter functions are
- * returned if the same selector string is provided.</p>
- *
- * <p>This function may be useful when defining synthetic events for delegate
- * handling.</p>
- *
- * @method delegate.compileFilter
- * @param selector {String} the selector string to base the filtration on
- * @return {Function}
- * @since 3.2.0
- * @static
- */
-delegate.compileFilter = Y.cached(function (selector) {
-    return function (target, e) {
-        return selectorTest(target._node, selector, e.currentTarget._node);
-    };
-});
+	attach = function (type, key, element) {
 
-/**
- * Walks up the parent axis of an event's target, and tests each element
- * against a supplied filter function.  If any Nodes, including the container,
- * satisfy the filter, the delegated callback will be triggered for each.
- *
- * @method delegate._applyFilter
- * @param filter {Function} boolean function to test for inclusion in event
- *                  notification
- * @param args {Array} the arguments that would be passed to subscribers
- * @param ce   {CustomEvent} the DOM event wrapper
- * @return {Node|Node[]|undefined} The Node or Nodes that satisfy the filter
- * @protected
- */
-delegate._applyFilter = function (filter, args, ce) {
-    var e         = args[0],
-        container = ce.el, // facadeless events in IE, have no e.currentTarget
-        target    = e.target || e.srcElement,
-        match     = [],
-        isContainer = false;
+		var focusMethods = {
+				focus: Event._attachFocus,
+				blur: Event._attachBlur
+			},
 
-    // Resolve text nodes to their containing element
-    if (target.nodeType === 3) {
-        target = target.parentNode;
-    }
+			attachFn = focusMethods[type],
 
-    // passing target as the first arg rather than leaving well enough alone
-    // making 'this' in the filter function refer to the target.  This is to
-    // support bound filter functions.
-    args.unshift(target);
+			args = [type, 
+			function (e) {
+	            delegateHandler(key, (e || window.event), element);
+			}, 
+			element];
 
-    if (isString(filter)) {
-        while (target) {
-            isContainer = (target === container);
-            if (selectorTest(target, filter, (isContainer ?null: container))) {
-                match.push(target);
-            }
 
-            if (isContainer) {
-                break;
-            }
+		if (attachFn) {
+			return attachFn(args, { capture: true, facade: false });
+		}
+		else {
+			return Event._attach(args, { facade: false });
+		}
+		
+	},
 
-            target = target.parentNode;
-        }
-    } else {
-        // filter functions are implementer code and should receive wrappers
-        args[0] = Y.one(target);
-        args[1] = new Y.DOMEventFacade(e, container, ce);
-
-        while (target) {
-            // filter(target, e, extra args...) - this === target
-            if (filter.apply(args[0], args)) {
-                match.push(target);
-            }
-
-            if (target === container) {
-                break;
-            }
-
-            target = target.parentNode;
-            args[0] = Y.one(target);
-        }
-        args[1] = e; // restore the raw DOM event
-    }
-
-    if (match.length <= 1) {
-        match = match[0]; // single match or undefined
-    }
-
-    // remove the target
-    args.shift();
-
-    return match;
-};
+    sanitize = Y.cached(function(str) {
+        return str.replace(/[|,:]/g, '~');
+    });
 
 /**
  * Sets up event delegation on a container element.  The delegated event
- * will use a supplied filter to test if the callback should be executed.
- * This filter can be either a selector string or a function that returns
- * a Node to use as the currentTarget for the event.
+ * will use a supplied selector to test if the target or one of the
+ * descendants of the target match it.  The supplied callback function 
+ * will only be executed if a match was encountered, and, in fact, 
+ * will be executed for each element that matches if you supply an 
+ * ambiguous selector.
  *
  * The event object for the delegated event is supplied to the callback
  * function.  It is modified slightly in order to support all properties
  * that may be needed for event delegation.  'currentTarget' is set to
- * the element that matched the selector string filter or the Node returned
- * from the filter function.  'container' is set to the element that the
- * listener is delegated from (this normally would be the 'currentTarget').
+ * the element that matched the delegation specifcation.  'container' is
+ * set to the element that the listener is bound to (this normally would
+ * be the 'currentTarget').
  *
- * Filter functions will be called with the arguments that would be passed to
- * the callback function, including the event object as the first parameter.
- * The function should return false (or a falsey value) if the success criteria
- * aren't met, and the Node to use as the event's currentTarget and 'this'
- * object if they are.
+ * @event delegate
+ * @param type {string} 'delegate'
+ * @param fn {function} the callback function to execute.  This function
+ * will be provided the event object for the delegated event.
+ * @param el {string|node} the element that is the delegation container
+ * @param delegateType {string} the event type to delegate
+ * @param spec {string} a selector that must match the target of the
+ * event.
+ * @param context optional argument that specifies what 'this' refers to.
+ * @param args* 0..n additional arguments to pass on to the callback function.
+ * These arguments will be added after the event object.
+ * @return {EventHandle} the detach handle
+ * @for YUI
+ * @deprecated use Y.delegate
+ */
+Y.Env.evt.plugins.delegate = {
+
+    on: function(type, fn, el, delegateType, spec) {
+
+        Y.log('delegate event is deprecated, use Y.delegate()', 'warn', 'deprecated');
+
+		var args = Y.Array(arguments, 0, true);
+		
+		args.splice(3, 1);
+		
+		args[0] = delegateType;
+
+		return Y.delegate.apply(Y, args);
+
+    }
+
+};
+
+
+/**
+ * Sets up event delegation on a container element.  The delegated event
+ * will use a supplied selector to test if the target or one of the
+ * descendants of the target match it.  The supplied callback function 
+ * will only be executed if a match was encountered, and, in fact, 
+ * will be executed for each element that matches if you supply an 
+ * ambiguous selector.
+ *
+ * The event object for the delegated event is supplied to the callback
+ * function.  It is modified slightly in order to support all properties
+ * that may be needed for event delegation.  'currentTarget' is set to
+ * the element that matched the delegation specifcation.  'container' is
+ * set to the element that the listener is bound to (this normally would
+ * be the 'currentTarget').
  *
  * @method delegate
  * @param type {string} the event type to delegate
  * @param fn {function} the callback function to execute.  This function
  * will be provided the event object for the delegated event.
  * @param el {string|node} the element that is the delegation container
- * @param filter {string|function} a selector that must match the target of the
- * event or a function that returns a Node or false.
+ * @param spec {string} a selector that must match the target of the
+ * event.
  * @param context optional argument that specifies what 'this' refers to.
  * @param args* 0..n additional arguments to pass on to the callback function.
  * These arguments will be added after the event object.
  * @return {EventHandle} the detach handle
  * @for YUI
  */
-Y.delegate = Y.Event.delegate = delegate;
+Event.delegate = function (type, fn, el, spec) {
+
+    if (!spec) {
+        Y.log('delegate: no spec, nothing to do', 'warn', 'event');
+        return false;
+    }
 
 
-}, '3.3.0' ,{requires:['node-base']});
+    var args = Y.Array(arguments, 0, true),	    
+		element = el,	// HTML element serving as the delegation container
+		availHandle;	
+
+
+	if (Lang.isString(el)) {
+		
+		//	Y.Selector.query returns an array of matches unless specified 
+		//	to return just the first match.  Since the primary use case for
+		//	event delegation is to use a single event handler on a container,
+		//	Y.delegate doesn't currently support being able to bind a 
+		//	single listener to multiple containers.
+		
+		element = Y.Selector.query(el, null, true);
+		
+		if (!element) { // Not found, check using onAvailable
+
+			availHandle = Event.onAvailable(el, function() {
+
+				availHandle.handle = Event.delegate.apply(Event, args);
+
+            }, Event, true, false);
+
+            return availHandle;
+			
+		}
+		
+	}
+
+
+	element = Y.Node.getDOMNode(element);
+
+
+	var	guid = Y.stamp(element),
+            
+        // The Custom Event for the delegation spec
+        ename = 'delegate:' + guid + type + sanitize(spec),
+
+        // The key to the listener for the event type and container
+        delegateKey = type + guid,
+
+		delegate = delegates[delegateKey],
+
+		domEventHandle,
+		
+		ceHandle,
+		
+		listeners;
+	
+
+    if (!delegate) {
+
+		delegate = {};
+
+		if (specialTypes[type]) {
+			
+			if (!Event._fireMouseEnter) {
+				Y.log("Delegating a " + type + " event requires the event-mouseenter submodule.", "error", "Event");
+				return false;				
+			}
+			
+			type = specialTypes[type];
+			delegate.fn = Event._fireMouseEnter;
+			
+		}
+
+		//	Create the DOM Event wrapper that will fire the Custom Event
+
+		domEventHandle = attach(type, delegateKey, element);
+
+
+		//	Hook into the _delete method for the Custom Event wrapper of this
+		//	DOM Event in order to clean up the 'delegates' map and unsubscribe
+		//	the associated Custom Event listeners fired by this DOM event
+		//	listener if/when the user calls "purgeElement" OR removes all 
+		//	listeners of the Custom Event.
+		
+		Y.after(function (sub) {
+
+			if (domEventHandle.sub == sub) {
+
+				//	Delete this event from the map of known delegates
+				delete delegates[delegateKey];
+
+				Y.log("DOM event listener associated with the " + ename + " Custom Event removed.  Removing all " + ename + " listeners.", "info", "Event");
+
+				//	Unsubscribe all listeners of the Custom Event fired 
+				//	by this DOM event.
+				Y.detachAll(ename);
+				
+			}
+
+		}, domEventHandle.evt, "_delete");
+			
+		delegate.handle = domEventHandle;
+
+        delegates[delegateKey] = delegate;
+
+    }
+
+
+	listeners = delegate.listeners;
+
+	delegate.listeners = listeners ? (listeners + 1) : 1;
+    delegate[spec] = ename;
+
+
+    args[0] = ename;
+
+    // Remove element, delegation spec
+    args.splice(2, 2);
+        
+
+    // Subscribe to the Custom Event for the delegation spec
+
+	ceHandle = Y.on.apply(Y, args);
+
+
+	//	Hook into the detach method of the handle in order to clean up the 
+	//	'delegates' map and remove the associated DOM event handler 
+	//	responsible for firing this Custom Event if all listener for this 
+	//	event have been removed.
+
+	Y.after(function () {
+			
+		delegate.listeners = (delegate.listeners - 1);
+		
+		if (delegate.listeners === 0) {
+			Y.log("No more listeners for the " + ename + " Custom Event.  Removing its associated DOM event listener.", "info", "Event");
+			delegate.handle.detach();
+		}
+
+	}, ceHandle, "detach");
+
+    return ceHandle;
+	
+};
+
+Y.delegate = Event.delegate;
+
+
+}, '3.0.0' ,{requires:['node-base']});

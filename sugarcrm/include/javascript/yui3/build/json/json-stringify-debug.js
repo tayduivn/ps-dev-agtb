@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('json-stringify', function(Y) {
 
@@ -15,14 +16,13 @@ YUI.add('json-stringify', function(Y) {
  * @for JSON
  * @static
  */
-var _JSON     = (Y.config.win || {}).JSON,
+var _JSON     = Y.config.win.JSON,
     Lang      = Y.Lang,
     isFunction= Lang.isFunction,
     isObject  = Lang.isObject,
     isArray   = Lang.isArray,
     _toStr    = Object.prototype.toString,
     Native    = (_toStr.call(_JSON) === '[object JSON]' && _JSON),
-    useNative = !!Native,
     UNDEFINED = 'undefined',
     OBJECT    = 'object',
     NULL      = 'null',
@@ -52,11 +52,9 @@ var _JSON     = (Y.config.win || {}).JSON,
     COLON     = ':',
     COLON_SP  = ': ',
     QUOTE     = '"',
-
     // Regex used to capture characters that need escaping before enclosing
     // their containing string in quotes.
     _SPECIAL_CHARS = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-
     // Character substitution map for common escapes and special characters.
     _CHARS = {
         '\b': '\\b',
@@ -214,16 +212,6 @@ function _stringify(o,w,space) {
     return _serialize({'':o},'');
 }
 
-// Double check basic native functionality.  This is primarily to catch broken
-// early JSON API implementations in Firefox 3.1 beta1 and beta2.
-if ( Native ) {
-    try {
-        useNative = ( '0' === Native.stringify(0) );
-    } catch ( e ) {
-        useNative = false;
-    }
-}
-
 Y.mix(Y.namespace('JSON'),{
     /**
      * Leverage native JSON stringify if the browser has a native
@@ -236,7 +224,7 @@ Y.mix(Y.namespace('JSON'),{
      * @default true
      * @static
      */
-    useNativeStringify : useNative,
+    useNativeStringify : !!Native,
 
     /**
      * Serializes a Date instance as a UTC date string.  Used internally by
@@ -246,7 +234,6 @@ Y.mix(Y.namespace('JSON'),{
      * @method dateToString
      * @param d {Date} The Date to serialize
      * @return {String} stringified Date in UTC format YYYY-MM-DDTHH:mm:SSZ
-     * @deprecated Use a replacer function
      * @static
      */
     dateToString : function (d) {
@@ -296,4 +283,4 @@ Y.mix(Y.namespace('JSON'),{
 });
 
 
-}, '3.3.0' );
+}, '3.0.0' );

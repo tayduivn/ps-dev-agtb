@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('datatype-number-parse', function(Y) {
 
@@ -42,4 +43,5 @@ Y.mix(Y.namespace("DataType.Number"), {
 Y.namespace("Parsers").number = Y.DataType.Number.parse;
 
 
-}, '3.3.0' ,{requires:['yui-base']});
+
+}, '3.0.0' );

@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('datasource-jsonschema', function(Y) {
 
@@ -73,9 +74,7 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
     },
 
     /**
-     * Parses raw data into a normalized response. To accommodate XHR responses,
-     * will first look for data in data.responseText. Otherwise will just work
-     * with data.
+     * Parses raw data into a normalized response.
      *
      * @method _beforeDefDataFn
      * <dl>
@@ -92,8 +91,8 @@ Y.extend(DataSourceJSONSchema, Y.Plugin.Base, {
      * @protected
      */
     _beforeDefDataFn: function(e) {
-        var data = e.data ? (e.data.responseText ?  e.data.responseText : e.data) : e.data,
-            response = Y.DataSchema.JSON.apply.call(this, this.get("schema"), data);
+        var data = (Y.DataSource.IO && (this.get("host") instanceof Y.DataSource.IO) && Y.Lang.isString(e.data.responseText)) ? e.data.responseText : e.data,
+            response = Y.DataSchema.JSON.apply(this.get("schema"), data);
             
         // Default
         if(!response) {
@@ -112,4 +111,4 @@ Y.namespace('Plugin').DataSourceJSONSchema = DataSourceJSONSchema;
 
 
 
-}, '3.3.0' ,{requires:['datasource-local', 'plugin', 'dataschema-json']});
+}, '3.0.0' ,{requires:['plugin', 'datasource-local', 'dataschema-json']});

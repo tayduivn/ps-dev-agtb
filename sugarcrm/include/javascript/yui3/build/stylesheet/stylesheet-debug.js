@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('stylesheet', function(Y) {
 
@@ -32,7 +33,7 @@ var d      = Y.config.doc,
 _unsetOpacity = (OPACITY in workerStyle) ?
     function (style) { style.opacity = EMPTY; } :
     function (style) { style.filter = EMPTY; };
-
+        
 // Normalizes the removal of an assigned style for a given property.  Expands
 // shortcut properties if necessary and handles the various names for the float
 // property.
@@ -74,7 +75,7 @@ _unsetProperty = workerStyle.borderLeft ?
             }
         }
     };
-
+    
 /**
  * Create an instance of StyleSheet to encapsulate a css stylesheet.
  * The constructor can be called using function or constructor syntax.
@@ -103,7 +104,7 @@ _unsetProperty = workerStyle.borderLeft ?
  * <p>The optional second parameter is a string name to register the sheet as.
  * This param is largely useful when providing a node id/ref or chunk of css
  * text to create a populated instance.</p>
- *
+ * 
  * @class StyleSheet
  * @constructor
  * @param seed {String|HTMLElement|Node} a style or link node, its id, or a
@@ -122,14 +123,14 @@ function StyleSheet(seed, name) {
         i,r,sel;
 
     // Factory or constructor
-    if (!(Y.instanceOf(this, StyleSheet))) {
+    if (!(this instanceof StyleSheet)) {
         return new StyleSheet(seed,name);
     }
 
     // Extract the DOM node from Node instances
     if (seed) {
         if (Y.Node && seed instanceof Y.Node) {
-            node = seed._node;
+            node = Y.Node.getDOMNode(seed);
         } else if (seed.nodeName) {
             node = seed;
         // capture the DOM node if the string is an id
@@ -370,7 +371,7 @@ function StyleSheet(seed, name) {
                         remove = true;
                     }
                 }
-
+                
                 if (remove) { // remove the rule altogether
                     rules = sheet[_rules];
                     for (i = rules.length - 1; i >= 0; --i) {
@@ -398,7 +399,7 @@ function StyleSheet(seed, name) {
          * @return {String}
          */
         getCssText : function (sel) {
-            var rule, css, selector;
+            var rule,css;
 
             if (isString(sel)) {
                 // IE's addRule doesn't support multiple comma delimited
@@ -408,9 +409,9 @@ function StyleSheet(seed, name) {
                 return rule ? rule.style.cssText : null;
             } else {
                 css = [];
-                for (selector in cssRules) {
-                    if (cssRules.hasOwnProperty(selector)) {
-                        rule = cssRules[selector];
+                for (sel in cssRules) {
+                    if (cssRules.hasOwnProperty(sel)) {
+                        rule = cssRules[sel];
                         css.push(rule.selectorText+" {"+rule.style.cssText+"}");
                     }
                 }
@@ -426,20 +427,7 @@ _toCssText = function (css,base) {
         trim = Y.Lang.trim,
         prop;
 
-    // A very difficult to repro/isolate IE 9 beta (and Platform Preview 7) bug
-    // was reduced to this line throwing the error:
-    // "Invalid this pointer used as target for method call"
-    // It appears that the style collection is corrupted. The error is
-    // catchable, so in a best effort to work around it, replace the
-    // p and workerStyle and try the assignment again.
-    try {
-        workerStyle.cssText = base || EMPTY;
-    } catch (e) {
-        Y.log("Worker style collection corrupted. Replacing.", "warn", "StyleSheet");
-        p = d.createElement('p');
-        workerStyle = p.style;
-        workerStyle.cssText = base || EMPTY;
-    }
+    workerStyle.cssText = base || EMPTY;
 
     if (f && !css[floatAttr]) {
         css = Y.merge(css);
@@ -454,9 +442,9 @@ _toCssText = function (css,base) {
                 // in values ala ' red' or 'red '
                 workerStyle[prop] = trim(css[prop]);
             }
-            catch (ex) {
+            catch (e) {
                 Y.log('Error assigning property "'+prop+'" to "'+css[prop]+
-                          "\" (ignored):\n"+ex.message,'warn','StyleSheet');
+                          "\" (ignored):\n"+e.message,'warn','StyleSheet');
             }
         }
     }
@@ -646,4 +634,4 @@ NOTES
 
 
 
-}, '3.3.0' );
+}, '3.0.0' );

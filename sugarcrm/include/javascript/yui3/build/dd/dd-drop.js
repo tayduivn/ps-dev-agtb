@@ -1,20 +1,20 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('dd-drop', function(Y) {
 
 
     /**
-     * Provides the ability to create a Drop Target.
+     * The Drag & Drop Utility allows you to create a draggable interface efficiently, buffering you from browser-level abnormalities and enabling you to focus on the interesting logic surrounding your particular implementation. This component enables you to create a variety of standard draggable objects with just a few lines of code and then, using its extensive API, add your own specific implementation logic.
      * @module dd
      * @submodule dd-drop
      */     
     /**
-     * Provides the ability to create a Drop Target.
+     * This class provides the ability to create a Drop Target.
      * @class Drop
      * @extends Base
      * @constructor
@@ -28,11 +28,6 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:over
         * @description Fires when a drag element is over this target.
-        * @param {Event.Facade} event An Event Facade object with the following specific property added:
-        * <dl>
-        * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
-        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
-        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -40,11 +35,6 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:enter
         * @description Fires when a drag element enters this target.
-        * @param {Event.Facade} event An Event Facade object with the following specific property added:
-        * <dl>
-        * <dt>drop</dt><dd>The drop object at the time of the event.</dd>
-        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
-        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -52,7 +42,6 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:exit
         * @description Fires when a drag element exits this target.
-        * @param {Event.Facade} event An Event Facade object
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -61,12 +50,6 @@ YUI.add('dd-drop', function(Y) {
         /**
         * @event drop:hit
         * @description Fires when a draggable node is dropped on this Drop Target. (Fired from dd-ddm-drop)
-        * @param {Event.Facade} event An Event Facade object with the following specific property added:
-        * <dl>
-        * <dt>drop</dt><dd>The best guess on what was dropped on.</dd>
-        * <dt>drag</dt><dd>The drag object at the time of the event.</dd>
-        * <dt>others</dt><dd>An array of all the other drop targets that was dropped on.</dd>
-        * </dl>        
         * @bubbles DDM
         * @type {Event.Custom}
         */
@@ -102,7 +85,7 @@ YUI.add('dd-drop', function(Y) {
         */        
         node: {
             setter: function(node) {
-                var n = Y.one(node);
+                var n = Y.Node.get(node);
                 if (!n) {
                     Y.error('DD.Drop: Invalid Node Given: ' + node);
                 }
@@ -152,61 +135,17 @@ YUI.add('dd-drop', function(Y) {
             }
         },
         /**
-        * @deprecated
         * @attribute bubbles
-        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling. Use bubbleTargets in config.
+        * @description Controls the default bubble parent for this Drop instance. Default: Y.DD.DDM. Set to false to disable bubbling.
         * @type Object
         */
         bubbles: {
-            setter: function(t) {
-                this.addTarget(t);
-                return t;
-            }
-        },
-        /**
-        * @deprecated
-        * @attribute useShim
-        * @description Use the Drop shim. Default: true
-        * @type Boolean
-        */
-        useShim: {
-            value: true,
-            setter: function(v) {
-                Y.DD.DDM._noShim = !v;
-                return v;
-            }
+            writeOnce: true,
+            value: Y.DD.DDM
         }
     };
 
     Y.extend(Drop, Y.Base, {
-        /**
-        * @private
-        * @property _bubbleTargets
-        * @description The default bubbleTarget for this object. Default: Y.DD.DDM
-        */
-        _bubbleTargets: Y.DD.DDM,
-        /**
-        * @method addToGroup
-        * @description Add this Drop instance to a group, this should be used for on-the-fly group additions.
-        * @param {String} g The group to add this Drop Instance to.
-        * @return {Self}
-        * @chainable
-        */
-        addToGroup: function(g) {
-            this._groups[g] = true;
-            return this;
-        },
-        /**
-        * @method removeFromGroup
-        * @description Remove this Drop instance from a group, this should be used for on-the-fly group removals.
-        * @param {String} g The group to remove this Drop Instance from.
-        * @return {Self}
-        * @chainable
-        */
-        removeFromGroup: function(g) {
-            delete this._groups[g];
-            return this;
-        },
         /**
         * @private
         * @method _createEvents
@@ -231,6 +170,11 @@ YUI.add('dd-drop', function(Y) {
                     prefix: 'drop'
                 });
             }, this);
+
+            if (this.get('bubbles')) {
+                this.addTarget(this.get('bubbles'));
+            }
+            
         },
         /**
         * @private
@@ -286,7 +230,8 @@ YUI.add('dd-drop', function(Y) {
         * @method initializer
         * @description Private lifecycle method
         */
-        initializer: function(cfg) {
+        initializer: function() {
+            //this._createEvents();
             Y.later(100, this, this._createEvents);
 
             var node = this.get(NODE), id;
@@ -305,9 +250,9 @@ YUI.add('dd-drop', function(Y) {
         */
         destructor: function() {
             DDM._unregTarget(this);
-            if (this.shim && (this.shim !== this.get(NODE))) {
+            if (this.shim) {
                 this.shim.detachAll();
-                this.shim.remove();
+                this.shim.get('parentNode').removeChild(this.shim);
                 this.shim = null;
             }
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop');
@@ -325,14 +270,11 @@ YUI.add('dd-drop', function(Y) {
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-valid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-active-invalid');
             this.get(NODE).removeClass(DDM.CSS_PREFIX + '-drop-over');
-
-            if (this.get('useShim')) {
-                this.shim.setStyles({
-                    top: '-999px',
-                    left: '-999px',
-                    zIndex: '1'
-                });
-            }
+            this.shim.setStyles({
+                top: '-999px',
+                left: '-999px',
+                zIndex: '1'
+            });
             this.overTarget = false;
         },
         /**
@@ -358,9 +300,6 @@ YUI.add('dd-drop', function(Y) {
                 node.addClass(DDM.CSS_PREFIX + '-drop-active-valid');
                 DDM._addValid(this);
                 this.overTarget = false;
-                if (!this.get('useShim')) {
-                    this.shim = this.get(NODE);
-                }
                 this.sizeShim();
             } else {
                 DDM._removeValid(this);
@@ -379,7 +318,6 @@ YUI.add('dd-drop', function(Y) {
             if (this.get(NODE) === DDM.activeDrag.get(NODE)) {
                 return false;
             }
-            //if (this.get('lock') || !this.get('useShim')) {
             if (this.get('lock')) {
                 return false;
             }
@@ -415,16 +353,14 @@ YUI.add('dd-drop', function(Y) {
 
             }
             
-            if (this.get('useShim')) {
-                //Set the style on the shim
-                this.shim.setStyles({
-                    height: nh + 'px',
-                    width: nw + 'px',
-                    top: xy[1] + 'px',
-                    left: xy[0] + 'px'
-                });
-            }
-
+            //Set the style on the shim
+            this.shim.setStyles({
+                height: nh + 'px',
+                width: nw + 'px',
+                top: xy[1] + 'px',
+                left: xy[0] + 'px'
+            });
+            
             //Create the region to be used by intersect when a drag node is over us.
             this.region = {
                 '0': xy[0], 
@@ -451,30 +387,24 @@ YUI.add('dd-drop', function(Y) {
             if (this.shim) {
                 return;
             }
-            var s = this.get('node');
+            var s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
 
-            if (this.get('useShim')) {
-                s = Y.Node.create('<div id="' + this.get(NODE).get('id') + '_shim"></div>');
-                s.setStyles({
-                    height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
-                    width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
-                    backgroundColor: 'yellow',
-                    opacity: '.5',
-                    zIndex: '1',
-                    overflow: 'hidden',
-                    top: '-900px',
-                    left: '-900px',
-                    position:  'absolute'
-                });
-
-                DDM._pg.appendChild(s);
-
-                s.on('mouseover', Y.bind(this._handleOverEvent, this));
-                s.on('mouseout', Y.bind(this._handleOutEvent, this));
-            }
-
-
+            s.setStyles({
+                height: this.get(NODE).get(OFFSET_HEIGHT) + 'px',
+                width: this.get(NODE).get(OFFSET_WIDTH) + 'px',
+                backgroundColor: 'yellow',
+                opacity: '.5',
+                zIndex: '1',
+                overflow: 'hidden',
+                top: '-900px',
+                left: '-900px',
+                position:  'absolute'
+            });
+            DDM._pg.appendChild(s);
             this.shim = s;
+
+            s.on('mouseover', Y.bind(this._handleOverEvent, this));
+            s.on('mouseout', Y.bind(this._handleOutEvent, this));
         },
         /**
         * @private
@@ -490,15 +420,12 @@ YUI.add('dd-drop', function(Y) {
                     DDM.activeDrag.fire('drag:over', { drop: this, drag: DDM.activeDrag });
                     this.fire(EV_DROP_OVER, { drop: this, drag: DDM.activeDrag });
                 } else {
-                    //Prevent an enter before a start..
-                    if (DDM.activeDrag.get('dragging')) {
-                        this.overTarget = true;
-                        this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
-                        DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
-                        DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
-                        //TODO - Is this needed??
-                        //DDM._handleTargetOver();
-                    }
+                    this.overTarget = true;
+                    this.fire(EV_DROP_ENTER, { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.fire('drag:enter', { drop: this, drag: DDM.activeDrag });
+                    DDM.activeDrag.get(NODE).addClass(DDM.CSS_PREFIX + '-drag-over');
+                    //TODO - Is this needed??
+                    //DDM._handleTargetOver();
                 }
             } else {
                 this._handleOut();
@@ -540,6 +467,9 @@ YUI.add('dd-drop', function(Y) {
                         this.fire(EV_DROP_EXIT);
                         DDM.activeDrag.fire('drag:exit', { drop: this });
                         delete DDM.otherDrops[this];
+                        //if (DDM.activeDrop === this) {
+                        //    DDM.activeDrop = null;
+                        //}
                     }
                 }
             }
@@ -552,4 +482,4 @@ YUI.add('dd-drop', function(Y) {
 
 
 
-}, '3.3.0' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});
+}, '3.0.0' ,{requires:['dd-ddm-drop', 'dd-drag'], skinnable:false});

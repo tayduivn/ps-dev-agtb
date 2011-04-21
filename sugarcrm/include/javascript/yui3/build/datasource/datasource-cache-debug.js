@@ -1,27 +1,30 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('datasource-cache', function(Y) {
 
 /**
- * Plugs DataSource with caching functionality.
+ * Extends DataSource with caching functionality.
  *
  * @module datasource
  * @submodule datasource-cache
  */
 
 /**
- * DataSourceCache extension binds Cache to DataSource.
- * @class DataSourceCacheExtension
- */
-var DataSourceCacheExtension = function() {
+ * Adds cacheability to the DataSource Utility.
+ * @class DataSourceCache
+ * @extends Cache
+ */    
+var DataSourceCache = function() {
+    DataSourceCache.superclass.constructor.apply(this, arguments);
 };
 
-Y.mix(DataSourceCacheExtension, {
+Y.mix(DataSourceCache, {
     /**
      * The namespace for the plugin. This will be the property on the host which
      * references the plugin instance.
@@ -41,12 +44,22 @@ Y.mix(DataSourceCacheExtension, {
      * @type String
      * @static
      * @final
-     * @value "dataSourceCacheExtension"
+     * @value "dataSourceCache"
      */
-    NAME: "dataSourceCacheExtension"
+    NAME: "dataSourceCache",
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    // DataSourceCache Attributes
+    //
+    /////////////////////////////////////////////////////////////////////////////
+
+    ATTRS: {
+
+    }
 });
 
-DataSourceCacheExtension.prototype = {
+Y.extend(DataSourceCache, Y.Cache, {
     /**
     * Internal init() handler.
     *
@@ -76,11 +89,11 @@ DataSourceCacheExtension.prototype = {
         // Is response already in the Cache?
         var entry = (this.retrieve(e.request)) || null;
         if(entry && entry.response) {
-            this.get("host").fire("response", Y.mix(entry, e));
-            return new Y.Do.Halt("DataSourceCache extension halted _defRequestFn");
+            this.get("host").fire("response", Y.mix({response: entry.response}, e));
+            return new Y.Do.Halt("DataSourceCache plugin halted _defRequestFn");
         }
     },
-
+    
     /**
      * Adds data to cache before returning data.
      *
@@ -110,58 +123,15 @@ DataSourceCacheExtension.prototype = {
      */
      _beforeDefResponseFn: function(e) {
         // Add to Cache before returning
-        if(e.response && !e.cached) {
-            this.add(e.request, e.response);
+        if(e.response && !e.response.cached) {
+            e.response.cached = true;
+            this.add(e.request, e.response, (e.callback && e.callback.argument));
         }
      }
-};
-
-Y.namespace("Plugin").DataSourceCacheExtension = DataSourceCacheExtension;
-
-
-
-/**
- * DataSource plugin adds cache functionality.
- * @class DataSourceCache
- * @extends Cache
- * @uses Plugin.Base, DataSourceCachePlugin
- */
-function DataSourceCache(config) {
-    var cache = config && config.cache ? config.cache : Y.Cache,
-        tmpclass = Y.Base.create("dataSourceCache", cache, [Y.Plugin.Base, Y.Plugin.DataSourceCacheExtension]),
-        tmpinstance = new tmpclass(config);
-    tmpclass.NS = "tmpClass";
-    return tmpinstance;
-}
-
-Y.mix(DataSourceCache, {
-    /**
-     * The namespace for the plugin. This will be the property on the host which
-     * references the plugin instance.
-     *
-     * @property NS
-     * @type String
-     * @static
-     * @final
-     * @value "cache"
-     */
-    NS: "cache",
-
-    /**
-     * Class name.
-     *
-     * @property NAME
-     * @type String
-     * @static
-     * @final
-     * @value "dataSourceCache"
-     */
-    NAME: "dataSourceCache"
 });
 
-
-Y.namespace("Plugin").DataSourceCache = DataSourceCache;
-
+Y.namespace('Plugin').DataSourceCache = DataSourceCache;
 
 
-}, '3.3.0' ,{requires:['datasource-local', 'cache-base']});
+
+}, '3.0.0' ,{requires:['datasource-local', 'cache']});

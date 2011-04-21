@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('dd-ddm-drop', function(Y) {
 
@@ -181,7 +182,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         isOverTarget: function(drop) {
             if (this.activeDrag && drop) {
                 var xy = this.activeDrag.mouseXY, r, dMode = this.activeDrag.get('dragMode'),
-                    aRegion, node = drop.shim;
+                    aRegion;
                 if (xy && this.activeDrag) {
                     aRegion = this.activeDrag.region;
                     if (dMode == this.STRICT) {
@@ -190,12 +191,9 @@ YUI.add('dd-ddm-drop', function(Y) {
                         if (drop && drop.shim) {
                             if ((dMode == this.INTERSECT) && this._noShim) {
                                 r = ((aRegion) ? aRegion : this.activeDrag.get('node'));
-                                return drop.get('node').intersect(r, drop.region).inRegion;
+                                return drop.get('node').intersect(r).inRegion;
                             } else {
-                                if (this._noShim) {
-                                    node = drop.get('node');
-                                }
-                                return node.intersect({
+                                return drop.shim.intersect({
                                     top: xy[1],
                                     bottom: xy[1],
                                     left: xy[0], 
@@ -228,13 +226,9 @@ YUI.add('dd-ddm-drop', function(Y) {
         * @description Clear the cache and activate the shims of all the targets
         */
         _activateTargets: function() {
-            this._noShim = true;
             this.clearCache();
             Y.each(this.targets, function(v, k) {
-                v._activateShim([]);
-                if (v.get('noShim') == true) {
-                    this._noShim = false;
-                }
+                v._activateShim.apply(v, []);
             }, this);
             this._handleTargetOver();
             
@@ -299,7 +293,7 @@ YUI.add('dd-ddm-drop', function(Y) {
                     activeDrop.fire('drop:hit', { drag: activeDrag, drop: activeDrop, others: other });
                     activeDrag.fire('drag:drophit', { drag: activeDrag,  drop: activeDrop, others: other });
                 }
-            } else if (activeDrag && activeDrag.get('dragging')) {
+            } else if (activeDrag) {
                 activeDrag.get('node').removeClass(this.CSS_PREFIX + '-drag-over');
                 activeDrag.fire('drag:dropmiss', { pageX: activeDrag.lastXY[0], pageY: activeDrag.lastXY[1] });
             } else {
@@ -308,7 +302,7 @@ YUI.add('dd-ddm-drop', function(Y) {
             this.activeDrop = null;
 
             Y.each(this.targets, function(v, k) {
-                v._deactivateShim([]);
+                v._deactivateShim.apply(v, []);
             }, this);
         },
         /**
@@ -397,7 +391,7 @@ YUI.add('dd-ddm-drop', function(Y) {
         */
         getDrop: function(node) {
             var drop = false,
-                n = Y.one(node);
+                n = Y.Node.get(node);
             if (n instanceof Y.Node) {
                 Y.each(this.targets, function(v, k) {
                     if (n.compareTo(v.get('node'))) {
@@ -415,4 +409,4 @@ YUI.add('dd-ddm-drop', function(Y) {
 
 
 
-}, '3.3.0' ,{requires:['dd-ddm'], skinnable:false});
+}, '3.0.0' ,{requires:['dd-ddm'], skinnable:false});

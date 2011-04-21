@@ -1,12 +1,11 @@
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
-.yui3-slider,
-.yui3-slider-rail {
+.yui-slider {
     /* xbrowser inline-block styles */
     display: -moz-inline-stack; /* FF2 */
     display: inline-block;
@@ -15,24 +14,29 @@ build: 3167
     vertical-align: middle;
 }
 
-.yui3-slider-content {
-    position: relative;
-    display: block;
-}
-.yui3-slider-rail {
+.yui-slider-content {
     position: relative;
 }
 
-.yui3-slider-rail-cap-top,
-.yui3-slider-rail-cap-left,
-.yui3-slider-rail-cap-bottom,
-.yui3-slider-rail-cap-right,
-.yui3-slider-thumb,
-.yui3-slider-thumb-image,
-.yui3-slider-thumb-shadow {
+.yui-slider-rail {
+    position: relative;
+}
+
+.yui-slider-thumb {
     position: absolute;
 }
+.yui-slider-thumb-image {
+    /* to collapse vertical space around short thumbs in tall line-height */
+    display: block;
+}
 
-.yui3-slider-thumb {
+.yui-slider-image-error .yui-slider-thumb {
+    height: 10px;
+    width: 10px;
+    background: #000;
+    color: #000;
     overflow: hidden;
+}
+.yui-slider-image-error .yui-slider-thumb-image {
+    display: none;
 }

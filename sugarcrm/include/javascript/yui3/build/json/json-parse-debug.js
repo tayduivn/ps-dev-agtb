@@ -1,9 +1,10 @@
+//FILE SUGARCRM flav=int ONLY
 /*
-Copyright (c) 2010, Yahoo! Inc. All rights reserved.
+Copyright (c) 2009, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
-http://developer.yahoo.com/yui/license.html
-version: 3.3.0
-build: 3167
+http://developer.yahoo.net/yui/license.txt
+version: 3.0.0
+build: 1549
 */
 YUI.add('json-parse', function(Y) {
 
@@ -44,9 +45,6 @@ YUI.add('json-parse', function(Y) {
 
 
 // All internals kept private for security reasons
-function fromGlobal(ref) {
-    return (Y.config.win || this || {})[ref];
-}
 
 
     /**
@@ -56,11 +54,8 @@ function fromGlobal(ref) {
      * @type {Object}
      * @private
      */
-var _JSON  = fromGlobal('JSON'),
-    // Create an indirect reference to eval to allow for minification
-    _eval  = fromGlobal('eval'),
+var _JSON  = Y.config.win.JSON,
     Native = (Object.prototype.toString.call(_JSON) === '[object JSON]' && _JSON),
-    useNative = !!Native,
 
     /**
      * Replace certain Unicode characters that JavaScript may handle incorrectly
@@ -178,47 +173,30 @@ var _JSON  = fromGlobal('JSON'),
     // JavaScript implementation in lieu of native browser support.  Based on
     // the json2.js library from http://json.org
     _parse = function (s,reviver) {
-        // Replace certain Unicode characters that are otherwise handled
-        // incorrectly by some browser implementations.
-        // NOTE: This modifies the input if such characters are found!
-        s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
-        
-        // Test for any remaining invalid characters
-        if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
-                            replace(_VALUES,']').
-                            replace(_BRACKETS,''))) {
+        if (typeof s === 'string') {
+            // Replace certain Unicode characters that are otherwise handled
+            // incorrectly by some browser implementations.
+            // NOTE: This modifies the input if such characters are found!
+            s = s.replace(_UNICODE_EXCEPTIONS, _escapeException);
+            
+            // Test for any remaining invalid characters
+            if (!_UNSAFE.test(s.replace(_ESCAPES,'@').
+                                 replace(_VALUES,']').
+                                 replace(_BRACKETS,''))) {
 
-            // Eval the text into a JavaScript data structure, apply any
-            // reviver function, and return
-            return _revive( _eval('(' + s + ')'), reviver );
+                // Eval the text into a JavaScript data structure, apply any
+                // reviver function, and return
+                return _revive( eval('(' + s + ')'), reviver );
+            }
         }
 
         throw new SyntaxError('JSON.parse');
     };
     
 Y.namespace('JSON').parse = function (s,reviver) {
-        if (typeof s !== 'string') {
-            s += '';
-        }
-
-        return Native && Y.JSON.useNativeParse ?
-            Native.parse(s,reviver) : _parse(s,reviver);
+    return Native && Y.JSON.useNativeParse ?
+        Native.parse(s,reviver) : _parse(s,reviver);
 };
-
-function workingNative( k, v ) {
-    return k === "ok" ? true : v;
-}
-
-// Double check basic functionality.  This is mainly to catch early broken
-// implementations of the JSON API in Firefox 3.1 beta1 and beta2
-if ( Native ) {
-    try {
-        useNative = ( Native.parse( '{"ok":false}', workingNative ) ).ok;
-    }
-    catch ( e ) {
-        useNative = false;
-    }
-}
 
 /**
  * Leverage native JSON parse if the browser has a native implementation.
@@ -231,7 +209,7 @@ if ( Native ) {
  * @default true
  * @static
  */
-Y.JSON.useNativeParse = useNative;
+Y.JSON.useNativeParse = !!Native;
 
 
-}, '3.3.0' );
+}, '3.0.0' );
