@@ -195,6 +195,8 @@ class ViewConvertLead extends SugarView
         }
         echo "</div>";
         echo ($qsd->getQSScriptsJSONAlreadyDefined());
+        // need to re-assign bean as it gets overridden by $ev->display
+        $smarty->assign("bean", $this->focus);
         $smarty->display("modules/Leads/tpls/ConvertLeadFooter.tpl");
     }
 
