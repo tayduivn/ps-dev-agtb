@@ -57,7 +57,11 @@ $viewdefs[$module_name]['EditView'] = array(
         array(
             'name' => 'application',
             'displayParams'=>array('required'=>true)
-        ), 'active',
+        ), 
+        array(
+            'name' => 'validated',
+            'customCode' => '{if $fields.validated.value}{$MOD.LBL_CONNECTED}{else}{$MOD.LBL_DISCONNECTED}{/if}',
+        ),
     ),
     array (
         array('name' => 'name', 'displayParams' => array('required' => true) ),
@@ -73,9 +77,6 @@ $viewdefs[$module_name]['EditView'] = array(
         array('name' => 'note', 
               'type'=>'text', 
               'customCode' => '<div id="eapm_notice_div">&nbsp;</div>'
-        ),
-        array('name' => 'validated',
-              'customCode' => '{if $fields.validated.value}{$MOD.LBL_CONNECTED}{else}{$MOD.LBL_DISCONNECTED}{/if}',
         ),
     ),
   ),
