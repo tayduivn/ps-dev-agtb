@@ -409,7 +409,7 @@ function loadChartForReports() {
 	if (idObject != null) {
 		id = idObject.value;
 	} // if
-	var chartId = document.getElementById(id + '_div');
+	var chartId = document.getElementById(id);
 	var showHideChartButton = document.getElementById('showHideChartButton');
 	if (chartId == null) {
 		if (showHideChartButton != null) {
