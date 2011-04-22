@@ -24,6 +24,22 @@ function setUp() {
        mkdir_recursive('custom/Extension/application/Ext/TableDictionary');
     }
 
+    if( $fh = @fopen($this->tableDictionaryExtFile1, 'w+') )
+    {
+$string = <<<EOQ
+<?php
+
+//WARNING: The contents of this file are auto-generated
+include('custom/metadata/bug43208Test_productsMetaData.php');
+
+//WARNING: The contents of this file are auto-generated
+include('custom/Extension/application/Ext/TableDictionary/Bug43208_module.php');
+?>
+EOQ;
+       fputs( $fh, $string);
+       fclose( $fh );
+    }     
+    
 
     if(file_exists($this->tableDictionaryExtFile2)) {
        copy($this->tableDictionaryExtFile2, $this->tableDictionaryExtFile2 . '.backup');
@@ -53,7 +69,6 @@ EOQ;
 $string = <<<EOQ
 <?php
  //WARNING: The contents of this file are auto-generated
- include ("custom/Extension/application/Ext/TableDictionary/Bug43208_module.php");
  	include( "custom/metadata/bug43208Test_productsMetaData.php" ); 
 ?>
 EOQ;
@@ -90,18 +105,13 @@ function tearDown() {
 function testRepairTableDictionaryExtFile() 
 {	
 	require_once('ModuleInstall/ModuleInstaller.php');
-	
 	repairTableDictionaryExtFile();
-	
-	$moduleInstaller = new ModuleInstaller();
-	$moduleInstaller->silent = true;
-	$moduleInstaller->rebuild_tabledictionary();
 	
 	if(function_exists('sugar_fopen'))
 	{
-		$fp = @sugar_fopen($this->tableDictionaryExtFile, 'r');
+		$fp = @sugar_fopen($this->tableDictionaryExtFile1, 'r');
 	} else {
-		$fp = fopen($this->tableDictionaryExtFile, 'r');
+		$fp = fopen($this->tableDictionaryExtFile1, 'r');
 	}			
 		
 	$matches = 0;
@@ -118,8 +128,32 @@ function testRepairTableDictionaryExtFile()
 		 fclose($fp); 
    }	
    
-   $this->assertEquals($matches, 1, 'Assert that there was one match for correct entries in file ' . $this->tableDictionaryExtFile);
+   $this->assertEquals($matches, 1, 'Assert that there was one match for correct entries in file ' . $this->tableDictionaryExtFile1);
+
    
+	if(function_exists('sugar_fopen'))
+	{
+		$fp = @sugar_fopen($this->tableDictionaryExtFile2, 'r');
+	} else {
+		$fp = fopen($this->tableDictionaryExtFile2, 'r');
+	}			
+		
+	$matches = 0;
+    if($fp)
+    {
+         while($line = fgets($fp))
+	     {
+	    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\'\"]\s*\)\s*;/', $line, $match))
+	    	{
+	    	   $matches++;
+	    	   $this->assertTrue(file_exists($match[1]), 'Assert that entry for file ' . $line . ' exists');
+	    	}
+	     }  
+		 fclose($fp); 
+   }	
+   
+   $this->assertEquals($matches, 1, 'Assert that there was one match for correct entries in file ' . $this->tableDictionaryExtFile2);
+      
    
 	if(function_exists('sugar_fopen'))
 	{
@@ -142,7 +176,7 @@ function testRepairTableDictionaryExtFile()
 		 fclose($fp); 
    }	
    
-   $this->assertEquals($matches, 1, 'Assert that there was one match for correct entries in file ' . $this->corruptExtModuleFile);   
+   $this->assertEquals($matches, 0, 'Assert that there was one match for correct entries in file ' . $this->corruptExtModuleFile);   
    
 }
 
