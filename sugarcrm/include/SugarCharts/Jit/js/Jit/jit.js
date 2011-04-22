@@ -15454,6 +15454,42 @@ $jit.PieChart = new Class({
 	    ctx.fillStyle = backgroundColor;
    	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
   },
+   renderTitle: function() {
+   	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	radius = this.sb.config.levelDistance,
+	title = config.Title,
+	label = config.Label,
+	subtitle = config.Subtitle;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+	ctx.moveTo(0,0);
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2 + margin.left, -size.height/2 + margin.top); 
+	} 	
+  },
+  renderSubtitle: function() {
+   	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	radius = this.sb.config.levelDistance,
+	title = config.Title,
+	label = config.Label,
+	subtitle = config.Subtitle;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
+	ctx.moveTo(0,0);
+	if(label.type == 'Native') {
+		ctx.fillText(subtitle.text, -size.width/2 + margin.left, size.height/2 - margin.bottom); 
+	} 	
+  },
   /*
     Method: loadJSON
    
@@ -15479,6 +15515,8 @@ $jit.PieChart = new Class({
         colorLength = color.length,
         config = this.config,
         renderBackground = config.renderBackground,
+        title = config.Title,
+		subtitle = config.Subtitle;
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -15537,8 +15575,14 @@ $jit.PieChart = new Class({
 
     
     sb.refresh();
-    
-        if(renderBackground) {
+    if(title.text != "") {
+    	this.renderTitle();
+    }
+       
+    if(subtitle.text != "") {
+    	this.renderSubtitle();
+    }
+     if(renderBackground) {
     	this.renderBackground();	
     }
     
