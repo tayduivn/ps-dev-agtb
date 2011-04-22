@@ -346,13 +346,13 @@ function toDecimal(original, precision) {
 }
 
 function isInteger(s) {
-	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	if (typeof s == "string" && s == "")
+        return true;
+    if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
-		return parseInt(s) == s;
 	}
-	
-	return typeof(s) == 'number' && parseInt(s) == s;
+	return parseFloat(s) == parseInt(s) && !isNaN(s);
 }
 
 function isNumeric(s) {
@@ -574,18 +574,7 @@ function bothExist(item1, item2) {
 	return true;
 }
 
-function trim(s) {
-	if(typeof(s) == 'undefined')
-		return s;
-	while (s.substring(0,1) == " ") {
-		s = s.substring(1, s.length);
-	}
-	while (s.substring(s.length-1, s.length) == ' ') {
-		s = s.substring(0,s.length-1);
-	}
-
-	return s;
-}
+trim = YAHOO.lang.trim;
 
 
 function check_form(formname) {
@@ -784,7 +773,7 @@ function validate_form(formname, startsWith){
 	inputsWithErrors = new Array();
 	for(var i = 0; i < validate[formname].length; i++){
 			if(validate[formname][i][nameIndex].indexOf(startsWith) == 0){
-				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
+				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined' && typeof form[validate[formname][i][nameIndex]].value != 'undefined'){
 					var bail = false;
 
                     //If a field is not required and it is blank or is binarydependant, skip validation.
@@ -833,7 +822,7 @@ function validate_form(formname, startsWith){
 						case 'alphanumeric':
 							break;
 						case 'file':
-						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "") {
+						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
 						          isError = true;
 						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
 						      }					      
@@ -1586,6 +1575,100 @@ function sendAndRedirect(theForm, loadingStr, redirect_location) {
 	var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
 	return false;
 }
+
+SUGAR._ajaxUICallback = function(o)
+{
+    var cont;
+    if (typeof window.onbeforeunload == "function")
+        window.onbeforeunload = null;
+    try{
+        var r = YAHOO.lang.JSON.parse(o.responseText);
+        cont = r.content;
+        if (r.moduleList)
+        {
+            SUGAR.themes.setModuleTabs(r.moduleList);
+        }
+        if (r.title)
+        {
+            document.title = r.title.replace(/&raquo;/g, '>').replace(/&nbsp;/g, ' ');
+        }
+        //SUGAR.themes.setCurrentTab(r.menu);
+        var c = document.getElementById("content");
+        c.innerHTML = cont;
+        SUGAR.util.evalScript(cont);
+    } catch (e){
+        document.body.innerHTML = o.responseText;
+        SUGAR.util.evalScript(document.body.innerHTML);
+    }
+
+
+}
+
+SUGAR._canAjaxLoadModule = function(module)
+{
+    var bannedModules = ['Emails', 'Administration', 'ModuleBuilder'];
+    return bannedModules.indexOf(module) == -1;
+}
+
+SUGAR.ajaxLoadContent = function(url, params)
+{
+    //Don't ajax load certain modules
+    var module = /module=(\w+)/.exec(url)[1];
+    if (SUGAR._canAjaxLoadModule(module))
+    {
+        YAHOO.util.History.navigate('ajaxUILoc',  url);
+    } else {
+        window.location = url;
+    }
+}
+
+SUGAR._ajaxGo = function(url, params)
+{
+    if (SUGAR.EmailAddressWidget){
+        SUGAR.EmailAddressWidget.instances = {};
+        SUGAR.EmailAddressWidget.count = {};
+    }
+    if (!/action=ajaxui/.exec(window.location))
+        window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
+    else {
+        YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1', {
+            success: SUGAR._ajaxUICallback
+        });
+    }
+}
+
+SUGAR.ajaxSubmitForm = function(formname, params)
+{
+    if (SUGAR.EmailAddressWidget){
+        SUGAR.EmailAddressWidget.instances = {};
+        SUGAR.EmailAddressWidget.count = {};
+    }
+    //Don't ajax load certain modules
+    var form = YAHOO.util.Dom.get(formname) || document.forms[formname];
+    if (SUGAR._canAjaxLoadModule(form.module.value))
+    {
+        YAHOO.util.Connect.setForm(form);
+        YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
+            success: SUGAR._ajaxUICallback
+        });
+    } else {
+        window.location = url;
+    }
+}
+
+SUGAR.ajaxFirstLoad = function()
+{
+    //Setup Browser History
+    var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
+    url = url ? url : 'index.php?module=Home&action=index';
+
+    YAHOO.util.History.register('ajaxUILoc', url, SUGAR._ajaxGo);
+    YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
+    SUGAR._ajax_hist_loaded = true;
+    SUGAR._ajaxGo(url);
+}
+
+
 
 function saveForm(theForm, theDiv, loadingStr) {
 	if(check_form(theForm)){

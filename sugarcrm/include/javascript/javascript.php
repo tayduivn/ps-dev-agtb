@@ -64,7 +64,8 @@ class javascript{
     }
 
 	function addField($field,$required, $prefix='', $displayField='', $translate = false){
-		if(isset($this->sugarbean->field_name_map[$field]['vname'])){
+		if ($field == "id") return;
+        if(isset($this->sugarbean->field_name_map[$field]['vname'])){
             $vname = $this->sugarbean->field_name_map[$field]['vname'];
             if ( $translate )
                 $vname = $this->buildStringToTranslateInSmarty($this->sugarbean->field_name_map[$field]['vname']);

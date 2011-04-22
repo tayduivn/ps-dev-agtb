@@ -92,9 +92,36 @@ class SugarView
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();
+        $ajax_ret = array();
+        if ($this->_getOption('json_output'))
+            ob_start();
         $this->display();
+        if ($this->_getOption('json_output'))
+        {
+            $content = ob_get_clean();
+            $module = $this->module;
+            $ajax_ret = array(
+                 'content' => $content,
+                 'menu' => array(
+                     'module' => $module,
+                     'label' => translate($module),
+                     $this->getMenu($module),
+                 ),
+                'moduleList' => $this->displayHeader(true),
+                'title' => $this->getBrowserTitle(),
+            );
+        }
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        if ($this->_getOption('show_subpanels')) $this->_displaySubPanels();
+        if ($this->_getOption('json_output'))
+            ob_start();
+
+        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
+        if ($this->_getOption('json_output'))
+        {
+            $ajax_ret['content'] .= ob_get_clean();
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        }
         if ($this->action === 'Login') {
             //this is needed for a faster loading login page ie won't render unless the tables are closed
             ob_flush();
@@ -193,7 +220,7 @@ class SugarView
     /**
      * Displays the header on section of the page; basically everything before the content
      */
-    public function displayHeader()
+    public function displayHeader($retModTabs=false)
     {
         global $theme;
         global $max_tabs;
@@ -582,18 +609,30 @@ class SugarView
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
             $ss->clear_compiled_tpl($headerTpl);
-        $ss->display($headerTpl);
 
-        $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+        if ($retModTabs)
+        {
+            return $ss->fetch($themeObject->getTemplate('_headerModuleList.tpl'));
+        } else {
+            $ss->display($headerTpl);
 
-        $errorMessages = SugarApplication::getErrorMessages();
-        if ( !empty($errorMessages)) {
-            foreach ( $errorMessages as $error_message ) {
-                echo('<p class="error">' . $error_message.'</p>');
+            $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+
+            $errorMessages = SugarApplication::getErrorMessages();
+            if ( !empty($errorMessages)) {
+                foreach ( $errorMessages as $error_message ) {
+                    echo('<p class="error">' . $error_message.'</p>');
+                }
             }
         }
 
     }
+
+    function getModuleMenuHTML()
+    {
+
+    }
+
     /**
      * If the view is classic then this method will include the file and
      * setup any global variables.

@@ -4666,4 +4666,9 @@ function getUrls($string)
 	}
     return $urls;
 }
+
+function ajaxLink($url)
+{
+	return "#ajaxUILoc=" . urlencode($url);
+}
 ?>
