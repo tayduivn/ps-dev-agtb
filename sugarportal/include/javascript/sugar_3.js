@@ -331,13 +331,13 @@ function bothExist(item1, item2) {
 }
 
 var trim = function(s)
-           {
-		        try {
-		            return s.replace(/^\s+|\s+$/g, "");
-		        } catch(e) {
-		            return s;
-		        }
-		   };
+    {
+      try {
+	     return s.replace(/^\s+|\s+$/g, "");
+	  } catch(e) {
+	     return s;
+	  }
+    };
 
 function check_form(formname) {
 	if (typeof(siw) != 'undefined' && siw 

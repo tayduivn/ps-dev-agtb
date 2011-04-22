@@ -613,7 +613,7 @@ class MssqlManager extends DBManager
         $i=0;
         $offset = 0;
         $strip_array = array();
-        while ($i<$count) {
+        while ($i<$count && $offset<strlen($p_sql)) {
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
                 break;
@@ -776,7 +776,7 @@ class MssqlManager extends DBManager
     {
         $sql = strtolower($sql);
         $orig_order_match = trim($orig_order_match);
-        if (strpos($orig_order_match, "."))
+        if (strpos($orig_order_match, ".") != 0)
             //this has a tablename defined, pass in the order match
             return $orig_order_match;
 
@@ -834,7 +834,7 @@ class MssqlManager extends DBManager
             $alias_beg_pos = 0;
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
-            else if (strncasecmp($psql, 'isnull', 6))
+            else if (strncasecmp($psql, 'isnull', 6) != 0)
                 $alias_beg_pos = strpos($psql, " ");
 
             if ($alias_beg_pos > 0) {
