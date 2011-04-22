@@ -22,8 +22,8 @@ function test_leads_searchdefs_merge() {
    $this->assertTrue(file_exists('custom/modules/Leads/metadata/searchdefs.php.suback.php'));
    require('custom/modules/Leads/metadata/searchdefs.php');
    
-   //Here's the main test... check to see that maxColumns has been changed to 4
-   $this->assertEquals($searchdefs['Leads']['templateMeta']['maxColumns'], '4', 'Assert that maxColumns has been set to 4 for Leads module'); 
+   //Here's the main test... check to see that maxColumns has been changed to 3
+   $this->assertEquals($searchdefs['Leads']['templateMeta']['maxColumns'], '3', 'Assert that maxColumns remains set to 3 for Leads module'); 
    $fields = array();
    foreach($searchdefs['Leads']['layout']['basic_search'] as $col_key=>$col) {
       	$id = is_array($col) && isset($col['name']) ? $col['name'] : $col;
