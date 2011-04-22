@@ -4729,7 +4729,7 @@ function verify_image_file($path, $jpeg = false)
 	} else {
 	    // check image manually
 	    $fp = fopen($path, "r");
-	    if(!fp) return false;
+	    if(!$fp) return false;
 	    $data = fread($fp, 4096);
 	    fclose($fp);
 	    if(preg_match("/<(html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
