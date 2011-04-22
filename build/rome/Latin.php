@@ -1,16 +1,16 @@
 <?php
 
 class Latin{
-	
+
 	function __construct($rome, $translationPath, $baseDir, $ver){
 		$this->translationPath = $translationPath;
 		$this->rome = $rome;
 		$this->baseDir = realpath($baseDir);
 		$this->ver = $ver;
 		if(empty($this->startPath))$this->startPath = $this->baseDir;
-		
+
 	}
-	
+
 	function updateGit(){
 		$this->cwd = getcwd();
 		 if(!file_exists($this->translationPath)){
@@ -24,10 +24,11 @@ class Latin{
 			passthru("git checkout 6_1");
 			passthru("git pull origin 6_1");
 		}else{
-			passthru("git pull origin master");
+			passthru("git checkout master");
+		    passthru("git pull origin master");
 		}
 	}
-	
+
 	function copyFiles($path){
 		require($this->cwd ."/". $this->translationPath . '/config_override.php');
 		$langConfig = array();
@@ -38,7 +39,7 @@ class Latin{
     			 $this->copyFiles($fileInfo->getPathname());
     		}else{
     			foreach($this->rome->config['builds'] as $flav=>$build){
-    				
+
 					if(empty($build['languages']))continue;
 					foreach($build['languages'] as $lang){
 	   					if(strpos($fileInfo->getFilename(), $lang. '.') !== false){
@@ -50,30 +51,30 @@ class Latin{
     						$en_usPath =$this->rome->buildPath . '/' . $flav . '/'. str_replace($lang . '.', 'en_us.',$this->rome->cleanPath($this->baseDir . '/' . $path));
     						if(file_exists($en_usPath)){
     							$this->rome->buildFile($this->baseDir . '/' . $path, $this->startPath);
-    							
+
     						}
 	   					}
 	   					$langConfig[$lang] = (!empty($sugar_config['languages'][$lang]))?$sugar_config['languages'][$lang]:$lang;
-	   					
+
 					}
 					$license = $this->rome->config['license'][$flav];
 					file_put_contents($this->rome->buildPath . '/' . $flav . '/sugarcrm/install/lang.config.php', '<?php' . "\n$license\n" . '$config["languages"]=' . var_export($langConfig, true)  . ';');
-					
+
     			}
     		}
-		}	
-		
+		}
+
 	}
-	
+
 	function copyTranslations(){
 		$this->updateGit();
-		
+
 		$tmp_path=realpath("$this->cwd" ."/". "$this->translationPath");
 		$this->copyFiles($tmp_path);
 		chdir($this->cwd);
-	} 
-	
-	
+	}
+
+
 }
 
 
