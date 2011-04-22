@@ -136,23 +136,41 @@ class Document extends SugarBean {
             }
             
             $Revision->doc_type = $this->doc_type;
-            $Revision->doc_id = $this->doc_id;
-            $Revision->doc_url = $this->doc_url;
-            $Revision->save();
-			
+            if ( isset($this->doc_id) ) {
+                $Revision->doc_id = $this->doc_id;
+            }
+            if ( isset($this->doc_url) ) {
+                $Revision->doc_url = $this->doc_url;
+            }
+            
+            $Revision->id = create_guid();
+            $Revision->new_with_id = true;
+
+            $createRevision = false;
             //Move file saved during populatefrompost to match the revision id rather than document id
             if (!empty($_FILES['filename_file'])) {
                 rename(UploadFile :: get_url($this->filename, $this->id), UploadFile :: get_url($this->filename, $Revision->id));
+                $createRevision = true;
             } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'Sugar' ) ) {
                 // Looks like we need to duplicate a file, this is tricky
                 $oldDocument = new Document();
                 $oldDocument->retrieve($_REQUEST['duplicateId']);
                 $GLOBALS['log']->debug('Attempting to copy from '.UploadFile :: get_url($this->filename, $oldDocument->document_revision_id).' to '.UploadFile :: get_url($this->filename, $Revision->id));
                 copy(UploadFile :: get_url($this->filename, $oldDocument->document_revision_id), UploadFile :: get_url($this->filename, $Revision->id));
+                $createRevision = true;
             }
-            //update document with latest revision id
-            $this->process_save_dates=false; //make sure that conversion does not happen again.
-            $this->document_revision_id = $Revision->id;	
+
+            // For external documents, we just need to make sure we have a doc_id
+            if ( !empty($this->doc_id) && $this->doc_type != 'Sugar' ) {
+                $createRevision = true;
+            }
+
+            if ( $createRevision ) {
+                $Revision->save();
+                //update document with latest revision id
+                $this->process_save_dates=false; //make sure that conversion does not happen again.
+                $this->document_revision_id = $Revision->id;	
+            }
 
 
             //set relationship field values if contract_id is passed (via subpanel create)
