@@ -11746,8 +11746,16 @@ $jit.ST.Plot.NodeTypes.implement({
 
 
             } else {
-              ctx.textAlign = 'center';
-              ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+              //if the number of nodes greater than 8 rotate labels 45 degrees
+              if(nodeCount > 8) {
+				ctx.textAlign = 'left';
+				ctx.translate(x + width/2, y + label.size/2 + config.labelOffset);
+				ctx.rotate(45* Math.PI / 180);
+				ctx.fillText(node.name, 0, 0);
+			  } else {
+				ctx.textAlign = 'center';
+				ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+			  }
             }
           }
           ctx.restore();
