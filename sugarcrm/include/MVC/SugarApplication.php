@@ -730,7 +730,7 @@ class SugarApplication
 	    if(substr($action, 0, 4) == "save" || substr($action, 0, 6) == "delete") {
 	        return true;
 	    }
-	    if($this->modifyModules[$this->controller->module]) {
+	    if(isset($this->modifyModules[$this->controller->module])) {
 	        if($this->modifyModules[$this->controller->module] == true) {
 	            return true;
 	        }
