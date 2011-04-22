@@ -45,10 +45,6 @@ $subpanel_layout = array(
 	 		'vname' => 'LBL_APPLICATION',
 	 		'width' => '20%',
 		),
-		'active'=>array(
-	 		'vname' => 'LBL_ACTIVE',
-	 		'width' => '5%',
-		),		
 		'validated'=>array(
 	 		'vname' => 'LBL_VALIDATED',
 	 		'width' => '5%',
