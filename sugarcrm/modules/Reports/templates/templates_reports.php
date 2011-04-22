@@ -779,6 +779,7 @@ function reportResults(&$reporter, &$args) {
 		chartId.style.display = \"\";
 		showHideChartButton.title = \"{$mod_strings['LBL_REPORT_HIDE_CHART']}\";
 		showHideChartButton.value = \"{$mod_strings['LBL_REPORT_HIDE_CHART']}\";
+		loadCustomChartForReports();
 	} else {
 		chartId.style.display = 'none';		
 		saveReportOptionsState('showChart', '0');
@@ -794,7 +795,7 @@ elseif(!empty($_REQUEST['record']))
 else  
     $report_id = ''; 
     
-	echo "<div class='reportChartContainer' id='{$report_id}_div'>";
+	echo "<div class='reportChartContainer' id='{$report_id}_div' style='{$reportChartDivStyle}'>";
 	 template_chart($reporter, $reportChartDivStyle);
 	 echo "</div>";
 	} // if
