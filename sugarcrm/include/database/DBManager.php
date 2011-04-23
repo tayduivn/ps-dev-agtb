@@ -610,14 +610,14 @@ abstract class DBManager
             $res = true;
             if ($sql) {
                 $msg = "Error creating table: $tablename";
-                $res = $res and $this->query($sql,true,$msg);
+                $res = ($res and $this->query($sql,true,$msg));
             }
             if(!$this->supports("inline_keys")) {
                 // handle constraints and indices
                 $indicesArr = $this->getConstraintSql($indices, $tablename);
                 if (count($indicesArr) > 0)
                     foreach ($indicesArr as $indexSql)
-                        $res = $res and $this->query($indexSql, true, "Error creating indexes");
+                        $res = ($res and $this->query($indexSql, true, "Error creating indexes"));
             }
             return $res;
         }
@@ -1696,7 +1696,7 @@ abstract class DBManager
             			break;
             		case '&':
             			$filename = $data[$dataIndex++];
-				        $query .= sugar_file_get_contents($filename);
+				        $query .= file_get_contents($filename);
             			break;
             		case '!':
             			$query .= $data[$dataIndex++];
