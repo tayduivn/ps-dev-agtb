@@ -1628,10 +1628,17 @@ SUGAR._ajaxGo = function(url, params)
         SUGAR.EmailAddressWidget.instances = {};
         SUGAR.EmailAddressWidget.count = {};
     }
+	
+	var module = /module=([^&]*)/.exec(url)[1];
+	var loadLanguageJS = '';
+	if(typeof(SUGAR.language.languages[module]) == 'undefined'){
+		loadLanguageJS = '&loadLanguageJS=1';
+	}
+	
     if (!/action=ajaxui/.exec(window.location))
         window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
     else {
-        YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1', {
+        YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
             success: SUGAR._ajaxUICallback
         });
     }

@@ -93,8 +93,12 @@ class SugarView
         $this->preDisplay();
         $this->displayErrors();
         $ajax_ret = array();
-        if ($this->_getOption('json_output'))
-            ob_start();
+		if ($this->_getOption('json_output')){
+			ob_start();
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+				echo $this->_getModLanguageJS();
+			}
+		}
         $this->display();
         if ($this->_getOption('json_output'))
         {
@@ -783,11 +787,9 @@ EOHTML;
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
             echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
-            if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
-                require_once ('include/language/jsLanguage.php');
-                jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
-            }
-            echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+			
+			echo $this->_getModLanguageJS();
+			
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
             echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
@@ -811,7 +813,15 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
-
+	
+	protected function _getModLanguageJS(){
+		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+			require_once ('include/language/jsLanguage.php');
+			jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
+		}
+		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+	}
+	
     /**
      * Called from process(). This method will display the footer on the page.
      */
