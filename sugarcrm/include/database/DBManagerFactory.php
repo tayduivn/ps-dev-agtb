@@ -33,6 +33,42 @@ require_once('include/database/DBManager.php');
 class DBManagerFactory
 {
     static $instances = array();
+
+    public static function getTypeInstance($type, $config = array())
+    {
+        $my_db_manager = 'MysqlManager';
+        if( $type == "mysql" ) {
+            if (empty($config['mysqli_disabled']) && function_exists('mysqli_connect')) {
+                $my_db_manager = 'MysqliManager';
+            }
+        //BEGIN SUGARCRM flav=ent ONLY
+        } elseif($type == "oci8" ) {
+                $my_db_manager = 'OracleManager';
+        //END SUGARCRM flav=ent ONLY
+        } elseif( $type == "mssql" ){
+          	if ( function_exists('sqlsrv_connect')
+                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' )) {
+                $my_db_manager = 'SqlsrvManager';
+            } elseif (is_freetds()
+                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' )) {
+                $my_db_manager = 'FreeTDSManager';
+            } else {
+                $my_db_manager = 'MssqlManager';
+            }
+        }
+        if(!empty($config['db_manager'])){
+            $my_db_manager = $config['db_manager'];
+        }
+        $GLOBALS['log']->info("using $my_db_manager DBManager backend");
+
+        require_once("include/database/{$my_db_manager}.php");
+        if(class_exists($my_db_manager)) {
+            return new $my_db_manager();
+        } else {
+            return null;
+        }
+    }
+
     /**
 	 * Returns a reference to the DB object for instance $instanceName, or the default
      * instance if one is not specified
@@ -43,7 +79,7 @@ class DBManagerFactory
 	public static function getInstance($instanceName = '')
     {
         global $sugar_config;
-        static $count, $old_count;
+        static $count = 0, $old_count = 0;
 
         //fall back to the default instance name
         if(empty($sugar_config['db'][$instanceName])){
@@ -72,36 +108,7 @@ class DBManagerFactory
                 }
             }
 
-            //END SUGARCRM flav=ent ONLY
-            $my_db_manager = 'MysqlManager';
-            if( $config['db_type'] == "mysql" ) {
-                if ((!isset($sugar_config['mysqli_disabled'])
-                            || $sugar_config['mysqli_disabled'] == false)
-                    && function_exists('mysqli_connect')) {
-                    $my_db_manager = 'MysqliManager';
-                }
-            }
-            if( $config['db_type'] == "oci8" ){
-                //BEGIN SUGARCRM flav=ent ONLY
-                $my_db_manager = 'OracleManager';
-                //END SUGARCRM flav=ent ONLY
-            }
-            elseif( $config['db_type'] == "mssql" ){
-            	if ( function_exists('sqlsrv_connect')
-                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' ))
-                	$my_db_manager = 'SqlsrvManager';
-            	elseif (is_freetds()
-                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' ))
-                    $my_db_manager = 'FreeTDSManager';
-                else
-                    $my_db_manager = 'MssqlManager';
-            }
-            $GLOBALS['log']->info("using $my_db_manager DBManager backend");
-            if(!empty($config['db_manager'])){
-                $my_db_manager = $config['db_manager'];
-            }
 
-            //BEGIN SUGARCRM flav=ent ONLY
             if(!empty($parentInstanceName) && !empty(self::$instances[$parentInstanceName])){
                 self::$instances[$instanceName] = self::$instances[$parentInstanceName];
                 $old_count++;
@@ -110,16 +117,14 @@ class DBManagerFactory
             }
             else{
                 //END SUGARCRM flav=ent ONLY
-                require_once("include/database/{$my_db_manager}.php");
-                self::$instances[$instanceName] = new $my_db_manager();
+                self::$instances[$instanceName] = self::getTypeInstance($config['db_type'], $config);
                 self::$instances[$instanceName]->connect($config, true);
                 self::$instances[$instanceName]->count_id = $count;
                 self::$instances[$instanceName]->references = 0;
                 //BEGIN SUGARCRM flav=ent ONLY
             }
             //END SUGARCRM flav=ent ONLY
-        }
-        else {
+        } else {
             $old_count++;
             self::$instances[$instanceName]->references = $old_count;
         }
@@ -133,6 +138,21 @@ class DBManagerFactory
         }
         self::$instances = array();
     }
-}
 
-?>
+    public static function getDbDrivers()
+    {
+        $drivers = array();
+        foreach(new GlobIterator("include/database/*Manager.php", FilesystemIterator::KEY_AS_FILENAME) as $name => $file) {
+            if($name == "DBManager.php") continue;
+
+            require_once($file->getPathname());
+            $classname = substr($name, 0, -4);
+            if(!class_exists($classname)) continue;
+            $driver = new $classname;
+            if($driver->valid()) {
+                $drivers[$driver->variant] = $driver->dbType;
+            }
+        }
+        return $drivers;
+    }
+}

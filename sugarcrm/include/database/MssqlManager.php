@@ -79,6 +79,7 @@ class MssqlManager extends DBManager
      */
     public $dbType = 'mssql';
     public $dbName = 'MsSQL';
+    public $variant = 'mssql';
 
     protected $capabilities = array(
         "affected_rows" => true,
@@ -176,7 +177,11 @@ class MssqlManager extends DBManager
             if(!$this->database){
                 $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name'].
                     " as ".$configOptions['db_user_name'].".");
-                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                if($dieOnError) {
+                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                } else {
+                    return false;
+                }
             }
             if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
@@ -185,8 +190,12 @@ class MssqlManager extends DBManager
             }
         }
         //make sure connection exists
-        if(!$this->database){
-            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+        if(!$this->database) {
+                if($dieOnError) {
+                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                } else {
+                    return false;
+                }
         }
 
         //select database
@@ -207,7 +216,11 @@ class MssqlManager extends DBManager
 			}
 			if(!$connected){
 			    $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}");
-				sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                if($dieOnError) {
+                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                } else {
+                    return false;
+                }
 			}
          }
 
@@ -215,6 +228,7 @@ class MssqlManager extends DBManager
             $GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
+        return true;
     }
 
 	/**
@@ -1879,5 +1893,72 @@ EOQ;
         }
         $condition = $this->quoted(join(" AND ",$condition));
         return "CONTAINS($field, $condition)";
+    }
+
+    /**
+     * Check if certain database exists
+     * @param string $dbname
+     */
+    public function dbExists($dbname)
+    {
+        $db = $this->getOne("SELECT name FROM master..sysdatabases WHERE name = N".$this->quoted($dbname));
+        return !empty($db);
+    }
+
+    /**
+     * Select database
+     * @param string $dbname
+     */
+    protected function selectDb($dbname)
+    {
+        return mssql_select_db($dbname);
+    }
+
+    /**
+     * Check if certain DB user exists
+     * @param string $username
+     */
+    public function userExists($username)
+    {
+        $this->selectDb("master");
+        $user = $this->getOne("select count(*) from sys.sql_logins where name =".$this->quoted($username));
+        // FIXME: go back to the original DB
+        return !empty($user);
+    }
+
+    /**
+     * Create DB user
+     * @param string $database_name
+     * @param string $host_name
+     * @param string $user
+     * @param string $password
+     */
+    public function createDbUser($database_name, $host_name, $user, $password)
+    {
+        $qpassword = $this->quote($password);
+        $this->selectDb($database_name);
+        $this->query("CREATE LOGIN $user WITH PASSWORD = '$qpassword'", true);
+        $this->query("CREATE USER $user FOR LOGIN $user", true);
+        $this->query("EXEC sp_addRoleMember 'db_ddladmin ', '$user'", true);
+        $this->query("EXEC sp_addRoleMember 'db_datareader','$user'", true);
+        $this->query("EXEC sp_addRoleMember 'db_datawriter','$user'", true);
+    }
+
+    /**
+     * Create a database
+     * @param string $dbname
+     */
+    public function createDatabase($dbname)
+    {
+        return $this->query("CREATE DATABASE $dbname", true);
+    }
+
+    /**
+     * Drop a database
+     * @param string $dbname
+     */
+    public function dropDatabase($dbname)
+    {
+        return $this->query("DROP DATABASE $dbname", true);
     }
 }

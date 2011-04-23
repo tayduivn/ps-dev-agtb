@@ -30,7 +30,7 @@ function createDatabaseForER_Diagram($sql) {
     echo "{$mod_strings['LBL_PERFORM_CREATE_DB_1']} {$setup_db_database_name} {$mod_strings['LBL_PERFORM_CREATE_DB_2']} {$setup_db_host_name}...";
 
 	$_SESSION['setup_db_type']='mysql';
-    switch($_SESSION['setup_db_type']) {
+	switch($_SESSION['setup_db_type']) {
         case 'mysql':
 
              if(isset($_SESSION['mysql_type'])){

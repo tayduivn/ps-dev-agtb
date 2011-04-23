@@ -77,6 +77,8 @@ include_once('include/database/MssqlManager.php');
 class SqlsrvManager extends MssqlManager
 {
     public $dbName = 'SQL Server';
+    public $variant = 'sqlsrv';
+
     protected $capabilities = array(
         "affected_rows" => true,
         'fulltext' => true,
@@ -152,7 +154,11 @@ class SqlsrvManager extends MssqlManager
                 );
         if(empty($this->database)) {
             $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name']." as ".$configOptions['db_user_name'].".");
-            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            if($dieOnError) {
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            } else {
+                return false;
+            }
         }
 
         if($this->checkError('Could Not Connect:', $dieOnError))
@@ -161,6 +167,7 @@ class SqlsrvManager extends MssqlManager
         sqlsrv_query($this->database, 'SET DATEFORMAT mdy');
 
         $GLOBALS['log']->info("Connect:".$this->database);
+        return true;
     }
 
 	/**
@@ -641,5 +648,14 @@ EOSQL;
     public function verifyDeleteFrom($table, $query)
     {
         return $this->verifyGenericQueryRollback("DELETE", $table, $query);
+    }
+
+    /**
+     * Select database
+     * @param string $dbname
+     */
+    protected function selectDb($dbname)
+    {
+        return $this->query("USE ".$this->quoted($dbname));
     }
 }

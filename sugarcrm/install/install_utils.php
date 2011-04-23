@@ -519,6 +519,26 @@ function getSugarConfigLanguageArray($langZip) {
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    FROM performSetup.php
+
+function getDbConnection()
+{
+    global $setup_db_host_name;
+    global $setup_db_admin_user_name;
+    global $setup_db_admin_password;
+    global $setup_db_host_instance;
+
+    $dbconfig = array(
+                "db_host_name" => $setup_db_host_name,
+                "db_user_name" => $setup_db_admin_user_name,
+                "db_password" => $setup_db_admin_password,
+                "db_host_instance" => $setup_db_host_instance,
+    );
+
+    $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
+    $db->connect($dbconfig, true);
+    return $db;
+}
+
 /**
  * creates the Sugar DB user (if not admin)
  */
@@ -535,230 +555,21 @@ function handleDbCreateSugarUser() {
     global $setup_db_sugarsales_password;
 
     echo $mod_strings['LBL_PERFORM_CREATE_DB_USER'];
-    $errno = '';
-    switch($_SESSION['setup_db_type']) {
-        case "mysql":
-            if(isset($_SESSION['mysql_type'])){
-                $host_name = getHostPortFromString($setup_db_host_name);
-                if(empty($host_name)){
-                    $link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                }else{
-                    $link = @mysqli_connect($host_name[0], $setup_db_admin_user_name, $setup_db_admin_password,null,$host_name[1]);
-                }
-                $query  = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
-                            ON `{$setup_db_database_name}`.*
-                            TO \"{$setup_db_sugarsales_user}\"@\"{$setup_site_host_name}\"
-                            IDENTIFIED BY '{$setup_db_sugarsales_password}';";
 
-                if(!@mysqli_query($link, $query)) {
-                    $errno = mysqli_errno($link);
-                    $error = mysqli_error($link);
-                }
-
-                $query  = "SET PASSWORD FOR \"{$setup_db_sugarsales_user}\"@\"{$setup_site_host_name}\" = old_password('{$setup_db_sugarsales_password}');";
-
-                if(!@mysqli_query($link, $query)) {
-                     $errno = mysqli_errno($link);
-                     $error = mysqli_error($link);
-                }
-
-                if($setup_site_host_name != 'localhost') {
-                    echo $mod_strings['LBL_PERFORM_CREATE_LOCALHOST'];
-
-                    $host_name = getHostPortFromString($setup_db_host_name);
-                    if(empty($host_name)){
-                        $link   = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                    }else{
-                        $link   = @mysqli_connect($host_name[0], $setup_db_admin_user_name, $setup_db_admin_password,null,$host_name[1]);
-                    }
-
-                    $query  = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
-                                ON `{$setup_db_database_name}`.*
-                                TO \"{$setup_db_sugarsales_user}\"@\"localhost\"
-                                IDENTIFIED BY '{$setup_db_sugarsales_password}';";
-                    if(!@mysqli_query($link, $query)) {
-                        $errno = mysqli_errno($link);
-                        $error = mysqli_error($link);
-                    }
-
-                    $query = "SET PASSWORD FOR \"{$setup_db_sugarsales_user}\"@\"localhost\"\ = old_password('{$setup_db_sugarsales_password}');";
-
-                    if(!@mysqli_query($link, $query)) {
-                        $errno = mysqli_errno($link);
-                        $error = mysqli_error($link);
-                    }
-                } // end LOCALHOST
-
-                mysqli_close($link);
-
-            }else{
-                $link   = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                $query  = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
-                            ON `{$setup_db_database_name}`.*
-                            TO \"{$setup_db_sugarsales_user}\"@\"{$setup_site_host_name}\"
-                            IDENTIFIED BY '{$setup_db_sugarsales_password}';";
-
-                if(!@mysql_query($query, $link)) {
-                    $errno = mysql_errno();
-                    $error = mysql_error();
-                }
-
-                $query  = "SET PASSWORD FOR \"{$setup_db_sugarsales_user}\"@\"{$setup_site_host_name}\" = old_password('{$setup_db_sugarsales_password}');";
-
-                if(!@mysql_query($query, $link)) {
-                     $errno = mysql_errno();
-                     $error = mysql_error();
-                }
-
-                if($setup_site_host_name != 'localhost') {
-                    echo $mod_strings['LBL_PERFORM_CREATE_LOCALHOST'];
-
-                    $link   = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                    $query  = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
-                                ON `{$setup_db_database_name}`.*
-                                TO \"{$setup_db_sugarsales_user}\"@\"localhost\"
-                                IDENTIFIED BY '{$setup_db_sugarsales_password}';";
-                    if(!@mysql_query($query, $link)) {
-                        $errno = mysql_errno();
-                        $error = mysql_error();
-                    }
-
-                    $query = "SET PASSWORD FOR \"{$setup_db_sugarsales_user}\"@\"localhost\"\ = old_password('{$setup_db_sugarsales_password}');";
-
-                    if(!@mysql_query($query, $link)) {
-                        $errno = mysql_errno();
-                        $error = mysql_error();
-                    }
-                } // end LOCALHOST
-
-                mysql_close($link);
-
-            }
-        break;
-
-        case 'mssql':
-        $setup_db_host_instance = trim($setup_db_host_instance);
-
-        $connect_host = "";
-        if (empty($setup_db_host_instance)){
-            $connect_host = $setup_db_host_name ;
-        }else{
-            $connect_host = $setup_db_host_name . "\\" . $setup_db_host_instance;
-        }
-        if(isset($_SESSION['mssql_type'])){
-            $link = sqlsrv_connect($connect_host , array( 'UID' => $setup_db_admin_user_name, 'PWD' => $setup_db_admin_password));
-            $query = "USE " . $setup_db_database_name . ";";
-            @sqlsrv_query($link,$query);
-
-            $query = "CREATE LOGIN $setup_db_sugarsales_user WITH PASSWORD = '$setup_db_sugarsales_password'";
-            if(!sqlsrv_query($link,$query)) {
-                $errno = 9999;
-                displayMssqlErrors('mssqlsrv', $query);
-                break;
-            }
-
-            $query = "CREATE USER $setup_db_sugarsales_user  FOR LOGIN $setup_db_sugarsales_user ";
-            if(!sqlsrv_query($link,$query)) {
-                $errno = 9999;
-                displayMssqlErrors('mssqlsrv', $query);
-                break;
-            }
-
-            $query = "EXEC sp_addRoleMember 'db_ddladmin ', '$setup_db_sugarsales_user'";
-            if(!sqlsrv_query($link,$query)) {
-                $errno = 9999;
-                displayMssqlErrors('mssqlsrv', $query);
-                break;
-            }
-
-            $query = "EXEC sp_addRoleMember 'db_datareader','$setup_db_sugarsales_user'";
-            if(!sqlsrv_query($link,$query)) {
-                $errno = 9999;
-                displayMssqlErrors('mssqlsrv', $query);
-                break;
-            }
-
-            $query = "EXEC sp_addRoleMember 'db_datawriter','$setup_db_sugarsales_user'";
-            if(!sqlsrv_query($link,$query)) {
-                $errno = 9999;
-                displayMssqlErrors('mssqlsrv', $query);
-                break;
-            }
-        }
-        else {
-            $link = mssql_connect($connect_host , $setup_db_admin_user_name, $setup_db_admin_password);
-            $query = "USE " . $setup_db_database_name . ";";
-            @mssql_query($query);
-
-            $query = "CREATE LOGIN $setup_db_sugarsales_user WITH PASSWORD = '$setup_db_sugarsales_password'";
-            if(!@mssql_query($query)) {
-                $errno = 9999;
-                $error = "Error Adding Login. SQL Query: $query";
-				displayMssqlErrors('mssql', $query);
-				break;
-            }
-
-            $query = "CREATE USER $setup_db_sugarsales_user  FOR LOGIN $setup_db_sugarsales_user ";
-            if(!@mssql_query($query)) {
-                $errno = 9999;
-                $error = "Error Granting Access. SQL Query: $query";
-				displayMssqlErrors('mssql', $query);
-				break;
-            }
-
-            $query = "EXEC sp_addRoleMember 'db_ddladmin ', '$setup_db_sugarsales_user'";
-            if(!@mssql_query($query)) {
-                $errno = 9999;
-                $error = "Error Adding Role db_owner. SQL Query: $query";
-				displayMssqlErrors('mssql', $query);
-				break;
-            }
-
-            $query = "EXEC sp_addRoleMember 'db_datareader','$setup_db_sugarsales_user'";
-            if(!@mssql_query($query)) {
-                $errno = 9999;
-                $error = "Error Adding Role db_datareader. SQL Query: $query";
-				displayMssqlErrors('mssql', $query);
-				break;
-            }
-
-            $query = "EXEC sp_addRoleMember 'db_datawriter','$setup_db_sugarsales_user'";
-            if(!@mssql_query($query)) {
-                $errno = 9999;
-                $error = "Error Adding Role db_datawriter. SQL Query: $query";
-				displayMssqlErrors('mssql', $query);
-				break;
-            }
-        }
-        break;
-    } // end switch()
-    if($errno == '')
-    echo $mod_strings['LBL_PERFORM_DONE'];
-}
-
-function displayMssqlErrors($driver_type, $query) {
-    global $sugar_config;
-    if($driver_type =='mssqlsrv' && ($errors = sqlsrv_errors(SQLSRV_ERR_ALL) ) != null)
-    {
-       foreach( $errors as $error)
-       {
-
+    $db = getDbConnection();
+    $db->createDbUser($setup_db_database_name, $setup_site_host_name, $setup_db_sugarsales_user, setup_db_sugarsales_password);
+    $err = $db->lastError();
+    if($err == '')  {
+        echo $mod_strings['LBL_PERFORM_DONE'];
+    } else {
           echo "<div style='color:red;'>";
-          echo "An error occured when performing the folloing query:<br>";
-          echo "$query<br>";
+          echo "An error occured when creating user:<br>";
+          echo "$err<br>";
           echo "</div>";
-          installLog("An error occured when performing the query:".$query." SQLSTATE: ".$error[ 'SQLSTATE']." message: ".$error[ 'message']);
-       }
-    }
-	if($driver_type =='mssql')
-    {
-          echo "<div style='color:red;'>";
-          echo "An error occured when performing the folloing query:<br>";
-          echo "$query<br>";
-          echo "</div>";
-          installLog("An error occured when performing the query:".$query." message: ".mssql_get_last_message());
+          installLog("An error occured when creating user: $err");
     }
 }
+
 /**
  * ensures that the charset and collation for a given database is set
  * MYSQL ONLY
@@ -772,27 +583,9 @@ function handleDbCharsetCollation() {
     global $sugar_config;
 
     if($_SESSION['setup_db_type'] == 'mysql') {
-        if(isset($_SESSION['mysql_type'])){
-           $host_name = getHostPortFromString($setup_db_host_name);
-            if(empty($host_name)){
-                $link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-
-            }else{
-                    $link   = @mysqli_connect($host_name[0], $setup_db_admin_user_name, $setup_db_admin_password,null,$host_name[1]);
-            }
-
-            $q1 = "ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8";
-            $q2 = "ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci";
-            @mysqli_query($link, $q1);
-            @mysqli_query($link, $q2);
-
-        }else{
-            $link = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-            $q1 = "ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8";
-            $q2 = "ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci";
-            @mysql_query($q1, $link);
-            @mysql_query($q2, $link);
-        }
+         $db = getDbConnection();
+         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
+         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
     }
 }
 
@@ -810,86 +603,12 @@ function handleDbCreateDatabase() {
     global $sugar_config;
 
     echo "{$mod_strings['LBL_PERFORM_CREATE_DB_1']} {$setup_db_database_name} {$mod_strings['LBL_PERFORM_CREATE_DB_2']} {$setup_db_host_name}...";
-
-    switch($_SESSION['setup_db_type']) {
-        case 'mysql':
-            if(isset($_SESSION['mysql_type'])){
-                $host_name = getHostPortFromString($setup_db_host_name);
-                if(empty($host_name)){
-                    $link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                }else{
-                    $link   = @mysqli_connect($host_name[0], $setup_db_admin_user_name, $setup_db_admin_password,null,$host_name[1]);
-                }
-                $drop = 'DROP DATABASE IF EXISTS '.$setup_db_database_name;
-                @mysqli_query($link, $drop);
-
-                $query = 'CREATE DATABASE `' . $setup_db_database_name . '` CHARACTER SET utf8 COLLATE utf8_general_ci';
-                @mysqli_query($link, $query);
-                mysqli_close($link);
-
-            }else{
-                $link = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                $drop = 'DROP DATABASE IF EXISTS '.$setup_db_database_name;
-                @mysql_query($drop, $link);
-
-                $query = 'CREATE DATABASE `' . $setup_db_database_name . '` CHARACTER SET utf8 COLLATE utf8_general_ci';
-                @mysql_query($query, $link);
-                mysql_close($link);
-
-            }
-        break;
-
-        case 'mssql':
-        $connect_host = "";
-        $setup_db_host_instance = trim($setup_db_host_instance);
-        if (empty($setup_db_host_instance)){
-            $connect_host = $setup_db_host_name ;
-        }else{
-            $connect_host = $setup_db_host_name . "\\" . $setup_db_host_instance;
-        }
-        if(isset($_SESSION['mssql_type'])){
-            $link = sqlsrv_connect($connect_host , array( 'UID' => $setup_db_admin_user_name, 'PWD' => $setup_db_admin_password));
-            $setup_db_database_name = str_replace(' ', '_', $setup_db_database_name);  // remove space
-
-            //create check to see if this is existing db
-            $check = "SELECT count(name) num FROM master..sysdatabases WHERE name = N'".$setup_db_database_name."'";
-            $tableCntRes = sqlsrv_query($link,$check);
-            $tableCnt= sqlsrv_fetch_array($tableCntRes);
-
-            //if this db already exists, then drop it
-            if($tableCnt[0]>0){
-                $drop = "DROP DATABASE $setup_db_database_name";
-               @ sqlsrv_query($link,$drop);
-            }
-
-            //create db
-            $query = 'create database '.$setup_db_database_name;
-            @sqlsrv_query($link,$query);
-            @sqlsrv_close($link);
-        }
-        else {
-            $link = @mssql_connect($connect_host, $setup_db_admin_user_name, $setup_db_admin_password);
-            $setup_db_database_name = str_replace(' ', '_', $setup_db_database_name);  // remove space
-
-            //create check to see if this is existing db
-            $check = "SELECT count(name) num FROM master..sysdatabases WHERE name = N'".$setup_db_database_name."'";
-            $tableCntRes = mssql_query($check);
-            $tableCnt= mssql_fetch_row($tableCntRes);
-
-            //if this db already exists, then drop it
-            if($tableCnt[0]>0){
-                $drop = "DROP DATABASE $setup_db_database_name";
-               @ mssql_query($drop);
-            }
-
-            //create db
-            $query = 'create database '.$setup_db_database_name;
-            @mssql_query($query);
-            @mssql_close($link);
-        }
-        break;
-
+    $db = getDbConnection();
+    if($db->dbExists($setup_db_database_name)) {
+        $db->dropDatabase($setup_db_database_name);
     }
+    $db->createDatabase($setup_db_database_name);
+
     echo $mod_strings['LBL_PERFORM_DONE'];
 }
 
@@ -975,7 +694,7 @@ function handleSugarConfig() {
     // we're setting these since the user was given a fair chance to change them
     $sugar_config['dbconfig']['db_host_name']       = $setup_db_host_name;
     if($_SESSION['setup_db_type'] == 'mssql') {
-    $sugar_config['dbconfig']['db_host_instance']   = $setup_db_host_instance;
+        $sugar_config['dbconfig']['db_host_instance']   = $setup_db_host_instance;
     }
     $sugar_config['dbconfig']['db_user_name']       = $setup_db_sugarsales_user;
     $sugar_config['dbconfig']['db_password']        = $setup_db_sugarsales_password;
@@ -1239,7 +958,7 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
-    
+
 	require_once('install/UserDemoData.php');
 
     //Create default admin user
@@ -1546,26 +1265,6 @@ function recursive_is_writable($start_file)
     return $ret_val;
 }
 
-
-
-
-function getMysqlVersion($link) {
-    if($link) {
-        if(isset($_SESSION['mysql_type'])){
-            $version = mysqli_get_server_info($link);
-        }else{
-            if(is_resource($link)) {
-                $version = mysql_get_server_info($link);
-            }
-        }
-        return preg_replace('/[A-Za-z\-]/','',$version);
-    }
-    return 0;
-}
-
-
-
-
 // one place for form validation/conversion to boolean
 function get_boolean_from_request( $field ){
     if( !isset($_REQUEST[$field]) ){
@@ -1624,14 +1323,9 @@ function print_debug_comment(){
 function validate_systemOptions() {
     global $mod_strings;
     $errors = array();
-    switch( $_SESSION['setup_db_type'] ){
-        case "mysql":
-        case "mssql":
-        case "oci8":
-            break;
-        default:
-            $errors[] = "<span class='error'>".$mod_strings['ERR_DB_INVALID']."</span>";
-            break;
+    $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
+    if(empty($db)) {
+       $errors[] = "<span class='error'>".$mod_strings['ERR_DB_INVALID']."</span>";
     }
     return $errors;
 }

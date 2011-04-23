@@ -25,6 +25,8 @@ include_once('include/database/MssqlManager.php');
 class FreeTDSManager extends MssqlManager
 {
     public $dbName = 'FreeTDS SQL Server';
+    public $variant = 'freetds';
+
     protected $capabilities = array(
         "affected_rows" => true,
         'fulltext' => true,

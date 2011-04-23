@@ -1433,10 +1433,9 @@ abstract class DBManager
      * @param  string   $sql        SQL Statement to execute
      * @param  bool     $dieOnError True if we want to call die if the query returns errors
      * @param  string   $msg        Message to log if error occurs
-     * @param  bool     $suppress   Message to log if error occurs
      * @return array    single value from the query
      */
-    public function getOne($sql, $dieOnError = false, $msg = '', $suppress = false)
+    public function getOne($sql, $dieOnError = false, $msg = '')
     {
         $GLOBALS['log']->info("Get One: |$sql|");
         $queryresult = $this->query($sql, $dieOnError, $msg);
@@ -3283,4 +3282,37 @@ abstract class DBManager
      * @return bool
      */
     abstract public function validateQuery($query);
+
+    /**
+     * Check if certain database exists
+     * @param string $dbname
+     */
+    abstract public function dbExists($dbname);
+
+    /**
+     * Create a database
+     * @param string $dbname
+     */
+    abstract public function createDatabase($dbname);
+
+    /**
+     * Drop a database
+     * @param string $dbname
+     */
+    abstract public function dropDatabase($dbname);
+
+    /**
+     * Check if certain DB user exists
+     * @param string $username
+     */
+    abstract public function userExists($username);
+
+    /**
+     * Create DB user
+     * @param string $database_name
+     * @param string $host_name
+     * @param string $user
+     * @param string $password
+     */
+    abstract public function createDbUser($database_name, $host_name, $user, $password);
 }

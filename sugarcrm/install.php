@@ -100,12 +100,12 @@ function getSupportedInstallLanguages(){
 	if(file_exists('install/lang.config.php')){
 		include('install/lang.config.php');
 		if(!empty($config['languages'])){
-			
+
 			foreach($config['languages'] as $k=>$v){
 				if(file_exists('install/language/' . $k . '.lang.php')){
-					$supportedLanguages[$k] = $v;	
-				}	
-			}	
+					$supportedLanguages[$k] = $v;
+				}
+			}
 		}
 	}
 	return $supportedLanguages;
@@ -397,12 +397,6 @@ if($next_clicked) {
             }
 
             $default_db_type = 'mysql';
-            //BEGIN SUGARCRM flav=ent ONLY
-            $default_db_type = 'oci8';
-            //END SUGARCRM flav=ent ONLY
-            //BEGIN SUGARCRM flav=int ONLY
-            $default_db_type = 'mysql';
-            //END SUGARCRM flav=int ONLY
 
             if(!isset($_SESSION['setup_db_type'])) {
                 $_SESSION['setup_db_type'] = empty($sugar_config['dbconfig']['db_type']) ? $default_db_type : $sugar_config['dbconfig']['db_type'];

@@ -45,6 +45,7 @@ class OracleManager extends DBManager
      */
     public $dbType = 'oci8';
     public $dbName = 'Oracle';
+    public $variant = 'oci8';
 
 	/**
      * contains the last result set returned from query()
@@ -641,14 +642,16 @@ class OracleManager extends DBManager
         if(!$configOptions)
 			$configOptions = $sugar_config['dbconfig'];
 
-		if($sugar_config['dbconfigoption']['persistent'] == true){
+		if($sugar_config['dbconfigoption']['persistent'] == true)
+		{
             $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
             $err = oci_error();
             if ($err != false) {
 	            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
             }
 		}
-            if(!$this->database){
+
+        if(!$this->database){
                 $this->database = oci_connect($configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
                 if (!$this->database) {
                 	$err = oci_error();
@@ -656,15 +659,18 @@ class OracleManager extends DBManager
 			            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
                 	}
                 	$GLOBALS['log']->fatal("Could not connect to server ".$this->dbName." as ".$this->userName.".");
-                	sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                	if($dieOnError) {
+                	    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                	} else {
+                	    return false;
+                	}
                 }
                 if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                     $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your config.php file</B>";
                 }
-            }
-            //set oracle date format to be yyyy-mm-dd
-            // ora_commiton($this->database);
-            //settings for function based index.
+        }
+        //set oracle date format to be yyyy-mm-dd
+        //settings for function based index.
             /* cn: This alters CREATE TABLE statements to explicitly create char-length varchar2() columns
              * at create time vs. byte-length columns.  the other option is to switch to nvarchar2()
              * which has char-length semantics by default.
@@ -679,7 +685,7 @@ class OracleManager extends DBManager
 			$GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
-
+        return true;
 	}
 
     /**
@@ -1620,5 +1626,58 @@ EOQ;
     public function verifyDeleteFrom($table, $query)
     {
         return $this->verifyGenericQueryRollback("DELETE", $table, $query);
+    }
+
+    /**
+     * Check if certain database exists
+     * @param string $dbname
+     */
+    public function dbExists($dbname)
+    {
+        // We don't check DB in Oracle, admin creates it
+        return true;
+    }
+
+    /**
+     * Check if certain database exists
+     * @param string $dbname
+     */
+    public function userExists($dbname)
+    {
+        // We don't check DB in Oracle, admin creates it
+        return true;
+    }
+
+    /**
+     * Create DB user
+     * @param string $database_name
+     * @param string $host_name
+     * @param string $user
+     * @param string $password
+     */
+    public function createDbUser($database_name, $host_name, $user, $password)
+    {
+        // We don't create users in Oracle, admin does that
+        return true;
+    }
+
+    /**
+     * Create a database
+     * @param string $dbname
+     */
+    public function createDatabase($dbname)
+    {
+        // We don't create DBs in Oracle, admin does that
+        return true;
+    }
+
+    /**
+     * Drop a database
+     * @param string $dbname
+     */
+    public function dropDatabase($dbname)
+    {
+        // // We don't create DBs in Oracle, admin does that
+        return true;
     }
 }

@@ -30,56 +30,7 @@ if( !isset( $install_script ) || !$install_script ){
 
   //BEGIN SUGARCRM lic=sub ONLY
 
-            if(isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted']) && isset($_SESSION['setup_db_type'])){
-
-    switch($_SESSION['setup_db_type']) {
-        case 'mysql':
-            if(isset($_SESSION['mysql_type'])){
-                $host_name = getHostPortFromString($_SESSION['setup_db_host_name']);
-                if(empty($host_name)){
-                    $link = @mysqli_connect( $_SESSION['setup_db_host_name'], $_SESSION['setup_db_sugarsales_user'], $_SESSION['setup_db_sugarsales_password']);
-                }else{
-                    $link = @mysqli_connect( $host_name[0], $_SESSION['setup_db_sugarsales_user'], $_SESSION['setup_db_sugarsales_password'], null, $host_name[1]);
-                }
-            }else{
-                $link = @mysql_connect( $_SESSION['setup_db_host_name'],
-                                        $_SESSION['setup_db_sugarsales_user'],
-                                        $_SESSION['setup_db_sugarsales_password'] );
-
-            }
-                    $db = $link;
-        break;
-
-        case 'mssql':
-                $connect_host = "";
-                $_SESSION['setup_db_host_instance'] = trim($_SESSION['setup_db_host_instance']);
-
-                if (empty($_SESSION['setup_db_host_instance'])){
-                    $connect_host = $_SESSION['setup_db_host_name'];
-                }else{
-                    $connect_host = $_SESSION['setup_db_host_name']. "\\" . $_SESSION['setup_db_host_instance'];
-                }
-                if(isset($_SESSION['mssql_type'])){
-                    $link = @sqlsrv_connect( $connect_host  , array(
-                                        'UID' => $_SESSION['setup_db_sugarsales_user'],
-                                        'PWD' => $_SESSION['setup_db_sugarsales_password']) );
-                }
-                else {
-                    $link = @mssql_connect( $connect_host  ,
-                                        $_SESSION['setup_db_sugarsales_user'],
-                                        $_SESSION['setup_db_sugarsales_password'] );
-                }
-                $db = $link;
-        break;
-        case 'oci8':
-                if( $conn = @ociplogon($_SESSION['setup_db_sugarsales_user'], $_SESSION['setup_db_sugarsales_password'], $_SESSION['setup_db_database_name']) ){
-                    $db = $conn;
-                }
-    }
-
-
-
-               // check_now(false, true, false, true);
+if(isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted']) && isset($_SESSION['setup_db_type'])){
 
                 if (isset($GLOBALS['license']) && isset($GLOBALS['license']->settings)){
 
@@ -94,8 +45,7 @@ if( !isset( $install_script ) || !$install_script ){
                     }
 
                 }
-            }
-
+}
   //END SUGARCRM lic=sub ONLY
 
 

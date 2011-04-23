@@ -33,11 +33,11 @@ if( !isset( $install_script ) || !$install_script ){
 }
 
 
-// DB split 
+// DB split
 $oci8sid = '';
 $createDbCheckbox = '';
 $createDb = (isset($_SESSION['setup_db_create_database']) && !empty($_SESSION['setup_db_create_database'])) ? 'checked="checked"' : '';
-$dropCreate = (isset($_SESSION['setup_db_drop_tables']) && !empty($_SESSION['setup_db_drop_tables'])) ? 'checked="checked"' : ''; 
+$dropCreate = (isset($_SESSION['setup_db_drop_tables']) && !empty($_SESSION['setup_db_drop_tables'])) ? 'checked="checked"' : '';
 $instanceName = '';
 if (isset($_SESSION['setup_db_host_instance']) && !empty($_SESSION['setup_db_host_instance'])){
 	$instanceName = $_SESSION['setup_db_host_instance'];
@@ -46,17 +46,17 @@ if (isset($_SESSION['setup_db_host_instance']) && !empty($_SESSION['setup_db_hos
 if($_SESSION['setup_db_type'] == 'oci8') {
 //BEGIN SUGARCRM flav=ent ONLY
 	$dbSplit1 = '<input type="hidden" name="setup_db_host_name" value="'.$_SESSION['setup_db_host_name'].'" /></td>';
-    $dbSplit1 .= '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG1'].'</td></tr>';    
+    $dbSplit1 .= '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG1'].'</td></tr>';
 	$oci8sid = "(SID from tnsnames.ora)";
 	$dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="no" />';
 //END SUGARCRM flav=ent ONLY
 }else {
-    
+
     $host_lbl = $mod_strings['LBL_DBCONF_HOST_NAME'];
     if($_SESSION['setup_db_type'] == 'mssql') {
-        $host_lbl = $mod_strings['LBL_DBCONF_HOST_NAME_MSSQL'];    
+        $host_lbl = $mod_strings['LBL_DBCONF_HOST_NAME_MSSQL'];
     }
-    
+
 	$dbSplit1 = '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG2'].' </td></tr>
         <tr>
 		 <td><span class="required">*</span></td>
@@ -68,7 +68,7 @@ if($_SESSION['setup_db_type'] == 'oci8') {
 			}
 		$dbSplit1 .= '</td>
 	</tr>';
-	
+
 
 }
 
@@ -97,7 +97,7 @@ $out =<<<EOQ
         UA = YAHOO.env.ua;
     -->
     </script>
-    <link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css' />     
+    <link rel='stylesheet' type='text/css' href='include/javascript/yui/build/container/assets/container.css' />
 
 </head>
 EOQ;
@@ -157,7 +157,7 @@ $out2 =<<<EOQ2
     </table>
 EOQ2;
 
-//if we are installing in custom mode, include the following html 
+//if we are installing in custom mode, include the following html
 if($_SESSION['setup_db_type'] != 'oci8' ){
 
 // create / set db user dropdown
@@ -219,18 +219,9 @@ EOQ2;
 //	'ja_jp' => 'Japanese - 日本語',
 //);
 $demoDD = "<select name='demoData' id='demoData'><option value='no' >".$mod_strings['LBL_NO']."</option><option value='yes'>".$mod_strings['LBL_YES']."</option>";
-//foreach($supported_demodata as $key => $v){
-//	// mssql is broken for mbcs
-//	if( ($_SESSION['setup_db_type'] == 'mssql') && ($key != 'en_us'))
-//		continue;
-//	$selected = '';
-//	if($_SESSION['demoData'] == $key)
-//		$selected = "selected"; 
-//	$demoDD .="<option value='$key' $selected>".$v."</option>";
-//}
 $demoDD .= "</select><br>&nbsp;";
 
-   
+
 $out3 =<<<EOQ3
 <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
 <tr><th colspan="3" align="left">{$mod_strings['LBL_DBCONF_DEMO_DATA_TITLE']}</th></tr>
@@ -243,8 +234,8 @@ $out3 =<<<EOQ3
 </tr>
 </table>
 EOQ3;
-   
-   
+
+
 $out4 =<<<EOQ4
 </td>
 </tr>
@@ -284,7 +275,7 @@ function toggleDBUser(){
     }
 }
     toggleDBUser();
-    
+
 var msgPanel;
 function callDBCheck(){
 
@@ -292,26 +283,26 @@ function callDBCheck(){
             ajaxCall = function(msg_panel){
                 //create success function for callback
 
-                getPanel = function() {        
-                var args = {    width:"300px", 
+                getPanel = function() {
+                var args = {    width:"300px",
                                 modal:true,
                                 fixedcenter: true,
-                                constraintoviewport: false,  
-                                underlay:"shadow",  
-                                close:false, 
-                                draggable:true, 
-                                
+                                constraintoviewport: false,
+                                underlay:"shadow",
+                                close:false,
+                                draggable:true,
+
                                 effect:{effect:YAHOO.widget.ContainerEffect.FADE, duration:.5}
-                               } ; 
+                               } ;
                         msg_panel = new YAHOO.widget.Panel('p_msg', args);
 
-                        msg_panel.setHeader("{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}"); 
+                        msg_panel.setHeader("{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}");
                         msg_panel.setBody(document.getElementById("checkingDiv").innerHTML);
                         msg_panel.render(document.body);
                         msgPanel = msg_panel;
-                } 
-                
-                
+                }
+
+
                 passed = function(url){
                     document.setConfig.goto.value="{$mod_strings['LBL_NEXT']}";
                     document.getElementById('hidden_goto').value="{$mod_strings['LBL_NEXT']}";
@@ -319,7 +310,7 @@ function callDBCheck(){
                     document.setConfig.submit();
                 }
                 success = function(o) {
-                    
+
                     //condition for just the preexisting database
                     if (o.responseText.indexOf('preexeest')>=0){
 
@@ -333,7 +324,7 @@ function callDBCheck(){
                         //make navigation
                         passed("install.php?goto={$mod_strings['LBL_NEXT']}");
 
-                    //condition for other errors    
+                    //condition for other errors
                     }else{
                         //turn off loading message
                         msgPanel.hide();
@@ -342,9 +333,9 @@ function callDBCheck(){
                         return false;
                     }
 
-                    
+
                 }//end success
-        
+
                 //set loading message and create url
 
                 postData = "checkDBSettings=true&to_pdf=1&sugar_body_only=1";
@@ -372,21 +363,21 @@ EOQ4;
 
 $out_dd = 'postData += "&demoData="+document.setConfig.demoData.value;';
 $out5 =<<<EOQ5
-                postData += "&to_pdf=1&sugar_body_only=1";                                                
-                 
-                //if this is a call already in progress, then just return               
-                    if(typeof ajxProgress != 'undefined'){ 
-                        return;                            
+                postData += "&to_pdf=1&sugar_body_only=1";
+
+                //if this is a call already in progress, then just return
+                    if(typeof ajxProgress != 'undefined'){
+                        return;
                     }
 
                 getPanel();
                 msgPanel.show;
-                var ajxProgress = YAHOO.util.Connect.asyncRequest('POST','install.php', {success: success, failure: success}, postData);                
-                        
-    
+                var ajxProgress = YAHOO.util.Connect.asyncRequest('POST','install.php', {success: success, failure: success}, postData);
+
+
             };//end ajaxCall method
               ajaxCall();
-            return;   
+            return;
 }
 
 function confirm_drop_tables(yes_no){
@@ -404,7 +395,7 @@ function confirm_drop_tables(yes_no){
             msgPanel.hide();
         }
 }
-    
+
 </script>
 
 
@@ -427,7 +418,7 @@ function confirm_drop_tables(yes_no){
                     <input type='button' class='button' onclick='confirm_drop_tables(false)' value="{$mod_strings['LBL_CANCEL']}">
                 </td></tr>
             </table>
-                
+
           <div>
 
 </body>

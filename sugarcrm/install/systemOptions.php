@@ -24,7 +24,7 @@ if( !isset( $install_script ) || !$install_script ){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
 if(!isset($_SESSION['setup_db_type']) || $_SESSION['setup_db_type'] ==''){
- $_SESSION['setup_db_type'] = 'mysql';   
+ $_SESSION['setup_db_type'] = 'mysql';
 }
 $setup_db_type = $_SESSION['setup_db_type'];
 
@@ -44,18 +44,11 @@ if(isset($validation_errors)) {
 	}
 }
 
-$mysql = '';
-$oci8 = '';
-$mssql = '';
-if($setup_db_type == "mysql")
-	$mysql = 'checked="checked"';
-else if ($setup_db_type == "mssql")
-	$mssql = 'checked="checked"';
-//BEGIN SUGARCRM flav=ent ONLY
-else if ($setup_db_type == "oci8" && function_exists('OCILogon'))
-	$oci8 = 'checked="checked"';
-//END SUGARCRM flav=ent ONLY
-
+$drivers = DBManagerFactory::getDbDrivers();
+foreach(array_values($drivers) as $dname) {
+    $checked[$dname] = '';
+}
+$checked[$setup_db_type] = 'checked="checked"';
 
 $out=<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -85,7 +78,7 @@ $out=<<<EOQ
         </th>
 </tr>
 <tr>
-   <td colspan="2">	
+   <td colspan="2">
 		{$errs}
 
 
@@ -96,26 +89,24 @@ $out=<<<EOQ
     <td>&nbsp;</td>
     <td align="left">
 EOQ;
-if(function_exists('mysql_connect') || function_exists('mysqli_connect')){ 
+if(in_array("mysql", array_values($drivers))){
 $out.=<<<EOQ
-        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mysql" {$mysql} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MYSQL']}
+        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mysql" {$checked['mysql']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MYSQL']}
 EOQ;
 //check to see if mysqli is enabled
-if(function_exists('mysqli_connect')){
-    $_SESSION['mysql_type'] = 'mysqli';
+if(isset($drivers['mysqli'])){
     $out.=' &nbsp;(MySQLi detected)<br>';
 }else{
      $out.= '<br>';
-}    
 }
-if(function_exists('mssql_connect') || function_exists('sqlsrv_connect')){
-$out.=<<<EOQ
-		<input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mssql" {$mssql} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MSSQL']}
+}
+if(in_array("mssql", array_values($drivers))){
+    $out.=<<<EOQ
+		<input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mssql" {$checked['mssql']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MSSQL']}
 EOQ;
 }
 //check to see if sqlsrv is enabled
-if(function_exists('sqlsrv_connect')){
-    $_SESSION['mssql_type'] = 'sqlsrv';
+if(isset($drivers['sqlsrv'])){
     $out.=' &nbsp;(Microsoft SQL Server Driver for PHP detected)<br>';
 }else{
      $out.= '<br>';
@@ -123,9 +114,9 @@ if(function_exists('sqlsrv_connect')){
 
 
 //BEGIN SUGARCRM flav=ent ONLY
-if(function_exists('OCILogon')){
-$out.=<<<EOQ
-        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="oci8" {$oci8} onclick="document.getElementById('ociMsg').style.display=''"/>{$mod_strings['LBL_ORACLE']}<BR>
+if(in_array("oci8", array_values($drivers))){
+    $out.=<<<EOQ
+        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="oci8" {$checked['oci8']} onclick="document.getElementById('ociMsg').style.display=''"/>{$mod_strings['LBL_ORACLE']}<BR>
 EOQ;
 }
 //END SUGARCRM flav=ent ONLY
@@ -143,7 +134,7 @@ EOQ;
 
 $out.=<<<EOQ
     </td>
-        
+
 </tr>
 </table>
 </td>

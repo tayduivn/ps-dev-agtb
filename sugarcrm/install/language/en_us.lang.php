@@ -119,6 +119,7 @@ $mod_strings = array(
     'ERR_DB_EXISTS_PROCEED'             => 'The provided Database Name already exists.  You can<br>1.  hit the back button and choose a new database name <br>2.  click next and continue but all existing tables on this database will be dropped.  <strong>This means your tables and data will be blown away.</strong>',
 	'ERR_DB_HOSTNAME'					=> 'Host name cannot be blank.',
 	'ERR_DB_INVALID'					=> 'Invalid database type selected.',
+	'ERR_DB_LOGIN_FAILURE'				=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
 	'ERR_DB_LOGIN_FAILURE_MYSQL'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
 	'ERR_DB_LOGIN_FAILURE_MSSQL'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
 	'ERR_DB_MYSQL_VERSION1'				=> 'Your MySQL version (',

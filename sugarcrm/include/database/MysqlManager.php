@@ -81,6 +81,7 @@ class MysqlManager extends DBManager
      * @see DBManager::$dbType
      */
     public $dbType = 'mysql';
+    public $variant = 'mysql';
     public $dbName = 'MySQL';
 
     protected $maxNameLengths = array(
@@ -489,7 +490,11 @@ class MysqlManager extends DBManager
                     );
             if(empty($this->database)) {
                 $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name']." as ".$configOptions['db_user_name'].":".mysql_error());
-                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                if($dieOnError) {
+                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                } else {
+                    return false;
+                }
             }
             // Do not pass connection information because we have not connected yet
             if($this->database  && $sugar_config['dbconfigoption']['persistent'] == true){
@@ -500,7 +505,11 @@ class MysqlManager extends DBManager
         }
         if(!@mysql_select_db($configOptions['db_name'])) {
             $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysql_error($this->database));
-            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            if($dieOnError) {
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            } else {
+                return false;
+            }
         }
 
         // cn: using direct calls to prevent this from spamming the Logs
@@ -514,6 +523,7 @@ class MysqlManager extends DBManager
             $GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
+        return true;
     }
 
     /**
@@ -1252,4 +1262,80 @@ class MysqlManager extends DBManager
     {
         return $this->verifyGenericReplaceQuery("DELETE FROM", $table, $query);
     }
+
+    /**
+     * Check if certain database exists
+     * @param string $dbname
+     */
+    public function dbExists($dbname)
+    {
+        $db = $this->getOne("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ".$this->quoted($dbname));
+        return !empty($db);
+    }
+
+    /**
+     * Select database
+     * @param string $dbname
+     */
+    protected function selectDb($dbname)
+    {
+        return mysql_select_db($dbname);
+    }
+
+    /**
+     * Check if certain DB user exists
+     * @param string $username
+     */
+    public function userExists($username)
+    {
+        $db = $this->getOne("SELECT DATABASE()");
+        if(!$this->selectDb("mysql")) {
+            return false;
+        }
+        $user = $this->getOne("select count(*) from user where user = ".$this->quoted($username));
+        if(!$this->selectDb($db)) {
+            $this->checkError("Cannot select database $db", true);
+        }
+        return !empty($user);
+    }
+
+    /**
+     * Create DB user
+     * @param string $database_name
+     * @param string $host_name
+     * @param string $user
+     * @param string $password
+     */
+    public function createDbUser($database_name, $host_name, $user, $password)
+    {
+        $qpassword = $this->quote($password);
+    	$this->query("GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX
+                            ON `$database_name`.*
+                            TO \"$user\"@\"$host_name\"
+                            IDENTIFIED BY '{$qpassword}';", true);
+
+        $this->query("SET PASSWORD FOR \"{$user}\"@\"{$host_name}\" = old_password('{$qpassword}');", true);
+        if($host_name != 'localhost') {
+            $this->createDbUser($database_name, "localhost", $user, $password);
+        }
+    }
+
+    /**
+     * Create a database
+     * @param string $dbname
+     */
+    public function createDatabase($dbname)
+    {
+        return $this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci", true);
+    }
+
+    /**
+     * Drop a database
+     * @param string $dbname
+     */
+    public function dropDatabase($dbname)
+    {
+        return $this->query("DROP DATABASE IF EXISTS `$dbname`", true);
+    }
+
 }

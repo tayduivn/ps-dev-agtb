@@ -83,6 +83,7 @@ class MysqliManager extends MysqlManager
      * @see DBManager::$dbType
      */
     public $dbType = 'mysql';
+    public $variant = 'mysqli';
 
     /**
      * @see DBManager::$backendFunctions
@@ -312,7 +313,11 @@ class MysqliManager extends MysqlManager
         	$this->database = mysqli_connect($dbhost,$configOptions['db_user_name'],$configOptions['db_password'],$configOptions['db_name'],$dbport);
         	if(empty($this->database)) {
         	    $GLOBALS['log']->fatal("Could not connect to DB server ".$dbhost." as ".$configOptions['db_user_name'].". port " .$dbport . ": " . mysqli_connect_error());
-                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                if($dieOnError) {
+                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                } else {
+                    return false;
+                }
         	}
         }
         if(!@mysqli_select_db($this->database,$configOptions['db_name'])) {
@@ -347,4 +352,14 @@ class MysqliManager extends MysqlManager
             "MySQL Character Set Settings" => join(", ", $charset_str),
           );
     }
+
+    /**
+     * Select database
+     * @param string $dbname
+     */
+    protected function selectDb($dbname)
+    {
+        return mysqli_select_db($dbname);
+    }
+
 }
