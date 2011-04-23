@@ -74,4 +74,13 @@ class FreeTDSManager extends MssqlManager
 		$sql = $this->_appendN($sql);
 		return parent::query($sql, $dieOnError, $msg, $suppress, $keepResult);
     }
+
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    public function valid()
+    {
+        return function_exists("mssql_connect") && is_freetds();
+    }
 }

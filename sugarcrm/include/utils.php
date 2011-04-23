@@ -4175,6 +4175,7 @@ if (version_compare(phpversion(), '5.0.0', '<')) {
 }
 
 /*
+ * FIXME: move this function to DB layer
  * Invoked when connected to mssql. checks if we have freetds version of mssql library.
  * the response is put into a global variable.
  */
@@ -4202,18 +4203,6 @@ function is_freetds() {
 		}
 	}
 	return $ret;
-}
-
-/*
- *  stripos - Find position of first occurrence of a case-insensitive string
- *
- *  The function is being defined for systems with PHP version < 5.
- *
- */
-if (!function_exists("stripos")){
-	function stripos($haystack,$needle,$offset=0){
-      return strpos(strtolower($haystack),strtolower($needle),$offset);
-	}
 }
 
 /**

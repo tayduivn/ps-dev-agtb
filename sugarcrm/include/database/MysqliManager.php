@@ -320,10 +320,14 @@ class MysqliManager extends MysqlManager
                 }
         	}
         }
-        if(!@mysqli_select_db($this->database,$configOptions['db_name'])) {
+        if(!empty($configOptions['db_name']) && !@mysqli_select_db($this->database,$configOptions['db_name'])) {
             $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysqli_connect_error());
-            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
-        }
+            if($dieOnError) {
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            } else {
+                return false;
+            }
+       }
 
         // cn: using direct calls to prevent this from spamming the Logs
         mysqli_query($this->database,"SET CHARACTER SET utf8"); // no quotes around "[charset]"
@@ -331,11 +335,17 @@ class MysqliManager extends MysqlManager
 
         if($this->checkError('Could Not Connect', $dieOnError))
             $GLOBALS['log']->info("connected to db");
+
+        return true;
     }
 
     public function lastError()
     {
-        return mysqli_error();
+        if($this->database) {
+            return mysqli_error($this->database);
+        } else {
+            return mysqli_connect_error();
+        }
     }
 
     public function getDbInfo()
@@ -362,4 +372,12 @@ class MysqliManager extends MysqlManager
         return mysqli_select_db($dbname);
     }
 
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    public function valid()
+    {
+        return function_exists("mysqli_connect");
+    }
 }

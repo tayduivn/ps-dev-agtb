@@ -503,7 +503,7 @@ class MysqlManager extends DBManager
                     . "in your config.php file</b>";
             }
         }
-        if(!@mysql_select_db($configOptions['db_name'])) {
+        if(!empty($configOptions['db_name']) && !@mysql_select_db($configOptions['db_name'])) {
             $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysql_error($this->database));
             if($dieOnError) {
                 sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
@@ -1338,4 +1338,12 @@ class MysqlManager extends DBManager
         return $this->query("DROP DATABASE IF EXISTS `$dbname`", true);
     }
 
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    public function valid()
+    {
+        return function_exists("mysql_connect");
+    }
 }

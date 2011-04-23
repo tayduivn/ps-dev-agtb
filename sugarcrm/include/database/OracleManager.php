@@ -1680,4 +1680,13 @@ EOQ;
         // // We don't create DBs in Oracle, admin does that
         return true;
     }
+
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    public function valid()
+    {
+        return function_exists("ocilogon");
+    }
 }

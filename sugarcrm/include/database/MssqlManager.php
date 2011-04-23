@@ -1961,4 +1961,13 @@ EOQ;
     {
         return $this->query("DROP DATABASE $dbname", true);
     }
+
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    public function valid()
+    {
+        return function_exists("mssql_connect");
+    }
 }

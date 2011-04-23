@@ -204,13 +204,13 @@ class ForecastOpportunities extends SugarBean {
     function get_opportunity_summary($currency_format=true) {
 
         $abc = array();
-        $amount_usdollar = $this->db->convert("amount_usdollar", "IFNULL", 0);
-        $probability = $this->db->convert("probability", "IFNULL", 0);
+        $amount_usdollar = $this->db->convert("amount_usdollar", "IFNULL", array(0));
+        $probability = $this->db->convert("probability", "IFNULL", array(0));
         $query1 = "SELECT count(*) as opportunitycount, sum(amount_usdollar) as total_amount,
         	sum((amount_usdollar * probability)/100) as weightedvalue,
-        	sum(".$this->db->convert("best_case","IFNULL", "(($amount_usdollar * $probability)/100))").") total_best_case,
-        	sum(".$this->db->convert("likely_case","IFNULL", "(($amount_usdollar * $probability)/100))").") total_likely_case,
-        	sum(".$this->db->convert("worst_case","IFNULL", "(($amount_usdollar * $probability)/100))").") total_worst_case";
+        	sum(".$this->db->convert("best_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_best_case,
+        	sum(".$this->db->convert("likely_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_likely_case,
+        	sum(".$this->db->convert("worst_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_worst_case";
 
         $query1 .= " FROM timeperiods, opportunities ";
         $query1 .= " LEFT JOIN worksheet on opportunities.id = worksheet.related_id and worksheet.user_id='{$this->fo_user_id}' and worksheet.timeperiod_id='{$this->fo_timeperiod_id}' and worksheet.forecast_type='{$this->fo_forecast_type}'";

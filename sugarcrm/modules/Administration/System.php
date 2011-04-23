@@ -115,7 +115,7 @@ class System extends SugarBean {
         $date = $this->db->quoted($dates[0]->asDb());
         $query = "SELECT count( DISTINCT id ) oc_count FROM $this->table_name
             WHERE {$this->table_name}.last_connect_date > $date AND system_id != 1";
-        return  $this->getOne($query);
+        return  $this->db->getOne($query);
     }
 
     /*

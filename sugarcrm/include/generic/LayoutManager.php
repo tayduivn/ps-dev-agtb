@@ -33,7 +33,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
 require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
-require_once('include/database/DBHelper.php');
 
 class LayoutManager
 {
@@ -47,17 +46,17 @@ class LayoutManager
 		// set a sane default for context
 		$this->defs['context'] = 'Detail';
 		$this->DBHelper = $GLOBALS['db']->getHelper();
-	}	
+	}
 
 	function setAttribute($key,$value)
 	{
 		$this->defs[$key] = $value;
-	}	
+	}
 
 	function setAttributePtr($key,&$value)
 	{
 		$this->defs[$key] = $value;
-	}	
+	}
 
 	function getAttribute($key)
 	{
@@ -67,7 +66,7 @@ class LayoutManager
 		} else {
 			return null;
 		}
-	}	
+	}
 
 	// Take the class name from the widget definition and use the class to look it up
 	// $use_default will default classes to SugarWidgetFieldxxxxx
@@ -119,7 +118,7 @@ class LayoutManager
 				'access_key'=>'LBL_NEW_BUTTON_KEY',
 				'form_value'=>'LNK_NEW_NOTE',
 				'ACL'=>'edit',
-			),	
+			),
 			'SugarWidgetSubPanelTopCreateContactAccountButton' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopButton',
 				'module'=>'Contacts',
@@ -159,11 +158,11 @@ class LayoutManager
 					'document_name' => 'document_name',
 					'document_revision' => 'latest_revision',
 					'document_filename' => 'filename',
-        			'document_revision_id' => 'document_revision_id',					
+        			'document_revision_id' => 'document_revision_id',
 				),
 				'ACL'=>'edit',
 			),
-			
+
 			'SugarWidgetSubPanelTopCreateDirectReport' => array(
 				'widget_class'=>'SugarWidgetSubPanelTopButton',
 				'module'=>'Contacts',
@@ -201,12 +200,12 @@ class LayoutManager
 					'parent_type'=>'ProspectList',
 					'child_id'=>'target_id',
 					'link_attribute'=>'target_type',
-					'link_type'=>'polymorphic',	 //polymorphic or default				
+					'link_type'=>'polymorphic',	 //polymorphic or default
 				)
 			),
 			//END SUGARCRM flav!=sales ONLY
-		);			
-		
+		);
+
 		$fieldDef = $this->getFieldDef($widget_def);
 		if(!empty($fieldDef) &&  !empty($fieldDef['type']) && strtolower(trim($fieldDef['type'])) == 'multienum'){
 				$widget_def['widget_class'] = 'Fieldmultienum';
@@ -214,7 +213,7 @@ class LayoutManager
 		if(!empty($fieldDef) &&  !empty($fieldDef['type']) && strtolower(trim($fieldDef['type'])) == 'bool'){
 				$widget_def['widget_class'] = 'Fieldbool';
 		}
-			
+
 		if($use_default) {
 			switch($widget_def['name']) {
 				case 'assigned_user_id':
@@ -234,17 +233,17 @@ class LayoutManager
 				    }
             }
 		}
-		
+
 		if(!empty($widget_def['name']) && $widget_def['name'] == 'team_set_id'){
 			$widget_def['widget_class'] = 'Fieldteam_set_id';
 		}
-		
+
 		if(empty($widget_def['widget_class']))
 		{
 			// Default the class to SugarWidgetField
 			$class_name = $this->widget_prefix.$this->default_widget_name;
 		}
-		else 
+		else
 		{
 			$class_name = $this->widget_prefix.$widget_def['widget_class'];
 		}
@@ -253,7 +252,7 @@ class LayoutManager
 		if(!empty($class_map[$class_name]))
 		{
 			if (empty($class_map[$class_name]['widget_class'])) {
-				$widget = new SugarWidgetSubPanelTopButton($class_map[$class_name]);				
+				$widget = new SugarWidgetSubPanelTopButton($class_map[$class_name]);
 			}  else {
 
 				if (!class_exists($class_map[$class_name]['widget_class'])) {
@@ -262,11 +261,11 @@ class LayoutManager
 
 				$widget = new $class_map[$class_name]['widget_class']($class_map[$class_name]);
 			}
-			
+
 
 			return $widget;
 		}
-		
+
 		// At this point, we have a class name and we do not have a valid class defined.
 		if(!class_exists($class_name))
 		{
@@ -276,14 +275,14 @@ class LayoutManager
 				require_once('custom/include/generic/SugarWidgets/'.$class_name.'.php');
 			else if (file_exists('include/generic/SugarWidgets/'.$class_name.'.php'))
 				require_once('include/generic/SugarWidgets/'.$class_name.'.php');
-			
+
 			if(!class_exists($class_name))
 			{
 				// If we still do not have a class, oops....
 				die("LayoutManager: Class not found:".$class_name);
 			}
 		}
-		
+
 		$widget = new $class_name($this); // cache disabled $this->getClassFromCache($class_name);
 		return $widget;
 	}
@@ -296,23 +295,23 @@ class LayoutManager
                 $beanCache[$widget_def['module']] = new $GLOBALS['beanList'][$widget_def['module']]();
             }
             $bean = $beanCache[$widget_def['module']];
-			if(!empty($widget_def['name']) && !empty($bean->field_name_map) &&!empty($bean->field_name_map[$widget_def['name']]) ){	
+			if(!empty($widget_def['name']) && !empty($bean->field_name_map) &&!empty($bean->field_name_map[$widget_def['name']]) ){
 				return $bean->field_name_map[$widget_def['name']];
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	function widgetDisplay($widget_def, $use_default = false)
 	{
 		$theclass = $this->getClassFromWidgetDef($widget_def, $use_default);
  		$label = isset($widget_def['module']) ? $widget_def['module'] : '';
 	    if (is_subclass_of($theclass, 'SugarWidgetSubPanelTopButton')) {
-            $label = $theclass->get_subpanel_relationship_name($widget_def);    
+            $label = $theclass->get_subpanel_relationship_name($widget_def);
 	    }
 		$theclass->setWidgetId($label);
-		
+
 		//#27426
 		$fieldDef = $this->getFieldDef($widget_def);
 		if(!empty($fieldDef) &&  !empty($fieldDef['type']) && strtolower(trim($fieldDef['type'])) == 'multienum'){
@@ -320,9 +319,9 @@ class LayoutManager
 				$widget_def['fields']['module']  = $label;
 		}
 		//end
-		
+
 		return $theclass->display($widget_def);
-	}	
+	}
 
 	function widgetQuery($widget_def, $use_default = false)
 	{
@@ -330,14 +329,14 @@ class LayoutManager
 //				_pp($theclass);
 		return $theclass->query($widget_def);
 	}
-	
+
 	// display an input field
 	// module is the parent module of the def
 	function widgetDisplayInput($widget_def, $use_default = false)
 	{
 		$theclass = $this->getClassFromWidgetDef($widget_def, $use_default);
 		return $theclass->displayInput($widget_def);
-	}	
+	}
 
 }
 ?>

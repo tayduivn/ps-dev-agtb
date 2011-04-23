@@ -181,6 +181,7 @@ abstract class DBManager
     {
         $this->timedate = TimeDate::getInstance();
         $this->log = $GLOBALS['log'];
+        $this->helper = $this; // compatibility
     }
 
     /**
@@ -3282,6 +3283,12 @@ abstract class DBManager
      * @return bool
      */
     abstract public function validateQuery($query);
+
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    abstract public function valid();
 
     /**
      * Check if certain database exists

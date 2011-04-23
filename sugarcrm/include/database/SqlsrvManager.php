@@ -264,10 +264,7 @@ class SqlsrvManager extends MssqlManager
 	/**
      * @see DBManager::getFieldsArray()
      */
-	public function getFieldsArray(
-        &$result,
-        $make_lower_case = false
-        )
+	public function getFieldsArray($result, $make_lower_case = false)
 	{
         $field_array = array();
 
@@ -289,11 +286,7 @@ class SqlsrvManager extends MssqlManager
     /**
      * @see DBManager::fetchByAssoc()
      */
-    public function fetchByAssoc(
-        &$result,
-        $rowNum = -1,
-        $encode = true
-        )
+    public function fetchByAssoc($result, $rowNum = -1, $encode = true)
     {
         if (!$result) {
             return false;
@@ -657,5 +650,14 @@ EOSQL;
     protected function selectDb($dbname)
     {
         return $this->query("USE ".$this->quoted($dbname));
+    }
+
+    /**
+     * Check if this driver can be used
+     * @return bool
+     */
+    public function valid()
+    {
+        return function_exists("sqlsrv_connect");
     }
 }

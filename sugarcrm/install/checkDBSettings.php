@@ -62,7 +62,7 @@ function checkDBSettings($silent=false) {
 
         $dbconfig = array(
                 "db_host_name" => $_SESSION['setup_db_host_name'],
-                "db_name" => $_SESSION['setup_db_database_name'],
+//                "db_name" => $_SESSION['setup_db_database_name'],
                 "db_host_instance" => $_SESSION['setup_db_host_instance'],
         );
 
