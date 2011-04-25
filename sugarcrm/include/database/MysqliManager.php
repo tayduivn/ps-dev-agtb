@@ -123,7 +123,7 @@ class MysqliManager extends MysqlManager
     /**
      * @see MysqlManager::query()
      */
-    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $autofree = false)
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
         static $queryMD5 = array();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -133,22 +133,9 @@ class MysqliManager extends MysqlManager
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
-        //$this->freeResult();
         $this->query_time = microtime(true);
         $this->lastsql = $sql;
-        if ($suppress==true){
-            //BEGIN SUGARCRM flav=ent ONLY
-            //suppress flag is when you are using CSQL and make a bad query.
-            //We don't want any php errors to appear
-            $orig_level = error_reporting();
-            error_reporting(0);
-            $result = mysqli_query($this->database,$sql);
-            error_reporting($orig_level);
-            //END SUGARCRM flav=ent ONLY
-        }
-        else {
-            $result = mysqli_query($this->database,$sql);
-        }
+        $result = @mysqli_query($this->database,$sql);
         $md5 = md5($sql);
 
         if (empty($queryMD5[$md5]))
@@ -175,9 +162,9 @@ class MysqliManager extends MysqlManager
 		}
 		//END SUGARCRM flav=pro ONLY
 
+        if($keepResult)
+            $this->lastResult = $result;
 		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
-        if($autofree)
-            $this->lastResult[] =& $result;
 
         return $result;
     }

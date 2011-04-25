@@ -172,17 +172,7 @@ class MysqlManager extends DBManager
         $this->checkConnection();
         $this->query_time = microtime(true);
         $this->lastsql = $sql;
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($suppress==true) {
-            //suppress flag is when you are using CSQL and make a bad query.
-            //We don't want any php errors to appear
-            $result = @mysql_query($sql, $this->database);
-        } else {
-        //END SUGARCRM flav=ent ONLY
-            $result = mysql_query($sql, $this->database);
-        //BEGIN SUGARCRM flav=ent ONLY
-        }
-        //END SUGARCRM flav=ent ONLY
+        $result = @mysql_query($sql, $this->database);
 
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
