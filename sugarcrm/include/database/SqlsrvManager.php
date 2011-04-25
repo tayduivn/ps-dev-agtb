@@ -216,8 +216,6 @@ class SqlsrvManager extends MssqlManager
 	 */
 	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
-		global $app_strings;
-
 		$sql = $this->_appendN($sql);
 
         $this->countQuery($sql);

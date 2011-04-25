@@ -469,7 +469,7 @@ class OracleManager extends DBManager
     public function insertParams($table, $field_defs, $data)
     {
         $values = array();
-        $lob_fields = array();
+        $lob_fields = $lobs = array();
         $lob_field_type = array();
 		foreach ($field_defs as $field => $fieldDef)
 		{
@@ -484,8 +484,7 @@ class OracleManager extends DBManager
             }
             $type = $this->getFieldType($fieldDef);
 
-            //handle auto increment values here only need to do this on insert not create
-            // TODO: do we really need to do this?
+            //handle auto increment values
             if (!empty($fieldDef['auto_increment'])) {
                 $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
                 if(!empty($auto)) {
@@ -545,7 +544,7 @@ class OracleManager extends DBManager
             $lob->free();
         }
         oci_free_statement($stmt);
-        return true;
+        return $result;
     }
 
     /**
@@ -899,8 +898,8 @@ class OracleManager extends DBManager
         $qval = $this->quoted($val);
         switch($type) {
             case 'date':
-                $val = explode(" ", $val); // make sure that we do not pass the time portion
-                $val = $val[0];            // get the date portion
+                $val = explode(" ", $qval); // make sure that we do not pass the time portion
+                $qval = $val[0];            // get the date portion
                 return "TO_DATE($qval, 'YYYY-MM-DD')";
             case 'datetime':
                 return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
@@ -1279,7 +1278,7 @@ EOQ;
             while ( $row = $this->db->fetchByAssoc($result) )
                 $sequences[] = $row['sequence_name'];
         }
-        if ( !is_array($sequences) )
+        if ( empty($sequences) )
             return false;
         else
             return in_array($name,$sequences);
@@ -1529,7 +1528,7 @@ EOQ;
      */
     protected function quoteTerm($term)
     {
-        $condition = str_replace("*", "%", $term); // Oracle's wildcard is %
+        $term = str_replace("*", "%", $term); // Oracle's wildcard is %
         return '{'.$term.'}';
     }
 

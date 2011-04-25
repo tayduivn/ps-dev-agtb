@@ -578,11 +578,6 @@ class MysqlManager extends DBManager
      */
     public function convert($string, $type, array $additional_parameters = array())
     {
-        if (!empty($additional_parameters)) {
-            $additional_parameters_string = ','.implode(',',$additional_parameters);
-        } else {
-            $additional_parameters_string = '';
-        }
         $all_parameters = $additional_parameters;
         if(is_array($string)) {
             $all_parameters = array_merge($string, $all_parameters);
@@ -731,6 +726,7 @@ class MysqlManager extends DBManager
      */
     protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
     {
+        $columns = array();
         if ($this->isFieldArray($fieldDefs)){
             foreach ($fieldDefs as $def){
                 if ($action == 'drop')
@@ -1101,8 +1097,13 @@ class MysqlManager extends DBManager
         return "MATCH($field) AGAINST($condition IN BOOLEAN MODE)";
     }
 
+    /**
+     * Get list of all defined charsets
+     * @return array
+     */
     protected function getCharsetInfo()
     {
+        $charsets = array();
         $res = $this->query("show variables like 'character\\_set\\_%'");
         while($row = $this->fetchByAssoc($res)) {
             $charsets[$row['Variable_name']] = $row['Value'];
@@ -1161,8 +1162,6 @@ class MysqlManager extends DBManager
      */
     protected function verifyAlterTable($table, $query)
     {
-    	global $sugar_config;
-
         $this->log->debug("verifying ALTER TABLE");
     	// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
 	    // over to the temp tables

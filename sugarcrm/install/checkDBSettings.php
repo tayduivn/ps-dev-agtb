@@ -62,9 +62,12 @@ function checkDBSettings($silent=false) {
 
         $dbconfig = array(
                 "db_host_name" => $_SESSION['setup_db_host_name'],
-//                "db_name" => $_SESSION['setup_db_database_name'],
                 "db_host_instance" => $_SESSION['setup_db_host_instance'],
         );
+        // TODO: do we need this?
+//        if(empty($_SESSION['setup_db_create_database'])) {
+//            $dbconfig["db_name"] = $_SESSION['setup_db_database_name'];
+//        }
 
         // Bug 29855 - Check to see if given db name is valid
         if (preg_match("![\"'*/\\?:<>-]+!i", $_SESSION['setup_db_database_name']) ) {

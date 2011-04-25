@@ -271,6 +271,7 @@ class MysqliManager extends MysqlManager
         }
 
         $row = mysqli_fetch_assoc($result);
+        // Unlike mysql, mysqli returns null when no more rows are available
         if ( is_null($row) ) {
             return false;
         }
@@ -351,6 +352,7 @@ class MysqliManager extends MysqlManager
     public function getDbInfo()
     {
         $charsets = $this->getCharsetInfo();
+        $charset_str = array();
         foreach($charsets as $name => $value) {
             $charset_str[] = "$name = $value";
         }

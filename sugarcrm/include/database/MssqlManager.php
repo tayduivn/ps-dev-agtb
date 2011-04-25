@@ -152,7 +152,6 @@ class MssqlManager extends DBManager
         ini_set('mssql.charset','UTF-8');
 
         //set the connections parameters
-        $connect_param = '';
         $configOptions['db_host_instance'] = trim($configOptions['db_host_instance']);
         if (empty($configOptions['db_host_instance']))
             $connect_param = $configOptions['db_host_name'];
@@ -476,13 +475,13 @@ class MssqlManager extends DBManager
                             $newSQL = $matches[1] . " TOP $count " . $matches[2] . $matches[3];
                         }
                     }
-                }
-                else {
+                } else {
                     $orderByMatch = array();
                     preg_match('/^(.*)(ORDER BY)(.*)$/is',$matches[3], $orderByMatch);
 
                     //if there is a distinct clause, parse sql string as we will have to insert the rownumber
                     //for paging, AFTER the distinct clause
+                    $grpByStr = '';
                     $hasDistinct = strpos(strtolower($matches[0]), "distinct");
                     if ($hasDistinct) {
                         $matches_sql = strtolower($matches[0]);
@@ -510,7 +509,6 @@ class MssqlManager extends DBManager
 
                         //place group by string into array
                         $grpByArr = explode(',', $distinctSQLARRAY[0]);
-                        $grpByStr = '';
                         $first = true;
                         //remove the aliases for each group by element, sql server doesnt like these in group by.
                         foreach ($grpByArr as $gb) {
@@ -530,8 +528,7 @@ class MssqlManager extends DBManager
                                 if ($first) {
                                     $grpByStr .= " $gb";
                                     $first = false;
-                                }
-                                else {
+                                } else {
                                     $grpByStr .= ", $gb";
                                 }
                             }
@@ -621,8 +618,6 @@ class MssqlManager extends DBManager
     private function removePatternFromSQL($p_sql, $strip_beg, $strip_end, $patt = 'patt')
     {
         //strip all single quotes out
-        $beg_sin = 0;
-        $sec_sin = 0;
         $count = substr_count ( $p_sql, $strip_beg);
         $increment = 1;
         if ($strip_beg != $strip_end)
@@ -645,7 +640,6 @@ class MssqlManager extends DBManager
                     $strip_array[$patt.$i] = substr($p_sql,$nested_pos+$beg_sin,$sec_sin - ($nested_pos+$beg_sin)+1);
                     $p_sql = substr($p_sql, 0, $nested_pos+$beg_sin) . " ##". $patt.$i."## " . substr($p_sql, $sec_sin+1);
                     $i = $i + 1;
-                    $beg_sin = $nested_pos;
                     continue;
                 }
             }
@@ -1032,7 +1026,7 @@ class MssqlManager extends DBManager
         if(is_array($string)) {
             return $this->arrayQuote($string);
         }
-        return $string = str_replace("'","''", parent::quote($string));
+        return str_replace("'","''", parent::quote($string));
     }
 
     /**
@@ -1231,7 +1225,6 @@ class MssqlManager extends DBManager
         if (empty($tablename) || empty($fieldDefs))
             return '';
 
-        $sql ='';
         $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
         if (empty($columns))
             return '';
@@ -1314,6 +1307,7 @@ class MssqlManager extends DBManager
     {
         $sql=$sql2='';
         $constraints = $this->get_field_default_constraint_name($tablename);
+        $columns = array();
         if ($this->isFieldArray($fieldDefs)) {
             foreach ($fieldDefs as $def)
       		{
@@ -1834,7 +1828,7 @@ EOQ;
         preg_match_all($regexp, $sql, $matches);
         $replace = array();
         if (!empty($matches)) {
-            foreach ($matches[0] as $key=>$value) {
+            foreach ($matches[0] as $value) {
                 // We are assuming that all nvarchar columns are no more than 200 characters in length
                 // One problem we face is the image column type in reports which cannot accept nvarchar data
                 if (!empty($value) && !is_numeric(trim(str_replace(array("'", ","), "", $value))) && !preg_match('/^\'[\,]\'$/', $value)) {
@@ -1862,7 +1856,7 @@ EOQ;
      */
     protected function quoteTerm($term)
     {
-        $condition = str_replace("%", "*", $term); // Mssql wildcard is *
+        $term = str_replace("%", "*", $term); // Mssql wildcard is *
         return '"'.$term.'"';
     }
 

@@ -467,8 +467,7 @@ abstract class DBManager
                 continue;
             }
 
-            //handle auto increment values here only need to do this on insert not create
-            // TODO: do we really need to do this?
+            //handle auto increment values here - we may have to do something like nextval for oracle
             if (!empty($fieldDef['auto_increment'])) {
                 $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
                 if(!empty($auto)) {
@@ -1066,7 +1065,7 @@ abstract class DBManager
         $this->tableName = $tablename;
         $sql = $this->addColumnSQL($tablename, $fieldDefs);
         if ($this->isFieldArray($fieldDefs)){
-
+            $columns = array();
             foreach ($fieldDefs as $fieldDef)
                 $columns[] = $fieldDef['name'];
             $columns = implode(",", $columns);
@@ -1090,6 +1089,7 @@ abstract class DBManager
         $this->tableName = $tablename;
         $sql = $this->alterColumnSQL($tablename, $newFieldDef,$ignoreRequired);
         if ($this->isFieldArray($newFieldDef)){
+            $columns = array();
             foreach ($newFieldDef as $fieldDef) {
                 unset(self::$table_descriptions[$tablename][$fieldDef['name']]);
                 $columns[] = $fieldDef['name'];
@@ -1151,22 +1151,14 @@ abstract class DBManager
      * @param  int    $start        the first row to query
      * @param  int    $count        the number of rows to query
      * @param  string $table        the table to query from
-     * @param  string $db_type      the client db type
      * @return string SQL insert statement
      */
-	public function generateInsertSQL(
-        SugarBean $bean,
-        $select_query,
-        $start,
-        $count = -1,
-        $table,
-        $db_type,
-        $is_related_query = false
-        )
+	public function generateInsertSQL(SugarBean $bean, $select_query, $start, $count = -1, $table, $is_related_query = false)
     {
         $GLOBALS['log']->info('call to DBManager::generateInsertSQL() is deprecated');
         global $sugar_config;
 
+        $rows_found = 0;
         $count_query = $bean->create_list_count_query($select_query);
 		if(!empty($count_query))
 		{
@@ -1176,7 +1168,7 @@ abstract class DBManager
 			if(!empty($assoc['c']))
 			{
 				$rows_found = $assoc['c'];
-			}
+            }
 		}
 		if($count == -1){
 			$count 	= $sugar_config['list_max_entries_per_page'];
@@ -1201,7 +1193,7 @@ abstract class DBManager
 			}
 			if(!empty($custom_fields)){
 				$custom_fields['id_c'] = 'id_c';
-				$id_field = array('name' => 'id_c', custom_type => 'id',);
+				$id_field = array('name' => 'id_c', 'custom_type' => 'id',);
 				$fields[] = $id_field;
 			}
 		}
@@ -1212,8 +1204,6 @@ abstract class DBManager
 		$cstm_row_array = array();
 		$cstm_columns = array();
 		$built_columns = false;
-        //configure client helper
-        $dbHelper = $this->configureHelper($db_type);
 		while(($row = $this->fetchByAssoc($result)) != null)
 		{
 			$values = array();
@@ -1238,7 +1228,7 @@ abstract class DBManager
 							$type = $fieldDef['custom_type'];
 						}
     		    		 // need to do some thing about types of values
-						 if($db_type == 'mysql' && $val == '' && ($type == 'datetime' ||  $type == 'date' || $type == 'int' || $type == 'currency' || $type == 'decimal')){
+						 if($this->dbType == 'mysql' && $val == '' && ($type == 'datetime' ||  $type == 'date' || $type == 'int' || $type == 'currency' || $type == 'decimal')){
 							if(!empty($custom_fields[$fieldDef['name']]))
 								$cstm_values[$fieldDef['name']] = 'null';
 							else
@@ -1265,7 +1255,7 @@ abstract class DBManager
     		   		}
 
     			}
-            }else{
+            } else {
                foreach ($row as $key=>$val)
                {
                		if($key != 'orc_row'){
@@ -1604,7 +1594,7 @@ abstract class DBManager
         if(empty($fields)) return '';
         $elems = array();
         $space = $this->quoted($space);
-        foreach ( $fields as $index => $field ) {
+        foreach ( $fields as $field ) {
             if(!empty($elems)) $elems[] = $space;
             $elems[] = $this->convert("$table.$field", 'IFNULL', array("''"));
         }
@@ -1738,7 +1728,7 @@ abstract class DBManager
 		$tablename = $bean->getTableName();
 		$fieldDefs = $bean->getFieldDefinitions();
 		$indices = $bean->getIndices();
-		$sql = $this->createTableSQLParams($tablename, $fieldDefs, $indices);
+		return $this->createTableSQLParams($tablename, $fieldDefs, $indices);
 	}
 
 	/**
@@ -1768,8 +1758,7 @@ abstract class DBManager
                 }
             }
 
-            //handle auto increment values here only need to do this on insert not create
-            // TODO: do we really need to do this?
+            //handle auto increment values here - we may have to do something like nextval for oracle
             if (!empty($fieldDef['auto_increment'])) {
                 $auto = $this->getAutoIncrementSQL($bean->getTableName(), $fieldDef['name']);
                 if(!empty($auto)) {
@@ -2462,9 +2451,9 @@ abstract class DBManager
     /*
      * Return a version of $proposed that can be used as a column name in any of our supported databases
      * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
-     * @param string $name Proposed name for the column
+     * @param string|array $name Proposed name for the column
      * @param string $ensureUnique
-     * @return string Valid column name trimmed to right length and with invalid characters removed
+     * @return string|array Valid column name trimmed to right length and with invalid characters removed
      */
     public function getValidDBName ($name, $ensureUnique = false, $type = 'column')
     {
@@ -2473,11 +2462,11 @@ abstract class DBManager
             foreach($name as $field) {
                 $result[] = $this->getValidDBName($field, $ensureUnique, $type);
             }
+            return $result;
         } else {
             // first strip any invalid characters - all but alphanumerics and -
             $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
             $len = strlen( $name ) ;
-            $result = $name;
             $maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
             if ($len <= $maxLen) {
                 return strtolower($name);
