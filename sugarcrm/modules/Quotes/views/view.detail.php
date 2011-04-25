@@ -76,11 +76,11 @@ class QuotesViewDetail extends ViewDetail
 		$this->ss->assign('gridline', $current_user->getPreference('gridline') == 'on' ? '1' : '0');
 
  		require_once('include/Sugarpdf/sugarpdf_config.php');
-
-		if(PDF_CLASS == 'EZPDF' && PDF_ENABLE_EZPDF == "1") {
+		if(PDF_CLASS == 'TCPDF') {
 		    $this->dv->defs['templateMeta']['form']['links'] = array('{$MOD.PDF_FORMAT} <select name="sugarpdf" id="sugarpdf">{$LAYOUT_OPTIONS}</select></form>');
 			// Bug 41079 Check User Email Client Type
 			$userPref = $current_user->getPreference('email_link_type');
+            global $sugar_config;
 			$defaultPref = $sugar_config['email_default_client'];
 			if($userPref != '') {
 				$client = $userPref;
@@ -99,7 +99,9 @@ class QuotesViewDetail extends ViewDetail
 		        array('customCode'=>'<form action="index.php" method="POST" name="Quote2Opp" id="form"><input type="hidden" name="module" value="Quotes"><input type="hidden" name="record" value="{$fields.id.value}"><input type="hidden" name="user_id" value="{$current_user->id}"><input type="hidden" name="team_id" value="{$fields.team_id.value}"><input type="hidden" name="user_name" value="{$current_user->user_name}"><input type="hidden" name="action" value="QuoteToOpportunity"><input type="hidden" name="opportunity_subject" value="{$fields.name.value}"><input type="hidden" name="opportunity_name" value="{$fields.name.value}"><input type="hidden" name="opportunity_id" value="{$fields.billing_account_id.value}"><input type="hidden" name="amount" value="{$fields.total.value}"><input type="hidden" name="valid_until" value="{$fields.date_quote_expected_closed.value}"><input type="hidden" name="currency_id" value="{$fields.currency_id.value}"><input title="{$APP.LBL_QUOTE_TO_OPPORTUNITY_TITLE}" accessKey="{$APP.LBL_QUOTE_TO_OPPORTUNITY_KEY}" class="button" type="submit" name="opp_to_quote_button" value="{$APP.LBL_QUOTE_TO_OPPORTUNITY_LABEL}"></form>'),
 		        array('customCode'=>$pdfButtons)
 		        );
+				
 		}		
  		parent::display();
  	}
 }
+

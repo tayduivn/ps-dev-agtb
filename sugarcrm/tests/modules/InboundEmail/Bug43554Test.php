@@ -6,6 +6,7 @@ require_once('modules/InboundEmail/InboundEmail.php');
  */
 class Bug43554Test extends Sugar_PHPUnit_Framework_TestCase
 {
+
 	static $ie = null;
     static $_user = null;
 

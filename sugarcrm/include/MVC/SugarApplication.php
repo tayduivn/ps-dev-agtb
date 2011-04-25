@@ -765,8 +765,10 @@ class SugarApplication
 		if ( !empty($sugar_config['http_referer']['list']) ) {
 			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
 		}
+
 		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions) && $this->isModifyAction()) {
 		    $http_host = explode(':', $_SERVER['HTTP_HOST']);
+
 			$whiteListActions[] = $this->controller->action;
 			$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
             if ( $dieIfInvalid ) {

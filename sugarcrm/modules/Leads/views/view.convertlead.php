@@ -347,43 +347,6 @@ class ViewConvertLead extends SugarView
                     $selectedBeans[$module] = $bean;
             	}
             }
-
-
-                //Now lets check the relationship for any existing beans that should be copied over
-                //grab the relationship with the lead
-                $bean = loadBean($module);
-                $beansRel = $this->findRelationship($lead,$bean);
-
-                //grab the list of id's for this relationship (if it exists)
-                if (!empty($beansRel))
-				{
-                    //lets retrieve all the related beans of this type
-					$lead->load_relationship($beansRel) ;
-                    $related_bean_ids = $lead->$beansRel->get();
-    
-                    //now lets relate the beans to the new contact
-                    foreach($related_bean_ids as $id){
-                        //start by identifying the relationship with contact
-                        $bean->retrieve($id);
-                        $contactsRel = $this->findRelationship($beans['Contacts'],$bean);
-
-                        //if the relationship is not empty, then load and add
-                        if(!empty($contactsRel)){
-                            //figure out if this is a m2m or o2m relationship so we can add appropriately
-                            $beans['Contacts']->load_relationship($contactsRel);
-                            $relObject = $beans['Contacts']->$contactsRel->getRelationshipObject();
-                            if ($relObject->relationship_type == "one-to-many" && $beans['Contacts']->$contactsRel->_get_bean_position())
-                            {
-                                $id_field = $relObject->rhs_key;
-                                $beans['Contacts']->$id_field = $id;
-                            } else {
-                                $beans['Contacts']->$contactsRel->add($id);
-                            }
-
-                        }
-                    }
-
-				}
         }
 
 		$this->handleActivities($lead, $beans);
@@ -693,9 +656,6 @@ class ViewConvertLead extends SugarView
     {
     	global $dictionary;
     	require_once("modules/TableDictionary.php");
-        if (file_exists("custom/Application/Ext/TableDictionary/tabledictionary.ext.php"))
-            include_once("custom/Application/Ext/TableDictionary/tabledictionary.ext.php");
-        
     	foreach ($from->field_defs as $field=>$def)
         {
             if (isset($def['type']) && $def['type'] == "link" && isset($def['relationship'])) {

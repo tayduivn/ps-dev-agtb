@@ -368,14 +368,8 @@ if(empty($_REQUEST['to_pdf']) && empty($_REQUEST['to_csv'])) {
 	echo '<script type="text/javascript" src="jscalendar/calendar.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="jscalendar/lang/calendar-en.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="jscalendar/calendar-setup_3.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script src="include/javascript/yui/YAHOO.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//  echo '<script src="include/javascript/yui/log.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script src="include/javascript/yui/dom.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-  echo '<script src="include/javascript/yui/event.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//	echo '<script src="include/javascript/yui/animation.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//	echo '<script src="include/javascript/yui/connection.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script src="include/javascript/yui/dragdrop.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//	echo '<script src="include/javascript/yui/ygDDList.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
+	echo '<script src="include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
+$sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="include/javascript/sugar_3.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo $timedate->get_javascript_validation();
 }
