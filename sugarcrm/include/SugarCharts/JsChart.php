@@ -66,7 +66,8 @@ class JsChart extends SugarChart {
 	}
 
 	function tab($str, $depth){
-		return str_repeat("\t", $depth) . $str . "\n";
+        $str = preg_replace('/(<\w+>)(.*)(<\/\w+>)/e', "'\\1'.htmlentities(from_html('\\2')).'\\3'", $str);
+        return str_repeat("\t", $depth) . $str . "\n";
 	}
 
 	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
@@ -78,11 +79,16 @@ class JsChart extends SugarChart {
 		$this->xmlFile = $xmlFile;
 		$this->chartType = $this->chart_properties['type'];
 
-
 		$style = array();
 		$chartConfig = array();
-		$xmlStr = $this->processXML($this->xmlFile);
-		$json = $this->buildJson($xmlStr);
+        try {
+		    $xmlStr = $this->processXML($this->xmlFile);
+		    $json = $this->buildJson($xmlStr);
+        }
+        catch(Exception $e) {
+            $GLOBALS['log']->fatal("Unable to return chart data, invalid xml for file {$this->xmlFile}");
+            return '';
+        }
 		$this->saveJsonFile($json);
 		$this->ss->assign("chartId", $this->chartId);
 		$this->ss->assign("filename", $this->jsonFilename);
@@ -217,8 +223,8 @@ class JsChart extends SugarChart {
 	}
 
 	function checkData($xmlstr) {
-		$xml = new SimpleXMLElement($xmlstr);
-		if(sizeof($xml->data->group) > 0) {
+        $xml = new SimpleXMLElement($xmlstr);
+        if(sizeof($xml->data->group) > 0) {
 			return true;
 		} else {
 			return false;
