@@ -558,7 +558,7 @@ function isTime(timeStr) {
 	if(!myregexp.test(timeStr))
 		return false
 
-	return true
+	return true;
 }
 
 function inRange(value, min, max) {
