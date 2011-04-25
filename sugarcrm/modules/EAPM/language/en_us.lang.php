@@ -98,5 +98,5 @@ $mod_strings = array (
   'LBL_ERR_FACEBOOK' => 'Facebook returned an error, and the feed cannot be displayed.',
   'LBL_ERR_NO_RESPONSE' => 'An error occurred when trying to connect to the external account.',
   'LBL_ERR_TWITTER' => 'Twitter returned an error, and the feed cannot be displayed.',
-  'LBL_ERR_POPUPS_DISABLED' => 'Please enabled popups in order to complete the connection.'
+  'LBL_ERR_POPUPS_DISABLED' => 'Please enable browser popup windows or add an exception for website "{0}" to the exceptions list in order to connect.'
 );

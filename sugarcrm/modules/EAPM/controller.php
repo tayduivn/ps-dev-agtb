@@ -97,7 +97,8 @@ class EAPMController extends SugarController
             // It's OAuth, we have to handle this specially.
             // We need to create a new window to handle the OAuth, and redirect this window back to the edit view
             // So we will handle that in javascript.
-            echo('<script type="text/javascript"> var rs = window.open(\'index.php?module=EAPM&action=oauth&record='.$this->bean->id.'&closeWhenDone=1&refreshParentWindow=1\',\'EAPM\'); if(!rs) alert(\''. $GLOBALS['mod_strings']['LBL_ERR_POPUPS_DISABLED'] . '\'); document.location=\''.$this->redirect_url.'\';</script>');
+            $popup_warning_msg = string_format($GLOBALS['mod_strings']['LBL_ERR_POPUPS_DISABLED'], array($_SERVER['HTTP_HOST']) );
+            echo('<script type="text/javascript"> var rs = window.open(\'index.php?module=EAPM&action=oauth&record='.$this->bean->id.'&closeWhenDone=1&refreshParentWindow=1\',\'EAPM\'); if(!rs) alert(\''. $popup_warning_msg . '\'); document.location=\''.$this->redirect_url.'\';</script>');
 
             // To prevent the normal handler from issuing a header call and destroying our neat little javascript we'll
             // end right here.
