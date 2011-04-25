@@ -108,6 +108,7 @@
 	var lblEnabled = '{sugar_translate label="LBL_VISIBLE_TABS"}';
 	var lblDisabled = '{sugar_translate label="LBL_HIDDEN_TABS"}';
 	{literal}
+	
 	SUGAR.enabledTabsTable = new YAHOO.SUGAR.DragDropTable(
 		"enabled_div",
 		[{key:"label",  label: lblEnabled, width: 200, sortable: false},
@@ -118,7 +119,10 @@
 			   fields : [{key : "module"}, {key : "label"}]
 			}
 		}), 
-		{height: "300px"}
+		{
+			height: "300px",
+			group: ["enabled_div", "disabled_div"]
+		}
 	);
 	SUGAR.disabledTabsTable = new YAHOO.SUGAR.DragDropTable(
 		"disabled_div",
@@ -130,7 +134,10 @@
 			   fields : [{key : "module"}, {key : "label"}]
 			}
 		}),
-		{height: "300px"}
+		{
+			height: "300px",
+		 	group: ["enabled_div", "disabled_div"]
+		 }
 	);
 	SUGAR.enabledTabsTable.disableEmptyRows = true;
     SUGAR.disabledTabsTable.disableEmptyRows = true;
@@ -153,7 +160,10 @@
 			   fields : [{key : "module"}, {key : "label"}]
 			}
 		}),  
-		{height: "300px"}
+		{
+		 	height: "300px",
+		 	group: ["enabled_subpanels_div", "disabled_subpanels_div"]
+		}
 	);
 	SUGAR.subDisabledTable = new YAHOO.SUGAR.DragDropTable(
 		"disabled_subpanels_div",
@@ -164,7 +174,10 @@
 			   fields : [{key : "module"}, {key : "label"}]
 			}
 		}),
-		{height: "300px"}
+		{
+		 	height: "300px",
+		 	group: ["enabled_subpanels_div", "disabled_subpanels_div"]
+		}
 	);
 	SUGAR.subEnabledTable.disableEmptyRows = true;
 	SUGAR.subDisabledTable.disableEmptyRows = true;
