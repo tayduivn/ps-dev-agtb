@@ -2892,6 +2892,18 @@ SUGAR.util = function () {
 			if (overrides) {
 			    for (var i in overrides)	subc.prototype[i] = overrides[i];
 			}
+		},
+		hrefURL : function(url) {
+			if(SUGAR.isIE) {
+				// IE needs special treatment since otherwise it would not pass Referer
+				var trampoline = document.createElement('a');
+				trampoline.href = url;
+				document.body.appendChild(trampoline);
+				trampoline.click();
+				document.body.removeChild(trampoline);
+			} else {
+				document.location.href = url;
+			}
 		}
 	};
 }(); // end util
