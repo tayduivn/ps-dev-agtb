@@ -1607,6 +1607,13 @@ SUGAR._ajaxUICallback = function(o)
 SUGAR._canAjaxLoadModule = function(module)
 {
     var bannedModules = ['Emails', 'Administration', 'ModuleBuilder'];
+	// Mechanism to allow for overriding or adding to this list
+	if(typeof(SUGAR.addAjaxBannedModules) != 'undefined'){
+		bannedModules.concat(SUGAR.addAjaxBannedModules);
+	}
+	if(typeof(SUGAR.overrideAjaxBannedModules) != 'undefined'){
+		bannedModules = SUGAR.overrideAjaxBannedModules;
+	}
     return bannedModules.indexOf(module) == -1;
 }
 
