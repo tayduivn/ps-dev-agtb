@@ -130,6 +130,8 @@ SUGAR.reports = function() {
 	var displaySummaryOrderBySelectedRow = -1;
 
 
+	var initInProgress = 0; //workaround for saveFilters
+
 	return {
         overrideRecord: true,
 		checkEnterKey: function() {
@@ -162,7 +164,9 @@ SUGAR.reports = function() {
 				}
 				if (report_def_str.filters_def.Filter_1){
 					SUGAR.reports.loadFilters(report_def_str.filters_def.Filter_1);
+					initInProgress = 1;
 					SUGAR.reports.saveFilters();
+					initInProgress = 0;
 				}
 				else
 				    SUGAR.FiltersWidget.addGroupToPanel('filter_designer_div', SUGAR.language.get('Reports','LBL_FILTER'));
@@ -773,10 +777,12 @@ SUGAR.reports = function() {
 						filter_def.input_name0 = new Array();
 						filter_def.input_name1 = new Array();
 						filter_def.input_name2 = '';
-					
+
+						var got_selected = 0;
 						for(l = 0; l < input_arr.length; l++) {
 							if(input_arr[l].type == 'hidden' && /^id_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name0.push(input_arr[l].value);
+								got_selected = 1;
 							} else if(input_arr[l].type == 'text' && /id_collection_/.test(input_arr[l].id) && trim(input_arr[l].value) != '') {
 								filter_def.input_name1.push(input_arr[l].value);
 							} else if(input_arr[l].type == 'radio' && input_arr[l].checked) {
@@ -785,7 +791,11 @@ SUGAR.reports = function() {
 								filter_def.input_name2 = input_arr[l].value;
 							}
 						}
-					}  
+						if (!initInProgress && !got_selected) {
+							got_error = 1;
+							error_msgs += "\"" + column_vname + "\" " + lbl_missing_input_value + "\n";
+						}
+					}
 					//END SUGARCRM flav!=sales ONLY
 					else if ( typeof(input_arr[0]) !=  'undefined' && input_arr[0].id.search(/runtime_filter/) == -1) {
 						filter_def.input_name0=input_arr[0].value;
