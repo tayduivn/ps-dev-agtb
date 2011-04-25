@@ -183,20 +183,30 @@ class SearchViewMetaDataParser extends ListLayoutMetaDataParser
         }
         return $temp ;
     }
-    
+
+
+    function normalizeDefs($defs) {
+        $out = array();
+        foreach ($defs as $def)
+        {
+            if (is_array($def) && isset($def['name']))
+            {
+                $out[strtolower($def['name'])] = $def;
+            }
+        }
+        return $out;
+    }
+
     function getOriginalViewDefs() {
         $defs = $this->implementation->getOriginalViewdefs ();
         $out = array();
         if (!empty($defs) && !empty($defs['layout']) && !empty($defs['layout'][$this->_searchLayout]))
         {
-        	$defs = $defs['layout'][$this->_searchLayout];
-	        foreach ($defs as $def)
-	        {
-	            if (is_array($def) && isset($def['name']))
-	            {
-	            	$out[strtolower($def['name'])] = $def;
-	            }
-	        }
+            if($this->_searchLayout == "basic_search" &&  !empty($defs['layout']["advanced_search"]))
+            {
+                $out = $this->normalizeDefs($defs['layout']["advanced_search"]);
+            }
+            $out = array_merge($out, $this->normalizeDefs($defs['layout'][$this->_searchLayout]));
         }
 
         return $out;
