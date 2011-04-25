@@ -36,19 +36,15 @@ $subpanel_layout = array(
 	'where' => '',
 
 	'list_fields' => array(
-		'name'=>array(
-	 		'vname' => 'LBL_NAME',
+		'application'=>array(
+	 		'vname' => 'LBL_APPLICATION',
 			'widget_class' => 'SubPanelDetailViewLink',
 	 		'width' => '25%',
 		),
-		'application'=>array(
-	 		'vname' => 'LBL_APPLICATION',
+		'name'=>array(
+	 		'vname' => 'LBL_NAME',
 	 		'width' => '20%',
 		),
-		'validated'=>array(
-	 		'vname' => 'LBL_VALIDATED',
-	 		'width' => '5%',
-		),		
 		'date_modified'=>array(
 	 		'vname' => 'LBL_DATE_MODIFIED',
 	 		'width' => '20%',
