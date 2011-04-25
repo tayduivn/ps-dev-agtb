@@ -26,7 +26,7 @@ class PanelVisibilityAction extends AbstractAction{
 	
 	function PanelVisibilityAction($params) {
 		$this->targetPanel = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 	}
 	
 	/**

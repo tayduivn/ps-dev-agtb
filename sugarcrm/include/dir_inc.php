@@ -83,7 +83,7 @@ function rmdir_recursive( $path ){
         return( unlink( $path ) );
     }
     if( !is_dir( $path ) ){
-        print( "ERROR: rmdir_recursive(): argument $path is not a file or a dir.\n" );
+        $GLOBALS['log']->error( "ERROR: rmdir_recursive(): argument $path is not a file or a dir.\n" );
         return( false );
     }
 

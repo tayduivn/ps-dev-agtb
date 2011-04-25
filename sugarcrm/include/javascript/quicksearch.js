@@ -252,6 +252,10 @@ function enableQS(noReload){
                     }
                     
                     
+                    if ( typeof(SUGAR.config.quicksearch_querydelay) != 'undefined' ) {
+                        search.queryDelay = SUGAR.config.quicksearch_querydelay;
+                    }
+                    
                     //fill in the data fields on selection
                     search.itemSelectEvent.subscribe(function(e, args){
                     	var data = args[2];

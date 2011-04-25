@@ -237,13 +237,14 @@ if(isset($_POST['clear_loaded'])){
         $json_config = new json_config();
 		$json = getJSONobj();
         $qsd = new QuickSearchDefaults();
-        $sqs_objects = array('tag_name' => getQSTags(),
-                             'team_name' => $qsd->getQSTeam(),
-                             'kbdoc_approver_name' => getQSApprover(),
-                             'kbarticle_author_name' => getQSAuthor(),
+        $qsd->setFormName('FTSFormAdvanced');
+        $sqs_objects = array('FTSFormAdvanced_tag_name' => getQSTags('FTSFormAdvanced'),
+                             'FTSFormAdvanced_team_name' => $qsd->getQSTeam(),
+                             'FTSFormAdvanced_kbdoc_approver_name' => getQSApprover('FTSFormAdvanced'),
+                             'FTSFormAdvanced_kbarticle_author_name' => getQSAuthor('FTSFormAdvanced'),
                              'filename' =>    getQSFileName(),
                              'file_mime_type' => getQSMimeType());
-        $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '</script>';
+        $quicksearch_js = '<script type="text/javascript" language="javascript">sqs_objects = ' . $json->encode($sqs_objects) . '; enableQS();</script>';
         $javascript = get_set_focus_js().$quicksearch_js;
 
         $ss->assign("JAVASCRIPT", $javascript);

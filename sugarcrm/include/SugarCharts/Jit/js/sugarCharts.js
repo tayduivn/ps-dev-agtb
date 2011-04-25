@@ -32,19 +32,18 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				var labelType, useGradients, nativeTextSupport, animate;
 				(function() {
 				  var ua = navigator.userAgent,
-					  iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
 					  typeOfCanvas = typeof HTMLCanvasElement,
 					  nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
 					  textSupport = nativeCanvasSupport 
 						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-				  //I'm setting this based on the fact that ExCanvas provides text support for IE
-				  //and that as of today iPhone/iPad current text support is lame
-				  labelType = (!iStuff) ? 'Native' : 'HTML';
+				  labelType = 'Native';
 				  nativeTextSupport = labelType == 'Native';
 				  useGradients = nativeCanvasSupport;
-				  animate = !(iStuff || !nativeCanvasSupport);
+				  animate = false;
 				})();
-
+				
+			jsonFilename =  jsonFilename + "?r=" + new Date().getTime();
+			
 			switch(chartConfig["chartType"]) {
 			case "barChart":
 				var handleFailure = function(o){
@@ -296,13 +295,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					  
 					  if(elem.collision) {
 					  	eval("var name = elem."+chartConfig["tip"]+";");
-					  	tip.innerHTML = '';
+					  	var content = '<table>';
 					  	
 					  	for(var i=0; i<name.length; i++) {
-					  		tip.innerHTML += "<b>" + name[i] + "</b>: " + elem.value[i] + " - " + elem.percentage[i] + "%" + "<br>";
+					  		content += '<tr><td><b>' + name[i] + '</b>:</td><td> ' + elem.value[i] + ' - ' + elem.percentage[i] + '%' + '</td></tr>';
 					  	}
-					  	//eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
-					  
+					  	content += '</table>';
+					  	tip.innerHTML = content;
 					  } else {
 					  	eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");	
 					  }
@@ -658,6 +657,12 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  colorStop2: 'rgba(255,255,255,0)',
 				  labelType: properties['labels'],
 				  hoveredColor: false,
+				  Title: {
+					text: properties['title'],
+					size: 16,
+					color: '#444444',
+					offset: 20
+				  },
 				  Subtitle: {
 					text: properties['subtitle'],
 					size: 11,

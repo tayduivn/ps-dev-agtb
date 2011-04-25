@@ -25,7 +25,7 @@ class SugarRelationshipFactory {
      * @return void
      *
      *
-     * 
+     *
      */
     public function getRelationship($relationshipName)
     {
@@ -91,8 +91,13 @@ class SugarRelationshipFactory {
                 {
                     if ($key == $relKey) //Relationship only entry, we need to capture everything
                         $relationships[$key] = array_merge(array('name' => $key), $def, $relDef);
-                    else
+                    else {
                         $relationships[$relKey] = array_merge(array('name' => $relKey), $relDef);
+                        if(!empty($relationships[$relKey]['join_table']) && empty($relationships[$relKey]['fields'])
+                            && isset($dictionary[$relationships[$relKey]['join_table']]['fields'])) {
+                            $relationships[$relKey]['fields'] = $dictionary[$relationships[$relKey]['join_table']]['fields'];
+                        }
+                    }
                 }
             }
         }

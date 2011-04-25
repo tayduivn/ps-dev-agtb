@@ -1,5 +1,0 @@
-<soda>
-	<script file="tests/modules/studio/module_lib/setup-studio.xml" />
-	<script fileset="tests/modules/studio" />
-	<script file="tests/modules/studio/module_lib/cleanup-studio.xml" />
-</soda>

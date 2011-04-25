@@ -25,5 +25,5 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+//FILE SUGARCRM flav=pro ONLY
 $action_view_map['trackersettings']= 'trackersettings';

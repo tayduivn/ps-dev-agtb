@@ -1,2 +1,0 @@
-name,quantity,serial_number,asset_number,status,date_purchased,date_support_starts,date_support_expires,currency_id,cost_price,list_price,discount_price,discount_amount,book_value,book_value_date,discount_select,website,category_id,mft_part_num,vendor_part_num,description,support_name,support_description,tax_class,weight
-ProductSubpanel,400,454,154,Quoted,11/11/2010,10/10/2010,12/12/2012,US Dollars : $,4546,120,15,45648748,4567484,12/11/2010,TRUE,www.sugarcrm.com,-none-,46548,15468,testing account product subpanel,41564,4154,Taxable,1223

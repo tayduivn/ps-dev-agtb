@@ -30,13 +30,13 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 	function queryFilterEmpty($layout_def)
 	{
 	    $column = $this->_get_column_select($layout_def);
-	    return "($column IS NULL OR $column LIKE '')";
+	    return "($column IS NULL OR $column LIKE '' OR $column = '^^')";
 	}
 
 	 function queryFilterNot_Empty($layout_def)
 	 {
 	     $column = $this->_get_column_select($layout_def);
-	     return "($column IS NOT NULL AND $column <> '')";
+	     return "($column IS NOT NULL AND $column <> '' AND $column <> '^^')";
 	 }
 
 	function queryFilteris($layout_def) {

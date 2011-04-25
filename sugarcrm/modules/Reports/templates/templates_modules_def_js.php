@@ -187,7 +187,7 @@ field_defs_<?php echo $module_name; ?>[ "<?php echo $field_def['name']; ?>"] = <
 							}
 							$field_value = addslashes($field_value);
 						}
-						else if ($field_name == 'help') {
+						else if ($field_name == 'comments' || $field_name == 'help') {
 							$field_value = addslashes($field_value);
 						}
 						

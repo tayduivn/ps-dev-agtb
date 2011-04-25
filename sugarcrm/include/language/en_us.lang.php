@@ -2247,6 +2247,7 @@ $app_strings = array (
     'LBL_CLOSE_ACTIVITY_HEADER' => "Confirm",
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
+    'LBL_INVALID_FILE_EXTENSION' => 'Invalid File Extension',
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',
@@ -2304,6 +2305,7 @@ $app_strings = array (
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
     'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
+    'ERR_EXTERNAL_API_UPLOAD_FAIL' => 'An error occurred while uploading.  Please ensure the file you are uploading is not empty.',
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
 
@@ -2770,9 +2772,6 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
 	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
-	'ERROR_USER_PREFS' => "WARNING: Not all of your data could be saved because your data limit has been reached.",
-	'ERROR_USER_PREFS_DASH' => "WARNING: The Sugar dashlet could not be added because your data limit has been reached.",
-	'ERROR_USER_PREFS_TAB' => "WARNING: The Home Page could not be added because your data limit has been reached.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -3034,7 +3033,7 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
-    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
     
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
@@ -3066,6 +3065,9 @@ $app_strings = array (
     'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
     'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
+    
+    //External API Error Messages
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

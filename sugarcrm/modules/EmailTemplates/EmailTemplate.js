@@ -147,6 +147,11 @@ function insert_variable_html_link(text) {
 		the_label = label;	
 	}
 
+	//remove surounding parenthesis around the label
+	if(the_label[0] == '{' && the_label[the_label.length-1] == '}'){
+		the_label = the_label.substring(1,the_label.length-1);
+	}
+	
 	var thelink = "<a href='" + text + "' > "+the_label+" </a>";
 	insert_variable_html(thelink);
 }	

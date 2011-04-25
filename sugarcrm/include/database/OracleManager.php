@@ -657,7 +657,7 @@ class OracleManager extends DBManager
                 	if ($err != false) {
 			            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
                 	}
-                	$GLOBALS['log']->fatal("Could not connect to server ".$this->dbName." as ".$this->userName.".");
+                	$GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_name']." as ".$configOptions['db_user_name'].".");
                 	if($dieOnError) {
                 	    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
                 	} else {
@@ -674,11 +674,18 @@ class OracleManager extends DBManager
              * at create time vs. byte-length columns.  the other option is to switch to nvarchar2()
              * which has char-length semantics by default.
              */
-            $this->query("alter session set
+             $session_query = "alter session set
                 nls_date_format = 'YYYY-MM-DD hh24:mi:ss'
                 QUERY_REWRITE_INTEGRITY = TRUSTED
                 QUERY_REWRITE_ENABLED = TRUE
-                NLS_LENGTH_SEMANTICS=CHAR");
+                NLS_LENGTH_SEMANTICS=CHAR ";
+
+            if(!empty($GLOBALS['sugar_config']['oracle_enable_ci'])){
+            	$session_query .= "
+            	NLS_COMP=LINGUISTIC
+				NLS_SORT=BINARY_CI";
+            }
+            $this->query($session_query);
 
 		if($this->checkError('Could Not Connect', $dieOnError))
 			$GLOBALS['log']->info("connected to db");

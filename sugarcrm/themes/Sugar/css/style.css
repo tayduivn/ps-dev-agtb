@@ -1292,6 +1292,9 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 .search_form  .edit tr td[scope="row"] {
 	background-color: transparent;
 }
+.search_form  .edit tr td.chkbxRow {
+	padding-left: 0px !important;
+}
 
 .search_form .sumbitButtons {
 	padding-left: 10px !important;
@@ -2522,6 +2525,7 @@ embed
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 	margin-bottom: 20px;
+	border: 1px solid #ccc\9;
 	}
 	
 	.dashletPanel .hd {
@@ -4963,6 +4967,18 @@ border-radius: 0px 0px 0px 6px;
 -moz-border-radius: 0px 0px 6px 0px;
 border-radius: 0px 0px 6px 0px;
 -webkit-border-bottom-right-radius: 6px;
+}
+table.importTable .edit.view > tr:first-child > td:first-child,.detail.view tr:first-child > td:first-child,
+table.importTable .edit.view > tr:first-child td:last-child,.detail.view tr:first-child td:last-child,
+table.importTable .edit.view > tr:last-child > td:first-child,.detail.view tr:last-child > td:first-child,
+table.importTable .edit.view > tr:last-child td:last-child ,.detail.view tr:last-child td:last-child 
+{
+    -moz-border-radius: 0px 0px 0px 0px;
+    border-radius: 0px 0px 0px 0px;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
 }
 
 .edit.view tr:last-child td,.detail.view tr:last-child td {

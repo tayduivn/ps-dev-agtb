@@ -76,6 +76,8 @@ require_once 'SugarTestThemeUtilities.php';
 require_once 'SugarTestTeamUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestContactUtilities.php';
+require_once 'SugarTestEmailUtilities.php';
+require_once 'SugarTestCampaignUtilities.php';
 require_once 'SugarTestLeadUtilities.php';
 require_once 'SugarTestStudioUtilities.php';
 require_once 'SugarTestMeetingUtilities.php';
@@ -84,14 +86,26 @@ require_once 'SugarTestAccountUtilities.php';
 require_once 'SugarTestTrackerUtility.php';
 require_once 'SugarTestImportUtilities.php';
 require_once 'SugarTestMergeUtilities.php';
+//BEGIN SUGARCRM flav=pro ONLY
+require_once 'SugarTestQuoteUtilities.php';
+require_once 'SugarTestProductUtilities.php';
+require_once 'SugarTestProductBundleUtilities.php';
+//END SUGARCRM flav=pro ONLY
 
 // define our testcase subclass
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {
     protected $backupGlobals = FALSE;
-    
+
     protected $useOutputBuffering = true;
-    
+
+    protected function assertPreConditions()
+    {
+        if(isset($GLOBALS['log'])) {
+            $GLOBALS['log']->info("START TEST: {$this->getName(false)}");
+        }
+    }
+
     protected function assertPostConditions() {
         if(!empty($_REQUEST)) {
             foreach(array_keys($_REQUEST) as $k) {
@@ -110,6 +124,17 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 		        unset($_GET[$k]);
 		    }
         }
+        if(isset($GLOBALS['log'])) {
+            $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
+        }
+    }
+
+    public static function tearDownAfterClass()
+    {
+        unset($GLOBALS['disable_date_format']);
+        unset($GLOBALS['saving_relationships']);
+        unset($GLOBALS['updating_relationships']);
+        $GLOBALS['timedate']->clearCache();
     }
 }
 

@@ -50,7 +50,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
 }
 {/literal}
 </script>
-<div id="dcSearchFormDiv" style="position:relative; left:20px;">
+<div id="dcSearchFormDiv" style="left:20px;">
 <form id="dcSearchForm">
 <table class='dcSearch' border='0' cellpadding='2' cellspacing='2'>
 <tr>
@@ -67,7 +67,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Documents
 </table>
 </form>	
 </div>	
-<table width='500' class='dcListView' cellpadding='0' cellspacing='0'>
+<table width='100%' class='dcListView' cellpadding='0' cellspacing='0'>
   <tr height='20'>
     {counter start=0 name="colCounter" print=false assign="colCounter"}
     {foreach from=$displayColumns key=colHeader item=params}

@@ -480,6 +480,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         return $results;
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Get the base64 contents of a quote pdf.
      *
@@ -565,8 +566,9 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
-
-        /**
+    //END SUGARCRM flav=pro ONLY
+    
+    /**
      * Retrieve the layout metadata for a given module given a specific type and view.
      *
      * @param String $session -- Session ID returned by a previous call to login.

@@ -108,6 +108,7 @@ class ListViewSmarty extends ListViewDisplay{
         $this->ss->assign('favorites',$this->seed->isFavoritesEnabled());
         //END SUGARCRM flav=pro ONLY
         if($this->overlib) $this->ss->assign('overlib', true);
+
         // Bug 24677 - Correct the page total amount on the last page of listviews
         $pageTotal = $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current'];
         if ( $this->data['pageData']['offsets']['next'] < 0 ) {

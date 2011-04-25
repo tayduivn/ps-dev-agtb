@@ -75,17 +75,24 @@ class SugarFieldExpression extends GenericExpression
                      throw new Exception("attempt to get date from empty field: {$fieldName}");
                 }
                 return $timedate->fromUserTime($timedate->to_display_time($this->context->$fieldName));
+            case 'bool':
+                if (!empty($this->context->$fieldName))
+                    return AbstractExpression::$TRUE;
+                return AbstractExpression::$FALSE;
         }
         return $this->context->$fieldName;
 	}
 
     protected function setContext()
     {
-        $module = $_REQUEST['module'];
-        $id = $_REQUEST['record'];
-        $focus = $this->getBean($module);
-        $focus->retrieve($id);
-        $this->context = $focus;
+        if (empty($this->context) && !empty($_REQUEST['module']) && !empty($_REQUEST['record']))
+        {
+            $module = $_REQUEST['module'];
+            $id = $_REQUEST['record'];
+            $focus = $this->getBean($module);
+            $focus->retrieve($id);
+            $this->context = $focus;
+        }
     }
 
     protected function getBean($module)

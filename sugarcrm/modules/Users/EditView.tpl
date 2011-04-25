@@ -78,8 +78,8 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 var EditView_tabs = new YAHOO.widget.TabView("EditView_tabs");
 
 {literal}
-//Override so we do not force submit
-SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { }
+//Override so we do not force submit, just simulate the 'save button' click
+SUGAR.EmailAddressWidget.prototype.forceSubmit = function() { document.getElementById('Save').click();}
 
 EditView_tabs.on('contentReady', function(e){
 {/literal}

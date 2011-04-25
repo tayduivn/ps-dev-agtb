@@ -27,7 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
  
- $searchFields['<module_name>'] =
+$module_name = '<module_name>';
+$_module_name = '<_module_name>';
+$searchFields['<module_name>'] =
 	array (
 		'document_name' => array( 'query_type'=>'default'),
         'category_id'=> array('query_type'=>'default', 'options' => 'document_category_dom', 'template_var' => 'CATEGORY_OPTIONS'),

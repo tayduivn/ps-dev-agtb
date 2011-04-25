@@ -77,7 +77,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			  $mapping['states'] = $states;
 
 	 	      if(!file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers')) {
-
 	 	      	 mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
 	    	  }
 
@@ -127,6 +126,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             */
             //END SUGARCRM flav=int ONLY
 
+            $this->initLookupMap();
  		}catch(Exception $ex){
  		 	$GLOBALS['log']->error($ex);
 			return;
@@ -204,13 +204,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		}
 
  		$lookup_mapping = array();
-
+ 		
+ 		$countries = array();
+ 		$states = array();
+ 		
  		if(file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
  		   require(HOOVERS_LOOKUP_MAPPING_FILE);
+ 		   $countries = array_flip($lookup_mapping['countries']);
+ 		   $states = array_flip($lookup_mapping['states']); 		   
  		}
-
- 		$countries = array_flip($lookup_mapping['countries']);
- 		$states = array_flip($lookup_mapping['states']);
 
  	    $data = array();
         $data['id'] = $args['uniqueId'];
@@ -306,7 +308,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         	$data['description'] = $result['full-description'];
         }
 
-       return $data;
+        return $data;
  	}
 
 
@@ -499,15 +501,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 * @param String $value String value of the value to lookup
 	 * @return String $lookupValue String value that should be used for lookup
 	 */
-	private function getLookupValue($category='', $value='') {
-	   if(empty($this->_lookupMap)) {
-	       $this->initLookupMap();
-	   }
+	private function getLookupValue($category='', $value='') 
+	{
 	   if(empty($category) || empty($value) || empty($this->_lookupMap)) {
 	   	  return $value;
 	   }
 
-       return !empty($this->_lookupMap[$category][strtoupper($value)]) ? $this->_lookupMap[$category][strtoupper($value)] : $value;
+       return isset($this->_lookupMap[$category][strtoupper($value)]) ? $this->_lookupMap[$category][strtoupper($value)] : $value;
 	}
 }
 

@@ -231,34 +231,34 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 
 	//add assigned user and current user if this is the first time bean is saved
   	if(empty($focus->id) && !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] =='Calls' && !empty($_REQUEST['return_action']) && $_REQUEST['return_action'] =='DetailView'){
-		//if return action is set to detail view and return module to call, then this is from the long form, do not add the assigned user (only the current user) 
+		//if return action is set to detail view and return module to call, then this is from the long form, do not add the assigned user (only the current user)
 		//The current user is already added to UI and we want to give the current user the option of opting out of meeting.
   		if($current_user->id != $_POST['assigned_user_id']){
   			$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
   			$_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
   		}
   	}elseif (empty($focus->id) ){
-	  	//this is not from long form so add assigned and current user automatically as there is no invitee list UI.  
+	  	//this is not from long form so add assigned and current user automatically as there is no invitee list UI.
 	  	//This call could be through an ajax call from subpanels or shortcut bar
 	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
-	  	
+
 	  	//add current user if the assigned to user is different than current user.
 	  	if($current_user->id != $_POST['assigned_user_id']){
 	  		$_POST['user_invitees'] .= ','.$current_user->id.', ';
 	  	}
-	  	
+
 	  	//remove any double comma's introduced during appending
 	    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
   	}
-  	
+
     if(isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true'){
         $focus->save(true);
         $return_id = $focus->id;
     }else{
-    	
+
 	    if(empty($_REQUEST['return_module']) && empty($_REQUEST['return_action']) && $focus->status == 'Held'){
     		//if we are closing the call, and the request does not have a return module AND return action set, then
-    		//the request is coming from a dashlet or subpanel close icon and there is no need to process user invitees, 
+    		//the request is coming from a dashlet or subpanel close icon and there is no need to process user invitees,
     		//just save the current values.
     		$focus->save(true);
 	    }else{
@@ -269,7 +269,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    	} else {
 	    	   $userInvitees = array();
 	    	}
-	
+
 	        // Calculate which users to flag as deleted and which to add
 	        $deleteUsers = array();
 	    	$focus->load_relationship('users');
@@ -284,26 +284,26 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    		     $acceptStatusUsers[$a['user_id']] = $a['accept_status'];
 	    		  }
 	    	}
-	
+
 	    	if(count($deleteUsers) > 0) {
 	    		$sql = '';
 		    	foreach($deleteUsers as $u) {
 	                $sql .= ",'" . $u . "'";
 	    		}
-	
+
 	    		$sql = substr($sql, 1);
 	    		// We could run a delete SQL statement here, but will just mark as deleted instead
 	    		$sql = "UPDATE calls_users set deleted = 1 where user_id in ($sql) AND call_id = '". $focus->id . "'";
 	    		$focus->db->query($sql);
 	    	}
-	
+
 	        // Get all contacts for the call
 	    	if(!empty($_POST['contact_invitees'])) {
 	    	   $contactInvitees = explode(',', trim($_POST['contact_invitees'], ','));
 	    	} else {
 	    	   $contactInvitees = array();
 	    	}
-	
+
 	        $deleteContacts = array();
 	    	$focus->load_relationship('contacts');
 	    	$q = 'SELECT mu.contact_id, mu.accept_status FROM calls_contacts mu WHERE mu.call_id = \''.$focus->id.'\'';
@@ -316,7 +316,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    		  	 $acceptStatusContacts[$a['contact_id']] = $a['accept_status'];
 	    		  }
 	    	}
-	
+
 	    	if(count($deleteContacts) > 0) {
 	    		$sql = '';
 	    		foreach($deleteContacts as $u) {
@@ -333,7 +333,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    	} else {
 	    	   $leadInvitees = array();
 	    	}
-	
+
 	        // Calculate which leads to flag as deleted and which to add
 	        $deleteLeads = array();
 	    	$focus->load_relationship('leads');
@@ -348,7 +348,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    		     $acceptStatusLeads[$a['user_id']] = $a['accept_status'];
 	    		  }
 	    	}
-	
+
 	    	if(count($deleteLeads) > 0) {
 	    		$sql = '';
 	    		foreach($deleteLeads as $u) {
@@ -364,8 +364,8 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    	//END SUGARCRM flav!=sales ONLY
 	    	////	END REMOVE
 	    	///////////////////////////////////////////////////////////////////////////
-	
-	
+
+
 	    	///////////////////////////////////////////////////////////////////////////
 	    	////	REBUILD INVITEE RELATIONSHIPS
 	    	$focus->users_arr = array();
@@ -388,18 +388,18 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    	// the users and contacts relationships
 	    	$focus->save(true);
 	    	$return_id = $focus->id;
-	
+
 	    	// Process users
 	    	$existing_users = array();
 	    	if(!empty($_POST['existing_invitees'])) {
 	    	   $existing_users =  explode(",", trim($_POST['existing_invitees'], ','));
 	    	}
-	
+
 	    	foreach($focus->users_arr as $user_id) {
 	    	    if(empty($user_id) || isset($existing_users[$user_id]) || isset($deleteUsers[$user_id])) {
 	    			continue;
 	    		}
-	
+
 	    		if(!isset($acceptStatusUsers[$user_id])) {
 	    			$focus->load_relationship('users');
 	    			$focus->users->add($user_id);
@@ -411,18 +411,18 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    			$focus->db->query($qU);
 	    		}
 	    	}
-	
+
 	        // Process contacts
 	    	$existing_contacts =  array();
 	    	if(!empty($_POST['existing_contact_invitees'])) {
 	    	   $existing_contacts =  explode(",", trim($_POST['existing_contact_invitees'], ','));
 	    	}
-	
+
 	    	foreach($focus->contacts_arr as $contact_id) {
-	    		if(empty($contact_id) || isset($exiting_contacts[$contact_id]) || isset($deleteContacts[$contact_id])) {
+	    		if(empty($contact_id) || isset($existing_contacts[$contact_id]) || isset($deleteContacts[$contact_id])) {
 	    			continue;
 	    		}
-	
+
 	    		if(!isset($acceptStatusContacts[$contact_id])) {
 	    			$focus->load_relationship('contacts');
 	    		    $focus->contacts->add($contact_id);
@@ -440,12 +440,12 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    	if(!empty($_POST['existing_lead_invitees'])) {
 	    	   $existing_leads =  explode(",", trim($_POST['existing_lead_invitees'], ','));
 	    	}
-	
+
 	    	foreach($focus->leads_arr as $lead_id) {
 	    		if(empty($lead_id) || isset($existing_leads[$lead_id]) || isset($deleteLeads[$lead_id])) {
 	    			continue;
 	    		}
-	
+
 	    		if(!isset($acceptStatusLeads[$lead_id])) {
 	    			$focus->load_relationship('leads');
 	    		    $focus->leads->add($lead_id);
@@ -458,11 +458,11 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	    		}
 	    	}
 	    	//END SUGARCRM flav!=sales ONLY
-	
+
 	    	// CCL - Comment out call to set $current_user as invitee
 	    	//set organizer to auto-accept
 	    	//$focus->set_accept_status($current_user, 'accept');
-	    	
+
 	    	////	END REBUILD INVITEE RELATIONSHIPS
 	    	///////////////////////////////////////////////////////////////////////////
 	    }

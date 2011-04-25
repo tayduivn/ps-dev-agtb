@@ -146,6 +146,33 @@ class DependencyManager {
 		return $deps;
 	}
 
+    static function getDependentFieldTriggerFields($fields, $fieldDefs = array())
+    {
+        $ret = array();
+        foreach($fields as $field => $def) {
+            if (!empty($fieldDefs[$field]))
+                $def = $fieldDefs[$field];
+			if ( !empty ( $def [ 'dependency' ] ) )
+    		{
+    			$triggerFields = array();
+    			// normalize the dependency definition
+    			if (is_array ( $def [ 'dependency' ] ) )
+    			{
+    				$triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ]['action'] ) ;
+				}
+                else
+                {
+                    $triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ] ) ;
+                }
+                foreach($triggerFields as $name)
+                {
+                    $ret[$name] = true;
+                }
+    		}
+		}
+        return array_keys($ret);
+    }
+
 	static function getDropDownDependencies($fields) {
 		$deps = array();
 		global $app_list_strings;

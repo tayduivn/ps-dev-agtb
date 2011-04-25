@@ -30,8 +30,8 @@ class Parser {
 		// the function map
 		static $FUNCTION_MAP = array();
 
-		// trim spaces, left and right
-		$expr = trim($expr);
+		// trim spaces, left and right, and remove newlines
+		$expr = str_replace("\n", "", trim($expr));
 
 		// check if its a constant and return a constant expression
 		$const = Parser::toConstant($expr);
@@ -56,6 +56,7 @@ class Parser {
             return new RelatedFieldExpression(array(
                 $linkField, Parser::toConstant('"' . $related . '"'))
             );
+
         }
 
 
@@ -273,6 +274,7 @@ class Parser {
 	}
 	
 	/**
+     * @deprecated
 	 * returns the expression with the variables replaced with the values in target.
 	 *
 	 * @param string $expr
@@ -302,6 +304,7 @@ class Parser {
                     $ret = str_replace("$$field", $val, $ret);
                 }
                 else if (isset ($target->$field)) {
+
                         $val = Parser::getFormatedValue($target->$field, $field);
                         $ret = str_replace("$$field", $val, $ret);
                     } else  {

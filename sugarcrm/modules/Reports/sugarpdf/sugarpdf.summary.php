@@ -86,11 +86,7 @@ class ReportsSugarpdfSummary extends ReportsSugarpdfReports
     
         $this->bean->clear_results();
         
-        $run_total_query = false; // check if one of the summary columns is a count, then run total otherwise do not run total
-        foreach($this->bean->report_def['summary_columns'] as $c => $col) {
-            if($col['name'] == 'count') $run_total_query = true;
-        }
-        if($run_total_query) $this->bean->run_total_query();
+        if($this->bean->has_summary_columns()) $this->bean->run_total_query();
     
         $total_header_row = $this->bean->get_total_header_row();
         $total_row = $this->bean->get_summary_total_row();

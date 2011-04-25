@@ -22,6 +22,12 @@
  */
 
 /**
+ * Modifications by SugarCRM
+ * 
+ * March 14, 2011 - asandberg: Changed DOCUMENTS_LIST_FEED_URI to work with v3 of Docs API.
+ */
+
+/**
  * Zend_Gdata_Query
  */
 require_once('Zend/Gdata/Query.php');
@@ -45,7 +51,7 @@ class Zend_Gdata_Docs_Query extends Zend_Gdata_Query
      *
      * @var string
      */
-    const DOCUMENTS_LIST_FEED_URI = 'http://docs.google.com/feeds/documents';
+    const DOCUMENTS_LIST_FEED_URI = 'http://docs.google.com/feeds/default';
 
     /**
      * The generic base URL used by some inherited methods

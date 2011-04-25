@@ -1,13 +1,13 @@
-<?php 
+<?php
 require_once 'modules/DynamicFields/FieldCases.php';
 require_once 'service/v4/SugarWebServiceImplv4.php';
 
 class Bug41985Test extends Sugar_PHPUnit_Framework_TestCase
-{   
+{
     protected $_contact;
     protected $_account;
-    
-    public function setUp() 
+
+    public function setUp()
     {
         $beanList = array();
         $beanFiles = array();
@@ -63,7 +63,7 @@ class Bug41985Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_account->save();
     }
 
-    public function tearDown() 
+    public function tearDown()
     {
         $this->df->deleteField($this->field);
 
@@ -79,10 +79,10 @@ class Bug41985Test extends Sugar_PHPUnit_Framework_TestCase
 
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
-    }    
+    }
 
-    public function testGetRelationshipsWithCustomFields() 
-    {    
+    public function testGetRelationshipsWithCustomFields()
+    {
         $web_service_util = new SugarWebServiceUtilv4();
 
         $result = $web_service_util->getRelationshipResults($this->_contact, 'accounts', array('id', 'name', 'test_custom_c'));

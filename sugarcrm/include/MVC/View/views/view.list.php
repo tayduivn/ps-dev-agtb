@@ -59,9 +59,16 @@ class ViewList extends SugarView{
                 }
             }
         }
-
-        if(!empty($_REQUEST['saved_search_select']) && $_REQUEST['saved_search_select']!='_none') {
-            if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
+        if(!empty($_REQUEST['saved_search_select'])) {
+            if ($_REQUEST['saved_search_select']=='_none' || !empty($_REQUEST['button'])) {
+                $_SESSION['LastSavedView'][$_REQUEST['module']] = '';
+                unset($_REQUEST['saved_search_select']);
+                unset($_REQUEST['saved_search_select_name']);
+                global $current_user;
+                //Reset the current display columns to default.
+                $current_user->setPreference('ListViewDisplayColumns', array(), 0, $_REQUEST['search_module']);
+            }
+            else if(empty($_REQUEST['button']) && (empty($_REQUEST['clear_query']) || $_REQUEST['clear_query']!='true')) {
                 $this->saved_search = loadBean('SavedSearch');
                 $this->saved_search->retrieveSavedSearch($_REQUEST['saved_search_select']);
                 $this->saved_search->populateRequest();

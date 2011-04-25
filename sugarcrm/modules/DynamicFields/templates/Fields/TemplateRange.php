@@ -211,7 +211,7 @@ class TemplateRange extends TemplateText
        return $field_name;   	
     }
     
-    public static function repairCustomSearchFields($vardef, $module, $package='')
+    public static function repairCustomSearchFields($vardefs, $module, $package='')
     {
     	
     	$fields = array();

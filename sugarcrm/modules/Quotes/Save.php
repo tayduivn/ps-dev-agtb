@@ -82,6 +82,12 @@ if(empty($focus->id)) {
     $focus->new_with_id = true;
 }
 
+//remove the relate id element if this is a duplicate
+if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
+	//this is a 'create duplicate' quote, keeping the relate_id in focus will assign the quote product bundles 
+	//to the original quote, not the new duplicate one, so we will unset the element
+	unset($_REQUEST['relate_id']);
+}
 
 	global $beanFiles;
 	require_once($beanFiles['Product']);
@@ -226,7 +232,7 @@ if(empty($focus->id)) {
 		//END SUGARCRM flav=pro ONLY
 
 		$product->quote_id=$focus->id;
-        $product->account_id=$focus->billing_account_id;  //<--------------
+        $product->account_id=$focus->billing_account_id;  
         $product->contact_id=$focus->billing_contact_id;
 		//SM: removed as per Bug 15305 $product->status=$focus->quote_type;
 		// if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';

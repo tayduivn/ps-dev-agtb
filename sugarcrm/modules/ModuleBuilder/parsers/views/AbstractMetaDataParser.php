@@ -68,7 +68,7 @@ abstract class AbstractMetaDataParser
             if (is_array($def [ 'studio' ]))
             {
                 if (!empty($view) && isset($def [ 'studio' ][$view]))
-                   return $def [ 'studio' ][$view] !== false && $def [ 'studio' ][$view] != 'false' && $def [ 'studio' ][$view] != 'hidden';
+                   return $def [ 'studio' ][$view] !== false && $def [ 'studio' ][$view] !== 'false' && $def [ 'studio' ][$view] !== 'hidden';
                 if (isset($def [ 'studio' ]['visible']))
                    return $def [ 'studio' ]['visible'];
             } else {

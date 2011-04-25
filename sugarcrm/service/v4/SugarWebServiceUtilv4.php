@@ -266,7 +266,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
 	    return $results;
 	}
-	
+
 	/**
 	 * Processes the filter_fields attribute to use with SugarBean::create_new_list_query()
 	 *
@@ -280,7 +280,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         $filterFields = array();
         foreach($fields as $field)
         {
-            if (isset($value->field_defs[$field])) 
+            if (isset($value->field_defs[$field]))
             {
                 $filterFields[$field] = $value->field_defs[$field];
             }
@@ -292,7 +292,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
     /**
      * @see SugarWebServiceUtilv3::getRelationshipResults()
      */
-    public function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '', $order_by = '') 
+    public function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '', $order_by = '')
     {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
 		require_once('include/TimeDate.php');
@@ -302,7 +302,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		$bean->load_relationship($link_field_name);
 		if (isset($bean->$link_field_name)) {
 			// get the query object for this link field
-			$query_array = $bean->$link_field_name->getQuery(true,array(),0,'',true);
+			$query_array = $bean->$link_field_name->getSubpanelQuery(array(), true);
 			if (isset($query_array['where'])) {
 				$query_array['where'] = str_ireplace("where", "", $query_array['where']);
 				if (!empty($optional_where)) {
@@ -311,7 +311,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 					$optional_where = $query_array['where'];
 				} // else
 			} // if
-			
+
 			$params = array();
 			$params['joined_tables'] = $query_array['join_tables'];
 
@@ -379,7 +379,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		} // else
 
 	} // fn
-	
+
 	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
 		global $beanList, $beanFiles, $current_user, $app_list_strings;
@@ -415,7 +415,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $field_name = $value['name'];
                     $val = $value['value'];
                 }
-				
+
 				if($seed->field_name_map[$field_name]['type'] == 'enum'){
 					$vardef = $seed->field_name_map[$field_name];
 					if(isset($app_list_strings[$vardef['options']]) && !isset($app_list_strings[$vardef['options']][$val]) ) {
@@ -534,4 +534,15 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 			);
 		}
 	}
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	function get_mobile_login_data(&$nameValueArray)
+	{
+	    if( file_exists('modules/Quotes/Layouts.php') )
+	    {
+    	    require_once('modules/Quotes/Layouts.php');
+    	    $nameValueArray['avail_quotes_layouts'] = get_layouts();
+	    }
+	}
+	//END SUGARCRM flav=pro ONLY
 }

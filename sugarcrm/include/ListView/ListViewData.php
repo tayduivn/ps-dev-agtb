@@ -293,13 +293,20 @@ class ListViewData {
         if ($seed->isFavoritesEnabled()) {
             $params['favorites'] = !empty($_REQUEST['my_favorites'])?2:1;
 		}
+        //Make sure all dependent fields have thier required data
+        require_once("include/Expressions/DependencyManager.php");
+        $triggers = DependencyManager::getDependentFieldTriggerFields($filter_fields, $this->seed->field_defs);
+        foreach($triggers as $field)
+        {
+            $filter_fields[$field] = true;
+        }
 		//END SUGARCRM flav=pro ONLY
 		
 		// If $params tells us to override for the special last_name, first_name sorting
 		if (!empty($params['overrideLastNameOrder']) && $order['orderBy'] == 'last_name') {
 			$orderBy = 'last_name '.$order['sortOrder'].', first_name '.$order['sortOrder'];
 		}
-		
+
 		$ret_array = $seed->create_new_list_query($orderBy, $where, $filter_fields, $params, 0, '', true, $seed, true);
         $ret_array['inner_join'] = '';
         if (!empty($this->seed->listview_inner_join)) {

@@ -132,7 +132,12 @@ class ImportViewLast extends SugarView
             $updatedCount  += (int) $row[4];
         }
         fclose($fp);
-        
+    
+        $this->ss->assign("noSuccess",FALSE);
+        if(($count == $errorCount) || ($dupeCount == $count)){
+        	$this->ss->assign("noSuccess",TRUE);        	
+        }
+              
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);

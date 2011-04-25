@@ -1,9 +1,0 @@
-<soda>
-	<csv file="{@global.scriptsdir}/csvs/users.csv" var="user">
-		<script file="{@global.scriptsdir}/modules/lib/login.xml" />
-		<script file="{@global.scriptsdir}/modules/lib/SugarInit_Lib.xml" />
-		<script fileset="{@global.scriptsdir}/modules/quote/part6" />
-		<script file="{@global.scriptsdir}/modules/lib/logout.xml" />
-	</csv>
-	<browser action="close" />
-</soda>

@@ -1483,9 +1483,408 @@ function createMSSQLTemp($table) {
 }
 
 /**
+ * Tests an ALTER TABLE query
+ * @param string table The table name to get DDL
+ * @param string dbType MySQL, MSSQL, etc.
+ * @param string query The query to test.
+ * @return string Non-empty if error found
+ */
+function testQueryAlter($table, $dbType, $query, $newTables) {
+	logThis('verifying ALTER statement...');
+	global $db;
+	global $sugar_config;
+
+	if(empty($db)) {
+		$db = &DBManagerFactory::getInstance();
+	}
+
+	// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
+	// over to the temp tables
+	if(strpos(strtoupper($query), 'DROP PRIMARY KEY') !== false) {
+		logThis('Skipping DROP PRIMARY KEY verification');
+		return '';
+	}
+
+	if ($dbType == 'mysql'){
+		mysql_error(); // initialize errors
+	}
+	$error = '';
+
+	if(!in_array($table, $newTables)) {
+		switch($dbType) {
+			case 'mysql':
+				// get DDL
+				logThis('creating temp table for ['.$table.']...');
+				$q = "SHOW CREATE TABLE {$table}";
+				$r = $db->query($q);
+				$a = $db->fetchByAssoc($r);
+
+				// rewrite DDL with _temp name
+				$cleanQuery = cleanQuery($a['Create Table']);
+				$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
+				$r2 = $db->query($tempTableQuery);
+
+				// get sample data into the temp table to test for data/constraint conflicts
+				logThis('inserting temp dataset...');
+				$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
+				$r3 = $db->query($q3, false, "Preflight Failed for: {$query}");
+
+				// test the query on the test table
+				logThis('testing query: ['.$query.']');
+				$tempTableTestQuery = str_replace("ALTER TABLE `{$table}`", "ALTER TABLE `{$table}__uw_temp`", $query);
+				if (strpos($tempTableTestQuery, 'idx') === false) {
+					if(isRunningAgainstTrueTable($tempTableTestQuery)) {
+						$error = getFormattedError('Could not use a temp table to test query!', $query);
+						return $error;
+					}
+
+					logThis('testing query on temp table: ['.$tempTableTestQuery.']');
+					$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+				}
+				else {
+					// test insertion of an index on a table
+					$tempTableTestQuery_idx = str_replace("ADD INDEX `idx_", "ADD INDEX `temp_idx_", $tempTableTestQuery);
+					logThis('testing query on temp table: ['.$tempTableTestQuery_idx.']');
+					$r4 = $db->query($tempTableTestQuery_idx, false, "Preflight Failed for: {$query}");
+				}
+				$mysqlError = mysql_error(); // empty on no-errors
+				if(!empty($mysqlError)) {
+					logThis('*** ERROR: query failed: '.$mysqlError);
+					$error = getFormattedError($mysqlError, $query);
+				}
+
+
+				// clean up moved to end of preflight
+			break;
+
+			case 'mssql':
+				logThis('mssql found: skipping test query - ['.$query.']');
+			break;
+
+			case 'oci8':
+				logThis('Oracle found: skipping test query - ['.$query.']');
+			break;
+		} // end switch()
+	} else {
+		logThis($table . ' is a new table');
+	}
+
+	logThis('verification done.');
+	return $error;
+}
+
+/**
+ * Tests an CREATE TABLE query
+ * @param string table The table name to get DDL
+ * @param string dbType MySQL, MSSQL, etc.
+ * @param string query The query to test.
+ * @return string Non-empty if error found
+ */
+function testQueryCreate($table, $dbType, $query, &$newTables) {
+	logThis('verifying CREATE statement...');
+	global $db;
+	if(empty($db)) {
+		$db = &DBManagerFactory::getInstance();
+	}
+
+	$error = '';
+	switch($dbType) {
+		case 'mysql':
+			// rewrite DDL with _temp name
+			logThis('testing query: ['.$query.']');
+			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $query);
+
+			if(isRunningAgainstTrueTable($tempTableQuery)) {
+				$error = getFormattedError('Could not use a temp table to test query!', $query);
+				return $error;
+			}
+
+			$r4 = $db->query($tempTableQuery, false, "Preflight Failed for: {$query}");
+
+			$error = mysql_error(); // empty on no-errors
+			if(!empty($error)) {
+				logThis('*** ERROR: query failed.');
+				$error = getFormattedError($error, $query);
+			}
+
+			// check if table exists
+			logThis('testing for table: '.$table);
+			$q1 = "DESC `{$table}`";
+			$r1 = $db->query($q1);
+
+			$mysqlError = mysql_error();
+			if(empty($mysqlError)) {
+				logThis('*** ERROR: table already exists!: '.$table);
+				$error = getFormattedError('table exists', $query);
+			}
+			else {
+				logThis('NEW TABLE: '.$query);
+				$newTables[] = $table;
+			}
+		break;
+
+		case 'mssql':
+			logThis('mssql found: skipping test query - ['.$query.']');
+		break;
+
+		case 'oci8':
+				logThis('Oracle found: skipping test query - ['.$query.']');
+			break;
+	}
+	return $error;
+}
+
+/**
+ * Tests an DELETE FROM query
+ * @param string table The table name to get DDL
+ * @param string dbType MySQL, MSSQL, etc.
+ * @param string query The query to test.
+ * @return string Non-empty if error found
+ */
+function testQueryDelete($table, $dbType, $query) {
+	logThis('verifying DELETE statements');
+	global $db;
+	if(empty($db)) {
+		$db = &DBManagerFactory::getInstance();
+	}
+
+	$error = '';
+
+	switch($dbType) {
+		case 'mysql':
+			// get DDL
+			logThis('creating temp table...');
+			$q = "SHOW CREATE TABLE {$table}";
+			$r = $db->query($q);
+			$a = $db->fetchByAssoc($r);
+
+			// rewrite DDL with _temp name
+			$cleanQuery = cleanQuery($a['Create Table']);
+			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
+			$r2 = $db->query($tempTableQuery);
+
+			// get sample data into the temp table to test for data/constraint conflicts
+			logThis('inserting temp dataset...');
+			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
+			$r3 = $db->query($q3);
+
+			// test the query on the test table
+			logThis('testing query: ['.$query.']');
+			$tempTableTestQuery = str_replace("DELETE FROM `{$table}`", "DELETE FROM `{$table}__uw_temp`", $query);
+
+			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
+				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
+				return $error;
+			}
+
+			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+			$error = mysql_error(); // empty on no-errors
+			if(!empty($error)) {
+				logThis('*** ERROR: query failed.');
+				$error = getFormattedError($error, $query);
+			}
+		break;
+
+		case 'mssql':
+			logThis('mssql found: skipping test query - ['.$query.']');
+		break;
+
+		case 'oci8':
+				logThis('Oracle found: skipping test query - ['.$query.']');
+			break;
+	}
+	logThis('verification done.');
+	return $error;
+}
+
+/**
+ * Tests a DROP TABLE query
+ *
+ */
+function testQueryDrop($table, $dbType, $query) {
+	logThis('verifying DROP TABLE statement');
+	global $db;
+	if(empty($db)) {
+		$db = &DBManagerFactory::getInstance();
+	}
+
+	$error = '';
+
+	switch($dbType) {
+		case 'mysql':
+			// get DDL
+			logThis('creating temp table...');
+			$q = "SHOW CREATE TABLE {$table}";
+			$r = $db->query($q);
+			$a = $db->fetchByAssoc($r);
+
+			// rewrite DDL with _temp name
+			$cleanQuery = cleanQuery($a['Create Table']);
+			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
+			$r2 = $db->query($tempTableQuery);
+
+			// get sample data into the temp table to test for data/constraint conflicts
+			logThis('inserting temp dataset...');
+			$query = stripQuotesUW($query, $table);
+			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
+			$r3 = $db->query($q3);
+
+			// test the query on the test table
+			logThis('testing query: ['.$query.']');
+			$tempTableTestQuery = str_replace("DROP TABLE `{$table}`", "DROP TABLE `{$table}__uw_temp`", $query);
+
+			// make sure the test query is running against a temp table
+			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
+				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
+				return $error;
+			}
+
+			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+			$error = mysql_error(); // empty on no-errors
+			if(!empty($error)) {
+				logThis('*** ERROR: query failed.');
+				$error = getFormattedError($error, $query);
+			}
+		break;
+
+		case 'mssql':
+			logThis('mssql found: skipping test query - ['.$query.']');
+		break;
+
+		case 'oci8':
+				logThis('Oracle found: skipping test query - ['.$query.']');
+			break;
+	}
+	logThis('verification done.');
+	return $error;
+}
+
+/**
+ * Tests an INSERT INTO query
+ * @param string table The table name to get DDL
+ * @param string dbType MySQL, MSSQL, etc.
+ * @param string query The query to test.
+ * @return string Non-empty if error found
+ */
+function testQueryInsert($table, $dbType, $query) {
+	logThis('verifying INSERT statement...');
+	global $db;
+	if(empty($db)) {
+		$db = &DBManagerFactory::getInstance();
+	}
+
+	$error = '';
+
+	switch($dbType) {
+		case 'mysql':
+			// get DDL
+			$q = "SHOW CREATE TABLE {$table}";
+			$r = $db->query($q);
+			$a = $db->fetchByAssoc($r);
+
+			// rewrite DDL with _temp name
+			$cleanQuery = cleanQuery($a['Create Table']);
+			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
+			$r2 = $db->query($tempTableQuery);
+
+			// test the query on the test table
+			logThis('testing query: ['.$query.']');
+			$tempTableTestQuery = str_replace("INSERT INTO `{$table}`", "INSERT INTO `{$table}__uw_temp`", $query);
+
+			// make sure the test query is running against a temp table
+			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
+				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
+				return $error;
+			}
+
+			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+			$error = mysql_error(); // empty on no-errors
+			if(!empty($error)) {
+				logThis('*** ERROR: query failed.');
+				$error = getFormattedError($error, $query);
+			}
+		break;
+
+		case 'mssql':
+			logThis('mssql found: skipping test query - ['.$query.']');
+		break;
+
+		case 'oci8':
+				logThis('Oracle found: skipping test query - ['.$query.']');
+			break;
+	}
+	logThis('verification done.');
+	return $error;
+}
+
+
+/**
+ * Tests an UPDATE TABLE query
+ * @param string table The table name to get DDL
+ * @param string dbType MySQL, MSSQL, etc.
+ * @param string query The query to test.
+ * @return string Non-empty if error found
+ */
+function testQueryUpdate($table, $dbType, $query) {
+	logThis('verifying UPDATE TABLE statement...');
+	global $db;
+	if(empty($db)) {
+		$db = &DBManagerFactory::getInstance();
+	}
+
+	$error = '';
+
+	switch($dbType) {
+		case 'mysql':
+			// get DDL
+			$q = "SHOW CREATE TABLE {$table}";
+			$r = $db->query($q);
+			$a = $db->fetchByAssoc($r);
+
+			// rewrite DDL with _temp name
+			$cleanQuery = cleanQuery($a['Create Table']);
+			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
+			$r2 = $db->query($tempTableQuery);
+
+			// get sample data into the temp table to test for data/constraint conflicts
+			logThis('inserting temp dataset...');
+			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
+			$r3 = $db->query($q3, false, "Preflight Failed for: {$query}");
+
+			// test the query on the test table
+			logThis('testing query: ['.$query.']');
+			$tempTableTestQuery = str_replace("UPDATE `{$table}`", "UPDATE `{$table}__uw_temp`", $query);
+
+			// make sure the test query is running against a temp table
+			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
+				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
+				return $error;
+			}
+
+			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
+			$error = mysql_error(); // empty on no-errors
+			if(!empty($error)) {
+				logThis('*** ERROR: query failed.');
+				$error = getFormattedError($error, $query);
+			}
+		break;
+
+		case 'mssql':
+		break;
+
+		case 'oci8':
+				logThis('Oracle found: skipping test query - ['.$query.']');
+			break;
+	}
+	logThis('verification done.');
+	return $error;
+}
+
+
+/**
  * strip queries of single and double quotes
  */
-function uw_stripQuotes($query, $table) {
+function stripQuotesUW($query, $table) {
 	$queryStrip = '';
 
 	$start = strpos($query, $table);
@@ -3351,10 +3750,10 @@ function upgradeDashletsForSalesAndMarketing() {
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
-        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
-        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
+        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
+        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
+        'pbls_ids' => 'OppByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -3922,14 +4321,16 @@ function upgradeTeamColumn($bean, $column_name) {
 			$GLOBALS['db']->addColumn($bean->table_name, $bean->field_defs['team_set_id']);
 		}
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
-		$indexDef = array(
+		
+        $indexName = getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34);
+        $indexDef = array(
 					 array(
-						'name' => 'idx_'.strtolower($bean->table_name).'_tmst_id',
+						'name' => $indexName,
 						'type' => 'index',
 						'fields' => array('team_set_id')
 					 )
 				   );
-		if(!isset($indexArray['idx_'.strtolower($bean->table_name).'_tmst_id'])) {
+		if(!isset($indexArray[$indexName])) {
 			$GLOBALS['db']->addIndexes($bean->table_name, $indexDef);
 		}
 
@@ -4035,36 +4436,19 @@ function upgradeModulesForTeam() {
             //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
             logThis('new modules to add are '.var_export($newModuleList,true),$path);
 
-            //grab the existing system tabs
-            $tabs = $newTB->get_system_tabs();
-
-            //add the new tabs to the array
-            foreach($newModuleList as $nm ){
-              $tabs[$nm] = $nm;
+            if(!empty($newModuleList))
+            {
+	            //grab the existing system tabs
+	            $tabs = $newTB->get_system_tabs();
+	
+	            //add the new tabs to the array
+	            foreach($newModuleList as $nm ){
+	              $tabs[$nm] = $nm;
+	            }
+	
+	            $newTB->set_system_tabs($tabs);
             }
-
-            if(!file_exists('modules/iFrames/iFrame.php') && isset($tabs['iFrames'])){
-                unset($tabs['iFrames']);
-            }
-
-	        //Set the default order
-	        $default_order = array(
-	        	'Home'=>'Home',
-	        	'Accounts'=>'Accounts',
-	        	'Contacts'=>'Contacts',
-	        	'Opportunities'=>'Opportunities',
-	        	'Activities'=>'Activities',
-	            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-	        	'Reports'=>'Reports',
-	            //END SUGARCRM flav=pro || flav=sales ONLY
-	        	'Documents'=>'Documents'
-	        );
-	        $tabs = array_merge($default_order, $tabs);
-
-            //now assign the modules to system tabs
-            $newTB->set_system_tabs($tabs);
             logThis('module tabs updated',$path);
-
         }
     }
 
@@ -4478,8 +4862,17 @@ function upgradeModulesForTeam() {
 	function upgradeDateTimeFields($path=''){
 		//bug: 39757
 		global $db;
-        $meetingsSql = "UPDATE meetings SET date_end = ".$db->convert('date_start', 'add_time', array('duration_hours','duration_minutes'));
-        $callsSql = "UPDATE calls SET date_end = ".$db->convert('date_start', 'add_time', array('duration_hours','duration_minutes'));
+		if($db->dbType == 'mysql')
+		{
+			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+		} else if($db->dbType == 'mssql') {
+			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+		} else if ($db->dbType == 'oci8') {
+			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+		}
 
 		if(isset($meetingsSql) && isset($callsSql))
 		{
@@ -4855,3 +5248,68 @@ function upgradeSugarCache($file)
 	}
 }
 
+
+/**
+ * upgradeDisplayedTabsAndSubpanels
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function upgradeDisplayedTabsAndSubpanels($version)
+{
+	if($version < '620')
+	{
+		logThis('start upgrading system displayed tabs and subpanels');
+	    require_once('modules/MySettings/TabController.php');
+	    $tc = new TabController();	
+	    
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();  
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
+	    $added_tabs = array();
+	    
+	    foreach($modules_to_add as $module)
+	    {
+		       $tabs[0][$module] = $module;
+		       $added_tabs[] = $module;
+	    }
+	    
+	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
+	    $tc->set_system_tabs($tabs[0]);    
+	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	}
+}
+
+
+/**
+ * unlinkUpgradeFiles
+ * This is a helper function to clean up 
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function unlinkUpgradeFiles($version)
+{
+	if(!isset($version))
+	{
+	   return;
+	}
+	
+	logThis('start unlinking files from previous upgrade');
+	if($version < '620')
+	{
+	   //list of files to remove
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php');
+	   
+	   foreach($files_to_remove as $f)
+	   {
+		   if(file_exists($f))
+		   {
+		   	  logThis('removing file: ' . $f);
+		   	  unlink($f);
+		   }  
+	   }
+	}
+	logThis('end unlinking files from previous upgrade');
+}

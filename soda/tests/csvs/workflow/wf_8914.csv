@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,selector,future_trigger__operator,future_trigger__field_value,past_trigger__operator,past_trigger__field_value,field_0__field_value,description,selector_select_module,task_name
-wf_8914,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,Name,Equals,future_trigger__field_value,Equals,past_trigger__field_value,successful,description,Task,wf_8914_task_name

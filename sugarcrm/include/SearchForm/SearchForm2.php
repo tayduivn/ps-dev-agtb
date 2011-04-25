@@ -576,37 +576,45 @@ require_once('include/EditView/EditView2.php');
             // a generic search form validation mechanism.
             $type = (!empty($this->seed->field_name_map[$field]['type']))?$this->seed->field_name_map[$field]['type']:'';
 
-			if(!empty($parms['enable_range_search']))
-			{
-				if(empty($type))
+			if(!empty($parms['enable_range_search']) && empty($type))
+			{				
+				if(preg_match('/^start_range_(.*?)$/', $field, $match))
 				{
-					if(preg_match('/^start_range_(.*?)$/', $field, $match))
-					{
-						$real_field = $match[1];
-						$start_field = 'start_range_' . $real_field;
-						$end_field = 'end_range_' . $real_field;
+					$real_field = $match[1];
+					$start_field = 'start_range_' . $real_field;
+					$end_field = 'end_range_' . $real_field;
 
-						if(isset($this->searchFields[$start_field]['value']) && isset($this->searchFields[$end_field]['value']))
-						{
-							$this->searchFields[$real_field]['value'] = $this->searchFields[$start_field]['value'] . '<>' . $this->searchFields[$end_field]['value'];
-							$this->searchFields[$real_field]['operator'] = 'between';
-							$parms['value'] = $this->searchFields[$real_field]['value'];
-							$parms['operator'] = 'between';
-							$field = $real_field;
-							unset($this->searchFields[$end_field]['value']);
-						}
-					} else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
-						$real_field = $match[1];
-						$this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
-						$this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];
-						$params['value'] = $this->searchFields[$field]['value'];
-						$params['operator'] = $this->searchFields[$field]['operator'];
-						unset($this->searchFields[$field]['value']);
+					if(isset($this->searchFields[$start_field]['value']) && isset($this->searchFields[$end_field]['value']))
+					{								
+						$this->searchFields[$real_field]['value'] = $this->searchFields[$start_field]['value'] . '<>' . $this->searchFields[$end_field]['value'];
+						$this->searchFields[$real_field]['operator'] = 'between';
+						$parms['value'] = $this->searchFields[$real_field]['value'];
+						$parms['operator'] = 'between';
 						$field = $real_field;
-					} else {
-        			    //Skip this range search field, it is the end field THIS IS NEEDED or the end range date will break the query
-		            	continue;
+						unset($this->searchFields[$end_field]['value']);
 					}
+				} else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
+					$real_field = $match[1];
+					
+					//Special case for datetime and datetimecombo fields.  By setting the type here we allow an actual between search
+					if($parms['operator'] == '=')
+					{
+					   $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';					
+					   if($field_type == 'datetimecombo' || $field_type == 'datetime')
+					   {
+					   	  $type = $field_type;
+					   }
+					}
+					
+					$this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
+					$this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];						
+					$params['value'] = $this->searchFields[$field]['value'];
+					$params['operator'] = $this->searchFields[$field]['operator'];
+					unset($this->searchFields[$field]['value']);
+					$field = $real_field;
+				} else {
+        		    //Skip this range search field, it is the end field THIS IS NEEDED or the end range date will break the query
+	            	continue;
 				}
 			}
 
@@ -685,6 +693,14 @@ require_once('include/EditView/EditView2.php');
 	                            }
 	                            $field_value .= "'" . $GLOBALS['db']->quote($val) . "'";
 	                        }
+                                // Bug 41209: adding a new operator "isnull" here
+                                // to handle the case when blank is selected from dropdown.
+                                // In that case, $val is empty.
+                                // When $val is empty, we need to use "IS NULL",
+                                // as "in (null)" won't work
+                                else if ($operator=='in') {
+                                    $operator = 'isnull';
+                                }
 	                    }
                     }
 
@@ -723,7 +739,7 @@ require_once('include/EditView/EditView2.php');
                 $where = '';
                 $itr = 0;
 
-                if($field_value != '') {
+                if($field_value != '' || $operator=='isnull') {
 
                     $this->searchColumns [ strtoupper($field) ] = $field ;
 
@@ -786,10 +802,18 @@ require_once('include/EditView/EditView2.php');
                         }
 
                         if($type == 'datetime' || $type == 'datetimecombo') {
-                            $dates = $timedate->getDayStartEndGMT($field_value);
-                            $field_value = array($this->seed->db->convert($dates["start"], "datetime"),
+                        	try {
+								$dates = $timedate->getDayStartEndGMT($field_value);
+    	                        $field_value = array($this->seed->db->convert($dates["start"], "datetime"),
                                 $this->seed->db->convert($dates["end"], "datetime"));
-                            $operator = 'between';
+	                            $operator = 'between';
+                        	} catch(Exception $timeException) {
+                        		//In the event that a date value is given that cannot be correctly processed by getDayStartEndGMT method,
+                        		//just skip searching on this field and continue.  This may occur if user switches locale date formats 
+                        		//in another browser screen, but re-runs a search with the previous format on another screen
+                        		$GLOBALS['log']->error($timeException->getMessage());
+                        		continue;
+                        	}
                         }
 
                     	if($type == 'decimal' || $type == 'float' || $type == 'currency' || (!empty($parms['enable_range_search']) && empty($parms['is_date_field']))) {
@@ -829,12 +853,11 @@ require_once('include/EditView/EditView2.php');
 								//set the first pass through variable to false
 								$first_between = false;
 							}
-
-							// Databases can't really search for floating point numbers, because they can't be accurately described in binary,
-							// So we have to fuzz out the math a little bit
-							if(!empty($parms['enable_range_search']) && ($parms['operator']!='equals' ||  $parms['operator']!='between')){
-								//do not add between clause if this is a range search, it will be handled below
-							} else {
+								
+							if(!empty($parms['enable_range_search']) && $parms['operator'] == '=')
+							{
+								// Databases can't really search for floating point numbers, because they can't be accurately described in binary,
+								// So we have to fuzz out the math a little bit								
 								$field_value = ($field_value - 0.01) . "<>" . ($field_value + 0.01);
 								$operator = 'between';
 							}
@@ -860,7 +883,7 @@ require_once('include/EditView/EditView2.php');
                         if(!empty($where)) {
                             $where .= " OR ";
                         }
-
+                        
                         switch(strtolower($operator)) {
                         	case 'subquery':
                         	    $in = 'IN';

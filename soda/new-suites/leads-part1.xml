@@ -1,6 +1,0 @@
-<soda>   
-   <script file="tests/modules/leads/module_lib/setup-leads.xml" />
-   <script fileset="tests/modules/leads-part1" />
-   <script file="tests/modules/leads/module_lib/cleanup-leads.xml" />
-</soda>
-

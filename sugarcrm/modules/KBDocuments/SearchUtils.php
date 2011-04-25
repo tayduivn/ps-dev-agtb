@@ -41,7 +41,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
     require_once('include/ListView/ListViewSmarty.php');
-    require_once('modules/KBDocuments/metadata/KBSearchlistviewdefs.php');
+    $view = new SugarView();
+    $view->type = 'list';
+    $view->module = 'KBDocuments';
+    $metadataFile = $view->getMetaDataFile();
+    require_once($metadataFile);
     require_once('modules/KBDocuments/KBListViewData.php');
 
 
@@ -61,15 +65,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     // check $_REQUEST if new display columns from post
     if(!empty($_REQUEST['displayColumns'])) {
         foreach(explode('|', $_REQUEST['displayColumns']) as $num => $col) {
-            if(!empty($listViewDefs['KBSearch'][$col]))
-                $displayColumns[$col] = $listViewDefs['KBSearch'][$col];
+            if(!empty($listViewDefs['KBDocuments'][$col]))
+                $displayColumns[$col] = $listViewDefs['KBDocuments'][$col];
         }
     }
     elseif(!empty($savedDisplayColumns)) { // use user defined display columns from preferences
         $displayColumns = $savedDisplayColumns;
     }
     else { // use columns defined in listviewdefs for default display columns
-        foreach($listViewDefs['KBSearch'] as $col => $params) {
+        foreach($listViewDefs['KBDocuments'] as $col => $params) {
             if(!empty($params['default']) && $params['default'])
                 $displayColumns[$col] = $params;
         }
@@ -317,7 +321,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
        //BEGIN SUGARCRM flav=ent ONLY
        $query .= " AND k.is_external_article = 1";
        //END SUGARCRM flav=ent ONLY
-		$query .= "	AND kt.kbtag_id in ($queryIds)";
+	$query .= "	AND kt.kbtag_id in ($queryIds)";
 
        $result = $bean->db->query($query);
 
@@ -379,7 +383,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         $spec_SearchVars = array();
      	$spec_SearchVars['exp_date'] = TimeDate::getInstance()->nowDate();
      	$spec_SearchVars['exp_date_filter'] = "after";
-   	   	$date_filter = return_date_filter($bean->db, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date']);
+   	   	$date_filter = return_date_filter($bean->db->dbType, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date']);
         $date_filter = str_replace("kbdocuments", "k", $date_filter);
         $date_filter = "($date_filter OR k.exp_date IS NULL)";
         $query = "select distinct(k.id) as doc_id, k.kbdocument_name as doc_name from kbdocuments k
@@ -511,9 +515,8 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 		$searchVars = array();
 
 
-		//BEGIN SUGARCRM flav=ent ONLY
 		$searchVars['is_external_article'] = array('operator'=>'=','filter'=>1);
-		//END SUGARCRM flav=ent ONLY
+		$searchVars['is_external_article'] = array('operator'=>'=','filter'=>1);
 	    $searchVars['status_id'] = array('operator'=>'=','filter'=>'Published');
 		$spec_SearchVars = array();
 
@@ -577,11 +580,10 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      * @param int $n the number of articles to return.  Default is 10
      * @param string $where clause to use in where portion of query, if needed.
      */
-    function create_portal_most_recent_query($db, $n = '10', $where='') {
-
-        $portal_most_recent_query = ' ';
-        //create portal most recent query, default is top 10
-        return $db->limitQuerySQL("SELECT kbdocuments.* FROM kbdocuments WHERE deleted=0
+    function create_portal_most_recent_query($db, $n = '10', $where='') 
+	{
+	    //create portal most recent query, default is top 10
+		return $db->limitQuerySQL("SELECT kbdocuments.* FROM kbdocuments WHERE deleted=0
         	AND is_external_article = 1 $where ORDER BY active_date DESC", 0, $n);
     }
 
@@ -1210,3 +1212,4 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
     }
  ?>
 
+    }

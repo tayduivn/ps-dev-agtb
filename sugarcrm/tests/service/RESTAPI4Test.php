@@ -37,15 +37,18 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->aclRole->name = "Unit Test";
         $this->aclRole->save();
         $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
-        
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->aclField = new ACLField();
         $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        //END SUGARCRM flav=pro ONLY
     }
 
     public function tearDown()
 	{
+	    //BEGIN SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
+	    //END SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' )");
 	    $GLOBALS['db']->query("DELETE FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}'");
 	    
@@ -54,7 +57,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 	    unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
-	    unset($GLOBALS['disable_date_format']);
 	    unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
@@ -105,12 +107,98 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                         'password' => $user->user_hash,
                         'version' => '.01',
                         ),
-                'application_name' => 'SugarTestRunner',
+                'application_name' => 'mobile',
                 'name_value_list' => array(),
                 )
             );
     }
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Test the login function to ensure it returns the available quotes layouts when application name
+     * is mobile.
+     *
+     */
+    public function testLoginForMobileWithQuotes()
+    {
+        $results = $this->_login($this->_admin_user);
+        $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Standard']) );
+        $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Invoice']) );
+    }
+    
+    /**
+     * Test the get_entry_list call with Export access disabled to ensure results are returned.
+     *
+     */
+    public function testGetEntryListWithExportRole()
+    {
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        
+        //Set the Export Role to no access for user.
+        $aclRole = new ACLRole();
+        $aclRole->name = "Unit Test Export";
+        $aclRole->save();
+        $aclRole->set_relationship('acl_roles_users', array('role_id'=> $aclRole->id ,'user_id'=> $this->_user->id), false);
+        $role_actions = $aclRole->getRoleActions($aclRole->id);
+        $action_id = $role_actions['Accounts']['module']['export']['id'];
+        $aclRole->setAction($aclRole->id, $action_id, -99);
+        
+        $result = $this->_login($this->_user);
+        $session = $result['id'];
 
+        $module = 'Accounts';
+        $orderBy = 'name';
+        $offset = 0;
+        $returnFields = array('name');
+        $linkNameFields = "";
+        $maxResults = 2;
+        $deleted = FALSE;
+        $favorites = FALSE;
+        $result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
+        $this->assertTrue( ! isset($result['name']) &&  $result['name'] != 'Access Denied');
+    }
+    
+    /**
+     * Test the ability to retrieve quote PDFs
+     *
+     */
+    public function testGetQuotesPDF()
+    {
+        $log_result = $this->_login($this->_admin_user);
+        $session = $log_result['id'];
+        
+        //Retrieve a list of quote ids to work with
+        $whereClause = "";
+        $module = 'Quotes';
+        $orderBy = 'name';
+        $offset = 0;
+        $returnFields = array('id');
+        $linkNameFields = "";
+        $maxResults = 2;
+        $deleted = FALSE;
+        $favorites = FALSE;
+        $list_result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
+        
+        //Test for standard oob layouts
+        foreach ($list_result['entry_list'] as $entry)
+        {
+            $quote_id = $entry['id'];
+            $result = $this->_makeRESTCall('get_quotes_pdf', array($session, $quote_id, 'Standard' ));
+            $this->assertTrue(!empty($result['file_contents']));
+        }
+        
+        //Test for a fake pdf type.
+        if( count($list_result['entry_list']) > 0 )
+        {
+            $quote_id = $list_result['entry_list'][0]['id'];
+            $result = $this->_makeRESTCall('get_quotes_pdf', array($session, $quote_id, 'Fake' ));
+            $this->assertTrue(!empty($result['file_contents']));
+        }   
+        
+        //Test for a fake bean.
+        $result = $this->_makeRESTCall('get_quotes_pdf', array($session, '-1', 'Standard' ));
+        $this->assertTrue(!empty($result['file_contents']));     
+    }
+    //END SUGARCRM flav=pro ONLY
     /**
      * Ensure the ability to retrieve a module list of recrods that are favorites.
      *
@@ -232,8 +320,8 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
     }    
-    
-    function _aclEditViewFieldProvider()
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function _aclEditViewFieldProvider()
     {
         return array(       
 
@@ -283,9 +371,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
     
-    
-    
-    function _aclListViewFieldProvider()
+    public function _aclListViewFieldProvider()
     {
         return array(       
             array('Accounts','wireless', array('name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 )),
@@ -321,7 +407,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    
+    //END SUGARCRM flav=pro ONLY
     /**
      * Private helper function to mark a bean as a favorite item.
      *

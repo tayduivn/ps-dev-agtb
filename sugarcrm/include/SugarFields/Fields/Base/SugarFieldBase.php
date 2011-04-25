@@ -164,6 +164,11 @@ class SugarFieldBase {
        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
     }
 
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
+    {
+        return $this->getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     function getWirelessEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	if(!empty($vardef['function']['returns']) && $vardef['function']['returns'] == 'html'){

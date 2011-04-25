@@ -35,9 +35,12 @@ require_once('modules/ModuleBuilder/views/view.listview.php');
 
 class ViewPortalListView extends ViewListView 
 {
-    function ViewListView()
+    function __construct()
     {
-        $this->init();
+        $this->editModule = $_REQUEST['view_module'];
+        $this->editLayout = $_REQUEST['view'];
+        $this->subpanel = (!empty($_REQUEST['subpanel'])) ? $_REQUEST['subpanel'] : false;
+        $this->fromModuleBuilder = ! empty ( $_REQUEST [ 'view_package' ] ) ;
     }
 
     /**
@@ -51,17 +54,6 @@ class ViewPortalListView extends ViewListView
     	   translate('LBL_MODULE_NAME','Administration'),
     	   ModuleBuilderController::getModuleTitle(),
     	   );
-    }
-
-    /*
-     * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
-     */
-    function init()
-    {
-        $this->editModule = $_REQUEST['view_module'];
-        $this->editLayout = $_REQUEST['view'];
-        $this->subpanel = (!empty($_REQUEST['subpanel'])) ? $_REQUEST['subpanel'] : false;
-        $this->fromModuleBuilder = ! empty ( $_REQUEST [ 'view_package' ] ) ;
     }
 
     function display() 

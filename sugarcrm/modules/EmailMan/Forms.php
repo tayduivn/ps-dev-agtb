@@ -49,33 +49,7 @@ $the_script  = <<<EOQ
 
 <script type="text/javascript" language="Javascript">
 <!--  to hide script contents from old browsers
-/**
- * DHTML date validation script. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/)
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- */
-// Declaring valid date character, minimum year and maximum year
-function isInteger(s){
-	var i;
-    for (i = 0; i < s.length; i++){
-        // Check that current character is number.
-        var c = s.charAt(i);
-        if (((c < "0") || (c > "9"))) return false;
-    }
-    // All characters are numbers.
-    return true;
-}
-function trim(s) {
-	while (s.substring(0,1) == " ") {
-		s = s.substring(1, s.length);
-	}
-	while (s.substring(s.length-1, s.length) == ' ') {
-		s = s.substring(0,s.length-1);
-	}
 
-	return s;
-}
 function verify_data(button) {
 	var isError = false;
 	var errorMessage = "";

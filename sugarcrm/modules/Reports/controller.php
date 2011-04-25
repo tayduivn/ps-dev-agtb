@@ -26,16 +26,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-class ReportsController extends SugarController{
-
-	
-	function ReportsController(){
-		parent::SugarController();
-
-	}
-	
-	public function loadBean(){
-				
+class ReportsController extends SugarController
+{	
+    /**
+     * @see SugarController::loadBean()
+     */
+	public function loadBean()
+	{			
 		if(!empty($_REQUEST['record']) && $_REQUEST['action'] == 'ReportsWizard'){
 			$_REQUEST['id'] = $this->record;
 			$_REQUEST['page'] = 'report';
@@ -45,7 +42,8 @@ class ReportsController extends SugarController{
 			$this->record = $_REQUEST['id'];
 			$GLOBALS['action'] = 'detailview';
 			$this->view_object_map['action'] =  'ReportCriteriaResults';
-		}elseif(!empty($this->record)){
+		}
+		elseif(!empty($this->record)){
 			if ($_REQUEST['action'] == 'DetailView') {
 				$_REQUEST['id'] = $this->record;
 				unset($_REQUEST['record']);
@@ -57,15 +55,23 @@ class ReportsController extends SugarController{
 		parent::loadBean();
 	}
 	
-	public function action_add_schedule() {
+	public function action_buildreportmoduletree() 
+	{
+	    $this->view = 'buildreportmoduletree';
+	}
+	
+	public function action_add_schedule() 
+	{
 	    $this->view = 'schedule';
 	}
 	
-	public function action_detailview(){
+	public function action_detailview()
+	{
 		$this->view = 'classic';
 	}
 	//BEGIN SUGARCRM flav=pro ONLY
-	public function action_get_teamset_field() {
+	public function action_get_teamset_field() 
+	{
 		require_once('include/SugarFields/Fields/Teamset/ReportsSugarFieldTeamsetCollection.php');
 		$view = new ReportsSugarFieldTeamsetCollection(true);
 		$view->setup();
@@ -74,8 +80,8 @@ class ReportsController extends SugarController{
 		echo $view->display();
 	}
 	//END SUGARCRM flav=pro ONLY
-
-	public function action_get_quicksearch_defaults() {
+	public function action_get_quicksearch_defaults() 
+	{
 		global $global_json;
 		$global_json = getJSONobj();
 		require_once('include/QuickSearchDefaults.php');
@@ -92,4 +98,3 @@ class ReportsController extends SugarController{
 		echo $quicksearch_js;
 	}
 }
-?>

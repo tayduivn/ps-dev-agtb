@@ -66,7 +66,8 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/DataSets/Layout_Popup_picker.html");
 }
 else {
-	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
+    $GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/DataSets/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/DataSets/".$_REQUEST['html'].'.html');
 }
@@ -80,23 +81,23 @@ $form->assign("APP", $app_strings);
 
 // This code should always return an answer.
 // The form name should be made into a parameter and not be hard coded in this file.
- 
-$focus = new DataSet_Layout();  
+
+$focus = new DataSet_Layout();
 
 if(isset($_REQUEST['layout_record']) ) {
     $focus->retrieve($_REQUEST['layout_record']);
-    
-	//obtain the calc_id if it exists
-   
 
-//Move this into the sub panel php files///////////////////////!!!!!!!!!!!	
+	//obtain the calc_id if it exists
+
+
+//Move this into the sub panel php files///////////////////////!!!!!!!!!!!
 
 	$head_object = $focus->get_att_object("Head");
 	if (!empty($head_object->id) && $head_object->id!=""){
 		$form->assign("MODIFY_HEAD", "checked");
 		$form->assign("TOGGLE_HEAD_START", "toggleDisplay('attheaddiv');");
 		$form->assign("HEAD_ATT_ID", $head_object->id);
-		
+
 		if($head_object->display_type=="Scalar"){
 		$form->assign("TOGGLE_SCALAR_START", "toggleDisplay('attheadscalardiv');");
 		}
@@ -108,7 +109,7 @@ if(isset($_REQUEST['layout_record']) ) {
 		$form->assign("TOGGLE_BODY_START", "toggleDisplay('attbodydiv');");
 		$form->assign("BODY_ATT_ID", $body_object->id);
    	}
-//end if layout record is present    
+//end if layout record is present
 }
 
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
@@ -158,15 +159,15 @@ $form->out("embeded");
 		$form->assign("HEAD_BG_COLOR", get_select_options_with_id($app_list_strings['report_color_dom'],$head_object->bg_color));
 		$form->assign("HEAD_FONT_COLOR", get_select_options_with_id($app_list_strings['report_color_dom'],$head_object->font_color));
 		$form->assign("HEAD_STYLE", get_select_options_with_id($app_list_strings['dataset_style_dom'],$head_object->style));
-		
-		
+
+
 		if ($head_object->wrap == 'on') $form->assign("HEAD_WRAP", "checked");
-			
-		
+
+
 		$form->assign("HEAD_DISPLAY_TYPE", get_select_options_with_id($app_list_strings['dataset_att_display_type_dom'], $head_object->display_type));
 		$form->assign("HEAD_DISPLAY_NAME", $head_object->display_name);
 		if ($head_object->display_type == 'Scalar') $form->assign("HEAD_DISPLAY_NAME_DISABLED", "disabled");
-		
+
 		$form->assign("HEAD_FORMAT_TYPE", get_select_options_with_id($app_list_strings['dataset_att_format_type_scalar_dom'], $head_object->format_type));
 
 $form->parse("main.attribute_head");
@@ -176,19 +177,19 @@ $form->parse("main.attribute_head");
 
 
 		$form->assign('BODY_TITLE', "<h3> Add/Edit Body Attributes: </h3><BR>");
-	
+
 		$form->assign('BODY_FONT_SIZE', get_select_options_with_id($app_list_strings['font_size_dom'],$body_object->font_size));
 		$form->assign("BODY_BG_COLOR", get_select_options_with_id($app_list_strings['report_color_dom'],$body_object->bg_color));
 		$form->assign("BODY_FONT_COLOR", get_select_options_with_id($app_list_strings['report_color_dom'],$body_object->font_color));
 		$form->assign("BODY_STYLE", get_select_options_with_id($app_list_strings['dataset_style_dom'],$body_object->style));
-		
-		
+
+
 		if ($body_object->wrap == 'on') $form->assign("BODY_WRAP", "checked");
-			
-		
+
+
 		$form->assign("BODY_FORMAT_TYPE", get_select_options_with_id($app_list_strings['dataset_att_format_type_dom'], $body_object->format_type));
 		//$form->assign("BODY_FORMAT", $body_object->format);
-		
+
 		$form->assign("BODY_SIZE_TYPE", get_select_options_with_id($app_list_strings['width_type_dom'],$body_object->size_type));
 		$form->assign('BODY_CELL_SIZE', $body_object->cell_size);
 

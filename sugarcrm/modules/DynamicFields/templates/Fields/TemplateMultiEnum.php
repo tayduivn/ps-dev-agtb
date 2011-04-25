@@ -138,6 +138,21 @@ class TemplateMultiEnum extends TemplateEnum{
     	return '';
 	}
 
+    function get_db_modify_alter_table($table){
+		//BEGIN SUGARCRM flav=ent ONLY
+        //CLOB fields cannot have thier type in modify statements under oracle
+        if ($GLOBALS['db']->dbType == "oci8")
+        {
+            $out = $this->get_db_default(true) . $this->get_db_required(true);
+            if (!empty($out))
+                return "ALTER TABLE $table MODIFY $this->name $out";
+            else
+                return "";
+        }
+        //END SUGARCRM flav=ent ONLY
+        return parent::get_db_modify_alter_table($table);
+	}
+
 	function save($df) {
 		if ( isset ( $this->default ) )
 		{

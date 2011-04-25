@@ -487,7 +487,20 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 '^Mr.^,^Mrs.^',$vardefs),
             encodeMultienumValue(array('Mr.', 'Mrs.')));
     }
-
+    
+    /**
+     * @ticket 37842 
+     */
+    public function testValidMultiEnumWhenSpacesExistInTheValue()
+    {
+        $vardefs = array('options' => 'salutation_dom');
+        
+        $this->assertEquals(
+            $this->_ifs->multienum(
+                'Mr., Mrs.',$vardefs),
+            encodeMultienumValue(array('Mr.', 'Mrs.')));
+    }
+    
     public function testInvalidMultiEnum()
     {
         $vardefs = array('options' => 'salutation_dom');

@@ -1,4 +1,0 @@
-subject,status,type,priority,release,user
-Test Bug 1 for BugTracker_0641,New,Feature,Urgent,1.0,Administrator
-Test Bug 2 for BugTracker_0641,Closed,Feature,Medium,1.1,Administrator
-Test Bug 3 for BugTracker_0641,Assigned,Defect,High,2.0,qauser

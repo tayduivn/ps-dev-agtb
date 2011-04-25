@@ -440,12 +440,12 @@ class SugarView
                 $groupedTabsClass = new GroupedTabStructure();
                 $modules = query_module_access_list($current_user);
                 //handle with submoremodules
-                $max_tabs = $current_user->getPreference('max_subtabs');
+                $max_tabs = $current_user->getPreference('max_tabs');
                 // If the max_tabs isn't set incorrectly, set it within the range, to the default max sub tabs size
                 if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
                     // We have a default value. Use it
-                    if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
-                        $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
+                    if(isset($GLOBALS['sugar_config']['default_max_tabs'])){
+                        $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
                     }
                     else{
                         $max_tabs = 8;
@@ -728,6 +728,9 @@ EOHTML;
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
 
+            if ( isset($sugar_config['quicksearch_querydelay']) ) {
+                echo "<script>SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};</script>";
+            }
             // cn: bug 12274 - prepare secret guid for asynchronous calls
             if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {
                 $_SESSION['asynchronous_key'] = create_guid();

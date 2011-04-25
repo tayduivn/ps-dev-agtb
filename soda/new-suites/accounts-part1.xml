@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/accounts/module_lib/setup-accounts.xml" />
-	<script fileset="tests/modules/accounts/part1" />
-	<script file="tests/modules/accounts/module_lib/cleanup-accounts.xml" />
-</soda>
-

@@ -12,6 +12,7 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public static function setUpBeforeClass()
 	{
+	    unset($GLOBALS['disable_date_format']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 

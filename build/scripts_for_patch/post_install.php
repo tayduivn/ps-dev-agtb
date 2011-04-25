@@ -339,8 +339,8 @@ function post_install() {
 	  
 	//Set the chart engine
 	if ($origVersion < '620') {
-		_logThis('Set chartEngine in config.php to SugarFlash', $path);
-		$sugar_config['chartEngine'] = 'SugarFlash';
+		_logThis('Set chartEngine in config.php to JS Charts', $path);
+		$sugar_config['chartEngine'] = 'Jit';
 	}
 	
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
@@ -437,147 +437,6 @@ function upgradeOutboundSetting(){
 	}
 }
 
-function hide_subpanels_if_tabs_are_hidden(){
-	global $path;	
-	require_once('modules/MySettings/TabController.php');
-    require_once ('include/SubPanel/SubPanelDefinitions.php') ;
-        
-	//grab the existing system tabs
-	$newTB = new TabController();
-	$tabs = $newTB->get_tabs_system();
-
-	//set the hidden tabs key to lowercase
-	$hidpanels_arr = array_change_key_case($tabs[1]);
-	_logThis('panels to hide because tabs are hidden: '.var_export($hidpanels_arr,true), $path);
-		
-    //make subpanels hidden if tab is hidden
-	SubPanelDefinitions::set_hidden_subpanels($hidpanels_arr);
-	_logThis('panels were hidden ', $path);	
-}
-
-/**
- * hide_iframes_and_feeds_modules
- * This method determines whether or not to hide the iFrames and Feeds module
- * for an upgrade to 551
- */
-function hide_iframes_and_feeds_modules() {
-	global $path;
-	
-    _logThis('Beginning hide_iframes_and_feeds_modules', $path);
-	$query = "SELECT id, contents, assigned_user_id FROM user_preferences WHERE deleted = 0 AND category = 'Home'";
-	$result = $GLOBALS['db']->query($query, true, "Unable to update iFrames and Feeds dashlets!");
-	while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-		$content = unserialize(base64_decode($row['contents']));
-		$assigned_user_id = $row['assigned_user_id'];
-		$record_id = $row['id'];
-		$current_user = new User();
-        $current_user->retrieve($row['assigned_user_id']);
-        
-		if(!empty($content['dashlets']) && !empty($content['pages'])){
-			$originalDashlets = $content['dashlets'];
-			$originalPages = $content['pages'];
-			
-			//Determine if the original perference has already had the two dashlets or not
-			foreach($originalDashlets as $key=>$ds){
-				//BEGIN SUGARCRM flav=com ONLY 
-				if(!empty($ds['options']['title']) && $ds['options']['title'] == 'LBL_DASHLET_DISCOVER_SUGAR_PRO'){
-				   $originalDashlets[$key]['module'] = 'Home';
-				}
-				//END SUGARCRM flav=com ONLY 
-				if(!empty($ds['options']['title']) && $ds['options']['title'] == 'LBL_DASHLET_SUGAR_NEWS'){
-				   $originalDashlets[$key]['module'] = 'Home';
-				}
-			}
-		}
-		$current_user->setPreference('dashlets', $originalDashlets, 0, 'Home');
-		$current_user->setPreference('pages', $originalPages, 0, 'Home');	
-	} //while	
-	
-	$remove_iframes = false;
-	$remove_feeds = false;
-	
-	//Check if we should remove iframes.  If the table does not exist or the directory
-	//does not exist then we set remove_iframes to true
-	if(!$GLOBALS['db']->tableExists('iframes') || !file_exists('modules/iFrames')) {
-		$remove_iframes = true;
-	} else {
-		$result = $GLOBALS['db']->query('SELECT count(id) as total from iframes');
-		if(!empty($result)) {
-			$row = $GLOBALS['db']->fetchByAssoc($result);
-			if($row['total'] == 0) {
-			   $remove_iframes = true;
-			}
-		}
-	}
-	
-	//Check if we should remove Feeds.  We check if the tab is hidden
-	require_once("modules/MySettings/TabController.php");
-	$controller = new TabController();
-	$tabs = $controller->get_tabs_system();
-	
-	//If the feeds table does not exists or if the directory does not exist or if it is hidden in 
-	//system tabs then set remove_feeds to true
-	if(!$GLOBALS['db']->tableExists('feeds') || !file_exists('modules/Feeds') || (isset($tabs) && isset($tabs[1]) && isset($tabs[1]['Feeds']))) {
-	   $remove_feeds = true;
-	}
-	
-	if($remove_feeds) {
-	   //Remove the modules/Feeds files
-	   if(is_dir('modules/Feeds')) 
-	   {
-	      _logThis('Removing the Feeds files', $path);
-	      rmdir_recursive('modules/Feeds');
-	   }
-		
-	   if(file_exists('custom/Extension/application/Ext/Include/Feeds.php'))
-	   {
-	      _logThis('Removing custom/Extension/application/Ext/Include/Feeds.php ', $path);
-	      unlink('custom/Extension/application/Ext/Include/Feeds.php');	   	
-	   }
-	   
-	   //Drop the table
-	   if($GLOBALS['db']->tableExists('feeds')) 
-	   {
-		   _logThis('Removing the Feeds table', $path);
-		   $GLOBALS['db']->dropTableName('feeds');
-	   }
-	} else {
-	   if(file_exists('modules/Feeds') && $GLOBALS['db']->tableExists('feeds')) {
-		   _logThis('Writing Feed.php module to custom/Extension/application/Ext/Include', $path);
-		   write_to_modules_ext_php('Feed', 'Feeds', 'modules/Feeds/Feed.php', true);
-	   }
-	}
-	
-	if($remove_iframes) {
-		//Remove the module/iFrames files
-		if(is_dir('modules/iFrames')) 
-		{
-		   _logThis('Removing the iFrames files', $path);
-		   rmdir_recursive('modules/iFrames');
-		}
-		
-		if(file_exists('custom/Extension/application/Ext/Include/iFrames.php'))
-	    {
-	       _logThis('Removing custom/Extension/application/Ext/Include/iFrames.php ', $path);
-	       unlink('custom/Extension/application/Ext/Include/iFrames.php');	   	
-	    }		
-		
-		//Drop the table
-		if($GLOBALS['db']->tableExists('iframes')) 
-		{
-		   _logThis('Removing the iframes table', $path);
-		   $GLOBALS['db']->dropTableName('iframes');
-		}
-
-	} else {
-	   if(file_exists('modules/iFrames') && $GLOBALS['db']->tableExists('iframes')) {
-		  _logThis('Writing iFrame.php module to custom/Extension/application/Ext/Include', $path);
-		  write_to_modules_ext_php('iFrame', 'iFrames', 'modules/iFrames/iFrame.php', true);
-	   }
-	}	
-	
-	 _logThis('Finshed with hide_iframes_and_feeds_modules', $path);
-}
 
 /**
  * write_to_modules_ext_php

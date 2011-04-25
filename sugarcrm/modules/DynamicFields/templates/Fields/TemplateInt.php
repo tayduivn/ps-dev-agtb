@@ -54,7 +54,7 @@ class TemplateInt extends TemplateRange
 
     function get_field_def(){
 		$vardef = parent::get_field_def();
-		$vardef['disable_num_format'] = $this->ext3;
+		$vardef['disable_num_format'] = isset($this->disable_num_format) ? $this->disable_num_format : $this->ext3;//40005
 		if(!empty($this->ext2)){
 		    $min = (!empty($this->ext1))?$this->ext1:0;
 		    $max = $this->ext2;

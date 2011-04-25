@@ -1071,8 +1071,8 @@ fix_report_relationships($path);
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
-if(isset($_SESSION['upgrade_from_flavor'])){
-
+if($ce_to_pro_ent)
+{
         //check to see if there are any new files that need to be added to systems tab
         //retrieve old modules list
         logThis('check to see if new modules exist',$path);
@@ -1121,23 +1121,9 @@ if(isset($_SESSION['upgrade_from_flavor'])){
           $tabs[$nm] = $nm;
         }
 
-        //Set the default order
-        $default_order = array(
-        	'Home'=>'Home',
-        	'Accounts'=>'Accounts',
-        	'Contacts'=>'Contacts',
-        	'Opportunities'=>'Opportunities',
-        	'Activities'=>'Activities',
-        	'Reports'=>'Reports',
-        	'Documents'=>'Documents'
-        );
-        $tabs = array_merge($default_order, $tabs);
-
         //now assign the modules to system tabs
         $newTB->set_system_tabs($tabs);
         logThis('module tabs updated',$path);
-
-
 }
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent

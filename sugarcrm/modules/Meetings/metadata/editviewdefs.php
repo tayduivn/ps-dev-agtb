@@ -93,8 +93,15 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration
             ),
          ),
       ),
-      array('type','password'),
-        array (
+      
+      //BEGIN SUGARCRM flav!=com ONLY
+      array(
+	      'type',
+	      'password'
+      ),
+      //END SUGARCRM flav!=com ONLY
+      
+      array (
           array (
             'name' => 'date_start',
             'type' => 'datetimecombo',
