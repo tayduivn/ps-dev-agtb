@@ -369,7 +369,7 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
         $searchLen = strlen($keywords);
 
         foreach ( $docList as $doc ) {
-            if ( strncmp($keywords,$doc['name'],$searchLen) === 0 ) {
+            if ( strncasecmp($keywords,$doc['name'],$searchLen) === 0 ) {
                 // It matches
                 $results[] = $doc;
 
