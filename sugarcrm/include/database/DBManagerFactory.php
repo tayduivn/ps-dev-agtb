@@ -34,11 +34,12 @@ class DBManagerFactory
 {
     static $instances = array();
 
-    public static function getTypeInstance($type, $config = array())
+    public static function getTypeInstance($type, $config = array(), $global_config = array())
     {
+        global $sugar_config;
         $my_db_manager = 'MysqlManager';
         if( $type == "mysql" ) {
-            if (empty($config['mysqli_disabled']) && function_exists('mysqli_connect')) {
+            if (empty($sugar_config['mysqli_disabled']) && function_exists('mysqli_connect')) {
                 $my_db_manager = 'MysqliManager';
             }
         //BEGIN SUGARCRM flav=ent ONLY

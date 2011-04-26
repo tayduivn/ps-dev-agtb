@@ -11,18 +11,22 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $backupGlobals = FALSE;
 
-    public function setUp()
+    static public function setupBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_db = DBManagerFactory::getInstance();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
-    public function tearDown()
+    static public function tearDownAfterClass()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_strings']);
+    }
+
+    public function setUp()
+    {
+        $this->_db = DBManagerFactory::getInstance();
     }
 
     private function _createRecords(
@@ -49,24 +53,12 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db->query("DELETE From contacts where id = '{$id}'");
     }
 
-    public function testGetTableName()
-    {
-        $this->_db->createTableParams('MyTableName',array('foo'=>'foo'),array());
-
-        $this->assertEquals($this->_db->getTableName(),'MyTableName');
-    }
-
     public function testGetDatabase()
     {
         if ( $this->_db instanceOf MysqliManager )
             $this->assertInstanceOf('Mysqli',$this->_db->getDatabase());
         else
             $this->assertTrue(is_resource($this->_db->getDatabase()));
-    }
-
-    public function testGetHelper()
-    {
-        $this->assertInstanceOf('DBManager',$this->_db->getHelper());
     }
 
     public function testCheckError()
@@ -930,36 +922,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db = &DBManagerFactory::getInstance();
     }
 
-    public function testQuote()
-    {
-        $string = "'dog eat ";
-
-        if ( $this->_db->dbType == 'mysql')
-            $this->assertEquals($this->_db->quote($string),"\\'dog eat ");
-        else
-            $this->assertEquals($this->_db->quote($string),"''dog eat ");
-    }
-
-    public function testQuoteForEmail()
-    {
-        $string = "'dog eat ";
-
-        if ( $this->_db->dbType == 'mysql')
-            $this->assertEquals($this->_db->quote($string),"\\'dog eat ");
-        else
-            $this->assertEquals($this->_db->quote($string),"''dog eat ");
-    }
-
-    public function testArrayQuote()
-    {
-        $string = array("'dog eat ");
-        $this->_db->arrayQuote($string);
-        if ( $this->_db->dbType == 'mysql')
-            $this->assertEquals($string,array("\\'dog eat "));
-        else
-            $this->assertEquals($string,array("''dog eat "));
-    }
-
     public function testQuery()
     {
         $beanIds = $this->_createRecords(5);
@@ -1201,258 +1163,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         else {
             $this->assertFalse($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
         }
-    }
-
-    public function providerConvert()
-    {
-        $db = DBManagerFactory::getInstance();
-
-        $returnArray = array(
-            array(
-                array('foo','nothing'),
-                'foo'
-                )
-            );
-        if ( $db instanceOf MysqlManager )
-            $returnArray += array(
-                array(
-                    array('foo','today'),
-                    'CURDATE()'
-                    ),
-                array(
-                    array('foo','left'),
-                    'LEFT(foo)'
-                ),
-            array(
-                    array('foo','left',array('1','2','3')),
-                    'LEFT(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','date_format'),
-                    'DATE_FORMAT(foo)'
-                        ),
-                array(
-                    array('foo','date_format',array('1','2','3')),
-                    'DATE_FORMAT(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','datetime',array("'%Y-%m'")),
-                    'DATE_FORMAT(foo, \'%Y-%m-%d %H:%i:%s\')'
-                        ),
-                array(
-                    array('foo','IFNULL'),
-                    'IFNULL(foo)'
-                    ),
-                array(
-                    array('foo','IFNULL',array('1','2','3')),
-                    'IFNULL(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','CONCAT',array('1','2','3')),
-                    'CONCAT(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','text2char'),
-                    'foo'
-                ),
-            );
-        if ( $db instanceOf MssqlManager )
-            $returnArray += array(
-                array(
-                    array('foo','today'),
-                    'GETDATE()'
-                    ),
-                array(
-                    array('foo','left'),
-                    'LEFT(foo)'
-                    ),
-                array(
-                    array('foo','left',array('1','2','3')),
-                    'LEFT(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','date_format'),
-                    'CONVERT(varchar(10),foo,120)'
-                    ),
-                array(
-                    array('foo','date_format',array('1','2','3')),
-                    'CONVERT(varchar(10),foo,120)'
-                    ),
-                array(
-                    array('foo','date_format',array("'%Y-%m'")),
-                    'CONVERT(varchar(7),foo,120)'
-                    ),
-                array(
-                    array('foo','IFNULL'),
-                    'ISNULL(foo)'
-                    ),
-                array(
-                    array('foo','IFNULL',array('1','2','3')),
-                    'ISNULL(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','CONCAT',array('1','2','3')),
-                    'foo+1+2+3'
-                    ),
-                array(
-                    array('foo','text2char'),
-                    'CAST(foo AS varchar(8000))'
-                    ),
-                );
-        if ( $db instanceOf SqlsrvManager )
-            $returnArray += array(
-                array(
-                    array('foo','datetime'),
-                    'CONVERT(varchar(20),foo,120)'
-                    ),
-                );
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ( $db instanceOf OracleManager )
-            $returnArray += array(
-                array(
-                    array('foo','date'),
-                    "to_date(foo, 'YYYY-MM-DD')"
-                    ),
-                array(
-                    array('foo','time'),
-                    "to_date(foo, 'HH24:MI:SS')"
-                    ),
-                array(
-                    array('foo','datetime'),
-                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS')"
-                    ),
-                array(
-                    array('foo','datetime',array(),array(1,2,3)),
-                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS',1,2,3)"
-                    ),
-                array(
-                    array('foo','today'),
-                    'sysdate'
-                    ),
-                array(
-                    array('foo','left'),
-                    "LTRIM(foo)"
-                    ),
-                array(
-                    array('foo','left',array(),array(1,2,3)),
-                    "LTRIM(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','date_format'),
-                    "TO_CHAR(foo)"
-                    ),
-                array(
-                    array('foo','date_format',array(),array(1,2,3)),
-                    "TO_CHAR(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','time_format'),
-                    "TO_CHAR(foo)"
-                    ),
-                array(
-                    array('foo','time_format',array(),array(1,2,3)),
-                    "TO_CHAR(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','IFNULL'),
-                    "NVL(foo)"
-                    ),
-                array(
-                    array('foo','IFNULL',array(),array(1,2,3)),
-                    "NVL(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','CONCAT'),
-                    "foo"
-                    ),
-                array(
-                    array('foo','CONCAT',array(),array(1,2,3)),
-                    "CONCAT(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','text2char'),
-                    "to_char(foo)"
-                    ),
-                );
-        //END SUGARCRM flav=ent ONLY
-
-        return $returnArray;
-    }
-
-    /**
-     * @ticket 33283
-     * @dataProvider providerConvert
-     */
-    public function testConvert(
-         array $parameters,
-         $result
-        )
-    {
-         if ( count($parameters) < 3 )
-             $this->assertEquals(
-                 $this->_db->convert($parameters[0],$parameters[1]),
-                 $result);
-         elseif ( count($parameters) < 4 )
-             $this->assertEquals(
-                 $this->_db->convert($parameters[0],$parameters[1],$parameters[2]),
-                 $result);
-        else
-            $this->assertEquals(
-                 $this->_db->convert($parameters[0],$parameters[1],$parameters[2],$parameters[3]),
-                 $result);
-     }
-
-     /**
-      * @ticket 33283
-      */
-     public function testConcat()
-     {
-         $ret = $this->_db->concat('foo',array('col1','col2','col3'));
-
-         if ( $this->_db instanceOf MysqlManager )
-             $this->assertEquals("LTRIM(RTRIM(CONCAT(IFNULL(foo.col1,''),' ',IFNULL(foo.col2,''),' ',IFNULL(foo.col3,''))))", $ret);
-         if ( $this->_db instanceOf MssqlManager )
-             $this->assertEquals("LTRIM(RTRIM(ISNULL(foo.col1,'') + ' ' + ISNULL(foo.col2,'') + ' ' + ISNULL(foo.col3,'')))", $ret);
-         if ( $this->_db instanceOf OracleManager )
-             $this->assertEquals("LTRIM(RTRIM(NVL(foo.col1,'') || ' ' || NVL(foo.col2,'') || ' ' || NVL(foo.col3,'') || ' '))", $ret);
-     }
-
-     public function providerFromConvert()
-     {
-         $returnArray = array(
-             array(
-                 array('foo','nothing'),
-                 'foo'
-                 )
-             );
-         if ( $this->_db instanceOf MssqlManager
-                || $this->_db instanceOf OracleManager )
-             $returnArray += array(
-                 array(
-                     array('2009-01-01 12:00:00','date'),
-                     '2009-01-01'
-                     ),
-                 array(
-                     array('2009-01-01 12:00:00','time'),
-                     '12:00:00'
-                     )
-                 );
-
-         return $returnArray;
-     }
-
-     /**
-      * @ticket 33283
-      * @dataProvider providerFromConvert
-      */
-     public function testFromConvert(
-         array $parameters,
-         $result
-         )
-     {
-         $this->assertEquals(
-             $this->_db->fromConvert($parameters[0],$parameters[1]),
-             $result);
     }
 
     /**

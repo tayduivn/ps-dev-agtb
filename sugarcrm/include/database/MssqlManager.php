@@ -1177,11 +1177,14 @@ class MssqlManager extends DBManager
             case 'left':
                 return "LEFT($string$additional_parameters_string)";
             case 'date_format':
+                if($additional_parameters[0][0] == "'") {
+                    $additional_parameters[0] = trim($additional_parameters[0], "'");
+                }
                 if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
                     $len = $this->date_formats[$additional_parameters[0]];
-                    return "LEFT(CONVERT(varchar($len),". $string . ",120), $len)";
+                    return "LEFT(CONVERT(varchar($len),". $string . ",120),$len)";
                 } else {
-                   return "LEFT(CONVERT(varchar(10),". $string . ",120), 10)";
+                   return "LEFT(CONVERT(varchar(10),". $string . ",120),10)";
                 }
             case 'ifnull':
                 if(empty($additional_parameters_string)) {

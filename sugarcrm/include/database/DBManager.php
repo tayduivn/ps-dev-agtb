@@ -195,7 +195,7 @@ abstract class DBManager
 
     /**
      * Returns the current tablename
-     *
+     * @deprecated
      * @return string
      */
     public function getTableName()
@@ -998,7 +998,7 @@ abstract class DBManager
      */
     public function addIndexes($tablename, $indexes, $execute = true)
     {
-        $alters = $this->getConstraintSql($indexes,true,'ADD');
+        $alters = $this->getConstraintSql($indexes, $tablename);
         if ($execute) {
             foreach($alters as $sql) {
                 $this->query($sql, true, "Error adding index: ");

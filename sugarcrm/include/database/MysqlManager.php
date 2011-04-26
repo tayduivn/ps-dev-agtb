@@ -583,9 +583,13 @@ class MysqlManager extends DBManager
                 return "LEFT($all_strings)";
             case 'date_format':
                 if(empty($additional_parameters)) {
-                    return "DATE_FORMAT($string, '%Y-%m-%d')";
+                    return "DATE_FORMAT($string,'%Y-%m-%d')";
                 } else {
-                    return "DATE_FORMAT($string, '{$additional_parameters[0]}')";
+                    $format = $additional_parameters[0];
+                    if($format[0] != "'") {
+                        $format = $this->quoted($format);
+                    }
+                    return "DATE_FORMAT($string,$format)";
                 }
             case 'datetime':
                 return $string;

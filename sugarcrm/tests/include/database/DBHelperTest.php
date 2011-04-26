@@ -10,17 +10,27 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     private $_db;
     private $_helper;
 
-    public function setUp()
+    static public function setupBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+    }
+
+    static public function tearDownAfterClass()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['app_strings']);
+    }
+
+    public function setUp()
+    {
         $this->_db = DBManagerFactory::getInstance();
         $this->_helper = $this->_db;
     }
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         $this->_db->disconnect();
     }
 
@@ -159,9 +169,9 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case->retrieve($case->id);
         $lastAuto = $case->case_number;
         $helperResult = $this->_helper->getAutoIncrement("cases", "case_number");
-        
+
         $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
-        
+
         $this->assertEquals($lastAuto + 1, $helperResult);
     }
     //END SUGARCRM flav!=sales ONLY
@@ -193,10 +203,10 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case2->save();
         $case2->retrieve($case2->id);
         $case_number = $case2->case_number;
-        
+
         $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
         $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case2->id}'");
-        
+
         $this->assertEquals($newAuto, $case_number);
     }
     //END SUGARCRM flav!=sales ONLY

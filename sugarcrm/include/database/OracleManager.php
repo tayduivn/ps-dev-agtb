@@ -753,6 +753,9 @@ class OracleManager extends DBManager
             case 'left':
                 return "LTRIM($string$additional_parameters_string)";
             case 'date_format':
+                if($additional_parameters[0][0] == "'") {
+                    $additional_parameters[0] = trim($additional_parameters[0], "'");
+                }
                 if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
                     $format = $this->date_formats[$additional_parameters[0]];
                     return "TO_CHAR($string, '$format')";
@@ -790,7 +793,7 @@ class OracleManager extends DBManager
                         $additional_parameters[0] .= "*7";
                         // break missing intentionally
                     case 'day':
-                        return "($string + $additional_parameters[0]})";
+                        return "($string + $additional_parameters[0])";
                     case 'year':
                         return "ADD_MONTHS($string, {$additional_parameters[0]}*12)";
                 }
