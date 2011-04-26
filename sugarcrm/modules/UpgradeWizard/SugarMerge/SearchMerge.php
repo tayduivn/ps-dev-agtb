@@ -155,5 +155,18 @@ class SearchMerge extends ListViewMerge{
 		return false;
 	}	
 	
+	protected function mergeTemplateMeta()
+	{
+	    if( isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName]) )
+	    {
+	       $this->newData[$this->module][$this->viewDefs][$this->templateMetaName] = $this->customData[$this->module][$this->viewDefs][$this->templateMetaName];
+	    }
+	    
+	    if(!isset($this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumnsBasic']) && isset($this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumns']))
+	    {
+	    	$this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumnsBasic'] = $this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumns'];
+	    }
+	}	
+	
 }
 ?>

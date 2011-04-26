@@ -37,6 +37,8 @@ function test_leads_searchdefs_merge() {
    $this->assertTrue(isset($fields['team_name']), "Assert that team_name field is present");
    $this->assertTrue(isset($fields['current_user_only']), "Assert that current_user_only field is present");
    $this->assertFalse(isset($fields['open_only']), "Assert that 620 OOTB open_only field is not added since there was a customization");
+   
+   $this->assertEquals($searchdefs['Leads']['templateMeta']['maxColumnsBasic'], $searchdefs['Leads']['templateMeta']['maxColumns'], 'Assert that maxColumnsBasic is set to value of maxColumns');   
 }
 
 
@@ -46,6 +48,7 @@ function test_accounts_searchdefs_merge() {
    $this->merge->merge('Accounts', 'tests/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Accounts/metadata/searchdefs.php', 'modules/Accounts/metadata/searchdefs.php', 'custom/modules/Accounts/metadata/searchdefs.php');
    $this->assertTrue(file_exists('custom/modules/Accounts/metadata/searchdefs.php.suback.php'));
    require('custom/modules/Accounts/metadata/searchdefs.php');
+   //echo var_export($searchdefs['Accounts'], true);
    
    //Here's the main test... check to see that maxColumns is still 3 since Accounts is not a module with maxColumn altered OOTB
    $this->assertEquals($searchdefs['Accounts']['templateMeta']['maxColumns'], '3', 'Assert that maxColumns is still 3 for Accounts module'); 
@@ -62,6 +65,8 @@ function test_accounts_searchdefs_merge() {
    $this->assertTrue(isset($fields['created_by_name']), "Assert that created_by_name field is present");
    $this->assertTrue(isset($fields['current_user_only']), "Assert that current_user_only field is present");
    $this->assertFalse(isset($fields['open_only']), "Assert that 620 OOTB open_only field is not added since there was a customization");
+   
+   $this->assertEquals($searchdefs['Accounts']['templateMeta']['maxColumnsBasic'], $searchdefs['Accounts']['templateMeta']['maxColumns'], 'Assert that maxColumnsBasic is set to value of maxColumns');
 }
 
 }
