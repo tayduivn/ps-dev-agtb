@@ -39,6 +39,10 @@ class M2MRelationship extends SugarRelationship
     {
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
+        if(!($lhs instanceof SugarBean) || !($rhs instanceof SugarBean)) {
+            $GLOBALS['log']->fatal("LHS and RHS must be beans");
+            return false;
+        }
         $lhsClass = get_class($lhs);
         $rhsClass = get_class($rhs);
         if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName))
@@ -74,6 +78,10 @@ class M2MRelationship extends SugarRelationship
 
     public function remove($lhs, $rhs)
     {
+        if(!($lhs instanceof SugarBean) || !($rhs instanceof SugarBean)) {
+            $GLOBALS['log']->fatal("LHS and RHS must be beans");
+            return false;
+        }
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 

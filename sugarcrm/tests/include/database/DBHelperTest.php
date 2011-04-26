@@ -170,7 +170,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $lastAuto = $case->case_number;
         $helperResult = $this->_helper->getAutoIncrement("cases", "case_number");
 
-        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
+//        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
 
         $this->assertEquals($lastAuto + 1, $helperResult);
     }

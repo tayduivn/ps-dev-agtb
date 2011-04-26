@@ -65,7 +65,7 @@ abstract class SugarRelationship
         {
             if (empty($related->id))
                 continue;
-            
+
             if ($link->getSide() == REL_LHS)
                 $this->remove($focus, $relBean);
             else
@@ -155,7 +155,7 @@ abstract class SugarRelationship
         $whereString = "WHERE " . implode(" AND ", $stringSets);
 
         $query = "UPDATE {$this->getRelationshipTable()} set deleted=1 , date_modified = '$date_modified' $whereString";
-        
+
         return DBManagerFactory::getInstance()->query($query);
 
     }
@@ -235,7 +235,7 @@ abstract class SugarRelationship
     {
         if (isset($this->def[$name]))
             return $this->def[$name];
-        
+
         switch($name)
         {
             case "relationship_type":

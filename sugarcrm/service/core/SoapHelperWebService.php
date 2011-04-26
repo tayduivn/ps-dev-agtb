@@ -542,15 +542,14 @@ function validate_user($user_name, $password){
 
 	function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '') {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
-		require_once('include/TimeDate.php');
 		global  $beanList, $beanFiles, $current_user;
 		global $disable_date_format;
 
 		$bean->load_relationship($link_field_name);
 		if (isset($bean->$link_field_name)) {
 			// get the query object for this link field
-			$query_array = $bean->$link_field_name->getQuery(true,array(),0,'',true);
-			if (isset($query_array['where'])) {
+			$query_array = $bean->$link_field_name->getQuery(array('return_as_array' => true));
+		    if (isset($query_array['where'])) {
 				$query_array['where'] = str_ireplace("where", "", $query_array['where']);
 				if (!empty($optional_where)) {
 					$optional_where = $query_array['where'] . " and " . $optional_where;

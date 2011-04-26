@@ -1165,7 +1165,7 @@ function _check_user_permissions()
 						$secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
 					}
 					if (isset($extModule->field_defs['name']['db_concat_fields']))
-		            	$select_piece = db_concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']).' '.$secondaryTableAlias.'_name';
+		            	$select_piece = $this->db->concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']).' '.$secondaryTableAlias.'_name';
 		            else
 		            	$select_piece = $secondaryTableAlias.'.name '. $secondaryTableAlias.'_name';
 
@@ -1458,6 +1458,7 @@ function _check_user_permissions()
     protected function wrapIfNull($field)
     {
         $has_space = strrpos($field, " ");
+        // Check if the field has space - i.e. it's "table.field alias"
         if($has_space && !stristr("' '",$field)) {
             $aggregate_func = strtolower(substr($field, 0, 4));
             if ($aggregate_func == 'max(' || $aggregate_func == 'min(' || $aggregate_func == 'avg(' || $aggregate_func == 'sum(') {
@@ -1466,13 +1467,16 @@ function _check_user_permissions()
             if(strtolower(substr($field, 0, 6)) == 'count(') {
                 return $field;
             }
+            // This is field name as table.field
             $field_name = substr($field, 0, $has_space);
             $field_data = explode(".", $field_name);
             if(!isset($field_data[1]) || !isset($this->focus->field_name_map[$field_data[1]]['type'])) {
+                // Not a field or unknown field type - don't touch it
                 return $field;
             }
             $field_type = $this->focus->field_name_map[$field_data[1]]['type'];
             if($field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date') {
+                // add IFNULL to the field and then re-add alias back
                 return $this->db->convert($field_name, "IFNULL", array("''"))." ".substr($field, $has_space+1)."\n";
             }
         }
