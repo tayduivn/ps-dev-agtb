@@ -580,7 +580,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      * @param int $n the number of articles to return.  Default is 10
      * @param string $where clause to use in where portion of query, if needed.
      */
-    function create_portal_most_recent_query($db, $n = '10', $where='') 
+    function create_portal_most_recent_query($db, $n = '10', $where='')
 	{
 	    //create portal most recent query, default is top 10
 		return $db->limitQuerySQL("SELECT kbdocuments.* FROM kbdocuments WHERE deleted=0
@@ -1208,8 +1208,5 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
         }else{
             return false;
         }
-
-    }
- ?>
 
     }
