@@ -373,7 +373,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $searchLen = strlen($keywords);
 
         foreach ( $docList as $doc ) {
-            if ( empty($keywords) || stristr($doc['name'],$keywords) !== FALSE ) {
+            if ( empty($keywords) || strncasecmp($doc['name'],$keywords,strlen($keywords)) == 0 ) {
                 // It matches
                 $results[] = $doc;
                 
