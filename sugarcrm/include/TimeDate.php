@@ -243,7 +243,6 @@ class TimeDate
     protected function _getUserTZ(User $user = null)
     {
         $user = $this->_getUser($user);
-
         if (empty($user) || $this->isAlwaysDb()) {
             return self::$gmtTimezone;
         }
@@ -638,12 +637,14 @@ class TimeDate
         try {
             $res = SugarDateTime::createFromFormat($this->get_date_time_format($user), $date, $this->_getUserTZ($user));
         } catch (Exception $e) {
+            $GLOBALS['log']->error("fromUser: Conversion of $date exception: {$e->getMessage()}");
         }
         if(!($res instanceof DateTime)) {
             $uf = $this->get_date_time_format($user);
-            $GLOBALS['log']->error("fromUser: Conversion of $date from user format $uf failed: {$e->getMessage()}");
+            $GLOBALS['log']->error("fromUser: Conversion of $date from user format $uf failed");
             return null;
         }
+        return $res;
     }
 
     /**
@@ -792,7 +793,6 @@ class TimeDate
             }
             $phpdate = SugarDateTime::createFromFormat($fromFormat, $date, $fromTZ);
             if ($phpdate == false) {
-                //		    	var_dump($date, $phpdate, $fromFormat,  DateTime::getLastErrors() );
                 $GLOBALS['log']->error("convert: Conversion of $date from $fromFormat to $toFormat failed");
                 return '';
             }
@@ -801,7 +801,6 @@ class TimeDate
             }
             return $phpdate->format($toFormat);
         } catch (Exception $e) {
-            //	    	var_dump($date, $phpdate, $fromFormat, $fromTZ,  DateTime::getLastErrors() );
             $GLOBALS['log']->error("Conversion of $date from $fromFormat to $toFormat failed: {$e->getMessage()}");
             return '';
         }
@@ -1489,7 +1488,7 @@ class TimeDate
 	/**
 	 * Get month-long range mdiff months from now
 	 */
-	protected function diffMon($mdiff, User $user)
+	protected function diffMon($mdiff, User $user = null)
 	{
         $now = $this->tzUser($this->getNow(), $user);
 	    $now->setDate($now->year, $now->month+$mdiff, 1);
@@ -1501,10 +1500,10 @@ class TimeDate
 	/**
 	 * Get year-long range ydiff years from now
 	 */
-	protected function diffYear($ydiff, User $user)
+	protected function diffYear($ydiff, User $user = null)
 	{
         $now = $this->tzUser($this->getNow(), $user);
-	    $now->setDate($now->year+$ydiff, 1, 1);
+        $now->setDate($now->year+$ydiff, 1, 1);
 	    $start = $now->get_day_begin();
 	    $end = $now->setDate($now->year, 12, 31)->setTime(23, 59, 59);
 	    return array($start, $end);
