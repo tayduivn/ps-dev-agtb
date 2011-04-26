@@ -237,32 +237,7 @@ function clearCompanyLogo(){
     }    
 }
 
-function repair_long_relationship_names()
-{
-    require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
-    $GLOBALS['mi_remove_tables'] = false;
-    $touched = array();
-    foreach($GLOBALS['moduleList'] as $module)
-    {
-        $relationships = new DeployedRelationships ($module) ;
-        foreach($relationships->getRelationshipList() as $rel_name)
-        {
-            if (strlen($rel_name) > 27 && empty($touched[$rel_name]))
-            {
-                _logThis("Rebuilding relationship fields for $rel_name", $path);
-                $touched[$rel_name] = true;
-                $rel_obj = $relationships->get($rel_name);
-                $rel_obj->setReadonly(false);
-                $relationships->delete($rel_name);
-                $relationships->save();
-                $relationships->add($rel_obj);
-                $relationships->save();
-                $relationships->build () ;
-            }
-        }
 
-    }
-}
 
 function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
@@ -365,11 +340,6 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY 
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
-
-    if ($origVersion < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8')) {
-        _logThis('About to repair relationship fields', $path);
-        repair_long_relationship_names();
-    }
 	  
 	//Set the chart engine
 	if ($origVersion < '620') {

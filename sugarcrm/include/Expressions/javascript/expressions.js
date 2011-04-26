@@ -938,7 +938,7 @@ SUGAR.util.DateUtils = {
 		var dateRemain = YAHOO.lang.trim(date);
 		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
 		for (var j = 0; j < oldFormat.length; j++) {
-			var c = oldFormat[j];
+			var c = oldFormat.charAt(j);
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
 				var i = dateRemain.indexOf(c);
 				if (i == -1) i = dateRemain.length;

@@ -241,6 +241,11 @@ if($_SESSION['current_db_version'] < '610' && function_exists('upgrade_connector
    upgrade_connectors($path);
 }
 
+if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
+{
+    repair_long_relationship_names($path);
+}
+
 //Global search support
 if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
 {
