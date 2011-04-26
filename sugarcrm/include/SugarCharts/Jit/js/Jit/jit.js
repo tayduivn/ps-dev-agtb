@@ -16348,7 +16348,7 @@ $jit.GaugeChart = new Class({
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	ctx.moveTo(0,0);
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -radius - 4, subtitle.size + subtitle.offset); 
+		ctx.fillText(subtitle.text, -radius - 4, subtitle.size + subtitle.offset + (radius/2)); 
 	}
   },
   
@@ -16432,7 +16432,7 @@ $jit.GaugeChart = new Class({
     }
     
     this.renderBackground();
-    
+    this.renderSubtitle();
     
     this.normalizeDims();
 	
@@ -16451,7 +16451,7 @@ $jit.GaugeChart = new Class({
 		this.renderNeedle(gaugePosition,props['gaugeTarget']);
 	}
 	
-	this.renderSubtitle();
+	
 
   },
   
