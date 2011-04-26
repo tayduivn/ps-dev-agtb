@@ -587,14 +587,15 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         	AND is_external_article = 1 $where ORDER BY active_date DESC", 0, $n);
     }
 
-    /**getQSAuthor()
+   /**getQSAuthor()
      *
      * This method sets up array for use with quicksearch framework.  Populates values for kb author
      */
-    function getQSAuthor() {
+    function getQSAuthor($form = 'EditView') {
         global $app_strings;
 
-        $qsUser = array(  'method' => 'get_user_array', // special method
+        $qsUser = array('form' => $form,
+                        'method' => 'get_user_array', // special method
                         'field_list' => array('user_name', 'id'),
                         'populate_list' => array('kbarticle_author_name', 'kbarticle_author_id'),
                         'conditions' => array(array('name'=>'user_name','op'=>'like_custom','end'=>'%','value'=>'')),
@@ -602,17 +603,15 @@ function get_admin_fts_list($where,$isMultiSelect=false){
         return $qsUser;
     }
 
-
-
     /**getQSApprover()
      *
      * This method sets up array for use with quicksearch framework.  Populates values for kb approver
      */
-    function getQSApprover() {
+    function getQSApprover($form = 'EditView') {
         global $app_strings;
 
-        $qsUser = array('form' => 'EditView',
-        				'method' => 'get_user_array', // special method
+        $qsUser = array('form' => $form,
+                        'method' => 'get_user_array', // special method
                         'field_list' => array('user_name', 'id'),
                         'populate_list' => array('kbdoc_approver_name', 'kbdoc_approver_id'),
                         'required_list' => array('kbdoc_approver_id'),
@@ -620,19 +619,21 @@ function get_admin_fts_list($where,$isMultiSelect=false){
                         'limit' => '30','no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
         return $qsUser;
     }
-    function getQSTags() {
+
+    function getQSTags($form = 'EditView') {
 		global $app_strings;
 
-		$qsTags = array('method' => 'query',
-		                   	'modules'=> array('KBTags'),
-		                   	'group' => 'or',
-			    			'field_list' => array('tag_name','id'),
-							'populate_list' => array('tag_name'),
-							'conditions' => array(array('name'=>'tag_name','op'=>'like_custom','end'=>'%','value'=>''),
+		$qsTags = array('form' => $form,
+		                'method' => 'query',
+		                'modules'=> array('KBTags'),
+		                'group' => 'or',
+		                'field_list' => array('tag_name','id'),
+		                'populate_list' => array('tag_name'),
+		                'conditions' => array(array('name'=>'tag_name','op'=>'like_custom','end'=>'%','value'=>''),
 							                       array('name'=>'tag_name','op'=>'like_custom','begin'=>'(','end'=>'%','value'=>'')),
-							'order' => 'tag_name',
-							'limit' => '30',
-                        	'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
+		                'order' => 'tag_name',
+		                'limit' => '30',
+		                'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
 		return $qsTags;
 	}
 
