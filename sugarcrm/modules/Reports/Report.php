@@ -1461,10 +1461,14 @@ function _check_user_permissions()
         $query = "SELECT ";
         $field_list_name_array = $this->$field_list_name;
         foreach($field_list_name_array as $field) {
-            $field_not_null[] = $this->db->convert($field, "IFNULL");
+            $field = trim($field);
+            $has_space = strrpos($field, " ");
+            if($has_space && !stristr("' '",$field)) {
+                $field_not_null[] = $this->db->convert(substr($field, 0, $has_space), "IFNULL", array("''"))." ".substr($field, $has_space+1)."\n";
+            }
         }
-        $query .= $this->db->convert($field_not_null, "CONCAT");
-
+        $this->$field_list_name = $field_not_null;
+        $query .= implode(",",$this->$field_list_name);
         $query .= $this->from ."\n";
 
         $where_auto = " " . $this->focus->table_name. ".deleted=0 \n";
@@ -1516,7 +1520,7 @@ function _check_user_permissions()
         $groups = array();
 // FIXME: see if we need to handle NULLs on GROUP BY
 //        foreach ( $this->group_by_arr as $group_by ) {
-//            $groups[] = $this->db->convert($group_by, "IFNULL", "''");
+//            $groups[] = $this->db->convert($group_by, "IFNULL", array("''"));
 //        }
         $query .= " GROUP BY ".join(",", $this->group_by_arr);
     }
@@ -1539,7 +1543,7 @@ function _check_user_permissions()
     function get_summary_header_row()
     {
         $this->layout_manager->setAttribute('list_type','summary');
-        // this needs to be fixed.. turn on summary sorting
+        // FIXME: this needs to be fixed.. turn on summary sorting
     //  $this->layout_manager->setAttribute('no_sort','1');
         $header_row = $this->get_header_row_generic('summary_columns');
         return  $header_row;
@@ -1700,7 +1704,7 @@ function _check_user_permissions()
             }
             $header_row = $distinct_labels;
         }
-        
+
         return $header_row;
     }
 
@@ -2105,8 +2109,8 @@ function _check_user_permissions()
       {
          return $column_name;
       }
-      
-      return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));   
+
+      return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));
   }
 }
 

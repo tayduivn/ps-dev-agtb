@@ -588,7 +588,7 @@ class MysqlManager extends DBManager
                     return "DATE_FORMAT($string, '{$additional_parameters[0]}')";
                 }
             case 'datetime':
-                return "DATE_FORMAT($string, '%Y-%m-%d %H:%i:%s')";
+                return $string;
             case 'ifnull':
                 return "IFNULL($all_strings)";
             case 'concat':

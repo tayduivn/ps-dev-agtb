@@ -634,9 +634,12 @@ class TimeDate
      */
     public function fromUser($date, User $user = null)
     {
+        $res = null;
         try {
-            return SugarDateTime::createFromFormat($this->get_date_time_format($user), $date, $this->_getUserTZ($user));
+            $res = SugarDateTime::createFromFormat($this->get_date_time_format($user), $date, $this->_getUserTZ($user));
         } catch (Exception $e) {
+        }
+        if(!($res instanceof DateTime)) {
             $uf = $this->get_date_time_format($user);
             $GLOBALS['log']->error("fromUser: Conversion of $date from user format $uf failed: {$e->getMessage()}");
             return null;

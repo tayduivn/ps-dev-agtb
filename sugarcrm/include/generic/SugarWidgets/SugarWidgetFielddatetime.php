@@ -211,8 +211,6 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
         global $timedate;
         if($arg2 instanceof DateTime) {
             $arg2 = $timedate->asDbType($arg2, $type);
-        } else {
-            $arg2 = $timedate->asDbType($timedate->fromUserType($arg2, $type), $type);
         }
         return "$arg1 $op ".$this->reporter->db->convert($this->reporter->db->quoted($arg2), $type)."\n";
     }
