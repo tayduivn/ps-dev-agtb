@@ -3015,7 +3015,7 @@ function save_relationship_changes($is_update, $exclude=array())
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
         require('include/VarDefHandler/listvardefoverride.php');
         $joined_tables = array();
-        if(isset($params['joined_tables']))
+        if(!empty($params['joined_tables']))
         {
             foreach($params['joined_tables'] as $table)
             {

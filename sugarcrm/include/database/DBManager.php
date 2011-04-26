@@ -965,7 +965,7 @@ abstract class DBManager
      * @param  string $table Focus table
      * @return array  Array of SQL queries to generate indices
      */
-	protected function getConstraintSql($indices, $table)
+	public function getConstraintSql($indices, $table)
     {
         if (!$this->isFieldArray($indices))
             $indices = array($indices);

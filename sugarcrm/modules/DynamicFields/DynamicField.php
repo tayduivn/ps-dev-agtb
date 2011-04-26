@@ -702,11 +702,11 @@ class DynamicField {
        			'id'=>array(
        				'name' =>$this->bean->table_name."_cstm_pk",
        				'type' =>'primary',
-       				'fields'=>array('id')
+       				'fields'=>array('id_c')
                 ),
            );
 
-            $query = $GLOBALS['db']->createTableSQL($this->bean->table_name."_cstm", $iddef, $ididx);
+            $query = $GLOBALS['db']->createTableSQLParams($this->bean->table_name."_cstm", $iddef, $ididx);
             $indicesArr = $GLOBALS['db']->getConstraintSql($ididx, $this->bean->table_name."_cstm");
             if($execute) {
                 $GLOBALS['db']->query($query);

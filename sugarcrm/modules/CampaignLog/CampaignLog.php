@@ -72,7 +72,8 @@ class CampaignLog extends SugarBean {
             $emptyArr = array();
             return $emptyArr;
         }
-        $query = "select first_name, last_name, ".$this->db->concat(array('first_name', 'last_name'))." name from ".strtolower($temp_array['TARGET_TYPE']) .
+        $table = strtolower($temp_array['TARGET_TYPE']);
+        $query = "select first_name, last_name, ".$this->db->concat($table, array('first_name', 'last_name'))." name from $table" .
         	" where id = ".$this->db->quoted($temp_array['TARGET_ID']);
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
