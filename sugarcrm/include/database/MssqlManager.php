@@ -1184,6 +1184,9 @@ class MssqlManager extends DBManager
                    return "LEFT(CONVERT(varchar(10),". $string . ",120), 10)";
                 }
             case 'ifnull':
+                if(empty($additional_parameters_string)) {
+                    $additional_parameters_string = ",''";
+                }
                 return "ISNULL($string$additional_parameters_string)";
             case 'concat':
                 return implode("+",$all_parameters);

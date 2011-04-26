@@ -590,6 +590,9 @@ class MysqlManager extends DBManager
             case 'datetime':
                 return $string;
             case 'ifnull':
+                if(empty($additional_parameters) && !strstr($all_strings, ",")) {
+                    $all_strings .= ",''";
+                }
                 return "IFNULL($all_strings)";
             case 'concat':
                 return "CONCAT($all_strings)";

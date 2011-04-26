@@ -765,6 +765,9 @@ class OracleManager extends DBManager
                 }
                 return "TO_CHAR($string".$additional_parameters_string.")";
             case 'ifnull':
+                if(empty($additional_parameters_string)) {
+                    $additional_parameters_string = ",''";
+                }
                 return "NVL($string$additional_parameters_string)";
             case 'concat':
                 return implode("||",$all_parameters);

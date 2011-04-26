@@ -1455,6 +1455,30 @@ function _check_user_permissions()
             }
     }
 
+    protected function wrapIfNull($field)
+    {
+        $has_space = strrpos($field, " ");
+        if($has_space && !stristr("' '",$field)) {
+            $aggregate_func = strtolower(substr($field, 0, 4));
+            if ($aggregate_func == 'max(' || $aggregate_func == 'min(' || $aggregate_func == 'avg(' || $aggregate_func == 'sum(') {
+                return $field;
+            }
+            if(strtolower(substr($field, 0, 6)) == 'count(') {
+                return $field;
+            }
+            $field_name = substr($field, 0, $has_space);
+            $field_data = explode(".", $field_name);
+            if(!isset($field_data[1]) || !isset($this->focus->field_name_map[$field_data[1]]['type'])) {
+                return $field;
+            }
+            $field_type = $this->focus->field_name_map[$field_data[1]]['type'];
+            if($field_type != 'currency' && $field_type != 'float' && $field_type != 'decimal' && $field_type != 'int' && $field_type != 'date') {
+                return $this->db->convert($field_name, "IFNULL", array("''"))." ".substr($field, $has_space+1)."\n";
+            }
+        }
+        return $field;
+    }
+
     function create_query($query_name='query',$field_list_name='select_fields')
     {
 
@@ -1462,9 +1486,13 @@ function _check_user_permissions()
         $field_list_name_array = $this->$field_list_name;
         foreach($field_list_name_array as $field) {
             $field = trim($field);
-            $has_space = strrpos($field, " ");
-            if($has_space && !stristr("' '",$field)) {
-                $field_not_null[] = $this->db->convert(substr($field, 0, $has_space), "IFNULL", array("''"))." ".substr($field, $has_space+1)."\n";
+            if(strstr($field, ',')) {
+                $fields = explode(',', $field);
+                foreach($fields as $field_in_field) {
+                    $field_not_null[] = $this->wrapIfNull($field_in_field);
+                }
+            } else {
+                $field_not_null[] = $this->wrapIfNull($field);
             }
         }
         $this->$field_list_name = $field_not_null;
