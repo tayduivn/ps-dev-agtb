@@ -1665,8 +1665,11 @@ SUGAR.ajaxSubmitForm = function(formname, params)
         YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
             success: SUGAR._ajaxUICallback
         });
+        return true;
     } else {
-        window.location = url;
+        // window.location = url;
+        form.submit();
+        return false;
     }
 }
 
