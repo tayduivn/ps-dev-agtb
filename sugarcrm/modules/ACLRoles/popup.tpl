@@ -23,7 +23,6 @@
  ********************************************************************************/
 -->
 
-<script type="text/javascript" src="include/JSON.js"></script>
 <script type="text/javascript" src="include/javascript/popup_helper.js"></script>
 <script type="text/javascript">
 <!--

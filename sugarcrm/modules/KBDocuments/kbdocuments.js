@@ -424,7 +424,7 @@ SUGAR.kb = function() {
 			        if (!confirm(SUGAR.language.get('app_strings', 'NTC_DELETE_CONFIRMATION'))) {
 			        	return false;
 			        }
-					postData = 'selectedTagIds=' + JSON.stringify(selectedTagIds) + '&module=KBTags&action=DeleteSelectedTags&to_pdf=1';
+					postData = 'selectedTagIds=' + YAHOO.lang.JSON.stringify(selectedTagIds) + '&module=KBTags&action=DeleteSelectedTags&to_pdf=1';
 					YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 
 			}
@@ -490,7 +490,7 @@ SUGAR.kb = function() {
 						     }
 					     }
 				    }
-					postData = 'selectedArticles=' + JSON.stringify(selectedArticleIds) + '&module=KBDocuments&action=DeleteSelectedArticles&to_pdf=1';
+					postData = 'selectedArticles=' + YAHOO.lang.JSON.stringify(selectedArticleIds) + '&module=KBDocuments&action=DeleteSelectedArticles&to_pdf=1';
 					YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 		    }
 		},
@@ -557,7 +557,7 @@ SUGAR.kb = function() {
 						SUGAR.util.evalScript(result['body']);
 					    window.setTimeout('ajaxStatus.hideStatus()', 1000);
 					}
-			postData = 'tagsMode=' + JSON.stringify(moveTags)+ '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
+			postData = 'tagsMode=' + YAHOO.lang.JSON.stringify(moveTags)+ '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: fillInTags, failure: fillInTags}, postData);
 		},
 
@@ -629,7 +629,7 @@ SUGAR.kb = function() {
 						SUGAR.util.evalScript(result['body']);
 					    window.setTimeout('ajaxStatus.hideStatus()', 1000);
 					}
-			postData = 'tagsMode=' + JSON.stringify(applyTags)+ '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
+			postData = 'tagsMode=' + YAHOO.lang.JSON.stringify(applyTags)+ '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: fillInTags, failure: fillInTags}, postData);
 
 			//myDialog.cfg.queueProperty("buttons", myButtons);
@@ -646,7 +646,7 @@ SUGAR.kb = function() {
 				     document.getElementById('tags_search').value='';
 			     }
 		    }
-			postData = 'searchTagName=' + JSON.stringify(searchTag) + '&module=KBTags&action=SearchTags&to_pdf=1';
+			postData = 'searchTagName=' + YAHOO.lang.JSON.stringify(searchTag) + '&module=KBTags&action=SearchTags&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 		    }else{
 		    alert('Please type in the search field');
@@ -688,7 +688,7 @@ SUGAR.kb = function() {
 					     }
 			}
 
-			postData = 'tagAndArticleIds=' + JSON.stringify(selectedArticleIds)+ '&module=KBTags&action=MoveArticlesToTagsModal&to_pdf=1';
+			postData = 'tagAndArticleIds=' + YAHOO.lang.JSON.stringify(selectedArticleIds)+ '&module=KBTags&action=MoveArticlesToTagsModal&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 			document.getElementById('Move').style.visibility = "hidden";
 			document.getElementById('Cancel_Move').style.visibility = "hidden";
@@ -739,7 +739,7 @@ SUGAR.kb = function() {
 						   SUGAR.util.evalScript(r.responseText);
 					     }
 				    }
-			postData = 'tagAndArticleIds=' + JSON.stringify(selectedTagsArticlesIds)+ '&module=KBTags&action=ApplyTagsToArticlesModal&to_pdf=1';
+			postData = 'tagAndArticleIds=' + YAHOO.lang.JSON.stringify(selectedTagsArticlesIds)+ '&module=KBTags&action=ApplyTagsToArticlesModal&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 			document.getElementById('Apply').style.visibility = "hidden";
 			document.getElementById('Cancel_Apply').style.visibility = "hidden";
@@ -953,7 +953,7 @@ SUGAR.kb = function() {
 				 	SUGAR.util.evalScript(r.responseText);
 			     }
 		    }
- 			postData = 'searchTagName=' + JSON.stringify(tagName) + '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
+ 			postData = 'searchTagName=' + YAHOO.lang.JSON.stringify(tagName) + '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 	     }
 	     else{
@@ -1134,7 +1134,7 @@ SUGAR.kb = function() {
 					SUGAR.util.evalScript(result['body']);
 				    window.setTimeout('ajaxStatus.hideStatus()', 1000);
 			}
-			var postData = 'tagsMode=' + JSON.stringify(selectCreateTags)+ '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
+			var postData = 'tagsMode=' + YAHOO.lang.JSON.stringify(selectCreateTags)+ '&module=KBTags&action=SelectCreateApplyAndMoveTags&to_pdf=1';
 			var callback = {success: fillInTags, failure: fillInTags};
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 		},
@@ -1650,7 +1650,7 @@ SUGAR.kb = function() {
 			        //AJAX call begins
 			        var callback = {
 					     upload:function(r) {
-				              var rets = JSON.parse(r.responseText);
+				              var rets = YAHOO.lang.JSON.parse(r.responseText);
 				              var thediv=document.getElementById(rets['div_name']);
 				              //remove the div if not a file
 				              if(rets['status']=='failed'){
@@ -2284,7 +2284,7 @@ SUGAR.kb = function() {
 							     }
 						     }
 					    }
-						postData = 'newTagName=' + JSON.stringify(idName) + '&module=KBTags&action=RenameTagsAdmin&to_pdf=1';
+						postData = 'newTagName=' + YAHOO.lang.JSON.stringify(idName) + '&module=KBTags&action=RenameTagsAdmin&to_pdf=1';
 						YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 					    if(admin){
 					    	//hideMessageAndNodeAdmin();
