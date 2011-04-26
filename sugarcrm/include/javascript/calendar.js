@@ -40,7 +40,7 @@ Calendar.getHighestZIndex = function (containerEl)
       currentIndex = YAHOO.util.Dom.getStyle(els[i], "zIndex");
       if(!isNaN(currentIndex) && currentIndex > highestIndex)
       { 
-      	 highestIndex = currentIndex; 
+      	 highestIndex = parseInt(currentIndex); 
       }
    }
    
