@@ -15155,6 +15155,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           colorLength = colorArray.length,
           stringArray = node.getData('stringArray'),
 		  percentage = node.getData('percentage'),
+		  iteration = node.getData('iteration'),
           span = node.getData('span') / 2,
           theta = node.pos.theta,
           begin = theta - span,
@@ -15166,13 +15167,46 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           gradient = node.getData('gradient'),
           border = node.getData('border'),
           config = node.getData('config'),
+          renderSubtitle = node.getData('renderSubtitle'),
+          renderBackground = config.renderBackground,
           showLabels = config.showLabels,
           resizeLabels = config.resizeLabels,
           label = config.Label;
 
       var xpos = config.sliceOffset * Math.cos((begin + end) /2);
       var ypos = config.sliceOffset * Math.sin((begin + end) /2);
+      //background rendering for IE
+		if(iteration == 0 && typeof FlashCanvas != "undefined" && renderBackground) {
+			backgroundColor = config.backgroundColor,
+		  	size = canvas.getSize();
+		  	ctx.save();
+		    ctx.fillStyle = backgroundColor;
+	   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+	   	    
+	   	    //subtitle
 
+			var margin = config.Margin,
+			title = config.Title,
+			subtitle = config.Subtitle;
+			ctx.fillStyle = title.color;
+			ctx.textAlign = 'left';
+			
+			if(title.text != "") {
+				ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+				ctx.moveTo(0,0);
+				if(label.type == 'Native') {
+					ctx.fillText(title.text, -size.width/2 + margin.left, -size.height/2 + margin.top); 
+				}
+			} 	
+	
+			if(subtitle.text != "") {
+				ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
+				if(label.type == 'Native') {
+					ctx.fillText(subtitle.text, -size.width/2 + margin.left, size.height/2 - margin.bottom); 
+				} 
+			}
+			ctx.restore();  	
+		}
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           var dimi = dimArray[i], colori = colorArray[i % colorLength];
@@ -15516,7 +15550,7 @@ $jit.PieChart = new Class({
         config = this.config,
         renderBackground = config.renderBackground,
         title = config.Title,
-		subtitle = config.Subtitle;
+		subtitle = config.Subtitle,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -15550,6 +15584,7 @@ $jit.PieChart = new Class({
           '$stringArray': name,
           '$gradient': gradient,
           '$config': config,
+          '$iteration': i,
           '$percentage': percentage.toFixed(1),
           '$angularWidth': $.reduce(valArray, function(x,y){return x+y;})
         },
@@ -15569,8 +15604,6 @@ $jit.PieChart = new Class({
     sb.loadJSON(root);
     
     
-
-    
     this.normalizeDims();
 
     
@@ -15582,10 +15615,9 @@ $jit.PieChart = new Class({
     if(subtitle.text != "") {
     	this.renderSubtitle();
     }
-     if(renderBackground) {
+     if(renderBackground && typeof FlashCanvas == "undefined") {
     	this.renderBackground();	
     }
-    
     
     if(animate) {
       sb.fx.animate({
