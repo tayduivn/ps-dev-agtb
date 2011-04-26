@@ -185,7 +185,7 @@ EOQ;
 		 
 		$request_data = empty($_REQUEST['request_data']) ? '' : $_REQUEST['request_data'];
 		$hide_clear_button = empty($_REQUEST['hide_clear_button']) && empty($this->_hide_clear_button) ? false : true;
-		$button = '<script>eval("var request_data = " + window.document.forms[\'popup_query_form\'].request_data.value);</script>';
+        $button = '<script>YAHOO.util.Event.onDOMReady(function() { request_data = YAHOO.lang.JSON.parse(window.document.forms.popup_query_form.request_data.value);});</script>';
 
 		if(isset($_REQUEST['mass'])) {
 			foreach(array_unique($_REQUEST['mass']) as $record) {
