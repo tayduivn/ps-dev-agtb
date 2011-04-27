@@ -779,7 +779,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     //create the fts 'include' search string
     $query_include = $query_exclude = $query_must = array();
     if(!empty($spec_SearchVars['searchText_include'])){
-        $query = $this->db->parseFulltextQuery($spec_SearchVars['searchText_include']);
+        $query = $db->parseFulltextQuery($spec_SearchVars['searchText_include']);
         if(empty($query)) {
             return '';
         }
@@ -789,7 +789,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     }
 
     if(!empty($spec_SearchVars['searchText_exclude'])) {
-        $query_ex = $this->db->parseFulltextQuery($spec_SearchVars['searchText_exclude']);
+        $query_ex = $db->parseFulltextQuery($spec_SearchVars['searchText_exclude']);
         if(empty($query_ex)) {
             return '';
         }
@@ -799,16 +799,12 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     }
 
     //create portion of query that holds the fts search
-    $search_str =",
-            (
+    $qry_arr['custom_from'] = " INNER JOIN(
               SELECT kbdocument_id as id FROM kbdocument_revisions WHERE deleted = 0 and latest = 1 and kbcontent_id in (
                      select id from kbcontents where deleted = 0
-                     and ".$db->getFulltextQuery('kbdocument_body', $query_include, $query_must, $query_exclude).") derived_table";
-    //assign string to custom from
-    $qry_arr['custom_from']=from_html($search_str);
-
+                     and ".$db->getFulltextQuery('kbdocument_body', $query_include, $query_must, $query_exclude).")) derived_table ON kbdocuments.id = derived_table.id";
     //reset search string to begin where clause
-    $search_str =' kbdocuments.id = derived_table.id ';
+    $search_str ='';
 
         $tag_display =' ';
         $tag_name_string = '';

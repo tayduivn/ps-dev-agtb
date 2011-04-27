@@ -2954,7 +2954,9 @@ abstract class DBManager
 	{
 	    /* split on space or comma, double quotes with \ for escape */
 	    if(strpbrk($query, " ,")) {
-            if(!preg_match_all('/([^" ,]+|".*?[^\\\\]")(,|\s)\s*/', $query, $m)) {
+	        // ("([^"]*?)"|[^" ,]+)((, )+)?
+	        // '/([^" ,]+|".*?[^\\\\]")(,|\s)\s*/'
+            if(!preg_match_all('/("([^"]*?)"|[^"\s,]+)((,\s)+)?/', $query, $m)) {
                 return false;
             }
             $qterms = $m[1];

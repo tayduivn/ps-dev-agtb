@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: ListView.php 19107 2007-01-06 00:58:36 +0000 (Sat, 06 Jan 2007) wayne $
@@ -28,13 +28,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('modules/KBDocuments/KBDcoument.php');
+require_once('modules/KBDocuments/KBDocument.php');
 
 
 require_once('include/ListView/ListViewSmarty.php');
-
-require_once('custom/modules/Cases/metadata/listviewdefs.php');	
-
 
 require_once('include/SearchForm/SearchForm.php');
 
@@ -52,14 +49,14 @@ global $current_user;
 global $focus_list;
 
 // clear the display columns back to default when clear query is called
-if(!empty($_REQUEST['clear_query']) && $_REQUEST['clear_query'] == 'true')  
+if(!empty($_REQUEST['clear_query']) && $_REQUEST['clear_query'] == 'true')
     $current_user->setPreference('ListViewDisplayColumns', array(), 0, $currentModule);
 
 $savedDisplayColumns = $current_user->getPreference('ListViewDisplayColumns', $currentModule); // get user defined display columns
 
 $json = getJSONobj();
 
-$seedCase = new KBDcoument(); // seed bean
+$seedCase = new KBDocument(); // seed bean
 $searchForm = new SearchForm('Cases', $seedCase); // new searchform instance
 
 // setup listview smarty
@@ -82,11 +79,11 @@ $displayColumns = array();
 // check $_REQUEST if new display columns from post
 if(!empty($_REQUEST['displayColumns'])) {
     foreach(explode('|', $_REQUEST['displayColumns']) as $num => $col) {
-        if(!empty($listViewDefs['Cases'][$col])) 
+        if(!empty($listViewDefs['Cases'][$col]))
             $displayColumns[$col] = $listViewDefs['Cases'][$col];
-    }    
+    }
 }
-elseif(!empty($savedDisplayColumns)) { // use user defined display columns from preferences 
+elseif(!empty($savedDisplayColumns)) { // use user defined display columns from preferences
     $displayColumns = $savedDisplayColumns;
 }
 else { // use columns defined in listviewdefs for default display columns
@@ -94,7 +91,7 @@ else { // use columns defined in listviewdefs for default display columns
         if(!empty($params['default']) && $params['default'])
             $displayColumns[$col] = $params;
     }
-} 
+}
 $params = array('massupdate' => true); // setup ListViewSmarty params
 if(!empty($_REQUEST['orderBy'])) { // order by coming from $_REQUEST
     $params['orderBy'] = $_REQUEST['orderBy'];
@@ -129,13 +126,13 @@ if(!isset($_REQUEST['query'])){
     $storeQuery->loadQuery($currentModule);
     $storeQuery->populateRequest();
 }else{
-    $storeQuery->saveFromGet($currentModule);   
+    $storeQuery->saveFromGet($currentModule);
 }
 if(isset($_REQUEST['query']))
 {
     // we have a query
-    // first save columns 
-    $current_user->setPreference('ListViewDisplayColumns', $displayColumns, 0, $currentModule); 
+    // first save columns
+    $current_user->setPreference('ListViewDisplayColumns', $displayColumns, 0, $currentModule);
     if(!empty($_SERVER['HTTP_REFERER']) && preg_match('/action=EditView/', $_SERVER['HTTP_REFERER'])) { // from EditView cancel
         $searchForm->populateFromArray($storeQuery->query);
     }
