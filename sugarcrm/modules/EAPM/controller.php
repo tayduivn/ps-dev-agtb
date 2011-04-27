@@ -118,6 +118,10 @@ class EAPMController extends SugarController
 			sugar_cleanup(true);
 			return true;
 		}
+        if(!empty($_REQUEST['oauth_error'])) {
+            // The OAuth request was denied
+            return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
+        }
         $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
         $reply = $this->api->checkLogin($this->bean);
         if ( !$reply['success'] ) {
