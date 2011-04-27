@@ -414,7 +414,7 @@ if (Y.Event) {
          * @deprecated Elements are not cached any longer
          */
         getEl: function(id) {
-            return Y.get(id);
+            return Y.one(id);
         }
     };
 

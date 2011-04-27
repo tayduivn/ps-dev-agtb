@@ -41,10 +41,10 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
         document.getElementById('globalLinks').style.width = "auto";
     }
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-        var module = Y.get('#globalLinksModule');
+        var module = Y.one('#globalLinksModule');
     
         if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-            var content = module.query('#globalLinks').plug(Y.Plugin.NodeFX, {
+            var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
             from: { width: 0
                      
             },
@@ -60,7 +60,7 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
             module.toggleClass('yui-closed');
             
         } else {
-        var content = module.query('#globalLinks').plug(Y.Plugin.NodeFX, {
+        var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
             from: { width: 
                     function(node) { // dynamic in case of change
                         return node.get('scrollWidth'); 
@@ -89,7 +89,7 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
         '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
         );
         
-        module.query('#globalLinksCtrl').appendChild(control);
+        module.one('#globalLinksCtrl').appendChild(control);
         control.on('click', onClick);
     });
 });
@@ -325,13 +325,13 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
 {
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y) 
     {
-        var content = Y.get('#content');
+        var content = Y.one('#content');
         //BEGIN SUGARCRM flav!=sales ONLY
-        var addPage = Y.get('#add_page');
+        var addPage = Y.one('#add_page');
         //END SUGARCRM flav!=sales ONLY
-        var tabListContainer = Y.get('#tabListContainer');
-        var tabList = Y.get('#tabList');
-        var dashletCtrlsElem = Y.get('#dashletCtrls');
+        var tabListContainer = Y.one('#tabListContainer');
+        var tabList = Y.one('#tabList');
+        var dashletCtrlsElem = Y.one('#dashletCtrls');
         var contentWidth = content.get('offsetWidth');
         var dashletCtrlsWidth = dashletCtrlsElem.get('offsetWidth')+10;
         //BEGIN SUGARCRM flav!=sales ONLY
@@ -363,7 +363,7 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
         //END SUGARCRM flav!=sales ONLY
         
     
-        var node = Y.get('#tabListContainer .yui-bd');
+        var node = Y.one('#tabListContainer .yui-bd');
         var anim = new Y.Anim({
             node: node,
             to: {

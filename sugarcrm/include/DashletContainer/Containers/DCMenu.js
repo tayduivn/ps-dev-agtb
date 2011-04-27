@@ -47,8 +47,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
 					this.get('boundingBox').setStyle('position' , 'absolute');
     				this.get('boundingBox').setStyle('visibility','visible');
-    				if(Y.get('#dcboxbody')) {
-    					Y.get('#dcboxbody').setStyle('display','');
+    				if(Y.one('#dcboxbody')) {
+    					Y.one('#dcboxbody').setStyle('display','');
     				}
     			}
     			overlays[depth].hide = function(){
@@ -56,7 +56,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     				this.get('boundingBox').setStyle('visibility','hidden');
     			}
     		}
-			var dcmenuContainer = Y.get('#dcmenuContainer');
+			var dcmenuContainer = Y.one('#dcmenuContainer');
 			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
     		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
    	  	overlays[depth].render();
@@ -116,8 +116,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
  		//isIE7 = ua.indexOf('msie 7')!=-1;
 		//box_style = isIE7 ? 'position:fixed; width:750px;' : 'none';
 		
-     	Y.get('#dcboxbody').setStyle('display','none');
-     	Y.get('#dcboxbody').setStyle('width', '950px;');
+     	Y.one('#dcboxbody').setStyle('display','none');
+     	Y.one('#dcboxbody').setStyle('width', '950px;');
     }
     function setBody(data, depth, parentid,type,title,extraButton){
 			if(typeof(data.html) == 'undefined')data = {html:data};
@@ -342,8 +342,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             		 }catch(err){
 
             			overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
-            			var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
-			    		var dcboxbody = Y.get('#dcboxbody');
+            			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
+			    		var dcboxbody = Y.one('#dcboxbody');
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
 			
@@ -374,8 +374,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
 	notificationsListDisplay = function(id, data){
 		overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');	
-        var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
-   		var dcboxbody = Y.get('#dcboxbody');
+        var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
+   		var dcboxbody = Y.one('#dcboxbody');
 		var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 		var dcmenuSugarCubeWidth = dcmenuSugarCube.get('offsetWidth');
 		var dcboxbodyWidth = dcboxbody.get('offsetWidth');
