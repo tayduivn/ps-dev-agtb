@@ -1768,7 +1768,9 @@ abstract class DBManager
                 $values['deleted'] = (int)$val;
             } else {
                 // need to do some thing about types of values
-                $values[$field] = $this->massageValue($val, $fieldDef);
+                if(!is_null($val) || !empty($fieldDef['required'])) {
+                    $values[$field] = $this->massageValue($val, $fieldDef);
+                }
             }
 		}
 
@@ -1819,7 +1821,9 @@ abstract class DBManager
                $val = $fieldDef['default'];
            }
 
-		   $columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
+           if(!is_null($val) || !empty($fieldDef['required'])) {
+    		   $columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
+           }
 		}
 
 		if ( sizeof($columns) == 0 )
@@ -2949,11 +2953,16 @@ abstract class DBManager
 	public function parseFulltextQuery($query)
 	{
 	    /* split on space or comma, double quotes with \ for escape */
-        if(!preg_match_all('/([^" ,]+|".*?[^\\\\]")(,|\s)\s*/', $query, $m)) {
-            return false;
-        }
+	    if(strpbrk($query, " ,")) {
+            if(!preg_match_all('/([^" ,]+|".*?[^\\\\]")(,|\s)\s*/', $query, $m)) {
+                return false;
+            }
+            $qterms = $m[1];
+	    } else {
+	        $qterms = array($query);
+	    }
         $terms = $must_terms = $not_terms = array();
-        foreach($m[1] as $item) {
+        foreach($qterms as $item) {
             if($item[0] == '"') {
                 $item = trim($item, '"');
             }
