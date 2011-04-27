@@ -688,7 +688,7 @@ SE.accounts = {
      * Populates an account's fields in Settings->Accounts
      */
     fillIeAccount:function(jsonstr) {
-        var o = JSON.parse(jsonstr);
+        var o = YAHOO.lang.JSON.parse(jsonstr);
 
         document.getElementById('ie_id').value = o.id;
         document.getElementById('ie_name').value = o.name;
@@ -1295,8 +1295,8 @@ SE.contextMenus = {
         for(var i=0; i<rows.length; i++) {
             uids[i] = SE.grid.getRecord(rows[i]).getData().uid;
         }
-        var ser = JSON.stringifyNoSecurity(uids);
-
+        var ser = YAHOO.lang.JSON.stringify(uids);
+        
         AjaxObject.startRequest(callbackRelateEmail, urlStandard + '&emailUIAction=getRelateForm&uid=' + ser + "&ieId=" + ieId + "&mbox=" + folder);
     },
 
@@ -1568,7 +1568,7 @@ SE.detailView = {
             document.getElementById('_blank').innerHTML = "";
 	        var ser = [ ];
 			ser.push(uid);
-	        uid = JSON.stringifyNoSecurity(ser);
+	        uid = YAHOO.lang.JSON.stringify(ser);
             this.emailDelete(ieId, uid, mbox);
         }
     },
@@ -2229,7 +2229,7 @@ SE.folders = {
 
     getNodeFromMboxPath : function(path) {
         var tree = YAHOO.widget.TreeView.getTree('frameFolders');
-        var a = JSON.parse(path);
+        var a = YAHOO.lang.JSON.parse(path);
 
         var node = tree.getRoot();
 

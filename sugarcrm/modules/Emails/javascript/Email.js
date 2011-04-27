@@ -204,7 +204,7 @@ function multiFiles( list_target){
 	        //AJAX call begins
 	        var callback = {
 			    upload:function(r) {
-	                var rets = JSON.parse(r.responseText);
+	                var rets = YAHOO.lang.JSON.parse(r.responseText);
 			    }
 	        }
 
@@ -414,7 +414,7 @@ function docUpload() {
     var rets ='';
 	var callback = {
 	    upload: function(r) {
-           rets = JSON.parse(r.responseText);
+           rets = YAHOO.lang.JSON.parse(r.responseText);
 	   }
     }
 

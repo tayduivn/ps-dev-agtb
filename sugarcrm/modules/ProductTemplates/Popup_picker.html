@@ -30,7 +30,6 @@
 <!-- BEGIN: main -->
 <!-- BEGIN: SearchHeader -->
 <script type="text/javascript" src="modules/ProductTemplates/Popup_picker.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/JSON.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" src="include/javascript/popup_helper.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
 <script type='text/javascript' src='include/javascript/yui/connection.js'></script>
 <script type='text/javascript' language='JavaScript'>
@@ -103,18 +102,6 @@ function set_return(treeid) {
 </td></tr>
 </table>
 
-
-<script type="text/javascript">
-<!--
-/* initialize the popup request from the parent */
-
-if(window.document.forms['popup_query_form'].request_data.value == "")
-{
-	window.document.forms['popup_query_form'].request_data.value
-		= JSON.stringify(window.opener.get_popup_request_data());
-}
--->
-</script>
 {ANCHOR}
 <!-- END: SearchHeader -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="list view">

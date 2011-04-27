@@ -280,7 +280,7 @@ FRA;
                     // If relate add the ID field to the array
                     $this->displayParams['collection_field_list'][$name]['field'] .= "collection['{$this->vardef['name']}'].update_fields.{$collection_field_vardef['id_name']}=true;";
                 }
-                $this->displayParams['collection_field_list'][$name]['field'] .= "document.getElementById('update_fields_{$this->vardef['name']}_collection').value = JSON.stringifyNoSecurity(collection['{$this->vardef['name']}'].update_fields);\" + oldonchange + \"};\");</script>{/literal}";
+                $this->displayParams['collection_field_list'][$name]['field'] .= "document.getElementById('update_fields_{$this->vardef['name']}_collection').value = YAHOO.lang.JSON.stringify(collection['{$this->vardef['name']}'].update_fields);\" + oldonchange + \"};\");</script>{/literal}";
                 //we need to get rid of the old value;
                 unset($this->displayParams['collection_field_list'][$k]);
             }
