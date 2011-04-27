@@ -149,8 +149,15 @@ class UnifiedSearchAdvanced {
 		{
 			$this->buildCache();
 		}
-		
 		include $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php';
+		
+		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		{
+		   $this->createUnifiedSearchModulesDisplay();
+		}
+		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
+		
+		
 		require_once 'include/ListView/ListViewSmarty.php';
 		
 		global $modListHeader, $beanList, $beanFiles, $current_language, $app_strings, $current_user, $mod_strings;
@@ -183,15 +190,6 @@ class UnifiedSearchAdvanced {
 			        }
 			    }
 			} else {
-				
-				//Load the display file to see which modules are elected for global search
-				if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
-				{
-				   $this->createUnifiedSearchModulesDisplay();
-				}
-				include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');	
-				
-				
 				foreach($unified_search_modules_display as $module=>$data) {
 				    if (!empty($data['visible']) ) {
 				        $modules_to_search[$module] = $beanList[$module];
@@ -201,12 +199,6 @@ class UnifiedSearchAdvanced {
 			$current_user->setPreference('globalSearch', $modules_to_search, 'search');
 		}
 		
-
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
-		{
-		   $this->createUnifiedSearchModulesDisplay();
-		}
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
 		foreach($modules_to_search as $module=>$data)
 		{
 			if(isset($unified_search_modules_display[$module]['visible']) && !$unified_search_modules_display[$module]['visible'])
