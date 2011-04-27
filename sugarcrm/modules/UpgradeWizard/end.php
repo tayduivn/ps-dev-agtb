@@ -45,6 +45,12 @@ if($unzip_dir == null ) {
 logThis('About to repair the database.', $path);
 //Use Repair and rebuild to update the database.
 global $dictionary, $beanFiles;
+
+require_once('modules/Trackers/TrackerManager.php');
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+$trackerManager->unsetMonitors();
+
 require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
