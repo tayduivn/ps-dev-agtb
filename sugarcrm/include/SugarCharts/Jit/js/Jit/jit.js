@@ -12602,7 +12602,9 @@ $jit.BarChart = new Class({
         fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
         fixedDim = (fixedDim > 40) ? 40 : fixedDim;
         whiteSpace = size.width - (marginWidth + (fixedDim * l));
-        
+        //bug in IE7 when vertical bar charts load in dashlets where number of bars exceed a certain width, canvas renders with an incorrect width, a hard refresh fixes the problem
+        if(!horz && typeof FlashCanvas != "undefined" && size.width < 250)
+        location.reload();
         //if not a grouped chart and is a vertical chart, adjust bar spacing to fix canvas width.
         if(!grouped && !horz) {
         	st.config.siblingOffset = whiteSpace/(l+1);
@@ -12653,13 +12655,15 @@ $jit.BarChart = new Class({
 	config = this.config,
 	margin = config.Margin,
 	label = config.Label,
-	subtitle = config.Subtitle;
+	subtitle = config.Subtitle,
+	nodeCount = config.nodeCount,
+	horz = config.orientation == 'horizontal' ? true : false,
 	ctx = canvas.getCtx();
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-(!horz && nodeCount > 8 ? 20 : margin.bottom)-subtitle.size);
 	}
   },
   
