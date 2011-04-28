@@ -36,6 +36,9 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 			copy($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php.bak', $GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php');
 			unlink($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php.bak');
 		}	        
+		
+		SugarTestTaskUtilities::removeAllCreatedTasks();
+		SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 	
 	public function testFisrtUnifiedSearchWithoutUserPreferences()
@@ -59,7 +62,7 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
     	 $this->assertEquals(count($users_modules), 3, 'Assert that we have 3 modules in user preferences for global search');
 	}
 	
-	
+	//BEGIN SUGARCRM flav=pro ONLY
 	public function testFisrtGlobalSearchWithoutUserPreferences()
 	{
 		 //Enable the Tasks, Accounts and Contacts modules
@@ -99,7 +102,7 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	     );
 	     $this->assertTag($matcher, $results, 'Assert that <a> link for Bug43653Test_Account was found');	     
 	}	
-    
+    //END SUGARCRM flav=pro ONLY
 }
 
 ?>
