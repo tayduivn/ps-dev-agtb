@@ -793,7 +793,7 @@ if (isset($reporter->saved_report->id) )
 elseif(!empty($_REQUEST['record'])) 
     $report_id = $_REQUEST['record'];
 else  
-    $report_id = ''; 
+    $report_id = 'unsavedReport'; 
     
 	echo "<div class='reportChartContainer' id='{$report_id}_div' style='{$reportChartDivStyle}'>";
 	 template_chart($reporter, $reportChartDivStyle);
