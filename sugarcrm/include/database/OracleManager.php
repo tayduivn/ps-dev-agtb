@@ -628,7 +628,7 @@ class OracleManager extends DBManager
         if(is_array($string)) {
             return $this->arrayQuote($string);
         }
-        return str_replace("'", "''", parent::quoteInternal($string));
+        return str_replace("'", "''", $this->quoteInternal($string));
     }
 
 	/**

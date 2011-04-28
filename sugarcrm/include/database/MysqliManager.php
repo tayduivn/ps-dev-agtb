@@ -274,7 +274,7 @@ class MysqliManager extends MysqlManager
      */
     public function quote($string)
     {
-        return mysqli_real_escape_string($this->getDatabase(),DBManager::quote($string));
+        return mysqli_real_escape_string($this->getDatabase(),$this->quoteInternal($string));
     }
 
     /**
