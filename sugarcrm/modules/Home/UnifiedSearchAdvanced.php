@@ -185,9 +185,9 @@ class UnifiedSearchAdvanced {
 			if(!empty($users_modules)) { 
 				// use user's previous selections
 			    foreach ( $users_modules as $key => $value ) {
-			        if ( isset($unified_search_modules[$key]) ) {
-			            $modules_to_search[$key] = $value;
-			        }
+			    	if (isset($unified_search_modules_display[$key]) && !empty($unified_search_modules_display[$key]['visible'])) {
+		            	$modules_to_search[$key] = $beanList[$key];
+		        	}
 			    }
 			} else {
 				foreach($unified_search_modules_display as $module=>$data) {
@@ -198,14 +198,7 @@ class UnifiedSearchAdvanced {
 			}
 			$current_user->setPreference('globalSearch', $modules_to_search, 'search');
 		}
-		
-		foreach($modules_to_search as $module=>$data)
-		{
-			if(isset($unified_search_modules_display[$module]['visible']) && !$unified_search_modules_display[$module]['visible'])
-			{
-			   unset($modules_to_search[$module]);
-			}
-		}
+
 	
 		$templateFile = 'modules/Home/UnifiedSearchAdvancedForm.tpl';
 		if(file_exists('custom/' . $templateFile))
@@ -349,7 +342,6 @@ class UnifiedSearchAdvanced {
 		}
                 		
 		if($has_results) {
-			//arsort($module_counts);
 			foreach($module_counts as $name=>$value) {
 				echo $module_results[$name];
 			}
