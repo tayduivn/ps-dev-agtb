@@ -75,11 +75,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 abstract class DBManager
 {
     /**
-     * Name of database table we are dealing with
-     */
-    protected $tableName;
-
-    /**
      * Name of database
      * @var resource
      */
@@ -151,9 +146,15 @@ abstract class DBManager
 
     /**
      * Maximum length of identifiers
+     * @abstract
      * @var array
      */
-    protected $maxNameLengths = array('column' => 64);
+    protected $maxNameLengths = array(
+        'table' => 64,
+        'column' => 64,
+        'index' => 64,
+        'alias' => 64
+    );
 
     /**
      * Type names map
@@ -165,7 +166,9 @@ abstract class DBManager
     /**
      * Capabilities this DB supports. Supported list:
      * affected_rows	Can report query affected rows for UPDATE/DELETE
+     * 					implement getAffectedRowCount()
      * select_rows		Can report row count for SELECT
+     * 					implement getRowCount()
      * case_sensitive	Supports case-sensitive text columns
      * fulltext			Supports fulltext search indexes
      * inline_keys		Supports defining keys together with the table
@@ -193,16 +196,6 @@ abstract class DBManager
     {
         $GLOBALS['log']->info('call to DBManagerFactory::$'.$p.' is deprecated');
         return $this->$p;
-    }
-
-    /**
-     * Returns the current tablename
-     * @deprecated
-     * @return string
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
     }
 
     /**
@@ -442,7 +435,7 @@ abstract class DBManager
     public function insert(SugarBean $bean)
     {
         $sql = $this->insertSQL($bean);
-        $this->tableName = $tablename =  $bean->getTableName();
+        $tablename =  $bean->getTableName();
         $msg = "Error inserting into table: $tablename:";
         return $this->query($sql,true,$msg);
     }
@@ -501,7 +494,7 @@ abstract class DBManager
     public function update(SugarBean $bean, array $where = array())
     {
         $sql = $this->updateSQL($bean, $where);
-        $this->tableName = $tablename = $bean->getTableName();
+        $tablename = $bean->getTableName();
         $msg = "Error updating table: $tablename:";
         return $this->query($sql,true,$msg);
     }
@@ -517,8 +510,8 @@ abstract class DBManager
     public function delete(SugarBean $bean, array $where = array())
     {
         $sql = $this->deleteSQL($bean, $where);
-        $this->tableName = $bean->getTableName();
-        $msg = "Error deleting from table: ".$this->tableName. ":";
+        $tableName = $bean->getTableName();
+        $msg = "Error deleting from table: ".$tableName. ":";
         return $this->query($sql,true,$msg);
     }
 
@@ -535,8 +528,8 @@ abstract class DBManager
     public function retrieve(SugarBean $bean, array $where = array())
     {
         $sql = $this->retrieveSQL($bean, $where);
-        $this->tableName = $bean->getTableName();
-        $msg = "Error retriving values from table:".$this->tableName. ":";
+        $tableName = $bean->getTableName();
+        $msg = "Error retriving values from table:".$tableName. ":";
         return $this->query($sql,true,$msg);
     }
 
@@ -573,7 +566,7 @@ abstract class DBManager
     public function createTable(SugarBean $bean)
     {
         $sql = $this->createTableSQL($bean);
-        $this->tableName = $tablename = $bean->getTableName();
+        $tablename = $bean->getTableName();
         $msg = "Error creating table: $tablename:";
         $this->query($sql,true,$msg);
         if(!$this->supports("inline_keys")) {
@@ -656,6 +649,11 @@ abstract class DBManager
         return $this->repairTableParams($tablename, $fielddefs,$new_index,$execute,$engine);
     }
 
+    /**
+     * Can this field be null?
+     * Auto-increment and ID fields can not be null
+     * @param array $vardef
+     */
     protected function isNullable($vardef)
     {
         if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id')
@@ -955,7 +953,7 @@ abstract class DBManager
     public function createIndex(SugarBean $bean, $fieldDefs, $name, $unique = true)
     {
         $sql = $this->createIndexSQL($bean, $fieldDefs, $name, $unique);
-        $this->tableName = $tablename = $bean->getTableName();
+        $tablename = $bean->getTableName();
         $msg = "Error creating index $name on table: $tablename:";
         return $this->query($sql,true,$msg);
     }
@@ -1063,7 +1061,6 @@ abstract class DBManager
 	 */
     public function addColumn($tablename, $fieldDefs)
     {
-        $this->tableName = $tablename;
         $sql = $this->addColumnSQL($tablename, $fieldDefs);
         if ($this->isFieldArray($fieldDefs)){
             $columns = array();
@@ -1087,7 +1084,6 @@ abstract class DBManager
 	 */
     public function alterColumn($tablename, $newFieldDef, $ignoreRequired = false)
     {
-        $this->tableName = $tablename;
         $sql = $this->alterColumnSQL($tablename, $newFieldDef,$ignoreRequired);
         if ($this->isFieldArray($newFieldDef)){
             $columns = array();
@@ -1135,7 +1131,7 @@ abstract class DBManager
      */
     public function deleteColumn(SugarBean $bean, $fieldDefs)
     {
-        $this->tableName = $tablename = $bean->getTableName();
+        $tablename = $bean->getTableName();
         $sql = $this->dropColumnSQL($tablename, $fieldDefs);
         $msg = "Error deleting column(s) on table: $tablename:";
         return $this->query($sql,true,$msg);
@@ -2583,25 +2579,12 @@ abstract class DBManager
 	}
 
 	/**
-     * Function returns true is full-text indexing is available in the connected database.
-     *
-     * Default value is false.
-     *
-     * @param  string $dbname
-     * @return bool
-     */
-	protected function full_text_indexing_enabled($dbname = null)
-	{
-	    return $this->supports('fulltext');
-	}
-
-	public function full_text_indexing_installed()
-	{
-	    return false;
-	}
-
+	 * Setup FT indexing
+	 * @abstract
+	 */
 	public function full_text_indexing_setup()
 	{
+	    // Most DBs have nothing to setup, so provide default empty function
 	}
 
 	/**
@@ -2719,6 +2702,7 @@ abstract class DBManager
 
     /**
      * Check if this DB supports certain capability
+     * See $this->capabilities for the list
      * @param string $cap
      */
     public function supports($cap)
@@ -2726,6 +2710,12 @@ abstract class DBManager
         return !empty($this->capabilities[$cap]);
     }
 
+    /**
+     * Create ORDER BY clause for ENUM type field
+     * @param string $order_by Field name
+     * @param array $values Possible enum value
+     * @param string $order_dir Order direction, ASC or DESC
+     */
     public function orderByEnum($order_by, $values, $order_dir)
     {
         $order_by_arr = array();
@@ -2796,32 +2786,12 @@ abstract class DBManager
     }
 
     /**
-     * Return current time in format fit for insertion into DB
+     * Return current time in format fit for insertion into DB (with quotes)
+     * @return string
      */
     public function now()
     {
         return $this->convert($this->quoted(TimeDate::getInstance()->nowDb()), "datetime");
-    }
-
-    /**
-     * Generate fulltext query from set of terms
-     * @param string $fields Field to search against
-     * @param array $terms Search terms that may be or not be in the result
-     * @param array $must_terms Search terms that have to be in the result
-     * @param array $exclude_terms Search terms that have to be not in the result
-     */
-    public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array())
-    {
-        return "0=1"; // by default we don't have fulltext search
-    }
-
-    /**
-     * Get database configuration information (DB-dependent)
-     * @return array|null
-     */
-    public function getDbInfo()
-    {
-        return null;
     }
 
     /**
@@ -3021,17 +2991,8 @@ abstract class DBManager
      */
     public function getScriptName()
     {
+        // Usually the same name as dbType
         return $this->dbType;
-    }
-
-    /**
-     * Get tables like expression
-     * @param $like string
-     * @return array
-     */
-    public function tablesLike($like)
-    {
-        return false;
     }
 
     /**
@@ -3288,6 +3249,13 @@ abstract class DBManager
     abstract public function dbExists($dbname);
 
     /**
+     * Get tables like expression
+     * @param $like string Expression describing tables
+     * @return array
+     */
+    abstract public function tablesLike($like);
+
+    /**
      * Create a database
      * @param string $dbname
      */
@@ -3298,6 +3266,12 @@ abstract class DBManager
      * @param string $dbname
      */
     abstract public function dropDatabase($dbname);
+
+    /**
+     * Get database configuration information (DB-dependent)
+     * @return array|null
+     */
+    abstract public function getDbInfo();
 
     /**
      * Check if certain DB user exists
@@ -3313,4 +3287,21 @@ abstract class DBManager
      * @param string $password
      */
     abstract public function createDbUser($database_name, $host_name, $user, $password);
+
+    /**
+     * Check if the database supports fulltext indexing
+     * Note that database driver can be capable of supporting FT (see supports('fulltext))
+     * but particular instance can still have it disabled
+     * @return bool
+     */
+	abstract public function full_text_indexing_installed();
+
+    /**
+     * Generate fulltext query from set of terms
+     * @param string $fields Field to search against
+     * @param array $terms Search terms that may be or not be in the result
+     * @param array $must_terms Search terms that have to be in the result
+     * @param array $exclude_terms Search terms that have to be not in the result
+     */
+    abstract public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array());
 }

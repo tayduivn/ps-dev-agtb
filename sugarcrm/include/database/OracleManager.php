@@ -1343,7 +1343,7 @@ EOQ;
         case 'fulltext':
                 if($drop) {
                     $sql = "DROP INDEX {$name}";
-                } elseif ($this->full_text_indexing_enabled()) {
+                } else {
                     $indextype=$definition['indextype'];
                     $parameters="";
                     //add parameters attribute if oracle version of 10 or more.
@@ -1700,5 +1700,10 @@ EOQ;
     public function valid()
     {
         return function_exists("ocilogon");
+    }
+
+    public function full_text_indexing_installed()
+    {
+        return true;
     }
 }

@@ -945,9 +945,9 @@ class MysqlManager extends DBManager
     }
 
 	/**
-     * @see DBManager::full_text_indexing_enabled()
+     * @see DBManager::full_text_indexing_installed()
      */
-    protected function full_text_indexing_enabled($dbname = null)
+    public function full_text_indexing_installed($dbname = null)
     {
 		return $this->isEngineEnabled('MyISAM');
 	}
