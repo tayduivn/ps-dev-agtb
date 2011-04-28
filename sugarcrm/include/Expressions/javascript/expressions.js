@@ -825,9 +825,8 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 SUGAR.expressions.ExpressionParser.prototype.toConstant = function(expr) {
 
 	// a raw numeric constant
-	var asNum = SUGAR.expressions.unFormatNumber(expr);
-	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
-		return new SUGAR.ConstantExpression( parseFloat(asNum) );
+	if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(expr) != null ) {
+		return new SUGAR.ConstantExpression( parseFloat(expr) );
 	}
 
 	// a pre defined numeric constant
@@ -980,7 +979,7 @@ SUGAR.util.DateUtils = {
 		var dateRemain = YAHOO.lang.trim(date);
 		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
 		for (var j = 0; j < oldFormat.length; j++) {
-			var c = oldFormat[j];
+			var c = oldFormat.charAt(j);
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
 				var i = dateRemain.indexOf(c);
 				if (i == -1) i = dateRemain.length;

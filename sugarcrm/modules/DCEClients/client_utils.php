@@ -614,6 +614,7 @@ function getUpgradeVars($db, $action, $inst){
     }
 
     function returnTimeRanges(){
+        global $timedate;
          //change time into timestamp
         $now = $timedate->nowDb();
         

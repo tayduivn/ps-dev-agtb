@@ -19,8 +19,8 @@ class SugarEmailAddress extends SugarBean {
     var $module_name = "EmailAddresses";
     var $module_dir = 'EmailAddresses';
     var $object_name = 'EmailAddress';
-    
-    //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3, 
+
+    //bug 40068, According to rules in page 6 of http://www.apps.ietf.org/rfc/rfc3696.html#sec-3,
 	//allowed special characters ! # $ % & ' * + - / = ?  ^ _ ` . { | } ~ in local part
     var $regex = "/^(['\.\-\+&'#!\$\*=\?\^_`\{\}~\/\w]+)*@((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+([\.-]?\w+)*(\.[\w-]{2,})+)\$/";
     var $disable_custom_fields = true;
@@ -327,8 +327,8 @@ class SugarEmailAddress extends SugarBean {
                    break;
                 }
             }
-
             $widget_id = $_REQUEST[$module .'_email_widget_id'];
+
 
             //Iterate over the widgets for this module, in case there are multiple email widgets for this module
             while(isset($_REQUEST[$module . $widget_id . "emailAddress" . $widgetCount]))
@@ -513,6 +513,16 @@ class SugarEmailAddress extends SugarBean {
         }
     }
 
+    public function splitEmailAddress($addr)
+    {
+        $email = $this->_cleanAddress($addr);
+        if(!preg_match($this->regex, $email)) {
+            $email = ''; // remove bad email addr
+        }
+        $name = trim(str_replace(array($email, '<', '>', '"', "'"), '', $addr));
+        return array("name" => $name, "email" => strtolower($email));
+    }
+
     /**
      * PRIVATE UTIL
      * Normalizes an RFC-clean email address, returns a string that is the email address only
@@ -523,7 +533,7 @@ class SugarEmailAddress extends SugarBean {
         $addr = trim(from_html($addr));
 
         if(strpos($addr, "<") !== false && strpos($addr, ">") !== false) {
-            $address = trim(substr($addr, strpos($addr, "<") +1, strpos($addr, ">") - strpos($addr, "<") -1));
+            $address = trim(substr($addr, strrpos($addr, "<") +1, strrpos($addr, ">") - strrpos($addr, "<") -1));
         } else {
             $address = trim($addr);
         }
@@ -643,8 +653,9 @@ class SugarEmailAddress extends SugarBean {
         $return = array();
         $module = $this->getCorrectedModule($module);
 
-        $q = "SELECT ea.*, ear.* FROM email_addresses ea
-                LEFT JOIN email_addr_bean_rel ear ON ea.id = ear.email_address_id
+        $q = "SELECT ea.email_address, ea.email_address_caps, ea.invalid_email, ea.opt_out, ea.date_created, ea.date_modified,
+                ear.id, ear.email_address_id, ear.bean_id, ear.bean_module, ear.primary_address, ear.reply_to_address, ear.deleted
+                FROM email_addresses ea LEFT JOIN email_addr_bean_rel ear ON ea.id = ear.email_address_id
                 WHERE ear.bean_module = '{$module}'
                 AND ear.bean_id = '{$id}'
                 AND ear.deleted = 0
@@ -673,6 +684,7 @@ class SugarEmailAddress extends SugarBean {
         global $app_strings, $dictionary, $beanList;
 
         $prefill = 'false';
+
         $prefillData = 'new Object()';
         $passedModule = $module;
         $module = $this->getCorrectedModule($module);
@@ -724,10 +736,10 @@ class SugarEmailAddress extends SugarBean {
         //Set addDefaultAddress flag (do not add if it's from the Email module)
         $this->smarty->assign('addDefaultAddress', (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Emails') ? 'false' : 'true');
         $form = $this->view;
+
         if ($this->view == "QuickCreate")
         $form = 'form_'.$this->view .'_'.$module;
         $this->smarty->assign('emailView', $form);
-
 
         if($module == 'Users') {
             $this->smarty->assign('useReplyTo', true);

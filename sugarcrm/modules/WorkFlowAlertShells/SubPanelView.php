@@ -55,6 +55,7 @@ echo $the_title;
 
 $button  = "<form  action='index.php' method='post' name='form' id='form'>\n";
 $button .= "<input type='hidden' name='module' value='WorkFlowAlertShells'>\n";
+$button .= "<input type='hidden' name='module_tab' value='WorkFlow'>\n";
 $button .= "<input type='hidden' name='workflow_id' value='$focus->id'>\n<input type='hidden' name='alert_name' value='$focus->name'>\n";
 $button .= "<input type='hidden' name='return_module' value='".$currentModule."'>\n";
 $button .= "<input type='hidden' name='return_action' value='".$action."'>\n";

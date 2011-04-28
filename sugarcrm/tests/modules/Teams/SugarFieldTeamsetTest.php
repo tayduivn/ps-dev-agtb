@@ -1,10 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-//require_once dirname(__FILE__) . '/../../test_utilities/SugarTest_TeamUtilities.php';
-//require_once dirname(__FILE__) . '/../../test_utilities/SugarTest_UserUtilities.php';
-//require_once('modules/Teams/Team.php');
-//require_once('modules/Teams/TeamSet.php');
-//require_once('include/nusoap/nusoap.php');
+
  
 class SugarFieldTeamsetTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -17,6 +17,12 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
+        $beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+		
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -54,7 +60,9 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
 	    
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
-	    unset($GLOBALS['app_list_strings']);
+	    unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
+		unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
 	    unset($GLOBALS['current_user']);
@@ -153,8 +161,12 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $maxResults = 2;
         $deleted = FALSE;
         $favorites = FALSE;
-        $result = $this->_makeRESTCall('get_entry_list', array($session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
-        $this->assertTrue( ! isset($result['name']) &&  $result['name'] != 'Access Denied');
+        $result = $this->_makeRESTCall('get_entry_list', array($session, $module, '', $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
+        
+        $this->assertFalse(isset($result['name']));
+        if ( isset($result['name']) ) {
+            $this->assertNotEquals('Access Denied',$result['name']);
+        }
     }
     
     /**
@@ -304,21 +316,23 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $results = $this->_makeRESTCall('search_by_module',
                         array(
                             'session' => $session,
-                            'search'  => $searchString,
+                            'search_string'  => $searchString,
                             'modules' => $searchModules,
                             'offset'  => $offSet,
-                            'max'     => $maxResults,
-                            'user'    => $this->_user->id,
-                            'select_field' => array(),
-                            'unified_only' => true,
+                            'max_results'     => $maxResults,
+                            'assigned_user_id'    => $this->_user->id,
+                            'select_fields' => array(),
+                            'unified_search_only' => true,
                             'favorites' => true,                            
                             )
                         );
-        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
-        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
+        
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'Unit Test %' ");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
+        
+        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
+        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
     }    
     //BEGIN SUGARCRM flav=pro ONLY
     public function _aclEditViewFieldProvider()

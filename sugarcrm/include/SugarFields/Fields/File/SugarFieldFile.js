@@ -190,7 +190,7 @@ if ( typeof(SUGAR.field.file) == 'undefined' ) {
             if( !isValid ){
                 var errorPannel = new YAHOO.widget.SimpleDialog('sugarMsgWindow', {
         			width: '240px',visible: true, fixedcenter: true,constraintoviewport: true,
-        	        draggable: true,type:'alert',modal:true,id:'sugarMsgWindow',close:true,
+        	        draggable: true,type:'alert',modal:true,id:'sugarMsgWindow',close:true
         		});
         		errorPannel.setBody(SUGAR.language.get("app_strings", "LBL_INVALID_FILE_EXTENSION"));
         		errorPannel.render(document.body);

@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $config['builds']['ent']['flav'] = array('ent','pro');
-$config['builds']['ent']['languages']= array('bg_BG','da_DK', 'de_DE','es_ES', 'fr_FR','hu_HU', 'it_it', 'lt_LT','ja_JP','nb_NO', 'nl_NL', 'pt_PT','ro_RO','ru_RU','sv_SE','tr_TR',  'zh_CN' );
+$config['builds']['ent']['languages']= array('bg_BG','cs_CZ','da_DK', 'de_DE','es_ES', 'et_EE', 'fr_FR','he_IL', 'hu_HU', 'it_it', 'lt_LT','ja_JP','nb_NO', 'nl_NL','pl_PL', 'pt_PT','ro_RO','ru_RU','sv_SE','tr_TR',  'zh_CN' );
 $config['builds']['ent']['lic'] = array('sub');
 $config['blackList']['ent'] = array(
 'sugarcrm/build'=>1,
@@ -43,6 +43,9 @@ $config['blackList']['ent'] = array(
 'sugarcrm/themes/TrailBlazers'=>1,
 'sugarcrm/themes/VintageSugar'=>1,
 'sugarcrm/themes/WhiteSands'=>1,
+
+'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
+'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
 
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,
 'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,

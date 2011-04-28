@@ -115,6 +115,13 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
+        
+        // Remap the mime type to something acceptable if we can do it.
+        $goodMimeTypes = Zend_Gdata_Docs::getSupportedMimeTypes();
+        if ( isset($goodMimeTypes[strtoupper($fileExtension)]) ) {
+            $mimeType = $goodMimeTypes[strtoupper($fileExtension)];
+        }
+
 		try{
 		    
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
@@ -197,7 +204,11 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full');
         } else {
             $docsQuery = new Zend_Gdata_Docs_Query();
-            $docsQuery->setQuery($keywords);
+            // This does a full-text search, which is awesome
+            // but doesn't match what the other providers have (title search)
+            // So we have to switch it for just a title search
+            // $docsQuery->setQuery($keywords);
+            $docsQuery->setTitle($keywords);
             $feed = $this->gdClient->getDocumentListFeed($docsQuery);
         }
 

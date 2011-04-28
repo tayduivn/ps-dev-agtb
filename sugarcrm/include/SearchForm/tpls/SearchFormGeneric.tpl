@@ -26,7 +26,12 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-
+{{* If templateMeta.maxColumnsBasic is not set, use maxColumns *}}
+{if !isset($templateMeta.maxColumnsBasic)}
+	{assign var="basicMaxColumns" value=$templateMeta.maxColumns}
+{else}
+    {assign var="basicMaxColumns" value=$templateMeta.maxColumnsBasic}
+{/if}
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0">
 <tr>
@@ -40,43 +45,26 @@
 	{counter assign=index}
 	{math equation="left % right"
    		  left=$index
-          right=$templateMeta.maxColumns
+          right=$basicMaxColumns
           assign=modVal
     }
-	{if ($index % ($templateMeta.maxColumns+1) == 1 && $index != 1)}
+	{if ($index % $basicMaxColumns == 1 && $index != 1)}
 		</tr><tr>
 	{/if}
 	
-	{{capture name=fieldLabelContent assign=fieldLabel}}
-    	{{if isset($colData.field.label)}}	
-    		{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
-        {{elseif isset($fields[$colData.field.name])}}
-    		{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
-    	{{/if}}
-	{{/capture}}
-	
-	{{capture name=fieldInputContent assign=fieldInputField}}
-    	{{if $fields[$colData.field.name]}}
-    		{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='searchView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
-       	{{/if}}
-   	{{/capture}}
-   	
-	<td nowrap="nowrap" width='1%' 
-	   {{if isset($colData.field.type) && $colData.field.type|lower == 'bool'}}	
-            >{{$fieldInputField}}
-       {{else}}
-           scope="row"> {{$fieldLabel}}
-       {{/if}}
+	<td scope="row" nowrap="nowrap" width='1%' >
+	{{if isset($colData.field.label)}}	
+		{sugar_translate label='{{$colData.field.label}}' module='{{$module}}'}
+    {{elseif isset($fields[$colData.field.name])}}
+		{sugar_translate label='{{$fields[$colData.field.name].vname}}' module='{{$module}}'}
+	{{/if}}
 	</td>
 
 	
-	<td  nowrap="nowrap" width='1%' 
-	   {{if isset($colData.field.type) && $colData.field.type|lower == 'bool'}}	
-            scope="row" class="chkbxRow">{{$fieldLabel}}
-       {{else}}
-            >{{$fieldInputField}}
-       {{/if}}
-	
+	<td  nowrap="nowrap" width='1%'>
+	{{if $fields[$colData.field.name]}}
+		{{sugar_field parentFieldArray='fields' vardef=$fields[$colData.field.name] displayType='searchView' displayParams=$colData.field.displayParams typeOverride=$colData.field.type formName=$form_name}}
+   	{{/if}}
    	   	{{* //BEGIN SUGARCRM flav=pro ONLY*}}
 		{{if !empty($colData.field.name)}}
 			{/if}
@@ -84,7 +72,7 @@
 	{{* //END SUGARCRM flav=pro ONLY*}}
    	</td>
 {{/foreach}}
-    {if $formData|@count >= $templateMeta.maxColumns+2}
+    {if $formData|@count >= $basicMaxColumns+1}
     </tr>
     <tr>
 	<td colspan="{$searchTableColumnCount}">

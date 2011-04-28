@@ -90,6 +90,7 @@ function convert_disc_client(){
 	        	$password = $_REQUEST['password'];
 	        }
 	    }
+
     }
     else{
     	//this is an offline client install

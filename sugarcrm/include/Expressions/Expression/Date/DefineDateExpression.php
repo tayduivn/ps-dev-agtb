@@ -41,7 +41,7 @@ class DefineDateExpression extends DateExpression
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters().evaluate();
-			var time   = SUGAR.util.DateUtils.parse(params);
+			var time   = SUGAR.util.DateUtils.parse(params, 'user');
 			if (time == false)	throw "Incorrect date format";
 
 			return time;

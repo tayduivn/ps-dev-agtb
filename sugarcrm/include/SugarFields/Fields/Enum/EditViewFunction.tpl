@@ -26,8 +26,6 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<select name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"
-title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{$displayParams.field}}
-{{if isset($displayParams.javascript)}}{{$displayParams.javascript}}{{/if}}>
+<select name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}">
 {{sugarvar key='value'}}
 </select>

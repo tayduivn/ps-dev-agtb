@@ -106,6 +106,7 @@ function displayTeamsData($data, $old, $expected){
 
 
 function saveResults($results){
+    global $timedate;
 	$save = array();
 
 	foreach($results as $tid=>$test){

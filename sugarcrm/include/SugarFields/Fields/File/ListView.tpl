@@ -26,10 +26,14 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$displayParams.module}{$vardef.displayParams.module}" class="tabDetailViewDFLink" target='_blank'>{sugar_fetch object=$parentFieldArray key=$col}</a>
-{if isset($vardef.allowEapm) && $vardef.allowEapm && isset($parentFieldArray.DOC_TYPE) && !empty($parentFieldArray.DOC_URL) }
+<a href="index.php?entryPoint=download&id={$parentFieldArray.ID}&type={$displayParams.module}{$vardef.displayParams.module}" class="tabDetailViewDFLink" target='_blank'>{sugar_fetch object=$parentFieldArray key=$col}
+{if isset($vardef.allowEapm) && $vardef.allowEapm && isset($parentFieldArray.DOC_TYPE) }
 {capture name=imageNameCapture assign=imageName}
 {sugar_fetch object=$parentFieldArray key=DOC_TYPE}_image_inline.png
 {/capture}
-<a href="{sugar_fetch object=$parentFieldArray key=DOC_URL}" class="tabDetailViewDFLink" target="_blank"><img src="{sugar_getimagepath file=$imageName}" border="0"></a>
+{capture name=imageURLCapture assign=imageURL}
+{sugar_getimagepath file=$imageName}
+{/capture}
+{if strlen($imageURL)>1}<img src="{$imageURL}" border="0">{/if}
 {/if}
+</a>

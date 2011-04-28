@@ -119,15 +119,16 @@ class Team extends SugarBean
 	function list_view_parse_additional_sections(&$list_form, $xTemplateSection) {
 		global $current_user;
 
-		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) {
-			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) {
+		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
+		{
+			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) 
+			{
 			    $list_form->parse($xTemplateSection.".row.admin_team");
 			    $list_form->parse($xTemplateSection.".row.admin_edit");
                 $record = isset($_REQUEST['record']) ? $_REQUEST['record'] : '';
-
-                //If record id is the same as the current focus object, then don't show admin_rem button
-                //because that would imply deleting the uesr's own private team when the user himself is not deleted
-			    if ($this->associated_user_id == $record || isset($this->implicit_assign) && $this->implicit_assign == '1') {
+			    if ($this->associated_user_id == $record) {
+                    $list_form->parse($xTemplateSection.".row.user_rem");
+				} else if ( isset($this->implicit_assign) && $this->implicit_assign == '1' ) {
 			        $list_form->parse($xTemplateSection.".row.user_rem");
 			    } else {
 			        $list_form->parse($xTemplateSection.".row.admin_rem");
@@ -513,7 +514,7 @@ class Team extends SugarBean
 		if(is_null($user_override) && $this->id == $focus->getPrivateTeamID() && $this->deleted == 0)
 		{
 		   $error_message = translate('ERR_CANNOT_REMOVE_PRIVATE_TEAM', 'Teams');
-		   $GLOBALS['log']->error($error_message);
+		   $GLOBALS['log']->fatal($error_message);
 		   throw new Exception($error_message);
 		}
 		

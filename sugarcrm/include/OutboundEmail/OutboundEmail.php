@@ -261,7 +261,7 @@ class OutboundEmail {
 	 * @param string mailer_id
 	 * @return object
 	 */
-	function getInboundMailerSettings(&$user, $mailer_id='', $ieId='') {
+	function getInboundMailerSettings($user, $mailer_id='', $ieId='') {
 		$mailer = '';
 
 		if(!empty($mailer_id)) {
@@ -557,5 +557,27 @@ class OutboundEmail {
         default:
             return $smtpserver; break;
         }
+	}
+
+	/**
+	 * Get mailer for current user by name
+	 * @param User $user
+	 * @param string $name
+	 * @return OutboundEmail|false
+	 */
+	public function getMailerByName($user, $name)
+	{
+	    if($name == "system" && !$this->isAllowUserAccessToSystemDefaultOutbound()) {
+	        $oe = $this->getUsersMailerForSystemOverride($user->id);
+	        if(!empty($oe) && !empty($oe->id)) {
+	            return $oe;
+	        }
+	    }
+	    $res = $this->db->query("SELECT id FROM outbound_email WHERE user_id = '{$user->id}' AND name='".$this->db->quote($name)."'");
+		$a = $this->db->fetchByAssoc($res);
+        if(!isset($a['id'])) {
+            return false;
+        }
+	    return $this->retrieve($a['id']);
 	}
 }

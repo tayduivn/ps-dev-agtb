@@ -591,13 +591,21 @@ function deleteCache(){
 	//Clean modules from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
-	   foreach($allModFiles as $file){
-	       	if(file_exists($file)){
-				unlink($file);
+		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles,true);
+		foreach($allModFiles as $file)
+		{
+	       	if(file_exists($file))
+	       	{
+	       		if(is_dir($file))
+	       		{
+				  rmdir_recursive($file);
+	       		} else {
+	       		  unlink($file);
+	       		}
 	       	}
-	   }
+		}
 	}
+	
 	//Clean jsLanguage from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'jsLanguage')){
 		$allModFiles = array();
@@ -5625,6 +5633,33 @@ function upgrade_connectors($path='') {
     logThis('End upgrade_connectors', $path);
 }
 
+function repair_long_relationship_names($path='')
+{
+    logThis("Begin repair_long_relationship_names", $path);
+    require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
+    $GLOBALS['mi_remove_tables'] = false;
+    $touched = array();
+    foreach($GLOBALS['moduleList'] as $module)
+    {
+        $relationships = new DeployedRelationships ($module) ;
+        foreach($relationships->getRelationshipList() as $rel_name)
+        {
+            if (strlen($rel_name) > 27 && empty($touched[$rel_name]))
+            {
+                logThis("Rebuilding relationship fields for $rel_name", $path);
+                $touched[$rel_name] = true;
+                $rel_obj = $relationships->get($rel_name);
+                $rel_obj->setReadonly(false);
+                $relationships->delete($rel_name);
+                $relationships->save();
+                $relationships->add($rel_obj);
+                $relationships->save();
+                $relationships->build () ;
+            }
+        }
+    }
+    logThis("End repair_long_relationship_names", $path);
+}
 
 function removeSilentUpgradeVarsCache(){
     global $silent_upgrade_vars_loaded;
@@ -5840,4 +5875,79 @@ function unlinkUpgradeFiles($version)
 	   }
 	}
 	logThis('end unlinking files from previous upgrade');
+	
+	if($version < '620')
+	{
+		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php)');
+
+		//Use a md5 comparison check to see if we can just remove the file where an exact match is found
+		if($version < '610')
+		{
+			$dr_files = array(
+	         'modules/DocumentRevisions/DetailView.html' => '17ad4d308ce66643fdeb6fdb3b0172d3',
+			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
+	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
+	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
+	        );		
+		} else {
+			$dr_files = array(
+	         'modules/DocumentRevisions/DetailView.html' => 'a8356ff20cd995daffe6cb7f7b8b2340',
+			 'modules/DocumentRevisions/DetailView.php' => '20edf45dd785469c484fbddff1a3f8f2',
+	         'modules/DocumentRevisions/EditView.php' => 'fb31958496f04031b2851dcb4ce87d50',
+	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
+	        );
+		}
+	
+		foreach($dr_files as $rev_file=>$hash)
+		{
+			if(file_exists($rev_file))
+			{
+				//It's a match here so let's just remove the file
+				if (md5(file_get_contents($rev_file)) == $hash) 
+				{
+					logThis('removing file ' . $rev_file);
+					unlink($rev_file);
+				} else {
+					if(!copy($rev_file, $rev_file . '.suback.bak')) 
+					{
+					  logThis('error making backup for file ' . $rev_file);
+					} else {
+					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
+					  unlink($rev_file);
+					}
+				} 
+			}
+		}
+		
+		logThis('end upgrade for DocumentRevisions classic files');
+	}	
+}
+
+if (!function_exists("getValidDBName"))
+{
+    /*
+     * Return a version of $proposed that can be used as a column name in any of our supported databases
+     * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+     * @param string $name Proposed name for the column
+     * @param string $ensureUnique
+     * @return string Valid column name trimmed to right length and with invalid characters removed
+     */
+     function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
+    {
+        // first strip any invalid characters - all but alphanumerics and -
+        $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
+        $len = strlen ( $name ) ;
+        $result = $name;
+        if ($ensureUnique)
+        {
+            $md5str = md5($name);
+            $tail = substr ( $name, -11) ;
+            $temp = substr($md5str , strlen($md5str)-4 );
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
+        }else if ($len > ($maxLen - 5))
+        {
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
+        }
+        return strtolower ( $result ) ;
+    }
 }

@@ -644,14 +644,41 @@ class SugarBean
             return;
 
         foreach ($this->field_defs as $field => $value) {
-		if( !empty($this->$field)
+		    if( !empty($this->$field)
                   && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
                     ) {
+                $this->$field = null;
+                continue;
+            }
+            if(!empty($this->$field) && !empty($value['display_default']) && in_array($value['type'], array('date', 'datetime', 'datetimecombo')) &&
+            $this->$field == $this->parseDateDefault($value['display_default'], ($value['type'] != 'date'))) {
                 $this->$field = null;
             }
         }
     }
 
+    /**
+     * Create date string from default value
+     * like '+1 month'
+     * @param string $value
+     * @param bool $time Should be expect time set too?
+     * @return string
+     */
+    protected function parseDateDefault($value, $time = false)
+    {
+        global $timedate;
+        if($time) {
+            $dtAry = explode('&', $value, 2);
+            $dateValue = $timedate->getNow(true)->modify($dtAry[0]);
+            if(!empty($dtAry[1])) {
+                $timeValue = $timedate->fromString($dtAry[1]);
+                $dateValue->setTime($timeValue->hour, $timeValue->min, $timeValue->sec);
+            }
+            return $timedate->asUser($dateValue);
+        } else {
+            return $timedate->asUserDate($timedate->getNow(true)->modify($value));
+        }
+    }
 
     function populateDefaultValues($force=false){
         if ( !is_array($this->field_defs) )
@@ -663,31 +690,15 @@ class SugarBean
                 switch($type){
                     case 'date':
                         if(!empty($value['display_default'])){
-                            global $timedate;
-                            require_once('modules/DynamicFields/templates/Fields/TemplateDate.php');
-                            $td = new TemplateDate();
-                            $timeValue = ($value['display_default'] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($value['display_default']) ;
-                            $this->$field = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat,$timeValue), false);
-                            break;
+                            $this->$field = $this->parseDateDefault($value['display_default']);
                         }
-                    case 'datetimecombo':
+                        break;
+                   case 'datetime':
+                   case 'datetimecombo':
                         if(!empty($value['display_default'])){
-                            global $timedate;
-                            $dtAry = explode('&', $value['display_default'] , 2);
-                            if(!empty($dtAry[0]) ){
-                                $dateValue = ($dtAry[0] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($dtAry[0]) ;
-                                $dateValue = date($GLOBALS['timedate']->dbDayFormat, $dateValue);
-                            }else{
-                                $dateValue='';
-                            }
-                            if(!empty($dtAry[1])){
-                                $timeValue = date($GLOBALS['timedate']->dbTimeFormat, strtotime($dtAry[1]));
-                            }else{
-                                $timeValue = '';
-                            }
-                            $this->$field = $timedate->to_display_date_time($dateValue.' '.$timeValue , true , false);
-                            break;
+                            $this->$field = $this->parseDateDefault($value['display_default'], true);
                         }
+                        break;
                     case 'multienum':
                         if(empty($value['default']) && !empty($value['display_default']))
                             $this->$field = $value['display_default'];
@@ -2340,6 +2351,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'datetime':
                 case 'datetimecombo':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$this->$field) ) {
                         // This appears to be formatted in user date/time
                         $this->$field = $timedate->to_db($this->$field);
@@ -2348,6 +2363,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'date':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_date($this->$field, false);
@@ -2356,6 +2375,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'time':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
                         $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
@@ -3006,7 +3029,6 @@ function save_relationship_changes($is_update, $exclude=array())
         $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 
-
         if(isset($_SESSION['show_deleted']))
         {
             $show_deleted = 1;
@@ -3117,8 +3139,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 {
                     //resort to default behavior.
                     $query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
-
-
                 }
                 if(!empty($subquery['secondary_select']))
                 {

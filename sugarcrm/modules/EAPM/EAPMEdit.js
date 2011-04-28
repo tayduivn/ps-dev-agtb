@@ -59,16 +59,17 @@ function EAPMChange() {
         passObj.exec();
 
         //hide/show new window notice
-        if(apiOpts.authMethod){
-            var messageDiv = document.getElementById('eapm_notice_div');
-            if(apiOpts.authMethod == "oauth"){
-                messageDiv.innerHTML = EAPMOAuthNotice;
+        var messageDiv = document.getElementById('eapm_notice_div');
+        if ( typeof messageDiv != 'undefined' && messageDiv != null ) {
+            if(apiOpts.authMethod){
+                if(apiOpts.authMethod == "oauth"){
+                    messageDiv.innerHTML = EAPMOAuthNotice;
+                }else{
+                    messageDiv.innerHTML = EAPMBAsicAuthNotice;
+                }
             }else{
-                 messageDiv.innerHTML = EAPMBAsicAuthNotice;
+                messageDiv.innerHTML = EAPMBAsicAuthNotice;
             }
-        }else{
-            var messageDiv = document.getElementById('eapm_notice_div');
-            messageDiv.innerHTML = EAPMBAsicAuthNotice;
         }
     }
 }
@@ -96,5 +97,10 @@ function EAPMEditStart(userIsAdmin) {
     if ( !userIsAdmin ) {
         // Disable the assigned user picker for non-admins
         document.getElementById('assigned_user_name').parentNode.innerHTML = document.getElementById('assigned_user_name').value;
+    }
+
+    // Disable the app picker if we are editing an existing record.
+    if ( apiElem.form.record.value != '' ) {
+        apiElem.disabled = true;
     }
 }

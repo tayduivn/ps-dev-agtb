@@ -73,8 +73,8 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
                     WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'";
         
         $result = $GLOBALS['db']->query($query);
-        
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+       
+        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
     }
     
     public function testUndo()
@@ -93,7 +93,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
     }
     
     /**
@@ -137,11 +137,11 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     	
     	$result = $GLOBALS['db']->query("SELECT * FROM email_addr_bean_rel where id = '{$this->email_addr_bean_rel_id}'");
 		$rows = $GLOBALS['db']->fetchByAssoc($result);
-    	$this->assertFalse($rows);
+    	$this->assertNull($rows);
     	
     	$result = $GLOBALS['db']->query("SELECT * FROM email_addresses where id = '{$this->email_address_id}'");
 		$rows = $GLOBALS['db']->fetchByAssoc($result);
-    	$this->assertFalse($rows);
+    	$this->assertNull($rows);
         
         $GLOBALS['db']->query("DELETE FROM users_last_import WHERE id = '{$last_import->id}'");
     }
@@ -161,7 +161,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
 
     }
     
