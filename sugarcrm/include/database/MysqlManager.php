@@ -807,7 +807,7 @@ class MysqlManager extends DBManager
                    $columns[] = " KEY $name ($fields)";
                break;
            case 'fulltext':
-               if ($this->full_text_indexing_enabled())
+               if ($this->full_text_indexing_installed())
                    $columns[] = " FULLTEXT ($fields)";
                else
                    $GLOBALS['log']->debug('MYISAM engine is not available/enabled, full-text indexes will be skipped. Skipping:',$name);
