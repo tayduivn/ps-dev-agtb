@@ -570,6 +570,8 @@ class SugarFolder {
 	function getFoldersChildForSettings($a, $collection, $subscriptions) {
 		$a['selected'] = (in_array($a['id'], $subscriptions)) ? true : false;
 		$a['origName'] = $a['name'];
+        if( isset($a['dynamic_query']) )
+            unset($a['dynamic_query']);
 		for($i=0; $i<$this->_depth; $i++) {
 
 			$a['name'] = ".".$a['name'];
