@@ -5863,7 +5863,7 @@ function unlinkUpgradeFiles($version)
 	if($version < '620')
 	{
 	   //list of files to remove
-	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/SugarColors.xml');
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/sugarColors.xml');
 	   
 	   foreach($files_to_remove as $f)
 	   {
