@@ -526,12 +526,14 @@ function getDbConnection()
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
     global $setup_db_host_instance;
+    global $setup_db_database_name;
 
     $dbconfig = array(
                 "db_host_name" => $setup_db_host_name,
                 "db_user_name" => $setup_db_admin_user_name,
                 "db_password" => $setup_db_admin_password,
                 "db_host_instance" => $setup_db_host_instance,
+                "db_name" => $setup_db_database_name,
     );
 
     $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
