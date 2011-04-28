@@ -347,14 +347,6 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             );
     }
 
-    public function testEscapeQuote()
-    {
-        $this->assertEquals(
-            $this->_helper->escape_quote('foobar'),
-            $this->_db->quote('foobar')
-            );
-    }
-
     public function testGetIndices()
     {
         $indices = $this->_helper->get_indices('contacts');

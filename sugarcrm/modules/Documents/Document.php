@@ -297,7 +297,7 @@ class Document extends SugarBean {
 		$document_fields['CATEGORY_ID'] = empty ($this->category_id) ? "" : $app_list_strings['document_category_dom'][$this->category_id];
 		$document_fields['SUBCATEGORY_ID'] = empty ($this->subcategory_id) ? "" : $app_list_strings['document_subcategory_dom'][$this->subcategory_id];
         $document_fields['NAME'] = $this->document_name;
-		$document_fields['DOCUMENT_NAME_JAVASCRIPT'] = $GLOBALS['db']->helper->escape_quote($document_fields['DOCUMENT_NAME']);
+		$document_fields['DOCUMENT_NAME_JAVASCRIPT'] = $GLOBALS['db']->quote($document_fields['DOCUMENT_NAME']);
 		return $document_fields;
 	}
 	function mark_relationships_deleted($id) {

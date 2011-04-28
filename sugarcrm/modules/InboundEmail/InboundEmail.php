@@ -769,15 +769,15 @@ class InboundEmail extends SugarBean {
 						break;
 
 						case "toaddr":
-							$values .= "'".$this->db->helper->escape_quote($overview->to)."'";
+							$values .= $this->db->quoted($overview->to);
 						break;
 
 						case "fromaddr":
-							$values .= "'".$this->db->helper->escape_quote($overview->from)."'";
+							$values .= $this->db->quoted($overview->from);
 						break;
 
 						case "message_id" :
-							$values .= "'".$this->db->helper->escape_quote($overview->message_id)."'";
+							$values .= $this->db->quoted($overview->message_id);
 						break;
 
 						case "mailsize":
@@ -787,7 +787,7 @@ class InboundEmail extends SugarBean {
 						case "senddate":
 							$conv=$timedate->fromString($overview->date);
 							if (!empty($conv)) {
-								$values .= "'" . $conv->asDb() ."'";
+								$values .= $this->db->quoted($conv->asDb());
 							} else {
 								$values .= "NULL";
 							}
@@ -800,7 +800,7 @@ class InboundEmail extends SugarBean {
 						default:
 							$overview->$colDef['name'] = from_html($overview->$colDef['name']);
 							$overview->$colDef['name'] = $this->cleanContent($overview->$colDef['name']);
-							$values .= "'".$this->db->helper->escape_quote($overview->$colDef['name'])."'";
+							$values .= $this->db->quote($overview->$colDef['name']);
 						break;
 					}
 				}
@@ -829,30 +829,17 @@ class InboundEmail extends SugarBean {
 
 					switch($colDef['name']) {
 						case "toaddr":
-							//$set .= "toaddr = '".$this->db->helper->escape_quote($overview->to)."'";
-						break;
-
 						case "fromaddr":
-							//$set .= "fromaddr = '".$this->db->helper->escape_quote($overview->from)."'";
-						break;
-
 						case "mailsize":
-							//$set .= "mailsize = {$overview->size}";
-						break;
-
 						case "senddate":
-							//$set .= "senddate = '".date("Y-m-d H:i:s", $overview->date)."'";
-						break;
-
 						case "mbox":
-							//$set .= "mbox = '{$mbox}'";
 						break;
 
 						default:
 							if(!empty($set)) {
 								$set .= ",";
 							}
-							$set .= "{$colDef['name']} = '".$this->db->helper->escape_quote($overview->$colDef['name'])."'";
+							$set .= "{$colDef['name']} = ".$this->db->quoted($overview->$colDef['name']);
 						break;
 					}
 				}
@@ -2056,7 +2043,6 @@ class InboundEmail extends SugarBean {
 
 		$criteria  = "";
 		$criteria .= (!empty($subject)) ? 'SUBJECT '.from_html($subject).'' : "";
-		//$criteria .= (!empty($subject)) ? 'SUBJECT "'.$GLOBALS['db']->helper->escape_quote($subject).'"' : "";
 		$criteria .= (!empty($from)) ? ' FROM "'.$from.'"' : "";
 		$criteria .= (!empty($to)) ? ' FROM "'.$to.'"' : "";
 		$criteria .= (!empty($body)) ? ' TEXT "'.$body.'"' : "";
@@ -2087,7 +2073,7 @@ class InboundEmail extends SugarBean {
 				$searchOverviews = array();
 				if ($bean->protocol == 'pop3') {
 					$pop3Criteria = "SELECT * FROM email_cache WHERE ie_id = '{$bean->id}' AND mbox = '{$mbox}'";
-					$pop3Criteria .= (!empty($subject)) ? ' AND subject like "%'.$bean->db->helper->escape_quote($subject).'%"' : "";
+					$pop3Criteria .= (!empty($subject)) ? ' AND subject like "%'.$bean->db->quote($subject).'%"' : "";
 					$pop3Criteria .= (!empty($from)) ? ' AND fromaddr like "%'.$from.'%"' : "";
 					$pop3Criteria .= (!empty($to)) ? ' AND toaddr like "%'.$to.'%"' : "";
 					$pop3Criteria .= (!empty($dateFrom)) ? ' AND senddate > "'.$dateFrom.'"' : "";
@@ -6340,9 +6326,8 @@ eoq;
 			$value = implode(",", $value);
 		}
 		$this->mailboxarray = explode(",", $value);
-		$value = $this->db->helper->escape_quote($value);
-		//$query = "update config set value = '{$value}' where category='InboundEmail' and name='{$this->id}' )";
-		$query = "update inbound_email set mailbox = '{$value}' where id ='{$this->id}'";
+		$value = $this->db->quoted($value);
+		$query = "update inbound_email set mailbox = $value where id ='{$this->id}'";
 		$this->db->query($query);
 	}
 
@@ -6355,9 +6340,9 @@ eoq;
 				$value = implode(",", $value);
 			}
 			$this->mailboxarray = explode(",", $value);
-			$value = $this->db->helper->escape_quote($value);
+			$value = $this->db->quoted($value);
 
-			$query = "INSERT INTO config VALUES('InboundEmail', '{$this->id}', '{$value}')";
+			$query = "INSERT INTO config VALUES('InboundEmail', '{$this->id}', $value)";
 			$this->db->query($query);
 		} // if
 	}

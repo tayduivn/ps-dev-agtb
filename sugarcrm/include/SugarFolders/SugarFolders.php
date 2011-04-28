@@ -927,7 +927,7 @@ class SugarFolder {
 	function updateFolder($fields) {
 		global $current_user;
 
-		$this->dynamic_query = $this->db->helper->escape_quote($this->dynamic_query);
+		$this->dynamic_query = $this->db->quote($this->dynamic_query);
 		$id = $fields['record'];
 		$name = $fields['name'];
 		$parent_folder = $fields['parent_folder'];

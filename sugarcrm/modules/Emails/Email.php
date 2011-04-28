@@ -187,7 +187,7 @@ class Email extends SugarBean {
 			if(move_uploaded_file($_FILES['email_attachment']['tmp_name'], $destination)) {
 				return array(
 					'guid' => $guid,
-					'name' => $GLOBALS['db']->helper->escape_quote($fileName),
+					'name' => $GLOBALS['db']->quote($fileName),
 					'nameForDisplay' => $fileName
 				);
 			} else {

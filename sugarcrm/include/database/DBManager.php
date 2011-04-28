@@ -157,6 +157,7 @@ abstract class DBManager
 
     /**
      * Type names map
+     * @abstract
      * @var array
      */
     protected $type_map = array();
@@ -171,6 +172,7 @@ abstract class DBManager
      * auto_increment_sequence Autoincrement support implemented as sequence
      * limit_subquery   Supports LIMIT clauses in subqueries
      *
+     * @abstract
      * Special cases:
      * fix:expandDatabase - needs expandDatabase fix, see expandDatabase.php
      * TODO: verify if we need these cases
@@ -205,7 +207,6 @@ abstract class DBManager
 
     /**
      * Returns the current database handle
-     *
      * @return resource
      */
     public function getDatabase()
@@ -1112,7 +1113,7 @@ abstract class DBManager
      */
     public function dropTable(SugarBean $bean)
     {
-        $this->dropTableName($bean->getTableName());
+        return $this->dropTableName($bean->getTableName());
     }
 
     /**
@@ -1123,8 +1124,7 @@ abstract class DBManager
     public function dropTableName($name)
     {
         $sql = $this->dropTableNameSQL($name);
-        $msg = "Error dropping table $name:";
-        $this->query($sql,true,$msg);
+        return $this->query($sql,true,"Error dropping table $name:");
     }
 
     /**
@@ -1138,7 +1138,7 @@ abstract class DBManager
         $this->tableName = $tablename = $bean->getTableName();
         $sql = $this->dropColumnSQL($tablename, $fieldDefs);
         $msg = "Error deleting column(s) on table: $tablename:";
-        $this->query($sql,true,$msg);
+        return $this->query($sql,true,$msg);
     }
 
     /**
@@ -1336,7 +1336,8 @@ abstract class DBManager
      * Resets the queryCount value to 0
      *
      */
-    public static function resetQueryCount() {
+    public static function resetQueryCount()
+    {
     	self::$queryCount = 0;
     }
 
@@ -1356,15 +1357,12 @@ abstract class DBManager
     }
 
     /**
-     * Returns a string properly quoted for this database
+     * Pre-process string for quoting
      *
      * @param string $string
      */
-    public function quote($string)
+    protected function quoteInternal($string)
     {
-        if(is_array($string)) {
-            return $this->arrayQuote($string);
-        }
         return from_html($string);
     }
 
@@ -1376,15 +1374,6 @@ abstract class DBManager
     public function quoted($string)
     {
         return "'".$this->quote($string)."'";
-    }
-
-    /**
-     * Quote identifier (table/column name)
-     * @param string $string
-     */
-    public function quoteIdentifier($string)
-    {
-        return $this->quoted($string);
     }
 
     /**
@@ -1466,7 +1455,7 @@ abstract class DBManager
 
     /**
      * Returns the number of rows returned by the result
-     *
+     * @abstract
      * @param  resource $result
      * @return int
      */
@@ -1477,7 +1466,7 @@ abstract class DBManager
 
     /**
      * Returns the number of rows affected by the last query
-     *
+     * @abstract
      * @return int
      */
     public function getAffectedRowCount($result)
@@ -1555,32 +1544,6 @@ abstract class DBManager
         }
         return $string;
     }
-    /**
-     * Use when you need to convert a database string to a different value; this function does it in a
-     * database-backend aware way
-     *
-     * @param string $string database string to convert
-     * @param string $type type of conversion to do
-     * @param array  $additional_parameters optional, additional parameters to pass to the db function
-     * @return string
-     */
-    public function convert($string, $type, array $additional_parameters = array())
-    {
-        /*
-         * Supported conversions:
-            today		return current date
-            left		Take substring from the left
-            date_format	Format date as string, supports %Y-%m-%d, %Y-%m, %Y
-            datetime	Format date as standard-format datetime string
-            ifnull		If var is null, use default value
-            concat		Concatenate strings
-            quarter		Quarter number of the date
-            length		Length of string
-            month		Month number of the date
-            add_date	Add specified interval to a date
-         */
-        return $string;
-    }
 
     /**
      * Returns the database string needed for concatinating multiple database strings together
@@ -1602,18 +1565,6 @@ abstract class DBManager
         return "LTRIM(RTRIM(".$this->convert($first, 'CONCAT', $elems)."))";
     }
 
-    /**
-     * Undoes database conversion
-     *
-     * @param string $string database string to convert
-     * @param string $type type of conversion to do
-     * @return string
-     */
-    public function fromConvert($string, $type)
-    {
-        return $string;
-    }
-
 	/**
      * Given a sql stmt attempt to parse it into the sql and the tokens. Then return the index of this prepared statement
      * Tokens can come in the following forms:
@@ -1624,7 +1575,8 @@ abstract class DBManager
      * @param  string	$sql        The sql to parse
      * @return int index of the prepared statement to be used with execute
      */
-    public function prepareQuery($sql){
+    public function prepareQuery($sql)
+    {
     	//parse out the tokens
     	$tokens = preg_split('/((?<!\\\)[&?!])/', $sql, -1, PREG_SPLIT_DELIM_CAPTURE);
 
@@ -1710,7 +1662,8 @@ abstract class DBManager
      * @param  array    $data 		The array of data to replace the tokens with.
      * @return resource result set or false on error
      */
-    public function pQuery($sql, $data = array()){
+    public function pQuery($sql, $data = array())
+    {
     	$stmt = $this->prepareQuery($sql);
     	return $this->executePreparedQuery($stmt, $data);
     }
@@ -1918,10 +1871,6 @@ abstract class DBManager
      */
 	public function massageValue($val, $fieldDef)
     {
-//        if(is_null($val)) {
-//            return "NULL";
-//        }
-//
         $type = $this->getFieldType($fieldDef);
 
         switch ($type) {
@@ -3085,6 +3034,48 @@ abstract class DBManager
         return false;
     }
 
+    /**
+     * Quote string in DB-specific manner
+     * @param string $string
+     * @return string
+     */
+    abstract public function quote($string);
+
+    /**
+     * Use when you need to convert a database string to a different value; this function does it in a
+     * database-backend aware way
+	 * Supported conversions:
+     *      today		return current date
+     *      left		Take substring from the left
+     *      date_format	Format date as string, supports %Y-%m-%d, %Y-%m, %Y
+     *      datetime	Format date as standard-format datetime string
+     *      ifnull		If var is null, use default value
+     *      concat		Concatenate strings
+     *      quarter		Quarter number of the date
+     *      length		Length of string
+     *      month		Month number of the date
+     *      add_date	Add specified interval to a date
+     *
+     * @param string $string database string to convert
+     * @param string $type type of conversion to do
+     * @param array  $additional_parameters optional, additional parameters to pass to the db function
+     * @return string
+     */
+    abstract public function convert($string, $type, array $additional_parameters = array());
+
+    /**
+     * Converts from Database data to app data
+     *
+     * Supported types
+     * - date
+     * - time
+     * - datetime
+     *
+     * @param string $string database string to convert
+     * @param string $type type of conversion to do
+     * @return string
+     */
+    abstract public function fromConvert($string, $type);
 
     /**
      * Parses and runs queries

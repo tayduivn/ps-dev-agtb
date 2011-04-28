@@ -2374,7 +2374,7 @@ eoq;
 			if(!empty($whereAdd)) {
 				$whereAdd .= " AND ";
 			}
-			$clause = $current_user->db->helper->escape_quote($clause);
+			$clause = $current_user->db->quote($clause);
 			$whereAdd .= "{$column} LIKE '{$clause}%'";
 		}
 
@@ -2517,7 +2517,7 @@ eoq;
 			if(!empty($whereAdd)) {
 				$whereAdd .= " OR ";
 			}
-			$clause = $current_user->db->helper->escape_quote($clause);
+			$clause = $current_user->db->quote($clause);
 			$whereAdd .= "{$column} LIKE '{$clause}%'";
 		}
 		$table = $beanType;

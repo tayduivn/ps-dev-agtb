@@ -451,7 +451,7 @@ class MysqlManager extends DBManager
         if(is_array($string)) {
             return $this->arrayQuote($string);
         }
-        return mysql_real_escape_string(parent::quote($string), $this->getDatabase());
+        return mysql_real_escape_string(parent::quoteInternal($string), $this->getDatabase());
     }
 
     /**
@@ -612,6 +612,15 @@ class MysqlManager extends DBManager
                     return "DATE_ADD($string, INTERVAL + CONCAT({$additional_parameters[0]}, ':', {$additional_parameters[1]}) HOUR_MINUTE)";
         }
 
+        return $string;
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::fromConvert()
+     */
+    public function fromConvert($string, $type)
+    {
         return $string;
     }
 
