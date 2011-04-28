@@ -213,6 +213,6 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
 	    if( isset($GLOBALS['app_strings'][$language_key]) )
 	       return $GLOBALS['app_strings'][$language_key];
 	    else 
-	       return '';	    
+	       return $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];	    
 	}
 }

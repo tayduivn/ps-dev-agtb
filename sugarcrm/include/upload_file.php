@@ -294,7 +294,6 @@ class UploadFile
                     $GLOBALS['log']->error("Could not load the requested API (".$doc_type.")");
                     $result['errorMessage'] = 'Could not find a proper API';
                 }
-                unlink($new_destination);
             }catch(Exception $e){
                 $result['success'] = FALSE;
                 $result['errorMessage'] = $e->getMessage();
@@ -310,6 +309,9 @@ class UploadFile
                 $error_message = isset($result['errorMessage']) ? $result['errorMessage'] : $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
                 $_SESSION['user_error_message'][] = $error_message;
 
+            }
+            else {
+                unlink($new_destination);
             }
         }
 	}

@@ -195,7 +195,9 @@ class JitReports extends Jit {
      * @return	string returns the html code through smarty
      */					
 	function display($name, $xmlFile, $width='320', $height='480', $reportChartDivStyle, $resize=false){
-		
+		if(empty($name)) {
+			$name = "unsavedReport";	
+		}
 		
 		parent::display($name, $xmlFile, $width, $height, $resize=false);			
 		
