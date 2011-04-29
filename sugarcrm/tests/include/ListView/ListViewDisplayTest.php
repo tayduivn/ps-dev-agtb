@@ -355,6 +355,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->object_name = 'foobar';
         $this->_lvd->seed->module_dir = 'foobarfoobar';
+        $_REQUEST['module'] = 'foobarfoobar';
         $this->_lvd->seed->field_defs = array(
             'field1' => array(
                 'type' => 'link',
@@ -369,6 +370,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('sListView.use_external_mail_client',$output);
 
         unset($GLOBALS['dictionary']['foobar']);
+        unset($_REQUEST['module']);
     }
 
     public function testBuildDeleteLink()
