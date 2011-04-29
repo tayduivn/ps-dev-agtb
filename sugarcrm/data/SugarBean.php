@@ -3640,8 +3640,6 @@ function save_relationship_changes($is_update, $exclude=array())
                             }
                         }
                     }
-                    //Replace references to this table in the where clause with the new alias
-                    $join_table_name = $this->$data['link']->getRelatedTableName();
                     // To fix SOAP stuff where we are trying to retrieve all the accounts data where accounts.id = ..
                     // and this code changes accounts to jt4 as there is a self join with the accounts table.
                     //Martin fix #27494

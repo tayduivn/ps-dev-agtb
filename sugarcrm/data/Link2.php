@@ -43,6 +43,7 @@ class Link2 {
     public $beans;  //beans on the other side of the link
     protected $rows;   //any additional fields on the relationship
     protected $loaded; //true if this link has been loaded from the database
+    protected $relationship_fields = array();
 
 	/**
      * @param  $linkName String name of a link field in the module's vardefs
@@ -159,10 +160,10 @@ class Link2 {
 	}
 
 	public function getRelatedField($name){
-        if (!empty($this->relationship_fields[$name]))
+        if (!empty($this->relationship_fields) && !empty($this->relationship_fields[$name]))
             return $this->relationship_fields[$name];
         else
-            return null; //For noew return null. Later try the relationship object directly.
+            return null; //For now return null. Later try the relationship object directly.
 	}
 
 	public function getRelationshipObject() {
@@ -241,6 +242,10 @@ class Link2 {
         {
             if (!is_a($key, "SugarBean")) {
                 $key = $this->getRelatedBean($key);
+                if (!is_a($key, "SugarBean")) {
+                    $GLOBALS['log']->error("Unable to load related bean by id");
+                    return false;
+                }
             }
 
             if ($this->getSide() == REL_LHS) {
