@@ -42,7 +42,7 @@ class JSON
         $encodedString = json_encode($string);
         
         if($addSecurityEnvelope) {
-            $encodedString = "while(1);/*" . $encodedString . "*/";
+            $encodedString = $encodedString;
         }
         
         return $encodedString;
