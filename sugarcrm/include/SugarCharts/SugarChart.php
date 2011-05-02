@@ -246,7 +246,7 @@ class SugarChart {
 		$yAxis = $this->tab("<yAxis>" ,1);
 		
 		foreach ($this->chart_yAxis as $key => $value){
-			$yAxis .= $this->tab("<$key>$value</$key>", 2);
+			$yAxis .= $this->tabValue("{$key}",$value, 2);
 		}
 		
 		$yAxis .= $this->tab("</yAxis>" ,1);
@@ -293,7 +293,7 @@ class SugarChart {
 	
 	function tabValue($tag,$value,$depth) {
 
-			return $this->tab("<{$tag}>".htmlspecialchars($value)."</{$tag}>",$depth);
+			return $this->tab("<{$tag}>".htmlspecialchars($value,ENT_QUOTES)."</{$tag}>",$depth);
 
 	}
 	/**
