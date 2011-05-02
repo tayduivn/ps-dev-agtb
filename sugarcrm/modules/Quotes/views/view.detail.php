@@ -46,11 +46,12 @@ class QuotesViewDetail extends ViewDetail
 		$this->bean->load_relationship('product_bundles');
 		$product_bundle_list = $this->bean->get_linked_beans('product_bundles','ProductBundle');
 		if(is_array($product_bundle_list)){
-	
+
 			$ordered_bundle_list = array();
-			for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-				$index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-				$ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
+            foreach ($product_bundle_list as $id => $bean)
+            {
+                $index = $bean->get_index($this->bean->id);
+				$ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
 			} //for
 			ksort($ordered_bundle_list);
 		} //if

@@ -181,11 +181,12 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
 
         if(is_array($product_bundle_list)){
             $ordered_bundle_list = array();
-            for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-                $index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-                $ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
-            } //for
-            ksort($ordered_bundle_list);
+            foreach ($product_bundle_list as $id => $bean)
+            {
+                $index = $bean->get_index($this->bean->id);
+				$ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
+			} //for
+			ksort($ordered_bundle_list);
 
             foreach ($ordered_bundle_list as $product_bundle) {
 
