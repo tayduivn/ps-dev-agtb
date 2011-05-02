@@ -228,7 +228,7 @@ background-position: -{$offset_x}px -{$offset_y}px;
 
 				// common css header
 				$head .= "span.spr_bogus {
-background: url('../../../index.php?entryPoint=getImage&imageName={$name}%2F{$this->fileName}.png&sprite=true') no-repeat;
+background: url('../../../index.php?entryPoint=getImage&imageName={$this->fileName}.png&spriteNamespace={$name}') no-repeat;
 display: inline-block;
 }\n";
 
