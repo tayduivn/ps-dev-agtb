@@ -101,6 +101,7 @@ class RepairAndClear
                 //BEGIN SUGARCRM flav=pro ONLY
                 $this->clearPDFFontCache();
                 //END SUGARCRM flav=pro ONLY
+				$this->rebuildCSSSprites();
                 $this->rebuildExtensions();
                 $this->rebuildAuditTables();
                 $this->repairDatabase();
@@ -228,6 +229,15 @@ class RepairAndClear
         if(isset($_SESSION['rebuild_extensions'])) {
             unset($_SESSION['rebuild_extensions']);
         }
+	}
+
+	public function rebuildCSSSprites()
+	{
+		global $mod_strings;
+		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_REBUILD_SPRITES']}...";
+		require_once('include/SugarTheme/SugarTheme.php');
+		SugarTheme::rebuildSprites(true);
+		if($this->show_output) echo "done</h3>";
 	}
 
 	//Cache Clear Methods

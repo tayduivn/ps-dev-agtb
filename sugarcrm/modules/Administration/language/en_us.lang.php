@@ -1146,5 +1146,6 @@ $mod_strings = array (
 
    'LBL_REBUILD_SPRITES_DESC_SHORT' => 'Rebuild CSS Sprites for all themes and system wide images',
    'LBL_REBUILD_SPRITES_TITLE' => 'Rebuild CSS Sprites',
+   'LBL_QR_REBUILD_SPRITES' => 'Rebuilding CSS Sprites',
 
 	);

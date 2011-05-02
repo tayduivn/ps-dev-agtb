@@ -938,6 +938,36 @@ EOHTML;
         return $imageArray;
     }
 
+    /**
+     * Rebuild CSS Sprites
+     */
+	public static function rebuildSprites($silent = true) {
+		include_once('include/SugarTheme/SugarSpriteBuilder.php');
+		$sb = new SugarSpriteBuilder();
+		$sb->silentRun = $silent;
+		//$sb->debug = true;
+
+		// add common image directories
+		$sb->addDirectory('default', 'include/images');
+		$sb->addDirectory('default', 'themes/default/images');	
+		$sb->addDirectory('default', 'themes/default/images/SugarLogic');
+		$sb->addDirectory('default', 'custom/themes/default/images');
+
+		// add all theme image directories
+		if($dh = opendir('themes')) {
+			while (($dir = readdir($dh)) !== false) {
+				if ($dir != "." && $dir != ".." && is_dir('themes/'.$dir)) {
+					$sb->addDirectory($dir, "themes/$dir/images");
+				}
+			}
+			closedir($dh);
+		}
+
+		$sb->createSprites();
+
+		// build horizontal/vertical repeatable sprites
+		// TODO
+	}
 }
 
 /**
@@ -1220,4 +1250,5 @@ class SugarThemeRegistry
             $themeobject->clearCache();
         }
     }
+
 }
