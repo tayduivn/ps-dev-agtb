@@ -178,8 +178,12 @@ class UploadFile
 	{
 
 		$filename = $_FILES_element['name'];
+        $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-		if( $_FILES_element['type'] )
+        //If no file extension is available and the mime is octet-stream try to determine the mime type.
+        $recheckMime = empty($file_ext) && ($_FILES_element['type']  == 'application/octet-stream');
+
+		if( $_FILES_element['type'] && !$recheckMime)
 		{
 			$mime = $_FILES_element['type'];
 		}
