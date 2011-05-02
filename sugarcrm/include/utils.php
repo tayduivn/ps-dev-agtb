@@ -226,6 +226,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
+		'use_sprites' => false,
 	);
 }
 
