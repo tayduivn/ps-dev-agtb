@@ -617,7 +617,7 @@ EOHTML;
         static $cached_results = array();
 
         $imageName .= $ext;
-        if(!empty($cached_results[$imageName]))
+        if(!empty($cached_results[$imageName])) {
 
 			// handle multiple class tags for sprites
 			if($GLOBALS['sugar_config']['use_sprites']) {
@@ -636,7 +636,8 @@ EOHTML;
 			if(substr($cached_results[$imageName],0,5) == '<span')
 				return $cached_results[$imageName]." $other_attributes></span>";
 
-            return $cached_results[$imageName]."$other_attributes />";
+            return $cached_results[$imageName]." $other_attributes />";
+		}
 
         $imageURL = $this->getImageURL($imageName,false);
         if ( empty($imageURL) )
@@ -687,7 +688,7 @@ EOHTML;
         // Cache everything but the other attributes....
         $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
 
-        return $cached_results[$imageName] . "$other_attributes />";
+        return $cached_results[$imageName] . " $other_attributes />";
     }
 
     /**
