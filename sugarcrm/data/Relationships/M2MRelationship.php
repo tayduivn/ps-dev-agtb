@@ -61,7 +61,7 @@ class M2MRelationship extends SugarRelationship
             "id" => create_guid(),
             $this->def['join_key_lhs'] => $lhs->id,
             $this->def['join_key_rhs'] => $rhs->id,
-            'date_modified' => TimeDate::getInstance()->getNow()->asDb(),
+            'date_modified' => TimeDate::getInstance()->nowDb(),
             'deleted' => 0,
         );
         $dataToInsert = array_merge($dataToInsert, $additionalFields);
