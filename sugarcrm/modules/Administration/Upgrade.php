@@ -118,6 +118,10 @@ if(strpos($server_software,'Microsoft-IIS') === false) {
     <td> <?php echo $mod_strings['LBL_REBUILD_JS_MINI_FILES_DESC_SHORT'] ; ?> </td>
 </tr>
 <tr>
+	<td scope="row"><?php echo SugarThemeRegistry::current()->getImage('Rebuild','alt="'. $mod_strings['LBL_REBUILD_SPRITES_TITLE'].'" align="absmiddle" border="0"'); ?>&nbsp;<a href="./index.php?module=Administration&action=RebuildCSSSprites"><?php echo $mod_strings['LBL_REBUILD_SPRITES_TITLE']; ?></a></td>
+	<td> <?php echo $mod_strings['LBL_REBUILD_SPRITES_DESC_SHORT'] ; ?> </td>
+</tr>
+<tr>
     <td scope="row"><?php echo SugarThemeRegistry::current()->getImage('Repair','alt="'. $mod_strings['LBL_REPAIR_JS_FILES_TITLE'].'" align="absmiddle" border="0"'); ?>&nbsp;<a href="./index.php?module=Administration&action=RepairJSFile&type=repair"><?php echo $mod_strings['LBL_REPAIR_JS_FILES_TITLE']; ?></a></td>
     <td> <?php echo $mod_strings['LBL_REPAIR_JS_FILES_DESC_SHORT'] ; ?> </td>
 </tr>

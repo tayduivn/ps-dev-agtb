@@ -1144,4 +1144,7 @@ $mod_strings = array (
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
 
+   'LBL_REBUILD_SPRITES_DESC_SHORT' => 'Rebuild CSS Sprites for all themes and system wide images',
+   'LBL_REBUILD_SPRITES_TITLE' => 'Rebuild CSS Sprites',
+
 	);
