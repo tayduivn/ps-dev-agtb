@@ -1,6 +1,7 @@
 <?php
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
+require_once 'tests/include/database/TestBean.php';
 
 class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -1170,9 +1171,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMssqlNotClearingErrorResults()
     {
-        if ( get_class($this->_db) != 'MssqlManager' )
-            $this->markTestSkipped('Skipping; only applies with php_mssql driver');
-
         // execute a bad query
         $this->_db->query("select dsdsdsdsdsdsdsdsdsd");
         // assert it found an error
@@ -1181,5 +1179,358 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->query("select * from config");
         // and make no error messages are asserted
         $this->assertFalse($this->_db->checkError());
+    }
+
+    public function vardefProvider()
+    {
+        $emptydate = "0000-00-00";
+        if($this->_db instanceof MssqlManager || $this->_db instanceof OracleManager) {
+            $emptydate = "1970-01-01";
+        }
+        return array(
+            array("testid", array (
+                  'id' =>
+                  array (
+                    'name' => 'id',
+                    'type' => 'varchar',
+                    'required'=>true,
+                  ),
+                  ),
+                  array("id" => "test123"),
+                  array("id" => "'test123'")
+            ),
+            array("testtext", array (
+                  'text1' =>
+                  array (
+                    'name' => 'text1',
+                    'type' => 'varchar',
+                    'required'=>true,
+                  ),
+                  'text2' =>
+                  array (
+                    'name' => 'text2',
+                    'type' => 'varchar',
+                  ),
+                  ),
+                  array(),
+                  array("text1" => "''"),
+                  array('text1' => "''", 'text2' => 'NULL')
+            ),
+            array("testtext2", array (
+                  'text1' =>
+                  array (
+                    'name' => 'text1',
+                    'type' => 'varchar',
+                    'required'=>true,
+                  ),
+                  'text2' =>
+                  array (
+                    'name' => 'text2',
+                    'type' => 'varchar',
+                  ),
+                  ),
+                  array('text1' => 'foo', 'text2' => 'bar'),
+                  array("text1" => "'foo'", 'text2' => "'bar'"),
+            ),
+            array("testreq", array (
+                  'id' =>
+                      array (
+                        'name' => 'id',
+                        'type' => 'varchar',
+                        'required'=>true,
+                      ),
+                  'intval' =>
+                      array (
+                        'name' => 'intval',
+                        'type' => 'int',
+                        'required'=>true,
+                      ),
+                  'floatval' =>
+                      array (
+                        'name' => 'floatval',
+                        'type' => 'decimal',
+                        'required'=>true,
+                      ),
+                  'money' =>
+                      array (
+                        'name' => 'money',
+                        'type' => 'currency',
+                        'required'=>true,
+                      ),
+                  'test_dtm' =>
+                      array (
+                        'name' => 'test_dtm',
+                        'type' => 'datetime',
+                        'required'=>true,
+                      ),
+                  'test_dtm2' =>
+                      array (
+                        'name' => 'test_dtm2',
+                        'type' => 'datetimecombo',
+                        'required'=>true,
+                      ),
+                  'test_dt' =>
+                      array (
+                        'name' => 'test_dt',
+                        'type' => 'date',
+                        'required'=>true,
+                      ),
+                  'test_tm' =>
+                      array (
+                        'name' => 'test_tm',
+                        'type' => 'time',
+                        'required'=>true,
+                      ),
+                  ),
+                  array("id" => "test123", 'intval' => 42, 'floatval' => 42.24,
+                  		'money' => 56.78, 'test_dtm' => '2002-01-02 12:34:56', 'test_dtm2' => '2011-10-08 01:02:03',
+                        'test_dt' => '1998-10-04', 'test_tm' => '03:04:05'
+                  ),
+                  array("id" => "'test123'", 'intval' => 42, 'floatval' => 42.24,
+                  		'money' => 56.78, 'test_dtm' => '\'2002-01-02 12:34:56\'', 'test_dtm2' => '\'2011-10-08 01:02:03\'',
+                        'test_dt' => '\'1998-10-04\'', 'test_tm' => '\'03:04:05\''
+                  ),
+            ),
+            array("testreqnull", array (
+                  'id' =>
+                      array (
+                        'name' => 'id',
+                        'type' => 'varchar',
+                        'required'=>true,
+                      ),
+                  'intval' =>
+                      array (
+                        'name' => 'intval',
+                        'type' => 'int',
+                        'required'=>true,
+                      ),
+                  'floatval' =>
+                      array (
+                        'name' => 'floatval',
+                        'type' => 'decimal',
+                        'required'=>true,
+                      ),
+                  'money' =>
+                      array (
+                        'name' => 'money',
+                        'type' => 'currency',
+                        'required'=>true,
+                      ),
+                  'test_dtm' =>
+                      array (
+                        'name' => 'test_dtm',
+                        'type' => 'datetime',
+                        'required'=>true,
+                      ),
+                  'test_dtm2' =>
+                      array (
+                        'name' => 'test_dtm2',
+                        'type' => 'datetimecombo',
+                        'required'=>true,
+                      ),
+                  'test_dt' =>
+                      array (
+                        'name' => 'test_dt',
+                        'type' => 'date',
+                        'required'=>true,
+                      ),
+                  'test_tm' =>
+                      array (
+                        'name' => 'test_tm',
+                        'type' => 'time',
+                        'required'=>true,
+                      ),
+                  ),
+                  array(),
+                  array("id" => "''", 'intval' => 0, 'floatval' => 0,
+                  		'money' => 0, 'test_dtm' => "'$emptydate 00:00:00'", 'test_dtm2' => "'$emptydate 00:00:00'",
+                        'test_dt' => "'$emptydate'", 'test_tm' => '\'00:00:00\''
+                  ),
+            ),
+            array("testnull", array (
+                  'id' =>
+                      array (
+                        'name' => 'id',
+                        'type' => 'varchar',
+                      ),
+                  'intval' =>
+                      array (
+                        'name' => 'intval',
+                        'type' => 'int',
+                      ),
+                  'floatval' =>
+                      array (
+                        'name' => 'floatval',
+                        'type' => 'decimal',
+                      ),
+                  'money' =>
+                      array (
+                        'name' => 'money',
+                        'type' => 'currency',
+                      ),
+                  'test_dtm' =>
+                      array (
+                        'name' => 'test_dtm',
+                        'type' => 'datetime',
+                      ),
+                  'test_dtm2' =>
+                      array (
+                        'name' => 'test_dtm2',
+                        'type' => 'datetimecombo',
+                      ),
+                  'test_dt' =>
+                      array (
+                        'name' => 'test_dt',
+                        'type' => 'date',
+                      ),
+                  'test_tm' =>
+                      array (
+                        'name' => 'test_tm',
+                        'type' => 'time',
+                      ),
+                  ),
+                  array("id" => 123),
+                  array("id" => "'123'"),
+                  array('intval' => 'NULL', 'floatval' => 'NULL',
+                  		'money' => 'NULL', 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
+                        'test_dt' => "NULL", 'test_tm' => 'NULL'
+                  ),
+            ),
+            array("testempty", array (
+                  'id' =>
+                      array (
+                        'name' => 'id',
+                        'type' => 'varchar',
+                      ),
+                  'intval' =>
+                      array (
+                        'name' => 'intval',
+                        'type' => 'int',
+                      ),
+                  'floatval' =>
+                      array (
+                        'name' => 'floatval',
+                        'type' => 'decimal',
+                      ),
+                  'money' =>
+                      array (
+                        'name' => 'money',
+                        'type' => 'currency',
+                      ),
+                  'test_dtm' =>
+                      array (
+                        'name' => 'test_dtm',
+                        'type' => 'datetime',
+                      ),
+                  'test_dtm2' =>
+                      array (
+                        'name' => 'test_dtm2',
+                        'type' => 'datetimecombo',
+                      ),
+                  'test_dt' =>
+                      array (
+                        'name' => 'test_dt',
+                        'type' => 'date',
+                      ),
+                  'test_tm' =>
+                      array (
+                        'name' => 'test_tm',
+                        'type' => 'time',
+                      ),
+                   'text_txt' =>
+                      array (
+                        'name' => 'test_txt',
+                        'type' => 'varchar',
+                      ),
+                  ),
+                  array("id" => "", 'intval' => '', 'floatval' => '',
+                  		'money' => '', 'test_dtm' => '', 'test_dtm2' => '',
+                        'test_dt' => '', 'test_tm' => '', 'text_txt' => null
+                  ),
+                  array("id" => "''", 'intval' => 0, 'floatval' => 0,
+                  		'money' => 0, 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
+                        'test_dt' => "NULL", 'test_tm' => 'NULL'
+                  ),
+                  array('intval' => 0, 'floatval' => 0,
+                  		'money' => 0, 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
+                        'test_dt' => "NULL", 'test_tm' => 'NULL', 'test_txt' => 'NULL'
+                  ),
+            ),
+        );
+    }
+
+   /**
+    * Test InserSQL functions
+    * @dataProvider vardefProvider
+    * @param string $name
+    * @param array $defs
+    * @param array $data
+    * @param array $result
+    */
+    public function testInsertSQL($name, $defs, $data, $result)
+    {
+        $vardefs = array(
+			'table' => $name,
+            'fields' => $defs,
+        );
+        $obj = new TestSugarBean($name, $vardefs);
+        // regular fields
+        foreach($data as $k => $v) {
+            $obj->$k = $v;
+        }
+        $sql = $this->_db->insertSQL($obj);
+        $names = join('\s*,\s*',array_keys($result));
+        $values = join('\s*,\s*',array_values($result));
+        $this->assertRegExp("/INSERT INTO $name\s+\(\s*$names\s*\)\s+VALUES\s+\(\s*$values\s*\)/is", $sql, "Bad sql: $sql");
+    }
+
+   /**
+    * Test UpdateSQL functions
+    * @dataProvider vardefProvider
+    * @param string $name
+    * @param array $defs
+    * @param array $data
+    * @param array $_
+    * @param array $result
+    */
+    public function testUpdateSQL($name, $defs, $data, $_, $result = null)
+    {
+        $vardefs = array(
+			'table' => $name,
+            'fields' => $defs,
+        );
+        // ensure it has an ID
+        $vardefs['fields']['id'] = array (
+                    'name' => 'id',
+                    'type' => 'id',
+                    'required'=>true,
+                  );
+
+        $obj = new TestSugarBean($name, $vardefs);
+        // regular fields
+        foreach($defs as $k => $v) {
+            if(isset($data[$k])) {
+                $obj->$k = $data[$k];
+            } else {
+                $obj->$k = null;
+            }
+        }
+        // set fixed ID
+        $obj->id = 'test_ID';
+        $sql = $this->_db->updateSQL($obj);
+        if(is_null($result)) {
+            $result = $_;
+        }
+        $names_i = array();
+        foreach($result as $k => $v) {
+            if($k == "id") continue;
+            $names_i[] = "$k=$v";
+        }
+        if(empty($names_i)) {
+            $this->assertEquals("", $sql, "Bad sql: $sql");
+            return;
+        }
+        $names = join('\s*,\s*',$names_i);
+        $this->assertRegExp("/UPDATE $name\s+SET\s+$names\s+WHERE\s+$name.id\s*=\s*'test_ID' AND deleted=0/is", $sql, "Bad sql: $sql");
     }
 }

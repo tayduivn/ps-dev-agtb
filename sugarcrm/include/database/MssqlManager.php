@@ -223,7 +223,7 @@ class MssqlManager extends DBManager
 			}
          }
 
-        if($this->checkError('Could Not Connect', $dieOnError))
+        if(!$this->checkError('Could Not Connect', $dieOnError))
             $GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
@@ -1260,6 +1260,9 @@ class MssqlManager extends DBManager
         }
         if($ctype == "date") {
             return $this->convert($this->quoted("1970-01-01"), "datetime");
+        }
+        if($ctype == "time") {
+            return $this->convert($this->quoted("00:00:00"), "time");
         }
         return parent::emptyValue($type);
     }

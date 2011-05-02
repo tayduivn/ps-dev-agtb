@@ -101,6 +101,25 @@ class OracleManager extends DBManager
 	    	'decimal_tpl' => 'number(%d, %d)',
             );
 
+        protected $type_classes = array(
+            'int'      => 'int',
+            'double'   => 'float',
+            'float'    => 'float',
+            'uint'     => 'int',
+            'ulong'    => 'int',
+            'long'     => 'int',
+            'short'    => 'int',
+            'date'     => 'date',
+            'datetime' => 'date',
+            'datetimecombo' => 'date',
+            'time'     => 'date',
+            'bool'     => 'int',
+            'tinyint'  => 'int',
+            'currency' => 'float',
+            'decimal'  => 'float',
+            'decimal2' => 'float',
+            );
+
 	/**
      * List of known sequences
      * @var array
@@ -687,7 +706,7 @@ class OracleManager extends DBManager
             }
             $this->query($session_query);
 
-		if($this->checkError('Could Not Connect', $dieOnError))
+		if(!$this->checkError('Could Not Connect', $dieOnError))
 			$GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
@@ -874,42 +893,18 @@ class OracleManager extends DBManager
 	public function massageValue($val, $fieldDef)
     {
         $type = $this->getFieldType($fieldDef);
-        switch ($type) {
-            case 'int':
-            case 'uint':
-            case 'ulong':
-            case 'long':
-            case 'short':
-            case 'bool':
-                if (!empty($fieldDef['required']) && $fieldDef['required'] == true && $val == ''){
-                    if (isset($fieldDef['default'])){
-                        return $fieldDef['default'];
-                    }
-                    return 0;
-                }
-                return intval($val);
-            case 'double':
-            case 'float':
-            case 'currency':
-                if (!empty($fieldDef['required']) && $fieldDef['required'] == true && $val == ''){
-                    if (isset($fieldDef['default'])){
-                        return $fieldDef['default'];
-                    }
-                    return 0;
-                }
-                return floatval($val);
-        }
+        $ctype = $this->getColumnType($type);
 
-        if($this->type_map[$type] == 'clob') {
+        if($ctype == 'clob') {
             return "EMPTY_CLOB()";
         }
 
-        if($this->type_map[$type] == 'blob') {
+        if($ctype == 'blob') {
             return "EMPTY_BLOB()";
         }
 
-        $qval = $this->quoted($val);
-        switch($type) {
+        $qval = parent::massageValue($val, $fieldDef);
+        switch($ctype) {
             case 'date':
                 $val = explode(" ", $qval); // make sure that we do not pass the time portion
                 $qval = $val[0];            // get the date portion
@@ -918,9 +913,6 @@ class OracleManager extends DBManager
                 return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
             case 'time':
                 return "TO_DATE($qval, 'HH24:MI:SS')";
-            default:
-                if (!$val or $val == '')
-                    return "''";
 		}
 
         return $qval;
@@ -1442,6 +1434,9 @@ EOQ;
         if($ctype == "date") {
             return $this->convert($this->quoted("1970-01-01"), "date");
         }
+        if($ctype == "time") {
+            return $this->convert($this->quoted("00:00:00"), "time");
+        }
         return parent::emptyValue($type);
     }
 
@@ -1451,7 +1446,7 @@ EOQ;
      */
     public function lastError()
     {
-        $err = oci_error();
+        $err = oci_error($this->database);
         if(is_array($err)) {
             $err = sprintf("ERROR %d: %s in %d of [%s]", $err['code'], $err['message'], $err['offset'], $err['sqltext']);
         }
@@ -1574,6 +1569,10 @@ EOQ;
         return "CONTAINS($field, $condition, $label) > 0";
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::getScriptName()
+     */
     public function getScriptName()
     {
         return "oracle";
@@ -1581,10 +1580,10 @@ EOQ;
 
     /**
      * Execute data manipulation statement, then roll it back
-     * @param  $type
-     * @param  $table
-     * @param  $query
-     * @return string
+     * @param  $type Statement type
+     * @param  $table Table name
+     * @param  $query Query to validate
+     * @return string|bool String will be not empty if there's any
      */
     protected function verifyGenericQueryRollback($type, $table, $query)
     {

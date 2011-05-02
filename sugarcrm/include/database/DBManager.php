@@ -164,6 +164,17 @@ abstract class DBManager
     protected $type_map = array();
 
     /**
+     * Type classification into:
+     * - int
+     * - bool
+     * - float
+     * - date
+     * @abstract
+     * @var array
+     */
+    protected $type_classes = array();
+
+    /**
      * Capabilities this DB supports. Supported list:
      * affected_rows	Can report query affected rows for UPDATE/DELETE
      * 					implement getAffectedRowCount()
@@ -219,11 +230,11 @@ abstract class DBManager
     }
 
     /**
-     * Checks for database not being connected
+     * Checks for error happening in the database
      *
      * @param  string $msg        message to prepend to the error message
      * @param  bool   $dieOnError true if we want to die immediately on error
-     * @return bool
+     * @return bool True if there was an error
      */
     public function checkError($msg = '', $dieOnError = false)
     {
@@ -1758,11 +1769,8 @@ abstract class DBManager
            //custom fields handle their save seperatley
            if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
-           if(isset($bean->$field)) {
-               $val = from_html($bean->$field);
-           } else {
-                continue;
-           }
+           $val = from_html($bean->$field);
+
 		   if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
                $val = $bean->getFieldValue($field);
 		   }
@@ -1772,6 +1780,8 @@ abstract class DBManager
 
            if(!is_null($val) || !empty($fieldDef['required'])) {
     		   $columns[] = "{$fieldDef['name']}=".$this->massageValue($val, $fieldDef);
+           } else {
+               $columns[] = "{$fieldDef['name']}=NULL";
            }
 		}
 
@@ -1869,24 +1879,52 @@ abstract class DBManager
     {
         $type = $this->getFieldType($fieldDef);
 
-        switch ($type) {
-            case 'int':
-            case 'uint':
-            case 'ulong':
-            case 'long':
-            case 'short':
-            case 'tinyint':
-            case 'bool':
-                return intval($val);
-            case 'double':
-            case 'float':
-            case 'currency':
-                return floatval($val);
-                break;
-		}
+        if(isset($this->type_class[$type])) {
+            // handle some known types
+            switch($this->type_class[$type]) {
+                case 'bool':
+                case 'int':
+                    if (!empty($fieldDef['required']) && $val == ''){
+                        if (isset($fieldDef['default'])){
+                            return $fieldDef['default'];
+                        }
+                        return 0;
+                    }
+                    return intval($val);
+                case 'float':
+                    if (!empty($fieldDef['required'])  && $val == ''){
+                        if (isset($fieldDef['default'])){
+                            return $fieldDef['default'];
+                        }
+                        return 0;
+                    }
+                    return floatval($val);
+                case 'time':
+                case 'date':
+                    // empty date can't be '', so convert it to either NULL or empty date value
+                    if($val == '') {
+                        if (!empty($fieldDef['required'])) {
+                            if (isset($fieldDef['default'])) {
+                                return $fieldDef['default'];
+                            }
+                            return $this->emptyValue($type);
+                        }
+                        return "NULL";
+                    }
+                    // fall through
+            }
+        }
 
-		if ( strlen($val) == 0 )
-            return "''";
+		if ( is_null($val) ) {
+		    if(!empty($fieldDef['required'])) {
+                if (isset($fieldDef['default'])){
+                    return $fieldDef['default'];
+                }
+                return $this->emptyValue($type);
+		    } else {
+		        return "NULL";
+		    }
+		}
 
         return $this->quoted($val);
 	}
@@ -2732,12 +2770,10 @@ abstract class DBManager
      */
     public function emptyValue($type)
     {
-        if($this->_isTypeNumber($type)) {
+        if(isset($this->type_classes[$type]) && ($this->type_classes[$type] == 'bool' || $this->type_classes[$type] == 'int' || $this->type_classes[$type] == 'float')) {
             return 0;
         }
-        if($type == "currency") {
-            return 0;
-        }
+
         return "''";
     }
 

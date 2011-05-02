@@ -126,6 +126,25 @@ class MysqlManager extends DBManager
 
      );
 
+    protected $type_class = array(
+            'int'      => 'int',
+            'double'   => 'float',
+            'float'    => 'float',
+            'uint'     => 'int',
+            'ulong'    => 'int',
+            'long'     => 'int',
+            'short'    => 'int',
+            'date'     => 'date',
+            'datetime' => 'date',
+            'datetimecombo' => 'date',
+            'time'     => 'time',
+            'bool'     => 'bool',
+            'tinyint'  => 'int',
+            'currency' => 'float',
+            'decimal'  => 'float',
+            'decimal2' => 'float',
+     );
+
     protected $capabilities = array(
         "affected_rows" => true,
         "select_rows" => true,
@@ -509,7 +528,7 @@ class MysqlManager extends DBManager
         mysql_query($charset, $this->database); // no quotes around "[charset]"
         mysql_query("SET NAMES 'utf8'", $this->database);
 
-        if($this->checkError('Could Not Connect:', $dieOnError))
+        if(!$this->checkError('Could Not Connect:', $dieOnError))
             $GLOBALS['log']->info("connected to db");
 
         $GLOBALS['log']->info("Connect:".$this->database);
@@ -1059,6 +1078,9 @@ class MysqlManager extends DBManager
         }
         if($ctype == "date") {
             return $this->convert($this->quoted("0000-00-00"), "date");
+        }
+        if($ctype == "time") {
+            return $this->convert($this->quoted("00:00:00"), "time");
         }
         return parent::emptyValue($type);
     }
