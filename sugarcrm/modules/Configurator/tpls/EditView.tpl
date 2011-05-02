@@ -158,6 +158,17 @@
         <td  width='35%'>
             <div id="container_upload"></div>
             <input type='text' id='company_logo' name='company_logo' style="display:none">
+		</td>
+		<td scope="row">{$MOD.LBL_USE_SPRITES} &nbsp;{sugar_help text=$MOD.LBL_USE_SPRITES_HELP} </td>
+			{if !empty($config.use_sprites)}
+				{assign var='use_sprites' value='CHECKED'}
+			{else}
+				{assign var='use_sprites' value=''}
+			{/if}
+		<td>
+			<input type='hidden' name='use_sprites' value='false'>
+			<input name='use_sprites'  type="checkbox" value="true" {$use_sprites}>
+		</td>
     </tr>
 </table>
 
