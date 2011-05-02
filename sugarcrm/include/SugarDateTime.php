@@ -265,7 +265,7 @@ class SugarDateTime extends DateTime
 	{
 		$newdate = clone $this;
 		$newdate->setDate($this->year, $month_index+1, 1);
-		$newdate->setDate($newdate->year, $newdate->month,  $newdate->days_in_month);
+        $newdate->setDate($newdate->year, $newdate->month,  $newdate->days_in_month);
 		$newdate->setTime(0, 0);
 		return $newdate;
 	}
@@ -546,7 +546,12 @@ class SugarDateTime extends DateTime
      */
     public function modify($modify)
     {
-        parent::modify($modify);
+        if(PHP_VERSION_ID >= 50300 || $modify != 'first day of next month') {
+            parent::modify($modify);
+        } else {
+            /* PHP 5.2 does not understand 'first day of' and defaults need it */
+            $this->setDate($this->year, $this->month+1, 1);
+        }
         return $this;
     }
 

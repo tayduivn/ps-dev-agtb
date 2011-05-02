@@ -187,25 +187,26 @@ abstract class SugarRelationship
         }
     }
 
-    protected function getCustomLogicArguments($focus, $related)
+    protected function getCustomLogicArguments($focus, $related, $link_name)
     {
         $custom_logic_arguments = array();
         $custom_logic_arguments['id'] = $focus->id;
         $custom_logic_arguments['related_id'] = $related->id;
         $custom_logic_arguments['module'] = $focus->module_dir;
         $custom_logic_arguments['related_module'] = $related->module_dir;
-
+        $custom_logic_arguments['link'] = $link_name;
+        $custom_logic_arguments['relationship'] = $this->name;
     }
 
-    protected function callAfterAdd($focus, $related)
+    protected function callAfterAdd($focus, $related, $link_name="")
     {
-        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related);
+        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
         $focus->call_custom_logic('after_relationship_add', $custom_logic_arguments);
     }
 
-    protected function callAfterDelete($focus, $related)
+    protected function callAfterDelete($focus, $related, $link_name="")
     {
-        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related);
+        $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
         $focus->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
     }
 

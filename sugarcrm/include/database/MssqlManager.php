@@ -626,7 +626,7 @@ class MssqlManager extends DBManager
         $i=0;
         $offset = 0;
         $strip_array = array();
-        while ($i<$count) {
+        while ($i<$count && $offset<strlen($p_sql)) {
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
                 break;
@@ -776,7 +776,7 @@ class MssqlManager extends DBManager
     {
         $sql = strtolower($sql);
         $orig_order_match = trim($orig_order_match);
-        if (strpos($orig_order_match, "."))
+        if (strpos($orig_order_match, ".") != 0)
             //this has a tablename defined, pass in the order match
             return $orig_order_match;
 
@@ -831,12 +831,15 @@ class MssqlManager extends DBManager
             //and is not part of a function (i.e. "ISNULL(leads.last_name,'') as name"  )
             //this is especially true for unified search from home screen
 
+            $alias_beg_pos = 0;
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
-            else
+            else if (strncasecmp($psql, 'isnull', 6) != 0)
                 $alias_beg_pos = strpos($psql, " ");
 
-            $col_name = substr($psql,0, $alias_beg_pos );
+            if ($alias_beg_pos > 0) {
+                $col_name = substr($psql,0, $alias_beg_pos );
+            }
             //add the "asc/desc" order back
             $col_name = $col_name. " ". $asc_desc;
 
@@ -887,15 +890,15 @@ class MssqlManager extends DBManager
             $sql = strtolower($sql);
 
             //look for the location of the "from" in sql string
-            $fromLoc = strpos ( $sql," from " );
+            $fromLoc = strpos($sql," from " );
             if ($fromLoc>0){
                 //found from, substring from the " FROM " string in sql to end
                 $tableEnd = substr($sql, $fromLoc+6);
                 //We know that tablename will be next parameter after from, so
                 //grab the next space after table name.
                 // MFH BUG #14009: Also check to see if there are any carriage returns before the next space so that we don't grab any arbitrary joins or other tables.
-                $carriage_ret = strpos($tableEnd, "\n");
-                $next_space = strpos($tableEnd, " ");
+                $carriage_ret = strpos($tableEnd,"\n");
+                $next_space = strpos($tableEnd," " );
                 if ($carriage_ret < $next_space)
                     $next_space = $carriage_ret;
                 if ($next_space > 0) {

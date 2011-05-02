@@ -532,6 +532,8 @@ class SugarFolder {
 		foreach($folders as $a) {
 			$a['selected'] = (in_array($a['id'], $subscriptions)) ? true : false;
             $a['origName'] = $a['name'];
+            if( isset($a['dynamic_query']) )
+                unset($a['dynamic_query']);
 			if($a['is_group'] == 1) {
 				$grp[] = $a;
 			} else {

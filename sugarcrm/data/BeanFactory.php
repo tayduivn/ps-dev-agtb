@@ -24,7 +24,7 @@ class BeanFactory {
             {
                 $bean = new $beanClass();
                 $bean->retrieve($id);
-                self::registerBean($module, $bean);
+                self::registerBean($module, $bean, $id);
             } else
             {
                 self::$hits++;
@@ -50,7 +50,7 @@ class BeanFactory {
         return $beanList[$module];
     }
 
-    static function registerBean($module, $bean)
+    static function registerBean($module, $bean, $id=false)
     {
         global $beanList;
         if (empty($beanList[$module]))  return false;
@@ -66,10 +66,15 @@ class BeanFactory {
             unset(self::$loadOrder[$index]);
         }
 
-        self::$loadedBeans[$module][$bean->id] = $bean;
-        self::$total++;
-        self::$loadOrder[self::$total] = array("module" => $module, "id" => $bean->id);
-
+        if(!empty($bean->id))
+           $id = $bean->id;
+        
+        if ($id)
+        {
+            self::$loadedBeans[$module][$id] = $bean;
+            self::$total++;
+            self::$loadOrder[self::$total] = array("module" => $module, "id" => $id);
+        }
 
         return $beanList[$module];
     }

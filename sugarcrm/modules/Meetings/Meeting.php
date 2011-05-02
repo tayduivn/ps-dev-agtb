@@ -136,13 +136,18 @@ class Meeting extends SugarBean {
 		global $timedate;
 		global $current_user;
 
-		if(isset($this->date_start)
-			&& isset($this->duration_hours)
-			&& isset($this->duration_minutes)) {
-                $dbObj = $timedate->fromDb($this->date_start);
-                if($dbObj){
-			        $this->date_end = $dbObj->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-                }
+		global $disable_date_format;
+		
+	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+        {
+        	if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+	        {
+	    	    $td = $timedate->fromDb($this->date_start);
+	    	    if($td)
+	    	    {
+		        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+	    	    }	
+	        }
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
@@ -421,10 +426,10 @@ class Meeting extends SugarBean {
 
             $meetingLink = '';
             if ($GLOBALS['current_user']->id == $this->assigned_user_id ) {
-                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_HOST_EXT_MEETING'].'"></a>';
+                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"></a>';
             }
-            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_JOIN_EXT_MEETING'].'"></a>';
 
+            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_JOIN_EXT_MEETING',$this->module_dir).'"></a>';
             $this->displayed_url = $meetingLink;
         }
         //END SUGARCRM flav!=com ONLY

@@ -182,10 +182,18 @@ class UnifiedSearchAdvanced {
 			            $modules_to_search[$key] = $value;
 			        }
 			    }
-			} else { 
-				// select all the modules (ie first time user has used global search)
-				foreach($unified_search_modules as $module=>$data) {
-				    if (!empty($data['default']) ) {
+			} else {
+				
+				//Load the display file to see which modules are elected for global search
+				if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+				{
+				   $this->createUnifiedSearchModulesDisplay();
+				}
+				include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');	
+				
+				
+				foreach($unified_search_modules_display as $module=>$data) {
+				    if (!empty($data['visible']) ) {
 				        $modules_to_search[$module] = $beanList[$module];
 				    }
 				}

@@ -206,7 +206,13 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
     }
 	
 	if (field.value !== null && typeof(field.value) != "undefined")
+	{
+		var asNum = SUGAR.expressions.unFormatNumber(field.value);
+		if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
+			return asNum;
+		}
 		return field.value;
+	}
 	
 	return YAHOO.lang.trim(field.innerText);
 }
@@ -279,13 +285,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	AH.LOCKS[variable] = true;
 
 	// fire onchange
-	var listeners = YAHOO.util.Event.getListeners(field, 'change');
-	if (listeners != null) {
-		for (var i = 0; i < listeners.length; i++) {
-			var l = listeners[i];
-			l.fn.call(l.scope ? l.scope : this, l.obj);
-		}
-	}
+	SUGAR.util.callOnChangeListers(field);
 
 	// unlock this variable
 	AH.LOCKS[variable] = null;

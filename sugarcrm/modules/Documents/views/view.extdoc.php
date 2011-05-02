@@ -117,7 +117,7 @@ class DocumentsViewExtdoc extends SugarView
 
         $displayColumns = array(
             'NAME' => array(
-                'label' => 'LBL_LIST_DOCUMENT_NAME',
+                'label' => 'LBL_LIST_EXT_DOCUMENT_NAME',
                 'type' => 'varchar',
                 'link' => true,
                 ),
@@ -129,7 +129,9 @@ class DocumentsViewExtdoc extends SugarView
 
         $ss = new Sugar_Smarty();
         $ss->assign('searchFieldLabel',translate('LBL_SEARCH_EXTERNAL_DOCUMENT','Documents'));
+        $ss->assign('displayedNote',translate('LBL_EXTERNAL_DOCUMENT_NOTE','Documents'));
         $ss->assign('APP',$GLOBALS['app_strings']);
+        $ss->assign('MOD',$GLOBALS['mod_strings']);
         $ss->assign('data', $searchData);
         $ss->assign('displayColumns',$displayColumns);
         $ss->assign('imgPath',SugarThemeRegistry::current()->getImageURL($apiName.'_image_inline.png'));

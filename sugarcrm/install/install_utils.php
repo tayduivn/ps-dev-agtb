@@ -815,6 +815,7 @@ RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
 RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
 RedirectMatch 403 {$ignoreCase}/+cache/+upload
+RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 # END SUGARCRM RESTRICTIONS
 EOQ;
@@ -840,7 +841,12 @@ EOQ;
 /**
  * (re)write the web.config file to prevent browser access to the log file
  */
-function handleWebConfig() {
+function handleWebConfig() 
+{
+    if ( !isset($_SERVER['IIS_UrlRewriteModule']) ) {
+        return;
+    }
+
 	global $setup_site_log_dir;
     global $setup_site_log_file;
     global $sugar_config;

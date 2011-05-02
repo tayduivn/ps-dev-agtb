@@ -237,6 +237,8 @@ function clearCompanyLogo(){
     }    
 }
 
+
+
 function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
@@ -286,6 +288,8 @@ function status_post_install_action($action){
 	}
 	return '';
 }
+
+
 
 function post_install() {
 	global $unzip_dir;
@@ -478,5 +482,4 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 	}
 
 }
-
 ?>

@@ -107,7 +107,6 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadDisplaySettingsUserTheme()
     {
         $this->_loadUser();
-
         $_REQUEST['usertheme'] = (string) SugarThemeRegistry::getDefault();
         
         $this->_app->loadDisplaySettings();

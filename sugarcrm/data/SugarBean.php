@@ -635,14 +635,41 @@ class SugarBean
             return;
 
         foreach ($this->field_defs as $field => $value) {
-		if( !empty($this->$field)
+		    if( !empty($this->$field)
                   && ((isset($value['default']) && $this->$field == $value['default']) || (!empty($value['display_default']) && $this->$field == $value['display_default']))
                     ) {
+                $this->$field = null;
+                continue;
+            }
+            if(!empty($this->$field) && !empty($value['display_default']) && in_array($value['type'], array('date', 'datetime', 'datetimecombo')) &&
+            $this->$field == $this->parseDateDefault($value['display_default'], ($value['type'] != 'date'))) {
                 $this->$field = null;
             }
         }
     }
 
+    /**
+     * Create date string from default value
+     * like '+1 month'
+     * @param string $value
+     * @param bool $time Should be expect time set too?
+     * @return string
+     */
+    protected function parseDateDefault($value, $time = false)
+    {
+        global $timedate;
+        if($time) {
+            $dtAry = explode('&', $value, 2);
+            $dateValue = $timedate->getNow(true)->modify($dtAry[0]);
+            if(!empty($dtAry[1])) {
+                $timeValue = $timedate->fromString($dtAry[1]);
+                $dateValue->setTime($timeValue->hour, $timeValue->min, $timeValue->sec);
+            }
+            return $timedate->asUser($dateValue);
+        } else {
+            return $timedate->asUserDate($timedate->getNow(true)->modify($value));
+        }
+    }
 
     function populateDefaultValues($force=false){
         if ( !is_array($this->field_defs) )
@@ -654,31 +681,15 @@ class SugarBean
                 switch($type){
                     case 'date':
                         if(!empty($value['display_default'])){
-                            global $timedate;
-                            require_once('modules/DynamicFields/templates/Fields/TemplateDate.php');
-                            $td = new TemplateDate();
-                            $timeValue = ($value['display_default'] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($value['display_default']) ;
-                            $this->$field = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat,$timeValue), false);
-                            break;
+                            $this->$field = $this->parseDateDefault($value['display_default']);
                         }
-                    case 'datetimecombo':
+                        break;
+                   case 'datetime':
+                   case 'datetimecombo':
                         if(!empty($value['display_default'])){
-                            global $timedate;
-                            $dtAry = explode('&', $value['display_default'] , 2);
-                            if(!empty($dtAry[0]) ){
-                                $dateValue = ($dtAry[0] == 'first of next month') ? $timeValue = strtotime( "+1 month" , strtotime( date("F")."1") ) : strtotime($dtAry[0]) ;
-                                $dateValue = date($GLOBALS['timedate']->dbDayFormat, $dateValue);
-                            }else{
-                                $dateValue='';
-                            }
-                            if(!empty($dtAry[1])){
-                                $timeValue = date($GLOBALS['timedate']->dbTimeFormat, strtotime($dtAry[1]));
-                            }else{
-                                $timeValue = '';
-                            }
-                            $this->$field = $timedate->to_display_date_time($dateValue.' '.$timeValue , true , false);
-                            break;
+                            $this->$field = $this->parseDateDefault($value['display_default'], true);
                         }
+                        break;
                     case 'multienum':
                         if(empty($value['default']) && !empty($value['display_default']))
                             $this->$field = $value['display_default'];
@@ -984,32 +995,9 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-
-        //BEGIN SUGARCRM flav!=sales ONLY
-        //if bean_name is Case then use aCase
-        if($bean_name=="Case")
-            $bean_name = "aCase";
-        //END SUGARCRM flav!=sales ONLY
-
-        //add a references to bean_name if it doe not exist aleady.
-        if (!(class_exists($bean_name)))
-        {
-
-            if (isset($GLOBALS['beanList']) && isset($GLOBALS['beanFiles']))
-            {
-                global $beanFiles;
-            }
-            else
-            {
-
-            }
-            $bean_file=$beanFiles[$bean_name];
-            include_once($bean_file);
-        }
-
         $this->load_relationship($field_name);
 
-        return $this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where);
+        return $this->$field_name->getBeans();
     }
 
     /**
@@ -1454,17 +1442,16 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         //Prevent cascading saves
-        if (empty($GLOBALS['updating_relationships']))
+        global $saved_beans;
+        if (empty($saved_beans))
+            $saved_beans = array();
+        if (empty($saved_beans[$this->module_name]))
+                $saved_beans[$this->module_name] = array();
+        if (empty($saved_beans[$this->module_name][$this->id]))
         {
-            global $saved_beans;
-            if (empty($saved_beans))
-                $saved_beans = array();
-            if (empty($saved_beans[$this->module_name]))
-                    $saved_beans[$this->module_name] = array();
             $saved_beans[$this->module_name][$this->id] = true;
             $this->updateRelatedCalcFields();
         }
-
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1488,7 +1475,7 @@ class SugarBean
     function updateCalculatedFields()
     {
         require_once("include/Expressions/DependencyManager.php");
-        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false);
+        $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false, true);
         foreach($deps as $dep)
         {
             if ($dep->getFireOnLoad())
@@ -1520,13 +1507,14 @@ class SugarBean
         }
     }
 
-    function updateRelatedCalcFields()
+    function updateRelatedCalcFields($linkName = "")
     {
         if (empty($this->id) || $this->new_with_id)
             return;
         global $dictionary, $updating_relationships, $saved_beans;
         if ($updating_relationships)
         {
+            $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");
             return;
         }
         $updating_relationships = true;
@@ -1576,12 +1564,51 @@ class SugarBean
                 }
             }
         }
-        if (!empty($dictionary[$this->object_name]['related_calc_fields'])
-            && empty($saved_beans[$this->module_name][$this->id]))
+        if (empty($saved_beans[$this->module_name][$this->id]) && $this->has_calc_field_with_link($linkName))
         {
+            //Save will updated the saved_beans array
             $this->save();
-        }
+        } 
         $updating_relationships = false;
+    }
+
+    /**
+     * Tests if the current module has a calculated field with a link.
+     * if a link name is specified, it will return true when a field uses that specific link
+     * Otherwise it will test for all link fields.
+     * @param string $linkName
+     * @return bool
+     */
+    function has_calc_field_with_link($linkName = ""){
+        $links = array();
+        if (empty($linkName))
+        {
+            foreach ($this->field_defs as $field => $def)
+            {
+                if (!empty ($def['type']) && $def['type'] == "link")
+                    $links[$field] = true;
+            }
+        }
+        else {
+            $links[$linkName] = true;
+        }
+        if (!empty($links))
+        {
+            foreach($this->field_defs as $name => $def)
+            {
+                //Look through all calculated fields for uses of this link field
+                if(!empty($def['formula']))
+                {
+                    $fields = Parser::getFieldsFromExpression($def['formula']);
+                    foreach($fields as $var)
+                    {
+                        if (!empty($links[$var]))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -2075,6 +2102,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'datetime':
                 case 'datetimecombo':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$this->$field) ) {
                         // This appears to be formatted in user date/time
                         $this->$field = $timedate->to_db($this->$field);
@@ -2083,6 +2114,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'date':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_date($this->$field, false);
@@ -2091,6 +2126,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'time':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
                         $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
@@ -2718,7 +2757,6 @@ function save_relationship_changes($is_update, $exclude=array())
         $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 
-
         if(isset($_SESSION['show_deleted']))
         {
             $show_deleted = 1;
@@ -2780,7 +2818,6 @@ function save_relationship_changes($is_update, $exclude=array())
         if (empty($final_query))
         {
             $subqueries = SugarBean::build_sub_queries_for_union($subpanel_list, $subpanel_def, $parentbean, $order_by);
-            //echo "<pre>" . print_r($subqueries, true) . "</pre>";
             $all_fields = array();
             foreach($subqueries as $i => $subquery)
             {
@@ -2830,8 +2867,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 {
                     //resort to default behavior.
                     $query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
-
-
                 }
                 if(!empty($subquery['secondary_select']))
                 {
@@ -3333,8 +3368,6 @@ function save_relationship_changes($is_update, $exclude=array())
                             }
                         }
                     }
-                    //Replace references to this table in the where clause with the new alias
-                    $join_table_name = $this->$data['link']->getRelatedTableName();
                     // To fix SOAP stuff where we are trying to retrieve all the accounts data where accounts.id = ..
                     // and this code changes accounts to jt4 as there is a self join with the accounts table.
                     //Martin fix #27494
@@ -5121,10 +5154,9 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if (empty($GLOBALS['updating_relationships']) &&
-                    ($event == "after_relationship_add" || $event == "after_relationship_delete"))
+            if ($event == "after_relationship_add" || $event == "after_relationship_delete")
             {
-                $this->updateRelatedCalcFields();
+                $this->updateRelatedCalcFields($arguments['link']);
             }
             //END SUGARCRM flav=pro ONLY
         }

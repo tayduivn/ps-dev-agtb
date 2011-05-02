@@ -29,10 +29,10 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
 	{
 
-	    /*$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");*/
+		$GLOBALS['current_user']->setPreference('timef', "h.iA");
 	}
 
 	public function tearDown()

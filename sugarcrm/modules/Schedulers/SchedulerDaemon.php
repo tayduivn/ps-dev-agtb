@@ -279,8 +279,8 @@ class SchedulerDaemon extends Scheduler {
 	 * @return	$successful	Boolean flag whether a job(s) is found
 	 */
 	function checkPendingJobs() {
-		global $timedate;
 		global $sugar_config;
+		global $timedate;
 		
 		$GLOBALS['log']->debug('');
 		$GLOBALS['log']->debug('----->Scheduler checking for qualified jobs to run.');

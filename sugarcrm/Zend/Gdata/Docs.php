@@ -23,6 +23,7 @@
 /**
  * Modifications by SugarCRM
  * 
+ * April 12, 2011 - asandberg: Changed mime-type for jpg files to image/jpeg
  * March 14, 2011 - asandberg: Added support for Google API v3: http://code.google.com/p/gdata-samples/source/browse/trunk/doclist/OCRDemo/DocsBeta.php
  * March 10, 2011 - asandberg: Added getSupportedMimeTypes function
  */
@@ -80,7 +81,7 @@ class Zend_Gdata_Docs extends Zend_Gdata
       'DOCX' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'HTML' =>'text/html',
       'HTM' => 'text/html',
-      'JPG' => 'image/jpg',
+      'JPG' => 'image/jpeg',
       'ODS' => 'application/vnd.oasis.opendocument.spreadsheet',
       'ODT' => 'application/vnd.oasis.opendocument.text',
       'PDF' => 'application/pdf',

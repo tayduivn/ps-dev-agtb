@@ -64,7 +64,8 @@ class JitReports extends Jit {
 				$data .= $this->processDataGroup(4, $key, 'NULL', '', '');
 			}			
 			else if (array_key_exists('numerical_value', $dataset)){
-				$data .= $this->processDataGroup($level, $dataset['group_base_text'], $dataset['numerical_value'], $dataset['numerical_value'], '');
+				$link = (isset($dataset['link'])) ? '#'.$dataset['link'] : '';
+				$data .= $this->processDataGroup($level, $dataset['group_base_text'], $dataset['numerical_value'], $dataset['numerical_value'], $link);
 				array_push($this->processed_report_keys, $dataset['group_base_text']);
 				return $data;
 			}

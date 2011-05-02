@@ -43,6 +43,8 @@ SUGAR.themes.show_image      = '{/literal}{sugar_getimagepath file="show.gif"}{l
 if ( YAHOO.env.ua )
     UA = YAHOO.env.ua;
 -->
+
+
 </script>
 {/literal}
 </head>

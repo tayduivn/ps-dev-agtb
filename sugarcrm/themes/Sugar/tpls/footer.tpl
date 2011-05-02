@@ -27,6 +27,8 @@
  ********************************************************************************/
 *}
 <!--end body panes-->
+		</td>
+		</tr>
 	  </table>
     </div>
     <div class="clear"></div>
@@ -42,6 +44,20 @@
         {$COPYRIGHT}
     </div>
 </div>
+<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png' style='display:none'></iframe>
+<input id='ajaxUI-history-field' type='hidden'>
+<script>
+{literal}
+if(SUGAR.util.isTouchScreen()) {
+	setTimeout(resizeHeader,10000);
+}
+if (!SUGAR._ajax_hist_loaded)
+{
+    YAHOO.util.History.register('ajaxUILoc', "", SUGAR._ajaxGo);
+    YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
+}
+{/literal}
+</script>
 
 </body>
 </html>

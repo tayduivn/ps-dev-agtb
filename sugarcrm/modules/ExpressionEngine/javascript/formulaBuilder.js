@@ -335,6 +335,7 @@ SUGAR.expressions.GridToolTip = {
 			case "formatName":
 			case "rollup":
 			case "count":
+			case "sugarField":
 				continue;
 				break;
 			}

@@ -258,10 +258,6 @@ class MysqliManager extends MysqlManager
         }
 
         $row = mysqli_fetch_assoc($result);
-        // Unlike mysql, mysqli returns null when no more rows are available
-        if ( is_null($row) ) {
-            return false;
-        }
 
         if ($encode && $this->encode && is_array($row))
             return array_map('to_html', $row);

@@ -92,9 +92,40 @@ class SugarView
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();
+        $ajax_ret = array();
+		if ($this->_getOption('json_output')){
+			ob_start();
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+				echo $this->_getModLanguageJS();
+			}
+		}
         $this->display();
+        if ($this->_getOption('json_output'))
+        {
+            $content = ob_get_clean();
+            $module = $this->module;
+            $ajax_ret = array(
+                 'content' => $content,
+                 'menu' => array(
+                     'module' => $module,
+                     'label' => translate($module),
+                     $this->getMenu($module),
+                 ),
+                'moduleList' => $this->displayHeader(true),
+                'title' => $this->getBrowserTitle(),
+            );
+        }
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        if ($this->_getOption('show_subpanels')) $this->_displaySubPanels();
+        if ($this->_getOption('json_output'))
+            ob_start();
+
+        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
+        if ($this->_getOption('json_output'))
+        {
+            $ajax_ret['content'] .= ob_get_clean();
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        }
         if ($this->action === 'Login') {
             //this is needed for a faster loading login page ie won't render unless the tables are closed
             ob_flush();
@@ -193,7 +224,7 @@ class SugarView
     /**
      * Displays the header on section of the page; basically everything before the content
      */
-    public function displayHeader()
+    public function displayHeader($retModTabs=false)
     {
         global $theme;
         global $max_tabs;
@@ -582,18 +613,30 @@ class SugarView
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
             $ss->clear_compiled_tpl($headerTpl);
-        $ss->display($headerTpl);
 
-        $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+        if ($retModTabs)
+        {
+            return $ss->fetch($themeObject->getTemplate('_headerModuleList.tpl'));
+        } else {
+            $ss->display($headerTpl);
 
-        $errorMessages = SugarApplication::getErrorMessages();
-        if ( !empty($errorMessages)) {
-            foreach ( $errorMessages as $error_message ) {
-                echo('<p class="error">' . $error_message.'</p>');
+            $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+
+            $errorMessages = SugarApplication::getErrorMessages();
+            if ( !empty($errorMessages)) {
+                foreach ( $errorMessages as $error_message ) {
+                    echo('<p class="error">' . $error_message.'</p>');
+                }
             }
         }
 
     }
+
+    function getModuleMenuHTML()
+    {
+
+    }
+
     /**
      * If the view is classic then this method will include the file and
      * setup any global variables.
@@ -744,11 +787,9 @@ EOHTML;
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
             echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
-            if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
-                require_once ('include/language/jsLanguage.php');
-                jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
-            }
-            echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+			
+			echo $this->_getModLanguageJS();
+			
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
             echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
@@ -772,7 +813,15 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
-
+	
+	protected function _getModLanguageJS(){
+		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+			require_once ('include/language/jsLanguage.php');
+			jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
+		}
+		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+	}
+	
     /**
      * Called from process(). This method will display the footer on the page.
      */
