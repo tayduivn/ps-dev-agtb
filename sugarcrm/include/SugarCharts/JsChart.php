@@ -66,7 +66,7 @@ class JsChart extends SugarChart {
 	}
 
 	function tab($str, $depth){
-        $str = preg_replace('/(<\w+>)(.*)(<\/\w+>)/e', "'\\1'.htmlentities(from_html('\\2')).'\\3'", $str);
+        //$str = preg_replace('/(<\w+>)(.*)(<\/\w+>)/e', "'\\1'.htmlentities(from_html('\\2')).'\\3'", $str);
         return str_repeat("\t", $depth) . $str . "\n";
 	}
 
