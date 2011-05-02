@@ -416,6 +416,8 @@ function get_sugar_config_defaults() {
 	'use_real_names' => true,
 	//BEGIN SUGARCRM flav=int ONLY
 
+	'use_sprites' => false,
+
 	// REMOVE BEFORE SHIPPING
 	'new_subpanels' => true,
 	//END SUGARCRM flav=int ONLY
