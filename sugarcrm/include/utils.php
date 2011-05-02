@@ -411,13 +411,11 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-
+	'use_sprites' => false,
 
 	//END SUGARCRM flav=pro ONLY
 	'use_real_names' => true,
 	//BEGIN SUGARCRM flav=int ONLY
-
-	'use_sprites' => false,
 
 	// REMOVE BEFORE SHIPPING
 	'new_subpanels' => true,
