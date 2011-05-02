@@ -40,6 +40,7 @@ if(!defined('JSMIN_AS_LIB'))
 require_once("include/SugarTheme/cssmin.php");
 require_once("jssource/jsmin.php");
 require_once('include/utils/sugar_file_utils.php');
+require_once("include/SugarTheme/SugarSprites.php");
 
 /**
  * Class that provides tools for working with a theme.
@@ -509,6 +510,23 @@ class SugarTheme
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('deprecated.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('style.css').'" />';
 
+		if($GLOBALS['sugar_config']['use_sprites']) {
+
+			// system wide sprites
+			if(file_exists("cache/sprites/default/sprites.css"))
+				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/default/sprites.css" />';
+
+			// theme specific sprites
+			if(file_exists("cache/sprites/{$this->dirName}/sprites.css"))
+				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$this->dirName.'/sprites.css" />';
+
+			// parent sprites
+			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
+				if(file_exists("cache/sprites/{$parent->dirName}/sprites.css"))
+					$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$parent->dirName.'/sprites.css" />';
+			}
+		}
+
         // for BC during upgrade
         if ( !empty($this->colors) ) {
             if ( isset($_SESSION['authenticated_user_theme_color']) && in_array($_SESSION['authenticated_user_theme_color'], $this->colors))
@@ -600,11 +618,65 @@ EOHTML;
 
         $imageName .= $ext;
         if(!empty($cached_results[$imageName]))
+
+			// handle multiple class tags for sprites
+			if($GLOBALS['sugar_config']['use_sprites']) {
+				$class_regex = '/class=["\']([^\'"]+)["\']/i';
+				preg_match($class_regex, $other_attributes, $match);
+				if(isset($match[1])) {
+					// get sprite class from cache
+					preg_match($class_regex, $cached_results[$imageName], $sprite_class);
+					// add sprite class to other attribute class definition
+					$other_attributes = preg_replace($class_regex, 'class="'.$sprite_class[1].' ${1}"', $other_attributes);
+					return "<span {$other_attributes} ></span>";
+				}
+			}
+
+			// use </span> instead of /> for span tag closing which can messup the UI
+			if(substr($cached_results[$imageName],0,5) == '<span')
+				return $cached_results[$imageName]." $other_attributes></span>";
+
             return $cached_results[$imageName]."$other_attributes />";
 
         $imageURL = $this->getImageURL($imageName,false);
         if ( empty($imageURL) )
             return false;
+
+		// sprite processing
+		if($GLOBALS['sugar_config']['use_sprites']) {
+		
+			// load sprites metadata
+			$sp = SugarSprites::getInstance();
+			$sp->loadSpriteMeta($this->dirName);
+			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
+				$sp->loadSpriteMeta($parent->dirName);
+			}
+
+			if(isset($sp->sprites[md5($imageURL)])) {
+
+				// sprite class
+				$class = 'spr_'.md5($imageURL);
+
+				// append sprite class to class present in other attributes
+				$class_regex = '/class=["\']([^\'"]+)["\']/i';
+				if(preg_match($class_regex, $other_attributes)) {
+					$other_attributes = preg_replace($class_regex, 'class="'.$class.' ${1}"', $other_attributes);
+
+				// add the sprite class if no class defined yet
+				} else {
+					$other_attributes .= ' class="'.$class.'"';
+				}
+
+				// cache span tag with single sprite class so we can use it later on
+				$cached_results[$imageName] = '<span class="'.$class.'"';
+
+				// do not return from cache, otherwise multi classes are not handled correctly
+				return "<span {$other_attributes}></span>";
+
+			} else {
+				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
+			}
+		}
 
         $size = getimagesize($imageURL);
         if ( is_null($width) )
@@ -650,6 +722,9 @@ EOHTML;
             $imagePath = $filename;
         elseif (($filename = $this->_getImageFileName($this->getDefaultImagePath().'/'.$imageName)) != '')
             $imagePath = $filename;
+		// also look in include/images
+		elseif (($filename = $this->_getImageFileName('include/images/'.$imageName)) != '')
+			$imagePath = $filename;
         else {
             $GLOBALS['log']->warn("Image $imageName not found");
             return false;
