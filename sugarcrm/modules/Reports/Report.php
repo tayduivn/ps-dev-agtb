@@ -110,19 +110,19 @@ class Report
     function Report($report_def_str='', $filters_def_str='', $panels_def_str='') {
         global $current_user, $current_language, $app_list_strings;
         if(!isset($current_user) || empty($current_user)) {
-            
+
             $current_user = new User();
             $current_user->retrieve('1');
         }
-        
+
         //Scheduled reports don't have $_REQUEST.
         if ((!isset($_REQUEST['module']) || $_REQUEST['module'] == 'Reports') && !defined('SUGAR_PHPUNIT_RUNNER')){
             Report::cache_modules_def_js();
         }
 
         //_pp($report_def_str);
-        $mod_strings = return_module_language($current_language, 'Reports'); 
-        
+        $mod_strings = return_module_language($current_language, 'Reports');
+
         $this->report_max = (!empty($GLOBALS['sugar_config']['list_report_max_per_page']))?$GLOBALS['sugar_config']['list_report_max_per_page']:100;
         $this->report_offset = (!empty($_REQUEST['report_offset']))?$_REQUEST['report_offset']:0;
         if($this->report_offset < 0)$this->report_offset = 0;
@@ -145,9 +145,9 @@ class Report
         }
         // 5.1 Report Format - only called by the Wizard.
         if (!empty($filters_def_str)) {
-            $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));          
+            $this->parseUIFiltersDef($json->decode($filters_def_str), $json->decode($panels_def_str));
         }
-        
+
         if ( ! empty($this->report_def['report_name']))
         {
             $this->name = $this->report_def['report_name'];
@@ -188,11 +188,11 @@ class Report
                                 break;
                             }
                         }
-                    if (!$isInGroupBy)                  
-                        $this->report_def['group_defs'][count($this->report_def['group_defs'])] = $summary_column;  
+                    if (!$isInGroupBy)
+                        $this->report_def['group_defs'][count($this->report_def['group_defs'])] = $summary_column;
                 }
             }
-        }        
+        }
 
         if ( ! empty($this->report_def['full_table_list']) )
         {
@@ -231,7 +231,7 @@ class Report
                 $linkObject = $tmpBean->$old_link;
                 $relationship = $tmpBean->$old_link->_relationship;
                 $newIndex = $tempFullTableList['self']['module'].':'. $linked_fields[$old_link]['name'];
-                $upgrade_lookup[$old_link] = $newIndex; 
+                $upgrade_lookup[$old_link] = $newIndex;
                 $tempFullTableList[$newIndex]['label'] = translate($linked_fields[$old_link]['vname']);
                 $tempFullTableList[$newIndex]['link_def']['relationship_name'] = $linked_fields[$old_link]['relationship'];
                 $tempFullTableList[$newIndex]['link_def']['name'] = $linked_fields[$old_link]['name'];
@@ -256,7 +256,7 @@ class Report
                 $tempFullTableList[$newIndex]['module'] = $linkObject->getRelatedModuleName();
                 $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = $linkObject->_get_bean_position() ? 1 : 0;
                 $tempFullTableList[$newIndex]['name'] = $tempFullTableList['self']['module']." > ". $tempFullTableList[$newIndex]['module'] ;
-                
+
             }
 
             unset($this->report_def['links_def']);
@@ -274,47 +274,47 @@ class Report
                     $newIndex =  $tempFullTableList['self']['module'] .":". $table_data['link_def']['name'];
                     $tempFullTableList[$newIndex] = $table_data;
                     $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
-                    $tempFullTableList[$newIndex]['parent']= 'self';                    
-                    $tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];     
-                    if (isset($table_data['optional']) && $table_data['optional'] == 1) 
-                        $tempFullTableList[$newIndex]['optional']= 1;       
+                    $tempFullTableList[$newIndex]['parent']= 'self';
+                    $tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];
+                    if (isset($table_data['optional']) && $table_data['optional'] == 1)
+                        $tempFullTableList[$newIndex]['optional']= 1;
                     unset($tempFullTableList[$newIndex]['children']);
                     //unset($tempFullTableList[$newIndex]['label']);
                     unset($tempFullTableList[$newIndex]['value']);
-                    $upgrade_lookup[$table_key] = $newIndex;                    
+                    $upgrade_lookup[$table_key] = $newIndex;
                 }
                 else {
-                    $newIndex =  $tempFullTableList[$upgrade_lookup[$parentLink]]['link_def']['table_key'] .":". 
+                    $newIndex =  $tempFullTableList[$upgrade_lookup[$parentLink]]['link_def']['table_key'] .":".
                         $table_data['link_def']['name'];
                     $tempFullTableList[$newIndex] = $table_data;
                     $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
-                    $tempFullTableList[$newIndex]['parent']= $upgrade_lookup[$parentLink];                  
-                    $tempFullTableList[$newIndex]['name']= $tempFullTableList[$upgrade_lookup[$parentLink]]['name'] . " > " .$table_data['module'];                 
+                    $tempFullTableList[$newIndex]['parent']= $upgrade_lookup[$parentLink];
+                    $tempFullTableList[$newIndex]['name']= $tempFullTableList[$upgrade_lookup[$parentLink]]['name'] . " > " .$table_data['module'];
                     unset($tempFullTableList[$newIndex]['children']);
                     //unset($tempFullTableList[$newIndex]['label']);
                     unset($tempFullTableList[$newIndex]['value']);
-                    if (isset($table_data['optional']) && $table_data['optional'] == 1) 
-                        $tempFullTableList[$newIndex]['optional']= 1;       
-                    $upgrade_lookup[$table_key] = $newIndex;                    
-                }           
+                    if (isset($table_data['optional']) && $table_data['optional'] == 1)
+                        $tempFullTableList[$newIndex]['optional']= 1;
+                    $upgrade_lookup[$table_key] = $newIndex;
+                }
             }
             else if ($table_key != 'self' && preg_match('/:/',$table_key) == 0) {
                 $newIndex =  $tempFullTableList['self']['module'] .":". $table_data['link_def']['name'];
                 $tempFullTableList[$newIndex] = $table_data;
                 $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
-                $tempFullTableList[$newIndex]['parent']= 'self';                    
-                $tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];     
-                if (isset($table_data['optional']) && $table_data['optional'] == 1) 
-                    $tempFullTableList[$newIndex]['optional']= 1;       
+                $tempFullTableList[$newIndex]['parent']= 'self';
+                $tempFullTableList[$newIndex]['name']= $tempFullTableList['self']['module'] . " > " .$table_data['module'];
+                if (isset($table_data['optional']) && $table_data['optional'] == 1)
+                    $tempFullTableList[$newIndex]['optional']= 1;
                 unset($tempFullTableList[$newIndex]['children']);
                 //unset($tempFullTableList[$newIndex]['label']);
                 unset($tempFullTableList[$newIndex]['value']);
-                $upgrade_lookup[$table_key] = $newIndex;                    
+                $upgrade_lookup[$table_key] = $newIndex;
             }
-        } 
+        }
         if (isset($upgrade_lookup) && count($upgrade_lookup) > 0) {
             $this->full_table_list = $tempFullTableList;
-            $this->report_def['full_table_list'] =  $tempFullTableList;      
+            $this->report_def['full_table_list'] =  $tempFullTableList;
             for ($i = 0; $i < count($this->report_def['display_columns']); $i++) {
                 if ($this->report_def['display_columns'][$i]['table_key'] != 'self') {
                     $this->report_def['display_columns'][$i]['table_key'] = $upgrade_lookup[$this->report_def['display_columns'][$i]['table_key']];
@@ -324,64 +324,64 @@ class Report
                 if ($this->report_def['summary_columns'][$i]['table_key'] != 'self') {
                     $this->report_def['summary_columns'][$i]['table_key'] = $upgrade_lookup[$this->report_def['summary_columns'][$i]['table_key']];
                 }
-            }       
+            }
 
             for ($i = 0; $i < count($this->report_def['group_defs']); $i++) {
                 if ($this->report_def['group_defs'][$i]['table_key'] != 'self') {
                     $this->report_def['group_defs'][$i]['table_key'] = $upgrade_lookup[$this->report_def['group_defs'][$i]['table_key']];
                 }
-            }   
+            }
             if (isset($this->report_def['order_by'])) {
                 for ($i = 0; $i < count($this->report_def['order_by']); $i++) {
                     if ($this->report_def['order_by'][$i]['table_key'] != 'self') {
                         $this->report_def['order_by'][$i]['table_key'] = $upgrade_lookup[$this->report_def['order_by'][$i]['table_key']];
                     }
-                }   
+                }
             }
-            
+
             $filters = array();
             $filters['Filter_1'] = array();
             if (isset($this->report_def['filters_combiner']))
                 $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
-            else 
+            else
                 $filters['Filter_1']['operator'] = 'AND';
             for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
                 if ($this->report_def['filters_def'][$i]['table_key'] != 'self') {
                     $this->report_def['filters_def'][$i]['table_key'] = $upgrade_lookup[$this->report_def['filters_def'][$i]['table_key']];
                 }
                 array_push($filters['Filter_1'],$this->report_def['filters_def'][$i]);
-            }   
+            }
             $this->report_def['filters_def'] = $filters;
-            
+
             // Re-encode the report definition
             $this->report_def_str = $json->encode($this->report_def);
-            
+
         }
-        
+
         // Still need to update older formats that only have self in the full_table_list
         if (!isset($this->report_def['filters_def']['Filter_1'])) {
             $filters = array();
             $filters['Filter_1'] = array();
             if (isset($this->report_def['filters_combiner']))
                 $filters['Filter_1']['operator'] = $this->report_def['filters_combiner'];
-            else 
+            else
                 $filters['Filter_1']['operator'] = 'AND';
 
             for ($i = 0; $i < count($this->report_def['filters_def']); $i++) {
                 array_push($filters['Filter_1'],$this->report_def['filters_def'][$i]);
-            }   
+            }
             $this->report_def['filters_def'] = $filters;
             // Re-encode the report definition
             $this->report_def_str = $json->encode($this->report_def);
         }
 
         if (isset($this->report_def['numerical_chart_column']) && $this->report_def['numerical_chart_column'] == 'count')
-            $this->report_def['numerical_chart_column'] = 'self:count';               
+            $this->report_def['numerical_chart_column'] = 'self:count';
         // END: Dynamically convert previous versions to 5.1 version of content string.
         // Load all the necessary beans, and populate the full_table_beans array
         foreach ( $this->full_table_list as $table_key => $table_data )
         {
-           
+
             // Set this to a reasonable default
             $beanLabel = 'Accounts';
             if ( isset($table_data['module']) )
@@ -416,7 +416,7 @@ class Report
         $this->_load_currency();
 
         require_once('include/generic/LayoutManager.php');
-        
+
         if ( $this->layout_manager == null)
         {
             $this->layout_manager = new LayoutManager();
@@ -543,7 +543,7 @@ function _check_user_permissions()
     function _load_currency()
     {
 
-        
+
         $this->currency_obj = new Currency();
         $this->currency_symbol = '$';
         global $current_user;
@@ -789,8 +789,8 @@ function _check_user_permissions()
                 && $layout_def['group_function'] != 'weighted_sum' && $layout_def['group_function'] != 'weighted_amount')))) {
                 global $mod_strings;
                 sugar_die($mod_strings['LBL_DELETED_FIELD_IN_REPORT1'] . ' <b>'. $layout_def['name'].'</b>. '.$mod_strings['LBL_DELETED_FIELD_IN_REPORT2']);
-            
-            
+
+
         }
         if ( ! empty($field_def['source']) && ($field_def['source'] == 'custom_fields' || ($field_def['source'] == 'non-db'
                 && !empty($field_def['ext2']) && !empty($field_def['id']))) && ! empty($field_def['real_table']))
@@ -832,14 +832,14 @@ function _check_user_permissions()
         }
 //print "REGISTER:".$layout_def['name'].":". $layout_def['type']."<BR>";
     }
-    
+
     function parseUIFiltersDef($filters_def_str, $panels_def_str) {
         $filters = array();
         $panelParents = array();
         foreach ($panels_def_str as $index=>$key) {
             $panelParents[$key['id']] = $key['parentId'];
             foreach ($filters_def_str as $filter_key=>$filter_def) {
-                if ($filter_def['panelId'] == $key['id']) {             
+                if ($filter_def['panelId'] == $key['id']) {
                     if (!isset ($filters[$filter_def['panelId']])) {
                         $filters[$filter_def['panelId']] = array();
                         $filters[$filter_def['panelId']]['operator'] = $key['operator'];
@@ -859,19 +859,19 @@ function _check_user_permissions()
         foreach ($panelParents as $panel=>$parent) {
             if (isset($filters[$parent])) {
                 array_push($filters[$parent], $filters[$panel]);
-            }           
+            }
         }
         array_splice($filters, 1);
         global $current_language;
-        $mod_strings = return_module_language($current_language, 'Reports'); 
-        $filterString = $mod_strings['LBL_FILTER'] . '.1';      
+        $mod_strings = return_module_language($current_language, 'Reports');
+        $filterString = $mod_strings['LBL_FILTER'] . '.1';
         if (isset($filters[$filterString])) {
             $filters['Filter_1'] = $filters[$filterString];
             unset($filters[$filterString]);
         }
         $this->report_def['filters_def'] = $filters;
     }
-    
+
     function filtersIterate($filters, &$where_clause) {
         //$where_arr = array();
         $where_clause .= '(';
@@ -897,11 +897,11 @@ function _check_user_permissions()
                 $where_clause .= ")";
             if ($i != count($filters) - 2)
                 $where_clause .= " $operator ";
-            
+
         }
         $where_clause .= ')';
     }
-    
+
     function create_where()
     {
         $where_arr = array();
@@ -911,13 +911,13 @@ function _check_user_permissions()
         if (isset($filters['Filter_1']))
             Report::filtersIterate($filters['Filter_1'], $where_clause);
         //BEGIN SUGARCRM flav!=sales ONLY
-        if(!is_admin($GLOBALS['current_user']) && !$this->focus->disable_row_level_security) {  
+        if(!is_admin($GLOBALS['current_user']) && !$this->focus->disable_row_level_security) {
             if(!empty($where_clause)){
                 $where_clause .= " AND";
             }
-            $where_clause .= " ".$this->focus->table_name.".team_set_id IN (SELECT tst.team_set_id FROM 
-                                team_sets_teams tst INNER JOIN team_memberships team_memberships ON 
-                                tst.team_id = team_memberships.team_id AND team_memberships.user_id = 
+            $where_clause .= " ".$this->focus->table_name.".team_set_id IN (SELECT tst.team_set_id FROM
+                                team_sets_teams tst INNER JOIN team_memberships team_memberships ON
+                                tst.team_id = team_memberships.team_id AND team_memberships.user_id =
                                 '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
         }
         //END SUGARCRM flav!=sales ONLY
@@ -955,7 +955,7 @@ function _check_user_permissions()
             }
         }
     }
-    
+
     function createFilterStringForUI() {
         global $app_list_strings;
         $verdef_arr_for_filters = array();
@@ -986,7 +986,7 @@ function _check_user_permissions()
         } // foreach
         return $where_clause;
     } // fn
-    
+
     function getFieldDefFromLayoutDef(&$layout_def)
     {
         $field = null;
@@ -1034,8 +1034,8 @@ function _check_user_permissions()
                            str_replace('self_','',$linked_field));
                            */
 
-        return $this->alias_lookup[$linked_field];                           
-        //return $linked_field;                           
+        return $this->alias_lookup[$linked_field];
+        //return $linked_field;
 
     }
 
@@ -1047,8 +1047,8 @@ function _check_user_permissions()
                            str_replace('self_','',$linked_field)).'_l';
                            */
          return $this->alias_lookup[$linked_field].'_1';
-        //return $linked_field;                           
-                           
+        //return $linked_field;
+
     }
 
     function has_summary_columns()
@@ -1140,7 +1140,7 @@ function _check_user_permissions()
                             $id_column['table_alias'] = strtolower($this->module);
                         } else{
                             $id_column['table_alias'] = $display_column['table_alias'];
-                        }    
+                        }
                         $id_column['column_key'] = $id_column['table_key'].':'.$id_column['name'];
                         $select_piece = $this->layout_manager->widgetQuery($id_column);
                         array_push($this->$field_list_name,$select_piece);
@@ -1210,7 +1210,7 @@ function _check_user_permissions()
         }
         $this->summary_order_by='';
         //$this->summary_order_by_arr= array();
-        
+
         // Only do this for Summation reports.
         if ($this->report_def['report_type'] == 'summary' && empty($this->report_def['display_columns'])){
             if(!empty($this->report_def['summary_order_by'][0]))
@@ -1222,7 +1222,7 @@ function _check_user_permissions()
         }
 
     }
-    
+
 
     function select_already_defined($select,$which='select_fields')
     {
@@ -1325,7 +1325,7 @@ function _check_user_permissions()
             $this->jtcount=0;
             foreach ( $this->full_table_list as $table_key => $table_def)
             {
-                
+
                 // Increment the join table count
                 $this->jtcount++;
 
@@ -1382,14 +1382,14 @@ function _check_user_permissions()
 
                         $this->full_bean_list[$table_def['parent']]->load_relationships();
                         $params['primary_table_name'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
-                                    
+
                         if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
                             // Start ACL check
                             global $current_user, $mod_strings;
                             $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
                             $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
                             $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
-                            
+
                             if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE) {
                                 if((isset($_REQUEST['DynamicAction']) && $_REQUEST['DynamicAction'] == 'retrievePage') || (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Home')) {
                                     throw new Exception($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
@@ -1397,13 +1397,13 @@ function _check_user_permissions()
                                     sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
                                 }
                             }
-                                
+
                             $this->from .= $this->full_bean_list[$table_def['parent']]->$link_name->getJoin($params);
                             if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
                                 $this->from .= " AND ".$params['join_table_alias'].".assigned_user_id='".$current_user->id."' ";
-                            // End ACL check                            
+                            // End ACL check
                         }
-                        else { 
+                        else {
                             // Start ACL check
                             global $current_user, $mod_strings;
                             $linkModName = $this->full_bean_list[$table_def['parent']]->$rel_name->getRelatedModuleName();
@@ -1415,7 +1415,7 @@ function _check_user_permissions()
                             $this->from .= $this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params);
                             if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
                                 $this->from .= " AND ".$params['join_table_alias'].".assigned_user_id='".$current_user->id."' ";
-                            // End ACL check                            
+                            // End ACL check
                         }
                         //echo("<br>Join for $link_name (parent: ".$table_def['parent']."):<br>".$this->from."<pre>".print_r($params,true)."</pre>");
                     }
@@ -1424,19 +1424,19 @@ function _check_user_permissions()
                         die("Could not find link name, searching through for: ".$link_name);
                     }
                }
-               
+
                 else
                 {
                     die("table_def[parent] is not an object! (".$table_def['parent'].")<br>");
                 }
-               
+
                 // Do not add team security on modules that opt out of row level security
                 require_once($beanFiles[$table_def['bean_name']]);
                 $focus = new $table_def['bean_name']();
                 //BEGIN SUGARCRM flav!=sales ONLY
                 if(!is_admin($GLOBALS['current_user']) && !$focus->disable_row_level_security) {
-                    $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams 
-                                    tst INNER JOIN team_memberships team_memberships ON tst.team_id = 
+                    $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
+                                    tst INNER JOIN team_memberships team_memberships ON tst.team_id =
                                     team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
                     //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
                 }
@@ -1509,7 +1509,7 @@ function _check_user_permissions()
         global $current_user, $mod_strings;
         $list_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'list',$type='module');
         $view_action = ACLAction::getUserAccessLevel($current_user->id, $this->focus->module_dir, 'view',$type='module');
-        
+
         if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
             sugar_die($mod_strings['LBL_NO_ACCESS']);
         if ($list_action == ACL_ALLOW_OWNER || $view_action == ACL_ALLOW_OWNER)
@@ -1598,7 +1598,7 @@ function _check_user_permissions()
         else {
             $this->layout_manager->setAttribute('context', 'HeaderCell');
         }
-        
+
         $header_row = array();
         $summary_count = 0;
 
@@ -1799,7 +1799,7 @@ function _check_user_permissions()
         } // foreach
         return $labelToDataTypeArray;
     } // fn
-    
+
     function get_summary_group_count(){
         return $this->db->getRowCount($this->summary_result);
     }
@@ -1912,18 +1912,18 @@ function _check_user_permissions()
                 if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
                     $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
-                
+
                 if (isset($display_column['fields'][$field_name])) {
                     $display = $display_column['fields'][$field_name];
                 }
-                    
+
                 global $locale;
                 $params = array();
                 $params['currency_id'] = $locale->getPrecedentPreference('currency');
                 $params['convert'] = true;
                 $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
                 $display = currency_format_number($display, $params);
-            
+
             }
 
             if (isset($display_column['type']) && $display_column['type'] == 'float') {
@@ -1931,9 +1931,9 @@ function _check_user_permissions()
             }
 
             if (isset($display_column['type'])) {
-                
-                $fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name'])); 
-                
+
+                $fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
+
                 if (array_key_exists($field_name, $display_column['fields'])) {
                     $displayData = $display_column['fields'][$field_name];
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum'  || $display_column['type'] == 'enum' && $displayData != '0')) {
@@ -1944,7 +1944,7 @@ function _check_user_permissions()
                     } // if
                 } // if
             } // if
-            
+
             //  for charts
             if($column_field_name == 'summary_columns' && $this->do_chart) {
                 //_pp($display);
@@ -1952,14 +1952,14 @@ function _check_user_permissions()
                /*
                 if ($type == 'currency') {
                     require_once('modules/Currencies/Currency.php');
-                    global $locale;                
+                    global $locale;
                     $params = array();
                     $params['currency_id'] = $locale->getPrecedentPreference('currency');
                     $params['convert'] = true;
                     $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
                     $raw_display = currency_format_number($raw_display, $params);
                 }*/
-                
+
                 $cell_arr = array('val'=>$raw_display,'key'=>$display_column['column_key']);
                 //_pp($cell_arr);
                 array_push($chart_cells,$cell_arr);
@@ -2011,7 +2011,7 @@ function _check_user_permissions()
         $saved_report = new SavedReport();
         $report_type = 'tabular';
         $chart_type = 'none';
-        
+
         if (isset($this->report_def['chart_type'])) {
             $chart_type = $this->report_def['chart_type'];
         }
@@ -2022,11 +2022,11 @@ function _check_user_permissions()
             } else {
                 if (!empty($this->report_def['group_defs'])) {
                     $group_def_array = $this->report_def['group_defs'];
-                    if (isset($this->report_def['layout_options']) && 
+                    if (isset($this->report_def['layout_options']) &&
                         ((count($group_def_array) == 2) || (count($group_def_array) == 3))) {
                             $report_type = 'Matrix';
                     } // if
-                } // if             
+                } // if
             } // else
         }
 
@@ -2036,7 +2036,7 @@ function _check_user_permissions()
 
         require_once('include/formbase.php');
         populateFromPost('', $saved_report);
-        
+
         $result = $saved_report->save_report(
             $_REQUEST['record'],
             $_REQUEST['assigned_user_id'],
@@ -2048,7 +2048,7 @@ function _check_user_permissions()
             $saved_report->team_id,
             $chart_type);
         $this->saved_report = &$saved_report;
-        
+
         if(!empty($this->saved_report)) {
             $_REQUEST['record'] = $this->saved_report->id;
         }
@@ -2073,7 +2073,7 @@ function _check_user_permissions()
                 fclose($fp);
             }
             // Only set this if we're not being called from the home page.
-            // Charts on the home page go through this code as well and 
+            // Charts on the home page go through this code as well and
             // _SESSION hasn't been initialized completely and this causes errors with global vars.
             if (!isset($_REQUEST['module']) || $_REQUEST['module'] != 'Home')
                 $_SESSION['reports_cache'] = true;
@@ -2123,7 +2123,7 @@ function _check_user_permissions()
     foreach($report_def['links_def'] as $name) {
       $properties = $linked_fields[$name];
       $class = load_link_class($properties);
-      
+
       $link = new $class($properties['relationship'], $focus, $properties);
       $module = $link->getRelatedModuleName();
       $modules_hash[$module] = 1;
@@ -2150,7 +2150,7 @@ function _check_user_permissions()
 
       return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));
   }
-  
+
 }
 
 ?>

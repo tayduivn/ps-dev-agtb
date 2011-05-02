@@ -2758,8 +2758,13 @@ abstract class DBManager
     {
         $order_by_arr = array();
         foreach ($values as $key => $value) {
-				array_push($order_by_arr, $order_by."=".$this->quoted($key)." $order_dir\n");
-			}
+            // IS NULL added for bug 42448
+            if($key == '') {
+		        $order_by_arr[] = "($order_by='' OR $order_by IS NULL) $order_dir\n";
+            } else {
+                $order_by_arr[] = "$order_by=".$this->quoted($key)." $order_dir\n";
+            }
+		}
 		return implode(',', $order_by_arr);
     }
 

@@ -1270,6 +1270,7 @@ EOQ;
      *
      * @param  string $name
      * @return bool   true if the sequence is found, false otherwise
+     * TODO: check if some caching here makes sense, keeping in mind bug 43148
      */
     protected function _findSequence($name)
     {
@@ -1277,16 +1278,10 @@ EOQ;
         $db_user_name = isset($sugar_config['dbconfig']['db_user_name'])?$sugar_config['dbconfig']['db_user_name']:'';
         $db_user_name = strtoupper($db_user_name);
 
-        if ( !is_array(self::$sequences) ) {
-            $result = $this->query(
-                "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' ");
-            while ( $row = $this->db->fetchByAssoc($result) )
-                $sequences[] = $row['sequence_name'];
-        }
-        if ( empty($sequences) )
-            return false;
-        else
-            return in_array($name,$sequences);
+        $uname = strtoupper($name);
+        $row = $this->db->fetchOne(
+                "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' AND SEQUENCE_NAME = '$uname'");
+        return !empty($row);
     }
 
 	/**
