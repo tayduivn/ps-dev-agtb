@@ -193,7 +193,7 @@ EOQ;
 			$html .= $this->getDynamicMenuItem($def);
 		}
 
-		$iconSearch = SugarThemeRegistry::current()->getImageURL("dcMenuSearchBtn.png");
+		$iconSearch = SugarThemeRegistry::current()->getImage("dcMenuSearchBtn", "class='icon' align='top'", null, null, '.png');
 		$html .= <<<EOQ
 		</ul>
 		</div>
@@ -202,7 +202,7 @@ EOQ;
 if(!is_admin($GLOBALS['current_user'])){
 //END SUGARCRM flav=sales ONLY
 $html .= <<<EOQ
-		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);"><img src="$iconSearch" class="icon" align="top"></a></div>
+		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);">{$iconSearch}</a></div>
 		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'></div>
 EOQ;
 //BEGIN SUGARCRM flav=sales ONLY
