@@ -1103,7 +1103,7 @@ SUGAR.kb = function() {
 
             // Check if myDialog exists
             if (typeof myDialog === "undefined") {
-                myDialog = new YAHOO.widget.Panel('dialog1', {
+                myDialog = new YAHOO.widget.SimpleDialog('dialog1', {
                     visible:false,
                     // Removing this effect, allows the dialog to center properly in YUI2.9.0 -Peter D.
 //                    effect:[
