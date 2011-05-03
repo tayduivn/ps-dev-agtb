@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $connector_strings = array (
-    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">Obtain a Key and Secret from LotusLive&copy; by registering your Sugar instance as a new application.<br>
+    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">Obtain a Key and Secret from LotusLive&copy; by registering your Sugar instance as a new application. The ability to register will be possible starting May 8, 2011.<br>
 &nbsp;<br>
 Steps to register your instance:<br>
 &nbsp;<br>
