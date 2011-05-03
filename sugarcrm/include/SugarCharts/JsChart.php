@@ -115,10 +115,6 @@ class JsChart extends SugarChart {
 			$this->ss->assign("error", "Unsupported Chart Type");
 		}
 
-
-		$file = "";
-
-		return $this->ss->fetch($file);
 	}
 
 
@@ -147,8 +143,6 @@ class JsChart extends SugarChart {
 		$chartConfig['imageExportType'] = $this->image_export_type;
 		$this->ss->assign("config", $chartConfig);
 
-		$file = "";
-		return $this->ss->fetch($file);
 	}
 
 	function chartArray($chartsArray) {
