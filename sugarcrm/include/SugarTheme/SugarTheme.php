@@ -578,7 +578,6 @@ EOHTML;
         
         return $templatePath;
     }
-    
     /**
      * Returns an image tag for the given image.
      *
@@ -586,6 +585,7 @@ EOHTML;
      * @param  string $other_attributes optional, other attributes to add to the image tag, not cached
      * @param  string $width optional, defaults to the actual image's width
      * @param  string $height optional, defaults to the actual image's height
+     * @param  string $alt image alt attribute
      * @return string HTML image tag
      */
     public function getImage(
@@ -593,8 +593,9 @@ EOHTML;
         $other_attributes = '',
         $width = null,
         $height = null,
-		$ext = '.gif'
-        )
+		$ext = '.gif',
+        $alt
+    )
     {
         static $cached_results = array();
         
@@ -613,7 +614,7 @@ EOHTML;
             $height = $size[1];
         
         // Cache everything but the other attributes....
-        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
+        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
         
         return $cached_results[$imageName] . "$other_attributes />";
     }
