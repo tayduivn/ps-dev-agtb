@@ -41,8 +41,8 @@ $mod_strings = array(
 
 	//BEGIN SUGARCRM flav=ent ONLY
 	'LBL_SYSOPTS_DB_DIRECTIONS'			=> 'You must have an Oracle client installed and configured if you select Oracle.',
-	'ERR_DB_LOGIN_FAILURE_OCI8'			=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
-	'ERR_DB_OCI8_CONNECT'				=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
+	'ERR_DB_LOGIN_FAILURE_OCI8'			=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
+	'ERR_DB_OCI8_CONNECT'				=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
 	'ERR_DB_OCI8_VERSION'				=> 'Your version of Oracle is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported Oracle Versions.',
     'LBL_DBCONFIG_MSG1'                 => 'Please provide the name of your database.  This will be the default table space that is assigned to your user.',
 	// seed Ent Reports
@@ -119,9 +119,9 @@ $mod_strings = array(
     'ERR_DB_EXISTS_PROCEED'             => 'The provided Database Name already exists.  You can<br>1.  hit the back button and choose a new database name <br>2.  click next and continue but all existing tables on this database will be dropped.  <strong>This means your tables and data will be blown away.</strong>',
 	'ERR_DB_HOSTNAME'					=> 'Host name cannot be blank.',
 	'ERR_DB_INVALID'					=> 'Invalid database type selected.',
-	'ERR_DB_LOGIN_FAILURE'				=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
-	'ERR_DB_LOGIN_FAILURE_MYSQL'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
-	'ERR_DB_LOGIN_FAILURE_MSSQL'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password.',
+	'ERR_DB_LOGIN_FAILURE'				=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
+	'ERR_DB_LOGIN_FAILURE_MYSQL'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
+	'ERR_DB_LOGIN_FAILURE_MSSQL'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
 	'ERR_DB_MYSQL_VERSION1'				=> 'Your MySQL version (',
 	'ERR_DB_MYSQL_VERSION2'				=> ') is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported MySQL versions.',
 	'ERR_DB_NAME'						=> 'Database name cannot be blank.',
