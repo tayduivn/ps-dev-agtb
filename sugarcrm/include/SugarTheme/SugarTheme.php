@@ -612,6 +612,10 @@ EOHTML;
             $width = $size[0];
         if ( is_null($height) ) 
             $height = $size[1];
+
+        // Worst case scenario: if alt tag is empty, we set it to the image name
+        if ( empty ($alt) )
+            $alt = $imageName;
         
         // Cache everything but the other attributes....
         $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
