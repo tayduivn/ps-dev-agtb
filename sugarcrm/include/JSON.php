@@ -57,15 +57,11 @@ class JSON
      */
     public static function decode($string, $examineEnvelope=false)
     {
-        if ($examineEnvelope) {
-            $meta = json_decode($string,true);
-            if($meta['asychronous_key'] != $_SESSION['asychronous_key']) {
-                $GLOBALS['log']->fatal("*** SECURITY: received asynchronous call with invalid ['asychronous_key'] value. Possible CSRF attack.");
-                return '';
-            }
-            
-            return $meta['jsonObject'];
-        }
+//        if ($examineEnvelope) {
+//            $meta = json_decode($string,true);
+//
+//            return $meta['jsonObject'];
+//        }
         
         return json_decode($string,true);
     }

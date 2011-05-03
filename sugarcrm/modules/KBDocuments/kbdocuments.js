@@ -1104,7 +1104,7 @@ SUGAR.kb = function() {
 			ajaxStatus.showStatus(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_LAUNCHING_TAG_BROWSING'));
 			myDialog = new YAHOO.widget.SimpleDialog('dialog1',
 			    { 
-			        visible:false, 
+			        visible:false,
 			        effect:[{effect:YAHOO.widget.ContainerEffect.SLIDE, duration:0.5}],
 					fixedcenter:true,
 					modal:true,
@@ -1129,8 +1129,8 @@ SUGAR.kb = function() {
 					myDialog.render(document.body);
 				//	myDialog.registerForm();
 					myDialog.show();
-				//	myDialog.center();
-					myDialog.configFixedCenter(null, false) ;
+//					myDialog.center();
+//					myDialog.configFixedCenter(null, false) ;
 					SUGAR.util.evalScript(result['body']);
 				    window.setTimeout('ajaxStatus.hideStatus()', 1000);
 			}
@@ -1141,174 +1141,176 @@ SUGAR.kb = function() {
 
 
 
-		modalClose:function(treeid) {
-		    var isThisSearchScreen = false;
-			searchID = document.getElementById('modal_close_search');
-			if(searchID != null && typeof(searchID) != 'undefined'){isThisSearchScreen = true;}
-		    var createNodeMessage = document.getElementById('CreateNodeMessage');
-		    var tagsCreate = document.getElementById('tagsCreate');
-		    tree = new YAHOO.widget.TreeView('treeid');
-			var node=YAHOO.namespace(treeid).selectednode;
-		    var currT = document.getElementsByName('docTagIds[]');
-		     //also get the tags already linked to the saved article
-		    var savedTags =document.getElementsByName('savedTagIds[]');
-		    var tagId = node.data.id;
-		    var tagExists = false;
-		    var nodeMessageExists = false;
-		    if(currT != null){
-		     for(i=0;i<currT.length;i++){
-		      if(node.data.id == currT[i].value){
-		        tagExists=true;
-		        break;
-		       }
-		      }
-		     }
+        modalClose:function(treeid) {
+            var isThisSearchScreen = false;
+            searchID = document.getElementById('modal_close_search');
+            if (searchID != null && typeof(searchID) != 'undefined') {
+                isThisSearchScreen = true;
+            }
+            var createNodeMessage = document.getElementById('CreateNodeMessage');
+            var tagsCreate = document.getElementById('tagsCreate');
+            tree = new YAHOO.widget.TreeView('treeid');
+            var node = YAHOO.namespace(treeid).selectednode;
+            var currT = document.getElementsByName('docTagIds[]');
+            //also get the tags already linked to the saved article
+            var savedTags = document.getElementsByName('savedTagIds[]');
+            var tagId = node.data.id;
+            var tagExists = false;
+            var nodeMessageExists = false;
+            if (currT != null) {
+                for (i = 0; i < currT.length; i++) {
+                    if (node.data.id == currT[i].value) {
+                        tagExists = true;
+                        break;
+                    }
+                }
+            }
 
-			if(isThisSearchScreen){
-				//process if we are in search screen
-				//set the form inputs and exit
-                if(node.data.id=='All_Tags'){
+            if (isThisSearchScreen) {
+                //process if we are in search screen
+                //set the form inputs and exit
+                if (node.data.id == 'All_Tags') {
                     clickedNode = '';
-                    alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_ROOT_TAG_MESSAGE'));
+                    alert(SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_ROOT_TAG_MESSAGE'));
                     return;
                 }
-				document.getElementById('tag_id').value = node.data.id;
-				document.getElementById('tag_name').value =  SUGAR.kb.getTagName(node,false);
-				myDialog.submit();
-			}else{
-	  	       //check if the tag is already linked/saved tot he article
-			     if(savedTags != null){
-			     for(i=0;i<savedTags.length;i++){
-			      if(node.data.id == savedTags[i].value){
-			        tagExists=true;
-			        break;
-			       }
-			      }
-			     }
+                document.getElementById('tag_id').value = node.data.id;
+                document.getElementById('tag_name').value = SUGAR.kb.getTagName(node, false);
+                myDialog.submit();
+            } else {
+                //check if the tag is already linked/saved tot he article
+                if (savedTags != null) {
+                    for (i = 0; i < savedTags.length; i++) {
+                        if (node.data.id == savedTags[i].value) {
+                            tagExists = true;
+                            break;
+                        }
+                    }
+                }
 
-			   if((createNodeMessage != null && createNodeMessage.style.display=='none') && (tagsCreate != null && tagsCreate.style.display == 'none')){
-				  if(node.data.id=='All_Tags'){
-				   	 clickedNode = '';
-				   	 alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_ROOT_TAG_MESSAGE'));
-				     return;
-				   }
-				   if(!tagExists){
-					   clickedNode = '';
-					   link_tags = document.getElementById("Linked_Tags");
-					   link_tags.style.display='';
-					   //create a new div element
-						var new_tag_row = document.createElement( 'div' );
-						new_tag_row.size = '500px';
+                if ((createNodeMessage != null && createNodeMessage.style.display == 'none') && (tagsCreate != null && tagsCreate.style.display == 'none')) {
+                    if (node.data.id == 'All_Tags') {
+                        clickedNode = '';
+                        alert(SUGAR.kb.getLocalizedLabels('KBDocuments', 'LBL_ROOT_TAG_MESSAGE'));
+                        return;
+                    }
+                    if (!tagExists) {
+                        clickedNode = '';
+                        link_tags = document.getElementById("Linked_Tags");
+                        link_tags.style.display = '';
+                        //create a new div element
+                        var new_tag_row = document.createElement('div');
+                        new_tag_row.size = '500px';
 
-					    //save tag name
+                        //save tag name
 
-						var docTagName = document.createElement('input');
-					    docTagName.setAttribute('id', 'docTagNames[]');
-					    docTagName.setAttribute('name', 'docTagNames[]');
-					    //docTagName.setAttribute('size', '60');
-					    docTagName.setAttribute('type', 'hidden');
-					    docTagName.setAttribute('disabled', true);
-					    docTagName.setAttribute('value',SUGAR.kb.getTagName(node,false));
-
-
-					    var new_row_button_remove_tag = document.createElement("img");
-						new_row_button_remove_tag.setAttribute("src", "index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=delete_inline.gif");
-						new_row_button_remove_tag.setAttribute("align","absmiddle");
-						//new_row_button_remove_tag.setAttribute("alt","Remove");
-						new_row_button_remove_tag.setAttribute("border","0");
-						//new_row_button_remove_tag.setAttribute("height","20");
-						//new_row_button_remove_tag.setAttribute("width","20");
-
-					    //also save tag id
-					    var docTagId = document.createElement('input');
-					    docTagId.setAttribute('id', 'docTagIds[]');
-					    docTagId.setAttribute('name', 'docTagIds[]');
-					    docTagId.setAttribute('size', '10');
-					    docTagId.setAttribute('type', 'hidden');
-					    docTagId.setAttribute('value',tagId);
-
-					    //also need a  remove button
-					    var removeTag = document.createElement('input');
-					    removeTag.type = 'button';
-					    removeTag.value = 'Remove';
-					    removeTag.onclick= function(){
-						    //Remove element from form
-							//this.parentNode.element.parentNode.removeChild(this.parentNode.element);
-							//remove this row from list
-							this.parentNode.parentNode.removeChild( this.parentNode );
-						}
-
-						new_row_button_remove_tag.onclick= function(){
-						    //Remove element from form
-							//this.parentNode.element.parentNode.removeChild(this.parentNode.element);
-							//remove this row from list
-							this.parentNode.parentNode.removeChild(this.parentNode);
-						}
-
-					    //new_tag_row.appendChild(docTagName);
-
-					   // new_tag_row.innerHTML = new_tag_row.innerHTML+getTagName(node,false);
-					    new_tag_row.appendChild(docTagName);
-			   		    new_tag_row.appendChild(new_row_button_remove_tag);
-			   		    new_tag_row.appendChild(document.createTextNode(' '));
-			   		    new_tag_row.appendChild(document.createTextNode(SUGAR.kb.getTagName(node,false)));
-			   		    //new_tag_row.replaceChild(document.createTextNode(getTagName(node,false)),new_tag_row.childNodes[1]);
-			   		    //new_tag_row.appendChild(docTagName);
-					    new_tag_row.appendChild(docTagId);
-					    link_tags.appendChild(new_tag_row);
-				  }
-				  myDialog.submit();
-			  }
-			  else{
-
-			     //document.getElementById('CreateNodeMessage').innerHTML = 'Currently selected a node     Please type the new node';
-			     //document.getElementById('NewNodeMessage').style.display='';
-			     //document.getElementById('NewNodeMessage').innerHTML = 'Please type the new node';
-			     document.getElementById('CreateNodeMessage').style.display='none';
-			     var prevNodeId = document.getElementById('tag_selected_id').value;
-			     //alert(clickedNode.data)
-			     if(clickedNode.data == undefined){
-			       //do nothing
-			     }
-			     else{
-			       //take the color away from previously selected node
-			       //var prevNode=YAHOO.widget.TreeView.getNode('tagstree',prevNodeId);
-			       clickedNode.getLabelEl().style.backgroundColor = "white";
-			     }
+                        var docTagName = document.createElement('input');
+                        docTagName.setAttribute('id', 'docTagNames[]');
+                        docTagName.setAttribute('name', 'docTagNames[]');
+                        //docTagName.setAttribute('size', '60');
+                        docTagName.setAttribute('type', 'hidden');
+                        docTagName.setAttribute('disabled', true);
+                        docTagName.setAttribute('value', SUGAR.kb.getTagName(node, false));
 
 
-			     //document.getElementById('tag_selected').style.display='';
-			     //new code
+                        var new_row_button_remove_tag = document.createElement("img");
+                        new_row_button_remove_tag.setAttribute("src", "index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif");
+                        new_row_button_remove_tag.setAttribute("align", "absmiddle");
+                        //new_row_button_remove_tag.setAttribute("alt","Remove");
+                        new_row_button_remove_tag.setAttribute("border", "0");
+                        //new_row_button_remove_tag.setAttribute("height","20");
+                        //new_row_button_remove_tag.setAttribute("width","20");
 
-			       //document.getElementById('SelectedTag').innerHTML = getTagName(node,true);
+                        //also save tag id
+                        var docTagId = document.createElement('input');
+                        docTagId.setAttribute('id', 'docTagIds[]');
+                        docTagId.setAttribute('name', 'docTagIds[]');
+                        docTagId.setAttribute('size', '10');
+                        docTagId.setAttribute('type', 'hidden');
+                        docTagId.setAttribute('value', tagId);
 
-				   //document.getElementById('newSave').type='';
-				   //document.getElementById('tag_new').type='';
-				   //document.getElementById('Ok').type='';
-				   //document.getElementById('Cancel').type='';
+                        //also need a  remove button
+                        var removeTag = document.createElement('input');
+                        removeTag.type = 'button';
+                        removeTag.value = 'Remove';
+                        removeTag.onclick = function() {
+                            //Remove element from form
+                            //this.parentNode.element.parentNode.removeChild(this.parentNode.element);
+                            //remove this row from list
+                            this.parentNode.parentNode.removeChild(this.parentNode);
+                        }
+
+                        new_row_button_remove_tag.onclick = function() {
+                            //Remove element from form
+                            //this.parentNode.element.parentNode.removeChild(this.parentNode.element);
+                            //remove this row from list
+                            this.parentNode.parentNode.removeChild(this.parentNode);
+                        }
+
+                        //new_tag_row.appendChild(docTagName);
+
+                        // new_tag_row.innerHTML = new_tag_row.innerHTML+getTagName(node,false);
+                        new_tag_row.appendChild(docTagName);
+                        new_tag_row.appendChild(new_row_button_remove_tag);
+                        new_tag_row.appendChild(document.createTextNode(' '));
+                        new_tag_row.appendChild(document.createTextNode(SUGAR.kb.getTagName(node, false)));
+                        //new_tag_row.replaceChild(document.createTextNode(getTagName(node,false)),new_tag_row.childNodes[1]);
+                        //new_tag_row.appendChild(docTagName);
+                        new_tag_row.appendChild(docTagId);
+                        link_tags.appendChild(new_tag_row);
+                    }
+                    myDialog.submit();
+                }
+                else {
+
+                    //document.getElementById('CreateNodeMessage').innerHTML = 'Currently selected a node     Please type the new node';
+                    //document.getElementById('NewNodeMessage').style.display='';
+                    //document.getElementById('NewNodeMessage').innerHTML = 'Please type the new node';
+                    document.getElementById('CreateNodeMessage').style.display = 'none';
+                    var prevNodeId = document.getElementById('tag_selected_id').value;
+                    //alert(clickedNode.data)
+                    if (clickedNode.data == undefined) {
+                        //do nothing
+                    }
+                    else {
+                        //take the color away from previously selected node
+                        //var prevNode=YAHOO.widget.TreeView.getNode('tagstree',prevNodeId);
+                        clickedNode.getLabelEl().style.backgroundColor = "white";
+                    }
 
 
-				 //alert('THIS ONE '+createNodeMessage.style.display);
-				 //new code end
-				 //alert(tagId);
-				 document.getElementById('tag_new').disabled = false;
-				 document.getElementById('Ok').disabled = false;
+                    //document.getElementById('tag_selected').style.display='';
+                    //new code
 
-				 document.getElementById('tag_new').style.visibility = "visible";
-				 document.getElementById('Ok').style.visibility = "visible";
+                    //document.getElementById('SelectedTag').innerHTML = getTagName(node,true);
 
-			     document.getElementById('tag_selected_id').value=tagId;
+                    //document.getElementById('newSave').type='';
+                    //document.getElementById('tag_new').type='';
+                    //document.getElementById('Ok').type='';
+                    //document.getElementById('Cancel').type='';
 
-			     document.getElementById('tagsCreate').style.display='';
-			     //document.getElementById('tag_selected').value=getTagName(node,true);
-			     //document.getElementById('CreateNode').style.display='';
-			     //node.getLabelEl().style.font = "500";
-			     node.getLabelEl().style.backgroundColor = "CCFFFF";  //light blue gray(CCCCCC)
 
-			     clickedNode = node;
-			   }
-			}
-		},
+                    //alert('THIS ONE '+createNodeMessage.style.display);
+                    //new code end
+                    //alert(tagId);
+                    document.getElementById('tag_new').disabled = false;
+                    document.getElementById('Ok').disabled = false;
+
+                    document.getElementById('tag_new').style.visibility = "visible";
+                    document.getElementById('Ok').style.visibility = "visible";
+
+                    document.getElementById('tag_selected_id').value = tagId;
+
+                    document.getElementById('tagsCreate').style.display = '';
+                    //document.getElementById('tag_selected').value=getTagName(node,true);
+                    //document.getElementById('CreateNode').style.display='';
+                    //node.getLabelEl().style.font = "500";
+                    node.getLabelEl().style.backgroundColor = "CCFFFF";  //light blue gray(CCCCCC)
+
+                    clickedNode = node;
+                }
+            }
+        },
 
 
 		selectTagNode:function(treeid) {
