@@ -119,8 +119,6 @@ if ((!empty($_REQUEST['relate_id']) && !empty($_REQUEST['parent_id'])) && ($_REQ
 	$_REQUEST['relate_id'] = false;
 }
 
-$GLOBALS['log']->fatal(var_export($_REQUEST, true));
-
 // avoid undefined index
 if (!isset($GLOBALS['check_notify'])) {
 	$GLOBALS['check_notify'] = false;
