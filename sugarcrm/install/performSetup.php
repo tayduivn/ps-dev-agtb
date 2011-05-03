@@ -134,7 +134,7 @@ echo "<br>";
 
 // create the SugarCRM database
 if($setup_db_create_database) {
-installLog("calling handleDbCreateDatabase()");
+    installLog("calling handleDbCreateDatabase()");
     handleDbCreateDatabase();
 } else {
 

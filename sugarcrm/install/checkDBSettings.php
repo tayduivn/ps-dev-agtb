@@ -110,12 +110,12 @@ function checkDBSettings($silent=false) {
             } else {
                 installLog("Connection made using  host: {$_SESSION['setup_db_host_name']}, usr: {$_SESSION['setup_db_sugarsales_user']}");
                 $db_selected = $db->dbExists($_SESSION['setup_db_database_name']);
-                if($silent==false && $db_selected && $_SESSION['setup_db_create_database'] && (!isset($_SESSION['setup_db_drop_tables']) || !$_SESSION['setup_db_drop_tables'])){
+                if($silent==false && $db_selected && $_SESSION['setup_db_create_database'] && empty($_SESSION['setup_db_drop_tables'])) {
                     // DB exists but user didn't agree to overwrite it
                         $errStr = $mod_strings['ERR_DB_EXISTS_PROCEED'];
                         $errors['ERR_DB_EXISTS_PROCEED'] = $errStr;
                         installLog("ERROR:: {$errors['ERR_DB_EXISTS_PROCEED']}");
-                } elseif( !$db_selected && !$_SESSION['setup_db_create_database'] ) {
+                } elseif($silent==false && !$db_selected && !$_SESSION['setup_db_create_database'] ) {
                     // DB does not exist but user did not allow to create it
                         $errors['ERR_DB_EXISTS_NOT'] = $mod_strings['ERR_DB_EXISTS_NOT'];
                         installLog("ERROR:: {$errors['ERR_DB_EXISTS_NOT']}");
@@ -306,8 +306,8 @@ function copyInputsIntoSession(){
                 //set up for Oracle Silent Installer
                 $_REQUEST['setup_db_drop_tables'] = $_SESSION['setup_db_drop_tables'] ;
             }
-            if (isset($_REQUEST['setup_db_drop_tables'])
-                || ((isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall' && isset($_SESSION['setup_db_drop_tables'])))
+            if (!empty($_REQUEST['setup_db_drop_tables'])
+                || ((isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall' && !empty($_SESSION['setup_db_drop_tables'])))
             ){
                 $_SESSION['setup_db_drop_tables']       = true;
                 $_SESSION['setup_db_create_database']   = false;

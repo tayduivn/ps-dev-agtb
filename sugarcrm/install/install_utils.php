@@ -1427,7 +1427,8 @@ function pullSilentInstallVarsIntoSession() {
     $config_subset = array (
         'setup_site_url'                => isset($sugar_config['site_url']) ? $sugar_config['site_url'] : '',
         'setup_db_host_name'            => isset($sugar_config['dbconfig']['db_host_name']) ? $sugar_config['dbconfig']['db_host_name'] : '',
-        'setup_db_sugarsales_user'      => isset($sugar_config['dbconfig']['db_user_name']) ? $sugar_config['dbconfig']['db_user_name'] : '',
+        'setup_db_host_instance'        => isset($sugar_config['dbconfig']['db_host_instance']) ? $sugar_config['dbconfig']['db_host_instance'] : '',
+    	'setup_db_sugarsales_user'      => isset($sugar_config['dbconfig']['db_user_name']) ? $sugar_config['dbconfig']['db_user_name'] : '',
         'setup_db_sugarsales_password'  => isset($sugar_config['dbconfig']['db_password']) ? $sugar_config['dbconfig']['db_password'] : '',
         'setup_db_database_name'        => isset($sugar_config['dbconfig']['db_name']) ? $sugar_config['dbconfig']['db_name'] : '',
         'setup_db_type'                 => isset($sugar_config['dbconfig']['db_type']) ? $sugar_config['dbconfig']['db_type'] : '',
@@ -1451,7 +1452,8 @@ function pullSilentInstallVarsIntoSession() {
         $derived['install_method'] = $sugar_config_si['install_method'];
     //END SUGARCRM flav=pro ONLY
 
-    $needles = array('setup_license_key_users','setup_license_key_expire_date','setup_license_key', 'setup_num_lic_oc',
+    $needles = array('setup_db_create_database','setup_db_create_sugarsales_user','setup_license_key_users',
+    				 'setup_license_key_expire_date','setup_license_key', 'setup_num_lic_oc',
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
