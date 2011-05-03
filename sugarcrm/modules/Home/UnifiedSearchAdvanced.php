@@ -345,7 +345,7 @@ class UnifiedSearchAdvanced {
 			foreach($module_counts as $name=>$value) {
 				echo $module_results[$name];
 			}
-		} else {
+		} else if(empty($_REQUEST['form_only'])) {
 			echo $home_mod_strings['LBL_NO_RESULTS'];
 			echo $home_mod_strings['LBL_NO_RESULTS_TIPS'];
 		}
