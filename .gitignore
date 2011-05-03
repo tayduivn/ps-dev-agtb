@@ -8,3 +8,4 @@ sugarcrm/config_si.php
 translations/
 /.idea
 /.settings
+.DS_Store
