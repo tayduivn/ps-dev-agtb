@@ -132,7 +132,7 @@
                 {if $pageData.rowAccess[$id].edit}
                 <a title='{$editLinkString}'
 href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}">
-                <img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>
+                {sugar_getimage file='edit_inline.gif' attributes='border="0"'}</a>
                 {/if}
             </td>
 			{/if}
