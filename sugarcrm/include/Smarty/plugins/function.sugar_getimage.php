@@ -7,7 +7,7 @@
  * Name:     sugar_getimage
  * Purpose:  returns requested image or sprite
  * 
- * @param array: file, attributes
+ * @param array: file, attr
  * @param Smarty
  */
 function smarty_function_sugar_getimage($params, &$smarty)
@@ -23,8 +23,8 @@ function smarty_function_sugar_getimage($params, &$smarty)
 
 	// optional attributes
 	$attr = '';
-	if(isset($params['attributes'])) 
-		$attr = $params['attributes'];
+	if(isset($params['attr'])) 
+		$attr = $params['attr'];
 
  	return SugarThemeRegistry::current()->getImage($filename, $attr, null, null, $ext);
 }

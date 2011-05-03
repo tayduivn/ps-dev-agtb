@@ -80,14 +80,17 @@
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{capture assign="attr"}border='0' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'{/capture}
+							{sugar_getimage file=$imageName attr=$attr}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{capture assign="attr"}border='0' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'{/capture}
+							{sugar_getimage file=$imageName attr=$attr}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+						{capture assign="attr"}border='0' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'{/capture}
+						{sugar_getimage file=$imageName attr=$attr}
 					{/if}
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
@@ -132,7 +135,8 @@
                 {if $pageData.rowAccess[$id].edit}
                 <a title='{$editLinkString}'
 href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}">
-                {sugar_getimage file='edit_inline.gif' attributes='border="0"'}</a>
+				{capture assign=attr}border='0'{/capture}
+                {sugar_getimage file='edit_inline.gif' attr=$attr}</a>
                 {/if}
             </td>
 			{/if}
