@@ -1769,7 +1769,11 @@ abstract class DBManager
            //custom fields handle their save seperatley
            if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type']))  continue;
 
-           $val = from_html($bean->$field);
+           if(isset($bean->$field)) {
+               $val = from_html($bean->$field);
+           } else {
+               $val = null;
+           }
 
 		   if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
                $val = $bean->getFieldValue($field);
