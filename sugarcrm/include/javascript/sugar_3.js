@@ -1683,7 +1683,7 @@ SUGAR.ajaxFirstLoad = function()
     YAHOO.util.History.register('ajaxUILoc', url, SUGAR._ajaxGo);
     YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
     SUGAR._ajax_hist_loaded = true;
-    SUGAR._ajaxGo(url);
+        SUGAR._ajaxGo(url);
 }
 
 
