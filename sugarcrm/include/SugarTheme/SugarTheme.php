@@ -597,6 +597,30 @@ EOHTML;
         return $templatePath;
     }
 
+	/**
+	 * Returns sprite span tag
+	 */
+	public function getSprite($sprite_class, $other_attributes) {
+
+		// handle multiple class tags
+		$class_regex = '/class=["\']([^\'"]+)["\']/i';
+		preg_match($class_regex, $other_attributes, $match);
+		if(isset($match[1])) {
+			$other_attributes = preg_replace($class_regex, 'class="'.$sprite_class.' ${1}"', $other_attributes);
+
+		// single class
+		} else {
+			$other_attributes .= ' class="'.$sprite_class.'"';
+		}
+
+		// replace alt attribute by title if present
+		$alt_regex = '/alt=["\']([^\'"]+)["\']/i';
+		$other_attributes = preg_replace($alt_regex, 'title="${1}"', $other_attributes);
+
+		// use </span> instead of /> as close tag to prevent weird UI results
+		return "<span {$other_attributes}></span>";
+	}
+
     /**
      * Returns an image tag for the given image.
      *
@@ -619,23 +643,15 @@ EOHTML;
         $imageName .= $ext;
         if(!empty($cached_results[$imageName])) {
 
-			// handle multiple class tags for sprites
-			if($GLOBALS['sugar_config']['use_sprites']) {
+			// sprite
+			if(substr($cached_results[$imageName],0,5) == '<span') {
+				// get class from cache
 				$class_regex = '/class=["\']([^\'"]+)["\']/i';
-				preg_match($class_regex, $other_attributes, $match);
-				if(isset($match[1])) {
-					// get sprite class from cache
-					preg_match($class_regex, $cached_results[$imageName], $sprite_class);
-					// add sprite class to other attribute class definition
-					$other_attributes = preg_replace($class_regex, 'class="'.$sprite_class[1].' ${1}"', $other_attributes);
-					return "<span {$other_attributes} ></span>";
-				}
+				preg_match($class_regex, $cached_results[$imageName], $cached_class);
+				return $this->getSprite($cached_class[1], $other_attributes);
 			}
 
-			// use </span> instead of /> for span tag closing which can messup the UI
-			if(substr($cached_results[$imageName],0,5) == '<span')
-				return $cached_results[$imageName]." $other_attributes></span>";
-
+			// normal img
             return $cached_results[$imageName]." $other_attributes />";
 		}
 
@@ -658,21 +674,11 @@ EOHTML;
 				// sprite class
 				$class = 'spr_'.md5($imageURL);
 
-				// append sprite class to class present in other attributes
-				$class_regex = '/class=["\']([^\'"]+)["\']/i';
-				if(preg_match($class_regex, $other_attributes)) {
-					$other_attributes = preg_replace($class_regex, 'class="'.$class.' ${1}"', $other_attributes);
-
-				// add the sprite class if no class defined yet
-				} else {
-					$other_attributes .= ' class="'.$class.'"';
-				}
-
 				// cache span tag with single sprite class so we can use it later on
 				$cached_results[$imageName] = '<span class="'.$class.'"';
 
 				// do not return from cache, otherwise multi classes are not handled correctly
-				return "<span {$other_attributes}></span>";
+				return $this->getSprite($class, $other_attributes);
 
 			} else {
 				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
