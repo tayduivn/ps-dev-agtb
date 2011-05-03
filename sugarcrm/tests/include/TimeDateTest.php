@@ -776,11 +776,17 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	        array("H:i", "15:38", "15:38:00"),
 	        array("h:ia", "03:38pm", "15:38:00"),
 	        array("h:iA", "03:38PM", "15:38:00"),
+	        array("h:ia", "03:38am", "03:38:00"),
+	        array("h:iA", "03:38AM", "03:38:00"),
 	        array("H.i", "15.38", "15:38:00"),
 	        array("h.ia", "03.38pm", "15:38:00"),
 	        array("h.iA", "03.38PM", "15:38:00"),
 	        array("h:ia", "03:38 pm", "15:38:00"),
 	        array("h:iA", "03:38 PM", "15:38:00"),
+	        array("h.ia", "03.38am", "03:38:00"),
+	        array("h.iA", "03.38AM", "03:38:00"),
+	        array("h:ia", "03:38 am", "03:38:00"),
+	        array("h:iA", "03:38 AM", "03:38:00"),
 	        );
 	}
 
