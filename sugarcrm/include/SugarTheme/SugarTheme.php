@@ -961,8 +961,8 @@ EOHTML;
 
 		// add all theme image directories
 		if($dh = opendir('themes')) {
-			while (($dir = readdir($dh)) !== false && $dir != 'default') {
-				if ($dir != "." && $dir != ".." && is_dir('themes/'.$dir)) {
+			while (($dir = readdir($dh)) !== false) {
+				if ($dir != "." && $dir != ".." && $dir != 'default' && is_dir('themes/'.$dir)) {
 					$sb->addDirectory($dir, "themes/$dir/images");
 				}
 			}
