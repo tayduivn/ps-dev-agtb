@@ -1027,7 +1027,7 @@ SE.accounts = {
 				node.setUpLabel(node.data.origText);
 			}
     	} else {
-    		node.setUpLabel('<span>' + node.data.origText + '</span>');
+    		node.setUpLabel('' + node.data.origText + '');
     	}
     	SE.accounts.setupDDTarget(node);
     },
