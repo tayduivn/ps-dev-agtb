@@ -362,11 +362,6 @@ class RepairAndClear
         if(file_exists($src_file)) {
             unlink( "$src_file" );
         }
-
-        $src_file = $search_dir . 'modules/unified_search_modules_display.php';
-        if(file_exists($src_file)) {
-            unlink( "$src_file" );
-        }
     }
     public function clearExternalAPICache()
 	{

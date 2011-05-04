@@ -4281,10 +4281,10 @@ function upgradeDashletsForSalesAndMarketing() {
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
-        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
-        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
-        'pbls_ids' => 'OppByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
+        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
+        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
+        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -5863,7 +5863,7 @@ function unlinkUpgradeFiles($version)
 	if($version < '620')
 	{
 	   //list of files to remove
-	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php');
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/sugarColors.xml');
 	   
 	   foreach($files_to_remove as $f)
 	   {

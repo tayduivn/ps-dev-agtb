@@ -272,10 +272,12 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
     {
         if (Dom.hasClass(field, "date_input"))
 			field.value = SUGAR.util.DateUtils.formatDate(value);
-		else if (Dom.hasClass(field, "DateTimeCombo"))
-			AH.setDateTimeField(field, value);
-		else
-			field.value = SUGAR.util.DateUtils.formatDate(value, true);
+		else {
+            if (Dom.hasClass(field, "DateTimeCombo"))
+                AH.setDateTimeField(field, value);
+
+            field.value = SUGAR.util.DateUtils.formatDate(value, true);
+        }
     }
 	else {
 		field.value = value;

@@ -80,9 +80,18 @@ Calendar.setup = function (params) {
                 });
                 
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));
-                dialog.setBody('<div id="' + showButton + '_div"></div>');
+                var dialogBody = '<p class="callnav_today"><a href="#"  id="callnav_today">' + SUGAR.language.get('app_strings', 'LBL_EMAIL_DATE_TODAY') + '</a></p><div id="' + showButton + '_div"></div>';
+                dialog.setBody(dialogBody);
                 dialog.render(document.body);
 
+                //Since the cal div name is dynamic we need to add a custom class to override some default yui css styles
+                Dom.addClass("container_" + showButton, "cal_panel");
+                
+                //Clear the date selection if the user clicks on today.
+                Event.addListener("callnav_today", "click", function(){ 
+                    calendar.clear();
+                });
+                
                 dialog.showEvent.subscribe(function() {
                     if (YAHOO.env.ua.ie) {
                         // Since we're hiding the table using yui-overlay-hidden, we 
