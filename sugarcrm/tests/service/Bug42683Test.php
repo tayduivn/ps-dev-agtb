@@ -23,12 +23,6 @@ class Bug42683Test extends SOAPTestCase
         $lead = SugarTestLeadUtilities::createLead();
 
         $this->_login();
-        $cookie = 'debug_stop=1; debug_host=127.0.0.1; debug_port=10137; start_debug=1; send_debug_header=1; no_remote=1; send_sess_end=1; debug_jit=1; ZDEDebuggerPresent=php,phtml,php3; debug_session_id=1234567';
-        $cookies = explode('; ', $cookie);
-        foreach($cookies as $c) {
-          $ca = explode('=', $c);
-          $this->_soapClient->setCookie($ca[0], $ca[1]);
-        }
 
         $result = $this->_soapClient->call(
             'get_entry_list',
