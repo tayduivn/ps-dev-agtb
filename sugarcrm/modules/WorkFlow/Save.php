@@ -49,6 +49,7 @@ if(isset($_POST['record']) && $_POST['record']!=""){
 //check if we need to remove the old stuff
 if(!$is_new && ((!empty($_POST['base_module']) && ($_POST['base_module'] != $focus->base_module)) || (!empty($_POST['type']) && ($_POST['type'] != $focus->type)))){
 	$focus->cascade_delete($focus, true);
+    $focus->deleted = 0;
 }
 
 foreach($focus->column_fields as $field)

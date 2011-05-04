@@ -1672,7 +1672,11 @@ print "<BR>";
                                 //the order list in the defined order
                                 foreach($summ_order_by as $ob){
                                     if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                    if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
+                                    if(empty($groupby)){
+                                        $startCut = strrpos($ob, "(");
+                                        $startCut = ($startCut === FALSE) ? 0 : $startCut+1;
+                                        $groupby = substr($ob,$startCut,strrpos($ob,"=") - $startCut);
+                                        }
                                     $ob = trim($ob);
                                     $beg_sing_pos = strpos($ob,"'");
                                     if($beg_sing_pos>0){

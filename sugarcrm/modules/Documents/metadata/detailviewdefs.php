@@ -39,7 +39,7 @@ $viewdefs['Documents']['DetailView'] = array(
       array (
         array (
           array (
-            'name' => 'uploadfile',
+            'name' => 'filename',
             'displayParams' => 
             array (
               'link' => 'filename',
