@@ -90,6 +90,16 @@ Calendar.setup = function (params) {
                 //Clear the date selection if the user clicks on today.
                 Event.addListener("callnav_today", "click", function(){ 
                     calendar.clear();
+                    var now = new Date();
+                    //Reset the input field value
+                    Dom.get(inputField).value = formatSelectedDate(now);
+                    //Highlight the cell
+                    var cellIndex = calendar.getCellIndex(now);
+                    if(cellIndex > -1 )
+                    {
+                        var cell = calendar.cells[cellIndex];
+                        Dom.addClass(cell, calendar.Style.CSS_CELL_SELECTED);
+                    }
                 });
                 
                 dialog.showEvent.subscribe(function() {
@@ -163,53 +173,72 @@ Calendar.setup = function (params) {
                 	}                	
                 	calendar.cfg.setProperty('WEEKDAYS_SHORT', SUGAR.language.languages['app_list_strings']['dom_cal_day_short']);
                 }
+
+                var formatSelectedDate = function(selDate)
+                {
+                    var monthVal = selDate.getMonth() + 1; //Add one for month value
+                    if(monthVal < 10)
+                    {
+                        monthVal = '0' + monthVal;
+                    }
+
+                    var dateVal = selDate.getDate();
+
+                    if(dateVal < 10)
+                    {
+                        dateVal = '0' + dateVal;
+                    }
+
+                    var yearVal = selDate.getFullYear();
+
+                    selDate = '';
+                    if(monthPos == 0)
+                    {
+                        selDate = monthVal;
+                    }
+                    else if(dayPos == 0)
+                    {
+                        selDate = dateVal;
+                    }
+                    else
+                    {
+                        selDate = yearVal;
+                    }
+
+                    if(monthPos == 1)
+                    {
+                        selDate += date_field_delimiter + monthVal;
+                    }
+                    else if(dayPos == 1)
+                    {
+                        selDate += date_field_delimiter + dateVal;
+                    }
+                    else
+                    {
+                        selDate += date_field_delimiter + yearVal;
+                    }
+
+                    if(monthPos == 2)
+                    {
+                        selDate += date_field_delimiter + monthVal;
+                    }
+                    else if(dayPos == 2)
+                    {
+                        selDate += date_field_delimiter + dateVal;
+                    }
+                    else
+                    {
+                        selDate += date_field_delimiter + yearVal;
+                    }
+
+                    return selDate;
+                };
                 
                 calendar.selectEvent.subscribe(function() {
                     var input = Dom.get(inputField);
 					if (calendar.getSelectedDates().length > 0) {
 
-                        var selDate = calendar.getSelectedDates()[0];
-                        var monthVal = selDate.getMonth() + 1; //Add one for month value
-                        if(monthVal < 10)
-                        {
-                           monthVal = '0' + monthVal;	
-                        }
-                        
-                        var dateVal = selDate.getDate();
-                        
-                        if(dateVal < 10)
-                        {
-                           dateVal = '0' + dateVal;	
-                        }
-                        
-                        var yearVal = selDate.getFullYear();
-                        
-                        selDate = '';
-                        if(monthPos == 0) {
-                          selDate = monthVal;
-                        } else if(dayPos == 0) {
-                          selDate = dateVal;
-                        } else {
-                          selDate = yearVal;
-                        }
-                        
-                        if(monthPos == 1) {
-                          selDate += date_field_delimiter + monthVal;
-                        } else if(dayPos == 1) {
-                          selDate += date_field_delimiter + dateVal;
-                        } else {
-                          selDate += date_field_delimiter + yearVal;
-                        }
-                        
-                        if(monthPos == 2) {
-                          selDate += date_field_delimiter + monthVal;
-                        } else if(dayPos == 2) {
-                          selDate += date_field_delimiter + dateVal;                       	
-                        } else {
-                          selDate += date_field_delimiter + yearVal;
-                        }
-
-                        input.value = selDate;
+                        input.value = formatSelectedDate(calendar.getSelectedDates()[0]);
                         
                         if(params.comboObject)
                         {
