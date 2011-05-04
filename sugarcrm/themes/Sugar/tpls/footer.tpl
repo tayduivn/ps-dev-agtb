@@ -51,9 +51,9 @@
 if(SUGAR.util.isTouchScreen()) {
 	setTimeout(resizeHeader,10000);
 }
-if (!SUGAR._ajax_hist_loaded)
+if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 {
-    YAHOO.util.History.register('ajaxUILoc', "", SUGAR._ajaxGo);
+    YAHOO.util.History.register('ajaxUILoc', "", SUGAR.ajaxUI.go);
     YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
 }
 {/literal}

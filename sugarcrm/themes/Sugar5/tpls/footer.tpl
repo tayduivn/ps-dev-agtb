@@ -46,9 +46,9 @@
 <iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png' style='display:none'></iframe>
 <input id='ajaxUI-history-field' type='hidden'>
 <script type='text/javascript'>
-if (!SUGAR._ajax_hist_loaded)
+if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 {
-    YAHOO.util.History.register('ajaxUILoc', "", SUGAR._ajaxGo);
+    YAHOO.util.History.register('ajaxUILoc', "", SUGAR.ajaxUI.go);
     YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
 }
 </script>

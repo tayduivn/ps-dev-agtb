@@ -145,7 +145,7 @@ href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&re
 {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}{/capture}
 {capture assign=action}{if $act}{$act}{else}DetailView{/if}{/capture}
 {capture assign=record}{$rowData[$params.id]|default:$rowData.ID}{/capture}
-                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="javascript:SUGAR.ajaxLoadContent('index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}')">
+                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="javascript:SUGAR.ajaxUI.loadContent('index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}')">
 					{/if}
 					{if $params.customCode} 
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
