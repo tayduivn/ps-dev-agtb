@@ -20,8 +20,9 @@ class SugarSpriteBuilder {
 	// sprite settings
 	var $pngCompression = 9;
 	var $pngFilter = PNG_NO_FILTER;
-	var $maxWidth = 50;
+	var $maxWidth = 50; 
 	var $maxHeight = 50;
+	var $rowCnt = 30;
 
 	// processed image types
 	var $imageTypes = array();
@@ -32,6 +33,14 @@ class SugarSpriteBuilder {
 	// sprite resource images
 	var $spriteImg;
 
+	// horizontal/vertical repeatable sprites
+	var $spriteHorDef = array();
+	var $spriteHor = array();
+	var $spriteVerDef = array();
+	var $spriteVer = array();
+
+	// sprite_config collection
+	var $sprites_config = array();
 
 	public function __construct() {
 		
@@ -70,12 +79,23 @@ class SugarSpriteBuilder {
 		$list = array();
 		if(is_dir($dir)) {
 			if($dh = opendir($dir)) {
+
+				// optional sprites_config.php file
+				$this->loadSpritesConfig($dir);
+
 			    while (($file = readdir($dh)) !== false) {
 					if ($file != "." && $file != ".." && $file != "sprites_config.php") {
 
-						// add sprite if supported format
+						// file info & check supported image format 
 						if($info = $this->getFileInfo($dir, $file)) {
-							$list[$file] = $info;
+
+							// skip excluded files
+							if(isset($this->sprites_config[$dir]['exclude'])
+									&& array_search($file, $this->sprites_config[$dir]['exclude']) !== false) {
+								$GLOBALS['log']->debug('VINK excluded -> '.$file); 
+							} else {
+								$list[$file] = $info;
+							}
 						}
 	   	     		}
    		 		}
@@ -83,6 +103,18 @@ class SugarSpriteBuilder {
 		    closedir($dh);
 		}
 		return $list;
+	}
+
+	// load sprites_config
+	private function loadSpritesConfig($dir) {
+		$sprites_config = array();
+		if(file_exists("$dir/sprites_config.php")) {
+			include("$dir/sprites_config.php");
+			if(count($sprites_config)) {
+				$this->sprites_config = array_merge($this->sprites_config, $sprites_config);
+			}
+			$GLOBALS['log']->debug('VINK loaded '.$dir.'/sprites_config.php');
+		}
 	}
 
 	// return array of file info if image type is supported
@@ -140,6 +172,7 @@ class SugarSpriteBuilder {
 				'type' => 1,
 				'width' => $this->maxWidth,
 				'height' => $this->maxHeight,
+				'rowcnt' => $this->rowCnt,
 			);
 
 			// use seperate class to arrange the images
@@ -307,6 +340,7 @@ class SpritePlacement {
 		required params for
 		type 1 	-> width
 				-> height
+				-> rowcnt
 
 	*/
 	var $config = array();
@@ -352,13 +386,11 @@ class SpritePlacement {
 			// boxed
 			case 1:
 
-				// we put 30 sprites on a row 
-				$spritesPerRow = 30;
 				$spriteX = $this->config['width'];
 				$spriteY = $this->config['height'];
 				$spriteCnt = count($this->spriteMatrix) + 1;
-				$y = ceil($spriteCnt / $spritesPerRow);
-				$x = $spriteCnt - (($y - 1) * $spritesPerRow);
+				$y = ceil($spriteCnt / $this->config['rowcnt']);
+				$x = $spriteCnt - (($y - 1) * $this->config['rowcnt']);
 				$result = array(
 					'x' => ($x * $spriteX) + 1 - $spriteX, 
 					'y' => ($y * $spriteY) + 1 - $spriteY);
