@@ -93,12 +93,12 @@ class IBMDB2Manager  extends DBManager
 
     protected $capabilities = array(
         "affected_rows" => true,
-        "select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
+        //"select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
         "inline_keys" => true,
-        "case_sensitive" => false, // DB2 is case insensitive by default
+        //"case_sensitive" => false, // DB2 is case insensitive by default
         "fulltext" => true, // DB2 supports this though it needs to be initialized
-        "auto_increment_sequence" => false, // DB2 supports the autoincrement attribute on a column and does it by default for PRIMARY keys
-        "limit_subquery" => false,
+        //"auto_increment_sequence" => false, // DB2 supports the autoincrement attribute on a column and does it by default for PRIMARY keys
+        //"limit_subquery" => false,
     );
 
     /**+
@@ -302,32 +302,46 @@ class IBMDB2Manager  extends DBManager
         return false;
     }
 
-   	/**
-     * @see DBManager::get_columns()
+    /**+
+     * Get list of DB column definitions
+     *
+     * More info can be found here:
+     * http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/r0001047.htm
      */
     public function get_columns($tablename)
     {
-        //find all unique indexes and primary keys.
-        $result = $this->query("DESCRIBE $tablename");
+        $result = $this->query(
+            "SELECT * FROM SYSCAT.COLUMNS WHERE TABNAME = '".strtoupper($tablename)."'");
 
         $columns = array();
         while (($row=$this->fetchByAssoc($result)) !=null) {
-            $name = strtolower($row['Field']);
+            $name = strtolower($row['colname']);
             $columns[$name]['name']=$name;
-            $matches = array();
-            preg_match_all('/(\w+)(?:\(([0-9]+,?[0-9]*)\)|)( unsigned)?/i', $row['Type'], $matches);
-            $columns[$name]['type']=strtolower($matches[1][0]);
-            if ( isset($matches[2][0]) && in_array(strtolower($matches[1][0]),array('varchar','char','varchar2','int','decimal','float')) )
-                $columns[$name]['len']=strtolower($matches[2][0]);
-            if ( stristr($row['Extra'],'auto_increment') )
+            $columns[$name]['type']=strtolower($row['typename']);
+
+            switch($columns[$name]['type']) {
+                case 'date':
+                case 'xml':
+                case 'blob':
+                case 'clob':
+                case 'dbclob': break;
+                case 'decimal': $columns[$name]['len'] = $row['length'].','.$row['scale'];
+                                break;
+                default: $columns[$name]['len'] = $row['length'];
+            }
+            if ( !empty($row['default']) ) {
+                $matches = array();
+                $row['data_default'] = html_entity_decode($row['data_default'],ENT_QUOTES);
+                if ( preg_match("/'(.*)'/i",$row['data_default'],$matches) ) // NOT sure if DB2 ever puts () around a default
+                    $columns[$name]['default'] = $matches[1];
+            }
+            if($row['generated'] == 'A' || $row['generated'] == 'D')
                 $columns[$name]['auto_increment'] = '1';
-            if ($row['Null'] == 'NO' && !stristr($row['Key'],'PRI'))
-                $columns[$name]['required'] = 'true';
-            if (!empty($row['Default']) )
-                $columns[$name]['default'] = $row['Default'];
+            $columns[$name]['required'] = ( $row['nulls'] == 'N' );
         }
         return $columns;
     }
+
 
     /**
      * @see DBManager::getFieldsArray()
@@ -904,14 +918,13 @@ class IBMDB2Manager  extends DBManager
     * NOTE normally the db2_statistics should produce the indices in an implementation indepent manner.
     * However it wasn't producing any results for the LUW Express-C edition running on Vista.
     * Furthermore using a permanent connections resulted in unexplainable PHP errors.
-    * Falling back to system views to retrieve this data.
+    * Falling back to system views to retrieve this data:
+    * http://publib.boulder.ibm.com/infocenter/db2luw/v9/topic/com.ibm.db2.udb.admin.doc/doc/r0001047.htm
     */
     public function get_indices($tablename)
     {
         $tablename = strtoupper($tablename);
-		$indexname = strtoupper($this->getValidDBName($indexname, true, 'index'));
 
-        //find all unique indexes and primary keys.
 		$query = <<<EOQ
                 SELECT i.INDNAME, UNIQUERULE, COLNAME, COLSEQ FROM SYSCAT."INDEXES" i
                 	INNER JOIN SYSCAT."INDEXCOLUSE" c
@@ -924,12 +937,7 @@ EOQ;
 
         $indices = array();
 		while (($row=$this->fetchByAssoc($result)) !=null) {
-            $index_type='index'; // Type 'D' which allows duplicates
-            if ($row['uniquerule'] =='P')
-                $index_type='primary';
-            if ($row['uniquerule'] =='U')
-                $index_type='unique';
-
+            $index_type = @self::$indexTypeMap[$row['uniquerule']] or $index_type='index'; // use 'index' as default if rule is not in indexTypeMap
             $name = strtolower($row['indname']);
             $indices[$name]['name']=$name;
             $indices[$name]['type']=$index_type;
@@ -938,6 +946,7 @@ EOQ;
 
         return $indices;
     }
+    private static $indexTypeMap = array('D' => 'index', 'P' => 'primary', 'U' => 'unique');
 
     /**
      * @see DBManager::add_drop_constraint()
