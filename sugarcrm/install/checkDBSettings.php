@@ -470,7 +470,7 @@ installLog("Begin DB Check Process *************");
                         $cnfgCount = oci_result($cnfgStmt, "THE_COUNT");
                     }
 
-                    if( $cnfgCount == 0 && $silent==false){
+                    if( $cnfgCount != 0 && $silent==false){
                         $errors['ERR_DB_EXISTS_PROCEED'] = $mod_strings['ERR_DB_EXISTS_PROCEED'];
                         installLog("ERROR:: {$errors['ERR_DB_EXISTS_PROCEED']}");
                     }else{
