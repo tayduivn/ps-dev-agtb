@@ -45,6 +45,8 @@ class DBManagerFactory
         //BEGIN SUGARCRM flav=ent ONLY
         } elseif($type == "oci8" ) {
                 $my_db_manager = 'OracleManager';
+        } elseif($type == "ibm_db2" ) {
+                $my_db_manager = 'IBMDB2Manager';
         //END SUGARCRM flav=ent ONLY
         } elseif( $type == "mssql" ){
           	if ( function_exists('sqlsrv_connect')
