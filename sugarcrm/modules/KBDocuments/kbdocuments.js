@@ -2316,7 +2316,7 @@ SUGAR.kb = function() {
                         SUGAR.util.evalScript(o.responseText);
                     },
                     failure: function(o) {/*failure handler code*/
-                    },
+                    }
                     //argument: [target, targettype]
                 }
                 var trobj = YAHOO.util.Connect.asyncRequest('POST', url, callback);

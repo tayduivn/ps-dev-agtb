@@ -142,7 +142,7 @@ function complexLayoutInit() {
 			var listV =  this.getInnerLayout2Rows();
 			listV.set("height", tp.get("element").clientHeight - 25);
 			listV.render();
-                
+            
             se.leftTabs = new YAHOO.widget.TabView("lefttabs");
             var folderTab = new YAHOO.widget.Tab({ 
 				label: app_strings.LBL_EMAIL_FOLDERS_SHORT,
@@ -211,7 +211,7 @@ function complexLayoutInit() {
 				SUGAR.email2.leftTabs.get("activeTab").get("contentEl").parentNode.style.height = height + "px";
             }
             resizeTabBody();
-            se.complexLayout.on("render", resizeTabBody);
+            se.complexLay out.on("render", resizeTabBody);
             se.leftTabs.on("activeTabChange", resizeTabBody);
 			//hack to allow left pane scroll bar to fully show
           	var lefttabsDiv = document.getElementById('lefttabs');
