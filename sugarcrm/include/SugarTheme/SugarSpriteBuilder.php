@@ -125,6 +125,8 @@ class SugarSpriteBuilder {
 	public function createSprites() {
 
 		if(! $this->isAvailable) {
+			if(! $this->silentRun)
+				echo '<b>Sprites are not supported ! </b>';
 			return false;
 		}
 
