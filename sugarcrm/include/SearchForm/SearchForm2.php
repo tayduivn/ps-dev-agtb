@@ -470,7 +470,7 @@ require_once('include/EditView/EditView2.php');
 						}
 					}
 
-					if(!empty($params['is_date_field']) && isset($this->searchFields[$name]['value']))
+					if(!empty($params['is_date_field']) && isset($this->searchFields[$name]['value']) && $this->searchFields[$name]['value'][0] != '[')
 					{
 						global $timedate;
 						$date_value = $timedate->to_db_date($this->searchFields[$name]['value']);
