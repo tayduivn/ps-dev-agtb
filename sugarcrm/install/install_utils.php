@@ -1120,7 +1120,7 @@ EOQ;
 /**
  * (re)write the web.config file to prevent browser access to the log file
  */
-function handleWebConfig() 
+function handleWebConfig()
 {
     if ( !isset($_SERVER['IIS_UrlRewriteModule']) ) {
         return;
@@ -1245,7 +1245,7 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
-    
+
 	require_once('install/UserDemoData.php');
 
     //Create default admin user
@@ -1295,10 +1295,8 @@ function set_admin_password( $password ) {
     global $db;
 
     $user = new User();
-    $encrypted_password = $user->encrypt_password($password);
-    $user_hash = strtolower(md5($password));
+    $user_hash = $user->getPasswordHash($password);
 
-    //$query = "update users set user_password='$encrypted_password', user_hash='$user_hash' where id='1'";
     $query = "update users set user_hash='$user_hash' where id='1'";
 
     $db->query($query);

@@ -730,7 +730,7 @@ EOQ;
 		if (!isset ($this->user_name) || $this->user_name == "" || !isset ($user_password) || $user_password == "")
 			return null;
 
-		$user_hash = strtolower(md5($user_password));
+		$user_hash = $this->getPasswordHash($user_password);
 		if($this->authenticate_user($user_hash)) {
 			$query = "SELECT * from $this->table_name where id='$this->id'";
 		} else {
@@ -795,6 +795,35 @@ EOQ;
 		return $this;
 	}
 
+	public static function getPasswordHash($password)
+	{
+	    return strtolower(md5($password));
+	}
+
+	public static function checkHash($password, $user_hash)
+	{
+	    if(empty($user_hash)) return false;
+	    return self::getPasswordHash($password) == $user_hash;
+	}
+
+	public static function findUser($name, $password, $where = '')
+	{
+	    global $db;
+		$name = $db->quote($name);
+		$query = "SELECT * from users where user_name='$name'";
+		if(!empty($where)) {
+		    $query .= "AND $where";
+		}
+		$result = $db->limitQuery($query,0,1,false);
+		if(!empty($result)) {
+		    $row = $db->fetchByAssoc($result);
+		    if(self::checkHash($password, $row['user_hash'])) {
+		        return $row;
+		    }
+		}
+		return false;
+	}
+
 	/**
 	 * Verify that the current password is correct and write the new password to the DB.
 	 *
@@ -818,7 +847,7 @@ EOQ;
 			return false;
 		}
 
-		$old_user_hash = strtolower(md5($user_password));
+		$old_user_hash = $this->getPasswordHash($user_password);
 
 		if (!$current_user->isAdminForModule('Users')) {
 			//check old password first
@@ -834,7 +863,7 @@ EOQ;
 			}
 		}
 
-        $user_hash = strtolower(md5($new_password));
+        $user_hash = $this->getPasswordHash($new_password);
         $this->setPreference('loginexpiration','0');
         //set new password
         $now = TimeDate::getInstance()->nowDb();
