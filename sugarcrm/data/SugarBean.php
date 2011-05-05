@@ -1334,11 +1334,7 @@ class SugarBean
         }
         if ($this->deleted != 1)
             $this->deleted = 0;
-        if($isUpdate)
-        {
-            $query = "Update ";
-        }
-        else
+        if(!$isUpdate)
         {
             if (empty($this->date_entered))
             {
@@ -1353,7 +1349,6 @@ class SugarBean
             {
                 $this->id = create_guid();
             }
-            $query = "INSERT into ";
         }
         //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
@@ -1568,7 +1563,7 @@ class SugarBean
         {
             //Save will updated the saved_beans array
             $this->save();
-        } 
+        }
         $updating_relationships = false;
     }
 
