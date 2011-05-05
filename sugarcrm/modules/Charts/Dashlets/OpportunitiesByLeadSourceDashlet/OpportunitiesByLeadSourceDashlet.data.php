@@ -27,9 +27,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
- // $Id: OppByLeadSourceDashlet.data.php 16280 2006-08-22 19:47:48Z awu $
+ // $Id: OpportunitiesByLeadSourceDashlet.data.php 16280 2006-08-22 19:47:48Z awu $
 
-$dashletData['OppByLeadSourceDashlet']['searchFields'] = array(
+$dashletData['OpportunitiesByLeadSourceDashlet']['searchFields'] = array(
         'pbls_lead_sources' => array(
                 'name'  => 'pbls_lead_sources',
                 'vname' => 'LBL_LEAD_SOURCES',
