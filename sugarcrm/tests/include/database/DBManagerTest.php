@@ -1190,7 +1190,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   ),
                   array(),
                   array("text1" => "''"),
-                  array('text1' => "''", 'text2' => 'NULL')
+                  array()
             ),
             array("testtext2", array (
                   'text1' =>
@@ -1322,6 +1322,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   		'money' => 0, 'test_dtm' => "'$emptydate 00:00:00'", 'test_dtm2' => "'$emptydate 00:00:00'",
                         'test_dt' => "'$emptydate'", 'test_tm' => '\'00:00:00\''
                   ),
+                  array(),
             ),
             array("testnull", array (
                   'id' =>
@@ -1367,10 +1368,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   ),
                   array("id" => 123),
                   array("id" => "'123'"),
-                  array('intval' => 'NULL', 'floatval' => 'NULL',
-                  		'money' => 'NULL', 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
-                        'test_dt' => "NULL", 'test_tm' => 'NULL'
-                  ),
+                  array(),
             ),
             array("testempty", array (
                   'id' =>
@@ -1427,9 +1425,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   		'money' => 0, 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
                         'test_dt' => "NULL", 'test_tm' => 'NULL'
                   ),
-                  array('intval' => 0, 'floatval' => 0,
-                  		'money' => 0, 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
-                        'test_dt' => "NULL", 'test_tm' => 'NULL', 'test_txt' => 'NULL'
+                  array('intval' => 'NULL', 'floatval' => 'NULL',
+                  		'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
+                        'test_dt' => 'NULL', 'test_tm' => 'NULL'
                   ),
             ),
         );

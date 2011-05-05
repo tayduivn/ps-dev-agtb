@@ -1772,14 +1772,19 @@ abstract class DBManager
            if(isset($bean->$field)) {
                $val = from_html($bean->$field);
            } else {
-               $val = null;
+               continue;
            }
 
 		   if(!empty($fieldDef['type']) && $fieldDef['type'] == 'bool'){
                $val = $bean->getFieldValue($field);
 		   }
-           if(strlen($val) == 0 && isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
-               $val = $fieldDef['default'];
+
+           if(strlen($val) == 0) {
+               if(isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+                   $val = $fieldDef['default'];
+               } else {
+                   $val = null;
+               }
            }
 
            if(!is_null($val) || !empty($fieldDef['required'])) {
