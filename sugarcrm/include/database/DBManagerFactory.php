@@ -145,10 +145,11 @@ class DBManagerFactory
     public static function getDbDrivers()
     {
         $drivers = array();
-        foreach(new GlobIterator("include/database/*Manager.php", FilesystemIterator::KEY_AS_FILENAME) as $name => $file) {
+        $dir = opendir("include/database");
+        while(($name = readdir($dir)) !== false) {
+            if(substr($name, -11) != "Manager.php") continue;
             if($name == "DBManager.php") continue;
-
-            require_once($file->getPathname());
+            require_once("include/database/$name");
             $classname = substr($name, 0, -4);
             if(!class_exists($classname)) continue;
             $driver = new $classname;
