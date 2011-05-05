@@ -982,34 +982,23 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
-    global $current_user;
+
 	require_once('install/UserDemoData.php');
 
     //Create default admin user
-    $current_user = new User();
-    $current_user->id = 1;
-    $current_user->new_with_id = true;
-    $current_user->last_name = 'Administrator';
-    //$user->user_name = 'admin';
-    $current_user->user_name = $setup_site_admin_user_name;
-    $current_user->title = "Administrator";
-    $current_user->status = 'Active';
-    $current_user->is_admin = true;
-	$current_user->employee_status = 'Active';
-    //$user->user_password = $user->encrypt_password($setup_site_admin_password);
-    $current_user->user_hash = strtolower(md5($setup_site_admin_password));
-    $current_user->email = '';
-    $current_user->picture = UserDemoData::_copy_user_image($current_user->id);
-    $current_user->save();
-
-    // echo 'Creating RSS Feeds';
-    //$feed = new Feed();
-    //$feed->createRSSHomePage($user->id);
-
-
-    // We need to change the admin user to a fixed id of 1.
-    // $query = "update users set id='1' where user_name='$user->user_name'";
-    // $result = $db->query($query, true, "Error updating admin user ID: ");
+    $user = new User();
+    $user->id = 1;
+    $user->new_with_id = true;
+    $user->last_name = 'Administrator';
+    $user->user_name = $setup_site_admin_user_name;
+    $user->title = "Administrator";
+    $user->status = 'Active';
+    $user->is_admin = true;
+	$user->employee_status = 'Active';
+    $user->user_hash = $user->getPasswordHash($setup_site_admin_password);
+    $user->email = '';
+    $user->picture = UserDemoData::_copy_user_image($user->id);
+    $user->save();
 
     $GLOBALS['log']->info("Created ".$current_user->table_name." table. for user $current_user->id");
 
@@ -1021,10 +1010,8 @@ function create_default_users(){
         if( isset($sugar_config['default_user_is_admin']) && $sugar_config['default_user_is_admin'] ){
             $default_user->is_admin = true;
         }
-        //$default_user->user_password = $default_user->encrypt_password($sugar_config['default_password']);
-        $default_user->user_hash = strtolower(md5($sugar_config['default_password']));
+        $default_user->user_hash = $user->getPasswordHash($sugar_config['default_password']);
         $default_user->save();
-        //$feed->createRSSHomePage($user->id);
     }
 }
 
@@ -1032,10 +1019,8 @@ function set_admin_password( $password ) {
     global $db;
 
     $user = new User();
-    $encrypted_password = $user->encrypt_password($password);
-    $user_hash = strtolower(md5($password));
+    $user_hash = $user->getPasswordHash($password);
 
-    //$query = "update users set user_password='$encrypted_password', user_hash='$user_hash' where id='1'";
     $query = "update users set user_hash='$user_hash' where id='1'";
 
     $db->query($query);
