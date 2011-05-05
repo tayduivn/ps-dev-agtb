@@ -338,10 +338,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareIndexInTables()
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
         $tablename1 = 'test9_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
@@ -480,10 +476,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCompareIndexInTablesIndexesDoNotMatch()
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
         $tablename1 = 'test15_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
@@ -535,10 +527,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testAddIndexes()
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
         $tablename1 = 'test17_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
@@ -603,10 +591,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDropIndexes()
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
         $tablename1 = 'test19_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
@@ -684,10 +668,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testModifyIndexes()
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
         $tablename1 = 'test21_' . mt_rand();
         $this->_db->createTableParams($tablename1,
             array(
@@ -989,10 +969,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetRowCount()
     {
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
+        if(!$this->_db->supports("select_rows")) {
+            $this->markTestSkipped('Skipping, backend doesn\'t support select_rows');
+        }
         $beanIds = $this->_createRecords(1);
 
         $result = $this->_db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
@@ -1004,16 +983,13 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetAffectedRowCount()
     {
-        if ( ($this->_db instanceOf MysqliManager) )
-            $this->markTestSkipped('Skipping on Mysqli; doesn\'t apply to this backend');
-        //BEGIN SUGARCRM flav=ent ONLY
-        if ($this->_db->dbType == 'oci8')
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
-        //END SUGARCRM flav=ent ONLY
+        if(!$this->_db->supports("affected_rows")) {
+            $this->markTestSkipped('Skipping, backend doesn\'t support affected rows');
+        }
 
         $beanIds = $this->_createRecords(1);
         $result = $this->_db->query("DELETE From contacts where id = '{$beanIds[0]}'");
-        $this->assertEquals($this->_db->getAffectedRowCount(),1);
+        $this->assertEquals(1, $this->_db->getAffectedRowCount($result));
     }
 
     public function testFetchByAssoc()
@@ -1495,6 +1471,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     */
     public function testUpdateSQL($name, $defs, $data, $_, $result = null)
     {
+        $name = "update$name";
         $vardefs = array(
 			'table' => $name,
             'fields' => $defs,

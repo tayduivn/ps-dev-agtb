@@ -3128,7 +3128,7 @@ abstract class DBManager
      * categorizes the index definition by types, unique, primary and index.
      * <code>
      * <?php
-     * array(
+     * array(                                                              O
      *       'index1'=> array (
      *           'name'   => 'index1',
      *           'type'   => 'primary',
