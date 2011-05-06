@@ -64,7 +64,7 @@
 					</td>
 					<td valign="top" >
 						<input id='email_password' name='email_password' size='30' maxlength='100' type="password" onclick="SUGAR.email2.accounts.ieAccountError(SUGAR.email2.accounts.normalStyle);">
-						<a href="#" id='email_password_link' onClick="SUGAR.util.setEmailPasswordEdit('email_password')" style="display: none">{$app_strings.LBL_CHANGE_PASSWORD}</a>
+						<a href="javascript:void(0)" id='email_password_link' onClick="SUGAR.util.setEmailPasswordEdit('email_password')" style="display: none">{$app_strings.LBL_CHANGE_PASSWORD}</a>
 					</td>
 			    </tr>
 
