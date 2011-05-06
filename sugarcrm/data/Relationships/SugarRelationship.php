@@ -26,7 +26,7 @@ abstract class SugarRelationship
     protected $lhsLink;
     protected $rhsLink;
 
-    public abstract function add($lhs, $rhs, $additionalFields);
+    public abstract function add($lhs, $rhs, $additionalFields = array());
 
     /**
      * @abstract

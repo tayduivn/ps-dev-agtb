@@ -888,7 +888,7 @@ class SugarApplication
         {
             ob_get_clean();
             $ajax_ret = array(
-                 'content' => "<script>SUGAR.ajaxLoadContent('$url');</script>\n",
+                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
                  'menu' => array(
                      'module' => $_REQUEST['module'],
                      'label' => translate($_REQUEST['module']),
@@ -898,7 +898,7 @@ class SugarApplication
             echo $json->encode($ajax_ret);
         } else {
             if (headers_sent()) {
-                echo "<script>SUGAR.ajaxLoadContent('$url');</script>\n";
+                echo "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n";
             } else {
                 //@ob_end_clean(); // clear output buffer
                 session_write_close();

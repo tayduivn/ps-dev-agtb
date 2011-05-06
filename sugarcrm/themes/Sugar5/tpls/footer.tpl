@@ -42,6 +42,16 @@
         {$COPYRIGHT}
     </div>
 </div>
-
+{literal}
+<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png' style='display:none'></iframe>
+<input id='ajaxUI-history-field' type='hidden'>
+<script type='text/javascript'>
+if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
+{
+    YAHOO.util.History.register('ajaxUILoc', "", SUGAR.ajaxUI.go);
+    YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
+}
+</script>
+{/literal}
 </body>
 </html>

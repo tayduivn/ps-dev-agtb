@@ -232,7 +232,7 @@ function handleRedirect($return_id='', $return_module='')
     {
         $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action";
         $ajax_ret = array(
-             'content' => "<script>SUGAR.ajaxLoadContent('$url');</script>\n",
+             'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
              'menu' => array(
                  'module' => $return_module,
                  'label' => translate($return_module),
@@ -257,7 +257,7 @@ function handleRedirect($return_id='', $return_module='')
     	}
         $url="index.php?{$standard}{$add}";
         $ajax_ret = array(
-             'content' => "<script>SUGAR.ajaxLoadContent('$url');</script>\n",
+             'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
              'menu' => array(
                  'module' => $return_module,
                  'label' => translate($return_module),

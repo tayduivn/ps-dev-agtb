@@ -1359,6 +1359,7 @@ class SugarBean
             $this->team_id = $current_user->team_id;
             $usedDefaultTeam = true;
         }
+        //END SUGARCRM flav=pro ONLY
 
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
@@ -1366,12 +1367,11 @@ class SugarBean
         if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']))
         {
             $GLOBALS['saving_relationships'] = true;
-        //END SUGARCRM flav=pro ONLY
         // let subclasses save related field changes
             $this->save_relationship_changes($isUpdate);
-        //BEGIN SUGARCRM flav=pro ONLY
             $GLOBALS['saving_relationships'] = false;
         }
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->updateCalculatedFields();
         //END SUGARCRM flav=pro ONLY
         if($isUpdate && !$this->update_date_entered)
