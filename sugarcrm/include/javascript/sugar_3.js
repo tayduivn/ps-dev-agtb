@@ -4101,3 +4101,24 @@ SUGAR.util.closeActivityPanel = {
         SUGAR.util.closeActivityPanel.panel.show();
     }
 }
+
+SUGAR.util.setEmailPasswordDisplay = function(id, exists) {
+	link = document.getElementById(id+'_link');
+	pwd = document.getElementById(id);
+	if(!pwd || !link) return;
+	if(exists) {
+    	pwd.style.display = 'none';
+    	link.style.display = '';
+	} else {
+    	pwd.style.display = '';
+    	link.style.display = 'none';
+	}
+}
+
+SUGAR.util.setEmailPasswordEdit = function(id) {
+	link = document.getElementById(id+'_link');
+	pwd = document.getElementById(id);
+	if(!pwd || !link) return;
+	pwd.style.display = '';
+	link.style.display = 'none';
+}

@@ -307,7 +307,10 @@ EditView_tabs.on('contentReady', function(e){
                             </tr>
                             <tr id="mail_smtppass_tr">
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtppass_label">{$MOD.LBL_MAIL_SMTPPASS}</span></td>
-                                <td width="30%" ><slot><input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="64" value="{$mail_smtppass}" tabindex='1'></slot></td>
+                                <td width="30%" ><slot>
+                                <input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="64" value="{$mail_smtppass}" tabindex='1'>
+                                <a href="#" id='mail_smtppass_link' onClick="SUGAR.util.setEmailPasswordEdit('mail_smtppass')" style="display: none">{$APP.LBL_CHANGE_PASSWORD}</a>
+                                </slot></td>
                                 <td>&nbsp;</td>
                                 <td >&nbsp;</td>
                             </tr>
@@ -918,6 +921,11 @@ document.getElementById('email_link_type').onchange();
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
+if(window.addEventListener){
+    window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
+}else{
+    window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
+}
 {/literal}
 {$getNameJs}
 {$getNumberJs}

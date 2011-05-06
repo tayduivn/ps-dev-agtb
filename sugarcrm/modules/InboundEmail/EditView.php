@@ -219,7 +219,8 @@ $xtpl->assign('NAME', $focus->name);
 $xtpl->assign('STATUS', $status);
 $xtpl->assign('SERVER_URL', $focus->server_url);
 $xtpl->assign('USER', $focus->email_user);
-// Don't send password back $xtpl->assign('PASSWORD', $focus->email_password);
+// Don't send password back
+$xtpl->assign('HAS_PASSWORD', empty($focus->email_password)?0:1);
 $xtpl->assign('TRASHFOLDER', $trashFolder);
 $xtpl->assign('SENTFOLDER', $sentFolder);
 $xtpl->assign('MAILBOX', $mailbox);
