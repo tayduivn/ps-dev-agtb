@@ -55,6 +55,7 @@ require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
+$rac->clearExternalAPICache();
 
 $repairedTables = array();
 

@@ -69,10 +69,11 @@ array (
             'label' => 'LBL_SUBJECT',
             'displayParams' => 
             array (
-              'size' => 100,
+              'size' => 50,
               'required' => true,
             ),
           ),
+          'assigned_user_name'
         ),
          
         array (

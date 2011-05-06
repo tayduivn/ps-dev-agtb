@@ -372,11 +372,11 @@ eoq;
     	foreach ($composePackage as $key => $singleCompose)
     	{
     	   if (is_string($singleCompose))
-    	       $composePackage[$key] = str_replace("'", "&#039;", htmlspecialchars($singleCompose, ENT_NOQUOTES, 'UTF-8'));
+    	       $composePackage[$key] = str_replace("&nbsp;", " ", from_html($singleCompose));
     	}
 
     	$quickComposeOptions = array('fullComposeUrl' => $fullLinkUrl,'composePackage' => $composePackage);
-    	$j_quickComposeOptions = json_encode($quickComposeOptions);
+    	$j_quickComposeOptions = json::encode($quickComposeOptions, false ,true);
 
     	return $j_quickComposeOptions;
     }

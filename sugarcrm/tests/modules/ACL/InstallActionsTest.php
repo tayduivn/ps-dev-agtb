@@ -2,8 +2,14 @@
 //FILE SUGARCRM flav=pro ONLY
 class InstallActionsTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        $this->markTestSkipped('Test is no longer valid as the tested upgrades are no longer supported');
+    }
+
     static public function setUpBeforeClass()
     {
+        return; // See above - skipped
         $admin = new User();
         $GLOBALS['current_user'] = $admin->retrieve('1');
         global $sugar_version, $sugar_flavor;
@@ -33,6 +39,7 @@ class InstallActionsTest extends Sugar_PHPUnit_Framework_TestCase
 
     static public function tearDownAfterClass()
     {
+        return; // see above - skipped
         //If it is the ce version, we need to restore db to ce state
         if ($GLOBALS['sugar_flavor'] == 'CE') {
             $query = "delete from acl_actions where acltype like 'Tracker%' and category != 'Trackers'";

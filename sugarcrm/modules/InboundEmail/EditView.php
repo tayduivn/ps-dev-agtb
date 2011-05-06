@@ -169,8 +169,10 @@ if(!empty($focus->stored_options)) {
 // return action
 if(isset($focus->id)) {
 	$return_action = 'DetailView';
+    $validatePass = FALSE;
 } else {
 	$return_action = 'ListView';
+    $validatePass = TRUE;
 }
 
 // javascript
@@ -178,7 +180,7 @@ $javascript->setSugarBean($focus);
 $javascript->setFormName('EditView');
 $javascript->addRequiredFields();
 $javascript->addFieldGeneric('email_user', 'alpha', $mod_strings['LBL_LOGIN'], true);
-$javascript->addFieldGeneric('email_password', 'alpha', $mod_strings['LBL_PASSWORD'], false);
+$javascript->addFieldGeneric('email_password', 'alpha', $mod_strings['LBL_PASSWORD'], $validatePass);
 $javascript->addFieldRange('email_num_autoreplies_24_hours', 'int', $mod_strings['LBL_MAX_AUTO_REPLIES'], true, "", 1, $focus->maxEmailNumAutoreplies24Hours);
 
 $r = $focus->db->query('SELECT value FROM config WHERE name = \'fromname\'');
@@ -251,6 +253,7 @@ else
 {
 	$groupId = create_guid();
 	$is_auto_import = 'checked';
+    $xtpl->assign('EMAIL_PASS_REQ_SYMB', $app_strings['LBL_REQUIRED_SYMBOL']);
 }
 
 $xtpl->assign('GROUP_ID', $groupId);
