@@ -116,7 +116,7 @@ function template_cal_tabs($args) {
 			    else {
 			        $callStatus = '';
 			    }
-				echo '<td>' . SugarThemeRegistry::current()->getImage('Calls','alt="'.$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"') . '</td>
+				echo '<td>' . SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Calls','', null,null,'.gif',$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Calls&action=DetailView&record=' .
 						$act->sugar_bean->id . '">' . $callStatus . ': ' . $act->sugar_bean->name . '</a></td>';
 			} else if($act->sugar_bean->object_name == 'Meeting') {
@@ -126,7 +126,7 @@ function template_cal_tabs($args) {
 			    else {
 			        $meetingStatus = '';
 			    }
-				$out = '<td>' . SugarThemeRegistry::current()->getImage('Meetings','alt="'.$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"') . '</td>
+				$out = '<td>' . SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Meetings','', null,null,'.gif',$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Meetings&action=DetailView&record=' .
 						$act->sugar_bean->id . '">' . $meetingStatus . ': ' . $act->sugar_bean->name .'</a>';
 
@@ -143,7 +143,7 @@ function template_cal_tabs($args) {
 				echo $out;
 
 			} else if($act->sugar_bean->object_name == 'Task') {
-				echo '<td>' .  SugarThemeRegistry::current()->getImage('Tasks','alt="'.$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"') . '</td>
+				echo '<td>' .  SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Tasks','', null,null,'.gif',$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Tasks&action=DetailView&record=' . $act->sugar_bean->id . '">'.$app_list_strings['task_status_dom'][$fields['STATUS']].': ' . $act->sugar_bean->name . '</a></td>';
 			}
 			echo '</tr></table><div>';
@@ -167,7 +167,7 @@ function template_cal_tabs($args) {
 			<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"100%\">";
 
 			if($act->sugar_bean->object_name == 'Call') {
-				echo "<tr><td>" . SugarThemeRegistry::current()->getImage('Calls','alt=\"'.$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'\"') . "</td>";
+				echo "<tr><td>" . SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Calls','', null,null,'.gif',$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . "</td>";
 
 				if(empty($act->sugar_bean->name)) {
 					echo "<td width=\"100%\">";
@@ -183,7 +183,7 @@ function template_cal_tabs($args) {
 				}
 			} else if($act->sugar_bean->object_name == 'Meeting') {
 				echo "<td>".
-					SugarThemeRegistry::current()->getImage('Meetings','alt=\"'.$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'\"');
+					SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Meetings','', null,null,'.gif',$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name);
 				echo "</td>";
 
 				if(empty($act->sugar_bean->name)) {
@@ -209,7 +209,7 @@ function template_cal_tabs($args) {
 				}
 			} else if($act->sugar_bean->object_name == 'Task') {
 				echo "<td>".
-					SugarThemeRegistry::current()->getImage('Tasks','alt="'.$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"');
+					SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Tasks','',null,null,'.gif',$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name);
 				echo "</td>";
 
 				if(empty($act->sugar_bean->name)) {
@@ -307,7 +307,7 @@ function template_cal_tabs($args) {
 			}
 			//END SUGARCRM flav=pro ONLY
 
-			$tools = '<div align="right"><a href="index.php?module='.$currentModule.'&action='.$action.'&view=shared" class="tabFormAdvLink">&nbsp;<a href="javascript: toggleDisplay(\'shared_cal_edit\');" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('edit', 'alt="'.$current_module_strings['LBL_EDIT'].'"  border="0"  align="absmiddle"').'&nbsp;'.$current_module_strings['LBL_EDIT'].'</a></div>';
+			$tools = '<div align="right"><a href="index.php?module='.$currentModule.'&action='.$action.'&view=shared" class="tabFormAdvLink">&nbsp;<a href="javascript: toggleDisplay(\'shared_cal_edit\');" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage/*ALTFIXED*/('edit', 'border="0" align="absmiddle"', null,null,'.gif',$current_module_strings['LBL_EDIT']).'&nbsp;'.$current_module_strings['LBL_EDIT'].'</a></div>';
 
 			echo get_form_header($mod_strings['LBL_SHARED_CAL_TITLE'], $tools, false);
 			if(empty($_SESSION['shared_ids']))
@@ -421,8 +421,8 @@ function template_cal_tabs($args) {
 				echo get_select_options_with_id(get_user_array(false), $ids);
 
 			echo "	</select></td>
-				<td><a onclick=\"up('shared_ids');\">".SugarThemeRegistry::current()->getImage('uparrow_big', 'border="0" style="margin-bottom: 1px;" alt="'.$app_strings['LBL_SORT'].'"')."</a><br>
-				<a onclick=\"down('shared_ids');\">".SugarThemeRegistry::current()->getImage('downarrow_big', 'border="0" style="margin-top: 1px;"  alt="'.$app_strings['LBL_SORT'].'"')."</a></td>
+				<td><a onclick=\"up('shared_ids');\">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/('uparrow_big', 'border="0" style="margin-bottom: 1px;"', null,null,'.gif',$app_strings['LBL_SORT'])."</a><br>
+				<a onclick=\"down('shared_ids');\">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/('downarrow_big', 'border="0" style="margin-top: 1px;"', null,null,'.gif',$app_strings['LBL_SORT'])."</a></td>
 			</tr>
 			<tr>";
 			echo "<td align=\"right\" colspan=\"2\"><input class=\"button\" type=\"submit\" title=\"".$app_strings['LBL_SELECT_BUTTON_TITLE']."\" accessKey=\"".$app_strings['LBL_SELECT_BUTTON_KEY']."\" value=\"".$app_strings['LBL_SELECT_BUTTON_LABEL']."\" /><input class=\"button\" onClick=\"javascript: toggleDisplay('shared_cal_edit');\" type=\"button\" title=\"".$app_strings['LBL_CANCEL_BUTTON_TITLE']."\" accessKey=\"".$app_strings['LBL_CANCEL_BUTTON_KEY']."\" value=\"".$app_strings['LBL_CANCEL_BUTTON_LABEL']."\"/></td>
@@ -888,7 +888,7 @@ function template_get_next_calendar($args) {
 
 	global $mod_strings;
 ?>
-<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?><?php echo $args['calendar']->get_next_date_str(); ?>"><?php echo $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)]; ?>&nbsp;<?php echo SugarThemeRegistry::current()->getImage('calendar_next','alt="'. $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)].'" align="absmiddle" border="0"'); ?></a>
+<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?><?php echo $args['calendar']->get_next_date_str(); ?>"><?php echo $mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)]; ?>&nbsp;<?php echo SugarThemeRegistry::current()->getImage/*ALTFIXED*/('calendar_next','align="absmiddle" border="0"', null,null,'.gif',$mod_strings["LBL_NEXT_".$args['calendar']->get_view_name($args['calendar']->view)]); ?></a>
 <?php
 
 }
@@ -897,7 +897,7 @@ function template_get_previous_calendar($args) {
 	global $mod_strings;
 
 ?>
-<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?><?php echo $args['calendar']->get_previous_date_str(); ?>"><?php echo SugarThemeRegistry::current()->getImage('calendar_previous','alt="'. $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)].'" align="absmiddle" border="0"'); ?>&nbsp;&nbsp;<?php echo $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)]; ?></a>
+<a href="index.php?action=index&module=Calendar&view=<?php echo $args['calendar']->view; ?><?php echo $args['calendar']->get_previous_date_str(); ?>"><?php echo SugarThemeRegistry::current()->getImage/*ALTFIXED*/('calendar_previous','align="absmiddle" border="0"', null,null,'.gif',$mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)]); ?>&nbsp;&nbsp;<?php echo $mod_strings["LBL_PREVIOUS_".$args['calendar']->get_view_name($args['calendar']->view)]; ?></a>
 <?php
 
 }

@@ -63,8 +63,8 @@ class ViewDropdowns extends SugarView
         
         $smarty->assign('LBL_BTN_ADDDROPDOWN',translate('LBL_BTN_ADDDROPDOWN'));
         $smarty->assign('dropdowns', $dd->getNodes());
-		$smarty->assign('deleteImage', SugarThemeRegistry::current()->getImage( 'delete_inline', ''));
-		$smarty->assign('editImage', SugarThemeRegistry::current()->getImage( 'edit_inline', ''));
+		$smarty->assign('deleteImage', SugarThemeRegistry::current()->getImage/*ALTFIXED*/( 'delete_inline', '',null,null,'.gif',$mod_strings['LBL_MB_DELETE']));
+		$smarty->assign('editImage', SugarThemeRegistry::current()->getImage/*ALTFIXED*/( 'edit_inline', '',null,null,'.gif',$mod_strings['LBL_EDIT']));
 		$smarty->assign('action', 'savedropdown');
 		
 

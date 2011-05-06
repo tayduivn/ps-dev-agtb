@@ -594,9 +594,22 @@ EOHTML;
         $width = null,
         $height = null,
 		$ext = '.gif',
-        $alt
+        $alt = ''
     )
     {
+        if ($alt == -1){
+            $debug = debug_backtrace();
+            $caller = $debug[0]["file"];
+            if (strstr ("/modules/", $caller) !== false) {
+                debug_print_backtrace();
+
+                echo "image name: " . $imageName . "<br />";
+                echo "other attrs: " . $other_attributes . "<br />";
+                echo "alt:" . $alt . "<br />";
+                 die();
+            }
+        }
+
         static $cached_results = array();
         
         $imageName .= $ext;
@@ -611,14 +624,10 @@ EOHTML;
         if ( is_null($width) ) 
             $width = $size[0];
         if ( is_null($height) ) 
-            $height = $size[1];
-
-        // Worst case scenario: if alt tag is empty, we set it to the image name
-        if ( empty ($alt) )
-            $alt = $imageName;
-        
+            $height = $size[1];        
         // Cache everything but the other attributes....
-        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
+        if ($alt == -1) $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
+        else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
         
         return $cached_results[$imageName] . "$other_attributes />";
     }
@@ -626,7 +635,7 @@ EOHTML;
     /**
      * Returns the URL for an image in the current theme. If not found in the current theme, will revert
      * to looking in the base theme.
-     * 
+     *  
      * @param  string $imageName image file name
      * @param  bool   $addJSPath call getJSPath() with the results to add some unique image tracking support
      * @return string path to image

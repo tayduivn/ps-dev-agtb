@@ -346,22 +346,22 @@ class SavedReport extends SugarBean
 		//set the following four buttons.
 
 		if(isset($this->schedule_id) && $this->active == 1){
-			//$is_scheduled_img = SugarThemeRegistry::current()->getImage('scheduled_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_SCHEDULE_EMAIL'].'"');
+			//$is_scheduled_img = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('scheduled_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_SCHEDULE_EMAIL']);
 			$is_scheduled = $timedate->to_display_date_time($this->next_run);
 		} else {
-			//$is_scheduled_img = SugarThemeRegistry::current()->getImage('unscheduled_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_SCHEDULE_EMAIL'].'"');
+			//$is_scheduled_img = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('unscheduled_inline','border="0" align="absmiddle"',null,null,$mod_strings['LBL_SCHEDULE_EMAIL']);
 			$is_scheduled = $mod_strings['LBL_NONE'];
 		}
 
-		$view = sprintf("%s %s", SugarThemeRegistry::current()->getImage('view_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_VIEW'].'"'), $mod_strings['LBL_VIEW']);
+		$view = sprintf("%s %s", SugarThemeRegistry::current()->getImage/*ALTFIXED*/('view_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_VIEW']), $mod_strings['LBL_VIEW']);
 
 	//logic for showing delete, publish, and unpublish buttons
 //		if (isset($_REQUEST['view'])) {
-			$delete_img = SugarThemeRegistry::current()->getImage('delete_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_DELETE'].'"');
+			$delete_img = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('delete_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_DELETE']);
 			$delete_line = "<a href=\"index.php?module=Reports&action=index&delete_report_id=".$this->id."\" class=\"listViewTdToolsS1\"> $delete_img ". $mod_strings['LBL_DELETE']."</a>";
 
-			$unpublish_img = SugarThemeRegistry::current()->getImage('unpublish_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_UN_PUBLISH'].'"');
-			$publish_img = SugarThemeRegistry::current()->getImage('publish_inline','border="0" align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'"');
+			$unpublish_img = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('unpublish_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_UN_PUBLISH']);
+			$publish_img = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('publish_inline','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_PUBLISH']);
 			$unpublish_line = "<a title='{$mod_strings['LBL_UN_PUBLISH']}' href=\"index.php?module=Reports&action=index&publish=no&publish_report_id=$this->id\" class=\"listViewTdToolsS1\">$unpublish_img</a>";
 			$publish_line = "<a title='{$mod_strings['LBL_PUBLISH']}' href=\"index.php?module=Reports&action=index&publish=yes&publish_report_id=$this->id\" class=\"listViewTdToolsS1\">$publish_img</a>";
 //		} else {

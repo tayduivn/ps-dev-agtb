@@ -49,7 +49,9 @@ $mod_strings = array (
   array (
     'Active' => 'Active',
     'Inactive' => 'Inactive',
-  ),
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+),
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 

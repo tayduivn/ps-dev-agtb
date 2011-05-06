@@ -425,9 +425,9 @@ class Meeting extends SugarBean {
             
             $meetingLink = '';
             if ($GLOBALS['current_user']->id == $this->assigned_user_id ) {
-                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"></a>';
+                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImage/*ALTFIXED*/("start_meeting_inline", 'border="0" ', 18, 19, ".png", translate('LBL_HOST_EXT_MEETING',$this->module_dir)).'" height="19" width="18" ></a>';
             }
-            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_JOIN_EXT_MEETING',$this->module_dir).'"></a>';
+            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImage/*ALTFIXED*/("join_meeting_inline", 'border="0" ', 18, 19, ".png", translate('LBL_JOIN_EXT_MEETING',$this->module_dir)).'"></a>';
             
             $this->displayed_url = $meetingLink;
         }
@@ -444,7 +444,7 @@ class Meeting extends SugarBean {
 			if(empty($action))
 			     $action = "index";
             $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Held\",\"listview\",\"1\");'>";
-			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Meetings')." border='0'")."</a>";
+			$meeting_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage/*ALTFIXED*/("close_inline"," border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE','Meetings'))."</a>";
 		}
 		global $timedate;
 		$today = $timedate->nowDb();
@@ -487,11 +487,11 @@ class Meeting extends SugarBean {
         $oneHourAgo = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time()-3600);
         if(!empty($this->host_url) && $date_db	>= $oneHourAgo) {
             if($this->assigned_user_id == $GLOBALS['current_user']->id){
-                $join_icon = SugarThemeRegistry::current()->getImage('start_meeting_inline', 'border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"');
+                $join_icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('start_meeting_inline', 'border="0"',null,null,'.gif',translate('LBL_HOST_EXT_MEETING',$this->module_dir));
                 $meeting_fields['OBJECT_IMAGE_ICON'] = 'start_meeting_inline';
                 $meeting_fields['DISPLAYED_URL'] = 'index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1';
             }else{
-                $join_icon = SugarThemeRegistry::current()->getImage('join_meeting_inline', 'border="0" title="'.translate('LBL_JOIN_EXT_MEETING',$this->module_dir).'"');
+                $join_icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('join_meeting_inline', 'border="0"',null,null,'.gif',translate('LBL_JOIN_EXT_MEETING',$this->module_dir));
                 $meeting_fields['OBJECT_IMAGE_ICON'] = 'join_meeting_inline';
                 $meeting_fields['DISPLAYED_URL'] = 'index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=0';
             }

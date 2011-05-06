@@ -105,19 +105,19 @@ function getImageForType( $type ){
     $icon = "";
     switch( $type ){
         case "full":
-            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "" );
+            $icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/("Upgrade", "",null,null,'.gif',$mod_strings['LBL_DST_UPGRADE']);
             break;
         case "langpack":
-            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "" );
+            $icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/("LanguagePacks", "",null,null,'.gif',$mod_strings['LBL_LANGUAGE_PACKS'] );
             break;
         case "module":
-            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "" );
+            $icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/("ModuleLoader", "",null,null,'.gif',$mod_strings['LBL_MODULE_LOADER_TITLE']);
             break;
         case "patch":
-            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "" );
+            $icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/("PatchUpgrades", "",null,null,'.gif',$mod_strings['LBL_PATCH_UPGRADES'] );
             break;
         case "theme":
-            $icon = SugarThemeRegistry::current()->getImage("Themes", "" );
+            $icon = SugarThemeRegistry::current()->getImage/*ALTFIXED*/("Themes", "",null,null,'.gif',$mod_strings['LBL_THEME_SETTINGS'] );
             break;
         default:
             break;
