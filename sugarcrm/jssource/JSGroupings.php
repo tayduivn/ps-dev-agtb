@@ -86,7 +86,7 @@
             $sugar_grp_yui_widgets = array(
 			//sugar_grp1_yui must be laoded before sugar_grp_yui_widgets
             'include/javascript/yui/build/datatable/datatable-min.js'   => 'include/javascript/sugar_grp_yui_widgets.js',
-            'include/javascript/yui/build/treeview/treeview-min .js'     => 'include/javascript/sugar_grp_yui_widgets.js',
+            'include/javascript/yui/build/treeview/treeview-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/yui/build/button/button-min.js'         => 'include/javascript/sugar_grp_yui_widgets.js',
             'include/javascript/yui/build/calendar/calendar-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/sugarwidgets/SugarYUIWidgets.js'        => 'include/javascript/sugar_grp_yui_widgets.js',
