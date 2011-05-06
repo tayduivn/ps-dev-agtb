@@ -669,13 +669,11 @@ EOHTML;
 				$sp->loadSpriteMeta($parent->dirName);
 			}
 
-			if(isset($sp->sprites[md5($imageURL)])) {
-
-				// sprite class
-				$class = 'spr_'.md5($imageURL);
+			$spriteHash = md5($imageURL);
+			if(isset($sp->sprites[$spriteHash])) {
 
 				// cache span tag with single sprite class so we can use it later on
-				$cached_results[$imageName] = '<span class="'.$class.'"';
+				$cached_results[$imageName] = '<span class="spr_'.$spriteHash.'"';
 
 				// do not return from cache, otherwise multi classes are not handled correctly
 				return $this->getSprite($class, $other_attributes);
