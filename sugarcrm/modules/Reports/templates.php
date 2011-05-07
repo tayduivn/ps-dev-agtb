@@ -320,7 +320,7 @@ template_columns_javascript($args);
 				<table>
 
 				<tr><td align=left colspan=2> 
-				<a onclick="javascript:up('display_columns');"><img src="<?php echo SugarThemeRegistry::current()->getImage/*ALTFIXED*/("uparrow", "", null, null, ".gif", $mod_strings['LBL_UP']); ?>" border="0"></a>
+				<a onclick="javascript:up('display_columns');"><?php echo SugarThemeRegistry::current()->getImage/*ALTFIXED*/("uparrow", "border='0'", null, null, ".gif", $mod_strings['LBL_UP']); ?></a>
 				</td></tr> 
 				<tr> <td align=left colspan=2>
 				<a onclick="javascript:down('display_columns');"><?php echo SugarThemeRegistry::current()->getImage/*ALTFIXED*/("downarrow", "", null, null, ".gif", $mod_strings['LBL_DOWN']); ?></a>

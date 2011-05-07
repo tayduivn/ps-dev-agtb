@@ -258,7 +258,7 @@ class SugarView
                 "LABEL"       => $menu_item[1],
                 "MODULE_NAME" => $menu_item[2],
                 "IMAGE"       => $themeObject
-                    ->getImage($menu_item[2],"alt='".$menu_item[1]."'  border='0' align='absmiddle'"),
+                    ->getImage/*ALTFIXED*/($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
                 );
         $ss->assign("SHORTCUT_MENU",$shortcut_menu);
 
@@ -376,7 +376,7 @@ class SugarView
             foreach ( $history as $key => $row ) {
                 $history[$key]['item_summary_short'] = getTrackerSubstring($row['item_summary']);
                 $history[$key]['image'] = SugarThemeRegistry::current()
-                    ->getImage($row['module_name'],'border="0" align="absmiddle" alt="'.$row['item_summary'].'"');
+                    ->getImage/*ALTFIXED*/($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',$row['item_summary']);
             }
             $ss->assign("recentRecords",$history);
         }
@@ -551,7 +551,7 @@ class SugarView
                         "LABEL"       => $menu_item[1],
                         "MODULE_NAME" => $menu_item[2],
                         "IMAGE"       => $themeObject
-                        ->getImage($menu_item[2],"alt='".$menu_item[1]."'  border='0' align='absmiddle'"),
+                        ->getImage/*ALTFIXED*/($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
                         );
                 }
             }

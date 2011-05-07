@@ -823,7 +823,7 @@ function getValidPatchName($returnFull = true) {
 				$icon = getImageForType( $manifest['type'] );
 			} else {
 				$path_parts = pathinfo( $manifest['icon'] );
-				$icon = "<img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
+				$icon = "<!--not_in_theme!--><img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
 			}
 	    }
 	}

@@ -1066,15 +1066,15 @@ function getUserVariable($localVarName, $varName) {
             $GLOBALS['log']->debug("Offsets: (start, previous, next, last)(0, $previous_offset, $next_offset, $last_offset)");
 
             if(0 == $current_offset) {
-                $start_link = "<button type='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("start_off","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
-                $previous_link = "<button type='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("previous_off","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                $start_link = "<button type='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' class='button' disabled>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("start_off","aborder='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
+                $previous_link = "<button type='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' class='button' disabled>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("previous_off","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
             } else {
                 if($this->multi_select_popup) {// nav links for multiselect popup, submit form to save checks.
-                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='javascript:save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("start","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
-                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='javascript:save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("previous","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='javascript:save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("start","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
+                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='javascript:save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("previous","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
                 } elseif($this->shouldProcess) {
-                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='location.href=\"$start_URL\"; sListView.save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("start","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
-                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='location.href=\"$previous_URL\"; sListView.save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("previous","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='location.href=\"$start_URL\"; sListView.save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("start","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
+                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='location.href=\"$previous_URL\"; sListView.save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("previous","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
                 } else {
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $start_URL)){
@@ -1082,7 +1082,7 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick ="'location.href=\"$start_URL\";'";
                     }
-                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("start","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
+                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("start","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
 
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $previous_URL)){
@@ -1090,23 +1090,23 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick = "'location.href=\"$previous_URL\";'";
                     }
-                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("previous","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("previous","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
                 }
             }
 
             if($last_offset <= $current_offset) {
-                $end_link = "<button type='button' name='listViewEndButton' title='{$this->local_app_strings['LNK_LIST_END']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("end_off","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
-                $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("next_off","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                $end_link = "<button type='button' name='listViewEndButton' title='{$this->local_app_strings['LNK_LIST_END']}' class='button' disabled>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("end_off","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
+                $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' disabled>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("next_off","aborder='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
             } else {
                 if($this->multi_select_popup) { // nav links for multiselect popup, submit form to save checks.
-                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='javascript:save_checks($last_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("end","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
+                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='javascript:save_checks($last_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("end","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
                     if(!empty($sugar_config['disable_count_query'])) {
                         $end_link = '';
                     }
-                    $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' onClick='javascript:save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("next","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                    $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' onClick='javascript:save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("next","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
                 } elseif($this->shouldProcess) {
-                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='location.href=\"$end_URL\"; sListView.save_checks(\"end\", \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("end","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
-                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick='location.href=\"$next_URL\"; sListView.save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("next","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='location.href=\"$end_URL\"; sListView.save_checks(\"end\", \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("end","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
+                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick='location.href=\"$next_URL\"; sListView.save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("next","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
                 } else {
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $next_URL)){
@@ -1114,7 +1114,7 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick ="'location.href=\"$next_URL\";'";
                     }
-                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("next","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("next","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
 
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $end_URL)){
@@ -1122,7 +1122,7 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick = "'location.href=\"$end_URL\";'";
                     }
-                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("end","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
+                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("end","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
 
                 }
             }
@@ -1163,7 +1163,7 @@ function getUserVariable($localVarName, $varName) {
                 }
                 </script>";
     */
-            //$export_link = "<a id='export_link' onclick='return export_overlib();' href=\"#\">".SugarThemeRegistry::current()->getImage("export","alt='".$this->local_app_strings['LBL_EXPORT']."'  border='0' align='absmiddle'")."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
+            //$export_link = "<a id='export_link' onclick='return export_overlib();' href=\"#\">".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("export","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LBL_EXPORT'])."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
             $export_link = '<input class="button" type="button" value="'.$this->local_app_strings['LBL_EXPORT'].'" ' .
                     'onclick="return sListView.send_form(true, \''.$_REQUEST['module'].'\', \'index.php?entryPoint=export\',\''.$this->local_app_strings['LBL_LISTVIEW_NO_SELECTED'].'\')">';
 

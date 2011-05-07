@@ -2115,7 +2115,7 @@ class Email extends SugarBean {
 			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
 			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
 			// remove bad img line from outbound email
-			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
+			$regex = '#img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim'; /*SKIP_IMAGE_TAG*/
 			$mail->Body = preg_replace($regex, '', $mail->Body);
 		}
 		$fileBasePath = "{$sugar_config['upload_dir']}";
@@ -2142,12 +2142,12 @@ class Email extends SugarBean {
 			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
 
 			// remove bad img line from outbound email
-			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
+			$regex = '#img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim'; /*SKIP_IMAGE_TAG*/
 			$mail->Body = preg_replace($regex, '', $mail->Body);
 		}
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im";
+		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im"; /*SKIP_IMAGE_TAG*/
         $embededImageMatches = array();
         preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
 
