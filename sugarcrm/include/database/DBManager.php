@@ -2766,15 +2766,17 @@ abstract class DBManager
     public function orderByEnum($order_by, $values, $order_dir)
     {
         $order_by_arr = array();
+		$i = 0;
+        $order_by_arr = array();
         foreach ($values as $key => $value) {
-            // IS NULL added for bug 42448
             if($key == '') {
-		        $order_by_arr[] = "($order_by='' OR $order_by IS NULL) $order_dir\n";
+                $order_by_arr[] = "WHEN ($order_by='' OR $order_by IS NULL) THEN $i";
             } else {
-                $order_by_arr[] = "$order_by=".$this->quoted($key)." $order_dir\n";
+                $order_by_arr[] = "WHEN $order_by=".$this->quoted($key)." THEN $i";
             }
+			$i++;
 		}
-		return implode(',', $order_by_arr);
+		return "CASE ".implode("\n", $order_by_arr)." ELSE $i END $order_dir\n";
     }
 
     /**

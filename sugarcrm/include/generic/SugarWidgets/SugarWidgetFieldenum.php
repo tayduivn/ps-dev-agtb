@@ -125,7 +125,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		if (!empty ($field_def['sort_on'])) {
 			$order_by = $layout_def['table_alias'].".".$field_def['sort_on'];
 		} else {
-			$order_by = $this->_get_column_alias($layout_def);
+			$order_by = $this->_get_column_select($layout_def);
 		}
 		$list = array();
         if(isset($field_def['options'])) {
@@ -140,9 +140,9 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
             $list = $field_def['function']();
         }
 		if (empty ($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a') {
-			$order_dir = " ASC";
+			$order_dir = "ASC";
 		} else {
-			$order_dir = " DESC";
+			$order_dir = "DESC";
 		}
 		return $this->reporter->db->orderByEnum($order_by, $list, $order_dir);
     }

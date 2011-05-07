@@ -505,7 +505,7 @@ class MssqlManager extends DBManager
                             if ($ob_pos) {
                                 $distinctSQLARRAY[1] = substr($distinctSQLARRAY[1],0,$ob_pos);
                             }
-                            
+
                             $distinctSQLARRAY[1] = preg_replace('/\)\s$/', ' ', $distinctSQLARRAY[1]);
                         }
 
@@ -520,7 +520,7 @@ class MssqlManager extends DBManager
                             //this way both fields are added in correctly to the group by
                             $gb = str_replace("isnull(","",$gb);
                             $gb = str_replace("'') + ' ' + ","",$gb);
-                            
+
                             //remove outer reference if they exist
                             if (strpos($gb,"'")!==false){
                                 continue;
@@ -636,8 +636,8 @@ class MssqlManager extends DBManager
         while ($i<$count && $offset<strlen($p_sql)) {
             if ($offset > strlen($p_sql))
             {
-				break;   
-            }     	
+				break;
+            }
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
             {
