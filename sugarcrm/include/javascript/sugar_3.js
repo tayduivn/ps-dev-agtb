@@ -2904,6 +2904,22 @@ SUGAR.util = function () {
 			} else {
 				document.location.href = url;
 			}
+		},
+
+		openWindow : function(URL, windowName, windowFeatures) {
+			if(SUGAR.isIE) {
+				// IE needs special treatment since otherwise it would not pass Referer
+				win = window.open('', windowName, windowFeatures);
+				var trampoline = document.createElement('a');
+				trampoline.href = URL;
+				trampoline.target = windowName;
+				document.body.appendChild(trampoline);
+				trampoline.click();
+				document.body.removeChild(trampoline);
+			} else {
+				win = window.open(URL, windowName, windowFeatures);
+			}
+			return win;
 		}
 	};
 }(); // end util
@@ -3734,18 +3750,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 		URL+='&metadata='+metadata;
 	}
 
-	if(SUGAR.isIE) {
-		// IE needs special treatment since otherwise it would not pass Referer
-		win = window.open('', windowName, windowFeatures);
-		var trampoline = document.createElement('a');
-		trampoline.href = URL;
-		trampoline.target = windowName;
-		document.body.appendChild(trampoline);
-		trampoline.click();
-		document.body.removeChild(trampoline);
-	} else {
-		win = window.open(URL, windowName, windowFeatures);
-	}
+	win = SUGAR.util.openWindow(URL, windowName, windowFeatures);
 
 	if(window.focus)
 	{
