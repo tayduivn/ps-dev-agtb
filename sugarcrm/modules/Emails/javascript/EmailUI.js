@@ -1021,13 +1021,13 @@ SE.accounts = {
     	//Set unread
     	if (typeof(node.data.unseen) != 'undefined') {
     		if (node.data.unseen > 0) {
-				node.setUpLabel('<b>' + node.data.origText + '(' + node.data.unseen + ')<b>');
+				node.setUpLabel(node.data.origText + '(' + node.data.unseen + ')');
 			}
 			else {
 				node.setUpLabel(node.data.origText);
 			}
     	} else {
-    		node.setUpLabel('' + node.data.origText + '');
+    		node.setUpLabel(node.data.origText);
     	}
     	SE.accounts.setupDDTarget(node);
     },
