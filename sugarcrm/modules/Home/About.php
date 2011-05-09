@@ -37,9 +37,9 @@ list-style-type: square;
 <span>
 <div class="about" style="padding: 10px 15px 20px 15px;">
 <p>
-<!-- //BEGIN SUGARCRM flav=pro && flav!=ent ONLY -->
+<!-- //BEGIN SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
 <IMG src="include/images/sugar_md.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=pro && flav!=ent ONLY -->
+<!-- //END SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
 <!-- //BEGIN SUGARCRM flav=sales ONLY
 <IMG src="include/images/sugar_md_sales.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=sales ONLY
