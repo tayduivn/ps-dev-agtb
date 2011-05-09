@@ -230,7 +230,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
     global $click_bg;
 
     $this->xTemplate->assign("BG_HILITE", $hilite_bg);
-    $this->xTemplate->assign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" alt=\"\" />");
+    $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
     $oddRow = true;
     $count = 0;
@@ -1138,14 +1138,13 @@ function getUserVariable($localVarName, $varName) {
                 . "<a style=\'width: 150px\' name=\"selectall\" class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$row_count});\' href=\'#\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$row_count}&#x29;&#x200E;</a>"
                 . "<a style=\'width: 150px\' name=\"deselect\" class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'sListView.clear_all(document.MassUpdate, \"mass[]\", false);\' href=\'#\'>{$this->local_app_strings['LBL_LISTVIEW_NONE']}</a>"
                 . "', CENTER, '"
-                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 src=" . SugarThemeRegistry::current()->getImageURL('close_inline.gif')
-                . ">', WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
+                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $mod_strings['LBL_CLOSEINLINE']), WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
                 . "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass');
                 }
                 </script>";
 
             if($this->show_select_menu) {
-                $select_link = "<a id='select_link' onclick='return select_overlib();' href=\"#\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;<img src='".SugarThemeRegistry::current()->getImageURL('MoreDetail.png')."' width='11' height='7' border='0''>"."</a>";
+                $select_link = "<a id='select_link' onclick='return select_overlib();' href=\"#\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;".SugarThemeRegistry::current()->getImage('MoreDetail', 'border=0', 11, 7, '.png', $mod_strings['LBL_MOREDETAIL'])."</a>";
             } else {
                 $select_link = "&nbsp;";
             }
@@ -1157,7 +1156,7 @@ function getUserVariable($localVarName, $varName) {
                 . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'return sListView.send_form(false, \"{$_REQUEST['module']}\", \"export.php\", \"{$this->local_app_strings['LBL_LISTVIEW_NO_SELECTED']}\")\' href=\'#\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_CURRENT']}</a>"
                 . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' href=\'export.php?module={$_REQUEST['module']}\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}</a>"
                 . "', CAPTION, '" . $this->local_app_strings['LBL_EXPORT']
-                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
+                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<!--not_in_theme!--><img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
                 . "close.gif>', WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
                 . "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass');
                 }
@@ -1185,7 +1184,7 @@ function getUserVariable($localVarName, $varName) {
                         . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' href=\'index.php?action=index&module=MailMerge\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_CURRENT']}</a>"
                         . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' href=\'index.php?action=index&module=MailMerge&entire=true\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}</a>"
                         . "', CAPTION, '" . $this->local_app_strings['LBL_MAILMERGE']
-                        . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
+                        . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<!--not_in_theme!--><img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
                         . "close.gif>', WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
                         . "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');
                 }
@@ -1335,7 +1334,7 @@ function getUserVariable($localVarName, $varName) {
 
 
         $this->xTemplate->assign('BG_HILITE', $hilite_bg);
-        $this->xTemplate->assign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" alt=\"\" />");
+        $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
         $oddRow = true;
         $count = 0;
@@ -1604,7 +1603,7 @@ function getUserVariable($localVarName, $varName) {
             if($isSugarBean) {
                 $seed->parse_additional_headers($this->xTemplate, $xTemplateSection);
             }
-            $this->xTemplateAssign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" al=\"\">");
+            $this->xTemplateAssign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
 
             // Process the  order by before processing the pro_nav.  The pro_nav requires the order by values to be set
             $this->processOrderBy($html_varName);
@@ -1634,7 +1633,7 @@ function getUserVariable($localVarName, $varName) {
     function getArrowStart() {
         $imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow.gif"));
 
-        return "&nbsp;<img border='0' src='".$imgFileParts['dirname']."/".$imgFileParts['filename']."";
+        return "&nbsp;<!--not_in_theme!--><img border='0' src='".$imgFileParts['dirname']."/".$imgFileParts['filename']."";
     }
 
     function getArrowUpDownStart($upDown) {
@@ -1643,7 +1642,7 @@ function getUserVariable($localVarName, $varName) {
         if (!isset($upDown) || empty($upDown)) {
             $upDown = "";
         }
-        return "&nbsp;<img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
+        return "&nbsp;<!--not_in_theme!--><img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
     }
 
     function getArrowEnd() {

@@ -208,7 +208,7 @@ class ReportListView  extends ListView {
 		global $click_bg;
 
 		$this->xTemplate->assign("BG_HILITE", $hilite_bg);
-		$this->xTemplate->assign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" alt=\"\">");
+		$this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
 		$oddRow = true;
 		$count = 0;
 		if(!empty($this->seed_object->data_set)){

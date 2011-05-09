@@ -107,7 +107,7 @@ class ListViewXTPL extends ListViewDisplay{
 		
         list($width,$height) = getimagesize($pathParts['dirname'].'/'.$pathParts['basename']);
 		
-		$this->xtpl->assign('arrow_start', "&nbsp;<img border='0' src='".getJSPath($pathParts['dirname'].'/'.$pathParts['filename']));
+		$this->xtpl->assign('arrow_start', "&nbsp;<!--not_in_theme!--><img border='0' src='".getJSPath($pathParts['dirname'].'/'.$pathParts['filename']));
 		$this->xtpl->assign('arrow_end', "' width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">");
 		$arrow_order = (strcmp($ordering['sortOrder'], 'ASC'))?'_up': '_down';
 		$this->xtpl->assign($ordering['orderBy'].'_arrow', $arrow_order);
