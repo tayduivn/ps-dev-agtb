@@ -2264,13 +2264,9 @@ function convert_id($string)
 /**
  * @deprecated use SugarTheme::getImage()
  */
-function get_image($image,$other_attributes,$width="",$height="")
+function get_image($image,$other_attributes,$width="",$height="",$ext='.gif',$alt)
 {
-    return SugarThemeRegistry::current()->getImage(basename($image),
-        $other_attributes,
-        empty($width) ? null : $width,
-        empty($height) ? null : $height
-        );
+    return SugarThemeRegistry::current()->getImage/*ALTFIXED*/(basename($image), $other_attributes, empty($width) ? null : $width, empty($height) ? null : $height, $ext, $alt );
 }
 /**
  * @deprecated use SugarTheme::getImageURL()

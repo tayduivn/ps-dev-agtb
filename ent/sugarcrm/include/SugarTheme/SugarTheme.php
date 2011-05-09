@@ -1,9 +1,9 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -24,8 +24,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 /*********************************************************************************
 
@@ -594,20 +595,17 @@ EOHTML;
         $width = null,
         $height = null,
 		$ext = '.gif',
-        $alt = ''
+        $alt = -1
     )
     {
         if ($alt == -1){
-            $debug = debug_backtrace();
-            $caller = $debug[0]["file"];
-            if (strstr ("/modules/", $caller) !== false) {
-                debug_print_backtrace();
+            print_r ($_SERVER);
+            debug_print_backtrace();
 
-                echo "image name: " . $imageName . "<br />";
-                echo "other attrs: " . $other_attributes . "<br />";
-                echo "alt:" . $alt . "<br />";
-                 die();
-            }
+            echo "image name: " . $imageName . "<br />";
+            echo "other attrs: " . $other_attributes . "<br />";
+            echo "alt:" . $alt . "<br />";
+             die();
         }
 
         static $cached_results = array();
@@ -624,10 +622,14 @@ EOHTML;
         if ( is_null($width) ) 
             $width = $size[0];
         if ( is_null($height) ) 
-            $height = $size[1];        
+            $height = $size[1];
+
+        // Worst case scenario: if alt tag is empty, we set it to the image name
+        if ( empty ($alt) )
+            $alt = $imageName;
+        
         // Cache everything but the other attributes....
-        if ($alt == -1) $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
-        else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
+        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
         
         return $cached_results[$imageName] . "$other_attributes />";
     }
@@ -643,7 +645,8 @@ EOHTML;
     public function getImageURL(
         $imageName,
         $addJSPath = true
-        ){
+        )
+    {
         if ( isset($this->_imageCache[$imageName]) ) {
             if ( $addJSPath )
                 return getJSPath($this->_imageCache[$imageName]);
