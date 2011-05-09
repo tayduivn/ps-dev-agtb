@@ -205,7 +205,7 @@ if ($sync_module_index > -1) {
 	echo retrieve_msg();
 	if ($display_log == 0)
 		echo '</div>';
-	echo "</td><td align='right'><A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></a></td></tr></table></div><script>document.getElementById('sync_table').style.display='inline';</script>";
+	echo "</td><td align='right'><A href='http://www.sugarcrm.com' target='_blank'><!--not_in_theme!--><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='".$mod_strings['LBL_POWERED_BY_SUGAR']."'></a></td></tr></table></div><script>document.getElementById('sync_table').style.display='inline';</script>";
 	echo str_repeat(' ', 256);
 
 	flush();

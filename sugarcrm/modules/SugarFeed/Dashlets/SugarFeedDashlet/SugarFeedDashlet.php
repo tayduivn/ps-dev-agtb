@@ -335,7 +335,7 @@ var $myFavoritesOnly = false;
                 }
             }
     
-            $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><img src="'.$item['IMAGE_URL'].'" style="max-width: 50px; max-height: 50px;"></div> '.$item['NAME'];
+            $resortQueue[$key]['NAME'] = '<div style="float: left; margin-right: 3px; width: 50px; height: 50px;"><!--not_in_theme!--><img src="'.$item['IMAGE_URL'].'" style="max-width: 50px; max-height: 50px;"></div> '.$item['NAME'];
         }
         //END SUGARCRM flav=pro ONLY
         $this->lvs->data['data'] = $resortQueue;
@@ -535,7 +535,7 @@ EOQ;
             '$matches',
             'if($matches[1] == "this"){$var = $matches[2]; return $GLOBALS[\'current_sugarfeed\']->$var;}else{return translate($matches[2], $matches[1]);}'
         ),$listview);
-		$listview = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $listview);
+		$listview = preg_replace('/\[(\w+)\:([\w\-\d]*)\:([^\]]*)\]/', '<a href="index.php?module=$1&action=DetailView&record=$2"><img src="themes/default/images/$1.gif" border=0>$3</a>', $listview); /*SKIP_IMAGE_TAG*/
 
 		return $listview.'</div></div>';
 	}
@@ -581,8 +581,8 @@ EOQ;
             return '';
         }
 		$user_name = ucfirst($GLOBALS['current_user']->user_name);
-		$moreimg = SugarThemeRegistry::current()->getImage('advanced_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"');
-		$lessimg = SugarThemeRegistry::current()->getImage('basic_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"');
+		$moreimg = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('advanced_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"',null,null,'.gif',translate('LBL_ADVANCED_SEARCH','SugarFeed'));
+		$lessimg = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('basic_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"',null,null,'.gif',translate('LBL_BASICSEARCH','SugarFeed'));
 		$ss = new Sugar_Smarty();
 		$ss->assign('LBL_TO', translate('LBL_TO', 'SugarFeed'));
 		$ss->assign('LBL_POST', translate('LBL_POST', 'SugarFeed'));

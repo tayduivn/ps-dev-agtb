@@ -606,7 +606,7 @@ $uwMain =<<<eoq
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
+           <p><!--not_in_theme!--><img src='modules/UpgradeWizard/processing.gif' alt='Processing'> <br></p>
         </td></tr>
      </table>
  </div>

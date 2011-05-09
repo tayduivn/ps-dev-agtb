@@ -62,7 +62,8 @@ $mod_strings = array (
   array (
     'Visible' => 'Visible',
     'Hidden' => 'Hidden',
-  ),
+	'LBL_MORE_DETAIL' => 'More Detail' /*for 508 compliance fix*/,
+),
   'LBL_TEAM_NOTICE_FEATURES' => 'Features:
 * Improved User Interface and new Wizard combine a simple, intuitive design with a guided process to step the user through report creation.
 * Complex Reporting Sets allow users to create reports across multiple modules using complex logic.
@@ -89,9 +90,7 @@ Enhancements:
 Features:
 * Tracker Reports provide a snapshot into system usage in order to increase user adoption and visibility into CRM utilization. Users can view reports on weekly CRM activities, records and modules viewed, cumulative login time and online status of other team members.
 * System Monitoring provides administrators information on how the system is being used and potential stress points for the application.',
-  
-  
-  
+	'LBL_MORE_DETAIL' => 'More Detail' /*for 508 compliance fix*/,
 );
 
 

@@ -89,6 +89,7 @@ $mod_strings = array (
   'LBL_PARENT_NAME' => 'Parent Type:',
   'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
   'LBL_TASK_INFORMATION' => 'Task Overview',
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 

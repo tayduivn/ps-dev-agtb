@@ -61,6 +61,7 @@ $mod_strings = array (
   
   
   'LBL_USER_ID' => 'User ID'
+	'LBL_EDITLAYOUT' => 'EditLayout' /*for 508 compliance fix*/,
 );
 
 

@@ -126,6 +126,7 @@ $mod_strings = array (
 	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',
 	//END SUGARCRM flav=pro ONLY
 	'LNK_IMPORT_PRODUCTS' => 'Import Products',
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 

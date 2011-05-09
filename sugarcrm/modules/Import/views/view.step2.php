@@ -87,7 +87,7 @@ class ImportViewStep2 extends SugarView
 	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
 	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
+	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><!--not_in_theme!--><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
     	}
     	else {
     	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
