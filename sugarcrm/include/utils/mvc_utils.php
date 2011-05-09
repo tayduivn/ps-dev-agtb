@@ -254,7 +254,7 @@ if(!function_exists('amsi')){
 					}else{
 					$notice = 'This copy of the SugarCRM customer relationship management program appears to have legal notices or author attributions modified or removed in violation of the SugarCRM Subscription Agreement. Please contact SugarCRM Inc. to correct this problem.';
 					}
-					echo '<head><title>Powered By SugarCRM</title><link rel="stylesheet" type="text/css" href="themes/Sugar/navigation.css" /><link rel="stylesheet" type="text/css" href="themes/Sugar/style.css" /><link rel="stylesheet" type="text/css" href="themes/Sugar/colors.sugar.css" id="current_color_style" /><link rel="stylesheet" type="text/css" href="themes/Sugar/fonts.normal.css" id="current_font_style"/></head><div  align="center" style="position:relative;top:200px"><table width=400 class="tabForm"><tr><td colspan="2" align="center"><b>'.$notice.'</b></td></tr><tr><td colspan="2" align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="'.$mod_strings["LBL_POWERED_BY_SUGARCRM"].'"></td></tr><tr><td colspan="2" align="right"><span id="dots"></span></td></tr></table>';
+					echo '<head><title>Powered By SugarCRM</title><link rel="stylesheet" type="text/css" href="themes/Sugar/navigation.css" /><link rel="stylesheet" type="text/css" href="themes/Sugar/style.css" /><link rel="stylesheet" type="text/css" href="themes/Sugar/colors.sugar.css" id="current_color_style" /><link rel="stylesheet" type="text/css" href="themes/Sugar/fonts.normal.css" id="current_font_style"/></head><div  align="center" style="position:relative;top:200px"><table width=400 class="tabForm"><tr><td colspan="2" align="center"><b>'.$notice.'</b></td></tr><tr><td colspan="2" align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="'.$app_strings["LBL_POWERED_BY_SUGARCRM"].'"></td></tr><tr><td colspan="2" align="right"><span id="dots"></span></td></tr></table>';
 					echo '<br><script>var count = 6; function updateDots(){if(count > 0){count--;} if(count==1){document.location="index.php";}document.getElementById("dots").innerHTML= count; setTimeout("updateDots();", 1000);}updateDots();</script></div>';
 					die();
 
@@ -268,7 +268,7 @@ if(!function_exists('amsi')){
 					$_SESSION['mvi'] .= '<div align="center" class="copyRight">' .$str . '</div>';
 				}
 				if($q & 1){
-					$_SESSION['mvi'] .= '<div align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="'.$mod_strings["LBL_POWERED_BY_SUGARCRM"].'"></div>';
+					$_SESSION['mvi'] .= '<div align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="'.$app_strings["LBL_POWERED_BY_SUGARCRM"].'"></div>';
 				}
 				if(empty($_SESSION['mvi']) && !empty($odd))$_SESSION['mvi'] = base64_decode($odd);
 				echo $_SESSION['mvi'];

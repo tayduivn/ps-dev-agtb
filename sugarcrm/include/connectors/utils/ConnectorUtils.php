@@ -820,12 +820,12 @@ class ConnectorUtils
                   if(!empty($formatterCode)) {
                       if($sourcesDisplayed > 1) {
                       	$dswidget_img = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
-                        $code = '<!--not_in_theme!--><img id="dswidget_img" src="'.$dswidget_img.'" width="11" height="7" border="0" alt="'.$mod_strings['LBL_CONNECTORS_POPUPS'].'" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
+                        $code = '<!--not_in_theme!--><img id="dswidget_img" src="'.$dswidget_img.'" width="11" height="7" border="0" alt="'.$app_strings['LBL_CONNECTORS_POPUPS'].'" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
 
                       } else {
                        	  $dswidget_img = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
                           $singleIcon = empty($singleIcon) ? $dswidget_img : $singleIcon;
-                          $code = '<!--not_in_theme!--><img id="dswidget_img" border="0" src="' . $singleIcon . '" alt="'.$mod_strings['LBL_CONNECTORS_POPUPS'].'" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
+                          $code = '<!--not_in_theme!--><img id="dswidget_img" border="0" src="' . $singleIcon . '" alt="'.$app_strings['LBL_CONNECTORS_POPUPS'].'" onmouseover="return showConnectorMenu2();" onmouseout="return nd(1000);">';
 
                       }
                       $code .= "{overlib_includes}\n";

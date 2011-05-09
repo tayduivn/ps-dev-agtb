@@ -657,7 +657,7 @@ EOJS;
 
 			$change_parent_button = "<span class='id-ff'><button title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'  type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']
 			."' name='button_parent_name' onclick='open_popup(document.MassUpdate.{$field['type_name']}.value, 600, 400, \"\", true, false, {$encoded_popup_request_data});'>
-			".SugarThemeRegistry::current()->getImage("id-ff-select", '', null, null, ".png", $mod_strings['LBL_ID_FF_SELECT'])." 
+			".SugarThemeRegistry::current()->getImage("id-ff-select", '', null, null, ".png", $app_strings['LBL_ID_FF_SELECT'])." 
 			</button></span>";
 			$parent_type = $field['parent_type'];
             $parent_types = $app_list_strings[$parent_type];
