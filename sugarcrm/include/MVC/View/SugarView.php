@@ -731,12 +731,9 @@ EOHTML;
             if ( isset($sugar_config['quicksearch_querydelay']) ) {
                 echo "<script>SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};</script>";
             }
-            // cn: bug 12274 - prepare secret guid for asynchronous calls
-            if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {
-                $_SESSION['asynchronous_key'] = create_guid();
-            }
+            
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
-            echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
+            echo '<script type="text/javascript">var SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo self::getJavascriptValidation();
             if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
@@ -765,11 +762,6 @@ EOHTML;
             require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
             //END SUGARCRM flav=pro ONLY
-        }
-
-        if (isset($_REQUEST['popup']) && !empty($_REQUEST['popup'])) {
-            // cn: bug 12274 - add security metadata envelope for async calls in popups
-            echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
 
