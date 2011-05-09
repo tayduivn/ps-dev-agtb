@@ -92,6 +92,12 @@ else {
     //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
     $login_image = '<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=ent && flav!=dev ONLY
+    //BEGIN SUGARCRM flav=corp ONLY
+    $login_image = '<IMG src="include/images/sugar_md_corp.png" alt="Sugar" width="340" height="25">';
+    //END SUGARCRM flav=corp ONLY
+    //BEGIN SUGARCRM flav=ult ONLY
+    $login_image = '<IMG src="include/images/sugar_md_ult.png" alt="Sugar" width="340" height="25">';
+    //END SUGARCRM flav=ult ONLY
 }
 $sugar_smarty->assign('LOGIN_IMAGE',$login_image);
 

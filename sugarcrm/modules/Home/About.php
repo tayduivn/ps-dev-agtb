@@ -58,6 +58,12 @@ list-style-type: square;
 <!-- //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
 <IMG src="include/images/sugar_md_ent.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=ent && flav!=dev ONLY -->
+<!-- //BEGIN SUGARCRM flav=corp ONLY
+<IMG src="include/images/sugar_md_corp.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<!-- //END SUGARCRM flav=corp ONLY
+<!-- //BEGIN SUGARCRM flav=ult ONLY
+<IMG src="include/images/sugar_md_ult.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
+<!-- //END SUGARCRM flav=ult ONLY
 <br>
 <b><?php echo $mod_strings['LBL_VERSION']." ".$sugar_version." (".$mod_strings['LBL_BUILD']." ".$sugar_build.")";
     if( is_file( "custom_version.php" ) ){
