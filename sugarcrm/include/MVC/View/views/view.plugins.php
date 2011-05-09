@@ -59,7 +59,7 @@ class ViewPlugins extends ViewAjax
 		
 		foreach($pluginsCat as $key => $value ){
 		    $pluginImage = SugarThemeRegistry::current()->getImageURL("plug-in_{$key}.gif");
-			$str .= "<tr><td valign='top' width='80' style='padding-right: 10px; padding-left: 10px;'><img src='$pluginImage'></td>";
+			$str .= "<tr><td valign='top' width='80' style='padding-right: 10px; padding-left: 10px;'><img src='$pluginImage' alt='$pluginImage'></td>";
 			$str .= "<td><b>{$value['name']}</b><br>";
 			$str .= $value['desc'];
 			$str .= '<ul id="pluginList">';

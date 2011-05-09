@@ -4103,10 +4103,11 @@ function _getIcon($iconFileName)
  * @param string $width Width of image
  * @param string $height Height of image
  * @param string $align Alignment of image
+ * @param string $alt Alt tag of image
  * @return string $string <img> tag with corresponding image
  */
 
-function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline' )
+function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline', $alt )
 {
 	global $app_strings, $theme;
 
@@ -4118,7 +4119,7 @@ function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='
             return $app_strings['LBL_NO_IMAGE'];
  	    }
  	}
-	return '<img border="0" src="'.$iconPath.'" width="'.$width.'" height="'.$height.'" align="'.$align.'">';
+	return '<img border="0" src="'.$iconPath.'" width="'.$width.'" height="'.$height.'" align="'.$align.'" alt="'.$alt.'">';
 }
 
 /**
@@ -4128,10 +4129,11 @@ function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='
  * @param string $width Width of image
  * @param string $height Height of image
  * @param string $align Alignment of image
+ * @param string $alt Alt tag of image
  * @return string $string <img> tag with corresponding image
  */
 
-function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle'){
+function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle',$alt){
 	global $app_strings, $theme;
  	$icon_path = _getIcon($module . "_32");
  	if (empty($icon_path))
@@ -4142,7 +4144,7 @@ function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align=
  		$icon = $app_strings['LBL_NO_IMAGE'];
  	}
 	else{
-		$icon = '<img border="0" src="'.$icon_path.'" width="'.$width.'" height="'.$height.'" align="'.$align.'">';
+		$icon = '<img border="0" src="'.$icon_path.'" width="'.$width.'" height="'.$height.'" align="'.$align.'" alt="'.$alt.'">';
 	}
 	return $icon;
 }
