@@ -525,6 +525,11 @@ class SugarTheme
 				if(file_exists("cache/sprites/{$parent->dirName}/sprites.css"))
 					$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$parent->dirName.'/sprites.css" />';
 			}
+			
+			// repeatable sprites
+            if(file_exists("cache/sprites/Repeatable/sprites.css"))
+                $html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/Repeatable/sprites.css" />';
+
 		}
 
         // for BC during upgrade

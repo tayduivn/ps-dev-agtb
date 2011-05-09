@@ -29,15 +29,10 @@ class SugarSpriteBuilder {
 
 	// source files
 	var $spriteSrc = array();
+	var $spriteRepeat = array();
 
 	// sprite resource images
 	var $spriteImg;
-
-	// horizontal/vertical repeatable sprites
-	var $spriteHorDef = array();
-	var $spriteHor = array();
-	var $spriteVerDef = array();
-	var $spriteVer = array();
 
 	// sprite_config collection
 	var $sprites_config = array();
@@ -92,9 +87,23 @@ class SugarSpriteBuilder {
 							// skip excluded files
 							if(isset($this->sprites_config[$dir]['exclude'])
 									&& array_search($file, $this->sprites_config[$dir]['exclude']) !== false) {
-								$GLOBALS['log']->debug('VINK excluded -> '.$file); 
+								$GLOBALS['log']->debug(__CLASS__.": excluding file $dir/$file"); 
 							} else {
-								$list[$file] = $info;
+		
+								// repeatable sprite ?
+								$isRepeat = false;
+								if(isset($this->sprites_config[$dir]['repeat'])) {
+									foreach($this->sprites_config[$dir]['repeat'] as $repeat) {
+										if($info['x'] == $repeat['width'] && $info['y'] == $repeat['height']) {
+											$id = md5($repeat['width'].$repeat['height'].$repeat['direction']);
+											$isRepeat = true;
+											$this->spriteRepeat['repeat_'.$repeat['direction'].'_'.$id][$dir][$file] = $info;
+										}
+									}
+								}
+
+								if(! $isRepeat)
+									$list[$file] = $info;
 							}
 						}
 	   	     		}
@@ -113,7 +122,6 @@ class SugarSpriteBuilder {
 			if(count($sprites_config)) {
 				$this->sprites_config = array_merge($this->sprites_config, $sprites_config);
 			}
-			$GLOBALS['log']->debug('VINK loaded '.$dir.'/sprites_config.php');
 		}
 	}
 
@@ -162,18 +170,31 @@ class SugarSpriteBuilder {
 			return false;
 		}
 
+		// add repeatable sprites
+		if(count($this->spriteRepeat))
+			$this->spriteSrc = array_merge($this->spriteSrc, $this->spriteRepeat);
+
 		foreach($this->spriteSrc as $name => $dirs) {
 
 			if(! $this->silentRun) 
 				echo "<u>Creating sprite namespace \"$name\"</u> ";
 
-			// config sprite placement config
-			$config = array(
-				'type' => 1,
-				'width' => $this->maxWidth,
-				'height' => $this->maxHeight,
-				'rowcnt' => $this->rowCnt,
-			);
+			// setup config for sprite placement algorithm
+			if(substr($name, 0, 6) == 'repeat') {
+				$isRepeat = true;
+				if(substr($name, 7, 10) == 'horizontal') {$type='horizontal';} else {$type ='vertical';}
+				$config = array(
+					'type' => $type,
+				);
+			} else {
+				$isRepeat = false;
+				$config = array(
+					'type' => 'boxed',
+					'width' => $this->maxWidth,
+					'height' => $this->maxHeight,
+					'rowcnt' => $this->rowCnt,
+				);
+			}
 
 			// use seperate class to arrange the images
 			$sp = new SpritePlacement($dirs, $config);
@@ -183,7 +204,7 @@ class SugarSpriteBuilder {
 				echo " (size {$sp->width()}x{$sp->height()})<br />";
 
 			// we need a target image size
-			if($sp->width() & $sp->height()) {
+			if($sp->width() && $sp->height()) {
 
 				// init sprite image
 				$this->initSpriteImg($sp->width(), $sp->height());
@@ -210,12 +231,27 @@ class SugarSpriteBuilder {
 					}
 				}
 	
-				// create dirs if not exist
-				if(!is_dir("cache/sprites/$name"))
-                	mkdir("cache/sprites/$name", 0750, true);
+				// dir & filenames 
+				if($isRepeat) {
+					$outputDir = "cache/sprites/Repeatable";
+					$spriteFileName = "{$name}.png";
+					$cssFileName = "{$this->fileName}.css";
+					$metaFileName = "{$this->fileName}.php";
+					$nameSpace = "Repeatable";
+				} else { 
+					$outputDir = "cache/sprites/$name";
+					$spriteFileName = "{$this->fileName}.png";
+					$cssFileName = "{$this->fileName}.css";
+					$metaFileName = "{$this->fileName}.php";
+					$nameSpace = "{$name}";
+				}
+
+				// directory structure
+				if(!is_dir("cache/sprites/$nameSpace"))
+					mkdir("cache/sprites/$nameSpace", 0750, true);
 
 				// save sprite image
-				imagepng($this->spriteImg, "cache/sprites/$name/{$this->fileName}.png", $this->pngCompression, $this->pngFilter);
+				imagepng($this->spriteImg, "$outputDir/$spriteFileName", $this->pngCompression, $this->pngFilter);
 				imagedestroy($this->spriteImg);
 
 				/* generate css & metadata */
@@ -258,33 +294,38 @@ background-position: -{$offset_x}px -{$offset_y}px;
 						'source' => $name.'.png',
 					);
 					*/
-					$metadata .= '$sprites["'.$hash_id.'"] = array ("image"=>"'.$id.'","sprite"=>"cache/sprites/'.$name.'/'.$this->fileName.'.png");'."\n";
+					$metadata .= '$sprites["'.$hash_id.'"] = array ("image"=>"'.$id.'","sprite"=>"cache/sprites/'.$nameSpace.'/'.$spriteFileName.'");'."\n";
 				} 
 
 				// common css header
 				$head .= "span.spr_bogus {
-background: url('../../../index.php?entryPoint=getImage&imageName={$this->fileName}.png&spriteNamespace={$name}') no-repeat;
+background: url('../../../index.php?entryPoint=getImage&imageName={$spriteFileName}&spriteNamespace={$nameSpace}') no-repeat;
 display: inline-block;
 }\n";
 
+				// append mode for repeatable sprites
+				$fileMode = 'w';
+				if($isRepeat)
+					$fileMode = 'a';
+
 				// save css
-				$css_content = cssmin::minify("/* autogenerated sprites - $name */\n".$head.$body);
-				$fh = fopen("cache/sprites/$name/{$this->fileName}.css", "w");
+				$css_content = cssmin::minify("\n/* autogenerated sprites - $name */\n".$head.$body);
+				$fh = fopen("$outputDir/$cssFileName", $fileMode);
 				fwrite($fh, $css_content);
 				fclose($fh);
 
 				/* save metadata */
 
-				$fh = fopen("cache/sprites/$name/{$this->fileName}.meta.php", "w");
+				$fh = fopen("$outputDir/$metaFileName", $fileMode);
 				fwrite($fh, '<?php'."\n/* sprites metadata - $name */\n");
-				fwrite($fh, $metadata);
+				fwrite($fh, $metadata."\n?>");
 				fclose($fh);
 
 			// if width & height
 			} else {
 
 				if(! $this->silentRun) 
-					echo "Skipping namespace, no sprites available ! <br />";
+					echo "Skipping namespace, no sprites available ! $name <br />";
 
 			}
 
@@ -333,9 +374,9 @@ class SpritePlacement {
 
 	// placement config array
 	/*
-		type = 	1 -> boxed
-				2 -> horizontal //TODO
-				3 -> vertical //TODO
+		type = 	boxed
+				horizontal
+				vertical
 		
 		required params for
 		type 1 	-> width
@@ -384,7 +425,7 @@ class SpritePlacement {
 		switch($this->config['type']) {
 
 			// boxed
-			case 1:
+			case 'boxed':
 
 				$spriteX = $this->config['width'];
 				$spriteY = $this->config['height'];
@@ -397,16 +438,21 @@ class SpritePlacement {
 
 				break;
 
-			// horizontal
-			case 2:
+			// horizontal -> align vertically
+			case 'horizontal':
+				$result = array('x' => 1, 'y' => $this->height() + 1);
+				$GLOBALS['log']->debug('VINK - horizontal');
 				break;
 
-			// vertical
-			case 3:
+			// vertical -> align horizontally
+			case 'vertical':
+				$result = array('x' => $this->width() + 1, 'y' => 1);
+				$GLOBALS['log']->debug('VINK - vertical');
 				break;
 
-			// other algorithms instead of boxed ???
-
+			default:
+				$GLOBALS['log']->warn(__CLASS__.": Unknown sprite placement algorithm -> {$this->config['type']}");
+				break;
 		}
 
 		return $result;
