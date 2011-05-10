@@ -119,6 +119,12 @@ if(in_array("oci8", array_values($drivers))){
         <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="oci8" {$checked['oci8']} onclick="document.getElementById('ociMsg').style.display=''"/>{$mod_strings['LBL_ORACLE']}<BR>
 EOQ;
 }
+
+if(in_array("ibm_db2", array_values($drivers))){
+    $out.=<<<EOQ
+        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="ibm_db2" {$checked['ibm_db2']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_IBM_DB2']}<BR>
+EOQ;
+}
 //END SUGARCRM flav=ent ONLY
 
 

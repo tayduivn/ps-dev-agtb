@@ -158,7 +158,7 @@ $out2 =<<<EOQ2
 EOQ2;
 
 //if we are installing in custom mode, include the following html
-if($_SESSION['setup_db_type'] != 'oci8' ){
+if($_SESSION['setup_db_type'] != 'oci8' && $_SESSION['setup_db_type'] != 'ibm_db2'){
 
 // create / set db user dropdown
 $auto_select = '';$provide_select ='';$create_select = '';$same_select = '';

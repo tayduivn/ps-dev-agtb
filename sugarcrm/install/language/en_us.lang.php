@@ -40,6 +40,10 @@ $mod_strings = array(
 
 
 	//BEGIN SUGARCRM flav=ent ONLY
+    'ERR_DB_LOGIN_FAILURE_IBM_DB2'		=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
+    'ERR_DB_IBM_DB2_CONNECT'			=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
+    'ERR_DB_IBM_DB2_VERSION'			=> 'Your version of DB2 is not supported by Sugar.  You will need to install a version that is compatible with the Sugar application.  Please consult the Compatibility Matrix in the Release Notes for supported DB2 Versions.',
+
 	'LBL_SYSOPTS_DB_DIRECTIONS'			=> 'You must have an Oracle client installed and configured if you select Oracle.',
 	'ERR_DB_LOGIN_FAILURE_OCI8'			=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
 	'ERR_DB_OCI8_CONNECT'				=> 'The provided database host, username, and/or password is invalid, and a connection to the database could not be established.  Please enter a valid host, username and password',
@@ -348,10 +352,11 @@ $mod_strings = array(
 	'LBL_ML_VERSION'					=> 'Version',
 	'LBL_MSSQL'							=> 'SQL Server',
 	'LBL_MSSQL2'                        => 'SQL Server (FreeTDS)',
-	'LBL_MYSQL'							=> 'MySQL',
+    'LBL_MYSQL'							=> 'MySQL',
+    'LBL_IBM_DB2'						=> 'IBM DB2',
 	'LBL_NEXT'							=> 'Next',
 	'LBL_NO'							=> 'No',
-	'LBL_ORACLE'						=> 'Oracle',
+    'LBL_ORACLE'						=> 'Oracle',
 	'LBL_PERFORM_ADMIN_PASSWORD'		=> 'Setting site admin password',
 	'LBL_PERFORM_AUDIT_TABLE'			=> 'audit table / ',
 	'LBL_PERFORM_CONFIG_PHP'			=> 'Creating Sugar configuration file',

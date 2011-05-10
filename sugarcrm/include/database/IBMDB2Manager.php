@@ -42,13 +42,16 @@
  */
 class IBMDB2Manager  extends DBManager
 {
-    /**
+    /**+
      * @see DBManager::$dbType
      */
     public $dbType = 'ibm_db2';
     public $variant = 'ibm_db2';
     public $dbName = 'IBM_DB2';
 
+    /**+
+     * @var array
+     */
     protected $maxNameLengths = array(
         'table' => 128,
         'column' => 128,
@@ -56,33 +59,38 @@ class IBMDB2Manager  extends DBManager
         'alias' => 128
     );
 
+    /**+
+     * Mapping recommendation derived from MySQL to DB2 guidelines
+     * http://www.ibm.com/developerworks/data/library/techarticle/dm-0807patel/index.html
+     * @var array
+     */
     protected $type_map = array(
-            'int'      => 'int',
+            'int'      => 'integer',
             'double'   => 'double',
-            'float'    => 'float',
-            'uint'     => 'int unsigned',
-            'ulong'    => 'bigint unsigned',
+            'float'    => 'double',
+            'uint'     => 'bigint',
+            'ulong'    => 'decimal(20,0)',
             'long'     => 'bigint',
             'short'    => 'smallint',
             'varchar'  => 'varchar',
-            'text'     => 'text',
-            'longtext' => 'longtext',
+            'text'     => 'clob(65535)',
+            'longtext' => 'clob(2000000000)',
             'date'     => 'date',
             'enum'     => 'varchar',
             'relate'   => 'varchar',
-            'multienum'=> 'text',
-            'html'     => 'text',
-            'datetime' => 'datetime',
-            'datetimecombo' => 'datetime',
+            'multienum'=> 'clob(65535)',
+            'html'     => 'clob(65535)',
+            'datetime' => 'timestamp',
+            'datetimecombo' => 'timestamp',
             'time'     => 'time',
-            'bool'     => 'bool',
-            'tinyint'  => 'tinyint',
-            'char'     => 'char',
-            'blob'     => 'blob',
-            'longblob' => 'longblob',
+            'bool'     => 'smallint', // Per recommendation here: http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.apdv.java.doc/doc/rjvjdata.htm
+            'tinyint'  => 'smallint',
+            'char'     => 'char(1)',
+            'blob'     => 'blob(65535)',
+            'longblob' => 'blob(2000000000)',
             'currency' => 'decimal(26,6)',
-            'decimal'  => 'decimal',
-            'decimal2' => 'decimal',
+            'decimal'  => 'decimal(20,2)', // Using Oracle numeric precision and scale as DB2 does not support decimal without it
+            'decimal2' => 'decimal(30,6)', // Using Oracle numeric precision and scale as DB2 does not support decimal without it
             'id'       => 'char(36)',
             'url'      => 'varchar',
             'encrypt'  => 'varchar',
@@ -91,6 +99,32 @@ class IBMDB2Manager  extends DBManager
 
      );
 
+    /**~
+     * @var array
+     */
+    // TODO: Note sure if the $type_class is required, just keeping it for consistency with the MySQL and Oracle implementations
+    protected $type_class = array(
+            'int'      => 'int',
+            'double'   => 'float',
+            'float'    => 'float',
+            'uint'     => 'int',
+            'ulong'    => 'int',
+            'long'     => 'int',
+            'short'    => 'int',
+            'date'     => 'date',
+            'datetime' => 'date',
+            'datetimecombo' => 'date',
+            'time'     => 'time',
+            'bool'     => 'bool',
+            'tinyint'  => 'int',
+            'currency' => 'float',
+            'decimal'  => 'float',
+            'decimal2' => 'float',
+     );    
+
+    /**+
+     * @var array
+     */
     protected $capabilities = array(
         "affected_rows" => true,
         //"select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
@@ -113,7 +147,7 @@ class IBMDB2Manager  extends DBManager
     {
         if ($this->dieOnError || $dieOnError){
             $GLOBALS['log']->fatal($logmsg);
-            sugar_die ($GLOBALS['app_strings']['ERR_DB_FAIL']);
+            sugar_die ($logmsg);
         }
         else {
             $this->last_error = $msg.$logmsg;
@@ -132,23 +166,16 @@ class IBMDB2Manager  extends DBManager
             return true;
 
         $result = false;
-        // NOT SURE if we run concurrency issues if we don't fetch the database
-        //$db = $this->getDatabase();
-//        if (db2_conn_error($db)) {
-//            $logmsg = "IBM_DB2 connection error ".db2_conn_error($db).": ".db2_conn_errormsg($db);
-//            $msg = $this->handleError($msg, $dieOnError, $logmsg);
-//            $result = true;
-//        }
         if (db2_conn_error()) {
             $logmsg = "IBM_DB2 connection error ".db2_conn_error().": ".db2_conn_errormsg();
             $msg = $this->handleError($msg, $dieOnError, $logmsg);
             $result = true;
         }
-        if (db2_stmt_error()) {/* TODO: Add statement resource from context*/
-            $logmsg = "IBM_DB2 statement error ".db2_stmt_error().": ".db2_stmt_errormsg();
-            $msg = $this->handleError($msg, $dieOnError, $logmsg);
-            $result = true;
-        }
+//        if (db2_stmt_error()) {/* TODO: Add statement resource from context*/
+//            $logmsg = "IBM_DB2 statement error ".db2_stmt_error().": ".db2_stmt_errormsg();
+//            $msg = $this->handleError($msg, $dieOnError, $logmsg);
+//            $result = true;
+//        }
         return $result;
     }
 
@@ -343,30 +370,20 @@ class IBMDB2Manager  extends DBManager
     }
 
 
-    /**
+    /**+
      * @see DBManager::getFieldsArray()
      */
 	public function getFieldsArray($result, $make_lower_case = false)
 	{
+        if(! isset($result) || empty($result)) return 0;
+
 		$field_array = array();
-
-        if(! isset($result) || empty($result))
-            return 0;
-
-        $i = 1;
-        $count = oci_num_fields($result);
-        $count_tag = $count + 1;
-        while ($i < $count_tag) {
-            $meta = oci_field_name($result, $i);
-            if (!$meta)
-                return 0;
-            if($make_lower_case==true)
-                $meta = strtolower($meta);
-            $field_array[] = $meta;
-
-            $i++;
+        $count = db2_num_fields($result);
+        for($i = 0; $i<$count; $i++) {
+            $meta = db2_field_name($result, $i);
+            if (!$meta) return array();
+            $field_array[]= $make_lower_case ? strtolower($meta) : $meta;
         }
-
         return $field_array;
     }
 
@@ -424,20 +441,19 @@ class IBMDB2Manager  extends DBManager
         return $row;
     }
 
-    /**
-     * @see DBManager::getTablesArray()
+    /**+
+     * @param  $namepattern     LIKE Style pattern to match the table name
+     * @return array|bool       returns false if no match found and an array with the matching list of names
      */
-    public function getTablesArray()
+    private function getTablesArrayByName($namepattern)
     {
-        $this->log->debug('Fetching table list');
-
-        if ($this->getDatabase()) {
+        if ($db = $this->getDatabase()) {
             $tables = array();
-            $r = $this->query('SHOW TABLES');
-            if (!empty($r)) {
-                while ($a = $this->fetchByAssoc($r)) {
-                    $row = array_values($a);
-					$tables[]=$row[0];
+            $result = db2_tables ($db, null, '%', strtoupper($namepattern), 'TABLE');
+            if (!empty($result)) {
+                while ($row = $this->fetchByAssoc($result)) {
+                    if(preg_match('/^sys/i', $row['table_schem']) == 0) // Since we don't know the default schema name
+					    $tables[]=strtolower($row['table_name']);       // we filter out all the tables coming from system schemas
                 }
                 return $tables;
             }
@@ -446,48 +462,47 @@ class IBMDB2Manager  extends DBManager
         return false; // no database available
     }
 
-    /**
+    /**+
+     * @see DBManager::getTablesArray()
+     */
+    public function getTablesArray()
+    {
+        $this->log->debug('Fetching table list');
+        return $this->getTablesArrayByName('%');
+    }
+
+    /**~
      * @see DBManager::version()
+     * NOTE DBMS_VER may not be adequate to uniquely identify the database system for DB2
+     * I.e. as per the discussion with the IBM folks, there DB2 version for different operating
+     * systems can be inherently different. Hence we may need to add an implementation indicator
+     * to the version. E.g. DBMS_NAME
      */
     public function version()
     {
-        return $this->getOne("SELECT version() version");
+        $dbinfo = db2_server_info($this->getDatabase());
+        if($dbinfo) return $dbinfo->DBMS_VER;
+        else return false;
     }
 
-    /**
+    /**+
      * @see DBManager::tableExists()
      */
     public function tableExists($tableName)
     {
-        $this->log->info("tableExists: $tableName");
-
-        if ($this->getDatabase()) {
-            $result = $this->getOne("SHOW TABLES LIKE ".$this->quoted($tableName));
-            return !empty($result);
-        }
-
-        return false;
+        $this->log->debug("tableExists: $tableName");
+        return (bool)$this->getTablesArrayByName($tableName);
     }
 
-    /**
+    /**+
      * Get tables like expression
      * @param $like string
      * @return array
      */
     public function tablesLike($like)
     {
-        if ($this->getDatabase()) {
-            $tables = array();
-            $r = $this->query('SHOW TABLES LIKE '.$this->quoted($like));
-            if (!empty($r)) {
-                while ($a = $this->fetchByAssoc($r)) {
-                    $row = array_values($a);
-					$tables[]=$row[0];
-                }
-                return $tables;
-            }
-        }
-        return false;
+        $this->log->debug("tablesLike: $like");
+        return $this->getTablesArrayByName($like);
     }
 
     /**+
@@ -617,57 +632,86 @@ class IBMDB2Manager  extends DBManager
         return $sql;
     }
 
-    /**
-     * @see DBManager::convert()
-     */
-    public function convert($string, $type, array $additional_parameters = array())
-    {
-        $all_parameters = $additional_parameters;
-        if(is_array($string)) {
-            $all_parameters = array_merge($string, $all_parameters);
-        } elseif (!is_null($string)) {
-            array_unshift($all_parameters, $string);
-        }
-        $all_strings = implode(',', $all_parameters);
+    /**~
+    * @see DBManager::convert()
+    */
+   public function convert($string, $type, array $additional_parameters = array())
+   {
+       if (!empty($additional_parameters)) {
+           $additional_parameters_string = ','.implode(',',$additional_parameters);
+       } else {
+           $additional_parameters_string = '';
+       }
+       $all_parameters = $additional_parameters;
+       if(is_array($string)) {
+           $all_parameters = array_merge($string, $all_parameters);
+       } elseif (!is_null($string)) {
+           array_unshift($all_parameters, $string);
+       }
 
-        switch (strtolower($type)) {
-            case 'today':
-                return "CURDATE()";
-            case 'left':
-                return "LEFT($all_strings)";
-            case 'date_format':
-                if(empty($additional_parameters)) {
-                    return "DATE_FORMAT($string,'%Y-%m-%d')";
-                } else {
-                    $format = $additional_parameters[0];
-                    if($format[0] != "'") {
-                        $format = $this->quoted($format);
-                    }
-                    return "DATE_FORMAT($string,$format)";
-                }
-            case 'datetime':
-                return $string;
-            case 'ifnull':
-                if(empty($additional_parameters) && !strstr($all_strings, ",")) {
-                    $all_strings .= ",''";
-                }
-                return "IFNULL($all_strings)";
-            case 'concat':
-                return "CONCAT($all_strings)";
-            case 'quarter':
-                    return "QUARTER($string)";
-            case "length":
-                    return "LENGTH($string)";
-            case 'month':
-                    return "MONTH($string)";
-            case 'add_date':
-                    return "DATE_ADD($string, INTERVAL {$additional_parameters[0]} {$additional_parameters[1]})";
-            case 'add_time':
-                    return "DATE_ADD($string, INTERVAL + CONCAT({$additional_parameters[0]}, ':', {$additional_parameters[1]}) HOUR_MINUTE)";
-        }
+       switch (strtolower($type)) {
+           case 'date':
+               return "to_date($string, 'YYYY-MM-DD')";
+           case 'time':
+               return "to_date($string, 'HH24:MI:SS')";
+           case 'datetime':
+               return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'$additional_parameters_string)";
+           case 'today':
+               return "sysdate";
+           case 'left':
+               return "LTRIM($string$additional_parameters_string)";
+           case 'date_format':
+               if($additional_parameters[0][0] == "'") {
+                   $additional_parameters[0] = trim($additional_parameters[0], "'");
+               }
+               if(!empty($additional_parameters) && isset($this->date_formats[$additional_parameters[0]])) {
+                   $format = $this->date_formats[$additional_parameters[0]];
+                   return "TO_CHAR($string, '$format')";
+               } else {
+                  return "TO_CHAR($string, 'YYYY-MM-DD')";
+               }
+           case 'time_format':
+               if(empty($additional_parameters_string)) {
+                   $additional_parameters_string = ",'HH24:MI:SS'";
+               }
+               return "TO_CHAR($string".$additional_parameters_string.")";
+           case 'ifnull':
+               if(empty($additional_parameters_string)) {
+                   $additional_parameters_string = ",''";
+               }
+               return "NVL($string$additional_parameters_string)";
+           case 'concat':
+               return implode("||",$all_parameters);
+           case 'text2char':
+               return "cast($string as VARCHAR(32000))";
+           case 'quarter':
+               return "TO_CHAR($string, 'Q')";
+           case "length":
+               return "LENGTH($string)";
+           case 'month':
+               return "TO_CHAR($string, 'MM')";
+           case 'add_date':
+               switch(strtolower($additional_parameters[1])) {
+                   case 'quarter':
+                       $additional_parameters[0] .= "*3";
+                       // break missing intentionally
+                   case 'month':
+                       return "ADD_MONTHS($string, {$additional_parameters[0]})";
+                   case 'week':
+                       $additional_parameters[0] .= "*7";
+                       // break missing intentionally
+                   case 'day':
+                       return "($string + $additional_parameters[0])";
+                   case 'year':
+                       return "ADD_MONTHS($string, {$additional_parameters[0]}*12)";
+               }
+               break;
+           case 'add_time':
+               return "$string + {$additional_parameters[0]}/24 + {$additional_parameters[1]}/1440";
+       }
 
-        return $string;
-    }
+       return $string;
+   }
 
     /**
      * (non-PHPdoc)
@@ -678,69 +722,11 @@ class IBMDB2Manager  extends DBManager
         return $string;
     }
 
-    /**
-     * Returns the name of the engine to use or null if we are to use the default
-     *
-     * @param  object $bean SugarBean instance
-     * @return string
-     */
-    protected function getEngine($bean)
+    /**~
+     * @see DBManager::createTableSQLParams()
+	 */
+	public function createTableSQLParams($tablename, $fieldDefs, $indices)
     {
-        global $dictionary;
-        $engine = null;
-        if (isset($dictionary[$bean->getObjectName()]['engine'])) {
-			$engine = $dictionary[$bean->getObjectName()]['engine'];
-		}
-        return $engine;
-    }
-
-    /**
-     * Returns true if the engine given is enabled in the backend
-     *
-     * @param  string $engine
-     * @return bool
-     */
-    protected function isEngineEnabled($engine)
-    {
-        $engine = strtoupper($engine);
-
-        $r = $this->query("SHOW ENGINES");
-
-        while ( $row = $this->fetchByAssoc($r) )
-            if ( strtoupper($row['Engine']) == $engine )
-                return ($row['Support']=='YES' || $row['Support']=='DEFAULT');
-
-        return false;
-    }
-
-    /**
-     * @see DBManager::createTableSQL()
-     */
-    public function createTableSQL(SugarBean $bean)
-    {
-        $tablename = $bean->getTableName();
-        $fieldDefs = $bean->getFieldDefinitions();
-        $indices   = $bean->getIndices();
-        $engine    = $this->getEngine($bean);
-        return $this->createTableSQLParams($tablename, $fieldDefs, $indices, $engine);
-	}
-
-    /**
-     * Generates sql for create table statement for a bean.
-     *
-     * @param  string $tablename
-     * @param  array  $fieldDefs
-     * @param  array  $indices
-     * @param  string $engine optional, MySQL engine to use
-     * @return string SQL Create Table statement
-    */
-    public function createTableSQLParams($tablename, $fieldDefs, $indices, $engine = null)
-    {
- 		if ( empty($engine) && isset($fieldDefs['engine']))
-            $engine = $fieldDefs['engine'];
-        if ( !$this->isEngineEnabled($engine) )
-            $engine = '';
-
         $columns = $this->columnSQLRep($fieldDefs, false, $tablename);
         if (empty($columns))
             return false;
@@ -749,37 +735,32 @@ class IBMDB2Manager  extends DBManager
         if (!empty($keys))
             $keys = ",$keys";
 
-        // cn: bug 9873 - module tables do not get created in utf8 with assoc collation
-        $sql = "CREATE TABLE $tablename ($columns $keys) CHARACTER SET utf8 COLLATE utf8_general_ci";
-
-	    if (!empty($engine))
-            $sql.= " ENGINE=$engine";
+        $sql = "CREATE TABLE $tablename ($columns $keys)";
 
         return $sql;
 	}
 
-    /**
-     * @see DBManager::oneColumnSQLRep()
+    
+	/**~
+     * @see DBHelper::oneColumnSQLRep()
      */
-	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
-        $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
-
-        if ( $ref['colType'] == 'int'
-                && !empty($fieldDef['len']) )
-            $ref['colType'] .= "(".$fieldDef['len'].")";
-
-        // bug 22338 - don't set a default value on text or blob fields
-        if ( isset($ref['default']) &&
-            ($ref['colType'] == 'text' || $ref['colType'] == 'blob'
-                || $ref['colType'] == 'longtext' || $ref['colType'] == 'longblob' ))
-            $ref['default'] = '';
-
-        if ( $return_as_array )
-            return $ref;
-        else
-            return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
-    }
+		if(isset($fieldDef['name'])){
+			$name = $fieldDef['name'];
+	        $type = $this->getFieldType($fieldDef);
+	        $colType = $this->getColumnType($type, $name, $table);
+	    	if(stristr($colType, 'decimal')){
+				$fieldDef['len'] = min($fieldDef['len'],31); // DB2 max precision is 31 for LUW, may be different for other OSs
+			}
+		}
+        //May need to add primary key and sequence stuff here
+		$colspec = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array);
+        if(!preg_match('/not\s+null/i', $colspec)) {
+            $colspec = str_replace(array('NULL', 'null'), '', $colspec); // DB2 doesn't like NULL specs
+        }
+        return $colspec;
+	}
 
     /**
      * @see DBManager::changeColumnSQL()
@@ -855,17 +836,17 @@ class IBMDB2Manager  extends DBManager
                 * that this can easily be fixed by referring to db dictionary
                 * to find the correct primary field name
                 */
-               if ( $alter_table )
-                   $columns[] = " INDEX $name ($fields)";
-               else
-                   $columns[] = " KEY $name ($fields)";
-               break;
+//               if ( $alter_table )
+//                   $columns[] = " INDEX $name ($fields)";
+//               else
+//                   $columns[] = " KEY $name ($fields)";
+//               break;
            case 'fulltext':
-               if ($this->full_text_indexing_installed())
-                   $columns[] = " FULLTEXT ($fields)";
-               else
-                   $GLOBALS['log']->debug('MYISAM engine is not available/enabled, full-text indexes will be skipped. Skipping:',$name);
-               break;
+//               if ($this->full_text_indexing_installed())
+//                   $columns[] = " FULLTEXT ($fields)";
+//               else
+//                   $GLOBALS['log']->debug('MYISAM engine is not available/enabled, full-text indexes will be skipped. Skipping:',$name);
+//               break;
           }
        }
        $columns = implode(", $alter_action ", $columns);
@@ -875,12 +856,12 @@ class IBMDB2Manager  extends DBManager
        return $columns;
     }
 
-    /**
+    /**-
      * @see DBManager::setAutoIncrement()
      */
  	protected function setAutoIncrement($table, $field_name)
     {
-		return "auto_increment";
+		return ""; // TODO implement sequence generation
 	}
 
    	/**
@@ -991,12 +972,12 @@ EOQ;
         return $sql;
     }
 
-	/**
+	/**+
      * @see DBManager::full_text_indexing_installed()
      */
-    public function full_text_indexing_installed($dbname = null)
+    public function full_text_indexing_installed()
     {
-		return $this->isEngineEnabled('MyISAM');
+		return true; // Part of DB2 since version 9.5 (http://www.ibm.com/developerworks/data/tutorials/dm-0810shettar/index.html)
 	}
 
     /**
@@ -1148,7 +1129,9 @@ EOQ;
         return "MATCH($field) AGAINST($condition IN BOOLEAN MODE)";
     }
 
-
+    /**+
+     * @return array
+     */
     public function getDbInfo()
     {
         return array(

@@ -170,6 +170,16 @@ function checkDBSettings($silent=false) {
                     } else {
                         installLog("Passed OCI minimum Version check");
                     }
+                } elseif($_SESSION['setup_db_type'] == 'ibm_db2') {
+                    // check DB2 version
+                    $version = $db->version();
+                    //TODO implement version checking
+                    if(!preg_match("/.*/i", $version)) {
+                        $errors['ERR_DB_IBM_DB2_VERSION'] = $mod_strings['ERR_DB_IBM_DB2_VERSION'];
+                        installLog("ERROR:: {$errors['ERR_DB_IBM_DB2_VERSION']}");
+                    } else {
+                        installLog("Passed IBM DB2 Version check");
+                    }
                 }
 
                 $db->disconnect();
