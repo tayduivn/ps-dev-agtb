@@ -72,8 +72,6 @@ class Link2 {
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship($this->def['relationship']);
 
        if (!$this->loadedSuccesfully())
-           //echo "<pre>"; debug_print_backtrace(); echo "</pre>";
-           throw new Exception("Relationship failed to load :" . $this->def['relationship']);
            $GLOBALS['log']->fatal("{$this->name} for {$this->def['relationship']} failed to load\n");
         //Following behavior is tied to a property(ignore_role) value in the vardef. It alters the values of 2 properties, ignore_role_filter and add_distinct.
 		//the property values can be altered again before any requests are made.
