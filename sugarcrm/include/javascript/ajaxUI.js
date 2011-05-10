@@ -31,6 +31,13 @@ SUGAR.ajaxUI = {
             var c = document.getElementById("content");
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
+            // set response time from ajax response
+            if(typeof(r.responseTime) != 'undefined'){
+                var rt = document.getElementById('responseTime');
+                if(rt != null){
+                    rt.innerHTML = r.responseTime;
+                }
+            }
         } catch (e){
             if (YAHOO.lang.trim(o.responseText) == "")
             {

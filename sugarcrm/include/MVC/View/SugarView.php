@@ -123,6 +123,8 @@ class SugarView
         if ($this->_getOption('json_output'))
         {
             $ajax_ret['content'] .= ob_get_clean();
+            if(empty($this->responseTime)) $this->_calculateFooterMetrics();
+            $ajax_ret['responseTime'] = $this->responseTime;
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
         }
@@ -1059,7 +1061,7 @@ EOHTML;
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];
-        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . " " . number_format(round($deltaTime, 2), 2) . " " . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
+        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' <span id="responseTime">' . number_format(round($deltaTime, 2), 2) . '</span> ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
         $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY
