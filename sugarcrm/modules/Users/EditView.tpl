@@ -921,12 +921,16 @@ document.getElementById('email_link_type').onchange();
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
+{/literal}
+{if !$HIDE_FOR_GROUP_AND_PORTAL}
+{literal}
 if(window.addEventListener){
     window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
 }else{
     window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
 }
 {/literal}
+{/if}
 {$getNameJs}
 {$getNumberJs}
 {$confirmReassignJs}
