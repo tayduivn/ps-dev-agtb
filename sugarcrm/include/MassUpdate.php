@@ -1164,7 +1164,7 @@ EOQ;
 			});
 
 			//Call update for first time to round hours and minute values
-			combo_{$varname}.update();
+			combo_{$varname}.update(false);
 		}
 
 		var obj_{$varname} = new update_{$varname}_available();

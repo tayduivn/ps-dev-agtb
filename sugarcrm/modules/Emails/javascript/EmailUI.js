@@ -308,6 +308,7 @@ SE.accounts = {
 
         this.inboundAccountEditDialog.render();
         this.inboundAccountEditDialog.show();
+        SUGAR.util.setEmailPasswordDisplay('email_password', clear == false);
     },
 
     /**
@@ -523,6 +524,7 @@ SE.accounts = {
         document.forms['ieAccount'].elements['ssl'].checked = true;
         document.forms['ieAccount'].elements['protocol'].value = "imap";
         SUGAR.email2.accounts.setPortDefault();
+        SUGAR.util.setEmailPasswordDisplay('email_password', false);
     },
     /**
      * Sets Port field to selected protocol and SSL settings defaults
@@ -681,7 +683,7 @@ SE.accounts = {
         document.ieAccount.protocol.options[0].selected = true;
         // handle SSL
         document.getElementById('ssl').checked = false;
-
+        SUGAR.util.setEmailPasswordDisplay('email_password', false);
     },
 
     /**
@@ -3464,7 +3466,6 @@ SE.settings = {
         }
 
     }
-
 };
 ////    END SE.settings
 ///////////////////////////////////////////////////////////////////////////////
