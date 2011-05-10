@@ -118,19 +118,20 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		}
 
 		if ( ! empty($layout_def['table_alias'])) {
-		    $comps = preg_split("/[fl]/", $localeNameFormat, null, PREG_SPLIT_DELIM_CAPTURE);
+		    $comps = preg_split("/([fl])/", $localeNameFormat, null, PREG_SPLIT_DELIM_CAPTURE);
 		    $name = array();
 		    foreach($comps as $val) {
 		        if($val == 'f') {
 		            $name[] = $this->reporter->db->convert($layout_def['table_alias'].".".$field_def['fields'][0], 'IFNULL', array("''"));
-		        } elseif($val = 'l') {
+		        } elseif($val == 'l') {
 		            $name[] = $this->reporter->db->convert($layout_def['table_alias'].".".$field_def['fields'][1], 'IFNULL', array("''"));
 		        } else {
-		            $name[] = $this->reporter->db->quoted($val);
+		            if(!empty($val)) {
+		                $name[] = $this->reporter->db->quoted($val);
+		            }
 		        }
 		    }
-		    $first = array_shift($name);
-		    $alias = $this->reporter->db->convert($first, "CONCAT", $name);
+		    $alias = $this->reporter->db->convert($name, "CONCAT");
 		} elseif (! empty($layout_def['name']))	{
 			$alias = $layout_def['name'];
 		} else {
