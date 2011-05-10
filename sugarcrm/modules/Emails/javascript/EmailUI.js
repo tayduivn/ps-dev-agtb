@@ -1022,6 +1022,8 @@ SE.accounts = {
     	if (typeof(node.data.unseen) != 'undefined') {
     		if (node.data.unseen > 0) {
 				node.setUpLabel(node.data.origText + '(' + node.data.unseen + ')');
+                // Add bold style to label, kinda hacky
+                node.labelStyle += " ygtvlabelbold";
 			}
 			else {
 				node.setUpLabel(node.data.origText);
