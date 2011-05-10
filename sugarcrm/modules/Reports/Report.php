@@ -1689,18 +1689,30 @@ print "<BR>";
                                 //If more than one, then create string to use in conjunction
                                 //with a charindex function.  This will make sure we can get
                                 //the order list in the defined order
-                                foreach($summ_order_by as $ob){
-                                    if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                    if(empty($groupby)){
-                                        $startCut = strrpos($ob, "(");
-                                        $startCut = ($startCut === FALSE) ? 0 : $startCut+1;
-                                        $groupby = substr($ob,$startCut,strrpos($ob,"=") - $startCut);
-                                        }
+                                foreach($summ_order_by as $ob)
+                                {
+                                    if(empty($ASC_DESC))
+                                    {
+                                    	$ASC_DESC = substr($ob,strrpos($ob," "));
+                                	}
+
+                                    if(empty($groupby))
+                                    {
+										$groupby = substr($ob,0,strrpos($ob,"="));
+                                        // Begin Bug 43874 - Since we made changes for Bug 42448, we might get a group by such as (accounts.account_type
+										if (substr($groupby,0,1) == '(' && substr($groupby,-1) != ')')
+										{
+											$groupby = substr($groupby,1); 
+										}
+                                        // End Bug 43874
+									}
+
                                     $ob = trim($ob);
                                     $beg_sing_pos = strpos($ob,"'");
+                                    
                                     if($beg_sing_pos>0){
-                                    $end_sing_pos = strrpos($ob,"'");
-                                    $summ_order_by_string .= substr($ob,$beg_sing_pos+1,$end_sing_pos-$beg_sing_pos-1) ."``";
+	                                    $end_sing_pos = strrpos($ob,"'");
+	                                    $summ_order_by_string .= substr($ob,$beg_sing_pos+1,$end_sing_pos-$beg_sing_pos-1) ."``";
                                     }else{
                                         if(empty($order_by_string)) $order_by_string = '';
                                         $order_by_string .= $ob ."``";
