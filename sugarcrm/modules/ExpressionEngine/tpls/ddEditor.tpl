@@ -1,4 +1,4 @@
-<?php
+{*
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -18,54 +18,24 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once ('modules/ModuleBuilder/MB/ModuleBuilder.php') ;
-require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
+*}
+<link rel="stylesheet" type="text/css" href="modules/ExpressionEngine/tpls/formulaBuilder.css" />
+<table>
+    <tr>
+        <td>Parent:</td>
+        <td><select><option>Industry</option></select></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td><select multiple="true"></select></td>
+        <td><select multiple="true"></select></td>
+    </tr>
+</table>
+<script>
+(function(){ldelim}
 
-class ExpressionEngineController extends SugarController
-{
-	var $action_remap = array ( ) ;
-	
-	function ExpressionEngineController() {
-		$this->view = 'editFormula';
-	}
-	
-	function action_editFormula ()
-    {
-     	$this->view = 'editFormula';  
-    }
 
-    function action_editDepDropdown ()
-    {
-     	$this->view = 'editDepDropdown';
-    }
-    
-	function action_index ()
-    {
-     	$this->view = 'index';  
-    }
-    
-	function action_cfTest ()
-    {
-     	$this->view = 'cfTest';  
-    }
-    
-	function action_list ()
-    {
-     	$this->view = 'index';  
-    }
 
-    function action_relFields ()
-    {
-     	$this->view = 'relFields';  
-    }
 
-    function action_execFunction ()
-    {
-     	$this->view = 'execFunction';  
-    }
-
-    function action_functionDetail() {
-    	$this->view = 'functionDetail'; 
-    }
-}
-?>
+{rdelim})();
+</script>
