@@ -618,9 +618,11 @@ EOHTML;
 			$other_attributes .= ' class="'.$sprite_class.'"';
 		}
 
-		// replace alt attribute by title if present
-		$alt_regex = '/alt=["\']([^\'"]+)["\']/i';
-		$other_attributes = preg_replace($alt_regex, 'title="${1}"', $other_attributes);
+		// replace alt attribute by title if no title present
+		if(! preg_match('/title=["\']([^\'"]+)["\']/i', $other_attributes)) {
+			$alt_regex = '/alt=["\']([^\'"]+)["\']/i';
+			$other_attributes = preg_replace($alt_regex, 'title="${1}"', $other_attributes);
+		}
 
 		// use </span> instead of /> as close tag to prevent weird UI results
 		return "<span {$other_attributes}></span>";
