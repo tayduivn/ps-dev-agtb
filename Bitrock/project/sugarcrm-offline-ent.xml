@@ -1,0 +1,1563 @@
+<project>
+    <shortName>Sugar</shortName>
+    <fullName>Sugar Offline Client</fullName>
+    <version>@_SUGAR_VERSION</version>
+    <installerFilename>${product_shortname}-OfflineClient-ENT-${product_version}-${platform_name}-installer.${platform_exec_suffix}</installerFilename>
+    <readmeFile></readmeFile>
+    <licenseFile>license.txt</licenseFile>
+    <wrapLicenseFileText>1</wrapLicenseFileText>
+    <leftImage>images/sugarleft.png</leftImage>
+    <logoImage>images/sugarcrm_logo_transparent_200x36.gif</logoImage>
+    <splashImage>images/sugarsplash.png</splashImage>
+    <defaultLanguage>en</defaultLanguage>
+    <allowLanguageSelection>0</allowLanguageSelection>
+    <postInstallationScript></postInstallationScript>
+    <postInstallationScriptArguments></postInstallationScriptArguments>
+    <showPostInstallationScriptResult>0</showPostInstallationScriptResult>
+    <preUninstallationScript></preUninstallationScript>
+    <preUninstallationScriptArguments></preUninstallationScriptArguments>
+    <allowedLanguages></allowedLanguages>
+    <defaultInstallationMode></defaultInstallationMode>
+    <defaultUnixDirectoryPermissions>755</defaultUnixDirectoryPermissions>
+    <defaultUnixFilePermissions>644</defaultUnixFilePermissions>
+    <description>One-line description of your software</description>
+    <outputDirectory>/home/build/sugarbuild-BitRock-@_SUGAR_VERSION/zip</outputDirectory>
+    <projectSchemaVersion>1.2</projectSchemaVersion>
+    <saveRelativePaths>1</saveRelativePaths>
+    <slideShowLoop>1</slideShowLoop>
+    <slideShowTiming>5</slideShowTiming>
+    <startMenuGroupName>${product_fullname}</startMenuGroupName>
+    <style>standard</style>
+    <summary>Place here a detailed description of your software</summary>
+    <uninstallerDirectory>${installdir}</uninstallerDirectory>
+    <uninstallerName></uninstallerName>
+    <validatorProgram></validatorProgram>
+    <vendor>SugarCRM</vendor>
+    <componentList>
+        <component>
+            <name>default</name>
+            <description>SugarCRM</description>
+            <canBeEdited>0</canBeEdited>
+            <detailedDescription>The SugarCRM main program files. This component is required and it will always be installed.</detailedDescription>
+            <selected>1</selected>
+            <show>1</show>
+            <desktopShortcutList>
+                <fileShortcut>
+                    <comment>SugarCRM Stack Installation Directory</comment>
+                    <filePath>${installdir}/</filePath>
+                    <icon>${installdir}/htdocs/sugar.gif</icon>
+                    <name>SugarCRM</name>
+                    <platforms>linux</platforms>
+                    <windowsIcon></windowsIcon>
+                </fileShortcut>
+            </desktopShortcutList>
+            <folderList>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfilesunix</name>
+                    <platforms>linux</platforms>
+                    <actionList>
+                        <substitute>
+                            <files>*/sugarctl.sh;*/common/bin/openssl</files>
+                            <type>regexp</type>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>@@BITROCK_COMMON_ROOTDIR@@</pattern>
+                                    <value>${installdir}/common</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/mysql</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_PHP_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/php</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_PORT@@</pattern>
+                                    <value>${dbport}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/apache2</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_PORT@@</pattern>
+                                    <value>${webport}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>LD_LIBRARY_PATH</pattern>
+                                    <value>DYLD_LIBRARY_PATH</value>
+                                    <ruleList>
+                                        <compareText>
+                                            <logic>equals</logic>
+                                            <nocase>0</nocase>
+                                            <text>${platform_name}</text>
+                                            <value>osx</value>
+                                        </compareText>
+                                    </ruleList>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                    </actionList>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>common</origin>
+                        </distributionDirectory>
+                        <distributionFile>
+                            <origin>sugarctl.sh</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfiles</name>
+                    <platforms>all</platforms>
+                    <actionList>
+                        <substitute>
+                            <files>*/myscript.sh;*/httpd.conf;*/ssl.conf;*/httpd.conf.default</files>
+                            <type>regexp</type>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>@@BITROCK_INSTALLDIR@@</pattern>
+                                    <value>${installdir.unix}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/mysql</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_PHP_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/php</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_PORT@@</pattern>
+                                    <value>${dbport}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/apache2</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_PORT@@</pattern>
+                                    <value>${webport}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_COMMON_ROOTDIR@@</pattern>
+                                    <value>${installdir}/common</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_SSL_PORT@@</pattern>
+                                    <value>${sslport}</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                        <substitute>
+                            <files>*/bin/ab;*/bin/checkgid;*/bin/htdbm;*/bin/htdigest;*/bin/htpasswd;*/bin/logresolve;*/bin/rotatelogs</files>
+                            <type>regexp</type>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/apache2</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                        <createDirectory>
+                            <path>${installdir}/php/tmp</path>
+                        </createDirectory>
+                        <actionGroup>
+                            <actionList>
+                                <changePermissions>
+                                    <files>${installdir}/php/tmp</files>
+                                    <permissions>777</permissions>
+                                </changePermissions>
+                                <changePermissions>
+                                    <files>*/cache*;*/data*;*/custom*;*/modules*;*/config.php</files>
+                                    <permissions>777</permissions>
+                                </changePermissions>
+                            </actionList>
+                            <ruleList>
+                                <compareText>
+                                    <logic>does_not_equal</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                        </actionGroup>
+                        <substitute>
+                            <files>*/my.ini;*/php.ini;*/php.ini-recommended</files>
+                            <type>regexp</type>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>mysql.default_socket =</pattern>
+                                    <value>mysql.default_socket = ${installdir}/mysql/tmp/mysql.sock</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>;session.save_path = /tmp</pattern>
+                                    <value>session.save_path = ${installdir}/php/tmp</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/apache2</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_PORT@@</pattern>
+                                    <value>${webport}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_PHP_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/php</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_PORT@@</pattern>
+                                    <value>${dbport}</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_ROOTDIR@@</pattern>
+                                    <value>${installdir.unix}/mysql</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_PASSWORD@@</pattern>
+                                    <value>${rootpassword}</value>
+                                </substitution>
+								<substitution>
+									<pattern>@@BITROCK_PHP_EXTENSIONDIR@@</pattern>
+									<value>${installdir}/php/extensions</value>
+								</substitution>
+                            </substitutionList>
+                        </substitute>
+                        <substitute>
+                            <files>*/pear.bat;*/peardev.bat;*/pecl.bat;*/include.inc;*/pearcmd.php</files>
+                            <type>regexp</type>
+                            <ruleList>
+                                <compareText>
+                                    <logic>equals</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>@@BITROCK_PHP_ROOTDIR@@</pattern>
+                                    <value>${installdir}/php</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                        <substitute>
+                            <files>*/apachectl;*/conf/*.conf;*/build-defs.h;*/apxs;*/apr-config;*/apu-config;*/bin/envvars;*/bin/envvars-std;*/build/config*;lib/libapr*.la;*/pearcmd.php;*/pear.conf;*/build-defs.h;*/etc/php.ini;*/bin/pear;*/bin/phpize;*/bin/php-config;*/bin/php;*.la;*.mk;*/*.h</files>
+                            <type>regexp</type>
+                            <ruleList>
+                                <compareText>
+                                    <logic>does_not_equal</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>@@BITROCK_PHP_ROOTDIR@@</pattern>
+                                    <value>${installdir}/php</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_ROOTDIR@@</pattern>
+                                    <value>${installdir}/apache2</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_COMMON_ROOTDIR@@</pattern>
+                                    <value>${installdir}/common</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                        <substitute>
+                            <files>*/bin/php;*/apache2/bin/apachectl</files>
+                            <type>regexp</type>
+                            <ruleList>
+                                <regExMatch>
+                                    <logic>matches</logic>
+                                    <pattern>osx</pattern>
+                                    <text>${platform_name}</text>
+                                </regExMatch>
+                            </ruleList>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>LD_LIBRARY_PATH</pattern>
+                                    <value>DYLD_LIBRARY_PATH</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                        <runProgram>
+                            <program>${installdir}/php/bin/php</program>
+                            <programArguments>-n -q ${installdir}/php/bin/fixreg.php ${installdir}/php/lib/php/.registry @@BITROCK_PHP_ROOTDIR@@ ${installdir}/php</programArguments>
+                            <runAs></runAs>
+                            <workingDirectory></workingDirectory>
+                            <ruleList>
+                                <compareText>
+                                    <logic>does_not_equal</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                        </runProgram>
+                        <runProgram>
+                            <program>${installdir}/php/php.exe</program>
+                            <programArguments>-n -q "${installdir}/php/fixreg.php" "${installdir}/php/pear/lib/.registry" @@BITROCK_PHP_ROOTDIR@@ "${installdir}/php"</programArguments>
+                            <runAs></runAs>
+                            <workingDirectory></workingDirectory>
+                            <ruleList>
+                                <compareText>
+                                    <logic>equals</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                        </runProgram>
+                        <runProgram>
+                            <program>${installdir}/php/bin/php</program>
+                            <programArguments>-n -q ${installdir}/php/bin/fixreg.php ${installdir}/php/etc @@BITROCK_PHP_ROOTDIR@@ ${installdir}/php</programArguments>
+                            <runAs></runAs>
+                            <workingDirectory></workingDirectory>
+                            <ruleList>
+                                <compareText>
+                                    <logic>does_not_equal</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                        </runProgram>
+                        <substitute>
+                            <files>*/mysqlaccess;*/mysqld_safe;*/mysql-log-rotate;*/mysql.spec;*/mysql-test-run;*/FrontBase.benchmark;*/safe_mysqld;*/mysql.server;*/mysql_fix_privilege_tables;*/mysqld_multi</files>
+                            <type>regexp</type>
+                            <ruleList>
+                                <compareText>
+                                    <logic>does_not_equal</logic>
+                                    <nocase>0</nocase>
+                                    <text>${platform_name}</text>
+                                    <value>windows</value>
+                                </compareText>
+                            </ruleList>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>/usr/local</pattern>
+                                    <value>${installdir}</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                        <addTextToFile>
+                            <file>${installdir}/apache2/conf/httpd.conf</file>
+                            <text>
+			AddType Application/x-httpd-php .php .phtml
+							</text>
+                        </addTextToFile>
+                    </actionList>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>apache2</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>php</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>mysql</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>licenses</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfileswindows</name>
+                    <platforms>windows</platforms>
+                    <actionList>
+                        <substitute>
+                            <files>*/allctl.bat;*/serviceinstall.bat;*/servicerun.bat;*/runctl.bat</files>
+                            <type>regexp</type>
+                            <substitutionList>
+                                <substitution>
+                                    <pattern>@@BITROCK_APACHE_ROOTDIR@@</pattern>
+                                    <value>${installdir.dos}\apache2</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_MYSQL_ROOTDIR@@</pattern>
+                                    <value>${installdir.dos}\mysql</value>
+                                </substitution>
+                                <substitution>
+                                    <pattern>@@BITROCK_PRODUCT_SHORTNAME@@</pattern>
+                                    <value>${product_shortname}</value>
+                                </substitution>
+                            </substitutionList>
+                        </substitute>
+                    </actionList>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>bin</origin>
+                        </distributionDirectory>
+                        <distributionDirectory>
+                            <origin>images</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description></description>
+                    <destination>${installdir}</destination>
+                    <name>htdocs</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>htdocs</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description></description>
+                    <destination>${installdir}/htdocs</destination>
+                    <name>sugarcrm</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>sugarcrm</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description></description>
+                    <destination>${installdir}</destination>
+                    <name>images</name>
+                    <platforms>all</platforms>
+                    <distributionFileList>
+                        <distributionDirectory>
+                            <origin>images</origin>
+                        </distributionDirectory>
+                    </distributionFileList>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </folder>
+            </folderList>
+            <postInstallationActionList/>
+            <startMenuShortcutList>
+                <startMenuLinkShortcut>
+                    <comment>SugarCRM Website</comment>
+                    <name>SugarCRM Website</name>
+                    <url>http://www.sugarcrm.com</url>
+                    <windowsIcon></windowsIcon>
+                </startMenuLinkShortcut>
+                <startMenuLinkShortcut>
+                    <comment>Start Here</comment>
+                    <name>Start Here</name>
+                    <url>http://127.0.0.1:${webport}/sugarcrm/index.php</url>
+                    <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                </startMenuLinkShortcut>
+                <startMenuShortcut>
+                    <comment>Uninstall ${product_fullname}</comment>
+                    <name>Uninstall ${product_fullname}</name>
+                    <windowsExec>${installdir}\uninstall.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon></windowsIcon>
+                    <windowsPath>${installdir}</windowsPath>
+                </startMenuShortcut>
+                <startMenuFolder>
+                    <name>Run SugarCRM</name>
+                    <platforms>windows</platforms>
+                    <startMenuShortcutList>
+                        <startMenuFolder>
+                            <name>All</name>
+                            <platforms>windows</platforms>
+                            <startMenuShortcutList>
+                                <startMenuShortcut>
+                                    <comment>Start ${product_fullname}</comment>
+                                    <name>Start ${product_fullname}</name>
+                                    <windowsExec>${installdir}\bin\allctl.bat</windowsExec>
+                                    <windowsExecArgs>start</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                                    <windowsPath>${installdir}/bin/</windowsPath>
+                                </startMenuShortcut>
+                                <startMenuShortcut>
+                                    <comment>Stop ${product_fullname}</comment>
+                                    <name>Stop ${product_fullname}</name>
+                                    <windowsExec>${installdir}\bin\allctl.bat</windowsExec>
+                                    <windowsExecArgs>stop</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                                    <windowsPath>${installdir}/bin/</windowsPath>
+                                </startMenuShortcut>
+                                <startMenuShortcut>
+                                    <comment>Restart ${product_fullname}</comment>
+                                    <name>Restart ${product_fullname}</name>
+                                    <windowsExec>${installdir}\bin\allctl.bat</windowsExec>
+                                    <windowsExecArgs>restart</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                                    <windowsPath>${installdir}/bin/</windowsPath>
+                                </startMenuShortcut>
+                            </startMenuShortcutList>
+                        </startMenuFolder>
+                        <startMenuFolder>
+                            <name>MySQL</name>
+                            <platforms>windows</platforms>
+                            <startMenuShortcutList>
+                                <startMenuShortcut>
+                                    <comment>Start MySQL</comment>
+                                    <name>Start MySQL</name>
+                                    <windowsExec>${installdir}/bin/runctl.bat</windowsExec>
+                                    <windowsExecArgs>mysql start</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/mysql.ico</windowsIcon>
+                                    <windowsPath>${installdir}/</windowsPath>
+                                </startMenuShortcut>
+                                <startMenuShortcut>
+                                    <comment>Stop MySQL</comment>
+                                    <name>Stop MySQL</name>
+                                    <windowsExec>${installdir}/bin/runctl.bat</windowsExec>
+                                    <windowsExecArgs>mysql stop</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/mysql.ico</windowsIcon>
+                                    <windowsPath>${installdir}/</windowsPath>
+                                </startMenuShortcut>
+                                <startMenuShortcut>
+                                    <comment>Restart MySQL</comment>
+                                    <name>Restart MySQL</name>
+                                    <windowsExec>${installdir}/bin/runctl.bat</windowsExec>
+                                    <windowsExecArgs>mysql restart</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/mysql.ico</windowsIcon>
+                                    <windowsPath>${installdir}/</windowsPath>
+                                </startMenuShortcut>
+                            </startMenuShortcutList>
+                        </startMenuFolder>
+                        <startMenuFolder>
+                            <name>Apache</name>
+                            <platforms>windows</platforms>
+                            <startMenuShortcutList>
+                                <startMenuShortcut>
+                                    <comment>Start Apache</comment>
+                                    <name>Start Apache</name>
+                                    <windowsExec>${installdir}/bin/runctl.bat</windowsExec>
+                                    <windowsExecArgs>apache start</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/apache.ico</windowsIcon>
+                                    <windowsPath>${installdir}/</windowsPath>
+                                </startMenuShortcut>
+                                <startMenuShortcut>
+                                    <comment>Stop Apache</comment>
+                                    <name>Stop Apache</name>
+                                    <windowsExec>${installdir}/bin/runctl.bat</windowsExec>
+                                    <windowsExecArgs>apache stop</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/apache.ico</windowsIcon>
+                                    <windowsPath>${installdir}/</windowsPath>
+                                </startMenuShortcut>
+                                <startMenuShortcut>
+                                    <comment>Restart Apache</comment>
+                                    <name>Restart Apache</name>
+                                    <windowsExec>${installdir}/bin/runctl.bat</windowsExec>
+                                    <windowsExecArgs>apache restart</windowsExecArgs>
+                                    <windowsIcon>${installdir}/images/apache.ico</windowsIcon>
+                                    <windowsPath>${installdir}/</windowsPath>
+                                </startMenuShortcut>
+                            </startMenuShortcutList>
+                        </startMenuFolder>
+                    </startMenuShortcutList>
+                </startMenuFolder>
+                <startMenuFolder>
+                    <name>SugarCRM Service</name>
+                    <platforms>windows</platforms>
+                    <startMenuShortcutList>
+                        <startMenuShortcut>
+                            <comment>Install ${product_fullname} as service</comment>
+                            <name>Install ${product_fullname} as service</name>
+                            <windowsExec>${installdir}/bin/serviceinstall.bat</windowsExec>
+                            <windowsExecArgs>INSTALL</windowsExecArgs>
+                            <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                            <windowsPath>${installdir}/</windowsPath>
+                        </startMenuShortcut>
+                        <startMenuShortcut>
+                            <comment>Start ${product_fullname} service</comment>
+                            <name>Start ${product_fullname} service</name>
+                            <windowsExec>${installdir}/bin/servicerun.bat</windowsExec>
+                            <windowsExecArgs>START</windowsExecArgs>
+                            <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                            <windowsPath>${installdir}/</windowsPath>
+                        </startMenuShortcut>
+                        <startMenuShortcut>
+                            <comment>Stop ${product_fullname} service</comment>
+                            <name>Stop ${product_fullname} service</name>
+                            <windowsExec>${installdir}/bin/servicerun.bat</windowsExec>
+                            <windowsExecArgs>STOP</windowsExecArgs>
+                            <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                            <windowsPath>${installdir}/</windowsPath>
+                        </startMenuShortcut>
+                        <startMenuShortcut>
+                            <comment>Uninstall ${product_fullname} service</comment>
+                            <name>Uninstall ${product_fullname} service</name>
+                            <windowsExec>${installdir}/bin/serviceinstall.bat</windowsExec>
+                            <windowsExecArgs>UNINSTALL</windowsExecArgs>
+                            <windowsIcon>${installdir}/images/sugarcrm.ico</windowsIcon>
+                            <windowsPath>${installdir}/</windowsPath>
+                        </startMenuShortcut>
+                    </startMenuShortcutList>
+                </startMenuFolder>
+            </startMenuShortcutList>
+        </component>
+    </componentList>
+    <customLanguageFileList/>
+    <fileList/>
+    <finalPageActionList>
+        <actionGroup>
+            <progressText>Launch Sugar Offline Client now?</progressText>
+            <actionList>
+                <runProgram>
+                    <program>${installdir}/bin/allctl.bat</program>
+                    <programArguments>start &amp;</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                    <ruleList>
+                        <compareText>
+                            <logic>does_not_equal</logic>
+                            <nocase>0</nocase>
+                            <text>${installAsService}</text>
+                            <value>1</value>
+                        </compareText>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </runProgram>
+                <runProgram>
+                    <program>${installdir}/bin/servicerun.bat</program>
+                    <programArguments>START &amp;</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${installAsService}</text>
+                            <value>1</value>
+                        </compareText>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${platform_name}</text>
+                            <value>windows</value>
+                        </compareText>
+                    </ruleList>
+                </runProgram>
+                <wait>
+                    <ms>2000</ms>
+                </wait>
+                <setEnvironmentVariable>
+                    <name>DYLD_LIBRARY_PATH</name>
+                    <value></value>
+                </setEnvironmentVariable>
+                <launchBrowser>
+                    <url>http://127.0.0.1:${webport}/sugarcrm</url>
+                </launchBrowser>
+            </actionList>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_ui}</text>
+                    <value>gui</value>
+                </compareText>
+            </ruleList>
+        </actionGroup>
+    </finalPageActionList>
+    <parameterList>
+        <directoryParameter>
+            <name>installdir</name>
+            <title></title>
+            <description>Installation directory</description>
+            <explanation>Please specify the directory where ${product_fullname} will be installed</explanation>
+            <value>${platform_install_prefix}/SugarCRM/SugarCRM Offline Client</value>
+            <default>${platform_install_prefix}/${product_shortname}-${product_version}</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <ask>yes</ask>
+            <cliOptionName>prefix</cliOptionName>
+            <leftImage></leftImage>
+            <mustBeWritable>yes</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>30</width>
+            <validationActionList>
+                <throwError>
+                    <text>The directory ${installdir.unix}/mysql/ contains a SugarCRM database from a previous installation. Please remove it or choose a new installation directory.</text>
+                    <ruleList>
+                        <fileTest>
+                            <condition>is_directory</condition>
+                            <path>${installdir}/mysql/data/sugarcrm</path>
+                        </fileTest>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+        </directoryParameter>
+        <passwordParameter>
+            <name>rootpassword</name>
+            <title>MySQL Password</title>
+            <description>Password</description>
+            <explanation>Initial password for the root and anonymous user accounts created during 
+the installation of the bundled MySQL database.</explanation>
+            <value></value>
+            <default></default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <ask>0</ask>
+            <cliOptionName></cliOptionName>
+            <descriptionRetype>Re-enter</descriptionRetype>
+            <leftImage></leftImage>
+            <width>40</width>
+            <validationActionList>
+                <throwError>
+                    <text>You need to provide a non-empty password</text>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${rootpassword}</text>
+                            <value></value>
+                        </compareText>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+        </passwordParameter>
+        <stringParameter>
+            <name>dbport</name>
+            <title>DB Port</title>
+            <description>MySQL database Port</description>
+            <explanation>Please enter the port that the bundled MySQL database will use.</explanation>
+            <value>3306</value>
+            <default>3306</default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <ask>1</ask>
+            <cliOptionName></cliOptionName>
+            <leftImage></leftImage>
+            <ruleEvaluationLogic>or</ruleEvaluationLogic>
+            <width>30</width>
+            <ruleList>
+                <portTest>
+                    <condition>cannot_bind</condition>
+                    <port>3306</port>
+                </portTest>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${dbport}</text>
+                    <value>3306</value>
+                </compareText>
+            </ruleList>
+            <validationActionList>
+                <throwError>
+                    <text>Unable to bind to the given port number. Please select another one.</text>
+                    <ruleList>
+                        <portTest>
+                            <condition>cannot_bind</condition>
+                            <port>${dbport}</port>
+                        </portTest>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+        </stringParameter>
+        <stringParameter>
+            <name>webport</name>
+            <title>Web Server Port</title>
+            <description>Apache Web Server Port</description>
+            <explanation>Please enter the port that the bundled Apache Server will listen to by default.</explanation>
+            <value>${defaultwebport}</value>
+            <default>${defaultwebport}</default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <ask>1</ask>
+            <cliOptionName></cliOptionName>
+            <leftImage></leftImage>
+            <ruleEvaluationLogic>or</ruleEvaluationLogic>
+            <width>30</width>
+            <ruleList>
+                <portTest>
+                    <condition>cannot_bind</condition>
+                    <port>${webport}</port>
+                </portTest>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${webport}</text>
+                    <value>80</value>
+                </compareText>
+            </ruleList>
+            <validationActionList>
+                <throwError>
+                    <text>Unable to bind to the given port number. Please select another one.</text>
+                    <ruleList>
+                        <portTest>
+                            <condition>cannot_bind</condition>
+                            <port>${webport}</port>
+                        </portTest>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+        </stringParameter>
+        <stringParameter>
+            <name>sslport</name>
+            <title>Web Server Port</title>
+            <description>SSL Port</description>
+            <explanation>Please enter the port that the bundled Apache Server will use for SSL access.</explanation>
+            <value>${defaultsslport}</value>
+            <default>${defaultsslport}</default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <ask>1</ask>
+            <cliOptionName></cliOptionName>
+            <leftImage></leftImage>
+            <ruleEvaluationLogic>or</ruleEvaluationLogic>
+            <width>30</width>
+            <ruleList>
+                <portTest>
+                    <condition>cannot_bind</condition>
+                    <port>${sslport}</port>
+                </portTest>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${sslport}</text>
+                    <value>443</value>
+                </compareText>
+            </ruleList>
+            <validationActionList>
+                <throwError>
+                    <text>Unable to bind to the given port number. Please select another one.</text>
+                    <ruleList>
+                        <portTest>
+                            <condition>cannot_bind</condition>
+                            <port>${sslport}</port>
+                        </portTest>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+        </stringParameter>
+        <stringParameter>
+            <name>domainname</name>
+            <title>Web Server Domain</title>
+            <description>Web Server domain</description>
+            <explanation>Enter the domain name or the IP address for you web server (www.mycompany.com)</explanation>
+            <value>127.0.0.1</value>
+            <default>127.0.0.1</default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <ask>0</ask>
+            <cliOptionName>Web Server Domain</cliOptionName>
+            <leftImage></leftImage>
+            <width>40</width>
+        </stringParameter>
+		<stringParameter>
+			<name>systemname</name>
+			<title>System Name</title>
+			<description>System Name</description>
+			<explanation>This will be displayed in the Title Bar of users who visit this SugarCRM installation</explanation>
+			<value></value>
+			<default>127.0.0.1</default>
+			<ask>1</ask>
+			<cliOptionName>System Name</cliOptionName>
+			<leftImage></leftImage>
+			<width>40</width>
+		</stringParameter>        
+        <passwordParameter>
+            <name>sugarpassword</name>
+            <title>SugarCRM Admin Password</title>
+            <description>Password</description>
+            <explanation>Password for the SugarCRM admin user. The administration user will be 'admin'</explanation>
+            <value></value>
+            <default></default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <ask>0</ask>
+            <cliOptionName></cliOptionName>
+            <descriptionRetype>Re-enter</descriptionRetype>
+            <leftImage></leftImage>
+            <width>40</width>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${sugarpassword}</text>
+                    <value></value>
+                </compareText>
+            </ruleList>
+            <validationActionList>
+                <throwError>
+                    <text>You need to provide a non-empty password</text>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${sugarpassword}</text>
+                            <value></value>
+                        </compareText>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+        </passwordParameter>
+        <stringParameter>
+            <name>oc_server_url</name>
+            <title>SugarCRM Server URL</title>
+            <description>SugarCRM Server URL</description>
+            <explanation>Enter the URL for the Sugar instance to which you would like to connect.</explanation>
+            <value>http://</value>
+            <default>http://</default>
+            <allowEmptyValue>1</allowEmptyValue>
+            <ask>1</ask>
+            <cliOptionName>Server Url</cliOptionName>
+            <leftImage></leftImage>
+            <width>40</width>
+        </stringParameter>
+        <parameterGroup>
+        	<name>oc_userandpass</name>
+        	<explanation>Please enter the username and password for accessing the Sugar server.</explanation>
+	        <parameterList>
+	        <stringParameter>
+	            <name>oc_username</name>
+	            <title>Server User</title>
+	            <description>Sugar Username</description>
+	            <!--<explanation>Please enter the username for accessing the Sugar server.</explanation>-->
+	            <value></value>
+	            <default></default>
+	            <allowEmptyValue>1</allowEmptyValue>
+	            <ask>1</ask>
+	            <cliOptionName></cliOptionName>
+	            <leftImage></leftImage>
+	            <width>40</width>
+	            <validationActionList>
+	                <throwError>
+	                    <text>You need to provide a non-empty username</text>
+	                    <ruleList>
+	                        <compareText>
+	                            <logic>equals</logic>
+	                            <nocase>0</nocase>
+	                            <text>${oc_username}</text>
+	                            <value></value>
+	                        </compareText>
+	                    </ruleList>
+	                </throwError>
+	            </validationActionList>
+	        </stringParameter>
+	        <passwordParameter>
+	            <name>oc_password</name>
+	            <title>Server User Password</title>
+	            <description>Password</description>
+	            <!--<explanation>Please enter the password for accessing the Sugar server.</explanation>-->
+	            <value></value>
+	            <default></default>
+	            <allowEmptyValue>0</allowEmptyValue>
+	            <ask>yes</ask>
+	            <askForConfirmation>0</askForConfirmation>
+	            <cliOptionName></cliOptionName>
+	            <leftImage></leftImage>
+	            <width>40</width>
+	            <validationActionList>
+                <throwError>
+                    <text>You need to provide a non-empty password</text>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${oc_password}</text>
+                            <value></value>
+                        </compareText>
+                    </ruleList>
+                </throwError>
+            </validationActionList>
+	        </passwordParameter>
+	        </parameterList>
+        </parameterGroup>
+        <booleanParameter>
+            <name>installAsService</name>
+            <title>Install as a service</title>
+            <description>Install service</description>
+            <explanation>You can optionally register ${product_fullname} as a service. This way it will automatically be started every time the machine is started. Install ${product_fullname} as a service?</explanation>
+            <value>1</value>
+            <default>0</default>
+            <ask>1</ask>
+            <cliOptionName></cliOptionName>
+            <leftImage></leftImage>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </booleanParameter>
+    </parameterList>
+    <platformOptionsList>
+        <platformOptions>
+            <fullName>Sugar Offline Client</fullName>
+            <platform>windows</platform>
+        </platformOptions>
+    </platformOptionsList>
+    <postInstallationActionList>
+        <writeFile>
+            <path>${installdir}/htdocs/sugarcrm/config_si.php</path>
+            <text>&lt;?php
+    $sugar_config_si = array (
+    'setup_db_host_name' =&gt; 'localhost',
+    'setup_db_database_name' =&gt; 'sugarcrm',
+    'setup_db_drop_tables' =&gt; 0,
+    'setup_db_create_database' =&gt; 1,
+    'setup_db_pop_demo_data' =&gt; 0,
+    'setup_site_admin_user_name' =&gt; 'admin',
+    'setup_site_admin_password' =&gt; '${sugarpassword}',
+    'setup_db_create_sugarsales_user' =&gt; 0,
+    'setup_db_admin_user_name' =&gt; 'root',
+    'setup_db_admin_password' =&gt; '${rootpassword}',
+    'setup_license_key_users' =&gt; 1,
+    'setup_license_key_expire_date' =&gt; '2011-12-12',
+    'setup_license_key' =&gt; 'sugar',
+    'setup_site_url' =&gt; 'http://${domainname}:${webport}/sugarcrm',
+    'setup_db_sugarsales_user' =&gt; 'root',
+    'setup_db_sugarsales_password' =&gt; '${rootpassword}',
+    'setup_db_type' =&gt; 'mysql',
+    'setup_system_name' => '${systemname}',    
+    'oc_password' =&gt; '${oc_password}',
+    'oc_username' =&gt; '${oc_username}',
+	'oc_server_url' =&gt; '${oc_server_url}',
+	'install_method' =&gt; 'bitrock',
+	'default_currency_iso4217' => 'USD',
+    'demoData' => 'no',
+    'default_currency_name' => 'US Dollars',
+    'default_currency_significant_digits' => '2',
+    'default_currency_symbol' => '$',
+    'default_date_format' => 'm/d/Y',
+    'default_time_format' => 'h:ia',
+    'default_decimal_seperator' => '.',
+    'default_export_charset' => 'ISO-8859-1',
+    'default_language' => 'en_us',
+    'default_locale_name_format' => 's f l',
+    'default_number_grouping_seperator' => ',',
+    'export_delimiter' => ',',
+    );
+    ?&gt; 
+            </text>
+        </writeFile>
+        <runProgram>
+            <program>${installdir}/mysql/scripts/myscript.sh</program>
+            <programArguments>${installdir}/mysql ${rootpassword} ${rootpassword}</programArguments>
+            <runAs></runAs>
+            <workingDirectory></workingDirectory>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </runProgram>
+        <runProgram>
+            <program>touch</program>
+            <programArguments>${installdir}/htdocs/sugarcrm/.htaccess</programArguments>
+            <runAs></runAs>
+            <workingDirectory></workingDirectory>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_root_install}</text>
+                    <value>1</value>
+                </compareText>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>linux</value>
+                </compareText>
+            </ruleList>
+        </runProgram>
+        <changeOwnerAndGroup>
+            <files>${installdir}/htdocs/sugarcrm/.htaccess</files>
+            <group></group>
+            <owner>nobody</owner>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_root_install}</text>
+                    <value>1</value>
+                </compareText>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>linux</value>
+                </compareText>
+            </ruleList>
+        </changeOwnerAndGroup>
+        <runProgram>
+            <program>${installdir}/sugarctl.sh</program>
+            <programArguments>start  &gt; /dev/null 2&gt; /dev/null &lt; /dev/null &amp;</programArguments>
+            <runAs></runAs>
+            <workingDirectory></workingDirectory>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </runProgram>
+        <wait>
+            <ms>10000</ms>
+            <progressText>Starting MySQL</progressText>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </wait>
+        <changePermissions>
+            <files>${installdir}/htdocs/sugarcrm/config.php</files>
+            <permissions>666</permissions>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_root_install}</text>
+                    <value>1</value>
+                </compareText>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </changePermissions>
+        <httpGet>
+            <filename>${installdir}/silent.log</filename>
+            <progressText>Initializing database, this may take a few minutes.</progressText>
+            <url>http://127.0.0.1:${webport}/sugarcrm/install.php?goto=SilentInstall&amp;cli=true&amp;oc_install=true</url>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </httpGet>
+        <changePermissions>
+            <files>${installdir}/htdocs/sugarcrm/config.php</files>
+            <permissions>664</permissions>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_root_install}</text>
+                    <value>1</value>
+                </compareText>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </changePermissions>
+        <changeOwnerAndGroup>
+            <files>${installdir}/htdocs/sugarcrm/.htaccess</files>
+            <group></group>
+            <owner>root</owner>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_root_install}</text>
+                    <value>1</value>
+                </compareText>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>linux</value>
+                </compareText>
+            </ruleList>
+        </changeOwnerAndGroup>
+        <writeFile>
+            <path>${installdir}/install_summary.txt</path>
+            <text>
+Installation Summary
+------------------------
+
+SugarCRM was installed with the following settings
+
+Installation directory: ${installdir}/
+Apache HTTP port: ${webport}
+Apache HTTPS port: ${sslport}
+MySQL port: ${dbport}
+
+On Linux and OSX systems:
+To start SugarCRM: ${installdir}/sugarctl.sh start
+To stop SugarCRM: ${installdir}/sugarctl.sh stop
+
+To access SugarCRM, point your browser to:
+http://${domainname}:${webport}/sugarcrm/
+
+To access SugarCRM with SSL, point your browser to:
+https://${domainname}:${sslport}/sugarcrm/
+            </text>
+        </writeFile>
+        <actionGroup>
+            <actionList>
+                <runProgram>
+                    <program>${installdir}\mysql\bin\mysqld.exe</program>
+                    <programArguments>--defaults-file=${installdir.dos}\mysql\my.ini &amp;</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <wait>
+                    <ms>4000</ms>
+                </wait>
+                <writeFile>
+                    <path>${installdir}\mysql\bin\sugarcrminit.bat</path>
+                    <text>@echo off
+                        ${installdir.dos}\mysql\bin\mysql.exe --defaults-file="${installdir.dos}\mysql\my.ini" -u root -e "UPDATE mysql.user SET Password=old_password('${rootpassword}') WHERE User='root';"
+                        ${installdir.dos}\mysql\bin\mysql.exe --defaults-file="${installdir.dos}\mysql\my.ini" -u root -e "UPDATE mysql.user SET Password=old_password('${rootpassword}') WHERE User='';"
+                        ${installdir.dos}\mysql\bin\mysql.exe --defaults-file="${installdir.dos}\mysql\my.ini" -u root -e "FLUSH PRIVILEGES;"
+                    </text>
+                </writeFile>
+                <wait>
+                    <ms>1000</ms>
+                </wait>
+                <runProgram>
+                    <program>${installdir}\mysql\bin\sugarcrminit.bat</program>
+                    <programArguments>${rootpassword}</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <runProgram>
+                    <program>${installdir}/bin/runctl.bat</program>
+                    <programArguments>apache start &amp;</programArguments>
+                    <progressText>Starting Apache</progressText>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <wait>
+                    <ms>12000</ms>
+                    <progressText>Starting configuration process</progressText>
+                </wait>
+                <httpGet>
+                    <filename>${installdir}/silent.log</filename>
+                    <progressText>Initializing database, this may take a few minutes.</progressText>
+                    <url>http://127.0.0.1:${webport}/sugarcrm/install.php?goto=SilentInstall&amp;cli=true&amp;oc_install=true</url>
+                </httpGet>
+                <runProgram>
+                    <program>${installdir}/bin/runctl.bat</program>
+                    <programArguments>apache stop</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <wait>
+                    <ms>12000</ms>
+                </wait>
+                <runProgram>
+                    <program>${installdir}\mysql\bin\mysqladmin.exe</program>
+                    <programArguments>--defaults-file=${installdir.dos}\mysql\my.ini shutdown</programArguments>
+                    <progressText>Shutting down MySQL</progressText>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <runProgram>
+                    <program>${installdir}/bin/serviceinstall.bat</program>
+                    <programArguments>INSTALL</programArguments>
+                    <progressText>Installing Services</progressText>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                    <ruleList>
+                        <compareText>
+                            <logic>equals</logic>
+                            <nocase>0</nocase>
+                            <text>${installAsService}</text>
+                            <value>1</value>
+                        </compareText>
+                    </ruleList>
+                </runProgram>
+            </actionList>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </actionGroup>
+    </postInstallationActionList>
+    <postUninstallationActionList>
+        <deleteFile>
+            <path>${installdir}/silent.log</path>
+        </deleteFile>
+        <deleteFile>
+            <path>${installdir}/php</path>
+        </deleteFile>
+        <deleteFile>
+            <path>${installdir}/htdocs</path>
+        </deleteFile>
+        <deleteFile>
+            <path>${installdir}/mysql/bin</path>
+        </deleteFile>
+        <deleteFile>
+            <path>${installdir}/install_summary.txt</path>
+        </deleteFile>
+        <deleteFile>
+            <path>${installdir}/mysql</path>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${remove_mysql}</text>
+                    <value>yes</value>
+                </compareText>
+            </ruleList>
+        </deleteFile>
+        <deleteFile>
+            <path>${installdir}/apache2</path>
+        </deleteFile>
+    </postUninstallationActionList>
+    <preBuildActionList>
+        <setInstallerVariable>
+            <name>product_fullname</name>
+            <value>Sugar Offline Client</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>linux</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>product_fullname</name>
+            <value>Sugar Offline Client</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>product_fullname</name>
+            <value>Sugar Offline Client</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>osx</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+    </preBuildActionList>
+    <preInstallationActionList>
+        <generateRandomValue>
+            <variable>random</variable>
+        </generateRandomValue>
+        <setInstallerVariable>
+            <name>rootpassword</name>
+            <value>${random}</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${rootpassword}</text>
+                    <value></value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>sugarpassword</name>
+            <value>${random}</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${sugarpassword}</text>
+                    <value></value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>sugarinstall</name>
+            <value>scommunity</value>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>defaultwebport</name>
+            <ruleEvaluationLogic>or</ruleEvaluationLogic>
+            <value>80</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_is_root_install}</text>
+                    <value>0</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>defaultwebport</name>
+            <value>8080</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_is_root_install}</text>
+                    <value>0</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>defaultsslport</name>
+            <ruleEvaluationLogic>or</ruleEvaluationLogic>
+            <value>443</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_is_root_install}</text>
+                    <value>0</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>defaultsslport</name>
+            <value>8443</value>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${installer_is_root_install}</text>
+                    <value>0</value>
+                </compareText>
+            </ruleList>
+        </setInstallerVariable>
+        <setInstallerVariable>
+            <name>domainname</name>
+            <value>127.0.0.1</value>
+        </setInstallerVariable>
+        <actionGroup>
+            <actionList>
+                <setInstallerVariable>
+                    <name>defaultwebport</name>
+                    <value>8080</value>
+                </setInstallerVariable>
+                <setInstallerVariable>
+                    <name>defaultsslport</name>
+                    <value>8443</value>
+                </setInstallerVariable>
+            </actionList>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>osx</value>
+                </compareText>
+            </ruleList>
+        </actionGroup>
+    </preInstallationActionList>
+    <preUninstallationActionList>
+        <showQuestion>
+            <text>Do you want the uninstallation to also remove the SugarCRM database data?</text>
+            <variable>remove_mysql</variable>
+        </showQuestion>
+        <actionGroup>
+            <actionList>
+                <runProgram>
+                    <program>${installdir}/sugarctl.sh</program>
+                    <programArguments>stop apache</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <wait>
+                    <ms>3000</ms>
+                </wait>
+                <runProgram>
+                    <program>${installdir}/sugarctl.sh</program>
+                    <programArguments>stop mysql ${rootpassword}</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+            </actionList>
+            <ruleList>
+                <compareText>
+                    <logic>does_not_equal</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </actionGroup>
+        <actionGroup>
+            <actionList>
+                <runProgram>
+                    <program>${installdir}/bin/allctl.bat</program>
+                    <programArguments>stop</programArguments>
+                    <progressText>Waiting for Services to stop, please be patient</progressText>
+                    <runAs></runAs>
+                    <workingDirectory>${installdir}/bin</workingDirectory>
+                </runProgram>
+                <runProgram>
+                    <program>${installdir}/bin/servicerun.bat</program>
+                    <programArguments>stop</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <wait>
+                    <ms>8000</ms>
+                    <progressText>Waiting for Services to stop, please be patient</progressText>
+                </wait>
+                <runProgram>
+                    <program>${installdir}/bin/serviceinstall.bat</program>
+                    <programArguments>REMOVE</programArguments>
+                    <runAs></runAs>
+                    <workingDirectory></workingDirectory>
+                </runProgram>
+                <wait>
+                    <ms>5000</ms>
+                    <progressText>Removing services</progressText>
+                </wait>
+            </actionList>
+            <ruleList>
+                <compareText>
+                    <logic>equals</logic>
+                    <nocase>0</nocase>
+                    <text>${platform_name}</text>
+                    <value>windows</value>
+                </compareText>
+            </ruleList>
+        </actionGroup>
+    </preUninstallationActionList>
+    <slideShowImageList/>
+</project>

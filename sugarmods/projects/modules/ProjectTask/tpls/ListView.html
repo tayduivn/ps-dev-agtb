@@ -1,0 +1,61 @@
+<!--
+/*
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
+ */
+-->
+<!-- $Id: ListView.html 14767 2006-07-18 22:21:41 +0000 (Tue, 18 Jul 2006) majed $ -->
+<!-- BEGIN: main -->
+<table width="100%" border="0" cellspacing=0 cellpadding="0" class="listView">
+<!-- BEGIN: list_nav_row -->
+{PAGINATION}
+<!-- END: list_nav_row -->
+<tr height="20">
+<td scope="col" class="listViewThS1">{CHECKALL}</td>
+<td scope="col" class="listViewThS1"><span sugar='slot1'><a href="{ORDER_BY}order_number" class="listViewThLinkS1" >{MOD.LBL_LIST_ORDER_NUMBER}{arrow_start}{order_number_arrow}{arrow_end}</a></span sugar='slot'></td>
+<td scope="col" class="listViewThS1"><span sugar='slot1b'><a href="{ORDER_BY}name" class="listViewThLinkS1" >{MOD.LBL_LIST_NAME}{arrow_start}{name_arrow}{arrow_end}</a></span sugar='slot'></td>
+<td scope="col" class="listViewThS1"><span sugar='slot2'><a href="{ORDER_BY}parent_name" class="listViewThLinkS1" >{MOD.LBL_LIST_PARENT_NAME}{arrow_start}{parent_name_arrow}{arrow_end}</a></span sugar='slot'></td>
+<td scope="col" class="listViewThS1"><span sugar='slot2b'><a href='{ORDER_BY}project_task_cstm.m_c' class='listViewThLinkS1'>{MOD.m_c}{arrow_start}{project_task_cstm_m_c_arrow}{arrow_end}</a></span sugar='slot'></td>
+<td scope="col" class="listViewThS1"><span sugar='slot3'><a href="{ORDER_BY}status" class="listViewThLinkS1">{MOD.LBL_LIST_STATUS}{arrow_start}{status_arrow}{arrow_end}</a></span sugar='slot'></td>
+<td scope="col" class="listViewThS1"><span sugar='slot3b'><a href="{ORDER_BY}assigned_user_name" class="listViewThLinkS1">{APP.LBL_LIST_ASSIGNED_USER}{arrow_start}{assigned_user_name_arrow}{arrow_end}</a></span sugar='slot'></td>
+</tr>
+<!-- BEGIN: row -->
+<tr height="20"
+	onmouseover="setPointer(this, '{PROJECTTASK.ID}', 'over', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');"
+	onmouseout="setPointer(this, '{PROJECTTASK.ID}', 'out', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');"
+	onmousedown="setPointer(this, '{PROJECTTASK.ID}', 'click', '{BG_COLOR}', '{BG_HILITE}', '{BG_CLICK}');">
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}">{PREROW}</td>
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}"><span sugar='slot4'>{PROJECTTASK.ORDER_NUMBER}</span sugar='slot'></td>
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}"><span sugar='slot4b'><{TAG.MAIN} href="index.php?module=ProjectTask&action=DetailView&record={PROJECTTASK.ID}&offset={PROJECTTASK.OFFSET}&stamp={PROJECTTASK.STAMP}" class="listViewTdLinkS1">{PROJECTTASK.NAME}</{TAG.MAIN}></span sugar='slot'></td>
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}"><span sugar='slot5'><{TAG.PARENT} href="index.php?module=Project&action=DetailView&record={PROJECTTASK.PARENT_ID}" class="listViewTdLinkS1">{PROJECTTASK.PARENT_NAME}</{TAG.PARENT}></span sugar='slot'></td>
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}"><span sugar='slot5b'>{PROJECTTASK.M_C}</span sugar='slot'></td>
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}"><span sugar='slot6'>{PROJECTTASK.STATUS}</span sugar='slot'></td>
+<td class="{ROW_COLOR}S1" bgcolor="{BG_COLOR}"><span sugar='slot6b'>{PROJECTTASK.ASSIGNED_USER_NAME}</span sugar='slot'></td>
+</tr>
+<tr><td colspan="12" class="listViewHRS1"></td></tr>
+<!-- END: row -->
+{PAGINATION}
+</table>
+<!-- END: main -->

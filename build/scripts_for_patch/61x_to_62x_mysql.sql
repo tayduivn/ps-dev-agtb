@@ -1,0 +1,3 @@
+ALTER TABLE meetings ALTER COLUMN status SET DEFAULT 'Planned';
+ALTER TABLE calls ALTER COLUMN status SET DEFAULT 'Planned';
+ALTER TABLE tasks ALTER COLUMN status SET DEFAULT 'Not Started';

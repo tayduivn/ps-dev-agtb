@@ -1,0 +1,38 @@
+<?php
+
+ini_set('include_path', '.');
+require('SugarInstanceManager.php');
+
+if(count($argv) != 2 && count($argv) != 3){
+    print "Usage: configure (install | upgrade <version> | configure | remove)\n";
+    exit(1);
+}
+
+$SIM = new SugarInstanceManager();
+// secret optional third parameter to turn on debug mode
+if(!empty($argv[2])){
+	$SIM->set_debug(true);
+}
+
+$command = $argv[1];
+
+$fail = 0;
+
+switch($command){
+	case 'install':
+		$fail = $SIM->install_license();
+		break;
+	case 'remove':
+		$fail = $SIM->remove_license();
+		break;
+	case 'query':
+		$fail = $SIM->query_license();
+		break;
+	default:
+		print "Error: unknown command $command.\n";
+		break;
+}
+
+exit($fail);
+
+?>

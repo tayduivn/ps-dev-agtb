@@ -1,0 +1,24 @@
+<msdeploy.iisapp>
+  <!-- iisapp path identifies the subdirectory in the ZIP file which
+       contains all of the application files -->
+  <iisapp path="SugarCE-Full-%SUGAR_VERSION%" />
+  <!-- dbmysql path identifies the SQL script file that will be executed
+       for database setup.  In this app's case, the script is being used
+       to create the database user for the application -->
+  <dbmysql path="install.sql" />
+  <!-- alias is used to make a copy of a distribution file to a location
+       where it will be used.  Note that when you specify the Application
+       name in the "to" attribute, you should specify the full path using
+       the value of iisapp above for the root.  Alias doesn't actually
+       copy the file within the package.  It creates an alias to the
+       original file using the new file's path and name.  This alias then
+       gets copied to the file system as if it were a real file within
+       the package -->
+  <alias from="sample.config_si.php" to="SugarCE-Full-%SUGAR_VERSION%/config_si.php" />
+  <alias from="web.config" to="SugarCE-Full-%SUGAR_VERSION%/web.config" />
+  <!-- setACL with no setAclResourceType set will default to setting an ACL
+       on a directory.  We are setting an ACL here for the files directory.
+       This directory is used to store files that are uploaded for the
+       application -->
+  <setAcl path="SugarCE-Full-%SUGAR_VERSION%" setAclAccess="Modify" setAclUser="anonymousAuthenticationUser" />
+</msdeploy.iisapp>

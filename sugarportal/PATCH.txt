@@ -1,0 +1,13 @@
+How to Install a Sugar Patch
+----------------------------
+
+IMPORTANT! Before beginning the upgrade process, it is imperative 
+to perform a backup of the Sugar directory structure and the database.
+
+If you have customized parts of Sugar, please check for any patched files that
+would overwrite your changes.
+
+- Patches are now applied through the Upgrade Wizard panel under the Admin section.
+- In short:
+    - upload the zip file through the Upgrade Wizard
+    - Click the 'Install' button to install the patch

@@ -1,0 +1,37 @@
+<?php
+
+ini_set('include_path', '.');
+require('SugarInstanceManager.php');
+
+if(count($argv) != 2 && count($argv) != 3){
+    print "Usage: usermanager (install | enable | disable | remove | configure)\n";
+    exit(1);
+}
+
+$SIM = new SugarInstanceManager();
+//$SIM->set_logging(true); //TODO: REMOVE THIS BEFORE GO LIVE
+// secret optional third parameter to turn on debug mode
+if(!empty($argv[2]) && $argv[2] == 'debug'){
+	$SIM->set_debug(true);
+}
+
+$command = $argv[1];
+
+$fail = 0;
+
+switch($command){
+	case 'install':
+	case 'enable':
+	case 'disable':
+	case 'remove':
+	case 'configure':
+		$fail = $SIM->user_modify($command);
+		break;
+	default:
+		print "Error: unknown command $command for usermanager script.\n";
+		break;
+}
+
+exit($fail);
+
+?>
