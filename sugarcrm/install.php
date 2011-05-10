@@ -85,6 +85,12 @@ $sugar_md = 'include/images/sugar_md.png';
 //BEGIN SUGARCRM flav=dev ONLY
 $sugar_md = 'include/images/sugar_md_dev.png';
 //END SUGARCRM flav=dev ONLY
+//BEGIN SUGARCRM flav=corp ONLY
+$sugar_md = 'include/images/sugar_md_corp.png';
+//END SUGARCRM flav=corp ONLY
+//BEGIN SUGARCRM flav=ult ONLY
+$sugar_md = 'include/images/sugar_md_ult.png';
+//END SUGARCRM flav=ult ONLY
 $loginImage = 'include/images/sugarcrm_login.png';
 $common = 'install/installCommon.js';
 

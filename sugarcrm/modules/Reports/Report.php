@@ -1249,44 +1249,38 @@ function _check_user_permissions()
             $this->group_order_by_arr = array();
             // $group_column = $this->report_def['group_defs'][0];
             foreach ( $this->report_def['group_defs'] as $group_column )
-        {
-                $this->layout_manager->setAttribute('context', 'GroupBy');
-            $this->register_field_for_query($group_column);
-            $group_by = $this->layout_manager->widgetQuery($group_column);
-            $this->layout_manager->setAttribute('context', 'OrderBy');
-            $order_by = $this->layout_manager->widgetQuery($group_column);
-            $this->layout_manager->setAttribute('context', 'Select');
+        	{
+	            $this->layout_manager->setAttribute('context', 'GroupBy');
+	            $this->register_field_for_query($group_column);
+	            $group_by = $this->layout_manager->widgetQuery($group_column);
+	            $this->layout_manager->setAttribute('context', 'OrderBy');
+	            $order_by = $this->layout_manager->widgetQuery($group_column);
+	            $this->layout_manager->setAttribute('context', 'Select');
 
-            if (! empty($group_column['qualifier']))
-            {
-                $group_column['column_function'] = $group_column['qualifier'];
+	            if (! empty($group_column['qualifier']))
+	            {
+	                $group_column['column_function'] = $group_column['qualifier'];
+	            }
+
+	            $select = $this->layout_manager->widgetQuery($group_column);
+
+	            if (! $this->select_already_defined($select,'select_fields'))
+	            {
+	                array_push($this->select_fields,$select);
+	            }
+
+	            if (! $this->select_already_defined($select,'summary_select_fields'))
+	      		{
+	                array_push($this->summary_select_fields,$select);
+	      		}
+
+	            if (! empty($register_group_by))
+	            {
+	                $this->group_by_arr[] = $group_by;
+	            }
+	                // Changed the sort order, so it would sort by the initial options first
+	            array_unshift($this->group_order_by_arr,$order_by);
             }
-
-          $select = $this->layout_manager->widgetQuery($group_column);
-
-            if (! $this->select_already_defined($select,'select_fields'))
-            {
-                array_push($this->select_fields,$select);
-            }
-
-            if (! $this->select_already_defined($select,'summary_select_fields'))
-      {
-                array_push($this->summary_select_fields,$select);
-      }
-
-                if (! empty($register_group_by))
-            {
-                    $this->group_by_arr[] = $group_by;
-                    //$this->child_filter_arr[] = array('column' => $group_column['table_alias'] . '.' . $group_column['name'],
-                    //                                'name' => $group_column['table_alias'] . '_' . $group_column['name']);
-                }
-                //$this->group_order_by_arr[] = $order_by;
-                // Changed the sort order, so it would sort by the initial options first
-                array_unshift($this->group_order_by_arr,$order_by);
-            }
-            //$this->group_by = $group_by;
-            //$this->child_filter = $group_column['table_alias'] . '.' . $group_column['name'];
-            //$this->child_filter_name = $group_column['table_alias'] . '_' . $group_column['name'];
         }
     }
 
@@ -2150,6 +2144,94 @@ function _check_user_permissions()
 
       return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));
   }
+
+
+
+  /**
+   * getExt2FieldDefSelectPiece
+   *
+   * This is a private helper function to separate a piece of code that creates the select statement for a field where
+   * there is an aggregation of columns
+   *
+   * @param $field_def Array representing the field definition to build the select piece for
+   * @param $add_alias boolean true to add the column alias, false otherwise (you would want false for group by)
+   */
+  private function getExt2FieldDefSelectPiece($field_def, $add_alias=true)
+  {
+        global $beanList;
+        $extModule = new $beanList[$field_def['ext2']];
+        $secondaryTableAlias = $field_def['secondary_table'];
+        if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]))
+		{
+           $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]['join_table_alias'];
+        } else if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])) {
+           $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
+        }
+
+		if (isset($extModule->field_defs['name']['db_concat_fields']))
+        {
+           $select_piece = $this->db->concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']);
+        } else {
+           $select_piece = $secondaryTableAlias.'.name'; //. $secondaryTableAlias.'_name';
+		}
+
+        $select_piece .= $add_alias ? " {$secondaryTableAlias}_name" : ' ';
+
+		return $select_piece;
+  }
+
+
+  /**
+   * fixMssqlConcatenation
+   *
+   * This method correctly fixes SQL for SQL Server where the database fields are concatenated with the + character
+   *
+   * @param $sql String value of SQL to fix
+   */
+  private function fixMssqlConcatenation($sql)
+  {
+		$fieldsInField = explode('+',trim($sql));
+
+		if(empty($fieldsInField))
+		{
+		   return $sql;
+		}
+
+        $newField = '';
+        foreach ( $fieldsInField as $field )
+        {
+            $field = trim($field);
+            //if it has a space, then it is aliased, let's process
+            //to see if it has a period
+            $has_space = strrpos($field, " ");
+            if($has_space && !stristr($field, "' '"))
+			{
+                $temp_field_name = substr($field,0,$has_space);
+                $temp_field_alias  = substr($field,$has_space+1);
+                if ( stristr($temp_field_name, 'ISNULL') )
+                {
+                    $newField .= "$temp_field_name $temp_field_alias";
+                } else {
+                    $newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
+                }
+            } else {
+                if ( stristr($field, 'ISNULL') )
+				{
+                    $newField .= "$field + ";
+                } else {
+                    $newField .= "ISNULL({$field},' ') + ";
+                }
+            }
+		}
+
+		//Safety check here.  If it ends with a + sign, remove it
+		if(preg_match('/(.*?)\+\s*?$/', $newField, $matches))
+        {
+		   $newField = $matches[1];
+        }
+
+		return $newField;
+   }
 
 }
 

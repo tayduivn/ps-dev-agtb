@@ -506,7 +506,8 @@ class MssqlManager extends DBManager
                                 $distinctSQLARRAY[1] = substr($distinctSQLARRAY[1],0,$ob_pos);
                             }
 
-                            $distinctSQLARRAY[1] = preg_replace('/\)\s$/', ' ', $distinctSQLARRAY[1]);
+                            // strip off last closing parathese from the where clause
+                            $distinctSQLARRAY[1] = preg_replace('/\)\s$/',' ',$distinctSQLARRAY[1]);
                         }
 
                         //place group by string into array
@@ -634,8 +635,7 @@ class MssqlManager extends DBManager
         $offset = 0;
         $strip_array = array();
         while ($i<$count && $offset<strlen($p_sql)) {
-            if ($offset > strlen($p_sql))
-            {
+            if ($offset > strlen($p_sql)) {
 				break;
             }
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
