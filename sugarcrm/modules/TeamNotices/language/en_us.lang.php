@@ -62,7 +62,6 @@ $mod_strings = array (
   array (
     'Visible' => 'Visible',
     'Hidden' => 'Hidden',
-	'LBL_MORE_DETAIL' => 'More Detail' /*for 508 compliance fix*/,
 ),
   'LBL_TEAM_NOTICE_FEATURES' => 'Features:
 * Improved User Interface and new Wizard combine a simple, intuitive design with a guided process to step the user through report creation.

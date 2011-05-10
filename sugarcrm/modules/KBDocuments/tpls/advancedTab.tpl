@@ -95,12 +95,12 @@
 							</select>
 							<span id='active_date_field_span' style="display:{$A_DATE1_STYLE}">
 								<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date' id='active_date_field' type="text" size='11' maxlength='10' value="{$active_date}"/> 
-								<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}"  id="active_date_trigger" align="absmiddle"/> 
+								{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="active_date_trigger" '} 
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	
 								<span id='active_date_field2_span' style="display:{$A_DATE2_STYLE}">&nbsp;{$MOD.LBL_AND}&nbsp;
 									<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date2' id='active_date_field2' type="text" size='11' value="{$active_date2}"/> 
-									<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}"  id="active_date_trigger2" align="absmiddle"/> 
+									{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="active_date_trigger2" '} 
 									<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 								</span>
 							</span>
@@ -114,12 +114,12 @@
 							</select>
 							<span id='exp_date_field_span' style="display:{$X_DATE1_STYLE}">
 								<input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date' id='exp_date_field' type="text" size='11' maxlength='10' value="{$exp_date}"> 
-								<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}"  id="exp_date_trigger" align="absmiddle"> 
+								{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="exp_date_trigger" '} 
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	
 								<span id='exp_date_field2_span' style="display:{$X_DATE2_STYLE}">&nbsp;{$MOD.LBL_AND}&nbsp;
 									<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date2' id='exp_date_field2' type="text" size='11' value="{$exp_date2}"/> 
-									<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}"  id="exp_date_trigger2" align="absmiddle"/> 
+									{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="exp_date_trigger2" '} 
 									<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 								</span>
 							</span>
@@ -160,7 +160,7 @@
 					</tr>
 					<tr>
 						<td class='dataLabel' nowrap width='1%'>
-							{$MOD.LBL_SAVE_SEARCH_AS} <img border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_SAVE_SEARCH_AS_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+							{$MOD.LBL_SAVE_SEARCH_AS} <<!-ALTFIX!-->img alt="Help" border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_SAVE_SEARCH_AS_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
 						</td>
 						<td class='dataField'>
 							<input type='text' id='saved_search_name' value='' name='saved_search_name'>
@@ -168,7 +168,7 @@
 							<input value='{$APP.LBL_SAVE_BUTTON_LABEL}' class='button' type='button' name='saved_search_submit' onclick="document.getElementById('saved_search_action').value='saveSearch'; this.form.submit();">
 						</td>
 						<td nowrap class='dataLabel'>
-							{$MOD.LBL_PREVIOUS_SAVED_SEARCH} <img border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_PREVIOUS_SAVED_SEARCH_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
+							{$MOD.LBL_PREVIOUS_SAVED_SEARCH} <<!-ALTFIX!-->img alt="Help" border='0' src='{sugar_getimagepath file='helpInline.gif'}' onmouseover="return overlib('{$MOD.LBL_PREVIOUS_SAVED_SEARCH_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();">
 						</td>
 						<td class='dataField'>
 							<select name='saved_search_select' id='saved_search_select' onChange="setSelectSearchInputs('loadSearch');this.form.submit();">

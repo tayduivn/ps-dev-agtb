@@ -416,7 +416,7 @@ addToValidateMoreThan('ConfigureSettings', 'list_max_entries_per_subpanel', 'int
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
         <input type="file" id="my_file_company" name="file_1" size="20" onchange="uploadCheck(false)"/>
-        <img id="loading_img_company" alt="loading..." src="{sugar_getimagepath file='sqsWait.gif'}" style="display:none">
+        {sugar_getimage name="sqsWait" ext=".gif" alt="{$mod_strings.LBL_LOADING}" other_attributes='id="loading_img_company" style="display:none" '}
     </form>
 </div>
 {literal}

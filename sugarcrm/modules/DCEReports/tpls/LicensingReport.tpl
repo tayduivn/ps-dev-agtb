@@ -49,7 +49,7 @@
             </td>
             <td >
 				<input autocomplete="off" type="text" name="startDate_date" id="startDate_date" value="{$DEFAULT_START_DATE}" size="11" maxlength="10" tabindex="1">
-				<img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="" id="startDate_trigger" align="absmiddle" />
+				{sugar_getimage name="jscalendar" ext=".gif" alt="{$mod_strings.LBL_JS_CALENDAR}" other_attributes='align="absmiddle" border="0" id="startDate_trigger" '}
 				&nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
 				<script type="text/javascript" language="javascript">
 					Calendar.setup ({ldelim}
@@ -71,7 +71,7 @@
             </td>
 	            <td >
 	            <input autocomplete="off" type="text" name="endDate_date" id="endDate_date" value="{$DEFAULT_END_DATE}" size="11" maxlength="10" tabindex="1">
-	            <img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="" id="endDate_trigger" align="absmiddle" />
+	            {sugar_getimage name="jscalendar" ext=".gif" alt="{$mod_strings.LBL_JS_CALENDAR}" other_attributes='align="absmiddle" border="0" id="endDate_trigger" '}
 	            &nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
 	            <script type="text/javascript" language="javascript">
 		            Calendar.setup ({ldelim}

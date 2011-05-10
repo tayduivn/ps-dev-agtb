@@ -135,7 +135,7 @@ $app_list_strings = array (
     'DCEActions' => 'Actions',
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
-        ),
+),
   'moduleListSingular' =>
   array (
     'Home' => 'Home',
@@ -1788,6 +1788,29 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
+  'LBL_ADVANCEDSEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
+  'LBL_MOREDETAIL' => 'More Detail' /*for 508 compliance fix*/,
+  'LBL_EDIT_INLINE' => 'Edit Inline' /*for 508 compliance fix*/,
+  'LBL_VIEW_INLINE' => 'View' /*for 508 compliance fix*/,
+  'LBL_BASIC_SEARCH' => 'Search' /*for 508 compliance fix*/,
+  'LBL_PROJECT_MINUS' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_PROJECT_PLUS' => 'Add' /*for 508 compliance fix*/,
+  'LBL_Blank' => ' ' /*for 508 compliance fix*/,
+  'LBL_ICON_COLUMN_1' => 'Column' /*for 508 compliance fix*/,
+  'LBL_ICON_COLUMN_2' => '2 Columns' /*for 508 compliance fix*/,
+  'LBL_ICON_COLUMN_3' => '3 Columns' /*for 508 compliance fix*/,
+  'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
+  'LBL_ID_FF_ADD' => 'Add' /*for 508 compliance fix*/,
+  'LBL_HIDE_SHOW' => 'Hide/Show' /*for 508 compliance fix*/,
+  'LBL_DELETE_INLINE' => 'Delete' /*for 508 compliance fix*/,
+  'LBL_PLUS_INLINE' => 'Add' /*for 508 compliance fix*/,
+  'LBL_ID_FF_CLEAR' => 'Clear' /*for 508 compliance fix*/,
+  'LBL_ID_FF_VCARD' => 'vCard' /*for 508 compliance fix*/,
+  'LBL_ID_FF_REMOVE' => 'Remove' /*for 508 compliance fix*/,
+  'LBL_ADD' => 'Add' /*for 508 compliance fix*/,
+  'LBL_COMPANY_LOGO' => 'Company logo' /*for 508 compliance fix*/,
+  'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
     'LBL_CONNECTORS_POPUPS'=>'Connectors Popups',
     'LBL_CLOSEINLINE'=>'Close',
     'LBL_MOREDETAIL'=>'More Detail',

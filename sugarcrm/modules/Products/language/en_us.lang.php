@@ -129,5 +129,4 @@ $mod_strings = array (
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
-
 ?>

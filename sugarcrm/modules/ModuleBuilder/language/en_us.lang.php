@@ -22,6 +22,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 
 $mod_strings = array(
+	'LBL_DEPENDANT' => 'Dependant' /*for 508 compliance fix*/,
+	'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
+	'LBL_HIDEOPTIONS' => 'Hide Options' /*for 508 compliance fix*/,
 'help'=>array(
 	'package'=>array(
 			'create'=>'Provide a <b>Name</b> for the package.  The name you enter must be alphanumeric and contain no spaces. (Example: HR_Management)<br/><br/> You can provide <b>Author</b> and <b>Description</b> information for package. <br/><br/>Click <b>Save</b> to create the package.',
@@ -39,7 +42,8 @@ $mod_strings = array(
 			'new_module'=>'Click <b>New Module</b> to create a new module for this package.',
 			'key'=>'This 5-letter, alphanumeric <b>Key</b> will be used to prefix all directories, class names and database tables for all of the modules in the current package.<br><br>The key is used in an effort to achieve table name uniqueness.',
 			'readme'=>'Click to add <b>Readme</b> text for this package.<br><br>The Readme will be available at the time of installation.',
-	),
+
+),
 	'main'=>array(
 
 	),

@@ -243,6 +243,9 @@ $mod_strings = array (
   'LBL_DASHLET_SUGAR_NEWS' => 'Sugar News',
   'LBL_DASHLET_DISCOVER_SUGAR_PRO' => 'Discover Sugar',
 	'LBL_POWERED_BY_SUGAR' => 'Powered By SugarCRM' /*for 508 compliance fix*/,
+	'LBL_MORE_DETAIL' => 'More Detail' /*for 508 compliance fix*/,
+	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
+	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
 );
 
 

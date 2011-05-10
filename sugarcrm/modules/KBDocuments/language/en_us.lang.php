@@ -303,5 +303,6 @@ $mod_strings = array (
 	'LBL_CLICK_APPLY_TAG' => 'Click Apply Tag',	
 	'LBL_HEAD_TAGS' => 'Tags',
 	'LBL_REMOVE' => 'Remove' /*for 508 compliance fix*/,
+	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
 );
 ?>

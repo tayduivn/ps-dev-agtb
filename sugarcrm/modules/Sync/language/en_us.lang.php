@@ -42,7 +42,7 @@ $mod_strings = array (
   'LBL_ACCEPT_CLIENT'=>'Client Wins',
   'LBL_CLEAN_SYNC'=>'Clean Sync:',
   'LBL_CLEAN_ALERT'=>'Performing a Clean Sync will delete all records on this client machine',
-  'LBL_INITIAL_SYNC_MESSAGE' => 'You have just installed the Offline Client.  Please click the button below in order to begin the sync process.'
+  'LBL_INITIAL_SYNC_MESSAGE' => 'You have just installed the Offline Client.  Please click the button below in order to begin the sync process.',
 	'LBL_POWERED_BY_SUGAR' => 'Powered By SugarCRM' /*for 508 compliance fix*/,
 );
 

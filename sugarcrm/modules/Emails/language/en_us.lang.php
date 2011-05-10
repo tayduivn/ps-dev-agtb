@@ -370,4 +370,8 @@ $mod_strings = array (
 	'LBL_CREATE_TASKS' => 'Create Tasks' /*for 508 compliance fix*/,
 	'LBL_CHECK_INLINE' => 'Correct' /*for 508 compliance fix*/,
 	'LBL_CLOSE' => 'Close' /*for 508 compliance fix*/,
+	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,
+	'LBL_GMAIL_LOGO' => 'Gmail' /*for 508 compliance fix*/,
+	'LBL_YAHOO_MAIL' => 'Yahoo' /*for 508 compliance fix*/,
+	'LBL_EXCHANGE_LOGO' => 'Exchange' /*for 508 compliance fix*/,
 );

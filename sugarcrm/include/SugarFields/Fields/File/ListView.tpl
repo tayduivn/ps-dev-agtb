@@ -31,6 +31,6 @@
 {capture name=imageNameCapture assign=imageName}
 {sugar_fetch object=$parentFieldArray key=DOC_TYPE}_image_inline.png
 {/capture}
-<img src="{sugar_getimagepath file=$imageName}" border="0">
+{sugar_getimage name=$imageName alt=$imageName other_attributes='border="0" '}
 {/if}
 </a>

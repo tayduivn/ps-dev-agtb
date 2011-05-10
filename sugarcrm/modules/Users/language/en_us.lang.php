@@ -618,6 +618,7 @@ $mod_strings = array (
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,
 	'LBL_CHECKMARK' => 'Checkmark' /*for 508 compliance fix*/,
+	'LBL_THEMEPREVIEW' => 'Preview' /*for 508 compliance fix*/,
 ); // END STRINGS DEFS
 
 ?>

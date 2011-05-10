@@ -414,6 +414,7 @@ $mod_strings = array (
 	'LBL_ALERT' => 'Alert' /*for 508 compliance fix*/,
 	'LBL_EDIT_INLINE' => 'Edit' /*for 508 compliance fix*/,
 	'LBL_DELETE_INLINE' => 'Delete' /*for 508 compliance fix*/,
+	'LBL_DELETE' => 'Remove' /*for 508 compliance fix*/,
 );
 
 

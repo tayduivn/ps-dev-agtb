@@ -57,7 +57,7 @@ var editLayout = function(row)
             scroll: true,
             cacheData: true,
             active :true,
-            content: "<img src='{sugar_getimagepath file='loading.gif'}'/>{sugar_translate label='LBL_LOADING'}"{literal}
+            content: "{sugar_getimage alt="{$mod_strings.LBL_LOADING}" name="loading" ext=".gif" other_attributes=''}{sugar_translate label='LBL_LOADING'}"{literal}
         }, ModuleBuilder.tabPanel);
         ModuleBuilder.tabPanel.addTab(panel);
     } else {
@@ -112,14 +112,14 @@ var formatSelect = function(el, rec, col, data)
     el.innerHTML = ret;
 }
 var getEditButton = function(el, rec, col, data){
-    var out = {/literal}"<img src='{sugar_getimagepath file='edit_inline.gif'}' />";{literal}
+    var out = {/literal}"{sugar_getimage alt="{$mod_strings.LBL_EDIT_INLINE}" name="edit_inline" ext=".gif" other_attributes=''}";{literal}
 	el.innerHTML = out;
 	YAHOO.util.Event.addListener(el, "click", function(){editLayout(grid.getRecord(el).getData());});
 }
 var getRemoveButton = function(el, rec, col, data){
 	if (rec.getData().module =="Contacts")
 	   return;
-    var out = {/literal}"<img src='{sugar_getimagepath file='delete_inline.gif'}' />";{literal}
+    var out = {/literal}"{sugar_getimage alt="{$mod_strings.LBL_EDIT_INLINE}" name="delete_inline" ext=".gif" other_attributes=''}";{literal}
     el.innerHTML = out;
     YAHOO.util.Event.addListener(el, "click", function(){removeLayout(grid.getRecord(el).getData());});
 }

@@ -44,10 +44,10 @@
 			    </select>
 			    &nbsp;
 			    <a href="javascript:void(0);">
-		           	<img onclick="SUGAR.email2.addressBook.searchContacts();" src="{sugar_getimagepath file='select.gif'}" align="absmiddle" border="0" alt="{$mod_strings.LBL_EMAIL_SELECTOR}">
+		           	{sugar_getimage name="select" ext=".gif" alt="{$mod_strings.LBL_EMAIL_SELECTOR}" other_attributes='align="absmiddle" border="0" onclick="SUGAR.email2.addressBook.searchContacts();" '}
                 </a>
                 <a href="javascript:void(0);">
-		           	<img onclick="SUGAR.email2.addressBook.clearAddressBookSearch();" src="{sugar_getimagepath file='clear.gif'}" align="absmiddle" border="0" alt="{$mod_strings.LBL_EMAIL_SELECTOR}">
+		           	{sugar_getimage name="clear" ext=".gif" alt="{$mod_strings.LBL_EMAIL_SELECTOR}" other_attributes='align="absmiddle" border="0" onclick="SUGAR.email2.addressBook.clearAddressBookSearch();" '}
                 </a>  
 			</td>
         </tr>

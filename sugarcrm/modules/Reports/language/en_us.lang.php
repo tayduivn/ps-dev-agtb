@@ -307,6 +307,7 @@ $mod_strings = array (
 	'LBL_RIGHT' => 'Right' /*for 508 compliance fix*/,
 	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
+	'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
 ),
   	'LBL_WEIGHTED_AVG_AMOUNT' => "Weighted Avg Amount",
   	'LBL_WEIGHTED_SUM_AMOUNT' => "Weighted Sum Amount",

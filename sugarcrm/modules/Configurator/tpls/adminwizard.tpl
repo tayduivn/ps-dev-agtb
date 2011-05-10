@@ -255,7 +255,7 @@ function disableReturnSubmission(e) {
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="gmail">
                                     {* //BEGIN SUGARCRM flav=int ONLY *}
-                                    <img src="{sugar_getimagepath file='gmail_logo.png'}" >
+                                    {sugar_getimage alt="{$mod_strings.LBL_GMAIL_LOGO}" name="gmail_logo" ext=".png" other_attributes=''}
                                     {* //END SUGARCRM flav=int ONLY *}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_GMAIL}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
@@ -265,7 +265,7 @@ function disableReturnSubmission(e) {
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="yahoomail">
                                     {* //BEGIN SUGARCRM flav=int ONLY *}
-                                    <img src="{sugar_getimagepath file='yahoomail_logo.png'}" >
+                                    {sugar_getimage alt="{$mod_strings.LBL_YAHOO_MAIL}" name="yahoomail_logo" ext=".png" other_attributes=''}
                                     {* //END SUGARCRM flav=int ONLY *}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_YAHOO}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
@@ -275,7 +275,7 @@ function disableReturnSubmission(e) {
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="exchange">
                                     {* //BEGIN SUGARCRM flav=int ONLY *}
-                                    <img src="{sugar_getimagepath file='exchange_logo.png'}" >
+                                    {sugar_getimage alt="{$mod_strings.LBL_EXCHANGE}" name="exchange_logo" ext=".png" other_attributes=''}
                                     {* //END SUGARCRM flav=int ONLY *}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_EXCHANGE}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
@@ -383,7 +383,7 @@ addToValidate('ConfigureSettings', 'system_name', 'varchar', true,'System Name' 
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
         <input type="file" id="my_file_company" name="file_1" size="20" onchange="uploadCheck(false)"/>
-        <img id="loading_img_company" alt="loading..." src="{sugar_getimagepath file='sqsWait.gif'}" style="display:none">
+        {sugar_getimage name="sqsWait" ext=".gif" alt="{$mod_strings.LBL_LOADING}" other_attributes='id="loading_img_company" style="display:none" '}
     </form>
 </div>
 
