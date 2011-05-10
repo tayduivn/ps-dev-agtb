@@ -1,2 +1,0 @@
--- //FILE SUGARCRM flav=ent ONLY 
--- knowledge base

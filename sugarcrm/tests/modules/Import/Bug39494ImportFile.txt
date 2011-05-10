@@ -1,2 +1,0 @@
-﻿name	city
-tester1	wuhan
