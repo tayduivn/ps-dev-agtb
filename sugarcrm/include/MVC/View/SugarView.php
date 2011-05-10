@@ -733,8 +733,8 @@ EOHTML;
             }
             
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
-            echo '<script type="text/javascript">var SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
-            echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
+            echo '<script type="text/javascript">SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
+            echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo self::getJavascriptValidation();
             if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
