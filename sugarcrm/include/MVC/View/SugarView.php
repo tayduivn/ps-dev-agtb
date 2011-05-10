@@ -850,11 +850,9 @@ EOHTML;
 
 		$bottomLinkList = array();
 		 if (isset($this->action) && $this->action != "EditView") {
-			 $bottomLinkList['print'] =
-			array($app_strings['LNK_PRINT'] => 'javascript:void window.open(\'index.php?'.$GLOBALS['request_string'].'\',\'printwin\',\'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1\')');
-
+			 $bottomLinkList['print'] = array($app_strings['LNK_PRINT'] => getPrintLink());
 		}
-		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => '#top');
+		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => 'javascript:SUGAR.util.top();');
 
 		$bottomLinksStr = "";
 		foreach($bottomLinkList as $key => $value) {
@@ -862,7 +860,7 @@ EOHTML;
 				   $href = $link;
 				   if(substr($link, 0, 11) == "javascript:") {
                        $onclick = " onclick=\"".substr($link,11)."\"";
-                       $href = "#";
+                       $href = "javascript:void();";
                    } else {
                    		$onclick = "";
                    	}

@@ -1153,22 +1153,11 @@ function _check_user_permissions()
                 array_push($this->$field_list_name,$select_piece);
             }
             if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])) {
-            	$field_def = $this->all_fields[$display_column['column_key']];
-            	if (!empty($field_def['ext2'])) {
-					global $beanList;
-					$extModule = new $beanList[$field_def['ext2']];
-					$secondaryTableAlias = $field_def['secondary_table'];
-					if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']])){
-						$secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]['join_table_alias'];
-					}
-            		else if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])){
-						$secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];
-					}
-					if (isset($extModule->field_defs['name']['db_concat_fields']))
-		            	$select_piece = $this->db->concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']).' '.$secondaryTableAlias.'_name';
-		            else
-		            	$select_piece = $secondaryTableAlias.'.name '. $secondaryTableAlias.'_name';
-
+                $field_def = $this->all_fields[$display_column['column_key']];
+                
+                if (!empty($field_def['ext2'])) 
+                {
+                	$select_piece = $this->getExt2FieldDefSelectPiece($field_def);
                     array_push($this->$field_list_name,$select_piece);
                 }
             }

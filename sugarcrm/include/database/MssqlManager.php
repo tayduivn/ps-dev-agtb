@@ -635,9 +635,11 @@ class MssqlManager extends DBManager
         $offset = 0;
         $strip_array = array();
         while ($i<$count && $offset<strlen($p_sql)) {
-            if ($offset > strlen($p_sql)) {
-				break;
-            }
+            if ($offset > strlen($p_sql))
+            {
+				break;   
+            }     	
+
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
             {

@@ -32,8 +32,14 @@ SUGAR.ajaxUI = {
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
         } catch (e){
-            document.body.innerHTML = o.responseText;
-            SUGAR.util.evalScript(document.body.innerHTML);
+            if (YAHOO.lang.trim(o.responseText) == "")
+            {
+                alert("Page not found.");
+            }
+            else {
+                document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
+                SUGAR.util.evalScript(document.body.innerHTML);
+            }
         }
     },
 
@@ -118,5 +124,14 @@ SUGAR.ajaxUI = {
         YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
         SUGAR.ajaxUI.hist_loaded = true;
         SUGAR.ajaxUI.go(url);
+    },
+    print: function()
+    {
+        var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
+        SUGAR.util.openWindow(
+            url + '&print=true',
+            'printwin',
+            'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1'
+        );
     }
 };

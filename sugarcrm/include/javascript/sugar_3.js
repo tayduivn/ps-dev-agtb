@@ -2998,6 +2998,10 @@ SUGAR.util = function () {
 				win = window.open(URL, windowName, windowFeatures);
 			}
 			return win;
+		},
+        //Reset the scroll on the window
+        top : function() {
+			window.scroll(0,0);
 		}
 	};
 }(); // end util
