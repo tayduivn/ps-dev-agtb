@@ -1959,7 +1959,7 @@ function save_relationship_changes($is_update, $exclude=array())
 				if(empty($this->$field)) continue;
 				if($field == 'date_modified' || $field == 'date_entered')
 				{
-					$this->$field = from_db_convert($this->$field, 'datetime');
+					$this->$field = $this->db->fromConvert($this->$field, 'datetime');
 					if(empty($disable_date_format)) {
 						$this->$field = $timedate->to_display_date_time($this->$field);
 					}
@@ -1975,7 +1975,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
 					if($type == 'date')
 					{
-						$this->$field = from_db_convert($this->$field, 'date');
+						$this->$field = $this->db->fromConvert($this->$field, 'date');
 
 						if($this->$field == '0000-00-00')
 						{
@@ -1986,7 +1986,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
 							if(!empty($this->$rel_field))
 							{
-								$this->$rel_field=from_db_convert($this->$rel_field, 'time');
+								$this->$rel_field=$this->db->fromConvert($this->$rel_field, 'time');
 								if(empty($disable_date_format)) {
 									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
 									$this->$field = $timedate->to_display_date($mergetime);
@@ -2008,7 +2008,7 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						else
 						{
-							$this->$field = from_db_convert($this->$field, 'datetime');
+							$this->$field = $this->db->fromConvert($this->$field, 'datetime');
 							if(empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
 							}
