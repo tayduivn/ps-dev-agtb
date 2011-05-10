@@ -13,6 +13,10 @@ class SugarRelationshipFactory {
         $this->loadRelationships();
     }
 
+    /**
+     * @static
+     * @return SugarRelationshipFactory
+     */
     public static function getInstance()
     {
         if (is_null(self::$rfInstance))
@@ -29,7 +33,10 @@ class SugarRelationshipFactory {
      */
     public function getRelationship($relationshipName)
     {
-        if (empty($this->relationships[$relationshipName])) return false;
+        if (empty($this->relationships[$relationshipName])) {
+            echo "Unable to find relationship $relationshipName<br/>";
+            return false;
+        }
 
         $def = $this->relationships[$relationshipName];
 
@@ -54,6 +61,8 @@ class SugarRelationshipFactory {
                 return new One2OneRelationship($def);
                 break;
         }
+
+        echo "$relationshipName had an unknown type $type .<br/>";
 
         return false;
     }

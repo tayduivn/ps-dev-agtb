@@ -32,8 +32,14 @@ SUGAR.ajaxUI = {
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
         } catch (e){
-            document.body.innerHTML = o.responseText;
-            SUGAR.util.evalScript(document.body.innerHTML);
+            if (YAHOO.lang.trim(o.responseText) == "")
+            {
+                alert("Page not found.");
+            }
+            else {
+                document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
+                SUGAR.util.evalScript(document.body.innerHTML);
+            }
         }
     },
 
