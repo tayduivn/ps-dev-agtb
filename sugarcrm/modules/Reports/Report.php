@@ -1296,7 +1296,7 @@ print "<BR>";
 						$field_def = $this->all_fields[$group_column['column_key']];
 						if (!empty($field_def['ext2'])) 
 						{
-							$select_piece = $this->getExt2FieldDefSelectPiece($field_def);	
+							$select_piece = $this->getExt2FieldDefSelectPiece($field_def, false);	
 
 							if($this->db->dbType == 'mssql' && strpos($select_piece, '+'))
 							{
