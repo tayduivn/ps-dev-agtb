@@ -26,6 +26,7 @@
  */
 
 // $Id: home.js 24436 2007-07-18 23:11:36Z awu $
+initMySugar = function(){
 SUGAR.mySugar = function() {
 	var originalLayout = null;
 	var configureDashletId = null;
@@ -1236,3 +1237,4 @@ SUGAR.mySugar = function() {
 		//END SUGARCRM flav=pro || flav=sales ONLY
 	 }; 
 }();
+};

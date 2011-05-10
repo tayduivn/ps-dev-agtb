@@ -9,6 +9,14 @@ class BeanFactory {
     protected static $loadOrder = array();
     public static $hits = 0;
 
+    /**
+     * Returns a SugarBean object by id. The Last 10 loaded beans are cached in memory to prevent multiple retrieves per request.
+     * If no id is passed, a new bean is created.
+     * @static
+     * @param  String $module
+     * @param String $id
+     * @return SugarBean
+     */
     static function getBean($module, $id = null)
     {
         if (!isset(self::$loadedBeans[$module]))
