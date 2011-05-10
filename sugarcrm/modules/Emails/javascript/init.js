@@ -362,7 +362,8 @@ function addChildNodes(parentNode, parentData) {
 	for (i in nodes) {
 		if (typeof(nodes[i]) == 'object') {
 			if (nodes[i].data) {
-				nodes[i].data.href = '#';
+                // See comment about href below.
+				// nodes[i].data.href = '#';
 				var node = new YAHOO.widget.TextNode(nodes[i].data, parentNode);
 				node.action = nodes[i].data.action;
 			} else {
