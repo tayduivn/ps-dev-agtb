@@ -681,7 +681,7 @@ EOHTML;
 				$cached_results[$imageName] = '<span class="spr_'.$spriteHash.'"';
 
 				// do not return from cache, otherwise multi classes are not handled correctly
-				return $this->getSprite("spr_$class", $other_attributes);
+				return $this->getSprite("spr_$spriteHash", $other_attributes);
 
 			} else {
 				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
