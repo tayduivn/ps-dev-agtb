@@ -922,7 +922,7 @@ document.getElementById('email_link_type').onchange();
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
-{if !$HIDE_FOR_GROUP_AND_PORTAL}
+{if !$IS_GROUP && !$IS_PORTALONLY}
 {literal}
 if(window.addEventListener){
     window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
