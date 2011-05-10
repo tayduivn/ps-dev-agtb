@@ -129,7 +129,7 @@ SUGAR.ajaxUI = {
     {
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
         SUGAR.util.openWindow(
-            url + '&print=1',
+            url + '&print=true',
             'printwin',
             'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1'
         );
