@@ -1291,7 +1291,7 @@ print "<BR>";
 	            {
 	                $this->group_by_arr[] = $group_by;
 
-	            	if (!empty($group_column['column_key']) && !empty($this->all_fields[$group_column['column_key']])) 
+	            	if ($this->db->dbType != 'mysql' && (!empty($group_column['column_key']) && !empty($this->all_fields[$group_column['column_key']]))) 
 	            	{
 						$field_def = $this->all_fields[$group_column['column_key']];
 						if (!empty($field_def['ext2'])) 
@@ -1301,8 +1301,24 @@ print "<BR>";
 							if($this->db->dbType == 'mssql' && strpos($select_piece, '+'))
 							{
 							   $select_piece = $this->fixMssqlConcatenation($select_piece);
-							}	
-													
+							} 
+							
+							//BEGIN SUGARCRM flav=int ONLY
+							/*
+							else if($this->db->dbType == 'mysql') {
+							   //Remove the TRIM and alias fields if found
+							   if(preg_match('/^\s*?TRIM\((.*?)$/', $select_piece, $matches))
+							   {
+							   	  $select_piece = $matches[1];
+							   	  if(preg_match('/(.*?)\)\s[a-zA-Z_0-9]*?$/', $select_piece, $matches))
+							   	  {
+							   	  	 $select_piece = $matches[1];
+							   	  }
+							   }
+							}
+							*/
+					        //END SUGARCRM flav=int ONLY
+					        
 							$this->group_by_arr[] = $select_piece;
 						}
 				    }	                
