@@ -236,13 +236,13 @@ class SugarSpriteBuilder {
 					$outputDir = "cache/sprites/Repeatable";
 					$spriteFileName = "{$name}.png";
 					$cssFileName = "{$this->fileName}.css";
-					$metaFileName = "{$this->fileName}.php";
+					$metaFileName = "{$this->fileName}.meta.php";
 					$nameSpace = "Repeatable";
 				} else { 
 					$outputDir = "cache/sprites/$name";
 					$spriteFileName = "{$this->fileName}.png";
 					$cssFileName = "{$this->fileName}.css";
-					$metaFileName = "{$this->fileName}.php";
+					$metaFileName = "{$this->fileName}.meta.php";
 					$nameSpace = "{$name}";
 				}
 
