@@ -34,7 +34,7 @@ class SugarRelationshipFactory {
     public function getRelationship($relationshipName)
     {
         if (empty($this->relationships[$relationshipName])) {
-            echo "Unable to find relationship $relationshipName<br/>";
+            $GLOBALS['log']->fatal("Unable to find relationship $relationshipName");
             return false;
         }
 
@@ -62,7 +62,7 @@ class SugarRelationshipFactory {
                 break;
         }
 
-        echo "$relationshipName had an unknown type $type .<br/>";
+        $GLOBALS['log']->fatal ("$relationshipName had an unknown type $type ");
 
         return false;
     }

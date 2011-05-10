@@ -1374,8 +1374,11 @@ function _check_user_permissions()
 
                         $this->full_bean_list[$table_def['parent']]->load_relationships();
                         $params['primary_table_name'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
-
-                        if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
+                                    
+                        if (isset($this->full_bean_list[$table_def['parent']]->$link_name))
+                        {
+                            if (!$this->full_bean_list[$table_def['parent']]->$link_name->loadedSuccesfully())
+                                sugar_die("Unable to load link: $link_name for bean {$table_def['parent']}");
                             // Start ACL check
                             global $current_user, $mod_strings;
                             $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
@@ -1402,6 +1405,10 @@ function _check_user_permissions()
                             $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
                             $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
 
+                            if (!$this->full_bean_list[$table_def['parent']]->$rel_name->loadedSuccesfully())
+                            {
+                                sugar_die("Unable to load link: $rel_name");
+                            }
                             if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
                                 sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
                             $this->from .= $this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params);
