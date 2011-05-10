@@ -205,8 +205,13 @@ SUGAR.mySugar = function() {
             url = 'index.php?action=DynamicAction&DynamicAction=retrievePage&module='+module+'&to_pdf=1&pageId='+pageNum;
 
             var populatePage = function(data) {
-                eval(data.responseText);
-
+                var response = {html:"", script:""};
+                try {
+                    response = YAHOO.lang.JSON.parse(data.responseText);
+                }
+                catch(e){
+                    console.log(e);
+                }
                 var htmlRepsonse = response['html'];
                 eval(response['script']);
                 
