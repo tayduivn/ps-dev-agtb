@@ -26,6 +26,7 @@
  */
 
 // $Id: customMySugarCharts.js 2010-12-01 23:11:36Z lhuynh $
+initmySugarCharts = function(){
 
 SUGAR.mySugar.sugarCharts = function() {
 
@@ -113,3 +114,4 @@ var activeTab = activePage,
 }();
 
 YAHOO.util.Event.addListener(window, 'resize', SUGAR.mySugar.sugarCharts.refreshGraphs);
+};

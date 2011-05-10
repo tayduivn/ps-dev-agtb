@@ -57,6 +57,15 @@ height: 10px;
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
 <!-- end includes for overlib -->
 
+
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
+<script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
+<script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
+<link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
+{$chartResources}
+{$mySugarChartResources}
+
 <script type="text/javascript">
 //BEGIN SUGARCRM flav=pro ONLY
 var numPages = {$numPages};
@@ -69,17 +78,11 @@ current_user_id = '{$current_user}';
 jsChartsArray = new Array();
 var moduleName = '{$module}';
 document.body.setAttribute("class", "yui-skin-sam");
+initMySugar();
+initmySugarCharts();
 </script>
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
-<script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
-<script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
-<link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 
-
-{$chartResources}
-{$mySugarChartResources}
 
 
 <!--//BEGIN SUGARCRM flav=pro || flav=sales ONLY -->
