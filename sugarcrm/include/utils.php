@@ -4703,13 +4703,6 @@ function getUrls($string)
 }
 
 
-function ajaxLink($url)
-{
-	return "#ajaxUILoc=" . urlencode($url);
-}
-
-
-
 /**
  * Sanitize image file from hostile content
  * @param string $path Image file
