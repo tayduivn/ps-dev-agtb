@@ -1154,8 +1154,8 @@ function _check_user_permissions()
             }
             if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])) {
                 $field_def = $this->all_fields[$display_column['column_key']];
-                
-                if (!empty($field_def['ext2'])) 
+
+                if (!empty($field_def['ext2']))
                 {
                 	$select_piece = $this->getExt2FieldDefSelectPiece($field_def);
                     array_push($this->$field_list_name,$select_piece);
@@ -1255,17 +1255,26 @@ function _check_user_permissions()
 
 	            if (! $this->select_already_defined($select,'select_fields'))
 	            {
-	                array_push($this->select_fields,$select);
+	                $this->select_fields[] = $select;
 	            }
 
 	            if (! $this->select_already_defined($select,'summary_select_fields'))
 	      		{
-	                array_push($this->summary_select_fields,$select);
+	                $this->summary_select_fields[] = $select;
 	      		}
 
 	            if (! empty($register_group_by))
 	            {
 	                $this->group_by_arr[] = $group_by;
+	                if (!empty($group_column['column_key']) && !empty($this->all_fields[$group_column['column_key']])) {
+                        $field_def = $this->all_fields[$group_column['column_key']];
+
+                        if (!empty($field_def['ext2']))
+                        {
+                        	$select_piece = $this->getExt2FieldDefSelectPiece($field_def, false);
+                            $this->group_by_arr[] = $select_piece;
+                        }
+                    }
 	            }
 	                // Changed the sort order, so it would sort by the initial options first
 	            array_unshift($this->group_order_by_arr,$order_by);
@@ -2169,58 +2178,6 @@ function _check_user_permissions()
 		return $select_piece;
   }
 
-
-  /**
-   * fixMssqlConcatenation
-   *
-   * This method correctly fixes SQL for SQL Server where the database fields are concatenated with the + character
-   *
-   * @param $sql String value of SQL to fix
-   */
-  private function fixMssqlConcatenation($sql)
-  {
-		$fieldsInField = explode('+',trim($sql));
-
-		if(empty($fieldsInField))
-		{
-		   return $sql;
-		}
-
-        $newField = '';
-        foreach ( $fieldsInField as $field )
-        {
-            $field = trim($field);
-            //if it has a space, then it is aliased, let's process
-            //to see if it has a period
-            $has_space = strrpos($field, " ");
-            if($has_space && !stristr($field, "' '"))
-			{
-                $temp_field_name = substr($field,0,$has_space);
-                $temp_field_alias  = substr($field,$has_space+1);
-                if ( stristr($temp_field_name, 'ISNULL') )
-                {
-                    $newField .= "$temp_field_name $temp_field_alias";
-                } else {
-                    $newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
-                }
-            } else {
-                if ( stristr($field, 'ISNULL') )
-				{
-                    $newField .= "$field + ";
-                } else {
-                    $newField .= "ISNULL({$field},' ') + ";
-                }
-            }
-		}
-
-		//Safety check here.  If it ends with a + sign, remove it
-		if(preg_match('/(.*?)\+\s*?$/', $newField, $matches))
-        {
-		   $newField = $matches[1];
-        }
-
-		return $newField;
-   }
 
 }
 
