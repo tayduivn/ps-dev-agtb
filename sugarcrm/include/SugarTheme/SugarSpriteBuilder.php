@@ -318,7 +318,7 @@ display: inline-block;
 				fclose($fh);
 
 				/* save metadata */
-				(file_exists("$outputDir/$metaFileName")) ? $add_php_tag = false : $add_php_tag = true;
+				(file_exists("$outputDir/$metaFileName") && $isRepeat) ? $add_php_tag = false : $add_php_tag = true;
 				$fh = fopen("$outputDir/$metaFileName", $fileMode);
 				if($add_php_tag)
 					fwrite($fh, '<?php');
