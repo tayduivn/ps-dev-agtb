@@ -605,7 +605,7 @@ function deleteCache(){
 	       	}
 		}
 	}
-	
+
 	//Clean jsLanguage from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'jsLanguage')){
 		$allModFiles = array();
@@ -968,12 +968,17 @@ function checkSystemCompliance() {
 	}
 
 	// database and connect
-	if($sugar_config['dbconfig']['db_type'] == 'mysql')
+    $v = $db->version();
+	if($db->dbType == 'mysql')
     {
-        $v  = $db->version();
         if(version_compare($v, '4.1.2') < 0) {
 	        	$ret['error_found'] = true;
 	        	$ret['mysqlVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_MYSQL_VERSION'].$v."</span></b>";
+	    }
+	} elseif($db->dbType == 'oci8') {
+	    if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $v)) {
+	        	$ret['error_found'] = true;
+	        	$ret['ociVersion'] = "<b><span class=stop>".$mod_strings['ERR_UW_OCI8_VERSION'].$v."</span></b>";
 	    }
 	}
 
@@ -1188,29 +1193,6 @@ function updateQuickCreateDefs(){
 	}
 }
 
-
-function cleanQuery($query, $oci8=false) {
-	$bad = array(
-			"&#039;",
-			"&quot;",
-			);
-	$good = array(
-			'"',
-			"",
-			);
-
-	$q = str_replace($bad, $good, $query);
-
-	//BEGIN SUGARCRM flav=ent ONLY
-	if($oci8) {
-		$more = array('"');
-		$all = array ('');
-		$q = str_replace($more, $all, $q);
-	}
-	//END SUGARCRM flav=ent ONLY
-	return $q;
-}
-
 /**
  * test perms for CREATE queries
  */
@@ -1343,613 +1325,12 @@ function testPermsDropTable($db, $out, $skip=false) {
     return $out;
 }
 
-
-//BEGIN SUGARCRM flav=ent ONLY
-function queryOci8($sql, $logError=true) {
-	global $db;
-
-    $stmt = ociparse($db->getDatabase(), $sql);
-    $err = ocierror($db->getDatabase());
-
-    if($err != false) {
-        logThis('*** ERROR: ociparse failed on: '.$sql.' - '.$err['message']);
-        return $err;
-    } else {
-        @ociexecute($stmt);
-        $err = ocierror($stmt);
-
-
-        if($logError) {
-	        if(!empty($err)) {
-	        	logThis("*** ERROR: ociexecute failed on query: {$sql} - {$err['message']}");
-	        	return $err;
-	        } else {
-	        	return $stmt;
-	        }
-        } else {
-        	return $stmt;
-        }
-    }
-}
-
-
-
-/**
- * creates a temp table with sample data
- */
-function createOci8Temp($table) {
-	global $sugar_config;
-	global $db;
-
-	$ociKeyWords = array('CONFIG', 'SYSTEMS');
-
-    // oracle's 30-char max table name;
-    $trueTable = $table;
-    if(strlen($table) > 21) {
-		$table = substr($table, 0, 21);
-    }
-
-    $table = strtoupper($table);
-
-    // test for temp table
-    $qtest = "SELECT TABLE_NAME tn FROM USER_TABLES WHERE TABLE_NAME = '{$table}__UW_TEMP'";
-    $rtest = $db->query($qtest);
-    $atest = $db->fetchByAssoc($rtest);
-
-    // only build table if it doesn't already exist
-    if(empty($atest)) {
-		if(!in_array(strtoupper($table), $ociKeyWords)) {
-			$ociTable = strtoupper($sugar_config['dbconfig']['db_user_name'].'.'.$trueTable);
-			$tempOciTable = strtoupper($sugar_config['dbconfig']['db_user_name'].'.'.$table);
-			// this query will populate the temp table with 10 rows of data
-			$tempTable = "CREATE TABLE {$tempOciTable}__UW_TEMP AS ".$db->limitQuerySql("SELECT * FROM {$ociTable}",0,8);
-			logThis("Creating temp table for {$table}: {$tempTable}");
-			$db->query($tempTable);
-
-			// drop the "count" row
-			$drop = "ALTER TABLE {$tempOciTable}__UW_TEMP DROP COLUMN orc_row";
-			$db->query($drop);
-		} else {
-			$tempTable = "CREATE TABLE {$sugar_config['dbconfig']['db_user_name']}.{$table}__UW_TEMP AS ".
-				"SELECT * FROM {$sugar_config['dbconfig']['db_user_name']}.\"{$table}\"";
-			$db->query(strtoupper($tempTable));
-			logThis('OCI8 Keyword-named table found - logic fork: '.$tempTable);
-		}
-    } else {
-    	//BEGIN SUGARCRM flav=int ONLY
-    	logThis("Found {$table}__UW_TEMP - skipping temp table creation.");
-    	//END SUGARCRM flav=int ONLY
-    }
-}
-
-/**
- * ORACLE gets DDL from DBMS_METADATA (data dictionary)
- */
-function getOracleDDL($table) {
-	global $db;
-
-	$q = "SELECT DBMS_METADATA.GET_DDL('TABLE', '".strtoupper($table)."') out FROM USER_TABLES u WHERE u.table_name = '".strtoupper($table)."'";
-	$r = $db->query($q);
-	$ret = '';
-
-	while($a = $db->fetchByAssoc($r)) {
-		$sql = $a['out'];
-
-		$end = strpos($sql, 'CONSTRAINT');
-		$end - 2;
-
-		if($end < 10) {
-			$end = strpos($sql, 'PCTFREE');
-			$sql = substr($sql, 0, $end).")";
-		} else {
-			$sql = substr($sql, 0, $end).")";
-		}
-
-		$ret = '';
-		$left = 0;
-		$right = 0;
-
-		for($i=0; $i<strlen($sql); $i++) {
-			$char = $sql{$i};
-			if($char == '(') {
-				$left++;
-			} elseif($char == ')') {
-				$right++;
-			}
-
-			$ret .= $sql{$i};
-
-			if($left > 0 && $left == $right) {
-				return $ret;
-			}
-		}
-
-
-		return $ret;
-	}
-}
-
-
-//END SUGARCRM flav=ent ONLY
-
-function createMSSQLTemp($table) {
-	global $sugar_config;
-	global $db;
-
-	$qtest = "SELECT TABLE_NAME tn FROM information.tables WHERE TABLE_NAME = '{$table}__UW_TEMP'";
-	$rtest = $db->query($qtest);
-	$atest = $db->fetchByAssoc($rtest);
-
-	if(empty($atest)) {
-		$tempTable = "CREATE TABLE {$table}__UW_TEMP AS ".$db->limitQuerySql("SELECT * FROM {$table}",0,8);
-		logThis("Creating temp table for {$table}: {$tempTable}");
-		$db->query($tempTable);
-	}
-	else {
-		logThis("Found {$table}__UW_TEMP - skipping temp table creation.");
-	}
-}
-
-/**
- * Tests an ALTER TABLE query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryAlter($table, $dbType, $query, $newTables) {
-	logThis('verifying ALTER statement...');
-	global $db;
-	global $sugar_config;
-
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	// Skipping ALTER TABLE [table] DROP PRIMARY KEY because primary keys are not being copied
-	// over to the temp tables
-	if(strpos(strtoupper($query), 'DROP PRIMARY KEY') !== false) {
-		logThis('Skipping DROP PRIMARY KEY verification');
-		return '';
-	}
-
-	if ($dbType == 'mysql'){
-		mysql_error(); // initialize errors
-	}
-	$error = '';
-
-	if(!in_array($table, $newTables)) {
-		switch($dbType) {
-			case 'mysql':
-				// get DDL
-				logThis('creating temp table for ['.$table.']...');
-				$q = "SHOW CREATE TABLE {$table}";
-				$r = $db->query($q);
-				$a = $db->fetchByAssoc($r);
-
-				// rewrite DDL with _temp name
-				$cleanQuery = cleanQuery($a['Create Table']);
-				$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-				$r2 = $db->query($tempTableQuery);
-
-				// get sample data into the temp table to test for data/constraint conflicts
-				logThis('inserting temp dataset...');
-				$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-				$r3 = $db->query($q3, false, "Preflight Failed for: {$query}");
-
-				// test the query on the test table
-				logThis('testing query: ['.$query.']');
-				$tempTableTestQuery = str_replace("ALTER TABLE `{$table}`", "ALTER TABLE `{$table}__uw_temp`", $query);
-				if (strpos($tempTableTestQuery, 'idx') === false) {
-					if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-						$error = getFormattedError('Could not use a temp table to test query!', $query);
-						return $error;
-					}
-
-					logThis('testing query on temp table: ['.$tempTableTestQuery.']');
-					$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-				}
-				else {
-					// test insertion of an index on a table
-					$tempTableTestQuery_idx = str_replace("ADD INDEX `idx_", "ADD INDEX `temp_idx_", $tempTableTestQuery);
-					logThis('testing query on temp table: ['.$tempTableTestQuery_idx.']');
-					$r4 = $db->query($tempTableTestQuery_idx, false, "Preflight Failed for: {$query}");
-				}
-				$mysqlError = mysql_error(); // empty on no-errors
-				if(!empty($mysqlError)) {
-					logThis('*** ERROR: query failed: '.$mysqlError);
-					$error = getFormattedError($mysqlError, $query);
-				}
-
-
-				// clean up moved to end of preflight
-			break;
-
-			case 'mssql':
-				logThis('mssql found: skipping test query - ['.$query.']');
-			break;
-
-			case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-		} // end switch()
-	} else {
-		logThis($table . ' is a new table');
-	}
-
-	logThis('verification done.');
-	return $error;
-}
-
-/**
- * Tests an CREATE TABLE query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryCreate($table, $dbType, $query, &$newTables) {
-	logThis('verifying CREATE statement...');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-	switch($dbType) {
-		case 'mysql':
-			// rewrite DDL with _temp name
-			logThis('testing query: ['.$query.']');
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $query);
-
-			if(isRunningAgainstTrueTable($tempTableQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $query);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableQuery, false, "Preflight Failed for: {$query}");
-
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-
-			// check if table exists
-			logThis('testing for table: '.$table);
-			$q1 = "DESC `{$table}`";
-			$r1 = $db->query($q1);
-
-			$mysqlError = mysql_error();
-			if(empty($mysqlError)) {
-				logThis('*** ERROR: table already exists!: '.$table);
-				$error = getFormattedError('table exists', $query);
-			}
-			else {
-				logThis('NEW TABLE: '.$query);
-				$newTables[] = $table;
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	return $error;
-}
-
-/**
- * Tests an DELETE FROM query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryDelete($table, $dbType, $query) {
-	logThis('verifying DELETE statements');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			logThis('creating temp table...');
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// get sample data into the temp table to test for data/constraint conflicts
-			logThis('inserting temp dataset...');
-			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-			$r3 = $db->query($q3);
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("DELETE FROM `{$table}`", "DELETE FROM `{$table}__uw_temp`", $query);
-
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-/**
- * Tests a DROP TABLE query
- *
- */
-function testQueryDrop($table, $dbType, $query) {
-	logThis('verifying DROP TABLE statement');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			logThis('creating temp table...');
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// get sample data into the temp table to test for data/constraint conflicts
-			logThis('inserting temp dataset...');
-			$query = stripQuotesUW($query, $table);
-			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-			$r3 = $db->query($q3);
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("DROP TABLE `{$table}`", "DROP TABLE `{$table}__uw_temp`", $query);
-
-			// make sure the test query is running against a temp table
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-/**
- * Tests an INSERT INTO query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryInsert($table, $dbType, $query) {
-	logThis('verifying INSERT statement...');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("INSERT INTO `{$table}`", "INSERT INTO `{$table}__uw_temp`", $query);
-
-			// make sure the test query is running against a temp table
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-			logThis('mssql found: skipping test query - ['.$query.']');
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-
-/**
- * Tests an UPDATE TABLE query
- * @param string table The table name to get DDL
- * @param string dbType MySQL, MSSQL, etc.
- * @param string query The query to test.
- * @return string Non-empty if error found
- */
-function testQueryUpdate($table, $dbType, $query) {
-	logThis('verifying UPDATE TABLE statement...');
-	global $db;
-	if(empty($db)) {
-		$db = &DBManagerFactory::getInstance();
-	}
-
-	$error = '';
-
-	switch($dbType) {
-		case 'mysql':
-			// get DDL
-			$q = "SHOW CREATE TABLE {$table}";
-			$r = $db->query($q);
-			$a = $db->fetchByAssoc($r);
-
-			// rewrite DDL with _temp name
-			$cleanQuery = cleanQuery($a['Create Table']);
-			$tempTableQuery = str_replace("CREATE TABLE `{$table}`", "CREATE TABLE `{$table}__uw_temp`", $cleanQuery);
-			$r2 = $db->query($tempTableQuery);
-
-			// get sample data into the temp table to test for data/constraint conflicts
-			logThis('inserting temp dataset...');
-			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
-			$r3 = $db->query($q3, false, "Preflight Failed for: {$query}");
-
-			// test the query on the test table
-			logThis('testing query: ['.$query.']');
-			$tempTableTestQuery = str_replace("UPDATE `{$table}`", "UPDATE `{$table}__uw_temp`", $query);
-
-			// make sure the test query is running against a temp table
-			if(isRunningAgainstTrueTable($tempTableTestQuery)) {
-				$error = getFormattedError('Could not use a temp table to test query!', $tempTableTestQuery);
-				return $error;
-			}
-
-			$r4 = $db->query($tempTableTestQuery, false, "Preflight Failed for: {$query}");
-			$error = mysql_error(); // empty on no-errors
-			if(!empty($error)) {
-				logThis('*** ERROR: query failed.');
-				$error = getFormattedError($error, $query);
-			}
-		break;
-
-		case 'mssql':
-		break;
-
-		case 'oci8':
-				logThis('Oracle found: skipping test query - ['.$query.']');
-			break;
-	}
-	logThis('verification done.');
-	return $error;
-}
-
-
-/**
- * strip queries of single and double quotes
- */
-function stripQuotesUW($query, $table) {
-	$queryStrip = '';
-
-	$start = strpos($query, $table);
-
-	if(substr($query, ($start - 1), 1) != ' ') {
-		$queryStrip  = substr($query, 0, ($start-2));
-		$queryStrip .= " {$table} ";
-		$queryStrip .= substr($query, ($start + strlen($table) + 2), strlen($query));
-	}
-
-	return (empty($queryStrip)) ? $query : $queryStrip;
-}
-
-/**
- * ensures that a __UW_TEMP table test SQL is running against a temp table, not the real thing
- * @param string query
- * @return bool false if it is a good query
- */
-function isRunningAgainstTrueTable($query) {
-	$query = strtoupper($query);
-	if(strpos($query, '__UW_TEMP') === false) {
-		logThis('***ERROR: test query is NOT running against a temp table!!!! -> '.$query);
-		return true;
-	}
-	return false;
-}
-
-/**
- * cleans up temp tables created during schema test phase
- */
-function testCleanUp() {
-	logThis('Cleaning up temporary tables...');
-
-	global $db;
-	if(empty($db)) {
-		$db = DBManagerFactory::getInstance();
-	}
-    $tables = $db->tablesLike("%__uw_temp");
-    if(!empty($tables)) {
-        foreach($tables as $table) {
-            logThis('Dropping table: '.$table);
-            $db->dropTableName($table);
-        }
-    }
-	logThis('Done cleaning up temp tables.');
-	return '';
-}
-
-
 function getFormattedError($error, $query) {
 	$error = "<div><b>".$error;
 	$error .= "</b>::{$query}</div>";
 
 	return $error;
 }
-
-
 
 /**
  * parses a query finding the table name
@@ -1989,19 +1370,6 @@ if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		$unzip_dir = '';
 		//also come up with mechanism to read from upgrade-progress file
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
-			/*
-			if ($handle = opendir(clean_path($sugar_config['upload_dir']))) {
-	    		while (false !== ($file = readdir($handle))) {
-	    		if($file !="." && $file !="..")	{
-				   $far = explode(".",$file);
-				   if($far[sizeof($far)-1] == 'zip') {
-				   		echo $sugar_config['upload_dir'].'/'.$file;
-				   		$_SESSION['install_file'] =  $sugar_config['upload_dir'].'/'.$file;
-				   }
-		       	 }
-	    		}
-    		}
-    		*/
 			if (file_exists(clean_path($base_tmp_upgrade_dir)) && $handle = opendir(clean_path($base_tmp_upgrade_dir))) {
 		    		while (false !== ($file = readdir($handle))) {
 		    		if($file !="." && $file !="..")	{
@@ -2142,16 +1510,11 @@ $uwMain = $upgrade_directories_not_found;
 				continue;
 			}
 
-			//logThis('Copying file to destination: ' . $targetFile);
-
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile);
 			} else {
 				$copiedFiles[] = $targetFile;
 			}
-		} else {
-			//logThis('Skipping file: ' . $targetFile);
-			//$skippedFiles[] = $targetFile;
 		}
 	   }
 	 }
@@ -2161,11 +1524,7 @@ $uwMain = $upgrade_directories_not_found;
 		$parserFiles = findAllFiles(clean_path($unzip_dir.'/'.$zip_from_dir."/UpgradeWizard510Files"), $parserFiles);
 		foreach($parserFiles as $file) {
 			$srcFile = clean_path($file);
-			//$targetFile = clean_path(getcwd() . '/' . $srcFile);
-	        if (strpos($srcFile,".svn") !== false) {
-			  //do nothing
-		    }
-		    else{
+	        if (strpos($srcFile,".svn") === false) {
 			    $targetFile = str_replace(clean_path($unzip_dir.'/'.$zip_from_dir."/UpgradeWizard510Files"), $cwd, $srcFile);
 				if(!is_dir(dirname($targetFile))) {
 					mkdir_recursive(dirname($targetFile)); // make sure the directory exists
@@ -2222,20 +1581,17 @@ function preflightCheck() {
 			if (file_exists(clean_path($base_tmp_upgrade_dir)) && $handle = opendir(clean_path($base_tmp_upgrade_dir))) {
 		    	while (false !== ($file = readdir($handle))) {
 		    		if($file !="." && $file !="..")	{
-					 //echo $base_tmp_upgrade_dir."/".$file.'</br>';
-					 if(is_file($base_tmp_upgrade_dir."/".$file."/manifest.php")){
-					 	require_once($base_tmp_upgrade_dir."/".$file."/manifest.php");
-					 	$package_name= $manifest['copy_files']['from_dir'];
-					 	//echo file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name).'</br>';
-					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
-					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
-					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists($sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip')){
-					 			$_SESSION['install_file'] = $sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip';
-					 			break;
-					 		}
-						}
-					  }
+					    if(is_file($base_tmp_upgrade_dir."/".$file."/manifest.php")){
+    					 	require_once($base_tmp_upgrade_dir."/".$file."/manifest.php");
+    					 	$package_name= $manifest['copy_files']['from_dir'];
+    					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
+    					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
+    					 		if(file_exists($sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip')){
+    					 			$_SESSION['install_file'] = $sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip';
+    					 			break;
+    					 		}
+    						}
+					    }
 		    		}
 		    	}
 			}
@@ -3158,145 +2514,6 @@ function deletePackageOnCancel(){
     }
 }
 
-
-function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery=''){
-	global $sugar_config;
-	$alterTableSchema = '';
-	$sqlErrors = array();
-	if(!isset($_SESSION['sqlSkippedQueries'])){
-	 	$_SESSION['sqlSkippedQueries'] = array();
-	 }
-	$db = DBManagerFactory::getInstance();
-	$is_mysql = false;
-	if($sugar_config['dbconfig']['db_type'] == 'mysql') {
-	   $is_mysql = true;
-	}
-    if($sugar_config['dbconfig']['db_type'] == 'oci8'){
-        $db->query("CREATE OR REPLACE FUNCTION blob_to_clob (blob_in IN BLOB)
-					RETURN CLOB
-					AS
-					  v_clob    CLOB;
-					  v_varchar VARCHAR2(32767);
-					  v_start   PLS_INTEGER := 1;
-					  v_buffer  PLS_INTEGER := 32767;
-					BEGIN
-					  DBMS_LOB.CREATETEMPORARY(v_clob, TRUE);
-
-					  FOR i IN 1..CEIL(DBMS_LOB.GETLENGTH(blob_in) / v_buffer)
-					  LOOP
-
-					     v_varchar := UTL_RAW.CAST_TO_VARCHAR2(DBMS_LOB.SUBSTR(blob_in, v_buffer, v_start));
-
-					           DBMS_LOB.WRITEAPPEND(v_clob, LENGTH(v_varchar), v_varchar);
-
-					        v_start := v_start + v_buffer;
-					    END LOOP;
-
-					   RETURN v_clob;
-
-					END blob_to_clob;");
-    }
-    if(strpos($resumeFromQuery,",") != false){
-    	$resumeFromQuery = explode(",",$resumeFromQuery);
-    	if(is_array($resumeFromQuery)){
-    		//print_r('RES ARRAY '.$resumeFromQuery[0].'</br>');
-    	}
-    }
-	if(file_exists($sqlScript)) {
-		$fp = fopen($sqlScript, 'r');
-		$contents = stream_get_contents($fp);
-	    $anyScriptChanges =$contents;
-	    $resumeAfterFound = false;
-		if(rewind($fp)) {
-			$completeLine = '';
-			$count = 0;
-			while($line = fgets($fp)) {
-				if(strpos($line, '--') === false) {
-					$completeLine .= " ".trim($line);
-					if(strpos($line, ';') !== false) {
-						$query = '';
-						$query = str_replace(';','',$completeLine);
-						//if resume from query is not null then find out from where
-						//it should start executing the query.
-
-						if($query != null && $resumeFromQuery != null){
-							if(!$resumeAfterFound){
-								if(strpos($query,",") != false){
-									$queArray = array();
-									$queArray = explode(",",$query);
-									for($i=0;$i<sizeof($resumeFromQuery);$i++){
-										if(strcmp(strtolower(trim($resumeFromQuery[$i])),strtolower(trim($queArray[$i])))==0){
-											//echo 'mat found '.$queArray[$i].'</br>';
-											$resumeAfterFound = true;
-										}
-										else{
-											$resumeAfterFound = false;
-											break;
-										}
-									}//for
-
-								}
-								elseif(strcmp(strtolower(trim($resumeFromQuery)),strtolower(trim($query)))==0){
-									$resumeAfterFound = true;
-								}
-							}
-							if($resumeAfterFound){
-								$count++;
-							}
-							// if $count=1 means it is just found so skip the query. Run the next one
-	                        if($query != null && $resumeAfterFound && $count >1){
-	                        	$tableName = '';
-	                        	if($is_mysql)
-	                        	{
-	                        		$tableName = getAlterTable($query);
-	                        		if(!empty($tableName))
-	                        		{
-	                        			$db->query('ALTER TABLE '.$tableName.' DISABLE KEYS');
-	                        		}
-	                        	}
-		                        $db->query($query);
-		                        if($db->checkError()){
-		                            //put in the array to use later on
-		                            $_SESSION['sqlSkippedQueries'][] = $query;
-		                        }
-	                            if(!empty($tableName))
-                                {
-                                    $db->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
-                                }
-		                        $progQuery[$forStepQuery]=$query;
-		                        post_install_progress($progQuery,$action='set');
-	                        }//if
-						}
-						elseif($query != null){
-						        $tableName = '';
-                                if($is_mysql)
-                                {
-                                    $tableName = getAlterTable($query);
-                                    if(!empty($tableName))
-                                    {
-                                        $db->query('ALTER TABLE '.$tableName.' DISABLE KEYS');
-                                    }
-                                }
-		                        $db->query($query);
-						        if(!empty($tableName))
-                                {
-                                    $db->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
-                                }
-		                        $progQuery[$forStepQuery]=$query;
-		                        post_install_progress($progQuery,$action='set');
-		                        if($db->checkError()){
-		                            //put in the array to use later on
-		                            $_SESSION['sqlSkippedQueries'][] = $query;
-		                        }
-	                        }
-	                   	$completeLine = '';
-					}
-				}
-			}//while
-		}
-	}
-}
-
 function getAlterTable($query){
 	$query = strtolower($query);
 	if (preg_match('/^\s*alter\s+table\s+/', $query)) {
@@ -3619,66 +2836,6 @@ function post_install_progress($progArray='',$action=''){
 		if(is_writable($upgrade_progress_file) && write_array_to_file( "upgrade_config", $upgrade_config,
 		$upgrade_progress_file)) {
 	       //writing to the file
-		}
-	}
-}
-
-
-// parse and run sql file
-function parseAndExecuteSqlFileExtended($sqlScript){
-	global $sugar_config;
-	$alterTableSchema = '';
-	$db = & DBManagerFactory::getInstance();
-	if(is_file($sqlScript)) {
-		$fp = fopen($sqlScript, 'r');
-		$contents = stream_get_contents($fp);
-	    $anyScriptChanges =$contents;
-		if(rewind($fp)) {
-			$completeLine = '';
-			$count = 0;
-			while($line = fgets($fp)) {
-				if(strpos($line, '--') === false) {
-					$completeLine .= " ".trim($line);
-					if(strpos($line, ';') !== false) {
-						$completeLine = str_replace(';','',$completeLine);
-	                    $currLine = explode(",",$completeLine);
-	                    //check if multiple statements are clubbed
-	                    if(sizeof($currLine) >1){
-	                    	$qarr = explode(" ",trim($currLine[0]));
-	                    	if(strtoupper(trim($qarr[0])) == 'CREATE' && strtoupper(trim($qarr[1])) == 'TABLE'){
-                                $tname = strtoupper(trim($qarr[2]));
-	                            if(!empty($tname)){
-                                    if(!$db->tableExists($tname)) {
-										$db->query($completeLine);
-	                            	}
-	                            }
-	                    	}
-	                    	else{
-	                    		$qType =trim($qarr[0])." ".trim($qarr[1])." ".trim($qarr[2]);
-		                    	echo trim($currLine[0])."<br />";
-	                            for ($i = 1; $i <= sizeof($currLine)-1; $i++) {
-	 							   $query = $qType." ".trim($currLine[$i]);
-	 							   echo $query."<br />";
-								}
-	                    	}
-
-	                    }
-	                    else{
-	                    	echo  trim($currLine[0]);
-	                    }
-
-
-                        //$q3 = $completeLine;
-						//''$r3 = $GLOBALS['db']->query($q3, false, "Preflight Failed for:");
-                        //echo mysql_error();
-						$completeLine = '';
-						//break;
-					}
-				}
-			}
-		} else {
-
-			//$sqlErrors[] = $mod_strings['ERR_UW_FILE_NOT_READABLE'].'::'.$sqlScript;
 		}
 	}
 }
@@ -4329,7 +3486,7 @@ function upgradeTeamColumn($bean, $column_name) {
 			$GLOBALS['db']->addColumn($bean->table_name, $bean->field_defs['team_set_id']);
 		}
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
-		
+
         $indexName = getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34);
         $indexDef = array(
 					 array(
@@ -4448,12 +3605,12 @@ function upgradeModulesForTeam() {
             {
 	            //grab the existing system tabs
 	            $tabs = $newTB->get_system_tabs();
-	
+
 	            //add the new tabs to the array
 	            foreach($newModuleList as $nm ){
 	              $tabs[$nm] = $nm;
 	            }
-	
+
 	            $newTB->set_system_tabs($tabs);
             }
             logThis('module tabs updated',$path);
@@ -4709,7 +3866,7 @@ function upgradeModulesForTeam() {
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	function check_FTS(){
-		//check to see if FTS is installed in mssql
+		//check to see if FTS is installed
 		global $sugar_config;
 		if($GLOBALS['db']->supports('fulltext') && $GLOBALS['db']->full_text_indexing_installed()) {
             return true;
@@ -4867,32 +4024,18 @@ function upgradeModulesForTeam() {
 	 *
 	 * @param path String location to log file, empty by default
 	 */
-	function upgradeDateTimeFields($path=''){
+	function upgradeDateTimeFields()
+	{
 		//bug: 39757
 		global $db;
-		if($db->dbType == 'mysql')
-		{
-			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-		} else if($db->dbType == 'mssql') {
-			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
-			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
-		} else if ($db->dbType == 'oci8') {
-			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
-			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
-		}
+		$meetingsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_hours'));
+		$callsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_hours'));
+    	logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+		$db->query($meetingsSql);
 
-		if(isset($meetingsSql) && isset($callsSql))
-		{
-			logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-			$db->query($meetingsSql);
-
-			logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-			$db->query($callsSql);
-		}
+		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+		$db->query($callsSql);
 	}
-
-
 
 	/**
 	 * upgradeDocumentTypeFields
@@ -5286,7 +4429,7 @@ function upgradeSugarCache($file)
 
 /**
  * upgradeDisplayedTabsAndSubpanels
- * 
+ *
  * @param $version String value of current system version (pre upgrade)
  */
 function upgradeDisplayedTabsAndSubpanels($version)
@@ -5295,33 +4438,33 @@ function upgradeDisplayedTabsAndSubpanels($version)
 	{
 		logThis('start upgrading system displayed tabs and subpanels');
 	    require_once('modules/MySettings/TabController.php');
-	    $tc = new TabController();	
-	    
-	    //grab the existing system tabs
-	    $tabs = $tc->get_tabs_system();  
+	    $tc = new TabController();
 
-	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists)
 	    //to displayed tabs unless explicitly set to hidden
 	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
 	    $added_tabs = array();
-	    
+
 	    foreach($modules_to_add as $module)
 	    {
 		       $tabs[0][$module] = $module;
 		       $added_tabs[] = $module;
 	    }
-	    
+
 	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
-	    $tc->set_system_tabs($tabs[0]);    
-	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	    $tc->set_system_tabs($tabs[0]);
+	    logThis('finish upgrading system displayed tabs and subpanels');
 	}
 }
 
 
 /**
  * unlinkUpgradeFiles
- * This is a helper function to clean up 
- * 
+ * This is a helper function to clean up
+ *
  * @param $version String value of current system version (pre upgrade)
  */
 function unlinkUpgradeFiles($version)
@@ -5330,24 +4473,24 @@ function unlinkUpgradeFiles($version)
 	{
 	   return;
 	}
-	
+
 	logThis('start unlinking files from previous upgrade');
 	if($version < '620')
 	{
 	   //list of files to remove
 	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/sugarColors.xml');
-	   
+
 	   foreach($files_to_remove as $f)
 	   {
 		   if(file_exists($f))
 		   {
 		   	  logThis('removing file: ' . $f);
 		   	  unlink($f);
-		   }  
+		   }
 	   }
 	}
 	logThis('end unlinking files from previous upgrade');
-	
+
 	if($version < '620')
 	{
 		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php)');
@@ -5360,7 +4503,7 @@ function unlinkUpgradeFiles($version)
 			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
 	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
 	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
-	        );		
+	        );
 		} else {
 			$dr_files = array(
 	         'modules/DocumentRevisions/DetailView.html' => 'a8356ff20cd995daffe6cb7f7b8b2340',
@@ -5369,30 +4512,30 @@ function unlinkUpgradeFiles($version)
 	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
 	        );
 		}
-	
+
 		foreach($dr_files as $rev_file=>$hash)
 		{
 			if(file_exists($rev_file))
 			{
 				//It's a match here so let's just remove the file
-				if (md5(file_get_contents($rev_file)) == $hash) 
+				if (md5(file_get_contents($rev_file)) == $hash)
 				{
 					logThis('removing file ' . $rev_file);
 					unlink($rev_file);
 				} else {
-					if(!copy($rev_file, $rev_file . '.suback.bak')) 
+					if(!copy($rev_file, $rev_file . '.suback.bak'))
 					{
 					  logThis('error making backup for file ' . $rev_file);
 					} else {
 					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
 					  unlink($rev_file);
 					}
-				} 
+				}
 			}
 		}
-		
+
 		logThis('end upgrade for DocumentRevisions classic files');
-	}	
+	}
 }
 
 if (!function_exists("getValidDBName"))
