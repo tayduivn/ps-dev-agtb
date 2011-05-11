@@ -1334,7 +1334,7 @@ EOQ;
             if ($drop)
                 $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FORIEGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FOREIGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
             break;
         case 'fulltext':
                 if($drop) {
