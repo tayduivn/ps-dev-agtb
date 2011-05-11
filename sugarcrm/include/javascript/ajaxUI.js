@@ -52,13 +52,18 @@ SUGAR.ajaxUI = {
 
     canAjaxLoadModule : function(module)
     {
-        var bannedModules = ['Emails', 'Administration', 'ModuleBuilder'];
-        // Mechanism to allow for overriding or adding to this list
-        if(typeof(SUGAR.addAjaxBannedModules) != 'undefined'){
-            bannedModules.concat(SUGAR.addAjaxBannedModules);
+        // Return false if ajax ui is completely disabled
+        if(typeof(SUGAR.config.disableAjaxUI) != 'undefined' && SUGAR.config.disableAjaxUI == true){
+            return false;
         }
-        if(typeof(SUGAR.overrideAjaxBannedModules) != 'undefined'){
-            bannedModules = SUGAR.overrideAjaxBannedModules;
+        
+        var bannedModules = SUGAR.config.stockAjaxBannedModules;
+        // Mechanism to allow for overriding or adding to this list
+        if(typeof(SUGAR.config.addAjaxBannedModules) != 'undefined'){
+            bannedModules.concat(SUGAR.config.addAjaxBannedModules);
+        }
+        if(typeof(SUGAR.config.overrideAjaxBannedModules) != 'undefined'){
+            bannedModules = SUGAR.config.overrideAjaxBannedModules;
         }
         return bannedModules.indexOf(module) == -1;
     },

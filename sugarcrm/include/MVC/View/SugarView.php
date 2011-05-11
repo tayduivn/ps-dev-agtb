@@ -772,10 +772,13 @@ EOHTML;
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
-
-            if ( isset($sugar_config['quicksearch_querydelay']) ) {
-                echo "<script>SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};</script>";
+            
+            // output necessary config js in the top of the page
+            $config_js = $this->getSugarConfigJS();
+            if(!empty($config_js)){
+                echo "<script>\n".implode("\n", $config_js)."</script>\n";
             }
+
             // cn: bug 12274 - prepare secret guid for asynchronous calls
             if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {
                 $_SESSION['asynchronous_key'] = create_guid();
@@ -1397,5 +1400,31 @@ EOHTML;
         else {
         	return "<span class='pointer'>&laquo;</span>";
         }
+    }
+
+    protected function getSugarConfigJS(){
+        global $sugar_config;
+
+        // Set all the config parameters in the JS config as necessary
+        $config_js = array();
+        // AjaxUI stock banned modules
+        $config_js[] = "SUGAR.config.stockAjaxBannedModules = ".json_encode(ajaxBannedModules()).";";
+        if ( isset($sugar_config['quicksearch_querydelay']) ) {
+            $config_js[] = "SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};";
+        }
+        if ( !isset($sugar_config['disableAjaxUI']) || $sugar_config['disableAjaxUI'] == false ) {
+            $config_js[] = "SUGAR.config.disableAjaxUI = false;";
+        }
+        else{
+            $config_js[] = "SUGAR.config.disableAjaxUI = true;";
+        }
+        if ( !empty($sugar_config['addAjaxBannedModules']) ){
+            $config_js[] = "SUGAR.config.addAjaxBannedModules = ".json_encode($sugar_config['addAjaxBannedModules']).";";
+        }
+        if ( !empty($sugar_config['overrideAjaxBannedModules']) ){
+            $config_js[] = "SUGAR.config.overrideAjaxBannedModules = ".json_encode($sugar_config['overrideAjaxBannedModules']).";";
+        }
+
+        return $config_js;
     }
 }
