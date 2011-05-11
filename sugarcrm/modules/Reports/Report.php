@@ -898,6 +898,7 @@ print "<BR>";
     
     function filtersIterate($filters, &$where_clause) {
         //$where_arr = array();
+        $where_clause .= '(';
         $operator = $filters['operator'];
         $isSubCondition = 0;
         if(count($filters) < 2) { // We only have an operator and an empty Filter Box.
@@ -922,6 +923,7 @@ print "<BR>";
                 $where_clause .= " $operator ";
             
         }
+        $where_clause .= ')';
     }
     
     function create_where()
@@ -1232,17 +1234,19 @@ print "<BR>";
         }
         $this->summary_order_by='';
         //$this->summary_order_by_arr= array();
-        if(!empty($this->report_def['summary_order_by'][0]))
-        {
-            $summary_order_by = $this->report_def['summary_order_by'][0];
-
-            $this->register_field_for_query($summary_order_by);
-
-            array_push($this->summary_order_by_arr,$this->layout_manager->widgetQuery($summary_order_by));
+        
+        // Only do this for Summation reports.
+        if ($this->report_def['report_type'] == 'summary' && empty($this->report_def['display_columns'])){
+            if(!empty($this->report_def['summary_order_by'][0]))
+            {
+                $summary_order_by = $this->report_def['summary_order_by'][0];
+                $this->register_field_for_query($summary_order_by);
+                array_push($this->summary_order_by_arr,$this->layout_manager->widgetQuery($summary_order_by));
+            }
         }
 
-
     }
+    
 
     function select_already_defined($select,$which='select_fields')
     {
@@ -1600,6 +1604,7 @@ print "<BR>";
         else
                         $query .= " WHERE ".$where_auto;
 
+
         if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  )
     {
             foreach ( $this->group_order_by_arr as $group_order_by )
@@ -1667,7 +1672,14 @@ print "<BR>";
                                 //the order list in the defined order
                                 foreach($summ_order_by as $ob){
                                     if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                    if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
+
+                                    if(empty($groupby)){
+										$groupby = substr($ob,0,strrpos($ob,"="));
+                                        // Begin Bug 43874 - Since we made changes for Bug 42448, we might get a group by such as (accounts.account_type
+										if (substr($groupby,0,1) == '(' && substr($groupby,-1) != ')')
+											$groupby = substr($groupby,1);
+                                        // End Bug 43874
+									}
                                     $ob = trim($ob);
                                     $beg_sing_pos = strpos($ob,"'");
                                     if($beg_sing_pos>0){

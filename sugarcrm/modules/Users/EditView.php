@@ -196,7 +196,7 @@ $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordset
 //BEGIN SUGARCRM flav=pro ONLY
 if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
     $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-    $sugar_smarty->assign("REGEX",$pwd_regex);     
+    $sugar_smarty->assign("REGEX",$pwd_regex);
 }
 //END SUGARCRM flav=pro ONLY
 
@@ -699,22 +699,22 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
     $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
     $hide_if_can_use_default = true;
     $mail_smtpauth_req=true;
-    
+
     if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
     {
-    	
+
     	$mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
         $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
         if($userOverrideOE != null) {
-        	
+
             $mail_smtpuser = $userOverrideOE->mail_smtpuser;
             $mail_smtppass = $userOverrideOE->mail_smtppass;
-            
-        }
-        
 
-        if(!$mail_smtpauth_req && 
-            ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser) 
+        }
+
+
+        if(!$mail_smtpauth_req &&
+            ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
             || empty($systemOutboundEmail->mail_smtppass)))
         {
             $hide_if_can_use_default = true;
@@ -723,11 +723,12 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
             $hide_if_can_use_default = false;
         }
     }
-     
+
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
     $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);
     $sugar_smarty->assign("mail_smtpuser", $mail_smtpuser);
-    $sugar_smarty->assign("mail_smtppass", $mail_smtppass);
+    $sugar_smarty->assign("mail_smtppass", "");
+    $sugar_smarty->assign("mail_haspass", empty($systemOutboundEmail->mail_smtppass)?0:1);
     $sugar_smarty->assign("mail_smtpauth_req", $mail_smtpauth_req);
     $sugar_smarty->assign('MAIL_SMTPPORT',$mail_smtpport);
     $sugar_smarty->assign('MAIL_SMTPSSL',$mail_smtpssl);

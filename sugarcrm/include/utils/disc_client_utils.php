@@ -90,6 +90,7 @@ function convert_disc_client(){
 	        	$password = $_REQUEST['password'];
 	        }
 	    }
+
     }
     else{
     	//this is an offline client install
@@ -124,7 +125,7 @@ function convert_disc_client(){
 	        }
 	    }
     }//end check for offline client install
-    
+
     if(!isset($_SESSION['is_oc_conversion']) || $_SESSION['is_oc_conversion'] == false){
         $password = md5($password);    
     }

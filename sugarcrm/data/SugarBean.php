@@ -2169,6 +2169,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'datetime':
                 case 'datetimecombo':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$this->$field) ) {
                         // This appears to be formatted in user date/time
                         $this->$field = $timedate->to_db($this->$field);
@@ -2177,6 +2181,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'date':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_date($this->$field, false);
@@ -2185,6 +2193,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'time':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_time($timedate->to_display_date(gmdate('Y-m-d')).' '.$this->$field);

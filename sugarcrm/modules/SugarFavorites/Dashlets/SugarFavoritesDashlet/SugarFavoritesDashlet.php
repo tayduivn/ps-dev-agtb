@@ -55,33 +55,6 @@ class SugarFavoritesDashlet extends DashletGeneric
     public function process() 
     {
         $this->lvs->quickViewLinks = false;
-
-        //create query to get the module types for this user favorites
-        global $current_user;
-        $lvsParams = array();
-        $module_type_query = "select distinct module from sugarfavorites where sugarfavorites.assigned_user_id = '".$current_user->id."' and sugarfavorites.deleted = 0";
-        $result = $GLOBALS['db']->query($module_type_query);
-        
-        
-        $lvsParams['custom_from'] = $custom_where  = '';
-        //itirate through each retrieved type
-        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-        	$module = strtolower($row['module']);
-        	//fill in the joins for each retrieved type
-	        $lvsParams['custom_from'] .= " LEFT JOIN $module on $module.id = sugarfavorites.record_id ";
-	        //add the deleted clause
-	        if(empty($custom_where)){
-	        	$custom_where .= " $module.deleted =0 ";
-	        }else {
-	        	$custom_where .=  " OR $module.deleted =0 ";
-	        }
-        }
-        
-        //finalize the where deleted clause
-        if(!empty($custom_where)){
-        	$lvsParams['custom_where'] = " AND ($custom_where) ";
-        }
-        //pass in query params for processing	
-        parent::process($lvsParams);    
+        parent::process();
     }
 }

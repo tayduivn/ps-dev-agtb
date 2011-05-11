@@ -325,4 +325,10 @@ function hashToFile($hash){
 		return false;
 }
 	
+
+function cleanFileName($name)
+{
+    return preg_replace('/[^\w-._]+/i', '', $name);
+}
+
 ?>
