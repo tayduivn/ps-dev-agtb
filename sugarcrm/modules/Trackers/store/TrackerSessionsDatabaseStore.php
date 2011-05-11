@@ -53,6 +53,7 @@ class TrackerSessionsDatabaseStore implements Store {
 
        if($db->supports("auto_increment_sequence")) {
           $values[] = $db->getAutoIncrementSQL($monitor->table_name,'id');
+          $columns[] = 'id';
        }
        if ( !isset($monitor->round_trips) ) $monitor->round_trips = 0;
        if ( !isset($monitor->active) ) $monitor->active = 1;
