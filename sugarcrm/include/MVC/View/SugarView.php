@@ -862,7 +862,7 @@ EOHTML;
 				   $href = $link;
 				   if(substr($link, 0, 11) == "javascript:") {
                        $onclick = " onclick=\"".substr($link,11)."\"";
-                       $href = "javascript:void();";
+                       $href = "javascript:void(0)";
                    } else {
                    		$onclick = "";
                    	}

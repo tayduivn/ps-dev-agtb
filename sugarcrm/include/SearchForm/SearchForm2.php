@@ -236,7 +236,7 @@ require_once('include/EditView/EditView2.php');
 			$header_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormHeader', 'include/SearchForm/tpls/header.tpl');
             //pass in info to render the select dropdown below the form
             $footer_txt = $this->th->displayTemplate($this->seed->module_dir, 'SearchFormFooter', 'include/SearchForm/tpls/footer.tpl');
-			$return_txt = $header_txt;//.$footer_txt;
+			$return_txt = $header_txt.$footer_txt;
 		}
 		return $return_txt;
  	}
