@@ -825,12 +825,11 @@ function showFullName() {
 	static $showFullName = null;
 
 	if (is_null($showFullName)) {
-		$sysPref = (isset($sugar_config['use_real_names']) && $sugar_config['use_real_names'] == true) ? true : false;
+		$sysPref = !empty($sugar_config['use_real_names']);
 		$userPref = (is_object($current_user)) ? $current_user->getPreference('use_real_names') : null;
 
 		if($userPref != null) {
-			$bool = ($userPref == 'on') ? true : false;
-			$showFullName = $bool;
+			$showFullName = ($userPref == 'on');
 		} else {
 			$showFullName = $sysPref;
 		}
