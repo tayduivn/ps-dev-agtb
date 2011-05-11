@@ -9,6 +9,7 @@ class SugarSpriteBuilder {
 	var $silentRun = false;
 	var $debug = false;
 	var $fileName = 'sprites';
+	var $cssMinify = true;
 
 	// class supported image types
 	var $supportedTypeMap = array(
