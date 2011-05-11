@@ -35,7 +35,7 @@
 <tr>
     <td scope="row" width="20%">{$property.label}:<span class="error" id="resized_{$name}_img" style="display:none"> {$MOD.LBL_IMG_RESIZED}</span>{sugar_help text=$property.info_label} </td>
     <td colspan="3">
-        <img src='{$property.path}' id='{$name}_img' style='margin-bottom: 10px;'>
+        <<!--ALTFIXED-->img src='{$property.path}' id='{$name}_img' style='margin-bottom: 10px;'>
         <input type='hidden' id='{$name}' name='{$name}' value='{$property.value}'>
         <script type='text/javascript'>
             {literal}

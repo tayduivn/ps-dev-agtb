@@ -37,10 +37,10 @@
 </div>
 
 <div id="header">
-    <img id="header_sunset" src="themes/Sunset/images/header_sunset.gif"/>
+    <<!--ALTFIXED-->img id="header_sunset" src="themes/Sunset/images/header_sunset.gif"/>
     {include file="_companyLogo.tpl" theme_template=true}
     <div class="clear"></div>
-    <img id="header_sunset_bottom" src="themes/Sunset/images/header_sunset_bottom.gif"/>
+    <<!--ALTFIXED-->img id="header_sunset_bottom" src="themes/Sunset/images/header_sunset_bottom.gif"/>
     <div class="clear"></div>
     {if !$AUTHENTICATED}
     <br /><br />

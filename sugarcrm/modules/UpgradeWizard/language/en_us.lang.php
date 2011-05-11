@@ -78,6 +78,7 @@ $mod_strings = array(
 	'LBL_PATCHUPGRADES' => 'Patch Upgrades' /*for 508 compliance fix*/,
 	'LBL_THEMES' => 'Themes' /*for 508 compliance fix*/,
 	'LBL_WORKFLOW' => 'Workflow' /*for 508 compliance fix*/,
+	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
 ),
 	'LBL_BUTTON_BACK'							=> '< Back',
 	'LBL_BUTTON_CANCEL'							=> 'Cancel',

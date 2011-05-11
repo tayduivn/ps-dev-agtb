@@ -399,7 +399,7 @@ EditView_tabs.on('contentReady', function(e){
                                      {*<span id="ext-gen63" class="x-panel-header-text">
                                         Requirements
                                         <span id="Filter.1_help" onmouseout="return nd();" onmouseover="return overlib(help(), FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">
-                                            <img src="themes/default/images/help.gif"/>
+                                            <<!--ALTFIXED-->img src="themes/default/images/help.gif" alt="{$mod_strings.LBL_HELP}"/>
                                         </span>
                                     </span>*}
                                 </td>

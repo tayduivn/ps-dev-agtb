@@ -50,7 +50,7 @@ function set_focus() {
 <br>
 <br>
 <div align='center'>
-<!-- <img src="include/images/logo_sugarportal.gif" width="300" height="25" alt="Sugar"><br> -->
+<!-- <<!--ALTFIXED-->img src="include/images/logo_sugarportal.gif" width="300" height="25" alt="Sugar"><br> -->
 <table border="0" cellspacing="0" cellpadding="0" align="center">
 <tr>
 <td valign="top">

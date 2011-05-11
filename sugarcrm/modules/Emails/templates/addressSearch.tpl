@@ -32,7 +32,7 @@
 			<td scope="row" nowrap="NOWRAP">
 			     <div id="rollover">
 			     {$mod_strings.LBL_SEARCH_FOR}:
-			         <a href="#" class="rollover"><img border="0" src="themes/default/images/helpInline.gif">
+			         <a href="#" class="rollover"><<!--ALTFIXED-->img border="0" alt="{$mod_strings.LBL_HELP}" src="themes/default/images/helpInline.gif">
 	                        <div style="position:absolute;top:-2px"><span class="rollover">{$mod_strings.LBL_ADDRESS_BOOK_SEARCH_HELP}</span></div>
 	                 </a>
 	                          

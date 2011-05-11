@@ -374,4 +374,8 @@ $mod_strings = array (
 	'LBL_GMAIL_LOGO' => 'Gmail' /*for 508 compliance fix*/,
 	'LBL_YAHOO_MAIL' => 'Yahoo' /*for 508 compliance fix*/,
 	'LBL_EXCHANGE_LOGO' => 'Exchange' /*for 508 compliance fix*/,
+	'LBL_WAIT' => 'Wait' /*for 508 compliance fix*/,
+	'LBL_CHECKEMAIL' => 'Check Email' /*for 508 compliance fix*/,
+	'LBL_COMPOSEEMAIL' => 'Compose Email' /*for 508 compliance fix*/,
+	'LBL_EMAILSETTINGS' => 'Email Settings' /*for 508 compliance fix*/,
 );

@@ -166,7 +166,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 												{if $button.alt}
 													{$button.alt}
 												{else}
-													<img border="0" src='{$button.img}'>			
+													<<!--ALTFIXED-->img border="0" src='{$button.img}'>			
 												{/if}
 												</a>
 											</td>

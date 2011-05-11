@@ -1788,6 +1788,8 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_MY_AREA_LINKS' => 'My area links: ', /*for 508 compliance fix*/,
+  'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
   'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
   'LBL_ADVANCEDSEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
   'LBL_MOREDETAIL' => 'More Detail' /*for 508 compliance fix*/,

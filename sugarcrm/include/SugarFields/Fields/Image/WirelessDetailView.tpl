@@ -27,7 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<img 
+<<!--ALTFIXED-->img 
 	id="img_{$vardef.name}" 
 	name="img_{$vardef.name}" 
 	{if empty($vardef.value)}
