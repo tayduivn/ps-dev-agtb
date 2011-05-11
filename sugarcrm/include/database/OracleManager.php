@@ -969,7 +969,7 @@ class OracleManager extends DBManager
              */
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
-                switch(strtoupper($action)) {
+                switch($action) {
                 case 'DROP':
                     $addColumns[] = $def['name'];
                     break;
@@ -977,6 +977,11 @@ class OracleManager extends DBManager
                 case 'MODIFY':
 					$colArray = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
 					$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
+    				$type = $this->getColumnType($colArray['colType']);
+    				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
+    				    // Bug 42467: prevent Oracle from modifying *LOB fields
+    				    continue 2;
+    				}
 					if ( !$ignoreRequired
 							&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
 					  	$colArray['required'] = '';
@@ -985,15 +990,19 @@ class OracleManager extends DBManager
                 }
 			}
         	$columns = "(" . implode(",", $addColumns) . ")";
-        }
-        else {
-            switch(strtoupper($action)) {
+        } else {
+            switch($action) {
             case 'DROP':
                 $columns = $fieldDefs['name'];
                 break;
             case 'ADD':
             case 'MODIFY':
 				$colArray = $this->oneColumnSQLRep($fieldDefs, $ignoreRequired, $tablename, true);
+				$type = $this->getColumnType($colArray['colType']);
+				if($action == "MODIFY" && ($type == 'blob' || $type == 'clob')) {
+				    // Bug 42467: prevent Oracle from modifying *LOB fields
+				    return "";
+				}
 				$isNullable = $this->_isNullableDb($tablename,$colArray['name']);
 				if ( !$ignoreRequired
 						&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )

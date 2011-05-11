@@ -57,7 +57,8 @@ class TemplateTextArea extends TemplateText{
 		return nl2br($this->bean->$name);
 	}
 
-	function get_field_def(){
+	function get_field_def()
+	{
 		$def = parent::get_field_def();
 		$def['studio'] = 'visible';
 
@@ -74,28 +75,10 @@ class TemplateTextArea extends TemplateText{
 		return $def;
 	}
 
-	function get_db_default(){
+	function get_db_default()
+	{
 	    // TEXT columns in MySQL cannot have a DEFAULT value - let the Bean handle it on save
         return null; // Bug 16612 - null so that the get_db_default() routine in TemplateField doesn't try to set DEFAULT
     }
 
-     function get_db_modify_alter_table($table){
-		//BEGIN SUGARCRM flav=ent ONLY
-        //CLOB fields cannot have thier type in modify statements under oracle
-        if ($GLOBALS['db']->dbType == "oci8")
-        {
-            $out = $this->get_db_default(true) . $this->get_db_required(true);
-            if (!empty($out))
-                return "ALTER TABLE $table MODIFY $this->name $out";
-            else
-                return "";
-        }
-        //END SUGARCRM flav=ent ONLY
-        return parent::get_db_modify_alter_table($table);
-	}
-
-
 }
-
-
-?>

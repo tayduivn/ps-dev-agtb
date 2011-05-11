@@ -3288,11 +3288,9 @@ function save_relationship_changes($is_update, $exclude=array())
                             $ret_array['select'] .= ", '                                    '  " . $join['rel_key'] . ' ';
                         }
                         $count_used =0;
-//                        if($this->db->dbType != 'mysql') {//bug 26801, these codes are just used to duplicate rel_key in the select sql, or it will throw error in MSSQL and Oracle.
                             foreach($used_join_key as $used_key) {
                                if($used_key == $join['rel_key']) $count_used++;
                             }
-//                        }
                         if($count_used <= 1) {//27416, the $ret_array['secondary_select'] should always generate, regardless the dbtype
                             $ret_array['secondary_select'] .= ', ' . $params['join_table_link_alias'].'.'. $join['rel_key'] .' ' . $join['rel_key'];
                         }
@@ -3859,7 +3857,8 @@ function save_relationship_changes($is_update, $exclude=array())
                 while($row)
                 {
                     $function_fields = array();
-                    if(($index < $row_offset + $max_per_page || $max_per_page == -99)/* or ($db->dbType != 'mysql') */)
+                    // FIXME: /* or ($db->dbType != 'mysql') */
+                    if(($index < $row_offset + $max_per_page || $max_per_page == -99))
                     {
                         if ($processing_collection)
                         {
