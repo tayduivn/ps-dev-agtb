@@ -318,11 +318,11 @@ display: inline-block;
 				fclose($fh);
 
 				/* save metadata */
-				$meta_header = "";
-				if(file_exists("$outputDir/$metaFileName"))
-					$meta_header = "<?php";
+				(file_exists("$outputDir/$metaFileName")) ? $add_php_tag = false : $add_php_tag = true;
 				$fh = fopen("$outputDir/$metaFileName", $fileMode);
-				fwrite($fh, "\n$meta_header/* sprites metadata - $name */\n");
+				if($add_php_tag)
+					fwrite($fh, '<?php');
+				fwrite($fh, "\n/* sprites metadata - $name */\n");
 				fwrite($fh, $metadata."\n");
 				fclose($fh);
 
