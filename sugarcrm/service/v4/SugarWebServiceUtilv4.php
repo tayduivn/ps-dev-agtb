@@ -675,6 +675,10 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
     	    require_once('modules/Quotes/Layouts.php');
     	    $nameValueArray['avail_quotes_layouts'] = get_layouts();
 	    }
+
+        require('sugar_version.php');
+        $nameValueArray['sugar_flavor'] = $GLOBALS['sugar_flavor'];
+        $nameValueArray['sugar_version'] = $GLOBALS['sugar_version'];
 	}
 	//END SUGARCRM flav=pro ONLY
 }

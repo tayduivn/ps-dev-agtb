@@ -200,7 +200,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 
 	//Special case for dates
 	if (field.className && (field.className == "DateTimeCombo" || field.className == "Date")){
-		return SUGAR.util.DateUtils.parse(field.value);
+		return SUGAR.util.DateUtils.parse(field.value, "user");
 	}
 
 	//For DetailViews where value is enclosed in a span tag

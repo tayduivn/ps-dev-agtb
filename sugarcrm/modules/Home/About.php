@@ -37,9 +37,9 @@ list-style-type: square;
 <span>
 <div class="about" style="padding: 10px 15px 20px 15px;">
 <p>
-<!-- //BEGIN SUGARCRM flav=pro && flav!=ent ONLY -->
+<!-- //BEGIN SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
 <IMG src="include/images/sugar_md.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=pro && flav!=ent ONLY -->
+<!-- //END SUGARCRM flav=pro && flav!=ent && flav!=corp && flav!=ult ONLY -->
 <!-- //BEGIN SUGARCRM flav=sales ONLY
 <IMG src="include/images/sugar_md_sales.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=sales ONLY
@@ -55,9 +55,9 @@ list-style-type: square;
 <!-- //BEGIN SUGARCRM flav=dce ONLY
 <IMG src="include/images/sugar_md_dce.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=dce ONLY
-<!-- //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
+<!-- //BEGIN SUGARCRM flav=ent && flav!=dev && flav!=ult ONLY
 <IMG src="include/images/sugar_md_ent.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=ent && flav!=dev ONLY -->
+<!-- //END SUGARCRM flav=ent && flav!=dev && flav!=ult ONLY -->
 <!-- //BEGIN SUGARCRM flav=corp ONLY
 <IMG src="include/images/sugar_md_corp.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!-- //END SUGARCRM flav=corp ONLY
@@ -162,6 +162,14 @@ $theProductName = "Sugar Professional";
 // Product Name for Enterprise edition.
 $theProductName = "Sugar Enterprise";
 //END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=corp ONLY
+// Product Name for Corp edition.
+$theProductName = "Sugar Corporate";
+//END SUGARCRM flav=corp ONLY
+//BEGIN SUGARCRM flav=ult ONLY
+// Product Name for Ultimate edition.
+$theProductName = "Sugar Ultimate";
+//END SUGARCRM flav=ult ONLY
 echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_strings['LBL_ARE'];
 ?>
 <a href="http://www.sugarcrm.com/crm/open-source/trademark-information.html"
