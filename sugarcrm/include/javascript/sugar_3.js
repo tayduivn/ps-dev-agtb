@@ -3075,7 +3075,7 @@ SUGAR.savedViews = function() {
 				// search and redirect back
 				document.search_form.action.value = 'index';
 			}
-			document.search_form.submit();
+			SUGAR.ajaxUI.submitForm(document.search_form);
 		},
 		shortcut_select: function(selectBox, module) {
 			//build url
