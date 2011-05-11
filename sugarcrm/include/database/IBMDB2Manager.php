@@ -131,8 +131,8 @@ class IBMDB2Manager  extends DBManager
         "inline_keys" => true,
         //"case_sensitive" => false, // DB2 is case insensitive by default
         "fulltext" => true, // DB2 supports this though it needs to be initialized
-        //"auto_increment_sequence" => false, // DB2 supports the autoincrement attribute on a column and does it by default for PRIMARY keys
-        //"limit_subquery" => false,
+        "auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
+        "limit_subquery" => true,
     );
 
     /**+
@@ -713,13 +713,19 @@ class IBMDB2Manager  extends DBManager
        return $string;
    }
 
-    /**
-     * (non-PHPdoc)
+
+    /**+
      * @see DBManager::fromConvert()
      */
     public function fromConvert($string, $type)
     {
-        return $string;
+        // YYYY-MM-DD HH:MM:SS
+        switch($type) {
+            case 'date': return substr($string, 0, 10);
+            case 'time': return substr($string, 11,8);
+            case 'datetime': return substr($string, 0,19);
+		}
+		return $string;
     }
 
     /**~
@@ -856,27 +862,9 @@ class IBMDB2Manager  extends DBManager
        return $columns;
     }
 
-    /**-
-     * @see DBManager::setAutoIncrement()
-     */
- 	protected function setAutoIncrement($table, $field_name)
-    {
-		return ""; // TODO implement sequence generation
-	}
 
-   	/**
-     * Sets the next auto-increment value of a column to a specific value.
-     *
-     * @param  string $table tablename
-     * @param  string $field_name
-     */
-    public function setAutoIncrementStart($table, $field_name, $start_value)
-    {
-        $start_value = (int)$start_value;
-        return $this->query( "ALTER TABLE $table AUTO_INCREMENT = $start_value;");
-    }
 
-    /**
+    /**+
      * Returns the next value for an auto increment
      *
      * @param  string $table tablename
@@ -885,12 +873,96 @@ class IBMDB2Manager  extends DBManager
      */
     public function getAutoIncrement($table, $field_name)
     {
-        $result = $this->query("SHOW TABLE STATUS LIKE '$table'");
-        $row = $this->fetchByAssoc($result);
-        if (!empty($row['Auto_increment']))
-            return $row['Auto_increment'];
+        $seqName = $this->_getSequenceName($table, $field_name, true);
+        // NOTE that we are not changing the sequence nor can we garantuee that this will be the next value
+        $currval = $this->getOne("SELECT PREVVAL FOR $seqName from SYSIBM.SYSDUMMY1");
+        if (!empty($currval))
+            return $currval + 1 ;
+        else
+            return "";
+    }
 
-    	return "";
+    /**+
+     * Returns the sql for the next value in a sequence
+     *
+     * @param  string $table tablename
+     * @param  string $field_name
+     * @return string
+     */
+    public function getAutoIncrementSQL($table, $field_name)
+    {
+        $seqName = $this->_getSequenceName($table, $field_name, true);
+        return "NEXTVAL FOR $seqName";
+    }
+    
+
+    /**~
+     * Generate an DB2 SEQUENCE name similar to Oracle. 
+     *
+     * @param string $table
+     * @param string $field_name
+     * @param boolean $upper_case
+     * @return string
+     */
+    protected function _getSequenceName($table, $field_name, $upper_case = true)
+    {
+        $sequence_name = $this->getValidDBName($table. '_' .$field_name . '_seq', true, 'index');
+        if($upper_case)
+            $sequence_name = strtoupper($sequence_name);
+        return $sequence_name;
+    }
+
+    /**+
+     * @see DBHelper::setAutoIncrement()
+     */
+    protected function setAutoIncrement($table, $field_name)
+    {
+      	$this->deleteAutoIncrement($table, $field_name);
+        $seqName = $this->_getSequenceName($table, $field_name, true);
+      	$this->query("CREATE SEQUENCE $seqName START WITH 0 INCREMENT BY 1 NO MAXVALUE NO CYCLE");
+        return "";
+    }
+
+    /**+
+     * Sets the next auto-increment value of a column to a specific value.
+     *
+     * @param  string $table tablename
+     * @param  string $field_name
+     */
+    public function setAutoIncrementStart($table, $field_name, $start_value)
+    {
+        $sequence_name = $this->_getSequenceName($table, $field_name, true);
+        if ($this->_findSequence($sequence_name)) {
+            $this->query("ALTER SEQUENCE $sequence_name RESTART WITH $start_value");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+	/**+
+     * @see DBHelper::deleteAutoIncrement()
+     */
+    public function deleteAutoIncrement($table, $field_name)
+    {
+	  	$sequence_name = $this->_getSequenceName($table, $field_name, true);
+	  	if ($this->_findSequence($sequence_name)) {
+            $this->query('DROP SEQUENCE ' .$sequence_name);
+        }
+    }
+
+    /**+
+     * Returns true if the sequence name given is found
+     *
+     * @param  string $name
+     * @return bool   true if the sequence is found, false otherwise
+     * TODO: check if some caching here makes sense, keeping in mind bug 43148
+     */
+    protected function _findSequence($name)
+    {
+        $uname = strtoupper($name);
+        $row = $this->fetchOne("SELECT SEQNAME FROM SYSCAT.SEQUENCES WHERE SEQNAME = '$uname'");
+        return !empty($row);
     }
 
    	/**+
@@ -1009,7 +1081,7 @@ EOQ;
             $fieldDef['len'] = '11';
     }
 
-    /**
+    /**+
      * Generates SQL for dropping a table.
      *
      * @param  string $name table name
@@ -1017,7 +1089,7 @@ EOQ;
      */
 	public function dropTableNameSQL($name)
     {
-		return "DROP TABLE IF EXISTS ".$name;
+        return parent::dropTableNameSQL(strtoupper($name));
 	}
 
     public function dropIndexes($tablename, $indexes, $execute = true)
