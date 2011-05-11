@@ -258,7 +258,7 @@ class SugarView
                 "LABEL"       => $menu_item[1],
                 "MODULE_NAME" => $menu_item[2],
                 "IMAGE"       => $themeObject
-                    ->getImage/*ALTFIXED*/($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                    ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
                 );
         $ss->assign("SHORTCUT_MENU",$shortcut_menu);
 
@@ -376,7 +376,7 @@ class SugarView
             foreach ( $history as $key => $row ) {
                 $history[$key]['item_summary_short'] = getTrackerSubstring($row['item_summary']);
                 $history[$key]['image'] = SugarThemeRegistry::current()
-                    ->getImage/*ALTFIXED*/($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',$row['item_summary']);
+                    ->getImage($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',$row['item_summary']);
             }
             $ss->assign("recentRecords",$history);
         }
@@ -551,7 +551,7 @@ class SugarView
                         "LABEL"       => $menu_item[1],
                         "MODULE_NAME" => $menu_item[2],
                         "IMAGE"       => $themeObject
-                        ->getImage/*ALTFIXED*/($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                        ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
                         );
                 }
             }
@@ -821,10 +821,8 @@ EOHTML;
                 $imageURL = SugarThemeRegistry::current()->getImageURL($key.'.gif');
 				$bottomLinksStr .= "<a href=\"{$href}\"";
 				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
-				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'></a>";
-				$bottomLinksStr .= " <a href=\"{$href}\" class=\"bottomLink\"";
-				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
-				$bottomLinksStr .= ">".$text."</a>";
+				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'>";
+				$bottomLinksStr .= " ".$text."</a>";
 			}
 		}
 		$ss->assign("BOTTOMLINKS",$bottomLinksStr);
@@ -1170,8 +1168,7 @@ EOHTML;
             $theTitle .= <<<EOHTML
 &nbsp;
 <a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
-<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'>
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;

@@ -38,12 +38,12 @@ function template_groups_chooser(&$args) {
   	if (!empty($args['display'])) {
   		$table_style = "display: ".$args['display']."\"";
   	}
-	$uparraow_big = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('uparrow_big','border="0" style="margin-bottom: 1px;"'
+	$uparraow_big = SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;"'
 ,null,null,'.gif',$mod_strings['LBL_SORT']);
-	$downarrow_big = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('downarrow_big','border="0" style="margin-top: 1px;" ',null,null,'.gif',$mod_strings['LBL_SORT']);
-	$leftarrow_big = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('leftarrow_big','border="0" style="margin-right: 1px;"'
+	$downarrow_big = SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;" ',null,null,'.gif',$mod_strings['LBL_SORT']);
+	$leftarrow_big = SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;"'
 ,null,null,'.gif',$mod_strings['LBL_SORT']);
-	$rightarrow_big = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('rightarrow_big','border="0" style="margin-left: 1px;"',null,null,'.gif',$mod_strings['LBL_SORT']);
+	$rightarrow_big = SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;"',null,null,'.gif',$mod_strings['LBL_SORT']);
 
 	
 	$smarty = new Sugar_Smarty();

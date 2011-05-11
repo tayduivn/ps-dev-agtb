@@ -132,8 +132,8 @@ $output_array = $action_object->build_field_selector($_REQUEST['field_num'], $_R
 		}
 		
 */
-	//$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage/*ALTFIXED*/('advanced_search','border="0"',null,null,'.gif',$app_strings['LNK_ADVANCED_SEARCH']));
-	//$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage/*ALTFIXED*/('basic_search','border="0"',null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
+	//$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','border="0"',null,null,'.gif',$app_strings['LNK_ADVANCED_SEARCH']));
+	//$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','border="0"',null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
 		
 /*
 $form->assign("MODULE_NAME", $currentModule);

@@ -89,7 +89,7 @@ class Dashlet
         if($this->isConfigurable) {
             $additionalTitle = '<td nowrap width="1%" style="padding-right: 0px;"><div class="dashletToolSet"><a href="javascript:void(0)" onclick="SUGAR.mySugar.configureDashlet(\'' 
                                . $this->id . '\'); return false;">'    
-                               . SugarThemeRegistry::current()->getImage/*ALTFIXED*/('dashlet-header-edit','title="' . translate('LBL_DASHLET_EDIT', 'Home') . '" border="0"  align="absmiddle"', null,null,'.gif',translate('LBL_DASHLET_EDIT', 'Home')).'</a>' 
+                               . SugarThemeRegistry::current()->getImage('dashlet-header-edit','title="' . translate('LBL_DASHLET_EDIT', 'Home') . '" border="0"  align="absmiddle"', null,null,'.gif',translate('LBL_DASHLET_EDIT', 'Home')).'</a>'
                                . '';
         }
         else {
@@ -110,7 +110,7 @@ class Dashlet
         if($this->isRefreshable) {
             $additionalTitle .= '<a href="javascript:void(0)" onclick="SUGAR.mySugar.retrieveDashlet(\'' 
                                 . $this->id . '\'); return false;">'
-                                . SugarThemeRegistry::current()->getImage/*ALTFIXED*/('dashlet-header-refresh','border="0" align="absmiddle" title="' . translate('LBL_DASHLET_REFRESH', 'Home') . '"',null,null,'.gif',translate('LBL_DASHLET_REFRESH', 'Home'))
+                                . SugarThemeRegistry::current()->getImage('dashlet-header-refresh','border="0" align="absmiddle" title="' . translate('LBL_DASHLET_REFRESH', 'Home') . '"',null,null,'.gif',translate('LBL_DASHLET_REFRESH', 'Home'))
                                 . '</a>';
         }
         
@@ -131,7 +131,7 @@ class Dashlet
 		}
     	$additionalTitle = '<a href="javascript:void(0)" onclick="SUGAR.mySugar.deleteDashlet(\'' 
                             . $this->id . '\'); return false;">'
-                            . SugarThemeRegistry::current()->getImage/*ALTFIXED*/('dashlet-header-close','border="0" align="absmiddle" title="' . translate('LBL_DASHLET_DELETE', 'Home') . '"',null,null,'.gif',translate('LBL_DASHLET_DELETE', 'Home'))
+                            . SugarThemeRegistry::current()->getImage('dashlet-header-close','border="0" align="absmiddle" title="' . translate('LBL_DASHLET_DELETE', 'Home') . '"',null,null,'.gif',translate('LBL_DASHLET_DELETE', 'Home'))
                             . '</a></div></td></tr></table>';
 		return $additionalTitle;                                	
     }

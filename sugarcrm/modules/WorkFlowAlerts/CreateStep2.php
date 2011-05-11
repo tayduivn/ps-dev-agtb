@@ -359,8 +359,8 @@ if(		$focus->user_type=="rel_user_custom"){
 
 	$adv_related_array = $ProcessView->get_adv_related("AlertsCreateStep1", $focus->user_type, "alert");
 
-		$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage/*ALTFIXED*/('advanced_search','  border="0"',null,null,'.gif',$app_strings['LNK_ADVANCED_SEARCH']));
-		$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage/*ALTFIXED*/('basic_search','  border="0"',null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
+		$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','  border="0"',null,null,'.gif',$app_strings['LNK_ADVANCED_SEARCH']));
+		$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','  border="0"',null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
 		
 	if($adv_related_array!=""){
 		$form->assign("ADV_RELATED_BLOCK", $adv_related_array['block']);

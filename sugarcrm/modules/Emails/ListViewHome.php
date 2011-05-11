@@ -49,7 +49,7 @@ $limit			= 10;
 ///////////////////////////////////////////////////////////////////////////////
 echo $focus->rolloverStyle;
 $ListView->initNewXTemplate('modules/Emails/ListViewHome.html',$current_mod_strings);
-$ListView->xTemplateAssign('ATTACHMENT_HEADER', SugarThemeRegistry::current()->getImage/*ALTFIXED*/('attachment',"","","",'.gif',$mod_strings['LBL_ATTACHMENT']));
+$ListView->xTemplateAssign('ATTACHMENT_HEADER', SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',$mod_strings['LBL_ATTACHMENT']));
 $ListView->setHeaderTitle($display_title);
 $ListView->setQuery($where, '', 'date_sent, date_entered DESC', "EMAIL");
 $ListView->setAdditionalDetails();

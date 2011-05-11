@@ -554,7 +554,7 @@ if($is_current_admin && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSI
 	if(!empty($_REQUEST['record'])){
 		$record = 	$_REQUEST['record'];
 	}
-	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
+	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
 }
 
 if(!empty($sugar_config['default_user_name']) &&

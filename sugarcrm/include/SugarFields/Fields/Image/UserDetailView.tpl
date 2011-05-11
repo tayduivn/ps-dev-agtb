@@ -24,7 +24,7 @@
 <a href='{$displayParams.link}'>
 {/if}
 
-<<!--ALTFIXED-->img 
+<img
 	id="img_picture" 
 	name="img_picture" 
 	{if empty($picture_value)}

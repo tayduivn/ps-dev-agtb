@@ -39,12 +39,12 @@
 </div>
 
 <div id="header">
-    <<!--ALTFIXED-->img id="header_left_bg" src="themes/GoldenGate/images/header_left_bg.jpg"/>
-    <<!--ALTFIXED-->img id="header_right_bg" src="themes/GoldenGate/images/header_right_bg.jpg"/>
+    <img id="header_left_bg" src="themes/GoldenGate/images/header_left_bg.jpg"/>
+    <img id="header_right_bg" src="themes/GoldenGate/images/header_right_bg.jpg"/>
     <div class="clear"></div>
     {include file="_companyLogo.tpl" theme_template=true}
     <div class="clear"></div>
-    <<!--ALTFIXED-->img id="header_right_bottom_bg" src="themes/GoldenGate/images/header_right_bottom_bg.jpg"/>
+    <img id="header_right_bottom_bg" src="themes/GoldenGate/images/header_right_bottom_bg.jpg"/>
     <div class="clear"></div>
     {if !$AUTHENTICATED}
     <br /><br />

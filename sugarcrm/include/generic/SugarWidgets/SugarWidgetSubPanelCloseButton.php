@@ -44,7 +44,7 @@ class SugarWidgetSubPanelCloseButton extends SugarWidgetField
 				break;
 		}
         
-		$html = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$module_name\",\"$record_id\",\"$new_status\",\"subpanel\",\"{$layout_def['subpanel_id']}\");' >".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("close_inline","border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE',$module_name))."</a>";
+		$html = "<a onclick='SUGAR.util.closeActivityPanel.show(\"$module_name\",\"$record_id\",\"$new_status\",\"subpanel\",\"{$layout_def['subpanel_id']}\");' >".SugarThemeRegistry::current()->getImage("close_inline","border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE',$module_name))."</a>";
 		return $html;
 
 	}

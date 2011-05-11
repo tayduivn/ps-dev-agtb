@@ -247,19 +247,19 @@ function define_image($num, $total)
     //if health number is equal to total number then all checks failed, set red image
     if($num == $total){
         //red
-        return SugarThemeRegistry::current()->getImage/*ALTFIXED*/('red_camp', "align='absmiddle'", null, null, ".gif", $mod_strings['LBL_INVALID']);
+        return SugarThemeRegistry::current()->getImage('red_camp', "align='absmiddle'", null, null, ".gif", $mod_strings['LBL_INVALID']);
 
 
     }elseif($num == 0){
         //if health number is zero, then all checks passed, set green image
         //green
-       return SugarThemeRegistry::current()->getImage/*ALTFIXED*/('green_camp', "align='absmiddle'", null, null, ".gif", $mod_strings['LBL_VALID']);
+       return SugarThemeRegistry::current()->getImage('green_camp', "align='absmiddle'", null, null, ".gif", $mod_strings['LBL_VALID']);
 
 
     }else{
         //if health number is between total and num params, then some checks failed but not all, set yellow image
         //yellow
-        return SugarThemeRegistry::current()->getImage/*ALTFIXED*/('yellow_camp', "align='absmiddle'", null, null, ".gif", $mod_strings['LBL_ALERT']);
+        return SugarThemeRegistry::current()->getImage('yellow_camp', "align='absmiddle'", null, null, ".gif", $mod_strings['LBL_ALERT']);
 
 
     }

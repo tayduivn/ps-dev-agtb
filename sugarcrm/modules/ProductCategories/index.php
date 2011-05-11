@@ -71,11 +71,11 @@ $button .= "</form>\n";
 
 $ListView = new ListView();
 if((is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Products')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("EditLayout","border='0' align='bottom'"
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'"
 ,null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
 }
 $ListView->initNewXTemplate( 'modules/ProductCategories/ListView.html',$mod_strings);
-$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage/*ALTFIXED*/('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
+$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
 $ListView->setHeaderTitle($header_text.$button);
 
 $ListView->show_export_button = false;
@@ -114,7 +114,7 @@ if ($is_edit) {
     */
     //END SUGARCRM flav=pro ONLY
     if((is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Products')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&edit=true&from_action=EditView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("EditLayout","border='0' alt='Edit Layout' align='bottom'"
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&edit=true&from_action=EditView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'"
 ,null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
 	}
     echo get_form_header($mod_strings['LBL_PRODUCTCATEGORY']." ".$focus->name . '&nbsp;' . $header_text,$edit_button , false);

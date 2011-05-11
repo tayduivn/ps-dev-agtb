@@ -2266,7 +2266,7 @@ function convert_id($string)
  */
 function get_image($image,$other_attributes,$width="",$height="",$ext='.gif',$alt)
 {
-    return SugarThemeRegistry::current()->getImage/*ALTFIXED*/(basename($image), $other_attributes, empty($width) ? null : $width, empty($height) ? null : $height, $ext, $alt );
+    return SugarThemeRegistry::current()->getImage(basename($image), $other_attributes, empty($width) ? null : $width, empty($height) ? null : $height, $ext, $alt );
 }
 /**
  * @deprecated use SugarTheme::getImageURL()

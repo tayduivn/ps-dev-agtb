@@ -158,7 +158,7 @@
 		{/foreach}
 		<td width='1%'>
 		{if !empty($moreMenu)}
-			<<!-ALTFIX!-->img src='{sugar_getimagepath file='more.gif'}' alt='More' align='absmiddle' id='MorePanelHandle' style=' margin-left:2px; cursor: pointer; cursor: hand;' align='absmiddle' onmouseover='tbButtonMouseOver(this.id,"","",0);'>
+			<img src='{sugar_getimagepath file='more.gif'}' alt='More' align='absmiddle' id='MorePanelHandle' style=' margin-left:2px; cursor: pointer; cursor: hand;' align='absmiddle' onmouseover='tbButtonMouseOver(this.id,"","",0);'>
 		{/if}
 		</td>
 		<td width='100%'>&nbsp;</td>

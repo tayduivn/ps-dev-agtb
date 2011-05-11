@@ -255,8 +255,8 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
         $this->ss->assign("SOURCE", $_REQUEST['source'] );
         $this->ss->assign("TYPE", $_REQUEST['type'] );
-        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage/*ALTFIXED*/('basic_search','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_DELETE']));
-        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage/*ALTFIXED*/('advanced_search','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_PUBLISH']));
+        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_DELETE']));
+        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_PUBLISH']));
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("STEP4_TITLE",
             strip_tags(str_replace("\n","",getClassicModuleTitle(

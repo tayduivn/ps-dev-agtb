@@ -367,13 +367,13 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetImageSpecifyingWidthAndHeightAndOtherAttributes()
     {
         $this->assertEquals(
-            $this->_themeObject->getImage/*ALTFIXED*/('Emails','',20,30,'.gif',"Emails"),
+            $this->_themeObject->getImage('Emails','',20,30,'.gif',"Emails"),
             "<img src=\"". $this->_themeObject->getImageURL('Emails.gif') ."\" width=\"20\" height=\"30\" alt=\"foo\" />"
             );
         
         // check again to see if caching of the image size works as expected
         $this->assertEquals(
-            $this->_themeObject->getImage/*ALTFIXED*/('Emails','',30,40,'.gif',"Emails"),
+            $this->_themeObject->getImage('Emails','',30,40,'.gif',"Emails"),
             "<img src=\"". $this->_themeObject->getImageURL('Emails.gif') ."\" width=\"20\" height=\"30\" alt=\"foo\" />"
             );
     }
@@ -383,7 +383,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
         $size = getimagesize($this->_themeObject->getImageURL('Contacts.gif',false));
         
         $this->assertEquals(
-            $this->_themeObject->getImage/*ALTFIXED*/('Contacts','',null,null,'.gif',"Contacts"),
+            $this->_themeObject->getImage('Contacts','',null,null,'.gif',"Contacts"),
             "<img src=\"". $this->_themeObject->getImageURL('Contacts.gif') ."\" width=\"{$size[0]}\" height=\"{$size[1]}\"  />"
             );
     }

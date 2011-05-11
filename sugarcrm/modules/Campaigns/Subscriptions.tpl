@@ -69,7 +69,7 @@
 			<tr>
 				<td><span><b>{$MOD.LBL_ALREADY_SUBSCRIBED_HEADER}</b></span></td>
 				<td><span><b>{$MOD.LBL_UNSUBSCRIBED_HEADER}</b>
-<<!-ALTFIX!-->img alt="Help" border="0" src="{sugar_getimagepath file='helpInline.gif'}"  
+<img alt="Help" border="0" src="{sugar_getimagepath file='helpInline.gif'}"
 onmouseover="return overlib('{$MOD.LBL_UNSUBSCRIBED_HEADER_EXPL}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );" onmouseout="return nd();" >
 				
 				</span></td>

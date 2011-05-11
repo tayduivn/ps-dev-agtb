@@ -228,7 +228,7 @@ class WorkFlowAlertShell extends SugarBean {
 		$temp_array['ID'] = $this->id;
 		
 		//Component information for either recipients or invitees (Meetings & Calls)
-		$recipient_icon =  SugarThemeRegistry::current()->getImage/*ALTFIXED*/('Users','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']);
+		$recipient_icon =  SugarThemeRegistry::current()->getImage('Users','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']);
 		$temp_array['COMPONENT_HREF_EDIT'] = 'index.php?action=DetailView&module=WorkFlowAlertShells&module_tab=WorkFlow&record='.$this->id.'&workflow_id='.$this->parent_id;
 		$temp_array['COMPONENT_STATEMENT'] = $recipient_icon.$mod_strings['LBL_RECIPIENTS'];
 		

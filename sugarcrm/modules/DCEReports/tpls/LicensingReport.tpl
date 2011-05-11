@@ -106,7 +106,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
     <td align="left">
-        <input title="{$MOD.LBL_RUN}" accessKey="" class="button" type="button" name="button" value="  {$MOD.LBL_RUN}  " id="btnrun"><<!--ALTFIXED-->img id="loading_img" alt="{$mod_strings.LBL_LOADING}" width="17" height="17" src="themes/default/ext/resources/images/default/shared/large-loading.gif" style="display:none">
+        <input title="{$MOD.LBL_RUN}" accessKey="" class="button" type="button" name="button" value="  {$MOD.LBL_RUN}  " id="btnrun"><img id="loading_img" alt="{$mod_strings.LBL_LOADING}" width="17" height="17" src="themes/default/ext/resources/images/default/shared/large-loading.gif" style="display:none">
     </td>
 </tr>
 </table>

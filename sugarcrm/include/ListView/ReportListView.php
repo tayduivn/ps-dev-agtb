@@ -604,14 +604,14 @@ class ReportListView  extends ListView {
 		global $currentModule, $export_module, $sugar_config, $current_user;
 
 		if(!empty($this->export_type) && $this->export_type=="Normal"){	
-			$export_link = "<a target=\"_blank\" href=\"index.php?entryPoint=export&record=".$this->seed_object->id."&module=".$export_module."\" >".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("export","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LBL_EXPORT'])."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
+			$export_link = "<a target=\"_blank\" href=\"index.php?entryPoint=export&record=".$this->seed_object->id."&module=".$export_module."\" >".SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LBL_EXPORT'])."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
 		} else {
 //BEGIN SUGARCRM flav=ent ONLY
 			//export type must be enterprise reporting related and only valid if the data set object exists
 			if(!empty($this->data_set_object->id)){	
 				if (!isset($export_module))
 					$export_module = 'ReportMaker';
-				$export_link = "<a target=\"_blank\" href=\"index.php?entryPoint=export_dataset&record=".$this->data_set_object->id."&module=".$export_module."\" >".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("export","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LBL_EXPORT'])."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
+				$export_link = "<a target=\"_blank\" href=\"index.php?entryPoint=export_dataset&record=".$this->data_set_object->id."&module=".$export_module."\" >".SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LBL_EXPORT'])."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
 			}
 //END SUGARCRM flav=ent ONLY
 		//end if export type is normal

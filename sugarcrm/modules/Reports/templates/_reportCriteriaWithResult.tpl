@@ -186,7 +186,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 	if (isset($reporter->report_def['filters_def']) && !isset($reporter->report_def['filters_def']['Filter_1'][0])){
 		$reportFilters = " " . $mod_strings['LBL_NONE_STRING'];
 	} else {
-	    $reportFilters = "<span id=\"filter_results\" valign=\"bottom\">&nbsp;<<!--ALTFIXED-->img id=\"filter_results_image\" src=\"".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."\" width=\"8px\" height=\"10px\" onclick=\"showFilterString();\"></span><span id=\"filter_results_text\" style=\"visibility:hidden;\"></span>";
+	    $reportFilters = "<span id=\"filter_results\" valign=\"bottom\">&nbsp;<img id=\"filter_results_image\" src=\"".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."\" width=\"8px\" height=\"10px\" onclick=\"showFilterString();\"></span><span id=\"filter_results_text\" style=\"visibility:hidden;\"></span>";
 	} // else
 	
 	$this->assign('reportFilters', $reportFilters);
@@ -391,7 +391,7 @@ function performFavAction(actionToPerfrom) {
     };
 	var postDataString = actionToPerfrom + '=1&report_id=' + document.getElementById('record').value;
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=ReportCriteriaResults&module=Reports&page=report", callback, postDataString);
-	var imageTag = "<<!--ALTFIXED-->img border=\"0\" height='16px' width='11px' align=\"absmiddle\" src=\"" + document.getElementById('blankimagepath').value + "\"/>";
+	var imageTag = "<img border=\"0\" height='16px' width='11px' align=\"absmiddle\" src=\"" + document.getElementById('blankimagepath').value + "\"/>";
 
 	var favButton = document.getElementById('favButton');
 	if (actionToPerfrom == 'addtofavorites') {

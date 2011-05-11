@@ -59,11 +59,11 @@ class DataSetsViewDetail extends ViewDetail {
 			//below: make sure to aquire the custom layout headers if available
 			$QueryView->export_type = "Ent";
 			
-			$QueryView->xTemplateAssign('EDIT_INLINE', SugarThemeRegistry::current()->getImage/*ALTFIXED*/('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
+			$QueryView->xTemplateAssign('EDIT_INLINE', SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
 
-			$QueryView->xTemplateAssign('LEFTARROW_INLINE', SugarThemeRegistry::current()->getImage/*ALTFIXED*/('calendar_previous','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LBL_LEFT']));
+			$QueryView->xTemplateAssign('LEFTARROW_INLINE', SugarThemeRegistry::current()->getImage('calendar_previous','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LBL_LEFT']));
 
-			$QueryView->xTemplateAssign('RIGHTARROW_INLINE', SugarThemeRegistry::current()->getImage/*ALTFIXED*/('calendar_next','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LBL_RIGHT']));
+			$QueryView->xTemplateAssign('RIGHTARROW_INLINE', SugarThemeRegistry::current()->getImage('calendar_next','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LBL_RIGHT']));
 
 			$QueryView->setup($data_set, $this->bean, "main", "CUSTOMQUERY");
 			$query_results = $QueryView->processDataSet();

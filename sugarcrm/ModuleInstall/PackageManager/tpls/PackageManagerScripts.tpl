@@ -126,7 +126,7 @@ if(typeof PackageManager == 'undefined') {
 														);
 
 					_loadingBar.setHeader("{/literal}{$MOD.SEARCHING_UPDATES}{literal}");
-					_loadingBar.setBody("<<!--ALTFIXED-->img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
+					_loadingBar.setBody("<img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
 					_loadingBar.render(document.body);
 					_loadingBar.show();
 	        		_pmg = new PackageManagerGrid();
@@ -163,7 +163,7 @@ if(typeof PackageManager == 'undefined') {
 														);
 
 					_loadingBar.setHeader("{/literal}{$MOD.DOWNLOADING}{literal}");
-					_loadingBar.setBody("<<!--ALTFIXED-->img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
+					_loadingBar.setBody("<img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
 					_loadingBar.render(document.body);
 					_loadingBar.show();
 	        			//_numPackagesToDownload = nodes.length;
@@ -514,7 +514,7 @@ if(typeof PackageManager == 'undefined') {
 			    					if(result['documents'][x]['preview_url']){
 			    						url = result['documents'][x]['preview_url'];
 			    					}
-			    					screenshot_html += "<td><a href='"+result['documents'][x]['url']+"' border='0' target='blank'><<!--ALTFIXED-->img src='"+url+"'></a></td>";
+			    					screenshot_html += "<td><a href='"+result['documents'][x]['url']+"' border='0' target='blank'><img src='"+url+"'></a></td>";
 			    					if((screenshot_count % 3) == 0 && screenshot_count > 0){
 			    						screenshot_html += "</tr>";
 			    					}
@@ -815,7 +815,7 @@ if(typeof PackageManager == 'undefined') {
 														);
 
 					_loadingBar.setHeader("{/literal}{$MOD.AUTHENTICATING}{literal}");
-					_loadingBar.setBody("<<!--ALTFIXED-->img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
+					_loadingBar.setBody("<img src=\"include/javascript/yui/assets/rel_interstitial_loading.gif\"/>");
 					_loadingBar.render(document.body);
 					_loadingBar.show();
 				//PackageManager.showWaiting();

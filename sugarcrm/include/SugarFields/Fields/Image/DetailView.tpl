@@ -33,7 +33,7 @@
 {else}
 <a href="javascript:SUGAR.image.lightbox(YAHOO.util.Dom.get('img_{{sugarvar key='name'}}').src)">
 {/if}
-<<!--ALTFIXED-->img 
+<img
 	id="img_{{sugarvar key='name'}}" 
 	name="img_{{sugarvar key='name'}}" 
 	{{if !empty($vardef.calculated)}}

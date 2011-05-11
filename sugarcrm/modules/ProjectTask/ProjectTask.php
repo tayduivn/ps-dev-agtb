@@ -261,7 +261,7 @@ class ProjectTask extends SugarBean {
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
 		
         //if ($this->status != "Completed" && $this->status != "Deferred" ) {
-		//	$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage/*ALTFIXED*/("close_inline"," border='0'",null,null,'.gif',$mod_strings['LBL_LIST_CLOSE'])."</a>";
+		//	$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',$mod_strings['LBL_LIST_CLOSE'])."</a>";
 		//}
         
         /*

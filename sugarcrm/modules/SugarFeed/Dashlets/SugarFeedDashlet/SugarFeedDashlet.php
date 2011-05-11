@@ -581,8 +581,8 @@ EOQ;
             return '';
         }
 		$user_name = ucfirst($GLOBALS['current_user']->user_name);
-		$moreimg = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('advanced_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"',null,null,'.gif',translate('LBL_ADVANCED_SEARCH','SugarFeed'));
-		$lessimg = SugarThemeRegistry::current()->getImage/*ALTFIXED*/('basic_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"',null,null,'.gif',translate('LBL_BASICSEARCH','SugarFeed'));
+		$moreimg = SugarThemeRegistry::current()->getImage('advanced_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"',null,null,'.gif',translate('LBL_ADVANCED_SEARCH','SugarFeed'));
+		$lessimg = SugarThemeRegistry::current()->getImage('basic_search' , 'onclick="toggleDisplay(\'more_' . $this->id . '\'); toggleDisplay(\'more_img_'.$this->id.'\'); toggleDisplay(\'less_img_'.$this->id.'\');"',null,null,'.gif',translate('LBL_BASICSEARCH','SugarFeed'));
 		$ss = new Sugar_Smarty();
 		$ss->assign('LBL_TO', translate('LBL_TO', 'SugarFeed'));
 		$ss->assign('LBL_POST', translate('LBL_POST', 'SugarFeed'));

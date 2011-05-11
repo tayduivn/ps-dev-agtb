@@ -98,7 +98,7 @@ form
 <table cellpadding="0"  cellspacing="0" border="0" align="center">
 <tr>
 <td style="padding-bottom: 10px;" ><b>{$MOD.LBL_LOGIN_WELCOME_TO}</b><br />
-<<!--ALTFIXED-->img src="{$sugar_md}" alt="Sugar" width="340" height="25" /></td>
+<img src="{$sugar_md}" alt="Sugar" width="340" height="25" /></td>
 </tr>
 <tr>
 <td align="center">

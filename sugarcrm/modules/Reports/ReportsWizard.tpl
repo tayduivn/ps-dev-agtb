@@ -87,7 +87,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 				<td width="35%">
 					<table  border="0" cellspacing="2" cellpadding="0" >	
 						<tr valign='top'>
-							<td><<!--ALTFIXED!-->img src="{sugar_getimagepath file='RowsAndColumns.gif'}" name="rowsColsImg" onclick="SUGAR.reports.selectReportType('tabular');"
+							<td><img src="{sugar_getimagepath file='RowsAndColumns.gif'}" name="rowsColsImg" onclick="SUGAR.reports.selectReportType('tabular');"
 								onMouseOver="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumnsOver.gif'}'"
 								onMouseOut="document.rowsColsImg.src='{sugar_getimagepath file='RowsAndColumns.gif'}'"></td>
 							<td>&nbsp;&nbsp;</td>
@@ -99,7 +99,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 							<td colspan=2>&nbsp;</td>
 						</tr>
 						<tr valign='top'>
-							<td><<!--ALTFIXED-->img src="{sugar_getimagepath file='Summation.gif'}" name="summationImg" onclick="SUGAR.reports.selectReportType('summation');"
+							<td><img src="{sugar_getimagepath file='Summation.gif'}" name="summationImg" onclick="SUGAR.reports.selectReportType('summation');"
 								onMouseOver="document.summationImg.src='{sugar_getimagepath file='SummationOver.gif'}'"
 								onMouseOut="document.summationImg.src='{sugar_getimagepath file='Summation.gif'}'"></td>
 							<td>&nbsp;&nbsp;</td>
@@ -113,7 +113,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 				<td width="35%">
 					<table  border="0" cellspacing="2" cellpadding="0">	
 						<tr valign='top'>
-							<td><<!--ALTFIXED!-->img src="{sugar_getimagepath file='SummationWithDetails.gif'}" name="summationWithDetailsImg" onclick="SUGAR.reports.selectReportType('summation_with_details');"
+							<td><img src="{sugar_getimagepath file='SummationWithDetails.gif'}" name="summationWithDetailsImg" onclick="SUGAR.reports.selectReportType('summation_with_details');"
 								onMouseOver="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetailsOver.gif'}'"
 								onMouseOut="document.summationWithDetailsImg.src='{sugar_getimagepath file='SummationWithDetails.gif'}'"></td>
 							<td>&nbsp;&nbsp;</td>
@@ -126,7 +126,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 						</tr>
 
 						<tr valign='top'>
-							<td><<!--ALTFIXED-->img src="{sugar_getimagepath file='MatrixReport.gif'}" name="matrixImg" onclick="SUGAR.reports.selectReportType('summation', true);"
+							<td><img src="{sugar_getimagepath file='MatrixReport.gif'}" name="matrixImg" onclick="SUGAR.reports.selectReportType('summation', true);"
 								onMouseOver="document.matrixImg.src='{sugar_getimagepath file='MatrixReportOver.gif'}'"
 								onMouseOut="document.matrixImg.src='{sugar_getimagepath file='MatrixReport.gif'}'"></td>
 							<td>&nbsp;&nbsp;</td>
@@ -166,7 +166,7 @@ document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_l
 												{if $button.alt}
 													{$button.alt}
 												{else}
-													<<!--ALTFIXED-->img border="0" src='{$button.img}'>			
+													<img border="0" src='{$button.img}'>
 												{/if}
 												</a>
 											</td>

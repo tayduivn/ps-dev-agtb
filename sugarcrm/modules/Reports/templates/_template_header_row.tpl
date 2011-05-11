@@ -36,7 +36,7 @@
 <td scope="col" align='center'  valign=middle nowrap>&nbsp;</td>
 {/if}
 {if ($isSummaryComboHeader)}
-<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><<!--ALTFIXED-->img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></td>
+<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></td>
 {/if}
 {php}
 	$count = 0;
