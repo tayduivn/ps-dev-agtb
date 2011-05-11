@@ -75,6 +75,6 @@ $mod_strings = array (
   'ERR_SET_TEMPLATES_DIRECTORY'=>'ERROR : Set the templates directory in DCE settings',
   'ERR_CREATE_TEMPLATES_DIRECTORY'=>'ERROR : Create the templates directory set in DCE settings',
   'ERR_ACC_EDITION_NOT_RECOGNIZE'=>': This acceptable edition is not valid.',
-	'LBL_LOADING' => 'loading ...' /*for 508 compliance fix*/,
+	'LBL_LOADING' => 'Loading ...' /*for 508 compliance fix*/,
 );
 ?>
