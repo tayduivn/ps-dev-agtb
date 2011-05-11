@@ -41,6 +41,7 @@ $action_view_map['vcard']= 'vcard';
 $action_view_map['importvcard']= 'importvcard';
 $action_view_map['importvcardsave']= 'importvcardsave';
 $action_view_map['modulelistmenu']= 'modulelistmenu';
+$action_view_map['ajaxui']= 'ajaxui';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 
 // SugarWireless views
@@ -70,4 +71,7 @@ $action_view_map['inlinefield'] = 'inlinefield';
 $action_view_map['inlinefieldsave'] = 'inlinefieldsave';
 $action_view_map['pluginlist'] = 'plugins';
 $action_view_map['downloadplugin'] = 'downloadplugin';
+$action_view_map['metadata'] = 'metadata';
+
+$action_view_map['cubes'] = 'cubes';
 ?>

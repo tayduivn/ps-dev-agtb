@@ -9,6 +9,8 @@ class Bug40209Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        global $_POST;
+        $_POST = array();
         //create user
         $this->user = $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 

@@ -316,7 +316,7 @@ class ListViewDisplay {
 		// mass update
 		$mass = new MassUpdate();
 		$mass->setSugarBean($this->seed);
-		if ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
+		if ( ( ACLController::checkAccess($this->seed->module_dir,'edit',true) && ACLController::checkAccess($this->seed->module_dir,'massupdate',true) ) && $this->showMassupdateFields && $mass->doMassUpdateFieldsExistForFocus() )
             $menuItems .= $this->buildMassUpdateLink();
 		//BEGIN SUGARCRM flav=sales ONLY
 		else if($this->seed->module_dir == 'Users' && $GLOBALS['current_user']->user_type == 'UserAdministrator')
@@ -353,7 +353,6 @@ class ListViewDisplay {
 
 		return <<<EOHTML
 <script type="text/javascript">
-<!--
 function actions_overlib()
 {
     return overlib("{$menuItems}", CENTER, '', STICKY, MOUSEOFF, 3000, CLOSETEXT, "{$closeText}", WIDTH, 150,
@@ -362,7 +361,6 @@ function actions_overlib()
         TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass',
         CLOSEFONTCLASS, 'olOptionsCloseFontClass');
 }
--->
 </script>
 <a id='$id' onclick='return actions_overlib();' href="#">
     {$app_strings['LBL_LINK_ACTIONS']}&nbsp;<img src='{$moreDetailImage}' border='0' />

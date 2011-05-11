@@ -570,8 +570,7 @@ class SugarFolder {
 	function getFoldersChildForSettings($a, $collection, $subscriptions) {
 		$a['selected'] = (in_array($a['id'], $subscriptions)) ? true : false;
 		$a['origName'] = $a['name'];
-		
-		//Bug 43367 - Removing 'Leakage' from children folders
+
 		if(isset($a['dynamic_query']))
 		{
 		   unset($a['dynamic_query']);

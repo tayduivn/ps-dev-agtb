@@ -312,4 +312,20 @@ if(!function_exists('mvclog')){
 }
 //END ENCODE
 
+function getPrintLink()
+{
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui")
+    {
+        return "javascript:SUGAR.ajaxUI.print();";
+    }
+    return "javascript:void window.open('index.php?{$GLOBALS['request_string']}',"
+         . "'printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')";
+}
+
+
+function ajaxLink($url)
+{
+	return "#ajaxUILoc=" . urlencode($url);
+}
+
 ?>

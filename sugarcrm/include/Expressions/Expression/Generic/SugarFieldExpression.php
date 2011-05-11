@@ -47,10 +47,8 @@ class SugarFieldExpression extends GenericExpression
         $def = $this->context->field_defs[$fieldName];
         $timedate = TimeDate::getInstance();
         switch($def['type']) {
-            //BEGIN SUGARCRM flav=een ONLY
             case 'link':
                 return $this->getLinkField($fieldName);
-            //END SUGARCRM flav=een ONLY
             case 'datetime':
             case 'datetimecombo':
                 if(empty($this->context->$fieldName)) {
@@ -106,7 +104,6 @@ class SugarFieldExpression extends GenericExpression
        return new $bean();
     }
 
-    //BEGIN SUGARCRM flav=een ONLY
     protected function getLinkField($fieldName)
     {
         if (empty($this->context->$fieldName) && !$this->context->load_relationship($fieldName))
@@ -118,18 +115,11 @@ class SugarFieldExpression extends GenericExpression
         if (isset($this->context->$fieldName->beans))
             return $this->context->$fieldName->beans;
 
-        $rmodule = $this->context->$fieldName->getRelatedModuleName();
-
-        //now we need a seed of the related module to load.
-        $seed = $this->getBean($rmodule);
-
-        $beans = $this->context->$fieldName->getBeans($seed);
-
+        $beans = $this->context->$fieldName->getBeans();
         $this->context->$fieldName->beans = $beans;
 
         return $beans;
     }
-    //END SUGARCRM flav=een ONLY
 
 
 

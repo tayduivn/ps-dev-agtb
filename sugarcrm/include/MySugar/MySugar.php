@@ -828,7 +828,7 @@ EOJS;
 
 		$scriptOutput = 'var scriptResponse = '.$json->encode($scriptResponse);
 
-		return 'response = ' . $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
+		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput), false, true);
 	}
 	//END SUGARCRM flav=pro ONLY
 

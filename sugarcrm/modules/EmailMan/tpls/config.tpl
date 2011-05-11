@@ -170,7 +170,10 @@ function change_state(radiobutton) {
                        </tr>
                        <tr id="smtp_auth2">
                             <td width="20%" scope="row"><span id="mail_smtppass_label">{$MOD.LBL_MAIL_SMTPPASS}</span> <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
-                            <td width="30%" ><input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="64" tabindex='1'></td>
+                            <td width="30%" >
+                            <input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="64" tabindex='1'>
+                            <a href="javascript:void(0)" id='mail_smtppass_link' onClick="SUGAR.util.setEmailPasswordEdit('mail_smtppass')" style="display: none">{$APP.LBL_CHANGE_PASSWORD}</a>
+                            </td>
                             <td width="20%">&nbsp;</td>
                             <td width="30%">&nbsp;</td>
                        </tr>
@@ -531,6 +534,7 @@ function sendTestEmail()
     var smtpssl  = document.getElementById('mail_smtpssl').value;
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
     var mail_sendtype = document.getElementById('mail_sendtype').value;
+
 	var postDataString = 'mail_name=system&mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl +
 	                      "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) +
 	                      "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_to_address=" + toAddress + "&outboundtest_from_address=" + fromAddress;
@@ -700,6 +704,11 @@ oButtonGroup.subscribe('checkedButtonChange', function(e)
     document.getElementById('EditView').mail_smtptype.value = e.newValue.get('value');
 });
 YAHOO.widget.Button.addHiddenFieldsToForm(document.ConfigureSettings);
+if(window.addEventListener){
+    window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
+}else{
+    window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
+}
 {/literal}{if !empty($mail_smtptype)}{literal}
 changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}", false);
 {/literal}{/if}{literal}

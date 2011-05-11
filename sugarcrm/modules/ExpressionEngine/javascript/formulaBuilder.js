@@ -63,6 +63,8 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 	{
 		if(typeof(vMap[t.name]) == "undefined")
 			throw ("Unknown field: " + t.name);
+		else if(vMap[t.name] == "relate")
+			t.returnType = SUGAR.expressions.Expression.GENERIC_TYPE;
 		else
 			t.returnType = vMap[t.name];
 	}

@@ -99,6 +99,22 @@ class OracleManager extends DBManager
         }
     }
 
+    public function repairTableParams(
+        $tablename,
+        $fielddefs,
+        $indices,
+        $execute = true,
+        $engine = null
+        )
+    {
+        //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them
+        foreach ($indices as $key => $value) {
+            $indices[$key]['name'] = OracleHelper::getValidDBName($value['name'], true, 'index');
+        }
+
+        return parent::repairTableParams($tablename,$fielddefs,$indices,$execute,$engine);
+
+    }
     /**
      * @see DBManager::version()
      */

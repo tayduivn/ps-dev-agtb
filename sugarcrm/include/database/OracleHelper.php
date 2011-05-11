@@ -38,6 +38,16 @@ require_once('include/database/DBHelper.php');
 class OracleHelper extends DBHelper
 {
     /**
+     * Maximum length of identifiers
+     */
+    protected static $maxNameLengths = array(
+        'table' => 30,
+        'column' => 30,
+        'index' => 30,
+        'alias' => 30
+    );
+    
+    /**
      * returns SQL to create constraints or indices
      *
      * @param  object $bean SugarBean instance
@@ -248,7 +258,6 @@ class OracleHelper extends DBHelper
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
                 switch(strtoupper($action)) {
-                case 'DROP':
                     $addColumns[] = $def['name'];
                     break;
                 case 'ADD':
@@ -386,8 +395,9 @@ class OracleHelper extends DBHelper
                  * to add the same indices with the same names to the repair table and will generate an
                  * error. so we append an r to the eend of the index name for these cases.
                  */
-                $name = $this->fixIndexName($index['name']);
-                $name = ((strtolower($table) == 'repair_table')
+                $name = $this->fixIndexName(self::getValidDBName($index['name'], true, 'index'));
+                $name = ((strtolower($table) == 'repair_table') 
+
                     ? $this->repair_index_name($name) : $name);
             }
 
@@ -608,7 +618,7 @@ class OracleHelper extends DBHelper
         )
     {
 		$tablename = strtoupper($tablename);
-		$indexname = strtoupper($indexname);
+		$indexname = strtoupper(self::getValidDBName($indexname, true, 'index'));
 
         //find all unique indexes and primary keys.
 		$query = <<<EOQ
@@ -719,7 +729,7 @@ EOQ;
     {
         $type         = $definition['type'];
         $fields       = implode(',',$definition['fields']);
-        $name         = $definition['name'];
+        $name         = self::getValidDBName($definition['name'], true, 'index');
         $foreignTable = isset($definition['foreignTable']) ? $definition['foreignTable'] : array();
         $sql          = '';
 
@@ -764,6 +774,8 @@ EOQ;
         $table_name
         )
     {
+        $old_definition = self::getValidDBName($old_definition, true, 'index');
+        $new_definition = self::getValidDBName($new_definition, true, 'index');
         return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
     }
 
@@ -860,13 +872,12 @@ EOQ;
         $upper_case = true
         )
     {
-        $sequence_name = $table. '_' .$field_name . '_seq';
-        if(strlen($sequence_name) > 30)
-            $sequence_name = $table. '_' .$this->_generateMD5Name($field_name) . '_seq';
+        $sequence_name = self::getValidDBName($table. '_' .$field_name . '_seq', true, 'index');
         if($upper_case)
             $sequence_name = strtoupper($sequence_name);
         return $sequence_name;
     }
+
 
     /**
      * Used in OracleHelper to generate SEQUENCE names. This could also be used

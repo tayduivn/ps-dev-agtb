@@ -134,7 +134,6 @@ class Call extends SugarBean
     // this is for calendar
 	function save($check_notify = FALSE) {
 		global $timedate,$current_user;
-		global $disable_date_format;
 
 	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
         {
@@ -683,11 +682,11 @@ class Call extends SugarBean
 	function save_relationship_changes($is_update) {
 		$exclude = array();
 		if(empty($this->in_workflow)) {
-           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise 
+           //if the global soap_server_object variable is not empty (as in from a soap/OPI call), then process the assigned_user_id relationship, otherwise
            //add assigned_user_id to exclude list and let the logic from MeetingFormBase determine whether assigned user id gets added to the relationship
            	if(!empty($GLOBALS['soap_server_object'])){
            		$exclude = array('lead_id', 'contact_id', 'user_id');
-           	}else{   	
+           	}else{
 	            $exclude = array('lead_id', 'contact_id', 'user_id', 'assigned_user_id');
            	}
         }
