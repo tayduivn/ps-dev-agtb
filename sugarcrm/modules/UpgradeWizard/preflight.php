@@ -283,33 +283,27 @@ $diffs ='';
 		{
 			$current_version = $matches[1].'0';
 		}
-
+        $type = $db->getScriptName();
 		switch($manifest['name']){
 			case 'SugarCE to SugarPro':
-				$sqlFile = $current_version.'_ce_to_pro_'.$db->dbType;
+				$sqlFile = $current_version.'_ce_to_pro_'.$type;
 				break;
 			case 'SugarCE to SugarEnt':
-				$sqlFile = $current_version.'_ce_to_ent_'.$db->dbType;
+				$sqlFile = $current_version.'_ce_to_ent_'.$type;
 				break;
 			case 'SugarPro to SugarEnt':
-				$sqlFile = $current_version.'_pro_to_ent_'.$db->dbType;
+				$sqlFile = $current_version.'_pro_to_ent_'.$type;
 				break;
 			default:
 				break;
 		}
 	} else {
-		$sqlFile = $current_version.'_to_'.$targetVersion.'_'.$db->dbType;
+		$sqlFile = $current_version.'_to_'.$targetVersion.'_'.$type;
 	}
 
 	$newTables = array();
 
-	if($db->dbType == 'oci8') {
-		//BEGIN SUGARCRM flav=ent ONLY
-		$sqlScript = $_SESSION['unzip_dir'].'/scripts/'.$current_version.'_to_'.$targetVersion.'_oracle.sql';
-		//END SUGARCRM flav=ent ONLY
-	} else {
-		$sqlScript = $_SESSION['unzip_dir'].'/scripts/'.$sqlFile.'.sql';
-	}
+    $sqlScript = $_SESSION['unzip_dir'].'/scripts/'.$sqlFile.'.sql';
 
 	logThis('looking for schema script at: '.$sqlScript);
 	if(is_file($sqlScript)) {

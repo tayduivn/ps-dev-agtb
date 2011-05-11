@@ -312,7 +312,6 @@ ACLAllowedModules = {$ACLAllowedModules};
 var visible_modules;
 var report_def;
 var current_module;
-// only defaulting to mysql.. actual dbType is set in templates_reports_request_js.php
 var visible_fields = new Array();
 var visible_fields_map =  new Object();
 var visible_summary_fields = new Array();

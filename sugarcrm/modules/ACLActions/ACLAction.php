@@ -227,38 +227,19 @@ class ACLAction  extends SugarBean{
         $additional_where = '';
         $db = DBManagerFactory::getInstance();
         if(!empty($category)){
-            $additional_where .= " AND $this->table_name.category = '$category' ";
+            $additional_where .= " AND acl_actions.category = '$category' ";
         }
         if(!empty($action)){
-            $additional_where .= " AND $this->table_name.name = '$action' ";
+            $additional_where .= " AND acl_actions.name = '$action' ";
         }
         if(!empty($type)){
-            $additional_where .= " AND $this->table_name.acltype = '$type' ";
+            $additional_where .= " AND acl_actions.acltype = '$type' ";
         }
-        $query=null;
-        if ($db->dbType == 'oci8') {
-            //BEGIN SUGARCRM flav=ent ONLY
-            ///for this dbtype first check if the user has been assigned a role or not, if not  then
-            //select all rows from acl_actions directly, no need to look for overrides.
-            //This is begin done becuse in oracle when you join table A with B, table B is the outer table, and if table B is empty
-            //the result of the query is 0 rows, in order to get all rows from table A you need to join with dual
-            //this table has one-row and one-column. This behavior has changed in oracle 10 because we should get all rows from the "parent" table.
-
-            $has_roles_query = "select count(*) role_count from acl_roles_users where user_id='$user_id'";
-            $result = $db->query($has_roles_query);
-            $row=$db->fetchByAssoc($result);
-            if ($row['role_count'] == 0 ) {
-                $query = "SELECT acl_actions .*, null access_override FROM acl_actions WHERE acl_actions.deleted=0 $additional_where ORDER BY category,name";
-            }
-            //END SUGARCRM flav=ent ONLY
-        }
-        if (empty($query)) {
-            $query = "SELECT acl_actions .*, acl_roles_actions.access_override
+        $query = "SELECT acl_actions .*, acl_roles_actions.access_override
                     FROM acl_actions
                     LEFT JOIN acl_roles_users ON acl_roles_users.user_id = '$user_id' AND  acl_roles_users.deleted = 0
                     LEFT JOIN acl_roles_actions ON acl_roles_actions.role_id = acl_roles_users.role_id AND acl_roles_actions.action_id = acl_actions.id AND acl_roles_actions.deleted=0
                     WHERE acl_actions.deleted=0 $additional_where ORDER BY category,name";
-        }
         $result = $db->query($query);
         $selected_actions = array();
         while($row = $db->fetchByAssoc($result) ){

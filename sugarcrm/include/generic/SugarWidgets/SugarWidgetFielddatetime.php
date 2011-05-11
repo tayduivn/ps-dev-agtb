@@ -364,12 +364,11 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		return $this->get_start_end_date_filter($layout_def,$begin->asDb(),$end->asDb());
 	}
 
-	function queryGroupBy($layout_def) {
+	function queryGroupBy($layout_def)
+	{
 		// i guess qualifier and column_function are the same..
 		if (!empty ($layout_def['qualifier'])) {
 			$func_name = 'queryGroupBy'.$layout_def['qualifier'];
-			//print_r($layout_def);
-			//print $func_name;
 			if (method_exists($this, $func_name)) {
 				return $this-> $func_name ($layout_def)." \n";
 			}
@@ -377,14 +376,10 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 		return parent :: queryGroupBy($layout_def)." \n";
 	}
 
-	function queryOrderBy($layout_def) {
-		// i guess qualifier and column_function are the same..
-        if ($this->reporter->db->dbType == 'mssql'){
-            //do nothing if this is for mssql, do not run group by
-
-        }
-		elseif (!empty ($layout_def['qualifier'])) {
-			$func_name ='queryGroupBy'.$layout_def['qualifier'];
+	function queryOrderBy($layout_def)
+	{
+        if (!empty ($layout_def['qualifier'])) {
+			$func_name ='queryOrderBy'.$layout_def['qualifier'];
 			if (method_exists($this, $func_name)) {
 				return $this-> $func_name ($layout_def)."\n";
 			}
