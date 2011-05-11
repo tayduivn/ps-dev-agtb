@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 $dictionary['Contact'] = array('table' => 'contacts', 'audited'=>true,
 
-'unified_search' => true, 'duplicate_merge'=>true, 'fields' =>
+'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true, 'fields' =>
 array (
 
 	'email_and_name1' =>
@@ -168,7 +168,6 @@ array (
 			'name' => 'portal_active',
 			'vname' => 'LBL_PORTAL_ACTIVE',
 			'type' => 'bool',
-			'required' => true,
 			'default' => '0',
 			'group'=>'portal',
 			'comment' => 'Indicator whether this contact is a portal user'
@@ -178,7 +177,8 @@ array (
         array (
             'name' => 'portal_password',
             'vname' => 'LBL_USER_PASSWORD',
-            'type' => 'varchar',
+            'type' => 'password',
+            'dbType' => 'varchar',
             'len' => '32',
             'group'=>'portal',
             'reportable' => false,
@@ -302,6 +302,14 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_EMAILS',
 		),
+	'documents'=>
+		array (
+			'name' => 'documents',
+			'type' => 'link',
+			'relationship' => 'documents_contacts',
+			'source' => 'non-db',
+			'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+		),
 	'leads'=>
 		array (
 			'name' => 'leads',
@@ -323,8 +331,7 @@ array (
 		'name' => 'contracts',
 		'type' => 'link',
 		'vname' => 'LBL_CONTRACTS',
-		'relationship' => 'contracts_quotes',
-		'link_type' => 'one',
+		'relationship' => 'contracts_contacts',
 		'source' => 'non-db',
 	),
 //END SUGARCRM flav=pro ONLY
@@ -549,6 +556,7 @@ array (
         'type' => 'bool',
         'source' => 'non-db',
         'comment' => 'Synch to outlook?  (Meta-Data only)',
+        'studio' => 'true',
       ),
 //BEGIN SUGARCRM flav=dce ONLY
     'dceinstance_role_fields' =>

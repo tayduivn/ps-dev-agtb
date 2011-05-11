@@ -265,9 +265,9 @@ li.yuimenuitem-disabled {
     display:none;	
 }
 
-.yui-dt table tr th {
-	padding: 0 !important;
-}
+/* .yui-dt table tr th {
+	padding: 2px 5px !important;
+}*/
 
 div #rollover {
     white-space: normal;
@@ -406,6 +406,7 @@ td.yui-dt-col-bean_id {
 
 #settingsDialog h4 {
 	text-align:left;
+	padding-left: 0px;
 }
 
 button img {

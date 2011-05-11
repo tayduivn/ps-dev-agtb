@@ -65,11 +65,14 @@ function clearPasswordSettings() {
 	//END SUGARCRM flav=pro ONLY
 }
 require_once('modules/Administration/Forms.php');
-echo get_module_title(
-                $mod_strings['LBL_MODULE_NAME'], 
-                $mod_strings['LBL_MANAGE_PASSWORD_TITLE'], 
-                true
-                );
+echo getClassicModuleTitle(
+        "Administration", 
+        array(
+            "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
+           $mod_strings['LBL_MANAGE_PASSWORD_TITLE'],
+           ), 
+        false
+        );
 require_once('modules/Configurator/Configurator.php');
 $configurator = new Configurator();
 $sugarConfig = SugarConfig::getInstance();
@@ -92,9 +95,17 @@ if(!empty($_POST['saveConfig'])){
 		if (isset($_REQUEST['system_ldap_enabled']) && $_REQUEST['system_ldap_enabled'] == 'on') {
 			$_POST['system_ldap_enabled'] = 1;
 			clearPasswordSettings();
-		}
+		} 
 		else 
 			$_POST['system_ldap_enabled'] = 0;
+
+			
+	   
+		if (isset($_REQUEST['authenticationClass'])) {
+			
+			$configurator->useAuthenticationClass = true;
+		}
+	  
 
 		if (isset($_REQUEST['ldap_group_checkbox']) && $_REQUEST['ldap_group_checkbox'] == 'on') 
 			$_POST['ldap_group'] = 1;
@@ -108,9 +119,11 @@ if(!empty($_POST['saveConfig'])){
 		
 		if( isset($_REQUEST['passwordsetting_lockoutexpirationtime']) && is_numeric($_REQUEST['passwordsetting_lockoutexpirationtime'])  )
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
-			
+
 		$configurator->saveConfig();
+		
 		$focus->saveConfig();
+		
 		header('Location: index.php?module=Administration&action=index');
 	}
 }
@@ -134,6 +147,16 @@ $sugar_smarty->assign('error', $configurator->errors);
 $sugar_smarty->assign('LANGUAGES', get_languages());
 $sugar_smarty->assign("settings", $focus->settings);
 
+$sugar_smarty->assign('saml_enabled_checked', false);
+
+//echo "sugar_config[authenticationClass]: " . $sugar_config['authenticationClass'];
+//if (array_key_exists('authenticationClass', $sugar_config) && $sugar_config['authenticationClass'] == 'SAMLAuthenticate') {
+//   $sugar_smarty->assign('saml_enabled_checked', true);	
+//} else {
+//	$sugar_smarty->assign('saml_enabled_checked', false);
+//}
+
+
 if(!function_exists('mcrypt_cbc')){
 	$sugar_smarty->assign("LDAP_ENC_KEY_READONLY", 'readonly');
 	$sugar_smarty->assign("LDAP_ENC_KEY_DESC", $config_strings['LDAP_ENC_KEY_NO_FUNC_DESC']);
@@ -151,6 +174,7 @@ if ($valid_public_key){
 }else{
 	$sugar_smarty->assign("CAPTCHA_CONFIG_DISPLAY", 'inline');
 }
+
 $sugar_smarty->assign("VALID_PUBLIC_KEY", $valid_public_key);
 
 	

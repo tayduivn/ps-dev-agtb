@@ -59,10 +59,13 @@ class StandardField extends DynamicField
      */
     function addFieldObject(&$field){
         global $dictionary, $beanList;
+        
+        
         if (empty($beanList[$this->module]))
             return false;
-        
-        $bean_name = $beanList[$this->module];
+
+        $bean_name = get_valid_bean_name($this->module);
+
         if (empty($dictionary[$bean_name]) || empty($dictionary[$bean_name]["fields"][$field->name]))
             return false;
 

@@ -144,5 +144,15 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 		
 		return $button;
 	}
+	
+	function display($defines, $additionalFormFields = null)
+	{
+	    $focus = new Meeting;
+		if ( !$focus->ACLAccess('EditView') ) {
+		    return '';
+	    }
+		
+		return parent::display($defines, $additionalFormFields);
+	}
 }
 ?>

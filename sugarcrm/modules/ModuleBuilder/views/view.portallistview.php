@@ -35,33 +35,25 @@ require_once('modules/ModuleBuilder/views/view.listview.php');
 
 class ViewPortalListView extends ViewListView 
 {
-    function ViewListView()
-    {
-        $this->init();
-    }
-
-    /**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams()
-	{
-	    global $mod_strings;
-	    
-    	return array(
-    	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
-    	   );
-    }
-
-    /*
-     * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
-     */
-    function init()
+    function __construct()
     {
         $this->editModule = $_REQUEST['view_module'];
         $this->editLayout = $_REQUEST['view'];
         $this->subpanel = (!empty($_REQUEST['subpanel'])) ? $_REQUEST['subpanel'] : false;
         $this->fromModuleBuilder = ! empty ( $_REQUEST [ 'view_package' ] ) ;
+    }
+
+    /**
+	 * @see SugarView::_getModuleTitleParams()
+	 */
+	protected function _getModuleTitleParams($browserTitle = false)
+	{
+	    global $mod_strings;
+	    
+    	return array(
+    	   translate('LBL_MODULE_NAME','Administration'),
+    	   ModuleBuilderController::getModuleTitle(),
+    	   );
     }
 
     function display() 

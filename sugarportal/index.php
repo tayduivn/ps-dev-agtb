@@ -368,14 +368,8 @@ if(empty($_REQUEST['to_pdf']) && empty($_REQUEST['to_csv'])) {
 	echo '<script type="text/javascript" src="jscalendar/calendar.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="jscalendar/lang/calendar-en.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="jscalendar/calendar-setup_3.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script src="include/javascript/yui/YAHOO.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//  echo '<script src="include/javascript/yui/log.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script src="include/javascript/yui/dom.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-  echo '<script src="include/javascript/yui/event.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//	echo '<script src="include/javascript/yui/animation.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//	echo '<script src="include/javascript/yui/connection.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-	echo '<script src="include/javascript/yui/dragdrop.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
-//	echo '<script src="include/javascript/yui/ygDDList.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
+	echo '<script src="include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
+$sugar_config['js_custom_version'] . '"></script>';
 	echo '<script type="text/javascript" src="include/javascript/sugar_3.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 	echo $timedate->get_javascript_validation();
 }
@@ -432,7 +426,7 @@ if(!$skipFooters) {
 	// the code and end-user application.
 	echo "<tr><td align='center' class='copyRight'>";
 	
-	echo ('&copy; 2004-2010 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />');
+	echo ('&copy; 2004-2011 <a href="http://www.sugarcrm.com" target="_blank" class="copyRightLink">SugarCRM Inc.</a> All Rights Reserved.<br />');
 
 	// Under the Sugar Public License referenced above, you are required to leave in all copyright statements in both
 	// the code and end-user application as well as the the powered by image. You can not change the url or the image below  .

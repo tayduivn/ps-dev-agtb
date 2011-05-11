@@ -1,7 +1,5 @@
 <?php
-
-if(!defined('sugarEntry') || !sugarEntry)
-	die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -23,7 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry)
  ********************************************************************************/
 
 //FILE SUGARCRM flav=pro ONLY
-
 set_time_limit(3600);
 ini_set('default_socket_timeout', 360);
 global $theme, $sugar_config;
@@ -35,7 +32,9 @@ require_once ('modules/Sync/SyncHelper.php');
 require_once ('soap/SoapHelperFunctions.php');
 require_once ('include/utils/progress_bar_utils.php');
 global $soapclient, $soap_server, $sync_modules;
-ob_end_flush();
+
+progress_bar_flush();
+
 if (isset ($_GET['check_available'])) {
 
 	echo get_form_header(translate('LBL_CHECKING_SYNC_AVAILABLE', 'Sync'), '', false);
@@ -85,7 +84,7 @@ if ((isset ($_SESSION['clean_sync']) && $_SESSION['clean_sync'] == 1) || (isset 
 }
 if($clean_sync == 0){
 	 if(!file_exists('modules/Sync/file_config.php')){
-	 	$clean_sync = 1;	
+	 	$clean_sync = 1;
 	 }else{
     		require_once ('modules/Sync/file_config.php');
     		if(isset($file_sync_info['is_first_sync']) && $file_sync_info['is_first_sync']){
@@ -112,14 +111,14 @@ if (isset ($_REQUEST['sync_module_index'])) {
 	function start_sync(accept_server, do_clean_sync){
 		var clean_sync = 0;
 		if(do_clean_sync){
-			clean_sync = 1;	
+			clean_sync = 1;
 		}
 		window.resizeTo(640, 280);
 		document.location.href = "index.php?&action=Popup&module=Sync&sync_module_index=-1&new_sync=true&clean_sync=" + clean_sync + "&global_accept_server=" + accept_server;
 	}
 
 </script>
-<?php 	if($clean_sync == 0){ 
+<?php 	if($clean_sync == 0){
 			$out = "<b>".translate('LBL_CLEAN_SYNC', 'Sync');
 		 	$out .= "</b>&nbsp;<input type='checkbox' class='checkbox' id='clean_sync' name='clean_sync' value='1' onclick=\"if(this.checked)alert('".translate('LBL_CLEAN_ALERT', 'Sync')."');\">";
 		 	echo $out;
@@ -130,7 +129,7 @@ if (isset ($_REQUEST['sync_module_index'])) {
 <option value=1><?php echo translate('LBL_ACCEPT_SERVER', 'Sync');?>
 <option value=-1><?php echo translate('LBL_ACCEPT_CLIENT', 'Sync');?>
 </select>
-<?php 	if($clean_sync == 0){ 
+<?php 	if($clean_sync == 0){
 			$out = "<input type='button' onclick='start_sync(document.getElementById(\"accept_server\").value, document.getElementById(\"clean_sync\").checked)' value='".translate('LBL_START_SYNC', 'Sync')."' class='button'>&nbsp;&nbsp";
 		}else{
 			$out = "<input type='button' onclick='start_sync(document.getElementById(\"accept_server\").value, true)' value='".translate('LBL_START_SYNC', 'Sync')."' class='button'>&nbsp;&nbsp";
@@ -208,15 +207,15 @@ if ($sync_module_index > -1) {
 		echo '</div>';
 	echo "</td><td align='right'><A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></a></td></tr></table></div><script>document.getElementById('sync_table').style.display='inline';</script>";
 	echo str_repeat(' ', 256);
-	
+
 	flush();
 	require_once ('include/nusoap/nusoap.php'); //must also have the nusoap code on the ClientSide.
 	$soapclient = new nusoapclient($soap_server); //define the SOAP Client an
 	$soapclient->response_timeout = 360;
 	if (empty ($_SESSION['sync_start_time'])) {
-		//get the what the server says is gmt time 
+		//get the what the server says is gmt time
 		$start_time = $soapclient->call('get_gmt_time', array ());
-		$local_time = $timedate->get_gmt_db_datetime();
+		$local_time = $timedate->nowDb();
 
 		if (has_error()) {
 			add_to_msg('Could not connect to server');
@@ -260,7 +259,7 @@ if ($sync_module_index > -1) {
 				$altered = array ('entry_list' => $_SESSION['sync_entry_list']);
 			}
 		}
-	
+
 
 	$current_step ++;
 	update_progress_bar($sync_module, $current_step, $module_steps);
@@ -299,8 +298,8 @@ if ($sync_module_index > -1) {
 
 
 foreach($sync_modules as $name=>$val){
-				
-				
+
+
 				if(in_array($val['name'], $mods['modules'])){
 					$new_related = array();
 					foreach($val['related'] as $rel_key=>$rel){
@@ -311,7 +310,7 @@ foreach($sync_modules as $name=>$val){
 					$sync_modules[$name]['related'] = $new_related;
 				}else{
 					unset($sync_modules[$name]);
-					
+
 				}
 
 			}
@@ -321,7 +320,7 @@ foreach($sync_modules as $name=>$val){
 			}
 			$sync_modules = $new_sync_modules;
 			$_SESSION['sync_modules'] = $sync_modules;
-		
+
 		} else {
 			add_to_msg('Fail<br>');
 		}
@@ -338,7 +337,7 @@ foreach($sync_modules as $name=>$val){
 
 	if (!empty ($session)) {
 
-		//if we have an offset we have already been down this path so we already uploaded data 
+		//if we have an offset we have already been down this path so we already uploaded data
 		if (empty($_REQUEST['offset']) && empty($_REQUEST['rel_offset'])) {
 			echo '<script>document.getElementById("records_progress_div").style.display="inline"</script>';
 			update_progress_bar('records', 0, 100);
@@ -386,7 +385,7 @@ foreach($sync_modules as $name=>$val){
 						update_progress_bar('records', 55, 100);
 						if($clean_sync == 1){
 							$result_arr = unserialize(base64_decode($result['result']));
-							execute_query($sync_module, $result_arr['data']);	
+							execute_query($sync_module, $result_arr['data']);
 							execute_query($sync_module, $result_arr['cstm']);
 						}
 						else
@@ -400,7 +399,7 @@ foreach($sync_modules as $name=>$val){
 							add_to_msg('Modified '.$done['modify'].' Records <br>', false);
 						}
 						add_to_msg('Done<br>', false);
-						
+
 						if ($result['next_offset'] < $result['total_count']) {
 							store_msg();
 							echo '<input type="hidden" name="sync_module_index" value="'.$sync_module_index.'">';
@@ -435,19 +434,19 @@ foreach($sync_modules as $name=>$val){
 								clean_relationships_for_sync($sync_module, $related);
 							}
 							$altered_relation = get_altered_relationships($sync_module, $related, $local_last_sync, $local_time);
-							
+
 							if(isset($altered_relation['result_count']) && $altered_relation['result_count'] > 0){
 								$commit_relation = get_encoded($altered_relation['entry_list']);
 								update_progress_bar('records', 50, 100);
 								add_to_msg('Sending '.sizeof($altered_relation['entry_list']).' Modified Relationship Records<br>', false);
 								$result = $soapclient->call('sync_set_relationships', array ('session' => $session, 'module_name' => $sync_module, 'related_module' => $related, 'from_date' => $last_sync, 'to_date' => $start_time, 'sync_entry_list' => $commit_relation, 'deleted' => -1));
 							}
-							
+
 							update_progress_bar('records', 100, 100);
 						}
-						
+
 						if ($rel_offset > 0 || !has_error($result)) {
-						
+
 							update_progress_bar('records', 0, 100);
 							$next_off = $rel_offset + $rel_max;
 							add_to_msg('Retrieving Server Relationships - '.$related."[$rel_offset - $next_off] <br>", false);
@@ -461,7 +460,7 @@ foreach($sync_modules as $name=>$val){
 								update_progress_bar('records', 50, 100);
 								if($clean_sync == 1){
 									$result_arr = unserialize(base64_decode($result['result']));
-									execute_query($sync_module, $result_arr['data']);	
+									execute_query($sync_module, $result_arr['data']);
 									execute_query($sync_module, $result_arr['cstm']);
 								}
 								else
@@ -514,7 +513,7 @@ foreach($sync_modules as $name=>$val){
                         }
 						$file_sync_info['is_first_sync'] = false;
 						write_array_to_file('file_sync_info', $file_sync_info, 'modules/Sync/file_config.php');
-						
+
 						add_to_msg('Storing Sync Info', false);
 						write_array_to_file('sync_info', $sync_info, 'modules/Sync/config.php');
 						$sync_module_index ++;
@@ -532,6 +531,7 @@ foreach($sync_modules as $name=>$val){
 						foreach($sync_info as $key => $val){
 							$sync_info[$key] = $sync_end_time;
 						}
+						$sync_info['last_sync'.$sync_module] = $sync_end_time;
 						$sync_info['local_last_sync'.$sync_module] = $local_time;
 						unset($_SESSION['sync_start_time']);
 						require_once ('include/utils/file_utils.php');
@@ -547,7 +547,7 @@ foreach($sync_modules as $name=>$val){
 							  $mod_strings = return_module_language($current_language, 'Administration');
                               $mi = new ModuleInstaller();
                               $mi->rebuild_all();
-						 
+
                                 $current_user->is_admin = '0';
 						echo '<script>document.getElementById("stop_sync_btn").value="Done"</script>';
                         echo '<script>opener.location.href = "index.php?module=Home&action=index";</script>';
@@ -573,4 +573,3 @@ if ($sync_module_index > -1) {
 }
 end_sync_log();
 insert_popup_footer($theme);
-?>

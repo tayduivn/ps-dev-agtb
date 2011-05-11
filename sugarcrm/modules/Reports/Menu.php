@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -16,8 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
  *
@@ -46,7 +46,7 @@ $module_menu = Array(
 //BEGIN SUGARCRM flav!=sales ONLY
 
     Array("index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report", $mod_strings['LBL_CREATE_REPORT'],"CreateReport", 'Reports'),
-    Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'), 
+    Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'),
 //END SUGARCRM flav!=sales ONLY
     Array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports'),
 //	Array("index.php?module=Reports&action=ActivitiesReports", $mod_strings['LBL_ACTIVITIES_REPORTS'],"Reports", 'Reports'),
@@ -64,7 +64,7 @@ $module_menu = Array(
 	Array("index.php?module=Reports&action=index&report_module=Emails&query=true", $mod_strings['LBL_EMAIL_REPORTS'],"EmailReports", 'Emails'),
 	Array("index.php?module=Reports&action=index&report_module=Forecasts&query=true", $mod_strings['LBL_FORECAST_REPORTS'],"ForecastReports", 'Forecasts'),
 	Array("index.php?module=Reports&action=index&report_module=ProjectTask&query=true", $mod_strings['LBL_PROJECT_TASK_REPORTS'],"TaskReports", 'Project'),
-	Array("index.php?module=Reports&action=index&report_module=Prospects&query=true", $mod_strings['LBL_PROSPECT_REPORTS'],"TaskReports", 'Prospects'),	
+	Array("index.php?module=Reports&action=index&report_module=Prospects&query=true", $mod_strings['LBL_PROSPECT_REPORTS'],"TaskReports", 'Prospects'),
 	Array("index.php?module=Reports&action=index&report_module=Contracts&query=true", $mod_strings['LBL_CONTRACT_REPORTS'],"ContractReports", 'Contracts'),
 	*/
 		
@@ -73,18 +73,18 @@ $module_menu = Array(
 //END SUGARCRM flav=ent ONLY
 	);
 	
-if(!(ACLController::checkAccess('Reports', 'edit')))
+if(!(ACLController::checkAccess('Reports', 'edit', true)))
 {
     $module_menu = Array(
 //BEGIN SUGARCRM flav=dce ONLY
     Array("index.php?module=DCEReports&action=LicensingReport", $mod_strings['LBL_DCE_LICENSING_REPORT'], "DCELicensingReport", 'Reports'),
 //END SUGARCRM flav=dce ONLY
-    Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'), 
-    Array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports'),        
+    Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'),
+    Array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports'),
 //BEGIN SUGARCRM flav=ent ONLY
-    Array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker"),
+    Array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker",'Reports'),
 //END SUGARCRM flav=ent ONLY
     );
-}	
+}
 
 ?>

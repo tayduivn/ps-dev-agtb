@@ -61,7 +61,7 @@ function disableReturnSubmission(e) {
 
 <div class="dashletPanelMenu">
 <div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
-<div class="bd">	
+<div class="bd">
 		<div class="ml"></div>
 		<div class="bd-center">
 <div id="welcome" class="screen">
@@ -75,13 +75,13 @@ function disableReturnSubmission(e) {
             </tr>
             <tr>
                 <td scope="row">
-                
+
                 {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
                <p> {$MOD.LBL_WIZARD_WELCOME}</p>
                 {else}
                <p> {$MOD.LBL_WIZARD_WELCOME_NOSMTP}</p>
                 {/if}
-              
+
 				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' width='765px' height='325px'></div>
                 </td>
             </tr>
@@ -152,7 +152,7 @@ function disableReturnSubmission(e) {
                         <td><slot><input name='address_postalcode' tabindex='9' size='10' maxlength='20' value='{$ADDRESS_POSTALCODE}'></slot></td>
                         <td scope="row" nowrap="nowrap"><slot>{$MOD.LBL_COUNTRY}:</slot></td>
                         <td><slot><input name='address_country' tabindex='10' size='10' maxlength='20' value='{$ADDRESS_COUNTRY}'></slot></td>
-                    </tr>                    
+                    </tr>
                 </table>
                 </div>
             </td>
@@ -160,8 +160,8 @@ function disableReturnSubmission(e) {
     </table>
     <div class="nav-buttons">
         {if $SKIP_WELCOME}
-        <input title="{$MOD.LBL_BACK}"  
-            onclick="document.location.href='index.php?module=Configurator&action=AdminWizard&page=smtp';" class="button"  
+        <input title="{$MOD.LBL_BACK}"
+            onclick="document.location.href='index.php?module=Configurator&action=AdminWizard&page=smtp';" class="button"
             type="button" name="cancel" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  " />&nbsp;
         {else}
         <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
@@ -189,14 +189,14 @@ function disableReturnSubmission(e) {
                     </tr>
                     <tr>
                         <td scope="row" nowrap="nowrap"><slot>{$MOD.LBL_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_TIMEZONE_TEXT }</td>
-                        <td colspan="3"><slot><select tabindex='14' name='timezone'>{$TIMEZONEOPTIONS}</select></slot></td>
+                        <td colspan="3"><slot><select tabindex='14' name='timezone'>{html_options options=$TIMEZONEOPTIONS selected=$TIMEZONE_CURRENT}</select></slot></td>
                     </tr>
                     <tr>
                         <td width="17%" scope="row" nowrap="nowrap"><slot>{$MOD.LBL_DATE_FORMAT}:</slot>&nbsp;{sugar_help text=$MOD.LBL_DATE_FORMAT_TEXT }</td>
                         <td width="33%"><slot><select tabindex='14' name='dateformat'>{$DATEOPTIONS}</select></slot></td>
                         <td scope="row" nowrap="nowrap"><slot>{$MOD.LBL_TIME_FORMAT}:</slot>&nbsp;{sugar_help text=$MOD.LBL_TIME_FORMAT_TEXT }</td>
                         <td ><slot><select tabindex='14' name='timeformat'>{$TIMEOPTIONS}</select></slot></td>
-                        
+
                     </tr>
                     <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                     <tr>
@@ -228,13 +228,13 @@ function disableReturnSubmission(e) {
                     <tr>
                         <td width="17%" scope="row" nowrap="nowrap"><slot>{$MOD.LBL_DECIMAL_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_DECIMAL_SEP_TEXT }</td>
                         <td ><slot>
-                            <input tabindex='14' name='dec_sep' id='default_decimal_seperator' 
+                            <input tabindex='14' name='dec_sep' id='default_decimal_seperator'
                                 type='text' maxlength='1' size='1' value='{$DEC_SEP}'
                                 onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
                         </slot></td>
                         <td width="17%" scope="row" nowrap="nowrap"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}:</slot>&nbsp;{sugar_help text=$MOD.LBL_NUMBER_GROUPING_SEP_TEXT }</td>
                         <td><input tabindex='14' name='num_grp_sep' id='default_number_grouping_seperator'
-                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' 
+                                    type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}'
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'></td>
                     </tr>
                     <!--//END SUGARCRM flav!=dce ONLY -->
@@ -248,7 +248,7 @@ function disableReturnSubmission(e) {
                             <input onkeyup="setPreview();" onkeydown="setPreview();" id="default_locale_name_format" type="text" tabindex='14' name="default_locale_name_format" value="{$default_locale_name_format}">
                         </td>
                         <td nowrap="nowrap" scope="row" valign="top"><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i> </td>
-                        <td valign="top"><input tabindex='14' name="no_value" id="nameTarget" value="" style="border: none;" disabled size="30"></td>        
+                        <td valign="top"><input tabindex='14' name="no_value" id="nameTarget" value="" style="border: none;" disabled size="30"></td>
                     </tr>
                 </table>
                 </div>
@@ -289,6 +289,7 @@ function disableReturnSubmission(e) {
                 <td scope="row">&nbsp;</td>
                 <td >&nbsp;</td>
             </tr>
+            {if !empty($mail_smtpauth_req)}
             <tr>
                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtpuser_label">{$MOD.LBL_MAIL_SMTPUSER}</span></td>
                 <td width="30%" ><slot><input type="text" id="mail_smtpuser" name="mail_smtpuser" size="25" maxlength="64" value="{$mail_smtpuser}" tabindex='1' ></slot></td>
@@ -301,6 +302,7 @@ function disableReturnSubmission(e) {
                 <td scope="row">&nbsp;</td>
                 <td >&nbsp;</td>
             </tr>
+            {/if}
             <tr>
                 <td width="17%" scope="row"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="startOutBoundEmailSettingsTest();"></td>
                 <td width="33%" >&nbsp;</td>
@@ -364,7 +366,7 @@ function disableReturnSubmission(e) {
 var SugarWizard = new function()
 {
     this.currentScreen = 'welcome';
-    
+
     this.handleKeyStroke = function(e)
     {
         // get the key pressed
@@ -375,7 +377,7 @@ var SugarWizard = new function()
         else if(e.which) {
             key = e.which
         }
-        
+
         switch(key) {
         case 13:
             primaryButton = YAHOO.util.Selector.query('input.primary',SugarWizard.currentScreen,true);
@@ -383,14 +385,14 @@ var SugarWizard = new function()
             break;
         }
     }
-    
+
     this.changeScreen = function(screen,skipCheck)
     {
         if ( !skipCheck ) {
             clear_all_errors();
             var form = document.getElementById('UserWizard');
             var isError = false;
-            
+
             switch(this.currentScreen) {
             case 'personalinfo':
                 if ( document.getElementById('last_name').value == '' ) {
@@ -414,10 +416,10 @@ var SugarWizard = new function()
             if (isError == true)
                 return false;
         }
-        
+
         document.getElementById(this.currentScreen).style.display = 'none';
         document.getElementById(screen).style.display = 'block';
-        
+
         this.currentScreen = screen;
     }
 }
@@ -456,11 +458,11 @@ function startOutBoundEmailSettingsTest()
         requires: ["datatable", "dragdrop", "treeview", "tabview"]
     });
     loader.insert();
-     
+
 }
 
-function testOutboundSettings() 
-{ 
+function testOutboundSettings()
+{
 	var errorMessage = '';
 	var isError = false;
 	var fromAddress = document.getElementById("outboundtest_from_address").value;
@@ -469,7 +471,7 @@ function testOutboundSettings()
     var smtpServer = document.getElementById('mail_smtpserver').value;
 
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
-    if(trim(smtpServer) == '' || trim(mail_smtpport) == '') 
+    if(trim(smtpServer) == '' || trim(mail_smtpport) == '')
     {
         isError = true;
         errorMessage += "{/literal}{$MOD.LBL_MISSING_DEFAULT_OUTBOUND_SMTP_SETTINGS}{literal}" + "<br/>";
@@ -477,29 +479,31 @@ function testOutboundSettings()
         return false;
     }
     
-    if(trim(document.getElementById('mail_smtpuser').value) == '') 
+    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '') 
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPUSER}{literal}" + "<br/>";
     }
-    if(trim(document.getElementById('mail_smtppass').value) == '') 
+    
+    if(document.getElementById('mail_smtppass') && trim(document.getElementById('mail_smtppass').value) == '') 
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPASS}{literal}" + "<br/>";
     }
+    
     if(isError) {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
-        return false;    
-    } 
-	
+        return false;
+    }
+
     testOutboundSettingsDialog();
 }
 
 function sendTestEmail()
 {
     var fromAddress = document.getElementById("outboundtest_from_address").value;
-    
-    if (trim(fromAddress) == "") 
+
+    if (trim(fromAddress) == "")
     {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", "{{/literal}$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR}{literal}", 'alert');
         return;
@@ -508,19 +512,26 @@ function sendTestEmail()
         overlay("{/literal}{$APP.ERR_INVALID_REQUIRED_FIELDS}{literal}", "{/literal}{$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR}{literal}", 'alert');
         return;
     }
-    
+
     //Hide the email address window and show a message notifying the user that the test email is being sent.
     EmailMan.testOutboundDialog.hide();
     overlay("{/literal}{$APP.LBL_EMAIL_PERFORMING_TASK}{literal}", "{/literal}{$APP.LBL_EMAIL_ONE_MOMENT}{literal}", 'alert');
-    
+
     var callbackOutboundTest = {
     	success	: function(o) {
     		hideOverlay();
     		overlay("{/literal}{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}{literal}", "{/literal}{$APP.LBL_EMAIL_TEST_NOTIFICATION_SENT}{literal}", 'alert');
     	}
-    };    
+    };
     var smtpServer = document.getElementById('mail_smtpserver').value;
-	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass'))
+       {
+         var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+        }
+    else
+       {
+    	 var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress;
+        }
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
@@ -537,7 +548,7 @@ function testOutboundSettingsDialog() {
             EmailMan.testOutboundDialog.setHeader("{/literal}{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}{literal}");
             YAHOO.util.Dom.removeClass("testOutboundDialog", "yui-hidden");
         } // end lazy load
-        
+
         EmailMan.testOutboundDialog.render();
         EmailMan.testOutboundDialog.show();
 } // fn
@@ -576,7 +587,7 @@ setSigDigits();
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 			<tr>
 				<td scope="row">
-					{$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR} 
+					{$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR}
 					<span class="required">
 						{$APP.LBL_REQUIRED_SYMBOL}
 					</span>

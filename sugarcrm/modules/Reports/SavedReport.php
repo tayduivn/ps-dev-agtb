@@ -143,7 +143,16 @@ class SavedReport extends SugarBean
 		$this->save();
 		return $result;
 	}
-
+	
+	function mark_deleted($id){
+	    require_once('modules/Reports/schedule/ReportSchedule.php');
+	    $report_schedule = new ReportSchedule();
+	    $scheduled_reports = $report_schedule->get_report_schedule($id);
+	    foreach($scheduled_reports as $rs_row){
+	        $report_schedule->mark_deleted($rs_row['id']);
+	    }
+	    parent::mark_deleted($id);
+	}
 
 		function mark_published($flag)
 		{

@@ -33,15 +33,20 @@ require_once('include/SugarFields/SugarFieldHandler.php');
 
 $focus = new Quote();
 $focus = populateFromPost('', $focus);
+
+if(!$focus->ACLAccess('Save')){
+	ACLController::displayNoAccess(true);
+	sugar_cleanup(true);
+}
+
 //we have to commit the teams here in order to obtain the team_set_id for use with products and product bundles.
 if(empty($focus->teams)){
 	$focus->load_relationship('teams');
 }
 $focus->teams->save();
-if(!$focus->ACLAccess('Save')){
-	ACLController::displayNoAccess(true);
-	sugar_cleanup(true);
-}
+//bug: 35297 - set the teams to have not been saved, so workflow can update if necessary
+$focus->teams->setSaved(false);
+
 if (!empty($_POST['assigned_user_id']) && ($focus->assigned_user_id != $_POST['assigned_user_id']) && ($_POST['assigned_user_id'] != $current_user->id)) {
 	$check_notify = TRUE;
 }
@@ -77,6 +82,12 @@ if(empty($focus->id)) {
     $focus->new_with_id = true;
 }
 
+//remove the relate id element if this is a duplicate
+if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
+	//this is a 'create duplicate' quote, keeping the relate_id in focus will assign the quote product bundles 
+	//to the original quote, not the new duplicate one, so we will unset the element
+	unset($_REQUEST['relate_id']);
+}
 
 	global $beanFiles;
 	require_once($beanFiles['Product']);
@@ -89,24 +100,25 @@ if(empty($focus->id)) {
 	}
 	//totals keys is a list of tables for the products bundles
 	if(isset($_REQUEST['total'])){
-	$total_keys = array_keys($_REQUEST['total']);
+	    $total_keys = array_keys($_REQUEST['total']);
 	}else{
 		$total_keys = array();
 	}
 	$product_bundels = array();
-
+    $last_pb_index = -1;
+    $last_pb = null;
 	for($k = 0; $k < sizeof($total_keys); $k++){
 		$pb = new ProductBundle();
 
 		if(substr_count($total_keys[$k], 'group_') == 0){
 				$pb->id = $total_keys[$k];
 		}
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$pb->team_id = $focus->team_id;
         $pb->team_set_id = $focus->team_set_id;
         //END SUGARCRM flav=pro ONLY
-        
+
 		$pb->tax = unformat_number($_REQUEST['tax'][$total_keys[$k]]);
 		$pb->shipping = unformat_number($_REQUEST['shipping'][$total_keys[$k]]);
 		$pb->subtotal = unformat_number($_REQUEST['subtotal'][$total_keys[$k]]);
@@ -127,13 +139,23 @@ if(empty($focus->id)) {
 		}
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
-			$pb->set_productbundle_quote_relationship($focus->id, $pb->id, $k);
+		    // Base new index on last saved bundle's index +1
+		    // or 0 if no bundles were saved
+		    if($last_pb_index == -1 && !empty($last_pb)) {
+		        $last_pb_index_row = $last_pb->get_index($focus->id);
+		        $last_pb_index = $last_pb_index_row[0]['bundle_index'];
+		    }
+		    $last_pb_index++;
+		    $pb->set_productbundle_quote_relationship($focus->id, $pb->id, $last_pb_index);
+		} else {
+		    $last_pb = $pb;
 		}
 
 		//clear the old relationships out
 		$pb->clear_productbundle_product_relationship($product_bundels[$total_keys[$k]]);
 		$pb->clear_product_bundle_note_relationship($product_bundels[$total_keys[$k]]);
 	}
+	unset($last_pb);
 
 	$pb = new ProductBundle();
 	$deletedGroups = array();
@@ -203,17 +225,17 @@ if(empty($focus->id)) {
 			}
 		}
 		$product->currency_id = $focus->currency_id;
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$product->team_id = $focus->team_id;
 		$product->team_set_id = $focus->team_set_id;
 		//END SUGARCRM flav=pro ONLY
-		
+
 		$product->quote_id=$focus->id;
-        $product->account_id=$focus->billing_account_id;  //<--------------
+        $product->account_id=$focus->billing_account_id;  
         $product->contact_id=$focus->billing_contact_id;
-		$product->status=$focus->quote_type;
-		if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
+		//SM: removed as per Bug 15305 $product->status=$focus->quote_type;
+		// if ($focus->quote_stage == 'Closed Accepted') $product->status='Orders';
     		$product->save();
     		$pb->set_productbundle_product_relationship($product->id,$_POST['parent_group_position'][$i], $product_bundels[$_REQUEST['parent_group'][$i]] );
 		}

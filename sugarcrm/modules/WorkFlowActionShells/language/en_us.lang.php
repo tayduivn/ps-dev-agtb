@@ -91,6 +91,7 @@ $mod_strings = array (
     'LBL__S' => ' s',
     'LBL_FILTER_RELATED'=>'Filter Related',
     'LBL_ASSOCIATED_WITH'=>' associated with a related ',
+    'LBL_ACTION_ERROR'=>'This action contains errors and connot be executed.',
 );
 
 

@@ -25,7 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * 
+ *
  * $Id: index.php 56965 2010-06-15 17:57:35Z jenny $
  * Description:  Main file for the Home module.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
@@ -41,7 +41,7 @@ require_once('include/MySugar/MySugar.php');
 // build dashlet cache file if not found
 if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
     require_once('include/Dashlets/DashletCacheBuilder.php');
-    
+
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 }
@@ -49,7 +49,7 @@ require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 
 require('modules/Home/dashlets.php');
 
-$pages = $current_user->getPreference('pages', 'Home'); 
+$pages = $current_user->getPreference('pages', 'Home');
 $dashlets = $current_user->getPreference('dashlets', 'Home');
 
 $defaultHomepage = false;
@@ -64,7 +64,7 @@ if(!$hasUserPreferences){
 	$defaultHomepage = true;
 	//END SUGARCRM flav=pro ONLY
     $dashlets = array();
-    
+
     //list of preferences to move over and to where
     $prefstomove = array(
         'mypbss_date_start' => 'MyPipelineBySalesStageDashlet',
@@ -90,7 +90,7 @@ if(!$hasUserPreferences){
 	if (isset($old_columns) && !empty($old_columns) && isset($old_dashlets) && !empty($old_dashlets)){
 		$columns = $old_columns;
 		$dashlets = $old_dashlets;
-		
+
 		// resetting old columns and dashlets to have no preference and data
 		$old_columns = array();
 		$old_dashlets = array();
@@ -124,7 +124,7 @@ if(!$hasUserPreferences){
                                                             'url' => 'http://www.sugarcrm.com/crm/product/news',
                                                             'height' => 315,
                                              ));
-        
+
 	    foreach($defaultDashlets as $dashletName=>$module){
 			// clint - fixes bug #20398
 			// only display dashlets that are from visibile modules and that the user has permission to list
@@ -136,14 +136,14 @@ if(!$hasUserPreferences){
                foreach ( $prefsforthisdashlet as $pref ) {
                    $options[$pref] = $current_user->getPreference($pref);
                }
-                $dashlets[create_guid()] = array('className' => $dashletName, 
-												 'module' => $module, 
+                $dashlets[create_guid()] = array('className' => $dashletName,
+												 'module' => $module,
 	            	                             'forceColumn' => 0,
 	            	                             'fileLocation' => $dashletsFiles[$dashletName]['file'],
                                                  'options' => $options);
 	    	}
 	    }
-	    
+
 	    $count = 0;
 	    $columns = array();
 	    $columns[0] = array();
@@ -152,9 +152,9 @@ if(!$hasUserPreferences){
 	    $columns[1] = array();
 	    $columns[1]['width'] = '40%';
 	    $columns[1]['dashlets'] = array();
-	    
+
 	    foreach($dashlets as $guid=>$dashlet) {
-	        if( $dashlet['forceColumn'] == 0 ) array_push($columns[0]['dashlets'], $guid); 
+	        if( $dashlet['forceColumn'] == 0 ) array_push($columns[0]['dashlets'], $guid);
 	        else array_push($columns[1]['dashlets'], $guid);
 	        $count++;
 	    }
@@ -165,10 +165,10 @@ if(!$hasUserPreferences){
     //END SUGARCRM flav=pro ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
-    
-    
+
+
     // BEGIN 'Sales Page'
-    $salesDashlets = array();       
+    $salesDashlets = array();
     foreach($defaultSalesDashlets as $salesDashletName=>$module){
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -181,12 +181,12 @@ if(!$hasUserPreferences){
                $options[$pref] = $current_user->getPreference($pref);
             }
 
-            $salesDashlets[create_guid()] = array('className' => $salesDashletName, 
-										 'module'=>$module, 
+            $salesDashlets[create_guid()] = array('className' => $salesDashletName,
+										 'module'=>$module,
 	                                         'fileLocation' => $dashletsFiles[$salesDashletName]['file'],
                                              'options' => $options);
     	}
-    }    
+    }
 
     foreach ($defaultSalesChartDashlets as $salesChartDashlet=>$module){
 		$savedReport = new SavedReport();
@@ -195,15 +195,15 @@ if(!$hasUserPreferences){
 		// only display dashlets that are from visibile modules and that the user has permission to list
 		$myDashlet = new MySugar($module);
 		$displayDashlet = $myDashlet->checkDashletDisplay();
-					
+
 		if(isset($reportId) && $displayDashlet) {
     		$salesDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-											 		'module'=>$module, 								
+											 		'module'=>$module,
     												'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
     												'reportId' => $reportId, );
-    	}    
-    }    
-    
+    	}
+    }
+
     foreach($defaultSalesDashlets2 as $salesDashletName=>$module){
 		$myDashlet = new MySugar($module);
 		$displayDashlet = $myDashlet->checkDashletDisplay();
@@ -214,13 +214,13 @@ if(!$hasUserPreferences){
                $options[$pref] = $current_user->getPreference($pref);
             }
 
-            $salesDashlets[create_guid()] = array('className' => $salesDashletName, 
-										 'module'=>$module, 
+            $salesDashlets[create_guid()] = array('className' => $salesDashletName,
+										 'module'=>$module,
 	                                         'fileLocation' => $dashletsFiles[$salesDashletName]['file'],
                                              'options' => $options);
     	}
-    }       
-    
+    }
+
     $count = 0;
     $salesColumns = array();
     $salesColumns[0] = array();
@@ -231,13 +231,13 @@ if(!$hasUserPreferences){
     $salesColumns[1]['dashlets'] = array();
 
     foreach($salesDashlets as $guid=>$dashlet){
-        if($count % 2 == 0) array_push($salesColumns[0]['dashlets'], $guid); 
-        else array_push($salesColumns[1]['dashlets'], $guid);        
+        if($count % 2 == 0) array_push($salesColumns[0]['dashlets'], $guid);
+        else array_push($salesColumns[1]['dashlets'], $guid);
         $count++;
     }
     // END 'Sales Page'
-    
-	// BEGIN 'Marketing Page'       
+
+	// BEGIN 'Marketing Page'
 	$marketingDashlets = array();
     foreach ($defaultMarketingChartDashlets as $marketingChartDashlet=>$module){
 		$savedReport = new SavedReport();
@@ -246,15 +246,15 @@ if(!$hasUserPreferences){
 		// only display dashlets that are from visibile modules and that the user has permission to list
 		$myDashlet = new MySugar($module);
 		$displayDashlet = $myDashlet->checkDashletDisplay();
-    	
+
 		if(isset($reportId) && $displayDashlet) {
     		$marketingDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-											 		'module'=>$module, 								
+											 		'module'=>$module,
     												'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
     												'reportId' => $reportId, );
 	    }
     }
-	
+
     foreach($defaultMarketingDashlets as $marketingDashletName=>$module){
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -267,13 +267,13 @@ if(!$hasUserPreferences){
             foreach ( $prefsforthisdashlet as $pref ) {
                $options[$pref] = $current_user->getPreference($pref);
             }
-            $marketingDashlets[create_guid()] = array('className' => $marketingDashletName, 
-									 		 'module'=>$module, 								
+            $marketingDashlets[create_guid()] = array('className' => $marketingDashletName,
+									 		 'module'=>$module,
 	                                         'fileLocation' => $dashletsFiles[$marketingDashletName]['file'],
                                              'options' => $options);
     	}
-    }    
-    
+    }
+
     $count = 0;
     $marketingColumns = array();
     $marketingColumns[0] = array();
@@ -282,15 +282,15 @@ if(!$hasUserPreferences){
     $marketingColumns[1] = array();
     $marketingColumns[1]['width'] = '40%';
     $marketingColumns[1]['dashlets'] = array();
-    
+
     foreach($marketingDashlets as $guid=>$dashlet){
-        if($count % 2 == 0) array_push($marketingColumns[0]['dashlets'], $guid); 
-        else array_push($marketingColumns[1]['dashlets'], $guid);        
+        if($count % 2 == 0) array_push($marketingColumns[0]['dashlets'], $guid);
+        else array_push($marketingColumns[1]['dashlets'], $guid);
         $count++;
     }
 	// END 'Marketing Page'
-    
-	// BEGIN 'Support Page'       
+
+	// BEGIN 'Support Page'
 	$supportDashlets = array();
     foreach ($defaultSupportChartDashlets as $supportChartDashlet=>$module){
 		$savedReport = new SavedReport();
@@ -299,15 +299,15 @@ if(!$hasUserPreferences){
 		// only display dashlets that are from visibile modules and that the user has permission to list
 		$myDashlet = new MySugar($module);
 		$displayDashlet = $myDashlet->checkDashletDisplay();
-    	
+
 		if(isset($reportId) && $displayDashlet) {
     		$supportDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-											 		'module'=>$module, 								
+											 		'module'=>$module,
     												'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
     												'reportId' => $reportId, );
 	    }
     }
-	
+
     foreach($defaultSupportDashlets as $supportDashletName=>$module){
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -320,13 +320,13 @@ if(!$hasUserPreferences){
             foreach ( $prefsforthisdashlet as $pref ) {
                $options[$pref] = $current_user->getPreference($pref);
             }
-            $supportDashlets[create_guid()] = array('className' => $supportDashletName, 
-									 		 'module'=>$module, 								
+            $supportDashlets[create_guid()] = array('className' => $supportDashletName,
+									 		 'module'=>$module,
 	                                         'fileLocation' => $dashletsFiles[$supportDashletName]['file'],
                                              'options' => $options);
     	}
-    }    
-    
+    }
+
     $count = 0;
     $supportColumns = array();
     $supportColumns[0] = array();
@@ -335,16 +335,16 @@ if(!$hasUserPreferences){
     $supportColumns[1] = array();
     $supportColumns[1]['width'] = '50%';
     $supportColumns[1]['dashlets'] = array();
-    
+
     foreach($supportDashlets as $guid=>$dashlet){
-        if($count % 2 == 0) array_push($supportColumns[0]['dashlets'], $guid);         
-        else array_push($supportColumns[1]['dashlets'], $guid);        
+        if($count % 2 == 0) array_push($supportColumns[0]['dashlets'], $guid);
+        else array_push($supportColumns[1]['dashlets'], $guid);
         $count++;
     }
 	// END 'Support Page'
 
-	// BEGIN 'Tracker Page'       
-										  
+	// BEGIN 'Tracker Page'
+
 	$trackingDashlets = array();
 	foreach($defaultTrackingDashlets as $trackingDashletName=>$module){
 		// clint - fixes bug #20398
@@ -357,27 +357,27 @@ if(!$hasUserPreferences){
             foreach ( $prefsforthisdashlet as $pref ) {
                $options[$pref] = $current_user->getPreference($pref);
             }
-            $trackingDashlets[create_guid()] = array('className' => $trackingDashletName, 
-									 		 'module'=>$module, 								
+            $trackingDashlets[create_guid()] = array('className' => $trackingDashletName,
+									 		 'module'=>$module,
 	                                         'fileLocation' => $dashletsFiles[$trackingDashletName]['file'],
                                              'options' => $options);
     	}
-    }    
+    }
 
     foreach($defaultTrackingReportDashlets as $name=>$module) {
     	$savedReport = new SavedReport();
         $reportId = $savedReport->retrieveReportIdByName($name);
-        
+
     	$myDashlet = new MySugar($module);
 		$displayDashlet = $myDashlet->checkDashletDisplay();
 
         if (isset($reportId) && $displayDashlet){
 	        $trackingDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-									 		 		'module'=>$module, 								
+									 		 		'module'=>$module,
                                                     'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
                                                     'reportId' => $reportId);
-		}        
-    }    
+		}
+    }
 
     $count = 0;
     $trackingColumns = array();
@@ -386,25 +386,25 @@ if(!$hasUserPreferences){
     $trackingColumns[0]['dashlets'] = array();
     $trackingColumns[1] = array();
     $trackingColumns[1]['width'] = '50%';
-    $trackingColumns[1]['dashlets'] = array();    
-    
+    $trackingColumns[1]['dashlets'] = array();
+
     foreach($trackingDashlets as $guid=>$dashlet){
-    	if($count % 2 == 0) { 
-    		array_push($trackingColumns[0]['dashlets'], $guid); 
+    	if($count % 2 == 0) {
+    		array_push($trackingColumns[0]['dashlets'], $guid);
     	} else {
-    		array_push($trackingColumns[1]['dashlets'], $guid);         
-    	}     
+    		array_push($trackingColumns[1]['dashlets'], $guid);
+    	}
     	$count++;
     }
-    
-    
-    
+
+
+
 	// END 'Tracker'
 	//END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce ONLY
 //BEGIN SUGARCRM flav=dce ONLY
 // BEGIN 'DCE page'
-    
+
     foreach ($defaultdceReportDashlets as $dceReportDashlets=>$module){
         $savedReport = new SavedReport();
         $reportId = $savedReport->retrieveReportIdByName($dceReportDashlets);
@@ -415,12 +415,12 @@ if(!$hasUserPreferences){
 
         if (isset($reportId) && $displayDashlet){
 	        $dceDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-									 		 		'module'=>$module, 								
+									 		 		'module'=>$module,
                                                     'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
                                                     'reportId' => $reportId, );
 		}
     }
-    
+
     foreach($defaultdceDashlets as $DCEDashletName=>$module){
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
@@ -433,21 +433,21 @@ if(!$hasUserPreferences){
             foreach ( $prefsforthisdashlet as $pref ) {
                $options[$pref] = $current_user->getPreference($pref);
             }*/
-            $dceDashlets[create_guid()] = array('className' => $DCEDashletName, 
-									 		 'module'=>$module, 								
+            $dceDashlets[create_guid()] = array('className' => $DCEDashletName,
+									 		 'module'=>$module,
                                              'fileLocation' => $dashletsFiles[$DCEDashletName]['file'],
                                              'options' => $options);
         }
-    }    
+    }
 //1 column
     $count = 0;
     $dceColumns = array();
     $dceColumns[0] = array();
     $dceColumns[0]['width'] = '100%';
     $dceColumns[0]['dashlets'] = array();
-    
+
     foreach($dceDashlets as $guid=>$dashlet){
-        array_push($dceColumns[0]['dashlets'], $guid);        
+        array_push($dceColumns[0]['dashlets'], $guid);
     }
 //2 columns
     /*$count = 0;
@@ -459,8 +459,8 @@ if(!$hasUserPreferences){
     $dceColumns[1]['width'] = '40%';
     $dceColumns[1]['dashlets'] = array();
     foreach($dceDashlets as $guid=>$dashlet){
-        if($count % 2 == 0) array_push($dceColumns[0]['dashlets'], $guid); 
-        else array_push($dceColumns[1]['dashlets'], $guid);        
+        if($count % 2 == 0) array_push($dceColumns[0]['dashlets'], $guid);
+        else array_push($dceColumns[1]['dashlets'], $guid);
         $count++;
     }*/
 // END 'DCE page'
@@ -474,12 +474,12 @@ if ($GLOBALS['sugar_flavor'] == 'DCE'){
     //END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce ONLY
 
-    
+
     $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
 }
 
 // handles upgrading from versions that had the 'Dashboard' module; move those items over to the Home page
-$pagesDashboard = $current_user->getPreference('pages', 'Dashboard'); 
+$pagesDashboard = $current_user->getPreference('pages', 'Dashboard');
 $dashletsDashboard = $current_user->getPreference('dashlets', 'Dashboard');
 if ( !empty($pagesDashboard) ) {
     //BEGIN SUGARCRM flav!=pro ONLY
@@ -498,7 +498,7 @@ if ( !empty($dashletsDashboard) ) {
     $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
 }
 if ( !empty($pagesDashboard) || !empty($dashletsDashboard) )
-    $current_user->resetPreferences('Dashboard'); 
+    $current_user->resetPreferences('Dashboard');
 
 if (empty($pages)){
 	$pages = array();
@@ -514,7 +514,7 @@ if (empty($pages)){
 	$pages[0]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_1_NAME'];	// "My Sugar"
 	$pageIndex++;
 //BEGIN SUGARCRM flav=pro ONLY
-    
+
 	$pages[$pageIndex]['columns'] = $salesColumns;
 	$pages[$pageIndex]['numColumns'] = '2';
 	$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_2_NAME'];	// "Sales Page"
@@ -523,25 +523,25 @@ if (empty($pages)){
 	if(ACLController::checkAccess('Leads', 'view', false)){
 		$pages[$pageIndex]['columns'] = $marketingColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_6_NAME'];	// "Marketing Page"	
+		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_6_NAME'];	// "Marketing Page"
 		$pageIndex++;
 	}
 
 	if(ACLController::checkAccess('Cases', 'view', false)){
 		$pages[$pageIndex]['columns'] = $supportColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
-		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_3_NAME'];	// "Support Page"	
+		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_3_NAME'];	// "Support Page"
 		$pageIndex++;
 	}
-	
+
 	if(ACLController::checkAccess('Trackers', 'view', false, 'Tracker')){
 		$pages[$pageIndex]['columns'] = $trackingColumns;
 		$pages[$pageIndex]['numColumns'] = '2';
 		$pages[$pageIndex]['pageTitle'] = $mod_strings['LBL_HOME_PAGE_4_NAME'];	// "Tracker"
 		$pageIndex++;
 	}
-    
-	
+
+
 //END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce ONLY
 	$current_user->setPreference('pages', $pages, 0, 'Home');
@@ -549,7 +549,7 @@ if (empty($pages)){
     $_COOKIE[$current_user->id . '_activePage'] = '0';
     setcookie($current_user->id . '_activePage','0',3000);
 //END SUGARCRM flav=pro ONLY
-    $activePage = 0;	
+    $activePage = 0;
 }
 
 $sugar_smarty = new Sugar_Smarty();
@@ -563,16 +563,16 @@ if(!empty($_REQUEST) && isset($_REQUEST['activeTab']) && strlen($_REQUEST['activ
 	} else {
 		$activePage = !empty($pages[$_REQUEST['activeTab']]) ? $_REQUEST['activeTab'] : 0;
 		$js = 'YAHOO.util.Event.onAvailable("' . 'pageNum_' . $activePage . '", function() { SUGAR.mySugar.togglePages("' . $activePage . '") })';
-        $sugar_smarty->assign('activeTabJavascript', $js);	
+        $sugar_smarty->assign('activeTabJavascript', $js);
 	}
 } else if(isset($_COOKIE[$current_user->id . '_activePage']) && $_COOKIE[$current_user->id . '_activePage'] != '' && isset($pages[$_COOKIE[$current_user->id . '_activePage']])) {
     $activePage = $_COOKIE[$current_user->id . '_activePage'];
 } else {
     $_COOKIE[$current_user->id . '_activePage'] = '0';
     setcookie($current_user->id . '_activePage','0',3000);
-//END SUGARCRM flav=pro ONLY    
+//END SUGARCRM flav=pro ONLY
     $activePage = 0;
-//BEGIN SUGARCRM flav=pro ONLY    
+//BEGIN SUGARCRM flav=pro ONLY
 }
 //END SUGARCRM flav=pro ONLY
 
@@ -596,7 +596,7 @@ foreach($pages as $pageNum => $page){
         $pageData[$pageNum]['tabClass'] = '';
         $pageData[$pageNum]['visibility'] = 'none';
     }
-}    
+}
 //END SUGARCRM flav=pro ONLY
 
 $count = 0;
@@ -606,16 +606,20 @@ $display = array();
 foreach($pages[$activePage]['columns'] as $colNum => $column) {
 	if ($colNum == $numCols){
 		break;
-	}	
+	}
     $display[$colNum]['width'] = $column['width'];
-    $display[$colNum]['dashlets'] = array(); 
+    $display[$colNum]['dashlets'] = array();
     foreach($column['dashlets'] as $num => $id) {
 		// clint - fixes bug #20398
 		// only display dashlets that are from visibile modules and that the user has permission to list
         if(!empty($id) && isset($dashlets[$id]) && is_file($dashlets[$id]['fileLocation'])) {
 			$module = 'Home';
-			if ( isset($dashletsFiles[$dashlets[$id]['className']]['module']) )
+			if ( !empty($dashletsFiles[$dashlets[$id]['className']]['module']) )
         		$module = $dashletsFiles[$dashlets[$id]['className']]['module'];
+        	// Bug 24772 - Look into the user preference for the module the dashlet is a part of in case
+        	//             of the Report Chart dashlets.
+        	elseif ( !empty($dashlets[$id]['module']) )
+        	    $module = $dashlets[$id]['module'];
 
 			$myDashlet = new MySugar($module);
 
@@ -641,8 +645,14 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
                 }
 
             	array_push($dashletIds, $id);
-
-            	$dashlet->process();
+            	
+		        $dashlets = $current_user->getPreference('dashlets', 'Home'); // Using hardcoded 'Home' because DynamicAction.php $_REQUEST['module'] value is always Home
+		        $lvsParams = array();
+		        if(!empty($dashlets[$id]['sort_options'])){
+		            $lvsParams = $dashlets[$id]['sort_options'];
+    	        }
+		        
+            	$dashlet->process($lvsParams);
             	try {
 	            	$display[$colNum]['dashlets'][$id]['display'] = $dashlet->display();
 	            	$display[$colNum]['dashlets'][$id]['displayHeader'] = $dashlet->getHeader();
@@ -653,7 +663,7 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
             	} catch (Exception $ex) {
 	            	$display[$colNum]['dashlets'][$id]['display'] = $ex->getMessage();
 	            	$display[$colNum]['dashlets'][$id]['displayHeader'] = $dashlet->getHeader();
-	            	$display[$colNum]['dashlets'][$id]['displayFooter'] = $dashlet->getFooter();            		
+	            	$display[$colNum]['dashlets'][$id]['displayFooter'] = $dashlet->getFooter();
             	}
         	}
     	}
@@ -661,7 +671,7 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
 }
 
 
-if(!empty($sugar_config['lock_homepage']) && $sugar_config['lock_homepage'] == true) $sugar_smarty->assign('lock_homepage', true);  
+if(!empty($sugar_config['lock_homepage']) && $sugar_config['lock_homepage'] == true) $sugar_smarty->assign('lock_homepage', true);
 
 //BEGIN SUGARCRM flav=pro ONLY
 $sugar_smarty->assign('pages', $pageData);
@@ -704,12 +714,19 @@ $sugar_smarty->assign('lblNumberOfColumns', $GLOBALS['app_strings']['LBL_NUMBER_
 $sugar_smarty->assign('lbl1Column', $GLOBALS['app_strings']['LBL_1_COLUMN']);
 $sugar_smarty->assign('lbl2Column', $GLOBALS['app_strings']['LBL_2_COLUMN']);
 $sugar_smarty->assign('lbl3Column', $GLOBALS['app_strings']['LBL_3_COLUMN']);
-$sugar_smarty->assign('form_header', get_module_title("Home","Home", true));
+$sugar_smarty->assign('form_header', getClassicModuleTitle("Home",array(), false));
 //END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));
 $sugar_smarty->assign('app', $GLOBALS['app_strings']);
 $sugar_smarty->assign('module', 'Home');
+//custom chart code
+require_once('include/SugarCharts/SugarChartFactory.php');
+$sugarChart = SugarChartFactory::getInstance();
+$resources = $sugarChart->getChartResources();
+$mySugarResources = $sugarChart->getMySugarChartResources();
+$sugar_smarty->assign('chartResources', $resources);
+$sugar_smarty->assign('mySugarChartResources', $mySugarResources);
 echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
 
 ?>

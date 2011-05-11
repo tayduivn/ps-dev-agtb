@@ -32,7 +32,9 @@ class DCMenu extends DashletContainer
 	        $createRecordTitle = $module_mod_strings['LNK_NEW_RECORD'];
 	    elseif ( isset($module_mod_strings['LNK_NEW_'.strtoupper($GLOBALS['beanList'][$module])]) )
 	        $createRecordTitle = $module_mod_strings['LNK_NEW_'.strtoupper($GLOBALS['beanList'][$module])];
-	    else
+	    elseif ( strtoupper($GLOBALS['beanList'][$module]) == 'ACASE' && isset($module_mod_strings['LNK_NEW_CASE']) )
+	        $createRecordTitle = $module_mod_strings['LNK_NEW_CASE'];
+        else
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 	    return <<<EOQ
 		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}'></a></li>	
@@ -150,7 +152,7 @@ EOQ;
 		<div id='dcmenutop'></div>
 		<div id='dcmenu' class='dcmenu dcmenuFloat'>
 		{$notificationsHTML}
-		<div class="dcmenuDivider" style="float: left; margin-left: 15px;"></div>
+		<div class="dcmenuDivider" id="notificationsDivider"></div>
 		
 		<div id="dcmenuContainer">
 		<ul id="dcmenuitems">
@@ -168,9 +170,23 @@ EOQ;
 
 		foreach($DCActions as $action){
 			if(ACLController::checkAccess($action, 'edit', true)) {
+			   //BEGIN SUGARCRM flav=sales ONLY
+			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
+			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
+			   //END SUGARCRM flav=sales ONLY
 			   $html .= $this->getMenuItem($action);	
 			}
 		}
+
+		$dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
+		if (is_file('custom/' . $dyn_actions_path)) {
+		    include('custom/' . $dyn_actions_path);
+		} else if ( is_file($dyn_actions_path) ) {
+		    include($dyn_actions_path); 
+        }
+		if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php')) {
+			include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
+        }
 		
 		foreach($dynamicDCActions as $def){
 			$html .= $this->getDynamicMenuItem($def);
@@ -180,9 +196,18 @@ EOQ;
 		$html .= <<<EOQ
 		</ul>
 		</div>
-		
+EOQ;
+//BEGIN SUGARCRM flav=sales ONLY
+if(!is_admin($GLOBALS['current_user'])){
+//END SUGARCRM flav=sales ONLY
+$html .= <<<EOQ
 		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);"><img src="$iconSearch" class="icon" align="top"></a></div>
 		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'></div>
+EOQ;
+//BEGIN SUGARCRM flav=sales ONLY
+}
+//END SUGARCRM flav=sales ONLY
+$html .= <<<EOQ
 		</div>
 		</div>
 		

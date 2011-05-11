@@ -16,8 +16,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
  *
@@ -33,18 +33,22 @@ require_once('modules/Reports/config.php');
 require_once('modules/Reports/Report.php');
 require_once('modules/Reports/templates/templates_reports.php');
 
+$is_owner =  true;
+global $current_user;
+if (isset($args['reporter']->saved_report) && $args['reporter']->saved_report->assigned_user_id != $current_user->id) {
+	$is_owner = false;
+}
 
-if(!(ACLController::checkAccess('Reports', 'edit')))
+if(!(ACLController::checkAccess('Reports', 'edit', $is_owner)))
 {
     ACLController::displayNoAccess(true);
     sugar_cleanup(true);
 }
-global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $current_user, $app_strings, $sugar_config, $sugar_version;
+global $mod_strings, $ACLAllowedModules, $current_language, $app_list_strings, $app_strings, $sugar_config, $sugar_version;
 
 $params = array();
-$params[] = "<a href='index.php?module=Reports&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 $params[] = $mod_strings['LBL_CREATE_CUSTOM_REPORT'];
-echo getClassicModuleTitle("Reports", $params, true);
+echo getClassicModuleTitle("Reports", $params, false);
 
 $ACLAllowedModules = getACLAllowedModules();
 uksort($ACLAllowedModules,"juliansort");
@@ -69,7 +73,7 @@ foreach ($tabs as $tabModuleKey=>$tabModuleKeyValue)
 		else
 			array_push($buttons, array('name'=>$app_list_strings['moduleList'][$tabModuleKey], 'img'=> SugarThemeRegistry::current()->getImageURL("icon_A1_newmod.gif"),'alt'=> $mod_strings['LBL_NO_IMAGE'], 'key'=>$tabModuleKey));
 		$ACLAllowedModulesAdded[$tabModuleKey] = 1;
-	}	
+	}
 }
 */
 // Add the remaining modules.
@@ -84,7 +88,7 @@ foreach ($ACLAllowedModules as $module=>$singular) {
 			array_push($buttons, array('name'=>$app_list_strings['moduleList'][$module], 'img'=> SugarThemeRegistry::current()->getImageURL("icon_A1_newmod.gif"),'alt'=> $mod_strings['LBL_NO_IMAGE'], 'key'=>$module));
 		} else {
 			array_push($buttons, array('name'=>$app_list_strings['moduleList'][$module], 'img'=> $icon_path, 'key'=>$module));
-			
+
 		}
 	//}
 }
@@ -105,7 +109,7 @@ $sugar_smarty->assign("help_image", $help_img);
 $sugar_smarty->assign("chart_data_help", $chart_data_help);
 $sugar_smarty->assign("do_round_help", $do_round_help);
 $sugar_smarty->assign("js_custom_version", $sugar_config['js_custom_version']);
-$sugar_smarty->assign("sugar_version", $sugar_version);	
+$sugar_smarty->assign("sugar_version", $sugar_version);
 
 
 $chart_types = array(
@@ -121,24 +125,28 @@ $chart_types = array(
 $sugar_smarty->assign('chart_types', $chart_types);
 //$sugar_smarty->assign('chart_description', $chart_description);
 
-
+require_once('include/SugarCharts/SugarChartFactory.php');
+$sugarChart = SugarChartFactory::getInstance();
+$resources = $sugarChart->getChartResources();
+$sugar_smarty->assign('chartResources', $resources);
+	
 if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1))
 	$sugar_smarty->assign("RUN_QUERY", '1');
 else
 	$sugar_smarty->assign("RUN_QUERY", '0');
 
-if (isset($_REQUEST['save_report_as'])) 
+if (isset($_REQUEST['save_report_as']))
 	$sugar_smarty->assign("save_report_as", $_REQUEST['save_report_as']);
 else
 	$sugar_smarty->assign("save_report_as", "");
 
-if (isset($_REQUEST['id'])) 
+if (isset($_REQUEST['id']))
 	$sugar_smarty->assign("id", $_REQUEST['id']);
 
-if (isset($_REQUEST['show_query'])) 
+if (isset($_REQUEST['show_query']))
 	$sugar_smarty->assign("show_query", $_REQUEST['show_query']);
 
-if (isset($_REQUEST['do_round'])) 
+if (isset($_REQUEST['do_round']))
 	$sugar_smarty->assign("do_round", $_REQUEST['do_round']);
 
 
@@ -153,10 +161,10 @@ if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
 		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
 	   	$args['reporter'] =  new Report($report_def, $filters_def, $panels_def);
 		$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
-	}	
+	}
 	if (isset($_REQUEST['id']))
 		$sugar_smarty->assign('record', $_REQUEST['id']);
-	
+
 	$assigned_user_html_def = array(
 		'parent_id'=>'assigned_user_id',
 		'parent_id_value'=>$_REQUEST['assigned_user_id'],
@@ -174,23 +182,23 @@ if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1)) {
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
-	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');		
-	$team_html = $teamSetField->getClassicView();			
+	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
+	$team_html = $teamSetField->getClassicView();
 	$sugar_smarty->assign("TEAM_HTML", $team_html);
 	//END SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 	$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 	$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));
-	
+
 	setSortByInfo($args['reporter'], $sugar_smarty);
-	
+
 	echo $sugar_smarty->fetch('modules/Reports/ReportsWizard.tpl');
 	echo "<br/><br/>";
 	echo "<div id='resultsDiv' name='resultsDiv'>";
 	//$image_path = $orig_image_path;
 	reportResults($args['reporter'],$args);
 	echo "</div>";
-	
+
 }
 else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) {
 	$args = array();
@@ -199,7 +207,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		$report_def = html_entity_decode($_REQUEST['report_def']);
 		$panels_def = html_entity_decode($_REQUEST['panels_def']);
 		$filters_def = html_entity_decode($_REQUEST['filters_defs']);
-	}	
+	}
 
 	if (!empty($_REQUEST['id'])) {
 		$saved_report_seed = new SavedReport();
@@ -218,7 +226,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 
 	$newReport = false;
 	if (empty($args['reporter']->saved_report_id)) {
-		$newReport = true;	
+		$newReport = true;
 	} // if
    	$args['reporter']->save($_REQUEST['save_report_as']);
 	$sugar_smarty->assign("record", $args['reporter']->saved_report->id);
@@ -231,9 +239,9 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 	} else {
 		updateReportAccessDate($args['reporter']->saved_report_id, $encodedFilterData);
 	} // else
-   	
+
 	if (isset($_REQUEST['save_and_run_query']) && ($_REQUEST['save_and_run_query'] == 'on')) {
-		header('location:index.php?action=ReportCriteriaResults&module=Reports&page=report&id='.$args['reporter']->saved_report->id);		
+		header('location:index.php?action=ReportCriteriaResults&module=Reports&page=report&id='.$args['reporter']->saved_report->id);
 	}
 	else {
 		$assigned_user_html_def = array(
@@ -245,7 +253,7 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 			'module'=>'Users',
 		  );
 		$assigned_user_html = get_select_related_html($assigned_user_html_def);
-		
+
 		$isOwner = 0;
 		if ($_REQUEST['assigned_user_id'] == $current_user->id)
 			$isOwner = 1;
@@ -254,9 +262,9 @@ else if (isset($_REQUEST['save_report']) && ($_REQUEST['save_report'] == 'on')) 
 		require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 		$teamSetField = new SugarFieldTeamset('Teamset');
 		$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
-		$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');		
-		$team_html = $teamSetField->getClassicView();		
-		
+		$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
+		$team_html = $teamSetField->getClassicView();
+
 		$sugar_smarty->assign("TEAM_HTML", $team_html);
 		//END SUGARCRM flav=pro ONLY
 		$sugar_smarty->assign("USER_HTML", $assigned_user_html);
@@ -279,9 +287,9 @@ else if (isset($_REQUEST['is_delete']) && ($_REQUEST['is_delete'] == '1')) {
     $report->retrieve($_REQUEST['id']);
     if($report->ACLAccess('Delete')){
         $report->mark_deleted($_REQUEST['id']);
-		header('location:index.php?action=index&module=Reports');		
+		header('location:index.php?action=index&module=Reports');
     }
-	
+
 }
 else if (!empty($_REQUEST['id'])) {
 	$saved_report_seed = new SavedReport();
@@ -293,8 +301,8 @@ else if (!empty($_REQUEST['id'])) {
 	$args['reporter']->saved_report_id = $saved_report_seed->id;
 	$sugar_smarty->assign('report_def_str', $args['reporter']->report_def_str);
 	if (!isset($args['reporter']->report_def['do_round']) || $args['reporter']->report_def['do_round'] == 1)
-			$sugar_smarty->assign("do_round", 1);		
-			
+			$sugar_smarty->assign("do_round", 1);
+
 	// Duplicate Functionality
 	if (!empty($_REQUEST['save_as'])) {
 		$assigned_user_html_def = array(
@@ -316,24 +324,24 @@ else if (!empty($_REQUEST['id'])) {
 				if(isset($report_def['layout_options']))
 					unset($report_def['layout_options']);
 				$report_def['display_columns'] = array();
-			}	
+			}
 			else if ($new_report_type == 'tabular') {
-				$report_def['report_type'] = $new_report_type;	
+				$report_def['report_type'] = $new_report_type;
 				$report_def['group_defs'] = array();
 				if(isset($report_def['layout_options']))
 					unset($report_def['layout_options']);
 				$report_def['summary_columns'] = array();
-			}	
+			}
 			else if ($new_report_type == 'summation_with_details') {
 				if(isset($report_def['layout_options']))
 					unset($report_def['layout_options']);
-				$report_def['report_type'] = $new_report_type;	
-			}	
+				$report_def['report_type'] = $new_report_type;
+			}
 			else if ($new_report_type == 'matrix') {
-				$report_def['report_type'] = 'summary';	
+				$report_def['report_type'] = 'summary';
 				$report_def['layout_options'] = '1';
 				$report_def['display_columns'] = array();
-			}	
+			}
 
 
 			$args['reporter'] = new Report($global_json->encode($report_def));
@@ -343,7 +351,7 @@ else if (!empty($_REQUEST['id'])) {
 	else {
 		$sugar_smarty->assign('record', $_REQUEST['id']);
 
-		$sugar_smarty->assign('save_report_as', htmlentities($saved_report_seed->name, ENT_QUOTES));
+		$sugar_smarty->assign('save_report_as', html_entity_decode($saved_report_seed->name, ENT_QUOTES));
 		$assigned_user_html_def = array(
 			'parent_id'=>'assigned_user_id',
 			'parent_id_value'=>$saved_report_seed->assigned_user_id,
@@ -363,17 +371,17 @@ else if (!empty($_REQUEST['id'])) {
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
-	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');		
+	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
 	$team_html = $teamSetField->getClassicView();
-				
+
 	$sugar_smarty->assign("TEAM_HTML", $team_html);
 	//END SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 	$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 	$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));
-	
+
 	setSortByInfo($args['reporter'], $sugar_smarty);
-	
+
 	echo $sugar_smarty->fetch('modules/Reports/ReportsWizard.tpl');
 }
 else {
@@ -392,15 +400,15 @@ else {
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');
 	$field_defs = VardefManager::loadVardef('Reports', 'SavedReport');
-	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');		
-	$team_html = $teamSetField->getClassicView();			
+	$teamSetField->initClassicView($GLOBALS['dictionary']['SavedReport']['fields'], 'ReportsWizardForm');
+	$team_html = $teamSetField->getClassicView();
 	$sugar_smarty->assign("TEAM_HTML", $team_html);
 	//END SUGARCRM flav=pro ONLY
 	$sugar_smarty->assign("USER_HTML", $assigned_user_html);
 	$sugar_smarty->assign("report_offset", $args['reporter']->report_offset);
 	$sugar_smarty->assign("chart_description", htmlentities( $args['reporter']->chart_description, ENT_QUOTES, 'UTF-8'));
 	setSortByInfo($args['reporter'], $sugar_smarty);
-	
+
 	echo $sugar_smarty->fetch('modules/Reports/ReportsWizard.tpl');
 }
 
@@ -409,36 +417,36 @@ function setSortByInfo(&$reporter, &$smarty) {
 	$sort_dir = '';
 	$summary_sort_by = '';
 	$summary_sort_dir = '';
-	
+
 	if (isset($reporter->report_def['order_by'][0]['name']) && isset($reporter->report_def['order_by'][0]['table_key'])) {
 		$sort_by = $reporter->report_def['order_by'][0]['table_key'].":".$reporter->report_def['order_by'][0]['name'];
 	} // if
 	if (isset($reporter->report_def['order_by'][0]['sort_dir'])) {
 		$sort_dir = $reporter->report_def['order_by'][0]['sort_dir'];
 	} // if
-	
+
 	if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function']) && $reporter->report_def['summary_order_by'][0]['group_function'] == 'count') {
-	
+
 	  $summary_sort_by = 'count';
 	} else if ( isset($reporter->report_def['summary_order_by'][0]['name'])) {
 		$summary_sort_by = $reporter->report_def['summary_order_by'][0]['table_key'].":".$reporter->report_def['summary_order_by'][0]['name'];
-	
+
 		if ( ! empty($reporter->report_def['summary_order_by'][0]['group_function'])) {
 			$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['group_function'];
 		} else if ( ! empty($reporter->report_def['summary_order_by'][0]['column__function'])) {
 	    	$summary_sort_by .=":". $reporter->report_def['summary_order_by'][0]['column_function'];
 	    } // else if
 	} // else if
-	
+
 	if ( isset($reporter->report_def['summary_order_by'][0]['sort_dir'])) {
 		$summary_sort_dir = $reporter->report_def['summary_order_by'][0]['sort_dir'];
 	} // if
-	
+
 	$smarty->assign('sort_by', $sort_by);
 	$smarty->assign('sort_dir', $sort_dir);
 	$smarty->assign('summary_sort_by', $summary_sort_by);
 	$smarty->assign('summary_sort_dir', $summary_sort_dir);
-	
+
 } // fn
 
 /*

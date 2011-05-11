@@ -98,7 +98,7 @@ if ( isset($_REQUEST['id'])) {
 	}
 }
 
-if(! empty($_REQUEST['to_pdf'])){
+if(! empty($_REQUEST['to_pdf']) && empty($_REQUEST['search_form_only'])){
 	template_handle_pdf($args['reporter']);
 	return;
 }
@@ -143,13 +143,15 @@ if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report')
 // show report lists
 else
 {
-//END SUGARCRM flav!=sales ONLY
-$params = array();
-if(!empty($_REQUEST['favorite']))
-    $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
-else
-    $params[] = $mod_strings['LBL_MODULE_NAME'];
-echo getClassicModuleTitle("Reports", $params, true);
+//END SUGARCRM flav!=sales ONLY                      
+if ( empty($_REQUEST['search_form_only']) ) {
+    $params = array();
+    if(!empty($_REQUEST['favorite']))
+        $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
+    else
+        $params[] = $app_strings['LBL_SEARCH'];
+    echo getClassicModuleTitle("Reports", $params, false);
+}
 
 include("modules/Reports/ListView.php");
 //BEGIN SUGARCRM flav!=sales ONLY
@@ -247,7 +249,7 @@ function checkSavedReportACL(&$reporter,&$args) {
 			}
 			$type = $hashModules[$col_module];
 			//todo: check the last param of this call (is_owner)
-			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams'){
+			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams' && $col_module != 'CampaignLog'){
 				sugar_die($mod_strings['LBL_NO_ACCESS']);
 			}			
 		}

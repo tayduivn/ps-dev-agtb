@@ -4,9 +4,9 @@ require_once('include/SugarFolders/SugarFolders.php');
 require_once('modules/Campaigns/ProcessBouncedEmails.php');
 
 /**
- * @group bug33918 
+ * @ticket 33918 
  */
-class Bug333918Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug33918Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public $folder = null;
     public $_user = null;
@@ -15,14 +15,14 @@ class Bug333918Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
     {
-        global $current_user, $currentModule;
-
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->_user->default_team=$this->_team->id;
         $this->_team->add_user_to_team($this->_user->id);
 		$this->_user->save();
 		$this->_ie = new InboundEmail();
+		
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
 
     public function tearDown()
@@ -159,6 +159,8 @@ class Bug333918Test extends Sugar_PHPUnit_Framework_TestCase
         $email = new stdClass();
         $email->id = $parentID;
         $email->description = $message;
+        $email->raw_source = $message;
+        $email->date_created = gmdate('Y-m-d H:i:s'); 
         $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
         $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
@@ -207,27 +209,30 @@ ryPoint=3Dremoveme&identifier=3D$trackerKey"> http=
 ndex.php?entryPoint=3Dimage&identifier=3D173e8e08-5826-c6a4-a17f-4be9d7c6d8=
 b4'></body></html>
 CIA;
-    $noteID = uniqid();
-    $parentID = uniqid();
-    $note = new Note();
-    $note->description = $message;
-    $note->file_mime_type = 'messsage/rfc822';
-    $note->subject = "Unit Test";
-    $note->new_with_id = TRUE;
-    $note->id = $noteID;
-    $note->parent_id = $parentID;
-    $note->parent_type = 'Emails';
-    $note->save();
-
-    $email = new stdClass();
-    $email->id = $parentID;
-    $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
-    $email_header = new stdClass();
-    $email_header->fromaddress = "MAILER-DAEMON";
-    $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
-
-    $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
-    $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
+        $noteID = uniqid();
+        $parentID = uniqid();
+        $note = new Note();
+        $note->description = $message;
+        $note->file_mime_type = 'messsage/rfc822';
+        $note->subject = "Unit Test";
+        $note->new_with_id = TRUE;
+        $note->id = $noteID;
+        $note->parent_id = $parentID;
+        $note->parent_type = 'Emails';
+        $note->save();
+    
+        $email = new stdClass();
+        $email->id = $parentID;
+        $email->description = $message;
+        $email->raw_source = $message;
+        $email->date_created = gmdate('Y-m-d H:i:s'); 
+        $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
+        $email_header = new stdClass();
+        $email_header->fromaddress = "MAILER-DAEMON";
+        $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
+    
+        $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
+        $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
         
     }
     

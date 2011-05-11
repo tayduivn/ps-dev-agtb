@@ -36,7 +36,7 @@ class MyCallsDashlet extends DashletGeneric {
     function MyCallsDashlet($id, $def = null) {
         global $current_user, $app_strings;
 		require('modules/Calls/Dashlets/MyCallsDashlet/MyCallsDashlet.data.php');
-		
+
         parent::DashletGeneric($id, $def);
 
         if(empty($def['title'])) $this->title = translate('LBL_LIST_MY_CALLS', 'Calls');
@@ -61,20 +61,24 @@ class MyCallsDashlet extends DashletGeneric {
     }
     
     
-    function process() {
+    function process($lvsParams = array()) {
         global $current_language, $app_list_strings, $current_user;            
         $mod_strings = return_module_language($current_language, 'Calls');
-        
-        if($this->myItemsOnly) { // handle myitems only differently
-            $lvsParams = array(
-                           'custom_from' => ' LEFT JOIN calls_users ON calls.id = calls_users.call_id AND calls_users.deleted = 0',
-                           'custom_where' => ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR calls_users.user_id = \'' . $current_user->id . '\') ',
-                           'distinct' => true
-                           );
-        } else {
-            $lvsParams = array();
+
+        // handle myitems only differently --  set the custom query to show assigned meetings and invitee meetings
+        if($this->myItemsOnly) {        	
+        	//join with meeting_users table to process related users
+       		$this->seedBean->listview_inner_join = array('LEFT JOIN  calls_users c_u on  c_u.call_id = calls.id');
+        	
+        	//set the custom query to include assigned meetings            
+        	$lvsParams['custom_where'] = ' AND (calls.assigned_user_id = \'' . $current_user->id . '\' OR c_u.user_id = \'' . $current_user->id . '\' AND c_u.deleted = 0) ';
         }
+        
         $this->myItemsOnly = false; 
+		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
+		//so we need to make sure date entered is also set so the sort can work with the group by
+		$lvsParams['custom_select']=', calls.date_entered ';
+		$lvsParams['distinct']=true;
         
         parent::process($lvsParams);
    
@@ -85,7 +89,7 @@ class MyCallsDashlet extends DashletGeneric {
         
 
        if(!empty($keys)){ 
-            $query = "SELECT call_id, accept_status FROM calls_users WHERE user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
+            $query = "SELECT call_id, accept_status FROM calls_users WHERE deleted = 0 and user_id = '" . $current_user->id . "' AND call_id IN ('" . implode("','", $keys ). "')";
             $result = $GLOBALS['db']->query($query);
             
             while($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -108,8 +112,10 @@ class MyCallsDashlet extends DashletGeneric {
             }
             if ($this->lvs->data['data'][$rowNum]['STATUS'] == $app_list_strings['meeting_status_dom']['Planned'])
             {
-                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == '' ||
-                    $this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')                
+                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
+					//if no status has been set, then do not show accept options
+					$this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" ></div>";
+				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')                
                 {
                     $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\"><a title=\"".$app_list_strings['dom_meeting_accept_options']['accept'].
                         "\" href=\"javascript:SUGAR.util.retrieveAndFill('index.php?module=Activities&to_pdf=1&action=SetAcceptStatus&id=".$this->id."&object_type=Call&object_id=".$this->lvs->data['data'][$rowNum]['ID'] . "&accept_status=accept', null, null, SUGAR.mySugar.retrieveDashlet, '{$this->id}');\">". 
@@ -141,7 +147,9 @@ class MyCallsDashlet extends DashletGeneric {
                                      'myItems' => translate('LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY', 'Calls'),
                                      'displayRows' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_DISPLAY_ROWS'],
                                      'title' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_TITLE'],
-                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL']));
+                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'],
+                                     'autoRefresh' => $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH'],
+                                     ));
         return $this->configureSS->fetch($this->configureTpl);
     }
 }

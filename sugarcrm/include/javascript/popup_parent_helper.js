@@ -49,7 +49,10 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
+	width = (width == 600) ? 800 : width;
+	height = (height == 400) ? 800 : height;
+	
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -178,14 +181,28 @@ function set_return_and_save_targetlist(popup_reply_data)
 					break;
 				}
 			}
-			window.document.forms[form_index].elements[the_key].value = name_to_value_array[the_key];
+			window.document.forms[form_index].elements[get_element_index(form_index,the_key)].value = name_to_value_array[the_key];
 		}
 	}
-	window.document.forms[form_index].return_module.value = window.document.forms[form_index].module.value;
-	window.document.forms[form_index].return_action.value = 'ListView';
-	window.document.forms[form_index].uids.value = uids;
+	window.document.forms[form_index].elements[get_element_index(form_index,"return_module")].value = window.document.forms[form_index].elements[get_element_index(form_index,"module")].value;
+	window.document.forms[form_index].elements[get_element_index(form_index,"return_action")].value = 'ListView';
+	window.document.forms[form_index].elements[get_element_index(form_index,"uids")].value = uids;
 	window.document.forms[form_index].submit();
 }
+
+
+function get_element_index(form_index,element_name) {
+	var j = 0;
+	while (j < window.document.forms[form_index].elements.length) {
+		if(window.document.forms[form_index].elements[j].name == element_name) {
+			index = j;
+			break;
+		}
+		j++;
+	}
+	return index;
+}
+
 
 /**
  * This is a helper function to construct the initial filter that can be

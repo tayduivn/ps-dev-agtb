@@ -102,22 +102,7 @@
         {include file="modules/Emails/templates/emailSettings.tpl"}
     </div>
     
-    <div id="footerLinks" class="yui-hidden">
-        <table cellpadding="0" cellspacing="0" border="0" width="100%">
-            <tr>
-                <td NOWRAP width="100%" align="center">
-                     {* //BEGIN SUGARCRM flav=pro ONLY*}
-                    <a href="http://www.sugarcrm.com" target="_blank">
-                     {* //END SUGARCRM flav=pro ONLY*}
-                    <img height="18" width="83" class="img" src="include/images/powered_by_sugarcrm.gif" border="0" align="absmiddle"/>
-                     {* //BEGIN SUGARCRM flav=pro ONLY*}
-                    </a>
-                     {* //END SUGARCRM flav=pro ONLY*}
-                    &nbsp;{$app_strings.LBL_SUGAR_COPYRIGHT}
-                </td>
-            </tr>
-        </table>
-    </div>
+    <div id="footerLinks" class="yui-hidden"></div>
     <!--//BEGIN SUGARCRM flav=int ONLY -->
     <div id="todo" class="yui-hidden">
         {include file="modules/Emails/templates/_todos.tpl"}

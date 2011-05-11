@@ -33,13 +33,13 @@ class ViewModulefield extends SugarView
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
 
@@ -75,6 +75,10 @@ class ViewModulefield extends SugarView
 				'relate' => 'Relate', 'address' => 'Address', 'text' => 'TextArea', 'url' => 'Link');
 		*/
 		$field_types = $GLOBALS['mod_strings']['fieldTypes'];
+		//BEGIN SUGARCRM flav=com ONLY
+		if (isset($field_types['encrypt']))
+		  unset($field_types['encrypt']);
+		//END SUGARCRM flav=com ONLY
         $field_name_exceptions = array(
             //bug 22264: Field name must not be an SQL keyword.
             //Taken from SQL Server's list of reserved keywords; http://msdn.microsoft.com/en-us/library/aa238507(SQL.80).aspx
@@ -143,6 +147,7 @@ class ViewModulefield extends SugarView
             if($isClone){
                 unset($vardef['name']);
             }
+          
             if(empty($vardef['name'])){
                 if(!empty($_REQUEST['type']))
                     $vardef['type'] = $_REQUEST['type'];
@@ -153,7 +158,10 @@ class ViewModulefield extends SugarView
                 $action = 'saveSugarField'; // tyoung - for OOB fields we currently only support modifying the label
                 $fv->ss->assign('hideLevel', 3);
             }
-
+            if($isClone && isset($vardef['type']) && $vardef['type'] == 'datetime'){
+            	$vardef['type'] = 'datetimecombo';
+            }
+            
 			require_once ('modules/DynamicFields/FieldCases.php') ;
             $tf = get_widget ( empty($vardef [ 'type' ]) ?  "" : $vardef [ 'type' ]) ;
             $tf->module = $module;
@@ -263,15 +271,24 @@ class ViewModulefield extends SugarView
         $fv->ss->assign('duplicate_merge_options', $GLOBALS['app_list_strings']['custom_fields_merge_dup_dom']);
 
         $triggers = array () ;
+        $existing_field_names = array () ;
         foreach ( $module->mbvardefs->vardefs['fields'] as $field )
         {
         	if ($field [ 'type' ] == 'enum' || $field [ 'type'] == 'multienum' )
         	{
         		$triggers [] = $field [ 'name' ] ;
         	}
+        	
+        	if (!isset($field['source']) || $field['source'] != 'non-db') {
+        		if(preg_match('/^(.*?)(_c)?$/', $field['name'], $matches))
+        		{
+        			$existing_field_names [] = strtoupper($matches[1]);	
+        		}
+        	}
         }
+        
         $fv->ss->assign('triggers',$triggers);
-
+        $fv->ss->assign('existing_field_names', $json->encode($existing_field_names));
         $fv->ss->assign('mod_strings',$GLOBALS['mod_strings']);
 
 		// jchi #24880

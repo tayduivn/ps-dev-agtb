@@ -73,7 +73,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
                     WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'";
         
         $result = $GLOBALS['db']->query($query);
-        
+       
         $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
     }
     
@@ -97,7 +97,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug21828
+     * @ticket 21828
      */
     public function testUndoRemovedAddedEmailAddresses()
     {

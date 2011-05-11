@@ -87,9 +87,9 @@ function login($user_auth, $application){
 	$isLoginSuccess = $authController->login($user_auth['user_name'], $user_auth['password'], array('passwordEncrypted' => true));
 	$usr_id=$user->retrieve_user_id($user_auth['user_name']);
 	if($usr_id) {
-		$user->retrieve($usr_id);	
+		$user->retrieve($usr_id);
 	}
-		
+
 	if ($isLoginSuccess) {
 		if ($_SESSION['hasExpiredPassword'] =='1') {
 			$error->set_error('password_expired');
@@ -177,7 +177,7 @@ function validate_authenticated($session_id){
 		if(!empty($_SESSION['is_valid_session']) && is_valid_ip_address('ip_address') && $_SESSION['type'] == 'user'){
 
 			global $current_user;
-			
+
 			$current_user = new User();
 			$current_user->retrieve($_SESSION['user_id']);
 			login_success();
@@ -444,7 +444,7 @@ function get_entries($session, $module_name, $ids,$select_fields ){
 		if ($seed->retrieve($id) == null)
 			$seed->deleted = 1;
     }
-    
+
     if ($seed->deleted == 1) {
     	$list = array();
     	$list[] = array('name'=>'warning', 'value'=>'Access to this object is denied since it has been deleted or does not exist');
@@ -632,7 +632,7 @@ function get_note_attachment($session,$id)
 		$error->set_error('invalid_login');
 		return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
 	}
-	
+
 	$note = new Note();
 
 	$note->retrieve($id);
@@ -832,6 +832,13 @@ function get_module_fields($session, $module_name){
 		return array('module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
 	}
 	$class_name = $beanList[$module_name];
+
+	if(empty($beanFiles[$class_name]))
+	{
+       $error->set_error('no_file');
+       return array('module_fields'=>$module_fields, 'error'=>$error->get_soap_array());
+	}
+
 	require_once($beanFiles[$class_name]);
 	$seed = new $class_name();
 	if($seed->ACLAccess('ListView', true) || $seed->ACLAccess('DetailView', true) || 	$seed->ACLAccess('EditView', true) )
@@ -997,7 +1004,7 @@ $server->register(
  * @return String -- The current date/time 'Y-m-d H:i:s'
  */
 function get_gmt_time(){
-	return gmdate('Y-m-d H:i:s');
+	return TimeDate::getInstance()->nowDb();
 }
 
 $server->register(
@@ -1015,7 +1022,7 @@ $server->register(
  */
 function get_sugar_flavor(){
  global $sugar_flavor;
- 
+
  return $sugar_flavor;
 }
 
@@ -1033,7 +1040,7 @@ $server->register(
  *                   '1.0' on error.
  */
 function get_server_version(){
-	
+
 	$admin  = new Administration();
 	$admin->retrieveSettings('info');
 	if(isset($admin->settings['info_sugar_version'])){
@@ -1244,6 +1251,75 @@ function handle_set_relationship($set_relationship_value)
     	$key = array_search(strtolower($module2),$mod->relationship_fields);
     	if(!$key) {
     	    $key = Relationship::retrieve_by_modules($module1, $module2, $GLOBALS['db']);
+    	    
+            // BEGIN SnapLogic fix for bug 32064
+            if ($module1 == "Quotes" && $module2 == "ProductBundles") {
+                // Alternative solution is perhaps to 
+                // do whatever Sugar does when the same
+                // request is received from the web:
+                $pb_cls = $beanList[$module2]; 
+                $pb = new $pb_cls();
+                $pb->retrieve($module2_id);
+                
+                // Check if this relationship already exists
+                $query = "SELECT count(*) AS count FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND bundle_id = '{$module2_id}' AND deleted = '0'";
+                $result = $GLOBALS['db']->query($query, true, "Error checking for previously existing relationship between quote and product_bundle");
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+                if(isset($row['count']) && $row['count'] > 0){
+                    return $error->get_soap_array();
+                }
+                
+                $query = "SELECT MAX(bundle_index)+1 AS idx FROM product_bundle_quote WHERE quote_id = '{$module1_id}' AND deleted='0'";
+                $result = $GLOBALS['db']->query($query, true, "Error getting bundle_index");
+                $GLOBALS['log']->debug("*********** Getting max bundle_index");
+                $GLOBALS['log']->debug($query);
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+                
+                $idx = 0;
+                if ($row) {
+                    $idx = $row['idx'];
+                }
+                
+                $pb->set_productbundle_quote_relationship($module1_id,$module2_id,$idx);
+                $pb->save();
+                return $error->get_soap_array();
+
+            } else if ($module1 == "ProductBundles" && $module2 == "Products") {
+                // And, well, similar things apply in this case
+                $pb_cls = $beanList[$module1];
+                $pb = new $pb_cls();
+                $pb->retrieve($module1_id);
+
+                // Check if this relationship already exists
+                $query = "SELECT count(*) AS count FROM product_bundle_product WHERE bundle_id = '{$module1_id}' AND product_id = '{$module2_id}' AND deleted = '0'";
+                $result = $GLOBALS['db']->query($query, true, "Error checking for previously existing relationship between quote and product_bundle");
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+                if(isset($row['count']) && $row['count'] > 0){
+                    return $error->get_soap_array();
+                }
+                
+                $query = "SELECT MAX(product_index)+1 AS idx FROM product_bundle_product WHERE bundle_id='{$module1_id}'";
+                $result = $GLOBALS['db']->query($query, true, "Error getting bundle_index");
+                $GLOBALS['log']->debug("*********** Getting max bundle_index");
+                $GLOBALS['log']->debug($query);
+                $row = $GLOBALS['db']->fetchByAssoc($result);
+
+                $idx = 0;
+                if ($row) {
+                    $idx = $row['idx'];
+                }
+                $pb->set_productbundle_product_relationship($module2_id,$idx,$module1_id);
+                $pb->save();
+
+                $prod_cls = $beanList[$module2];
+                $prod = new $prod_cls();
+                $prod->retrieve($module2_id);
+                $prod->quote_id = $pb->quote_id;
+                $prod->save();
+                return $error->get_soap_array();
+            }
+            // END SnapLogic fix for bug 32064
+            
     		if (!empty($key)) {
     			$mod->load_relationship($key);
     			$mod->$key->add($module2_id);
@@ -1251,7 +1327,7 @@ function handle_set_relationship($set_relationship_value)
     		} // if
         }
     }
-    
+
     if(!$key)
     {
         $error->set_error('no_module');
@@ -1340,7 +1416,7 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
                             'ProjectTask'=>array('where'=>array('ProjectTask' => array(0 => "project.id = '{0}'")), 'fields'=>"project_task.id, project_task.name"),
 							//END SUGARCRM flav!=sales ONLY
 							'Contacts'=>array('where'=>array('Contacts' => array(0 => "contacts.first_name like '{0}%'", 1 => "contacts.last_name like '{0}%'"), 'EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"contacts.id, contacts.first_name, contacts.last_name"),
-							'Opportunities'=>array('where'=>array('Opportunities' => array(0 => "opportunities.name like '{0}%'")), 'fields'=>"opportunities.id, opportunities.name"),                           
+							'Opportunities'=>array('where'=>array('Opportunities' => array(0 => "opportunities.name like '{0}%'")), 'fields'=>"opportunities.id, opportunities.name"),
 							'Users'=>array('where'=>array('EmailAddresses' => array(0 => "ea.email_address like '{0}%'")),'fields'=>"users.id, users.user_name, users.first_name, ea.email_address"),
 						);
 
@@ -1377,14 +1453,14 @@ function search_by_module($user_name, $password, $search_string, $modules, $offs
 							$tmpQuery .= "LEFT JOIN teams ON $seed->table_name.team_id=teams.id AND (teams.deleted=0) ";
 						}
 						//END SUGARCRM flav=pro ONLY
-						
+
 						//BEGIN SUGARCRM flav!=sales ONLY
 
 		                if($module_name == 'ProjectTask'){
 		                    $tmpQuery .= "INNER JOIN project ON $seed->table_name.project_id = project.id ";
 		                }
 		                //END SUGARCRM flav!=sales ONLY
-		                
+
 		               	if(isset($seed->emailAddress) && $key == 'EmailAddresses'){
 		               		$tmpQuery .= " INNER JOIN email_addr_bean_rel eabl  ON eabl.bean_id = $seed->table_name.id and eabl.deleted=0";
 		              		$tmpQuery .= " INNER JOIN email_addresses ea ON (ea.id = eabl.email_address_id) ";
@@ -1741,18 +1817,14 @@ function get_document_revision($session,$id)
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
 
-    
+
     $dr = new DocumentRevision();
     $dr->retrieve($id);
     if(!empty($dr->filename)){
         $filename = $sugar_config['upload_dir']."/".$dr->id;
-        $handle = sugar_fopen($filename, "r");
-        $contents = fread($handle, filesize($filename));
-        fclose($handle);
-        $contents = base64_encode($contents);
-
-        $fh = sugar_fopen($sugar_config['upload_dir']."/rogerrsmith.doc", 'w');
-        fwrite($fh, base64_decode($contents));
+        $contents = base64_encode(sugar_file_get_contents($filename));
+//        $fh = sugar_fopen($sugar_config['upload_dir']."/rogerrsmith.doc", 'w');
+//        fwrite($fh, base64_decode($contents));
         return array('document_revision'=>array('id' => $dr->id, 'document_name' => $dr->document_name, 'revision' => $dr->revision, 'filename' => $dr->filename, 'file' => $contents), 'error'=>$error->get_soap_array());
     }else{
         $error->set_error('no_records');
@@ -1965,7 +2037,7 @@ function handle_set_entries($module_name, $name_value_lists, $select_fields = FA
 		           	if (!empty($parsedItems)) {
 						$val = encodeMultienumValue($parsedItems);
 		           	}
-		        }					
+		        }
 			}
 			$seed->$value['name'] = $val;
 		}
@@ -2096,7 +2168,7 @@ function create_DCE_action($session, $record, $actionType, $startDate='',$priori
     if(!validate_authenticated($session)){
         return 'invalid login';
     }
-	
+
 	$inst = new DCEInstance();
 	$inst->create_action($record, $actionType, $startDate,$priority,$upgradeVars,$dbCloned);
 	$inst = new DCEInstance();
@@ -2200,11 +2272,11 @@ function dce_update_license($session, $instance_id, $contact_id, $deploy, $enabl
         return array('id'=>-1, 'error'=>$error->get_soap_array());
     }
     global $current_user;
-    
-    
-    
-    
-    
+
+
+
+
+
     $inst = new DCEInstance();
     $ct = new Contact();
     if($inst->retrieve($instance_id) && $ct->retrieve($contact_id)){

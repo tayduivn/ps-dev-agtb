@@ -34,6 +34,7 @@
 <form action="index.php" method="POST">
 <table>
 	{foreach from=$DETAILS item=DETAIL name="recordlist"}
+    {if !$fields[$DETAIL.field].hidden}
 	<tr>
 		<td class="detail_label {if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">{$DETAIL.label|strip_semicolon}: {if $DETAIL.required}<span class="required">*</span>{/if}</td>
 		<td class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
@@ -47,11 +48,12 @@
 			{if !empty($DETAIL.customCode)}
 				{eval var=$DETAIL.customCode}
             {else}
-			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams='' typeOverride=$DETAIL.type formName=$form_name}
+			    {sugar_field parentFieldArray='fields' vardef=$fields[$DETAIL.field] displayType='wirelessEditView' displayParams=$DETAIL.displayParams typeOverride=$DETAIL.type formName=$form_name}
             {/if}
         {/if}
 		</td>
 	</tr>
+    {/if}
 	{/foreach}
 </table>
 	<input class="button" type="submit" value="{sugar_translate label='LBL_SAVE_BUTTON_LABEL' module=''}" />

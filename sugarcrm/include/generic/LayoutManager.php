@@ -226,8 +226,13 @@ class LayoutManager
 					break;
 				//END SUGARCRM flav=pro ONLY
 				default:
-					$widget_def['widget_class'] = 'Field' . $this->DBHelper->getFieldType($widget_def);
-			}
+				    if ( isset($widget_def['type']) ) {
+				        $widget_def['widget_class'] = 'Field' . $widget_def['type'];
+				    }
+				    else {
+				        $widget_def['widget_class'] = 'Field' . $this->DBHelper->getFieldType($widget_def);
+				    }
+            }
 		}
 		
 		if(!empty($widget_def['name']) && $widget_def['name'] == 'team_set_id'){

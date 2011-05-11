@@ -58,7 +58,6 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=ReportMaker&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 if(empty($focus->id)){
 	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{

@@ -419,7 +419,7 @@ function toggleTaxSelect(doc, count, hideselect){
 				inputEl.type = 'button';
 				inputEl.tableId = id;
 				inputEl.onclick = function(){
-						addRow("","","","",0,0,"","","","","","","", this.tableId, '', '', '', '', '','0','');
+						addRow("","","","",0,0,"","","","","","","", this.tableId, '', '', '', '', '','0','','', '');
 				}
 				inputEl.name = addRowName;
 				inputEl.value = addRowValue;
@@ -708,7 +708,6 @@ function toggleTaxSelect(doc, count, hideselect){
 	function addCommentRow(id, table_id, comment_description ){
 			var form = document.getElementById('EditView');
 			var table = document.getElementById(table_id);
-			var tmpRow = table.insertRow(table.rows.length);
 			var row = table.insertRow(table.rows.length );
 			var rowName = 'item_row_' + count;
 			row.setAttribute('valign', 'top');
@@ -802,7 +801,12 @@ function toggleTaxSelect(doc, count, hideselect){
 			document.getElementById('product_count').value = count;
 		}	
 
-	function addRow(id, quantity, product_template_id, product_name, cost_price, list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, bundle_name,bundle_shipping,product_description, type_id,discount_amount,discount_select,deal_calc){
+	function addRow(id, quantity, product_template_id, product_name, cost_price, 
+					list_price, discount_price, pricing_formula, pricing_formula_name, pricing_factor, 
+					tax_class, tax_class_name, mft_part_num, table_id, bundle_stage, 
+					bundle_name,bundle_shipping,product_description, type_id,discount_amount,
+					discount_select, deal_calc, product_status)
+	{
 		    
 			if(!table_exists(table_id)){
 				table_id = addTable(table_id, bundle_stage, bundle_name, bundle_shipping);
@@ -814,6 +818,7 @@ function toggleTaxSelect(doc, count, hideselect){
 			else unit_price = discount_price;	
 			if (discount_select == '') discount_select = false;
 			if (deal_calc == '') deal_calc=0;		
+			if(product_status == '') product_status = default_product_status;
 			var form = document.getElementById('EditView')
 			var table = document.getElementById(table_id);
 			var row = table.insertRow(table.rows.length );
@@ -894,7 +899,7 @@ function toggleTaxSelect(doc, count, hideselect){
 			textEl.setAttribute('type', 'hidden')
 			textEl.setAttribute('name',  "status[" + count + "]" );
 			textEl.setAttribute('id', "status[" + count + "]" );
-			textEl.setAttribute('value', default_product_status);
+			textEl.setAttribute('value', product_status);
 			item_list_MSI["status[" + count + "]"] = textEl;
 			form.appendChild(textEl);
 			
@@ -1000,7 +1005,7 @@ function toggleTaxSelect(doc, count, hideselect){
 			buttonEl.textElement = 'name_' + count;
 			buttonEl.count = count;
 			buttonEl.tabIndex = 6;
-			buttonEl.setAttribute('name',  "product_name[" + count + "]" );
+			buttonEl.setAttribute('name',  "btn_product_name[" + count + "]" );
 			buttonEl.setAttribute('id', itemName );
 			buttonEl.onclick = function(){openPopup( lookup_item(this.textElement, document).value,this.count);}
 			buttonEl.className = 'button';
@@ -1396,31 +1401,52 @@ function walk_the_kids(doc, children, variables, variable_values){
 
 var warned = false;
 function calculate_formula(doc, formula, table_id){
-    var total = 0.00;
+	var total = 0.00;
 	var formula_type = '';
 	if (formula != 'discount_amount' && formula != 'tax') {	
 		var variables = formula.match(/(_var_[a-zA-Z\_]+)+/g);
 		var variable_values = new Array();
 		formula = formula.replace(/(_var_)/g, '');
 		for(q =0; q < variables.length; q++){
-        variables[q] = trim(variables[q]).replace(/(_var_)/g, '');
-        }
-    }else
+			variables[q] = trim(variables[q]).replace(/(_var_)/g, '');
+		}
+	}else
 	{
-	    formula_type = formula;
+		formula_type = formula;
 	}
-	
+
 	var table = doc.getElementById(table_id);
-    var rows = table.rows;
-	for(i = 0 ; i < rows.length; i++){	
-	   	if (formula_type == 'discount_amount') {
-	   	 	formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+	var rows = table.rows;
+	for(var i = 0 ; i < rows.length; i++){	
+		if (formula_type == 'discount_amount') {
+			formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 " 
+				  + "* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) "
+				  + "* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
 			if (i != 0) {
-				if (doc.getElementById('checkbox_select_' + table_array[table_id][i]) && doc.getElementById('checkbox_select_' + table_array[table_id][i]).checked == true) {
-					formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+				
+            	var chckd = null;
+				var ckId = 'checkbox_select_' + table_array[table_id][i];
+                //retrieve the value of percentage discount check box
+                if(
+                		typeof(rows[i].cells[11])!='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0]) !='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0].childNodes[0]) !='undefined'
+                ){//check box was found, retrieve value through dom tree.  We try this way first as it is more
+                  //reliable when rows have been removed than relying on count
+                        chckd = rows[i].cells[11].childNodes[0].childNodes[0].checked;
+                }else{
+                //check box was not found, retrieve value directly
+                        chckd = doc.getElementById(ckId) && doc.getElementById(ckId).checked;
+                }
+
+				if (chckd) {
+					formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 " +
+							"* unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) " +
+							"* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
 				}
 				else {
-					formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+					formula = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) " +
+					"* unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
 				}
 			}
 			var variables = formula.match(/(_var_[a-zA-Z\_]+)+/g);
@@ -1430,29 +1456,44 @@ function calculate_formula(doc, formula, table_id){
 		if(formula_type == 'tax')
 		{
 			var taxrate_value = "taxrate_value";
-	        var taxrate = 0.00;
-	        if(doc.EditView.taxrate_id.options.selectedIndex > -1){
-	            taxrate=get_taxrate(doc.EditView.taxrate_id.options[doc.EditView.taxrate_id.options.selectedIndex].value);
-	        }
-	        var taxable = SUGAR.language.get('app_list_strings','tax_class_dom');
-	        taxable = taxable['Taxable'];
-	        var formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
-            if (i != 0) {        
-            	if (doc.getElementById('checkbox_select_' + table_array[table_id][i]) && doc.getElementById('checkbox_select_' + table_array[table_id][i]).checked == true) {
-	            	formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
-	           	}
-	            else {
-	            	formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
-	            } 
-            }
-	        formula = "(unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0 - "+formula_discount+") * " + taxrate + " * 1.0 * (('_var_tax_class_' == " + "'" + taxable + "') || ('_var_tax_class_' == " + "'Taxable'))";
-		    var variables = formula.match(/(_var_[a-zA-Z\_]+)+/g);
-            var variable_values = new Array();
-            formula = formula.replace(/(_var_)/g, '');
-            
+			var taxrate = 0.00;
+			if(doc.EditView.taxrate_id.options.selectedIndex > -1){
+				taxrate=get_taxrate(doc.EditView.taxrate_id.options[doc.EditView.taxrate_id.options.selectedIndex].value);
+			}
+			var taxable = SUGAR.language.get('app_list_strings','tax_class_dom');
+			taxable = taxable['Taxable'];
+			var formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+			if (i != 0) {    
+            	var chckd = null;
+				var ckId = 'checkbox_select_' + table_array[table_id][i];
+                //retrieve the value of percentage discount check box
+                if(
+                		typeof(rows[i].cells[11])!='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0]) !='undefined'
+                        && typeof(rows[i].cells[11].childNodes[0].childNodes[0]) !='undefined'
+                ){//check box was found, retrieve value through dom tree.  We try this way first as it is more
+                  //reliable when rows have been removed than relying on count
+                        chckd = rows[i].cells[11].childNodes[0].childNodes[0].checked;
+                }else{
+                //check box was not found, retrieve value directly
+                        chckd = doc.getElementById(ckId) && doc.getElementById(ckId).checked;
+                }
+
+				if (chckd) {
+					formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) / 100 * unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+				}
+				else {
+					formula_discount = "unformatNumber('_var_discount_amount_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0";
+				} 
+			}
+			formula = "(unformatNumber('_var_discount_price_', num_grp_sep, dec_sep) * unformatNumber('_var_quantity_', num_grp_sep, dec_sep) * 1.0 - "+formula_discount+") * " + taxrate + " * 1.0 * (('_var_tax_class_' == " + "'" + taxable + "') || ('_var_tax_class_' == " + "'Taxable'))";
+			var variables = formula.match(/(_var_[a-zA-Z\_]+)+/g);
+			var variable_values = new Array();
+			formula = formula.replace(/(_var_)/g, '');
+
 		}
-        for(q =0; q < variables.length; q++){
-        variables[q] = trim(variables[q]).replace(/(_var_)/g, '');
+		for(q =0; q < variables.length; q++){
+			variables[q] = trim(variables[q]).replace(/(_var_)/g, '');
 		}
 		cells = rows[i].cells;
 		for(q =0; q < variables.length; q++){
@@ -1469,23 +1510,23 @@ function calculate_formula(doc, formula, table_id){
 		}
 
 		var newformula = formula;
-		
+
 		for(z =0; z < variables.length; z++){
-				var reg =  variables[z] ;
-				newformula = newformula.replace(reg, variable_values[variables[z]]);
+			var reg =  variables[z] ;
+			newformula = newformula.replace(reg, variable_values[variables[z]]);
 		}
 		try{
 			total = total + eval(newformula);
 		}catch(exception){
-		if(!warned){
-			alert(check_data);
-			warned = true;
-		}
+			if(!warned){
+				alert(check_data);
+				warned = true;
+			}
 			return 0;
 		}
-}
-		
-		return total;
+	}
+
+	return total;
 }
 
 function calculate_subtotal(doc, table_id){

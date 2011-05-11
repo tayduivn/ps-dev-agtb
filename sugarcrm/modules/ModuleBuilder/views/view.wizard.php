@@ -55,13 +55,13 @@ class ModuleBuilderViewWizard extends SugarView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
 
@@ -352,8 +352,9 @@ class ModuleBuilderViewWizard extends SugarView
 			{
 				foreach ( $modules [ 'children' ] as $module )
 				{
-					$this->buttons [ $module [ 'name' ] ] = array ( 'action' => $module [ 'action' ] , 'imageTitle' => ucfirst ( $module [ 'module' ] ) , 'size' => '48' ) ;
+					$this->buttons [ $module [ 'name' ] ] = array ( 'action' => $module [ 'action' ] , 'imageTitle' => ucfirst ( $module [ 'module' ]. "_32" ) , 'size' => '32' ) ;
 				}
+				ksort($this->buttons);
 				break ;
 			}
 		}

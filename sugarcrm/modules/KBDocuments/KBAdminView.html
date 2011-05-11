@@ -55,8 +55,9 @@
 			<input type="hidden" name="parent_id" value="{PARENT_ID}">
 			<input type="hidden" name="parent_type" value="{PARENT_TYPE}">
 			<input type="hidden" name="parent_name" value="{PARENT_NAME}">
-			
-				
+			<textarea style="display: none;" name="uid"></textarea>
+			<input name="select_entire_list" value="0" type="hidden">
+			<input name="KBDocuments2_KBDOCUMENT_offset" value="0" type="hidden">
 	<td align='right'>{ADMIN_EDIT}</td>
 	</tr>
 </table>
@@ -408,6 +409,18 @@ document_additionalDetailsCalls = new Array();
 		YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 	}
 	
+	function update_select_count_to_value(val) 
+	{
+		  els = document.getElementsByName('selectCount[]');
+		  for(x in els)
+		  {
+			  if(typeof els[x].value != 'undefined')
+			  {
+		      	 els[x].value = val;
+			  }
+		  }	
+	}
+	
 	function update_sel_count(c){
 		selCount = parseInt(document.getElementById('selectCountTop').value);
 		if(c.checked){
@@ -418,67 +431,68 @@ document_additionalDetailsCalls = new Array();
 		if(selCount < 0){
 			selCount =0;
 		}
-		document.getElementById('selectCountTop').value = selCount;  
-		//document.getElementById('selectCountBot').value = selCount;  		
+
+		update_select_count_to_value(selCount);
 	}
+
+	function set_update_select_count() 
+	{
+		if(document.KBAdminView.uid.value != '') {
+			var oldUids = document.KBAdminView.uid.value.split(',');
+			var ar = new Array();
+
+			for(i in oldUids)
+			{
+				ar[oldUids[i]] = 1;
+			}
+			
+			var inputs_array = document.getElementsByName("mass[]");
+			for(wp = 0 ; wp < inputs_array.length; wp++) {
+					if(typeof ar[inputs_array[wp].value] != 'undefined') {
+						inputs_array[wp].checked = true;
+					}
+			}
+			selCount = oldUids.length;
+		} else {
+			selCount = 0;
+		}
+		update_select_count_to_value(selCount);
+	}
+	
    function checkUncheckAll(){
 	  var state = document.getElementsByName('massall')[0].checked;
 	  var elems = document.getElementsByName('mass[]');	  
 	  selCount = 0;  
-	  for(var i=0;i<elems.length;i++){      		      		      
+	  for(var i=0;i<elems.length;i++)
+      {      		      		      
 		  var el = elems[i];              
-		  if(el.type == 'checkbox') { 		 	       	
+		  if(el.type == 'checkbox') 
+	      { 		 	       	
 			 el.checked=state;
 			 selCount++;
-		     }
-		   }
-		   if(!state){
-		   	selCount = 0;
-		   }
-		document.getElementById('selectCountTop').value = selCount;  
-		//document.getElementById('selectCountBot').value = selCount;  		
+		  }
 	  }
+
+	  if(!state){
+		 selCount = 0;
+      }
+	  update_select_count_to_value(selCount);
+	}
 	
 	function unCheckAll(){
-      document.getElementsByName('massall')[0].checked=false;
-	  var elems = document.getElementsByName('mass[]');	  
-	  for(var i=0;i<elems.length;i++){      		      		      
+        document.getElementsByName('massall')[0].checked=false;
+	    var elems = document.getElementsByName('mass[]');	  
+	    for(var i=0;i<elems.length;i++){      		      		      
 		  var el = elems[i];              
 		  if(el.type == 'checkbox') { 		 	       	
 			 el.checked = false;
-		     }
-		   }
-		document.getElementById('selectCountTop').value = 0;  
-		//document.getElementById('selectCountBot').value = 0;  		
-
-	  }
-	function sortBrowseList1(params,name) {
-        alert('test');            
-		// if paginating before running a sort, then name will be empty.  Handle this use case
-		//by defaulting to kbdocument name
-		if(typeof(name) =='undefined' ){
-			name = 'kbdocument_name';
+		  }
 		}
 
-
-		//create data to send across
-		postData = 'sortCol='+name+ '&params=' + JSON.stringify(params) + '&module=KBDocuments&action=BrowseListView&to_pdf=1'; 
-		//create callback function
-		var callback =	{
-			//on success, refresh list
-			  success: function(o) {    
-			    	var targetdiv=document.getElementById('selected_directory_children');
-	    			targetdiv.innerHTML=o.responseText;
-	    			SUGAR.util.evalScript(o.responseText);
-			  },
-			  //do nothing on failure
-			  failure: function(o) {/*failure handler code*/}
-		};
-		//make ajax call
-		var trobj = YAHOO.util.Connect.asyncRequest('POST','index.php', callback, postData);
-
+		document.KBAdminView.uid.value = '';
+		document.KBAdminView.select_entire_list.value = 0;
+		update_select_count_to_value(0);
 	}
-
 
 
 	//when called, this function will make ajax call to refresh list view sort order
@@ -511,6 +525,37 @@ document_additionalDetailsCalls = new Array();
 
 	}
 
+
+	
+	function save_kb_checks(offset) {
+		ar = new Array();
+		if(document.KBAdminView.uid.value != '') {
+			oldUids = document.KBAdminView.uid.value.split(',');
+			for(uid in oldUids) {
+			    if(typeof(oldUids[uid]) != 'function') {
+			       ar[oldUids[uid]] = 1;
+			    }
+			}
+		}
+		
+		// build associated array of uids, associated array ensures uniqueness
+		var inputs = document.getElementsByName('mass[]');	 
+		for(i = 0; i < inputs.length; i++) {
+			ar[inputs[i].value]	= (inputs[i].checked) ? 1 : 0; // 0 of it is unchecked
+		}
+
+		// build regular array of uids
+		uids = new Array();
+		for(i in ar) {
+			if(typeof(ar[i]) != 'function' && ar[i] == 1) {
+			   uids.push(i);
+			}
+		}
+
+		document.KBAdminView.uid.value = uids.join(',');
+		eval('document.KBAdminView.KBDocuments2_KBDOCUMENT_offset.value = offset');
+		return true;
+	} 
 </script>
 
 </table>

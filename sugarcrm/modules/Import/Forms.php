@@ -35,119 +35,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
- * Returns the bean object of the given module
- *
- * @param  string $module
- * @return object
- */
-function loadImportBean(
-    $module
-    )
-{
-    $focus = SugarModule::get($module)->loadBean();
-    if ( $focus ) {
-        if ( !$focus->importable )
-            return false;
-        if ( $module == 'Users' && !is_admin($GLOBALS['current_user'])
-             && !is_admin_for_module($GLOBALS['current_user'],'Users')
-             //BEGIN SUGARCRM flav=sales ONLY
-             && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-             //END SUGARCRM flav=sales ONLY
-           )
-            return false;
-        if ( $focus->bean_implements('ACL')){
-            if(!ACLController::checkAccess($focus->module_dir, 'import', true)){
-                ACLController::displayNoAccess();
-                sugar_die('');
-            }
-        }
-    }
-    else {
-        return false;
-    }
-    
-    return $focus;
-}
-
-/**
- * Displays the Smarty template for an error
- *
- * @param string $message error message to show
- * @param string $module what module we were importing into
- * @param string $action what page we should go back to
- */
-function showImportError(
-    $message, 
-    $module,
-    $action = 'Step1'
-    )
-{
-    $ss = new Sugar_Smarty();
-    
-	$ss->assign("MESSAGE",$message);
-    $ss->assign("ACTION",$action);
-    $ss->assign("IMPORT_MODULE",$module);
-    $ss->assign("MOD", $GLOBALS['mod_strings']);
-    $ss->assign("SOURCE","");
-    if ( isset($_REQUEST['source']) )
-        $ss->assign("SOURCE", $_REQUEST['source']);
-    
-    echo $ss->fetch('modules/Import/tpls/error.tpl');
-}
-
-/**
- * Replaces PHP error handler in Step4
- *
- * @param int    $errno
- * @param string $errstr
- * @param string $errfile
- * @param string $errline
- */
-function handleImportErrors(
-    $errno, 
-    $errstr, 
-    $errfile, 
-    $errline
-    )
-{
-    if ( !defined('E_DEPRECATED') )
-        define('E_DEPRECATED','8192');
-    if ( !defined('E_USER_DEPRECATED') )
-        define('E_USER_DEPRECATED','16384');
-    
-    // check to see if current reporting level should be included based upon error_reporting() setting, if not
-    // then just return
-    if ( !(error_reporting() & $errno) )
-        return true;
-    
-    switch ($errno) {
-    case E_USER_ERROR:
-        echo "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
-        exit(1);
-        break;
-    case E_USER_WARNING:
-    case E_WARNING:
-        echo "WARNING: [$errno] $errstr on line $errline in file $errfile<br />\n";
-        break;
-    case E_USER_NOTICE:
-    case E_NOTICE:
-        echo "NOTICE: [$errno] $errstr on line $errline in file $errfile<br />\n";
-        break;
-    case E_STRICT:
-    case E_DEPRECATED:
-    case E_USER_DEPRECATED:
-        // don't worry about these
-        //echo "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
-        break;
-    default:
-        echo "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
-        break;
-    }
-
-    return true;
-}
-
-/**
  * Returns an input control for this fieldname given
  *
  * @param  string $module
@@ -205,17 +92,9 @@ function getControl(
         }
         
         $displayParams = array();
-        $displayParams['formName'] = 'importstep3';    
+        $displayParams['formName'] = 'importstep3';  
 
-        $view = 'EditView';
-        //BEGIN SUGARCRM flav=pro ONLY
-        //Special case handling for the teamset view
-        if(!empty($vardef['custom_type']) && $vardef['custom_type'] == 'teamset') {
-           $view = 'importView';
-        }
-        //END SUGARCRM flav=pro ONLY
-        
-        $contents = $sfh->displaySmarty('fields', $vardef, $view, $displayParams);
+        $contents = $sfh->displaySmarty('fields', $vardef, 'ImportView', $displayParams);
         
         // Remove all the copyright comments
         $contents = preg_replace('/\{\*[^\}]*?\*\}/', '', $contents);
@@ -240,6 +119,8 @@ function getControl(
     global $timedate;
     $time_format = $timedate->get_user_time_format();
     $date_format = $timedate->get_cal_date_format();
+    $ss->assign('USER_DATEFORMAT', $timedate->get_user_date_format());
+ 	$ss->assign('TIME_FORMAT', $time_format);
     $time_separator = ":";
     $match = array();
     if(preg_match('/\d+([^\d])\d+([^\d]*)/s', $time_format, $match)) {

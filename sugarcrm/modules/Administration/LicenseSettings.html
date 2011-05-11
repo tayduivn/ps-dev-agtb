@@ -38,23 +38,21 @@
 
 
 <div id='detail_view_div' style='display:inline'>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
 <tr>
     <td>
-    	<input title="{APP.LBL_EDIT_BUTTON_TITLE}" class="button" onclick="toggleDisplay('detail_view_div');toggleDisplay('edit_view_div');" type="button" name="button" value="  {APP.LBL_EDIT_BUTTON_LABEL}  " >
+    	<input title="{APP.LBL_EDIT_BUTTON_TITLE}" class="button primary" onclick="toggleDisplay('detail_view_div');toggleDisplay('edit_view_div');" type="button" name="button" value="  {APP.LBL_EDIT_BUTTON_LABEL}  " >
     </td>
 
 	<td align="right" nowrap><span class="required">&nbsp;</td>
 </tr>
 </table>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
-<tr><td>
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
     <tr><th align="left" scope="row" colspan="4"><h4>{MOD.LBL_MANAGE_LICENSE_TITLE}</h4></th>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_KEY}</td>
-      <td width="30%" >{LICENSE_KEY}</td>
+      <td width="30%" >{LICENSE_KEY}<div class="error">{LICENSE_VALIDATION_NOTICE}</div></td>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_EXPIRE_DATE} {CALENDAR_DATEFORMAT}</td>
@@ -79,19 +77,16 @@
       <td  scope="row"></td>
       <td ></td>
     </tr>
-    <tr><td colspan="4">
-    </tr>
   </table>
-</td></tr></table>
 </div>
 
 <div id='edit_view_div' style='display:none'>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
 <tr>
 
 
     <td>
-        <input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save'; " type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " >
+        <input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="this.form.action.value='Save'; " type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " >
         <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.location.href='index.php?module=Administration&action=LicenseSettings'" type="button" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
     </td>
 
@@ -99,13 +94,14 @@
 </tr>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
-<tr><td>
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr><th align="left" scope="row" colspan="4"><h4>{MOD.LBL_MANAGE_LICENSE_TITLE}</h4></th>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_KEY}</td>
-      <td width="30%" ><input name='license_key' tabindex='3' size='25' maxlength='128' type="text" value="{LICENSE_KEY}"></td>
+      <td width="30%" >
+      <input name='license_key' tabindex='3' size='25' maxlength='128' type="text" value="{LICENSE_KEY}">
+      <div class='error'>{LICENSE_VALIDATION_NOTICE}</div>
+      </td>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_EXPIRE_DATE}</td>
@@ -129,14 +125,11 @@
       <td  scope="row"></td>
       <td ></td>
     </tr>
-    <tr><td colspan="4">
-    </tr>
   </table>
-</td></tr></table>
 </div>
     <br>
 	<div style='display:{LICENSE_VALIDATION_HIDE}'>
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="actionsContainer">
 <tr>
  
     <td>
@@ -147,9 +140,7 @@
 </tr>
 </table>
     <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
-<tr><td>
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr><th align="left" scope="row" colspan="4"><h4>{MOD.LBL_LICENSE_VALIDATION} <span class='error'>{LICENSE_VALIDATION_NOTICE}</span></h4></th>
+    <tr><th align="left" scope="row" colspan="4"><h4>{MOD.LBL_LICENSE_VALIDATION}</h4></th>
     </tr>
     <tr>
       <td width="15%" scope="row">{MOD.LBL_LICENSE_VALIDATION_KEY}</td>
@@ -169,19 +160,7 @@
      <tr>
       <td colspan='2' > {MOD.LBL_MANUAL_VALIDATION} </td>
     </tr>
-    
-    
-
-    
- 
-    <tr>
-      <td  scope="row"></td>
-      <td ></td>
-    </tr>
-    <tr><td colspan="4">
-    </tr>
   </table>
-</td></tr></table>
 </div>
 </form>
 </div>

@@ -33,11 +33,9 @@ $viewdefs['Leads']['DetailView'] = array (
 				'DUPLICATE',
 				'DELETE',
 				array (
-					'customCode' => '<input title="{$MOD.LBL_CONVERTLEAD_TITLE}" accessKey="{$MOD.LBL_CONVERTLEAD_BUTTON_KEY}" type="button" class="button" onClick="document.location=\'index.php?module=Leads&action=ConvertLead&record={$fields.id.value}\'" name="convert" value="{$MOD.LBL_CONVERTLEAD}">'
+					'customCode' => '{if $bean->aclAccess("edit")}<input title="{$MOD.LBL_CONVERTLEAD_TITLE}" accessKey="{$MOD.LBL_CONVERTLEAD_BUTTON_KEY}" type="button" class="button" onClick="document.location=\'index.php?module=Leads&action=ConvertLead&record={$fields.id.value}\'" name="convert" value="{$MOD.LBL_CONVERTLEAD}">{/if}'
 				),
-				array (
-					'customCode' => '<input title="{$APP.LBL_DUP_MERGE}" accessKey="M" class="button" onclick="this.form.return_module.value=\'Leads\'; this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Step1\'; this.form.module.value=\'MergeRecords\';" type="submit" name="Merge" value="{$APP.LBL_DUP_MERGE}">'
-				),
+				'FIND_DUPLICATES',
 				array (
 					'customCode' => '<input title="{$APP.LBL_MANAGE_SUBSCRIPTIONS}" class="button" onclick="this.form.return_module.value=\'Leads\'; this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Leads\';" type="submit" name="Manage Subscriptions" value="{$APP.LBL_MANAGE_SUBSCRIPTIONS}">'
 				),
@@ -71,6 +69,16 @@ $viewdefs['Leads']['DetailView'] = array (
 			array (
 				'name' => 'full_name',
 				'label' => 'LBL_NAME',
+	            //BEGIN SUGARCRM flav=pro ONLY
+	            'displayParams' => array (
+	                'enableConnectors' => true,
+	                'module' => 'Leads',
+	                'connectors' => 
+	                array (
+	                  0 => 'ext_rest_twitter',
+	                ),
+	            ),
+	            //END SUGARCRM flav=pro ONLY 			
 			),
 			'phone_work',
 		),
@@ -86,8 +94,20 @@ $viewdefs['Leads']['DetailView'] = array (
 		),					
 
 	    array (
-		     'account_name',
-			 'website'
+            array (
+              'name' => 'account_name',
+			    //BEGIN SUGARCRM flav=pro ONLY
+			    'displayParams' => array (
+			       'enableConnectors' => true,
+			       'module' => 'Leads',
+			       'connectors' => 
+			       array (
+			          0 => 'ext_rest_linkedin',
+			       ),
+			    ),
+			    //END SUGARCRM flav=pro ONLY 
+            ),
+			'website'
 	    ),		
 		
 		array (
@@ -137,16 +157,16 @@ $viewdefs['Leads']['DetailView'] = array (
 		),	
 	
 		array (
+			'opportunity_amount',
+			'refered_by',
+		),	
+		
+		array (
 			array (
 				'name' => 'campaign_name',
 				'label' => 'LBL_CAMPAIGN',
 				
 			),
-			'refered_by',
-		),	
-		
-		array (
-			'',
 		    'do_not_call'
 		)
 		

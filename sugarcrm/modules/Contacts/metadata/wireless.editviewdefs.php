@@ -52,8 +52,12 @@ $viewdefs['Contacts']['EditView'] = array(
 		array('account_name'),
 		array('phone_work'),
 	    array('phone_mobile'),
-		array('phone_home'),
 		array('email1'),
+		array('primary_address_street'),
+		array('primary_address_city'),
+		array('primary_address_state'),
+		array('primary_address_postalcode'),
+		array('primary_address_country'),		
 		array('assigned_user_name'),
 		//BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),

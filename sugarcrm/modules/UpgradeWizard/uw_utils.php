@@ -29,7 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: uw_utils.php 56650 2010-05-24 18:53:17Z jenny $
+// $Id: uw_utils.php 58174 2010-09-14 18:18:39Z kjing $
 
 /**
  * Backs-up files that are targeted for patch/upgrade to a restore directory
@@ -160,7 +160,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile, $path);
+			//logThis('Copying file to destination: ' . $targetFile, $path);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
@@ -168,7 +168,7 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile, $path);
+			//logThis('Skipping file: ' . $targetFile, $path);
 			$skippedFiles[] = $targetFile;
 		}
 	}
@@ -248,12 +248,12 @@ function copyRecursiveBetweenDirectories($from,$to){
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
 					} else {
-						logThis('Copied file: ' . $targetFile);
+						//logThis('Copied file: ' . $targetFile);
 						//$copiedFiles[] = $targetFile;
 					}
 
@@ -325,7 +325,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						continue;
 					}
 
-					logThis('Copying file to destination: ' . $targetFile);
+					//logThis('Copying file to destination: ' . $targetFile);
 
 					if(!copy($srcFile, $targetFile)) {
 						logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -333,7 +333,7 @@ function deleteAndOverWriteSelectedFiles($unzip_dir, $zip_from_dir,$delete_dirs)
 						$copiedFiles[] = $targetFile;
 					}
 				} else {
-					logThis('Skipping file: ' . $targetFile);
+					//logThis('Skipping file: ' . $targetFile);
 					$skippedFiles[] = $targetFile;
 				}
 			  }
@@ -538,8 +538,9 @@ function commitHandleReminders($skippedFiles, $path='') {
 		}
 
 		//MFH #13468
-		$nowDate = gmdate($timedate->dbDateFormat);
-		$nowTime = gmdate($timedate->dbTimeFormat);
+		/// Not using new TimeDate stuff here because it needs to be compatible with 6.0
+		$nowDate = gmdate('Y-m-d');
+		$nowTime = gmdate('H:i:s');
 		$nowDateTime = $nowDate . ' ' . $nowTime;
 
 		if($_REQUEST['addTaskReminder'] == 'remind') {
@@ -590,13 +591,21 @@ function deleteCache(){
 	//Clean modules from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
-	   foreach($allModFiles as $file){
-	       	if(file_exists($file)){
-				unlink($file);
+		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles,true);
+		foreach($allModFiles as $file)
+		{
+	       	if(file_exists($file))
+	       	{
+	       		if(is_dir($file))
+	       		{
+				  rmdir_recursive($file);
+	       		} else {
+	       		  unlink($file);
+	       		}
 	       	}
-	   }
+		}
 	}
+	
 	//Clean jsLanguage from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'jsLanguage')){
 		$allModFiles = array();
@@ -676,6 +685,12 @@ function upgradeUWFiles($file) {
 	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"))) {
 		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"), $allFiles);
 	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
+		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	}
 
 	/*
 	 * /home/chris/workspace/maint450/cache/upload/upgrades/temp/DlNnqP/
@@ -732,25 +747,25 @@ function getValidPatchName($returnFull = true) {
 	$ready .= "
 		<table>
 			<tr>
-				<th></th>
-				<th align=left>
-					{$mod_strings['LBL_ML_NAME']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_TYPE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_VERSION']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_PUBLISHED']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_UNINSTALLABLE']}
-				</th>
-				<th>
-					{$mod_strings['LBL_ML_DESCRIPTION']}
-				</th>
+				<td></td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_NAME']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_TYPE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_VERSION']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_PUBLISHED']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_UNINSTALLABLE']}</b>
+				</td>
+				<td align=left>
+					<b>{$mod_strings['LBL_ML_DESCRIPTION']}</b>
+				</td>
 			</tr>";
 	$disabled = '';
 
@@ -820,11 +835,11 @@ function getValidPatchName($returnFull = true) {
 	$_SESSION['install_file'] = urldecode($newest); // in-case it was there from a prior.
 	logThis("*** UW using [ {$_SESSION['install_file']} ] as source for patch files.");
 
-	$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 	$cleanUpgradeContent = urlencode($_SESSION['install_file']);
 
 	// cn: 10606 - cannot upload a patch file since this returned always.
 	if(!empty($cleanUpgradeContent)) {
+		$ready .= "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n";
 		$ready .=<<<eoq
 	        <td>
 				<form action="index.php" method="post">
@@ -835,17 +850,18 @@ function getValidPatchName($returnFull = true) {
 	        		<input type=hidden name="install_file" value="{$cleanUpgradeContent}" />
 	        		<input type=submit value="{$mod_strings['LBL_BUTTON_DELETE']}" />
 				</form>
-			</td>
+			</td></table>
 eoq;
 		$disabled = "DISABLED";
 	}
 
-	$ready .= "</table>\n";
+
 
 	if(empty($cleanUpgradeContent)){
-	    $ready .= "<i>None</i><br>\n";
+	    $ready .= "<tr><td colspan='7'><i>None</i></td>\n";
+		$ready .= "</table>\n";
 	}
-	$ready .= "</ul>\n";
+	$ready .= "<br></ul>\n";
 
 	$return['ready'] = $ready;
 	$return['disabled'] = $disabled;
@@ -1238,7 +1254,7 @@ function updateQuickCreateDefs(){
 						//replace 'EditView' with 'QuickCreate'
 						$fp = fopen($quickcreatedefs,'w');
 						foreach($file as &$line){
-							if(preg_match("/^\s*'EditView'\s*=>\s*$/", $line) > 0){
+							if(preg_match('/^\s*\'EditView\'\s*=>\s*$/', $line) > 0){
 								$line = "'QuickCreate' =>\n";
 							}
 							fwrite($fp, $line);
@@ -2127,7 +2143,7 @@ function testQueryDrop($table, $dbType, $query) {
 
 			// get sample data into the temp table to test for data/constraint conflicts
 			logThis('inserting temp dataset...');
-			$query = stripQuotes($query, $table);
+			$query = stripQuotesUW($query, $table);
 			$q3 = "INSERT INTO `{$table}__uw_temp` SELECT * FROM `{$table}` LIMIT 10";
 			$r3 = $db->query($q3);
 
@@ -2286,7 +2302,7 @@ function testQueryUpdate($table, $dbType, $query) {
 /**
  * strip queries of single and double quotes
  */
-function stripQuotes($query, $table) {
+function stripQuotesUW($query, $table) {
 	$queryStrip = '';
 
 	$start = strpos($query, $table);
@@ -2566,7 +2582,7 @@ $uwMain = $upgrade_directories_not_found;
 				continue;
 			}
 
-			logThis('Copying file to destination: ' . $targetFile);
+			//logThis('Copying file to destination: ' . $targetFile);
 
 			if(!copy($srcFile, $targetFile)) {
 				logThis('*** ERROR: could not copy file: ' . $targetFile);
@@ -2574,7 +2590,7 @@ $uwMain = $upgrade_directories_not_found;
 				$copiedFiles[] = $targetFile;
 			}
 		} else {
-			logThis('Skipping file: ' . $targetFile);
+			//logThis('Skipping file: ' . $targetFile);
 			//$skippedFiles[] = $targetFile;
 		}
 	   }
@@ -2814,7 +2830,7 @@ $uwMain = $upgrade_directories_not_found;
 				}
 				$filesize = filesize($destFile);
 				if($filesize > 0) {
-					$fileContents = fread($fp, $filesize);
+					$fileContents = stream_get_contents($fp);
 					$targetMd5 = md5($fileContents);
 				}
 			} else {
@@ -2848,10 +2864,10 @@ function fileCopy($file_path){
 function getChecklist($steps, $step) {
 	global $mod_strings;
 
-	$skip = array('start', 'cancel', 'uninstall');
+	$skip = array('start', 'cancel', 'uninstall','end');
 	$j=0;
 	$i=1;
-	$ret  = '<table cellpadding="3" cellspacing="0" border="0">';
+	$ret  = '<table cellpadding="3" cellspacing="4" border="0">';
 	$ret .= '<tr><th colspan="3" align="left">'.$mod_strings['LBL_UW_CHECKLIST'].':</th></tr>';
 	foreach($steps['desc'] as $k => $desc) {
 		if(in_array($steps['files'][$j], $skip)) {
@@ -2860,17 +2876,22 @@ function getChecklist($steps, $step) {
 		}
 
 		//$status = "<span class='error'>{$mod_strings['LBL_UW_INCOMPLETE']}</span>";
-		$status = '';
+		$desc_mod_pre = '';
+		$desc_mod_post = '';
+		/*
 		if(isset($_SESSION['step'][$steps['files'][$k]]) && $_SESSION['step'][$steps['files'][$k]] == 'success') {
-			$status = $mod_strings['LBL_UW_COMPLETE'];
+			//$status = $mod_strings['LBL_UW_COMPLETE'];
 		}
+		*/
 
 		if($k == $_REQUEST['step']) {
-			$status = $mod_strings['LBL_UW_IN_PROGRESS'];
+			//$status = $mod_strings['LBL_UW_IN_PROGRESS'];
+			$desc_mod_pre = "<font color=blue><i>";
+			$desc_mod_post = "</i></font>";
 		}
 
-		$ret .= "<tr><td>&nbsp;</td><td><b>{$i}: {$desc}</b></td>";
-		$ret .= "<td id={$steps['files'][$j]}><i>{$status}</i></td></tr>";
+		$ret .= "<tr><td>&nbsp;</td><td><b>{$i}: {$desc_mod_pre}{$desc}{$desc_mod_post}</b></td>";
+		$ret .= "<td id={$steps['files'][$j]}><i></i></td></tr>";
 		$i++;
 		$j++;
 	}
@@ -3158,7 +3179,7 @@ function unlinkTempFiles() {
 		rsort($files);
 		foreach($files as $file) {
 			if(!is_dir($file)) {
-				logThis('unlinking ['.$file.']', $path);
+				//logThis('unlinking ['.$file.']', $path);
 				@unlink($file);
 			}
 		}
@@ -3166,7 +3187,7 @@ function unlinkTempFiles() {
 		$files = findAllFiles($tempDir, array(), true);
 		foreach($files as $dir) {
 			if(is_dir($dir)) {
-				logThis('removing dir ['.$dir.']', $path);
+				//logThis('removing dir ['.$dir.']', $path);
 				@rmdir($dir);
 			}
 		}
@@ -3281,15 +3302,13 @@ function resetUwSession() {
 function UWrebuild() {
 	global $db;
 	global $path;
-
+	/*
+	//CCL - Comment this block out, it is called in end.php
 	logThis('Rebuilding everything...', $path);
-//	require_once('ModuleInstall/ModuleInstaller.php');
-//	$mi = new ModuleInstaller();
-//	$mi->rebuild_all(true);
 	require_once('modules/Administration/QuickRepairAndRebuild.php');
 	$randc = new RepairAndClear();
     $randc->repairAndClearAll(array('clearAll'),array(translate('LBL_ALL_MODULES')), false, false);
-
+    */
 	$query = "DELETE FROM versions WHERE name='Rebuild Extensions'";
 	$db->query($query);
 	logThis('Registering rebuild record: '.$query, $path);
@@ -3297,7 +3316,7 @@ function UWrebuild() {
 
 	// insert a new database row to show the rebuild extensions is done
 	$id = create_guid();
-	$gmdate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	$gmdate = gmdate('Y-m-d H:i:s');
 	$date_entered = db_convert("'$gmdate'", 'datetime');
 	$query = 'INSERT INTO versions (id, deleted, date_entered, date_modified, modified_user_id, created_by, name, file_version, db_version) '
 		. "VALUES ('$id', '0', $date_entered, $date_entered, '1', '1', 'Rebuild Extensions', '4.0.0', '4.0.0')";
@@ -3629,7 +3648,7 @@ function deletePackageOnCancel(){
     // delete file in upgrades/patch
     $delete_me = urldecode( $_SESSION['install_file'] );
     if(@unlink($delete_me)) {
-    	logThis('unlinking: '.$delete_me);
+    	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
     } else {
     	logThis('ERROR: could not delete ['.$delete_me.']');
@@ -3697,7 +3716,7 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
     }
 	if(file_exists($sqlScript)) {
 		$fp = fopen($sqlScript, 'r');
-		$contents = fread($fp, filesize($sqlScript));
+		$contents = stream_get_contents($fp);
 	    $anyScriptChanges =$contents;
 	    $resumeAfterFound = false;
 		if(rewind($fp)) {
@@ -3748,16 +3767,16 @@ function parseAndExecuteSqlFile($sqlScript,$forStepQuery='',$resumeFromQuery='')
 	                        		}
 	                        	}
 		                        $db->query($query);
+		                        if($db->checkError()){
+		                            //put in the array to use later on
+		                            $_SESSION['sqlSkippedQueries'][] = $query;
+		                        }
 	                            if(!empty($tableName))
                                 {
                                     $db->query('ALTER TABLE '.$tableName.' ENABLE KEYS');
                                 }
 		                        $progQuery[$forStepQuery]=$query;
 		                        post_install_progress($progQuery,$action='set');
-		                        if($db->checkError()){
-		                            //put in the array to use later on
-		                            $_SESSION['sqlSkippedQueries'][] = $query;
-		                        }
 	                        }//if
 						}
 						elseif($query != null){
@@ -3872,7 +3891,7 @@ function initialize_session_vars(){
 		  			//set session variables
 		  			$_SESSION[$key]=$val;
 		  			//set varibales
-					"$".$key=$val;
+					'$'.$key=$val;
 	  			}
 	  		}
 	  	}
@@ -3911,7 +3930,7 @@ function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubS
 			if($currStepSub != null && $currStepSubState !=null){
 				//check if new status to be set or update
 				//get the latest in array. since it has sub components prepare an array
-				if(is_array($upgrade_config[sizeof($upgrade_config)][$currStep])){
+				if(!empty($upgrade_config[sizeof($upgrade_config)][$currStep]) && is_array($upgrade_config[sizeof($upgrade_config)][$currStep])){
 					$latestStepSub = currSubStep($upgrade_config[sizeof($upgrade_config)][$currStep]);
 					if($latestStepSub == $currStepSub){
 						$upgrade_config[sizeof($upgrade_config)][$currStep][$latestStepSub]=$currStepSubState;
@@ -4124,7 +4143,7 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 	$db = & DBManagerFactory::getInstance();
 	if(is_file($sqlScript)) {
 		$fp = fopen($sqlScript, 'r');
-		$contents = fread($fp, filesize($sqlScript));
+		$contents = stream_get_contents($fp);
 	    $anyScriptChanges =$contents;
 		if(rewind($fp)) {
 			$completeLine = '';
@@ -4186,22 +4205,6 @@ function parseAndExecuteSqlFileExtended($sqlScript){
 		}
 	}
 }
-function createTable(){
-	if($sugar_config['dbconfig']['db_type'] == 'oci8'){
-		$query= "select table_name from user_tables where table_name=strtoupper(trim($qarr[2]))";
-		$result = $db->query($query);
-		$row = $db->fetchByAssociation($result);
-		if($row['table_name'] != null){
-			//already exists
-		}
-		else{
-			//create table
-			$query= $completeLine;
-			$db->query($query);
-		}
-	}
-}
-
 
 function repairDBForUpgrade($execute=false,$path=''){
 
@@ -4548,20 +4551,6 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
 		  } //if
 
-		  // move the favorite reports over to the SugarFavorites table
-		  $current_favorites = array_keys($current_user->getPreference('favorites', 'Reports'));
-		  foreach ($current_favorites as $report_id) {
-		      if ( SugarFavorites::isUserFavorite('Reports',$report_id) ) {
-		          continue;
-		      }
-
-		      $favFocus = new SugarFavorites;
-		      $favFocus->module = 'Reports';
-		      $favFocus->record_id = $report_id;
-		      $favFocus->assigned_user_id = $current_user->id;
-		      $favFocus->save();
-		  }
-
 		  // we need to force save the changes to disk, otherwise we lose them.
 		  $current_user->savePreferencesToDB();
 	} //while
@@ -4616,6 +4605,132 @@ function upgradeUserPreferences() {
 	   write_array_to_file("dashletsFiles", $dashletsFiles, $GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 	} //if
 	//END SUGARCRM flav=pro ONLY
+}
+
+// BEGIN SUGARCRM flav=pro ONLY
+function migrate_sugar_favorite_reports(){
+    require_once('modules/SugarFavorites/SugarFavorites.php');
+
+    // Need to repair the RC1 instances that have incorrect GUIDS
+    $deleteRows = array();
+    $res = $GLOBALS['db']->query("select * from sugarfavorites where module='Reports'");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $expectedId = SugarFavorites::generateGUID('Reports', $row['record_id'], $row['assigned_user_id']);
+        if ($row['id'] != $expectedId) {
+            $deleteRows[] = $row['id'];
+        }
+    }
+    $GLOBALS['db']->query("delete from sugarfavorites where id in ('" . implode("','",$deleteRows) . "')");
+    // End Repair
+
+
+    $active_users = array();
+    $res = $GLOBALS['db']->query("select id, user_name, deleted, status from users where is_group = 0 and portal_only = 0 and status = 'Active' and deleted = 0");
+    while($row = $GLOBALS['db']->fetchByAssoc($res)){
+        $active_users[] = $row['id'];
+    }
+
+    foreach($active_users as $user_id){
+        $user = new User();
+        $user->retrieve($user_id);
+
+        $user_favorites = $user->getPreference('favorites', 'Reports');
+        if(!is_array($user_favorites)) $user_favorites = array();
+
+        if(!empty($user_favorites)){
+            foreach($user_favorites as $report_id => $bool){
+                $fav = new SugarFavorites();
+                $record = SugarFavorites::generateGUID('Reports', $report_id, $user_id);
+                if(!$fav->retrieve($record, true, false)){
+                        $fav->new_with_id = true;
+                }
+                $fav->id = $record;
+                $fav->module = 'Reports';
+                $fav->record_id = $report_id;
+                $fav->assigned_user_id = $user->id;
+                $fav->created_by = $user->id;
+                $fav->modified_user_id = $user->id;
+
+                $fav->deleted = 0;
+                $fav->save();
+            }
+        }
+    }
+}
+// END SUGARCRM flav=pro ONLY
+
+function add_custom_modules_favorites_search(){
+    $module_directories = scandir('modules');
+
+	foreach($module_directories as $module_dir){
+		if($module_dir == '.' || $module_dir == '..' || !is_dir("modules/{$module_dir}")){
+			continue;
+		}
+
+		$matches = array();
+		preg_match('/^[a-z0-9]{1,5}_[a-z0-9_]+$/i' , $module_dir, $matches);
+
+		// Make sure the module was created by module builder
+		if(empty($matches)){
+			continue;
+		}
+
+		$full_module_dir = "modules/{$module_dir}/";
+		$read_searchdefs_from = "{$full_module_dir}/metadata/searchdefs.php";
+		$read_SearchFields_from = "{$full_module_dir}/metadata/SearchFields.php";
+		$read_custom_SearchFields_from = "custom/{$full_module_dir}/metadata/SearchFields.php";
+
+		// Studio can possibly override this file, so we check for a custom version of it
+		if(file_exists("custom/{$full_module_dir}/metadata/searchdefs.php")){
+			$read_searchdefs_from = "custom/{$full_module_dir}/metadata/searchdefs.php";
+		}
+
+		if(file_exists($read_searchdefs_from) && file_exists($read_SearchFields_from)){
+			$found_sf1 = false;
+			$found_sf2 = false;
+			require($read_searchdefs_from);
+			foreach($searchdefs[$module_dir]['layout']['basic_search'] as $sf_array){
+				if(isset($sf_array['name']) && $sf_array['name'] == 'favorites_only'){
+					$found_sf1 = true;
+				}
+			}
+
+			require($read_SearchFields_from);
+			if(isset($searchFields[$module_dir]['favorites_only'])){
+				$found_sf2 = true;
+			}
+
+			if(!$found_sf1 && !$found_sf2){
+				$searchdefs[$module_dir]['layout']['basic_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchdefs[$module_dir]['layout']['advanced_search']['favorites_only'] = array('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',);
+				$searchFields[$module_dir]['favorites_only'] = array(
+					'query_type'=>'format',
+					'operator' => 'subquery',
+					'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites
+								WHERE sugarfavorites.deleted=0
+									and sugarfavorites.module = \''.$module_dir.'\'
+									and sugarfavorites.assigned_user_id = \'{0}\'',
+					'db_field'=>array('id')
+				);
+
+				if(!is_dir("custom/{$full_module_dir}/metadata")){
+					mkdir_recursive("custom/{$full_module_dir}/metadata");
+				}
+				$success_sf1 = write_array_to_file('searchdefs', $searchdefs, "custom/{$full_module_dir}/metadata/searchdefs.php");
+				$success_sf2 = write_array_to_file('searchFields', $searchFields, "{$full_module_dir}/metadata/SearchFields.php");
+
+				if(!$success_sf1){
+					logThis("add_custom_modules_favorites_search failed for searchdefs.php for {$module_dir}");
+				}
+				if(!$success_sf2){
+					logThis("add_custom_modules_favorites_search failed for SearchFields.php for {$module_dir}");
+				}
+				if($success_sf1 && $success_sf2){
+					logThis("add_custom_modules_favorites_search successfully updated searchdefs and searchFields for {$module_dir}");
+				}
+			}
+		}
+	}
 }
 
 
@@ -4737,14 +4852,16 @@ function upgradeTeamColumn($bean, $column_name) {
 			$GLOBALS['db']->addColumn($bean->table_name, $bean->field_defs['team_set_id']);
 		}
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
-		$indexDef = array(
+		
+        $indexName = getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34);
+        $indexDef = array(
 					 array(
-						'name' => 'idx_'.strtolower($bean->table_name).'_tmst_id',
+						'name' => $indexName,
 						'type' => 'index',
 						'fields' => array('team_set_id')
 					 )
 				   );
-		if(!isset($indexArray['idx_'.strtolower($bean->table_name).'_tmst_id'])) {
+		if(!isset($indexArray[$indexName])) {
 			$GLOBALS['db']->addIndexes($bean->table_name, $indexDef);
 		}
 
@@ -4811,12 +4928,8 @@ function upgradeModulesForTeam() {
     $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
 
     //Update team_set_id
-	if((isset($_SESSION['current_db_version']) && $_SESSION['current_db_version'] < '550') || $ce_to_pro_or_ent) {
-	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
-	}
-
-	//Update default_team
 	if($ce_to_pro_or_ent) {
+	   $GLOBALS['db']->query("update users set team_set_id = (select teams.id from teams where teams.associated_user_id = users.id)");
 	   $GLOBALS['db']->query("update users set default_team = (select teams.id from teams where teams.associated_user_id = users.id)");
 	}
 
@@ -4854,36 +4967,19 @@ function upgradeModulesForTeam() {
             //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
             logThis('new modules to add are '.var_export($newModuleList,true),$path);
 
-            //grab the existing system tabs
-            $tabs = $newTB->get_system_tabs();
-
-            //add the new tabs to the array
-            foreach($newModuleList as $nm ){
-              $tabs[$nm] = $nm;
+            if(!empty($newModuleList))
+            {
+	            //grab the existing system tabs
+	            $tabs = $newTB->get_system_tabs();
+	
+	            //add the new tabs to the array
+	            foreach($newModuleList as $nm ){
+	              $tabs[$nm] = $nm;
+	            }
+	
+	            $newTB->set_system_tabs($tabs);
             }
-
-            if(!file_exists('modules/iFrames/iFrame.php') && isset($tabs['iFrames'])){
-                unset($tabs['iFrames']);
-            }
-
-	        //Set the default order
-	        $default_order = array(
-	        	'Home'=>'Home',
-	        	'Accounts'=>'Accounts',
-	        	'Contacts'=>'Contacts',
-	        	'Opportunities'=>'Opportunities',
-	        	'Activities'=>'Activities',
-	            //BEGIN SUGARCRM flav=pro || flav=sales ONLY
-	        	'Reports'=>'Reports',
-	            //END SUGARCRM flav=pro || flav=sales ONLY
-	        	'Documents'=>'Documents'
-	        );
-	        $tabs = array_merge($default_order, $tabs);
-
-            //now assign the modules to system tabs
-            $newTB->set_system_tabs($tabs);
             logThis('module tabs updated',$path);
-
         }
     }
 
@@ -4970,7 +5066,12 @@ function upgradeModulesForTeam() {
            	  require($file);
            	  $touched = false;
            	  $contents = file_get_contents($file);
-           	  $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  if ( !isset($GLOBALS['app_list_strings']) ) {
+           	      $GLOBALS['app_list_strings'] = $app_list_strings;
+           	  }
+           	  else {
+           	      $GLOBALS['app_list_strings'] = array_merge($app_list_strings, $GLOBALS['app_list_strings']);
+           	  }
 
            	  if(isset($GLOBALS['app_list_strings']) && is_array($GLOBALS['app_list_strings'])) {
            	  	 foreach($GLOBALS['app_list_strings'] as $key=>$entry) {
@@ -5120,7 +5221,7 @@ function upgradeModulesForTeam() {
 			if(!empty($content['dashlets']) && !empty($content['pages'])){
 				$originalDashlets = $content['dashlets'];
 				foreach($originalDashlets as $key => $ds){
-				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://apps.sugarcrm.com/dashlet/go-pro.html')){
+				    if(!empty($ds['options']['url']) && stristr($ds['options']['url'],'http://www.sugarcrm.com/crm/product/gopro')){
 						unset($originalDashlets[$key]);
 					}
 				}
@@ -5234,7 +5335,7 @@ function upgradeModulesForTeam() {
 		foreach( $allHelpFiles as $the_file ){
 	        if( is_file( $the_file ) ){
 	            unlink( $the_file );
-	            _logThis("Deleted file: $the_file", $path);
+	            logThis("Deleted file: $the_file", $path);
 	        }
 	    }
 	}
@@ -5285,4 +5386,568 @@ function upgradeModulesForTeam() {
         }
 	}
 	//END SUGARCRM flav=pro ONLY
-?>
+
+	/**
+	 * upgradeDateTimeFields
+	 *
+	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
+	 * which prevents you from performing timezone offset calculations once the data has been saved.
+	 *
+	 * @param path String location to log file, empty by default
+	 */
+	function upgradeDateTimeFields($path=''){
+		//bug: 39757
+		global $db;
+		if($db->dbType == 'mysql')
+		{
+			$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+			$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
+		} else if($db->dbType == 'mssql') {
+			$meetingsSql = "UPDATE meetings set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+			$callsSql = "UPDATE calls set date_end = DATEADD(hh, duration_hours, DATEADD(mi, duration_minutes, date_start))";
+		} else if ($db->dbType == 'oci8') {
+			$meetingsSql = "UPDATE meetings SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+			$callsSql = "UPDATE calls SET date_end = date_start + duration_hours/24 + duration_minutes/1440";
+		}
+
+		if(isset($meetingsSql) && isset($callsSql))
+		{
+			logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
+			$db->query($meetingsSql);
+
+			logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
+			$db->query($callsSql);
+		}
+	}
+
+
+
+	/**
+	 * upgradeDocumentTypeFields
+	 *
+	 */
+	function upgradeDocumentTypeFields($path){
+		//bug: 39757
+		global $db;
+
+		$documentsSql = "UPDATE documents SET doc_type = 'Sugar' WHERE doc_type IS NULL";
+		$meetingsSql = "UPDATE meetings SET type = 'Sugar' WHERE type IS NULL";
+
+		logThis('upgradeDocumentTypeFields Documents SQL:' . $documentsSql, $path);
+		$db->query($documentsSql);
+		logThis('upgradeDocumentTypeFields Meetings SQL:' . $meetingsSql, $path);
+		$db->query($meetingsSql);
+	}
+
+
+/**
+ * merge_config_si_settings
+ * This method checks for the presence of a config_si.php file and, if found, merges the configuration
+ * settings from the config_si.php file into config.php.  If a config_si_location parameter value is not
+ * supplied it will attempt to discover the config_si.php file location from where the executing script
+ * was invoked.
+ *
+ * @param write_to_upgrade_log boolean optional value to write to the upgradeWizard.log file
+ * @param config_location String optional value to config.php file location
+ * @param config_si_location String optional value to config_si.php file location
+ * @param path String file of the location of log file to write to
+ * @return boolean value indicating whether or not a merge was attempted with config_si.php file
+ */
+function merge_config_si_settings($write_to_upgrade_log=false, $config_location='', $config_si_location='', $path='')
+{
+	if(!empty($config_location) && !file_exists($config_location))
+	{
+		if($write_to_upgrade_log)
+		{
+	       logThis('config.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+		}
+	    return false;
+	} else if(empty($config_location)) {
+		global $argv;
+		//We are assuming this is from the silentUpgrade scripts so argv[3] will point to SugarCRM install location
+		if(isset($argv[3]) && is_dir($argv[3]))
+		{
+			$config_location = $argv[3] . DIRECTORY_SEPARATOR . 'config.php';
+		}
+	}
+
+	//If config_location is still empty or if the file cannot be found, skip merging
+	if(empty($config_location) || !file_exists($config_location))
+	{
+	   if($write_to_upgrade_log)
+	   {
+	   	  logThis('config.php file at (' . $config_location . ') could not be found.  Skip merging.', $path);
+	   }
+	   return false;
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      logThis('Loading config.php file at (' . $config_location . ') for merging.', $path);
+	   }
+
+	   include($config_location);
+	   if(empty($sugar_config))
+	   {
+	   	  if($write_to_upgrade_log)
+		  {
+	   	     logThis('config.php contents are empty.  Skip merging.', $path);
+		  }
+	   	  return false;
+	   }
+	}
+
+	if(!empty($config_si_location) && !file_exists($config_si_location))
+	{
+		if($write_to_upgrade_log)
+		{
+	       logThis('config_si.php file specified in ' . $config_si_location . ' could not be found.  Skip merging', $path);
+		}
+	    return false;
+	} else if(empty($config_si_location)) {
+		if(isset($argv[0]) && is_file($argv[0]))
+		{
+			$php_file = $argv[0];
+			$p_info = pathinfo($php_file);
+			$php_dir = (isset($p_info['dirname']) && $p_info['dirname'] != '.') ?  $p_info['dirname'] . DIRECTORY_SEPARATOR : '';
+			$config_si_location = $php_dir . 'config_si.php';
+		}
+	}
+
+	//If config_si_location is still empty or if the file cannot be found, skip merging
+	if(empty($config_si_location) || !file_exists($config_si_location))
+	{
+	   if($write_to_upgrade_log)
+	   {
+	      logThis('config_si.php file at (' . $config_si_location . ') could not be found.  Skip merging.', $path);
+	   }
+	   return false;
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      logThis('Loading config_si.php file at (' . $config_si_location . ') for merging.', $path);
+	   }
+
+	   include($config_si_location);
+	   if(empty($sugar_config_si))
+	   {
+	      if($write_to_upgrade_log)
+		  {
+	   	     logThis('config_si.php contents are empty.  Skip merging.', $path);
+		  }
+	   	  return false;
+	   }
+	}
+
+	//Now perform the merge operation
+	$modified = false;
+	foreach($sugar_config_si as $key=>$value)
+	{
+		if(!preg_match('/^setup_/', $key) && !isset($sugar_config[$key]))
+		{
+		   if($write_to_upgrade_log)
+		   {
+		      logThis('Merge key (' . $key . ') with value (' . $value . ')', $path);
+		   }
+		   $sugar_config[$key] = $value;
+		   $modified = true;
+		}
+	}
+
+	if($modified)
+	{
+		if($write_to_upgrade_log)
+		{
+	       logThis('Update config.php file with new values', $path);
+		}
+
+	    if(!write_array_to_file("sugar_config", $sugar_config, $config_location)) {
+	       if($write_to_upgrade_log)
+		   {
+	    	  logThis('*** ERROR: could not write to config.php', $path);
+		   }
+		   return false;
+		}
+	} else {
+	   if($write_to_upgrade_log)
+	   {
+	      logThis('config.php values are in sync with config_si.php values.  Skipped merging.');
+	   }
+	   return false;
+	}
+
+	if($write_to_upgrade_log)
+	{
+	   logThis('End merge_config_si_settings', $path);
+	}
+	return true;
+}
+
+/**
+ * upgrade_connectors
+ * @param $path String variable for the log path
+ */
+function upgrade_connectors($path='') {
+    logThis('Begin upgrade_connectors', $path);
+
+    $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php';
+    if(file_exists($filePath))
+    {
+       logThis("{$filePath} file", $path);
+       require($filePath);
+       if(!is_null($config))
+       {
+          $modified = false;
+          if(isset($config['properties']['hoovers_endpoint']))
+          {
+             $config['properties']['hoovers_endpoint'] = 'http://hapi.hoovers.com/HooversAPI-33';
+             $modified = true;
+          }
+
+          if(isset($config['properties']['hoovers_wsdl']))
+          {
+             $config['properties']['hoovers_wsdl'] = 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
+             $modified = true;
+          }
+
+          if($modified)
+          {
+              if(!write_array_to_file('config', $config, $filePath)) {
+                 logThis("Could not write new configuration to {$filePath} file", $path);
+              } else {
+                 logThis('Modified file successfully with new configuration entries', $path);
+              }
+          }
+       }
+    }
+
+    $filePath = 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/vardefs.php';
+    if(file_exists($filePath))
+    {
+       logThis("Modifying {$filePath} file", $path);
+       require($filePath);
+       $fileContents = file_get_contents($filePath);
+       $out = str_replace('bal.specialtyCriteria.companyKeyword', 'bal.specialtyCriteria.companyName', $fileContents);
+       file_put_contents($filePath, $out);
+    }
+
+    logThis('End upgrade_connectors', $path);
+}
+
+function repair_long_relationship_names($path='')
+{
+    logThis("Begin repair_long_relationship_names", $path);
+    require_once 'modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php' ;
+    $GLOBALS['mi_remove_tables'] = false;
+    $touched = array();
+    foreach($GLOBALS['moduleList'] as $module)
+    {
+        $relationships = new DeployedRelationships ($module) ;
+        foreach($relationships->getRelationshipList() as $rel_name)
+        {
+            if (strlen($rel_name) > 27 && empty($touched[$rel_name]))
+            {
+                logThis("Rebuilding relationship fields for $rel_name", $path);
+                $touched[$rel_name] = true;
+                $rel_obj = $relationships->get($rel_name);
+                $rel_obj->setReadonly(false);
+                $relationships->delete($rel_name);
+                $relationships->save();
+                $relationships->add($rel_obj);
+                $relationships->save();
+                $relationships->build () ;
+            }
+        }
+    }
+    logThis("End repair_long_relationship_names", $path);
+}
+
+function removeSilentUpgradeVarsCache(){
+    global $silent_upgrade_vars_loaded;
+
+    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+
+    if(file_exists($cacheFile)){
+        unlink($cacheFile);
+    }
+
+    $silent_upgrade_vars_loaded = array(); // Set to empty to reset it
+
+    return true;
+}
+
+function loadSilentUpgradeVars(){
+    global $silent_upgrade_vars_loaded;
+
+    if(empty($silent_upgrade_vars_loaded)){
+        $cacheFile = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader/silentUpgradeCache.php";
+        // We have no pre existing vars
+        if(!file_exists($cacheFile)){
+            // Set the vars array so it's loaded
+            $silent_upgrade_vars_loaded = array('vars' => array());
+        }
+        else{
+            require_once($cacheFile);
+            $silent_upgrade_vars_loaded = $silent_upgrade_vars_cache;
+        }
+    }
+
+    return true;
+}
+
+function writeSilentUpgradeVars(){
+    global $silent_upgrade_vars_loaded;
+
+    if(empty($silent_upgrade_vars_loaded)){
+        return false; // You should have set some values before trying to write the silent upgrade vars
+    }
+
+    $cacheFileDir = "{$GLOBALS['sugar_config']['cache_dir']}/silentUpgrader";
+    $cacheFile = "{$cacheFileDir}/silentUpgradeCache.php";
+
+    require_once('include/dir_inc.php');
+    if(!mkdir_recursive($cacheFileDir)){
+        return false;
+    }
+    require_once('include/utils/file_utils.php');
+    if(!write_array_to_file('silent_upgrade_vars_cache', $silent_upgrade_vars_loaded, $cacheFile, 'w')){
+        global $path;
+        logThis("WARNING: writeSilentUpgradeVars could not write to {$cacheFile}", $path);
+        return false;
+    }
+
+    return true;
+}
+
+function setSilentUpgradeVar($var, $value){
+    if(!loadSilentUpgradeVars()){
+        return false;
+    }
+
+    global $silent_upgrade_vars_loaded;
+
+    $silent_upgrade_vars_loaded['vars'][$var] = $value;
+
+    return true;
+}
+
+function getSilentUpgradeVar($var){
+    if(!loadSilentUpgradeVars()){
+        return false;
+    }
+
+    global $silent_upgrade_vars_loaded;
+
+    if(!isset($silent_upgrade_vars_loaded['vars'][$var])){
+        return null;
+    }
+    else{
+        return $silent_upgrade_vars_loaded['vars'][$var];
+    }
+}
+
+
+/**
+ * add_unified_search_to_custom_modules_vardefs
+ *
+ * This method calls the repair code to remove the unified_search_modules.php fiel
+ *
+ */
+function add_unified_search_to_custom_modules_vardefs()
+{
+	if(file_exists('cache/modules/unified_search_modules.php'))
+	{
+	   unlink('cache/modules/unified_search_modules.php');
+	}
+
+}
+
+/**
+ * change from using the older SugarCache in 6.1 and below to the new one in 6.2
+ */
+function upgradeSugarCache($file)
+{
+	global $sugar_config;
+	// file = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
+
+	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
+
+	unzip($file, $cacheUploadUpgradesTemp);
+
+	if(!file_exists(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"))) {
+		logThis("*** ERROR: no manifest file detected while bootstraping upgrade wizard files!");
+		return;
+	} else {
+		include(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"));
+	}
+
+	$allFiles = array();
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	}
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
+		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	}
+	$cwd = clean_path(getcwd());
+
+	foreach($allFiles as $k => $file) {
+		$file = clean_path($file);
+		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+       if(!is_dir(dirname($destFile))) {
+			mkdir_recursive(dirname($destFile)); // make sure the directory exists
+		}
+		if ( stristr($file,'uw_main.tpl') )
+            logThis('Skipping "'.$file.'" - file copy will during commit step.');
+        else {
+            logThis('updating UpgradeWizard code: '.$destFile);
+            copy_recursive($file, $destFile);
+        }
+	}
+	logThis ('is sugar_file_util there '.file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php")));
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php"))) {
+		$file = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php");
+		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+        copy($file,$destFile);
+	}
+}
+
+
+/**
+ * upgradeDisplayedTabsAndSubpanels
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function upgradeDisplayedTabsAndSubpanels($version)
+{
+	if($version < '620')
+	{
+		logThis('start upgrading system displayed tabs and subpanels');
+	    require_once('modules/MySettings/TabController.php');
+	    $tc = new TabController();	
+	    
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();  
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //to displayed tabs unless explicitly set to hidden
+	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
+	    $added_tabs = array();
+	    
+	    foreach($modules_to_add as $module)
+	    {
+		       $tabs[0][$module] = $module;
+		       $added_tabs[] = $module;
+	    }
+	    
+	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
+	    $tc->set_system_tabs($tabs[0]);    
+	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	}
+}
+
+
+/**
+ * unlinkUpgradeFiles
+ * This is a helper function to clean up 
+ * 
+ * @param $version String value of current system version (pre upgrade)
+ */
+function unlinkUpgradeFiles($version)
+{
+	if(!isset($version))
+	{
+	   return;
+	}
+	
+	logThis('start unlinking files from previous upgrade');
+	if($version < '620')
+	{
+	   //list of files to remove
+	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/sugarColors.xml');
+	   
+	   foreach($files_to_remove as $f)
+	   {
+		   if(file_exists($f))
+		   {
+		   	  logThis('removing file: ' . $f);
+		   	  unlink($f);
+		   }  
+	   }
+	}
+	logThis('end unlinking files from previous upgrade');
+	
+	if($version < '620')
+	{
+		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php)');
+
+		//Use a md5 comparison check to see if we can just remove the file where an exact match is found
+		if($version < '610')
+		{
+			$dr_files = array(
+	         'modules/DocumentRevisions/DetailView.html' => '17ad4d308ce66643fdeb6fdb3b0172d3',
+			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
+	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
+	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
+	        );		
+		} else {
+			$dr_files = array(
+	         'modules/DocumentRevisions/DetailView.html' => 'a8356ff20cd995daffe6cb7f7b8b2340',
+			 'modules/DocumentRevisions/DetailView.php' => '20edf45dd785469c484fbddff1a3f8f2',
+	         'modules/DocumentRevisions/EditView.php' => 'fb31958496f04031b2851dcb4ce87d50',
+	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
+	        );
+		}
+	
+		foreach($dr_files as $rev_file=>$hash)
+		{
+			if(file_exists($rev_file))
+			{
+				//It's a match here so let's just remove the file
+				if (md5(file_get_contents($rev_file)) == $hash) 
+				{
+					logThis('removing file ' . $rev_file);
+					unlink($rev_file);
+				} else {
+					if(!copy($rev_file, $rev_file . '.suback.bak')) 
+					{
+					  logThis('error making backup for file ' . $rev_file);
+					} else {
+					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
+					  unlink($rev_file);
+					}
+				} 
+			}
+		}
+		
+		logThis('end upgrade for DocumentRevisions classic files');
+	}	
+}
+
+if (!function_exists("getValidDBName"))
+{
+    /*
+     * Return a version of $proposed that can be used as a column name in any of our supported databases
+     * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+     * @param string $name Proposed name for the column
+     * @param string $ensureUnique
+     * @return string Valid column name trimmed to right length and with invalid characters removed
+     */
+     function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
+    {
+        // first strip any invalid characters - all but alphanumerics and -
+        $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
+        $len = strlen ( $name ) ;
+        $result = $name;
+        if ($ensureUnique)
+        {
+            $md5str = md5($name);
+            $tail = substr ( $name, -11) ;
+            $temp = substr($md5str , strlen($md5str)-4 );
+            $result = substr ( $name, 0, 10) . $temp . $tail ;
+        }else if ($len > ($maxLen - 5))
+        {
+            $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
+        }
+        return strtolower ( $result ) ;
+    }
+}

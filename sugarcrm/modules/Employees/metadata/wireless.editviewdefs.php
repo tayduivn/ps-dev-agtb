@@ -62,7 +62,6 @@ $viewdefs['Employees']['EditView'] = array(
 	    ),
 		array('phone_work'),
 	    array('phone_mobile'),
-	    array('phone_home'),
 		array('email1'),
 	),
 );

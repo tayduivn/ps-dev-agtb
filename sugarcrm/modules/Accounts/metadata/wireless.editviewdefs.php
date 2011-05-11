@@ -39,13 +39,17 @@ $viewdefs['Accounts']['EditView'] = array(
     	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
 	    array('phone_office'),
 		array(array('name'=>'website', 'displayParams'=>array('type'=>'link'))),
-		array('industry'),
-	    array('account_type'),
+		array('email1'),
+		array('billing_address_street'),
+		array('billing_address_city'),
+		array('billing_address_state'),
+		array('billing_address_postalcode'),
+		array('billing_address_country'),
 		array('assigned_user_name'),
 		//BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),
 		//END SUGARCRM flav=pro ONLY
-		array('email1'),
+
 	),
 );
 ?>

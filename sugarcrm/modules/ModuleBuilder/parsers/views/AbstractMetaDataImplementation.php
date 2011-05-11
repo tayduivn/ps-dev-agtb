@@ -219,8 +219,10 @@ abstract class AbstractMetaDataImplementation
 	 */
 	protected function _saveToFile ($filename , $defs , $useVariables = true, $forPopup = false )
 	{
-
-		mkdir_recursive ( dirname ( $filename ) ) ;
+	    if(file_exists($filename))
+	        unlink($filename);
+	    
+	    mkdir_recursive ( dirname ( $filename ) ) ;
 
 		$useVariables = (count ( $this->_variables ) > 0) && $useVariables ; // only makes sense to do the variable replace if we have variables to replace...
 
@@ -244,7 +246,7 @@ abstract class AbstractMetaDataImplementation
 		
 		$out .= ";\n?>\n" ;
 
-		if ( file_put_contents ( $filename, $out ) === false)
+		if ( sugar_file_put_contents ( $filename, $out ) === false)
 			$GLOBALS [ 'log' ]->fatal ( get_class($this).": could not write new viewdef file " . $filename ) ;
 	}
 

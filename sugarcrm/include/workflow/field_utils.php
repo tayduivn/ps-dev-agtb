@@ -564,30 +564,43 @@ include_once('include/workflow/expression_utils.php');
 
 
 
-function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, $ext1=null, $for_action_display=false){
+function get_display_text($temp_module, $field, $field_value, $adv_type=null, $ext1=null, $context=null){
 	global $app_list_strings, $current_user;
 
-	if($temp_module->field_defs[$field]['type']=="relate"){
+    if($temp_module->field_defs[$field]['type']=="relate"){
 		//echo $field;
         //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
-        if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && $for_action_display) {
-            $assigned_user = loadBean('Users');
-            $assigned_user->retrieve($field_value);
-            if($current_user->getPreference('use_real_names') == 'on'){
-                return $assigned_user->full_name;
+        if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && !empty($context['for_action_display'])) {
+            if($adv_type != 'exist_user') {
+	            $assigned_user = loadBean('Users');
+    	        $assigned_user->retrieve($field_value);
+        	    if (empty($assigned_user->id)) {
+            	    return false;
+        	    }
+	            if($current_user->getPreference('use_real_names') == 'on'){
+    	            return $assigned_user->full_name;
+	            } else {
+                    return $assigned_user->user_name;
+                }
+	        } else {
+                $target_type = "assigned_user_name";
             }
-            else {
-                return $assigned_user->user_name;
-            }
+        } else {
+    		if(!empty($temp_module->field_defs[$field]['dbType']))
+    			$target_type = $temp_module->field_defs[$field]['dbType'];
+    		else
+    			return $field_value;
         }
-		if(!empty($temp_module->field_defs[$field]['dbType']))
-			$target_type = $temp_module->field_defs[$field]['dbType'];
-		else
-			return $field_value;
-	} else {
+	}
+    else if (isset($temp_module->field_defs[$field]['calculated'])
+            && $temp_module->field_defs[$field]['calculated'])
+    {
+        //Cannot set the value of calculated fields.
+        return false;
+    }
+    else {
 		$target_type = $temp_module->field_defs[$field]['type'];
 	}
-
 
 
 	//Land of the "one offs"
@@ -601,6 +614,11 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 
 		if($adv_type==null){
 			$user_array = get_user_array(TRUE, "Active", $field_value, true);
+			if (!isset($user_array[$field_value])) {
+				return false;
+			}
+
+
 			return $user_array[$field_value];
 		}
 		if($adv_type=="exist_user"){
@@ -610,11 +628,7 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 			} else {
 				return $app_list_strings['wflow_adv_user_type_dom'][$field_value];
 			}
-
-
 		}
-
-
 	}
 
 
@@ -646,74 +660,11 @@ function get_display_text(& $temp_module, $field, $field_value, $adv_type=null, 
 
 //Used primarily for alert templates
 
-/*
-	if($target_type == "team_list" && $adv_type==null){
-
-		$team_array = get_team_array();
-
-		if(!empty($team_array[$field_value])){
-			return $team_array[$field_value];
-		} else {
-			return "";
-		}
-
-
-	//end if this is team list but not involving the advanced type
-	}
-	if($target_type == "bool"){
-
-		if($field_value=="bool_true" || $field_value==true){
-			return $app_list_strings['checkbox_dom']['1'];//Yes
-		}
-		if(empty($field_value) || $field_value=="bool_false"){
-			return $app_list_strings['checkbox_dom']['2'];//No
-		}
-			return "";
-	//end if target_type is bool
-	}
-	if($target_type=="datetime"){
-		global $timedate;
-			global $current_user;
-			$pref_array = $timedate->getUserTimeZone($current_user);
-			$gmtOffset = $pref_array['gmtOffset']/60;
-			if(!isset($app_list_strings['dom_timezones_extra'][$gmtOffset])){
-				$gmt_display = "(GMT$gmtOffset)";
-			}
-			else{
-				$gmt_display = $app_list_strings['dom_timezones_extra'][$gmtOffset];
-			}
-		if(!empty($field_value)){
-			return $timedate->to_display_date_time($field_value, true, true, $current_user);
-		} else {
-			return "";
-		}
-	//end if datetime or date
-	}
-
-	//takes care of enum.  You need the value to display, not the key.
-	if($target_type=="enum" || $target_type=="multienum"){
-		if(!empty($temp_module->field_defs[$field]['options'])){
-		$option_array_name = $temp_module->field_defs[$field]['options'];
-		} else {
-			return $field_value;
-		}
-		
-		if(isset($temp_module->field_defs[$field]['isMultiSelect']) && $temp_module->field_defs[$field]['isMultiSelect']===true){
-			return str_replace("^,^",", ",$field_value);
-		}
-		if(!empty($app_list_strings[$option_array_name][$field_value])){
-			return $app_list_strings[$option_array_name][$field_value];
-		} else {
-			return $field_value;
-		}
-	}
-*/
-
     require_once('include/SugarFields/SugarFieldHandler.php');
     $sugarField = SugarFieldHandler::getSugarField($target_type);
-    $GLOBALS['log']->fatal("Field: $field is of type $target_type, before: $field_value");
-    $field_value = $sugarField->getEmailTemplateValue($field_value,$temp_module->field_defs[$field]);
-    $GLOBALS['log']->fatal("after: $field_value");
+    $GLOBALS['log']->debug("Field: $field is of type $target_type, before: $field_value");
+    $field_value = $sugarField->getEmailTemplateValue($field_value,$temp_module->field_defs[$field], $context);
+    $GLOBALS['log']->debug("after: $field_value");
 
 	return $field_value;
 
@@ -821,7 +772,7 @@ function find_start_position(& $target_array, $target_key){
 }
 
 
-function check_special_fields($field_name, & $source_object, $use_past_array=false){
+function check_special_fields($field_name, $source_object, $use_past_array=false, $context = null){
 	global $locale;
 
 	//Only special case we check for right now is full_name
@@ -842,15 +793,19 @@ function check_special_fields($field_name, & $source_object, $use_past_array=fal
         require_once('modules/Teams/TeamSetManager.php');
         if($use_past_array==false)
         {
-            $team_set_id = $source_object->team_set_id; 
+        	if(empty($source_object->team_set_id)){
+        		if(!empty($source_object->teams)){
+        			$source_object->teams->save();
+        		}
+        	}
+            $team_set_id = $source_object->team_set_id;
             $team_id = $source_object->team_id;
         }
         else
         {
-            $team_set_id = $source_object->fetched_row['team_set_id']; 
+            $team_set_id = $source_object->fetched_row['team_set_id'];
             $team_id = $source_object->fetched_row['team_id'];
         }
-
         return TeamSetManager::getCommaDelimitedTeams($team_set_id, $team_id, true);
     }
     else {
@@ -860,10 +815,10 @@ function check_special_fields($field_name, & $source_object, $use_past_array=fal
 		if($use_past_array==false && $field_name!="date_entered"){
 			//use the future value
 
-				 return get_display_text($source_object, $field_name, $source_object->$field_name);
+				 return get_display_text($source_object, $field_name, $source_object->$field_name, null, null, $context);
 		} else {
 			//use the past value
-				return get_display_text($source_object, $field_name, $source_object->fetched_row[$field_name]);
+				return get_display_text($source_object, $field_name, $source_object->fetched_row[$field_name], null, null, $context);
 		}
 	}
 

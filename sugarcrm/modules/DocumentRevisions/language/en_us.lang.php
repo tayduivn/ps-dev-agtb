@@ -36,7 +36,7 @@ $mod_strings = array (
 
 	//vardef labels
 	'LBL_REVISION_NAME' => 'Revision Number',
-	'LBL_FILENAME' => 'Filename',
+	'LBL_FILENAME' => 'File:',
 	'LBL_MIME' => 'Mime Type',
 	'LBL_REVISION' => 'Revision',
 	'LBL_DOCUMENT' => 'Related Document',
@@ -56,7 +56,7 @@ $mod_strings = array (
 	'LBL_REV_LIST_ENTERED' => 'Date Created',
 	'LBL_REV_LIST_CREATED' => 'Created by',
 	'LBL_REV_LIST_LOG'=> 'Change Log',
-	'LBL_REV_LIST_FILENAME' => 'Filename',
+	'LBL_REV_LIST_FILENAME' => 'File',
 
 	'LBL_CURRENT_DOC_VERSION'=> 'Latest Revision:',
 	'LBL_SEARCH_FORM_TITLE'=> 'Document Search',
@@ -67,6 +67,9 @@ $mod_strings = array (
 	'ERR_DELETE_CONFIRM'=> 'Do you want to delete this document revision?',
 	'ERR_DELETE_LATEST_VERSION'=> 'You are not allowed to delete the latest revision of a document.',
 	'LNK_NEW_MAIL_MERGE' => 'Mail Merge',
+	'LBL_DOC_ID' => 'Document Source ID',
+	'LBL_DOC_TYPE' => 'Source',
+	'LBL_DOC_URL' => 'Document Source URL',
 );
 
 

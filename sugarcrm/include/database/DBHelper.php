@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: DBHelper.php 56786 2010-06-02 18:29:56Z jenny $
+* $Id: DBHelper.php 57848 2010-08-20 19:37:11Z kjing $
 * Description: This file is an abstract class and handles the Data base functionality for
 * the application. It is called by the DBManager class to generate various sql statements.
 *
@@ -112,6 +112,8 @@ abstract class DBHelper
                 continue;
 
             $val = $bean->getFieldValue($fieldDef['name']);
+            // clean the incoming value..
+            $val = from_html($val);
             if (strlen($val) <= 0) {
                 if(isset($fieldDef['default']) && (strlen($fieldDef['default']) > 0))
                     $val = $fieldDef['default'];
@@ -177,6 +179,8 @@ abstract class DBHelper
            if (isset($bean->$fieldDef['name'])
                     && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
                $val = $bean->getFieldValue($fieldDef['name']);
+               // clean the incoming value..
+               $val = from_html($val);
 
                // need to do some thing about types of values
                if (strlen($val) <= 0)
@@ -277,7 +281,7 @@ abstract class DBHelper
 	{
        return " where " . $this->getColumnWhereClause($bean->getTableName(), $whereArray);
 	}
-	
+
 	/**
 	 * Designed to take an SQL statement and produce a list of fields used in that select
 	 * @param String $selectStatement
@@ -287,7 +291,7 @@ abstract class DBHelper
 		$selectStatement = trim($selectStatement);
 		if (strtoupper(substr($selectStatement, 0, 6)) == "SELECT")
 			$selectStatement = trim(substr($selectStatement, 6));
-		
+
 		//Due to sql functions existing in many selects, we can't use php explode
 		$fields = array();
 		$level = 0;
@@ -296,7 +300,7 @@ abstract class DBHelper
 		for($i = 0; $i < $strLen; $i++)
 		{
 			$char = $selectStatement[$i];
-			
+
 			if ($char == "," && $level == 0)
 			{
 				$field = $this->getFieldNameFromSelect(trim($selectField));
@@ -311,22 +315,25 @@ abstract class DBHelper
 				$level--;
 				$selectField .= $char;
 
-				
+
 			}else{
 				$selectField .= $char;
 			}
-			
+
 		}
 		$fields[$this->getFieldNameFromSelect($selectField)] = $selectField;
 		return $fields;
 	}
-	
+
 	/**
 	 * returns the field name used in a select
 	 * @param String $string
 	 */
 	protected function getFieldNameFromSelect($string)
 	{
+	    if(strncasecmp($string, "DISTINCT ", 9) == 0) {
+	        $string = substr($string, 9);
+	    }
 		if (stripos($string, " as ") !== false)
 			//"as" used for an alias
 			return trim(substr($string, strripos($string, " as ") + 4));
@@ -561,10 +568,10 @@ abstract class DBHelper
         $type = $this->getFieldType($fieldDef);
         $colType = $this->getColumnType($type, $name, $table);
 
-        if (( $colType == 'nvarchar' 
-				or $colType == 'nchar' 
-				or $colType == 'varchar' 
-				or $colType == 'char' 
+        if (( $colType == 'nvarchar'
+				or $colType == 'nchar'
+				or $colType == 'varchar'
+				or $colType == 'char'
 				or $colType == 'varchar2') ) {
             if( !empty($fieldDef['len']))
                 $colType .= "(".$fieldDef['len'].")";
@@ -579,12 +586,12 @@ abstract class DBHelper
 	        		}else{
 	                    $colType .= "(".$fieldDef['len'].")";
 	        		}
-	        	else 
+	        	else
 	                    $colType .= "(".$fieldDef['len'].")";
 	        }
-       }        
+       }
 
-       
+
         if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
             $default = " DEFAULT '".$fieldDef['default']."'";
         elseif (!isset($default) && $type == 'bool')
@@ -598,7 +605,7 @@ abstract class DBHelper
 
         $required = 'NULL';  // MySQL defaults to NULL, SQL Server defaults to NOT NULL -- must specify
         //Starting in 6.0, only ID and auto_increment fields will be NOT NULL in the DB.
-        if ((empty($fieldDef['isnull'])  || strtolower($fieldDef['isnull']) == 'false') && 
+        if ((empty($fieldDef['isnull'])  || strtolower($fieldDef['isnull']) == 'false') &&
 		(!empty($auto_increment) || $name == 'id' || ($fieldDef['type'] == 'id' && isset($fieldDef['required']) && $fieldDef['required'])))
 		{
             $required =  "NOT NULL";
@@ -680,8 +687,8 @@ abstract class DBHelper
     {
         return "";
     }
-	
-	
+
+
 
 	/**
      * Either creates an auto increment through queries or returns sql for auto increment
@@ -700,7 +707,7 @@ abstract class DBHelper
         return "";
 	}
 
-	
+
     /**
      * Sets the next auto-increment value of a column to a specific value.
      *
@@ -822,7 +829,7 @@ abstract class DBHelper
 
         return "alter table ".$bean->getTableName()." drop (".implode(", ", $columns).")";
 	}
-    
+
     /**
      * This method generates sql that drops a column identified by fieldDef.
      * Designed to work like the other addColumnSQL() and alterColumnSQL() functions
@@ -842,7 +849,7 @@ abstract class DBHelper
             'drop'
             );
         return $sql;
-        
+
 	}
 
     /**
@@ -1016,10 +1023,7 @@ abstract class DBHelper
      * @param array  $changes changes
      * @see DBHelper::getDataChanges()
      */
-    public function save_audit_records(
-        SugarBean &$bean,
-        &$changes
-        )
+    public function save_audit_records(SugarBean $bean, $changes)
 	{
 		global $current_user;
 		$sql = "INSERT INTO ".$bean->get_audit_table_name();
@@ -1041,12 +1045,12 @@ abstract class DBHelper
 			$values['before_value_string']=$bean->dbManager->getHelper()->massageValue($changes['before'], $fieldDefs['before_value_string']);
 			$values['after_value_string']=$bean->dbManager->getHelper()->massageValue($changes['after'], $fieldDefs['after_value_string']);
 		}
-		$values['date_created']=$bean->dbManager->getHelper()->massageValue(gmdate($GLOBALS['timedate']->get_db_date_time_format()), $fieldDefs['date_created']);
+		$values['date_created']=$bean->dbManager->getHelper()->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
 		$values['created_by']=$bean->dbManager->getHelper()->massageValue($current_user->id, $fieldDefs['created_by']);
 
 		$sql .= "(".implode(",", array_keys($values)).") ";
 		$sql .= "VALUES(".implode(",", $values).")";
-		
+
         if ( $this->db->dbType == 'oci8' && $changes['data_type'] == 'text' ) {
             $sql .= " RETURNING before_value_text, after_value_text INTO :before_value_text, :after_value_text";
             $stmt = oci_parse($this->db->getDatabase(), $sql);
@@ -1108,7 +1112,7 @@ abstract class DBHelper
 						else
 							$field_type=$properties['dbtype'];
 					}
-					
+
 					//Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table). so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
 					if(!empty($field_type) && $field_type == 'date'){
 						$before_value = from_db_convert($before_value , $field_type);
@@ -1269,33 +1273,33 @@ abstract class DBHelper
     abstract public function number_of_columns(
         $table_name
         );
-    
+
     protected function _isTypeBoolean(
         $type
-        ) 
+        )
     {
         switch ($type) {
-        case 'bool': 
+        case 'bool':
             return true;
         }
-        
+
         return false;
     }
 
     protected function _getBooleanValue(
         $val
-        ) 
+        )
     {
     	//need to put the === sign here otherwise true == 'non empty string'
         if (empty($val) or $val==='off')
             return false;
-        
+
         return true;
     }
 
     protected function _isTypeNumber(
         $type
-        ) 
+        )
     {
         switch ($type) {
         case 'decimal':
@@ -1315,13 +1319,13 @@ abstract class DBHelper
      * return true if the value if empty
      */
     protected function _emptyValue(
-        $val, 
+        $val,
         $type
         )
     {
-        if (empty($val)) 
+        if (empty($val))
             return true;
-    
+
         switch ($type) {
         case 'decimal':
         case 'int':
@@ -1331,7 +1335,7 @@ abstract class DBHelper
         case 'ulong':
         case 'long':
         case 'short':
-            if ($val == 0)	
+            if ($val == 0)
                 return true;
             return false;
         case 'date':
@@ -1341,8 +1345,8 @@ abstract class DBHelper
                 return true;
             return false;
         }
-        
+
         return false;
-    }	
+    }
 }
 ?>

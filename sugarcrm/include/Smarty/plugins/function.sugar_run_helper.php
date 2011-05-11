@@ -1,4 +1,26 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r56153 - 2010-04-28 15:37:27 -0700 (Wed, 28 Apr 2010) - asandberg - Bug #35808 - Tab ordering for fields is inconsistent specifically for the "Email Address" and "Teams" fields
+Modified SugarFieldBase file, displayFromFunc function to propagate the tabindex down the call stack and the email address widget to utilize the value
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r54415 - 2010-02-10 07:58:39 -0800 (Wed, 10 Feb 2010) - jmertic - Bug 35628 - Fixed SQL error showing when importing into a currency field. Also fixes unit test failure of properly rendering the currency field widget.
+
+r54369 - 2010-02-08 16:33:57 -0800 (Mon, 08 Feb 2010) - rob - Bug 35453: Add support for vardef functions to return various html, bypassing the sugar fields
+
+
+*/
+
+
 /**
  * Smarty plugin
  * @package Smarty

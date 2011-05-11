@@ -35,19 +35,23 @@ class ViewPortalPreview extends SugarView
 {
 	function ViewPortalPreview()
 	{
-	    $GLOBALS['log']->debug('in ViewPortalStyleView');
+	    $this->options['show_title'] = false;
+		$this->options['show_header'] = false;
+        $this->options['show_footer'] = false;
+        $this->options['show_javascript'] = false;
+        $GLOBALS['log']->debug('in ViewPortalStyleView');
 	}
 	
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
 	
@@ -58,9 +62,9 @@ class ViewPortalPreview extends SugarView
 
 	function display() 
 	{
-        echo get_module_title($GLOBALS['mod_strings']['LBL_MODULE_TITLE'], $GLOBALS['mod_strings']['LBL_MODULE_TITLE'], true); 
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod', $GLOBALS['mod_strings']);
+        $smarty->assign('app', $GLOBALS['app_strings']);
         $smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SP_UPLOADSTYLE']);
         $smarty->assign('useCustomFile', file_exists('custom/portal/custom/style.css'));
         echo $smarty->fetch('modules/ModuleBuilder/tpls/portalpreview.tpl');

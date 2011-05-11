@@ -243,7 +243,7 @@ class Sugarpdf extends TCPDF
     */
     public function SetFont($family, $style='', $size=0, $fontfile='') {
         
-        if(empty($fontfile)){
+        if(empty($fontfile) && defined('K_PATH_CUSTOM_FONTS')){
             // This will force addFont to search the custom directory for font before the OOB directory
             $fontfile = K_PATH_CUSTOM_FONTS."phantomFile.phantom";
         }
@@ -623,6 +623,20 @@ class Sugarpdf extends TCPDF
             }
         }
         return $lines;
+    }
+    
+    /**
+     * Disable zlib output compression if we are downloading the PDF.
+     *
+     * @see TCPDF::Output()
+     */
+    public function Output($name='doc.pdf', $dest='I') 
+    {
+        if ( $dest == 'I' || $dest == 'D') {
+            ini_set('zlib.output_compression', 'Off');
+        }
+        
+        return parent::Output($name,$dest);
     }
 }
 

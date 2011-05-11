@@ -15,10 +15,20 @@ class SugarFieldEnumTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
      /**
-     * @group bug36744
+     * @ticket 36744
      */
 	public function testFormatEnumField()
 	{
+	    $langpack = new SugarTestLangPackCreator();
+	    $langpack->setAppListString('case_priority_dom',
+	        array (
+                'P1' => 'High',
+                'P2' => 'Medium',
+                'P3' => 'Low',
+                )
+            );
+        $langpack->save();
+        
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 		$fieldDef = array (
 					    'name' => 'priority',

@@ -51,7 +51,7 @@ class UsersController extends SugarController
 			$this->view = 'classic';
 		}
 	}
-	
+    //END SUGARCRM flav=pro || flav=sales ONLY	
 	protected function action_delete()
 	{
 	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')
@@ -67,17 +67,27 @@ class UsersController extends SugarController
             $u->employee_status = 'Terminated';
             $u->save();
             $GLOBALS['log']->info("User id: {$GLOBALS['current_user']->id} deleted user record: {$_REQUEST['record']}");
-            //BEGIN SUGARCRM flav!=sales ONLY
-            SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
-            //END SUGARCRM flav!=sales ONLY
-            //BEGIN SUGARCRM flav=sales ONLY
+
+            $eapm = loadBean('EAPM');
+            $eapm->delete_user_accounts($_REQUEST['record']);
+            $GLOBALS['log']->info("Removing user's External Accounts");
+            
+            //BEGIN SUGARCRM flav=PRO ONLY
+            if($u->portal_only == '0'){
+                SugarApplication::redirect("index.php?module=Users&action=reassignUserRecords&record={$u->id}");
+            }
+            else{
+                SugarApplication::redirect("index.php?module=Users&action=index");
+            }
+            //END SUGARCRM flav=PRO ONLY
+            //BEGIN SUGARCRM flav=sales || flav=COM ONLY
             SugarApplication::redirect("index.php?module=Users&action=index");
-            //END SUGARCRM flav=sales ONLY
+            //END SUGARCRM flav=sales || flav=COM ONLY
         }
         else 
             sugar_die("Unauthorized access to administration.");
 	}
-	
+    //BEGIN SUGARCRM flav=pro || flav=sales ONLY	
 	/**
 	 * Clear the reassign user records session variables. 
 	 *
@@ -89,7 +99,7 @@ class UsersController extends SugarController
         else
 	       sugar_die("You cannot access this page.");
 	}
-	
+
 	protected function action_wirelessmain() 
 	{
 		$this->view = 'wirelessmain';
@@ -114,12 +124,7 @@ class UsersController extends SugarController
         //BEGIN SUGARCRM flav=sales ONLY
         $_POST['email_link_type'] = $sugar_config['default_email_client'];
         //END SUGARCRM flav=sales ONLY
-        //BEGIN SUGARCRM flav=com ONLY
-	    $_POST['user_theme'] = 'Sugar5';
-	    //END SUGARCRM flav=com ONLY
-	    //BEGIN SUGARCRM flav!=com ONLY
-	    $_POST['user_theme'] = 'Sugar';
-	    //END SUGARCRM flav!=com ONLY
+        $_POST['user_theme'] = (string) SugarThemeRegistry::getDefault();
 	    
 	    // save and redirect to new view
 	    $_REQUEST['return_module'] = 'Home';

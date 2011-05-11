@@ -44,13 +44,20 @@ $mod_strings = array (
 
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
-	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
-                                                'Click OK to delete the User record. After clicking OK, you will be given the ability to reassign records assigned to the user to another user',
+    'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
+                                                'Deleting a User record cannot be undone.',
+	'LBL_DELETE_GROUP_CONFIRM'          => 'Are you sure you want to delete this Group User? Click OK to delete the User record.<br/>After clicking OK, you will be given the ability to reassign records assigned to the Group User to another user.',
+	'LBL_DELETE_PORTAL_CONFIRM'         => 'Are you sure you want to delete this Portal API User? Click OK to delete the User record.',
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=sales ONLY
 	'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted. After the user is deleted, any workflow definitions and reports involving the user might need to be updated.<br/><br/>'.
                                                 'Click OK to delete the User record.',
 //END SUGARCRM flav=sales ONLY
+//BEGIN SUGARCRM flav=com ONLY
+    'LBL_DELETE_USER_CONFIRM'           => 'When the User record is deleted, the corresponding Employee record will also be deleted.<br/><br/>'.
+                                                  'Click OK to delete the User record.',
+//END SUGARCRM flav=com ONLY
+
 	'LNK_IMPORT_USERS'                 => 'Import Users',
 	'ERR_DELETE_RECORD'					=> 'A record number must be specified to delete the account.',
 	'ERR_EMAIL_INCORRECT'				=> 'Provide a valid email address in order to create and send the password.',
@@ -262,8 +269,8 @@ $mod_strings = array (
     'LBL_NAME'							=> 'Full Name',
     'LBL_SIGNATURE_NAME'                                        =>  'Name',
     'LBL_NAVIGATION_PARADIGM'           => 'Navigation',
-    'LBL_NAVIGATION_PARADIGM_DESCRIPTION'   => 'View modules grouped under tab categories or view modules by distinct tabs for each module.',
-    'LBL_USE_GROUP_TABS'                => 'Navigate using grouped modules',
+    'LBL_NAVIGATION_PARADIGM_DESCRIPTION'   => 'Select to view modules tabs in the navigation bar based on pre-defined groups. If this feature is not selected, all modules will appear within the navigation bar.',
+    'LBL_USE_GROUP_TABS'                => 'Grouped Modules',
 	'LBL_NEW_FORM_TITLE'				=> 'New User',
 	'LBL_NEW_PASSWORD'					=> 'New Password',
 	'LBL_NEW_PASSWORD1'					=> 'Password',
@@ -295,8 +302,8 @@ $mod_strings = array (
 	'LBL_PORTAL_ONLY_USER'					=> 'Portal API User',
 	'LBL_POSTAL_CODE'					=> 'Postal Code',
 	'LBL_PRIMARY_ADDRESS'				=> 'Primary Address',
-	'LBL_PROMPT_TIMEZONE_TEXT'			=> 'Check to have the user goto the User Wizard on login.',
-	'LBL_PROMPT_TIMEZONE'				=> 'User Wizard prompt',
+	'LBL_PROMPT_TIMEZONE_TEXT'			=> 'Select to have new users go through the New User Wizard upon first login.',
+	'LBL_PROMPT_TIMEZONE'				=> 'User Wizard Prompt',
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a User Name and an Email Address.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
 	
@@ -406,7 +413,7 @@ $mod_strings = array (
 	'LBL_REASS_DESC_PART1'				=> 'Select the modules containing the records to reassign from a specific user to another user. <br/><br/>
                                                             Click Next to view the number of records that will be updated in each selected module.
                                                             Click Cancel to exit the page without reassigning any records.',
-        'LBL_REASS_DESC_PART2'=>                    'Select which modules against which to run workflows, send assignment notifications, and do auditing tracking during reassignment.',
+        'LBL_REASS_DESC_PART2'=>                    'Select which modules against which to run workflows, send assignment notifications, and do auditing tracking during reassignment. Click Next to continue and reassign records. Click Restart to start over.',
 	'LBL_REASS_STEP2_TITLE'				=> 'Team Reassignment',
 	'LBL_REASS_STEP2_DESC'				=> 'The teams listed below were available in the from user\'s team, but not in the to user\'s team. All records in the From User\'s team will not be visible in the To User team unless the team values are mapped. ',
 	'LBL_REASS_USER_FROM_TEAM'			=> 'From User Team:',
@@ -454,7 +461,7 @@ $mod_strings = array (
 	'LBL_REASS_BUTTON_SUBMIT' 			=> 'Submit',
 	'LBL_REASS_BUTTON_CLEAR' 			=> 'Clear',
 	'LBL_REASS_BUTTON_CONTINUE'			=> 'Next >',
-        'LBL_REASS_BUTTON_REASSIGN'                     => 'Reassign',
+    'LBL_REASS_BUTTON_REASSIGN'         => 'Reassign',
 	'LBL_REASS_BUTTON_GO_BACK' 			=> '< Back',
 	'LBL_REASS_BUTTON_RESTART' 			=> 'Restart',
 	'LBL_REASS_BUTTON_RETURN' 			=> 'Return',
@@ -462,7 +469,7 @@ $mod_strings = array (
 	'LBL_REASS_CONFIRM_REASSIGN'		=> 'Would you like to reassign all of this user\'s records?',
 	// end js
 	'ERR_REASS_SELECT_MODULE'			=> 'Please go back and select at least one module.',
-	'ERR_REASS_DIFF_USERS'				=> 'Please select an assign to user that is different from the assign from user.',
+	'ERR_REASS_DIFF_USERS'				=> 'Please select a To User that is different from the From User.',
 // END MASS REASSIGNMENT SCRIPT STRINGS
 
 //END SUGARCRM flav=pro||flav=sales ONLY
@@ -593,15 +600,13 @@ $mod_strings = array (
     'LBL_WIZARD_FINISH_TITLE' => 'You are ready to use Sugar!',
     'LBL_WIZARD_FINISH' => 'Click <b>Finish</b> below to save your settings and to begin using Sugar. For more information on using Sugar:<br /><br />
 <table cellpadding=0 cellspacing=0>
-<tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b>Sugar University</b></a><br>Get a head start with training and resources for end-users, power-users and system administrators at Sugar University.</td></tr>
+<tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b>Sugar University</b></a><br>End-user and System Administrator Training and Resources</td></tr>
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/docs.png style="margin-right: 5px;"></td><td><a href="http://docs.sugarcrm.com/" target="_blank"><b>Documentation</b></a><br>Product documentation to get you started with all flavors of Sugar and official Sugar Plug-Ins and extensions.</td></tr>
+<tr><td><img src=include/images/docs.png style="margin-right: 5px;"></td><td><a href="http://docs.sugarcrm.com/" target="_blank"><b>Documentation</b></a><br>Product Guides and Release Notes</td></tr>
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a href="http://kb.sugarcrm.com/" target="_blank"><b>Knowledge Base</b></a><br>A collection of articles on accomplishing common tasks and answers to frequently asked questions.</td></tr>
+<tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a href="http://kb.sugarcrm.com/" target="_blank"><b>Knowledge Base</b></a><br>Tips from SugarCRM Support for performing common tasks and processes in Sugar</td></tr>
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/wiki.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/wiki" target="_blank"><b>Wiki</b></a><br>A collection of articles on accomplishing common tasks and answers to frequently asked questions.</td></tr>
-<tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b>Forums</b></a><br>Community and Sugar team members hang out here dicussing all things Sugar.</td></tr>
+<tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b>Forums</b></a><br>Forums dedicated to the Sugar Community to discuss topics of interest with each other and with SugarCRM Developers</td></tr>
 </table>',
     'LBL_WIZARD_PERSONALINFO' => 'Your Information',
     'LBL_WIZARD_LOCALE' => 'Your Locale',
@@ -609,7 +614,7 @@ $mod_strings = array (
     'LBL_WIZARD_PERSONALINFO_DESC' => 'Provide information about yourself. The information you provide about yourself will be visible to other Sugar users.<br />Fields marked with <span class="required">*</span> are required.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify your time zone and how you would like dates, currencies and names to appear in Sugar.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for the default outbound email server.',
-
+	'LBL_EAPM_SUBPANEL_TITLE' => 'External Accounts',
 ); // END STRINGS DEFS
 
 ?>

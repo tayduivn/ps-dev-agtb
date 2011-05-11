@@ -37,7 +37,6 @@ if(!is_admin($current_user)) {
 	sugar_die($app_strings['ERR_NOT_ADMIN']);
 }
 
-
 require_once('include/utils/db_utils.php');
 
 require_once('include/utils/zip_utils.php');
@@ -46,7 +45,7 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 
 require_once('modules/Administration/UpgradeHistory.php');
 
-
+$GLOBALS['top_message'] = '';
 
 
 if(!isset($locale) || empty($locale)) {
@@ -77,6 +76,8 @@ $stepNext = '';
 $stepCancel = '';
 $stepBack = '';
 $stepRecheck = '';
+$showDone = '';
+$showExit = '';
 $disableNextForLicense='';
 
 if(!isset($_SESSION['step']) || !is_array($_SESSION['step'])){
@@ -153,7 +154,12 @@ if(isset($_REQUEST['delete_package']) && $_REQUEST['delete_package'] == 'true') 
 
         if(!empty($error)) {
 			$out = "<b><span class='error'>{$error}</span></b><br />";
-			$smarty->assign('frozen', $out);
+			if(!empty($GLOBALS['top_message'])){
+			    $GLOBALS['top_message'] .= "<br />{$out}";
+			}
+			else{
+			    $GLOBALS['top_message'] = $out;
+			}
         }	    
 }
 
@@ -208,7 +214,25 @@ else{
 		);
 	}
 	else{
-		// Upgrading from 5.0 upwards and upload not performed yet.
+        /* BEGIN TEMP FIX:
+        This can be removed post 6.1.  As this is a new string that is introduced in 6.1, we can't
+        effectively load it into a pre 6.1 instance.  Running
+
+                global $current_language;
+                $lang = $current_language;
+                if(empty($lang))
+                    $lang = $GLOBALS['sugar_config']['default_language'];
+                require_once('include/SugarObjects/LanguageManager.php');
+                LanguageManager::clearLanguageCache('UpgradeWizard',$lang);
+                LanguageManager::loadModuleLanguage('UpgradeWizard',$lang,true);
+
+        causes strange theme issues with the Upgrade Wizard.
+        */
+        if (empty($mod_strings['LBL_UW_TITLE_LAYOUTS']))
+            $mod_strings['LBL_UW_TITLE_LAYOUTS'] = 'Layouts';
+        /* END TEMP FIX */
+
+        // Upgrading from 5.0 upwards and upload not performed yet.
 		$steps = array(
 			'files' => array(
 		            'start',
@@ -290,6 +314,8 @@ if($upgradeStepFile == 'end'){
 
 require('modules/UpgradeWizard/'.$upgradeStepFile.'.php');
 
+$afterCurrentStep = $_REQUEST['step'] + 1;
+
 ////	END LOGIC
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -299,30 +325,30 @@ require('modules/UpgradeWizard/'.$upgradeStepFile.'.php');
 $installeds = $uh->getAll();
 $upgrades_installed = 0;
 
-$uwHistory  = $mod_strings['LBL_UW_DESC_MODULES_INSTALLED']."<br>\n";
+$uwHistory  = '<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view"><tr><td>'.$mod_strings['LBL_UW_DESC_MODULES_INSTALLED']."<br>\n";
 $uwHistory .= "<ul>\n";
-$uwHistory .= "<table>\n";
+$uwHistory .= "<table class=\"edit view\" cellspacing=5>\n";
 $uwHistory .= <<<eoq
 	<tr>
-		<th></th>
-		<th align=left>
-			{$mod_strings['LBL_ML_NAME']}
-		</th>
-		<th align=left>
-			{$mod_strings['LBL_ML_TYPE']}
-		</th>
-		<th align=left>
-			{$mod_strings['LBL_ML_VERSION']}
-		</th>
-		<th align=left>
-			{$mod_strings['LBL_ML_INSTALLED']}
-		</th>
-		<th>
-			{$mod_strings['LBL_ML_DESCRIPTION']}
-		</th>
-		<th>
-			{$mod_strings['LBL_ML_ACTION']}
-		</th>
+		<td></td>
+		<td align=left>
+			<b>{$mod_strings['LBL_ML_NAME']}</b>
+		</td>
+		<td align=left>
+			<b>{$mod_strings['LBL_ML_TYPE']}</b>
+		</td>
+		<td align=left>
+			<b>{$mod_strings['LBL_ML_VERSION']}</b>
+		</td>
+		<td align=left>
+			<b>{$mod_strings['LBL_ML_INSTALLED']}</b>
+		</td>
+		<td align=left>
+			<b>{$mod_strings['LBL_ML_DESCRIPTION']}</b>
+		</td>
+		<td align=left>
+			<b>{$mod_strings['LBL_ML_ACTION']}</b>
+		</td>
 	</tr>
 eoq;
 
@@ -362,7 +388,7 @@ foreach($installeds as $installed) {
 			}
 
 			$uwHistory .= "<form action=\"index.php\" method=\"post\">\n".
-				"<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$date_entered</td><td>$description</td><td>$link</td></tr>\n".
+				"<tr><td align=left>$icon</td><td align=left>$name</td><td align=left>$type</td><td align=left>$version</td><td align=left>$date_entered</td><td align=left>$description</td><td align=left>$link</td></tr>\n".
 				"</form>\n";
 		}
 	}
@@ -375,7 +401,8 @@ if($upgrades_installed == 0) {
 	$uwHistory .= "</td></tr>";
 }
 
-$uwHistory .= "</table>\n";
+$uwHistory .= "</table></td></tr>
+</table>\n";
 $uwHistory .= "</ul>\n";
 ////	END UPGRADE HISTORY
 ///////////////////////////////////////////////////////////////////////////////
@@ -438,14 +465,29 @@ function handlePreflight(step) {
 			}
 		}
 		
+		var merge_necessary = true;
 		if(step == 'layouts')
-		   getSelectedModulesForLayoutMerge();
-		  
+		   merge_necessary = getSelectedModulesForLayoutMerge();
+		
+		if(!merge_necessary){
+			document.getElementById('step').value = '{$afterCurrentStep}';
+		}
+		
 		return;
 	}
-	
+
+function handleUploadCheck(step, u_allow) {
+	if(step == 'upload' && !u_allow) {
+		document.getElementById('top_message').innerHTML = '<span class="error"><b>{$mod_strings['LBL_UW_FROZEN']}</b></span>';
+	}
+	  
+	return;
+}
+
+
 function getSelectedModulesForLayoutMerge()
 {
+	var found_one = false;
     var results = new Array();
     var table = document.getElementById('layoutSelection');
     var moduleCheckboxes = table.getElementsByTagName('input');
@@ -455,6 +497,7 @@ function getSelectedModulesForLayoutMerge()
         if( typeof(singleCheckbox.type) != 'undefined' && singleCheckbox.type == 'checkbox' 
             && singleCheckbox.name.substring(0,2) == 'lm' && singleCheckbox.checked )
         {
+            found_one = true;
             results.push(singleCheckbox.name.substring(3)); //remove the 'lm_' key
         }
     }  
@@ -468,6 +511,7 @@ function getSelectedModulesForLayoutMerge()
     
     var upgradeForms = document.getElementsByName('UpgradeWizardForm');
     upgradeForms[0].appendChild(selectedModulesElement);
+    return found_one;
 }
 </script>
 eoq;
@@ -475,7 +519,7 @@ eoq;
 $smarty->assign('UW_MAIN', $uwMain);
 $smarty->assign('UW_JS', $js);
 $smarty->assign('CHECKLIST', getChecklist($steps, $step));
-$smarty->assign('UW_TITLE', get_module_title($mod_strings['LBL_UW_TITLE'], $mod_strings['LBL_UW_TITLE'].": ".$steps['desc'][$_REQUEST['step']], true));
+$smarty->assign('UW_TITLE', getClassicModuleTitle($mod_strings['LBL_UW_TITLE'], array($mod_strings['LBL_UW_TITLE'],$steps['desc'][$_REQUEST['step']]), false));
 $smarty->assign('MOD', $mod_strings);
 $smarty->assign('APP', $app_strings);
 $smarty->assign('GRIDLINE', $current_user->getPreference('gridline'));
@@ -483,6 +527,8 @@ $smarty->assign('showNext', $showNext);
 $smarty->assign('showCancel', $showCancel);
 $smarty->assign('showBack', $showBack);
 $smarty->assign('showRecheck', $showRecheck);
+$smarty->assign('showDone', $showDone);
+$smarty->assign('showExit', $showExit);
 $smarty->assign('STEP_NEXT', $stepNext);
 $smarty->assign('STEP_CANCEL', $stepCancel);
 $smarty->assign('STEP_BACK', $stepBack);
@@ -490,9 +536,16 @@ $smarty->assign('STEP_RECHECK', $stepRecheck);
 $smarty->assign('step', $steps['files'][$_REQUEST['step']]);
 $smarty->assign('UW_HISTORY', $uwHistory);
 $smarty->assign('disableNextForLicense',$disableNextForLicense);
+$u_allow='true';
 if(isset($stop) && $stop == true) {
 	$frozen = (isset($frozen)) ? "<br />".$frozen : '';
-	$smarty->assign('frozen', $mod_strings['LBL_UW_FROZEN'].$frozen);
+	$smarty->assign('frozen', $frozen);
+	if($step == 'upload')
+	    $u_allow = 'false';
+}
+$smarty->assign('u_allow', $u_allow);
+if(!empty($GLOBALS['top_message'])){
+	$smarty->assign('top_message', $GLOBALS['top_message']);
 }
 
 if ($sugar_config['sugar_version'] < '5.5') {

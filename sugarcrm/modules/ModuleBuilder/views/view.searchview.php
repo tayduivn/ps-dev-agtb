@@ -36,32 +36,26 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewSearchView extends ViewListView
 {
- 	function ViewSearchView()
+ 	function __construct()
  	{
- 		$this->init () ;
+ 		parent::__construct();
+ 		if (!empty($_REQUEST['searchlayout'])) {
+ 			$this->editLayout = $_REQUEST['searchlayout'];
+ 		}
  	}
  	
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
-
-	function init()
- 	{
- 		parent::init () ;
- 		if (!empty($_REQUEST['searchlayout'])) {
- 			$this->editLayout = $_REQUEST['searchlayout'];
- 		}
-
- 	}
 
  	// DO NOT REMOVE - overrides parent ViewEdit preDisplay() which attempts to load a bean for a non-existent module
  	function preDisplay()

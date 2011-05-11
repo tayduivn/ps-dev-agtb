@@ -13,7 +13,7 @@
 require_once("include/Expressions/DependencyManager.php");
 //END SUGARCRM flav=pro ONLY
 
-class TemplateHandler {    
+class TemplateHandler {
     var $cacheDir;
     var $templateDir = 'modules/';
     var $ss;
@@ -86,13 +86,13 @@ class TemplateHandler {
 
             global $dictionary, $beanList, $app_strings, $mod_strings;
             $mod = $beanList[$module];
-            
+
             //BEGIN SUGARCRM flav!=sales ONLY
             if($mod == 'aCase') {
                 $mod = 'Case';
             }
             //END SUGARCRM flav!=sales ONLY
-            
+
             $defs = $dictionary[$mod]['fields'];
             $defs2 = array();
             //Retrieve all panel field definitions with displayParams Array field set
@@ -145,19 +145,20 @@ class TemplateHandler {
             $sugarbean = new stdClass;
             $sugarbean->field_name_map = $defs;
             $sugarbean->module_dir = $module;
-            
+
             $javascript = new javascript();
             $view = $view == 'QuickCreate' ? "QuickCreate_{$module}" : $view;
             $javascript->setFormName($view);
 
             $javascript->setSugarBean($sugarbean);
-            $javascript->addAllFields('', null,true);
+            if ($view != "ConvertLead")
+                $javascript->addAllFields('', null,true);
 
             $validatedFields = array();
             //BEGIN SUGARCRM flav=pro ONLY
             $validatedFields[] = 'team_name';
             //END SUGARCRM flav=pro ONLY
-            $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty(array('ERR_SQS_NO_MATCH_FIELD','LBL_ASSIGNED_TO')), 'false', '', 'assigned_user_id');
+            $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty('LBL_ASSIGNED_TO'), 'false', '', 'assigned_user_id');
             $validatedFields[] = 'assigned_user_name';
             //Add remaining validation dependency for related fields
             //1) a relate type as defined in vardefs
@@ -181,7 +182,7 @@ class TemplateHandler {
                   else{
                      $vname = "undefined";
                   }
-                  $javascript->addToValidateBinaryDependency($name, 'alpha', $javascript->buildStringToTranslateInSmarty(array('ERR_SQS_NO_MATCH_FIELD',$vname)), (!empty($def['required']) ? 'true' : 'false'), '', $def['id_name']);
+                  $javascript->addToValidateBinaryDependency($name, 'alpha', $javascript->buildStringToTranslateInSmarty('ERR_SQS_NO_MATCH_FIELD').': '.$javascript->buildStringToTranslateInSmarty($vname), (!empty($def['required']) ? 'true' : 'false'), '', $def['id_name']);
                   $validatedFields[] = $name;
                }
             } //foreach
@@ -196,13 +197,13 @@ class TemplateHandler {
         }else if(preg_match('/^SearchForm_.+/', $view)){
             global $dictionary, $beanList, $app_strings, $mod_strings;
             $mod = $beanList[$module];
-            
+
             //BEGIN SUGARCRM flav!=sales ONLY
             if($mod == 'aCase') {
                 $mod = 'Case';
             }
             //END SUGARCRM flav!=sales ONLY
-            
+
             $defs = $dictionary[$mod]['fields'];
             $contents .= '{literal}';
             $contents .= $this->createQuickSearchCode($defs, array(), $view);
@@ -214,6 +215,10 @@ class TemplateHandler {
             $mod = $beanList[$module];
             if($mod == 'aCase')
                 $mod = 'Case';
+            $defs = $dictionary[$mod]['fields'];
+            $contents .= "{literal}\n";
+            $contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view);
+            $contents .= "{/literal}\n";
         }//if
 		//END SUGARCRM flav=pro ONLY
 
@@ -380,8 +385,8 @@ class TemplateHandler {
 					   $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
-				
-				
+
+
 
                 if($field['type'] == 'relate' && isset($field['module']) && (preg_match('/_name$|_c$/si',$name) || !empty($field['quicksearch']))) {
                     if(!preg_match('/_c$/si',$name) && preg_match('/^(Campaigns|Teams|Users|Contacts|Accounts)$/si', $field['module'], $matches)) {
@@ -393,14 +398,17 @@ class TemplateHandler {
                             $sqs_objects[$name] = $qsd->getQSTeam();
                             //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
-                            if($field['name'] == 'reports_to_name')
+                            if($field['name'] == 'reports_to_name') {
                                 $sqs_objects[$name] = $qsd->getQSUser('reports_to_name','reports_to_id');
+                            }
+                            // Bug 34643 - Default what the options should be for the assigned_user_name field
+                            //             and then pass thru the fields to be used in the fielddefs.
+                            elseif($field['name'] == 'assigned_user_name') {
+                                $sqs_objects[$name] = $qsd->getQSUser('assigned_user_name','assigned_user_id');
+                            }
                             else {
-                                if ($view == "ConvertLead")
-								    $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
-								else 
-								    $sqs_objects[$name] = $qsd->getQSUser();
-							}
+                                $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
+                            }
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->getQSCampaigns();
@@ -449,7 +457,7 @@ class TemplateHandler {
                 } //if-else
             } //foreach
         }
-        
+
        //Implement QuickSearch for the field
        if(!empty($sqs_objects) && count($sqs_objects) > 0) {
            $quicksearch_js = '<script language="javascript">';
@@ -462,7 +470,7 @@ class TemplateHandler {
        }
        return '';
     }
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
     /**
      * createDependencyJavascript
@@ -477,16 +485,20 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
-        
+        //BEGIN SUGARCRM flav=een ONLY
+        $js .= DependencyManager::getLinkFields($fieldDefs, $view);
+        //END SUGARCRM flav=een ONLY
+
         $dependencies = array_merge(
-           DependencyManager::getDependenciesForFields($fieldDefs),
-           DependencyManager::getDependenciesForView($viewDefs)
+           DependencyManager::getDependenciesForFields($fieldDefs, $view),
+           DependencyManager::getDependenciesForView($viewDefs, $view)
         );
+
         
         foreach($dependencies as $dep) {
-            $js .= $dep->getJavascript();
+            $js .= $dep->getJavascript($view);
         }
-        
+
         $js .= "</script>";
         return $js;
     }

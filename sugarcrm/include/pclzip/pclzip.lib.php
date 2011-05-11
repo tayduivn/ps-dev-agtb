@@ -1,4 +1,56 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r46791 - 2009-05-03 17:06:15 -0700 (Sun, 03 May 2009) - wdong - 28603, merge from maint520_hermosa 
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r38213 - 2008-07-24 12:50:06 -0700 (Thu, 24 Jul 2008) - Collin Lee - Bug:22608
+Modified pclzip.lib.php files in both portal and server code base to not use call by reference for func_get_args in the extract method.
+Modified (server and portal side):
+include/pclzip/pclzip.lib.php
+
+r36478 - 2008-06-10 09:23:49 -0700 (Tue, 10 Jun 2008) - Collin Lee - Fix for 22608
+Marked as fixed in 5.1.0 GA.  Changed the method call in pclzip.lib.php to use a call by reference.
+Modified:
+include/pclzip/pclzip.lib.php
+
+r15812 - 2006-08-10 17:05:31 -0700 (Thu, 10 Aug 2006) - chris - fixing calltime-pass-by-reference error
+
+r14739 - 2006-07-17 21:27:19 -0700 (Mon, 17 Jul 2006) - majed - revert pclzip
+
+r14367 - 2006-06-29 14:20:41 -0700 (Thu, 29 Jun 2006) - chris - updating PCLZip library to current latest 2.5 (security fixes)
+
+r11996 - 2006-03-09 14:16:53 -0800 (Thu, 09 Mar 2006) - sadek - Updated pclzip library from 2.3 to 2.4. There was a bug in PCLZIP 2.3 that caused my diag tool to break in certain environments
+
+r7861 - 2005-09-20 15:40:25 -0700 (Tue, 20 Sep 2005) - majed - & fix for 3.5.1
+
+r5573 - 2005-06-03 16:32:18 -0700 (Fri, 03 Jun 2005) - bob - checking in chosen [un]zip utility
+
+
+*/
+
+
 // --------------------------------------------------------------------------------
 // PhpConcept Library - Zip Module 2.4
 // --------------------------------------------------------------------------------

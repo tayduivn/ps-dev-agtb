@@ -50,14 +50,22 @@ class Person extends Basic
 	/**
 	 * Generate the name field from the first_name and last_name fields.
 	 */
-	function _create_proper_name_field() {
-		global $locale;
+	function _create_proper_name_field() 
+	{
+		global $locale, $app_list_strings;
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($GLOBALS['current_user']->id) && $this->bean_implements('ACL') && !ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))){
 			$full_name = $this->last_name;
 		}else{
 		//END SUGARCRM flav=pro ONLY
-			$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name, $this->salutation, $this->title);
+		    // Bug 38648 - If the given saluation doesn't exist in the dropdown, don't display it as part of the full name
+		    $salutation = '';
+		    if(isset($this->field_defs['salutation']['options']) 
+		            && isset($app_list_strings[$this->field_defs['salutation']['options']])
+		            && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
+		        $salutation = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
+		    }
+			$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name, $salutation, $this->title);
 		//BEGIN SUGARCRM flav=pro ONLY
 		}
 		//END SUGARCRM flav=pro ONLY

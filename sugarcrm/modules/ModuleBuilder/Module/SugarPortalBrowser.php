@@ -56,7 +56,12 @@ class SugarPortalBrowser
         foreach($this->modules as $module){
             $layouts[$module->name] = $module->getNodes();
         }
-        $nodes[] = array('name'=>$GLOBALS['mod_strings']['LBL_LAYOUTS'], 'imageTitle' => 'Layouts', 'type'=>'Folder', 'children'=>$layouts, 'action'=>'module=ModuleBuilder&action=wizard&portal=1&layout=1');
+        $nodes[] = array(
+            'name'=> translate('LBL_LAYOUTS'),
+            'imageTitle' => 'Layouts', 
+            'type'=>'Folder', 
+            'children'=>$layouts, 
+            'action'=>'module=ModuleBuilder&action=wizard&portal=1&layout=1');
         ksort($nodes);
         return $nodes;
     }

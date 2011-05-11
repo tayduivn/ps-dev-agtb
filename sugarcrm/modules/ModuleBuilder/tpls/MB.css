@@ -85,6 +85,16 @@ cursor:pointer
 a.studiolink {font-weight: normal; text-decoration:none; text-align:center}
 div.bodywrapper{padding: 4px 4px 4px 4px}
 
+img.left_icon {
+    float:left;
+    margin:0px 2px;
+}
+
+img.right_icon {
+    float:right;
+    margin:0px 2px;
+}
+
 .oddListRowS1{
 	background-color:WhiteSmoke;
 }
@@ -98,6 +108,11 @@ div.bodywrapper{padding: 4px 4px 4px 4px}
     font-size:8px;
     font-weight:normal;
 }
+
+#mbfooter .yui-layout-hd td a.copyRightLink {
+    font-size:8px;
+}
+
 #mbfooter div.yui-layout-hd h2 {
     padding-top: 0;	
 }
@@ -124,4 +139,8 @@ div.bodywrapper{padding: 4px 4px 4px 4px}
 
 #mblayout .yui-dt-scrollable .yui-dt-hd {
     position: static;
+}
+
+input[disabled], select[disabled]{
+    background-color: #EEE;
 }

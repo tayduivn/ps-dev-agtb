@@ -37,6 +37,7 @@ $GLOBALS['ignore_files'] = array(
 						'BooleanExpression.php',
 						'FalseExpression.php',
 						'GenericExpression.php',
+                        'RelateExpression.php',
 						'AbstractAction.php',
 						'ActionFactory.php',
 					);
@@ -99,6 +100,8 @@ function recursiveParse($dir, $silent = false)
 			}
 			continue;
 		}
+		if (!is_array($op_name))
+		  $op_name = array($op_name);
 
 		$parent_class = get_parent_class($entry);
 		$parent_types = call_user_func(array($parent_class, "getParameterTypes"));
@@ -111,6 +114,7 @@ SUGAR.$entry = function(params) {
 	this.init(params);
 }
 SUGAR.util.extend(SUGAR.$entry, SUGAR.$parent_class, {
+    className: "$entry",
 	evaluate: function() {
 $js_code
 	}
@@ -162,18 +166,21 @@ EOQ;
 
 $js_contents .= "});\n\n";
 
-		//echo the entry
-		if ($silent === false) 
+		foreach ($op_name as $alias)
 		{
-			echo "<li>($op_name) $entry<br>";
-		}
-
-		$contents .= <<<EOQ
-		'$op_name' => array(
-					'class'	=>	'$entry',
-					'src'	=>	'$dir/$entry.php',
-		),\n
+	        //echo the entry
+			if ($silent === false) 
+			{
+				echo "<li>($alias) $entry<br>";
+			}
+	
+			$contents .= <<<EOQ
+			'$alias' => array(
+						'class'	=>	'$entry',
+						'src'	=>	'$dir/$entry.php',
+			),\n
 EOQ;
+		}
 	}
 	if ($silent === false) 
 	{
@@ -225,12 +232,13 @@ $cache_contents .= <<<EOQ
 SUGAR.FunctionMap = {
 
 EOQ;
-
-foreach ( $FUNCTION_MAP as $key=>$value ) {
-	$entry = $FUNCTION_MAP[$key]['class'];
-	$cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+if ( isset($FUNCTION_MAP) && is_array($FUNCTION_MAP) ) {
+    foreach ( $FUNCTION_MAP as $key=>$value ) {
+        $entry = $FUNCTION_MAP[$key]['class'];
+        $cache_contents .= "\t'$key'\t:\tSUGAR.$entry,";
+    }
 }
-$cache_contents = substr($cache_contents, 0, -2);
+$cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 
@@ -244,8 +252,11 @@ $cache_contents .= <<<EOQ
 SUGAR.NumericConstants = {
 
 EOQ;
-foreach ( $NUMERIC_CONSTANTS as $key=>$value )
-	$cache_contents .= "\t'$key'\t:\t$value,";
+if ( isset($NUMERIC_CONSTANTS) && is_array($NUMERIC_CONSTANTS) ) {
+    foreach ( $NUMERIC_CONSTANTS as $key=>$value ) {
+        $cache_contents .= "\t'$key'\t:\t$value,";
+    }
+}
 $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 

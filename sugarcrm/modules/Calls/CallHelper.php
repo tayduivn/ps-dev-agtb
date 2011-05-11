@@ -52,7 +52,7 @@ function getDurationMinutesOptions($focus, $field, $value, $view) {
     || $view == 'wirelessedit'
     //END SUGARCRM flav=pro ONLY
     ) {
-       $html = '<select ';
+       $html = '<select id="duration_minutes"';
        if($view != 'MassUpdate' 
        		//BEGIN SUGARCRM flav=pro ONLY
        		&& $view != 'wirelessedit'
@@ -87,7 +87,7 @@ function getReminderTime($focus, $field, $value, $view) {
     //END SUGARCRM flav=pro ONLY
     ) {
 		global $app_list_strings;
-        $html = '<select name="reminder_time">';
+        $html = '<select id="reminder_time" name="reminder_time">';
         $html .= get_select_options_with_id($app_list_strings['reminder_time_options'], $reminder_t);
         $html .= '</select>';
         return $html;

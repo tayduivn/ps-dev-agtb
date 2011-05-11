@@ -2,7 +2,7 @@
 require_once 'modules/Calls/metadata/additionalDetails.php';
 
 /**
- * @group bug22882
+ * @ticket 22882
  */
 class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
 {

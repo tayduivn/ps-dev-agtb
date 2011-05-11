@@ -26,7 +26,17 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{{include file='include/EditView/footer.tpl'}}
+</form>
+{{if $externalJSFile}}
+require_once("'".$externalJSFile."'");
+{{/if}}
+{$set_focus_block}
+{{if isset($scriptBlocks)}}
+<!-- Begin Meta-Data Javascript -->
+{{$scriptBlocks}}
+<!-- End Meta-Data Javascript -->
+{{/if}}
+
 
 <div class="h3Row" id="scheduler"></div>
 
@@ -53,3 +63,16 @@ if ( document.getElementById('save_and_continue') ) {
 {/literal}
 </script>
 </form>
+<form >
+	<div class="buttons">
+		{{if !empty($form) && !empty($form.buttons)}}
+		   {{foreach from=$form.buttons key=val item=button}}
+		      {{sugar_button module="$module" id="$button" view="$view"}}
+		   {{/foreach}}
+		{{else}}
+				{{sugar_button module="$module" id="SAVE" view="$view"}}
+				{{sugar_button module="$module" id="CANCEL" view="$view"}}
+		{{/if}}
+		{{sugar_button module="$module" id="Audit" view="$view"}}
+	</div>
+</form> 

@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,7 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Expression/Numeric/NumericExpression.php");
-
+/**
+ * <b>number(String s)</b><br>
+ * Returns the numeric value of <i>s</i>.<br/>
+ * ex: <i>number("1,200")</i> = 1200
+ */
 class ValueOfExpression extends NumericExpression {
 	
 	/**
@@ -27,11 +31,25 @@ class ValueOfExpression extends NumericExpression {
 	 */
 	function evaluate() {
 		$val = $this->getParameters()->evaluate();
-		$val = str_replace(",", "", $val);
-		if (strpos($val, ".") !== false) {
-			return (float) $val;
+		if (is_string($val))
+		{
+			$val = str_replace(",", "", $val);
+			if (!is_numeric($val))
+			   throw new Exception("Error: '$val' is not a number");
+			if (strpos($val, ".") !== false) {
+				$val =  $val;
+			}
+			else {
+			    $val = (int) $val;
+			}
 		}
-		return (int) $val;
+		if (is_numeric($val))
+		{
+			return $val;
+		}
+		else {
+		    throw new Exception("Error: '$val' is not a number");
+		}
 	}
 	
 	/**
@@ -41,9 +59,15 @@ class ValueOfExpression extends NumericExpression {
 		return <<<EOQ
 			var val = this.getParameters().evaluate() + "";
 			val = val.replace(/,/g, "");
+			var out = 0;
 			if (val.indexOf(".") != -1)
-				return parseFloat(val);
-			return parseInt(val);
+				out = parseFloat(val);
+			else 
+			    out = parseInt(val);
+			if (isNaN(out))
+			   throw "Error: '" + val + "' is not a number";
+			
+			return out;
 EOQ;
 	}
 	
@@ -66,7 +90,7 @@ EOQ;
 	 * All parameters have to be a string.
 	 */
 	function getParameterTypes() {
-		return AbstractExpression::$STRING_TYPE;
+		return AbstractExpression::$GENERIC_TYPE;
 	}
 }
 ?>

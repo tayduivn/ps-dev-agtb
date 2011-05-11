@@ -109,10 +109,11 @@ if(typeof(SUGAR.collection) == "undefined") {
         remove: function(num){
             // if there is only one record, clear it instead of removing it
     	    // this is determined by the visibility of the drop down arrow element
-    	    radio_els = this.get_radios();
+    	    var radio_els = this.get_radios();
+            var div_el;
             if(radio_els.length == 1) {
                 div_el = document.getElementById(this.field_element_name + '_input_div_' + num);
-                input_els = div_el.getElementsByTagName('input');
+                var input_els = div_el.getElementsByTagName('input');
                 //Clear text field
                 input_els[0].value = '';
                 
@@ -127,17 +128,18 @@ if(typeof(SUGAR.collection) == "undefined") {
                 }
             } else {	
             	div_el = document.getElementById(this.field_element_name + '_input_div_' + num);
-            	tr_to_remove = document.getElementById('lineFields_' + this.field_element_name + '_' + num);
+            	if (!div_el)
+                    div_el = document.getElementById(this.field_element_name + '_radio_div_' + num);
+                var tr_to_remove = document.getElementById('lineFields_' + this.field_element_name + '_' + num);
             	div_el.parentNode.parentNode.parentNode.removeChild(tr_to_remove);
             	
-                var radios = this.get_radios();
-                div_id = 'lineFields_' + this.field_element_name + '_' + num;
+                var div_id = 'lineFields_' + this.field_element_name + '_' + num;
                 if (typeof sqs_objects[div_id.replace("_field_", "_")] != 'undefined') {
                     delete (sqs_objects[div_id.replace("_field_", "_")]);
                 }
                 var checked=false;
-                for(var k=0; k< radios.length; k++){
-                    if(radios[k].checked){
+                for(var k=0; k< radio_els.length; k++){
+                    if(radio_els[k].checked){
                         checked=true;
                     }
                 }
@@ -147,14 +149,14 @@ if(typeof(SUGAR.collection) == "undefined") {
                 if(primary_checked && primary_checked.value == 'false'){
                 	allowed_to_check = false;
                 }
-                if(/EditView/.test(this.form) && !checked && typeof radios[0] != 'undefined' && allowed_to_check) {
-                    radios[0].checked = true;
+                if(/EditView/.test(this.form) && !checked && typeof radio_els[0] != 'undefined' && allowed_to_check) {
+                    radio_els[0].checked = true;
                     this.changePrimary(true);
                     this.js_more();
                     this.js_more();
                 }
                 // if there is now only one record, hide the "more..." link
-                if(radios.length == 1){
+                if(radio_els.length == 1){
                     this.more_status = false;
 					if (document.getElementById('more_'+this.field_element_name) && document.getElementById('more_'+this.field_element_name).style.display != 'none') {
 	                    document.getElementById('more_'+this.field_element_name).style.display='none';			
@@ -238,8 +240,10 @@ if(typeof(SUGAR.collection) == "undefined") {
             
             var count = this.fields_count;
             
-            //Clone the table element containing the fields for each row
-            Field0 = this.cloneField[0].cloneNode(true);
+            //Clone the table element containing the fields for each row, use safe_clone uder IE to prevent events from being cloned
+            Field0 = SUGAR.isIE ? 
+            	SUGAR.collection.safe_clone(this.cloneField[0], true) : 
+            	this.cloneField[0].cloneNode(true);
 
             Field0.id = "lineFields_"+this.field_element_name+"_"+count;
                         
@@ -275,7 +279,7 @@ if(typeof(SUGAR.collection) == "undefined") {
 					currentNode.name = 'teamset_div';
 				}
             	
-            	input_els = currentNode.getElementsByTagName('input');
+            	var input_els = currentNode.getElementsByTagName('input');
             	for ( var x = 0; x < input_els.length; x++ ){
                 	if(input_els[x].tagName && input_els[x].tagName == 'INPUT') {
                 	   this.process_node(parentNode, input_els[x], values);
@@ -290,7 +294,7 @@ if(typeof(SUGAR.collection) == "undefined") {
 
                 switch (name) {
                     case toreplace:
-                    	sqs_id = this.form + '_' + new_name;
+                    	var sqs_id = this.form + '_' + new_name;
                         if (typeof this.sqs_clone != 'undefined') {
                         	var sqs_clone = YAHOO.lang.JSON.stringify(this.sqs_clone);
                             eval('sqs_objects[sqs_id]=' + sqs_clone);
@@ -403,10 +407,12 @@ if(typeof(SUGAR.collection) == "undefined") {
          */
         create_clone: function() {
             var oneField = document.getElementById('lineFields_'+this.field_element_name+'_0');
-            this.cloneField[0] = oneField.cloneNode(true);
+            this.cloneField[0] = SUGAR.isIE ? 
+            	SUGAR.collection.safe_clone(oneField, true) : 
+            	oneField.cloneNode(true);
             this.cloneField[1] = oneField.parentNode;
             this.more_status = true;
-            clone_id = this.form + '_' + this.field + '_collection_0';
+            var clone_id = this.form + '_' + this.field + '_collection_0';
 
             if (typeof sqs_objects[clone_id] != 'undefined') {
                 var clone = YAHOO.lang.JSON.stringify(sqs_objects[clone_id]);
@@ -417,11 +423,11 @@ if(typeof(SUGAR.collection) == "undefined") {
          * Validates team set to check if the primary team id has been set or not
          */
 		validateTemSet : function(formname, fieldname) {
-			table_element_id = formname + '_' + fieldname + '_table';
+			var table_element_id = formname + '_' + fieldname + '_table';
 			if(document.getElementById(table_element_id)) {
-			   input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
-			   has_primary = false;
-			   primary_field_id = fieldname + '_collection_0';	   
+			   var input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
+			   var has_primary = false;
+			   var primary_field_id = fieldname + '_collection_0';
 			   for(t in input_elements) {
 				    primary_field_id = fieldname + '_collection_' + input_elements[t].value;
 			        if(input_elements[t].type && input_elements[t].type == 'radio' && input_elements[t].checked == true) {
@@ -442,27 +448,27 @@ if(typeof(SUGAR.collection) == "undefined") {
          * return an array of teamids for a team field
          */
 		getTeamIdsfromUI: function(formname, fieldname) {
-			$team_ids = new Array();
-			table_element_id = formname + '_' + fieldname + '_table';
+			var team_ids = new Array();
+			var table_element_id = formname + '_' + fieldname + '_table';
 			if(document.getElementById(table_element_id)) {
 			   input_elements = YAHOO.util.Selector.query('input[type=hidden]', document.getElementById(table_element_id));
-			   for(t in input_elements) {
+			   for(t = 0; t < input_elements.length; t++) {
 			     if (input_elements[t].id.match("id_" + fieldname + "_collection_") != null) {
-			     	$team_ids.push(input_elements[t].value);
+			     	team_ids.push(input_elements[t].value);
 			     } // if
 			   } // for	   	   
 			} // if
-		    return $team_ids;
+		    return team_ids;
 		},
         /**
          * return a primary team id
          */
 		getPrimaryTeamidsFromUI: function(formname, fieldname) {
-			table_element_id = formname + '_' + fieldname + '_table';
+			var table_element_id = formname + '_' + fieldname + '_table';
 			if(document.getElementById(table_element_id)) {
-		   		input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
+		   		var input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
 			    	for(t in input_elements) {
-			    		primary_field_id = 'id_' + document.forms[formname][fieldname].name + '_collection_' + input_elements[t].value;
+			    		var primary_field_id = 'id_' + document.forms[formname][fieldname].name + '_collection_' + input_elements[t].value;
 			    		if(input_elements[t].type && input_elements[t].type == 'radio' && input_elements[t].checked == true) {
 				           if(document.forms[formname].elements[primary_field_id].value != '') {
 				        	   return document.forms[formname].elements[primary_field_id].value;
@@ -522,7 +528,7 @@ if(typeof(SUGAR.collection) == "undefined") {
          */
         replace_first: function(values){
         	for (var i = 0; i <= this.fields_count; i++) {
-        		div_el = document.getElementById(this.field_element_name + '_input_div_' + i);
+        		var div_el = document.getElementById(this.field_element_name + '_input_div_' + i);
                 if(div_el) { 
 		        	var name_field = document.getElementById(this.field+"_collection_" + i);
 					var id_field = document.getElementById("id_"+this.field+"_collection_" + i);
@@ -541,7 +547,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             var isFirstFieldEmpty = false;
             var divCount = 0;
             for (var i = 0; i <= this.fields_count; i++) {
-                div_el = document.getElementById(this.field_element_name + '_input_div_' + i);
+                var div_el = document.getElementById(this.field_element_name + '_input_div_' + i);
                 if(div_el) {        
 	                input_els = div_el.getElementsByTagName('input');
 	                for ( var x = 0; x < input_els.length; x++ ){
@@ -583,4 +589,40 @@ if(typeof(SUGAR.collection) == "undefined") {
             return false;
         }
     }
+
+	SUGAR.collection.safe_clone = function(e, recursive)
+	{
+		if (e.nodeName == "#text")
+		{
+			return document.createTextNode(e.data);
+		}
+		if(!e.tagName) return false;
+		
+		var newNode = document.createElement(e.tagName);
+		if (!newNode) return false;
+		
+		var properties = ['class', 'style', 'name', 'type', 'valign', 'border', 'width', 'height', 'top', 'bottom', 'left', 'right', 'scope', 'row', 'columns', 'src', 'href', 'className', 'align', 'nowrap'];
+		for (var i in properties)
+		{
+			if (e[properties[i]])
+			{
+				if ((properties[i] != 'style' || !SUGAR.isIE) && 
+					//Only <a> and <iframe> tags can have hrefs
+					(properties[i] != 'href'  || e.tagName == 'a' || e.tagName == 'iframe'))
+					newNode[properties[i]] = e[properties[i]];
+			}
+		}
+		if(recursive)
+		{
+			for (var i in e.childNodes)
+			{
+				if(e.childNodes[i].nodeName && (!e.className || e.className != "yui-ac-container"))
+				{
+					var child = SUGAR.collection.safe_clone(e.childNodes[i], true);
+					if (child) newNode.appendChild(child);
+				}
+			}
+		}
+		return newNode;
+	}
 }

@@ -429,19 +429,16 @@ SUGAR.kb = function() {
 
 			}
 		},
+		
 		selectArticles:function(action){
-			var els= document.getElementsByName('mass[]');
-			var selected = false;
-			var selectedTagIds = new Array();
-			var j = 0;
-			for(i=0;i<els.length;i++){
-					if(els[i].checked==true){
-						selectedTagIds[j] = els[i].value;
-						selected =  true;
-						j++;
-						//break;
-					}
-		    }
+			save_kb_checks(0); 
+			if(document.KBAdminView.uid.value != '')
+			{
+			  selectedArticleIds = document.KBAdminView.uid.value.split(',');
+			  selected = true;
+			} else {
+			  selected = false;
+			}
 
 		    if(!selected){
 		      if(action=='Move'){
@@ -455,36 +452,21 @@ SUGAR.kb = function() {
 		      }
 		      return false;
 		    }
-			else{
-				   return true;
-				   /*window.setTimeout('ajaxStatus.hideStatus()', 500);
-				    var callback = {
-					     success:function(r) {
-						     //rebuild the tree to display the latest node
-						     //treeDiv.innerHTML=r.responseText;
-						     SUGAR.util.evalScript(r.responseText);
-					     }
-				    }
-					postData = 'selectedTagIds=' + JSON.stringify(selectedTagIds) + '&module=KBTags&action=DeleteSelectedTags&to_pdf=1';
-					YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
-				*/
-			}
-			return selected;
+
+			return true;
 		},
 
 		deleteArticles:function(){
-			var els= document.getElementsByName('mass[]');
-			var selected = false;
-			var selectedArticleIds = new Array();
-			var j = 0;
-			for(i=0;i<els.length;i++){
-					if(els[i].checked==true){
-						selectedArticleIds[j] = els[i].value;
-						selected =  true;
-						j++;
-						//break;
-					}
-		    }
+			save_kb_checks(0); 
+			
+			if(document.KBAdminView.uid.value != '')
+			{
+			  selectedArticleIds = document.KBAdminView.uid.value.split(',');
+			  selected = true;
+			} else {
+			  selected = false;
+			}
+			
 		    if(!selected){
 		      alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_SELECT_ARTICLES_TO_DELETE'));
 		      return false;
@@ -514,22 +496,15 @@ SUGAR.kb = function() {
 		},
 
 		modalMoveDocs:function(){
-		  //check if nodemessage already opened in modal. close it
-		  //hideMessageAndNode();
-
-			// Instantiate the Dialog
-		//document.getElementById('dialog1').style.display='';
+		// Instantiate the Dialog
 		document.getElementById('moveDlg').style.display='';
 		var handleCancel = function() {
 			this.cancel();
 		}
+		
 		var handleSubmit = function() {
-			//this.submit();
-			//alert(tree.getNodeByIndex(2));
 		    tree = new YAHOO.widget.TreeView('tagstreeMoveDocsModal');
 		    document.getElementById('moveDlg').style.display='';
-			//document.getElementById('Linked_Tags').style.display='';
-			//var linked_tags = document.getElementById('Linked_Tags');
 			var attId = document.createElement('input');
 		    attId.setAttribute('id', 't1');
 		    attId.setAttribute('name', 't1');
@@ -540,6 +515,7 @@ SUGAR.kb = function() {
 		    linked_tags.appendChild(attId);
 		    this.submit();
 		}
+		
 		var myButtons = [ //{ text:"Ok", handler:handleSubmit },
 						  //{ text:'', handler:handleCancel,visible:false}
 						  ];
@@ -683,35 +659,34 @@ SUGAR.kb = function() {
 			var node=YAHOO.namespace('tagstreeMoveDocsModal').selectednode;
 		    var tagId = node.data.id;
 
-		    //alert(document.getElementById('tag_selected_move_from_id').value);
 		    if(tagId == document.getElementById('tag_selected_move_from_id').value){
 		    	alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_SOURCE_AND_TARGET_TAGS_ARE_SAME'));
 		    }
-		    var els= document.getElementsByName('mass[]');
+		    
 			var selected = false;
 			var selectedArticleIds = new Array();
 
 		    selectedArticleIds[0] = document.getElementById('tag_selected_move_from_id').value;
-			selectedArticleIds[1]=tagId;
+			selectedArticleIds[1] = tagId;
 			var j = 2;
-			for(i=0;i<els.length;i++){
-					if(els[i].checked==true){
-						selectedArticleIds[j] = els[i].value;
-						selected =  true;
-						j++;
-						//break;
-					}
-		    }
-		    //alert(selectedArticleIds);
-		    //ajax call for movng articles
-			//+'articles='+JSON.stringify(selectedArticleIds)
+			
+			if(document.KBAdminView.uid.value != '')
+			{
+			   els = document.KBAdminView.uid.value.split(',');
+			   for(x in els)
+			   {
+				   selectedArticleIds[j] = els[x];  
+				   j++;
+			   }
+			   selected = true;
+			}
 
-		     var callback = {
+		    var callback = {
 					     success:function(r) {
 						   //rebuild the tree to display the latest node
 						   SUGAR.util.evalScript(r.responseText);
 					     }
-				    }
+			}
 
 			postData = 'tagAndArticleIds=' + JSON.stringify(selectedArticleIds)+ '&module=KBTags&action=MoveArticlesToTagsModal&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
@@ -724,17 +699,10 @@ SUGAR.kb = function() {
 
 		applyTagsAndmodalClose:function(){
 			tree = new YAHOO.widget.TreeView('tagstreeApplyTags');
-			//var node=YAHOO.namespace(tagstreeApplyTags).selectednode;
 
-		    //var tagId = node.data.id;
-
-		    var els= document.getElementsByName('mass[]');
 			var selected = false;
 			var selectedTagsArticlesIds = new Array();
-
-
 		    var tagsEls= document.getElementsByName('selected_apply_tags[]');
-
 			var j = 2;
 			var countTags = 0;
 			for(i=0;i<tagsEls.length;i++){
@@ -747,19 +715,23 @@ SUGAR.kb = function() {
 		    }
 
 		   selectedTagsArticlesIds[0] = countTags;
-
 		   countArticles = 0;
-			for(i=0;i<els.length;i++){
-					if(els[i].checked==true){
-						selectedTagsArticlesIds[j] = els[i].value;
-						selected =  true;
-						j++;
-						countArticles++;
-						//break;
-					}
-		    }
+		   
+		   if(document.KBAdminView.uid.value != '')
+		   {
+			 var els = document.KBAdminView.uid.value.split(',');
+			 for(x in els)
+			 {
+				 selectedTagsArticlesIds[j] = els[x];
+				 j++;
+				 countArticles++;
+			 }
+			 selected = true;  
+		   }
+		   
+
 		   selectedTagsArticlesIds[1] = countArticles;
-		    //alert(selectedArticleIds);
+
 		     var callback = {
 					     success:function(r) {
 						     //rebuild the tree to display the latest node
@@ -2336,7 +2308,26 @@ SUGAR.kb = function() {
 		     else{
 			      alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_TYPE_THE_NEW_TAG_NAME'));
 		     }
-		 }
+		 },
+		
+		paginateList:function(url, mode) {
+			    if(mode == 'browse')
+			    {
+					var callback =	{
+						  success: function(o) {    
+							    	var targetdiv=document.getElementById('selected_directory_children');
+							    	targetdiv.innerHTML=o.responseText;
+							    	SUGAR.util.evalScript(o.responseText);
+						  },
+						  failure: function(o) {/*failure handler code*/},
+						  //argument: [target, targettype]
+					}
+					var trobj = YAHOO.util.Connect.asyncRequest('POST', url, callback);
+					
+			    } else {
+			    	document.location.href = url;
+			    }
+		}
 	}
 }();
 

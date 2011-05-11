@@ -47,13 +47,13 @@ class ViewPortalLayoutView extends ViewLayoutView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
 
@@ -86,12 +86,14 @@ class ViewPortalLayoutView extends ViewLayoutView
 		$buttons[] = array(
 		  'id'=>'saveBtn',
 		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_save'],''),
-		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVE'],'actionScript'=>"onclick='Studio2.handleSave();'"
+		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVE'],
+		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handleSave();'"
 		);
 		$buttons[] = array(
 		  'id'=>'publishBtn',
 		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_publish'],''),
-		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],'actionScript'=>"onclick='Studio2.handlePublish();'"
+		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],
+		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handlePublish();'"
 		);
 
 		$html = "";
@@ -109,8 +111,10 @@ class ViewPortalLayoutView extends ViewLayoutView
 
 		// assign fields and layout
 		$smarty->assign('available_fields', $this->parser->getAvailableFields());
+        $smarty->assign ( 'field_defs', $this->parser->getFieldDefs () ) ;
 		$smarty->assign('layout', $this->parser->getLayout());
 		$smarty->assign('view_module', $this->editModule);
+		$smarty->assign('calc_field_list', json_encode($this->parser->getCalculatedFields()));
 		$smarty->assign('view', $this->editLayout);
 		$smarty->assign('maxColumns', $this->parser->maxColumns);
 		$smarty->assign('fieldwidth', '150px');

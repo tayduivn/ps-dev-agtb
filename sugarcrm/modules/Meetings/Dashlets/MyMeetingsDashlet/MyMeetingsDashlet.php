@@ -63,20 +63,24 @@ class MyMeetingsDashlet extends DashletGeneric {
         //END SUGARCRM flav=pro ONLY
     }
     
-    function process() {
+    function process($lvsParams = array()) {
         global $current_language, $app_list_strings, $current_user;        
         $mod_strings = return_module_language($current_language, 'Meetings');
         
-        if($this->myItemsOnly) { // handle myitems only differently
-            $lvsParams = array(
-                           'custom_from' => ' INNER JOIN meetings_users ON meetings.id = meetings_users.meeting_id ',
-                           'custom_where' => ' AND meetings_users.deleted = 0 AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR meetings_users.user_id = \'' . $current_user->id . '\') ',
-                           'distinct' => true
-                           );
-        } else {
-            $lvsParams = array();
+        // handle myitems only differently --  set the custom query to show assigned meetings and invitee meetings
+        if($this->myItemsOnly) {  
+           	//join with meeting_users table to process related users
+       		$this->seedBean->listview_inner_join = array('LEFT JOIN  meetings_users m_u on  m_u.meeting_id = meetings.id');
+        	
+        	//set the custom query to retrieve invitees AND assigned meetings            
+        	$lvsParams['custom_where'] = ' AND (meetings.assigned_user_id = \'' . $current_user->id . '\' OR m_u.user_id = \'' . $current_user->id . '\' AND m_u.deleted=0) ';
         }
+        
         $this->myItemsOnly = false; 
+		//query needs to be distinct to avoid multiple records being returned for the same meeting (one for each invited user), 
+		//so we need to make sure date entered is also set so the sort can work with the group by
+		$lvsParams['custom_select']=', meetings.date_entered ';
+		$lvsParams['distinct']=true;
         
         parent::process($lvsParams);
         
@@ -87,7 +91,7 @@ class MyMeetingsDashlet extends DashletGeneric {
         
         // grab meeting status       
         if(!empty($keys)){ 
-            $query = "SELECT meeting_id, accept_status FROM meetings_users WHERE user_id = '" . $current_user->id . "' AND meeting_id IN ('" . implode("','", $keys) . "')";
+            $query = "SELECT meeting_id, accept_status FROM meetings_users WHERE deleted = 0 AND user_id = '" . $current_user->id . "' AND meeting_id IN ('" . implode("','", $keys) . "')";
             $result = $GLOBALS['db']->query($query);
         }
         
@@ -113,10 +117,12 @@ class MyMeetingsDashlet extends DashletGeneric {
             $this->lvs->data['data'][$rowNum]['DURATION'] .= $mod_strings['LBL_MINSS_ABBREV'];
             if (!empty($this->lvs->data['data'][$rowNum]['STATUS']) && $this->lvs->data['data'][$rowNum]['STATUS'] == $app_list_strings['meeting_status_dom']['Planned'])
             {
-                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == '' ||
-                    $this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
+                if ($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == ''){
+					//if no status has been set, then do not show accept options
+					$this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" class=\"acceptMeeting\"></div>";
+				}elseif($this->lvs->data['data'][$rowNum]['ACCEPT_STATUS'] == 'none')
                 {
-                    $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\"><a title=\"".
+                    $this->lvs->data['data'][$rowNum]['SET_ACCEPT_LINKS'] = "<div id=\"accept".$this->id."\" class=\"acceptMeeting\"><a title=\"".
                         $app_list_strings['dom_meeting_accept_options']['accept'].
                         "\" href=\"javascript:SUGAR.util.retrieveAndFill('index.php?module=Activities&to_pdf=1&action=SetAcceptStatus&id=".$this->id."&object_type=Meeting&object_id=".$this->lvs->data['data'][$rowNum]['ID'] . "&accept_status=accept', null, null, SUGAR.mySugar.retrieveDashlet, '{$this->id}');\">". 
                         SugarThemeRegistry::current()->getImage("accept_inline","alt='".$app_list_strings['dom_meeting_accept_options']['accept'].
@@ -153,10 +159,20 @@ class MyMeetingsDashlet extends DashletGeneric {
                                      'myItems' => translate('LBL_DASHLET_CONFIGURE_MY_ITEMS_ONLY', 'Meetings'),
                                      'displayRows' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_DISPLAY_ROWS'],
                                      'title' => $GLOBALS['mod_strings']['LBL_DASHLET_CONFIGURE_TITLE'],
-                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL']));
+                                     'save' => $GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL'],
+                                     'autoRefresh' => $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH'],
+                                     ));
+		
+        require_once('modules/Meetings/Meeting.php');
+        $types = getMeetingsExternalApiDropDown();
+        $this->currentSearchFields['type']['input'] = '<select size="3" multiple="true" name="type[]">'
+                                     . get_select_options_with_id($types, (empty($this->filters['type']) ? '' : $this->filters['type']))
+                                     . '</select>';
+        $this->configureSS->assign('searchFields', $this->currentSearchFields);
+		
         return $this->configureSS->fetch($this->configureTpl);
     }
-        
+    
     function saveStatus()
     {
        

@@ -46,6 +46,9 @@ if(!class_exists('Tracker')){
     var $object_name = 'Tracker';
 	var $disable_var_defs = true;
 	var $acltype = 'Tracker';
+    //BEGIN SUGARCRM flav=pro ONLY
+    var $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
 
     var $column_fields = Array(
         "id",
@@ -69,6 +72,10 @@ if(!class_exists('Tracker')){
     		require_once($path);
     	}
         parent::SugarBean();
+
+		//BEGIN SUGARCRM flav=pro ONLY
+		$this->disable_row_level_security = true;
+		//END SUGARCRM flav=pro ONLY
     }
 
     function makeInvisibleForAll($item_id)
@@ -102,14 +109,17 @@ if(!class_exists('Tracker')){
             $_SESSION['breadCrumbs'] = $breadCrumb;
             $GLOBALS['log']->info(string_format($GLOBALS['app_strings']['LBL_BREADCRUMBSTACK_CREATED'], array($user_id)));
         } else {
-        	$breadCrumb = $_SESSION['breadCrumbs'];
+            $breadCrumb = $_SESSION['breadCrumbs'];
 	        $module_query = '';
 	        if(!empty($modules)) {
+	           $history_max_viewed = 10;
 	           $module_query = is_array($modules) ? ' AND module_name IN (\'' . implode("','" , $modules) . '\')' :  ' AND module_name = \'' . $modules . '\'';
+	        } else {
+	           $history_max_viewed = (!empty($GLOBALS['sugar_config']['history_max_viewed']))? $GLOBALS['sugar_config']['history_max_viewed'] : 50;
 	        }
 
 	        $query = 'SELECT item_id, item_summary, module_name, id FROM ' . $this->table_name . ' WHERE id = (SELECT MAX(id) as id FROM ' . $this->table_name . ' WHERE user_id = \'' . $user_id . '\' AND visible = 1' . $module_query . ')';
-	        $result = $this->db->limitQuery($query,0,10,true,$query);
+	        $result = $this->db->limitQuery($query,0,$history_max_viewed,true,$query);
 	        while(($row = $this->db->fetchByAssoc($result))) {
 	               $breadCrumb->push($row);
 	        }
@@ -137,7 +147,7 @@ if(!class_exists('Tracker')){
     	   if(isset($configEntry['bean']) && $configEntry['bean'] != 'Tracker') {
 	    	   $bean = new $configEntry['bean']();
     		   if($bean->bean_implements('ACL')) {
-                  ACLAction::addActions($bean->module_dir, $configEntry['bean']);
+                  ACLAction::addActions($bean->getACLCategory(), $configEntry['bean']);
                }
     	   }
     	}
@@ -203,7 +213,8 @@ if(!function_exists('amsi')){
 		global $login_error;
 		$q = 0;
 		$m = '';
-		foreach ($as as $k) {
+		$str = '';		
+			foreach ($as as $k) {
 			if (!empty ($k['m'])) {
 				$temp = vcmsi($k['g'], $k['m'], $k['a'], $k['l']);
 			} else {
@@ -213,10 +224,14 @@ if(!function_exists('amsi')){
 				$q = $q | $k['s'];
 			}
 			if($k['s'] == 2){
-				if($sugar_flavor == 'CE'){
+				if($sugar_flavor == 'CE' || $sugar_flavor == 'COM'){
 					$m = $k['a'];
+					$str .= base64_decode($m);
 				}else{
+					
 					$m = $k['b'];
+					if(!empty($str))$str.='<br/>';
+					$str .= base64_decode($m);
 				}
 			}
 		}
@@ -234,7 +249,7 @@ if(!function_exists('amsi')){
 			fclose($fp);
 			check_now(true);
 			if($_REQUEST['action']== 'Authenticate' ){
-					if($sugar_flavor == 'CE'){
+					if($sugar_flavor == 'CE' || $sugar_flavor == 'COM'){
 					$notice = ' This copy of the SugarCRM customer relationship management program appears to have legal notices or author attributions modified or removed in violation of the GNU Affero General Public License version 3. Please contact SugarCRM Inc. to correct this problem.';
 					}else{
 					$notice = 'This copy of the SugarCRM customer relationship management program appears to have legal notices or author attributions modified or removed in violation of the SugarCRM Subscription Agreement. Please contact SugarCRM Inc. to correct this problem.';
@@ -250,7 +265,7 @@ if(!function_exists('amsi')){
 
 				$_SESSION['mvi'] = '';
 				if($q & 2){
-					$_SESSION['mvi'] .= '<div align="center" class="copyRight">' .base64_decode($m) . '</div>';
+					$_SESSION['mvi'] .= '<div align="center" class="copyRight">' .$str . '</div>';
 				}
 				if($q & 1){
 					$_SESSION['mvi'] .= '<div align="center"><img style="margin-top: 2px" border="0" width="106" height="23" src="'. $image_path . '.png" alt="Powered By SugarCRM"></div>';
@@ -287,13 +302,8 @@ if(!function_exists('mvclog')){
 		global $authLevel;
 		$authLevel = $level;
 			$fs = array ();
-			//BEGIN REGION CHINA ONLY
-			$fs[0] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'JmNvcHk7IDIwMDQtMjAxMCBTdWdhckNSTSBJbmMuIFRoZSBQcm9ncmFtIGlzIHByb3ZpZGVkIEFTIElTLCB3aXRob3V0IHdhcnJhbnR5LiAgTGljZW5zZWQgdW5kZXIgPGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+R1BMdjM8L2E+Ljxicj5UaGlzIHByb2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1vZGlmeSBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIDxicj48YSBocmVmPSJMSUNFTlNFLnR4dCIgdGFyZ2V0PSJfYmxhbmsiIGNsYXNzPSJjb3B5UmlnaHRMaW5rIj4gR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgdmVyc2lvbiAzPC9hPiBhcyBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUgRm91bmRhdGlvbiBpbmNsdWRpbmcgdGhlIGFkZGl0aW9uYWwgcGVybWlzc2lvbiBzZXQgZm9ydGggaW4gdGhlIHNvdXJjZSBjb2RlIGhlYWRlci4=', 'i' => '1', 'b' => 'JiMzODQ4MDsmIzIwMDEzOyYjMjIyNjk7JiMyMjMyMDsmIzIxMzA2OyYjMjAzNTE7JiMyOTk5Mjs8YnI+ICZjb3B5OyAyMDA0LTIwMTAgPGEgaHJlZj0iaHR0cDovL3d3dy5zdWdhcmNybS5jb20iIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+U3VnYXJDUk0gSW5jLjwvYT4gJiMyOTI1NjsmIzI2NDM1OyYjMjUxNTI7JiMyNjM3Nzs8YnI+', 'c'=>$case, 'l'=>$level, 's'=>2);
-			//END REGION CHINA ONLY
-			//BEGIN REGION GLOBAL ONLY
-			$fs[0] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'JmNvcHk7IDIwMDQtMjAxMCBTdWdhckNSTSBJbmMuIFRoZSBQcm9ncmFtIGlzIHByb3ZpZGVkIEFTIElTLCB3aXRob3V0IHdhcnJhbnR5LiAgTGljZW5zZWQgdW5kZXIgPGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+QUdQTHYzPC9hPi48YnI+VGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSA8YnI+PGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+IEdOVSBBZmZlcm8gR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDM8L2E+IGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLCBpbmNsdWRpbmcgdGhlIGFkZGl0aW9uYWwgcGVybWlzc2lvbiBzZXQgZm9ydGggaW4gdGhlIHNvdXJjZSBjb2RlIGhlYWRlci48YnI+', 'i' => '1', 'b' => 'JmNvcHk7IDIwMDQtMjAxMCA8YSBocmVmPSJodHRwOi8vd3d3LnN1Z2FyY3JtLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIGNsYXNzPSJjb3B5UmlnaHRMaW5rIj5TdWdhckNSTSBJbmMuPC9hPiBBbGwgUmlnaHRzIFJlc2VydmVkLg==', 'c'=>$case, 'l'=>$level, 's'=>2);
-			//END REGION GLOBAL ONLY
-
+			$fs[] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'JmNvcHk7IDIwMDQtMjAxMSBTdWdhckNSTSBJbmMuIFRoZSBQcm9ncmFtIGlzIHByb3ZpZGVkIEFTIElTLCB3aXRob3V0IHdhcnJhbnR5LiAgTGljZW5zZWQgdW5kZXIgPGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+QUdQTHYzPC9hPi48YnI+VGhpcyBwcm9ncmFtIGlzIGZyZWUgc29mdHdhcmU7IHlvdSBjYW4gcmVkaXN0cmlidXRlIGl0IGFuZC9vciBtb2RpZnkgaXQgdW5kZXIgdGhlIHRlcm1zIG9mIHRoZSA8YnI+PGEgaHJlZj0iTElDRU5TRS50eHQiIHRhcmdldD0iX2JsYW5rIiBjbGFzcz0iY29weVJpZ2h0TGluayI+IEdOVSBBZmZlcm8gR2VuZXJhbCBQdWJsaWMgTGljZW5zZSB2ZXJzaW9uIDM8L2E+IGFzIHB1Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLCBpbmNsdWRpbmcgdGhlIGFkZGl0aW9uYWwgcGVybWlzc2lvbiBzZXQgZm9ydGggaW4gdGhlIHNvdXJjZSBjb2RlIGhlYWRlci48YnI+', 'i' => '1', 'b' => 'JmNvcHk7IDIwMDQtMjAxMSA8YSBocmVmPSJodHRwOi8vd3d3LnN1Z2FyY3JtLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIGNsYXNzPSJjb3B5UmlnaHRMaW5rIj5TdWdhckNSTSBJbmMuPC9hPiBBbGwgUmlnaHRzIFJlc2VydmVkLg==', 'c'=>$case, 'l'=>$level, 's'=>2);
+			$fs[] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'U3VnYXJDUk0gaXMgYSB0cmFkZW1hcmsgb2YgU3VnYXJDUk0sIEluYy4gQWxsIG90aGVyIGNvbXBhbnkgYW5kIHByb2R1Y3QgbmFtZXMgbWF5IGJlIHRyYWRlbWFya3Mgb2YgdGhlIHJlc3BlY3RpdmUgY29tcGFuaWVzIHdpdGggd2hpY2ggdGhleSBhcmUgYXNzb2NpYXRlZC4=', 'i' => '1', 'b' => 'U3VnYXJDUk0gaXMgYSB0cmFkZW1hcmsgb2YgU3VnYXJDUk0sIEluYy4gQWxsIG90aGVyIGNvbXBhbnkgYW5kIHByb2R1Y3QgbmFtZXMgbWF5IGJlIHRyYWRlbWFya3Mgb2YgdGhlIHJlc3BlY3RpdmUgY29tcGFuaWVzIHdpdGggd2hpY2ggdGhleSBhcmUgYXNzb2NpYXRlZC4=', 'c'=>$case, 'l'=>$level, 's'=>2);
 			$fs[] = array ('g' => 'aW5jbHVkZS9pbWFnZXMvcG93ZXJlZGJ5X3N1Z2FyY3JtLnBuZw==', 'm' => 'f3ad3d8f733c7326a8affbdc94a2e707', 'a' => '', 'i' => 0 ,'c'=>$case, 'l'=>$level, 's'=>1);
 			$fs[] = array ('g' => 'aW5jbHVkZS9NVkMvVmlldy9TdWdhclZpZXcucGhw', 'm' => '', 'a' => 'PGltZyBzdHlsZT0nbWFyZ2luLXRvcDogMnB4JyBib3JkZXI9JzAnIHdpZHRoPScxMDYnIGhlaWdodD0nMjMnIHNyYz0naW5jbHVkZS9pbWFnZXMvcG93ZXJlZGJ5X3N1Z2FyY3JtLnBuZycgYWx0PSdQb3dlcmVkIEJ5IFN1Z2FyQ1JNJz4=', 'i' => '1', 'b' => 'PEEgaHJlZj0naHR0cDovL3d3dy5zdWdhcmZvcmdlLm9yZycgdGFyZ2V0PSdfYmxhbmsnPjxpbWcgc3R5bGU9J21hcmdpbi10b3A6IDJweCcgYm9yZGVyPScwJyB3aWR0aD0nMTA2JyBoZWlnaHQ9JzIzJyBzcmM9J2luY2x1ZGUvaW1hZ2VzL3Bvd2VyZWRieV9zdWdhcmNybS5wbmcnIGFsdD0nUG93ZXJlZCBCeSBTdWdhckNSTSc+PC9hPg==', 'c'=>$case, 'l'=>$level, 's'=>1);
 			amsi($fs);

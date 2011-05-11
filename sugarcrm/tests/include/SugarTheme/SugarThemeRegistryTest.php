@@ -5,17 +5,24 @@ require_once 'include/dir_inc.php';
 class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_themeName;
+    private $_oldDefaultTheme;
     
     public function setup()
     {
         $this->_themeName = SugarTestThemeUtilities::createAnonymousTheme();
-        
+        if ( isset($GLOBALS['sugar_config']['default_theme']) ) {
+            $this->_oldDefaultTheme = $GLOBALS['sugar_config']['default_theme'];
+        }
+        $GLOBALS['sugar_config']['default_theme'] = $this->_themeName;
         SugarThemeRegistry::buildRegistry();
     }
     
     public function tearDown()
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
+        if ( isset($this->_oldDefaultTheme) ) {
+            $GLOBALS['sugar_config']['default_theme'] = $this->_oldDefaultTheme;
+        }
     }
     
     public function testThemesRegistered()
@@ -27,15 +34,43 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $object = SugarThemeRegistry::get($this->_themeName);
         
-        $this->assertType('SugarTheme',$object);
+        $this->assertInstanceOf('SugarTheme',$object);
         $this->assertEquals($object->__toString(),$this->_themeName);
+    }
+    
+    /**
+     * @ticket 41635
+     */
+    public function testGetDefaultThemeObject()
+    {
+        $GLOBALS['sugar_config']['default_theme'] = $this->_themeName;
+        
+        $object = SugarThemeRegistry::getDefault();
+        
+        $this->assertInstanceOf('SugarTheme',$object);
+        $this->assertEquals($object->__toString(),$this->_themeName);
+    }
+    
+    /**
+     * @ticket 41635
+     */
+    public function testGetDefaultThemeObjectWhenDefaultThemeIsNotSet()
+    {
+        unset($GLOBALS['sugar_config']['default_theme']);
+        
+        $themename = array_pop(array_keys(SugarThemeRegistry::availableThemes()));
+        
+        $object = SugarThemeRegistry::getDefault();
+        
+        $this->assertInstanceOf('SugarTheme',$object);
+        $this->assertEquals($object->__toString(),$themename);
     }
     
     public function testSetCurrentTheme()
     {
         SugarThemeRegistry::set($this->_themeName);
         
-        $this->assertType('SugarTheme',SugarThemeRegistry::current());
+        $this->assertInstanceOf('SugarTheme',SugarThemeRegistry::current());
         $this->assertEquals(SugarThemeRegistry::current()->__toString(),$this->_themeName);
     }
     
@@ -118,7 +153,7 @@ class SugarThemeRegistryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug35307
+     * @ticket 35307
      */
     public function testOldThemeIsNotRecognized()
     {

@@ -24,7 +24,6 @@ require_once('modules/Leads/LeadFormBase.php');
 
 
 
-
 global $app_strings, $app_list_strings, $sugar_config, $timedate, $current_user;
 
 $mod_strings = return_module_language($sugar_config['default_language'], 'Leads');
@@ -71,6 +70,11 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 $lead->new_with_id = true;
             }
             $GLOBALS['check_notify'] = true;
+
+            //bug: 42398 - have to unset the id from the required_fields since it is not populated in the $_POST
+            unset($lead->required_fields['id']);
+            unset($lead->required_fields['team_name']);
+            unset($lead->required_fields['team_count']);
             $lead = $leadForm->handleSave($prefix, false, true, false, $lead);
             
 			if(!empty($lead)){
@@ -82,7 +86,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	            $camplog->related_type = $lead->module_dir;
 	            $camplog->activity_type = "lead";
 	            $camplog->target_type = $lead->module_dir;
-	            $campaign_log->activity_date=$timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+	            $campaign_log->activity_date=$timedate->now();
 	            $camplog->target_id    = $lead->id;
 	            $camplog->save();
 
@@ -118,21 +122,62 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
                 }
             }              
 			if(isset($_POST['redirect_url']) && !empty($_POST['redirect_url'])){
-				echo '<html><head><title>SugarCRM</title></head><body>';
-				echo '<form name="redirect" action="' .$_POST['redirect_url']. '" method="GET">';
+			    // Get the redirect url, and make sure the query string is not too long
+		        $redirect_url = $_POST['redirect_url'];
+		        $query_string = '';
+				$first_char = '&';
+				if(strpos($redirect_url, '?') === FALSE){
+					$first_char = '?';
+				}
+				$first_iteration = true;
+				$get_and_post = array_merge($_GET, $_POST);
+				foreach($get_and_post as $param => $value) {
 
-				foreach($_POST as $param => $value) {
-					if($param != 'redirect_url' ||$param != 'submit') {
-						echo '<input type="hidden" name="'.$param.'" value="'.$value.'">';
-
+					if($param == 'redirect_url' || $param == 'submit')
+						continue;
+					
+					if($first_iteration){
+						$first_iteration = false;
+						$query_string .= $first_char;
 					}
-
+					else{
+						$query_string .= "&";
+					}
+					$query_string .= "{$param}=".urlencode($value);
 				}
 				if(empty($lead)) {
-					echo '<input type="hidden" name="error" value="1">';
+					if($first_iteration){
+						$query_string .= $first_char;
+					}
+					else{
+						$query_string .= "&";
+					}
+					$query_string .= "error=1";
 				}
-				echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
-				echo '</body></html>';
+				
+				$redirect_url = $redirect_url.$query_string;
+				
+				// Check if the headers have been sent, or if the redirect url is greater than 2083 characters (IE max URL length)
+				//   and use a javascript form submission if that is the case.
+			    if(headers_sent() || strlen($redirect_url) > 2083){
+    				echo '<html><head><title>SugarCRM</title></head><body>';
+    				echo '<form name="redirect" action="' .$_POST['redirect_url']. '" method="GET">';
+    
+    				foreach($_POST as $param => $value) {
+    					if($param != 'redirect_url' ||$param != 'submit') {
+    						echo '<input type="hidden" name="'.$param.'" value="'.$value.'">';
+    					}
+    				}
+    				if(empty($lead)) {
+    					echo '<input type="hidden" name="error" value="1">';
+    				}
+    				echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
+    				echo '</body></html>';
+    			}
+				else{
+    				header("Location: {$redirect_url}");
+    				die();
+			    }
 			}
 			else{
 				echo $mod_strings['LBL_THANKS_FOR_SUBMITTING_LEAD'];
@@ -146,11 +191,17 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 	  }
 }
 
-echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 if (!empty($_POST['redirect'])) {
-	echo '<html><head><title>SugarCRM</title></head><body>';
-	echo '<form name="redirect" action="' .$_POST['redirect']. '" method="GET">';
-	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
-	echo '</body></html>';
+    if(headers_sent()){
+    	echo '<html><head><title>SugarCRM</title></head><body>';
+    	echo '<form name="redirect" action="' .$_POST['redirect']. '" method="GET">';
+    	echo '</form><script language="javascript" type="text/javascript">document.redirect.submit();</script>';
+    	echo '</body></html>';
+    }
+    else{
+    	header("Location: {$_POST['redirect']}");
+    	die();
+    }
 }
+echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 ?>

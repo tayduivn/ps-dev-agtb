@@ -24,8 +24,8 @@ require_once("include/Expressions/Expression/Parser/Parser.php");
 require_once("include/Expressions/Expression/AbstractExpression.php");
 
 class Trigger {
-	private $triggerFields = array();
-	private $conditionFunction = "";
+	public $triggerFields = array();
+	public $conditionFunction = "";
 	static $ValueNotSetError = -1;
 	
 	function Trigger($condition, $fields = array()) {
@@ -42,8 +42,7 @@ class Trigger {
 				return Trigger::$ValueNotSetError;
 			}
 		}
-		$expression = Parser::replaceVariables($this->conditionFunction, $target);
-		$result = Parser::evaluate($expression)->evaluate();
+		$result = Parser::evaluate($this->conditionFunction, $target)->evaluate();
 		if ($result == AbstractExpression::$TRUE){
 			return true;
 		} else {
@@ -59,7 +58,7 @@ class Trigger {
 				$js .= ",";
 			}
 		}
-		$js .= "], '{$this->conditionFunction}')";
+		$js .= "], '" . str_replace("\n","",$this->conditionFunction) . "')";
 		return $js;
 	}
 	

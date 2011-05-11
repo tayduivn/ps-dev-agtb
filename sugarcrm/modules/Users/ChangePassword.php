@@ -10,7 +10,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
  *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+ *right to remove SugarCRM copyrights from the source code or user interface
  * All copies of the Covered Code must include on each user interface screen:
  * (i) the "Powered by SugarCRM" logo and
  * (ii) the SugarCRM copyright notice
@@ -84,6 +84,12 @@ $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_open.png'))
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md.png'));
 //END SUGARCRM flav=pro && flav!=ent ONLY
+//BEGIN SUGARCRM flav=corp ONLY
+$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_corp.png'));
+//END SUGARCRM flav=corp ONLY
+//BEGIN SUGARCRM flav=ult ONLY
+$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ult.png'));
+//END SUGARCRM flav=ult ONLY
 if (!$current_user->is_admin) $sugar_smarty->assign('OLD_PASSWORD_FIELD','<td scope="row" width="30%">'.$mod_strings['LBL_OLD_PASSWORD'].':</td><td width="70%"><input type="password" size="26" tabindex="1" id="old_password" name="old_password"  value="" /></td>');
 $pwd_settings=$GLOBALS['sugar_config']['passwordsetting'];
 

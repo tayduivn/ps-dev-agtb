@@ -83,7 +83,6 @@ class ImportViewUndo extends SugarView
     {
         global $mod_strings, $current_user, $current_language;
         
-        $this->ss->assign("MOD", $mod_strings);
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         // lookup this module's $mod_strings to get the correct module name
         $old_mod_strings = $mod_strings;
@@ -93,8 +92,6 @@ class ImportViewUndo extends SugarView
         // reset old ones afterwards
         $mod_strings = $old_mod_strings;
         
-        
-
         $last_import = new UsersLastImport();
         $this->ss->assign('UNDO_SUCCESS',$last_import->undo($_REQUEST['import_module']));
         $this->ss->assign("JAVASCRIPT", $this->_getJS());

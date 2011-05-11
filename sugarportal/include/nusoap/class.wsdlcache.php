@@ -117,11 +117,11 @@ class wsdlcache {
 			$this->debug("Lock for $filename already exists");
 			return false;
 		}
-		$this->fplock[md5($filename)] = fopen($filename.".lock", "w");
+		$this->fplock[md5($filename)] = @fopen($filename.".lock", "w");
 		if ($mode == "r") {
-			return flock($this->fplock[md5($filename)], LOCK_SH);
+			return @flock($this->fplock[md5($filename)], LOCK_SH);
 		} else {
-			return flock($this->fplock[md5($filename)], LOCK_EX);
+			return @flock($this->fplock[md5($filename)], LOCK_EX);
 		}
 	}
 

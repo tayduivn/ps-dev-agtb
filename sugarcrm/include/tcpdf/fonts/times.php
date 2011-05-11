@@ -1,4 +1,45 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r52556 - 2009-11-18 12:37:40 -0800 (Wed, 18 Nov 2009) - clee - Bug:34025
+Correctly tagged the font files in the tcpdf folder to include sales edition.
+Modified:
+include/tcpdf/fonts/courier.php
+include/tcpdf/fonts/helvetica.php
+include/tcpdf/fonts/helveticab.php
+include/tcpdf/fonts/helveticabi.php
+include/tcpdf/fonts/helveticai.php
+include/tcpdf/fonts/symbol.php
+include/tcpdf/fonts/times.php
+include/tcpdf/fonts/timesb.php
+include/tcpdf/fonts/timesbi.php
+include/tcpdf/fonts/timesi.php
+include/tcpdf/fonts/zpfdingbats.php
+include/tcpdf/fonts/README.txt
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r46847 - 2009-05-04 15:59:01 -0700 (Mon, 04 May 2009) - jenny - Tagging file as PRO ONLY.
+
+r46451 - 2009-04-23 16:57:40 -0700 (Thu, 23 Apr 2009) - jenny - tcpdf initial checkin.
+
+
+*/
+
+
 //FILE SUGARCRM flav=pro||flav=sales ONLY
  // core font definition file for TCPDF (www.tcpdf.org)
 $type='core';

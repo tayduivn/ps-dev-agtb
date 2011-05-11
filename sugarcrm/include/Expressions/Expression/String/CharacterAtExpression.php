@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -19,7 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/Expressions/Expression/String/StringExpression.php");
-
+/**
+ * <b>charAt(String s, Number index)</b><br>
+ * Returns character at index <i>i</i> in <i>s</i>.<br/>
+ * ex: <em>charAt("Hello", 1)</em> = "e"
+ */
 class CharacterAtExpression extends StringExpression {
 	/**
 	 * Returns itself when evaluating.
@@ -37,7 +41,7 @@ class CharacterAtExpression extends StringExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters();
-			var str = params[0].evaluate();
+			var str = params[0].evaluate() + "";
 			var idx = params[1].evaluate();
 			return str.charAt(idx);
 EOQ;

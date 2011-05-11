@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+global $db;
+
 if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authenticated_user_id'])) {
 	die("Not a Valid Entry Point");
 }
@@ -33,7 +35,7 @@ else {
     if(!isset($_REQUEST['isTempFile'])) {
 	    //Custom modules may have capilizations anywhere in thier names. We should check the passed in format first.
 		require('include/modules.php');
-		$module = $_REQUEST['type'];
+		$module = $db->quote($_REQUEST['type']);
 		$file_type = strtolower($_REQUEST['type']);
 		if(empty($beanList[$module])) {
 			//start guessing at a module name
@@ -52,14 +54,46 @@ else {
 	    if(!$focus->ACLAccess('view')){
 	        die($mod_strings['LBL_NO_ACCESS']);
 	    } // if
+
+        // Pull up the document revision, if it's of type Document
+        if ( isset($focus->object_name) && $focus->object_name == 'Document' ) {
+            // It's a document, get the revision that really stores this file
+            $focusRevision = new DocumentRevision();
+            $focusRevision->retrieve($_REQUEST['id']);
+
+            if ( empty($focusRevision->id) ) {
+                // This wasn't a document revision id, it's probably actually a document id, we need to grab that, get the latest revision and use that
+                $focusDocument = new Document();
+                $focusDocument->retrieve($_REQUEST['id']);
+
+                $focusRevision->retrieve($focusDocument->document_revision_id);
+
+                if ( !empty($focusRevision->id) ) {
+                    $_REQUEST['id'] = $focusRevision->id;
+                }
+            }
+        }
+
+        // See if it is a remote file, if so, send them that direction
+        if ( isset($focus->doc_url) && !empty($focus->doc_url) ) {
+            header('Location: '.$focus->doc_url);
+            sugar_die();
+        }
+
+        if ( isset($focusRevision) && isset($focusRevision->doc_url) && !empty($focusRevision->doc_url) ) {
+            header('Location: '.$focusRevision->doc_url);
+            sugar_die();
+        }
+
     } // if
+
 	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"
 		 : $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
 
-	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {			
-	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];	    
+	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
+	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
     }
-    
+
 	if(!file_exists( $local_location ) || strpos($local_location, "..")) {
 		die($app_strings['ERR_INVALID_FILE_REFERENCE']);
 	}
@@ -75,15 +109,15 @@ else {
                 $focus->add_team_security_where_clause($query);
 			}
             //END SUGARCRM flav=pro ONLY
-			$query .= "WHERE document_revisions.id = '" . $_REQUEST['id'] ."'";
+			$query .= "WHERE document_revisions.id = '".$db->quote($_REQUEST['id'])."' ";
 		} elseif($file_type == 'kbdocuments') {
-				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbdocument_revisions ON document_revisions.id = kbdocument_revisions.document_revision_id INNER JOIN kbdocuments ON kbdocument_revisions.kbdocument_id = kbdocuments.id ";	 
+				$query="SELECT document_revisions.filename name	FROM document_revisions INNER JOIN kbdocument_revisions ON document_revisions.id = kbdocument_revisions.document_revision_id INNER JOIN kbdocuments ON kbdocument_revisions.kbdocument_id = kbdocuments.id ";
             //BEGIN SUGARCRM flav=pro ONLY
             if(!$focus->disable_row_level_security){
                 $focus->add_team_security_where_clause($query);
             }
             //END SUGARCRM flav=pro ONLY
-			$query .= "WHERE document_revisions.id = '" . $_REQUEST['id'] ."'";
+            $query .= "WHERE document_revisions.id = '" . $db->quote($_REQUEST['id']) ."'";
 		}  elseif($file_type == 'notes') {
 			$query = "SELECT filename name FROM notes ";
             //BEGIN SUGARCRM flav=pro ONLY
@@ -91,7 +125,7 @@ else {
                 $focus->add_team_security_where_clause($query);
             }
             //END SUGARCRM flav=pro ONLY
-			$query .= "WHERE notes.id = '" . $_REQUEST['id'] ."'";
+			$query .= "WHERE notes.id = '" . $db->quote($_REQUEST['id']) ."'";
 		} elseif( !isset($_REQUEST['isTempFile']) && !isset($_REQUEST['tempName'] ) && isset($_REQUEST['type']) && $file_type!='temp' ){ //make sure not email temp file.
 			$query = "SELECT filename name FROM ". $file_type ." ";
             //BEGIN SUGARCRM flav=pro ONLY
@@ -99,7 +133,7 @@ else {
                 $focus->add_team_security_where_clause($query);
             }
             //END SUGARCRM flav=pro ONLY
-			$query .= "WHERE ". $file_type .".id= '".$_REQUEST['id']."'";
+			$query .= "WHERE ". $file_type .".id= '".$db->quote($_REQUEST['id'])."'";
 		}elseif( $file_type == 'temp'){
 			$doQuery = false;
 		}
@@ -122,21 +156,28 @@ else {
 			$download_location = $local_location;
 			$name = $_REQUEST['tempName'];
 		}
-		
+
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT']))
-		{	
+		{
 			$name = urlencode($name);
 			$name = str_replace("+", "_", $name);
 		}
 
 		header("Pragma: public");
 		header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-		if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage"))
-			header("Content-type: image");
-		else {
-		    header("Content-type: application/force-download");
-            header("Content-disposition: attachment; filename=\"".$name."\";");
+		if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
+		    $mime = getimagesize($download_location);
+		    if(!empty($mime)) {
+			    header("Content-Type: {$mime['mime']}");
+		    } else {
+		        header("Content-Type: image/png");
+		    }
+		} else {
+		    header("Content-Type: application/force-download");
+            header("Content-Disposition: attachment; filename=\"".$name."\";");
 		}
+		// disable content type sniffing in MSIE
+		header("X-Content-Type-Options: nosniff");
 		header("Content-Length: " . filesize($local_location));
 		header("Expires: 0");
 		set_time_limit(0);
@@ -150,7 +191,7 @@ else {
             zend_send_file($download_location);
 		}else{
 		//END SUGARCRM flav=int ONLY
-	        echo file_get_contents($download_location);
+	        readfile($download_location);
 	    //BEGIN SUGARCRM flav=int ONLY
 		}
 		//END SUGARCRM flav=int ONLY

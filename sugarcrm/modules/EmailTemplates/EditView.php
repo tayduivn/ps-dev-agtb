@@ -88,7 +88,7 @@ if($has_campaign || $inboundEmail) {
 
 
 $params = array();
-$params[] = "<a href='index.php?module={$focus->module_dir}&action=index'>{$GLOBALS['app_list_strings']['moduleList'][$focus->module_dir]}</a>";
+
 if(empty($focus->id)){
 	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{

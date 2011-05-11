@@ -53,9 +53,6 @@ function disableReturnSubmission(e) {
 <form name="AdminWizard" id="AdminWizard" enctype='multipart/form-data' method="POST" action="index.php" onkeypress="return disableReturnSubmission(event);">
 <input type='hidden' name='action' value='SaveAdminWizard'/>
 <input type='hidden' name='module' value='Configurator'/>
-<!-- //BEGIN SUGARCRM flav=sales ONLY -->
-<input type='hidden' id='mail_smtptype' name='mail_smtptype' value='other'/>
-<!-- //END SUGARCRM flav=sales ONLY -->
 <span class='error'>{$error.main}</span>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Emails/javascript/vars.js'}"></script>
@@ -247,7 +244,6 @@ function disableReturnSubmission(e) {
             <tr>
                 <td align="left" scope="row" colspan="4"><i>{$MOD.LBL_WIZARD_SMTP_DESC}</i></td>
             </tr>
-            {* //BEGIN SUGARCRM flav!=sales ONLY *}
              <tr>
                 <td align="left" scope="row" colspan="4">{$MOD.LBL_CHOOSE_EMAIL_PROVIDER}</td>
             </tr>
@@ -295,7 +291,6 @@ function disableReturnSubmission(e) {
                     </div>
                 </td>
             </tr>
-            {* //END SUGARCRM flav!=sales ONLY *}
             <tr>
                 <td colspan="4">
                     <div id="smtp_settings">
@@ -314,7 +309,7 @@ function disableReturnSubmission(e) {
                                 </td>
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtpssl_label">{$APP.LBL_EMAIL_SMTP_SSL_OR_TLS}</span></td>
                                 <td width="30%">
-                                <select id="mail_smtpssl" name="mail_smtpssl" tabindex="501">{$MAIL_SSL_OPTIONS}</select>
+                                <select id="mail_smtpssl" name="mail_smtpssl" onchange="setDefaultSMTPPort()" tabindex="501">{$MAIL_SSL_OPTIONS}</select>
                                 </td>
                             </tr>
                             <tr id="smtp_auth1">
@@ -371,7 +366,7 @@ function disableReturnSubmission(e) {
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
             onclick="SugarWizard.changeScreen('locale',true);" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" class="button primary"
-            type="submit" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" />&nbsp;
+            onclick="if(adjustEmailSettings())this.form.submit();" type="button" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" />&nbsp;
     </div>
 </div>
 			</div>
@@ -523,6 +518,40 @@ var SugarWizard = new function()
 SugarWizard.changeScreen('{/literal}{$START_PAGE}{literal}');
 document.onkeypress = SugarWizard.handleKeyStroke;
 
+function adjustEmailSettings(){
+    var server = document.getElementById('mail_smtpserver'),
+	    user = document.getElementById('mail_smtpuser'),
+		pass = document.getElementById('mail_smtppass'),
+		port = document.getElementById('mail_smtpport');
+	if( !server.value || !user.value || !pass.value || !port.value)
+	{
+			server.value = ""; 
+			user.value = ""; 
+			pass.value = ""; 
+			port.value = "";
+			return true;
+    } else {
+		if (validate['AdminWizard'])
+		{
+			removeFromValidate('AdminWizard', 'mail_smtpserver');
+			removeFromValidate('AdminWizard', 'mail_smtpuser');
+			removeFromValidate('AdminWizard', 'mail_smtppass');
+			removeFromValidate('AdminWizard', 'mail_smtpport');
+		}
+		if (server.value == "smtp.gmail.com" && !isValidEmail(user.value)) {
+		    addToValidate("AdminWizard", 'mail_smtpuser', 'email', false, 
+			  SUGAR.language.get('Configurator','LBL_GMAIL_SMTPUSER'));
+	    }
+		else if (server.value == "plus.smtp.mail.yahoo.com" && !isValidEmail(user.value)) {
+            addToValidate("AdminWizard", 'mail_smtpuser', 'email', false, 
+              SUGAR.language.get('Configurator','LBL_YAHOOMAIL_SMTPUSER'));
+        }
+		addToValidateMoreThan("AdminWizard", 'mail_smtpport', 'int', false, 
+              document.getElementById("mail_smtpport_label").innerHTML, 1);
+		return check_form("AdminWizard");
+	}
+}
+
 function clearEmailFields() { 
  	document.getElementById('AdminWizard').mail_smtpuser.value = '';
     document.getElementById('AdminWizard').mail_smtppass.value = '';
@@ -590,6 +619,7 @@ function changeEmailScreenDisplay(smtptype)
         break;
     }
     notify_setrequired();
+    setDefaultSMTPPort();
 }
 //changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}");
 
@@ -755,6 +785,19 @@ function notify_setrequired() {
 	return true;
 }
 notify_setrequired();
+
+function setDefaultSMTPPort() 
+{
+    useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
+    
+    if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
+        document.getElementById("mail_smtpport").value = '465';
+    }
+    if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
+        document.getElementById("mail_smtpport").value = '25';
+    }
+        
+}
 {/literal}
 {$getNameJs}
 -->

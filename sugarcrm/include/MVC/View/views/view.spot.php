@@ -32,27 +32,45 @@ class ViewSpot extends ViewAjax
     public function display()
     {
         if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
-            $usa = new UnifiedSearchAdvanced;
+            $usa = new UnifiedSearchAdvanced();
             $usa->buildCache();
-        }
+        }      
         
+        //Filter out the modules that are not allowed to be searched upon
+        if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+        {
+        	if(!isset($usa))
+        	{
+            	$usa = new UnifiedSearchAdvanced();
+        	}
+            $usa->createUnifiedSearchModulesDisplay();
+        }
+        include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
+		
         // load the list of unified search enabled modules
         $modules = array();
         
-        // check to see if the user has customized the list of modules available to search
+        //check to see if the user has customized the list of modules available to search        
         $users_modules = $GLOBALS['current_user']->getPreference('globalSearch', 'search');
-        if(!isset($users_modules)) {
-            $unified_search_modules = array();
-            include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
-            foreach ( $unified_search_modules as $key => $value )
-                $modules[$key] = $key;
-        }
-        // otherwise, just use them all
-        else {
-            foreach ( $users_modules as $key => $value )
-                $modules[$key] = $key;
-        }
-		
+             
+    	if(!empty($users_modules)) { 
+			// use user's previous selections
+		    foreach ($users_modules as $key => $value ) {
+		        if (isset($unified_search_modules_display[$key]) && !empty($unified_search_modules_display[$key]['visible'])) {
+		            $modules[$key] = $key;
+		        }
+		    }
+		} else {
+			global $beanList;
+			foreach($unified_search_modules_display as $key=>$data) {
+			    if (!empty($data['visible'])) 
+			    {
+			        $modules[$key] = $key;			    
+			    }
+			}
+		}        
+
+
 		$offset = -1;
 		
 		// make sure the current module appears first in the list
@@ -69,6 +87,8 @@ class ViewSpot extends ViewAjax
 		}
 		require_once('include/SearchForm/SugarSpot.php');
 		$sugarSpot = new SugarSpot;
-		echo $sugarSpot->searchAndDisplay($_REQUEST['q'], $modules, $offset);
+		$trimmed_query = trim($_REQUEST['q']);
+				
+		echo $sugarSpot->searchAndDisplay($trimmed_query, $modules, $offset);
     }
 }

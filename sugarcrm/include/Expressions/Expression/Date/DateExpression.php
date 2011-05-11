@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -22,54 +22,73 @@ require_once('include/Expressions/Expression/AbstractExpression.php');
 require_once('include/TimeDate.php');
 abstract class DateExpression extends AbstractExpression
 {
-	protected $internalDateFormat = "Y-m-d";
-	protected $internalDateTimeFormat = "Y-m-d H:i:s";
-	protected $includeTime = false;
-	
 	/**
 	 * All parameters have to be a string.
 	 */
 	function getParameterTypes() {
 		return AbstractExpression::$DATE_TYPE;
 	}
-	
-	protected function convertToGMT($unixTime) {
-		$TD = new TimeDate();
-		$time = date($TD->get_date_time_format(), $unixTime);
-		$time = $TD->to_db($time);
-		return strtotime($time);
-	}
-	
-	protected function convertToUserZone($unixTime) {
-		$TD = new TimeDate();
-		$time = date($this->internalDateFormat, $unixTime);
-		return $TD->to_display_date($time);
-	}
-	
-	/**
-	 * returns the users display date format. 
-	 *
-	 * @param int $unixTime (should be in GMT Time zone)
-	 */
-	protected function toDisplayTime($unixTime) {
-		$TD = new TimeDate();
-		if ($this->includeTime)
-		{
-			return  date($TD->get_date_format() . " " . $TD->get_time_format(), $unixTime);
-		}
-		return date($TD->get_date_format(), $unixTime);
-	}
-	
-	protected function convertFromUserFormat($date) {
-		$TD = new TimeDate();
-		if (strrchr(trim($date), ' ')) {
-			$this->includeTime = true;
-			$date = $TD->swap_formats($date, $TD->get_date_time_format(), $this->internalDateTimeFormat);
-		}
-		 else {
-		 	$date = $TD->swap_formats($date, $TD->get_date_format(), $this->internalDateFormat);
-		 }
-		return $date;
-	}
+
+    /**
+     * @static
+     * @param  String $date
+     * @return DateTime, returns the DateTime object representing the string passed in
+     * or false if the string could not be converted to a valid date.
+     */
+    public static function parse($date)
+    {
+        if ($date instanceof DateTime)
+            return $date;
+
+        //String dates must be in User format.
+        if (is_string($date)) {
+            $timedate = TimeDate::getInstance();
+            $split = $timedate->split_date_time($date);
+            if(!empty($split[1])) {
+                // have time
+                $resdate = $timedate->fromUser($date);
+            } else {
+                // just date, no time
+                $resdate = $timedate->fromUserDate($date);
+            }
+            /*if(!$resdate) {
+                $resdate = $timedate->fromString($date);
+            }*/
+            if(!$resdate) {
+                throw new Exception("attempt to convert invalid value to date: $date");
+            }
+            return $resdate;
+        }
+        throw new Exception("attempt to convert invalid value to date: $date");
+        return false;
+    }
+
+    public static function roundTime($date)
+    {
+        if (!($date instanceof DateTime))
+            return false;
+
+        $min = $date->format("i");
+        $offset = 0;
+        if ($min < 16){
+            $offset = 15 - $min;
+        } else if ($min < 31)
+        {
+            $offset = 30 - $min;
+        }
+        else if ($min < 46)
+        {
+            $offset = 45 - $min;
+        }
+        else if ($min < 46)
+        {
+            $offset = 60 - $min;
+        }
+        if($offset != 0) {
+            $date->modify("+$offset minutes");
+        }
+
+        return $date;
+    }
 }
 ?>

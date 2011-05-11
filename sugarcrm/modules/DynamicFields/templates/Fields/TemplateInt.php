@@ -26,11 +26,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 
-class TemplateInt extends TemplateText{
+class TemplateInt extends TemplateRange
+{
 	
 	function __construct(){
-		//parent::__construct();
+		parent::__construct();
 		$this->vardef_map['autoinc_next'] = 'autoinc_next';
 		$this->vardef_map['autoinc_start'] = 'autoinc_start';
 		$this->vardef_map['auto_increment'] = 'auto_increment';
@@ -52,7 +54,7 @@ class TemplateInt extends TemplateText{
 	
     function get_field_def(){
 		$vardef = parent::get_field_def();
-		$vardef['disable_num_format'] = $this->ext3;
+		$vardef['disable_num_format'] = isset($this->disable_num_format) ? $this->disable_num_format : $this->ext3;//40005
 		if(!empty($this->ext2)){
 		    $min = (!empty($this->ext1))?$this->ext1:0;
 		    $max = $this->ext2;

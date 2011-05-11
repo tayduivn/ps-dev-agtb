@@ -37,8 +37,14 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
     public $pbls_lead_sources = array();
     public $pbls_ids          = array();
     
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
     protected $_seedName = 'Opportunities';
     
+    /**
+     * @see DashletGenericChart::displayOptions()
+     */
     public function displayOptions()
     {
         global $app_list_strings;
@@ -59,14 +65,17 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
         return parent::displayOptions();
     }
     
+    /**
+     * @see DashletGenericChart::display()
+     */
     public function display() 
     {
     	global $current_user, $sugar_config;
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['pipeline_by_lead_source'];
         
-        require_once('include/SugarCharts/SugarChart.php');
-        $sugarChart = new SugarChart();
+        require_once('include/SugarCharts/SugarChartFactory.php');
+        $sugarChart = SugarChartFactory::getInstance();
         $sugarChart->is_currency = true; 
         $currency_symbol = $sugar_config['default_currency_symbol'];
         if ($current_user->getPreference('currency')){
@@ -88,9 +97,12 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
 		$sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
 		return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();
     }  
     
+    /**
+     * @see DashletGenericChart::constructQuery()
+     */
     protected function constructQuery()
     {
 		$query = "SELECT lead_source,sum(amount_usdollar/1000) as total,count(*) as opp_count ".
@@ -109,7 +121,4 @@ class OpportunitiesByLeadSourceDashlet extends DashletGenericChart
 
         return $query;		
 	}
-    
 }
-
-?>

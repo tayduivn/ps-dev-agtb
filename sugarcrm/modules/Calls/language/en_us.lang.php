@@ -62,18 +62,9 @@ $mod_strings = array (
   'LBL_HOURS_ABBREV' => 'h',
   'LBL_MINSS_ABBREV' => 'm',
   'LBL_COLON' => ':',
-  'LBL_DEFAULT_STATUS' => 'Planned',
   'LNK_NEW_CALL' => 'Log Call',
   'LNK_NEW_MEETING' => 'Schedule Meeting',
-  'LNK_NEW_TASK' => 'Create Task',
-  'LNK_NEW_NOTE' => 'Create Note or Add Attachment',
-  'LNK_NEW_EMAIL' => 'Archive Email',
-  'LNK_CALL_LIST' => 'Calls',
-  'LNK_MEETING_LIST' => 'Meetings',
-  'LNK_TASK_LIST' => 'Tasks',
-  'LNK_NOTE_LIST' => 'Notes',
-  'LNK_EMAIL_LIST' => 'Emails',
-  'LNK_VIEW_CALENDAR' => 'Today',
+  'LNK_CALL_LIST' => 'View Calls',
   'LNK_IMPORT_CALLS' => 'Import Calls',
   'ERR_DELETE_RECORD' => 'A record number must be specified to delete the account.',
   'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this invitee from the call?',
@@ -95,7 +86,7 @@ $mod_strings = array (
 	'LBL_TIME_END'=>'Time End',
 	'LBL_REMINDER_TIME'=>'Reminder Time',
    'LBL_SEARCH_BUTTON'=> 'Search',
-  'LBL_ACTIVITIES_REPORTS' => 'Activities Report',    
+  'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
    'LBL_ADD_BUTTON'=> 'Add',
 	'LBL_DEFAULT_SUBPANEL_TITLE' => 'Calls',
    'LBL_LOG_CALL'=> 'Log Call',
@@ -117,7 +108,7 @@ $mod_strings = array (
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
     'LBL_CALL_INFORMATION' => 'Call Overview',
     'LBL_REMOVE' => 'rem',
-   );
+);
 
 
 ?>

@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: MssqlHelper.php 56786 2010-06-02 18:29:56Z jenny $
+* $Id: MssqlHelper.php 56151 2010-04-28 21:02:22Z jmertic $
 * Description: This file handles the Data base functionality for the application specific
 * to Mssql database. It is called by the DBManager class to generate various sql statements.
 *
@@ -75,6 +75,7 @@ class MssqlHelper extends DBHelper
             'id'       => 'varchar(36)',
             'url'=>'varchar',
             'encrypt'=>'varchar',
+            'file'     => 'varchar',
             );
         
         return $map[$type];
@@ -142,7 +143,7 @@ class MssqlHelper extends DBHelper
         $ignoreRequired = false
         )
     {
-        $sql='';
+        $sql=$sql2='';
         $constraints = $this->get_field_default_constraint_name($tablename);
         if ($this->isFieldArray($fieldDefs)) {
             foreach ($fieldDefs as $def)
@@ -152,7 +153,15 @@ class MssqlHelper extends DBHelper
           		if (!empty($constraints[$def['name']])) {
           			$sql.=" ALTER TABLE " . $tablename . " DROP CONSTRAINT " . $constraints[$def['name']];
           		}
-
+          		//check to see if we need to drop related indexes before the alter
+          		$indices = $this->get_indices($tablename);
+                foreach ( $indices as $index ) {
+                    if ( in_array($def['name'],$index['fields']) ) {
+                        $sql  .= ' ' . $this->add_drop_constraint($tablename,$index,true).' ';
+                        $sql2 .= ' ' . $this->add_drop_constraint($tablename,$index,false).' ';
+                    }
+                }
+            
           		$columns[] = $this->alterSQLRep($action, $def, $ignoreRequired,$tablename);
       		}
         }
@@ -162,12 +171,21 @@ class MssqlHelper extends DBHelper
       		if (!empty($constraints[$fieldDefs['name']])) {
       			$sql.=" ALTER TABLE " . $tablename . " DROP CONSTRAINT " . $constraints[$fieldDefs['name']];
       		}
+      		//check to see if we need to drop related indexes before the alter
+            $indices = $this->get_indices($tablename);
+            foreach ( $indices as $index ) {
+                if ( in_array($fieldDefs['name'],$index['fields']) ) {
+                    $sql  .= ' ' . $this->add_drop_constraint($tablename,$index,true).' ';
+                    $sql2 .= ' ' . $this->add_drop_constraint($tablename,$index,false).' ';
+                }
+            }
+            
 
           	$columns[] = $this->alterSQLRep($action, $fieldDefs, $ignoreRequired,$tablename);
         }
 
         $columns = implode(", ", $columns);
-        $sql .= " ALTER TABLE $tablename $columns";
+        $sql .= " ALTER TABLE $tablename $columns " . $sql2;
         
         return $sql;
     }
@@ -211,6 +229,8 @@ class MssqlHelper extends DBHelper
        $columns = array();
        foreach ($indices as $index) {
            if(!empty($index['db']) && $index['db'] != 'mssql')
+               continue;
+           if (isset($index['source']) && $index['source'] != 'db')
                continue;
 
            $type = $index['type'];
@@ -397,7 +417,7 @@ EOSQL;
             }
 			elseif ( in_array($row['TYPE_NAME'],array('nchar','nvarchar')) )
 				$columns[$column_name]['len']=strtolower($row['PRECISION']);
-            elseif ( !in_array($row['TYPE_NAME'],array('datetime','text')) )
+            elseif ( !in_array($row['TYPE_NAME'],array('datetime','text','bit')) )
                 $columns[$column_name]['len']=strtolower($row['LENGTH']);
             if ( stristr($row['TYPE_NAME'],'identity') ) {
                 $columns[$column_name]['auto_increment'] = '1';
@@ -445,14 +465,14 @@ EOSQL;
         case 'index':
         case 'alternate_key':
             if ($drop)
-                $sql = "DROP INDEX {$name} ";
+                $sql = "DROP INDEX {$name} ON {$table}";
             else
                 $sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
             break;
         // constraints as indices
         case 'unique':
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP INDEX $name";
+                $sql = "ALTER TABLE {$table} DROP CONSTRAINT $name";
             else
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE ({$fields})";
             break;
@@ -467,6 +487,27 @@ EOSQL;
                 $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
             else
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name}  FOREIGN KEY ({$fields}) REFERENCES {$foreignTable}({$foreignfields})";
+            break;
+        case 'fulltext':
+            if ($this->full_text_indexing_enabled() && $drop)
+                $sql = "DROP FULLTEXT INDEX ON {$table}";
+            elseif ($this->full_text_indexing_enabled()) {
+                $catalog_name="sugar_fts_catalog";
+                if ( isset($index['catalog_name']) && $index['catalog_name'] != 'default')
+                    $catalog_name = $index['catalog_name'];
+
+                $language = "Language 1033";
+                if (isset($index['language']) && !empty($index['language']))
+                    $language = "Language " . $index['language'];
+                
+                $key_index = $index['key_index'];
+
+                $change_tracking = "auto";
+                if (isset($index['change_tracking']) && !empty($index['change_tracking']))
+                    $change_tracking = $index['change_tracking'];
+                
+                $columns[] = " CREATE FULLTEXT INDEX ON $table ($fields $language) KEY INDEX $key_index ON $catalog_name WITH CHANGE_TRACKING $change_tracking" ;
+            }
             break;
         }
         return $sql;
@@ -677,6 +718,12 @@ EOQ;
 	        $colType = $this->getColumnType($type, $name, $table);
 	    	if(stristr($colType, 'decimal')){
 				$fieldDef['len'] = isset($fieldDef['len'])? min($fieldDef['len'],38) : 38;
+			}
+			//bug: 39690 float(8) is interpreted as real and this generates a diff when doing repair
+			if(stristr($colType, 'float')){
+				if(isset($fieldDef['len']) && $fieldDef['len'] == 8){
+					unset($fieldDef['len']);
+				}
 			}
 		}
 		

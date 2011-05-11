@@ -132,7 +132,11 @@ class PopupSmarty extends ListViewSmarty{
 			$this->th->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan());
 			$this->th->ss->assign('multiSelectData', $this->getMultiSelectData());
 			$this->th->ss->assign('MODE', "<input type='hidden' name='mode' value='MultiSelect'>");
-			$this->th->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $this->data['pageData']['offsets']['next']-$this->data['pageData']['offsets']['current']));
+            $pageTotal = $this->data['pageData']['offsets']['next'] - $this->data['pageData']['offsets']['current'];
+            if($this->data['pageData']['offsets']['next'] < 0){ // If we are on the last page, 'next' is -1, which means we have to have a custom calculation
+                $pageTotal = $this->data['pageData']['offsets']['total'] - $this->data['pageData']['offsets']['current'];
+            }
+    		$this->th->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
 		}
 		
 		$this->processArrows($data['pageData']['ordering']);
@@ -234,7 +238,9 @@ class PopupSmarty extends ListViewSmarty{
 			$formBase = new $this->_popupMeta['create']['formBaseClass']();
 			if(isset($_REQUEST['doAction']) && $_REQUEST['doAction'] == 'save')
 			{
-				$formBase->handleSave('', false, true);
+				//If it's a new record, set useRequired to false
+				$useRequired = empty($_REQUEST['id']) ? false : true;
+				$formBase->handleSave('', false, $useRequired);
 			}
 		}
 	    
@@ -286,6 +292,10 @@ class PopupSmarty extends ListViewSmarty{
         $this->searchForm->lv = $lv;
         $this->searchForm->displaySavedSearch = false;
 
+        //BEGIN SUGARCRM flav=pro ONLY
+		ACLField::listFilter($this->searchForm->fieldDefs, $this->module, $GLOBALS['current_user']->id, true, false, 1,false, true, '_advanced');
+		//END SUGARCRM flav=pro ONLY
+        
         $this->searchForm->populateFromRequest('advanced_search');
         $searchWhere = $this->_get_where_clause();
         $this->searchColumns = $this->searchForm->searchColumns;

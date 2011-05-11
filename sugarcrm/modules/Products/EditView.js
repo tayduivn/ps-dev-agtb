@@ -30,7 +30,7 @@
 
 function get_popup_product()
 {
-     open_popup('ProductTemplates', '600', '400', '&form=EditView&tree=ProductsProd', 'true', 'false',{"call_back_function":"set_product_type_return","form_name":"EditView","field_to_name_array":{"id":"product_template_id","name":"name"}});
+    open_popup('ProductTemplates', '600', '400', '&form=EditView&tree=ProductsProd', 'true', 'false',{"call_back_function":"set_product_type_return","form_name":this.form_id,"field_to_name_array":{"id":"product_template_id","name":"name"}});
 }
 
 

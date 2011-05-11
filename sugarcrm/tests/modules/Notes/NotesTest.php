@@ -15,7 +15,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug19499
+     * @ticket 19499
      */
     public function testCreateProperNameFieldContainsFirstAndLastName()
     {
@@ -31,7 +31,7 @@ class NotesTest extends Sugar_PHPUnit_Framework_TestCase
         $note = new Note();
         $note->contact_id = $contact_id;
         $note->disable_row_level_security = true;
-        $note->_create_proper_name_field();
+        $note->fill_in_additional_detail_fields();
         
         $this->assertContains($contact->first_name,$note->contact_name);
         $this->assertContains($contact->last_name,$note->contact_name);

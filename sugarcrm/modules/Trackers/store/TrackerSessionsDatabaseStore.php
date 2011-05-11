@@ -52,13 +52,19 @@ class TrackerSessionsDatabaseStore implements Store {
        }
        
        //BEGIN SUGARCRM flav=pro ONLY
-       if($GLOBALS['db']->dbType == 'oci8') {
+       if($GLOBALS['db']->dbType == 'oci8'  &&  method_exists( $GLOBALS['db']->getHelper()  , 'getAutoIncrementSQL')) {
        	  $columns[] = 'id';
-       	  $values[] = $GLOBALS['db']->getHelper()->getAutoIncrementSQL($monitor->table_name,'id');
+       	  if(method_exists($GLOBALS['db']->getHelper(), 'getAutoIncrementSQL'))
+       	  {
+       	  	$values[] = $GLOBALS['db']->getHelper()->getAutoIncrementSQL($monitor->table_name,'id');
+       	  } else {
+       	  	$values[] = $GLOBALS['db']->getHelper()->getAutoIncrement($monitor->table_name,'id');
+       	  }
        }
        //END SUGARCRM flav=pro ONLY
        if ( !isset($monitor->round_trips) ) $monitor->round_trips = 0;
        if ( !isset($monitor->active) ) $monitor->active = 1;
+       if ( !isset($monitor->seconds) ) $monitor->seconds = 0;
        if($monitor->round_trips == 1) {
 		  $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
 		  $GLOBALS['db']->query($query);

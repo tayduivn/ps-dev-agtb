@@ -23,42 +23,18 @@
  ********************************************************************************/
 -->
 <script type='text/javascript'>
-var LBL_LOGIN_SUBMIT = '{$MOD.LBL_LOGIN_SUBMIT}';
-var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
+var LBL_LOGIN_SUBMIT = '{sugar_translate module="Users" label="LBL_LOGIN_SUBMIT"}';
+var LBL_REQUEST_SUBMIT = '{sugar_translate module="Users" label="LBL_REQUEST_SUBMIT"}';
 </script>
 <table cellpadding="0" align="center" width="100%" cellspacing="0" border="0">
 	<tr>
 		<td align="center">
-		<div class="dashletPanelMenu" style="width: 460px;">
-		<div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
-		<div class="bd">
-		<div class="ml"></div>
-		<div class="bd-center">
+		<div class="loginBoxShadow" style="width: 460px;">
 			<div class="loginBox">
 			<table cellpadding="0" cellspacing="0" border="0" align="center">
 				<tr>
-					<td align="left"><b>{$MOD.LBL_LOGIN_WELCOME_TO}</b><br>
-					    {* //BEGIN SUGARCRM flav=pro && flav!=ent ONLY *}
-						<IMG src="include/images/sugar_md.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=pro && flav!=ent ONLY *}
-					    {* //BEGIN SUGARCRM flav=sales ONLY
-						<IMG src="include/images/sugar_md_sales.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=sales ONLY
-					    {* //BEGIN SUGARCRM flav=dev ONLY
-						<IMG src="include/images/sugar_md_dev.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=dev ONLY
-					    {* //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-						<IMG src="include/images/sugar_md_express.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-					    {* //BEGIN SUGARCRM flav=com && lic!=sub ONLY
-						<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">
-					    {* //END SUGARCRM flav=com && lic!=sub ONLY
-					    {* //BEGIN SUGARCRM flav=dce ONLY
-						<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=dce ONLY
-					    {* //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
-						<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">
-					    {* //END SUGARCRM flav=ent && flav!=dev ONLY *}
+					<td align="left"><b>{sugar_translate module="Users" label="LBL_LOGIN_WELCOME_TO"}</b><br>
+					    {$LOGIN_IMAGE}
 					</td>
 				</tr>
 				<tr>
@@ -82,7 +58,8 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 									</tr>
 								{/if}
 									<tr>
-										<td scope="row" colspan="2" width="100%" style="font-size: 12px; font-weight: normal; padding-bottom: 4px;">{$APP.NTC_LOGIN_MESSAGE}
+										<td scope="row" colspan="2" width="100%" style="font-size: 12px; font-weight: normal; padding-bottom: 4px;">
+										{sugar_translate label="NTC_LOGIN_MESSAGE"}
 										<input type="hidden" name="module" value="Users">
 										<input type="hidden" name="action" value="Authenticate">
 										<input type="hidden" name="return_module" value="Users">
@@ -93,31 +70,28 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 										<input type="hidden" name="login_record" value="{$LOGIN_RECORD}">
 										</td>
 									</tr>
+									
+                                    <tr><td>&nbsp;</td></tr>
 									<tr>
-										<td scope="row" width="30%">{$MOD.LBL_USER_NAME}:</td>
+										<td scope="row" width="30%">{sugar_translate module="Users" label="LBL_USER_NAME"}:</td>
 										<td width="70%"><input type="text" size='35' tabindex="1" id="user_name" name="user_name"  value='{$LOGIN_USER_NAME}' /></td>
 									</tr>
 									<tr>
-										<td scope="row">{$MOD.LBL_PASSWORD}:</td>
+										<td scope="row">{sugar_translate module="Users" label="LBL_PASSWORD"}:</td>
 										<td width="30%"><input type="password" size='26' tabindex="2" id="user_password" name="user_password" value='{$LOGIN_PASSWORD}' /></td>
 									</tr>
 									{if !empty($SELECT_LANGUAGE)}
+									
+									
 									<tr>
-										<td colspan="2" class="login_more"><div  style="cursor: hand; cursor: pointer; display:{$LOGIN_DISPLAY}" onclick='toggleDisplay("more");'><IMG src="{sugar_getimagepath file='advanced_search.gif'}" border="0" alt="Hide Options" id="more_options">&nbsp;<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_OPTIONS}</a></div>
-											<div id='more' style='display: none'>
-												<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
-												    <tr>
-														<td scope="row">{$MOD.LBL_LANGUAGE}</td>
-														<td><select style='width: 152px' name='login_language'>{$SELECT_LANGUAGE}</select></td>
-													</tr>
-												</table>
-											</div>
-										</td>
+									    <td scope="row">{sugar_translate module="Users" label="LBL_LANGUAGE"}:</td>
+                                        <td><select style='width: 152px' name='login_language' onchange="switchLanguage(this.value)">{$SELECT_LANGUAGE}</select></td>
 									</tr>
+                                    <tr><td>&nbsp;</td></tr>
 									{/if}
 									<tr>
 										<td>&nbsp;</td>
-										<td><input title="{$MOD.LBL_LOGIN_BUTTON_TITLE}" accessKey="{$MOD.LBL_LOGIN_BUTTON_TITLE}" class="button primary" type="submit" tabindex="3" id="login_button" name="Login" value="{$MOD.LBL_LOGIN_BUTTON_LABEL}"><br>&nbsp;</td>		
+										<td><input title="{sugar_translate module="Users" label="LBL_LOGIN_BUTTON_TITLE"}" accessKey="{sugar_translate module="Users" label="LBL_LOGIN_BUTTON_TITLE"}" class="button primary" type="submit" tabindex="3" id="login_button" name="Login" value="{sugar_translate module="Users" label="LBL_LOGIN_BUTTON_LABEL"}"><br>&nbsp;</td>		
 									</tr>
 								</table>
 							</form>
@@ -127,7 +101,7 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 										<td colspan="2" class="login_more">
 										<div  style="cursor: hand; cursor: pointer; display:{$DISPLAY_FORGOT_PASSWORD_FEATURE};" onclick='toggleDisplay("forgot_password_dialog");'>
 											<IMG src="{sugar_getimagepath file='advanced_search.gif'}" border="0" alt="Hide Options" id="forgot_password_dialog_options">
-											<a href='javascript:void(0)'>{$MOD.LBL_LOGIN_FORGOT_PASSWORD}</a>
+											<a href='javascript:void(0)'>{sugar_translate module="Users" label="LBL_LOGIN_FORGOT_PASSWORD"}</a>
 										</div>
 											<div id="forgot_password_dialog" style="display:none" >
 												<input type="hidden" name="entryPoint" value="GeneratePassword">
@@ -138,17 +112,17 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 														</td>
 													</tr>
 													<tr>
-														<td scope="row" width="30%">{$MOD.LBL_USER_NAME}:</td>
+														<td scope="row" width="30%">{sugar_translate module="Users" label="LBL_USER_NAME"}:</td>
 														<td width="70%"><input type="text" size='26' id="fp_user_name" name="fp_user_name"  value='{$LOGIN_USER_NAME}' /></td>
 													</tr>
 													<tr>
-											            <td scope="row" width="30%">{$MOD.LBL_EMAIL}:</td>
+											            <td scope="row" width="30%">{sugar_translate module="Users" label="LBL_EMAIL"}:</td>
 											            <td width="70%"><input type="text" size='26' id="fp_user_mail" name="fp_user_mail"  value='' ></td>
 											     	</tr>
 													{$CAPTCHA}
 													<tr>
 													    <td scope="row" width="30%"><div id='wait_pwd_generation'></div></td>
-														<td width="70%"><input title="Email Temp Password" class="button" type="button" style="display:inline" onclick="validateAndSubmit(); return document.getElementById('cant_login').value == ''" id="generate_pwd_button" name="fp_login" value="{$MOD.LBL_LOGIN_SUBMIT}"></td>
+														<td width="70%"><input title="Email Temp Password" class="button" type="button" style="display:inline" onclick="validateAndSubmit(); return document.getElementById('cant_login').value == ''" id="generate_pwd_button" name="fp_login" value="{sugar_translate module="Users" label="LBL_LOGIN_SUBMIT"}"></td>
 													</tr>
 												</table>
 											</div>
@@ -163,10 +137,7 @@ var LBL_REQUEST_SUBMIT = '{$MOD.LBL_REQUEST_SUBMIT}';
 				</tr>
 			</table>
 			</div>
-			</div>
-			<div class="mr"></div>
-			</div>
-<div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>
+
 </div>
 		</td>
 	</tr>

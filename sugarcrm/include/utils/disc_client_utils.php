@@ -47,10 +47,10 @@ function convert_disc_client(){
     $user_name  = "";
     $admin_name  = "";
     $password   = "";
-    
+
     $oc_install = false;
 	if(empty($sugar_config['unique_key'])){
-		$sugar_config['unique_key'] = create_guid();   
+		$sugar_config['unique_key'] = create_guid();
     }
     if(isset($_SESSION['oc_install']) && $_SESSION['oc_install'] == true){
     	$oc_install = true;
@@ -63,7 +63,7 @@ function convert_disc_client(){
 	    if( isset( $_REQUEST['run'] ) ){
 	        $run = $_REQUEST['run'];
 	    }
-	
+
 	    if( $run == "convert" ){
 	        if( isset($_REQUEST['server_url']) ){
 	            $server_url = $_REQUEST['server_url'];
@@ -75,7 +75,7 @@ function convert_disc_client(){
 	    else if( $run == "sync" ){
 	        $server_url = $sugar_config['sync_site_url'];
 	    }
-	
+
 	    if( isset($_REQUEST['user_name']) ){
 	        $user_name = $_REQUEST['user_name'];
 	        if( $user_name == "" ){
@@ -90,13 +90,14 @@ function convert_disc_client(){
 	        	$password = $_REQUEST['password'];
 	        }
 	    }
+
     }
     else{
     	//this is an offline client install
     	if( isset( $_SESSION['oc_run'] ) ){
 	        $run = $_SESSION['oc_run'];
 	    }
-	
+
 	    if( $run == "convert" ){
 	        if( isset($_SESSION['oc_server_url']) ){
 	            $server_url = $_SESSION['oc_server_url'];
@@ -108,7 +109,7 @@ function convert_disc_client(){
 	    else if( $run == "sync" ){
 	        $server_url = $sugar_config['sync_site_url'];
 	    }
-	
+
 	    if( isset($_SESSION['oc_username']) ){
 	        $user_name = $_SESSION['oc_username'];
 	        if( $user_name == "" ){
@@ -124,9 +125,9 @@ function convert_disc_client(){
 	        }
 	    }
     }//end check for offline client install
-    
+
     if(!isset($_SESSION['is_oc_conversion']) || $_SESSION['is_oc_conversion'] == false){
-        $password = md5($password);    
+        $password = md5($password);
     }
 
     $sugar_config['oc_username'] = $user_name;
@@ -136,39 +137,39 @@ function convert_disc_client(){
     if(isset($_SESSION['install_method'])){
         $sugar_config['install_method'] = $_SESSION['install_method'];
     }
-   
+
     if((isset( $_REQUEST['submitted']) || $oc_install) && sizeof( $errors ) == 0 ){
           if(empty($server_url) || $server_url == 'http://'){
         	 $errors[] = "Server URL is required";
         }else{
-        $sugar_config['sync_site_url']  = $server_url;	
-         
+        $sugar_config['sync_site_url']  = $server_url;
+
         $soapclient = new nusoapclient( "$server_url/soap.php" );
         $soapclient->response_timeout = 360;
 		if($soapclient->call('is_loopback', array())){
-			$errors[] = "Server and Client must be on seperate machines with unique ip addresses";	
+			$errors[] = "Server and Client must be on seperate machines with unique ip addresses";
 		}
         $result = $soapclient->call('get_sugar_flavor', array());
         global $sugar_flavor, $sugar_version;
-        
+
 
         if($result != $sugar_flavor){
-            $errors[] = "Server and Client must both be running the same flavor of Sugar.";  
+            $errors[] = "Server and Client must both be running the same flavor of Sugar.";
         }
 		if(!$soapclient->call('offline_client_available', array())){
-			$errors[] = "No licenses available for offline client";	
+			$errors[] = "No licenses available for offline client";
 		}
         $result = $soapclient->call( 'login', array('user_auth'=>array('user_name'=>$user_name,'password'=>$password, 'version'=>'.01'), 'application_name'=>'Disconnected Client Setup'));
         if( $soapclient->error_str ){
             $errors[] = "Login failed with error: " . $soapclient->response;
         }
-        
+
         if( $result['error']['number'] != 0 ){
         	 $errors[] = "Login failed with error: " . $result['error']['name'] . ' ' . $result['error']['description'];
-        	
+
         }
-          
-      
+
+
         $session = $result['id'];
           }
 		 $errorString = "";
@@ -177,16 +178,16 @@ function convert_disc_client(){
 	      		 $errorString .= $error . "<br>" ;
 	  		  }
 		 }
-       
+
         if( $session  && empty($errors)){
             if( $run == "convert" ){
                 // register this client/user with server
 
                 // update local config.php file
-              
+
                 $install_method = 'web';
                 if(isset($sugar_config['install_method'])){
-                    $install_method = $sugar_config['install_method'];   
+                    $install_method = $sugar_config['install_method'];
                 }
                	//attempt to obtain the system_id from the server
                 //php_uname('n') will only work on a windows system
@@ -200,14 +201,14 @@ function convert_disc_client(){
                     if( $result['error']['number'] != 0 ){
                        $errors[] =  $result['error']['description'];
                     }else{
-					   
+
 					   $admin = new Administration();
 					   $system_id = $result['id'];
 					   if(!isset($system_id)){
 						  $system_id = 1;
 					   }
 					   $admin->saveSetting('system', 'system_id', $system_id);
-                    } 
+                    }
         		}
             }
 
@@ -216,7 +217,7 @@ function convert_disc_client(){
                 require_once("modules/Sync/SyncHelper.php");
                 sync_users($soapclient, $session, true, true);
                 $sugar_config['oc_converted'] = true;
-                
+
 			    echo 'Updating Local Information<br>';
 			 	//echo 'Done - will auto logout in <div id="seconds_left">10</div> seconds<script> function logout_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php?module=Users&action=Logout";}else{left--; setTimeout("logout_countdown("+ left+")", 1000)}};setTimeout("logout_countdown(10)", 1000)</script>';
                 // done with soap calls
@@ -229,12 +230,12 @@ function convert_disc_client(){
         }
     }
 
-    
+
     $errorString = "";
     foreach( $errors as $error ){
        $errorString .= $error . "<br>" ;
     }
-   
+
     return $errorString;
 }
 
@@ -264,24 +265,22 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
     set_time_limit(3600);
 	ini_set('default_socket_timeout', 3600);
     $return_str  = "";
-    
+
     //1) rather than using md5, we will use the date_modified
     if (file_exists('modules/Sync/file_config.php') && $force_md5_sync != true) {
 		require_once ('modules/Sync/file_config.php');
         global $file_sync_info;
 		if(!isset($file_sync_info['last_local_sync']) && !isset($file_sync_info['last_server_sync'])){
-			$last_local_sync = $timedate->get_gmt_db_datetime();	
-    		$last_server_sync = $timedate->get_gmt_db_datetime();	
+			$last_server_sync = $last_local_sync = $timedate->nowDb();
     		$is_first_sync = true;
-		}else{	
+		}else{
 			$last_local_sync = $file_sync_info['last_local_sync'];
 			$last_server_sync = $file_sync_info['last_server_sync'];
 			$is_first_sync = false;
 		}
     }
     else{
-    	$last_local_sync = $timedate->get_gmt_db_datetime();	
-    	$last_server_sync = $timedate->get_gmt_db_datetime();	
+    	$last_server_sync = $last_local_sync = $timedate->nowDb();
     	$is_first_sync = true;
     }
 
@@ -303,22 +302,20 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
         			$file_list[$src_file] = $md5;
             	}
         	}
-    	}	
+    	}
     }
-    
-    
-    
+
+
+
     //2) save the list of md5 files to file system
     if( !write_array_to_file( "client_file_list", $file_list, $temp_file ) ){
         echo "Could not save file.";
     }
 
-	$md5 = md5_file($temp_file);
 	// read file
-    $fh = sugar_fopen($temp_file, "rb" );
-    $contents = fread( $fh, filesize($temp_file) );
-    fclose( $fh );
-	
+    $contents = sugar_file_get_contents($temp_file);
+	$md5 = md5($contents);
+
     // encode data
     $data = base64_encode($contents);
    $md5file  = array('filename'=>$temp_file, 'md5'=>$md5, 'data'=>$data, 'error' => null);
@@ -330,18 +327,14 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
     	$fh = sugar_fopen($zip_file, 'w');
     	fwrite($fh, base64_decode($result['result']));
 		fclose($fh);
-	
-    	$archive = new PclZip($zip_file);
-    	if( $archive->extract( PCLZIP_OPT_PATH, ".", 
-    					   PCLZIP_OPT_REPLACE_NEWER) == 0 ){
-        	die( "Error: " . $archive->errorInfo(true) );
-    	}
+
+		unzip($zip_file, ".", true);
     }
-    
+
     if(file_exists($zip_file)){
         unlink($zip_file);
     }
-	$file_sync_info['last_local_sync'] = $timedate->get_gmt_db_datetime();
+	$file_sync_info['last_local_sync'] = $timedate->nowDb();
 	$server_time = $soapclient->call('get_gmt_time', array ());
 	$file_sync_info['last_server_sync'] = $server_time;
 	$file_sync_info['is_first_sync'] = $is_first_sync;
@@ -351,10 +344,10 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 
 /*
  * Obtain a list of required upgrades from the server
- * 
+ *
  * @param soapclient           the nusoap client to use for request
  * @param session              the authenticated session to use for request
- *                             
+ *
  * return                  true if at least one upgrade was applied, false otherwise
  */
 function get_required_upgrades($soapclient, $session){
@@ -362,8 +355,8 @@ function get_required_upgrades($soapclient, $session){
 	require_once('include/nusoap/nusoap.php');
 
     $errors = array();
-    
-    
+
+
     $upgrade_history = new UpgradeHistory();
     $upgrade_history->disable_row_level_security = true;
     $installeds = $upgrade_history->getAllOrderBy('date_entered ASC');
@@ -374,24 +367,24 @@ function get_required_upgrades($soapclient, $session){
 	{
 		$history[] = array('id' => $installed->id, 'filename' => $installed->filename, 'md5' => $installed->md5sum, 'type' => $installed->type, 'status' => $installed->status, 'version' => $installed->version, 'date_entered' => $installed->date_entered, 'error' => $error->get_soap_array());
 	}
-    
+
     $result = $soapclient->call('get_required_upgrades', array('session'=>$session, 'client_upgrade_history' => $history, 'client_version' => $sugar_version));
 
     $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
 
     $upgrade_installed = false;
-    
+
     if(empty($soapclient->error_str) && $result['error']['number'] == 0){
         foreach($result['upgrade_history_list'] as $upgrade){
             $file_result = $soapclient->call('get_encoded_file', array( 'session'=>$session, 'filename'=>$upgrade['filename']));
-            
+
             if(empty($soapclient->error_str) && $result['error']['number'] == 0){
                 if($file_result['md5'] == $upgrade['md5']){
                     $newfile = write_encoded_file($file_result, $temp_dir);
                     unzip($newfile, $temp_dir);
 					global $unzip_dir;
 					$unzip_dir = $temp_dir;
-					
+
                     if(file_exists("$temp_dir/manifest.php")){
                         require_once("$temp_dir/manifest.php");
                         global $manifest_arr;
@@ -406,14 +399,14 @@ function get_required_upgrades($soapclient, $session){
                                 $zip_from_dir   = $manifest['copy_files']['from_dir'];
                             }
                             $source = "$temp_dir/$zip_from_dir";
-                            $dest = getcwd();  
-                            copy_recursive($source, $dest);  
-                       
+                            $dest = getcwd();
+                            copy_recursive($source, $dest);
+
                             if(file_exists("$temp_dir/scripts/post_install.php")){
                                 require_once("$temp_dir/scripts/post_install.php");
                                 post_install();
                             }
-                            
+
                             //save newly installed upgrade
                             $new_upgrade = new UpgradeHistory();
                             $new_upgrade->filename      = $upgrade['filename'];
@@ -429,7 +422,7 @@ function get_required_upgrades($soapclient, $session){
             }
         }
     }
-    return $upgrade_installed;   
+    return $upgrade_installed;
 }
 
 function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempts = 0){
@@ -465,13 +458,13 @@ function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempt
     if( !empty($soapclient->error_str)){
 		if($attempts < $max_attempts && substr_count($soapclient->error_str, 'HTTP Error: socket read of headers timed out') > 0){
 			echo "Could not retrieve file patterns list.  Error was: " . $soapclient->error_str;
-			
+
 			$attempts++;
 			echo "<BR> $attempts of $max_attempts attempts trying again<br>";
 			flush();
 			ob_flush();
 			return disc_client_file_sync($soapclient, $session, $verbose, $attempts);
-				
+
 		}
         die( "Failed: Could not retrieve file patterns list.  Error was: " . $soapclient->error_str);
 
@@ -514,7 +507,7 @@ function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempt
 			flush();
 			ob_flush();
 			return disc_client_file_sync($soapclient, $session, $verbose, $attempts);
-				
+
 		}
         die( "Failed: Could not retrieve file  list.  Error was: " . $soapclient->error_str);
 
@@ -576,9 +569,9 @@ function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempt
        		 }
 		}else{
 			if(!$ignore){
-				 $return_str .= disc_client_utils_print( "File missing from client : $temp_dir/$server_filename<br>", $verbose );		
+				 $return_str .= disc_client_utils_print( "File missing from client : $temp_dir/$server_filename<br>", $verbose );
 				 $needed_file_list[] = $server_filename;
-			}	
+			}
 		}
 
     }
@@ -593,7 +586,7 @@ function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempt
 			flush();
 			ob_flush();
 			return disc_client_file_sync($soapclient, $session, $verbose, $attempts);
-				
+
 		}
         die( "Failed: Empty file list returned from server.  Please try again." );
 
@@ -620,10 +613,10 @@ function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempt
        	 copy( "$temp_dir/$needed_file", $needed_file );
        	  $return_str .= disc_client_utils_print( "Updated file: $needed_file <br>", $verbose );
 		}else{
-			 $return_str .= disc_client_utils_print( "File missing from client : $temp_dir/$needed_file<br>", $verbose );		
+			 $return_str .= disc_client_utils_print( "File missing from client : $temp_dir/$needed_file<br>", $verbose );
 		}
 
-       
+
 
     }
 

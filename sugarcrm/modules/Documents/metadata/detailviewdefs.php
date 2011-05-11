@@ -112,4 +112,5 @@ $viewdefs['Documents']['DetailView'] = array(
     )
    
 );
+
 ?>

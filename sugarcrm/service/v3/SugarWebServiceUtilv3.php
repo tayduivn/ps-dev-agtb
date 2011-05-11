@@ -21,6 +21,47 @@
 require_once('service/core/SoapHelperWebService.php');
 class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 
+    function filter_fields($value, $fields)
+    {
+        $GLOBALS['log']->info('Begin: SoapHelperWebServices->filter_fields');
+        global $invalid_contact_fields;
+        $filterFields = array();
+        foreach($fields as $field)
+        {
+            if (is_array($invalid_contact_fields))
+            {
+                if (in_array($field, $invalid_contact_fields))
+                {
+                    continue;
+                }
+            }
+            if (isset($value->field_defs[$field]))
+            {
+                $var = $value->field_defs[$field];
+                if( isset($var['source'])
+                    && ($var['source'] != 'db' && $var['source'] != 'custom_fields' && $var['source'] != 'non-db')
+                    && $var['name'] != 'email1' && $var['name'] != 'email2'
+                    && (!isset($var['type'])|| $var['type'] != 'relate')) {
+
+                    if( $value->module_dir == 'Emails'
+                        && (($var['name'] == 'description') || ($var['name'] == 'description_html') || ($var['name'] == 'from_addr_name')
+                            || ($var['name'] == 'reply_to_addr') || ($var['name'] == 'to_addrs_names') || ($var['name'] == 'cc_addrs_names')
+                            || ($var['name'] == 'bcc_addrs_names') || ($var['name'] == 'raw_source')))
+                    {
+
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+            $filterFields[] = $field;
+        }
+        $GLOBALS['log']->info('End: SoapHelperWebServices->filter_fields');
+        return $filterFields;
+    }
+
     function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '', $order_by = '') {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
 		require_once('include/TimeDate.php');
@@ -107,7 +148,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 
 	} // fn
 
-	function get_field_list($value,$fields,  $translate=true) {
+	function get_field_list($value, $fields, $translate=true) {
 
 	    $GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list');
 		$module_fields = array();
@@ -117,7 +158,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 			foreach($value->field_defs as $var){
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
 				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' &&$var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
-				if ($var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
+				if ((isset($var['source']) && $var['source'] == 'non_db') || (isset($var['type']) && $var['type'] == 'link')) {
 					continue;
 				}
 				$required = 0;
@@ -125,7 +166,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 				$options_ret = array();
 				// Apparently the only purpose of this check is to make sure we only return fields
 				//   when we've read a record.  Otherwise this function is identical to get_module_field_list
-				if( isset($var['required']) && ($var['required'] || $var['required'] == 'true') ){
+				if( isset($var['required']) && ($var['required'] || $var['required'] == 'true' ) ){
 					$required = 1;
 				}
 
@@ -145,6 +186,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	            $entry['type'] = $var['type'];
 	            $entry['group'] = isset($var['group']) ? $var['group'] : '';
 	            $entry['id_name'] = isset($var['id_name']) ? $var['id_name'] : '';
+
 	            if ($var['type'] == 'link') {
 		            $entry['relationship'] = (isset($var['relationship']) ? $var['relationship'] : '');
 		            $entry['module'] = (isset($var['module']) ? $var['module'] : '');
@@ -158,6 +200,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 		            }
 		            $entry['required'] = $required;
 		            $entry['options'] = $options_ret;
+		            $entry['related_module'] = (isset($var['id_name']) && isset($var['module'])) ? $var['module'] : '';
 					if(isset($var['default'])) {
 					   $entry['default_value'] = $var['default'];
 					}
@@ -391,7 +434,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
     function generateUpcomingActivitiesWhereClause($seed,$meta)
     {
         $query = array();
-        $query_date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $query_date = TimeDate::getInstance()->nowDb();
         $query[] = " {$seed->table_name}.{$meta['date_field']} > '$query_date'"; //Add date filter
         $query[] = "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}' "; //Add assigned user filter
         if(is_array($meta['status_field']))

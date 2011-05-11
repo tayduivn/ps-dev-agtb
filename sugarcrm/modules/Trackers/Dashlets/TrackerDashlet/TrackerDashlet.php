@@ -57,7 +57,8 @@ class TrackerDashlet extends Dashlet {
         // if no custom title, use default
         if(empty($def['title'])) $this->title = $this->dashletStrings['LBL_TITLE'];
         else $this->title = $def['title'];   
-
+        if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
+        
         $this->tReporter = new TrackerReporter();
     }
 
@@ -119,6 +120,12 @@ class TrackerDashlet extends Dashlet {
         $ss->assign('title', $this->title);
         $ss->assign('height', $this->height);
         $ss->assign('id', $this->id);
+        if($this->isAutoRefreshable()) {
+       		$ss->assign('isRefreshable', true);
+			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
+			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
+			$ss->assign('autoRefreshSelect', $this->autoRefresh);
+		}
 
         return parent::displayOptions() . $ss->fetch('modules/Trackers/Dashlets/TrackerDashlet/TrackerDashletOptions.tpl');
     }  
@@ -141,7 +148,8 @@ class TrackerDashlet extends Dashlet {
         
 //        $options['savedText'] = br2nl($this->savedText);
         $options['savedText'] = $this->savedText;
-         
+        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
+        
         return $options;
     }
     

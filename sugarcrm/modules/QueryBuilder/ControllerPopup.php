@@ -66,7 +66,8 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/QueryBuilder/Controller_Popup_picker.html");
 }
 else {
-	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
+    $GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/QueryBuilder/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/QueryBuilder/".$_REQUEST['html'].'.html');
 }
@@ -80,16 +81,16 @@ if(!isset($_REQUEST['form']))
 
 // This code should always return an answer.
 // The form name should be made into a parameter and not be hard coded in this file.
- 
- 
+
+
 
 if ($_REQUEST['component'] == 'Column')
 {
-	$focus = new QueryColumn(); 
+	$focus = new QueryColumn();
 	if(isset($_REQUEST['column_record']) && isset($_REQUEST['column_record'])) {
     	$focus->retrieve($_REQUEST['column_record']);
 	}
-	
+
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return(magnitude, direction) {\n";
         $the_javascript .= "    window.opener.document.ColumnView.action.value = 'ColumnSave';\n";
@@ -102,17 +103,17 @@ if ($_REQUEST['component'] == 'Column')
         $the_javascript .= "</script>\n";
 
         $display_title = $mod_strings['LBL_COLUMN_NAME'];
-        $form->assign("DISPLAY_TITLE", $display_title); 
-        $form->assign("DISPLAY_NAME", $focus->column_name);        
+        $form->assign("DISPLAY_TITLE", $display_title);
+        $form->assign("DISPLAY_NAME", $focus->column_name);
 }
 
 if ($_REQUEST['component'] == 'GroupBy')
 {
-	$focus = new QueryGroupBy(); 
+	$focus = new QueryGroupBy();
 	if(isset($_REQUEST['groupby_record']) && isset($_REQUEST['groupby_record'])) {
     	$focus->retrieve($_REQUEST['groupby_record']);
 	}
-	
+
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return(magnitude, direction) {\n";
         $the_javascript .= "    window.opener.document.GroupByView.action.value = 'GroupBySave';\n";
@@ -123,10 +124,10 @@ if ($_REQUEST['component'] == 'GroupBy')
        	$the_javascript .= "	window.opener.document.GroupByView.submit(); \n";
         $the_javascript .= "}\n";
         $the_javascript .= "</script>\n";
-		
+
         $display_title = $mod_strings['LBL_GROUPBY_FIELD'];
-        $form->assign("DISPLAY_TITLE", $display_title); 
-        $form->assign("DISPLAY_NAME", $focus->groupby_field);        
+        $form->assign("DISPLAY_TITLE", $display_title);
+        $form->assign("DISPLAY_NAME", $focus->groupby_field);
 }
 
 $form->assign("MODULE_NAME", $currentModule);

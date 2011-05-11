@@ -33,6 +33,40 @@ class ModuleBuilderController extends SugarController
 {
     var $action_remap = array ( ) ;
 
+    /**
+     * Used by the _getModuleTitleParams() method calls in ModuleBuilder views to get the correct string
+     * for the section you are in
+     *
+     * @return string
+     */
+    public static function getModuleTitle()
+    {
+        global $mod_strings;
+
+        if(!empty($_REQUEST['type'])){
+            if ( $_REQUEST['type'] == 'studio' ) {
+                return $mod_strings['LBL_STUDIO'];
+            }
+            elseif ( $_REQUEST['type'] == 'sugarportal' ) {
+                return $mod_strings['LBL_SUGARPORTAL'];
+            }
+            elseif ( $_REQUEST['type'] == 'mb' ) {
+                return $mod_strings['LBL_MODULEBUILDER'];
+            }
+            elseif ( $_REQUEST['type'] == 'dropdowns') {
+                return $mod_strings['LBL_DROPDOWNEDITOR'];
+            }
+            elseif ( $_REQUEST['type'] == 'home' ) {
+                return $mod_strings['LBL_HOME'];
+            }
+            else {
+                return $mod_strings['LBL_DEVELOPER_TOOLS'];
+            }
+        }else{
+            return $mod_strings['LBL_DEVELOPER_TOOLS'];
+        }
+    }
+    
     function fromModuleBuilder ()
     {
         return (isset ( $_REQUEST [ 'MB' ] ) && ($_REQUEST [ 'MB' ] == '1')) ;
@@ -162,7 +196,7 @@ class ModuleBuilderController extends SugarController
         {
             $mb->getPackage ( $load ) ;
             $mb->packages [ $load ]->build () ;
-        }
+        }        
     }
 
     function action_DeployPackage ()
@@ -189,13 +223,17 @@ class ModuleBuilderController extends SugarController
             $pm->performUninstall ( $load ) ;           
 			 //#23177 , js cache clear
 			 clearAllJsAndJsLangFilesWithoutOutput();
-    		//#30747, clear the cache in memoy
+    		//#30747, clear the cache in memory
     		$cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
     		sugar_cache_clear($cache_key );
     		sugar_cache_reset();
     		//clear end
             $pm->performInstall ( $_REQUEST [ 'install_file' ] , true) ;
-        }
+
+            //clear the unified_search_module.php file 
+            require_once('modules/Home/UnifiedSearchAdvanced.php');
+            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();          
+        }        
         echo 'complete' ;
 
     }
@@ -214,7 +252,7 @@ class ModuleBuilderController extends SugarController
             $mb->packages [ $load ]->description = $description ;
             $mb->packages [ $load ]->exportProject () ;
             $mb->packages [ $load ]->readme = $readme ;
-        }
+        }       
     }
 
     function action_DeletePackage ()
@@ -310,7 +348,7 @@ class ModuleBuilderController extends SugarController
     {
         require_once ('modules/DynamicFields/FieldCases.php') ;
         $field = get_widget ( $_REQUEST [ 'type' ] ) ;
-        $_REQUEST [ 'name' ] = trim ( $_POST [ 'name' ] ) ;
+        $_REQUEST [ 'name' ] = trim ( $_REQUEST [ 'name' ] ) ;
 
         $field->populateFromPost () ;
 
@@ -320,6 +358,18 @@ class ModuleBuilderController extends SugarController
             if (! empty ( $_REQUEST [ 'view_module' ] ))
             {
                 $module = $_REQUEST [ 'view_module' ] ;
+                
+                $bean = loadBean($module);
+                if(!empty($bean))
+                {
+	                $field_defs = $bean->field_defs;          
+	                if(isset($field_defs[$field->name. '_c']))
+	                {
+						$GLOBALS['log']->error($GLOBALS['mod_strings']['ERROR_ALREADY_EXISTS'] . '[' . $field->name . ']');
+						sugar_die($GLOBALS['mod_strings']['ERROR_ALREADY_EXISTS']);
+	                }
+                }                
+                
                 $df = new DynamicField ( $module ) ;
                 $class_name = $GLOBALS [ 'beanList' ] [ $module ] ;
                 require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
@@ -501,7 +551,7 @@ class ModuleBuilderController extends SugarController
     function action_DeleteField ()
     {
         require_once ('modules/DynamicFields/FieldCases.php') ;
-        $field = get_widget ( $_POST [ 'type' ] ) ;
+        $field = get_widget ( $_REQUEST [ 'type' ] ) ;
         $field->name = $_REQUEST [ 'name' ] ;
         if (!isset ( $_REQUEST [ 'view_package' ] ))
         {
@@ -517,6 +567,12 @@ class ModuleBuilderController extends SugarController
                 //Need to load the entire field_meta_data for some field types
                 $field = $df->getFieldWidget($moduleName, $field->name);
                 $field->delete ( $df ) ;
+                
+                $GLOBALS [ 'mod_strings' ]['LBL_ALL_MODULES'] = 'all_modules';
+                $_REQUEST['execute_sql'] = true;
+                include_once ('modules/Administration/QuickRepairAndRebuild.php') ;
+                $repair = new RepairAndClear();
+                $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
                 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php' ;
                 $module = StudioModuleFactory::getStudioModule( $moduleName ) ;
             }
@@ -613,6 +669,14 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->writeWorkingFile () ;
+        
+    	if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->setUseTabs($parser->getUseTabs());
+                $parser2->writeWorkingFile () ;
+	        }
+        }
     }
 
     function action_saveAndPublishLayout ()
@@ -634,6 +698,14 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
+        
+        if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
+	        if(strtolower ($parser->_view) == MB_EDITVIEW){
+	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
+	        	$parser2->setUseTabs($parser->getUseTabs());
+                $parser2->handleSave () ;
+	        }
+        }
     }
 
     function action_manageBackups ()
@@ -748,7 +820,7 @@ class ModuleBuilderController extends SugarController
     {
         $this->view = 'history' ;
     }
-
+    
     function resetmodule()
     {
     	$this->view = 'resetmodule';

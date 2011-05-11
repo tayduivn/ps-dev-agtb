@@ -43,7 +43,7 @@ $manifest = array(
 $installdefs = array(
 	'id' => 'feeds',
 
-	'image_dir'=>'<basepath>/images',
+	//'image_dir'=>'<basepath>/images',
 
 	'copy' => array(
 		array(

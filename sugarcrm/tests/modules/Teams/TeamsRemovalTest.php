@@ -1,11 +1,11 @@
 <?php
-
+//FILE SUGARCRM flav=pro ONLY
 /**
  * Test cases for the Team object
  */
 class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	var $skipTest = true;
+
 	var $_user = null;    
 	var $_contact = null;
 	var $_contact2 = null;
@@ -23,11 +23,11 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
     var $_teamB = null;
     var $_teamBId = null;
 
-	function setUp() {
-	    if($this->skipTest) {
-    	   $this->markTestSkipped("Skipping unless otherwise specified");
-    	}		
-		
+
+	function setUp() 
+	{
+	    $this->markTestSkipped("Skipping unless otherwise specified");
+
         global $beanList, $beanFiles, $moduleList;
         require('include/modules.php');		
 		
@@ -64,11 +64,14 @@ class TeamsRemovalTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_contact = null;
         $this->_contact2 = null;   
         
-        $this->_teamA->delete_team();
-        $this->_teamA = null;
-        
-        $this->_teamB->delete_team();
-        $this->_teamB = null;     
+        if ( $this->_teamA instanceOf Team ) {
+            $this->_teamA->delete_team();
+            $this->_teamA = null;
+        }
+        if ( $this->_teamB instanceOf Team ) {
+            $this->_teamB->delete_team();
+            $this->_teamB = null;     
+        }
 
 		$user = new User();
 		$user->retrieve('1');

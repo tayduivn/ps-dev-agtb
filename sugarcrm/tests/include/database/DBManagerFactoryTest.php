@@ -36,7 +36,7 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27781
+     * @ticket 27781
      */
     public function testGetInstanceMssqlDefaultSelection()
     {
@@ -56,7 +56,7 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27781
+     * @ticket 27781
      */
     public function testGetInstanceMssqlForceFreetdsSelection()
     {
@@ -71,7 +71,7 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27781
+     * @ticket 27781
      */
     public function testGetInstanceMssqlForceMssqlSelection()
     {
@@ -91,7 +91,7 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
-     * @group bug27781
+     * @ticket 27781
      */
     public function testGetInstanceMssqlForceSqlsrvSelection()
     {

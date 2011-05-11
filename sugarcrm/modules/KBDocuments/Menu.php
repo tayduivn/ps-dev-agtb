@@ -43,7 +43,7 @@ if(ACLController::checkAccess('KBDocuments', 'edit', true)){
 	}
 }
 if(ACLController::checkAccess('KBDocuments', 'list', true))$module_menu[]=Array("index.php?module=KBDocuments&action=SearchHome", $mod_strings['LBL_LIST_ARTICLES'],"KBArticle");
-if(is_admin($current_user)){
+if(is_admin($current_user) || is_admin_for_module($current_user,'KBDocuments')){
 	if(ACLController::checkAccess('KBDocuments', 'list', true))$module_menu[]=Array("index.php?module=KBDocuments&action=KBAdminView", $mod_strings['LBL_KNOWLEDGE_BASE_ADMIN_MENU'],"KB");
 }
 ?>

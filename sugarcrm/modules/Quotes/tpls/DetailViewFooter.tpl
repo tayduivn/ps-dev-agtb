@@ -32,13 +32,13 @@
 	<td scope="row" align="left" colspan="7"><h4>{$MOD.LBL_LINE_ITEM_INFORMATION}</h4></td>
 </tr>
 	{foreach from=$ordered_bundle_list key=index item=product_bundle}
-	
+
 	{assign var=product_bundle_product_note_list value=$product_bundle->get_notes()}
-	{assign var=bundle_list value=$product_bundle->get_product_bundle_line_items()}	
+	{assign var=bundle_list value=$product_bundle->get_product_bundle_line_items()}
 	{assign var=BUNDLE_NAME value=$product_bundle->name}
 	{assign var=bundle_key value=$product_bundle->bundle_stage}
 	{assign var=BUNDLE_STAGE value=$APP_LIST_STRINGS.quote_stage_dom.$bundle_key}
-    
+
 	<!-- BEGIN: product_bundle -->
 	<tr>
 	<td scope="row" width="1%" valign="top" style="text-align: left;" colspan='3'>{$MOD.LBL_BUNDLE_NAME}&nbsp;<b>{$BUNDLE_NAME}</b></td>
@@ -61,18 +61,18 @@
 	<td scope="row" width="15%" valign="top" style="text-align: right;">{$MOD.LBL_LIST_DEAL_TOT}</td>
 	{/if}
 	</tr>
-    
+
     {if is_array($bundle_list)}
     {counter start=0 print=false}
     {foreach from=$bundle_list key=key item=line_item}
         {if $line_item->object_name == "Product"}
 
 			<tr>
-			
+
 			<td width="1" valign="top"style="text-align: center;">{if $bean->show_line_nums == 1}{counter print=true}{/if}&nbsp;</td>
 			<td valign="top" style="text-align: center;">{$line_item->quantity}</td>
-		    <td valign="top"><a href="index.php?module=Products&action=DetailView&record={$line_item->id}">{$line_item->name}</a><BR>{$line_item->description}</td>
-		
+		    <td valign="top"><a href="index.php?module=Products&action=DetailView&record={$line_item->id}">{$line_item->name}</a><BR>{$line_item->description|nl2br}</td>
+
 		    {if $line_item->currency_id == $bean->currency_id && $line_item->currency_id != "-99"}
 		        {assign var="COST_PRICE" value=$line_item->cost_price}
 		        {assign var="LIST_PRICE" value=$line_item->list_price}
@@ -84,9 +84,9 @@
 		        {assign var="LIST_PRICE" value=$line_item->list_usdollar}
 		        {assign var="DISCOUNT_PRICE" value=$line_item->discount_usdollar}
 		        {assign var="DISCOUNT_AMOUNT" value=$line_item->discount_amount_usdollar}
-		        {assign var="SELECT_DISCOUNT" value=$line_item->discount_select}	
+		        {assign var="SELECT_DISCOUNT" value=$line_item->discount_select}
 			{/if}
-		
+
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$COST_PRICE currency_id=$CURRENCY_ID}</td>
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$LIST_PRICE currency_id=$CURRENCY_ID}</td>
 			<td valign="top" style="text-align: right;">{sugar_currency_format var=$DISCOUNT_PRICE currency_id=$CURRENCY_ID}</td>
@@ -98,9 +98,9 @@
 			     {/if}
 			{/if}
 			</tr>
-			
+
         {elseif $line_item->object_name == "ProductBundleNote"}
-			
+
 			<tr valign="top">
 			<td width='1' valign="top" style="text-align: center;">&nbsp;</td>
 			<td valign="top" style="text-align: center;">&nbsp;</td>
@@ -110,9 +110,9 @@
 			<td valign="top">&nbsp;</td>
 			</tr>
 
-        {/if} 
+        {/if}
     {/foreach}
-    
+
 		<tr><td colspan='7' NOWRAP><HR><br></td></tr>
 		<tr>
 			<td NOWRAP>&nbsp;</td>
@@ -166,7 +166,7 @@
             {/if}
 			<td NOWRAP style="text-align: right;">{$MOD.LBL_SHIPPING}</td>
 			<td NOWRAP style="text-align: right;">{sugar_currency_format var=$product_bundle->shipping currency_id=$CURRENCY_ID}</td>
-        </tr><tr>		
+        </tr><tr>
 			<td NOWRAP>&nbsp;</td>
 			<td colspan='3' NOWRAP>&nbsp;</td>
 			{if $bean->deal_tot != "0.00"}
@@ -176,7 +176,7 @@
 			<td NOWRAP style="text-align: right;">{sugar_currency_format var=$product_bundle->total currency_id=$CURRENCY_ID}</td>
 	    </tr>
 		<tr><td colspan='7' NOWRAP><br></td></tr>
-		    
+
     {/if}
 	{/foreach}
 

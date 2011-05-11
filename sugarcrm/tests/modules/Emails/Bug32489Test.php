@@ -4,7 +4,7 @@ require_once('modules/Emails/Email.php');
 require_once('modules/Notes/Note.php');
 
 /**
- * @group bug32489
+ * @ticket 32489
  */
 class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -45,7 +45,7 @@ class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        
+        unset($GLOBALS['mod_strings']);
         $GLOBALS['db']->query("DELETE FROM emails WHERE id= '{$this->em1->id}'");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id= '{$this->note1->id}'");
         if($this->note2 != null)
@@ -76,13 +76,13 @@ class Bug32489Test extends Sugar_PHPUnit_Framework_TestCase
 		$_REQUEST['dateFrom'] = $tommDisplay;
 		unset($_REQUEST['name']);
 		$results = $this->em1->searchImportedEmails();
-		$this->assertEquals(1, count($results['out']), "Could not perform a simple search for imported emails with a single date filter" );
+		$this->assertTrue(count($results['out']) >= 1, "Could not perform a simple search for imported emails with a single date filter" );
 
 		$weekFromNow = gmdate('Y-m-d H:i:s',(gmmktime() + (3600 * 24 * 7)));
 		$weekFromNowDisplay = $timedate->to_display_date_time($weekFromNow);
 		$_REQUEST['dateTo'] = $weekFromNowDisplay;
 		$results = $this->em1->searchImportedEmails();
-		$this->assertEquals(1, count($results['out']), "Could not perform a simple search for imported emails with a two date filter" );
+		$this->assertTrue(count($results['out']) >= 1, "Could not perform a simple search for imported emails with a two date filter" );
     }
     
     function testSimpleImportEmailSearchWithAttachments()

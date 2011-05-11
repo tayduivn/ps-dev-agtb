@@ -287,24 +287,38 @@ class SugarModule
      *
      * @return object
      */
-    public function loadBean()
+    public function loadBean($beanList = null, $beanFiles = null, $returnObject = true)
     {
-        global $beanList, $beanFiles;
-        
-        if ( !isset($beanList) || !isset($beanFiles) )
+        // Populate these reference arrays
+        if ( empty($beanList) ) {
+            global $beanList;
+        }
+        if ( empty($beanFiles) ) {
+            global $beanFiles;
+        }
+        if ( !isset($beanList) || !isset($beanFiles) ) {
             require('include/modules.php');
-    
+        }
+        
         if ( isset($beanList[$this->_moduleName]) ) {
             $bean = $beanList[$this->_moduleName];
             if (isset($beanFiles[$bean])) {
+                if ( !$returnObject ) {
+                    return true;
+                }
+                if ( !sugar_is_file($beanFiles[$bean]) ) {
+                    return false;
+                }
                 require_once($beanFiles[$bean]);
                 $focus = new $bean;
             }
-            else
+            else {
                 return false;
+            }
         }
-        else
+        else {
             return false;
+        }
     
         return $focus;
     }

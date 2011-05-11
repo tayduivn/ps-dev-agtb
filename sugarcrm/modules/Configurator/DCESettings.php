@@ -36,7 +36,7 @@ if(!is_admin($current_user)){
 }
 
 require_once('modules/Administration/Forms.php');
-echo get_module_title($mod_strings['LBL_MODULE_ID'], $mod_strings['LBL_DCEMODULE_NAME'].": ", true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_DCEMODULE_NAME']), false);
 require_once('modules/Configurator/Configurator.php');
 
 $configurator = new Configurator();

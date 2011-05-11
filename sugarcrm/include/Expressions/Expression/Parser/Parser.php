@@ -23,29 +23,45 @@ class Parser {
 	 * Evaluates an expression.
 	 *
 	 * @param string	the expression to evaluate
+     *
 	 */
-	static function evaluate($expr)
+	static function evaluate($expr, $context = false)
 	{
 		// the function map
 		static $FUNCTION_MAP = array();
 
-		// trim spaces, left and right
-		$expr = trim($expr);
+		// trim spaces, left and right, and remove newlines
+		$expr = str_replace("\n", "", trim($expr));
 
 		// check if its a constant and return a constant expression
 		$const = Parser::toConstant($expr);
 		if ( isset($const) )	return $const;
 
+        if (preg_match('/^\$[a-zA-Z0-9_\-]+$/', $expr))
+        {
+            require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
+            $var = substr($expr, 1);
+            $ret = new SugarFieldExpression($var);
+            if ($context)
+                $ret->context = $context;
+            return $ret;
+        }
+
 
 		// VALIDATE: expression format
-		if ( ! preg_match('/^[a-zA-Z0-9_-]+\(.*\)$/', $expr) )
-			throw new Exception("Syntax Error (Expression Format Incorrect '$expr' )");
+		if ( ! preg_match('/^[a-zA-Z0-9_\-$]+\(.*\)$/', $expr) ) {
+			throw new Exception("Attempted to evaluate expression with an invalid format: $expr");
+			return;
+		}
 
 		// EXTRACT: Function
 		$open_paren_loc = strpos($expr, '(');
 
 		// if no open-paren '(' found
-		if ( $open_paren_loc < 0 )	throw new Exception("Syntax Error (No opening paranthesis found)");
+		if ( $open_paren_loc < 0 )	{
+            throw new Exception("Attempted to evaluate expression with a Syntax Error (No opening paranthesis found): $expr");
+            return;
+        }
 
 		// get the function
 		$func   = substr( $expr , 0 ,  $open_paren_loc);
@@ -60,7 +76,10 @@ class Parser {
 		}
 			
 
-		if ( !isset($FUNCTION_MAP[$func]) )	throw new Exception("$func: No such function defined");
+		if ( !isset($FUNCTION_MAP[$func]) )	{
+            throw new Exception("Attempted to evaluate expression with an invalid function '$func': $expr");
+            return;
+        }
 
 		// EXTRACT: Parameters
 		$params = substr( $expr , $open_paren_loc + 1, -1);
@@ -77,6 +96,7 @@ class Parser {
 		$justReadString	= false;		// did i just read in a string
 		$isInQuotes 	= false;		// am i currently reading in a string
 		$isPrevCharBK 	= false;		// is my previous character a backslash
+        $isInVariable 	= false;		// is my previous character a backslash
 
 		for ( $i = 0 ; $i <= $length ; $i++ ) {
 			// store the last character read
@@ -84,13 +104,16 @@ class Parser {
 
 			// the last parameter
 			if ( $i == $length ) {
-				$args[] = Parser::evaluate($argument);
+                if ($argument != "") {
+				    $subExp = Parser::evaluate($argument, $context);
+                    $subExp->context = $context;
+                    $args[] = $subExp;
+                }
 				break;
 			}
 
 			// set isprevcharbk
-			if ( $lastCharRead == '\\' )		$isPrevCharBK = true;
-			else								$isPrevCharBK = false;
+			$isPrevCharBK = $lastCharRead == '\\';
 
 			// get the charAt index $i
 			$char = $params{$i};
@@ -108,13 +131,22 @@ class Parser {
 				if ( $isInQuotes ) {
 					// only spaces may follow the end of a string
 					$temp = substr($params, $i+1, strpos($params, ",", $i) - $i - 1 );
-					if ( !preg_match( '/^(\s*|\s*\))$/', $temp ) )
-						Parser::throwException($func, "Syntax Error", "Improperly Terminated String '$temp'");
+					if ( !preg_match( '/^(\s*|\s*\))$/', $temp ) ) {
+			            throw new Exception("Syntax Error:Improperly Terminated String '$temp' in formula: $expr");
+			            return;
+			        }
 				}
 
 				// negate if i am in quotes
 				$isInQuotes = !$isInQuotes;
 			}
+
+            if( $char == '$' && !$isInQuotes && !$isPrevCharBK)
+            {
+                if($isInVariable) {
+                    throw new Exception ("Syntax Error: Invalid variable name in formula: $expr");
+                }
+            }
 
 			// check parantheses open/close
 			if ( $char == '(' ) {
@@ -122,10 +154,11 @@ class Parser {
 			} else if ( $char == ')' ) {
 				$level--;
 			}
-
 			// argument splitting
 			else if ( $char == ',' && $level == 0 ) {
-				$args[] = Parser::evaluate($argument);
+				$subExp = Parser::evaluate($argument, $context);
+                $subExp->context = $context;
+                $args[] = $subExp;
 				$argument = "";
 				continue;
 			}
@@ -136,14 +169,24 @@ class Parser {
 
 
 		// now check to make sure all the parantheses opened were closed
-		if ( $level != 0 )	throw new Exception("Syntax Error (Incorrectly Matched Parantheses)");
+		if ( $level != 0 )	{
+            throw new Exception("Syntax Error (Incorrectly Matched Parantheses) in formula: $expr");
+            return;
+        }
 
 		// now check to make sure all the quotes opened were closed
-		if ( $isInQuotes )	throw new Exception("Syntax Error (Unterminated String Literal)");
+		if ( $isInQuotes )	if ( $level != 0 ) {
+            throw new Exception("Syntax Error (Unterminated String Literal) in formula: $expr");
+            return;
+        }
 
 		// require and return the appropriate expression object
 		require_once( $FUNCTION_MAP[$func]['src'] );
-		return new $FUNCTION_MAP[$func]['class']($args);
+        $expObject = new $FUNCTION_MAP[$func]['class']($args);
+        if ($context) {
+            $expObject->context = $context;
+        }
+		return $expObject;
 	}
 
 	/**
@@ -192,7 +235,6 @@ class Parser {
 			$year  = floatval(substr($expr, 6, 4));
 			require_once( "include/Expressions/Expression/String/StringLiteralExpression.php");
 			require_once('include/Expressions/Expression/Date/DefineDateExpression.php');
-			//echo "Date found $month, $day, $year";
 			//return new DefineDateExpression(array($day, $month, $year));
 			return new DefineDateExpression(new StringLiteralExpression( $expr ));
 		}
@@ -220,37 +262,57 @@ class Parser {
 	}
 	
 	/**
+     * @deprecated
 	 * returns the expression with the variables replaced with the values in target.
 	 *
 	 * @param string $expr
 	 * @param Array/SugarBean $target
 	 */
 	static function replaceVariables($expr, $target) {
-		$variables = Parser::getFieldsFromExpression($expr);
+        //BEGIN SUGARCRM flav=een ONLY
+		$target->load_relationships();
+        //END SUGARCRM flav=een ONLY
+        $variables = Parser::getFieldsFromExpression($expr);
 		$ret = $expr;
 		foreach($variables as $field) {
 			if (is_array($target)) 
 			{
 				if (isset($target[$field])) {
-					$val = Parser::getFormatedValue($target[$field]);
+					$val = Parser::getFormatedValue($target[$field], $field);
 					$ret = str_replace("$$field", $val, $ret);
 				} else {
-					throw new Exception("Unknown variable $$field in expression: $expr");
+				    continue;
+                    //throw new Exception("Unknown variable $$field in formula: $expr");
+                    //return;
 				}
 			} else 
 			{
-				if (isset ($target->$field)) {
-					$val = Parser::getFormatedValue($target->$field);
-					$ret = str_replace("$$field", $val, $ret);	
-				} else  {
-					throw new Exception("Unknown variable $$field in expression: $expr");
-				}
+				//BEGIN SUGARCRM flav=een ONLY
+				//Special case for link fields
+                if (isset($target->field_defs[$field]) && $target->field_defs[$field]['type'] == "link")
+                {
+                    $val = "link(\"$field\")";
+                    $ret = str_replace("$$field", $val, $ret);
+                }
+                else {
+                //END SUGARCRM flav=een ONLY
+                    if (isset ($target->$field)) {
+                        $val = Parser::getFormatedValue($target->$field, $field);
+                        $ret = str_replace("$$field", $val, $ret);
+                    } else  {
+                        continue;
+                       // throw new Exception("Unknown variable $$field in formula: $expr");
+                       // return;
+                    }
+                //BEGIN SUGARCRM flav=een ONLY
+                }
+                //END SUGARCRM flav=een ONLY
 			}
 		}
 		return $ret;
 	}
 	
-	private static function getFormatedValue($val) {
+	private static function getFormatedValue($val, $fieldName) {
 		//Boolean values
 		if ($val === true) {
 			return AbstractExpression::$TRUE;	

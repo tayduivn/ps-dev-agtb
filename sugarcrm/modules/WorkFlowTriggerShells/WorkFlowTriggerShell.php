@@ -198,7 +198,13 @@ class WorkFlowTriggerShell extends SugarBean {
 		$temp_array['FRAME_TYPE'] = $this->frame_type;
 		$temp_array['STATEMENT'] = "<b>".$prev_display_text."</b>";
 		$temp_array['STATEMENT1'] = "<i>".$statement1."</i>";
-		$temp_array['STATEMENT2'] = "<b>".$ProcessView->get_trigger_display_text("TriggersCreateStep1", $this)."</b>";
+		$trigger_display_text = $ProcessView->get_trigger_display_text("TriggersCreateStep1", $this);
+		if (strpos($trigger_display_text,'class="error"') !== false && empty($this->hasError))
+		{
+		    $this->hasError = true;
+            echo '<p class="error"><b>' . translate('LBL_TRIGGER_ERRORS') . '</b></p>';
+		}
+		$temp_array['STATEMENT2'] = "<b>".$trigger_display_text."</b>";
 		unset($ProcessView);
 		//preset height and width
 		$temp_array['POPUP_HEIGHT'] = "500";

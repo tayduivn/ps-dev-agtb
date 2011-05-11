@@ -124,19 +124,19 @@ class User extends Person {
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security = true;
 		//END SUGARCRM flav=pro ONLY
-		
+
 		$this->_loadUserPreferencesFocus();
 	}
-	
+
 	protected function _loadUserPreferencesFocus()
 	{
 	    $this->_userPreferenceFocus = new UserPreference($this);
 	}
-	
+
     /**
      * returns an admin user
      */
-    public function getSystemUser() 
+    public function getSystemUser()
     {
         if (null === $this->retrieve('1'))
             // handle cases where someone deleted user with id "1"
@@ -144,7 +144,7 @@ class User extends Person {
                 'status' => 'Active',
                 'is_admin' => '1',
                 ));
-        
+
         return $this;
     }
 
@@ -165,10 +165,10 @@ class User extends Person {
 	 * @param string id ID of user_signature
 	 * @return array ID, signature, and signature_html
 	 */
-	public function getSignature($id) 
+	public function getSignature($id)
 	{
 	    $signatures = $this->getSignaturesArray();
-	    
+
 	    return $signatures[$id];
 	}
 
@@ -190,10 +190,10 @@ class User extends Person {
 	 * retrieves any signatures that the User may have created as <select>
 	 */
 	public function getSignatures(
-	    $live = false, 
+	    $live = false,
 	    $defaultSig = '',
 	    $forSettings = false
-	    ) 
+	    )
 	{
 		$sig = $this->getSignaturesArray();
 		$sigs = array();
@@ -201,7 +201,7 @@ class User extends Person {
 		{
 			$sigs[$key] = !empty($arr['name']) ? $arr['name'] : '';
 		}
-		
+
 		$change = '';
 		if(!$live) {
 			$change = ($forSettings) ? "onChange='displaySignatureEdit();'" : "onChange='setSigEditButtonVisibility();'";
@@ -211,7 +211,7 @@ class User extends Person {
 
 		$out  = "<select {$change} id='{$id}' name='{$id}'>";
 		$out .= get_select_options_with_id($sigs, $defaultSig).'</select>';
-		
+
 		return $out;
 	}
 
@@ -240,11 +240,11 @@ class User extends Person {
 	 *
 	 * @return bool
 	 */
-	public function hasPersonalEmail() 
+	public function hasPersonalEmail()
 	{
 	    $focus = new InboundEmail;
 	    $focus->retrieve_by_string_fields(array('group_id' => $this->id));
-	    
+
 	    return !empty($focus->id);
 	}
 
@@ -285,11 +285,11 @@ class User extends Person {
 	 * @param string $category Name of the category to retrieve
 	 */
 	public function setPreference(
-	    $name, 
-	    $value, 
-	    $nosession = 0, 
+	    $name,
+	    $value,
+	    $nosession = 0,
 	    $category = 'global'
-	    ) 
+	    )
 	{
 	    // for BC
 	    if ( func_num_args() > 4 ) {
@@ -298,7 +298,7 @@ class User extends Person {
 	    }
 	    else
 	        $user = $this;
-	        
+
         $user->_userPreferenceFocus->setPreference($name, $value, $category);
 	}
 
@@ -311,7 +311,7 @@ class User extends Person {
 	 */
 	public function resetPreferences(
 	    $category = null
-	    ) 
+	    )
 	{
 	    // for BC
 	    if ( func_num_args() > 1 ) {
@@ -320,7 +320,7 @@ class User extends Person {
 	    }
 	    else
 	        $user = $this;
-	        
+
         $user->_userPreferenceFocus->resetPreferences($category);
 	}
 
@@ -329,7 +329,7 @@ class User extends Person {
 	 *
 	 * @see UserPreference::savePreferencesToDB()
 	 */
-	public function savePreferencesToDB() 
+	public function savePreferencesToDB()
 	{
         // for BC
 	    if ( func_num_args() > 0 ) {
@@ -338,8 +338,18 @@ class User extends Person {
 	    }
 	    else
 	        $user = $this;
-	        
+
         $user->_userPreferenceFocus->savePreferencesToDB();
+	}
+
+	/**
+	 * Unconditionally reloads user preferences from the DB and updates the session
+	 * @param string $category name of the category to retreive, defaults to global scope
+	 * @return bool successful?
+	 */
+	public function reloadPreferences($category = 'global')
+	{
+	    return $this->_userPreferenceFocus->reloadPreferences($category = 'global');
 	}
 
 	/**
@@ -349,7 +359,7 @@ class User extends Person {
 	 *
 	 * @return array 'date' - date format for user ; 'time' - time format for user
 	 */
-	public function getUserDateTimePreferences() 
+	public function getUserDateTimePreferences()
 	{
         // for BC
 	    if ( func_num_args() > 0 ) {
@@ -358,7 +368,7 @@ class User extends Person {
 	    }
 	    else
 	        $user = $this;
-	        
+
         return $user->_userPreferenceFocus->getUserDateTimePreferences();
 	}
 
@@ -372,7 +382,7 @@ class User extends Person {
 	 */
 	public function loadPreferences(
 	    $category = 'global'
-	    ) 
+	    )
 	{
 	    // for BC
 	    if ( func_num_args() > 1 ) {
@@ -381,8 +391,8 @@ class User extends Person {
 	    }
 	    else
 	        $user = $this;
-	        
-        return $user->_userPreferenceFocus->loadPreferences($category); 
+
+        return $user->_userPreferenceFocus->loadPreferences($category);
 	}
 
 	/**
@@ -395,9 +405,9 @@ class User extends Person {
 	 * @return mixed the value of the preference (string, array, int etc)
 	 */
 	public function getPreference(
-	    $name, 
+	    $name,
 	    $category = 'global'
-	    ) 
+	    )
 	{
 	    // for BC
 	    if ( func_num_args() > 2 ) {
@@ -406,7 +416,7 @@ class User extends Person {
 	    }
 	    else
 	        $user = $this;
-	        
+
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
@@ -428,14 +438,14 @@ class User extends Person {
 		global $sugar_flavor;
         $admin = new Administration();
         $admin->retrieveSettings();
-		if((isset($sugar_flavor) && $sugar_flavor != null) && 
+		if((isset($sugar_flavor) && $sugar_flavor != null) &&
 			($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
-				
+
 	        // Begin Express License Enforcement Check
 			// this will cause the logged in admin to have the licensed user count refreshed
 				if( isset($_SESSION['license_seats_needed']))
 			        unset($_SESSION['license_seats_needed']);
-		     	if ($this->portal_only != 1 && $this->is_group != 1 && (empty($this->fetched_row) || $this->fetched_row['status'] == 'Inactive' || $this->fetched_row['status'] == '') && $this->status == 'Active'){ 
+		     	if ($this->portal_only != 1 && $this->is_group != 1 && (empty($this->fetched_row) || $this->fetched_row['status'] == 'Inactive' || $this->fetched_row['status'] == '') && $this->status == 'Active'){
 			        global $sugar_flavor;
 					//if((isset($sugar_flavor) && $sugar_flavor != null) && ($sugar_flavor=='CE')){
 			            $license_users = $admin->settings['license_users'];
@@ -453,13 +463,13 @@ class User extends Person {
 						    if (isset($_REQUEST['action']) && $_REQUEST['action'] != 'MassUpdate' && $_REQUEST['action'] != 'Save') {
 					            die(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
 						    }
-							else if (isset($_REQUEST['action'])){ // When this is not set, we're coming from the installer.						    
+							else if (isset($_REQUEST['action'])){ // When this is not set, we're coming from the installer.
 								$sv = new SugarView();
 							    $sv->init('Users');
 							    $sv->renderJavascript();
 							    $sv->displayHeader();
 		        				//$sv->includeClassicFile('themes/' . $GLOBALS['theme'] . '/header.php');
-		        				//$sv->includeClassicFile('modules/Administration/DisplayWarnings.php');					    
+		        				//$sv->includeClassicFile('modules/Administration/DisplayWarnings.php');
 							    displayAdminError(translate('WARN_LICENSE_SEATS_EDIT_USER', 'Administration'). ' ' . translate('WARN_LICENSE_SEATS2', 'Administration'));
 							    $sv->displayFooter();
 							    die();
@@ -480,16 +490,16 @@ class User extends Person {
 			$this->is_group = 0;
 			$this->portal_only = 0;
 		}
-		
+
 
 		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
 		$setNewUserPreferences = empty($this->id);
 		//END SUGARCRM flav=sales ONLY
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 
-		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and 
+		//this code is meant to allow for the team widget to set the team_id as the 'Primary' team and
 		//then b/c Users uses the default_team field we can map it back when committing the user to the database.
 		if(!empty($this->team_id)){
 			$this->default_team = $this->team_id;
@@ -501,7 +511,7 @@ class User extends Person {
 
 
 		parent::save($check_notify);
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
 		//END SUGARCRM flav=pro ONLY
@@ -514,7 +524,7 @@ class User extends Person {
 		    $this->setPreference('mailmerge_on', 'on');
 		}
 		//END SUGARCRM flav=sales ONLY
-		
+
         $this->savePreferencesToDB();
         return $this->id;
 	}
@@ -530,7 +540,7 @@ class User extends Person {
 	* Contributor(s): ______________________________________..
 	*/
 	function check_role_membership($role_name, $user_id = ''){
-		
+
 		global $current_user;
 
 		if(empty($user_id))
@@ -601,7 +611,7 @@ class User extends Person {
 	 */
 	public function authenticate_user(
 	    $password
-	    ) 
+	    )
 	{
 		$password = $GLOBALS['db']->quote($password);
 		$user_name = $GLOBALS['db']->quote($this->user_name);
@@ -732,7 +742,7 @@ EOQ;
 		}
 
 		$this->loadPreferences();
-		
+
 
 		require_once ('modules/Versions/CheckVersions.php');
 		$invalid_versions = get_invalid_versions();
@@ -771,10 +781,10 @@ EOQ;
 	 * @return boolean - If passwords pass verification and query succeeds, return true, else return false.
 	 */
 	function change_password(
-	    $user_password, 
-	    $new_password, 
+	    $user_password,
+	    $new_password,
 	    $system_generated = '0'
-	    ) 
+	    )
 	{
 	    global $mod_strings;
 		global $current_user;
@@ -804,7 +814,7 @@ EOQ;
         $user_hash = strtolower(md5($new_password));
         $this->setPreference('loginexpiration','0');
         //set new password
-        $now=date("Y-m-d H:i:s");
+        $now = TimeDate::getInstance()->nowDb();
 		$query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";
 		$this->db->query($query, true, "Error setting new password for $this->user_name: ");
         $_SESSION['hasExpiredPassword'] = '0';
@@ -836,13 +846,13 @@ EOQ;
 		//BEGIN SUGARCRM flav=pro ONLY
 		$query = "SELECT team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.team_id = '{$this->default_team}'";
 		$result = $this->db->query($query, false, "Error retrieving team name: ");
-		
+
 		//rrs bug: 31277 - this tempDefaultTeam works in conjunction with the 'if' stmt below/
 		//what was happening was that if the user was an admin user and they did not have team membership to their primary team
-		//then this query would not return anything and the default_team would be set to empty, which is fine, but 
+		//then this query would not return anything and the default_team would be set to empty, which is fine, but
 		//we need to ensure that the team_id is not empty for team set widget purposes.
 		$tempDefaultTeam = $this->default_team;
-		
+
 		$row = $this->db->fetchByAssoc($result);
 		if (!empty ($row['team_id'])) {
 			$this->default_team = $row['team_id'];
@@ -852,7 +862,7 @@ EOQ;
 			$this->default_team_name = '';
 			$this->team_set_id = '';
 		}
-		
+
 		if(!empty($this->is_admin) && empty($this->default_team)){
 			$this->team_id = $tempDefaultTeam;
 		}else{
@@ -865,13 +875,13 @@ EOQ;
 
 	public function retrieve_user_id(
 	    $user_name
-	    ) 
+	    )
 	{
 	    $userFocus = new User;
 	    $userFocus->retrieve_by_string_fields(array('user_name'=>$user_name));
 	    if ( empty($userFocus->id) )
 	        return false;
-	    
+
         return $userFocus->id;
 	}
 
@@ -994,7 +1004,7 @@ EOQ;
 		if($this->portal_only) {
 		   return;
 		}
-		
+
 
 		//todo: move this logic into a post save helper method.
 		// If this is not an update, then make sure the new user logic is executed.
@@ -1009,11 +1019,11 @@ EOQ;
 			//private team name and name_2 in sync with their name.
 			$team_id = $this->getPrivateTeamID();
 			if(!empty($team_id)){
-				
+
 				$team = new Team();
 				$team->retrieve($team_id);
                 Team::set_team_name_from_user($team, $this);
-				$team->save();	
+				$team->save();
 			}
 		}
 		//END SUGARCRM flav=pro ONLY
@@ -1039,19 +1049,20 @@ EOQ;
 
 
 	function get_my_teams($return_obj = FALSE) {
-		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
+		$query = "SELECT DISTINCT rel.team_id, teams.name, teams.name_2, rel.implicit_assign FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.deleted = 0 ORDER BY teams.name ASC";
 		$result = $this->db->query($query, false, "Error retrieving user ID: ");
 		$out = Array ();
 
 		if ($return_obj) {
-			
+
 			$x = 0;
 		}
 
 		while ($row = $this->db->fetchByAssoc($result)) {
 			if ($return_obj) {
 				$out[$x] = new Team();
-				$out[$x ++]->retrieve($row['team_id']);
+				$out[$x]->retrieve($row['team_id']);
+				$out[$x++]->implicit_assign = $row['implicit_assign'];
 			} else {
 				$out[$row['team_id']] = Team::getDisplayName($row['name'], $row['name_2']);
 			}
@@ -1079,7 +1090,7 @@ EOQ;
 	 * assignments in the new location
 	 */
 	function update_team_memberships($old_reports_to_id) {
-		
+
 		$team = new Team();
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
@@ -1108,7 +1119,7 @@ EOQ;
 		if(!$current_user->is_admin){
 			$query .= " AND users.is_admin=0";
 		}
-		
+
 		if ($order_by != "")
 			$query .= " ORDER BY $order_by";
 		else
@@ -1230,7 +1241,7 @@ EOQ;
 	} // fn
 
 	function getSystemDefaultNameAndEmail() {
-		
+
 		$email = new Email();
 		$return = $email->getSystemDefaultEmail();
 		$prefAddr = $return['email'];
@@ -1310,7 +1321,7 @@ EOQ;
 		if(!isset($sugar_config['email_default_client'])) {
 			$this->setDefaultsInConfig();
 		}
-	
+
 		$userPref = $this->getPreference('email_link_type');
 		$defaultPref = $sugar_config['email_default_client'];
 		if($userPref != '') {
@@ -1349,7 +1360,7 @@ EOQ;
 				$to_addrs_names = $fullName;
 				$to_addrs_emails = $focus->email1;
 			}
-			
+
 			$emailLinkUrl = 'contact_id='.$contact_id.
 				'&parent_type='.$focus->module_dir.
 				'&parent_id='.$focus->id.
@@ -1361,21 +1372,21 @@ EOQ;
 				'&return_module='.$ret_module.
 				'&return_action='.$ret_action.
 				'&return_id='.$ret_id;
-					
+
     		//Generate the compose package for the quick create options.
     		//$json = getJSONobj();
     		//$composeOptionsLink = $json->encode( array('composeOptionsLink' => $emailLinkUrl,'id' => $focus->id) );
 			require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl);
-            
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
+
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
-			
+
 		} else {
 			// straight mailto:
 			$emailLink = '<a href="mailto:'.$emailAddress.'" class="'.$class.'">';
 		}
-		
+
 		return $emailLink;
 	}
 
@@ -1453,13 +1464,13 @@ EOQ;
 				'&return_module='.$ret_module.
 				'&return_action='.$ret_action.
 				'&return_id='.$ret_id;
-				
+
 			//Generate the compose package for the quick create options.
     		require_once('modules/Emails/EmailUI.php');
             $eUi = new EmailUI();
-            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl);
+            $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($emailLinkUrl, true);
     		$emailLink = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);' class='$class'>";
-				
+
 		} else {
 			// straight mailto:
 			$emailLink = '<a href="mailto:'.$focus->$attribute.'" class="'.$class.'">';
@@ -1506,18 +1517,18 @@ EOQ;
 
 
 	//BEGIN SUGARCRM flav=pro ONLY
-	public function getPrivateTeamID() 
+	public function getPrivateTeamID()
 	{
 	    return self::staticGetPrivateTeamID($this->id);
 	}
-	
+
     public static function staticGetPrivateTeamID($user_id)
 	{
 	    $teamFocus = new Team;
 	    $teamFocus->retrieve_by_string_fields(array('associated_user_id'=>$user_id));
 	    if ( empty($teamFocus->id) )
 	        return '';
-	    
+
 	    return $teamFocus->id;
 	}
     //END SUGARCRM flav=pro ONLY
@@ -1537,38 +1548,70 @@ EOQ;
 	}
 
 	//BEGIN SUGARCRM flav!=com ONLY
-	function preprocess_fields_on_save(){		
-		parent::preprocess_fields_on_save();	
+	function preprocess_fields_on_save(){
+		parent::preprocess_fields_on_save();
         require_once('include/upload_file.php');
 		$upload_file = new UploadFile("picture");
-	
+
 		//remove file
 		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
 		{
 			$upload_file->unlink_file($this->picture);
-			$this->picture="";			
-		}		
-		
+			$this->picture="";
+		}
+
 		//uploadfile
 		if (isset($_FILES['picture']))
-		{			
+		{
 			//confirm only image file type can be uploaded
 			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
 			if (in_array($_FILES['picture']["type"], $imgType))
 			{
 				if ($upload_file->confirm_upload())
 				{
-					$this->picture = create_guid();
+					$this->picture = create_guid().".png";
 					$upload_file->final_move( $this->picture);
-					$url=$upload_file->get_url($this->picture);
+					$path=$upload_file->get_upload_path($this->picture);
+					if(!verify_image_file($path)) {
+					    $this->picture = '';
+					}
 				}
 			}
 		}
-		
+
 		//duplicate field handling (in the event the Duplicate button was pressed)
 		if(empty($this->picture) && !empty($_REQUEST['picture_duplicate'])) {
-           $this->picture = $_REQUEST['picture_duplicate'];			
-		}			
+           $this->picture = $_REQUEST['picture_duplicate'];
+		}
 	}
 	//END SUGARCRM flav!=com ONLY
+
+
+   function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
+   {	//call parent method, specifying for array to be returned
+   		$ret_array = parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, true,$parentbean, $singleSelect);
+
+   		//if this is being called from webservices, then run additional code
+   		if(!empty($GLOBALS['soap_server_object'])){
+
+	   		//if this is a single select, then secondary queries are being run that may result in duplicate rows being returned through the
+	   		//left joins with meetings/tasks/call.  Add a group by to return one user record (bug 40250)
+	       	if($singleSelect)
+	    	{
+	    		$ret_array['order_by'] = ' Group By '.$this->table_name.'.id '.$ret_array['order_by'];
+	    	}
+   		}
+
+   		//return array or query string
+   		if($return_array)
+    	{
+    		return $ret_array;
+    	}
+
+    	return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
+
+
+
+   }
+
 }

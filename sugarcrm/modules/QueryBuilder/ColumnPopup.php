@@ -67,7 +67,8 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/QueryBuilder/Column_Popup_picker.html");
 }
 else {
-	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
+    $GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/QueryBuilder/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/QueryBuilder/".$_REQUEST['html'].'.html');
 }
@@ -81,21 +82,21 @@ $form->assign("APP", $app_strings);
 
 // This code should always return an answer.
 // The form name should be made into a parameter and not be hard coded in this file.
- 
-$focus = new QueryColumn();  
+
+$focus = new QueryColumn();
 $calc_object = new QueryCalc();
 
 if(isset($_REQUEST['column_record']) ) {
     $focus->retrieve($_REQUEST['column_record']);
-    
+
 	//obtain the calc_id if it exists
     $calc_id = $focus->get_calc_id();
 
 	if(!empty($calc_id) ) {
 	    $calc_object->retrieve($calc_id);
 	}
-    
-    
+
+
 }
 
 
@@ -108,15 +109,15 @@ if ($_REQUEST['component'] == 'Column')
         $the_javascript .= "    window.opener.document.ColumnView.column_type.value = column_type;\n";
         $the_javascript .= "    window.opener.document.ColumnView.action.value = action;\n";
        	$the_javascript .= "    window.opener.document.ColumnView.column_record.value = '".$focus->id."';\n";
-       
-        
+
+
 //Calculation informaton
 
 		$the_javascript .= "    window.opener.document.ColumnView.calc_field.value = document.getElementById('calciframe').contentDocument.dropdownview.column_name.value;\n";
-    	$the_javascript .= "    window.opener.document.ColumnView.calc_module.value = calc_module;\n";    
+    	$the_javascript .= "    window.opener.document.ColumnView.calc_module.value = calc_module;\n";
 		$the_javascript .= "    window.opener.document.ColumnView.name.value = name;\n";
-    	$the_javascript .= "    window.opener.document.ColumnView.type.value = type;\n"; 
-		$the_javascript .= "    window.opener.document.ColumnView.calc_type.value = calc_type;\n"; 
+    	$the_javascript .= "    window.opener.document.ColumnView.type.value = type;\n";
+		$the_javascript .= "    window.opener.document.ColumnView.calc_type.value = calc_type;\n";
     	$the_javascript .= "    window.opener.document.ColumnView.calc_id.value = '".$calc_object->id."';\n";
     	$the_javascript .= "	window.opener.document.ColumnView.submit(); \n";
 
@@ -126,17 +127,17 @@ if ($_REQUEST['component'] == 'Column')
 
 
 	$column_select_array = $seed_object->get_relationship_modules($seed_object->base_module);
-	
-	$form->assign("AVAILABLE_MODULES", get_select_options_with_id($column_select_array,$focus->column_module));       
-	$form->assign("CALC_MODULES", get_select_options_with_id($column_select_array,$focus->column_module));       
 
-	
+	$form->assign("AVAILABLE_MODULES", get_select_options_with_id($column_select_array,$focus->column_module));
+	$form->assign("CALC_MODULES", get_select_options_with_id($column_select_array,$focus->column_module));
+
+
 	$form->assign("COLUMN_DISPLAY_SWITCH", get_select_options_with_id($app_list_strings['query_column_type_dom'],$focus->column_type));
     $form->assign("COLUMN_NAME", $focus->column_name);
-    
-      
-    
-    
+
+
+
+
 //Calculation Column Type
 
 
@@ -150,28 +151,28 @@ if ($_REQUEST['component'] == 'Column')
 		$form->assign("TYPE", get_select_options_with_id($app_list_strings['query_calc_type_dom'], $calc_object->type));
 
 
-		
+
 	if(!empty($calc_object->type) && $calc_object->type=="Math"){
-	
+
 		//Disable column_type
 		//Disable type
 		//Disable name
 		//Disable calc_type
 		$form->assign("SUB_CALC_DISABLE", "disabled");
 
-		
+
 		//Change select button display name to Finished
 		$form->assign("SELECT_BUTTON_LABEL", $mod_strings['LBL_FINISHED_BUTTON_LABEL']);
 		$form->assign("SELECT_BUTTON_TITLE", $mod_strings['LBL_FINISHED_BUTTON_TITLE']);
-	
+
 	} else {
-	//set stuff for standard calculation	
+	//set stuff for standard calculation
 		$form->assign("SELECT_BUTTON_LABEL", $app_strings['LBL_SELECT_BUTTON_LABEL']);
 		$form->assign("SELECT_BUTTON_TITLE", $app_strings['LBL_SELECT_BUTTON_TITLE']);
-		
-	}		
-		
-		
+
+	}
+
+
 
 }
 
@@ -192,11 +193,11 @@ $form->out("main");
 
 //Process the sub-query and math sub-calculation window
 if(!empty($calc_object->type) && $calc_object->type=="Math"){
-	
-	
-//echo "SubcalcView.php".$calc_object->id."JKL";	
+
+
+//echo "SubcalcView.php".$calc_object->id."JKL";
 //in subcalc, build form and make sure you are passing all the necessary stuff
-	
+
 
 //pass record - querybuilder
 //pass column_record - querycolumn

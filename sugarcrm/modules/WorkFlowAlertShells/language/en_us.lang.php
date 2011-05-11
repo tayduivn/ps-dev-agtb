@@ -100,6 +100,9 @@ $mod_strings = array (
 	//Invite Labels
 	'LBL_MODULE_TITLE_INVITE' => 'Invite People',
 	'LBL_SHOW' => 'Show',
+    
+  'LBL_RECIPIENT_ERROR'=>'This recipient contains errors and connot be used.',
+  'LBL_ALERT_ERRORS'=>'Notice: One or more alerts below contains errors.',
 	
 );
 

@@ -196,6 +196,7 @@ class SubPanel
 		$ListView->show_export_button = false;
 		
 		//function returns the query that was used to populate sub-panel data.
+
 		$query=$ListView->process_dynamic_listview($this->parent_module, $this->parent_bean,$this->subpanel_defs);
 		$this->subpanel_query=$query; 
 		$ob_contents = ob_get_contents();
@@ -289,8 +290,21 @@ class SubPanel
   		
   		//bugfix: load looks for moduleName/metadata/subpanels, not moduleName/subpanels
   		$path = 'custom/modules/'. $panel->_instance_properties['module'] . '/metadata/subpanels';
-  		$filename = $panel->parent_bean->object_name . $panel->_instance_properties['subpanel_name'] ;
-  		$extname = '_override'.$panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
+  		
+  		//bug# 40171: "Custom subpanels not working as expected" 
+  		//each custom subpanel needs to have a unique custom def file
+  		$filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name; //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
+  		$oldName1 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
+  		$oldName2 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['get_subpanel_data'] ;
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php")){ 	
+  		  unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php");
+  		}
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php")){ 
+         unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php");
+  		}
+  		$extname = '_override'.$filename;
+  		//end of bug# 40171
+  		
   		mkdir_recursive($path, true);
   		write_array_to_file( $name, $override,$path.'/' . $filename .'.php');
   		

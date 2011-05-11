@@ -35,15 +35,16 @@ $viewdefs['Tasks']['EditView'] = array(
                             ),                                  
                            ),
     'panels' => array(
-		array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),    
-		array('date_due'),
+		array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
+	    array('priority'),    
 	    array('status'),
-	    array('priority'),
+        array('date_start'),
+	    array('date_due'),
+	    array('description'),
+		array('assigned_user_name'),
 	    //BEGIN SUGARCRM flav=pro ONLY
 		array('team_name'),
-		//BEGIN SUGARCRM flav=pro ONLY
-		array('assigned_user_name'),
-	    array('description'),
+		//END SUGARCRM flav=pro ONLY
 	),
 );
 ?>

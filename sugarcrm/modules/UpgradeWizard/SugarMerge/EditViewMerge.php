@@ -546,7 +546,7 @@ class EditViewMerge{
 	 * @param ARRAY $panels - this is the 'panel' section of the meta-data
 	 * @return ARRAY $fields - an associate array of fields and their meta-data as well as their location
 	 */
-	protected function getFields($panels){
+	protected function getFields(&$panels){
 
 		$fields = array();
 		$blanks = 0;
@@ -592,6 +592,12 @@ class EditViewMerge{
 					}
 					
 					if(is_string($field_name)) {
+                        // We need to replace all instances of the fake uploadfile field with the real filename field
+                        if ( $field_name == 'uploadfile' && !empty($col['customCode'])) {
+                            $field_name = 'filename';
+                            $col['name'] = 'filename';
+                            unset($col['customCode']);
+                        }
 						$fields[$field_name] = array('data'=>$col, 'loc'=>array('panel'=>"{$panel_id}", 'row'=>"{$row_id}", 'col'=>"{$col_id}"));
 					}
 				}

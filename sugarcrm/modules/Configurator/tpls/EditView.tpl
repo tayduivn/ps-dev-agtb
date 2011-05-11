@@ -125,22 +125,35 @@
 		{* //END SUGARCRM flav!=sales ONLY*}
 	</tr>
 	<tr>
-		<td  scope="row" width='15%' nowrap>{$MOD.SYSTEM_NAME} </td>
-		<td   width='35%'>
+		<td scope="row" width='15%' nowrap>{$MOD.SYSTEM_NAME} </td>
+		<td width='35%'>
 			<input type='text' name='system_name' value='{$settings.system_name}'>
+		</td>
+		<td scope="row" width='15%' nowrap>{$MOD.LBL_MIN_AUTO_REFRESH_INTERVAL} &nbsp;{sugar_help text=$MOD.LBL_MIN_AUTO_REFRESH_INTERVAL_HELP} </td>
+		<td width='35%'>
+		    <select name='dashlet_auto_refresh_min' id='dashlet_auto_refresh_min'>{$AUTO_REFRESH_INTERVAL_OPTIONS}</select>
 		</td>
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
-        {$MOD.CURRENT_LOGO}&nbsp{sugar_help text=$MOD.CURRENT_LOGO_HELP} 
+        {$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}
         </td>
         <td width='35%' >
             <img id="company_logo_image" src='{$company_logo}' height="40" width="212">
         </td>
+        //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
+        <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
+		{if !isset($config.show_download_tab) || !empty($config.show_download_tab)}
+			{assign var='show_download_tab_checked' value='CHECKED'}
+		{else}
+			{assign var='show_download_tab_checked' value=''}
+		{/if}
+		<td ><input type='hidden' name='show_download_tab' value='false'><input name='show_download_tab'  type="checkbox" value='true' {$show_download_tab_checked}></td>
+        //END SUGARCRM flav!=com && flav!=sales ONLY
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
-            {$MOD.NEW_LOGO}:&nbsp{sugar_help text=$MOD.NEW_LOGO_HELP}
+            {$MOD.NEW_LOGO}&nbsp;{sugar_help text=$MOD.NEW_LOGO_HELP}
         </td>
         <td  width='35%'>
             <div id="container_upload"></div>
@@ -231,7 +244,7 @@
 	</tr>
  </table>
 
-  
+
 {* //BEGIN SUGARCRM flav!=sales ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
@@ -348,6 +361,9 @@
 			<input type='text' size='4' name='vcal_time' value='{$config.vcal_time}'>
 		</td>
 	</tr>
+
+
+
 </table>
 
 
@@ -425,9 +441,10 @@ function toggleDisplay_2(div_string){
             eval("var file_type = " + r.responseText);
             var forQuotes = file_type['forQuotes'];
             document.getElementById('loading_img_'+forQuotes).style.display="none";
+            bad_image = SUGAR.language.get('Configurator',(forQuotes == 'quotes')?'LBL_ALERT_TYPE_JPEG':'LBL_ALERT_TYPE_IMAGE');
             switch(file_type['data']){
                 case 'other':
-                    alert(SUGAR.language.get('Configurator','LBL_ALERT_JPG_IMAGE'));
+                    alert(bad_image);
                     document.getElementById('my_file_' + forQuotes).value='';
                     break;
                 case 'size':
@@ -446,7 +463,7 @@ function toggleDisplay_2(div_string){
                     break;
                 //error in getimagesize because unsupported type
                 default:
-                   alert(SUGAR.language.get('Configurator','LBL_ALERT_TYPE_IMAGE'));
+                   alert(bad_image);
                    document.getElementById('my_file_' + forQuotes).value='';
             }
         },

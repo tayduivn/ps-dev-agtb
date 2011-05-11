@@ -81,11 +81,11 @@ padding:1px 15px 2px;
 border-color:#F0B9D3;
 }
 
-#moduleTabExtraMenu .yuimenuitemlabel.more {
+.moduleTabExtraMenu .yuimenuitemlabel.more {
 border-right:1px solid #F0B9D3;
 }
 
-#moduleList #moduleTabGroup .yuimenuitemlabel.group em
+#moduleList .moduleTabGroup .yuimenuitemlabel.group em
 {
 	background-image: url(../../../../index.php?entryPoint=getImage&imageName=grouped-menu.png);
 }
@@ -187,8 +187,12 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png");
 }
 
-#moduleList .dashletPanelMenu,#moduleList #More.dashletPanelMenu,#moduleList #Group.dashletPanelMenu {
+#moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png");
+}
+
+#moduleList li.more div.bd { 
+border: none;
 }
 
 .dashletPanel .dccontent {
@@ -285,7 +289,7 @@ color:#ef3067;
 color: #ff1255;
 }
 
-a.utilsLink:link, a.utilsLink:visited {
+a.utilsLink:link, a.utilsLink:visited, #bottomLinks a {
 color:#ef3067;
 }
 
@@ -300,7 +304,7 @@ color:#ef3067;
 .search_form .view {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=search-basic-bg.png");
 border-color:#FF95C7;
-background-color: transparent;
+background-color: #efb9d2;
 }
 
 .search_form .view.advanced {
@@ -358,12 +362,12 @@ color:#ef3067;
 border-color: #FF95C7;
 }
 
-#moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover,#moduleList #More.dashletPanelMenu a.yuimenuitemlabel:hover {
+#moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover,#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover {
 background-color: #ef3067;
 }
 
 
-#moduleList #moduleTabExtraMenu,#moduleList #moduleTabGroup {
+#moduleList .moduleTabExtraMenu,#moduleList .moduleTabGroupMenu {
 height:32px;
 }
 

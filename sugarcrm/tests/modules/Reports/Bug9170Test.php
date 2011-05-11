@@ -1,6 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro ONLY 
-
+// FILE SUGARCRM flav=pro ONLY
 require_once('modules/Reports/schedule/ReportSchedule.php');
 
 class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
@@ -42,7 +41,11 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 	    $expectedRunDateTs = strtotime($start_date . " GMT") + $interval; 
 	    $expectedRunDate = gmdate($timedate->get_db_date_time_format(),$expectedRunDateTs);
 	    $results = $this->rs->get_report_schedule($reportID);
-	    $this->assertEquals($expectedRunDate, $results[$reportID]['next_run'], "Unable to schedule report.");
+        $next_run = '';
+        foreach($results as $ur){
+            $next_run = $ur['next_run'];
+        }
+	    $this->assertEquals($expectedRunDate, $next_run, "Unable to schedule report.");
 	}
 	
 	public function testUpdateNextRun()
@@ -57,12 +60,20 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 	    
 	    //Update the report schedule
 	    $results = $this->rs->get_report_schedule($reportID);
-	    $this->rs->update_next_run_time($id,$results[$reportID]['next_run'],$results[$reportID]['time_interval'] );
+        $next_run = '';
+        foreach($results as $ur){
+            $next_run = $ur['next_run'];
+        }
+	    $this->rs->update_next_run_time($id,$next_run,$results[0]['time_interval'] );
 	    
 	    //Get the update
 	    $expectedRunDate = gmdate($timedate->get_db_date_time_format(), $start_ts + $interval);
 	    $updatedResults = $this->rs->get_report_schedule($reportID);
-	    $this->assertEquals($expectedRunDate, $updatedResults[$reportID]['next_run'], "Unable to update scheduled report.");
+        $next_run = '';
+        foreach($updatedResults as $ur){
+            $next_run = $ur['next_run'];
+        }
+	    $this->assertEquals($expectedRunDate, $next_run, "Unable to update scheduled report.");
 	}
 	
 	public function tearDown() 

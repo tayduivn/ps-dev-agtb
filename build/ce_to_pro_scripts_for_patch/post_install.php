@@ -76,7 +76,7 @@ function post_install()
 	   $schemaFile = "$self_dir/610_ce_to_pro_mysql.sql";
     } else if ($sugar_config['dbconfig']['db_type'] == 'mssql') {
 	   $schemaFile = "$self_dir/610_ce_to_pro_mssql.sql";
-	   if(is_freetds() && file_exists("$self_dir/610_ce_to_pro_mssql_freetds.sql")){
+	   if(in_array(get_class($db),array('SqlsrvManager','FreeTDSManager')) && file_exists("$self_dir/610_ce_to_pro_mssql_freetds.sql")){
 	       $schemaFile = "$self_dir/610_ce_to_pro_mssql_freetds.sql";
 	   }
 	   $log->info("Running SQL file $schemaFile");
@@ -154,8 +154,29 @@ function post_install()
 	//Create the default reports. Going from ce to ent
 	createDefaultReports();
 
+	
+	//add language pack config information to config.php
+   	if(is_file('install/lang.config.php')){
+		global $sugar_config;
+		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
+		require_once('install/lang.config.php');
+
+   	    foreach($config['languages'] as $k=>$v){
+            $sugar_config['languages'][$k] = $v;
+        }
+		
+		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
+	    }else{
+			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
+		}		
+    }else{
+    	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
+    }
+	
     //Upgrade Projects
 	upgradeProjects();
+        setConnectorDefaults();
     rebuild_teams();
 	rebuild_roles();	
 }
@@ -364,4 +385,9 @@ function upgradeProjects(){
 	updateProjectTaskData();
 	updateProjectResources();
 }
+
+function setConnectorDefaults(){
+    require('modules/Connectors/InstallDefaultConnectors.php');
+} 
+
 ?>

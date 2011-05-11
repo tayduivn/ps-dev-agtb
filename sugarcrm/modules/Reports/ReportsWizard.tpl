@@ -27,6 +27,7 @@
  */
 
 *}
+{$chartResources}
 <div id='progress_div' ></div>
 <script>
 document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepath file="bar_loader.gif"}">';
@@ -185,7 +186,7 @@ document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepa
 		<br/>
 	</div>	
 	<div id='filters_div' style="display:none">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 20px;">
 			<tr>
 				<td align='left'><input type='button' title="{$MOD.LBL_PREVIOUS}" class="button" name="{$MOD.LBL_PREVIOUS}" value="{$MOD.LBL_PREVIOUS}" 
 					onClick='SUGAR.reports.showWizardStep(1);'>&nbsp;&nbsp;<input type='button' title="{$MOD.LBL_NEXT}" class="button" name="{$MOD.LBL_NEXT}" value="{$MOD.LBL_NEXT}" 
@@ -211,7 +212,7 @@ document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepa
 							<div id="dt_ac_container"></div> 
 			    			</div>
 						</div> 
-						<div id="module_fields_panel" style="width:200px;">
+						<div id="module_fields_panel" style="width:200px; float: left;">
 						</div>
 					</div>
 				</td>

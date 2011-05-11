@@ -16,7 +16,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
- 	 * @group bug23380
+ 	 * @ticket 23380
  	 */
 	public function testFileImportNoEnclosers()
     {
@@ -41,6 +41,19 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($importFile->fileExists());
     }
     
+    /**
+     * @ticket 39494
+     */
+    public function testLoadFileWithByteOrderMark()
+    {
+        $importFile = new ImportFile('tests/modules/Import/Bug39494ImportFile.txt',"\t",'',false);
+        $this->assertTrue($importFile->fileExists());
+        $row = $importFile->getNextRow();
+        $this->assertEquals($row,array('name','city'));
+        $row = $importFile->getNextRow();
+        $this->assertEquals($row,array('tester1','wuhan'));
+    }
+    
     public function testGetNextRow()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
@@ -52,6 +65,18 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(array("foo10","foo11"),$row);
         $row = $importFile->getNextRow();
         $this->assertEquals(array("foo20","foo21"),$row);
+    }
+    
+    /**
+ 	 * @ticket 41361
+ 	 */
+    public function testGetNextRowWithEOL()
+    {
+        $file = SugarTestImportUtilities::createFileWithEOL(1, 1);
+        $importFile = new ImportFile($file,',','"');
+        $row = $importFile->getNextRow();
+        // both \r\n and \n should be properly replaced with PHP_EOL
+        $this->assertEquals(array("start0".PHP_EOL."0".PHP_EOL."end"), $row);
     }
     
     public function testLoadEmptyFile()

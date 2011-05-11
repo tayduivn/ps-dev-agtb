@@ -64,12 +64,7 @@ class SugarFieldAddress extends SugarFieldBase {
            return $this->fetch($tplCode);	
         }
         
-        global $current_language;
-        if(isset($current_language) && file_exists('include/SugarFields/Fields/Address/' . $current_language . '.DetailView.tpl')) {
-          return $this->fetch('include/SugarFields/Fields/Address/' . $current_language . '.DetailView.tpl'); 	
-        } else {
-          return $this->fetch('include/SugarFields/Fields/Address/DetailView.tpl');
-        } //if-else
+        return $this->fetch($this->findTemplate('DetailView'));
     }
     
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
@@ -87,13 +82,7 @@ class SugarFieldAddress extends SugarFieldBase {
            return $this->fetch($tplCode);	
         }       
 
-        global $current_language;
-        if(isset($current_language) && file_exists('include/SugarFields/Fields/Address/' . $current_language . '.EditView.tpl')) {
-          return $this->fetch('include/SugarFields/Fields/Address/' . $current_language . '.EditView.tpl'); 	
-        } else {
-          return $this->fetch('include/SugarFields/Fields/Address/EditView.tpl');
-        } //if-else
-       
+        return $this->fetch($this->findTemplate('EditView'));      
     }
     
 }

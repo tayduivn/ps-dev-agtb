@@ -7,12 +7,17 @@ class SugarTestMeetingUtilities
 
     private function __construct() {}
 
-    public static function createMeeting() 
+    public static function createMeeting($id = '') 
     {
         $time = mt_rand();
     	$name = 'Meeting';
     	$meeting = new Meeting();
         $meeting->name = $name . $time;
+        if(!empty($id))
+        {
+            $meeting->new_with_id = true;
+            $meeting->id = $id;
+        }
         $meeting->save();
         self::$_createdMeetings[] = $meeting;
         return $meeting;

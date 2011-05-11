@@ -14,22 +14,70 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
     
-    public function testGetLocaleFormattedName()
+    public function providerGetLocaleFormattedName()
     {
-    	$this->_user->setPreference('default_locale_name_format', 't s f l');
-    	$firstName = 'Mason';
-    	$lastName = 'Hu';
-    	$title = 'Saler';
-    	$salution = 'Mr.';
-    	$expectedOutput = 'Saler Mr. Mason Hu';
-    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salution, $title, '',$this->_user);
+        return array(
+            array(
+                't s f l',
+                'Mason',
+                'Hu',
+                'Mr.',
+                'Saler',
+                'Saler Mr. Mason Hu',
+                ),
+            array(
+                'l f',
+                'Mason',
+                'Hu',
+                '',
+                '',
+                'Hu Mason',
+                ),
+                    
+            );
+    }
+    
+    /**
+     * @dataProvider providerGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedNameUsingFormatInUserPreference($nameFormat,$firstName,$lastName,$salutation,$title,$expectedOutput)
+    {
+    	$this->_user->setPreference('default_locale_name_format', $nameFormat);
+    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, '',$this->_user);
     	$this->assertEquals($expectedOutput, $outputName);
-    	
-    	$this->_user->setPreference('default_locale_name_format', 'l f');
-    	$expectedOutput = 'Hu Mason';
-    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, '', '', '',$this->_user);
+    }
+    
+    /**
+     * @dataProvider providerGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedNameUsingFormatSpecified($nameFormat,$firstName,$lastName,$salutation,$title,$expectedOutput)
+    {
+    	$outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, $nameFormat,$this->_user);
     	$this->assertEquals($expectedOutput, $outputName);
-    	
+    }
+    
+    /**
+     * @ticket 26803
+     */
+    public function testGetLocaleFormattedNameWhenNameIsEmpty()
+    {
+        $this->_user->setPreference('default_locale_name_format', 'l f');
+        $expectedOutput = ' ';
+        $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '',$this->_user);
+        
+        $this->assertEquals($expectedOutput, $outputName);
+    }
+    
+    /**
+     * @ticket 26803
+     */
+    public function testGetLocaleFormattedNameWhenNameIsEmptyAndReturningEmptyString()
+    {
+        $this->_user->setPreference('default_locale_name_format', 'l f');
+        $expectedOutput = '';
+        $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '',$this->_user,true);
+        
+        $this->assertEquals($expectedOutput, $outputName);
     }
     
     public function testCurrenciesLoadingCorrectly()
@@ -99,5 +147,92 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertRegExp("/stuff\['f'\] = '{$app_strings['LBL_LOCALE_NAME_EXAMPLE_FIRST']}';/",$ret);
         $this->assertRegExp("/stuff\['l'\] = '$last';/",$ret);
         $this->assertRegExp("/stuff\['t'\] = '{$app_strings['LBL_LOCALE_NAME_EXAMPLE_TITLE']}';/",$ret);
+    }
+    
+    public function testGetPrecedentPreferenceWithUserPreference()
+    {
+        $backup = $GLOBALS['sugar_config']['export_delimiter'];
+        $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
+        $this->_user->setPreference('export_delimiter','John is Really Cool');
+        
+        $this->assertEquals(
+            $this->_locale->getPrecedentPreference('export_delimiter',$this->_user),
+            $this->_user->getPreference('export_delimiter')
+            );
+        
+        $GLOBALS['sugar_config']['export_delimiter'] = $backup;
+    }
+    
+    public function testGetPrecedentPreferenceWithNoUserPreference()
+    {
+        $backup = $GLOBALS['sugar_config']['export_delimiter'];
+        $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
+        
+        $this->assertEquals(
+            $this->_locale->getPrecedentPreference('export_delimiter',$this->_user),
+            $GLOBALS['sugar_config']['export_delimiter']
+            );
+        
+        $GLOBALS['sugar_config']['export_delimiter'] = $backup;
+    }
+    
+    /**
+     * @ticket 33086
+     */
+    public function testGetPrecedentPreferenceWithUserPreferenceAndSpecifiedConfigKey()
+    {
+        $backup = $GLOBALS['sugar_config']['export_delimiter'];
+        $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
+        $this->_user->setPreference('export_delimiter','');
+        $GLOBALS['sugar_config']['default_random_setting_for_localization_test'] = 'John is not Cool at all';
+        
+        $this->assertEquals(
+            $this->_locale->getPrecedentPreference('export_delimiter',$this->_user,'default_random_setting_for_localization_test'),
+            $GLOBALS['sugar_config']['default_random_setting_for_localization_test']
+            );
+        
+        $backup = $GLOBALS['sugar_config']['export_delimiter'];
+        unset($GLOBALS['sugar_config']['default_random_setting_for_localization_test']);
+    }
+    
+    /**
+     * @ticket 39171
+     */
+    public function testGetPrecedentPreferenceForDefaultEmailCharset()
+    {
+        $emailSettings = array('defaultOutboundCharset' => 'something fun');
+        $this->_user->setPreference('emailSettings',$emailSettings, 0, 'Emails');
+        
+        $this->assertEquals(
+            $this->_locale->getPrecedentPreference('default_email_charset',$this->_user),
+            $emailSettings['defaultOutboundCharset']
+            );
+    }
+    
+    /**
+     * @ticket 23992
+     */
+    public function testGetCurrencySymbol()
+    {
+        $this->_user->setPreference('default_currency_symbol','&&');
+        
+        $this->assertEquals(
+            $this->_locale->getCurrencySymbol($this->_user),
+            '&&'
+            );
+    }
+    
+    /**
+     * @ticket 23992
+     */
+    public function testGetLocaleFormattedNumberWithNoCurrencySymbolSpecified()
+    {
+        $this->_user->setPreference('default_currency_symbol','**');
+        $this->_user->setPreference('default_decimal_separator','.');
+        
+        $this->assertEquals(
+            $this->_locale->getLocaleFormattedNumber(20,'',true,$this->_user),
+            '**20'
+            );
     }
 }

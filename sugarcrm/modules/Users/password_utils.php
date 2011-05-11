@@ -1,23 +1,23 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Menu.php 44341 2009-02-21 01:03:11Z maubert $
@@ -37,8 +37,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  	$emailTemp = new EmailTemplate();
  	$mail->setMailerForSystem();
     $emailTemp->disable_row_level_security = true;
-    
- 	
+
+
     if ($current_user->is_admin){
     	if ($emailTemp->retrieve($GLOBALS['sugar_config']['passwordsetting']['generatepasswordtmpl']) == '')
         	return $mod_strings['LBL_EMAIL_TEMPLATE_MISSING'];
@@ -46,7 +46,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     		return $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
     	if($mail->Mailer == 'smtp' && $mail->Host =='')
     		return $mod_strings['ERR_SERVER_SMTP_EMPTY'];
-   
+
 		$email_errors=$mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
 		if ($mail->Mailer == 'smtp')
 			$email_errors.="<br>-".$mod_strings['ERR_SMTP_URL_SMTP_PORT'];
@@ -66,7 +66,7 @@ function  hasPasswordExpired($username){
 	$current_user->retrieve($usr_id);
 	$type = '';
 	if ($current_user->system_generated_password == '1'){
-        $type='syst';    
+        $type='syst';
     }
 	//BEGIN SUGARCRM flav=pro ONLY
     else{
@@ -75,53 +75,48 @@ function  hasPasswordExpired($username){
 	//END SUGARCRM flav=pro ONLY
 
     if ($current_user->portal_only=='0'){
-	    global $mod_strings;
+	    global $mod_strings, $timedate;
 	    $res=$GLOBALS['sugar_config']['passwordsetting'];
 	  	if ($type != '') {
 		    switch($res[$type.'expiration']){
-	        
+
 	        case '1':
 		    	global $timedate;
 		    	if ($current_user->pwd_last_changed == ''){
-		    		$current_user->pwd_last_changed= gmdate($GLOBALS['timedate']->get_db_date_time_format());
+		    		$current_user->pwd_last_changed= $timedate->nowDb();
 		    		$current_user->save();
 		    		}
-		    		
+
 		        $expireday = $res[$type.'expirationtype']*$res[$type.'expirationtime'];
-			    $stim = strtotime($current_user->pwd_last_changed);
-			    //add day to timestamp
-			    $expiretime = gmdate("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+$expireday,   date("Y",$stim)));
-			    $timenow = gmdate($GLOBALS['timedate']->get_db_date_time_format());
-			    
-			    if ($timenow < $expiretime)
+		        $expiretime = $timedate->fromUser($current_user->pwd_last_changed)->get("+{$expireday} days")->ts;
+
+			    if ($timedate->getNow()->ts < $expiretime)
 			    	return false;
 			    else{
 			    	$_SESSION['expiration_type']= $mod_strings['LBL_PASSWORD_EXPIRATION_TIME'];
 			    	return true;
 			    	}
-				break;        
-			
-			
+				break;
+
+
 		    case '2':
 		    	$login=$current_user->getPreference('loginexpiration');
 		    	$current_user->setPreference('loginexpiration',$login+1);
 		        $current_user->save();
 		        if ($login+1 >= $res[$type.'expirationlogin']){
 		        	$_SESSION['expiration_type']= $mod_strings['LBL_PASSWORD_EXPIRATION_LOGIN'];
-		        	return true;    
+		        	return true;
 		        }
 		        else
 		            {
 			    	return false;
 			    	}
 		    	break;
-		    
-		    case '0':      
+
+		    case '0':
 		        return false;
 		   	 	break;
 		    }
 		}
     }
 }
-
-?>

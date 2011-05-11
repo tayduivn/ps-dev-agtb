@@ -131,10 +131,12 @@ class MssqlManager extends DBManager
                     $connect_param ,
                     $configOptions['db_user_name'],
                     $configOptions['db_password']
-                    )
-                or sugar_die("Could not connect to server ".$configOptions['db_host_name'].
+                    );
+            if(!$this->database){
+                $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name'].
                     " as ".$configOptions['db_user_name'].".");
-
+                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+            }
             if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
@@ -143,7 +145,7 @@ class MssqlManager extends DBManager
         }
         //make sure connection exists
         if(!$this->database){
-            sugar_die("Unable to establish connection");
+            sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
         }
 
         //select database
@@ -163,7 +165,8 @@ class MssqlManager extends DBManager
 				}
 			}
 			if(!$connected){
-				sugar_die("Unable to select database");
+			    $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}");
+				sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
 			}
          }
 
@@ -193,9 +196,11 @@ class MssqlManager extends DBManager
             return true;
 
         $sqlmsg = mssql_get_last_message();
+        
         $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        $sqlpos2 = strpos($sqlmsg, 'Caution: Changing any part of an object name could break scripts and stored procedures.');
-        if ( $sqlpos !== false || $sqlpos2 !== false )
+        $sqlpos2 = strpos($sqlmsg, 'Warning:');
+        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false )
             $sqlmsg = '';  // empty out sqlmsg if its either of the two error messages described above
         else {
         	global $app_strings;
@@ -258,6 +263,34 @@ class MssqlManager extends DBManager
             $result = @mssql_query($sql, $this->database);
         }
 
+        if (!$result) {
+            //BEGIN SUGARCRM flav=int ONLY
+            _pp($sql);
+            display_stack_trace();
+            //END SUGARCRM flav=int ONLY
+
+            // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
+            // 				  and difficult to reproduce error. The message is only a warning, and does
+            //				  not affect the functionality of the query
+            $sqlmsg = mssql_get_last_message();
+            $sqlpos = strpos($sqlmsg, 'Changed database context to');
+			$sqlpos2 = strpos($sqlmsg, 'Warning:');
+			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+            
+			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
+				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
+			else {
+				//BEGIN SUGARCRM flav=int ONLY
+				_pp($sql);
+				display_stack_trace();
+				//END SUGARCRM flav=int ONLY
+				$GLOBALS['log']->fatal($sqlmsg . ": " . $sql );
+				if($dieOnError)
+					sugar_die('SQL Error : ' . $sqlmsg);
+				else
+					echo 'SQL Error : ' . $sqlmsg;
+			}
+        }
         $this->lastmysqlrow = -1;
 
         $this->query_time = microtime(true) - $this->query_time;
@@ -457,6 +490,8 @@ class MssqlManager extends DBManager
                             if ($ob_pos) {
                                 $distinctSQLARRAY[1] = substr($distinctSQLARRAY[1],0,$ob_pos);
                             }
+                            
+                            $distinctSQLARRAY[1] = preg_replace('/\)\s$/', ' ', $distinctSQLARRAY[1]);
                         }
 
                         //place group by string into array
@@ -467,6 +502,11 @@ class MssqlManager extends DBManager
                         foreach ($grpByArr as $gb) {
                             $gb = trim($gb);
 
+                            //clean out the extra stuff added if we are concating first_name and last_name together
+                            //this way both fields are added in correctly to the group by
+                            $gb = str_replace("isnull(","",$gb);
+                            $gb = str_replace("'') + ' ' + ","",$gb);
+                            
                             //remove outer reference if they exist
                             if (strpos($gb,"'")!==false){
                                 continue;
@@ -580,10 +620,16 @@ class MssqlManager extends DBManager
         $i=0;
         $offset = 0;
         $strip_array = array();
-        while ($i<$count) {
+        while ($i<$count && $offset<strlen($p_sql)) {
+            if ($offset > strlen($p_sql))
+            {
+				break;   
+            }     	
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
+            {
                 break;
+            }
             $sec_sin = strpos($p_sql, $strip_end, $beg_sin+1);
             $strip_array[$patt.$i] = substr($p_sql, $beg_sin, $sec_sin - $beg_sin +1);
             if ($increment > 1) {
@@ -743,7 +789,7 @@ class MssqlManager extends DBManager
     {
         $sql = strtolower($sql);
         $orig_order_match = trim($orig_order_match);
-        if (strpos($orig_order_match, "."))
+        if (strpos($orig_order_match, ".") != 0)
             //this has a tablename defined, pass in the order match
             return $orig_order_match;
 
@@ -798,12 +844,15 @@ class MssqlManager extends DBManager
             //and is not part of a function (i.e. "ISNULL(leads.last_name,'') as name"  )
             //this is especially true for unified search from home screen
 
+            $alias_beg_pos = 0;
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
-            else
+            else if (strncasecmp($psql, 'isnull', 6) != 0)
                 $alias_beg_pos = strpos($psql, " ");
 
-            $col_name = substr($psql,0, $alias_beg_pos );
+            if ($alias_beg_pos > 0) {
+                $col_name = substr($psql,0, $alias_beg_pos );
+            }
             //add the "asc/desc" order back
             $col_name = $col_name. " ". $asc_desc;
 
@@ -857,15 +906,15 @@ class MssqlManager extends DBManager
             $sql = strtolower($sql);
 
             //look for the location of the "from" in sql string
-            $fromLoc = strpos ( $sql,"from" );
+            $fromLoc = strpos($sql," from " );
             if ($fromLoc>0){
-                //found from, substring from the "FROM" string in sql to end
-                $tableEnd = substr($sql, $fromLoc+5);
+                //found from, substring from the " FROM " string in sql to end
+                $tableEnd = substr($sql, $fromLoc+6);
                 //We know that tablename will be next parameter after from, so
                 //grab the next space after table name.
                 // MFH BUG #14009: Also check to see if there are any carriage returns before the next space so that we don't grab any arbitrary joins or other tables.
                 $carriage_ret = strpos($tableEnd,"\n");
-                $next_space = strpos ( $tableEnd," " );
+                $next_space = strpos($tableEnd," " );
                 if ($carriage_ret < $next_space)
                     $next_space = $carriage_ret;
                 if ($next_space > 0) {
@@ -966,12 +1015,12 @@ class MssqlManager extends DBManager
         $table_descriptions[$tablename] = array();
 
         $sql = sprintf( "SELECT COLUMN_NAME AS Field
-				, DATA_TYPE + CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL " .
-							"THEN '(' + RTRIM(CAST(CHARACTER_MAXIMUM_LENGTH AS CHAR)) + ')' " .
-							"ELSE '' END as 'Type'
+				, DATA_TYPE + CASE WHEN CHARACTER_MAXIMUM_LENGTH IS NOT NULL
+                        THEN '(' + RTRIM(CAST(CHARACTER_MAXIMUM_LENGTH AS CHAR)) + ')' 
+						ELSE '' END as 'Type'
 				, CHARACTER_MAXIMUM_LENGTH
 				, IS_NULLABLE AS 'Null'
-				, CASE WHEN COLUMN_DEFAULT LIKE '((0))' THEN \"('0')\" ELSE COLUMN_DEFAULT END as 'Default'
+				, CASE WHEN COLUMN_DEFAULT LIKE '((0))' THEN '(''0'')' ELSE COLUMN_DEFAULT END as 'Default'
 			FROM INFORMATION_SCHEMA.COLUMNS
 			WHERE TABLE_NAME = '%s'",
 			$tablename
@@ -1257,7 +1306,7 @@ class MssqlManager extends DBManager
 			else
 			    $ret .=	" + ' ' + ".db_convert($table.".".$field,'IFNULL', array("''"));
 
-		return $ret;
+		return empty($ret)?$ret:"LTRIM(RTRIM($ret))";
     }
 
     /**
@@ -1268,6 +1317,7 @@ class MssqlManager extends DBManager
         $type)
     {
         switch($type) {
+        case 'datetime': return substr($string, 0,19);
         case 'date': return substr($string, 0,11);
         case 'time': return substr($string, 11);
 		}

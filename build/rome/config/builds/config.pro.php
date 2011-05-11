@@ -1,6 +1,25 @@
 <?php
-
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 $config['builds']['pro']['flav'] = array('pro');
+$config['builds']['pro']['languages']= array('bg_BG','cs_CZ','da_DK', 'de_DE','es_ES', 'et_EE', 'fr_FR','he_IL', 'hu_HU', 'it_it', 'lt_LT','ja_JP','nb_NO', 'nl_NL','pl_PL', 'pt_PT','ro_RO','ru_RU','sv_SE','tr_TR',  'zh_CN' );
 $config['builds']['pro']['lic'] = array('sub');
 $config['blackList']['pro'] = array(
 'sugarcrm/build'=>1,
@@ -24,19 +43,21 @@ $config['blackList']['pro'] = array(
 'sugarcrm/themes/TrailBlazers'=>1,
 'sugarcrm/themes/VintageSugar'=>1,
 'sugarcrm/themes/WhiteSands'=>1,
-
 'sugarcrm/modules/CustomQueries'=>1,
 'sugarcrm/modules/DataSets'=>1,
 'sugarcrm/modules/ReportMaker'=>1,
+
+'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
+'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
 
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,
 'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,
 'sugarcrm/themes/default/images/exchange_logo.png'=>1,
 
+'sugarcrm/modules/SugarFollowing'=>1,
 'sugarcrm/themes/default/images/user_follow.png'=>1,    
 'sugarcrm/themes/default/images/user_unfollow.png'=>1,
 
-'sugarcrm/modules/SugarFollowing'=>1,
 'sugarcrm/include/EditView/InlineEdit.css'=>1,
 'sugarcrm/include/EditView/InlineEdit.js'=>1,
 'sugarcrm/include/EditView/InlineEdit.php'=>1,

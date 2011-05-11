@@ -98,9 +98,11 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     /*
      * Save a draft layout
      */
-    function writeWorkingFile ()
+    function writeWorkingFile ($populate = true)
     {
-        $this->_populateFromRequest ( $this->_fielddefs ) ;
+        if ($populate)
+            $this->_populateFromRequest ( $this->_fielddefs ) ;
+        
         $viewdefs = $this->_viewdefs ;
         $viewdefs [ 'panels' ] = $this->_convertToCanonicalForm ( $this->_viewdefs [ 'panels' ] , $this->_fielddefs ) ;
         $this->implementation->save ( array ( self::$variableMap [ $this->_view ] => $viewdefs ) ) ;
@@ -242,10 +244,15 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             $panel = $this->_viewdefs [ 'panels' ] [ $panelID ] ;
             $lastrow = count ( $panel ) - 1 ; // index starts at 0
             $maxColumns = $this->getMaxColumns () ;
+            $lastRowDef = $this->_viewdefs [ 'panels' ] [ $panelID ] [ $lastrow ];
             for ( $column = 0 ; $column < $maxColumns ; $column ++ )
             {
-                if (! isset ( $this->_viewdefs [ 'panels' ] [ $panelID ] [ $lastrow ] [ $column ] ) || ($this->_viewdefs [ 'panels' ] [ $panelID ] [ $lastrow ] [ $column ] [ 'name' ] == '(empty)'))
+                if (! isset ( $lastRowDef [ $column ] )
+                        || (is_array( $lastRowDef [ $column ]) && $lastRowDef [ $column ][ 'name' ] == '(empty)')
+                        || (is_string( $lastRowDef [ $column ]) && $lastRowDef [ $column ] == '(empty)')
+                ){
                     break ;
+                }
             }
 
             // if we're on the last column of the last row, start a new row
@@ -433,6 +440,15 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         	else
         	   $this->setUseTabs( true );
         }
+        
+    	//bug: 38232 - Set the sync detail and editview settings
+        if (isset($_REQUEST['sync_detail_and_edit']))
+        {
+        	if ($_REQUEST['sync_detail_and_edit'] == false || $_REQUEST['sync_detail_and_edit'] == "false")
+        	   $this->setSyncDetailEditViews( false );
+        	else
+        	   $this->setSyncDetailEditViews( true );
+        }
 
         $GLOBALS [ 'log' ]->debug ( print_r ( $this->_viewdefs [ 'panels' ], true ) ) ;
 
@@ -539,6 +555,18 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 	{
                         $newRow [ $colID - $offset ] = $fieldname;
                 	}
+                	//BEGIN SUGARCRM flav=pro ONLY
+	                if ($this->_view == MB_WIRELESSEDITVIEW && !empty($fielddefs [ $fieldname ]['calculated']))
+			        {
+			            if (is_array($newRow [ $colID - $offset ]))
+			            {
+			            	$newRow [ $colID - $offset ]['readOnly'] = true;
+			            } else 
+			            {
+			            	$newRow [ $colID - $offset ] = array('name' => $newRow [ $colID - $offset ],  'ReadOnly' => true);
+			            }
+			        }
+			        //END SUGARCRM flav=pro ONLY
                 }
                 $panels [ $panelID ] [ $rowID ] = $newRow ;
             }
@@ -658,6 +686,9 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	                    {
 	                        $ret[$field['name']] = $field;  
 	                    }
+	            	    else if(!is_array($field)){
+                            $ret[$field] = $field;
+                        }	                    
 	                }
 	            }
 	        }
@@ -691,7 +722,7 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
 	{
 		$ret = array_intersect_key ( $def , 
             array ( 'studio' => true , 'name' => true , 'label' => true , 'displayParams' => true , 'comment' => true , 
-                    'customCode' => true , 'customLabel' => true , 'tabIndex' => true , 'hideLabel' => true) ) ;
+                    'customCode' => true , 'customLabel' => true , 'tabindex' => true , 'hideLabel' => true) ) ;
         if (!empty($def['vname']) && empty($def['label']))
             $ret['label'] = $def['vname'];
 		return $ret;
@@ -707,19 +738,70 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
     public function setUseTabs($useTabs){
         $this->_viewdefs  [ 'templateMeta' ]['useTabs'] = $useTabs;
     }
-	
-    static function validField ( $def, $view = "")
+    
+    /**
+     * Return whether the Detail & EditView should be in sync.
+     */
+	public function getSyncDetailEditViews(){
+        if (isset($this->_viewdefs  [ 'templateMeta' ]['syncDetailEditViews']))
+           return $this->_viewdefs  [ 'templateMeta' ]['syncDetailEditViews'];
+           
+        return false;
+    }
+    
+    /**
+     * Sync DetailView & EditView. This should only be set on the EditView
+     * @param bool $syncViews
+     */
+    public function setSyncDetailEditViews($syncDetailEditViews){
+        $this->_viewdefs  [ 'templateMeta' ]['syncDetailEditViews'] = $syncDetailEditViews;
+    }
+
+    /**
+     * Getter function to get the implementation method which is a private variable
+     * @return DeployedMetaDataImplementation
+     */
+    public function getImplementation(){
+        return $this->implementation;
+    }
+
+    /**
+     * Public access to _convertFromCanonicalForm
+     * @param  $panels
+     * @param  $fielddefs
+     * @return array
+     */
+    public function convertFromCanonicalForm ( $panels , $fielddefs )
     {
-    	if (!parent::validField($def, $view))
-    		return false;
-    	//BEGIN SUGARCRM flav=pro ONLY
-    	if ($view == MB_WIRELESSEDITVIEW && isset($def['calculated']) && $def['calculated'])
-    	{
-    		return false;
-    	}
-    	//END SUGARCRM flav=pro ONLY
-    	
-    	return true;
+        return $this->_convertFromCanonicalForm ( $panels , $fielddefs );
+    }
+
+     /**
+     * Public access to _convertToCanonicalForm
+     * @param  $panels
+     * @param  $fielddefs
+     * @return array
+     */
+    public function convertToCanonicalForm ( $panels , $fielddefs )
+    {
+        return $this->_convertToCanonicalForm ( $panels , $fielddefs );
+    }
+
+    
+    /**
+     * @return Array list of fields in this module that have the calculated property
+     */
+    public function getCalculatedFields() {
+        $ret = array();
+        foreach ($this->_fielddefs as $field => $def)
+        {
+            if(!empty($def['calculated']) && !empty($def['formula']))
+            {
+                $ret[] = $field;
+            }
+        }
+        
+        return $ret;
     }
 }
 

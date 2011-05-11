@@ -88,13 +88,14 @@ class SugarTestLangPackCreator
         
         if ( isset($this->_strings['mod_strings']) ) {
             foreach ( $this->_strings['mod_strings'] as $module => $strings ) {
-                $cache_key = "LanguageManager.$module.$language";
+                $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
                 $mod_strings = sugar_cache_retrieve($cache_key);
                 if ( empty($mod_strings) )
                     $mod_strings = return_module_language($language, $module);
                 foreach ( $strings as $key => $value )
                     $mod_strings[$key] = $value;
                 sugar_cache_put($cache_key, $mod_strings);
+                $GLOBALS['mod_strings'] = $mod_strings;
             }
         }
     }
@@ -119,7 +120,7 @@ class SugarTestLangPackCreator
         
         if ( isset($this->_strings['mod_strings']) ) {
             foreach ( $this->_strings['mod_strings'] as $module => $strings ) {
-                $cache_key = "LanguageManager.$module.$language";
+                $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
                 sugar_cache_clear($cache_key);
             }
         }

@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,6 +20,12 @@
  ********************************************************************************/
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
+/**
+ * <b>isValidEmail(String email)</b><br/>
+ * Returns true if <i>email</i> is in a valid email address format. <br/>
+ * ex: <i>isValidEmail("invalid@zxcv")</i> = false,<br/>
+ * <i>isValidEmail("good@test.com")</i> = true
+ */
 class IsValidEmailExpression extends BooleanExpression {
 	/**
 	 * Returns itself when evaluating.
@@ -37,8 +43,8 @@ class IsValidEmailExpression extends BooleanExpression {
 		for ( $i = 0; $i < sizeof($emailArr) ; $i++) {
 			$emailAddress = $emailArr[$i];
 			if (trim($emailAddress) != '') {
-				if (!preg_match('/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}\s*$/i', $emailAddress) &&
-				    !preg_match('/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}>\s*$/i', $emailAddress) )
+				if (!preg_match('/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}\s*$/i', $emailAddress) &&
+				    !preg_match('/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}>\s*$/i', $emailAddress) )
 					return AbstractExpression::$FALSE;
 			}
 		}
@@ -52,8 +58,10 @@ class IsValidEmailExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 		var emailStr = this.getParameters().evaluate();
-
+		
 		if ( emailStr.length == 0 )		return SUGAR.expressions.Expression.TRUE;
+		if ( typeof emailStr != "string" ) return SUGAR.expressions.Expression.FALSE;
+		
 		var lastChar = emailStr.charAt(emailStr.length - 1);
 		if ( !lastChar.match(/[^\.]/i) )	return SUGAR.expressions.Expression.FALSE;
 
@@ -63,8 +71,8 @@ class IsValidEmailExpression extends BooleanExpression {
 			var emailAddress = emailArr[i];
 			emailAddress = emailAddress.replace(/^\s+|\s+$/g,"");
 			if ( emailAddress != '') {
-				if(!/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}\s*$/i.test(emailAddress) &&
-				   !/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,4}>\s*$/i.test(emailAddress))
+				if(!/^\s*[\w.%+\-]+@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}\s*$/i.test(emailAddress) &&
+				   !/^.*<[A-Z0-9._%+\-]+?@([A-Z0-9-]+\.)*[A-Z0-9-]+\.[A-Z]{2,}>\s*$/i.test(emailAddress))
 				   return SUGAR.expressions.Expression.FALSE;
 			}
 		}

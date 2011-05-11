@@ -1,6 +1,5 @@
 <?php
-
-require_once('SugarTestTeamUtilities.php');
+//FILE SUGARCRM flav=pro ONLY
 
 /**
  * Test cases for the Team object

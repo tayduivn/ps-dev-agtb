@@ -42,115 +42,115 @@ require_once('modules/KBDocuments/SearchUtils.php');
 //END SUGARCRM flav=pro ONLY
 
 function get_bugs_in_contacts($in, $orderBy = '', $where='')
-	{
-		//bail if the in is empty
-		if($in == '()')return;
-		// First, get the list of IDs.
-		
-		//BEGIN SUGARCRM flav=com ONLY
-		$query = "SELECT bug_id as id from contacts_bugs where contact_id IN $in AND deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		//END SUGARCRM flav=com ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT cb.bug_id as id from contacts_bugs cb, bugs b where cb.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and cb.contact_id IN $in AND cb.deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY cb.' . $orderBy;
-		}
-		//END SUGARCRM flav=pro ONLY
+    {
+        //bail if the in is empty
+        if(empty($in)  || $in =='()' || $in =="('')")return;
+        // First, get the list of IDs.
+        
+        //BEGIN SUGARCRM flav=com ONLY
+        $query = "SELECT bug_id as id from contacts_bugs where contact_id IN $in AND deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        //END SUGARCRM flav=com ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query = "SELECT cb.bug_id as id from contacts_bugs cb, bugs b where cb.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and cb.contact_id IN $in AND cb.deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY cb.' . $orderBy;
+        }
+        //END SUGARCRM flav=pro ONLY
 
-		$sugar = new Contact();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		set_module_in($sugar->build_related_in($query), 'Bugs');
-	}
+        $sugar = new Contact();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        set_module_in($sugar->build_related_in($query), 'Bugs');
+    }
 
 function get_bugs_in_accounts($in, $orderBy = '', $where='')
-	{
-		//bail if the in is empty
-		if($in == '()')return;
-		// First, get the list of IDs.
-		
-		//BEGIN SUGARCRM flav=com ONLY
-	    $query = "SELECT bug_id as id from accounts_bugs where account_id IN $in AND deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		//END SUGARCRM flav=com ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT ab.bug_id as id from accounts_bugs ab, bugs b where ab.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and ab.account_id IN $in AND ab.deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ab.' . $orderBy;
-		}
-		//END SUGARCRM flav=pro ONLY
+    {
+        //bail if the in is empty
+        if(empty($in)  || $in =='()' || $in =="('')")return;
+        // First, get the list of IDs.
+        
+        //BEGIN SUGARCRM flav=com ONLY
+        $query = "SELECT bug_id as id from accounts_bugs where account_id IN $in AND deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        //END SUGARCRM flav=com ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query = "SELECT ab.bug_id as id from accounts_bugs ab, bugs b where ab.bug_id = b.id and b.deleted = 0 and b.portal_viewable = 1 and ab.account_id IN $in AND ab.deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ab.' . $orderBy;
+        }
+        //END SUGARCRM flav=pro ONLY
 
-		$sugar = new Account();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
+        $sugar = new Account();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
 
-		set_module_in($sugar->build_related_in($query), 'Bugs');
-	}
+        set_module_in($sugar->build_related_in($query), 'Bugs');
+    }
 
 /*
 Cases
 */
 
 function get_cases_in_contacts($in, $orderBy = '')
-	{
-		//bail if the in is empty
-		if($in == '()')return;
-		// First, get the list of IDs.
+    {
+        //bail if the in is empty
+        if(empty($in)  || $in =='()' || $in =="('')")return;
+        // First, get the list of IDs.
 
-		//BEGIN SUGARCRM flav=com ONLY
-		$query = "SELECT case_id as id from contacts_cases where contact_id IN $in AND deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		//END SUGARCRM flav=com ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT case_id as id from contacts_cases cc, cases c where cc.case_id = c.id AND c.deleted = 0 AND c.portal_viewable = 1 AND cc.contact_id IN $in AND cc.deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY cc.' . $orderBy;
-		}
-		//END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=com ONLY
+        $query = "SELECT case_id as id from contacts_cases where contact_id IN $in AND deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        //END SUGARCRM flav=com ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query = "SELECT case_id as id from contacts_cases cc, cases c where cc.case_id = c.id AND c.deleted = 0 AND c.portal_viewable = 1 AND cc.contact_id IN $in AND cc.deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY cc.' . $orderBy;
+        }
+        //END SUGARCRM flav=pro ONLY
 
-		$sugar = new Contact();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		set_module_in($sugar->build_related_in($query), 'Cases');
-	}
+        $sugar = new Contact();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        set_module_in($sugar->build_related_in($query), 'Cases');
+    }
 
 function get_cases_in_accounts($in, $orderBy = '')
-	{
-		if(empty($_SESSION['viewable']['Accounts'])){
-			return;
-		}
-		//bail if the in is empty
-		if($in == '()')return;
-		// First, get the list of IDs.
-		//BEGIN SUGARCRM flav=com ONLY
-		$query = "SELECT id  from cases where account_id IN $in AND deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}		
-		//END SUGARCRM flav=com ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT id from cases where deleted = 0 AND portal_viewable = 1 AND account_id IN $in";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		//END SUGARCRM flav=pro ONLY
-		
-		$sugar = new Account();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		set_module_in($sugar->build_related_in($query), 'Cases');
-	}
+    {
+        if(empty($_SESSION['viewable']['Accounts'])){
+            return;
+        }
+        //bail if the in is empty
+        if(empty($in)  || $in =='()' || $in =="('')")return;
+        // First, get the list of IDs.
+        //BEGIN SUGARCRM flav=com ONLY
+        $query = "SELECT id  from cases where account_id IN $in AND deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }       
+        //END SUGARCRM flav=com ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query = "SELECT id from cases where deleted = 0 AND portal_viewable = 1 AND account_id IN $in";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        //END SUGARCRM flav=pro ONLY
+        
+        $sugar = new Account();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        set_module_in($sugar->build_related_in($query), 'Cases');
+    }
 
 
 
@@ -160,54 +160,54 @@ NOTES
 
 
 function get_notes_in_contacts($in, $orderBy = '')
-	{
-		//bail if the in is empty
-		if($in == '()')return;
-		// First, get the list of IDs.
-		$query = "SELECT id from notes where contact_id IN $in AND deleted=0 AND portal_flag=1";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-			
-		$contact = new Contact();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$contact->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		$note = new Note();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$note->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		return $contact->build_related_list($query, $note);
-	}
+    {
+        //bail if the in is empty
+        if(empty($in)  || $in =='()' || $in =="('')")return;
+        // First, get the list of IDs.
+        $query = "SELECT id from notes where contact_id IN $in AND deleted=0 AND portal_flag=1";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+            
+        $contact = new Contact();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $contact->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        $note = new Note();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $note->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        return $contact->build_related_list($query, $note);
+    }
 
 function get_notes_in_module($in, $module, $orderBy = '')
-	{
-		//bail if the in is empty
-		if($in == '()')return;
-		// First, get the list of IDs.
-		$query = "SELECT id from notes where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		global $beanList, $beanFiles;
+    {
+        //bail if the in is empty
+        if(empty($in)  || $in =='()' || $in =="('')")return;
+        // First, get the list of IDs.
+        $query = "SELECT id from notes where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        global $beanList, $beanFiles;
 
-		if(!empty($beanList[$module])){
-			$class_name = $beanList[$module];
-			require_once($beanFiles[$class_name]);
-			$sugar = new $class_name();
-		}else{
-			return array();
-		}
+        if(!empty($beanList[$module])){
+            $class_name = $beanList[$module];
+            require_once($beanFiles[$class_name]);
+            $sugar = new $class_name();
+        }else{
+            return array();
+        }
 
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		$note = new Note();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$note->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		return $sugar->build_related_list($query, $note);
-	}
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        $note = new Note();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $note->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        return $sugar->build_related_list($query, $note);
+    }
     
     function get_related_in_module($in, $module, $rel_module, $orderBy = '', $row_offset = 0, $limit= -1)
     {
@@ -221,16 +221,16 @@ function get_notes_in_module($in, $module, $orderBy = '')
         }
         
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
 
         // First, get the list of IDs.
-		if ($module == 'KBDocuments' || $module == 'DocumentRevisions') {
-			$query = "SELECT dr.* from document_revisions dr
+        if ($module == 'KBDocuments' || $module == 'DocumentRevisions') {
+            $query = "SELECT dr.* from document_revisions dr
                       inner join kbdocument_revisions kr on kr.document_revision_id = dr.id AND kr.kbdocument_id IN ($in)
                       AND dr.file_mime_type is not null";
-		} else {
-			$query = "SELECT id from $rel->table_name where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
-		}
+        } else {
+            $query = "SELECT id from $rel->table_name where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
+        }
 
         if(!empty($orderBy)){
             $query .= ' ORDER BY ' . $orderBy;
@@ -247,7 +247,7 @@ function get_notes_in_module($in, $module, $orderBy = '')
         //BEGIN SUGARCRM flav=pro ONLY
         $sugar->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
-		//BEGIN SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
         $rel->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
         
@@ -268,105 +268,112 @@ function get_notes_in_module($in, $module, $orderBy = '')
     }
 
 function get_accounts_from_contact($contact_id, $orderBy = '')
-	{
-				// First, get the list of IDs.
-		$query = "SELECT account_id as id from accounts_contacts where contact_id='$contact_id' AND deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		$sugar = new Contact();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		set_module_in($sugar->build_related_in($query), 'Accounts');
-	}
+    {
+                // First, get the list of IDs.
+        $query = "SELECT account_id as id from accounts_contacts where contact_id='$contact_id' AND deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        $sugar = new Contact();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        set_module_in($sugar->build_related_in($query), 'Accounts');
+    }
 
 function get_contacts_from_account($account_id, $orderBy = '')
-	{
-		// First, get the list of IDs.
-		$query = "SELECT contact_id as id from accounts_contacts where account_id='$account_id' AND deleted=0";
-		if(!empty($orderBy)){
-			$query .= ' ORDER BY ' . $orderBy;
-		}
-		$sugar = new Account();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$sugar->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-		set_module_in($sugar->build_related_in($query), 'Contacts');
-	}
+    {
+        // First, get the list of IDs.
+        $query = "SELECT contact_id as id from accounts_contacts where account_id='$account_id' AND deleted=0";
+        if(!empty($orderBy)){
+            $query .= ' ORDER BY ' . $orderBy;
+        }
+        $sugar = new Account();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $sugar->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+        set_module_in($sugar->build_related_in($query), 'Contacts');
+    }
 
 function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = ""){
+        //BEGIN SUGARCRM flav=pro ONLY
+        $template->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
 
-		$list = array();
-		//bail if the in is empty
-		if($in == '()')return $list;
-		//BEGIN SUGARCRM flav=pro ONLY
-		$template->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
+        $q = '';
+        //if $in is empty then pass in a query to get the list of related list
+        if(empty($in)  || $in =='()' || $in =="('')"){
+            $in = '';
+            //build the query to pass into the template list function
+             $q = 'select id from '.$template->table_name.' where deleted = 0 ';
+        	//add where statement if it is not empty
+			if(!empty($where)){
+				$q .= ' and '.$where;
+			}
+        }
+        
+        return $template->build_related_list_where($q, $template, $where, $in, $order_by, $limit, $row_offset);
 
-		return $template->build_related_list_where('',$template, $where, $in, $order_by, $limit, $row_offset);
-
-
-}
+    }
 
 function build_relationship_tree($contact){
-	global $sugar_config;
-	$contact->retrieve($contact->id);
+    global $sugar_config;
+    $contact->retrieve($contact->id);
 
-	//BEGIN SUGARCRM flav=pro ONLY
-	$contact->disable_row_level_security = true;
-	//END SUGARCRM flav=pro ONLY
-	get_accounts_from_contact($contact->id);
+    //BEGIN SUGARCRM flav=pro ONLY
+    $contact->disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
+    get_accounts_from_contact($contact->id);
 
-	set_module_in(array('list'=>array($contact->id), 'in'=> "('$contact->id')"), 'Contacts');
+    set_module_in(array('list'=>array($contact->id), 'in'=> "('$contact->id')"), 'Contacts');
 
-	$accounts = $_SESSION['viewable']['Accounts'];
-	foreach($accounts as $id){
-		if(!isset($sugar_config['portal_view']) || $sugar_config['portal_view'] != 'single_user'){
-			get_contacts_from_account($id);
-		}
-	}
+    $accounts = $_SESSION['viewable']['Accounts'];
+    foreach($accounts as $id){
+        if(!isset($sugar_config['portal_view']) || $sugar_config['portal_view'] != 'single_user'){
+            get_contacts_from_account($id);
+        }
+    }
 }
 
 function get_contacts_in(){
-	return $_SESSION['viewable']['contacts_in'];
+    return $_SESSION['viewable']['contacts_in'];
 }
 
 function get_accounts_in(){
-	return $_SESSION['viewable']['accounts_in'];
+    return $_SESSION['viewable']['accounts_in'];
 }
 
 function get_module_in($module_name){
-	if(!isset($_SESSION['viewable'][$module_name])){
-		return '()';
-	}
+    if(!isset($_SESSION['viewable'][$module_name])){
+        return '()';
+    }
 
     $mod_in = "('" . join("','", array_keys($_SESSION['viewable'][$module_name])) . "')";
     $_SESSION['viewable'][strtolower($module_name).'_in'] = $mod_in;
     
-	return $mod_in;
+    return $mod_in;
 }
 
 function set_module_in($arrayList, $module_name){
 
-		if(!isset($_SESSION['viewable'][$module_name])){
-			$_SESSION['viewable'][$module_name] = array();
-		}
-		foreach($arrayList['list'] as $id){
-			$_SESSION['viewable'][$module_name][$id] = $id;
-		}
-		if($module_name == 'Accounts' && isset($id)){
-			$_SESSION['account_id'] = $id;
-		}
+        if(!isset($_SESSION['viewable'][$module_name])){
+            $_SESSION['viewable'][$module_name] = array();
+        }
+        foreach($arrayList['list'] as $id){
+            $_SESSION['viewable'][$module_name][$id] = $id;
+        }
+        if($module_name == 'Accounts' && isset($id)){
+            $_SESSION['account_id'] = $id;
+        }
 
         if(!empty($_SESSION['viewable'][strtolower($module_name).'_in'])){
-        	if($arrayList['in'] != '()') {
-            	$_SESSION['viewable'][strtolower($module_name).'_in'] = "('" . implode("', '", $_SESSION['viewable'][strtolower($module_name).'_in']);
-            	$_SESSION['viewable'][strtolower($module_name).'_in'] .= implode("', '", $arrayList['list']) . "')";
+            if($arrayList['in'] != '()') {
+                $_SESSION['viewable'][strtolower($module_name).'_in'] = "('" . implode("', '", $_SESSION['viewable'][strtolower($module_name).'_in']);
+                $_SESSION['viewable'][strtolower($module_name).'_in'] .= implode("', '", $arrayList['list']) . "')";
             }
-		}else{
-			$_SESSION['viewable'][strtolower($module_name).'_in'] = $arrayList['in'];
-		}
+        }else{
+            $_SESSION['viewable'][strtolower($module_name).'_in'] = $arrayList['in'];
+        }
 }
 
 /*
@@ -391,7 +398,7 @@ function login_user($portal_auth){
             //END SUGARCRM flav=ent ONLY
             return 'success';
         }else{
-			$GLOBALS['log']->fatal('SECURITY: User authentication for '. $portal_auth['user_name']. ' failed');
+            $GLOBALS['log']->fatal('SECURITY: User authentication for '. $portal_auth['user_name']. ' failed');
             return 'fail';
         }
 }
@@ -406,47 +413,47 @@ function login_user($portal_auth){
  */
 function portal_get_child_tags_query($session, $tag) {
 
-	if (!portal_validate_authenticated($session)) {
-		$error->set_error('invalid_session');
-		return array (
-		'result_count' => -1,
-		'entry_list' => array (),
-		'error' => $error->get_soap_array());
-	}
+    if (!portal_validate_authenticated($session)) {
+        $error->set_error('invalid_session');
+        return array (
+        'result_count' => -1,
+        'entry_list' => array (),
+        'error' => $error->get_soap_array());
+    }
 
-	$sugar = new KBDocument();
-	//Use KBDocuments/SearchUtils.php 
-	return get_child_tags($tag, $sugar);
+    $sugar = new KBDocument();
+    //Use KBDocuments/SearchUtils.php 
+    return get_child_tags($tag, $sugar);
 }
 
 function portal_get_tag_docs_query($session, $tag) {
-	
-	if (!portal_validate_authenticated($session)) {
-		$error->set_error('invalid_session');
-		return array (
-		'result_count' => -1,
-		'entry_list' => array (),
-		'error' => $error->get_soap_array());
-	}
+    
+    if (!portal_validate_authenticated($session)) {
+        $error->set_error('invalid_session');
+        return array (
+        'result_count' => -1,
+        'entry_list' => array (),
+        'error' => $error->get_soap_array());
+    }
 
-	$sugar = new KBDocument();
-	//Use KBDocuments/SearchUtils.php 
-	return get_tag_docs($tag, $sugar);	
+    $sugar = new KBDocument();
+    //Use KBDocuments/SearchUtils.php 
+    return get_tag_docs($tag, $sugar);  
 }
 
 function portal_get_kbdocument_body_query($session, $id) {
-	
-	if (!portal_validate_authenticated($session)) {
-		$error->set_error('invalid_session');
-		return array (
-		'result_count' => -1,
-		'entry_list' => array (),
-		'error' => $error->get_soap_array());
-	}
+    
+    if (!portal_validate_authenticated($session)) {
+        $error->set_error('invalid_session');
+        return array (
+        'result_count' => -1,
+        'entry_list' => array (),
+        'error' => $error->get_soap_array());
+    }
 
-	$sugar = new KBDocument();
-	//Use KBDocuments/SearchUtils.php 
-	return get_kbdocument_body($id, $sugar);	
+    $sugar = new KBDocument();
+    //Use KBDocuments/SearchUtils.php 
+    return get_kbdocument_body($id, $sugar);    
 }
 //END SUGARCRM flav=pro ONLY
 
@@ -466,13 +473,25 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
     if($module_name == 'Cases'){
+
+        //if the related cases have not yet been loaded into the session object,
+        //then call the methods that will load the cases related to the contact/accounts for this user
         if(!isset($_SESSION['viewable'][$module_name])){
-            get_cases_in_contacts(get_contacts_in());
-            get_cases_in_accounts(get_accounts_in());
+            //retrieve the contact/account id's for this user
+            $c =get_contacts_in();
+            $a = get_accounts_in();
+           if(!empty($c)) {get_cases_in_contacts($c);}
+           if(!empty($a)) { get_cases_in_accounts($a);}
         }
          
         $sugar = new aCase();
-        $list =  get_related_list(get_module_in($module_name), new aCase(), $where,$order_by, $row_offset, $limit);
+
+        $list = array();
+        //if no Cases have been loaded into the session as viewable, then do not issue query, just return empty list
+        //issuing a query with no cases loaded in session will return ALL the Cases, which is not a good thing
+        if(!empty($_SESSION['viewable'][$module_name])){
+            $list =  get_related_list(get_module_in($module_name), new aCase(), $where,$order_by, $row_offset, $limit);
+        }
 
     }else if($module_name == 'Contacts'){
             $sugar = new Contact();
@@ -481,46 +500,57 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
             $sugar = new Account();
             $list =  get_related_list(get_module_in($module_name), new Account(), $where,$order_by);
     }else if($module_name == 'Bugs'){
+
+        //if the related bugs have not yet been loaded into the session object,
+        //then call the methods that will load the bugs related to the contact/accounts for this user
             if(!isset($_SESSION['viewable'][$module_name])){
-                get_bugs_in_contacts(get_contacts_in());
-                get_bugs_in_accounts(get_accounts_in());
+                //retrieve the contact/account id's for this user
+                $c =get_contacts_in();
+                $a = get_accounts_in();
+                if(!empty($c)) {get_bugs_in_contacts($c);}
+                if(!empty($a)) {get_bugs_in_accounts($a);}
             }
 
+        $list = array();
+        //if no Bugs have been loaded into the session as viewable, then do not issue query, just return empty list
+        //issuing a query with no bugs loaded in session will return ALL the Bugs, which is not a good thing
+        if(!empty($_SESSION['viewable'][$module_name])){
             $list = get_related_list(get_module_in($module_name), new Bug(), $where, $order_by, $row_offset, $limit);
+        }
     } else if ($module_name == 'KBDocuments') {
 //BEGIN SUGARCRM flav=pro ONLY
-			$sugar = new KBDocument();
-			$sugar->disable_row_level_security = true;
-			$keywords = array();
-			//Check if there was a LIKE or = clause built.  If so, the key/value pairs
-			$where = str_replace("\'", "<##@comma@##>", $where);
-			if (preg_match_all("/kbdocuments[\.]([^\s]*?)[\s]+(LIKE|=)[\s]+[\'](.*?)[%][\']/si", $where, $matches, PREG_SET_ORDER)) {
-				foreach($matches as $match) {
-					    $value = str_replace("<##@comma@##>", "\'", $match[3]);
-				        $keywords[$match[1]] = $value;
-				}
-			}
-		    $where = "";
+            $sugar = new KBDocument();
+            $sugar->disable_row_level_security = true;
+            $keywords = array();
+            //Check if there was a LIKE or = clause built.  If so, the key/value pairs
+            $where = str_replace("\'", "<##@comma@##>", $where);
+            if (preg_match_all("/kbdocuments[\.]([^\s]*?)[\s]+(LIKE|=)[\s]+[\'](.*?)[%][\']/si", $where, $matches, PREG_SET_ORDER)) {
+                foreach($matches as $match) {
+                        $value = str_replace("<##@comma@##>", "\'", $match[3]);
+                        $keywords[$match[1]] = $value;
+                }
+            }
+            $where = "";
 
-			$result = create_portal_list_query($sugar, $order_by, $where, $keywords, $row_offset, $limit);
-			$list = array ();
-			while ($row = $sugar->db->fetchByAssoc($result)) {
-				   $id = $row['id'];
-				   //$list[] = $id;
-				   $record = new KBDocument();
-				   $record->disable_row_level_security = true;
-				   $record->retrieve($id);
-				   $record->fill_in_additional_list_fields();
-				   $list[] = $record;		
-			}
+            $result = create_portal_list_query($sugar, $order_by, $where, $keywords, $row_offset, $limit);
+            $list = array ();
+            while ($row = $sugar->db->fetchByAssoc($result)) {
+                   $id = $row['id'];
+                   //$list[] = $id;
+                   $record = new KBDocument();
+                   $record->disable_row_level_security = true;
+                   $record->retrieve($id);
+                   $record->fill_in_additional_list_fields();
+                   $list[] = $record;       
+            }
 //END SUGARCRM flav=pro ONLY
-	} else if ($module_name == 'FAQ') {
+    } else if ($module_name == 'FAQ') {
 //BEGIN SUGARCRM flav=pro ONLY
-				$sugar = new KBDocument();
-				preg_match("/kbdocuments.tags[\s]=[\s]+[(][\'](.*?)[\'][)]/si", $where, $matches);
-				//Use KBDocuments/SearchUtils.php 
-				//ToDo: Set Global ID for FAQ somewhere, can't assume it's faq1
-				$list = get_faq_list($matches[1], $sugar);
+                $sugar = new KBDocument();
+                preg_match("/kbdocuments.tags[\s]=[\s]+[(][\'](.*?)[\'][)]/si", $where, $matches);
+                //Use KBDocuments/SearchUtils.php 
+                //ToDo: Set Global ID for FAQ somewhere, can't assume it's faq1
+                $list = get_faq_list($matches[1], $sugar);
 //END SUGARCRM flav=pro ONLY
     } else{
         $error->set_error('no_module_support');

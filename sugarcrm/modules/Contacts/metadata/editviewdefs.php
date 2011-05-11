@@ -34,45 +34,42 @@ $viewdefs['Contacts']['EditView'] = array(
     											          '<input type="hidden" name="bug_id" value="{$smarty.request.bug_id}">',
     											          '<input type="hidden" name="email_id" value="{$smarty.request.email_id}">',
     											          '<input type="hidden" name="inbound_email_id" value="{$smarty.request.inbound_email_id}">')),
-							'maxColumns' => '2', 
+							'maxColumns' => '2',
 							//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 							'useTabs' => true,
 							//END SUGARCRM flav=pro || flav=sales ONLY
                             'widths' => array(
-                                            array('label' => '10', 'field' => '30'), 
+                                            array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30'),
                                         ),
 ),
 
 
-    'panels' => 
+    'panels' =>
     array (
-      'lbl_contact_information' => 
+      'lbl_contact_information' =>
       array (
         array (
           array (
             'name' => 'first_name',
-            'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="25" maxlength="25" type="text" value="{$fields.first_name.value}">',
-          ),
+            'customCode' => '{html_options name="salutation" id="salutation" options=$fields.salutation.options selected=$fields.salutation.value}' 
+	      . '&nbsp;<input name="first_name"  id="first_name" size="25" maxlength="25" type="text" value="{$fields.first_name.value}">',
+	      ),
           
 	      //BEGIN SUGARCRM flav!=com ONLY
 	      'picture',
-	      //END SUGARCRM flav!=com ONLY          
+	      //END SUGARCRM flav!=com ONLY
 
         ),
         array (
           array (
             'name' => 'last_name',
-            'displayParams' => 
-            array (
-              'required' => true,
-            ),
           ),
           array (
             'name' => 'phone_work',
             'comment' => 'Work phone number of the contact',
             'label' => 'LBL_OFFICE_PHONE',
-          ),   
+          ),
         ),
 
         array (
@@ -86,8 +83,8 @@ $viewdefs['Contacts']['EditView'] = array(
             'name' => 'phone_mobile',
             'comment' => 'Mobile phone number of the contact',
             'label' => 'LBL_MOBILE_PHONE',
-          ),          
-                    
+          ),
+
         ),
 
         array (
@@ -101,17 +98,17 @@ $viewdefs['Contacts']['EditView'] = array(
         array(
           array (
             'name' => 'account_name',
-            'displayParams' => 
+            'displayParams' =>
             array (
               'key' => 'billing',
               'copy' => 'primary',
               'billingKey' => 'primary',
-              'additionalFields' => 
+              'additionalFields' =>
               array (
                 'phone_office' => 'phone_work',
               ),
             ),
-          ),  
+          ),
         ),
 
         array (
@@ -120,7 +117,7 @@ $viewdefs['Contacts']['EditView'] = array(
             'name' => 'primary_address_street',
             'hideLabel' => true,
             'type' => 'address',
-            'displayParams' => 
+            'displayParams' =>
             array (
               'key' => 'primary',
               'rows' => 2,
@@ -133,7 +130,7 @@ $viewdefs['Contacts']['EditView'] = array(
             'name' => 'alt_address_street',
             'hideLabel' => true,
             'type' => 'address',
-            'displayParams' => 
+            'displayParams' =>
             array (
               'key' => 'alt',
               'copy' => 'primary',
@@ -152,7 +149,7 @@ $viewdefs['Contacts']['EditView'] = array(
             'label' => 'LBL_EMAIL_ADDRESS',
           ),
         ),
-        
+
         array (
 
           array (
@@ -161,9 +158,9 @@ $viewdefs['Contacts']['EditView'] = array(
           ),
         ),
       ),
-      
-      
-      'LBL_PANEL_ADVANCED' => 
+
+
+      'LBL_PANEL_ADVANCED' =>
       array (
 
         array (
@@ -194,22 +191,22 @@ $viewdefs['Contacts']['EditView'] = array(
             'label' => 'LBL_DO_NOT_CALL',
           ),
         ),
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         array (
 	      'campaign_name',
         ),
         //END SUGARCRM flav!=sales ONLY
       ),
-      
+
 	  //BEGIN SUGARCRM flav=ent ONLY
-	  'lbl_portal_information' => 
+	  'lbl_portal_information' =>
 	  array (
-	    
+
 	    array (
 	      array('name'=>'portal_name',
 	            'customCode'=>'<table border="0" cellspacing="0" cellpadding="0"><tr><td>
-	                           <input id="portal_name" name="portal_name" type="text" size="30" maxlength="30" value="{$fields.portal_name.value}" autocomplete="off">
+	                           <input id="portal_name" name="portal_name" type="text" size="30" maxlength="{$fields.portal_name.len|default:\'30\'}" value="{$fields.portal_name.value}" autocomplete="off">
 	                           <input type="hidden" id="portal_name_existing" value="{$fields.portal_name.value}" autocomplete="off">
 	                           </td><tr><tr><td><input type="hidden" id="portal_name_verified" value="true"></td></tr></table>',
 	      ),
@@ -218,32 +215,32 @@ $viewdefs['Contacts']['EditView'] = array(
 	    array (
 	      array('name'=>'portal_password1',
 	            'type'=>'password',
-	            'customCode'=>'<input id="portal_password1" name="portal_password1" type="password" size="32" maxlength="32" value="{$fields.portal_password.value}" autocomplete="off">',
+	            'customCode'=>'<input id="portal_password1" name="portal_password1" type="password" size="32" maxlength="{$fields.portal_password.len|default:\'32\'}" value="{$fields.portal_password.value}" autocomplete="off">',
 	            'label'=>'LBL_PORTAL_PASSWORD'
 	      ),
 	    ),
-	    
+
 	    array (
-	      array('name'=>'portal_password', 
-	            'customCode'=>'<input id="portal_password" name="portal_password" type="password" size="32" maxlength="32" value="{$fields.portal_password.value}" autocomplete="off">' .
-	            		      '<input name="old_portal_password" type="hidden" value="{$fields.portal_password.value}" autocomplete="off">', 
+	      array('name'=>'portal_password',
+	            'customCode'=>'<input id="portal_password" name="portal_password" type="password" size="32" maxlength="{$fields.portal_password.len|default:\'32\'}" value="{$fields.portal_password.value}" autocomplete="off">' .
+	            		      '<input name="old_portal_password" type="hidden" value="{$fields.portal_password.value}" autocomplete="off">',
 	            'label'=>'LBL_CONFIRM_PORTAL_PASSWORD'
 	      ),
 	    ),
-	  ),  
+	  ),
 	  //END SUGARCRM flav=ent ONLY
-      
-      
-      'LBL_PANEL_ASSIGNMENT' => 
+
+
+      'LBL_PANEL_ASSIGNMENT' =>
       array (
-        array (      
+        array (
           array (
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO_NAME',
           ),
-	      //BEGIN SUGARCRM flav=pro ONLY   
+	      //BEGIN SUGARCRM flav=pro ONLY
 	      'team_name',
-	      //END SUGARCRM flav=pro ONLY  
+	      //END SUGARCRM flav=pro ONLY
         ),
       ),
     )

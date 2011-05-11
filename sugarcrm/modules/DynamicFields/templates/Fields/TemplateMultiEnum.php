@@ -113,18 +113,21 @@ class TemplateMultiEnum extends TemplateEnum{
 
 	function get_field_def(){
 		$def = parent::get_field_def();
-		if ( isset ( $this->ext4 ) )
+		if ( !empty ( $this->ext4 ) )
 		{
 			// turn off error reporting in case we are unpacking a value that hasn't been packed...
 			// this is kludgy, but unserialize doesn't throw exceptions correctly
-			$oldErrorReporting = error_reporting ( 0 );
-			$unpacked = unserialize ( $this->ext4 ) ;
-			error_reporting ( $oldErrorReporting ) ;
+			if($this->ext4[0] == 'a' && $this->ext4[1] == ':') {
+			    $unpacked = @unserialize ( $this->ext4 ) ;
+			} else {
+			    $unpacked = false;
+			}
 
 			// if we have a new error, then unserialize must have failed => we don't have a packed ext4
 			// safe to assume that false means the unpack failed, as ext4 will either contain an imploded string of default values, or an array, not a boolean false value
-			if ( $unpacked === false )
+			if ( $unpacked === false ) {
 				$def [ 'default' ] = $this->ext4 ;
+			}
 			else
 			{
 				// we have a packed representation containing one or both of default and dependency
@@ -134,7 +137,6 @@ class TemplateMultiEnum extends TemplateEnum{
 					$def [ 'dependency' ] = $unpacked [ 'dependency' ] ;
 			}
 		}
-		//$def['default'] = isset($this->ext4)? $this->ext4 : $def['default'];
 		$def['isMultiSelect'] = true;
 		unset($def['len']);
 		return $def;
@@ -142,6 +144,21 @@ class TemplateMultiEnum extends TemplateEnum{
 
 	function get_db_default(){
     	return '';
+	}
+
+    function get_db_modify_alter_table($table){
+		//BEGIN SUGARCRM flav=ent ONLY
+        //CLOB fields cannot have thier type in modify statements under oracle
+        if ($GLOBALS['db']->dbType == "oci8")
+        {
+            $out = $this->get_db_default(true) . $this->get_db_required(true);
+            if (!empty($out))
+                return "ALTER TABLE $table MODIFY $this->name $out";
+            else
+                return "";
+        }
+        //END SUGARCRM flav=ent ONLY
+        return parent::get_db_modify_alter_table($table);
 	}
 
 	function save($df) {

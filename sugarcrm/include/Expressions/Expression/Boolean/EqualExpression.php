@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -22,8 +22,8 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>equal(Generic item1, Generic item2)</b><br>
- * Returns true if "item1" is equal to "item2".
- *
+ * Returns true if "item1" is equal to "item2".<br/>
+ * ex: <i>equal("one", "one")</i> = true, <i>equal(1, "one")</i> = false
  */
 class EqualExpression extends BooleanExpression {
 	/**
@@ -32,10 +32,10 @@ class EqualExpression extends BooleanExpression {
 	function evaluate() {
 		$params = $this->getParameters();
 
-		$a = $params[0]->evaluate();
+        $a = $params[0]->evaluate();
 		$b = $params[1]->evaluate();
 
-		if ( $a == $b )	return AbstractExpression::$TRUE;
+        if ( $a == $b )	return AbstractExpression::$TRUE;
 		return AbstractExpression::$FALSE;
 	}
 

@@ -36,12 +36,16 @@ $viewdefs['Calls']['EditView'] = array(
     'panels' => array(
     	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
 		array('date_start'),
+		array('direction'),
+	    array('status'),
 	    array('duration_hours'),
 		array('duration_minutes'),
-	    array('status'),
-	    array('direction'),
-		array('assigned_user_name'),
         array('description'),
+		array('assigned_user_name'),
+		//BEGIN SUGARCRM flav=pro ONLY
+		array('team_name'),
+		//END SUGARCRM flav=pro ONLY
+        
 	),
 );
 ?>

@@ -36,32 +36,14 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewDashlet extends ViewListView
 {
-    function ViewDashlet()
+    function __construct()
     {
-        $this->init () ;
-    }
-
-    /**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams()
-	{
-	    global $mod_strings;
-	    
-    	return array(
-    	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
-    	   );
-    }
-
-	/*
-     * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
-     */
-    function init()
-    {
-    	$this->editModule = $_REQUEST [ 'view_module' ] ;
+        $this->editModule = $_REQUEST [ 'view_module' ] ;
         $this->editLayout = $_REQUEST [ 'view' ] ;
-        $this->editPackage = (isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
+        if(isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] ))
+            $this->editPackage = $_REQUEST [ 'view_package' ];
+        else
+            $this->editPackage = null;
 
         $this->fromModuleBuilder = isset ( $_REQUEST [ 'MB' ] ) || (isset($_REQUEST['view_package']) && $_REQUEST['view_package'] && $_REQUEST['view_package'] != 'studio') ;
 
@@ -71,6 +53,19 @@ class ViewDashlet extends ViewListView
             $moduleNames = array_change_key_case ( $app_list_strings [ 'moduleList' ] ) ;
             $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
         }
+    }
+
+    /**
+	 * @see SugarView::_getModuleTitleParams()
+	 */
+	protected function _getModuleTitleParams($browserTitle = false)
+	{
+	    global $mod_strings;
+	    
+    	return array(
+    	   translate('LBL_MODULE_NAME','Administration'),
+    	   ModuleBuilderController::getModuleTitle(),
+    	   );
     }
 
     // DO NOT REMOVE - overrides parent ViewEdit preDisplay() which attempts to load a bean for a non-existent module
@@ -134,6 +129,7 @@ class ViewDashlet extends ViewListView
         $smarty->assign ( 'action', 'dashletSave' ) ;
         $smarty->assign( 'module', 'ModuleBuilder');
         $smarty->assign ( 'view_module', $this->editModule ) ;
+        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $helpName = (isset( $_REQUEST['view']) && $_REQUEST['view']=='dashletsearch') ? 'searchViewEditor' : 'listViewEditor';
         $smarty->assign ( 'helpName', $helpName ) ;
         $smarty->assign ( 'helpDefault', 'modify' ) ;

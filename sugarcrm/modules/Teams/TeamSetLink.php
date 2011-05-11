@@ -128,9 +128,6 @@ class TeamSetLink extends Link {
 						}
 					}
 					
-					if(!empty($this->_bean->in_workflow)){
-						$this->_teamList = array();
-					}
 					//this stmt is intended to handle the situation where the code has set the team_id but not the team_set_id as may be the case
 					//from SOAP.
 					if(!in_array($this->_bean->team_id, $this->_teamList)){
@@ -226,6 +223,14 @@ class TeamSetLink extends Link {
 	
 	public function isSaved(){
 		return $this->_saved;
+	}
+	
+	/**
+	 * We use this method in action_utils when setting the team_id, so we can ensure that the proper team logic is re-run.
+	 * @param BOOL $saved
+	 */
+	public function setSaved($saved){ 
+		$this->_saved = $saved;
 	}
 		
 	/**

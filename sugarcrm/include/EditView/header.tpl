@@ -47,7 +47,7 @@
 <input type="hidden" name="module_tab"> 
 <input type="hidden" name="contact_role">
 {if !empty($smarty.request.return_module) || !empty($smarty.request.relate_to)}
-<input type="hidden" name="relate_to" value="{if $smarty.request.return_relationship}{$smarty.request.return_relationship}{elseif $smarty.request.relate_to}{$smarty.request.relate_to}{elseif empty($isDCForm)}{$smarty.request.return_module}{/if}">
+<input type="hidden" name="relate_to" value="{if $smarty.request.return_relationship}{$smarty.request.return_relationship}{elseif $smarty.request.relate_to && empty($smarty.request.from_dcmenu)}{$smarty.request.relate_to}{elseif empty($isDCForm) && empty($smarty.request.from_dcmenu)}{$smarty.request.return_module}{/if}">
 <input type="hidden" name="relate_id" value="{$smarty.request.return_id}">
 {/if}
 <input type="hidden" name="offset" value="{$offset}">
@@ -62,8 +62,8 @@
       {{sugar_button module="$module" id="$button" view="$view"}}
    {{/foreach}}
 {{else}}
-{{sugar_button module="$module" id="SAVE" view="$view"}}
-{{sugar_button module="$module" id="CANCEL" view="$view"}}
+{{sugar_button module="$module" id="SAVE" view="$view" location="HEADER"}}
+{{sugar_button module="$module" id="CANCEL" view="$view" location="HEADER"}}
 {{/if}}
 {{if empty($form.hideAudit) || !$form.hideAudit}}
 {{sugar_button module="$module" id="Audit" view="$view"}}

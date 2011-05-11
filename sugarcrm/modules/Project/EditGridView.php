@@ -126,8 +126,10 @@ if (count($resources) > 0){
 $sugar_smarty->assign("DURATION_UNITS", $app_list_strings['project_duration_units_dom']);
 $sugar_smarty->assign("PROJECT", $focus);
 
-$today = date($GLOBALS['timedate']->dbDayFormat, time());
-$nextWeek = date($GLOBALS['timedate']->dbDayFormat, time() + (7 * 24 * 60 * 60));
+$today = $timedate->nowDbDate();
+$nextWeek = $timedate->asDbDate( $timedate->getNow()->get('+1 week'));
+
+
 
 if (isset($_REQUEST["selected_view"]))
     $sugar_smarty->assign("SELECTED_VIEW", $_REQUEST["selected_view"]);

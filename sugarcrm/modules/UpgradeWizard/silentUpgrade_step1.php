@@ -33,7 +33,7 @@
 //// php.exe -f silentUpgrade.php [Path to Upgrade Package zip] [Path to Log file] [Path to Instance]
 //// See below the Usage for more details.
 /////////////////////////////////////////////////////////////////////////////////////////
-
+ini_set('memory_limit',-1);
 ///////////////////////////////////////////////////////////////////////////////
 ////	UTILITIES THAT MUST BE LOCAL :(
 function prepSystemForUpgradeSilent() {
@@ -108,7 +108,7 @@ function checkLoggerSettings(){
  		}
 	 }
 }
- 
+
 function checkResourceSettings(){
 	if(file_exists(getcwd().'/config.php')){
          require(getcwd().'/config.php');
@@ -135,14 +135,6 @@ function checkResourceSettings(){
 	}
 }
 
-
-//rebuild all relationships...
-function rebuildRelations($pre_path = ''){
-	$_REQUEST['silent'] = true;
-	include($pre_path.'modules/Administration/RebuildRelationship.php');
-	 $_REQUEST['upgradeWizard'] = true;
-	 include($pre_path.'modules/ACL/install_actions.php');
-}
 
 function createMissingRels(){
 	$relForObjects = array('leads'=>'Leads','campaigns'=>'Campaigns','prospects'=>'Prospects');
@@ -239,8 +231,8 @@ function createMissingRels(){
  * @param   $sugar_version
  * @return  bool true if successful
  */
-function merge_passwordsetting($sugar_config, $sugar_version) {	
-   
+function merge_passwordsetting($sugar_config, $sugar_version) {
+
      $passwordsetting_defaults = array (
         'passwordsetting' => array (
             'minpwdlength' => '',
@@ -272,7 +264,7 @@ function merge_passwordsetting($sugar_config, $sugar_version) {
             'lockoutexpirationlogin' => '',
         ),
     );
-        
+
     $sugar_config = sugarArrayMerge($passwordsetting_defaults, $sugar_config );
 
     // need to override version with default no matter what
@@ -298,7 +290,7 @@ function addDefaultModuleRoles($defaultRoles = array()) {
 					$row=$GLOBALS['db']->fetchByAssoc($result);
 					if ($row == null) {
 	                	$guid = create_guid();
-	                	$currdate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	                	$currdate = gmdate('Y-m-d H:i:s');
 	                	$query= "INSERT INTO acl_actions (id,date_entered,date_modified,modified_user_id,name,category,acltype,aclaccess,deleted ) VALUES ('$guid','$currdate','$currdate','1','$name','$category','$roleName','$access_override','0')";
 						$GLOBALS['db']->query($query);
 						if($GLOBALS['db']->checkError()){
@@ -320,7 +312,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
         } else {
             echo "*******************************************************************************\n";
             echo "*** ERROR: 3rd parameter must be a valid directory.  Tried to cd to [ {$argv[3]} ].\n";
-            die();
+            exit(1);
         }
     }
 
@@ -335,7 +327,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "*** ERROR: Missing required parameters.  Received ".count($argv)." argument(s), require 7.\n";
             echo $usage_dce;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
         // this is an instance
         if(!is_dir($argv[1])) { // valid directory . template path?
@@ -343,7 +335,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "*** ERROR: First argument must be a full path to the template. Got [ {$argv[1]} ].\n";
             echo $usage_dce;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
     }
     else if(is_file("{$cwd}/include/entryPoint.php")) {
@@ -355,27 +347,27 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "*** ERROR: First argument must be a full path to the patch file. Got [ {$argv[1]} ].\n";
             echo $usage_regular;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
         if(count($argv) < 5) {
             echo "*******************************************************************************\n";
             echo "*** ERROR: Missing required parameters.  Received ".count($argv)." argument(s), require 5.\n";
             echo $usage_regular;
             echo "FAILURE\n";
-            die();
+            exit(1);
         }
     }
     else {
         //this should be a regular sugar install
         echo "*******************************************************************************\n";
         echo "*** ERROR: Tried to execute in a non-SugarCRM root directory.\n";
-        die();      
+        exit(1);
     }
 
     if(isset($argv[7]) && file_exists($argv[7].'SugarTemplateUtilties.php')){
         require_once($argv[7].'SugarTemplateUtilties.php');
     }
-    
+
     return $upgradeType;
 }
 
@@ -415,7 +407,8 @@ function threeWayMerge(){
 
 // only run from command line
 if(isset($_SERVER['HTTP_USER_AGENT'])) {
-	die('This utility may only be run from the command line or command prompt.');
+	fwrite(STDERR,'This utility may only be run from the command line or command prompt.');
+	exit(1);
 }
 //Clean_string cleans out any file  passed in as a parameter
 $_SERVER['PHP_SELF'] = 'silentUpgrade.php';
@@ -526,11 +519,11 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 
 	ini_set('error_reporting',1);
 	require_once('include/entryPoint.php');
-	
+	require_once('include/SugarLogger/SugarLogger.php');
 	require_once('include/utils/zip_utils.php');
-	
-	
-	
+
+
+
 	require('config.php');
 	//require_once('modules/UpgradeWizard/uw_utils.php'); // must upgrade UW first
 	if(isset($argv[3])) {
@@ -578,7 +571,7 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 	   }
 	   else{
 	   	echo "FAILURE: Not an admin user in users table. Please provide an admin user\n";
-		die();
+		exit(1);
 	   }
 	}
 	else {
@@ -586,7 +579,7 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 		echo "*** ERROR: 4th parameter must be a valid admin user.\n";
 		echo $usage;
 		echo "FAILURE\n";
-		die();
+		exit(1);
 	}
 
 
@@ -599,6 +592,8 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 ////	UPGRADE PREP
 prepSystemForUpgradeSilent();
 
+//repair tabledictionary.ext.php file if needed
+repairTableDictionaryExtFile();
 
 $unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp");
 $install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
@@ -606,11 +601,21 @@ $install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/"
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
-
+if(is_dir($unzip_dir.'/scripts'))
+{
+	rmdir_recursive($unzip_dir.'/scripts');
+}
+if(is_file($unzip_dir.'/manifest.php'))
+{
+	rmdir_recursive($unzip_dir.'/manifest.php');
+}
 mkdir_recursive($unzip_dir);
 if(!is_dir($unzip_dir)) {
-	die("\n{$unzip_dir} is not an available directory\nFAILURE\n");
+	echo "\n{$unzip_dir} is not an available directory\nFAILURE\n";
+	fwrite(STDERR,"\n{$unzip_dir} is not an available directory\nFAILURE\n");
+	exit(1);
 }
+
 unzip($argv[1], $unzip_dir);
 // mimic standard UW by copy patch zip to appropriate dir
 copy($argv[1], $install_file);
@@ -629,6 +634,7 @@ foreach($uwFiles as $uwFile) {
 	copy($uwFile, $destFile);
 }
 require_once('modules/UpgradeWizard/uw_utils.php'); // must upgrade UW first
+removeSilentUpgradeVarsCache(); // Clear the silent upgrade vars - Note: Any calls to these functions within this file are removed here
 logThis("*** SILENT UPGRADE INITIATED.", $path);
 logThis("*** UpgradeWizard Upgraded  ", $path);
 
@@ -658,23 +664,26 @@ if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php")) {
 	// provides $manifest array
 	include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 	if(!isset($manifest)) {
-		die("\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+		fwrite(STDERR,"\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+	    exit(1);
 	} else {
 		copy("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php", "{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/{$zip_from_dir}-manifest.php");
 
 		$error = validate_manifest($manifest);
 		if(!empty($error)) {
 			$error = strip_tags(br2nl($error));
-			die("\n{$error}\n\nFAILURE\n");
+			fwrite(STDERR,"\n{$error}\n\nFAILURE\n");
+			exit(1);
 		}
 	}
 } else {
-	die("\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+	fwrite(STDERR,"\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
+	exit(1);
 }
 
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
-$_SESSION['upgrade_from_flavor'] = $manifest['name'];	
-	
+$_SESSION['upgrade_from_flavor'] = $manifest['name'];
+
 global $sugar_config;
 global $sugar_version;
 global $sugar_flavor;
@@ -711,14 +720,14 @@ foreach($parserFiles as $file) {
 
 	if(!file_exists($targetFile))
 	 {
-		logThis('Copying file to destination: ' . $targetFile);
+		//logThis('Copying file to destination: ' . $targetFile, $path);
 		if(!copy($srcFile, $targetFile)) {
-			logThis('*** ERROR: could not copy file: ' . $targetFile);
+			logThis('*** ERROR: could not copy file: ' . $targetFile, $path);
 		} else {
 			$copiedFiles[] = $targetFile;
 		}
 	} else {
-		logThis('Skipping file: ' . $targetFile);
+		//logThis('Skipping file: ' . $targetFile, $path);
 		//$skippedFiles[] = $targetFile;
 	}
    }
@@ -735,10 +744,11 @@ foreach($parserFiles as $file) {
 /*
 $errors = preflightCheck();
 if((count($errors) == 1)) { // only diffs
-	logThis('file preflight check passed successfully.');
+	logThis('file preflight check passed successfully.', $path);
 }
 else{
-	die("\nThe user doesn't have sufficient permissions to write to database'.\n\n");
+	fwrite(STDERR,"\nThe user doesn't have sufficient permissions to write to database'.\n\n");
+	exit(1);
 }
 */
 //If version less than 500 then look for modules to be upgraded
@@ -816,20 +826,29 @@ if(!didThisStepRunBefore('commit')){
 	 		$skippedFiles = $split['skippedFiles'];
 			set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
 	 }
-	require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php')); 
+	require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
 	$new_sugar_version = getUpgradeVersion();
     $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
     $destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
+    $siv_varset_1 = setSilentUpgradeVar('origVersion', $origVersion);
+    $siv_varset_2 = setSilentUpgradeVar('destVersion', $destVersion);
+    $siv_write    = writeSilentUpgradeVars();
+    if(!$siv_varset_1 || !$siv_varset_2 || !$siv_write){
+        logThis("Error with silent upgrade variables: origVersion write success is ({$siv_varset_1}) ".
+        		"-- destVersion write success is ({$siv_varset_2}) -- ".
+        		"writeSilentUpgradeVars success is ({$siv_write}) -- ".
+        		"path to cache dir is ({$GLOBALS['sugar_config']['cache_dir']})", $path);
+    }
      require_once('modules/DynamicFields/templates/Fields/TemplateText.php');
 	///////////////////////////////////////////////////////////////////////////////
     ///    RELOAD NEW DEFINITIONS
     global $ACLActions, $beanList, $beanFiles;
     include('modules/ACLActions/actiondefs.php');
-    include('include/modules.php'); 
+    include('include/modules.php');
 	/////////////////////////////////////////////
 
-    if (!function_exists("inDeveloperMode")) { 
-        //this function was introduced from tokyo in the file include/utils.php, so when upgrading from 5.1x and 5.2x we should declare the this function 
+    if (!function_exists("inDeveloperMode")) {
+        //this function was introduced from tokyo in the file include/utils.php, so when upgrading from 5.1x and 5.2x we should declare the this function
         function inDeveloperMode()
         {
             return isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'];
@@ -840,7 +859,7 @@ if(!didThisStepRunBefore('commit')){
 	if(empty($errors)) {
 		logThis('Starting post_install()...', $path);
 
-		$trackerManager = TrackerManager::getInstance();   
+		$trackerManager = TrackerManager::getInstance();
         $trackerManager->pause();
         $trackerManager->unsetMonitors();
 
@@ -851,10 +870,6 @@ if(!didThisStepRunBefore('commit')){
 				$progArray['post_install']='in_progress';
 				post_install_progress($progArray,'set');
 				    global $moduleList;
-				    if($origVersion < '551' && !in_array('Feeds', $moduleList))
-				    {
-				        $moduleList[] = 'Feeds';
-				    }
 					include($file);
 					post_install();
 				// cn: only run conversion if admin selects "Sugar runs SQL"
@@ -885,64 +900,46 @@ if(!didThisStepRunBefore('commit')){
 			checkResourceSettings();
 		logThis('begin check resource settings .', $path);
 
-        
+
 		require("sugar_version.php");
 		require('config.php');
 		global $sugar_config;
 
-		if($origVersion < '550' && $sugar_config['dbconfig']['db_type'] == 'mssql' && !is_freetds()){
-		     convertImageToText('import_maps', 'content');
-		     convertImageToText('import_maps', 'default_values');
-		      convertImageToText('saved_reports', 'content');
-		}
-		
-		/*
-		if($origVersion < '550'){
-			logThis("Upgrading multienum data", $path);
-            require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-            upgrade_multienum_data();
-		}
-		if($origVersion < '550' && $sugar_config['dbconfig']['db_type'] == 'mssql') {
- 			dropColumnConstraintForMSSQL("outbound_email", "mail_smtpssl");
- 			$GLOBALS['db']->query("ALTER TABLE outbound_email alter column mail_smtpssl int NULL");
- 		} // if
-		*/
-		
-		if($ce_to_pro_ent || $origVersion < '550'){
+		if($ce_to_pro_ent){
 			if(isset($sugar_config['sugarbeet']))
 			{
 			    //$sugar_config['sugarbeet'] is only set in COMM
-			    unset($sugar_config['sugarbeet']); 
+			    unset($sugar_config['sugarbeet']);
 			}
 		    if(isset($sugar_config['disable_team_access_check']))
 			{
-			    //$sugar_config['disable_team_access_check'] is a runtime configration, 
+			    //$sugar_config['disable_team_access_check'] is a runtime configration,
 			    //no need to write to config.php
-			    unset($sugar_config['disable_team_access_check']); 
+			    unset($sugar_config['disable_team_access_check']);
 			}
 			if(!merge_passwordsetting($sugar_config, $sugar_version)) {
 				logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
 				$errors[] = 'Could not write config.php!';
 			}
-			
+
 		}
 
 		logThis('Set default_theme to Sugar', $path);
 		$sugar_config['default_theme'] = 'Sugar';
-		
+
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
         }
-        
+
         logThis('Set default_max_tabs to 7', $path);
 		$sugar_config['default_max_tabs'] = '7';
-		
+
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
         }
-        
+
 		logThis('Upgrade the sugar_version', $path);
 		$sugar_config['sugar_version'] = $sugar_version;
 		if($destVersion == $origVersion)
@@ -951,7 +948,7 @@ if(!didThisStepRunBefore('commit')){
             logThis('*** ERROR: could not write config.php! - upgrade will fail!', $path);
             $errors[] = 'Could not write config.php!';
         }
-		
+
 		logThis('post_install() done.', $path);
 	}
 
@@ -1008,7 +1005,7 @@ if(!didThisStepRunBefore('commit')){
 		       	}
 		   }
 		}
-		
+
 		//delete cache/themes
 		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
 			$allModFiles = array();
@@ -1027,19 +1024,11 @@ if(!didThisStepRunBefore('commit')){
 	else if(isset($_REQUEST['silent']) && $_REQUEST['silent'] != true){
 		$_REQUEST['silent'] = true;
 	}
-	 
-    if($origVersion < '550')
-    {
-    	include("install/seed_data/Advanced_Password_SeedData.php"); 
-    	$GLOBALS['db']->query(" update email_templates set team_set_id=team_id where team_set_id is null and team_id is not null ");
-    }
-	logThis('Start rebuild relationships.', $path);
-	 	@rebuildRelations();
-	logThis('End rebuild relationships.', $path);
+
 	 //logThis('Checking for leads_assigned_user relationship and if not found then create.', $path);
-		@createMissingRels();
+	@createMissingRels();
 	 //logThis('Checked for leads_assigned_user relationship.', $path);
-	ob_end_clean();	
+	ob_end_clean();
 	//// run fix on dropdown lists that may have been incorrectly named
     //fix_dropdown_list();
 }
@@ -1052,16 +1041,6 @@ if(function_exists('deleteCache')){
 	set_upgrade_progress('end','in_progress','deleteCache','in_progress');
 	@deleteCache();
 	set_upgrade_progress('end','in_progress','deleteCache','done');
-}
-
-///////////////////////////////////////////////////////////////////////////////
-////	TAKE OUT TRASH
-
-if(empty($errors)) {
-	set_upgrade_progress('end','in_progress','unlinkingfiles','in_progress');
-	logThis('Taking out the trash, unlinking temp files.', $path);
-	unlinkTempFiles(true);
-	set_upgrade_progress('end','in_progress','unlinkingfiles','done');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1099,8 +1078,8 @@ fix_report_relationships($path);
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
-if(isset($_SESSION['upgrade_from_flavor'])){ 
-
+if($ce_to_pro_ent)
+{
         //check to see if there are any new files that need to be added to systems tab
         //retrieve old modules list
         logThis('check to see if new modules exist',$path);
@@ -1111,19 +1090,19 @@ if(isset($_SESSION['upgrade_from_flavor'])){
         include('include/modules.php');
         $newModuleList = $moduleList;
 
-        //include tab controller 
+        //include tab controller
         require_once('modules/MySettings/TabController.php');
         $newTB = new TabController();
-        
+
         //make sure new modules list has a key we can reference directly
         $newModuleList = $newTB->get_key_array($newModuleList);
         $oldModuleList = $newTB->get_key_array($oldModuleList);
-        
+
         //iterate through list and remove commonalities to get new modules
         foreach ($newModuleList as $remove_mod){
             if(in_array($remove_mod, $oldModuleList)){
                 unset($newModuleList[$remove_mod]);
-            }   
+            }
         }
 
         $must_have_modules= array(
@@ -1137,10 +1116,10 @@ if(isset($_SESSION['upgrade_from_flavor'])){
 			  'KBDocuments' => 'KBDocuments'
         );
         $newModuleList = array_merge($newModuleList,$must_have_modules);
-        
+
         //new modules list now has left over modules which are new to this install, so lets add them to the system tabs
         logThis('new modules to add are '.var_export($newModuleList,true),$path);
-        
+
         //grab the existing system tabs
         $tabs = $newTB->get_system_tabs();
 
@@ -1149,35 +1128,10 @@ if(isset($_SESSION['upgrade_from_flavor'])){
           $tabs[$nm] = $nm;
         }
 
-        //Set the default order
-        $default_order = array(
-        	'Home'=>'Home',
-        	'Accounts'=>'Accounts',
-        	'Contacts'=>'Contacts',
-        	'Opportunities'=>'Opportunities',
-        	'Activities'=>'Activities',
-        	'Reports'=>'Reports',
-        	'Documents'=>'Documents'
-        );
-        $tabs = array_merge($default_order, $tabs);        
-        
-        //now assign the modules to system tabs 
+        //now assign the modules to system tabs
         $newTB->set_system_tabs($tabs);
         logThis('module tabs updated',$path);
-        
-
 }
-
-// clear out the theme cache
-if(!class_exists('SugarThemeRegistry')){
-    require_once('include/SugarTheme/SugarTheme.php');
-}
-
-
-// re-minify the JS source files
-$_REQUEST['root_directory'] = getcwd();
-$_REQUEST['js_rebuild_concat'] = 'rebuild';
-require_once('jssource/minify.php');
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
@@ -1205,21 +1159,94 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	$phpErrors = ob_get_contents();
 	ob_end_clean();
 	logThis("**** Potential PHP generated error messages: {$phpErrors}", $path);
-	
+
 	if(count($errors) > 0) {
 		foreach($errors as $error) {
 			logThis("****** SilentUpgrade ERROR: {$error}", $path);
 		}
 		echo "FAILED\n";
-	} 
+	}
 
 
 } else {
 //ELSE if DCE_INSTANCE
 echo "RUNNING DCE UPGRADE\n";
-	
+
 } //END of big if-else block for DCE_INSTANCE
 
 
+/**
+ * repairTableDictionaryExtFile
+ * 
+ * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file 
+ * did not exist.  This would cause warnings to appear during the upgrade.  As a result, this
+ * function scans the contents of tabledictionary.ext.php and then remove entries where the file does exist.
+ */
+function repairTableDictionaryExtFile()
+{
+	$tableDictionaryExtDirs = array('custom/Extension/application/Ext/TableDictionary', 'custom/application/Ext/TableDictionary');
+	
+	foreach($tableDictionaryExtDirs as $tableDictionaryExt)
+	{
+	
+		if(is_dir($tableDictionaryExt) && is_writable($tableDictionaryExt)){
+			$dir = dir($tableDictionaryExt);
+			while(($entry = $dir->read()) !== false)
+			{
+				$entry = $tableDictionaryExt . '/' . $entry;
+				if(is_file($entry) && preg_match('/\.php$/i', $entry) && is_writeable($entry))
+				{
+			
+						if(function_exists('sugar_fopen'))
+						{
+							$fp = @sugar_fopen($entry, 'r');
+						} else {
+							$fp = fopen($entry, 'r');
+						}			
+						
+						
+					    if($fp)
+				        {
+				             $altered = false;
+				             $contents = '';
+						     
+				             while($line = fgets($fp))
+						     {
+						    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\"|\']\s*\)\s*;/', $line, $match))
+						    	{
+						    	   if(!file_exists($match[1]))
+						    	   {
+						    	      $altered = true;
+						    	   } else {
+						    	   	  $contents .= $line;
+						    	   }
+						    	} else {
+						    	   $contents .= $line;
+						    	}
+						     }
+						     
+						     fclose($fp); 
+				        }
+				        
+				        
+					    if($altered)
+					    {
+							if(function_exists('sugar_fopen'))
+							{
+								$fp = @sugar_fopen($entry, 'w');
+							} else {
+								$fp = fopen($entry, 'w');
+							}		    	
+				            
+							if($fp && fwrite($fp, $contents))
+							{
+								fclose($fp);
+							}
+					    }					
+				} //if
+			} //while
+		} //if
+	}
+}
 
 ?>

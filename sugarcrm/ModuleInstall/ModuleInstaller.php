@@ -215,10 +215,13 @@ class ModuleInstaller{
 				$rac = new RepairAndClear();
 				$rac->repairAndClearAll($selectedActions, $installed_modules,true, false);
 				$this->rebuild_relationships();
-				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
-
 				UpdateSystemTabs('Add',$tab_modules);
-
+				
+				//clear the unified_search_module.php file 
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile(); 
+	            				
+				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 		}else{
 			die("No \$installdefs Defined In $this->base_dir/manifest.php");
 		}
@@ -279,7 +282,7 @@ class ModuleInstaller{
 	function install_copy(){
 		if(isset($this->installdefs['copy'])){
 			/* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
-			$backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore" );
+			$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore" );
 			/* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
 			foreach($this->installdefs['copy'] as $cp){
 				$GLOBALS['log']->debug("Copying ..." . $cp['from'].  " to " .$cp['to'] );
@@ -301,12 +304,12 @@ class ModuleInstaller{
 				/* BEGIN - RESTORE POINT - by MR. MILK August 31, 2005 02:22:11 PM */
 						//rmdir_recursive($cp['to']);
 
-						$backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore/".$cp['to'] );
+						$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] );
 						$this->uninstall_new_files($cp, $backup_path);
 						$this->copy_path($backup_path, $cp['to'], $backup_path, true);
 				/* END - RESTORE POINT - by MR. MILK August 31, 2005 02:22:18 PM */
 					}
-					$backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore");
+					$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore");
 					if(file_exists($backup_path))
 						rmdir_recursive($backup_path);
 				}
@@ -328,7 +331,9 @@ class ModuleInstaller{
 				//if it's not a sugar file then we remove it otherwise we can't restor it
 				if(!$this->ms->sugarFileExists($to)){
 					$GLOBALS['log']->debug('ModuleInstaller[uninstall_new_file] deleting file ' . $to);
-					unlink($to);
+					if(file_exists($to)) {
+					    unlink($to);
+					}
 				}else{
 					$GLOBALS['log']->fatal('ModuleInstaller[uninstall_new_file] Could not remove file ' . $to . ' as no backup file was found to restore to');
 				}
@@ -446,8 +451,8 @@ class ModuleInstaller{
         if(isset($this->installdefs['dcaction'])){
 			$this->log(translate('LBL_MI_UN_MENUS'));
 			foreach($this->installdefs['dcaction'] as $action){
-				$menu['from'] = str_replace('<basepath>', $this->base_dir, $menu['from']);
-				$GLOBALS['log']->debug("Uninstalling Menu ..." . $action['from'] );
+				$action['from'] = str_replace('<basepath>', $this->base_dir, $action['from']);
+				$GLOBALS['log']->debug("Uninstalling DCActions ..." . $action['from'] );
 				$path = 'custom/Extension/application/Ext/DashletContainer/Containers';
 				if (sugar_is_file($path . '/'. $this->id_name . '.php', 'w'))
 				{
@@ -1252,6 +1257,10 @@ class ModuleInstaller{
 
 				UpdateSystemTabs('Restore',$installed_modules);
 
+	            //clear the unified_search_module.php file 
+	            require_once('modules/Home/UnifiedSearchAdvanced.php');
+	            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();     				
+				
 				$this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
 				if(!$this->silent){
 					update_progress_bar('install', $total_steps, $total_steps);
@@ -1280,6 +1289,14 @@ class ModuleInstaller{
 			$this->merge_files('Ext/Vardefs/', 'vardefs.ext.php');
 			sugar_cache_reset();
 	}
+    //BEGIN SUGARCRM flav=pro ONLY
+    function rebuild_dependencies(){
+            $this->log(translate('LBL_MI_REBUILDING') . " Dependencies...");
+			$this->merge_files('Ext/Dependencies/', 'deps.ext.php');
+			sugar_cache_reset();
+	}
+    //END SUGARCRM flav=pro ONLY
+
 	function rebuild_layoutdefs(){
             $this->log(translate('LBL_MI_REBUILDING') . " Layoutdefs...");
 			$this->merge_files('Ext/Layoutdefs/', 'layoutdefs.ext.php');
@@ -1293,12 +1310,12 @@ class ModuleInstaller{
 
 	function rebuild_dashletcontainers(){
             $this->log(translate('LBL_MI_REBUILDING') . " DC Actions...");
-			$this->merge_files('Ext/DashletContainer/Containers', 'dcactions.ext.php');
+			$this->merge_files('Ext/DashletContainer/Containers/', 'dcactions.ext.php');
 	}
 
 	function rebuild_modules(){
             $this->log(translate('LBL_MI_REBUILDING') . " Modules...");
-			$this->merge_files('Ext/Include', 'modules.ext.php', '', true);
+			$this->merge_files('Ext/Include/', 'modules.ext.php', '', true);
 	}
 
 	function rebuild_administration(){
@@ -1353,6 +1370,9 @@ class ModuleInstaller{
 
 		$this->rebuild_languages($sugar_config['languages']);
 		$this->rebuild_vardefs();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->rebuild_dependencies();
+        //END SUGARCRM flav=pro ONLY
 		$this->rebuild_layoutdefs();
 		$this->rebuild_menus();
 		$this->rebuild_dashletcontainers();
@@ -1391,18 +1411,14 @@ class ModuleInstaller{
 						     if (substr($entry, 0, 9) == '_override') {
 						    	$override[] = $entry;
 						    } else {
-							    $fp = sugar_fopen($module_install . '/' . $entry, 'r');
-							    $file = fread($fp , filesize($module_install . '/' . $entry));
+							    $file = file_get_contents($module_install . '/' . $entry);
 							    $GLOBALS['log']->debug(get_class($this)."->merge_files(): found {$module_install}{$entry}") ;
-							    fclose($fp);
 							    $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 						    }
 						}
 					}
 					foreach ($override as $entry) {
-						$fp = sugar_fopen($module_install . '/' . $entry, 'r');
-                        $file = fread($fp , filesize($module_install . '/' . $entry));
-                        fclose($fp);
+                        $file = file_get_contents($module_install . '/' . $entry);
                         $extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 					}
 				}
@@ -1437,9 +1453,7 @@ class ModuleInstaller{
 								if((empty($filter) || substr_count($entry, $filter) > 0) && is_file($module_install.'/'.$entry)
 								  && $entry != '.' && $entry != '..' && strtolower(substr($entry, -4)) == ".php")
 								{
-									$fp = sugar_fopen($module_install . '/' . $entry, 'r');
-									$file = fread($fp , filesize($module_install . '/' . $entry));
-									fclose($fp);
+									$file = file_get_contents($module_install . '/' . $entry);
 									$extension .= "\n". str_replace(array('<?php', '?>', '<?PHP', '<?'), array('','', '' ,'') , $file);
 								}
 						}
@@ -1620,6 +1634,7 @@ private function dir_get_files($path, $base_path){
 private function dir_file_count($path){
 	//if its a file then it has at least 1 file in the directory
 	if(is_file($path)) return 1;
+	if(!is_dir($path)) return 0;
 	$d = dir($path);
 	$count = 0;
 	while ($e = $d->read()){
@@ -1988,7 +2003,7 @@ private function dir_file_count($path){
                         $path ='custom/Extension/' . $relationship['module']. '/Ext/Layoutdefs';
                     }
 				}
-                
+
 				if(!empty($relationship['module_layoutdefs']) && file_exists($path . '/'. $this->id_name . '.php')){
 					mkdir_recursive($path . '/'.DISABLED_PATH, true);
 					rename( $path . '/'. $this->id_name . '.php', $path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php');
@@ -2238,7 +2253,7 @@ private function dir_file_count($path){
 			if(!empty($this->installdefs['copy'])){
 				foreach($this->installdefs['copy'] as $cp){
 					$cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
-					$backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore/".$cp['to'] );
+					$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] );
 
 					//check if this file exists in the -restore directory
 					if(file_exists($backup_path)){
@@ -2269,7 +2284,7 @@ private function dir_file_count($path){
 //				$GLOBALS['log']->debug('ModuleInstaller.php->disable_copy(): installdefs not empty');
 				foreach($this->installdefs['copy'] as $cp){
 					$cp['to'] = clean_path(str_replace('<basepath>', $this->base_dir, $cp['to']));
-					$backup_path = clean_path( remove_file_extension(urldecode($_REQUEST['install_file']))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
+					$backup_path = clean_path( remove_file_extension(urldecode(hashToFile($_REQUEST['install_file'])))."-restore/".$cp['to'] ); // bug 16966 tyoung - replaced missing assignment to $backup_path
 					//check if this file exists in the -restore directory
 //					$GLOBALS['log']->debug("ModuleInstaller.php->disable_copy(): backup_path=".$backup_path);
 					if(file_exists($backup_path)){
@@ -2292,7 +2307,13 @@ private function dir_file_count($path){
 
 	public function reset_opcodes()
     {
-    	sugar_clean_opcodes();
+        /* Bug 39354 - added function_exists check. Not optimal fix, but safe nonetheless.
+         * This is for the upgrade to 6.1 from pre 6.1, since the utils files haven't been updated to 6.1 when this is called,
+         * but this file has been updated to 6.1
+         */
+        if(function_exists('sugar_clean_opcodes')){
+            sugar_clean_opcodes();
+        }
     }
 
 }

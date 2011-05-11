@@ -59,7 +59,7 @@
     <tr id="lineLabel_{$idname}" name="lineLabel_{$idname}">
         <td nowrap>
 			<span class="id-ff multiple ownline">
-            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$idname}'].add(); if(collection['{$displayParams.formName}_{$idname}'].more_status)collection['{$displayParams.formName}_{$idname}'].js_more();"><img src="{sugar_getimagepath file="id-ff-add.png"}"></button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();'><img src="{sugar_getimagepath file="id-ff-select.png"}"></button>
+            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();' name="teamSelect"><img src="{sugar_getimagepath file="id-ff-select.png"}"></button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$idname}'].add(); if(collection['{$displayParams.formName}_{$idname}'].more_status)collection['{$displayParams.formName}_{$idname}'].js_more();" name="teamAdd"><img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
 			</span>
         </td>
         <td>
@@ -117,6 +117,7 @@ and push it outside the screen.
 -->
  <input style='position:absolute; left:-9999px; width: 0px; height: 0px;' accesskey='T' halign='left' type="button" class="button" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();'>
 <script type="text/javascript">
+	SUGAR_callsInProgress++;
 	if(collection["{$displayParams.formName}_{$idname}"] && collection["{$displayParams.formName}_{$idname}"].secondaries_values.length == 0) {ldelim}
 		{if !empty($values.secondaries)}
 			{foreach from=$values.secondaries item=secondary_field}   
@@ -136,11 +137,15 @@ and push it outside the screen.
  	document.getElementById("{$idname}_collection_0").value = "{$values.primary.name}";
     {if isset($displayParams.arrow) && $displayParams.arrow == 'show'}
         setTimeout('call_js_more(collection_field)',1000);
-    {/if}
+    {else}
+	   SUGAR_callsInProgress--;
+	{/if}
+	
     
     {literal}
 	function call_js_more(c) {
 	    c.js_more();
+		SUGAR_callsInProgress--;
 	}    
 	{/literal}
 </script>

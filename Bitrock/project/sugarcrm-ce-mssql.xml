@@ -1128,6 +1128,7 @@ This process may take several minutes to complete.</explanation>
     'setup_db_sugarsales_password' => '${setup_db_root_password}',
     'setup_db_type' => '${db_server}',
     'demoData' => '${demoData}',
+    'setup_site_admin_user_name' => 'admin',
     'setup_site_admin_password' => '${sugarpassword}',
     'setup_license_key_users' => ${slkeyusers},
     'setup_license_key_expire_date' => '${slkeyexpiredate}',

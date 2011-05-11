@@ -53,16 +53,20 @@ class ViewEditFormula extends SugarView
 	        	$seed = new $class ( ) ;
 	        	$fields = $this->cleanFields($seed->field_defs);
  			}
-        	$smarty->assign('Field_Array', $json->encodeReal($fields));
+        	$smarty->assign('Field_Array', $json->encode($fields));
 		}
 		else
 		{
 			$fields = array(array('income', 'number'), array('employed', 'boolean'), array('first_name', 'string'), array('last_name', 'string'));
-			$smarty->assign('Field_Array', $json->encodeReal($fields));
+			$smarty->assign('Field_Array', $json->encode($fields));
 		}
 		if (!empty($_REQUEST['targetField']))
 		{
 			$smarty->assign("target", $_REQUEST['targetField']);
+		}
+        if (isset($_REQUEST['returnType']))
+		{
+			$smarty->assign("returnType", $_REQUEST['returnType']);
 		}
 		//Assign any requested Javascript event actions
 		foreach(array('onSave', 'onLoad', 'onClose') as $e) {
@@ -83,7 +87,7 @@ class ViewEditFormula extends SugarView
 			$smarty->assign('loadExt', false);
 		}
 		if (!empty($_REQUEST['formula'])) {
-			$smarty->assign('formula', htmlspecialchars_decode($_REQUEST['formula']));
+			$smarty->assign('formula', $json->decode(htmlspecialchars_decode($_REQUEST['formula'])));
 		}
 		if (isset($_REQUEST['returnType'])) {
 			$smarty->assign('returnType', $_REQUEST['returnType']);
@@ -102,11 +106,14 @@ class ViewEditFormula extends SugarView
  	function cleanFields($fieldDef){
  		$fieldArray = array();
  		foreach($fieldDef as $fieldName => $def) {
- 			if ($fieldName == 'deleted' || empty($def['type']))
+ 			if ($fieldName == 'deleted' || $fieldName == 'email1' || empty($def['type']))
  				continue;
+ 			if (isset($def['studio']) && ($def['studio'] == false || $def['studio'] == "false"))
+ 			    continue;
  			switch($def['type']) {
  				case "int":
  				case "float":
+ 				case "decimal":
  				case "currency":
  					$fieldArray[] = array($fieldName, 'number');
  					break;
@@ -122,7 +129,15 @@ class ViewEditFormula extends SugarView
  				case "enum":
 					$fieldArray[] = array($fieldName, 'string');
  					break;
- 				default:
+                case "date":
+                case "datetime":
+                case "datetimecombo":
+					$fieldArray[] = array($fieldName, 'date');
+ 					break;
+ 				case "link":
+					$fieldArray[] = array($fieldName, 'relate');
+ 					break;
+                 default:
  					//Do Nothing
  					break;
  			}

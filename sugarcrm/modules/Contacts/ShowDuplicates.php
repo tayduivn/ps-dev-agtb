@@ -19,7 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+if (!isset($_SESSION['SHOW_DUPLICATES']))
+    sugar_die("Unauthorized access to this area.");
 // retrieve $_POST values out of the $_SESSION variable - placed in there by ContactFormBase to avoid the length limitations on URLs implicit with GETS
 //$GLOBALS['log']->debug('ShowDuplicates.php: _POST = '.print_r($_SESSION['SHOW_DUPLICATES'],true));
 parse_str($_SESSION['SHOW_DUPLICATES'],$_POST);
@@ -34,7 +35,7 @@ $error_msg = '';
 global $current_language;
 $mod_strings = return_module_language($current_language, 'Contacts');
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$mod_strings['LBL_SAVE_CONTACT'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_SAVE_CONTACT']), true);
 $xtpl=new XTemplate ('modules/Contacts/ShowDuplicates.html');
 $xtpl->assign("MOD", $mod_strings);
 $xtpl->assign("APP", $app_strings);
@@ -96,6 +97,14 @@ foreach ($contact->additional_column_fields as $field)
 	if (!empty($_POST['Contacts'.$field])) {
 		$input .= "<input type='hidden' name='$field' value='${_POST['Contacts'.$field]}'>\n";
 	}
+}
+
+// Bug 25311 - Add special handling for when the form specifies many-to-many relationships
+if(!empty($_POST['Contactsrelate_to'])) {
+    $input .= "<input type='hidden' name='relate_to' value='{$_POST['Contactsrelate_to']}'>\n";
+}
+if(!empty($_POST['Contactsrelate_id'])) {
+    $input .= "<input type='hidden' name='relate_id' value='{$_POST['Contactsrelate_id']}'>\n";
 }
 
 //BEGIN SUGARCRM flav=pro ONLY

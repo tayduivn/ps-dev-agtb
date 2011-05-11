@@ -49,6 +49,7 @@ $mapping = array (
             'finsales' => 'annual_revenue',
             'employees' => 'employees',
             'hqphone' => 'phone_office',
+      		'description' => 'description',
       ),
       'Contacts' => array(
             'id' => 'id',

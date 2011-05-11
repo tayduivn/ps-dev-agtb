@@ -47,7 +47,7 @@ require_once('include/entryPoint.php');
     $_REQUEST['js_rebuild_concat'] = 'rebuild';
     require_once('jssource/minify.php');
 
-$timedate = new TimeDate();
+$timedate = TimeDate::getInstance();
 // cn: set php.ini settings at entry points
 setPhpIniSettings();
 $locale = new Localization();
@@ -85,21 +85,44 @@ $sugar_md = 'include/images/sugar_md.png';
 //BEGIN SUGARCRM flav=dev ONLY
 $sugar_md = 'include/images/sugar_md_dev.png';
 //END SUGARCRM flav=dev ONLY
+//BEGIN SUGARCRM flav=corp ONLY
+$sugar_md = 'include/images/sugar_md_corp.png';
+//END SUGARCRM flav=corp ONLY
+//BEGIN SUGARCRM flav=ult ONLY
+$sugar_md = 'include/images/sugar_md_ult.png';
+//END SUGARCRM flav=ult ONLY
 $loginImage = 'include/images/sugarcrm_login.png';
 $common = 'install/installCommon.js';
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	INSTALLER LANGUAGE
 
-$supportedLanguages = array(
+
+
+function getSupportedInstallLanguages(){
+	$supportedLanguages = array(
 	'en_us'	=> 'English (US)',
-	'ja'	=> 'Japanese - 日本語',
-	'fr_fr'	=> 'French - Français',
-	'zh_cn' => 'Chinese - 简体中文',
-//	'ge_ge'	=> 'German - Deutch',
-//	'pt_br'	=> 'Portuguese (Brazil)',
-//	'es_es'	=> 'Spanish (Spain) - Español',
-);
+	);
+	if(file_exists('install/lang.config.php')){
+		include('install/lang.config.php');
+		if(!empty($config['languages'])){
+			
+			foreach($config['languages'] as $k=>$v){
+				if(file_exists('install/language/' . $k . '.lang.php')){
+					$supportedLanguages[$k] = $v;	
+				}	
+			}	
+		}
+	}
+	return $supportedLanguages;
+}
+$supportedLanguages = getSupportedInstallLanguages();
+
+
+
+
+
+
 
 // after install language is selected, use that pack
 $default_lang = 'en_us';
@@ -115,7 +138,7 @@ if(!isset($_POST['language']) && (!isset($_SESSION['language']) && empty($_SESSI
 }
 
 if(isset($_POST['language'])) {
-	$_SESSION['language'] = strtolower(str_replace('-','_',$_POST['language']));
+	$_SESSION['language'] = str_replace('-','_',$_POST['language']);
 }
 
 $current_language = isset($_SESSION['language']) ? $_SESSION['language'] : $default_lang;
@@ -371,7 +394,7 @@ if($next_clicked) {
       case 'license.php':
                 $_SESSION['setup_license_accept']   = get_boolean_from_request('setup_license_accept');
                 $_SESSION['license_submitted']      = true;
-                
+
 
            // eventually default all vars here, with overrides from config.php
             if(is_readable('config.php')) {
@@ -404,10 +427,8 @@ if($next_clicked) {
             if(empty($_SESSION['setup_license_key'])){
                 $_SESSION['setup_license_key']  = '';
             }
-                $_SESSION['setup_license_key_users'] = 50;
-                $nextYear = time() + (7 * 24 * 60 * 60 * 4 * 12);
-                $_SESSION['setup_license_key_expire_date'] = date($timedate->get_date_format(), $nextYear);
-
+            $_SESSION['setup_license_key_users'] = 50;
+            $_SESSION['setup_license_key_expire_date'] = $timedate->asDbDate($timedate->getNow()->modify("+1 year"));
             //END SUGARCRM flav=int ONLY
 
             break;
@@ -549,7 +570,7 @@ switch($the_file) {
         // check to see if installer has been disabled
         if(is_readable('config.php') && (filesize('config.php') > 0)) {
             include_once('config.php');
-			
+
             if(!isset($sugar_config['installer_locked']) || $sugar_config['installer_locked'] == true) {
                 $the_file = 'installDisabled.php';
 				$disabled_title = $mod_strings['LBL_DISABLED_DESCRIPTION'];
@@ -563,12 +584,12 @@ switch($the_file) {
 
 					<p>{$mod_strings['LBL_DISABLED_HELP_1']} <a href="{$mod_strings['LBL_DISABLED_HELP_LNK']}" target="_blank">{$mod_strings['LBL_DISABLED_HELP_2']}</a>.</p>
 EOQ;
-				                //if this is an offline client installation but the conversion did not succeed,
-                //then try to convert again
-                if(isset($sugar_config['disc_client']) && $sugar_config['disc_client'] == true && isset($sugar_config['oc_converted']) && $sugar_config['oc_converted'] == false) {
-					 header('Location: index.php?entryPoint=oc_convert&first_time=true');
-					exit ();
-                }
+		             //if this is an offline client installation but the conversion did not succeed,
+		            //then try to convert again
+					if(isset($sugar_config['disc_client']) && $sugar_config['disc_client'] == true && isset($sugar_config['oc_converted']) && $sugar_config['oc_converted'] == false) {
+			          header('Location: index.php?entryPoint=oc_convert&first_time=true');
+						exit ();
+		            }
             }
         }
         break;

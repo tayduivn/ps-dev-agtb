@@ -54,7 +54,7 @@ if(!empty($_REQUEST['record'])) {
     }	
 }
 else {
-	header("Location: index.php?module=WorkFlowAlertShells&action=index");
+	header("Location: index.php?module=WorkFlowAlertShells&module_tab=WorkFlow&action=index");
 }
 
 //Get the meta information
@@ -64,7 +64,7 @@ $focus->retrieve_meta_information();
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
 }
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings[$focus->target_meta_array['module_title']] . " " . $focus->name, true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings[$focus->target_meta_array['module_title']],$focus->name), true);
 $GLOBALS['log']->info("WorkFlow detail view");
 
 $xtpl=new XTemplate ('modules/WorkFlowAlertShells/DetailView.html');

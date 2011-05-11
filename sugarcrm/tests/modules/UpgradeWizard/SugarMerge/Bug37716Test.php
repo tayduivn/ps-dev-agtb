@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY 
 require_once 'include/dir_inc.php';
 
 class Bug37716Test extends Sugar_PHPUnit_Framework_TestCase  {
@@ -59,8 +60,9 @@ function test_contacts_editview_merge() {
    }
    
    //echo var_export($viewdefs['Contacts']['EditView']['panels'], true);
-   
+   //BEGIN SUGARCRM flav=pro ONLY
    $this->assertTrue(isset($fields['picture']), 'Assert that picture field exists');
+   //END SUGARCRM flav=pro ONLY
 }
 
 

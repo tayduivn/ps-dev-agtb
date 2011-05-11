@@ -41,7 +41,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
     
     require_once('include/ListView/ListViewSmarty.php');
-    require_once('modules/KBDocuments/metadata/KBSearchlistviewdefs.php');
+    $view = new SugarView();
+    $view->type = 'list';
+    $view->module = 'KBDocuments';
+    $metadataFile = $view->getMetaDataFile();
+    require_once($metadataFile);
     require_once('modules/KBDocuments/KBListViewData.php');
 
 
@@ -61,15 +65,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     // check $_REQUEST if new display columns from post
     if(!empty($_REQUEST['displayColumns'])) {
         foreach(explode('|', $_REQUEST['displayColumns']) as $num => $col) {
-            if(!empty($listViewDefs['KBSearch'][$col]))
-                $displayColumns[$col] = $listViewDefs['KBSearch'][$col];
+            if(!empty($listViewDefs['KBDocuments'][$col]))
+                $displayColumns[$col] = $listViewDefs['KBDocuments'][$col];
         }
     }
     elseif(!empty($savedDisplayColumns)) { // use user defined display columns from preferences
         $displayColumns = $savedDisplayColumns;
     }
     else { // use columns defined in listviewdefs for default display columns
-        foreach($listViewDefs['KBSearch'] as $col => $params) {
+        foreach($listViewDefs['KBDocuments'] as $col => $params) {
             if(!empty($params['default']) && $params['default'])
                 $displayColumns[$col] = $params;
         }
@@ -117,8 +121,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     $lv->lvd->additionalDetailsAjax=false;
     $lv->export = false;
     $lv->show_mass_update_form = false;
+    $lv->show_action_dropdown = false;
     $lv->delete = false;
     $lv->select = false;
+
     $lv->setup($seedDocument, 'modules/KBDocuments/SearchListView.tpl', $where, $params);
     $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
     //if this is a sort from browse tab, then set the ajaxsort flag to true
@@ -178,12 +184,6 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
     
     require_once('include/ListView/ListViewSmarty.php');
-	
-
-	
-	
-	require_once('include/ListView/ListViewSmarty.php');
-
 	require_once('modules/KBDocuments/metadata/listviewdefs.php');
     require_once('modules/KBDocuments/KBListViewData.php');
 
@@ -280,40 +280,21 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 	    $GLOBALS['log']->info("Here is the where clause for the list view: $where");
 	}
 
-	//$lv->show_mass_update_form = true;
-
-	//$lv->setup($seedCase, 'include/ListView/AdminSearchListView.tpl', $where, $params);
 	$lv->export = false;
     $lv->show_mass_update_form = false;
+    $lv->show_action_dropdown = false;
     $lv->delete = false;
     $lv->select = false;
     $lv->setup($seedCase, 'modules/KBDocuments/AdminSearchListView.tpl', $where, $params);
 	$lv->show_mass_update_form=false;
 	$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
-	//echo get_form_header($current_module_strings['LBL_LIST_FORM_TITLE'] . $savedSearchName, '', false);
-    //assign the number of items selected
-  //  $lv->ss->assign('selectedObjectsSpanTop', buildKBSelectedObjectsSpan(true));
-   // $lv->ss->assign('selectedObjectsSpanBot', buildKBSelectedObjectsSpan(false));
 
-	    $ret_str =  $lv->display(false);
-	    $json = getJSONobj();
-	    return $ret_str;
+	$ret_str =  $lv->display(false);
+	$json = getJSONobj();
+	return $ret_str;
 
-    }
-
-/*
-function buildKBSelectedObjectsSpan($top = true){
-        global $app_strings;
-        if($top){
-            $selectedObjectSpan = "{$app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly id='selectCountTop' name='selectCount[]' value='0' />";
-        }else{
-            $selectedObjectSpan = "{$app_strings['LBL_LISTVIEW_SELECTED_OBJECTS']}<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' readonly id='selectCountBot' name='selectCount[]' value='0' />";
-        }
-        return $selectedObjectSpan;
-
-
-
-}*/
+}
+    
 
    /**
     * get_faq_list
@@ -340,7 +321,7 @@ function buildKBSelectedObjectsSpan($top = true){
        //BEGIN SUGARCRM flav=ent ONLY
        $query .= " AND k.is_external_article = 1";
        //END SUGARCRM flav=ent ONLY
-		$query .= "	AND kt.kbtag_id in ($queryIds)";
+	$query .= "	AND kt.kbtag_id in ($queryIds)";
 
        $result = $bean->db->query($query);
 
@@ -400,13 +381,13 @@ function buildKBSelectedObjectsSpan($top = true){
         $list = array();
 
         $spec_SearchVars = array();
-     	$spec_SearchVars['exp_date'] = date($GLOBALS['timedate']->dbDayFormat);
+     	$spec_SearchVars['exp_date'] = TimeDate::getInstance()->nowDate();
      	$spec_SearchVars['exp_date_filter'] = "after";
    	   	$date_filter = return_date_filter($bean->db->dbType, 'exp_date', $spec_SearchVars['exp_date_filter'], $spec_SearchVars['exp_date']);
         $date_filter = str_replace("kbdocuments", "k", $date_filter);
         $date_filter = "($date_filter OR k.exp_date IS NULL)";
         $query = "select distinct(k.id) as doc_id, k.kbdocument_name as doc_name from kbdocuments k
-                 INNER join kbdocuments_kbtags kt on kt.kbdocument_id = k.id AND kt.deleted = 0"; 
+                 INNER join kbdocuments_kbtags kt on kt.kbdocument_id = k.id AND kt.deleted = 0";
        //BEGIN SUGARCRM flav=ent ONLY
        $query .= " AND k.is_external_article = 1";
        //END SUGARCRM flav=ent ONLY
@@ -549,7 +530,7 @@ function buildKBSelectedObjectsSpan($top = true){
 		$spec_SearchVars = array();
 
 	    //Create the common date filter to check for expiration and exp_date IS NULL
-		$date_filter = return_date_filter($bean->db->dbType, 'exp_date', 'after', date($GLOBALS['timedate']->dbDayFormat), null);
+		$date_filter = return_date_filter($bean->db->dbType, 'exp_date', 'after', TimeDate::getInstance()->nowDate(), null);
 		$date_filter = "($date_filter OR kbdocuments.exp_date IS NULL) ";
 
 		if(!empty($keywords)) {
@@ -663,6 +644,7 @@ function buildKBSelectedObjectsSpan($top = true){
             //BEGIN SUGARCRM flav=ent ONLY
             $portal_most_recent_query .= '  AND kbdocuments.is_external_article = 1 ';
              //END SUGARCRM flav=ent ONLY
+
             //add where clause if specified
             if (!empty($where)){
                 $portal_most_recent_query .=  $where;
@@ -678,10 +660,11 @@ function buildKBSelectedObjectsSpan($top = true){
      *
      * This method sets up array for use with quicksearch framework.  Populates values for kb author
      */
-    function getQSAuthor() {
+    function getQSAuthor($form = 'EditView') {
         global $app_strings;
 
-        $qsUser = array(  'method' => 'get_user_array', // special method
+        $qsUser = array('form' => $form,
+                        'method' => 'get_user_array', // special method
                         'field_list' => array('user_name', 'id'),
                         'populate_list' => array('kbarticle_author_name', 'kbarticle_author_id'),
                         'conditions' => array(array('name'=>'user_name','op'=>'like_custom','end'=>'%','value'=>'')),
@@ -695,11 +678,11 @@ function buildKBSelectedObjectsSpan($top = true){
      *
      * This method sets up array for use with quicksearch framework.  Populates values for kb approver
      */
-    function getQSApprover() {
+    function getQSApprover($form = 'EditView') {
         global $app_strings;
 
-        $qsUser = array('form' => 'EditView',
-        				'method' => 'get_user_array', // special method
+        $qsUser = array('form' => $form,
+                        'method' => 'get_user_array', // special method
                         'field_list' => array('user_name', 'id'),
                         'populate_list' => array('kbdoc_approver_name', 'kbdoc_approver_id'),
                         'required_list' => array('kbdoc_approver_id'),
@@ -707,19 +690,20 @@ function buildKBSelectedObjectsSpan($top = true){
                         'limit' => '30','no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
         return $qsUser;        
     }
-    function getQSTags() {
+    function getQSTags($form = 'EditView') {
 		global $app_strings;
 
-		$qsTags = array('method' => 'query',
-		                   	'modules'=> array('KBTags'),
-		                   	'group' => 'or',
-			    			'field_list' => array('tag_name','id'),
-							'populate_list' => array('tag_name'),
-							'conditions' => array(array('name'=>'tag_name','op'=>'like_custom','end'=>'%','value'=>''),
+		$qsTags = array('form' => $form,
+		                'method' => 'query',
+		                'modules'=> array('KBTags'),
+		                'group' => 'or',
+		                'field_list' => array('tag_name','id'),
+		                'populate_list' => array('tag_name'),
+		                'conditions' => array(array('name'=>'tag_name','op'=>'like_custom','end'=>'%','value'=>''),
 							                       array('name'=>'tag_name','op'=>'like_custom','begin'=>'(','end'=>'%','value'=>'')),
-							'order' => 'tag_name',
-							'limit' => '30',
-                        	'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
+		                'order' => 'tag_name',
+		                'limit' => '30',
+		                'no_match_text' => $app_strings['ERR_SQS_NO_MATCH']);
 		return $qsTags;
 	}
 
@@ -874,7 +858,7 @@ function buildKBSelectedObjectsSpan($top = true){
             }
 
             //strip quotes for easier processing
-            $include_stripped = stripQuotes($spec_SearchVars['searchText_include'],$dbType);
+            $include_stripped = stripQuotesKB($spec_SearchVars['searchText_include'],$dbType);
             $include_quote_token = $include_stripped['quote_token'];
             $include_srch_str_raw = $include_stripped['search_string_raw'];
         }
@@ -947,7 +931,7 @@ function buildKBSelectedObjectsSpan($top = true){
             $xclude_str = str_replace('-', ' ',$spec_SearchVars['searchText_exclude']);
 
             //strip out any words enclosed in quotes, for easy processing
-            $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'],$dbType);
+            $exclude_stripped = stripQuotesKB($spec_SearchVars['searchText_exclude'],$dbType);
             $exclude_quote_token = $exclude_stripped['quote_token'];
             $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
 
@@ -1070,7 +1054,7 @@ function buildKBSelectedObjectsSpan($top = true){
                 }
 
                 //replace words in quotes qith tokens
-                $exclude_stripped = stripQuotes($spec_SearchVars['searchText_exclude'], $dbType);
+                $exclude_stripped = stripQuotesKB($spec_SearchVars['searchText_exclude'], $dbType);
                 $exclude_quote_token = $exclude_stripped['quote_token'];
                 $exclude_srch_str_raw = $exclude_stripped['search_string_raw'];
 
@@ -1566,7 +1550,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
      * @param $srch_str_raw string to be processed for quoted words
      * @param $dbType dbType of install, for example 'mssql', 'mysql', or 'oci8'
      */
-    function stripQuotes($srch_str_raw, $dbType){
+    function stripQuotesKB($srch_str_raw, $dbType){
             //lets look for paired quotes and tokenize them
             $quote_token = array();
             $first_quote = 0;
@@ -2111,7 +2095,7 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
 
         //Begin Setup
 		$searchVars = array();
-		
+
         //BEGIN SUGARCRM flav=ent ONLY
 		$searchVars['is_external_article'] = array('operator'=>'=','filter'=>1);
         //END SUGARCRM flav=ent ONLY

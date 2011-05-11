@@ -125,6 +125,12 @@ class ImportFile
         $this->_deleteFile = $deleteFile;
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
+
+        // Bug 39494 - Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
+        $bomCheck = fread($this->_fp, 3); 
+        if($bomCheck != pack("CCC",0xef,0xbb,0xbf)) {
+            rewind($this->_fp);
+        }
     }
     
     /**
@@ -182,9 +188,11 @@ class ImportFile
         }
         
         // Bug 26219 - Convert all line endings to the same style as PHP_EOL
-        foreach ( $this->_currentRow as $key => $value )
-            $this->_currentRow[$key] = str_replace(array("\r\n", "\n", "\r"),PHP_EOL,$value);
-        
+        foreach ( $this->_currentRow as $key => $value ) {
+            // use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
+            $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $value);
+        }
+            
         $this->_rowsCount++;
         $this->_rowCountedForErrors = false;
         

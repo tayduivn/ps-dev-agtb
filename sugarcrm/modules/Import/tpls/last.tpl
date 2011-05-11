@@ -32,7 +32,11 @@
 *}
 {$MODULE_TITLE}
 <span>
-{$MOD.LBL_SUCCESS}<BR>
+{if $noSuccess}
+	<p>{$MOD.LBL_FAILURE}</p>
+{else}
+	<p>{$MOD.LBL_SUCCESS}</p>
+{/if}
 {if $createdCount > 0}
 <b>{$createdCount}</b>&nbsp;{$MOD.LBL_SUCCESSFULLY_IMPORTED}<br />
 {/if}
@@ -58,9 +62,11 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
     <td align="left" style="padding-bottom: 2px;">
-        <input title="{$MOD.LBL_UNDO_LAST_IMPORT}" accessKey="" class="button" 
-            type="submit" name="undo" id="undo" value="  {$MOD.LBL_UNDO_LAST_IMPORT}  ">
-        <input title="{$MOD.LBL_IMPORT_MORE}" accessKey="" class="button" type="submit"
+{if !$noSuccess}
+    <input title="{$MOD.LBL_UNDO_LAST_IMPORT}" accessKey="" class="button"
+        type="submit" name="undo" id="undo" value="  {$MOD.LBL_UNDO_LAST_IMPORT}  ">
+{/if}
+    <input title="{$MOD.LBL_IMPORT_MORE}" accessKey="" class="button" type="submit"
             name="importmore" id="importmore" value="  {$MOD.LBL_IMPORT_MORE}  ">
         <input title="{$MOD.LBL_FINISHED}{$MODULENAME}" accessKey="" class="button" type="submit" 
             name="finished" id="finished" value="  {$MOD.LBL_IMPORT_COMPLETE}  ">

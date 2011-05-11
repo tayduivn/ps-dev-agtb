@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -21,8 +21,9 @@
 require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
- * <b>isInEnum(Generic item, Enum enum)</b>
- * Returns true if item is contained within the enum. 
+ * <b>isInList(Generic item, List list)</b><br/>
+ * Returns true if item is contained within the list. <br/>
+ * <i>isInList(3, createList(2, 3, "red", "blue"))</i> = true
  */
 class IsInEnumExpression extends BooleanExpression {
 	/**
@@ -79,7 +80,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "isInEnum";
+		return array("isInList", "isInEnum");
 	}
 
 	/**

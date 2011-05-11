@@ -28,11 +28,13 @@ if(!defined('sugarEntry') || !sugarEntry)
  * by SugarCRM are Copyright(C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: commit.php 56510 2010-05-17 18:54:49Z jenny $
+ * $Id: commit.php 58188 2010-09-16 03:20:33Z kjing $
  * Description:
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  * *******************************************************************************/
+require_once('include/SugarLogger/SugarLogger.php');
+
 $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 $trackerManager->unsetMonitors();
@@ -40,13 +42,12 @@ $trackerManager->unsetMonitors();
 //BEGIN SUGARCRM flav=pro ONLY
 //bug: 38017 - SugarView is not yet pulled out of memory and to avoid putting a check-in there for every call, will just
 //put in here for one call
-$timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$timeStamp = gmdate('Y-m-d H:i:s');
 $monitor3 = $trackerManager->getMonitor('tracker_sessions');
 if(!empty($monitor3)) {
    $monitor3->setValue('date_start', $timeStamp);
 }
 //END SUGARCRM flav=pro ONLY
-
 $_SESSION['upgrade_complete'] = '';
 $_REQUEST['upgradeWizard'] = true;
 
@@ -286,13 +287,6 @@ $uwMain = $upgrade_directories_not_found;
 		 		$copiedFiles = $split['copiedFiles'];
 		 		$skippedFiles = $split['skippedFiles'];
 				set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
-
-				/// RELOAD to have new files loaded
-				LanguageManager::clearLanguageCache();
-				logThis('Reloading....');
-				$query=http_build_query($_REQUEST);
-				header("Location: index.php?$query");
-				exit();
          }
 		 //END COPY NEW FILES INTO TARGET INSTANCE
     ///////////////////////////////////////////////////////////////////////////////
@@ -326,14 +320,6 @@ $uwMain = $upgrade_directories_not_found;
        if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
 			logThis('Performing UWrebuild()...');
 			UWrebuild();
-
-		    global $sugar_version;
-		    $origVersion = substr(preg_replace("/[^0-9]/", "", $_SESSION['current_db_version']),0,3);
-
-		    if($origVersion < '600') {
-				_logThis('Check to hide iFrames and Feeds modules', $path);
-				hide_iframes_and_feeds_modules();
-			}
 			logThis('UWrebuild() done.');
        }
 
@@ -560,17 +546,6 @@ commitHandleReminders($skippedFiles);
 ///////////////////////////////////////////////////////////////////////////////
 
 
-if(!didThisStepRunBefore('commit','cleanAll')){
-			set_upgrade_progress('commit','in_progress','cleanAll','done');
-			SugarThemeRegistry::buildRegistry();
-			SugarThemeRegistry::clearAllCaches();
-			/// RELOAD to have new files loaded
-			logThis('Reloading....');
-			$query=http_build_query($_REQUEST);
-			header("Location: index.php?$query");
-			exit();
-         }
-
 logThis("Resetting error_reporting() to system level.");
 error_reporting($standardErrorLevel);
 
@@ -590,9 +565,9 @@ $uwMain =<<<eoq
 </script>
 <table cellpadding="3" cellspacing="0" border="0">
 	<tr>
-		<th align="left">
-			{$mod_strings['LBL_UW_TITLE_COMMIT']}
-		</th>
+		<td>
+			&nbsp;
+		</td>
 	</tr>
 	<tr>
 		<td align="left">
@@ -631,7 +606,7 @@ $uwMain =<<<eoq
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><img src='modules/UpgradeWizard/processing.gif'> <br>{$mod_strings['LBL_UPGRADE_TAKES_TIME_HAVE_PATIENCE']}</p>
+           <p><img src='modules/UpgradeWizard/processing.gif'> <br></p>
         </td></tr>
      </table>
  </div>
@@ -658,9 +633,16 @@ $showCancel = false;
 $showRecheck = false;
 $showNext =($stop) ? false : true;
 
+$GLOBALS['top_message'] = "<b>{$mod_strings['LBL_UW_COMMIT_DESC']}</b>";
 $stepBack = $_REQUEST['step'] - 1;
 //Skip ahead to the end page as no layouts need to be merged.
-$stepNext = (count($_SESSION['sugarMergeRunResults']) > 0 ) ? $_REQUEST['step'] + 1 : $_REQUEST['step'] + 2; 
+$skipLayouts = true;
+foreach($_SESSION['sugarMergeRunResults'] as $mergeModule => $mergeModuleFileList){
+    if(!empty($mergeModuleFileList)){
+        $skipLayouts = false;
+    }
+}
+$stepNext = $skipLayouts ? $_REQUEST['step'] + 2 : $_REQUEST['step'] + 1;
 $stepCancel = -1;
 $stepRecheck = $_REQUEST['step'];
 

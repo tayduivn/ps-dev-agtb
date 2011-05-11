@@ -97,7 +97,12 @@ $dashletData['MyTasksDashlet']['columns'] = array('set_complete' => array('width
                                                    'assigned_user_name' => array('width'   => '8', 
                                                                                  'label'   => 'LBL_LIST_ASSIGNED_USER'),
                                                    'contact_name' => array('width'   => '8', 
-                                                                           'label'   => 'LBL_LIST_CONTACT'),
+                                                                           'label'   => 'LBL_LIST_CONTACT',
+																		    'link' =>  true,
+																		    'id' => 'CONTACT_ID',//bug # 38712 it gave error on clicking on contacts from
+        																    'module' => 'Contacts',//my open tasks dashlet because some of the parameters were not set
+        																    'ACLTag' => 'CONTACT',// like id, link etc.
+        																    'related_fields' => array('contact_id')),
                                                    //BEGIN SUGARCRM flav=pro ONLY
                                                    'team_name' => array('width'   => '15', 
                                                                         'label'   => 'LBL_LIST_TEAM', 

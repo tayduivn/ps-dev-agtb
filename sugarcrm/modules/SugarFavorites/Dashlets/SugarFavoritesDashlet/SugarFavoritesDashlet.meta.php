@@ -33,5 +33,5 @@ global $app_strings;
 $dashletMeta['SugarFavoritesDashlet'] = array('module'		=> 'SugarFavorites',
 										  'title'       => 'LBL_TITLE', 
                                           'description' => 'A customizable view into Sugar_Favorites',
-                                          'icon'        => SugarThemeRegistry::current()->getImageURL('icon_Sugar_Favorites_32.gif'),
+                                          //'icon'        => SugarThemeRegistry::current()->getImageURL('icon_Sugar_Favorites_32.gif'),
                                           'category'    => 'Module Views');

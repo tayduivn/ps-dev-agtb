@@ -139,17 +139,15 @@ class OracleManager extends DBManager
         if (parent::checkError($msg, $dieOnError))
             return true;
 
-    	$userMsg = inDeveloperMode()?"$msg: ":"";
-
         $err = oci_error($this->getDatabase());
         if ($err){
             $error = $err['code']."-".$err['message'];
             if($this->dieOnError || $dieOnError){
-                $GLOBALS['log']->fatal("$msg: Oracle error: $error");
-                sugar_die ($userMsg."Oracle error: $error");
+                $GLOBALS['log']->fatal("Oracle error: $error");
+                sugar_die($GLOBALS['app_strings']['ERR_DB_FAIL']);
             }else{
-                $this->last_error = $userMsg."Oracle error: $error";
-                $GLOBALS['log']->error("$msg: ORACLE error: $error");
+                $this->last_error = $msg."Oracle error: $error";
+                $GLOBALS['log']->error("Oracle error: $error");
             }
             return true;
         }
@@ -195,11 +193,6 @@ class OracleManager extends DBManager
 				   $this->track_slow_queries($sql);
 				}
 				//END SUGARCRM flav=pro ONLY
-
-				$err = oci_error($this->database);
-
-				if($err != false)
-					$GLOBALS['log']->debug($sql.">>".$err['code'].":".$err['message']);
 			}
 
 			$result = $stmt;
@@ -223,35 +216,26 @@ class OracleManager extends DBManager
 				}
 				//END SUGARCRM flav=pro ONLY
 
-                $err = oci_error($stmt);
-                if ($err != false) {
-		            //BEGIN SUGARCRM flav=int ONLY
-		            _pp($sql);
-		            display_stack_trace();
-		            //END SUGARCRM flav=int ONLY
-		            $result = false;
-		            $GLOBALS['log']->fatal($sql.">>".$err['code'].":".$err['message']);
-    		        if ($endSessionOnError) {
-    		            global $app_strings;
-    		            if (!empty($app_strings['ERR_DATABASE_CONN_DROPPED'])) {
-    		                echo $app_strings['ERR_DATABASE_CONN_DROPPED'];
-    		            }
-                        else {
-	    	                echo("Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.");
-    		            }
-		                sugar_cleanup(true);
-    		        }
-		        }
-		        else {
-		            $result = $stmt;
-		        }
+                $result = $stmt;
 		    }
 		    $this->lastmysqlrow = -1;
 		    $this->newQuery = true;
 		    $this->lastQuery = $sql;
 		    $this->_lastResult = $result;
 
-		    $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
+		    if ( $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError) ) {
+		        $result = false;
+		        if ($endSessionOnError) {
+                    global $app_strings;
+                    if (!empty($app_strings['ERR_DATABASE_CONN_DROPPED'])) {
+                        echo $app_strings['ERR_DATABASE_CONN_DROPPED'];
+                    }
+                    else {
+                        echo("Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.");
+                    }
+                    sugar_cleanup(true);
+                }
+            }
 		}
 
         return $result;
@@ -409,7 +393,7 @@ class OracleManager extends DBManager
         $execute = true)
     {
         $matches = array();
-        preg_match("/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is",$sql, $matches);
+        preg_match('/^(.*SELECT)(.*?FROM.*WHERE)(.*)$/is',$sql, $matches);
         $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
         if ($start ==0 && !empty($matches[3])) {
             $sql = 'SELECT /*+ FIRST_ROWS('. $count . ') */ * FROM (' . $matches[1]. $matches[2]. $matches[3] . ') MSI WHERE ROWNUM <= '.$count;
@@ -911,7 +895,8 @@ class OracleManager extends DBManager
                 	if ($err != false) {
 			            $GLOBALS['log']->debug("oci_error:".var_export($err, true));
                 	}
-                	sugar_die("Could not connect to server ".$this->dbName." as ".$this->userName.".");
+                	$GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_name']." as ".$configOptions['db_user_name'].".");
+                	sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
                 }
                 if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
                     $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your config.php file</B>";
@@ -924,11 +909,18 @@ class OracleManager extends DBManager
              * at create time vs. byte-length columns.  the other option is to switch to nvarchar2()
              * which has char-length semantics by default.
              */
-            $this->query("alter session set
+             $session_query = "alter session set
                 nls_date_format = 'YYYY-MM-DD hh24:mi:ss'
                 QUERY_REWRITE_INTEGRITY = TRUSTED
                 QUERY_REWRITE_ENABLED = TRUE
-                NLS_LENGTH_SEMANTICS=CHAR");
+                NLS_LENGTH_SEMANTICS=CHAR ";
+
+            if(!empty($GLOBALS['sugar_config']['oracle_enable_ci'])){
+            	$session_query .= "
+            	NLS_COMP=LINGUISTIC
+				NLS_SORT=BINARY_CI";
+            }
+            $this->query($session_query);
 
 		if($this->checkError('Could Not Connect', $dieOnError))
 			$GLOBALS['log']->info("connected to db");
@@ -959,6 +951,9 @@ class OracleManager extends DBManager
     	if (!empty($additional_parameters_string_oracle_only)) {
 			$additional_parameters_string=$additional_parameters_string_oracle_only;
 		}
+		if ( $type == 'CONCAT' && empty($additional_parameters_oracle_only) ) {
+		    return $string;
+		}
         switch ($type) {
         case 'date': return "to_date($string, 'YYYY-MM-DD')";
         case 'time': return "to_date($string, 'HH24:MI:SS')";
@@ -987,11 +982,11 @@ class OracleManager extends DBManager
 
         foreach ( $fields as $index => $field )
 			if (empty($ret))
-			    $ret = "CONCAT(".db_convert($table.".".$field,'IFNULL', array("''")).",' ')";
+			    $ret = "CONCAT(".$this->convert($table.".".$field,'IFNULL', array("''")).",' ')";
 			else
-			    $ret = "CONCAT($ret, CONCAT(".db_convert($table.".".$field,'IFNULL', array("''")).",' '))";
+			    $ret = "CONCAT($ret, CONCAT(".$this->convert($table.".".$field,'IFNULL', array("''")).",' '))";
 
-		return $ret;
+		return empty($ret)?$ret:"TRIM($ret)";
     }
 
     /**

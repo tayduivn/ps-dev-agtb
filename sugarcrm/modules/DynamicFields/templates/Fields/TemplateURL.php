@@ -29,13 +29,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class TemplateURL extends TemplateText{
 	
+	function __construct()
+	{
+		$this->vardef_map['ext4'] = 'link_target';
+		$this->vardef_map['link_target'] = 'ext4';
+	}
+	
 	var $type='url';
     function get_html_edit(){
         $this->prepare();
         return "<input type='text' name='". $this->name. "' id='".$this->name."' size='".$this->size."' title='{" . strtoupper($this->name) ."_HELP}' value='{". strtoupper($this->name). "}'>";
     }
     
-    function get_html_detail(){
+    function get_html_detail(){ 
         $xtpl_var = strtoupper($this->name);
         return "<a href='{" . $xtpl_var . "}' target='_blank'>{" . $xtpl_var . "}</a>";
     }

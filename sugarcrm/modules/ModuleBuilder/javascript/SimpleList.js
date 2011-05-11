@@ -54,7 +54,7 @@ if(typeof(SimpleList) == 'undefined'){
 
     },
     isValidDropDownKey : function(value){
-    	if(value.match(/^[\w\d ]+$/i) || value == "")
+    	if(value.match(/^[\w\d \.]+$/i) || value == "")
     		return true;
     	
     	return false;
@@ -80,6 +80,10 @@ if(typeof(SimpleList) == 'undefined'){
         for (i=0;i<items.length;i=i+1) {
             if((SimpleList.isBlank(items[i].id) && SimpleList.isBlank(drop_name.value)) || items[i].id == drop_name.value){
                 alert("Key already exists in list");
+                return;
+            }
+            if((!SimpleList.isBlank(drop_name.value) && SimpleList.isBlank(drop_value.value)) || (SimpleList.isBlank(drop_name.value) && !SimpleList.isBlank(drop_value.value))){
+                alert(SUGAR.language.get('ModuleBuilder', 'LBL_DROPDOWN_BLANK_WARNING'));
                 return;
             }
         }

@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Prospect'] = array(
 
 	'table' => 'prospects',
+	'unified_search' => true,
 	'fields' => array (
 	 'tracker_key' => array (
 		'name' => 'tracker_key',
@@ -85,6 +86,7 @@ $dictionary['Prospect'] = array(
         'source' => 'non-db',
 		'vname' => 'LBL_EMAIL_ADDRESSES',
 		'reportable'=>false,
+        'rel_fields' => array('primary_address' => array('type'=>'bool')),
 	),
 	'email_addresses_primary' =>
 	array (

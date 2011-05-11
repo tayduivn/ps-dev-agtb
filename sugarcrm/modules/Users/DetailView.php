@@ -30,28 +30,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/DetailView/DetailView.php');
 require_once('include/export_utils.php');
-require_once('include/timezone/timezones.php');
-
-
-
 global $current_user;
 global $theme;
 global $app_strings;
 global $mod_strings;
-global $timezones;
 if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'Users')
 //BEGIN SUGARCRM flav=sales ONLY
       && $current_user->user_type != 'UserAdministrator'
 //END SUGARCRM flav=sales ONLY
       && ($_REQUEST['record'] != $current_user->id)) sugar_die("Unauthorized access to administration.");
 
+$is_current_admin=is_admin($current_user)
+//BEGIN SUGARCRM flav=sales ONLY
+                ||$current_user->user_type = 'UserAdministrator'
+//END SUGARCRM flav=sales ONLY
+                ||is_admin_for_module($GLOBALS['current_user'],'Users');
+                
 $focus = new User();
 
 $detailView = new DetailView();
 $offset=0;
 if (isset($_REQUEST['offset']) || !empty($_REQUEST['record'])) {
 	$result = $detailView->processSugarBean("USER", $focus, $offset);
-	
+
 	if($result == null) {
 	    sugar_die($app_strings['ERROR_NO_RECORD']);
 	}
@@ -75,9 +76,12 @@ if(isset($_REQUEST['reset_homepage'])){
 }
 
 $params = array();
-$params[] = "<a href='index.php?module=Users&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 $params[] = $locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
-echo getClassicModuleTitle("Users", $params, true);
+
+$index_url = ($is_current_admin) ? "index.php?module=Users&action=index" : "index.php?module=Users&action=DetailView&record={$focus->id}"; 
+
+
+echo getClassicModuleTitle("Users", $params, true,$index_url);
 
 global $app_list_strings;
 
@@ -108,6 +112,21 @@ $edit_self = $current_user->id == $focus->id;
 if($edit_self) {
 	$sugar_smarty->assign('EDIT_SELF','1');
 }
+
+if (isset($sugar_config['show_download_tab']))
+{
+	$enable_download_tab = $sugar_config['show_download_tab'];
+}else{
+	
+	$enable_download_tab = true;
+}	
+
+$sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
+	
+ 
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	TO SUPPORT LEGACY XTEMPLATES
@@ -190,7 +209,7 @@ if (isset($_REQUEST['pwd_set']) && $_REQUEST['pwd_set']!= 0){
 		$errors.=canSendPassword();
 	}
 	else {
-		$errors.=$mod_strings['LBL_NEW_USER_PASSWORD_'.$_REQUEST['pwd_set']];	
+		$errors.=$mod_strings['LBL_NEW_USER_PASSWORD_'.$_REQUEST['pwd_set']];
 		$msgGood = true;
 	}
 }else{
@@ -234,7 +253,7 @@ elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],
                     $buttons .="<input type='button' class='button' onclick='confirmDelete();' value='".$app_strings['LBL_DELETE_BUTTON_LABEL']."' /> ";
                 }
 
-			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only 
+			if (!$focus->portal_only && !$focus->is_group && !$focus->external_auth_only
 			&& isset($sugar_config['passwordsetting']['SystemGeneratedPasswordON']) && $sugar_config['passwordsetting']['SystemGeneratedPasswordON']){
 				$buttons .= "<input title='".$mod_strings['LBL_GENERATE_PASSWORD_BUTTON_TITLE']."' accessKey='".$mod_strings['LBL_GENERATE_PASSWORD_BUTTON_KEY']."' class='button' LANGUAGE=javascript onclick='generatepwd(\"".$focus->id."\");' type='button' name='password' value='".$mod_strings['LBL_GENERATE_PASSWORD_BUTTON_LABEL']."'>  ";
 			}
@@ -256,7 +275,7 @@ if (!$current_user->is_group){
     }
 	$buttons .="<input type='button' class='button' onclick='if(confirm(\"{$reset_pref_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_preferences=true\";' value='".$mod_strings['LBL_RESET_PREFERENCES']."' />";
 	$buttons .="&nbsp;<input type='button' class='button' onclick='if(confirm(\"{$reset_home_warning}\"))window.location=\"".$_SERVER['PHP_SELF'] .'?'.$the_query_string."&reset_homepage=true\";' value='".$mod_strings['LBL_RESET_HOMEPAGE']."' />";
- 
+
 }
 if (isset($buttons)) $sugar_smarty->assign("BUTTONS", $buttons);
 
@@ -328,7 +347,7 @@ if(isset($oc_status)) {
 $sugar_smarty->assign("SETTINGS_URL", $sugar_config['site_url']);
 
 
-$sugar_smarty->assign("EXPORT_DELIMITER", getDelimiter());
+$sugar_smarty->assign("EXPORT_DELIMITER", $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('EXPORT_CHARSET', $locale->getExportCharset('', $focus));
 $sugar_smarty->assign('USE_REAL_NAMES', $focus->getPreference('use_real_names'));
 
@@ -338,20 +357,7 @@ $sugar_smarty->assign("DATEFORMAT", $sugar_config['date_formats'][$timedate->get
 $sugar_smarty->assign("TIMEFORMAT", $sugar_config['time_formats'][$timedate->get_time_format()]);
 
 $userTZ = $focus->getPreference('timezone');
-if(!empty($userTZ) && isset($timezones[$userTZ])) {
-	$value = $timezones[$userTZ];
-}
-if(!empty($value['dstOffset'])) {
-	$dst = " (+DST)";
-} else {
-	$dst = "";
-}
-$gmtOffset = ($value['gmtOffset'] / 60);
-if(!strstr($gmtOffset,'-')) {
-	$gmtOffset = "+".$gmtOffset;
-}
-
-$sugar_smarty->assign("TIMEZONE", $userTZ. str_replace('_',' '," (GMT".$gmtOffset.") ".$dst) );
+$sugar_smarty->assign("TIMEZONE", TimeDate::tzName($userTZ));
 $datef = $focus->getPreference('datef');
 $timef = $focus->getPreference('timef');
 
@@ -477,7 +483,7 @@ else
 $useGroupTabs = $current_user->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'm';
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
     }
     $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
 }
@@ -524,7 +530,7 @@ if($userOverrideOE == null)
     if( $oe->isAllowUserAccessToSystemDefaultOutbound() )
         $mail_smtpuser = $systemOE->mail_smtpuser;
 }
-else 
+else
 {
     $mail_smtpdisplay = $userOverrideOE->mail_smtpdisplay;
     $mail_smtpuser = $userOverrideOE->mail_smtpuser;
@@ -607,6 +613,16 @@ function confirmDelete() {
         confirmDeletePopup.hide();
         return false;
      };
+    var user_portal_group = '{$usertype}';
+    var confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM');
+    if(user_portal_group == 'GroupUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_GROUP_CONFIRM');
+    }
+    //BEGIN SUGARCRM flav=pro ONLY
+    else if(user_portal_group == 'PortalUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_PORTAL_CONFIRM');
+    }
+    //END SUGARCRM flav=pro ONLY
 
     var confirmDeletePopup = new YAHOO.widget.SimpleDialog(\"Confirm \", {
                 width: \"400px\",
@@ -614,7 +630,7 @@ function confirmDelete() {
                 constraintoviewport: true,
                 modal: true,
                 fixedcenter: true,
-                text: SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM'),
+                text: confirm_text,
                 bodyStyle: \"padding:5px\",
                 buttons: [{
                         text: SUGAR.language.get('Users', 'LBL_OK'),
@@ -622,7 +638,7 @@ function confirmDelete() {
                         isDefault:true
                 }, {
                         text: SUGAR.language.get('Users', 'LBL_CANCEL'),
-                        handler: handleNo,
+                        handler: handleNo
                 }]
      });
     confirmDeletePopup.setHeader(SUGAR.language.get('Users', 'LBL_DELETE_USER'));
@@ -630,4 +646,3 @@ function confirmDelete() {
 }
 </script>";
 echo $confirmDeleteJS;
-?>

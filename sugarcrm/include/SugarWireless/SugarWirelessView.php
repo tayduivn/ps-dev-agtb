@@ -125,8 +125,11 @@ class SugarWirelessView extends SugarView
 		$wl_module_select_list = array();
         $wl_mod_create_list = array();
 		foreach($wl_module_list as $module){
+		    //Explicitly remove the Reports module if selected for other mobile devices.
+		    if($module == 'Reports')
+			     continue;
 			// check if user has access to the listed module
-			if (in_array($module, $GLOBALS['moduleList']) || in_array($module, $GLOBALS['modInvisListActivities'])){
+			if (in_array($module, $GLOBALS['moduleList'])){
 				$wl_module_select_list[$module] = $GLOBALS['app_list_strings']['moduleList'][$module];
                 $module_reg = $this->view_object_map['wireless_module_registry'][$module];
                 if ( isset($module_reg['disable_create']) && $module_reg['disable_create'] )
@@ -320,19 +323,25 @@ class SugarWirelessView extends SugarView
 	    $field
 	    )
 	{
-	    $displayParams = (isset($field['displayParams'])) ? $field['displayParams'] : array();
-		$required = false;
+	    $displayParams = (is_array($field) && isset($field['displayParams']) && is_array($field['displayParams'])) ? $field['displayParams'] : array();
+	    $required = false;
 		$detail_only = false;
 		$customCode = null;
+		$readOnly = false;
 		if (is_array($field)){
 		    $required = !empty($this->bean->field_name_map[$field['name']]['required']);
+		    if (!isset($field['displayParams']) || !is_array($field['displayParams']))
+		        $field['displayParams'] = $displayParams;
 		    if ( isset($field['displayParams']['required']) )
 		        $required = $field['displayParams']['required'];
 			$detail_only = (isset($field['displayParams']['wireless_detail_only'])) ? $field['displayParams']['wireless_detail_only'] : false;
 			$customCode = (isset($field['customCode'])) ? $field['customCode'] : null;
 			$customCode = (isset($field['customCode'])) ? $field['customCode'] : null;
+			$readOnly = !empty($field['readOnly']);
 			$field = $field['name'];
 		}
+		
+		$displayParams['readOnly'] = !empty($displayParams['readOnly']) || $readOnly || !empty($this->bean->field_name_map[$field]['calculated']);
 
         if ( !isset($this->bean->field_name_map[$field]) ) {
 		    return false;
@@ -348,6 +357,7 @@ class SugarWirelessView extends SugarView
                 'value' => isset($this->bean->$field) ? $this->bean->$field : '',
                 'vardef' => $this->bean->field_name_map[$field],
                 'type'  => $this->bean->field_name_map[$field]['type'],
+		        'readOnly' => $displayParams['readOnly'],
                 'customCode' => $customCode,
                 );
 	}

@@ -57,10 +57,10 @@ function email2init() {
          mode: tinyConfig.mode,
          strict_loading_mode : true,
 		 force_br_newlines : true,
-         forced_root_block : ''
+         forced_root_block : '',
+         directionality : (typeof(rtl) == "undefined") ? "ltr" : "rtl"
      });
     }
-         //alert('loadedTiny');
 
     // initialze message overlay
     SUGAR.email2.e2overlay = new YAHOO.widget.Dialog("SUGAR.email2.e2overlay", {

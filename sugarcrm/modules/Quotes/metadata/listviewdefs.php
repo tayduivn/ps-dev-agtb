@@ -82,7 +82,12 @@ $listViewDefs['Quotes'] = array(
 		'module' => 'Employees',
         'id' => 'ASSIGNED_USER_ID',
         'default' => true        
-        )
+        ),
+	'DATE_ENTERED' => array (
+	    'width' => '10',
+	    'label' => 'LBL_DATE_ENTERED',
+	    'default' => true,
+	  )        
 );
 
 ?>

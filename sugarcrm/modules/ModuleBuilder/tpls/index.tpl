@@ -75,7 +75,7 @@ MBLoader.insert();
 {/literal}
 </script>
 <div id="footerHTML" class="y-hidden">
-    <table width="100%" cellpadding="0" cellspacing="0"><tr><td>
+    <table width="100%" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">
     <input type="button" class="button" value="{$mod.LBL_HOME}" onclick="ModuleBuilder.main('home');">
     {if $TEST_STUDIO == true}
     <input type="button" class="button" value="{$mod.LBL_STUDIO}" onclick="ModuleBuilder.main('studio');">
@@ -90,15 +90,6 @@ MBLoader.insert();
     {* //END SUGARCRM flav=ent ONLY*}
     {/if}
     <input type="button" class="button" value="{$mod.LBL_DROPDOWNEDITOR}" onclick="ModuleBuilder.main('dropdowns');">
-    </td><td align="right">
-    {* //BEGIN SUGARCRM flav=pro ONLY*}
-    <a href="http://www.sugarcrm.com" target="_blank">
-    {* //END SUGARCRM flav=pro ONLY*}
-        <img height="18" width="83" class="img" src="include/images/powered_by_sugarcrm.gif" border="0" align="absmiddle"/>
-     {* //BEGIN SUGARCRM flav=pro ONLY*}
-    </a>
-     {* //END SUGARCRM flav=pro ONLY*}
-    {$app_strings.LBL_SUGAR_COPYRIGHT}
     </td></tr></table>
 </div>
 {include file='modules/ModuleBuilder/tpls/assistantJavascript.tpl'}

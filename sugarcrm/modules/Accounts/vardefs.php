@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.as
  ********************************************************************************/
-$dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_search' => true, 'duplicate_merge'=>true,
+$dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
   'comment' => 'Accounts are organizations or entities that are the target of selling, support, and marketing activities, or have already purchased products or services',
   'fields' => array (
 
@@ -54,15 +54,15 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'id_name' => 'parent_id',
     'vname' => 'LBL_MEMBER_OF',
     'type' => 'relate',
-    'table' => 'parent_accounts',
     'isnull' => 'true',
     'module' => 'Accounts',
+    'table' => 'accounts',
     'massupdate' => false,
     'source'=>'non-db',
     'len' => 36,
     'link'=>'member_of',
     'unified_search' => true,
-    'importable' => 'false',
+    'importable' => 'true',
   ),
 
 
@@ -169,6 +169,14 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'source'=>'non-db',
     'vname'=>'LBL_EMAILS',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_accounts',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
   'bugs' =>
   array (
     'name' => 'bugs',
@@ -267,15 +275,24 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
         'vname'=>'LBL_LEADS',
   ),
   'campaigns' =>
-  array (
-    'name' => 'campaigns',
-    'type' => 'link',
-    'relationship' => 'campaign_accounts',
-    'module'=>'Campaigns',
-    'bean_name'=>'Campaign',
-    'source'=>'non-db',
-    'vname'=>'LBL_CAMPAIGNS',
-  ),
+	array (
+  		'name' => 'campaigns',
+    	'type' => 'link',
+    	'relationship' => 'account_campaign_log',
+    	'module'=>'CampaignLog',
+    	'bean_name'=>'CampaignLog',
+    	'source'=>'non-db',
+		'vname'=>'LBL_CAMPAIGNLOG',
+  ),  
+  'campaign_accounts' =>
+    array (
+      'name' => 'campaign_accounts',
+      'type' => 'link',
+      'vname' => 'LBL_CAMPAIGNS',
+      'relationship' => 'campaign_accounts',
+      'source' => 'non-db',
+  ),  
+  
   //END SUGARCRM flav!=sales ONLY
   'created_by_link' =>
   array (
@@ -317,7 +334,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 
 //BEGIN SUGARCRM flav!=sales ONLY
   'products' => array(
-      'name' => 'contracts',
+      'name' => 'products',
       'type' => 'link',
       'relationship' => 'products_accounts',
       'source' => 'non-db',
@@ -362,7 +379,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
         'source'=>'non-db',
         'table' => 'campaigns',
         'id_name' => 'campaign_id',
-        'link' => 'campaigns', 
+        'link' => 'campaign_accounts', 
         'module'=>'Campaigns',
         'duplicate_merge'=>'disabled',
         'comment' => 'The first campaign name for Account (Meta-data only)',
@@ -452,9 +469,16 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
   array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
   'rhs_module'=> 'Accounts', 'rhs_table'=> 'accounts', 'rhs_key' => 'created_by',
   'relationship_type'=>'one-to-many'),
-  )
-    //This enables optimistic locking for Saves From EditView
-    ,'optimistic_locking'=>true,
+  
+//BEGIN SUGARCRM flav!=sales ONLY
+  'account_campaign_log' => array('lhs_module' => 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key'=> 'id',
+  'rhs_module'=> 'CampaignLog','rhs_table'=>'campaign_log', 'rhs_key'=> 'target_id',
+  'relationship_type'	=>'one-to-many'),
+//END SUGARCRM flav!=sales ONLY    
+  
+  ),
+  //This enables optimistic locking for Saves From EditView
+  'optimistic_locking'=>true,
 );
 
 VardefManager::createVardef('Accounts','Account', array('default', 'assignable',

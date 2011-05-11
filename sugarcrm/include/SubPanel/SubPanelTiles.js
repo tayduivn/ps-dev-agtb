@@ -191,6 +191,7 @@ function set_return_and_save_background(popup_reply_data)
 
 function got_data(args, inline)
 {
+
 	var list_subpanel = document.getElementById('list_subpanel_'+request_map[args.request_id].toLowerCase());
 	//this function assumes that we are always working with a subpanel..
 	//add a null check to prevent failures when we are not.
@@ -481,6 +482,10 @@ SUGAR.subpanelUtils = function() {
 		
 		cancelCreate: function(buttonName) {
 			var element = document.getElementById(buttonName);
+            
+            var theForm = element.form;
+            var confirmMsg = onUnloadEditView(theForm);
+
 			do {
 				element = element.parentNode;
 			} while ( element.className != 'quickcreate' && element.parentNode ) ;
@@ -490,6 +495,14 @@ SUGAR.subpanelUtils = function() {
 			if (typeof(subpanelContents[theDiv]) == 'undefined')
                 return false;
 			
+            if ( confirmMsg != null ) {
+                if ( !confirm(confirmMsg) ) {
+                    return false;
+                } else {
+                    disableOnUnloadEditView(theForm);
+                }
+            }
+
 			subpanelContents[theDiv]['newDiv'].parentNode.removeChild(subpanelContents[theDiv]['newDiv']);
 			subpanelContents[theDiv]['list'].style.display = '';
 
@@ -575,7 +588,8 @@ SUGAR.subpanelUtils = function() {
 			for(group_sp in SUGAR.subpanelUtils.subpanelGroups[group]){
                 if ( typeof(SUGAR.subpanelUtils.subpanelGroups[group][group_sp]) != 'string' ) continue;
 				var cur = document.getElementById('whole_subpanel_'+SUGAR.subpanelUtils.subpanelGroups[group][group_sp]);
-				cur.style.display = 'block';
+				if (cur != null)
+				    cur.style.display = 'block';
 				/* use YDD swapNodes this and first, second, etc. */
 				try{
 					YAHOO.util.DDM.swapNode(cur, sp_list.getElementsByTagName('LI')[group_sp]);

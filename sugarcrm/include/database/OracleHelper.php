@@ -20,13 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
-* $Id: OracleHelper.php 56133 2010-04-28 02:09:10Z jmertic $
+* $Id: OracleHelper.php 56151 2010-04-28 21:02:22Z jmertic $
 * Description: This file handles the Data base functionality for the application specific
 * to oracle database. It is called by the DBManager class to generate various sql statements.
 *
 * All the functions in this class will work with any bean which implements the meta interface.
-* Please refer the DBManager documentation for the details. 
-* 
+* Please refer the DBManager documentation for the details.
+*
 * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
 * All Rights Reserved.
 * Contributor(s): ______________________________________..
@@ -35,7 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=ent ONLY
 require_once('include/database/DBHelper.php');
 
-class OracleHelper extends DBHelper 
+class OracleHelper extends DBHelper
 {
     /**
      * returns SQL to create constraints or indices
@@ -45,17 +45,17 @@ class OracleHelper extends DBHelper
      */
 	public function createConstraintSql(
         SugarBean &$bean
-        ) 
+        )
     {
 		return $this->getConstraintSql($bean->getIndices(), $bean->getTableName());
 	}
-    
+
 	/**
      * @see DBHelper::createTableSQLParams()
 	 */
 	public function createTableSQLParams(
-        $tablename, 
-        $fieldDefs, 
+        $tablename,
+        $fieldDefs,
         $indices,
         $engine = null
         )
@@ -71,11 +71,11 @@ class OracleHelper extends DBHelper
 	 * @see DBHelper::massageValue()
 	 */
 	public function massageValue(
-        $val, 
+        $val,
         $fieldDef
         )
     {
-        if ($val === 0) 
+        if ($val === 0)
             return $val;
 
         // escape all quotes in oracle style
@@ -94,10 +94,10 @@ class OracleHelper extends DBHelper
                 if (isset($fieldDef['default'])){
                     return $fieldDef['default'];
                 }
-                return 0;	
+                return 0;
             }
-            if ($val == '') 
-                return "''";		  	
+            if ($val == '')
+                return "''";
             return $val;
             break;
         case 'varchar':
@@ -107,12 +107,12 @@ class OracleHelper extends DBHelper
             return "'$val'";
             break;
         case 'blob':
-        case 'longblob': 
+        case 'longblob':
             return "EMPTY_BLOB()";
             break;
         case 'multienum':
-        case 'longtext':   	
-        case 'text':                  
+        case 'longtext':
+        case 'text':
         case 'clob':
         case 'html':
             return "EMPTY_CLOB()";
@@ -129,13 +129,13 @@ class OracleHelper extends DBHelper
             return "TO_DATE('$val', 'HH24:MI:SS')";
             break;
         default:
-            if (!$val or $val == '') 
+            if (!$val or $val == '')
                 return "''";
             return $val;
             break;
 		}
 	}
-	
+
 	/**
      * @see DBHelper::oneColumnSQLRep()
      */
@@ -155,10 +155,10 @@ class OracleHelper extends DBHelper
 				$fieldDef['len'] = min($fieldDef['len'],38);
 			}
 		}
-		
+
 		return parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array);
 	}
-	
+
 	/**
 	 * returns true if the field is nullable
 	 *
@@ -172,21 +172,21 @@ class OracleHelper extends DBHelper
 		)
 	{
 		return $this->db->getOne(
-            "SELECT nullable FROM user_tab_columns 
+            "SELECT nullable FROM user_tab_columns
 				WHERE TABLE_NAME = '".strtoupper($tableName)."'
 					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
 	}
-	 
+
 	/**
      * @see DBHelper::getColumnType()
      */
     public function getColumnType(
-        $type, 
-        $name = '', 
+        $type,
+        $name = '',
         $table = ''
         )
     {
-        $map = array( 
+        $map = array(
             'int'      => 'number',
             'double'   => 'number(30,10)',
             'float'    => 'number(30,6)',
@@ -216,27 +216,28 @@ class OracleHelper extends DBHelper
             'decimal2' => 'number (30,6)',
             'url'=>'varchar2(255)',
             'encrypt'=>'varchar2(255)',
+            'file'     => 'varchar2(255)',
             );
-                    
+
 		return $map[$type];
 	}
-	
+
 	/**
      * @see DBHelper::changeColumnSQL()
      *
      * Oracle's ALTER TABLE syntax is a bit different from the other rdbmss
      */
     protected function changeColumnSQL(
-        $tablename, 
-        $fieldDefs, 
-        $action, 
+        $tablename,
+        $fieldDefs,
+        $action,
         $ignoreRequired = false
         )
     {
-        
+
         $tablename = strtoupper($tablename);
         $action = strtoupper($action);
-        
+
         $columns = "";
         if ($this->isFieldArray($fieldDefs)) {
             /**
@@ -247,14 +248,14 @@ class OracleHelper extends DBHelper
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
                 switch(strtoupper($action)) {
-                case 'DROP': 
-                    $addColumns[] = $def['name']; 
+                case 'DROP':
+                    $addColumns[] = $def['name'];
                     break;
                 case 'ADD':
                 case 'MODIFY':
 					$colArray = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
 					$isNullable = $this->isNullable($tablename,$colArray['name']);
-					if ( !$ignoreRequired 
+					if ( !$ignoreRequired
 							&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
 					  	$colArray['required'] = '';
 					$addColumns[] = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
@@ -265,14 +266,14 @@ class OracleHelper extends DBHelper
         }
         else {
             switch(strtoupper($action)) {
-            case 'DROP': 
-                $columns = $fieldDefs['name']; 
+            case 'DROP':
+                $columns = $fieldDefs['name'];
                 break;
             case 'ADD':
             case 'MODIFY':
 				$colArray = $this->oneColumnSQLRep($fieldDefs, $ignoreRequired, $tablename, true);
 				$isNullable = $this->isNullable($tablename,$colArray['name']);
-				if ( !$ignoreRequired 
+				if ( !$ignoreRequired
 						&& ( $isNullable == ( $colArray['required'] == 'NULL' ) ) )
 					$colArray['required'] = '';
 				$columns = "{$colArray['name']} {$colArray['colType']} {$colArray['default']} {$colArray['required']} {$colArray['auto_increment']}";
@@ -281,11 +282,11 @@ class OracleHelper extends DBHelper
         }
         if ( $action == 'DROP' )
             $action = 'DROP COLUMN';
-        return ($columns == '' || empty($columns)) 
-            ? "" 
+        return ($columns == '' || empty($columns))
+            ? ""
             : "ALTER TABLE $tablename $action $columns";
     }
-    
+
 	/**
      * @see DBHelper::dropTableNameSQL()
      */
@@ -295,18 +296,18 @@ class OracleHelper extends DBHelper
     {
 		return "DROP TABLE ". strtoupper($name);
     }
-    
+
     /**
      * Fixes an Oracle index name
      *
      * Oracle has a strict limit on the size of object names (30 characters). errors will
      * occur if this is not checked. indexes should follow the naming convention as follows
-     * 
+     *
      *   idx_[table name]_[column_](_[column2] ...)
-     * 
+     *
      * and columns should be abbreviated by the first three letters or the following abbreviation
      * chart
-     * 
+     *
      * 		u = assigned user
      *		t = assigned team
      * 		d = deleted
@@ -317,12 +318,12 @@ class OracleHelper extends DBHelper
      */
     public function fixIndexName(
         $name
-        ) 
+        )
     {
     	$result = $this->db->query(
-            "SELECT COUNT(*) CNT 
-                FROM USER_INDEXES 
-                WHERE INDEX_NAME = '$name' 
+            "SELECT COUNT(*) CNT
+                FROM USER_INDEXES
+                WHERE INDEX_NAME = '$name'
                     OR INDEX_NAME = '".strtoupper($name)."'");
 		$row = $this->db->fetchByAssoc($result);
 		return ($row['cnt'] > 1) ? $name . (intval($row['cnt']) + 1) : $name;
@@ -338,15 +339,15 @@ class OracleHelper extends DBHelper
      */
 	public function repair_index_name(
         $index_name
-        ) 
+        )
     {
 		$last_char='r';
 		if (substr($index_name,strlen($index_name) -1,1) =='r')
 			$last_char='1';
-		
+
 		return substr($index_name,0,strlen($index_name)-1). $last_char;
 	}
-	
+
 	/**
      * returns a SQL query that creates the indices as defined in metadata
      * @param  array  $indices Assoc array with index definitions from vardefs
@@ -354,24 +355,25 @@ class OracleHelper extends DBHelper
      * @return array  Array of SQL queries to generate indices
      */
 	public function getConstraintSql(
-        $indices, 
+        $indices,
         $table
         )
     {
-        if (!$this->isFieldArray($indices)) 
+        if (!$this->isFieldArray($indices))
             $indices[] = $indices;
-		
+
         $columns = array();
-		
-        /** 
-         * Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY 
+
+        /**
+         * Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY
          * and UNIQUE (which can defined inline with the CREATE TABLE)
          */
-        $ret = '';
 		foreach ($indices as $index) {
             if(!empty($index['db']) && $index['db'] != 'oci8')
                 continue;
-            
+            if (isset($index['source']) && $index['source'] != 'db')
+               continue;
+
             $type = '';
             if (!empty($index['type']))
                 $type = $index['type'];
@@ -385,13 +387,13 @@ class OracleHelper extends DBHelper
                  * error. so we append an r to the eend of the index name for these cases.
                  */
                 $name = $this->fixIndexName($index['name']);
-                $name = ((strtolower($table) == 'repair_table') 
+                $name = ((strtolower($table) == 'repair_table')
                     ? $this->repair_index_name($name) : $name);
             }
-            
+
             $fields = '';
             if (!empty($index['fields']))
-                $fields = (is_array($index['fields'])) 
+                $fields = (is_array($index['fields']))
                     ? implode(",", $index['fields']) : $index['fields'];
 
             switch ($type){
@@ -412,32 +414,32 @@ class OracleHelper extends DBHelper
                 $columns[] = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FORIEGN KEY ({$fields}) REFERENCES {$index['foreignTable']}.({$index['foreignField']})";
                 break;
             case 'fulltext':
-                if ($this->full_text_indexing_enabled()) {				
+                if ($this->full_text_indexing_enabled()) {
                     $indextype=$index['indextype'];
                     $parameters="";
                     //add parameters attribute if oracle version of 10 or more.
                     $ver = $this->db->version();
                     $tok = strtok($ver, '.');
                     if ($tok !== false && $tok > 9) {
-                        $parameters = isset($index['parameters']) 
-                            ? "parameters ('". $index['parameters']. "')" : "";     						
-                    }	
+                        $parameters = isset($index['parameters'])
+                            ? "parameters ('". $index['parameters']. "')" : "";
+                    }
                     $columns[] = "CREATE INDEX {$name} ON $table($fields) INDEXTYPE IS $indextype $parameters";
-                }					
+                }
                 break;
             default:
                 $columns[] = "SELECT 1 FROM DUAL";
             }
 		}
-		
+
 		return $columns;
-	} 
-      
+	}
+
     /**
      * @see DBHelper::getAutoIncrement()
      */
     public function getAutoIncrement(
-        $table, 
+        $table,
         $field_name
         )
     {
@@ -445,40 +447,40 @@ class OracleHelper extends DBHelper
         $row = $this->db->fetchByAssoc($result);
         if (!empty($row['currval']))
             return $row['currval'] + 1 ;
-            
+
         return "";
     }
-    
+
 /**
      * @see DBHelper::getAutoIncrement()
      */
     public function getAutoIncrementSQL(
-        $table, 
+        $table,
         $field_name
         )
     {
         return $this->_getSequenceName($table, $field_name, true) . '.nextval';
     }
-	  
+
     /**
      * @see DBHelper::setAutoIncrement()
      */
     protected function setAutoIncrement(
-        $table, 
+        $table,
         $field_name
         )
-    {	
+    {
       	$this->deleteAutoIncrement($table, $field_name);
       	$this->db->query(
-            'CREATE SEQUENCE ' . $this->_getSequenceName($table, $field_name, true) . 
+            'CREATE SEQUENCE ' . $this->_getSequenceName($table, $field_name, true) .
                 ' START WITH 0 increment by 1 nomaxvalue minvalue 0');
 		$this->db->query(
-            'SELECT ' . $this->_getSequenceName($table, $field_name, true) . 
+            'SELECT ' . $this->_getSequenceName($table, $field_name, true) .
                 '.NEXTVAL FROM DUAL');
-        
+
         return "";
     }
-	  
+
 	/**
      * Sets the next auto-increment value of a column to a specific value.
      *
@@ -491,7 +493,7 @@ class OracleHelper extends DBHelper
         $start_value
         )
     {
-    	$sequence_name = _getSequenceName($table, $field_name, true);
+    	$sequence_name = $this->_getSequenceName($table, $field_name, true);
     	$result = $this->db->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
     	$row = $this->db->fetchByAssoc($result);
     	$current = $row['currval'];
@@ -499,15 +501,15 @@ class OracleHelper extends DBHelper
     	$this->db->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY $change");
         $this->db->query("SELECT {$sequence_name}.NEXTVAL FROM DUAL");
         $this->db->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY 1");
-                        
+
     	return true;
     }
-	  
+
 	/**
      * @see DBHelper::deleteAutoIncrement()
      */
     public function deleteAutoIncrement(
-        $table, 
+        $table,
         $field_name
         )
     {
@@ -516,50 +518,50 @@ class OracleHelper extends DBHelper
             $this->db->query('DROP SEQUENCE ' .$sequence_name);
         }
     }
-    
-    
-    /** 
+
+
+    /**
      * Escapes single quotes in a string with a single quote.
      *
      * Calls magic_quotes_oracle_ForEmail(), but html decodes the string first
-     * 
+     *
      * @deprecated
      * @param  string $theString
      * @return string
-     */    
+     */
     public static function magic_quotes_oracle(
         $theString
-        ) 
+        )
     {
         $GLOBALS['log']->info('call to OracleHelper::magic_quotes_oracle() is deprecated');
         return self::magic_quotes_oracle_ForEmail(from_html($theString));
     }
 
-	/** 
+	/**
      * Escapes single quotes in a string with a single quote.
-     * 
+     *
      * Does not html decode the string
      *
      * @deprecated
      * @param  string $theString
      * @return string
-     */    
+     */
     public static function magic_quotes_oracle_ForEmail(
         $theString
-        ) 
+        )
     {
         $GLOBALS['log']->info('call to OracleHelper::magic_quotes_oracle_ForEmail() is deprecated');
-        if (empty($theString)) 
+        if (empty($theString))
             return $theString;
-	  	
+
         return str_replace("'","''",$theString);
     }
-	
+
     /**
      * @see DBHelper::updateSQL()
      */
     public function updateSQL(
-        SugarBean $bean, 
+        SugarBean $bean,
         array $where = array()
         )
     {
@@ -570,15 +572,15 @@ class OracleHelper extends DBHelper
 		// get column names and values
 		foreach ($bean->getFieldDefinitions() as $fieldDef) {
             $name = $fieldDef['name'];
-            if ($name == $primaryField['name']) 
+            if ($name == $primaryField['name'])
                 continue;
-            if (isset($bean->$name) 
+            if (isset($bean->$name)
                     && (!isset($fieldDef['source']) || $fieldDef['source'] == 'db')) {
                 $val = $bean->getFieldValue($name);
 			   	// clean the incoming value..
 			   	$val = from_html($val);
-                
-                if (strlen($val) <= 0) 
+
+                if (strlen($val) <= 0)
                     $val = null;
 
 		        // need to do some thing about types of values
@@ -587,35 +589,35 @@ class OracleHelper extends DBHelper
             }
 		}
 
-		if (sizeof ($columns) == 0) 
+		if (sizeof ($columns) == 0)
             return ""; // no columns set
 
 		$where = $this->updateWhereArray($bean, $where);
         $where = $this->getWhereClause($bean, $where);
-		
+
         // get the entire sql
 		return "update ".$bean->getTableName()." set ".implode(",", $columns)." $where ";
 	}
-    
+
     /**
      * @see DBHelper::get_indices()
      */
     public function get_indices(
         $tablename,
         $indexname = null
-        ) 
+        )
     {
 		$tablename = strtoupper($tablename);
 		$indexname = strtoupper($indexname);
-		
+
         //find all unique indexes and primary keys.
 		$query = <<<EOQ
 select a.index_name, c.column_name, b.constraint_type, c.column_position
-    from user_indexes a 
-        inner join user_ind_columns c  
+    from user_indexes a
+        inner join user_ind_columns c
             on c.index_name = a.index_name
-        left join user_constraints b 
-            on b.constraint_name = a.index_name 
+        left join user_constraints b
+            on b.constraint_name = a.index_name
                 and b.table_name='$tablename'
     where a.table_name='$tablename'
         and a.index_type='NORMAL'
@@ -633,34 +635,34 @@ EOQ;
                 $index_type='primary';
             if ($row['constraint_type'] =='U')
                 $index_type='unique';
-            
+
             $name = strtolower($row['index_name']);
             $indices[$name]['name']=$name;
             $indices[$name]['type']=$index_type;
             $indices[$name]['fields'][]=strtolower($row['column_name']);
         }
-		
+
         return $indices;
 	}
-    
+
     /**
      * @see DBHelper::get_columns()
      */
     public function get_columns(
         $tablename
-        ) 
+        )
     {
         //find all unique indexes and primary keys.
         $result = $this->db->query(
             "SELECT * FROM user_tab_columns WHERE TABLE_NAME = '".strtoupper($tablename)."'");
-        
+
         $columns = array();
         while (($row=$this->db->fetchByAssoc($result)) !=null) {
             $name = strtolower($row['column_name']);
             $columns[$name]['name']=$name;
             $columns[$name]['type']=strtolower($row['data_type']);
             if ( $columns[$name]['type'] == 'number' ) {
-                $columns[$name]['len']= 
+                $columns[$name]['len']=
                     ( !empty($row['data_precision']) ? $row['data_precision'] : '3');
                 if ( !empty($row['data_scale']) )
                     $columns[$name]['len'].=','.$row['data_scale'];
@@ -669,7 +671,7 @@ EOQ;
                 ,array('date','clob','blob')) ) {
                 // do nothing
             }
-            else    
+            else
                 $columns[$name]['len']=strtolower($row['char_length']);
             if ( !empty($row['data_default']) ) {
                 $matches = array();
@@ -677,7 +679,7 @@ EOQ;
                 if ( preg_match("/'(.*)'/i",$row['data_default'],$matches) )
                     $columns[$name]['default'] = $matches[1];
             }
-            
+
             $sequence_name = $this->_getSequenceName($tablename, $row['column_name'], true);
             if ($this->_findSequence($sequence_name))
                 $columns[$name]['auto_increment'] = '1';
@@ -686,50 +688,41 @@ EOQ;
         }
         return $columns;
     }
-    
+
     /**
      * Returns true if the sequence name given is found
      *
      * @param  string $name
      * @return bool   true if the sequence is found, false otherwise
      */
-    private function _findSequence(
-        $name
-        )
+    private function _findSequence($name)
     {
-        static $sequences;
-        
         global $sugar_config;
         $db_user_name = isset($sugar_config['dbconfig']['db_user_name'])?$sugar_config['dbconfig']['db_user_name']:'';
         $db_user_name = strtoupper($db_user_name);
-        
-        if ( !is_array($sequences) ) {
-            $result = $this->db->query(
-                "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' ");
-            while ( $row = $this->db->fetchByAssoc($result) )
-                $sequences[] = $row['sequence_name'];
-        }
-        if ( !is_array($sequences) )
-            return false;
-        else    
-            return in_array($name,$sequences);
+        $uname = strtoupper($name);
+        $result = $this->db->query(
+                "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' AND SEQUENCE_NAME = '$uname'");
+        if(empty($result)) return false;
+        $row = $this->db->fetchByAssoc($result);
+        return !empty($row);
     }
-	
+
 	/**
      * @see DBHelper::add_drop_constraint()
      */
     public function add_drop_constraint(
         $table,
-        $definition, 
+        $definition,
         $drop = false
-        ) 
+        )
     {
         $type         = $definition['type'];
         $fields       = implode(',',$definition['fields']);
         $name         = $definition['name'];
         $foreignTable = isset($definition['foreignTable']) ? $definition['foreignTable'] : array();
         $sql          = '';
-        
+
         switch ($type){
         // generic indices
         case 'index':
@@ -769,22 +762,22 @@ EOQ;
         $old_definition,
         $new_definition,
         $table_name
-        ) 
+        )
     {
-        return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";        
+        return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
     }
-   
+
     /**
      * @see DBHelper::number_of_columns()
      */
     public function number_of_columns(
         $table_name
-        ) 
+        )
     {
         $table_name = strtoupper($table_name);
         $result = $this->db->query(
-            "select count(*) cols 
-                from user_tab_columns 
+            "select count(*) cols
+                from user_tab_columns
                 where table_name='$table_name'");
         $row = $this->db->fetchByAssoc($result);
         if (!empty($row)) {
@@ -798,11 +791,11 @@ EOQ;
      */
     protected function full_text_indexing_enabled(
         $dbname = null
-        ) 
+        )
     {
 		return true;
     }
-    
+
     /**
      * @see DBHelper::massageFieldDef()
      */
@@ -812,7 +805,7 @@ EOQ;
         )
     {
         parent::massageFieldDef($fieldDef,$tablename);
-        
+
         if ($fieldDef['name'] == 'id')
             $fieldDef['required'] = 'true';
         if ($fieldDef['dbType'] == 'decimal')
@@ -849,9 +842,9 @@ EOQ;
             $fieldDef['len'] = '255';
         if ($fieldDef['type'] == 'varchar2' && empty($fieldDef['len']) )
             $fieldDef['len'] = '255';
-        
+
     }
-    
+
     /**
      * Generate an Oracle SEQUENCE name. If the length of the sequence names exceeds a certain amount
      * we will use an md5 of the field name to shorten.
@@ -862,8 +855,8 @@ EOQ;
      * @return string
      */
     protected function _getSequenceName(
-        $table, 
-        $field_name, 
+        $table,
+        $field_name,
         $upper_case = true
         )
     {
@@ -874,7 +867,7 @@ EOQ;
             $sequence_name = strtoupper($sequence_name);
         return $sequence_name;
     }
-    
+
     /**
      * Used in OracleHelper to generate SEQUENCE names. This could also be used
      * by an upgrade script to upgrading sequences.  It will take in a name
@@ -885,7 +878,7 @@ EOQ;
      * @return string
      */
     protected function _generateMD5Name(
-        $name, 
+        $name,
         $length = 6
         )
     {
@@ -895,7 +888,7 @@ EOQ;
         //cut it so we only have $length number of chars
         return substr($md5_name, 0, $length);
     }
-    
+
     /**
      * @see DBHelper::deleteColumnSQL()
      */

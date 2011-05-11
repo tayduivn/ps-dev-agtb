@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -18,17 +18,24 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('include/Expressions/Expression/Date/DateExpression.php');
+require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 
-class DayOfWeekExpression extends DateExpression
+/**
+ * <b>dayofweek(Date d)</b><br>
+ * Returns the day of week that <i>d</i> falls on.<br/>
+ * Sun = 0, Mon = 1, ... , Sat = 6
+ */
+class DayOfWeekExpression extends NumericExpression
 {
 	/**
-	 * Returns the entire enumeration bare.
+	 * Returns day of week for the date.
 	 */
 	function evaluate() {
-		$params = $this->getParameters()->evaluate();
-		$time = strtotime($params);
-		return date("w", $time);
+		$params = DateExpression::parse($this->getParameters()->evaluate());
+        if(!$params) {
+            return false;
+        }
+		return $params->day_of_week;
 	}
 
 
@@ -55,6 +62,13 @@ EOQ;
 	 */
 	static function getParamCount() {
 		return 1;
+	}
+
+    /**
+	 * All parameters have to be a date.
+	 */
+	function getParameterTypes() {
+		return array(AbstractExpression::$DATE_TYPE);
 	}
 
 	/**

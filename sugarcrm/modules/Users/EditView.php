@@ -20,12 +20,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: EditView.php 57474 2010-07-15 07:31:59Z kjing $
+ * $Id: EditView.php 57829 2010-08-19 23:26:17Z kjing $
  * Description:  TODO: To be written.
  * Portions created by SugarCRM are Copyright(C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
+
+
 
 $sugar_smarty = new Sugar_Smarty();
 require_once('include/export_utils.php');
@@ -47,9 +49,9 @@ $is_current_admin=is_admin($current_user)
 //END SUGARCRM flav=sales ONLY
                 ||is_admin_for_module($GLOBALS['current_user'],'Users');
 $is_super_admin = is_admin($current_user);
-if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
 
 if(isset($_REQUEST['record'])) {
+    if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
     $focus->retrieve($_REQUEST['record']);
 }
 
@@ -59,7 +61,9 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
 	$focus->user_name = "";
 }else if(!isset($_REQUEST['record'])){
-    define('SUGARPDF_USE_DEFAULT_SETTINGS', true);
+    if ( !defined('SUGARPDF_USE_DEFAULT_SETTINGS') ) {
+        define('SUGARPDF_USE_DEFAULT_SETTINGS', true);
+    }
 }
 	//BEGIN SUGARCRM lic=sub ONLY
 	global $sugar_flavor;
@@ -125,14 +129,15 @@ if (isset($buttons)) $sugar_smarty->assign("BUTTONS", $buttons);
 
 echo "\n<p>\n";
 $params = array();
-$params[] = "<a href='index.php?module=Users&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 if(empty($focus->id)){
 	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
 	$params[] = "<a href='index.php?module=Users&action=DetailView&record={$focus->id}'>".$locale->getLocaleFormattedName($focus->first_name,$focus->last_name)."</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
-echo getClassicModuleTitle("Users", $params, true);
+
+$index_url = ($is_current_admin) ? "index.php?module=Users&action=index" : "index.php?module=Users&action=DetailView&record={$focus->id}"; 
+echo getClassicModuleTitle("Users", $params, true,$index_url);
 
 $GLOBALS['log']->info('User edit view');
 $sugar_smarty->assign('MOD', $mod_strings);
@@ -192,12 +197,13 @@ $sugar_smarty->assign('ADDRESS_STATE', $focus->address_state);
 $sugar_smarty->assign('ADDRESS_POSTALCODE', $focus->address_postalcode);
 $sugar_smarty->assign('ADDRESS_COUNTRY', $focus->address_country);
 $sugar_smarty->assign('DESCRIPTION', $focus->description);
-$sugar_smarty->assign('EXPORT_DELIMITER', getDelimiter());
+$sugar_smarty->assign('EXPORT_DELIMITER', $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
 //BEGIN SUGARCRM flav=pro ONLY
-
-$pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
-$sugar_smarty->assign("REGEX",$pwd_regex);
+if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
+    $pwd_regex=str_replace( "\\","\\\\",$GLOBALS['sugar_config']['passwordsetting']['customregex']);
+    $sugar_smarty->assign("REGEX",$pwd_regex);
+}
 //END SUGARCRM flav=pro ONLY
 
 if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
@@ -235,6 +241,9 @@ if( $focus->getPreference('use_real_names') == 'on' || ( empty($focus->id) && is
 if($focus->getPreference('no_opps') == 'on') {
     $sugar_smarty->assign('NO_OPPS', 'CHECKED');
 }
+
+
+
 
 //BEGIN SUGARCRM flav=pro ONLY
 // REASSIGNMENT SCRIPT CODE
@@ -334,8 +343,10 @@ $sugar_smarty->assign('DATEOPTIONS', $dateOptions);
 /////////  PDF SETTINGS
 global $focus_user;
 $focus_user = $focus;
-define('SUGARPDF_USE_FOCUS', true);
-include('include/Sugarpdf/sugarpdf_config.php');
+if ( !defined('SUGARPDF_USE_FOCUS') ) {
+    define('SUGARPDF_USE_FOCUS', true);
+}
+include_once('include/Sugarpdf/sugarpdf_config.php');
 $sugar_smarty->assign('PDF_CLASS',PDF_CLASS);
 $sugar_smarty->assign('PDF_UNIT',PDF_UNIT);
 $sugar_smarty->assign('PDF_PAGE_FORMAT_LIST',get_select_options_with_id(array_combine(explode(",",PDF_PAGE_FORMAT_LIST), explode(",",PDF_PAGE_FORMAT_LIST)), PDF_PAGE_FORMAT));
@@ -361,34 +372,22 @@ $sugar_smarty->assign('PDF_FONT_SIZE_DATA',PDF_FONT_SIZE_DATA);
 if(empty($focus->id)) { // remove default timezone for new users(set later)
     $focus->user_preferences['timezone'] = '';
 }
-require_once('include/timezone/timezones.php');
-global $timezones;
 
 $userTZ = $focus->getPreference('timezone');
-if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
-	$focus->setPreference('timezone', date('T'));
-}
 
-if(empty($userTZ) && !$focus->is_group && !$focus->portal_only)
-	$userTZ = lookupTimezone();
+if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
+	$userTZ = TimeDate::guessTimezone();
+	$focus->setPreference('timezone', $userTZ);
+}
 
 if(!$focus->getPreference('ut')) {
 	$sugar_smarty->assign('PROMPTTZ', ' checked');
+	//BEGIN SUGARCRM flav=sales ONLY
+	$sugar_smarty->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
+	//END SUGARCRM flav=sales ONLY
 }
-
-$timezoneOptions = '';
-ksort($timezones);
-foreach($timezones as $key => $value) {
-	$selected =($userTZ == $key) ? ' SELECTED="true"' : '';
-	$dst = !empty($value['dstOffset']) ? '(+DST)' : '';
-	$gmtOffset =($value['gmtOffset'] / 60);
-
-	if(!strstr($gmtOffset,'-')) {
-		$gmtOffset = '+'.$gmtOffset;
-	}
-  $timezoneOptions .= "<option value='$key'".$selected.">".str_replace(array('_','North'), array(' ', 'N.'),translate('timezone_dom','',$key)). "(GMT".$gmtOffset.") ".$dst."</option>";
-}
-$sugar_smarty->assign('TIMEZONEOPTIONS', $timezoneOptions);
+$sugar_smarty->assign('TIMEZONE_CURRENT', $userTZ);
+$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
 //// Numbers and Currency display
 require_once('modules/Currencies/ListCurrency.php');
@@ -451,10 +450,10 @@ $sugar_smarty->assign('getNameJs', $locale->getNameJs());
 
 
 // Grouped tabs?
-$useGroupTabs = $current_user->getPreference('navigation_paradigm');
+$useGroupTabs = $focus->getPreference('navigation_paradigm');
 if ( ! isset($useGroupTabs) ) {
     if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'm';
+        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
     }
     $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
 }
@@ -468,7 +467,7 @@ if(isset($user_max_tabs) && $user_max_tabs > 0) {
 } else {
     $sugar_smarty->assign("MAX_TAB", $GLOBALS['sugar_config']['default_max_tabs']);
 }
-$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, 10));
+$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, ((!empty($GLOBALS['sugar_config']['default_max_tabs']) && $GLOBALS['sugar_config']['default_max_tabs'] > 10 ) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $user_subpanel_tabs = $focus->getPreference('subpanel_tabs');
@@ -489,6 +488,30 @@ $sugar_smarty->assign("SHOW_THEMES",count(SugarThemeRegistry::availableThemes())
 $sugar_smarty->assign("USER_THEME_COLOR", $focus->getPreference('user_theme_color'));
 $sugar_smarty->assign("USER_THEME_FONT", $focus->getPreference('user_theme_font'));
 $sugar_smarty->assign("USER_THEME", $user_theme);
+
+// Build a list of themes that support group modules
+$sugar_smarty->assign("DISPLAY_GROUP_TAB", 'none');
+
+$selectedTheme = $user_theme;
+if(!isset($user_theme)) {
+    $selectedTheme = $GLOBALS['sugar_config']['default_theme'];
+}
+
+$themeList = SugarThemeRegistry::availableThemes();
+$themeGroupList = array();
+
+foreach ( $themeList as $themeId => $themeName ) {
+    $currThemeObj = SugarThemeRegistry::get($themeId);
+    if ( isset($currThemeObj->group_tabs) && $currThemeObj->group_tabs == 1 ) {
+        $themeGroupList[$themeId] = true;
+        if ( $themeId == $selectedTheme ) {
+            $sugar_smarty->assign("DISPLAY_GROUP_TAB", '');
+        }
+    } else {
+        $themeGroupList[$themeId] = false;
+    }
+}
+$sugar_smarty->assign("themeGroupListJSON",json_encode($themeGroupList));
 
 $sugar_smarty->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $focus->getPreference('mail_sendtype')));
 $reminder_time = $focus->getPreference('reminder_time');
@@ -615,7 +638,7 @@ else
     $sugar_smarty->assign('REQUIRED_PASSWORD','0');
 
 // If my account page or portal only user or regular user without system generated password or a duplicate user
-if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
+if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || $usertype == 'ADMIN' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
    $sugar_smarty->assign('CHANGE_PWD', '1');
 else
    $sugar_smarty->assign('CHANGE_PWD', '0');
@@ -626,7 +649,7 @@ if ( $usertype == 'GROUP' ) {
 }
 
 $configurator = new Configurator();
-if ( ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
+if ( isset($configurator->config['passwordsetting']) && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
         && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' )
 	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','1');
 else
@@ -644,14 +667,24 @@ else{
 
 $sugar_smarty->assign('IS_FOCUS_ADMIN', is_admin($focus));
 
-$disable_download_tab = !isset($sugar_config['disable_download_tab']) ? false : $sugar_config['disable_download_tab'];
-
-if($edit_self && !$disable_download_tab) {
+if($edit_self) {
 	$sugar_smarty->assign('EDIT_SELF','1');
 }
 if($admin_edit_self) {
 	$sugar_smarty->assign('ADMIN_EDIT_SELF','1');
 }
+
+
+if (isset($sugar_config['show_download_tab']))
+{
+	$enable_download_tab = $sugar_config['show_download_tab'];
+}else{
+	
+	$enable_download_tab = true;
+}	
+
+$sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
+	
 
 
 /////////////////////////////////////////////
@@ -671,24 +704,41 @@ if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
     $mail_smtppass = "";
     $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
     $hide_if_can_use_default = true;
+    $mail_smtpauth_req=true;
+
     if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
     {
+
+    	$mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
         $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
         if($userOverrideOE != null) {
+
             $mail_smtpuser = $userOverrideOE->mail_smtpuser;
             $mail_smtppass = $userOverrideOE->mail_smtppass;
+
         }
 
-        $hide_if_can_use_default = empty($systemOutboundEmail->mail_smtpserver) ? true : false;
+
+        if(!$mail_smtpauth_req &&
+            ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
+            || empty($systemOutboundEmail->mail_smtppass)))
+        {
+            $hide_if_can_use_default = true;
+        }
+        else{
+            $hide_if_can_use_default = false;
+        }
     }
+
     $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
     $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);
     $sugar_smarty->assign("mail_smtpuser", $mail_smtpuser);
-    $sugar_smarty->assign("mail_smtppass", $mail_smtppass);
+    $sugar_smarty->assign("mail_smtppass", "");
+    $sugar_smarty->assign("mail_smtpauth_req", $mail_smtpauth_req);
     $sugar_smarty->assign('MAIL_SMTPPORT',$mail_smtpport);
     $sugar_smarty->assign('MAIL_SMTPSSL',$mail_smtpssl);
 }
-$sugar_smarty->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default);
+$sugar_smarty->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default );
 
 $reports_to_change_button_html = '';
 

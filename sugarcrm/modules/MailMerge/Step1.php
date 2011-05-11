@@ -206,7 +206,7 @@ if($_SESSION['MAILMERGE_MODULE'] == 'Campaigns'){
 $admin = new Administration();
 $admin->retrieveSettings();
 $user_merge = $current_user->getPreference('mailmerge_on');
-if ($user_merge != 'on' || !$admin->settings['system_mailmerge_on']){
+if ($user_merge != 'on' || !isset($admin->settings['system_mailmerge_on']) || !$admin->settings['system_mailmerge_on']){
 	$xtpl->assign("ADDIN_NOTICE", $mod_strings['LBL_ADDIN_NOTICE']);
 	$xtpl->assign("DISABLE_NEXT_BUTTON", "disabled");
 }
@@ -219,13 +219,7 @@ function get_user_module_list($user){
 	global $app_list_strings, $current_language;
 	$app_list_strings = return_app_list_strings_language($current_language);
 	$modules = query_module_access_list($user);
-	global $modInvisList, $modInvisListActivities;
-
-	if(isset($modules['Calendar']) || $modules['Activities']){
-		foreach($modInvisListActivities as $invis){
-				$modules[$invis] = $invis;
-		}
-	}
+	global $modInvisList;
 
 	return $modules;
 }
@@ -234,7 +228,7 @@ function getDocumentRevisions()
 {			
 	$document = new Document();
 
-	$currentDate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+	$currentDate = TimeDate::getInstance()->nowDb();
 	if ($document->db->dbType=="mysql") {
 		$empty_date=db_convert("'0000-00-00'", 'datetime');
 	}

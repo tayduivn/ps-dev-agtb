@@ -40,17 +40,58 @@ class SugarWidgetFieldDateTimecombo extends SugarWidgetFieldDateTime {
 			$ontime = $layout_def['input_name0'];
 		}
 
-		//BEGIN SUGARCRM flav=ent ONLY 
+		//BEGIN SUGARCRM flav=ent ONLY
 		if ($this->reporter->db->dbType == 'oci8') {
-			return $this->_get_column_select($layout_def).">=TO_DATE('".$this->reporter->db->quote($ontime)."','YYYY-MM-DD hh24:mi:ss')  \n";
+			return $this->_get_column_select($layout_def)."=TO_DATE('".$this->reporter->db->quote($ontime)."','YYYY-MM-DD hh24:mi:ss')  \n";
 		} else {
-			//END SUGARCRM flav=ent ONLY 
+			//END SUGARCRM flav=ent ONLY
 			return $this->_get_column_select($layout_def)."='".$this->reporter->db->quote($ontime)."' \n";
-			//BEGIN SUGARCRM flav=ent ONLY 
+			//BEGIN SUGARCRM flav=ent ONLY
 		}
-		//END SUGARCRM flav=ent ONLY 
+		//END SUGARCRM flav=ent ONLY
 	}
+    function queryFilterBefore(& $layout_def) {
+        global $timedate;
 
+        if($this->getAssignedUser()) {
+            $begin = $timedate->handle_offset($layout_def['input_name0'], $timedate->get_db_date_time_format(), false, $this->assigned_user);
+        }
+        else {
+            $begin = $layout_def['input_name0'];
+        }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        if ($this->reporter->db->dbType == 'oci8') {
+            return $this->_get_column_select($layout_def)."< TO_DATE('".$this->reporter->db->quote($begin)."', 'yyyy-mm-dd hh24:mi:ss')\n";
+        } else {
+            //END SUGARCRM flav=ent ONLY
+            return $this->_get_column_select($layout_def)."<'".$this->reporter->db->quote($begin)."'\n";
+            //BEGIN SUGARCRM flav=ent ONLY
+        }
+        //END SUGARCRM flav=ent ONLY
+
+    }
+
+    function queryFilterAfter(& $layout_def) {
+        global $timedate;
+
+        if($this->getAssignedUser()) {
+            $begin = $timedate->handle_offset($layout_def['input_name0'] , $timedate->get_db_date_time_format(), false, $this->assigned_user);
+        }
+        else {
+            $begin = $layout_def['input_name0'];
+        }
+
+        //BEGIN SUGARCRM flav=ent ONLY
+        if ($this->reporter->db->dbType == 'oci8') {
+            return $this->_get_column_select($layout_def)."> TO_DATE('".$this->reporter->db->quote($begin)."', 'yyyy-mm-dd hh24:mi:ss')\n";
+        } else {
+            //END SUGARCRM flav=ent ONLY
+            return $this->_get_column_select($layout_def).">'".$this->reporter->db->quote($begin)."'\n";
+            //BEGIN SUGARCRM flav=ent ONLY
+        }
+        //END SUGARCRM flav=ent ONLY
+    }
 	//TODO:now for date time field , we just search from date start to date end. The time is from 00:00:00 to 23:59:59
 	//If there is requirement, we can modify report.js::addFilterInputDatetimesBetween and this function
 	function queryFilterBetween_Datetimes(& $layout_def) {
@@ -63,16 +104,39 @@ class SugarWidgetFieldDateTimecombo extends SugarWidgetFieldDateTime {
 			$begin = $layout_def['input_name0'];
 			$end = $layout_def['input_name1'];
 		}
-		//BEGIN SUGARCRM flav=ent ONLY 
+		//BEGIN SUGARCRM flav=ent ONLY
 		if ($this->reporter->db->dbType == 'oci8') {
 			return "(".$this->_get_column_select($layout_def).">=TO_DATE('".$this->reporter->db->quote($begin)."','yyyy-mm-dd hh24:mi:ss') AND \n ".$this->_get_column_select($layout_def)."<=TO_DATE('".$this->reporter->db->quote($end)."','yyyy-mm-dd hh24:mi:ss'))\n";
 		} else {
-			//END SUGARCRM flav=ent ONLY 
+			//END SUGARCRM flav=ent ONLY
 			return "(".$this->_get_column_select($layout_def).">='".$this->reporter->db->quote($begin)."' AND \n".$this->_get_column_select($layout_def)."<='".$this->reporter->db->quote($end)."')\n";
-			//BEGIN SUGARCRM flav=ent ONLY 
+			//BEGIN SUGARCRM flav=ent ONLY
 		}
-		//END SUGARCRM flav=ent ONLY 
+		//END SUGARCRM flav=ent ONLY
 	}
-}
-?>
+	
+    function queryFilterNot_Equals_str(& $layout_def) {
+        global $timedate;
 
+        if($this->getAssignedUser()) {
+            $begin = $timedate->handle_offset($layout_def['input_name0'], $timedate->get_db_date_time_format(), false, $this->assigned_user);
+            $end = $timedate->handle_offset($layout_def['input_name0'], $timedate->get_db_date_time_format(), false, $this->assigned_user);
+        }
+        else {
+            $begin = $layout_def['input_name0'];
+            $end = $layout_def['input_name0'];
+        }
+
+        if ($this->reporter->db->dbType == 'oci8') {
+        //BEGIN SUGARCRM flav=ent ONLY
+            return "NVL( TO_CHAR(".$this->_get_column_select($layout_def)."),'0')  = '0' OR \n(".$this->_get_column_select($layout_def)."< TO_DATE('".$this->reporter->db->quote($begin)."','yyyy-mm-dd hh24:mi:ss') OR ".$this->_get_column_select($layout_def).">TO_DATE('".$this->reporter->db->quote($end)."','yyyy-mm-dd hh24:mi:ss') )\n";
+            //END SUGARCRM flav=ent ONLY
+
+        } elseif ($this->reporter->db->dbType == 'mssql'){
+            return "(".$this->_get_column_select($layout_def)."<'".$this->reporter->db->quote($begin)."' OR ".$this->_get_column_select($layout_def).">'".$this->reporter->db->quote($end)."')\n";
+
+        }else{
+            return "ISNULL(".$this->_get_column_select($layout_def).") OR \n(".$this->_get_column_select($layout_def)."<'".$this->reporter->db->quote($begin)."' OR ".$this->_get_column_select($layout_def).">'".$this->reporter->db->quote($end)."')\n";
+        }
+    }	
+}

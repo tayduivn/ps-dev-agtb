@@ -30,8 +30,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  // $Id: SugarAuthenticate.php 56655 2010-05-24 20:08:32Z jmertic $
 
 /**
- * This file is used to control the authentication process. 
- * It will call on the user authenticate and controll redirection 
+ * This file is used to control the authentication process.
+ * It will call on the user authenticate and controll redirection
  * based on the users validation
  *
  */
@@ -47,7 +47,7 @@ class SugarAuthenticate{
 	function SugarAuthenticate(){
 		require_once('modules/Users/authentication/'. $this->authenticationDir . '/'. $this->userAuthenticateClass . '.php');
 		$this->userAuthenticate = new $this->userAuthenticateClass();
-		
+
 	}
 	/**
 	 * Authenticates a user based on the username and password
@@ -56,7 +56,7 @@ class SugarAuthenticate{
 	 *
 	 * @param string $username
 	 * @param string $password
-	 * @return boolean 
+	 * @return boolean
 	 */
 	function loginAuthenticate($username, $password, $fallback=false, $PARAMS = array ()){
 		global $mod_strings;
@@ -71,23 +71,24 @@ class SugarAuthenticate{
 		$_SESSION['waiting_error']='';
 		$_SESSION['hasExpiredPassword']='0';
 		//BEGIN SUGARCRM flav=pro ONLY
+		$usr->reloadPreferences();
 		// if there is too many login attempts
 		if (!empty($usr_id) && $res['lockoutexpiration'] > 0 && $usr->getPreference('loginfailed')>=($res['lockoutexpirationlogin']) && !($usr->portal_only)){
 		    // if there is a lockout time set
 		    if ($res['lockoutexpiration'] == '2'){
 		    	// lockout date is now if not set
 		    	if (($logout_time=$usr->getPreference('logout_time'))==''){
-			        $usr->setPreference('logout_time',date("Y-m-d H:i:s"));
+			        $usr->setPreference('logout_time',TimeDate::getInstance()->nowDb());
 			        $logout_time=$usr->getPreference('logout_time');
-			        }    
+			        }
 				$stim = strtotime($logout_time);
-				$expiretime = date("Y-m-d H:i:s", mktime(date("H",$stim), date("i",$stim)+($res['lockoutexpirationtime']*$res['lockoutexpirationtype']), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim)));
-			    // Test if the user is still locked out and return a error message
-			    if (date("Y-m-d H:i:s") < $expiretime){
+			    $expiretime = TimeDate::getInstance()->fromTimestamp($stim)->get("+"+$res['lockoutexpirationtime']*$res['lockoutexpirationtype']+" minutes")->asDb();
+				// Test if the user is still locked out and return a error message
+			    if (TimeDate::getInstance()->nowDb() < $expiretime){
 			    	$usr->setPreference('lockout','1');
 			        $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
 			        $_SESSION['waiting_error']=$mod_strings['LBL_LOGIN_LOGIN_TIME_ALLOWED'].' ';
-			        $lol= strtotime($expiretime)-strtotime(date("Y-m-d H:i:s"));
+			        $lol= strtotime($expiretime)-strtotime(TimeDate::getInstance()->nowDb());
 					        switch (true) {
 				    case (floor($lol/86400) !=0):
 				        $_SESSION['waiting_error'].=floor($lol/86400).$mod_strings['LBL_LOGIN_LOGIN_TIME_DAYS'];
@@ -102,6 +103,7 @@ class SugarAuthenticate{
 				        $_SESSION['waiting_error'].=floor($lol).$mod_strings['LBL_LOGIN_LOGIN_TIME_SECONDS'];
 				        break;
 					}
+					$usr->savePreferencesToDB();
 					return false;
 			    }
 			    else{
@@ -115,6 +117,7 @@ class SugarAuthenticate{
 		    	$usr->setPreference('lockout','1');
 			    $_SESSION['login_error']=$mod_strings['LBL_LOGIN_ATTEMPTS_OVERRUN'];
 		        $_SESSION['waiting_error']=$mod_strings['LBL_LOGIN_ADMIN_CALL'];
+		        $usr->savePreferencesToDB();
 		        return false;
 			}
 		}
@@ -124,15 +127,20 @@ class SugarAuthenticate{
 			if(hasPasswordExpired($username)) {
 				$_SESSION['hasExpiredPassword'] = '1';
 			}
+			// now that user is authenticated, reset loginfailed
+			if ($usr->getPreference('loginfailed') != '' && $usr->getPreference('loginfailed') != 0) {
+				$usr->setPreference('loginfailed','0');
+				$usr->savePreferencesToDB();
+			}
 			return $this->postLoginAuthenticate();
-			
+
 		}
 		else
 		{
 			if(!empty($usr_id) && $res['lockoutexpiration'] > 0){
 				if (($logout=$usr->getPreference('loginfailed'))=='')
 	        		$usr->setPreference('loginfailed','1');
-	    		else 
+	    		else
 	        		$usr->setPreference('loginfailed',$logout+1);
 	    		$usr->savePreferencesToDB();
     		}
@@ -141,18 +149,18 @@ class SugarAuthenticate{
 			$sa = new SugarAuthenticate();
 			$error = (!empty($_SESSION['login_error']))?$_SESSION['login_error']:'';
 			if($sa->loginAuthenticate($username, $password, true, $PARAMS)){
-				return true;	
+				return true;
 			}
-			$_SESSION['login_error'] = $error;	
+			$_SESSION['login_error'] = $error;
 		}
-	
-			
+
+
 		$_SESSION['login_user_name'] = $username;
 		$_SESSION['login_password'] = $password;
 		if(empty($_SESSION['login_error'])){
 			$_SESSION['login_error'] = translate('ERR_INVALID_PASSWORD', 'Users');
 		}
-	
+
 		return false;
 
 	}
@@ -162,10 +170,10 @@ class SugarAuthenticate{
 	 *
 	 */
 	function postLoginAuthenticate(){
-		
-		global $reset_theme_on_default_user, $reset_language_on_default_user, $sugar_config;	
+
+		global $reset_theme_on_default_user, $reset_language_on_default_user, $sugar_config;
 		//THIS SECTION IS TO ENSURE VERSIONS ARE UPTODATE
-		
+
 		require_once ('modules/Versions/CheckVersions.php');
 		$invalid_versions = get_invalid_versions();
 		if (!empty ($invalid_versions)) {
@@ -185,14 +193,14 @@ class SugarAuthenticate{
 
 			$_SESSION['invalid_versions'] = $invalid_versions;
 		}
-		
-		
-		//just do a little house cleaning here 
+
+
+		//just do a little house cleaning here
 		unset($_SESSION['login_password']);
 		unset($_SESSION['login_error']);
 		unset($_SESSION['login_user_name']);
 		unset($_SESSION['ACL']);
-		
+
 		//set the server unique key
 		if (isset ($sugar_config['unique_key']))$_SESSION['unique_key'] = $sugar_config['unique_key'];
 
@@ -204,7 +212,7 @@ class SugarAuthenticate{
 		}
 
 		$_SESSION['authenticated_user_language'] = $authenticated_user_language;
-    
+
 		$GLOBALS['log']->debug("authenticated_user_language is $authenticated_user_language");
 
 		// Clear all uploaded import files for this user if it exists
@@ -214,27 +222,27 @@ class SugarAuthenticate{
 		if (file_exists($tmp_file_name)) {
 			unlink($tmp_file_name);
 		}
-		
-		
-		
+
+
+
 		return true;
 	}
 
 	/**
-	 * On every page hit this will be called to ensure a user is authenticated 
-	 * @return boolean 
+	 * On every page hit this will be called to ensure a user is authenticated
+	 * @return boolean
 	 */
 	function sessionAuthenticate(){
-		
+
 		global $module, $action, $allowed_actions;
 		$authenticated = false;
 		$allowed_actions = array ("Authenticate", "Login"); // these are actions where the user/server keys aren't compared
 		if (isset ($_SESSION['authenticated_user_id'])) {
-			
+
 			$GLOBALS['log']->debug("We have an authenticated user id: ".$_SESSION["authenticated_user_id"]);
-			
+
 			$authenticated = $this->postSessionAuthenticate();
-			
+
 		} else
 		if (isset ($action) && isset ($module) && $action == "Authenticate" && $module == "Users") {
 			$GLOBALS['log']->debug("We are authenticating user now");
@@ -267,19 +275,19 @@ class SugarAuthenticate{
 	/**
 	 * Called after a session is authenticated - if this returns false the sessionAuthenticate will return false and destroy the session
 	 * and it will load the  current user
-	 * @return boolean 
+	 * @return boolean
 	 */
 
 	function postSessionAuthenticate(){
-	   
+
 		global $action, $allowed_actions, $sugar_config;
 		$_SESSION['userTime']['last'] = time();
 		$user_unique_key = (isset ($_SESSION['unique_key'])) ? $_SESSION['unique_key'] : '';
 		$server_unique_key = (isset ($sugar_config['unique_key'])) ? $sugar_config['unique_key'] : '';
-		
+
 		//CHECK IF USER IS CROSSING SITES
 		if (($user_unique_key != $server_unique_key) && (!in_array($action, $allowed_actions)) && (!isset ($_SESSION['login_error']))) {
-			
+
 			session_destroy();
 			$post_login_nav = '';
 			if (!empty ($record) && !empty ($action) && !empty ($module)) {
@@ -318,7 +326,7 @@ class SugarAuthenticate{
                 if(count($session_parts) < 4) {
                     $classCheck = 0;
                 }
-                else { 
+                else {
     				// match class C IP addresses
     				for ($i = 0; $i < 3; $i ++) {
     					if ($session_parts[$i] == $client_parts[$i]) {
@@ -367,7 +375,7 @@ class SugarAuthenticate{
 	function encodePassword($password){
 		return strtolower(md5($password));
 	}
-	
+
 	/**
 	 * If a user may change there password through the Sugar UI
 	 *
@@ -382,7 +390,7 @@ class SugarAuthenticate{
 	function canChangeUserName(){
 		return true;
 	}
-	
+
 
 
 

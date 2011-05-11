@@ -26,12 +26,15 @@ $config = array (
   'order' => 2,
   'properties' => 
   array (
-    'hoovers_endpoint' => 'http://hapi.hoovers.com/axis2/services/AccessHoovers',
-    'hoovers_wsdl' => 'http://hapi.hoovers.com/axis2/Hapi.wsdl',
-    'hoovers_api_key' => '',
+    'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
+    'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
+  	'hoovers_api_key' => '',
   ),
 );
+
 //BEGIN SUGARCRM flav=int ONLY
-$config['properties']['hoovers_api_key'] = 'uxafep6anuf7knxpcv68ykhw';
+$config['properties']['hoovers_api_key'] = 'nmvsu5btfrrj66t3ayrscmee';
+$config['properties']['hoovers_endpoint'] = 'http://hapi-dev.hoovers.com/HooversAPI-33';
+$config['properties']['hoovers_wsdl'] = 'http://hapi-dev.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl';
 //END SUGARCRM flav=int ONLY
 ?>

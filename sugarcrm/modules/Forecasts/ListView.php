@@ -96,9 +96,7 @@ else
 
 $seedForecast = new Forecast();
 
-$middleText = "<a href='index.php?module=Forecasts&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a><span class='pointer'>&raquo;</span>{$mod_strings['LBL_FORECAST_HISTORY_TITLE']}";
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $middleText, true);
-//echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_FORECAST_HISTORY_TITLE'], true);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_FORECAST_HISTORY_TITLE']), false);
 
 //START:processing the search form.
 $fcst_timeperiods =  $comm->get_my_forecasted_timeperiods($ws_current_user_id);

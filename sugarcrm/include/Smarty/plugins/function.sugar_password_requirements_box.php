@@ -1,4 +1,42 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r55866 - 2010-04-07 12:53:06 -0700 (Wed, 07 Apr 2010) - jmertic - Merge from Windex_beta1 r55799 through r55853
+
+r53119 - 2009-12-09 19:23:33 -0800 (Wed, 09 Dec 2009) - mitani - fixes tags for xtemplate
+
+r53116 - 2009-12-09 17:24:37 -0800 (Wed, 09 Dec 2009) - mitani - Merge Kobe into Windex Revision 51633 to 53087
+
+r53057 - 2009-12-07 17:36:37 -0800 (Mon, 07 Dec 2009) - mitani - Cleans up tag spacing to reduce the number of conflicts with Windex
+
+r52695 - 2009-11-23 12:43:45 -0800 (Mon, 23 Nov 2009) - jmertic - Bug 34084 - Correct tag the password strength indicators on the Users EditView for sales and pro instead of just pro.
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r50752 - 2009-09-10 15:18:28 -0700 (Thu, 10 Sep 2009) - dwong - Merged branches/tokyo from revision 50372 to 50729 to branches/kobe2
+Discard lzhang r50568 changes in Email.php and corresponding en_us.lang.php
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r50250 - 2009-08-19 11:34:16 -0700 (Wed, 19 Aug 2009) - dwong - merged Advanced Password Management removal from CE from jenny/tokyo, from r50164 to r50232
+
+r45859 - 2009-04-03 12:26:29 -0700 (Fri, 03 Apr 2009) - faissah - Now using Smarty functions to display password requirements box
+
+
+*/
+
+
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
 *The contents of this file are subject to the SugarCRM Professional End User License Agreement

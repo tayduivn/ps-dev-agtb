@@ -101,6 +101,13 @@
           </tr>
           {/if}
           {* //END SUGARCRM flav!=sales ONLY *}
+          {foreach from=$custom_mappings item=item name=custommappings}
+          {capture assign=mapping_label}{$MOD.LBL_CUSTOM_MAPPING_}{$item|upper}{/capture}
+          <tr>
+            <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="{$item}" />
+              &nbsp;{$mapping_label}</td>
+          </tr>
+          {/foreach}
           {foreach from=$custom_imports key=key item=item name=saved}
           {if $smarty.foreach.saved.first}
           <tr>
@@ -119,7 +126,7 @@
                     onclick="document.location.href = 'index.php?publish=yes&amp;import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;import_map_id={$item.IMPORT_ID}'">
                 {/if}
                 <input type="button" name="delete" value="{$MOD.LBL_DELETE}" class="button" 
-                    onclick="document.location.href = 'index.php?import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;delete_map_id={$item.IMPORT_ID}'">
+					onclick="if(confirm('{$MOD.LBL_DELETE_MAP_CONFIRMATION}')){literal}{{/literal}document.location.href = 'index.php?import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;delete_map_id={$item.IMPORT_ID}'{literal}}{/literal}">
             </td>
           </tr>
           {/foreach}
@@ -140,7 +147,7 @@
                 <input type="button" name="publish" value="{$MOD.LBL_UNPUBLISH}" class="button" 
                     onclick="document.location.href = 'index.php?publish=no&amp;import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;import_map_id={$item.IMPORT_ID}'">
                 <input type="button" name="delete" value="{$MOD.LBL_DELETE}" class="button" 
-                    onclick="document.location.href = 'index.php?import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;delete_map_id={$item.IMPORT_ID}'">
+                    onclick="if(confirm('{$MOD.LBL_DELETE_MAP_CONFIRMATION}')){literal}{{/literal}document.location.href = 'index.php?import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;delete_map_id={$item.IMPORT_ID}'{literal}}{/literal}">
                 {/if}
             </td>
           </tr>

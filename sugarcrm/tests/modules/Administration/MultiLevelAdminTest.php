@@ -8,7 +8,16 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
     
     public function setup()
     {
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
         $this->_role_id = null;
+        $beanList = $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
     }
     
     public function tearDown()
@@ -21,6 +30,9 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         
         if ( isset($GLOBALS['current_user']) )
             unset($GLOBALS['current_user']);
+        
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
     }
     
     public function testAdminUserIsAdminForTheGivenModule()
@@ -32,7 +44,58 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(is_admin_for_module($user, $module, array('Accounts')));  
     }
     
-    public function testCurrentUserIsAdminForTheGivenModule()
+    public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreAdminAndDev()
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $user->is_admin = 0;
+        $mlaRoles = array(
+            'test_for_module'=>array(
+                'Accounts'=>array('admin'=>100),
+                )
+            );
+        addDefaultRoles($mlaRoles); 
+        
+        $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
+        $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
+        $this->_role_id = $user->role_id;
+        
+        $module = 'Accounts';
+        $actions = array();
+        $actions[$module]['module']['admin']['aclaccess'] = 96;
+        
+        unset($_SESSION['MLA_'.$user->user_name]);
+        
+        $this->assertTrue(is_admin_for_module($user, $module, $actions));
+    }
+    
+    /**
+     * @ticket 33494
+     */
+    public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyAdmin()
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $user->is_admin = 0;
+        $mlaRoles = array(
+            'test_for_module'=>array(
+                'Accounts'=>array('admin'=>99),
+                )
+            );
+        addDefaultRoles($mlaRoles); 
+        
+        $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
+        $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
+        $this->_role_id = $user->role_id;
+        
+        $module = 'Accounts';
+        $actions = array();
+        $actions[$module]['module']['admin']['aclaccess'] = 96;
+        
+        unset($_SESSION['MLA_'.$user->user_name]);
+        
+        $this->assertTrue(is_admin_for_module($user, $module, $actions));
+    }
+    
+    public function testCurrentUserIsAdminForTheGivenModuleIfTheyAreOnlyDev()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
@@ -85,6 +148,18 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['is_admin_for_module']);
         
         $this->assertTrue(is_admin_for_any_module($user));
+    }
+    
+    public function testCurrentUserIsAdminForAnyModuleWhenSessionVarIsSet()
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $_SESSION['is_admin_for_module'] = true;
+        
+        $check = is_admin_for_any_module($user);
+        
+        unset($_SESSION['is_admin_for_module']);
+        
+        $this->assertTrue($check);
     }
     
     public function testCurrentUserIsNotAdminForAnyModule()
@@ -176,6 +251,21 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count(get_admin_modules_for_user($user)),0);
     }
     
+    public function testGetAdminModulesWhenNoUserIsPassed()
+    {
+        $this->assertEquals(array(),get_admin_modules_for_user(false));
+    }
+    
+    public function testGetAdminModulesForCurrentUserIfSessionVarIsSet()
+    {
+        $_SESSION['get_admin_modules_for_user'] = array('dog','cat');
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        
+        $modules = get_admin_modules_for_user($user);
+        
+        $this->assertEquals(array('dog','cat'),$modules);
+    }
+    
     public function testCanDisplayStudioForCurrentUserThatDoesNotHaveDeveloperAccessToAStudioModule()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -238,5 +328,27 @@ class MultiLevelAdminTest extends Sugar_PHPUnit_Framework_TestCase
         unset($_SESSION['get_admin_modules_for_user']);
 
         $this->assertTrue(displayStudioForCurrentUser());
+    }
+    
+    public function testCanDisplayStudioForCurrentUserIfTheyAreAnAdminUser()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = 1;
+        
+        $this->assertTrue(displayStudioForCurrentUser());
+    }
+    
+    public function testCanDisplayStudioForIfSessionVarIsSet()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = 0;
+        
+        $_SESSION['display_studio_for_user'] = true;
+        
+        $check = displayStudioForCurrentUser();
+        
+        unset($_SESSION['display_studio_for_user']);
+        
+        $this->assertTrue($check);
     }
 }

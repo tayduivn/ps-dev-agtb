@@ -114,7 +114,6 @@ $vardef_meta_array = array (
 			'type' => array('id', 'link', 'team_list', 'time'),
 			'custom_type' => array('id', 'link', 'team_list', 'time'),
 			'name' => array('parent_type', 'team_name', 'assigned_user_name', 'parent_type', 'amount_usdollar', 'deleted' ,'filename', 'file_mime_type', 'file_url'),
-			'reportable' => array('true'),
 			'source' => array('non-db'),
 		//end exclusion
 		),
@@ -140,12 +139,15 @@ $vardef_meta_array = array (
 			'reportable' => array('false'),
 			'source' => array('non-db'),
 			'name' => array('created_by', 'parent_type', 'deleted', 'assigned_user_name', 'amount_usdollar', 'deleted' ,'filename', 'file_mime_type', 'file_url', 'resource_id'),
+            //BEGIN SUGARCRM flav=pro ONLY
+            'calculated' => array(true),
+            //END SUGARCRM flav=pro ONLY
 		//end exclusion
 		),
 		
 		'inc_override' => array(
 			'type' => array('team_list'),
-			'name' => array('assigned_user_id', 'time_start', 'date_start', 'email1', 'email2', 'date_due'),
+			'name' => array('assigned_user_id', 'time_start', 'date_start', 'email1', 'email2', 'date_due', 'is_optout'),
 		//end inc_override
 		),
 		'ex_override' => array(
@@ -171,8 +173,9 @@ $vardef_meta_array = array (
 		//end inc_override
 		),
 		'ex_override' => array(
-			'link_type' => array('one'),
+			//'link_type' => array('one'),
 			'name' => array('users'),
+		    'module' => array('Users'),
 		//end ex_override
 		)
 	

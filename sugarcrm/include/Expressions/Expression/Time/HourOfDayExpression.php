@@ -1,5 +1,5 @@
 <?php
-/*********************************************************************************
+/************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -21,8 +21,8 @@
 require_once('include/Expressions/Expression/Time/TimeExpression.php');
 
 /**
- * 
- * This is the description of the class
+ * <b>hourOfDay(Date d)</b><br/>
+ * Returns the hour of the day (24 hour format) of a given date/time.<br>
  */
 class HourOfDayExpression extends TimeExpression
 {
@@ -30,8 +30,11 @@ class HourOfDayExpression extends TimeExpression
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$params = $this->getParameters()->evaluate();
-		return floatval( substr( $params, 0, 2 ) );
+		$params = DateExpression::parse($this->getParameters()->evaluate());
+		if(!$params) {
+		    return false;
+		}
+		return $params->hour;
 	}
 
 
@@ -50,7 +53,7 @@ EOQ;
 	 * called by.
 	 */
 	static function getOperationName() {
-		return "hourofday";
+		return "hourOfDay";
 	}
 
 	/**

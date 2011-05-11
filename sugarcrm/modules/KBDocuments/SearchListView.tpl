@@ -33,7 +33,7 @@
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
 {*  --export and pagination-- *}
-	{include file='include/ListView/ListViewPagination.tpl'}
+	{include file='modules/KBDocuments/tpls/ListViewPagination.tpl'}
 {*  --Header Row -- *}
 	<tr height='20'>
 		{if $prerow}
@@ -139,12 +139,11 @@
 							symbol=$params.currency_format.symbol
 						}
 					{elseif $params.type == 'bool'}
-							3<input type='checkbox' disabled=disabled class='checkbox'
+							<input type='checkbox' disabled=disabled class='checkbox'
 							{if !empty($rowData[$col])}
 								checked=checked
 							{/if}
-							/>3
-					
+							/>
 					{else}	
 						{$rowData.$col}
 					{/if}
@@ -162,5 +161,5 @@
 			{/if}
 	 	
 	{/foreach}
-	{include file='include/ListView/ListViewPagination.tpl'}
+	{include file='modules/KBDocuments/tpls/ListViewPagination.tpl'}
 </table>

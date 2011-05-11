@@ -34,30 +34,9 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewPopupview extends ViewListView
 {
-    function ViewPopupview()
+    function __construct()
     {
-        $this->init ();
-    }
-    
-    /**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams()
-	{
-	    global $mod_strings;
-	    
-    	return array(
-    	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
-    	   );
-    }
-
-    /*
-     * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
-     */
-    function init()
-    {
-    	$this->editModule = $_REQUEST [ 'view_module' ] ;
+        $this->editModule = $_REQUEST [ 'view_module' ] ;
         $this->editLayout = $_REQUEST [ 'view' ] ;
         $this->editPackage = (isset ( $_REQUEST [ 'view_package' ] ) && ! empty ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
 
@@ -68,6 +47,27 @@ class ViewPopupview extends ViewListView
             $moduleNames = array_change_key_case ( $app_list_strings [ 'moduleList' ] ) ;
             $this->translatedEditModule = $moduleNames [ strtolower ( $this->editModule ) ] ;
         }
+    }
+    
+    /**
+	 * @see SugarView::_getModuleTitleParams()
+	 */
+	protected function _getModuleTitleParams($browserTitle = false)
+	{
+	    global $mod_strings;
+	    
+    	return array(
+    	   translate('LBL_MODULE_NAME','Administration'),
+    	   ModuleBuilderController::getModuleTitle(),
+    	   );
+    }
+
+    /*
+     * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
+     */
+    function init()
+    {
+
     }
 
     function preDisplay()
@@ -130,6 +130,7 @@ class ViewPopupview extends ViewListView
         $smarty->assign ( 'action', 'popupSave' ) ;
         $smarty->assign( 'module', 'ModuleBuilder');
         $smarty->assign ( 'view_module', $this->editModule ) ;
+        $smarty->assign ( 'field_defs', $parser->getFieldDefs () ) ;
         $helpName = (isset( $_REQUEST['view']) && $_REQUEST['view']==MB_POPUPSEARCH) ? 'searchViewEditor' : 'popupListViewEditor';
         $smarty->assign ( 'helpName', $helpName ) ;
         $smarty->assign ( 'helpDefault', 'modify' ) ;

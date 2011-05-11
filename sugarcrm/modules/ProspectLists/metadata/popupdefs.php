@@ -40,7 +40,28 @@ $popupMeta = array('moduleMain' => 'ProspectList',
 									'formBaseClass' => 'ProspectListFormBase',
 									'getFormBodyParams' => array('','','ProspectListSave'),
 									'createButton' => $mod_strings['LNK_NEW_PROSPECT_LIST']
-								  )
+								  ),
+						'listviewdefs' => array(
+							'NAME' => array(
+								'width' => '25', 
+								'label' => 'LBL_LIST_PROSPECT_LIST_NAME', 
+								'link' => true,
+								'default' => true),
+							'LIST_TYPE' => array(
+								'width' => '15', 
+								'label' => 'LBL_LIST_TYPE_LIST_NAME', 
+								'default' => true),
+							'DESCRIPTION' => array(
+								'width' => '50', 
+								'label' => 'LBL_LIST_DESCRIPTION', 
+								'default' => true),
+							'ASSIGNED_USER_NAME' => array(
+								'width' => '10', 
+								'label' => 'LBL_LIST_ASSIGNED_USER',
+								'module' => 'Employees',
+								'default' => true),
+							),
+
 						);
 
 

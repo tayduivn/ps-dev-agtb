@@ -261,19 +261,36 @@ class KBDocument extends SugarBean {
         //BEGIN SUGARCRM flav=ent ONLY
          $ret_array['select'] .= ", kbdocuments.created_by";
          //END SUGARCRM flav=ent ONLY
+         $custom_join = false;
+        if((!isset($params['include_custom_fields']) || $params['include_custom_fields']) &&  isset($this->custom_fields))
+        {
 
+            $custom_join = $this->custom_fields->getJOIN( empty($filter)? true: $filter );
+            if($custom_join)
+            {
+                $ret_array['select'] .= ' ' .$custom_join['select'];
+            }
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!is_admin($current_user) && !$this->disable_row_level_security){
             $ret_array['select'] .= ", kbdocuments.team_id ";
         }
         //END SUGARCRM flav=pro ONLY
         $ret_array['from'] = " FROM kbdocuments left join kbdocuments_views_ratings kvr ON kbdocuments.id = kvr.kbdocument_id  LEFT JOIN  users jt0 ON jt0.id= kbdocuments.assigned_user_id AND jt0.deleted=0  LEFT JOIN  users jt1 ON jt1.id= kbdocuments.kbdoc_approver_id AND jt1.deleted=0 ";
+        if($custom_join)
+        {
+            $ret_array['from'] .= ' ' . $custom_join['join'];
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         if (!is_admin($current_user) && !$this->disable_row_level_security){
             $this->add_team_security_where_clause($ret_array['from']);
         }
         //END SUGARCRM flav=pro ONLY
-        $ret_array['where'] = ' WHERE '. $where;
+        if(!empty($where)) {
+            $ret_array['where'] = ' WHERE '. $where;
+        } else {
+            $ret_array['where'] = '';
+        }
         //if order by just has asc or des
         $temp_order = trim($order_by);
         $temp_order = strtolower($temp_order);
@@ -282,6 +299,9 @@ class KBDocument extends SugarBean {
         $ret_array['order_by'] = (!empty($order_by) ? ' ORDER BY '. $order_by : '  ORDER BY kbdocuments.date_entered');
 
         $ret_array['from_min'] = $ret_array['from'];
+        if ( !$return_array ) {
+            return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
+        }
         return $ret_array;
     }
 

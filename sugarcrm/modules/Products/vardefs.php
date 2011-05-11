@@ -463,6 +463,14 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'source'=>'non-db',
 		'vname'=>'LBL_NOTES',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_products',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
   'contracts' => array (
 	'name' => 'contracts',
 	'type' => 'link',
@@ -622,5 +630,9 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
 	)
 );
 
-VardefManager::createVardef('Products','Product', array('default'));
+VardefManager::createVardef('Products','Product', array('default',
+//BEGIN SUGARCRM flav=pro ONLY
+'team_security',
+//END SUGARCRM flav=pro ONLY
+));
 ?>

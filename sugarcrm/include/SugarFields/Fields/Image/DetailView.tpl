@@ -27,25 +27,24 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{if empty({{sugarvar key='value' string=true}})}
-{assign var="value" value={{sugarvar key='default_value' string=true}} }
-{else}
-{assign var="value" value={{sugarvar key='value' string=true}} }
-{/if}  
-
+<input type="hidden" class="sugar_field" id="{{sugarvar key='name'}}" value="{{sugarvar key='value' string=true}}">
 {if isset($displayParams.link)}
 <a href='{{$displayParams.link}}'>
 {else}
-<a href="javascript:SUGAR.image.lightbox('index.php?entryPoint=download&id={{sugarvar key='value'}}&type=SugarFieldImage&isTempFile=1')">
+<a href="javascript:SUGAR.image.lightbox(YAHOO.util.Dom.get('img_{{sugarvar key='name'}}').src)">
 {/if}
 <img 
 	id="img_{{sugarvar key='name'}}" 
 	name="img_{{sugarvar key='name'}}" 
+	{{if !empty($vardef.calculated)}}
+	   src='{{sugarvar key='value'}}'
+	{{else}}
 	{if empty({{sugarvar key='value' string=true}})}
 	   src='' 	
 	{else}
 	   src='index.php?entryPoint=download&id={{sugarvar key='value'}}&type=SugarFieldImage&isTempFile=1'
-	{/if}	
+	{/if}
+	{{/if}}
 	style='
 		{if empty({{sugarvar key='value' string=true}})}
 			display:	none;

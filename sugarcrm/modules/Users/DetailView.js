@@ -114,7 +114,9 @@ function user_status_display(field){
 			document.getElementById("settings").style.display="none";
 			document.getElementById("information").style.display="none";
             //BEGIN SUGARCRM flav=pro ONLY
-            document.getElementById("pdf").style.display="none";
+			if(document.getElementById("pdf")) {
+				document.getElementById("pdf").style.display="none";
+			}
             //END SUGARCRM flav=pro ONLY
             document.getElementById("email_options_link_type").style.display="none";
 	    break;
@@ -128,7 +130,9 @@ function user_status_display(field){
 			document.getElementById("settings").style.display="none";
 			document.getElementById("information").style.display="none";
 			//BEGIN SUGARCRM flav=pro ONLY
-            document.getElementById("pdf").style.display="none";
+			if(document.getElementById("pdf")) {
+				document.getElementById("pdf").style.display="none";
+			}
             //END SUGARCRM flav=pro ONLY
             document.getElementById("email_options_link_type").style.display="none";
 	    break;

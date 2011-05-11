@@ -25,11 +25,11 @@ require_once("include/Expressions/Actions/VisibilityAction.php");
 require_once("include/Expressions/Expression/Parser/Parser.php");
 
 class Dependency {
-	private $trigger;
-	private $actions = array();
-	private $falseActions = array();
-	private $id = "";
-	private $fireOnLoad = false;
+	protected $trigger;
+	protected $actions = array();
+	protected $falseActions = array();
+	protected $id = "";
+	protected $fireOnLoad = false;
 	
 	function Dependency($id) {
 		$this->id = $id;
@@ -87,7 +87,7 @@ class Dependency {
 	/**
 	 * Returns the javascript equivalent of this dependency.
 	 */
-	function getJavascript() {
+	function getJavascript($form = "EditView") {
 		if (empty($this->actions)) return "";
 		
 		$js = "var {$this->id}dep = new SUGAR.forms.Dependency(" . 
@@ -112,9 +112,12 @@ class Dependency {
 		$js .= "]";
 		if ($this->fireOnLoad) {
 			$js .= ",true";
-		}
+		} else {
+            $js .= ",false";
+        }
 		
-		$js .= ");\n";
+		$js .= ",'$form');\n";
+
 		return $js;
 	}
 	
@@ -141,10 +144,16 @@ class Dependency {
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
-		if ($this->trigger->evaluate($target) === true) {
-			$this->fireActions($target);
-		} else {
-			$this->fireActions($target, true);
+		try {
+		  if ($this->trigger->evaluate($target) === true) {
+			     $this->fireActions($target);
+			} else {
+				$this->fireActions($target, true);
+			}
+		} catch (Exception $e)
+		{
+			$GLOBALS['log']->fatal($e->getMessage());
+			$GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
 		}
 	}
 	
@@ -155,12 +164,21 @@ class Dependency {
 	 * @param boolean $useFalse
 	 */
 	private function fireActions(&$target, $useFalse = false) {
-		$actions = $this->actions;
-		if ($useFalse)
-			$actions = $this->falseActions;
-		foreach ($actions as $action) {
-			$action->fire($target);
-		}
+		$action = "";
+		try {
+			$actions = $this->actions;
+			if ($useFalse)
+				$actions = $this->falseActions;
+			foreach ($actions as $action) {
+				$action->fire($target);
+			}
+		} catch (Exception $e)
+        {
+            $GLOBALS['log']->fatal($e->getMessage());
+            $GLOBALS['log']->fatal("Trigger was : {$this->trigger->conditionFunction}");
+            $GLOBALS['log']->fatal("Target was : " . print_r($action, true));
+            
+        }
 	}
 	
 	function getFireOnLoad()

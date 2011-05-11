@@ -81,7 +81,7 @@ padding:1px 15px 2px;
 border-color:#cbdc2b;
 }
 
-#moduleTabExtraMenu .yuimenuitemlabel.more {
+.moduleTabExtraMenu .yuimenuitemlabel.more {
 border-right:1px solid #cbdc2b;
 }
 
@@ -191,8 +191,12 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-menu.png");
 }
 
-#moduleList .dashletPanelMenu,#moduleList #More.dashletPanelMenu,#moduleList #Group.dashletPanelMenu {
+#moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png");
+}
+
+#moduleList li.more div.bd { 
+border: none;
 }
 
 .dashletPanel .dccontent {
@@ -289,7 +293,7 @@ color:#689800;
 color: #00ad15;
 }
 
-a.utilsLink:link, a.utilsLink:visited {
+a.utilsLink:link, a.utilsLink:visited, #bottomLinks a {
 color:#689800;
 }
 
@@ -304,7 +308,7 @@ color:#689800;
 .search_form .view {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=search-basic-bg.png");
 border-color:#17E531	;
-background-color: transparent;
+background-color: #E8F292;
 }
 
 .search_form .view.advanced {
@@ -362,12 +366,12 @@ color:#095E14;
 border-color: #17E531;
 }
 
-#moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover,#moduleList #More.dashletPanelMenu a.yuimenuitemlabel:hover {
+#moduleList .dashletPanelMenu a.yuimenuitemlabel:hover, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel:hover,#moduleList .more .dashletPanelMenu a.yuimenuitemlabel:hover {
 background-color: #6ea100;
 }
 
 
-#moduleList #moduleTabExtraMenu,#moduleList #moduleTabGroup {
+#moduleList .moduleTabExtraMenu,#moduleList .moduleTabGroupMenu {
 height:32px;
 }
 
@@ -430,3 +434,4 @@ background-color:#ECFFEE;
 tr.yui-dt-selected td, tr.yui-dt-selected td.yui-dt-asc, tr.yui-dt-selected td.yui-dt-desc {
 background-color: #f6fccd;
 }
+

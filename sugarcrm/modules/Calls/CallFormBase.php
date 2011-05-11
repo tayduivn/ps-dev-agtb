@@ -66,7 +66,7 @@ $ntc_time_format = '('.$timedate->get_user_time_format().')';
 	$user_id = $current_user->id;
 $default_status = $app_list_strings['call_status_default'];
 $default_parent_type= $app_list_strings['record_type_default_key'];
-$date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$date = TimeDate::getInstance()->nowDb();
 $default_date_start = $timedate->to_display_date($date,false);
 $default_time_start = $timedate->to_display_time($date);
 $time_ampm = $timedate->AMPMMenu($prefix,$default_time_start);
@@ -215,7 +215,7 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	}
 
 	if(isset($_POST[$prefix.'meridiem']) && !empty($_POST[$prefix.'meridiem'])) {
-		$_POST[$prefix.'time_start'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_start'],$timedate->get_time_format(true), $_POST[$prefix.'meridiem']);
+		$_POST[$prefix.'time_start'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_start'],$timedate->get_time_format(), $_POST[$prefix.'meridiem']);
 	}
 
 	if(isset($_POST[$prefix.'time_start']) && strlen($_POST[$prefix.'date_start']) == 10) {
@@ -228,215 +228,245 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 	   ACLController::displayNoAccess(true);
 	   sugar_cleanup(true);
 	}
+
+	//add assigned user and current user if this is the first time bean is saved
+  	if(empty($focus->id) && !empty($_REQUEST['return_module']) && $_REQUEST['return_module'] =='Calls' && !empty($_REQUEST['return_action']) && $_REQUEST['return_action'] =='DetailView'){
+		//if return action is set to detail view and return module to call, then this is from the long form, do not add the assigned user (only the current user)
+		//The current user is already added to UI and we want to give the current user the option of opting out of meeting.
+  		if($current_user->id != $_POST['assigned_user_id']){
+  			$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
+  			$_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
+  		}
+  	}elseif (empty($focus->id) ){
+	  	//this is not from long form so add assigned and current user automatically as there is no invitee list UI.
+	  	//This call could be through an ajax call from subpanels or shortcut bar
+	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
+
+	  	//add current user if the assigned to user is different than current user.
+	  	if($current_user->id != $_POST['assigned_user_id']){
+	  		$_POST['user_invitees'] .= ','.$current_user->id.', ';
+	  	}
+
+	  	//remove any double comma's introduced during appending
+	    $_POST['user_invitees'] = str_replace(',,', ',', $_POST['user_invitees']);
+  	}
+
     if(isset($_POST['isSaveFromDetailView']) && $_POST['isSaveFromDetailView'] == 'true'){
         $focus->save(true);
         $return_id = $focus->id;
     }else{
-    	///////////////////////////////////////////////////////////////////////////
-    	////	REMOVE INVITEE RELATIONSHIPS
-    	if(!empty($_POST['user_invitees'])) {
-    	   $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
-    	} else {
-    	   $userInvitees = array();
-    	}
 
-        // Calculate which users to flag as deleted and which to add
-        $deleteUsers = array();
-    	$focus->load_relationship('users');
-    	// Get all users for the call
-    	$q = 'SELECT mu.user_id, mu.accept_status FROM calls_users mu WHERE mu.call_id = \''.$focus->id.'\'';
-    	$r = $focus->db->query($q);
-    	$acceptStatusUsers = array();
-    	while($a = $focus->db->fetchByAssoc($r)) {
-    		  if(!in_array($a['user_id'], $userInvitees)) {
-    		  	 $deleteUsers[$a['user_id']] = $a['user_id'];
-    		  } else {
-    		     $acceptStatusUsers[$a['user_id']] = $a['accept_status'];
-    		  }
-    	}
+	    if(empty($_REQUEST['return_module']) && empty($_REQUEST['return_action']) && $focus->status == 'Held'){
+    		//if we are closing the call, and the request does not have a return module AND return action set, then
+    		//the request is coming from a dashlet or subpanel close icon and there is no need to process user invitees,
+    		//just save the current values.
+    		$focus->save(true);
+	    }else{
+	    	///////////////////////////////////////////////////////////////////////////
+	    	////	REMOVE INVITEE RELATIONSHIPS
+	    	if(!empty($_POST['user_invitees'])) {
+	    	   $userInvitees = explode(',', trim($_POST['user_invitees'], ','));
+	    	} else {
+	    	   $userInvitees = array();
+	    	}
 
-    	if(count($deleteUsers) > 0) {
-    		$sql = '';
-	    	foreach($deleteUsers as $u) {
-                $sql .= ",'" . $u . "'";
-    		}
+	        // Calculate which users to flag as deleted and which to add
+	        $deleteUsers = array();
+	    	$focus->load_relationship('users');
+	    	// Get all users for the call
+	    	$q = 'SELECT mu.user_id, mu.accept_status FROM calls_users mu WHERE mu.call_id = \''.$focus->id.'\'';
+	    	$r = $focus->db->query($q);
+	    	$acceptStatusUsers = array();
+	    	while($a = $focus->db->fetchByAssoc($r)) {
+	    		  if(!in_array($a['user_id'], $userInvitees)) {
+	    		  	 $deleteUsers[$a['user_id']] = $a['user_id'];
+	    		  } else {
+	    		     $acceptStatusUsers[$a['user_id']] = $a['accept_status'];
+	    		  }
+	    	}
 
-    		$sql = substr($sql, 1);
-    		// We could run a delete SQL statement here, but will just mark as deleted instead
-    		$sql = "UPDATE calls_users set deleted = 1 where user_id in ($sql) AND call_id = '". $focus->id . "'";
-    		$focus->db->query($sql);
-    	}
+	    	if(count($deleteUsers) > 0) {
+	    		$sql = '';
+		    	foreach($deleteUsers as $u) {
+	                $sql .= ",'" . $u . "'";
+	    		}
 
-        // Get all contacts for the call
-    	if(!empty($_POST['contact_invitees'])) {
-    	   $contactInvitees = explode(',', trim($_POST['contact_invitees'], ','));
-    	} else {
-    	   $contactInvitees = array();
-    	}
+	    		$sql = substr($sql, 1);
+	    		// We could run a delete SQL statement here, but will just mark as deleted instead
+	    		$sql = "UPDATE calls_users set deleted = 1 where user_id in ($sql) AND call_id = '". $focus->id . "'";
+	    		$focus->db->query($sql);
+	    	}
 
-        $deleteContacts = array();
-    	$focus->load_relationship('contacts');
-    	$q = 'SELECT mu.contact_id, mu.accept_status FROM calls_contacts mu WHERE mu.call_id = \''.$focus->id.'\'';
-    	$r = $focus->db->query($q);
-    	$acceptStatusContacts = array();
-    	while($a = $focus->db->fetchByAssoc($r)) {
-    		  if(!in_array($a['contact_id'], $contactInvitees)) {
-    		  	 $deleteContacts[$a['contact_id']] = $a['contact_id'];
-    		  }	else {
-    		  	 $acceptStatusContacts[$a['contact_id']] = $a['accept_status'];
-    		  }
-    	}
+	        // Get all contacts for the call
+	    	if(!empty($_POST['contact_invitees'])) {
+	    	   $contactInvitees = explode(',', trim($_POST['contact_invitees'], ','));
+	    	} else {
+	    	   $contactInvitees = array();
+	    	}
 
-    	if(count($deleteContacts) > 0) {
-    		$sql = '';
-    		foreach($deleteContacts as $u) {
-    		        $sql .= ",'" . $u . "'";
-    		}
-    		$sql = substr($sql, 1);
-    		// We could run a delete SQL statement here, but will just mark as deleted instead
-    		$sql = "UPDATE calls_contacts set deleted = 1 where contact_id in ($sql) AND call_id = '". $focus->id . "'";
-    		$focus->db->query($sql);
-    	}
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if(!empty($_POST['lead_invitees'])) {
-    	   $leadInvitees = explode(',', trim($_POST['lead_invitees'], ','));
-    	} else {
-    	   $leadInvitees = array();
-    	}
+	        $deleteContacts = array();
+	    	$focus->load_relationship('contacts');
+	    	$q = 'SELECT mu.contact_id, mu.accept_status FROM calls_contacts mu WHERE mu.call_id = \''.$focus->id.'\'';
+	    	$r = $focus->db->query($q);
+	    	$acceptStatusContacts = array();
+	    	while($a = $focus->db->fetchByAssoc($r)) {
+	    		  if(!in_array($a['contact_id'], $contactInvitees)) {
+	    		  	 $deleteContacts[$a['contact_id']] = $a['contact_id'];
+	    		  }	else {
+	    		  	 $acceptStatusContacts[$a['contact_id']] = $a['accept_status'];
+	    		  }
+	    	}
 
-        // Calculate which leads to flag as deleted and which to add
-        $deleteLeads = array();
-    	$focus->load_relationship('leads');
-    	// Get all leads for the call
-    	$q = 'SELECT mu.lead_id, mu.accept_status FROM calls_leads mu WHERE mu.call_id = \''.$focus->id.'\'';
-    	$r = $focus->db->query($q);
-    	$acceptStatusLeads = array();
-    	while($a = $focus->db->fetchByAssoc($r)) {
-    		  if(!in_array($a['lead_id'], $leadInvitees)) {
-    		  	 $deleteLeads[$a['lead_id']] = $a['lead_id'];
-    		  } else {
-    		     $acceptStatusLeads[$a['user_id']] = $a['accept_status'];
-    		  }
-    	}
+	    	if(count($deleteContacts) > 0) {
+	    		$sql = '';
+	    		foreach($deleteContacts as $u) {
+	    		        $sql .= ",'" . $u . "'";
+	    		}
+	    		$sql = substr($sql, 1);
+	    		// We could run a delete SQL statement here, but will just mark as deleted instead
+	    		$sql = "UPDATE calls_contacts set deleted = 1 where contact_id in ($sql) AND call_id = '". $focus->id . "'";
+	    		$focus->db->query($sql);
+	    	}
+	        //BEGIN SUGARCRM flav!=sales ONLY
+	        if(!empty($_POST['lead_invitees'])) {
+	    	   $leadInvitees = explode(',', trim($_POST['lead_invitees'], ','));
+	    	} else {
+	    	   $leadInvitees = array();
+	    	}
 
-    	if(count($deleteLeads) > 0) {
-    		$sql = '';
-    		foreach($deleteLeads as $u) {
-                // make sure we don't delete the assigned user
-                if ( $u != $focus->assigned_user_id )
-    		        $sql .= ",'" . $u . "'";
-    		}
-    		$sql = substr($sql, 1);
-    		// We could run a delete SQL statement here, but will just mark as deleted instead
-    		$sql = "UPDATE calls_leads set deleted = 1 where lead_id in ($sql) AND call_id = '". $focus->id . "'";
-    		$focus->db->query($sql);
-    	}
-    	//END SUGARCRM flav!=sales ONLY
-    	////	END REMOVE
-    	///////////////////////////////////////////////////////////////////////////
+	        // Calculate which leads to flag as deleted and which to add
+	        $deleteLeads = array();
+	    	$focus->load_relationship('leads');
+	    	// Get all leads for the call
+	    	$q = 'SELECT mu.lead_id, mu.accept_status FROM calls_leads mu WHERE mu.call_id = \''.$focus->id.'\'';
+	    	$r = $focus->db->query($q);
+	    	$acceptStatusLeads = array();
+	    	while($a = $focus->db->fetchByAssoc($r)) {
+	    		  if(!in_array($a['lead_id'], $leadInvitees)) {
+	    		  	 $deleteLeads[$a['lead_id']] = $a['lead_id'];
+	    		  } else {
+	    		     $acceptStatusLeads[$a['user_id']] = $a['accept_status'];
+	    		  }
+	    	}
+
+	    	if(count($deleteLeads) > 0) {
+	    		$sql = '';
+	    		foreach($deleteLeads as $u) {
+	                // make sure we don't delete the assigned user
+	                if ( $u != $focus->assigned_user_id )
+	    		        $sql .= ",'" . $u . "'";
+	    		}
+	    		$sql = substr($sql, 1);
+	    		// We could run a delete SQL statement here, but will just mark as deleted instead
+	    		$sql = "UPDATE calls_leads set deleted = 1 where lead_id in ($sql) AND call_id = '". $focus->id . "'";
+	    		$focus->db->query($sql);
+	    	}
+	    	//END SUGARCRM flav!=sales ONLY
+	    	////	END REMOVE
+	    	///////////////////////////////////////////////////////////////////////////
 
 
-    	///////////////////////////////////////////////////////////////////////////
-    	////	REBUILD INVITEE RELATIONSHIPS
-    	$focus->users_arr = array();
-    	$focus->users_arr = $userInvitees;
-    	$focus->contacts_arr = array();
-    	$focus->contacts_arr = $contactInvitees;
-    	//BEGIN SUGARCRM flav!=sales ONLY
-        $focus->leads_arr = array();
-    	$focus->leads_arr = $leadInvitees;
-        //END SUGARCRM flav!=sales ONLY
-    	if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Contacts') {
-    		$focus->contacts_arr[] = $_POST['parent_id'];
-    	}
-    	//BEGIN SUGARCRM flav!=sales ONLY
-        if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
-    		$focus->leads_arr[] = $_POST['parent_id'];
-    	}
-    	//END SUGARCRM flav!=sales ONLY
-    	// Call the Call module's save function to handle saving other fields besides
-    	// the users and contacts relationships
-    	$focus->save(true);
-    	$return_id = $focus->id;
+	    	///////////////////////////////////////////////////////////////////////////
+	    	////	REBUILD INVITEE RELATIONSHIPS
+	    	$focus->users_arr = array();
+	    	$focus->users_arr = $userInvitees;
+	    	$focus->contacts_arr = array();
+	    	$focus->contacts_arr = $contactInvitees;
+	    	//BEGIN SUGARCRM flav!=sales ONLY
+	        $focus->leads_arr = array();
+	    	$focus->leads_arr = $leadInvitees;
+	        //END SUGARCRM flav!=sales ONLY
+	    	if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Contacts') {
+	    		$focus->contacts_arr[] = $_POST['parent_id'];
+	    	}
+	    	//BEGIN SUGARCRM flav!=sales ONLY
+	        if(!empty($_POST['parent_id']) && $_POST['parent_type'] == 'Leads') {
+	    		$focus->leads_arr[] = $_POST['parent_id'];
+	    	}
+	    	//END SUGARCRM flav!=sales ONLY
+	    	// Call the Call module's save function to handle saving other fields besides
+	    	// the users and contacts relationships
+	    	$focus->save(true);
+	    	$return_id = $focus->id;
 
-    	// Process users
-    	$existing_users = array();
-    	if(!empty($_POST['existing_invitees'])) {
-    	   $existing_users =  explode(",", trim($_POST['existing_invitees'], ','));
-    	}
+	    	// Process users
+	    	$existing_users = array();
+	    	if(!empty($_POST['existing_invitees'])) {
+	    	   $existing_users =  explode(",", trim($_POST['existing_invitees'], ','));
+	    	}
 
-    	foreach($focus->users_arr as $user_id) {
-    	    if(empty($user_id) || isset($existing_users[$user_id]) || isset($deleteUsers[$user_id])) {
-    			continue;
-    		}
+	    	foreach($focus->users_arr as $user_id) {
+	    	    if(empty($user_id) || isset($existing_users[$user_id]) || isset($deleteUsers[$user_id])) {
+	    			continue;
+	    		}
 
-    		if(!isset($acceptStatusUsers[$user_id])) {
-    			$focus->load_relationship('users');
-    			$focus->users->add($user_id);
-    		} else {
-    			// update query to preserve accept_status
-    			$qU  = 'UPDATE calls_users SET deleted = 0, accept_status = \''.$acceptStatusUsers[$user_id].'\' ';
-    			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
-    			$qU .= 'AND user_id = \''.$user_id.'\'';
-    			$focus->db->query($qU);
-    		}
-    	}
+	    		if(!isset($acceptStatusUsers[$user_id])) {
+	    			$focus->load_relationship('users');
+	    			$focus->users->add($user_id);
+	    		} else {
+	    			// update query to preserve accept_status
+	    			$qU  = 'UPDATE calls_users SET deleted = 0, accept_status = \''.$acceptStatusUsers[$user_id].'\' ';
+	    			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
+	    			$qU .= 'AND user_id = \''.$user_id.'\'';
+	    			$focus->db->query($qU);
+	    		}
+	    	}
 
-        // Process contacts
-    	$existing_contacts =  array();
-    	if(!empty($_POST['existing_contact_invitees'])) {
-    	   $existing_contacts =  explode(",", trim($_POST['existing_contact_invitees'], ','));
-    	}
+	        // Process contacts
+	    	$existing_contacts =  array();
+	    	if(!empty($_POST['existing_contact_invitees'])) {
+	    	   $existing_contacts =  explode(",", trim($_POST['existing_contact_invitees'], ','));
+	    	}
 
-    	foreach($focus->contacts_arr as $contact_id) {
-    		if(empty($contact_id) || isset($exiting_contacts[$contact_id]) || isset($deleteContacts[$contact_id])) {
-    			continue;
-    		}
+	    	foreach($focus->contacts_arr as $contact_id) {
+	    		if(empty($contact_id) || isset($existing_contacts[$contact_id]) || isset($deleteContacts[$contact_id])) {
+	    			continue;
+	    		}
 
-    		if(!isset($acceptStatusContacts[$contact_id])) {
-    			$focus->load_relationship('contacts');
-    		    $focus->contacts->add($contact_id);
-    		} else {
-    			// update query to preserve accept_status
-    			$qU  = 'UPDATE calls_contacts SET deleted = 0, accept_status = \''.$acceptStatusContacts[$contact_id].'\' ';
-    			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
-    			$qU .= 'AND contact_id = \''.$contact_id.'\'';
-    			$focus->db->query($qU);
-    		}
-    	}
-        //BEGIN SUGARCRM flav!=sales ONLY
-        // Process leads
-    	$existing_leads =  array();
-    	if(!empty($_POST['existing_lead_invitees'])) {
-    	   $existing_leads =  explode(",", trim($_POST['existing_lead_invitees'], ','));
-    	}
+	    		if(!isset($acceptStatusContacts[$contact_id])) {
+	    			$focus->load_relationship('contacts');
+	    		    $focus->contacts->add($contact_id);
+	    		} else {
+	    			// update query to preserve accept_status
+	    			$qU  = 'UPDATE calls_contacts SET deleted = 0, accept_status = \''.$acceptStatusContacts[$contact_id].'\' ';
+	    			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
+	    			$qU .= 'AND contact_id = \''.$contact_id.'\'';
+	    			$focus->db->query($qU);
+	    		}
+	    	}
+	        //BEGIN SUGARCRM flav!=sales ONLY
+	        // Process leads
+	    	$existing_leads =  array();
+	    	if(!empty($_POST['existing_lead_invitees'])) {
+	    	   $existing_leads =  explode(",", trim($_POST['existing_lead_invitees'], ','));
+	    	}
 
-    	foreach($focus->leads_arr as $lead_id) {
-    		if(empty($lead_id) || isset($existing_leads[$lead_id]) || isset($deleteLeads[$lead_id])) {
-    			continue;
-    		}
+	    	foreach($focus->leads_arr as $lead_id) {
+	    		if(empty($lead_id) || isset($existing_leads[$lead_id]) || isset($deleteLeads[$lead_id])) {
+	    			continue;
+	    		}
 
-    		if(!isset($acceptStatusLeads[$lead_id])) {
-    			$focus->load_relationship('leads');
-    		    $focus->leads->add($lead_id);
-    		} else {
-    			// update query to preserve accept_status
-    			$qU  = 'UPDATE calls_leads SET deleted = 0, accept_status = \''.$acceptStatusLeads[$lead_id].'\' ';
-    			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
-    			$qU .= 'AND lead_id = \''.$lead_id.'\'';
-    			$focus->db->query($qU);
-    		}
-    	}
-    	//END SUGARCRM flav!=sales ONLY
+	    		if(!isset($acceptStatusLeads[$lead_id])) {
+	    			$focus->load_relationship('leads');
+	    		    $focus->leads->add($lead_id);
+	    		} else {
+	    			// update query to preserve accept_status
+	    			$qU  = 'UPDATE calls_leads SET deleted = 0, accept_status = \''.$acceptStatusLeads[$lead_id].'\' ';
+	    			$qU .= 'WHERE call_id = \''.$focus->id.'\' ';
+	    			$qU .= 'AND lead_id = \''.$lead_id.'\'';
+	    			$focus->db->query($qU);
+	    		}
+	    	}
+	    	//END SUGARCRM flav!=sales ONLY
 
-    	// CCL - Comment out call to set $current_user as invitee
-    	//set organizer to auto-accept
-    	//$focus->set_accept_status($current_user, 'accept');
-    	
-    	////	END REBUILD INVITEE RELATIONSHIPS
-    	///////////////////////////////////////////////////////////////////////////
+	    	// CCL - Comment out call to set $current_user as invitee
+	    	//set organizer to auto-accept
+	    	//$focus->set_accept_status($current_user, 'accept');
+
+	    	////	END REBUILD INVITEE RELATIONSHIPS
+	    	///////////////////////////////////////////////////////////////////////////
+	    }
     }
-
 	if (isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Home'){
 		header("Location: index.php?module=Home&action=index");
 	}
@@ -484,7 +514,7 @@ $cal_dateformat = $timedate->get_cal_date_format();
 	$user_id = $current_user->id;
 $default_status = $app_list_strings['call_status_default'];
 $default_parent_type= $app_list_strings['record_type_default_key'];
-$date = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+$date = TimeDate::getInstance()->nowDb();
 $default_date_start = $timedate->to_display_date($date);
 $default_time_start = $timedate->to_display_time($date,true);
 $time_ampm = $timedate->AMPMMenu($prefix,$default_time_start);

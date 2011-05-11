@@ -150,7 +150,11 @@ class StudioModule
         $sources [ translate('LBL_WIRELESSLAYOUTS') ] = array ( 'children' => 'getWirelessLayouts' , 'action' => "module=ModuleBuilder&action=wizard&view=wirelesslayouts&view_module={$this->module}" , 'imageTitle' => 'MobileLayouts' , 'help' => 'wirelesslayoutsBtn' ) ;
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
-        $sources [ translate ( 'LBL_PORTAL' ) ] = array ( 'children' => 'getPortal' , 'action' => "module=ModuleBuilder&action=wizard&portal=1&view_module={$this->module}" , 'imageTitle' => 'Portal' , 'help' => 'portalBtn' ) ;
+        $sources [ translate ( 'LBL_PORTAL_LAYOUTS' ) ] = array ( 
+            'children' => 'getPortal' , 
+            'action' => "module=ModuleBuilder&action=wizard&portal=1&view_module={$this->module}" , 
+            'imageTitle' => 'Portal' , 
+            'help' => 'portalBtn' ) ;
         //END SUGARCRM flav=ent ONLY
 
         $nodes = array () ;
@@ -333,7 +337,10 @@ class StudioModule
             if (file_exists ( "portal/modules/{$this->module}/metadata/$file" ))
             {
             	$file = str_replace ( $file, '.php', '' ) ;
-            	$nodes [] = array ( 'name' => $def [ 'name' ] , 'action' => 'module=ModuleBuilder&action=editPortal&view=' . ucfirst ( $def [ 'type' ] ) . '&view_module=' . $this->module ) ;
+            	$nodes [] = array ( 
+            	   'name' => $def [ 'name' ] , 
+            	   'action' => 'module=ModuleBuilder&action=editPortal&view=' . ucfirst ( $def [ 'type' ] ) . '&view_module=' . $this->module 
+            	) ;
             }
         }
         return $nodes ;
@@ -456,17 +463,23 @@ class StudioModule
         $GLOBALS [ 'log' ]->debug ( print_r( $sources,true) ) ;
         foreach ( $sources as $name => $defs )
         {
-            $parser = ParserFactory::getParser( $defs [ 'type' ] , $this->module ) ;
-            if ($parser->removeField ( $fieldName ) )
-                $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
+            //If this module type doesn't support a given metadata type, we will get an exception from getParser()
+            try {
+                $parser = ParserFactory::getParser( $defs [ 'type' ] , $this->module ) ;
+                if ($parser->removeField ( $fieldName ) )
+                    $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
+            } catch(Exception $e){}
         }
         
         //Remove the fields in subpanel
         $data = $this->getParentModulesOfSubpanel($this->module);
         foreach($data as $parentModule){
-			$parser = ParserFactory::getParser( MB_LISTVIEW , $parentModule, null ,  $this->module) ;
-			if ($parser->removeField ( $fieldName ) )
-                $parser->handleSave(false) ; 
+            //If this module type doesn't support a given metadata type, we will get an exception from getParser()
+            try {
+                $parser = ParserFactory::getParser( MB_LISTVIEW , $parentModule, null ,  $this->module) ;
+                if ($parser->removeField ( $fieldName ) )
+                    $parser->handleSave(false) ;
+            } catch(Exception $e){}
         }
     }
 

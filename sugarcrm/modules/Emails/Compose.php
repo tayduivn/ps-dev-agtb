@@ -30,11 +30,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //Shorten name.
 $data = $_REQUEST;
 
+if (!empty($data['listViewExternalClient'])) {
+    $email = new Email();
+    echo $email->getNamePlusEmailAddressesForCompose($_REQUEST['action_module'], (explode(",", $_REQUEST['uid'])));
+}
 //For the full compose/email screen, the compose package is generated and script execution
-//continues to the Emails/index.php page.  
-
-if(!isset($data['forQuickCreate']))
+//continues to the Emails/index.php page.
+else if(!isset($data['forQuickCreate'])) {
 	$ret = generateComposeDataPackage($data);
+}
 
 /**
  * Initialize the full compose window by creating the compose package 
@@ -87,8 +91,10 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 		$bean->retrieve($data['parent_id']);
 		if (isset($bean->full_name)) {
 			$parentName = $bean->full_name;
-		} else {
-			$parentName = isset($bean->name) ? $bean->name : "";
+		} elseif(isset($bean->name)) {
+			$parentName = $bean->name;
+		}else{
+			$parentName = '';
 		}
 		$parentName = from_html($parentName);
 		$namePlusEmail = '';
@@ -108,7 +114,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 		$email_id = "";
 		$attachments = array();
 		if ($bean->module_dir == 'Cases') {
-			$subject = str_replace('%1', $bean->case_number, $bean->getEmailSubjectMacro() . " ". $bean->name) ;
+			$subject = str_replace('%1', $bean->case_number, $bean->getEmailSubjectMacro() . " ". from_html($bean->name)) ;//bug 41928 
 			$bean->load_relationship("contacts");
 			$contact_ids = $bean->contacts->get();
 			$contact = new Contact();

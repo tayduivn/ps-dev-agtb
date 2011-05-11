@@ -34,7 +34,7 @@ class ViewDisplaydeployresult extends SugarView
 		$this->show_title = false;
  		$this->show_subpanels = false;
  		$this->show_search = false;
- 		$this->show_footer = false;
+ 		$this->show_footer = true;
  		$this->show_javascript = true;
  		$this->view_print = false;
 	}
@@ -42,13 +42,13 @@ class ViewDisplaydeployresult extends SugarView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams()
+	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   $mod_strings['LBL_MODULEBUILDER'],
+    	   ModuleBuilderController::getModuleTitle(),
     	   );
     }
 
