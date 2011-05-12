@@ -43,9 +43,11 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
     }
     $zip = new ZipArchive;
     $res = $zip->open($zip_archive);
-    if($res !== true) {
+    if($res !== TRUE) {
         if (!defined('SUGAR_PHPUNIT_RUNNER'))
-            die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+        {
+            die(sprintf("ZIP Error(%d): Status(%s): Archive(%s): Directory(%s)", $res, $zip->status, $zip_archive, $zip_dir));
+        }
         return false;
     }
 
@@ -54,9 +56,11 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
     } else {
         $res = $zip->extractTo($zip_dir);
     }
-    if($res !== true) {
+    if($res !== TRUE) {
         if (!defined('SUGAR_PHPUNIT_RUNNER'))
-            die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
+        {
+            die(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $zip_archive, $zip_dir));
+        }
         return false;
     }
     return true;
