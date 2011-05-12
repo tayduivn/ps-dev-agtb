@@ -40,10 +40,11 @@
            $sugar_grp1 = array(
                 //scripts loaded on first page
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',
+                'include/javascript/ajaxUI.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/cookie.js'          => 'include/javascript/sugar_grp1.js',
                 'include/javascript/menu.js'            => 'include/javascript/sugar_grp1.js',
                 'include/javascript/calendar.js'        => 'include/javascript/sugar_grp1.js',
-                'include/javascript/quickCompose.js'        => 'include/javascript/sugar_grp1.js',
+                'include/javascript/quickCompose.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
 				//BEGIN SUGARCRM flav=pro ONLY
 	            //Expression Engine
@@ -54,7 +55,7 @@
 
             $sugar_grp1_yui = array(
 			//YUI scripts loaded on first page
-			'include/javascript/yui/build/yahoo/yahoo-min.js'           => 'include/javascript/sugar_grp1_yui.js',
+			'include/javascript/yui/build/yahoo/yahoo.js'           => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/dom/dom-min.js'               => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event-min.js'
 			    => 'include/javascript/sugar_grp1_yui.js',
@@ -65,7 +66,9 @@
             'include/javascript/yui/build/dragdrop/dragdrop-min.js'     => 'include/javascript/sugar_grp1_yui.js',
             //Ensure we grad the SLIDETOP custom container animation
             'include/javascript/yui/build/container/container-min.js'   => 'include/javascript/sugar_grp1_yui.js',
-            'include/javascript/yui/build/selector/selector-min.js'=> 'include/javascript/sugar_grp1_yui.js',
+            'include/javascript/yui/build/element/element-min.js'       => 'include/javascript/sugar_grp1_yui.js',
+            'include/javascript/yui/build/tabview/tabview-min.js'       => 'include/javascript/sugar_grp1_yui.js',
+            'include/javascript/yui/build/selector/selector.js'     => 'include/javascript/sugar_grp1_yui.js',
             //This should probably be removed as it is not often used with the rest of YUI
             'include/javascript/yui/ygDDList.js'                        => 'include/javascript/sugar_grp1_yui.js',
             //YUI based quicksearch
@@ -82,10 +85,8 @@
 
             $sugar_grp_yui_widgets = array(
 			//sugar_grp1_yui must be laoded before sugar_grp_yui_widgets
-			'include/javascript/yui/build/element/element-min.js'       => 'include/javascript/sugar_grp_yui_widgets.js',
             'include/javascript/yui/build/datatable/datatable-min.js'   => 'include/javascript/sugar_grp_yui_widgets.js',
-            'include/javascript/yui/build/tabview/tabview-min.js'       => 'include/javascript/sugar_grp_yui_widgets.js',
-			'include/javascript/yui/build/treeview/treeview-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
+            'include/javascript/yui/build/treeview/treeview-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/yui/build/button/button-min.js'         => 'include/javascript/sugar_grp_yui_widgets.js',
             'include/javascript/yui/build/calendar/calendar-min.js'     => 'include/javascript/sugar_grp_yui_widgets.js',
 			'include/javascript/sugarwidgets/SugarYUIWidgets.js'        => 'include/javascript/sugar_grp_yui_widgets.js',

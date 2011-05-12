@@ -78,7 +78,7 @@ class SugarAuthenticate{
 		    if ($res['lockoutexpiration'] == '2'){
 		    	// lockout date is now if not set
 		    	if (($logout_time=$usr->getPreference('logout_time'))==''){
-			        $usr->setPreference('logout_time',Timedate2::getInstance()->nowDb());
+			        $usr->setPreference('logout_time',TimeDate::getInstance()->nowDb());
 			        $logout_time=$usr->getPreference('logout_time');
 			        }
 				$stim = strtotime($logout_time);

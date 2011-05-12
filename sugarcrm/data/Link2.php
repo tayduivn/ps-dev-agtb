@@ -58,6 +58,21 @@ class Link2 {
         {
             //Assume $linkName is really relationship_name, and find the link name with the vardef manager
             $this->def = VardefManager::getLinkFieldForRelationship($bean->module_dir, $bean->object_name, $linkName);
+            if (is_array($this->def) && !isset($this->def['name']))
+            {
+                //More than one link found, we need to figure out if we are currently on the LHS or RHS
+                //assume lhs for now
+                if (isset($this->def[0]['side']) && $this->def[0]['side'] == 'left')
+                {
+                    $this->def = $this->def[0];
+                }else if (isset($this->def[1]['side']) && $this->def[1]['side'] == 'left')
+                {
+                    $this->def = $this->def[1];
+                }
+                else {
+                    $this->def = $this->def[0];
+                }
+            }
             if (empty($this->def['name']))
             {
                 $GLOBALS['log']->fatal("failed to find link for $linkName");
@@ -123,7 +138,9 @@ class Link2 {
 	}
 
 	public function getRelatedModuleName() {
-		if ($this->getSide() == REL_LHS) {
+		if (!$this->relationship) return false;
+        
+        if ($this->getSide() == REL_LHS) {
             return $this->relationship->getRHSModule();
 		} else {
             return $this->relationship->getLHSModule();

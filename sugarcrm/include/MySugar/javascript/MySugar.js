@@ -26,6 +26,7 @@
  */
 
 // $Id: home.js 24436 2007-07-18 23:11:36Z awu $
+initMySugar = function(){
 SUGAR.mySugar = function() {
 	var originalLayout = null;
 	var configureDashletId = null;
@@ -204,8 +205,13 @@ SUGAR.mySugar = function() {
             url = 'index.php?action=DynamicAction&DynamicAction=retrievePage&module='+module+'&to_pdf=1&pageId='+pageNum;
 
             var populatePage = function(data) {
-                eval(data.responseText);
-
+                var response = {html:"", script:""};
+                try {
+                    response = YAHOO.lang.JSON.parse(data.responseText);
+                }
+                catch(e){
+                    console.log(e);
+                }
                 var htmlRepsonse = response['html'];
                 eval(response['script']);
                 
@@ -1236,3 +1242,4 @@ SUGAR.mySugar = function() {
 		//END SUGARCRM flav=pro || flav=sales ONLY
 	 }; 
 }();
+};

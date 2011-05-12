@@ -490,6 +490,9 @@ class MssqlManager extends DBManager
                             if ($ob_pos) {
                                 $distinctSQLARRAY[1] = substr($distinctSQLARRAY[1],0,$ob_pos);
                             }
+
+                            // strip off last closing parathese from the where clause
+                            $distinctSQLARRAY[1] = preg_replace("/\)\s$/"," ",$distinctSQLARRAY[1]);
                         }
 
                         //place group by string into array
@@ -499,6 +502,11 @@ class MssqlManager extends DBManager
                         //remove the aliases for each group by element, sql server doesnt like these in group by.
                         foreach ($grpByArr as $gb) {
                             $gb = trim($gb);
+
+                            //clean out the extra stuff added if we are concating first_name and last_name together
+                            //this way both fields are added in correctly to the group by
+                            $gb = str_replace("isnull(","",$gb);
+                            $gb = str_replace("'') + ' ' + ","",$gb);
 
                             //remove outer reference if they exist
                             if (strpos($gb,"'")!==false){
@@ -614,9 +622,16 @@ class MssqlManager extends DBManager
         $offset = 0;
         $strip_array = array();
         while ($i<$count && $offset<strlen($p_sql)) {
+            if ($offset > strlen($p_sql))
+            {
+				break;   
+            }     	
+
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
+            {
                 break;
+            }
             $sec_sin = strpos($p_sql, $strip_end, $beg_sin+1);
             $strip_array[$patt.$i] = substr($p_sql, $beg_sin, $sec_sin - $beg_sin +1);
             if ($increment > 1) {

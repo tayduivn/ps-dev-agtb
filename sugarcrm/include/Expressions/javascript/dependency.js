@@ -196,7 +196,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 
 	//Special case for dates
 	if (field.className && (field.className == "DateTimeCombo" || field.className == "Date")){
-		return SUGAR.util.DateUtils.parse(field.value);
+		return SUGAR.util.DateUtils.parse(field.value, "user");
 	}
 
 	//For DetailViews where value is enclosed in a span tag
@@ -268,10 +268,12 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
     {
         if (Dom.hasClass(field, "date_input"))
 			field.value = SUGAR.util.DateUtils.formatDate(value);
-		else if (Dom.hasClass(field, "DateTimeCombo"))
-			AH.setDateTimeField(field, value);
-		else
-			field.value = SUGAR.util.DateUtils.formatDate(value, true);
+		else {
+            if (Dom.hasClass(field, "DateTimeCombo"))
+                AH.setDateTimeField(field, value);
+
+            field.value = SUGAR.util.DateUtils.formatDate(value, true);
+        }
     }
 	else {
 		field.value = value;

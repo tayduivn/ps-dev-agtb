@@ -229,6 +229,9 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     
     private function getAcceptibleFileExtensions() {
         $mimeTypes = Zend_Gdata_Docs::getSupportedMimeTypes();
+        //If we can detect mime types, allow empty file extensions.
+        if( $this->isMimeDetectionAvailable() )
+            $mimeTypes[''] = '';
         return array_keys($mimeTypes);        
     }
     

@@ -312,4 +312,48 @@ if(!function_exists('mvclog')){
 }
 //END ENCODE
 
+function getPrintLink()
+{
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui")
+    {
+        return "javascript:SUGAR.ajaxUI.print();";
+    }
+    return "javascript:void window.open('index.php?{$GLOBALS['request_string']}',"
+         . "'printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')";
+}
+
+
+function ajaxBannedModules(){
+    $bannedModules = array(
+        "Emails",
+        "Administration",
+        "ModuleBuilder",
+    );
+
+    if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){
+        $bannedModules = array_merge($bannedModules, $GLOBALS['sugar_config']['addAjaxBannedModules']);
+    }
+    if(!empty($GLOBALS['sugar_config']['overrideAjaxBannedModules'])){
+        $bannedModules = $GLOBALS['sugar_config']['overrideAjaxBannedModules'];
+    }
+
+    return $bannedModules;
+}
+
+function ajaxLink($url)
+{
+    $match = array();
+    preg_match('/module=([^&]*)/i', $url, $match);
+
+    if(isset($GLOBALS['sugar_config']['disableAjaxUI']) && $GLOBALS['sugar_config']['disableAjaxUI'] == true){
+        return $url;
+    }
+    else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
+        return $url;
+    }
+    else{
+        return "#ajaxUILoc=" . urlencode($url);
+    }
+}
+
 ?>

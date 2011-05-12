@@ -353,7 +353,6 @@ class ListViewDisplay {
 
 		return <<<EOHTML
 <script type="text/javascript">
-<!--
 function actions_overlib()
 {
     return overlib("{$menuItems}", CENTER, '', STICKY, MOUSEOFF, 3000, CLOSETEXT, "{$closeText}", WIDTH, 150,
@@ -362,7 +361,6 @@ function actions_overlib()
         TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass',
         CLOSEFONTCLASS, 'olOptionsCloseFontClass');
 }
--->
 </script>
 <a id='$id' onclick='return actions_overlib();' href="#">
     {$app_strings['LBL_LINK_ACTIONS']}&nbsp;<img src='{$moreDetailImage}' border='0' />

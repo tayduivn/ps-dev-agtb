@@ -188,7 +188,11 @@ Datetimecombo.prototype.html = function(callback) {
  * XXX TODO 20100317 Frank Steegmans: The code in this module is violating so many best practices
  * that it will need to get rewritten. Also note that it still stems from before the datetime unification.
  */
-Datetimecombo.prototype.update = function() {
+Datetimecombo.prototype.update = function(updateListeners) {
+	//On initial load, we call update but we don't want to trigger listeners as the value hasn't really changed.
+	if (typeof (updateListeners) == "undefined")
+		updateListeners = true;
+
 	// Bug 42025: hour/minute/second still required when start_date is non required
 	//			  Fixing this by just assigning default when they aren't required
     var d = window.document.getElementById(this.fieldname + '_date');
@@ -219,7 +223,8 @@ Datetimecombo.prototype.update = function() {
 	}
 	document.getElementById(this.fieldname).value = newdate;
 	//Check for onchange actions and fire them
-	SUGAR.util.callOnChangeListers(this.fieldname);
+	if(updateListeners)
+		SUGAR.util.callOnChangeListers(this.fieldname);
 
     if(this.showCheckbox) {	
          flag = this.fieldname + '_flag';
