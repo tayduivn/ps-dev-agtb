@@ -106,23 +106,23 @@ var resources = new Array();
 <div id="projectButtonsDiv">
 	<span id = "grid_buttons_span">
 	{if $SELECTED_VIEW <= 1 && $CANEDIT}
-			<a valign="bottom" title="{$MOD.LBL_INSERT_BUTTON}"><img src='{sugar_getimagepath file='ProjectInsertRows.gif'}' onClick="javascript:SUGAR.grid.insertRow()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_INDENT_BUTTON}"><img src='{sugar_getimagepath file='ProjectIndent.gif'}' onClick="javascript:SUGAR.grid.indentSelectedRows()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_OUTDENT_BUTTON}"><img src='{sugar_getimagepath file='ProjectOutdent.gif'}' onClick="javascript:SUGAR.grid.addToOutdent()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_COPY_BUTTON}"><img src='{sugar_getimagepath file='ProjectCopy.gif'}' onClick="javascript:SUGAR.grid.copyRow()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_CUT_BUTTON}"><img src='{sugar_getimagepath file='ProjectCut.gif'}' onClick="javascript:SUGAR.grid.cutRow()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_PASTE_BUTTON}"><img src='{sugar_getimagepath file='ProjectPaste.gif'}' onClick="javascript:SUGAR.grid.pasteRow()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_DELETE_BUTTON}"><img src='{sugar_getimagepath file='ProjectDelete.gif'}' onClick="javascript:SUGAR.grid.deleteRows()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_EXPAND_ALL_BUTTON}"><img src='{sugar_getimagepath file='ProjectExpandAll.gif'}' onClick="javascript:SUGAR.grid.expandAll()"></img></a>
-			<a valign="bottom" title="{$MOD.LBL_COLLAPSE_ALL_BUTTON}"><img src='{sugar_getimagepath file='ProjectCollapseAll.gif'}' onClick="javascript:SUGAR.grid.collapseAll()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_INSERT_BUTTON}">{sugar_getimage name="ProjectInsertRows" ext=".gif" alt="{$mod_strings.LBL_INSERTROWS}" other_attributes='onclick="javascript:SUGAR.grid.insertRow()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_INDENT_BUTTON}">{sugar_getimage name="ProjectIndent" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.indentSelectedRows()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_OUTDENT_BUTTON}">{sugar_getimage name="ProjectOutdent" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.addToOutdent()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_COPY_BUTTON}">{sugar_getimage name="ProjectCopy" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.copyRow()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_CUT_BUTTON}">{sugar_getimage name="ProjectCut" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.cutRow()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_PASTE_BUTTON}">{sugar_getimage name="ProjectPaste" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.pasteRow()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_DELETE_BUTTON}">{sugar_getimage name="ProjectDelete" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.deleteRows()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_EXPAND_ALL_BUTTON}">{sugar_getimage name="ProjectExpandAll" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.expandAll()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_COLLAPSE_ALL_BUTTON}">{sugar_getimage name="ProjectCollapseAll" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.collapseAll()" '}</img></a>
 	{/if}
-		<a id="saveGridLink" title="{$MOD.LBL_SAVE_BUTTON}"><img src='{sugar_getimagepath file='ProjectSave.gif'}' onClick="javascript:SUGAR.grid.save()"></img></a>
+		<a id="saveGridLink" title="{$MOD.LBL_SAVE_BUTTON}">{sugar_getimage name="ProjectSave" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.save()" '}</img></a>
 	</span>	
 	
 	<span id = "gantt_buttons_span">
-		<a title="{$MOD.LBL_WEEK_BUTTON}"><img src='{sugar_getimagepath file='ProjectWeek.gif'}' onClick="SUGAR.gantt.createTable('week', document.getElementById('gantt_chart_start_date').value, '{$BG_COLOR}');"></img></a>
-		<a title="{$MOD.LBL_BIWEEK_BUTTON}"><img src='{sugar_getimagepath file='Project2Weeks.gif'}' onClick="SUGAR.gantt.createTable('biweek', document.getElementById('gantt_chart_start_date').value, '{$BG_COLOR}');"></img></a>
-		<a title="{$MOD.LBL_MONTH_BUTTON}"><img src='{sugar_getimagepath file='ProjectMonth.gif'}' onClick="SUGAR.gantt.createTable('month', document.getElementById('gantt_chart_start_date').value, '{$BG_COLOR}');"></img></a>
+		<a title="{$MOD.LBL_WEEK_BUTTON}">{sugar_getimage name="ProjectWeek" ext=".gif" other_attributes='onclick="SUGAR.gantt.createTable(\'week\', document.getElementById(\'gantt_chart_start_date\').value, \'{$BG_COLOR}\');" '}</img></a>
+		<a title="{$MOD.LBL_BIWEEK_BUTTON}">{sugar_getimage name="Project2Weeks" ext=".gif" other_attributes='onclick="SUGAR.gantt.createTable(\'biweek\', document.getElementById(\'gantt_chart_start_date\').value, \'{$BG_COLOR}\');" '}</img></a>
+		<a title="{$MOD.LBL_MONTH_BUTTON}">{sugar_getimage name="ProjectMonth" ext=".gif" other_attributes='onclick="SUGAR.gantt.createTable(\'month\', document.getElementById(\'gantt_chart_start_date\').value, \'{$BG_COLOR}\');" '}</img></a>
 	</span>		
 
 	<input type="hidden" name="selected_view" id="selected_view" value="{$SELECTED_VIEW}" />
@@ -313,7 +313,7 @@ var resources = new Array();
 </div>
 </form>
 <div id="task_detail_area_div" name="task_detail_area_div" width="100%" style="display:none;border:1px">
-<img src="{sugar_getimagepath file='img_loading.gif'}" border="0" />
+{sugar_getimage name="img_loading" ext=".gif" other_attributes='border="0" '}
 </div>
 <iframe id="task_detail_area_iframe" name="task_detail_area_iframe" width="100%" style="display:none;border:0px">
 </iframe>

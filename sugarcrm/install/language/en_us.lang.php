@@ -28,7 +28,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * *******************************************************************************/
 
 $mod_strings = array(
-
+	'LBL_BASIC_SEARCH'					=> 'Basic Search',
+	'LBL_ADVANCED_SEARCH'				=> 'Advanced Search',
+	'LBL_BASIC_TYPE'					=> 'Basic Type',
+	'LBL_ADVANCED_TYPE'					=> 'Advanced Type',
 	'LBL_SYSOPTS_1'						=> 'Select from the following system configuration options below.',
     'LBL_SYSOPTS_2'                     => 'What type of database will be used for the Sugar instance you are about to install?',
 	'LBL_SYSOPTS_CONFIG'				=> 'System Configuration',

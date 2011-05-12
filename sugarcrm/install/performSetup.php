@@ -273,15 +273,6 @@ echo "<br>";
     }
 
 ///////////////////////////////////////////////////////////////////////////////
-////	CREATE CSS SPRITES
-
-	echo "<br>";
-	echo "<b>Creating CSS sprites</b> .... ";
-	include_once('include/SugarTheme/SugarTheme.php');
-	SugarTheme::rebuildSprites(true);
-	echo "done<br>";
-
-///////////////////////////////////////////////////////////////////////////////
 ////    START CREATE DEFAULTS
     echo "<br>";
     echo "<b>{$mod_strings['LBL_PERFORM_CREATE_DEFAULT']}</b><br>";

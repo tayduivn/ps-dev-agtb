@@ -41,8 +41,7 @@ require_once('include/DetailView/DetailView.php');
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
 		<td nowrap>
-			<h3><img src="<?php echo SugarThemeRegistry::current()->getImageURL("h3Arrow.gif"); ?>" width="11" height="11" border="0"
-				alt="<?php echo $current_module_strings['LBL_HOME_TITLE']; ?>">
+			<h3><?php echo SugarThemeRegistry::current()->getImage("h3Arrow", 'border="0"', 11, 11, ".gif", $current_module_strings['LBL_HOME_TITLE']) ?>
 				&nbsp;<?php echo $current_module_strings['LBL_HOME_TITLE']; echo '('.count($items).') Items'; ?></h3>
 		</td>
 		<td width='100%'>
@@ -110,7 +109,7 @@ if(!empty($items)) {
 				$bname = substr($bname, 0, 20).'...';
 			}
 			$beanNameLink = "<a href='index.php?module=".$bean->module_dir."&action=DetailView&record=".$bean->id."'>".$bname."</a>";
-			$queueIcon = $ahref."<img border='0' src='".SugarThemeRegistry::current()->getImageURL("Emails.gif")."'></a>";
+			$queueIcon = $ahref.SugarThemeRegistry::current()->getImage("Emails", "", null, null, ".gif", $mod_strings['LBL_EMAILS'])."</a>";
 			$instantAction = "<a href=\"index.php?module=Emails&action=EditView&type=out&inbound_email_id=".$bean->id."&return_module=Home&return_action=index&to_email_addrs=".$reply_to."&email_name=".str_replace(' ','_','RE: '.trim($bean->name))."\">
 							".$current_module_strings['LBL_REPLY']."</a>";
 
@@ -125,11 +124,11 @@ if(!empty($items)) {
 
 				if(!empty($bean->case_id) && !empty($bean->case_name)) {
 					$ahref = "<a href=\"index.php?module=Cases&action=DetailView&record=".$bean->case_id."&contact_id=".$bean->contact_id."&case_name=".str_replace(' ','_',trim($bean->case_name))."\">";
-					$taskIcon = $ahref."<img border='0' src=\"".SugarThemeRegistry::current()->getImageURL("Cases.gif")."\"></a>";
+					$taskIcon = $ahref.SugarThemeRegistry::current()->getImage("Cases", "", null, null, ".gif", $mod_strings['LBL_CASES'])."</a>";
 					$taskLink = $ahref.trim($bean->case_name)."</a>";
 				} else {
 					$ahref = "<a href=\"index.php?module=Cases&action=EditView&inbound_email_id=".$bean->id."&contact_id=".$bean->contact_id."&case_name=".str_replace(' ','_',trim($bean->name))."\">";
-					$taskIcon = $ahref."<img border='0' src=\"".SugarThemeRegistry::current()->getImageURL("Cases.gif")."\"></a>";
+					$taskIcon = $ahref.SugarThemeRegistry::current()->getImage("Cases", "", null, null, ".gif", $mod_strings['LBL_CASES'])."</a>";
 					$taskLink = $ahref.$current_module_strings['LBL_CREATE_NEW_CASE']."</a>";
 				}
 			} else {

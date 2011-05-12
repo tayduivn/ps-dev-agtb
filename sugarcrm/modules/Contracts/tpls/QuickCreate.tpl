@@ -76,7 +76,7 @@
 	</tr><tr>
 	<td scope="row"><slot>{$MOD.LBL_START_DATE}</slot></td>
 	<td ><slot><input type="text" onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name="start_date" id="start_date" tabindex="2" size="11" value="{$START_DATE}" />
-			<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}" id="start_date_trigger" align="absmiddle" />
+			{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="start_date_trigger" '}
 			<span class="dateFormat">{$USER_DATE_FORMAT}</span></slot></td>
 	<td scope="row"><slot>{$MOD.LBL_ACCOUNT_NAME} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
 	<td  valign="top"  ><slot><input class="sqsEnabled" tabindex="1" autocomplete="off" id="account_name" name='account_name' type="text" value="{$ACCOUNT_NAME}">
@@ -86,7 +86,7 @@
 	<tr>
 	<td scope="row"><slot>{$MOD.LBL_END_DATE}</slot></td>
 	<td ><slot><input type="text" onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name="end_date" id="end_date" tabindex="2" size="11" value="{$END_DATE}" />
-			<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$APP.LBL_ENTER_DATE}" id="end_date_trigger" align="absmiddle" />
+			{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="end_date_trigger" '}
 			<span class="dateFormat">{$USER_DATE_FORMAT}</span></slot></td>
 	<td></td><td></td>
 	</tr>

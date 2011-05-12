@@ -50,9 +50,9 @@
 		    <input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}">&nbsp;
 			<a href="#" onclick="javascript:toggleInlineSearch();" style="font-size:12px; font-weight:bold; text-decoration:none; text-shadow:0 1px #FFFFFF;">{$MOD.LBL_SELECT_MODULES}&nbsp;
             {if $SHOWGSDIV == 'yes'}
-			<img src='{sugar_getimagepath file="basic_search.gif"}' id='up_down_img' border=0>
+			{sugar_getimage alt="{$mod_strings.LBL_BASIC_SEARCH}" name="basic_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}
 			{else}
-			<img src='{sugar_getimagepath file="advanced_search.gif"}' id='up_down_img' border=0>
+			{sugar_getimage alt="{$mod_strings.LBL_ADVANCED_SEARCH}" name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}
 			{/if}
 			</a>
 		</td>

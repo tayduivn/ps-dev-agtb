@@ -98,7 +98,7 @@ $button .= "</form>\n";
 
 $ListView = new ListView();
 $ListView->initNewXTemplate( 'modules/CustomQueries/ListView.html',$mod_strings);
-$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
+$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_DELETE']));
 $ListView->setHeaderTitle($mod_strings['LBL_LIST_FORM_TITLE'] . $header_text);
 $ListView->setHeaderText($button);
 

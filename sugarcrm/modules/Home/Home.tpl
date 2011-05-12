@@ -84,7 +84,7 @@ var moduleName = 'Home';
         <span id="pageNum_{$pageNum}_link_span">
         <span id="pageNum_{$pageNum}_title_text" ondblclick="SUGAR.mySugar.renamePage('{$pageNum}');">{$pageData.pageTitle}</span>&nbsp;
         <span id="pageNum_{$pageNum}_more_detail" {if $pageData.tabClass != 'current'}style="display:none;"{/if}>
-        <img onclick="return SUGAR.mySugar.showTabContext('{$pageNum}');" onmouseout="return nd(1000);" src="{sugar_getimagepath file='MoreDetail.png'}" width="8" height="7" border="0"/>
+        {sugar_getimage alt="{$mod_strings.LBL_MORE_DETAIL}" name="MoreDetail" ext=".png" width="8" height="7" other_attributes='border="0" onclick="return SUGAR.mySugar.showTabContext(\'{$pageNum}\');" onmouseout="return nd(1000);" '}
 		</span>
         </span>
     </a>
@@ -106,7 +106,7 @@ var moduleName = 'Home';
 		</td>
 	
 		<td rowspan="3">
-				<img src='{sugar_getimagepath file='blank.gif'}' width='15' height='1' border='0'>
+				{sugar_getimage alt=" " name="blank" ext=".gif" width="15" height="1" other_attributes='border="0" '}
 		</td>
 		{/if}
 		{if $numCols > 1}
@@ -114,7 +114,7 @@ var moduleName = 'Home';
 		&nbsp;
 		</td>
 		<td rowspan="3">
-				<img src='{sugar_getimagepath file='blank.gif'}' width='15' height='1' border='0'>
+				{sugar_getimage alt=" " name="blank" ext=".gif" width="15" height="1" other_attributes='border="0" '}
 		</td>
 		{/if}	
 		<td align='right'>
@@ -126,7 +126,7 @@ var moduleName = 'Home';
 		-->
 		{* //END SUGARCRM flav=pro ONLY*}
 	 		<a href='index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugarVersion}&edition={$sugarFlavor}&lang={$currentLanguage}&help_module=Home&help_action=index&key={$serverUniqueKey}' class='utilsLink' target='_blank'>
-				<img src='{sugar_getimagepath file="help.gif"}' width='13' height='13' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
+				{sugar_getimage name="help" ext=".gif" width="13" height="13" alt="{$lblLnkHelp}" other_attributes='align="absmiddle" border="0" '}
             </a>
             <a href='index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugarVersion}&edition={$sugarFlavor}&lang={$currentLanguage}&help_module=Home&help_action=index&key={$serverUniqueKey}' class='utilsLink' target='_blank'>
 				{$lblLnkHelp}

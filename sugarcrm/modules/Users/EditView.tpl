@@ -404,7 +404,7 @@ EditView_tabs.on('contentReady', function(e){
                                      {*<span id="ext-gen63" class="x-panel-header-text">
                                         Requirements
                                         <span id="Filter.1_help" onmouseout="return nd();" onmouseover="return overlib(help(), FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">
-                                            <img src="themes/default/images/help.gif"/>
+                                            <img src="themes/default/images/help.gif" alt="{$mod_strings.LBL_HELP}"/>
                                         </span>
                                     </span>*}
                                 </td>
@@ -458,7 +458,7 @@ EditView_tabs.on('contentReady', function(e){
                         </select>
                     </td>
                     <td width="33%">
-                        <img id="themePreview" src="{sugar_getimagepath file='themePreview.png'}" border="1" />
+                        {sugar_getimage name="themePreview" alt="{$mod_strings.LBL_THEMEPREVIEW}" ext=".png" other_attributes='border="1" id="themePreview" '}
                     </td>
                     <td width="17%">&nbsp;</td>
                     <td width="33%">&nbsp;</td>

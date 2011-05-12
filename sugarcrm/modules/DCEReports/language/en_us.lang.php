@@ -65,5 +65,7 @@ $mod_strings = array (
     'LBL_SALES_REPORT_NEVER' => ' never ',
 //
     'LBL_TOP_REPORTS' => 'Resource Usage By Instance',
+	'LBL_JS_CALENDAR' => 'Calendar' /*for 508 compliance fix*/,
+	'LBL_LOADING' => 'Loading' /*for 508 compliance fix*/,
 );
 ?>
