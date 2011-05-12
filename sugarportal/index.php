@@ -268,10 +268,24 @@ if(!empty($action) && !empty($module)) {
 		header('Location: index.php?action=Logout&module=Users');
         die();
 	} else {
-		$currentModuleFile = 'modules/'.$module.'/'.$action.'.php';
+ 		$currentModuleFile = 'modules/'.$module.'/'.$action.'.php';
+ 		
+ 		//Check for custom file
+		$customModuleFile = 'custom/' . $currentModuleFile;
+		if (file_exists($customModuleFile))
+		{
+			$currentModuleFile = $customModuleFile;
+ 		}
 	}
-} elseif(!empty($module)) { // ifwe do not have an action, but we have a module, make the index.php file the action
+} elseif(!empty($module)) { // if we do not have an action, but we have a module, make the index.php file the action
 	$currentModuleFile = 'modules/'.$currentModule.'/index.php';
+	
+	//Check for custom file
+	$customModuleFile = 'custom/' . $currentModuleFile;
+	if (file_exists($customModuleFile))
+	{
+		$currentModuleFile = $customModuleFile;	
+	}	
 } else { // Use the system default action and module
 	// use $sugar_config['default_module'] and $sugar_config['default_action'] as set in config.php
 	// Redirect to the correct module with the correct action.  We need the URI to include these fields.

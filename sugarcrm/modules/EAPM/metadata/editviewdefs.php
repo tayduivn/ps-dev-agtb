@@ -57,10 +57,11 @@ $viewdefs[$module_name]['EditView'] = array(
         array(
             'name' => 'application',
             'displayParams'=>array('required'=>true)
-        ), 
-        array(
-            'name' => 'validated',
-            'customCode' => '{if $fields.validated.value}{$MOD.LBL_CONNECTED}{else}{$MOD.LBL_DISCONNECTED}{/if}',
+        ),
+        array('name' => 'note', 
+              'type'=>'text', 
+              'customCode' => '{if $fields.validated.value}{$MOD.LBL_CONNECTED}<div id="eapm_notice_div" style="display: none;"></div>{else}<div id="eapm_notice_div">&nbsp;</div>{/if}',
+              'label' => 'LBL_STATUS',
         ),
     ),
     array (
@@ -72,12 +73,6 @@ $viewdefs[$module_name]['EditView'] = array(
               'displayParams' => array('required' => true),
               'customCode' => '<input type=\'text\' name=\'url\' id=\'url\' size=\'30\' maxlength=\'255\' value=\'{$fields.url.value}\' title=\'\' tabindex=\'104\' ><br>{$MOD.LBL_OMIT_URL}',
             )
-    ),
-    array (
-        array('name' => 'note', 
-              'type'=>'text', 
-              'customCode' => '<div id="eapm_notice_div">&nbsp;</div>'
-        ),
     ),
   ),
 

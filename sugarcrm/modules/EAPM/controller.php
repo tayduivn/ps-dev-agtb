@@ -91,19 +91,18 @@ class EAPMController extends SugarController
             $this->return_action = 'EditView';
         }
         parent::post_save();
-        
         // Override the redirect location to add the hash
         $this->redirect_url = $this->redirect_url.'#tab5';
-
         if ( $this->api->authMethod == 'oauth' && !$this->bean->deleted ) {
             // It's OAuth, we have to handle this specially.
             // We need to create a new window to handle the OAuth, and redirect this window back to the edit view
             // So we will handle that in javascript.
-            echo('<script type="text/javascript">window.open(\'index.php?module=EAPM&action=oauth&record='.$this->bean->id.'&closeWhenDone=1&refreshParentWindow=1\',\'EAPM\'); document.location=\''.$this->redirect_url.'\';</script>');
+            $popup_warning_msg = string_format($GLOBALS['mod_strings']['LBL_ERR_POPUPS_DISABLED'], array($_SERVER['HTTP_HOST']) );
+            echo('<script src="modules/EAPM/EAPMEdit.js" type="text/javascript"></script><script type="text/javascript">EAPMPopupAndRedirect("index.php?module=EAPM&action=oauth&record='.$this->bean->id.'", "'.$this->redirect_url.'", \''.$popup_warning_msg.'\'); </script>');
 
             // To prevent the normal handler from issuing a header call and destroying our neat little javascript we'll
             // end right here.
-            sugar_die(true);
+            sugar_die('');
         } else {
             return;
         }
@@ -119,29 +118,31 @@ class EAPMController extends SugarController
 			sugar_cleanup(true);
 			return true;
 		}
-        $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
-        $reply = $this->api->checkLogin($this->bean);
-        if ( !$reply['success'] ) {
-            return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
-        } else {
-            $this->bean->validated();
-            
-            // This is a tweak so that we can automatically close windows if requested by the external account system
-            if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
-                if(!empty($_REQUEST['callbackFunction']) && !empty($_REQUEST['application'])){
-            	    $js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
-                }else if(!empty($_REQUEST['refreshParentWindow'])){
-                    $js = '<script type="text/javascript">window.opener.location.reload();window.close();</script>';
-                }else{
-                    $js = '<script type="text/javascript">window.close();</script>';
-                }
-                echo($js);
-                return;
-            }            
-
-            // redirect to detail view, as in save
-            return parent::post_save();
+        if(empty($_REQUEST['oauth_error'])) {
+            $this->api = ExternalAPIFactory::loadAPI($this->bean->application,true);
+            $reply = $this->api->checkLogin($this->bean);
+            if ( !$reply['success'] ) {
+                return $this->failed(translate('LBL_AUTH_ERROR', $this->bean->module_dir));
+            } else {
+                $this->bean->validated();
+            }
         }
+        
+        // This is a tweak so that we can automatically close windows if requested by the external account system
+        if ( isset($_REQUEST['closeWhenDone']) && $_REQUEST['closeWhenDone'] == 1 ) {
+            if(!empty($_REQUEST['callbackFunction']) && !empty($_REQUEST['application'])){
+                $js = '<script type="text/javascript">window.opener.' . $_REQUEST['callbackFunction'] . '("' . $_REQUEST['application'] . '"); window.close();</script>';
+            }else if(!empty($_REQUEST['refreshParentWindow'])){
+                $js = '<script type="text/javascript">window.opener.location.reload();window.close();</script>';
+            }else{
+                $js = '<script type="text/javascript">window.close();</script>';
+            }
+            echo($js);
+            return;
+        }            
+        
+        // redirect to detail view, as in save
+        return parent::post_save();
     }
 
     protected function pre_QuickSave(){

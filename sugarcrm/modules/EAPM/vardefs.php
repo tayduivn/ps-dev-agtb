@@ -27,7 +27,7 @@
  ********************************************************************************/
 $dictionary['EAPM'] = array(
 	'table'=>'eapm',
-	'audited'=>true,
+	'audited'=>false,
 	'fields'=>array (
   'password' =>
   array (

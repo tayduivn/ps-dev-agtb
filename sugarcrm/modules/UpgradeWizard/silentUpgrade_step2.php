@@ -228,7 +228,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 require_once('include/utils/zip_utils.php');
 require_once('include/utils/sugar_file_utils.php');
 require_once('include/SugarObjects/SugarConfig.php');
-
 global $sugar_config;
 $isDCEInstance = false;
 $errors = array();
@@ -316,10 +315,6 @@ copy($argv[1], $install_file);
 ////	END UPGRADE PREP
 ///////////////////////////////////////////////////////////////////////////////
 
-if(function_exists('repairTableDictionaryExtFile'))
-{
-    repairTableDictionaryExtFile();
-}
 
 if(function_exists('set_upgrade_vars')){
 	set_upgrade_vars();
@@ -347,6 +342,12 @@ set_time_limit(0);
 
 ///    RELOAD NEW DEFINITIONS
 global $ACLActions, $beanList, $beanFiles;
+
+require_once('modules/Trackers/TrackerManager.php');
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+$trackerManager->unsetMonitors();
+
 include('modules/ACLActions/actiondefs.php');
 include('include/modules.php'); 
 
@@ -382,6 +383,7 @@ require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
+$rac->clearExternalAPICache();
 
 $repairedTables = array();
 foreach ($beanFiles as $bean => $file) {

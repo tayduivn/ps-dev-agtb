@@ -95,7 +95,7 @@ update_{{sugarvar key='name'}}_available.prototype.handleOnAvailable = function(
 	{rdelim});
 	
 	//Call update for first time to round hours and minute values
-	combo_{{sugarvar key='name'}}.update();
+	combo_{{sugarvar key='name'}}.update(false);
 {rdelim}
 
 var obj_{{sugarvar key='name'}} = new update_{{sugarvar key='name'}}_available(); 

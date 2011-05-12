@@ -81,6 +81,7 @@ var activeTab = activePage,
 		refreshPage: function() {
 			var newWidth = document.body.offsetWidth;			
 			if(newWidth != windowWidth && !firstLoad){
+				//BEGIN SUGARCRM flav=pro ONLY
 				if(SUGAR.isIE) { 
 					SUGAR.mySugar.loading.show();
 					document.getElementById('loading_c').style.display = 'inline';
@@ -89,6 +90,12 @@ var activeTab = activePage,
 				} else {
 					SUGAR.mySugar.retrievePage(activePage);	
 				}
+				//END SUGARCRM flav=pro ONLY
+				
+				//BEGIN SUGARCRM flav=com ONLY
+				setTimeout(function() {location.reload();}, 500);
+				//END SUGARCRM flav=com ONLY
+					
 				SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
 						
 			}

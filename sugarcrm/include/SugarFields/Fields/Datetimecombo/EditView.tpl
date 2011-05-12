@@ -103,7 +103,7 @@ YAHOO.util.Event.onDOMReady(function()
 	{rdelim});
 	
 	//Call update for first time to round hours and minute values
-	combo_{{$idname}}.update();
+	combo_{{$idname}}.update(false);
 
 {rdelim}); 
 </script>

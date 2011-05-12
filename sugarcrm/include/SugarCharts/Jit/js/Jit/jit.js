@@ -12602,7 +12602,9 @@ $jit.BarChart = new Class({
         fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
         fixedDim = (fixedDim > 40) ? 40 : fixedDim;
         whiteSpace = size.width - (marginWidth + (fixedDim * l));
-        
+        //bug in IE7 when vertical bar charts load in dashlets where number of bars exceed a certain width, canvas renders with an incorrect width, a hard refresh fixes the problem
+        if(!horz && typeof FlashCanvas != "undefined" && size.width < 250)
+        location.reload();
         //if not a grouped chart and is a vertical chart, adjust bar spacing to fix canvas width.
         if(!grouped && !horz) {
         	st.config.siblingOffset = whiteSpace/(l+1);
@@ -12653,13 +12655,15 @@ $jit.BarChart = new Class({
 	config = this.config,
 	margin = config.Margin,
 	label = config.Label,
-	subtitle = config.Subtitle;
+	subtitle = config.Subtitle,
+	nodeCount = config.nodeCount,
+	horz = config.orientation == 'horizontal' ? true : false,
 	ctx = canvas.getCtx();
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-(!horz && nodeCount > 8 ? 20 : margin.bottom)-subtitle.size);
 	}
   },
   
@@ -15155,6 +15159,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           colorLength = colorArray.length,
           stringArray = node.getData('stringArray'),
 		  percentage = node.getData('percentage'),
+		  iteration = node.getData('iteration'),
           span = node.getData('span') / 2,
           theta = node.pos.theta,
           begin = theta - span,
@@ -15166,13 +15171,46 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           gradient = node.getData('gradient'),
           border = node.getData('border'),
           config = node.getData('config'),
+          renderSubtitle = node.getData('renderSubtitle'),
+          renderBackground = config.renderBackground,
           showLabels = config.showLabels,
           resizeLabels = config.resizeLabels,
           label = config.Label;
 
       var xpos = config.sliceOffset * Math.cos((begin + end) /2);
       var ypos = config.sliceOffset * Math.sin((begin + end) /2);
+      //background rendering for IE
+		if(iteration == 0 && typeof FlashCanvas != "undefined" && renderBackground) {
+			backgroundColor = config.backgroundColor,
+		  	size = canvas.getSize();
+		  	ctx.save();
+		    ctx.fillStyle = backgroundColor;
+	   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+	   	    
+	   	    //subtitle
 
+			var margin = config.Margin,
+			title = config.Title,
+			subtitle = config.Subtitle;
+			ctx.fillStyle = title.color;
+			ctx.textAlign = 'left';
+			
+			if(title.text != "") {
+				ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+				ctx.moveTo(0,0);
+				if(label.type == 'Native') {
+					ctx.fillText(title.text, -size.width/2 + margin.left, -size.height/2 + margin.top); 
+				}
+			} 	
+	
+			if(subtitle.text != "") {
+				ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
+				if(label.type == 'Native') {
+					ctx.fillText(subtitle.text, -size.width/2 + margin.left, size.height/2 - margin.bottom); 
+				} 
+			}
+			ctx.restore();  	
+		}
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           var dimi = dimArray[i], colori = colorArray[i % colorLength];
@@ -15516,7 +15554,7 @@ $jit.PieChart = new Class({
         config = this.config,
         renderBackground = config.renderBackground,
         title = config.Title,
-		subtitle = config.Subtitle;
+		subtitle = config.Subtitle,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -15550,6 +15588,7 @@ $jit.PieChart = new Class({
           '$stringArray': name,
           '$gradient': gradient,
           '$config': config,
+          '$iteration': i,
           '$percentage': percentage.toFixed(1),
           '$angularWidth': $.reduce(valArray, function(x,y){return x+y;})
         },
@@ -15569,8 +15608,6 @@ $jit.PieChart = new Class({
     sb.loadJSON(root);
     
     
-
-    
     this.normalizeDims();
 
     
@@ -15582,10 +15619,9 @@ $jit.PieChart = new Class({
     if(subtitle.text != "") {
     	this.renderSubtitle();
     }
-     if(renderBackground) {
+     if(renderBackground && typeof FlashCanvas == "undefined") {
     	this.renderBackground();	
     }
-    
     
     if(animate) {
       sb.fx.animate({
@@ -16348,7 +16384,7 @@ $jit.GaugeChart = new Class({
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	ctx.moveTo(0,0);
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -radius - 4, subtitle.size + subtitle.offset); 
+		ctx.fillText(subtitle.text, -radius - 4, subtitle.size + subtitle.offset + (radius/2)); 
 	}
   },
   
@@ -16432,7 +16468,7 @@ $jit.GaugeChart = new Class({
     }
     
     this.renderBackground();
-    
+    this.renderSubtitle();
     
     this.normalizeDims();
 	
@@ -16451,7 +16487,7 @@ $jit.GaugeChart = new Class({
 		this.renderNeedle(gaugePosition,props['gaugeTarget']);
 	}
 	
-	this.renderSubtitle();
+	
 
   },
   

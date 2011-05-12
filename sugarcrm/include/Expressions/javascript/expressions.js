@@ -938,7 +938,7 @@ SUGAR.util.DateUtils = {
 		var dateRemain = YAHOO.lang.trim(date);
 		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
 		for (var j = 0; j < oldFormat.length; j++) {
-			var c = oldFormat[j];
+			var c = oldFormat.charAt(j);
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
 				var i = dateRemain.indexOf(c);
 				if (i == -1) i = dateRemain.length;
@@ -1101,7 +1101,8 @@ SUGAR.util.DateUtils = {
 	{
 		var min = date.getMinutes();
 
-		if (min < 16) { min = 15; }
+		if (min < 1) { min = 0; }
+		else if (min < 16) { min = 15; }
 		else if (min < 31) { min = 30; }
 		else if (min < 46) { min = 45; }
 		else { min = 0; date.setHours(date.getHours() + 1)}
