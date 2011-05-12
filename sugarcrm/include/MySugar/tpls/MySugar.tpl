@@ -109,7 +109,7 @@ initmySugarCharts();
 			</span>
 			<span id="pageNum_{$pageNum}_link_span" class="tabText">
 			<span id="pageNum_{$pageNum}_title_text" {if !$lock_homepage}ondblclick="SUGAR.mySugar.renamePage('{$pageNum}');"{/if}>{$pageData.pageTitle}</span></span>
-			<img id="pageNum_{$pageNum}_delete_page_img" class="deletePageImg" style="display: none;" onclick="return SUGAR.mySugar.deletePage()" src='{sugar_getimagepath file="info-del.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
+			{sugar_getimage name="info-del" ext=".png" alt="{$lblLnkHelp}" other_attributes='align="absmiddle" border="0" class="deletePageImg" id="pageNum_\{$pageNum}_delete_page_img" style="display: none;" onclick="return SUGAR.mySugar.deletePage()" '}
 		   </a>
 	   </li>
 	   {/foreach}	
@@ -119,7 +119,7 @@ initmySugarCharts();
 </div>
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
 	<div id="addPage">
-		<a href='javascript:void(0)' id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"><img src='{sugar_getimagepath file="info-add-page.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'></a>
+		<a href='javascript:void(0)' id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();">{sugar_getimage name="info-add-page" ext=".png" alt="{$lblLnkHelp}" other_attributes='align="absmiddle" border="0" '}</a>
 	</div>
 <!--//END SUGARCRM flav=pro ONLY -->
 </td>
@@ -129,12 +129,12 @@ initmySugarCharts();
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
             <a href="javascript:void(0)" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
-			<img src='{sugar_getimagepath file="info-add.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
+			{sugar_getimage name="info-add" ext=".png" alt="{$lblLnkHelp}" other_attributes='align="absmiddle" border="0" '}
 			    {$mod.LBL_ADD_DASHLETS}
             </a>
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
             <a href="javascript:void(0)" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
-			<img src='{sugar_getimagepath file="info-layout.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
+			{sugar_getimage name="info-layout" ext=".png" alt="{$lblLnkHelp}" other_attributes='align="absmiddle" border="0" '}
 			    {$app.LBL_CHANGE_LAYOUT}
             </a>
 			<!--//END SUGARCRM flav=pro ONLY -->
@@ -161,7 +161,7 @@ initmySugarCharts();
 		</td>
 	
 		<td rowspan="3">
-				<img src='{sugar_getimagepath file='blank.gif'}' width='40' height='1' border='0'>
+				{sugar_getimage alt="{$app_strings.LBL_Blank}" name="blank" ext=".gif" width="40" height="1" other_attributes='border="0" '}
 		</td>
  		{* //BEGIN SUGARCRM flav=pro ONLY*}
 		{/if}
@@ -170,7 +170,7 @@ initmySugarCharts();
 		
 		</td>
 		<td rowspan="3">
-				<img src='{sugar_getimagepath file='blank.gif'}' width='40' height='1' border='0'>
+				{sugar_getimage alt="{$app_strings.LBL_Blank}" name="blank" ext=".gif" width="40" height="1" other_attributes='border="0" '}
 		</td>
 		{/if}	
 		{* //END SUGARCRM flav=pro ONLY*}
@@ -227,9 +227,9 @@ initmySugarCharts();
 				<label>{$lblNumberOfColumns}:</label>
 				<table align="center" cellpadding="8">
 					<tr>
-						<td align="center"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="1" /></td>
-						<td align="center"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="2" checked="yes" /></td>
-						<td align="center"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="3" /></td>
+						<td align="center">{sugar_getimage alt="{$app_strings.LBL_ICON_COLUMN_1}" name="icon_Column_1" ext=".gif" other_attributes='border="0" '}<br /><input type="radio" name="numColumns" value="1" /></td>
+						<td align="center">{sugar_getimage alt="{$app_strings.LBL_ICON_COLUMN_2}" name="icon_Column_2" ext=".gif" other_attributes='border="0" '}<br /><input type="radio" name="numColumns" value="2" checked="yes" /></td>
+						<td align="center">{sugar_getimage alt="{$app_strings.LBL_ICON_COLUMN_3}" name="icon_Column_3" ext=".gif" other_attributes='border="0" '}<br /><input type="radio" name="numColumns" value="3" /></td>
                     </tr>
 				</table>
 			</form>
@@ -245,9 +245,9 @@ initmySugarCharts();
 			<br /><br />
 			<table align="center" cellpadding="15">
 				<tr>
-					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(1);"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/></a></td>
-					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(2);"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/></a></td>
-					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(3);"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/></a></td>						
+					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(1);">{sugar_getimage alt="{$app_strings.LBL_ICON_COLUMN_1}" name="icon_Column_1" ext=".gif" other_attributes='border="0" '}</a></td>
+					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(2);">{sugar_getimage alt="{$app_strings.LBL_ICON_COLUMN_2}" name="icon_Column_2" ext=".gif" other_attributes='border="0" '}</a></td>
+					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(3);">{sugar_getimage alt="{$app_strings.LBL_ICON_COLUMN_3}" name="icon_Column_3" ext=".gif" other_attributes='border="0" '}</a></td>
 				</tr>
 			</table>
 		</div>
