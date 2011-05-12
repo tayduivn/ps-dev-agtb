@@ -152,8 +152,8 @@ class KBDocumentRevision extends SugarBean {
 		else {
 			$img_name = "def_image_inline";  //todo change the default image.						
 		}
-			*/
-		//$this->file_url = "<a href='".UploadFile::get_url($this->filename,$this->id)."' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name,'border="0"',null,null,'.gif',$mod_strings['LBL_LIST_VIEW_DOCUMENT'])."</a>";
+		$this->file_url = "<a href='".UploadFile::get_url($this->filename,$this->id)."' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name,'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+	*/			
 	}
 	
 	/**

@@ -291,7 +291,7 @@ class SugarView
                 "LABEL"       => $menu_item[1],
                 "MODULE_NAME" => $menu_item[2],
                 "IMAGE"       => $themeObject
-                    ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                    ->getImage($menu_item[2],"alt='".$menu_item[1]."'  border='0' align='absmiddle'"),
                 );
         $ss->assign("SHORTCUT_MENU",$shortcut_menu);
 
@@ -409,7 +409,7 @@ class SugarView
             foreach ( $history as $key => $row ) {
                 $history[$key]['item_summary_short'] = getTrackerSubstring($row['item_summary']);
                 $history[$key]['image'] = SugarThemeRegistry::current()
-                    ->getImage($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',$row['item_summary']);
+                    ->getImage($row['module_name'],'border="0" align="absmiddle" alt="'.$row['item_summary'].'"');
             }
             $ss->assign("recentRecords",$history);
         }
@@ -584,7 +584,7 @@ class SugarView
                         "LABEL"       => $menu_item[1],
                         "MODULE_NAME" => $menu_item[2],
                         "IMAGE"       => $themeObject
-                        ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
+                        ->getImage($menu_item[2],"alt='".$menu_item[1]."'  border='0' align='absmiddle'"),
                         );
                 }
             }
@@ -837,7 +837,6 @@ EOHTML;
         }
         global $sugar_config;
         global $app_strings;
-        global $mod_strings;
 
         //decide whether or not to show themepicker, default is to show
         $showThemePicker = true;
@@ -873,8 +872,10 @@ EOHTML;
                 $imageURL = SugarThemeRegistry::current()->getImageURL($key.'.gif');
 				$bottomLinksStr .= "<a href=\"{$href}\"";
 				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
-				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'>";
-				$bottomLinksStr .= " ".$text."</a>";
+				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'></a>";
+				$bottomLinksStr .= " <a href=\"{$href}\" class=\"bottomLink\"";
+				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
+				$bottomLinksStr .= ">".$text."</a>";
 			}
 		}
 		$ss->assign("BOTTOMLINKS",$bottomLinksStr);
@@ -918,7 +919,7 @@ EOHTML;
         // of the "Powered by SugarCRM" logo. If the display of the logo is
         // not reasonably feasible for technical reasons, the Appropriate
         // Legal Notices must display the words "Powered by SugarCRM".
-        $attribLinkImg = "<img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='{$app_strings['LBL_POWERED_BY_SUGARCRM']}'>\n";
+        $attribLinkImg = "<img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'>\n";
 
         //END SUGARCRM flav=com  && dep=os ONLY
 
@@ -926,7 +927,7 @@ EOHTML;
         // You are required to leave in all copyright statements in both the
         // code and end-user application as well as the the powered by image.
         // You can not change the url or the image below.
-        $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='{$app_strings['LBL_POWERED_BY_SUGARCRM']}'></A>\n";
+        $attribLinkImg = "<A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></A>\n";
 
           //END SUGARCRM lic=sub ONLY
 
@@ -1220,7 +1221,8 @@ EOHTML;
             $theTitle .= <<<EOHTML
 &nbsp;
 <a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
-<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'>
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;

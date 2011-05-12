@@ -63,7 +63,7 @@ $filter_object = new QueryFilter();
 global $current_user;
 $header_text = '';
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>";
 }
 
 //This needs to be changed.  It is here because I have to use to_pdf=true.  The index recognizes
@@ -77,9 +77,9 @@ $xtpl->assign("APP", $app_strings);
 $xtpl->assign("GRIDLINE", $gridline);
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("RECORD", $focus->id);
-$xtpl->assign('EDIT_INLINE', SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
-$xtpl->assign('MOVE_INLINE', SugarThemeRegistry::current()->getImage('arrow','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_ORDER']));
-$xtpl->assign('DELETE_INLINE_PNG', SugarThemeRegistry::current()->getImage("delete_inline", 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
+$xtpl->assign('EDIT_INLINE', SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" alt="'.$app_strings['LNK_EDIT'].'" border="0"'));
+$xtpl->assign('MOVE_INLINE', SugarThemeRegistry::current()->getImage('arrow','align="absmiddle" alt="Order" border="0"'));
+$xtpl->assign('DELETE_INLINE_PNG', SugarThemeRegistry::current()->getImage("delete_inline", 'align="absmiddle" alt="'. $app_strings['LNK_DELETE'] . '" border="0"'));
 
 //Sub-Calc Form (Math)
 	//core form elements	
@@ -196,7 +196,7 @@ if(!empty($is_edit) && $is_edit==true){
 	$ListView->xTemplateAssign("QUERY_ID", $seed_object->id);
 	$ListView->xTemplateAssign("COLUMN_ID", $focus->id);
 	 
-	$del_image_link = SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']);
+	$del_image_link = SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"');
 	$ListView->xTemplateAssign("DELETE_INLINE_PNG", $del_image_link);
 	
 	$ListView->setQuery($where, "", "list_order", "SUB_CALC");

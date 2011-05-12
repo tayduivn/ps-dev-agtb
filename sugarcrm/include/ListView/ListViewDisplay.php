@@ -282,11 +282,12 @@ class ListViewDisplay {
 			. "<a style=\'width: 150px\' name=\"selectall\" class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$total});\' href=\'#\'>{$app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$total}&#x29;&#x200E;</a>"
 			. "<a style=\'width: 150px\' name=\"deselect\" class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'sListView.clear_all(document.MassUpdate, \"mass[]\", false);\' href=\'#\'>{$app_strings['LBL_LISTVIEW_NONE']}</a>"
 			. "', CENTER, '"
-			. "', STICKY, MOUSEOFF, 3000, CLOSETEXT, " . SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']) . ", WIDTH, 150, CLOSETITLE, '" . $app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
+			. "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 src=" . SugarThemeRegistry::current()->getImageURL('close_inline.gif')
+			. ">', WIDTH, 150, CLOSETITLE, '" . $app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
 			. "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass',TIMEOUT,1000);
 			}
 			</script>";
-            $script .= "<a id='$id' onclick='return select_overlib();' href=\"#\">".SugarThemeRegistry::current()->getImage('MoreDetail', 'border=0', null, null, '.png', $app_strings['LBL_MOREDETAIL'])."</a>";
+            $script .= "<a id='$id' onclick='return select_overlib();' href=\"#\"><img src='".SugarThemeRegistry::current()->getImageURL('MoreDetail.png')."' border='0''>"."</a>";
 
 		return $script;
 	}
@@ -302,7 +303,7 @@ class ListViewDisplay {
 	    )
 	{
 	    global $app_strings;
-		$closeText = SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']);
+		$closeText = "<img border=0 src=" . SugarThemeRegistry::current()->getImageURL('close_inline.gif') . " />";
 		$moreDetailImage = SugarThemeRegistry::current()->getImageURL('MoreDetail.png');
 		$menuItems = '';
 
@@ -362,7 +363,7 @@ function actions_overlib()
 }
 </script>
 <a id='$id' onclick='return actions_overlib();' href="#">
-    {$app_strings['LBL_LINK_ACTIONS']}&nbsp;<!--not_in_theme!--><img src='{$moreDetailImage}' border='0' />
+    {$app_strings['LBL_LINK_ACTIONS']}&nbsp;<img src='{$moreDetailImage}' border='0' />
 </a>
 EOHTML;
 	}

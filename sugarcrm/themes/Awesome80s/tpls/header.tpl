@@ -54,8 +54,8 @@
     {/if}
     <div class="clear"></div>
     <div id="welcomeSearch">
-	    <div  id="welcomeSearchLeft">{sugar_getimage alt="{$app_strings.LBL_WELCOMEBAR}" name="welcomeBar_left" ext=".gif" other_attributes=''}</div>
-		<div  id="welcomeSearchRight">{sugar_getimage alt="{$app_strings.LBL_WELCOMEBAR}" name="welcomeBar_right" ext=".gif" other_attributes=''}</div>
+	    <div  id="welcomeSearchLeft"><img src="{sugar_getimagepath file='welcomeBar_left.gif'}"></div>
+		<div  id="welcomeSearchRight"><img src="{sugar_getimagepath file='welcomeBar_right.gif'}"></div>
 	    	{include file="_headerSearchAlt.tpl" theme_template=true}
 			{include file="_welcome.tpl" theme_template=true}
 		</div>

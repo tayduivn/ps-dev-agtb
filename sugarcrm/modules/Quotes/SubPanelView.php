@@ -103,7 +103,7 @@ $button .= "</form>\n";
 
 $ListView = new ListView();
 $ListView->initNewXTemplate( 'modules/Quotes/SubPanelView.html',$current_module_strings);
-$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
+$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" alt="'.$app_strings['LNK_EDIT'].'" border="0"'));
 $ListView->xTemplateAssign("RETURN_URL", "&return_module=".$currentModule."&return_action=DetailView&return_id=".$focus->id);
 $ListView->setHeaderTitle($current_module_strings['LBL_MODULE_NAME'] );
 $ListView->setHeaderText($button);

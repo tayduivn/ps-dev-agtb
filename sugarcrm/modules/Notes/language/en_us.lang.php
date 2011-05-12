@@ -89,7 +89,6 @@ $mod_strings = array (
 	'LBL_PANEL_DETAILS' => 'Details',
 	'LBL_NOTE_INFORMATION' => 'Note Overview',
 	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 ?>

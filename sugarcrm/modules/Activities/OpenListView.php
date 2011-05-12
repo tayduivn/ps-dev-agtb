@@ -280,16 +280,16 @@ foreach($open_activity_list as $activity) {
 	}
 	switch ($activity['type']) {
 		case 'Call':
-			$activity_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((is_object($focus) && ! empty($focus->id)) ? $focus->id : "")."&action=EditView&module=Calls&status=Held&record=".$activity['id']."&status=Held'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Activities')." border='0'", null, null, '.gif', $mod_strings['LBL_LIST_CLOSE'])."</a>";
+			$activity_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((is_object($focus) && ! empty($focus->id)) ? $focus->id : "")."&action=EditView&module=Calls&status=Held&record=".$activity['id']."&status=Held'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Activities')." border='0'")."</a>";
 			break;
 		case 'Meeting':
-			$activity_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((is_object($focus) && ! empty($focus->id)) ? $focus->id : "")."&action=EditView&module=Meetings&status=Held&record=".$activity['id']."&status=Held'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Activities')." border='0'",null,null,'.gif',$mod_strings['LBL_LIST_CLOSE'])."</a>";
+			$activity_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((is_object($focus) && ! empty($focus->id)) ? $focus->id : "")."&action=EditView&module=Meetings&status=Held&record=".$activity['id']."&status=Held'>".SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Activities')." border='0'")."</a>";
 			break;
 	}
 
 	if (! empty($activity['accept_status'])) {
 		if ( $activity['accept_status'] == 'none') {
-			$activity_fields['SET_ACCEPT_LINKS'] = "<div id=\"accept".$activity['id']."\"><a title=\"".$app_list_strings['dom_meeting_accept_options']['accept']."\" href=\"javascript:setAcceptStatus('".$activity_fields['MODULE']."','".$activity['id']."','accept');\">". SugarThemeRegistry::current()->getImage("accept_inline","title='".$app_list_strings['dom_meeting_accept_options']['accept']."' border='0'", null,null,'.gif',$mod_strings['LBL_ACCEPT']). "</a>&nbsp;<a title=\"".$app_list_strings['dom_meeting_accept_options']['tentative']."\" href=\"javascript:setAcceptStatus('".$activity_fields['MODULE']."','".$activity['id']."','tentative');\">".SugarThemeRegistry::current()->getImage("tentative_inline","alt='".$app_list_strings['dom_meeting_accept_options']['tentative']."' border='0'", null,null,'.gif',$mod_strings['LBL_ACCEPT'])."</a>&nbsp;<a title=\"".$app_list_strings['dom_meeting_accept_options']['decline']."\" href=\"javascript:setAcceptStatus('".$activity_fields['MODULE']."','".$activity['id']."','decline');\">".SugarThemeRegistry::current()->getImage("decline_inline","alt='".$app_list_strings['dom_meeting_accept_options']['decline']."' border='0'", null,null,'.gif',$mod_strings['LBL_ACCEPT'])."</a></div>";
+			$activity_fields['SET_ACCEPT_LINKS'] = "<div id=\"accept".$activity['id']."\"><a title=\"".$app_list_strings['dom_meeting_accept_options']['accept']."\" href=\"javascript:setAcceptStatus('".$activity_fields['MODULE']."','".$activity['id']."','accept');\">". SugarThemeRegistry::current()->getImage("accept_inline","title='".$app_list_strings['dom_meeting_accept_options']['accept']."' border='0'"). "</a>&nbsp;<a title=\"".$app_list_strings['dom_meeting_accept_options']['tentative']."\" href=\"javascript:setAcceptStatus('".$activity_fields['MODULE']."','".$activity['id']."','tentative');\">".SugarThemeRegistry::current()->getImage("tentative_inline","alt='".$app_list_strings['dom_meeting_accept_options']['tentative']."' border='0'")."</a>&nbsp;<a title=\"".$app_list_strings['dom_meeting_accept_options']['decline']."\" href=\"javascript:setAcceptStatus('".$activity_fields['MODULE']."','".$activity['id']."','decline');\">".SugarThemeRegistry::current()->getImage("decline_inline","alt='".$app_list_strings['dom_meeting_accept_options']['decline']."' border='0'")."</a></div>";
 		} else {
 			$activity_fields['SET_ACCEPT_LINKS'] = $app_list_strings['dom_meeting_accept_status'][$activity['accept_status']];
 		}
@@ -303,7 +303,7 @@ foreach($open_activity_list as $activity) {
 		$activity_fields['TITLE'] .= "\n".$app_list_strings['record_type_display'][$activity['parent_type']].": ".$activity['parent_name'];
 	}
 
-	$xtpl->assign("ACTIVITY_MODULE_PNG", SugarThemeRegistry::current()->getImage($activity_fields['MODULE'].'','border="0"', null,null,'.gif',$activity_fields['NAME']));
+	$xtpl->assign("ACTIVITY_MODULE_PNG", SugarThemeRegistry::current()->getImage($activity_fields['MODULE'].'','border="0" alt="'.$activity_fields['NAME'].'"'));
 	$xtpl->assign("ACTIVITY", $activity_fields);
 	$xtpl->assign("BG_HILITE", $hilite_bg);
 	$xtpl->assign("BG_CLICK", $click_bg);

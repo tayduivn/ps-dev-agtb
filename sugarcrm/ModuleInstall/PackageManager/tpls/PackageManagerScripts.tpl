@@ -277,8 +277,8 @@ if(typeof PackageManager == 'undefined') {
 				PackageManager.hideWaiting();
 	        },
 	        toggleLowerDiv: function(outer_div, animate_div){
-                var show_img = "{sugar_getimage name="advanced_search" ext=".gif" width="8" height="8" alt="Expand" other_attributes='border="0" '}";
-                var hide_img = "{sugar_getimage name="basic_search" ext=".gif" width="8" height="8" alt="Collapse" other_attributes='border="0" '}";
+                var show_img = "<img src='{sugar_getimagepath file='advanced_search.gif'}' width='8' height='8' alt='Expand' border='0'>";
+                var hide_img = "<img src='{sugar_getimagepath file='basic_search.gif'}' width='8' height='8' alt='Collapse' border='0'>";
 
                 var spn = document.getElementById(outer_div);
                 var anim_div = document.getElementById(animate_div);
@@ -291,8 +291,8 @@ if(typeof PackageManager == 'undefined') {
                 spn.innerHTML =(anim_div.style.display == 'none') ? show_img+"&nbsp;Expand" : hide_img+"&nbsp;Collapse";
             },
             toggleDiv: function(outer_div, animate_div){
-                var show_img = "{sugar_getimage name="advanced_search" ext=".gif" width="8" height="8" alt="Expand" other_attributes='border="0" '}";
-                var hide_img = "{sugar_getimage name="basic_search" ext=".gif" width="8" height="8" alt="Collapse" other_attributes='border="0" '}";
+                var show_img = "<img src='{sugar_getimagepath file='advanced_search.gif'}' width='8' height='8' alt='Expand' border='0'>";
+                var hide_img = "<img src='{sugar_getimagepath file='basic_search.gif'}' width='8' height='8' alt='Collapse' border='0'>";
 
                 var spn = document.getElementById(outer_div);
                 var anim_div = document.getElementById(animate_div);
@@ -456,8 +456,8 @@ if(typeof PackageManager == 'undefined') {
             },
 			toggle_div : function toggle_div(id)
 			{
-				var show_img = "{sugar_getimage name="advanced_search" ext=".gif" width="8" height="8" alt="Show" other_attributes='border="0" '}";
-				var hide_img = "{sugar_getimage name="basic_search" ext=".gif" width="8" height="8" alt="Hide" other_attributes='border="0" '}";
+				var show_img = "<img src='{sugar_getimagepath file='advanced_search.gif'}' width='8' height='8' alt='Show' border='0'>";
+				var hide_img = "<img src='{sugar_getimagepath file='basic_search.gif'}' width='8' height='8' alt='Hide' border='0'>";
 				var dv = document.getElementById("release_table_"+id);
 				var spn = document.getElementById("span_toggle_package_"+id);
 				dv.style.display =(dv.style.display == 'none') ? 'block' : 'none';

@@ -610,24 +610,19 @@ require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
         $icon = "";
         switch( $type ){
             case "full":
-                $icon = SugarThemeRegistry::current()->getImage("Upgrade", "" ,null,null,'.gif', "Upgrade");
-
+                $icon = SugarThemeRegistry::current()->getImage("Upgrade", "" );
                 break;
             case "langpack":
-                $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "",null,null,'.gif',"Language Packs" );
-
+                $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "" );
                 break;
             case "module":
-                $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "" ,null,null,'.gif', "Module Loader");
-
+                $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "" );
                 break;
             case "patch":
-                $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "",null,null,'.gif', "Patch Upgrades" );
-
+                $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "" );
                 break;
             case "theme":
-                $icon = SugarThemeRegistry::current()->getImage("Themes", "",null,null,'.gif', "Themes" );
-
+                $icon = SugarThemeRegistry::current()->getImage("Themes", "" );
                 break;
             default:
                 break;

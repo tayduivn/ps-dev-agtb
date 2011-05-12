@@ -44,7 +44,7 @@
 
 {if empty($picture_value)}
 {else}
-<img
+<img 
 	id="img_picture" 
 	name="img_picture" 	
 	src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1'
@@ -67,7 +67,7 @@
 		'	
 
 >
-<img
+<img 
 	id="bt_remove_picture" 
 	name="bt_remvoe_picture" 
 	alt="{$APP.LBL_REMOVE}"

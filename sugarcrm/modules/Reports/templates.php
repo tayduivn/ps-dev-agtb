@@ -306,34 +306,34 @@ template_columns_javascript($args);
 			if ($control_type == '4corner') { ?>
 				<table>
 				<tr><td rowspan=2 valign=middle>
-				<a onclick="javascript:right_to_left();"><?php echo SugarThemeRegistry::current()->getImage('leftarrow', 'border="0" ', null, null, ".gif", $mod_strings['LBL_LEFT']); ?></a>
+				<a onclick="javascript:right_to_left();"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('leftarrow.gif'); ?>" border="0"></a> 
 				</td>
 				<td rowspan=2 valign=middle>
-				<a onclick="javascript:left_to_right();"><?php echo SugarThemeRegistry::current()->getImage("rightarrow", "", null, null, ".gif", $mod_strings['LBL_RIGHT']); ?></a>
+				<a onclick="javascript:left_to_right();"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('rightarrow.gif'); ?>" border="0"></a> 
 				</tr>
 				<tr>
 				<td>
-				<a onclick="javascript:down('display_columns');"><?php echo SugarThemeRegistry::current()->getImage("downarrow", "", null, null, ".gif", $mod_strings['LBL_DOWN']); ?></a></td>
+				<a onclick="javascript:down('display_columns');"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('downarrow.gif'); ?>" border="0"></a></td>
 				</tr>
 				</table> 
 			<?php } else if ($control_type == 'side') { ?>
 				<table>
 
 				<tr><td align=left colspan=2> 
-				<a onclick="javascript:up('display_columns');"><?php echo SugarThemeRegistry::current()->getImage("uparrow", "border='0'", null, null, ".gif", $mod_strings['LBL_UP']); ?></a>
+				<a onclick="javascript:up('display_columns');"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('uparrow.gif'); ?>" border="0"></a>
 				</td></tr> 
 				<tr> <td align=left colspan=2>
-				<a onclick="javascript:down('display_columns');"><?php echo SugarThemeRegistry::current()->getImage("downarrow", "", null, null, ".gif", $mod_strings['LBL_DOWN']); ?></a>
+				<a onclick="javascript:down('display_columns');"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('downarrow.gif'); ?>" border="0"></a>
 				</td> </tr> 
 
 				<tr><td colspan=2>&nbsp;</td></tr>
 
 				<tr> 
 				<td>
-				<a onclick="javascript:right_to_left();"><?php echo SugarThemeRegistry::current()->getImage('leftarrow', 'border="0" ', null, null, ".gif", $mod_strings['LBL_LEFT']); ?></a>
+				<a onclick="javascript:right_to_left();"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('leftarrow.gif'); ?>" border="0"></a> 
 				</td>
 				<td>
-				<a onclick="javascript:left_to_right();"><?php echo SugarThemeRegistry::current()->getImage("rightarrow", 'border="0"', null, null, ".gif", $mod_strings['LBL_RIGHT']); ?></a>
+				<a onclick="javascript:left_to_right();"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('rightarrow.gif'); ?>" border="0"></a>
 				</td>
 				</tr>
 				</table> 

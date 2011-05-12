@@ -258,7 +258,5 @@ $mod_strings = array (
 	'LBL_PROJECTTASK_SUBPANEL_TITLE' => 'Project Task',
 	'LBL_HOLIDAYS_SUBPANEL_TITLE' => 'Holidays',
 	'LBL_PROJECT_INFORMATION' => 'Project Overview',
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
-	'LBL_INSERTROWS' => 'Insert Rows' /*for 508 compliance fix*/,
 );
 ?>

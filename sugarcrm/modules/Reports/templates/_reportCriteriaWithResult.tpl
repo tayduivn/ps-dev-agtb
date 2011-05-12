@@ -272,7 +272,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 <tr>
 <td valign="top" width="90%">
 <div id="filters_tab" style={$filterTabStyle}>
-<div scope="row"><h3>{$mod_strings.LBL_RUNTIME_FILTERS}:<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib('{$mod_strings.LBL_VIEWER_RUNTIME_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">&nbsp;{sugar_getimage name="helpInline" alt="{$mod_strings.LBL_HELP}" ext=".gif" other_attributes=''}</span></h3>
+<div scope="row"><h3>{$mod_strings.LBL_RUNTIME_FILTERS}:<span valign="bottom" onmouseout="return nd();" onmouseover="return overlib('{$mod_strings.LBL_VIEWER_RUNTIME_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass' );">&nbsp;<img src="{sugar_getimagepath file='helpInline.gif'}"></span></h3>
 </div>
 <input type=hidden name='filters_def' value ="">
 <table id='filters_top' border=0 cellpadding="0" cellspacing="0">

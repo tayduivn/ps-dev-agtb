@@ -151,7 +151,7 @@ $cache_file_name = $current_user->getUserPrivGuid()."_".$theme."_my_pipeline_".$
 $GLOBALS['log']->debug("cache file name is: $cache_file_name");
 
 
-$tools='<div align="right"><a href="index.php?module='.$currentModule.'&action='. $action .'&mypbss_refresh=true" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('refresh','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_REFRESH']).'&nbsp;'.$current_module_strings['LBL_REFRESH'].'</a>&nbsp;&nbsp;<a href="javascript: toggleDisplay(\'my_pipeline_edit\');" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('edit','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_EDIT']).'&nbsp;'. $current_module_strings['LBL_EDIT'].'</a></div>';
+$tools='<div align="right"><a href="index.php?module='.$currentModule.'&action='. $action .'&mypbss_refresh=true" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('refresh','alt="Refresh"  border="0" align="absmiddle"').'&nbsp;'.$current_module_strings['LBL_REFRESH'].'</a>&nbsp;&nbsp;<a href="javascript: toggleDisplay(\'my_pipeline_edit\');" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('edit','alt="Edit"  border="0"  align="absmiddle"').'&nbsp;'. $current_module_strings['LBL_EDIT'].'</a></div>';
 
 ?>
 	<?php echo get_form_header($mod_strings['LBL_PIPELINE_FORM_TITLE'], $tools , false);?>
@@ -170,12 +170,12 @@ $tools='<div align="right"><a href="index.php?module='.$currentModule.'&action='
 <table cellpadding="0" cellspacing="0" border="0" class="edit view" align="center">
 <tr>
 	<td valign='top' nowrap><b><?php echo $current_module_strings['LBL_DATE_START']?> </b><br><i><?php echo $timedate->get_user_date_format();?></i></td>
-	<td valign='top' ><input onblur="parseDate(this, '<?php echo $cal_dateformat ?>');" class="text" name="mypbss_date_start" size='12' maxlength='10' id='date_start' value='<?php echo $date_start; ?>'> <?php echo SugarThemeRegistry::current()->getImage('jscalendar', 'id="date_start_trigger" align="absmiddle"', null, null, ".gif", $app_strings['LBL_ENTER_DATE']); ?> </td>
+	<td valign='top' ><input onblur="parseDate(this, '<?php echo $cal_dateformat ?>');" class="text" name="mypbss_date_start" size='12' maxlength='10' id='date_start' value='<?php echo $date_start; ?>'>  <img src="<?php echo SugarThemeRegistry::current()->getImageURL('jscalendar.gif'); ?>" alt="<?php echo $app_strings['LBL_ENTER_DATE']; ?>"  id="date_start_trigger" align="absmiddle"> </td>
 </tr>
 
 <tr>
 	<td valign='top' nowrap><b><?php echo $current_module_strings['LBL_DATE_END'];?></b><br><i><?php echo $timedate->get_user_date_format();?></i></td>
-	<td valign='top' ><input onblur="parseDate(this, '<?php echo $cal_dateformat ?>');" class="text" name="mypbss_date_end" size='12' maxlength='10' id='date_end' value='<?php echo $date_end; ?>'>  <?php echo SugarThemeRegistry::current()->getImage('jscalendar', 'id="date_end_trigger" align="absmiddle"', null, null, ".gif", $app_strings['LBL_ENTER_DATE']); ?> </td>
+	<td valign='top' ><input onblur="parseDate(this, '<?php echo $cal_dateformat ?>');" class="text" name="mypbss_date_end" size='12' maxlength='10' id='date_end' value='<?php echo $date_end; ?>'>  <img src="<?php echo SugarThemeRegistry::current()->getImageURL('jscalendar.gif'); ?>" alt="<?php echo $app_strings['LBL_ENTER_DATE']; ?>"  id="date_end_trigger" align="absmiddle"> </td>
 </tr>
 
 	<tr>

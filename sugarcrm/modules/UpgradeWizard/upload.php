@@ -361,7 +361,7 @@ $form5 =<<<eoq5
 <div id="upgradeDiv" style="display:none">
     <table cellspacing="0" cellpadding="0" border="0">
         <tr><td>
-           <p><!--not_in_theme!--><img src='modules/UpgradeWizard/processing.gif' alt='Processing'></p>
+           <p><img src='modules/UpgradeWizard/processing.gif'></p>
         </td></tr>
      </table>
  </div>

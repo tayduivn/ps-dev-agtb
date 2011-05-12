@@ -304,9 +304,7 @@ if(is_admin($current_user)
 	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action="
 		.$_REQUEST['action'] ."&from_module=".$_REQUEST['module']
 		."&record=".$record. "'>"
-		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'"
-,null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");	
-
+		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>");	
 }
 $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);

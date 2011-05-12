@@ -115,7 +115,7 @@ class TeamNotice extends SugarBean {
       if(count($teams) > 1) {
       	 $temp_array['TEAM_NAME'] .= "<span id='div_{$this->id}_teams'>
 						<a href=\"#\" onMouseOver=\"javascript:toggleMore('div_{$this->id}_teams','img_{$this->id}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$this->team_set_id}&team_id={$this->team_id}');\"  onFocus=\"javascript:toggleMore('div_{$this->id}_teams','img_{$this->id}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$this->team_set_id}');\" id='more_feather' class=\"utilsLink\">
-					    ".SugarThemeRegistry::current()->getImage('MoreDetail', "style='padding: 0px 0px 0px 0px' border='0'", 8, 7, ".png", $mod_strings['LBL_MORE_DETAIL'])."
+					    <img style='padding: 0px 0px 0px 0px' border='0' src='themes/default/images/MoreDetail.png' width='8' height='7'>
 						</a>
 						</span>";
       }

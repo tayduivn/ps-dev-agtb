@@ -270,7 +270,7 @@ for($i= 0; $i<$columns;$i++){
                 $Web_To_Lead_Form_html .= "<td width='15%' style='text-align: left; font-size: 12px; font-weight: normal;'><span sugar='slot'>$field_label</span sugar='slot'></td>";
           }
 				$Web_To_Lead_Form_html .= "<td width='35%' style='font-size: 12px; font-weight: normal;'><span sugar='slot'><input onblur=\"parseDate(this, '{$cal_dateformat}');\" class=\"text\" name=\"{$field_name}\" size='12' maxlength='10' id='{$field_name}' value=''>
-".SugarThemeRegistry::current()->getImage('jscalendar', "id=\"{$field_name}_trigger\" align=\"absmiddle\"", null, null, ".gif", "\"{$LBL_ENTER_DATE}\"") . "
+<img src=\"".SugarThemeRegistry::current()->getImageURL('jscalendar.gif')."\" alt=\"{$LBL_ENTER_DATE}\" id=\"{$field_name}_trigger\" align=\"absmiddle\">
 <script type='text/javascript'>
 Calendar.setup ({
     inputField : \"{$field_name}\", ifFormat : \"{$cal_dateformat}\", showsTime : false, button : \"{$field_name}_trigger\", singleClick : true, step : 1, weekNumbers:false

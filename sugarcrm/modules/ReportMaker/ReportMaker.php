@@ -195,10 +195,10 @@ class ReportMaker extends SugarBean {
 		
 		//report scheduling
 		if(isset($this->schedule_id) && $this->active == 1){
-			$is_scheduled_img = SugarThemeRegistry::current()->getImage('scheduled_inline.png','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_SCHEDULE_EMAIL']);
+			$is_scheduled_img = SugarThemeRegistry::current()->getImage('scheduled_inline.png','border="0" align="absmiddle" alt="'.$mod_strings['LBL_SCHEDULE_EMAIL'].'"');
 			$is_scheduled = $timedate->to_display_date_time($this->next_run);
 		} else {
-			$is_scheduled_img = SugarThemeRegistry::current()->getImage('unscheduled_inline.png','border="0" align="absmiddle"',null,null,'.gif',$mod_strings['LBL_SCHEDULE_EMAIL']);
+			$is_scheduled_img = SugarThemeRegistry::current()->getImage('unscheduled_inline.png','border="0" align="absmiddle" alt="'.$mod_strings['LBL_SCHEDULE_EMAIL'].'"');
 			$is_scheduled = $mod_strings['LBL_NONE'];
 		}
 		

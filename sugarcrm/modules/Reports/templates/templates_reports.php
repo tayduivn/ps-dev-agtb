@@ -99,7 +99,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 	} // if
 	if ($report_type == 'tabular') {
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'tabular\');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
+				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
 	}
 	// Summation with Details
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['display_columns']) && count($reporter->report_def['display_columns']) > 0 )) {
@@ -107,12 +107,12 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  )) 						
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation_with_details\','.$canCovertToMatrix.');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
+				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
 	} 
 	// Matrix
 	else if ($report_type == 'summary' && (!empty($reporter->report_def['layout_options']))) {
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'matrix\');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
+				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
 	} 
 	// Summation
 	else if ($report_type == 'summary') {
@@ -120,7 +120,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 		if ((!empty($reporter->report_def['group_defs']) && count($reporter->report_def['group_defs']) <= 3  )) 						
 			$canCovertToMatrix = 1;
 		$duplicateButtons = '<button class="button" onclick="showDuplicateOverlib(\'summation\','.$canCovertToMatrix.');" type="button">' .
-				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
+				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].'<img border="0" align="absmiddle" src="'.SugarThemeRegistry::current()->getImageURL("more.gif").'"/></button>';
 	} 	
 
 	$smarty->assign('duplicateButtons', $duplicateButtons);	

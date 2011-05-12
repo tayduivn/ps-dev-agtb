@@ -137,7 +137,7 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
                 $fake_record['NAME'] .= ' '.$message['message'];
             }
             if ( !empty($message['picture'])) {
-                $fake_record['NAME'] .= '<br><!--not_in_theme!--><img src="'.$message['picture'].'" height=50>';
+                $fake_record['NAME'] .= '<br><img src="'.$message['picture'].'" height=50>';
             }
             $fake_record['NAME'] .= '<br><div class="byLineBox"><span class="byLineLeft">'.SugarFeed::getTimeLapse($fake_record['DATE_ENTERED']).'&nbsp;</span><div class="byLineRight">&nbsp;</div></div>';
             $fake_record['IMAGE_URL'] = "https://graph.facebook.com/".$message['from']['id'].'/picture';

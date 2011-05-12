@@ -72,7 +72,7 @@ $button .= "</form>\n";
 
 $ListView = new ListView();
 $ListView->initNewXTemplate( 'modules/Quotes/SubPanelViewProjects.html',$current_module_strings);
-$ListView->xTemplateAssign("REMOVE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
+$ListView->xTemplateAssign("REMOVE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_REMOVE'].'" border="0"'));
 $ListView->xTemplateAssign("RETURN_URL", "&return_module=".$currentModule."&return_action=DetailView&return_id=".$focus->id);
 $header_text = '';
 if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quotes'))
@@ -83,7 +83,7 @@ if((is_admin($current_user) || is_admin_for_module($GLOBALS['current_user'],'Quo
 		. "&module=DynamicLayout"
 		. "&from_action=SubPanelViewProjects"
 		. "&from_module=Quotes'>"
-		. SugarThemeRegistry::current()->getImage( 'EditLayout', "border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])
+		. SugarThemeRegistry::current()->getImage( 'EditLayout', "border='0' alt='Edit Layout' align='bottom'")
 		. '</a>';
 }
 $ListView->setHeaderTitle($project_module_strings['LBL_QUOTE_SUBPANEL_TITLE'] . $header_text);

@@ -38,7 +38,7 @@
 	{assign var="activity_image" value=$module}
 	{assign var="dotgif" value=".gif"}	
 	<li class="{if $smarty.foreach.activitylist.index % 2 == 0}odd{else}even{/if}">
-        <a href=index.php?module={$module}&action=wirelessdetail&record={$activity.ID}>{sugar_getimage name=$activity_image$dotgif alt=$activity_image other_attributes='border="0" '}&nbsp;
+        <a href=index.php?module={$module}&action=wirelessdetail&record={$activity.ID}><img border=0 src="{sugar_getimagepath file=$activity_image$dotgif}">&nbsp;
         {$activity.NAME}</a>
     </li>
 	{/foreach}
@@ -53,7 +53,7 @@
 	{assign var="module_image" value=$LAST_VIEWED.module}
 	{assign var="dotgif" value=".gif"}
 	<li class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
-        <a href=index.php?module={$LAST_VIEWED.module}&action=wirelessdetail&record={$ID}>{sugar_getimage name=$module_image$dotgif alt=$module_image other_attributes='border="0" '}&nbsp;
+        <a href=index.php?module={$LAST_VIEWED.module}&action=wirelessdetail&record={$ID}><img border=0 src="{sugar_getimagepath file=$module_image$dotgif}">&nbsp;
         {$LAST_VIEWED.summary}</a>
     </li>
 	{/foreach}

@@ -31,10 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/DynamicFields/DynamicField.php');
 
-
-
-
-
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
  * the primary functionality needed for manipulating business objects: create,

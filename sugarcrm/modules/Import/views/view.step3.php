@@ -91,7 +91,7 @@ class ImportViewStep3 extends SugarView
 	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
 	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><!--not_in_theme!--><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
+	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
     	}
     	else {
     	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
@@ -255,8 +255,8 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
         $this->ss->assign("SOURCE", $_REQUEST['source'] );
         $this->ss->assign("TYPE", $_REQUEST['type'] );
-        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_DELETE']));
-        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_PUBLISH']));
+        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
+        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("STEP4_TITLE",
             strip_tags(str_replace("\n","",getClassicModuleTitle(
@@ -681,7 +681,7 @@ document.getElementById('addrow').onclick = function(){
                     document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '';
                     return;
                 }
-                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<!--not_in_theme!--><img src="{$sqsWaitImage}" />'
+                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<img src="{$sqsWaitImage}" />'
                 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action=GetControl&import_module='+module+'&field_name='+fieldname,
                     {
                         success: function(o)
@@ -739,7 +739,7 @@ YAHOO.util.Event.onDOMReady(function(){
                     return;
                 }
 
-                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<!--not_in_theme!--><img src="{$sqsWaitImage}" />'
+                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<img src="{$sqsWaitImage}" />'
                 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action=GetControl&import_module='+module+'&field_name='+fieldname,
                     {
                         success: function(o)

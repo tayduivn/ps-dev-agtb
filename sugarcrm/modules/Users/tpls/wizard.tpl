@@ -82,7 +82,7 @@ function disableReturnSubmission(e) {
                <p> {$MOD.LBL_WIZARD_WELCOME_NOSMTP}</p>
                 {/if}
 
-				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' alt="{$mod_strings.LBL_WIZARD_WELCOME_TAB}" width='765px' height='325px'></div>
+				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' width='765px' height='325px'></div>
                 </td>
             </tr>
             </table>

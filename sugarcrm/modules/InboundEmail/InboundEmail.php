@@ -3212,7 +3212,7 @@ class InboundEmail extends SugarBean {
 		else
 		{
             $safedMsgPart = $this->cleanContent($msgPart);
-	   	    return str_replace("<img />", '', $safedMsgPart); /*SKIP_IMAGE_TAG*/
+	   	    return str_replace("<img />", '', $safedMsgPart);
 		}
 	}
 

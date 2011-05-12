@@ -57,7 +57,7 @@ global $focus_list;
 global $current_user;
 $header_text = '';
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>";
 }
 
 $button  = "<table cellspacing='0' border='0'><form  action='index.php' method='post' name='form' id='form'>\n";
@@ -80,7 +80,7 @@ $ListView->setQuery("", "", "list_order_y  ASC", "DATA_SET", false);
 
 //need to pass the main id to have the dataset subpanel href properly
 if(!empty($focus->id)) $ListView->xTemplateAssign("RECORD", $focus->id);
-$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
+$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" alt="'.$app_strings['LNK_EDIT'].'" border="0"'));
 
 $ListView->processListView($focus_list, "main", "DATA_SET");
 ?>

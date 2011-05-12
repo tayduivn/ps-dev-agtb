@@ -66,7 +66,7 @@ class ListViewReports extends ListViewSmarty {
             		$this->data['data'][$i]['IS_EDIT'] = "&nbsp;";
             //BEGIN SUGARCRM flav!=sales ONLY
             	} else {
-                	$this->data['data'][$i]['IS_EDIT'] = "<a title=\"{$app_strings['LBL_EDIT_BUTTON']}\" href=\"index.php?action=ReportsWizard&module=Reports&page=report&record={$rowData['ID']}\">".SugarThemeRegistry::current()->getImage("edit_inline", '', null, null, ".gif", $mod_strings['LBL_EDIT'])."</a>";
+                	$this->data['data'][$i]['IS_EDIT'] = "<a title=\"{$app_strings['LBL_EDIT_BUTTON']}\" href=\"index.php?action=ReportsWizard&module=Reports&page=report&record={$rowData['ID']}\"><img border=0 src=".SugarThemeRegistry::current()->getImageURL('edit_inline.gif')."></a>";
             	}
             }
             //END SUGARCRM flav!=sales ONLY
