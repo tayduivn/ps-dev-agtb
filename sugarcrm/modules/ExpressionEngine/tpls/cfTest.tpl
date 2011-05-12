@@ -75,10 +75,10 @@ if (!Ext.isIE) console.log("done");
 								Return to List
 							</button>&nbsp;&nbsp;&nbsp;&nbsp;
 							<button type='button' class='button' title='Previous' disabled>
-								<img src="themes/default/images/previous_off.gif" width="8" height="11" alt='Previous' border='0' align='absmiddle' />
+								<img src="themes/default/images/previous_off.gif" width="8" height="11" alt="{$mod_strings.LBL_PREVIOUS}" border='0' align='absmiddle' />
 							</button>&nbsp;&nbsp;(1)&nbsp;&nbsp;
 							<button type='button' class='button' title='Next' disabled>
-								<img src="themes/default/images/next_off.gif" width="8" height="11" alt='Next' border='0' align='absmiddle' />
+								<img src="themes/default/images/next_off.gif" width="8" height="11" alt="{$mod_strings.LBL_NEXT}" border='0' align='absmiddle' />
 							</button>&nbsp;&nbsp;
 						</td>
 					</tr>
@@ -422,7 +422,7 @@ if (!Ext.isIE) console.log("done");
 																																						<td scope="row" valign="top" NOWRAP>
 																																							<div>
 																																								<a href="javascript:addEmailAddress('','');">
-																																									<img src="themes/default/images/plus_inline.gif" border="0" height="10" width="10" class="img">
+																																									<img src="themes/default/images/plus_inline.gif" border="0" alt="{$mod_strings.LBL_EXPAND}" height="10" width="10" class="img">
 																																								</a>&nbsp;
 																																								<a href="javascript:addEmailAddress('','');">
 																																									Add Address

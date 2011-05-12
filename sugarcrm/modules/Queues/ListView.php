@@ -34,7 +34,7 @@ require_once('modules/Queues/Queue.php');
 $focus = new Queue();
 global $current_user;
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-	$ListView->setHeaderText("<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>" );
+	$ListView->setHeaderText("<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>" );
 }
 
 
@@ -48,7 +48,7 @@ $listView = new ListView();
 $listView->initNewXTemplate('modules/Queues/ListView.html', $mod_strings);
 $listView->setHeaderTitle($mod_strings['LBL_LIST_FORM']);
 $listView->setQuery($where, $limit, $orderBy, 'QUEUE', $allowByOverride);
-$listView->xTemplateAssign("REMOVE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_REMOVE'].'" border="0"')); 
+$listView->xTemplateAssign("REMOVE_INLINE_PNG", SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
 $listView->processListView($focus, "main", "QUEUE");
 
 ?>

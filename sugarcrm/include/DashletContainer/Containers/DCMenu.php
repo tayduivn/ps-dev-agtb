@@ -37,7 +37,7 @@ class DCMenu extends DashletContainer
         else
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 	    return <<<EOQ
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}'></a></li>	
+		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><!--not_in_theme!--><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}'></a></li>	
 EOQ;
 
 	}
@@ -54,7 +54,7 @@ EOQ;
 	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label');";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
 	    return <<<EOQ
-		<li>$script<a href="javascript: $action"><img class="icon" src="{$imageURL}" alt="{$label}" title="{$label}"></a></li>	
+		<li>$script<a href="javascript: $action"><!--not_in_theme!--><img class="icon" src="{$imageURL}" alt="{$label}" title="{$label}"></a></li>	
 EOQ;
 	}
 	
@@ -89,7 +89,7 @@ EOQ;
 		$notificationsHTML = <<<EOQ
 		
 			<div id="dcmenuSugarCube" $class>
-			  <a href="javascript: DCMenu.notificationsList();" class="notice"><img class='dc_notif_icon' src='$iconImageUrl' border="0"></a>
+			  <a href="javascript: DCMenu.notificationsList();" class="notice"><!--not_in_theme!--><img class='dc_notif_icon' src='$iconImageUrl' border="0"></a>
 			  $code
 			</div>	
 			
@@ -101,7 +101,7 @@ EOQ;
 				$notificationsHTML = <<<EOQ
 			
 			<div id="dcmenuSugarCube" $class>
-			  <img class='dc_notif_icon' src='$iconImageUrl' border="0">
+			  <!--not_in_theme!--><img class='dc_notif_icon' src='$iconImageUrl' border="0">
 			  $code
 			</div>	
 EOQ;
@@ -201,7 +201,7 @@ EOQ;
 if(!is_admin($GLOBALS['current_user'])){
 //END SUGARCRM flav=sales ONLY
 $html .= <<<EOQ
-		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);"><img src="$iconSearch" class="icon" align="top"></a></div>
+		<div id="glblSearchBtn"><a href="javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);"><!--not_in_theme!--><img src="$iconSearch" class="icon" align="top" alt=""></a></div>
 		<div id="dcmenuSearchDiv"><div id="sugar_spot_search_div"><input size=20 id='sugar_spot_search'></div>
 EOQ;
 //BEGIN SUGARCRM flav=sales ONLY

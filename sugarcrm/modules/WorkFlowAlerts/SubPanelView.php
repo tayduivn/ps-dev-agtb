@@ -76,8 +76,8 @@ $ListView->xTemplateAssign("WORKFLOW_ID", $workflow_object->id);
 $ListView->xTemplateAssign("LBL_LIST_STATEMENT", $current_module_strings[$focus->target_meta_array['statement_title']]);
 
 $ListView->xTemplateAssign("RETURN_URL", "&return_module=".$currentModule."&return_action=DetailView&return_id={$_REQUEST['record']}");
-$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" alt="'.$app_strings['LNK_EDIT'].'" border="0"'));
-$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_REMOVE'].'" border="0"'));
+$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
+$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
 $ListView->setHeaderTitle($current_module_strings[$focus->target_meta_array['sub_panel_title']] . $header_text);
 $ListView->setHeaderText($button);
 $ListView->processListView($focus_alertcomp_list, "main", "ALERTCOMP");

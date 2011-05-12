@@ -30,7 +30,7 @@
 {$chartResources}
 <div id='progress_div' ></div>
 <script>
-document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepath file="bar_loader.gif"}">';
+document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_loader" alt="{$mod_strings.LBL_LOADING}" ext=".gif" other_attributes=''}';
 </script>
 
 
@@ -167,7 +167,7 @@ document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepa
 												{if $button.alt}
 													{$button.alt}
 												{else}
-													<img border="0" src='{$button.img}'>			
+													<img border="0" src='{$button.img}'>
 												{/if}
 												</a>
 											</td>

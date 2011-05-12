@@ -92,14 +92,14 @@ function template_pagination(&$args) {
 	if(!ACLController::checkAccess('Reports', 'export', $is_owner) || $sugar_config['disable_export'] || (!empty($sugar_config['admin_export_only']) && !(is_admin($current_user) || (ACLController::moduleSupportsACL($reporter->module) && ACLAction::getUserAccessLevel($current_user->id,$reporter->module, 'access') == ACL_ALLOW_ENABLED && ACLAction::getUserAccessLevel($current_user->id, $reporter->module, 'admin') == ACL_ALLOW_ADMIN)))){
 		// no op
 	} else {
-		$smarty->assign('exportImagePath', SugarThemeRegistry::current()->getImage('export',"alt='".translate('LBL_EXPORT')."'  border='0' align='absmiddle'"));
+		$smarty->assign('exportImagePath', SugarThemeRegistry::current()->getImage('export',"  border='0' align='absmiddle'",null,null,'.gif',translate('LBL_EXPORT')));
 		$isExportAccess = true;
 	} // else
 	$smarty->assign('isExportAccess', $isExportAccess);
-	$smarty->assign('start_link_ImagePath', SugarThemeRegistry::current()->getImage("start_off","alt='".$app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'"));
-	$smarty->assign('prev_link_ImagePath', SugarThemeRegistry::current()->getImage("previous_off","alt='".$app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'"));
-	$smarty->assign('end_link_ImagePath', SugarThemeRegistry::current()->getImage("end_off","alt='".$app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'"));
-	$smarty->assign('next_link_ImagePath', SugarThemeRegistry::current()->getImage("next_off","alt='".$app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'"));
+	$smarty->assign('start_link_ImagePath', SugarThemeRegistry::current()->getImage("start_off","  border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_START']));
+	$smarty->assign('prev_link_ImagePath', SugarThemeRegistry::current()->getImage("previous_off","border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_PREVIOUS']));
+	$smarty->assign('end_link_ImagePath', SugarThemeRegistry::current()->getImage("end_off","border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_END']));
+	$smarty->assign('next_link_ImagePath', SugarThemeRegistry::current()->getImage("next_off","border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_NEXT']));
  	$smarty->assign('start_link_disabled', true);
  	$smarty->assign('prev_link_disabled', true);
  	$smarty->assign('end_link_disabled', true);
@@ -108,20 +108,20 @@ function template_pagination(&$args) {
 	$next = $reporter->row_end + $reporter->report_offset;
  	if($reporter->report_offset > 0){
  		$prev = $reporter->report_offset - $reporter->report_max;
-	 	$smarty->assign('start_link_ImagePath', SugarThemeRegistry::current()->getImage("start","alt='".$app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'"));
+	 	$smarty->assign('start_link_ImagePath', SugarThemeRegistry::current()->getImage("start","  border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_START']));
 	 	$smarty->assign('start_link_onclick' , "onClick=javascript:set_offset(0);");
 	 	$smarty->assign('start_link_disabled', false);
-		$smarty->assign('prev_link_ImagePath', SugarThemeRegistry::current()->getImage("previous","alt='".$app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'"));
+		$smarty->assign('prev_link_ImagePath', SugarThemeRegistry::current()->getImage("previous","border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_PREVIOUS']));
 	 	$smarty->assign('prev_link_onclick' , "onClick=javascript:set_offset($prev);");
 	 	$smarty->assign('prev_link_disabled', false);
  	} // if
 	if($next < $reporter->total_count){
  		$end = ceil(($reporter->total_count/ $reporter->report_max) -1) * $reporter->report_max;
-		$smarty->assign('end_link_ImagePath', SugarThemeRegistry::current()->getImage("end","alt='".$app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'"));
+		$smarty->assign('end_link_ImagePath', SugarThemeRegistry::current()->getImage("end","  border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_END']));
  		$smarty->assign('end_link_disabled', false);
 	 	$smarty->assign('end_link_onclick' , "onClick=javascript:set_offset($end);");
 		
-		$smarty->assign('next_link_ImagePath', SugarThemeRegistry::current()->getImage("next","alt='".$app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'"));
+		$smarty->assign('next_link_ImagePath', SugarThemeRegistry::current()->getImage("next"," border='0' align='absmiddle'",null,null,'.gif',$app_strings['LNK_LIST_NEXT']));
  		$smarty->assign('next_link_disabled', false);
 	 	$smarty->assign('next_link_onclick' , "onClick=javascript:set_offset($next);");
 		
@@ -1438,7 +1438,7 @@ function template_list_row1(&$column_row,$equal_width=false, $isSummaryComboHead
 	<?php 
     $count = 0;
 		if ($isSummaryComboHeader) {
-			echo '<td><span id="img_'.$divId.'"><a href="javascript:expandCollapseComboSummaryDiv(\''.$divId.'\')"><img width="8" height="8" border="0" absmiddle="" alt="Show" src="'.SugarThemeRegistry::current()->getImageURL('advanced_search.gif').'"/></a></span></td>';
+			echo '<td><span id="img_'.$divId.'"><a href="javascript:expandCollapseComboSummaryDiv(\''.$divId.'\')">'.SugarThemeRegistry::current()->getImage("advanced_search", 'border="0" absmiddle=""', 8, 8, ".gif", $mod_strings['LBL_SHOW']).'"</a></span></td>';
 		}      
     
     foreach ($column_row['cells'] as $cell) { 

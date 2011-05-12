@@ -1504,7 +1504,7 @@ function convert_id($string)
          ) ,$string);
 }
 
-function get_image($image,$other_attributes,$width="",$height=""){
+function get_image($image,$other_attributes,$width="",$height="",$alt){
 	global $png_support;
 
 	if ($png_support == false)
@@ -1517,7 +1517,7 @@ function get_image($image,$other_attributes,$width="",$height=""){
 		$size=getimagesize($image.'.'.$ext);
 		if ($width == "") { $width = $size[0];}
 		if ($height == "") { $height = $size[1];}
-		$out= "<img src='$image.$ext' width='".$width."' height='".$height."' $other_attributes>";
+		$out= "<img src='$image.$ext' width='".$width."' alt='".$alt."' height='".$height."' $other_attributes>";
 	}else if(substr_count($image,'themes') > 0){
 		$path = explode('/',$image);
 		$path[1] = 'Default';
@@ -1527,7 +1527,7 @@ function get_image($image,$other_attributes,$width="",$height=""){
 			$size=getimagesize($image.'.'.$ext);
 			if ($width == "") { $width = $size[0];}
 			if ($height == "") { $height = $size[1];}
-			$out= "<img src='$image.$ext' width='".$width."' height='".$height."' $other_attributes>";
+			$out= "<img src='$image.$ext' width='".$width."' alt='".$alt."' height='".$height."' $other_attributes>";
 		}
 
 	}

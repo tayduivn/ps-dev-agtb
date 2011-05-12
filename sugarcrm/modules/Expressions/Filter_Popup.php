@@ -131,11 +131,11 @@ $output_array = $action_object->build_field_selector($_REQUEST['field_num'], $_R
 			$form->assign('SET_DISABLED', "Yes");
 		}
 		
+*/
+	//$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','border="0"',null,null,'.gif',$app_strings['LNK_ADVANCED_SEARCH']));
+	//$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','border="0"',null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
 		
-	$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','alt="'.$app_strings['LNK_ADVANCED_SEARCH'].'"  border="0"'));
-	$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','alt="'.$app_strings['LNK_BASIC_SEARCH'].'"  border="0"'));
-		
-
+/*
 $form->assign("MODULE_NAME", $currentModule);
 //$form->assign("FORM", $_REQUEST['form']);
 $form->assign("GRIDLINE", $gridline);

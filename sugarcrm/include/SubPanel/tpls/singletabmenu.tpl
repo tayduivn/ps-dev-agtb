@@ -73,7 +73,7 @@
 {if !empty($moreMenu)}
 	<li>
 		<div id='MorePanelHandle' onmouseover='SUGAR.subpanelUtils.menu.tbspButtonMouseOver(this.id,"","",0);'>
-			<img src="{sugar_getimagepath file='blank.gif'}" alt="more" border="0" height="16" width="16" />
+			{sugar_getimage name="blank" ext=".gif" width="16" height="16" alt="{$app_strings.LBL_MORE}" other_attributes='border="0" '}
 		</div>
 	</li>
 {/if}

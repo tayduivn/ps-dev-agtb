@@ -55,7 +55,7 @@
 {if empty({{sugarvar key='value' string=true}}) {{if !empty($vardef.calculated)}}&& false{{/if}}}
 {else}
 <a href="javascript:SUGAR.image.lightbox(Dom.get('img_{{$idname}}').src)">
-<img 
+<img
 	id="img_{{$idname}}" 
 	name="img_{{$idname}}" 	
 	{{if empty($vardef.calculated)}}
@@ -86,7 +86,7 @@
 
 ></a>
 {{if empty($vardef.calculated)}}
-<img 
+<img
 	id="bt_remove_{{$idname}}" 
 	name="bt_remvoe_{{$idname}}" 
 	alt="{sugar_translate label='LBL_REMOVE'}"

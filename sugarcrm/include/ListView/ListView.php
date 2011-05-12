@@ -230,7 +230,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
     global $click_bg;
 
     $this->xTemplate->assign("BG_HILITE", $hilite_bg);
-    $this->xTemplate->assign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" alt=\"\" />");
+    $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
     $oddRow = true;
     $count = 0;
@@ -1066,15 +1066,15 @@ function getUserVariable($localVarName, $varName) {
             $GLOBALS['log']->debug("Offsets: (start, previous, next, last)(0, $previous_offset, $next_offset, $last_offset)");
 
             if(0 == $current_offset) {
-                $start_link = "<button type='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("start_off","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
-                $previous_link = "<button type='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("previous_off","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                $start_link = "<button type='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("start_off","aborder='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
+                $previous_link = "<button type='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("previous_off","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
             } else {
                 if($this->multi_select_popup) {// nav links for multiselect popup, submit form to save checks.
-                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='javascript:save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("start","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
-                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='javascript:save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("previous","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='javascript:save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("start","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
+                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='javascript:save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("previous","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
                 } elseif($this->shouldProcess) {
-                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='location.href=\"$start_URL\"; sListView.save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("start","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
-                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='location.href=\"$previous_URL\"; sListView.save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("previous","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick='location.href=\"$start_URL\"; sListView.save_checks(0, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("start","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
+                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick='location.href=\"$previous_URL\"; sListView.save_checks($previous_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("previous","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
                 } else {
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $start_URL)){
@@ -1082,7 +1082,7 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick ="'location.href=\"$start_URL\";'";
                     }
-                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("start","alt='".$this->local_app_strings['LNK_LIST_START']."'  border='0' align='absmiddle'")."</button>";
+                    $start_link = "<button type='button' class='button' name='listViewStartButton' title='{$this->local_app_strings['LNK_LIST_START']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("start","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_START'])."</button>";
 
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $previous_URL)){
@@ -1090,23 +1090,23 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick = "'location.href=\"$previous_URL\";'";
                     }
-                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("previous","alt='".$this->local_app_strings['LNK_LIST_PREVIOUS']."'  border='0' align='absmiddle'")."</button>";
+                    $previous_link = "<button type='button' class='button' name='listViewPrevButton' title='{$this->local_app_strings['LNK_LIST_PREVIOUS']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("previous","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_PREVIOUS'])."</button>";
                 }
             }
 
             if($last_offset <= $current_offset) {
-                $end_link = "<button type='button' name='listViewEndButton' title='{$this->local_app_strings['LNK_LIST_END']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("end_off","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
-                $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("next_off","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                $end_link = "<button type='button' name='listViewEndButton' title='{$this->local_app_strings['LNK_LIST_END']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("end_off","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
+                $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' disabled>".SugarThemeRegistry::current()->getImage("next_off","aborder='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
             } else {
                 if($this->multi_select_popup) { // nav links for multiselect popup, submit form to save checks.
-                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='javascript:save_checks($last_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("end","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
+                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='javascript:save_checks($last_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("end","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
                     if(!empty($sugar_config['disable_count_query'])) {
                         $end_link = '';
                     }
-                    $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' onClick='javascript:save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("next","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                    $next_link = "<button type='button' name='listViewNextButton' title='{$this->local_app_strings['LNK_LIST_NEXT']}' class='button' onClick='javascript:save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("next","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
                 } elseif($this->shouldProcess) {
-                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='location.href=\"$end_URL\"; sListView.save_checks(\"end\", \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("end","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
-                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick='location.href=\"$next_URL\"; sListView.save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("next","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick='location.href=\"$end_URL\"; sListView.save_checks(\"end\", \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("end","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
+                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick='location.href=\"$next_URL\"; sListView.save_checks($next_offset, \"{$moduleString}\");'>".SugarThemeRegistry::current()->getImage("next","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
                 } else {
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $next_URL)){
@@ -1114,7 +1114,7 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick ="'location.href=\"$next_URL\";'";
                     }
-                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("next","alt='".$this->local_app_strings['LNK_LIST_NEXT']."'  border='0' align='absmiddle'")."</button>";
+                    $next_link = "<button type='button' name='listViewNextButton' class='button' title='{$this->local_app_strings['LNK_LIST_NEXT']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("next","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_NEXT'])."</button>";
 
                     $onClick = '';
                     if(0 != preg_match('/javascript.*/', $end_URL)){
@@ -1122,7 +1122,7 @@ function getUserVariable($localVarName, $varName) {
                     }else{
                         $onClick = "'location.href=\"$end_URL\";'";
                     }
-                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("end","alt='".$this->local_app_strings['LNK_LIST_END']."'  border='0' align='absmiddle'")."</button>";
+                    $end_link = "<button type='button' name='listViewEndButton' class='button' title='{$this->local_app_strings['LNK_LIST_END']}' onClick=".$onClick.">".SugarThemeRegistry::current()->getImage("end","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LNK_LIST_END'])."</button>";
 
                 }
             }
@@ -1138,14 +1138,13 @@ function getUserVariable($localVarName, $varName) {
                 . "<a style=\'width: 150px\' name=\"selectall\" class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'sListView.check_entire_list(document.MassUpdate, \"mass[]\",true,{$row_count});\' href=\'#\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}&nbsp;&#x28;{$row_count}&#x29;&#x200E;</a>"
                 . "<a style=\'width: 150px\' name=\"deselect\" class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'sListView.clear_all(document.MassUpdate, \"mass[]\", false);\' href=\'#\'>{$this->local_app_strings['LBL_LISTVIEW_NONE']}</a>"
                 . "', CENTER, '"
-                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 src=" . SugarThemeRegistry::current()->getImageURL('close_inline.gif')
-                . ">', WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
+                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, " . SugarThemeRegistry::current()->getImage('close_inline', 'border=0', null, null, ".gif", $app_strings['LBL_CLOSEINLINE']) . ", WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
                 . "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass');
                 }
                 </script>";
 
             if($this->show_select_menu) {
-                $select_link = "<a id='select_link' onclick='return select_overlib();' href=\"#\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;<img src='".SugarThemeRegistry::current()->getImageURL('MoreDetail.png')."' width='11' height='7' border='0''>"."</a>";
+                $select_link = "<a id='select_link' onclick='return select_overlib();' href=\"#\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;".SugarThemeRegistry::current()->getImage('MoreDetail', 'border=0', 11, 7, '.png', $app_strings['LBL_MOREDETAIL'])."</a>";
             } else {
                 $select_link = "&nbsp;";
             }
@@ -1157,13 +1156,13 @@ function getUserVariable($localVarName, $varName) {
                 . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' onclick=\'return sListView.send_form(false, \"{$_REQUEST['module']}\", \"export.php\", \"{$this->local_app_strings['LBL_LISTVIEW_NO_SELECTED']}\")\' href=\'#\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_CURRENT']}</a>"
                 . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' href=\'export.php?module={$_REQUEST['module']}\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}</a>"
                 . "', CAPTION, '" . $this->local_app_strings['LBL_EXPORT']
-                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
+                . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<!--not_in_theme!--><img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
                 . "close.gif>', WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
                 . "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olOptionsCloseFontClass');
                 }
                 </script>";
     */
-            //$export_link = "<a id='export_link' onclick='return export_overlib();' href=\"#\">".SugarThemeRegistry::current()->getImage("export","alt='".$this->local_app_strings['LBL_EXPORT']."'  border='0' align='absmiddle'")."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
+            //$export_link = "<a id='export_link' onclick='return export_overlib();' href=\"#\">".SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'",null,null,'.gif',$this->local_app_strings['LBL_EXPORT'])."&nbsp;".$this->local_app_strings['LBL_EXPORT']."</a>";
             $export_link = '<input class="button" type="button" value="'.$this->local_app_strings['LBL_EXPORT'].'" ' .
                     'onclick="return sListView.send_form(true, \''.$_REQUEST['module'].'\', \'index.php?entryPoint=export\',\''.$this->local_app_strings['LBL_LISTVIEW_NO_SELECTED'].'\')">';
 
@@ -1185,7 +1184,7 @@ function getUserVariable($localVarName, $varName) {
                         . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' href=\'index.php?action=index&module=MailMerge\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_CURRENT']}</a>"
                         . "<a style=\'width: 150px\' class=\'menuItem\' onmouseover=\'hiliteItem(this,\"yes\");\' onmouseout=\'unhiliteItem(this);\' href=\'index.php?action=index&module=MailMerge&entire=true\'>{$this->local_app_strings['LBL_LISTVIEW_OPTION_ENTIRE']}</a>"
                         . "', CAPTION, '" . $this->local_app_strings['LBL_MAILMERGE']
-                        . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
+                        . "', STICKY, MOUSEOFF, 3000, CLOSETEXT, '<!--not_in_theme!--><img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=" . $this->local_image_path
                         . "close.gif>', WIDTH, 150, CLOSETITLE, '" . $this->local_app_strings['LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'] . "', CLOSECLICK, FGCLASS, 'olOptionsFgClass', "
                         . "CGCLASS, 'olOptionsCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olOptionsCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');
                 }
@@ -1335,7 +1334,7 @@ function getUserVariable($localVarName, $varName) {
 
 
         $this->xTemplate->assign('BG_HILITE', $hilite_bg);
-        $this->xTemplate->assign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" alt=\"\" />");
+        $this->xTemplate->assign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
     //$this->xTemplate->assign("BG_CLICK", $click_bg);
         $oddRow = true;
         $count = 0;
@@ -1604,7 +1603,7 @@ function getUserVariable($localVarName, $varName) {
             if($isSugarBean) {
                 $seed->parse_additional_headers($this->xTemplate, $xTemplateSection);
             }
-            $this->xTemplateAssign('CHECKALL', "<img src='".SugarThemeRegistry::current()->getImageURL('blank.gif')."' width=\"1\" height=\"1\" al=\"\">");
+            $this->xTemplateAssign('CHECKALL', SugarThemeRegistry::current()->getImage('blank', '', 1, 1, ".gif", ''));
 
             // Process the  order by before processing the pro_nav.  The pro_nav requires the order by values to be set
             $this->processOrderBy($html_varName);
@@ -1634,7 +1633,7 @@ function getUserVariable($localVarName, $varName) {
     function getArrowStart() {
         $imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow.gif"));
 
-        return "&nbsp;<img border='0' src='".$imgFileParts['dirname']."/".$imgFileParts['filename']."";
+        return "&nbsp;<!--not_in_theme!--><img border='0' src='".$imgFileParts['dirname']."/".$imgFileParts['filename']."";
     }
 
     function getArrowUpDownStart($upDown) {
@@ -1643,7 +1642,7 @@ function getUserVariable($localVarName, $varName) {
         if (!isset($upDown) || empty($upDown)) {
             $upDown = "";
         }
-        return "&nbsp;<img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
+        return "&nbsp;<!--not_in_theme!--><img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
     }
 
     function getArrowEnd() {

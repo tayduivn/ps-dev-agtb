@@ -71,7 +71,7 @@
                     {assign var="module_image" value=$SUBPANEL}
                     {assign var="dotgif" value=".gif"}
                     <a href="index.php?module={$SUBPANEL}&record={$ID}&action=wirelessdetail">
-                        <img border=0 src="{sugar_getimagepath file=$module_image$dotgif}">&nbsp;
+                        {sugar_getimage name=$module_image$dotgif alt=$module_image other_attributes='border="0" '}&nbsp;
                         {$NAME}
                     </a><br />
 				</li>
