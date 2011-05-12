@@ -51,8 +51,10 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_TestCase
     	 $_REQUEST = array();
     	 $_REQUEST['advanced'] = 'false';
     	 $unifiedSearchAdvanced->query_stirng = 'blah';
+         ob_start();
     	 $unifiedSearchAdvanced->search();
-    	 
+    	 ob_clean();
+        
     	 global $current_user;
     	 $users_modules = $current_user->getPreference('globalSearch', 'search');
     	 $this->assertTrue(!empty($users_modules), 'Assert we have set the user preferences properly');

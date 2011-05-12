@@ -1004,32 +1004,9 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-
-        //BEGIN SUGARCRM flav!=sales ONLY
-        //if bean_name is Case then use aCase
-        if($bean_name=="Case")
-            $bean_name = "aCase";
-        //END SUGARCRM flav!=sales ONLY
-
-        //add a references to bean_name if it doe not exist aleady.
-        if (!(class_exists($bean_name)))
-        {
-
-            if (isset($GLOBALS['beanList']) && isset($GLOBALS['beanFiles']))
-            {
-                global $beanFiles;
-            }
-            else
-            {
-
-            }
-            $bean_file=$beanFiles[$bean_name];
-            include_once($bean_file);
-        }
-
         $this->load_relationship($field_name);
 
-        return $this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where);
+        return $this->$field_name->getBeans();
     }
 
     /**
@@ -1396,6 +1373,7 @@ class SugarBean
             $this->team_id = $current_user->team_id;
             $usedDefaultTeam = true;
         }
+        //END SUGARCRM flav=pro ONLY
 
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
@@ -1403,12 +1381,11 @@ class SugarBean
         if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']))
         {
             $GLOBALS['saving_relationships'] = true;
-        //END SUGARCRM flav=pro ONLY
         // let subclasses save related field changes
             $this->save_relationship_changes($isUpdate);
-        //BEGIN SUGARCRM flav=pro ONLY
             $GLOBALS['saving_relationships'] = false;
         }
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->updateCalculatedFields();
         //END SUGARCRM flav=pro ONLY
         if($isUpdate && !$this->update_date_entered)
