@@ -130,7 +130,7 @@ class IBMDB2Manager  extends DBManager
         //"select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
         "inline_keys" => true,
         //"case_sensitive" => false, // DB2 is case insensitive by default
-        "fulltext" => true, // DB2 supports this though it needs to be initialized
+        //"fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
         "auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
         "limit_subquery" => true,
     );
@@ -1001,8 +1001,10 @@ EOQ;
     }
     private static $indexTypeMap = array('D' => 'index', 'P' => 'primary', 'U' => 'unique');
 
-    /**
-     * @see DBManager::add_drop_constraint()
+
+    /**~
+     * @see DBHelper::add_drop_constraint()
+     * Note: Tested all constructs pending feedback from IBM on text search index creation from code
      */
     public function add_drop_constraint($table, $definition, $drop = false)
     {
@@ -1011,45 +1013,60 @@ EOQ;
         $name         = $definition['name'];
         $sql          = '';
 
+        /**
+         * DB2 just as Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY
+         * and UNIQUE (which can defined inline with the CREATE TABLE)
+         */
         switch ($type){
         // generic indices
         case 'index':
         case 'alternate_key':
         case 'clustered':
             if ($drop)
-                $sql = "DROP INDEX {$name} ";
+                $sql = "DROP INDEX {$name}";
             else
                 $sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
             break;
         // constraints as indices
         case 'unique':
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP INDEX $name";
+                $sql = "ALTER TABLE {$table} DROP UNIQUE {$name}";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT UNIQUE {$name} ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE ({$fields})";
             break;
         case 'primary':
             if ($drop)
                 $sql = "ALTER TABLE {$table} DROP PRIMARY KEY";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT PRIMARY KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fields})";
             break;
         case 'foreign':
             if ($drop)
                 $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT FOREIGN KEY {$name} ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FOREIGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
             break;
+        case 'fulltext':
+            // Until we have a better place to put this, here is a reference to how to install text search
+            // http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.ts.doc/doc/c0053115.html
+            // However there doesn't seem to be a programmatic way to create the text search indexes.
+            // Pending reply from IBM this will be unsupported.
+
+                break;
         }
         return $sql;
     }
+
 
 	/**+
      * @see DBManager::full_text_indexing_installed()
      */
     public function full_text_indexing_installed()
     {
-		return true; // Part of DB2 since version 9.5 (http://www.ibm.com/developerworks/data/tutorials/dm-0810shettar/index.html)
+		return false;
+		// Part of DB2 since version 9.5 (http://www.ibm.com/developerworks/data/tutorials/dm-0810shettar/index.html)
+        // However there doesn't seem to be a programmatic way to create the text search indexes.
+        // Pending reply from IBM marking this as unsupported.
 	}
 
     /**
