@@ -9,12 +9,13 @@ from pymongo import json_util
 consumer_key = 'CONSUMERKEY'
 consumer_secret = 'CONSUMERSECRET'
 
-url = 'http://localhost:8888/sugarent/service/v3/rest.php'
-urld = 'http://localhost:8888/sugarent/service/v3/rest.php?start_debug=1&debug_port=10137&debug_session_id=1012800&debug_host=127.0.0.1'
+url = 'http://localhost:8888/sugar63/service/v5/rest.php'
+urld = 'http://localhost:8888/sugar63/service/v5/rest.php?start_debug=1&debug_port=10137&debug_session_id=1012820&debug_host=127.0.0.1&debug_stop=1'
 
 restparams = {
                 'input_type': 'json',
                 'request_type': 'json',
+                'response_type': 'json',
                 'method':'',
             }
 
@@ -29,10 +30,12 @@ print content
 
 restparams['method'] = 'get_available_modules'
 resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
+print resp
 print content
 
 restparams['method'] = 'get_entry_list'
 param_string = {0:False, 1:'Calls', 2: '', 3:'', 4:0}
 restparams['rest_data'] = json.dumps(param_string,sort_keys=False, default=json_util.default)
 resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
+print resp
 print content

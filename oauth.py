@@ -6,7 +6,7 @@ import urllib
 consumer_key = 'CONSUMERKEY'
 consumer_secret = 'CONSUMERSECRET'
 
-url = 'http://localhost:8888/sugarent/service/v3/rest.php'
+url = 'http://localhost:8888/sugar63/service/v5/rest.php'
 
 restparams = {
                 'input_type': 'json',
@@ -24,6 +24,8 @@ client = oauth.Client(consumer)
 restparams['method'] = 'oauth_request_token'
 resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
 if resp['status'] != '200':
+    print resp
+    print content
     raise Exception("Invalid response %s." % resp['status'])
 
 request_token = dict(urlparse.parse_qsl(content))
