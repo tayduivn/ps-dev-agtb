@@ -406,25 +406,33 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 
 	} else {
 	        $mail_objects = array();
-			foreach($address_array['to'] as $key => $user_info_array){
+			foreach($address_array['to'] as $key => $user_info_array)
+			{
 			    $mail_object = new SugarPHPMailer;
 			    $mail_object->AddAddress($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-			    if($invite_person == true) populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-			    $mail_objects[] = array($mail_object,$user_info_array['notify_user']);
+			    if($invite_person == true) 
+			    {
+			    	populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+			    }
+
 			}
 
 			foreach($address_array['cc'] as $key => $user_info_array){
 				$mail_object = new SugarPHPMailer;
-			    $mail_object->AddCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-				if($invite_person == true) populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-				$mail_objects[] = array($mail_object,$user_info_array['notify_user']);
+				$mail_object->AddCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+				if($invite_person == true)
+				{
+					populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+				}
 			}
 
 			foreach($address_array['bcc'] as $key => $user_info_array){
 				$mail_object = new SugarPHPMailer;
-			    $mail_object->AddBCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-				if($invite_person == true) populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-				$mail_objects[] = array($mail_object,$user_info_array['notify_user']);
+				$mail_object->AddBCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+				if($invite_person == true) 
+				{
+					populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+				}
 			}
 
 
@@ -446,19 +454,18 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 			}
 
 			//fill in the mail object with all the administrative settings and configurations
-			foreach ( $mail_objects as $row_data ) {
-                list($mail_object,$notify_user_object) = $row_data;
-                setup_mail_object($mail_object, $admin);
-                $error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, '', $notify_user_object);
-                $mail_object->prepForOutbound();
-
-                if($error == false){
-                    if(!$mail_object->Send()) {
-                        $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mail_object->Mailer}), (error: {$mail_object->ErrorInfo})");
-                    }
-                    //end if error is false
-                }
-            }
+			setup_mail_object($mail_object, $admin);
+			$error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array);
+            $mail_object->prepForOutbound();
+            
+			if($error == false)
+			{
+				if(!$mail_object->Send()) 
+				{
+					$GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mail_object->Mailer}), (error: {$mail_object->ErrorInfo})");
+				}
+				//end if error is false
+			}
 
 	//end if else use system defaults or not
 	}
@@ -503,12 +510,12 @@ function setup_mail_object(& $mail_object, & $admin){
 }
 
 
-function create_email_body(& $focus, & $mail_object, & $admin, $alert_msg, $alert_shell_array, $notify_user_id="", $notify_user_object=null){
+function create_email_body(& $focus, & $mail_object, & $admin, $alert_msg, $alert_shell_array, $notify_user_id=""){
 	global $current_language;
 	$mod_strings = return_module_language($current_language, 'WorkFlow');
 	if($alert_shell_array['source_type']=="Custom Template"){
 		//use custom template
-		$error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id, $notify_user_object);
+		$error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id);
 		return $error;
 	//use custom template
 	}
@@ -632,7 +639,7 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 
 /////////////////////////////////////////Parsing Custom Templates//////////
 
-function fill_mail_object(& $mail_object, & $focus, $template_id, $source_field, $notify_user_id="", $notify_user_object=null){
+function fill_mail_object(& $mail_object, & $focus, $template_id, $source_field, $notify_user_id=""){
 
 
 
@@ -661,24 +668,24 @@ function fill_mail_object(& $mail_object, & $focus, $template_id, $source_field,
  	}
  	if(!empty($template_object->body_html)){
 		$mail_object->IsHTML(true);
-		$mail_object->Body = from_html(parse_alert_template($focus, $template_object->body_html, $notify_user_id, $notify_user_object), true);
-		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id, $notify_user_object)));
+		$mail_object->Body = from_html(parse_alert_template($focus, $template_object->body_html, $notify_user_id), true);
+		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id)));
  	}
  	else{
- 		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id, $notify_user_object)));
+ 		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id)));
  	}
- 	$mail_object->Subject = from_html(parse_alert_template($focus, $template_object->subject, $notify_user_id, $notify_user_object));
+ 	$mail_object->Subject = from_html(parse_alert_template($focus, $template_object->subject, $notify_user_id));
 
 		return false;
 
 //end function fill_mail_object;
 }
 
-function parse_alert_template($focus, $target_body, $notify_user_id="", $notify_user_object=null){
+function parse_alert_template($focus, $target_body, $notify_user_id=""){
 
 	//Parse target body and return an array of components
 	$component_array = parse_target_body($target_body, $focus->module_dir);
-	$parsed_target_body = reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id, $notify_user_object);
+	$parsed_target_body = reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id);
 	return $parsed_target_body;
 
 //end function parse_alert_template
@@ -726,7 +733,7 @@ function parse_target_body($target_body, $base_module){
 }
 
 
-function reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id="", $notify_user_object=null){
+function reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id=""){
 	global $beanList;
 
 	$replace_array = Array();
@@ -789,22 +796,9 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 				//obtain the rel_module object
 				$rel_list = $rel_handler->build_related_list("base");
 				//$rel_list = $focus->get_linked_beans($relationship_name, $bean_name);
-				if(!empty($rel_list[0])){
+				if(!empty($rel_list[0]))
+				{
 					$rel_object = $rel_list[0];
-					// Bug 39408 - Iterate over the list of related objects to see if we can match it to the recipent of
-					//             the email.
-					if(!is_null($notify_user_object)
-					        && $notify_user_object instanceOf SugarBean
-					        && count($rel_list) > 1
-					        ) {
-                        foreach ( $rel_list as $rel_bean ) {
-                            if ( $rel_bean->id == $notify_user_object->id
-                                    && $notify_user_object->object_name == $rel_bean->object_name ) {
-                                $rel_object = $rel_bean;
-                                break;
-                            }
-                        }
-                    }
 					$rel_module_present = true;
 				} else {
 					$rel_module_present = false;
