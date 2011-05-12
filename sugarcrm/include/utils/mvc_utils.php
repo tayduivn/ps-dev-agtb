@@ -323,9 +323,37 @@ function getPrintLink()
 }
 
 
+function ajaxBannedModules(){
+    $bannedModules = array(
+        "Emails",
+        "Administration",
+        "ModuleBuilder",
+    );
+
+    if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){
+        $bannedModules = array_merge($bannedModules, $GLOBALS['sugar_config']['addAjaxBannedModules']);
+    }
+    if(!empty($GLOBALS['sugar_config']['overrideAjaxBannedModules'])){
+        $bannedModules = $GLOBALS['sugar_config']['overrideAjaxBannedModules'];
+    }
+
+    return $bannedModules;
+}
+
 function ajaxLink($url)
 {
-	return "#ajaxUILoc=" . urlencode($url);
+    $match = array();
+    preg_match('/module=([^&]*)/i', $url, $match);
+
+    if(isset($GLOBALS['sugar_config']['disableAjaxUI']) && $GLOBALS['sugar_config']['disableAjaxUI'] == true){
+        return $url;
+    }
+    else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
+        return $url;
+    }
+    else{
+        return "#ajaxUILoc=" . urlencode($url);
+    }
 }
 
 ?>

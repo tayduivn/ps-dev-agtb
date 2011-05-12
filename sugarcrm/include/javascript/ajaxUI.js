@@ -52,49 +52,70 @@ SUGAR.ajaxUI = {
 
     canAjaxLoadModule : function(module)
     {
-        var bannedModules = ['Emails', 'Administration', 'ModuleBuilder'];
-        // Mechanism to allow for overriding or adding to this list
-        if(typeof(SUGAR.addAjaxBannedModules) != 'undefined'){
-            bannedModules.concat(SUGAR.addAjaxBannedModules);
+        // Return false if ajax ui is completely disabled
+        if(typeof(SUGAR.config.disableAjaxUI) != 'undefined' && SUGAR.config.disableAjaxUI == true){
+            return false;
         }
-        if(typeof(SUGAR.overrideAjaxBannedModules) != 'undefined'){
-            bannedModules = SUGAR.overrideAjaxBannedModules;
+        
+        var bannedModules = SUGAR.config.stockAjaxBannedModules;
+        // Mechanism to allow for overriding or adding to this list
+        if(typeof(SUGAR.config.addAjaxBannedModules) != 'undefined'){
+            bannedModules.concat(SUGAR.config.addAjaxBannedModules);
+        }
+        if(typeof(SUGAR.config.overrideAjaxBannedModules) != 'undefined'){
+            bannedModules = SUGAR.config.overrideAjaxBannedModules;
         }
         return bannedModules.indexOf(module) == -1;
     },
 
     loadContent : function(url, params)
     {
-        //Don't ajax load certain modules
-        var module = /module=(\w+)/.exec(url)[1];
-        if (module && SUGAR.ajaxUI.canAjaxLoadModule(module))
+        if(YAHOO.lang.trim(url) != "")
         {
-            YAHOO.util.History.navigate('ajaxUILoc',  url);
-        } else {
-            window.location = url;
+            //Don't ajax load certain modules
+            var module = /module=(\w+)/.exec(url)[1];
+            if (module && SUGAR.ajaxUI.canAjaxLoadModule(module))
+            {
+                YAHOO.util.History.navigate('ajaxUILoc',  url);
+            } else {
+                window.location = url;
+            }
         }
     },
 
     go : function(url, params)
     {
-        //Reset the EmailAddressWidget before loading a new page
-        if (SUGAR.EmailAddressWidget){
-            SUGAR.EmailAddressWidget.instances = {};
-            SUGAR.EmailAddressWidget.count = {};
-        }
+        
+        if(YAHOO.lang.trim(url) != "")
+        {
+            var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
+            if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
+                con.abort(ui.lastCall);
+            }
+            //Reset the EmailAddressWidget before loading a new page
+            if (SUGAR.EmailAddressWidget){
+                SUGAR.EmailAddressWidget.instances = {};
+                SUGAR.EmailAddressWidget.count = {};
+            }
 
-        var module = /module=([^&]*)/.exec(url)[1];
-        var loadLanguageJS = '';
-        if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
-            loadLanguageJS = '&loadLanguageJS=1';
-        }
+            var module = /module=([^&]*)/.exec(url)[1];
+            //If we can't ajax load the module (blacklisted), set the URL directly.
+            if (!ui.canAjaxLoadModule(module)) {
+                window.location = url;
+                return;
+            }
+            var loadLanguageJS = '';
+            if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
+                loadLanguageJS = '&loadLanguageJS=1';
+            }
 
-        if (!/action=ajaxui/.exec(window.location))
-            window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
-        else {
-            YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
-                success: SUGAR.ajaxUI.callback
-            });
+            if (!/action=ajaxui/.exec(window.location))
+                window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
+            else {
+                ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
+                    success: SUGAR.ajaxUI.callback
+                });
+            }
         }
     },
 
