@@ -956,6 +956,15 @@ if(window.addEventListener){
     window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
 }
 {/literal}
+{if !$IS_GROUP && !$IS_PORTALONLY}
+{literal}
+if(window.addEventListener){
+    window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
+}else{
+    window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
+}
+{/literal}
+{/if}
 {$getNameJs}
 {$getNumberJs}
 {$confirmReassignJs}

@@ -653,7 +653,7 @@ function selectDoc() {
 	URL="index.php?module=EmailTemplates&action=PopupDocumentsCampaignTemplate&to_pdf=true&target=" ;
 	windowName = 'selectDocument';
 	windowFeatures = 'width=800' + ',height=600' + ',resizable=1,scrollbars=1';
-	win = SUGAR.utils.openWindow(URL, windowName, windowFeatures);
+	win = SUGAR.util.openWindow(URL, windowName, windowFeatures);
 	if(window.focus) {
 		// put the focus on the popup if the browser supports the focus() method
 		win.focus();
