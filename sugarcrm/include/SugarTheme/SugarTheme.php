@@ -586,6 +586,7 @@ EOHTML;
      * @param  string $other_attributes optional, other attributes to add to the image tag, not cached
      * @param  string $width optional, defaults to the actual image's width
      * @param  string $height optional, defaults to the actual image's height
+     * @param  string $alt image alt attribute
      * @return string HTML image tag
      */
     public function getImage(
@@ -593,9 +594,23 @@ EOHTML;
         $other_attributes = '',
         $width = null,
         $height = null,
-		$ext = '.gif'
-        )
+		$ext = '.gif',
+        $alt = ''
+    )
     {
+        if ($alt == -1){
+            $debug = debug_backtrace();
+            $caller = $debug[0]["file"];
+            if (strstr ("/modules/", $caller) !== false) {
+                debug_print_backtrace();
+
+                echo "image name: " . $imageName . "<br />";
+                echo "other attrs: " . $other_attributes . "<br />";
+                echo "alt:" . $alt . "<br />";
+                 die();
+            }
+        }
+
         static $cached_results = array();
 
         $imageName .= $ext;
@@ -609,19 +624,19 @@ EOHTML;
         $size = getimagesize($imageURL);
         if ( is_null($width) )
             $width = $size[0];
-        if ( is_null($height) )
-            $height = $size[1];
 
+        if ( is_null($height) ) 
+            $height = $size[1];        
         // Cache everything but the other attributes....
-        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
-
+        if ($alt == -1) $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
+        else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
+        
         return $cached_results[$imageName] . "$other_attributes />";
     }
 
     /**
      * Returns the URL for an image in the current theme. If not found in the current theme, will revert
      * to looking in the base theme.
-     *
      * @param  string $imageName image file name
      * @param  bool   $addJSPath call getJSPath() with the results to add some unique image tracking support
      * @return string path to image
@@ -629,8 +644,7 @@ EOHTML;
     public function getImageURL(
         $imageName,
         $addJSPath = true
-        )
-    {
+        ){
         if ( isset($this->_imageCache[$imageName]) ) {
             if ( $addJSPath )
                 return getJSPath($this->_imageCache[$imageName]);

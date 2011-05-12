@@ -139,7 +139,7 @@
         {$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}
         </td>
         <td width='35%' >
-            <img id="company_logo_image" src='{$company_logo}' height="40" width="212">
+            <img id="company_logo_image" src='{$company_logo}' alt="{$mod_strings.LBL_LOGO}" height="40" width="212">
         </td>
         //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
         <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
@@ -416,7 +416,7 @@ addToValidateMoreThan('ConfigureSettings', 'list_max_entries_per_subpanel', 'int
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
         <input type="file" id="my_file_company" name="file_1" size="20" onchange="uploadCheck(false)"/>
-        <img id="loading_img_company" alt="loading..." src="{sugar_getimagepath file='sqsWait.gif'}" style="display:none">
+        {sugar_getimage name="sqsWait" ext=".gif" alt="{$mod_strings.LBL_LOADING}" other_attributes='id="loading_img_company" style="display:none" '}
     </form>
 </div>
 {literal}

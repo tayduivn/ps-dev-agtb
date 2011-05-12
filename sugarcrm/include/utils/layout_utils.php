@@ -83,7 +83,7 @@ EOHTML;
             if ($_REQUEST['action'] != "EditView") {
                 $the_form .= <<<EOHTML
     <a href='index.php?{$GLOBALS['request_string']}' class='utilsLink'>
-    <img src='{$printImageURL}' alt='Print' border='0' align='absmiddle'>
+    <img src='{$printImageURL}' alt='{$app_strings["LBL_PRINT"]}' border='0' align='absmiddle'>
     </a>&nbsp;
     <a href='index.php?{$GLOBALS['request_string']}' class='utilsLink'>
     {$app_strings['LNK_PRINT']}
@@ -122,7 +122,7 @@ EOHTML;
             if ($_REQUEST['action'] != "EditView") {
                 $the_form .= <<<EOHTML
     <a href='index.php?{$GLOBALS['request_string']}' class='utilsLink'>
-    <img src='{$printImageURL}' alt='Print' border='0' align='absmiddle'>
+    <img src='{$printImageURL}' alt='{$app_strings['LBL_PRINT']}' border='0' align='absmiddle'>
     </a>&nbsp;
     <a href='index.php?{$GLOBALS['request_string']}' class='utilsLink'>
     {$app_strings['LNK_PRINT']}</a>
@@ -132,7 +132,7 @@ EOHTML;
     &nbsp;
     <a href='index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugar_version}&edition={$sugar_flavor}&lang={$current_language}&help_module={$current_module}&help_action={$current_action}&key={$server_unique_key}'
        class='utilsLink' target='_blank'>
-    <img src='{$helpImageURL}' alt='Help' border='0' align='absmiddle'>
+    <img src='{$helpImageURL}' alt='{$app_strings['LBL_HELP']}' border='0' align='absmiddle'>
     </a>&nbsp;
     <a href='index.php?module=Administration&action=SupportPortal&view=documentation&version={$sugar_version}&edition={$sugar_flavor}&lang={$current_language}&help_module={$current_module}&help_action={$current_action}&key={$server_unique_key}'
         class='utilsLink' target='_blank'>{$app_strings['LNK_HELP']}</a>
@@ -181,15 +181,13 @@ function get_module_title(
     }
     if (!empty($iconPath)) {
     	if (SugarThemeRegistry::current()->directionality == "ltr") {
-	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
-	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
+	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
 	        $the_title .= ($count >= 1) ? SugarView::getBreadCrumbSymbol() : "";
 	        $the_title .=  $module_title;	
     	} else {
     		$the_title .= $module_title;
     		$the_title .= ($count > 1) ? SugarView::getBreadCrumbSymbol() : "";
-    		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " 
-	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
+    		$the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' "  . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
     	}
     } else {
 		$the_title .= $module_title;
@@ -263,8 +261,7 @@ function getClassicModuleTitle(
     }
     if (!empty($iconPath)) {
     	$url = (!empty($index_url_override)) ? $index_url_override : "index.php?module={$module}&action=index";
-    	array_unshift ($params,"<a href='{$url}'><img src='{$iconPath}' " 
-	                    . "alt='".$module."' title='".$module."' align='absmiddle'></a>");
+    	array_unshift ($params,"<a href='{$url}'><img src='{$iconPath}' ". "alt='".$module."' title='".$module."' align='absmiddle'></a>");
 	}
 	
 	$new_params = array();

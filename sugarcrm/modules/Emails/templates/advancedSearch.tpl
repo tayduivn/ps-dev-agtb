@@ -55,7 +55,7 @@
 		<td class="advancedSearchTD" style="padding-bottom: 2px">
 			{$app_strings.LBL_EMAIL_SEARCH_DATE_FROM}:&nbsp;<i>({$dateFormatExample})</i><br/>
 			<input name='searchDateFrom' id='searchDateFrom' onblur="parseDate(this, '{$dateFormat}');" maxlength='10' size='11' value="" type="text">&nbsp;
-			<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$app_strings.LBL_ENTER_DATE}" id="searchDateFrom_trigger" align="absmiddle">
+			{sugar_getimage name="jscalendar" ext=".gif" alt="{$app_strings.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="searchDateFrom_trigger" '}
 		</td>
 	</tr>
 
@@ -63,7 +63,7 @@
 		<td class="advancedSearchTD">
 			{$app_strings.LBL_EMAIL_SEARCH_DATE_UNTIL}:&nbsp;<i>({$dateFormatExample})</i><br/>
 			<input name='searchDateTo' id='searchDateTo' onblur="parseDate(this, '{$dateFormat}');" maxlength='10' size='11' value="" type="text">&nbsp;
-			<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$app_strings.LBL_ENTER_DATE}" id="searchDateTo_trigger" align="absmiddle">		
+			{sugar_getimage name="jscalendar" ext=".gif" alt="{$app_strings.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="searchDateTo_trigger" '}		
 		</td>
 	</tr>
 

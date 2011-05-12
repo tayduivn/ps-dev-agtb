@@ -32,10 +32,10 @@
     {foreach from=$moduleTopMenu item=module key=name name=moduleList}
     {if $name == $MODULE_TAB}
     <li class="noBorder">
-        <span class="currentTabLeft">&nbsp;</span><span class="currentTab">{sugar_link id="moduleTab_$name" module=$name}&nbsp;<img src="{sugar_getimagepath file="advanced_search.gif"}" id="moduleTabMenu_$name" /></span><span class="currentTabRight">&nbsp;</span>
+        <span class="currentTabLeft">&nbsp;</span><span class="currentTab">{sugar_link id="moduleTab_$name" module=$name}&nbsp;{sugar_getimage name="advanced_search" ext=".gif" other_attributes='id="moduleTabMenu_$name" '}</span><span class="currentTabRight">&nbsp;</span>
     {else}
     <li>
-        <span class="notCurrentTabLeft">&nbsp;</span><span class="notCurrentTab">{sugar_link id="moduleTab_$name" module=$name}&nbsp;<img src="{sugar_getimagepath file="advanced_search.gif"}" id="moduleTabMenu_$name" /></span><span class="notCurrentTabRight">&nbsp;</span>
+        <span class="notCurrentTabLeft">&nbsp;</span><span class="notCurrentTab">{sugar_link id="moduleTab_$name" module=$name}&nbsp;{sugar_getimage name="advanced_search" ext=".gif" other_attributes='id="moduleTabMenu_$name" '}</span><span class="notCurrentTabRight">&nbsp;</span>
     {/if}
     </li>
     {/foreach}

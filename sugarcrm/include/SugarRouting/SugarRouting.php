@@ -777,7 +777,8 @@ class SugarRouting {
 		$ret .= "<a class='listViewThLinkS1' href='javascript:SUGAR.routing.editRule(\"{$rule['id']}\")'>{$rule['name']}</a>";
 		$ret .= "</td>";
 		$ret .= "<td style='padding:2px;' id='remove{$rule['id']}'>";
-		$ret .= "<a class='listViewThLinkS1' href='javascript:SUGAR.routing.ui.deleteRule(\"{$rule['id']}\")'><img class='img' src='".SugarThemeRegistry::current()->getImageURL('minus.gif')."' border='0'></a>";
+		$ret .= "<a class='listViewThLinkS1' href='javascript:SUGAR.routing.ui.deleteRule(\"{$rule['id']}\")'>";
+		$ret .= SugarThemeRegistry::current()->getImage("minus", "class='img' border='0'", null, null, ".gif", $mod_strings['LBL_DELETE']);
 		$ret .= "</td>";
 		$ret .= "</tr>"; 
 		
@@ -786,15 +787,3 @@ class SugarRouting {
 	////	END UI ELEMENTS
 	///////////////////////////////////////////////////////////////////////////
 }
-
-
-
-
-
-
-
-
-
-
-
-

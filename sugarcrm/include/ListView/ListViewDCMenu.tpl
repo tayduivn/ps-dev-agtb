@@ -101,14 +101,14 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
 					{/if}
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
@@ -145,7 +145,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 				<td>{$rowData.star}</td>
 			{/if}
 			{if !empty($quickViewLinks)}
-			<td width='2%' nowrap>{if $pageData.access.edit}<a title='{$editLinkString}' href="index.php?action=EditView&module={if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index"><img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>{/if}</td>
+			<td width='2%' nowrap>{if $pageData.access.edit}<a title='{$editLinkString}' href="index.php?action=EditView&module={if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index">{sugar_getimage alt="{$app_strings.LBL_EDIT_INLINE}" name="edit_inline" ext=".gif" other_attributes='border="0" '}</a>{/if}</td>
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=col item=params}

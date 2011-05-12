@@ -72,7 +72,7 @@
         {assign var="field" value=$col.name}
         <div class='le_field' id='{$idCount}'>
             {if ! $fromModuleBuilder && ($col.name != '(filler)')}
-                <img class='le_edit' src="{sugar_getimagepath file='edit_inline.gif'}" style='float:right; cursor:pointer;' onclick="editFieldProperties('{$idCount}', '{$col.label}');" />
+                {sugar_getimage name="edit_inline" ext=".gif" other_attributes='class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties(\'{$idCount}\', \'{$col.label}\');" '}
             {/if}
             {if isset($col.type) && ($col.type == 'address')}
                 {$icon_address}
@@ -82,10 +82,10 @@
             {/if}
             {* BEGIN SUGARCRM flav=pro ONLY *}
             {if isset($field_defs.$field.calculated) && $field_defs.$field.calculated}
-                <img src="{sugar_getimagepath file='SugarLogic/icon_calculated.png'}" class="right_icon" />
+                {sugar_getimage name="SugarLogic/icon_calculated" alt="{$mod_strings.LBL_CALCULATED}" ext=".png" other_attributes='class="right_icon" '}
             {/if}
             {if isset($field_defs.$field.dependency) && $field_defs.$field.dependency}
-                <img src="{sugar_getimagepath file='SugarLogic/icon_dependent.png'}" class="right_icon" />
+                {sugar_getimage name="SugarLogic/icon_dependent" ext=".png" alt="{$mod_strings.LBL_DEPENDANT}" other_attributes='class="right_icon" '}
             {/if}
             {* END SUGARCRM flav=pro ONLY *}
             <span id='le_label_{$idCount}'>
@@ -138,7 +138,7 @@
           {* //END SUGARCRM flav=een ONLY *}
         </div>
         {if $panelid ne 'default'}
-        <img class='le_edit' src="{sugar_getimagepath file='edit_inline.gif'}" style='float:right; cursor:pointer;' onclick="editPanelProperties('{$idCount}')" />
+        {sugar_getimage name="edit_inline" ext=".gif" other_attributes='class="le_edit" style="float:right; cursor:pointer;" onclick="editPanelProperties(\'{$idCount}\')" '}
         {/if}
         {counter name='idCount' assign='idCount' print=false}
 
@@ -150,10 +150,9 @@
                 {assign var="field" value=$col.name}
                 <div class='le_field' id='{$idCount}'>
                     {if ! $fromModuleBuilder && ($col.name != '(filler)')}
-                        <img class='le_edit' src="{sugar_getimagepath file='edit_inline.gif'}" 
-						style='float:right; cursor:pointer;' 
-						onclick="editFieldProperties('{$idCount}', '{$col.label}');" />
-                    {/if}
+
+        {sugar_getimage name="edit_inline" ext=".gif" other_attributes='class="le_edit" style="float:right; cursor:pointer;" onclick="editFieldProperties(\'{$idCount}\', \'{$col.label}\');" '}
+	    {/if}
 
                     {if isset($col.type) && ($col.type == 'address')}
                         {$icon_address}
@@ -163,10 +162,10 @@
                     {/if}
                     {* BEGIN SUGARCRM flav=pro ONLY *}
                     {if isset($field_defs.$field.calculated) && $field_defs.$field.calculated}
-                        <img src="{sugar_getimagepath file='SugarLogic/icon_calculated.png'}" class="right_icon" />
+                        {sugar_getimage name="SugarLogic/icon_calculated" alt="{$mod_strings.LBL_CALCULATED}" ext=".png" other_attributes='class="right_icon" '}
                     {/if}
                     {if isset($field_defs.$field.dependency) && $field_defs.$field.dependency}
-                        <img src="{sugar_getimagepath file='SugarLogic/icon_dependent.png'}" class="right_icon" />
+                        {sugar_getimage name="SugarLogic/icon_dependent" ext=".png" alt="{$mod_strings.LBL_DEPENDANT}" other_attributes='class="right_icon" '}
                     {/if}
                     {* END SUGARCRM flav=pro ONLY *}
                     <span id='le_label_{$idCount}'>

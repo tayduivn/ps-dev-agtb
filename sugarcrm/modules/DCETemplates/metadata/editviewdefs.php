@@ -37,7 +37,7 @@ array (
 <div id='upload_panel' style="display:none">
     <form id="upload_form" name="upload_form" method="POST" action='index.php' enctype="multipart/form-data">
         <input type="file" id="my_file" name="file_1" size="20" onchange="uploadCheck()"/>
-        <img id="loading_img" alt="loading..." src="{/literal}{sugar_getimagepath file='sqsWait.gif'}{literal}" style="display:none">
+        <!--not_in_theme!--><img id="loading_img" alt="{$mod_strings['LBL_LOADING']}" src="{/literal}{sugar_getimagepath file='sqsWait.gif'}{literal}" style="display:none">
     </form> 
 </div>
 <script type='text/javascript' src='$overlibJS'></script>

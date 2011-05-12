@@ -108,6 +108,7 @@ $mod_strings = array (
 	'LBL_SCHEDULED_REPORT_MSG_INTRO' => 'Attached is an auto-generated report sent to you from the Sugar application.  This report was created on ', 
 	'LBL_SCHEDULED_REPORT_MSG_BODY1' => ' and saved with the name "', 
 	'LBL_SCHEDULED_REPORT_MSG_BODY2' => "\". If you wish to change your report settings, login to the Sugar application and click on the \"Reports\" tab.\n\n", 
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 

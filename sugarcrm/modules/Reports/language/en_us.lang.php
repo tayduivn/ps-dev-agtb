@@ -297,7 +297,8 @@ $mod_strings = array (
   							'604800'=>'Weekly',
   							'1209600'=>'Every 2 Weeks',
   							'2419200'=>'Every 4 Weeks',
-  							),
+
+),
   	'LBL_WEIGHTED_AVG_AMOUNT' => "Weighted Avg Amount",
   	'LBL_WEIGHTED_SUM_AMOUNT' => "Weighted Sum Amount",
     'ERR_SELECT_COLUMN' => 'Please select a display column first.',
@@ -575,5 +576,15 @@ $mod_strings = array (
 // END DCE SUGARCRM ONLY
 	'LBL_ALT_SHOW' => 'Show',
   	'LBL_REPORT_DATA_COLUMN_ORDERS' => 'This report contains data in following column orders:',
+	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+	'LBL_SORT' => 'Sort' /*for 508 compliance fix*/,
+	'LBL_EDIT' => 'Edit' /*for 508 compliance fix*/,
+	'LBL_SHOW' => 'Show' /*for 508 compliance fix*/,
+	'LBL_MORE' => 'More' /*for 508 compliance fix*/,
+	'LBL_LEFT' => 'Left' /*for 508 compliance fix*/,
+	'LBL_RIGHT' => 'Right' /*for 508 compliance fix*/,
+	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
+	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
 );
 ?>

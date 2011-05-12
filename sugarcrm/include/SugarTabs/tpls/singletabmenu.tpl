@@ -147,9 +147,9 @@
 				<tbody>
 				<tr height="25">
                     {capture assign="tabImage"}{$tab.type}Tab_left.gif{/capture}
-					<td width='1'><img src="{sugar_getimagepath file=$tabImage}" alt="{$tab.label}" border="0" height="25" width="5"></td>
+					<td width='1'>{sugar_getimage name=$tabImage width="5" height="25" alt="{$tab.label}" other_attributes='border="0" '}</td>
 					<td width='1' class="{$tab.type}Tab" nowrap="nowrap"><a class="{$tab.type}TabLink" href="javascript:SUGAR.themes.loadSubpanel('{$tab.label}');">{$tab.label}</a></td>
-					<td width='1' class="{$tab.type}TabRight"><img src="{sugar_getimagepath file='blank.gif'}" alt="{$tab.label}" border="0" height="1" width="2"></td>
+					<td width='1' class="{$tab.type}TabRight">{sugar_getimage name="blank" ext=".gif" width="2" height="1" alt="{$tab.label}" other_attributes='border="0" '}</td>
 					<td width='1' style="background-image: url({sugar_getimagepath file='emptyTabSpace.gif'});" valign="bottom"></td>
 				</tr>
 				</tbody>
@@ -158,7 +158,7 @@
 		{/foreach}
 		<td width='1%'>
 		{if !empty($moreMenu)}
-			<img src='{sugar_getimagepath file='more.gif'}' alt='' align='absmiddle' id='MorePanelHandle' style=' margin-left:2px; cursor: pointer; cursor: hand;' align='absmiddle' onmouseover='tbButtonMouseOver(this.id,"","",0);'>
+			<img src='{sugar_getimagepath file='more.gif'}' alt='More' align='absmiddle' id='MorePanelHandle' style=' margin-left:2px; cursor: pointer; cursor: hand;' align='absmiddle' onmouseover='tbButtonMouseOver(this.id,"","",0);'>
 		{/if}
 		</td>
 		<td width='100%'>&nbsp;</td>

@@ -140,6 +140,7 @@ $mod_strings = array (
 	'LBL_SELECT_FILTER' => 'You must select a field to filter by',
 	'LBL_SELECT_NAME_EMAIL' => 'You must select the name and e-mail fields',
 	'LBL_PLEASE_SELECT' => 'Please Select',
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 
