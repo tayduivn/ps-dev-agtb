@@ -106,7 +106,7 @@ if ($startTable) {
 		<td>
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="{$topLevelGroupClass}">
 				<tr height="20" >				
-				  <th align='left' id = "{$rowId}" name= "{$rowId}" class="reportGroup1ByTableEvenListRowS1" valign=middle nowrap><span id="{$spanId}"><a href="javascript:expandCollapseComboSummaryDivTable('{$divId}')">{sugar_getimage name="basic_search" ext=".gif" width="8" height="8" alt="{$mod_strings.LBL_ALT_SHOW}" other_attributes='border="0" '}</a></span>&nbsp;{$groupByColumnName}
+				  <th align='left' id = "{$rowId}" name= "{$rowId}" class="reportGroup1ByTableEvenListRowS1" valign=middle nowrap><span id="{$spanId}"><a href="javascript:expandCollapseComboSummaryDivTable('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_ALT_SHOW}" src="{sugar_getimagepath file='basic_search.gif'}"/></a></span>&nbsp;{$groupByColumnName}
 				  </th>
 				</tr>
 			</table>

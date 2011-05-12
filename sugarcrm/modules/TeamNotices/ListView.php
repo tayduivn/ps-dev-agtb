@@ -43,6 +43,6 @@ echo getClassicModuleTitle('TeamNotices', array($mod_strings['LBL_MODULE_NAME'])
 
 $ListView = new ListView();
 $ListView->initNewXTemplate( 'modules/TeamNotices/ListView.html',$mod_strings);
-$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']));
+$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
 $ListView->setQuery('', "", "team_notices.name", "TEAMNOTICE");
 $ListView->processListView($focus, "main", "TEAMNOTICE");

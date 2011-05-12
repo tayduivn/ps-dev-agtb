@@ -144,7 +144,6 @@ $mod_strings = array (
 //END SUGARCRM flav!=sales ONLY
   'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
 	'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 ?>

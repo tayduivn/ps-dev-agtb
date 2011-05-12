@@ -56,11 +56,11 @@ global $focus_list;
 
 global $current_user;
 $header_text = '';
-
-//if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-//		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>";
-//}
-
+/*
+if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=SubPanelView&from_module=Leads&record=". $_REQUEST['record']."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>";
+}
+*/
 $button  = "<table cellspacing='0' border='0' width='100%'><tr><td nowrap><form  action='index.php' method='post' name='form' id='form'>\n";
 $button .= "<input type='hidden' name='module' value='DataSets'>\n";
 $button .= "<input type='hidden' name='return_module' value='".$currentModule."'>\n";
@@ -75,9 +75,9 @@ $button .= "</td></tr></form></table>\n";
 
 $ListView = new ListView();
 $ListView->initNewXTemplate( 'modules/DataSets/SubPanelView.html',$current_module_strings);
-$ListView->xTemplateAssign('UPARROW_INLINE', SugarThemeRegistry::current()->getImage('uparrow_inline','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LNK_UP']));
-$ListView->xTemplateAssign('DOWNARROW_INLINE', SugarThemeRegistry::current()->getImage('downarrow_inline','align="absmiddle" border="0"', null,null,'.gif',$mod_strings['LNK_DOWN']));
-$ListView->xTemplateAssign('DELETE_INLINE', SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_DELETE']));
+$ListView->xTemplateAssign('UPARROW_INLINE', SugarThemeRegistry::current()->getImage('uparrow_inline','align="absmiddle" alt="'.$mod_strings['LNK_UP'].'" border="0"'));
+$ListView->xTemplateAssign('DOWNARROW_INLINE', SugarThemeRegistry::current()->getImage('downarrow_inline','align="absmiddle" alt="'.$mod_strings['LNK_DOWN'].'" border="0"'));
+$ListView->xTemplateAssign('DELETE_INLINE', SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
 $ListView->xTemplateAssign('UPARROW_TEXT', $mod_strings['LNK_UP']);
 $ListView->xTemplateAssign('DOWNARROW_TEXT', $mod_strings['LNK_DOWN']);
 $ListView->xTemplateAssign('DELETE_TEXT', $app_strings['LNK_DELETE']);
@@ -88,7 +88,7 @@ $ListView->setQuery("", "", "list_order_y  ASC", "DATA_SET", false);
 
 //need to pass the main id to have the dataset subpanel href properly
 if(!empty($focus->id)) $ListView->xTemplateAssign("RECORD", $focus->id);
-$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_EDIT']));
+$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" alt="'.$app_strings['LNK_EDIT'].'" border="0"'));
 
 $ListView->processListView($focus_list, "main", "DATA_SET");
 ?>

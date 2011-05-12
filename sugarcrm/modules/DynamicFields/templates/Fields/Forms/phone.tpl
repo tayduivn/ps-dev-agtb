@@ -82,7 +82,7 @@
 <td>
 <input type="checkbox" name="validate_usa_format" value="1" {if !empty($vardef.validate_usa_format) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
 {if $hideLevel > 5}<input type="hidden" name="validate_usa_format" value="{$vardef.validate_usa_format}">{/if}
-{sugar_getimage alt="{$mod_strings.LBL_HELP}" name="helpInline" ext=".gif" other_attributes='id="validatePhoneToolTipIcon" '}
+<img id="validatePhoneToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}"/>
 <script type="text/javascript">
 	if (!ModuleBuilder.validatePhoneToolTip)
 	     ModuleBuilder.validatePhoneToolTip = new YAHOO.widget.Tooltip("validatePhoneToolTip", {ldelim}

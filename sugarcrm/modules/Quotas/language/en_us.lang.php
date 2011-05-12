@@ -58,8 +58,9 @@ $mod_strings = array (
   'LBL_NO_QUOTAS_TIMEPERIOD' => 'No quotas for your direct reports have been entered for this time period.',
   'LBL_CURRENT_USER_QUOTA' => 'Your assigned quota for this time period is: ',
   'LBL_CURRENT_USER_NO_QUOTA' => 'You have not been assigned a quota for this time period.',
-  'LBL_USER_ID' => 'User ID',
-	'LBL_EDITLAYOUT' => 'EditLayout' /*for 508 compliance fix*/,
+  
+  
+  'LBL_USER_ID' => 'User ID'
 );
 
 

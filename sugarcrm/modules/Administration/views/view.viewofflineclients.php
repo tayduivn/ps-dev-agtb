@@ -156,7 +156,7 @@ class ViewViewofflineclients extends SugarView
             $search_form = new Sugar_Smarty;
             $search_form->assign("MOD", $mod_strings);
             $search_form->assign("APP", $app_strings);
-            $search_form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','border="0"', null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
+            $search_form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','alt="'.$app_strings['LNK_BASIC_SEARCH'].'"  border="0"'));
             if (isset($user_name)) $search_form->assign("USER_NAME", $user_name);
             $search_form->assign("JAVASCRIPT", get_clear_form_js());
             $search_form->display('modules/Administration/templates/OfflineClientSearchForm.tpl');
@@ -166,7 +166,7 @@ class ViewViewofflineclients extends SugarView
         $ListView = new ListView();
         $ListView->initNewXTemplate( 'modules/Administration/templates/ViewOfflineClients.html',$mod_strings);
         $ListView->xTemplateAssign("RETURN_URL", "&return_module=".$currentModule."&return_action=ListView");
-        $ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"', null,null,'.gif', "{SYSTEM.LBL_DISABLE}"));
+        $ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="{SYSTEM.LBL_DISABLE}" border="0"'));
         $ListView->setQuery($where, "", "system_key", "SYSTEM");
         $ListView->show_export_button = false;
         $ListView->show_mass_update_form = true;

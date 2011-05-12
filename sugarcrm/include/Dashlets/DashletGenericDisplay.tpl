@@ -40,54 +40,54 @@
                     <td align='left'>&nbsp;</td>
                     <td align='right' nowrap='nowrap'>                    
                         {if $pageData.urls.startPage}
-                            <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")' >{sugar_getimage name="start" ext=".png" width="14" height="13" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
+                            <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")' ><img src='{sugar_getimagepath file="start.png"}' alt='{$navStrings.start}' align='absmiddle' border='0' width='14' height='13'>&nbsp;{$navStrings.start}</a>&nbsp;-->
 							<button title='{$navStrings.start}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")'>
-								{sugar_getimage name="start" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}
+								<img src='{sugar_getimagepath file='start.png'}' alt='{$navStrings.start}' align='absmiddle' border='0'>
 							</button>
                             
                         {else}
-                            <!--{sugar_getimage name="start_off" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
+                            <!--<img src='{sugar_getimagepath file="start_off.png"}' alt='{$navStrings.start}' align='absmiddle' border='0'>&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
 							<button title='{$navStrings.start}' class='button' disabled>
-								{sugar_getimage name="start_off" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}
+								<img src='{sugar_getimagepath file='start_off.png'}' alt='{$navStrings.start}' align='absmiddle' border='0'>
 							</button>
                             
                         {/if}
                         {if $pageData.urls.prevPage}
-                            <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")' >{sugar_getimage name="previous" ext=".png" width="8" height="13" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
+                            <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")' ><img src='{sugar_getimagepath file="previous.png"}' alt='{$navStrings.previous}' align='absmiddle' border='0' width='8' height='13'>&nbsp;{$navStrings.previous}</a>&nbsp;-->
 							<button title='{$navStrings.previous}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")'>
-								{sugar_getimage name="previous" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}							
+								<img src='{sugar_getimagepath file='previous.png'}' alt='{$navStrings.previous}' align='absmiddle' border='0'>							
 							</button>
                             
                         {else}
-                            <!--{sugar_getimage name="previous_off" ext=".png" width="8" height="13" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}&nbsp;-->
+                            <!--<img src='{sugar_getimagepath file="previous_off.png"}' alt='{$navStrings.previous}' align='absmiddle' border='0' width='8' height='13'>&nbsp;{$navStrings.previous}&nbsp;-->
 							<button class='button' disabled title='{$navStrings.previous}'>
-								{sugar_getimage name="previous_off" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}
+								<img src='{sugar_getimagepath file='previous_off.png'}' alt='{$navStrings.previous}' align='absmiddle' border='0'>
 							</button>
                         {/if}
                             <span class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</span>
                         {if $pageData.urls.nextPage}
-                            <!--&nbsp;<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.nextPage}")' >{$navStrings.next}&nbsp;{sugar_getimage name="next" ext=".png" width="8" height="13" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}</a>&nbsp;-->
+                            <!--&nbsp;<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.nextPage}")' >{$navStrings.next}&nbsp;<img src='{sugar_getimagepath file="next.png"}' alt='{$navStrings.next}' align='absmiddle' border='0' width='8' height='13'></a>&nbsp;-->
 							<button title='{$navStrings.next}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.nextPage}")'>
-								{sugar_getimage name="next" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}
+								<img src='{sugar_getimagepath file='next.png'}' alt='{$navStrings.next}' align='absmiddle' border='0'>
 							</button>
                             
                         {else}
-                           <!-- &nbsp;{$navStrings.next}&nbsp;{sugar_getimage name="next_off" ext=".png" width="8" height="13" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}-->
+                           <!-- &nbsp;{$navStrings.next}&nbsp;<img src='{sugar_getimagepath file="next_off.png"}' alt='{$navStrings.next}' align='absmiddle' border='0' width='8' height='13'>-->
 							<button class='button' title='{$navStrings.next}' disabled>
-								{sugar_getimage name="next_off" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}
+								<img src='{sugar_getimagepath file='next_off.png'}' alt='{$navStrings.next}' align='absmiddle' border='0'>
 							</button>
 
                         {/if}
 						{if $pageData.urls.endPage  && $pageData.offsets.total != $pageData.offsets.lastOffsetOnPage}
-                            <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")' >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" width="14" height="13" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}</a></td>-->
+                            <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")' >{$navStrings.end}&nbsp;<img src='{sugar_getimagepath file="end.png"}' alt='{$navStrings.end}' align='absmiddle' border='0' width='14' height='13'></a></td>-->
 							<button title='{$navStrings.end}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")'>
-								{sugar_getimage name="end" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}							
+								<img src='{sugar_getimagepath file='end.png'}' alt='{$navStrings.end}' align='absmiddle' border='0'>							
 							</button>
                             
 						{elseif !$pageData.offsets.totalCounted || $pageData.offsets.total == $pageData.offsets.lastOffsetOnPage}
-                            <!--&nbsp;{$navStrings.end}&nbsp;{sugar_getimage name="end_off" ext=".png" width="14" height="13" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}-->
+                            <!--&nbsp;{$navStrings.end}&nbsp;<img src='{sugar_getimagepath file="end_off.png"}' alt='{$navStrings.end}' align='absmiddle' border='0' width='14' height='13'>-->
 							<button class='button' disabled title='{$navStrings.end}'>
-							 	{sugar_getimage name="end_off" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}
+							 	<img src='{sugar_getimagepath file='end_off.png'}' alt='{$navStrings.end}' align='absmiddle' border='0'>
 							</button>
                             
                         {/if}
@@ -105,14 +105,14 @@
 	                {if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 	                    {if $pageData.ordering.sortOrder == 'ASC'}
                             {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-	                        {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+	                        <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
 	                    {else}
                             {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-	                        {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+	                        <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
 	                    {/if}
 	                {else}
                         {capture assign="imageName"}arrow.{$arrowExt}{/capture}
-	                    {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+	                    <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
 	                {/if}
 	           {else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
@@ -164,10 +164,10 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' class='{$_rowColor}S1' bgcolor='{$_bgColor}' nowrap>
 				{if $pageData.access.edit}
-					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'>{sugar_getimage name="edit_inline" alt="{$app_strings.LBL_EDIT_INLINE}" ext=".png" other_attributes='border="0" '}</a>
+					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="edit_inline.png"}"></a>
 				{/if}
 				{if $pageData.access.view}
-					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'>{sugar_getimage alt="{$app_strings.LBL_VIEW_INLINE}" name="view_inline" ext=".png" other_attributes='border="0" '}</a>
+					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="view_inline.png"}"></a>
 				{/if}
 			</td>
 			{/if}

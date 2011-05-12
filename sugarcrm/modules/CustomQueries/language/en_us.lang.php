@@ -82,8 +82,7 @@ $mod_strings = array (
   'ERROR_RESULT_MSG' => 'This query is invalid.',
   'CHILD_RESULT_MSG' => 'This query cannot be run independently.',
   'LBL_QUERYRESULT' => 'Query Result',
-	'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
-);
+  );
 
 
 ?>

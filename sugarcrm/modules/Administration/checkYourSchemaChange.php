@@ -78,8 +78,7 @@ echo "<form name='checkSchema'>
 	   <div  id='checkingDiv' style='display:none''>
        <table cellspacing='0' cellpadding='0' border='0'>
            <tr><td>
-                <p><!--not_in_theme!--><img src='modules/UpgradeWizard/processing.gif' alt='".$mod_strings['LBL_PROCESSING']."'> <br>May take sometime</p>
-
+                <p><img src='modules/UpgradeWizard/processing.gif'> <br>May take sometime</p>
             </td></tr>
         </table>
         </div>

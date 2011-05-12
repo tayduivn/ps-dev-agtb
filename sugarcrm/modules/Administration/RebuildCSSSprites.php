@@ -24,23 +24,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2010 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+if(! is_admin($current_user)){
+	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
+}
 
-$mod_strings = array (
-'LBL_ALLOW_ALL'=>'All',
-'LBL_ALLOW_NONE'=>'None',
-'LBL_ALLOW_OWNER'=>'Owner',
-'LBL_ROLE'=>'Role',
-'LBL_NAME'=>'Name',
-'LBL_DESCRIPTION'=>'Description',
-'LIST_ROLES'=>'List Roles',
-'LBL_USERS_SUBPANEL_TITLE'=>'Users',
-'LIST_ROLES_BY_USER'=>'List Roles By User',
-'LBL_ROLES_SUBPANEL_TITLE'=>'User Roles',
-'LBL_SEARCH_FORM_TITLE'=>'Search',
-'LBL_NO_ACCESS'=>'You do not have access to this area. Contact your site administrator to obtain access.',
-'LBL_ADDING'=>'Adding for ',
-
-)
+global $mod_strings, $sugar_config;
+echo $mod_strings['LBL_REBUILD_SPRITES_DESC_SHORT']." <br /><br />";
+include_once('include/SugarTheme/SugarTheme.php');
+SugarTheme::rebuildSprites(false);
+echo "Done<br />";
 ?>

@@ -55,8 +55,7 @@ $mod_strings = array (
   'NTC_DELETE_GRAFT_CONFIRMATION' => 'Are you sure you want to delete this category?  All sub-categories and products will remain.',
   'LBL_PARENT_NAME' => 'Parent Category:',
   'LBL_CATEGORIES'=> 'Categories',
-	'LBL_EDITLAYOUT' => '' /*for 508 compliance fix*/,
-);
+  );
 
 
 ?>

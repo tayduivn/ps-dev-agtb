@@ -39,7 +39,7 @@
 		{if $hideLevel > 5}
             <input type="hidden" name="calculated" value="{$vardef.calculated}">
         {/if}
-		{sugar_getimage alt="{$mod_strings.LBL_HELP}" name="helpInline" ext=".gif" other_attributes='id="calcToolTipIcon" '}
+		<img id="calcToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
 		<script>
 			if (!ModuleBuilder.cfToolTip)
@@ -67,7 +67,7 @@
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF()"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {sugar_getimage alt="{$mod_strings.LBL_HELP}" name="helpInline" ext=".gif" other_attributes='id="depToolTipIcon" '}
+        <img id="depToolTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
         <script>
 			if (!ModuleBuilder.dfToolTip)
 			     ModuleBuilder.dfToolTip = new YAHOO.widget.Tooltip("dfToolTip", {ldelim}

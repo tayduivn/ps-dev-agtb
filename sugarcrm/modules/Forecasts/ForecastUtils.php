@@ -464,7 +464,7 @@ function buildExportLink($forecast_type) {
     
     global $mod_strings;
     //id='$id'
-    //SugarThemeRegistry::current()->getImage("export","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_COPY'])."&nbsp;
+    //SugarThemeRegistry::current()->getImage("export","alt='".$mod_strings['LBL_COPY']."'  border='0' align='absmiddle'")."&nbsp;
     //$script = "<a onclick=\"return copyvalue_overlib('{$forecast_type}');\" href=\"#\" >".$mod_strings['LBL_COPY']."</a>";
     $script = "<input type=button onclick=\"return copyvalue_overlib('{$forecast_type}');\" class='button' value='".$mod_strings['LBL_COPY']."'>";
     return $script;

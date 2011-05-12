@@ -124,7 +124,7 @@
 							</tr>
 							<tr>
 								<td colspan='4'>
-										<a class="tabFormAdvLink" href="javascript:toggleDisplay_2('regex_config_display')">{sugar_getimage alt="{$mod_strings.LBL_ADVANCED_SEARCH}" name="advanced_search" ext=".gif" other_attributes='border="0" id="regex_config_display_img" '}&nbsp<span id='regex_config_display_lbl'>{$MOD.LBL_SHOW_ADVANCED_OPTIONS}<span></a>
+										<a class="tabFormAdvLink" href="javascript:toggleDisplay_2('regex_config_display')"><img id='regex_config_display_img' border="0" src="{sugar_getimagepath file="advanced_search.gif"}"/>&nbsp<span id='regex_config_display_lbl'>{$MOD.LBL_SHOW_ADVANCED_OPTIONS}<span></a>
 								</td>
 							</tr>
 							<tr>

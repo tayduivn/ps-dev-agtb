@@ -87,8 +87,5 @@ $mod_strings = array (	'LBL_DETAIL'				=> 'Details',
 						'DOM_LBL_NONE'				=> '--None--',
 						'DOM_ACTION_TYPE'			=> array ('Leads'	=> 'Create Lead',
 															  'Cases'	=> 'Create Case'),
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
-	'LBL_EMAILS' => 'Emails' /*for 508 compliance fix*/,
-	'LBL_CASES' => 'Cases' /*for 508 compliance fix*/,
-);
+					);
 ?>

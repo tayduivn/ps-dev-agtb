@@ -507,9 +507,7 @@ class EditViewMerge{
 	 */
 	protected function mergeTemplateMeta()
 	{
-        //this is to handle the situation in Calls/Meetings where we updated the templateMeta and will fail if we don't update this.
-        //long term we should not do this and should provide a way for calls/meetings to update themselves.
-	    if( isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName]) && (!$this->module == 'Calls' || !$this->module == 'Meetings') )
+	    if( isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName]) )
 	       $this->newData[$this->module][$this->viewDefs][$this->templateMetaName] = $this->customData[$this->module][$this->viewDefs][$this->templateMetaName];
 	}
 	

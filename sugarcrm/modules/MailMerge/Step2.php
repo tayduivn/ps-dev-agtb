@@ -130,10 +130,10 @@ else
 }
 
 $xtpl->assign("MAILMERGE_MODULE", $_SESSION['MAILMERGE_MODULE']);
-$xtpl->assign("MAILMERGE_PREV", SugarThemeRegistry::current()->getImage('previous','border="0" style="margin-left: 1px;" id="prevItems" onClick="decreaseOffset();getObjects();"',null,null,'.gif',$mod_strings['LBL_BACK']));
-$xtpl->assign("MAILMERGE_NEXT", SugarThemeRegistry::current()->getImage('next','border="0" style="margin-left: 1px;" alt="Next" id="nextItems" onClick="increaseOffset();getObjects();"',null,null,'.gif',$mod_strings['LBL_NEXT']));
-$xtpl->assign("MAILMERGE_RIGHT_TO_LEFT", SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-left: 1px;"  onClick="moveLeft();"',null,null,'.gif',$mod_strings['LBL_REMOVE']));
-$xtpl->assign("MAILMERGE_LEFT_TO_RIGHT", SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;" onClick="moveRight();"',null,null,'.gif',$mod_strings['LBL_ADD']));
+$xtpl->assign("MAILMERGE_PREV", SugarThemeRegistry::current()->getImage('previous','border="0" style="margin-left: 1px;" alt="Previous" id="prevItems" onClick="decreaseOffset();getObjects();"'));
+$xtpl->assign("MAILMERGE_NEXT", SugarThemeRegistry::current()->getImage('next','border="0" style="margin-left: 1px;" alt="Next" id="nextItems" onClick="increaseOffset();getObjects();"'));
+$xtpl->assign("MAILMERGE_RIGHT_TO_LEFT", SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-left: 1px;" alt="Remove Item(s)" onClick="moveLeft();"'));
+$xtpl->assign("MAILMERGE_LEFT_TO_RIGHT", SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;" alt="Add Item(s)" onClick="moveRight();"'));
 $xtpl->assign("MAIL_MERGE_HEADER_STEP_2", $step_txt);
 if($_SESSION['MAILMERGE_MODULE'] == 'CampaignProspects'){
     $rel_options = array("Contacts"=>"Contacts", "Leads" => "Leads", "Prospects" => "Prospects", "Users"=>"Users");

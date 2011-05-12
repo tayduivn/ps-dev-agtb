@@ -50,8 +50,9 @@ $mod_strings = array (
   'LBL_SEARCH_TP_NAME' => 'Time Period',
   'LBL_SEARCH_TP_START_DATE' => 'Start Date',
   'LBL_SEARCH_TP_END_DATE' => 'End Date',
-  'ERR_TIME_PERIOD_DATE_RANGE' => 'Time period end date should be later than start date.',
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'ERR_TIME_PERIOD_DATE_RANGE' => 'Time period end date should be later than start date.'
+
 );
+
 
 ?>

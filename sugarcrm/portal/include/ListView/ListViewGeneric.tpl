@@ -34,20 +34,20 @@
 					<td align='left' class='listViewPaginationTdS1'>&nbsp;</td>
 					<td class='listViewPaginationTdS1' align='right' nowrap='nowrap'>
 						{if $pageData.urls.startPage}
-							<a href='{$pageData.urls.startPage}' {if $prerow}onclick="javascript:return sListView.save_checks(0, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}start.gif' alt="{$app_strings.LNK_LIST_START}" align='absmiddle' border='0' height='11' width='13'>&nbsp;Start</a>&nbsp;
+							<a href='{$pageData.urls.startPage}' {if $prerow}onclick="javascript:return sListView.save_checks(0, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}start.gif' alt='Start' align='absmiddle' border='0' height='11' width='13'>&nbsp;Start</a>&nbsp;
 						{else}
-							<img src='{$imagePath}start_off.gif' alt="{$app_strings.LNK_LIST_START}" align='absmiddle' border='0' height='11' width='13'>&nbsp;Start&nbsp;&nbsp;
+							<img src='{$imagePath}start_off.gif' alt='Start' align='absmiddle' border='0' height='11' width='13'>&nbsp;Start&nbsp;&nbsp;
 						{/if}
 						{if $pageData.urls.prevPage}
-							<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}previous.gif' alt="{$app_strings.LNK_LIST_PREVIOUS}" align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous</a>&nbsp;
+							<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}previous.gif' alt='Previous' align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous</a>&nbsp;
 						{else}
-							<img src='{$imagePath}previous_off.gif' alt="{$app_strings.LNK_LIST_PREVIOUS}" align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous&nbsp;
+							<img src='{$imagePath}previous_off.gif' alt='Previous' align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous&nbsp;
 						{/if}
 							<span class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} of {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.total>$pageData.offsets.lastOffsetOnPage}+{/if}{/if})</span>
 						{if $pageData.urls.nextPage}
-							&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'>Next&nbsp;<img src='{$imagePath}next.gif' alt="{$app_strings.LNK_LIST_NEXT}" align='absmiddle' border='0' height='11' width='8'></a>&nbsp;
+							&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'>Next&nbsp;<img src='{$imagePath}next.gif' alt='Next' align='absmiddle' border='0' height='11' width='8'></a>&nbsp;
 						{else}
-							&nbsp;Next&nbsp;<img src='{$imagePath}next_off.gif' alt="{$app_strings.LNK_LIST_NEXT}" align='absmiddle' border='0' height='11' width='8'>
+							&nbsp;Next&nbsp;<img src='{$imagePath}next_off.gif' alt='Next' align='absmiddle' border='0' height='11' width='8'>
 						{/if}
 					</td>
 				</tr>
@@ -129,20 +129,20 @@
 					<td align='left' class='listViewPaginationTdS1'>&nbsp;</td>
 					<td class='listViewPaginationTdS1' align='right' nowrap='nowrap'>
 						{if $pageData.urls.startPage}
-							<a href='{$pageData.urls.startPage}' {if $prerow}onclick="javascript:return sListView.save_checks(0, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}start.gif' alt="{$app_strings.LNK_LIST_START}" align='absmiddle' border='0' height='11' width='13'>&nbsp;Start</a>&nbsp;
+							<a href='{$pageData.urls.startPage}' {if $prerow}onclick="javascript:return sListView.save_checks(0, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}start.gif' alt='Start' align='absmiddle' border='0' height='11' width='13'>&nbsp;Start</a>&nbsp;
 						{else}
-							<img src='{$imagePath}start_off.gif' alt="{$app_strings.LNK_LIST_START}" align='absmiddle' border='0' height='11' width='13'>&nbsp;Start&nbsp;&nbsp;
+							<img src='{$imagePath}start_off.gif' alt='Start' align='absmiddle' border='0' height='11' width='13'>&nbsp;Start&nbsp;&nbsp;
 						{/if}
 						{if $pageData.urls.prevPage}
-							<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}previous.gif' alt="{$app_strings.LNK_LIST_PREVIOUS}" align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous</a>&nbsp;
+							<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'><img src='{$imagePath}previous.gif' alt='Previous' align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous</a>&nbsp;
 						{else}
-							<img src='{$imagePath}previous_off.gif' alt="{$app_strings.LNK_LIST_PREVIOUS}" align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous&nbsp;
+							<img src='{$imagePath}previous_off.gif' alt='Previous' align='absmiddle' border='0' height='11' width='8'>&nbsp;Previous&nbsp;
 						{/if}
 							<span class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} of {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.total>$pageData.offsets.lastOffsetOnPage}+{/if}{/if})</span>
 						{if $pageData.urls.nextPage}
-							&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'>Next&nbsp;<img src='{$imagePath}next.gif' alt="{$app_strings.LNK_LIST_NEXT}" align='absmiddle' border='0' height='11' width='8'></a>&nbsp;
+							&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="javascript:return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} class='listViewPaginationLinkS1'>Next&nbsp;<img src='{$imagePath}next.gif' alt='Next' align='absmiddle' border='0' height='11' width='8'></a>&nbsp;
 						{else}
-							&nbsp;Next&nbsp;<img src='{$imagePath}next_off.gif' alt="{$app_strings.LNK_LIST_NEXT}" align='absmiddle' border='0' height='11' width='8'>
+							&nbsp;Next&nbsp;<img src='{$imagePath}next_off.gif' alt='Next' align='absmiddle' border='0' height='11' width='8'>
 						{/if}
 					</td>
 				</tr>

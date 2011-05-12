@@ -823,7 +823,7 @@ function getValidPatchName($returnFull = true) {
 				$icon = getImageForType( $manifest['type'] );
 			} else {
 				$path_parts = pathinfo( $manifest['icon'] );
-				$icon = "<!--not_in_theme!--><img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
+				$icon = "<img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
 			}
 	    }
 	}
@@ -3011,19 +3011,19 @@ function getImageForType($type) {
     $icon = "";
     switch($type) {
         case "full":
-            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "",null,null,'.gif',$mod_strings['LBL_UPGRADE']);
+            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "");
             break;
         case "langpack":
-            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "",null,null,'.gif',$mod_strings['LBL_LANGPACKS']);
+            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "");
             break;
         case "module":
-            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "",null,null,'.gif',$mod_strings['LBL_MODULELOADER']);
+            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "");
             break;
         case "patch":
-            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "",null,null,'.gif',$mod_strings['LBL_PATCHUPGRADES']);
+            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "");
             break;
         case "theme":
-            $icon = SugarThemeRegistry::current()->getImage("Themes", "",null,null,'.gif',$mod_strings['LBL_THEMES']);
+            $icon = SugarThemeRegistry::current()->getImage("Themes", "");
             break;
         default:
             break;
@@ -3465,7 +3465,7 @@ function testThis2($dir, $id=0, $hide=false) {
 		if(is_dir($path.'/'.$file)) {
 			$file = $path.'/'.$file;
 			$newI = create_guid();
-			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'>".SugarThemeRegistry::current()->getImage("Workflow", "", null, null, ".gif", $mod_strings['LBL_WORKFLOW'])."</a></td>\n";
+			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'><img border='0' src='".SugarThemeRegistry::current()->getImageURL('Workflow.gif')."'></a></td>\n";
 			$out .= "<td valign='top'><b><a href='javascript:toggleNwFiles(\"{$newI}\");'>".basename($file)."</a></b></td></tr>";
 			$out .= "<tr><td></td><td valign='top'>".testThis2($file, $newI, true)."</td></tr>";
 		} else {
@@ -3506,7 +3506,7 @@ function testThis3(&$files, $id, $hide, $previousPath = '') {
 			$out .= "<td valign='top' align='left'>{$fileName}</td></tr>";
 		} else { // new directory
 			$newI = $k;
-			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'>".SugarThemeRegistry::current()->getImage("Workflow", "", null, null, ".gif", $mod_strings['LBL_WORKFLOW'])."</a></td>\n";
+			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'><img border='0' src='".SugarThemeRegistry::current()->getImageURL('Workflow.gif')."></a></td>\n";
 			$out .= "<td valign='top'><b><a href='javascript:toggleNwFiles(\"{$newI}\");'>".$fileName."</a></b></td></tr>";
 			$recurse = testThis3($files, $newI, true, $previousPath);
 			$out .= "<tr><td></td><td valign='top'>".$recurse."</td></tr>";

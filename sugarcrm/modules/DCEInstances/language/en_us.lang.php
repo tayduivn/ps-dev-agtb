@@ -134,6 +134,5 @@ $mod_strings = array (
   'ERR_BANNED_NAME' => '<span class="error"><b>This Instance Name is not allowed.</b></span>',
   'ERR_NEED_UPDATE_OR_GET_KEY'=> 'You have change a licensing field. You need to update the key or get a new key.',
   'ERR_BANNED_CHARACTER' => '<span class="error"><b>This Instance Name contains no alphanumeric character(s).</b></span>',
-	'LBL_JSCALENDAR' => 'Calendar' /*for 508 compliance fix*/,
 );
 ?>

@@ -200,7 +200,7 @@ $the_form = <<<EOQ
 	<br><span class="dateFormat">$ntc_date_format</span></td>
 </tr>
 <tr>
-<td ><input name='{$prefix}date_quote_expected_closed' onblur="parseDate(this, '$cal_dateformat');" size='12' maxlength='10' id='${prefix}jscal_field' type="text" value="">&nbsp;<!--not_in_theme!--><img src="{$jsCalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="${prefix}jscal_trigger" align="absmiddle"></td>
+<td ><input name='{$prefix}date_quote_expected_closed' onblur="parseDate(this, '$cal_dateformat');" size='12' maxlength='10' id='${prefix}jscal_field' type="text" value="">&nbsp;<img src="{$jsCalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="${prefix}jscal_trigger" align="absmiddle"></td>
 </tr>
 <tr>
     <td scope="row">$lbl_sales_stage&nbsp;<span class="required">$lbl_required_symbol</span></td>
@@ -307,7 +307,7 @@ $the_form = <<<EOQ
 		<input name='{$prefix}billing_account_name' type='text' readonly value="" size="16">
 		<input name='billing_account_id' type="hidden" value=''>&nbsp;<input title="{$app_strings['LBL_SELECT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_SELECT_BUTTON_KEY']}" type="button" class="button" value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1 onclick='open_popup("Accounts", 600, 400, "", true, false, {$encoded_popup_request_data});' /><br>
 		${mod_strings['LBL_DATE_QUOTE_EXPECTED_CLOSED']}&nbsp;<span class="required">${lbl_required_symbol}</span><br>		
-		<input name='{$prefix}date_quote_expected_closed' id='{$prefix}date_quote_expected_closed' onblur="parseDate(this, '$cal_dateformat');" type="text" maxlength="10" value="${default_date_start}"> <!--not_in_theme!--><img src="{$jsCalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="date_quote_expected_closed_trigger" align="absmiddle"><br>
+		<input name='{$prefix}date_quote_expected_closed' id='{$prefix}date_quote_expected_closed' onblur="parseDate(this, '$cal_dateformat');" type="text" maxlength="10" value="${default_date_start}"> <img src="{$jsCalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="date_quote_expected_closed_trigger" align="absmiddle"><br>
 		$lbl_quote_stage&nbsp;<span class="required">$lbl_required_symbol</span><br>
 		<select name='{$prefix}quote_stage'>
 EOQ;

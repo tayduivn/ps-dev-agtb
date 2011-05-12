@@ -318,7 +318,7 @@ foreach($upgrade_contents as $upgrade_content)
 		else
 		{
 			$path_parts = pathinfo( $manifest['icon'] );
-			$icon = "<!--not_in_theme!--><img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\" alt =''>";
+			$icon = "<img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
 		}
 
 		$upgrades_available++;

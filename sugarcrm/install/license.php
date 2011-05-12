@@ -205,7 +205,7 @@ function callSysCheck(){
            <div id="checkingDiv" style="display:none">
            <table cellspacing="0" cellpadding="0" border="0">
                <tr><td>
-                    <p><img src='install/processing.gif' alt="{$mod_strings['LBL_LICENSE_CHECKING']}"> <br>{$mod_strings['LBL_LICENSE_CHECKING']}</p>
+                    <p><img src='install/processing.gif'> <br>{$mod_strings['LBL_LICENSE_CHECKING']}</p>
                 </td></tr>
             </table>
             </div>

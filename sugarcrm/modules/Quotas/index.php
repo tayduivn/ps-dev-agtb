@@ -130,7 +130,7 @@ if (!empty($_REQUEST['timeperiod_id']))
 $ListView = new ListView();
 
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
-		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
+		$header_text = "&nbsp;<a href='index.php?action=index&module=DynamicLayout&from_action=ListView&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>";
 }
 $ListView->initNewXTemplate( 'modules/Quotas/ListView.html',$mod_strings);
 $ListView->setHeaderTitle($mod_strings['LBL_LIST_FORM_TITLE'] . $header_text);

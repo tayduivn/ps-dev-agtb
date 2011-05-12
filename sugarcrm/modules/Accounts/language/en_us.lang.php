@@ -178,7 +178,5 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
-
-	'LBL_COPY' => 'Copy' /*for 508 compliance fix*/,
 );
 ?>

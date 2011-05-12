@@ -107,7 +107,7 @@ $mod_strings = array (
 	'LBL_DEPENDENT'=>'Dependent',
 	'LBL_VISIBLE_IF'=>'Visible If',
 	'LBL_ENFORCED'=>'Enforced',
-	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,
+
 );
 
 

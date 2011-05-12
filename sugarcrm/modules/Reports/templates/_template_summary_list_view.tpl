@@ -36,7 +36,7 @@
 <th scope="col" align='center' class="reportlistViewThS1" valign=middle nowrap>&nbsp;</th>
 {/if}
 {if ($isSummaryComboHeader)}
-<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></td>
+<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="Show" src="{$image_path}advanced_search.gif"/></a></span></td>
 {/if}
 {php}
 	$count = 0;
@@ -73,7 +73,7 @@ while (( $row = $reporter->get_summary_next_row() ) != 0 ) {
 {/php}
 <tr height=20 class="{$row_class}" onmouseover="setPointer(this, '{$rownum}', 'over', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');" onmouseout="setPointer(this, '{$rownum}', 'out', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');" onmousedown="setPointer(this, '{$rownum}', 'click', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');">
 {if ($isSummaryComboHeader)}
-<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></td>
+<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="Show" src="{$image_path}advanced_search.gif"/></a></span></td>
 {/if}
 {php}
 	$count = 0;
@@ -129,7 +129,7 @@ if ($reporter->has_summary_columns()) {
 	<th scope="col"  valign=middle nowrap>&nbsp;</th>
 	{/if}
 	{if ($isSummaryComboHeader)}
-	<th><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></th>
+	<th><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="Show" src="{$image_path}advanced_search.gif"/></a></span></th>
 	{/if}
 	{php}
 		$count = 0;
@@ -160,7 +160,7 @@ if ($reporter->has_summary_columns()) {
 {/php}
 		<tr height=20 class="{$row_class}" onmouseover="setPointer(this, '{$rownum}', 'over', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');" onmouseout="setPointer(this, '{$rownum}', 'out', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');" onmousedown="setPointer(this, '{$rownum}', 'click', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');">
 		{if ($isSummaryComboHeader)}
-		<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></td>
+		<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="Show" src="{$image_path}advanced_search.gif"/></a></span></td>
 		{/if}
 		{php}
 			$count = 0;

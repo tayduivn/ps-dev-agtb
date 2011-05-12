@@ -100,8 +100,8 @@ class SubPanelViewTeams {
 		$ListView->initNewXTemplate($xTemplatePath, $mod_strings);
 		$ListView->xTemplateAssign("RETURN_URL", "&return_module=".$curModule."&return_action=DetailView&return_id=".$this->focus->id);
 		$ListView->xTemplateAssign("RECORD_ID",  $this->focus->id);
-		$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']));
-		$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']));
+		$ListView->xTemplateAssign("EDIT_INLINE_PNG",  SugarThemeRegistry::current()->getImage('edit_inline','align="absmiddle" alt="'.$app_strings['LNK_EDIT'].'" border="0"'));
+		$ListView->xTemplateAssign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_REMOVE'].'" border="0"'));
 		$ListView->setHeaderTitle($mod_strings['LBL_TEAM_MEMBERS']);
 		$ListView->setHeaderText($this->getHeaderText($action, $curModule));
 		$ListView->processListView($this->users_list, "users", "USER");

@@ -105,19 +105,19 @@ function getImageForType( $type ){
     $icon = "";
     switch( $type ){
         case "full":
-            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "",null,null,'.gif',$mod_strings['LBL_DST_UPGRADE']);
+            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "" );
             break;
         case "langpack":
-            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "",null,null,'.gif',$mod_strings['LBL_LANGUAGE_PACKS'] );
+            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "" );
             break;
         case "module":
-            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "",null,null,'.gif',$mod_strings['LBL_MODULE_LOADER_TITLE']);
+            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "" );
             break;
         case "patch":
-            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "",null,null,'.gif',$mod_strings['LBL_PATCH_UPGRADES'] );
+            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "" );
             break;
         case "theme":
-            $icon = SugarThemeRegistry::current()->getImage("Themes", "",null,null,'.gif',$mod_strings['LBL_THEME_SETTINGS'] );
+            $icon = SugarThemeRegistry::current()->getImage("Themes", "" );
             break;
         default:
             break;

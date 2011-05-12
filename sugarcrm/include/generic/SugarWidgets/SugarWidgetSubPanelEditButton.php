@@ -44,7 +44,8 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 	{
 		global $app_strings;
 
-		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']);
+		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline',
+			'align="absmiddle" alt="' . $app_strings['LNK_EDIT'] . '" border="0"');
 		if($layout_def['EditView']){
                 return "<a href='#' onMouseOver=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
                 . (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
