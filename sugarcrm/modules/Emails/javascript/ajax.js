@@ -210,12 +210,9 @@ var AjaxObject = {
 	ieDeleteSuccess : function(o) {
 		hideOverlay();
 		
-		var ret = YAHOO.lang.JSON.parse(o.responseText);
-
 		SUGAR.email2.accounts.refreshInboundAccountTable();
 		alert(app_strings.LBL_EMAIL_IE_DELETE_SUCCESSFUL);
 		SUGAR.email2.accounts.rebuildFolderList();
-
 	},
 
 	/**
