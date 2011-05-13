@@ -41,7 +41,7 @@ class SugarWebServiceImplv5 extends SugarWebServiceImplv4 {
         require_once "include/SugarOAuthServer.php";
         try {
 	        $oauth = new SugarOAuthServer($GLOBALS['sugar_config']['site_url'].'service/v5/rest.php');
-	        return $oauth->requestToken()."&authorize_url=".$oauth->authURL();
+	        return $oauth->requestToken()."&oauth_callback_confirmed=true&authorize_url=".$oauth->authURL();
         } catch(OAuthException $e) {
             $GLOBALS['log']->debug("OAUTH Exception: $e");
             $errorObject = new SoapError();

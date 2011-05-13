@@ -50,7 +50,7 @@ $dictionary['OAuthKey'] = array('table' => 'oauth_consumer',
           ),
     ),
     'indices' => array (
-       array('name' =>'ckey', 'type' =>'index', 'fields'=>array('c_key')),
+       array('name' =>'ckey', 'type' =>'unique', 'fields'=>array('c_key')),
     )
 );
 if (!class_exists('VardefManager')){
