@@ -1,8 +1,8 @@
 <?php
 /*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional Subscription
+ * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
+ * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
  * By installing or using this file, You have unconditionally agreed to the
  * terms and conditions of the License, and You may not use this file except in
  * compliance with the License.  Under the terms of the license, You shall not,
@@ -40,7 +40,7 @@ $viewdefs['Documents']['DetailView'] = array(
       array (
         array (
           array (
-            'name' => 'uploadfile',
+            'name' => 'filename',
             'displayParams' => 
             array (
               'link' => 'filename',
@@ -109,4 +109,5 @@ $viewdefs['Documents']['DetailView'] = array(
     )
    
 );
+
 ?>
