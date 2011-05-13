@@ -90,7 +90,7 @@ class OAuthToken extends SugarBean
 	 */
 	public function invalidate()
 	{
-	    $this->state = self::INVALID;
+	    $this->setState(self::INVALID);
 	    $this->verify = false;
 	    return $this->save();
 	}
