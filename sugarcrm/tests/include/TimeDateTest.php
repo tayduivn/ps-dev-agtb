@@ -853,5 +853,14 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 
 	    $f = $this->time_date->get_date_time_format(null, $current_user);
 	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format($current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format($current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format($current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
 	}
 }
