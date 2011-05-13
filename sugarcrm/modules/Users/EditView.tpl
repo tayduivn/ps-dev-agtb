@@ -950,11 +950,6 @@ document.getElementById('email_link_type').onchange();
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
-if(window.addEventListener){
-    window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
-}else{
-    window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
-}
 {/literal}
 {if !$IS_GROUP && !$IS_PORTALONLY}
 {literal}
