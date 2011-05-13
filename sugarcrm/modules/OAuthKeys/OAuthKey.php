@@ -1,5 +1,5 @@
 <?php
-class OAuthKey extends SugarBean
+class OAuthKey extends Basic
 {
 	public $module_dir = 'OAuthKeys';
 	public $object_name = 'OAuthKey';
@@ -9,11 +9,6 @@ class OAuthKey extends SugarBean
 	public $disable_row_level_security = true;
 
 	static public $keys_cache = array();
-
-	public function get_summary_text()
-	{
-	    return $this->name;
-	}
 
 	/**
 	 * Get record by consumer key

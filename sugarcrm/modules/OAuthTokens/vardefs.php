@@ -101,7 +101,7 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
     ),
    'relationships'=>array(
         'consumer' =>
-           array('lhs_module'=> 'OAuthKeys', 'lhs_table'=> 'oauth_consumer', 'lhs_key' => 'id',
+           array('lhs_module'=> 'OAuthKeys', 'lhs_table'=> 'oauth_consumer', 'lhs_key' => 'c_key',
    				'rhs_module'=> 'OAuthTokens', 'rhs_table'=> 'oauth_tokens', 'rhs_key' => 'consumer',
    				'relationship_type'=>'one-to-many')
     )
