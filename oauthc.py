@@ -27,8 +27,18 @@ restparams['method'] = 'oauth_access'
 resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
 print resp
 print content
+cont = json.loads(content)
+sess = cont["id"]
+print sess
 
 restparams['method'] = 'get_available_modules'
+resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
+print resp
+print content
+
+restparams['method'] = 'get_entry_list'
+param_string = {0:False, 1:'Calls', 2: '', 3:'', 4:0}
+restparams['rest_data'] = json.dumps(param_string,sort_keys=False, default=json_util.default)
 resp, content = client.request(url, "POST", body=urllib.urlencode(restparams))
 print resp
 print content

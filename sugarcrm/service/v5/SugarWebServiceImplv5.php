@@ -76,7 +76,7 @@ class SugarWebServiceImplv5 extends SugarWebServiceImplv4 {
     		return $error;
     	}
     	global $current_user;
-        return "Welcome {$current_user->user_name}!";
+        return array('id'=>session_id());
     }
 
 }

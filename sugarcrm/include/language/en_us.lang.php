@@ -135,6 +135,7 @@ $app_list_strings = array (
     'DCEActions' => 'Actions',
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
+    'OAuthKeys' => 'OAuth Consumer Keys',
         ),
   'moduleListSingular' =>
   array (
@@ -3036,7 +3037,7 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
-    
+
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
     'LBL_ENTER_YEAR' => 'Enter Year',
@@ -3061,13 +3062,13 @@ $app_strings = array (
     'LBL_SHARE_LINKABLE' => 'Linkable',
     'LBL_SHARE_PUBLIC' => 'Public',
 
-    
+
     // Web Services REST RSS
     'LBL_RSS_FEED' => 'RSS Feed',
     'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
     'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
-    
+
     //External API Error Messages
     'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
     );

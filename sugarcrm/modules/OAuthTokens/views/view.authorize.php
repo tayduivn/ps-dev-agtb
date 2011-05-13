@@ -3,15 +3,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class OauthTokensViewAuthorize extends SugarView
 {
-	public function __construct()
-	{
-		parent::SugarView();
-
-//        $this->options['show_header'] = false;
-//        $this->options['show_footer'] = false;
-        $this->options['show_javascript'] = false;
-	}
-
 	public function display()
     {
         global $current_user;
