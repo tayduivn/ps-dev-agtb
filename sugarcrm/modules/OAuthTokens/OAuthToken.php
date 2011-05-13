@@ -30,17 +30,30 @@ class OAuthToken extends SugarBean
         $this->setState(self::REQUEST);
 	}
 
+	/**
+	 * Set token state
+	 * @param int $s
+	 * @return OAuthToken
+	 */
 	public function setState($s)
 	{
 	    $this->tstate = $s;
 	    return $this;
 	}
 
+	/**
+	 * Generate random token
+	 * @return string
+	 */
 	protected static function randomValue()
 	{
 	    return bin2hex(OAuthProvider::generateToken(6));
 	}
 
+	/**
+	 * Generate random token/secret pair and create token
+	 * @return OAuthToken
+	 */
     static function generate()
     {
         $t = self::randomValue();
@@ -58,6 +71,11 @@ class OAuthToken extends SugarBean
         parent::save();
     }
 
+    /**
+     * Load token by ID
+     * @param string $token
+	 * @return OAuthToken
+     */
     static function load($token)
 	{
 	    $ltoken = new self();
@@ -67,6 +85,9 @@ class OAuthToken extends SugarBean
         return $ltoken;
 	}
 
+	/**
+	 * Invalidate token
+	 */
 	public function invalidate()
 	{
 	    $this->state = self::INVALID;
@@ -74,8 +95,16 @@ class OAuthToken extends SugarBean
 	    return $this->save();
 	}
 
+	/**
+	 * Authorize request token
+	 * @param mixed $authdata
+	 * @return string Validation token
+	 */
 	public function authorize($authdata)
 	{
+	    if($this->tstate != self::REQUEST) {
+	        return false;
+	    }
 	    $this->verify = self::randomValue();
 	    $this->authdata = $authdata;
 	    if(isset($authdata['user'])) {
@@ -85,6 +114,11 @@ class OAuthToken extends SugarBean
 	    return $this->verify;
 	}
 
+	/**
+	 * Copy auth data between tokens
+	 * @param OAuthToken $token
+	 * @return OAuthToken
+	 */
 	public function copyAuthData(OAuthToken $token)
 	{
 	    $this->authdata = $token->authdata;
@@ -92,11 +126,17 @@ class OAuthToken extends SugarBean
 	    return $this;
 	}
 
+	/**
+	 * Get query string for the token
+	 */
 	public function queryString()
 	{
 	    return "oauth_token={$this->token}&oauth_token_secret={$this->secret}";
 	}
 
+	/**
+	 * Clean up stale tokens
+	 */
     static public function cleanup()
 	{
 	    global $db;
@@ -106,6 +146,12 @@ class OAuthToken extends SugarBean
 	    $db->query("DELETE FROM oauth_token WHERE status = ".self::REQUEST." AND token_ts < ".time()-60*60*24);
 	}
 
+	/**
+	 * Check if the nonce is valid
+	 * @param string $key
+	 * @param string $nonce
+	 * @param string $ts
+	 */
 	public static function checkNonce($key, $nonce, $ts)
 	{
 	    global $db;
@@ -124,5 +170,10 @@ class OAuthToken extends SugarBean
         $db->query(sprintf("DELETE FROM oauth_nonce WHERE conskey='%s' AND nonce_ts < %d", $db->quote($key), $ts));
         $db->query(sprintf("INSERT INTO oauth_nonce(conskey, nonce, nonce_ts) VALUES('%s', '%s', %d)", $db->quote($key), $db->quote($nonce), $ts));
 	    return OAUTH_OK;
+	}
+
+	public function mark_deleted($id)
+	{
+	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
 	}
 }

@@ -23,6 +23,10 @@ class OAuthKey extends Basic
 	    return $this;
 	}
 
+	/**
+	 * Fetch customer key by id
+	 * @param string $key
+	 */
 	public static function fetchKey($key)
 	{
 	    if(isset(self::$keys_cache[$key])) {
