@@ -36,4 +36,9 @@ class OAuthKey extends Basic
 	    return false;
 	}
 
+	public function mark_deleted($id)
+	{
+	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
+	}
+
 }
