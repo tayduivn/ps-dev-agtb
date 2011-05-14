@@ -17,6 +17,7 @@ class OAuthToken extends SugarBean
     public $authdata;
     public $consumer;
     public $assigned_user_id;
+    public $consumer_obj;
 
     const REQUEST = 1;
     const ACCESS = 2;
@@ -38,6 +39,13 @@ class OAuthToken extends SugarBean
 	public function setState($s)
 	{
 	    $this->tstate = $s;
+	    return $this;
+	}
+
+	public function setConsumer($consumer)
+	{
+	    $this->consumer = $consumer->id;
+	    $this->consumer_obj = $consumer;
 	    return $this;
 	}
 
@@ -82,6 +90,13 @@ class OAuthToken extends SugarBean
 	    $ltoken->retrieve($token);
         if(empty($ltoken->id)) return null;
         $ltoken->token = $ltoken->id;
+        if(!empty($ltoken->consumer)) {
+            $ltoken->consumer_obj = new OAuthKey();
+            $ltoken->consumer_obj->retrieve($ltoken->consumer);
+            if(empty($ltoken->consumer_obj->id)) {
+                return null;
+            }
+        }
         return $ltoken;
 	}
 
@@ -176,4 +191,12 @@ class OAuthToken extends SugarBean
 	{
 	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
 	}
+}
+
+function displayDateFromTs($focus, $field, $value, $view='ListView')
+{
+    $field = strtoupper($field);
+    if(!isset($focus[$field])) return '';
+    global $timedate;
+    return $timedate->asUser($timedate->fromTimestamp($focus[$field]));
 }

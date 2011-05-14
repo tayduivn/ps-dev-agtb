@@ -3819,4 +3819,8 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'password' => 'Username/Password',
     'oauth' => 'OAuth',
     );
-  ?>
+	$app_list_strings['token_status'] = array(
+        1 => 'Request',
+        2 => 'Access',
+        3 => 'Invalid',
+    );

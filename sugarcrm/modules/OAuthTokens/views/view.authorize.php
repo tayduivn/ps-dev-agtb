@@ -13,17 +13,12 @@ class OauthTokensViewAuthorize extends SugarView
         $sugar_smarty->assign('sid', session_id());
 
         $token = OAuthToken::load($_REQUEST['token']);
-        if(empty($token) || empty($token->consumer) || $token->tstate != OAuthToken::REQUEST) {
+        if(empty($token) || empty($token->consumer) || $token->tstate != OAuthToken::REQUEST || empty($token->consumer_obj)) {
             sugar_die('Invalid token');
         }
 
-        $consumer = OAuthKey::fetchKey($token->consumer);
-        if(!empty($consumer)) {
-            $sugar_smarty->assign('consumer', sprintf($GLOBALS['mod_strings']['LBL_OAUTH_CONSUMERREQ'], $consumer->name));
-        } else {
-            sugar_die('Invalid consumer key');
-        }
         if(empty($_REQUEST['confirm'])) {
+            $sugar_smarty->assign('consumer', sprintf($GLOBALS['mod_strings']['LBL_OAUTH_CONSUMERREQ'], $token->consumer_obj->name));
             $roles = array('' => '');
             $allroles = ACLRole::getAllRoles();
             foreach($allroles as $role) {

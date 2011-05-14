@@ -23,4 +23,5 @@ $mod_strings = array (
   'LBL_MODULE_TITLE' => 'OAuth Keys',
   'LNK_NEW_RECORD' => 'Create OAuth Key',
   'LNK_LIST' => 'View OAuth Keys',
+  'LBL_TOKENS' => 'Tokens',
 );

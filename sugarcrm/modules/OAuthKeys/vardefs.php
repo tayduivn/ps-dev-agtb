@@ -48,6 +48,17 @@ $dictionary['OAuthKey'] = array('table' => 'oauth_consumer',
             'reportable'=>false,
         	'studio' => 'hidden',
           ),
+          'tokens' =>
+          array (
+            'name' => 'tokens',
+            'type' => 'link',
+            'relationship' => 'consumer_tokens',
+            'module'=>'OAuthTokens',
+            'bean_name'=>'OAuthToken',
+            'source'=>'non-db',
+            'vname'=>'LBL_TOKENS',
+          ),
+
     ),
     'indices' => array (
        array('name' =>'ckey', 'type' =>'unique', 'fields'=>array('c_key')),

@@ -43,6 +43,7 @@ class OAuthKey extends Basic
 	public function mark_deleted($id)
 	{
 	    $this->db->query("DELETE from {$this->table_name} WHERE id='".$this->db->quote($id)."'");
+	    $this->db->query("DELETE from oauth_tokens WHERE consumer='".$this->db->quote($id)."'");
 	}
 
 }
