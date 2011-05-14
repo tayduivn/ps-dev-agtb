@@ -95,12 +95,12 @@
 							</select>
 							<span id='active_date_field_span' style="display:{$A_DATE1_STYLE}">
 								<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date' id='active_date_field' type="text" size='11' maxlength='10' value="{$active_date}"/> 
-								{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="active_date_trigger" '} 
+								{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE other_attributes='align="absmiddle" id="active_date_trigger" '} 
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	
 								<span id='active_date_field2_span' style="display:{$A_DATE2_STYLE}">&nbsp;{$MOD.LBL_AND}&nbsp;
 									<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date2' id='active_date_field2' type="text" size='11' value="{$active_date2}"/> 
-									{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="active_date_trigger2" '} 
+									{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE other_attributes='align="absmiddle" id="active_date_trigger2" '} 
 									<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 								</span>
 							</span>
@@ -114,12 +114,12 @@
 							</select>
 							<span id='exp_date_field_span' style="display:{$X_DATE1_STYLE}">
 								<input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date' id='exp_date_field' type="text" size='11' maxlength='10' value="{$exp_date}"> 
-								{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="exp_date_trigger" '} 
+								{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE other_attributes='align="absmiddle" id="exp_date_trigger" '} 
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	
 								<span id='exp_date_field2_span' style="display:{$X_DATE2_STYLE}">&nbsp;{$MOD.LBL_AND}&nbsp;
 									<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date2' id='exp_date_field2' type="text" size='11' value="{$exp_date2}"/> 
-									{sugar_getimage name="jscalendar" ext=".gif" alt="{$APP.LBL_ENTER_DATE}" other_attributes='align="absmiddle" id="exp_date_trigger2" '} 
+									{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE other_attributes='align="absmiddle" id="exp_date_trigger2" '} 
 									<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 								</span>
 							</span>

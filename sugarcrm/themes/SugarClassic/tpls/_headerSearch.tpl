@@ -34,7 +34,7 @@
         <input type="hidden" name="search_form" value="false">
         <input type="hidden" name="advanced" value="false">
         {$APP.LBL_SEARCH}
-		{sugar_getimage name="MoreDetail" ext=".png" alt="{$APP.LBL_SEARCH}" other_attributes='border="0" id="unified_search_advanced_img" '}&nbsp;
+		{sugar_getimage name="MoreDetail" ext=".png" alt=$APP.LBL_SEARCH other_attributes='border="0" id="unified_search_advanced_img" '}&nbsp;
         <input type="text" name="query_string" id="query_string" size="20" value="{$SEARCH}">&nbsp;
 		<input type="submit" class="button" value="&nbsp;">
     </form>
@@ -43,7 +43,7 @@
 <div id="sitemapLink">
     <span id="sitemapLinkSpan">
         {$APP.LBL_SITEMAP}
-        {sugar_getimage name="MoreDetail" alt="{$app_strings.LBL_MOREDETAIL}" ext=".png" other_attributes=''}
+        {sugar_getimage name="MoreDetail" alt=$app_strings.LBL_MOREDETAIL ext=".png" other_attributes=''}
     </span>
 </div>
 <span id='sm_holder'></span>

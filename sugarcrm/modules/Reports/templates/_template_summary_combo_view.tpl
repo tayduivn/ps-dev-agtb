@@ -106,7 +106,7 @@ if ($startTable) {
 		<td>
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="{$topLevelGroupClass}">
 				<tr height="20" >				
-				  <th align='left' id = "{$rowId}" name= "{$rowId}" class="reportGroup1ByTableEvenListRowS1" valign=middle nowrap><span id="{$spanId}"><a href="javascript:expandCollapseComboSummaryDivTable('{$divId}')">{sugar_getimage name="basic_search" ext=".gif" width="8" height="8" alt="{$mod_strings.LBL_ALT_SHOW}" other_attributes='border="0" '}</a></span>&nbsp;{$groupByColumnName}
+				  <th align='left' id = "{$rowId}" name= "{$rowId}" class="reportGroup1ByTableEvenListRowS1" valign=middle nowrap><span id="{$spanId}"><a href="javascript:expandCollapseComboSummaryDivTable('{$divId}')">{sugar_getimage name="basic_search" ext=".gif" width="8" height="8" alt=$mod_strings.LBL_ALT_SHOW other_attributes='border="0" '}</a></span>&nbsp;{$groupByColumnName}
 				  </th>
 				</tr>
 			</table>
@@ -404,7 +404,7 @@ if ( $reporter->has_summary_columns()) {
 	<th scope="col" align='left'  valign=middle nowrap>&nbsp;</th>
 	{/if}
 	{if ($isSummaryComboHeader)}
-	<th><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_ALT_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></th>
+	<th><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt=$mod_strings.LBL_ALT_SHOW src="{$image_path}advanced_search.gif"/></a></span></th>
 	{/if}
 	{php}
 		$count = 0;
@@ -435,7 +435,7 @@ if ( $reporter->has_summary_columns()) {
 {/php}
 		<tr height=20 class="{$row_class}" onmouseover="setPointer(this, '{$rownum}', 'over', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');" onmouseout="setPointer(this, '{$rownum}', 'out', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');" onmousedown="setPointer(this, '{$rownum}', 'click', '{$bg_color}', '{$hilite_bg}', '{$click_bg}');">
 		{if ($isSummaryComboHeader)}
-		<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt="{$mod_strings.LBL_ALT_SHOW}" src="{$image_path}advanced_search.gif"/></a></span></td>
+		<td><span id="img_{$divId}"><a href="javascript:expandCollapseComboSummaryDiv('{$divId}')"><img width="8" height="8" border="0" absmiddle="" alt=$mod_strings.LBL_ALT_SHOW src="{$image_path}advanced_search.gif"/></a></span></td>
 		{/if}
 		{php}
 			$count = 0;

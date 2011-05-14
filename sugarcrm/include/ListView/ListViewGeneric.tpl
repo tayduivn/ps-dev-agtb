@@ -80,14 +80,14 @@
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 					{/if}
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
@@ -128,7 +128,7 @@
 			{if !empty($quickViewLinks)}
             {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}{/capture}
             {capture assign=action}{if $act}{$act}{else}EditView{/if}{/capture}
-                <td width='2%' nowrap>{if $pageData.rowAccess[$id].edit}<a title='{$editLinkString}' href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)" onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)">{sugar_getimage alt="{$app_strings.LBL_EDIT_INLINE}" name="edit_inline" ext=".gif" other_attributes='border="0" '}</a>{/if}</td>
+                <td width='2%' nowrap>{if $pageData.rowAccess[$id].edit}<a title='{$editLinkString}' href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)" onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)">{sugar_getimage alt=$app_strings.LBL_EDIT_INLINE name="edit_inline" ext=".gif" other_attributes='border="0" '}</a>{/if}</td>
 
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}

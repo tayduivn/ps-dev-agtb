@@ -147,9 +147,9 @@
 				<tbody>
 				<tr height="25">
                     {capture assign="tabImage"}{$tab.type}Tab_left.gif{/capture}
-					<td width='1'>{sugar_getimage name=$tabImage width="5" height="25" alt="{$tab.label}" other_attributes='border="0" '}</td>
+					<td width='1'>{sugar_getimage name=$tabImage width="5" height="25" alt=$tab.label other_attributes='border="0" '}</td>
 					<td width='1' class="{$tab.type}Tab" nowrap="nowrap"><a class="{$tab.type}TabLink" href="javascript:SUGAR.themes.loadSubpanel('{$tab.label}');">{$tab.label}</a></td>
-					<td width='1' class="{$tab.type}TabRight">{sugar_getimage name="blank" ext=".gif" width="2" height="1" alt="{$tab.label}" other_attributes='border="0" '}</td>
+					<td width='1' class="{$tab.type}TabRight">{sugar_getimage name="blank" ext=".gif" width="2" height="1" alt=$tab.label other_attributes='border="0" '}</td>
 					<td width='1' style="background-image: url({sugar_getimagepath file='emptyTabSpace.gif'});" valign="bottom"></td>
 				</tr>
 				</tbody>

@@ -26,5 +26,5 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{sugar_getimage name="img_loading" alt="{$mod_strings.LBL_LOADING}" ext=".gif" other_attributes='align="absmiddle" '}&nbsp;{$message} {$package}
+{sugar_getimage name="img_loading" alt=$mod_strings.LBL_LOADING ext=".gif" other_attributes='align="absmiddle" '}&nbsp;{$message} {$package}
 <script type='text/javascript' language='Javascript'>ModuleBuilder.beginDeploy('{$package}');</script>	

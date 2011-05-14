@@ -40,7 +40,7 @@
     {include file="_companyLogo.tpl" theme_template=true}
     {include file="_colorFontPicker.tpl" theme_template=true}
     {include file="_globalLinks.tpl" theme_template=true}
-    <img id="myAreaSeparator" height="20" border="0" alt="{$app_strings.LBL_MY_AREA_LINKS}" src="themes/VintageSugar/images/myAreaSeparator.gif"/>
+    <img id="myAreaSeparator" height="20" border="0" alt=$app_strings.LBL_MY_AREA_LINKS src="themes/VintageSugar/images/myAreaSeparator.gif"/>
     <div class="clear"></div>
     {if !$AUTHENTICATED}
     <br /><br />

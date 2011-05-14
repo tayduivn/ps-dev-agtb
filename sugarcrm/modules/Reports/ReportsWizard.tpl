@@ -30,7 +30,7 @@
 {$chartResources}
 <div id='progress_div' ></div>
 <script>
-document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_loader" alt="{$mod_strings.LBL_LOADING}" ext=".gif" other_attributes=''}';
+document.getElementById('progress_div').innerHTML = '{sugar_getimage name="bar_loader" alt=$mod_strings.LBL_LOADING ext=".gif" other_attributes=''}';
 </script>
 
 

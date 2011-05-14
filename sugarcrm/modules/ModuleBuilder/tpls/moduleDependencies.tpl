@@ -105,8 +105,8 @@ table.list tr td.toggleDown, table.list:hover tr td.toggleDown:hover {
 			<td><button id="{$dep.name}actionsBtn" class="button" 
 					onclick="ModuleBuilder.Dependencies.toggleAction('{$dep.name}actions')">
 				Show Actions</button></td>
-			<td width="10px"><img border="0" alt="{$mod_strings.LBL_EDIT}" src="themes/default/images/edit_inline.gif"/></td>
-			<td width="10px"><img border="0" alt="{$mod_strings.LBL_DELETE}" src="themes/Sugar/images/delete_inline.gif"/></td>
+			<td width="10px"><img border="0" alt=$mod_strings.LBL_EDIT src="themes/default/images/edit_inline.gif"/></td>
+			<td width="10px"><img border="0" alt=$mod_strings.LBL_DELETE src="themes/Sugar/images/delete_inline.gif"/></td>
 		</tr>
 		<tr style="display:none" id="{$dep.name}actions">
 			<td class="actionLeadLine"><div/></td>
@@ -116,11 +116,11 @@ table.list tr td.toggleDown, table.list:hover tr td.toggleDown:hover {
     			<th width="50%" class="headerList">Details</th><th class="headerList">&nbsp;</th><th class="headerList">&nbsp;</th>
     			{foreach from=$dep.actions item='action'}
     			<tr><td>{$action.action}</td><td>{$action.target}</td><td>{$action.value}</td>
-    			<td width="10px"><img border="0" alt="{$mod_strings.LBL_EDIT}" src="themes/default/images/edit_inline.gif"/></td>
-    			<td width="10px"><img border="0" alt="{$mod_strings.LBL_DELETE}" src="themes/Sugar/images/delete_inline.gif"/></td></tr>
+    			<td width="10px"><img border="0" alt=$mod_strings.LBL_EDIT src="themes/default/images/edit_inline.gif"/></td>
+    			<td width="10px"><img border="0" alt=$mod_strings.LBL_DELETE src="themes/Sugar/images/delete_inline.gif"/></td></tr>
     			{/foreach}
     			<tr><td colspan="5"><div class="action new" style="text-align:center">New Action 
-    			<img border="0" alt="{$mod_strings.LBL_NEW}" src="themes/default/images/new_inline.gif" style="position: relative; top: 0.15em;"/></div></td></tr>
+    			<img border="0" alt=$mod_strings.LBL_NEW src="themes/default/images/new_inline.gif" style="position: relative; top: 0.15em;"/></div></td></tr>
     		</table>
     	</td></tr>  
 	{/foreach}
@@ -249,10 +249,10 @@ var grid = new Ext.grid.GridPanel({
 			return '<input type=button id="' + a[0][0] + 'act_btn" class="button" onclick="ModuleBuilder.toggleActions(this)"  value="Show Actions"/>';
 		}},
         {header: '', width: 20, sortable: false, dataIndex: '', renderer:function(){
-			return '<img border="0" alt="{$mod_strings.LBL_EDIT}" src="themes/default/images/edit_inline.gif"/>';
+			return '<img border="0" alt=$mod_strings.LBL_EDIT src="themes/default/images/edit_inline.gif"/>';
 		}},
 		{header: '', width: 20, sortable: false, dataIndex: '',renderer:function(){
-			return '<img border="0" alt="{$mod_strings.LBL_EDIT}" src="themes/default/images/edit_inline.gif"/>';
+			return '<img border="0" alt=$mod_strings.LBL_EDIT src="themes/default/images/edit_inline.gif"/>';
 		}}
     ],
     renderTo:'depGrid',

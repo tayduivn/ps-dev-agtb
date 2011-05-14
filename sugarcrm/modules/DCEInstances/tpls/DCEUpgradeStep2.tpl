@@ -78,7 +78,7 @@
 				<td nowrap>
 				<input autocomplete="off" type="text" id="startDate_date" value="" size="11" maxlength="10" onblur="combo_startDate.update();">
 				<input type="hidden" id="startDate" name="startDate" value="">
-				{sugar_getimage name="jscalendar" ext=".gif" alt="{$app_strings.LBL_JS_CALENDAR}" other_attributes='align="absmiddle" border="0" id="startDate_trigger" '}&nbsp;
+				{sugar_getimage name="jscalendar" ext=".gif" alt=$app_strings.LBL_JS_CALENDAR other_attributes='align="absmiddle" border="0" id="startDate_trigger" '}&nbsp;
 				</td>
 				<td nowrap>
 				<div id="startDate_time_section"></div>

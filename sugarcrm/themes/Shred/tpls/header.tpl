@@ -40,7 +40,7 @@
     {include file="_companyLogo.tpl" theme_template=true}
     {include file="_colorFontPicker.tpl" theme_template=true}
     {include file="_globalLinks.tpl" theme_template=true}
-    <img id="boarder" height="45" border="0" width="43" style="margin-left: 3em;" alt="{$app_strings.LBL_GETTINGAIR}" src="themes/Shred/images/boarder.png"/>
+    <img id="boarder" height="45" border="0" width="43" style="margin-left: 3em;" alt=$app_strings.LBL_GETTINGAIR src="themes/Shred/images/boarder.png"/>
     <div class="clear"></div>
     <img id="icicle_left" src="themes/Shred/images/icicle_left.png"/>
     <img id="icicle_right" src="themes/Shred/images/icicle_right.png"/>

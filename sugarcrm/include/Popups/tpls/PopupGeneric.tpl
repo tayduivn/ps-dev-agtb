@@ -43,48 +43,48 @@
 						<td  align='right' nowrap='nowrap'>						
 							{if $pageData.urls.startPage}
 								<button type='button' id='popupViewStartButton' title='{$navStrings.start}' class='button' {if $prerow}onclick='return sListView.save_checks(0, "{$moduleString}");'{else} onClick='location.href="{$pageData.urls.startPage}"' {/if}>
-									{sugar_getimage name="start" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="start" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}
 								</button>						
-								<!--<a href='{$pageData.urls.startPage}' {if $prerow}onclick="return sListView.save_checks(0, '{$moduleString}')"{/if} >{sugar_getimage name="start" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
+								<!--<a href='{$pageData.urls.startPage}' {if $prerow}onclick="return sListView.save_checks(0, '{$moduleString}')"{/if} >{sugar_getimage name="start" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
 							{else}
 								<button type='button' id='popupViewStartButton' title='{$navStrings.start}' class='button' disabled>
-									{sugar_getimage name="start_off" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="start_off" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--{sugar_getimage name="start_off" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
+								<!--{sugar_getimage name="start_off" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
 							{/if}
 							{if $pageData.urls.prevPage}
 								<button type='button' id='popupViewPrevButton' title='{$navStrings.previous}' class='button' {if $prerow}onclick='return sListView.save_checks({$pageData.offsets.prev}, "{$moduleString}")' {else} onClick='location.href="{$pageData.urls.prevPage}"'{/if}>
-									{sugar_getimage name="previous" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}							
+									{sugar_getimage name="previous" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}							
 								</button>
-								<!--<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} >{sugar_getimage name="previous" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
+								<!--<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} >{sugar_getimage name="previous" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
 							{else}
 								<button type='button' id='popupViewPrevButton' class='button' disabled title='{$navStrings.previous}'>
-									{sugar_getimage name="previous_off" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="previous_off" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--{sugar_getimage name="previous_off" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}&nbsp;-->
+								<!--{sugar_getimage name="previous_off" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}&nbsp;-->
 							{/if}
 								<span class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</span>
 							{if $pageData.urls.nextPage}
 								<button type='button' id='popupViewNextButton' title='{$navStrings.next}' class='button' {if $prerow}onclick='return sListView.save_checks({$pageData.offsets.next}, "{$moduleString}")' {else} onClick='location.href="{$pageData.urls.nextPage}"'{/if}>
-									{sugar_getimage name="next" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="next" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} >{$navStrings.next}&nbsp;{sugar_getimage name="next" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}</a>&nbsp;-->
+								<!--&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} >{$navStrings.next}&nbsp;{sugar_getimage name="next" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}</a>&nbsp;-->
 							{else}
 								<button type='button' id='popupViewNextButton' class='button' title='{$navStrings.next}' disabled>
-									{sugar_getimage name="next_off" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="next_off" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--&nbsp;{$navStrings.next}&nbsp;{sugar_getimage name="next_off" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}-->
+								<!--&nbsp;{$navStrings.next}&nbsp;{sugar_getimage name="next_off" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}-->
 							{/if}
 							{if $pageData.urls.endPage  && $pageData.offsets.total != $pageData.offsets.lastOffsetOnPage}
 								<button type='button' id='popupViewEndButton' title='{$navStrings.end}' class='button' {if $prerow}onclick='return sListView.save_checks({$pageData.offsets.end}, "{$moduleString}")' {else} onClick='location.href="{$pageData.urls.endPage}"'{/if}>
-									{sugar_getimage name="end" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}							
+									{sugar_getimage name="end" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}							
 								</button>
-								<!--<a href='{$pageData.urls.endPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.end}, '{$moduleString}')"{/if} >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}</a></td>-->
+								<!--<a href='{$pageData.urls.endPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.end}, '{$moduleString}')"{/if} >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}</a></td>-->
 							{elseif !$pageData.offsets.totalCounted || $pageData.offsets.total == $pageData.offsets.lastOffsetOnPage}
 								<button type='button' id='popupViewEndButton' class='button' disabled title='{$navStrings.end}'>
-								 	{sugar_getimage name="end_off" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}
+								 	{sugar_getimage name="end_off" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--&nbsp;{$navStrings.end}&nbsp;{sugar_getimage name="end_off" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}-->
+								<!--&nbsp;{$navStrings.end}&nbsp;{sugar_getimage name="end_off" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}-->
 							{/if}
 						</td>
 					</tr>
@@ -111,14 +111,14 @@
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
 								{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-								{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+								{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 							{else}
 								{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-								{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+								{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 							{/if}
 						{else}
 							{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 						{/if}
 						</a>
 					{else}
@@ -208,48 +208,48 @@
 						<td  align='right' nowrap='nowrap'>						
 							{if $pageData.urls.startPage}
 								<button type='button' title='{$navStrings.start}' class='button' {if $prerow}onclick='return sListView.save_checks(0, "{$moduleString}");'{else} onClick='location.href="{$pageData.urls.startPage}"' {/if}>
-									{sugar_getimage name="start" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="start" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}
 								</button>						
-								<!--<a href='{$pageData.urls.startPage}' {if $prerow}onclick="return sListView.save_checks(0, '{$moduleString}')"{/if} >{sugar_getimage name="start" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
+								<!--<a href='{$pageData.urls.startPage}' {if $prerow}onclick="return sListView.save_checks(0, '{$moduleString}')"{/if} >{sugar_getimage name="start" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
 							{else}
 								<button type='button' title='{$navStrings.start}' class='button' disabled>
-									{sugar_getimage name="start_off" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="start_off" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--{sugar_getimage name="start_off" ext=".png" alt="{$navStrings.start}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
+								<!--{sugar_getimage name="start_off" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
 							{/if}
 							{if $pageData.urls.prevPage}
 								<button type='button' title='{$navStrings.previous}' class='button' {if $prerow}onclick='return sListView.save_checks({$pageData.offsets.prev}, "{$moduleString}")' {else} onClick='location.href="{$pageData.urls.prevPage}"'{/if}>
-									{sugar_getimage name="previous" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}							
+									{sugar_getimage name="previous" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}							
 								</button>
-								<!--<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} >{sugar_getimage name="previous" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
+								<!--<a href='{$pageData.urls.prevPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.prev}, '{$moduleString}')"{/if} >{sugar_getimage name="previous" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
 							{else}
 								<button type='button' class='button' disabled title='{$navStrings.previous}'>
-									{sugar_getimage name="previous_off" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="previous_off" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--{sugar_getimage name="previous_off" ext=".png" alt="{$navStrings.previous}" other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}&nbsp;-->
+								<!--{sugar_getimage name="previous_off" ext=".png" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}&nbsp;-->
 							{/if}
 								<span class='pageNumbers'>({if $pageData.offsets.lastOffsetOnPage == 0}0{else}{$pageData.offsets.current+1}{/if} - {$pageData.offsets.lastOffsetOnPage} {$navStrings.of} {if $pageData.offsets.totalCounted}{$pageData.offsets.total}{else}{$pageData.offsets.total}{if $pageData.offsets.lastOffsetOnPage != $pageData.offsets.total}+{/if}{/if})</span>
 							{if $pageData.urls.nextPage}
 								<button type='button' title='{$navStrings.next}' class='button' {if $prerow}onclick='return sListView.save_checks({$pageData.offsets.next}, "{$moduleString}")' {else} onClick='location.href="{$pageData.urls.nextPage}"'{/if}>
-									{sugar_getimage name="next" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="next" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} >{$navStrings.next}&nbsp;{sugar_getimage name="next" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}</a>&nbsp;-->
+								<!--&nbsp;<a href='{$pageData.urls.nextPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.next}, '{$moduleString}')"{/if} >{$navStrings.next}&nbsp;{sugar_getimage name="next" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}</a>&nbsp;-->
 							{else}
 								<button type='button' class='button' title='{$navStrings.next}' disabled>
-									{sugar_getimage name="next_off" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}
+									{sugar_getimage name="next_off" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--&nbsp;{$navStrings.next}&nbsp;{sugar_getimage name="next_off" ext=".png" alt="{$navStrings.next}" other_attributes='align="absmiddle" border="0" '}-->
+								<!--&nbsp;{$navStrings.next}&nbsp;{sugar_getimage name="next_off" ext=".png" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}-->
 							{/if}
 							{if $pageData.urls.endPage  && $pageData.offsets.total != $pageData.offsets.lastOffsetOnPage}
 								<button type='button' title='{$navStrings.end}' class='button' {if $prerow}onclick='return sListView.save_checks({$pageData.offsets.end}, "{$moduleString}")' {else} onClick='location.href="{$pageData.urls.endPage}"'{/if}>
-									{sugar_getimage name="end" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}							
+									{sugar_getimage name="end" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}							
 								</button>
-								<!--<a href='{$pageData.urls.endPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.end}, '{$moduleString}')"{/if} >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}</a></td>-->
+								<!--<a href='{$pageData.urls.endPage}' {if $prerow}onclick="return sListView.save_checks({$pageData.offsets.end}, '{$moduleString}')"{/if} >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}</a></td>-->
 							{elseif !$pageData.offsets.totalCounted || $pageData.offsets.total == $pageData.offsets.lastOffsetOnPage}
 								<button type='button' class='button' disabled title='{$navStrings.end}'>
-								 	{sugar_getimage name="end_off" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}
+								 	{sugar_getimage name="end_off" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}
 								</button>
-								<!--&nbsp;{$navStrings.end}&nbsp;{sugar_getimage name="end_off" ext=".png" alt="{$navStrings.end}" other_attributes='align="absmiddle" border="0" '}-->
+								<!--&nbsp;{$navStrings.end}&nbsp;{sugar_getimage name="end_off" ext=".png" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}-->
 							{/if}
 						</td>
 					</tr>

@@ -32,7 +32,7 @@
 			<td scope="row" nowrap="NOWRAP">
 			     <div id="rollover">
 			     {$mod_strings.LBL_SEARCH_FOR}:
-			         <a href="#" class="rollover"><img border="0" alt="{$mod_strings.LBL_HELP}" src="themes/default/images/helpInline.gif">
+			         <a href="#" class="rollover"><img border="0" alt=$mod_strings.LBL_HELP src="themes/default/images/helpInline.gif">
 	                        <div style="position:absolute;top:-2px"><span class="rollover">{$mod_strings.LBL_ADDRESS_BOOK_SEARCH_HELP}</span></div>
 	                 </a>
 	                          
@@ -44,10 +44,10 @@
 			    </select>
 			    &nbsp;
 			    <a href="javascript:void(0);">
-		           	{sugar_getimage name="select" ext=".gif" alt="{$mod_strings.LBL_EMAIL_SELECTOR}" other_attributes='align="absmiddle" border="0" onclick="SUGAR.email2.addressBook.searchContacts();" '}
+		           	{sugar_getimage name="select" ext=".gif" alt=$mod_strings.LBL_EMAIL_SELECTOR other_attributes='align="absmiddle" border="0" onclick="SUGAR.email2.addressBook.searchContacts();" '}
                 </a>
                 <a href="javascript:void(0);">
-		           	{sugar_getimage name="clear" ext=".gif" alt="{$mod_strings.LBL_EMAIL_SELECTOR}" other_attributes='align="absmiddle" border="0" onclick="SUGAR.email2.addressBook.clearAddressBookSearch();" '}
+		           	{sugar_getimage name="clear" ext=".gif" alt=$mod_strings.LBL_EMAIL_SELECTOR other_attributes='align="absmiddle" border="0" onclick="SUGAR.email2.addressBook.clearAddressBookSearch();" '}
                 </a>  
 			</td>
         </tr>

@@ -52,7 +52,7 @@
         </td>
 <!-- BEGIN Add and collapse -->
         <td rowspan='1' valign='top'>
-            &nbsp;&nbsp;<a class="utilsLink" href="javascript:collection['{$vardef.name}'].js_more();" id='more_{$vardef.name}' {if empty($values.secondaries)}style="display:none"{/if}>{sugar_getimage name="advanced_search" ext=".gif" width="8" height="8" alt="{$app_strings.LBL_HIDE_SHOW}" other_attributes='border="0" id="more_img_{$vardef.name}" '}</a>
+            &nbsp;&nbsp;<a class="utilsLink" href="javascript:collection['{$vardef.name}'].js_more();" id='more_{$vardef.name}' {if empty($values.secondaries)}style="display:none"{/if}>{sugar_getimage name="advanced_search" ext=".gif" width="8" height="8" alt=$app_strings.LBL_HIDE_SHOW other_attributes='border="0" id="more_img_{$vardef.name}" '}</a>
         </td>
 <!-- END Add and collapse -->
     </tr>

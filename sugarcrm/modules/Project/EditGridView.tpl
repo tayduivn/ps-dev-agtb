@@ -106,7 +106,7 @@ var resources = new Array();
 <div id="projectButtonsDiv">
 	<span id = "grid_buttons_span">
 	{if $SELECTED_VIEW <= 1 && $CANEDIT}
-			<a valign="bottom" title="{$MOD.LBL_INSERT_BUTTON}">{sugar_getimage name="ProjectInsertRows" ext=".gif" alt="{$mod_strings.LBL_INSERTROWS}" other_attributes='onclick="javascript:SUGAR.grid.insertRow()" '}</img></a>
+			<a valign="bottom" title="{$MOD.LBL_INSERT_BUTTON}">{sugar_getimage name="ProjectInsertRows" ext=".gif" alt=$mod_strings.LBL_INSERTROWS other_attributes='onclick="javascript:SUGAR.grid.insertRow()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_INDENT_BUTTON}">{sugar_getimage name="ProjectIndent" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.indentSelectedRows()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_OUTDENT_BUTTON}">{sugar_getimage name="ProjectOutdent" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.addToOutdent()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_COPY_BUTTON}">{sugar_getimage name="ProjectCopy" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.copyRow()" '}</img></a>

@@ -43,14 +43,14 @@
         <li id="unified_search_advanced_div" style="display: none; height: 1px; position: absolute; overflow: hidden; width: 300px; padding-top: 5px; left:-62px;"> </li>
         <li> <a id="unified_search_advanced_img">
             Advanced Search
-            {sugar_getimage name="MoreDetail" ext=".png" alt="{$APP.LBL_ADVANCED_SEARCH}" other_attributes='border="0" '}&nbsp;
+            {sugar_getimage name="MoreDetail" ext=".png" alt=$APP.LBL_ADVANCED_SEARCH other_attributes='border="0" '}&nbsp;
             </a>
         </li>
 
         <li id="sitemapLink">
             <span id="sitemapLinkSpan">
             {$APP.LBL_SITEMAP}
-            {sugar_getimage name="MoreDetail" alt="{$app_strings.LBL_MOREDETAIL}" ext=".png" other_attributes=''}
+            {sugar_getimage name="MoreDetail" alt=$app_strings.LBL_MOREDETAIL ext=".png" other_attributes=''}
             </span>
             <span id='sm_holder'></span>
         </li>
