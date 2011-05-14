@@ -687,7 +687,7 @@ EOHTML;
             $height = $size[1];        
         // Cache everything but the other attributes....
         if ($alt == -1) $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
-        else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
+        else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\="$alt\" height=\"$height\" ";
         
         return $cached_results[$imageName] . " $other_attributes />";
     }
