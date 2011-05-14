@@ -40,6 +40,7 @@ if(!defined('JSMIN_AS_LIB'))
 require_once("include/SugarTheme/cssmin.php");
 require_once("jssource/jsmin.php");
 require_once('include/utils/sugar_file_utils.php');
+require_once("include/SugarTheme/SugarSprites.php");
 
 /**
  * Class that provides tools for working with a theme.
@@ -509,6 +510,28 @@ class SugarTheme
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('deprecated.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('style.css').'" />';
 
+		// sprites
+		if($GLOBALS['sugar_config']['use_sprites']) {
+
+			// system wide sprites
+			if(file_exists("cache/sprites/default/sprites.css"))
+				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/default/sprites.css" />';
+
+			// theme specific sprites
+			if(file_exists("cache/sprites/{$this->dirName}/sprites.css"))
+				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$this->dirName.'/sprites.css" />';
+
+			// parent sprites
+			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
+				if(file_exists("cache/sprites/{$parent->dirName}/sprites.css"))
+					$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/'.$parent->dirName.'/sprites.css" />';
+			}
+
+			// repeatable sprites
+			if(file_exists("cache/sprites/Repeatable/sprites.css"))
+				$html .= '<link rel="stylesheet" type="text/css" href="cache/sprites/Repeatable/sprites.css" />';
+		}
+
         // for BC during upgrade
         if ( !empty($this->colors) ) {
             if ( isset($_SESSION['authenticated_user_theme_color']) && in_array($_SESSION['authenticated_user_theme_color'], $this->colors))
@@ -614,12 +637,47 @@ EOHTML;
         static $cached_results = array();
 
         $imageName .= $ext;
-        if(!empty($cached_results[$imageName]))
-            return $cached_results[$imageName]."$other_attributes />";
+        if(!empty($cached_results[$imageName])) {
+
+			// sprite
+			if(substr($cached_results[$imageName],0,5) == '<span') {
+				// get class from cache
+				$class_regex = '/class=["\']([^\'"]+)["\']/i';
+				preg_match($class_regex, $cached_results[$imageName], $cached_class);
+				return $this->getSprite($cached_class[1], $other_attributes);
+			}
+
+			// normal img
+			return $cached_results[$imageName]." $other_attributes />";
+		}
 
         $imageURL = $this->getImageURL($imageName,false);
         if ( empty($imageURL) )
             return false;
+
+		// sprite processing
+		if($GLOBALS['sugar_config']['use_sprites']) {
+
+			// load sprites metadata
+			$sp = SugarSprites::getInstance();
+			$sp->loadSpriteMeta($this->dirName);
+			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
+				$sp->loadSpriteMeta($parent->dirName);
+			}
+
+			$spriteHash = md5($imageURL);
+			if(isset($sp->sprites[$spriteHash])) {
+
+				// cache span tag with single sprite class so we can use it later on
+				$cached_results[$imageName] = '<span class="spr_'.$spriteHash.'"';
+
+				// do not return from cache, otherwise multi classes are not handled correctly
+				return $this->getSprite("spr_$spriteHash", $other_attributes);
+
+			} else {
+				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
+			}
+		}
 
         $size = getimagesize($imageURL);
         if ( is_null($width) )
@@ -631,8 +689,34 @@ EOHTML;
         if ($alt == -1) $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
         else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt\"$alt\" height=\"$height\" ";
         
-        return $cached_results[$imageName] . "$other_attributes />";
+        return $cached_results[$imageName] . " $other_attributes />";
     }
+
+	/**
+	 * Returns sprite span tag
+	 */
+	public function getSprite($sprite_class, $other_attributes) {
+
+		// handle multiple class tags
+		$class_regex = '/class=["\']([^\'"]+)["\']/i';
+		preg_match($class_regex, $other_attributes, $match);
+		if(isset($match[1])) {
+			$other_attributes = preg_replace($class_regex, 'class="'.$sprite_class.' ${1}"', $other_attributes);
+
+		// single class
+		} else {
+			$other_attributes .= ' class="'.$sprite_class.'"';
+		}
+
+		// replace alt attribute by title if no title present
+		if(! preg_match('/title=["\']([^\'"]+)["\']/i', $other_attributes)) {
+			$alt_regex = '/alt=["\']([^\'"]+)["\']/i';
+			$other_attributes = preg_replace($alt_regex, 'title="${1}"', $other_attributes);
+		}
+
+		// use </span> instead of /> as close tag to prevent weird UI results
+		return "<span {$other_attributes}></span>";
+	}
 
     /**
      * Returns the URL for an image in the current theme. If not found in the current theme, will revert
@@ -664,6 +748,8 @@ EOHTML;
             $imagePath = $filename;
         elseif (($filename = $this->_getImageFileName($this->getDefaultImagePath().'/'.$imageName)) != '')
             $imagePath = $filename;
+		elseif (($filename = $this->_getImageFileName('include/images/'.$imageName)) != '')
+			$imagePath = $filename;
         else {
             $GLOBALS['log']->warn("Image $imageName not found");
             return false;
