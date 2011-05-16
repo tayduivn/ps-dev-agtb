@@ -199,6 +199,7 @@ class IBMDB2Manager  extends DBManager
 
         $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
 		if(!$this->checkDB2STMTerror($stmt)) {
+            //db2_execute($stmt);
 			$suppress?@db2_execute($stmt):db2_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
@@ -226,6 +227,8 @@ class IBMDB2Manager  extends DBManager
      */
     protected function checkDB2STMTerror($obj)
     {
+        if(!$obj) return true;
+        
         $err = db2_stmt_error($obj);
         if ($err != false){
             $result = false;
@@ -260,19 +263,21 @@ class IBMDB2Manager  extends DBManager
             db2_free_result($dbResult);
     }
 
-    /**~
+    /**+
      * @see DBManager::limitQuery()
      * NOTE that DB2 supports this on my LUW Express-C version but there may be issues
      * prior to 9.7.2. Hence depending on the versions we are supporting we may need
      * to add code for backward compatibility.
+     * If we need to support this on platforms that don't support the LIMIT functionality,
+     * see here: http://www.channeldb2.com/profiles/blogs/porting-limit-and-offset
      */
     public function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true)
     {
         if ($start < 0)
             $start = 0;
-        $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
+        $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count . ' BUT NOT EXECUTING LIMIT FOR NOW BECAUSE OF DB2');
 
-        $sql = "$sql LIMIT $start,$count";
+        $sql = "SELECT * FROM ($sql) LIMIT $start,$count"; // NOTE Limit
         $this->lastsql = $sql;
 
         if(!empty($GLOBALS['sugar_config']['check_query'])){
@@ -526,6 +531,12 @@ class IBMDB2Manager  extends DBManager
         if(is_null($configOptions))
 			$configOptions = $sugar_config['dbconfig'];
 
+
+        if(isset($sugar_config['dbconfigoption']) && isset( $sugar_config['dbconfigoption']['persistent']))
+            $persistConnection = $sugar_config['dbconfigoption']['persistent'];
+        else
+            $persistConnection = false;
+
         // Creating the connection string dynamically so that we can accommodate all scenarios
         // Starting with user and password as we always need these.
         $dsn = "UID=".$configOptions['db_user_name'].";PWD=".$configOptions['db_password'].";";
@@ -548,35 +559,18 @@ class IBMDB2Manager  extends DBManager
         if(!isset($configOptions['db_options']))
             $configOptions['db_options'] = array();
 
-        if ($sugar_config['dbconfigoption']['persistent'] == true) {
+        if ($persistConnection) {
             $this->database = db2_pconnect($dsn, '', '', $configOptions['db_options']);
         }
 
         if (!$this->database) {
             $this->database = db2_connect($dsn, '', '', $configOptions['db_options']);
-            if($this->database  && $sugar_config['dbconfigoption']['persistent'] == true){
+            if($this->database  && $persistConnection){
                 $_SESSION['administrator_error'] = "<b>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false "
                     . "in your config.php file</b>";
             }
         }
-
-//        if(!$this->database) {
-//            $GLOBALS['log']->fatal("Could not connect to server " //.$configOptions['db_host_name']
-//                                   ." as ".$configOptions['db_user_name'].":".db2_conn_errormsg());
-//            if($dieOnError) {
-//                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
-//            } else {
-//                return false;
-//            }
-//        }
-
-        // cn: using direct calls to prevent this from spamming the Logs
-//        $charset = "SET CHARACTER SET utf8";
-//        if(isset($sugar_config['dbconfigoption']['collation']) && !empty($sugar_config['dbconfigoption']['collation']))
-//        	$charset .= " COLLATE {$sugar_config['dbconfigoption']['collation']}";
-//        mysql_query($charset, $this->database); // no quotes around "[charset]"
-//        mysql_query("SET NAMES 'utf8'", $this->database);
 
         if($this->checkError('Could Not Connect:', $dieOnError))
             $GLOBALS['log']->info("connected to db");
@@ -827,7 +821,9 @@ class IBMDB2Manager  extends DBManager
 
            switch ($type) {
            case 'unique':
-               $columns[] = " UNIQUE $name ($fields)";
+               //$columns[] = " UNIQUE ($fields)";
+               // NOTE: DB2 doesn't allow null columns in UNIQUE constraint. Hence
+               // we will not enforce the uniqueness other than through Indexes as per Stas recommendation.
                break;
            case 'primary':
                $columns[] = " PRIMARY KEY ($fields)";
@@ -1054,6 +1050,8 @@ EOQ;
 
                 break;
         }
+
+        $GLOBALS['log']->info("IBMDB2Manager.add_drop_constraint: ".$sql);
         return $sql;
     }
 
