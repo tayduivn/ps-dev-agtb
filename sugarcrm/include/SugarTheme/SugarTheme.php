@@ -613,7 +613,9 @@ EOHTML;
     public function getImage(
         $imageName,
         $other_attributes = '',
-        $alt = '' // only to be used when image contains something useful, ie "profile picture of Sally"
+        $alt = '', // only to be used when image contains something useful, ie "profile picture of Sally"
+		$width = null,
+		$height = null
     )
     {
 
@@ -640,8 +642,19 @@ EOHTML;
         if ( empty($imageURL) )
             return false;
 
+		// compare requested image size with actual image
+		$size = getimagesize($imageURL);
+		$act_width = $size[0];
+		$act_height = $size[1];
+
+		$sameSize = true;
+		if($act_width <> $width || $act_height <> $height) {
+			$GLOBALS['log']->debug(__FUNCTION__.": requested image size different from original one, bypassing sprite for $imageURL");
+			$sameSize = false;
+		}
+
 		// sprite processing
-		if($GLOBALS['sugar_config']['use_sprites']) {
+		if($GLOBALS['sugar_config']['use_sprites'] && $sameSize) {
 
 			// load sprites metadata
 			$sp = SugarSprites::getInstance();
@@ -663,11 +676,6 @@ EOHTML;
 				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
 			}
 		}
-
-		// image size taken from image (no longer supported to supply w/h on method args because of sprites)
-        $size = getimagesize($imageURL);
-		$width = $size[0];
-		$height = $size[1];        
 
         // Cache everything but the other attributes and alt attribute ....
         $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
