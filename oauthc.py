@@ -9,8 +9,8 @@ from pymongo import json_util
 consumer_key = 'CONSUMERKEY'
 consumer_secret = 'CONSUMERSECRET'
 
-url = 'http://localhost:8888/sugar63/service/v5/rest.php'
-urld = 'http://localhost:8888/sugar63/service/v5/rest.php?start_debug=1&debug_port=10137&debug_session_id=1012820&debug_host=127.0.0.1&debug_stop=1'
+url = 'http://localhost:8888/sugar63/service/v4/rest.php'
+urld = 'http://localhost:8888/sugar63/service/v4/rest.php?start_debug=1&debug_port=10137&debug_session_id=1012820&debug_host=127.0.0.1&debug_stop=1'
 
 restparams = {
                 'input_type': 'json',

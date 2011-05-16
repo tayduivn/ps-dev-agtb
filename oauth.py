@@ -6,7 +6,7 @@ import urllib
 consumer_key = 'CONSUMERKEY'
 consumer_secret = 'CONSUMERSECRET'
 
-url = 'http://localhost:8888/sugar63/service/v5/rest.php'
+url = 'http://localhost:8888/sugar63/service/v4/rest.php'
 
 restparams = {
                 'input_type': 'json',
