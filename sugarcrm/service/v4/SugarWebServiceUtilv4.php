@@ -510,7 +510,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 		return array('module_fields' => $module_fields, 'link_fields' => $link_fields);
 	}
 
-    
+
 	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
 		global $beanList, $beanFiles, $current_user, $app_list_strings;
@@ -665,7 +665,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 			);
 		}
 	}
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	function get_mobile_login_data(&$nameValueArray)
 	{
@@ -680,4 +680,51 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         $nameValueArray['sugar_version'] = $GLOBALS['sugar_version'];
 	}
 	//END SUGARCRM flav=pro ONLY
+
+    function checkSessionAndModuleAccess($session, $login_error_key, $module_name, $access_level, $module_access_level_error_key, $errorObject)
+    {
+          if(isset($_REQUEST['oauth_token'])) {
+              $session = $this->checkOAuthAccess($errorObject);
+          }
+          if(!$session) return false;
+          return parent::checkSessionAndModuleAccess($session, $login_error_key, $module_name, $access_level, $module_access_level_error_key, $errorObject);
+    }
+
+    public function checkOAuthAccess($errorObject)
+    {
+        require_once "include/SugarOAuthServer.php";
+        try {
+	        $oauth = new SugarOAuthServer();
+	        $token = $oauth->authorizedToken();
+	        if(empty($token) || empty($token->assigned_user_id)) {
+	            return false;
+	        }
+        } catch(OAuthException $e) {
+            $GLOBALS['log']->debug("OAUTH Exception: $e");
+            $errorObject->set_error('invalid_login');
+			$this->setFaultObject($errorObject);
+            return false;
+        }
+
+	    $user = new User();
+	    $user->retrieve($token->assigned_user_id);
+	    if(empty($user->id)) {
+	        return false;
+	    }
+        global $current_user;
+		$current_user = $user;
+		ini_set("session.use_cookies", 0); // disable cookies to prevent session ID from going out
+		session_start();
+		session_regenerate_id();
+		$_SESSION['oauth'] = $oauth->authorization();
+		$_SESSION['avail_modules'] = $this->get_user_module_list($user);
+		// TODO: handle role
+		// handle session
+		$_SESSION['is_valid_session']= true;
+		$_SESSION['ip_address'] = query_client_ip();
+		$_SESSION['user_id'] = $current_user->id;
+		$_SESSION['type'] = 'user';
+		$_SESSION['authenticated_user_id'] = $current_user->id;
+        return session_id();
+    }
 }

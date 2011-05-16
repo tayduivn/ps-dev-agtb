@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
- 
+
 // $Id: layout_defs.php 17862 2006-11-22 06:37:45Z awu $
 
 $layout_defs['Users'] = array(
@@ -48,7 +48,17 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
-		
+        'tokens' => array(
+			'order' => 40,
+			'module' => 'OAuthTokens',
+			'sort_order' => 'asc',
+			'sort_by' => 'token_ts',
+			'subpanel_name' => 'ForUser',
+			'get_subpanel_data' => 'oauth_tokens',
+			'title_key' => 'LBL_OAUTH_TOKENS_SUBPANEL_TITLE',
+            'top_buttons' => array(),
+		),
+
 		//END SUGARCRM flav=pro ONLY
 	),
 	'default_subpanel_define' => array(
@@ -147,6 +157,8 @@ $layout_defs['UserEAPM'] = array(
     ),
 );
 
+$layout_defs['UsersHolidays']['subpanel_setup']['holidays'] = $layout_defs['Users']['subpanel_setup']['holidays'];
+$layout_defs['UserOAuth']['subpanel_setup']['tokens'] = $layout_defs['Users']['subpanel_setup']['tokens'];
 
 //BEGIN SUGARCRM flav=pro ONLY
 //remove the administrator create button holiday for the user admin only

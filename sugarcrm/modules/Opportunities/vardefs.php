@@ -99,7 +99,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 		'id_name'=>'campaign_id',
 		'vname'=>'LBL_CAMPAIGN',
 		'type'=>'relate',
-		'link' => 'campaign_opportunities',   	      	   
+		'link' => 'campaign_opportunities',
 		'isnull'=>'true',
 		'table' => 'campaigns',
 		'module'=>'Campaigns',
@@ -234,7 +234,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'audited'=>true,
     'comment' => 'The probability of closure',
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
-    'merge_filter' => 'enabled', 
+    'merge_filter' => 'enabled',
   ),
   'accounts' =>
   array (
@@ -335,7 +335,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'source'=>'non-db',
 		'vname'=>'LBL_LEADS',
   ),
-  
+
   'campaigns' =>
 		array (
   			'name' => 'campaigns',
@@ -375,7 +375,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'relationship' => 'contracts_opportunities',
 	//'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
 	'source' => 'non-db',
-    
+
   ),
  //END SUGARCRM flav=pro ONLY
 ),
