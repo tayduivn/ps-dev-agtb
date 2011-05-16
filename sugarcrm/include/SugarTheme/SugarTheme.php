@@ -607,36 +607,21 @@ EOHTML;
      *
      * @param  string $image image name
      * @param  string $other_attributes optional, other attributes to add to the image tag, not cached
-     * @param  string $width optional, defaults to the actual image's width
-     * @param  string $height optional, defaults to the actual image's height
      * @param  string $alt image alt attribute
      * @return string HTML image tag
      */
     public function getImage(
         $imageName,
         $other_attributes = '',
-        $width = null,
-        $height = null,
-		$ext = '.gif',
-        $alt = ''
+        $alt = '' // only to be used when image contains something useful, ie "profile picture of Sally"
     )
     {
-        if ($alt == -1){
-            $debug = debug_backtrace();
-            $caller = $debug[0]["file"];
-            if (strstr ("/modules/", $caller) !== false) {
-                debug_print_backtrace();
-
-                echo "image name: " . $imageName . "<br />";
-                echo "other attrs: " . $other_attributes . "<br />";
-                echo "alt:" . $alt . "<br />";
-                 die();
-            }
-        }
 
         static $cached_results = array();
 
-        $imageName .= $ext;
+		// remove alt attribute in other attributes
+        preg_replace('/alt=["\']([^\'"]+)["\']/i', '', $other_attributes);
+
         if(!empty($cached_results[$imageName])) {
 
 			// sprite
@@ -644,11 +629,11 @@ EOHTML;
 				// get class from cache
 				$class_regex = '/class=["\']([^\'"]+)["\']/i';
 				preg_match($class_regex, $cached_results[$imageName], $cached_class);
-				return $this->getSprite($cached_class[1], $other_attributes);
+				return $this->getSprite($cached_class[1], $other_attributes, $alt);
 			}
 
 			// normal img
-			return $cached_results[$imageName]." $other_attributes />";
+			return $cached_results[$imageName]." $other_attributes alt=\"$alt\" />";
 		}
 
         $imageURL = $this->getImageURL($imageName,false);
@@ -672,30 +657,27 @@ EOHTML;
 				$cached_results[$imageName] = '<span class="spr_'.$spriteHash.'"';
 
 				// do not return from cache, otherwise multi classes are not handled correctly
-				return $this->getSprite("spr_$spriteHash", $other_attributes);
+				return $this->getSprite("spr_$spriteHash", $other_attributes, $alt);
 
 			} else {
 				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
 			}
 		}
 
+		// image size taken from image (no longer supported to supply w/h on method args because of sprites)
         $size = getimagesize($imageURL);
-        if ( is_null($width) )
-            $width = $size[0];
+		$width = $size[0];
+		$height = $size[1];        
 
-        if ( is_null($height) ) 
-            $height = $size[1];        
-        // Cache everything but the other attributes....
-        if ($alt == -1) $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
-        else $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" alt=\"$alt\" height=\"$height\" ";
-        
-        return $cached_results[$imageName] . " $other_attributes />";
+        // Cache everything but the other attributes and alt attribute ....
+        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
+        return $cached_results[$imageName] . " $other_attributes alt=\"$alt\" />";
     }
 
 	/**
 	 * Returns sprite span tag
 	 */
-	public function getSprite($sprite_class, $other_attributes) {
+	public function getSprite($sprite_class, $other_attributes, $title) {
 
 		// handle multiple class tags
 		$class_regex = '/class=["\']([^\'"]+)["\']/i';
@@ -708,14 +690,41 @@ EOHTML;
 			$other_attributes .= ' class="'.$sprite_class.'"';
 		}
 
-		// replace alt attribute by title if no title present
-		if(! preg_match('/title=["\']([^\'"]+)["\']/i', $other_attributes)) {
-			$alt_regex = '/alt=["\']([^\'"]+)["\']/i';
-			$other_attributes = preg_replace($alt_regex, 'title="${1}"', $other_attributes);
-		}
+		if($title) 
+			$other_attributes .= ' title="'.$title.'"';
 
 		// use </span> instead of /> as close tag to prevent weird UI results
 		return "<span {$other_attributes}></span>";
+	}
+
+	/**                                                                                                                                                      
+	 * Returns a link HTML tag with or without an embedded image
+	 */                                                                                                                                                      
+    public function getLink(
+		$url,
+		$title,
+		$other_attributes = '',
+        $img_name = '',
+        $img_other_attributes = '',
+		$img_placement = '',
+		$img_alt = '' // only to be used when image contains something useful, ie "profile picture of Sally"
+    )                                                                                                                                                        
+    {
+		
+		// include image 
+		if($img_name) {
+			$img = $this->getImage($img_name, $img_other_attributes, $img_alt);
+			switch($img_placement) {
+				case 'left': 	$inner_html = $img.$title; break;
+				case 'right':	$inner_html = $title.$img; break;
+				default:		$inner_html = $img; break;
+			}
+		} else {
+			$inner_html = $title;
+		}
+
+		return '<a href="'.$url.'" title="'.$title.'" '.$other_attributes.'>'.$inner_html.'</a>';
+
 	}
 
     /**
