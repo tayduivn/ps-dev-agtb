@@ -198,7 +198,7 @@ EOQ;
 		}
 
 		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($url, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"');
+		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"');
 		$html .= <<<EOQ
 		</ul>
 		</div>
