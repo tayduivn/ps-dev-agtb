@@ -10,9 +10,5 @@ $mod_strings = array (
     'LBL_STATUS' => 'Status',
     'LBL_TS' => 'Timestamp',
     'LBL_LIST_DELETE' => 'Delete Token',
-	'token_status' => array(
-        1 => 'Request',
-        2 => 'Access',
-        3 => 'Invalid',
-    ),
+    'LBL_CONSUMER' => 'Consumer Name',
 );

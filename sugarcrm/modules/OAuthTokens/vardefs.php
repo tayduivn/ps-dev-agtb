@@ -98,6 +98,20 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
         'bean_name'=>'OAuthKey',
         'source'=>'non-db',
       ),
+      'consumer_name' =>
+	  array (
+		    'name' => 'consumer_name',
+		    'link'=>'consumer_link' ,
+		    'vname' => 'LBL_CONSUMER',
+		    'rname' => 'name',
+		    'type' => 'relate',
+		    'reportable'=>false,
+		    'source'=>'non-db',
+		    'table' => 'oauth_consumer',
+		    'id_name' => 'consumer',
+		    'module'=>'OAuthKeys',
+		    'duplicate_merge'=>'disabled'
+	  ),
 	 'assigned_user_id' =>
 		array (
 			'name' => 'assigned_user_id',
