@@ -358,8 +358,19 @@ class TimeDate
      * @param [User] $user user object, current user if not specified
      * @return string
      */
-    public function get_date_time_format(User $user = null)
+    public function get_date_time_format($user = null)
     {
+        // BC fix - had (bool, user) signature before
+        if(!($user instanceof User)) {
+            if(func_num_args() > 1) {
+                $user = func_get_arg(1);
+                if(!($user instanceof User)) {
+                    $user = null;
+                }
+            } else {
+                $user = null;
+            }
+        }
         return $this->merge_date_time($this->get_date_format($user), $this->get_time_format($user));
     }
 

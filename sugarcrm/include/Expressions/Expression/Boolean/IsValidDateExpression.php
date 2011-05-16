@@ -23,7 +23,7 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>isValidDate(String date)</b><br/>
- * Returns true if <i>date</i> is a valid date string or is empty.
+ * Returns true if <i>date</i> is a valid date string.
  *
  */
 class IsValidDateExpression extends BooleanExpression {
@@ -38,7 +38,12 @@ class IsValidDateExpression extends BooleanExpression {
             return AbstractExpression::$FALSE;
         }
         try {
-            $date = TimeDate::getInstance()->fromUser($dtStr);
+            $date = TimeDate::getInstance()->fromUser($dtStr, $current_user);
+            if(!empty($date)) {
+                return AbstractExpression::$TRUE;
+            }
+            //Next try without time
+            $date = TimeDate::getInstance()->fromUserDate($dtStr, $current_user);
             if(!empty($date)) {
                 return AbstractExpression::$TRUE;
             }

@@ -13,10 +13,10 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 			unlink($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules.php');
 		}
 		
-    	if(file_exists($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php'))
+    	if(file_exists('custom/modules/unified_search_modules_display.php'))
 		{
-			copy($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php', $GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php.bak');
-			unlink($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php');
+			copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
+			unlink('custom/modules/unified_search_modules_display.php');
 		}		
     }
     
@@ -31,10 +31,10 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 			unlink($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules.php.bak');
 		}
 		
-    	if(file_exists($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php.bak'))
+    	if(file_exists('custom/modules/unified_search_modules_display.php.bak'))
 		{
-			copy($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php.bak', $GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php');
-			unlink($GLOBALS['sugar_config']['cache_dir']. 'modules/unified_search_modules_display.php.bak');
+			copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
+			unlink('custom/modules/unified_search_modules_display.php.bak');
 		}	        
 		
 		SugarTestTaskUtilities::removeAllCreatedTasks();
