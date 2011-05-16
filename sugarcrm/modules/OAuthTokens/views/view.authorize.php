@@ -7,8 +7,7 @@ class OauthTokensViewAuthorize extends SugarView
 	public function display()
     {
         if(!SugarOAuthServer::enabled()) {
-            echo $GLOBALS['mod_strings']['LBL_OAUTH_DISABLED'];
-            sugar_die();
+            sugar_die($GLOBALS['mod_strings']['LBL_OAUTH_DISABLED']);
         }
         global $current_user;
         $sugar_smarty = new Sugar_Smarty();
