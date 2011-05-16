@@ -23,7 +23,7 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>isValidDate(String date)</b><br/>
- * Returns true if <i>date</i> is a valid date string or is empty.
+ * Returns true if <i>date</i> is a valid date string.
  *
  */
 class IsValidDateExpression extends BooleanExpression {
