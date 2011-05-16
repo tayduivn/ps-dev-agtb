@@ -2761,16 +2761,21 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9\&\/\.\?=:]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{
                   		script.text = result[2];
                   	}
-                  	document.body.appendChild(script)
+                  	document.body.appendChild(script);
 	              }
 	              catch(e) {
-
+                      if(console && console.log)
+                      {
+                          console.log("error adding script");
+                          console.log(e);
+                          console.log(result);
+                      }
                   }
                   result =  objRegex.exec(text);
 			}

@@ -80,7 +80,7 @@ Calendar.setup = function (params) {
                 });
                 
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));
-                var dialogBody = '<p class="callnav_today"><a href="#"  id="callnav_today">' + SUGAR.language.get('app_strings', 'LBL_EMAIL_DATE_TODAY') + '</a></p><div id="' + showButton + '_div"></div>';
+                var dialogBody = '<p class="callnav_today"><a href="javascript:void(0)"  id="callnav_today">' + SUGAR.language.get('app_strings', 'LBL_EMAIL_DATE_TODAY') + '</a></p><div id="' + showButton + '_div"></div>';
                 dialog.setBody(dialogBody);
                 dialog.render(document.body);
 

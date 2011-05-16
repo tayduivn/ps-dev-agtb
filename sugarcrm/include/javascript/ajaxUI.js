@@ -39,11 +39,7 @@ SUGAR.ajaxUI = {
                 }
             }
         } catch (e){
-            if (YAHOO.lang.trim(o.responseText) == "")
-            {
-                alert("Page not found.");
-            }
-            else {
+            if(YAHOO.lang.trim(o.responseText) == "" && o.responseText.charAt(0) != '{') {
                 document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
                 SUGAR.util.evalScript(document.body.innerHTML);
             }
@@ -117,11 +113,27 @@ SUGAR.ajaxUI = {
                 });
             }
         }
+        var test = function() {
+            SUGAR.testAjax = YAHOO.util.Connect.asyncRequest('GET', "index.php?module=Accounts&action=index", {
+                success: function(o){
+                    console.log("success called");
+                    console.log(o);
+                },
+                failure: function(o){
+                    console.log("fail called");
+                    console.log(o);
+                }
+            });
+            window.setTimeout("YAHOO.util.Connect.abort(SUGAR.testAjax)", 500);
+        }
     },
 
     submitForm : function(formname, params)
     {
-        var SA = SUGAR.ajaxUI;
+        var con = YAHOO.util.Connect, SA = SUGAR.ajaxUI;
+        if (SA.lastCall && con.isCallInProgress(SA.lastCall)) {
+            con.abort(SA.lastCall);
+        }
         //Reset the EmailAddressWidget before loading a new page
         if (SUGAR.EmailAddressWidget){
             SUGAR.EmailAddressWidget.instances = {};
