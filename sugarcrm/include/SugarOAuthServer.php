@@ -27,6 +27,14 @@ class SugarOAuthServer
     }
 
     /**
+     * Is this functionality enabled?
+     */
+    public static function enabled()
+    {
+        return extension_loaded('oauth');
+    }
+
+    /**
      * Find consumer by key
      * @param $provider
      */

@@ -14,10 +14,12 @@ class OAuthToken extends SugarBean
     public $tstate;
     public $token_ts;
     public $verify;
-    public $authdata;
     public $consumer;
     public $assigned_user_id;
     public $consumer_obj;
+    // authdata is not preserved so far since we don't have any useful data yet
+    // so it's an extension point for the future
+    public $authdata;
 
     const REQUEST = 1;
     const ACCESS = 2;
@@ -42,6 +44,10 @@ class OAuthToken extends SugarBean
 	    return $this;
 	}
 
+	/**
+	 * Associate the token with the consumer key
+	 * @param OAuthKey $consumer
+	 */
 	public function setConsumer($consumer)
 	{
 	    $this->consumer = $consumer->id;

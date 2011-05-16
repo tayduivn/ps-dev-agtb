@@ -19,12 +19,13 @@ class OauthTokensViewAuthorize extends SugarView
 
         if(empty($_REQUEST['confirm'])) {
             $sugar_smarty->assign('consumer', sprintf($GLOBALS['mod_strings']['LBL_OAUTH_CONSUMERREQ'], $token->consumer_obj->name));
-            $roles = array('' => '');
-            $allroles = ACLRole::getAllRoles();
-            foreach($allroles as $role) {
-                $roles[$role->id] = $role->name;
-            }
-            $sugar_smarty->assign('roles', $roles);
+// SM: roles disabled for now
+//            $roles = array('' => '');
+//            $allroles = ACLRole::getAllRoles();
+//            foreach($allroles as $role) {
+//                $roles[$role->id] = $role->name;
+//            }
+//            $sugar_smarty->assign('roles', $roles);
             $hash = md5(rand());
             $_SESSION['oauth_hash'] = $hash;
             $sugar_smarty->assign('hash', $hash);
@@ -33,7 +34,7 @@ class OauthTokensViewAuthorize extends SugarView
             if($_REQUEST['sid'] != session_id() || $_SESSION['oauth_hash'] != $_REQUEST['hash']) {
                 sugar_die('Invalid request');
             }
-            $verify = $token->authorize(array("user" => $current_user->id, "role" => $_REQUEST['role']));
+            $verify = $token->authorize(array("user" => $current_user->id));
             $sugar_smarty->assign('VERIFY', $verify);
             $sugar_smarty->assign('token', '');
             echo $sugar_smarty->fetch('modules/OAuthTokens/tpl/authorized.tpl');
