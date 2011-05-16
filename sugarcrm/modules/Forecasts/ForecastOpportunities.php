@@ -303,7 +303,7 @@ class ForecastOpportunities extends SugarBean {
             $last_committed["BEST_CASE"]=$this->currency->symbol . format_number($this->currency->convertFromDollar($row["best_case"]),0,0);
             $last_committed["WORST_CASE"]=$this->currency->symbol . format_number($this->currency->convertFromDollar($row["worst_case"]),0,0);
             $last_committed["LIKELY_CASE"]=$this->currency->symbol . format_number($this->currency->convertFromDollar($row["likely_case"]),0,0);
-            $last_committed["DATE_ENTERED"]=$timedate->to_display_date_time($row["date_entered"]);
+            $last_committed["DATE_ENTERED"]=$timedate->to_display_date_time($this->db->fromConvert($row["date_entered"], 'datetime'));
         } else {
             $last_committed["BEST_CASE"]='';
             $last_committed["WORST_CASE"]='';
