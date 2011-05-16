@@ -64,10 +64,11 @@ function checkDBSettings($silent=false) {
                 "db_host_name" => $_SESSION['setup_db_host_name'],
                 "db_host_instance" => $_SESSION['setup_db_host_instance'],
         );
-        // TODO: do we need this?
-//        if(empty($_SESSION['setup_db_create_database'])) {
-//            $dbconfig["db_name"] = $_SESSION['setup_db_database_name'];
-//        }
+        // Needed for database implementation that do not allow connections to the server directly
+        // and that typically require the manual setup of a database instances such as DB2
+        if(empty($_SESSION['setup_db_create_database'])) {
+            $dbconfig["db_name"] = $_SESSION['setup_db_database_name'];
+        }
 
         // Bug 29855 - Check to see if given db name is valid
         if (preg_match("![\"'*/\\?:<>-]+!i", $_SESSION['setup_db_database_name']) ) {
@@ -258,8 +259,8 @@ function copyInputsIntoSession(){
 
             //make sure we are creating or using provided user for app db connections
             $_SESSION['setup_db_create_sugarsales_user']  = true;//get_boolean_from_request('setup_db_create_sugarsales_user');
-            if( $_SESSION['setup_db_type'] == 'oci8' ){
-             //if we are in Oracle Mode, make the admin user/password same as connecting user/password
+            if( $_SESSION['setup_db_type'] == 'oci8' || $_SESSION['setup_db_type'] == 'ibm_db2' ){
+             //if we are in Oracle or DB2 Mode, make the admin user/password same as connecting user/password
               $_SESSION['setup_db_sugarsales_user']             = $_SESSION['setup_db_admin_user_name'];
               $_SESSION['setup_db_sugarsales_password']         = $_SESSION['setup_db_admin_password'];
               $_SESSION['setup_db_sugarsales_password_retype']  = $_SESSION['setup_db_sugarsales_password'];
@@ -322,10 +323,15 @@ function copyInputsIntoSession(){
                 $_SESSION['setup_db_drop_tables']       = true;
                 $_SESSION['setup_db_create_database']   = false;
 
-            }else{
-                $_SESSION['setup_db_drop_tables']       = false;
-                $_SESSION['setup_db_create_database']   = true;
             }
+    // TODO fsteegmans: Verify the following commented out lines as I am not sure why we are hardcoding this based
+    // on the request while these are already defaults. Furthermore this hardcoding overrides previous logic
+    // such as setting setup_db_create_database to false for Oracle and DB2.
+
+//            else{
+//                $_SESSION['setup_db_drop_tables']       = false;
+//                $_SESSION['setup_db_create_database']   = true;
+//            }
 }
 
 ////    END PAGEOUTPUT
