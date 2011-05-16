@@ -1,10 +1,15 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+require_once 'include/SugarOAuthServer.php';
 
 class OauthTokensViewAuthorize extends SugarView
 {
 	public function display()
     {
+        if(!SugarOAuthServer::enabled()) {
+            echo $GLOBALS['mod_strings']['LBL_OAUTH_DISABLED'];
+            sugar_die();
+        }
         global $current_user;
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
