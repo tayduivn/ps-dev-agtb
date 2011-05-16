@@ -35,6 +35,9 @@ class DaysUntilExpression extends NumericExpression
             return false;
         }
         $now = TimeDate::getInstance()->getNow();
+        //set the time to 0, as we are returning an integer based on the date.
+        $now->setTime(0, 0, 0);
+        $params->setTime(0, 0, 0);
         $tsdiff = $params->ts - $now->ts;
         $diff = (int)floor($tsdiff/86400);
         $extrasec = $tsdiff%86400;
