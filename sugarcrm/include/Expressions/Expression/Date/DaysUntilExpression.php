@@ -37,7 +37,7 @@ class DaysUntilExpression extends NumericExpression
         $now = TimeDate::getInstance()->getNow();
         //set the time to 0, as we are returning an integer based on the date.
         $now->setTime(0, 0, 0);
-        $params->setTime(0, 0, 0);
+        $params->setTime(1, 0, 0);
         $tsdiff = $params->ts - $now->ts;
         $diff = (int)floor($tsdiff/86400);
         $extrasec = $tsdiff%86400;
@@ -58,14 +58,21 @@ class DaysUntilExpression extends NumericExpression
 		return <<<EOQ
 			var then = SUGAR.util.DateUtils.parse(this.getParameters().evaluate());
 			var now = new Date();
-			then.setHours(0);
-			then.setMinutes(0);
 			now.setHours(0);
 			now.setMinutes(0);
 			now.setSeconds(0);
-			now.setMilliseconds(0);
+			then.setHours(1);
+			then.setMinutes(0);
+			then.setSeconds(0);
 			var diff = then - now;
-			return Math.ceil(diff / 86400000);
+			var days = Math.floor(diff / 86400000);
+			var extrasec = diff % 86400000;
+			var extra = new Date();
+			extra.setTime(then.getTime() + extrasec);
+			if (extra.getDate() != then.getDate())
+			    days++;
+
+			return days;
 EOQ;
 	}
 
