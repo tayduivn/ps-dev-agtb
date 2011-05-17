@@ -42,6 +42,10 @@ SUGAR.ajaxUI = {
             if(YAHOO.lang.trim(o.responseText) == "" && o.responseText.charAt(0) != '{') {
                 document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
                 SUGAR.util.evalScript(document.body.innerHTML);
+            } else if (console && console.log)
+            {
+                console.log("invalid JSON response:");
+                console.log(o.responseText);
             }
         }
     },

@@ -18,20 +18,21 @@ class SugarFieldPhone extends SugarFieldBase {
 		 /*
          if(isset($params[$prefix.$field]))
          {
-         	 
-         	 
+
+
              if(!empty($properties['validate_usa_format']) && preg_match('/^([\+])?([1])?[- .]?[\(]?([2-9]\d{2})[\)]?[- .]?([0-9]{3})[- .]?([0-9]{4})$/', $params[$prefix.$field], $matches))
          	 {
 	         	 $international_sign = !empty($matches[1]) ? $matches[1] : '';
 	         	 $country_code = !empty($matches[2]) ? $matches[2] . ' ' : '';
 	             $bean->$field = $international_sign . $country_code . '(' . $matches[3] . ') ' . $matches[4] . '-' . $matches[5];
          	 } else {
-         	 
+
          	 //END SUGARCRM flav=int ONLY
-         	 	 $bean->$field = $params[$prefix.$field];
-         	 //BEGIN SUGARCRM flav=int ONLY	 
+         	 	if (isset($params[$prefix.$field]))
+		            $bean->$field = $params[$prefix.$field];
+         	 //BEGIN SUGARCRM flav=int ONLY
          	 }
-         	
+
          }
          */
 		 //END SUGARCRM flav=int ONLY
