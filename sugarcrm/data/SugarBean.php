@@ -1688,6 +1688,8 @@ class SugarBean
 
         $this->call_custom_logic('after_save', '');
 
+        //Now that the record has been saved, we don't want to insert again on further saves
+        $this->new_with_id = false;
         return $this->id;
     }
 
