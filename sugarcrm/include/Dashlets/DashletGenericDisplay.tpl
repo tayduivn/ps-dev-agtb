@@ -181,7 +181,3 @@
 	{/foreach}
 </table>
 
-<script>{literal}    if(typeof(qe_init) != 'undefined'){
-        qe_init(); //!! THIS IS A HACK!  need to find way to trigger off qe_init on last dashlet initial load
-                    // qe_init is defined in footer.tpl
-    }{/literal}</script>
