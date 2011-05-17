@@ -219,7 +219,7 @@ class SugarMin {
                         break;
                     case '/':
                         // Check if regular expression
-                        if (in_array($newLine[strlen($newLine) - 1], $this->regexChars)) {
+                        if (strlen($newLine) > 0 && in_array($newLine[strlen($newLine) - 1], $this->regexChars)) {
                             $nesting = 0;
                             $newLine .= $line[$i];
 
