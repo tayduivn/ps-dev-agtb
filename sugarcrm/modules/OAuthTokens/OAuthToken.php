@@ -1,5 +1,4 @@
 <?php
-require_once 'include/OAuth/SugarOAuthData.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 
 class OAuthToken extends SugarBean
