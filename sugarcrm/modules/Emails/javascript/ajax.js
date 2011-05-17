@@ -306,15 +306,20 @@ var AjaxObject = {
 	 *
 	 */
 	sendEmailCleanUp : function(o) {
+        var ret;
 		hideOverlay();
-		var ret = YAHOO.lang.JSON.parse(o.responseText);
-		if (ret) {
-		  SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
-		  //SUGAR.email2.addressBook.showContactMatches(ret.possibleMatches);
-		} else if (o.responseText) {
-		  overlay(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
-		}
 
+        try {
+            ret = YAHOO.lang.JSON.parse(o.responseText);
+            SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
+            //SUGAR.email2.addressBook.showContactMatches(ret.possibleMatches);
+        } catch(err) {
+            if (o.responseText) {
+		        overlay(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
+		    }
+            // Else we have an error here.
+        }
+        
 		if (typeof(SE.grid) != 'undefined')
 			SE.listView.refreshGrid();
 		//Disabled while address book is disabled
