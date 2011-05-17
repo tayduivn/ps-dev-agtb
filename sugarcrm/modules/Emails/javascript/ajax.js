@@ -590,17 +590,22 @@ AjaxObject.accounts = {
 ///////////////////////////////////////////////////////////////////////////////
 ////	COMPOSE LAYOUT
 AjaxObject.composeLayout = {
-	/**
-	 * Populates the record id
-	 */
-	saveDraftCleanup : function(o) {
-		hideOverlay();
-		var ret = YAHOO.lang.JSON.parse(o.responseText);
-		if(ret)
-		  SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
-		else if (o.responseText)
-		  overlay(mod_strings.LBL_ERROR_SAVING_DRAFT, o.responseText, 'alert');
-	}
+    /**
+     * Populates the record id
+     */
+    saveDraftCleanup : function(o) {
+        var ret;
+        hideOverlay();
+
+        try {
+            ret = YAHOO.lang.JSON.parse(o.responseText);
+            SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
+        } catch(err) {
+            if (o.responseText) {
+                overlay(mod_strings.LBL_ERROR_SAVING_DRAFT, o.responseText, 'alert');
+            }
+        }
+    }
 };
 
 AjaxObject.composeLayout.callback = {
