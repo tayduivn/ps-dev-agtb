@@ -12,8 +12,8 @@ class SugarFieldPhone extends SugarFieldBase {
      * @param SugarBean bean - the bean performing the save
      * @param array params - an array of paramester relevant to the save, most likely will be $_REQUEST
      */
-	public function save(&$bean, $params, $field, $properties, $prefix = ''){
-		 parent::save(&$bean, $params, $field, $properties, $prefix);
+	public function save($bean, $params, $field, $properties, $prefix = ''){
+		 parent::save($bean, $params, $field, $properties, $prefix);
 		 //BEGIN SUGARCRM flav=int ONLY
 		 /*
          if(isset($params[$prefix.$field]))
