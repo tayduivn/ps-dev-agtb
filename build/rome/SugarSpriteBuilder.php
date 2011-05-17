@@ -284,18 +284,7 @@ height: {$h}px;
 background-position: -{$offset_x}px -{$offset_y}px;
 }\n";
 
-					// metadata TODO do we actually need this besides debugging ???
-					/*
-					$metadata[$hash_id] = array(
-						'sprite' => $id,
-						'width' => $w,
-						'height' => $h,
-						'offset_x' => $offset_x,
-						'offset_y' => $offset_y,
-						'source' => $name.'.png',
-					);
-					*/
-					$metadata .= '$sprites["'.$hash_id.'"] = array ("image"=>"'.$id.'","sprite"=>"cache/sprites/'.$nameSpace.'/'.$spriteFileName.'");'."\n";
+					$metadata .= '$sprites["'.$id.'"] = array ("class"=>"'.$hash_id.'","width"=>"'.$w.'","height"=>"'.$h.'");'."\n";
 				} 
 
 				// common css header

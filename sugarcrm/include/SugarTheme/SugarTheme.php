@@ -40,7 +40,6 @@ if(!defined('JSMIN_AS_LIB'))
 require_once("include/SugarTheme/cssmin.php");
 require_once("jssource/jsmin.php");
 require_once('include/utils/sugar_file_utils.php');
-require_once("include/SugarTheme/SugarSprites.php");
 
 /**
  * Class that provides tools for working with a theme.
@@ -213,6 +212,13 @@ class SugarTheme
      */
     private $_templateCache = array();
 
+	/**
+	 * Cache built of sprite meta data
+	 *
+	 * @var array
+	 */
+	private $_spriteCache = array();
+
     /**
      * Size of the caches after the are initialized in the constructor
      *
@@ -223,6 +229,7 @@ class SugarTheme
         'imageCache'    => 0,
         'jsCache'       => 0,
         'templateCache' => 0,
+		'spriteCache'	=> 0,
         );
 
     /**
@@ -286,12 +293,16 @@ class SugarTheme
                 if ( isset($caches['templateCache']) )
                     $this->_templateCache = $caches['templateCache'];
             }
+			if($GLOBALS['sugar_config']['use_sprites'] && sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php')) {
+				$this->_spriteCache = unserialize(sugar_file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php'));
+			}
         }
         $this->_initialCacheSize = array(
             'jsCache'       => count($this->_jsCache),
             'cssCache'      => count($this->_cssCache),
             'imageCache'    => count($this->_imageCache),
             'templateCache' => count($this->_templateCache),
+			'spriteCache' 	=> count($this->_spriteCache),
             );
     }
 
@@ -309,6 +320,8 @@ class SugarTheme
         if ( $this->_clearCacheOnDestroy ) {
             if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
                 unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
+			if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php'))
+				unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php');
         }
         elseif ( !inDeveloperMode() ) {
             // only update the caches if they have been changed in this request
@@ -330,6 +343,12 @@ class SugarTheme
                     );
 
             }
+			if ( count($this->_spriteCache) != $this->_initialCacheSize['spriteCache']) {
+				sugar_file_put_contents(
+					create_cache_directory($this->getFilePath().'/spriteCache.php'),
+					serialize($this->_spriteCache)
+				);
+			}
         }
     }
 
@@ -607,102 +626,133 @@ EOHTML;
      *
      * @param  string $image image name
      * @param  string $other_attributes optional, other attributes to add to the image tag, not cached
-     * @param  string $alt image alt attribute
-     * @return string HTML image tag
+	 * @param  string $width optional, defaults to the actual image's width
+	 * @param  string $height optional, defaults to the actual image's height
+	 * @param  string $ext optional, image extension (TODO can we depricate this one ?)
+     * @param  string $alt optional, only used when image contains something useful, i.e. "Sally's profile pic"
+     * @return string HTML image tag or sprite 
      */
     public function getImage(
         $imageName,
         $other_attributes = '',
-        $alt = '', // only to be used when image contains something useful, ie "profile picture of Sally"
 		$width = null,
-		$height = null
+		$height = null,
+		$ext = null,
+        $alt = ''
     )
     {
 
         static $cached_results = array();
 
-		// remove alt attribute in other attributes
-        preg_replace('/alt=["\']([^\'"]+)["\']/i', '', $other_attributes);
-
-        if(!empty($cached_results[$imageName])) {
-
-			// sprite
-			if(substr($cached_results[$imageName],0,5) == '<span') {
-				// get class from cache
-				$class_regex = '/class=["\']([^\'"]+)["\']/i';
-				preg_match($class_regex, $cached_results[$imageName], $cached_class);
-				return $this->getSprite($cached_class[1], $other_attributes, $alt);
-			}
-
-			// normal img
-			return $cached_results[$imageName]." $other_attributes alt=\"$alt\" />";
+		// trap depricated use of image extension
+		if(is_null($ext)) {
+			$imageNameExp = explode('.',$imageName);
+			if(count($imageNameExp) == 1)
+				$imageName .= '.gif';
+		} else {
+			$imageName .= $ext;
 		}
 
-        $imageURL = $this->getImageURL($imageName,false);
-        if ( empty($imageURL) )
-            return false;
+		// trap alt attributes in other_attributes
+		if(preg_match('/alt=["\']([^\'"]+)["\']/i', $other_attributes))
+			$GLOBALS['log']->debug("VINK alt attribute detected for $imageName");
 
-		// compare requested image size with actual image
-		$size = getimagesize($imageURL);
-		$act_width = $size[0];
-		$act_height = $size[1];
-
-		$sameSize = true;
-		if($act_width <> $width || $act_height <> $height) {
-			$GLOBALS['log']->debug(__FUNCTION__.": requested image size different from original one, bypassing sprite for $imageURL");
-			$sameSize = false;
-		}
-
-		// sprite processing
-		if($GLOBALS['sugar_config']['use_sprites'] && $sameSize) {
-
-			// load sprites metadata
-			$sp = SugarSprites::getInstance();
-			$sp->loadSpriteMeta($this->dirName);
-			if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
-				$sp->loadSpriteMeta($parent->dirName);
-			}
-
-			$spriteHash = md5($imageURL);
-			if(isset($sp->sprites[$spriteHash])) {
-
-				// cache span tag with single sprite class so we can use it later on
-				$cached_results[$imageName] = '<span class="spr_'.$spriteHash.'"';
-
-				// do not return from cache, otherwise multi classes are not handled correctly
-				return $this->getSprite("spr_$spriteHash", $other_attributes, $alt);
-
-			} else {
-				$GLOBALS['log']->debug('Sprite miss -> '.$imageURL);
+		// sprite handler, makes use of own caching mechanism
+		if($GLOBALS['sugar_config']['use_sprites']) {
+			// get sprite metadata
+			if($sp = $this->getSpriteMeta($imageName)) {
+				// requested size should match
+				if( (!is_null($width) && $sp['width'] == $width) || (is_null($width)) &&
+					(!is_null($height) && $sp['height'] == $height) || (is_null($height)) )
+				{
+					if($sprite = $this->getSprite($sp['class'], $other_attributes, $alt))
+						return $sprite;
+				}
 			}
 		}
 
-        // Cache everything but the other attributes and alt attribute ....
-        $cached_results[$imageName] = "<img src=\"". getJSPath($imageURL) ."\" width=\"$width\" height=\"$height\" ";
-        return $cached_results[$imageName] . " $other_attributes alt=\"$alt\" />";
+		// img caching
+		if(empty($cached_results[$imageName])) {
+			$imageURL = $this->getImageURL($imageName,false);
+			if ( empty($imageURL) )
+				return false;
+	        $cached_results[$imageName] = '<img src="'.getJSPath($imageURL).'" ';
+		}
+
+		$attr_width = (is_null($width)) ? "" : "width=\"$width\"";
+		$attr_height = (is_null($height)) ? "" : "height=\"$height\"";
+		return $cached_results[$imageName] . " $attr_width $attr_height $other_attributes alt=\"$alt\" />";
     }
 
 	/**
-	 * Returns sprite span tag
+	 * Returns sprite meta data 
+	 * 
+	 * @param  string $imageName Image filename including extension
+	 * @return array  Sprite meta data
 	 */
-	public function getSprite($sprite_class, $other_attributes, $title) {
+	public function getSpriteMeta($imageName) {
+
+		// return from cache 
+		if(isset($this->_spriteCache[$imageName]))
+			return $this->_spriteCache[$imageName];
+
+		// sprite keys are base on imageURL
+		$imageURL = $this->getImageURL($imageName,false);
+		if(empty($imageURL)) {
+			$this->_spriteCache[$imageName] = false;
+			return false;
+		}
+
+		// load meta data, includes default images
+		require_once("include/SugarTheme/SugarSprites.php");
+		$meta = SugarSprites::getInstance();
+
+		// add current theme dir
+		$meta->loadSpriteMeta($this->dirName);
+		// add parent theme dir
+		if($this->parentTheme && $parent = SugarThemeRegistry::get($this->parentTheme)) {
+			$meta->loadSpriteMeta($parent->dirName);
+		}
+
+		// add to cache
+		if(isset($meta->sprites[$imageURL])) {
+			$this->_spriteCache[$imageName] = $meta->sprites[$imageURL];
+			// add imageURL to cache
+			//$this->_spriteCache[$imageName]['imageURL'] = $imageURL;
+		} else {
+			$this->_spriteCache[$imageName] = false;
+			$GLOBALS['log']->debug("VINK sprite miss for $imageURL");
+		}
+		return $this->_spriteCache[$imageName];
+	}
+
+	/**
+	 * Returns sprite HTML span tag
+	 *
+	 * @param  string class The md5 id used in the CSS sprites class
+	 * @param  string attr  optional, list of additional html attributes
+	 * @param  string title optional, the title (equivalent to alt on img)
+	 * @return string HTML span tag
+	 */
+	public function getSprite($class, $attr, $title) {
 
 		// handle multiple class tags
 		$class_regex = '/class=["\']([^\'"]+)["\']/i';
-		preg_match($class_regex, $other_attributes, $match);
+		preg_match($class_regex, $attr, $match);
 		if(isset($match[1])) {
-			$other_attributes = preg_replace($class_regex, 'class="'.$sprite_class.' ${1}"', $other_attributes);
+			$attr = preg_replace($class_regex, 'class="spr_'.$class.' ${1}"', $attr);
 
 		// single class
 		} else {
-			$other_attributes .= ' class="'.$sprite_class.'"';
+			$attr .= ' class="spr_'.$class.'"';
 		}
 
 		if($title) 
-			$other_attributes .= ' title="'.$title.'"';
+			$attr .= ' title="'.$title.'"';
 
-		// use </span> instead of /> as close tag to prevent weird UI results
-		return "<span {$other_attributes}></span>";
+		// use </span> instead of /> to prevent weird UI results
+		$GLOBALS['log']->debug("VINK generated sprite -> $attr");
+		return "<span {$attr}></span>";
 	}
 
 	/**                                                                                                                                                      
@@ -714,14 +764,19 @@ EOHTML;
 		$other_attributes = '',
         $img_name = '',
         $img_other_attributes = '',
-		$img_placement = '',
-		$img_alt = '' // only to be used when image contains something useful, ie "profile picture of Sally"
+		$img_width = null,
+		$img_height = null,
+		$img_alt = '',
+		$img_placement = 'imageonly'
     )                                                                                                                                                        
     {
 		
-		// include image 
 		if($img_name) {
-			$img = $this->getImage($img_name, $img_other_attributes, $img_alt);
+			$img = $this->getImage($img_name, $img_other_attributes, $img_width, $img_height, null, $img_alt);
+			if($img == false) {
+				$GLOBALS['log']->debug('VINK unknown image getLink');
+				$img = 'unknown';
+			}
 			switch($img_placement) {
 				case 'left': 	$inner_html = $img.$title; break;
 				case 'right':	$inner_html = $title.$img; break;

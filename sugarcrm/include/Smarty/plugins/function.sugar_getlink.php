@@ -26,12 +26,16 @@ function smarty_function_sugar_getlink($params, &$smarty) {
 		$params['img_name'] = '';
 	if(!isset($params['img_attr']))
 		$params['img_attr'] = '';
+	if(!isset($params['img_width']))
+		$params['img_width'] = null;
+	if(!isset($params['img_height']))
+		$params['height'] = null;
 	if(!isset($params['img_placement']))
-		$params['img_placement'] = '';
+		$params['img_placement'] = 'imageonly';
 	if(!isset($params['img_alt']))
 		$params['img_alt'] = '';
 
-	return SugarThemeRegistry::current()->getLink($params['url'], $params['title'], $params['attr'],
-			$params['img_name'], $params['img_attr'], $params['img_placement'], $params['img_alt']);	
+	return SugarThemeRegistry::current()->getLink($params['url'], $params['title'], $params['attr'], $params['img_name'], 
+		$params['img_attr'], $params['img_width'], $params['img_height'], $params['img_alt'], $params['img_placement']);	
 }
 ?>

@@ -14,14 +14,15 @@ class SugarSprites {
 		$this->dirs['default'] = true;
 		$this->loadMetaHelper('default','sprites');
 		// load repeatable sprites
-		$this->dirs['Repeatable'] = true;
-		$this->loadMetaHelper('Repeatable','sprites');
+		//$this->dirs['Repeatable'] = true;
+		//$this->loadMetaHelper('Repeatable','sprites');
 	}
 
 	public static function getInstance() {
 		if(!self::$instance)
 			self::$instance = new self();
-		return self::$instance;                                                                                                                                                     
+		$GLOBALS['log']->debug('VINK Referencing SugarSprites');
+		return self::$instance;
     }
 
 	public function loadSpriteMeta($dir) {
@@ -34,10 +35,10 @@ class SugarSprites {
 	private function loadMetaHelper($dir, $file) {
 		if(file_exists("cache/sprites/{$dir}/{$file}.meta.php")) {
 			$sprites = array();
+			$GLOBALS['log']->debug("VINK Loading sprites metadata for $dir");
 			include("cache/sprites/{$dir}/{$file}.meta.php");
 			foreach($sprites as $id => $meta) {
-				// we only need the id for now
-				$this->sprites[$id] = true;
+				$this->sprites[$id] = $meta;
 			}
 		}
 	}

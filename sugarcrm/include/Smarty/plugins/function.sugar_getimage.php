@@ -22,9 +22,17 @@ function smarty_function_sugar_getimage($params, &$smarty) {
 	// set defaults
 	if(!isset($params['attr']))
 		$params['attr'] = '';
+	if(!isset($params['width']))
+		$params['width'] = null;
+	if(!isset($params['height']))
+		$params['height'] = null;
 	if(!isset($params['alt'])) 
 		$params['alt'] = '';
 
-	return SugarThemeRegistry::current()->getImage($params['name'], $params['attr'], $params['alt']);	
+	// deprecated ?
+	if(!isset($params['ext']))
+		$params['ext'] = null;
+
+	return SugarThemeRegistry::current()->getImage($params['name'], $params['attr'], $params['width'], $params['height'], $params['ext'], $params['alt']);	
 }
 ?>
