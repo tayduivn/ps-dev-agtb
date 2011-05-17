@@ -3998,11 +3998,17 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+							var tempEvent = window.document.createEvent('HTMLEvents');
+							tempEvent.initEvent('change', true, true);
+							selectField.dispatchEvent(tempEvent);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+					var tempEvent = document.createEvent('HTMLEvents');
+					tempEvent.initEvent('change', true, true);
+					window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
