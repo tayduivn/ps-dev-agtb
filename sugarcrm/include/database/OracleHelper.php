@@ -46,7 +46,7 @@ class OracleHelper extends DBHelper
         'index' => 30,
         'alias' => 30
     );
-    
+
     /**
      * returns SQL to create constraints or indices
      *
@@ -258,6 +258,7 @@ class OracleHelper extends DBHelper
         	$addColumns = array();
 			foreach($fieldDefs as $def) {
                 switch(strtoupper($action)) {
+                    case 'DROP':
                     $addColumns[] = $def['name'];
                     break;
                 case 'ADD':
@@ -396,7 +397,7 @@ class OracleHelper extends DBHelper
                  * error. so we append an r to the eend of the index name for these cases.
                  */
                 $name = $this->fixIndexName(self::getValidDBName($index['name'], true, 'index'));
-                $name = ((strtolower($table) == 'repair_table') 
+                $name = ((strtolower($table) == 'repair_table')
 
                     ? $this->repair_index_name($name) : $name);
             }
