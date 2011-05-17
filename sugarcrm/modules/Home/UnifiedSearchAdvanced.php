@@ -59,12 +59,12 @@ class UnifiedSearchAdvanced {
 		
 		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
 
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
 		
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
+		include('custom/modules/unified_search_modules_display.php');		
 		
 		global $mod_strings, $modListHeader, $app_list_strings, $current_user, $app_strings, $beanList;
 		$users_modules = $current_user->getPreference('globalSearch', 'search');
@@ -151,11 +151,11 @@ class UnifiedSearchAdvanced {
 		}
 		include $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php';
 		
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
+		include('custom/modules/unified_search_modules_display.php');		
 		
 		
 		require_once 'include/ListView/ListViewSmarty.php';
@@ -436,12 +436,12 @@ class UnifiedSearchAdvanced {
 	{
 		global $mod_strings, $app_strings, $app_list_strings;
 
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 		
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
+		include('custom/modules/unified_search_modules_display.php');
 				
 		$sugar_smarty = new Sugar_Smarty();		
 		$sugar_smarty->assign('APP', $app_strings);
@@ -623,12 +623,12 @@ class UnifiedSearchAdvanced {
 	 */
 	function saveGlobalSearchSettings()
 	{
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');
+		include('custom/modules/unified_search_modules_display.php');
 		
 		if(isset($_REQUEST['enabled_modules'])) 
 		{
@@ -711,11 +711,11 @@ class UnifiedSearchAdvanced {
 		   return false;
 		}
 		
-	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php')) 
+	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php')) 
 	    {
 	    	//Log error message and throw Exception
 	    	global $app_strings;
-	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'));
+	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array('custom/modules/unified_search_modules_display.php'));
 	    	$GLOBALS['log']->error($msg);
 	    	throw new Exception($msg);
 	    }		

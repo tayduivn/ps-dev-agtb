@@ -616,6 +616,12 @@ SUGAR.mySugar = function() {
 				//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 				SUGAR.mySugar.attachToggleToolsetEvent(id);
 				//END SUGARCRM flav=pro || flav=sales ONLY
+
+                //we need to reinit the quickEdit Listeners whenever a dashlet is refreshed
+                if(typeof(qe_init) =='function'){
+                    //reinitialize the Quick Edit events
+                    qe_init();
+                }
 			}
 			
 			SUGAR.mySugar.currentDashlet = document.getElementById('dashlet_entire_' + id);

@@ -56,7 +56,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		$onclick .= "retValz = SUGAR.subpanelUtils.sendAndRetrieve('" . $formname
 			. "', 'subpanel_" . $layout_def['subpanel_id'] . "', '" . addslashes($app_strings['LBL_LOADING'])
 			. "', '" . $layout_def['subpanel_id'] . "');";
-		$onclick .= "document.forms['{$formname}'].record.value='';retValz";
+		$onclick .= "document.forms['{$formname}'].record.value='';retValz;return false;";
 
 		$href = "#";
 		/*if($layout_def['EditView']){

@@ -23,9 +23,8 @@
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2009 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
 $viewdefs['Documents']['DetailView'] = array(
 'templateMeta' => array('maxColumns' => '2',
                         'form' => array('hidden'=>array('<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">')), 
@@ -34,79 +33,80 @@ $viewdefs['Documents']['DetailView'] = array(
                                         array('label' => '10', 'field' => '30')
                                         ),
                         ),
-'panels' => 
+'panels' =>array (
+  
+  array (
+    
     array (
-      'lbl_document_information' => 
-      array (
-        array (
-          array (
-            'name' => 'uploadfile',
-            'displayParams' => 
-            array (
-              'link' => 'filename',
-              'id' => 'document_revision_id',
-            ),
-          ),
-          'status',
-        ),
+      'name' => 'document_name',
+      'label' => 'LBL_DOC_NAME',
+    ),
+    
+    array (
+      'name' => 'revision',
+      'label' => 'LBL_DOC_VERSION',
+    ),
+  ),
+  
+  array (
+    
+    array (
+      'name' => 'is_template',
+      'label' => 'LBL_DET_IS_TEMPLATE',
+    ),
+    
+    array (
+      'name' => 'template_type',
+      'label' => 'LBL_DET_TEMPLATE_TYPE',
+    ),
+  ),
+  
+  array (
+      'category_id',
+      'subcategory_id',
+  ),
+  
+  array (
+	  'status',
 
-        array (
-          array (
-            'name' => 'document_name',
-            'label' => 'LBL_DOC_NAME',
-          ),
-          array (
-            'name' => 'revision',
-            'label' => 'LBL_DOC_VERSION',
-          ),
-        ),
+	  'team_name',
 
-        array (
-          array (
-            'name' => 'template_type',
-            'label' => 'LBL_DET_TEMPLATE_TYPE',
-          ),
-          array (
-            'name' => 'is_template',
-            'label' => 'LBL_DET_IS_TEMPLATE',
-          ),
-        ),
+  ),
+  
+  array (
+      'last_rev_created_name',
+      'last_rev_create_date',
+  ),
+  
+  array (
+      'active_date',
+      'exp_date',
+  ),
+  
+  array (
+    'related_doc_name',
+    'related_doc_rev_number',
+  ),
+  
+  array (
+    
+    array (
+      'name' => 'description',
+      'label' => 'LBL_DOC_DESCRIPTION',
+    ),
+  ),
+  
+  array (
+    
+    array (
+      'name' => 'filename',
+      'displayParams' => array('link'=>'filename', 'id'=>'document_revision_id'), 
+    ),
 
-        array (
-          'active_date',
-          'category_id',
-        ),
- 
-        array (
-          'exp_date',
-          'subcategory_id',
-        ),
+  ),
+)
 
-        array (
-          array (
-            'name' => 'description',
-            'label' => 'LBL_DOC_DESCRIPTION',
-          ),
-        ),
-	    
-	    array (
-	       'related_doc_name',
-	       'related_doc_rev_number',
-	    ),
 
-	    array (
-	      'team_name'
-	    ),
-        
-      ),
-      'LBL_REVISIONS_PANEL' => 
-      array (
-        array (
-          0 => 'last_rev_created_name',
-          1 => 'last_rev_create_date',
-        ),
-      ),
-    )
    
 );
 ?>

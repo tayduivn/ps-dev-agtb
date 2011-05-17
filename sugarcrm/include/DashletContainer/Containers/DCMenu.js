@@ -255,13 +255,18 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.miniDetailView = function(module, id){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=quick&record=' + id , miniDetailViewResults);
 	}
+    //this form is used by quickEdits to provide a modal edit form
 	DCMenu.miniEditView = function(module, id, refreshListID, refreshDashletID){
+        //use pased in values to determine if this is being fired from a dashlet or list
+        //populate the qe_refresh variable with the correct refresh string to execute on DCMenu.save
         if(typeof(refreshListID) !='undefined' && refreshListID !=''){
-            qe_refresh = 'SUGAR.ajaxUI.loadContent("index.php?module='+module+'&action=index&ignore='+new Date().getTime()+'");';
-            //qe_refresh = 'window.location.reload(false)';
+            //this is a list, so add a time stamp to url so ajaxUI detects a change and refreshes the screen
+            DCMenu.qe_refresh = 'SUGAR.ajaxUI.loadContent("index.php?module='+module+'&action=index&ignore='+new Date().getTime()+'");';
+
         }
         if(typeof(refreshDashletID) !='undefined' && refreshDashletID !=''){
-            qe_refresh = 'SUGAR.mySugar.retrieveDashlet("'+refreshDashletID+'");';
+            //this is a dashlet, use the passed in id to refresh the dashlet
+            DCMenu.qe_refresh = 'SUGAR.mySugar.retrieveDashlet("'+refreshDashletID+'");';
         }
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id , miniDetailViewResults);
 	}
@@ -301,7 +306,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		});
 		lastLoadedMenu=undefined;
 		DCMenu.closeOverlay();
-        setTimeout('qe_init();', 3000); //!!!! this approach is a hack, we need to figure out how to call this method after the ajax page loads
+        //if DCMenu.qe_refresh is set to a string, then eval it as it is a js reload command (either reloads dashlet or list view)
+        if(typeof(DCMenu.qe_refresh) =='string'){
+            eval(DCMenu.qe_refresh);
+        }
 		return false;
 	}
 
