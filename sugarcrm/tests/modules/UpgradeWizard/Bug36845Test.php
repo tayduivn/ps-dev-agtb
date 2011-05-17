@@ -15,10 +15,10 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
             copy('cache/modules/unified_search_modules.php', 'cache/modules/unified_search_modules.php.bak');
         }
     
-        if(file_exists('cache/modules/unified_search_modules_display.php'))
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
         {
             $this->has_custom_unified_search_modules_display = true;
-            copy('cache/modules/unified_search_modules_display.php', 'cache/modules/unified_search_modules_display.php.bak');
+            copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
         }	
         
         if(file_exists($this->module_dir))
@@ -115,9 +115,9 @@ EOQ;
             unlink('cache/modules/unified_search_modules.php');
         }
     
-        if(file_exists('cache/modules/unified_search_modules_display.php'))
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
         {
-            unlink('cache/modules/unified_search_modules_display.php');
+            unlink('custom/modules/unified_search_modules_display.php');
         }	
         
         if($this->has_custom_unified_search_modules)
@@ -128,8 +128,8 @@ EOQ;
     
         if($this->has_custom_unified_search_modules_display)
         {
-            copy('cache/modules/unified_search_modules_display.php.bak', 'cache/modules/unified_search_modules_display.php');
-            unlink('cache/modules/unified_search_modules_display.php.bak');
+            copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
+            unlink('custom/modules/unified_search_modules_display.php.bak');
         }	
         
         if(file_exists($this->module_dir))
@@ -173,15 +173,15 @@ EOQ;
     
     public function test_create_unified_search_modules_display()
     {
-        if(file_exists('cache/modules/unified_search_modules_display.php'))
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
         {
-            unlink('cache/modules/unified_search_modules_display.php');
+            unlink('custom/modules/unified_search_modules_display.php');
         }		
         
         require_once('modules/UpgradeWizard/uw_utils.php');
         $usa = new UnifiedSearchAdvanced();
         $_REQUEST['enabled_modules'] = 'Accounts,Bug36845Test';
         $usa->saveGlobalSearchSettings();
-        $this->assertTrue(file_exists('cache/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
+        $this->assertTrue(file_exists('custom/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
     }
 }

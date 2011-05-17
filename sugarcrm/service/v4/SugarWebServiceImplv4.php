@@ -610,7 +610,8 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_quotes_pdf');
         global  $beanList, $beanFiles;
         global $sugar_config,$current_language;
-
+        $GLOBALS['mod_strings'] = return_module_language($current_language, 'Quotes');
+        
         $error = new SoapError();
         $output_list = array();
         if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))

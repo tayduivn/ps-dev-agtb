@@ -31,11 +31,11 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         	unlink('cache/modules/unified_search_modules.php');
         }
 
-        if(file_exists('cache/modules/unified_search_modules_display.php'))
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
         {
         	$this->_hasUnifiedSearchModulesDisplay = true;
-        	copy('cache/modules/unified_search_modules_display.php', 'cache/modules/unified_search_modules_display.php.bak');
-        	unlink('cache/modules/unified_search_modules_display.php');
+        	copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
+        	unlink('custom/modules/unified_search_modules_display.php');
         }        
         
 	}
@@ -55,10 +55,10 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         
         if($this->_hasUnifiedSearchModulesDisplay)
         {
-        	copy('cache/modules/unified_search_modules_display.php.bak', 'cache/modules/unified_search_modules_display.php');
-        	unlink('cache/modules/unified_search_modules_display.php.bak');
+        	copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
+        	unlink('custom/modules/unified_search_modules_display.php.bak');
         } else {
-        	unlink('cache/modules/unified_search_modules_display.php');
+        	unlink('custom/modules/unified_search_modules_display.php');
         }
 	}
 
