@@ -19,6 +19,10 @@ function smarty_function_sugar_getimage($params, &$smarty) {
 	if(!isset($params['name'])) 
 		$smarty->trigger_error($GLOBALS['app_strings']['ERR_MISSING_REQUIRED_FIELDS'] . 'name');
 
+	// temp hack to deprecate the use of other_attributes
+	if(isset($params['other_attributes']))
+		$params['attr'] = $params['other_attributes'];
+
 	// set defaults
 	if(!isset($params['attr']))
 		$params['attr'] = '';
