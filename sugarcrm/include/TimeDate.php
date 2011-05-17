@@ -1706,14 +1706,14 @@ class TimeDate
 	 */
     public function getDSTRange($year, $zone)
     {
-        $year = SugarDateTime::createFromFormat("Y", $year, self::$gmtTimezone);
-        $year_end = clone $year;
+        $year_date = SugarDateTime::createFromFormat("Y", $year, self::$gmtTimezone);
+        $year_end = clone $year_date;
         $year_end->setDate((int) $year, 12, 31);
         $year_end->setTime(23, 59, 59);
-        $year->setDate((int) $year, 1, 1);
-        $year->setTime(0, 0, 0);
+        $year_date->setDate((int) $year, 1, 1);
+        $year_date->setTime(0, 0, 0);
         $tz = $this->_getUserTZ();
-        $transitions = $tz->getTransitions($year->getTimestamp(), $year_end->getTimestamp());
+        $transitions = $tz->getTransitions($year_date->getTimestamp(), $year_end->getTimestamp());
         $idx = 0;
         while (! $transitions[$idx]["isdst"])
             $idx ++;
