@@ -130,6 +130,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
 
+            //set the title if it was passed in the data array
+            if((typeof(title) == 'undefined' || title =='')&&(typeof(data.title)!='undefined')){
+                title = data.title;
+            }
+
     		var style = 'position:fixed';
     		if(parentid){
     			overlay.set("align", {node:"#" + parentid, points:[Y.WidgetPositionExt.TL, Y.WidgetPositionExt.BL]});
@@ -159,8 +164,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent">' + data.html + '</div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div>';
     		overlay.set('bodyContent', content);
 
-    		//DCMenu.all('#dcboxbody .view').replaceClass('view', 'dcview');
-
+            //eval the contents if the eval parameter is passed in.  This will ensure that quick search, validation,
+            // and other relevant js is run in the spawned modal
+            if(typeof(data.eval) != 'undefined' && data.eval){
+                SUGAR.util.evalScript(content);
+            }
     		overlay.show();
     		return overlay;
     }
