@@ -131,7 +131,7 @@ class ViewQuickedit extends ViewAjax
 		   $this->ev->formName = $form_name;
 		   $this->ev->process(true, $form_name);
 			ob_clean();
-			echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $this->ev->display(false, true)));	
+            echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $this->ev->display(false, true), 'eval'=>true));
 		}
 	}
 }
