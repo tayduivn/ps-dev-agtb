@@ -128,7 +128,7 @@ class IBMDB2Manager  extends DBManager
     protected $capabilities = array(
         "affected_rows" => true,
         //"select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
-        "inline_keys" => true,
+        //"inline_keys" => false,   // Since we still need indexes created separately.
         //"case_sensitive" => false, // DB2 is case insensitive by default
         //"fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
         "auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
@@ -722,7 +722,7 @@ class IBMDB2Manager  extends DBManager
 		return $string;
     }
 
-    /**~
+    /**+
      * @see DBManager::createTableSQLParams()
 	 */
 	public function createTableSQLParams($tablename, $fieldDefs, $indices)
@@ -731,12 +731,7 @@ class IBMDB2Manager  extends DBManager
         if (empty($columns))
             return false;
 
-        $keys = $this->keysSQL($indices);
-        if (!empty($keys))
-            $keys = ",$keys";
-
-        $sql = "CREATE TABLE $tablename ($columns $keys)";
-
+        $sql = "CREATE TABLE $tablename ($columns)";
         return $sql;
 	}
 
@@ -784,80 +779,6 @@ class IBMDB2Manager  extends DBManager
 
         return "ALTER TABLE $tablename $action COLUMN ".implode(",$action column ", $columns);
     }
-
-    /**
-     * Generates SQL for key specification inside CREATE TABLE statement
-     *
-     * The passes array is an array of field definitions or a field definition
-     * itself. The keys generated will be either primary, foreign, unique, index
-     * or none at all depending on the setting of the "key" parameter of a field definition
-     *
-     * @param  array  $indices
-     * @param  bool   $alter_table
-     * @param  string $alter_action
-     * @return string SQL Statement
-     */
-    protected function keysSQL($indices, $alter_table = false, $alter_action = '')
-	{
-       // check if the passed value is an array of fields.
-       // if not, convert it into an array
-       if (!$this->isFieldArray($indices))
-           $indices[] = $indices;
-
-       $columns = array();
-       foreach ($indices as $index) {
-           if(!empty($index['db']) && $index['db'] != $this->dbType)
-               continue;
-           if (isset($index['source']) && $index['source'] != 'db')
-               continue;
-
-           $type = $index['type'];
-           $name = $index['name'];
-
-           if (is_array($index['fields']))
-               $fields = implode(", ", $index['fields']);
-           else
-               $fields = $index['fields'];
-
-           switch ($type) {
-           case 'unique':
-               //$columns[] = " UNIQUE ($fields)";
-               // NOTE: DB2 doesn't allow null columns in UNIQUE constraint. Hence
-               // we will not enforce the uniqueness other than through Indexes as per Stas recommendation.
-               break;
-           case 'primary':
-               $columns[] = " PRIMARY KEY ($fields)";
-               break;
-           case 'index':
-           case 'foreign':
-           case 'clustered':
-           case 'alternate_key':
-               /**
-                * @todo here it is assumed that the primary key of the foreign
-                * table will always be named 'id'. It must be noted though
-                * that this can easily be fixed by referring to db dictionary
-                * to find the correct primary field name
-                */
-//               if ( $alter_table )
-//                   $columns[] = " INDEX $name ($fields)";
-//               else
-//                   $columns[] = " KEY $name ($fields)";
-//               break;
-           case 'fulltext':
-//               if ($this->full_text_indexing_installed())
-//                   $columns[] = " FULLTEXT ($fields)";
-//               else
-//                   $GLOBALS['log']->debug('MYISAM engine is not available/enabled, full-text indexes will be skipped. Skipping:',$name);
-//               break;
-          }
-       }
-       $columns = implode(", $alter_action ", $columns);
-       if(!empty($alter_action)){
-           $columns = $alter_action . ' '. $columns;
-       }
-       return $columns;
-    }
-
 
 
     /**+
@@ -1009,10 +930,6 @@ EOQ;
         $name         = $definition['name'];
         $sql          = '';
 
-        /**
-         * DB2 just as Oracle requires indices to be defined as ALTER TABLE statements except for PRIMARY KEY
-         * and UNIQUE (which can defined inline with the CREATE TABLE)
-         */
         switch ($type){
         // generic indices
         case 'index':
@@ -1025,10 +942,12 @@ EOQ;
             break;
         // constraints as indices
         case 'unique':
+               // NOTE: DB2 doesn't allow null columns in UNIQUE constraint. Hence
+               // we will not enforce the uniqueness other than through Indexes which does treats nulls as 1 value.
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP UNIQUE {$name}";
+                $sql = "DROP INDEX {$name}";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE ({$fields})";
+                $sql = "CREATE UNIQUE INDEX {$name} ON {$table} ({$fields})";
             break;
         case 'primary':
             if ($drop)
