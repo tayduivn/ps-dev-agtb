@@ -661,5 +661,52 @@ YAHOO.widget.TVSlideOut.prototype = {
     }
 };
 
+/**
+ * The sugar Tree is a YUI tree with node construction based on AJAX data built in.
+ */
+sw.ReportsDataTable = function (parentEl, baseRequestParams, rootParams) {
+	this.baseRequestParams = baseRequestParams;
+	sw.Tree.superclass.constructor.call(this, parentEl);
+	if (rootParams) {
+		if (typeof rootParams == "string")
+			this.sendTreeNodeDataRequest(this.getRoot(), rootParams);
+		else
+			this.sendTreeNodeDataRequest(this.getRoot(), "");
+	}
+}
+
+YAHOO.extend(sw.ReportsDataTable, YAHOO.widget.DataTable, {
+	sendTreeNodeDataRequest: function(parentNode, params){
+		YAHOO.util.Connect.asyncRequest('POST', 'index.php', {
+			success: this.handleTreeNodeDataRequest,
+			argument: {
+				parentNode: parentNode
+			},
+			scope: this
+		}, this.baseRequestParams + params);
+	},
+	handleTreeNodeDataRequest : function(o) {
+		var parentNode = o.argument.parentNode;
+		//parent.tree.removeChildren(parentNode);
+		var resp = YAHOO.lang.JSON.parse(o.responseText);
+		if (resp.tree_data.nodes) {
+			for (var i = 0; i < resp.tree_data.nodes.length; i++) {
+				var newChild = this.buildTreeNodeRecursive(resp.tree_data.nodes[i], parentNode);
+			}
+		}
+		parentNode.tree.draw();
+	},
+
+	buildTreeNodeRecursive : function(nodeData, parentNode) {
+		nodeData.label = nodeData.text;
+		var node = new YAHOO.widget.TextNode(nodeData, parentNode, nodeData.expanded);
+		if (typeof(nodeData.children) == 'object') {
+			for (var i = 0; i < nodeData.children.length; i++) {
+				this.buildTreeNodeRecursive(nodeData.children[i], node);
+			}
+		}
+		return node;
+	}
+});
 
 })();
