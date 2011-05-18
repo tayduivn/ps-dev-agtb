@@ -61,8 +61,10 @@ if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
 }
 
 //qe_init function sets listeners to click event on elements of 'quickEdit' class
-DCMenu.qe_refresh = false;
-DCMenu.qe_handle;
+ if(typeof(DCMenu) !='undefined'){
+    DCMenu.qe_refresh = false;
+    DCMenu.qe_handle;
+ }
 function qe_init(){
     //do not process if YUI is undefined
     if(typeof(YUI)=='undefined'){
