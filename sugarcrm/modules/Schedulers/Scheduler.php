@@ -576,7 +576,6 @@ class Scheduler extends SugarBean {
 				// see if last_run is in it
 				// if not, add NOW
                 $now = $timedate->nowDb();
-		        $GLOBALS['log']->debug("Valid jobs from {$validJobTime[0]} now $now");
                 if(!empty($validJobTime) && ($focus->last_run < $validJobTime[0]) && ($now > $validJobTime[0])) {
 				// cn: empty() bug 5914;
 				//if(!empty) should be checked, becasue if a scheduler is defined to run every day 4pm, then after 4pm, and it runs as 4pm, the $validJobTime will be empty, and it should not catch up
