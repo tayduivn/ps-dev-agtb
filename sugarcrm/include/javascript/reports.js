@@ -3825,7 +3825,9 @@ SUGAR.reports = function() {
 	        myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 	        myDataSource.responseSchema = { 
 	            fields: ["field_label", "module_name","parents", "field_name", "link_name", "parent_module", "parents_link"]
-	        }; 
+	        };
+
+            console.log(myDataSource);
 			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel + "</span>" +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
 			
 			var toolTip = new YAHOO.widget.Tooltip("tt6", {context:"fields_panel_help",  
