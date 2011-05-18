@@ -4086,16 +4086,24 @@ function createGroupUser($name) {
 
 function _getIcon($iconFileName)
 {
-    $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
-    //First try un-ucfirst-ing the icon name
-    if ( empty($iconPath) )
-        $iconPath = SugarThemeRegistry::current()->getImageURL(
-            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
-    //Next try removing the icon prefix
-    if ( empty($iconPath) )
-        $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 
-  	return $iconPath;
+	$iconName = "icon_{$iconFileName}.gif";
+    $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconFound) )
+		$iconName = "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif";
+        $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+    
+	//Next try removing the icon prefix
+    if ( empty($iconFound) )
+		$iconName = "{$iconFileName}.gif";
+		$iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+
+	if ( empty($iconFound) )
+		$iconName = '';
+
+  	return $iconName;
 }
 /**
  * Function to grab the correct icon image for Studio
@@ -4108,19 +4116,19 @@ function _getIcon($iconFileName)
  * @return string $string <img> tag with corresponding image
  */
 
-function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline', $alt )
+function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline', $alt='' )
 {
 	global $app_strings, $theme;
 
-    $iconPath = _getIcon($iconFileName);
- 	if(empty($iconPath)){
- 	    $iconPath = _getIcon($altFileName);
- 	    if (empty($iconPath))
+    $iconName = _getIcon($iconFileName);
+ 	if(empty($iconName)){
+ 	    $iconName = _getIcon($altFileName);
+ 	    if (empty($iconName))
  	    {
             return $app_strings['LBL_NO_IMAGE'];
  	    }
  	}
-	return '<img border="0" src="'.$iconPath.'" width="'.$width.'" height="'.$height.'" align="'.$align.'" alt="'.$alt.'">';
+	return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
 /**
@@ -4134,20 +4142,17 @@ function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='
  * @return string $string <img> tag with corresponding image
  */
 
-function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle',$alt){
+function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle',$alt=''){
 	global $app_strings, $theme;
- 	$icon_path = _getIcon($module . "_32");
- 	if (empty($icon_path))
+ 	$iconName = _getIcon($module . "_32");
+ 	if (empty($iconName))
  	{
- 		$icon_path = _getIcon($module);
+ 		$iconName = _getIcon($module);
  	}
- 	if(empty($icon_path)){
- 		$icon = $app_strings['LBL_NO_IMAGE'];
+ 	if(empty($iconName)){
+ 		return $app_strings['LBL_NO_IMAGE'];
  	}
-	else{
-		$icon = '<img border="0" src="'.$icon_path.'" width="'.$width.'" height="'.$height.'" align="'.$align.'" alt="'.$alt.'">';
-	}
-	return $icon;
+	return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
 // works nicely to change UTF8 strings that are html entities - good for PDF conversions

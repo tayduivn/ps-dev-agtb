@@ -59,7 +59,7 @@
     <tr id="lineLabel_{$idname}" name="lineLabel_{$idname}">
         <td nowrap>
 			<span class="id-ff multiple ownline">
-            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();' name="teamSelect">{sugar_getimage name="id-ff-select" alt=$app_strings.LBL_ID_FF_SELECT ext=".png" other_attributes=''}</button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$idname}'].add(); if(collection['{$displayParams.formName}_{$idname}'].more_status)collection['{$displayParams.formName}_{$idname}'].js_more();" name="teamAdd">{sugar_getimage name="id-ff-add" alt=$app_strings.LBL_ID_FF_ADD ext=".png" other_attributes=''}</button>
+            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();' name="teamSelect" title="{sugar_translate label="LBL_ID_FF_SELECT"}">{sugar_getimage name="id-ff-select.png"}</button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$idname}'].add(); if(collection['{$displayParams.formName}_{$idname}'].more_status)collection['{$displayParams.formName}_{$idname}'].js_more();" name="teamAdd" title="{sugar_translate label="LBL_ID_FF_ADD"}">{sugar_getimage name="id-ff-add.png"}</button>
 			</span>
         </td>
         <td>
@@ -72,9 +72,10 @@
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap: none;' valign='top'>
             &nbsp;
             {if !$hideShowHideButton}
-            <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if}>
+            <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if} title="{sugar_translate label="LBL_HIDE_SHOW"}">
             <input id="arrow_{$idname}" name="arrow_{$idname}" type="hidden" value="show">
-            {sugar_getimage name="advanced_search" ext=".gif" width="8" height="8" alt=$app_strings.LBL_HIDE_SHOW other_attributes='border="0" id="more_img_{$displayParams.formName}_{$idname}" '}
+			{capture assign="attr"}border="0" id="more_img_{$displayParams.formName}_{$idname}"{/capture}
+            {sugar_getimage name="advanced_search.gif" width="8" height="8" attr=$attr}
             <span id="more_div_{$displayParams.formName}_{$idname}" {if empty($values.secondaries)}style="display:none"{/if}>{sugar_translate label='LBL_SHOW'}</span>
             </span>
             {/if}
@@ -94,7 +95,9 @@
         </td>
 <!-- BEGIN Remove and Radio -->
         <td valign='top' align='left' nowrap>
-            {sugar_getimage alt=$app_strings.LBL_ID_FF_REMOVE name="id-ff-remove" ext=".png" other_attributes='class="id-ff-remove" id="remove_{$idname}_collection_0" onclick="collection[\'{$displayParams.formName}_{$idname}\'].remove(0);" '}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+			{capture assign="attr"}class="id-ff-remove" id="remove_{$idname}_collection_0" onclick="collection[\'{$displayParams.formName}_{$idname}\'].remove(0);"{/capture}
+			{capture assign="alt"}{sugar_translate label="LBL_ID_FF_REMOVE"}{/capture}
+            {sugar_getimage name="id-ff-remove.png" attr=$attr alt=$alt}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
         </td>
         <td valign='top' align='center'>
             <span id='{$displayParams.formName}_{$idname}_radio_div_0'>
