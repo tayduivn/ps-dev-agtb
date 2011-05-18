@@ -25,7 +25,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-if (typeof console == "undefined") 
+if (typeof console == "undefined")
 	console = { log: function(o) {alert(o)} };
 
 var AjaxObject = {
@@ -64,8 +64,8 @@ var AjaxObject = {
 		SUGAR.email2.composeLayout.fromAccounts = ret.fromAccounts;
 
 		SUGAR.email2.composeLayout.setComposeOptions(idx);
-		
-		//Set the error array so we can notify the user when they try to hit send if any errors 
+
+		//Set the error array so we can notify the user when they try to hit send if any errors
 		//are present.  We will also notify them now (after hitting compose button).
 		SUGAR.email2.composeLayout.outboundAccountErrors = ret.errorArray;
 
@@ -74,13 +74,13 @@ var AjaxObject = {
 		if (typeof(ret.errorArray)=='object' && ret.errorArray instanceof Array && ret.errorArray.length > 0){
 			//add error messages for display
 			for(i in ret.errorArray)
-				overlay(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorArray[i], 'alert');
+				SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorArray[i], 'alert');
 		}else if (typeof(ret.errorArray)=='object' && ret.errorArray!=null && ret.errorArray!='' ) {
 			//if error element is returning an object, and the object value is not empty or null, then display error message
 			for(i in ret.errorArray)
-				overlay(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorArray[i], 'alert');
+				SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorArray[i], 'alert');
 		}
-		
+
 		//YUI bug with IE6 - Wont restore visibility property for nested select elements.
 		if(SUGAR.isIE) {
 			var overlayPanel = YAHOO.SUGAR.MessageBox.panel;
@@ -92,7 +92,7 @@ var AjaxObject = {
 
 
 	handleDeleteSignature : function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		var ret = JSON.parse(o.responseText);
 		SUGAR.email2.composeLayout.signatures = ret.signatures;
     	var field = document.getElementById('signature_id');
@@ -104,12 +104,12 @@ var AjaxObject = {
 		}
 		setSigEditButtonVisibility();
 	},
-	
+
 	/**
 	 */
 	handleDeleteReturn : function(o) {
 		// force refresh ListView
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		if(document.getElementById('focusEmailMbox')) {
 			YAHOO.namespace('frameFolders').selectednode = SUGAR.email2.folders.getNodeFromMboxPath(document.getElementById('focusEmailMbox').innerHTML);
 		}
@@ -122,7 +122,7 @@ var AjaxObject = {
 	 */
     handleFailure : function(o) {
 		// Failure handler
-		overlay('Exception occurred...', o.statusText, 'alert');
+		SUGAR.showMessageBox('Exception occurred...', o.statusText, 'alert');
 		if(document.getElementById('saveButton')) {
 			document.getElementById('saveButton').disabled = false;
 		}
@@ -174,7 +174,7 @@ var AjaxObject = {
 			SUGAR.email2.composeLayout.showHiddenAddress('bcc',idx);
 		}
 
-		
+
 		if(a.type) {
 			document.getElementById('type' + idx).value = a.type;
 		}
@@ -182,7 +182,7 @@ var AjaxObject = {
 		//BEGIN SUGARCRM flav=pro ONLY
         var teamOptions = document.getElementById('teamOptions' + idx);
         teamOptions.innerHTML = "";
-        
+
         if (a.teamSetCode != null) {
 	        var teamOptionsString = a.teamSetCode;
 	        teamOptionsString = teamOptionsString.replace(/composeEmailForm/gi, ("composeOptionsForm" + idx));
@@ -191,31 +191,31 @@ var AjaxObject = {
         }
 
 		//END SUGARCRM flav=pro ONLY
-		
+
 		// apply attachment values
 		SUGAR.email2.composeLayout.loadAttachments(a.attachments);
 
 		setTimeout("callbackReplyForward.finish(globalA);", 500);
 	},
-		
+
 	/**
 	 */
 	handleSuccess : function(o) {
 		document.getElementById(this.target).innerHTML = o.responseText;
-		hideOverlay();
+		SUGAR.hideMessageBox();
 	},
 
 	/**
 	 */
 	ieDeleteSuccess : function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 
 		var ret = JSON.parse(o.responseText);
 
 		SUGAR.email2.accounts.refreshInboundAccountTable();
 		alert(app_strings.LBL_EMAIL_IE_DELETE_SUCCESSFUL);
 		SUGAR.email2.accounts.rebuildFolderList();
-		
+
 	},
 
 	/**
@@ -225,7 +225,7 @@ var AjaxObject = {
 		var a = JSON.parse(o.responseText);
 		if (a) {
 			if(a.error) {
-				overlay(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_CHECK_IE_SETTINGS, 'alert');
+				SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_CHECK_IE_SETTINGS, 'alert');
 				SUGAR.email2.accounts.ieAccountError(SUGAR.email2.accounts.errorStyle);
 			} else {
 				resp = JSON.parse(o.responseText);
@@ -235,10 +235,10 @@ var AjaxObject = {
 				SUGAR.email2.accounts.inboundAccountEditDialog.hide();
 			}
 		} else {
-		     hideOverlay();
-		     overlay(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_SAVE_ACCOUNT, 'alert'); 
+		     SUGAR.hideMessageBox();
+		     SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_SAVE_ACCOUNT, 'alert');
 		}
-		
+
 	},
 
 	/**
@@ -263,8 +263,8 @@ var AjaxObject = {
 	markEmailCleanup : function(o) {
 		var ret = JSON.parse(o.responseText);
 		if (!ret['status']) {
-        	hideOverlay();
-			overlay(app_strings.LBL_EMAIL_ERROR_DESC, ret['message'], 'alert');			
+        	SUGAR.hideMessageBox();
+			SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, ret['message'], 'alert');
 		} else {
 			SUGAR.email2.contextMenus.markEmailCleanup();
 		} // else
@@ -309,37 +309,37 @@ var AjaxObject = {
 	 *
 	 */
 	sendEmailCleanUp : function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		var ret = JSON.parse(o.responseText);
 		if (ret) {
 		  SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
 		  //SUGAR.email2.addressBook.showContactMatches(ret.possibleMatches);
 		} else if (o.responseText) {
-		  overlay(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
+		  SUGAR.showMessageBox(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
 		}
-		
+
 		if (typeof(SE.grid) != 'undefined')
 			SE.listView.refreshGrid();
 		//Disabled while address book is disabled
-		
+
 		//If this call back was initiated by quick compose from a Detail View page, refresh the
 		//history subpanel.  If it was initiated by quickcreate from shortcut bar, then
 		//close the shortcut bar menu
 		if ( (typeof(action_sugar_grp1) != 'undefined')) {
 			if(action_sugar_grp1 == 'DetailView') {
-				showSubPanel('history',null,true);  
+				showSubPanel('history',null,true);
 		  	} else if(action_sugar_grp1 == 'quickcreate') {
 		  		closeEmailOverlay();
 		  	}
 		}
-		
+
 	},
 
 	ieSendSuccess : function(o) {
-		hideOverlay();
-		overlay(app_strings.LBL_EMAIL_TEST_OUTBOUND_SETTINGS_SENT, app_strings.LBL_EMAIL_TEST_NOTIFICATION_SENT, 'plain');
+		SUGAR.hideMessageBox();
+		SUGAR.showMessageBox(app_strings.LBL_EMAIL_TEST_OUTBOUND_SETTINGS_SENT, app_strings.LBL_EMAIL_TEST_NOTIFICATION_SENT, 'plain');
 	},
-	
+
 	/**
 	 */
 	settingsFolderRefresh : function(o) {
@@ -373,7 +373,7 @@ var AjaxObject = {
 		this.currentRequestObject = YAHOO.util.Connect.asyncRequest('POST', "./index.php", callback, args);
 		this._reset();
 	},
-	
+
 	requestInProgress : function() {
 		return (YAHOO.util.Connect.isCallInProgress(this.currentRequestObject));
 	},
@@ -383,7 +383,7 @@ var AjaxObject = {
 	updateFolderSubscriptions : function() {
 		SUGAR.email2.folders.lazyLoadSettings(); // refresh view in Settings overlay
 		SUGAR.email2.folders.setSugarFolders(1000);// refresh view in TreeView
-		hideOverlay();
+		SUGAR.hideMessageBox();
 	},
 
 	/**
@@ -409,11 +409,11 @@ var AjaxObject = {
 		var idx = SUGAR.email2.composeLayout.currentInstanceId;
 		var overall = document.getElementById('addedFiles' + idx);
 		var index = overall.childNodes.length;
-		var out = 
+		var out =
 			"<div id='email_attachment_bucket" + idx + index + "'>" +
-				// remove button	
+				// remove button
 				"<img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=minus.gif' " +
-					"style='cursor:pointer' align='absmiddle' onclick='SUGAR.email2.composeLayout.deleteUploadAttachment(\"" + 
+					"style='cursor:pointer' align='absmiddle' onclick='SUGAR.email2.composeLayout.deleteUploadAttachment(\"" +
 					idx + index + "\",\"" + ret.guid + ret.name + "\");'/>" +
 				// file icon
 				"<img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=attachment.gif' " +
@@ -421,7 +421,7 @@ var AjaxObject = {
 				// hidden id field
 				"<input type='hidden' value='" + ret.guid + ret.name + "' name='email_attachment" + index + "' id='email_attachment" + idx + index + "' />" +
 				// file name
-				((ret.nameForDisplay != null) ? ret.nameForDisplay + "&nbsp;" : ret.name + "&nbsp;") + 
+				((ret.nameForDisplay != null) ? ret.nameForDisplay + "&nbsp;" : ret.name + "&nbsp;") +
 				"<br/>" +
 			"</div>";
 		overall.innerHTML += out;
@@ -447,10 +447,10 @@ AjaxObject.accounts = {
 		SUGAR.email2.accounts.newAddedOutboundId = id;
 		},
 	saveDefaultOutboundCleanup: function(o){
-		
+
 	},
 	callbackEditOutbound : {
-		success	: function(o) 
+		success	: function(o)
 		{
 			var ret = JSON.parse(o.responseText);
 			// show overlay
@@ -465,11 +465,10 @@ AjaxObject.accounts = {
 			document.getElementById("outboundEmailForm").mail_smtptype.value = ret.mail_smtptype;
 			document.getElementById("mail_smtpport").value = ret.mail_smtpport;
 			document.getElementById("mail_smtpuser").value = ret.mail_smtpuser;
-			document.getElementById("mail_smtppass").value = ret.mail_smtppass;
 			document.getElementById("mail_smtpauth_req").checked = (ret.mail_smtpauth_req == 1) ? true : false;
 			SUGAR.email2.accounts.smtp_authenticate_field_display();
 			document.getElementById("mail_smtpssl").options[ret.mail_smtpssl].selected = true;
-			
+
             if(ret.type == 'system-override') {
 			     SUGAR.email2.accounts.toggleOutboundAccountDisabledFields(true);
 			     SUGAR.email2.accounts.changeEmailScreenDisplay(ret.mail_smtptype,true);
@@ -478,8 +477,8 @@ AjaxObject.accounts = {
 			     SUGAR.email2.accounts.toggleOutboundAccountDisabledFields(false);
 			     SUGAR.email2.accounts.changeEmailScreenDisplay(ret.mail_smtptype,false);
             }
-            
-			
+            SUGAR.util.setEmailPasswordDisplay('mail_smtppass', ret.has_password);
+
 		},
 		failure	: AjaxObject.handleFailure,
 		timeout	: AjaxObject.timeout,
@@ -490,49 +489,49 @@ AjaxObject.accounts = {
 		    var ret = JSON.parse(o.responseText);
 		    if(ret.is_error)
 		    {
-		        if(confirm(ret.error_message)) 
+		        if(confirm(ret.error_message))
                 {
-                    overlay(app_strings.LBL_EMAIL_IE_DELETE, app_strings.LBL_EMAIL_ONE_MOMENT);
+                    SUGAR.showMessageBox(app_strings.LBL_EMAIL_IE_DELETE, app_strings.LBL_EMAIL_ONE_MOMENT);
                     AjaxObject.startRequest(AjaxObject.accounts.callbackDeleteOutbound, urlStandard + "&emailUIAction=deleteOutbound&confirm=true&outbound_email=" + ret.outbound_email);
                 }
                 else
-                    hideOverlay();  
+                    SUGAR.hideMessageBox();
 		    }
 		    else
 		    {
-			     hideOverlay();
+			     SUGAR.hideMessageBox();
 			     SUGAR.email2.accounts.refreshOuboundAccountTable();
 		    }
 		},
-		
+
 		failure	: AjaxObject.handleFailure,
 		timeout	: AjaxObject.timeout,
 		scope	: AjaxObject
 	},
-		
+
 	callbackCheckMailProgress : {
 	   success : function(o) {
 	       if (typeof(SUGAR.email2.accounts.totalMsgCount) == "undefined") {
 	           SUGAR.email2.accounts.totalMsgCount = -1;
 	       }
-	       
+
 	       //Check for server timeout / errors
 	       var ret = JSON.parse(o.responseText);
 	       var done = false;
-		   
+
 	       if (typeof(o.responseText) == 'undefined' || o.responseText == "" || ret == false) {
-	           hideOverlay();
-	           overlay(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_TIMEOUT, 'alert');
+	           SUGAR.hideMessageBox();
+	           SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_TIMEOUT, 'alert');
 	           SUGAR.email2.accounts.totalMsgCount = -1;
                //SUGAR.email2.folders.rebuildFolders();
                done = true;
-	       } 
-	       
+	       }
+
 	       var currIeId = ret['ieid'];
-	       
-	      
+
+
 	       var serverCount = ret.count;
-	       
+
 	       if (ret['status'] == 'done') {
 	           for(i=0; i < SUGAR.email2.accounts.ieIds.length; i++) {
 	               if (i == SUGAR.email2.accounts.ieIds.length - 1) {
@@ -547,7 +546,7 @@ AjaxObject.accounts = {
 	                   break;
 	               }
 	           }
-	       } 
+	       }
 	       else if (ret.mbox && ret.totalcount && ret.count) {
 	           SUGAR.email2.accounts.totalMsgCount = ret.totalcount;
 	           if (ret.count >= ret.totalcount) {
@@ -556,26 +555,26 @@ AjaxObject.accounts = {
 	       } else if (SUGAR.email2.accounts.totalMsgCount < 0 && ret.totalcount) {
 	           SUGAR.email2.accounts.totalMsgCount = ret.totalcount;
 	       } else {
-		       hideOverlay();
-               overlay(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_TIMEOUT, 'alert');
+		       SUGAR.hideMessageBox();
+               SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_TIMEOUT, 'alert');
                SUGAR.email2.accounts.totalMsgCount = -1;
                done = true;
 		   }
-	       
+
 	       if (done) {
 	           SUGAR.email2.accounts.totalMsgCount = -1;
-	           hideOverlay();
+	           SUGAR.hideMessageBox();
 	           SUGAR.email2.folders.rebuildFolders();
 	           SE.listView.refreshGrid();
 	       } else if (SUGAR.email2.accounts.totalMsgCount < 0) {
                YAHOO.SUGAR.MessageBox.updateProgress(0, mod_strings.LBL_CHECKING_ACCOUNT + ' '+ (i + 2) + ' '+ mod_strings.LBL_OF + ' ' + SUGAR.email2.accounts.ieIds.length);
-               AjaxObject.startRequest(AjaxObject.accounts.callbackCheckMailProgress, urlStandard + 
+               AjaxObject.startRequest(AjaxObject.accounts.callbackCheckMailProgress, urlStandard +
                                 '&emailUIAction=checkEmailProgress&ieId=' + currIeId + "&currentCount=0&synch=" + ret.synch);
            } else {
                YAHOO.SUGAR.MessageBox.updateProgress((ret.count / SUGAR.email2.accounts.totalMsgCount) * 100,
                    app_strings.LBL_EMAIL_DOWNLOAD_STATUS.replace(/\[\[count\]\]/, ret.count).replace(/\[\[total\]\]/, SUGAR.email2.accounts.totalMsgCount));
-	           AjaxObject.startRequest(AjaxObject.accounts.callbackCheckMailProgress, urlStandard + 
-                   '&emailUIAction=checkEmailProgress&ieId=' + currIeId + "&currentCount=" + serverCount + 
+	           AjaxObject.startRequest(AjaxObject.accounts.callbackCheckMailProgress, urlStandard +
+                   '&emailUIAction=checkEmailProgress&ieId=' + currIeId + "&currentCount=" + serverCount +
                    '&mbox=' + ret.mbox + '&synch=' + ret.synch + '&totalcount=' + SUGAR.email2.accounts.totalMsgCount);
 	       }
 	   },
@@ -592,12 +591,12 @@ AjaxObject.composeLayout = {
 	 * Populates the record id
 	 */
 	saveDraftCleanup : function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		var ret = JSON.parse(o.responseText);
 		if(ret)
 		  SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
-		else if (o.responseText) 
-		  overlay(mod_strings.LBL_ERROR_SAVING_DRAFT, o.responseText, 'alert');
+		else if (o.responseText)
+		  SUGAR.showMessageBox(mod_strings.LBL_ERROR_SAVING_DRAFT, o.responseText, 'alert');
 	}
 };
 
@@ -624,7 +623,7 @@ AjaxObject.detailView = {
 		if (typeof(email.cc) == 'undefined') {
 		  email.cc = "";
 		}
-		
+
 		var out = displayTemplate.exec({
 			'app_strings'	: app_strings,
 			'theme'			: theme,
@@ -634,7 +633,7 @@ AjaxObject.detailView = {
 		});
 
 		// open popup window
-		var popup = window.open('modules/Emails/templates/_blank.html', 'printwin' , 
+		var popup = window.open('modules/Emails/templates/_blank.html', 'printwin' ,
 		    'scrollbars=yes,menubar=no,height=600,width=800,resizable=yes,toolbar=no,location=no,status=no');
 
 		popup.document.write(out);
@@ -669,7 +668,7 @@ AjaxObject.detailView = {
 		SED.viewDialog.setHeader(ret.title);
 		SED.viewDialog.setBody(ret.html);
 		SED.viewDialog.render();
-		SED.viewDialog.show();	
+		SED.viewDialog.show();
 	},
 
 	/**
@@ -687,7 +686,7 @@ AjaxObject.detailView = {
             	constraintoviewport: true,
 				shadow	: true
 			});
-			
+
             SED.quickCreateDialog.renderEvent.subscribe(function() {
             	var viewH = YAHOO.util.Dom.getViewportHeight();
             	var contH = 0;
@@ -702,7 +701,7 @@ AjaxObject.detailView = {
         		this.body.style.height = (viewH - 75 > contH ? (contH + 10) : (viewH - 75)) + "px";
         		this.body.style.overflow = "auto";
             }, SED.quickCreateDialog);
-            
+
             SED.quickCreateDialog.hideEvent.subscribe(function(){
 				var qsFields = YAHOO.util.Dom.getElementsByClassName('.sqsEnabled', null, this.body);
 				/*for(var qsField in qsFields){
@@ -718,41 +717,41 @@ AjaxObject.detailView = {
 		SED.quickCreateDialog.setBody(ret.html ? ret.html : "&nbsp;");
 		SED.quickCreateDialog.render();
 		SUGAR.util.evalScript(ret.html + '<script language="javascript">enableQS(true);</script>');
-		
+
 		SED.quickCreateDialog.ieId = ret.ieId;
 		SED.quickCreateDialog.uid = ret.uid;
         SED.quickCreateDialog.mbox = ret.mbox;
         SED.quickCreateDialog.qcmodule = ret.module;
-        
+
         SED.quickCreateDialog.show();
 
 		var editForm = document.getElementById('form_EmailQCView_' + ret.module);
 		if (editForm) {
 		  editForm.module.value = 'Emails';
-		  var count = SUGAR.EmailAddressWidget.count[ret.module] ? SUGAR.EmailAddressWidget.count[ret.module] : 0; 
+		  var count = SUGAR.EmailAddressWidget.count[ret.module] ? SUGAR.EmailAddressWidget.count[ret.module] : 0;
 		  var tableId = YAHOO.util.Dom.getElementsByClassName('emailaddresses', 'table', editForm)[0].id;
 		  var instId = ret.module + count;
 		  SED.quickCreateEmailsToAdd = ret.emailAddress;
 		  SED.quickCreateEmailCallback = function(instId, tableId) {
 			  var eaw = SUGAR.EmailAddressWidget.instances[instId];
 			  if (typeof(eaw) == "undefined")
-				  window.setTimeout("SUGAR.email2.detailView.quickCreateEmailCallback('" 
+				  window.setTimeout("SUGAR.email2.detailView.quickCreateEmailCallback('"
 					  	+ instId + "','" + tableId + "');", 100);
 			  eaw.prefillEmailAddresses(tableId, SUGAR.email2.detailView.quickCreateEmailsToAdd);
 		  }
-		  window.setTimeout("SUGAR.email2.detailView.quickCreateEmailCallback('" 
+		  window.setTimeout("SUGAR.email2.detailView.quickCreateEmailCallback('"
 				  	+ instId + "','" + tableId + "');", 100);
 		}
 	},
 
 	saveQuickCreateForm : function(o) {
-	    hideOverlay();
+	    SUGAR.hideMessageBox();
 		SUGAR.email2.detailView.quickCreateDialog.hide();
 		validate['EditView'] = [ ];
 	},
 
 	saveQuickCreateFormAndReply : function(o) {
-	    hideOverlay();
+	    SUGAR.hideMessageBox();
 	    var ret = JSON.parse(o.responseText);
         SUGAR.email2.detailView.quickCreateDialog.hide();
         var qcd = SUGAR.email2.detailView.quickCreateDialog;
@@ -768,12 +767,12 @@ AjaxObject.detailView = {
     },
 
 	saveQuickCreateFormAndAddToAddressBook : function(o) {
-	   hideOverlay();
+	   SUGAR.hideMessageBox();
 		SUGAR.email2.detailView.quickCreateDialog.hide();
 		SUGAR.email2.complexLayout.findPanel('contactsTab').show();
 		validate['EditView'] = [ ];
 	},
-	
+
 	handleAssignmentDialogAssignAction : function() {
 
 
@@ -788,12 +787,12 @@ AjaxObject.detailView = {
 	    //BEGIN SUGARCRM flav=pro ONLY
 	    //Ensure a valid team selection.
 	    if( typeof validate['Distribute'] == 'undefined' )
-	       addToValidate('Distribute', 'team_name', 'teamset_mass', false, 'Team'); 
-	    
+	       addToValidate('Distribute', 'team_name', 'teamset_mass', false, 'Team');
+
 	   formValidTeamSet = validate_form('Distribute','');
-	   if(!formValidTeamSet) 
+	   if(!formValidTeamSet)
 	       return false;
-	    
+
 	    var warning_message = mod_strings.LBL_WARN_NO_USERS_OR_TEAM;
 	    var teamIdsArray = SUGAR.collection.prototype.getTeamIdsfromUI('Distribute', 'team_name');
 	    if (teamIdsArray != null && teamIdsArray.length > 0)   {
@@ -819,7 +818,7 @@ AjaxObject.detailView = {
 	        alert(warning_message);
 	        return;
 	    }
-	    
+
 	    var emailUids = SUGAR.email2.listView.getUidsFromSelection();
 	    var uids = "";
 	    for(i=0; i<emailUids.length; i++) {
@@ -835,10 +834,10 @@ AjaxObject.detailView = {
 	    var mbox = data.mbox;
 	    AjaxObject.startRequest(callbackAssignmentAction, urlStandard + '&emailUIAction=' + "doAssignmentAssign&uids=" + uids + "&ieId=" + ieid + "&folder=" + mbox + "&distribute_method=" + dist + "&users=" +assign_user_id + get);
 	    SUGAR.email2.contextMenus.assignToDialogue.hide();
-	    overlay('Assignment', app_strings.LBL_EMAIL_ONE_MOMENT);
-		
+	    SUGAR.showMessageBox('Assignment', app_strings.LBL_EMAIL_ONE_MOMENT);
+
 	},
-	
+
 	handleAssignmentDialogDeleteAction : function() {
 		// TO pass list of UIDS/emailIds
 		var uids = SUGAR.email2.listView.getUidsFromSelection();
@@ -847,14 +846,14 @@ AjaxObject.detailView = {
 	    var mbox = row.data.mbox;
         AjaxObject.startRequest(callbackAssignmentAction, urlStandard + '&emailUIAction=' + "doAssignmentDelete&uids=" + uids + "&ieId=" + ieId + "&folder=" + mbox);
         SUGAR.email2.contextMenus.assignmentDialog.hide();
-		overlay(app_strings.LBL_EMAIL_PERFORMING_TASK, app_strings.LBL_EMAIL_ONE_MOMENT);
+		SUGAR.showMessageBox(app_strings.LBL_EMAIL_PERFORMING_TASK, app_strings.LBL_EMAIL_ONE_MOMENT);
 
 		// AJAX Call
-		
+
 	},
-	
+
 	showEmailDetailView : function(o) {
-        hideOverlay();
+        SUGAR.hideMessageBox();
         var SED = SUGAR.email2.detailView;
 		var ret = JSON.parse(o.responseText);
 
@@ -884,13 +883,13 @@ AjaxObject.detailView = {
 		SED.quickCreateDialog.setHeader(app_strings.LBL_EMAIL_RECORD);
 		SED.quickCreateDialog.setBody(ret.html);
 		SED.quickCreateDialog.render();
-        SUGAR.util.evalScript(ret.html);      
-        SED.quickCreateDialog.show();		
+        SUGAR.util.evalScript(ret.html);
+        SED.quickCreateDialog.show();
 	},
-	
+
 	showAssignmentDialogWithData : function(o) {
         var SEC = SUGAR.email2.contextMenus;
-		hideOverlay();
+		SUGAR.hideMessageBox();
         var ret = JSON.parse(o.responseText);
         if (!SEC.assignmentDialog) {
 	        SEC.assignmentDialog = new YAHOO.widget.Dialog("assignmentDialog", {
@@ -915,13 +914,13 @@ AjaxObject.detailView = {
         SEC.assignmentDialog.show();
         SUGAR.util.evalScript(ret);
 	},
-	
+
 	showImportForm : function(o) {
 		var SED = SUGAR.email2.detailView;
 		var ret = JSON.parse(o.responseText);
-        
+
         document.getElementById('quickCreateContent').innerHTML = "";
-        hideOverlay();
+        SUGAR.hideMessageBox();
         if (!ret) {
             return false;
         }
@@ -950,7 +949,7 @@ AjaxObject.detailView = {
             			QSProcessedFieldsArray[i] = false;
             		} // if
 				}
-            }); 
+            });
             SED.importDialog.renderEvent.subscribe(function() {
             	var iev = YAHOO.util.Dom.get("ImportEditView");
             	if (iev) {
@@ -992,8 +991,8 @@ AjaxObject.detailView = {
         var row = SUGAR.email2.grid.getSelectedRows()[0];
         row = SUGAR.email2.grid.getRecord(row);
         var data = row.getData();
-        var ieId = data.ieId; 
-        var mbox = data.mbox; 
+        var ieId = data.ieId;
+        var mbox = data.mbox;
         var serverDelete = editView.serverDelete.checked;
         var emailUids = SUGAR.email2.listView.getUidsFromSelection();
         var uids = "";
@@ -1003,7 +1002,7 @@ AjaxObject.detailView = {
             }
             uids += emailUids[i];
         }
-        
+
         var action = 'importEmail&uid=';
         if (ret.move) {
             action = 'moveEmails';
@@ -1012,24 +1011,24 @@ AjaxObject.detailView = {
             action = action + '&destinationFolder=' + ret['dstFolder'];
             action = action + '&destinationIeId=' + ret['dstIeId'];
             action = action + '&emailUids=';
-        } 
-        if (action.search(/importEmail/) != -1) {
-            overlay(app_strings.LBL_EMAIL_IMPORTING_EMAIL, app_strings.LBL_EMAIL_ONE_MOMENT);
-        } else {
-            overlay("Moving Email(s)", app_strings.LBL_EMAIL_ONE_MOMENT);
         }
-        
-        AjaxObject.startRequest(callbackStatusForImport, urlStandard + '&emailUIAction=' + action + uids + "&ieId=" + ieId + "&mbox=" + mbox + 
+        if (action.search(/importEmail/) != -1) {
+            SUGAR.showMessageBox(app_strings.LBL_EMAIL_IMPORTING_EMAIL, app_strings.LBL_EMAIL_ONE_MOMENT);
+        } else {
+            SUGAR.showMessageBox("Moving Email(s)", app_strings.LBL_EMAIL_ONE_MOMENT);
+        }
+
+        AjaxObject.startRequest(callbackStatusForImport, urlStandard + '&emailUIAction=' + action + uids + "&ieId=" + ieId + "&mbox=" + mbox +
         get + "&parent_id=" + parent_id + "&parent_type=" + parent_type + '&delete=' + serverDelete);
         SUGAR.email2.detailView.importDialog.hide();
         document.getElementById('importDialogContent').innerHTML = "";
-        
+
     },
     showRelateForm : function(o) {
         var SED = SUGAR.email2.detailView;
     	var ret = JSON.parse(o.responseText);
         document.getElementById('quickCreateContent').innerHTML = "";
-        hideOverlay();
+        SUGAR.hideMessageBox();
         if (!ret) {
             return false;
         }
@@ -1051,8 +1050,8 @@ AjaxObject.detailView = {
     	                var parent_type = editView.parent_type.value;
     	                var row = SUGAR.email2.grid.getSelectedRows()[0];
     	                row  = SUGAR.email2.grid.getRecord(row);
-    	                var ieId = row.getData().ieId; 
-    	                var mbox = row.getData().mbox; 
+    	                var ieId = row.getData().ieId;
+    	                var mbox = row.getData().mbox;
     	                var emailUids = SUGAR.email2.listView.getUidsFromSelection();
     	                var uids = "";
     	                for(i=0; i<emailUids.length; i++) {
@@ -1061,15 +1060,15 @@ AjaxObject.detailView = {
     	                    }
     	                    uids += emailUids[i];
     	                }
-    	                overlay(app_strings.LBL_EMAIL_PERFORMING_TASK, app_strings.LBL_EMAIL_ONE_MOMENT);
-    	                AjaxObject.startRequest(callbackStatusForImport, urlStandard + '&emailUIAction=relateEmails&uid=' + uids 
+    	                SUGAR.showMessageBox(app_strings.LBL_EMAIL_PERFORMING_TASK, app_strings.LBL_EMAIL_ONE_MOMENT);
+    	                AjaxObject.startRequest(callbackStatusForImport, urlStandard + '&emailUIAction=relateEmails&uid=' + uids
     	                    + "&ieId=" + ieId + "&mbox=" + mbox + "&parent_id=" + parent_id + "&parent_type=" + parent_type);
     	                SED.relateDialog.hide();
     	                document.getElementById('relateDialogContent').innerHTML = "";
 	                }
                 }]
 			});
-			
+
             SED.relateDialog.hideEvent.subscribe(function(){
             	if (QSFieldsArray['ImportEditView_parent_name'] != null) {
             		QSFieldsArray['ImportEditView_parent_name'].destroy();
@@ -1078,8 +1077,8 @@ AjaxObject.detailView = {
 				if (QSProcessedFieldsArray['ImportEditView_parent_name']) {
 					QSProcessedFieldsArray['ImportEditView_parent_name'] = false;
 				} // if
-            }); 
-			
+            });
+
             SED.relateDialog.renderEvent.subscribe(function() {
             	var viewPortHeight = YAHOO.util.Dom.getViewportHeight();
             	var contH = 0;
@@ -1090,7 +1089,7 @@ AjaxObject.detailView = {
             }, SED.relateDialog);
             SED.relateDialog.setHeader(app_strings.LBL_EMAIL_RELATE_EMAIL);
 		} // end lazy load
-		
+
         SED.relateDialog.setBody(ret.html);
         SED.relateDialog.render();
         SUGAR.util.evalScript(ret.html);
@@ -1145,7 +1144,7 @@ AjaxObject.folders = {
 	 * check-mail post actions
 	 */
 	checkMailCleanup : function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		AjaxObject.folders.rebuildFolders(o); // rebuild TreeView
 
 		// refresh focus ListView
@@ -1156,7 +1155,7 @@ AjaxObject.folders = {
 	/**
 	 */
 	rebuildFolders : function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 
 		var data = JSON.parse(o.responseText);
 
@@ -1220,27 +1219,27 @@ success : function (o) {
 failure	: AjaxObject.handleFailure,
 timeout	: AjaxObject.timeout,
 scope	: AjaxObject
-	
+
 };
 
 var callbackStatusForImport = {
 success : function (o) {
-	hideOverlay();
+	SUGAR.hideMessageBox();
 	if (o.responseText != "")  {
 		var statusString = "";
 		var data = JSON.parse(o.responseText);
 		for(i=0; i<data.length; i++) {
 			statusString = statusString + data[i] + '<br/>';
 		}
-		overlay(SUGAR.language.get('Emails','LBL_IMPORT_STATUS_TITLE'), statusString, 'alert');
+		SUGAR.showMessageBox(SUGAR.language.get('Emails','LBL_IMPORT_STATUS_TITLE'), statusString, 'alert');
 	}
 	SE.listView.refreshGrid();
-	
+
 },
 failure	: AjaxObject.handleFailure,
 timeout	: AjaxObject.timeout,
 scope	: AjaxObject
-	
+
 };
 var callbackComposeCache = {
 	success	: AjaxObject.composeCache,
@@ -1256,7 +1255,7 @@ var callbackDelete = {
 };
 var callbackEmailDetailMultiple = {
 	success	: function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		var retMulti = JSON.parse(o.responseText);
 		var ret = new Object();
 
@@ -1280,7 +1279,7 @@ var callbackListViewSortOrderChange = {
 };
 var callbackEmptyTrash = {
 	success	: function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		AjaxObject.folderRenameCleanup;
 	},
 	failure	: AjaxObject.handleFailure,
@@ -1289,14 +1288,14 @@ var callbackEmptyTrash = {
 };
 var callbackClearCacheFiles = {
 	success	: function(o) {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 	},
 	failure	: AjaxObject.handleFailure,
 	timeout	: AjaxObject.timeout,
 	scope	: AjaxObject
 };
 var callbackFolderRename = {
-	success	: function(o) {hideOverlay();SUGAR.email2.folders.rebuildFolders();},
+	success	: function(o) {SUGAR.hideMessageBox();SUGAR.email2.folders.rebuildFolders();},
 	failure	: AjaxObject.handleFailure,
 	timeout	: AjaxObject.timeout,
 	scope	: AjaxObject
@@ -1314,11 +1313,11 @@ var callbackFolderDelete = {
 		        if(node)
 		        	SUGAR.email2.tree.removeNode(node, true);
 		    }
-			hideOverlay();
+			SUGAR.hideMessageBox();
 			//SUGAR.email2.folders.loadSettingFolder();
 		} else {
-			hideOverlay();
-			overlay(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorMessage, 'alert');
+			SUGAR.hideMessageBox();
+			SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, ret.errorMessage, 'alert');
 		} // else
 	},
 	failure	: AjaxObject.handleFailure,
@@ -1366,7 +1365,7 @@ var callbackFullSync = {
 };
 var callbackGeneric = {
 	success	: function() {
-		hideOverlay();
+		SUGAR.hideMessageBox();
 	},
 	failure	: AjaxObject.handleFailure,
 	timeout	: AjaxObject.timeout,
@@ -1375,7 +1374,7 @@ var callbackGeneric = {
 var callbackIeAccountRetrieve = {
 	success	: function(o) {
 		// return JSON encoding
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		SUGAR.email2.accounts.fillIeAccount(o.responseText);
 		SUGAR.email2.accounts.showEditInboundAccountDialogue(false);
 	},
@@ -1405,14 +1404,14 @@ var callbackAssignmentDialog = {
 	success :  AjaxObject.detailView.showAssignmentDialogWithData,
 	failure	: AjaxObject.handleFailure,
 	timeout	: AjaxObject.timeout,
-	scope	: AjaxObject	
+	scope	: AjaxObject
 };
 var callbackAssignmentAction = {
 	success :  function(o) {
 		SE.listView.refreshGrid();
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		if(o.responseText != '') {
-	       overlay('Assignment action result', o.responseText, 'alert');
+	       SUGAR.showMessageBox('Assignment action result', o.responseText, 'alert');
 	    } // if
 	} ,
 	failure	: AjaxObject.handleFailure,
@@ -1422,9 +1421,9 @@ var callbackAssignmentAction = {
 var callbackMoveEmails = {
 	success :  function(o) {
 	    SE.listView.refreshGrid();
-		hideOverlay();
+		SUGAR.hideMessageBox();
 		if(o.responseText != '') {
-	       overlay(app_strings.LBL_EMAIL_ERROR_DESC, o.responseText, 'alert');
+	       SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, o.responseText, 'alert');
 	    } // if
 	} ,
 	failure	: AjaxObject.handleFailure,
@@ -1568,7 +1567,7 @@ var callbackReplyForward = {
 				}
 			}
 		}
-		
+
 		//SUGAR.email2.innerLayout.regions.center.getPanel('composeLayout' + idx).setTitle(a.name);
 		if (a.parent_name != null && a.parent_name != "") {
 			document.getElementById('data_parent_name' + idx).value = a.parent_name;
@@ -1591,9 +1590,9 @@ var callbackReplyForward = {
 	              	opt.selected = true;
 	              }
 	              addressFrom.options.add(opt);
-	        }			
+	        }
 		} // if
-		hideOverlay();
+		SUGAR.hideMessageBox();
 
 	},
 	failure	: AjaxObject.handleFailure,
@@ -1668,7 +1667,7 @@ var updateMailingLists = {
 var callbackCheckEmail2 = {
 	success : function(o) {
 		var ret = JSON.parse(o.responseText);
-		overlay(app_strings.LBL_EMAIL_CHECKING_NEW, ret.text);
+		SUGAR.showMessageBox(app_strings.LBL_EMAIL_CHECKING_NEW, ret.text);
 
 
 	},

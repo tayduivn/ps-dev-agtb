@@ -318,7 +318,7 @@ function email2init() {
 		},
         {
             text: app_strings.LBL_EMAIL_MENU_RENAME,
-            onclick:{ fn: function() { overlay(app_strings.LBL_EMAIL_LIST_RENAME_TITLE, app_strings.LBL_EMAIL_LIST_RENAME_DESC,
+            onclick:{ fn: function() { SUGAR.showMessageBox(app_strings.LBL_EMAIL_LIST_RENAME_TITLE, app_strings.LBL_EMAIL_LIST_RENAME_DESC,
              'prompt', {fn: SUGAR.email2.addressBook.renameMailingList}); } }
         }
 	]);

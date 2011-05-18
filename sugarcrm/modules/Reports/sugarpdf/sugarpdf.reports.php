@@ -46,9 +46,9 @@ class ReportsSugarpdfReports extends Sugarpdf
         
         //Set PDF document properties
         if($this->bean->name == "untitled") {
-            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], date("Y-m-d H:m:s"));
+            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $app_list_strings['moduleList'][$this->bean->module], date("Y-m-d H:i:s"));
         } else {
-            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, date("Y-m-d H:m:s"));
+            $this->SetHeaderData(PDF_SMALL_HEADER_LOGO, PDF_SMALL_HEADER_LOGO_WIDTH, $this->bean->name, date("Y-m-d H:i:s"));
         }
         $cols = count($this->bean->report_def['display_columns']);
     }

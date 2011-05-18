@@ -296,15 +296,15 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
     public function testBuildMassUpdateLink()
     {
         $output = $this->_lvd->buildMassUpdateLink();
-
-        $this->assertContains("<a href='#massupdate_form'",$output);
+        
+        $this->assertRegExp("/.*document\.getElementById\(['\"]massupdate_form['\"]\)\.style\.display\s*=\s*['\"]['\"].*/", $output);
     }
 
     public function testComposeEmailIfFieldDefsNotAnArray()
     {
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->field_defs = false;
-
+        
         $this->assertEmpty($this->_lvd->buildComposeEmailLink(0));
     }
 
@@ -355,6 +355,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->object_name = 'foobar';
         $this->_lvd->seed->module_dir = 'foobarfoobar';
+        $_REQUEST['module'] = 'foobarfoobar';
         $this->_lvd->seed->field_defs = array(
             'field1' => array(
                 'type' => 'link',
@@ -369,6 +370,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertContains('sListView.use_external_mail_client',$output);
 
         unset($GLOBALS['dictionary']['foobar']);
+        unset($_REQUEST['module']);
     }
 
     public function testBuildDeleteLink()
@@ -537,10 +539,11 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
         $output = $this->_lvd->getMultiSelectData();
 
-        $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
+        $this->assertEquals($output, "<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
 				"<textarea style='display: none' name='uid'></textarea>\n" .
 				"<input type='hidden' name='select_entire_list' value='0'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n",$output);
+				"<input type='hidden' name='foobar' value='0'>\n".
+                "<input type='hidden' name='show_plus' value=''>\n",$output);
     }
 
     public function testGetMultiSelectDataWithRequestParameterUidSet()
@@ -553,7 +556,8 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
 				"<textarea style='display: none' name='uid'>1234</textarea>\n" .
 				"<input type='hidden' name='select_entire_list' value='0'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n",$output);
+				"<input type='hidden' name='foobar' value='0'>\n" .
+                "<input type='hidden' name='show_plus' value=''>\n",$output);        
     }
 
     public function testGetMultiSelectDataWithRequestParameterSelectEntireListSet()
@@ -566,7 +570,8 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
 				"<textarea style='display: none' name='uid'></textarea>\n" .
 				"<input type='hidden' name='select_entire_list' value='1234'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n",$output);
+				"<input type='hidden' name='foobar' value='0'>\n" .
+                "<input type='hidden' name='show_plus' value=''>\n",$output);        
     }
 
     public function testGetMultiSelectDataWithRequestParameterMassupdateSet()
@@ -581,7 +586,8 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
 				"<textarea style='display: none' name='uid'></textarea>\n" .
 				"<input type='hidden' name='select_entire_list' value='0'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n",$output);
+				"<input type='hidden' name='foobar' value='0'>\n".
+                "<input type='hidden' name='show_plus' value=''>\n",$output);        
     }
 }
 

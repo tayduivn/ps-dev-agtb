@@ -221,15 +221,15 @@ class WorkFlowAlertShell extends SugarBean {
 				//end else custom template message
 			}
 			
-		$temp_array['HREF_EDIT'] = 'index.php?action=EditView&module=WorkFlowAlertShells&record='.$this->id.'&workflow_id='.$this->parent_id;
-		$temp_array['HREF_DELETE'] = "index.php?action=Delete&module=WorkFlowAlertShells&record=".$this->id."";
+		$temp_array['HREF_EDIT'] = 'index.php?action=EditView&module=WorkFlowAlertShells&module_tab=WorkFlow&record='.$this->id.'&workflow_id='.$this->parent_id;
+		$temp_array['HREF_DELETE'] = "index.php?action=Delete&module=WorkFlowAlertShells&module_tab=WorkFlow&record=".$this->id."";
 		$temp_array['TYPE'] = $current_module_strings['LBL_MODULE_NAME'];
 		$temp_array['DETAILS_TABLE'] = $table_html;
 		$temp_array['ID'] = $this->id;
 		
 		//Component information for either recipients or invitees (Meetings & Calls)
 		$recipient_icon =  SugarThemeRegistry::current()->getImage('Users','align="absmiddle" alt="'.$app_strings['LNK_REMOVE'].'" border="0"');
-		$temp_array['COMPONENT_HREF_EDIT'] = 'index.php?action=DetailView&module=WorkFlowAlertShells&record='.$this->id.'&workflow_id='.$this->parent_id;
+		$temp_array['COMPONENT_HREF_EDIT'] = 'index.php?action=DetailView&module=WorkFlowAlertShells&module_tab=WorkFlow&record='.$this->id.'&workflow_id='.$this->parent_id;
 		$temp_array['COMPONENT_STATEMENT'] = $recipient_icon.$mod_strings['LBL_RECIPIENTS'];
 		
 		return $temp_array;

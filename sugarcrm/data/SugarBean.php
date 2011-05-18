@@ -199,6 +199,7 @@ class SugarBean
     * @var String
     */
     var $module_dir = '';
+    var $module_name = '';
     var $field_name_map;
     var $field_defs;
     var $custom_fields;
@@ -273,8 +274,9 @@ class SugarBean
         global  $dictionary, $current_user;
         static $loaded_defs = array();
         $this->db = DBManagerFactory::getInstance();
-
         $this->dbManager = DBManagerFactory::getInstance();
+        if (empty($this->module_name))
+            $this->module_name = $this->module_dir;
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
         if(!empty($current_user->id) &&
@@ -918,7 +920,7 @@ class SugarBean
      */
     function load_relationship($rel_name)
     {
-        $GLOBALS['log']->debug("SugarBean.load_relationships, Loading relationship (".$rel_name.").");
+        $GLOBALS['log']->debug("SugarBean[{$this->object_name}].load_relationships, Loading relationship (".$rel_name.").");
 
         if (empty($rel_name))
         {
@@ -928,33 +930,32 @@ class SugarBean
         $fieldDefs = $this->getFieldDefinitions();
 
         //find all definitions of type link.
-        if (!empty($fieldDefs))
+        if (!empty($fieldDefs[$rel_name]))
         {
+            //initialize a variable of type Link
+            require_once('data/Link2.php');
+            $class = load_link_class($fieldDefs[$rel_name]);
+            if (isset($this->$rel_name) && $this->$rel_name instanceof $class)
+                return true;
             //if rel_name is provided, search the fieldef array keys by name.
-            if (array_key_exists($rel_name, $fieldDefs))
+            if (array_search('link',$fieldDefs[$rel_name]) === 'type')
             {
-                if (array_search('link',$fieldDefs[$rel_name]) === 'type')
+                if ($class == "Link2")
+                    $this->$rel_name = new $class($rel_name, $this);
+                else
+                    $this->$rel_name = new $class($fieldDefs[$rel_name]['relationship'], $this, $fieldDefs[$rel_name]);
+
+                if (empty($this->$rel_name) ||
+                        (isset($this->$rel_name->_relationship) && empty($this->$rel_name->_relationship->id)) ||
+                        (method_exists($this->$rel_name, "loadedSuccesfully") && !$this->$rel_name->loadedSuccesfully()))
                 {
-                    //initialize a variable of type Link
-                    require_once('data/Link.php');
-                    $class = load_link_class($fieldDefs[$rel_name]);
-
-                    $this->$rel_name=new $class($fieldDefs[$rel_name]['relationship'], $this, $fieldDefs[$rel_name]);
-
-                    if (empty($this->$rel_name->_relationship->id)) {
-                        unset($this->$rel_name);
-                        return false;
-                    }
-                    return true;
+                    unset($this->$rel_name);
+                    return false;
                 }
-            }
-            else
-            {
-                $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading relationship (".$rel_name.").");
-                return false;
+                return true;
             }
         }
-
+        $GLOBALS['log']->debug("SugarBean.load_relationships, Error Loading relationship (".$rel_name.")");
         return false;
     }
 
@@ -974,7 +975,7 @@ class SugarBean
         $GLOBALS['log']->debug("SugarBean.load_relationships, Loading all relationships of type link.");
 
         $linked_fields=$this->get_linked_fields();
-        require_once("data/Link.php");
+        require_once("data/Link2.php");
         foreach($linked_fields as $name=>$properties)
         {
             $class = load_link_class($properties);
@@ -1003,32 +1004,9 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-
-        //BEGIN SUGARCRM flav!=sales ONLY
-        //if bean_name is Case then use aCase
-        if($bean_name=="Case")
-            $bean_name = "aCase";
-        //END SUGARCRM flav!=sales ONLY
-
-        //add a references to bean_name if it doe not exist aleady.
-        if (!(class_exists($bean_name)))
-        {
-
-            if (isset($GLOBALS['beanList']) && isset($GLOBALS['beanFiles']))
-            {
-                global $beanFiles;
-            }
-            else
-            {
-
-            }
-            $bean_file=$beanFiles[$bean_name];
-            include_once($bean_file);
-        }
-
         $this->load_relationship($field_name);
 
-        return $this->$field_name->getBeans(new $bean_name(), $sort_array, $begin_index, $end_index, $deleted, $optional_where);
+        return $this->$field_name->getBeans();
     }
 
     /**
@@ -1395,8 +1373,20 @@ class SugarBean
             $this->team_id = $current_user->team_id;
             $usedDefaultTeam = true;
         }
-        $this->updateCalculatedFields();
+        //END SUGARCRM flav=pro ONLY
 
+        require_once("data/BeanFactory.php");
+        BeanFactory::registerBean($this->module_name, $this);
+
+        if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']))
+        {
+            $GLOBALS['saving_relationships'] = true;
+        // let subclasses save related field changes
+            $this->save_relationship_changes($isUpdate);
+            $GLOBALS['saving_relationships'] = false;
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->updateCalculatedFields();
         //END SUGARCRM flav=pro ONLY
         if($isUpdate && !$this->update_date_entered)
         {
@@ -1675,18 +1665,16 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         //Prevent cascading saves
-        if (empty($GLOBALS['updating_relationships']))
+        global $saved_beans;
+        if (empty($saved_beans))
+            $saved_beans = array();
+        if (empty($saved_beans[$this->module_name]))
+                $saved_beans[$this->module_name] = array();
+        if (empty($saved_beans[$this->module_name][$this->id]))
         {
-        //END SUGARCRM flav=pro ONLY
-
-            // let subclasses save related field changes
-            $this->save_relationship_changes($isUpdate);
-            //BEGIN SUGARCRM flav=een ONLY
+            $saved_beans[$this->module_name][$this->id] = true;
             $this->updateRelatedCalcFields();
-            //END SUGARCRM flav=een ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
         }
-
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1728,6 +1716,7 @@ class SugarBean
             }
         }
     }
+
     function updateDependentField()
     {
         require_once("include/Expressions/DependencyManager.php");
@@ -1741,35 +1730,41 @@ class SugarBean
         }
     }
 
-
-    //BEGIN SUGARCRM flav=een ONLY
-    function updateRelatedCalcFields()
+    function updateRelatedCalcFields($linkName = "")
     {
-        if (empty($this->id))
+        if (empty($this->id) || $this->new_with_id)
             return;
-        global $dictionary, $updating_relationships;
+        global $dictionary, $updating_relationships, $saved_beans;
         if ($updating_relationships)
         {
+            $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");
             return;
         }
-        if (!isset($GLOBALS['related_calc_records_saved']))
-            $GLOBALS['related_calc_records_saved'] = array();
         $updating_relationships = true;
+        if (empty($saved_beans))
+            $saved_beans = array();
+        $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
         if (!empty($dictionary[$this->object_name]['related_calc_fields']))
         {
             $links = $dictionary[$this->object_name]['related_calc_fields'];
             foreach($links as $lname)
             {
+                $GLOBALS['log']->debug("checking $lname");
                 if (empty($this->$lname))
                 {
+                    $GLOBALS['log']->debug("loading relationship $lname");
                     $this->load_relationship($lname);
                 }
                 $rmodule = $this->$lname->getRelatedModuleName();
                 $beans = array();
                 if(isset($this->$lname->beans))
+                {
                     $beans = $this->$lname->beans;
+                    $GLOBALS['log']->debug("beans for $lname were already loaded");
+                }
                 else
                 {
+                    $GLOBALS['log']->debug("loading beans for $lname");
                     //now we need a seed of the related module to load.
                     global $beanList;
                     if (empty($beanList[$rmodule]))
@@ -1780,17 +1775,64 @@ class SugarBean
                     $beans = $this->$lname->getBeans($seed);
                     $this->$lname->beans = $beans;
                 }
+                if (empty($saved_beans[$rmodule]))
+                    $saved_beans[$rmodule] = array();
                 foreach($beans as $rBean)
                 {
-                    if (empty($rBean->deleted)) {
+                    if (empty($rBean->deleted) && empty($saved_beans[$rmodule][$rBean->id])) {
+                        $GLOBALS['log']->debug("resaving {$rBean->module_dir} {$rBean->id}");
                         $rBean->save();
+                        $saved_beans[$rmodule][$rBean->id] = true;
                     }
                 }
             }
         }
+        if (empty($saved_beans[$this->module_name][$this->id]) && $this->has_calc_field_with_link($linkName))
+        {
+            //Save will updated the saved_beans array
+            $this->save();
+        } 
         $updating_relationships = false;
     }
-    //END SUGARCRM flav=een ONLY
+
+    /**
+     * Tests if the current module has a calculated field with a link.
+     * if a link name is specified, it will return true when a field uses that specific link
+     * Otherwise it will test for all link fields.
+     * @param string $linkName
+     * @return bool
+     */
+    function has_calc_field_with_link($linkName = ""){
+        $links = array();
+        if (empty($linkName))
+        {
+            foreach ($this->field_defs as $field => $def)
+            {
+                if (!empty ($def['type']) && $def['type'] == "link")
+                    $links[$field] = true;
+            }
+        }
+        else {
+            $links[$linkName] = true;
+        }
+        if (!empty($links))
+        {
+            foreach($this->field_defs as $name => $def)
+            {
+                //Look through all calculated fields for uses of this link field
+                if(!empty($def['formula']))
+                {
+                    $fields = Parser::getFieldsFromExpression($def['formula']);
+                    foreach($fields as $var)
+                    {
+                        if (!empty($links[$var]))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     //END SUGARCRM flav=pro ONLY
 
     /**
@@ -2093,7 +2135,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     $this->$lower_link->add($new_rel_id);
 
                 }else{
-                    require_once('data/Link.php');
+                    require_once('data/Link2.php');
                     $rel = Relationship::retrieve_by_modules($new_rel_link, $this->module_dir, $GLOBALS['db'], 'many-to-many');
 
                     if(!empty($rel)){
@@ -2108,7 +2150,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         }
                         //ok so we didn't find it in the field defs let's save it anyway if we have the relationshp
 
-                        $this->$rel=new Link($rel, $this, array());
+                        $this->$rel=new Link2($rel, $this, array());
                         $this->$rel->add($new_rel_id);
                     }
                 }
@@ -2286,6 +2328,10 @@ function save_relationship_changes($is_update, $exclude=array())
                 case 'datetime':
                 case 'datetimecombo':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$/',$this->$field) ) {
                         // This appears to be formatted in user date/time
                         $this->$field = $timedate->to_db($this->$field);
@@ -2294,6 +2340,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'date':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( ! preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$this->$field) ) {
                         // This date appears to be formatted in the user's format
                         $this->$field = $timedate->to_db_date($this->$field, false);
@@ -2302,6 +2352,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     break;
                 case 'time':
                     if(empty($this->$field)) break;
+                    if ($this->$field == 'NULL') {
+                    	$this->$field = '';
+                    	break;
+                    }
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
                         $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
@@ -2477,6 +2531,9 @@ function save_relationship_changes($is_update, $exclude=array())
         $custom_logic_arguments['encode'] = $encode;
         $this->call_custom_logic("after_retrieve", $custom_logic_arguments);
         unset($custom_logic_arguments);
+
+        require_once("data/BeanFactory.php");
+        BeanFactory::registerBean($this->module_dir, $this);
         return $this;
     }
 
@@ -2573,28 +2630,29 @@ function save_relationship_changes($is_update, $exclude=array())
         //sub-selects.
         if (strstr($query," UNION ALL ") !== false) {
 
-    		//seperate out all the queries.
-    		$union_qs=explode(" UNION ALL ", $query);
-    		foreach ($union_qs as $key=>$union_query) {
-        		$star = '*';
-				preg_match($pattern, $union_query, $matches);
-				if (!empty($matches)) {
-					if (stristr($matches[0], "distinct")) {
-			          	if (!empty($this->seed) && !empty($this->seed->table_name ))
-			          		$star = 'DISTINCT ' . $this->seed->table_name . '.id';
-			          	else
-			          		$star = 'DISTINCT ' . $this->table_name . '.id';
-					}
-				} // if
-    			$replacement = 'SELECT count(' . $star . ') c FROM ';
-    			$union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
-    		}
-    		$modified_select_query=implode(" UNION ALL ",$union_qs);
-    	} else {
-	    	$modified_select_query = preg_replace($pattern, $replacement, $query,1);
-    	}
+            //seperate out all the queries.
+            $union_qs=explode(" UNION ALL ", $query);
+            foreach ($union_qs as $key=>$union_query) {
+                $star = '*';
+                preg_match($pattern, $union_query, $matches);
+                if (!empty($matches)) {
+                    if (stristr($matches[0], "distinct")) {
+                        if (!empty($this->seed) && !empty($this->seed->table_name ))
+                            $star = 'DISTINCT ' . $this->seed->table_name . '.id';
+                        else
+                            $star = 'DISTINCT ' . $this->table_name . '.id';
+                    }
+                } // if
+                $replacement = 'SELECT count(' . $star . ') c FROM ';
+                $union_qs[$key] = preg_replace($pattern, $replacement, $union_query,1);
+            }
+            $modified_select_query=implode(" UNION ALL ",$union_qs);
+        } else {
+            $modified_select_query = preg_replace($pattern, $replacement, $query,1);
+        }
 
-		return $modified_select_query;
+
+        return $modified_select_query;
     }
 
     /**
@@ -2865,7 +2923,7 @@ function save_relationship_changes($is_update, $exclude=array())
                         unset ($parentbean->$related_field_name);
                         continue;
                     }
-                    $query_array = $parentbean->$related_field_name->getQuery(true,array(),0,'',true, null, null, true);
+                    $query_array = $parentbean->$related_field_name->getSubpanelQuery(array(), true);
                 }
                 $table_where = $this_subpanel->get_where();
                 $where_definition = $query_array['where'];
@@ -2948,118 +3006,116 @@ function save_relationship_changes($is_update, $exclude=array())
         $secondary_queries = array();
         global $layout_edit_mode, $beanFiles, $beanList;
 
-		if(isset($_SESSION['show_deleted']))
-		{
-			$show_deleted = 1;
-		}
-		$final_query = '';
-		$final_query_rows = '';
-		$subpanel_list=array();
-		if ($subpanel_def->isCollection())
-		{
-			$subpanel_def->load_sub_subpanels();
-			$subpanel_list=$subpanel_def->sub_subpanels;
-		}
-		else
-		{
-			$subpanel_list[]=$subpanel_def;
-		}
+        if(isset($_SESSION['show_deleted']))
+        {
+            $show_deleted = 1;
+        }
+        $final_query = '';
+        $final_query_rows = '';
+        $subpanel_list=array();
+        if ($subpanel_def->isCollection())
+        {
+            $subpanel_def->load_sub_subpanels();
+            $subpanel_list=$subpanel_def->sub_subpanels;
+        }
+        else
+        {
+            $subpanel_list[]=$subpanel_def;
+        }
 
-		$first = true;
+        $first = true;
 
-		//Breaking the building process into two loops. The first loop gets a list of all the sub-queries.
-		//The second loop merges the queries and forces them to select the same number of columns
-		//All columns in a sub-subpanel group must have the same aliases
-		//If the subpanel is a datasource function, it can't be a collection so we just poll that function for the and return that
-		foreach($subpanel_list as $this_subpanel)
-		{
-			if($this_subpanel->isDatasourceFunction() && empty($this_subpanel->_instance_properties['generate_select']))
-			{
-				$shortcut_function_name = $this_subpanel->get_data_source_name();
-				$parameters=$this_subpanel->get_function_parameters();
-				if (!empty($parameters))
-				{
-					//if the import file function is set, then import the file to call the custom function from
-					if (is_array($parameters)  && isset($parameters['import_function_file'])){
-						//this call may happen multiple times, so only require if function does not exist
-						if(!function_exists($shortcut_function_name)){
-							require_once($parameters['import_function_file']);
-						}
-						//call function from required file
-						$tmp_final_query =  $shortcut_function_name($parameters);
-					}else{
-						//call function from parent bean
-						$tmp_final_query =  $parentbean->$shortcut_function_name($parameters);
-					}
-				}
-				else
-				{
-					$tmp_final_query = $parentbean->$shortcut_function_name();
-				}
-				if(!$first)
-				{
-					$final_query_rows .= ' UNION ALL ( '.$parentbean->create_list_count_query($tmp_final_query, $parameters) . ' )';
-					$final_query .= ' UNION ALL ( '.$tmp_final_query . ' )';
-				} else {
-					$final_query_rows = '(' . $parentbean->create_list_count_query($tmp_final_query, $parameters) . ')';
-					$final_query = '(' . $tmp_final_query . ')';
-					$first = false;
-				}
-			}
-		}
-		//If final_query is still empty, its time to build the sub-queries
-		if (empty($final_query))
-		{
-			$subqueries = SugarBean::build_sub_queries_for_union($subpanel_list, $subpanel_def, $parentbean, $order_by);
-			$all_fields = array();
-			foreach($subqueries as $i => $subquery)
-			{
-				$query_fields = $GLOBALS['db']->helper->getSelectFieldsFromQuery($subquery['select']);
-				foreach($query_fields as $field => $select)
-				{
-					if (!in_array($field, $all_fields))
-						$all_fields[] = $field;
-				}
-				$subqueries[$i]['query_fields'] = $query_fields;
-			}
-			$first = true;
-			//Now ensure the queries have the same set of fields in the same order.
-			foreach($subqueries as $subquery)
-			{
-				$subquery['select'] = "SELECT";
-				foreach($all_fields as $field)
-				{
-					if (!isset($subquery['query_fields'][$field]))
-					{
-						$subquery['select'] .= " ' ' $field,";
-					}
-					else
-					{
-						$subquery['select'] .= " {$subquery['query_fields'][$field]},";
-					}
-				}
-				$subquery['select'] = substr($subquery['select'], 0 , strlen($subquery['select']) - 1);
-				//Put the query into the final_query
-				$query =  $subquery['select'] . " " . $subquery['from'] . " " . $subquery['where'];
-				if(!$first)
-				{
-					$query = ' UNION ALL ( '.$query . ' )';
-					$final_query_rows .= " UNION ALL ";
-				} else {
-					$query = '(' . $query . ')';
-					$first = false;
-				}
-				$query_array = $subquery['query_array'];
-				$select_position=strpos($query_array['select'],"SELECT");
-				$distinct_position=strpos($query_array['select'],"DISTINCT");
-				if ($select_position !== false && $distinct_position!= false)
-				{
-					$query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
-				}
-				else
-				{
-					//resort to default behavior.
-					$query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
+        //Breaking the building process into two loops. The first loop gets a list of all the sub-queries.
+        //The second loop merges the queries and forces them to select the same number of columns
+        //All columns in a sub-subpanel group must have the same aliases
+        //If the subpanel is a datasource function, it can't be a collection so we just poll that function for the and return that
+        foreach($subpanel_list as $this_subpanel)
+        {
+            if($this_subpanel->isDatasourceFunction() && empty($this_subpanel->_instance_properties['generate_select']))
+            {
+                $shortcut_function_name = $this_subpanel->get_data_source_name();
+                $parameters=$this_subpanel->get_function_parameters();
+                if (!empty($parameters))
+                {
+                    //if the import file function is set, then import the file to call the custom function from
+                    if (is_array($parameters)  && isset($parameters['import_function_file'])){
+                        //this call may happen multiple times, so only require if function does not exist
+                        if(!function_exists($shortcut_function_name)){
+                            require_once($parameters['import_function_file']);
+                        }
+                        //call function from required file
+                        $tmp_final_query =  $shortcut_function_name($parameters);
+                    }else{
+                        //call function from parent bean
+                        $tmp_final_query =  $parentbean->$shortcut_function_name($parameters);
+                    }
+                } else {
+                    $tmp_final_query = $parentbean->$shortcut_function_name();
+                }
+                if(!$first)
+                    {
+                        $final_query_rows .= ' UNION ALL ( '.$parentbean->create_list_count_query($tmp_final_query, $parameters) . ' )';
+                        $final_query .= ' UNION ALL ( '.$tmp_final_query . ' )';
+                    } else {
+                        $final_query_rows = '(' . $parentbean->create_list_count_query($tmp_final_query, $parameters) . ')';
+                        $final_query = '(' . $tmp_final_query . ')';
+                        $first = false;
+                    }
+                }
+        }
+        //If final_query is still empty, its time to build the sub-queries
+        if (empty($final_query))
+        {
+            $subqueries = SugarBean::build_sub_queries_for_union($subpanel_list, $subpanel_def, $parentbean, $order_by);
+            $all_fields = array();
+            foreach($subqueries as $i => $subquery)
+            {
+                $query_fields = $GLOBALS['db']->helper->getSelectFieldsFromQuery($subquery['select']);
+                foreach($query_fields as $field => $select)
+                {
+                    if (!in_array($field, $all_fields))
+                        $all_fields[] = $field;
+                }
+                $subqueries[$i]['query_fields'] = $query_fields;
+            }
+            $first = true;
+            //Now ensure the queries have the same set of fields in the same order.
+            foreach($subqueries as $subquery)
+            {
+                $subquery['select'] = "SELECT";
+                foreach($all_fields as $field)
+                {
+                    if (!isset($subquery['query_fields'][$field]))
+                    {
+                        $subquery['select'] .= " ' ' $field,";
+                    }
+                    else
+                    {
+                        $subquery['select'] .= " {$subquery['query_fields'][$field]},";
+                    }
+                }
+                $subquery['select'] = substr($subquery['select'], 0 , strlen($subquery['select']) - 1);
+                //Put the query into the final_query
+                $query =  $subquery['select'] . " " . $subquery['from'] . " " . $subquery['where'];
+                if(!$first)
+                {
+                    $query = ' UNION ALL ( '.$query . ' )';
+                    $final_query_rows .= " UNION ALL ";
+                } else {
+                    $query = '(' . $query . ')';
+                    $first = false;
+                }
+                $query_array = $subquery['query_array'];
+                $select_position=strpos($query_array['select'],"SELECT");
+                $distinct_position=strpos($query_array['select'],"DISTINCT");
+                if ($select_position !== false && $distinct_position!= false)
+                {
+                    $query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
+                }
+                else
+                {
+                    //resort to default behavior.
+                    $query_rows = "( SELECT count(*)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
                 }
                 if(!empty($subquery['secondary_select']))
                 {
@@ -3557,11 +3613,10 @@ function save_relationship_changes($is_update, $exclude=array())
                                     $ret_array['select'] .= ' , ' .$params['join_table_alias'] . '.created_by ' .  $field . '_owner';
                                 }
                                 $ret_array['select'] .= "  , '".$rel_module  ."' " .  $field . '_mod';
+
                             }
                         }
                     }
-                    //Replace references to this table in the where clause with the new alias
-                    $join_table_name = $this->$data['link']->getRelatedTableName();
                     // To fix SOAP stuff where we are trying to retrieve all the accounts data where accounts.id = ..
                     // and this code changes accounts to jt4 as there is a self join with the accounts table.
                     //Martin fix #27494
@@ -3664,10 +3719,6 @@ function save_relationship_changes($is_update, $exclude=array())
         }
 
         return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
-
-
-
-
     }
     /**
      * Returns parent record data for objects that store relationship information
@@ -3809,6 +3860,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 $limit = $max_per_page + 1;
                 $max_per_page = $limit;
             }
+
         }
 
         if(empty($row_offset))
@@ -5349,14 +5401,13 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook = new LogicHook();
             $logicHook->setBean($this);
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
-            //BEGIN SUGARCRM flav=een ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if (empty($GLOBALS['updating_relationships']) &&
-                    ($event == "after_relationship_add" || $event == "after_relationship_delete"))
+            if ($event == "after_relationship_add" || $event == "after_relationship_delete")
             {
-                $this->updateRelatedCalcFields();
+                $this->updateRelatedCalcFields($arguments['link']);
             }
-            //END SUGARCRM flav=een ONLY
+            //END SUGARCRM flav=pro ONLY
         }
     }
 

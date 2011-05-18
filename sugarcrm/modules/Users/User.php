@@ -421,6 +421,8 @@ class User extends Person {
 	}
 
 	function save($check_notify = false) {
+		$isUpdate = !empty($this->id) && !$this->new_with_id;
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		// this will cause the logged in admin to have the licensed user count refreshed
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
@@ -514,6 +516,27 @@ class User extends Person {
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		$GLOBALS['sugar_config']['disable_team_access_check'] = true;
+        if(!$this->portal_only) {
+		   // If this is not an update, then make sure the new user logic is executed.
+            if (!$isUpdate) {
+                // If this is a new user, make sure to add them to the appriate default teams
+                if (!$this->team_exists) {
+                    $team = new Team();
+                    $team->new_user_created($this);
+                }
+            }else{
+                //if this is an update, then we need to ensure we keep the user's
+                //private team name and name_2 in sync with their name.
+                $team_id = $this->getPrivateTeamID();
+                if(!empty($team_id)){
+
+                    $team = new Team();
+                    $team->retrieve($team_id);
+                    Team::set_team_name_from_user($team, $this);
+                    $team->save();
+                }
+            }
+		}
 		//END SUGARCRM flav=pro ONLY
 
 		//BEGIN SUGARCRM flav=sales ONLY
@@ -998,37 +1021,6 @@ EOQ;
 	function list_view_parse_additional_sections(& $list_form, $xTemplateSection) {
 		return $list_form;
 	}
-
-	function save_relationship_changes($is_update) {
-		//BEGIN SUGARCRM flav=pro ONLY
-		if($this->portal_only) {
-		   return;
-		}
-
-
-		//todo: move this logic into a post save helper method.
-		// If this is not an update, then make sure the new user logic is executed.
-		if ($is_update == false) {
-			// If this is a new user, make sure to add them to the appriate default teams
-			if (!$this->team_exists) {
-				$team = new Team();
-				$team->new_user_created($this);
-			}
-		}else{
-			//if this is an update, then we need to ensure we keep the user's
-			//private team name and name_2 in sync with their name.
-			$team_id = $this->getPrivateTeamID();
-			if(!empty($team_id)){
-
-				$team = new Team();
-				$team->retrieve($team_id);
-                Team::set_team_name_from_user($team, $this);
-				$team->save();
-			}
-		}
-		//END SUGARCRM flav=pro ONLY
-	}
-
 
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -1569,9 +1561,12 @@ EOQ;
 			{
 				if ($upload_file->confirm_upload())
 				{
-					$this->picture = create_guid();
+					$this->picture = create_guid().".png";
 					$upload_file->final_move( $this->picture);
-					$url=$upload_file->get_url($this->picture);
+					$path=$upload_file->get_upload_path($this->picture);
+					if(!verify_image_file($path)) {
+					    $this->picture = '';
+					}
 				}
 			}
 		}
@@ -1582,16 +1577,16 @@ EOQ;
 		}
 	}
 	//END SUGARCRM flav!=com ONLY
-	
+
 
    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
    {	//call parent method, specifying for array to be returned
    		$ret_array = parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, true,$parentbean, $singleSelect);
-   		
+
    		//if this is being called from webservices, then run additional code
    		if(!empty($GLOBALS['soap_server_object'])){
-	
-	   		//if this is a single select, then secondary queries are being run that may result in duplicate rows being returned through the 
+
+	   		//if this is a single select, then secondary queries are being run that may result in duplicate rows being returned through the
 	   		//left joins with meetings/tasks/call.  Add a group by to return one user record (bug 40250)
 	       	if($singleSelect)
 	    	{
@@ -1607,8 +1602,8 @@ EOQ;
 
     	return  $ret_array['select'] . $ret_array['from'] . $ret_array['where']. $ret_array['order_by'];
 
-   		
-   
+
+
    }
-	
+
 }

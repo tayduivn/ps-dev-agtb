@@ -122,13 +122,15 @@ class StoreQuery{
 		   $bean = loadBean($this->query['module']);
 		}
 
+
 		foreach($this->query as $key=>$value)
 		{
             // todo wp: remove this
-            if($key != 'advanced' && $key != 'module') 
+            if($key != 'advanced' && $key != 'module'
+               && (($key != "lvso" && substr($key, -7) != "_offset") || !isset($_REQUEST[$key])))
             {   
             	//Filter date fields to ensure it is saved to DB format, but also avoid empty values
-				if(!empty($value) && !empty($bean) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
+                if(!empty($value) && !empty($bean) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
 				{
 				   $field = $match[2];
 				   if(isset($bean->field_defs[$field]['type']))
@@ -151,9 +153,9 @@ class StoreQuery{
             	
             	// cn: bug 6546 storequery stomps correct value for 'module' in Activities
     			$_REQUEST[$key] = $value;	
-    			$_GET[$key] = $value;	
+    			$_GET[$key] = $value;
             }
-		}	
+        }
 	}
 	
 	function getSaveType($name)
@@ -238,17 +240,17 @@ class StoreQuery{
 			}
 		}
 	}
-	
+
 	/**
 	 * Static method to retrieve the user's stored query for a particular module
 	 *
 	 * @param string $module
 	 * @return array
 	 */
-	public static function getStoredQueryForUser($module){
+	public static function getStoredQueryForUser($module)
+	{
 		global $current_user;
 		return $current_user->getPreference($module.'Q');
-	}
+	}	
 }
-
 ?>

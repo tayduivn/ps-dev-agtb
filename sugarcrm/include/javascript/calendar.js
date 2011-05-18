@@ -27,6 +27,26 @@
 
 Calendar = function() {};
 
+Calendar.getHighestZIndex = function (containerEl)
+{
+   var highestIndex = 0;
+   var currentIndex = 0;
+   var els = Array();
+   
+   els = containerEl ? containerEl.getElementsByTagName('*') : document.getElementsByTagName('*');
+   
+   for(var i=0; i < els.length; i++)
+   {
+      currentIndex = YAHOO.util.Dom.getStyle(els[i], "zIndex");
+      if(!isNaN(currentIndex) && currentIndex > highestIndex)
+      { 
+      	 highestIndex = parseInt(currentIndex); 
+      }
+   }
+   
+   return (highestIndex == Number.MAX_VALUE) ? Number.MAX_VALUE : highestIndex+1;
+};
+
 Calendar.setup = function (params) {
 
     YAHOO.util.Event.onDOMReady(function(){
@@ -49,20 +69,39 @@ Calendar.setup = function (params) {
         Event.on(Dom.get(showButton), "click", function() {
 
             if (!dialog) {
-                             
+                                  
                 dialog = new YAHOO.widget.SimpleDialog("container_" + showButton, {
                     visible:false,
                     context:[showButton, "tl", "bl"],
                     buttons:[],
                     draggable:false,
                     close:true,
-                    zIndex: 1000
+                    zIndex: Calendar.getHighestZIndex(document.body)
                 });
                 
                 dialog.setHeader(SUGAR.language.get('app_strings', 'LBL_MASSUPDATE_DATE'));
-                dialog.setBody('<div id="' + showButton + '_div"></div>');
+                var dialogBody = '<p class="callnav_today"><a href="javascript:void(0)"  id="callnav_today">' + SUGAR.language.get('app_strings', 'LBL_EMAIL_DATE_TODAY') + '</a></p><div id="' + showButton + '_div"></div>';
+                dialog.setBody(dialogBody);
                 dialog.render(document.body);
 
+                //Since the cal div name is dynamic we need to add a custom class to override some default yui css styles
+                Dom.addClass("container_" + showButton, "cal_panel");
+                
+                //Clear the date selection if the user clicks on today.
+                Event.addListener("callnav_today", "click", function(){ 
+                    calendar.clear();
+                    var now = new Date();
+                    //Reset the input field value
+                    Dom.get(inputField).value = formatSelectedDate(now);
+                    //Highlight the cell
+                    var cellIndex = calendar.getCellIndex(now);
+                    if(cellIndex > -1 )
+                    {
+                        var cell = calendar.cells[cellIndex];
+                        Dom.addClass(cell, calendar.Style.CSS_CELL_SELECTED);
+                    }
+                });
+                
                 dialog.showEvent.subscribe(function() {
                     if (YAHOO.env.ua.ie) {
                         // Since we're hiding the table using yui-overlay-hidden, we 
@@ -134,53 +173,72 @@ Calendar.setup = function (params) {
                 	}                	
                 	calendar.cfg.setProperty('WEEKDAYS_SHORT', SUGAR.language.languages['app_list_strings']['dom_cal_day_short']);
                 }
+
+                var formatSelectedDate = function(selDate)
+                {
+                    var monthVal = selDate.getMonth() + 1; //Add one for month value
+                    if(monthVal < 10)
+                    {
+                        monthVal = '0' + monthVal;
+                    }
+
+                    var dateVal = selDate.getDate();
+
+                    if(dateVal < 10)
+                    {
+                        dateVal = '0' + dateVal;
+                    }
+
+                    var yearVal = selDate.getFullYear();
+
+                    selDate = '';
+                    if(monthPos == 0)
+                    {
+                        selDate = monthVal;
+                    }
+                    else if(dayPos == 0)
+                    {
+                        selDate = dateVal;
+                    }
+                    else
+                    {
+                        selDate = yearVal;
+                    }
+
+                    if(monthPos == 1)
+                    {
+                        selDate += date_field_delimiter + monthVal;
+                    }
+                    else if(dayPos == 1)
+                    {
+                        selDate += date_field_delimiter + dateVal;
+                    }
+                    else
+                    {
+                        selDate += date_field_delimiter + yearVal;
+                    }
+
+                    if(monthPos == 2)
+                    {
+                        selDate += date_field_delimiter + monthVal;
+                    }
+                    else if(dayPos == 2)
+                    {
+                        selDate += date_field_delimiter + dateVal;
+                    }
+                    else
+                    {
+                        selDate += date_field_delimiter + yearVal;
+                    }
+
+                    return selDate;
+                };
                 
                 calendar.selectEvent.subscribe(function() {
                     var input = Dom.get(inputField);
 					if (calendar.getSelectedDates().length > 0) {
 
-                        var selDate = calendar.getSelectedDates()[0];
-                        var monthVal = selDate.getMonth() + 1; //Add one for month value
-                        if(monthVal < 10)
-                        {
-                           monthVal = '0' + monthVal;	
-                        }
-                        
-                        var dateVal = selDate.getDate();
-                        
-                        if(dateVal < 10)
-                        {
-                           dateVal = '0' + dateVal;	
-                        }
-                        
-                        var yearVal = selDate.getFullYear();
-                        
-                        selDate = '';
-                        if(monthPos == 0) {
-                          selDate = monthVal;
-                        } else if(dayPos == 0) {
-                          selDate = dateVal;
-                        } else {
-                          selDate = yearVal;
-                        }
-                        
-                        if(monthPos == 1) {
-                          selDate += date_field_delimiter + monthVal;
-                        } else if(dayPos == 1) {
-                          selDate += date_field_delimiter + dateVal;
-                        } else {
-                          selDate += date_field_delimiter + yearVal;
-                        }
-                        
-                        if(monthPos == 2) {
-                          selDate += date_field_delimiter + monthVal;
-                        } else if(dayPos == 2) {
-                          selDate += date_field_delimiter + dateVal;                       	
-                        } else {
-                          selDate += date_field_delimiter + yearVal;
-                        }
-
-                        input.value = selDate;
+                        input.value = formatSelectedDate(calendar.getSelectedDates()[0]);
                         
                         if(params.comboObject)
                         {
@@ -192,13 +250,7 @@ Calendar.setup = function (params) {
 
                     dialog.hide();
 					//Fire any on-change events for this input field
-					var listeners = YAHOO.util.Event.getListeners(input, 'change');
-					if (listeners != null) {
-						for (var i = 0; i < listeners.length; i++) {
-							var l = listeners[i];
-							l.fn.call(l.scope ? l.scope : this, l.obj);
-						}
-					}
+					SUGAR.util.callOnChangeListers(input);
                 });
 
                 calendar.renderEvent.subscribe(function() {

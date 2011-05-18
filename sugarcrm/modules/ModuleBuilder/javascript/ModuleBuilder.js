@@ -1078,7 +1078,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					close: true,
 					constraintoviewport: true,
 					fixedcenter: false,
-					script: true
+					script: true,
+					modal: true
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
 			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));

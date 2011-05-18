@@ -1,5 +1,24 @@
 <?php
-
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 require_once('include/externalAPI/Base/WebDocument.php');
@@ -13,7 +32,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     public $supportMeetingPassword = false;
     public $docSearch = true;
     public $restrictUploadsByExtension = false;
-    // public $connector = "ext_eapm_lotuslive";
+    public $connector = "ext_eapm_lotuslive";
 
     public $hostURL;
     protected $oauthReq = "/manage/oauth/getRequestToken";
@@ -21,15 +40,6 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     protected $oauthAccess = '/manage/oauth/getAccessToken';
     protected $oauthParams = array(
         'signatureMethod' => 'PLAINTEXT',
-// Test
-//        'consumerKey' => "test_app",
-//        'consumerSecret' => "87323at4aj6y8e9a0pa92w",
-// Stage
-//        'consumerKey' => "95d6df6a53ef6ae65a9ec14dc8716d25",
-//        'consumerSecret' => "7e38abfb6b7bd7ae9250d61af33ed438",
-// Production
-        'consumerKey' => "9399cf0ce6e4ca4d30d56a76b21da89",
-        'consumerSecret' => "7704b27829c5715445e14637415b67c1",
     );
     protected $url = 'https://apps.lotuslive.com/';
 
@@ -382,7 +392,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         $searchLen = strlen($keywords);
 
         foreach ( $docList as $doc ) {
-            if ( empty($keywords) || stristr($doc['name'],$keywords) !== FALSE ) {
+            if ( empty($keywords) || strncasecmp($doc['name'],$keywords,strlen($keywords)) == 0 ) {
                 // It matches
                 $results[] = $doc;
                 

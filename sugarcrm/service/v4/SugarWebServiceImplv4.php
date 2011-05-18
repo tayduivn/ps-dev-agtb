@@ -34,7 +34,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     {
         self::$helperObject = new SugarWebServiceUtilv4();
     }
-    
+
         /**
      * Log the user into the application
      *
@@ -160,11 +160,11 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
                     $availModuleNames[] = $mod_def['module_key'];
 
                 $nameValueArray['vardefs_md5'] = self::get_module_fields_md5(session_id(), $availModuleNames);
-                
+
                 self::$helperObject->get_mobile_login_data($nameValueArray);
             }
             //END SUGARCRM flav=pro ONLY
-            
+
             $currencyObject = new Currency();
             $currencyObject->retrieve($cur_id);
             $nameValueArray['user_currency_name'] = self::$helperObject->get_name_value('user_currency_name', $currencyObject->name);
@@ -177,8 +177,8 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         self::$helperObject->setFaultObject($error);
         $GLOBALS['log']->info('End: SugarWebServiceImpl->login - failed login');
     }
-    
-    	
+
+
 	/**
 	 * Retrieve a list of SugarBean's based on provided IDs. This API will not wotk with report module
 	 *
@@ -208,11 +208,11 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 			}
 			$returnRelationshipList[]['link_list'] = $link_output;
 		}
-		
+
 		$result['relationship_list'] = $returnRelationshipList;
 		return $result;
 	}
-	
+
 	    /**
      * Retrieve a list of beans.  This is the primary method for getting list of SugarBeans from Sugar using the SOAP API.
      *
@@ -315,7 +315,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entry_list');
         return array('result_count'=>sizeof($output_list), 'total_count' => $totalRecordCount, 'next_offset'=>$next_offset, 'entry_list'=>$output_list, 'relationship_list' => $returnRelationshipList);
     } // fn
-    
+
 	/**
      * Retrieve the layout metadata for a given module given a specific type and view.
      *
@@ -327,7 +327,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      */
     function get_module_layout($session, $a_module_names, $a_type, $a_view,$acl_check = TRUE, $md5 = FALSE){
     	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
-    
+
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
         $results = array();
@@ -341,7 +341,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
 
             if( empty($module_name) )
                 continue;
-                
+
             $class_name = $beanList[$module_name];
             require_once($beanFiles[$class_name]);
             $seed = new $class_name();
@@ -362,13 +362,13 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
                 }
             }
         }
-    	 
+
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_layout');
-    	
+
         return $results;
     }
-    
-	
+
+
 	/**
      * Given a list of modules to search and a search string, return the id, module_name, along with the fields
      * We will support Accounts, Bug Tracker, Cases, Contacts, Leads, Opportunities, Project, ProjectTask, Quotes
@@ -380,8 +380,8 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      * @param int $max_results			- max number of records to return
      * @param string $assigned_user_id	- a user id to filter all records by, leave empty to exclude the filter
      * @param string[] $select_fields   - An array of fields to return.  If empty the default return fields will be from the active list view defs.
-     * @param bool $unified_search_only - A boolean indicating if we should only search against those modules participating in the unified search.  
-     * @param bool $favorites           - A boolean indicating if we should only search against records marked as favorites.  
+     * @param bool $unified_search_only - A boolean indicating if we should only search against those modules participating in the unified search.
+     * @param bool $favorites           - A boolean indicating if we should only search against records marked as favorites.
      * @return Array return_search_result 	- Array('Accounts' => array(array('name' => 'first_name', 'value' => 'John', 'name' => 'last_name', 'value' => 'Do')))
      * @exception 'SoapFault' -- The SOAP error, if any
      */
@@ -389,7 +389,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->search_by_module');
     	global  $beanList, $beanFiles;
     	global $sugar_config,$current_language;
-    
+
     	$error = new SoapError();
     	$output_list = array();
     	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) {
@@ -401,22 +401,22 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	if($max_results > 0){
     		$sugar_config['list_max_entries_per_page'] = $max_results;
     	}
-    
+
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
     	require_once 'include/utils.php';
     	$usa = new UnifiedSearchAdvanced();
         if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
             $usa->buildCache();
         }
-    
+
     	include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
     	$modules_to_search = array();
     	$unified_search_modules['Users'] =   array('fields' => array());
-    	
+
     	//BEGIN SUGARCRM flav!=sales ONLY
     	$unified_search_modules['ProjectTask'] =   array('fields' => array());
         //END SUGARCRM flav!=sales ONLY
-    	
+
         //If we are ignoring the unified search flag within the vardef we need to re-create the search fields.  This allows us to search
         //against a specific module even though it is not enabled for the unified search within the application.
         if( !$unified_search_only )
@@ -430,16 +430,16 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
                 }
             }
         }
-        
-        
+
+
         foreach($unified_search_modules as $module=>$data) {
         	if (in_array($module, $modules)) {
             	$modules_to_search[$module] = $beanList[$module];
         	} // if
         } // foreach
-    
+
         $GLOBALS['log']->info('SugarWebServiceImpl->search_by_module - search string = ' . $search_string);
-    
+
     	if(!empty($search_string) && isset($search_string)) {
     		$search_string = trim($GLOBALS['db']->quote(securexss(from_html(clean_string($search_string, 'UNIFIED_SEARCH')))));
         	foreach($modules_to_search as $name => $beanName) {
@@ -449,11 +449,11 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     				$unifiedSearchFields[$name] [ $field ] = $def ;
     				$unifiedSearchFields[$name] [ $field ]['value'] = $search_string;
     			}
-    
+
     			require_once $beanFiles[$beanName] ;
     			$seed = new $beanName();
     			require_once 'include/SearchForm/SearchForm2.php' ;
-    			if ($beanName == "User" 
+    			if ($beanName == "User"
     			     //BEGIN SUGARCRM flav!=sales ONLY
     			    || $beanName == "ProjectTask"
     			     //END SUGARCRM flav!=sales ONLY
@@ -465,47 +465,47 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     					continue;
     				} // if
     			}
-    
-    			if ($beanName != "User" 
+
+    			if ($beanName != "User"
     			     //BEGIN SUGARCRM flav!=sales ONLY
     			    && $beanName != "ProjectTask"
     			     //END SUGARCRM flav!=sales ONLY
     			    ) {
     				$searchForm = new SearchForm ($seed, $name ) ;
-    
+
     				$searchForm->setup(array ($name => array()) ,$unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
     				$where_clauses = $searchForm->generateSearchWhere() ;
     				require_once 'include/SearchForm/SearchForm2.php' ;
     				$searchForm = new SearchForm ($seed, $name ) ;
-    
+
     				$searchForm->setup(array ($name => array()) ,$unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
     				$where_clauses = $searchForm->generateSearchWhere() ;
     				$emailQuery = false;
-    
+
     				$where = '';
     				if (count($where_clauses) > 0 ) {
     					$where = '('. implode(' ) OR ( ', $where_clauses) . ')';
     				}
-                    
+
     				$mod_strings = return_module_language($current_language, $seed->module_dir);
-    				
-    				if(count($select_fields) > 0) 
+
+    				if(count($select_fields) > 0)
     				    $filterFields = $select_fields;
     				else {
     				    if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
     					   require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
         				else
         					require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-        				
+
         				$filterFields = array();
         				foreach($listViewDefs[$seed->module_dir] as $colName => $param) {
-        	                if(!empty($param['default']) && $param['default'] == true) 
+        	                if(!empty($param['default']) && $param['default'] == true)
         	                    $filterFields[] = strtolower($colName);
-        	            } 
+        	            }
         	            if (!in_array('id', $filterFields))
         	            	$filterFields[] = 'id';
     				}
-    				
+
     				//Pull in any db fields used for the unified search query so the correct joins will be added
     				$selectOnlyQueryFields = array();
     				foreach ($unifiedSearchFields[$name] as $field => $def){
@@ -520,12 +520,12 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	               $ownerWhere = $seed->getOwnerWhere($assigned_user_id);
     	               $where = "($where) AND $ownerWhere";
     	            }
-                    
+
     	            if( $beanName == "Employee" )
     	            {
     	                $where = "($where) AND users.deleted = 0 AND users.is_group = 0 AND users.employee_status = 'Active'";
     	            }
-    	            
+
     	            $list_params = array();
     	            //BEGIN SUGARCRM flav=pro ONLY
     	            if( $seed->isFavoritesEnabled() && $favorites === TRUE )
@@ -533,7 +533,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	                $list_params['favorites'] = 2;
     	            }
     	            //END SUGARCRM flav=pro ONLY
-    	            
+
     				$ret_array = $seed->create_new_list_query('', $where, $filterFields, $list_params, 0, '', true, $seed, true);
     		        if(empty($params) or !is_array($params)) $params = array();
     		        if(!isset($params['custom_select'])) $params['custom_select'] = '';
@@ -573,7 +573,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	            }
     	            $result = $seed->db->limitQuery($main_query, $offset, $limit + 1);
     			}
-    
+
     			$rowArray = array();
     			while($row = $seed->db->fetchByAssoc($result)) {
     				$nameValueArray = array();
@@ -589,12 +589,155 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     			} // while
     			$output_list[] = array('name' => $name, 'records' => $rowArray);
         	} // foreach
-    
+
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->search_by_module');
     	return array('entry_list'=>$output_list);
     	} // if
     	return array('entry_list'=>$output_list);
     } // fn
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Get the base64 contents of a quote pdf.
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param string $quote_id
+     * @param string $pdf_format Either Standard or Invoice
+     */
+    function get_quotes_pdf($session, $quote_id, $pdf_format = 'Standard')
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_quotes_pdf');
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+
+        $error = new SoapError();
+        $output_list = array();
+        if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
+        {
+            $error->set_error('invalid_login');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+            return;
+        }
+
+        $GLOBALS['disable_date_format'] = FALSE;
+        require_once('include/Sugarpdf/SugarpdfFactory.php');
+        $bean = new Quote();
+        $bean->retrieve($quote_id);
+        $sugarpdfBean = SugarpdfFactory::loadSugarpdf($pdf_format, 'Quotes', $bean, array() );
+        $sugarpdfBean->process();
+
+        $pdfContents = $sugarpdfBean->Output('','S');
+        $pdfContents = base64_encode($pdfContents);
+
+        return array('file_contents' => $pdfContents);
+    }
+
+
+    /**
+     * For a particular report, generate the associated pdf report.  All caching should be done
+     * on the client side.
+     *
+     * @param string $session   - Session ID returned by a previous call to login.
+     * @param string $report_id - The id of the report bean.
+     *
+     * @return array - file_contents key with pdf base64 encoded.
+     *
+     */
+    function get_report_pdf($session, $report_id)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_report_pdf');
+    	global  $beanList, $beanFiles;
+    	global $sugar_config,$current_language;
+
+    	$error = new SoapError();
+    	$output_list = array();
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))
+    	{
+    		$error->set_error('invalid_login');
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+    		return;
+    	}
+
+        $GLOBALS['disable_date_format'] = FALSE;
+    	require_once('modules/Reports/templates/templates_pdf.php');
+
+    	$saved_report = new SavedReport();
+    	$saved_report->retrieve($report_id);
+
+    	$contents = '';
+    	if($saved_report->id != null)
+    	{
+    	    $reporter = new Report(html_entity_decode($saved_report->content));
+    	    $reporter->layout_manager->setAttribute("no_sort",1);
+    	    //Translate pdf to correct language
+    	    $module_for_lang = $reporter->module;
+    	    $mod_strings = return_module_language($current_language, 'Reports');
+
+    	    //Generate actual pdf
+    	    $report_filename = template_handle_pdf($reporter, false);
+
+    	    //Get file pdf file contents
+    	    $contents = self::$helperObject->get_file_contents_base64($report_filename, TRUE);
+    	}
+
+    	return array('file_contents' => $contents);
+
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
+    }
+    //END SUGARCRM flav=pro ONLY
+
+    public function oauth_request_token()
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_request_token');
+        require_once "include/SugarOAuthServer.php";
+        try {
+	        $oauth = new SugarOAuthServer($GLOBALS['sugar_config']['site_url'].'service/v4/rest.php');
+	        $result = $oauth->requestToken()."&oauth_callback_confirmed=true&authorize_url=".$oauth->authURL();
+        } catch(OAuthException $e) {
+            $GLOBALS['log']->debug("OAUTH Exception: $e");
+            $errorObject = new SoapError();
+            $errorObject->set_error('invalid_login');
+			self::$helperObject->setFaultObject($errorObject);
+            $result = null;
+        }
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->oauth_request_token');
+        return $result;
+    }
+
+    public function oauth_access_token()
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_access_token');
+        require_once "include/SugarOAuthServer.php";
+        try {
+	        $oauth = new SugarOAuthServer();
+	        $result = $oauth->accessToken();
+        } catch(OAuthException $e) {
+            $GLOBALS['log']->debug("OAUTH Exception: $e");
+            $errorObject = new SoapError();
+            $errorObject->set_error('invalid_login');
+			self::$helperObject->setFaultObject($errorObject);
+            $result = null;
+        }
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->oauth_access_token');
+        return $result;
+    }
+
+    public function oauth_access($session)
+    {
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->oauth_access');
+        $error = new SoapError();
+    	$output_list = array();
+    	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error)) {
+    		$error->set_error('invalid_login');
+    		$GLOBALS['log']->info('End: SugarWebServiceImpl->oauth_access');
+    		$result = $error;
+    	} else {
+            $result = array('id'=>session_id());
+    	}
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->oauth_access');
+        return $result;
+    }
 }
 
 SugarWebServiceImplv4::$helperObject = new SugarWebServiceUtilv4();

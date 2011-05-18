@@ -50,7 +50,10 @@ class DependencyManager {
 
 		    	$dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field, 'value' => $def['formula'])));
 
-		    	if (isset($def['enforced']) && $def['enforced'] == true) {
+		    	if (isset($def['enforced']) && $def['enforced'] &&
+                    //Check for the string "false"
+                    (!is_string($def['enforced']) || strtolower($def['enforced']) !== "false"))
+                {
 			    	$dep->setFireOnLoad(true);
 		    		if ($includeReadOnly)
 		    		{
@@ -365,7 +368,6 @@ class DependencyManager {
         )) . ";\n";
     }
 
-    //BEGIN SUGARCRM flav=een ONLY
     /**
      * @static returns the javascript for the link variables of this view.
      * @param  $fields array, field_defs for this view
@@ -412,6 +414,5 @@ class DependencyManager {
         //Otherwise this link looks ok
         return true;
     }
-    //END SUGARCRM flav=een ONLY
 }
 ?>

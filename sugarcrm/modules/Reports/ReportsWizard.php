@@ -125,7 +125,11 @@ $chart_types = array(
 $sugar_smarty->assign('chart_types', $chart_types);
 //$sugar_smarty->assign('chart_description', $chart_description);
 
-
+require_once('include/SugarCharts/SugarChartFactory.php');
+$sugarChart = SugarChartFactory::getInstance();
+$resources = $sugarChart->getChartResources();
+$sugar_smarty->assign('chartResources', $resources);
+	
 if (isset($_REQUEST['run_query']) && ($_REQUEST['run_query'] == 1))
 	$sugar_smarty->assign("RUN_QUERY", '1');
 else

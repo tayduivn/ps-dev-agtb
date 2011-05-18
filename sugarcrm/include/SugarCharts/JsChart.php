@@ -66,7 +66,8 @@ class JsChart extends SugarChart {
 	}
 
 	function tab($str, $depth){
-		return str_repeat("\t", $depth) . $str . "\n";
+       // $str = preg_replace('/(<\w+>)(.*)(<\/\w+>)/e', "'\\1'.htmlentities(from_html('\\2')).'\\3'", $str);
+        return str_repeat("\t", $depth) . $str . "\n";
 	}
 
 	function display($name, $xmlFile, $width='320', $height='480', $resize=false) {
@@ -78,11 +79,16 @@ class JsChart extends SugarChart {
 		$this->xmlFile = $xmlFile;
 		$this->chartType = $this->chart_properties['type'];
 
-
 		$style = array();
 		$chartConfig = array();
-		$xmlStr = $this->processXML($this->xmlFile);
-		$json = $this->buildJson($xmlStr);
+        try {
+		    $xmlStr = $this->processXML($this->xmlFile);
+		    $json = $this->buildJson($xmlStr);
+        }
+        catch(Exception $e) {
+            $GLOBALS['log']->fatal("Unable to return chart data, invalid xml for file {$this->xmlFile}");
+            return '';
+        }
 		$this->saveJsonFile($json);
 		$this->ss->assign("chartId", $this->chartId);
 		$this->ss->assign("filename", $this->jsonFilename);
@@ -109,10 +115,6 @@ class JsChart extends SugarChart {
 			$this->ss->assign("error", "Unsupported Chart Type");
 		}
 
-
-		$file = "";
-
-		return $this->ss->fetch($file);
 	}
 
 
@@ -137,10 +139,10 @@ class JsChart extends SugarChart {
 		foreach($this->getChartConfigParams($xmlStr) as $key => $value) {
 			$chartConfig[$key] = $value;
 		}
+		
+		$chartConfig['imageExportType'] = $this->image_export_type;
 		$this->ss->assign("config", $chartConfig);
 
-		$file = "";
-		return $this->ss->fetch($file);
 	}
 
 	function chartArray($chartsArray) {
@@ -204,8 +206,7 @@ class JsChart extends SugarChart {
 	function getChartDimensions($xmlStr) {
 		if($this->getNumNodes($xmlStr) > 9 && $this->chartType != "pie chart") {
 			if($this->chartType == "horizontal group by chart" || $this->chartType == "horizontal bar chart") {
-				$diff = $this->getNumNodes($xmlStr) - 9;
-				$height = ($diff * (.20 * $this->height)) + $this->height;
+				$height = ($this->getNumNodes($xmlStr) * 60) + 100;
 				return array("width"=>$this->width, "height"=>($height));
 			} else {
 				return array("width"=>($this->width * 2), "height"=>$this->height);
@@ -216,8 +217,8 @@ class JsChart extends SugarChart {
 	}
 
 	function checkData($xmlstr) {
-		$xml = new SimpleXMLElement($xmlstr);
-		if(sizeof($xml->data->group) > 0) {
+        $xml = new SimpleXMLElement($xmlstr);
+        if(sizeof($xml->data->group) > 0) {
 			return true;
 		} else {
 			return false;
@@ -248,7 +249,7 @@ class JsChart extends SugarChart {
 		$labels = array();
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group[0]->subgroups->group as $group) {
-			$labels[] = $this->tab("'".$group->title."'",2);
+			$labels[] = $this->tab("'".$this->processSpecialChars($group->title)."'",2);
 		}
 		$content .= join(",\n",$labels)."\n";
 		$content .= $this->tab("],\n",1);
@@ -260,7 +261,7 @@ class JsChart extends SugarChart {
 		$labels = array();
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group as $group) {
-			$labels[] = $this->tab("'".$group->title."'",2);
+			$labels[] = $this->tab("'".$this->processSpecialChars($group->title)."'",2);
 		}
 		$labelStr = join(",\n",$labels)."\n";
 		$content .= $labelStr;
@@ -274,7 +275,7 @@ class JsChart extends SugarChart {
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group as $group) {
 			$groupcontent = $this->tab("{\n",1);
-			$groupcontent .= $this->tab("'label': '{$group->title}',\n",2);
+			$groupcontent .= $this->tab("'label': '".$this->processSpecialChars($group->title)."',\n",2);
 			$groupcontent .= $this->tab("'gvalue': '{$group->value}',\n",2);
 			$groupcontent .= $this->tab("'gvaluelabel': '{$group->label}',\n",2);
 			$subgroupValues = array();
@@ -282,7 +283,7 @@ class JsChart extends SugarChart {
 			$subgroupLinks = array();
 			foreach($group->subgroups->group as $subgroups) {
 				$subgroupValues[] = $this->tab(($subgroups->value == "NULL") ? 0 : $subgroups->value,3);
-				$subgroupValueLabels[] = $this->tab("'".$subgroups->label."'",3);
+				$subgroupValueLabels[] = $this->tab("'".$this->processSpecialChars($subgroups->label)."'",3);
 				$subgroupLinks[] = $this->tab("'".$subgroups->link."'",3);
 			}
 			$subgroupValuesStr = join(",\n",$subgroupValues)."\n";
@@ -309,7 +310,7 @@ class JsChart extends SugarChart {
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group as $group) {
 			$groupcontent = $this->tab("{\n",1);
-			$groupcontent .= $this->tab("'label': '{$group->title}',\n",2);
+			$groupcontent .= $this->tab("'label': '".$this->processSpecialChars($group->title)."',\n",2);
 			$groupcontent .= $this->tab("'gvalue': '{$group->value}',\n",2);
 			$groupcontent .= $this->tab("'gvaluelabel': '{$group->label}',\n",2);
 			$subgroupValues = array();
@@ -320,7 +321,7 @@ class JsChart extends SugarChart {
 				$subgroupValues[] = $this->tab(($subgroups->value == "NULL") ? 0 : $subgroups->value,3);
 				$subgroupValueLabels[] = $this->tab("'".$subgroups->label."'",3);
 				$subgroupLinks[] = $this->tab("'".$subgroups->link."'",3);
-				$subgroupTitles[] = $this->tab("'".$subgroups->title."'",3);
+				$subgroupTitles[] = $this->tab("'".$this->processSpecialChars($subgroups->title)."'",3);
 			}
 			$subgroupValuesStr = join(",\n",$subgroupValues)."\n";
 			$subgroupValueLabelsStr = join(",\n",$subgroupValueLabels)."\n";
@@ -353,7 +354,7 @@ class JsChart extends SugarChart {
 		foreach($xml->data->group as $group) {
 		$groupcontent = $this->tab("{\n",1);
 		$groupcontent .= $this->tab("'label': [\n",2);
-		$groupcontent .= $this->tab("'{$group->title}'\n",3);
+		$groupcontent .= $this->tab("'".$this->processSpecialChars($group->title)."'\n",3);
 		$groupcontent .= $this->tab("],\n",2);
 		$groupcontent .= $this->tab("'values': [\n",2);
 		$groupcontent .= $this->tab(($group->value == "NULL") ? 0 : $group->value."\n",3);
@@ -379,7 +380,7 @@ class JsChart extends SugarChart {
 		$labels = array();
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group as $group) {
-			$labels[] = $this->tab("'".$group->title."'",2);
+			$labels[] = $this->tab("'".$this->processSpecialChars($group->title)."'",2);
 		}
 		$labelStr = join(",\n",$labels)."\n";
 		$content .= $labelStr;
@@ -398,7 +399,7 @@ class JsChart extends SugarChart {
 		foreach($xml->data->group as $group) {
 		$groupcontent = $this->tab("{\n",1);
 		$groupcontent .= $this->tab("'label': [\n",2);
-		$groupcontent .= $this->tab("'{$group->title}'\n",3);
+		$groupcontent .= $this->tab("'".$this->processSpecialChars($group->title)."'\n",3);
 		$groupcontent .= $this->tab("],\n",2);
 		$groupcontent .= $this->tab("'values': [\n",2);
 		$groupcontent .= $this->tab("{$group->value}\n",3);
@@ -424,7 +425,7 @@ class JsChart extends SugarChart {
 		$labels = array();
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group as $group) {
-			$labels[] = $this->tab("'".$group->title."'",2);
+			$labels[] = $this->tab("'".$this->processSpecialChars($group->title)."'",2);
 		}
 		$labelStr = join(",\n",$labels)."\n";
 		$content .= $labelStr;
@@ -438,7 +439,7 @@ class JsChart extends SugarChart {
 		$xml = new SimpleXMLElement($xmlstr);
 		foreach($xml->data->group as $group) {
 			$groupcontent = $this->tab("{\n",1);
-			$groupcontent .= $this->tab("'label': '{$group->title}',\n",2);
+			$groupcontent .= $this->tab("'label': '".$this->processSpecialChars($group->title)."',\n",2);
 			$groupcontent .= $this->tab("'gvalue': '{$group->value}',\n",2);
 			$finalComma = ($group->title != "GaugePosition") ? "," : "";
 			$groupcontent .= $this->tab("'gvaluelabel': '{$group->label}'{$finalComma}\n",2);
@@ -603,7 +604,6 @@ class JsChart extends SugarChart {
 	}
 
 	function saveJsonFile($jsonContents) {
-
 		$this->jsonFilename = str_replace(".xml",".js",$this->xmlFile);
 		//$jsonContents = mb_convert_encoding($jsonContents, 'UTF-16LE', 'UTF-8');
 
@@ -640,7 +640,11 @@ class JsChart extends SugarChart {
 		}
 		return $props;
 	}
-
+	
+	function processSpecialChars($str) {
+		return addslashes(html_entity_decode($str,ENT_QUOTES));
+	}
+	
 	function processXML($xmlFile) {
 
 		if(!file_exists($xmlFile)) {

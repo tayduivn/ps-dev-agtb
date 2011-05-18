@@ -59,16 +59,17 @@ function EAPMChange() {
         passObj.exec();
 
         //hide/show new window notice
-        if(apiOpts.authMethod){
-            var messageDiv = document.getElementById('eapm_notice_div');
-            if(apiOpts.authMethod == "oauth"){
-                messageDiv.innerHTML = EAPMOAuthNotice;
+        var messageDiv = document.getElementById('eapm_notice_div');
+        if ( typeof messageDiv != 'undefined' && messageDiv != null ) {
+            if(apiOpts.authMethod){
+                if(apiOpts.authMethod == "oauth"){
+                    messageDiv.innerHTML = EAPMOAuthNotice;
+                }else{
+                    messageDiv.innerHTML = EAPMBAsicAuthNotice;
+                }
             }else{
-                 messageDiv.innerHTML = EAPMBAsicAuthNotice;
+                messageDiv.innerHTML = EAPMBAsicAuthNotice;
             }
-        }else{
-            var messageDiv = document.getElementById('eapm_notice_div');
-            messageDiv.innerHTML = EAPMBAsicAuthNotice;
         }
     }
 }
@@ -97,4 +98,41 @@ function EAPMEditStart(userIsAdmin) {
         // Disable the assigned user picker for non-admins
         document.getElementById('assigned_user_name').parentNode.innerHTML = document.getElementById('assigned_user_name').value;
     }
+
+    // Disable the app picker if we are editing an existing record.
+    if ( apiElem.form.record.value != '' ) {
+        apiElem.disabled = true;
+    }
+}
+
+var EAPMPopupCheckCount = 0;
+function EAPMPopupCheck(newWin, popup_url, redirect_url, popup_warning_message) {
+    if ( newWin == false || newWin == null || typeof newWin.close != 'function' || EAPMPopupCheckCount > 35 ) {
+        // Opening the popup failed, redirect them to the popup_url
+        alert(popup_warning_message);
+        document.location = redirect_url;
+        return;
+    }
+    
+    if ( typeof(newWin.innerHeight) != 'undefined' && newWin.innerHeight != 0 ) {
+        // Popup was successful
+        document.location = redirect_url;
+        return;
+    }
+
+    // If we are here, we don't know if it worked or not.
+    EAPMPopupCheckCount++;
+    setTimeout(function() { EAPMPopupCheck(newWin, popup_url, redirect_url, popup_warning_message); },100);
+}
+
+function EAPMPopupAndRedirect(popup_url, redirect_url, popup_warning_message) {
+    var newWin = false;
+
+    try {
+        newWin = window.open(popup_url + '&closeWhenDone=1&refreshParentWindow=1','_blank');
+    } catch (e) {
+        newWin = false;
+    }
+
+    EAPMPopupCheck(newWin, popup_url, redirect_url, popup_warning_message);
 }

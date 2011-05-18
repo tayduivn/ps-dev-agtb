@@ -123,9 +123,9 @@ class AbstractRelationship
         return $this->definition [ 'readonly' ] ;
     }
 
-    public function setReadonly ()
+    public function setReadonly ($set = true)
     {
-        $this->readonly = $this->definition [ 'readonly' ] = true ;
+        $this->readonly = $this->definition [ 'readonly' ] = $set ;
     }
 
     public function setFromStudio ()

@@ -169,7 +169,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
         $out['signatures'] = $sigs;
         $out['fromAccounts'] = $email->et->getFromAccountsArray($ie);
         $out['errorArray'] = array();
-        
+
         $oe = new OutboundEmail();
         if( $oe->doesUserOverrideAccountRequireCredentials($current_user->id) )
         {
@@ -179,8 +179,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 $overideAccount = $oe->createUserSystemOverrideAccount($current_user->id);
 
 		    $out['errorArray'] = array($overideAccount->id => $app_strings['LBL_EMAIL_WARNING_MISSING_USER_CREDS']);
-        }     
-        
+        }
+
         $ret = $json->encode($out);
         echo $ret;
         break;
@@ -1125,6 +1125,8 @@ eoq;
             foreach($oe->field_defs as $def) {
                 $ret[$def] = $oe->$def;
             }
+            $ret['mail_smtppass']=''; // don't send back the password
+            $ret['has_password'] =  isset($oe->mail_smtppass);
 
             $out = $json->encode($ret, true);
             echo $out;
@@ -1174,6 +1176,7 @@ eoq;
 
         $oe = new OutboundEmail();
         $oe->id = $_REQUEST['mail_id'];
+        $oe->retrieve($oe->id);
         $oe->name = $_REQUEST['mail_name'];
         $type = empty($_REQUEST['type']) ? 'user' : $_REQUEST['type'];
         $oe->type = $type;
@@ -1185,7 +1188,9 @@ eoq;
         $oe->mail_smtpssl = $_REQUEST['mail_smtpssl'];
         $oe->mail_smtpauth_req = isset($_REQUEST['mail_smtpauth_req']) ? 1 : 0;
         $oe->mail_smtpuser = $_REQUEST['mail_smtpuser'];
-        $oe->mail_smtppass = $_REQUEST['mail_smtppass'];
+        if(!empty($_REQUEST['mail_smtppass'])) {
+            $oe->mail_smtppass = $_REQUEST['mail_smtppass'];
+        }
         $oe = $oe->save();
 		echo $oe->id;
         break;
@@ -1200,9 +1205,20 @@ eoq;
     case "testOutbound":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: testOutbound");
 
+        $pass = '';
+        if(!empty($_REQUEST['mail_smtppass'])) {
+            $pass = $_REQUEST['mail_smtppass'];
+        } elseif(isset($_REQUEST['mail_name'])) {
+            $oe = new OutboundEmail();
+            $oe = $oe->getMailerByName($current_user, $_REQUEST['mail_name']);
+            if(!empty($oe)) {
+                $pass = $oe->mail_smtppass;
+            }
+        }
         $out = $email->sendEmailTest($_REQUEST['mail_smtpserver'], $_REQUEST['mail_smtpport'], $_REQUEST['mail_smtpssl'],
         							(isset($_REQUEST['mail_smtpauth_req']) ? 1 : 0), $_REQUEST['mail_smtpuser'],
-        							$_REQUEST['mail_smtppass'], $_REQUEST['outboundtest_from_address'], $_REQUEST['outboundtest_from_address']);
+        							$pass, $_REQUEST['outboundtest_from_address'], $_REQUEST['outboundtest_from_address']);
+        							
         $out = $json->encode($out);
         echo $out;
         break;

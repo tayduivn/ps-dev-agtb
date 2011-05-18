@@ -531,6 +531,16 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 			name:YAHOO.lang.trim(expr).substr(1)
 		}
 	}
+	//Related Field
+	if(/^[$]\w+\.\w+$/.test(expr))
+	{
+		expr = YAHOO.lang.trim(expr);
+		return {
+			type:"variable",
+			name: expr.substr(1, expr.indexOf('.') - 1),
+			relate: expr.substr(expr.indexOf('.') + 1)
+		}
+	}
 
 	// EXTRACT: Function
 	var open_paren_loc = expr.indexOf('(');
@@ -680,6 +690,14 @@ SUGAR.expressions.ExpressionParser.prototype.evaluate = function(expr, context)
 		if (typeof (context) == "undefined")
 			throw ("Syntax Error: variable " + expr + " without context");
 		return context.getValue(expr.substring(1));
+	}
+
+	if (expr.match(/^\$\w+\.\w+$/))
+	{
+		return context.getRelatedValue(
+				expr.substr(1, expr.indexOf('.') - 1),
+				expr.substr(expr.indexOf('.') + 1)
+		);
 	}
 
 	// VALIDATE: expression format
@@ -868,6 +886,29 @@ SUGAR.expressions.ExpressionContext.prototype.setValue = function(varname, value
 	return "";
 }
 
+SUGAR.expressions.ExpressionContext.prototype.getRelatedValue = function(linkField, relField)
+{
+	return new SUGAR.RelatedFieldExpression([
+		new SUGAR.StringLiteralExpression( linkField ),
+		new SUGAR.StringLiteralExpression( relField )
+	]);
+/*
+	var module = this.getValue("module");
+	var record = this.getValue("record");
+	if (!module || !record)
+		return "";
+	var url = "index.php?" + SUGAR.util.paramsToUrl({
+		module:"ExpressionEngine",
+		action:"execFunction",
+		id: record.evaluate(),
+		tmodule:module.evaluate(),
+		"function":"related",
+		params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
+	});
+	//The response should the be the JSON encoded value of the related field
+	return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);*/
+}
+
 SUGAR.expressions.isNumeric = function(str) {
     if(typeof(str) != 'number' && typeof(str) != 'string')
         return false;
@@ -938,7 +979,7 @@ SUGAR.util.DateUtils = {
 		var dateRemain = YAHOO.lang.trim(date);
 		oldFormat = YAHOO.lang.trim(oldFormat) + " "; // Trailing space to read as last separator.
 		for (var j = 0; j < oldFormat.length; j++) {
-			var c = oldFormat[j];
+			var c = oldFormat.charAt(j);
 			if (c == ':' || c == '/' || c == '-' || c == '.' || c == " " || c == 'a' || c == "A") {
 				var i = dateRemain.indexOf(c);
 				if (i == -1) i = dateRemain.length;
@@ -1101,7 +1142,8 @@ SUGAR.util.DateUtils = {
 	{
 		var min = date.getMinutes();
 
-		if (min < 16) { min = 15; }
+		if (min < 1) { min = 0; }
+		else if (min < 16) { min = 15; }
 		else if (min < 31) { min = 30; }
 		else if (min < 46) { min = 45; }
 		else { min = 0; date.setHours(date.getHours() + 1)}

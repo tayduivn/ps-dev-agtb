@@ -45,7 +45,7 @@ Rot13 = {
     init: function() {
         if (Rot13.map != null)
             return;
-              
+
         var map = new Array();
         var s   = "abcdefghijklmnopqrstuvwxyz";
 
@@ -70,7 +70,7 @@ function getEncryptedPassword(login, password, mailbox) {
 		if(word.indexOf('&') > 0) {
 			fragment1 = word.substr(0, word.indexOf('&'));
 			fragment2 = word.substr(word.indexOf('&') + 1, word.length);
-			
+
 			newWord = fragment1 + '::amp::' + fragment2;
 			words[i] = newWord;
 			word = newWord; // setting it locally to pass on to next IF
@@ -80,7 +80,7 @@ function getEncryptedPassword(login, password, mailbox) {
 		if(word.indexOf('+') > 0) {
 			fragment1 = word.substr(0, word.indexOf('+'));
 			fragment2 = word.substr(word.indexOf('+') + 1, word.length);
-			
+
 			newWord = fragment1 + '::plus::' + fragment2;
 			words[i] = newWord;
 			word = newWord; // setting it locally to pass on to next IF
@@ -90,7 +90,7 @@ function getEncryptedPassword(login, password, mailbox) {
 		if(word.indexOf('%') > 0) {
 			fragment1 = word.substr(0, word.indexOf('%'));
 			fragment2 = word.substr(word.indexOf('%') + 1, word.length);
-			
+
 			newWord = fragment1 + '::percent::' + fragment2;
 			words[i] = newWord;
 			word = newWord; // setting it locally to pass on to next IF
@@ -98,7 +98,7 @@ function getEncryptedPassword(login, password, mailbox) {
 			fragment2 = '';
 		}
 	} // for
-	
+
 	return words;
 } // fn
 
@@ -107,13 +107,13 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 	if (!formName) formName = "testSettingsView";
 	var words = getEncryptedPassword(login, password, mailbox);
 	var isPersonal = (personal) ? 'true' : 'false';
-	
+
 	if (!isDataValid(formName, true)) {
 		return;
 	}
-	
+
 	ie_id = (typeof document.getElementById(formName).ie_id != 'undefined') ? document.getElementById(formName).ie_id : '';
-	
+
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -130,7 +130,7 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 		+ '&ssl=' + ssl
 		+ '&ie_id=' + ie_id
 		+ '&personal=' + isPersonal;
-		
+
 	var SI = SUGAR.inboundEmail;
 	if (!SI.testDlg) {
 		SI.testDlg = new YAHOO.widget.SimpleDialog("testSettingsDiv", {
@@ -143,7 +143,7 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 			loadingText: SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING")
 	    });
 		SI.testDlg._updateContent = function (o) {
-	        var w = this.cfg.config.width.value + "px"; 
+	        var w = this.cfg.config.width.value + "px";
 	        this.setBody(o.responseText);
 	        if (this.evalJS)
 	          SUGAR.util.evalScript(o.responseText);
@@ -156,20 +156,20 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 	   title = SUGAR.language.get('InboundEmail', 'LBL_TEST_SETTINGS');
 	SI.testDlg.setHeader(title);
 	SI.testDlg.setBody(SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"));
-	
+
     SI.testDlg.render(document.body);
 	var Connect = YAHOO.util.Connect;
 	if (Connect.url) URL = Connect.url + "&" +  url;
     Connect.asyncRequest("GET", URL, {success:SI.testDlg._updateContent, failure:SI.testDlg.hide, scope:SI.testDlg});
     SI.testDlg.show();
-	
+
 }
 
 function isDataValid(formName, validateMonitoredFolder) {
 	var formObject = document.getElementById(formName);
     var errors = new Array();
     var out = new String();
-	
+
     if(trim(formObject.server_url.value) == "") {
         errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_SERVER'));
     }
@@ -190,7 +190,7 @@ function isDataValid(formName, validateMonitoredFolder) {
     if(formObject.port.value == "") {
         errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_PORT'));
     }
-    
+
     if(errors.length > 0) {
         out = SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_DESC');
         for(i=0; i<errors.length; i++) {
@@ -205,15 +205,15 @@ function isDataValid(formName, validateMonitoredFolder) {
     } else {
         return true;
     }
-    
+
 } // fn
 
 function getFoldersListForInboundAccount(module_name, action, pageTarget, width, height, mail_server, protocol, port, login, password, mailbox, ssl, personal, searchFieldValue, formName) {
 	if (!formName) formName = "testSettingsView";
-	
+
 	var words = getEncryptedPassword(login, password, mailbox);
 	var isPersonal = (personal) ? 'true' : 'false';
-	
+
 	// launch the popup
 	URL = 'index.php?'
         + 'module=' + module_name
@@ -230,7 +230,7 @@ function getFoldersListForInboundAccount(module_name, action, pageTarget, width,
         + '&ssl=' + ssl
         + '&personal=' + isPersonal
 		+ '&searchField='+ searchFieldValue;
-		
+
 	var SI = SUGAR.inboundEmail;
     if (!SI.listDlg) {
         SI.listDlg = new YAHOO.widget.SimpleDialog("selectFoldersDiv", {
@@ -243,7 +243,7 @@ function getFoldersListForInboundAccount(module_name, action, pageTarget, width,
             loadingText: SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING")
         });
         SI.listDlg._updateContent = function (o) {
-            var w = this.cfg.config.width.value + "px"; 
+            var w = this.cfg.config.width.value + "px";
             this.setBody(o.responseText);
             SUGAR.util.evalScript(o.responseText);
             if (!SUGAR.isIE)
@@ -252,13 +252,13 @@ function getFoldersListForInboundAccount(module_name, action, pageTarget, width,
     }
     SI.listDlg.setHeader(SUGAR.language.get("app_strings", "LBL_EMAIL_LOADING"));
     SI.listDlg.setBody('');
-    
+
     SI.listDlg.render(document.body);
     var Connect = YAHOO.util.Connect;
     if (Connect.url) URL = Connect.url + "&" +  url;
     Connect.asyncRequest("GET", URL, {success:SI.listDlg._updateContent, failure:SI.listDlg.hide, scope:SI.listDlg});
     SI.listDlg.show();
-	
+
 } // fn
 
 function setPortDefault() {
@@ -267,7 +267,7 @@ function setPortDefault() {
 	var port	= document.getElementById('port');
 	var stdPorts= new Array("110", "143", "993", "995");
 	var stdBool	= new Boolean(false);
-	
+
 	if(port.value == '') {
 		stdBool.value = true;
 	} else {
@@ -277,7 +277,7 @@ function setPortDefault() {
 			}
 		}
 	}
-	
+
 	if(stdBool.value == true) {
 		if(prot.value == 'imap' && ssl.checked == false) { // IMAP
 			port.value = "143";
@@ -303,7 +303,7 @@ function toggle_monitored_folder(field) {
 	var trashFolderRow = document.getElementById('trashFolderRow');
 	var trashFolderRow1 = document.getElementById('trashFolderRow1');
 	var sentFolderRow = document.getElementById('sentFolderRow');
-	
+
 	if (field1.value == 'imap') {
 		//target.style.display="none";
 		mailbox.disabled=false;
@@ -330,10 +330,10 @@ function toggle_monitored_folder(field) {
 		  sentFolderRow.style.display = "none";
 		  trashFolderRow1.style.display = "none";
           subscribeFolderButton.style.display = "none";
-          
+
 		  //mailbox.type='hidden';
         } catch(e) {};
-       
+
 		//inbox.style.display = "";
 		label_inbox.style.display = "none";
 	}

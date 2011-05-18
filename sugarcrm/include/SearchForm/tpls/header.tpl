@@ -34,7 +34,7 @@
 <script>SUGAR.savedViews.handleForm();</script>
 {/literal}
 {{/if}}
-<form name='search_form' id='search_form' class='search_form' method='post' action='index.php?module={$module}&action={$action}'>
+<form name='search_form' id='search_form' class='search_form' method='post' action='index.php?module={$module}&action={$action}' onsubmit='return !SUGAR.ajaxUI.submitForm(this.name);'>
 <input type='hidden' name='searchFormTab' value='{$displayView}'/>
 <input type='hidden' name='module' value='{$module}'/>
 <input type='hidden' name='action' value='{$action}'/> 

@@ -501,7 +501,7 @@ class ProcessView {
             $href_inner_text = translate_label($option_array['vname'])."&nbsp;";
         }
 
-        $href_element = "<a id='".$href_id."' href=# onclick=\"".$option_array['jscript_function']."(".$javascript_content.");\"><i>".$href_inner_text."</i></a> \n";
+        $href_element = "<a id='".$href_id."' href=\"javascript:void(0)\" onclick=\"".$option_array['jscript_function']."(".$javascript_content.");\"><i>".$href_inner_text."</i></a> \n";
         return $href_element;
 
         //end function get_href_element

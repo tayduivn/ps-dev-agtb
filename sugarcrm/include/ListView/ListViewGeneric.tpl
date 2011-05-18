@@ -126,7 +126,17 @@
 			{/if}
 			{* //END SUGARCRM flav=pro ONLY *}
 			{if !empty($quickViewLinks)}
-			<td width='2%' nowrap>{if $pageData.rowAccess[$id].edit}<a title='{$editLinkString}' href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)" onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)"><img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>{/if}</td>
+            {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}{/capture}
+            {capture assign=action}{if $act}{$act}{else}EditView{/if}{/capture}
+			<td width='2%' nowrap>
+                {if $pageData.rowAccess[$id].edit}
+                <a title='{$editLinkString}'
+href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}"
+data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}'
+data-list = 'true' class="quickEdit">
+                <img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>
+                {/if}
+            </td>
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=col item=params}
@@ -134,8 +144,11 @@
 				<td scope='row' align='{$params.align|default:'left'}' valign="top" class="{if ($params.type == 'teamset')}nowrap{/if}{if preg_match('/PHONE/', $col)} phone{/if}">
 					{if $col == 'NAME' || $params.bold}<b>{/if}
 				    {if $params.link && !$params.customCode}
-						<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}', '{$rowData[$params.id]|default:$rowData.ID}', 'd', {$offset}, this)"  onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}', '{$rowData[$params.id]|default:$rowData.ID}', 'd', {$offset}, this)">
-						{/if}
+{capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}{/capture}
+{capture assign=action}{if $act}{$act}{else}DetailView{/if}{/capture}
+{capture assign=record}{$rowData[$params.id]|default:$rowData.ID}{/capture}
+                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="javascript:SUGAR.ajaxUI.loadContent('index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}')">
+					{/if}
 					{if $params.customCode} 
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
 					{else}	
@@ -165,7 +178,32 @@
 {if $contextMenus}
 <script type="text/javascript">
 {$contextMenuScript}
-{literal}function lvg_nav(m,id,act,offset,t){if(t.href.search(/#/) < 0){return;}else{if(act=='pte'){act='ProjectTemplatesEditView';}else if(act=='d'){ act='DetailView';}else if( act =='ReportsWizard'){act = 'ReportsWizard';}else{ act='EditView';}{/literal}url = 'index.php?module='+m+'&offset=' + offset + '&stamp={$pageData.stamp}&return_module='+m+'&action='+act+'&record='+id;t.href=url;{literal}}}{/literal}
-{literal}function lvg_dtails(id){{/literal}return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir|default:$params.module}',id, 'adspan_'+id);{literal}}{/literal}
+{literal}
+function lvg_nav(m,id,act,offset,t){
+    if(t.href.search(/#/) < 0){return;}
+    else{
+        if(act=='pte'){
+            act='ProjectTemplatesEditView';
+        }
+        else if(act=='d'){
+            act='DetailView';
+        }else if( act =='ReportsWizard'){
+            act = 'ReportsWizard';
+        }else{
+            act='EditView';
+        }
+    {/literal}
+        url = 'index.php?module='+m+'&offset=' + offset + '&stamp={$pageData.stamp}&return_module='+m+'&action='+act+'&record='+id;
+        t.href=url;
+    {literal}
+    }
+}{/literal}
+{literal}
+    function lvg_dtails(id){{/literal}
+        return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir|default:$params.module}',id, 'adspan_'+id);{literal}}
+    if(typeof(qe_init) != 'undefined'){
+        qe_init(); //qe_init is defined in footer.tpl
+    }
+{/literal}
 </script>
 {/if}

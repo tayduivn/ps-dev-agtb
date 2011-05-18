@@ -85,6 +85,12 @@ $sugar_md = 'include/images/sugar_md.png';
 //BEGIN SUGARCRM flav=dev ONLY
 $sugar_md = 'include/images/sugar_md_dev.png';
 //END SUGARCRM flav=dev ONLY
+//BEGIN SUGARCRM flav=corp ONLY
+$sugar_md = 'include/images/sugar_md_corp.png';
+//END SUGARCRM flav=corp ONLY
+//BEGIN SUGARCRM flav=ult ONLY
+$sugar_md = 'include/images/sugar_md_ult.png';
+//END SUGARCRM flav=ult ONLY
 $loginImage = 'include/images/sugarcrm_login.png';
 $common = 'install/installCommon.js';
 
@@ -578,12 +584,12 @@ switch($the_file) {
 
 					<p>{$mod_strings['LBL_DISABLED_HELP_1']} <a href="{$mod_strings['LBL_DISABLED_HELP_LNK']}" target="_blank">{$mod_strings['LBL_DISABLED_HELP_2']}</a>.</p>
 EOQ;
-				                //if this is an offline client installation but the conversion did not succeed,
-                //then try to convert again
-                if(isset($sugar_config['disc_client']) && $sugar_config['disc_client'] == true && isset($sugar_config['oc_converted']) && $sugar_config['oc_converted'] == false) {
-					 header('Location: index.php?entryPoint=oc_convert&first_time=true');
-					exit ();
-                }
+		             //if this is an offline client installation but the conversion did not succeed,
+		            //then try to convert again
+					if(isset($sugar_config['disc_client']) && $sugar_config['disc_client'] == true && isset($sugar_config['oc_converted']) && $sugar_config['oc_converted'] == false) {
+			          header('Location: index.php?entryPoint=oc_convert&first_time=true');
+						exit ();
+		            }
             }
         }
         break;

@@ -6206,29 +6206,40 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
 
-/*
-
-.yui-layout-wrap .yui-navset .yui-content {
-    background:#FFF none repeat scroll 0 0;
-    height : 100%;
+.yui-calcontainer {
+    border: none;
+    padding: 10px 0 0;
 }
 
-.yui-layout .yui-layout-unit .yui-layout-wrap div.yui-layout-bd {
-    background:#FFF none repeat scroll 0 0;
+.cal_panel.yui-panel .ft, .cal_panel.yui-panel .bd {
+    background-color:#f2f2f2;
 }
 
-
-.yui-navset-top ul{
-    background:#DDD url('../../../../index.php?entryPoint=getImage&imageName=sugar-yui-sprites-grey.png') repeat-x scroll 0 0;   
-    border-color:#666666 !important;
-    border-style:solid;
-    border-width:0 0 5px;
+.cal_panel.yui-panel .ft, .cal_panel.yui-panel .bd {
+    background-color:#f2f2f2;
 }
 
-.yui-navset-top ul li.selected a, .yui-navset-top ul li.selected a:focus, .yui-navset-top ul li.selected a:hover {
-    background:#666666 url(tabBG.png) repeat-x scroll 0 0 !important;
+.cal_panel.yui-panel .bd {
+    padding-top:5px;
+    padding-bottom:0px;
+    float: left;
 }
 
-.yui-navset  {
-    height : 100%;
-}*/
+.callnav_today {
+    text-align: center;
+}
+
+.callnav_today a, .callnav_today a:link, .callnav_today a:visited  {
+    color: #000000;
+    text-decoration:none;
+    background-color: #fff;
+    border: 1px solid #bbb;
+    padding: 2px;
+    float: left;
+    margin-left: 32%;
+    margin-right: 32%;
+    width: 33%;
+    -moz-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+}

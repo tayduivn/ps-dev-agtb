@@ -89,6 +89,7 @@ $dictionary['Document'] = array('table' => 'documents',
      'fileId' => 'document_revision_id',
      'docType' => 'doc_type',
   ),
+
 'active_date' =>
   array (
     'name' => 'active_date',

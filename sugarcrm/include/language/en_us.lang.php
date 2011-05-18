@@ -135,6 +135,7 @@ $app_list_strings = array (
     'DCEActions' => 'Actions',
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
+    'OAuthKeys' => 'OAuth Consumer Keys',
         ),
   'moduleListSingular' =>
   array (
@@ -2360,6 +2361,7 @@ $app_strings = array (
     'LBL_CASE'=>'Case',
     'LBL_CASES'=>'Cases',
     'LBL_CHANGE_BUTTON_KEY' => 'G',
+    'LBL_CHANGE_PASSWORD' => 'Change password',
     'LBL_CHANGE_BUTTON_LABEL' => 'Change',
     'LBL_CHANGE_BUTTON_TITLE' => 'Change [Alt+G]',
     'LBL_CHARSET' => 'UTF-8',
@@ -2703,9 +2705,8 @@ $app_strings = array (
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected record(s)?',
-    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record or system settings. Are you sure you want to delete it?',
-    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records or system settings. Are you sure you want to delete them?\n",
-
+    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record. Are you sure you want to delete it?',
+    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records. Are you sure you want to delete them?\n",
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
@@ -3036,7 +3037,7 @@ $app_strings = array (
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
     'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
-    
+
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
     'LBL_ENTER_YEAR' => 'Enter Year',
@@ -3061,13 +3062,13 @@ $app_strings = array (
     'LBL_SHARE_LINKABLE' => 'Linkable',
     'LBL_SHARE_PUBLIC' => 'Public',
 
-    
+
     // Web Services REST RSS
     'LBL_RSS_FEED' => 'RSS Feed',
     'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
     'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
-    
+
     //External API Error Messages
     'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
     );
@@ -3818,4 +3819,8 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'password' => 'Username/Password',
     'oauth' => 'OAuth',
     );
-  ?>
+	$app_list_strings['token_status'] = array(
+        1 => 'Request',
+        2 => 'Access',
+        3 => 'Invalid',
+    );

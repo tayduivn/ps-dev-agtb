@@ -4,6 +4,7 @@ class InstallActionsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() 
     {    	  
+        $this->markTestSkipped('Test is no longer valid as the tested upgrades are no longer supported');
         //BEGIN SUGARCRM flav=ent ONLY
         if ($GLOBALS['db']->dbType == 'oci8')
             $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');

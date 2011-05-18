@@ -40,6 +40,7 @@ class SugarApplication
             $this->ACLFilter();
             $this->preProcess();
             $this->controller->preProcess();
+            $this->checkHTTPReferer();
         }
 
         SugarThemeRegistry::buildRegistry();
@@ -55,7 +56,6 @@ class SugarApplication
 		$this->loadLicense();
 		$this->loadGlobals();
 		$this->setupResourceManagement($module);
-		$this->checkHTTPReferer();
 		$this->controller->execute();
 		sugar_cleanup();
 	}
@@ -301,8 +301,18 @@ class SugarApplication
             return;
         }
 
+
 		if(!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader']))
 			$GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
+
+		if(in_array($this->controller->module, $GLOBALS['modInvisList']) &&
+			((in_array('Activities', $GLOBALS['moduleList'])              &&
+			in_array('Calendar',$GLOBALS['moduleList']))                 &&
+			in_array($this->controller->module, $GLOBALS['modInvisListActivities']))
+			){
+				$this->controller->hasAccess = false;
+				return;
+		}
 	}
 
 	/**
@@ -641,17 +651,17 @@ class SugarApplication
             else if(!empty($_COOKIE['sugar_user_theme'])){
                 $theme = $_COOKIE['sugar_user_theme'];
             }
-            
+
 			if(isset($_SESSION['authenticated_user_theme']) && $_SESSION['authenticated_user_theme'] != '') {
 				$_SESSION['theme_changed'] = false;
 			}
 		}
-		   
+
         if(!is_null($theme) && !headers_sent())
         {
             setcookie('sugar_user_theme', $theme, time() + 31536000); // expires in a year
         }
-		
+
         SugarThemeRegistry::set($theme);
         require_once('include/utils/layout_utils.php');
         $GLOBALS['image_path'] = SugarThemeRegistry::current()->getImagePath().'/';
@@ -680,6 +690,64 @@ class SugarApplication
 			$_REQUEST['action'] = $this->default_action;
 		}
 	}
+
+	/**
+	 * Actions that modify data in this controller's instance and thus require referrers
+	 * @var array
+	 */
+	protected $modifyActions = array();
+	/**
+	 * Actions that always modify data and thus require referrers
+	 * save* and delete* hardcoded as modified
+	 * @var array
+	 */
+	private $globalModifyActions = array(
+		'massupdate', 'configuredashlet', 'import', 'importvcardsave', 'inlinefieldsave',
+	    'wlsave', 'quicksave'
+	);
+
+	/**
+	 * Modules that modify data and thus require referrers for all actions
+	 */
+	private $modifyModules = array(
+		'Administration' => true,
+		'UpgradeWizard' => true,
+		'Configurator' => true,
+		'Studio' => true,
+		'ModuleBuilder' => true,
+		'Emails' => true,
+	    'DCETemplates' => true,
+		'DCEInstances' => true,
+		'DCEActions' => true,
+		'Trackers' => array('trackersettings'),
+	    'SugarFavorites' => array('tag'),
+	    'Import' => array('last', 'undo'),
+	);
+
+	protected function isModifyAction()
+	{
+	    $action = strtolower($this->controller->action);
+	    if(substr($action, 0, 4) == "save" || substr($action, 0, 6) == "delete") {
+	        return true;
+	    }
+	    if(isset($this->modifyModules[$this->controller->module])) {
+	        if($this->modifyModules[$this->controller->module] == true) {
+	            return true;
+	        }
+	        if(in_array($this->controller->action, $this->modifyModules[$this->controller->module])) {
+	            return true;
+
+	        }
+	    }
+	    if(in_array($this->controller->action, $this->globalModifyActions)) {
+            return true;
+        }
+	    if(in_array($this->controller->action, $this->modifyActions)) {
+            return true;
+        }
+        return false;
+	}
+
 	/**
 	 *
 	 * Checks a request to ensure the request is coming from a valid source or it is for one of the white listed actions
@@ -687,21 +755,43 @@ class SugarApplication
 	protected function checkHTTPReferer($dieIfInvalid = true)
 	{
 		global $sugar_config;
-		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView','oauth');
+		$whiteListActions = (!empty($sugar_config['http_referer']['actions']))?$sugar_config['http_referer']['actions']:array('index', 'ListView', 'DetailView', 'EditView','oauth', 'Authenticate', 'Login');
+
+		$strong = empty($sugar_config['http_referer']['weak']);
+
 		// Bug 39691 - Make sure localhost and 127.0.0.1 are always valid HTTP referers
 		$whiteListReferers = array('127.0.0.1','localhost');
 		if(!empty($_SERVER['SERVER_ADDR']))$whiteListReferers[]  = $_SERVER['SERVER_ADDR'];
 		if ( !empty($sugar_config['http_referer']['list']) ) {
 			$whiteListReferers = array_merge($whiteListReferers,$sugar_config['http_referer']['list']);
 		}
+
+		if($strong && empty($_SERVER['HTTP_REFERER']) && !in_array($this->controller->action, $whiteListActions) && $this->isModifyAction()) {
+		    $http_host = explode(':', $_SERVER['HTTP_HOST']);
+
+			$whiteListActions[] = $this->controller->action;
+			$whiteListString = "'" . implode("', '", $whiteListActions) . "'";
+            if ( $dieIfInvalid ) {
+                header("Cache-Control: no-cache, must-revalidate");
+                $ss = new Sugar_Smarty;
+                $ss->assign('host', $http_host[0]);
+                $ss->assign('action',$this->controller->action);
+                $ss->assign('whiteListString',$whiteListString);
+                $ss->display('include/MVC/View/tpls/xsrf.tpl');
+                sugar_cleanup(true);
+            }
+            return false;
+		} else
 		if(!empty($_SERVER['HTTP_REFERER']) && !empty($_SERVER['SERVER_NAME'])){
 			$http_ref = parse_url($_SERVER['HTTP_REFERER']);
 			if($http_ref['host'] !== $_SERVER['SERVER_NAME']  && !in_array($this->controller->action, $whiteListActions) &&
-				    (empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))){
+
+				(empty($whiteListReferers) || !in_array($http_ref['host'], $whiteListReferers))){
                 if ( $dieIfInvalid ) {
                     header("Cache-Control: no-cache, must-revalidate");
                     $whiteListActions[] = $this->controller->action;
                     $whiteListString = "'" . implode("', '", $whiteListActions) . "'";
+
                     $ss = new Sugar_Smarty;
                     $ss->assign('host',$http_ref['host']);
                     $ss->assign('action',$this->controller->action);
@@ -712,8 +802,7 @@ class SugarApplication
                 return false;
 			}
 		}
-		
-		return true;
+         return true;
 	}
 	function startSession()
 	{
@@ -806,14 +895,28 @@ class SugarApplication
 		 * If the headers have been sent, then we cannot send an additional location header
 		 * so we will output a javascript redirect statement.
 		 */
-		if (headers_sent()) {
-			echo "<script>document.location.href='$url';</script>\n";
-		} else {
-			//@ob_end_clean(); // clear output buffer
-			session_write_close();
-			header( 'HTTP/1.1 301 Moved Permanently' );
-			header( "Location: ". $url );
-		}
+		if (!empty($_REQUEST['ajax_load']))
+        {
+            ob_get_clean();
+            $ajax_ret = array(
+                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
+                 'menu' => array(
+                     'module' => $_REQUEST['module'],
+                     'label' => translate($_REQUEST['module']),
+                 ),
+            );
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        } else {
+            if (headers_sent()) {
+                echo "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n";
+            } else {
+                //@ob_end_clean(); // clear output buffer
+                session_write_close();
+                header( 'HTTP/1.1 301 Moved Permanently' );
+                header( "Location: ". $url );
+            }
+        }
 		exit();
 	}
 

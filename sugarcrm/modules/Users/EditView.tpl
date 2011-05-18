@@ -85,13 +85,14 @@ EditView_tabs.on('contentReady', function(e){
 {/literal}
 {if $ID}
 {literal}
-    EditView_tabs.addTab( new YAHOO.widget.Tab({
-        label: '{/literal}{$MOD.LBL_EAPM_SUBPANEL_TITLE}{literal}',
-        dataSrc: 'index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true',
-        content: '<div style="text-align:center; width: 100%">{/literal}{sugar_image name="loading"}{literal}</div>',
-        cacheData: true
-    }));
-    EditView_tabs.getTab(4).getElementsByTagName('a')[0].id = 'tab5';
+    var eapmTabIndex = 4;
+    {/literal}{if !$SHOW_THEMES}{literal}eapmTabIndex = 3;{/literal}{/if}{literal}
+    EditView_tabs.getTab(eapmTabIndex).set('dataSrc','index.php?sugar_body_only=1&module=Users&subpanel=eapm&action=SubPanelViewer&inline=1&record={/literal}{$ID}{literal}&layout_def_key=UserEAPM&inline=1&ajaxSubpanel=true');
+    EditView_tabs.getTab(eapmTabIndex).set('cacheData',true);
+
+    if ( document.location.hash == '#tab5' ) {
+        EditView_tabs.selectTab(eapmTabIndex);
+    }
 {/literal}
 {/if}
 //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
@@ -135,6 +136,9 @@ EditView_tabs.on('contentReady', function(e){
         <li><a id="tab3" href="#tab3"><em>{$MOD.LBL_THEME}</em></a></li>
         {/if}
         <li><a id="tab4" href="#tab4" style='display:{$HIDE_FOR_GROUP_AND_PORTAL};'><em>{$MOD.LBL_ADVANCED}</em></a></li>
+        {if $ID}
+        <li><a id="tab5" href="#tab5"><em>{$MOD.LBL_EAPM_SUBPANEL_TITLE}</em></a></li>
+        {/if}
     </ul>
     <div class="yui-content">
         <div>
@@ -318,7 +322,7 @@ EditView_tabs.on('contentReady', function(e){
                                 <td >&nbsp;</td>
                             </tr>
                              {if !empty($mail_smtpauth_req) }
-                            
+
                             <tr id="mail_smtpuser_tr">
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtpuser_label">{$MOD.LBL_MAIL_SMTPUSER}</span></td>
                                 <td width="30%" ><slot><input type="text" id="mail_smtpuser" name="mail_smtpuser" size="25" maxlength="64" value="{$mail_smtpuser}" tabindex='1' ></slot></td>
@@ -327,12 +331,15 @@ EditView_tabs.on('contentReady', function(e){
                             </tr>
                             <tr id="mail_smtppass_tr">
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtppass_label">{$MOD.LBL_MAIL_SMTPPASS}</span></td>
-                                <td width="30%" ><slot><input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="64" value="{$mail_smtppass}" tabindex='1'></slot></td>
+                                <td width="30%" ><slot>
+                                <input type="password" id="mail_smtppass" name="mail_smtppass" size="25" maxlength="64" value="{$mail_smtppass}" tabindex='1'>
+                                <a href="javascript:void(0)" id='mail_smtppass_link' onClick="SUGAR.util.setEmailPasswordEdit('mail_smtppass')" style="display: none">{$APP.LBL_CHANGE_PASSWORD}</a>
+                                </slot></td>
                                 <td>&nbsp;</td>
                                 <td >&nbsp;</td>
                             </tr>
                             {/if}
-                         
+
                             <tr id="test_outbound_settings_tr">
                                 <td width="17%" scope="row"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="startOutBoundEmailSettingsTest();"></td>
                                 <td width="33%" >&nbsp;</td>
@@ -723,6 +730,11 @@ EditView_tabs.on('contentReady', function(e){
         <!--//END SUGARCRM flav!=dce ONLY -->
         <!--//END SUGARCRM flav!=sales ONLY -->
     </div>
+    {if $ID}
+    <div id="eapm_area">
+        <div style="text-align:center; width: 100%">{sugar_image name="loading"}</div>
+    </div>
+    {/if}
 </div>
 
 
@@ -820,20 +832,15 @@ function testOutboundSettings()
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
         return false;
     }
-    
-   
-    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '') 
+
+
+    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '')
     {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPUSER}{literal}" + "<br/>";
     }
 
-    
-    if(document.getElementById('mail_smtppass') && trim(document.getElementById('mail_smtppass').value) == '') 
-    {
-        isError = true;
-        errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPASS}{literal}" + "<br/>";
-    }
+
     if(isError) {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
         return false;
@@ -844,6 +851,7 @@ function testOutboundSettings()
 
 function sendTestEmail()
 {
+    var toAddress = document.getElementById("outboundtest_from_address").value;
     var fromAddress = document.getElementById("outboundtest_from_address").value;
 
     if (trim(fromAddress) == "")
@@ -867,14 +875,14 @@ function sendTestEmail()
     	}
     };
     var smtpServer = document.getElementById('mail_smtpserver').value;
-    
+
     if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass')){
-    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
     }
     else{
-	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress;
+	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
     }
-	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
+	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&mail_name=system&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
         // lazy load dialogue
@@ -942,6 +950,11 @@ document.getElementById('email_link_type').onchange();
 <!--//BEGIN SUGARCRM flav!=sales ONLY -->
 {literal}
 <script type="text/javascript" language="Javascript">
+if(window.addEventListener){
+    window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
+}else{
+    window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
+}
 {/literal}
 {$getNameJs}
 {$getNumberJs}

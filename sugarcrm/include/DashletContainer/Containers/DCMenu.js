@@ -143,7 +143,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
 	    		
-	    		 content += '<div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void()" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
+	    		 content += '<div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
     		}
     		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd"><div class="tl"></div><div class="hd-center">';
 			if ( title !== undefined )
@@ -151,20 +151,20 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			else
 			    if(typeof type  !=  'undefined')
 			        content +=	'<span>' + type + '</span>';
-			    
+
 		    content += '<div class="close">';
             if ( extraButton != null ) {
                 content += extraButton
             }
             content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent">' + data.html + '</div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div>';
     		overlay.set('bodyContent', content);
-    		
+
     		//DCMenu.all('#dcboxbody .view').replaceClass('view', 'dcview');
-    		
+
     		overlay.show();
     		return overlay;
     }
-	
+
 	DCMenu.showView = function(data, parent_id){
 		setBody(data, 0, parent_id);
 	}
@@ -179,7 +179,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		}
 		quickRequest('favorites', 'index.php?to_pdf=1&module=SugarFavorites&action=save&fav_id=' + record + '&fav_module=' + module);
 	}
-	
+
 	DCMenu.removeFromFavorites = function(item, module, record){
 		Y.one(item).replaceClass('on', 'off');
 		item.onclick = function(){
@@ -199,7 +199,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		}
 		quickRequest('following', 'index.php?module=SugarFollowing&action=save&following_id=' + record + '&following_module=' + module);
 	}
-	
+
 	DCMenu.removeFromFollowing = function(item, module, record){
 		Y.one(item).replaceClass('on', 'off');
 		item.onclick = function(){
@@ -213,22 +213,22 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         var id = Y.io(url, {
              method: 'POST',
              //XDR Listeners
- 		    on: { 
+ 		    on: {
  			    success: success,
  			    failure: function(id, data) {
                      //Something failed..
                      //alert('Feed failed to load..' + id + ' :: ' + data);
                  }
  		    }
-         });	
+         });
     }
-    
+
     DCMenu.pluginList = function(){
 		quickRequest('plugins', 'index.php?to_pdf=1&module=Home&action=pluginList', pluginResults);
 	}
-	
+
 	pluginResults = function(id, data){
-		var overlay = setBody(data.responseText, 0, 'globalLinks');	
+		var overlay = setBody(data.responseText, 0, 'globalLinks');
 		overlay.set('y', 90);
 	}
 	DCMenu.history = function(q){
@@ -248,17 +248,28 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		//set focus on first sugaraction element, identified by id sugaraction1
 		var focuselement=document.getElementById('sugaraction1');
 		if (typeof(focuselement) != 'undefined' && focuselement != null) {
-			focuselement.focus(); 
-		}		
+			focuselement.focus();
+		}
 	}
-	
+
 	DCMenu.miniDetailView = function(module, id){
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=quick&record=' + id , miniDetailViewResults);
 	}
-	miniDetailViewResults = function(id, data){
-		setBody(Y.JSON.parse(data.responseText), 0);	
+	DCMenu.miniEditView = function(module, id, refreshListID, refreshDashletID){
+        if(typeof(refreshListID) !='undefined' && refreshListID !=''){
+            qe_refresh = 'SUGAR.ajaxUI.loadContent("index.php?module='+module+'&action=index&ignore='+new Date().getTime()+'");';
+            //qe_refresh = 'window.location.reload(false)';
+        }
+        if(typeof(refreshDashletID) !='undefined' && refreshDashletID !=''){
+            qe_refresh = 'SUGAR.mySugar.retrieveDashlet("'+refreshDashletID+'");';
+        }
+		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id , miniDetailViewResults);
 	}
-	         
+	miniDetailViewResults = function(id, data){
+		setBody(Y.JSON.parse(data.responseText), 0);
+		Y.get('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+	}
+
 	DCMenu.save = function(id){
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 		Y.io('index.php',{
@@ -269,9 +280,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			},
 			on:{
 				complete: function(id, data){
-				    try { 
+				    try {
                         var returnData = Y.JSON.parse(data.responseText);
-                        
+
                         switch ( returnData.status ) {
                         case 'dupe':
                             location.href = 'index.php?' + returnData.get;
@@ -280,19 +291,20 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                             ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'), 2000);
                             break;
                         }
-                    } 
-                    catch (e) { 
+                    }
+                    catch (e) {
                         ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'), 2000);
                     }
-				}	
+				}
 			}
-			
+
 		});
 		lastLoadedMenu=undefined;
-		DCMenu.closeOverlay();	
-		return false;	
+		DCMenu.closeOverlay();
+        setTimeout('qe_init();', 3000); //!!!! this approach is a hack, we need to figure out how to call this method after the ajax page loads
+		return false;
 	}
-    
+
     DCMenu.submitForm = function(id, status, title){
 		ajaxStatus.showStatus(status);
 		Y.io('index.php',{
@@ -304,27 +316,27 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			on:{
 				complete: function(id, data){
                     alert('hello');
-				}	
+				}
 			}
-			
+
 		});
 		lastLoadedMenu=undefined;
-		return false;	
+		return false;
 	}
-    
+
     DCMenu.hostMeeting = function(){
         window.open(DCMenu.hostMeetingUrl, 'hostmeeting');
     }
 
-	
-  
-   
+
+
+
     DCMenu.loadView = function(type,url, depth, parentid, title, extraButton){
         if ( extraButton == undefined ) { extraButton = null; }
         var id = Y.io(url, {
              method: 'POST',
              //XDR Listeners
- 		    on: { 
+ 		    on: {
  			    success: function(id, data) {
             		 //Parse the JSON data
             		 try{
@@ -341,12 +353,12 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
 
-            			overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+            			var overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
             			var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
 			    		var dcboxbody = Y.get('#dcboxbody');
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-			
+
 						if(isRTL) {
 							overlay.set('x',dcmenuSugarCubeX - dcboxbodyWidth);
 						}
@@ -355,9 +367,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             		 	setTimeout("enableQS();", 1000);
 
             		 }
-                    
-                     
-                     
+
+
+
                  },
  			    failure: function(id, data) {
                      //Something failed..
@@ -365,15 +377,15 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                  }
  		    }
          });
-        requests[id.id] = {type:type, url:url, parentid:parentid, depth:depth, extraButton:extraButton}; 	
+        requests[id.id] = {type:type, url:url, parentid:parentid, depth:depth, extraButton:extraButton};
     }
-    
+
     var loadView = Y.loadView;
     DCMenu.notificationsList = function(q){
 		quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quicklist', notificationsListDisplay );
 	}
 	notificationsListDisplay = function(id, data){
-		overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');	
+		var overlay = setBody(data.responseText, 0, 'dcmenuSugarCube');
         var dcmenuSugarCube = Y.get('#dcmenuSugarCube');
    		var dcboxbody = Y.get('#dcboxbody');
 		var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');

@@ -517,6 +517,14 @@ $beanList['EAPM'] = 'EAPM';
 $beanFiles['EAPM'] = 'modules/EAPM/EAPM.php';
 $modules_exempt_from_availability_check['EAPM'] = 'EAPM';
 $modInvisList[] = 'EAPM';
+$beanList['OAuthKeys'] = 'OAuthKey';
+$beanFiles['OAuthKey'] = 'modules/OAuthKeys/OAuthKey.php';
+$modules_exempt_from_availability_check['OAuthKeys'] = 'OAuthKeys';
+$modInvisList[] = 'OAuthKeys';
+$beanList['OAuthTokens'] = 'OAuthToken';
+$beanFiles['OAuthToken'] = 'modules/OAuthTokens/OAuthToken.php';
+$modules_exempt_from_availability_check['OAuthTokens'] = 'OAuthTokens';
+$modInvisList[] = 'OAuthTokens';
 
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['SugarFavorites'] = 'SugarFavorites';

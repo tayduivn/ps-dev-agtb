@@ -78,7 +78,7 @@ class SugarAuthenticate{
 		    if ($res['lockoutexpiration'] == '2'){
 		    	// lockout date is now if not set
 		    	if (($logout_time=$usr->getPreference('logout_time'))==''){
-			        $usr->setPreference('logout_time',Timedate2::getInstance()->nowDb());
+			        $usr->setPreference('logout_time',TimeDate::getInstance()->nowDb());
 			        $logout_time=$usr->getPreference('logout_time');
 			        }
 				$stim = strtotime($logout_time);
@@ -126,6 +126,11 @@ class SugarAuthenticate{
 			require_once('modules/Users/password_utils.php');
 			if(hasPasswordExpired($username)) {
 				$_SESSION['hasExpiredPassword'] = '1';
+			}
+			// now that user is authenticated, reset loginfailed
+			if ($usr->getPreference('loginfailed') != '' && $usr->getPreference('loginfailed') != 0) {
+				$usr->setPreference('loginfailed','0');
+				$usr->savePreferencesToDB();
 			}
 			return $this->postLoginAuthenticate();
 

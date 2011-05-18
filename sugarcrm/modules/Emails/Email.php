@@ -82,6 +82,7 @@ class Email extends SugarBean {
 	var $new_schema = true;
 	var $table_name = 'emails';
 	var $module_dir = 'Emails';
+    var $module_name = 'Emails';
 	var $object_name = 'Email';
 	var $db;
 
@@ -1006,6 +1007,13 @@ class Email extends SugarBean {
 				$this->id = create_guid();
 				$this->new_with_id = true;
 			}
+			$this->from_addr_name = $this->cleanEmails($this->from_addr_name);
+			$this->to_addrs_names = $this->cleanEmails($this->to_addrs_names);
+			$this->cc_addrs_names = $this->cleanEmails($this->cc_addrs_names);
+			$this->bcc_addrs_names = $this->cleanEmails($this->bcc_addrs_names);
+			$this->reply_to_addr = $this->cleanEmails($this->reply_to_addr);
+			$this->description = to_html($this->safeText(from_html($this->description)));
+			$this->description_html = $this->safeText($this->description_html);
 			$this->saveEmailText();
 			$this->saveEmailAddresses();
 
@@ -1036,6 +1044,7 @@ class Email extends SugarBean {
                 }
 			}
 		}
+		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
 
 	/**
@@ -1136,6 +1145,24 @@ class Email extends SugarBean {
 		return $guid;
 	}
 
+	function cleanEmails($emails)
+	{
+		$emails = str_replace(array(",",";"), "::", from_html($emails));
+		$addrs = explode("::", $emails);
+		$res = array();
+		foreach($addrs as $addr) {
+            $parts = $this->emailAddress->splitEmailAddress($addr);
+            if(empty($parts["email"])) {
+                continue;
+            }
+            if(!empty($parts["name"])) {
+                $res[] = "{$parts["name"]} <{$parts["email"]}>";
+            } else {
+                $res[] .= $parts["email"];
+            }
+		}
+        return join(", ", $res);
+	}
 
 	function saveEmailText() {
 		$isOracle = ($this->db->dbType == "oci8") ? true : false;
@@ -1216,11 +1243,11 @@ class Email extends SugarBean {
 		$ret = parent::retrieve($id, $encoded, $deleted);
 
 		if($ret) {
+			$ret->retrieveEmailText();
+			$ret->retrieveEmailAddresses();
 			$ret->raw_source = to_html($ret->safeText(from_html($ret->raw_source)));
 			$ret->description = to_html($ret->safeText(from_html($ret->description)));
 			$ret->description_html = $ret->safeText($ret->description_html);
-			$ret->retrieveEmailText();
-			$ret->retrieveEmailAddresses();
 
 			$ret->date_start = '';
 			$ret->time_start = '';
@@ -2840,17 +2867,18 @@ class Email extends SugarBean {
 		      }
         }
 
-        $isDateFromSearchSet = !empty($_REQUEST['dateFrom']);
-        $isdateToSearchSet = !empty($_REQUEST['dateTo']);
+        $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
+        $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
+
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
         //Hanlde date from and to seperately
         if($bothDateRangesSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
 
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
 
             $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND
@@ -2858,13 +2886,13 @@ class Email extends SugarBean {
         }
         elseif ($isdateToSearchSet)
         {
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent <= $dbFormatDateTo ";
         }
         elseif ($isDateFromSearchSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent >= $dbFormatDateFrom ";
         }
