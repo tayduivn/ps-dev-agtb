@@ -68,7 +68,9 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		$str = "<a target='_blank' href=\"index.php?action=DetailView&module=$module&record=$record\">";
 		$str .= $this->displayListPlain($layout_def);
 		$str .= "</a>";
+        //BEGIN SUGARCRM flav=pro ONLY
 		$str .= " <a href=\"#\" data-record=$record data-module=$module class=\"quickEdit\"' ><img border=\"0\" src=\"themes/Sugar/images/edit_inline.png\"></a>";
+        //END SUGARCRM flav=pro ONLY
 		return $str;
 	}
 
