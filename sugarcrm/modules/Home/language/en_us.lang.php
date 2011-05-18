@@ -216,7 +216,6 @@ $mod_strings = array (
   'LBL_SOURCE_HTML_SAFE' => 'HTML_Safe - A parser that strips down all potentially dangerous content within HTML',
   'LBL_SOURCE_XML_HTMLSAX3' => 'XML_HTMLSax3 - A SAX parser for HTML and other badly formed XML documents',
   'LBL_SOURCE_YAHOO_UI_LIB_EXT' => 'Yahoo! UI Extensions Library - Extensions to the Yahoo! User Interface Library by Jack Slocum',
-  'LBL_SOURCE_JSMIN' => 'JSMin - filter which removes comments and unnecessary whitespace from JavaScript files.',
   'LBL_SOURCE_SWFOBJECT' => 'SWFObject - Javascript Flash Player detection and embed script.',
   'LBL_SOURCE_TINYMCE' => 'TinyMCE - A WYSIWYG editor control for web browsers that enables the user to edit HTML contents',
   'LBL_SOURCE_EXT' => 'Ext - A client-side JavaScript framework for building web applications.',
