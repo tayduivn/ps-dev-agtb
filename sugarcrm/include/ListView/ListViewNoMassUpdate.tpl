@@ -49,18 +49,18 @@
 			<th scope='col' width='{$params.width}%' nowrap="nowrap">
 				<span sugar="sugar{$colCounter}"><div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
                 {if $params.sortable|default:true}
-	                <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}</a>&nbsp;&nbsp;
+	                <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1' title="{$arrowAlt}">{sugar_translate label=$params.label module=$pageData.bean.moduleDir}</a>&nbsp;&nbsp;
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" '}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" '}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" '}
 					{/if}
 				{else}
 					{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
@@ -81,7 +81,7 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' nowrap>
 				{if $pageData.access.edit && $pageData.bean.moduleDir != "Employees"}
-					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}'>{sugar_getimage alt=$app_strings.LBL_EDIT_INLINE name="edit_inline" ext=".gif" other_attributes='border="0" '}</a>
+					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}' title="{sugar_translate label="LBL_EDIT_INLINE"}">{sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>
 				{/if}
 			</td>
 			{/if}

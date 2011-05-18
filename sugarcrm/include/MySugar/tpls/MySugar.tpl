@@ -102,7 +102,7 @@ initmySugarCharts();
 		<ul class="subpanelTablist" id="tabList">
 		{foreach from=$pages key=pageNum item=pageData}
 		<li id="pageNum_{$pageNum}" {if ($pageNum == $activePage)}class="active"{/if}>
-		<a id="pageNum_{$pageNum}_anchor" class="{$pageData.tabClass}" href="javascript:SUGAR.mySugar.togglePages('{$pageNum}');" title="{$lblLnkHelp}">
+		<a id="pageNum_{$pageNum}_anchor" class="{$pageData.tabClass}" href="javascript:SUGAR.mySugar.togglePages('{$pageNum}');" title="{$pageData.pageTitle}">
 			<span id="pageNum_{$pageNum}_input_span" style="display:none;">
 			<input type="hidden" id="pageNum_{$pageNum}_name_hidden_input" value="{$pageData.pageTitle}"/>
 			<input type="text" id="pageNum_{$pageNum}_name_input" value="{$pageData.pageTitle}" size="10" onblur="SUGAR.mySugar.savePageTitle('{$pageNum}',this.value);"/>
@@ -122,7 +122,7 @@ initmySugarCharts();
 	<div id="addPage">
 		{capture assign=attr}id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"{/capture}
 		{capture assign=img_attr}align="absmiddle" border="0"{/capture}
-		{sugar_getlink url="javascript:void(0)" title=$lblLnkHelp attr=$attr img_name="info-add-page.png" img_attr=$img_attr}
+		{sugar_getlink url="javascript:void(0)" title="Add page" attr=$attr img_name="info-add-page.png" img_attr=$img_attr}
 	</div>
 <!--//END SUGARCRM flav=pro ONLY -->
 </td>
