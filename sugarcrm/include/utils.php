@@ -3722,11 +3722,6 @@ function getJSONobj() {
 }
 
 require_once('include/utils/db_utils.php');
-//check to see if custom utils exists
-if(file_exists('custom/include/custom_utils.php')){
-	include_once('custom/include/custom_utils.php');
-}
-
 
 /**
  * Set default php.ini settings for entry points
@@ -4797,4 +4792,13 @@ function order_beans($beans, $field_name)
     usort($beans, "cmp_beans");
     return $beans;
 }
-?>
+
+//check to see if custom utils exists
+if(file_exists('custom/include/custom_utils.php')){
+	include_once('custom/include/custom_utils.php');
+}
+
+//check to see if custom utils exists in Extension framework
+if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
+    include_once('custom/application/Ext/Utils/custom_utils.ext.php');
+}

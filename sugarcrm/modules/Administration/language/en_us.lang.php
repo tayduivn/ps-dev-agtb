@@ -437,7 +437,9 @@ $mod_strings = array (
     //ModuleInstaller
     'LBL_MI_REBUILDING' => 'Rebuilding',
     'LBL_MI_SECTION' => 'Section...',
-    'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
+    'LBL_MI_IN_EXT' => 'Installing %s extension',
+    'LBL_MI_UN_EXT' => 'Uninstalling %s extension',
+	'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
     'LBL_MI_IN_CUSTOMFIELD' => 'Installing Custom Fields...',
     'LBL_MI_COMPLETE' => 'Complete',
     'LBL_MI_UN_BEAN' => 'Uninstalling Bean :',
@@ -463,7 +465,10 @@ $mod_strings = array (
     'LBL_MI_REPAIR_INDICES' => 'Repairing indexes',
 	'LBL_MI_IN_CONNECTORS' => 'Installing Connectors',
 	'LBL_MI_UN_CONNECTORS' => 'UnInstalling Connectors',
-
+    'LBL_MI_IN_HOOKS' => 'Installing Logic Hooks',
+    'LBL_MI_UN_HOOKS' => 'Uninstalling Logic Hooks',
+    'LBL_MI_IN_SCHEDULEDTASKS' => 'Installing Scheduled Tasks',
+    'LBL_MI_UN_SCHEDULEDTASKS' => 'Uninstalling Scheduled Tasks',
     'LBL_ML_ACTION' => 'Action',
     'LBL_ML_CANCEL'             => 'Cancel',
     'LBL_ML_COMMIT'=>'Commit',
@@ -1143,6 +1148,8 @@ $mod_strings = array (
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
+   'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
+   'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
 // OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",
