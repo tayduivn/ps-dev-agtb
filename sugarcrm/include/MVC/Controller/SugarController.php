@@ -230,19 +230,15 @@ class SugarController{
 			if(file_exists('custom/include/MVC/Controller/'. $var . '.php')){
 				require('custom/include/MVC/Controller/'. $var . '.php');
 			}
-			if (file_exists('custom/application/Ext/EntryPoints/entrypoints.ext.php') && $var == 'entry_point_registry')
-			{
-				require('custom/application/Ext/EntryPoints/entrypoints.ext.php');
-			}
-			
 
-			if($var == 'action_view_map') {
-				if(file_exists('custom/application/Ext/ActionViewMap/action_view_map.ext.php')){
-					require('custom/application/Ext/ActionViewMap/action_view_map.ext.php');
-				}
-				if(file_exists('custom/modules/' . $this->module . '/Ext/ActionViewMap/action_view_map.ext.php')){
-					require('custom/modules/' . $this->module . '/Ext/ActionViewMap/action_view_map.ext.php');
-				}
+            // entry_point_registry -> EntryPointRegistry
+
+			$varname = str_replace(" ","",ucwords(str_replace("_"," ", $var)));
+            if(file_exists('custom/application/Ext/$varname/$var.ext.php')){
+				require('custom/application/Ext/$varname/$var.ext.php');
+	        }
+			if(file_exists("custom/modules/{$this->module}/Ext/$varname/$var.ext.php")){
+				require("custom/modules/{$this->module}/Ext/$varname/$var.ext.php");
 			}
 
 			sugar_cache_put("CONTROLLER_". $var . "_".$this->module, $$var);

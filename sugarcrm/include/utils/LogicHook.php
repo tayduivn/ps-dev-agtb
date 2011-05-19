@@ -108,7 +108,7 @@ class LogicHook{
 	    if(!empty($module_dir)) {
 	        $custom = "custom/modules/$module_dir";
 	    } else {
-	        $custom = "custom/modules";
+	        $custom = "custom/application";
 	    }
 		if(file_exists("$custom/logic_hooks.php")){
             if(isset($GLOBALS['log'])){

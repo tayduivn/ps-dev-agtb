@@ -437,7 +437,9 @@ $mod_strings = array (
     //ModuleInstaller
     'LBL_MI_REBUILDING' => 'Rebuilding',
     'LBL_MI_SECTION' => 'Section...',
-    'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
+    'LBL_MI_IN_EXT' => 'Installing %s extension',
+    'LBL_MI_UN_EXT' => 'Uninstalling %s extension',
+	'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
     'LBL_MI_IN_CUSTOMFIELD' => 'Installing Custom Fields...',
     'LBL_MI_COMPLETE' => 'Complete',
     'LBL_MI_UN_BEAN' => 'Uninstalling Bean :',
