@@ -234,8 +234,8 @@ class SugarController{
             // entry_point_registry -> EntryPointRegistry
 
 			$varname = str_replace(" ","",ucwords(str_replace("_"," ", $var)));
-            if(file_exists('custom/application/Ext/$varname/$var.ext.php')){
-				require('custom/application/Ext/$varname/$var.ext.php');
+            if(file_exists("custom/application/Ext/$varname/$var.ext.php")){
+				require("custom/application/Ext/$varname/$var.ext.php");
 	        }
 			if(file_exists("custom/modules/{$this->module}/Ext/$varname/$var.ext.php")){
 				require("custom/modules/{$this->module}/Ext/$varname/$var.ext.php");
