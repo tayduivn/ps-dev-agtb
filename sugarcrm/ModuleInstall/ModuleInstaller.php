@@ -317,7 +317,7 @@ class ModuleInstaller{
 	 * @param string $extname Name in Ext directory
 	 * @param string $module This extension belongs to a specific module
 	 */
-	protected function installExt($section, $extname, $module = '')
+	public function installExt($section, $extname, $module = '')
 	{
         if(isset($this->installdefs[$section])){
 			$this->log(sprintf(translate("LBL_MI_IN_EXT"), $section));
@@ -351,7 +351,7 @@ class ModuleInstaller{
 	 * @param string $extname Name in Ext directory
 	 * @param string $module This extension belongs to a specific module
 	 */
-	protected function uninstallExt($section, $extname, $module = '')
+	public function uninstallExt($section, $extname, $module = '')
 	{
         if(isset($this->installdefs[$section])){
 			$this->log(sprintf(translate("LBL_MI_UN_EXT"), $section));
@@ -390,7 +390,7 @@ class ModuleInstaller{
      * @param string $ext Extension directory
      * @param string $filename Target filename
      */
-	protected function rebuildExt($ext, $filename)
+	public function rebuildExt($ext, $filename)
 	{
             $this->log(translate('LBL_MI_REBUILDING') . " $ext...");
 			$this->merge_files("Ext/$ext/", $filename);
@@ -402,7 +402,7 @@ class ModuleInstaller{
 	 * @param string $extname Extension directory
  	 * @param string $module This extension belongs to a specific module
 	 */
-	protected function disableExt($section, $extname, $module = '')
+	public function disableExt($section, $extname, $module = '')
 	{
 		if(isset($this->installdefs[$section])) {
 			foreach($this->installdefs[$section] as $item) {
@@ -439,7 +439,7 @@ class ModuleInstaller{
 	 * @param string $extname Extension directory
  	 * @param string $module This extension belongs to a specific module
 	 */
-	protected function enableExt($section, $extname, $module = '')
+	public function enableExt($section, $extname, $module = '')
 	{
 		if(isset($this->installdefs[$section])) {
 			foreach($this->installdefs[$section] as $item) {
@@ -1275,6 +1275,11 @@ class ModuleInstaller{
 	{
 	    $this->rebuildExt("Vardefs", 'vardefs.ext.php');
 		sugar_cache_reset();
+	}
+
+	function rebuild_layoutdefs()
+	{
+	    $this->rebuildExt("Layoutdefs", 'layoutdefs.ext.php');
 	}
 
 	function rebuild_dashletcontainers(){
