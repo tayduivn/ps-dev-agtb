@@ -37,12 +37,12 @@ console = {
 		Event = YAHOO.util.Event,
 		Connect = YAHOO.util.Connect,
 	    Dom = YAHOO.util.Dom;
-
+	
 function createTreePanel(treeData, params) {
 	var tree = new YAHOO.widget.TreeView(params.id);
 	var root = tree.getRoot();
 	addChildNodes(root, treeData);
-
+	
 	return tree;
 }
 
@@ -63,26 +63,26 @@ function addChildNodes(parentNode, parentData) {
 if (typeof(ModuleBuilder) == 'undefined') {
 	ModuleBuilder = {
 	    init: function(){
-
+			
 			//Setup the basic ajax request settings
 			Connect.extraParams = {
 				to_pdf: true
 			};
 			Connect.url = 'index.php?to_pdf=1&sugar_body_only=1';
 			Connect.method = 'POST';
-			Connect.timeout = 300000;
-
+			Connect.timeout = 300000; 
+			
 			//Setup and read cookie settings
 			//Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
-
+			
 			if (SUGAR.themes.tempHideLeftCol)
 				SUGAR.themes.tempHideLeftCol();
-
+			
 			var Ck = YAHOO.util.Cookie;
-
+			
 			//Setup the main layout
 			var tp = ModuleBuilder.tabPanel = new YAHOO.widget.TabView("mbtabs");
-			tp.addTab(new YAHOO.widget.Tab({
+			tp.addTab(new YAHOO.widget.Tab({ 
 				label: SUGAR.language.get('ModuleBuilder', 'LBL_SECTION_MAIN'),
 				scroll : true,
 				content : "<div> </div>",
@@ -129,29 +129,29 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				}]
 			});
 			mp.render();
-
+			
 			ModuleBuilder.nextYear = new Date();
 			ModuleBuilder.nextYear.setDate(ModuleBuilder.nextYear.getDate() + 360);
-
+			
 			var nextyear = ModuleBuilder.nextYear;
-
+			
 			if (Ck.getSub("ModuleBuilder", "helpHidden") == "true") {
 				mp.getUnitByPosition('right').collapse();
 			}
 			if (Ck.getSub("ModuleBuilder", "treeHidden") == "true") {
 				mp.getUnitByPosition('left').collapse();
 			}
-
+			
 			var centerEl = mp.getUnitByPosition('center').get('wrap');
 			tp.appendTo(centerEl);
-
+			
 			//YUI does not take the resizers into account when calculating panel size.
 			var correctW = function(){
 				var w = (this.body.offsetWidth - 7) + "px";
 				this.body.style.width = w;
 				this.header.style.width = w;
 			};
-			mp.getUnitByPosition('right').on("resize", correctW);
+			mp.getUnitByPosition('right').on("resize", correctW); 
 			mp.getUnitByPosition('right').on("collapse", function(){
 				Ck.setSub("ModuleBuilder", "helpHidden", "true");
 			});
@@ -167,7 +167,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			});
 			mp.resize(true);
 			Event.on(window, 'resize', ModuleBuilder.autoSetLayout, this, true);
-
+			
 			var tree = ModuleBuilder.tree = createTreePanel(TREE_DATA, {
 				id: 'mbTree'
 			});
@@ -176,10 +176,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			//tree.subscribe("labelClick", ModuleBuilder.handleTreeClick);
 			tree.subscribe("clickEvent", ModuleBuilder.handleTreeClick);
 			tree.render();
-
+			
 			//Setup Browser History
 			var mbContent = YAHOO.util.History.getBookmarkedState('mbContent');
-
+			
 			if (ModuleBuilder.mode == 'mb') {
 				mp.getUnitByPosition('left').header.firstChild.innerHTML = SUGAR.language.get('ModuleBuilder', 'LBL_SECTION_PACKAGES');
 				mbContent = mbContent ? mbContent : 'module=ModuleBuilder&action=package&package=';
@@ -207,14 +207,14 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			YAHOO.util.History.register('mbContent', mbContent, ModuleBuilder.navigate);
 			YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
 			ModuleBuilder.getContent(mbContent);
-
+			
 			if (SUGAR.themes.tempHideLeftCol) SUGAR.themes.tempHideLeftCol();
 			ModuleBuilder.autoSetLayout();
-
+			
 			ModuleBuilder.tabPanel.on('activeTabChange', function(e) {
 				ModuleBuilder.helpLoad( e.newValue.get("id") ) ;
 			});
-
+			
 			if (Dom.get("HideHandle")){
 				if (SUGAR.themes.tempHideLeftCol){
 					SUGAR.themes.tempHideLeftCol();
@@ -255,7 +255,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				subpanel = subpanel ? subpanel : "";
 				if (!module && ModuleBuilder.module != "undefined") {
 					module = ModuleBuilder.module;
-				}
+				}   
 				if (!ModuleBuilder.history.popup_window) {
 					ModuleBuilder.history.popup_window = new YAHOO.SUGAR.AsyncPanel('histWindow', {
 						width: 300,
@@ -268,7 +268,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				var module_str = module;
 				if(typeof SUGAR.language.languages['app_list_strings']['moduleList'][module] != 'undefined'){
 					module_str = SUGAR.language.languages['app_list_strings']['moduleList'][module];
-				}
+				} 
 				ModuleBuilder.history.popup_window.setHeader( module_str + ' : ' + SUGAR.language.get('ModuleBuilder', 'LBL_' + layout.toUpperCase()) + SUGAR.language.get('ModuleBuilder', 'LBL_HISTORY_TITLE'));
 				ModuleBuilder.history.popup_window.setBody("test");
 				ModuleBuilder.history.popup_window.render(document.body);
@@ -311,12 +311,12 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				} else {
 					ModuleBuilder.tabPanel.set("activeTab", prevPanel);
 				}
-
+				
 			},
 			revert: function(module, layout, id, subpanel){
 				var prevTab = ModuleBuilder.tabPanel.getTabIndex("preview:" + id);
 				if(prevTab) ModuleBuilder.tabPanel.removeTab(prevTab);
-
+				
 				ModuleBuilder.history.params = {
 					module: 'ModuleBuilder',
 					histAction: 'restore',
@@ -460,13 +460,13 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		getContent: function(url, successCall){
 			if (!url) return;
-
+			
 			if (url.substring(0, 11) == "javascript:")
 			{
 				eval(url.substring(11));
 				return;
 			}
-
+			
 			//save a pointer to intended action
 			ModuleBuilder.state.intended_view.url = url;
 			ModuleBuilder.state.intended_view.successCall = successCall;
@@ -484,7 +484,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				ModuleBuilder.state.current_view.url = url;
 				ModuleBuilder.state.current_view.successCall = successCall;
 			}
-
+			
 			ModuleBuilder.contentURL =  url;
 			if (typeof(successCall) != 'function') {
 				if (ModuleBuilder.callInProgress)
@@ -503,11 +503,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 			ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_REQUEST_PROCESSED'), 2000);
 			if(ModuleBuilder.checkForErrors(o))
-                return false;
-
+                return false; 
+			
 			try {
-			r = unescape(o.responseText.replace(/\+/g, " "));
-			var ajaxResponse = YAHOO.lang.JSON.parse(r);
+			var ajaxResponse = YAHOO.lang.JSON.parse((o.responseText));
 			} catch (err) {
 				YAHOO.SUGAR.MessageBox.show({
                     title: SUGAR.language.get('ModuleBuilder', 'ERROR_GENERIC_TITLE'),
@@ -516,8 +515,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 });
 				return false;
 			}
-
-
+			
+			
 			if (ajaxResponse.tpl){
 				var t = new YAHOO.SUGAR.Template(ajaxResponse.tpl);
 				ModuleBuilder.ajaxData = ajaxResponse.data;
@@ -525,7 +524,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				SUGAR.util.evalScript(t.exec(ajaxResponse.data));
 				return true;
 			}
-
+			
 			for (var maj in ajaxResponse) {
 				var name = 'mb' + maj;
 				var comp = ModuleBuilder.mainPanel.getUnitById(maj);
@@ -536,7 +535,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						comp = tabs[i];
 					}
 				}
-
+				
 				if (name == 'mbwest') { //refresh package_tree!
 					var tree = ModuleBuilder.tree;
 					var root = tree.root;
@@ -579,7 +578,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 						comp.set('content', "<div class='bodywrapper'><div>" + ajaxResponse[maj].crumb + "</div>" + ajaxResponse[maj].content + "</div>");
 						if (ajaxResponse[maj].title != "no_change")
 							comp.set('label', ajaxResponse[maj].title);
-						SUGAR.util.evalScript(ajaxResponse[maj].content);
+						SUGAR.util.evalScript(ajaxResponse[maj].content);	
 					}
 				}
 				ModuleBuilder.history.update();
@@ -596,15 +595,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				});
 				return true;
             }
-
-
+			
+			
 			return false;
-		},
-		uploadCall: function(success) {
-			return function(o) {
-				o.status = '200';
-				return success(o);
-			}
 		},
 		submitForm: function(formname, successCall){
 			ajaxStatus.showStatus(SUGAR.language.get('ModuleBuilder', 'LBL_AJAX_LOADING'));
@@ -614,11 +607,11 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			else {
 				ModuleBuilder.callLock = true;
 			}
-			Connect.setForm(document.getElementById(formname) || document.forms[formname], true);
+			Connect.setForm(document.getElementById(formname) || document.forms[formname]);
 			Connect.asyncRequest(
-			    Connect.method,
-			    Connect.url,
-			    {success: successCall, upload: ModuleBuilder.uploadCall(successCall), failure: ModuleBuilder.failed}
+			    Connect.method, 
+			    Connect.url, 
+			    {success: successCall, failure: ModuleBuilder.failed}
 			);
 		},
 		setMode: function(reqMode){
@@ -733,26 +726,26 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		helpSetup: function(group, def, panel){
 			if (!ModuleBuilder.panelHelp) ModuleBuilder.panelHelp = [];
-
+			
 			// setup the linkage between this tab/panel and the relevant help
 			var id = ModuleBuilder.tabPanel.get("activeTab").get("id")  ;
 			ModuleBuilder.panelHelp [ id ] = { lang: group , def: def } ;
-
+			 
 			// get the help text if required
 			if ( ! ModuleBuilder.AllHelpLang ) ModuleBuilder.AllHelpLang = SUGAR.language.get('ModuleBuilder', 'help');
 
 			if (group && def) {
 				ModuleBuilder.helpLang = ModuleBuilder.AllHelpLang[group];
 				ModuleBuilder.helpDefault = def;
-			}
-
+			} 
+			
 			ModuleBuilder.helpToggle('default');
 		},
 		helpLoad: function(panelId){
 			if (!ModuleBuilder.panelHelp) return;
-
+			
 			if ( ! ModuleBuilder.AllHelpLang ) ModuleBuilder.AllHelpLang = SUGAR.language.get('ModuleBuilder', 'help');
-
+			
 			if ( ModuleBuilder.panelHelp [ panelId ] )
 			{
 				ModuleBuilder.helpLang = ModuleBuilder.AllHelpLang[ ModuleBuilder.panelHelp [ panelId ].lang ];
@@ -840,7 +833,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 		},
 		deployComplete: function(o){
 			var resp = o.responseText;
-
+			
 			//check if the deploy completed
 			if (!resp.match(/^\s*(\s*(Table already exists : [\w_]*)(<br>)*\s*)*complete$/m))
 			{
@@ -854,15 +847,15 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			);
 			ModuleBuilder.asyncRequest(
 				'module=Administration&action=RebuildDashlets&silent=true',
-				function(){}
+				function(){}			
 			);
-
+			
 			ModuleBuilder.failed = function(){};
             ModuleBuilder.state.hideFailedMesage = true;
 			//Reload the page
 			window.setTimeout("window.location.assign(window.location.href.split('#')[0])", 2000);
-
-
+			
+			
 		},
 		packageExport: function(form){
 			if (check_form(form)) {
@@ -889,7 +882,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 
 			ModuleBuilder.callLock = false;
 
-			ModuleBuilder.getContent('module=ModuleBuilder&action=modulefields&view_package=' + ModuleBuilder.MBpackage +
+			ModuleBuilder.getContent('module=ModuleBuilder&action=modulefields&view_package=' + ModuleBuilder.MBpackage + 
 				'&view_module=' + ModuleBuilder.module);
 		},
 		moduleLoadField: function(name, type){
@@ -897,12 +890,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				type = 0;
 			if (typeof(formsWithFieldLogic) != 'undefined')
 				formsWithFieldLogic = 'undefined';
-			ModuleBuilder.getContent('module=ModuleBuilder&action=modulefield&view_package=' + ModuleBuilder.MBpackage +
+			ModuleBuilder.getContent('module=ModuleBuilder&action=modulefield&view_package=' + ModuleBuilder.MBpackage + 
 				'&view_module=' + ModuleBuilder.module + '&field=' + name + '&type=' + type);
-		},
-		moduleLoadHook: function(name, type){
-			ModuleBuilder.getContent('module=ModuleBuilder&action=modulehook&view_package=' + ModuleBuilder.MBpackage +
-				'&view_module=' + ModuleBuilder.module + '&hook=' + name+"&type=" + type);
 		},
 		moduleLoadLabels: function(type){
 			if (typeof(type) == 'undefined')
@@ -974,10 +963,6 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			ModuleBuilder.callLock = false;
 			ModuleBuilder.getContent('module=ModuleBuilder&MB=1&action=wizard&view_package=' + ModuleBuilder.MBpackage + '&view_module=' + ModuleBuilder.module);
 		},
-		moduleViewHooks: function(o){
-			ModuleBuilder.callLock = false;
-			ModuleBuilder.getContent('module=ModuleBuilder&MB=1&action=modulehooks&view_package=' + ModuleBuilder.MBpackage + '&view_module=' + ModuleBuilder.module);
-		},
 		findTabById : function(id) {
 			var tabs = ModuleBuilder.tabPanel.get("tabs");
 			for (var i = 0; i < tabs.length; i++) {
@@ -985,7 +970,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					return tabs[i];
 			}
 			return null;
-		},
+		}, 
 		autoSetLayout: function(){
 			var mp = ModuleBuilder.mainPanel;
 			var c = Dom.get("mblayout");
@@ -1015,8 +1000,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE'));
 			Connect.asyncRequest(
-			    Connect.method,
-			    Connect.url + '&' + url,
+			    Connect.method, 
+			    Connect.url + '&' + url, 
 			    {success: callback, failure: ModuleBuilder.failed}
 			);
 		},
@@ -1104,7 +1089,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			win.show();
 			win.center();
         },
-
+        
 		toggleCF: function(enable) {
             if (typeof(enable) == 'undefined') {
                 enable = Dom.get('calculated').checked;

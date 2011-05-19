@@ -66,7 +66,7 @@ class ModuleBuilderController extends SugarController
             return $mod_strings['LBL_DEVELOPER_TOOLS'];
         }
     }
-
+    
     function fromModuleBuilder ()
     {
         return (isset ( $_REQUEST [ 'MB' ] ) && ($_REQUEST [ 'MB' ] == '1')) ;
@@ -196,7 +196,7 @@ class ModuleBuilderController extends SugarController
         {
             $mb->getPackage ( $load ) ;
             $mb->packages [ $load ]->build () ;
-        }
+        }        
     }
 
     function action_DeployPackage ()
@@ -205,7 +205,7 @@ class ModuleBuilderController extends SugarController
     		sugar_cache_reset();
     		SugarTemplateUtilities::disableCache();
     	}
-
+    	
         $mb = new ModuleBuilder ( ) ;
         $load = $_REQUEST [ 'package' ] ;
         $message = $GLOBALS [ 'mod_strings' ] [ 'LBL_MODULE_DEPLOYED' ] ;
@@ -220,7 +220,7 @@ class ModuleBuilderController extends SugarController
             copy ( $info [ 'manifest' ], $GLOBALS [ 'sugar_config' ] [ 'cache_dir' ] . '/' . 'upload/upgrades/module/' . $info [ 'name' ] . '-manifest.php' ) ;
             $_REQUEST [ 'install_file' ] = $GLOBALS [ 'sugar_config' ] [ 'cache_dir' ] . '/' . 'upload/upgrades/module/' . $info [ 'name' ] . '.zip' ;
             $GLOBALS [ 'mi_remove_tables' ] = false ;
-            $pm->performUninstall ( $load ) ;
+            $pm->performUninstall ( $load ) ;           
 			 //#23177 , js cache clear
 			 clearAllJsAndJsLangFilesWithoutOutput();
     		//#30747, clear the cache in memory
@@ -230,10 +230,10 @@ class ModuleBuilderController extends SugarController
     		//clear end
             $pm->performInstall ( $_REQUEST [ 'install_file' ] , true) ;
 
-            //clear the unified_search_module.php file
+            //clear the unified_search_module.php file 
             require_once('modules/Home/UnifiedSearchAdvanced.php');
-            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
-        }
+            UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();          
+        }        
         echo 'complete' ;
 
     }
@@ -252,7 +252,7 @@ class ModuleBuilderController extends SugarController
             $mb->packages [ $load ]->description = $description ;
             $mb->packages [ $load ]->exportProject () ;
             $mb->packages [ $load ]->readme = $readme ;
-        }
+        }       
     }
 
     function action_DeletePackage ()
@@ -344,146 +344,6 @@ class ModuleBuilderController extends SugarController
         }
     }
 
-    function action_DeleteHook()
-    {
-        if(isset($_REQUEST['type']) && isset($_REQUEST['hook']) && isset($_REQUEST['view_package']) && isset($_REQUEST['view_module'])) {
-            if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio' || empty ( $_REQUEST [ 'view_package' ] ) ) {
-                $module_name = $_REQUEST [ 'view_module' ];
-                $lh = new LogicHook();
-                $lh->scanHooksDir("custom/Extension/modules/$module_name/Ext/LogicHooks");
-                $lh->scanHooksDir("custom/Extension/applicaion/Ext/LogicHooks");
-                $hooks = $lh->getHooksList();
-                $hooks_map = $lh->getHooksMap();
-                if(isset($hooks[$_REQUEST['type']][$_REQUEST['hook']]) && isset($hooks_map[$_REQUEST['type']][$_REQUEST['hook']])) {
-                    $file = $hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['file'];
-                    if(file_exists($file)) {
-                        include($file);
-                        if(isset($hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']])) {
-                            unset($hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']]);
-                            if(count($hook_array[$_REQUEST['type']]) == 0) {
-                                unset($hook_array[$_REQUEST['type']]);
-                            }
-                            if(count($hook_array) == 0) {
-                                unlink($file);
-                            } else {
-                                $this->saveHooksFile($file, $hook_array);
-                            }
-                        }
-                    }
-                }
-                require_once('ModuleInstall/ModuleInstaller.php');
-                ob_start();
-                $mi = new ModuleInstaller();
-                $mi->rebuild_logichooks();
-                ob_end_clean();
-            } else {
-                $mb = new ModuleBuilder ( ) ;
-                $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
-                $hk = $module->hooks[$_REQUEST['type']][$_REQUEST['hook']];
-                $file = $module->path."/LogicHooks/".basename($hk[2]);
-                foreach($module->hooks as $hgroup) {
-                    foreach($hgroup as $hook) {
-                        if($file == $hook[2]) {
-                            // used by other hook, don't remove
-                            $file = null;
-                            break 2;
-                        }
-                    }
-                }
-                if(!empty($file) && file_exists($file)) {
-                    unlink($file);
-                }
-                unset($module->hooks[$_REQUEST['type']][$_REQUEST['hook']]);
-                $module->saveHooks();
-            }
-        }
-        $this->view = 'modulehooks';
-    }
-
-    protected function saveHooksFile($file, $hooks)
-    {
-        $fp = fopen($file, 'w');
-        fwrite($fp, "<?php\n");
-        foreach($hooks as $type => $hookg) {
-            foreach($hookg as $hook) {
-                fwrite($fp, '$hook_array["'.$type.'"][]='.var_export($hook, true).";\n");
-            }
-        }
-        fclose($fp);
-    }
-
-    function action_SaveHook()
-    {
-        if(isset($_REQUEST['type']) && isset($_REQUEST['view_package']) && isset($_REQUEST['view_module'])) {
-            $module_name = $_REQUEST [ 'view_module' ];
-            if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio' || empty ( $_REQUEST [ 'view_package' ] ) ) {
-                if(isset($_REQUEST['hook'])) {
-                    $lh = new LogicHook();
-                    $lh->scanHooksDir("custom/Extension/modules/$module_name/Ext/LogicHooks");
-                    $lh->scanHooksDir("custom/Extension/applicaion/Ext/LogicHooks");
-                    $hooks = $lh->getHooksList();
-                    $hooks_map = $lh->getHooksMap();
-                    if(isset($hooks[$_REQUEST['type']][$_REQUEST['hook']]) && isset($hooks_map[$_REQUEST['type']][$_REQUEST['hook']])) {
-                        $file = $hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['file'];
-                        if(file_exists($file)) {
-                            include($file);
-                            if(isset($hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']])) {
-                                $hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']][0] = $_REQUEST['order'];
-                                $hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']][3] = $_REQUEST['class'];
-                                $hook_array[$_REQUEST['type']][$hooks_map[$_REQUEST['type']][$_REQUEST['hook']]['index']][4] = $_REQUEST['func'];
-                                $this->saveHooksFile($file, $hook_array);
-                            }
-                        }
-                    }
-                } else {
-                    $fname = $_FILES['file']['tmp_name'];
-                    if(is_uploaded_file($fname)) {
-                        $lhname = "custom/Extension/modules/$module_name/Ext/LogicHooks/hook.".basename($_FILES['file']['name']);
-                        $hname = "custom/modules/$module_name/LogicHooks/".basename($_FILES['file']['name']);
-                        if(!file_exists("custom/modules/$module_name/LogicHooks")) {
-                           mkdir_recursive("custom/modules/$module_name/LogicHooks");
-                        }
-                        move_uploaded_file($fname, $hname);
-                        if(empty($_REQUEST['order'])) {
-                            $_REQUEST['order'] = 1;
-                        }
-
-                        $hook = array($_REQUEST['type'] => array(array($_REQUEST['order'], $module_name, $hname,  $_REQUEST['class'],  $_REQUEST['func'])));
-                        $this->saveHooksFile($lhname, $hook);
-                    }
-                }
-                require_once('ModuleInstall/ModuleInstaller.php');
-                ob_start();
-                $mi = new ModuleInstaller();
-                $mi->rebuild_logichooks();
-                ob_end_clean();
-            } else {
-                $mb = new ModuleBuilder ( ) ;
-                $module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
-                if(isset($_REQUEST['hook'])) {
-                    $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][0] = $_REQUEST['order'];
-                    $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][3] = $_REQUEST['class'];
-                    $module->hooks[$_REQUEST['type']][$_REQUEST['hook']][4] = $_REQUEST['func'];
-                } else {
-                    $fname = $_FILES['file']['tmp_name'];
-                    if(is_uploaded_file($fname)) {
-                        $lhname = "modules/".$module->key_name."/LogicHooks/".basename($_FILES['file']['name']);
-                        if(!file_exists($module->path."/LogicHooks")) {
-                           mkdir_recursive($module->path."/LogicHooks");
-                        }
-                        move_uploaded_file($fname, $module->path."/LogicHooks/".basename($_FILES['file']['name']));
-                        if(empty($_REQUEST['order'])) {
-                            $_REQUEST['order'] = 1;
-                        }
-                        $module->hooks[$_REQUEST['type']][] = array($_REQUEST['order'], $module->key_name, $lhname,  $_REQUEST['class'],  $_REQUEST['func']);
-                    }
-                }
-                $module->saveHooks();
-            }
-        }
-        $this->view = 'modulehooks' ;
-    }
-
     function action_SaveField ()
     {
         require_once ('modules/DynamicFields/FieldCases.php') ;
@@ -498,18 +358,18 @@ class ModuleBuilderController extends SugarController
             if (! empty ( $_REQUEST [ 'view_module' ] ))
             {
                 $module = $_REQUEST [ 'view_module' ] ;
-
+                
                 $bean = loadBean($module);
                 if(!empty($bean))
                 {
-	                $field_defs = $bean->field_defs;
+	                $field_defs = $bean->field_defs;          
 	                if(isset($field_defs[$field->name. '_c']))
 	                {
 						$GLOBALS['log']->error($GLOBALS['mod_strings']['ERROR_ALREADY_EXISTS'] . '[' . $field->name . ']');
 						sugar_die($GLOBALS['mod_strings']['ERROR_ALREADY_EXISTS']);
 	                }
-                }
-
+                }                
+                
                 $df = new DynamicField ( $module ) ;
                 $class_name = $GLOBALS [ 'beanList' ] [ $module ] ;
                 require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
@@ -557,29 +417,29 @@ class ModuleBuilderController extends SugarController
         require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
         $mod = new $class_name ( ) ;
         $df->setup ( $mod ) ;
-
+        
         $field->module = $mod;
         $field->save ( $df ) ;
         $this->action_SaveLabel () ;
-
+        
         $MBmodStrings = $mod_strings;
         $GLOBALS [ 'mod_strings' ] = return_module_language ( '', 'Administration' ) ;
-
+        
        	include_once ('modules/Administration/QuickRepairAndRebuild.php') ;
         $GLOBALS [ 'mod_strings' ]['LBL_ALL_MODULES'] = 'all_modules';
         $_REQUEST['execute_sql'] = true;
-
+       
         $repair = new RepairAndClear();
         $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();
-
-
+        
+         
         // now clear the cache so that the results are immediately visible
         include_once ('include/TemplateHandler/TemplateHandler.php') ;
         TemplateHandler::clearCache ( $module ) ;
-
+        
         $GLOBALS [ 'mod_strings' ] = $MBmodStrings;
     }
 
@@ -624,7 +484,7 @@ class ModuleBuilderController extends SugarController
         }
         $this->view = 'relationships' ;
 	}
-
+	
     function action_SaveRelationship ()
     {
         if(!empty($GLOBALS['current_user']) && empty($GLOBALS['modListHeader']))
@@ -707,7 +567,7 @@ class ModuleBuilderController extends SugarController
                 //Need to load the entire field_meta_data for some field types
                 $field = $df->getFieldWidget($moduleName, $field->name);
                 $field->delete ( $df ) ;
-
+                
                 $GLOBALS [ 'mod_strings' ]['LBL_ALL_MODULES'] = 'all_modules';
                 $_REQUEST['execute_sql'] = true;
                 include_once ('modules/Administration/QuickRepairAndRebuild.php') ;
@@ -809,7 +669,7 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->writeWorkingFile () ;
-
+        
     	if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
@@ -838,7 +698,7 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
-
+        
         if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
@@ -875,7 +735,7 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
-
+        
     }
 
     function action_dashletSave () {
@@ -900,11 +760,11 @@ class ModuleBuilderController extends SugarController
 			$repair->show_output = false;
 			$class_name = $GLOBALS [ 'beanList' ] [ $_REQUEST [ 'view_module' ] ] ;
 			$repair->module_list = array($class_name);
-			$repair->clearTpls();
+			$repair->clearTpls();	
         }
-
+        
 	}
-
+	
     function action_searchViewSave ()
     {
         $packageName = (isset ( $_REQUEST [ 'view_package' ] )) ? $_REQUEST [ 'view_package' ] : null ;
@@ -960,7 +820,7 @@ class ModuleBuilderController extends SugarController
     {
         $this->view = 'history' ;
     }
-
+    
     function resetmodule()
     {
     	$this->view = 'resetmodule';

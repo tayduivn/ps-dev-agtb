@@ -35,21 +35,21 @@ class AjaxCompose{
 		}
 		$this->sections[$name] = array('title'=>$title,'crumb'=>$crumb, 'content'=>$content, 'action'=>$action);
 	}
-
+	
 	function getJavascript(){
 		if(!empty($this->sections['center'])){
 			 if(empty($this->sections['east']))$this->addSection('east', '', '', 'deactivate');
 			 if(empty($this->sections['east2']))$this->addSection('east2', '', '', 'deactivate');
 		}
-
+		
 		$json = getJSONobj();
-		return urlencode($json->encode($this->sections));
+		return $json->encode($this->sections);
 	}
-
+	
 	function addCrumb($name, $action){
 		$this->crumbs[$name] = $action;
 	}
-
+	
 	function getBreadCrumb(){
 		$crumbs = '';
 		$actions = array();
@@ -74,21 +74,21 @@ class AjaxCompose{
 				}
 				$count++;
 			}
-
+			
 		}
 		if($count > 1 && $actions[$count-2] != ""){
-			$crumbs = "<a onclick='{$actions[$count-2]}' href='javascript:void(0)'>". getStudioIcon('back', 'back', 16, 16) . '</a>&nbsp;'. $crumbs;
+			$crumbs = "<a onclick='{$actions[$count-2]}' href='javascript:void(0)'>". getStudioIcon('back', 'back', 16, 16) . '</a>&nbsp;'. $crumbs;	
 		}
 		return $crumbs . '<br><br>';
-
-
+		
+		
 	}
-
+	
 	function echoErrorStatus($labelName=''){
 		$sections = array('failure'=>true,'failMsg'=>$labelName);
 		$json = getJSONobj();
 		echo $json->encode($sections);
 	}
-
+	
 }
 ?>

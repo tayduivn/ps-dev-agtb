@@ -36,8 +36,6 @@
  						'index' => 'main',
  						'module'=>'module',
  						'modulefields'=>'modulefields',
- 						'modulehooks'=>'modulehooks',
- 						'modulehook'=>'modulehook',
  						'modulelabels'=>'modulelabels',
  						'relationships'=>'relationships',
  						'relationship'=>'relationship',

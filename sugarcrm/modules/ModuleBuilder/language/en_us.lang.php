@@ -379,13 +379,11 @@ $mod_strings = array(
 'LBL_EDIT_COLUMNS'=>'Edit Columns',
 'LBL_EDIT_LABELS'=>'Edit Labels',
 'LBL_EDIT_FIELDS'=>'Edit Custom Fields',
-'LBL_EDIT_HOOKS'=>'Edit Logic Hooks',
 'LBL_EDIT_PORTAL'=>'Edit Portal for ',
 'LBL_EDIT_FIELDS'=>'Edit Fields',
 'LBL_EDITVIEW'=>'EditView',
 'LBL_FILLER'=>'(filler)',
 'LBL_FIELDS'=>'Fields',
-'LBL_HOOKS'=>'Logic Hooks',
 'LBL_FAILED_TO_SAVE' => 'Failed To Save',
 'LBL_FAILED_PUBLISHED' => 'Failed to Publish',
 'LBL_HOMEPAGE_PREFIX' => 'My',
@@ -559,7 +557,6 @@ $mod_strings = array(
 'LBL_BTN_ADDCOLS'=>'Add Columns',
 'LBL_BTN_ADDROWS'=>'Add Rows',
 'LBL_BTN_ADDFIELD'=>'Add Field',
-'LBL_BTN_ADDHOOK'=>'Add Logic Hook',
 'LBL_BTN_ADDDROPDOWN'=>'Add Dropdown',
 'LBL_BTN_SORT_ASCENDING'=>'Sort Ascending',
 'LBL_BTN_SORT_DESCENDING'=>'Sort Descending',
@@ -575,7 +572,6 @@ $mod_strings = array(
 'LBL_BTN_DELETE'=>'Delete',
 'LBL_BTN_VIEW_LAYOUTS'=>'View Layouts',
 'LBL_BTN_VIEW_FIELDS'=>'View Fields',
-'LBL_BTN_VIEW_HOOKS'=>'View Logic Hooks',
 'LBL_BTN_VIEW_RELATIONSHIPS'=>'View Relationships',
 'LBL_BTN_ADD_RELATIONSHIP'=>'Add Relationship',
 //TABS
@@ -742,7 +738,7 @@ $mod_strings = array(
    . "Workflow definitions containing an action that are set to update this field will no longer execute the action.<br>"
    . "Fields using formulas will not be calculated in real-time in "
    //BEGIN SUGARCRM flav=ent ONLY
-   . "the Sugar Self-Service Portal or "
+   . "the Sugar Self-Service Portal or " 
    //END SUGARCRM flav=ent ONLY
    . "Mobile EditView layouts.",
 
@@ -796,25 +792,6 @@ $mod_strings = array(
     "" => "Frequently used labels",
 	"all" => "All Labels",
 ),
-"hook_types" => array(
- "after_ui_frame",
- "after_ui_footer",
- "after_save",
- "before_save",
- "before_retrieve",
- "after_retrieve",
- "process_record",
- "before_delete",
- "after_delete",
- "before_restore",
- "after_restore",
- "server_roundtrip",
- "before_logout",
- "after_logout",
- "before_login",
- "after_login",
- "login_failed"
-),
 
 'parent' => 'Flex Relate',
 
@@ -825,13 +802,5 @@ $mod_strings = array(
                                  "to apply a U.S. format to the phone number when the record<br>" .
                                  "is saved. The following format will be applied: (xxx) xxx-xxxx.",
 
-
-'LBL_EC_EXT_LOGICHOOKS' => "Extension: Logic Hook(s)",
-'LBL_EC_EXT_SCHEDULEDTASKS' => "Extension: Scheduled Task(s)",
-'LBL_EC_EXT_VARDEFS' => "Extension: Custom Field(s)",
-'LBL_EC_EXT_LAYOUTDEFS' => "Extension: Subpanel Layout(s)",
-'LBL_EC_EXT_LANGUAGE' => "Extension: Module Language",
-'LBL_EC_EXT_UNDEFINED_EXTENSION' => "Extension: Unspecified",
-'LBL_EC_EXT_ENTRYPOINTS' => 'Extension: Entry Point Definition(s)',
 );
 
