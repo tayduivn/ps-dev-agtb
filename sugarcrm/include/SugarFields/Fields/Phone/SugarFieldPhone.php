@@ -26,10 +26,7 @@ class SugarFieldPhone extends SugarFieldBase {
 	         	 $country_code = !empty($matches[2]) ? $matches[2] . ' ' : '';
 	             $bean->$field = $international_sign . $country_code . '(' . $matches[3] . ') ' . $matches[4] . '-' . $matches[5];
          	 } else {
-         	 
-         	 //END SUGARCRM flav=int ONLY
          	 	 $bean->$field = $params[$prefix.$field];
-         	 //BEGIN SUGARCRM flav=int ONLY	 
          	 }
          	
          }

@@ -144,6 +144,7 @@ class UnifiedSearchAdvanced {
 		return $sugar_smarty->fetch($tpl);
 	}
 
+	
 	function search() {
 		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
 		{
@@ -271,7 +272,7 @@ class UnifiedSearchAdvanced {
                  */
                 require_once $beanFiles[$beanName] ;
                 $seed = new $beanName();
-				 require_once 'include/SearchForm/SearchForm2.php' ;
+				require_once 'include/SearchForm/SearchForm2.php' ;
                 $searchForm = new SearchForm ( $seed, $moduleName ) ;
                 
                 $searchForm->setup (array ( $moduleName => array() ) , $unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
@@ -356,7 +357,7 @@ class UnifiedSearchAdvanced {
 	{
 
 		global $beanList, $beanFiles, $dictionary;
-
+		
 		$supported_modules = array();
 
 		foreach($beanList as $moduleName=>$beanName)
@@ -386,6 +387,12 @@ class UnifiedSearchAdvanced {
 				require "modules/{$moduleName}/metadata/SearchFields.php" ;
 			}		
 			
+			//Load custom SearchFields.php if it exists
+			if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) 
+			{
+				require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
+			}				
+			
 			$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $moduleName);
 			
 			//If the bean supports unified search or if it's a custom module bean and unified search is not defined
@@ -394,17 +401,21 @@ class UnifiedSearchAdvanced {
 				$fields = array();
 				foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )
 				{
-					// We cannot enable or disable unified_search for email in the vardefs as we don't actually have a vardef entry for 'email' -
+					// We cannot enable or disable unified_search for email in the vardefs as we don't actually have a vardef entry for 'email'
 					// the searchFields entry for 'email' doesn't correspond to any vardef entry. Instead it contains SQL to directly perform the search.
 					// So as a proxy we allow any field in the vardefs that has a name starting with 'email...' to be tagged with the 'unified_search' parameter
 
 					if (strpos($field,'email') !== false)
+					{
 						$field = 'email' ;
+					}
 						
 					//bug: 38139 - allow phone to be searched through Global Search
 					if (strpos($field,'phone') !== false)
+					{
 						$field = 'phone' ;
-
+					}
+					
 					if ( !empty($def['unified_search']) && isset ( $searchFields [ $moduleName ] [ $field ]  ))
 					{
 						$fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
@@ -413,7 +424,8 @@ class UnifiedSearchAdvanced {
 
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
-					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) {
+					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) 
+					{
                         $supported_modules [$moduleName]['default'] = true;
                     } else {
                         $supported_modules [$moduleName]['default'] = false;
@@ -496,124 +508,6 @@ class UnifiedSearchAdvanced {
 		return $sugar_smarty->fetch($tpl);				
 	}
 	
-	
-	/**
-	 * addModuleToUnifiedSearch
-	 * This method handles adding a new module to the unified search list of modules.  It will add an 
-	 * entry to the unified_search_modules.php if it already exists
-	 * 
-	 * @param module String value of the module entry to add
-	 * @return boolean value indiciating whether or not the module was added to the unified_search_modules.php file
-	 */
-	function addModuleToUnifiedSearch($module='')
-	{
-		if(empty($module))
-		{
-		   return false;
-		}
-		
-		//If the file doesn't exist
-		if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php'))
-		{
-			include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
-			$this->buildCache();
-			return isset($unified_search_modules[$module]) ? true : false;
-		}
-		
-		include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
-		
-		//If modules is already in list, unset it and rebuild
-		if(isset($unified_search_modules[$module]))
-		{
-		   unset($unified_search_modules[$module]);
-		}
-		
-		//Build the entry
-		global $beanList, $beanFiles, $dictionary;
-		
-		if(!isset($beanList[$module]))
-		{
-		   $GLOBALS['log']->fatal('no beanList entry!');
-		   $beanName = $module;
-		   //return false;
-		}
-		
-		$beanName = $beanList[$module];
-		
-		if (!isset($beanFiles[$beanName]))
-		{
-			$GLOBALS['log']->fatal('no beanFiles entry!');
-		    //return false;
-		}
-		
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if($beanName == 'aCase') 
-		{
-			$beanName = 'Case';
-		}
-        //END SUGARCRM flav!=sales ONLY
-			
-		$manager = new VardefManager();
-		$manager->loadVardef($module, $beanName);
-
-		// obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-		if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')) 
-		{
-           require('custom/modules/'.$module.'/metadata/metafiles.php');	
-        } elseif (file_exists('modules/'.$module.'/metadata/metafiles.php')) {
-           require('modules/'.$module.'/metadata/metafiles.php');
-        }
- 		
-			
-	    if(!empty($metafiles[$module]['searchfields']))
-		{
-			require $metafiles[$moduleName]['searchfields'] ;
-		} else if(file_exists("modules/{$module}/metadata/SearchFields.php")) {
-			require "modules/{$module}/metadata/SearchFields.php" ;
-		}		
-			
-		$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $module);
-			
-		//If the bean supports unified search or if it's a custom module bean and unified search is not defined
-		if(!empty($dictionary[$beanName]['unified_search']) || $isCustomModule)
-		{
-			$GLOBALS['log']->fatal("found dictionary entry!");
-			$fields = array();
-			foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )
-			{
-				// We cannot enable or disable unified_search for email in the vardefs as we don't actually have a vardef entry for 'email' -
-				// the searchFields entry for 'email' doesn't correspond to any vardef entry. Instead it contains SQL to directly perform the search.
-				// So as a proxy we allow any field in the vardefs that has a name starting with 'email...' to be tagged with the 'unified_search' parameter
-				if (strpos($field,'email') !== false)
-					$field = 'email' ;
-					
-				//bug: 38139 - allow phone to be searched through Global Search
-				if (strpos($field,'phone') !== false)
-					$field = 'phone' ;
-
-				if (!empty($def['unified_search']) && isset ($searchFields [$module] [ $field ]))
-				{
-					$fields[ $field ] = $searchFields [$module] [ $field ] ;
-				}
-			}
-
-			if(count($fields) > 0) {
-				$unified_search_modules [$module] ['fields'] = $fields;
-				if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) {
-                    $unified_search_modules[$module]['default'] = true;
-                } else {
-                    $unified_search_modules[$module]['default'] = false;
-                }
-			}
-		 }		
-		
-		 if(!isset($unified_search_modules[$module]))
-		 {
-		 	return false;
-		 }
-		 
-		 return write_array_to_file('unified_search_modules', $unified_search_modules, $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
-	}
 	
 	/**
 	 * saveGlobalSearchSettings
