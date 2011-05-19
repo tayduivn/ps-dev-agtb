@@ -1258,7 +1258,8 @@ class ModuleInstaller{
 		}
 	}
 
-	function rebuild_languages($languages = array(), $modules=""){
+	function rebuild_languages($languages = array(), $modules="")
+	{
             foreach($languages as $language=>$value){
 				$this->log(translate('LBL_MI_REBUILDING') . " Language...$language");
 				$this->merge_files('Ext/Language/', $language.'.lang.ext.php', $language);
@@ -1275,11 +1276,6 @@ class ModuleInstaller{
 	{
 	    $this->rebuildExt("Vardefs", 'vardefs.ext.php');
 		sugar_cache_reset();
-	}
-
-	function rebuild_layoutdefs()
-	{
-	    $this->rebuildExt("Layoutdefs", 'layoutdefs.ext.php');
 	}
 
 	function rebuild_dashletcontainers(){
@@ -2056,6 +2052,31 @@ private function dir_file_count($path){
         }
     }
 
+    /**
+     * BC implementation to provide specific calls to extensions
+     */
+    public function __call($name, $args)
+    {
+        $nameparts = explode('_', $name);
+        // name is something_something
+        if(count($nameparts) == 2 && isset($this->extensions[$nameparts[1]])) {
+            $ext = $this->extensions[$nameparts[1]];
+            switch($nameparts[0]) {
+                case 'enable':
+                    return $this->enableExt($ext['section'], $ext['extdir']);
+                case 'disable':
+                    return $this->disableExt($ext['section'], $ext['extdir']);
+                case 'install':
+                    return $this->installExt($ext['section'], $ext['extdir']);
+                case 'uninstall':
+                    return $this->uninstallExt($ext['section'], $ext['extdir']);
+                case 'rebuild':
+                    return $this->rebuildExt($ext['extdir'], $ext['file']);
+            }
+        }
+        sugar_die("Unknown method ModuleInstaller::$name called");
+    }
+
 }
 
     function UpdateSystemTabs($action, $installed_modules){
@@ -2094,9 +2115,6 @@ private function dir_file_count($path){
 		        return $_SESSION['get_workflow_admin_modules_for_user'];
 		    }
 		    //END SUGARCRM flav=pro ONLY
-        }
+    }
 
 }
-
-
-?>
