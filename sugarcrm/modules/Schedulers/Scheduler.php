@@ -765,8 +765,8 @@ class Scheduler extends SugarBean {
 	 */
 	function cleanJobLog() 
 	{
-		$GLOBALS['log']->debug('DELETE FROM schedulers_times WHERE date_entered < \''.TimeDate::getInstance()->getNow()->get("-1 day")->asDb() .'\'');
-		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < \''.TimeDate::getInstance()->getNow()->get("-1 day")->asDb() .'\'');
+		$GLOBALS['log']->info('DELETE FROM schedulers_times WHERE date_entered < '.db_convert("'" . TimeDate::getInstance()->getNow()->get("-1 day")->asDb() . "'", 'datetime'));
+		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert("'" . TimeDate::getInstance()->getNow()->get("-1 day")->asDb() . "'", 'datetime'));
 	}
 
 	/**
