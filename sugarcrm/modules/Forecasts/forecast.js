@@ -99,7 +99,7 @@ function get_chart(theform) {
 		var post_data=get_post_url(theform);
 		var callback =	{
 			  success: function(o) {    
-					subwindow=window.open("","forecast_chart","height=640,width=800,left=100,top=100");
+					subwindow=window.open("","forecast_chart","height=640,width=800,left=100,top=100,resizable=yes");
 					subwindow.document.write(o.responseText);
 					subwindow.document.close();
 					subwindow.focus();
