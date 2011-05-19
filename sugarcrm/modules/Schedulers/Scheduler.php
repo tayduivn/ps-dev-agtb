@@ -763,8 +763,10 @@ class Scheduler extends SugarBean {
 	/**
 	 * soft-deletes all job logs older than 24 hours
 	 */
-	function cleanJobLog() {
-		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < '.db_convert('\''.TimeDate::getInstance()->nowDb(), strtotime('-24 hours')).'\'', 'datetime'.'');
+	function cleanJobLog() 
+	{
+		$GLOBALS['log']->debug('DELETE FROM schedulers_times WHERE date_entered < \''.TimeDate::getInstance()->getNow()->get("-1 day")->asDb() .'\'');
+		$this->db->query('DELETE FROM schedulers_times WHERE date_entered < \''.TimeDate::getInstance()->getNow()->get("-1 day")->asDb() .'\'');
 	}
 
 	/**
