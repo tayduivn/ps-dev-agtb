@@ -28,6 +28,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
+
 function set_offset(offset) {
 	document.ReportsWizardForm['report_offset'].value=offset;
 	SUGAR.reports.previewReport();
@@ -130,6 +131,7 @@ SUGAR.reports = function() {
 
 
 	return {
+        overrideRecord: true,
 		checkEnterKey: function() {
 			if (grid && grid.store.data.items.length == 1) {
 				grid.selModel.last = 0;
