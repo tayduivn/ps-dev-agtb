@@ -1,0 +1,378 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/**
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ */
+
+require_once('modules/Studio/DropDowns/DropDownHelper.php');
+require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
+
+class RenameModules
+{
+    private $selectedLanguage;
+    private $changedModules;
+
+
+    public function process($options = '')
+    {
+        if($options == 'SaveDropDown')
+            $this->save();
+
+        $this->display();
+
+    }
+
+    protected function display()
+    {
+        global $app_list_strings, $app_strings, $mod_strings;
+
+        
+        require_once('modules/Studio/parsers/StudioParser.php');
+        $dh = new DropDownHelper();
+        
+        $smarty = new Sugar_Smarty();
+        $smarty->assign('MOD', $GLOBALS['mod_strings']);
+        $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_RENAME_TABS']), false);
+        $smarty->assign('title', $title);
+
+        $selected_lang = (!empty($_REQUEST['dropdown_lang'])?$_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
+        if(empty($selected_lang))
+        {
+            $selected_lang = $GLOBALS['sugar_config']['default_language'];
+        }
+
+        if($selected_lang == $GLOBALS['current_language'])
+        {
+            $my_list_strings = $GLOBALS['app_list_strings'];
+        }
+        else
+        {
+            $my_list_strings = return_app_list_strings_language($selected_lang);
+        }
+
+        $selected_dropdown = $my_list_strings['moduleList'];
+        $selected_dropdown_singular = $my_list_strings['moduleListSingular'];
+
+
+        foreach($selected_dropdown as $key=>$value)
+        {
+           $singularValue = isset($selected_dropdown_singular[$key]) ? $selected_dropdown_singular[$key] : $value;
+           if($selected_lang != $_SESSION['authenticated_user_language'] && !empty($app_list_strings['moduleList']) && isset($app_list_strings['moduleList'][$key]))
+           {
+                $selected_dropdown[$key]=array('lang'=>$value, 'user_lang'=> '['.$app_list_strings['moduleList'][$key] . ']', 'singular' => $singularValue);
+           }
+           else
+           {
+               $selected_dropdown[$key]=array('lang'=>$value, 'singular' => $singularValue);
+           }
+        }
+
+
+        $selected_dropdown = $dh->filterDropDown('moduleList', $selected_dropdown);
+
+        $smarty->assign('dropdown', $selected_dropdown);
+        $smarty->assign('dropdown_languages', get_languages());
+
+        $buttons = array();
+        $buttons[] = array('text'=>$mod_strings['LBL_BTN_UNDO'],'actionScript'=>"onclick='jstransaction.undo()'" );
+        $buttons[] = array('text'=>$mod_strings['LBL_BTN_REDO'],'actionScript'=>"onclick='jstransaction.redo()'" );
+        $buttons[] = array('text'=>$mod_strings['LBL_BTN_SAVE'],'actionScript'=>"onclick='if(check_form(\"editdropdown\")){document.editdropdown.submit();}'");
+        $buttonTxt = StudioParser::buildImageButtons($buttons);
+        $smarty->assign('buttons', $buttonTxt);
+        $smarty->assign('dropdown_lang', $selected_lang);
+
+        $editImage = SugarThemeRegistry::current()->getImage( 'edit_inline', '');
+        $smarty->assign('editImage',$editImage);
+        $deleteImage = SugarThemeRegistry::current()->getImage( 'delete_inline', '');
+        $smarty->assign('deleteImage',$deleteImage);
+        $smarty->display("modules/Studio/wizards/RenameModules.tpl");
+    }
+    
+    protected function save()
+    {
+        $this->selectedLanguage = (!empty($_REQUEST['dropdown_lang'])? $_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
+
+        //Retrieve changes the user is requesting and store previous values for future use.
+        $this->changedModules = $this->getChangedModules();
+
+        //Change module, appStrings, and related links.
+        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks();
+
+        //Clear all relevant language caches
+        $this->clearLanguageCaches();
+        //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
+        SugarApplication::redirect('index.php?action=wizard&module=Studio&wizard=StudioWizard&option=RenameTabs');
+    }
+
+    private function renameAllRelatedLinks()
+    {
+        global $beanList;
+
+        foreach($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) && $beanName == 'Contact')
+            {
+                $this->renameModuleRelatedLinks($moduleName, $beanName, $this->changedModules);
+            }
+            else
+            {
+                $GLOBALS['log']->fatal("Class $beanName does not exist, unable to rename.");
+            }
+        }
+
+        return $this;
+    }
+
+    private function renameModuleRelatedLinks($moduleName, $moduleClass, $changedModules)
+    {
+        $GLOBALS['log']->fatal("Begining to renameModuleRelatedLinks for $moduleClass\n");
+        $tmp = new $moduleClass;
+        if( ! method_exists($tmp, 'get_related_fields') )
+        {
+            $GLOBALS['log']->fatal("Unable to resolve linked fields for module $moduleClass ");
+            return;
+        }
+        $linkedfields = $tmp->get_related_fields();
+
+        $mod_strings = return_module_language($this->selectedLanguage, $moduleName);
+        $replacementStrings = array();
+        foreach($linkedfields as $link => $linkEntry)
+        {
+            //For each linked field check if the module referenced to is in our changed module list.
+            foreach($changedModules as $changedModuleName => $renameFields)
+            {
+                if( isset($linkEntry['module']) && $linkEntry['module'] ==  $changedModuleName)
+                {
+                    $GLOBALS['log']->fatal("******** Begining to rename for link field {$link}");
+                    if( !isset($mod_strings[$linkEntry['vname']]) )
+                    {
+                        $GLOBALS['log']->fatal("No label attribute for link $link, continuing." . var_export($linkEntry, true));
+                        $GLOBALS['log']->fatal("MOD STRINGS: "  . var_export($mod_strings, true));
+                        continue;
+                    }
+
+                    $replaceKey = $linkEntry['vname'];
+                    $oldStringValue = $mod_strings[$replaceKey];
+                    //At this point we don't know if we should replace the string with the plural or singular version of the new
+                    //strings so we'll try both but with the plural version first since it should be longer than the singular.
+                    $replacedString = str_replace($renameFields['prev_plural'], $renameFields['plural'], $oldStringValue);
+                    $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    $replacementStrings[$replaceKey] = $replacedString;
+                }
+            }
+        }
+
+        //Now we can write out the replaced language strings for each module
+        if(count($replacementStrings) > 0)
+        {
+            $GLOBALS['log']->fatal("Writing out labels for link changes for module $moduleName, labels: " . var_export($replacementStrings,true));
+            ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
+        }
+    }
+
+    private function clearLanguageCaches()
+    {
+        //remove the js language files
+        LanguageManager::removeJSLanguageFiles();
+
+        //remove lanugage cache files
+        LanguageManager::clearLanguageCache();
+    }
+
+    private function changeModuleModStrings($moduleName, $replacementLabels)
+    {
+        $GLOBALS['log']->fatal("Begining to change module labels for: $moduleName");
+        $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
+        $labelKeysToReplace = array(
+            array('name' => 'LNK_NEW_RECORD', 'type' => 'plural'), //Module built modules, Create <moduleName>
+            array('name' => 'LNK_LIST', 'type' => 'plural'), //Module built modules, View <moduleName>
+            array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
+            array('name' => 'LNK_###MODULE_SINGULAR###_LIST', 'type' => 'plural'),
+            array('name' => 'LNK_###MODULE_SINGULAR###_REPORTS', 'type' => 'singular'),
+            array('name' => 'LNK_IMPORT_VCARD', 'type' => 'singular'),
+            array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'plural'),
+            array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
+            array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
+
+        );
+
+        $replacedLabels = array();
+        foreach($labelKeysToReplace as $entry)
+        {
+            $formattedLanguageKey = $this->formatModuleLanguageKey($entry['name'], $replacementLabels);
+            if( isset($currentModuleStrings[$formattedLanguageKey]) )
+            {
+                $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
+                $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($oldStringValue, $replacementLabels, $entry);
+            }
+        }
+
+        ParserLabel::addLabels($this->selectedLanguage, $replacedLabels, $moduleName);
+    }
+
+    private function formatModuleLanguageKey($unformatedKey, $replacementStrings)
+    {
+        $unformatedKey = str_replace('###MODULE_SINGULAR###', strtoupper($replacementStrings['key_singular']), $unformatedKey);
+        return str_replace('###MODULE_PLURAL###', strtoupper($replacementStrings['key_plural']), $unformatedKey);
+
+    }
+    private function replaceSingleLabel($oldStringValue, $replacementLabels, $replacementMetaData)
+    {
+        $replaceKey = 'prev_' . $replacementMetaData['type'];
+        return str_replace($replacementLabels[$replaceKey] , $replacementLabels[$replacementMetaData['type']], $oldStringValue);
+    }
+
+    private function changeAllModuleModStrings()
+    {
+        foreach($this->changedModules as $moduleName => $replacementLabels)
+        {
+            $this->changeModuleModStrings($moduleName, $replacementLabels);
+        }
+
+        return $this;
+    }
+
+
+    private function changeAppStringEntries()
+    {
+        $GLOBALS['log']->debug('Begining to save app string entries');
+        //Save changes to the moduleList app string entry
+        DropDownHelper::saveDropDown($_REQUEST);
+
+        //Save changes to the moduleListSingular app string entry
+        $newParams = array();
+        $newParams['dropdown_name'] = 'moduleListSingular';
+        $newParams['dropdown_lang'] = isset($_REQUEST['dropdown_lang']) ? $_REQUEST['dropdown_lang'] : '';
+        $newParams['use_push'] = true;
+        DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $this->changedModules));
+        return $this;
+    }
+
+    private function createModuleListSingularPackage($params, $changedModules)
+    {
+        $count = 0;
+        foreach($changedModules as $moduleName => $package)
+        {
+            $singularString = $package['singular'];
+
+            $params['slot_' . $count] = $count;
+            $params['key_' . $count] = $moduleName;
+            $params['value_' . $count] = $singularString;
+            $params['delete_' . $count] = '';
+
+            $count++;
+        }
+
+        return $params;
+
+    }
+
+    private function getChangedModules()
+    {
+        $count = 0;
+        $allModuleEntries = array();
+        $results = array();
+        $params = $_REQUEST;
+        while(isset($params['slot_' . $count]))
+        {
+
+           $index = $params['slot_' . $count];
+           $key = (isset($params['key_' . $index]))?$params['key_' . $index]: 'BLANK';
+           $value = (isset($params['value_' . $index]))?$params['value_' . $index]: '';
+           $svalue = (isset($params['svalue_' . $index]))?$params['svalue_' . $index]: $value;
+           if($key == 'BLANK')
+               $key = '';
+
+           $key = trim($key);
+           $value = trim($value);
+           $svalue = trim($svalue);
+           $allModuleEntries[$key] = array('s' => $svalue, 'p' => $value);
+
+           $count++;
+        }
+
+        $selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
+        $current_app_list_string = return_app_list_strings_language($selected_lang);
+
+        foreach($allModuleEntries as $k => $e)
+        {
+            $svalue = $e['s'];
+            $pvalue = $e['p'];
+            $prev_plural = $current_app_list_string['moduleList'][$k];
+            $prev_singular = isset($current_app_list_string['moduleListSingular'][$k]) ? $current_app_list_string['moduleListSingular'][$k] : $prev_plural;
+            if( strcmp($prev_plural, $pvalue) != 0 || (strcmp($prev_singular, $svalue) != 0) )
+            {
+                $results[$k] = array('singular' => $svalue, 'plural' => $pvalue, 'prev_singular' => $prev_singular, 'prev_plural' => $prev_plural,
+                                     'key_plural' => $k, 'key_singular' => $this->getModuleSingularKey($k)
+                );
+            }
+
+        }
+
+        return $results;
+    }
+
+
+    /**
+     * Return the 'singular' name of a module (Eg. Opportunity for Opportunities) given a moduleName which is a key
+     * in the app string moduleList array.
+     *
+     * @param  $moduleName
+     * @return String The 'singular' name of a module.
+     */
+    private function getModuleSingularKey($moduleName)
+    {
+        $className = isset($GLOBALS['beanList'][$moduleName]) ? $GLOBALS['beanList'][$moduleName] : null;
+        if( is_null($className) || ! class_exists($className) )
+        {
+            $GLOBALS['log']->fatal("Unable to get module singular key for class: $className");
+            return $moduleName;
+        }
+
+        $tmp = new $className();
+        if( property_exists($tmp, 'object_name') )
+            return $tmp->object_name;
+        else
+            return $moduleName;
+    }
+
+
+
+    private function getSingularStringsForModuleFromAppStrings($moduleName)
+    {
+        $current_app_list_string = return_app_list_strings_language($this->selectedLanguage);
+
+        if( isset($current_app_list_string['moduleListSingular'][$moduleName] ) )
+        {
+            return $current_app_list_string['moduleListSingular'][$moduleName];
+        }
+        else
+            return null;
+    }
+}
+
+
+
