@@ -1,8 +1,0 @@
-<soda>
-   <puts text="ProductCategory_Delete_Lib: Starting" />
-   <link text="Admin" />
-   <link text="Product Categories" />
-   <link href="index.php?action=Delete&amp;module=ProductCategories&amp;record={@category_id}&amp;return_module=ProductCategories&amp;return_action=EditView&amp;return_id=" alert="true" />
-   <puts text="ProductCategory_Delete_Lib: Finished" />
-</soda>
-

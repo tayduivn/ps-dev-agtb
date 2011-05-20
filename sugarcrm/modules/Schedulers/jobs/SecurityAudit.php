@@ -331,6 +331,7 @@ class SecurityAudit {
 	}
 	
 	function doPhpHtmlAudit() {
+        global $timedate;
 		// start output buffer
 		ob_start();
 		$badHack = array();

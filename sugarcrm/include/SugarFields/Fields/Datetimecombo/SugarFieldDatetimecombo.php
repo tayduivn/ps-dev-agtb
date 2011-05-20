@@ -32,6 +32,12 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         return $this->fetch($this->findTemplate('EditView'));
     }
 
+    function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex)
+    {
+        $displayParams['showFormats'] = true;
+        return $this->getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
+    }
+	
     function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 
     	 if($this->isRangeSearchView($vardef)) {
@@ -50,6 +56,10 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
+           if(file_exists('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl'))
+           {
+              return $this->fetch('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
+           }
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
         }
 
@@ -109,7 +119,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     }
     //END SUGARCRM flav=pro || flav=sales ONLY
 
-    public function getEmailTemplateValue($inputField, $vardef, $context = null){
+	public function getEmailTemplateValue($inputField, $vardef, $context = null, $tabindex = 0){
         // This does not return a smarty section, instead it returns a direct value
         if(isset($context['notify_user'])) {
             $user = $context['notify_user'];
@@ -118,8 +128,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         }
         return TimeDate::getInstance()->to_display_date_time($inputField, true, true, $user);
     }
-
-
+    
     public function save(&$bean, &$inputData, &$field, &$def, $prefix = '') {
         global $timedate;
         if ( !isset($inputData[$prefix.$field]) ) {

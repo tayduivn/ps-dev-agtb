@@ -41,7 +41,7 @@ class="yui-navset"
     <ul class="yui-nav">
     {{foreach name=section from=$sectionPanels key=label item=panel}}
         {{counter name="tabCount" print=false}}
-        <li class="selected"><a id="tab{{$tabCount}}" href="#tab{{$tabCount}}"><em>{sugar_translate label='{{$label}}' module='{{$module}}'}</em></a></li>
+        <li class="selected"><a id="tab{{$tabCount}}" href="javascript:void({{$tabCount}})"><em>{sugar_translate label='{{$label}}' module='{{$module}}'}</em></a></li>
     {{/foreach}}
     </ul>
     {{/if}}
@@ -53,7 +53,12 @@ class="yui-navset"
 {{counter name="panelCount" print=false}}
 
 {{* Print out the table data *}}
-<div id="{{$label}}">
+{{if $label == 'DEFAULT'}}
+	<div id="Default_{$module}_Subpanel">
+{{else}}
+	<div id="{{$label}}">
+{{/if}}
+
 {counter name="panelFieldCount" start=0 print=false assign="panelFieldCount"}
 {{* Check to see if the panel variable is an array, if not, we'll attempt an include with type param php *}}
 {{* See function.sugar_include.php *}}
@@ -231,7 +236,7 @@ class="yui-navset"
 {{include file=$footerTpl}}
 {$overlibStuff}
 {{if $useTabs}}
-<script type="text/javascript" src="cache/include/javascript/sugar_grp_yui_widgets.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript">
 var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{$form_name}}_tabs.selectTab(0);

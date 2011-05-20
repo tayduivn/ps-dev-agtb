@@ -81,7 +81,7 @@ array (
 {sugar_getscript file="include/javascript/jsclass_async.js"}
 {sugar_getscript file="modules/Meetings/jsclass_scheduler.js"}
 <script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim} 
-function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration()){ldelim}document.EditView.submit();{rdelim}{rdelim}</script>',
+function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration()){ldelim}SUGAR.ajaxUI.submitForm("EditView");{rdelim}{rdelim}</script>',
        'useTabs' => false,
     ),
     'panels' =>

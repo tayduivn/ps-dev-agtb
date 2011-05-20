@@ -66,13 +66,11 @@ SUGAR.forms.AssignmentHandler.ANIMATE = true;
  */
 SUGAR.forms.AssignmentHandler.VARIABLE_MAP = {};
 
-//BEGIN SUGARCRM flav=een ONLY
 /**
  * @STATIC
  * This array contains a list of valid relationship links for this module
  */
 SUGAR.forms.AssignmentHandler.LINKS = {};
-//END SUGARCRM flav=een ONLY
 
 /**
  * @STATIC
@@ -172,11 +170,9 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
 SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 
-	//BEGIN SUGARCRM flav=een ONLY
 	//Relate fields are only string on the client side, so return the variable name back.
 	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
 		return variable;
-	//END SUGARCRM flav=een ONLY
 
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
 	if ( field == null || field.tagName == null) 	return null;
@@ -200,7 +196,7 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 
 	//Special case for dates
 	if (field.className && (field.className == "DateTimeCombo" || field.className == "Date")){
-		return SUGAR.util.DateUtils.parse(field.value);
+		return SUGAR.util.DateUtils.parse(field.value, "user");
 	}
 
 	//For DetailViews where value is enclosed in a span tag
@@ -210,7 +206,13 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
     }
 	
 	if (field.value !== null && typeof(field.value) != "undefined")
+	{
+		var asNum = SUGAR.expressions.unFormatNumber(field.value);
+		if ( (/^(\-)?[0-9]+(\.[0-9]+)?$/).exec(asNum) != null ) {
+			return asNum;
+		}
 		return field.value;
+	}
 	
 	return YAHOO.lang.trim(field.innerText);
 }
@@ -266,10 +268,12 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
     {
         if (Dom.hasClass(field, "date_input"))
 			field.value = SUGAR.util.DateUtils.formatDate(value);
-		else if (Dom.hasClass(field, "DateTimeCombo"))
-			AH.setDateTimeField(field, value);
-		else
-			field.value = SUGAR.util.DateUtils.formatDate(value, true);
+		else {
+            if (Dom.hasClass(field, "DateTimeCombo"))
+                AH.setDateTimeField(field, value);
+
+            field.value = SUGAR.util.DateUtils.formatDate(value, true);
+        }
     }
 	else {
 		field.value = value;
@@ -283,13 +287,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	AH.LOCKS[variable] = true;
 
 	// fire onchange
-	var listeners = YAHOO.util.Event.getListeners(field, 'change');
-	if (listeners != null) {
-		for (var i = 0; i < listeners.length; i++) {
-			var l = listeners[i];
-			l.fn.call(l.scope ? l.scope : this, l.obj);
-		}
-	}
+	SUGAR.util.callOnChangeListers(field);
 
 	// unlock this variable
 	AH.LOCKS[variable] = null;
@@ -407,12 +405,10 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 
 		var value = "";
 
-		//BEGIN SUGARCRM flav=een ONLY
 		//Relate fields are only string on the client side, so return the variable name back.
 		if(SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname])
 			value = varname;
 		else
-		//END SUGARCRM flav=een ONLY
 			value = SUGAR.forms.AssignmentHandler.getValue(varname, this.formName);
 
 		if (typeof(value) == "string")

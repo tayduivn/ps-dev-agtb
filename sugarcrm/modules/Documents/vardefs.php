@@ -89,6 +89,7 @@ $dictionary['Document'] = array('table' => 'documents',
      'fileId' => 'document_revision_id',
      'docType' => 'doc_type',
   ),
+
 'active_date' =>
   array (
     'name' => 'active_date',
@@ -96,6 +97,7 @@ $dictionary['Document'] = array('table' => 'documents',
     'type' => 'date',
     'importable' => 'required',
 	'required' => true,
+    'display_default' => 'now',
   ),
 
 'exp_date' =>
@@ -270,6 +272,7 @@ $dictionary['Document'] = array('table' => 'documents',
        'source' => 'non-db',
        'vname' => 'LBL_BUGS_SUBPANEL_TITLE',
    ),
+   //BEGIN SUGARCRM flav=pro ONLY
   'quotes'=>
    array (
        'name' => 'quotes',
@@ -285,7 +288,8 @@ $dictionary['Document'] = array('table' => 'documents',
        'relationship' => 'documents_products',
        'source' => 'non-db',
        'vname' => 'LBL_PRODUCTS_SUBPANEL_TITLE',
-   ),   
+   ),
+   //END SUGARCRM flav=pro ONLY
   'related_doc_id' =>
   array (
     'name' => 'related_doc_id',

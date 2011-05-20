@@ -108,7 +108,7 @@ class Popup_Picker
 
 		foreach ($focus_tasks_list as $task) {
 			$sort_date_time='';
-			if ($task->date_due == '0000-00-00') {
+			if (empty($task->date_due) || $task->date_due == '0000-00-00') {
 				$date_due = '';
 			}
 			else {
@@ -130,7 +130,7 @@ class Popup_Picker
 									 'date_modified' => $date_due,
 									 'description' => $this->getTaskDetails($task),
 									 'date_type' => $app_strings['DATA_TYPE_DUE'],
-									 'sort_value' => $task->date_entered,
+									 'sort_value' => strtotime($task->fetched_row['date_due'].' GMT'),
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $task->name,
@@ -152,8 +152,15 @@ class Popup_Picker
 		} // end Tasks
 
 		foreach ($focus_meetings_list as $meeting) {
+			
+			if (empty($meeting->contact_id) && empty($meeting->contact_name)) {
+				$meeting_contacts = $meeting->get_linked_beans('contacts','Contact');
+				if (!empty($meeting_contacts[0]->id) && !empty($meeting_contacts[0]->name)) {
+					$meeting->contact_id = $meeting_contacts[0]->id;
+					$meeting->contact_name = $meeting_contacts[0]->name;
+				}
+			}
 			if ($meeting->status != "Planned") {
-
 				$history_list[] = array('name' => $meeting->name,
 									 'id' => $meeting->id,
 									 'type' => "Meeting",
@@ -168,7 +175,7 @@ class Popup_Picker
 									 'date_modified' => $meeting->date_start,
 									 'description' => $this->formatDescription($meeting->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $meeting->date_entered,
+									 'sort_value' => strtotime($meeting->fetched_row['date_start'].' GMT'),
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $meeting->name,
@@ -190,6 +197,15 @@ class Popup_Picker
 		} // end Meetings
 
 		foreach ($focus_calls_list as $call) {
+
+			if (empty($call->contact_id) && empty($call->contact_name)) {
+				$call_contacts = $call->get_linked_beans('contacts','Contact');
+				if (!empty($call_contacts[0]->id) && !empty($call_contacts[0]->name)) {
+					$call->contact_id = $call_contacts[0]->id;
+					$call->contact_name = $call_contacts[0]->name;
+				}
+			}
+
 			if ($call->status != "Planned") {
 				$history_list[] = array('name' => $call->name,
 									 'id' => $call->id,
@@ -205,7 +221,7 @@ class Popup_Picker
 									 'date_modified' => $call->date_start,
 									 'description' => $this->formatDescription($call->description),
 									 'date_type' => $app_strings['DATA_TYPE_START'],
-									 'sort_value' => $call->date_entered,
+									 'sort_value' => strtotime($call->fetched_row['date_start'].' GMT'),
 									 );
 			} else {
 				$open_activity_list[] = array('name' => $call->name,
@@ -227,7 +243,14 @@ class Popup_Picker
 		} // end Calls
 
 		foreach ($focus_emails_list as $email) {
-
+			
+			if (empty($email->contact_id) && empty($email->contact_name)) {
+				$email_contacts = $email->get_linked_beans('contacts','Contact');
+				if (!empty($email_contacts[0]->id) && !empty($email_contacts[0]->name)) {
+					$email->contact_id = $email_contacts[0]->id;
+					$email->contact_name = $email_contacts[0]->name;
+				}
+			}
 			$history_list[] = array('name' => $email->name,
 									 'id' => $email->id,
 									 'type' => "Email",
@@ -242,12 +265,12 @@ class Popup_Picker
 									 'date_modified' => $email->date_start." ".$email->time_start,
 									 'description' => $this->getEmailDetails($email),
 									 'date_type' => $app_strings['DATA_TYPE_SENT'],
-									 'sort_value' => $email->date_entered,
+									 'sort_value' => strtotime($email->fetched_row['date_sent'].' GMT'),
 									 );
 		} //end Emails
 
 		foreach ($focus_notes_list as $note) {
-
+			
 			$history_list[] = array('name' => $note->name,
 									 'id' => $note->id,
 									 'type' => "Note",
@@ -262,7 +285,7 @@ class Popup_Picker
 									 'date_modified' => $note->date_modified,
 									 'description' => $this->formatDescription($note->description),
 									 'date_type' => $app_strings['DATA_TYPE_MODIFIED'],
-									 'sort_value' => $note->date_entered,
+									 'sort_value' => strtotime($note->fetched_row['date_modified'].' GMT'),
 									 );
 			if(!empty($note->filename)) {
 				$count = count($history_list);
@@ -350,53 +373,50 @@ class Popup_Picker
             $xtpl->parse("history.row");
         // Put the rows in.
 }
+		$xtpl->parse("history");
+		$xtpl->out("history");
+		insert_popup_footer();
+	}
 
-        $xtpl->parse("history");
-        $xtpl->out("history");
-        insert_popup_footer();
-    }
+	function getEmailDetails($email){
+		$details = "";
 
-    function getEmailDetails($email){
-        $details = "";
+		if(!empty($email->to_addrs)){
+			$details .= "To: ".$email->to_addrs."<br>";
+		}
+		if(!empty($email->from_addr)){
+			$details .= "From: ".$email->from_addr."<br>";
+		}
+		if(!empty($email->cc_addrs)){
+			$details .= "CC: ".$email->cc_addrs."<br>";
+		}
+		if(!empty($email->from_addr) || !empty($email->cc_addrs) || !empty($email->to_addrs)){
+			$details .= "<br>";
+		}
 
-        if(!empty($email->to_addrs)){
-            $details .= "To: ".$email->to_addrs."<br>";
-        }
-        if(!empty($email->from_addr)){
-            $details .= "From: ".$email->from_addr."<br>";
-        }
-        if(!empty($email->cc_addrs)){
-            $details .= "CC: ".$email->cc_addrs."<br>";
-        }
-        if(!empty($email->from_addr) || !empty($email->cc_addrs) || !empty($email->to_addrs)){
-            $details .= "<br>";
-        }
+		// cn: bug 8433 - history does not distinguish b/t text/html emails
+		$details .= empty($email->description_html)
+			? $this->formatDescription($email->description)
+			: $this->formatDescription(strip_tags(br2nl(from_html($email->description_html))));
 
-        // cn: bug 8433 - history does not distinguish b/t text/html emails
-        $details .= empty($email->description_html)
-            ? $this->formatDescription($email->description)
-            : $this->formatDescription(strip_tags(br2nl(from_html($email->description_html))));
+		return $details;
+	}
 
-        return $details;
-    }
+	function getTaskDetails($task){
+		global $app_strings;
 
-    function getTaskDetails($task){
-        global $app_strings;
+		$details = "";
+		if (!empty($task->date_start) && $task->date_start != '0000-00-00') {
+			$details .= $app_strings['DATA_TYPE_START'].$task->date_start."<br>";
+			$details .= "<br>";
+		}
+		$details .= $this->formatDescription($task->description);
 
-        $details = "";
-        if($task->date_start != '0000-00-00'){
-            $details .= $app_strings['DATA_TYPE_START'].$task->date_start."<br>";
-        }
-        if(($task->date_start != '0000-00-00')){
-            $details .= "<br>";
-        }
-        $details .= $this->formatDescription($task->description);
+		return $details;
+	}
 
-        return $details;
-    }
-
-    function formatDescription($description){
-        return nl2br($description);
-    }
+	function formatDescription($description){
+		return nl2br($description);
+	}
 } // end of class Popup_Picker
 ?>

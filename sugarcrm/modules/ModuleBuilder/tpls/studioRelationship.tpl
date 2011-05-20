@@ -119,13 +119,17 @@
 			{if !empty($rel.rhs_module) && $rel.relationship_type != 'one-to-one'}
 			<tr>
                 {if $rel.relationship_type == 'many-to-many' || $rel.relationship_type == 'many-to-one'}
-                <td align="right" scope="row">{sugar_translate label="LBL_REL_LABEL"}:</td>
-                <td><input name="lhs_label" id="lhs_label" value="{$rel.lhs_label}"  ></td>
-                {else}<td></td><td></td>{/if}
+                    <td align="right" scope="row">{sugar_translate label="LBL_REL_LABEL"}:</td>
+                    <td><input name="lhs_label" id="lhs_label" value="{$rel.lhs_label}"  ></td>
+                {else}
+                    <td></td><td><input type="hidden" name="lhs_label" id="lhs_label" value="{$rel.lhs_label}"  ></td>
+                {/if}
                 <td></td>
                 {if $rel.relationship_type != 'many-to-one'} 
                 <td align="right" scope="row">{sugar_translate label="LBL_REL_LABEL"}:</td>
                 <td><input name="rhs_label" id="rhs_label" value="{$rel.rhs_label}"  ></td>
+                {else}
+                    <td></td><td><input type="hidden" name="rhs_label" id="rhs_label" value="{$rel.rhs_label}"  ></td>
                 {/if}
             </tr>
             <tr>

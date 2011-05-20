@@ -380,7 +380,7 @@ function get_team_array($add_blank = FALSE) {
     	return $team_array;
     }
 
-    
+
     $db = & PearDatabase::getInstance();
 
     if(is_admin($current_user))
@@ -582,7 +582,7 @@ function return_application_language($language) {
 	$en_app_strings = array();
 	if($language_used != $default_language)
 		$en_app_strings = $app_strings;
-	
+
 	if(!empty($language)) {
 		include("include/language/$language.lang.php");
 	}
@@ -677,7 +677,7 @@ function &return_module_language($language, $module) {
 	$en_mod_strings = array();
 	if($language_used != $default_language)
 		$en_mod_strings = $mod_strings;
-	
+
 	if(file_exists("modules/$module/language/$language.lang.php")) {
 		 include("modules/$module/language/$language.lang.php");
 	}
@@ -724,7 +724,7 @@ function &return_module_language($language, $module) {
 		$GLOBALS['log']->fatal("Unable to load the module($module) language file for the selected language($language) or the default language($default_language)");
 		return $returnnull;
 	}
-	
+
 	// cn: bug 6048 - merge en_us with requested language
 	$mod_strings = sugarArrayMerge($en_mod_strings,$mod_strings);
 
@@ -758,7 +758,7 @@ function return_mod_list_strings_language($language,$module) {
 	if($currentModule == $module && isset($mod_list_strings) && $mod_list_strings != null) {
 		return $mod_list_strings;
 	}
-	
+
     // cn: bug 6351 - include en_us if file langpack not available
 	// cn: bug 6048 - merge en_us with requested language
 	include("modules/$module/language/en_us.lang.php");
@@ -778,7 +778,7 @@ function return_mod_list_strings_language($language,$module) {
 		echo 'Please Change:<br>' . "modules/$module/language/$language.lang.php.override" . '<br>to<br>' . 'Please Change:<br>' . "modules/$module/language/$language.lang.override.php";
 		include("modules/$module/language/$language.lang.php.override");
 	}
-	
+
 	if(!isset($mod_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application list language file for the selected language($language) or the default language($default_language) for module({$module})");
 		return null;
@@ -868,7 +868,7 @@ function return_session_value_or_default($varname, $default)
   */
 function append_where_clause(&$where_clauses, $variable_name, $SQL_name = null)
 {
-	
+
 
 	if($SQL_name == null)
 	{
@@ -1108,7 +1108,7 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 		$select_options .= "\n<OPTION ".$selected_string."value='$html_value'>$label_list[$option_key]</OPTION>";
 	}
 	$select_options = preg_replace($pattern, $replacement, $select_options);
-    
+
 	return $select_options;
 }
 
@@ -1381,7 +1381,7 @@ function clean_special_arguments() {
 }
 
 /**
- * cleans the given key in superglobals $_GET, $_POST, $_REQUEST 
+ * cleans the given key in superglobals $_GET, $_POST, $_REQUEST
  */
 function clean_superglobals($key, $filter = 'STANDARD') {
     if(isset($_GET[$key])) clean_string($_GET[$key], $filter);
@@ -1681,7 +1681,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
         $user_array = get_register_value('select_array',$bean_name. $display_columns. $where . $order_by);
         if(!$user_array)
         {
-                
+
                 $db = & PearDatabase::getInstance();
                 $temp_result = Array();
                 $query = "SELECT id, {$display_columns} as display from {$focus->table_name} where ";
@@ -1860,7 +1860,7 @@ function _ppd($mixed)
 
 	echo "";
 	$stack  = debug_backtrace();
-	if (!empty($stack) && isset($stack[0]['file']) && $stack[0]['line']) {	
+	if (!empty($stack) && isset($stack[0]['file']) && $stack[0]['line']) {
 		echo "\n\n _ppd caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	die();
@@ -1884,20 +1884,20 @@ function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="debug") {
 		require_once ('log4php/LoggerManager.php');
 		$GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
 	}
-	
-	
+
+
 	$mix	= print_r($mixed, true); // send print_r() output to $mix
 	$stack	= debug_backtrace();
-	
+
 	$GLOBALS['log']->$loglevel('------------------------------ _ppLogger() output start -----------------------------');
 	$GLOBALS['log']->$loglevel($mix);
 	if($displayStackTrace) {
 		$GLOBALS['log']->$loglevel($stack);
 	}
-	
+
 	$GLOBALS['log']->$loglevel('------------------------------ _ppLogger() output end -----------------------------');
 	$GLOBALS['log']->$loglevel('------------------------------ _ppLogger() file: '.$stack[0]['file'].' line#: '.$stack[0]['line'].'-----------------------------');
-	
+
 	if($die) {
 		die();
 	}
@@ -1919,7 +1919,7 @@ function _pp($mixed)
 
 	echo "";
 	$stack  = debug_backtrace();
-	if (!empty($stack) && isset($stack[0]['file']) && $stack[0]['line']) {	
+	if (!empty($stack) && isset($stack[0]['file']) && $stack[0]['line']) {
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
@@ -1961,14 +1961,14 @@ function _pptd($mixed)
  * unsupported (results unknown), or invalid (something will break on this
  * ver).  Do not pass in any pararameter to default to a check against the
  * current environment's PHP version.
- * 
+ *
  * @return 1 implies supported, 0 implies unsupported, -1 implies invalid
  */
-function check_php_version($sys_php_version = '') {	
+function check_php_version($sys_php_version = '') {
 	$sys_php_version = empty($sys_php_version) ? constant('PHP_VERSION') : $sys_php_version;
 	// versions below $min_considered_php_version considered invalid by default,
 	// versions equal to or above this ver will be considered depending
-	// on the rules that follow 
+	// on the rules that follow
 	$min_considered_php_version = '5.2.1';
 
 	// only the supported versions,
@@ -2012,18 +2012,18 @@ function pre_login_check(){
 	global $action, $login_error;
 	if(!empty($action)&& $action == 'Login'){
 		checkLoginUserStatus();
-		
+
 		if(!empty($login_error)){
 			$login_error = htmlentities($login_error);
 			$login_error = str_replace(array("&lt;pre&gt;","&lt;/pre&gt;","\r\n", "\n"), "<br>", $login_error);
 			$_SESSION['login_error'] = $login_error;
 			echo '<script>
 						if(document.getElementById("post_error")) {
-							document.getElementById("post_error").innerHTML="'. $login_error. '"; 	
+							document.getElementById("post_error").innerHTML="'. $login_error. '";
 						}
-						</script>';	
-		}	
-	}	
+						</script>';
+		}
+	}
 }
 
 function sugar_cleanup($exit = false) {
@@ -2381,7 +2381,7 @@ function get_module_info($module_name){
 
 
 function  checkAuthUserStatus(){
-	
+
 	//authUserStatus();
 }
 
@@ -2492,7 +2492,7 @@ function checkLoginUserStatus(){
 function appendPortToHost($url, $port)
 {
 	$resulturl = $url;
-	
+
 	// if no port, don't change the url
 	if($port != '')
 	{
@@ -2508,7 +2508,7 @@ function appendPortToHost($url, $port)
 			//first index ($split[0]) will be the host
 			$split[0] .= ":".$port;
 		}
-			
+
 		$resulturl = implode("/", $split);
 	}
 
@@ -2521,7 +2521,7 @@ function appendPortToHost($url, $port)
  */
 function getJSONobj() {
 	static $json = null;
-	if(!isset($json)) { 
+	if(!isset($json)) {
 			require_once('include/JSON.php');
 			$json = new JSON(JSON_LOOSE_TYPE);
 	}
@@ -2535,6 +2535,10 @@ if(file_exists('custom/include/custom_utils.php')){
 	include_once('custom/include/custom_utils.php');
 }
 
+//check to see if custom utils exists in Extension framework
+if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
+    include_once('custom/application/Ext/Utils/custom_utils.ext.php');
+}
 
 /**
  * Set default php.ini settings for entry points
@@ -2557,7 +2561,7 @@ function setPhpIniSettings() {
 }
 
 /**
- * like array_merge() but will handle array elements that are themselves arrays; 
+ * like array_merge() but will handle array elements that are themselves arrays;
  * PHP's version just overwrites the element with the new one.
  * @param array gimp the array whose values will be overloaded
  * @param array dom the array whose values will pwn the gimp's
@@ -2586,10 +2590,10 @@ function sugarArrayMerge($gimp, $dom) {
  */
 function returnPhpJsonStatus() {
 	$goodVersions = array('1.1.1',);
-	
+
 	if(function_exists('json_encode')) {
 		$phpInfo = getPhpInfo(8);
-		
+
 		if(!in_array($phpInfo['json']['json version'], $goodVersions)) {
 			return true; // bad version found
 		} else {
@@ -2607,13 +2611,13 @@ function returnPhpJsonStatus() {
  */
 function getTrackerSubstring($name) {
 	$strlen = function_exists('mb_strlen') ? mb_strlen($name) : strlen($name);
-	
+
 	if($strlen > 20) {
 		$chopped = function_exists('mb_substr') ? mb_substr($name, 0, 15) : substr($name, 0, 15);
 	} else {
 		$chopped = $name;
 	}
-	
-	return $chopped;	
+
+	return $chopped;
 }
 ?>

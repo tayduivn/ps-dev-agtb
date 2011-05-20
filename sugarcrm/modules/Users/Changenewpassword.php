@@ -251,7 +251,12 @@ $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_open.png'))
 //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
 $sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md.png'));
 //END SUGARCRM flav=pro && flav!=ent ONLY
-
+//BEGIN SUGARCRM flav=ult ONLY
+$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_ult.png'));
+//END SUGARCRM flav=ult ONLY
+//BEGIN SUGARCRM flav=corp ONLY
+$sugar_smarty->assign('sugar_md',getWebPath('include/images/sugar_md_corp.png'));
+//END SUGARCRM flav=corp ONLY
 $sugar_smarty->assign("MOD", $mod_strings);
 $sugar_smarty->assign("CAPTCHA", $Captcha);
 $sugar_smarty->assign("IS_ADMIN", '1');

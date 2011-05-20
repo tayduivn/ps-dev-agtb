@@ -63,6 +63,8 @@ SUGAR.expressions.setReturnTypes = function(t, vMap)
 	{
 		if(typeof(vMap[t.name]) == "undefined")
 			throw ("Unknown field: " + t.name);
+		else if(vMap[t.name] == "relate")
+			t.returnType = SUGAR.expressions.Expression.GENERIC_TYPE;
 		else
 			t.returnType = vMap[t.name];
 	}
@@ -168,6 +170,10 @@ SUGAR.expressions.saveCurrentExpression = function(target, returnType)
 	if (YAHOO.lang.isString(target))
 		target = Dom.get(target);
 	target.value = Dom.get("formulaInput").value;
+	if (typeof target.onchange == "function")
+	{
+		target.onchange();
+	}
 	return true;
 }
 
@@ -329,6 +335,7 @@ SUGAR.expressions.GridToolTip = {
 			case "formatName":
 			case "rollup":
 			case "count":
+			case "sugarField":
 				continue;
 				break;
 			}

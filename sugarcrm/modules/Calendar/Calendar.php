@@ -281,7 +281,7 @@ class Calendar
 		}
 		else if ($this->view == 'year')
 		{
-			$day = $this->date_time->get_year_begin($this->year-1);
+            $day = $this->date_time->get("-1 year")->get_day_begin();
 		}
 		else
 		{
@@ -309,7 +309,7 @@ class Calendar
 		else
 		if ($this->view == 'year')
 		{
-			$day = $this->date_time->get_year_begin($this->year+1);
+			$day = $this->date_time->get("+1 year")->get_day_begin();
 		}
 		else
 		{

@@ -228,7 +228,6 @@ require_once('modules/UpgradeWizard/uw_utils.php');
 require_once('include/utils/zip_utils.php');
 require_once('include/utils/sugar_file_utils.php');
 require_once('include/SugarObjects/SugarConfig.php');
-
 global $sugar_config;
 $isDCEInstance = false;
 $errors = array();
@@ -313,6 +312,10 @@ copy($argv[1], $install_file);
 ////	END UPGRADE PREP
 ///////////////////////////////////////////////////////////////////////////////
 
+if(function_exists('repairTableDictionaryExtFile'))
+{
+    repairTableDictionaryExtFile();
+}
 
 if(function_exists('set_upgrade_vars')){
 	set_upgrade_vars();
@@ -340,6 +343,12 @@ set_time_limit(0);
 
 ///    RELOAD NEW DEFINITIONS
 global $ACLActions, $beanList, $beanFiles;
+
+require_once('modules/Trackers/TrackerManager.php');
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+$trackerManager->unsetMonitors();
+
 include('modules/ACLActions/actiondefs.php');
 include('include/modules.php');
 
@@ -359,6 +368,13 @@ if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
+	
+//Add the cache cleaning here.
+if(function_exists('deleteCache'))
+{
+	logThis('Call deleteCache', $path);
+	@deleteCache();
+}
 
 
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
@@ -369,6 +385,7 @@ require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
+$rac->clearExternalAPICache();
 
 $repairedTables = array();
 foreach ($beanFiles as $bean => $file) {
@@ -511,9 +528,10 @@ if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 	upgradeDisplayedTabsAndSubpanels($origVersion);
 }
 
-//also add the cache cleaning here.
-if(function_exists('deleteCache')){
-	@deleteCache();
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($origVersion);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -56,19 +56,19 @@
     {capture name=extraparams assign=extraparams}parentTab={$group}{/capture}
     <span id="moduleLink_{$smarty.foreach.moduleList.index}" {if ( ( $smarty.request.parentTab == $group || (!$smarty.request.parentTab && in_array($MODULE_TAB,$modules.modules)) ) && !$groupSelected ) || ($smarty.foreach.moduleList.index == 0 && $defaultFirst)}class="selected" {assign var="groupSelected" value=true}{/if}>
     	<ul>
-	        {foreach from=$modules.modules item=module}
+	        {foreach from=$modules.modules item=module key=modulekey}
 	        <li>
 	        	{capture name=moduleTabId assign=moduleTabId}moduleTab_{$smarty.foreach.moduleList.index}_{$module}{/capture}
-	        	{sugar_link id=$moduleTabId module=$module data=$module extraparams=$extraparams}
+	        	{sugar_link id=$moduleTabId module=$modulekey data=$module extraparams=$extraparams}
 	        </li>
 	        {/foreach}
 	        {if !empty($modules.extra)}
 	        <li class="subTabMore">
 	        	<a>>></a>      
 		        <ul class="cssmenu">
-		        {foreach from=$modules.extra item=submodule}
+		        {foreach from=$modules.extra item=submodulename key=submodule}
 					<li>
-						<a href="{sugar_link module=$submodule link_only=1 extraparams=$extraparams}">{$submodule}
+						<a href="{sugar_link module=$submodule link_only=1 extraparams=$extraparams}">{$submodulename}
 						</a>
 					</li>
 		        {/foreach}

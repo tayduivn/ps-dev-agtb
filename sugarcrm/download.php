@@ -60,12 +60,12 @@ else {
             // It's a document, get the revision that really stores this file
             $focusRevision = new DocumentRevision();
             $focusRevision->retrieve($_REQUEST['id']);
-            
+
             if ( empty($focusRevision->id) ) {
                 // This wasn't a document revision id, it's probably actually a document id, we need to grab that, get the latest revision and use that
                 $focusDocument = new Document();
                 $focusDocument->retrieve($_REQUEST['id']);
-                
+
                 $focusRevision->retrieve($focusDocument->document_revision_id);
 
                 if ( !empty($focusRevision->id) ) {
@@ -73,7 +73,7 @@ else {
                 }
             }
         }
-        
+
         // See if it is a remote file, if so, send them that direction
         if ( isset($focus->doc_url) && !empty($focus->doc_url) ) {
             header('Location: '.$focus->doc_url);
@@ -164,12 +164,19 @@ else {
 
 		header("Pragma: public");
 		header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-		if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage"))
-			header("Content-type: image");
-		else {
-		    header("Content-type: application/force-download");
-            header("Content-disposition: attachment; filename=\"".$name."\";");
+		if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
+		    $mime = getimagesize($download_location);
+		    if(!empty($mime)) {
+			    header("Content-Type: {$mime['mime']}");
+		    } else {
+		        header("Content-Type: image/png");
+		    }
+		} else {
+		    header("Content-Type: application/force-download");
+            header("Content-Disposition: attachment; filename=\"".$name."\";");
 		}
+		// disable content type sniffing in MSIE
+		header("X-Content-Type-Options: nosniff");
 		header("Content-Length: " . filesize($local_location));
 		header("Expires: 0");
 		set_time_limit(0);
@@ -183,7 +190,7 @@ else {
             zend_send_file($download_location);
 		}else{
 		//END SUGARCRM flav=int ONLY
-	        echo file_get_contents($download_location);
+	        readfile($download_location);
 	    //BEGIN SUGARCRM flav=int ONLY
 		}
 		//END SUGARCRM flav=int ONLY

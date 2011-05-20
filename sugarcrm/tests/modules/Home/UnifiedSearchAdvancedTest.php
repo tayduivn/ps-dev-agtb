@@ -31,13 +31,13 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
         	unlink(sugar_cached('modules/unified_search_modules.php'));
         }
 
-        if(file_exists(sugar_cached('modules/unified_search_modules_display.php')))
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
         {
         	$this->_hasUnifiedSearchModulesDisplay = true;
-        	copy(sugar_cached('modules/unified_search_modules_display.php'), sugar_cached('modules/unified_search_modules_display.php.bak'));
-        	unlink(sugar_cached('modules/unified_search_modules_display.php'));
-        }
-
+        	copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
+        	unlink('custom/modules/unified_search_modules_display.php');
+        }        
+        
 	}
 
 	public function tearDown()
@@ -55,10 +55,10 @@ class UnifiedSearchAdvancedTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
         if($this->_hasUnifiedSearchModulesDisplay)
         {
-        	copy(sugar_cached('modules/unified_search_modules_display.php.bak'), sugar_cached('modules/unified_search_modules_display.php'));
-        	unlink(sugar_cached('modules/unified_search_modules_display.php.bak'));
+        	copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
+        	unlink('custom/modules/unified_search_modules_display.php.bak');
         } else {
-        	unlink(sugar_cached('modules/unified_search_modules_display.php'));
+        	unlink('custom/modules/unified_search_modules_display.php');
         }
 	}
 

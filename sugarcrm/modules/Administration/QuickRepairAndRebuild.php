@@ -349,18 +349,13 @@ class RepairAndClear
 	}
 
 	/**
-	 * Remove the cached unified_search_modules.php and unified_search_modules_display.php files
+	 * Remove the cached unified_search_modules.php file
 	 */
     public function clearSearchCache() {
         global $mod_strings, $sugar_config;
         if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEARSEARCH']}</h3>";
         $search_dir=sugar_cached('');
         $src_file = $search_dir . 'modules/unified_search_modules.php';
-        if(file_exists($src_file)) {
-            unlink( "$src_file" );
-        }
-
-        $src_file = $search_dir . 'modules/unified_search_modules_display.php';
         if(file_exists($src_file)) {
             unlink( "$src_file" );
         }

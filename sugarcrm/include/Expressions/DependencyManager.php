@@ -50,7 +50,10 @@ class DependencyManager {
 
 		    	$dep->addAction(ActionFactory::getNewAction('SetValue', array('target' => $field, 'value' => $def['formula'])));
 
-		    	if (isset($def['enforced']) && $def['enforced'] == true) {
+		    	if (isset($def['enforced']) && $def['enforced'] &&
+                    //Check for the string "false"
+                    (!is_string($def['enforced']) || strtolower($def['enforced']) !== "false"))
+                {
 			    	$dep->setFireOnLoad(true);
 		    		if ($includeReadOnly)
 		    		{
@@ -145,6 +148,33 @@ class DependencyManager {
 		}
 		return $deps;
 	}
+
+    static function getDependentFieldTriggerFields($fields, $fieldDefs = array())
+    {
+        $ret = array();
+        foreach($fields as $field => $def) {
+            if (!empty($fieldDefs[$field]))
+                $def = $fieldDefs[$field];
+			if ( !empty ( $def [ 'dependency' ] ) )
+    		{
+    			$triggerFields = array();
+    			// normalize the dependency definition
+    			if (is_array ( $def [ 'dependency' ] ) )
+    			{
+    				$triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ]['action'] ) ;
+				}
+                else
+                {
+                    $triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ] ) ;
+                }
+                foreach($triggerFields as $name)
+                {
+                    $ret[$name] = true;
+                }
+    		}
+		}
+        return array_keys($ret);
+    }
 
 	static function getDropDownDependencies($fields) {
 		$deps = array();
@@ -338,7 +368,6 @@ class DependencyManager {
         )) . ";\n";
     }
 
-    //BEGIN SUGARCRM flav=een ONLY
     /**
      * @static returns the javascript for the link variables of this view.
      * @param  $fields array, field_defs for this view
@@ -385,6 +414,5 @@ class DependencyManager {
         //Otherwise this link looks ok
         return true;
     }
-    //END SUGARCRM flav=een ONLY
 }
 ?>

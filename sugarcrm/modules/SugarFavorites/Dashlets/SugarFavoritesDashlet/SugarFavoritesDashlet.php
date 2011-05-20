@@ -52,7 +52,7 @@ class SugarFavoritesDashlet extends DashletGeneric
         $this->filters = array();
     }
     
-    public function process() 
+    public function process()
     {
         $this->lvs->quickViewLinks = false;
         parent::process();

@@ -1,4 +1,25 @@
 <?php
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+
 class SugarDateTime extends DateTime
 {
 	protected $formats = array(
@@ -38,7 +59,19 @@ class SugarDateTime extends DateTime
      */
     protected $_strings;
 
-	/**
+    /**
+     * For testing - if we allowed to use PHP date parse
+     * @var bool
+     */
+    public static $use_php_parser = true;
+
+    /**
+     * For testing - if we allowed to use strptime()
+     * @var bool
+     */
+    public static $use_strptime = true;
+
+    /**
 	 * Copy of DateTime::createFromFormat
 	 *
 	 * Needed to return right type of the object
@@ -54,7 +87,7 @@ class SugarDateTime extends DateTime
 	    if(empty($time) || empty($format)) {
 	        return false;
 	    }
-		if(is_callable(array("DateTime", "createFromFormat"))) {
+		if(self::$use_php_parser && is_callable(array("DateTime", "createFromFormat"))) {
 			// 5.3, hurray!
 			if(!empty($timezone)) {
 			    $d = parent::createFromFormat($format, $time, $timezone);
@@ -79,10 +112,12 @@ class SugarDateTime extends DateTime
 		if(!empty($timezone)) {
 		    $res->setTimezone($timezone);
 		}
-		if(function_exists("strptime")) {
+		if(self::$use_strptime && function_exists("strptime")) {
     		$str_format = str_replace(array_keys(TimeDate::$format_to_str), array_values(TimeDate::$format_to_str), $format);
     		// for a reason unknown to modern science, %P doesn't work in strptime
     		$str_format = str_replace("%P", "%p", $str_format);
+    		// strip spaces before am/pm as our formats don't have them
+    		$time = preg_replace('/\s+(AM|PM)/i', '\1', $time);
     		// TODO: better way to not risk locale stuff problems?
     		$data = strptime($time, $str_format);
     		if(empty($data)) {
@@ -244,7 +279,7 @@ class SugarDateTime extends DateTime
 	{
 		$newdate = clone $this;
 		$newdate->setDate($this->year, $month_index+1, 1);
-		$newdate->modify("last day of this month");
+        $newdate->setDate($newdate->year, $newdate->month,  $newdate->days_in_month);
 		$newdate->setTime(0, 0);
 		return $newdate;
 	}
@@ -464,7 +499,7 @@ class SugarDateTime extends DateTime
             }
         }
         if ( isset($regexp['positions']['a']) && !empty($dateparts[$regexp['positions']['a']])) {
-            $ampm = $dateparts[$regexp['positions']['a']];
+            $ampm = trim($dateparts[$regexp['positions']['a']]);
             if($ampm == 'pm') {
                 if($data["tm_hour"] != 12) $data["tm_hour"] += 12;
             } else if($ampm == 'am') {
@@ -478,7 +513,7 @@ class SugarDateTime extends DateTime
         }
 
         if ( isset($regexp['positions']['A']) && !empty($dateparts[$regexp['positions']['A']])) {
-            $ampm = $dateparts[$regexp['positions']['A']];
+            $ampm = trim($dateparts[$regexp['positions']['A']]);
             if($ampm == 'PM') {
                 if($data["tm_hour"] != 12) $data["tm_hour"] += 12;
             } else if($ampm == 'AM') {
@@ -525,7 +560,12 @@ class SugarDateTime extends DateTime
      */
     public function modify($modify)
     {
-        parent::modify($modify);
+        if(PHP_VERSION_ID >= 50300 || $modify != 'first day of next month') {
+            parent::modify($modify);
+        } else {
+            /* PHP 5.2 does not understand 'first day of' and defaults need it */
+            $this->setDate($this->year, $this->month+1, 1);
+        }
         return $this;
     }
 

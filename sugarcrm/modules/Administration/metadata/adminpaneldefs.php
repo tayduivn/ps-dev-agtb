@@ -31,6 +31,10 @@ $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS
 //BEGIN SUGARCRM flav!=sales ONLY
 $admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
 //END SUGARCRM flav!=sales ONLY
+require_once 'include/SugarOAuthServer.php';
+if(SugarOAuthServer::enabled()) {
+    $admin_option_defs['Administration']['oauth']= array('Password','LBL_OAUTH_TITLE','LBL_OAUTH','./index.php?module=OAuthKeys&action=index');
+}
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
 
 //BEGIN SUGARCRM flav=dce ONLY
@@ -260,7 +264,7 @@ $admin_group_header[]= array('LBL_CONTRACT_TITLE','',false,$admin_option_defs, '
 //END SUGARCRM flav!=dce ONLY
 
 if(file_exists('custom/modules/Administration/Ext/Administration/administration.ext.php')){
-	require_once('custom/modules/Administration/Ext/Administration/administration.ext.php');
+	include('custom/modules/Administration/Ext/Administration/administration.ext.php');
 }
 
 //For users with MLA access we need to find which entries need to be shown.

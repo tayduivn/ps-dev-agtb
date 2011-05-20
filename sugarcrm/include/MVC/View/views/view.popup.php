@@ -47,7 +47,7 @@ class ViewPopup extends SugarView{
 		elseif(file_exists('custom/modules/' . $this->module . '/metadata/popupdefs.php'))
 	    	require_once('custom/modules/' . $this->module . '/metadata/popupdefs.php');
 	    elseif(file_exists('modules/' . $this->module . '/metadata/popupdefs.php'))
-	    	require_once('modules/' . $this->module . '/metadata/popupdefs.php');	
+	    	require_once('modules/' . $this->module . '/metadata/popupdefs.php');
 	    
 	    if(!empty($popupMeta) && !empty($popupMeta['listviewdefs'])){
 	    	if(is_array($popupMeta['listviewdefs'])){
@@ -65,9 +65,7 @@ class ViewPopup extends SugarView{
 		}
 		
 		//check for searchdefs as well
-		if(empty($searchdefs) && file_exists('custom/modules/'.$this->module.'/metadata/searchdefs.php')){
-			require_once('custom/modules/'.$this->module.'/metadata/searchdefs.php');
-		}elseif(!empty($popupMeta) && !empty($popupMeta['searchdefs'])){
+		if(!empty($popupMeta) && !empty($popupMeta['searchdefs'])){
 	    	if(is_array($popupMeta['searchdefs'])){
 	    		//if we have an array, then we are not going to include a file, but rather the 
 	    		//searchdefs will be defined directly in the popupdefs file
@@ -76,7 +74,9 @@ class ViewPopup extends SugarView{
 	    		//otherwise include the file
 	    		require_once($popupMeta['searchdefs']);
 	    	}
-	    }else if(empty($searchdefs) && file_exists('modules/'.$this->module.'/metadata/searchdefs.php')){
+	    }else if(empty($searchdefs) && file_exists('custom/modules/'.$this->module.'/metadata/searchdefs.php')){
+			require_once('custom/modules/'.$this->module.'/metadata/searchdefs.php');
+		}else if(empty($searchdefs) && file_exists('modules/'.$this->module.'/metadata/searchdefs.php')){
 	    	require_once('modules/'.$this->module.'/metadata/searchdefs.php');
 		}
 		

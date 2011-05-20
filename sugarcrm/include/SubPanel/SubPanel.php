@@ -198,7 +198,7 @@ class SubPanel
 		//function returns the query that was used to populate sub-panel data.
 
 		$query=$ListView->process_dynamic_listview($this->parent_module, $this->parent_bean,$this->subpanel_defs);
-		$this->subpanel_query=$query; 
+        $this->subpanel_query=$query;
 		$ob_contents = ob_get_contents();
 		ob_end_clean();
 		return $ob_contents;
@@ -293,10 +293,15 @@ class SubPanel
   		
   		//bug# 40171: "Custom subpanels not working as expected" 
   		//each custom subpanel needs to have a unique custom def file
-  		$filename = $panel->parent_bean->object_name . $panel->_instance_properties['get_subpanel_data'] ;
-  		$oldName = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
-  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName.php"))
-  			unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName.php");
+  		$filename = $panel->parent_bean->object_name . "_subpanel_" . $panel->name; //bug 42262 (filename with $panel->_instance_properties['get_subpanel_data'] can create problem if had word "function" in it)
+  		$oldName1 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['module'] . $panel->_instance_properties['subpanel_name'] ;
+  		$oldName2 = '_override' . $panel->parent_bean->object_name .$panel->_instance_properties['get_subpanel_data'] ;
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php")){ 	
+  		  unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName1.php");
+  		}
+  		if (file_exists('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php")){ 
+         unlink('custom/Extension/modules/'. $panel->parent_bean->module_dir . "/Ext/Layoutdefs/$oldName2.php");
+  		}
   		$extname = '_override'.$filename;
   		//end of bug# 40171
   		
@@ -304,7 +309,9 @@ class SubPanel
   		write_array_to_file( $name, $override,$path.'/' . $filename .'.php');
   		
   		//save the override for the layoutdef
-  		$name = "layout_defs['".  $panel->parent_bean->module_dir. "']['subpanel_setup']['" .strtolower($panel->name). "']"; // tyoung 10.12.07 pushed panel->name to lowercase to match case in subpaneldefs.php files - gave error on bad index 'module' as this override key didn't match the key in the subpaneldefs
+        //tyoung 10.12.07 pushed panel->name to lowercase to match case in subpaneldefs.php files -
+        //gave error on bad index 'module' as this override key didn't match the key in the subpaneldefs
+  		$name = "layout_defs['".  $panel->parent_bean->module_dir. "']['subpanel_setup']['" .strtolower($panel->name). "']";
 //  	$GLOBALS['log']->debug('SubPanel.php->saveSubPanelDefOverride(): '.$name);
   		$newValue = override_value_to_string($name, 'override_subpanel_name', $filename);
   		mkdir_recursive('custom/Extension/modules/'. $panel->parent_bean->module_dir . '/Ext/Layoutdefs', true);

@@ -414,7 +414,7 @@ $mod_strings = array (
 	//BEGIN SUGARCRM flav!=sales ONLY
 	If you experience persistent problems with automatic validation, please check your Proxy configuration in the <a href="index.php?module=Configurator&action=EditView">System Settings</a> admin panel.
 	//END SUGARCRM flav!=sales ONLY
-	If your system environment prohibits your system from communicating to the license validation server through the internet, you should proceed with the <a href="#" onclick="toggleDisplay(\'mainbody\');toggleDisplay(\'manualbody\');">Manual Validation</a> steps. ',
+	If your system environment prohibits your system from communicating to the license validation server through the internet, you should proceed with the <a href="javascript:void(0)" onclick="toggleDisplay(\'mainbody\');toggleDisplay(\'manualbody\');">Manual Validation</a> steps. ',
     'LBL_MANUAL_VALIDATION1'=> 'Step 1: Generate a license key information file by clicking the following button. ',
     'LBL_MANUAL_VALIDATION2'=> 'Then save the file (sugarkey.lic) on your local file system.',
     'LBL_MANUAL_VALIDATION3'=> 'Step 2: Transfer the sugarkey.lic file to a system where you can access the internet with a web browser.   <br<br>Go to <a href="http://updates.sugarcrm.com/license">http://updates.sugarcrm.com/license</a>  and submit the sugarkey.lic file.  <br><br>The license validation web site will perform the validation immediately and return you the validation key file (sugarvalidationkey.lic) if the validation is successful.  Your browser should prompt you to save the file.  ',
@@ -437,7 +437,9 @@ $mod_strings = array (
     //ModuleInstaller
     'LBL_MI_REBUILDING' => 'Rebuilding',
     'LBL_MI_SECTION' => 'Section...',
-    'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
+    'LBL_MI_IN_EXT' => 'Installing %s extension',
+    'LBL_MI_UN_EXT' => 'Uninstalling %s extension',
+	'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
     'LBL_MI_IN_CUSTOMFIELD' => 'Installing Custom Fields...',
     'LBL_MI_COMPLETE' => 'Complete',
     'LBL_MI_UN_BEAN' => 'Uninstalling Bean :',
@@ -463,7 +465,10 @@ $mod_strings = array (
     'LBL_MI_REPAIR_INDICES' => 'Repairing indexes',
 	'LBL_MI_IN_CONNECTORS' => 'Installing Connectors',
 	'LBL_MI_UN_CONNECTORS' => 'UnInstalling Connectors',
-
+    'LBL_MI_IN_HOOKS' => 'Installing Logic Hooks',
+    'LBL_MI_UN_HOOKS' => 'Uninstalling Logic Hooks',
+    'LBL_MI_IN_SCHEDULEDTASKS' => 'Installing Scheduled Tasks',
+    'LBL_MI_UN_SCHEDULEDTASKS' => 'Uninstalling Scheduled Tasks',
     'LBL_ML_ACTION' => 'Action',
     'LBL_ML_CANCEL'             => 'Cancel',
     'LBL_ML_COMMIT'=>'Commit',
@@ -751,8 +756,8 @@ $mod_strings = array (
     'LBL_TO'    => ' to ',
     'LBL_TRACKER_SETTINGS' => 'Tracker',
 	'LBL_TRACKER_SETTINGS_DESC' => 'Select what system and user data is tracked',
-    'LBL_SUGARFEED_SETTINGS' => 'Sugar Feed',
-	'LBL_SUGARFEED_SETTINGS_DESC' => 'Enable User Feed and select modules to post updates ',
+    'LBL_SUGARFEED_SETTINGS' => 'Activity Streams',
+	'LBL_SUGARFEED_SETTINGS_DESC' => 'Enable the user feed and module feeds for the My Activity Stream dashlet.',
     'LBL_UPDATE_CHECK_AUTO'=>'Automatically',
     'LBL_UPDATE_CHECK_MANUAL'=>'Manually',
     'LBL_UPDATE_CHECK_TYPE'=>'<B>Automatically Check For Updates</B> - If checked, the system will periodically check to see if updated versions of the application are available.',
@@ -1143,5 +1148,9 @@ $mod_strings = array (
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
-
-	);
+   'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
+   'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
+// OAuth
+    'LBL_OAUTH_TITLE' => "OAuth Keys",
+    'LBL_OAUTH' => "OAuth key management",
+);

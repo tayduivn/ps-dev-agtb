@@ -135,6 +135,7 @@ $app_list_strings = array (
     'DCEActions' => 'Actions',
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
+    'OAuthKeys' => 'OAuth Consumer Keys',
         ),
   'moduleListSingular' =>
   array (
@@ -2247,6 +2248,7 @@ $app_strings = array (
     'LBL_CLOSE_ACTIVITY_HEADER' => "Confirm",
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
+    'LBL_INVALID_FILE_EXTENSION' => 'Invalid File Extension',
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',
@@ -2304,8 +2306,10 @@ $app_strings = array (
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
     'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
+    'ERR_EXTERNAL_API_UPLOAD_FAIL' => 'An error occurred while uploading.  Please ensure the file you are uploading is not empty.',
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
+    'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
@@ -2357,6 +2361,7 @@ $app_strings = array (
     'LBL_CASE'=>'Case',
     'LBL_CASES'=>'Cases',
     'LBL_CHANGE_BUTTON_KEY' => 'G',
+    'LBL_CHANGE_PASSWORD' => 'Change password',
     'LBL_CHANGE_BUTTON_LABEL' => 'Change',
     'LBL_CHANGE_BUTTON_TITLE' => 'Change [Alt+G]',
     'LBL_CHARSET' => 'UTF-8',
@@ -2578,6 +2583,7 @@ $app_strings = array (
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search [Alt+Q]',
     'LBL_SEARCH' => 'Search',
+    'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
     'LBL_SELECT_BUTTON_KEY' => 'T',
@@ -2699,9 +2705,8 @@ $app_strings = array (
     'NTC_DATE_FORMAT' => '(yyyy-mm-dd)',
     'NTC_DATE_TIME_FORMAT' => '(yyyy-mm-dd 24:00)',
     'NTC_DELETE_CONFIRMATION_MULTIPLE' => 'Are you sure you want to delete selected record(s)?',
-    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record or system settings. Are you sure you want to delete it?',
-    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records or system settings. Are you sure you want to delete them?\n",
-
+    'NTC_TEMPLATE_IS_USED' => 'The template is used in at least one email marketing record. Are you sure you want to delete it?',
+    'NTC_TEMPLATES_IS_USED' => "The following templates are used in email marketing records. Are you sure you want to delete them?\n",
     'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
     'NTC_DELETE_CONFIRMATION_NUM' => 'Are you sure you want to delete the ',
     'NTC_UPDATE_CONFIRMATION_NUM' => 'Are you sure you want to update the ',
@@ -2770,9 +2775,6 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
     'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
 	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
-	'ERROR_USER_PREFS' => "WARNING: Not all of your data could be saved because your data limit has been reached.",
-	'ERROR_USER_PREFS_DASH' => "WARNING: The Sugar dashlet could not be added because your data limit has been reached.",
-	'ERROR_USER_PREFS_TAB' => "WARNING: The Home Page could not be added because your data limit has been reached.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -3034,8 +3036,8 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
-    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh Interval',
-    
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
+
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',
     'LBL_ENTER_YEAR' => 'Enter Year',
@@ -3060,12 +3062,15 @@ $app_strings = array (
     'LBL_SHARE_LINKABLE' => 'Linkable',
     'LBL_SHARE_PUBLIC' => 'Public',
 
-    
+
     // Web Services REST RSS
     'LBL_RSS_FEED' => 'RSS Feed',
     'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
     'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
+
+    //External API Error Messages
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
@@ -3814,4 +3819,8 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'password' => 'Username/Password',
     'oauth' => 'OAuth',
     );
-  ?>
+	$app_list_strings['token_status'] = array(
+        1 => 'Request',
+        2 => 'Access',
+        3 => 'Invalid',
+    );

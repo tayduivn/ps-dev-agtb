@@ -104,6 +104,9 @@ $mod_strings = array (
     'LBL_IMAGE_HEIGHT' => 'Height',
     'LBL_IMAGE_BORDER' => 'Border',
 	'COLUMN_TITLE_VALIDATE_US_FORMAT' => 'U.S. Format',
+	'LBL_DEPENDENT'=>'Dependent',
+	'LBL_VISIBLE_IF'=>'Visible If',
+	'LBL_ENFORCED'=>'Enforced',
 
 );
 

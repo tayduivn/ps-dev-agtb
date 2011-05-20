@@ -107,7 +107,7 @@
 				<th scope='col' width='{$params.width}%' nowrap="nowrap">
 					<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
 	                {if $params.sortable|default:true}              
-		                <a href='#' onclick='location.href="{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}"; return sListView.save_checks(0, "{$moduleString}");' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
+		                <a href='javascript:void(0)' onclick='location.href="{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}"; return sListView.save_checks(0, "{$moduleString}");' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
 								{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
@@ -142,7 +142,7 @@
 			<tr height='20' class='{$_rowColor}S1'>
 				{if $prerow}
 				<td width='1%' nowrap='nowrap'>
-						<input onclick='sListView.check_item(this, document.MassUpdate)' type='checkbox' class='checkbox' name='mass[]' value='{$rowData[$params.id]|default:$rowData.ID}'>
+						<input onclick='sListView.check_item(this, document.MassUpdate)' type='checkbox' class='checkbox' name='mass[]' value='{$rowData.ID}'>
 				</td>
 				<td width='1%' nowrap='nowrap'>
 						{$pageData.additionalDetails.$id}
@@ -153,7 +153,7 @@
 					<td scope='row' align='{$params.align|default:'left'}' valign=top class='{$_rowColor}S1' bgcolor='{$_bgColor}'>
 						{if $params.link && !$params.customCode}
 							
-							<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='#' onclick="send_back('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}','{$rowData[$params.id]|default:$rowData.ID}');">{$rowData.$col}</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
+							<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='javascript:void(0)' onclick="send_back('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}','{$rowData[$params.id]|default:$rowData.ID}');">{$rowData.$col}</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
 	
 						{elseif $params.customCode} 
 							{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
@@ -174,7 +174,7 @@
 								/>
 	                    {* //BEGIN SUGARCRM flav=pro ONLY*}
                         {elseif $params.type == 'teamset'}
-                            <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='#' onclick="send_back('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}','{$rowData[$params.id]|default:$rowData.ID}');">
+                            <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='javascript:void(0)' onclick="send_back('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}','{$rowData[$params.id]|default:$rowData.ID}');">
                             {if $rowData.TEAM_COUNT > 1}
                                 <span id='div_{$rowData.ID}_teams'>
                                 {$rowData.$col}<a href="javascript:toggleMore('div_{$rowData.ID}_teams','img_{$rowData.ID}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$rowData.TEAM_SET_ID}&team_id={$rowData.TEAM_ID}');" style='text-decoration:none;' onMouseOver="javascript:toggleMore('div_{$rowData.ID}_teams','img_{$rowData.ID}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$rowData.TEAM_SET_ID}&team_id={$rowData.TEAM_ID}');"  onFocus="javascript:toggleMore('div_{$rowData.ID}_teams','img_{$rowData.ID}_teams', 'Teams', 'DisplayInlineTeams', 'team_set_id={$rowData.TEAM_SET_ID}');" id='more_feather'>+</a>

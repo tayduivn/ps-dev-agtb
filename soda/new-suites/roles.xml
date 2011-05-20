@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/roles/module_lib/setup-roles.xml" />
-	<script fileset="tests/modules/roles" />
-	<script file="tests/modules/roles/module_lib/cleanup-roles.xml" />
-</soda>
-

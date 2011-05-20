@@ -1,2 +1,0 @@
-mail_name,mail_imapprotocol,mail_imapserver,mail_imapport,mail_imapssl,mail_imapuser,mail_imappass
-EmailInComing,IMAP,imap.gmail.com,993,on,sugarqa3@gmail.com,sugarcrm1

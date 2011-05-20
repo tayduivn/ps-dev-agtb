@@ -67,7 +67,8 @@ if (!isset($_REQUEST['html'])) {
 	$GLOBALS['log']->debug("using file modules/WorkFlowActionShells/CreateStep1.html");
 }
 else {
-	$GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
+    $_REQUEST['html'] = preg_replace("/[^a-zA-Z0-9_]/", "", $_REQUEST['html']);
+    $GLOBALS['log']->debug("_REQUEST['html'] is ".$_REQUEST['html']);
 	$form =new XTemplate ('modules/WorkFlowActionShells/'.$_REQUEST['html'].'.html');
 	$GLOBALS['log']->debug("using file modules/WorkFlowActionShells/".$_REQUEST['html'].'.html');
 }

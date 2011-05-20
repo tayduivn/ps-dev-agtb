@@ -73,7 +73,10 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 
             //bug: 42398 - have to unset the id from the required_fields since it is not populated in the $_POST
             unset($lead->required_fields['id']);
-            $lead = $leadForm->handleSave($prefix, false, true, false, $lead);
+            unset($lead->required_fields['team_name']);
+            unset($lead->required_fields['team_count']);
+            // checkRequired needs a major overhaul before it works for web to lead forms.
+            $lead = $leadForm->handleSave($prefix, false, false, false, $lead);
             
 			if(!empty($lead)){
 				
@@ -128,7 +131,9 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 					$first_char = '?';
 				}
 				$first_iteration = true;
-				foreach($_REQUEST as $param => $value) {
+				$get_and_post = array_merge($_GET, $_POST);
+				foreach($get_and_post as $param => $value) {
+
 					if($param == 'redirect_url' || $param == 'submit')
 						continue;
 					
@@ -139,7 +144,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 					else{
 						$query_string .= "&";
 					}
-					$query_string .= "{$param}={$value}";
+					$query_string .= "{$param}=".urlencode($value);
 				}
 				if(empty($lead)) {
 					if($first_iteration){
@@ -199,4 +204,5 @@ if (!empty($_POST['redirect'])) {
     	die();
     }
 }
+echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
 ?>

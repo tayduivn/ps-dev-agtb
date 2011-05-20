@@ -234,6 +234,71 @@ class VardefManager{
         }
 	}
 
+    /**
+     * @static
+     * @param  $module
+     * @param  $object
+     * @return array|bool  returns a list of all fields in the module of type 'link'.
+     */
+    protected static function getLinkFieldsForModule($module, $object)
+    {
+        global $dictionary;
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if($object == 'aCase') {
+            $object = 'Case';
+        }
+        //END SUGARCRM flav!=sales ONLY
+        if (empty($dictionary[$object]))
+            self::refreshVardefs($module, $object);
+        if (empty($dictionary[$object]))
+        {
+            $GLOBALS['log']->debug("Failed to load vardefs for $module:$object in linkFieldsForModule<br/>");
+            return false;
+        }
+
+        //Cache link fields for this call in a static variable
+        if (!isset(self::$linkFields))
+            self::$linkFields = array();
+
+        if (isset(self::$linkFields[$object]))
+            return self::$linkFields[$object];
+
+        $vardef = $dictionary[$object];
+        $links = array();
+        foreach($vardef['fields'] as $name => $def)
+        {
+            //Look through all link fields for related modules that have calculated fields that use that relationship
+            if(!empty($def['type']) && $def['type'] == 'link' && !empty($def['relationship']))
+            {
+                $links[$name] = $def;
+            }
+        }
+        return $links;
+    }
+
+
+    public static function getLinkFieldForRelationship($module, $object, $relName)
+    {
+        $relLinkFields = self::getLinkFieldsForModule($module, $object);
+        $matches = array();
+        if (!empty($relLinkFields))
+        {
+            foreach($relLinkFields as $rfName => $rfDef)
+            {
+                if ($rfDef['relationship'] == $relName)
+                {
+                    $matches[] = $rfDef;
+                }
+            }
+        }
+        if (empty($matches))
+            return false;
+        if (sizeof($matches) == 1)
+            return $matches[0];
+        //For relationships where both sides are the same module, more than one link will be returned
+        return $matches;
+    }
+
     //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @static
@@ -298,39 +363,7 @@ class VardefManager{
         $dictionary[$object]['related_calc_fields'] = array_keys($linksWithCFs);
     }
 
-    /**
-     * @static
-     * @param  $module
-     * @param  $object
-     * @return array|bool  returns a list of all fields in the module of type 'link'.
-     */
-    protected static function getLinkFieldsForModule($module, $object)
-    {
-        global $dictionary;
-        if (empty($dictionary[$object]))
-            self::refreshVardefs($module, $object);
-        if (empty($dictionary[$object]))
-            return false;
 
-        //Cache link fields for this call in a static variable
-        if (!isset(self::$linkFields))
-            self::$linkFields = array();
-
-        if (isset(self::$linkFields[$object]))
-            return self::$linkFields[$object];
-
-        $vardef = $dictionary[$object];
-        $links = array();
-        foreach($vardef['fields'] as $name => $def)
-        {
-            //Look through all link fields for related modules that have calculated fields that use that relationship
-            if(!empty($def['type']) && $def['type'] == 'link' && !empty($def['relationship']))
-            {
-                $links[$name] = $def;
-            }
-        }
-        return $links;
-    }
 
     /**
      * @static
@@ -363,23 +396,6 @@ class VardefManager{
         }
         return $hasFieldsWithLink;
     }
-
-    public static function getLinkFieldForRelationship($module, $object, $relName)
-    {
-        $relLinkFields = self::getLinkFieldsForModule($module, $object);
-        if (!empty($relLinkFields))
-        {
-            foreach($relLinkFields as $rfName => $rfDef)
-            {
-                if ($rfDef['relationship'] == $relName)
-                {
-                    return $rfDef;
-                }
-            }
-        }
-        return false;
-    }
-
     //END SUGARCRM flav=pro ONLY
 	
 	/**

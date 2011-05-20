@@ -209,3 +209,11 @@ YAHOO.util.Event.onDOMReady(function()
     }
 	////////////////////////////////////////////////////////////////////////////////////////
 });
+
+
+SUGAR.themes = {
+    setModuleTabs : function(html)
+    {
+        //TODO: In the Sugar5 theme, we need to be updating the last viewed here
+    }
+};

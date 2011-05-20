@@ -65,7 +65,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Date in which call is schedule to (or did) start',
     'importable' => 'required',
 	'required' => true,
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
 
@@ -76,7 +76,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date is which call is scheduled to (or did) end',
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
 
@@ -173,6 +173,15 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => '20',
     'source'=>'non-db',
   ),
+  //bug 39559 
+  'set_accept_links' => array (
+    'name' => 'accept_status',
+    'vname' => 'LBL_SUBJECT',
+    'dbType' => 'varchar',
+    'type' => 'varchar',
+    'len' => '20',
+    'source'=>'non-db',
+  ),
   'contact_name' =>
   array (
     'name' => 'contact_name',
@@ -192,15 +201,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => 36,
     'importable' => 'false',
     'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
-  ),
-  'account' =>
-  array (
-  	'name' => 'account',
-    'type' => 'link',
-    'relationship' => 'account_calls',
-		'link_type'=>'one',
-    'source'=>'non-db',
-		'vname'=>'LBL_OLD_ACCOUNT_LINK',
   ),
   'opportunity' =>
   array (

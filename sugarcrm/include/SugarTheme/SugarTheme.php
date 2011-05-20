@@ -637,7 +637,6 @@ EOHTML;
             else
                 return $this->_imageCache[$imageName];
         }
-
         $imagePath = '';
         if (($filename = $this->_getImageFileName('custom/'.$this->getImagePath().'/'.$imageName)) != '')
             $imagePath = $filename;
@@ -842,7 +841,7 @@ EOHTML;
         foreach ( $pathsToSearch as $path )
         {
             if (!sugar_is_dir($path)) $path = "custom/$path";
-            if (sugar_is_dir($path) && $dir = opendir($path)) {
+            if (sugar_is_dir($path) && is_readable($path) && $dir = opendir($path)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".."
                             || $file == "."
@@ -1019,6 +1018,7 @@ class SugarThemeRegistry
         // set some of the expected globals
         $GLOBALS['barChartColors'] = self::current()->barChartColors;
         $GLOBALS['pieChartColors'] = self::current()->pieChartColors;
+        return true;
     }
 
     /**
@@ -1038,7 +1038,7 @@ class SugarThemeRegistry
         }
 
         foreach ($dirs as $dirPath ) {
-            if (sugar_is_dir('./'.$dirPath) && $dir = opendir('./'.$dirPath)) {
+            if (sugar_is_dir('./'.$dirPath) && is_readable('./'.$dirPath) && $dir = opendir('./'.$dirPath)) {
                 while (($file = readdir($dir)) !== false) {
                     if ($file == ".."
                             || $file == "."
@@ -1070,7 +1070,6 @@ class SugarThemeRegistry
                 closedir($dir);
             }
         }
-
         // default to setting the default theme as the current theme
         if ( !isset($GLOBALS['sugar_config']['default_theme']) || !self::set($GLOBALS['sugar_config']['default_theme']) ) {
             if ( count(self::availableThemes()) == 0 )

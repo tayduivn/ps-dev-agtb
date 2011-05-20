@@ -47,8 +47,8 @@ class TimeDate
      * @var array
      */
     protected static $format_to_regexp = array(
-    	'a' => '[ap]m',
-    	'A' => '[AP]M',
+    	'a' => '[ ]*[ap]m',
+    	'A' => '[ ]*[AP]M',
     	'd' => '[0-9]{1,2}',
     	'j' => '[0-9]{1,2}',
     	'h' => '[0-9]{1,2}',
@@ -358,8 +358,19 @@ class TimeDate
      * @param [User] $user user object, current user if not specified
      * @return string
      */
-    public function get_date_time_format(User $user = null)
+    public function get_date_time_format($user = null)
     {
+        // BC fix - had (bool, user) signature before
+        if(!($user instanceof User)) {
+            if(func_num_args() > 1) {
+                $user = func_get_arg(1);
+                if(!($user instanceof User)) {
+                    $user = null;
+                }
+            } else {
+                $user = null;
+            }
+        }
         return $this->merge_date_time($this->get_date_format($user), $this->get_time_format($user));
     }
 
@@ -1032,12 +1043,12 @@ class TimeDate
         } else {
             $nowGMT = $this->now;
         }
-        return $this->asDbDate($nowGMT);
+        return $this->asDbDate($nowGMT, true);
     }
 
     /**
      * Get 'now' DateTime object
-     * @param $userTz return in user timezone?
+     * @param bool $userTz return in user timezone?
      * @return SugarDateTime
      */
     public function getNow($userTz = false)
@@ -1051,6 +1062,17 @@ class TimeDate
             return $this->tzUser($now);
         }
         return $now;
+    }
+
+    /**
+     * Set 'now' time
+     * For testability - predictable time value
+     * @param DateTime $now
+     */
+    public function setNow($now)
+    {
+        $this->now = $now;
+        return $this;
     }
 
     /**
@@ -1202,14 +1224,27 @@ class TimeDate
 	    if(!is_numeric($userOffset)) {
 		    return '';
 	    }
-	    $defaultZones= array('America/New_York', 'America/Los_Angeles','America/Chicago', 'America/Denver',
-	    	'America/Anchorage', 'America/Phoenix', 'Europe/Amsterdam','Europe/Athens','Europe/London',
-	    	'Australia/Sydney', 'Australia/Perth');
+	    $defaultZones= array(
+	        'America/Anchorage', 'America/Los_Angeles', 'America/Phoenix', 'America/Chicago',
+	    	'America/New_York', 'America/Argentina/Buenos_Aires', 'America/Montevideo',
+	        'Europe/London', 'Europe/Amsterdam', 'Europe/Athens', 'Europe/Moscow',
+	        'Asia/Tbilisi', 'Asia/Omsk', 'Asia/Jakarta', 'Asia/Hong_Kong',
+	        'Asia/Tokyo', 'Pacific/Guam', 'Australia/Sydney', 'Australia/Perth',
+	    );
 
 	    $now = new DateTime();
+	    $tzlist = timezone_identifiers_list();
 	    if($userOffset == 0) {
-    	     array_unshift($defaultZones, date('e'));
     	     $gmtOffset = date('Z');
+	         $nowtz = date('e');
+	         if(in_array($nowtz, $tzlist)) {
+    	         array_unshift($defaultZones, $nowtz);
+	         } else {
+	             $nowtz = timezone_name_from_abbr(date('T'), $gmtOffset, date('I'));
+	             if(in_array($nowtz, $tzlist)) {
+	                 array_unshift($defaultZones, $nowtz);
+	             }
+	         }
     	} else {
     	    $gmtOffset = $userOffset * 60;
     	}
@@ -1220,7 +1255,7 @@ class TimeDate
 	        }
 	    }
     	// try all zones
-	    foreach(timezone_identifiers_list() as $zoneName) {
+	    foreach($tzlist as $zoneName) {
 	        $tz = new DateTimeZone($zoneName);
 	        if($tz->getOffset($now) == $gmtOffset) {
                 return $tz->getName();
@@ -1440,6 +1475,92 @@ class TimeDate
         return array('format' => $newFormat, 'positions' => $regPositions);
     }
 
+    // format - date expression ('' means now) for start and end of the range
+    protected $date_expressions = array(
+        'yesterday' =>    array("-1 day", "-1 day"),
+        'today' =>        array("", ""),
+        'tomorrow' =>     array("+1 day", "+1 day"),
+        'last_7_days' =>  array("-6 days", ""),
+        'next_7_days' =>  array("", "+6 days"),
+        'last_30_days' => array("-29 days", ""),
+        'next_30_days' => array("", "+29 days"),
+    );
+
+    /**
+     * Parse date template
+     * @param string $template Date expression
+     * @param bool $daystart Do we want start or end of the day?
+     * @param User $user
+     */
+    protected function parseFromTemplate($template, $daystart, User $user = null)
+	{
+        $now = $this->tzUser($this->getNow(), $user);
+        if(!empty($template[0])) {
+            $now->modify($template[0]);
+        }
+        if($daystart) {
+            return $now->get_day_begin();
+        } else {
+            return $now->get_day_end();
+        }
+	}
+
+	/**
+	 * Get month-long range mdiff months from now
+	 */
+	protected function diffMon($mdiff, User $user)
+	{
+        $now = $this->tzUser($this->getNow(), $user);
+	    $now->setDate($now->year, $now->month+$mdiff, 1);
+	    $start = $now->get_day_begin();
+	    $end = $now->setDate($now->year, $now->month, $now->days_in_month)->setTime(23, 59, 59);
+	    return array($start, $end);
+	}
+
+	/**
+	 * Get year-long range ydiff years from now
+	 */
+	protected function diffYear($ydiff, User $user)
+	{
+        $now = $this->tzUser($this->getNow(), $user);
+	    $now->setDate($now->year+$ydiff, 1, 1);
+	    $start = $now->get_day_begin();
+	    $end = $now->setDate($now->year, 12, 31)->setTime(23, 59, 59);
+	    return array($start, $end);
+	}
+
+	/**
+	 * Parse date range expression
+	 * Returns beginning and end of the range as a date
+	 * @param string $range
+	 * @param User $user
+	 * @return array
+	 */
+	public function parseDateRange($range, User $user = null)
+	{
+        if(isset($this->date_expressions[$range])) {
+            return array($this->parseFromTemplate($this->date_expressions[$range][0], true, $user),
+                $this->parseFromTemplate($this->date_expressions[$range][1], false, $user)
+            );
+        }
+	    switch($range) {
+			case 'next_month':
+			    return $this->diffMon(1,  $user);
+		    case 'last_month':
+			    return $this->diffMon(-1,  $user);
+		    case 'this_month':
+			    return $this->diffMon(0,  $user);
+	        case 'last_year':
+			    return $this->diffYear(-1,  $user);
+	        case 'this_year':
+			    return $this->diffYear(0,  $user);
+	        case 'next_year':
+			    return $this->diffYear(1,  $user);
+	        default:
+			    return null;
+	    }
+	}
+
     /********************* OLD functions, should not be used publicly anymore ****************/
     /**
      * Merge time without am/pm with am/pm string
@@ -1585,14 +1706,14 @@ class TimeDate
 	 */
     public function getDSTRange($year, $zone)
     {
-        $year = SugarDateTime::createFromFormat("Y", $year, self::$gmtTimezone);
-        $year_end = clone $year;
+        $year_date = SugarDateTime::createFromFormat("Y", $year, self::$gmtTimezone);
+        $year_end = clone $year_date;
         $year_end->setDate((int) $year, 12, 31);
         $year_end->setTime(23, 59, 59);
-        $year->setDate((int) $year, 1, 1);
-        $year->setTime(0, 0, 0);
+        $year_date->setDate((int) $year, 1, 1);
+        $year_date->setTime(0, 0, 0);
         $tz = $this->_getUserTZ();
-        $transitions = $tz->getTransitions($year->getTimestamp(), $year_end->getTimestamp());
+        $transitions = $tz->getTransitions($year_date->getTimestamp(), $year_end->getTimestamp());
         $idx = 0;
         while (! $transitions[$idx]["isdst"])
             $idx ++;

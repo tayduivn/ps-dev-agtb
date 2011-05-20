@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/users/module_lib/setup-users.xml" />
-	<script fileset="tests/modules/users" />
-	<script file="tests/modules/users/module_lib/cleanup-users.xml" />
-</soda>
-

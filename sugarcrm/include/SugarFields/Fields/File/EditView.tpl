@@ -90,7 +90,6 @@ type="file" title='{{$vardef.help}}' size="{{$displayParams.size|default:30}}"
 {{else}}
     maxlength="255"
 {{/if}}
-onchange="document.getElementById('{{$idName}}').value='something'"
 {{$displayParams.field}}>
 
 
@@ -204,6 +203,7 @@ YAHOO.util.Event.onDOMReady(function()
 if(document.getElementById("{{$displayParams.onchangeSetFileNameTo}}"))
 {ldelim}
 YAHOO.util.Event.addListener('{{$idName}}_file', 'change', {{$idName}}_setFileName);
+YAHOO.util.Event.addListener(['{{$idName}}_file', '{{$vardef.docType}}'], 'change', SUGAR.field.file.checkFileExtension,{ldelim} fileEl: '{{$idName}}_file', targEl: '{{$displayParams.onchangeSetFileNameTo}}'{rdelim});
 {rdelim}
 {rdelim});
 </script>

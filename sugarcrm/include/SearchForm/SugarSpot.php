@@ -56,7 +56,7 @@ class SugarSpot
 			$data['pageData']['offsets']['next']++;
 			if($countRemaining > 0){
 				$more = <<<EOHTML
-<small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining more)</small>
+<small class='more' onclick="DCMenu.spotZoom('$query', '$m','{$data['pageData']['offsets']['next']}' )">($countRemaining {$GLOBALS['app_strings']['LBL_SEARCH_MORE']})</small>
 EOHTML;
 			}
 
@@ -68,9 +68,12 @@ EOHTML;
 			$str.= '<ul>';
 			foreach($data['data'] as $row){
 				$name = '';
+				
 				if(!empty($row['NAME'])){
 					$name = $row['NAME'];
-				}else{
+				} else if(!empty($row['DOCUMENT_NAME'])) {
+				    $name = $row['DOCUMENT_NAME'];
+				} else {
 					foreach($row as $k=>$v){
 						if(strpos($k, 'NAME') !== false && !empty($row[$k])){
 							$name = $v;
@@ -104,7 +107,7 @@ EOHTML;
 			}
 			$str.= '</ul>';
 		}
-		
+
 		if($foundData)
 		{
 			$str = <<<EOHTML
@@ -129,24 +132,32 @@ EOHTML;
 	}
 
 	/**
-	 * Returns the array containing the $searchFields for a module
+	 * Returns the array containing the $searchFields for a module.  This function
+	 * first checks the default installation directories for the SearchFields.php file and then
+	 * loads any custom definition (if found)
 	 *
-	 * @param  $moduleName string
-	 * @return array
+	 * @param  $moduleName String name of module to retrieve SearchFields entries for
+	 * @return array of SearchFields
 	 */
 	protected static function getSearchFields(
 	    $moduleName
 	    )
 	{
-		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) {
-			$searchFields = array();
-		    require "modules/{$moduleName}/metadata/SearchFields.php" ;
-			return $searchFields;
+		$searchFields = array();
+
+		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) 
+		{
+		    require("modules/{$moduleName}/metadata/SearchFields.php");
 		}
-		else {
-			return array();
+		
+		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) 
+		{
+		    require("custom/modules/{$moduleName}/metadata/SearchFields.php");
 		}
+		
+		return $searchFields;
 	}
+	
 	//BEGIN SUGARCRM flav=spotactions ONLY
 	/**
 	 * Performs a search for actions based upon the query string
@@ -186,13 +197,10 @@ EOHTML;
 	 */
 	protected function _getCount($seed, $main_query)
 	{
-        $count_query = $seed->create_list_count_query($main_query);
-		$result = $seed->db->query($count_query);
-		$cnt = 0;
-		while($row = $seed->db->fetchByAssoc($result)){
-			$cnt += $row['c'];
-		}
-		return $cnt;
+//        $count_query = $seed->create_list_count_query($main_query);
+		$result = $seed->db->query("SELECT COUNT(*) as c FROM ($main_query) main");
+		$row = $seed->db->fetchByAssoc($result);
+		return isset($row['c'])?$row['c']:0;
 	}
 
 	/**
@@ -214,20 +222,27 @@ EOHTML;
 		$results = array();
 		require_once 'include/SearchForm/SearchForm2.php' ;
 		$where = '';
-
-		$searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
+        $searchEmail = preg_match('/^([^%]|%)*@([^%]|%)*$/', $query);
 
         $limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5 );
 		if($offset !== -1){
 			$limit = ( !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20 );
 		}
     	$totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
-
+ 	
+			
 	    foreach($modules as $moduleName){
-		    if (empty($primary_module)) $primary_module=$moduleName;
+		    if (empty($primary_module))
+		    {
+		    	$primary_module=$moduleName;
+		    } 
 
-			$searchFields = SugarSpot::getSearchFields($moduleName);
-			if (empty($searchFields[$moduleName])) continue;
+			$searchFields = SugarSpot::getSearchFields($moduleName);         			
+			
+			if (empty($searchFields[$moduleName]))
+			{
+				continue;
+			}
 
 			$class = $GLOBALS['beanList'][$moduleName];
 			$return_fields = array();
@@ -237,6 +252,7 @@ EOHTML;
 			if ($class == 'aCase') {
 		            $class = 'Case';
 			}
+			
 			foreach($searchFields[$moduleName] as $k=>$v){
 				$keep = false;
 				$searchFields[$moduleName][$k]['value'] = $query;
@@ -261,8 +277,12 @@ EOHTML;
 					        unset($searchFields[$moduleName][$k]);
 					    }
 					}
-				}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){;
-					unset($searchFields[$moduleName][$k]);
+				}else if(empty($GLOBALS['dictionary'][$class]['fields'][$k]) ){
+					//If module did not have unified_search defined, then check the exception for an email search before we unset
+					if(strpos($k,'email') === false || !$searchEmail)
+					{
+					   unset($searchFields[$moduleName][$k]);
+					}
 				}else{
 					switch($GLOBALS['dictionary'][$class]['fields'][$k]['type']){
 						case 'id':
@@ -282,24 +302,41 @@ EOHTML;
 
 			if (empty($searchFields[$moduleName])) continue;
 
-			if(isset($seed->field_defs['id']) && $seed->field_defs['id']['type'] == 'id') {
-			    $return_fields['id'] = $seed->field_defs['id'];
-			}
-			if(isset($seed->field_defs['name']) && $seed->field_defs['name']['type'] == 'name') {
+			if(isset($seed->field_defs['name'])) {
 			    $return_fields['name'] = $seed->field_defs['name'];
 			}
-			if(!isset($return_fields['name']) || !isset($return_fields['id'])) {
-			    // guessing didn't work, try the hard way
-			    foreach($seed->field_defs as $k => $v) {
-			        if(isset($seed->field_defs[$k]['type'])
-				    && ($seed->field_defs[$k]['type'] == 'name' || $seed->field_defs[$k]['type'] == 'id')) {
+
+			foreach($seed->field_defs as $k => $v) {
+			    if(isset($seed->field_defs[$k]['type']) && ($seed->field_defs[$k]['type'] == 'name') && !isset($return_fields[$k])) {
+				    $return_fields[$k] = $seed->field_defs[$k];
+				}
+			}
+
+			if(!isset($return_fields['name'])) {
+			    // if we couldn't find any name fields, try search fields that have name in it
+			    foreach($searchFields[$moduleName] as $k => $v) {
+			        if(strpos($k, 'name') != -1 && isset($seed->field_defs[$k])
+			            && !isset($seed->field_defs[$k]['source'])) {
 				        $return_fields[$k] = $seed->field_defs[$k];
+				        break;
 				    }
 			    }
 			}
-			if(!isset($return_fields['name']) || !isset($return_fields['id'])) {
+
+			if(!isset($return_fields['name'])) {
+			    // last resort - any fields that have 'name' in their name
+			    foreach($seed->field_defs as $k => $v) {
+			        if(strpos($k, 'name') != -1 && isset($seed->field_defs[$k])
+			            && !isset($seed->field_defs[$k]['source'])) {
+				        $return_fields[$k] = $seed->field_defs[$k];
+				        break;
+				    }
+			    }
+			}
+
+			if(!isset($return_fields['name'])) {
 			    // FAIL: couldn't find id & name for the module
-			    $GLOBALS['log']->fatal("Unable to find name and id for module $moduleName");
+			    $GLOBALS['log']->error("Unable to find name for module $moduleName");
 			    continue;
 			}
 
@@ -314,14 +351,14 @@ EOHTML;
 			$searchForm = new SearchForm ( $seed, $moduleName ) ;
 			$searchForm->setup (array ( $moduleName => array() ) , $searchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
 			$where_clauses = $searchForm->generateSearchWhere() ;
-
+			
 			if(empty($where_clauses)) {
 			    continue;
 			}
 			if(count($where_clauses) > 1) {
 			    $query_parts =  array();
 
-			    $ret_array_start = $seed->create_new_list_query('', '', $return_fields, array("distinct" => true), 0, '', true, $seed, true);
+			    $ret_array_start = $seed->create_new_list_query('', '', $return_fields, array(), 0, '', true, $seed, true);
                 $search_keys = array_keys($searchFields[$moduleName]);
 
                 foreach($where_clauses as $n => $clause) {
@@ -332,7 +369,7 @@ EOHTML;
 			            $allfields[$skey] = $seed->field_defs[$skey];
 			        }
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, array(), 0, '', true, $seed, true);
-                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
+                    $query_parts[] = $ret_array_start['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
                 }
                 $main_query = "(".join(") UNION (", $query_parts).")";
 			} else {
@@ -342,10 +379,10 @@ EOHTML;
                     }
 			    }
 			    $ret_array = $seed->create_new_list_query('', $where_clauses[0], $return_fields, array(), 0, '', true, $seed, true);
-		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'] ;
+		        $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
 			}
 
-            $totalCount = null;
+			$totalCount = null;
 		    if($limit < -1) {
 			    $result = $seed->db->query($main_query);
 		    } else {

@@ -447,3 +447,8 @@ function sugar_cached($file)
     }
     return "$cdir/$file";
 }
+
+function cleanFileName($name)
+{
+    return preg_replace('/[^\w-._]+/i', '', $name);
+}

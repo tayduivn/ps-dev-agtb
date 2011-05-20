@@ -180,6 +180,7 @@ class DCEReportsController extends SugarController{
     }
     function action_Export_LincensingReport()
     {
+        global $timedate;
         $content=file_get_contents(sugar_cached("xml/LicensingReport.tmp"));
         ob_clean();
         header("Pragma: cache");

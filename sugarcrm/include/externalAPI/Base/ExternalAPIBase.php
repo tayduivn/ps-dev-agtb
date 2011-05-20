@@ -1,4 +1,24 @@
 <?php
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 
 require_once ('include/externalAPI/Base/ExternalAPIPlugin.php');
 require_once ('include/externalAPI/Base/ExternalOAuthAPIPlugin.php');
@@ -11,6 +31,10 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
     public $authMethod = 'password';
     public $useAuth = true;
     public $requireAuth = true;
+    
+    const APP_STRING_ERROR_PREFIX = 'ERR_EXTERNAL_API_';
+    protected $_appStringErrorPrefix = self::APP_STRING_ERROR_PREFIX;
+    
     /**
      * Authorization data
      * @var EAPM
@@ -57,7 +81,7 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
             return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
         }
 
-        if ( $this->eapmBean->active==0 || $this->eapmBean->validated==0 ) {
+        if ( $this->eapmBean->validated==0 ) {
             return array('success' => false, 'errorMessage' => translate('LBL_ERR_NO_AUTHINFO','EAPM'));
         }
 
@@ -177,4 +201,28 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
          
          return $callback_url;
 	}	
+	
+	/**
+	 * Allow API clients to provide translated language strings for a given error code
+	 *
+	 * @param unknown_type $error_numb
+	 */
+	protected function getErrorStringFromCode($error_numb)
+	{
+	    $language_key = $this->_appStringErrorPrefix . $error_numb;
+	    if( isset($GLOBALS['app_strings'][$language_key]) )
+	       return $GLOBALS['app_strings'][$language_key];
+	    else 
+	       return $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];	    
+	}
+
+    /**
+     * Determine if mime detection extensions are available.
+     *
+     * @return bool
+     */
+    public function isMimeDetectionAvailable()
+	{
+	    return ( function_exists('mime_content_type') || function_exists( 'ext2mime' ) );
+	}
 }

@@ -1,32 +1,3 @@
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
- */
-
-// $Id: jit.js 2010-12-01 23:11:36Z lhuynh $
-
 /*
   Copyright (c) 2010, Nicolas Garcia Belmonte
   All rights reserved
@@ -53,6 +24,11 @@
   >  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   >  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+ /** Lam Huynh on 10/10/2010 added funnel,guage charts **/
+ /** Lam Huynh on 02/27/2011 added image exporting **/
+ /** Lam Huynh on 02/23/2011 added line charts **/
+ 
  (function () { 
 
 /*
@@ -230,28 +206,31 @@ $.roundedRect = function (ctx,x,y,width,height,radius,fillType){
 
 $.saveImageFile = function (id,jsonfilename,imageExt) {
 	var parts = jsonfilename.split("/");
-	var filename = parts[2].replace(".json","."+imageExt);
+	var filename = parts[2].replace(".js","."+imageExt);
 	var oCanvas = document.getElementById(id+"-canvas");
 	
-	if(imageExt == "jpg") {
-		var strDataURI = oCanvas.toDataURL("image/jpeg"); 
-	} else {
-		var strDataURI = oCanvas.toDataURL("image/png");
+	if(oCanvas) {
+		if(imageExt == "jpg") {
+			var strDataURI = oCanvas.toDataURL("image/jpeg"); 
+		} else {
+			var strDataURI = oCanvas.toDataURL("image/png");
+		}
+		var handleFailure = function(o){
+			//alert('failed to write image' + filename);
+			//remove alert since chrome triggers this function when user navigates away from page before image gets written.
+		}	
+		var handleSuccess = function(o){
+		}			
+		var callback =
+		{
+		  success:handleSuccess,
+		  failure:handleFailure,
+		  argument: { foo:'foo', bar:''}
+		};
+		var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
+		var postData = "imageStr=" + strDataURI + "&filename=" + filename;
+		var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 	}
-	var handleFailure = function(o){
-		alert('failed to write image' + filename);
-	}	
-	var handleSuccess = function(o){
-	}			
-	var callback =
-	{
-	  success:handleSuccess,
-	  failure:handleFailure,
-	  argument: { foo:'foo', bar:''}
-	};
-	var path = "index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1";
-	var postData = "imageStr=" + strDataURI + "&filename=" + filename;
-	var request = YAHOO.util.Connect.asyncRequest('POST', path, callback, postData);
 };
 
 $.saveImageTest = function (id,jsonfilename,imageExt) {
@@ -3356,12 +3335,8 @@ var Canvas;
           conf = this.config,
           styles = conf.CanvasStyles,
           size = base.getSize();
-		   // Create gradients
-		  var lingrad = ctx.createLinearGradient(-size.width/2,-size.height/2,-size.width/2,size.height/2);
-		  lingrad.addColorStop(0, conf.colorStop1);
-		  lingrad.addColorStop(1, conf.colorStop2);
-		  ctx.fillStyle = lingrad;
-		  ctx.fillRect(-size.width/2 + 100,-size.height/2,size.width,size.height);
+		  ctx.fillStyle = 'rgb(255,255,255)';
+		  ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
       //TODO(nico): print labels too!
     }
   });
@@ -10155,6 +10130,8 @@ $jit.LineChart = new Class({
     var st = new $jit.ST({
       injectInto: config.injectInto,
       orientation: "bottom",
+      backgroundColor: config.backgroundColor,
+      renderBackground: config.renderBackground,
       levelDistance: 0,
       siblingOffset: 0,
       subtreeOffset: 0,
@@ -10300,6 +10277,23 @@ $jit.LineChart = new Class({
     this.canvas = this.st.canvas;
   },
   
+    renderTitle: function() {
+  	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	label = config.Label,
+	title = config.Title;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.textBaseline = 'top';
+	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2+margin.left, -size.height/2+margin.top);
+	}
+  },  
+  
     renderTicks: function() {
 
 	var canvas = this.canvas,
@@ -10376,6 +10370,19 @@ $jit.LineChart = new Class({
 	
 
   },
+  
+  renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	//ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
+  
+  
  /*
   Method: loadJSON
  
@@ -10399,8 +10406,10 @@ $jit.LineChart = new Class({
         color = $.splat(json.color || this.colors),
         config = this.config,
         ticks = config.Ticks,
+        renderBackground = config.renderBackground,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
+        title = config.Title,
         groupTotalValue = 0;
     
     var valArrayAll = new Array();
@@ -10461,8 +10470,17 @@ $jit.LineChart = new Class({
     
     this.normalizeDims();
     
+    if(renderBackground) {
+    	this.renderBackground();	
+    }
+    
     if(!animate && ticks.enable) {
 		this.renderTicks();
+	}
+	
+	
+	if(title.text) {
+		this.renderTitle();	
 	}
 	
     st.compute();
@@ -11522,7 +11540,10 @@ Options.BarChart = {
   type: 'stacked', //stacked, grouped, : gradient
   labelOffset: 3, //label offset
   barsOffset: 0, //distance between bars
+  nodeCount: 0, //number of bars
   hoveredColor: '#9fd4ff',
+  background: false,
+  renderBackground: false,
   orientation: 'horizontal',
   showAggregates: true,
   showLabels: true,
@@ -11650,11 +11671,9 @@ $jit.ST.Plot.NodeTypes.implement({
 				acumValueLabel = valAcum;
 			}
           if(aggregates(node.name, valAcum)) {
-            if(horz) {
-
-            } else {
+            if(!horz) {
 			  ctx.textAlign = 'center';
-			  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+			  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 			  //background box
 			  ctx.save();
 			  gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -11665,22 +11684,24 @@ $jit.ST.Plot.NodeTypes.implement({
 			  inset = 10;
 			  boxHeight = label.size+6;
 			  
-			  if(boxWidth + acum + config.labelOffset > gridHeight) {
-				bottomPadding = acum - config.labelOffset - boxWidth;
+			  if(boxHeight + acum + config.labelOffset > gridHeight) {
+				bottomPadding = acum - config.labelOffset - boxHeight;
 			  } else {
 				bottomPadding = acum + config.labelOffset + inset;
 			  }
 			
 			
-			  ctx.translate(x + width/2, y - bottomPadding);
+			  ctx.translate(x + width/2 - (mtxt.width/2) , y - bottomPadding);
 			  cornerRadius = 4;	
 			  boxX = -inset/2;
 			  boxY = -boxHeight/2;
 			  
-			  ctx.rotate(270* Math.PI / 180);
+			  ctx.rotate(0 * Math.PI / 180);
 			  ctx.fillStyle = "rgba(255,255,255,.8)";
-			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-			  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+			  if(boxHeight + acum + config.labelOffset > gridHeight) {
+			  	$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+			  }
+			  //$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 			  ctx.fillStyle = ctx.strokeStyle = label.color;
 			  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
 			  ctx.restore();
@@ -11692,7 +11713,7 @@ $jit.ST.Plot.NodeTypes.implement({
 
 
                 //background box
-                ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+                ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 				inset = 10;
 				
 				gridWidth = canvasSize.width - (config.Margin.left + config.Margin.right);
@@ -11713,9 +11734,11 @@ $jit.ST.Plot.NodeTypes.implement({
 				boxX = -inset/2;
 				boxY = -boxHeight/2;
 				ctx.fillStyle = "rgba(255,255,255,.8)";
-				cornerRadius = 4;	
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				cornerRadius = 4;
+				if(acum + boxWidth + config.labelOffset + inset > gridWidth) {	
+					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				}
+				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				
 			  ctx.fillStyle = label.color;
               ctx.rotate(0 * Math.PI / 180);
@@ -11723,8 +11746,16 @@ $jit.ST.Plot.NodeTypes.implement({
 
 
             } else {
-              ctx.textAlign = 'center';
-              ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+              //if the number of nodes greater than 8 rotate labels 45 degrees
+              if(nodeCount > 8) {
+				ctx.textAlign = 'left';
+				ctx.translate(x + width/2, y + label.size/2 + config.labelOffset);
+				ctx.rotate(45* Math.PI / 180);
+				ctx.fillText(node.name, 0, 0);
+			  } else {
+				ctx.textAlign = 'center';
+				ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+			  }
             }
           }
           ctx.restore();
@@ -11908,7 +11939,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					acumValueLabel = valueArray[i];
 				}
 			   if(horz) {
-			   	  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+			   	  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 				  ctx.textAlign = 'left';
 				  ctx.textBaseline = 'top';
 				  ctx.fillStyle = "rgba(255,255,255,.8)";
@@ -11927,8 +11958,11 @@ $jit.ST.Plot.NodeTypes.implement({
 				  boxY = y + i*fixedDim + (fixedDim/2) - boxHeight/2;
 				  cornerRadius = 4;	
 				  
-				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				  
+				  if(boxWidth + dimArray[i] + config.labelOffset > gridWidth) {
+				  	$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				  }
+				//  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 				  
 				  ctx.fillStyle = ctx.strokeStyle = label.color;
 				  ctx.fillText(acumValueLabel, x + inset/2 + leftPadding, y + i*fixedDim + (fixedDim/2) - (label.size/2));
@@ -11938,9 +11972,9 @@ $jit.ST.Plot.NodeTypes.implement({
 					
 				} else {
 				  
-				  	ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+				  	ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					ctx.save();
-					ctx.textAlign = 'left';
+					ctx.textAlign = 'center';
 					
 					//background box
 					gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -11949,24 +11983,27 @@ $jit.ST.Plot.NodeTypes.implement({
 					
 					mtxt = ctx.measureText(acumValueLabel);
 					boxWidth = mtxt.width+10;
-					if(boxWidth + dimArray[i] + config.labelOffset > gridHeight) {
-						bottomPadding = dimArray[i] - config.labelOffset - boxWidth - inset;
+					boxHeight = label.size+6;
+					if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+						bottomPadding = dimArray[i] - config.labelOffset - boxHeight - inset;
 					} else {
 						bottomPadding = dimArray[i] + config.labelOffset + inset;
 					}
 										              	
-					boxHeight = label.size+6;
-					ctx.translate(x + i*fixedDim + (fixedDim/2), y - bottomPadding);
 					
-					boxX = -inset/2;
+					ctx.translate(x + (i*fixedDim) + (fixedDim/2) , y - bottomPadding);
+					
+					boxX = -boxWidth/2;
 					boxY = -boxHeight/2;
 					ctx.fillStyle = "rgba(255,255,255,.8)";
 					
 					cornerRadius = 4;	
 
-					ctx.rotate(270* Math.PI / 180);
-					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					//ctx.rotate(270* Math.PI / 180);
+					if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+						$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					}
+					//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					
 					ctx.fillStyle = ctx.strokeStyle = label.color;
 					ctx.fillText(acumValueLabel, 0,0);
@@ -12152,7 +12189,7 @@ $jit.ST.Plot.NodeTypes.implement({
 					  }
 					 if(!horz) {
 					  ctx.textAlign = 'center';
-					  ctx.font = 'bold' + ' ' + label.size + 'px ' + label.family;
+					  ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
 					  //background box
 					  ctx.save();
 					  gridHeight = canvasSize.height - (margin.top + margin.bottom + (config.Title.text ? config.Title.size + config.Title.offset : 0) +
@@ -12163,22 +12200,24 @@ $jit.ST.Plot.NodeTypes.implement({
 					  inset = 10;
 					  boxHeight = label.size+6;
 					  
-					  if(boxWidth + dimArray[i] + config.labelOffset > gridHeight) {
-						bottomPadding = dimArray[i] - config.labelOffset - boxWidth - inset;
+					  if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+						bottomPadding = dimArray[i] - config.labelOffset  - inset;
 					  } else {
 						bottomPadding = dimArray[i] + config.labelOffset + inset;
 					  }
 					
 					
-					  ctx.translate(x + width/2, y - bottomPadding);
+					  ctx.translate(x + width/2 - (mtxt.width/2) , y - bottomPadding);
 					  cornerRadius = 4;	
 					  boxX = -inset/2;
 					  boxY = -boxHeight/2;
 					  
-					  ctx.rotate(270* Math.PI / 180);
+					  //ctx.rotate(270* Math.PI / 180);
 					  ctx.fillStyle = "rgba(255,255,255,.6)";
-					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-					  $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+					  if(boxHeight + dimArray[i] + config.labelOffset > gridHeight) {
+					  	$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+					  }
+					 // $.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 					  ctx.fillStyle = ctx.strokeStyle = label.color;
 					  ctx.fillText(acumValueLabel, mtxt.width/2, 0);
 					  ctx.restore();
@@ -12200,7 +12239,7 @@ $jit.ST.Plot.NodeTypes.implement({
         if(label.type == 'Native') {
           ctx.save();
           ctx.fillStyle = ctx.strokeStyle = label.color;
-          ctx.font = "bold" + ' ' + label.size + 'px ' + label.family;
+          ctx.font = label.style + ' ' + label.size + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           if(showLabels(node.name, valAcum, node)) {
             if(horz) {
@@ -12226,9 +12265,10 @@ $jit.ST.Plot.NodeTypes.implement({
 				ctx.fillStyle = "rgba(255,255,255,.8)";
 				
 				cornerRadius = 4;	
-				
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
-				$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
+				if(acum + boxWidth + config.labelOffset + inset > gridWidth) {
+					$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"fill");
+				}
+				//$.roundedRect(ctx,boxX,boxY,boxWidth,boxHeight,cornerRadius,"stroke");
 		
 				
 				ctx.fillStyle = label.color;
@@ -12355,9 +12395,12 @@ $jit.BarChart = new Class({
       injectInto: config.injectInto,
       orientation: horz? 'left' : 'bottom',
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       levelDistance: 0,
+      nodeCount: config.nodeCount,
       siblingOffset: config.barsOffset,
       subtreeOffset: 0,
       withLabels: config.Label.type != 'Native',      
@@ -12546,10 +12589,29 @@ $jit.BarChart = new Class({
     });
 
     var size = st.canvas.getSize(),
+    	l = config.nodeCount,
         margin = config.Margin;
         title = config.Title;
         subtitle = config.Subtitle,
-        grouped = config.type.split(':')[0] == 'grouped';
+        grouped = config.type.split(':')[0] == 'grouped',
+        margin = config.Margin,
+        ticks = config.Ticks,
+        marginWidth = margin.left + margin.right + (config.Label && grouped ? config.Label.size + config.labelOffset: 0),
+        marginHeight = (title.text? title.size + title.offset : 0) + (subtitle.text? subtitle.size + subtitle.offset : 0) + margin.top + margin.bottom,
+        horz = config.orientation == 'horizontal',
+        fixedDim = (size[horz? 'height':'width'] - (horz? marginHeight:marginWidth) - (ticks.enable? config.Label.size + config.labelOffset : 0) - (l -1) * config.barsOffset) / l,
+        fixedDim = (fixedDim > 40) ? 40 : fixedDim;
+        whiteSpace = size.width - (marginWidth + (fixedDim * l));
+        //bug in IE7 when vertical bar charts load in dashlets where number of bars exceed a certain width, canvas renders with an incorrect width, a hard refresh fixes the problem
+        if(!horz && typeof FlashCanvas != "undefined" && size.width < 250)
+        location.reload();
+        //if not a grouped chart and is a vertical chart, adjust bar spacing to fix canvas width.
+        if(!grouped && !horz) {
+        	st.config.siblingOffset = whiteSpace/(l+1);
+        }
+        
+        
+        
 	//Bars offset
     if(horz) {
       st.config.offsetX = size.width/2 - margin.left - (grouped && config.Label ? config.labelOffset + config.Label.size : 0);    
@@ -12593,13 +12655,15 @@ $jit.BarChart = new Class({
 	config = this.config,
 	margin = config.Margin,
 	label = config.Label,
-	subtitle = config.Subtitle;
+	subtitle = config.Subtitle,
+	nodeCount = config.nodeCount,
+	horz = config.orientation == 'horizontal' ? true : false,
 	ctx = canvas.getCtx();
 	ctx.fillStyle = title.color;
 	ctx.textAlign = 'left';
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-margin.bottom-subtitle.size);
+		ctx.fillText(subtitle.text, -size.width/2+margin.left, size.height/2-(!horz && nodeCount > 8 ? 20 : margin.bottom)-subtitle.size);
 	}
   },
   
@@ -12687,7 +12751,7 @@ $jit.BarChart = new Class({
 		while(axis>=grid) {
 			ctx.save();
 			ctx.translate(-(size.width/2)+margin.left, Math.round(axis));
-			ctx.rotate(Math.PI / 2);
+			ctx.rotate(0 * Math.PI / 180 );
 			ctx.fillStyle = label.color;
 			if(config.showLabels) {
 				if(label.type == 'Native') { 
@@ -12721,6 +12785,16 @@ $jit.BarChart = new Class({
 	
 
   },
+  
+  renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
   /*
     Method: loadJSON
    
@@ -12747,6 +12821,7 @@ $jit.BarChart = new Class({
         color = $.splat(json.color || this.colors),
         config = this.config,
         gradient = !!config.type.split(":")[1],
+        renderBackground = config.renderBackground,
         animate = config.animate,
         ticks = config.Ticks,
         title = config.Title,
@@ -12807,6 +12882,10 @@ $jit.BarChart = new Class({
     st.loadJSON(root);
     
     this.normalizeDims();
+    
+    if(renderBackground) {
+   		this.renderBackground();
+    }
 	
 	if(!animate && ticks.enable) {
 		this.renderTicks();
@@ -13053,7 +13132,7 @@ $jit.BarChart = new Class({
       });
       
       if(grouped) {
-      	fixedDim = animateValue.length * 25;
+      	fixedDim = animateValue.length * 40;
       }
       n.setData(dim1, fixedDim);
       
@@ -13371,6 +13450,8 @@ $jit.FunnelChart = new Class({
       orientation: horz? 'left' : 'bottom',
       levelDistance: 0,
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       siblingOffset: config.segmentOffset,
@@ -13596,6 +13677,18 @@ $jit.FunnelChart = new Class({
 			
   },
 
+   renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	//ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
+  
+  
   loadJSON: function(json) {
     if(this.busy) return;
     this.busy = true;
@@ -13610,6 +13703,7 @@ $jit.FunnelChart = new Class({
         animate = config.animate,
         title = config.Title,
         subtitle = config.Subtitle,
+        renderBackground = config.renderBackground,
         horz = config.orientation == 'horizontal',
         that = this,
 		colorLength = color.length,
@@ -13688,6 +13782,9 @@ $jit.FunnelChart = new Class({
     
     this.normalizeDims();
 	
+	if(renderBackground) {
+		this.renderBackground();	
+	}
 	if(!animate && title.text) {
 		this.renderTitle();
 	}
@@ -15061,6 +15158,8 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           colorArray = node.getData('colorMono'),
           colorLength = colorArray.length,
           stringArray = node.getData('stringArray'),
+		  percentage = node.getData('percentage'),
+		  iteration = node.getData('iteration'),
           span = node.getData('span') / 2,
           theta = node.pos.theta,
           begin = theta - span,
@@ -15072,13 +15171,46 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           gradient = node.getData('gradient'),
           border = node.getData('border'),
           config = node.getData('config'),
+          renderSubtitle = node.getData('renderSubtitle'),
+          renderBackground = config.renderBackground,
           showLabels = config.showLabels,
           resizeLabels = config.resizeLabels,
           label = config.Label;
 
       var xpos = config.sliceOffset * Math.cos((begin + end) /2);
       var ypos = config.sliceOffset * Math.sin((begin + end) /2);
+      //background rendering for IE
+		if(iteration == 0 && typeof FlashCanvas != "undefined" && renderBackground) {
+			backgroundColor = config.backgroundColor,
+		  	size = canvas.getSize();
+		  	ctx.save();
+		    ctx.fillStyle = backgroundColor;
+	   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);
+	   	    
+	   	    //subtitle
 
+			var margin = config.Margin,
+			title = config.Title,
+			subtitle = config.Subtitle;
+			ctx.fillStyle = title.color;
+			ctx.textAlign = 'left';
+			
+			if(title.text != "") {
+				ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+				ctx.moveTo(0,0);
+				if(label.type == 'Native') {
+					ctx.fillText(title.text, -size.width/2 + margin.left, -size.height/2 + margin.top); 
+				}
+			} 	
+	
+			if(subtitle.text != "") {
+				ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
+				if(label.type == 'Native') {
+					ctx.fillText(subtitle.text, -size.width/2 + margin.left, size.height/2 - margin.bottom); 
+				} 
+			}
+			ctx.restore();  	
+		}
       if (colorArray && dimArray && stringArray) {
         for (var i=0, l=dimArray.length, acum=0, valAcum=0; i<l; i++) {
           var dimi = dimArray[i], colori = colorArray[i % colorLength];
@@ -15158,15 +15290,20 @@ $jit.Sunburst.Plot.NodeTypes.implement({
           ctx.font = label.style + ' ' + fontSize + 'px ' + label.family;
           ctx.textBaseline = 'middle';
           ctx.textAlign = 'center';
-          
+          pi = Math.PI;
+          angle = theta * 360 / (2 * pi);
           polar.rho = acum + config.labelOffset + config.sliceOffset;
           polar.theta = node.pos.theta;
           var cart = polar.getc(true);
-          if(config.labelType == 'name') {
-			ctx.fillText(node.name, cart.x, cart.y);
-		  } else {
-			ctx.fillText(node.data.valuelabel, cart.x, cart.y);
-		  }
+          if(((angle >= 225 && angle <= 315) || (angle <= 135 && angle >= 45)) && percentage <= 5) {
+          	
+          	} else {
+	          if(config.labelType == 'name') {
+				ctx.fillText(node.name, cart.x, cart.y);
+			  } else {
+				ctx.fillText(node.data.valuelabel, cart.x, cart.y);
+			  }
+          }
           ctx.restore();
         }
       }
@@ -15236,6 +15373,8 @@ $jit.PieChart = new Class({
       useCanvas: config.useCanvas,
       withLabels: config.Label.type != 'Native',
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       Label: {
@@ -15343,7 +15482,52 @@ $jit.PieChart = new Class({
     this.canvas = this.sb.canvas;
     this.canvas.getCtx().globalCompositeOperation = 'lighter';
   },
-  
+    renderBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
+  },
+   renderTitle: function() {
+   	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	radius = this.sb.config.levelDistance,
+	title = config.Title,
+	label = config.Label,
+	subtitle = config.Subtitle;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.font = label.style + ' bold ' +' ' + title.size + 'px ' + label.family;
+	ctx.moveTo(0,0);
+	if(label.type == 'Native') {
+		ctx.fillText(title.text, -size.width/2 + margin.left, -size.height/2 + margin.top); 
+	} 	
+  },
+  renderSubtitle: function() {
+   	var canvas = this.canvas,
+	size = canvas.getSize(),
+	config = this.config,
+	margin = config.Margin,
+	radius = this.sb.config.levelDistance,
+	title = config.Title,
+	label = config.Label,
+	subtitle = config.Subtitle;
+	ctx = canvas.getCtx();
+	ctx.fillStyle = title.color;
+	ctx.textAlign = 'left';
+	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
+	ctx.moveTo(0,0);
+	if(label.type == 'Native') {
+		ctx.fillText(subtitle.text, -size.width/2 + margin.left, size.height/2 - margin.bottom); 
+	} 	
+  },
   /*
     Method: loadJSON
    
@@ -15368,6 +15552,9 @@ $jit.PieChart = new Class({
         color = $.splat(json.color || this.colors),
         colorLength = color.length,
         config = this.config,
+        renderBackground = config.renderBackground,
+        title = config.Title,
+		subtitle = config.Subtitle,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -15401,6 +15588,7 @@ $jit.PieChart = new Class({
           '$stringArray': name,
           '$gradient': gradient,
           '$config': config,
+          '$iteration': i,
           '$percentage': percentage.toFixed(1),
           '$angularWidth': $.reduce(valArray, function(x,y){return x+y;})
         },
@@ -15419,8 +15607,22 @@ $jit.PieChart = new Class({
     };
     sb.loadJSON(root);
     
+    
     this.normalizeDims();
+
+    
     sb.refresh();
+    if(title.text != "") {
+    	this.renderTitle();
+    }
+       
+    if(subtitle.text != "") {
+    	this.renderSubtitle();
+    }
+     if(renderBackground && typeof FlashCanvas == "undefined") {
+    	this.renderBackground();	
+    }
+    
     if(animate) {
       sb.fx.animate({
         modes: ['node-property:dimArray'],
@@ -15825,6 +16027,8 @@ $jit.GaugeChart = new Class({
       useCanvas: config.useCanvas,
       withLabels: config.Label.type != 'Native',
       background: config.background,
+      renderBackground: config.renderBackground,
+      backgroundColor: config.backgroundColor,
       colorStop1: config.colorStop1,
       colorStop2: config.colorStop2,
       Label: {
@@ -16171,6 +16375,7 @@ $jit.GaugeChart = new Class({
 	config = this.config,
 	margin = config.Margin,
 	radius = this.sb.config.levelDistance,
+	title = config.Title,
 	label = config.Label,
 	subtitle = config.Subtitle;
 	ctx = canvas.getCtx();
@@ -16179,8 +16384,19 @@ $jit.GaugeChart = new Class({
 	ctx.font = label.style + ' ' + subtitle.size + 'px ' + label.family;
 	ctx.moveTo(0,0);
 	if(label.type == 'Native') {
-		ctx.fillText(subtitle.text, -radius, radius/2 + subtitle.size + subtitle.offset); 
+		ctx.fillText(subtitle.text, -radius - 4, subtitle.size + subtitle.offset + (radius/2)); 
 	}
+  },
+  
+  renderChartBackground: function() {
+	  	var canvas = this.canvas,
+	  	config = this.config,
+	  	backgroundColor = config.backgroundColor,
+	  	size = canvas.getSize(),
+	   	ctx = canvas.getCtx();
+	   	//ctx.globalCompositeOperation = "destination-over";
+	    ctx.fillStyle = backgroundColor;
+   	    ctx.fillRect(-size.width/2,-size.height/2,size.width,size.height);  	
   },
   
   loadJSON: function(json) {
@@ -16193,6 +16409,7 @@ $jit.GaugeChart = new Class({
         color = $.splat(json.color || this.colors),
         colorLength = color.length,
         config = this.config,
+        renderBackground = config.renderBackground,
         gradient = !!config.type.split(":")[1],
         animate = config.animate,
         mono = nameLength == 1;
@@ -16245,7 +16462,14 @@ $jit.GaugeChart = new Class({
 	
 	
     sb.loadJSON(root);
+    
+    if(renderBackground) {
+    	this.renderChartBackground();	
+    }
+    
     this.renderBackground();
+    this.renderSubtitle();
+    
     this.normalizeDims();
 	
     sb.refresh();
@@ -16263,7 +16487,7 @@ $jit.GaugeChart = new Class({
 		this.renderNeedle(gaugePosition,props['gaugeTarget']);
 	}
 	
-	this.renderSubtitle();
+	
 
   },
   

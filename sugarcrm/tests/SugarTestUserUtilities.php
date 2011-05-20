@@ -12,7 +12,7 @@ class SugarTestUserUtilities
         self::removeAllCreatedAnonymousUsers();
     }
 
-    public static function createAnonymousUser($save = true) 
+    public static function createAnonymousUser($save = true)
     {
         if (isset($_REQUEST['action'])) { 
         unset($_REQUEST['action']);
@@ -32,6 +32,7 @@ class SugarTestUserUtilities
         if ( $save ) {
             $user->save();
         }
+
         $user->fill_in_additional_detail_fields();
         self::$_createdUsers[] = $user;
         return $user;

@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/DetailView/DetailView.php');
 require_once('include/export_utils.php');
+require_once('include/SugarOAuthServer.php');
 global $current_user;
 global $theme;
 global $app_strings;
@@ -45,7 +46,7 @@ $is_current_admin=is_admin($current_user)
                 ||$current_user->user_type = 'UserAdministrator'
 //END SUGARCRM flav=sales ONLY
                 ||is_admin_for_module($GLOBALS['current_user'],'Users');
-                
+
 $focus = new User();
 
 $detailView = new DetailView();
@@ -78,7 +79,7 @@ if(isset($_REQUEST['reset_homepage'])){
 $params = array();
 $params[] = $locale->getLocaleFormattedName($focus->first_name,$focus->last_name);
 
-$index_url = ($is_current_admin) ? "index.php?module=Users&action=index" : "index.php?module=Users&action=DetailView&record={$focus->id}"; 
+$index_url = ($is_current_admin) ? "index.php?module=Users&action=index" : "index.php?module=Users&action=DetailView&record={$focus->id}";
 
 
 echo getClassicModuleTitle("Users", $params, true,$index_url);
@@ -117,13 +118,13 @@ if (isset($sugar_config['show_download_tab']))
 {
 	$enable_download_tab = $sugar_config['show_download_tab'];
 }else{
-	
+
 	$enable_download_tab = true;
-}	
+}
 
 $sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
-	
- 
+
+
 
 
 
@@ -566,7 +567,7 @@ $GLOBALS['sugar_config']['lock_subpanels'] = true;
 // User Holidays subpanels should not be displayed for group and portal users
 if($show_roles){
     require_once('include/SubPanel/SubPanelTiles.php');
-    $subpanel = new SubPanelTiles($focus, 'Users');
+    $subpanel = new SubPanelTiles($focus, 'UsersHolidays');
 
     $sugar_smarty->assign('USER_HOLIDAYS_SUBPANEL',$subpanel->display(true,true));
 }
@@ -575,10 +576,18 @@ $GLOBALS['sugar_config']['lock_subpanels'] = $locked;
 
 $sugar_smarty->display('modules/Users/DetailView.tpl');
 
+if(SugarOAuthServer::enabled()) {
+    $subpanel = new SubPanelTiles($focus, 'UserOAuth');
+    $oauth_tokens = $subpanel->display(true,true);
+}
 // Roles Grid and Roles subpanel should not be displayed for group and portal users
 if($show_roles){
     echo "<div>";
     require_once('modules/ACLRoles/DetailUserRole.php');
+    if(SugarOAuthServer::enabled()) {
+        $subpanel = new SubPanelTiles($focus, 'UserOAuth');
+        echo $subpanel->display(true,true);
+    }
     echo "</div></div>";
 }
 

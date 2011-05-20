@@ -1,6 +1,0 @@
-<soda>
-	<script file="tests/modules/knowledgebase/module_lib/setup-knowledgebase.xml" />
-	<script fileset="tests/modules/knowledgebase" />
-	<script file="tests/modules/knowledgebase/module_lib/cleanup-knowledgebase.xml" />
-</soda>
-

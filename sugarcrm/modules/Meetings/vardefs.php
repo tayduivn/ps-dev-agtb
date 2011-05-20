@@ -43,6 +43,15 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '20',
     'source'=>'non-db',
   ),
+  //bug 39559 
+  'set_accept_links' => array (
+    'name' => 'accept_status',
+    'vname' => 'LBL_SUBJECT',
+    'type' => 'varchar',
+    'dbType' => 'varchar',
+    'len' => '20',
+    'source'=>'non-db',
+  ),
   'location' =>
   array (
     'name' => 'location',
@@ -58,8 +67,13 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'varchar',
     'len' => '50',
     'comment' => 'Meeting password',
-    'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
+    //BEGIN SUGARCRM flav=com ONLY  
+    'studio' => 'false',
+    //END SUGARCRM flav=com ONLY    
+	//BEGIN SUGARCRM flav!=com ONLY    
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+    'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
+    //END SUGARCRM flav!=com ONLY
   ),
   'join_url' =>
   array (
@@ -88,8 +102,13 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'url',
     'len' => '400',
     'comment' => 'Meeting URL',
-    'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
+    //BEGIN SUGARCRM flav=com ONLY  
+    'studio' => 'false',
+    //END SUGARCRM flav=com ONLY  
+    //BEGIN SUGARCRM flav!=com ONLY
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+    'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
+    //END SUGARCRM flav!=com ONLY
   ),
   'creator' =>
   array (
@@ -138,7 +157,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Date of start of meeting',
     'importable' => 'required',
     'required' => true,
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
   ),
 
   'date_end' =>
@@ -148,7 +167,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'datetime',
     'massupdate'=>false,
     'comment' => 'Date meeting ends',
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
   ),
   'parent_type' =>
   array (
@@ -180,6 +199,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
      'comment' => 'Meeting type (ex: WebEx, Other)',
      'options' => 'eapm_list',
      'default'	=> 'Sugar',
+     'massupdate' => false,
    	 //BEGIN SUGARCRM flav=com ONLY
    	 'studio' => 'false',
      //END SUGARCRM flav=com ONLY
@@ -200,7 +220,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'importable' => 'false',
     'massupdate'=>false,
     'reportable'=>false,
-	'studio' => false,
+	'studio' => 'false',
   ),
   'parent_id' =>
   array (

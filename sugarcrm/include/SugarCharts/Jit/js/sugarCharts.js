@@ -32,19 +32,17 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				var labelType, useGradients, nativeTextSupport, animate;
 				(function() {
 				  var ua = navigator.userAgent,
-					  iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
 					  typeOfCanvas = typeof HTMLCanvasElement,
 					  nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
 					  textSupport = nativeCanvasSupport 
 						&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-				  //I'm setting this based on the fact that ExCanvas provides text support for IE
-				  //and that as of today iPhone/iPad current text support is lame
-				  labelType = (!iStuff) ? 'Native' : 'HTML';
+				  labelType = 'Native';
 				  nativeTextSupport = labelType == 'Native';
 				  useGradients = nativeCanvasSupport;
-				  animate = !(iStuff || !nativeCanvasSupport);
+				  animate = false;
 				})();
-
+				
+			
 			switch(chartConfig["chartType"]) {
 			case "barChart":
 				var handleFailure = function(o){
@@ -66,7 +64,9 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  nodeCount: json.values.length,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  shadow: {
@@ -93,11 +93,11 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					color: css["gridLineColor"]
 				  },
 				  //bars separation
-				  barsOffset: 20,
+				  barsOffset: (chartConfig["orientation"] == "vertical") ? 30 : 20,
 				  //visualization offset
 				  Margin: {
 					top:20,
-					left: 20,
+					left: 30,
 					right: 20,
 					bottom: marginBottom
 				  },
@@ -168,17 +168,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = barChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols),
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
-						table += '<td nowrap>';
+						table += '<td width=\'16\' valign=\'top\'>';
 						if(legend["name"][j] != undefined) {
 							table += '<div class=\'query-color\' style=\'background-color:'
-							  + legend["color"][j] +'\'>&nbsp;</div>' + legend["name"][j];
+							  + legend["color"][j] +'\'>&nbsp;</div>';
+						}
+						  
+						table += '</td>';
+						table += '<td class=\'label\' valign=\'top\'>';
+						if(legend["name"][j] != undefined) {
+							table += legend["name"][j];
 						}
 						  
 						table += '</td>';
@@ -205,7 +212,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 				break;
 				
 			case "lineChart":
@@ -227,7 +234,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  selectOnHover: false,
@@ -296,13 +304,13 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					  
 					  if(elem.collision) {
 					  	eval("var name = elem."+chartConfig["tip"]+";");
-					  	tip.innerHTML = '';
+					  	var content = '<table>';
 					  	
 					  	for(var i=0; i<name.length; i++) {
-					  		tip.innerHTML += "<b>" + name[i] + "</b>: " + elem.value[i] + " - " + elem.percentage[i] + "%" + "<br>";
+					  		content += '<tr><td><b>' + name[i] + '</b>:</td><td> ' + elem.value[i] + ' - ' + elem.percentage[i] + '%' + '</td></tr>';
 					  	}
-					  	//eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
-					  
+					  	content += '</table>';
+					  	tip.innerHTML = content;
 					  } else {
 					  	eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");	
 					  }
@@ -329,17 +337,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = lineChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols),
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
-						table += '<td nowrap>';
+						table += '<td width=\'16\' valign=\'top\'>';
 						if(legend["name"][j] != undefined) {
 							table += '<div class=\'query-color\' style=\'background-color:'
-							  + legend["color"][j] +'\'>&nbsp;</div>' + legend["name"][j];
+							  + legend["color"][j] +'\'>&nbsp;</div>';
+						}
+						  
+						table += '</td>';
+						table += '<td class=\'label\' valign=\'top\'>';
+						if(legend["name"][j] != undefined) {
+							table += legend["name"][j];
 						}
 						  
 						table += '</td>';
@@ -366,7 +381,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 				break;
 			
 				
@@ -390,7 +405,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',	
 				  labelType: properties['labels'],
@@ -403,6 +419,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  type: useGradients? chartConfig["pieType"]+':gradient' : chartConfig["pieType"],
 				  //whether to show the labels for the slices
 				  showLabels:true,
+				  Title: {
+					text: properties['title'],
+					size: 16,
+					color: '#444444',
+					offset: 20
+				  },
+				  Subtitle: {
+					text: properties['subtitle'],
+					size: 11,
+					color: css["color"],
+					offset: 20
+				  },
+				  Margin: {
+					top:20,
+					left: 20,
+					right: 20,
+					bottom: 20
+				  },
 				  Events: {
 					enable: true,
 					onClick: function(node) {  
@@ -443,17 +477,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = pieChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols);
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
-						table += '<td nowrap>';
+						table += '<td width=\'16\' valign=\'top\'>';
 						if(legend["name"][j] != undefined) {
 							table += '<div class=\'query-color\' style=\'background-color:'
-							  + legend["color"][j] +'\'>&nbsp;</div>' + legend["name"][j];
+							  + legend["color"][j] +'\'>&nbsp;</div>';
+						}
+						  
+						table += '</td>';
+						table += '<td class=\'label\' valign=\'top\'>';
+						if(legend["name"][j] != undefined) {
+							table += legend["name"][j];
 						}
 						  
 						table += '</td>';
@@ -478,7 +519,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 							
 				break;
 				
@@ -504,7 +545,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',	
 				  //orientation setting should not be changed
@@ -594,17 +636,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				//dynamically add legend to list
 				var list = $jit.id('legend'+chartId);
 				var legend = funnelChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols);
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 0;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
-						table += '<td nowrap>';
+						table += '<td width=\'16\' valign=\'top\'>';
 						if(legend["name"][j] != undefined) {
 							table += '<div class=\'query-color\' style=\'background-color:'
-							  + legend["color"][j] +'\'>&nbsp;</div>' + legend["name"][j];
+							  + legend["color"][j] +'\'>&nbsp;</div>';
+						}
+						  
+						table += '</td>';
+						table += '<td class=\'label\' valign=\'top\'>';
+						if(legend["name"][j] != undefined) {
+							table += legend["name"][j];
 						}
 						  
 						table += '</td>';
@@ -628,7 +677,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 				break;
 				
 				
@@ -653,11 +702,18 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  injectInto: chartId,
 				  //whether to add animations
 				  animate: false,
-				  background: false,
+				  renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
+				  backgroundColor: 'rgb(255,255,255)',
 				  colorStop1: 'rgba(255,255,255,.8)',
 				  colorStop2: 'rgba(255,255,255,0)',
 				  labelType: properties['labels'],
 				  hoveredColor: false,
+				  Title: {
+					text: properties['title'],
+					size: 16,
+					color: '#444444',
+					offset: 20
+				  },
 				  Subtitle: {
 					text: properties['subtitle'],
 					size: 11,
@@ -665,7 +721,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 					offset: 5
 				  },
 				  //offsets
-				  offset: 0,
+				  offset: 20,
 				  gaugeStyle: {
 					backgroundColor: '#aaaaaa',
 					borderColor: '#999999',
@@ -717,17 +773,24 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 				var list = $jit.id('legend'+chartId);
 				var legend = gaugeChart.getLegend(),
-					rows = Math.ceil(legend["name"].length/5);
+					cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
+					rows = Math.ceil(legend["name"].length/cols);
 					table = "<table cellpadding='0' cellspacing='0' align='left'>";
 				var j = 1;
 				for(i=0;i<rows;i++) {
 					table += "<tr>"; 
-					for(td=0;td<5;td++) {
+					for(td=0;td<cols;td++) {
 						
-						table += '<td nowrap>';
+						table += '<td width=\'16\' valign=\'top\'>';
 						if(legend["name"][j] != undefined) {
 							table += '<div class=\'query-color\' style=\'background-color:'
-							  + legend["color"][j] +'\'>&nbsp;</div>' + legend["name"][j];
+							  + legend["color"][j] +'\'>&nbsp;</div>';
+						}
+						  
+						table += '</td>';
+						table += '<td class=\'label\' valign=\'top\'>';
+						if(legend["name"][j] != undefined) {
+							table += legend["name"][j];
 						}
 						  
 						table += '</td>';
@@ -752,7 +815,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  argument: { foo:'foo', bar:''}
 				};
 				
-				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename, callback);
+				var request = YAHOO.util.Connect.asyncRequest('GET', jsonFilename + "?r=" + new Date().getTime(), callback);
 							
 				break;
 				

@@ -41,9 +41,9 @@
 <tr><td>
 
 	<ul class="tablist" id="groupTabs">
-		<li id="basic_tab_li"  class="active"><a id='basic_tab_link'  class="{$CURRENT_OTHER_BASIC}" href="javascript:select_Tab_CSS('basic_tab');">{$MOD.LBL_TAB_SEARCH}</a></li>
-		<li  id='browse_tab_li'  class="active"><a id='browse_tab_link' class="{$CURRENT_OTHER_BROWSE}"  href="javascript:select_Tab_CSS('browse_tab');">{$MOD.LBL_TAB_BROWSE}</a></li>
-		<li id="advanced_tab_li"  class="active"><a id='advanced_tab_link'  class="{$CURRENT_OTHER_ADV}" href="javascript:select_Tab_CSS('advanced_tab');">{$MOD.LBL_TAB_ADVANCED}</a></li>
+		<li id="basic_tab_li"  class="active"><a id='basic_tab_link'  class="{$CURRENT_OTHER_BASIC}" href="javascript:select_Tab_CSS('basic_tab');">{$MOD.LBL_TAB_SEARCH}</a></li>		
+		<li id="advanced_tab_li"  class="active"><a id='advanced_tab_link'  class="{$CURRENT_OTHER_ADV}" href="javascript:select_Tab_CSS('advanced_tab');">{$MOD.LBL_TAB_ADVANCED}</a></li>	
+		<li  id='browse_tab_li'  class="active"><a id='browse_tab_link' class="{$CURRENT_OTHER_BROWSE}"  href="javascript:select_Tab_CSS('browse_tab');">{$MOD.LBL_TAB_BROWSE}</a></li>			
 	</ul>
 
 		<div id="basic_tab"  style="{$SHOW_INITIAL_BASIC}">
@@ -77,33 +77,23 @@
 		</div>
 
 
-		<div id="browse_tab"   style="{$SHOW_INITIAL_BROWSE}">
-
-			{$BROWSETAB}
-		</div>
-
-
 		<div id="advanced_tab" width='100%'  style="{$SHOW_INITIAL_ADV}">
 			{$ADVANCEDTAB}
 
 
 		</div>
+		<div id="browse_tab"   style="{$SHOW_INITIAL_BROWSE}">
+
+			{$BROWSETAB}
+		</div>	
 
 
 			<div id='fts_results_form' {$SHOW_INITIAL_LIST}>
 				{$LIST}
 			</div>
-
-
-
-
-
-
 </p>
 {literal}
 <script>
-
-
 		var document_additionalDetailsCache;
 		var document_additionalDetailsCalls;
 		var document_additionalDetailsRpcCall;

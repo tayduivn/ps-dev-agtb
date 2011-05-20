@@ -237,7 +237,9 @@ function clearCompanyLogo(){
     }
 }
 
-function genericFunctions(){
+
+
+function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
@@ -286,6 +288,8 @@ function status_post_install_action($action){
 	}
 	return '';
 }
+
+
 
 function post_install() {
 	global $unzip_dir;
@@ -339,8 +343,8 @@ function post_install() {
 	  
 	//Set the chart engine
 	if ($origVersion < '620') {
-		_logThis('Set chartEngine in config.php to SugarFlash', $path);
-		$sugar_config['chartEngine'] = 'SugarFlash';
+		_logThis('Set chartEngine in config.php to JS Charts', $path);
+		$sugar_config['chartEngine'] = 'Jit';
 	}
 	
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
@@ -484,5 +488,4 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 	}
 
 }
-
 ?>

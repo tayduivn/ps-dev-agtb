@@ -304,7 +304,7 @@ color:#ef3067;
 .search_form .view {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=search-basic-bg.png");
 border-color:#FF95C7;
-background-color: transparent;
+background-color: #efb9d2;
 }
 
 .search_form .view.advanced {

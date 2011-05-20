@@ -45,10 +45,17 @@ if($unzip_dir == null ) {
 logThis('About to repair the database.', $path);
 //Use Repair and rebuild to update the database.
 global $dictionary, $beanFiles;
+
+require_once('modules/Trackers/TrackerManager.php');
+$trackerManager = TrackerManager::getInstance();
+$trackerManager->pause();
+$trackerManager->unsetMonitors();
+
 require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
+$rac->clearExternalAPICache();
 
 $repairedTables = array();
 
@@ -241,6 +248,11 @@ if($_SESSION['current_db_version'] < '610' && function_exists('upgrade_connector
    upgrade_connectors($path);
 }
 
+if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
+{
+    repair_long_relationship_names($path);
+}
+
 //Global search support
 if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
 {
@@ -253,6 +265,13 @@ if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_searc
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 {
 	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
+}
+
+
+//Unlink files that have been removed
+if(function_exists('unlinkUpgradeFiles'))
+{
+	unlinkUpgradeFiles($_SESSION['current_db_version']);
 }
 
 require_once('modules/Administration/upgrade_custom_relationships.php');

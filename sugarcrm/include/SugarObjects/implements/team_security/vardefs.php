@@ -63,6 +63,7 @@ $vardefs = array(
 			'join_name'=>'ts1',
 			'table' => 'team_sets',
 			'type' => 'relate',
+            'required' => 'true',
 			'table' => 'teams',
 			'isnull' => 'true',
 			'module' => 'Teams',
@@ -86,6 +87,7 @@ $vardefs = array(
 			'id_name' => 'team_id',
 			'vname' => 'LBL_TEAMS',
 			'type' => 'relate',
+            'required' => 'true',
 			'table' => 'teams',
 			'isnull' => 'true',
 			'module' => 'Teams',
@@ -172,7 +174,7 @@ $vardefs = array(
 ),
 'indices' => array(
 		array(
-			'name' => 'idx_'.strtolower($table_name).'_tmst_id', 
+			'name' => 'idx_'.strtolower($table_name).'_tmst_id',
 			'type' => 'index', 
 			'fields' => array('team_set_id')
 		),

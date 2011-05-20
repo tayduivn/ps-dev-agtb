@@ -22,6 +22,12 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->_noUserCache();
 	}
 
+	public function tearDown()
+	{
+	    SugarDateTime::$use_php_parser = true;
+	    SugarDateTime::$use_strptime = true;
+	}
+
 	public static function tearDownAfterClass()
 	{
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -762,5 +768,99 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	    sleep(2);
 	    $now2 = $this->time_date->now();
 	    $this->assertEquals($now1, $now2, "now() should produce same result when cached");
+	}
+
+	public function stringFormats()
+	{
+	    return array(
+	        array("H:i", "15:38", "15:38:00"),
+	        array("h:ia", "03:38pm", "15:38:00"),
+	        array("h:iA", "03:38PM", "15:38:00"),
+	        array("h:ia", "03:38am", "03:38:00"),
+	        array("h:iA", "03:38AM", "03:38:00"),
+	        array("H.i", "15.38", "15:38:00"),
+	        array("h.ia", "03.38pm", "15:38:00"),
+	        array("h.iA", "03.38PM", "15:38:00"),
+	        array("h:ia", "03:38 pm", "15:38:00"),
+	        array("h:iA", "03:38 PM", "15:38:00"),
+	        array("h.ia", "03.38am", "03:38:00"),
+	        array("h.iA", "03.38AM", "03:38:00"),
+	        array("h:ia", "03:38 am", "03:38:00"),
+	        array("h:iA", "03:38 AM", "03:38:00"),
+	        );
+	}
+
+	/**
+	 * @dataProvider stringFormats
+	 * @param string $format
+	 * @param string $string
+	 * @param string $result
+	 */
+	public function testCreateFromString($format, $string, $result)
+	{
+        $this->_setPrefs("Y-m-d", $format, "GMT");
+        $tz = new DateTimeZone("GMT");
+        SugarDateTime::$use_php_parser = true;
+	    $date = SugarDateTime::createFromFormat($format, $string, $tz);
+	    $this->assertInstanceOf("SugarDateTime", $date, "Parsing $string failed with PHP parser");
+	    $this->assertEquals($result, $this->time_date->getTimePart($date->asDb()));
+
+	    SugarDateTime::$use_php_parser = false;
+	    $date = SugarDateTime::createFromFormat($format, $string, $tz);
+	    $this->assertInstanceOf("SugarDateTime", $date, "Parsing $string failed with strptime");
+	    $this->assertEquals($result, $this->time_date->getTimePart($date->asDb()));
+
+	    SugarDateTime::$use_strptime = false;
+	    $date = SugarDateTime::createFromFormat($format, $string, $tz);
+	    $this->assertInstanceOf("SugarDateTime", $date, "Parsing $string failed with manual parser");
+	    $this->assertEquals($result, $this->time_date->getTimePart($date->asDb()));
+
+	    SugarDateTime::$use_php_parser = true;
+	    SugarDateTime::$use_strptime = true;
+	}
+
+	public function testGetTimeDate()
+	{
+	    global $current_user;
+	    $this->_setPrefs("Y-m-d", "H:i", "GMT");
+
+	    $f = $this->time_date->get_date_time_format();
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(true);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(false);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(null);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(true, null);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(false, null);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(null, null);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(true, $current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(false, $current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format(null, $current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format($current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format($current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
+
+	    $f = $this->time_date->get_date_time_format($current_user);
+	    $this->assertEquals("Y-m-d H:i", $f);
 	}
 }

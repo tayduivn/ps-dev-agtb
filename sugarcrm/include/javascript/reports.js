@@ -153,7 +153,6 @@ SUGAR.reports = function() {
 			    SUGAR.reports.populateFieldGrid(current_module,"","");
 				report_type = report_def_str.report_type;
 				SUGAR.FiltersWidget.init(imgPath);
-				
 				if (report_type == 'summary') {
 					report_type = 'summation';
 					if (report_def_str.display_columns && report_def_str.display_columns.length > 0) 
@@ -535,7 +534,8 @@ SUGAR.reports = function() {
 					var key = field_def.table_key + ":" + field_def.name;
 				}
 
-				if (cells[3].getElementsByTagName('input')[0].checked) {
+				
+				if (report_type == 'summation' && cells[3].getElementsByTagName('input')[0].checked) {
                     sortedOn = true;
                     summary_order_by[0] = field_def;
                     summary_order_by[0].sort_dir = cells[3].getElementsByTagName('select')[0].value;
@@ -1635,7 +1635,7 @@ SUGAR.reports = function() {
 				report_def.summary_columns = summary_columns;
 			if (order_by.length > 0)
 				report_def.order_by = order_by;
-			if (summary_order_by.length > 0)
+			if (summary_order_by.length > 0 && report_type == 'summation')
 				report_def.summary_order_by = summary_order_by;
 
 			report_def.report_name = document.ReportsWizardForm.save_report_as.value;
@@ -1964,10 +1964,12 @@ SUGAR.reports = function() {
 			cell.innerHTML = "<input type='text' size='50' id= '"+id+"_input' value='"+colLabel+"' onclick='this.focus();'>";
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\"" + id + "\")'></input>";
-			cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id + "'></span>";
-			cell = row.insertCell(4);			
-			cell.setAttribute('scope', 'row');
+			if (report_type == 'summation') {
+				cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\"" + id + "\")'></input>";
+				cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id + "'></span>";
+				cell = row.insertCell(4);			
+				cell.setAttribute('scope', 'row');
+			}
 			if (typeof(linkedGroupById) == 'undefined')
 				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
 			SUGAR.reports.addToFullTableList(id, fieldGridCell.getRecord(fieldGridCell.getSelectedRows()[0]).getData('parents'));		
@@ -2073,7 +2075,10 @@ SUGAR.reports = function() {
 			document.getElementById('display_summaries_div').innerHTML='';
 			module = current_module;
 			var panelHtml="<table id='displaySummariesTable' width='100%'><tr><td width='4%' class='dataLabel'>&nbsp;&nbsp;&nbsp;&nbsp;</td><td width='30%' class='dataLabel'><b>"+SUGAR.language.get('Reports','LBL_COLUMN_NAME')+
-				"</td><td class='dataLabel'>&nbsp;</td><td width='30%'><b>"+SUGAR.language.get('Reports','LBL_ORDER_BY')+"</b></td></tr>" +
+				"</td><td class='dataLabel'>&nbsp;</td><td width='30%'><b>";
+			if (report_type == 'summation') 
+				panelHtml += SUGAR.language.get('Reports','LBL_ORDER_BY')+"</b></td></tr>";
+			panelHtml +=	
 				"<tr id='display_summary_help_row'><td>&nbsp;&nbsp;&nbsp;</td><td colspan=2><table width='70%' valign='center' class='button'><tr><td>"+SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARY_HELP_DESC')+"</td></tr></table></td></tr></table>";
 
 			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DISPLAY_SUMMARIES') + "</span>" + "<span id='display_summary_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
@@ -3172,7 +3177,11 @@ SUGAR.reports = function() {
 							//full_table_list[parentsStrSoFar].module = fieldGridCell.store.data.items[fieldGridCell.selModel.last].data.module_name;
 							full_table_list[parentsStrSoFar].dependents =[rowId];
 							var relationship = link_defs[j].relationship_name;
-							if (link_defs[j].bean_is_lhs && rel_defs[relationship].rhs_module) {
+							if (link_defs[j].module)
+							{
+								full_table_list[parentsStrSoFar].module = link_defs[j].module;
+							}
+							else if (link_defs[j].bean_is_lhs && rel_defs[relationship].rhs_module) {
 								full_table_list[parentsStrSoFar].module = rel_defs[relationship].rhs_module;
 							}
 							else {
@@ -3545,16 +3554,18 @@ SUGAR.reports = function() {
 			cell.innerHTML = "<input type='text' size='50' id= '"+id+"_input' value='"+summaryColumn.label+"' onclick='this.focus();'>";
 			cell = row.insertCell(3);
 			cell.setAttribute('scope', 'row');
-			cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\""	+ id + "\")' >";
-			cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
-			if (typeof (summaryOrderBy) != "undefined" && summaryOrderBy.length > 0) {
-				if (summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
-					document.getElementById("summary_order_by_radio_" + id).setAttribute('checked', true);
-					SUGAR.reports.summaryOrderBySelected(id, summaryOrderBy[0].sort_dir);
+			if (report_type == 'summation') {
+				cell.innerHTML = "<input type='radio' name='summary_order_by_radio' id='summary_order_by_radio_"+ id + "' onClick='SUGAR.reports.summaryOrderBySelected(\""	+ id + "\")' >";
+				cell.innerHTML += "&nbsp;&nbsp;<span id='summaryOrderByDirectionDiv_" + id	+ "'></span>";
+				if (typeof (summaryOrderBy) != "undefined" && summaryOrderBy.length > 0) {
+					if (report_type=='summation' && summaryOrderBy[0].name == summaryColumn.name && summaryOrderBy[0].table_key == summaryColumn.table_key) {
+						document.getElementById("summary_order_by_radio_" + id).setAttribute('checked', true);
+						SUGAR.reports.summaryOrderBySelected(id, summaryOrderBy[0].sort_dir);
+					}
 				}
+				cell = row.insertCell(4);
+				cell.setAttribute('scope', 'row');
 			}
-			cell = row.insertCell(4);
-			cell.setAttribute('scope', 'row');
 			if (linkedGroupById == null)
 				cell.innerHTML = "&nbsp;&nbsp;<img onclick='SUGAR.reports.deleteDisplaySummary(\"" +id + "\")' src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=delete_inline.gif'>";
 			SUGAR.reports.addToFullTableList(id,

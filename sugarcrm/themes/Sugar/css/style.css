@@ -131,7 +131,7 @@ th, td
 
 /* layout the header elements */
 #header {
-
+min-width: 1050px;
 }
 
 .headerLarge {
@@ -972,6 +972,9 @@ border-radius: 6px;
     word-wrap: break-word;
 }
 
+#wizard .detail.view {
+	background-color: #fff;	
+}
 /* detail view */
 .detail.view {
 box-shadow: #ccc 0px 0px 10px;
@@ -1252,7 +1255,7 @@ div.indent_right {
 }
 
 .search_form .view.advanced .help {
-text-align: left;	
+text-align: right;	
 }
 
 .search_form .view a {
@@ -2145,7 +2148,7 @@ padding-left: 0px;
 /* for team notices and my portal dashlets */
 .teamNoticeBox 
 {
-    border-width: 0px 1px 1px 1px;
+    border-width: 0px 1px 0px 1px;
     border-style: solid;
     padding: 0;
     background: #fff;
@@ -2522,6 +2525,7 @@ embed
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 	margin-bottom: 20px;
+	border: 1px solid #ccc\9;
 	}
 	
 	.dashletPanel .hd {
@@ -4669,6 +4673,11 @@ margin: 0 4px 0 0;
 *height: 19px; /* ie 7 hack */
 }
 
+.yui-navset .yui-nav {
+	overflow: hidden;	
+}
+
+
 .yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav, .yui-layout .yui-layout-hd {
 
     background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png') repeat-x scroll 0 0; 
@@ -4964,6 +4973,18 @@ border-radius: 0px 0px 0px 6px;
 border-radius: 0px 0px 6px 0px;
 -webkit-border-bottom-right-radius: 6px;
 }
+table.importTable .edit.view > tr:first-child > td:first-child,.detail.view tr:first-child > td:first-child,
+table.importTable .edit.view > tr:first-child td:last-child,.detail.view tr:first-child td:last-child,
+table.importTable .edit.view > tr:last-child > td:first-child,.detail.view tr:last-child > td:first-child,
+table.importTable .edit.view > tr:last-child td:last-child ,.detail.view tr:last-child td:last-child 
+{
+    -moz-border-radius: 0px 0px 0px 0px;
+    border-radius: 0px 0px 0px 0px;
+    -webkit-border-top-left-radius: 0px;
+    -webkit-border-top-right-radius: 0px;
+    -webkit-border-bottom-left-radius: 0px;
+    -webkit-border-bottom-right-radius: 0px;
+}
 
 .edit.view tr:last-child td,.detail.view tr:last-child td {
 border-bottom: 0px;
@@ -5175,6 +5196,7 @@ color:blue;
 height:55px;
 background-image:url('../../../../index.php?entryPoint=getImage&imageName=dcmenugrade.png');
 background-repeat:repeat-x;
+min-width: 1050px;
 }
 
 

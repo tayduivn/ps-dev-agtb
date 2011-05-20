@@ -383,6 +383,7 @@ function processReports(){
     
     
     function  getNumOfActiveUsers($id, $db){
+            global $timedate;
             //get current time
             $now = TimeDate::getInstance()->nowDb();
             $stim = strtotime($now);

@@ -485,9 +485,7 @@ class TemplateHandler {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
-        //BEGIN SUGARCRM flav=een ONLY
         $js .= DependencyManager::getLinkFields($fieldDefs, $view);
-        //END SUGARCRM flav=een ONLY
 
         $dependencies = array_merge(
            DependencyManager::getDependenciesForFields($fieldDefs, $view),

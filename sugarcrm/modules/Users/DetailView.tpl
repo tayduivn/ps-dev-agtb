@@ -53,7 +53,7 @@ user_detailview_tabs.on('contentReady', function(e){
 {/if}
 //END SUGARCRM flav!=com && flav!=sales ONLY
 });
-</script> 
+</script>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="actionsContainer">
 <tr>
@@ -94,7 +94,7 @@ user_detailview_tabs.on('contentReady', function(e){
         <li><a id="tab3" href="#tab3"><em>{$MOD.LBL_USER_ACCESS}</em></a></li>
         {/if}
         {* //END SUGARCRM flav!=sales ONLY *}
-    </ul>            
+    </ul>
     <div class="yui-content">
         <div>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
@@ -126,11 +126,11 @@ user_detailview_tabs.on('contentReady', function(e){
                     <td valign="top"><slot>{$PICTURE_FILE_CODE}&nbsp;</slot></td>
                     <td valign="top" scope="row"><slot>&nbsp;</slot></td>
                     <td valign="top" ><slot>&nbsp;</slot></td>
-                </tr> 
+                </tr>
                 {/if}
-                {* //END SUGARCRM flav!=com ONLY *}               
+                {* //END SUGARCRM flav!=com ONLY *}
             </table>
-            
+
             <div id='information'>
                 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
                 <tr>
@@ -161,7 +161,7 @@ user_detailview_tabs.on('contentReady', function(e){
                 <td valign="top" scope="row"><slot>{$MOD.LBL_FAX}:</slot></td>
                 <td valign="top"><slot>{$PHONE_FAX}&nbsp;</slot></td>
                 </tr><tr>
-            
+
                 <td valign="top" scope="row"><slot>{$MOD.LBL_HOME_PHONE}:</slot></td>
                 <td valign="top"><slot>{$PHONE_HOME}&nbsp;</slot></td>
                 <td valign="top" scope="row"><slot>&nbsp;</slot></td>
@@ -190,7 +190,7 @@ user_detailview_tabs.on('contentReady', function(e){
                 <td width="35%" valign="top"><slot>&nbsp;</slot></td>
             </tr></table>
             </div>
-            
+
             <div id='email_options'>
                 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
                     <tr>
@@ -262,7 +262,7 @@ user_detailview_tabs.on('contentReady', function(e){
                 <td scope="row" valign="top"><slot>{$MOD.LBL_REMINDER}:</td>
                 <td valign="top" nowrap><slot><input name='should_remind' tabindex='1' size='2' maxlength='2'  disabled type="checkbox" class="checkbox" value='1' {$REMINDER_CHECKED}>&nbsp;{$REMINDER_TIME}</slot></td>
                 <td ><slot>{$MOD.LBL_REMINDER_TEXT}&nbsp;</slot></td>
-            
+
                 </tr>
                 <tr>
                 <td valign="top" scope="row"><slot>{$MOD.LBL_MAILMERGE}:</slot></td>
@@ -311,7 +311,7 @@ user_detailview_tabs.on('contentReady', function(e){
                 {$EXTERNAL_AUTH}
             </table>
         </div>
-        
+
         <div id='locale'>
             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="detail view">
                 <tr>
@@ -361,7 +361,7 @@ user_detailview_tabs.on('contentReady', function(e){
                 </tr>
             </table>
         </div>
-        
+
         <!--//BEGIN SUGARCRM flav=pro ONLY -->
         {if $SHOW_PDF_OPTIONS}
         <div id='pdf'>
@@ -394,7 +394,7 @@ user_detailview_tabs.on('contentReady', function(e){
         </div>
         {/if}
         <!--//END SUGARCRM flav=pro ONLY -->
-        
+
         <!--//BEGIN SUGARCRM flav!=dce ONLY -->
         <!--//BEGIN SUGARCRM flav!=sales ONLY -->
         <div id='calendar_options'>
@@ -446,6 +446,9 @@ user_detailview_tabs.on('contentReady', function(e){
         {$USER_HOLIDAYS_SUBPANEL}
         </div>
         <!--//END SUGARCRM flav!=sales ONLY -->
+        <div id="oauth_tokens">
+        {$OAUTH_TOKENS_SUBPANEL}
+        </div>
     </div>
 {if !$SHOW_ROLES}
 </div>

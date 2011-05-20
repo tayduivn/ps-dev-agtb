@@ -1,2 +1,0 @@
-name,type,status,base_module,record_type,fire_order,description,selector,rel_module_type,lhs_field,trigger__operator,selector,field_0__field_value,selector1,selector2,test,trigger__field_value
-wf_9043,When record saved,Active,Accounts,New and Existing Records,Alerts then Actions,description,Contacts,any related,Name,Equals,Call,call_name,Administrator,To:,KobeMail <oliver.sugar@gmail.com>,wf_9043_trigger__field_value

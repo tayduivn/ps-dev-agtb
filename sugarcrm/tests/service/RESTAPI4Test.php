@@ -17,6 +17,12 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
+        $beanList = array();
+		$beanFiles = array();
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+		
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -37,21 +43,26 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->aclRole->name = "Unit Test";
         $this->aclRole->save();
         $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
-        
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->aclField = new ACLField();
         $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        //END SUGARCRM flav=pro ONLY
     }
 
     public function tearDown()
 	{
+	    //BEGIN SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
+	    //END SUGARCRM flav=pro ONLY
 	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' )");
 	    $GLOBALS['db']->query("DELETE FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}'");
 	    
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
-	    unset($GLOBALS['app_list_strings']);
+	    unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
+		unset($GLOBALS['app_list_strings']);
 	    unset($GLOBALS['app_strings']);
 	    unset($GLOBALS['mod_strings']);
 	    unset($GLOBALS['current_user']);
@@ -109,7 +120,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
     }
-
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test the login function to ensure it returns the available quotes layouts when application name
      * is mobile.
@@ -120,6 +131,42 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $results = $this->_login($this->_admin_user);
         $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Standard']) );
         $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Invoice']) );
+    }
+    
+    /**
+     * Test the get_entry_list call with Export access disabled to ensure results are returned.
+     *
+     */
+    public function testGetEntryListWithExportRole()
+    {
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        
+        //Set the Export Role to no access for user.
+        $aclRole = new ACLRole();
+        $aclRole->name = "Unit Test Export";
+        $aclRole->save();
+        $aclRole->set_relationship('acl_roles_users', array('role_id'=> $aclRole->id ,'user_id'=> $this->_user->id), false);
+        $role_actions = $aclRole->getRoleActions($aclRole->id);
+        $action_id = $role_actions['Accounts']['module']['export']['id'];
+        $aclRole->setAction($aclRole->id, $action_id, -99);
+        
+        $result = $this->_login($this->_user);
+        $session = $result['id'];
+
+        $module = 'Accounts';
+        $orderBy = 'name';
+        $offset = 0;
+        $returnFields = array('name');
+        $linkNameFields = "";
+        $maxResults = 2;
+        $deleted = FALSE;
+        $favorites = FALSE;
+        $result = $this->_makeRESTCall('get_entry_list', array($session, $module, '', $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites));
+        
+        $this->assertFalse(isset($result['name']));
+        if ( isset($result['name']) ) {
+            $this->assertNotEquals('Access Denied',$result['name']);
+        }
     }
     
     /**
@@ -163,7 +210,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $result = $this->_makeRESTCall('get_quotes_pdf', array($session, '-1', 'Standard' ));
         $this->assertTrue(!empty($result['file_contents']));     
     }
-    
+    //END SUGARCRM flav=pro ONLY
     /**
      * Ensure the ability to retrieve a module list of recrods that are favorites.
      *
@@ -269,24 +316,26 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $results = $this->_makeRESTCall('search_by_module',
                         array(
                             'session' => $session,
-                            'search'  => $searchString,
+                            'search_string'  => $searchString,
                             'modules' => $searchModules,
                             'offset'  => $offSet,
-                            'max'     => $maxResults,
-                            'user'    => $this->_user->id,
-                            'select_field' => array(),
-                            'unified_only' => true,
+                            'max_results'     => $maxResults,
+                            'assigned_user_id'    => $this->_user->id,
+                            'select_fields' => array(),
+                            'unified_search_only' => true,
                             'favorites' => true,                            
                             )
                         );
-        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
-        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
+        
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'Unit Test %' ");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account->id}'");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE record_id = '{$account2->id}'");
+        
+        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account->id,'Accounts'), "Unable to find {$account->id} id in favorites search.");
+        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$account2->id,'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
     }    
-    
-    function _aclEditViewFieldProvider()
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function _aclEditViewFieldProvider()
     {
         return array(       
 
@@ -336,9 +385,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         }
     }
     
-    
-    
-    function _aclListViewFieldProvider()
+    public function _aclListViewFieldProvider()
     {
         return array(       
             array('Accounts','wireless', array('name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 )),
@@ -374,7 +421,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    
+    //END SUGARCRM flav=pro ONLY
     /**
      * Private helper function to mark a bean as a favorite item.
      *
@@ -394,5 +441,97 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
                     ),
                 )
             );
+    }
+
+
+    public function testRelateAccountToTwoContacts()
+    {
+        $result = $this->_login();
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+        $session = $result['id'];
+
+        $result = $this->_makeRESTCall('set_entry',
+            array(
+                'session' => $session,
+                'module' => 'Accounts',
+                'name_value_list' => array(
+                    array('name' => 'name', 'value' => 'New Account'),
+                    array('name' => 'description', 'value' => 'This is an account created from a REST web services call'),
+                    ),
+                )
+            );
+
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+
+        $accountId = $result['id'];
+
+        $result = $this->_makeRESTCall('set_entry',
+            array(
+                'session' => $session,
+                'module' => 'Contacts',
+                'name_value_list' => array(
+                    array('name' => 'last_name', 'value' => 'New Contact 1'),
+                    array('name' => 'description', 'value' => 'This is a contact created from a REST web services call'),
+                    ),
+                )
+            );
+
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+
+        $contactId1 = $result['id'];
+
+        $result = $this->_makeRESTCall('set_entry',
+            array(
+                'session' => $session,
+                'module' => 'Contacts',
+                'name_value_list' => array(
+                    array('name' => 'last_name', 'value' => 'New Contact 2'),
+                    array('name' => 'description', 'value' => 'This is a contact created from a REST web services call'),
+                    ),
+                )
+            );
+
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+
+        $contactId2 = $result['id'];
+
+        // now relate them together
+        $result = $this->_makeRESTCall('set_relationship',
+            array(
+                'session' => $session,
+                'module' => 'Accounts',
+                'module_id' => $accountId,
+                'link_field_name' => 'contacts',
+                'related_ids' => array($contactId1,$contactId2),
+                )
+            );
+
+        $this->assertEquals($result['created'],1,$this->_returnLastRawResponse());
+
+        // check the relationship
+        $result = $this->_makeRESTCall('get_relationships',
+            array(
+                'session' => $session,
+                'module' => 'Accounts',
+                'module_id' => $accountId,
+                'link_field_name' => 'contacts',
+                'related_module_query' => '',
+                'related_fields' => array('last_name','description'),
+                'related_module_link_name_to_fields_array' => array(),
+                'deleted' => false,
+                )
+            );
+
+        $returnedValues = array();
+        $returnedValues[] = $result['entry_list'][0]['name_value_list']['last_name']['value'];
+        $returnedValues[] = $result['entry_list'][1]['name_value_list']['last_name']['value'];
+
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$accountId}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId1}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId2}'");
+        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE account_id= '{$accountId}'");
+
+        $this->assertContains('New Contact 1',$returnedValues,$this->_returnLastRawResponse());
+        $this->assertContains('New Contact 2',$returnedValues,$this->_returnLastRawResponse());
     }
 }

@@ -1,6 +1,5 @@
 <?php
-// FILE SUGARCRM flav=pro ONLY 
-
+// FILE SUGARCRM flav=pro ONLY
 require_once('modules/Reports/schedule/ReportSchedule.php');
 
 class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase

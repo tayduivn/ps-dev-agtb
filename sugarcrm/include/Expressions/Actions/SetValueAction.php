@@ -26,7 +26,7 @@ class SetValueAction extends AbstractAction{
 
 	function SetValueAction($params) {
 		$this->targetField = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 	}
 
 	/**

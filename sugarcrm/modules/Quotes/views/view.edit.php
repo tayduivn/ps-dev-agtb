@@ -183,17 +183,12 @@ class QuotesViewEdit extends ViewEdit
 		$this->ss->assign('ASSIGNED_USER_NAME', $this->bean->assigned_user_name);
 		$this->ss->assign('ASSIGNED_USER_ID', $this->bean->assigned_user_id );
 
-		if(empty($this->bean->id)) {
+		if(!empty($this->bean->calc_grand_total) && $this->bean->calc_grand_total == 1){
 			$this->ss->assign('CALC_GRAND_TOTAL_CHECKED', 'checked');
-			$this->ss->assign('SHOW_LINE_NUMS_CHECKED', 'checked');
-		} else {
-			if(!empty($this->bean->calc_grand_total) && $this->bean->calc_grand_total == 1){
-				$this->ss->assign('CALC_GRAND_TOTAL_CHECKED', 'checked');
-			}
+		}
 
-			if(!empty($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
-				$this->ss->assign('SHOW_LINE_NUMS_CHECKED', 'checked');
-			}
+		if(!empty($this->bean->show_line_nums) && $this->bean->show_line_nums == 1){
+			$this->ss->assign('SHOW_LINE_NUMS_CHECKED', 'checked');
 		}
 
 		// Set Currency values and currency javascript
@@ -226,11 +221,12 @@ class QuotesViewEdit extends ViewEdit
 			if(is_array($product_bundle_list)){
 
 				$ordered_bundle_list = array();
-				for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-					$index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-					$ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
-				}
-				ksort($ordered_bundle_list);
+                foreach ($product_bundle_list as $id => $bean)
+                {
+                    $index = $bean->get_index($this->bean->id);
+                    $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
+                } //for
+                ksort($ordered_bundle_list);
 				foreach ($ordered_bundle_list as $product_bundle) {
 					$product_list = $product_bundle->get_products();
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
@@ -273,11 +269,12 @@ class QuotesViewEdit extends ViewEdit
 			if(is_array($product_bundle_list)){
 
 				$ordered_bundle_list = array();
-				for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-					$index =& $product_bundle_list[$cnt]->get_index($original_quote->id);
-					$ordered_bundle_list[$cnt] = $product_bundle_list[$cnt];
-				}
-				ksort($ordered_bundle_list);
+                foreach ($product_bundle_list as $id => $bean)
+                {
+                    $index = $bean->get_index($this->bean->id);
+                    $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
+                } //for
+                ksort($ordered_bundle_list);
 
 				foreach ($ordered_bundle_list as $product_bundle) {
 

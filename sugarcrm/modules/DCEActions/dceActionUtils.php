@@ -27,6 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  
       //create and execute query for queued actions    
     function cleanupActions($db=null){
+        global $timedate;
         if(empty($db)) {
             $db = DBManagerFactory::getInstance();
         }

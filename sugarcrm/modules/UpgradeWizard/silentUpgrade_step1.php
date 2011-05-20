@@ -592,6 +592,8 @@ if($upgradeType != constant('DCE_INSTANCE')) {
 ////	UPGRADE PREP
 prepSystemForUpgradeSilent();
 
+//repair tabledictionary.ext.php file if needed
+repairTableDictionaryExtFile();
 
 $unzip_dir = clean_path("{$sugar_config['upload_dir']}upgrades/temp");
 $install_file = clean_path("{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
@@ -1080,8 +1082,8 @@ fix_report_relationships($path);
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
-if(isset($_SESSION['upgrade_from_flavor'])){
-
+if($ce_to_pro_ent)
+{
         //check to see if there are any new files that need to be added to systems tab
         //retrieve old modules list
         logThis('check to see if new modules exist',$path);
@@ -1130,23 +1132,9 @@ if(isset($_SESSION['upgrade_from_flavor'])){
           $tabs[$nm] = $nm;
         }
 
-        //Set the default order
-        $default_order = array(
-        	'Home'=>'Home',
-        	'Accounts'=>'Accounts',
-        	'Contacts'=>'Contacts',
-        	'Opportunities'=>'Opportunities',
-        	'Activities'=>'Activities',
-        	'Reports'=>'Reports',
-        	'Documents'=>'Documents'
-        );
-        $tabs = array_merge($default_order, $tabs);
-
         //now assign the modules to system tabs
         $newTB->set_system_tabs($tabs);
         logThis('module tabs updated',$path);
-
-
 }
 
 //Also set the tracker settings if  flavor conversion ce->pro or ce->ent
@@ -1191,5 +1179,78 @@ echo "RUNNING DCE UPGRADE\n";
 } //END of big if-else block for DCE_INSTANCE
 
 
+/**
+ * repairTableDictionaryExtFile
+ * 
+ * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file 
+ * did not exist.  This would cause warnings to appear during the upgrade.  As a result, this
+ * function scans the contents of tabledictionary.ext.php and then remove entries where the file does exist.
+ */
+function repairTableDictionaryExtFile()
+{
+	$tableDictionaryExtDirs = array('custom/Extension/application/Ext/TableDictionary', 'custom/application/Ext/TableDictionary');
+	
+	foreach($tableDictionaryExtDirs as $tableDictionaryExt)
+	{
+	
+		if(is_dir($tableDictionaryExt) && is_writable($tableDictionaryExt)){
+			$dir = dir($tableDictionaryExt);
+			while(($entry = $dir->read()) !== false)
+			{
+				$entry = $tableDictionaryExt . '/' . $entry;
+				if(is_file($entry) && preg_match('/\.php$/i', $entry) && is_writeable($entry))
+				{
+			
+						if(function_exists('sugar_fopen'))
+						{
+							$fp = @sugar_fopen($entry, 'r');
+						} else {
+							$fp = fopen($entry, 'r');
+						}			
+						
+						
+					    if($fp)
+				        {
+				             $altered = false;
+				             $contents = '';
+						     
+				             while($line = fgets($fp))
+						     {
+						    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\"|\']\s*\)\s*;/', $line, $match))
+						    	{
+						    	   if(!file_exists($match[1]))
+						    	   {
+						    	      $altered = true;
+						    	   } else {
+						    	   	  $contents .= $line;
+						    	   }
+						    	} else {
+						    	   $contents .= $line;
+						    	}
+						     }
+						     
+						     fclose($fp); 
+				        }
+				        
+				        
+					    if($altered)
+					    {
+							if(function_exists('sugar_fopen'))
+							{
+								$fp = @sugar_fopen($entry, 'w');
+							} else {
+								$fp = fopen($entry, 'w');
+							}		    	
+				            
+							if($fp && fwrite($fp, $contents))
+							{
+								fclose($fp);
+							}
+					    }					
+				} //if
+			} //while
+		} //if
+	}
+}
 
 ?>

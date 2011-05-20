@@ -26,6 +26,7 @@
  */
 
 // $Id: home.js 24436 2007-07-18 23:11:36Z awu $
+initMySugar = function(){
 SUGAR.mySugar = function() {
 	var originalLayout = null;
 	var configureDashletId = null;
@@ -204,8 +205,13 @@ SUGAR.mySugar = function() {
             url = 'index.php?action=DynamicAction&DynamicAction=retrievePage&module='+module+'&to_pdf=1&pageId='+pageNum;
 
             var populatePage = function(data) {
-                eval(data.responseText);
-
+                var response = {html:"", script:""};
+                try {
+                    response = YAHOO.lang.JSON.parse(data.responseText);
+                }
+                catch(e){
+                    console.log(e);
+                }
                 var htmlRepsonse = response['html'];
                 eval(response['script']);
                 
@@ -266,6 +272,9 @@ SUGAR.mySugar = function() {
 				//custom chart code
                 SUGAR.mySugar.sugarCharts.loadSugarCharts(pageNum);
                 
+                //refresh page when user resizes window
+
+
 				SUGAR.mySugar.loading.hide();                                                  
 				document.getElementById('loading_c').style.display = 'none';
             }
@@ -304,11 +313,6 @@ SUGAR.mySugar = function() {
 
 			var addBlankPage = function(data) {
 				//check to see if a user preference error occurred
-				if(data.responseText == 'userpref_error'){
-					//user preference error occured, flash message and exit processing
-					ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_TAB'),7000);
-					return;
-				} 
 				
 			    var pageContainerDivElem = document.getElementById('pageContainer');
 			    var newPageId = 'pageNum_' + pageCount + '_div';
@@ -611,6 +615,12 @@ SUGAR.mySugar = function() {
 				}
 				//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 				SUGAR.mySugar.attachToggleToolsetEvent(id);
+
+                //we need to reinit the quickEdit Listeners whenever a dashlet is refreshed
+                if(typeof(qe_init) =='function'){
+                    //reinitialize the Quick Edit events
+                    qe_init();
+                }
 				//END SUGARCRM flav=pro || flav=sales ONLY
 			}
 			
@@ -704,13 +714,6 @@ SUGAR.mySugar = function() {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_ADDING_DASHLET'));
 			var success = function(data) {
 
-			//check to see if a user preference error occurred
-			if(data.responseText == 'userpref_error'){
-				//user preference error occured, close the dashlet dialog, flash the error message and exit processing
-				SUGAR.mySugar.closeDashletsDialog();
-				ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'ERROR_USER_PREFS_DASH'),7000);
-				return;
-			}
 				colZero = document.getElementById('col_'+activeTab+'_0');
 				newDashlet = document.createElement('li'); // build the list item
 				newDashlet.id = 'dashlet_' + data.responseText;
@@ -988,22 +991,22 @@ SUGAR.mySugar = function() {
 		
 		collapseList: function(chartList){
 			document.getElementById(chartList+'List').style.display='none';
-			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.expandList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" align="absmiddle" />';
+			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" align="absmiddle" />';
 		},
 		
 		expandList: function(chartList){
 			document.getElementById(chartList+'List').style.display='';		
-			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.collapseList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=basic_search.gif" align="absmiddle" />';			
+			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=basic_search.gif" align="absmiddle" />';
 		},
 		
 		collapseReportList: function(reportChartList){
 			document.getElementById(reportChartList+'ReportsChartDashletsList').style.display='none';
-			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.expandReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectPlus.gif" align="absmiddle" />';
+			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectPlus.gif" align="absmiddle" />';
 		},
 		
 		expandReportList: function(reportChartList){
 			document.getElementById(reportChartList+'ReportsChartDashletsList').style.display='';
-			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.collapseReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectMinus.gif" align="absmiddle" />';
+			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectMinus.gif" align="absmiddle" />';
 		},
 		
 		clearSearch: function(){
@@ -1245,3 +1248,4 @@ SUGAR.mySugar = function() {
 		//END SUGARCRM flav=pro || flav=sales ONLY
 	 }; 
 }();
+};

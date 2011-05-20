@@ -33,6 +33,11 @@ class ExpressionEngineController extends SugarController
     {
      	$this->view = 'editFormula';  
     }
+
+    function action_editDepDropdown ()
+    {
+     	$this->view = 'editDepDropdown';
+    }
     
 	function action_index ()
     {

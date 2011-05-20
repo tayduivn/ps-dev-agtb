@@ -26,6 +26,7 @@
  ********************************************************************************/
 	var elems = new Array("address_street", "address_city", "address_state", "address_postalcode", "address_country");
     var tHasText = false;
+    var syncAddressCheckbox = true;
     var originalBgColor = '#FFFFFF';  
     var Dom = YAHOO.util.Dom;
 	
@@ -46,17 +47,19 @@
 		        if(!tHasText && trim(e1.value) != "") {
 		           tHasText = true;
 		        }
-		        if(e1.value != e2.value) {
-		           document.getElementById(this.id).checked = false;
+		        
+		        if(e1.value != e2.value) 
+		        {
+		           syncAddressCheckbox = false;
 		           break;
 		        }
 		        originalBgColor = e1.style.backgroundColor;
 		    }
 	    }
 	    
-	    if(!tHasText) {
-	       document.getElementById(this.id).checked = false;
-	    } else {
+	    if(tHasText && syncAddressCheckbox) 
+        {
+           document.getElementById(this.id).checked = true;
 	       syncFields(fromKey, toKey);
 	    }	  
 	} 
@@ -65,7 +68,18 @@
          fromEl = YAHOO.util.Event.getTarget(e, true);
          if(typeof fromEl != "undefined") {
             toEl = document.getElementById(fromEl.id.replace(fromKey, toKey));
+
+            dispatch = false;
+            if(toEl.value != fromEl.value)
+                dispatch = true;
+
             toEl.value = fromEl.value;
+
+            if(dispatch){
+                var tempEvent = document.createEvent('HTMLEvents');
+                tempEvent.initEvent('change', true, true);
+                toEl.dispatchEvent(tempEvent);
+            }
          }
     }
     
@@ -79,12 +93,23 @@
                   if(!document.getElementById(toKey + '_checkbox').checked) {
 		             Dom.setStyle(e1,'backgroundColor',originalBgColor);
 		             e1.removeAttribute('readOnly');
-		             YAHOO.util.Event.removeListener(e2, 'keyup'); 
+		             YAHOO.util.Event.removeListener(e2, 'change', writeToSyncField);
 		          } else {
-		             e1.value = e2.value;
+                     dispatch = false;
+                     if(e1.value != e2.value)
+                         dispatch = true;
+                     
+                     e1.value = e2.value;
+                     
                      Dom.setStyle(e1,'backgroundColor','#DCDCDC');
                      e1.setAttribute('readOnly', true);
-                     YAHOO.util.Event.addListener(e2, 'keyup', writeToSyncField);
+                     YAHOO.util.Event.addListener(e2, 'change', writeToSyncField);
+
+                     if(dispatch){
+                         var tempEvent = document.createEvent('HTMLEvents');
+                         tempEvent.initEvent('change', true, true);
+                         e1.dispatchEvent(tempEvent);
+                     }
                   }
              }
          } //for

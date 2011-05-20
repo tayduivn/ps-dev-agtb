@@ -158,9 +158,11 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case->save();
         $case->retrieve($case->id);
         $lastAuto = $case->case_number;
-        $this->assertEquals($lastAuto + 1, $this->_helper->getAutoIncrement("cases", "case_number"));
-        $case->deleted = true;
-        $case->save();
+        $helperResult = $this->_helper->getAutoIncrement("cases", "case_number");
+        
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
+        
+        $this->assertEquals($lastAuto + 1, $helperResult);
     }
     //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=ent ONLY
@@ -190,9 +192,12 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case2->name = "foo2";
         $case2->save();
         $case2->retrieve($case2->id);
-        $this->assertEquals($newAuto, $case2->case_number);
-        $case2->deleted = true;
-        $case2->save();
+        $case_number = $case2->case_number;
+        
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case2->id}'");
+        
+        $this->assertEquals($newAuto, $case_number);
     }
     //END SUGARCRM flav!=sales ONLY
     public function testAddColumnSQL()

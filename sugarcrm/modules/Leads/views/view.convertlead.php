@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once("include/EditView/EditView2.php");
+require_once("include/upload_file.php");
 
 class ViewConvertLead extends SugarView
 {
@@ -123,10 +124,12 @@ class ViewConvertLead extends SugarView
 	                else if ($module == "Opportunities" && $field == 'amount')
 	                {
 	                    $focus->amount = unformat_number($this->focus->opportunity_amount);
-	                }
-                    else if ($module == "Opportunities" && $field == 'name' && $opportunityNameInLayout) {
-                        $focus->name = $this->focus->opportunity_name;
-                    }
+	                } 
+                 	else if ($module == "Opportunities" && $field == 'name') {
+                 		if ($opportunityNameInLayout && !empty($this->focus->opportunity_name)){
+                           $focus->name = $this->focus->opportunity_name;
+                 		}
+                   	}
 	                else if ($field == "id")
                     {
 						//If it is not a contact, don't copy the ID from the lead
@@ -350,6 +353,11 @@ class ViewConvertLead extends SugarView
 		// Bug 39268 - Add the lead's activities to the selected beans
 		$this->handleActivities($lead, $selectedBeans);
 
+		//link selected account to lead if it exists
+        if(!empty($selectedBeans['Accounts'])){
+            $lead->account_id = $selectedBeans['Accounts']->id;
+        }
+
         //Handle non-contacts relationships
 	    foreach($beans as $bean)
         {
@@ -377,7 +385,7 @@ class ViewConvertLead extends SugarView
 						$id_field = $relObject->rhs_key;
 						$lead->$id_field = $bean->id;
 					} else {
-						$bean->$leadsRel->add($lead->id);
+						$bean->$leadsRel->add($lead);
 					}
 				}
 			}
@@ -457,6 +465,11 @@ class ViewConvertLead extends SugarView
     	{
 	    	if (isset($parent_types[$module]))
 	    	{
+                if (empty($bean->id))
+                {
+                    $bean->id = create_guid();
+		            $bean->new_with_id = true;
+                }
                 foreach($activities as $activity)
 		    	{
 		    		$this->copyActivityAndRelateToBean($activity, $bean);
@@ -525,10 +538,14 @@ class ViewConvertLead extends SugarView
                 $key = $relObj->rhs_key;
                 $newActivity->$key = $bean->id;
             }
-            $newActivity->$rel->add($bean->id);
             $newActivity->parent_id = $bean->id;
 	        $newActivity->parent_type = $bean->module_dir;
+	        $newActivity->update_date_modified = false; //bug 41747 
 	        $newActivity->save();
+            $newActivity->$rel->add($bean);
+            if ($newActivity->module_dir == "Notes" && $newActivity->filename) {
+	        	UploadFile::duplicate_file($activity->id, $newActivity->id,  $newActivity->filename);
+	        }
          }
 	}
 
@@ -553,6 +570,7 @@ class ViewConvertLead extends SugarView
 			if(!isset($_REQUEST[$module . $field]) && isset($lead->$field) && $field != 'id')
 			{
 				$bean->$field = $lead->$field;
+				if($field == 'date_entered') $bean->$field = gmdate($GLOBALS['timedate']->get_db_date_time_format()); //bug 41030
 			}
 		}
 		//Try to link to the new contact
@@ -587,7 +605,7 @@ class ViewConvertLead extends SugarView
 					$id_field = $relObject->rhs_key;
 					$bean->$id_field = $contact->id;
 				} else {
-					$contact->$contactRel->add($bean->id);
+					$contact->$contactRel->add($bean);
 				}
 				//Set the parent of activites to the new Contact
 				if (isset($bean->field_defs['parent_id']) && isset($bean->field_defs['parent_type']))

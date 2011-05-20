@@ -71,10 +71,10 @@ if(!$hasUserPreferences){
         'mypbss_date_end' => 'MyPipelineBySalesStageDashlet',
         'mypbss_sales_stages' => 'MyPipelineBySalesStageDashlet',
         'mypbss_chart_type' => 'MyPipelineBySalesStageDashlet',
-        'lsbo_lead_sources' => 'OppByLeadOutcomeDashlet',
-        'lsbo_ids' => 'OppByLeadOutcomeDashlet',
-        'pbls_lead_sources' => 'OppByLeadSourceDashlet',
-        'pbls_ids' => 'OppByLeadSourceDashlet',
+        'lsbo_lead_sources' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
+        'lsbo_ids' => 'OpportunitiesByLeadSourceByOutcomeDashlet',
+        'pbls_lead_sources' => 'OpportunitiesByLeadSourceDashlet',
+        'pbls_ids' => 'OpportunitiesByLeadSourceDashlet',
         'pbss_date_start' => 'PipelineBySalesStageDashlet',
         'pbss_date_end' => 'PipelineBySalesStageDashlet',
         'pbss_sales_stages' => 'PipelineBySalesStageDashlet',
@@ -727,5 +727,6 @@ $mySugarResources = $sugarChart->getMySugarChartResources();
 $sugar_smarty->assign('chartResources', $resources);
 $sugar_smarty->assign('mySugarChartResources', $mySugarResources);
 echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
-
+//init the quickEdit listeners after the dashlets have loaded on home page the first time
+echo"<script>if(typeof(qe_init) != 'undefined'){qe_init();}</script>";
 ?>

@@ -95,7 +95,7 @@ $mod_strings = array (
 	'ERR_RECIPIENT_EMAIL'				=> 'Recipient Email Address',
 	'ERR_SERVER_STATUS'					=> 'Your server status',
 	'ERR_SERVER_SMTP_EMPTY'				=> 'The system is unable to send an email to the user. Please check the Outgoing Mail Configuration in <a href="index.php?module=EmailMan&action=config">Email Settings</a>.',
-	
+
 	'LBL_ADDRESS_CITY'					=> 'Address City',
 	'LBL_ADDRESS_COUNTRY'				=> 'Address Country',
 	'LBL_ADDRESS_INFORMATION'			=> 'Address Information',
@@ -112,7 +112,7 @@ $mod_strings = array (
 
 	//END SUGARCRM flav=com || flav=sales ONLY
 
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records, regardless of team security.',
 	'LBL_REGULAR_DESC'					=> 'User can access modules and records based on team security and roles.',
@@ -293,7 +293,7 @@ $mod_strings = array (
     'LBL_PASSWORD_EXPIRATION_LOGIN'     => 'Your password has expired. Please provide a new password.',
     'LBL_PASSWORD_EXPIRATION_GENERATED' => 'Your password is system-generated',
     'LBL_PASSWORD_EXPIRATION_TIME'      => 'Your password has expired. Please provide a new password.',
-    
+
 	'LBL_PSW_MODIFIED'                  => 'password last changed',
     'LBL_PHONE'							=> 'Phone',
 	'LBL_PICK_TZ_WELCOME'				=> 'Welcome to Sugar.',
@@ -306,7 +306,7 @@ $mod_strings = array (
 	'LBL_PROMPT_TIMEZONE'				=> 'User Wizard Prompt',
 	'LBL_PROVIDE_USERNAME_AND_EMAIL' 	=> 'Provide both a User Name and an Email Address.',
 	'LBL_PUBLISH_KEY'					=> 'Publish Key',
-	
+
 	'LBL_RECAPTCHA_NEW_CAPTCHA'         => 'Get another CAPTCHA',
 	'LBL_RECAPTCHA_SOUND'				=> 'Switch to Sound',
 	'LBL_RECAPTCHA_IMAGE'				=> 'Switch to Image',
@@ -316,7 +316,7 @@ $mod_strings = array (
 	'LBL_RECAPTCHA_INVALID_PRIVATE_KEY'	=> 'Invalid Recaptcha Private Key',
 	'LBL_RECAPTCHA_INVALID_REQUEST_COOKIE'=> 'The challenge parameter of the verify Recaptcha script was incorrect.',
 	'LBL_RECAPTCHA_UNKNOWN'				=> 'Unknown Recaptcha Error',
-	
+
 	'LBL_RECEIVE_NOTIFICATIONS_TEXT'	=> 'Receive an email notification when a record is assigned to you.',
 	'LBL_RECEIVE_NOTIFICATIONS'			=> 'Notify on Assignment',
 	'LBL_REGISTER'                      => 'New user? Please register',
@@ -333,9 +333,9 @@ $mod_strings = array (
     'LBL_RESET_PREFERENCES_WARNING'     => 'Are you sure you want reset all of your user preferences? Warning: This will also log you out of the application.',
     'LBL_RESET_PREFERENCES_WARNING_USER' => 'Are you sure you want reset all of the preferences for this user?',
     'LBL_RESET_HOMEPAGE'                => 'Reset Homepage',
-    'LBL_RESET_DASHBOARD'               => 'Reset Dashboard',    
+    'LBL_RESET_DASHBOARD'               => 'Reset Dashboard',
     'LBL_RESET_HOMEPAGE_WARNING'        => 'Are you sure you want reset your Homepage?',
-    'LBL_RESET_HOMEPAGE_WARNING_USER'   => 'Are you sure you want reset the Homepage for this user?',    
+    'LBL_RESET_HOMEPAGE_WARNING_USER'   => 'Are you sure you want reset the Homepage for this user?',
 	'LBL_SALUTATION'                    => 'Salutation',
     'LBL_ROLES_SUBPANEL_TITLE'			=> 'Roles',
 	'LBL_SEARCH_FORM_TITLE'				=> 'User Search',
@@ -522,7 +522,7 @@ $mod_strings = array (
 	'LBL_LDAP_ERROR' => 'LDAP Error: Please contact an Admin',
 	'LBL_LDAP_EXTENSION_ERROR' => 'LDAP Error: Extensions not loaded',
 
-// PROJECT RESOURCES STRINGS	
+// PROJECT RESOURCES STRINGS
 	'LBL_USER_HOLIDAY_SUBPANEL_TITLE' => 'User Holidays',
 	'LBL_RESOURCE_NAME' => 'Name',
 	'LBL_RESOURCE_TYPE' => 'Type',
@@ -615,6 +615,8 @@ $mod_strings = array (
     'LBL_WIZARD_LOCALE_DESC' => 'Specify your time zone and how you would like dates, currencies and names to appear in Sugar.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide your email account username and password for the default outbound email server.',
 	'LBL_EAPM_SUBPANEL_TITLE' => 'External Accounts',
+    'LBL_OAUTH_TOKENS' => 'OAuth Tokens',
+    'LBL_OAUTH_TOKENS_SUBPANEL_TITLE' => "OAuth Access Tokens",
 ); // END STRINGS DEFS
 
 ?>

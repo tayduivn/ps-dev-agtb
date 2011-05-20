@@ -92,9 +92,42 @@ class SugarView
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();
+        $ajax_ret = array();
+		if ($this->_getOption('json_output')){
+			ob_start();
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+				echo $this->_getModLanguageJS();
+			}
+		}
         $this->display();
+        if ($this->_getOption('json_output'))
+        {
+            $content = ob_get_clean();
+            $module = $this->module;
+            $ajax_ret = array(
+                 'content' => $content,
+                 'menu' => array(
+                     'module' => $module,
+                     'label' => translate($module),
+                     $this->getMenu($module),
+                 ),
+                'moduleList' => $this->displayHeader(true),
+                'title' => $this->getBrowserTitle(),
+            );
+        }
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        if ($this->_getOption('show_subpanels')) $this->_displaySubPanels();
+        if ($this->_getOption('json_output'))
+            ob_start();
+
+        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
+        if ($this->_getOption('json_output'))
+        {
+            $ajax_ret['content'] .= ob_get_clean();
+            if(empty($this->responseTime)) $this->_calculateFooterMetrics();
+            $ajax_ret['responseTime'] = $this->responseTime;
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        }
         if ($this->action === 'Login') {
             //this is needed for a faster loading login page ie won't render unless the tables are closed
             ob_flush();
@@ -193,7 +226,7 @@ class SugarView
     /**
      * Displays the header on section of the page; basically everything before the content
      */
-    public function displayHeader()
+    public function displayHeader($retModTabs=false)
     {
         global $theme;
         global $max_tabs;
@@ -440,12 +473,12 @@ class SugarView
                 $groupedTabsClass = new GroupedTabStructure();
                 $modules = query_module_access_list($current_user);
                 //handle with submoremodules
-                $max_tabs = $current_user->getPreference('max_subtabs');
+                $max_tabs = $current_user->getPreference('max_tabs');
                 // If the max_tabs isn't set incorrectly, set it within the range, to the default max sub tabs size
                 if ( !isset($max_tabs) || $max_tabs <= 0 || $max_tabs > 10){
                     // We have a default value. Use it
-                    if(isset($GLOBALS['sugar_config']['default_max_subtabs'])){
-                        $max_tabs = $GLOBALS['sugar_config']['default_max_subtabs'];
+                    if(isset($GLOBALS['sugar_config']['default_max_tabs'])){
+                        $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
                     }
                     else{
                         $max_tabs = 8;
@@ -582,18 +615,30 @@ class SugarView
         $headerTpl = $themeObject->getTemplate('header.tpl');
         if ( isset($GLOBALS['sugar_config']['developerMode']) && $GLOBALS['sugar_config']['developerMode'] )
             $ss->clear_compiled_tpl($headerTpl);
-        $ss->display($headerTpl);
 
-        $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+        if ($retModTabs)
+        {
+            return $ss->fetch($themeObject->getTemplate('_headerModuleList.tpl'));
+        } else {
+            $ss->display($headerTpl);
 
-        $errorMessages = SugarApplication::getErrorMessages();
-        if ( !empty($errorMessages)) {
-            foreach ( $errorMessages as $error_message ) {
-                echo('<p class="error">' . $error_message.'</p>');
+            $this->includeClassicFile('modules/Administration/DisplayWarnings.php');
+
+            $errorMessages = SugarApplication::getErrorMessages();
+            if ( !empty($errorMessages)) {
+                foreach ( $errorMessages as $error_message ) {
+                    echo('<p class="error">' . $error_message.'</p>');
+                }
             }
         }
 
     }
+
+    function getModuleMenuHTML()
+    {
+
+    }
+
     /**
      * If the view is classic then this method will include the file and
      * setup any global variables.
@@ -729,6 +774,12 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
+            
+            // output necessary config js in the top of the page
+            $config_js = $this->getSugarConfigJS();
+            if(!empty($config_js)){
+                echo "<script>\n".implode("\n", $config_js)."</script>\n";
+            }
 
             // cn: bug 12274 - prepare secret guid for asynchronous calls
             if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {
@@ -743,11 +794,9 @@ EOHTML;
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
             echo getVersionedScript('cache/jsLanguage/'. $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
-            if (!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
-                require_once ('include/language/jsLanguage.php');
-                jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
-            }
-            echo getVersionedScript('cache/jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
+
+			echo $this->_getModLanguageJS();
+
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo getVersionedScript('modules/Sync/headersync.js');
             echo getVersionedScript('include/javascript/yui3/build/yui/yui-min.js');
@@ -771,7 +820,15 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
-
+	
+	protected function _getModLanguageJS(){
+		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+			require_once ('include/language/jsLanguage.php');
+			jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
+		}
+		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+	}
+	
     /**
      * Called from process(). This method will display the footer on the page.
      */
@@ -800,11 +857,9 @@ EOHTML;
 
 		$bottomLinkList = array();
 		 if (isset($this->action) && $this->action != "EditView") {
-			 $bottomLinkList['print'] =
-			array($app_strings['LNK_PRINT'] => 'javascript:void window.open(\'index.php?'.$GLOBALS['request_string'].'\',\'printwin\',\'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1\')');
-
+			 $bottomLinkList['print'] = array($app_strings['LNK_PRINT'] => getPrintLink());
 		}
-		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => '#top');
+		$bottomLinkList['backtotop'] = array($app_strings['LNK_BACKTOTOP'] => 'javascript:SUGAR.util.top();');
 
 		$bottomLinksStr = "";
 		foreach($bottomLinkList as $key => $value) {
@@ -812,7 +867,7 @@ EOHTML;
 				   $href = $link;
 				   if(substr($link, 0, 11) == "javascript:") {
                        $onclick = " onclick=\"".substr($link,11)."\"";
-                       $href = "#";
+                       $href = "javascript:void(0)";
                    } else {
                    		$onclick = "";
                    	}
@@ -1011,7 +1066,7 @@ EOHTML;
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];
-        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . " " . number_format(round($deltaTime, 2), 2) . " " . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
+        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' <span id="responseTime">' . number_format(round($deltaTime, 2), 2) . '</span> ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
         $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY
@@ -1347,5 +1402,31 @@ EOHTML;
         else {
         	return "<span class='pointer'>&laquo;</span>";
         }
+    }
+
+    protected function getSugarConfigJS(){
+        global $sugar_config;
+
+        // Set all the config parameters in the JS config as necessary
+        $config_js = array();
+        // AjaxUI stock banned modules
+        $config_js[] = "SUGAR.config.stockAjaxBannedModules = ".json_encode(ajaxBannedModules()).";";
+        if ( isset($sugar_config['quicksearch_querydelay']) ) {
+            $config_js[] = "SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};";
+        }
+        if ( !isset($sugar_config['disableAjaxUI']) || $sugar_config['disableAjaxUI'] == false ) {
+            $config_js[] = "SUGAR.config.disableAjaxUI = false;";
+        }
+        else{
+            $config_js[] = "SUGAR.config.disableAjaxUI = true;";
+        }
+        if ( !empty($sugar_config['addAjaxBannedModules']) ){
+            $config_js[] = "SUGAR.config.addAjaxBannedModules = ".json_encode($sugar_config['addAjaxBannedModules']).";";
+        }
+        if ( !empty($sugar_config['overrideAjaxBannedModules']) ){
+            $config_js[] = "SUGAR.config.overrideAjaxBannedModules = ".json_encode($sugar_config['overrideAjaxBannedModules']).";";
+        }
+
+        return $config_js;
     }
 }

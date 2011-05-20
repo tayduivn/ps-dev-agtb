@@ -50,6 +50,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'type' =>'bool',
     'default'=>0,
     'group'=>'date_due',
+  	'studio' => false,
   ),
   'date_due' =>
   array (
@@ -59,7 +60,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'dbType' => 'datetime',
     'group'=>'date_due',
     'studio' => array('required' => true, 'no_duplicate' => true),
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     ),
   'time_due' =>
@@ -79,6 +80,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'type' =>'bool',
     'group'=>'date_start',
     'default'=>0,
+  	'studio' => false,
   ),
   'date_start' =>
   array (
@@ -89,7 +91,7 @@ $dictionary['Task'] = array('table' => 'tasks',
     'group'=>'date_start',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_due', 'blank' => false),
     'studio' => array('required' => true, 'no_duplicate' => true),
-    'enable_range_search' => '1',
+    'enable_range_search' => true,
     'options' => 'date_range_search_dom',
     ),
  'parent_type'=>

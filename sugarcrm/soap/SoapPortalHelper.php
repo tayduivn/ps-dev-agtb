@@ -44,7 +44,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
 function get_bugs_in_contacts($in, $orderBy = '', $where='')
     {
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
         
         //BEGIN SUGARCRM flav=com ONLY
@@ -70,7 +70,7 @@ function get_bugs_in_contacts($in, $orderBy = '', $where='')
 function get_bugs_in_accounts($in, $orderBy = '', $where='')
     {
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
         
         //BEGIN SUGARCRM flav=com ONLY
@@ -101,7 +101,7 @@ Cases
 function get_cases_in_contacts($in, $orderBy = '')
     {
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
 
         //BEGIN SUGARCRM flav=com ONLY
@@ -130,7 +130,7 @@ function get_cases_in_accounts($in, $orderBy = '')
             return;
         }
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
         //BEGIN SUGARCRM flav=com ONLY
         $query = "SELECT id  from cases where account_id IN $in AND deleted=0";
@@ -162,7 +162,7 @@ NOTES
 function get_notes_in_contacts($in, $orderBy = '')
     {
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
         $query = "SELECT id from notes where contact_id IN $in AND deleted=0 AND portal_flag=1";
         if(!empty($orderBy)){
@@ -183,7 +183,7 @@ function get_notes_in_contacts($in, $orderBy = '')
 function get_notes_in_module($in, $module, $orderBy = '')
     {
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
         // First, get the list of IDs.
         $query = "SELECT id from notes where parent_id IN $in AND parent_type='$module' AND deleted=0 AND portal_flag = 1";
         if(!empty($orderBy)){
@@ -221,7 +221,7 @@ function get_notes_in_module($in, $module, $orderBy = '')
         }
         
         //bail if the in is empty
-        if($in == '()')return;
+        if(empty($in)  || $in =='()' || $in =="('')")return;
 
         // First, get the list of IDs.
         if ($module == 'KBDocuments' || $module == 'DocumentRevisions') {
@@ -296,18 +296,25 @@ function get_contacts_from_account($account_id, $orderBy = '')
     }
 
 function get_related_list($in, $template, $where, $order_by, $row_offset = 0, $limit = ""){
-
-        $list = array();
-        //bail if the in is empty
-        if($in == '()')return $list;
         //BEGIN SUGARCRM flav=pro ONLY
         $template->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
 
-        return $template->build_related_list_where('',$template, $where, $in, $order_by, $limit, $row_offset);
+        $q = '';
+        //if $in is empty then pass in a query to get the list of related list
+        if(empty($in)  || $in =='()' || $in =="('')"){
+            $in = '';
+            //build the query to pass into the template list function
+             $q = 'select id from '.$template->table_name.' where deleted = 0 ';
+        	//add where statement if it is not empty
+			if(!empty($where)){
+				$q .= ' and '.$where;
+			}
+        }
+        
+        return $template->build_related_list_where($q, $template, $where, $in, $order_by, $limit, $row_offset);
 
-
-}
+    }
 
 function build_relationship_tree($contact){
     global $sugar_config;
@@ -466,13 +473,25 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
         return array('result_count'=>-1, 'entry_list'=>array(), 'error'=>$error->get_soap_array());
     }
     if($module_name == 'Cases'){
+
+        //if the related cases have not yet been loaded into the session object,
+        //then call the methods that will load the cases related to the contact/accounts for this user
         if(!isset($_SESSION['viewable'][$module_name])){
-            get_cases_in_contacts(get_contacts_in());
-            get_cases_in_accounts(get_accounts_in());
+            //retrieve the contact/account id's for this user
+            $c =get_contacts_in();
+            $a = get_accounts_in();
+           if(!empty($c)) {get_cases_in_contacts($c);}
+           if(!empty($a)) { get_cases_in_accounts($a);}
         }
          
         $sugar = new aCase();
-        $list =  get_related_list(get_module_in($module_name), new aCase(), $where,$order_by, $row_offset, $limit);
+
+        $list = array();
+        //if no Cases have been loaded into the session as viewable, then do not issue query, just return empty list
+        //issuing a query with no cases loaded in session will return ALL the Cases, which is not a good thing
+        if(!empty($_SESSION['viewable'][$module_name])){
+            $list =  get_related_list(get_module_in($module_name), new aCase(), $where,$order_by, $row_offset, $limit);
+        }
 
     }else if($module_name == 'Contacts'){
             $sugar = new Contact();
@@ -481,12 +500,23 @@ function portal_get_entry_list_limited($session, $module_name,$where, $order_by,
             $sugar = new Account();
             $list =  get_related_list(get_module_in($module_name), new Account(), $where,$order_by);
     }else if($module_name == 'Bugs'){
+
+        //if the related bugs have not yet been loaded into the session object,
+        //then call the methods that will load the bugs related to the contact/accounts for this user
             if(!isset($_SESSION['viewable'][$module_name])){
-                get_bugs_in_contacts(get_contacts_in());
-                get_bugs_in_accounts(get_accounts_in());
+                //retrieve the contact/account id's for this user
+                $c =get_contacts_in();
+                $a = get_accounts_in();
+                if(!empty($c)) {get_bugs_in_contacts($c);}
+                if(!empty($a)) {get_bugs_in_accounts($a);}
             }
 
+        $list = array();
+        //if no Bugs have been loaded into the session as viewable, then do not issue query, just return empty list
+        //issuing a query with no bugs loaded in session will return ALL the Bugs, which is not a good thing
+        if(!empty($_SESSION['viewable'][$module_name])){
             $list = get_related_list(get_module_in($module_name), new Bug(), $where, $order_by, $row_offset, $limit);
+        }
     } else if ($module_name == 'KBDocuments') {
 //BEGIN SUGARCRM flav=pro ONLY
             $sugar = new KBDocument();

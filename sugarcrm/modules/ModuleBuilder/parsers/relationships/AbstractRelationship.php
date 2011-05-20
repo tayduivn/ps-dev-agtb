@@ -123,9 +123,9 @@ class AbstractRelationship
         return $this->definition [ 'readonly' ] ;
     }
 
-    public function setReadonly ()
+    public function setReadonly ($set = true)
     {
-        $this->readonly = $this->definition [ 'readonly' ] = true ;
+        $this->readonly = $this->definition [ 'readonly' ] = $set ;
     }
 
     public function setFromStudio ()
@@ -541,22 +541,9 @@ class AbstractRelationship
      */
     static function getValidDBName ($name, $ensureUnique = false)
     {
+
         require_once 'modules/ModuleBuilder/parsers/constants.php' ;
-        // first strip any invalid characters - all but alphanumerics and -
-        $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
-        $len = strlen ( $name ) ;
-        $result = $name;
-        if ($ensureUnique) 
-        {        	
-    		$md5str = md5($name);
-			$tail = substr ( $name, -11) ;
-			$temp = substr($md5str , strlen($md5str)-4 );	    			
-			$result = substr ( $name, 0, 10) . $temp . $tail ;
-		}else if ($len > (MB_MAXDBIDENTIFIERLENGTH - 5))
-        {
-            $result = substr ( $name, 0, 11) . substr ( $name, 11 - MB_MAXDBIDENTIFIERLENGTH + 5); 
-        }
-        return strtolower ( $result ) ;
+        return getValidDBName($name, $ensureUnique, MB_MAXDBIDENTIFIERLENGTH);
     }
 
     /*

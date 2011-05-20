@@ -49,19 +49,10 @@
 							<input id='tag_id' name='tag_id' type="hidden" value="{$tag_id}" />
 					        <input  title="{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" tabindex='1' class="button" value='{$MOD.LBL_SELECT_TAG_BUTTON_TITLE}' name='btn_tagss' onclick="javascript:SUGAR.kb.modalInit(); return false;" />
 
-					<br></td>
+					</td>
 					</tr>
-				</table>
+				
 			</div>
-            <div>
-                <span onclick="hideShowMoreOptions();" id='more_options_img' name='more_options_img' ><a href='#'  class="tabFormAdvLink"><img src='{sugar_getimagepath file='advanced_search.gif'}' id='up_down_img2'>&nbsp;{$MOD.LBL_SHOW_OPTIONS}</a></span>
-            </div>
-
-			<div id='more_options_div' name='more_options_div' style='display: none'>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0">
-					<tr>
-				        <td colspan='4'>&nbsp;</td>
-					</tr>
 					<tr>
 						<td width="15%" scope="row"><span sugar='slot2'>{$MOD.LBL_ARTICLE_TITLE}&nbsp;<span class="required"></span></span sugar='slot'></td>
 						<td width = "35%" ><span sugar='slot2b'><input name='kbdocument_name'  type='text' size='50' value="{$kbdocument_name}"></span sugar='slot'></td>
@@ -189,7 +180,7 @@
 						</td>
 					</tr>
 				</table>
-				</div>
+			
 			</td></tr></table>
 	        	<div style='padding: 2'>
 		        	<input type='submit' class='button' name='fts_search_ADV' id='fts_search_ADV' value='{$MOD.LBL_SEARCH}'">

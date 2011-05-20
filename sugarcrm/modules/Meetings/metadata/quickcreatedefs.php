@@ -97,12 +97,12 @@ array (
             ),
           ),
         ),
+        //BEGIN SUGARCRM flav!=com ONLY
         array(
-        	//BEGIN SUGARCRM flav!=com ONLY
         	'type',
-            //END SUGARCRM flav!=com ONLY
         	'password'
         ),
+        //END SUGARCRM flav!=com ONLY
         array (
 
           array (

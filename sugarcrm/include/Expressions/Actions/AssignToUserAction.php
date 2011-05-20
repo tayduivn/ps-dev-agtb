@@ -31,7 +31,7 @@ class AssignToUserAction extends AbstractAction{
 	protected $expression =  "";
 
 	function AssignToAction($params) {
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 	}
 
 	/**

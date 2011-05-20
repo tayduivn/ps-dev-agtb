@@ -209,7 +209,9 @@ class InboundEmail extends SugarBean {
 		//_ppd($raw);
 		$raw = $this->filterMailBoxFromRaw(explode(",", $this->mailbox), $raw);
 		$this->mailbox = implode(",", $raw);
-		$this->email_password = blowfishEncode(blowfishGetKey('InboundEmail'), $this->email_password);
+		if(!empty($this->email_password)) {
+		    $this->email_password = blowfishEncode(blowfishGetKey('InboundEmail'), $this->email_password);
+		}
 		$ret = parent::save($check_notify);
 		return $ret;
 	}
@@ -2232,7 +2234,9 @@ class InboundEmail extends SugarBean {
 		$this->status = $_REQUEST['ie_status'];
 		$this->server_url = trim($_REQUEST['server_url']);
 		$this->email_user = trim($_REQUEST['email_user']);
-		$this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
+		if(!empty($_REQUEST['email_password'])) {
+		    $this->email_password = html_entity_decode($_REQUEST['email_password'], ENT_QUOTES);
+		}
 		$this->port = trim($_REQUEST['port']);
 		$this->protocol = $_REQUEST['protocol'];
 		if ($this->protocol == "pop3") {
@@ -2696,6 +2700,7 @@ class InboundEmail extends SugarBean {
 
 				$replyToName = (!empty($storedOptions['reply_to_name']))? from_html($storedOptions['reply_to_name']) :$from_name ;
 				$replyToAddr = (!empty($storedOptions['reply_to_addr'])) ? $storedOptions['reply_to_addr'] : $from_addr;
+
 
 				if(!empty($email->reply_to_email)) {
 					$to[0]['email'] = $email->reply_to_email;
@@ -3423,6 +3428,18 @@ class InboundEmail extends SugarBean {
 		return (strtolower($encoding) == 'utf-8') ? $name : mb_convert_encoding($name, 'UTF-8', $encoding);
 	}
 
+	/*
+		Primary body types for a part of a mail structure (imap_fetchstructure returned object)
+		0 => text
+		1 => multipart
+		2 => message
+		3 => application
+		4 => audio
+		5 => image
+		6 => video
+		7 => other
+	*/
+
 	/**
 	Primary body types for a part of a mail structure (imap_fetchstructure returned object)
 	@var array $imap_types
@@ -3469,6 +3486,7 @@ class InboundEmail extends SugarBean {
 			6 => video
 			7 => other
 		*/
+
 		foreach($parts as $k => $part) {
 			$thisBc = $k+1;
 			if($breadcrumb != '0') {
@@ -3479,7 +3497,7 @@ class InboundEmail extends SugarBean {
 			//if($part->type == 1 && !empty($part->parts)) {
 			if(isset($part->parts) && !empty($part->parts) && !( isset($part->subtype) && strtolower($part->subtype) == 'rfc822')  ) {
 				$this->saveAttachments($msgNo, $part->parts, $emailId, $thisBc, $forDisplay);
-				continue;
+                continue;
 			} elseif($part->ifdisposition) {
 				// we will take either 'attachments' or 'inline'
 				if(strtolower($part->disposition) == 'attachment' || ((strtolower($part->disposition) == 'inline') && $part->type != 0)) {
@@ -3498,6 +3516,14 @@ class InboundEmail extends SugarBean {
 
 					// deal with the MIME types email has
 					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
+					$attach->safeAttachmentName();
+					if($forDisplay) {
+						$attach->id = $this->getTempFilename();
+					} else {
+						// only save if doing a full import, else we want only the binaries
+						$attach->save();
+					}
+					$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 				} // end if disposition type 'attachment'
 			}// end ifdisposition
 			//Retrieve contents of subtype rfc8822
@@ -3508,6 +3534,14 @@ class InboundEmail extends SugarBean {
 			    $attach->file_mime_type = 'messsage/rfc822';
 			    $attach->description = $tmp_eml;
 			    $attach->filename = 'bounce.eml';
+			    $attach->safeAttachmentName();
+			    if($forDisplay) {
+			        $attach->id = $this->getTempFilename();
+			    } else {
+			        // only save if doing a full import, else we want only the binaries
+			        $attach->save();
+			    }
+			    $this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 			} elseif(!$part->ifdisposition && $part->type != 1 && $part->type != 2 && $thisBc != '1') {
         		// No disposition here, but some IMAP servers lie about disposition headers, try to find the truth
 				// Also Outlook puts inline attachments as type 5 (image) without a disposition
@@ -3519,21 +3553,22 @@ class InboundEmail extends SugarBean {
                         }
                     }
                     if(empty($fname)) continue;
+
 					// we assume that named parts are attachments too
                     $attach = $this->getNoteBeanForAttachment($emailId);
 
 					$attach->filename = $attach->name = $fname;
 					$attach->file_mime_type = $this->getMimeType($part->type, $part->subtype);
-				}
-			}
 
-			if(empty($attach)) continue;
-			$attach->safeAttachmentName();
-			if ($forDisplay) {
-			    $attach->id = $this->getTempFilename();
-			} else {
-			    // only save if doing a full import, else we want only the binaries
-			    $attach->save();
+					$attach->safeAttachmentName();
+					if($forDisplay) {
+						$attach->id = $this->getTempFilename();
+					} else {
+						// only save if doing a full import, else we want only the binaries
+						$attach->save();
+					}
+					$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
+				}
 			}
 			$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 		} // end foreach
@@ -3771,6 +3806,40 @@ class InboundEmail extends SugarBean {
 		return $ret;
 	}
 
+   /**
+	* URL cleanup function
+	* Until we have comprehensive CSRF protection, we need to sanitize URLs in emails
+	* to avoid CSRF attacks
+	*/
+	public function urlCleaner($attr, $value)
+	{
+	// hrefs are ok
+	    if(strtolower($attr) == "href") return true;
+	    $items = parse_url($value);
+	    if(empty($items)) return false;
+	// don't allow relative URLs
+		if(empty($items['host'])) return false;
+	// allow URLs with no query
+		if(empty($items['query'])) return true;
+	// allow URLs that don't start with /? or /index.php?
+		if(!empty($items['path']) && $items['path'] != '/' && strtolower(substr($items['path'], -10)) != '/index.php') {
+			return true;
+		}
+	// now we have blah-blah/index.php?query - let's see if query looks dangerous
+		$query_items = array();
+		parse_str(from_html($items['query']), $query_items);
+	// weird query, probably harmless
+		if(empty($query_items)) return true;
+	// suspiciously like SugarCRM query, reject
+		if(!empty($query_items['module']) && !empty($query_items['action'])) return false;
+	// looks like non-download entry point - allow only specific entry points
+		if(!empty($query_items['entryPoint']) && !in_array($query_items['entryPoint'], array('download', 'image', 'getImage'))) {
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Cleans content for XSS and other types of attack vectors
 	 * @param string str String to clean
@@ -3779,6 +3848,7 @@ class InboundEmail extends SugarBean {
 	function cleanContent($str) {
 		// Safe_HTML
 		$this->safe->clear();
+		$this->safe->setUrlCallback(array($this, "urlCleaner"));
 		$str = $this->safe->parse($str);
 		return $this->cleanXssContent($str);
 	}
@@ -3857,11 +3927,6 @@ class InboundEmail extends SugarBean {
 			$unixHeaderDate = strtotime('now');
 		}
 
-		// now get it to user's datetime format for save
-//		$gmt0dateTime = $timedate->to_display_date_time(date('Y-m-d H:i:s', $unixHeaderDate));
-//		$gmt0dateTime = $timedate->swap_formats($gmt0dateTime, $timedate->get_date_time_format(), $timedate->get_db_date_time_format());
-//		$unixHeaderDate = strtotime($gmt0dateTime);
-//
 		return $unixHeaderDate;
 		////	END CALCULATE CORRECT SENT DATE/TIME FOR EMAIL
 		///////////////////////////////////////////////////////////////////
@@ -4185,6 +4250,13 @@ class InboundEmail extends SugarBean {
 	        if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
                 $email->parent_id = $_REQUEST['parent_id'];
                 $email->parent_type = $_REQUEST['parent_type'];
+
+                $mod = strtolower($email->parent_type);
+                $rel = array_key_exists($mod, $email->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
+
+                if(! $email->load_relationship($rel) )
+                    return FALSE;
+                $email->$rel->add($email->parent_id);
 	        }
 
 			// override $forDisplay w/user pref
@@ -5720,10 +5792,6 @@ eoq;
 		foreach($fetchedAttributes as $k) {
 			if ($k == 'date_start') {
 				$this->email->$k . " " . $this->email->time_start;
-				//$timedate->to_display_date_time($msg->date)
-				//$souEmail[$k] = $timedate->to_display_date_time(date('r', strtotime($this->email->$k . " " . $this->email->time_start)));
-				//$souEmail[$k] = $timedate->swap_formats($this->email->$k . " " . $this->email->time_start, $timedate->get_date_time_format(true,$current_user), $timedate->get_db_date_time_format());
-				//$souEmail[$k] = $timedate->to_display_date_time($souEmail[$k]);
 				$souEmail[$k] = $this->email->$k . " " . $this->email->time_start;
 			} elseif ($k == 'time_start') {
 				$souEmail[$k] = "";
@@ -6168,7 +6236,7 @@ eoq;
 			$temp = array();
 			$temp['flagged'] = $flagged;
 			$temp['status'] = $status;
-			$temp['from']	= $from;
+			$temp['from']	= to_html($from);
 			$temp['subject'] = $subject;
 			$temp['date']	= $date;
 			$temp['uid'] = $msg->uid; // either from an imap_search() or massaged cache value
@@ -6177,7 +6245,7 @@ eoq;
 			$temp['site_url'] = $sugar_config['site_url'];
 			$temp['seen'] = $msg->seen;
 			$temp['type'] = (isset($msg->type)) ? $msg->type: 'remote';
-			$temp['to_addrs'] = $msg->to;
+			$temp['to_addrs'] = to_html($msg->to);
 			$temp['hasAttach'] = '0';
 
 			$return[] = $temp;

@@ -1,4 +1,25 @@
 <?php
+/*********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+
 require_once('include/externalAPI/Base/ExternalAPIBase.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
@@ -34,10 +55,15 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     public $docSearch = true;
     public $needsUrl = false;
     public $sharingOptions = null;
-
+    public $restrictUploadsByExtension = true;
+    
+    const APP_STRING_ERROR_PREFIX = 'ERR_GOOGLE_API_';
+    
 	function __construct(){
 		require_once('include/externalAPI/Google/GoogleXML.php');
 		$this->oauthReq .= "?scope=".urlencode($this->scope);
+		
+		$this->restrictUploadsByExtension = $this->getAcceptibleFileExtensions();
 	}
 
     protected function getIdFromUrl($url) {
@@ -61,7 +87,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
         try {
             $this->getClient();
 		    // test documents access
-		    $docs = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full?title=TestTestTest');
+		    $docs = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full?title=TestTestTest');
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
@@ -89,7 +115,15 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 		$this->getClient();
 		$filenameParts = explode('.', $fileToUpload);
 		$fileExtension = end($filenameParts);
+        
+        // Remap the mime type to something acceptable if we can do it.
+        $goodMimeTypes = Zend_Gdata_Docs::getSupportedMimeTypes();
+        if ( isset($goodMimeTypes[strtoupper($fileExtension)]) ) {
+            $mimeType = $goodMimeTypes[strtoupper($fileExtension)];
+        }
+
 		try{
+		    
             $newDocumentEntry = $this->gdClient->uploadFile($fileToUpload, $docName,
                                                             $mimeType,
 
@@ -102,10 +136,22 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $bean->doc_id = $cut;//$this->getIdFromUrl($alternateLink);
             $bean->doc_url = $alternateLink;
             $result['success'] = TRUE;
-		}catch (Exception $e)
+		}
+		catch(Zend_Gdata_App_HttpException $e)
+		{
+		    $result['success'] = FALSE;
+		    $resp = $e->getResponse();  //Zend_Http_Response with details of failed request.
+            $result['errorMessage'] = $this->getErrorStringFromCode($resp->getStatus());
+		}
+		catch(Zend_Gdata_App_IOException $e)
+		{
+		    $result['success'] = FALSE;
+		    $result['errorMessage'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_UPLOAD_FAIL'];
+		}
+		catch (Exception $e)
          {
              $result['success'] = FALSE;
-             $result['errorMsg'] = $e->getMessage();
+             $result['errorMessage'] = $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
          }
 
         return $result;
@@ -155,10 +201,14 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         if ( empty($keywords) ) 
         {
-            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/documents/private/full');
+            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full');
         } else {
             $docsQuery = new Zend_Gdata_Docs_Query();
-            $docsQuery->setQuery($keywords);
+            // This does a full-text search, which is awesome
+            // but doesn't match what the other providers have (title search)
+            // So we have to switch it for just a title search
+            // $docsQuery->setQuery($keywords);
+            $docsQuery->setTitle($keywords);
             $feed = $this->gdClient->getDocumentListFeed($docsQuery);
         }
 
@@ -176,4 +226,13 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         return $results;
     }
+    
+    private function getAcceptibleFileExtensions() {
+        $mimeTypes = Zend_Gdata_Docs::getSupportedMimeTypes();
+        //If we can detect mime types, allow empty file extensions.
+        if( $this->isMimeDetectionAvailable() )
+            $mimeTypes[''] = '';
+        return array_keys($mimeTypes);        
+    }
+    
 }

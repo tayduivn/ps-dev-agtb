@@ -162,11 +162,22 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	            'query_type' => 'default',
 	            'enable_range_search' => 1,
 	            'value' => '10000',
-	            'operator' => 'not_equals',
+	            'operator' => 'not_equal',
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$this->assertEquals($where_clauses[0], "opportunities.amount != '10000'"); 
+
+		$this->searchForm->searchFields['range_amount'] = array (
+	            'query_type' => 'default',
+	            'enable_range_search' => 1,
+	            'value' => '10000',
+	            'operator' => '=',
 	    );    
 
 		$where_clauses = $this->searchForm->generateSearchWhere();		
 		$this->assertEquals($where_clauses[0], "opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01'"); 		
+		
     }
     
     public function testRangeSearchMssql()
@@ -187,7 +198,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($where_clauses[0], 'DATEPART(yy,opportunities.date_closed) = DATEPART(yy,( dateadd(yy, 1,GETDATE())))');
 		
     }       
-
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testRangeSearchOracle()
     {
 		$GLOBALS['db']->dbType = 'oci8';
@@ -206,7 +217,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($where_clauses[0], 'TRUNC(opportunities.date_closed,\'YEAR\') = TRUNC(add_months(sysdate,+12),\'YEAR\')');
 		
     } 
-    
+    //END SUGARCRM flav=ent ONLY
     
     /**
      * testRangeSearchWithSavedReportValues

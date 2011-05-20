@@ -149,7 +149,8 @@ class EmailUI {
 		$this->smarty->assign('dateFormat', $cuDatePref['date']);
 		$this->smarty->assign('dateFormatExample', str_replace(array("Y", "m", "d"), array("yyyy", "mm", "dd"), $cuDatePref['date']));
 		$this->smarty->assign('calFormat', $timedate->get_cal_date_format());
-
+        $this->smarty->assign('TIME_FORMAT', $timedate->get_user_time_format());
+		
 		$ieAccounts = $ie->retrieveByGroupId($current_user->id);
 		$ieAccountsOptions = "<option value=''>{$app_strings['LBL_NONE']}</option>\n";
 
@@ -264,11 +265,12 @@ class EmailUI {
 				    type : "js",
 				    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
 				    varName: "YAHOO.SUGAR",
-				    requires: ["datatable", "dragdrop", "treeview", "tabview"]
+				    requires: ["datatable", "dragdrop", "treeview", "tabview", "calendar"]
 				});
 				loader.insert();
 
 				{$preloadFolder};
+	
 			</script>
 eoq;
 
@@ -296,7 +298,7 @@ eoq;
         $out = json_encode($outData);
         return $out;
     }
-    
+
     /**
      * Load the modules from the metadata file and include in a custom one if it exists
      *
@@ -356,6 +358,7 @@ eoq;
     function generateComposePackageForQuickCreate($composeData,$fullLinkUrl, $lazyLoad=false)
     {
         $_REQUEST['forQuickCreate'] = true;
+
         if(!$lazyLoad){
     	    require_once('modules/Emails/Compose.php');
     	    $composePackage = generateComposeDataPackage($composeData,FALSE);
@@ -363,17 +366,17 @@ eoq;
             $composePackage = $composeData;
         }
 
-    	//JSON object is passed into the function defined within the a href onclick event
-    	//which is delimeted by '.  Need to escape all single quotes, every other char is valid.
+    	// JSON object is passed into the function defined within the a href onclick event
+    	// which is delimeted by '.  Need to escape all single quotes and &, <, >
+    	// but not double quotes since json would escape them
     	foreach ($composePackage as $key => $singleCompose)
     	{
     	   if (is_string($singleCompose))
-    	       $composePackage[$key] = str_replace("'","&#039;",$singleCompose);
+    	       $composePackage[$key] = str_replace("&nbsp;", " ", from_html($singleCompose));
     	}
-        
 
     	$quickComposeOptions = array('fullComposeUrl' => $fullLinkUrl,'composePackage' => $composePackage);
-    	$j_quickComposeOptions = json_encode($quickComposeOptions);
+    	$j_quickComposeOptions = json::encode($quickComposeOptions, false ,true);
 
     	return $j_quickComposeOptions;
     }
@@ -2188,7 +2191,7 @@ eoq;
 		$ea = new SugarEmailAddress();
 
 		if(!empty($email)) {
-			$description = (empty($email->description_html)) ? $email->description : from_html($email->description_html);
+			$description = (empty($email->description_html)) ? $email->description : $email->description_html;
 		}
 
 		//Get the most complete address list availible for this email
@@ -2211,8 +2214,6 @@ eoq;
 		$ret['description'] = $description;
 		$ret['from'] = (isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'forward') ? "" : $email->from_addr;
 		$ret['to'] = from_html($toAddresses);
-		$ret['cc'] = from_html($ccAddresses);
-		$ret['bcc'] = $bccAddresses;
 		$ret['uid'] = $email->id;
 		$ret['parent_name'] = $email->parent_name;
 		$ret['parent_type'] = $email->parent_type;
@@ -2220,6 +2221,9 @@ eoq;
 
 		// reply all
 		if(isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'replyAll') {
+		    $ret['cc'] = from_html($ccAddresses);
+		    $ret['bcc'] = $bccAddresses;
+
 			$userEmails = array();
 			$userEmailsMeta = $ea->getAddressesByGUID($current_user->id, 'Users');
 			foreach($userEmailsMeta as $emailMeta) {

@@ -135,15 +135,19 @@ class Meeting extends SugarBean {
 	function save($check_notify = FALSE) {
 		global $timedate;
 		global $current_user;
-		global $disable_date_format;
 
-		if(isset($this->date_start)
-			&& isset($this->duration_hours)
-			&& isset($this->duration_minutes)) {
-                $dbObj = $timedate->fromDb($this->date_start);
-                if($dbObj){
-			        $this->date_end = $dbObj->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
-                }
+		global $disable_date_format;
+		
+	    if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+        {
+        	if(isset($this->date_start) && isset($this->duration_hours) && isset($this->duration_minutes)) 
+	        {
+	    	    $td = $timedate->fromDb($this->date_start);
+	    	    if($td)
+	    	    {
+		        	$this->date_end = $td->modify("+{$this->duration_hours} hours {$this->duration_minutes} mins")->asDb();
+	    	    }	
+	        }
 		}
 
 		$check_notify =(!empty($_REQUEST['send_invites']) && $_REQUEST['send_invites'] == '1') ? true : false;
@@ -191,6 +195,11 @@ class Meeting extends SugarBean {
 
         if ( isset($api) && is_a($api,'WebMeeting') ) {
             // Make sure the API initialized and it supports Web Meetings
+            // Also make suer we have an ID, the external site needs something to reference
+            if ( !isset($this->id) || empty($this->id) ) {
+                $this->id = create_guid();
+                $this->new_with_id = true;
+            }
             $response = $api->scheduleMeeting($this);
             if ( $response['success'] == TRUE ) {
                 // Need to send out notifications
@@ -200,10 +209,6 @@ class Meeting extends SugarBean {
                         $api->inviteAttendee($this,$person,$check_notify);
                     }
 
-                    // Don't double-send if the WebMeeting API sends invites
-                    if ( $api->sendsInvites ) {
-                        $check_notify = false;
-                    }
                 }
             } else {
                 SugarApplication::appendErrorMessage($GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL']);
@@ -413,19 +418,21 @@ class Meeting extends SugarBean {
 			$this->parent_type = $app_list_strings['record_type_default_key'];
 		}
 
+		//BEGIN SUGARCRM flav!=com ONLY
         // Fill in the meeting url for external account types
         if ( !empty($this->id) && !empty($this->type) && $this->type != 'Sugar' && !empty($this->join_url) ) {
             // It's an external meeting
             global $mod_strings;
-            
+
             $meetingLink = '';
             if ($GLOBALS['current_user']->id == $this->assigned_user_id ) {
-                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_HOST_EXT_MEETING'].'"></a>';
+                $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'&host_meeting=1" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("start_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_HOST_EXT_MEETING',$this->module_dir).'"></a>';
             }
-            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.$mod_strings['LBL_JOIN_EXT_MEETING'].'"></a>';
-            
+
+            $meetingLink .= '<a href="index.php?module=Meetings&action=JoinExternalMeeting&meeting_id='.$this->id.'" target="_blank"><img src="'.SugarThemeRegistry::current()->getImageURL("join_meeting_inline.png").'" height="19" width="18" border="0" title="'.translate('LBL_JOIN_EXT_MEETING',$this->module_dir).'"></a>';
             $this->displayed_url = $meetingLink;
         }
+        //END SUGARCRM flav!=com ONLY
 	}
 
 	function get_list_view_data() {
@@ -442,7 +449,7 @@ class Meeting extends SugarBean {
 		}
 		global $timedate;
 		$today = $timedate->nowDb();
-		$nextday = $timedate->asDbDate($timedate->getNow()->get("+1 day")); 
+		$nextday = $timedate->asDbDate($timedate->getNow()->get("+1 day"));
 		$mergeTime = $meeting_fields['DATE_START']; //$timedate->merge_date_time($meeting_fields['DATE_START'], $meeting_fields['TIME_START']);
 		$date_db = $timedate->to_db($mergeTime);
 		if($date_db	< $today	) {
@@ -477,6 +484,7 @@ class Meeting extends SugarBean {
 
         $meeting_fields['REMINDER_CHECKED'] = $this->reminder_time==-1 ? false : true;
 
+        //BEGIN SUGARCRM flav!=com ONLY
         $oneHourAgo = gmdate($GLOBALS['timedate']->get_db_date_time_format(), time()-3600);
         if(!empty($this->host_url) && $date_db	>= $oneHourAgo) {
             if($this->assigned_user_id == $GLOBALS['current_user']->id){
@@ -494,7 +502,8 @@ class Meeting extends SugarBean {
 		if(!empty($meeting_fields['DISPLAYED_URL'])){
 			$meeting_fields['JOIN_MEETING']= '<a href="' . $meeting_fields['DISPLAYED_URL']. '" target="_blank">' . $join_icon . '</a>';
 		}
-
+		//END SUGARCRM flav!=com ONLY
+		
 		return $meeting_fields;
 	}
 

@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
+if(empty($_SESSION['oc_install'])){
+	die('Not A Valid Entry Point');
+}
 require_once('include/utils/disc_client_utils.php');
 global $beanList, $beanFiles, $sugar_config;
 $first_time = 'false';

@@ -9,25 +9,25 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-	    if(file_exists(sugar_cached('modules/unified_search_modules.php')))
-    	{
-    		$this->has_custom_unified_search_modules = true;
-    		copy(sugar_cached('modules/unified_search_modules.php'), sugar_cached('modules/unified_search_modules.php.bak'));
-    	}
-
-    	if(file_exists(sugar_cached('modules/unified_search_modules_display.php')))
-    	{
-    		$this->has_custom_unified_search_modules_display = true;
-    		copy(sugar_cached('modules/unified_search_modules_display.php'), sugar_cached('modules/unified_search_modules_display.php.bak'));
-    	}
-
-    	if(file_exists($this->module_dir))
-    	{
-    	   rmdir_recursive($this->module_dir);
-    	}
-
-    	mkdir_recursive($this->module_dir . '/metadata');
-
+        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
+        {
+            $this->has_custom_unified_search_modules = true;
+            copy(sugar_cached('modules/unified_search_modules.php'), 'sugar_cached('modules/unified_search_modules.php.bak'));
+        }
+    
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
+        {
+            $this->has_custom_unified_search_modules_display = true;
+            copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
+        }	
+        
+        if(file_exists($this->module_dir))
+        {
+           rmdir_recursive($this->module_dir);
+        }
+        
+        mkdir_recursive($this->module_dir . '/metadata');
+        
         $the_string = <<<EOQ
 <?php
 \$module_name = "{$this->module}";
@@ -108,33 +108,33 @@ EOQ;
     }
 
     public function tearDown()
-	{
-    	if(file_exists($cachefile = sugar_cached('modules/unified_search_modules.php')))
-    	{
-    		unlink($cachefile);
-    	}
-
-    	if(file_exists($cachefile = sugar_cached('modules/unified_search_modules_display.php')))
-    	{
-    		unlink($cachefile);
-    	}
-
-    	if($this->has_custom_unified_search_modules)
-    	{
-    		copy(sugar_cached('modules/unified_search_modules.php.bak'), sugar_cached('modules/unified_search_modules.php'));
-    		unlink(sugar_cached('modules/unified_search_modules.php.bak'));
-    	}
-
-    	if($this->has_custom_unified_search_modules_display)
-    	{
-    		copy(sugar_cached('modules/unified_search_modules_display.php.bak'), sugar_cached('modules/unified_search_modules_display.php'));
-    		unlink(sugar_cached('modules/unified_search_modules_display.php.bak'));
-    	}
-
-    	if(file_exists($this->module_dir))
-    	{
-    	   rmdir_recursive($this->module_dir);
-    	}
+    {
+        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
+        {
+            unlink(sugar_cached('modules/unified_search_modules.php'));
+        }
+    
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
+        {
+            unlink('custom/modules/unified_search_modules_display.php');
+        }	
+        
+        if($this->has_custom_unified_search_modules)
+        {
+            copy(sugar_cached('modules/unified_search_modules.php.bak'), sugar_cached('modules/unified_search_modules.php'));
+            unlink(sugar_cached('modules/unified_search_modules.php.bak'));
+        }
+    
+        if($this->has_custom_unified_search_modules_display)
+        {
+            copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
+            unlink('custom/modules/unified_search_modules_display.php.bak');
+        }	
+        
+        if(file_exists($this->module_dir))
+        {
+           rmdir_recursive($this->module_dir);
+        }
     }
 
     public function test_update_custom_vardefs()
@@ -172,16 +172,16 @@ EOQ;
 
     public function test_create_unified_search_modules_display()
     {
-    	if(file_exists(sugar_cached('modules/unified_search_modules_display.php')))
-    	{
-    		unlink(sugar_cached('modules/unified_search_modules_display.php'));
-    	}
-
+        if(file_exists('custom/modules/unified_search_modules_display.php'))
+        {
+            unlink('custom/modules/unified_search_modules_display.php');
+        }		
+        
         require_once('modules/UpgradeWizard/uw_utils.php');
         $usa = new UnifiedSearchAdvanced();
         $_REQUEST['enabled_modules'] = 'Accounts,Bug36845Test';
         $usa->saveGlobalSearchSettings();
-        $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules_display.php')), 'Assert that unified_search_modules_display.php file was created');
+        $this->assertTrue(file_exists('custom/modules/unified_search_modules_display.php'), 'Assert that unified_search_modules_display.php file was created');        
     }
 
 }

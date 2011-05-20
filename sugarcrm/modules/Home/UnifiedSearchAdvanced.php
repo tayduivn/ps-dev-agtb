@@ -59,14 +59,12 @@ class UnifiedSearchAdvanced {
 			$this->buildCache();
 		}
 
-		include($this->cache_search);
-
-		if(!file_exists($cachefile = sugar_cached('modules/unified_search_modules_display.php')))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
 
-		include $cachefile;
+		include('custom/modules/unified_search_modules_display.php');
 
 		global $mod_strings, $modListHeader, $app_list_strings, $current_user, $app_strings, $beanList;
 		$users_modules = $current_user->getPreference('globalSearch', 'search');
@@ -146,13 +144,21 @@ class UnifiedSearchAdvanced {
 		return $sugar_smarty->fetch($tpl);
 	}
 
+	
 	function search() {
 		if(!file_exists($this->cache_search))
 		{
 			$this->buildCache();
 		}
-
 		include $this->cache_search;
+		
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
+		{
+		   $this->createUnifiedSearchModulesDisplay();
+		}
+		include('custom/modules/unified_search_modules_display.php');		
+		
+		
 		require_once 'include/ListView/ListViewSmarty.php';
 
 		global $modListHeader, $beanList, $beanFiles, $current_language, $app_strings, $current_user, $mod_strings;
@@ -180,14 +186,13 @@ class UnifiedSearchAdvanced {
 			if(!empty($users_modules)) {
 				// use user's previous selections
 			    foreach ( $users_modules as $key => $value ) {
-			        if ( isset($unified_search_modules[$key]) ) {
-			            $modules_to_search[$key] = $value;
-			        }
+			    	if (isset($unified_search_modules_display[$key]) && !empty($unified_search_modules_display[$key]['visible'])) {
+		            	$modules_to_search[$key] = $beanList[$key];
+		        	}
 			    }
 			} else {
-				// select all the modules (ie first time user has used global search)
-				foreach($unified_search_modules as $module=>$data) {
-				    if (!empty($data['default']) ) {
+				foreach($unified_search_modules_display as $module=>$data) {
+				    if (!empty($data['visible']) ) {
 				        $modules_to_search[$module] = $beanList[$module];
 				    }
 				}
@@ -195,19 +200,6 @@ class UnifiedSearchAdvanced {
 			$current_user->setPreference('globalSearch', $modules_to_search, 'search');
 		}
 
-
-		if(!file_exists($this->cache_display))
-		{
-		   $this->createUnifiedSearchModulesDisplay();
-		}
-		include($this->cache_display);
-		foreach($modules_to_search as $module=>$data)
-		{
-			if(isset($unified_search_modules_display[$module]['visible']) && !$unified_search_modules_display[$module]['visible'])
-			{
-			   unset($modules_to_search[$module]);
-			}
-		}
 
 		$templateFile = 'modules/Home/UnifiedSearchAdvancedForm.tpl';
 		if(file_exists('custom/' . $templateFile))
@@ -280,7 +272,7 @@ class UnifiedSearchAdvanced {
                  */
                 require_once $beanFiles[$beanName] ;
                 $seed = new $beanName();
-				 require_once 'include/SearchForm/SearchForm2.php' ;
+				require_once 'include/SearchForm/SearchForm2.php' ;
                 $searchForm = new SearchForm ( $seed, $moduleName ) ;
 
                 $searchForm->setup (array ( $moduleName => array() ) , $unifiedSearchFields , '' , 'saved_views' /* hack to avoid setup doing further unwanted processing */ ) ;
@@ -325,6 +317,7 @@ class UnifiedSearchAdvanced {
                 $lv->delete = false;
                 $lv->select = false;
                 $lv->showMassupdateFields = false;
+                $lv->email = false;
                 if($overlib) {
                     $lv->overlib = true;
                     $overlib = false;
@@ -332,7 +325,7 @@ class UnifiedSearchAdvanced {
                 	$lv->overlib = false;
                 }
 
-                $lv->setup($seed, 'include/ListView/ListViewGeneric.tpl', $where, $params, 0, 10);
+                $lv->setup($seed, 'include/ListView/ListViewNoMassUpdate.tpl', $where, $params, 0, 10);
 
                 $module_results[$moduleName] = '<br /><br />' . get_form_header($GLOBALS['app_list_strings']['moduleList'][$seed->module_dir] . ' (' . $lv->data['pageData']['offsets']['total'] . ')', '', false);
                 $module_counts[$moduleName] = $lv->data['pageData']['offsets']['total'];
@@ -350,11 +343,10 @@ class UnifiedSearchAdvanced {
 		}
 
 		if($has_results) {
-			//arsort($module_counts);
 			foreach($module_counts as $name=>$value) {
 				echo $module_results[$name];
 			}
-		} else {
+		} else if(empty($_REQUEST['form_only'])) {
 			echo $home_mod_strings['LBL_NO_RESULTS'];
 			echo $home_mod_strings['LBL_NO_RESULTS_TIPS'];
 		}
@@ -365,7 +357,7 @@ class UnifiedSearchAdvanced {
 	{
 
 		global $beanList, $beanFiles, $dictionary;
-
+		
 		$supported_modules = array();
 
 		foreach($beanList as $moduleName=>$beanName)
@@ -395,6 +387,12 @@ class UnifiedSearchAdvanced {
 				require "modules/{$moduleName}/metadata/SearchFields.php" ;
 			}
 
+			//Load custom SearchFields.php if it exists
+			if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) 
+			{
+				require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
+			}				
+			
 			$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $moduleName);
 
 			//If the bean supports unified search or if it's a custom module bean and unified search is not defined
@@ -403,17 +401,21 @@ class UnifiedSearchAdvanced {
 				$fields = array();
 				foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )
 				{
-					// We cannot enable or disable unified_search for email in the vardefs as we don't actually have a vardef entry for 'email' -
+					// We cannot enable or disable unified_search for email in the vardefs as we don't actually have a vardef entry for 'email'
 					// the searchFields entry for 'email' doesn't correspond to any vardef entry. Instead it contains SQL to directly perform the search.
 					// So as a proxy we allow any field in the vardefs that has a name starting with 'email...' to be tagged with the 'unified_search' parameter
 
 					if (strpos($field,'email') !== false)
+					{
 						$field = 'email' ;
-
+					}
+						
 					//bug: 38139 - allow phone to be searched through Global Search
 					if (strpos($field,'phone') !== false)
+					{
 						$field = 'phone' ;
-
+					}
+					
 					if ( !empty($def['unified_search']) && isset ( $searchFields [ $moduleName ] [ $field ]  ))
 					{
 						$fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
@@ -422,7 +424,8 @@ class UnifiedSearchAdvanced {
 
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
-					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) {
+					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) 
+					{
                         $supported_modules [$moduleName]['default'] = true;
                     } else {
                         $supported_modules [$moduleName]['default'] = false;
@@ -445,13 +448,13 @@ class UnifiedSearchAdvanced {
 	{
 		global $mod_strings, $app_strings, $app_list_strings;
 
-		if(!file_exists($this->cache_display))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
-
-		include($this->cache_display);
-
+		
+		include('custom/modules/unified_search_modules_display.php');
+				
 		$sugar_smarty = new Sugar_Smarty();
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('MOD', $mod_strings);
@@ -507,124 +510,6 @@ class UnifiedSearchAdvanced {
 
 
 	/**
-	 * addModuleToUnifiedSearch
-	 * This method handles adding a new module to the unified search list of modules.  It will add an
-	 * entry to the unified_search_modules.php if it already exists
-	 *
-	 * @param module String value of the module entry to add
-	 * @return boolean value indiciating whether or not the module was added to the unified_search_modules.php file
-	 */
-	function addModuleToUnifiedSearch($module='')
-	{
-		if(empty($module))
-		{
-		   return false;
-		}
-
-		//If the file doesn't exist
-		if(!file_exists($this->cache_search))
-		{
-			include($this->cache_search);
-			$this->buildCache();
-			return isset($unified_search_modules[$module]) ? true : false;
-		}
-
-		include($this->cache_search);
-
-		//If modules is already in list, unset it and rebuild
-		if(isset($unified_search_modules[$module]))
-		{
-		   unset($unified_search_modules[$module]);
-		}
-
-		//Build the entry
-		global $beanList, $beanFiles, $dictionary;
-
-		if(!isset($beanList[$module]))
-		{
-		   $GLOBALS['log']->fatal('no beanList entry!');
-		   $beanName = $module;
-		   //return false;
-		}
-
-		$beanName = $beanList[$module];
-
-		if (!isset($beanFiles[$beanName]))
-		{
-			$GLOBALS['log']->fatal('no beanFiles entry!');
-		    //return false;
-		}
-
-		//BEGIN SUGARCRM flav!=sales ONLY
-		if($beanName == 'aCase')
-		{
-			$beanName = 'Case';
-		}
-        //END SUGARCRM flav!=sales ONLY
-
-		$manager = new VardefManager();
-		$manager->loadVardef($module, $beanName);
-
-		// obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-		if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php'))
-		{
-           require('custom/modules/'.$module.'/metadata/metafiles.php');
-        } elseif (file_exists('modules/'.$module.'/metadata/metafiles.php')) {
-           require('modules/'.$module.'/metadata/metafiles.php');
-        }
-
-
-	    if(!empty($metafiles[$module]['searchfields']))
-		{
-			require $metafiles[$moduleName]['searchfields'] ;
-		} else if(file_exists("modules/{$module}/metadata/SearchFields.php")) {
-			require "modules/{$module}/metadata/SearchFields.php" ;
-		}
-
-		$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $module);
-
-		//If the bean supports unified search or if it's a custom module bean and unified search is not defined
-		if(!empty($dictionary[$beanName]['unified_search']) || $isCustomModule)
-		{
-			$GLOBALS['log']->fatal("found dictionary entry!");
-			$fields = array();
-			foreach ( $dictionary [ $beanName ][ 'fields' ] as $field => $def )
-			{
-				// We cannot enable or disable unified_search for email in the vardefs as we don't actually have a vardef entry for 'email' -
-				// the searchFields entry for 'email' doesn't correspond to any vardef entry. Instead it contains SQL to directly perform the search.
-				// So as a proxy we allow any field in the vardefs that has a name starting with 'email...' to be tagged with the 'unified_search' parameter
-				if (strpos($field,'email') !== false)
-					$field = 'email' ;
-
-				//bug: 38139 - allow phone to be searched through Global Search
-				if (strpos($field,'phone') !== false)
-					$field = 'phone' ;
-
-				if (!empty($def['unified_search']) && isset ($searchFields [$module] [ $field ]))
-				{
-					$fields[ $field ] = $searchFields [$module] [ $field ] ;
-				}
-			}
-
-			if(count($fields) > 0) {
-				$unified_search_modules [$module] ['fields'] = $fields;
-				if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) {
-                    $unified_search_modules[$module]['default'] = true;
-                } else {
-                    $unified_search_modules[$module]['default'] = false;
-                }
-			}
-		 }
-
-		 if(!isset($unified_search_modules[$module]))
-		 {
-		 	return false;
-		 }
-
-		 return write_array_to_file('unified_search_modules', $unified_search_modules, $this->cache_search);
-	}
-
-	/**
 	 * saveGlobalSearchSettings
 	 * This method handles the administrator's request to save the searchable modules selected and stores
 	 * the results in the unified_search_modules_display.php file
@@ -632,14 +517,14 @@ class UnifiedSearchAdvanced {
 	 */
 	function saveGlobalSearchSettings()
 	{
-		if(!file_exists($this->cache_display))
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
 
-		include($this->cache_display);
-
-		if(isset($_REQUEST['enabled_modules']))
+		include('custom/modules/unified_search_modules_display.php');
+		
+		if(isset($_REQUEST['enabled_modules'])) 
 		{
 			$new_unified_search_modules_display = array();
 
@@ -719,12 +604,12 @@ class UnifiedSearchAdvanced {
 		{
 		   return false;
 		}
-
-	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, $this->cache_display))
+		
+	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php')) 
 	    {
 	    	//Log error message and throw Exception
 	    	global $app_strings;
-	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array($this->cache_display));
+	    	$msg = string_format($app_strings['ERR_FILE_WRITE'], array('custom/modules/unified_search_modules_display.php'));
 	    	$GLOBALS['log']->error($msg);
 	    	throw new Exception($msg);
 	    }

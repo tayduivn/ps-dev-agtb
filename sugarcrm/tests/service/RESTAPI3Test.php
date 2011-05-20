@@ -448,6 +448,8 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
 
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$accountId}'");
+        
         $this->assertTrue(!empty($result['entry_list'][0]['id']) && $result['entry_list'][0]['id'] != -1,$this->_returnLastRawResponse());
         $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['name'],'warning',$this->_returnLastRawResponse());
         $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['value'],"Access to this object is denied since it has been deleted or does not exist",$this->_returnLastRawResponse());
@@ -537,6 +539,10 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $returnedValues[] = $result['entry_list'][0]['name_value_list']['last_name']['value'];
         $returnedValues[] = $result['entry_list'][1]['name_value_list']['last_name']['value'];
 
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$accountId}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId1}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId2}'");
+        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE account_id= '{$accountId}'");
 
         $this->assertContains('New Contact 1',$returnedValues,$this->_returnLastRawResponse());
         $this->assertContains('New Contact 2',$returnedValues,$this->_returnLastRawResponse());
@@ -586,6 +592,20 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 'session' => $session,
                 'module' => 'Contacts',
                 'name_value_list' => array(
+                    array('name' => 'last_name', 'value' => 'New Contact 3'),
+                    array('name' => 'description', 'value' => 'This is a contact created from a REST web services call'),
+                    ),
+                )
+            );
+
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+        $contactId3 = $result['id'];
+
+        $result = $this->_makeRESTCall('set_entry',
+            array(
+                'session' => $session,
+                'module' => 'Contacts',
+                'name_value_list' => array(
                     array('name' => 'last_name', 'value' => 'New Contact 2'),
                     array('name' => 'description', 'value' => 'This is a contact created from a REST web services call'),
                     ),
@@ -603,7 +623,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 'module' => 'Accounts',
                 'module_id' => $accountId,
                 'link_field_name' => 'contacts',
-                'related_ids' => array($contactId1,$contactId2),
+                'related_ids' => array($contactId1,$contactId3,$contactId2),
                 )
             );
 
@@ -624,8 +644,15 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
 
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$accountId}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId1}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId2}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId3}'");
+        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE account_id= '{$accountId}'");
+
         $this->assertEquals($result['entry_list'][0]['name_value_list']['last_name']['value'],'New Contact 1',$this->_returnLastRawResponse());
         $this->assertEquals($result['entry_list'][1]['name_value_list']['last_name']['value'],'New Contact 2',$this->_returnLastRawResponse());
+        $this->assertEquals($result['entry_list'][2]['name_value_list']['last_name']['value'],'New Contact 3',$this->_returnLastRawResponse());
     }
 
     public static function _subpanelLayoutProvider()
@@ -702,7 +729,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 
+        //BEGIN SUGARCRM flav=pro ONLY 
         $monitor->setValue('team_id', $this->_user->getPrivateTeamID());
+        //END SUGARCRM flav=pro ONLY 
         $monitor->setValue('action', 'detail');
         $monitor->setValue('user_id', $this->_user->id);
         $monitor->setValue('module_name', $module);

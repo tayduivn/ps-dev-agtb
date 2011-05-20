@@ -19,10 +19,10 @@ if(!empty($config['dir']) && is_file($config['dir']) && empty($config['file'])){
 if(!empty($config['clean'])) {
     if ( !empty($config['file']) )
         foreach ( $config['builds'] as $build )
-            $rome->remove($rome->getBuildDir().'/'.$build.'/'.$config['file']);
+            $rome->remove($rome->getBuildDir(). DIRECTORY_SEPARATOR .$build. DIRECTORY_SEPARATOR .$config['file']);
     elseif ( !empty($config['dir']) )
         foreach ( $config['builds'] as $build )
-            $rome->remove($rome->getBuildDir().'/'.$build.'/'.$config['dir']);
+            $rome->remove($rome->getBuildDir(). DIRECTORY_SEPARATOR .$build. DIRECTORY_SEPARATOR .$config['dir']);
     else
         $rome->remove($rome->getBuildDir());
 }
@@ -44,30 +44,30 @@ if(!empty($config['base_dir'])){
 		if(file_exists($config['file'])) {
 			$config['file'] = realpath($config['file']);
 		} else {
-			$config['file'] = realpath($config['base_dir'] .'/' .$config['file']);
+			$config['file'] = realpath($config['base_dir'] . DIRECTORY_SEPARATOR .$config['file']);
 		}
-		$config['file'] = str_replace($config['base_dir']. '/','', $config['file']);
-		if(is_file($config['base_dir'] .'/' .  $config['file'])){
+		$config['file'] = str_replace($config['base_dir']. DIRECTORY_SEPARATOR ,'', $config['file']);
+		if(is_file($config['base_dir'] . DIRECTORY_SEPARATOR .  $config['file'])){
 			$rome->setStartPath($config['base_dir']);
-			echo "Building " . $config['base_dir']  .'/' . $config['file'];
-			$rome->buildFile($config['base_dir']  .'/' . $config['file'], "");
+			echo "Building " . $config['base_dir']  . DIRECTORY_SEPARATOR . $config['file'];
+			$rome->buildFile($config['base_dir']  . DIRECTORY_SEPARATOR . $config['file'], "");
 		}else{
-			echo "Build Stopped.  You entered an invalid file name: ".$config['base_dir']  .'/' . $config['file'];
+			echo "Build Stopped.  You entered an invalid file name: ".$config['base_dir']  . DIRECTORY_SEPARATOR . $config['file'];
 		}
 	}elseif(!empty($config['dir'])){
 		if (file_exists($config['dir']))
 		{
 			$config['dir'] = realpath($config['dir']);
 		} else {
-            $config['dir'] = realpath($config['base_dir'] .'/' .$config['dir']);
+            $config['dir'] = realpath($config['base_dir'] . DIRECTORY_SEPARATOR .$config['dir']);
         }
 		$config['dir'] = str_replace($config['base_dir'],'', $config['dir']);
-		if(is_dir($config['base_dir'] .'/' . $config['dir'])){
+		if(is_dir($config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir'])){
 			$rome->setStartPath($config['base_dir']);
-			echo "Building " . $config['base_dir'] .'/' . $config['dir'];
-			$rome->build($config['base_dir'] .'/' . $config['dir']);
+			echo "Building " . $config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir'];
+			$rome->build($config['base_dir'] . DIRECTORY_SEPARATOR . $config['dir']);
 		}else{
-			echo "Build Stopped.  You entered an invalid directory name: ".$config['base_dir']  .'/' . $config['dir'];
+			echo "Build Stopped.  You entered an invalid directory name: ".$config['base_dir']  . DIRECTORY_SEPARATOR . $config['dir'];
 		}
 	}
 	else{
@@ -78,7 +78,7 @@ if(!empty($config['base_dir'])){
 	if(!empty($config['latin'])){
 		echo "\nImporting Languages\n\n";
 		require_once('Latin.php');
-		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir']);
+		$latin = new Latin($rome, $config['languages']['gitPath'], $config['base_dir'], $config['ver']);
 		$latin->copyTranslations();
 	}
 

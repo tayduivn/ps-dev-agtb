@@ -27,7 +27,7 @@ class VisibilityAction extends AbstractAction{
 	function VisibilityAction($params) {
         $this->params = $params;
 		$this->targetField = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 		$this->view = isset($params['view']) ? $params['view'] : "";
 	}
 	
@@ -97,6 +97,7 @@ class VisibilityAction extends AbstractAction{
 						    if (wasHidden && this.view == 'EditView')
 						        SUGAR.forms.FlashField(target);
 						}
+						this.checkRow(Dom.getAncestorByTagName(inputTD, 'TR'), inv_class);
 					}
 				} catch (e) {if (console && console.log) console.log(e);}
 			},
@@ -106,9 +107,14 @@ class VisibilityAction extends AbstractAction{
 			    if (el && this.containsPlainText(el))
 			    {
 			        var span = document.createElement('SPAN');
-			        for(var i = el.childNodes.length - 1; i > -1 ; i--)
+			        var nodes = [];
+			        for(var i = 0; i < el.childNodes.length ; i++)
                     {
-                        span.appendChild(el.childNodes[i]);
+                        nodes[i] = el.childNodes[i];
+                    }
+                    for(var i = 0 ; i < nodes.length; i++)
+                    {
+                        span.appendChild(nodes[i]);
                     }
 			        el.appendChild(span);
 			    }
@@ -123,6 +129,19 @@ class VisibilityAction extends AbstractAction{
                     }
                 }
 			    return false;
+			},
+			checkRow: function(el, inv_class)
+			{
+                var hide = true;
+                for(var i = 0; i < el.children.length; i++)
+                {
+                    var node = el.children[i];
+                    if (!YAHOO.util.Dom.hasClass(node, inv_class)) {
+                        hide = false;
+                        break;
+                    }
+                }
+                el.style.display = hide ? 'none' : '';
 			}
 
 		});";

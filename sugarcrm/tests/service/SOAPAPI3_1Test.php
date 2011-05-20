@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY 
 require_once('include/nusoap/nusoap.php');
 require_once('include/TimeDate.php');
 /**
@@ -78,23 +79,24 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
        $result = $this->_soapClient->call('get_entry_list', $soap_data);
        $actual = $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value'];
        $this->assertEquals($c1->email1, $actual);
-   }
-
+    }
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test get avaiable modules call
      *
      */
-    function testGetAvailableModules()
+    function testGetAvailableModulesForMobile()
     {
         $this->_login();
         $soap_data = array('session' => $this->_sessionId,'filter' => 'mobile');
 
         $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        
         $actual = $result['modules'][0];
         $this->assertEquals('Accounts', $actual['module_key'] );
         $this->assertTrue(isset($actual['acls']));
     }
-
+    //END SUGARCRM flav=pro ONLY
     /**
      * Test get avaiable modules call
      *
@@ -144,6 +146,9 @@ class SOAPAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
                           );
 
        $result = $this->_soapClient->call('get_entry_list', $soap_data);
+       
+       $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$a1->id}'");
+       
        $actual = $result['entry_list'][0]['name_value_list'][0]['value'];
        $this->assertEquals($account_name, $actual);
 

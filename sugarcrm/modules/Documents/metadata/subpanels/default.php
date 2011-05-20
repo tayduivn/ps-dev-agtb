@@ -62,12 +62,17 @@ $subpanel_layout = array(
 	 	    'vname' => 'LBL_LIST_FILENAME',
 		    'width' => '20%',
             'module' => 'Documents',
+            'sortable'=>false,
             'displayParams' => array(
                 'module' => 'Documents',
             ),
 		),
-       'category'=>array(
- 	    	'name' => 'category',
+		'document_revision_id' => array(
+	       'name' => 'document_revision_id',
+	       'usage' => 'query_only',
+	   ),
+       'category_id'=>array(
+ 	    	'name' => 'category_id',
 	 	    'vname' => 'LBL_LIST_CATEGORY',
 		    'width' => '20%',
 		),		

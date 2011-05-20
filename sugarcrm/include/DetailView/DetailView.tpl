@@ -39,7 +39,7 @@ class="yui-navset detailview_tabs"
     <ul class="yui-nav">
     {{foreach name=section from=$sectionPanels key=label item=panel}}
         {{counter name="tabCount" print=false}}
-        <li><a id="tab{{$tabCount}}" href="#tab{{$tabCount}}"><em>{sugar_translate label='{{$label}}' module='{{$module}}'}</em></a></li>
+        <li><a id="tab{{$tabCount}}" href="javascript:void(0)"><em>{sugar_translate label='{{$label}}' module='{{$module}}'}</em></a></li>
     {{/foreach}}
     </ul>
     {{/if}}
@@ -110,13 +110,13 @@ class="yui-navset detailview_tabs"
                    {overlib_includes}
                    {sugar_help text=$popupText WIDTH=400}
                 {{/if}}
-                {{* //BEGIN SUGARCRM flav=pro ONLY*}}
                 {{if !empty($colData.field.name)}}
+                {{* //BEGIN SUGARCRM flav=pro ONLY*}}
                 {else}
                     {counter name="fieldsHidden"}
+                {{* //END SUGARCRM flav=pro ONLY*}}
                 {/if}
                 {{/if}}
-                {{* //END SUGARCRM flav=pro ONLY*}}
 			</td>
 			<td width='{{$def.templateMeta.widths[$smarty.foreach.colIteration.index].field}}%' {{if $colData.colspan}}colspan='{{$colData.colspan}}'{{/if}} {{if isset($fields[$colData.field.name].type) && $fields[$colData.field.name].type == 'phone'}}class="phone"{{/if}}>
 			    {{if !empty($colData.field.name)}}

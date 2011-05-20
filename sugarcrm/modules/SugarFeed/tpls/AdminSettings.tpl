@@ -47,11 +47,13 @@
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 <tr>
 <td scope="row" align="right" nowrap>{$mod.LBL_ENABLE_FEED}:</td>
-<td align="left" width="25%">
+<td align="left" width="25%" colspan='4'>
 <input type="hidden" id="feed_enable_hidden" name="feed_enable" value="0">
 <input type="checkbox" id="feed_enable" name="feed_enable" value="1" {$enabled_checkbox} onClick="SugarFeedDisableCheckboxes()">
+{* //BEGIN SUGARCRM flav=pro ONLY*}
+{$mod.LBL_ENABLE_EXTERNAL_CONNECTORS}
+{* //END SUGARCRM flav=pro ONLY*}
 </td>
-<td colspan="3" width="70%">&nbsp;</td>
 </tr>
 <tr>
 <td scope="row" align="right" valign="top" nowrap>{$mod.LBL_ENABLE_MODULE_LIST}:</td>

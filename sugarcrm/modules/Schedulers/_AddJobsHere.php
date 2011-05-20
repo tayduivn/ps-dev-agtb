@@ -578,4 +578,9 @@ All in all, Exit looks like an exciting action puzzle game that should showoff t
 if (file_exists('custom/modules/Schedulers/_AddJobsHere.php')) {
 	require('custom/modules/Schedulers/_AddJobsHere.php');
 }
+
+if (file_exists('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php'))
+{
+	require('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php');
+}
 ?>

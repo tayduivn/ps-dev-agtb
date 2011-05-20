@@ -119,18 +119,21 @@ class Team extends SugarBean
 	function list_view_parse_additional_sections(&$list_form, $xTemplateSection) {
 		global $current_user;
 
-		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) {
-			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) {
+		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
+		{
+			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) 
+			{
 			    $list_form->parse($xTemplateSection.".row.admin_team");
 			    $list_form->parse($xTemplateSection.".row.admin_edit");
-                if ( isset($this->implicit_assign) && $this->implicit_assign == '1' ) {
+                $record = isset($_REQUEST['record']) ? $_REQUEST['record'] : '';
+			    if ($this->associated_user_id == $record) {
+                    $list_form->parse($xTemplateSection.".row.user_rem");
+				} else if ( isset($this->implicit_assign) && $this->implicit_assign == '1' ) {
 			        $list_form->parse($xTemplateSection.".row.user_rem");
-			    }
-			    else {
+			    } else {
 			        $list_form->parse($xTemplateSection.".row.admin_rem");
 			    }
-			}
-			else {
+			} else {
 				$list_form->parse($xTemplateSection.".row.user_team");
 				$list_form->parse($xTemplateSection.".row.user_edit");
 				$list_form->parse($xTemplateSection.".row.user_rem");

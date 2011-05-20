@@ -76,6 +76,10 @@ function smarty_function_sugar_translate($params, &$smarty)
 	}else{
 		$value = translate($params['label'] , $module);
     }
+    if (!empty($params['for_js']) && $params['for_js']) {
+        $value = addslashes($value);
+        $value = str_replace(array('&#039;', '&#39;'), "\'", $value);
+    }
 	if(!empty($params['trimColon']) && !$params['trimColon']) {
         return $value;
     }

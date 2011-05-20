@@ -1063,7 +1063,8 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					close: true,
 					constraintoviewport: true,
 					fixedcenter: false,
-					script: true
+					script: true,
+					modal: true
 				});
 			var win = ModuleBuilder.formulaEditorWindow;
 			win.setHeader(SUGAR.language.get("ModuleBuilder", "LBL_FORMULA_BUILDER"));
@@ -1078,7 +1079,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 embed: true,
                 targetModule:ModuleBuilder.module,
                 package:ModuleBuilder.MBpackage,
-                formula:formula
+                formula:YAHOO.lang.JSON.stringify(formula)
             };
 			win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
 			{
@@ -1096,7 +1097,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
             var display = enable ? "" : "none";
 			Dom.setStyle("formulaRow", "display", display);
 			Dom.setStyle("enforcedRow", "display", display);
-			Dom.get('calculated').value = enable;
+            if(Dom.get('calculated')){
+			    Dom.get('calculated').value = enable;
+            }
             this.toggleEnforced(enable);
         },
         toggleEnforced: function(enable) {
@@ -1124,7 +1127,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			if (massupdate)massupdate.disabled = disable;
 			this.toggleDateTimeDefalutEnabled(disable);
 			if (defaultVal) defaultVal.disabled = disable;
-            Dom.get("enforced").value = enable;
+            if(Dom.get("enforced")){
+                Dom.get("enforced").value = enable;
+            }
         },
 		toggleDateTimeDefalutEnabled : function(disable)
 		{

@@ -112,14 +112,22 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'reportable'=>false,
     'massupdate' => false,
   ),
-    'reports_to_link' =>
-  array (
-  	'name' => 'reports_to_link',
-    'type' => 'link',
-    'relationship' => 'lead_direct_reports',
+    'reports_to_link' => array (
+  	    'name' => 'reports_to_link',
+        'type' => 'link',
+        'relationship' => 'lead_direct_reports',
 		'link_type'=>'one',
 		'side'=>'right',
-    'source'=>'non-db',
+        'source'=>'non-db',
+		'vname'=>'LBL_REPORTS_TO',
+  ),
+    'reportees' => array (
+  	    'name' => 'reportees',
+        'type' => 'link',
+        'relationship' => 'lead_direct_reports',
+		'link_type'=>'many',
+		'side'=>'left',
+        'source'=>'non-db',
 		'vname'=>'LBL_REPORTS_TO',
   ),
   /*'acc_name_from_accounts' =>
@@ -431,8 +439,8 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'type' => 'link',
     'relationship' => 'emails_leads_rel',
     'source'=>'non-db',
-		'vname'=>'LBL_EMAILS',
-	'unified_search'=>true,
+    'unified_search'=>true,
+	'vname'=>'LBL_EMAILS',
   ),
 	'email_addresses' =>
 	array (
@@ -442,6 +450,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         'source' => 'non-db',
 		'vname' => 'LBL_EMAIL_ADDRESSES',
 		'reportable'=>false,
+	    'rel_fields' => array('primary_address' => array('type'=>'bool')),
 	),
 	'email_addresses_primary' =>
 	array (

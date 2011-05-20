@@ -872,13 +872,13 @@ function safe_map_named($request_var, & $focus, $member_var, $always_copy)
 	}
 }
 
-/** 
+/**
  * This function retrieves an application language file and returns the array of strings included in the $app_list_strings var.
- * 
+ *
  * @param string $language specific language to load
  * @return array lang strings
  */
-function return_app_list_strings_language($language) 
+function return_app_list_strings_language($language)
 {
 	global $app_list_strings;
 	global $sugar_config;
@@ -894,7 +894,7 @@ function return_app_list_strings_language($language)
 
 	$default_language = $sugar_config['default_language'];
 	$temp_app_list_strings = $app_list_strings;
-	
+
 	$langs = array();
 	if ($language != 'en_us') {
 	    $langs[] = 'en_us';
@@ -903,9 +903,9 @@ function return_app_list_strings_language($language)
 	    $langs[] = $default_language;
 	}
 	$langs[] = $language;
-	
+
 	$app_list_strings_array = array();
-	
+
 	foreach ( $langs as $lang ) {
 	    $app_list_strings = array();
 	    if(file_exists("include/language/$lang.lang.php")) {
@@ -920,15 +920,15 @@ function return_app_list_strings_language($language)
             include("include/language/$lang.lang.php.override");
             $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
         }
-        
+
         $app_list_strings_array[] = $app_list_strings;
     }
-    
+
     $app_list_strings = array();
     foreach ( $app_list_strings_array as $app_list_strings_item ) {
         $app_list_strings = sugarArrayMerge($app_list_strings, $app_list_strings_item);
     }
-    
+
     foreach ( $langs as $lang ) {
         if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
             $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
@@ -981,13 +981,13 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
    return $app_list_strings;
 }
 
-/** 
+/**
  * This function retrieves an application language file and returns the array of strings included.
- * 
+ *
  * @param string $language specific language to load
  * @return array lang strings
  */
-function return_application_language($language) 
+function return_application_language($language)
 {
 	global $app_strings, $sugar_config;
 
@@ -1010,10 +1010,11 @@ function return_application_language($language)
 	if ($default_language != 'en_us' && $language != $default_language) {
 	    $langs[] = $default_language;
 	}
+
 	$langs[] = $language;
-	
+
 	$app_strings_array = array();
-	
+
 	foreach ( $langs as $lang ) {
 	    $app_strings = array();
 	    if(file_exists("include/language/$lang.lang.php")) {
@@ -1043,7 +1044,7 @@ function return_application_language($language)
     foreach ( $app_strings_array as $app_strings_item ) {
         $app_strings = sugarArrayMerge($app_strings, $app_strings_item);
     }
-	
+
 	if(!isset($app_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language strings");
 		return null;
@@ -1068,19 +1069,19 @@ function return_application_language($language)
 	$app_strings = $temp_app_strings;
 
 	sugar_cache_put($cache_key, $return_value);
-	
+
 	return $return_value;
 }
 
-/** 
+/**
  * This function retrieves a module's language file and returns the array of strings included.
- * 
+ *
  * @param string $language specific language to load
  * @param string $module module name to load strings for
  * @param bool $refresh optional, true if you want to rebuild the language strings
  * @return array lang strings
  */
-function return_module_language($language, $module, $refresh=false) 
+function return_module_language($language, $module, $refresh=false)
 {
 	global $mod_strings;
 	global $sugar_config;
@@ -1093,7 +1094,7 @@ function return_module_language($language, $module, $refresh=false)
 		return array();
 	}
 
-	$cache_key = "mod_strings_lang.".$language.$module;
+	$cache_key = LanguageManager::getLanguageCacheKey($module, $language);
 	// Check for cached value
 	$cache_entry = sugar_cache_retrieve($cache_key);
 	if(!empty($cache_entry))
@@ -1132,7 +1133,7 @@ function return_module_language($language, $module, $refresh=false)
             LanguageManager::loadModuleLanguage($module, $sugar_config['default_language'],$refresh),
                 $loaded_mod_strings
             );
-     
+
     // Load in en_us strings by default
     if($language != 'en_us' && $sugar_config['default_language'] != 'en_us')
         $loaded_mod_strings = sugarArrayMerge(
@@ -1567,8 +1568,7 @@ function is_admin_for_any_module($user) {
     $actions = ACLAction::getUserActions($user->id);
 	foreach ($beanList as $key=>$val) {
         if(($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'&& $key!='Calendar' && $key!='Activities') &&
-            ((isset($actions[$key]['module']) && $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV) ||
-            	(isset($actions[$key]['module']) && $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)   	)) {
+            (isset($actions[$key]['module']['admin']['aclaccess']) && ($actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV))) {
                 $_SESSION['is_admin_for_module'] = true;
                 return true;
         }
@@ -1600,8 +1600,8 @@ function is_admin_for_module($user,$module) {
     else {
         $key = 'module';
     }
-    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key]))||
-    	(isset($actions[$module][$key]) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
+    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key])) ||
+    	(isset($actions[$module][$key]['admin']['aclaccess']) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
         $_SESSION[$sessionVar][$module]=true;
     	return true;
     }
@@ -1957,6 +1957,23 @@ function getDefaultXssTags() {
 }
 
 /**
+ * Remove potential xss vectors from strings
+ * @param string str String to search for XSS attack vectors
+ * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
+ * @return string
+ */
+function remove_xss($str, $cleanImg=true)
+{
+    $potentials = clean_xss($str, $cleanImg);
+    if(is_array($potentials) && !empty($potentials)) {
+        foreach($potentials as $bad) {
+            $str = str_replace($bad, "", $str);
+        }
+    }
+    return $str;
+}
+
+/**
  * Detects typical XSS attack patterns
  * @param string str String to search for XSS attack vectors
  * @param bool cleanImg Flag to allow <img> tags to survive - only used by InboundEmail for inline images.
@@ -1983,12 +2000,12 @@ function clean_xss($str, $cleanImg=true) {
 	// cn: bug 13079 - "on\w" matched too many non-events (cONTact, strONG, etc.)
 	$jsEvents  = "onblur|onfocus|oncontextmenu|onresize|onscroll|onunload|ondblclick|onclick|";
 	$jsEvents .= "onmouseup|onmouseover|onmousedown|onmouseenter|onmouseleave|onmousemove|onload|onchange|";
-	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror";
+	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror|ondragdrop";
 
-	$attribute_regex	= "#<[^/>][^>]+({$jsEvents}\w+)[^=>]*=[^>]*>#sim";
+	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
-	$css_url			= "#url\(.*\.\w+\)#";
+	$css_url			= '#url\(.*\.\w+\)#';
 
 
 	$str = str_replace("\t", "", $str);
@@ -2048,16 +2065,16 @@ function clean_string($str, $filter = "STANDARD") {
 	global  $sugar_config;
 
 	$filters = Array(
-	"STANDARD"        => "#[^A-Z0-9\-_\.\@]#i",
-	"STANDARDSPACE"   => "#[^A-Z0-9\-_\.\@\ ]#i",
-	"FILE"            => "#[^A-Z0-9\-_\.]#i",
-	"NUMBER"          => "#[^0-9\-]#i",
-	"SQL_COLUMN_LIST" => "#[^A-Z0-9,_\.]#i",
-	"PATH_NO_URL"     => "#://#i",
-	"SAFED_GET"		  => "#[^A-Z0-9\@\=\&\?\.\/\-_~]#i", /* range of allowed characters in a GET string */
+	"STANDARD"        => '#[^A-Z0-9\-_\.\@]#i',
+	"STANDARDSPACE"   => '#[^A-Z0-9\-_\.\@\ ]#i',
+	"FILE"            => '#[^A-Z0-9\-_\.]#i',
+	"NUMBER"          => '#[^0-9\-]#i',
+	"SQL_COLUMN_LIST" => '#[^A-Z0-9,_\.]#i',
+	"PATH_NO_URL"     => '#://#i',
+	"SAFED_GET"		  => '#[^A-Z0-9\@\=\&\?\.\/\-_~]#i', /* range of allowed characters in a GET string */
 	"UNIFIED_SEARCH"	=> "#[\\x00]#", /* cn: bug 3356 & 9236 - MBCS search strings */
-	"AUTO_INCREMENT"	=> "#[^0-9\-,\ ]#i",
-	"ALPHANUM"        => "#[^A-Z0-9\-]#i",
+	"AUTO_INCREMENT"	=> '#[^0-9\-,\ ]#i',
+	"ALPHANUM"        => '#[^A-Z0-9\-]#i',
 	);
 
 	if (preg_match($filters[$filter], $str)) {
@@ -3727,11 +3744,6 @@ function getJSONobj() {
 }
 
 require_once('include/utils/db_utils.php');
-//check to see if custom utils exists
-if(file_exists('custom/include/custom_utils.php')){
-	include_once('custom/include/custom_utils.php');
-}
-
 
 /**
  * Set default php.ini settings for entry points
@@ -4438,7 +4450,7 @@ function can_start_session(){
 }
 
 function load_link_class($properties){
-	$class = 'Link';
+	$class = 'Link2';
 	if(!empty($properties['link_class']) && !empty($properties['link_file'])){
     	require_once($properties['link_file']);
     	$class = $properties['link_class'];
@@ -4706,4 +4718,109 @@ function getUrls($string)
 	}
     return $urls;
 }
-?>
+
+
+/**
+ * Sanitize image file from hostile content
+ * @param string $path Image file
+ * @param bool $jpeg Recode as JPEG (false - recode as PNG)
+ */
+function verify_image_file($path, $jpeg = false)
+{
+	if(function_exists('imagepng') && function_exists('imagejpeg') && function_exists('imagecreatefromstring')) {
+        $img = imagecreatefromstring(file_get_contents($path));
+    	if(!$img) {
+    	    return false;
+    	}
+        if($jpeg) {
+            if(imagejpeg($img, $path)) {
+                return true;
+            }
+        } else {
+        	imagealphablending($img, true);
+        	imagesavealpha($img, true);
+    	    if(imagepng($img, $path)) {
+                return true;
+    	    }
+        }
+	} else {
+	    // check image manually
+	    $fp = fopen($path, "r");
+	    if(!$fp) return false;
+	    $data = fread($fp, 4096);
+	    fclose($fp);
+	    if(preg_match("/<(html|!doctype|script|body|head|plaintext|table|img |pre(>| )|frameset|iframe|object|link|base|style|font|applet|meta|center|form|isindex)/i",
+	         $data, $m)) {
+	        $GLOBALS['log']->info("Found {$m[0]} in $path, not allowing upload");
+	        return false;
+	    }
+	    return true;
+	}
+	return false;
+}
+
+/**
+ * Verify uploaded image
+ * Verifies that image has proper extension, MIME type and doesn't contain hostile contant
+ * @param string $path  Image path
+ * @param bool $jpeg_only  Accept only JPEGs?
+ */
+function verify_uploaded_image($path, $jpeg_only = false)
+{
+    $supportedExtensions = array('jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg');
+    if(!$jpeg_only) {
+        $supportedExtensions['png'] = 'image/png';
+    }
+
+    if(!file_exists($path) || !is_file($path)) {
+	    return false;
+	}
+
+	$img_size = getimagesize($path);
+	$filetype = $img_size['mime'];
+	$ext = end(explode(".", $path));
+	if(substr_count('..', $path) > 0 || $ext === $path || !in_array(strtolower($ext), array_keys($supportedExtensions)) ||
+	    !in_array($filetype, array_values($supportedExtensions))) {
+	        return false;
+	}
+    return verify_image_file($path, $jpeg_only);
+}
+
+function cmp_beans($a, $b)
+{
+    global $sugar_web_service_order_by;
+    //If the order_by field is not valid, return 0;
+    if (empty($sugar_web_service_order_by) || !isset($a->$sugar_web_service_order_by) || !isset($b->$sugar_web_service_order_by)){
+        return 0;
+    }
+    if (is_object($a->$sugar_web_service_order_by) || is_object($b->$sugar_web_service_order_by)
+        || is_array($a->$sugar_web_service_order_by) || is_array($b->$sugar_web_service_order_by))
+    {
+        return 0;
+    }
+    if ($a->$sugar_web_service_order_by < $b->$sugar_web_service_order_by)
+    {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+function order_beans($beans, $field_name)
+{
+    //Since php 5.2 doesn't include closures, we must use a global to pass the order field to cmp_beans.
+    global $sugar_web_service_order_by;
+    $sugar_web_service_order_by = $field_name;
+    usort($beans, "cmp_beans");
+    return $beans;
+}
+
+//check to see if custom utils exists
+if(file_exists('custom/include/custom_utils.php')){
+	include_once('custom/include/custom_utils.php');
+}
+
+//check to see if custom utils exists in Extension framework
+if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
+    include_once('custom/application/Ext/Utils/custom_utils.ext.php');
+}

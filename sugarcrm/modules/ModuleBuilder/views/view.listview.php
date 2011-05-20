@@ -54,7 +54,7 @@ class ViewListView extends ViewEdit
     /*
      * Pseudo-constructor to enable subclasses to call a parent's constructor without knowing the parent in PHP4
      */
-    function init ()
+    function __construct()
     {
         $this->editModule = $_REQUEST [ 'view_module' ] ;
         $this->editLayout = $_REQUEST [ 'view' ] ;
@@ -187,7 +187,7 @@ class ViewListView extends ViewEdit
             if (!$this->fromModuleBuilder) {
                 $subList =  SubPanel::getModuleSubpanels ( $this->editModule);
                 $subRef = $subList[strtolower($this->subpanel)];
-                $subTitleKey = empty($subRef) ? $subRef : "LBL_" . strtoupper($this->subpanel) . "_SUBPANEL_TITLE";
+                $subTitleKey = !empty($subRef) ? $subRef : "LBL_" . strtoupper($this->subpanel) . "_SUBPANEL_TITLE";
                 $subTitle    = !empty($subRef) ? translate($subTitleKey, $this->editModule) : UCfirst($this->subpanel);
             	$smarty->assign ( 'subpanel_label', $subTitleKey ) ;
             	$smarty->assign ( 'subpanel_title', $subTitle ) ;

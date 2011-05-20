@@ -57,13 +57,14 @@ header("Pragma: dummy=bogus");
 header("Etag: $etag");
 
 $ifmod = isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
-    ? $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $last_modified_time : null;
+    ? strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $last_modified_time : null;
 $iftag = isset($_SERVER['HTTP_IF_NONE_MATCH'])
     ? $_SERVER['HTTP_IF_NONE_MATCH'] == $etag : null;
 if (($ifmod || $iftag) && ($ifmod !== false && $iftag !== false)) {
     header($_SERVER["SERVER_PROTOCOL"].' 304 Not Modified');
     die;
 }
+
 header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 header("Last-Modified: ".gmdate('D, d M Y H:i:s \G\M\T', $last_modified_time));
 

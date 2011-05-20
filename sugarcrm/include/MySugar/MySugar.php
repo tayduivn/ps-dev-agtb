@@ -40,8 +40,8 @@ class MySugar{
 
     function checkDashletDisplay () {
 
-		if((!in_array($this->type, $GLOBALS['moduleList'])
-				&& !in_array($this->type, $GLOBALS['modInvisList']))
+		if((!in_array($this->type, $GLOBALS['moduleList']) 
+				&& !in_array($this->type, $GLOBALS['modInvisList'])) 
 				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
 		}
@@ -60,13 +60,13 @@ class MySugar{
     }
 
 	function addDashlet(){
-		if(!is_file($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+		if(!is_file(sugar_cached(dashlets/dashlets.php'))) {
             require_once('include/Dashlets/DashletCacheBuilder.php');
 
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}
-		require_once $cachedfile;
+		require_once sugar_cached(dashlets/dashlets.php');
 
 		global $current_user;
 
@@ -593,14 +593,7 @@ EOJS;
 
 		array_push($pages,$newPage);
 
-
-		//check to see whether the preference is too large to store
-		if($current_user->isPreferenceSizeTooLarge($this->type)){
-			//user preference is too large, do not attempt to store.  echo error string and return.  This will be processed by mySugar.js
-			echo 'userpref_error';
-			return false;
-		}
-		//store preference and echo guid
+		//store preference and echo guid		
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
 		$newPagesPref = $current_user->getPreference('pages', $this->type);
@@ -668,13 +661,13 @@ EOJS;
 		global $app_strings, $theme;
 
 		// build dashlet cache file if not found
-		if(!is_file($cachedfile = sugar_cached('dashlets/dashlets.php'))) {
+		if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
 		    require_once('include/Dashlets/DashletCacheBuilder.php');
 
 		    $dc = new DashletCacheBuilder();
 		    $dc->buildCache();
 		}
-		require_once $cachedfile;
+		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
 
 		$pages = $current_user->getPreference('pages', $this->type);
 		$dashlets = $current_user->getPreference('dashlets', $this->type);
@@ -684,8 +677,8 @@ EOJS;
 		$display = array();
 
 		$predefinedChartsList = array( 	'MyPipelineBySalesStageDashlet',
-										'OppByLeadSourceDashlet',
-									   	'OppByLeadOutcomeDashlet',
+										'OpportunitiesByLeadSourceDashlet',
+									   	'OpportunitiesByLeadSourceByOutcomeDashlet',
 									   	'OutcomeByMonthDashlet',
 									   	'PipelineBySalesStageDashlet',
 									   	//BEGIN SUGARCRM flav!=sales ONLY
@@ -703,11 +696,12 @@ EOJS;
 	    $chartStyleCSS = SugarThemeRegistry::current()->getCSSURL('chart.css');
 	    $chartColorsXML = SugarThemeRegistry::current()->getImageURL('sugarColors.xml');
 
-	    $chartStringsXML = sugar_cached("xml/").'chart_strings.' . $current_language .'.lang.xml';
+	    $chartStringsXML = $sugar_config['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
 	    
 	    require_once('include/SugarCharts/SugarChartFactory.php');
 		$sugarChart = SugarChartFactory::getInstance();
-						
+			
+			
         if (!file_exists($chartStringsXML)) {
             $sugarChart->generateChartStrings($chartStringsXML);
 		}
@@ -743,7 +737,7 @@ EOJS;
 
 							$chartsArray[$id] = array();
 							$chartsArray[$id]['id'] = $id;
-							$chartsArray[$id]['xmlFile'] = sugar_cached("xml/") . $dashlets[$id]['reportId'] . '_saved_chart.xml';
+							$chartsArray[$id]['xmlFile'] = $sugar_config['tmp_dir'] . $dashlets[$id]['reportId'] . '_saved_chart.xml';
 							$chartsArray[$id]['width'] = '100%';
 							$chartsArray[$id]['height'] = '480';
 							$chartsArray[$id]['styleSheet'] = $chartStyleCSS;
@@ -834,7 +828,7 @@ EOJS;
 
 		$scriptOutput = 'var scriptResponse = '.$json->encode($scriptResponse);
 
-		return 'response = ' . $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
+		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput), false, true);
 	}
 	//END SUGARCRM flav=pro ONLY
 

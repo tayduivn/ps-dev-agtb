@@ -87,7 +87,11 @@ function process_action_update($focus, $action_array){
 	}
 
 	foreach($action_array['basic_ext'] as $field => $new_value){
-
+        if (!empty($focus->field_defs[$field]['calculated']))
+        {
+            $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+            continue;
+        }
 		//Only here if there is a datetime.
 		if($new_value=='Triggered Date'){
 			$focus->$field = get_expiry_date(get_field_type($focus->field_defs[$field]), $action_array['basic'][$field]);
@@ -104,7 +108,11 @@ function process_action_update($focus, $action_array){
 	}
 
 	foreach($action_array['advanced'] as $field => $meta_array){
-
+        if (!empty($focus->field_defs[$field]['calculated']))
+            {
+                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                continue;
+            }
 		$new_value = process_advanced_actions($focus, $field, $meta_array, $focus);
 		$focus->$field = $new_value;
 		execute_special_logic($field, $focus);
@@ -143,7 +151,7 @@ function process_action_update_rel(& $focus, $action_array){
 			foreach($action_array['basic_ext'] as $field => $new_value){
 				//Only here if there is a datetime.
 				if($new_value=='Triggered Date'){
-					$rel_object->$field = get_expiry_date(get_field_type($rel_object->field_defs[$field]), $action_array['basic'][$field]);
+					$rel_object->$field = get_expiry_date(get_field_type($rel_object->field_defs[$field]), $action_array['basic'][$field], true);
 				}
 				if($new_value=='Existing Value'){
 					$rel_object->$field = get_expiry_date(get_field_type($rel_object->field_defs[$field]), $action_array['basic'][$field], true, true, $rel_object->$field);
@@ -199,11 +207,11 @@ function process_action_new(& $focus, $action_array){
 		//Only here if there is a datetime.
 		if($new_value=='Triggered Date'){
 
-			$target_module->$field = get_expiry_date(get_field_type($target_module->field_defs[$field]), $action_array['basic'][$field]);
+			$target_module->$field = get_expiry_date(get_field_type($target_module->field_defs[$field]), $action_array['basic'][$field], true);
 
 			if($target_module->field_defs[$field]['type']=='date' && !empty($target_module->field_defs[$field]['rel_field']) ){
 				$rel_field = $target_module->field_defs[$field]['rel_field'];
-				$target_module->$rel_field = get_expiry_date('time', $action_array['basic'][$field]);
+				$target_module->$rel_field = get_expiry_date('time', $action_array['basic'][$field], true);
 			}
 		}
 	}
@@ -281,10 +289,10 @@ function process_action_new_rel(& $focus, $action_array){
 				//Only here if there is a datetime.
 				if($new_value=='Triggered Date'){
 
-					$target_module->$field = get_expiry_date(get_field_type($target_module->field_defs[$field]), $action_array['basic'][$field]);
+					$target_module->$field = get_expiry_date(get_field_type($target_module->field_defs[$field]), $action_array['basic'][$field], true);
 					if($target_module->field_defs[$field]['type']=='date' && !empty($target_module->field_defs[$field]['rel_field']) ){
 						$rel_field = $target_module->field_defs[$field]['rel_field'];
-						$target_module->$rel_field = get_expiry_date('time', $action_array['basic'][$field]);
+						$target_module->$rel_field = get_expiry_date('time', $action_array['basic'][$field], true);
 					}
 				}
 			}
@@ -319,7 +327,7 @@ function process_action_new_rel(& $focus, $action_array){
 }
 
 
-function clean_save_data(& $target_module, $action_array){
+function clean_save_data($target_module, $action_array){
 	global $app_list_strings;
 		if (empty($app_list_strings)) {
 			global $sugar_config;
@@ -408,7 +416,6 @@ function clean_save_data(& $target_module, $action_array){
 //end function clean_save_data
 }
 
-
 function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_update = false, $value=null)
 {
 	/* This function needs to be combined with the one in WorkFlowSchedule.php
@@ -423,6 +430,7 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
 	    }
 	} else {
 	    $date = $timedate->getNow();
+
 	}
 	$date->modify("+$time_interval seconds");
     return $timedate->asDbType($date, $stamp_type);
