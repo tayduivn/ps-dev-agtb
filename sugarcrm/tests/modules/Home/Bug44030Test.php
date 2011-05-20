@@ -6,7 +6,6 @@ class Bug44030Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp() 
     {
-    	$this->useOutputBuffering = false;
 	    global $beanList, $beanFiles, $dictionary;
 	    	
 	    //Add entries to simulate custom module
@@ -68,7 +67,7 @@ EOQ;
 		unset($dictionary['Bug44030_TestPerson']);
     }
 	
-	public function testUnifiesSearchAdvancedBuildCache()
+	public function testUnifiedSearchAdvancedBuildCache()
 	{
 		require_once('modules/Home/UnifiedSearchAdvanced.php');
 		$usa = new UnifiedSearchAdvanced();
@@ -77,7 +76,7 @@ EOQ;
 		//Assert we could build the file without problems
 		$this->assertTrue(file_exists($this->unified_search_modules_file), "Assert {$this->unified_search_modules_file} file was created");
 	
-	    require_once($this->unified_search_modules_file);
+	    include($this->unified_search_modules_file);
 	    $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']), "Assert that we have the custom module set in unified_search_modules.php file");
 	    $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']['fields']['email']), "Assert that the email field was set for the custom module");
 	}
