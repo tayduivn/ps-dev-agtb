@@ -90,6 +90,7 @@ require_once 'SugarTestTaskUtilities.php';
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestQuoteUtilities.php';
 require_once 'SugarTestProductUtilities.php';
+require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
 //END SUGARCRM flav=pro ONLY
 

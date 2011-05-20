@@ -517,12 +517,20 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
 
   'type_name' =>
   array (
-    'name' => 'type_name',
-    'type' => 'varchar',
-    'vname' => 'LBL_TYPE',
-    'source'=>'non-db',
-    'comment' => 'Type',
-    'importable' => 'false',
+      'name' => 'type_name',
+      'rname' => 'name',
+      'id_name' => 'type_id',
+      'vname' => 'LBL_TYPE',
+      'join_name' => 'types',
+      'type' => 'relate',
+      'link' => 'product_types_link',
+      'table' => 'product_types',
+      'isnull' => 'true',
+      'module' => 'ProductTypes',
+      'importable' => 'false',
+      'dbType' => 'varchar',
+      'len' => '255',
+      'source' => 'non-db',
   ),
 
   'account_link' =>
