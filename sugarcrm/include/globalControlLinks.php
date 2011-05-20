@@ -79,9 +79,10 @@ $global_control_links['about'] = array('linkinfo' => array($app_strings['LNK_ABO
 'submenu' => ''
 );
 
-
-
 if (sugar_is_file('custom/include/globalControlLinks.php')) {
     include('custom/include/globalControlLinks.php');
+}
+if (sugar_is_file('custom/application/Ext/GlobalLinks/links.ext.php')) {
+    include('custom/application/Ext/GlobalLinks/links.ext.php');
 }
 ?>

@@ -264,7 +264,7 @@ $admin_group_header[]= array('LBL_CONTRACT_TITLE','',false,$admin_option_defs, '
 //END SUGARCRM flav!=dce ONLY
 
 if(file_exists('custom/modules/Administration/Ext/Administration/administration.ext.php')){
-	require_once('custom/modules/Administration/Ext/Administration/administration.ext.php');
+	include('custom/modules/Administration/Ext/Administration/administration.ext.php');
 }
 
 //For users with MLA access we need to find which entries need to be shown.

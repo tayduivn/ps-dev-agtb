@@ -43,13 +43,15 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 	function displayList(&$layout_def)
 	{
 		global $app_strings, $beanList;
+//BEGIN SUGARCRM flav=pro ONLY
 		$this->bean = new $beanList[$layout_def['module']]();
-		//$this->bean->retrieve($layout_def['subpanel_id']);
-		//var_dump($this);
+//END SUGARCRM flav=pro ONLY
 
 		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline',
 			'align="absmiddle" alt="' . $app_strings['LNK_EDIT'] . '" border="0"');
 
+        $onclick ='';
+//BEGIN SUGARCRM flav=pro ONLY
 		$formname = $this->getFormName($layout_def);
 
 		$onclick = "document.forms['{$formname}'].record.value='{$layout_def['fields']['ID']}';";
@@ -58,21 +60,13 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 			. "', '" . $layout_def['subpanel_id'] . "');";
 		$onclick .= "document.forms['{$formname}'].record.value='';retValz;return false;";
 
-		$href = "#";
-		/*if($layout_def['EditView']){
-                return "<a href='#' onMouseOver=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
-                . (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-                . " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
-                . (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-                . ' class="listViewTdToolsS1" onclick="' .$onclick. '">' . $edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
-		}else{
-			return '';
-		}*/
 
 		if($layout_def['EditView'] && $this->isQuickCreateValid($layout_def['module'])){
-			return '<a href="' . $href . '"'
-			. 'class="listViewTdToolsS1" onclick="' . $onclick . '">' . $edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
-		}elseif($layout_def['EditView'] && !$this->isQuickCreateValid($layout_def['module'])) {
+			return '<a href="#" class="listViewTdToolsS1" onclick="' . $onclick . '">' .
+                    $edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
+		}else
+//END SUGARCRM flav=pro ONLY
+            if($layout_def['EditView']) {
 			return "<a href='#' onMouseOver=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
@@ -85,6 +79,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		}
 	//}
 
+//BEGIN SUGARCRM flav=pro ONLY
 	function isQuickCreateValid($module) {
 		$isValid = false;
 		if(file_exists('custom/modules/'.$module.'/metadata/quickcreatedefs.php')) {
@@ -146,6 +141,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         return $formname . $layout_def['module'];
 
 	}
+//END SUGARCRM flav=pro ONLY
 }
 
 ?>
