@@ -687,7 +687,7 @@ YAHOO.widget.TVSlideOut.prototype = {
             }
         }
 
-        if (SUGAR.reports.overrideRecord) {
+        if (SUGAR.reports && SUGAR.reports.overrideRecord) {
             this._sId = this._oData.module_name + "_" + this._oData.field_name;
         } else {
             this._sId = Dom.generateId(null, "yui-rec"); //"yui-rec" + this._nCount;
