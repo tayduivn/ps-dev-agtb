@@ -42,7 +42,7 @@ SUGAR.ajaxUI = {
             if(YAHOO.lang.trim(o.responseText) == "" && o.responseText.charAt(0) != '{') {
                 document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
                 SUGAR.util.evalScript(document.body.innerHTML);
-            } else if (console && console.log)
+            } else if (typeof(console) != "undefined" && typeof(console.log) == "function")
             {
                 console.log("invalid JSON response:");
                 console.log(o.responseText);
@@ -92,18 +92,13 @@ SUGAR.ajaxUI = {
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
             }
-            //Reset the EmailAddressWidget before loading a new page
-            if (SUGAR.EmailAddressWidget){
-                SUGAR.EmailAddressWidget.instances = {};
-                SUGAR.EmailAddressWidget.count = {};
-            }
-
             var module = /module=([^&]*)/.exec(url)[1];
             //If we can't ajax load the module (blacklisted), set the URL directly.
             if (!ui.canAjaxLoadModule(module)) {
                 window.location = url;
                 return;
             }
+            ui.cleanGlobals();
             var loadLanguageJS = '';
             if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
                 loadLanguageJS = '&loadLanguageJS=1';
@@ -117,19 +112,6 @@ SUGAR.ajaxUI = {
                 });
             }
         }
-        var test = function() {
-            SUGAR.testAjax = YAHOO.util.Connect.asyncRequest('GET', "index.php?module=Accounts&action=index", {
-                success: function(o){
-                    console.log("success called");
-                    console.log(o);
-                },
-                failure: function(o){
-                    console.log("fail called");
-                    console.log(o);
-                }
-            });
-            window.setTimeout("YAHOO.util.Connect.abort(SUGAR.testAjax)", 500);
-        }
     },
 
     submitForm : function(formname, params)
@@ -139,10 +121,7 @@ SUGAR.ajaxUI = {
             con.abort(SA.lastCall);
         }
         //Reset the EmailAddressWidget before loading a new page
-        if (SUGAR.EmailAddressWidget){
-            SUGAR.EmailAddressWidget.instances = {};
-            SUGAR.EmailAddressWidget.count = {};
-        }
+        SA.cleanGlobals();
         //Don't ajax load certain modules
         var form = YAHOO.util.Dom.get(formname) || document.forms[formname];
         if (SA.canAjaxLoadModule(form.module.value))
@@ -151,12 +130,24 @@ SUGAR.ajaxUI = {
             YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
                 success: SA.callback
             });
+            window.location="index.php?action=ajaxui#ajaxUILoc=";
             return true;
         } else {
             // window.location = url;
             form.submit();
             return false;
         }
+    },
+    cleanGlobals : function()
+    {
+        sqs_objects = {};
+        collection = {};
+        //Reset the EmailAddressWidget before loading a new page
+        if (SUGAR.EmailAddressWidget){
+            SUGAR.EmailAddressWidget.instances = {};
+            SUGAR.EmailAddressWidget.count = {};
+        }
+
     },
     firstLoad : function()
     {

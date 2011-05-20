@@ -210,7 +210,8 @@ SUGAR.mySugar = function() {
                     response = YAHOO.lang.JSON.parse(data.responseText);
                 }
                 catch(e){
-                    console.log(e);
+                    if (typeof(console) != "undefined" && typeof(console.log) == "function")
+                        console.log(e);
                 }
                 var htmlRepsonse = response['html'];
                 eval(response['script']);
