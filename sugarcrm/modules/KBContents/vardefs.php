@@ -133,6 +133,7 @@ $dictionary['KBContent'] = array(
        array('name' =>'kbcontentspk', 'type' =>'primary', 'fields'=>array('id')), 
        array('name' =>'fts_unique_idx', 'type' =>'unique', 'fields'=>array('kb_index')),
        array('name' =>'kbcontentsftk', 'type' =>'fulltext','fields'=>array('kbdocument_body'), 'db'=>'mysql'),
+       array('name' =>'kbcontentsftk', 'type' =>'fulltext','fields'=>array('kbdocument_body'), 'db'=>'ibm_db2'),
        array('name' =>'kbcontentsftk', 'type' =>'fulltext','fields'=>array('kbdocument_body'), 'db'=>'oci8','indextype'=>'CTXSYS.CONTEXT','parameters' =>'sync (on commit)'),
        array('name' =>'kbcontentsftk', 'type' =>'fulltext','fields'=>array('kbdocument_body'), 'db'=>'mssql','key_index'=>'fts_unique_idx','change_tracking' =>'AUTO', 'language' => 1033,'catalog'=>'default'),
     ),

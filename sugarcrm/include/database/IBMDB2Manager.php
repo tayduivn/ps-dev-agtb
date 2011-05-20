@@ -130,7 +130,7 @@ class IBMDB2Manager  extends DBManager
         //"select_rows" => false,     // The number of rows cannot be reliably retrieved without executing the whole query
         //"inline_keys" => false,   // Since we still need indexes created separately.
         //"case_sensitive" => false, // DB2 is case insensitive by default
-        //"fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
+        "fulltext" => true, // DB2 supports this though it needs to be initialized and we are currently not capable of doing though through code. Pending request to IBM
         "auto_increment_sequence" => true, // Opted to use DB2 sequences instead of identity columns because of the restriction of only 1 identity per table
         "limit_subquery" => true,
     );
@@ -199,15 +199,33 @@ class IBMDB2Manager  extends DBManager
 
         $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
 		if(!$this->checkDB2STMTerror($stmt)) {
-            //db2_execute($stmt);
-			$suppress?@db2_execute($stmt):db2_execute($stmt);
+            $sp_msg = '';
+            if(preg_match('/CALL.+,\s*\?/i', $sql))
+            {
+                // 20110519 Frank Steegmans: Note at the time of this implementation we are not using stored procedures
+                // anywhere except for creating full text indexes in add_drop_contraint. Furthermore
+                // we are also not using parameterized prepared queries. If either one of these assumptions
+                // changes this code needs to be revisited.
+                if($suppress) @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
+                else db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
+            }
+
+			$rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
-	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
-	        //BEGIN SUGARCRM flav=pro ONLY
+
+            if($rc)
+                $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
+            else
+                $GLOBALS['log']->error("Query Failed: $sql");
+
+            if(isset($sp_msg) && $sp_msg != '')
+            {
+                $GLOBALS['log']->info("Return message from stored procedure call '$sql': $sp_msg");
+            }
+
 		    if($this->dump_slow_queries($sql)) {
 			    $this->track_slow_queries($sql);
 			}
-			//END SUGARCRM flav=pro ONLY
 		}
 
 		$result = $stmt;
@@ -218,6 +236,7 @@ class IBMDB2Manager  extends DBManager
 		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
         return $result;
     }
+
 
     /**~
      * Checks for db2_stmt_error in the given resource
@@ -962,12 +981,19 @@ EOQ;
                 $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FOREIGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
             break;
         case 'fulltext':
-            // Until we have a better place to put this, here is a reference to how to install text search
-            // http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.ts.doc/doc/c0053115.html
-            // However there doesn't seem to be a programmatic way to create the text search indexes.
-            // Pending reply from IBM this will be unsupported.
-
-                break;
+            /**
+             * Until we have a better place to put this, here is a reference to how to install text search
+             * http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.ts.doc/doc/c0053115.html
+             * http://www.ibm.com/developerworks/data/tutorials/dm-0810shettar/index.html
+             * http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.sql.rtn.doc/doc/r0051989.html
+             */
+            if ($drop)
+                $sql = "CALL SYSPROC.SYSTS_DROP('', '{$name}', '', ?)";
+            else
+                $sql = "CALL SYSPROC.SYSTS_CREATE('', '{$name}', '{$table} ({$fields})', '', '', ?)";
+            // Note that the message output parameter is bound automatically and logged in query
+            $sql = strtoupper($sql); // When using stored procedures DB2 becomes case sensitive.
+            break;
         }
 
         $GLOBALS['log']->info("IBMDB2Manager.add_drop_constraint: ".$sql);
@@ -980,7 +1006,7 @@ EOQ;
      */
     public function full_text_indexing_installed()
     {
-		return false;
+		return true;
 		// Part of DB2 since version 9.5 (http://www.ibm.com/developerworks/data/tutorials/dm-0810shettar/index.html)
         // However there doesn't seem to be a programmatic way to create the text search indexes.
         // Pending reply from IBM marking this as unsupported.
