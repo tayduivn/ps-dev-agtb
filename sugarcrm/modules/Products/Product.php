@@ -85,7 +85,7 @@ class Product extends SugarBean {
     var $currency_name;
     var $default_currency_symbol;
     var $discount_amount;
-	
+
 	// These are for related fields
 	var $type_name;
 	var $type_id;
@@ -121,7 +121,7 @@ class Product extends SugarBean {
 
 
 	// This is the list of fields that are copied over from product template.
-    //#9668: removed description from this list..default product desc was overwriting the 
+    //#9668: removed description from this list..default product desc was overwriting the
     //the description provided by the user in the quote screen.
 	var $template_fields = array('mft_part_num', 'vendor_part_num', 'website', 'tax_class', 'manufacturer_id',
 								 'type_id', 'category_id', 'team_id',
@@ -129,15 +129,15 @@ class Product extends SugarBean {
 								 'support_description', 'support_contact');
 
 	function Product() {
-	
+
 		parent::SugarBean();
-		
+
 		$this->team_id = 1; // make the item globally accessible
-		
+
 		$currency= new Currency();
 		$this->default_currency_symbol = $currency->getDefaultCurrencySymbol();
-	
-	
+
+
 	}
 
 
@@ -160,9 +160,9 @@ class Product extends SugarBean {
 		}
 		$ret_array = parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
 		$ret_array['from'] = $ret_array['from']. " LEFT JOIN contacts on contacts.id = products.contact_id";
-		
+
 		return $ret_array;
-	}	
+	}
 
 
     function create_export_query(&$order_by, &$where, $relate_link_join='')
@@ -170,7 +170,7 @@ class Product extends SugarBean {
         $custom_join = $this->custom_fields->getJOIN(true, true,$where);
 		if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
-		$query = "SELECT $this->table_name.id, $this->table_name.name, $this->table_name.status,$this->table_name.cost_usdollar, $this->table_name.discount_usdollar, $this->table_name.list_usdollar, $this->table_name.currency_id, $this->table_name.cost_price, $this->table_name.discount_price, $this->table_name.list_price, $this->table_name.mft_part_num, $this->table_name.serial_number ";
+		$query = "SELECT $this->table_name.* ";
 		if($custom_join){
    								$query .= $custom_join['select'];
  		}
@@ -219,7 +219,7 @@ class Product extends SugarBean {
 	{
 	    parent::fill_in_additional_detail_fields();
 
-		
+
 		$currency = new Currency();
 		$currency->retrieve($this->currency_id);
 		$this->currency_symbol = $currency->symbol;
@@ -233,11 +233,11 @@ class Product extends SugarBean {
 			$this->discount_amount = $this->discount_amount_usdollar;
 			$this->currency_id = $currency->id;
 		}
-		
+
 		if (isset($this->discount_select) && $this->discount_select) {
 			$this->discount_amount = format_number($this->discount_amount, 2);
 		}
-		
+
 		$this->get_account();
 		$this->get_contact();
 		$this->get_quote();
@@ -313,7 +313,7 @@ class Product extends SugarBean {
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
 
 		global $locale;
-		
+
 		// Get the id and the name.
 		$row = $this->db->fetchByAssoc($result);
 
@@ -399,30 +399,30 @@ class Product extends SugarBean {
 		}
 	}
 
-	/** 
+	/**
 	 * get_list_view_data
 	 * Returns a list view of the associated Products.  This view is used in the Subpanel
-	 * listings.  
-	 * 
+	 * listings.
+	 *
 	 */
 	function get_list_view_data(){
 		global $current_language, $app_strings, $app_list_strings, $current_user, $timedate, $locale;
 		$product_mod_strings = return_module_language($current_language, "Products");
 		include('modules/Products/config.php');
 		//$this->format_all_fields();
-		
+
 		if ($this->date_purchased == '0000-00-00') $the_date_purchased='';
 		else{ $the_date_purchased = $this->date_purchased;
 			$db_date_purchased = $timedate->to_db_date($this->date_purchased, false);
-			
+
 		}
 		$the_date_support_expires = $this->date_support_expires;
 		$db_date_support_expires = $timedate->to_db_date($this->date_support_expires, false);
-		
-		$expired = $timedate->asDbDate($timedate->getNow()->get($support_expired)); 
+
+		$expired = $timedate->asDbDate($timedate->getNow()->get($support_expired));
 		$coming_due = $timedate->asDbDate($timedate->getNow()->get($support_coming_due));
 
-	
+
 		if (!empty($the_date_support_expires) && $db_date_support_expires < $expired) {
 			$the_date_support_expires="<strong><font color='$support_expired_color'>$the_date_support_expires</font></strong>";
 		}
@@ -430,7 +430,7 @@ class Product extends SugarBean {
 			$the_date_support_expires="<strong><font color='$support_coming_due_color'>$the_date_support_expires</font></strong>";
 		}
 		if ($this->date_support_expires == '0000-00-00') $the_date_support_expires='';
-	
+
 		$temp_array = $this->get_list_view_array();
 		$temp_array['NAME'] = (($this->name == "") ? "<em>blank</em>" : $this->name);
         if (!empty($this->status))
@@ -438,9 +438,9 @@ class Product extends SugarBean {
 		$temp_array['ENCODED_NAME'] = $this->name;
 		$temp_array['DATE_SUPPORT_EXPIRES'] = $the_date_support_expires;
 		$temp_array['DATE_PURCHASED'] = $the_date_purchased;
-                
-            
-        $params['currency_id'] = $this->currency_id;    
+
+
+        $params['currency_id'] = $this->currency_id;
         $temp_array['LIST_PRICE'] = $this->list_price;
         $temp_array['DISCOUNT_PRICE'] = $this->discount_price;
         $temp_array['COST_PRICE'] = $this->cost_price;
@@ -449,10 +449,10 @@ class Product extends SugarBean {
         } else {
         	$temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount;
         }
-		
+
 		$this->get_account();
 		$this->get_contact();
-		
+
 		$temp_array['ACCOUNT_NAME'] = empty($this->account_name) ? '' : $this->account_name;
 		$temp_array['CONTACT_NAME'] = empty($this->contact_name) ? '' : $this->contact_name;
 		return $temp_array;
@@ -469,15 +469,15 @@ class Product extends SugarBean {
 			array_push($where_clauses, "mft_part_num like '%$the_query_string%'");
 			array_push($where_clauses, "vendor_part_num like '%$the_query_string%'");
 		}
-	
+
 		$the_where = "";
 		foreach($where_clauses as $clause)
 		{
 			if($the_where != "") $the_where .= " or ";
 			$the_where .= $clause;
 		}
-	
-	
+
+
 		return $the_where;
 	}
 
@@ -485,8 +485,8 @@ class Product extends SugarBean {
 
 		$currency = new Currency();
 		$currency->retrieve($this->currency_id);
-		// RPS - begin - decimals cant be null in sql server	
-		if ( $this->cost_price == '' ) { $this->cost_price = '0'; }	
+		// RPS - begin - decimals cant be null in sql server
+		if ( $this->cost_price == '' ) { $this->cost_price = '0'; }
 		if ( $this->discount_price == '' ) { $this->discount_price = '0'; }
 		if ( $this->list_price == '' ) { $this->list_price = '0'; }
 		if ( $this->weight == '' ) { $this->weight = '0'; }
@@ -523,7 +523,7 @@ class Product extends SugarBean {
 		// We need to update the associated product bundle and quote totals that might be impacted by this product.
 		if (isset($id)) {
 			$tax_rate = 0.00;
-			$query = "select * from quotes INNER JOIN taxrates on quotes.taxrate_id=taxrates.id where quotes.id='".$this->quote_id."' and quotes.deleted=0 and taxrates.deleted=0";			
+			$query = "select * from quotes INNER JOIN taxrates on quotes.taxrate_id=taxrates.id where quotes.id='".$this->quote_id."' and quotes.deleted=0 and taxrates.deleted=0";
 			$result = $this->db->query($query);
 			if( $row =  $this->db->fetchByAssoc($result)){
 				$tax_rate = $row['value']/100;
@@ -555,18 +555,18 @@ class Product extends SugarBean {
 					    $product->id = $row['product_id'];
 					    $product->retrieve();
 					    $subtotal_usdollar += $product->discount_usdollar * $product->quantity;
-					    
+
 					    if($product->discount_select){
 					       $deal_tot_usdollar += ($product->discount_amount / 100) * $product->discount_usdollar * $product->quantity;
 					    }
 					    else{
 					       $deal_tot_usdollar += $product->discount_amount;
-					    }				
+					    }
 					    $new_sub_usdollar = $subtotal_usdollar - $deal_tot_usdollar;
 					    if ($product->tax_class == 'Taxable') {
 					    	$tax_usdollar += ($product->discount_usdollar * $product->quantity) * $tax_rate;
 
-					    }					
+					    }
 						$row =  $this->db->fetchByAssoc($result);
 					}
 				    $total_usdollar += $new_sub_usdollar + $tax_usdollar + $shipping_usdollar;
@@ -613,24 +613,24 @@ class Product extends SugarBean {
 
 				}
 			}
-		}		
+		}
 		return $id;
 	}
-			
-			
+
+
 	function bean_implements($interface) {
 		switch($interface){
 			case 'ACL': return true;
 		}
 		return false;
 	}
-	
+
 	function listviewACLHelper() {
 		$array_assign = parent::listviewACLHelper();
-	
+
 		$is_owner = false;
 		if(!empty($this->contact_name)){
-			
+
 			if(!empty($this->contact_name_owner)){
 				global $current_user;
 				$is_owner = $current_user->id == $this->contact_name_owner;
@@ -643,7 +643,7 @@ class Product extends SugarBean {
 			}
 		$is_owner = false;
 		if(!empty($this->account_name)){
-			
+
 			if(!empty($this->account_name_owner)){
 				global $current_user;
 				$is_owner = $current_user->id == $this->account_name_owner;
@@ -656,7 +656,7 @@ class Product extends SugarBean {
 			}
 		$is_owner = false;
 		if(!empty($this->quote_name)){
-			
+
 			if(!empty($this->quote_name_owner)){
 				global $current_user;
 				$is_owner = $current_user->id == $this->quote_name_owner;
@@ -667,7 +667,7 @@ class Product extends SugarBean {
 			}else{
 				$array_assign['QUOTE'] = 'span';
 			}
-		
+
 		return $array_assign;
 	}
 
