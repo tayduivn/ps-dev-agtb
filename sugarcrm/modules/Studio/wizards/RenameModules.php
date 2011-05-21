@@ -118,8 +118,8 @@ class RenameModules
         //Retrieve changes the user is requesting and store previous values for future use.
         $this->changedModules = $this->getChangedModules();
 
-        //Change module, appStrings, and related links.
-        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks();
+        //Change module, appStrings, subpanels, and related links.
+        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels();
 
         //Clear all relevant language caches
         $this->clearLanguageCaches();
@@ -127,13 +127,107 @@ class RenameModules
         SugarApplication::redirect('index.php?action=wizard&module=Studio&wizard=StudioWizard&option=RenameTabs');
     }
 
+    private function renameAllSubpanels()
+    {
+        global $beanList;
+
+        foreach($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) )
+            {
+                $this->renameModuleSubpanel($moduleName, $beanName, $this->changedModules);
+            }
+            else
+            {
+                $GLOBALS['log']->fatal("Class $beanName does not exist, unable to rename.");
+            }
+        }
+
+        return $this;
+
+    }
+
+    private function renameModuleSubpanel($moduleName, $beanName)
+    {
+        $GLOBALS['log']->fatal("About to rename $moduleName");
+        $bean = new $beanName();
+        //Get the subpanel def
+        $subpanelDefs = $this->getSubpanelDefs($bean);
+
+        if( count($subpanelDefs) <= 0)
+        {
+            $GLOBALS['log']->fatal("Found empty subpanel defs for $moduleName");
+            return;
+        }
+
+        $mod_strings = return_module_language($this->selectedLanguage, $moduleName);
+        $replacementStrings = array();
+
+        //Iterate over all subpanel entries and see if we need to make a change.
+        foreach($subpanelDefs as $subpanelName => $subpanelMetaData)
+        {
+            $GLOBALS['log']->fatal("Examining subpanel definition: $subpanelName ");
+            //For each subpanel def, check if they are in our changed modules set.
+            foreach($this->changedModules as $changedModuleName => $renameFields)
+            {
+                if( !( isset($subpanelMetaData['type']) &&  $subpanelMetaData['type'] == 'collection') //Dont bother with collections
+                    && $subpanelMetaData['module'] == $changedModuleName && isset($subpanelMetaData['title_key']) )
+                {
+                    $GLOBALS['log']->fatal("Found a subpanel to change!!! " . var_export($subpanelMetaData, true));
+                    $replaceKey = $subpanelMetaData['title_key'];
+                    if( !isset($mod_strings[$replaceKey]) )
+                    {
+                        $GLOBALS['log']->fatal("No module string entry defined for: {$mod_strings[$replaceKey]}");
+                        continue;
+                    }
+                    $oldStringValue = $mod_strings[$replaceKey];
+                    //At this point we don't know if we should replace the string with the plural or singular version of the new
+                    //strings so we'll try both but with the plural version first since it should be longer than the singular.
+                    $replacedString = str_replace($renameFields['prev_plural'], $renameFields['plural'], $oldStringValue);
+                    $GLOBALS['log']->fatal("********* 1 : $replacedString , old value was $oldStringValue, rpl: {$renameFields['plural']}");
+                    $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    $GLOBALS['log']->fatal("********* 2 : $replacedString , rpl:{$renameFields['singular']} ");
+                    $replacementStrings[$replaceKey] = $replacedString;
+                }
+            }
+        }
+
+        //Now we can write out the replaced language strings for each module
+        if(count($replacementStrings) > 0)
+        {
+            $GLOBALS['log']->fatal("Writing out labels for subpanel changes for module $moduleName, labels: " . var_export($replacementStrings,true));
+            ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
+        }
+    }
+
+    /**
+     * Retrieve the subpanel definitions for a given SugarBean object. Unforunately we can't reuse
+     * any of the SubPanelDefinion.php functions.
+     *
+     * @param  SugarBean $bean
+     * @return array The subpanel definitions.
+     */
+    private function getSubpanelDefs($bean )
+	{
+
+		$layout_defs = array();
+
+        if ( file_exists( 'modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') )
+            require('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php');
+
+        if ( file_exists( 'custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
+            require('custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
+
+         return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
+	}
+
     private function renameAllRelatedLinks()
     {
         global $beanList;
 
         foreach($beanList as $moduleName => $beanName)
         {
-            if( class_exists($beanName) && $beanName == 'Contact')
+            if( class_exists($beanName) )
             {
                 $this->renameModuleRelatedLinks($moduleName, $beanName, $this->changedModules);
             }
@@ -169,8 +263,7 @@ class RenameModules
                     $GLOBALS['log']->fatal("******** Begining to rename for link field {$link}");
                     if( !isset($mod_strings[$linkEntry['vname']]) )
                     {
-                        $GLOBALS['log']->fatal("No label attribute for link $link, continuing." . var_export($linkEntry, true));
-                        $GLOBALS['log']->fatal("MOD STRINGS: "  . var_export($mod_strings, true));
+                        $GLOBALS['log']->debug("No label attribute for link $link, continuing.");
                         continue;
                     }
 
