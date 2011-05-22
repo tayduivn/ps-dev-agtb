@@ -49,6 +49,8 @@ class Zend_Oauth_Provider
     protected $tokenHandler;
     protected $consumerHandler;
     protected $nonceHandler;
+
+    protected $requestPath;
     /**
      * Current URL
      * @var Zend_Uri_Http
@@ -142,7 +144,17 @@ class Zend_Oauth_Provider
 	 */
 	protected function needsToken()
 	{
-	    return empty($this->is_request) && $this->url->getUri() != $this->requestPath;
+	    if(!empty($this->is_request)) {
+	        return false;
+	    }
+	    if(empty($this->requestPath)) {
+	        return true;
+	    }
+	    $GLOBALS['log']->debug("URLs: now: ".$this->url->getUri(). " req: {$this->requestPath}");
+	    if($this->requestPath[0] == '/') {
+	        return $this->url->getPath() != $this->requestPath;
+	    }
+	    return $this->url->getUri() != $this->requestPath;
 	}
 
 	/**
@@ -252,8 +264,12 @@ class Zend_Oauth_Provider
 	public function checkOAuthRequest(Zend_Uri_Http $url = null, $params = array())
 	{
 	    if(empty($url)) {
-	        $url = $this->getRequestUrl();
+	        $this->url = $this->getRequestUrl();
+	    } else {
+	        $this->url = clone $url;
 	    }
+	    // We'll ignore query for the pruposes of URL matching
+	    $this->url->setQuery('');
 
 	    if(isset($_SERVER['REQUEST_METHOD'])) {
 	        $method = $_SERVER['REQUEST_METHOD'];
@@ -263,8 +279,8 @@ class Zend_Oauth_Provider
 	        $method = 'GET';
 	    }
         $params = $this->assembleParams($method, $params);
-        $this->url = $url;
         $this->checkSignatureMethod($params['oauth_signature_method']);
+        $this->checkRequiredParams($params);
 
         $this->timestamp = $params['oauth_timestamp'];
         $this->nonce = $params['oauth_nonce'];
@@ -306,7 +322,7 @@ class Zend_Oauth_Provider
         $req_sign = $params['oauth_signature'];
         unset($params['oauth_signature']);
         $our_sign = $util->sign($params, $params['oauth_signature_method'], $this->consumer_secret,
-            $this->token_secret, $method, $url->getUri());
+            $this->token_secret, $method, $this->url->getUri());
         if($req_sign != $our_sign) {
             // TODO: think how to extract signature base string
             $this->problem = $our_sign;
