@@ -21,6 +21,7 @@ class Zend_Oauth_Provider
     const TOKEN_REJECTED = 9;
     const PARAMETER_ABSENT = 10;
     const SIGNATURE_METHOD_REJECTED = 11;
+    const OAUTH_VERIFIER_INVALID = 12;
 
     protected $errnames = array(
      self::BAD_NONCE => "nonce_used",
@@ -34,19 +35,30 @@ class Zend_Oauth_Provider
      self::TOKEN_REJECTED => "token_rejected",
      self::PARAMETER_ABSENT => "parameter_absent",
      self::SIGNATURE_METHOD_REJECTED => "signature_method_rejected",
-    );
+     self::OAUTH_VERIFIER_INVALID => "verifier_invalid",
+     );
 
     public $token;
     public $token_secret;
-    public $consumer;
+    public $consumer_key;
     public $consumer_secret;
+    public $verifier;
 
     protected $problem;
 
     protected $tokenHandler;
     protected $consumerHandler;
     protected $nonceHandler;
-
+    /**
+     * Current URL
+     * @var Zend_Uri_Http
+     */
+    protected $url;
+    /**
+     *
+     * Required OAuth parameters
+     * @var array
+     */
     protected $required = array("oauth_consumer_key", "oauth_signature", "oauth_signature_method", "oauth_nonce", "oauth_timestamp");
 
     /**
@@ -130,7 +142,7 @@ class Zend_Oauth_Provider
 	 */
 	protected function needsToken()
 	{
-	    return empty($this->is_request) && $this->url->getPath() != $this->requestPath;
+	    return empty($this->is_request) && $this->url->getUri() != $this->requestPath;
 	}
 
 	/**
@@ -201,7 +213,7 @@ class Zend_Oauth_Provider
 	        $auth = $_SERVER['HTTP_AUTHORIZATION'];
 	    }
 
-	    if(!empty($auth) && substr($auth, 0, 6) = 'OAuth ') {
+	    if(!empty($auth) && substr($auth, 0, 6) == 'OAuth ') {
 	        // import header data
 	        if (preg_match_all('/(oauth_[a-z_-]*)=(:?"([^"]*)"|([^,]*))/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
               foreach ($matches[1] as $num => $header) {
@@ -222,12 +234,12 @@ class Zend_Oauth_Provider
 	{
 	    $proto = "http";
 	    if(empty($_SERVER['SERVER_PORT']) || empty($_SERVER['HTTP_HOST']) || empty($_SERVER['REQUEST_URI'])) {
-	        return new Zend_Uri_Http('http');
+	        return Zend_Uri_Http::fromString("http://localhost/");
 	    }
 	    if($_SERVER['SERVER_PORT'] == 443 || (!empty($_SERVER['HTTPS']) &&  $_SERVER['HTTPS'] == 'on')) {
 	        $proto = 'https';
 	    }
-	    return new Zend_Uri_Http($proto, "$proto://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
+	    return Zend_Uri_Http::fromString("$proto://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
 	}
 
 	/**
@@ -252,15 +264,11 @@ class Zend_Oauth_Provider
 	    }
         $params = $this->assembleParams($method, $params);
         $this->url = $url;
-
         $this->checkSignatureMethod($params['oauth_signature_method']);
-
-        if(!is_callable($this->consumerHandler)) {
-            throw new Zend_Oauth_Exception("Consumer handler not callable", self::CONSUMER_KEY_UNKNOWN);
-        }
 
         $this->timestamp = $params['oauth_timestamp'];
         $this->nonce = $params['oauth_nonce'];
+        $this->consumer_key = $params['oauth_consumer_key'];
 
         if(!is_callable($this->nonceHandler)) {
             throw new Zend_Oauth_Exception("Nonce handler not callable", self::BAD_NONCE);
@@ -271,7 +279,9 @@ class Zend_Oauth_Provider
             throw new Zend_Oauth_Exception("Invalid request", $res);
         }
 
-        $this->consumer_key = $params['oauth_consumer_key'];
+        if(!is_callable($this->consumerHandler)) {
+            throw new Zend_Oauth_Exception("Consumer handler not callable", self::CONSUMER_KEY_UNKNOWN);
+        }
 
         $res = call_user_func($this->consumerHandler, $this);
         // this will set $this->consumer_secret if OK
@@ -281,6 +291,7 @@ class Zend_Oauth_Provider
 
         if($this->needsToken()) {
             $this->token = $params['oauth_token'];
+            $this->verifier = $params['oauth_verifier'];
             if(!is_callable($this->tokenHandler)) {
                 throw new Zend_Oauth_Exception("Token handler not callable", self::TOKEN_REJECTED);
             }
