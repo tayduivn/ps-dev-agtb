@@ -20,9 +20,9 @@ class SugarOAuthServer
      */
     protected function check()
     {
-        if(!extension_loaded('oauth')) {
+        if(!function_exists('mhash') && !function_exists('hash_hmac')) {
             // define exception class
-            throw new OAuthException("OAuth extension required for OAuth support");
+            throw new OAuthException("MHash extension required for OAuth support");
         }
     }
 
@@ -41,16 +41,16 @@ class SugarOAuthServer
     public function lookupConsumer($provider)
     {
         // check $provider->consumer_key
-        // on unknown: OAUTH_CONSUMER_KEY_UNKNOWN
-        // on bad key: OAUTH_CONSUMER_KEY_REFUSED
+        // on unknown: Zend_Oauth_Provider::CONSUMER_KEY_UNKNOWN
+        // on bad key: Zend_Oauth_Provider::CONSUMER_KEY_REFUSED
         $GLOBALS['log']->debug("OAUTH: lookupConsumer, key={$provider->consumer_key}");
         $consumer = OAuthKey::fetchKey($provider->consumer_key);
         if(!$consumer) {
-            return OAUTH_CONSUMER_KEY_UNKNOWN;
+            return Zend_Oauth_Provider::CONSUMER_KEY_UNKNOWN;
         }
         $provider->consumer_secret = $consumer->c_secret;
         $this->consumer = $consumer;
-        return OAUTH_OK;
+        return Zend_Oauth_Provider::OK;
     }
 
     /**
@@ -61,10 +61,10 @@ class SugarOAuthServer
     {
         // FIXME: add ts/nonce verification
         if(empty($provider->nonce)) {
-            return OAUTH_BAD_NONCE;
+            return Zend_Oauth_Provider::BAD_NONCE;
         }
         if(empty($provider->timestamp)) {
-            return OAUTH_BAD_TIMESTAMP;
+            return Zend_Oauth_Provider::BAD_TIMESTAMP;
         }
         return OAuthToken::checkNonce($provider->consumer_key, $provider->nonce, $provider->timestamp);
     }
@@ -79,27 +79,27 @@ class SugarOAuthServer
 
         $token = OAuthToken::load($provider->token);
         if(empty($token)) {
-            return OAUTH_TOKEN_REJECTED;
+            return Zend_Oauth_Provider::TOKEN_REJECTED;
         }
         if($token->consumer != $this->consumer->id) {
-            return OAUTH_TOKEN_REJECTED;
+            return Zend_Oauth_Provider::TOKEN_REJECTED;
         }
         $GLOBALS['log']->debug("OAUTH: tokenHandler, found token=".var_export($token->id, true));
         if($token->tstate == OAuthToken::REQUEST) {
             if(!empty($token->verify) && $provider->verifier == $token->verify) {
                 $provider->token_secret = $token->secret;
                 $this->token = $token;
-                return OAUTH_OK;
+                return Zend_Oauth_Provider::OK;
             } else {
-                return OAUTH_TOKEN_USED;
+                return Zend_Oauth_Provider::TOKEN_USED;
             }
         }
         if($token->tstate == OAuthToken::ACCESS) {
             $provider->token_secret = $token->secret;
             $this->token = $token;
-            return OAUTH_OK;
+            return Zend_Oauth_Provider::OK;
         }
-        return OAUTH_TOKEN_REJECTED;
+        return Zend_Oauth_Provider::TOKEN_REJECTED;
     }
 
     /**
@@ -112,11 +112,11 @@ class SugarOAuthServer
     {
         $GLOBALS['log']->debug("OAUTH: __construct($req_path): ".var_export($_REQUEST, true));
         $this->check();
-        $this->provider = new OAuthProvider();
+        $this->provider = new Zend_Oauth_Provider();
         try {
-		    $this->provider->consumerHandler(array($this,'lookupConsumer'));
-		    $this->provider->timestampNonceHandler(array($this,'timestampNonceChecker'));
-		    $this->provider->tokenHandler(array($this,'tokenHandler'));
+		    $this->provider->setConsumerHandler(array($this,'lookupConsumer'));
+		    $this->provider->setTimestampNonceHandler(array($this,'timestampNonceChecker'));
+		    $this->provider->setTokenHandler(array($this,'tokenHandler'));
 	        if(!empty($req_path)) {
 		        $this->provider->setRequestTokenPath($req_path);  // No token needed for this end point
 	        }

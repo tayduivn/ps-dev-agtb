@@ -1,4 +1,6 @@
 <?php
+require_once 'Zend/Oauth/Provider.php';
+
 class OAuthKey extends Basic
 {
 	public $module_dir = 'OAuthKeys';
