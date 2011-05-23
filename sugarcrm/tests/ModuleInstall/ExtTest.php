@@ -30,7 +30,9 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
 	    if($this->module_installer) {
 	        $this->module_installer->uninstall_extensions();
 	    }
-	    @unlink($this->module_installer->base_dir."/test.ext.php");
+	    if(file_exists($this->module_installer->base_dir."/test.ext.php")) {
+	        @unlink($this->module_installer->base_dir."/test.ext.php");
+	    }
 	}
 
 	public static function tearDownAfterClass()
