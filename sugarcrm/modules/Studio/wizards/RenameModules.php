@@ -32,8 +32,27 @@ require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
 
 class RenameModules
 {
+    /**
+     * Selected language user is renaming for (eg. en_us).
+     *
+     * @var string
+     */
     private $selectedLanguage;
+
+    /**
+     * An array containing the modules which should be renamed.
+     *
+     * @var array
+     */
     private $changedModules;
+
+    /**
+     * An array containing the modules which have had their module strings modified as part of the
+     * renaming process.
+     *
+     * @var array
+     */
+    private $renamedModules = array();
 
 
     /**
@@ -126,7 +145,7 @@ class RenameModules
      *
      * @return void
      */
-    protected function save()
+    public function save($redirect = TRUE)
     {
         $this->selectedLanguage = (!empty($_REQUEST['dropdown_lang'])? $_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
 
@@ -139,9 +158,9 @@ class RenameModules
         //Change module, appStrings, subpanels, and related links.
         $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels();
 
-
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
-        SugarApplication::redirect('index.php?action=wizard&module=Studio&wizard=StudioWizard&option=RenameTabs');
+        if($redirect)
+            SugarApplication::redirect('index.php?action=wizard&module=Studio&wizard=StudioWizard&option=RenameTabs');
     }
 
     /**
@@ -224,6 +243,7 @@ class RenameModules
         {
             $GLOBALS['log']->debug("Writing out labels for subpanel changes for module $moduleName, labels: " . var_export($replacementStrings,true));
             ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
+            $this->renamedModules[$moduleName] = true;
         }
     }
 
@@ -323,6 +343,7 @@ class RenameModules
         {
             $GLOBALS['log']->debug("Writing out labels for link changes for module $moduleName, labels: " . var_export($replacementStrings,true));
             ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
+            $this->renamedModules[$moduleName] = true;
         }
     }
 
@@ -395,6 +416,7 @@ class RenameModules
 
         //Save all entries
         ParserLabel::addLabels($this->selectedLanguage, $replacedLabels, $moduleName);
+        $this->renamedModules[$moduleName] = true;
     }
 
     /**
@@ -485,26 +507,33 @@ class RenameModules
         $allModuleEntries = array();
         $results = array();
         $params = $_REQUEST;
+
+        $selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
+        $current_app_list_string = return_app_list_strings_language($selected_lang);
+
         while(isset($params['slot_' . $count]))
         {
-
-           $index = $params['slot_' . $count];
-           $key = (isset($params['key_' . $index]))?$params['key_' . $index]: 'BLANK';
-           $value = (isset($params['value_' . $index]))?$params['value_' . $index]: '';
-           $svalue = (isset($params['svalue_' . $index]))?$params['svalue_' . $index]: $value;
-           if($key == 'BLANK')
+            $index = $params['slot_' . $count];
+            $key = (isset($params['key_' . $index]))?$params['key_' . $index]: 'BLANK';
+            $value = (isset($params['value_' . $index]))?$params['value_' . $index]: '';
+            $svalue = (isset($params['svalue_' . $index]))?$params['svalue_' . $index]: $value;
+            if($key == 'BLANK')
                $key = '';
 
-           $key = trim($key);
-           $value = trim($value);
-           $svalue = trim($svalue);
-           $allModuleEntries[$key] = array('s' => $svalue, 'p' => $value);
+            $key = trim($key);
+            $value = trim($value);
+            $svalue = trim($svalue);
+
+            //If the module key dne then do not continue with this rename.
+            if( isset($current_app_list_string['moduleList'][$key]) )
+                $allModuleEntries[$key] = array('s' => $svalue, 'p' => $value);
+            else
+                $_REQUEST['delete_' . $count] = TRUE;
+
 
            $count++;
         }
 
-        $selected_lang = (!empty($params['dropdown_lang'])?$params['dropdown_lang']:$_SESSION['authenticated_user_language']);
-        $current_app_list_string = return_app_list_strings_language($selected_lang);
 
         foreach($allModuleEntries as $k => $e)
         {
@@ -547,6 +576,16 @@ class RenameModules
             return $tmp->object_name;
         else
             return $moduleName;
+    }
+
+    /**
+     * Return an array of the modules whos mod_strings have been modified.
+     *
+     * @return array
+     */
+    public function getRenamedModules()
+    {
+        return $this->renamedModules;
     }
 }
 
