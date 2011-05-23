@@ -42,7 +42,9 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_language']);
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['mod_strings']);
-        unlink("cache/ExtTest/test.ext.php");
+	    if(file_exists("cache/ExtTest/test.ext.php")) {
+	        @unlink("cache/ExtTest/test.ext.php");
+	    }
         rmdir_recursive("cache/ExtTest");
 	}
 
