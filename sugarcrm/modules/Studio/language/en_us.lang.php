@@ -149,7 +149,7 @@ $mod_strings = array (
 'LBL_TAB_GROUP_LANGUAGE_HELP' => 'Select an available language, edit the Group labels and click Save & Deploy to apply the labels in the selected language.',
 'LBL_ADD_GROUP'=>'Add Group',
 'LBL_NEW_GROUP'=>'New Group',
-'LBL_RENAME_TABS'=>'Rename Tabs',
+'LBL_RENAME_TABS'=>'Rename Modules',
 'LBL_DISPLAY_OTHER_TAB' => 'Display \'Other\' Tab',
 
 //LIST VIEW EDITOR
@@ -175,6 +175,7 @@ $mod_strings = array (
 'LBL_SP_UPLOADED'=> 'Uploaded',
 'ERROR_SP_UPLOADED'=>'Please ensure that you are uploading a css style sheet.',
 'LBL_SP_PREVIEW'=>'Here is a preview of what your style sheet will look like',
+
 	'LBL_SAVE' => 'Save' /*for 508 compliance fix*/,
 	'LBL_UNDO' => 'Undo' /*for 508 compliance fix*/,
 	'LBL_REDO' => 'Redo' /*for 508 compliance fix*/,
@@ -187,5 +188,10 @@ $mod_strings = array (
 	'LBL_ADDROWS' => 'Add Rows' /*for 508 compliance fix*/,
 	'LBL_ADDFIELD' => 'Add Field' /*for 508 compliance fix*/,
 	'LBL_EDIT' => 'Edit' /*for 508 compliance fix*/,
+
+'LBL_LANGUAGE_TOOLTIP' => 'Select the language to edit.',
+'LBL_SINGULAR' => 'Singular Label',
+'LBL_PLURAL' => 'Plural Label',
+
 );
 ?>

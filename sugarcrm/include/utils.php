@@ -1095,14 +1095,16 @@ function return_module_language($language, $module, $refresh=false)
 		return array();
 	}
 
-	$cache_key = LanguageManager::getLanguageCacheKey($module, $language);
-	// Check for cached value
-	$cache_entry = sugar_cache_retrieve($cache_key);
-	if(!empty($cache_entry))
-	{
-		return $cache_entry;
-	}
-
+    if( !$refresh )
+    {
+        $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
+        // Check for cached value
+        $cache_entry = sugar_cache_retrieve($cache_key);
+        if(!empty($cache_entry))
+        {
+            return $cache_entry;
+        }
+    }
 	// Store the current mod strings for later
 	$temp_mod_strings = $mod_strings;
 	$loaded_mod_strings = array();
@@ -3719,11 +3721,6 @@ function getJSONobj() {
 }
 
 require_once('include/utils/db_utils.php');
-//check to see if custom utils exists
-if(file_exists('custom/include/custom_utils.php')){
-	include_once('custom/include/custom_utils.php');
-}
-
 
 /**
  * Set default php.ini settings for entry points
@@ -4772,4 +4769,42 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	}
     return verify_image_file($path, $jpeg_only);
 }
-?>
+
+function cmp_beans($a, $b)
+{
+    global $sugar_web_service_order_by;
+    //If the order_by field is not valid, return 0;
+    if (empty($sugar_web_service_order_by) || !isset($a->$sugar_web_service_order_by) || !isset($b->$sugar_web_service_order_by)){
+        return 0;
+    }
+    if (is_object($a->$sugar_web_service_order_by) || is_object($b->$sugar_web_service_order_by)
+        || is_array($a->$sugar_web_service_order_by) || is_array($b->$sugar_web_service_order_by))
+    {
+        return 0;
+    }
+    if ($a->$sugar_web_service_order_by < $b->$sugar_web_service_order_by)
+    {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+function order_beans($beans, $field_name)
+{
+    //Since php 5.2 doesn't include closures, we must use a global to pass the order field to cmp_beans.
+    global $sugar_web_service_order_by;
+    $sugar_web_service_order_by = $field_name;
+    usort($beans, "cmp_beans");
+    return $beans;
+}
+
+//check to see if custom utils exists
+if(file_exists('custom/include/custom_utils.php')){
+	include_once('custom/include/custom_utils.php');
+}
+
+//check to see if custom utils exists in Extension framework
+if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
+    include_once('custom/application/Ext/Utils/custom_utils.ext.php');
+}

@@ -47,7 +47,8 @@
         </td>
 <!-- BEGIN Remove and Radio -->
         <td valign='top'>
-            {sugar_getimage alt=$app_strings.LBL_DELETE_INLINE name="delete_inline" ext=".gif" other_attributes='id="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove('lineFields_{$displayParams.formName}_{$vardef.name}_0');" '}
+        	{capture assign=attr}id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove('lineFields_{$displayParams.formName}_{$vardef.name}_0');"{/capture}
+        	{sugar_getimage name="delete_inline" ext=".gif" attr=$attr}
             {if !empty($displayParams.allowNewValue) }
             <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
             {/if}
@@ -63,7 +64,11 @@
 <table name='{$displayParams.formName}_{$vardef.name}_add_table' id='{$displayParams.formName}_{$vardef.name}_add_table'>
     <tr>
         <td>
-            <a href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();">{sugar_getimage alt=$app_strings.LBL_PLUS_INLINE name="plus_inline" ext=".gif" width="10" height="10" other_attributes='border="0" class="img" id="add_{$displayParams.formName}_{$vardef.name}_image" style="margin-top: 3px;" '}</a><a href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();"> Add </a>
+            <a href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();">
+            {capture assign="attr"}class="img" id="add_{$displayParams.formName}_{$vardef.name}_image" border="0" style="margin-top: 3px;"{/capture}
+            [sugar_getimage name="plus_inline" ext=".gif" attr=$attr width="10" height="10"}
+            </a>
+            <a href="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();"> Add </a>
         </td>
     </tr>
 </table>
@@ -78,12 +83,14 @@
             {/foreach}
 {/if}
 <script type="text/javascript">
-collection['{$displayParams.formName}_{$vardef.name}'].add_secondaries(collection['{$displayParams.formName}_{$vardef.name}'].secondaries_values);
-</script>
-{literal}
- <script type="text/javascript">
- 	document.getElementById("id_{/literal}{$displayParams.formName}_{$vardef.name}{literal}_collection_0").value = "{/literal}{$values.primary.id}{literal}";
-    document.getElementById("{/literal}{$displayParams.formName}_{$vardef.name}{literal}_collection_0").value = "{/literal}{$values.primary.name}{literal}";
+(function() {ldelim}
+    var field_id = '{$displayParams.formName}_{$vardef.name}';
+    YAHOO.util.Event.onContentReady(field_id + "_table", function(){ldelim}
+        collection[field_id].add_secondaries(collection[field_id].secondaries_values});
+    {rdelim});
+{rdelim})();
+ 	document.getElementById("id_{$displayParams.formName}_{$vardef.name}_collection_0").value = "{$values.primary.id}";
+    document.getElementById("{$displayParams.formName}_{$vardef.name}_collection_0").value = "{$values.primary.name}";
 </script>
 {/literal}
 {$quickSearchCode}

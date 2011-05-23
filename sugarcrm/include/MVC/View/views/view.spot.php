@@ -37,7 +37,7 @@ class ViewSpot extends ViewAjax
         }      
         
         //Filter out the modules that are not allowed to be searched upon
-        if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php'))
+        if(!file_exists('custom/modules/unified_search_modules_display.php'))
         {
         	if(!isset($usa))
         	{
@@ -45,7 +45,7 @@ class ViewSpot extends ViewAjax
         	}
             $usa->createUnifiedSearchModulesDisplay();
         }
-        include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules_display.php');		
+        include('custom/modules/unified_search_modules_display.php');		
 		
         // load the list of unified search enabled modules
         $modules = array();

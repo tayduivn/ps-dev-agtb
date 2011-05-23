@@ -414,7 +414,7 @@ $mod_strings = array (
 	//BEGIN SUGARCRM flav!=sales ONLY
 	If you experience persistent problems with automatic validation, please check your Proxy configuration in the <a href="index.php?module=Configurator&action=EditView">System Settings</a> admin panel.
 	//END SUGARCRM flav!=sales ONLY
-	If your system environment prohibits your system from communicating to the license validation server through the internet, you should proceed with the <a href="#" onclick="toggleDisplay(\'mainbody\');toggleDisplay(\'manualbody\');">Manual Validation</a> steps. ',
+	If your system environment prohibits your system from communicating to the license validation server through the internet, you should proceed with the <a href="javascript:void(0)" onclick="toggleDisplay(\'mainbody\');toggleDisplay(\'manualbody\');">Manual Validation</a> steps. ',
     'LBL_MANUAL_VALIDATION1'=> 'Step 1: Generate a license key information file by clicking the following button. ',
     'LBL_MANUAL_VALIDATION2'=> 'Then save the file (sugarkey.lic) on your local file system.',
     'LBL_MANUAL_VALIDATION3'=> 'Step 2: Transfer the sugarkey.lic file to a system where you can access the internet with a web browser.   <br<br>Go to <a href="http://updates.sugarcrm.com/license">http://updates.sugarcrm.com/license</a>  and submit the sugarkey.lic file.  <br><br>The license validation web site will perform the validation immediately and return you the validation key file (sugarvalidationkey.lic) if the validation is successful.  Your browser should prompt you to save the file.  ',
@@ -437,7 +437,9 @@ $mod_strings = array (
     //ModuleInstaller
     'LBL_MI_REBUILDING' => 'Rebuilding',
     'LBL_MI_SECTION' => 'Section...',
-    'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
+    'LBL_MI_IN_EXT' => 'Installing %s extension',
+    'LBL_MI_UN_EXT' => 'Uninstalling %s extension',
+	'LBL_MI_UN_CUSTOMFIELD' => 'Uninstalling Custom Fields...',
     'LBL_MI_IN_CUSTOMFIELD' => 'Installing Custom Fields...',
     'LBL_MI_COMPLETE' => 'Complete',
     'LBL_MI_UN_BEAN' => 'Uninstalling Bean :',
@@ -463,7 +465,10 @@ $mod_strings = array (
     'LBL_MI_REPAIR_INDICES' => 'Repairing indexes',
 	'LBL_MI_IN_CONNECTORS' => 'Installing Connectors',
 	'LBL_MI_UN_CONNECTORS' => 'UnInstalling Connectors',
-
+    'LBL_MI_IN_HOOKS' => 'Installing Logic Hooks',
+    'LBL_MI_UN_HOOKS' => 'Uninstalling Logic Hooks',
+    'LBL_MI_IN_SCHEDULEDTASKS' => 'Installing Scheduled Tasks',
+    'LBL_MI_UN_SCHEDULEDTASKS' => 'Uninstalling Scheduled Tasks',
     'LBL_ML_ACTION' => 'Action',
     'LBL_ML_CANCEL'             => 'Cancel',
     'LBL_ML_COMMIT'=>'Commit',
@@ -638,7 +643,7 @@ $mod_strings = array (
     'LBL_REGEX_HELP_TEXT'		=>'<b>Regular Expressions </b> provide a concise and flexible means for identifying strings of the password, such as particular characters or patterns of characters. You can create custom password rules by providing a regex that will be used in a NOT MATCH condition; the password must not contain a match to any expressions in the regex.',
     'LBL_REGEX_DESC_HELP_TEXT'	=>'This description should explain the Regex Requirement and will be displayed in the list of requirements for users when they provide new passwords.',
 	'LBL_RELEASE' => 'Manage releases and versions',
-    'LBL_RENAME_TABS'=>'Rename Tabs',
+    'LBL_RENAME_TABS'=>'Rename Modules',
     'LBL_REPAIR_ACTION' => 'What action would you like to take?',
     'LBL_REPAIR_DATABASE_DESC' =>  'Repairs database based on values defined in vardefs',
     'LBL_REPAIR_DATABASE_PROCESSING' => 'Processing database and vardef comparison...',
@@ -1148,4 +1153,11 @@ $mod_strings = array (
 	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
 	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
 	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
+
+   'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
+   'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
+	// OAuth
+    'LBL_OAUTH_TITLE' => "OAuth Keys",
+    'LBL_OAUTH' => "OAuth key management",
+
 );

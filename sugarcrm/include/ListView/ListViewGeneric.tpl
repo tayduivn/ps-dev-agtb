@@ -128,7 +128,18 @@
 			{if !empty($quickViewLinks)}
             {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}{/capture}
             {capture assign=action}{if $act}{$act}{else}EditView{/if}{/capture}
-                <td width='2%' nowrap>{if $pageData.rowAccess[$id].edit}<a title='{$editLinkString}' href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)" onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}', '{$rowData.ID}', {if $act}'{$act}'{else}'e'{/if}, {$offset}, this)">{sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>{/if}</td>
+			<td width='2%' nowrap>
+                {if $pageData.rowAccess[$id].edit}
+                <a title='{$editLinkString}'
+href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}"
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}'
+ data-list = 'true' class="quickEdit"
+{* //END SUGARCRM flav=pro ONLY *}
+                >
+                {sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>
+                {/if}
+            </td>
 
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
@@ -194,5 +205,12 @@ function lvg_nav(m,id,act,offset,t){
 {literal}
     function lvg_dtails(id){{/literal}
         return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir|default:$params.module}',id, 'adspan_'+id);{literal}}{/literal}
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+{literal}
+    if(typeof(qe_init) != 'undefined'){
+        qe_init(); //qe_init is defined in footer.tpl
+    }
+{/literal}
+{* //END SUGARCRM flav=pro ONLY *}
 </script>
 {/if}

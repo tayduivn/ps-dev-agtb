@@ -39,15 +39,16 @@ class M2MRelationship extends SugarRelationship
     {
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
-        $lhsClass = get_class($lhs);
-        $rhsClass = get_class($rhs);
+
         if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName))
         {
+            $lhsClass = get_class($lhs);
             $GLOBALS['log']->fatal("could not load LHS $lhsLinkName in $lhsClass");
             return false;
         }
         if (empty($rhs->$rhsLinkName) && !$rhs->load_relationship($rhsLinkName))
         {
+            $rhsClass = get_class($rhs);
             $GLOBALS['log']->fatal("could not load RHS $rhsLinkName in $rhsClass");
             return false;
         }

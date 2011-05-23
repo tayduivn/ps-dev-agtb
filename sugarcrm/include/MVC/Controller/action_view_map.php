@@ -43,6 +43,7 @@ $action_view_map['importvcardsave']= 'importvcardsave';
 $action_view_map['modulelistmenu']= 'modulelistmenu';
 $action_view_map['ajaxui']= 'ajaxui';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+$action_view_map['quickedit']= 'quickedit';
 
 // SugarWireless views
 $action_view_map['edit_mobile'] = 'edit_mobile';

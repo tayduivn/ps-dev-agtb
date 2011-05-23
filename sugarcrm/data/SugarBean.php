@@ -1692,6 +1692,8 @@ class SugarBean
 
         $this->call_custom_logic('after_save', '');
 
+        //Now that the record has been saved, we don't want to insert again on further saves
+        $this->new_with_id = false;
         return $this->id;
     }
 
@@ -2362,7 +2364,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
-                        $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
+                        $this->$field = $timedate->fromUserTime($this->$field)->format(TimeDate::DB_TIME_FORMAT);
                         $reformatted = true;
                     }
                     break;

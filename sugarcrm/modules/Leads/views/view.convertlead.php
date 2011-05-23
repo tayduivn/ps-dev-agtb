@@ -110,6 +110,10 @@ class ViewConvertLead extends SugarView
 
         foreach($this->defs as $module => $vdef)
         {
+            if(!isset($beanList[$module]))
+            {
+                continue;
+            }
             $bean = $beanList[$module];
             $focus = new $bean();
             $focus->fill_in_additional_detail_fields();
@@ -385,7 +389,7 @@ class ViewConvertLead extends SugarView
 						$id_field = $relObject->rhs_key;
 						$lead->$id_field = $bean->id;
 					} else {
-						$bean->$leadsRel->add($lead->id);
+						$bean->$leadsRel->add($lead);
 					}
 				}
 			}
@@ -465,6 +469,11 @@ class ViewConvertLead extends SugarView
     	{
 	    	if (isset($parent_types[$module]))
 	    	{
+                if (empty($bean->id))
+                {
+                    $bean->id = create_guid();
+		            $bean->new_with_id = true;
+                }
                 foreach($activities as $activity)
 		    	{
 		    		$this->copyActivityAndRelateToBean($activity, $bean);
@@ -533,12 +542,12 @@ class ViewConvertLead extends SugarView
                 $key = $relObj->rhs_key;
                 $newActivity->$key = $bean->id;
             }
-            $newActivity->$rel->add($bean->id);
             $newActivity->parent_id = $bean->id;
 	        $newActivity->parent_type = $bean->module_dir;
 	        $newActivity->update_date_modified = false; //bug 41747 
 	        $newActivity->save();
-	        if ($newActivity->module_dir == "Notes" && $newActivity->filename) {
+            $newActivity->$rel->add($bean);
+            if ($newActivity->module_dir == "Notes" && $newActivity->filename) {
 	        	UploadFile::duplicate_file($activity->id, $newActivity->id,  $newActivity->filename);
 	        }
          }
@@ -600,7 +609,7 @@ class ViewConvertLead extends SugarView
 					$id_field = $relObject->rhs_key;
 					$bean->$id_field = $contact->id;
 				} else {
-					$contact->$contactRel->add($bean->id);
+					$contact->$contactRel->add($bean);
 				}
 				//Set the parent of activites to the new Contact
 				if (isset($bean->field_defs['parent_id']) && isset($bean->field_defs['parent_type']))

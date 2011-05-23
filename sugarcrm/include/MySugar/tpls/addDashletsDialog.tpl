@@ -62,7 +62,7 @@
 		{if $rowCounter % 2 == 0}
 		<tr>
 		{/if}
-			<td width="50%" align="left"><a href="#" onclick="{$module.onclick}">{$module.icon}</a>&nbsp;<a class="mbLBLL" href="#" onclick="{$module.onclick}">{$module.title}</a><br /></td>
+			<td width="50%" align="left"><a href="javascript:void(0)" onclick="{$module.onclick}">{$module.icon}</a>&nbsp;<a class="mbLBLL" href="#" onclick="{$module.onclick}">{$module.title}</a><br /></td>
 		{if $rowCounter % 2 == 1}
 		</tr>
 		{/if}
@@ -74,12 +74,12 @@
 {/if}
 <div id="chartDashlets" style="{if $moduleName == 'Home'}height:400px;display:none;{else}height:425px;display:;{/if}">
 	{if $charts != false}
-	<h3><span id="basicChartDashletsExpCol"><a href="#" onClick="javascript:SUGAR.mySugar.collapseList('basicChartDashlets');">{sugar_getimage alt=$app_strings.LBL_BASIC_SEARCH name="basic_search" ext=".gif" other_attributes='align="absmiddle" border="0" '}</span></a>&nbsp;{sugar_translate label='LBL_BASIC_CHARTS' module='Home'}</h3>
+	<h3><span id="basicChartDashletsExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList('basicChartDashlets');">{sugar_getimage alt=$app_strings.LBL_BASIC_SEARCH name="basic_search" ext=".gif" other_attributes='align="absmiddle" border="0" '}</span></a>&nbsp;{sugar_translate label='LBL_BASIC_CHARTS' module='Home'}</h3>
 	<div id="basicChartDashletsList">
 	<table width="100%">
 		{foreach from=$charts item=chart}
 		<tr>
-			<td align="left"><a href="#" onclick="{$chart.onclick}">{$chart.icon}</a>&nbsp;<a class="mbLBLL" href="#" onclick="{$chart.onclick}">{$chart.title}</a><br /></td>
+			<td align="left"><a href="javascript:void(0)" onclick="{$chart.onclick}">{$chart.icon}</a>&nbsp;<a class="mbLBLL" href="#" onclick="{$chart.onclick}">{$chart.title}</a><br /></td>
 		</tr>
 		{/foreach}
 	</table>
@@ -89,22 +89,22 @@
 	</div>
 	{/if}
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
-	<h3><span id="reportChartDashletsExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList('reportChartDashlets');">{sugar_getimage alt=$app_strings.LBL_BASIC_SEARCH name="basic_search" ext=".gif" other_attributes='align="absmiddle" border="0" '}</span></a>&nbsp;{sugar_translate label='LBL_REPORT_CHARTS' module='Home'}</h3>
+	<h3><span id="reportChartDashletsExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList('reportChartDashlets');">{sugar_getimage name="basic_search" ext=".gif" other_attributes='align="absmiddle" border="0" '}</span></a>&nbsp;{sugar_translate label='LBL_REPORT_CHARTS' module='Home'}</h3>
 	<div id="reportChartDashletsList">
 		<div id="myFavoriteReportsChartDashlets" style="display:inline;">
-			<h4><span id="myFavoriteExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseReportList('myFavorite');">{sugar_getimage alt=$app_strings.LBL_PROJECT_MINUS name="ProjectMinus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_MY_FAVORITE_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="myFavoriteExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseReportList('myFavorite');">{sugar_getimage name="ProjectMinus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_MY_FAVORITE_REPORT_CHARTS' module='Home'}</h4>
 			<div id="myFavoriteReportsChartDashletsList">{sugar_getimage alt=$app_strings.LBL_LOADING name="img_loading" ext=".gif" other_attributes='align="absmiddle" '}</div>
 		</div>
 		<div id="mySavedReportsChartDashlets" style="display:inline;">
-			<h4><span id="mySavedExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('mySaved');">{sugar_getimage alt=$app_strings.LBL_PROJECT_PLUS name="ProjectPlus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_MY_SAVED_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="mySavedExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('mySaved');">{sugar_getimage name="ProjectPlus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_MY_SAVED_REPORT_CHARTS' module='Home'}</h4>
 			<div id="mySavedReportsChartDashletsList" style="display:none;">{sugar_getimage alt=$app_strings.LBL_LOADING name="img_loading" ext=".gif" other_attributes='align="absmiddle" '}</div>
 		</div>
 		<div id="myTeamReportsChartDashlets" style="display:inline;">
-			<h4><span id="myTeamExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('myTeam');">{sugar_getimage alt=$app_strings.LBL_PROJECT_PLUS name="ProjectPlus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_MY_TEAM_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="myTeamExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('myTeam');">{sugar_getimage name="ProjectPlus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_MY_TEAM_REPORT_CHARTS' module='Home'}</h4>
 			<div id="myTeamReportsChartDashletsList" style="display:none;">{sugar_getimage alt=$app_strings.LBL_LOADING name="img_loading" ext=".gif" other_attributes='align="absmiddle" '}</div>
 		</div>
 		<div id="globalReportsChartDashlets" style="display:inline;">
-			<h4><span id="globalExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('global');">{sugar_getimage alt=$app_strings.LBL_PROJECT_PLUS name="ProjectPlus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_GLOBAL_REPORT_CHARTS' module='Home'}</h4>
+			<h4><span id="globalExpCol"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList('global');">{sugar_getimage name="ProjectPlus" ext=".gif" other_attributes='align="absmiddle" border="0" '}</a></span>&nbsp;{sugar_translate label='LBL_GLOBAL_REPORT_CHARTS' module='Home'}</h4>
 			<div id="globalReportsChartDashletsList" style="display:none;">{sugar_getimage alt=$app_strings.LBL_LOADING name="img_loading" ext=".gif" other_attributes='align="absmiddle" '}</div>
 		</div>
 	</div>
@@ -121,7 +121,7 @@
 		{if $rowCounter % 2 == 0}
 		<tr>
 		{/if}
-			<td align="left"><a href="#" onclick="{$tool.onclick}">{$tool.icon}</a>&nbsp;<a class="mbLBLL" href="#" onclick="{$tool.onclick}">{$tool.title}</a><br /></td>
+			<td align="left"><a href="javascript:void(0)" onclick="{$tool.onclick}">{$tool.icon}</a>&nbsp;<a class="mbLBLL" href="#" onclick="{$tool.onclick}">{$tool.title}</a><br /></td>
 		{if $rowCounter % 2 == 1}
 		</tr>
 		{/if}

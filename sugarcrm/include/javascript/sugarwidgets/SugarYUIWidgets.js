@@ -153,7 +153,8 @@ sw.Template.prototype = {
 	append: function (target, args) {
 		var tEl = Dom.get(target);
 		if (tEl) tEl.innerHTML += this.exec(args);
-		else if (!SUGAR.isIE) console.log("Warning, unable to find target:" + target);
+		else if (typeof(console) != "undefined" && typeof(console.log) == "function")
+            console.log("Warning, unable to find target:" + target);
 	},
 	exec : function (args) {
 		var out = this.content;

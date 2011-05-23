@@ -153,12 +153,12 @@ function buildTableForm($rows, $mod='Accounts'){
 		$form .= "<tr class='$rowColor'>";
 		if ($action != 'ShowDuplicates')
 		{
-		$form .= "<td width='1%' nowrap><a href='#' onclick='document.dupAccounts.selectedAccount.value=\"${row['id']}\"; document.dupAccounts.submit(); '>[${app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
+		$form .= "<td width='1%' nowrap><a href='javascript:void(0)' onclick='document.dupAccounts.selectedAccount.value=\"${row['id']}\"; document.dupAccounts.submit(); '>[${app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
 		}
 		foreach ($row as $key=>$value){
 				if($key != 'id'){
                     if(isset($_POST['popup']) && $_POST['popup']==true){
-                        $form .= "<td scope='row'><a  href='#' onclick=\"window.opener.location='index.php?module=Accounts&action=DetailView&record=${row['id']}'\">$value</a></td>\n";
+                        $form .= "<td scope='row'><a  href='javascript:void(0)' onclick=\"window.opener.location='index.php?module=Accounts&action=DetailView&record=${row['id']}'\">$value</a></td>\n";
                     }   
                     else
 					    $form .= "<td><a target='_blank' href='index.php?module=Accounts&action=DetailView&record=${row['id']}'>$value</a></td>\n";

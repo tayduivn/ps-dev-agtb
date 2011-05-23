@@ -98,12 +98,14 @@ $config['blackList']['corp'] = array(
 'sugarcrm/include/images/sugarsales_lg_ent.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_express.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_open.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_ult.png'=>1,
 'sugarcrm/include/images/sugar_md_dce.png'=>1,
 'sugarcrm/include/images/sugar_md_dev.png'=>1,
 'sugarcrm/include/images/sugar_md_ent.png'=>1,
 'sugarcrm/include/images/sugar_md_express.png'=>1,
 'sugarcrm/include/images/sugar_md_open.png'=>1,
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
+'sugarcrm/include/images/sugar_md_ult.png'=>1,
 
 );
 $build = 'corp';

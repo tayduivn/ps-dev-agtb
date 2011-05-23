@@ -164,7 +164,12 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' class='{$_rowColor}S1' bgcolor='{$_bgColor}' nowrap>
 				{if $pageData.access.edit}
-					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index' title="{sugar_translate label="LBL_EDIT_INLINE"}">{sugar_getimage name="edit_inline.png" attr='border="0" '}</a>
+					<a
+                        {* //BEGIN SUGARCRM flav=pro ONLY *}
+                        class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData[$params.parent_id]|default:$rowData.ID}' data-module='{$params.module|default:$pageData.bean.moduleDir}'
+                        {* //END SUGARCRM flav=pro ONLY *}
+                        title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'>{sugar_getimage name="edit_inline.png" attr='border="0" '}</a>
+
 				{/if}
 				{if $pageData.access.view}
 					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index' title="{sugar_translate label="LBL_VIEW_INLINE"}>{sugar_getimage name="view_inline.png" attr='border="0" '}</a>
@@ -180,3 +185,4 @@
 	</tr>
 	{/foreach}
 </table>
+
