@@ -97,4 +97,11 @@ class JSONTest extends Sugar_PHPUnit_Framework_TestCase
             $array
         );
     }
+
+    public function testCanDecodeHomefinder(){
+        $response = '{"data":{"meta":{"currentPage":1,"totalMatched":1,"totalPages":1,"executionTime":0.025315999984741},"affiliates":[{"name":"Los Angeles Times","profileName":"latimes","parentCompany":"Tribune Company","isActive":true,"hasEcommerceEnabled":true,"profileNameLong":"latimes","homePageUrl":"http:\/\/www.latimes.com\/classified\/realestate\/","createDateTime":"2008-07-25T00:00:00-05:00","updateDateTime":"2011-02-16T00:00:00-06:00","id":137}]},"status":{"code":200,"errorStack":null}}';
+        $json = new JSON();
+        $decode = $json->decode($response);
+        $this->assertNotEmpty($decode['data']['affiliates'][0]['profileName'], "Did not decode correctly");
+    }
 }
