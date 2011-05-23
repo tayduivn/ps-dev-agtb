@@ -33,9 +33,10 @@ class IsValidEmailExpression extends BooleanExpression {
 	function evaluate() {
 		$emailStr = $this->getParameters()->evaluate();
 
-		if ( strlen($emailStr) == 0 )				return AbstractExpression::$TRUE;
+		if ($emailStr == "")
+            return AbstractExpression::$TRUE;
 
-		$lastChar = $emailStr[strlen($emailStr) - 1];
+        $lastChar = $emailStr[strlen($emailStr) - 1];
 		if ( !preg_match('/[^\.]/i', $lastChar) )	return AbstractExpression::$FALSE;
 
 		// validate it
@@ -59,8 +60,9 @@ class IsValidEmailExpression extends BooleanExpression {
 		return <<<EOQ
 		var emailStr = this.getParameters().evaluate();
 		
-		if ( emailStr.length == 0 )		return SUGAR.expressions.Expression.TRUE;
 		if ( typeof emailStr != "string" ) return SUGAR.expressions.Expression.FALSE;
+
+		if ( emailStr == "" ) return SUGAR.expressions.Expression.TRUE;
 		
 		var lastChar = emailStr.charAt(emailStr.length - 1);
 		if ( !lastChar.match(/[^\.]/i) )	return SUGAR.expressions.Expression.FALSE;

@@ -1634,6 +1634,12 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
+
     // we don't need to check if the data is changed in the search popup
     if (theForm.id == 'popup_query_form') {
     	return;
@@ -1645,11 +1651,6 @@ function initEditView(theForm) {
     	SUGAR.loadedForms = new Object();
     }
 
-    // console.log('DEBUG: Adding checks for '+theForm.id);
-    if ( theForm == null || theForm.id == null ) {
-        // Not much we can do here.
-        return;
-    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
 
@@ -2761,16 +2762,21 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9\&\/\.\?=:]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{
                   		script.text = result[2];
                   	}
-                  	document.body.appendChild(script)
+                  	document.body.appendChild(script);
 	              }
 	              catch(e) {
-
+                      if(typeof(console) != "undefined" && typeof(console.log) == "function")
+                      {
+                          console.log("error adding script");
+                          console.log(e);
+                          console.log(result);
+                      }
                   }
                   result =  objRegex.exec(text);
 			}
@@ -3814,7 +3820,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	if (initial_filter != '') {
 		URL += '&query=true' + initial_filter;
 		// Bug 41891 - Popup Window Name
-		popupName = initial_filter.replace(/[^a-z_\-0-9]+/ig, '_');
+		popupName = initial_filter.replace(/[^a-z_0-9]+/ig, '_');
 		windowName = module_name + '_popup_window' + popupName;
 	} else {
 		windowName = module_name + '_popup_window' + popupCount;
@@ -3882,11 +3888,17 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+							var tempEvent = window.document.createEvent('HTMLEvents');
+							tempEvent.initEvent('change', true, true);
+							selectField.dispatchEvent(tempEvent);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+					var tempEvent = document.createEvent('HTMLEvents');
+					tempEvent.initEvent('change', true, true);
+					window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)

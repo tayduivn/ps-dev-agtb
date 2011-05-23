@@ -210,7 +210,8 @@ SUGAR.mySugar = function() {
                     response = YAHOO.lang.JSON.parse(data.responseText);
                 }
                 catch(e){
-                    console.log(e);
+                    if (typeof(console) != "undefined" && typeof(console.log) == "function")
+                        console.log(e);
                 }
                 var htmlRepsonse = response['html'];
                 eval(response['script']);
@@ -615,6 +616,12 @@ SUGAR.mySugar = function() {
 				}
 				//BEGIN SUGARCRM flav=pro || flav=sales ONLY
 				SUGAR.mySugar.attachToggleToolsetEvent(id);
+
+                //we need to reinit the quickEdit Listeners whenever a dashlet is refreshed
+                if(typeof(qe_init) =='function'){
+                    //reinitialize the Quick Edit events
+                    qe_init();
+                }
 				//END SUGARCRM flav=pro || flav=sales ONLY
 			}
 			
@@ -985,22 +992,22 @@ SUGAR.mySugar = function() {
 		
 		collapseList: function(chartList){
 			document.getElementById(chartList+'List').style.display='none';
-			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.expandList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" align="absmiddle" />';
+			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=advanced_search.gif" align="absmiddle" />';
 		},
 		
 		expandList: function(chartList){
 			document.getElementById(chartList+'List').style.display='';		
-			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.collapseList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=basic_search.gif" align="absmiddle" />';			
+			document.getElementById(chartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseList(\''+chartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=basic_search.gif" align="absmiddle" />';
 		},
 		
 		collapseReportList: function(reportChartList){
 			document.getElementById(reportChartList+'ReportsChartDashletsList').style.display='none';
-			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.expandReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectPlus.gif" align="absmiddle" />';
+			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.expandReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectPlus.gif" align="absmiddle" />';
 		},
 		
 		expandReportList: function(reportChartList){
 			document.getElementById(reportChartList+'ReportsChartDashletsList').style.display='';
-			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="#" onClick="javascript:SUGAR.mySugar.collapseReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectMinus.gif" align="absmiddle" />';
+			document.getElementById(reportChartList+'ExpCol').innerHTML = '<a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.collapseReportList(\''+reportChartList+'\');"><img border="0" src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=ProjectMinus.gif" align="absmiddle" />';
 		},
 		
 		clearSearch: function(){
