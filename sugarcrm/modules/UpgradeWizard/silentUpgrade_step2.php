@@ -304,14 +304,6 @@ $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
 
-mkdir_recursive($unzip_dir);
-if(!is_dir($unzip_dir)) {
-	fwrite(STDERR,"\n{$unzip_dir} is not an available directory\nFAILURE\n");
-    exit(1);
-}
-unzip($argv[1], $unzip_dir);
-// mimic standard UW by copy patch zip to appropriate dir
-copy($argv[1], $install_file);
 ////	END UPGRADE PREP
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -319,21 +311,6 @@ copy($argv[1], $install_file);
 if(function_exists('set_upgrade_vars')){
 	set_upgrade_vars();
 }
-
-/*
-if($configOptions['db_type'] == 'mysql'){
-	//Change the db wait_timeout for this session
-	$que ="select @@wait_timeout";
-	$result = $db->query($que);
-	$tb = $db->fetchByAssoc($result);
-	logThis('Wait Timeout before change ***** '.$tb['@@wait_timeout'] , $path);
-	$query ="set wait_timeout=28800";
-	$db->query($query);
-	$result = $db->query($que);
-	$ta = $db->fetchByAssoc($result);
-	logThis('Wait Timeout after change ***** '.$ta['@@wait_timeout'] , $path);
-}
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	RUN SILENT UPGRADE

@@ -983,36 +983,48 @@ if(!didThisStepRunBefore('commit')){
 	  }
 
 	//Clean modules from cache
-		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'smarty')){
-			$allModFiles = array();
-			$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'smarty',$allModFiles);
+		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'smarty'))
+		{
+		   logThis('remove files from ' . $GLOBALS['sugar_config']['cache_dir'].'smarty');
+		   $allModFiles = array();
+		   $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'smarty',$allModFiles);
 		   foreach($allModFiles as $file){
 		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
-		       	if(file_exists($file)){
+		       	if(file_exists($file))
+		       	{
+		       		logThis('unlink ' . $file);
 					unlink($file);
 		       	}
 		   }
 		}
    //delete cache/modules before rebuilding the relations
    	//Clean modules from cache
-		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
-			$allModFiles = array();
-			$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
+		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules'))
+		{
+		   logThis('remove files from ' . $GLOBALS['sugar_config']['cache_dir'].'modules');
+		   $allModFiles = array();
+		   $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
 		   foreach($allModFiles as $file){
 		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
-		       	if(file_exists($file)){
+		       	if(file_exists($file))
+		       	{
+		       		logThis('unlink ' . $file);
 					unlink($file);
 		       	}
 		   }
 		}
 
 		//delete cache/themes
-		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
-			$allModFiles = array();
-			$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'themes',$allModFiles);
+		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes'))
+		{
+		   logThis('remove files from ' . $GLOBALS['sugar_config']['cache_dir'].'themes');
+		   $allModFiles = array();
+		   $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'themes',$allModFiles);
 		   foreach($allModFiles as $file){
 		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
-		       	if(file_exists($file)){
+		       	if(file_exists($file))
+		       	{
+		       		logThis('unlink ' . $file);
 					unlink($file);
 		       	}
 		   }
@@ -1025,40 +1037,51 @@ if(!didThisStepRunBefore('commit')){
 		$_REQUEST['silent'] = true;
 	}
 
-	 //logThis('Checking for leads_assigned_user relationship and if not found then create.', $path);
+	logThis('call createMissingRels() function');
 	@createMissingRels();
-	 //logThis('Checked for leads_assigned_user relationship.', $path);
+	logThis('finished createMissingRels() function');
 	ob_end_clean();
-	//// run fix on dropdown lists that may have been incorrectly named
-    //fix_dropdown_list();
 }
 
+logThis('call set_upgrade_proceess: end, in_progress');
 set_upgrade_progress('end','in_progress','end','in_progress');
 /////////////////////////Old Logger settings///////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-if(function_exists('deleteCache')){
+if(function_exists('deleteCache'))
+{
+	logThis('call set_upgrade_proceess: deleteCache, in_progress');
 	set_upgrade_progress('end','in_progress','deleteCache','in_progress');
+	logThis('call deleteCache function');
 	@deleteCache();
+	logThis('finished deleteCache');
+	logThis('call set_upgrade_proceess: deleteCache, done');
 	set_upgrade_progress('end','in_progress','deleteCache','done');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	HANDLE REMINDERS
-if(empty($errors)) {
+if(empty($errors)) 
+{
+	logThis('call commitHandleReminders function');
 	commitHandleReminders($skippedFiles, $path);
+	logThis('finished commitHandleReminders function');
 }
 
-if(file_exists(clean_path(getcwd()).'/original451files')){
+/*
+if(file_exists(clean_path(getcwd()).'/original451files'))
+{
 	rmdir_recursive(clean_path(getcwd()).'/original451files');
 }
+*/
 
 require_once('modules/Administration/Administration.php');
 $admin = new Administration();
 $admin->saveSetting('system','adminwizard',1);
 
 logThis('Upgrading user preferences start .', $path);
-if(function_exists('upgradeUserPreferences')){
+if(function_exists('upgradeUserPreferences'))
+{
    upgradeUserPreferences();
 }
 logThis('Upgrading user preferences finish .', $path);
