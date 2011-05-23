@@ -1,0 +1,15 @@
+<?php
+// Do not store anything in this file that is not part of the array or the hook version.  This file will	
+// be automatically rebuilt in the future. 
+$hook_version = 1; 
+$hook_array = Array(); 
+
+// position, file, function 
+$hook_array['before_save'] = Array(); 
+$hook_array['before_save'][] = Array(1, 'setAccount', 'custom/modules/RoadmapLogicHooks.php','RoadmapLogicHooks', 'setAccount');
+
+// position, file, function 
+$hook_array['after_save'] = Array();
+// START jvink - IBMSyncHelper (should be the first after_save hook !)
+$hook_array['after_save'][] = Array(1, 'IBMSyncHelper', 'custom/modules/IBMSyncHelperLogicHooks.php','IBMSyncHelperLogicHooks', 'IBMSyncHelper');
+// END jvink 

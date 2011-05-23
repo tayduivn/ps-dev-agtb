@@ -1,0 +1,1 @@
+<input type='text' name='{$idname}_inline' id='{$idname}_inline' size='{$displayParams.size|default:30}' {if isset($displayParams.maxlength)}maxlength='{$displayParams.maxlength}'{elseif isset($vardef.len)}maxlength='{$vardef.len}'{/if} value='{$current_tag_val}' title='{$vardef.help}' tabindex='{$tabindex}' {$displayParams.field}>
