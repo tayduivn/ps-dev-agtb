@@ -36,6 +36,11 @@ class RenameModules
     private $changedModules;
 
 
+    /**
+     *
+     * @param string $options
+     * @return void
+     */
     public function process($options = '')
     {
         if($options == 'SaveDropDown')
@@ -45,9 +50,14 @@ class RenameModules
 
     }
 
+    /**
+     * Main display function.
+     *
+     * @return void
+     */
     protected function display()
     {
-        global $app_list_strings, $app_strings, $mod_strings;
+        global $app_list_strings, $mod_strings;
 
         
         require_once('modules/Studio/parsers/StudioParser.php');
@@ -110,23 +120,36 @@ class RenameModules
         $smarty->assign('deleteImage',$deleteImage);
         $smarty->display("modules/Studio/wizards/RenameModules.tpl");
     }
-    
+
+    /**
+     * Save function responsible executing all sub-save functions required to rename a module.
+     *
+     * @return void
+     */
     protected function save()
     {
         $this->selectedLanguage = (!empty($_REQUEST['dropdown_lang'])? $_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
 
+        //Clear all relevant language caches
+        $this->clearLanguageCaches();
+        
         //Retrieve changes the user is requesting and store previous values for future use.
         $this->changedModules = $this->getChangedModules();
 
         //Change module, appStrings, subpanels, and related links.
         $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels();
 
-        //Clear all relevant language caches
-        $this->clearLanguageCaches();
+
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
         SugarApplication::redirect('index.php?action=wizard&module=Studio&wizard=StudioWizard&option=RenameTabs');
     }
 
+    /**
+     * Rename all subpanels within the application.
+     *
+     *
+     * @return RenameModules
+     */
     private function renameAllSubpanels()
     {
         global $beanList;
@@ -139,7 +162,7 @@ class RenameModules
             }
             else
             {
-                $GLOBALS['log']->fatal("Class $beanName does not exist, unable to rename.");
+                $GLOBALS['log']->error("Class $beanName does not exist, unable to rename.");
             }
         }
 
@@ -147,16 +170,23 @@ class RenameModules
 
     }
 
+    /**
+     * Rename subpanels for a particular module.
+     *
+     * @param  string $moduleName The name of the module to be renamed
+     * @param  string $beanName  The name of the SugarBean to be renamed.
+     * @return void
+     */
     private function renameModuleSubpanel($moduleName, $beanName)
     {
-        $GLOBALS['log']->fatal("About to rename $moduleName");
+        $GLOBALS['log']->info("About to rename subpanel for module: $moduleName");
         $bean = new $beanName();
         //Get the subpanel def
         $subpanelDefs = $this->getSubpanelDefs($bean);
 
         if( count($subpanelDefs) <= 0)
         {
-            $GLOBALS['log']->fatal("Found empty subpanel defs for $moduleName");
+            $GLOBALS['log']->debug("Found empty subpanel defs for $moduleName");
             return;
         }
 
@@ -166,27 +196,24 @@ class RenameModules
         //Iterate over all subpanel entries and see if we need to make a change.
         foreach($subpanelDefs as $subpanelName => $subpanelMetaData)
         {
-            $GLOBALS['log']->fatal("Examining subpanel definition: $subpanelName ");
+            $GLOBALS['log']->debug("Examining subpanel definition for potential rename: $subpanelName ");
             //For each subpanel def, check if they are in our changed modules set.
             foreach($this->changedModules as $changedModuleName => $renameFields)
             {
                 if( !( isset($subpanelMetaData['type']) &&  $subpanelMetaData['type'] == 'collection') //Dont bother with collections
                     && $subpanelMetaData['module'] == $changedModuleName && isset($subpanelMetaData['title_key']) )
                 {
-                    $GLOBALS['log']->fatal("Found a subpanel to change!!! " . var_export($subpanelMetaData, true));
                     $replaceKey = $subpanelMetaData['title_key'];
                     if( !isset($mod_strings[$replaceKey]) )
                     {
-                        $GLOBALS['log']->fatal("No module string entry defined for: {$mod_strings[$replaceKey]}");
+                        $GLOBALS['log']->info("No module string entry defined for: {$mod_strings[$replaceKey]}");
                         continue;
                     }
                     $oldStringValue = $mod_strings[$replaceKey];
                     //At this point we don't know if we should replace the string with the plural or singular version of the new
                     //strings so we'll try both but with the plural version first since it should be longer than the singular.
                     $replacedString = str_replace($renameFields['prev_plural'], $renameFields['plural'], $oldStringValue);
-                    $GLOBALS['log']->fatal("********* 1 : $replacedString , old value was $oldStringValue, rpl: {$renameFields['plural']}");
                     $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
-                    $GLOBALS['log']->fatal("********* 2 : $replacedString , rpl:{$renameFields['singular']} ");
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
@@ -195,7 +222,7 @@ class RenameModules
         //Now we can write out the replaced language strings for each module
         if(count($replacementStrings) > 0)
         {
-            $GLOBALS['log']->fatal("Writing out labels for subpanel changes for module $moduleName, labels: " . var_export($replacementStrings,true));
+            $GLOBALS['log']->debug("Writing out labels for subpanel changes for module $moduleName, labels: " . var_export($replacementStrings,true));
             ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
         }
     }
@@ -221,6 +248,11 @@ class RenameModules
          return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
 	}
 
+    /**
+     * Rename all related linked within the application
+     *
+     * @return RenameModules
+     */
     private function renameAllRelatedLinks()
     {
         global $beanList;
@@ -229,7 +261,7 @@ class RenameModules
         {
             if( class_exists($beanName) )
             {
-                $this->renameModuleRelatedLinks($moduleName, $beanName, $this->changedModules);
+                $this->renameModuleRelatedLinks($moduleName, $beanName);
             }
             else
             {
@@ -240,27 +272,35 @@ class RenameModules
         return $this;
     }
 
-    private function renameModuleRelatedLinks($moduleName, $moduleClass, $changedModules)
+    /**
+     * Rename the related links within a module.
+     *
+     * @param  string $moduleName The module to be renamed
+     * @param  string $moduleClass The class name of the module to be renamed
+     * @return void
+     */
+    private function renameModuleRelatedLinks($moduleName, $moduleClass)
     {
-        $GLOBALS['log']->fatal("Begining to renameModuleRelatedLinks for $moduleClass\n");
+        $GLOBALS['log']->info("Begining to renameModuleRelatedLinks for $moduleClass\n");
         $tmp = new $moduleClass;
         if( ! method_exists($tmp, 'get_related_fields') )
         {
-            $GLOBALS['log']->fatal("Unable to resolve linked fields for module $moduleClass ");
+            $GLOBALS['log']->info("Unable to resolve linked fields for module $moduleClass ");
             return;
         }
-        $linkedfields = $tmp->get_related_fields();
 
+        $linkedFields = $tmp->get_related_fields();
         $mod_strings = return_module_language($this->selectedLanguage, $moduleName);
         $replacementStrings = array();
-        foreach($linkedfields as $link => $linkEntry)
+
+        foreach($linkedFields as $link => $linkEntry)
         {
             //For each linked field check if the module referenced to is in our changed module list.
-            foreach($changedModules as $changedModuleName => $renameFields)
+            foreach($this->changedModules as $changedModuleName => $renameFields)
             {
                 if( isset($linkEntry['module']) && $linkEntry['module'] ==  $changedModuleName)
                 {
-                    $GLOBALS['log']->fatal("******** Begining to rename for link field {$link}");
+                    $GLOBALS['log']->debug("Begining to rename for link field {$link}");
                     if( !isset($mod_strings[$linkEntry['vname']]) )
                     {
                         $GLOBALS['log']->debug("No label attribute for link $link, continuing.");
@@ -281,11 +321,16 @@ class RenameModules
         //Now we can write out the replaced language strings for each module
         if(count($replacementStrings) > 0)
         {
-            $GLOBALS['log']->fatal("Writing out labels for link changes for module $moduleName, labels: " . var_export($replacementStrings,true));
+            $GLOBALS['log']->debug("Writing out labels for link changes for module $moduleName, labels: " . var_export($replacementStrings,true));
             ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
         }
     }
 
+    /**
+     * Clear all related language cache files.
+     *
+     * @return void
+     */
     private function clearLanguageCaches()
     {
         //remove the js language files
@@ -295,9 +340,32 @@ class RenameModules
         LanguageManager::clearLanguageCache();
     }
 
+
+    /**
+     * Rename all module strings within the application.
+     *
+     * @return RenameModules
+     */
+    private function changeAllModuleModStrings()
+    {
+        foreach($this->changedModules as $moduleName => $replacementLabels)
+        {
+            $this->changeModuleModStrings($moduleName, $replacementLabels);
+        }
+
+        return $this;
+    }
+
+    /**
+     * For a particular module, rename any relevant module strings that need to be replaced.
+     *
+     * @param  string $moduleName The name of the module to be renamed.
+     * @param  $replacementLabels
+     * @return void
+     */
     private function changeModuleModStrings($moduleName, $replacementLabels)
     {
-        $GLOBALS['log']->fatal("Begining to change module labels for: $moduleName");
+        $GLOBALS['log']->info("Begining to change module labels for: $moduleName");
         $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
         $labelKeysToReplace = array(
             array('name' => 'LNK_NEW_RECORD', 'type' => 'plural'), //Module built modules, Create <moduleName>
@@ -316,6 +384,8 @@ class RenameModules
         foreach($labelKeysToReplace as $entry)
         {
             $formattedLanguageKey = $this->formatModuleLanguageKey($entry['name'], $replacementLabels);
+
+            //If the static of dynamic key exists it should be replaced.
             if( isset($currentModuleStrings[$formattedLanguageKey]) )
             {
                 $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
@@ -323,32 +393,44 @@ class RenameModules
             }
         }
 
+        //Save all entries
         ParserLabel::addLabels($this->selectedLanguage, $replacedLabels, $moduleName);
     }
 
+    /**
+     * Format our dynamic keys containing module strings to a valid key depending on the module.
+     *
+     * @param  string $unformatedKey
+     * @param  string $replacementStrings
+     * @return string
+     */
     private function formatModuleLanguageKey($unformatedKey, $replacementStrings)
     {
         $unformatedKey = str_replace('###MODULE_SINGULAR###', strtoupper($replacementStrings['key_singular']), $unformatedKey);
         return str_replace('###MODULE_PLURAL###', strtoupper($replacementStrings['key_plural']), $unformatedKey);
 
     }
+
+    /**
+     * Replace a label with a new value based on metadata which specifies the label as either singular or plural.
+     *
+     * @param  string $oldStringValue
+     * @param  string $replacementLabels
+     * @param  array $replacementMetaData
+     * @return string
+     */
     private function replaceSingleLabel($oldStringValue, $replacementLabels, $replacementMetaData)
     {
         $replaceKey = 'prev_' . $replacementMetaData['type'];
         return str_replace($replacementLabels[$replaceKey] , $replacementLabels[$replacementMetaData['type']], $oldStringValue);
     }
 
-    private function changeAllModuleModStrings()
-    {
-        foreach($this->changedModules as $moduleName => $replacementLabels)
-        {
-            $this->changeModuleModStrings($moduleName, $replacementLabels);
-        }
 
-        return $this;
-    }
-
-
+    /**
+     * Save changes to the module names to the app string entries for both the moduleList and moduleListSingular entries.
+     *
+     * @return RenameModules
+     */
     private function changeAppStringEntries()
     {
         $GLOBALS['log']->debug('Begining to save app string entries');
@@ -364,6 +446,14 @@ class RenameModules
         return $this;
     }
 
+    /**
+     * Create an array entry that can be passed to the DropDownHelper:saveDropDown function so we can re-utilize
+     * the save logic.
+     *
+     * @param  array $params
+     * @param  array $changedModules
+     * @return
+     */
     private function createModuleListSingularPackage($params, $changedModules)
     {
         $count = 0;
@@ -383,6 +473,12 @@ class RenameModules
 
     }
 
+    /**
+     * Determine which modules have been updated and return an array with the module name as the key
+     * and the singular/plural entries as the value.
+     *
+     * @return array
+     */
     private function getChangedModules()
     {
         $count = 0;
@@ -431,17 +527,18 @@ class RenameModules
 
     /**
      * Return the 'singular' name of a module (Eg. Opportunity for Opportunities) given a moduleName which is a key
-     * in the app string moduleList array.
+     * in the app string moduleList array.  If no entry is found, simply return the moduleName as this is consistant with modules
+     * built by moduleBuilder.
      *
-     * @param  $moduleName
-     * @return String The 'singular' name of a module.
+     * @param  string $moduleName
+     * @return string The 'singular' name of a module.
      */
     private function getModuleSingularKey($moduleName)
     {
         $className = isset($GLOBALS['beanList'][$moduleName]) ? $GLOBALS['beanList'][$moduleName] : null;
         if( is_null($className) || ! class_exists($className) )
         {
-            $GLOBALS['log']->fatal("Unable to get module singular key for class: $className");
+            $GLOBALS['log']->error("Unable to get module singular key for class: $className");
             return $moduleName;
         }
 
@@ -450,20 +547,6 @@ class RenameModules
             return $tmp->object_name;
         else
             return $moduleName;
-    }
-
-
-
-    private function getSingularStringsForModuleFromAppStrings($moduleName)
-    {
-        $current_app_list_string = return_app_list_strings_language($this->selectedLanguage);
-
-        if( isset($current_app_list_string['moduleListSingular'][$moduleName] ) )
-        {
-            return $current_app_list_string['moduleListSingular'][$moduleName];
-        }
-        else
-            return null;
     }
 }
 
