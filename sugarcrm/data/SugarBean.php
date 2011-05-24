@@ -5777,8 +5777,9 @@ function save_relationship_changes($is_update, $exclude=array())
     * Send assignment notifications and invites for meetings and calls
     */
     private function _sendNotifications($check_notify){
-        if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true)){ // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
-
+        if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true) // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
+           && !$this->isOwner($this->created_by) )  // cn: bug 42727 no need to send email to owner (within workflow)
+        {
             $admin = new Administration();
             $admin->retrieveSettings();
             $sendNotifications = false;
