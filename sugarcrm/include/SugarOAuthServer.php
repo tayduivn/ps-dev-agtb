@@ -31,7 +31,7 @@ class SugarOAuthServer
      */
     public static function enabled()
     {
-        return extension_loaded('oauth');
+        return function_exists('mhash') || function_exists('hash_hmac');
     }
 
     /**
@@ -102,6 +102,16 @@ class SugarOAuthServer
         return Zend_Oauth_Provider::TOKEN_REJECTED;
     }
 
+    protected function decodePostGet()
+    {
+        $data = $_GET;
+        $data = array_merge($data, $_POST);
+        foreach($data as $k => $v) {
+            $data[$k] = from_html($v);
+        }
+        return $data;
+    }
+
     /**
      * Create OAuth provider
      *
@@ -120,7 +130,7 @@ class SugarOAuthServer
 	        if(!empty($req_path)) {
 		        $this->provider->setRequestTokenPath($req_path);  // No token needed for this end point
 	        }
-	    	$this->provider->checkOAuthRequest();
+	    	$this->provider->checkOAuthRequest(null, $this->decodePostGet());
 	    	if(mt_rand() % 10 == 0) {
 	    	    // cleanup 1 in 10 times
 	    	    OAuthToken::cleanup();

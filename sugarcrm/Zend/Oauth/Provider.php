@@ -208,9 +208,9 @@ class Zend_Oauth_Provider
 	 */
 	protected function assembleParams($method, $params = array())
 	{
-	    $params = array_merge($params, $_GET);
+	    $params = array_merge($_GET, $params);
 	    if($method == 'POST') {
-	        $params = array_merge($params, $_POST);
+	        $params = array_merge($_POST, $params);
 	    }
 	    $auth = null;
 	    if(function_exists('apache_request_headers')) {
