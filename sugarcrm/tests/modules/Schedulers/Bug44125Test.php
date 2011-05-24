@@ -39,6 +39,9 @@ class Bug44215Test extends Sugar_PHPUnit_Framework_TestCase
  		{
  			$job = new SchedulersJob();
  			$job->retrieve($row['id']);
+ 			
+ 			$this->assertEquals('completed', $job->status, "Assert that schedulers_times status is set to 'completed'");
+ 			
  			$job->execute_time = $this->testScheduler->date_time_start; //Set this to the start time of the scheduler which is in year 2005
  			$job->save();
  			$jobCount++;
@@ -49,6 +52,16 @@ class Bug44215Test extends Sugar_PHPUnit_Framework_TestCase
 		
 		$this->testScheduler->retrieve($this->testScheduler->id);
 		$this->assertEquals('Active', $this->testScheduler->status, "Assert that the status for scheduler is set to 'Active'");
+		
+        $result = $GLOBALS['db']->query("SELECT id FROM schedulers_times WHERE scheduler_id ='{$this->testScheduler->id}'");
+
+ 		while($row = $GLOBALS['db']->fetchByAssoc($result)) 
+ 		{
+ 			$job = new SchedulersJob();
+ 			$job->retrieve($row['id']);	
+ 			$this->assertEquals('failed', $job->status, "Assert that schedulers_times status is set to 'failed'");
+ 		}		
+		
     }
 
 
@@ -57,7 +70,7 @@ class Bug44215Test extends Sugar_PHPUnit_Framework_TestCase
 function Bug44215TestFunction()
 {
 	//Could do something here, but don't need to
-	return false;
+	return true;
 }
 
 //Mock Scheduler bean for the test scheduler
