@@ -64,7 +64,7 @@ class JSON
      * @param bool $examineEnvelope Default false, true to extract and verify envelope
      * @return string 
      */
-    public static function decode($string, $examineEnvelope=false)
+    public static function decode($string, $examineEnvelope=false, $assoc = true)
     {
         if ($examineEnvelope) {
             $meta = json_decode($string,true);
@@ -76,7 +76,7 @@ class JSON
             return $meta['jsonObject'];
         }
         
-        return json_decode($string,true);
+        return json_decode($string,$assoc);
     }
 
     /**
