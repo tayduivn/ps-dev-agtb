@@ -1,6666 +1,0 @@
-<?php
-
-// BEGIN sadek - NEED TO SPLIT SOME LANGUAGE OPTIONS INTO SEPARATE FILES FOR PERFORMANCE
-$s['SUSE121404'] = 'S&S Consultants Private Limited';
-$s['SUSE187569'] = 'S1 Belgium NV';
-$s['SUSE187567'] = 'S1 Corporation';
-$s['SUSE213827'] = 'S1 Services (India) Pvt. Ltd.';
-$s['SUSE176718'] = 'S2Digitec';
-$s['SUSE177638'] = 's2it';
-$s['SUSE199009'] = 'S4 Consulting';
-$s['SUSE176319'] = 'S7 Software Solutions';
-$s['SUSE182004'] = 'S7 Software Solutions Pvt. Ltd.';
-$s['SUSE138799'] = 'Saab Systems Pty Ltd';
-$s['SUSE195424'] = 'Saahi Systems Limited';
-$s['SUSE098146'] = 'Saama Technologies (India) Pvt. Ltd.';
-$s['SUSE224750'] = 'Saama Technologies India P Ltd';
-$s['SUSE245084'] = 'SAAR Solutions and Services';
-$s['SUSE195117'] = 'SaBER Corp.';
-$s['SUSE257583'] = 'Sabre Infomix';
-$s['SUSE220933'] = 'sabs trading co';
-$s['SUSE238116'] = 'Safa Marwa Pty Ltd';
-$s['SUSE186502'] = 'Safaltek Software Pvt. Ltd';
-$s['SUSE209051'] = 'SAFAS INTERNETWORKING TECHNOLOGIES PVT LTD';
-$s['SUSE176956'] = 'Safehouse Technology Pty Ltd';
-$s['SUSE183957'] = 'SafeNet Infotech Pvt. Ltd';
-$s['SUSE169879'] = 'SafeWare v.o.f.';
-$s['SUSE261800'] = 'Safezone Secure Solutions Private Limited';
-$s['SUSE056429'] = 'SAGA Consulting nv/sa';
-$s['SUSE181822'] = 'Sagar amalgamations';
-$s['SUSE103821'] = 'Sage Computer Support Pty Ltd';
-$s['SUSE081408'] = 'Sage Consulting and Investment Services Pty Ltd';
-$s['SUSE167660'] = 'Sage CRM Pty Ltd';
-$s['SUSE141860'] = 'Sage Infotech Pvt Ltd';
-$s['SUSE159350'] = 'Sage Software';
-$s['SUSE192392'] = 'Sage Software India Pvt Ltd';
-$s['SUSE200835'] = 'Sahara Computers & Electronics';
-$s['SUSE219190'] = 'Sahara Net Corp Ltd.';
-$s['SUSE182491'] = 'Sahasra Solutions Private Limited';
-$s['SUSE147141'] = 'Sahil Infoways';
-$s['SUSE243514'] = 'Sai Business';
-$s['SUSE249616'] = 'Sai Computers';
-$s['SUSE217383'] = 'Sai InfoSystem (India) Limited';
-$s['SUSE252520'] = 'Sai Ram Computers';
-$s['SUSE215670'] = 'sai services';
-$s['SUSE182484'] = 'Sai Sovereign Technologies (I) Ltd';
-$s['SUSE250292'] = 'Sai Sudguru Computer Services';
-$s['SUSE242014'] = 'sai synergy llp';
-$s['SUSE241183'] = 'sai technologies';
-$s['SUSE224418'] = 'SAIC Pty Ltd';
-$s['SUSE180458'] = 'Sainath Overseas System Pvt. Ltd.';
-$s['SUSE251604'] = 'SAInfoTech';
-$s['SUSE200276'] = 'Sakshamah Software';
-$s['SUSE239987'] = 'Saksoft Ltd';
-$s['SUSE059028'] = 'Saktek Technology';
-$s['G1'] = 'Sales Agent (SA)';
-$s['SUSE249089'] = 'SalesBabu Business Solutions Private Limited';
-$s['SUSE163385'] = 'SalesInHand emPay Ltd';
-$s['SUSE092971'] = 'SalesManager Software b.v.';
-$s['SUSE174482'] = 'Salio Systems';
-$s['SUSE078344'] = 'Salmat Limited';
-$s['SUSE210843'] = 'Salmon Asia Pacific Pty Limited';
-$s['SUSE180678'] = 'Salt Group Pty Ltd';
-$s['SUSE253507'] = 'Sam System';
-$s['SUSE180398'] = 'Samadhan';
-$s['RBEE000023'] = 'SAMAP SA/NV';
-$s['SUSE174313'] = 'Samarth Services';
-$s['SUSE220227'] = 'Samartha InfoSolutions Pvt. Ltd.';
-$s['SUSE240154'] = 'Samason Pty. Ltd.';
-$s['SUSE174524'] = 'SAMCOMM Technologies';
-$s['SUSE219339'] = 'Samir Computers';
-$s['SUSE175063'] = 'samjass technologies pvt.ltd';
-$s['SUSE173308'] = 'Sampatti.com Ltd.';
-$s['SUSE251404'] = 'Samrudhdhi Systems';
-$s['SUSE174518'] = 'Samsung Electronics India Software Operations';
-$s['SUSE088431'] = 'SAMTECH';
-$s['SUSE166270'] = 'Samtech';
-$s['SUSE175841'] = 'Samtech InfoNet Limited';
-$s['SUSE239317'] = 'Samtul Technologies';
-$s['SUSE259898'] = 'SAMUS';
-$s['SUSE244562'] = 'San  Media Limited';
-$s['SUSE180187'] = 'SAN FORAY PVT LTD';
-$s['SUSE216777'] = 'SAN Software Australia Pty Ltd';
-$s['SUSE252206'] = 'Sana Solutions';
-$s['SUSE155881'] = 'Sanctum Renovation Infosystems Pvt. Ltd.';
-$s['SUSE073251'] = 'Sand Gold Card Information Science & Technology Co.Ltd.';
-$s['SUSE165489'] = 'Sandglass Enterprises Pty Ltd';
-$s['SUSE183894'] = 'Sandhar Infosystems Limited';
-$s['SUSE161863'] = 'Sandstone Technology Pty Ltd.';
-$s['SUSE189670'] = 'Sanework Technologies';
-$s['SUSE145073'] = 'Sanganak';
-$s['SUSE250946'] = 'Sanghvi Infotech Pvt. Ltd.';
-$s['SUSE185047'] = 'Sankara Software Services Private Limited';
-$s['SUSE255361'] = 'Sanket Systems';
-$s['SUSE253967'] = 'Sanket Traders';
-$s['SUSE178935'] = 'Sankhya Technologies Private Limited';
-$s['SUSE141079'] = 'Sanovi Technologies India Pvt. Ltd';
-$s['SUSE241922'] = 'Sans TechGroup';
-$s['SUSE237969'] = 'Sansui Software';
-$s['SUSE167667'] = 'Sansui Software Pvt. Ltd.';
-$s['SUSE261259'] = 'Santhi Computers';
-$s['SUSE246019'] = 'Santron Computers';
-$s['SUSE236323'] = 'Sanveer Infotech Private Limited';
-$s['SUSE232646'] = 'Sanvei Overseas Pvt. Ltd.';
-$s['SUSE154855'] = 'Saosce Pty Ltd';
-$s['SUSE185143'] = 'SAP Australia';
-$s['SUSE159406'] = 'SAP China';
-$s['SUSE212765'] = 'SAP India Pvt. Limited';
-$s['SUSE177063'] = 'SAP Labs India';
-$s['SUSE182760'] = 'SAP Labs India Pvt Ltd';
-$s['SUSE259504'] = 'Sapient';
-$s['SUSE159696'] = 'SAPient Consulting Pvt. Ltd';
-$s['RINE000977'] = 'Sapient Corporation';
-$s['SUSE224177'] = 'Sapienz Solutions';
-$s['SUSE143645'] = 'Sapphire Computer Systems Inc';
-$s['SUSE144962'] = 'Sapphire Computing Solutions';
-$s['SUSE252937'] = 'Sapphire Infocom Private Limited';
-$s['SUSE147146'] = 'SAPPHIRE MARKETING & CONSULTANTS';
-$s['SUSE234508'] = 'SAPTRISHI INFOSYSTEMS (P) LTD.';
-$s['SUSE246158'] = 'Saqui Concepts';
-$s['SUSE255664'] = 'SAR Infotech Consultancy Pvt. Ltd.';
-$s['SUSE119259'] = 'Sara (Qld) Pty Ltd';
-$s['SUSE200549'] = 'saraswat infotech';
-$s['SUSE205543'] = 'Saraswat infotech Ltd';
-$s['SUSE182774'] = 'saren technologies';
-$s['SUSE146929'] = 'Saroda Digitech';
-$s['SUSE156529'] = 'SASI NETSYSTEMS';
-$s['SUSE169721'] = 'Sateri Systems';
-$s['SUSE184492'] = 'Sathabdhi Technologies';
-$s['SUSE193999'] = 'Satisco SA';
-$s['SUSE184386'] = 'Satnav Technologies Private Limited';
-$s['SUSE195218'] = 'satvat infosol';
-$s['SUSE251093'] = 'satvat infosol pvt ltd.,';
-$s['SUSE121761'] = 'Satya Mart';
-$s['SUSE083678'] = 'Satyam Computer Services Limited';
-$s['SUSE083176'] = 'Satyam Computer Services Ltd';
-$s['SUSE209300'] = 'Satyam Computer Services Ltd.';
-$s['SUSE261241'] = 'satyam computer services ltd.';
-$s['SUSE144991'] = 'Satyam Computer System';
-$s['SUSE201913'] = 'Satyam Software Solutions Pvt Ltd.';
-$s['SUSE256725'] = 'Satyam Technologies ';
-$s['SUSE239543'] = 'Satyam Technovision';
-$s['SUSE104225'] = 'Savant Systems International Pty Ltd';
-$s['SUSE179750'] = 'Savellis Communications Group Pty Ltd';
-$s['SUSE186334'] = 'Saviance Technologies Private Limited';
-$s['SUSE211833'] = 'Savvysoft Technologies Pvt Ltd';
-$s['SUSE171460'] = 'Saxion';
-$s['SUSE137585'] = 'Saxon Computer Centre';
-$s['SUSE059393'] = 'Saxon Systems Pty. Ltd.';
-$s['SUSE234605'] = 'SB Engineering Consultants';
-$s['RINE000125'] = 'SBA Info Solutions Pvt Ltd';
-$s['SUSE127687'] = 'SCAA Pty Ltd';
-$s['SUSE180993'] = 'Scala Computer Television BV';
-$s['RINE000032'] = 'Scales Technologies';
-$s['SUSE184498'] = 'Scan Infotech Private Limited';
-$s['SUSE179943'] = 'SCANDIVA s.a.';
-$s['SUSE173239'] = 'Scanpoint Graphics Ltd.';
-$s['SUSE099068'] = 'SCANSOURCE EUROPE';
-$s['SUSE179324'] = 'Scantech Info Systems';
-$s['SUSE057852'] = 'Scape Velocity Net Solutions Ltd';
-$s['RNLE000076'] = 'SCC Services B.V.';
-$s['SUSE110258'] = 'Schaubroeck nv';
-$s['SUSE184068'] = 'Schiller Healthcare';
-$s['SUSE139823'] = 'Scholar Digital Systems';
-$s['RNLE000244'] = 'Scholten Awater';
-$s['SUSE195313'] = 'Schouw Informatisering B.V.';
-$s['SUSE184246'] = 'Schwarcz Computer Services P/L';
-$s['SUSE197432'] = 'SCI Informatique';
-$s['SUSE074121'] = 'SCI-POWER Electronic Information Ltd.';
-$s['SUSE054594'] = 'SCIA Group';
-$s['SUSE170223'] = 'Scieneer Pty Ltd';
-$s['SUSE237632'] = 'Scienetic Technologies';
-$s['SUSE168346'] = 'Scientific Computing & Modelling NV';
-$s['SUSE059029'] = 'Scinaptic Communicatons Pty Ltd';
-$s['SUSE191515'] = 'Scius Solutions Pty Ltd';
-$s['SUSE190560'] = 'Score Information Technologies Ltd.';
-$s['SUSE238534'] = 'Scot technologies';
-$s['SUSE228029'] = 'Scotler SPRL';
-$s['SUSE245156'] = 'Screwloose';
-$s['SUSE129514'] = 'Scriptware bv';
-$s['SUSE090290'] = 'SCS';
-$s['SUSE083624'] = 'SCSC Faij';
-$s['SUSE176397'] = 'SCSL';
-$s['SUSE257984'] = 'SCXHKJ';
-$s['SUSE131373'] = 'SD InfoCom';
-$s['SUSE231210'] = 'SDG Corporation';
-$s['SUSE183096'] = 'SDG Software Technologies pvt ltd';
-$s['SUSE065386'] = 'SDL Tridion Development lab';
-$s['SUSE200646'] = 'SDSL';
-$s['SUSE207228'] = 'SE-Mentor Solutions (P) Ltd';
-$s['SUSE168227'] = 'Seacom Solutions (India) Ltd.';
-$s['SUSE241916'] = 'Seaford Computer Cons. PTY.LTD';
-$s['SUSE175511'] = 'Seagen Tech. Lab.';
-$s['SUSE099855'] = 'Seagull Business Software B.V.';
-$s['SUSE177194'] = 'Seagull Software';
-$s['SUSE239881'] = 'SEAL INFOTECH LTD';
-$s['SUSE246341'] = 'Searce';
-$s['SUSE168184'] = 'Seascope Impex Pvt.Ltd.';
-$s['SUSE176875'] = 'Seastars (Shanghai)co ,.Ltd';
-$s['SUSE162210'] = 'SEC Corp.';
-$s['SUSE245820'] = 'Secant Technologies';
-$s['SUSE230719'] = 'Seclore Technology Pvt Ltd';
-$s['SUSE209566'] = 'SecondFloor BV';
-$s['SUSE147720'] = 'Secure Access Pty Ltd';
-$s['SUSE104081'] = 'Secure Agility Pty Ltd';
-$s['SUSE217766'] = 'Secure Bits Pty. Ltd.';
-$s['SUSE225255'] = 'Secure Matrix India Pvt Ltd';
-$s['SUSE075324'] = 'Secure Network Solutions India Private Limited';
-$s['SUSE213149'] = 'SecureComm B.V.';
-$s['SUSE250063'] = 'SecureWorx';
-$s['SUSE250435'] = 'SecureWorx Pty Ltd';
-$s['SUSE059888'] = 'SecurIT B.V.';
-$s['SUSE040155'] = 'SecurIT bvba';
-$s['SUSE200843'] = 'Securus Solutions';
-$s['SUSE247757'] = 'SEDOTS INFO TECHNOLOGIES PRIVATE LIMITED';
-$s['SUSE168471'] = 'SeE Consulting (P) Ltd';
-$s['SUSE163898'] = 'SEEC Technologies Asia Pvt Ltd';
-$s['SUSE235168'] = 'SEED Healthcare Solutions Pvt. Ltd.';
-$s['SUSE188952'] = 'SEED Infotech Ltd.';
-$s['SUSE209669'] = 'SEEinfobiz Pvt.Ltd.';
-$s['SUSE129707'] = 'SeekAndBuy.com';
-$s['SUSE175768'] = 'SeerPharma Pty. Ltd.';
-$s['SUSE180723'] = 'SEGA (Shanghai) Software Co.,LTD.';
-$s['SUSE190869'] = 'Seini Consulting';
-$s['SUSE183040'] = 'Select Software Solutions';
-$s['SUSE201609'] = 'Select Softwares(I) Pvt. Ltd.';
-$s['SUSE159580'] = 'Selectica India Pvt Ltd';
-$s['SUSE252072'] = 'Selex Technologies&Solutions';
-$s['SUSE163515'] = 'Selligent';
-$s['SUSE232184'] = 'Semansys Technologies BV';
-$s['SUSE201610'] = 'SemanticSapce Technologies Ltd';
-$s['SUSE148430'] = 'SEMD Business Solutions Pty Ltd';
-$s['SUSE257033'] = 'Semper Software Nederland B.V.';
-$s['SUSE068973'] = 'Senetas Corporation Ltd';
-$s['SUSE111632'] = 'Sententia Pty Ltd';
-$s['RAUE000137'] = 'Senteq Information Systems Pty Ltd';
-$s['SUSE121456'] = 'Sentrix Pty Ltd';
-$s['SUSE159984'] = 'Sepher Software';
-$s['SUSE225144'] = 'Sequel Infocom Pvt Ltd';
-$s['SUSE068270'] = 'Sequoyah International Restructuring n.v.-s.a.';
-$s['SUSE217410'] = 'Sequre Enterprises Pvt. Ltd.';
-$s['SUSE042595'] = 'Serac Applications B.V.';
-$s['SUSE215306'] = 'Serena Software';
-$s['SUSE165082'] = 'Serena Software, Australia';
-$s['SUSE160027'] = 'Serena Software, Inc (Belgium/Duffel)';
-$s['SUSE238814'] = 'serenI.T. Pty Ltd';
-$s['SUSE261485'] = 'Seria Applied Research Pvt. Ltd.';
-$s['SUSE154199'] = 'Server Central Pty Ltd';
-$s['SUSE233553'] = 'Server Options Online';
-$s['SUSE228850'] = 'Servers, DesktopsFuturenetWings Solutions p Ltd';
-$s['SUSE144742'] = 'Service 8';
-$s['RAUE000448'] = 'Service Elements';
-$s['Service Provider'] = 'Service Provider';
-$s['GP'] = 'Service Provider (SVP)';
-$s['SUSE170933'] = 'ServicePoint Limited';
-$s['SV'] = 'Services';
-$s['RINE001143'] = 'Servion Global Solutions Limted';
-$s['SUSE193480'] = 'Serviz4u Network (I) Pvt, Ltd.';
-$s['SUSE179024'] = 'Servoy BV';
-$s['SUSE176411'] = 'Seth Services';
-$s['SUSE182533'] = 'Seven Hills Business Solutions Limited';
-$s['SUSE165662'] = 'Seyyone Software Solutions Pvt Ltd';
-$s['SUSE221291'] = 'SG Informatics (I) Pvt. Ltd.,';
-$s['SUSE208397'] = 'SGP Systems';
-$s['SUSE158620'] = 'SGS Pacific Pty Ltd';
-$s['SUSE217914'] = 'SGT India';
-$s['SUSE144876'] = 'SH Mingliu Science Tech Dev';
-$s['SUSE121818'] = 'SH Pudong CS&S Technology Co';
-$s['SUSE245745'] = 'Shade Infosys';
-$s['SUSE156572'] = 'Shaf Broadcast Pvt. Ltd.';
-$s['SUSE188532'] = 'shah systems and services';
-$s['SUSE142944'] = 'Shake I.T. Services';
-$s['SUSE129721'] = 'Shalaka Technologies Pvt Ltd';
-$s['SUSE175827'] = 'Shalsols';
-$s['SUSE179980'] = 'Shandong Dazhong Information Industry Co.,Ltd';
-$s['SUSE138506'] = 'Shane Everett Barrie';
-$s['SUSE196895'] = 'Shane Longman';
-$s['SUSE074671'] = 'Shang Bell Co.,Ltd.';
-$s['SUSE176746'] = 'shangeesoft';
-$s['SUSE183917'] = 'Shanghai 30san Pty. Ltd.';
-$s['SUSE075872'] = 'shanghai Advanced China Technology Co.,Ltd.';
-$s['SUSE074131'] = 'shanghai bk';
-$s['SUSE076993'] = 'Shanghai Center for Bioinformatics Technology';
-$s['SUSE216692'] = 'SHANGHAI CISIP';
-$s['SUSE073210'] = 'Shanghai Comserv Information System Co.,Ltd.';
-$s['SUSE073297'] = 'shanghai dongkai software technology company limited';
-$s['SUSE074328'] = 'Shanghai DoubleE Enterprise info.Tech. Co.,Ltd';
-$s['SUSE072733'] = 'Shanghai Dragon Zhangjiang Information Technology Inc.';
-$s['SUSE077009'] = 'Shanghai e-star Network Tech. Co., Ltd';
-$s['SUSE073247'] = 'Shanghai East China Future Network System Co.,Ltd';
-$s['SUSE074666'] = 'Shanghai EasyService Network Co., Ltd.';
-$s['SUSE183837'] = 'ShangHai Great Wall Infonet Co.,Ltd';
-$s['SUSE077004'] = 'Shanghai HongJian Numeric Tech.Co.,Ltd.';
-$s['SUSE077005'] = 'SHANGHAI HOWWELL ELECTRONIC CO., LTD';
-$s['SUSE169003'] = 'Shanghai HuiCai Software tech. Co., Ltd.';
-$s['SUSE083513'] = 'Shanghai Huntek Technology Co.,Ltd';
-$s['SUSE073370'] = 'Shanghai Jiaoda Withub Information Industrial Co., Ltd.';
-$s['SUSE072890'] = 'Shanghai PROWISE Technology Co.,Ltd';
-$s['SUSE072762'] = 'Shanghai Siusoft Information System Co.,Ltd.';
-$s['SUSE072919'] = 'Shanghai Summiteam Solutions Inc.';
-$s['SUSE241849'] = 'SHANGHAI TRIANGLER TECHNOLOGY CO.,LTD.';
-$s['SUSE078447'] = 'Shanghai TrueSincerity computer software CO., LTD';
-$s['SUSE074324'] = 'Shanghai Urgin Information Tech.Development Co.,Ltd.';
-$s['SUSE074678'] = 'Shanghai Wisdom Information System Co.,Ltd.';
-$s['SUSE080808'] = 'Shanghai Xunli Keji Youxian Gongsi';
-$s['SUSE247879'] = 'Shanghai Yach Electronic Tech Dev Co.,Ltd';
-$s['SUSE072774'] = 'shanghai yuling E-business co.,ltd.';
-$s['SUSE220658'] = 'shanghai zhulu information technology co.,ltd';
-$s['SUSE184440'] = 'ShangYiTong Electronic Technology Co.,Ltd';
-$s['SUSE184456'] = 'ShanXi Automatic Research Institute';
-$s['SUSE184170'] = 'ShanXi ShanDaXinWang Technology Co.,Ltd';
-$s['SUSE184172'] = 'ShanXi XinHongZhou';
-$s['SUSE184816'] = 'ShanXi XunChao Technology';
-$s['SUSE254360'] = 'Sharabh Technologies Pvt. Ltd.';
-$s['SUSE145067'] = 'Sharda Systems and Services Pvt Limited';
-$s['SUSE142942'] = 'Sharen Holdings Pty Ltd';
-$s['SUSE158125'] = 'Sharma Services Pty Ltd';
-$s['SUSE207542'] = 'Sharp Business Solutions';
-$s['SUSE137344'] = 'Sharp Point';
-$s['SUSE165544'] = 'ShawMan Software Pvt. Ltd';
-$s['SUSE245747'] = 'Sheikh Enterprises';
-$s['SUSE241925'] = 'Shell Computers';
-$s['SUSE169134'] = 'Shell Services';
-$s['SUSE073735'] = 'Shen Zhen ShiBaiYeShunHe Computer Co.,Ltd.';
-$s['SUSE121875'] = 'Shengdazhiwei Electroric Tech';
-$s['SUSE184714'] = 'ShengYang DongYu Information Co., Ltd';
-$s['SUSE076352'] = 'Shenyang Federal Software Co.,Ltd.';
-$s['SUSE076940'] = 'Shenzhen Dingtian Science-Technology Co.,Ltd.';
-$s['SUSE076698'] = 'SHENZHEN E-CITY TECHNOLOGY HOLDINGS CO.,LTD.';
-$s['SUSE210726'] = 'Shenzhen Huge Information & Technology Co,.Ltd';
-$s['SUSE194445'] = 'Shenzhen Richinfo Technology Co.,Ltd.';
-$s['SUSE246011'] = 'Shenzhen Xbrother Technology Co.,Ltd.';
-$s['SUSE222030'] = 'Shenzhen XinChangJi Electronics Co., Ltd.';
-$s['SUSE211702'] = 'SHESHPUSHPA INFOMATRIX PVT.LTD';
-$s['SUSE147110'] = 'Shimas Networks P. Ltd.';
-$s['SUSE183599'] = 'ShiTongDianZiXinXiChanYe';
-$s['SUSE251403'] = 'Shiva Computers Private Limited';
-$s['SUSE146943'] = 'Shiva Netcom';
-$s['SUSE252732'] = 'Shiva Network Systems Pvt. Ltd';
-$s['SUSE173526'] = 'Shiva systems & Technologies Pvt LTd.';
-$s['SUSE251405'] = 'Shivam Exports';
-$s['SUSE185293'] = 'SHL Nederland BV';
-$s['SUSE088852'] = 'Shock Tactics Pty Limited';
-$s['SUSE250054'] = 'ShopAlive';
-$s['SUSE143712'] = 'shova international';
-$s['SUSE209827'] = 'Shree Balaji Computers';
-$s['SUSE119647'] = 'SHREE COMPUTERS';
-$s['SUSE226770'] = 'Shree Gurukul Computers';
-$s['SUSE251465'] = 'Shree IT Systems';
-$s['SUSE215357'] = 'Shree Parshwa Mkt. Pvt. Ltd.';
-$s['SUSE193898'] = 'Shree Sai Sales Corporation';
-$s['SUSE210538'] = 'Shree Samartha Krupa Consultancy Services';
-$s['SUSE255607'] = 'Shree Umiya Computers';
-$s['SUSE186513'] = 'ShreeDutt Technologies Pvt. Ltd.';
-$s['SUSE250563'] = 'Shreeji Infocom';
-$s['SUSE241924'] = 'Shreeji Marketing';
-$s['SUSE246017'] = 'Shreeram Computer';
-$s['SUSE233969'] = 'Shrees services';
-$s['SUSE245441'] = 'Shreshtha Compserve';
-$s['SUSE147377'] = 'Shreyan NS3';
-$s['SUSE251467'] = 'Shri Disha Computer';
-$s['SUSE143724'] = 'Shri Infotech Solutions';
-$s['SUSE253594'] = 'SHRI OMKAR SYTEMS';
-$s['SUSE147203'] = 'Shri Ram Computers';
-$s['SUSE092849'] = 'Shricon bV';
-$s['SUSE175696'] = 'Shrivastavas';
-$s['SUSE184824'] = 'Shriyaf Business Solutions PVT Ltd.';
-$s['SUSE214292'] = 'Shriyan\'s Prasad';
-$s['SUSE167839'] = 'Shubha Softek';
-$s['SUSE149021'] = 'Shubham Computers';
-$s['SUSE185955'] = 'Shv Energy pvt Ltd';
-$s['SUSE251466'] = 'Shweta Computers & Peripherals';
-$s['SUSE257895'] = 'Shyam Networks Limited';
-$s['SUSE232719'] = 'Sical Logistics Ltd';
-$s['SUSE076139'] = 'Sichuan Xingyuan Software Development Ltd. CO.';
-$s['SUSE192438'] = 'Sidcom Pvt Ltd';
-$s['SUSE139263'] = 'Siddharaj importers and exporters';
-$s['SUSE243853'] = 'Siddhi System & Services';
-$s['SUSE240032'] = 'Siddhivinayak Infotech';
-$s['SUSE076982'] = 'Sidsoft';
-$s['SUSE092898'] = 'Siebel Systems Nederland B.V.';
-$s['SUSE196059'] = 'SIEMENS';
-$s['SUSE236459'] = 'Siemens Building Technologies';
-$s['SUSE168138'] = 'Siemens Dematic';
-$s['SUSE225835'] = 'Siemens Enterprise Communications';
-$s['SUSE159254'] = 'Siemens Information Systems Limited';
-$s['SUSE238113'] = 'Siemens Informations Systems Ltd.';
-$s['SUSE195353'] = 'Siemens Ltd';
-$s['SUSE188635'] = 'Siemens Networks';
-$s['SUSE159443'] = 'Siemens Nixdorf B.V.';
-$s['SUSE059845'] = 'Siemens nv';
-$s['SUSE235799'] = 'Siemens PLM Software';
-$s['SUSE163049'] = 'Siemens Public Communication Networks  Ltd';
-$s['SUSE151081'] = 'Siera Infosystem Pvt. Ltd.';
-$s['SUSE183347'] = 'SIERRA ODC Private Limited';
-$s['SUSE161389'] = 'Sierra Systems Ltd.';
-$s['SUSE058631'] = 'SierraNet Pty Ltd';
-$s['SUSE204659'] = 'Siff pvt ltd';
-$s['SUSE062712'] = 'Sify Technologies Limited';
-$s['SUSE151907'] = 'Sigma Computer';
-$s['SUSE252457'] = 'Sigma Infotech';
-$s['SUSE260006'] = 'Sigma-Aldrich Chemicals Pvt Ltd';
-$s['SUSE237012'] = 'SIGMAH COMPUTERS';
-$s['SUSE197198'] = 'SIGNET PRODUCTS PVT. LTD.';
-$s['SUSE222462'] = 'SIGROUP';
-$s['SUSE216633'] = 'SIGROUP sa';
-$s['SUSE243706'] = 'SiiS';
-$s['SUSE084823'] = 'Sikkim Software Solutions (P) Ltd';
-$s['SUSE184949'] = 'Sikkra Ptd Ltd';
-$s['SUSE177884'] = 'Sikraft Solutions Ltd.';
-$s['SUSE068055'] = 'Silenzio';
-$s['SUSE213715'] = 'Silicoft';
-$s['RINE000930'] = 'Silicon Business Solutions Pvt Ltd';
-$s['SUSE173549'] = 'Silicon Cocoon Pty Ltd';
-$s['SUSE144795'] = 'SILICON COMPUTERS';
-$s['SUSE138387'] = 'Silicon Compuware Solutions (P) Ltd.';
-$s['SUSE171840'] = 'Silicon Crafts Pty. Ltd.';
-$s['SUSE148755'] = 'silicon infotech pvt ltd';
-$s['SUSE201088'] = 'Silicon Integrix Pvt. Ltd.';
-$s['RINE000936'] = 'Silicon Solutions';
-$s['SUSE240089'] = 'SILICON SOLUTIONS';
-$s['SUSE261260'] = 'Silicon Systems';
-$s['SUSE168045'] = 'Silicon Visions Pty Ltd';
-$s['SUSE182560'] = 'Silicus Technologies India Private Limited';
-$s['SUSE220614'] = 'Silver & Ballard (Australia) Pty Ltd';
-$s['RAUE000499'] = 'Silverfern Computers Pty Ltd';
-$s['SUSE259273'] = 'Silverhawk Systems & Software Technologies Private Limited';
-$s['SUSE185440'] = 'Silverlake';
-$s['SUSE193747'] = 'SilverLake Information Systems';
-$s['SUSE220222'] = 'Silvermoon Business Systems';
-$s['SUSE059557'] = 'Silverside';
-$s['SUSE135567'] = 'Silvertouch Infotech Pvt Ltd';
-$s['RNLE000153'] = 'Simac ICT B.V.';
-$s['SUSE074973'] = 'Simac SA Succursale de Luxembourg';
-$s['SUSE234884'] = 'SimarTec';
-$s['SUSE073564'] = 'Simban Holdings Pty Ltd';
-$s['SUSE222914'] = 'Simient Pty Ltd';
-$s['SUSE038330'] = 'Simms Nederland B.V.';
-$s['SUSE195994'] = 'SIMOCO SYSTEMS SOLUTIONS LTD.';
-$s['SUSE183846'] = 'Simoco Telecommunications (South Asia) Ltd.,';
-$s['SUSE128487'] = 'SIMON ELLIS';
-$s['SUSE231088'] = 'Simple technology';
-$s['SUSE224571'] = 'Simply International Group';
-$s['RAUE000815'] = 'Simply Wireless Pty Ltd';
-$s['SUSE256753'] = 'SIMRAN INFOSOLUTIONS';
-$s['SUSE239779'] = 'Sincere Trading';
-$s['SUSE102775'] = 'Sindhu Synergy Limited';
-$s['RINE000938'] = 'Sine Wave Technologies';
-$s['SUSE239944'] = 'sinewlore software services';
-$s['SUSE130193'] = 'Singleton Ogilvy & Mather';
-$s['SUSE233347'] = 'Singularity Limited';
-$s['RCNE000166'] = 'Sino-Rail Hong Xin Computer Networking Ltd.';
-$s['SUSE075392'] = 'Sinoray Technology Industry Co.,Ltd.';
-$s['SUSE169607'] = 'SIR Pty Ltd';
-$s['SUSE075310'] = 'SIRA Professionals BV';
-$s['SUSE165399'] = 'Siri Technologies';
-$s['SUSE145732'] = 'Sirisoft';
-$s['RNLE000200'] = 'Sirius B.V.';
-$s['SUSE169986'] = 'SIS Software (India) Pvt. Ltd.';
-$s['SUSE183869'] = 'SISUO COMPUTER CO.,LTD';
-$s['SUSE088510'] = 'SIT GROUP S.A.';
-$s['SUSE225616'] = 'Sitec Electronics';
-$s['SUSE176539'] = 'SITL';
-$s['SUSE172537'] = 'Sivakumar Consultant';
-$s['SUSE180613'] = 'Six DEE Telecom Solutions Pvt Ltd';
-$s['SUSE204460'] = 'SixDee Telecom Solutions Pvt Ltd';
-$s['SUSE144094'] = 'SixthElement Systems (P) Ltd';
-$s['SUSE252026'] = 'SJK Consulting Pty Ltd';
-$s['SUSE235578'] = 'SJS NETWORK & SERVICE (P) LTD';
-$s['SUSE181849'] = 'Skandsoft Technologies Private Limited';
-$s['SUSE255776'] = 'SKEDA Pty Ltd';
-$s['SUSE239745'] = 'Skillex Consulting Pvt Ltd';
-$s['SUSE057982'] = 'Skillgate Learning Centres';
-$s['SUSE088389'] = 'SkillTeam s.a./n.v.';
-$s['SUSE169050'] = 'SkillTeam SA';
-$s['SUSE186044'] = 'Skiron Solutions Pty Ltd';
-$s['SUSE038221'] = 'Skopos Consulting bvba';
-$s['SUSE254586'] = 'Skycirrus Technologies';
-$s['RINE000919'] = 'Skylark Information Technologies P Ltd';
-$s['SUSE224998'] = 'Skyline Marketig Pvt Ltd';
-$s['SUSE249756'] = 'Skynet Technologies';
-$s['SUSE240033'] = 'Skyshinesolutions';
-$s['SUSE181502'] = 'SkyTECH Solutions Pvt Ltd';
-$s['SUSE078472'] = 'skywind software';
-$s['SUSE177898'] = 'SLASHSUPPORT';
-$s['SUSE185123'] = 'slc institute of engineering &technology';
-$s['SUSE242935'] = 'Slick Infotech Pvt. Ltd.';
-$s['SUSE241817'] = 'Sligro Food Group Nederland BV';
-$s['SUSE168015'] = 'SLK Software Services';
-$s['SUSE253814'] = 'SLONIT Software Consulting and Services Pvt Ltd';
-$s['RNLE000049'] = 'SLTN';
-$s['SUSE220501'] = 'SM Intellisoft Technologies Lt';
-$s['SUSE211186'] = 'SmaarfTech Inc';
-$s['SUSE243334'] = 'Smarchitech';
-$s['SUSE222418'] = 'Smart Chip Limited';
-$s['SUSE178327'] = 'Smart Data Web';
-$s['SUSE176228'] = 'Smart Health Solutions Pty Limited';
-$s['SUSE169097'] = 'Smart I.T. Solutions Pct. Ltd.';
-$s['SUSE220295'] = 'Smart Information Systems';
-$s['SUSE242709'] = 'Smart Integration Australia';
-$s['SUSE231149'] = 'Smart IT Pty LTd';
-$s['SUSE073881'] = 'Smart Network Solutions(GuangDong) Ltd.';
-$s['SUSE143498'] = 'Smart Soft';
-$s['SUSE252919'] = 'Smart Systems Solutions Private Limited';
-$s['SUSE245442'] = 'Smart Tech Info system Pvt Ltd';
-$s['SUSE222289'] = 'Smarter Technologies Pty Ltd';
-$s['SUSE242130'] = 'Smartesting';
-$s['SUSE246591'] = 'Smartesting Software Solutions India Private Limited';
-$s['SUSE057952'] = 'SmartForce Australia Pty Ltd - NSW';
-$s['SUSE253369'] = 'Smartpath Pty Ltd';
-$s['SUSE185162'] = 'SMARTS';
-$s['SUSE248632'] = 'SMARTSAP Pty Ltd';
-$s['SUSE167443'] = 'SmartStream Technologies India Private Limited';
-$s['SUSE185970'] = 'SMC Software';
-$s['SUSE127154'] = 'SME Computer Services Pty Ltd';
-$s['SUSE130893'] = 'SME IT Solutions';
-$s['SUSE180794'] = 'SMG Infosolutions Pvt Ltd';
-$s['SUSE162423'] = 'SMH Systems and Networking Pty Ltd';
-$s['SUSE260933'] = 'Smile Computer';
-$s['SUSE120798'] = 'SMITIL PTY LTD';
-$s['SUSE151890'] = 'SMS Consulting Limited';
-$s['SUSE199169'] = 'SMS eTechnologies';
-$s['SUSE169528'] = 'SN Informatics Private Limited';
-$s['SUSE149577'] = 'SNA Infotech Private Limited';
-$s['SUSE166906'] = 'Snehapadma Software Technologies Pvt Ltd';
-$s['SUSE239489'] = 'SNP Services B.V. (h.o.d.n. Excis)';
-$s['SUSE199719'] = 'SOA People';
-$s['SUSE239540'] = 'Sobha renaissance Information Technology';
-$s['SUSE152649'] = 'Sobha Renaissance Information Technology Pvt. Ltd.';
-$s['SUSE059022'] = 'Sobis Software India Pvt Ltd';
-$s['SUSE179760'] = 'SOBIS Teksoft Pvt. Ltd';
-$s['SUSE224117'] = 'Sobisteksoft';
-$s['SUSE103663'] = 'Socia BV';
-$s['SUSE120329'] = 'Society for Promotion of IT in Chandigarh';
-$s['SUSE169186'] = 'Socius Automatisering B.V.';
-$s['SUSE175464'] = 'SOCOBEL Sprl';
-$s['SUSE182698'] = 'Sofgen India Pvt. Ltd.';
-$s['SUSE140161'] = 'sofico n.v.';
-$s['SUSE141221'] = 'Soflab Systems Pvt. Ltd';
-$s['SUSE173497'] = 'Sofon';
-$s['SUSE191826'] = 'Soft & System Infotech';
-$s['SUSE223390'] = 'Soft Options Ltd';
-$s['SUSE098737'] = 'Soft Projex (india) Ltd.';
-$s['SUSE224061'] = 'Softbridge Solutions';
-$s['SUSE237377'] = 'SOFTBYTE SYSTEMS';
-$s['SUSE090865'] = 'SOFTCELL Technologies Limited';
-$s['SUSE166809'] = 'Softco Solutions Pty Ltd';
-$s['SUSE057857'] = 'SoftCode Pty Ltd';
-$s['SUSE228730'] = 'Softech Computer Services';
-$s['SUSE259582'] = 'Softech Labs Pvt. Ltd.';
-$s['RINE000159'] = 'Softech Technology Pvt Ltd';
-$s['SUSE243407'] = 'Softech Technology Pvt. Ltd.';
-$s['SUSE171014'] = 'Softel Solutions pty Ltd';
-$s['SUSE141214'] = 'Softel Solutions Pvt. Ltd';
-$s['SUSE256950'] = 'Softential';
-$s['SUSE260831'] = 'Softential Inc';
-$s['SUSE220385'] = 'Softeon India Pvt. Ltd.';
-$s['SUSE171304'] = 'Softgineering';
-$s['SUSE057559'] = 'Softhelp bvba';
-$s['SUSE261957'] = 'Softium Systems';
-$s['SUSE184912'] = 'Softland Software solutions Pvt Ltd';
-$s['SUSE191483'] = 'Softlink International';
-$s['SUSE252458'] = 'Softnet Infosys Private Limited';
-$s['SUSE228893'] = 'Softopt';
-$s['RNLE000159'] = 'Softpak B.V.';
-$s['SUSE182963'] = 'Softpal Technologies Pvt Ltd';
-$s['SUSE143299'] = 'Softpro Business Solutions';
-$s['SUSE176428'] = 'Softpro Sytems Ltd';
-$s['SUSE153696'] = 'Softronics Computers & services';
-$s['SUSE176144'] = 'Softtrend software pvt.ltd';
-$s['SUSE161426'] = 'Software  One';
-$s['SUSE260046'] = 'SOFTWARE & CELL OF ADVANCED TECHNOLOGY';
-$s['RNLE000052'] = 'Software 684 (Benelux) B.V.';
-$s['SUSE227367'] = 'Software AG SA';
-$s['SUSE144774'] = 'Software and Integrated Solutions Pvt Ltd';
-$s['SUSE192937'] = 'Software Art B.V.';
-$s['SUSE170927'] = 'Software Associates';
-$s['SUSE168722'] = 'Software Associates Information Technologies P. Limited';
-$s['BECP00039465'] = 'Software Center 80';
-$s['RBEE000170'] = 'SOFTWARE CENTER 80 BVBA';
-$s['SUSE104079'] = 'Software Choice Pty Ltd';
-$s['SUSE248635'] = 'Software India Pvt.Ltd';
-$s['SUSE131377'] = 'Software Innovations & Training';
-$s['SUSE235429'] = 'Software Institute for Rural Development';
-$s['SUSE164278'] = 'Software Product Research';
-$s['SUSE180860'] = 'Software Quality Assurance Centre';
-$s['SUSE040291'] = 'Software Spectrum B.V.';
-$s['SUSE140938'] = 'Software Spectrum Inc.';
-$s['SUSE179355'] = 'Software Tasmania Pty Ltd';
-$s['SUSE080804'] = 'Software Technology Group International Limited';
-$s['SUSE163614'] = 'Software Toolsmiths';
-$s['SUSE196899'] = 'Software Traction Pty Ltd';
-$s['S1'] = 'Software Value Incentive';
-$s['RNLE000073'] = 'Softwarebevers B.V.';
-$s['SUSE219178'] = 'SoftwareONE B.V.';
-$s['SUSE143105'] = 'Softway Consultancy Private Limited';
-$s['SUSE141218'] = 'Softworld Consultancy';
-$s['SUSE193325'] = 'SoftWorld Consultancy';
-$s['SUSE174724'] = 'SoftWorld Solutions';
-$s['SUSE261497'] = 'Sogeti';
-$s['SUSE070561'] = 'Sogeti Belgium SA/NV';
-$s['SUSE151122'] = 'SOGETI Luxembourg S.A.';
-$s['SUSE053786'] = 'Sogeti Nederland B.V.';
-$s['SUSE064808'] = 'SOGID SA';
-$s['RINE000154'] = 'Sogo Computers Pvt Ltd';
-$s['SUSE055707'] = 'Sogyo information engineering B.V.';
-$s['SUSE200029'] = 'Solaide Consultancy Services Pvt Ltd';
-$s['SUSE151399'] = 'Solaris Consultancy Services Ltd';
-$s['SUSE172480'] = 'Solemate Software';
-$s['SUSE247039'] = 'Solid Ice Pty LTD';
-$s['SUSE220831'] = 'Solipsis bv';
-$s['SUSE185341'] = 'Solix Technologies Limited';
-$s['SUSE058043'] = 'Sollazzo Consulting';
-$s['SUSE253766'] = 'Solusoft Technologies Private Limited';
-$s['SUSE162495'] = 'Solutech India Private Ltd.';
-$s['SUSE164625'] = 'Solution 6 IS Pty Ltd (Previously Fishtech)';
-$s['SUSE164624'] = 'Solution 6 Pty Ltd';
-$s['SUSE140933'] = 'Solution Architects Private Limited';
-$s['SUSE166513'] = 'Solution Centric Pty Ltd';
-$s['SUSE229593'] = 'Solution Minds';
-$s['GZ'] = 'Solution Prov. International';
-$s['GF'] = 'Solution Provider - Tier 1';
-$s['GG'] = 'Solution Provider - Tier 2';
-$s['SUSE188911'] = 'SOLUTION TECHNOLOGIES PVT. LTD';
-$s['SUSE215527'] = 'Solution4 Software Pty Ltd';
-$s['SUSE159986'] = 'SolutionBank';
-$s['SUSE084480'] = 'SolutionNET India Pvt Ltd';
-$s['SUSE191575'] = 'SolutionOne Pty Ltd';
-$s['SUSE164612'] = 'Solutions Analysis Pty.Ltd.';
-$s['SUSE174736'] = 'Solversa Technologies';
-$s['SUSE138933'] = 'Solway Charters Pty Ltd';
-$s['SUSE177205'] = 'Sommet Technologies Pvt Limited';
-$s['SUSE243850'] = 'Somya  Sales';
-$s['SUSE252460'] = 'Sona Infotech Private Limited';
-$s['SUSE143096'] = 'Sonal Infosoft Pvt Ltd';
-$s['SUSE058979'] = 'Sonata Information Technology Limited';
-$s['SUSE182777'] = 'Sonata Software Ltd';
-$s['SUSE176599'] = 'Sonet Microsystems';
-$s['SUSE194077'] = 'SoniaTech Consulting';
-$s['SUSE079819'] = 'Sonic-IT Ltd.';
-$s['SUSE220813'] = 'SONIC-SYNTHESIS Technology Labs Private Limited';
-$s['SUSE208815'] = 'Sonnet Enterprise Services Pty Ltd.';
-$s['RAUE000044'] = 'Sontech Retail Systems';
-$s['SUSE196502'] = 'SOPHOI India';
-$s['SUSE176014'] = 'Sophos';
-$s['SUSE193973'] = 'Sopra Group';
-$s['SUSE067128'] = 'Soprano Design Pty Ltd';
-$s['SUSE222716'] = 'Sorento Systems Pty Limited';
-$s['SUSE058011'] = 'SOS Consulting Pty Ltd';
-$s['SUSE143290'] = 'Soundry Computer Systems';
-$s['SUSE174714'] = 'Source';
-$s['SUSE147103'] = 'SourceEdge Software Technologies Pvt Ltd';
-$s['RAUE000125'] = 'Southern Cross Computer Systems Pty Ltd';
-$s['SUSE172494'] = 'Southern Software (Vic) Pty Ltd';
-$s['SUSE148676'] = 'Southern Symentech & Solutions Private Limited';
-$s['SUSE145072'] = 'SouthernHi-tech Computers';
-$s['SUSE167421'] = 'Sovereign Resources Pty Ltd';
-$s['SUSE217882'] = 'Sowedane IT Solution Pvt Ltd';
-$s['SUSE077130'] = 'Sowswe Compunications Pvt Ltd';
-$s['SUSE252504'] = 'SP IT Solutions';
-$s['SUSE229923'] = 'SP Software (P) Limited.';
-$s['SUSE192304'] = 'SP TECHNOLOGY';
-$s['SUSE183833'] = 'Space-Time Research';
-$s['SUSE205137'] = 'SpadeWorx Software Services';
-$s['SUSE185266'] = 'span infotech';
-$s['SUSE185272'] = 'SPAN Infotech India Pvt. Ltd';
-$s['SUSE234739'] = 'Span Office Solutions India Private Limited';
-$s['SUSE249167'] = 'Spanco Limited';
-$s['SUSE225427'] = 'Spanco Telesystems';
-$s['SUSE137902'] = 'Spanco Telesystems & Solutions Ltd';
-$s['SUSE147387'] = 'Sparknet Systems';
-$s['SUSE216921'] = 'Spatial Vision';
-$s['SUSE188781'] = 'Specialist IT Solutions';
-$s['RNLE000166'] = 'Specialist Retail Systems B.V. (SRS)';
-$s['SUSE190545'] = 'speck Systems Ltd';
-$s['SUSE181749'] = 'Spect Solutions';
-$s['RINE000022'] = 'Spectra Computech Pvt Ltd';
-$s['SUSE198753'] = 'Spectra Interface Pty Ltd';
-$s['SUSE138341'] = 'Spectra Systems';
-$s['SUSE180429'] = 'Spectrasoft Technologies Limited';
-$s['SUSE149554'] = 'Spectrum';
-$s['SUSE173753'] = 'spectrum';
-$s['SUSE226244'] = 'Spectrum Infotech';
-$s['SUSE172596'] = 'Spectrum Software P/L';
-$s['SUSE077100'] = 'Speech and Software Technologies (I) Pvt. Ltd.';
-$s['SUSE074995'] = 'speed advanced technology education center';
-$s['SUSE176272'] = 'SPG INFOTECH';
-$s['SUSE242621'] = 'Sphere Grouppe Pty Ltd';
-$s['SUSE260171'] = 'Sphere Info Solutions Pvt Ltd';
-$s['SUSE058015'] = 'Spherion Education Pty Ltd';
-$s['SUSE184273'] = 'Spheris India Pvt Ltd';
-$s['SUSE184504'] = 'Sphinx Systemhouse';
-$s['SUSE256293'] = 'Spica Data Systems Pvt Ltd';
-$s['SUSE174505'] = 'spicymind sprl';
-$s['SUSE071057'] = 'Spider Junction Pty Ltd';
-$s['SUSE168753'] = 'Spider Systems Pvt Ltd';
-$s['SUSE081239'] = 'Spikes N.V.';
-$s['SUSE184412'] = 'Spinnovation Limited';
-$s['SUSE251383'] = 'SPINNOVATION S/W SOLN & SERV';
-$s['SUSE231024'] = 'Spirit Software Solutions';
-$s['SUSE166062'] = 'SPL Technology B.V. (h.o.d.n.v. Systeemhuis vd Ned.Groothandel SNG)';
-$s['SUSE219535'] = 'Spring Computing';
-$s['SUSE059963'] = 'SpringTeam B.V.';
-$s['SUSE161025'] = 'SPRL B.I.S.I.';
-$s['SUSE218490'] = 'Sprocket Technologies Pty Ltd';
-$s['SUSE249786'] = 'Sprystone Software';
-$s['RNLE000156'] = 'SPS  Software Productivity Solutions B.V.';
-$s['SUSE184228'] = 'SPSS South Asia Private Limited';
-$s['SUSE236893'] = 'Spudweb';
-$s['SUSE251468'] = 'Spy Computers';
-$s['SUSE225751'] = 'SQC INFOTECH';
-$s['SUSE095992'] = 'SQL Star International Limited';
-$s['SUSE059799'] = 'SQL Star International Ltd - Gurgaon';
-$s['SUSE141215'] = 'SQTL Integrated Solutions Pvt Ltd';
-$s['SUSE244396'] = 'Squad Systems Private Limited';
-$s['SUSE168030'] = 'Square One';
-$s['SUSE212694'] = 'SquareBrace Software';
-$s['SUSE235782'] = 'Squerist';
-$s['SUSE244658'] = 'Squire Support Group B.V.';
-$s['SUSE161449'] = 'Squiredeck';
-$s['SUSE235904'] = 'SRA India Pvt. Ltd.';
-$s['SUSE247759'] = 'SRA Information Technology Pty';
-$s['SUSE253394'] = 'SRA Information Technology Pty Ltd';
-$s['SUSE184258'] = 'SRA Systems Limited';
-$s['SUSE168433'] = 'SRC Advies en Beheer bv';
-$s['SUSE161737'] = 'SRC System Integrators BV';
-$s['SUSE140825'] = 'SRCS Technologies Pvt Ltd';
-$s['SUSE178084'] = 'Sree Systems';
-$s['RINE000976'] = 'Sri Creative Solutions';
-$s['SUSE198479'] = 'Sri Lakshmi System Products';
-$s['SUSE245701'] = 'Sri Ram computer services';
-$s['SUSE143092'] = 'Sri Saimedha computer creations';
-$s['SUSE261263'] = 'Sri Satva Open Systems';
-$s['SUSE176368'] = 'Sri Shankara Advaita Research Centre';
-$s['SUSE173674'] = 'Srinivasa Hatcheries Limited';
-$s['SUSE169365'] = 'Srishti Software Pvt. Ltd.';
-$s['SUSE224982'] = 'SRS TECHNOLOGIC';
-$s['SUSE251236'] = 'Srujan Infotech';
-$s['SUSE208928'] = 'SRUSHTI SOFTWARE SYSTEMS PVT LTD';
-$s['SUSE246520'] = 'SS Computers and Consumables';
-$s['SUSE260875'] = 'SS Techno Info System';
-$s['RAUE000370'] = 'SS Trading Co Pty Ltd';
-$s['SUSE187608'] = 'SSA Global Melbourne, Australia';
-$s['SUSE187614'] = 'SSA Global New Delhi, India';
-$s['RAUE000093'] = 'SSA Global Technologies (Australia) Pty Ltd';
-$s['SUSE187616'] = 'SSA Global Technologies India (Pvt) Ltd';
-$s['SUSE183353'] = 'SSG Innovation';
-$s['SUSE261826'] = 'SSG SOLUTIONS (P) LTD';
-$s['SUSE175778'] = 'SSi';
-$s['SUSE253875'] = 'sSKY Technologies';
-$s['SUSE233410'] = 'SSP 2000 Inc';
-$s['SUSE077228'] = 'SSP Asia Pacific Pty Ltd';
-$s['SUSE229492'] = 'SSP India Private Ltd';
-$s['SUSE253700'] = 'SSRHeritage International';
-$s['SUSE255351'] = 'SST Infotech India Pvt Ltd.';
-$s['SUSE142945'] = 'St Kilda Rd Communications Pty Ltd';
-$s['SUSE208365'] = 'St. Joseph\'s College';
-$s['SUSE229002'] = 'Stabilix';
-$s['SUSE171774'] = 'STALEMATE';
-$s['SUSE150854'] = 'Stamina Software Pty Ltd';
-$s['SUSE244633'] = 'Stance Software Pvt. Ltd';
-$s['SUSE168131'] = 'Stanco Informatics Pte  Ltd';
-$s['SUSE220192'] = 'Standard Software Pvt.Ltd.';
-$s['SUSE148747'] = 'StandPoint Systems and Services';
-$s['SUSE256482'] = 'Staples Future Office Products Private Limited';
-$s['SUSE168569'] = 'Star India Ltd';
-$s['SUSE170353'] = 'Star Plus Technologies';
-$s['SUSE196616'] = 'STAR-APIC';
-$s['RAUE000166'] = 'Starcom Group Pty Ltd';
-$s['SUSE234773'] = 'Starglow Enterprises Pty Ltd';
-$s['SUSE104716'] = 'Starmark Services Pvt. Ltd.';
-$s['SUSE182088'] = 'START Corp. India Pvt. Ltd';
-$s['SUSE260064'] = 'State Information Technology Co., Ltd. Sichuan wing';
-$s['SUSE166193'] = 'Statement/400 Software b.v.';
-$s['SUSE251149'] = 'Staunch Technologies Pvt Ltd';
-$s['SUSE148745'] = 'STC Networks Pvt.Ltd';
-$s['SUSE105042'] = 'STC Technologies Private Limited';
-$s['SUSE239880'] = 'Steel Sea';
-$s['SUSE261310'] = 'Steer IT';
-$s['SUSE161855'] = 'Stellar - X Pty Ltd.';
-$s['SUSE178649'] = 'Stellar Informatics (P) Ltd';
-$s['SUSE239604'] = 'Stellar Systems Pty Ltd';
-$s['SUSE173336'] = 'Stellaris';
-$s['SUSE240635'] = 'Stephen Pole ITSCM Consulting';
-$s['SUSE257322'] = 'Stepin Computer Shoppe';
-$s['SUSE252070'] = 'Steps Infotech Systems';
-$s['SUSE163615'] = 'Steps Software';
-$s['SUSE200494'] = 'Steria Benelux SA/NV';
-$s['RAUE000082'] = 'Sterland Computing P/L';
-$s['SUSE246016'] = 'Sterling Infosystems Pvt.Ltd.';
-$s['RINE000055'] = 'Sterling Infoways Pvt. Ltd.';
-$s['SUSE205536'] = 'STERLITE OPTICAL TECHNOLOGIES';
-$s['SUSE236831'] = 'Sterlite Technologies Ltd';
-$s['SUSE249949'] = 'Steve Bruce IT Consulting Pty';
-$s['SUSE100660'] = 'Stevo I.C.T. Tools BV';
-$s['SUSE179408'] = 'STG University Hardware Loans - Australian National University';
-$s['SUSE195949'] = 'Stillwater Consulting';
-$s['SUSE156301'] = 'Stirling Business Machines Pty Ltd';
-$s['SUSE052200'] = 'STN BVBA';
-$s['SUSE130215'] = 'Stone Family Trust';
-$s['SUSE105205'] = 'Stone Original Integration';
-$s['SUSE061739'] = 'Stone-IT';
-$s['SUSE195326'] = 'Storage Dynamics Pty Limited';
-$s['SUSE159602'] = 'Storeperform Technologies India Pvt Ltd';
-$s['SUSE205251'] = 'Stork Asset Management Solutions';
-$s['SUSE199310'] = 'Stork Asset Management Solutions BV';
-$s['SUSE128346'] = 'Storm FX Distributions Pty Ltd';
-$s['RAUE000011'] = 'Stott + Hoare';
-$s['SUSE184910'] = 'STP Domain Technologies (P) Ltd.';
-$s['SUSE241059'] = 'STP Systems (India) Pvt. Ltd.';
-$s['SUSE083549'] = 'STQC';
-$s['SUSE168413'] = 'Strabus Software Solutions (P) Limited';
-$s['SUSE233348'] = 'Straight Root Marketing Pvt. LTD';
-$s['SUSE166468'] = 'Stralett Pty Ltd';
-$s['SUSE069536'] = 'Strange Technology Pty Limited';
-$s['SUSE247278'] = 'Stratatel Resource';
-$s['SUSE223871'] = 'Strategic Consulting Partnerships';
-$s['SUSE107988'] = 'Strategic Data Pty Ltd';
-$s['SUSE197503'] = 'Strategic Information Technologies Pty Ltd';
-$s['SUSE252722'] = 'Strategic Marketing';
-$s['SUSE095984'] = 'Strategic Project Outcomes';
-$s['SUSE170958'] = 'Strategion Holdings Pty Ltd';
-$s['SUSE129081'] = 'Strategis Solutions Pty Ltd';
-$s['SUSE251217'] = 'Stream Consulting Services Pty Ltd';
-$s['SUSE218211'] = 'Stream Softtech Corporation';
-$s['SUSE149270'] = 'StreamServe BV';
-$s['RAUE000632'] = 'Strictly Information Technology Pty Ltd';
-$s['SUSE077067'] = 'Strider Business Consultants';
-$s['SUSE087534'] = 'Strig IT Pty Ltd';
-$s['SUSE230027'] = 'SuadaSoft';
-$s['SUSE252525'] = 'Subex Limited';
-$s['SUSE081344'] = 'Subex Systems Limited';
-$s['SUSE226904'] = 'Subha Technical Services P. Ltd';
-$s['SUSE179215'] = 'Subhashree Infotech Pvt Ltd';
-$s['SUSE252071'] = 'Sudharma Infotech';
-$s['SUSE184656'] = 'Suistah Technologies';
-$s['SUSE149779'] = 'Sujata computers Pvt. Ltd.';
-$s['SUSE195425'] = 'Sujata Computers Pvt. Ltd.';
-$s['SUSE148748'] = 'SUJAY INTERNATIONAL';
-$s['SUSE256377'] = 'SUKH INFO SOLUTIONS';
-$s['RINE000152'] = 'Sukrut Software & Systems';
-$s['SUSE174073'] = 'Sukumaran';
-$s['SUSE234115'] = 'Suman Trades Pvt. Ltd.';
-$s['RINE001005'] = 'Summation Enterprises Pvt. Ltd.';
-$s['SUSE129713'] = 'Summit Strategic Software Consulting Pvt Ltd';
-$s['SUSE182839'] = 'Sumosoft Pvt. Ltd.';
-$s['SUSE245759'] = 'Sun i-tech SARL';
-$s['SUSE252726'] = 'Sun Infosystem';
-$s['SUSE251940'] = 'sun micro networks p ltd';
-$s['RINE000167'] = 'Sun Micro Systems & Services Pvt Ltd';
-$s['SUSE253767'] = 'Sun System';
-$s['SUSE235544'] = 'SUNCOM INFOTECH (P) LTD';
-$s['SUSE248108'] = 'Sundaram Infotech Solutions Limited';
-$s['RAUE000003'] = 'Sundata Pty Ltd';
-$s['SUSE153697'] = 'SUNDATACOMM PRIVATE LIMITED';
-$s['SUSE144534'] = 'Sunflower Electronics';
-$s['SUSE184274'] = 'SunGard';
-$s['SUSE159354'] = 'SunGard Offshore Services (India)';
-$s['SUSE250554'] = 'Sungard Technology Services';
-$s['SUSE225432'] = 'Sunictech Technologies Pvt, Ltd,';
-$s['SUSE173947'] = 'Sunikar';
-$s['SUSE143289'] = 'Sunil@lampocomputers.com';
-$s['SUSE174899'] = 'Sunlink Info Systems';
-$s['SUSE216026'] = 'sunn it zone';
-$s['SUSE187074'] = 'Sunny Hills Consultancy bv';
-$s['SUSE156768'] = 'SunPro Integrated Communication Services P Ltd';
-$s['SUSE252725'] = 'Sunray System & Technologies';
-$s['SUSE252459'] = 'Sunrays Technologies';
-$s['SUSE252855'] = 'Sunrise Infotech';
-$s['SUSE254191'] = 'Sunrise Systems';
-$s['SUSE261120'] = 'SUNSYSTEMS';
-$s['SUSE174922'] = 'SunTec';
-$s['SUSE166656'] = 'SunTec Business Solutions Pvt. Ltd.';
-$s['SUSE252112'] = 'Suntronix';
-$s['SUSE219123'] = 'Super Computer Systems';
-$s['SUSE164426'] = 'Superflow';
-$s['SUSE168780'] = 'Superior Information Systems Pty Ltd';
-$s['SUSE178126'] = 'SUPERTECH SOLUTIONS LTD.';
-$s['SUSE148067'] = 'Supertron Electronics Limited';
-$s['SUSE181130'] = 'Support Services Group';
-$s['SUSE246755'] = 'Suprawin Technologies Ltd';
-$s['SUSE241923'] = 'Supreme Computer Systems';
-$s['SUSE246187'] = 'Supreme Computers & Softwares';
-$s['SUSE153905'] = 'supreme technologies pvt ltd';
-$s['RAUE000803'] = 'Surebridge Pty Ltd';
-$s['RAUE000716'] = 'Surety IT Pty Ltd';
-$s['SUSE245735'] = 'Surf Amazon';
-$s['SUSE186533'] = 'Surgeworks';
-$s['SUSE145062'] = 'SURTARU FUSION';
-$s['SUSE212949'] = 'Survik Software Limited';
-$s['SUSE156532'] = 'Surya Enterprises Pty Ltd';
-$s['SUSE204159'] = 'Surya Software Systems Private Limited';
-$s['SUSE144372'] = 'Suryan Technologies';
-$s['SUSE237960'] = 'Suryaputra Networks';
-$s['SUSE171793'] = 'Suvon Systems Pty Ltd';
-$s['SUSE180450'] = 'SUZSOFT CO. LTD';
-$s['SUSE169017'] = 'SVA Information Industry Co., Ltd.';
-$s['SUSE222290'] = 'SvenSoft';
-$s['SUSE250157'] = 'SVN System Technologies';
-$s['SUSE147713'] = 'SVS International';
-$s['SUSE146927'] = 'SVS TECHNOLOGIES';
-$s['SUSE220912'] = 'SwaaS Systems Private Limited';
-$s['SUSE159870'] = 'Swallow Tech';
-$s['RINE000890'] = 'Swan Solutions & Services Pvt Ltd';
-$s['SUSE224756'] = 'swapnil';
-$s['SUSE260600'] = 'Swarani Enterprises';
-$s['SUSE260660'] = 'Swastik Marketing Services';
-$s['SUSE148070'] = 'Swati Corp Enterprises';
-$s['SUSE090923'] = 'SWIFT';
-$s['SUSE253846'] = 'Swift Compulinks Private Limited';
-$s['SUSE161064'] = 'SWIFT sc SOLVAY';
-$s['SUSE252022'] = 'Swinburne University';
-$s['SUSE163224'] = 'Swisslog Australia Pty Ltd';
-$s['SUSE153699'] = 'SWORD TECHNOLIGES';
-$s['SUSE143284'] = 'Swyfte Marketing Private Limited';
-$s['RINE000015'] = 'Swyfte Marketing Pvt Ltd';
-$s['SUSE252522'] = 'Syamala Consultancy Services';
-$s['SUSE159530'] = 'Sybase';
-$s['SUSE209935'] = 'Sybase Software (India) Pvt Ltd.';
-$s['SUSE227015'] = 'SYBASE SOFTWARE INDIA (p) LTD';
-$s['SUSE159529'] = 'Sybase, Inc. Europe';
-$s['SUSE143502'] = 'Syber Net Technologies';
-$s['SUSE178781'] = 'Syber Systems and Solutions Private Limited';
-$s['SUSE248056'] = 'SYBERNAUTIX SYSTEMS (P) LTD.';
-$s['SUSE179730'] = 'SYCODE';
-$s['SUSE135683'] = 'Syd IT Pty Ltd';
-$s['SUSE126882'] = 'Sydney Consolidated Holdings Pty Ltd';
-$s['SUSE138142'] = 'Sygate Business Solutions';
-$s['RAUE000763'] = 'SYM-PAC Computing Pty Ltd';
-$s['SUSE153989'] = 'SYM3 bvba';
-$s['SUSE242302'] = 'symantec';
-$s['SUSE244936'] = 'Symantec';
-$s['SUSE159738'] = 'Symantec (Australia) Pty Ltd';
-$s['SUSE188634'] = 'Symantec Corp.';
-$s['SUSE208518'] = 'Symantec Corporation';
-$s['SUSE184946'] = 'SYMBIONS SOFTWARE PVT LTD';
-$s['SUSE176778'] = 'symbiosys solutions india';
-$s['SUSE189846'] = 'Symbiosys Technologies';
-$s['SUSE159391'] = 'Symbol Technologies India Pvt Ltd';
-$s['SUSE182303'] = 'Symital Pty Ltd';
-$s['SUSE242625'] = 'Symmetrix';
-$s['SUSE147911'] = 'Sympact Pty Ltd';
-$s['SUSE174756'] = 'Symphony services';
-$s['SUSE179344'] = 'Symphony Services';
-$s['SUSE185800'] = 'symphony services';
-$s['SUSE183299'] = 'Symphony Services Corporation (India ) Pvt.Ltd.';
-$s['SUSE181503'] = 'Symphony Services Ltd';
-$s['SUSE053293'] = 'SYNAPS sa';
-$s['SUSE247766'] = 'Synapse IT Consultants Pty Ltd';
-$s['SUSE217070'] = 'Synapsis Goup';
-$s['SUSE213691'] = 'Synaptris Decisions Pvt Ltd';
-$s['SUSE057958'] = 'Synavant Inc.';
-$s['SUSE251267'] = 'Synaxion BV';
-$s['SUSE156178'] = 'SYNC 01 PTY LTD';
-$s['SUSE049161'] = 'Synchronised Software Ltd';
-$s['SUSE217566'] = 'Syncron IT';
-$s['SUSE220194'] = 'SYNDROME TECHNOLOGIES';
-$s['SUSE239287'] = 'Syndrome Technologies';
-$s['SUSE237046'] = 'SYNECTICS';
-$s['SUSE174854'] = 'Synergetic Solutions';
-$s['SUSE207223'] = 'SYNERGIC SOFTEK SOLUTIONS';
-$s['SUSE179951'] = 'Synergis Corporation Pty Ltd';
-$s['SUSE141858'] = 'Synergy Infonet Pvt Ltd';
-$s['SUSE151643'] = 'Synergy Information Management Services Pvt Ltd';
-$s['SUSE188918'] = 'Synergy Information Solutions Pty Ltd';
-$s['SUSE058041'] = 'Synergy Innovations Pty Ltd';
-$s['RAUE000498'] = 'Synergy Plus Operations Pty Ltd';
-$s['SUSE176151'] = 'Synergy Solutions India';
-$s['SUSE168005'] = 'Synergy Solutions, Inc.';
-$s['SUSE170494'] = 'Synergy Systems';
-$s['SUSE221510'] = 'Synergy systems';
-$s['SUSE183230'] = 'Syni Communications Co.,Ltd.';
-$s['SUSE083541'] = 'Synise Technologies Pvt Ltd';
-$s['RAUE000494'] = 'Synnex Australia Pty Ltd';
-$s['SUSE156255'] = 'SYNNEX INFORMATION TECHNOLOGIES (SHANGHAI)LTD.';
-$s['SUSE158024'] = 'Synobsys Nederland B.V.';
-$s['SUSE177328'] = 'Synopsis InfoTech Pvt. Ltd.';
-$s['SUSE130742'] = 'Synoptic Consulting';
-$s['SUSE099336'] = 'Synoptic Solutions Pty Limited';
-$s['SUSE248449'] = 'Synoptics Technologies Pvt Ltd';
-$s['SUSE131378'] = 'Syntax Soft Tech India Pvt. Ltd.';
-$s['SUSE243348'] = 'Synte Solution & Tech Pvt Ltd';
-$s['SUSE098865'] = 'Syntech Informatics Pvt Ltd';
-$s['SUSE235363'] = 'Syntegrity Solutions Pty Ltd';
-$s['SUSE206551'] = 'Syntel (India) Ltd';
-$s['SUSE168489'] = 'Syntel (India) Ltd.';
-$s['SUSE098392'] = 'SYNTEL B.V.';
-$s['SUSE206587'] = 'syntel Inc';
-$s['SUSE178213'] = 'Syntonic Corporation Pty Limited';
-$s['SUSE196058'] = 'SYS-COMP COMPUTER SERVICES';
-$s['GC'] = 'Sys. Integrator International';
-$s['SUSE242401'] = 'Sysam Consulting';
-$s['SUSE158489'] = 'SysArc Infomatix Private Limited';
-$s['SUSE210099'] = 'Syscare Infotech';
-$s['RAUE000366'] = 'Syscom I.T.';
-$s['SUSE209046'] = 'Syscon Solutions Pvt. Ltd,.';
-$s['SUSE146395'] = 'Syscon SysNet Pvt. Ltd.';
-$s['RAUE000728'] = 'SysCons Global Services Pty Ltd';
-$s['SUSE181126'] = 'Sysfore Technologies';
-$s['SUSE216793'] = 'SYSMAN TECHNOLOGIES';
-$s['RINE000168'] = 'Sysmantech';
-$s['SUSE179266'] = 'Sysmex Health IT Systems';
-$s['SUSE183336'] = 'Sysnet Associates (Inida) Pvt Ltd';
-$s['SUSE089339'] = 'Syson Automatisering B.V.';
-$s['SUSE149967'] = 'Syssoft P/L';
-$s['SUSE225671'] = 'Systeam Pvt. Ltd.';
-$s['SUSE188531'] = 'Systech';
-$s['SUSE221445'] = 'Systech Services Pvt. Ltd.';
-$s['SUSE073190'] = 'SYSTEK Information Technology (Shanghai) Ltd.';
-$s['SUSE207216'] = 'System Consultant';
-$s['SUSE138239'] = 'System Consulting Solutions Pty Ltd';
-$s['SUSE142939'] = 'System Integration Partners Pty Ltd';
-$s['SUSE147133'] = 'SYSTEM NEEDS';
-$s['SUSE140349'] = 'System Performance BVBA';
-$s['SUSE256963'] = 'System Performance Group';
-$s['RINE001418'] = 'System Tech Inc';
-$s['SUSE088514'] = 'SYSTEMAT LUXEMBOURG SA';
-$s['SUSE088333'] = 'Systemat sa';
-$s['SUSE256944'] = 'Systematic Communication Pvt.Ltd';
-$s['SUSE251646'] = 'Systematix';
-$s['SUSE143524'] = 'SystemicLogic Pty Ltd';
-$s['SUSE152705'] = 'Systems & Softwares';
-$s['SUSE178257'] = 'Systems 3000 Pty.Ltd.';
-$s['SUSE166865'] = 'Systems Dynamics (Software) Pvt. Ltd.';
-$s['SUSE185345'] = 'Systems Integration & Development Services';
-$s['GM'] = 'Systems Integrator';
-$s['SUSE156734'] = 'Systems International';
-$s['SUSE229242'] = 'Systems Lifecycle Pvt. Ltd.';
-$s['RAUE000341'] = 'Systems Men Services';
-$s['SUSE248943'] = 'Systems of the Future (Australia) Pty Ltd';
-$s['SUSE241917'] = 'Systems Solutions';
-$s['SUSE182525'] = 'Systems Technology Group (India) Pvt. Ltd';
-$s['SUSE165078'] = 'SystemSmiths';
-$s['SUSE219414'] = 'Systemtech P(Ltd)';
-$s['SUSE208308'] = 'SYSTEMWORK GLOBAL';
-$s['SUSE170576'] = 'Systesols';
-$s['SUSE137973'] = 'SYSTIME Computer Systems Ltd.';
-$s['SUSE235289'] = 'SYSTIME Global Solutions(AUST) PTY Ltd';
-$s['SUSE229387'] = 'Systronet Technologies';
-$s['SUSE188727'] = 'sysworker';
-$s['SUSE221380'] = 'Syven Global Services Private Limited';
-$s['SUSE198778'] = 'Syven Technologies';
-$s['SUSE186166'] = 'Syx Automations BVBA';
-$s['SUSE058948'] = 'Syzygy Technology';
-$s['SUSE175094'] = 'SZ ISSC';
-$s['SUSE130988'] = 'SZ Kingdom Tech';
-$s['SUSE181957'] = 'T S Solutions Private Limited';
-$s['SUSE161658'] = 'T3 Solutions Pty Ltd';
-$s['SUSE069537'] = 'Tacit Group - Melbourne';
-$s['SUSE069538'] = 'Tacit Group - Sydney';
-$s['SUSE059033'] = 'TACTICS Consulting Pty Ltd';
-$s['SUSE041716'] = 'Tadis IT Solutions B.V.';
-$s['SUSE191444'] = 'TAI';
-$s['SUSE195112'] = 'Taiji Company Corporation Limited';
-$s['SUSE184168'] = 'TaiYuan OX Electronic Engineering Co.,Ltd';
-$s['SUSE225084'] = 'TAIYUAN YUNFAN WEIYE KEJI YOUXIAN GONGSI';
-$s['SUSE184815'] = 'TaiYuan ZhongTianChengDing';
-$s['SUSE261492'] = 'Taizhou City, Zhejiang and Network System Engineering Corporation';
-$s['SUSE228460'] = 'Taj computer services';
-$s['SUSE251648'] = 'Take Care';
-$s['SUSE251983'] = 'Take Solutions';
-$s['SUSE107985'] = 'Take This Deal Pty Ltd';
-$s['SUSE128989'] = 'Talent2 Pty Ltd';
-$s['SUSE197682'] = 'Talentain Technologies';
-$s['SUSE167612'] = 'Talisma Corporation Pvt. Ltd.';
-$s['SUSE236510'] = 'Tally Solutions (P) Limited';
-$s['SUSE131390'] = 'Tamiel Holdings Pty Ltd';
-$s['SUSE255043'] = 'Tanaashi Technologies Pvt Ltd';
-$s['SUSE164386'] = 'Tando Technologies Pty Ltd';
-$s['SUSE228098'] = 'Tangentia India Technologies Pvt Limited';
-$s['SUSE181835'] = 'Tanla Solutions Ltd';
-$s['SUSE236754'] = 'TannX Solutions';
-$s['SUSE058020'] = 'Tapestry Systems Pty Ltd';
-$s['SUSE144103'] = 'Taranis Software Pty Ltd';
-$s['SUSE239180'] = 'Tarchia Systems Private. Limited.';
-$s['RAUE000006'] = 'Tardis Services Pty Ltd';
-$s['SUSE141696'] = 'Target Harlosh Limited';
-$s['SUSE215725'] = 'Target Harlosh Ltd';
-$s['SUSE251647'] = 'Target Marketing';
-$s['RINE000858'] = 'Targus Technologies Pvt Ltd';
-$s['SUSE234787'] = 'Tarini COnsultants (P) Ltd.';
-$s['SUSE175713'] = 'Tarmace Pty Ltd';
-$s['SUSE089206'] = 'TARQ Information Technology';
-$s['SUSE057977'] = 'Task Exchange Pty Ltd';
-$s['SUSE185353'] = 'Taskhub Soft Tech Pvt Ltd';
-$s['SUSE183048'] = 'Tasmay Marfin Private Limited';
-$s['RINE000026'] = 'Tata Consultancy Services';
-$s['SUSE127438'] = 'Tata Consultancy Services Ltd';
-$s['SUSE120509'] = 'Tata Consultancy Services Nederland B.V.';
-$s['SUSE174285'] = 'TATA ELXSI LTD';
-$s['SUSE164029'] = 'TATA Liebert Ltd.';
-$s['SUSE083180'] = 'Tata Sons Limited';
-$s['SUSE092570'] = 'Tata Technologies Ltd';
-$s['SUSE261849'] = 'TatvaSoft';
-$s['SUSE175497'] = 'Taurus Infotech Solutions';
-$s['SUSE184566'] = 'Tavant Technologies India Pvt Ltd';
-$s['SUSE183867'] = 'Taxton Co.,Ltd';
-$s['SUSE168883'] = 'Tayana Software Solutions Pvt Ltd';
-$s['SUSE128973'] = 'Tazzie Pty Ltd';
-$s['SUSE128391'] = 'TBITC Pty Ltd';
-$s['SUSE177927'] = 'tblink';
-$s['SUSE163973'] = 'TCG Information Systems Pty. Ltd.';
-$s['SUSE178478'] = 'TCGIvega';
-$s['SUSE146420'] = 'TCGIvega Information Technologies Pvt. Ltd.';
-$s['GI'] = 'TCI System z';
-$s['SUSE149652'] = 'TCL电脑绵阳和平专卖店';
-$s['SUSE028733'] = 'TCS Financial Solutions Australia Pty Ltd';
-$s['SUSE254199'] = 'TCSL';
-$s['SUSE129285'] = 'TDG Corporation Pty Ltd';
-$s['SUSE252916'] = 'Teac Consultancy';
-$s['RINE000068'] = 'Team Computers Pvt Ltd';
-$s['RAUE000023'] = 'Team Computing Australia Pty Limited';
-$s['SUSE256396'] = 'Team e-biz Limited';
-$s['SUSE243597'] = 'Team Frontline Ltd';
-$s['SUSE215707'] = 'Team Reliance Pty Ltd';
-$s['SUSE143632'] = 'TeamOne Computers India Pvt Ltd';
-$s['SUSE183182'] = 'Teamtek Information Technology';
-$s['SUSE178050'] = 'TeamTrack Pty Ltd';
-$s['SUSE136816'] = 'Teamworks Solutions Private Ltd';
-$s['SUSE206778'] = 'Teaq Technologies Pvt. Ltd.';
-$s['SUSE185492'] = 'tebs labs';
-$s['SUSE200080'] = 'Tecala ICT Pty Limited';
-$s['RBEE000105'] = 'Tech Data Belgium NV';
-$s['SUSE227143'] = 'Tech Edifice';
-$s['SUSE235669'] = 'Tech Grow Systems';
-$s['SUSE247942'] = 'Tech Know Hub (India)';
-$s['SUSE193335'] = 'Tech Mahindra';
-$s['SUSE189661'] = 'Tech Mahindra Limited';
-$s['SUSE156563'] = 'Tech Mahindra Ltd';
-$s['SUSE227310'] = 'tech mahindra ltd';
-$s['RINE000861'] = 'Tech Services';
-$s['SUSE190562'] = 'Tech-India Infosolutions P Ltd';
-$s['SUSE194001'] = 'Tech-IT S.A.';
-$s['SUSE254114'] = 'Techage Consulting';
-$s['SUSE194140'] = 'Techatalyst';
-$s['SUSE183471'] = 'Techhero co. Ltd.';
-$s['SUSE255805'] = 'TechiePoint Mentoring India Private Limited';
-$s['SUSE250095'] = 'Techinfinity Software Solutions Pvt. Ltd.';
-$s['SUSE260723'] = 'Techknowcrat Solutions';
-$s['RINE001139'] = 'TechKnowledge';
-$s['SUSE242004'] = 'TechMahindra Ltd.';
-$s['SUSE238007'] = 'Techminds Softwares';
-$s['SUSE058960'] = 'Techne-Ventures Pty Ltd';
-$s['SUSE253850'] = 'Technet Software Solutions Private Limited';
-$s['SUSE089196'] = 'Technical Marketing Consulting';
-$s['SUSE180011'] = 'Technical Software Services';
-$s['SUSE151601'] = 'Technicalities Group Consulting Pty Ltd';
-$s['SUSE222471'] = 'Technics Info Systems';
-$s['SUSE261555'] = 'Techno Aspect Solutions';
-$s['SUSE230890'] = 'Techno Guru';
-$s['SUSE252507'] = 'Techno Serva';
-$s['SUSE255348'] = 'Techno Wizz Infosystem';
-$s['SUSE252524'] = 'Techno World';
-$s['SUSE210522'] = 'TECHNOCOM SOLUTIONS';
-$s['SUSE242299'] = 'Technocrat Pty Limited';
-$s['SUSE224005'] = 'Technofast Consulting Solution';
-$s['SUSE198767'] = 'Technofirm Software';
-$s['SUSE213320'] = 'Technoforte Software Pvt Ltd';
-$s['SUSE252767'] = 'Technology Co., Ltd. Wuhan waves';
-$s['SUSE234078'] = 'Technology Effect Pty Ltd';
-$s['SUSE175343'] = 'Technology One';
-$s['SUSE072356'] = 'Technology Partners Group Pty Ltd';
-$s['SUSE205996'] = 'Technology Solutions India';
-$s['RAUE000509'] = 'Technology Trading House of Australia Pty Ltd';
-$s['SUSE089786'] = 'Technorite Consultants';
-$s['SUSE051849'] = 'Technosoft B.V.';
-$s['SUSE241347'] = 'Technosoft Imaging';
-$s['SUSE179058'] = 'Technosoft Information Technologies India Limited';
-$s['SUSE227145'] = 'Technosoft Solutions';
-$s['SUSE193349'] = 'TechnoSource Australia Pty Ltd';
-$s['SUSE146930'] = 'Technosys';
-$s['SUSE185542'] = 'Technosys Services Pvt. Ltd.';
-$s['RAUE000367'] = 'Technotronics Business Systems Pty Ltd';
-$s['SUSE165858'] = 'Technovate';
-$s['SUSE076970'] = 'TechnoVista Limited';
-$s['SUSE191221'] = 'Technoways Systems Limited';
-$s['SUSE219474'] = 'TECHPAQ INFOTECH';
-$s['RINE000852'] = 'Techpark India Private Limited';
-$s['SUSE143156'] = 'Techpatrol Pty Ltd';
-$s['SUSE214150'] = 'TechProcess Solutions Ltd';
-$s['SUSE211669'] = 'Techs Onsite';
-$s['SUSE254109'] = 'techsa services pvt. ltd.';
-$s['SUSE233982'] = 'TechSafe Computers & Accessories PTY LTD';
-$s['SUSE187427'] = 'TechShastra India Pvt Ltd';
-$s['SUSE251150'] = 'TechSivam';
-$s['SUSE062702'] = 'TechSpan India Ltd.';
-$s['SUSE129626'] = 'techtrade';
-$s['SUSE092605'] = 'TechTrain';
-$s['SUSE108085'] = 'Techtronix';
-$s['SUSE177433'] = 'Techvoyant Infotech Pvt Ltd';
-$s['RAUE000454'] = 'Techware Corporation (Australia) Pty Ltd';
-$s['SUSE181023'] = 'TecKnowledgy Solutions';
-$s['SUSE137537'] = 'Teckraft Infosolutions Pvt. Ltd.';
-$s['SUSE163451'] = 'TecLAN Computer Solutions';
-$s['SUSE234175'] = 'Tecnotree Convergence Ltd.';
-$s['SUSE132548'] = 'TECS Pty. Ltd.';
-$s['RNLE000042'] = 'Tectrade B.V.';
-$s['SUSE057344'] = 'Tectrade NV';
-$s['SUSE243854'] = 'Tee Ess Enterprises';
-$s['SUSE251947'] = 'Teephone Electronic Corpn.';
-$s['SUSE156530'] = 'Teh Corporation Pty Ltd';
-$s['SUSE242527'] = 'Teknomex Solutions';
-$s['SUSE098139'] = 'Teknoturf Info Services P Ltd';
-$s['SUSE222355'] = 'Tekriti Software Pvt Ltd';
-$s['SUSE254584'] = 'Telcave Computing Pvt. Ltd';
-$s['SUSE251715'] = 'Telecom Enterprises';
-$s['SUSE122415'] = 'Telecommunication Consultants  India Ltd';
-$s['SUSE156711'] = 'Telecommunications Consultants India Limited';
-$s['SUSE052928'] = 'Telecomputer Software';
-$s['SUSE211668'] = 'Telelogic India Pvt Ltd';
-$s['SUSE088340'] = 'TELEMATICS & SERVICES SA';
-$s['SUSE180661'] = 'Telenity System Software Pvt Ltd';
-$s['SUSE249009'] = 'Telephone Applications Aust. (TAA) Pty Ltd';
-$s['SUSE248938'] = 'TELEPHONE APPLICATIONS AUSTRALIA (TAA) PTY LTD';
-$s['SUSE146646'] = 'Telesis Global Solutions Ltd';
-$s['SUSE184854'] = 'TeleVital India Pvt Ltd.';
-$s['SUSE237343'] = 'TelExcell Information Systems';
-$s['SUSE207676'] = 'Telexcell Information Systems Ltd';
-$s['SUSE212762'] = 'Telexcell Networking Solutions';
-$s['SUSE088352'] = 'Telindus Luxembourg sa';
-$s['SUSE177965'] = 'Telindus NV';
-$s['SUSE163443'] = 'Tellurian Pty Ltd';
-$s['SUSE242528'] = 'Telnet Services';
-$s['SUSE181950'] = 'Telserra India Pvt. Ltd.';
-$s['SUSE163506'] = 'Telstra Research Labs';
-$s['SUSE072730'] = 'Temco Infomation Tech Co,.Ltd.';
-$s['SUSE159366'] = 'Temenos India Pvt. Ltd';
-$s['SUSE171553'] = 'Tenix Datagate';
-$s['SUSE182380'] = 'Tenix Pty Ltd';
-$s['SUSE215998'] = 'Tensor Design Pty Limited ta POSMarket.com.au';
-$s['SUSE184986'] = 'Tenth Planet Technologies Private Limited';
-$s['SUSE103912'] = 'Tera International Unit Trust';
-$s['SUSE224146'] = 'Tera Software Limited';
-$s['SUSE172170'] = 'Terabyte Systems';
-$s['SUSE247200'] = 'Teracom LTD.';
-$s['SUSE226973'] = 'Teradata Operations, Inc.';
-$s['SUSE174593'] = 'Teranovate Pty Ltd';
-$s['SUSE080065'] = 'Terasys Australia Pty Ltd';
-$s['RAUE000382'] = 'Territory Technology Solutions Pty Ltd';
-$s['SUSE165881'] = 'Tersec Bvba';
-$s['SUSE194621'] = 'Tesco';
-$s['SUSE126845'] = 'Tescom Australasia PTY LTD';
-$s['SUSE170973'] = 'tesseractic bv';
-$s['SUSE234633'] = 'TestLogistics Pty Ltd';
-$s['SUSE247507'] = 'Testpoint Pty Ltd';
-$s['SUSE111809'] = 'TestPro Pty Ltd';
-$s['SUSE180205'] = 'Tetra Information Services Pvt. Ltd';
-$s['SUSE146232'] = 'Tetran Pty Ltd';
-$s['SUSE254002'] = 'Teussink Holding B.V.';
-$s['SUSE127651'] = 'Texen Computer Services';
-$s['SUSE238111'] = 'TEXICAN ELECTRONICS (BOMBAY) P';
-$s['SUSE176225'] = 'Textinfo BV';
-$s['SUSE188145'] = 'Textkernel BV';
-$s['SUSE169185'] = 'Teydo Company';
-$s['SUSE158514'] = 'TF TESTER AU PARTNERWORLD';
-$s['RSGE000140'] = 'Thakral Information Systems Pvt. Ltd.';
-$s['SUSE143717'] = 'THAKUR TURNKEY SERVICES PVT.LTD.';
-$s['SUSE248136'] = 'Thales';
-$s['SUSE072790'] = 'THALES Information System sa/nv';
-$s['SUSE144374'] = 'Thankral computers Pvt Ltd';
-$s['SUSE235545'] = 'thatikonda info solutions';
-$s['SUSE175367'] = 'THBS';
-$s['SUSE261480'] = 'The Absolute Solutions';
-$s['SUSE214088'] = 'The ACR Group';
-$s['SUSE178330'] = 'The add contact delay test';
-$s['SUSE252523'] = 'The Advanced Technology Labs';
-$s['SUSE150804'] = 'The Angotti Family Trust Trading as Advantage IT Solutions & Supplies';
-$s['SUSE248044'] = 'The Australian Laser and Fax Supplies Co. Pty Ltd';
-$s['SUSE229177'] = 'The BMA Group';
-$s['RAUE000408'] = 'The Boss Group Pty Ltd';
-$s['SUSE077876'] = 'The Brain Resource Company Limited';
-$s['SUSE174343'] = 'The Bridgers B.V.';
-$s['SUSE254940'] = 'The Cairns and Hammer Family Trust and The Clift Family Trust';
-$s['SUSE053432'] = 'The Capital Markets Company';
-$s['SUSE086168'] = 'The Cavalry';
-$s['SUSE187358'] = 'The Cehun Bennett Family Trust';
-$s['SUSE058054'] = 'The Colony Park Group Pty Ltd';
-$s['RAUE000696'] = 'The Computelec Business Trust';
-$s['SUSE143512'] = 'the computer bazar';
-$s['SUSE225329'] = 'The Computer Shoppee';
-$s['SUSE141774'] = 'The Computer Wholesaler';
-$s['SUSE073566'] = 'The Dialog Institute';
-$s['SUSE223083'] = 'The Digital Group';
-$s['SUSE212302'] = 'The Disc';
-$s['SUSE177769'] = 'The Distillery Pty Ltd';
-$s['SUSE168518'] = 'The E-corporation';
-$s['SUSE102519'] = 'The Frame Group Pty Limited';
-$s['SUSE174649'] = 'The Frontier Group Pty Ltd';
-$s['SUSE177404'] = 'The Future Group';
-$s['SUSE076225'] = 'The Future Is Freedom Pty Ltd';
-$s['SUSE197274'] = 'The Golden Key Co.(Aust) Pty';
-$s['RAUE000409'] = 'The Grid Corporation Pty Ltd';
-$s['SUSE053884'] = 'THE GROUPWARE COMPANY';
-$s['SUSE260056'] = 'The Hard Shop';
-$s['SUSE144719'] = 'The ICT Associates Ltd.';
-$s['SUSE150325'] = 'The Informatic Computer';
-$s['SUSE176637'] = 'The Integral CMS Group';
-$s['SUSE135542'] = 'The IQ Business Group Pty Ltd';
-$s['SUSE195844'] = 'The MacGregor Group BV';
-$s['SUSE091607'] = 'The Marlo Group';
-$s['SUSE247943'] = 'The Mastermind Group Pty Ltd';
-$s['SUSE255413'] = 'The MathWorks Australia Pty Limited';
-$s['SUSE255215'] = 'The MathWorks BV';
-$s['SUSE098686'] = 'The Missing Link Network Integration Pty Ltd';
-$s['SUSE058021'] = 'The Net-Effects Group Pty Ltd ATF Net-Effects Unit Trust';
-$s['SUSE103837'] = 'The PC Company Pty Ltd';
-$s['SUSE037895'] = 'The Reference';
-$s['SUSE146413'] = 'The Resonance Group Pty Limited';
-$s['SUSE174902'] = 'The Retail Knowledge + Learning Centre Pty Ltd';
-$s['SUSE235903'] = 'The Romann Group Pty Ltd';
-$s['SUSE252505'] = 'The Shamrao Vithal Co-op Bank';
-$s['SUSE191840'] = 'The Software Cottage Pty Ltd';
-$s['RAUE000368'] = 'The Somerville Group Pty Ltd';
-$s['SUSE167759'] = 'The Storage Point Pty Ltd';
-$s['SUSE039663'] = 'The Technology Counseling Corporation BVBA';
-$s['SUSE232112'] = 'The Trustee for A8 Trust';
-$s['SUSE248367'] = 'The Trustee for Answers IT Trust';
-$s['SUSE224548'] = 'The Trustee for BizTech IT Unit Trust';
-$s['SUSE218491'] = 'The Trustee For Campbell Software Consultancy, D R Welsby Family & Terringcorp Trust';
-$s['SUSE230248'] = 'The Trustee for Cornerstone Management Consulting Trust';
-$s['SUSE235202'] = 'The Trustee for ECI Trust';
-$s['SUSE216378'] = 'The Trustee for EVENTRA NO. 1 TRUST & The Trustee for EVENTRA NO. 3 TRUST';
-$s['SUSE204793'] = 'The Trustee for Galgano Family Trust';
-$s['SUSE230391'] = 'The Trustee for Hooper Trust';
-$s['SUSE221709'] = 'The Trustee for iStar Trust';
-$s['SUSE219671'] = 'The Trustee For Mangano IT Solutions';
-$s['SUSE131199'] = 'The Trustee For The Abridge Trust';
-$s['SUSE225105'] = 'The Trustee for The Dutton Family Trust';
-$s['RAUE000738'] = 'The Trustee for the Emerging IT Trust';
-$s['SUSE247555'] = 'The Trustee for The Mastermind Unit Trust';
-$s['SUSE224786'] = 'The Trustee for The R & S Hazell Family Trust';
-$s['SUSE232436'] = 'The Trustee for Union Trust';
-$s['SUSE255066'] = 'The Trustee for Well Connected Trust';
-$s['SUSE255484'] = 'The Trustee for Xpanse Unit Trust';
-$s['SUSE187021'] = 'The Wheel Automatisering';
-$s['SUSE161535'] = 'The Young Ones Pty. Ltd.';
-$s['SUSE181378'] = 'THE9';
-$s['SUSE226828'] = 'Theme Technologies Pvt Ltd';
-$s['SUSE083038'] = 'Theseus Pty. Ltd.';
-$s['SUSE084669'] = 'Thesys Technologies Private Limited';
-$s['SUSE185056'] = 'THESYS TECHNOLOGIES PRIVATE LIMITED';
-$s['SUSE183534'] = 'TheyerGFX Pty Ltd';
-$s['SUSE161096'] = 'Thinc Engineering VOF';
-$s['SUSE198188'] = 'Thinc Technology Pty Ltd';
-$s['SUSE178860'] = 'ThincValue';
-$s['SUSE145521'] = 'Think Consulting Group Pty Ltd';
-$s['SUSE189350'] = 'Think Network Pty Ltd';
-$s['RAUE000474'] = 'Think Solutions Pty Ltd';
-$s['SUSE208312'] = 'Thinkinetics';
-$s['SUSE140981'] = 'Thinking Space IT Solutions Pty Ltd';
-$s['SUSE239849'] = 'THINKSERV TECHNOLOGIES';
-$s['SUSE255743'] = 'ThinkStorm Consulting';
-$s['SUSE185069'] = 'Thinkwise Software Factory B.V.';
-$s['SUSE148567'] = 'Thirdeye Systems Pvt Ltd';
-$s['SUSE078648'] = 'Thirdware Solution Ltd.';
-$s['SUSE057858'] = 'Thomas Duryea Consulting Pty Ltd';
-$s['SUSE204999'] = 'Thomson Corporation Intn Ltd';
-$s['SUSE241724'] = 'Thorogood Associates';
-$s['SUSE236320'] = 'Thorogood Associates India Pvt Limited';
-$s['SUSE235040'] = 'ThoughtWare Australia P/L';
-$s['SUSE186089'] = 'ThoughtWeb Pty Ltd';
-$s['SUSE181938'] = 'Three Sixty Technologies Pvt Ltd';
-$s['SUSE180144'] = 'Threshold Technolgies';
-$s['SUSE247142'] = 'Thrinaina Informatics Ltd';
-$s['SUSE174096'] = 'Thuis';
-$s['SUSE249648'] = 'Thukral Systems & Solutions';
-$s['SUSE059342'] = 'Thundercloud Technologies India Private Limited';
-$s['SUSE122721'] = 'Thunderhead Pty Ltd';
-$s['SUSE247276'] = 'thuong nguyen enterprises';
-$s['SUSE132785'] = 'Thymus Solutions Ltd';
-$s['SUSE184110'] = 'Tiangongtech';
-$s['SUSE256023'] = 'Tianjin DeTong Electric Co.ltd';
-$s['SUSE229603'] = 'TianJin IC Card Public Network System CO.,LTD.';
-$s['SUSE185107'] = 'Tianjin JoinWeb Telecom Co. Ltd.';
-$s['SUSE184106'] = 'TianYi Software Co., Ltd';
-$s['SUSE159319'] = 'TIBCO Software Inc. (Pune)';
-$s['SUSE213688'] = 'Tiberone Europe BV';
-$s['SUSE224448'] = 'TidalData Solutions Pvt Ltd';
-$s['SUSE168179'] = 'Tie belgium';
-$s['SUSE129474'] = 'Tier One Holdings Pty Ltd';
-$s['SUSE219736'] = 'Tier-3 Pty Ltd';
-$s['SUSE088464'] = 'TietoEnator NV';
-$s['SUSE226772'] = 'TietoEnator Software Technolog';
-$s['SUSE169081'] = 'Tiger Infotech Pvt. Limited';
-$s['SUSE177835'] = 'Tildy, LLC';
-$s['SUSE194334'] = 'TIME CHANNEL NEW ELECTRONIC TECHNOLOGY CO.,LTD.';
-$s['SUSE216278'] = 'Time2Trace';
-$s['SUSE107681'] = 'Timeless Technologies Pty Ltd';
-$s['SUSE183920'] = 'Timeline Technologies Pvt. Ltd.';
-$s['SUSE215646'] = 'TimeNet Solutions Pvt Ltd';
-$s['SUSE075399'] = 'Timerwell Technology (China) Co.,Ltd.';
-$s['SUSE240643'] = 'Times IT Solutions';
-$s['SUSE181903'] = 'Times of India';
-$s['SUSE166259'] = 'Timmer IT Consultancy BV';
-$s['SUSE249614'] = 'Tiru DB Solutions';
-$s['SUSE127563'] = 'Titan International';
-$s['SUSE242087'] = 'Tivre Business Solutions Pvt.';
-$s['SUSE148206'] = 'TJ BoTian ShiDai Sci&Tech';
-$s['SUSE144872'] = 'TJ Kaiyuan Tech&Dev';
-$s['SUSE237493'] = 'TKIT Pty Ltd';
-$s['SUSE177247'] = 'TLA Software Solutions';
-$s['RAUE000712'] = 'TLC IT Solutions Pty Ltd.';
-$s['SUSE143719'] = 'TM Systems Pvt. Ltd';
-$s['SUSE190867'] = 'tmc';
-$s['SUSE147121'] = 'TMC Infoway';
-$s['SUSE179317'] = 'TMCThane';
-$s['SUSE140945'] = 'TMNS B.V.';
-$s['SUSE187222'] = 'TMS';
-$s['SUSE247803'] = 'TNGiCUBE Technology Resources';
-$s['SUSE198105'] = 'Toast Technology';
-$s['SUSE077729'] = 'Toast Technology Pty Ltd';
-$s['SUSE165474'] = 'Today Systems Inc';
-$s['SUSE068015'] = 'Tokata Management Systems Pty. Limited';
-$s['SUSE152950'] = 'TOKYO TRADING AUSTRALIA PTY  LTD';
-$s['SUSE192921'] = 'Tolerro Pty Ltd';
-$s['SUSE159808'] = 'TON VAN DER MEER   B.V.';
-$s['SUSE121669'] = 'Tonsoft';
-$s['SUSE138277'] = 'TooConnect';
-$s['SUSE182906'] = 'Tools4ever';
-$s['SUSE230843'] = 'Toovey Family trust';
-$s['GD'] = 'Top Global ISV';
-$s['SUSE177356'] = 'Top Image System China';
-$s['SUSE196482'] = 'top web designing';
-$s['SUSE135725'] = 'TopByte System Development';
-$s['SUSE097871'] = 'TopFicie Holding bv';
-$s['SUSE190330'] = 'Topline Business Solutions Pty Ltd';
-$s['SUSE112104'] = 'TOPS Office & Business Systems Pty Ltd';
-$s['SUSE167575'] = 'Tore Notland Consulting';
-$s['SUSE078150'] = 'Torry Harris Business Solutions';
-$s['SUSE172901'] = 'Tortoise Logic Pty Ltd';
-$s['SUSE156140'] = 'Total Computer Technology Pty Limited';
-$s['SUSE107676'] = 'Total Network Engineering Pty Ltd';
-$s['SUSE126888'] = 'Total Network Support Pty Ltd';
-$s['SUSE188468'] = 'Total RISC Technology Pty Ltd';
-$s['SUSE176458'] = 'Total Systems for Managment';
-$s['SUSE198631'] = 'TOTAL TEL INTERNATIONAL PTY LTD';
-$s['SUSE249440'] = 'totem international ltd';
-$s['SUSE170745'] = 'Toto';
-$s['SUSE083178'] = 'Touchbase Australia Pty Ltd';
-$s['SUSE219379'] = 'TOUCHDATA';
-$s['SUSE213067'] = 'Touchpoint';
-$s['SUSE216602'] = 'TouchScreen Solutions Pty Ltd';
-$s['SUSE085039'] = 'Tourism Technology Pty Ltd';
-$s['SUSE161456'] = 'Tower Software';
-$s['RAUE000102'] = 'Tower Technology Pty Ltd';
-$s['SUSE143295'] = 'Towers\' Infotech Pvt. Ltd.';
-$s['SUSE073231'] = 'Townsville Online Compuuters';
-$s['SUSE119168'] = 'TP human capital';
-$s['SUSE236625'] = 'Tracer Solutions';
-$s['SUSE260955'] = 'TRACK FOUR INFOTEC (I) PVT LTD';
-$s['SUSE143509'] = 'Trade & Technology Pvt ltd';
-$s['SUSE165129'] = 'Tradeware SA';
-$s['SUSE232811'] = 'Trainedge Consulting Private Limited';
-$s['SUSE248821'] = 'Trainedge Consulting Pvt Ltd';
-$s['SUSE248942'] = 'Training Online Pty Ltd';
-$s['GT'] = 'Training Provider';
-$s['SUSE245994'] = 'Trans iT Systems';
-$s['SUSE127565'] = 'Trans Trades';
-$s['SUSE181445'] = 'Transacta Pty Ltd';
-$s['SUSE112016'] = 'TransAction Solutions Pty Ltd';
-$s['GQ'] = 'Transactional';
-$s['SUSE218377'] = 'Transcend Infosystems Pvt. Ltd';
-$s['SUSE166542'] = 'Transcend Software Solutions';
-$s['SUSE180795'] = 'Transcend Technology Orbit';
-$s['SUSE103801'] = 'Transline India Business Solutions (P) Ltd';
-$s['SUSE184851'] = 'translogix systems pty ltd';
-$s['SUSE170464'] = 'Transmit';
-$s['SUSE189972'] = 'Transpire Pty Ltd';
-$s['SUSE175791'] = 'Transtek Software Services';
-$s['SUSE143369'] = 'Transversal E Networks Private Limited';
-$s['SUSE157529'] = 'Transversal e Networks Pvt Ltd';
-$s['SUSE188460'] = 'Tranzteknik Pty Ltd';
-$s['SUSE240486'] = 'TRASSET INDIA';
-$s['SUSE220625'] = 'TRASYS';
-$s['SUSE055154'] = 'TRASYS-OSI, division de TRASYS S.A.';
-$s['SUSE172668'] = 'Travelex';
-$s['SUSE174058'] = 'Travelsky';
-$s['SUSE135636'] = 'Travis S Saron';
-$s['SUSE150423'] = 'TRAX NV';
-$s['SUSE229468'] = 'TRB Technologies';
-$s['SUSE138180'] = 'Treddy\'s Technology';
-$s['SUSE184717'] = 'Tree C Technology B.V.';
-$s['SUSE127178'] = 'TRee Data Corporation B.V.';
-$s['SUSE177464'] = 'Trend Micro China';
-$s['SUSE177640'] = 'Trescon Software Private Limited';
-$s['SUSE087374'] = 'Trevor Smith';
-$s['SUSE251716'] = 'Triad Micro Systems';
-$s['SUSE191164'] = 'Triad Software Private Limited';
-$s['TR'] = 'Trial Re-seller';
-$s['SUSE179886'] = 'Triangle Solutions b.v.';
-$s['SUSE253511'] = 'Trianz Holdings Pvt. Ltd';
-$s['RINE000117'] = 'Tricad Computers';
-$s['SUSE256747'] = 'Tricom';
-$s['SUSE192648'] = 'Tricom International';
-$s['SUSE246521'] = 'TRICOM TECHNOLOGIES';
-$s['RAUE000621'] = 'Tricomm Networking Pty Ltd';
-$s['SUSE212370'] = 'Tridant Pty Ltd';
-$s['SUSE087132'] = 'Tridax Software';
-$s['SUSE196654'] = 'Trident Info Systems Pvt. Ltd';
-$s['SUSE124768'] = 'Trident Information Systems Pvt Ltd';
-$s['SUSE148753'] = 'TRIDENT INFOTECH SERVICES';
-$s['SUSE169854'] = 'Trident Systems';
-$s['SUSE254941'] = 'Triff I.T';
-$s['SUSE235166'] = 'Trifin Technologies Pvt Ltd';
-$s['SUSE135402'] = 'Triforce Australia Pty Ltd';
-$s['SUSE192572'] = 'Trigent Software Ltd';
-$s['SUSE214680'] = 'Trigyn Technologies Ltd.';
-$s['SUSE235804'] = 'Trillion IT Solutions (India)';
-$s['SUSE146234'] = 'Trilogy Computer Systems Pty Ltd';
-$s['SUSE242081'] = 'Trimax IT Infra.& services Ltd';
-$s['SUSE221435'] = 'Trimax IT Infrastructure And Services Ltd.';
-$s['SUSE253209'] = 'Trimbkeshwar Services';
-$s['SUSE174164'] = 'Trimentus Technologies';
-$s['SUSE182823'] = 'Triniti Advance Software Labs';
-$s['SUSE179359'] = 'Triniti Advanced Software Labs';
-$s['SUSE173573'] = 'Trinity Comnet Private Limited';
-$s['SUSE248519'] = 'Trinity Future-In Pvt. Ltd';
-$s['SUSE175402'] = 'Trinity Software Australia Pty Ltd';
-$s['RAUE000450'] = 'Trinix Computers Pty Ltd';
-$s['SUSE242507'] = 'Trinix Information Technologies Limited';
-$s['SUSE061152'] = 'Triple P Nederland B.V.';
-$s['SUSE086812'] = 'Tripoint Corporation Pty Ltd';
-$s['SUSE165394'] = 'triptic bv';
-$s['SUSE242635'] = 'Triquesta';
-$s['SUSE257571'] = 'Trisita Marketing Private Limited';
-$s['RINE000840'] = 'Trisita Marketing Pvt Ltd.';
-$s['SUSE179672'] = 'Trisoft Systems Pvt Ltd';
-$s['SUSE250456'] = 'Tristars Multi-Trade Pvt. Ltd.';
-$s['SUSE255555'] = 'TritonServices';
-$s['SUSE237342'] = 'TRIVEDI COMPUTERS';
-$s['SUSE198180'] = 'Triven System Software(P) Ltd';
-$s['SUSE241735'] = 'Triveni Computer';
-$s['SUSE245786'] = 'Triveni Enterprises';
-$s['SUSE147748'] = 'Triveni Infotech Pty Ltd';
-$s['SUSE168602'] = 'Trojan Software Pvt.Ltd';
-$s['SUSE177536'] = 'Troop Software';
-$s['SUSE214087'] = 'TRT';
-$s['SUSE173269'] = 'True Blue Technologies Pvt. Ltd.,';
-$s['SUSE225603'] = 'TRUGLOBAL INC';
-$s['SUSE055986'] = 'Trust Factory B.V.';
-$s['SUSE181157'] = 'TrustAlert';
-$s['SUSE152212'] = 'Trusted Technology Asia Pacific Pty Ltd';
-$s['SUSE147747'] = 'Trustee for AD & CL Voigt Family Trust';
-$s['SUSE147919'] = 'Trustee for AH Computer Services Unit Trust';
-$s['SUSE148431'] = 'Trustee for Applaud IT Unit Trust';
-$s['SUSE103873'] = 'Trustee for BL Tech';
-$s['SUSE217634'] = 'Trustee For Copperwire Trust';
-$s['SUSE151623'] = 'Trustee for Crockett Family Trust';
-$s['SUSE130356'] = 'Trustee for In-Tellect Unit Trust No 2';
-$s['SUSE154200'] = 'Trustee for JTEM Investments Trust';
-$s['SUSE186900'] = 'Trustee for Micronet Unit Trust';
-$s['SUSE194543'] = 'Trustee for Newtech Unit Trust';
-$s['SUSE147177'] = 'Trustee for Rapidfire Group Trust';
-$s['SUSE158622'] = 'Trustee for SNMP Unit Trust';
-$s['SUSE148621'] = 'Trustee for Stirling Unit Trust';
-$s['SUSE147920'] = 'Trustee for the DSC - IT Unit Trust';
-$s['SUSE147914'] = 'Trustee for The Network Data Solutions';
-$s['SUSE154219'] = 'Trustee for The Roy Adams Family Trust';
-$s['SUSE103874'] = 'Trustee For The Single Point Trust';
-$s['SUSE137962'] = 'Trustee for the Stone Family Trust';
-$s['SUSE138375'] = 'Trustees of the Christian Brothers (Queensland)';
-$s['SUSE198418'] = 'TrustSystems& Software (I)PLtd';
-$s['SUSE074334'] = 'Truth Honour Electronic Ltd.';
-$s['SUSE053478'] = 'TRW ISCS SA';
-$s['SUSE168959'] = 'Tryllian Solutions BV';
-$s['SUSE135829'] = 'Tryllium Solutions Pty Ltd';
-$s['RNLE000030'] = 'TSD Automatisering B.V.';
-$s['SUSE150846'] = 'Tseng Dynasty Pty Ltd';
-$s['SUSE144798'] = 'TSG SOFTECH (INDIA) PVT. LTD';
-$s['SUSE073256'] = 'Tsinghua Science&Technique Economic Consultation Center';
-$s['SUSE226695'] = 'TsingIT Tiptop (Beijing) Technology Co.,Ltd.';
-$s['SUSE157120'] = 'TSL Defence Technologies Pvt. Ltd';
-$s['SUSE225434'] = 'TSN Networking Solutions Pvt Ltd';
-$s['SUSE244159'] = 'TSS';
-$s['SUSE237252'] = 'TSS Netway';
-$s['SUSE091591'] = 'Tuan Tran';
-$s['SUSE156320'] = 'Tulip IT Services Ltd.';
-$s['SUSE226615'] = 'Tuple Technologies Pvt Ltd';
-$s['SUSE138743'] = 'Tuples Infotech Solutions';
-$s['SUSE162431'] = 'Turn-Key Systems Pty Ltd';
-$s['SUSE235658'] = 'TurningIdeas Solution Pvt Ltd';
-$s['SUSE182806'] = 'TurningPoint Software Solutions';
-$s['SUSE199034'] = 'Tux Technologies';
-$s['SUSE178378'] = 'TVS Infotech Ltd.';
-$s['SUSE243048'] = 'Tvs Net Technologies Limited';
-$s['SUSE209406'] = 'TVS NET TECHNOLOGIES LTD';
-$s['SUSE242082'] = 'tvsnet';
-$s['SUSE238182'] = 'TVSNet Technologies Ltd';
-$s['SUSE228134'] = 'Twice Digitale Private Limited';
-$s['SUSE164420'] = 'Twisted Reality Pty Ltd';
-$s['SUSE056780'] = 'TWO Consult';
-$s['SUSE163555'] = 'TWR Enterprises Pty Ltd';
-$s['SUSE176223'] = 'TXS LTD';
-$s['SUSE209108'] = 'U-IT & Telecommunication';
-$s['SUSE167045'] = 'U-NIQ Consulting Pty Ltd';
-$s['SUSE167673'] = 'UBench n.v.';
-$s['SUSE168036'] = 'UbiCall Communications SA';
-$s['SUSE184477'] = 'UbiQTech Software (P) Limited';
-$s['SUSE225480'] = 'Ubq Technologies Pvt. Ltd.';
-$s['SUSE221572'] = 'UCS';
-$s['SUSE226121'] = 'Uddatta Systems';
-$s['SUSE256911'] = 'UDS, 优集计算机信息技术(上海)有限公司';
-$s['SUSE183699'] = 'UF Soft Co.,Ltd.';
-$s['SUSE179860'] = 'UG Software Technologies Pvt. Ltd.';
-$s['SUSE184182'] = 'Ugam Solutions Pvt. Ltd';
-$s['SUSE248825'] = 'uInnoTech Solutions Private Limited';
-$s['SUSE143158'] = 'Ulex Computer';
-$s['SUSE148749'] = 'Ultima Solutions P Ltd';
-$s['SUSE144890'] = 'Ultimate Computech Pvt. Ltd.';
-$s['SUSE221505'] = 'ULTIMATE IT';
-$s['SUSE225775'] = 'Ultra Electronics  Limited';
-$s['SUSE248013'] = 'ULTRA INNOVATIVE TECHNOLOGY SOLUTIONS PRIVATE LIMITED';
-$s['SUSE218712'] = 'Ultra Integrated Technology services P.Ltd';
-$s['SUSE194691'] = 'Ultra Serve Internet Pty Ltd';
-$s['RAUE000072'] = 'Ultradata Australia Pty Ltd';
-$s['RAUE000730'] = 'Ultralink Media Pty Ltd';
-$s['SUSE141857'] = 'Ultramatics India Private Limited';
-$s['SUSE144775'] = 'UMANG';
-$s['SUSE107880'] = 'Umart International Pty Ltd';
-$s['SUSE224417'] = 'UNBOUND Technologies';
-$s['SUSE257700'] = 'UnI24 Techno Solutions Pvt. Lt';
-$s['SUSE247963'] = 'Unic B.V.';
-$s['SUSE206639'] = 'UNICEF';
-$s['SUSE235108'] = 'Unicom Solutions Pty Ltd';
-$s['SUSE195852'] = 'Unicop Technologies(OA) Ltd.';
-$s['SUSE212034'] = 'Unicorn Software and Solutions';
-$s['SUSE104982'] = 'Unicorn Technology Pty Ltd';
-$s['SUSE251229'] = 'Unicorn Vision';
-$s['SUSE206552'] = 'Unicorp Infotech';
-$s['SUSE249626'] = 'unified data-tech solutions private limited';
-$s['SUSE249316'] = 'Unified Solutions';
-$s['SUSE177367'] = 'Unified Technologies Pvt Ltd (TechUnified)';
-$s['SUSE172949'] = 'unihub';
-$s['RAUE000092'] = 'Unilink Data Systems Pty Ltd';
-$s['SUSE178068'] = 'Unilink Softwares Pvt. Ltd.';
-$s['SUSE137880'] = 'Unique Enterprises';
-$s['SUSE060873'] = 'Unique Ideas Australia Pty Ltd';
-$s['SUSE238302'] = 'Unique Infotech';
-$s['RINE000842'] = 'Unique Infoways P Ltd';
-$s['SUSE152952'] = 'Unique Solutions';
-$s['SUSE251958'] = 'Unique Technologies';
-$s['SUSE254592'] = 'Uniserve Data Technologies Pvt.Ltd.';
-$s['SUSE239314'] = 'Uniserve IT Solutions Pvt. Ltd';
-$s['SUSE184379'] = 'Unisoft Infotech Pvt Ltd';
-$s['RAUE000387'] = 'Unisoft Pty Ltd';
-$s['SUSE201698'] = 'unisoft total services b.v.';
-$s['SUSE138712'] = 'Unistanz Software Private Limited';
-$s['SUSE230695'] = 'Unisys Australia Pty Limited';
-$s['SUSE197433'] = 'Unisys Belgium NV/SA';
-$s['SUSE225918'] = 'Unisys China Limited';
-$s['SUSE185406'] = 'Unisys Global Services India';
-$s['SUSE241103'] = 'Unisys India Pvt Ltd';
-$s['SUSE182265'] = 'Unisys Netherland N.V.';
-$s['SUSE159585'] = 'Unisys/ACUS';
-$s['SUSE108684'] = 'Unit 4';
-$s['SUSE089151'] = 'Unit 4 Agresso Enterprise Solutions BV';
-$s['SUSE249877'] = 'Unit4 Consist';
-$s['SUSE154290'] = 'United India Power Corporation';
-$s['SUSE236156'] = 'United Tectsa';
-$s['SUSE188540'] = 'United Telecoms Ltd';
-$s['SUSE225145'] = 'Unity Electro Systems Pvt Ltd';
-$s['SUSE179069'] = 'Unive';
-$s['SUSE261415'] = 'Universal Agency';
-$s['SUSE252556'] = 'Universal Business Systems';
-$s['SUSE256281'] = 'Universal Computers';
-$s['SUSE151145'] = 'Universal Defence Pty. Limited';
-$s['SUSE184549'] = 'Universal Software';
-$s['SUSE184194'] = 'Universal Software Labs';
-$s['SUSE225332'] = 'Universal Technologies (P) Ltd';
-$s['SUSE149559'] = 'UNIVERSAL TECHNOLOGY';
-$s['SUSE180164'] = 'Universal Trustees';
-$s['SUSE058083'] = 'University of Ballarat';
-$s['SUSE245190'] = 'University of Michigan';
-$s['SUSE170208'] = 'Uniware Pty Ltd';
-$s['RAUE000814'] = 'Unlimited Computer Services Pty Ltd';
-$s['SUSE169760'] = 'Unlimited Gui Software';
-$s['SUSE135849'] = 'Unlimited Networks Pty Ltd';
-$s['SUSE252721'] = 'UPBTSystemsSolutions&Services';
-$s['SUSE052126'] = 'Update education';
-$s['SUSE088429'] = 'UpFront sprl';
-$s['SUSE200225'] = 'Uphantis B.V.';
-$s['SUSE252918'] = 'Uptech Computer Consultancy Limited';
-$s['SUSE229091'] = 'Uptime Solutions';
-$s['RBEE000202'] = 'Uptime Technologies nv';
-$s['SUSE261262'] = 'uReach Technologies';
-$s['SUSE238221'] = 'UReason';
-$s['SUSE131934'] = 'URN Technologies Pty Ltd';
-$s['SUSE078231'] = 'URSoft';
-$s['SUSE184705'] = 'US Call Centre Depot Limited';
-$s['SUSE245802'] = 'Us Computer Products';
-$s['SUSE175086'] = 'US Software Pvt Ltd';
-$s['SUSE085565'] = 'US Technology International Pvt Ltd';
-$s['SUSE185889'] = 'User Tunnel';
-$s['SUSE140551'] = 'Ushacomm India Pvt Ltd.';
-$s['SUSE186448'] = 'USi';
-$s['SUSE176615'] = 'USMOI';
-$s['SUSE174463'] = 'USR enterprise\'s';
-$s['SUSE231214'] = 'Utiba Pty Ltd';
-$s['SUSE145097'] = 'Utkarsh Infotech Private Limited';
-$s['SUSE186356'] = 'UTS Faculty of IT';
-$s['SUSE171989'] = 'UTStarcom';
-$s['SUSE245904'] = 'UV Televenture Pvt Ltd';
-$s['SUSE230452'] = 'UXC Engineering Solutions';
-$s['SUSE205716'] = 'V C Solutions Pty Ltd';
-$s['SUSE241734'] = 'V Care Communications Private';
-$s['SUSE149782'] = 'V Technologies';
-$s['SUSE124774'] = 'V-Care Technologies';
-$s['SUSE194794'] = 'V-Max Technology';
-$s['SUSE243970'] = 'Vaishnavi Infosolutions';
-$s['SUSE242666'] = 'Valadis Benelux';
-$s['SUSE162059'] = 'Valar Consultancy bv';
-$s['SUSE221259'] = 'Valid';
-$s['SUSE059391'] = 'Valinessa Technology Services';
-$s['SUSE253799'] = 'Valion Infosystems Pvt Ltd';
-$s['SUSE119438'] = 'Valok Global Midrange Software Solutions';
-$s['SUSE214873'] = 'Valorem Sytems Australia Pty Ltd';
-$s['SUSE071285'] = 'VALORIS Belgium';
-$s['SUSE179400'] = 'VALRIA Resarch Center';
-$s['SUSE198959'] = 'Valtech India Systems Pvt Ltd';
-$s['I4'] = 'Value Advantage Plus (VAP)';
-$s['SUSE237957'] = 'ValueCare Inc';
-$s['SUSE176316'] = 'Valuefirst Messaging Private Limited';
-$s['SUSE222737'] = 'ValueLabs';
-$s['SUSE176880'] = 'ValueMomentum Software Services Pvt  Ltd';
-$s['VS'] = 'ValueNet Solution Provider';
-$s['SUSE231468'] = 'Valuesource Technologies Pvt Ltd';
-$s['SUSE183794'] = 'valyd software pvt. ltd';
-$s['SUSE256249'] = 'VAMA Enterprises    ';
-$s['SUSE053795'] = 'Van Aaken Automatisering B.V.';
-$s['SUSE223226'] = 'VAN DER VEEN HOLDINGS P/L';
-$s['SUSE166473'] = 'Van Dijk Software Engineering';
-$s['SUSE055386'] = 'Van Eynde Computer Consulting VOF';
-$s['SUSE104805'] = 'van Helvoirt Automatisering b.v.';
-$s['SUSE256308'] = 'van hoye joris bvba';
-$s['SUSE053075'] = 'Van Meijel Automatisering B.V.';
-$s['SUSE166134'] = 'Van Munster Automatisering BV';
-$s['SUSE166187'] = 'Van Osch Automatisering';
-$s['SUSE177045'] = 'Vanderlande Industries B.V.';
-$s['SUSE167967'] = 'Vanenburg Business IT Solutions Pvt. Ltd.';
-$s['SUSE154209'] = 'Vangoogle IT Support';
-$s['SUSE165467'] = 'Vanguard Computer Services Pty Ltd';
-$s['SUSE241593'] = 'Vani Infotech Private Limited';
-$s['SUSE131391'] = 'VANREE Software Consultancy';
-$s['SUSE170821'] = 'Vansh Infotech';
-$s['SUSE057922'] = 'Vantage Systems Pty Ltd';
-$s['SUSE111636'] = 'Vantex Pty Ltd';
-$s['SUSE251094'] = 'Variable i-Solutions';
-$s['SUSE184968'] = 'Varista Technologies';
-$s['SUSE174331'] = 'Vasco Data Security';
-$s['SUSE181239'] = 'VAST Audio Pty Ltd';
-$s['SUSE145198'] = 'Vast computers';
-$s['SUSE156567'] = 'Vayam Technologies Ltd';
-$s['SUSE245192'] = 'vCentric Technologies Pvt. Ltd';
-$s['SUSE246486'] = 'VDA INFOSOLUTIONS PRIVATE LIMI';
-$s['SUSE170383'] = 'VDE';
-$s['SUSE170434'] = 'VECTIS bvba';
-$s['RINE000819'] = 'Vectra Computer Solution';
-$s['RAUE000247'] = 'Vectra Corporation Limited';
-$s['SUSE216295'] = 'VECTRA SYSTEMS AND SOLUTIONS P';
-$s['SUSE172367'] = 'Vedaleon';
-$s['SUSE240341'] = 'Vedisoft';
-$s['SUSE149772'] = 'Veeras';
-$s['SUSE068687'] = 'VEERAS INFOTEK (P) LTD';
-$s['SUSE142009'] = 'Veeras Infotek Private Ltd';
-$s['SUSE235245'] = 'Veeras Infotek Pvt Ltd';
-$s['SUSE151696'] = 'Veetrag Computers';
-$s['SUSE189398'] = 'veHere Interactive Private Limited';
-$s['SUSE236936'] = 'velocis';
-$s['RINE000769'] = 'VELOCIS Systems Private Ltd';
-$s['SUSE238451'] = 'VELOCIS SYSTEMS PVT LTD.,';
-$s['SUSE207519'] = 'Velocis Systems(Pvt.)Ltd.';
-$s['SUSE247807'] = 'Velocity Software Solutions';
-$s['SUSE228849'] = 'Velocity Software Solutions Pvt. Ltd.';
-$s['SUSE199303'] = 'Veloz Software Solutions India Private Limited';
-$s['SUSE104083'] = 'Velteo Pty Ltd.';
-$s['SUSE127667'] = 'Veltronics India Pvt. Ltd.';
-$s['SUSE102493'] = 'Venire Consulting';
-$s['SUSE088767'] = 'Venkat Communications';
-$s['SUSE162918'] = 'Venky Srinivasan';
-$s['SUSE180667'] = 'Venmak Technologies Pvt Ltd.,';
-$s['SUSE108090'] = 'VENMITRA SYSTEMS';
-$s['SUSE182304'] = 'venture.com';
-$s['SUSE255985'] = 'Venus IT Solutions Pvt. Ltd.';
-$s['SUSE214686'] = 'Veracity Business Solutions';
-$s['SUSE159803'] = 'VERACITY SOFTWARE CONSULTANCY';
-$s['SUSE167965'] = 'Verchaska Infotech (P) Ltd.';
-$s['SUSE246590'] = 'Verchaska Infotech Pvt Ltd';
-$s['SUSE256072'] = 'Verge Technologies';
-$s['SUSE169649'] = 'Vergil Technology (P) Limited';
-$s['SUSE173291'] = 'VERIDIS';
-$s['SUSE174430'] = 'Veridis';
-$s['SUSE246075'] = 'Verinon Technology Solutions Pvt Ltd';
-$s['SUSE054361'] = 'Verion B.V.';
-$s['SUSE137150'] = 'Verion ICT';
-$s['SUSE220504'] = 'Veritas Marketing Services';
-$s['SUSE212313'] = 'Veritek Business Solutions Pty';
-$s['SUSE255930'] = 'Verizon Australia Pty Ltd';
-$s['SUSE172986'] = 'Verizon Data Service India Pvt. Ltd.';
-$s['SUSE168541'] = 'Vermeulen Automatisering';
-$s['SUSE163272'] = 'VEROSYS Technical Automation';
-$s['SUSE229485'] = 'Versatile Techno Solution Private Limited';
-$s['SUSE145915'] = 'Vertebral Solutions Pty Ltd';
-$s['SUSE260106'] = 'Vertex Consultancy Services';
-$s['SUSE234741'] = 'Vertex Cosulting';
-$s['SUSE254234'] = 'Vertex Data Private Limited';
-$s['SUSE059046'] = 'Vertex Technology Pty Ltd';
-$s['SUSE181333'] = 'VertexInfoMedia';
-$s['SUSE253290'] = 'Vetooran Technologies';
-$s['SUSE235563'] = 'VetriSoft Pvt Ltd';
-$s['SUSE172541'] = 'vFortress Security';
-$s['SUSE151693'] = 'VG Computers';
-$s['SUSE182741'] = 'VGE';
-$s['SUSE170011'] = 'VGL Softech Ltd';
-$s['SUSE167425'] = 'VGL Softech Ltd.';
-$s['SUSE138025'] = 'VHP INFOTECH';
-$s['SUSE256168'] = 'Viacuity';
-$s['SUSE252607'] = 'Vianks Technology';
-$s['SUSE255065'] = 'Viatek Sage IT Services Pty Ltd';
-$s['SUSE229128'] = 'vibrant conputer pvt. ltd.';
-$s['SUSE193004'] = 'Vibrant Integration & Solutions';
-$s['SUSE176280'] = 'vicisoft technologies';
-$s['SUSE068017'] = 'Vicroads Design';
-$s['SUSE261951'] = 'Victory Enterprise';
-$s['SUSE220555'] = 'VIDEOPROMOTION';
-$s['SUSE150112'] = 'Videsh Sanchar Nigam Limited';
-$s['SUSE143518'] = 'vidya computer centre';
-$s['SUSE248873'] = 'View at the Top Pty Ltd';
-$s['SUSE166834'] = 'View Technology';
-$s['SUSE159267'] = 'Viewlocity Technologies Australia Pty Limited';
-$s['SUSE237255'] = 'Viewstor Pty Ltd';
-$s['SUSE259780'] = 'Vignan\'s Engineering College';
-$s['SUSE083552'] = 'Vigneshwara E.Biz Private Limited';
-$s['SUSE170277'] = 'Vignette';
-$s['SUSE172812'] = 'Vigor Soft Private Limited';
-$s['SUSE227153'] = 'VIGYANLABS';
-$s['SUSE248231'] = 'Vijay Direct.com';
-$s['SUSE143514'] = 'vijay udyog';
-$s['SUSE211148'] = 'Viking Services pty Ltd';
-$s['SUSE086698'] = 'Vinay Traders';
-$s['SUSE226118'] = 'Vinayak International';
-$s['SUSE149566'] = 'VINCOM SYSTEMS';
-$s['SUSE180807'] = 'VInCom Technologies India Pvt. Ltd.';
-$s['SUSE252387'] = 'Vindhya Telelinks Limited';
-$s['SUSE186304'] = 'Vineet Infotech';
-$s['SUSE181787'] = 'VINJEY Software Systems (P) Ltd';
-$s['SUSE148432'] = 'Vintek Pty Ltd';
-$s['SUSE237457'] = 'Vipsee Infotech';
-$s['SUSE139097'] = 'Virgil BV';
-$s['SUSE098148'] = 'virgo creative';
-$s['SUSE198113'] = 'Virgo Softech Limited';
-$s['SUSE181687'] = 'Virinchi Technologies Limited';
-$s['SUSE182011'] = 'virmati software & telecommunications ltd.';
-$s['SUSE197325'] = 'Virtsol Pty Ltd';
-$s['SUSE197556'] = 'Virtual Enterprises';
-$s['SUSE148066'] = 'Virtual Galaxy Infotech Pvt. Ltd.';
-$s['SUSE147714'] = 'Virtual Matrix';
-$s['SUSE075663'] = 'Virtual Sciences BIS B.V.';
-$s['SUSE090653'] = 'Virtual Software Technology Ltd';
-$s['SUSE067029'] = 'VirtualCorp Pty Ltd';
-$s['SUSE083710'] = 'Virtually Unlimited Technology Pty. Ltd.';
-$s['SUSE197919'] = 'Virtualsoft Systems Ltd.';
-$s['SUSE226976'] = 'VirtuaTech Pty Ltd';
-$s['SUSE229452'] = 'Virtunet Pty Ltd';
-$s['SUSE232602'] = 'Virtuos Solutions';
-$s['SUSE180484'] = 'VirtuosoMedia b.v.';
-$s['SUSE249567'] = 'Virtuosos Solutions Pvt Ltd';
-$s['SUSE231581'] = 'Virtus';
-$s['SUSE237013'] = 'Virtus Enterprises Australia P/L';
-$s['SUSE251409'] = 'Virtus Tech Private Limited';
-$s['SUSE124782'] = 'Virtusa India Pvt Ltd';
-$s['SUSE180891'] = 'Virtusa India Pvt. Ltd.';
-$s['SUSE058010'] = 'visAbility Information Systems';
-$s['RINE000521'] = 'Visesh Infotecnics Ltd';
-$s['SUSE243050'] = 'VISESH INFOTECNICS LTD';
-$s['SUSE238409'] = 'Vishaal Singh';
-$s['SUSE242933'] = 'Vishal Computer Solutions';
-$s['SUSE255400'] = 'Vishal Enterprise';
-$s['SUSE220863'] = 'Vishnave Technologies';
-$s['SUSE253006'] = 'Vishwa Solutions';
-$s['SUSE189715'] = 'VISHWAYAGNA';
-$s['SUSE172860'] = 'Vision 6';
-$s['SUSE142002'] = 'VISION COMNET PRIVATE LIMITED';
-$s['SUSE201685'] = 'Vision Comptech Limited';
-$s['SUSE098905'] = 'Vision Comtech';
-$s['SUSE251892'] = 'Vision Effect Technosolutions Pvt.Ltd.';
-$s['SUSE122508'] = 'Vision Holding B.V.';
-$s['SUSE144307'] = 'Vision Indya';
-$s['SUSE179933'] = 'Vision Information Services (Australia)';
-$s['SUSE255559'] = 'Vision Infosys';
-$s['SUSE224060'] = 'Vision IT Consultants Pvt. Ltd';
-$s['SUSE181474'] = 'Vision N Solutions';
-$s['SUSE224949'] = 'Vision Secure Technologies Pvt. Ltd.';
-$s['SUSE244452'] = 'Vision Software Private Limited';
-$s['RAUE000765'] = 'Vision Software Solutions Pty Ltd';
-$s['SUSE214086'] = 'Vision Solutions, Inc.';
-$s['RAUE000778'] = 'VISITS Pty Ltd';
-$s['SUSE185311'] = 'Visnova Solutions Private Limited';
-$s['SUSE186075'] = 'vission Automation Pvt Ltd';
-$s['SUSE219117'] = 'Vista eCommerce Solutions Pvt';
-$s['SUSE154844'] = 'VISTA TECH SOLUTIONS PVT. LTD.';
-$s['SUSE061666'] = 'Visual Advantage Pty Ltd';
-$s['SUSE235543'] = 'Visual Collaboration Technologies Pvt. Ltd';
-$s['SUSE196489'] = 'VISUAL MEDIA';
-$s['SUSE162011'] = 'Visual WEB Solutions Pvt Ltd.';
-$s['SUSE165854'] = 'Visualnet Pty Ltd';
-$s['SUSE167983'] = 'VisualSoft Technologies Ltd.';
-$s['RINE000028'] = 'Vitage Systems Private Limited';
-$s['SUSE178559'] = 'Vital Software Pty Ltd';
-$s['SUSE086584'] = 'vitria';
-$s['SUSE192976'] = 'VIVASVAN TECHNOLOGIES PVT LTD';
-$s['SUSE161455'] = 'Viveo Belgium s.a./n.v.';
-$s['SUSE244356'] = 'Vivid Data Corp Pty Ltd';
-$s['SUSE244690'] = 'VIVID IT SOLUTIONS PVT LTD';
-$s['SUSE146417'] = 'Viztech Softwares';
-$s['SUSE246954'] = 'VKC Infotech';
-$s['SUSE225517'] = 'VKsoft';
-$s['SUSE196481'] = 'VLAN Technologies';
-$s['SUSE240758'] = 'VLife Sciences Technologies Pvt. Ltd.';
-$s['SUSE239373'] = 'VMC India Limited';
-$s['SUSE168202'] = 'vMoksha Technologies Private Limited';
-$s['SUSE225002'] = 'VMukti Solutions Pvt. Ltd.';
-$s['SUSE210185'] = 'VMware';
-$s['SUSE221121'] = 'VMWARE SOFTWARE INDIA PVT LTD';
-$s['SUSE252023'] = 'VNIX SOLUTIONS PTY LTD';
-$s['SUSE090975'] = 'VoCognition B.V.';
-$s['SUSE252274'] = 'Vohra Brothers';
-$s['SUSE259813'] = 'Voice-Insight SA/NV';
-$s['SUSE167023'] = 'VoiceRite Pty Ltd';
-$s['RAUE000180'] = 'Volante Systems Pty Ltd';
-$s['SUSE168954'] = 'Voltaire Consultants bv';
-$s['SUSE228121'] = 'Vondle NV';
-$s['RINE000978'] = 'Vora  Information Technologies';
-$s['SUSE240649'] = 'VPR Consulting Group';
-$s['SUSE260728'] = 'VRcontext International SA';
-$s['SUSE207218'] = 'Vritti Solutions Limited';
-$s['SUSE252509'] = 'Vs Infotech';
-$s['SUSE170710'] = 'VSL';
-$s['SUSE253235'] = 'VSM Software Services Pty Ltd';
-$s['SUSE179579'] = 'VSoft Technologies Pty Ltd';
-$s['SUSE200340'] = 'VSoft Technologies Pvt Ltd';
-$s['SUSE250676'] = 'Vspectra Communication systems';
-$s['SUSE206927'] = 'vtiger Systems (India) Private Limited';
-$s['SUSE168255'] = 'Vulcan Infotech';
-$s['SUSE183170'] = 'VXL Instruments Limited';
-$s['SUSE185931'] = 'Vyom Infotech';
-$s['SUSE243900'] = 'Vyom Labs Pvt. Ltd.';
-$s['SUSE143630'] = 'W3 Computers Pvt. Ltd.';
-$s['SUSE129269'] = 'Waagner-Biro Luxembourg Stage Systems S.A';
-$s['SUSE220949'] = 'Wafes Technologies Pvt Ltd';
-$s['SUSE088370'] = 'WAL - MART SA';
-$s['SUSE201050'] = 'Wallaby Productions Pty Ltd';
-$s['SUSE238301'] = 'Walter Payne';
-$s['SUSE061033'] = 'WAP Solutions (Aust) Pty Ltd';
-$s['SUSE159873'] = 'WarpSpeed Computers';
-$s['PA'] = 'Warranty Service Provider';
-$s['SUSE088461'] = 'WASLET SA';
-$s['SUSE128395'] = 'Watermark Nederland B.V.';
-$s['SUSE058074'] = 'Watershed Systems Pty Ltd';
-$s['SUSE087619'] = 'Wave-Front International BV';
-$s['SUSE139106'] = 'Wavenet Pty Ltd';
-$s['SUSE181619'] = 'Wavenet ptyltd';
-$s['SUSE126716'] = 'Wayne Ferrari';
-$s['SUSE122644'] = 'WCC Services BV';
-$s['SUSE238436'] = 'wdc ltd';
-$s['SUSE193710'] = 'WDScott';
-$s['SUSE059026'] = 'We Start Computing Pty Ltd';
-$s['SUSE058265'] = 'Web Development Company Ltd';
-$s['SUSE179992'] = 'Web Development Group Pty Ltd';
-$s['SUSE251587'] = 'WEB INFOMATRIX PRIVATE LIMITED';
-$s['SUSE144794'] = 'web technology';
-$s['SUSE254595'] = 'Webb Bhartiya';
-$s['SUSE225142'] = 'WEBCOM Information Technology';
-$s['SUSE090881'] = 'Webcom Information Technology Pvt Ltd';
-$s['SUSE261892'] = 'Webcontinental Enterprises';
-$s['SUSE090661'] = 'Webdunia.com (I) Pvt. Ltd.';
-$s['SUSE247281'] = 'Webel Technology Limited';
-$s['SUSE253969'] = 'Weberon Solutions';
-$s['SUSE169501'] = 'Webify Services (India) Pvt. Ltd.';
-$s['SUSE135885'] = 'WEBLINK SYSTEMS';
-$s['SUSE217574'] = 'webMethods development Center India Pvt. Ltd';
-$s['SUSE146676'] = 'WebQ';
-$s['SUSE129710'] = 'WebSciential Solutions Pvt Ltd';
-$s['SUSE169082'] = 'WebSight Technologies';
-$s['SUSE128223'] = 'Webster Computer Systems';
-$s['SUSE131738'] = 'Webster Computer Systems Pty Ltd';
-$s['SUSE169521'] = 'WebSurfe.com';
-$s['SUSE168040'] = 'Websym Technologies';
-$s['SUSE179586'] = 'webtech softwares & services ltd';
-$s['SUSE249645'] = 'Webtek Labs Pvt Ltd';
-$s['SUSE095997'] = 'WebTek Labs Pvt. Ltd.';
-$s['SUSE163291'] = 'WebToTheMax';
-$s['SUSE170822'] = 'Webwavez Technologies';
-$s['SUSE139814'] = 'webWise Network Consultants Pty Ltd';
-$s['SUSE253638'] = 'Webx';
-$s['SUSE174076'] = 'WeBYS Integrated Solutions Pvt Ltd';
-$s['SUSE075089'] = 'WEIHAI JINLIMING R&D CO.LID.';
-$s['SUSE136840'] = 'WELDEN UNIT TRUST';
-$s['SUSE260583'] = 'Well Connected World Pty Ltd';
-$s['SUSE062748'] = 'WellDev Solutions Pty Ltd';
-$s['SUSE193273'] = 'Welling International Institute of Business Studies';
-$s['SUSE252058'] = 'Wellwin Computers & Electronics';
-$s['SUSE090682'] = 'WEMATRIX';
-$s['SUSE181939'] = 'WenS ict diensten';
-$s['SUSE249899'] = 'Wentregue Solutions Pvt Ltd';
-$s['SUSE243847'] = 'Wep Solutions India Limited';
-$s['SUSE220519'] = 'Wep Solutions India Ltd.';
-$s['SUSE178786'] = 'Wesfarmers Federation Insurance';
-$s['SUSE249405'] = 'Wesstband Marketing Pvt.Ltd.';
-$s['SUSE201740'] = 'Westcon European Holdings Ltd.';
-$s['SUSE139991'] = 'Westcon Group PTY LTD';
-$s['SUSE226350'] = 'Westcon Group Pty Ltd';
-$s['SUSE236586'] = 'Westgate Technology Solutions';
-$s['SUSE057947'] = 'WestNet Consultants Pty Ltd';
-$s['SUSE219618'] = 'Wevoli Nederland BV';
-$s['SUSE170587'] = 'WH Computer';
-$s['SUSE205479'] = 'White House Business Solutions';
-$s['SUSE167936'] = 'Whitehorses BV';
-$s['SUSE170150'] = 'Whizlabs Software';
-$s['SUSE174998'] = 'Whiznet Networks';
-$s['SUSE177452'] = 'Whodathoughtit solutions';
-$s['SUSE230713'] = 'Wiaan Business Corporation';
-$s['SUSE247207'] = 'Wicann Business Services Pvt.';
-$s['SUSE055832'] = 'WICE Consulting BVBA';
-$s['SUSE111635'] = 'Wieland, David Carl Manning';
-$s['SUSE103822'] = 'Wigtown Bear Pty Ltd';
-$s['SUSE130336'] = 'Wikcom Pty Ltd';
-$s['SUSE178082'] = 'Wildcard Information Systems Pty Ltd';
-$s['SUSE156142'] = 'Wilkinson - Kent Consulting Pty Ltd';
-$s['SUSE146649'] = 'Wilkinson Electronic Document Solutions Pty Ltd';
-$s['SUSE127989'] = 'WILLCOMPUTERS & COMMUNICATIONS (P) LTD.,';
-$s['SUSE200479'] = 'WILLDO TECH SOLUTIONS PVT LTD';
-$s['SUSE057962'] = 'William Buck Consulting (VIC) Pty Ltd';
-$s['SUSE138736'] = 'Willmation Pty Ltd';
-$s['SUSE193414'] = 'Willpower IT Solutions';
-$s['SUSE089190'] = 'Wilroff ICT Groep B.V.';
-$s['SUSE254936'] = 'Wilston Hill Pty Ltd and Salamoa DSF Pty Ltd trading as BITG';
-$s['RAUE000671'] = 'Winbasic Pty Ltd';
-$s['SUSE234551'] = 'Winch Computer Consulting Pty Ltd';
-$s['SUSE159433'] = 'Wincor Nixdorf Retail & Banking Systems (Shanghai) Ltd.';
-$s['SUSE256065'] = 'Wind River China';
-$s['SUSE178221'] = 'Wings Infonet Limited';
-$s['SUSE167859'] = 'Winnet Systems (P) Ltd.';
-$s['SUSE148043'] = 'Winotech India';
-$s['SUSE065359'] = 'Winsome Benelux NV';
-$s['SUSE076983'] = 'Winssoft';
-$s['SUSE168817'] = 'Wintaro Pty Ltd';
-$s['SUSE211592'] = 'WINTEK SERVICES';
-$s['SUSE218304'] = 'Wintel Systems';
-$s['SUSE089350'] = 'Wintelligent B.V.';
-$s['SUSE247508'] = 'Winthrop Australia';
-$s['SUSE138739'] = 'Winthrop Australia Pty Ltd';
-$s['SUSE247201'] = 'Wipro';
-$s['SUSE207016'] = 'Wipro Infotech';
-$s['SUSE085552'] = 'Wipro Limited';
-$s['SUSE241848'] = 'Wipro Networks';
-$s['SUSE237251'] = 'Wipro Networks Pte Ltd';
-$s['SUSE196871'] = 'Wipro Technologies';
-$s['SUSE207020'] = 'wipro technology';
-$s['SUSE207863'] = 'Wirefoot (India) Tech. (P) Ltd';
-$s['SUSE235035'] = 'Wiselink Technologies Pvt Ltd';
-$s['SUSE081520'] = 'Wisetech Solutions Private Limited';
-$s['SUSE137382'] = 'WISH Information Technology Pty Ltd';
-$s['SUSE242521'] = 'WisNet India (p) Ltd.';
-$s['SUSE168551'] = 'WITS (Worldwide Information Technology Solutions)';
-$s['SUSE057956'] = 'Wizard Computer Training - ACT';
-$s['SUSE057994'] = 'Wizard Computer Training - VIC';
-$s['SUSE161607'] = 'Wizard Information Services Pty Limited';
-$s['SUSE228846'] = 'Wizard Internet Solutions Pvt';
-$s['SUSE137881'] = 'Wizertech Informatics P Ltd';
-$s['SUSE243287'] = 'Wizertech Informatics Pvt Ltd';
-$s['SUSE254285'] = 'WizTel Infosol';
-$s['SUSE164699'] = 'Wizzix Vof';
-$s['RAUE000140'] = 'WJ Moncrieff Pty Ltd';
-$s['SUSE076697'] = 'Wonder';
-$s['RAUE000781'] = 'Wood, James and Brett J';
-$s['SUSE248824'] = 'WoodApple UnikSolutionz P Ltd';
-$s['SUSE237638'] = 'Word Pro Computer Consultancy Pvt Lmt';
-$s['SUSE168483'] = 'Wordstream';
-$s['SUSE185765'] = 'WorkBuddy Solutions Pty Ltd';
-$s['SUSE169326'] = 'Workgroup Software Development';
-$s['SUSE091599'] = 'Working Mice';
-$s['RAUE000791'] = 'Working Technology Pty Ltd';
-$s['SUSE253145'] = 'Worksafe Management Systems';
-$s['SUSE258993'] = 'WorksLink';
-$s['SUSE210237'] = 'World IT Consulting Pvt Ltd';
-$s['SUSE119614'] = 'World Wide Productions Pty Ltd';
-$s['SUSE173353'] = 'Worldhosting.org BV';
-$s['SUSE123286'] = 'Worldsmart Retech Pty Ltd';
-$s['SUSE170126'] = 'Worldwide Information Technology Solutions';
-$s['RINE000106'] = 'Worth Technology Pvt Ltd';
-$s['SUSE253553'] = 'WRENCH Solutions (P) LTD.';
-$s['SUSE167141'] = 'Wrenfeld Pty Ltd';
-$s['SUSE242560'] = 'Wruddhi Consultancy Services';
-$s['SUSE183968'] = 'WuHan ChuangXin HengTong S&T Development Co. ltd.';
-$s['SUSE075701'] = 'Wuhan Fangda Information System Integration Co., Ltd';
-$s['SUSE071451'] = 'WUHAN JINPAI TECHNOLOGY CO.,LTD';
-$s['SUSE120352'] = 'WuHan RuiKang Tech';
-$s['SUSE076135'] = 'WUHAN UNITYSYSTEM COMM CO.,LTD';
-$s['SUSE177445'] = 'wuhan wisco';
-$s['SUSE073375'] = 'Wuxi COLL';
-$s['SUSE239375'] = 'www.consultuz.com';
-$s['SUSE163335'] = 'www.SIC.nl';
-$s['SUSE225143'] = 'www.ustri.com';
-$s['RINE000798'] = 'Wysetek Systems Technologists Pvt Ltd';
-$s['SUSE179732'] = 'x';
-$s['SUSE167287'] = 'X-Hive Corporation';
-$s['SUSE165434'] = 'X-IT Computer Services Pty Ltd';
-$s['SUSE216789'] = 'X-Seed Technologies Pvt. Ltd.';
-$s['SUSE217546'] = 'X-Solutions';
-$s['SUSE237376'] = 'XAge Solutions';
-$s['SUSE222570'] = 'Xalted Information Systems Private Limited';
-$s['SUSE176410'] = 'Xalted Information Sytems Pvt. Ltd';
-$s['SUSE234118'] = 'Xanadu Software';
-$s['SUSE170945'] = 'Xansa India Ltd';
-$s['SUSE248330'] = 'Xavient Infotech Pvt Ltd';
-$s['SUSE144690'] = 'Xavient Software Solutions India Pvt Ltd';
-$s['SUSE198187'] = 'Xbio Systems Pty Ltd';
-$s['SUSE062346'] = 'Xceed bvba';
-$s['SUSE210934'] = 'XCEED IT PTY LTD';
-$s['SUSE190502'] = 'Xceleon Technologies Pty Ltd';
-$s['SUSE211960'] = 'Xcellerate IT';
-$s['SUSE130614'] = 'Xcite Logic Pty Ltd';
-$s['SUSE131376'] = 'Xebec Systems';
-$s['SUSE139337'] = 'Xebia B.V.';
-$s['SUSE207213'] = 'Xebia IT Architects India Private Limited';
-$s['SUSE236199'] = 'XebiaLabs B.V.';
-$s['SUSE238686'] = 'XEDIS';
-$s['SUSE169795'] = 'XempleX Pty Ltd';
-$s['SUSE243098'] = 'Xencia Technology Solutions Pvt Ltd';
-$s['SUSE248450'] = 'Xenex Surveillance Systems Pvt Ltd';
-$s['SUSE188529'] = 'Xenolith Technologies Ltd';
-$s['SUSE053200'] = 'XENON 54 NV';
-$s['SUSE248946'] = 'Xenosoft Technologies (I) P Ltd';
-$s['SUSE244339'] = 'XePOS cvba';
-$s['SUSE187856'] = 'Xerago';
-$s['SUSE180749'] = 'Xerago CRM Solutions Pvt. Ltd.';
-$s['SUSE190870'] = 'Xerolin Software Systems Pvt Ltd.';
-$s['SUSE239228'] = 'Xerox India Ltd';
-$s['SUSE201256'] = 'Xerox Nv';
-$s['SUSE177866'] = 'xerox-cfet';
-$s['SUSE149780'] = 'XI & Growing Solution Pvt. Ltd';
-$s['SUSE130714'] = 'XI Consulting Group Unit Trust';
-$s['SUSE243056'] = 'Xi\'an beyond the Digital Technology Co., Ltd.';
-$s['SUSE076351'] = 'Xi\'an Bitrunsoft Co.,Ltd.';
-$s['SUSE220006'] = 'Xi\'an Kunhe Electric Tec Co.';
-$s['SUSE073821'] = 'Xi\'an Wealth Software Technology  Co., Ltd';
-$s['SUSE076368'] = 'Xiamen Golden Bridge Networks Co.,Ltd.';
-$s['SUSE078740'] = 'Xianzhizaixian  Co., Ltd';
-$s['SUSE176260'] = 'Xidar Systems';
-$s['SUSE174402'] = 'Xinhua Computer College Nanjing';
-$s['SUSE075268'] = 'Xinjiang Captainship Hi-Tech. Co., Ltd.';
-$s['SUSE184358'] = 'Xiro unlimited entertainment b.v.';
-$s['SUSE230333'] = 'XLinIT BV';
-$s['SUSE151691'] = 'Xlink Software Drome';
-$s['SUSE210678'] = 'XLNC INFOTECH SOLUTIONS PVT LT';
-$s['SUSE139624'] = 'XLNet Pty Ltd';
-$s['SUSE176499'] = 'XLSGlobal BV';
-$s['SUSE178591'] = 'XML Corporation';
-$s['SUSE079456'] = 'XML Yes Pty Ltd';
-$s['SUSE186498'] = 'XNet Inc.';
-$s['SUSE168535'] = 'Xoriant Solutions Pvt. Ltd.';
-$s['SUSE223566'] = 'Xout Europe BV';
-$s['SUSE225106'] = 'Xpanse Pty Ltd';
-$s['SUSE167811'] = 'Xpectis';
-$s['SUSE102494'] = 'Xplore-Tech Services Pvt. Ltd';
-$s['SUSE222365'] = 'Xpoint technologies';
-$s['SUSE200778'] = 'XSI Data Solutions Pty Limited';
-$s['SUSE173810'] = 'XSoft信息技术有限公司';
-$s['SUSE228217'] = 'xtend computers pty ltd';
-$s['SUSE144369'] = 'Xtending IT Solutions';
-$s['SUSE141415'] = 'Xtenza Solutions Pvt Ltd.';
-$s['SUSE215237'] = 'XtraNet Technologies Pvt. Ltd.';
-$s['SUSE178093'] = 'Xtreme Technologies BV';
-$s['SUSE248227'] = 'Xtremum Solutions Pvt Ltd';
-$s['SUSE076348'] = 'XUFENG DEVELOPMENT LTD';
-$s['SUSE088414'] = 'Xylos Computer Center';
-$s['SUSE173702'] = 'Xyron Infotech Ltd';
-$s['SUSE239804'] = 'Y-403,Konarkpuram,Kondhwa Kh.';
-$s['SUSE136763'] = 'Y.S. Technocrats Pvt Ltd';
-$s['SUSE054402'] = 'Yacht ICT';
-$s['SUSE230640'] = 'yahoo';
-$s['SUSE256290'] = 'Yakshay Technologies';
-$s['SUSE172065'] = 'Yalamanchili Consultancy Services (P) Ltd';
-$s['SUSE252242'] = 'YalamanchiliSoftwareExportsLt';
-$s['SUSE158647'] = 'Yamaha Motor Solutions India Pvt. Ltd';
-$s['SUSE074775'] = 'Yambay Technologies Pty ltd';
-$s['SUSE062142'] = 'Yandle Consulting Pty Limited';
-$s['SUSE173610'] = 'Yantra Solutions Private Limited';
-$s['SUSE060024'] = 'Yarra Technologies Pty Ltd';
-$s['SUSE222743'] = 'Yarris Pty Ltd';
-$s['SUSE200834'] = 'Yash Computers';
-$s['SUSE121405'] = 'YASH Technologies';
-$s['SUSE174464'] = 'Yash Technologies';
-$s['SUSE223960'] = 'Yash Technologies Inc';
-$s['SUSE192471'] = 'Yash Technology';
-$s['SUSE248877'] = 'Yashas Technologies';
-$s['SUSE173102'] = 'YASU Technologies';
-$s['SUSE207822'] = 'Yeahpoint Pty Ltd';
-$s['SUSE058582'] = 'Yeek Creations';
-$s['SUSE181263'] = 'Yellowfin pty ltd';
-$s['SUSE144260'] = 'YES INFOSYS';
-$s['SUSE075400'] = 'Yesfly Internet & Technology Co.,Ltd.';
-$s['SUSE232325'] = 'Ygg-R BV';
-$s['SUSE196626'] = 'Yiburg Pty Ltd';
-$s['SUSE225066'] = 'Yield Services Pty Ltd';
-$s['SUSE075700'] = 'Yinneng Network Information and Technology Center of Jinan Developing District';
-$s['SUSE257444'] = 'Yogik technologies Pvt. Ltd.';
-$s['SUSE179850'] = 'Yoho InfoSys';
-$s['SUSE184164'] = 'Yongkang Dingcheng Indsutry & Trading co.,ltd';
-$s['SUSE247607'] = 'YOROS PTY LTD';
-$s['SUSE251369'] = 'You Get BV';
-$s['SUSE261412'] = 'Youdan Marketing';
-$s['SUSE093127'] = 'YoungWood Solutions';
-$s['SUSE170793'] = 'YPK Systems';
-$s['SUSE207018'] = 'Yukthi Systems Pvt. Ltd.';
-$s['SUSE183563'] = 'YunNan ICP';
-$s['SUSE183611'] = 'YunNan KeJie Information Technology';
-$s['SUSE188003'] = 'Yunnan Xinhongcheng Network&Information Systems Co.,Ltd';
-$s['SUSE183235'] = 'YunNan YaChuang Information Technology';
-$s['SUSE103695'] = 'YUSE';
-$s['SUSE178418'] = 'Yuse Nederland BV';
-$s['SUSE197790'] = 'Yuva Software';
-$s['SUSE247086'] = 'Z Tech Pvt Ltd';
-$s['SUSE255870'] = 'Zacware Pty Ltd';
-$s['SUSE151096'] = 'Zallcom Pty Limited';
-$s['SUSE143288'] = 'Zansys Technologies Pvt. Ltd.';
-$s['SUSE174780'] = 'ZapApp India Pvt Ltd.';
-$s['SUSE219938'] = 'Zapio Technologies';
-$s['SUSE250809'] = 'Zeal Infosoft Technologies Pvt';
-$s['SUSE092619'] = 'Zed-Axis Technologies Pvt Ltd';
-$s['SUSE220593'] = 'ZEEGRA TECHNOLOGIES PRIVATE LIMITED';
-$s['SUSE162163'] = 'Zelix Pty Ltd';
-$s['SUSE164403'] = 'Zelos Technologies (India) Pvt. Ltd.';
-$s['SUSE039324'] = 'ZeluS Support';
-$s['SUSE163322'] = 'Zelus Support';
-$s['SUSE150213'] = 'Zen Computers';
-$s['SUSE090652'] = 'Zen Exim Pvt. Ltd.';
-$s['SUSE222612'] = 'ZenExim Private Limited';
-$s['SUSE200981'] = 'ZenFocus India';
-$s['SUSE129717'] = 'Zenith Infotech Ltd.';
-$s['SUSE219118'] = 'Zenith Solutions Aust. Pty Ltd';
-$s['SUSE073805'] = 'Zenithsoft Beijing Company Limited';
-$s['SUSE228892'] = 'Zenopsys Technologies Pvt Ltd';
-$s['SUSE232774'] = 'Zensar Technologies Limited';
-$s['SUSE093156'] = 'ZenSOFT Services Pvt. Ltd.';
-$s['SUSE131379'] = 'Zephyr Info Solutions Pvt. Ltd.';
-$s['SUSE244395'] = 'Zero Limit Technology Group';
-$s['SUSE255401'] = 'Zero One Micro Systems';
-$s['SUSE139830'] = 'Zerone Consulting Private Limited';
-$s['SUSE238439'] = 'Zest Bittla IT Solutions Private Limited';
-$s['SUSE072759'] = 'Zhejing University Qware Technology Group Co.';
-$s['SUSE184162'] = 'Zheng Zhou Tian Cheng Information Measurement&Control Co.,Ltd';
-$s['SUSE075234'] = 'Zhengzhou Nichin Electron Co., Ltd.';
-$s['SUSE221163'] = 'ZhengzhoubochaoElectronicsCo., Ltd.';
-$s['SUSE215000'] = 'Zhongguo diyizhongxing';
-$s['SUSE074126'] = 'ZhongRuiFeng Software System Technology Co., Ltd';
-$s['SUSE164163'] = 'Zhongxing Telecom.Co.Ltd.';
-$s['SUSE076140'] = 'ZHOUSHAN ABLENET COMPUTER NETWORK SYSTEM INTERGRATION CO.,LTD.';
-$s['SUSE183835'] = 'ZhuHai isoftstone';
-$s['SUSE121763'] = 'Zhuhai Zantong';
-$s['SUSE183705'] = 'ZhuHaiShiKangBiDa';
-$s['SUSE247137'] = 'Zicom Electronic Security Systems Ltd.';
-$s['SUSE207341'] = 'Zig Websoftware B.V.';
-$s['SUSE251228'] = 'Zigma Solutions';
-$s['SUSE178430'] = 'Zimmer Pty Ltd';
-$s['SUSE237958'] = 'Zinnia Systems Pvt. Ltd.';
-$s['SUSE235482'] = 'Zion Computers Pvt Ltd';
-$s['SUSE184122'] = 'ZION SECURITY';
-$s['SUSE163792'] = 'ZLM Verzekeringen';
-$s['SUSE235796'] = 'ZOHO Corporation';
-$s['SUSE245115'] = 'Zones Solutions Pvt. Ltd.';
-$s['SUSE246074'] = 'Zoom Computer & Technologies';
-$s['SUSE059889'] = 'ZorgPlus Systemen B.V.';
-$s['SUSE200044'] = 'Zuyder Technologie';
-$s['SUSE240797'] = 'ZyberOps';
-$s['SUSE254624'] = 'Zycom Technologies';
-$s['SUSE083548'] = 'Zycus Infotech Pvt Ltd';
-$s['SUSE177393'] = 'ZyLAB Distribution BV';
-$s['SUSE240638'] = 'Zylog System Limited';
-$s['SUSE181183'] = 'Zylog Systems';
-$s['SUSE218709'] = 'Zylog Systems Ltd';
-$s['SUSE092716'] = 'Zyntax Consulting B.V.';
-$s['SUSE192306'] = 'zz do not use';
-$s['SUSE128326'] = '一华软件有限公司';
-$s['SUSE149517'] = '一铭科技';
-$s['SUSE191990'] = '丁丁软件工作室';
-$s['SUSE237387'] = '万国数据服务有限公司北京分公司';
-$s['SUSE121537'] = '万国软件开发(深圳)有限公司';
-$s['SUSE073189'] = '万达信息股份有限公司';
-$s['SUSE147557'] = '万通办公设备有限公司';
-$s['SUSE189465'] = '万通电子技术有限责任公司';
-$s['SUSE244705'] = '三一集团有限公司';
-$s['SUSE258216'] = '三亚中源电脑网络工程有限公司';
-$s['SUSE146833'] = '三亚亿源电脑网络工程有限公司';
-$s['SUSE205548'] = '三亚华泰扬天科技有限公司';
-$s['SUSE257871'] = '三亚安联科技有限公司';
-$s['SUSE085591'] = '三人行服务有限公司';
-$s['SUSE145676'] = '三叶网络科技有限公司(九江)';
-$s['SUSE142606'] = '三明市宏达科技贸易有限公司';
-$s['SUSE207783'] = '三明市技达电脑设备有限公司';
-$s['SUSE256650'] = '三明新蓝德科技有限公司';
-$s['SUSE257176'] = '三明聚隆网络工程有限公司';
-$s['SUSE219921'] = '三星数据系统(中国)有限公司';
-$s['SUSE171889'] = '三汇数字信息技术有限公司';
-$s['SUSE225035'] = '三江网信';
-$s['SUSE214221'] = '三环集团公司';
-$s['SUSE147548'] = '三联电子有限公司';
-$s['SUSE146860'] = '三门创想电脑';
-$s['SUSE204961'] = '三门峡创新电脑有限公司';
-$s['SUSE147527'] = '三门峡博建电脑有限公司';
-$s['SUSE144636'] = '三门峡宏志电脑技术服务有限公司';
-$s['SUSE145258'] = '三门峡市创新电脑有限公司';
-$s['SUSE144643'] = '三门峡市华云电脑有限公司';
-$s['SUSE204965'] = '三门峡市环宇高科计算机信息工程有限责任公司';
-$s['SUSE144633'] = '三门峡浪潮计算机有限公司';
-$s['SUSE147524'] = '三门峡腾讯电子科技有限公司';
-$s['SUSE147525'] = '三门峡金浪计算机有限公司';
-$s['SUSE147526'] = '三门峡飓风电脑数码广场';
-$s['SUSE146861'] = '三门超越电脑科技有限公司';
-$s['SUSE140759'] = '上汽通用五菱汽车股份有限公司';
-$s['SUSE183571'] = '上海IBM应用开发合作中心';
-$s['SUSE182977'] = '上海万同科技有限公司';
-$s['SUSE142891'] = '上海万户网络技术有限公司';
-$s['SUSE188512'] = '上海万昌计算机技术服务有限公司';
-$s['SUSE151849'] = '上海万申信息产业股份有限公司';
-$s['SUSE211670'] = '上海三国电子有限公司';
-$s['SUSE187695'] = '上海三零卫士信息安全有限公司';
-$s['SUSE186079'] = '上海三高计算机中心';
-$s['SUSE183240'] = '上海上大久亿信息技术有限公司';
-$s['SUSE158484'] = '上海上大海润信息系统有限公司';
-$s['SUSE247045'] = '上海世纪华迪信息技术有限公司';
-$s['SUSE137186'] = '上海世范软件技术有限公司';
-$s['SUSE108079'] = '上海世鼐信息科技有限公司';
-$s['SUSE185619'] = '上海业腾数码科技有限公司';
-$s['SUSE132749'] = '上海东云信息技术发展有限公司';
-$s['SUSE121820'] = '上海东吉数码科技有限公司';
-$s['SUSE086341'] = '上海东展科技技术有限公司';
-$s['SUSE121751'] = '上海东方通信产业贸易有限公司';
-$s['SUSE205868'] = '上海东方龙马软件技术有限公司';
-$s['SUSE096621'] = '上海东软时代物流软件有限公司';
-$s['SUSE217151'] = '上海中交海德交通科技股份有限公司';
-$s['SUSE150716'] = '上海中信信息发展股份有限公司';
-$s['SUSE184275'] = '上海中和软件有限公司';
-$s['SUSE136507'] = '上海中圣信息技术有限公司';
-$s['SUSE121650'] = '上海中安电子商务科技有限公司';
-$s['SUSE257981'] = '上海中思信息系统工程有限公司';
-$s['SUSE121410'] = '上海中教信息技术有限公司';
-$s['SUSE080605'] = '上海中星计算机有限公司';
-$s['RCNE001940'] = '上海中景信息技术有限公司';
-$s['SUSE119947'] = '上海中智科技应用发展公司';
-$s['SUSE243010'] = '上海中智计算机技术服务有限公司';
-$s['SUSE184591'] = '上海中标软件有限公司';
-$s['SUSE214959'] = '上海中电电子系统工程有限公司';
-$s['SUSE147949'] = '上海中臣信息产业有限公司';
-$s['SUSE249577'] = '上海中软计算机系统工程有限公司';
-$s['SUSE154643'] = '上海中远资讯科技有限公司';
-$s['SUSE200412'] = '上海中鑫信息技术有限公司';
-$s['SUSE215100'] = '上海中铁信息工程有限公司';
-$s['SUSE256921'] = '上海丰合数码科技有限公司';
-$s['SUSE238263'] = '上海丰莹电子科技有限公司';
-$s['SUSE221371'] = '上海临兰电子信息技术有限公司';
-$s['SUSE253972'] = '上海为创信息科技有限公司';
-$s['SUSE254572'] = '上海为科工贸有限公司';
-$s['SUSE139487'] = '上海久隆信息工程有限公司';
-$s['SUSE185929'] = '上海久隆电力科技有限公司';
-$s['SUSE241739'] = '上海乐华电子科技发展有限公司';
-$s['SUSE236605'] = '上海乐尔信息科技有限公司';
-$s['RCNE001893'] = '上海乐捷网络应用服务有限公司';
-$s['SUSE254627'] = '上海乐杰电子科技有限公司';
-$s['SUSE151894'] = '上海乙木信息技术有限公司';
-$s['SUSE253776'] = '上海九合信息科技有限公司';
-$s['SUSE216964'] = '上海乾乾信息科技有限公司';
-$s['SUSE154421'] = '上海乾初科技有限公司';
-$s['SUSE145518'] = '上海云石管理咨询有限公司';
-$s['SUSE255182'] = '上海互盈科技有限公司';
-$s['SUSE208962'] = '上海互联网软件有限公司';
-$s['SUSE246186'] = '上海五昊信息科技有限公司';
-$s['SUSE107775'] = '上海亚太蓝星计算机信息技术有限公司';
-$s['SUSE073255'] = '上海亚太计算机信息系统有限公司';
-$s['SUSE208470'] = '上海亚软信息技术有限公司';
-$s['SUSE214533'] = '上海交大南洋机电科技有限公司';
-$s['SUSE218371'] = '上海交大南洋海外有限公司';
-$s['SUSE156609'] = '上海交大南洋海外科技有限公司';
-$s['SUSE121418'] = '上海交大慧谷信息产业股份有限公司';
-$s['SUSE131312'] = '上海交大慧谷通用技术有限公司';
-$s['SUSE082710'] = '上海交大达通新技术开发应用有限公司';
-$s['SUSE207739'] = '上海交技发展股份有限公司';
-$s['SUSE173514'] = '上海交通大学';
-$s['SUSE178098'] = '上海交通大学生命质量与机械工程研究所';
-$s['SUSE168957'] = '上海亨途信息科技有限公司';
-$s['SUSE076138'] = '上海亮普计算机有限公司';
-$s['SUSE246672'] = '上海亿佳计算机系统有限公司';
-$s['SUSE121705'] = '上海亿发信息科技有限公司';
-$s['SUSE236953'] = '上海亿嘉信息科技有限公司';
-$s['SUSE077006'] = '上海亿威信息技术有限公司';
-$s['SUSE112018'] = '上海亿明科技有限公司';
-$s['SUSE150717'] = '上海亿盟信息技术开发有限公司';
-$s['SUSE130195'] = '上海亿舸软件系统有限公司';
-$s['SUSE074346'] = '上海亿软信息技术有限公司';
-$s['SUSE146285'] = '上海亿通国际股份有限公司';
-$s['SUSE131308'] = '上海亿通广达信息技术有限公司';
-$s['SUSE207517'] = '上海仁安数码科技有限公司';
-$s['SUSE225083'] = '上海仁维软件有限公司';
-$s['SUSE138918'] = '上海今朝科技有限公司';
-$s['SUSE140961'] = '上海仕欣科贸有限公司';
-$s['SUSE178924'] = '上海企顺信息系统有限公司';
-$s['SUSE081121'] = '上海伏德数码科技有限公司';
-$s['SUSE218619'] = '上海众信生物技术有限公司';
-$s['SUSE107822'] = '上海众恒信息产业股份有限公司';
-$s['SUSE257864'] = '上海众恒信息发展有限公司';
-$s['SUSE215668'] = '上海众翔科技发展有限公司';
-$s['SUSE140959'] = '上海众融信息技术有限公司';
-$s['SUSE171843'] = '上海众达信息产业发展有限公司';
-$s['SUSE240771'] = '上海优图信息技术有限公司';
-$s['SUSE107826'] = '上海优斯迈克国际贸易有限公司';
-$s['SUSE183249'] = '上海伦勤信息系统有限公司';
-$s['SUSE086362'] = '上海佳亿电脑科技有限公司';
-$s['SUSE221816'] = '上海佳依佳信息科技有限公司';
-$s['SUSE257887'] = '上海佳凯电脑科技有限公司';
-$s['SUSE140249'] = '上海佳溢电脑科技有限公司';
-$s['SUSE246671'] = '上海佳锐信息科技有限公司';
-$s['SUSE223831'] = '上海信业计算机网络工程有限公司';
-$s['SUSE172727'] = '上海信岩计算机通信技术有限公司';
-$s['SUSE171283'] = '上海信投互联网应用技术有限公司';
-$s['RCNE000271'] = '上海信投系统集成股份有限公司';
-$s['SUSE183781'] = '上海信杰科技有限公司';
-$s['SUSE247178'] = '上海信迪信息技术有限公司';
-$s['SUSE141837'] = '上海信迪计算机系统工程有限公司';
-$s['SUSE184878'] = '上海倍智特信息科技有限公司';
-$s['SUSE121747'] = '上海健生实业股份有限公司';
-$s['SUSE086411'] = '上海傲今信息科技有限公司';
-$s['SUSE121407'] = '上海傲冠广阔计算机系统技术有限公司';
-$s['SUSE191757'] = '上海儒商电脑科技有限公司';
-$s['SUSE192857'] = '上海元亿国际贸易有限公司';
-$s['SUSE248028'] = '上海先创机电自动化工程有限公司';
-$s['SUSE251558'] = '上海先知网络科技发展有限公司';
-$s['SUSE105271'] = '上海先致信息系统有限公司';
-$s['SUSE176949'] = '上海光辰信息技术有限公司';
-$s['SUSE137762'] = '上海全成通信技术有限公司';
-$s['SUSE103353'] = '上海兰忆网络科技有限公司';
-$s['SUSE074667'] = '上海共享数据网络有限公司';
-$s['SUSE248494'] = '上海兴候信息科技有限公司';
-$s['SUSE245160'] = '上海兴安得力软件有限公司';
-$s['SUSE191992'] = '上海兴安软件工程有限公司';
-$s['SUSE217078'] = '上海兴翼信息科技有限公司';
-$s['SUSE244057'] = '上海冀盛计算机科技有限公司';
-$s['SUSE122264'] = '上海冠秦信息系统有限公司';
-$s['SUSE169507'] = '上海凌柯计算机系统有限公司';
-$s['SUSE206256'] = '上海凯创科技信息技术有限公司';
-$s['SUSE154176'] = '上海凯安弱电系统工程有限公司';
-$s['SUSE255221'] = '上海凯樱';
-$s['SUSE228737'] = '上海凯永信息技术有限公司';
-$s['SUSE206261'] = '上海凯程信息技术有限公司';
-$s['SUSE232598'] = '上海凯纬斯信息技术有限公司';
-$s['SUSE206238'] = '上海凯道电子科技有限公司';
-$s['SUSE251245'] = '上海凯骋信息技术有限公司';
-$s['SUSE238616'] = '上海创为信息科技有限公司';
-$s['SUSE233208'] = '上海创久计算机科技有限公司';
-$s['SUSE090180'] = '上海创景计算机系统有限公司';
-$s['SUSE172708'] = '上海利�系统集成有限公司';
-$s['SUSE086333'] = '上海利宝科技有限公司';
-$s['SUSE092219'] = '上海利蓝信息技术有限公司';
-$s['SUSE221801'] = '上海利道软件技术有限公司';
-$s['SUSE190503'] = '上海利银信息科技有限公司';
-$s['SUSE107777'] = '上海利银电子科技有限公司';
-$s['SUSE184627'] = '上海利驰软件有限公司';
-$s['SUSE226187'] = '上海前后计算机科技有限公司';
-$s['SUSE177465'] = '上海前瞻信息技术有限公司';
-$s['SUSE208823'] = '上海力基软件有限公司';
-$s['SUSE085688'] = '上海力铭科技有限公司';
-$s['SUSE222558'] = '上海功夫堂信息科技发展有限公司';
-$s['SUSE184875'] = '上海加士德电脑有限公司';
-$s['SUSE188565'] = '上海加迪信息技术有限公司';
-$s['SUSE250126'] = '上海动量软件技术有限公司';
-$s['SUSE186918'] = '上海北方网络科技有限公司';
-$s['SUSE080379'] = '上海北骥电子科技发展有限公司';
-$s['SUSE205570'] = '上海匡维信息技术有限公司';
-$s['SUSE073298'] = '上海医药网络有限公司';
-$s['SUSE209593'] = '上海华东电脑存储网络系统有限公司';
-$s['RCNE001936'] = '上海华东电脑股份有限公司';
-$s['SUSE196917'] = '上海华冠电子设备有限责任公司';
-$s['SUSE186040'] = '上海华勤通讯技术有限公司';
-$s['SUSE195569'] = '上海华博泰富网络技术有限公司';
-$s['SUSE111663'] = '上海华博系统工程股份有限公司';
-$s['SUSE121472'] = '上海华威信息系统有限公司';
-$s['SUSE209684'] = '上海华宇电子工程有限公司';
-$s['SUSE193345'] = '上海华微科技有限公司';
-$s['SUSE246423'] = '上海华志信息科技有限公司';
-$s['SUSE204267'] = '上海华浪计算机科技有限公司';
-$s['SUSE250602'] = '上海华涯实业有限公司';
-$s['SUSE081058'] = '上海华申智能卡应用系统有限公司';
-$s['SUSE261830'] = '上海华盖科技发展有限公司成都分公司';
-$s['SUSE249988'] = '上海华祥信息技术有限公司';
-$s['SUSE177484'] = '上海华立软件系统有限公司';
-$s['SUSE206254'] = '上海华群信息科技有限公司';
-$s['RCNE001420'] = '上海华腾软件系统有限公司';
-$s['SUSE210321'] = '上海华虹计通智能系统股份有限公司';
-$s['RCNE001931'] = '上海华讯网络系统有限公司';
-$s['SUSE221472'] = '上海华讯网络系统股份有限公司驻成都办事处';
-$s['SUSE077008'] = '上海华钟计算机软件开发有限公司';
-$s['SUSE143319'] = '上海华钰科技有限公司';
-$s['SUSE086334'] = '上海华铁弘兴计算机工程有限公司';
-$s['SUSE144741'] = '上海华铁弘康计算机工程有限公司';
-$s['SUSE243617'] = '上海华雷信息科技有限公司';
-$s['SUSE205985'] = '上海协同科技股份有限公司';
-$s['SUSE238666'] = '上海协成科技有限责任公司';
-$s['SUSE208906'] = '上海协达软件科技有限公司';
-$s['SUSE227920'] = '上海卓格计算机信息系统有限公司';
-$s['SUSE119345'] = '上海卓繁信息技术有限公司';
-$s['SUSE123255'] = '上海卓豪计算机科技有限公司';
-$s['SUSE234678'] = '上海南天电脑系统有限公司';
-$s['SUSE171891'] = '上海南广电子技术有限公司';
-$s['SUSE121825'] = '上海南洋软件系统集成有限公司';
-$s['SUSE206973'] = '上海博沁信息技术有限公司';
-$s['SUSE028744'] = '上海博科资讯股份有限公司';
-$s['SUSE209599'] = '上海博胜佳欣科技有限公司';
-$s['SUSE121469'] = '上海博胜佳益科技有限公司';
-$s['SUSE249912'] = '上海博辕信息技术服务有限公司';
-$s['SUSE208560'] = '上海友升启繁信息技术有限公司';
-$s['SUSE137411'] = '上海友特电脑有限公司';
-$s['SUSE217260'] = '上海友研计算机科技有限公司';
-$s['SUSE237381'] = '上海友胜计算机工程有限公司';
-$s['SUSE229500'] = '上海双洲信息科技发展有限公司';
-$s['SUSE216243'] = '上海双流电子技术有限公司';
-$s['SUSE216768'] = '上海司普计算机技术有限公司';
-$s['SUSE218499'] = '上海合优电子科技有限公司';
-$s['SUSE206835'] = '上海合瑞通讯技术有限公司';
-$s['SUSE236538'] = '上海合耀信息系统有限公司';
-$s['SUSE150645'] = '上海合联电子科技有限公司';
-$s['SUSE128805'] = '上海合胜计算机科技有限公司';
-$s['SUSE248504'] = '上海合腾电子科技有限公司';
-$s['SUSE213525'] = '上海吉海网络科技有限公司';
-$s['SUSE246775'] = '上海吉程信息技术有限公司';
-$s['SUSE158645'] = '上海吉联新软件有限公司';
-$s['SUSE190506'] = '上海同友信息科技有限公司';
-$s['SUSE219144'] = '上海同振信息技术有限公司';
-$s['SUSE073212'] = '上海同方信息系统有限公司';
-$s['SUSE215313'] = '上海同程信息技术有限公司';
-$s['SUSE165187'] = '上海启明软件有限公司';
-$s['SUSE250933'] = '上海吾通通信设备有限公司';
-$s['SUSE175661'] = '上海和勤软件技术有限公司';
-$s['SUSE073261'] = '上海和强软件有限公司';
-$s['SUSE220232'] = '上海和趣信息科技发展有限公司';
-$s['SUSE185099'] = '上海和达信息系统有限公司';
-$s['SUSE204434'] = '上海和雍贸易有限公司';
-$s['SUSE147771'] = '上海咨力信息系统有限公司';
-$s['SUSE221307'] = '上海品易信息科技有限公司';
-$s['SUSE169046'] = '上海响宇科技发展有限公司';
-$s['SUSE144938'] = '上海哲人科技有限公司';
-$s['SUSE136585'] = '上海商众科技有限公司';
-$s['SUSE231044'] = '上海商安科技发展股份有限公司';
-$s['SUSE086339'] = '上海商昊网络信息技术有限公司';
-$s['SUSE140977'] = '上海商耕软件技术有限公司';
-$s['SUSE182946'] = '上海喜诺信息科技有限公司';
-$s['SUSE195228'] = '上海嘉天信息技术有限公司';
-$s['SUSE183763'] = '上海嘉扬信息系统有限公司';
-$s['SUSE081312'] = '上海嘉贝信息技术有限公司';
-$s['SUSE249462'] = '上海四博信息技术有限公司';
-$s['SUSE183593'] = '上海因特奈信息有限公司';
-$s['SUSE259945'] = '上海因睿信息技术咨询有限公司';
-$s['SUSE226392'] = '上海国劢建筑安装工程有限公司';
-$s['SUSE222312'] = '上海国响信息技术有限公司';
-$s['SUSE187514'] = '上海国天信息科技有限公司';
-$s['SUSE172981'] = '上海国投';
-$s['SUSE142488'] = '上海国腾致瑞科技有限公司';
-$s['SUSE217950'] = '上海国臣信息技术有限公司';
-$s['SUSE146264'] = '上海国通供应链管理有限公司';
-$s['SUSE173926'] = '上海圣诺软件技术有限公司';
-$s['SUSE179731'] = '上海坦思计算机系统有限公司';
-$s['SUSE254262'] = '上海坦瑞信息技术有限公司';
-$s['SUSE121714'] = '上海复华电脑有限公司';
-$s['SUSE184841'] = '上海复华知识库软件有限公司';
-$s['SUSE074326'] = '上海复旦光华信息科技股份有限公司';
-$s['SUSE195329'] = '上海复深蓝信息技术有限公司';
-$s['SUSE140967'] = '上海复舜信息科技有限公司';
-$s['SUSE173129'] = '上海复蓝计算机有限公司';
-$s['SUSE080597'] = '上海夏尔软件有限公司';
-$s['SUSE128424'] = '上海夏朗信息技术有限公司';
-$s['SUSE183562'] = '上海外高桥英得网路信息有限公司';
-$s['SUSE175982'] = '上海大众汽车有限公司';
-$s['SUSE141508'] = '上海大恒科技有限公司';
-$s['SUSE239187'] = '上海大漠电子科技有限公司';
-$s['SUSE121710'] = '上海天光电子有公司';
-$s['SUSE220881'] = '上海天域时捷信息系统有限公司';
-$s['SUSE104737'] = '上海天奇网络信息技术有限公司';
-$s['SUSE086329'] = '上海天好企业发展有限公司南京分公司';
-$s['SUSE206677'] = '上海天好电子商务有限公司';
-$s['SUSE081123'] = '上海天宸信息科技开发有限公司';
-$s['SUSE209820'] = '上海天昇软件有限公司';
-$s['SUSE236141'] = '上海天曼电脑有限公司';
-$s['SUSE235116'] = '上海天正信息科技有限公司';
-$s['SUSE247154'] = '上海天润嘉业实业有限公司';
-$s['SUSE260710'] = '上海天玑信息技术服务有限公司';
-$s['SUSE136418'] = '上海天玑科技股份有限公司';
-$s['SUSE237569'] = '上海天缘迪柯信息技术有限公司';
-$s['SUSE208572'] = '上海天翎电脑有限公司';
-$s['SUSE143461'] = '上海奇骏信息科技有限公司';
-$s['SUSE090182'] = '上海奥诺信息技术有限公司';
-$s['SUSE233433'] = '上海好服软件科技有限公司';
-$s['SUSE177671'] = '上海好购信息技术有限公司';
-$s['SUSE250325'] = '上海好赢信息科技有限公司';
-$s['SUSE248642'] = '上海威储实业有限公司';
-$s['SUSE217153'] = '上海威士顿信息技术有限公司';
-$s['SUSE208232'] = '上海威孚瑞贸易有限公司';
-$s['SUSE249054'] = '上海威爵信息技术有限公司';
-$s['SUSE104991'] = '上海子安计算机科技有限公司';
-$s['SUSE141848'] = '上海子烨电子科技有限公司';
-$s['SUSE242308'] = '上海子牙信息科技有限公司';
-$s['SUSE186509'] = '上海季泽信息科技有限公司';
-$s['SUSE231585'] = '上海宇互数码科技有限公司';
-$s['SUSE073369'] = '上海宇兴泓泰科技发展有限公司';
-$s['SUSE097634'] = '上海安卡信息技术有限公司';
-$s['SUSE246426'] = '上海安好数码科技有限公司';
-$s['SUSE086340'] = '上海安思网络科技有限公司';
-$s['SUSE242896'] = '上海安托信息技术有限公司';
-$s['SUSE121490'] = '上海安捷斯计算机有限公司';
-$s['SUSE171666'] = '上海安易会计软件有限公司';
-$s['SUSE077011'] = '上海安硕信息技术有限公司';
-$s['SUSE179767'] = '上海安鹏网络科技有限公司';
-$s['SUSE107776'] = '上海宙信系统集成有限公司';
-$s['SUSE209944'] = '上海宜衡信息技术有限公司';
-$s['SUSE073299'] = '上海宝信软件股份有限公司';
-$s['SUSE087156'] = '上海宝利行文化发展有限公司';
-$s['SUSE246119'] = '上海宝尊实业有限公司';
-$s['SUSE212006'] = '上海宝景信息技术发展有限公司';
-$s['SUSE225524'] = '上海宝资软件有限公司';
-$s['SUSE152424'] = '上海宝龙通信息技术有限公司';
-$s['SUSE201602'] = '上海寅轩电脑科技有限公司';
-$s['SUSE193715'] = '上海富勒信息科技有限公司';
-$s['SUSE085170'] = '上海富比信息科技有限公司';
-$s['SUSE183893'] = '上海寰联科技';
-$s['SUSE122701'] = '上海寰联科技有限公司';
-$s['SUSE220544'] = '上海尚哲信息技术有限公司';
-$s['SUSE174625'] = '上海尚网信息技术有限公司';
-$s['SUSE185879'] = '上海尼欧信息科技发展有限公司';
-$s['SUSE149602'] = '上海屹通信息科技发展有限公司';
-$s['SUSE256880'] = '上海岩申信息科技有限公司';
-$s['SUSE121012'] = '上海岱嘉医学信息系统有限公司';
-$s['SUSE192455'] = '上海工易软件有限公司';
-$s['SUSE183190'] = '上海工理电子有限公司';
-$s['SUSE177506'] = '上海市傲普科技有限公司';
-$s['SUSE176982'] = '上海市利蓝信息技术有限公司';
-$s['SUSE173329'] = '上海市幸运鸟软件科技有限公司';
-$s['SUSE179557'] = '上海市杉鹤咨询有限公司';
-$s['SUSE249482'] = '上海帕科信息科技有限公司';
-$s['SUSE098775'] = '上海常臣计算机科技有限公司';
-$s['SUSE121816'] = '上海年阳电子科技发展有限公司';
-$s['SUSE256068'] = '上海广巨网络科技有限公司';
-$s['SUSE075876'] = '上海广平信息系统工程有限公司';
-$s['SUSE140958'] = '上海广度信息技术有限公司';
-$s['SUSE075270'] = '上海广电通讯网络有限公司';
-$s['SUSE131944'] = '上海广腾信息科技有限公司';
-$s['SUSE216394'] = '上海庚商计算机科技有限公司';
-$s['SUSE246958'] = '上海度特信息科技有限公司';
-$s['SUSE223404'] = '上海康培科技有限公司';
-$s['SUSE188919'] = '上海康时信息系统有限公司';
-$s['SUSE168101'] = '上海康本科技咨询有限公司';
-$s['SUSE217949'] = '上海康汇通信信息网络有限公司';
-$s['SUSE171846'] = '上海康阔光通信设备有限公司';
-$s['SUSE121767'] = '上海延华高科技有限公司';
-$s['SUSE247544'] = '上海开先软件有限公司';
-$s['SUSE219930'] = '上海开放科技发展有限公司';
-$s['SUSE213595'] = '上海弘元计算机科技有限公司';
-$s['SUSE234063'] = '上海微创容盟软件有限公司';
-$s['SUSE230321'] = '上海微创软件有限公司';
-$s['SUSE255092'] = '上海德慧信息技术有限公司';
-$s['SUSE184691'] = '上海德益行企业发展有限公司';
-$s['SUSE246846'] = '上海心瞻信息咨询服务有限公司';
-$s['SUSE204149'] = '上海必特数码科技有限公司';
-$s['SUSE216951'] = '上海志鑫信息技术有限公司';
-$s['SUSE232990'] = '上海思奕创信息科技有限公司';
-$s['SUSE205803'] = '上海思广电子有限公司';
-$s['SUSE078417'] = '上海思明信息科技有限公司';
-$s['SUSE121749'] = '上海思眭信息技术有限公司';
-$s['SUSE104783'] = '上海思群科技发展有限公司';
-$s['SUSE248489'] = '上海思闽电子信息科技有限公司';
-$s['SUSE209213'] = '上海怡捷信计算机系统有限公司';
-$s['SUSE213700'] = '上海恒咏信息科技发展有限公司';
-$s['SUSE246118'] = '上海恒商通电子有限公司';
-$s['SUSE251045'] = '上海恒铁盈信息技术有限公司';
-$s['SUSE217850'] = '上海恒锐智能工程有限公司';
-$s['SUSE237903'] = '上海恒韬软件有限公司';
-$s['SUSE255099'] = '上海恩杨电脑科技有限公司';
-$s['SUSE249318'] = '上海悠康电子有限公司';
-$s['SUSE146522'] = '上海悦春科技信息服务有限公司';
-$s['SUSE121773'] = '上海悦盈信息技术有限公司';
-$s['SUSE248636'] = '上海惠生通讯技术有限公司';
-$s['SUSE167649'] = '上海意贝斯特信息技术有限公司';
-$s['SUSE072928'] = '上海慧广科技发展有限公司';
-$s['SUSE157241'] = '上海慧渠网络科技有限公司';
-$s['SUSE142177'] = '上海慧索计算机科技有限公司';
-$s['SUSE252231'] = '上海慧聪邓白氏市场信息咨询有限公司';
-$s['SUSE217854'] = '上海慧蕊电子科技有限公司';
-$s['SUSE183138'] = '上海成凝实业有限公司';
-$s['SUSE253882'] = '上海成思信息科技有限公司';
-$s['SUSE104719'] = '上海才扬信息技术有限公司';
-$s['RCNE001913'] = '上海扬贺贸易发展有限公司';
-$s['SUSE227417'] = '上海拓友网络科技有限公司';
-$s['RCNE001932'] = '上海拓天电子有限公司';
-$s['SUSE247640'] = '上海拜服信息科技有限公司';
-$s['SUSE119953'] = '上海拜服实业发展有限公司';
-$s['SUSE172965'] = '上海捷一软件技术有限公司';
-$s['SUSE224964'] = '上海捷盟信息科技有限公司';
-$s['SUSE088064'] = '上海摩岚星信息技术有限公司';
-$s['SUSE182274'] = '上海摩非信息软件有限公司';
-$s['SUSE159204'] = '上海敦新计算机技术开发有限公司';
-$s['SUSE260883'] = '上海敦沪信息科技有限公司';
-$s['SUSE078597'] = '上海数缘科技有限公司';
-$s['SUSE209980'] = '上海数聚信息技术有限公司';
-$s['SUSE179594'] = '上海数讯信息技术有限公司';
-$s['SUSE088715'] = '上海文华专修学院';
-$s['SUSE074669'] = '上海文广科技发展有限公司';
-$s['SUSE141548'] = '上海斗文计算机系统集成工程有限公司';
-$s['SUSE247375'] = '上海斯轩信息科技有限公司';
-$s['SUSE169047'] = '上海新宇计算机系统公司';
-$s['RCNE000101'] = '上海新晨信息集成系统有限公司';
-$s['SUSE183113'] = '上海新浩艺软件有限公司';
-$s['SUSE234937'] = '上海新炬网络技术有限公司';
-$s['SUSE235251'] = '上海新炬网络技术有限公司嘉兴分公司';
-$s['SUSE225033'] = '上海新炬高新技术服务有限公司';
-$s['SUSE235250'] = '上海新炬高新技术服务有限公司嘉兴分公司';
-$s['SUSE176558'] = '上海新爱信息系统有限公司';
-$s['SUSE183770'] = '上海新球通信有限公司';
-$s['SUSE260154'] = '上海新网程信息技术有限公司';
-$s['SUSE173655'] = '上海新致软件有限公司';
-$s['SUSE149974'] = '上海新逸科技有限公司';
-$s['SUSE199681'] = '上海方平信息技术有限公司';
-$s['SUSE186294'] = '上海方程软件科技有限公司';
-$s['SUSE183476'] = '上海方舟信息技术有限公司';
-$s['SUSE238010'] = '上海方通计算机科技发展有限公司';
-$s['SUSE230477'] = '上海旋风软件开发有限公司';
-$s['SUSE246732'] = '上海日出信息技术有限公司';
-$s['SUSE197309'] = '上海日出科技有限公司';
-$s['SUSE136590'] = '上海日射科技有限公司';
-$s['SUSE121753'] = '上海日联计算机技术发展有限公司';
-$s['SUSE144977'] = '上海时光科技发展有限公司';
-$s['SUSE110138'] = '上海时运高新技术股份有限公司';
-$s['SUSE200832'] = '上海昂川信息科技发展有限公司';
-$s['SUSE226337'] = '上海昂森网络科技有限公司';
-$s['SUSE255292'] = '上海昆迪数据服务有限公司';
-$s['SUSE221299'] = '上海昊声电子信息技术有限公司';
-$s['SUSE242224'] = '上海明杨计算机科技有限公司';
-$s['SUSE228953'] = '上海明羽实业有限公司';
-$s['SUSE087006'] = '上海易令科技开发有限公司';
-$s['SUSE250366'] = '上海易可思信息技术有限公司';
-$s['SUSE252613'] = '上海易可思复高数码科技有限公司';
-$s['SUSE156243'] = '上海易宝软件有限公司南京分公司';
-$s['SUSE185091'] = '上海易强信息技术有限公司';
-$s['SUSE147770'] = '上海易群電子科技有限公司';
-$s['SUSE180523'] = '上海星来瑞软件科技有限公司';
-$s['SUSE249903'] = '上海星润电子科技发展有限公司';
-$s['SUSE247150'] = '上海显晋自动化工程有限公司';
-$s['SUSE248132'] = '上海晓轩信息技术有限公司';
-$s['SUSE086335'] = '上海晚昌计算机技术服务有限公司';
-$s['SUSE222657'] = '上海普华科技发展有限公司';
-$s['SUSE249515'] = '上海普天网络技术有限公司';
-$s['SUSE128581'] = '上海普天邮通科技股份有限公司';
-$s['SUSE092202'] = '上海普好企业发展有限公司';
-$s['SUSE248119'] = '上海普禾信息技术有限公司';
-$s['SUSE141828'] = '上海智寰信息技术有限公司';
-$s['SUSE088679'] = '上海智广网络信息技术有限公司';
-$s['SUSE121765'] = '上海智禾科技有限公司';
-$s['SUSE186223'] = '上海智翔信息科技发展有限公司';
-$s['SUSE141077'] = '上海智联腾华软件技术有限公司';
-$s['SUSE185728'] = '上海智证门户网络系统有限公司';
-$s['SUSE073248'] = '上海智诚信息技术咨询有限公司';
-$s['SUSE143325'] = '上海智韵计算机网络科技有限公司';
-$s['SUSE254214'] = '上海月呈信息技术有限公司';
-$s['SUSE261337'] = '上海有道电子有限责任公司';
-$s['SUSE259730'] = '上海朗田科技发展有限公司';
-$s['SUSE229029'] = '上海朝冶机电成套设备有限公司';
-$s['SUSE226005'] = '上海朝盟计算机技术有限公司';
-$s['SUSE200983'] = '上海期货信息技术有限公司';
-$s['SUSE083517'] = '上海杉德金卡信息系统科技有限公司';
-$s['SUSE209544'] = '上海来伊份股份有限公司';
-$s['SUSE183487'] = '上海杰峰计算机科技有限公司';
-$s['SUSE213248'] = '上海杰狮信息技术有限公司';
-$s['SUSE182242'] = '上海杰诺管理软件有限公司';
-$s['SUSE205562'] = '上海柏安信息技术有限公司';
-$s['SUSE072732'] = '上海柯华软件开发有限公司';
-$s['SUSE086342'] = '上海柯莱特信息系统有限公司';
-$s['SUSE121461'] = '上海格尔软件股份有限公司';
-$s['SUSE078609'] = '上海桉洋通讯科技有限公司';
-$s['SUSE087005'] = '上海桑移投资管理咨询公司';
-$s['SUSE080162'] = '上海梦讯网络信息服务有限公司';
-$s['SUSE186046'] = '上海棕榈电脑系统有限公司';
-$s['SUSE144874'] = '上海楚星信息技术有限公司';
-$s['SUSE242029'] = '上海横智市场营销策划有限公司';
-$s['SUSE254927'] = '上海欣影电力科技发展有限公司';
-$s['SUSE121707'] = '上海欣方智能系统有限公司';
-$s['SUSE137230'] = '上海欣能信息科技发展有限公司';
-$s['SUSE222816'] = '上海欧俊';
-$s['SUSE212042'] = '上海欧显信息科技有限公司';
-$s['SUSE244146'] = '上海欧镀信息科技有限公司';
-$s['SUSE151346'] = '上海正古信息科技有限公司';
-$s['SUSE218124'] = '上海正电科技发展有限公司';
-$s['SUSE249932'] = '上海毅轩电子有限公司';
-$s['SUSE200703'] = '上海比佛信息科技';
-$s['SUSE111664'] = '上海民航华东凯亚系统集成有限公司';
-$s['SUSE072403'] = '上海永信计算机服务有限公司';
-$s['SUSE198239'] = '上海永峻信息科技有限公司';
-$s['SUSE103319'] = '上海永诺信息技术有限公司';
-$s['SUSE225281'] = '上海汇和信息技术有限公司';
-$s['SUSE229033'] = '上海汇策电子系统集成有限公司';
-$s['SUSE253205'] = '上海汇迈电子科技有限公司';
-$s['SUSE183719'] = '上海汇驿软件有限公司';
-$s['SUSE257012'] = '上海汉邦京泰数码技术有限公司';
-$s['SUSE261780'] = '上海江影信息科技有限公司';
-$s['SUSE122306'] = '上海江达科技发展有限公司';
-$s['SUSE107669'] = '上海汽车信息产业投资有限公司';
-$s['SUSE179429'] = '上海沃克软件有限公司';
-$s['SUSE254398'] = '上海沐高网络科技有限公司';
-$s['SUSE136588'] = '上海沪正软件工程有限公司';
-$s['SUSE120275'] = '上海沪泽电脑有限公司';
-$s['SUSE248510'] = '上海沪翱信息技术有限公司';
-$s['SUSE247110'] = '上海沪菱信息技术有限公司';
-$s['SUSE254906'] = '上海泛微网络科技有限公司';
-$s['SUSE259515'] = '上海泛思信息科技有限公司';
-$s['SUSE200443'] = '上海泛翔网络科技有限公司';
-$s['SUSE258265'] = '上海波宝仟赫科技有限公司';
-$s['SUSE231053'] = '上海泰孚企业管理咨询有限公司';
-$s['SUSE225690'] = '上海派拉软件有限公司';
-$s['SUSE196540'] = '上海浅兰电子有限公司';
-$s['SUSE074336'] = '上海济丰寰亚信息技术有限公司';
-$s['SUSE183189'] = '上海浦东软件园信息技术股份有限公司';
-$s['SUSE207995'] = '上海浦东软件园股份有限公司';
-$s['SUSE205867'] = '上海浦宜亚软件有限公司';
-$s['SUSE213082'] = '上海浩宙数码科技有限公司';
-$s['SUSE214438'] = '上海浩德科技股份有限公司';
-$s['SUSE235953'] = '上海浩德科技股份有限公司南京分公司';
-$s['SUSE121821'] = '上海浩方科技有限公司';
-$s['SUSE081135'] = '上海浩艺软件技术有限公司';
-$s['SUSE183349'] = '上海浪潮通软科技有限公司';
-$s['SUSE205402'] = '上海浪腾电子科技有限公司';
-$s['SUSE121323'] = '上海浪腾科技有限公司';
-$s['SUSE185665'] = '上海海事大学';
-$s['SUSE152422'] = '上海海勃物流软件有限公司';
-$s['SUSE250172'] = '上海海景信息技术有限公司';
-$s['SUSE223872'] = '上海海正计算机系统有限公司';
-$s['SUSE121415'] = '上海海隆软件股份有限公司';
-$s['SUSE172529'] = '上海海鼎信息工程股份有限公司';
-$s['SUSE237652'] = '上海润普网络信息技术有限责任公司';
-$s['SUSE213381'] = '上海润物信息科技有限公司';
-$s['SUSE098916'] = '上海润百数码科技发展有限公司';
-$s['SUSE250835'] = '上海淳远信息科技有限公司';
-$s['SUSE208390'] = '上海清华同仁企业发展有限公司';
-$s['SUSE192385'] = '上海源天软件有限公司';
-$s['SUSE171849'] = '上海源笙软件科技有限公司';
-$s['SUSE232434'] = '上海源逸计算机网络信息有限公司';
-$s['SUSE224650'] = '上海澳克伦德信息科技有限公司';
-$s['SUSE148217'] = '上海瀚凯网络科技有限公司';
-$s['SUSE121531'] = '上海瀚达系统集成有限公司';
-$s['SUSE181888'] = '上海瀛宇通信有限公司';
-$s['SUSE126298'] = '上海灵卓计算机信息科技有限公司';
-$s['SUSE158480'] = '上海灵澈电子科技有限公司';
-$s['SUSE260476'] = '上海灵腾网络科技有限公司';
-$s['SUSE080860'] = '上海灼华网络技术有限公司';
-$s['SUSE194232'] = '上海炎鼎软件有限公司';
-$s['SUSE154404'] = '上海点惠信息系统有限公司';
-$s['SUSE213464'] = '上海熙和信息科技有限公司';
-$s['SUSE221868'] = '上海熙菱信息技术有限公司';
-$s['SUSE086850'] = '上海熠德数码科技有限公司';
-$s['SUSE122494'] = '上海燕梭信息科技有限公司';
-$s['SUSE237304'] = '上海爱递网络科技有限公司';
-$s['SUSE121416'] = '上海玄唐信息技术有限公司';
-$s['SUSE256645'] = '上海玖数软件有限公司';
-$s['SUSE217730'] = '上海玖道信息科技有限公司';
-$s['SUSE156673'] = '上海玖道投资管理有限公司';
-$s['SUSE180177'] = '上海理光传真机有限公司';
-$s['SUSE211741'] = '上海理想信息产业（集团）有限公司';
-$s['SUSE220664'] = '上海琦朝科技公司';
-$s['SUSE145695'] = '上海琼佩贸易发展有限公司';
-$s['SUSE247177'] = '上海瑞宝融鑫计算机系统有限公司';
-$s['SUSE121807'] = '上海瑞弘科贸有限公司';
-$s['SUSE198264'] = '上海瑞星软件有限公司';
-$s['SUSE226393'] = '上海瑞格软件';
-$s['SUSE220662'] = '上海瑞致计算机科技有限公司';
-$s['SUSE249981'] = '上海瑭瑞软件有限公司';
-$s['SUSE224535'] = '上海璞纬信息技术有限公司';
-$s['SUSE243439'] = '上海用威计算机软件有限公司';
-$s['SUSE232996'] = '上海申润电子科技发展有限公司';
-$s['SUSE142603'] = '上海申澜信息技术有限公司';
-$s['SUSE218857'] = '上海申瑞电力科技股份有限公司';
-$s['SUSE155343'] = '上海申石软件技术有限公司';
-$s['SUSE213703'] = '上海申腾信息技术有限公司';
-$s['SUSE184834'] = '上海申通网络技术有限公司';
-$s['SUSE152493'] = '上海申铁信息工程有限公司';
-$s['SUSE174753'] = '上海电信数据业务营销中心';
-$s['SUSE107678'] = '上海电信科技发展有限公司网络集成分公司';
-$s['SUSE231538'] = '上海电力学院';
-$s['SUSE207566'] = '上海电器科学研究所（集团）有限公司';
-$s['SUSE233661'] = '上海电科智能系统股份有限公司';
-$s['SUSE098345'] = '上海电达信息技术有限公司';
-$s['SUSE121473'] = '上海略影信息技术有限公司';
-$s['SUSE148219'] = '上海登杰信息技术有限公司';
-$s['SUSE225043'] = '上海登飞计算机科技有限公司';
-$s['SUSE111673'] = '上海百桥信息科技有限公司';
-$s['SUSE244864'] = '上海百胜星联科技有限公司';
-$s['SUSE260087'] = '上海百胜软件有限公司深圳分公司';
-$s['SUSE212649'] = '上海百誉科技有限公司';
-$s['SUSE227828'] = '上海百高计算机科技有限公司';
-$s['SUSE241872'] = '上海皇世投资管理有限公司';
-$s['SUSE188645'] = '上海皓矾网络科技有限公司';
-$s['SUSE229295'] = '上海皓蓝电子科技发展有限公司';
-$s['SUSE086465'] = '上海盈冠计算机科技有限公司';
-$s['SUSE187696'] = '上海盈都数码科技有限公司';
-$s['SUSE188039'] = '上海益彰信息技术服务有限公司';
-$s['SUSE193118'] = '上海益成数码科技有限公司';
-$s['SUSE247234'] = '上海盛举信息科技有限公司';
-$s['SUSE121319'] = '上海盛源众望信息科技技术有限公司';
-$s['SUSE220234'] = '上海盟森电子科技有限公司';
-$s['SUSE225644'] = '上海盟科信息科技有限公司';
-$s['SUSE072738'] = '上海真信计算机软件有限公司';
-$s['SUSE142534'] = '上海真智贸易有限公司';
-$s['SUSE261491'] = '上海睦盛计算机科技有限公司';
-$s['SUSE238123'] = '上海睿志软件有限公司';
-$s['SUSE260877'] = '上海睿理信息科技有限公司';
-$s['SUSE247109'] = '上海矩方信息技术有限公司';
-$s['SUSE182736'] = '上海石化众达信息产业发展有限公司';
-$s['SUSE189047'] = '上海码德';
-$s['SUSE183768'] = '上海砾阳软件有限公司';
-$s['SUSE127555'] = '上海硅网数码科技有限公司';
-$s['SUSE083222'] = '上海神州数码有限公司';
-$s['SUSE177040'] = '上海神州文华信息科技有限公司';
-$s['SUSE242894'] = '上海神舟航天软件技术有限公司';
-$s['SUSE103970'] = '上海福华网络技术有限公司';
-$s['SUSE218962'] = '上海福朗信息技术有限公司';
-$s['SUSE231913'] = '上海科欣电子科技有限公司';
-$s['SUSE213183'] = '上海科海豪斯信息技术有限公司';
-$s['SUSE128580'] = '上海科海豪斯数码科技有限公司';
-$s['SUSE082471'] = '上海科络思信息科技有限公司';
-$s['SUSE121718'] = '上海科视数码频道制作有限公司';
-$s['SUSE171847'] = '上海移通网路有限公司';
-$s['SUSE173029'] = '上海竞仁信息技术有限公司';
-$s['SUSE207588'] = '上海竞天科技股份有限公司';
-$s['SUSE205049'] = '上海竞航数码科技有限责任公司';
-$s['SUSE254001'] = '上海竣智信息技术有限公司';
-$s['SUSE204930'] = '上海米中信息科技有限公司';
-$s['SUSE157904'] = '上海精优信息科技有限公司';
-$s['SUSE185065'] = '上海索源信息系统有限公司';
-$s['SUSE107767'] = '上海索通通信设备有限公司';
-$s['SUSE151966'] = '上海紫健计算机信息系统有限公司';
-$s['SUSE206500'] = '上海紫金信息技术有限公司';
-$s['SUSE141663'] = '上海繁昌信息技术有限公司';
-$s['SUSE236437'] = '上海经意实业有限公司';
-$s['SUSE217009'] = '上海经达实业发展有限公司';
-$s['SUSE217860'] = '上海绘智电子科技有限公司';
-$s['SUSE104086'] = '上海络安信息技术有限公司';
-$s['SUSE248322'] = '上海统讯电子有限公司';
-$s['SUSE144134'] = '上海统讯科技发展有限公司';
-$s['SUSE121704'] = '上海维优电子工程有限公司';
-$s['SUSE259290'] = '上海维度信息技术有限公司';
-$s['SUSE073216'] = '上海维泰软件有限公司';
-$s['SUSE251490'] = '上海维致信息技术有限公司';
-$s['SUSE229941'] = '上海维豪信息安全技术有限公司';
-$s['SUSE250372'] = '上海网博网络科技有限公司';
-$s['SUSE075276'] = '上海网盈计算机技术有限公司';
-$s['SUSE121357'] = '上海网达信息技术有限公司';
-$s['SUSE239964'] = '上海罗宸信息技术有限公司';
-$s['SUSE232095'] = '上海罗泰信息技术有限公司';
-$s['SUSE081119'] = '上海罗盘信息科技公司';
-$s['SUSE215749'] = '上海罨画溪贸易商行';
-$s['SUSE086331'] = '上海美佳达计算机工程有限责任公司';
-$s['SUSE136954'] = '上海美华系统有限公司';
-$s['SUSE233562'] = '上海群环科技有限公司';
-$s['SUSE141239'] = '上海群立电脑科技有限公司';
-$s['SUSE233435'] = '上海群雁信息技术有限公司';
-$s['SUSE248724'] = '上海翰成怡嘉计算机科技发展有限公司';
-$s['SUSE248361'] = '上海翰明计算机科技有限公司';
-$s['SUSE251559'] = '上海耀荣电子系统集成有限公司';
-$s['SUSE241866'] = '上海耀趋信息技术有限公司';
-$s['SUSE237260'] = '上海联众网络信息有限公司';
-$s['SUSE246769'] = '上海联承数码科技有限公司';
-$s['SUSE220876'] = '上海联盈数码技术有限公司';
-$s['SUSE074337'] = '上海联融软件有限公司';
-$s['SUSE249571'] = '上海联阳信息科技有限公司';
-$s['SUSE216776'] = '上海联鼎保泰信息技术有限公司';
-$s['SUSE251304'] = '上海胜料信息科技有限公司';
-$s['SUSE205815'] = '上海胜蓝信息技术服务有限公司';
-$s['SUSE157812'] = '上海能新网络系统有限公司';
-$s['SUSE211952'] = '上海腾程医学科技信息有限公司';
-$s['SUSE206242'] = '上海腾达科技有限公司';
-$s['SUSE140975'] = '上海致信信息科技有限公司';
-$s['SUSE228947'] = '上海致同信息技术有限公司';
-$s['SUSE122293'] = '上海致达信息产业股份有限公司';
-$s['SUSE214165'] = '上海致达信息产业股份有限公司北京分公司';
-$s['SUSE256920'] = '上海致途信息科技有限公司';
-$s['SUSE183702'] = '上海致道信息科技有限公司';
-$s['SUSE184713'] = '上海艺哈信息技术有限公司';
-$s['SUSE226777'] = '上海艾三信息科技有限公司';
-$s['SUSE208960'] = '上海艾川信息技术有限公司';
-$s['SUSE241526'] = '上海艾惟太科贸易有限公司';
-$s['SUSE104912'] = '上海艾提孚斯信息系统有限公司';
-$s['SUSE073367'] = '上海英博信息技术有限公司';
-$s['SUSE184025'] = '上海英孚思为信息科技有限公司';
-$s['SUSE211736'] = '上海英迪信息技术有限公司';
-$s['SUSE112035'] = '上海茂恒信息技术有限公司';
-$s['SUSE249910'] = '上海茂源电脑有限公司';
-$s['SUSE142546'] = '上海茂源电脑有限公司镇江分公司';
-$s['SUSE181089'] = '上海荣荟电子技术有限公司';
-$s['SUSE183238'] = '上海荧德智能科技有限公司';
-$s['SUSE102729'] = '上海菱威深信息技术有限公司';
-$s['SUSE253881'] = '上海菱石管理系统有限公司';
-$s['SUSE221897'] = '上海菲耐得信息科技有限公司';
-$s['SUSE247708'] = '上海萧华网络科技有限公司';
-$s['SUSE209532'] = '上海葡萄城信息技术有限公司';
-$s['SUSE224302'] = '上海蓝司得计算机信息系统有限公司';
-$s['SUSE089795'] = '上海蓝坊信息科技有限公司';
-$s['SUSE080950'] = '上海蓝天计算机辅助设计有限公司';
-$s['SUSE120718'] = '上海蓝蔚科技发展有限公司';
-$s['SUSE219916'] = '上海虎轲信息技术有限公司';
-$s['SUSE255478'] = '上海融亿信息技术有限公司';
-$s['RCNE000060'] = '上海融昌计算机系统工程有限公司';
-$s['SUSE252484'] = '上海衍丰信息技术有限公司';
-$s['SUSE175938'] = '上海解放日报报业集团信息技术中心';
-$s['SUSE080812'] = '上海计算机有限公司';
-$s['SUSE183467'] = '上海讯博数码科技有限公司';
-$s['SUSE215152'] = '上海讯博科技发展有限公司';
-$s['SUSE166645'] = '上海讯博软件有限公司';
-$s['SUSE103262'] = '上海讯坦信息科技有限公司';
-$s['SUSE205912'] = '上海讯懿信息技术有限公司';
-$s['SUSE257437'] = '上海讯杰科技有限公司';
-$s['SUSE204614'] = '上海诚望计算机科技有限公司';
-$s['SUSE208126'] = '上海诺祺科技有限公司';
-$s['SUSE250571'] = '上海谨信信息科技有限公司';
-$s['SUSE168703'] = '上海贝尔股份有限公司';
-$s['SUSE121711'] = '上海贝尔阿尔卡特股份有限公司';
-$s['SUSE232506'] = '上海赞录科技发展有限公司';
-$s['SUSE187512'] = '上海超唐数码科技有限公司';
-$s['SUSE183596'] = '上海超算并行软件有限责任公司';
-$s['SUSE176954'] = '上海越好信息技术有限公司';
-$s['SUSE220939'] = '上海越星电子科技发展有限公司';
-$s['SUSE078604'] = '上海趋领信息技术有限公司';
-$s['SUSE140378'] = '上海轩远计算机系统工程有限公司';
-$s['SUSE172983'] = '上海软中信息技术有限公司';
-$s['SUSE078738'] = '上海软易信息技术有限公司';
-$s['SUSE215321'] = '上海软盛信息技术有限公司';
-$s['SUSE220238'] = '上海辰锐信息科技公司';
-$s['SUSE173626'] = '上海达泰科技发展有限公司';
-$s['SUSE226994'] = '上海迅驰德佳';
-$s['SUSE148218'] = '上海迅骐电子科技有限公司';
-$s['SUSE136586'] = '上海迈内多计算机科技有限公司';
-$s['SUSE122979'] = '上海迈劲威信息科技有限公司';
-$s['SUSE232210'] = '上海运捷迅信息系统有限公司';
-$s['SUSE222165'] = '上海远图电脑科技有限公司';
-$s['SUSE093149'] = '上海远瑞计算机系统有限公司';
-$s['SUSE121768'] = '上海远程教育集团';
-$s['SUSE171097'] = '上海远致信息技术有限公司';
-$s['SUSE222187'] = '上海迪爱斯通信设备有限公司';
-$s['SUSE246973'] = '上海通为软件有限公司';
-$s['SUSE196720'] = '上海通亚软件有限公司';
-$s['SUSE121769'] = '上海通创信息技术有限公司';
-$s['SUSE139986'] = '上海通拓信息科技有限公司';
-$s['SUSE215753'] = '上海通方信息系统有限公司';
-$s['SUSE175980'] = '上海通用汽车有限公司';
-$s['SUSE224254'] = '上海通联经贸有限公司';
-$s['SUSE140965'] = '上海道业信息科技有限公司';
-$s['SUSE207905'] = '上海道仑软件有限公司';
-$s['SUSE250638'] = '上海邻科信息科技有限公司';
-$s['SUSE180118'] = '上海金仕达卫宁软件股份有限公司';
-$s['SUSE072773'] = '上海金仕达多媒体有限公司';
-$s['SUSE239327'] = '上海金慧软件有限公司';
-$s['SUSE177843'] = '上海金时空通信技术有限公司';
-$s['SUSE154410'] = '上海金曜电子工程有限公司';
-$s['SUSE226696'] = '上海金桥信息工程有限公司';
-$s['SUSE223765'] = '上海金睦邻网络科技有限公司';
-$s['SUSE140969'] = '上海金络脑信息技术有限公司';
-$s['SUSE210623'] = '上海金自天正信息技术有限公司';
-$s['SUSE220530'] = '上海金蓝络科技信息系统有限公司';
-$s['SUSE239323'] = '上海金蝶软件科技有限公司';
-$s['SUSE086350'] = '上海金证高科技股份有限公司';
-$s['SUSE185287'] = '上海金诚科技发展有限公司';
-$s['SUSE185079'] = '上海金铖科技发展有限公司';
-$s['SUSE111690'] = '上海金马软件有限公司';
-$s['SUSE251478'] = '上海金驰信息科技发展有限公司';
-$s['SUSE219550'] = '上海鑫旭电子技术有限公司';
-$s['SUSE246876'] = '上海鑫琳网络科技有限公司';
-$s['SUSE221246'] = '上海鑫锦坤系统集成技术有限公司';
-$s['SUSE097781'] = '上海银基信息科技有限公司';
-$s['SUSE121414'] = '上海银欣高新技术发展有限公司';
-$s['SUSE214595'] = '上海银音信息科技有限公司';
-$s['SUSE205323'] = '上海锐兆电子科技有限公司';
-$s['SUSE254571'] = '上海锐旭信息技术有限公司';
-$s['SUSE186276'] = '上海锐磁数码信息技术有限公司';
-$s['SUSE185038'] = '上海锐道信息技术有限公司';
-$s['SUSE188729'] = '上海锦程信息科技有限公司';
-$s['SUSE130825'] = '上海长卫宜斯软件系统有限公司';
-$s['SUSE250750'] = '上海长城电子信息网络有限公司';
-$s['SUSE216499'] = '上海长宁地铁建设发展有限公司';
-$s['SUSE220200'] = '上海长江新成计算机系统集成有限公司';
-$s['SUSE081053'] = '上海长江科技发展有限公司';
-$s['SUSE221926'] = '上海长江计算机(集团)科技中心有限公司';
-$s['SUSE168090'] = '上海长江计算机系统集成有限公司';
-$s['SUSE107768'] = '上海长润信息技术有限公司';
-$s['SUSE183236'] = '上海闻普软件有限公司';
-$s['SUSE128488'] = '上海阳关科技有限公司';
-$s['SUSE211671'] = '上海阳关网络信息技术有限公司';
-$s['SUSE185060'] = '上海阿尔卡特网络支援系统有限公司';
-$s['SUSE180004'] = '上海阿法迪智能标签系统技术有限公司';
-$s['SUSE248121'] = '上海隆翔信息科技有限公司';
-$s['SUSE178292'] = '上海雅库信息科技有限公司';
-$s['SUSE190508'] = '上海雅龙网络科技有限公司';
-$s['SUSE248360'] = '上海雨创网络科技发展有限公司';
-$s['SUSE207707'] = '上海青蓝科技有限责任公司';
-$s['SUSE218622'] = '上海音宝信息技术有限公司';
-$s['SUSE205130'] = '上海顶点软件有限公司';
-$s['SUSE151562'] = '上海顶腾信息技术责任有限公司';
-$s['SUSE081056'] = '上海顺泰企业管理咨询有限公司';
-$s['SUSE086854'] = '上海颐东网络信息有限公司';
-$s['SUSE221101'] = '上海颐升计算机科技服务有限公司';
-$s['SUSE191745'] = '上海颐圣计算机系统有限公司';
-$s['SUSE187884'] = '上海频展计算机技术有限公司';
-$s['SUSE223947'] = '上海飞辉虹科技投资有限公司';
-$s['SUSE249098'] = '上海飞速信息技术发展有限公司';
-$s['SUSE131096'] = '上海首恒电子科技有限公司';
-$s['SUSE240324'] = '上海高伟达计算机系统工程有限公司';
-$s['SUSE121470'] = '上海高威数据技术有限公司';
-$s['SUSE225486'] = '上海鸿冠信息科技有限公司';
-$s['SUSE248124'] = '上海鸿数信息科技有限公司';
-$s['SUSE247155'] = '上海鹏生信息科技咨询有限公司';
-$s['SUSE074994'] = '上海鹏达计算机系统开发有限公司';
-$s['SUSE080598'] = '上海麦加信息资讯有限公司';
-$s['SUSE184351'] = '上海麦格纳信息技术服务有限公司';
-$s['SUSE247543'] = '上海鼎思电子科技有限公司';
-$s['SUSE121812'] = '上海鼎润电子科技有限公司';
-$s['SUSE223416'] = '上海鼎翔信息技术有限公司';
-$s['SUSE184083'] = '上海鼎茂信息技术有限公司';
-$s['SUSE222822'] = '上海鼎飞信息技术有限公司';
-$s['SUSE195944'] = '上海鼎驰信息技术有限公司';
-$s['SUSE208758'] = '上海龙日科技发展有限公司';
-$s['SUSE144599'] = '上饶天创电脑网络有限公司';
-$s['SUSE145240'] = '上饶宏创计算机系统集成有限公司';
-$s['SUSE146080'] = '上饶市中天信息技术有限公司';
-$s['SUSE198738'] = '上饶市圆规信息技术有限公司';
-$s['SUSE225530'] = '上饶市新浪潮电脑有限责任公司';
-$s['SUSE144601'] = '上饶拓普森信息技术有限公司';
-$s['SUSE220655'] = '上饶新天力数码科技有限公司';
-$s['SUSE226268'] = '世全软件技术有限公司';
-$s['SUSE219551'] = '世科';
-$s['SUSE236842'] = '世纪五岳（北京）科技有限公司';
-$s['SUSE146139'] = '世纪新岛网络有限公司';
-$s['SUSE073249'] = '世纪龙信息网络有限责任公司上海分公司';
-$s['SUSE174823'] = '东北财经大学电子商务学院';
-$s['SUSE147021'] = '东升数码科技有限公司';
-$s['SUSE143455'] = '东华大学信息管理系统';
-$s['SUSE097780'] = '东华软件股份公司';
-$s['SUSE081313'] = '东南融通（中国）系统工程有限公司';
-$s['SUSE149336'] = '东台市联信网络科技有限公司';
-$s['SUSE086327'] = '东大高信科技有限公司';
-$s['SUSE215595'] = '东方乾元科技(北京)有限公司';
-$s['SUSE245443'] = '东方博盾(北京)科技有限公司';
-$s['SUSE078599'] = '东方电子股份有限公司';
-$s['SUSE184419'] = '东方美盛科技有限公司';
-$s['SUSE230541'] = '东方通信股份有限公司';
-$s['SUSE120272'] = '东莞上诠电脑软件咨询有限公司';
-$s['SUSE192947'] = '东莞创富眼镜有限公司';
-$s['SUSE148253'] = '东莞市业勤电脑网络有限公司';
-$s['SUSE148251'] = '东莞市中正电脑有限公司';
-$s['SUSE148249'] = '东莞市众人信息技术有限公司';
-$s['SUSE076370'] = '东莞市全达电脑有限公司';
-$s['SUSE195004'] = '东莞市兴昂计算机有限公司';
-$s['SUSE213197'] = '东莞市创盛计算机有限公司';
-$s['SUSE122289'] = '东莞市华南信息科技有限公司';
-$s['SUSE237181'] = '东莞市卓越电脑有限公司';
-$s['SUSE222166'] = '东莞市国通计算机科技有限公司';
-$s['SUSE148258'] = '东莞市大地信息科技有限公司';
-$s['SUSE080154'] = '东莞市大通电脑有限公司';
-$s['SUSE148256'] = '东莞市太平洋计算机科技有限公司';
-$s['SUSE256828'] = '东莞市奇才科技发展有限公司';
-$s['SUSE217947'] = '东莞市好马电子科技有限公司';
-$s['SUSE220443'] = '东莞市宇诚信息技术有限公司';
-$s['SUSE224649'] = '东莞市宝亮网智电子信息技术有限公司';
-$s['SUSE221798'] = '东莞市广视通科教设备有限公司';
-$s['SUSE207349'] = '东莞市开普互联信息有限公司';
-$s['SUSE236762'] = '东莞市志盈计算机有限公司';
-$s['SUSE222757'] = '东莞市慧讯计算机网络工程有限公司';
-$s['SUSE232904'] = '东莞市慧通信息技术有限公司';
-$s['SUSE234180'] = '东莞市技安网络工程有限公司';
-$s['SUSE259532'] = '东莞市政创软件科技有限公司';
-$s['SUSE148254'] = '东莞市旭辉计算机科技有限公司';
-$s['SUSE209495'] = '东莞市昊宇电子科技有限公司';
-$s['SUSE259560'] = '东莞市智恒信息技术有限公司';
-$s['SUSE244144'] = '东莞市朋盟智能科技有限公司';
-$s['SUSE195008'] = '东莞市正欣科技有限公司';
-$s['SUSE215248'] = '东莞市深思计算机有限公司';
-$s['SUSE227719'] = '东莞市百思维软件有限公司';
-$s['SUSE208869'] = '东莞市盈达科技开发有限公司';
-$s['SUSE130703'] = '东莞市科旺输配电工程有限公司';
-$s['SUSE235548'] = '东莞市科达计算机系统工程有限公司';
-$s['SUSE145599'] = '东莞市零星科技有限公司';
-$s['SUSE142220'] = '东莞市鹰腾江天科技有限公司';
-$s['SUSE242222'] = '东莞神马电脑软件有限公司';
-$s['SUSE145597'] = '东莞聚龙制衣有限公司';
-$s['SUSE207934'] = '东莞艾迪斯信息技术有限公司';
-$s['SUSE136853'] = '东莞鹰腾江天科技有限公司';
-$s['SUSE208549'] = '东营中瑞智能技术有限公司';
-$s['SUSE223431'] = '东营中科佳美科贸有限责任公司';
-$s['SUSE254722'] = '东营博群商贸';
-$s['SUSE207760'] = '东营市奥特银河科技发展有限责任公司';
-$s['SUSE254966'] = '东营市腾飞智能工程有限公司';
-$s['SUSE209978'] = '东营市鸿日科贸有限责任公司';
-$s['SUSE193475'] = '东营怡华创新科贸有限公司';
-$s['SUSE217956'] = '东营石大瑞帆数码信控工程有限公司';
-$s['SUSE246498'] = '东营融达智能工程有限公司';
-$s['SUSE184804'] = '东软股份大连分公司';
-$s['SUSE171924'] = '东软软件有限公司';
-$s['RCNE000030'] = '东软集团股份有限公司';
-$s['SUSE188363'] = '东阳市军民网络信息系统有限公司';
-$s['SUSE230724'] = '东风悦达起亚汽车有限公司';
-$s['SUSE184907'] = '个人';
-$s['SUSE205129'] = '中亦安图科技发展（北京）有限公司';
-$s['SUSE121745'] = '中企网络通信技术有限公司';
-$s['SUSE074125'] = '中信国安信息产业股份有限公司';
-$s['SUSE220435'] = '中信国安信息科技有限公司';
-$s['SUSE217477'] = '中信泰富工程技术（上海）有限公司';
-$s['SUSE176490'] = '中信网络科技股份有限公司';
-$s['SUSE179147'] = '中关村科技软件有限公司';
-$s['SUSE120886'] = '中兴英业科技发展有限公司';
-$s['SUSE126385'] = '中兴软件技术(南昌)有限公司';
-$s['SUSE184345'] = '中兴软件技术（南昌）有限公司';
-$s['SUSE122319'] = '中兴通讯股份有限公司';
-$s['SUSE174386'] = '中冠信息科技（武汉）有限公司';
-$s['SUSE209135'] = '中冶南方工程技术有限公司';
-$s['SUSE222104'] = '中冶成工建设有限公司';
-$s['SUSE185399'] = '中创国际信息系统有限公司';
-$s['SUSE245151'] = '中华通信系统有限责任公司';
-$s['SUSE149342'] = '中卫中联电脑公司';
-$s['SUSE216459'] = '中卫市浩天电子科贸有限责任公司';
-$s['SUSE146474'] = '中卫新世纪电脑科技有限公司';
-$s['SUSE146453'] = '中卫金冠计算机网络技术有限公司';
-$s['SUSE192293'] = '中印环球软件有限公司';
-$s['SUSE241065'] = '中商流通生产力促进中心有限公司';
-$s['SUSE193714'] = '中国';
-$s['SUSE184818'] = '中国一航金城南京机电液压工程研究中心';
-$s['SUSE218951'] = '中国中元国际工程公司';
-$s['SUSE237017'] = '中国中化集团公司';
-$s['SUSE175486'] = '中国互联网新闻中心';
-$s['SUSE252280'] = '中国化工信息中心';
-$s['SUSE233664'] = '中国北京大唐通信设备有限公司';
-$s['SUSE260058'] = '中国北方工业装备有限公司';
-$s['SUSE240327'] = '中国华云技术开发公司';
-$s['SUSE240742'] = '中国卫星通讯集团公司';
-$s['SUSE235115'] = '中国国信信息总公司';
-$s['RCNE000826'] = '中国图书进出口（集团）总公司';
-$s['SUSE208005'] = '中国大恒(集团)有限公司';
-$s['SUSE085689'] = '中国工商银行软件开发中心';
-$s['SUSE204892'] = '中国惠普有限公司';
-$s['SUSE215008'] = '中国惠普有限公司上海分公司';
-$s['SUSE171672'] = '中国普天中讯通信发展有限公司';
-$s['SUSE214591'] = '中国普天信息产业股份有限公司';
-$s['SUSE120203'] = '中国民用航空总局第二研究所';
-$s['SUSE208966'] = '中国电信系统集成江苏分公司';
-$s['SUSE242771'] = '中国电信股份有限公司广西分公司';
-$s['SUSE257011'] = '中国电信股份有限公司延安分公司';
-$s['SUSE235679'] = '中国电信股份有限公司无锡分公司';
-$s['SUSE222963'] = '中国电信股份有限公司景德镇分公司';
-$s['SUSE214990'] = '中国电信股份有限公司百色分公司';
-$s['SUSE257962'] = '中国电信股份有限公司苏州分公司';
-$s['SUSE221168'] = '中国电信股份有限公司赣州分公司';
-$s['SUSE219638'] = '中国电信股份有限公司郴州分公司';
-$s['SUSE227805'] = '中国电信股份有限公司铜仁分公司';
-$s['SUSE257862'] = '中国电信集团公司河南省电信分公司';
-$s['SUSE145707'] = '中国电信集团系统集成有限责任公司';
-$s['SUSE213518'] = '中国电力工程顾问集团西南电力设计院';
-$s['SUSE166619'] = '中国电力科学研究院';
-$s['SUSE220737'] = '中国电子科技集团公司第二十八研究所';
-$s['SUSE218231'] = '中国电子科技集团公司第十五研究所';
-$s['SUSE212653'] = '中国电子科技集团公司第十四研究所';
-$s['SUSE181640'] = '中国电子科技集团公司第四十一研究所';
-$s['SUSE163832'] = '中国石化南京石油物探研究所';
-$s['SUSE184249'] = '中国科学院';
-$s['SUSE173656'] = '中国科学院上海有机化学研究所';
-$s['SUSE184666'] = '中国科学院沈阳自动化研究所';
-$s['SUSE185000'] = '中国科学院沈阳计算技术研究所有限公司';
-$s['SUSE182700'] = '中国科学院软件研究所';
-$s['SUSE191854'] = '中国移动通信集团广东有限公司广州分公司';
-$s['SUSE237192'] = '中国移动通信集团江苏有限公司';
-$s['SUSE250686'] = '中国移动通信集团江西有限公司宜春分公司';
-$s['SUSE234681'] = '中国移动通讯集团西藏有限公司';
-$s['SUSE224480'] = '中国移动通讯集团重庆有限公司';
-$s['SUSE206496'] = '中国网络通信集团公司';
-$s['SUSE205497'] = '中国网络通信集团公司宝鸡市分公司';
-$s['SUSE215665'] = '中国网络通信集团公司金昌市分公司';
-$s['SUSE207719'] = '中国网通（集团）有限公司保定市分公司';
-$s['SUSE214351'] = '中国网通（集团）有限公司北京市分公司';
-$s['SUSE206627'] = '中国网通(集团)有限公司邯郸市分公司';
-$s['SUSE225282'] = '中国网通（集团）有限公司青岛市分公司';
-$s['SUSE234679'] = '中国网通集团系统集成有限公司内蒙古分公司';
-$s['SUSE186095'] = '中国翱世拓（有限）公司';
-$s['SUSE251239'] = '中国联合网络通信有限公司佛山市分公司';
-$s['SUSE234004'] = '中国联合网络通信有限公司无锡市分公司';
-$s['SUSE174933'] = '中国联合网络通信有限公司汕头分公司';
-$s['SUSE229991'] = '中国自动化控制系统总公司';
-$s['SUSE144635'] = '中国航空工业第六一三新技术开发中心';
-$s['SUSE216963'] = '中国船舶重工集团公司第七一○研究所';
-$s['SUSE122315'] = '中国船舶重工集团公司第七一八研究所';
-$s['RCNE001882'] = '中国计算机软件与技术服务总公司';
-$s['SUSE137063'] = '中国软件与技术服务股份有限公司';
-$s['SUSE144978'] = '中国远洋网络有限公司';
-$s['SUSE242305'] = '中国通信建设集团第三工程局有限公司';
-$s['SUSE206476'] = '中国通广电子公司';
-$s['SUSE158626'] = '中国邮电器材集团公司';
-$s['SUSE240491'] = '中国金融电子化公司';
-$s['SUSE213449'] = '中国铁路通信信号上海工程集团有限公司';
-$s['SUSE221463'] = '中国铁路通信信号集团公司';
-$s['SUSE239896'] = '中国铁道科学研究院';
-$s['SUSE192075'] = '中国银行梅州分行';
-$s['SUSE183971'] = '中基太业软件有限公司';
-$s['SUSE140364'] = '中天伟业计算机科技有限公司';
-$s['SUSE121076'] = '中天科技集团武汉办事处';
-$s['SUSE110139'] = '中太数据通信(深圳)有限公司';
-$s['SUSE184137'] = '中安科技集团有限公司';
-$s['SUSE257732'] = '中安网脉（北京）技术股份有限公司';
-$s['SUSE150469'] = '中实成套设备有限公司';
-$s['SUSE194312'] = '中山公用信息服务产业发展有限公司';
-$s['SUSE260841'] = '中山博思电脑科技发展有限公司';
-$s['SUSE205571'] = '中山坚信科技有限公司';
-$s['SUSE191865'] = '中山大学';
-$s['SUSE248584'] = '中山安信智能科技有限公司';
-$s['SUSE206235'] = '中山峰杰科技有限公司';
-$s['SUSE242582'] = '中山市乘元数码科技有限公司';
-$s['SUSE194413'] = '中山市京通咨讯科技有限公司';
-$s['SUSE216281'] = '中山市信通多媒体有限公司';
-$s['SUSE226008'] = '中山市信通通信有限公司';
-$s['SUSE194414'] = '中山市光裕天安智能科技有限公司';
-$s['SUSE194415'] = '中山市全通数码科技有限公司';
-$s['SUSE197257'] = '中山市创业科技有限公司';
-$s['SUSE194316'] = '中山市天一网络发展有限公司';
-$s['SUSE230041'] = '中山市奥图电子工程有限公司';
-$s['SUSE121527'] = '中山市奥通信息产业有限公司';
-$s['SUSE213922'] = '中山市宇天网络技术有限公司';
-$s['SUSE120648'] = '中山市峰杰科技有限公司';
-$s['SUSE216280'] = '中山市巨龙电脑科技有限公司';
-$s['SUSE242311'] = '中山市捷迅电脑科技有限公司';
-$s['SUSE257178'] = '中山市摩天电脑信息系统有限公司';
-$s['SUSE235370'] = '中山市明天网络科技有限公司';
-$s['SUSE194412'] = '中山市普光科技发展有限公司';
-$s['SUSE121535'] = '中山市正大电脑有限公司';
-$s['SUSE233910'] = '中山市泰克软件科技有限公司';
-$s['SUSE237204'] = '中山市泷龙仪器设备有限公司';
-$s['SUSE238565'] = '中山市澳信信息科技有限公司';
-$s['SUSE158002'] = '中山市盈信科技有限公司';
-$s['SUSE216241'] = '中山市粤港电脑有限公司';
-$s['SUSE172814'] = '中山市网政软件有限公司';
-$s['SUSE209055'] = '中山市诚进网络技术有限公司';
-$s['SUSE208279'] = '中山真诚信息产业有限公司';
-$s['SUSE241428'] = '中山银利自动化系统设备有限公司';
-$s['SUSE188255'] = '中州科技信息公司';
-$s['SUSE228745'] = '中建电子工程有限责任公司';
-$s['SUSE135962'] = '中投科信科技股份有限公司';
-$s['SUSE131372'] = '中控科技集团有限公司';
-$s['SUSE082930'] = '中数通信息有限公司';
-$s['SUSE181798'] = '中文基地工作室';
-$s['SUSE227811'] = '中方(大连)信息系统有限公司';
-$s['SUSE179918'] = '中智出国咨询中心';
-$s['RCNE000004'] = '中望商业机器有限公司';
-$s['SUSE149521'] = '中汇科技有限公司';
-$s['SUSE225687'] = '中海信息系统有限公司';
-$s['SUSE209366'] = '中海石油基地集团通讯网络特力电信技术公司';
-$s['SUSE243915'] = '中煤科技集团公司';
-$s['SUSE103889'] = '中电广通股份有限公司';
-$s['SUSE179366'] = '中电科技电子信息系统（上海）有限公司';
-$s['SUSE121062'] = '中电科长江数据股份有限公司';
-$s['SUSE093589'] = '中盈优创资讯科技有限公司';
-$s['SUSE257443'] = '中盛瑞达科技有限公司';
-$s['SUSE246345'] = '中科世纪（北京）数码技术有限公司';
-$s['SUSE234106'] = '中科伟博（北京）科技有限公司';
-$s['SUSE155719'] = '中科天翔（杭州）科技有限公司';
-$s['SUSE208845'] = '中科宇图天下科技有限公司';
-$s['SUSE222162'] = '中科方德软件有限公司';
-$s['SUSE167216'] = '中科红旗软件技术有限公司';
-$s['SUSE086338'] = '中科软件存储技术有限公司上海分公司';
-$s['SUSE105213'] = '中科软件集团有限公司';
-$s['SUSE072381'] = '中科软科技股份有限公司';
-$s['SUSE131622'] = '中科院成都信息技术有限公司';
-$s['SUSE128778'] = '中科院沈阳计算所';
-$s['SUSE185611'] = '中科院研究生院';
-$s['SUSE142549'] = '中科院软件研究所宁波开发中心';
-$s['SUSE186020'] = '中粮可口可乐饮料（中国）投资有限公司';
-$s['SUSE211954'] = '中经网（北京）数据科技发展有限公司';
-$s['SUSE209696'] = '中联云达系统集成（上海）有限公司';
-$s['SUSE166750'] = '中联宏达计算机系统集成（深圳）有限公司';
-$s['RCNE000049'] = '中联电脑(国际)有限公司';
-$s['SUSE191751'] = '中联系统';
-$s['SUSE171270'] = '中联集团';
-$s['SUSE165952'] = '中联集团成都办事处';
-$s['SUSE184692'] = '中软同天信息系统有限公司';
-$s['SUSE226780'] = '中软国际';
-$s['SUSE089793'] = '中软国际杭州';
-$s['SUSE073157'] = '中软总公司计算机培训中心';
-$s['SUSE221577'] = '中达通讯';
-$s['SUSE196073'] = '中远（网络）北京有限公司';
-$s['SUSE154110'] = '中远网络(北京)有限公司';
-$s['SUSE214526'] = '中远网络物流信息科技有限公司';
-$s['RCNE000144'] = '中远资讯科技(香港)有限公司';
-$s['SUSE242037'] = '中通（沈阳）信息工程有限公司';
-$s['SUSE253045'] = '中野智能';
-$s['SUSE250564'] = '中金富通信息技术服务有限公司';
-$s['SUSE153595'] = '中金数据系统有限公司';
-$s['SUSE222545'] = '中钞信用卡产业发展有限公司';
-$s['SUSE222103'] = '中铁二局集团有限公司';
-$s['SUSE137154'] = '中铁信弘兴(北京)信息工程有限责任公司';
-$s['SUSE190537'] = '中铁信弘科（北京）信息工程有限责任公司';
-$s['SUSE074342'] = '中铁信弘远（北京）软件科技有限责任公司';
-$s['SUSE204891'] = '中铁信弘远(北京)软件科技有限责任公司';
-$s['RCNE000165'] = '中铁信息工程集团有限公司';
-$s['SUSE209312'] = '中铁信息计算机工程有限责任公司云南分公司';
-$s['SUSE226909'] = '中铁信息计算机工程有限责任公司南宁分公司';
-$s['SUSE226401'] = '中铁信息计算机工程有限责任公司甘肃分公司';
-$s['SUSE210347'] = '中铁信息计算机工程有限责任公司辽宁分公司';
-$s['SUSE142572'] = '中铁信息计算机工程有限责任公司陕西分公司';
-$s['SUSE208010'] = '中铁信金快（北京）信息工程有限责任公司';
-$s['SUSE241311'] = '中铁宝桥宝鸡科技有限公司';
-$s['SUSE208413'] = '中铁建电气化局集团有限公司';
-$s['SUSE226776'] = '中铁建电气化局集团第一工程有限公司';
-$s['SUSE227195'] = '中铁电气化局集团有限公司';
-$s['SUSE251413'] = '中铁电气化局集团第一工程有限公司';
-$s['SUSE210232'] = '中铁电气化局集团第三工程有限公司';
-$s['SUSE204357'] = '中铁电气化局集团第二工程有限公司第二工程段';
-$s['SUSE085533'] = '中雅公司';
-$s['SUSE240487'] = '中鹰科技(广州)有限公司';
-$s['SUSE146147'] = '丰润裕兴电脑培训中心';
-$s['SUSE254279'] = '丰益（上海）信息技术有限公司';
-$s['SUSE154033'] = '临汾市北佳科器有限公司';
-$s['SUSE147020'] = '临汾市大学电脑';
-$s['SUSE248561'] = '临汾市天赐华源科技有限公司';
-$s['SUSE147018'] = '临汾市尧都区亿博科贸有限公司';
-$s['SUSE147019'] = '临汾市尧都区理想电脑办公设备有限公司';
-$s['SUSE210638'] = '临汾市尧都区金阳光科技有限责任公司';
-$s['SUSE248576'] = '临汾市尧都区龙海佳诚电子有限公司';
-$s['SUSE147025'] = '临汾市希望数码科技发展有限公司';
-$s['SUSE248574'] = '临汾市普华科技有限公司';
-$s['SUSE154032'] = '临汾市相如网络技术有限公司';
-$s['SUSE147022'] = '临汾市迎新电脑有限公司';
-$s['SUSE147026'] = '临汾海通科技有限公司';
-$s['SUSE147016'] = '临汾皓辰科技';
-$s['SUSE154115'] = '临沂亿邦商贸有限公司';
-$s['SUSE225152'] = '临沂博安智能科技有限公司';
-$s['SUSE155191'] = '临沂市天一智能科技有限公司';
-$s['SUSE146315'] = '临沂市天力科技有限公司';
-$s['SUSE154034'] = '临沂市思索信息技术有限公司';
-$s['SUSE154025'] = '临沂市阳光科技有限公司';
-$s['SUSE214193'] = '临沂延中科技办公设备有限公司';
-$s['SUSE153589'] = '临沂新华海计算机有限公司';
-$s['SUSE155194'] = '临沂新天地有限公司';
-$s['SUSE153586'] = '临沂新瑞德电脑有限公司';
-$s['SUSE153590'] = '临沂新贵电子科技有限公司';
-$s['SUSE155193'] = '临沂海诺电子有限公司';
-$s['SUSE155186'] = '临沂维嘉科技有限公司';
-$s['SUSE146859'] = '临海市诚智电子有限公司';
-$s['SUSE188252'] = '丹东九洲科技有限公司';
-$s['SUSE187443'] = '丹东基士得耶办公设备有限公司';
-$s['SUSE158161'] = '丹东天极电子科技有限公司';
-$s['SUSE139978'] = '丹东天龙电脑有限公司';
-$s['SUSE197307'] = '丹东市九三电脑有限公司';
-$s['SUSE152433'] = '丹东市九三网络技术有限公司';
-$s['SUSE208463'] = '丹东鸿峰缘科技有限公司';
-$s['SUSE243289'] = '丹阳市汇创电脑有限公司';
-$s['SUSE146877'] = '丽水中立电脑有限公司';
-$s['SUSE208761'] = '丽水市同心科技有限公司';
-$s['SUSE219961'] = '丽水市天时科技有限公司';
-$s['SUSE219844'] = '丽水市宏志数码科技有限公司';
-$s['SUSE157738'] = '丽水市思迈科技有限公司';
-$s['SUSE204507'] = '丽水市极点数码有限公司';
-$s['SUSE149298'] = '丽水市科海电子有限公司';
-$s['SUSE204601'] = '丽水市绿谷计算机网络工程有限公司';
-$s['SUSE149297'] = '丽水快威网络工程有限公司';
-$s['SUSE147065'] = '丽江新锐';
-$s['SUSE147064'] = '丽江智信';
-$s['SUSE147087'] = '丽江海联电脑销售中心';
-$s['SUSE147063'] = '丽江蓝盾';
-$s['SUSE257720'] = '久罡信息技术（上海）有限公司';
-$s['SUSE149296'] = '义乌市平慧电子技术有限公司';
-$s['SUSE150010'] = '义乌开天电脑有限公司';
-$s['SUSE149295'] = '义乌恒兴网络工程限公司';
-$s['SUSE146879'] = '义乌科创计算机有限公司';
-$s['SUSE150008'] = '义乌香溢网络工程有限公司';
-$s['SUSE225786'] = '乌兰浩特市大洋信达电脑科技有限公司';
-$s['SUSE225706'] = '乌兰浩特市龙腾盛世商贸有限公司';
-$s['SUSE142516'] = '乌鲁木齐东方硅谷商贸有限公司';
-$s['SUSE220839'] = '乌鲁木齐兴易龙科技发展有限责任公司';
-$s['SUSE142643'] = '乌鲁木齐华网科技有限责任公司';
-$s['SUSE144732'] = '乌鲁木齐同方数码科技有限公司';
-$s['SUSE234183'] = '乌鲁木齐多普科技有限公司';
-$s['SUSE219482'] = '乌鲁木齐市久诚电子有限公司';
-$s['SUSE248029'] = '乌鲁木齐市北航冠新世纪科技有限公司';
-$s['SUSE241863'] = '乌鲁木齐市大得万隆发展有限公司';
-$s['SUSE221369'] = '乌鲁木齐市时空电脑技术有限公司';
-$s['SUSE120028'] = '乌鲁木齐市普瑞尔石油科技有限公司';
-$s['SUSE212371'] = '乌鲁木齐市木易科技有限公司';
-$s['SUSE149346'] = '乌鲁木齐市永靖科技有限公司';
-$s['SUSE229882'] = '乌鲁木齐市深金田贸易有限公司';
-$s['SUSE149347'] = '乌鲁木齐庆龙伟业商业商贸有限公司';
-$s['SUSE216167'] = '乌鲁木齐捷成科技发展有限公司';
-$s['SUSE158264'] = '乌鲁木齐汇基五洲网络技术有限公司';
-$s['SUSE120942'] = '乌鲁木齐汇捷系统工程有限责任公司';
-$s['SUSE145774'] = '乌鲁木齐润德电脑有限责任公司';
-$s['SUSE121360'] = '乌鲁木齐瑞励电子通讯技术有限公司';
-$s['SUSE260618'] = '乌鲁木齐瑞驰博通科技有限公司';
-$s['SUSE137468'] = '乌鲁木齐胜思信息技术有限公司';
-$s['SUSE225295'] = '乌鲁木齐铁路先行电子工程公司';
-$s['SUSE209002'] = '乐山中维科技有限公司';
-$s['SUSE204437'] = '乐山力拓高科技有限公司';
-$s['SUSE154058'] = '乐山市巨匠电脑发展有限公司';
-$s['SUSE246342'] = '乐山市鑫海天科技有限公司';
-$s['SUSE210621'] = '乐山新蓝电脑有限责任公司';
-$s['SUSE210910'] = '乐山科朋电脑科技有限公司';
-$s['SUSE194311'] = '乐山航天金穗高技术有限公司';
-$s['SUSE201516'] = '乐山鹏程高技术有限公司';
-$s['SUSE204117'] = '乐昌市新思维电脑有限公司';
-$s['SUSE150524'] = '乐清市金四通数码技术有限公司';
-$s['SUSE145677'] = '九江佳美办公设备有限公司';
-$s['SUSE144607'] = '九江创佳科技有限公司';
-$s['SUSE229604'] = '九江前进系统工程有限公司';
-$s['SUSE146081'] = '九江国泰电脑技术有限公司';
-$s['SUSE145679'] = '九江威亚科技';
-$s['SUSE235319'] = '九江市兴业计算机销售有限公司';
-$s['SUSE145675'] = '九江思创普汇科技公司';
-$s['SUSE146459'] = '九江思创普汇科技有限公司';
-$s['SUSE247235'] = '九江惠联科技发展有限公司';
-$s['SUSE145672'] = '九江斯普林网络公司';
-$s['SUSE145678'] = '九江新元电脑网络科技公司';
-$s['SUSE145671'] = '九江新和贸易有限公司';
-$s['SUSE145236'] = '九江新国众科技有限公司';
-$s['SUSE144609'] = '九江新大陆计算机网络公司';
-$s['SUSE144608'] = '九江浩远科技工贸有限公司';
-$s['SUSE144604'] = '九江视通科技发展有限公司';
-$s['SUSE235059'] = '九江进达办公设备有限公司';
-$s['SUSE257440'] = '九江长征计算机系统有限公司';
-$s['SUSE205681'] = '九鼎企业集团（深圳）有限公司';
-$s['SUSE085499'] = '书生世纪电子技术公司';
-$s['SUSE253329'] = '乾道计算机科技有限公司';
-$s['SUSE104986'] = '二十一世纪空间技术应用股份有限公司';
-$s['SUSE235473'] = '云南世丰商贸有限公司';
-$s['SUSE111689'] = '云南中云信息技术有限公司';
-$s['SUSE147060'] = '云南临沧晨曦科工贸有限责任公司';
-$s['SUSE185101'] = '云南云电信息通信股份有限公司';
-$s['SUSE111693'] = '云南云电同方科技有限公司';
-$s['SUSE207932'] = '云南亚创科技有限公司';
-$s['SUSE217848'] = '云南俊豪科技有限公司';
-$s['SUSE141944'] = '云南保山市科乐电脑公司';
-$s['SUSE185264'] = '云南信龙科技';
-$s['SUSE151186'] = '云南信龙科技有限公司';
-$s['SUSE205891'] = '云南光华科技有限公司';
-$s['RCNE000637'] = '云南冶金仁达电脑有限公司';
-$s['SUSE120859'] = '云南创智汉唐信息技术有限公司';
-$s['SUSE183277'] = '云南劳斯特科技产业有限公司';
-$s['SUSE142648'] = '云南华东电脑科技有限公司';
-$s['SUSE255025'] = '云南华力特科技有限公司';
-$s['SUSE080723'] = '云南厚朴信息科技有限公司';
-$s['SUSE225157'] = '云南双翊科技有限公司';
-$s['SUSE185128'] = '云南安聚科技工程有限公司';
-$s['SUSE128044'] = '云南官房电子科技有限公司';
-$s['SUSE185219'] = '云南宝亮合瑞电子信息技术有限公司';
-$s['SUSE251053'] = '云南尖峰合讯科技有限公司';
-$s['SUSE183181'] = '云南市窗';
-$s['SUSE247638'] = '云南广信康越科技发展有限公司';
-$s['SUSE224891'] = '云南思普投资有限公司';
-$s['SUSE192511'] = '云南思立耐特信息系统工程有限公司';
-$s['SUSE188316'] = '云南恒创科技实业有限公司';
-$s['SUSE191679'] = '云南恒翌科技有限公司';
-$s['SUSE214531'] = '云南慧盟科技有限公司';
-$s['SUSE245182'] = '云南掌联科技有限公司';
-$s['SUSE182776'] = '云南新视源科技有限公司';
-$s['SUSE256679'] = '云南新阳光科技有限公司临沧分公司';
-$s['SUSE183295'] = '云南旅游信息网络有限公司';
-$s['SUSE251278'] = '云南时代涌泰工贸有限责任公司';
-$s['SUSE120858'] = '云南昆明中瑞方园科技有限公司';
-$s['SUSE121719'] = '云南昆明通联通信公司';
-$s['SUSE147050'] = '云南昭通新西部电子有限公司';
-$s['SUSE188516'] = '云南汇众信息网络集成有限公司';
-$s['SUSE128305'] = '云南清华北美科技发展有限公司';
-$s['SUSE250918'] = '云南港电系统集成有限公司';
-$s['SUSE082703'] = '云南爱迪科技有限公司';
-$s['SUSE207163'] = '云南特灵达新时技术有限公司';
-$s['SUSE123246'] = '云南玉溪人通计算机网络有限公司';
-$s['SUSE148196'] = '云南环球磁卡信息网络有限公司';
-$s['SUSE207919'] = '云南现代网联信息产业有限公司';
-$s['SUSE207725'] = '云南瑞普电子有限公司';
-$s['SUSE246736'] = '云南瑞软科技有限公司';
-$s['SUSE188312'] = '云南电信公众信息产业有限公司';
-$s['SUSE183274'] = '云南电信网信实业集团有限公司';
-$s['SUSE198108'] = '云南电力技术有限责任公司';
-$s['SUSE123253'] = '云南电力试验研究院(集团)有限公司';
-$s['SUSE183231'] = '云南盛云科技有限公司';
-$s['SUSE256015'] = '云南省交通科学研究所';
-$s['SUSE195284'] = '云南省玉溪市信龙电脑有限公司';
-$s['SUSE185672'] = '云南省电信有限公司信息业务公司';
-$s['SUSE151184'] = '云南省计算机软件技术开发研究中心';
-$s['SUSE212578'] = '云南省通信产业服务有限公司';
-$s['SUSE120369'] = '云南禾嘉君涛网络信息系统有限公司';
-$s['SUSE192669'] = '云南科力网络工程有限公司';
-$s['SUSE142596'] = '云南科旭电子科技有限公司';
-$s['SUSE122279'] = '云南科海电子有限公司';
-$s['SUSE235475'] = '云南网易特信息产业有限公司';
-$s['SUSE128301'] = '云南英茂烟草通信有限公司';
-$s['SUSE188318'] = '云南蓝泰信息技术有限公司';
-$s['SUSE210171'] = '云南诚隆伟业商贸有限公司';
-$s['SUSE120856'] = '云南软件中心朗维科技有限责任公司';
-$s['SUSE193782'] = '云南软通信息科技有限公司';
-$s['SUSE145822'] = '云南金隆伟业科技有限公司';
-$s['SUSE120339'] = '云南鑫鸿程网络信息系统有限公司';
-$s['SUSE213191'] = '云南静昆科技有限公司';
-$s['SUSE185131'] = '云南香农信息技术有限公司';
-$s['SUSE208234'] = '云南龙达网络信息科技有限公司';
-$s['SUSE251432'] = '云浮市鹰东科技发展有限公司';
-$s['SUSE201459'] = '云浮新辉灵科技有限公司';
-$s['SUSE174246'] = '五奥环软件';
-$s['SUSE243616'] = '五洲在线电子商务（北京）有限公司';
-$s['SUSE147434'] = '五环科技方正电脑专卖店';
-$s['SUSE077879'] = '亚信联创科技(中国)有限公司';
-$s['SUSE235274'] = '亚信集团股份有限公司';
-$s['SUSE185500'] = '亚士帝信息工程有限公司';
-$s['SUSE171911'] = '亚士帝计算机科技有限公司';
-$s['SUSE249822'] = '亚太安讯网络电子技术有限公司';
-$s['SUSE179598'] = '亚太电效系统（珠海）有限公司';
-$s['SUSE222606'] = '亚美亚（中国）通讯设备有限公司';
-$s['SUSE198398'] = '交大龙山';
-$s['SUSE241576'] = '交通部规划研究院';
-$s['SUSE105217'] = '京北方科技股份有限公司';
-$s['SUSE087146'] = '京华信息科技股份有限公司';
-$s['SUSE181494'] = '京华网络';
-$s['SUSE107825'] = '京汇企业(香港)有限公司';
-$s['SUSE199780'] = '亳州市东科现代办公设备有限公司';
-$s['SUSE191753'] = '亿威数码科技有限公司';
-$s['SUSE171832'] = '亿峰网络软件开发公司';
-$s['SUSE130196'] = '亿腾华泰(北京)科技有限公司';
-$s['SUSE181830'] = '亿讯国际股份有限公司';
-$s['SUSE179336'] = '亿通网络系统有限公司';
-$s['SUSE073322'] = '亿阳信通股份有限公司';
-$s['SUSE206859'] = '仁化县方宏科技有限公司';
-$s['SUSE238193'] = '仁扬贸易(上海)有限公司';
-$s['SUSE214711'] = '今日在线科技发展有限公司';
-$s['SUSE146868'] = '仙居三星电脑技术开发有限公司';
-$s['SUSE146866'] = '仙居华铭电子计算机有限公司';
-$s['SUSE240104'] = '仙居县万维计算机网络工程有限公司';
-$s['SUSE146067'] = '仙桃万德电脑有限责任公司';
-$s['SUSE149158'] = '仙桃市创达科技发展有限公司';
-$s['SUSE144611'] = '仙桃市蓝星科技发展有限公司';
-$s['SUSE256755'] = '仙桃通用电脑办公设备有限公司';
-$s['SUSE146783'] = '伊犁万捷科技有限责任公司';
-$s['SUSE145161'] = '伊犁先锋科贸有限责任公司';
-$s['SUSE144739'] = '伊犁同创科技有限责任公司';
-$s['SUSE142553'] = '伊犁哈萨克自治州财信投资有限责任公司';
-$s['SUSE142509'] = '伊犁师范学院汇科电脑销售服务中心';
-$s['SUSE226693'] = '伊犁新新时代信息科技有限责任公司';
-$s['SUSE226691'] = '伊犁瑞恒商贸有限责任公司';
-$s['SUSE080163'] = '伊迪艾电脑科技(上海)有限公司';
-$s['SUSE072731'] = '伊迪艾电脑科技（中国）有限公司';
-$s['SUSE081065'] = '伍尔特国际咨询（上海）有限公司';
-$s['SUSE122298'] = '伍尔特菲尼克斯信息技术(上海)有限公司';
-$s['SUSE178499'] = '伍尔特菲尼克斯信息技术（上海）有限公司';
-$s['SUSE189778'] = '伏羲计算机系统工程有限公司';
-$s['SUSE184799'] = '众智科技有限公司';
-$s['SUSE188335'] = '众豪联德（北京）科技有限公司';
-$s['SUSE246593'] = '优万科技（北京）有限公司';
-$s['SUSE183207'] = '优万网络技术(有限)公司';
-$s['SUSE236542'] = '优炫（北京）科技有限公司';
-$s['SUSE082858'] = '优码计算机软件开发(苏州)有限公司';
-$s['SUSE234875'] = '优网科技';
-$s['SUSE155575'] = '优集系统(中国)有限公司';
-$s['SUSE170860'] = '伦茨公司北京代表处';
-$s['SUSE189356'] = '佑邦科技有限公司';
-$s['SUSE237442'] = '余姚市博朗计算机科技有限公司';
-$s['SUSE207514'] = '佛山东日科技有限公司';
-$s['SUSE244322'] = '佛山商羽计算机有限公司';
-$s['SUSE226913'] = '佛山市三水杰华网络有限公司';
-$s['SUSE216747'] = '佛山市三水联科电脑有限公司';
-$s['SUSE250011'] = '佛山市京奥电子科技有限公司';
-$s['SUSE215358'] = '佛山市以太科技有限公司';
-$s['SUSE145605'] = '佛山市佛仪办公设备有限公司';
-$s['SUSE253515'] = '佛山市佳禾科技有限公司';
-$s['SUSE209207'] = '佛山市倚天计算机网络工程有限公司';
-$s['SUSE205546'] = '佛山市先创科技有限公司';
-$s['SUSE209418'] = '佛山市凯利得计算机网络技术有限公司';
-$s['SUSE208236'] = '佛山市南海区科域资讯有限公司';
-$s['SUSE120394'] = '佛山市友恒网络科技有限公司';
-$s['SUSE204579'] = '佛山市大昌科技有限公司';
-$s['SUSE232727'] = '佛山市展翼计算机科技有限公司';
-$s['SUSE176827'] = '佛山市建皓科技发展有限公司';
-$s['SUSE248608'] = '佛山市新思联计算机科技有限公司';
-$s['SUSE145606'] = '佛山市星星计算机科技实业有限公司';
-$s['SUSE226839'] = '佛山市浩鑫电脑科技有限公司';
-$s['SUSE249419'] = '佛山市源信计算机网络有限公司';
-$s['SUSE207390'] = '佛山市爱普电脑工程有限公司';
-$s['SUSE121068'] = '佛山市禅城区嘉讯科技服务中心';
-$s['SUSE235272'] = '佛山市科杰通计算机网络服务有限公司';
-$s['SUSE145607'] = '佛山市粤众天创技术有限公司';
-$s['SUSE208912'] = '佛山市菲奈特系统网络有限公司';
-$s['SUSE208757'] = '佛山市蓝天网络科技有限公司';
-$s['SUSE251256'] = '佛山市衡联网络工程有限公司';
-$s['SUSE207604'] = '佛山市豪杰智能信息技术有限公司';
-$s['SUSE221317'] = '佛山市通税科技有限公司';
-$s['SUSE150433'] = '佛山市金百科计算机系统集成有限公司';
-$s['SUSE145603'] = '佛山市金益达电子计算机有限公司';
-$s['SUSE195331'] = '佛山市顺德区中泓计算机有限公司';
-$s['SUSE207724'] = '佛山市顺德区新动力科技网络有限公司';
-$s['SUSE218028'] = '佛山市顺德区鼎华电脑网络有限公司';
-$s['SUSE237986'] = '佛山市顺隆信息科技有限公司';
-$s['SUSE145602'] = '佛山市飞云信息网络系统有限公司';
-$s['SUSE205012'] = '佛山市高明逸聪电脑系统集成有限公司';
-$s['SUSE145601'] = '佛山高达电脑公司';
-$s['SUSE247043'] = '佳报（上海）信息技术有限公司';
-$s['SUSE151014'] = '佳木斯中恒科技有限公司';
-$s['SUSE149629'] = '佳木斯同方信息技术有限公司';
-$s['SUSE151016'] = '佳木斯四方科技有限公司';
-$s['SUSE207504'] = '佳木斯市金卓越科技发展有限公司';
-$s['SUSE151106'] = '佳木斯晨锋计算机科技有限公司';
-$s['SUSE144606'] = '佳木斯金卓越科技发展有限公司';
-$s['SUSE151019'] = '佳木斯黄金电脑公司';
-$s['SUSE186894'] = '佳杰科技（上海）有限公司';
-$s['RCNE001899'] = '佳杰科技(中国)有限公司';
-$s['SUSE193155'] = '佳电国际贸易（上海）有限公司';
-$s['SUSE213932'] = '佳迈网络科技有限公司';
-$s['SUSE192908'] = '侨乡人才网';
-$s['SUSE146464'] = '保定嘉华科技有限公司';
-$s['SUSE146140'] = '保定基石数码科技有限公司';
-$s['SUSE208230'] = '保定市亿佰电子商务有限责任公司';
-$s['SUSE147123'] = '保定市北辰科技发展有限公司';
-$s['SUSE251734'] = '保定市区摩尔科技开发有限公司';
-$s['SUSE146467'] = '保定市华宇电脑工程有限公司';
-$s['SUSE251101'] = '保定市华恩电子科技有限公司';
-$s['SUSE224646'] = '保定市华联计算机有限公司';
-$s['SUSE146465'] = '保定市天财胜龙信息技术有限公司';
-$s['SUSE230780'] = '保定市威辰科技发展有限公司';
-$s['SUSE223757'] = '保定市新瑞光电子商贸有限公司';
-$s['SUSE145471'] = '保定市瑞光笃信计算机有限公司';
-$s['SUSE253125'] = '保定市盈科电子有限公司';
-$s['SUSE235715'] = '保定市硕星计算机网络科技有限公司';
-$s['SUSE103893'] = '保定市英捷财务软件销售有限公司';
-$s['SUSE258342'] = '保定市赫远科技开发有限公司';
-$s['SUSE237127'] = '保定市迈拓港湾科技发展有限公司';
-$s['SUSE230601'] = '保定市鸿志计算机工程有限公司';
-$s['SUSE121290'] = '保定超越电子科技有限公司';
-$s['SUSE147091'] = '保山保会通软件有限公司';
-$s['SUSE147090'] = '保山大禹实业有限公司';
-$s['SUSE147062'] = '保山市亿家人数码网络科技公司';
-$s['SUSE150518'] = '保山市津桥电脑有限公司';
-$s['SUSE147068'] = '保山福瑞得新技术工程有限公司';
-$s['SUSE147066'] = '保山科教电脑公司';
-$s['SUSE184537'] = '信利软件科技有限责任公司';
-$s['SUSE218702'] = '信安软件(中国)有限公司';
-$s['SUSE146618'] = '信联数码科技';
-$s['SUSE145251'] = '信阳三叶电脑有限公司';
-$s['SUSE144564'] = '信阳市新中惠电脑有限公司';
-$s['SUSE147555'] = '信阳市联创科技有限公司';
-$s['SUSE147550'] = '信阳市金桥网络中心';
-$s['SUSE154039'] = '信阳恒诚电子有限公司';
-$s['SUSE145384'] = '信阳海纳电脑有 限责任公司';
-$s['SUSE145382'] = '信阳科宇有限公司';
-$s['SUSE130687'] = '信雅达南京办事处';
-$s['SUSE128927'] = '信雅达成都办事处';
-$s['SUSE130686'] = '信雅达武汉办事处';
-$s['SUSE128930'] = '信雅达深圳办事处';
-$s['SUSE072734'] = '信雅达系统工程股份有限公司';
-$s['SUSE097911'] = '倍多科技(上海)有限公司';
-$s['SUSE151962'] = '元化医疗咨询服务(上海)有限公司';
-$s['SUSE237989'] = '元帅科技';
-$s['SUSE147466'] = '先创科技有限公司';
-$s['SUSE147056'] = '先达电脑公司';
-$s['SUSE179572'] = '先锋软件';
-$s['SUSE208083'] = '先锋软件股份有限公司';
-$s['SUSE180042'] = '光华冠群软件公司';
-$s['SUSE222239'] = '光彩未来软件技术有限公司';
-$s['SUSE142649'] = '克拉玛依世通有限责任公司';
-$s['SUSE146757'] = '克拉玛依区胜科电子商行';
-$s['SUSE215095'] = '克拉玛依华融科技有限公司';
-$s['SUSE142555'] = '克拉玛依市兴港有限责任公司';
-$s['SUSE146758'] = '克拉玛依市庆财有限责任公司';
-$s['SUSE146753'] = '克拉玛依市志强商贸有限公司';
-$s['SUSE215093'] = '克拉玛依市方联科技发展有限责任公司';
-$s['SUSE217158'] = '克拉玛依市汇捷电子技术有限责任公司';
-$s['SUSE213947'] = '克拉玛依市独山子北方电子系统工程有限公司';
-$s['SUSE146762'] = '克拉玛依市独山子荣祥工贸有限责任公司';
-$s['SUSE146750'] = '克拉玛依市精诚公司';
-$s['SUSE146752'] = '克拉玛依市金通信息技术广告有限责任公司';
-$s['SUSE243136'] = '克拉玛依红有软件有限责任公司';
-$s['SUSE193476'] = '全维智码信息技术(北京)有限公司';
-$s['SUSE145591'] = '全胜恒业';
-$s['SUSE166196'] = '公安部交通管理科学研究所';
-$s['SUSE214522'] = '六安市万达信息科技有限公司';
-$s['SUSE199734'] = '六安市永辰电脑科技发展有限责任公司';
-$s['SUSE259468'] = '六盘水万事达科贸有限公司';
-$s['SUSE241648'] = '六盘水万象科贸有限公司';
-$s['SUSE147126'] = '六盘水南方电脑公司';
-$s['SUSE251055'] = '六盘水精明人软件科贸实业有限公司';
-$s['SUSE129185'] = '兰剑物流科技有限责任公司';
-$s['SUSE248952'] = '兰博医信科技（北京）有限公司';
-$s['SUSE232150'] = '兰吉尔仪表系统(珠海)有限公司';
-$s['SUSE241002'] = '兰州一兴电子信息工程有限公司';
-$s['SUSE209682'] = '兰州万桥智能科技有限公司';
-$s['SUSE226006'] = '兰州业海星诚商贸有限公司';
-$s['SUSE216911'] = '兰州东方电子工程（集团）有限公司';
-$s['SUSE107770'] = '兰州九鼎信息科技有限公司';
-$s['SUSE214555'] = '兰州乾阳电子科技有限公司';
-$s['SUSE213522'] = '兰州亿佳科技有限公司';
-$s['SUSE148235'] = '兰州信惠达电子有限责任公司';
-$s['SUSE150816'] = '兰州倚天资讯有限公司';
-$s['SUSE212654'] = '兰州华清计算机系统有限公司';
-$s['SUSE216819'] = '兰州华益润达科技有限公司';
-$s['SUSE135835'] = '兰州华融电子科技有限公司';
-$s['SUSE235117'] = '兰州华迪科技有限公司';
-$s['SUSE207596'] = '兰州华陇理工科技有限公司';
-$s['SUSE238242'] = '兰州南特数码科技股份有限公司';
-$s['SUSE155509'] = '兰州博华科技开发有限公司';
-$s['SUSE217267'] = '兰州博瑞科技产业工程有限公司';
-$s['SUSE218374'] = '兰州商源网络软件技术有限公司';
-$s['SUSE228554'] = '兰州嘉运通达电子科技有限公司';
-$s['SUSE155507'] = '兰州大方电子有限公司';
-$s['SUSE205810'] = '兰州天地电脑技术有限公司';
-$s['SUSE220431'] = '兰州天泽科技开发有限公司';
-$s['SUSE226340'] = '兰州天网软件技术有限公司';
-$s['SUSE121339'] = '兰州奥普信息技术有限公司';
-$s['SUSE142644'] = '兰州宏志达电子有限责任公司';
-$s['SUSE223554'] = '兰州宏炬网络科技有限公司';
-$s['SUSE239413'] = '兰州宏致电力科技开发有限责任公司';
-$s['SUSE144788'] = '兰州山康电子有限责任公司';
-$s['SUSE107771'] = '兰州工联高新技术有限责任公司';
-$s['SUSE120697'] = '兰州市驰达通用电子有限责任公司';
-$s['SUSE222960'] = '兰州微晶数码科技工程有限责任';
-$s['SUSE250855'] = '兰州恩大商贸有限公司';
-$s['SUSE144787'] = '兰州恺隆电子科技有限公司';
-$s['SUSE225343'] = '兰州文曦分析仪器有限公司';
-$s['SUSE142483'] = '兰州新希望电子有限责任公司';
-$s['SUSE142695'] = '兰州方联电脑技术有限责任公司';
-$s['SUSE194009'] = '兰州时空电脑技术有限公司';
-$s['SUSE224070'] = '兰州昌明源电子有限责任公司';
-$s['SUSE142489'] = '兰州星耀网络信息有限公司';
-$s['SUSE142646'] = '兰州星辰电子科技有限公司';
-$s['SUSE136836'] = '兰州昱帆实业有限公司';
-$s['SUSE241022'] = '兰州朗恩思电子科技有限公司';
-$s['SUSE207614'] = '兰州杰森伟业电子科技有限公司';
-$s['SUSE225349'] = '兰州松影电子科技有限公司';
-$s['SUSE155513'] = '兰州欣惠泽电子科技有限公司';
-$s['SUSE241003'] = '兰州正德电子科技有限责任公司';
-$s['SUSE213375'] = '兰州正龙电子科技有限责任公司';
-$s['SUSE155518'] = '兰州海华网络信息服务有限公司';
-$s['SUSE223480'] = '兰州海天伟业科技有限公司';
-$s['SUSE248951'] = '兰州海星科技有限责任公司';
-$s['SUSE212656'] = '兰州海诺天一网络科技有限公司';
-$s['SUSE239549'] = '兰州溥元电子科技发展有限公司';
-$s['SUSE144789'] = '兰州瀚阳电子有限责任公司';
-$s['SUSE210094'] = '兰州理想科视信息系统有限公司';
-$s['SUSE221164'] = '兰州瑞成天祥应用科技有限公司';
-$s['SUSE252705'] = '兰州瑞杰信息科技有限公司';
-$s['SUSE250726'] = '兰州瑞欣志业科技有限公司';
-$s['SUSE235550'] = '兰州盛威信息技术有限公司';
-$s['SUSE216734'] = '兰州竣凯电力物资有限公司';
-$s['SUSE126816'] = '兰州美承科技有限公司';
-$s['SUSE122753'] = '兰州联创计算机系统集成有限公司';
-$s['SUSE226341'] = '兰州联勤电子科技有限责任公司';
-$s['SUSE209814'] = '兰州联和电子有限责任公司';
-$s['SUSE158158'] = '兰州腾冠数码有限责任公司';
-$s['SUSE240805'] = '兰州蓝博电子信息科技有限公司';
-$s['SUSE241014'] = '兰州财富电子科技有限公司';
-$s['SUSE142588'] = '兰州辰光计算机新技术有限公司';
-$s['SUSE142645'] = '兰州通讯技术公司';
-$s['SUSE193606'] = '兰州金科天润计算机信息技术有限公司';
-$s['SUSE210594'] = '兰州金科计算机信息技术有限公司';
-$s['SUSE217023'] = '兰州金蓉威通讯技术有限公司';
-$s['SUSE207521'] = '兰州金隆达工贸有限公司';
-$s['SUSE142486'] = '兰州阳光灵迅电子科技有限公司';
-$s['SUSE142700'] = '兰州雨思电子科技有限公司';
-$s['SUSE122751'] = '兰州鸿业科技发展有限公司';
-$s['SUSE119878'] = '兰新高科技产业发展股份有限公司';
-$s['SUSE247550'] = '兰溪市神箭办公设备有限公司';
-$s['SUSE157209'] = '兰溪市科信电脑办公设备有限公司';
-$s['SUSE190764'] = '兴义四新电脑科技有限公司';
-$s['SUSE190688'] = '兴义市好帮手科技有限公司';
-$s['SUSE218769'] = '兴化市诚创计算机有限公司';
-$s['SUSE179563'] = '兴唐通信科技股份有限公司';
-$s['SUSE216463'] = '兴汉科技';
-$s['SUSE257221'] = '内江今英电脑科技有限公司';
-$s['SUSE250839'] = '内江市百吉电子技术有限责任公司';
-$s['SUSE209417'] = '内江市英特信息咨询有限责任公司';
-$s['SUSE257446'] = '内江市诚华电脑有限责任公司';
-$s['SUSE209272'] = '内江联迅科技有限责任公司';
-$s['SUSE209269'] = '内江英特公司';
-$s['SUSE120712'] = '内蒙古万德系统集成有限责任公司';
-$s['SUSE145086'] = '内蒙古三C集团有限公司';
-$s['SUSE150464'] = '内蒙古三佳金卡有限责任公司';
-$s['SUSE121665'] = '内蒙古世纪新元科技软件有限公司';
-$s['SUSE190354'] = '内蒙古中生联网络商务有限公司';
-$s['SUSE141836'] = '内蒙古亨达海天网络有限公司';
-$s['SUSE221103'] = '内蒙古众志伟业科技有限公司';
-$s['SUSE261732'] = '内蒙古凯盛科技有限公司';
-$s['SUSE243715'] = '内蒙古创天信息技术有限公司';
-$s['SUSE120908'] = '内蒙古北清联大科贸有限公司';
-$s['SUSE205269'] = '内蒙古华强通讯技术有限公司';
-$s['SUSE145925'] = '内蒙古华昕立合科技有限公司';
-$s['SUSE250010'] = '内蒙古博众科技开发有限责任公司';
-$s['SUSE249813'] = '内蒙古君强电子科技有限责任公司';
-$s['SUSE206868'] = '内蒙古天卓皓宇科贸有限责任公司';
-$s['SUSE122498'] = '内蒙古天地方正信息有限责任公司';
-$s['SUSE122501'] = '内蒙古天大天财信息技术有限责任公司';
-$s['SUSE212047'] = '内蒙古天迅网络科技发展有限责任公司';
-$s['SUSE236081'] = '内蒙古奥博华商贸有限公司';
-$s['SUSE260130'] = '内蒙古宝亮信息技术有限公司';
-$s['SUSE150468'] = '内蒙古实达巨龙计算机应用服务有限责任公司';
-$s['SUSE120166'] = '内蒙古实达科技软件系统有限公司';
-$s['SUSE243837'] = '内蒙古富通网络科技有限公司';
-$s['SUSE243571'] = '内蒙古巨鹏电子科技开发有限公司';
-$s['SUSE243566'] = '内蒙古德宝办公自动化有限责任公司';
-$s['SUSE250598'] = '内蒙古恒利达信息技术有限责任公司';
-$s['SUSE215889'] = '内蒙古承启电子科技有限公司';
-$s['SUSE156167'] = '内蒙古新联信息产业有限公司';
-$s['SUSE120711'] = '内蒙古新脉远望科技有限公司';
-$s['SUSE150470'] = '内蒙古星联星网络科技有限公司';
-$s['SUSE204367'] = '内蒙古永鑫智达科技有限公司';
-$s['SUSE150463'] = '内蒙古泰信数码科技有限责任公司';
-$s['SUSE212232'] = '内蒙古浪潮同洲信息科技有限责任公司';
-$s['SUSE212655'] = '内蒙古灵奕(集团)正北电脑有限责任公司';
-$s['SUSE244469'] = '内蒙古盈嘉电子科技有限公司';
-$s['SUSE121425'] = '内蒙古益恒宽带技术有限公司';
-$s['SUSE260066'] = '内蒙古益网安全技术有限责任公司';
-$s['SUSE214272'] = '内蒙古科电电气有限责任公司';
-$s['SUSE121467'] = '内蒙古立信科技发展有限责任公司';
-$s['SUSE156437'] = '内蒙古立元新技术应用有限责任公司';
-$s['SUSE183751'] = '内蒙古维思高科技有限责任公司';
-$s['SUSE194962'] = '内蒙古自立电脑有限责任公司';
-$s['SUSE208002'] = '内蒙古蒙影影视设备工程有限责任公司';
-$s['SUSE243643'] = '内蒙古西部动力网络科技有限责任公司';
-$s['SUSE121460'] = '内蒙古证联信息技术有限公司';
-$s['SUSE247529'] = '内蒙古诚远科技发展有限公司';
-$s['SUSE237582'] = '内蒙古赛迪佳讯科技有限公司';
-$s['SUSE121479'] = '内蒙古金名计算机系统集成有限责任公司';
-$s['SUSE206480'] = '内蒙古金立达电子技术有限责任公司';
-$s['SUSE128271'] = '内蒙古金财信息技术有限公司';
-$s['SUSE250099'] = '内蒙古高维信诚科技有限公司';
-$s['SUSE150462'] = '内蒙古鸿恩数码科技有限公司';
-$s['SUSE231103'] = '军工思波信息科技产业有限公司';
-$s['SUSE186047'] = '冠融泰科';
-$s['SUSE260562'] = '冠赫国际贸易(上海)有限公司';
-$s['SUSE145574'] = '凌云计算机网络集成有限公司';
-$s['SUSE221033'] = '凤城市翰墨科技有限公司';
-$s['SUSE217066'] = '凯捷咨询（中国）有限公司';
-$s['SUSE180114'] = '凯明信息科技股份有限公司';
-$s['SUSE248509'] = '凯歌信息技术有限公司';
-$s['SUSE223762'] = '凯润银科信息技术(深圳)有限公司';
-$s['SUSE146136'] = '凯迈(洛阳)电子有限公司';
-$s['SUSE147129'] = '凯里市百盛电脑有限公司';
-$s['SUSE221783'] = '凯里市黔兴电脑有限责任公司';
-$s['SUSE121732'] = '凸版软件上海有限公司';
-$s['SUSE136814'] = '创新科存储技术(深圳)有限公司';
-$s['SUSE147552'] = '创星科技有限公司';
-$s['SUSE174201'] = '创智金信系统集成有限公司';
-$s['RCNE000121'] = '创智集团';
-$s['SUSE229813'] = '前卫科技';
-$s['SUSE103998'] = '前郭县诚远科技实业有限公司';
-$s['SUSE141351'] = '加安信息技术有限公司';
-$s['SUSE086547'] = '加拿大达内科技(中国)公司';
-$s['SUSE120253'] = '勾股软件有限公司';
-$s['SUSE146466'] = '包头励恒科技有限公司';
-$s['SUSE153594'] = '包头市元乙科技有限责任公司';
-$s['SUSE250097'] = '包头市康悦科技有限责任公司';
-$s['SUSE146148'] = '包头市新纪元信息技术有限责任公司';
-$s['SUSE146155'] = '包头市汉通科技有限公司';
-$s['SUSE146144'] = '包头市轶涛科技有限责任公司';
-$s['SUSE146145'] = '包头市金诺达数码科技有限责任公司';
-$s['SUSE186147'] = '北京';
-$s['SUSE197604'] = '北京NTT数据系统集成有限公司上海分公司';
-$s['SUSE166893'] = '北京TRS（拓尔思）信息技术有限公司';
-$s['SUSE078607'] = '北京一诺达信息技术有限责任公司';
-$s['SUSE188513'] = '北京一风立创科技有限公司';
-$s['SUSE247182'] = '北京七彩橙科技有限公司';
-$s['SUSE235182'] = '北京七星宏泰电子设备有限责任公司';
-$s['SUSE107930'] = '北京万博网迅铁路物流技术开发有限公司';
-$s['SUSE171549'] = '北京万古汇力科技有限公司';
-$s['SUSE225294'] = '北京万嘉博科技开发有限公司';
-$s['SUSE251249'] = '北京万成九江科技有限公司';
-$s['SUSE126984'] = '北京万润达科技有限公司';
-$s['SUSE216393'] = '北京万维美思科技有限责任公司';
-$s['SUSE229299'] = '北京三石汇通信息技术有限公司';
-$s['SUSE220368'] = '北京三维天地科技有限公司';
-$s['SUSE259350'] = '北京三维海容科技有限公司';
-$s['SUSE211739'] = '北京三联恒远科技发展有限公司';
-$s['SUSE257224'] = '北京三达德科技发展有限公司';
-$s['SUSE251555'] = '北京三阳今日科技有限公司';
-$s['SUSE251749'] = '北京世创未来科技发展有限公司';
-$s['SUSE249430'] = '北京世奇康盛商贸有限公司';
-$s['SUSE207389'] = '北京世源希达工程技术公司';
-$s['SUSE234105'] = '北京世纪东方国铁科技股份有限公司';
-$s['SUSE093522'] = '北京世纪众恒科技发展有限公司';
-$s['SUSE222127'] = '北京世纪佳博科技发展有限公司';
-$s['SUSE078606'] = '北京世纪华夏信息技术有限公司';
-$s['SUSE111814'] = '北京世纪华路科技发展有限公司';
-$s['SUSE139709'] = '北京世纪华风科技发展有限公司';
-$s['SUSE228452'] = '北京世纪奥通科技有限公司';
-$s['SUSE260837'] = '北京世纪弘彩科技有限公司';
-$s['SUSE204992'] = '北京世纪支点科技发展有限责任公司延安分公司';
-$s['SUSE246000'] = '北京世纪晨辉科技有限公司';
-$s['SUSE254532'] = '北京世纪畅想科技发展有限公司';
-$s['SUSE128718'] = '北京世纪科怡信息技术有限公司';
-$s['SUSE233717'] = '北京世纪联彤科技有限公司';
-$s['SUSE183307'] = '北京世纪远扬科技有限公司';
-$s['SUSE138956'] = '北京世纪飞捷科技有限公司';
-$s['SUSE176426'] = '北京世纪鼎点软件有限公司';
-$s['SUSE245390'] = '北京世龙众远科贸有限责任公司';
-$s['SUSE184820'] = '北京业成自控系统有限公司';
-$s['SUSE253323'] = '北京东信龙石油技术有限公司';
-$s['SUSE141664'] = '北京东华合创北美科技有限公司';
-$s['SUSE249321'] = '北京东华合创科技有限公司';
-$s['SUSE107605'] = '北京东华英斯坦信息技术有限公司';
-$s['SUSE080863'] = '北京东南鼎圣信息技术发展有限公司';
-$s['SUSE233586'] = '北京东安宝龙科技有限公司';
-$s['SUSE242098'] = '北京东方东森科技有限公司';
-$s['SUSE179877'] = '北京东方中科集成科技有限公司';
-$s['SUSE221473'] = '北京东方国信科技股份有限公司';
-$s['SUSE236907'] = '北京东方基业科技发展有限公司';
-$s['SUSE220671'] = '北京东方天安科技有限公司';
-$s['SUSE231479'] = '北京东方奕兴科技有限公司';
-$s['SUSE212268'] = '北京东方德思科技有限公司';
-$s['SUSE078605'] = '北京东方思佳科技有限责任公司';
-$s['SUSE085388'] = '北京东方惠群科技发展有限公司';
-$s['SUSE141834'] = '北京东方捷通科技发展有限公司';
-$s['SUSE251302'] = '北京东方森太科技发展有限公司';
-$s['SUSE207373'] = '北京东方正通科技有限公司';
-$s['SUSE191570'] = '北京东方清大技术发展有限公司';
-$s['SUSE085497'] = '北京东方瑞和科技有限公司';
-$s['SUSE248374'] = '北京东方瑞安科技有限公司';
-$s['SUSE139714'] = '北京东方舜成科技发展有限公司';
-$s['SUSE185540'] = '北京东方般若科技发展有限公司';
-$s['SUSE215572'] = '北京东方英龙科技发展有限公司';
-$s['SUSE080951'] = '北京东方莱恩信息技术有限公司';
-$s['SUSE122273'] = '北京东方蓝金科技有限责任公司';
-$s['SUSE243916'] = '北京东方融信达软件技术有限公司';
-$s['SUSE121746'] = '北京东方诚业科技有限公司';
-$s['SUSE218862'] = '北京东方赛得科技有限责任公司';
-$s['SUSE073217'] = '北京东方趋势科技发展中心';
-$s['SUSE235122'] = '北京东方远阳电子技术开发有限公司';
-$s['SUSE242223'] = '北京东方迪格软件科技发展有限公司';
-$s['SUSE077226'] = '北京东方通科技发展有限责任公司';
-$s['SUSE120336'] = '北京东方金指科技有限公司';
-$s['SUSE219351'] = '北京东方金时代网络技术有限公司';
-$s['SUSE145514'] = '北京东方金鹰信息科技股份有限公司';
-$s['SUSE079627'] = '北京东方飞鸿远航网络信息技术有限公司';
-$s['SUSE105274'] = '北京东晨利能科技发展有限公司';
-$s['SUSE127648'] = '北京东林瑞达信息技术有限公司';
-$s['SUSE139980'] = '北京东海岸技术开发有限责任公司';
-$s['SUSE111908'] = '北京东联网际科技有限公司';
-$s['SUSE230982'] = '北京东软慧聚信息技术有限公司';
-$s['SUSE237132'] = '北京东辉佳业电脑技术有限公司';
-$s['SUSE128578'] = '北京中交科信科技有限公司';
-$s['SUSE224235'] = '北京中人光华教育科技有限公司';
-$s['SUSE105443'] = '北京中企天际信息技术有限责任公司';
-$s['SUSE209614'] = '北京中兴远东科技发展有限公司';
-$s['SUSE148263'] = '北京中兴远东科技发展有限公司烟台分公司';
-$s['SUSE218307'] = '北京中兴通科技股份有限公司';
-$s['SUSE239198'] = '北京中创信测科技股份有限公司';
-$s['SUSE229394'] = '北京中加集成智能系统工程有限公司';
-$s['SUSE257532'] = '北京中嘉时代科技有限公司';
-$s['SUSE128373'] = '北京中大科慧科技发展有限公司';
-$s['SUSE103999'] = '北京中天信诚科技发展有限公司';
-$s['SUSE128809'] = '北京中天动力科技发展有限公司';
-$s['SUSE137111'] = '北京中天康瑞科技有限公司';
-$s['SUSE250509'] = '北京中天智通科技有限公司';
-$s['SUSE121748'] = '北京中天瑞达科技发展有限公司';
-$s['SUSE231588'] = '北京中天网信科技有限公司';
-$s['SUSE237987'] = '北京中宏立达科技发展有限公司';
-$s['SUSE207806'] = '北京中广联科技有限公司';
-$s['SUSE179070'] = '北京中建三合理财咨询有限公司';
-$s['SUSE135738'] = '北京中建创业科技有限公司';
-$s['SUSE139170'] = '北京中恒创业信息技术有限公司';
-$s['SUSE073484'] = '北京中技新元科技有限公司';
-$s['SUSE114616'] = '北京中旭阳光石油天然气科技有限公司';
-$s['SUSE089129'] = '北京中普友通软件技术有限公司';
-$s['SUSE146686'] = '北京中正鸿远科技有限公司';
-$s['SUSE217672'] = '北京中水科水电科技开发有限公司';
-$s['SUSE250570'] = '北京中油海陆科技开发有限公司';
-$s['SUSE200107'] = '北京中油瑞飞信息技术有限责任公司';
-$s['SUSE255807'] = '北京中海纪元数字技术发展股份有限公司';
-$s['SUSE207255'] = '北京中海讯通数码科技有限公司';
-$s['SUSE143460'] = '北京中烟信息技术有限公司';
-$s['SUSE227346'] = '北京中电兴华软件有限公司';
-$s['SUSE261846'] = '北京中电兴发科技公司宁夏分公司';
-$s['SUSE204912'] = '北京中电兴发科技有限公司';
-$s['SUSE171834'] = '北京中电华大电子设计有限责任公司';
-$s['SUSE218027'] = '北京中电同业科技发展有限公司';
-$s['SUSE128813'] = '北京中电广通科技有限公司';
-$s['SUSE105214'] = '北京中电普华信息技术有限公司';
-$s['RCNE000254'] = '北京中电清华科技有限责任公司';
-$s['SUSE229848'] = '北京中电瑞达电子技术有限公司';
-$s['SUSE084129'] = '北京中电红石科技有限公司';
-$s['SUSE120167'] = '北京中电网信息技术有限公司';
-$s['SUSE246666'] = '北京中电融创科技有限公司';
-$s['SUSE260110'] = '北京中电颐合科技有限公司';
-$s['SUSE145923'] = '北京中电飞华通信股份有限公司';
-$s['SUSE227971'] = '北京中矿信电科技股份有限公司';
-$s['SUSE092711'] = '北京中科久辉信息自动化有限公司';
-$s['SUSE223598'] = '北京中科创新园高新技术有限公司新疆分公司';
-$s['SUSE121772'] = '北京中科卓远科技发展有限公司';
-$s['SUSE224977'] = '北京中科同向信息技术有限公司';
-$s['SUSE146600'] = '北京中科大洋科技发展股份有限公司';
-$s['SUSE072772'] = '北京中科希望软件股份有限公司';
-$s['SUSE240743'] = '北京中科建友科技有限公司';
-$s['SUSE238579'] = '北京中科朗思信息技术有限公司';
-$s['SUSE231584'] = '北京中科永信数字技术有限公司';
-$s['SUSE193614'] = '北京中科汇联信息技术有限公司';
-$s['SUSE209530'] = '北京中科电工贸有限公司';
-$s['SUSE142914'] = '北京中科诺泰技术有限公司';
-$s['SUSE210365'] = '北京中科软件有限公司';
-$s['SUSE130424'] = '北京中科辅龙计算机技术有限公司';
-$s['SUSE122342'] = '北京中科达奥软件有限公司';
-$s['SUSE225437'] = '北京中科金天地网络技术有限公司';
-$s['SUSE192357'] = '北京中科金财科技股份有限公司';
-$s['SUSE226955'] = '北京中科领新信息技术有限公司';
-$s['SUSE085408'] = '北京中程汇强科技有限公司';
-$s['SUSE185289'] = '北京中程科技有限公司';
-$s['SUSE201651'] = '北京中联云达信息系统服务有限公司';
-$s['SUSE135556'] = '北京中联兴达软件工程有限公司';
-$s['SUSE131176'] = '北京中胜世纪科技有限公司';
-$s['SUSE210130'] = '北京中航弱电系统工程有限公司';
-$s['SUSE260617'] = '北京中航航安科技有限公司';
-$s['SUSE122328'] = '北京中色长信软件科技有限公司';
-$s['SUSE188038'] = '北京中视广信科技有限公司';
-$s['SUSE121347'] = '北京中认网信息技术有限公司';
-$s['SUSE210741'] = '北京中软万维网络技术有限公司';
-$s['SUSE242906'] = '北京中软万维网络技术有限公司上海分公司';
-$s['SUSE225887'] = '北京中软信息系统工程有限公司';
-$s['SUSE185825'] = '北京中软冠群软件技术有限公司';
-$s['RCNE001884'] = '北京中软华夏信息技术有限公司';
-$s['SUSE103884'] = '北京中软国际信息技术有限公司';
-$s['SUSE085500'] = '北京中软巨人科技有限公司';
-$s['SUSE073211'] = '北京中软融鑫计算机系统工程有限公司';
-$s['SUSE088861'] = '北京中远瑞天网络技术有限公司';
-$s['SUSE231542'] = '北京中通国信系统集成有限公司';
-$s['SUSE207385'] = '北京中铁信科技有限公司';
-$s['SUSE237225'] = '北京中铁天易科技发展有限公司';
-$s['SUSE108210'] = '北京中长石基信息技术股份有限公司';
-$s['SUSE142507'] = '北京中阳恒泰科技有限责任公司';
-$s['SUSE150642'] = '北京中青旅海天数码科技有限公司';
-$s['SUSE206848'] = '北京中鼎信源科技发展有限公司';
-$s['SUSE212946'] = '北京中龙网库科技有限公司';
-$s['SUSE119881'] = '北京久其软件股份有限公司';
-$s['SUSE240693'] = '北京久联国通科技有限公司';
-$s['SUSE216388'] = '北京义联润达科技发展有限公司';
-$s['SUSE230462'] = '北京乐金系统集成有限公司';
-$s['SUSE207271'] = '北京九州汇通科技有限公司';
-$s['SUSE078610'] = '北京九州计算机网络有限公司';
-$s['SUSE208035'] = '北京九德科技开发有限公司';
-$s['SUSE183111'] = '北京九瑞网络科技有限公司';
-$s['SUSE116729'] = '北京乾坤建业科技发展有限公司';
-$s['SUSE259469'] = '北京乾坤建业科技发展有限公司上海分公司';
-$s['SUSE079901'] = '北京云星宇交通工程有限公司';
-$s['SUSE104560'] = '北京互信互通信息技术有限公司';
-$s['SUSE204779'] = '北京五洲广联软件开发有限责任公司';
-$s['SUSE105038'] = '北京五洲迅驰科技发展有限公司';
-$s['SUSE227474'] = '北京亚唐信息科技发展有限公司';
-$s['SUSE184176'] = '北京亚太博大软件技术有限公司';
-$s['SUSE121157'] = '北京亚细亚智业科技有限公司';
-$s['SUSE214834'] = '北京亚细亚集创科技有限公司';
-$s['SUSE241800'] = '北京交大思源科技有限公司';
-$s['SUSE073482'] = '北京京云万峰信息技术有限公司';
-$s['SUSE224358'] = '北京京城大管家科技有限公司';
-$s['SUSE242800'] = '北京京天威科技发展有限公司';
-$s['SUSE215598'] = '北京京安利德科技有限公司';
-$s['SUSE222604'] = '北京京安天地数据科技有限公司';
-$s['SUSE205117'] = '北京京宏信科技有限公司';
-$s['SUSE219804'] = '北京京师励耘教育科技有限公司';
-$s['SUSE233651'] = '北京京徽博睿科技发展有限公司';
-$s['SUSE212641'] = '北京京正益泰科技有限公司';
-$s['SUSE242314'] = '北京京汇思维科技发展有限公司';
-$s['SUSE238617'] = '北京京源时代科技发展有限公司';
-$s['SUSE215499'] = '北京京航安机场工程有限公司';
-$s['SUSE221595'] = '北京京航计算通讯研究所';
-$s['SUSE218119'] = '北京京诚鼎宇管理系统有限公司';
-$s['SUSE139484'] = '北京京达来科技有限责任公司';
-$s['SUSE223558'] = '北京亿中邮信息技术有限公司';
-$s['SUSE219897'] = '北京亿创网安科技有限公司';
-$s['SUSE182919'] = '北京亿惠达电子科技有限公司';
-$s['SUSE250688'] = '北京亿维创鑫科技有限公司';
-$s['SUSE108026'] = '北京亿维慧达科技发展有限公司';
-$s['SUSE090956'] = '北京亿网格软件技术有限公司';
-$s['SUSE254419'] = '北京亿航创世科技有限公司';
-$s['SUSE147031'] = '北京亿达金泰信息科技有限公司';
-$s['SUSE232837'] = '北京亿通博联科技有限公司';
-$s['SUSE251280'] = '北京亿通阳光科技有限公司';
-$s['SUSE242569'] = '北京亿鑫天成软件系统集成工程技术有限公司';
-$s['SUSE194116'] = '北京亿阳增值业务通信股份有限公司';
-$s['RCNE000828'] = '北京今京西科技有限公司';
-$s['SUSE210697'] = '北京今日在线科技发展有限公司';
-$s['SUSE257879'] = '北京仕科达系统技术有限公司';
-$s['SUSE171833'] = '北京伊麦特科技有限公司';
-$s['SUSE226411'] = '北京众志和达科技有限公司';
-$s['SUSE209308'] = '北京众智天恒软件有限公司';
-$s['SUSE227073'] = '北京众诚博达科技有限公司';
-$s['SUSE080595'] = '北京优侍客科技发展有限公司';
-$s['SUSE220120'] = '北京优兆科技有限公司';
-$s['SUSE221930'] = '北京优诺威讯科技有限公司';
-$s['SUSE073365'] = '北京优达创业科技有限公司';
-$s['SUSE220230'] = '北京伟裕嘉业科技有限公司';
-$s['SUSE256637'] = '北京传奇天地科技有限公司';
-$s['SUSE148426'] = '北京佰能电气技术有限公司';
-$s['SUSE221255'] = '北京佳君鸿运科技发展有限公司';
-$s['SUSE252247'] = '北京佳易恒瑞科技有限公司';
-$s['SUSE075281'] = '北京佳网科技有限公司';
-$s['SUSE181804'] = '北京佳网科技有限责任公司';
-$s['SUSE078602'] = '北京俊和在线网络科技有限公司';
-$s['SUSE229939'] = '北京保利智慧科技有限公司';
-$s['SUSE090016'] = '北京信博通科技有限公司';
-$s['SUSE121145'] = '北京信城通数码科技有限公司';
-$s['SUSE073937'] = '北京信安世纪科技有限公司';
-$s['SUSE216687'] = '北京信德顺诚科技有限公司';
-$s['SUSE184856'] = '北京信必优信息技术有限公司';
-$s['SUSE259284'] = '北京信志鸿达科技发展有限公司';
-$s['SUSE219350'] = '北京信易铭科贸有限公司';
-$s['SUSE224472'] = '北京信科安信息技术有限公司';
-$s['SUSE255785'] = '北京信诚国泰贸易有限公司';
-$s['SUSE128577'] = '北京信诚达远科技发展有限公司';
-$s['SUSE079539'] = '北京信诺时代科技发展有限公司';
-$s['SUSE221105'] = '北京信达恒源科技有限公司';
-$s['SUSE245150'] = '北京信通利达网络系统技术有限公司';
-$s['SUSE212513'] = '北京信通安盟科技有限公司';
-$s['SUSE249008'] = '北京修业时代科技有限公司';
-$s['SUSE257457'] = '北京倍卓三优科技发展有限公司';
-$s['SUSE230677'] = '北京健伦机房工程有限公司';
-$s['SUSE079624'] = '北京傲姿时代教育网络有限公司';
-$s['SUSE137227'] = '北京傲志众达科技发展有限公司';
-$s['SUSE239338'] = '北京傲比特信息技术有限公司';
-$s['SUSE219023'] = '北京傲腾基业科技有限公司';
-$s['SUSE207875'] = '北京元鼎时代科技有限公司';
-$s['SUSE186322'] = '北京兆新时代';
-$s['SUSE227171'] = '北京兆祺科技发展有限公司';
-$s['SUSE242985'] = '北京兆维数码科技有限公司';
-$s['SUSE222011'] = '北京兆维晓通科技有限公司';
-$s['SUSE091698'] = '北京兆维电子(集团)有限责任公司';
-$s['SUSE154269'] = '北京先进数通信息技术有限公司';
-$s['SUSE141055'] = '北京先锋时代数码科技有限责任公司';
-$s['SUSE142498'] = '北京光天网系统工程技术有限公司';
-$s['SUSE138336'] = '北京全路通信信号研究设计院';
-$s['SUSE222111'] = '北京兰维志新科技发展有限公司';
-$s['SUSE088184'] = '北京兰迪欣创科技有限公司';
-$s['SUSE104992'] = '北京共业科技有限公司';
-$s['SUSE085507'] = '北京共创开源软件股份有限公司';
-$s['SUSE143308'] = '北京关键要素科技有限公司';
-$s['SUSE186007'] = '北京兴唐通信科技有限公司';
-$s['SUSE185608'] = '北京兴奥德泰科技有限公司';
-$s['SUSE195961'] = '北京兴泰明远科技有限公司';
-$s['SUSE122310'] = '北京兴润佳源科技有限公司';
-$s['SUSE105441'] = '北京兴瑞风科技开发有限责任公司';
-$s['SUSE218230'] = '北京兴财信息技术开发公司';
-$s['SUSE206001'] = '北京冠华宏鑫科技有限公司';
-$s['SUSE180241'] = '北京冠融泰科软件有限责任公司';
-$s['SUSE261110'] = '北京冠辰世纪信息技术有限责任公司';
-$s['SUSE246004'] = '北京凌技通信技术有限公司';
-$s['SUSE233357'] = '北京凌瑞智同科技有限公司';
-$s['SUSE110080'] = '北京凯文斯科技发展有限公司';
-$s['SUSE084380'] = '北京凯普计算机软件系统工程公司';
-$s['SUSE253107'] = '北京凯汇欣诚科技发展有限公司';
-$s['SUSE093490'] = '北京凯盛信息系统有限责任公司';
-$s['SUSE174726'] = '北京凯翔信息科技有限公司';
-$s['SUSE207700'] = '北京凯英信业科技有限责任公司';
-$s['SUSE086548'] = '北京创业天成电子技术有限公司';
-$s['SUSE185307'] = '北京创今世纪科技有限公司';
-$s['SUSE192729'] = '北京创佳益软件有限公司';
-$s['SUSE073816'] = '北京创原天地科技有限公司';
-$s['SUSE226843'] = '北京创新通达科技发展有限公司';
-$s['SUSE137110'] = '北京创智海视通达信息技术有限公司';
-$s['SUSE209825'] = '北京创智赢科资讯科技有限责任公司';
-$s['SUSE219056'] = '北京创源富通信息技术有限公司';
-$s['SUSE233594'] = '北京创纳明日科技有限公司';
-$s['SUSE105405'] = '北京创腾科技有限公司';
-$s['SUSE142189'] = '北京创至通达科技发展有限公司';
-$s['SUSE220817'] = '北京利亚德电子科技有限公司';
-$s['SUSE232153'] = '北京利华晶商贸有限公司';
-$s['SUSE178709'] = '北京利博赛社保信息技术有限公司';
-$s['SUSE140768'] = '北京利天网通科贸有限责任公司';
-$s['SUSE253797'] = '北京利天达成科技发展有限责任公司';
-$s['SUSE256756'] = '北京利源辉科技发展有限公司';
-$s['SUSE193231'] = '北京前行科技发展有限公司铜陵分公司';
-$s['SUSE122285'] = '北京力合腾飞科贸有限公司';
-$s['SUSE226929'] = '北京力鼎创软科技有限公司';
-$s['SUSE084658'] = '北京北佳耐特科技有限公司';
-$s['SUSE240492'] = '北京北信源自动化技术有限公司';
-$s['SUSE216119'] = '北京北大方正电子有限公司';
-$s['SUSE081321'] = '北京北大西创有限公司';
-$s['SUSE204754'] = '北京北大软件工程发展有限公司';
-$s['SUSE231096'] = '北京北大青鸟安全系统工程技术有限公司';
-$s['SUSE184654'] = '北京北大高科指纹技术有限公司';
-$s['SUSE145163'] = '北京北控三兴信息技术有限公司';
-$s['SUSE120717'] = '北京北控伟仕软件工程技术有限公司';
-$s['SUSE112098'] = '北京北控电信通信息技术有限公司';
-$s['SUSE211361'] = '北京北斗兴业信息技术有限公司';
-$s['SUSE237783'] = '北京北方卓立科技有限公司';
-$s['SUSE208352'] = '北京北方博业科技发展有限公司';
-$s['SUSE157659'] = '北京北方天一科技有限公司';
-$s['SUSE246675'] = '北京北方联讯科技发展有限公司';
-$s['SUSE229110'] = '北京北方金证科技有限公司';
-$s['SUSE207601'] = '北京北科光大信息技术股份有限公司';
-$s['SUSE205736'] = '北京北科安信科技股份有限公司';
-$s['SUSE141682'] = '北京北科汇智软件技术有限公司';
-$s['SUSE179787'] = '北京北科麦思科公司';
-$s['SUSE105399'] = '北京北纬机电技术有限公司';
-$s['SUSE233996'] = '北京北联晨光信息系统有限公司';
-$s['SUSE195845'] = '北京北航冠新世纪软件有限公司';
-$s['SUSE180399'] = '北京北辰东软信息技术有限公司';
-$s['SUSE090283'] = '北京北鹰吉成科技有限公司';
-$s['SUSE213821'] = '北京北鹰金星科技有限公司';
-$s['SUSE206522'] = '北京千帆一新科技文化有限公司';
-$s['SUSE107937'] = '北京华丰天源科技发展有限公司';
-$s['SUSE207485'] = '北京华乐思软件科技有限公司';
-$s['SUSE205698'] = '北京华人求实科技发展有限公司';
-$s['SUSE220825'] = '北京华依中盛科技有限公司';
-$s['SUSE107693'] = '北京华信正合信息技术有限公司';
-$s['SUSE222078'] = '北京华兴永信信息科技有限公司';
-$s['SUSE212256'] = '北京华创宏图科技有限公司';
-$s['SUSE198190'] = '北京华力创通科技股份有限公司';
-$s['SUSE128810'] = '北京华商达数据系统科技有限公司';
-$s['SUSE089084'] = '北京华夏大地远程教育网络服务有限公司';
-$s['SUSE213516'] = '北京华夏楚天科技发展有限公司';
-$s['SUSE204263'] = '北京华夏电通科技有限公司';
-$s['SUSE229249'] = '北京华大智宝电子系统有限公司';
-$s['SUSE235617'] = '北京华天海峰科技发展有限公司';
-$s['SUSE255502'] = '北京华安天诚科技有限公司';
-$s['SUSE152451'] = '北京华安通联信息技术有限责任公司';
-$s['SUSE233432'] = '北京华宏信达科技有限公司';
-$s['SUSE248258'] = '北京华思维昂软件技术有限公司';
-$s['SUSE080858'] = '北京华思维泰克科技有限公司';
-$s['SUSE223673'] = '北京华敏兴业系统集成有限公司';
-$s['SUSE184353'] = '北京华日博乐资讯有限公司';
-$s['SUSE247054'] = '北京华昊天电子技术有限责任公司';
-$s['SUSE207085'] = '北京华晨阳通信技术有限责任公司';
-$s['SUSE188725'] = '北京华景中天信息技术有限公司';
-$s['SUSE209819'] = '北京华景创智科技有限公司';
-$s['SUSE204970'] = '北京华欣元明科技有限公司';
-$s['SUSE204767'] = '北京华泰友信电讯技术有限公司';
-$s['SUSE237224'] = '北京华泰星辰信息技术有限公司';
-$s['SUSE246669'] = '北京华海众成科技发展有限公司';
-$s['SUSE243928'] = '北京华海易联科技有限公司';
-$s['SUSE225979'] = '北京华深中色科技发展有限公司';
-$s['SUSE137678'] = '北京华深慧正系统工程技术有限公司';
-$s['SUSE073584'] = '北京华源雷讯科技有限公司';
-$s['SUSE201513'] = '北京华瑞特信息技术有限公司';
-$s['SUSE219882'] = '北京华瑞通联科技发展有限公司';
-$s['SUSE121735'] = '北京华电方胜软件技术有限公司';
-$s['SUSE242589'] = '北京华盈锐思信息技术有限公司';
-$s['SUSE107696'] = '北京华盛扬科技有限公司';
-$s['SUSE213336'] = '北京华盛鼎兴科技有限公司';
-$s['SUSE121885'] = '北京华科创新数码科技有限公司';
-$s['SUSE111670'] = '北京华科广通信息技术有限公司';
-$s['SUSE206107'] = '北京华科林科技有限公司';
-$s['SUSE221618'] = '北京华科软科技有限公司';
-$s['SUSE110135'] = '北京华纬讯电信技术有限公司';
-$s['SUSE119397'] = '北京华纳信龙信息技术发展有限公司';
-$s['SUSE143317'] = '北京华美博弈软件开发有限公司';
-$s['SUSE232491'] = '北京华联数据系统有限公司';
-$s['SUSE102651'] = '北京华育天地国际教育有限公司';
-$s['SUSE137293'] = '北京华胜天信科技有限公司';
-$s['SUSE193825'] = '北京华胜天成科技股份有限公司';
-$s['SUSE240333'] = '北京华胜天成软件技术有限公司';
-$s['SUSE232963'] = '北京华胜天隆信息技术有限公司';
-$s['SUSE120935'] = '北京华胜鸣天科技有限公司';
-$s['SUSE171858'] = '北京华腾世纪信息技术有限公司';
-$s['SUSE221374'] = '北京华融信通科技有限公司';
-$s['SUSE201069'] = '北京华融汇通科技发展有限公司';
-$s['SUSE107698'] = '北京华诚世纪科技有限公司';
-$s['SUSE145074'] = '北京华诚信科科技有限公司';
-$s['RCNE000290'] = '北京华贸科联科技有限公司';
-$s['SUSE107697'] = '北京华软路迈信息科技有限公司';
-$s['SUSE139708'] = '北京华达时代科技有限公司';
-$s['SUSE247384'] = '北京华远志高科技发展有限公司';
-$s['SUSE220600'] = '北京华迪计算机技术有限公司';
-$s['SUSE142466'] = '北京华迪计算机有限公司南昌办事处';
-$s['SUSE207910'] = '北京华通伟业科技发展有限公司';
-$s['SUSE192506'] = '北京华通联动科技有限公司';
-$s['SUSE248133'] = '北京华鑫志和科技有限公司';
-$s['SUSE084253'] = '北京华铁海兴科技有限公司';
-$s['SUSE221470'] = '北京华银天科技发展有限公司';
-$s['SUSE206972'] = '北京华际信息系统有限公司';
-$s['SUSE231912'] = '北京协力惠众软件科技有限公司';
-$s['SUSE250180'] = '北京卓为恒天科技有限公司';
-$s['SUSE145078'] = '北京卓伟洪达科技发展有限责任公司';
-$s['SUSE257469'] = '北京卓信易博科技有限公司';
-$s['SUSE131643'] = '北京卓益达科技有限公司';
-$s['SUSE137315'] = '北京南天信息工程有限公司';
-$s['SUSE254092'] = '北京南天软件有限公司';
-$s['SUSE111671'] = '北京南山高科技有限公司';
-$s['SUSE212874'] = '北京博信超信息技术有限公司';
-$s['SUSE098747'] = '北京博力特新创技术有限公司';
-$s['SUSE076938'] = '北京博厚高明科技有限公司';
-$s['SUSE249697'] = '北京博发伟业科技有限公司';
-$s['SUSE145287'] = '北京博坤佳业科技有限公司';
-$s['SUSE150813'] = '北京博大医信科技有限公司';
-$s['SUSE252829'] = '北京博宇恒业科技有限公司';
-$s['SUSE165472'] = '北京博彦科技发展有限公司';
-$s['SUSE121541'] = '北京博彦融汇科技发展有限公司';
-$s['SUSE073935'] = '北京博思美亚科技发展有限公司';
-$s['SUSE217310'] = '北京博思致远科技有限公司';
-$s['SUSE254596'] = '北京博文欣业科技有限公司';
-$s['SUSE223473'] = '北京博智中威科技有限公司';
-$s['SUSE151970'] = '北京博望华科科技有限公司';
-$s['SUSE233206'] = '北京博森达科技发展有限公司';
-$s['SUSE210285'] = '北京博润昊天科技有限公司';
-$s['SUSE080948'] = '北京博瑞巨龙电脑技术有限公司';
-$s['SUSE107849'] = '北京博瑞森科技开发有限公司';
-$s['SUSE212776'] = '北京博瑞翔伦科技发展有限公司';
-$s['SUSE221874'] = '北京博维达科系统集成有限公司';
-$s['SUSE242954'] = '北京博雅兴业科技有限公司';
-$s['SUSE247710'] = '北京博雅新创科技有限公司';
-$s['SUSE236267'] = '北京博雅昊天科技发展有限公司';
-$s['SUSE185852'] = '北京卡斯特信息系统技术有限公司';
-$s['SUSE186183'] = '北京厚盾科技有限公司';
-$s['SUSE193875'] = '北京友邦佳通电子科技有限公司';
-$s['SUSE252234'] = '北京友银鸿达科技有限公司';
-$s['SUSE142493'] = '北京双鑫汇在线科技有限公司';
-$s['SUSE257459'] = '北京可利邦信息技术有限公司';
-$s['SUSE147113'] = '北京合力思腾计算机有限公司';
-$s['SUSE207571'] = '北京合力普天信息技术有限公司';
-$s['RCNE001919'] = '北京合力金桥软件技术有限责任公司';
-$s['SUSE235558'] = '北京合宇通信息技术有限公司';
-$s['SUSE183640'] = '北京合正软件有限公司';
-$s['SUSE226558'] = '北京合胜易达科技有限公司';
-$s['SUSE194145'] = '北京合荣欣业信息技术有限公司';
-$s['SUSE217938'] = '北京吉威数源信息技术有限公司';
-$s['SUSE121869'] = '北京吉安通正科技发展有限公司';
-$s['SUSE254708'] = '北京吉海智通科技有限公司';
-$s['SUSE250641'] = '北京同创友谊科技有限公司';
-$s['SUSE256981'] = '北京同创永益科技发展有限公司';
-$s['SUSE250636'] = '北京同和瑞思计算机系统技术有限公司';
-$s['SUSE214172'] = '北京同天科技有限公司';
-$s['SUSE084335'] = '北京同方瑞和科技发展有限公司';
-$s['SUSE135970'] = '北京同方电子科技有限公司';
-$s['SUSE225649'] = '北京同方软件股份有限公司';
-$s['SUSE196729'] = '北京同有飞骥科技有限公司济南办事处';
-$s['SUSE229117'] = '北京同舟宏创科技有限公司';
-$s['RCNE001904'] = '北京同软涌莲科技有限公司';
-$s['SUSE204592'] = '北京同辉无限科技有限责任公司';
-$s['SUSE228805'] = '北京君众达科技有限公司';
-$s['SUSE246860'] = '北京君创时代科技有限公司';
-$s['SUSE258321'] = '北京君拓科技有限公司';
-$s['SUSE219019'] = '北京君杰时代科技发展有限公司';
-$s['SUSE090974'] = '北京君海长青科技发展有限公司';
-$s['SUSE241679'] = '北京启天创业科技有限公司';
-$s['SUSE073807'] = '北京启天同信科技有限公司';
-$s['SUSE224590'] = '北京启明星辰信息安全技术有限公司';
-$s['SUSE206356'] = '北京启明星辰信息技术股份有限公司';
-$s['SUSE209388'] = '北京启明星辰信息技术股份有限公司上海分公司';
-$s['SUSE214600'] = '北京启明星辰信息技术股份有限公司沈阳分公司';
-$s['SUSE074123'] = '北京和佳软件技术有限公司';
-$s['SUSE177856'] = '北京和利时信息技术有限公司';
-$s['SUSE171861'] = '北京和利时系统工程有限公司';
-$s['SUSE206369'] = '北京和勤新泰技术有限公司';
-$s['RCNE000162'] = '北京和发科技有限公司';
-$s['SUSE120389'] = '北京和煦利天科技有限公司';
-$s['SUSE124767'] = '北京和腾达技术开发有限公司';
-$s['SUSE082699'] = '北京和锐信息技术有限公司';
-$s['SUSE244473'] = '北京品傲光电科技有限公司';
-$s['SUSE111863'] = '北京品恩科技有限公司';
-$s['SUSE206089'] = '北京品高致远信息技术有限公司';
-$s['SUSE102772'] = '北京哈工大八亿时空科技发展有限公司';
-$s['SUSE235616'] = '北京唐诚朗风科技有限公司';
-$s['SUSE200393'] = '北京唯思意科技有限公司';
-$s['SUSE137884'] = '北京商信时代科技有限公司';
-$s['SUSE236711'] = '北京嘉业合创科技有限公司';
-$s['SUSE213181'] = '北京嘉华时代科技发展有限公司';
-$s['SUSE138172'] = '北京嘉和天际科技有限公司';
-$s['SUSE183512'] = '北京嘉和美康信息技术有限公司';
-$s['SUSE212685'] = '北京嘉文电子设备科贸中心';
-$s['SUSE121324'] = '北京嘉润飞科技有限公司';
-$s['SUSE186013'] = '北京嘉禾通用电子有限公司';
-$s['SUSE103922'] = '北京嘉运达科技开发有限公司';
-$s['SUSE121308'] = '北京四一安信科技有限公司';
-$s['SUSE207507'] = '北京四合天地科技有限公司';
-$s['SUSE105440'] = '北京四方华能电网控制系统有限公司';
-$s['SUSE138569'] = '北京四方继保自动化股份有限公司';
-$s['SUSE235433'] = '北京四方速通科技发展有限公司';
-$s['SUSE223672'] = '北京四方金源信息科技有限公司';
-$s['SUSE143315'] = '北京四方雅龙科有限公司';
-$s['SUSE136838'] = '北京四海博通科技发展有限公司';
-$s['SUSE192417'] = '北京四海商达科技发展有限公司';
-$s['SUSE121309'] = '北京四海蓝翔科技发展有限公司';
-$s['SUSE235369'] = '北京四通智能建筑系统集成工程有限公司';
-$s['SUSE223878'] = '北京四通计算机技术有限公司';
-$s['SUSE130911'] = '北京国俊融信科技有限公司';
-$s['SUSE130197'] = '北京国信博飞科技发展有限公司';
-$s['SUSE255097'] = '北京国信天合科技有限公司';
-$s['SUSE238118'] = '北京国信普瑞德科技发展有限公司';
-$s['SUSE209667'] = '北京国信桥通信工程有限公司';
-$s['SUSE215921'] = '北京国信桥通信工程有限公司上海分公司';
-$s['SUSE227410'] = '北京国信桥通信工程有限公司广东分公司';
-$s['SUSE072412'] = '北京国创科技有限公司';
-$s['SUSE178742'] = '北京国图数字技术有限公司';
-$s['SUSE204283'] = '北京国安电气总公司';
-$s['SUSE121064'] = '北京国永融通系统集成有限公司';
-$s['SUSE146706'] = '北京国泰联合数码科技有限公司';
-$s['SUSE208385'] = '北京国环兴业科贸有限公司';
-$s['SUSE089627'] = '北京国电博通科技有限公司';
-$s['SUSE084514'] = '北京国电联合商务网络有限公司';
-$s['SUSE249575'] = '北京国电软通科技有限公司';
-$s['SUSE211731'] = '北京国研数通软件技术有限公司';
-$s['RCNE001901'] = '北京国能天恩科技有限公司';
-$s['SUSE174116'] = '北京国脉融创信息科技有限公司';
-$s['SUSE238189'] = '北京国诚鑫业科技发展有限公司';
-$s['SUSE242448'] = '北京国遥新天地信息技术有限公司';
-$s['SUSE227238'] = '北京国都信业科技有限公司';
-$s['SUSE136517'] = '北京国都时代科技有限公司';
-$s['RCNE000289'] = '北京圣思园东方信息技术有限公司';
-$s['SUSE215183'] = '北京圣特尔科技发展有限公司';
-$s['SUSE157658'] = '北京圣钰佳泰科技有限公司';
-$s['SUSE207661'] = '北京圣隆正泰科技发展有限公司';
-$s['SUSE148434'] = '北京在信恒通科技有限公司';
-$s['SUSE185989'] = '北京地大大地科技有限公司';
-$s['SUSE179588'] = '北京地尔奥软件科技有限公司';
-$s['SUSE204185'] = '北京坤腾世纪科技有限公司';
-$s['SUSE240329'] = '北京墨麟世纪科技有限公司';
-$s['SUSE221068'] = '北京多研硅谷科技发展有限公司';
-$s['SUSE104545'] = '北京大唐中联系统集成有限公司';
-$s['SUSE236599'] = '北京大唐兴竹软件技术有限公司';
-$s['SUSE143324'] = '北京大唐实业有限公司';
-$s['SUSE248784'] = '北京大唐高鸿数据网络技术有限公司';
-$s['SUSE173475'] = '北京大学医学信息学中心';
-$s['SUSE177876'] = '北京大学软件学院';
-$s['SUSE119262'] = '北京大恒创新技术有限公司';
-$s['SUSE236017'] = '北京大时空联宇电子有限公司';
-$s['SUSE184201'] = '北京大陆信息联盟信息技术有限公司';
-$s['SUSE120660'] = '北京大龙腾飞软件有限公司';
-$s['SUSE234507'] = '北京天信立科技有限公司';
-$s['SUSE179193'] = '北京天健恒达科技有限公司';
-$s['SUSE108244'] = '北京天健源达科技有限公司';
-$s['SUSE081317'] = '北京天刚数码有限公司（广州分公司）';
-$s['SUSE072408'] = '北京天刚数码科技有限公司';
-$s['SUSE259642'] = '北京天创征腾信息科技有限公司';
-$s['SUSE237264'] = '北京天创数通科技发展有限公司';
-$s['SUSE142505'] = '北京天力和时信息技术有限公司';
-$s['SUSE233199'] = '北京天博亚科贸有限公司';
-$s['SUSE207641'] = '北京天合正道电子技术有限公司';
-$s['SUSE220506'] = '北京天大天科科技发展有限公司';
-$s['SUSE243836'] = '北京天天兴工贸有限责任公司';
-$s['SUSE247471'] = '北京天宇英华科技有限责任公司';
-$s['SUSE145082'] = '北京天尧信息技术有限公司';
-$s['SUSE253122'] = '北京天广仁合科技有限公司';
-$s['SUSE221113'] = '北京天择嘉业科技有限公司';
-$s['SUSE234181'] = '北京天时信宇科技有限公司';
-$s['SUSE189190'] = '北京天时数通信息技术有限公司';
-$s['SUSE078601'] = '北京天智恒业科技发展有限公司';
-$s['SUSE253751'] = '北京天正艺达科技有限公司';
-$s['SUSE208014'] = '北京天海鼎诚科技发展有限公司';
-$s['SUSE183780'] = '北京天润欧泰科技有限公司';
-$s['SUSE225527'] = '北京天皓博睿技术有限公司';
-$s['SUSE148351'] = '北京天石融合信息技术有限公司';
-$s['SUSE173471'] = '北京天秦奥泰科技有限公司';
-$s['SUSE185505'] = '北京天空互联科技有限公司';
-$s['SUSE237021'] = '北京天立顺智能科技有限公司';
-$s['SUSE226336'] = '北京天茂科技有限公司';
-$s['SUSE207789'] = '北京天融信科技有限公司';
-$s['SUSE223552'] = '北京天融信科技有限公司上海分公司';
-$s['SUSE204831'] = '北京天融信网络安全技术有限公司';
-$s['SUSE181287'] = '北京天行网安信息技术有限责任公司';
-$s['SUSE237979'] = '北京天诚盛业科技有限公司';
-$s['SUSE250635'] = '北京天谋欣业石油科技发展有限公司';
-$s['SUSE076354'] = '北京天阳宏业软件技术有限公司';
-$s['SUSE246551'] = '北京天鹏恒宇科技发展有限公司';
-$s['SUSE250474'] = '北京太极信息系统技术有限公司';
-$s['SUSE209307'] = '北京太极开放计算机系统工程公司';
-$s['SUSE192972'] = '北京太极联合实验室科技有限公司';
-$s['SUSE156991'] = '北京太盛高科技有限公司';
-$s['SUSE105433'] = '北京奇正软件系统公司';
-$s['SUSE178014'] = '北京奕恒佳源软件技术有限公司';
-$s['SUSE209449'] = '北京奥吉通信息技术有限公司';
-$s['SUSE173116'] = '北京奥图美德计算机系统有限公司上海分公司';
-$s['SUSE182947'] = '北京奥斯科科技有限公司';
-$s['SUSE208387'] = '北京奥特美克科技发展有限公司';
-$s['SUSE230545'] = '北京奥福思特科贸有限公司';
-$s['SUSE112076'] = '北京奥索泛亚科技有限公司';
-$s['SUSE071453'] = '北京奥索电脑有限公司';
-$s['SUSE183457'] = '北京奥蓝德信息科技有限公司';
-$s['SUSE206341'] = '北京奥飞达通力电子技术有限公司';
-$s['SUSE228911'] = '北京威信泰克技术有限公司';
-$s['SUSE135631'] = '北京威发新世纪信息技术有限公司';
-$s['SUSE222655'] = '北京威发新世纪信息技术有限公司成都分公司';
-$s['SUSE105215'] = '北京威士顿世纪信息技术有限公司';
-$s['SUSE243151'] = '北京威泰信息技术有限公司';
-$s['SUSE127804'] = '北京威视数据系统有限公司';
-$s['SUSE140982'] = '北京威视科技发展有限公司';
-$s['SUSE251750'] = '北京威达泰克信息技术有限公司';
-$s['SUSE210196'] = '北京威通易讯网络技术有限公司';
-$s['SUSE216309'] = '北京威龙恒信商贸有限公司';
-$s['SUSE251449'] = '北京子铭时代科技发展有限公司';
-$s['SUSE085532'] = '北京学富科技有限公司';
-$s['SUSE198517'] = '北京它山石科技有限公司';
-$s['SUSE073330'] = '北京宇信易初科技有限公司';
-$s['SUSE212939'] = '北京宇信易诚科技有限公司';
-$s['SUSE248263'] = '北京宇信网景信息技术有限公司';
-$s['RCNE000280'] = '北京宇信鸿泰科技发展有限公司';
-$s['RCNE000119'] = '北京宇博电子科技有限公司';
-$s['RCNE000120'] = '北京宇博电子科技有限公司(广州)';
-$s['SUSE245393'] = '北京宇星伟业科贸有限公司';
-$s['SUSE225891'] = '北京宇泰信视频技术有限公司';
-$s['SUSE099151'] = '北京宇电威达科技发展有限公司';
-$s['SUSE176770'] = '北京宇讯佳通科技有线公司';
-$s['SUSE210133'] = '北京安信创业信息科技发展公司';
-$s['SUSE142496'] = '北京安华时代科技发展有限公司';
-$s['SUSE211508'] = '北京安博维科技发展有限公司';
-$s['SUSE240489'] = '北京安图派普信息技术有限公司';
-$s['SUSE223471'] = '北京安宁创新网络科技有限公司';
-$s['SUSE184489'] = '北京安宁盈科软件系统技术有限公司';
-$s['SUSE112077'] = '北京安恒达信科技发展有限公司';
-$s['SUSE206264'] = '北京安托系统集成有限公司';
-$s['SUSE250656'] = '北京安捷士特科技有限责任公司';
-$s['SUSE205324'] = '北京安氏领信科技发展有限公司';
-$s['SUSE226189'] = '北京安泰伟奥信息技术有限公司';
-$s['SUSE225271'] = '北京安泰金志科技有限公司';
-$s['SUSE169033'] = '北京安浪信息科技有限公司';
-$s['SUSE239469'] = '北京安证通信息技术有限公司';
-$s['SUSE206656'] = '北京安达信通系统集成有限公司';
-$s['SUSE232599'] = '北京安达时代科技有限公司';
-$s['SUSE248826'] = '北京安龙联合科贸有限公司';
-$s['SUSE240695'] = '北京宏嘉瑞兴信息技术有限公司';
-$s['SUSE143323'] = '北京宏基恒信科技有限责任公司';
-$s['SUSE215084'] = '北京宏天德美数码科技有限公司';
-$s['SUSE152427'] = '北京宏景世纪软件公司';
-$s['SUSE236709'] = '北京宏涛嘉业信息系统有限公司';
-$s['SUSE194410'] = '北京宏软经纬科技有限公司';
-$s['SUSE213557'] = '北京宏骏科技有限公司';
-$s['SUSE132468'] = '北京宝亮网智电子信息技术有限公司';
-$s['SUSE084526'] = '北京宝龙普信科技有限公司';
-$s['SUSE242394'] = '北京实利通和科技发展有限公司';
-$s['SUSE227240'] = '北京宽太视通软件技术有限公司';
-$s['SUSE211395'] = '北京宽明科技有限公司';
-$s['SUSE186260'] = '北京宽连十方数字技术有限公司';
-$s['SUSE210746'] = '北京密安网络技术股份有限公司';
-$s['SUSE181064'] = '北京富兰格电力技术有限公司';
-$s['SUSE184993'] = '北京富兰格电力技术有限公司沈阳分公司';
-$s['SUSE209954'] = '北京富力通能源软件技术有限公司';
-$s['SUSE073194'] = '北京富基融通科技有限公司';
-$s['SUSE243525'] = '北京富通东方优尼卡科技有限公司';
-$s['SUSE090835'] = '北京富通东方科技有限公司';
-$s['SUSE130702'] = '北京富通亚讯网络信息技术有限公司';
-$s['SUSE235907'] = '北京富骥思翱科技有限公司';
-$s['SUSE195941'] = '北京寰信通科技有限公司';
-$s['SUSE120683'] = '北京尖峰合讯科技有限公司';
-$s['SUSE078745'] = '北京尖峰远景科技有限公司';
-$s['SUSE078608'] = '北京尚方易维软件技术有限公司';
-$s['SUSE073822'] = '北京尚洋信德信息技术股份有限公司';
-$s['SUSE193855'] = '北京展华科技有限公司';
-$s['SUSE120257'] = '北京展恒软件技术有限公司';
-$s['SUSE107688'] = '北京展高电子有限责任公司';
-$s['RCNE000044'] = '北京展鹏行打科技发展有限责任公司';
-$s['SUSE250028'] = '北京山海经纬信息技术有限公司';
-$s['SUSE139924'] = '北京屹鹏达远科技发展有限公司';
-$s['SUSE073373'] = '北京峻峰慧祥发展有限公司';
-$s['SUSE185899'] = '北京工业大学软件学院';
-$s['SUSE187817'] = '北京左岸阳光科技发展有限公司';
-$s['SUSE218624'] = '北京巨人世纪科技有限责任公司';
-$s['RCNE001924'] = '北京巨通亚讯科技有限公司';
-$s['SUSE206361'] = '北京市万力佳创网络技术有限公司';
-$s['SUSE223701'] = '北京市万隆然博科技有限责任公司';
-$s['SUSE241013'] = '北京市中联教仪设备开发公司';
-$s['SUSE236025'] = '北京市京创惠达科贸有限公司';
-$s['SUSE227233'] = '北京市众诚鑫业技术发展有限公司第一分公司';
-$s['SUSE184421'] = '北京市北邮通信技术公司';
-$s['SUSE080861'] = '北京市华夏瑞和软件技术有限责任公司';
-$s['SUSE171825'] = '北京市华涛电子技术开发部';
-$s['SUSE233592'] = '北京市博汇科技有限公司';
-$s['SUSE194042'] = '北京市天元网络技术股份有限公司';
-$s['SUSE139010'] = '北京市太极华英信息系统有限公司';
-$s['RCNE000190'] = '北京市太极华青信息系统有限公司';
-$s['SUSE131026'] = '北京市宏天信业科技发展有限公司';
-$s['SUSE226645'] = '北京市快捷诚电子技术有限公司';
-$s['SUSE165844'] = '北京市招信互联技术有限公司';
-$s['SUSE221247'] = '北京市新明星电子技术开发公司';
-$s['SUSE243940'] = '北京市朝阳区惠新东桥北小营路13号亚非大厦2008室';
-$s['SUSE232653'] = '北京市盛世鸿业科贸有限公司';
-$s['SUSE236836'] = '北京市科学器材公司';
-$s['SUSE121289'] = '北京市骏程利达科技有限责任公司';
-$s['SUSE179763'] = '北京布朗科技有限公司';
-$s['SUSE088717'] = '北京师科智林技术有限公司';
-$s['SUSE195936'] = '北京希尔信息技术有限公司';
-$s['SUSE119354'] = '北京希益丰科技有限公司';
-$s['SUSE236438'] = '北京平步科技有限公司';
-$s['SUSE259695'] = '北京平衡力量信息技术咨询有限公司';
-$s['SUSE244863'] = '北京广维通科技发展有限公司';
-$s['SUSE104450'] = '北京广联东方科技有限公司';
-$s['SUSE233563'] = '北京广通信达科技有限公司';
-$s['SUSE204270'] = '北京康科达成科技发展有限公司';
-$s['SUSE221314'] = '北京延中新星科技有限公司';
-$s['SUSE148270'] = '北京建翔巨峰商贸有限责任公司';
-$s['SUSE206540'] = '北京建设数字科技有限责任公司';
-$s['SUSE254065'] = '北京开普互联科技有限公司';
-$s['SUSE142477'] = '北京开泰创新科技有限公司';
-$s['SUSE222907'] = '北京弈通宏创科技有限公司';
-$s['SUSE183715'] = '北京弗飞尔信息技术有限公司';
-$s['SUSE192509'] = '北京影研创新科技发展有限公司';
-$s['SUSE136580'] = '北京得实系统集成有限公司';
-$s['SUSE078169'] = '北京得捷永源科技有限公司';
-$s['SUSE075533'] = '北京微宏电子软件研究所';
-$s['SUSE111672'] = '北京微蓝创新科技有限公司';
-$s['SUSE260903'] = '北京德众网联科技有限公司';
-$s['SUSE221594'] = '北京德合伟业科技有限公司';
-$s['SUSE229301'] = '北京德康世纪科技有限公司';
-$s['SUSE236894'] = '北京德派克信息技术有限公司';
-$s['SUSE257438'] = '北京志远九州数码科技有限公司';
-$s['SUSE107674'] = '北京志远创新科技发展有限公司';
-$s['SUSE182200'] = '北京志远思齐信息技术有限责任公司';
-$s['SUSE081140'] = '北京志邦创世科技发展有限公司';
-$s['RCNE001950'] = '北京志鸿英华科技有限公司';
-$s['SUSE207909'] = '北京思倍驰科技有限公司';
-$s['SUSE218127'] = '北京思创贯宇科技开发有限公司';
-$s['SUSE210440'] = '北京思创银联科技有限公司';
-$s['SUSE096017'] = '北京思奥特科技发展有限公司';
-$s['SUSE254300'] = '北京思捷创新信息技术有限公司';
-$s['SUSE085643'] = '北京思易华科技有限公司';
-$s['SUSE251659'] = '北京思普兴业科技发展有限公司';
-$s['SUSE228910'] = '北京思瑞德计算机系统集成有限公司';
-$s['SUSE218369'] = '北京思路创新科技有限公司';
-$s['SUSE259558'] = '北京思达志科技有限公司';
-$s['SUSE249286'] = '北京怡东联盟网络技术有限公司';
-$s['SUSE205370'] = '北京怡华通联信息技术有限公司';
-$s['SUSE196785'] = '北京怡然瑞丰科技有限公司';
-$s['SUSE176514'] = '北京怡软汇商信息技术有限公司';
-$s['SUSE250649'] = '北京恒丰易达科技发展有限公司';
-$s['SUSE232650'] = '北京恒久信信息技术有限责任公司';
-$s['SUSE250477'] = '北京恒亚博通科技有限公司';
-$s['SUSE182814'] = '北京恒信仪和信息技术有限公司';
-$s['SUSE211950'] = '北京恒信启华信息技术有限公司';
-$s['SUSE155337'] = '北京恒信国通系统科技有限公司';
-$s['SUSE148271'] = '北京恒信捷通网络科技有限公司';
-$s['SUSE256555'] = '北京恒信通诚科技有限公司';
-$s['SUSE241004'] = '北京恒信鸿瑞科技有限公司';
-$s['SUSE220128'] = '北京恒和兴业科技发展有限公司';
-$s['SUSE255125'] = '北京恒安永顺科技有限公司';
-$s['SUSE195939'] = '北京恒宝信息技术有限公司';
-$s['SUSE121533'] = '北京恒实网通数码科技有限公司上海分公司';
-$s['SUSE206275'] = '北京恒易时代数码科技有限公司';
-$s['SUSE198898'] = '北京恒泰信立科技有限公司';
-$s['SUSE210912'] = '北京恒泰实达科技发展有限公司';
-$s['SUSE213940'] = '北京恒润伟业科技有限公司';
-$s['SUSE142627'] = '北京恒讯时代信息技术有限公司';
-$s['SUSE218703'] = '北京恒远至达科技发展有限公司';
-$s['SUSE084334'] = '北京恒远至达软件技术有限公司';
-$s['SUSE205258'] = '北京恒通网联科技发展有限公司';
-$s['SUSE196262'] = '北京恩信创业科技有限公司';
-$s['SUSE261343'] = '北京恩次方科技有限公司';
-$s['SUSE155704'] = '北京惠天九州科技有限公司';
-$s['SUSE224078'] = '北京惠明世纪科技发展有限公司天津分公司';
-$s['SUSE138309'] = '北京惠讯时代企业科技有限公司';
-$s['SUSE085509'] = '北京惠讯锐达软件有限公司';
-$s['SUSE224600'] = '北京惠达丰信息科技有限公司';
-$s['SUSE257223'] = '北京意达四维信息技术有限公司';
-$s['SUSE082934'] = '北京慧图信息科技有限公司';
-$s['SUSE245531'] = '北京慧智能动科技有限公司';
-$s['SUSE098105'] = '北京慧点科技开发有限公司';
-$s['SUSE153799'] = '北京成众莱恩兴业科技有限公司';
-$s['SUSE210716'] = '北京成大阳光科技有限公司';
-$s['SUSE245009'] = '北京戴德宏信科技发展有限公司';
-$s['SUSE128591'] = '北京扩荣电子技术有限公司';
-$s['SUSE253123'] = '北京扬帆伟业科技有限公司';
-$s['SUSE233667'] = '北京扬科创意科贸有限公司';
-$s['SUSE180258'] = '北京技联信通科技发展有限公司';
-$s['SUSE175335'] = '北京拓尔思信息技术有限公司上海分公司';
-$s['SUSE079871'] = '北京拓尔斯信息技术有限公司';
-$s['SUSE073597'] = '北京拓文科技发展有限公司';
-$s['SUSE254716'] = '北京拓明科技有限公司';
-$s['SUSE184776'] = '北京拓普丰联信息工程有限公司';
-$s['SUSE119347'] = '北京拓林思软件有限公司';
-$s['SUSE142495'] = '北京拓维启通科技有限公司';
-$s['SUSE127152'] = '北京拓维科技启通科技有限公司';
-$s['SUSE085496'] = '北京拜尔豪克信息技术有限公司';
-$s['SUSE143653'] = '北京择士通达科技有限责任公司';
-$s['SUSE246319'] = '北京振德惠志科技发展有限公司';
-$s['SUSE190171'] = '北京捷先科技有限公司';
-$s['SUSE104878'] = '北京捷成世纪科技股份有限公司';
-$s['SUSE245271'] = '北京捷泰科技有限公司';
-$s['SUSE224774'] = '北京捷迅卡斯特系统控制技术有限公司';
-$s['SUSE171853'] = '北京捷通华声语音技术有限公司';
-$s['SUSE220439'] = '北京捷通瑞奇信息技术有限公司';
-$s['SUSE232828'] = '北京掌控时代科技有限公司';
-$s['SUSE218884'] = '北京敏捷世纪科技发展有限公司';
-$s['SUSE236733'] = '北京敏捷世纪科技发展有限公司山东办事处';
-$s['SUSE208423'] = '北京教育信息网服务中心有限公司';
-$s['SUSE149824'] = '北京数字中远网络技术服务有限公司';
-$s['SUSE212875'] = '北京数字天堂信息科技有限公司上海分公司';
-$s['SUSE188492'] = '北京数字天堂信息科技有限责任公司';
-$s['SUSE197895'] = '北京数字政通科技股份有限公司';
-$s['SUSE216914'] = '北京数字空间科技有限公司';
-$s['SUSE204881'] = '北京数字证书认证中心有限公司';
-$s['RCNE001951'] = '北京数源信息技术有限公司';
-$s['SUSE259947'] = '北京数码创天科技有限公司';
-$s['SUSE225982'] = '北京数码地带科技有限责任公司';
-$s['SUSE147135'] = '北京数码大方科技有限公司贵阳办';
-$s['SUSE180184'] = '北京数行天下科技有限公司';
-$s['SUSE240344'] = '北京数途科技有限公司';
-$s['SUSE242309'] = '北京文仪通科技发展有限公司';
-$s['SUSE185678'] = '北京文华在线科技发展有限公司';
-$s['SUSE199634'] = '北京文德荣达科技开发有限公司';
-$s['SUSE212270'] = '北京文通信息技术有限公司';
-$s['SUSE177892'] = '北京斯德锐科技有限公司';
-$s['SUSE216681'] = '北京斯福泰克科技发展有限公司';
-$s['SUSE230540'] = '北京新华时代数据系统有限公司';
-$s['SUSE089842'] = '北京新大陆联众数码科技有限公司';
-$s['RCNE000829'] = '北京新宇系统集成有限公司';
-$s['SUSE107695'] = '北京新支爰信息技术有限公司';
-$s['SUSE085511'] = '北京新星网事通软件科技有限公司';
-$s['SUSE259517'] = '北京新晨阳光科技有限公司';
-$s['SUSE241868'] = '北京新榕基业软件技术有限公司';
-$s['SUSE086345'] = '北京新洲协同软件技术有限公司';
-$s['SUSE145978'] = '北京新派天地科技有限公司';
-$s['SUSE085510'] = '北京新络联合智能信息技术有限公司';
-$s['SUSE186038'] = '北京新聚思信息技术有限公司';
-$s['SUSE110179'] = '北京新脉远望科技有限公司';
-$s['SUSE074332'] = '北京新锐互动商业网络有限公司';
-$s['SUSE241392'] = '北京方位捷讯科技有限公司';
-$s['SUSE231035'] = '北京方创伟业科技有限公司';
-$s['SUSE214225'] = '北京方正世纪信息系统有限公司';
-$s['SUSE185510'] = '北京方正众邦数字医疗系统有限公司';
-$s['SUSE127796'] = '北京方正奥德计算机系统有限公司';
-$s['SUSE209121'] = '北京方正蓝康信息技术有限公司';
-$s['SUSE236144'] = '北京方法科技发展有限公司';
-$s['SUSE227376'] = '北京施沃尔科技发展有限公司';
-$s['SUSE190710'] = '北京旋极信息技术股份有限公司';
-$s['SUSE137040'] = '北京无间数码科技有限公司';
-$s['SUSE135886'] = '北京无限立通通信技术有限责任公司';
-$s['SUSE223048'] = '北京日创有限公司';
-$s['SUSE085502'] = '北京日研聚星计算机技术有限公司';
-$s['SUSE216117'] = '北京日立北工大信息系统有限公司';
-$s['SUSE137918'] = '北京旭天华创信息技术有限公司';
-$s['SUSE213999'] = '北京旭联科贸有限公司';
-$s['SUSE183141'] = '北京时代亿信科技有限公司';
-$s['SUSE222394'] = '北京时代凌宇科技有限公司';
-$s['SUSE192830'] = '北京时代威驰信息技术有限公司';
-$s['SUSE190752'] = '北京时代盈通信息技术有限公司';
-$s['SUSE139166'] = '北京时代网盟信息技术有限公司';
-$s['SUSE207170'] = '北京时创网杰软件技术有限公司';
-$s['SUSE108249'] = '北京时空超越科技有限公司';
-$s['SUSE256970'] = '北京旺佳通科技发展有限公司';
-$s['SUSE074685'] = '北京昆仑瑞通科技发展有限公司';
-$s['SUSE073993'] = '北京昆仑联通科技发展有限公司';
-$s['SUSE232906'] = '北京昊天华世科技有限公司';
-$s['SUSE229733'] = '北京昊天旭辉科技有限责任公司';
-$s['SUSE145032'] = '北京明博天地科技有限公司';
-$s['SUSE166979'] = '北京明天浩海科技有限公司青岛分公司';
-$s['SUSE078596'] = '北京明天高软科技有限公司';
-$s['SUSE148266'] = '北京明德时代科技有限公司';
-$s['SUSE242662'] = '北京明星耐特通讯网络有限责任公司';
-$s['SUSE225192'] = '北京明泰嘉讯科技发展有限公司';
-$s['SUSE253407'] = '北京明通盈动科技有限公司';
-$s['SUSE210403'] = '北京明道泰和信息技术有限公司';
-$s['SUSE239548'] = '北京易事通慧科技有限公司';
-$s['SUSE085200'] = '北京易亨北斗系统工程技术有限公司';
-$s['SUSE210639'] = '北京易兴顺科技有限公司';
-$s['SUSE206030'] = '北京易华录信息技术股份有限公司';
-$s['SUSE083855'] = '北京易博瑞中间件软件技术有限公司';
-$s['SUSE251099'] = '北京易发久科技';
-$s['SUSE183130'] = '北京易商海泰克科技有限公司';
-$s['SUSE249322'] = '北京易方联科技有限公司';
-$s['SUSE217020'] = '北京易普拉格科技有限责任公司';
-$s['SUSE084513'] = '北京易码随行通信技术有限公司';
-$s['SUSE073343'] = '北京易科创科技有限公司';
-$s['SUSE191754'] = '北京易讯思达科技开发有限公司';
-$s['SUSE242660'] = '北京易讯时代科技发展有限公司';
-$s['SUSE235713'] = '北京易证迅达信息技术有限公司';
-$s['SUSE073372'] = '北京易诚世纪科技有限公司';
-$s['SUSE108027'] = '北京易诚智讯科技发展有限责任公司';
-$s['SUSE236613'] = '北京易诚智讯科技发展有限责任公司内蒙古分公司';
-$s['SUSE244474'] = '北京易豪伟业弱电系统工程技术有限公司';
-$s['SUSE141956'] = '北京易赛维斯科技发展有限公司';
-$s['SUSE212508'] = '北京易达深蓝科技有限公司';
-$s['SUSE073161'] = '北京易通经纬科技发展有限公司';
-$s['SUSE083858'] = '北京星火未来科技有限公司';
-$s['SUSE253015'] = '北京星火融智科技有限公司';
-$s['RCNE000903'] = '北京星纪开元科技发展有限公司';
-$s['SUSE240117'] = '北京星网通信息技术有限公司';
-$s['SUSE112070'] = '北京昭华紫琪科技发展有限公司';
-$s['SUSE216536'] = '北京晨拓联鑫科技发展有限责任公司';
-$s['SUSE126720'] = '北京普兰普系统技术有限公司';
-$s['SUSE251972'] = '北京普华雅龙科技有限公司';
-$s['SUSE209750'] = '北京普天和平通信技术有限公司';
-$s['SUSE143456'] = '北京普天永信数码科技有限公司';
-$s['SUSE207150'] = '北京普天行科技有限公司';
-$s['SUSE184861'] = '北京普照天星科技有限公司';
-$s['SUSE222083'] = '北京普照天星科技有限公司上海分公司';
-$s['SUSE086354'] = '北京普瑞博达信息技术有限公司 （中国电力科学研究院）';
-$s['SUSE107772'] = '北京普视科技有限公司';
-$s['SUSE221235'] = '北京智云达科技有限公司';
-$s['SUSE247635'] = '北京智凯办公自动化设备有限公司';
-$s['SUSE215324'] = '北京智力普建科技有限公司';
-$s['SUSE158162'] = '北京智博联合科技有限公司';
-$s['SUSE182600'] = '北京智控美信信息技术有限公司';
-$s['SUSE256842'] = '北京智石国际信息技术有限公司';
-$s['SUSE225168'] = '北京智网科技有限公司';
-$s['SUSE229253'] = '北京智远威数字技术有限公司';
-$s['SUSE207529'] = '北京曙光天演信息技术有限公司';
-$s['SUSE193876'] = '北京月新时代科技有限公司';
-$s['SUSE093150'] = '北京有为利朋科技有限责任公司';
-$s['SUSE137751'] = '北京有生博大软件技术有限公司';
-$s['SUSE152426'] = '北京朗坤世纪科技发展有限公司';
-$s['SUSE232903'] = '北京朗弘基业科技发展有限公司';
-$s['SUSE077882'] = '北京朗新信息系统有限公司';
-$s['SUSE088075'] = '北京朗维计算机应用技术开发有限公司';
-$s['SUSE206145'] = '北京望海康信科技有限公司';
-$s['SUSE122295'] = '北京未来凯宏科技有限公司';
-$s['SUSE176247'] = '北京机械工业自动化研究所';
-$s['SUSE191913'] = '北京杜恩信息系统有限公司';
-$s['SUSE260904'] = '北京杰迅鸿翔信息技术有限公司';
-$s['SUSE120345'] = '北京林亚科技有限公司';
-$s['SUSE210322'] = '北京林克森自动化系统工程有限公司';
-$s['SUSE140968'] = '北京枫叶联合科技有限公司';
-$s['SUSE177955'] = '北京校际通信息技术有限公司';
-$s['SUSE197898'] = '北京根网科技有限公司';
-$s['SUSE188615'] = '北京格尔国信科技有限公司';
-$s['SUSE184319'] = '北京桑原中江软件有限责任公司';
-$s['RCNE000233'] = '北京森达信科技开发有限公司';
-$s['SUSE221237'] = '北京楷峰科技有限公司';
-$s['SUSE090689'] = '北京欣思达科技有限责任公司';
-$s['SUSE223877'] = '北京欣智通科技发展有限公司';
-$s['SUSE232656'] = '北京欣环龙自动化工程技术有限公司';
-$s['SUSE226840'] = '北京欧瑞科斯科技有限公司';
-$s['SUSE220008'] = '北京欧雷新创科技发展有限公司';
-$s['SUSE183747'] = '北京正创利通科技有限公司';
-$s['SUSE156302'] = '北京正文软件有限公司';
-$s['SUSE108082'] = '北京正明天地信息技术有限责任公司';
-$s['SUSE105450'] = '北京正群欣世信息技术有限公司';
-$s['SUSE140840'] = '北京正群科技有限公司';
-$s['SUSE257175'] = '北京正辰科技发展有限责任公司';
-$s['SUSE127149'] = '北京殷商时代科技发展有限公司';
-$s['SUSE141000'] = '北京毅力金网科技发展有限公司';
-$s['SUSE251557'] = '北京毕威胜软件技术有限责任公司';
-$s['SUSE196568'] = '北京毕策科技有限公司';
-$s['SUSE224760'] = '北京毫微电子科技有限公司';
-$s['SUSE184771'] = '北京民安信科技发展有限公司';
-$s['SUSE236014'] = '北京民生管理软件有限责任公司';
-$s['SUSE238254'] = '北京水木同正网络技术有限公司';
-$s['SUSE218260'] = '北京永欣瑞琪科技发展有限公司';
-$s['SUSE090954'] = '北京永正信达数码科技有限公司';
-$s['SUSE188131'] = '北京永泰东莹科技有限公司';
-$s['SUSE254935'] = '北京永越昌盛科技有限公司';
-$s['SUSE198929'] = '北京永鑫华业系统集成科技有限公司';
-$s['SUSE108032'] = '北京汇东铭志科技发展有限公司';
-$s['SUSE215589'] = '北京汇众畅游科技有限公司';
-$s['SUSE231911'] = '北京汇众荣科技有限公司';
-$s['SUSE208235'] = '北京汇冠金财科技有限公司';
-$s['SUSE231945'] = '北京汇金科技股份有限公司';
-$s['SUSE260621'] = '北京汉博信息技术有限公司';
-$s['SUSE150476'] = '北京汉唐自远技术有限公司';
-$s['SUSE084377'] = '北京汉端科技有限公司';
-$s['SUSE244373'] = '北京汉通易键科技发展有限公司';
-$s['SUSE093105'] = '北京汉铭信通科技有限公司';
-$s['SUSE224890'] = '北京江东慧达科技有限公司';
-$s['SUSE248734'] = '北京江南天安科技有限公司';
-$s['SUSE217666'] = '北京江南宏业科贸有限公司';
-$s['SUSE088716'] = '北京江帆伟业科技有限公司';
-$s['SUSE232596'] = '北京江河瑞通技术发展有限公司';
-$s['RCNE000273'] = '北京江达科技发展有限公司';
-$s['SUSE204669'] = '北京沃天路信息技术有限公司';
-$s['SUSE201517'] = '北京沃纳信息技术有限公司';
-$s['SUSE207270'] = '北京泊松矩阵信息技术有限责任公司';
-$s['SUSE078414'] = '北京泰利特科技发展有限责任公司';
-$s['SUSE116562'] = '北京泰成杰瑞科技开发有限公司';
-$s['SUSE142494'] = '北京泰晴伟业科技发展有限公司';
-$s['SUSE211477'] = '北京泰盛德电子有限责任公司';
-$s['SUSE170978'] = '北京泰科维思科技发展有限公司';
-$s['SUSE210505'] = '北京泰能时代科技有限公司';
-$s['SUSE256642'] = '北京泽嘉软件有限公司';
-$s['SUSE225531'] = '北京泽天盛海能源科技有限公司';
-$s['SUSE188040'] = '北京泽林创新科技发展有限公司';
-$s['SUSE207921'] = '北京泽诺奇科技有限公司';
-$s['SUSE207928'] = '北京洪景立天高新科技发展有限公司';
-$s['SUSE215365'] = '北京派得伟业信息技术有限公司';
-$s['SUSE084373'] = '北京派盟技术有限公司';
-$s['SUSE132108'] = '北京浦华众城科技有限公司';
-$s['SUSE183816'] = '北京浩丰创源科技有限公司';
-$s['SUSE250690'] = '北京浩晨志远电子技术有限公司';
-$s['SUSE224361'] = '北京浩普智尚技术有限公司';
-$s['SUSE233589'] = '北京浩普诚华科技有限公司';
-$s['SUSE231394'] = '北京浩海心盟科技有限公司';
-$s['SUSE111849'] = '北京浩鸿天业信息技术有限责任公司';
-$s['SUSE251428'] = '北京海华永联科技有限公司';
-$s['SUSE148272'] = '北京海天东方科技发展有限公司';
-$s['SUSE092220'] = '北京海天起点技术服务有限公司';
-$s['SUSE223086'] = '北京海川世纪科技有限公司';
-$s['SUSE082931'] = '北京海栎圣科技发展有限公司';
-$s['SUSE218362'] = '北京海湾联华能源技术有限公司';
-$s['SUSE251656'] = '北京海石花实业开发公司';
-$s['SUSE197490'] = '北京海耐信息科技有限公司';
-$s['SUSE208961'] = '北京海联捷讯信息科技发展有限公司';
-$s['SUSE183964'] = '北京海虹药通电子商务有限公司';
-$s['SUSE102820'] = '北京海辉高科软件有限公司';
-$s['SUSE207157'] = '北京海达信通科技有限公司';
-$s['SUSE131590'] = '北京海达信通科技有限公司哈尔滨分公司';
-$s['SUSE244765'] = '北京海量智能数据技术有限公司';
-$s['SUSE200546'] = '北京海鑫科金高科技股份有限公司';
-$s['SUSE149966'] = '北京海顿新科技术有限公司';
-$s['SUSE182793'] = '北京涌莲科技有限公司 广州公司';
-$s['SUSE177770'] = '北京润乾软件技术有限公司';
-$s['SUSE188649'] = '北京润博星原科技发展有限公司';
-$s['SUSE208957'] = '北京润天恒业科技发展有限公司';
-$s['SUSE140379'] = '北京润成恒信科技有限公司';
-$s['SUSE236758'] = '北京润普金桥科技发展有限公司';
-$s['SUSE120356'] = '北京润达博宏科技有限公司';
-$s['SUSE233906'] = '北京深思天成科技有限公司';
-$s['SUSE166583'] = '北京深思计算机系统集成技术有限公司';
-$s['SUSE144957'] = '北京深思软件股份有限公司';
-$s['SUSE120192'] = '北京深蓝伟业科技有限公司';
-$s['SUSE215318'] = '北京深蓝诺特科技有限公司';
-$s['SUSE215319'] = '北京深蓝诺特科技有限公司广州分公司';
-$s['SUSE231392'] = '北京深蓝领航科技有限公司';
-$s['SUSE222010'] = '北京清元优软科技有限公司';
-$s['SUSE081309'] = '北京清华万博网络技术股份有限公司';
-$s['SUSE183845'] = '北京清华北方思路信息技术有限公司';
-$s['SUSE240699'] = '北京清华永新电子有限公司';
-$s['SUSE107685'] = '北京清华诚志科技发展有限公司';
-$s['SUSE149786'] = '北京清大科越科技有限公司';
-$s['SUSE242327'] = '北京清大高科系统控制有限公司';
-$s['SUSE191650'] = '北京清源并行计算机有限公司';
-$s['SUSE161850'] = '北京清科园软件技术有限公司';
-$s['SUSE242726'] = '北京清软英泰信息技术有限公司';
-$s['RCNE000183'] = '北京湘计立德信息技术有限公司';
-$s['SUSE227212'] = '北京源启龙华科技有限公司';
-$s['SUSE231831'] = '北京澳克百年科技有限公司';
-$s['SUSE234456'] = '北京澳凯富汇科技发展有限公司';
-$s['SUSE225628'] = '北京火花软件有限公司';
-$s['SUSE085389'] = '北京灵图软件技术有限公司';
-$s['SUSE261880'] = '北京烽火九州科技有限公司';
-$s['SUSE122266'] = '北京烽火志诚软件技术有限公司';
-$s['SUSE149776'] = '北京煜邦电力技术有限公司';
-$s['SUSE151162'] = '北京燕京科技有限公司';
-$s['SUSE111976'] = '北京燕园科胜技术开发有限公司';
-$s['SUSE199014'] = '北京燕晖世纪科技发展有限公司';
-$s['SUSE145290'] = '北京燕龙科技发展有限公司';
-$s['RCNE000149'] = '北京爱必克微电子技术有限公司';
-$s['SUSE208764'] = '北京爱特泰克技术有限公司';
-$s['SUSE244326'] = '北京爱码信科技发展有限公司';
-$s['RCNE000034'] = '北京爱迪安系统集成有限公司';
-$s['SUSE244534'] = '北京爱迪思维科技发展有限公司';
-$s['SUSE149899'] = '北京环亚时代信息技术有限公司';
-$s['SUSE084590'] = '北京环天宇正技术发展有限责任公司';
-$s['SUSE183406'] = '北京环宇通软技术有限公司';
-$s['SUSE120701'] = '北京现代卓越管理技术交流中心';
-$s['SUSE204917'] = '北京现代太极电子有限公司';
-$s['SUSE220937'] = '北京理工大学';
-$s['SUSE216913'] = '北京理正人信息技术有限公司';
-$s['SUSE197204'] = '北京理正软件设计研究院有限公司';
-$s['SUSE207063'] = '北京瑞仪盛天科技有限公司';
-$s['SUSE130985'] = '北京瑞友世纪科技发展有限责任公司';
-$s['SUSE184157'] = '北京瑞友科技股份有限公司';
-$s['SUSE128832'] = '北京瑞天诚信科技发展有限公司';
-$s['SUSE143786'] = '北京瑞宇天成科技有限公司';
-$s['RCNE000170'] = '北京瑞宝赛博技术有限公司';
-$s['SUSE085504'] = '北京瑞尊电子商务软件有限公司';
-$s['SUSE081068'] = '北京瑞峰卓越科技有限公司';
-$s['SUSE107682'] = '北京瑞得恒昌计算机系统工程有限公司';
-$s['SUSE207306'] = '北京瑞得恒达医疗软件有限公司';
-$s['SUSE224139'] = '北京瑞恒都通信技术有限公司';
-$s['SUSE250488'] = '北京瑞昇经纬科技有限责任公司';
-$s['SUSE236794'] = '北京瑞星世纪科技发展有限公司';
-$s['SUSE231393'] = '北京瑞泰达机械设备有限责任公司';
-$s['SUSE193806'] = '北京瑞翔无限科技有限公司';
-$s['SUSE216333'] = '北京瑞辰数研科技有限公司';
-$s['SUSE234306'] = '北京瑞达沃电子商务有限公司';
-$s['SUSE207584'] = '北京瑞通鸿业科技发展有限公司';
-$s['SUSE140970'] = '北京瑞驰博通科技有限公司';
-$s['SUSE107679'] = '北京瑞鸿基科技有限公司';
-$s['SUSE081120'] = '北京用友安易软件技术有限公司';
-$s['SUSE210792'] = '北京用友政务软件有限公司';
-$s['SUSE207033'] = '北京用友致远软件技术有限公司';
-$s['SUSE224360'] = '北京用尚科技有限公司';
-$s['SUSE247287'] = '北京电研华源电力技术有限公司';
-$s['SUSE126815'] = '北京百联优力科技有限公司';
-$s['SUSE098578'] = '北京百联美达美数码科技有限公司';
-$s['SUSE207832'] = '北京百迅龙科技有限公司';
-$s['SUSE119879'] = '北京盈宇润泽科技有限公司';
-$s['SUSE207490'] = '北京盈想东方科技发展有限公司';
-$s['SUSE209624'] = '北京盈科创新数码技术有限公司';
-$s['SUSE210903'] = '北京盈讯动力科技发展有限公司';
-$s['SUSE231832'] = '北京益德佳源办公设备有限公司';
-$s['SUSE246689'] = '北京益成佳源科技发展有限公司';
-$s['SUSE213997'] = '北京益泰电子集团有限责任公司';
-$s['SUSE215489'] = '北京益航天欣科技发展有限公司';
-$s['SUSE234340'] = '北京益阳天润科技发展有限公司';
-$s['SUSE235547'] = '北京盖特佳信息安全技术股份有限公司';
-$s['SUSE092717'] = '北京盛世创先科技发展有限公司';
-$s['SUSE260012'] = '北京盛和信科技有限公司';
-$s['SUSE259197'] = '北京盛唐佳业科技有限公司';
-$s['SUSE228139'] = '北京盛大百年科技发展有限公司';
-$s['SUSE171826'] = '北京盛安德科技发展有限公司';
-$s['SUSE072783'] = '北京盛松科技有限公司';
-$s['SUSE248719'] = '北京盛联创业科技有限公司';
-$s['SUSE244334'] = '北京直真科技股份有限公司';
-$s['SUSE131588'] = '北京直真节点技术开发有限公司';
-$s['SUSE227563'] = '北京睿蓝奇科技有限责任公司';
-$s['SUSE073819'] = '北京睿隽科技有限公司';
-$s['SUSE152423'] = '北京碧隆科技发展有限公司';
-$s['SUSE243057'] = '北京神剑网景科技发展有限公司';
-$s['SUSE244371'] = '北京神州坤达信息技术有限公司';
-$s['SUSE238857'] = '北京神州开元科技有限公司';
-$s['SUSE231589'] = '北京神州数码在线科技有限公司';
-$s['SUSE177793'] = '北京神州数码思特奇信息技术股份有限公司';
-$s['SUSE098277'] = '北京神州数码有限公司';
-$s['SUSE075282'] = '北京神州新桥科技有限公司';
-$s['SUSE195471'] = '北京神州普惠科技有限公司';
-$s['SUSE180028'] = '北京神州泰岳软件股份有限公司';
-$s['SUSE224601'] = '北京神州蓝快科技发展有限公司';
-$s['SUSE248417'] = '北京神州辉煌软件科技发展有限公司';
-$s['SUSE185826'] = '北京神州长青技术有限公司';
-$s['SUSE137377'] = '北京神州骏腾科技发展有限公司';
-$s['SUSE226492'] = '北京神州鼎鑫科技有限公司';
-$s['SUSE226143'] = '北京神舟航天软件技术有限公司';
-$s['SUSE226834'] = '北京祥润世纪科技开发有限公司';
-$s['SUSE141847'] = '北京祥瑞博华科技有限责任公司';
-$s['SUSE227116'] = '北京福莱运科贸有限公司';
-$s['SUSE089886'] = '北京福音达计算机科技有限公司';
-$s['SUSE121336'] = '北京科东电力控制系统有限责任公司';
-$s['SUSE241869'] = '北京科信华技术有限公司';
-$s['SUSE090971'] = '北京科力天工科技有限公司';
-$s['SUSE253214'] = '北京科大京科技术有限公司';
-$s['SUSE163406'] = '北京科情新技术开发有限公司';
-$s['SUSE178351'] = '北京科技大学';
-$s['SUSE254932'] = '北京科潘数据系统有限公司';
-$s['SUSE168700'] = '北京科蓝软件系统有限公司';
-$s['SUSE074512'] = '北京科软创新有限公司';
-$s['SUSE208733'] = '北京立云志业科技发展有限公司';
-$s['SUSE250838'] = '北京立思辰新技术有限公司';
-$s['SUSE226409'] = '北京立讯时代数码科技有限公司';
-$s['SUSE214352'] = '北京竞业达数码科技有限公司';
-$s['SUSE071695'] = '北京精易博创软件技术有限公司';
-$s['SUSE171932'] = '北京紫光华宇软件股份有限公司';
-$s['SUSE225565'] = '北京紫光慧图信息技术有限公司';
-$s['SUSE221809'] = '北京紫光新华技术开发有限公司';
-$s['SUSE080722'] = '北京紫光新华科技发展有限公司';
-$s['SUSE215750'] = '北京紫新报通科技发展有限公司';
-$s['SUSE185236'] = '北京红旗贰仟软件技术有限公司';
-$s['SUSE204762'] = '北京纵横兴业科技发展有限公司';
-$s['SUSE252124'] = '北京纵迪浩博信息技术咨询有限公司';
-$s['SUSE184867'] = '北京绎络信诚科技有限公司';
-$s['SUSE229612'] = '北京经纬信息技术公司';
-$s['SUSE199933'] = '北京经纬恒润科技有限公司';
-$s['SUSE215386'] = '北京络捷斯特科技发展有限公司';
-$s['SUSE092683'] = '北京维深电子技术有限公司';
-$s['SUSE183164'] = '北京维深科技发展有限公司';
-$s['SUSE192362'] = '北京网信云达科技有限责任公司';
-$s['SUSE225784'] = '北京网信嘉业科技有限公司';
-$s['SUSE225772'] = '北京网信未来信息技术有限公司';
-$s['SUSE078232'] = '北京网安趋势网络安全技术有限公司';
-$s['SUSE251964'] = '北京网探科技有限公司';
-$s['SUSE213766'] = '北京网新易尚科技有限公司';
-$s['SUSE078736'] = '北京网新银星计算机技术有限公司';
-$s['SUSE137062'] = '北京网智博通科技有限公司';
-$s['SUSE205590'] = '北京网智易通科技有限公司';
-$s['SUSE174115'] = '北京网梯科技发展有限公司';
-$s['SUSE179899'] = '北京网盟信息技术发展有限公司';
-$s['SUSE085372'] = '北京网鼎系统集成有限责任公司';
-$s['SUSE185944'] = '北京罗克世纪科技有限公司';
-$s['SUSE157554'] = '北京置安日富科技有限公司';
-$s['SUSE233920'] = '北京美尔斯通科技发展股份有限公司';
-$s['SUSE207906'] = '北京美承互联数码科技发展有限公司';
-$s['SUSE078735'] = '北京美承新创科技有限公司';
-$s['SUSE206243'] = '北京美福科技有限公司';
-$s['SUSE191526'] = '北京美络科技有限公司';
-$s['SUSE240700'] = '北京美诺信息技术有限公司';
-$s['SUSE111668'] = '北京美髯公科技发展有限公司';
-$s['SUSE205819'] = '北京翔科佳信系统技术有限公司';
-$s['SUSE107980'] = '北京翰林汇软件产业股份有限公司';
-$s['SUSE156442'] = '北京翰海五洲电子技术有限公司';
-$s['SUSE085563'] = '北京翰纳维科技有限公司';
-$s['SUSE248643'] = '北京耀华恒昌科技有限公司';
-$s['SUSE261112'] = '北京联丰创业科技有限公司';
-$s['SUSE119401'] = '北京联信创新技术有限公司';
-$s['SUSE216462'] = '北京联信永益信息技术有限公司';
-$s['SUSE086361'] = '北京联信永益科技股份有限公司';
-$s['SUSE148268'] = '北京联创瑞得科技有限公司';
-$s['SUSE137467'] = '北京联创银丰科技发展有限公司';
-$s['SUSE260620'] = '北京联动天翼科技有限公司';
-$s['SUSE229398'] = '北京联华为创科技有限公司';
-$s['SUSE253404'] = '北京联合伟世科技股分有限公司';
-$s['SUSE158497'] = '北京联合经研投资咨询有限公司';
-$s['SUSE191908'] = '北京联合金投工程科技有限公司';
-$s['SUSE236952'] = '北京联强中服信息技术有限公司';
-$s['SUSE251671'] = '北京联强永盛科技有限公司';
-$s['SUSE139866'] = '北京联德成科技有限公司';
-$s['SUSE226486'] = '北京联想利泰软件有限公司';
-$s['SUSE207592'] = '北京联控兴业科技发展有限公司';
-$s['SUSE210085'] = '北京联盈互动通讯技术有限公司';
-$s['SUSE236897'] = '北京联科创新技术有限公司';
-$s['SUSE105142'] = '北京联迪科技有限公司';
-$s['SUSE105193'] = '北京联银通科技有限公司';
-$s['SUSE132615'] = '北京聚盟科技发展有限公司';
-$s['SUSE114741'] = '北京育英网信息技术有限公司';
-$s['SUSE208296'] = '北京胜和幢科技有限责任公司';
-$s['SUSE107690'] = '北京能博弈码能源科技发展有限公司';
-$s['SUSE233486'] = '北京能博文科技发展有限责任公司';
-$s['SUSE237831'] = '北京能融恒通科技有限公司';
-$s['SUSE204713'] = '北京能通万维网络科技有限公司';
-$s['SUSE110084'] = '北京能通威科软件技术有限责任公司';
-$s['SUSE235557'] = '北京腾宁信息技术有限公司';
-$s['SUSE225992'] = '北京至成恒业科技发展有限公司';
-$s['SUSE107670'] = '北京致达赛都科技有限公司';
-$s['SUSE218030'] = '北京航天华星电子信息技术有限公司';
-$s['SUSE205005'] = '北京航天四创软件技术有限责任公司';
-$s['SUSE108035'] = '北京航天国科信息技术有限公司';
-$s['SUSE242982'] = '北京航天新概念软件有限公司';
-$s['SUSE084128'] = '北京航天理想科技有限公司';
-$s['SUSE237258'] = '北京航天盛业科技有限公司';
-$s['SUSE204898'] = '北京航天锐捷科技有限公司';
-$s['SUSE256572'] = '北京航天长峰科技工业集团有限公司';
-$s['SUSE225446'] = '北京艾京迪科技有限公司';
-$s['SUSE186018'] = '北京艾克斯特科技有限公司';
-$s['SUSE216509'] = '北京艾力泰尔信息技术有限公司';
-$s['SUSE250006'] = '北京艾威康电子技术有限公司';
-$s['SUSE175704'] = '北京艾得维软件技术有限公司';
-$s['SUSE140962'] = '北京艾提科信网络技术有限公司';
-$s['SUSE214348'] = '北京艾普创数据技术有限公司';
-$s['SUSE214935'] = '北京艾普创科技有限公司';
-$s['SUSE240102'] = '北京艾汇商科技有限公司';
-$s['SUSE204501'] = '北京艾瑞信系统工程技术有限责任公司';
-$s['SUSE184115'] = '北京艾迪互动科技有限公司';
-$s['SUSE235259'] = '北京若泰科技有限公司';
-$s['SUSE220663'] = '北京英克科技有限公司';
-$s['SUSE188511'] = '北京英创信诚科技有限公司';
-$s['SUSE218519'] = '北京英创四维电子技术有限公司';
-$s['SUSE131673'] = '北京英夫美迪数字技术有限公司';
-$s['SUSE105140'] = '北京英孚泰克信息技术有限公司';
-$s['SUSE212717'] = '北京英思创科技有限公司';
-$s['SUSE221683'] = '北京英思杰科技有限公司';
-$s['SUSE120274'] = '北京英智合联信息技术有限公司';
-$s['SUSE136750'] = '北京英软弘毅科技有限公司';
-$s['SUSE085493'] = '北京英迈移通科技有限公司';
-$s['SUSE253760'] = '北京英进质方科技有限公司';
-$s['SUSE204685'] = '北京英迪创新科技有限公司';
-$s['SUSE211740'] = '北京荣之联科技股份有限公司';
-$s['SUSE228912'] = '北京荣之联科技股份有限公司上海分公司';
-$s['SUSE084464'] = '北京荣智精诚科技发展有限公司';
-$s['SUSE107919'] = '北京菲迪克斯资讯发展有限公司';
-$s['SUSE243743'] = '北京蒙斯瑞科技有限责任公司';
-$s['SUSE254709'] = '北京蓝博恒通科技有限公司';
-$s['SUSE219936'] = '北京蓝卫通科技有限公司';
-$s['SUSE086468'] = '北京蓝天中交科技发展有限公司';
-$s['SUSE198118'] = '北京蓝天恒泰计算机技术有限公司';
-$s['SUSE193257'] = '北京蓝快拓展信息技术有限公司';
-$s['SUSE079870'] = '北京蓝波今朝科技有限公司';
-$s['SUSE252426'] = '北京蔚蓝时代科技有限公司';
-$s['SUSE178845'] = '北京融冠科技发展有限公司';
-$s['SUSE251890'] = '北京融创天地科技有限公司';
-$s['SUSE217478'] = '北京融创未来网络技术有限公司';
-$s['SUSE074547'] = '北京融正泰和科技发展有限公司';
-$s['SUSE074122'] = '北京融汇兴业网络技术有限公司';
-$s['SUSE075390'] = '北京融海恒信咨询有限公司';
-$s['SUSE212076'] = '北京融科华创科技发展有限公司';
-$s['SUSE119458'] = '北京融网科技有限公司';
-$s['SUSE247285'] = '北京裕翔创力科技有限责任公司广州分公司';
-$s['SUSE186150'] = '北京西北软件科技开发有限公司';
-$s['SUSE218955'] = '北京西普阳光教育科技有限公司';
-$s['SUSE179803'] = '北京西门子通信网络有限公司';
-$s['SUSE233720'] = '北京视翰科技有限公司';
-$s['SUSE221406'] = '北京许继电气有限公司';
-$s['SUSE104811'] = '北京证海科技发展有限公司';
-$s['SUSE253879'] = '北京诚信能环科技有限公司';
-$s['SUSE183810'] = '北京诚创易通科技发展有限公司';
-$s['SUSE229296'] = '北京诚创达科技有限公司';
-$s['SUSE257529'] = '北京诚和创业科技有限公司';
-$s['SUSE259580'] = '北京诚智合创信息技术有限公司';
-$s['SUSE212043'] = '北京诚达交通科技有限公司';
-$s['SUSE251655'] = '北京诺亚新洲贸易有限公司';
-$s['SUSE252614'] = '北京诺恩开创科技有限公司';
-$s['SUSE080155'] = '北京诺恩数字设备有限公司';
-$s['SUSE111812'] = '北京豪义讯通网络科技有限公司';
-$s['SUSE080854'] = '北京豪诺金科技开发有限公司';
-$s['SUSE233276'] = '北京资旗源信息技术有限公司';
-$s['SUSE188726'] = '北京资旗源科技有限公司';
-$s['SUSE105209'] = '北京赛四达科技有限公司';
-$s['SUSE141832'] = '北京赛文世纪信息系统有限公司';
-$s['SUSE232995'] = '北京赛莱斯特科技发展有限公司';
-$s['SUSE079865'] = '北京赛莱特科技有限公司';
-$s['SUSE108243'] = '北京赛迪时代信息产业股份有限公司';
-$s['SUSE108208'] = '北京赞同科技发展有限公司';
-$s['SUSE137750'] = '北京超图地理信息技术有限公司';
-$s['SUSE216469'] = '北京超图软件股份有限公司';
-$s['SUSE226644'] = '北京超圣信华科技有限公司';
-$s['SUSE105161'] = '北京超现代电子设备有限公司';
-$s['SUSE207701'] = '北京趋势未来科技发展有限公司';
-$s['SUSE246424'] = '北京路由天地网络技术服务有限公司';
-$s['SUSE237194'] = '北京轩洋迅雷科贸有限公司';
-$s['SUSE234381'] = '北京轩辕盛世科技有限责任公司';
-$s['SUSE085503'] = '北京软件产业促进中心';
-$s['SUSE090170'] = '北京软信通科技有限公司';
-$s['SUSE227374'] = '北京软赢科技有限公司';
-$s['SUSE140978'] = '北京辉腾盈创科技有限公司';
-$s['SUSE138331'] = '北京辉蓝保盈科技发展有限公司';
-$s['SUSE226138'] = '北京达明平安科技有限公司';
-$s['SUSE232720'] = '北京达源利能科技有限公司';
-$s['SUSE226561'] = '北京迈拓晨峰科技发展有限公司';
-$s['SUSE255285'] = '北京迈斯沃克软件有限公司';
-$s['SUSE243135'] = '北京迎福时代数码科技有限公司';
-$s['SUSE249569'] = '北京远东华贸科贸有限公司';
-$s['SUSE249824'] = '北京远志铭达科技发展有限公司';
-$s['SUSE084510'] = '北京远扬创新科技有限公司';
-$s['SUSE220660'] = '北京远航通信息技术有限公司';
-$s['SUSE192544'] = '北京通源盈富科技有限公司';
-$s['SUSE179148'] = '北京通融通信息技术有限公司';
-$s['SUSE183594'] = '北京速达客信息技术有限责任公司';
-$s['SUSE183133'] = '北京速通电子科技有限公司';
-$s['SUSE140991'] = '北京道亨众成科技有限公司';
-$s['SUSE251966'] = '北京邦诺存储科技有限公司';
-$s['SUSE197927'] = '北京酷帮富基新媒体技术有限公司';
-$s['SUSE216773'] = '北京采恩科技';
-$s['SUSE121906'] = '北京金冠同利科技有限公司';
-$s['SUSE237645'] = '北京金冠鸿远科技有限公司';
-$s['SUSE078733'] = '北京金叶软件技术开发有限公司';
-$s['SUSE074124'] = '北京金叶软件技术有限公司';
-$s['SUSE172972'] = '北京金和人网络工程有限公司';
-$s['SUSE185626'] = '北京金和商源科技发展有限公司';
-$s['SUSE148269'] = '北京金商祺系统集成有限责任公司';
-$s['SUSE259199'] = '北京金嘉恒科技发展有限公司';
-$s['SUSE157736'] = '北京金天鹏软件科技有限公司';
-$s['SUSE244558'] = '北京金宝阳科技有限责任公司';
-$s['SUSE204883'] = '北京金山顶尖科技有限公司';
-$s['SUSE210717'] = '北京金山顶尖科技股份有限公司';
-$s['SUSE227160'] = '北京金成荣达软件技术有限公司';
-$s['SUSE105143'] = '北京金振达科技有限公司';
-$s['SUSE205697'] = '北京金支点技术服务有限公司';
-$s['SUSE234616'] = '北京金政信诚科技有限公司';
-$s['SUSE186303'] = '北京金旅雅途信息科技有限公司';
-$s['SUSE208001'] = '北京金水信息技术发展有限公司';
-$s['SUSE227117'] = '北京金海中达科技发展有限公司';
-$s['SUSE186009'] = '北京金益康新技术有限公司';
-$s['SUSE196527'] = '北京金科润天信息技术有限公司';
-$s['SUSE218464'] = '北京金网安泰信息技术有限公司';
-$s['SUSE073374'] = '北京金至泰克科技有限公司';
-$s['SUSE120702'] = '北京金色快车计算机技术有限责任公司武汉分公司';
-$s['SUSE256635'] = '北京金蝶软件系统技术有限公司';
-$s['SUSE107692'] = '北京金路金快计算机技术有限公司';
-$s['SUSE229298'] = '北京金路金达信息技术有限公司';
-$s['SUSE107780'] = '北京金达视通电子技术有限公司';
-$s['SUSE213341'] = '北京金道佳业软件有限公司';
-$s['SUSE218867'] = '北京金鑫天泰计算机技术服务有限公司';
-$s['SUSE209742'] = '北京金高科技股份有限公司';
-$s['SUSE141419'] = '北京金高科技股份有限公司上海分公司';
-$s['SUSE261213'] = '北京鑫万达科贸有限责任公司';
-$s['SUSE142490'] = '北京鑫创佳宇科技有限公司';
-$s['SUSE121884'] = '北京鑫创思特科技有限公司';
-$s['SUSE226489'] = '北京鑫台华科技有限公司';
-$s['SUSE222479'] = '北京鑫同荣科技有限责任公司';
-$s['SUSE122330'] = '北京鑫奥博科技发展有限公司';
-$s['SUSE246681'] = '北京鑫子时科技有限公司';
-$s['SUSE219627'] = '北京鑫汇诚信科技有限责任公司';
-$s['SUSE246344'] = '北京鑫源港工业发展有限公司';
-$s['SUSE184664'] = '北京铭泰科技发展有限公司';
-$s['SUSE107694'] = '北京银丰新融科技开发有限公司';
-$s['SUSE173100'] = '北京银信国风科技有限公司';
-$s['SUSE205076'] = '北京银信长远科技股份有限公司';
-$s['SUSE141120'] = '北京银河万佳电子技术有限公司';
-$s['SUSE080456'] = '北京银河世纪网络技术有限公司';
-$s['SUSE075135'] = '北京银河网络';
-$s['SUSE210079'] = '北京银泰永辉智能科技有限公司';
-$s['SUSE191490'] = '北京银洲通科技发展有限公司';
-$s['SUSE238575'] = '北京银湖创新科技有限公司';
-$s['SUSE235564'] = '北京银融信科技有限公司';
-$s['SUSE234873'] = '北京银都新天地科技有限公司';
-$s['SUSE085498'] = '北京锐和亚太科技有限公司';
-$s['SUSE249810'] = '北京锐安科技有限公司';
-$s['SUSE193409'] = '北京锐易特软件技术有限公司';
-$s['SUSE248134'] = '北京锐网时代科技发展有限公司';
-$s['SUSE137114'] = '北京锐达伟信数码科技有限公司';
-$s['SUSE121316'] = '北京长亮科技有限公司';
-$s['SUSE206402'] = '北京长信泰康通信技术有限公司';
-$s['SUSE076141'] = '北京长天计算机应用与系统有限公司';
-$s['SUSE199204'] = '北京长峰星桥计算机技术有限公司';
-$s['SUSE224071'] = '北京长得万众信息技术有限公司';
-$s['SUSE120933'] = '北京长得瑞华电子技术有限公司';
-$s['SUSE208559'] = '北京长益联合信息科技有限公司';
-$s['SUSE248026'] = '北京长能科技有限公司';
-$s['SUSE104845'] = '北京长荣信科技发展有限公司';
-$s['SUSE230855'] = '北京长荣发科技发展有限公司';
-$s['SUSE221031'] = '北京长远智扬科技有限公司';
-$s['SUSE192858'] = '北京长银科技投资有限公司';
-$s['SUSE128583'] = '北京阳光信致科技有限公司';
-$s['SUSE185622'] = '北京阳光加信软件';
-$s['SUSE230124'] = '北京阳光宏远科技有限公司';
-$s['SUSE205011'] = '北京阳光金网科技发展有限公司';
-$s['SUSE116561'] = '北京阳通科技有限公司';
-$s['SUSE227477'] = '北京阿什卡技术开发有限公司';
-$s['SUSE210435'] = '北京陆融通达科技有限责任公司';
-$s['SUSE217677'] = '北京隆华志强科技有限公司';
-$s['SUSE249299'] = '北京雄财伟业技贸有限公司';
-$s['SUSE084374'] = '北京雄震科技有限公司';
-$s['SUSE181827'] = '北京雅普兰科技发展有限公司';
-$s['SUSE183328'] = '北京集尔普数据软件技术有限公司';
-$s['SUSE249574'] = '北京雨禾盛科技有限公司';
-$s['SUSE103270'] = '北京雷安泰克科技有限公司';
-$s['SUSE204799'] = '北京青鸟中交科技发展有限公司';
-$s['SUSE252117'] = '北京青鸟应用信息技术有限公司';
-$s['SUSE122551'] = '北京青鸟蒙电信息技术有限公司';
-$s['SUSE246677'] = '北京青鸟软通信息技术有限公司杭州分公司';
-$s['SUSE250469'] = '北京非凡伟业科技发展有限公司';
-$s['SUSE216121'] = '北京韦驮安全工程有限责任公司';
-$s['SUSE085535'] = '北京顶点银腾软件技术有限公司';
-$s['SUSE228852'] = '北京飞利信科技股份有限公司';
-$s['SUSE204378'] = '北京首信科技有限公司';
-$s['SUSE105439'] = '北京首创信息技术有限公司';
-$s['SUSE139165'] = '北京首创前锋信息科技有限公司';
-$s['SUSE080727'] = '北京首创通讯发展有限公司';
-$s['SUSE231712'] = '北京首航财务管理顾问有限公司';
-$s['SUSE204686'] = '北京首都在线数据科技有限公司';
-$s['SUSE213216'] = '北京驰波信息工程有限公司';
-$s['SUSE129400'] = '北京驷骑中天网络工程技术有限公司';
-$s['RCNE000207'] = '北京高伟达科技发展有限公司';
-$s['SUSE189994'] = '北京高伟达科技发展有限公司南京分公司';
-$s['SUSE213338'] = '北京高伟达科技发展有限公司武汉分公司';
-$s['RCNE000270'] = '北京高伟达软件技术有限公司';
-$s['SUSE261805'] = '北京高伟达软件技术有限公司深圳分公司';
-$s['SUSE123251'] = '北京高科世纪科技发展有限公司';
-$s['SUSE122493'] = '北京高鑫瑞科技有限公司';
-$s['SUSE182199'] = '北京高阳明天信息技术有限公司';
-$s['SUSE074688'] = '北京高阳金信信息技术有限公司';
-$s['SUSE253762'] = '北京鸿时康铭科技发展有限责任公司';
-$s['SUSE146146'] = '北京鸿昌伟业科技有限公司';
-$s['SUSE250926'] = '北京鸿科鼎业科技有限公司';
-$s['SUSE249915'] = '北京鸿策创成科技有限公司';
-$s['SUSE243355'] = '北京鹏扬天成信息科技有限公司';
-$s['SUSE176475'] = '北京鹏泰海达科技有限公司';
-$s['SUSE196780'] = '北京鹏联科技发展有限公司';
-$s['SUSE256877'] = '北京鹏诚信通信息技术有限责任公司';
-$s['SUSE216034'] = '北京麦斯科科技有限公司';
-$s['SUSE209526'] = '北京黄金电脑有限公司';
-$s['SUSE224355'] = '北京鼎信华铭科技有限公司';
-$s['SUSE207381'] = '北京鼎天软件有限公司';
-$s['SUSE227067'] = '北京鼎普科技股份有限公司';
-$s['SUSE199756'] = '北京鼎盛嘉业科贸有限责任公司';
-$s['SUSE213526'] = '北京鼎翎科技有限公司';
-$s['SUSE237129'] = '北京鼎隆腾达科技有限公司';
-$s['SUSE082933'] = '北京龙兴多维软件技术有限(公司)';
-$s['SUSE130635'] = '北京龙卷风信息科技有限公司';
-$s['SUSE232907'] = '北京龙星瑞达电子设备有限公司';
-$s['SUSE236901'] = '北京龙海佳诚科技有限公司';
-$s['SUSE138333'] = '北京龙盛兴业科技发展有限公司';
-$s['SUSE107691'] = '北京龙翔达信息技术有限公司';
-$s['SUSE183109'] = '北京龙软科技发展有限公司';
-$s['SUSE226074'] = '北大方正集团有限公司';
-$s['SUSE072729'] = '北大集团';
-$s['SUSE131307'] = '北斗星科技发展有限责任公司';
-$s['SUSE250475'] = '北方互动科技（北京）有限公司';
-$s['SUSE206091'] = '北方互联(北京)网络技术有限公司';
-$s['SUSE121071'] = '北明软件有限公司';
-$s['SUSE256971'] = '北明软件有限公司*杭州分公司';
-$s['SUSE251052'] = '北海天方电子有限责任公司';
-$s['SUSE146355'] = '北海市友联电脑有限责任公司';
-$s['SUSE251054'] = '北海市宏凯电子科技有限责任公司';
-$s['SUSE251036'] = '北海蓝讯电脑有限公司';
-$s['SUSE189189'] = '北航计算机学院嵌入式系统实验室';
-$s['SUSE190512'] = '医脉科技有限公司';
-$s['SUSE144620'] = '十堰力拓科工贸有限公司';
-$s['SUSE144622'] = '十堰博涛科工贸有限公司';
-$s['SUSE144624'] = '十堰市光谷科技有限公司';
-$s['SUSE237643'] = '十堰市汇智隆达科技有限公司';
-$s['SUSE144629'] = '十堰市科学器材有限责任公司';
-$s['SUSE216216'] = '十堰市鼎创工贸有限公司';
-$s['SUSE144625'] = '十堰拓达贸易有限公司';
-$s['SUSE144623'] = '十堰蓝色理想科技有限公司';
-$s['SUSE144621'] = '十堰连邦软件有限公司';
-$s['SUSE146070'] = '十堰鼎一科技有限公司';
-$s['SUSE119400'] = '华中电力科技开发有限公司';
-$s['SUSE178511'] = '华为三康';
-$s['SUSE168234'] = '华为技术有限公司';
-$s['SUSE248472'] = '华为技术服务有限公司';
-$s['SUSE260648'] = '华云信息技术工程有限公司';
-$s['SUSE225165'] = '华信永道（北京）科技有限公司';
-$s['SUSE147538'] = '华创计算机有限公司';
-$s['SUSE257464'] = '华北石油通信公司';
-$s['SUSE248266'] = '华南理工大学电力学院';
-$s['RCNE000282'] = '华南理工大学计算机工程与科学系计算机技术中心';
-$s['SUSE165979'] = '华南资讯系统集成有限公司';
-$s['SUSE147572'] = '华友信息工程有限公司';
-$s['SUSE183086'] = '华商易连(北京)科技有限公司';
-$s['SUSE198265'] = '华夏媒体信息技术有限公司';
-$s['SUSE146625'] = '华大数码科技有限公司';
-$s['SUSE149516'] = '华天弈电子科技有限公司';
-$s['SUSE127699'] = '华宇创力科技(北京)有限公司';
-$s['SUSE207050'] = '华安天网（北京）信息技术有限公司';
-$s['SUSE182949'] = '华富天下投资顾问公司';
-$s['SUSE120691'] = '华工安鼎信息技术(武汉)有限公司';
-$s['SUSE097622'] = '华建电子有限责任公司';
-$s['SUSE238502'] = '华建高科（北京）科技有限公司';
-$s['SUSE233575'] = '华怡合信（北京）科技有限公司';
-$s['SUSE098760'] = '华普信息技术有限公司';
-$s['SUSE083582'] = '华泰贝通网络科技有限公司';
-$s['SUSE079542'] = '华泰软件工程有限公司';
-$s['SUSE178954'] = '华润思捷实业有限公司';
-$s['SUSE206266'] = '华源润通（北京）科技有限公司';
-$s['SUSE080602'] = '华立信息网络技术有限公司';
-$s['SUSE176562'] = '华立技术有限公司';
-$s['SUSE145615'] = '华网数码';
-$s['SUSE188332'] = '华罗庚软件基地有限公司';
-$s['SUSE147547'] = '华联电子技术有限公司';
-$s['SUSE171813'] = '华育字源软件技术（北京）公司';
-$s['SUSE177482'] = '华讯通信科技有限公司';
-$s['SUSE183723'] = '华诠科技(上海)有限公司';
-$s['SUSE145661'] = '华达通信有限公司';
-$s['SUSE242799'] = '华迪计算机（江西）有限公司';
-$s['RCNE000175'] = '华迪计算机集团有限公司';
-$s['SUSE254201'] = '华通科技有限公司';
-$s['SUSE137346'] = '协力科技股份有限公司';
-$s['SUSE149000'] = '协和电脑有限责任公司';
-$s['SUSE084255'] = '卓为信息技术有限公司';
-$s['SUSE195330'] = '卓望数码技术（深圳）有限公司';
-$s['SUSE145673'] = '卓格无线网络';
-$s['SUSE183160'] = '卓繁信息有限公司';
-$s['SUSE179656'] = '卓越软件科技有限公司';
-$s['SUSE107847'] = '南京三商电脑软件开发有限公司';
-$s['SUSE128052'] = '南京三商電腦軟件開發有限公司';
-$s['SUSE205454'] = '南京三宝科技股份有限公司';
-$s['SUSE247114'] = '南京业事成软件科技有限公司';
-$s['SUSE226272'] = '南京东大建设新技术有限公司';
-$s['SUSE204895'] = '南京东大智能化系统有限公司';
-$s['SUSE135967'] = '南京中兴软创科技股份有限责任公司';
-$s['SUSE236759'] = '南京中力自动化技术有限公司';
-$s['SUSE247229'] = '南京中德保护控制系统有限公司';
-$s['SUSE141850'] = '南京中晔科贸有限公司';
-$s['SUSE219902'] = '南京中端科技有限公司';
-$s['SUSE186603'] = '南京中联全达计算机系统集成有限公司';
-$s['SUSE253933'] = '南京中脉科技研究院有限公司';
-$s['SUSE245161'] = '南京中软软件与技术服务有限公司';
-$s['SUSE204807'] = '南京中铁信息工程有限公司';
-$s['SUSE261590'] = '南京中韬天友电子科技有限公司';
-$s['SUSE167048'] = '南京丰柏信息技术开发有限公司';
-$s['SUSE250568'] = '南京久尚计算机科技有限公司';
-$s['SUSE238923'] = '南京乔木科技有限公司';
-$s['SUSE227204'] = '南京乾初网络科技有限公司';
-$s['SUSE245015'] = '南京众秦通信科技有限公司';
-$s['SUSE207257'] = '南京优创科技有限公司';
-$s['SUSE183323'] = '南京佰思届信息技术有限公司';
-$s['SUSE218949'] = '南京佳强科技有限公司';
-$s['SUSE209407'] = '南京保旺达科技有限公司';
-$s['SUSE225525'] = '南京信同诚信息技术有限公司';
-$s['SUSE198319'] = '南京信风网络科技有限公司';
-$s['SUSE207569'] = '南京元欣高英科技有限公司';
-$s['SUSE233362'] = '南京光旭科技有限责任公司';
-$s['SUSE219022'] = '南京兴拓源科技有限公司';
-$s['SUSE241622'] = '南京其宝科技设备有限公司';
-$s['SUSE259218'] = '南京凯博电子科技有限公司';
-$s['SUSE204361'] = '南京前鹏科技有限公司';
-$s['SUSE254446'] = '南京剑盛科技发展有限公司';
-$s['SUSE206419'] = '南京力锦科技有限公司';
-$s['SUSE080862'] = '南京勤业计算机系统集成有限公司';
-$s['SUSE211826'] = '南京华晨新电脑技术有限公司';
-$s['SUSE216689'] = '南京华瑞杰自动化设备有限公司';
-$s['SUSE222895'] = '南京华盛达信息系统工程有限公司';
-$s['SUSE235816'] = '南京华禹晨计算机科技有限公司';
-$s['SUSE177428'] = '南京华铁弘达计算机工程有限公司';
-$s['SUSE140984'] = '南京华际科技有限公司';
-$s['RCNE000324'] = '南京协同计算机信息网络有限公司';
-$s['SUSE206095'] = '南京协同软件有限责任公司';
-$s['SUSE253046'] = '南京卓杰网络技术有限公司';
-$s['SUSE247687'] = '南京卓睿胜域信息工程有限公司';
-$s['SUSE204925'] = '南京南大尚诚软件科技有限公司';
-$s['SUSE206900'] = '南京南大苏富特系统集成有限责任公司';
-$s['SUSE198320'] = '南京南瑞继保工程技术有限公司';
-$s['SUSE170714'] = '南京南瑞继保电气有限公司';
-$s['SUSE078015'] = '南京南瑞集团公司';
-$s['SUSE249767'] = '南京南自信息技术有限公司';
-$s['SUSE249816'] = '南京南谷信息系统有限公司';
-$s['SUSE247226'] = '南京博励晟电子科技有限公司';
-$s['SUSE234323'] = '南京博萃软件有限责任公司';
-$s['SUSE246971'] = '南京卡索系统工程有限公司';
-$s['SUSE227074'] = '南京叁壹叁电子科技有限公司';
-$s['SUSE206247'] = '南京友永科技有限公司';
-$s['SUSE089578'] = '南京同庆科技有限公司';
-$s['SUSE242798'] = '南京君升电子科技有限公司';
-$s['SUSE238918'] = '南京君度科技有限公司';
-$s['SUSE080173'] = '南京君瑞科技有限公司';
-$s['SUSE080158'] = '南京唐诚网络系统开发有限公司';
-$s['SUSE236023'] = '南京嘉志德电子科技有限公司';
-$s['SUSE084828'] = '南京嘉腾系统有限公司';
-$s['SUSE075388'] = '南京嘉腾系统有限公司北京分公司';
-$s['SUSE249472'] = '南京国瑞科技(集团)有限公司';
-$s['SUSE208736'] = '南京国瑞青鸟信息技术有限公司';
-$s['SUSE243949'] = '南京坚卓软件科技有限公司';
-$s['SUSE175375'] = '南京多茂科技发展有限公司';
-$s['SUSE233913'] = '南京多辉电子科技有限公司';
-$s['SUSE175748'] = '南京大学软件学院';
-$s['SUSE159045'] = '南京大汉网络有限公司';
-$s['SUSE080159'] = '南京大陆软件技术开发有限公司';
-$s['SUSE185431'] = '南京大雄科技有限公司';
-$s['SUSE179733'] = '南京天文光学研究所';
-$s['SUSE156241'] = '南京天顺迪诚科技有限公司';
-$s['SUSE206840'] = '南京太平科技发展有限公司';
-$s['SUSE120714'] = '南京奥达尼科资讯科技有限公司';
-$s['SUSE245014'] = '南京威明顿信息系统有限公司';
-$s['SUSE121663'] = '南京孚邦信息系统有限责任公司';
-$s['SUSE224544'] = '南京宇宽科技有限公司';
-$s['SUSE221873'] = '南京宇际信息科技有限公司';
-$s['SUSE226957'] = '南京安腾信息工程有限公司';
-$s['SUSE151158'] = '南京尔讯智能科技有限公司';
-$s['SUSE213076'] = '南京尚泽信息技术有限公司';
-$s['SUSE144740'] = '南京尼伯莱利科技发展有限公司';
-$s['SUSE259797'] = '南京岱昌科技有限责任公司';
-$s['SUSE226487'] = '南京巨软科技开发有限公司';
-$s['SUSE127559'] = '南京广建科技有限公司';
-$s['SUSE215530'] = '南京库柏软件有限公司';
-$s['SUSE249572'] = '南京弘柏信息技术有限公司';
-$s['SUSE238574'] = '南京彩天科技发展有限公司';
-$s['SUSE259795'] = '南京微信点系统工程有限责任公司';
-$s['SUSE199074'] = '南京志世科技有限公司';
-$s['SUSE141665'] = '南京志聪科技有限公司';
-$s['SUSE151564'] = '南京怡豪科技有限责任公司';
-$s['SUSE252831'] = '南京恒北科技发展有限公司';
-$s['SUSE210561'] = '南京恒鑫源科技有限公司';
-$s['SUSE206846'] = '南京恩瑞特实业有限公司';
-$s['SUSE218956'] = '南京恩益喜信息技术有限公司';
-$s['SUSE144743'] = '南京憧憬科技有限公司';
-$s['SUSE122495'] = '南京懋毅科技有限公司';
-$s['SUSE121888'] = '南京成瑞科技有限责任公司';
-$s['SUSE183338'] = '南京擎天科技有限公司';
-$s['SUSE156240'] = '南京敏思科技有限公司';
-$s['SUSE254664'] = '南京文惠贸易有限公司';
-$s['SUSE121808'] = '南京文瑞科技有限公司';
-$s['SUSE120934'] = '南京新华海科技产业集团有限公司';
-$s['SUSE252642'] = '南京新维宁科技有限公司';
-$s['SUSE205060'] = '南京新联电子股份有限责任公司';
-$s['SUSE184163'] = '南京新联软件有限责任公司';
-$s['SUSE205261'] = '南京施诺华德信息系统工程有限公司';
-$s['SUSE258219'] = '南京施远电子有限公司';
-$s['SUSE250373'] = '南京日擎远电子科技有限公司';
-$s['SUSE249292'] = '南京旭飞光电有限公司';
-$s['SUSE212185'] = '南京明维自动化有限公司';
-$s['SUSE247152'] = '南京易学教育软件有限公司';
-$s['SUSE258328'] = '南京易广联数据系统有限公司';
-$s['SUSE224013'] = '南京晓通网络科技有限公司';
-$s['SUSE212389'] = '南京晓雷科技发展有限公司';
-$s['SUSE156016'] = '南京晨光高新科技有限公司';
-$s['SUSE121666'] = '南京普兰普科技有限公司';
-$s['SUSE240763'] = '南京普天通信股份有限公司';
-$s['SUSE231946'] = '南京普建维思信息技术有限公司';
-$s['SUSE248207'] = '南京普锐菲信息技术有限公司';
-$s['SUSE217061'] = '南京智多科技有限公司';
-$s['SUSE120267'] = '南京朗坤软件有限公司';
-$s['SUSE195297'] = '南京标腾科技有限公司';
-$s['SUSE248828'] = '南京森根科技发展有限公司';
-$s['SUSE247549'] = '南京欣华成电子科技有限公司';
-$s['SUSE080947'] = '南京欣网视讯科技股份有限公司';
-$s['SUSE213389'] = '南京步隆信息技术有限公司';
-$s['SUSE219660'] = '南京水利科学研究院';
-$s['SUSE246117'] = '南京永旺盈合信息系统有限公司';
-$s['SUSE131027'] = '南京永腾信息技术有限公司';
-$s['SUSE232992'] = '南京汉可福科技有限公司';
-$s['SUSE213392'] = '南京泰旺科技有限公司';
-$s['SUSE249287'] = '南京泰融科技发展有限公司';
-$s['SUSE256573'] = '南京派维森数字科技有限公司';
-$s['SUSE150425'] = '南京浩博科技有限公司';
-$s['SUSE206511'] = '南京润放科技有限责任公司';
-$s['SUSE208085'] = '南京深拓计算机系统集成有限责任公司';
-$s['SUSE260704'] = '南京灵动科技有限公司';
-$s['SUSE172026'] = '南京焦点科技开发有限公司';
-$s['SUSE208098'] = '南京熊猫信息产业有限公司';
-$s['SUSE248264'] = '南京熊猫国际通信系统有限公司';
-$s['SUSE184767'] = '南京熊猫系统集成有限公司';
-$s['SUSE243366'] = '南京珠腾科技有限公司';
-$s['SUSE120350'] = '南京瑞仪泰克系统集成有限公司';
-$s['SUSE205818'] = '南京瑞沃软件有限公司';
-$s['SUSE224973'] = '南京盛佳建业科技有限责任公司';
-$s['SUSE260882'] = '南京硅特电力自动化有限公司';
-$s['SUSE219276'] = '南京神州数码有限公司';
-$s['SUSE249911'] = '南京福铁科技发展有限公司';
-$s['SUSE183622'] = '南京科中信息技术有限公司';
-$s['SUSE243948'] = '南京科安电子有限公司';
-$s['SUSE200846'] = '南京科登科技有限责任公司';
-$s['SUSE196927'] = '南京科融数据系统有限公司';
-$s['SUSE205568'] = '南京科远自动化集团股份有限公司';
-$s['SUSE223550'] = '南京立飞科技开发有限公司';
-$s['SUSE249920'] = '南京第五十五所技术开发有限公司';
-$s['SUSE240101'] = '南京米格数码科技有限公司';
-$s['RCNE001952'] = '南京紫金支点技术有限公司';
-$s['SUSE155562'] = '南京纽博科技有限公司';
-$s['SUSE251445'] = '南京绍锋科技有限公司';
-$s['SUSE250504'] = '南京维跃计算机有限公司';
-$s['SUSE249460'] = '南京罗澳信息技术有限公司';
-$s['SUSE121878'] = '南京美承数码信息系统有限公司';
-$s['SUSE257872'] = '南京群立年代软件有限公司';
-$s['SUSE235430'] = '南京耀源网络科技发展有限公司';
-$s['SUSE189822'] = '南京联创科技股份有限公司';
-$s['SUSE121318'] = '南京联拓数码科技有限公司';
-$s['SUSE244905'] = '南京肯思软件有限公司';
-$s['SUSE121314'] = '南京胜业昆威电子有限公司';
-$s['SUSE178244'] = '南京脉动软件有限公司';
-$s['SUSE121342'] = '南京腾博科技有限公司';
-$s['SUSE252276'] = '南京腾坤宁科技有限公司';
-$s['SUSE252584'] = '南京腾普信息科技有限公司';
-$s['SUSE076992'] = '南京航星信息技术有限公司';
-$s['SUSE185693'] = '南京航空航天大学';
-$s['SUSE157929'] = '南京艾立特科技发展有限公司';
-$s['SUSE204433'] = '南京苏创汇网络有限公司';
-$s['SUSE143192'] = '南京苏创科技有限公司';
-$s['SUSE208462'] = '南京苏得控制系统有限公司';
-$s['SUSE206106'] = '南京苏福成数码科技有限公司';
-$s['SUSE180558'] = '南京英沃数据技术服务有限公司';
-$s['SUSE157416'] = '南京莫顿科技发展有限公司';
-$s['SUSE219673'] = '南京莱斯信息技术股份有限公司';
-$s['SUSE249827'] = '南京衡萃科技开发有限责任公司';
-$s['SUSE148232'] = '南京诚恩科技有限公司';
-$s['SUSE190768'] = '南京财经大学';
-$s['SUSE216131'] = '南京赫哲科技有限公司';
-$s['SUSE098344'] = '南京路青信息科技实业有限公司';
-$s['SUSE119472'] = '南京轩远计算机工程有限公司';
-$s['SUSE155809'] = '南京软通建设工程实业有限公司';
-$s['SUSE241390'] = '南京辉榕烨科贸有限公司';
-$s['SUSE207379'] = '南京迈康网络技术有限公司';
-$s['SUSE246849'] = '南京迪泰计算机网络有限责任公司';
-$s['SUSE086328'] = '南京迪软软件有限公司';
-$s['SUSE251811'] = '南京通球科技有限公司';
-$s['SUSE212768'] = '南京通达海信息技术有限公司';
-$s['SUSE232843'] = '南京逸振机电有限公司';
-$s['SUSE235431'] = '南京道乐科技有限公司';
-$s['SUSE164758'] = '南京邮电学院信息网络技术研究所';
-$s['SUSE165491'] = '南京金华昕信息系统工程有限公司';
-$s['SUSE148231'] = '南京金和计算机有限责任公司';
-$s['SUSE250929'] = '南京金易炜科技有限公司';
-$s['SUSE243153'] = '南京金百吉网络计算机集成有限公司';
-$s['SUSE089577'] = '南京金脉博通资讯有限公司';
-$s['SUSE122496'] = '南京铁恒科技有限公司';
-$s['SUSE121307'] = '南京铁盟计算机系统工程有限公司';
-$s['SUSE122792'] = '南京铁路计算机工程有限公司';
-$s['SUSE199080'] = '南京铁马信息技术有限公司';
-$s['SUSE209122'] = '南京铭泰科技有限公司';
-$s['SUSE104814'] = '南京锦讯美联科技有限公司';
-$s['SUSE216769'] = '南京长城信息系统有限公司';
-$s['SUSE209741'] = '南京长江瑞亨软件有限公司';
-$s['SUSE136587'] = '南京长越信息科技有限公司';
-$s['SUSE171647'] = '南京长风信息系统有限公司';
-$s['SUSE254649'] = '南京雀尊科技有限公司';
-$s['SUSE204929'] = '南京青苜信息技术有限公司';
-$s['SUSE209501'] = '南京飞搏软件有限公司';
-$s['SUSE224971'] = '南京鸿舟科技有限公司';
-$s['SUSE238858'] = '南京鹏振科技发展有限公司';
-$s['SUSE147462'] = '南京鹏霄科技有限公司';
-$s['SUSE243205'] = '南京黑格科技有限公司';
-$s['SUSE120379'] = '南京鼎博数码信息技术有限责任公司';
-$s['SUSE250100'] = '南京鼎坤信息科技有限公司';
-$s['SUSE251412'] = '南京鼎易天宸系统集成有限公司';
-$s['SUSE121643'] = '南京鼎易科技有限公司';
-$s['SUSE205256'] = '南京鼎欣旺科技有限公司';
-$s['SUSE120380'] = '南京鼎铭科技有限公司';
-$s['SUSE147080'] = '南充中天电脑公司';
-$s['SUSE154057'] = '南充凌翔电脑行';
-$s['SUSE154118'] = '南充图林科技有限公司';
-$s['SUSE147079'] = '南充德尔数码网络有限公司';
-$s['SUSE147078'] = '南充瑞海电脑公司';
-$s['SUSE247547'] = '南博发展有限公司';
-$s['SUSE253298'] = '南宁亚创电子科技有限公司';
-$s['SUSE183262'] = '南宁亚奥数码有限公司';
-$s['SUSE146347'] = '南宁亚速商贸有限责任公司';
-$s['SUSE212780'] = '南宁加创';
-$s['SUSE234979'] = '南宁北杰科技有限公司';
-$s['SUSE243227'] = '南宁华树网络科技有限公司';
-$s['SUSE232338'] = '南宁合智电子科技有限公司';
-$s['SUSE225159'] = '南宁天怡信电脑系统有限责任公司';
-$s['SUSE181007'] = '南宁尚瑞科技有限责任公司';
-$s['SUSE221170'] = '南宁市中天电子科技有限公司';
-$s['SUSE205496'] = '南宁市元光达计算机网络系统有限责任公司';
-$s['SUSE218871'] = '南宁市华旭科技有限责任公司';
-$s['SUSE252589'] = '南宁市华雄电子科技有限公司';
-$s['SUSE260709'] = '南宁市国翔电子科技有限公司';
-$s['SUSE214329'] = '南宁市天耀科技有限责任公司';
-$s['SUSE171663'] = '南宁市奥申安保通讯电脑系统有限责任公司';
-$s['SUSE259847'] = '南宁市宁创电子有限责任公司';
-$s['SUSE234978'] = '南宁市宇风科技有限责任公司';
-$s['SUSE250032'] = '南宁市建坤电子科技有限公司';
-$s['SUSE238187'] = '南宁市捷胜信息技术有限公司';
-$s['SUSE225357'] = '南宁市文祺电子科技有限公司';
-$s['SUSE245389'] = '南宁市旭科电子科技有限责任公司';
-$s['SUSE205229'] = '南宁市普威科技有限责任公司';
-$s['SUSE146346'] = '南宁市曼联电子有限责任公司';
-$s['SUSE121306'] = '南宁市洛泽科技有限公司';
-$s['SUSE223651'] = '南宁市浩通电子有限公司';
-$s['SUSE225521'] = '南宁市澳视办公设备有限公司';
-$s['SUSE155703'] = '南宁市科能电子技术有限责任公司';
-$s['SUSE227922'] = '南宁市荣兴计算机技术有限公司';
-$s['SUSE254598'] = '南宁市诚维讯科贸有限责任公司';
-$s['SUSE224477'] = '南宁市赛盟数字设备有限公司';
-$s['SUSE210138'] = '南宁市迈越软件有限责任公司';
-$s['SUSE261424'] = '南宁市迪瓦尔商贸有限公司';
-$s['SUSE231817'] = '南宁市金点电子科技有限公司';
-$s['SUSE234325'] = '南宁市韬创永业信息技术有限公司';
-$s['SUSE142600'] = '南宁平方软件新技术公司';
-$s['SUSE225639'] = '南宁得实科技有限公司';
-$s['SUSE249815'] = '南宁德兴电子科技有限公司';
-$s['SUSE244055'] = '南宁恒展电子科技有限公司';
-$s['SUSE219146'] = '南宁恒帆科技有限公司';
-$s['SUSE144731'] = '南宁惠科电脑有限责任公司';
-$s['SUSE220007'] = '南宁新惠邦电子科技有限公司';
-$s['SUSE149267'] = '南宁春林电子科技有限公司';
-$s['SUSE148979'] = '南宁深思科贸';
-$s['SUSE207159'] = '南宁翔帆电子科技有限公司';
-$s['SUSE183842'] = '南宁超创信息工程有限公司';
-$s['SUSE251736'] = '南宁车泰科技有限责任公司';
-$s['SUSE255193'] = '南宁那诺计算机科贸有限公司玉林分公司';
-$s['SUSE217674'] = '南宁铁路唯斯电脑公司';
-$s['SUSE198628'] = '南宁雷格尔科技有限责任公司';
-$s['SUSE250179'] = '南宁风行科技有限责任公司';
-$s['SUSE150319'] = '南安市飞达电脑有限公司';
-$s['SUSE146340'] = '南平市宏图办公设备有限公司';
-$s['SUSE150311'] = '南平市百联办公设备有限责任公司';
-$s['SUSE146344'] = '南平康培特电脑公司';
-$s['SUSE146342'] = '南平新南佰办公设备有限公司';
-$s['SUSE152403'] = '南平智腾办公设备有限公司';
-$s['SUSE146337'] = '南平科达技术开发公司';
-$s['SUSE146343'] = '南平网迅科技有限公司';
-$s['SUSE146341'] = '南平银盛电脑办公设备有限公司';
-$s['SUSE146339'] = '南平鸿邮实业有限公司鸿邮计算机信息分公司';
-$s['SUSE148233'] = '南昌中达信息系统有限公司';
-$s['SUSE131274'] = '南昌先锋网讯系统集成有限公司';
-$s['SUSE179975'] = '南昌大学计算机技术工程公司';
-$s['SUSE206179'] = '南昌市公用信息技术有限公司';
-$s['SUSE237026'] = '南昌德昭科技有限公司';
-$s['SUSE207576'] = '南昌必达科技实业有限公司';
-$s['SUSE131170'] = '南昌思宇数码科技有限公司';
-$s['SUSE253257'] = '南昌晨星科技有限公司';
-$s['SUSE223059'] = '南昌民德科贸有限公司';
-$s['SUSE121489'] = '南昌电信实业有限责任公司宇创科技开发分公司';
-$s['SUSE254124'] = '南昌科威信息技术有限公司';
-$s['SUSE250364'] = '南昌耐思迪信息技术有限公司';
-$s['SUSE145680'] = '南昌联众电脑九江分公司';
-$s['SUSE221522'] = '南昌路通高新技术有限责任公司';
-$s['SUSE225779'] = '南昌金在线电脑科技有限公司';
-$s['SUSE142465'] = '南昌金百灵信息产业有限公司';
-$s['SUSE207298'] = '南昌金鼎软件开发有限公司';
-$s['SUSE116696'] = '南昌铁路三力电子发展公司';
-$s['SUSE216763'] = '南昌鸿泰数码科技有限责任公司';
-$s['SUSE231106'] = '南昌麦翔科技发展有限公司';
-$s['SUSE205331'] = '南瑞集团信息系统分公司';
-$s['SUSE174617'] = '南车四方机车车辆股份有限公司';
-$s['SUSE168165'] = '南通万捷计算机系统有限公司';
-$s['SUSE149534'] = '南通万能达办公设备有限公司';
-$s['SUSE147013'] = '南通中威科技信息系统有限公司';
-$s['SUSE157741'] = '南通中德计算机网络工程有限公司';
-$s['SUSE179637'] = '南通中集特种运输设备制造有限公司';
-$s['SUSE179623'] = '南通中集顺达集装箱';
-$s['SUSE149340'] = '南通众和网络科技有限公司';
-$s['SUSE142536'] = '南通华远科技发展有限公司';
-$s['SUSE150529'] = '南通同方计算机系统集成有限公司';
-$s['SUSE151004'] = '南通天和电脑有限公司';
-$s['SUSE149530'] = '南通思创信息技术有限公司';
-$s['SUSE205199'] = '南通晟晖未来科技贸易有限公司';
-$s['SUSE149339'] = '南通王府天成科贸有限公司';
-$s['SUSE147015'] = '南通百瑞电脑公司';
-$s['SUSE150530'] = '南通经纬信息产业公司';
-$s['SUSE249808'] = '南通赛尔科技信息系统有限公司';
-$s['SUSE147014'] = '南通金正泰科技发展有限公司';
-$s['SUSE251448'] = '南通顺海科技发展有限公司';
-$s['SUSE154846'] = '南阳功铭软件有限公司';
-$s['SUSE204962'] = '南阳市汇科电子有限责任公司';
-$s['SUSE147530'] = '南阳市汇融网络科技有限公司';
-$s['SUSE146134'] = '南阳市瑞华网络技术有限公司';
-$s['SUSE197659'] = '南阳市计算机技术中心';
-$s['SUSE147532'] = '南阳市飞龙电力自动化技术有限公司';
-$s['SUSE147558'] = '南阳联翔科技有限公司';
-$s['SUSE145259'] = '南阳虹志数码电脑有限公司';
-$s['SUSE239974'] = '博世谷（北京）系统工程技术有限公司';
-$s['SUSE149362'] = '博乐名威电子有限责任公司';
-$s['SUSE149364'] = '博乐科林电子有限责任公司';
-$s['SUSE206131'] = '博克软件有限公司';
-$s['SUSE192107'] = '博奥杰软件';
-$s['SUSE192847'] = '博思永拓信息技术有限公司';
-$s['SUSE253748'] = '博易智讯（北京）信息技术有限公司';
-$s['SUSE206000'] = '博易智软(北京)技术有限公司';
-$s['SUSE147540'] = '博琛计算机网络工程有限公司';
-$s['SUSE082705'] = '博科信息产业（深圳）有限公司开发中心';
-$s['SUSE225626'] = '博罗县天一电脑设备有限公司';
-$s['SUSE235602'] = '博隆中兴科技有限公司';
-$s['SUSE179662'] = '原子数据技术(昆山)有限公司';
-$s['SUSE107581'] = '厦门一方软件有限公司';
-$s['SUSE206357'] = '厦门中智博科技有限公司';
-$s['SUSE110031'] = '厦门中软海晟信息技术有限公司';
-$s['SUSE248577'] = '厦门乾盛科技有限公司';
-$s['SUSE256580'] = '厦门亚德科技有限公司';
-$s['SUSE158664'] = '厦门亿力吉奥信息科技有限公司';
-$s['SUSE075389'] = '厦门信息港建设发展股份有限公司';
-$s['SUSE186307'] = '厦门信达网络科技有限公司';
-$s['SUSE207659'] = '厦门全宇通科技有限公司';
-$s['SUSE253883'] = '厦门八达科技有限公司';
-$s['SUSE206824'] = '厦门兴瑞隆科技发展有限公司';
-$s['SUSE209066'] = '厦门兴计通信息技术有限公司';
-$s['SUSE253941'] = '厦门华旗嘉韵科技有限公司';
-$s['SUSE138480'] = '厦门华脉科技有限公司';
-$s['SUSE088893'] = '厦门合强软件有限公司';
-$s['SUSE184631'] = '厦门吉联科技有限公司';
-$s['SUSE220840'] = '厦门和宝系统工程有限公司';
-$s['SUSE212500'] = '厦门唯网网络科技有限公司';
-$s['SUSE231541'] = '厦门商州数码科技有限公司';
-$s['SUSE140632'] = '厦门四美达科技发展有限公司';
-$s['SUSE230653'] = '厦门国融信通信息技术有限公司';
-$s['SUSE254121'] = '厦门国际航空港机电工程有限公司';
-$s['SUSE107586'] = '厦门大金岛电脑有限公司';
-$s['SUSE184899'] = '厦门大金岛科技开发有限公司';
-$s['SUSE107925'] = '厦门天同系统工程有限公司';
-$s['SUSE197700'] = '厦门威奥特科技有限公司';
-$s['SUSE240093'] = '厦门威尔软件有限公司';
-$s['SUSE210029'] = '厦门市中软科技有限公司';
-$s['SUSE193479'] = '厦门市兴智瑞科技有限公司';
-$s['SUSE183667'] = '厦门市大金岛科技开发有限公司';
-$s['SUSE215943'] = '厦门市威特计算机信息系统工程有限公司';
-$s['SUSE142602'] = '厦门市安腾科技有限公司';
-$s['SUSE179584'] = '厦门市对外服务中心';
-$s['SUSE073187'] = '厦门市巨龙软件工程有限公司';
-$s['SUSE207506'] = '厦门市智业软件工程有限公司';
-$s['SUSE222313'] = '厦门市智能大厦有限公司';
-$s['SUSE213187'] = '厦门市清鑫科技有限公司';
-$s['SUSE193477'] = '厦门市科同系统工程有限公司';
-$s['SUSE104812'] = '厦门市金利得电子科技有限公司';
-$s['SUSE220944'] = '厦门市锐域科技服务有限公司';
-$s['SUSE221171'] = '厦门市领航科技有限公司';
-$s['SUSE183850'] = '厦门建发房地产集团有限公司';
-$s['SUSE186080'] = '厦门强龙货运代理有限公司';
-$s['SUSE220755'] = '厦门恒瑞网航软件有限公司';
-$s['SUSE225966'] = '厦门捷晟数字科技有限公司';
-$s['RCNE000267'] = '厦门新柏科信息工程有限公司';
-$s['SUSE222081'] = '厦门普润特科技服务有限公司';
-$s['SUSE207463'] = '厦门柏事特信息科技有限公司';
-$s['SUSE177555'] = '厦门民航凯亚有限公司';
-$s['SUSE208481'] = '厦门汉维数码科技有限公司';
-$s['SUSE225037'] = '厦门泛德科技开发有限公司';
-$s['SUSE222309'] = '厦门泽宇科技工程有限公司';
-$s['SUSE139711'] = '厦门浩程科技有限公司';
-$s['SUSE108220'] = '厦门海晟用友软件有限责任公司';
-$s['SUSE193983'] = '厦门海迈科技股份有限公司';
-$s['SUSE221471'] = '厦门源代码网络科技有限公司';
-$s['SUSE137030'] = '厦门石溪科技有限公司';
-$s['SUSE220539'] = '厦门科华恒盛股份有限公司拉萨分公司';
-$s['SUSE098432'] = '厦门精图信息技术有限公司';
-$s['SUSE205997'] = '厦门纵横集团科技股份有限公司';
-$s['SUSE175510'] = '厦门维思信息产业有限公司';
-$s['SUSE146338'] = '厦门网安科技有限公司';
-$s['SUSE252708'] = '厦门网路科技有限公司';
-$s['SUSE225207'] = '厦门网迅科技有限公司';
-$s['SUSE120392'] = '厦门翰林汇电脑有限公司';
-$s['SUSE207772'] = '厦门翰阳科技有限公司';
-$s['SUSE120661'] = '厦门至精诚系统集成有限公司';
-$s['SUSE249980'] = '厦门荆艺软件有限公司';
-$s['SUSE260645'] = '厦门誉捷科技有限公司';
-$s['SUSE148197'] = '厦门讯怡教学设备有限公司';
-$s['SUSE108047'] = '厦门软件产业投资发展有限公司';
-$s['SUSE107909'] = '厦门邮电纵横股份有限公司';
-$s['SUSE206814'] = '厦门金网科技有限公司';
-$s['SUSE150474'] = '厦门金荣计算机设备有限公司';
-$s['SUSE238924'] = '厦门鑫宏程系统工程有限公司';
-$s['SUSE218227'] = '厦门鑫微思科技有限公司';
-$s['SUSE206652'] = '厦门鑫润衡科技发展有限公司';
-$s['SUSE249696'] = '厦门锐特信息技术有限公司';
-$s['SUSE120395'] = '厦门领航立华科技有限公司';
-$s['SUSE254436'] = '厦门颐信信息技术有限公司';
-$s['SUSE073215'] = '厦门高士达科技实业有限公司';
-$s['SUSE171492'] = '厦门鸿软科技开发有限公司';
-$s['SUSE168369'] = '友通科技有限公司';
-$s['SUSE171827'] = '友邦创新资讯科技（北京）有限公司';
-$s['SUSE185163'] = '友邦资讯科技（广州）有限公司';
-$s['SUSE206855'] = '双鸭山天立伟业电脑有限公司';
-$s['SUSE244560'] = '台塑网(南京)商贸有限公司';
-$s['SUSE152397'] = '台山市天惠数码有限公司';
-$s['SUSE152393'] = '台山市汇通信息技术有限公司';
-$s['SUSE147940'] = '台州今人计算机技术有限公司';
-$s['SUSE150026'] = '台州冠华网络科技有限公司';
-$s['SUSE156782'] = '台州复星办公设备有限公司';
-$s['SUSE146856'] = '台州天潮电脑有限公司';
-$s['SUSE146848'] = '台州宏拓计算机技术有限公司';
-$s['SUSE150005'] = '台州巨星电脑公司';
-$s['SUSE151008'] = '台州市新宇计算机网络工程有限公司';
-$s['SUSE146858'] = '台州市星峰电子信息工程有限公司';
-$s['SUSE146849'] = '台州市科海电脑有限公司';
-$s['SUSE086466'] = '台州市联信商用计算机有限公司';
-$s['SUSE146857'] = '台州市超想计算机工程有限公司';
-$s['SUSE146867'] = '台州市阳光电脑网络有限公司';
-$s['SUSE149533'] = '台州市飞天电脑有限公司';
-$s['SUSE156789'] = '台州市黄岩日利计算机网络科技有限公司';
-$s['SUSE205742'] = '台州怡天数码电子科技有限公司';
-$s['SUSE146847'] = '台州新时代科技发展有限公司';
-$s['SUSE146850'] = '台州新远见电脑网络有限公司';
-$s['SUSE146852'] = '台州联众电脑技术公司';
-$s['SUSE146854'] = '台州蓝天数码科技有限公司';
-$s['SUSE229510'] = '台州金点信息技术有限公司';
-$s['SUSE157740'] = '台州鹏程电脑网络有限公司';
-$s['SUSE215495'] = '史泰博商贸有限公司';
-$s['SUSE120447'] = '合肥万户网络技术有限公司';
-$s['SUSE213925'] = '合肥三佳趋势软件开发有限公司';
-$s['SUSE209215'] = '合肥中杰网络科技有限公司';
-$s['SUSE251314'] = '合肥众城电子系统工程有限责任公司';
-$s['SUSE224025'] = '合肥力合电子科技有限公司';
-$s['SUSE238566'] = '合肥华安普慧信息科技有限公司';
-$s['SUSE238131'] = '合肥协和科贸发展有限公司';
-$s['SUSE254810'] = '合肥博尔佳电子科技有限公司';
-$s['SUSE259860'] = '合肥博微安全电子科技有限公司';
-$s['SUSE243288'] = '合肥合和信息科技有限公司';
-$s['SUSE142531'] = '合肥同方信息技术开发有限责任公司';
-$s['SUSE090970'] = '合肥和谐软件有限公司';
-$s['SUSE254723'] = '合肥天地电脑有限责任公司';
-$s['SUSE255317'] = '合肥宝龙四凯信息科技有限公司';
-$s['SUSE206843'] = '合肥工大高科信息技术有限责任公司';
-$s['SUSE144780'] = '合肥市浩普科贸有限公司';
-$s['SUSE178606'] = '合肥庆鹏科技发展有限公司';
-$s['SUSE212743'] = '合肥开元精密工程有限责任公司';
-$s['SUSE242795'] = '合肥德信电子科技有限公司';
-$s['SUSE221867'] = '合肥思汇数码科技有限责任公司';
-$s['SUSE261593'] = '合肥恒卓科技有限公司';
-$s['SUSE243052'] = '合肥指南针电子科技有限责任公司';
-$s['SUSE191860'] = '合肥捷精网络科技有限公司';
-$s['SUSE121317'] = '合肥新地计算机网络技术有限责任公司';
-$s['SUSE241874'] = '合肥晶奇电子科技有限公司';
-$s['SUSE217754'] = '合肥智圣计算机技术有限责任公司';
-$s['SUSE204764'] = '合肥未来计算机技术开发有限公司';
-$s['SUSE141829'] = '合肥比特数码科技有限公司';
-$s['SUSE152535'] = '合肥永信信息产业股份有限公司';
-$s['SUSE217886'] = '合肥永智网络技术有限公司';
-$s['SUSE142463'] = '合肥洪武科技有限公司';
-$s['SUSE226079'] = '合肥深皖电子科技投资有限公司';
-$s['SUSE230282'] = '合肥点联网络科技有限公司';
-$s['SUSE206092'] = '合肥瑞克斯特网络系统集成有限公司';
-$s['SUSE141647'] = '合肥瑞智电力电子有限公司';
-$s['SUSE187698'] = '合肥索甲电子科技有限公司';
-$s['SUSE144778'] = '合肥美承数码科技有限公司';
-$s['SUSE223045'] = '合肥苏创系统集成工程有限公司';
-$s['SUSE230654'] = '合肥蓝天网络科技有限公司';
-$s['SUSE222602'] = '合肥金海电子科技有限公司';
-$s['SUSE139486'] = '合肥银柏电子科技有限公司';
-$s['SUSE151112'] = '吉化集团信息网络技术有限公司';
-$s['SUSE146836'] = '吉地信息工程有限公司';
-$s['SUSE144578'] = '吉安市启迪信息产业有限责任公司';
-$s['SUSE144580'] = '吉安市天力实业有限公司';
-$s['SUSE236098'] = '吉安市永安交通设施有限公司';
-$s['SUSE146083'] = '吉安金浪信息网络工程技术中心';
-$s['SUSE157212'] = '吉林三豪电子工程有限公司';
-$s['SUSE256575'] = '吉林中软吉大信息技术有限公司';
-$s['SUSE256030'] = '吉林中通电子科技发展有限公司';
-$s['SUSE157214'] = '吉林大仝数码科技股份有限公司';
-$s['SUSE157217'] = '吉林市东北电院开无科技有限公司';
-$s['SUSE204993'] = '吉林市东方人科技有限公司';
-$s['SUSE259293'] = '吉林市兰通旭日网络技术开发有限公司';
-$s['SUSE149625'] = '吉林市华邦神洲商贸有限责任公司';
-$s['SUSE157215'] = '吉林市大唐网络有限现任公司';
-$s['SUSE197737'] = '吉林市志诚兴业科技开发有限责任公司';
-$s['SUSE120338'] = '吉林市恒崴科技开发有限责任公司';
-$s['SUSE157216'] = '吉林市泰恩科贸有限责任公司';
-$s['SUSE157213'] = '吉林市网联科技有限公司';
-$s['SUSE197734'] = '吉林市金源科技有限公司';
-$s['SUSE188344'] = '吉林市金荣昌伟业工贸有限公司';
-$s['SUSE129013'] = '吉林市银海盛达科技有限公司';
-$s['SUSE260997'] = '吉林市阳光树人数码电脑经销有限公司';
-$s['SUSE253348'] = '吉林林业信息科技有限责任公司';
-$s['SUSE108020'] = '吉林盟友科技有限责任公司';
-$s['SUSE259221'] = '吉林省一夫智能科技有限公司';
-$s['SUSE197749'] = '吉林省万事达系统集成有限公司';
-$s['SUSE081318'] = '吉林省万维通信科技有限公司';
-$s['SUSE254526'] = '吉林省东科信息工程有限公司';
-$s['SUSE128921'] = '吉林省中建汇通科技有限公司';
-$s['SUSE151495'] = '吉林省初创信息工程有限公司';
-$s['SUSE254185'] = '吉林省华力信息科技有限公司';
-$s['SUSE231395'] = '吉林省华威惠通科技有限公司';
-$s['SUSE236666'] = '吉林省合成电子有限公司';
-$s['SUSE127646'] = '吉林省吉能信息技术有限公司';
-$s['SUSE128298'] = '吉林省同方智能系统集成有限公司';
-$s['SUSE253212'] = '吉林省嘉阳科技有限公司';
-$s['SUSE207089'] = '吉林省天正科技信息技术有限公司';
-$s['SUSE218772'] = '吉林省山水瑞通网络科技有限责任公司';
-$s['SUSE120337'] = '吉林省微蓝网络有限公司';
-$s['SUSE218249'] = '吉林省恒宇功业网络科技有限公司';
-$s['SUSE108073'] = '吉林省施乐商务机器有限公司';
-$s['SUSE209450'] = '吉林省智能网络系统有限公司';
-$s['SUSE214443'] = '吉林省浩然科贸有限公司';
-$s['SUSE239138'] = '吉林省火焰电子科技有限公司';
-$s['SUSE207302'] = '吉林省现代信息技术有限公司';
-$s['SUSE145837'] = '吉林省电子商务交易中心';
-$s['SUSE197748'] = '吉林省科海网络有限公司';
-$s['SUSE214832'] = '吉林省科维交通工程有限公司';
-$s['SUSE237186'] = '吉林省科迪信息技术有限公司';
-$s['SUSE217676'] = '吉林省联宇合达科技有限公司';
-$s['SUSE244808'] = '吉林省萱庆科技有限公司';
-$s['SUSE218462'] = '吉林省计算机所科技开发中心';
-$s['SUSE230456'] = '吉林省豪克信息技术有限公司';
-$s['SUSE241131'] = '吉林省迅华科贸有限公司';
-$s['SUSE171896'] = '吉林省远腾系统工程有限公司';
-$s['SUSE120271'] = '吉林省金鹰电脑软件集团公司';
-$s['SUSE232356'] = '吉林省骅舜天洪科技有限公司';
-$s['SUSE216221'] = '吉林省鲲鹏信息科技有限公司';
-$s['SUSE230455'] = '吉林真才信息技术有限公司';
-$s['SUSE236537'] = '吉林迈尔拓鑫信息科技有限公司';
-$s['SUSE152436'] = '吉林通电网络技术有限公司';
-$s['SUSE073984'] = '吉贝克信息技术(北京)有限公司';
-$s['SUSE200296'] = '吉贝克信息技术有限公司';
-$s['SUSE207886'] = '吉首市三湘电子开发有限公司';
-$s['SUSE146096'] = '吉首市智成科技文化发展有限公司';
-$s['SUSE108044'] = '吉高电子有限公司';
-$s['SUSE148989'] = '吉龙发展有限公司';
-$s['SUSE227416'] = '同创双子（北京）信息技术有限公司';
-$s['SUSE147553'] = '同德电脑网络商务资讯公司';
-$s['SUSE253113'] = '同方光盘股份有限公司';
-$s['RCNE000054'] = '同方股份有限公司';
-$s['SUSE222658'] = '同方鼎欣信息技术有限公司';
-$s['SUSE179997'] = '同济大学cims研究中心';
-$s['SUSE189774'] = '同舟科技有限公司';
-$s['SUSE145582'] = '同诚海盛科技';
-$s['SUSE207781'] = '名仕网络';
-$s['SUSE237440'] = '向心力信息技术股份有限公司';
-$s['SUSE205920'] = '吕梁四通新技术有限公司';
-$s['SUSE089880'] = '启明信息技术股份有限公司';
-$s['SUSE155189'] = '吴忠博宇科技';
-$s['SUSE146472'] = '吴忠市天力电脑科技有限公司';
-$s['SUSE146473'] = '吴忠市迪声电子科技有限公司';
-$s['SUSE250183'] = '吴江市众诚电器销售有限公司';
-$s['SUSE227867'] = '吴江市翰邦计算机网络工程有限公司';
-$s['SUSE144650'] = '周口佳杰科技有限公司';
-$s['SUSE205755'] = '周口友谊电脑有限公司';
-$s['SUSE209063'] = '周口大地电脑公司';
-$s['SUSE144568'] = '周口市东方网络工程有限公司';
-$s['SUSE147579'] = '周口市哲浩网络有限公司';
-$s['SUSE147566'] = '周口市大地电脑科技有限公司';
-$s['SUSE147556'] = '周口市天骄计算机工程有限公司';
-$s['SUSE147559'] = '周口市联创电脑有限公司';
-$s['SUSE145235'] = '周口市诚信电脑公司';
-$s['SUSE145250'] = '周口市迅驰网络科技有限公司';
-$s['SUSE147560'] = '周口市阿尔泰计算机有限公司';
-$s['SUSE147575'] = '周口海翔电脑科技有限公司';
-$s['SUSE147569'] = '周口融鑫电脑有限公司';
-$s['SUSE242444'] = '呼和浩特市博维科技信息技术有限责任公司';
-$s['SUSE207930'] = '呼和浩特市捷友信息技术有限公司';
-$s['SUSE249415'] = '呼和浩特市满宁科技有限责任公司';
-$s['SUSE208301'] = '呼和浩特市瑞嘉信息技术有限公司';
-$s['SUSE226640'] = '呼和浩特市誉华世纪网络有限责任公司';
-$s['SUSE218522'] = '呼和浩特易迅智业科技工程有限公司';
-$s['SUSE088666'] = '和勤软件技术有限公司';
-$s['SUSE226271'] = '和田市金戈电子';
-$s['SUSE144616'] = '咸宁市汇海电脑有限责任公司';
-$s['SUSE205572'] = '咸阳新阳光信息技术有限公司';
-$s['SUSE261848'] = '咸阳明讯电子有限公司';
-$s['SUSE207998'] = '咸阳科态澳思计算机有限公司';
-$s['SUSE246785'] = '咸阳赛尔金正计算机工程有限公司';
-$s['SUSE195708'] = '品信唯尔(北京)商业有限公司';
-$s['SUSE227001'] = '哈密四通商贸有限责任公司';
-$s['SUSE212056'] = '哈密新通网络技术有限公司乌鲁木齐分公司';
-$s['SUSE241351'] = '哈尔滨三英网络工程有限公司';
-$s['SUSE195826'] = '哈尔滨与时科技发展有限公司';
-$s['SUSE119946'] = '哈尔滨世纪朗讯科技发展有限公司';
-$s['SUSE252839'] = '哈尔滨世纪鹏程科技发展有限公司';
-$s['SUSE145381'] = '哈尔滨世纪龙翔科技开发有限公司';
-$s['SUSE213701'] = '哈尔滨东方华瑞科技开发有限责任公司';
-$s['SUSE120159'] = '哈尔滨中太科技发展有限公司';
-$s['SUSE197929'] = '哈尔滨乐辰科技有限责任公司';
-$s['SUSE120882'] = '哈尔滨云鹏电子有限公司';
-$s['SUSE212369'] = '哈尔滨交研交通工程有限责任公司';
-$s['SUSE258200'] = '哈尔滨众嘉机电工程技术有限公司';
-$s['SUSE240120'] = '哈尔滨佳信世通科技发展有限公司';
-$s['SUSE198853'] = '哈尔滨军华科技开发有限公司';
-$s['SUSE073402'] = '哈尔滨凯纳科技股份有限公司';
-$s['SUSE230726'] = '哈尔滨创百伟业科技有限公司';
-$s['SUSE207494'] = '哈尔滨北联计算机系统集成有限公司';
-$s['SUSE140380'] = '哈尔滨华光科技发展有限公司';
-$s['SUSE084873'] = '哈尔滨华强电力自动化工程有限公司';
-$s['SUSE257718'] = '哈尔滨华怿达科技发展有限公司';
-$s['SUSE128308'] = '哈尔滨华胜天成科技有限公司';
-$s['SUSE220934'] = '哈尔滨华谨科技有限公司';
-$s['SUSE108218'] = '哈尔滨华远伟业科技开发有限公司';
-$s['SUSE195893'] = '哈尔滨博诚科技发展有限公司';
-$s['SUSE121637'] = '哈尔滨同庆网络工程有限公司';
-$s['SUSE233360'] = '哈尔滨同欣诚信电子有限公司';
-$s['SUSE145926'] = '哈尔滨和盛泰铁道科技有限公司';
-$s['SUSE221569'] = '哈尔滨四木红科技有限公司';
-$s['SUSE122307'] = '哈尔滨国宇科技开发有限公司';
-$s['SUSE128311'] = '哈尔滨天辰宇安科技发展有限公司';
-$s['SUSE253342'] = '哈尔滨奇峰科技开发有限公司';
-$s['SUSE220321'] = '哈尔滨安捷士特科技有限责任公司';
-$s['SUSE240767'] = '哈尔滨岳海网络通讯技术有限责任公司';
-$s['SUSE120850'] = '哈尔滨工业大学东亚电子仪器开发有限责任公司';
-$s['SUSE128297'] = '哈尔滨工业大学仁通科技开发有限责任公司';
-$s['SUSE183279'] = '哈尔滨工业大学众达电子有限公司';
-$s['SUSE107673'] = '哈尔滨工业大学软件工程有限公司';
-$s['SUSE244766'] = '哈尔滨工大慧通新意信息技术有限公司';
-$s['SUSE195963'] = '哈尔滨工程大学博瑞信科管理咨询有限公司';
-$s['SUSE121635'] = '哈尔滨工高计算机网络开发有限公司';
-$s['SUSE108025'] = '哈尔滨市世纪大恒科技发展有限公司';
-$s['SUSE128313'] = '哈尔滨市共创科技发展有限公司';
-$s['SUSE248186'] = '哈尔滨市昱阳信息技术开发有限责任公司';
-$s['SUSE105039'] = '哈尔滨市速达电子有限公司';
-$s['SUSE246374'] = '哈尔滨市道外区天河专业灯光音响商场';
-$s['SUSE216758'] = '哈尔滨市鸿码科技有限公司';
-$s['SUSE079455'] = '哈尔滨市龙江风采信息科技有限公司';
-$s['SUSE213826'] = '哈尔滨康明新网络科技开发有限公司';
-$s['SUSE156709'] = '哈尔滨微创科技开发有限公司';
-$s['SUSE260849'] = '哈尔滨思航计算机网络工程有限公司';
-$s['SUSE088903'] = '哈尔滨惠诚科技开发有限公司';
-$s['SUSE196340'] = '哈尔滨斯万电子科技有限公司';
-$s['SUSE183612'] = '哈尔滨新中新电子股份有限公司';
-$s['SUSE137555'] = '哈尔滨新华杰科技发展有限公司';
-$s['SUSE183720'] = '哈尔滨新天翼电子有限公司';
-$s['SUSE131181'] = '哈尔滨新恒华电子有限公司';
-$s['SUSE148240'] = '哈尔滨新海扬帆科技发展有限公司';
-$s['SUSE140365'] = '哈尔滨新达威科技有限公司';
-$s['SUSE241353'] = '哈尔滨智恒时代科技有限公司';
-$s['SUSE120891'] = '哈尔滨朗新世纪科技贸易有限公司';
-$s['SUSE243150'] = '哈尔滨海佳科技发展有限公司';
-$s['SUSE136803'] = '哈尔滨海贝电子信息有限公司';
-$s['SUSE195620'] = '哈尔滨海鑫科技有限公司';
-$s['SUSE206112'] = '哈尔滨澳克信息技术有限公司';
-$s['SUSE122300'] = '哈尔滨王码同利科技开发有限公司';
-$s['SUSE195755'] = '哈尔滨瑞雷电气科技发展有限责任公司';
-$s['SUSE251243'] = '哈尔滨百辰科技发展有限公司';
-$s['SUSE084532'] = '哈尔滨神舟计算机网络有限公司';
-$s['SUSE196296'] = '哈尔滨精达测量仪器有限公司';
-$s['SUSE241647'] = '哈尔滨美服国际商务服务有限公司';
-$s['SUSE252329'] = '哈尔滨美禾力达网络工程有限公司';
-$s['SUSE120910'] = '哈尔滨美禾电子有限责任公司';
-$s['SUSE120363'] = '哈尔滨翰儒天正信息技术有限公司';
-$s['SUSE137031'] = '哈尔滨联威科技有限公司';
-$s['SUSE223596'] = '哈尔滨联德信息技术有限公司';
-$s['SUSE107845'] = '哈尔滨联成电子有限公司';
-$s['SUSE213512'] = '哈尔滨联科科技发展有限公司';
-$s['SUSE243619'] = '哈尔滨蓝虹科技开发有限公司';
-$s['SUSE078416'] = '哈尔滨融科科技有限公司';
-$s['SUSE216757'] = '哈尔滨诚信方威信息技术有限公司';
-$s['SUSE195828'] = '哈尔滨路特科技开发有限责任公司';
-$s['SUSE229112'] = '哈尔滨速达旭日科技有限公司';
-$s['SUSE248259'] = '哈尔滨速阳电子技术开发有限公司';
-$s['SUSE212644'] = '哈尔滨邦通科技有限公司';
-$s['SUSE120906'] = '哈尔滨金网智能系统集成有限公司';
-$s['SUSE251965'] = '哈尔滨金翰林科技发展有限责任公司';
-$s['SUSE248039'] = '哈尔滨鑫天铠电子科技有限公司';
-$s['SUSE131182'] = '哈尔滨鑫联华信息技术开发有限公司';
-$s['SUSE231421'] = '哈尔滨鑫长德计算机系统集成有限公司';
-$s['SUSE248369'] = '哈尔滨长城科技开发有限公司';
-$s['SUSE120986'] = '哈尔滨青云计算机有限公司';
-$s['SUSE244147'] = '哈尔滨驿路腾达科技有限公司';
-$s['SUSE218700'] = '哈尔滨鸿天伟业科技发展有限公司';
-$s['SUSE241928'] = '哈尔滨鼎鑫数据科技有限公司';
-$s['SUSE085383'] = '哈工大北方科技有限公司';
-$s['SUSE085386'] = '哈工大首创科技股份有限公司';
-$s['SUSE183036'] = '哲泰信息技术有限公司';
-$s['SUSE229855'] = '唐山三力伟业商贸有限公司';
-$s['SUSE149651'] = '唐山世道科技有限公司';
-$s['SUSE245162'] = '唐山天恒科技开发有限公司';
-$s['SUSE238188'] = '唐山市创基合众科技开发有限公司';
-$s['SUSE142504'] = '唐山市华岩网络工程有限公司';
-$s['SUSE238124'] = '唐山市鑫乘方泰科技有限公司';
-$s['SUSE215987'] = '唐山市飞驰商贸有限公司';
-$s['SUSE150807'] = '唐山方明信息技术有限公司';
-$s['SUSE146150'] = '唐山瑞科计算机有限公司';
-$s['SUSE246002'] = '唐山瑞达电气有限公司';
-$s['SUSE146141'] = '唐山超维电子科技有限公司';
-$s['SUSE147587'] = '唐山金利科技有限公司';
-$s['SUSE183718'] = '唐山龙赫网络技术开发有限公司';
-$s['SUSE219554'] = '唯智信息技术（上海）有限公司';
-$s['SUSE147585'] = '商丘市世纪联创电子科技有限公司';
-$s['SUSE144567'] = '商丘市中海科技网络工程有限公司';
-$s['SUSE205640'] = '商丘市利达电脑公司';
-$s['SUSE246082'] = '商丘市商航贸易有限公司';
-$s['SUSE147583'] = '商丘市恒生商贸有限公司';
-$s['SUSE147590'] = '商丘慧鑫商贸有限公司';
-$s['SUSE147586'] = '商丘现代教育科技有限公司';
-$s['SUSE260017'] = '商天虹日计算机科贸有限公司';
-$s['SUSE210506'] = '喀什亿网通电脑有限责任公司';
-$s['SUSE142692'] = '喀什创通计算机有限公司';
-$s['SUSE146782'] = '喀什四通有限责任公司';
-$s['SUSE222669'] = '喀什市升杰电子';
-$s['SUSE227173'] = '喀什易迅商贸有限公司';
-$s['SUSE222670'] = '喀什汉通商贸有限公司';
-$s['SUSE142517'] = '喀什瑞通科技有限责任公司';
-$s['SUSE221695'] = '嘉专案';
-$s['SUSE199785'] = '嘉兴市三联同创计算机有限公司';
-$s['SUSE149537'] = '嘉兴市思科网络有限公司';
-$s['SUSE188360'] = '嘉兴市新中软计算机系统工程有限公司';
-$s['SUSE176453'] = '嘉兴市明日信息技术有限公司';
-$s['SUSE145727'] = '嘉兴市晓通科技有限公司';
-$s['SUSE222608'] = '嘉兴市深蓝科技有限公司';
-$s['SUSE188641'] = '嘉兴市联腾电脑科技有限公司';
-$s['SUSE150027'] = '嘉兴市融和计算机有限责任公司';
-$s['SUSE157739'] = '嘉兴市计算机应用研究所有限公司';
-$s['SUSE188362'] = '嘉兴市金穗信息技术有限公司';
-$s['SUSE205221'] = '嘉兴市飞狐软件有限公司';
-$s['SUSE188359'] = '嘉兴市鹏博网络科技有限公司';
-$s['SUSE234610'] = '嘉兴思玛特尔信息技术有限公司';
-$s['SUSE258188'] = '嘉善众成计算机技术有限公司';
-$s['SUSE146790'] = '嘉峪关中信商贸有限责任公司';
-$s['SUSE146789'] = '嘉峪关市金信商贸有限责任公司';
-$s['SUSE146786'] = '嘉峪关新兰办公自动化有限责任公司';
-$s['SUSE146787'] = '嘉峪关新日上商贸公司';
-$s['SUSE156775'] = '嘉峪关电业局电力物资公司电脑分公司';
-$s['SUSE146788'] = '嘉峪关雄关泰岳电脑';
-$s['SUSE186463'] = '嘉易通';
-$s['SUSE145664'] = '嘉智达经贸有限公司';
-$s['SUSE253400'] = '嘉桓（北京）科技有限公司';
-$s['SUSE137415'] = '嘉润达资讯系统(深圳)有限公司';
-$s['SUSE244245'] = '嘉钛华数码科技（天津）有限公司';
-$s['SUSE247641'] = '四川万兴智能控制系统工程有限公司';
-$s['SUSE215341'] = '四川世纪金鹰科技有限公司';
-$s['SUSE230852'] = '四川东久软件科技有限公司';
-$s['SUSE156025'] = '四川中惠实业有限公司';
-$s['SUSE177618'] = '四川中科力腾软件股份有限公司';
-$s['SUSE176334'] = '四川中科院信息技术有限公司';
-$s['SUSE176879'] = '四川中科院信息技术有限公司中国科学院成都计算机应用研究所';
-$s['SUSE188033'] = '四川中锐信息技术有限公司';
-$s['SUSE120939'] = '四川中陆石油科技有限公司';
-$s['SUSE239013'] = '四川久信科诚信息技术有限公司';
-$s['SUSE234899'] = '四川久远银海软件股份有限公司';
-$s['SUSE227970'] = '四川九洲应用电子系统有限责任公司';
-$s['SUSE228034'] = '四川九洲电器集团有限责任公司';
-$s['SUSE192162'] = '四川九阵科技有限公司';
-$s['SUSE225691'] = '四川五博科技有限公司';
-$s['SUSE148211'] = '四川亿科科技有限公司';
-$s['SUSE120268'] = '四川亿联科技有限公司';
-$s['SUSE204783'] = '四川亿联科技有限公司乐山分公司';
-$s['SUSE120658'] = '四川众望科希盟科技有限公司';
-$s['SUSE230538'] = '四川众科安全保密技术设备有限公司';
-$s['SUSE255088'] = '四川优腾技术有限公司';
-$s['SUSE193488'] = '四川佳诚科技有限公司';
-$s['SUSE242027'] = '四川信通通信技术有限公司';
-$s['SUSE131491'] = '四川兴财信息产业发展有限公司';
-$s['SUSE120719'] = '四川创意信息技术股份有限公司';
-$s['SUSE151175'] = '四川创立信息科技有限责任公司';
-$s['SUSE207929'] = '四川千帆电子系统工程有限公司';
-$s['SUSE111677'] = '四川华信富恒科技有限公司';
-$s['SUSE183540'] = '四川华南信息产业有限公司';
-$s['SUSE083218'] = '四川华胜信息产业有限责任公司';
-$s['SUSE186243'] = '四川华迪信息技术有限公司';
-$s['SUSE211933'] = '四川博世科技信息产业有限公司';
-$s['SUSE242827'] = '四川博宇传媒有限公司';
-$s['SUSE230466'] = '四川博安信息科技有限公司';
-$s['SUSE185615'] = '四川合强软件';
-$s['SUSE152663'] = '四川启明星银海科技有限公司';
-$s['SUSE208539'] = '四川启祥机电成套设备有限公司';
-$s['SUSE253928'] = '四川大卫网络科技有限公司';
-$s['SUSE206364'] = '四川大宇信息系统有限公司';
-$s['SUSE122301'] = '四川天宇信息产业开发有限公司';
-$s['SUSE120931'] = '四川太平洋电子科技发展有限公司';
-$s['SUSE207075'] = '四川宇森办公设备有限公司';
-$s['SUSE234109'] = '四川安巨信息技术有限公司';
-$s['SUSE208415'] = '四川安杰信信息设备有限责任公司';
-$s['SUSE224357'] = '四川宏微科技有限公司';
-$s['SUSE120029'] = '四川宏远计算机系统集成技术公司';
-$s['SUSE230279'] = '四川尚鼎信息科技有限公司';
-$s['SUSE104984'] = '四川展望信息设备有限责任公司';
-$s['SUSE107596'] = '四川川大智胜软件股份有限公司';
-$s['SUSE137964'] = '四川川大软件工程研究所';
-$s['SUSE188314'] = '四川川大金键信息产业有限责任公司';
-$s['SUSE129678'] = '四川帕赛菲克科技有限公司';
-$s['SUSE147082'] = '四川广安创达科技有限责任公司';
-$s['SUSE234895'] = '四川康来达贸易发展有限公司';
-$s['SUSE076369'] = '四川建华软件有限公司';
-$s['SUSE120888'] = '四川德阳艾力特科技有限公司';
-$s['SUSE147142'] = '四川恒发科技有限公司';
-$s['SUSE147081'] = '四川恒通科技有限公司';
-$s['SUSE253620'] = '四川悦智信息技术有限公司';
-$s['SUSE151183'] = '四川成电华信科技有限公司';
-$s['SUSE120025'] = '四川成都彤云科技有限责任公司';
-$s['SUSE122313'] = '四川成都理邦计算机系统集成有限公司';
-$s['SUSE120026'] = '四川成都超弦电子技术系统集成有限公司';
-$s['SUSE207712'] = '四川新东盛科技发展有限公司';
-$s['SUSE227556'] = '四川新乐士科技有限责任公司';
-$s['SUSE179063'] = '四川新星信息技术有限责任公司';
-$s['SUSE186083'] = '四川新源现代智能科技有限公司';
-$s['SUSE156832'] = '四川新环佳科技发展有限公司';
-$s['SUSE208073'] = '四川新迎顺信息技术有限公司';
-$s['SUSE205260'] = '四川日达科技有限公司';
-$s['SUSE120201'] = '四川易汇科技有限责任公司';
-$s['SUSE217083'] = '四川易达信息产业有限公司';
-$s['SUSE255233'] = '四川杰思德科技有限公司';
-$s['SUSE129078'] = '四川杰达科技网络有限公司';
-$s['SUSE151174'] = '四川林飞数码科技有限公司';
-$s['SUSE188315'] = '四川格瑞特科技有限公司';
-$s['SUSE140362'] = '四川汇源光通信有限公司';
-$s['SUSE181620'] = '四川汇源数码科技有限公司';
-$s['SUSE120860'] = '四川汇源科技发展股份有限公司';
-$s['SUSE179613'] = '四川汇源领先数码科技有限公司';
-$s['SUSE220653'] = '四川泰尔科技有限公司';
-$s['SUSE141947'] = '四川泸州泰宇科技有限公司';
-$s['SUSE251303'] = '四川海讯电子开发有限公司';
-$s['SUSE253330'] = '四川瀚扬信息技术有限公司';
-$s['SUSE240319'] = '四川省三特科技有限公司';
-$s['SUSE120354'] = '四川省东方惠群科技发展有限公司';
-$s['SUSE178630'] = '四川省众望科希盟科技有限公司';
-$s['SUSE120196'] = '四川省兴迪资讯科技有限公司';
-$s['SUSE216448'] = '四川省天光科技实业有限责任公司';
-$s['SUSE147097'] = '四川省宜宾市外贸昭阳电脑有限公司';
-$s['SUSE207697'] = '四川省德阳市航天金穗高技术有限公司';
-$s['SUSE219634'] = '四川省永成电子系统有限责任公司';
-$s['SUSE128309'] = '四川省汇峰世纪科技有限公司';
-$s['SUSE108216'] = '四川省洋洲信息产业(集团)公司';
-$s['SUSE154059'] = '四川省眉山新世纪科技发展有限公司';
-$s['SUSE215663'] = '四川省科强信息技术有限公司';
-$s['SUSE227412'] = '四川省紫华数码科技发展有限公司';
-$s['SUSE147150'] = '四川省绵阳晨希科技有限公司';
-$s['SUSE246771'] = '四川省通博科技有限公司';
-$s['SUSE121722'] = '四川省金科成地理信息技术有限公司';
-$s['SUSE227408'] = '四川省银锐科贸有限公司';
-$s['SUSE149501'] = '四川省长林实业公司绵阳分公司';
-$s['SUSE227868'] = '四川省鼎盛实业有限责任公司';
-$s['SUSE253935'] = '四川眉山文祥办公伙伴发展有限公司';
-$s['SUSE154047'] = '四川福利来网络工程有限公司';
-$s['SUSE128302'] = '四川禾嘉君涛数码科技有限公司昆明分公司';
-$s['SUSE122296'] = '四川科瑞软件有限责任公司';
-$s['SUSE250411'] = '四川立嘉科技有限公司';
-$s['SUSE241224'] = '四川翱领科技有限公司';
-$s['SUSE207922'] = '四川联浩科技有限公司';
-$s['SUSE215657'] = '四川英卓科技有限责任公司';
-$s['SUSE232597'] = '四川蓝海众拓电子科技有限公司';
-$s['SUSE253939'] = '四川蓝色港湾科技有限公司';
-$s['SUSE218026'] = '四川虹信软件有限公司';
-$s['SUSE247871'] = '四川西南楼宇机电工程有限公司';
-$s['SUSE244324'] = '四川西斯德科技建设有限公司';
-$s['SUSE254083'] = '四川西旗光信息科技有限公司';
-$s['SUSE085887'] = '四川西辰软件有限公司';
-$s['SUSE185511'] = '四川诺亚信息产业有限公司';
-$s['SUSE247533'] = '四川路得光电技术有限公司';
-$s['SUSE111662'] = '四川通信科研规划设计有限责任公司';
-$s['SUSE143459'] = '四川速集实业集团有限公司';
-$s['SUSE121321'] = '四川金仁科技有限公司';
-$s['SUSE149784'] = '四川金佰匯科技有限公司';
-$s['SUSE255553'] = '四川金秉政和信息科技有限公司';
-$s['SUSE210722'] = '四川金虎多媒体通讯技术有限公司';
-$s['SUSE156021'] = '四川金软科技有限公司';
-$s['SUSE259063'] = '四川金通信息技术有限公司';
-$s['SUSE192425'] = '四川银星软件有限公司';
-$s['SUSE140976'] = '四川银海软件有限责任公司';
-$s['SUSE181800'] = '四川锋芒计算机网络公司';
-$s['SUSE255251'] = '四川锐昕科技有限责任公司';
-$s['SUSE178868'] = '四川长城网络科技有限公司';
-$s['SUSE128806'] = '四川长虹佳华信息产品有限责任公司';
-$s['SUSE256827'] = '四川长虹佳华数字技术有限公司';
-$s['SUSE252529'] = '四川雅讯软件有限公司';
-$s['SUSE247183'] = '四川领航信息技术有限公司';
-$s['SUSE212163'] = '四川驰辉科技有限公司';
-$s['SUSE235012'] = '四川骋志电子科技有限公司';
-$s['RCNE000265'] = '四川鸿通科技实业有限责任公司';
-$s['SUSE176740'] = '四川鼎天软件有限公司';
-$s['SUSE157230'] = '四平星辰办公设备有限公司';
-$s['SUSE157228'] = '四平讯数码科技有限公司';
-$s['SUSE104718'] = '四方精创资讯(深圳)有限公司';
-$s['SUSE171901'] = '四班公司亚洲总部';
-$s['SUSE210436'] = '四联智能技术股份有限公司';
-$s['SUSE183597'] = '因弗比信息科技（上海）有限公司';
-$s['SUSE072885'] = '国信信息技术(苏州)有限公司';
-$s['SUSE110109'] = '国信朗讯科技网络技术有限公司';
-$s['SUSE182682'] = '国家统计局计算中心';
-$s['SUSE226852'] = '国富通信息技术发展有限公司';
-$s['SUSE173411'] = '国泰君安证券股份有限公司';
-$s['SUSE187762'] = '国电南京自动化股份有限公司';
-$s['SUSE189776'] = '国电南瑞科技股份有限公司';
-$s['SUSE253156'] = '国电科技环保集团有限公司';
-$s['SUSE149892'] = '国研信息科技有限公司';
-$s['SUSE255336'] = '国研信息科技有限公司宁波分公司';
-$s['SUSE249414'] = '国科政信科技（北京）有限公司';
-$s['SUSE151494'] = '国网信通亿力科技股份有限公司';
-$s['SUSE212770'] = '国脉中讯网络科技有限公司';
-$s['SUSE185204'] = '国际商用机器有限公司';
-$s['SUSE236910'] = '图腾盛视（北京）科技有限公司';
-$s['SUSE236332'] = '圣丰系统有限公司';
-$s['SUSE191983'] = '地理所';
-$s['SUSE183817'] = '埃慕计算机技术（上海）有限公司';
-$s['SUSE128332'] = '埃森哲上海有限公司';
-$s['SUSE175478'] = '埃森哲信息技术（大连）有限公司';
-$s['SUSE149361'] = '塔城众恒电脑网络商贸有限公司';
-$s['SUSE142552'] = '塔城地区新科信电脑有限公司';
-$s['SUSE217632'] = '塔塔信息技术(上海)有限公司';
-$s['SUSE211520'] = '塞刻亿文高科技开发有限公司';
-$s['SUSE238316'] = '增城市宏道电脑有限公司';
-$s['SUSE205135'] = '壁山东南电脑公司';
-$s['SUSE229189'] = '壁山县世纪办公设备有限公司';
-$s['SUSE183520'] = '声达软件科技(上海)有限公司';
-$s['SUSE185609'] = '复旦大学协同信息与系统实验室';
-$s['SUSE234623'] = '多元思维信息科技有限公司';
-$s['SUSE145613'] = '大同亿海扬天科技发展公司';
-$s['SUSE153593'] = '大同天宇数码科技有限公司';
-$s['SUSE151396'] = '大同太工天成信息技术有限公司';
-$s['SUSE147465'] = '大同市中天盛世文化科技发展有限公司';
-$s['SUSE147460'] = '大同市丰氏信息工程有限责任公司';
-$s['SUSE145612'] = '大同市从横伟业科贸有限责任公司';
-$s['SUSE204370'] = '大同市华立科技有限责任公司';
-$s['SUSE145618'] = '大同市友利联创发展公司';
-$s['SUSE145523'] = '大同市同信电脑科技发展有限责任公司';
-$s['SUSE122280'] = '大同市同方网络科技有限责任公司';
-$s['SUSE145625'] = '大同市康悦科贸有限责任公司';
-$s['SUSE233587'] = '大同市新基正科技有限公司';
-$s['SUSE250096'] = '大同市新网科技有限公司';
-$s['SUSE226281'] = '大同市易胜科技有限公司';
-$s['SUSE145614'] = '大同市普华科技发展有限责任公司';
-$s['SUSE233911'] = '大同市网安科技有限责任公司';
-$s['SUSE237908'] = '大同市迅驰电脑网络科技有限责任公司';
-$s['SUSE146163'] = '大同市远大软件工程有限责任公司';
-$s['SUSE256532'] = '大同市远航科技有限公司';
-$s['SUSE145698'] = '大同景睿科技';
-$s['SUSE145616'] = '大同科星电脑电器有限责任公司';
-$s['SUSE145621'] = '大同联创网络科技有限公司';
-$s['SUSE145617'] = '大同金达电脑有限责任公司';
-$s['SUSE145619'] = '大同鑫光标数码科技有限责任公司';
-$s['SUSE145622'] = '大同银河网络有限责任公司';
-$s['SUSE145624'] = '大同鹭海恒星';
-$s['SUSE192387'] = '大唐微电子技术有限公司';
-$s['SUSE171929'] = '大唐微电子技术通信公司';
-$s['RCNE001941'] = '大唐软件技术有限责任公司';
-$s['SUSE121771'] = '大唐高鸿数据网络技术股份有限公司';
-$s['SUSE209996'] = '大唐高鸿数据网络技术股份有限公司贵阳分公司';
-$s['SUSE170099'] = '大宇宙信息创造（中国）有限公司';
-$s['SUSE245036'] = '大庆三维软件有限责任公司';
-$s['SUSE149283'] = '大庆伟业电脑科技有限公司';
-$s['SUSE128307'] = '大庆创今凯达科技有限公司';
-$s['SUSE205821'] = '大庆地源科技开发有限公司';
-$s['SUSE122312'] = '大庆市世纪索福科技有限公司';
-$s['SUSE149488'] = '大庆市东油科技有限公司';
-$s['SUSE147034'] = '大庆市同创信息产业股份有限公司';
-$s['SUSE151022'] = '大庆市嘉华科技有限公司';
-$s['SUSE151023'] = '大庆市大金福电脑有限公司';
-$s['SUSE149518'] = '大庆市新宏基科技有限公司';
-$s['SUSE149490'] = '大庆市智远科技有限公司';
-$s['SUSE151026'] = '大庆市翰林汇科技有限公司';
-$s['SUSE226412'] = '大庆市育才网络科技有限公司';
-$s['SUSE205814'] = '大庆市让胡路区科讯科技有限公司';
-$s['SUSE245267'] = '大庆市金宇电子科技有限公司';
-$s['SUSE205869'] = '大庆市金普生计算机科技有限公司';
-$s['SUSE221599'] = '大庆恒信达成电子科技有限公司';
-$s['SUSE087275'] = '大庆油田长垣软件有限公司';
-$s['SUSE149519'] = '大庆石化总厂计算机开发公司';
-$s['SUSE121752'] = '大庆金三元有限公司';
-$s['SUSE212721'] = '大庆金桥信息技术工程有限公司';
-$s['SUSE258316'] = '大庆金桥信息技术工程有限公司成都分公司';
-$s['SUSE227923'] = '大庆锦华联电子信息科技开发有限公司';
-$s['SUSE079869'] = '大恒网络技术公司';
-$s['SUSE185403'] = '大梨技术有限公司';
-$s['SUSE149495'] = '大理中软科技';
-$s['SUSE149494'] = '大理均宏电脑公司';
-$s['SUSE185186'] = '大理福致计算机有限公司';
-$s['SUSE147052'] = '大理金石电脑公司';
-$s['SUSE213927'] = '大连三方计算机科技中心';
-$s['SUSE225206'] = '大连三鹰科技发展有限公司';
-$s['SUSE211957'] = '大连世讯数码科技有限公司';
-$s['SUSE207696'] = '大连东升网络系统有限公司';
-$s['SUSE141950'] = '大连东正电子技术开发公司';
-$s['SUSE206629'] = '大连东财大软件有限公司';
-$s['SUSE204759'] = '大连中天融信科技有限公司';
-$s['SUSE121764'] = '大连中智信息科技有限公司';
-$s['SUSE216120'] = '大连中科国政信息科技有限公司';
-$s['SUSE200444'] = '大连九州网络科技发展有限公司';
-$s['SUSE120655'] = '大连九鼎计算机网络安全技术有限公司';
-$s['SUSE199129'] = '大连亿蓝德信息科技有限公司';
-$s['SUSE185034'] = '大连仁和海事科技有限公司';
-$s['SUSE247261'] = '大连伟达科技有限公司';
-$s['SUSE226145'] = '大连佳宇新通科技发展有限公司';
-$s['SUSE184620'] = '大连信开数码有限公司';
-$s['SUSE228970'] = '大连信远科技有限公司';
-$s['SUSE207706'] = '大连倚天软件有限公司';
-$s['SUSE185956'] = '大连冰山天翼信息科技有限公司';
-$s['SUSE184347'] = '大连凤凰软件有限公司';
-$s['SUSE121725'] = '大连凯博科技发展有限公司';
-$s['SUSE234003'] = '大连创世联科电脑有限公司';
-$s['SUSE224777'] = '大连北奥信息工程有限公司';
-$s['SUSE250515'] = '大连北方通联科技发展有限公司';
-$s['SUSE206161'] = '大连华世软件科技有限公司';
-$s['SUSE138557'] = '大连华信计算机技术股份有限公司';
-$s['SUSE245482'] = '大连华恒科技有限公司';
-$s['SUSE248118'] = '大连华明伟业电子有限公司';
-$s['SUSE205668'] = '大连华洋数码科技有限公司';
-$s['SUSE183785'] = '大连华铁海兴科技有限公司';
-$s['SUSE224770'] = '大连博宇恒业科技有限公司';
-$s['SUSE136834'] = '大连博特软件科技有限公司';
-$s['SUSE233561'] = '大连叁木网络科技发展有限公司';
-$s['SUSE145434'] = '大连口岸物流科技有限公司';
-$s['SUSE231773'] = '大连口岸物流网有限公司';
-$s['SUSE186003'] = '大连合为科技有限公司';
-$s['SUSE251814'] = '大连吉尔吉科技发展有限公司';
-$s['SUSE190901'] = '大连同顺科技有公司';
-$s['SUSE209358'] = '大连同顺科技有限公司';
-$s['SUSE225976'] = '大连启明海通信息技术有限公司';
-$s['SUSE234876'] = '大连嘉邦科技发展有限公司';
-$s['SUSE141953'] = '大连圣达计算机发展有限公司';
-$s['SUSE225973'] = '大连在线互联网信息服务有限公司';
-$s['SUSE131094'] = '大连大安技防有限公司';
-$s['SUSE208408'] = '大连大工信息技术有限公司';
-$s['SUSE204271'] = '大连大工电脑发展有限公司';
-$s['SUSE107941'] = '大连大显网络系统股份有限公司';
-$s['SUSE121566'] = '大连天港科技发展有限公司';
-$s['SUSE235114'] = '大连奥林匹克电子城海通电脑经销';
-$s['SUSE137032'] = '大连奥远电子有限公司';
-$s['SUSE240731'] = '大连奥通网络工程有限公司';
-$s['SUSE232983'] = '大连安势科技发展有限公司';
-$s['SUSE227812'] = '大连宏德炎邦信息工程有限公司';
-$s['SUSE128039'] = '大连宏旗计算机网络技术发展有限公司';
-$s['SUSE211955'] = '大连富成通讯工程有限公司';
-$s['SUSE121463'] = '大连富沃科技有限公司';
-$s['SUSE205756'] = '大连富达电子有限公司';
-$s['SUSE184468'] = '大连开明信息科技有限公司';
-$s['SUSE142464'] = '大连德创电子有限公司';
-$s['SUSE121563'] = '大连志腾科技发展有限公司';
-$s['SUSE228851'] = '大连思科领势科技发展有限公司';
-$s['SUSE151698'] = '大连恒基电子技术有限公司';
-$s['SUSE246761'] = '大连恒成计算机网络设备有限公司';
-$s['SUSE225485'] = '大连恒智科技发展有限公司';
-$s['SUSE234980'] = '大连恒荣科技有限公司';
-$s['SUSE209947'] = '大连慧博科技发展有限公司';
-$s['SUSE205551'] = '大连拓思科技有限公司';
-$s['SUSE121466'] = '大连数码科技股份有限公司';
-$s['SUSE182009'] = '大连斯马特科技发展有限公司';
-$s['SUSE146679'] = '大连新中连软件集团有限公司';
-$s['SUSE236471'] = '大连新创世天成科技有限公司';
-$s['SUSE091675'] = '大连新峰科技发展有限公司';
-$s['SUSE141954'] = '大连新桥科技发展有限公司';
-$s['SUSE204277'] = '大连新科伟业数码网络有限公司';
-$s['SUSE230286'] = '大连新科伟业科技发展有限公司';
-$s['SUSE207702'] = '大连方辰中泰信息产业有限公司';
-$s['SUSE226188'] = '大连日升网络科技开发有限公司';
-$s['SUSE176332'] = '大连旭日计算机有限公司';
-$s['SUSE205683'] = '大连昊天正兴科技发展有限公司';
-$s['SUSE204269'] = '大连易成达科技有限公司';
-$s['SUSE107662'] = '大连易玛特软件开发中心';
-$s['SUSE215323'] = '大连智达科技有限公司';
-$s['SUSE129015'] = '大连正德信息技术发展有限公司';
-$s['SUSE226134'] = '大连汇欣科技发展有限公司';
-$s['SUSE252644'] = '大连汇锋商贸有限公司';
-$s['SUSE209813'] = '大连泛润通信系统有限公司';
-$s['SUSE108212'] = '大连泰富数码科技有限公司';
-$s['SUSE190280'] = '大连海普天利科技有限公司';
-$s['SUSE214310'] = '大连海荣自动化系统有限公司';
-$s['SUSE232986'] = '大连海融科技发展有限公司';
-$s['SUSE217269'] = '大连港埠机电有限公司';
-$s['SUSE236951'] = '大连港通信工程有限公司';
-$s['SUSE131095'] = '大连港隆网络技术有限公司';
-$s['SUSE199669'] = '大连瀚翔电子科技有限公司';
-$s['SUSE184709'] = '大连爱特维尔信息技术有限公司';
-$s['SUSE178012'] = '大连环宇';
-$s['SUSE108209'] = '大连环宇网络技术有限公司';
-$s['SUSE107663'] = '大连现代高技术发展有限公司';
-$s['SUSE196393'] = '大连理工大学';
-$s['SUSE244095'] = '大连畅通计算机技术发展有限公司';
-$s['SUSE228144'] = '大连百易软件有限公司';
-$s['SUSE098776'] = '大连盛辉软件有限公司';
-$s['SUSE141952'] = '大连神讯信息电子工程有限公司';
-$s['SUSE145158'] = '大连科望兴达科技发展有限公司';
-$s['SUSE205666'] = '大连科鸿信息技术有限公司';
-$s['SUSE206575'] = '大连索创智能系统工程有限公司';
-$s['SUSE226958'] = '大连纵横科技有限公司';
-$s['SUSE207387'] = '大连经济技术开发区中联电脑开发有限公司';
-$s['SUSE237396'] = '大连经济技术开发区晨阳数码科技有限公司';
-$s['SUSE190515'] = '大连网信软件有限公司';
-$s['SUSE242964'] = '大连美嘉信息技术有限公司';
-$s['SUSE183698'] = '大连美琳信息技术服务有限公司';
-$s['SUSE237508'] = '大连联创世纪信息系统有限公司';
-$s['SUSE247820'] = '大连至派技术有限公司';
-$s['SUSE223092'] = '大连英傲科技有限公司';
-$s['SUSE121564'] = '大连英康咨讯有限公司';
-$s['SUSE112047'] = '大连英康科技有限公司';
-$s['SUSE190904'] = '大连英科时代科技发展有限公司';
-$s['SUSE148421'] = '大连蓝天计算机系统有限公司';
-$s['SUSE185652'] = '大连见微软件';
-$s['SUSE184238'] = '大连见微软件有限公司';
-$s['SUSE228040'] = '大连诚华电子技术有限公司';
-$s['SUSE073481'] = '大连诚高科技股份有限公司';
-$s['SUSE215322'] = '大连贝得科技有限公司';
-$s['SUSE204266'] = '大连贯虹世纪科技有限公司';
-$s['SUSE215659'] = '大连软件园咨询服务有限公司';
-$s['SUSE104809'] = '大连运邦科技发展有限公司';
-$s['SUSE137113'] = '大连通软科技有限公司';
-$s['SUSE108240'] = '大连鑫海智桥信息技术有限公司';
-$s['SUSE228043'] = '大连锐成佳业科技有限公司';
-$s['SUSE233300'] = '大连集发科技有限公司';
-$s['SUSE224893'] = '大连青云数码科技有限公司';
-$s['SUSE214764'] = '大连飞创信息技术有限公司';
-$s['SUSE243303'] = '大连高山电子科技有限公司';
-$s['SUSE151047'] = '大连高新园区恒新电脑网络有限公司';
-$s['SUSE192457'] = '大连鸿升科技有限公司';
-$s['SUSE225631'] = '大连鸿智科技发展有限公司';
-$s['SUSE122553'] = '大连鸿鹄伟业科技有限公司';
-$s['SUSE148259'] = '大连鹤巍达网络科技有限公司';
-$s['SUSE146876'] = '天台深篮电脑有限公司';
-$s['SUSE212840'] = '天地(常州)自动化股份有限公司';
-$s['SUSE189767'] = '天地科技有限公司';
-$s['SUSE213247'] = '天威科技';
-$s['SUSE171845'] = '天心软件集团';
-$s['SUSE184937'] = '天极信息发展有限公司';
-$s['SUSE139982'] = '天极有限';
-$s['SUSE254470'] = '天栢宽带网络科技（上海）有限公司';
-$s['SUSE246914'] = '天水实达办公设备有限公司';
-$s['SUSE218483'] = '天水得实办公设备有限公司';
-$s['SUSE246913'] = '天水恒迪科贸有限责任公司';
-$s['SUSE246916'] = '天水理想办公设备有限责任公司';
-$s['SUSE119134'] = '天津七所信息技术有限公司';
-$s['SUSE253721'] = '天津东软软件技术有限公司';
-$s['SUSE244130'] = '天津中仪科技发展有限公司';
-$s['SUSE121063'] = '天津中创龙科科技发展有限公司';
