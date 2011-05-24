@@ -63,10 +63,18 @@ class Bug43196Test extends Sugar_PHPUnit_Framework_TestCase
             
         $result = $this->_soapClient->call('get_entry_list',$parameters);
         
+        $account_names = array($account1->name, $account2->name);
+        $account_ids = array($account1->id, $account2->id);
+        /*
         $this->assertEquals($result['entry_list'][0]['name_value_list'][1]['value'],$account1->name);
         $this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'],$account1->id);
         $this->assertEquals($result['entry_list'][1]['name_value_list'][1]['value'],$account2->name);
         $this->assertEquals($result['entry_list'][1]['name_value_list'][2]['value'],$account2->id);
+        */
+        $this->assertTrue(in_array($result['entry_list'][0]['name_value_list'][1]['value'], $account_names));
+        $this->assertTrue(in_array($result['entry_list'][1]['name_value_list'][1]['value'], $account_names));
+        $this->assertTrue(in_array($result['entry_list'][0]['name_value_list'][2]['value'], $account_ids));
+        $this->assertTrue(in_array($result['entry_list'][1]['name_value_list'][2]['value'], $account_ids));
     }
     
     /**
