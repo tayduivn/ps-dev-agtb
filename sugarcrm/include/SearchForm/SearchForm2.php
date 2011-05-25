@@ -486,14 +486,8 @@ require_once('include/EditView/EditView2.php');
                     	{
                     		$long_name = $key.'_'.$SearchName;
                     		
-	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys)) 
-	                    	{
-	                    		
-	                    		//C.L. - Bug 44166 - Fix case for customized single select dropdowns to not search on blank values
-	                    		if(is_array($array[$long_name]) && isset($array[$long_name][0]) && $array[$long_name][0] == '' && !$this->isEmptyDropdownField($long_name, $array[$long_name]))
-	                    		{
-	                    		   continue;
-	                    		}    	                    		
+	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name])) 
+	                    	{  	                    		
 	                    		
 	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
 	                        	
