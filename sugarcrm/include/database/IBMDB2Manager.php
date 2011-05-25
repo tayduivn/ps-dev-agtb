@@ -1130,9 +1130,10 @@ EOQ;
         return mysql_error();
     }
 
-    /**
-     * Quote MySQL search term
-     * @param unknown_type $term
+    /**+
+     * Quote DB2 search term
+     * @param string $term
+     * @return string
      */
     protected function quoteTerm($term)
     {
@@ -1142,7 +1143,7 @@ EOQ;
         return $term;
     }
 
-    /**
+    /**~
      * Generate fulltext query from set of terms
      * @param string $fields Field to search against
      * @param array $terms Search terms that may be or not be in the result
@@ -1153,7 +1154,7 @@ EOQ;
     {
         $condition = array();
         foreach($terms as $term) {
-            $condition[] = $this->quoteTerm($term);
+            $condition[] = "?".$this->quoteTerm($term);
         }
         foreach($must_terms as $term) {
             $condition[] = "+".$this->quoteTerm($term);
@@ -1162,7 +1163,8 @@ EOQ;
             $condition[] = "-".$this->quoteTerm($term);
         }
         $condition = $this->quoted(join(" ",$condition));
-        return "MATCH($field) AGAINST($condition IN BOOLEAN MODE)";
+
+        return "CONTAINS($field, $condition) = 1";
     }
 
     /**+
