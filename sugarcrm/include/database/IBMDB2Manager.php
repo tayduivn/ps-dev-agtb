@@ -200,7 +200,7 @@ class IBMDB2Manager  extends DBManager
         $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
 		if(!$this->checkDB2STMTerror($stmt)) {
             $sp_msg = '';
-            if(preg_match('/CALL.+,\s*\?/i', $sql))
+            if(preg_match('/^CALL.+,\s*\?/i', $sql))
             {
                 // 20110519 Frank Steegmans: Note at the time of this implementation we are not using stored procedures
                 // anywhere except for creating full text indexes in add_drop_contraint. Furthermore
@@ -294,9 +294,9 @@ class IBMDB2Manager  extends DBManager
     {
         if ($start < 0)
             $start = 0;
-        $GLOBALS['log']->debug('Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count . ' BUT NOT EXECUTING LIMIT FOR NOW BECAUSE OF DB2');
+        $GLOBALS['log']->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
-        $sql = "SELECT * FROM ($sql) LIMIT $start,$count"; // NOTE Limit
+        $sql = "SELECT * FROM ($sql) LIMIT $start,$count";
         $this->lastsql = $sql;
 
         if(!empty($GLOBALS['sugar_config']['check_query'])){
