@@ -134,6 +134,12 @@ class Lead extends Person {
 	var $additional_column_fields = Array('assigned_user_name', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id');
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
 
+        private static $_ConversionOptions = array(
+            'copy'       => 'Copy',
+            'move'       => 'Move',
+            'donothing'  => 'Do Nothing'
+        );
+
 	function Lead() {
 		parent::Person();
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -581,7 +587,18 @@ class Lead extends Person {
         
         return $return_array;
     }
-	
+
+    /**
+     * Returns array of lead conversion activitity options
+     *
+     * @return string SQL statement
+     */
+    public static function getActivitiesOptions() {
+        $activityOptions = self::$_ConversionOptions;
+
+        return $activityOptions;
+    }
+
     /**
      * Returns query to find the related meetings created pre-5.1
      *

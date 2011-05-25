@@ -238,6 +238,8 @@ $mod_strings = array (
 	'LBL_SELECTION_TIP' => 'Modules with a relate field in Contacts can be selected rather than created during the convert lead process.',
 	'LBL_EDIT_TIP'		=> 'Modify the convert layout for this module.',
 	'LBL_DELETE_TIP'	=> 'Remove this module from the convert layout.',
+        'LBL_ACTIVITIES_MOVE'   => 'Move activities to',
+        'LBL_ACTIVITIES_COPY'   => 'Copy activities to',
 );
 
 

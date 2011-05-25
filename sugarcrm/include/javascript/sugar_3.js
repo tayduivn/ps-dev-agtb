@@ -3935,6 +3935,13 @@ function set_return(popup_reply_data)
 	}
 }
 
+function set_return_lead_conv(popup_reply_data) {
+    set_return(popup_reply_data);
+    if (document.getElementById('lead_conv_ac_op_sel') && typeof onBlurKeyUpHandler=='function') {
+        onBlurKeyUpHandler();
+    }
+}
+
 function set_return_and_save(popup_reply_data)
 {
 	var form_name = popup_reply_data.form_name;
