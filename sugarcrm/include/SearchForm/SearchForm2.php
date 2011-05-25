@@ -451,15 +451,17 @@ require_once('include/EditView/EditView2.php');
                 foreach($this->searchFields as $name => $params) {
 					$long_name = $name.'_'.$SearchName;           
 					/*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
-					if(isset($array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
-					{ //advanced*/
+                	if(isset($array[$long_name]) && !$this->isEmptyDropdownField($long_name, $array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
+					{ //advanced*/				
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$long_name];
                         }
-                    }else if(!empty($array[$name]) && !$fromMergeRecords) { //basic
-                        $this->searchFields[$name]['value'] = $array[$name];
-                        if(empty($this->fieldDefs[$long_name]['value'])) $this->fieldDefs[$long_name]['value'] = $array[$name];
+                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic        	
+                    	$this->searchFields[$name]['value'] = $array[$name];
+                        if(empty($this->fieldDefs[$name]['value'])) {
+                        	$this->fieldDefs[$name]['value'] = $array[$name];
+                        }
                     }
                     
                     if(!empty($params['enable_range_search']) && isset($this->searchFields[$name]['value']))
@@ -482,17 +484,28 @@ require_once('include/EditView/EditView2.php');
                     foreach($this->seed->field_name_map as $key => $params) {
                     	if($key != 'assigned_user_name' && $key != 'modified_by_name')
                     	{
-	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys)) {
-	                        	$this->searchFields[$key] = array('query_type' => 'default',
-	                                                              'value'      => $array[$key.'_'.$SearchName]);
+                    		$long_name = $key.'_'.$SearchName;
+                    		
+	                    	if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys)) 
+	                    	{
+	                    		
+	                    		//C.L. - Bug 44166 - Fix case for customized single select dropdowns to not search on blank values
+	                    		if(is_array($array[$long_name]) && isset($array[$long_name][0]) && $array[$long_name][0] == '' && !$this->isEmptyDropdownField($long_name, $array[$long_name]))
+	                    		{
+	                    		   continue;
+	                    		}    	                    		
+	                    		
+	                        	$this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
+	                        	
                                 if (!empty($params['type']) && $params['type'] == 'parent'
                                     && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
                                 {
                                         $this->searchFields[$params['type_name']] = array('query_type' => 'default',
                                                                                           'value'      => $array[$params['type_name']]);
-                                    }
+                                }
+                                
                                 if(empty($this->fieldDefs[$long_name]['value'])) {
-                                    $this->fieldDefs[$key.'_'.$SearchName]['value'] =  $array[$key.'_'.$SearchName];
+                                    $this->fieldDefs[$long_name]['value'] =  $array[$long_name];
                                 }
                             }
                         }
@@ -1184,5 +1197,21 @@ require_once('include/EditView/EditView2.php');
 
         return $where_clauses;
     }
+    
+    
+    /**
+     * isEmptyDropdownField
+     * 
+     * This function checks to see if a blank dropdown field was supplied.  This scenario will occur where
+     * a dropdown select is in single selection mode
+     * 
+     * @param $value Mixed dropdown value
+     */
+    private function isEmptyDropdownField($name='', $value=array())
+    {
+    	$result = is_array($value) && isset($value[0]) && $value[0] == '';
+    	$GLOBALS['log']->debug("Found empty value for {$name} dropdown search key");
+    	return $result;
+    }    
  }
 ?>
