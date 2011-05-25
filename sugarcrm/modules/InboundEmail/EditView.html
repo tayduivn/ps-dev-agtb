@@ -58,7 +58,7 @@
 					type='button'
 					accessKey="{MOD.LBL_TEST_BUTTON_KEY}"
 					class="button"
-					onClick='ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(this.form.server_url.value), this.form.protocol.value, trim(this.form.port.value), trim(this.form.email_user.value), Rot13.write(this.form.email_password.value), trim(this.form.mailbox.value), this.form.ssl.checked, this.form.personal.value, "EditView");'
+					onClick='ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(this.form.server_url.value), this.form.protocol.value, trim(this.form.port.value), trim(this.form.email_user.value), Rot13.write(this.form.email_password.value), trim(this.form.mailbox.value), this.form.ssl.checked, this.form.personal.value, "EditView", this.form.record.value);'
 					name="button" value="  {MOD.LBL_TEST_SETTINGS}  " {IE_DISABLED}>
 			</td>
 			<td align="right" width="20%" NOWRAP><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
