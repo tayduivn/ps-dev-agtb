@@ -546,6 +546,7 @@ function isDBName(str) {
 }
 var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 function isTime(timeStr) {
+    var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 	time_reg_format = time_reg_format.replace('([ap]m)', '');
 	time_reg_format = time_reg_format.replace('([AP]M)', '');
 	if(timeStr.length== 0){
