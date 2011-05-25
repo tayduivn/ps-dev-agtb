@@ -135,9 +135,9 @@ class Lead extends Person {
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
 
         private static $_ConversionOptions = array(
-            'copy'       => 'Copy',
-            'move'       => 'Move',
-            'donothing'  => 'Do Nothing'
+            'copy'       => null,
+            'move'       => null,
+            'donothing'  => null
         );
 
 	function Lead() {
@@ -595,6 +595,10 @@ class Lead extends Person {
      */
     public static function getActivitiesOptions() {
         $activityOptions = self::$_ConversionOptions;
+
+        foreach ($activityOptions as $name => &$label) {
+            $label = $GLOBALS['app_list_strings']['lead_conv_activity_opt'][$name];
+        }
 
         return $activityOptions;
     }
