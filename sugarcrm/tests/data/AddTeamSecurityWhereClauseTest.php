@@ -1,6 +1,7 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-/********************************************************************************
+
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may

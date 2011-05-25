@@ -3814,8 +3814,4 @@ $app_list_strings['kbdocument_status_dom'] = array (
     'Facebook'=>'Facebook',
     'Twitter'=>'Twitter',
   );
-  $app_list_strings['LBL_API_TYPE_ENUM'] = array(
-    'password' => 'Username/Password',
-    'oauth' => 'OAuth',
-    );
   ?>
