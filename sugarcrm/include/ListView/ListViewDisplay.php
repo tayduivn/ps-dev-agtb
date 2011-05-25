@@ -509,8 +509,10 @@ EOHTML;
 	protected function buildTargetList()
 	{
         global $app_strings;
+		unset($_REQUEST[session_name()]);
+		unset($_REQUEST['PHPSESSID']);
         $current_query_by_page = base64_encode(serialize($_REQUEST));
-        
+
 		$js = <<<EOF
             if(sugarListView.get_checks_count() < 1) {
                 alert('{$app_strings['LBL_LISTVIEW_NO_SELECTED']}');
