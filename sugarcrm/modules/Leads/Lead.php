@@ -134,10 +134,11 @@ class Lead extends Person {
 	var $additional_column_fields = Array('assigned_user_name', 'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id');
 	var $relationship_fields = Array('email_id'=>'emails','call_id'=>'calls','meeting_id'=>'meetings','task_id'=>'tasks',);
 
+        // options with default values, to be used and translated in getActivitiesOptions
         private static $_ConversionOptions = array(
-            'copy'       => null,
-            'move'       => null,
-            'donothing'  => null
+            'copy'       => 'Copy',
+            'move'       => 'Move',
+            'donothing'  => 'No Nothing'
         );
 
 	function Lead() {
@@ -597,7 +598,9 @@ class Lead extends Person {
         $activityOptions = self::$_ConversionOptions;
 
         foreach ($activityOptions as $name => &$label) {
-            $label = $GLOBALS['app_list_strings']['lead_conv_activity_opt'][$name];
+            if (isset($GLOBALS['app_list_strings']['lead_conv_activity_opt'][$name])) {
+                $label = $GLOBALS['app_list_strings']['lead_conv_activity_opt'][$name];
+            }
         }
 
         return $activityOptions;
