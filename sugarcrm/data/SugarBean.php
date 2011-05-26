@@ -1439,6 +1439,20 @@ class SugarBean
 
         $this->_sendNotifications($check_notify);
 
+        //make sure that all required fields have been filled
+        $empty_required_fields = $this->check_required_fields_fromSaveAction();
+
+        //log, and echo an error message, then return if required fields were not filled
+        if(!empty($empty_required_fields)){
+            global $app_strings;
+            $GLOBALS['log']->fatal($app_strings['ERR_EMPTY_REQUIRED_FIELDS'] .'-- '.$empty_required_fields);
+            echo($app_strings['ERR_EMPTY_REQUIRED_FIELDS'] .'-- '.$empty_required_fields);
+            //unset the bean and return
+            $this->id = '';
+            unset($this);
+            return;
+        }
+
         if ($this->db->dbType == "oci8")
         {
             //BEGIN SUGARCRM flav=ent ONLY
@@ -5976,4 +5990,52 @@ function save_relationship_changes($is_update, $exclude=array())
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
 	}
+
+
+    /**
+     * this function checks to see if the bean has any empty required fields.
+     * it excludes fields that have defaults defined, are relationship based (type link), are from a non-db source
+     * or are part of an exclude fields array.
+     */
+    public function check_required_fields_fromSaveAction(){
+        $emptyfields= '';
+        global $current_language, $currentModule;
+        //define array of fields to ignore, as they are autopopulated further down
+        $exclude_fields = array('system_generated_password','date_entered');
+
+        //itirate through each field and check if the required flag is set.
+        foreach($this->field_name_map as $req_k=>$req_v){
+
+            // only process fields that are required, do not have a default specified, are not of type link (relationship), and are db fields (as opposed to 'non-db'
+            if(
+                 //isset($this->$req_k) && //exclude fields that have been unset
+                   (!empty($req_v['required']) && $req_v['required'])//field must be marked as required
+                 && !isset($req_v['default']) //default value must not be set
+                 && $req_v['type'] != 'link' //must not be a relationshiup field
+                 && (!isset($req_v['source']) || $req_v['source']!='non-db')////must not be 'non-db
+                 && !in_array($req_k,$exclude_fields) //must not be part of excluded fields array
+             ){
+
+                //check to see if the value of the field is empty
+                if(empty($this->$req_k)){
+                    //build the error string
+                    $fieldNameStr = $req_k;
+                    $emptyfields .= empty($emptyfields) ? $this->module_name.': '.$fieldNameStr : ", $fieldNameStr";
+               }
+
+            }
+        }
+
+        if(!empty($emptyfields)){
+            //log the error and return fields
+            $id = empty($this->id) ? ' ': ' and id: '.$this->id;
+            $GLOBALS['log']->info('SugarBean of type '.$this->module_name.$id.' was attempted to be saved with missing required fields: '.$emptyfields);
+        }
+
+        return $emptyfields;
+
+
+    }
+
+
 }
