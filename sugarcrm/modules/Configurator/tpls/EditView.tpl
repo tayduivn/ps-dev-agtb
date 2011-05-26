@@ -354,14 +354,14 @@
 			{assign var='developerModeChecked' value=''}
 		{/if}
 		<td ><input type='hidden' name='developerMode' value='false'><input name='developerMode'  type="checkbox" value='true' {$developerModeChecked}></td>
-                <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION} </td>
-                <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
 	</tr>
 	<tr>
 		<td scope="row">{$MOD.LBL_VCAL_PERIOD} {sugar_help text=$MOD.vCAL_HELP}</td>
 		<td >
 			<input type='text' size='4' name='vcal_time' value='{$config.vcal_time}'>
 		</td>
+                <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION} </td>
+                <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
 	</tr>
 
 
