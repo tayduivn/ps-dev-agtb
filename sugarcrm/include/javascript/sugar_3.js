@@ -2756,7 +2756,7 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9\&\/\.\?=:]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{
