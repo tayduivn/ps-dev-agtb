@@ -532,7 +532,7 @@ class ListViewDisplayTest extends Sugar_PHPUnit_Framework_TestCase
         $output = $this->_lvd->buildTargetList();
 
         $this->assertContains("input.setAttribute ( 'name' , 'module' );			    input.setAttribute ( 'value' , 'foobarfoobar' );",$output);
-        $this->assertContains("input.setAttribute ( 'name' , 'current_query_by_page' );			    input.setAttribute ( 'value', '".base64_encode(serialize($_POST))."' );",$output);
+        $this->assertContains("input.setAttribute ( 'name' , 'current_query_by_page' );			    input.setAttribute ( 'value', '".base64_encode(serialize($_REQUEST))."' );",$output);
     }
     //END SUGARCRM flav!=sales ONLY
 

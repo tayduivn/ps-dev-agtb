@@ -125,7 +125,7 @@ class StoreQuery{
 		foreach($this->query as $key=>$value)
 		{
             // todo wp: remove this
-            if($key != 'advanced' && $key != 'module')
+            if($key != 'advanced' && $key != 'module' && $key != 'lvso')
             {   
             	//Filter date fields to ensure it is saved to DB format, but also avoid empty values
                 if(!empty($value) && !empty($bean) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
