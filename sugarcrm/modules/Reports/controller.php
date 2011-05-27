@@ -28,6 +28,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ReportsController extends SugarController
 {	
+	/** 
+	 * @see SugarController::setup($module = '')
+	 */
+	
+	public function setup($module = '')
+	{
+		$result = parent::setup($module);
+		
+		// bug 41860 fix
+		if(!empty($_REQUEST['id']))
+			$this->record = $_REQUEST['id'];
+		// end bugfix
+		
+		return $result;
+	}
+	
     /**
      * @see SugarController::loadBean()
      */
