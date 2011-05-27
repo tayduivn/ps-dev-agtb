@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,12 +22,8 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/DynamicFields/FieldCases.php');
 
-/**
- * @group DynamicFieldsCurrencyTests
- */
+require_once('modules/DynamicFields/FieldCases.php');
 
 class TemplateEnumTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -54,12 +51,10 @@ class TemplateEnumTest extends Sugar_PHPUnit_Framework_TestCase
        $this->assertEquals('equal(strlen($name),5)', $fieldDef['dependency'], 'The dependency was not populated correctly.');
     }
 
-    /*
     public function testPopulateDependencyFromExt4()
     {
         unset($this->field->dependency);
        $fieldDef = $this->field->get_field_def();
        $this->assertEquals('fred', $fieldDef['dependency'], 'The dependency was not populated correctly.');
     }
-    */
 }
