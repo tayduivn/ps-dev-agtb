@@ -42,8 +42,8 @@ class TemplateEnumTest extends Sugar_PHPUnit_Framework_TestCase
     	$this->field = get_widget('enum');
         $this->field->id = $this->_modulename.'foofighter_c';
         $this->field->name = 'foofighter_c';
-        $this->field->dependency = 'equal(strlen($name),5)';
-        $this->field->ext4 = serialize(html_entity_decode('fred'));
+        $this->field->dependency = htmlentities('equal(strlen($name),5)');
+        $this->field->ext4 = serialize(htmlentities('fred'));
     }
     
     public function tearDown()
