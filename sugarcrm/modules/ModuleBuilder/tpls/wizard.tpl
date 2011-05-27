@@ -57,10 +57,10 @@
                             {/if}
 						{else}
 							{sugar_image name=$button.imageTitle width=$button.size height=$button.size}
-						{/if}</a></td>
+						{/if}</a></td>{debug}
 					 </tr>
 					 <tr>
-						 <td align="center"><a class='studiolink' href="javascript:void(0)">
+						 <td align="center"><a class='studiolink' id='{$button.linkId}' href="javascript:void(0)">
 				            {if (isset($button.imageName))}{$button.imageTitle}{else}{$buttonName}{/if}</a></td>
 				     </tr>
 				 </table>
