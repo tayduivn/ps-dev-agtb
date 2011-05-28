@@ -5633,6 +5633,33 @@ function upgrade_connectors($path='') {
     logThis('End upgrade_connectors', $path);
 }
 
+/**
+ * Enable the InsideView connector for the four default modules.
+ */
+function upgradeEnableInsideViewConnector($path='')
+{
+    logThis('Begin upgradeEnableInsideViewConnector', $path);
+
+    // Load up the existing mapping and hand it to the InsideView connector to have it setup the correct logic hooks
+    $mapFile = 'modules/Connectors/connectors/sources/ext/rest/insideview/mapping.php';
+    if ( file_exists('custom/'.$mapFile) ) {
+        logThis('Found CUSTOM mappings', $path);
+        require('custom/'.$mapFile);
+    } else {
+        logThis('Used default mapping', $path);
+        require($mapFile);
+    }
+ 
+    require_once('include/connectors/sources/SourceFactory.php');
+    $source = SourceFactory::getSource('ext_rest_insdeview');
+
+    // $mapping is brought in from the mapping.php file above
+    $source->saveMappingHook($mapping);
+
+    logThis('End upgradeEnableInsideViewConnector', $path);
+
+}
+
 function repair_long_relationship_names($path='')
 {
     logThis("Begin repair_long_relationship_names", $path);

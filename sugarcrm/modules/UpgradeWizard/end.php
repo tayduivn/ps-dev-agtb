@@ -248,6 +248,11 @@ if($_SESSION['current_db_version'] < '610' && function_exists('upgrade_connector
    upgrade_connectors($path);
 }
 
+// Enable the InsideView connector by default
+if($_SESSION['current_db_version'] < '621' && function_exists('upgradeEnableInsideViewConnector')) {
+    upgradeEnableInsideViewConnector();
+}
+
 if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
 {
     repair_long_relationship_names($path);
