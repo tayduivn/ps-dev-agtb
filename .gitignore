@@ -2,6 +2,7 @@
 .externalToolBuilders/
 .project
 .settings/
+.idea
 build/rome/builds/
 sugarcrm/config_si.php
 *~
