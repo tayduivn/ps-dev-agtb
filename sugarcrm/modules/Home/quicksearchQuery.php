@@ -127,7 +127,7 @@ class quicksearchQuery {
         foreach($args['modules'] as $module) {
             require_once($beanFiles[$beanList[$module]]);
             $focus = new $beanList[$module];
-            
+                       
             $query_orderby = '';
             if (!empty($args['order'])) {
                 $query_orderby = $args['order'];
@@ -161,6 +161,13 @@ class quicksearchQuery {
         for($i = 0; $i < count($list_return); $i++) {
             $list_arr['fields'][$i]= array();
             $list_arr['fields'][$i]['module']= $list_return[$i]->object_name;
+            
+            //C.L.: Bug 43395 - For Quicksearch, do not return values with salutation and title formatting
+            if($list_return[$i] instanceof Person)
+            {
+               $list_return[$i]->createLocaleFormattedName = false;
+            }
+            
             $listData = $list_return[$i]->get_list_view_data();
                 
             foreach($args['field_list'] as $field) {
