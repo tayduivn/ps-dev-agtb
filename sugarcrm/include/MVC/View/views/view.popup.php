@@ -39,6 +39,12 @@ class ViewPopup extends SugarView{
             sugar_cleanup(true);
         }
         
+        //C.L.: Bug 43395 - Do not apply locale formatting to Popup names
+        if($this->bean instanceof Person)
+        {
+           $this->bean->createLocaleFormattedName = false;
+        }
+        
 		if(isset($_REQUEST['metadata']) && strpos($_REQUEST['metadata'], "..") !== false)
 			die("Directory navigation attack denied.");
 		if(!empty($_REQUEST['metadata']) && $_REQUEST['metadata'] != 'undefined' 

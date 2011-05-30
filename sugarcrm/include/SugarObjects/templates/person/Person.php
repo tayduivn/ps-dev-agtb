@@ -34,6 +34,9 @@ class Person extends Basic
 {	
     var $picture;
     
+    //Variable to control whether or not to invoke the getLocalFormatttedName method with title and salutation
+    var $createLocaleFormattedName = true;
+    
 	function Person(){
 		parent::Basic();
 		$this->emailAddress = new SugarEmailAddress();
@@ -56,7 +59,7 @@ class Person extends Basic
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($GLOBALS['current_user']->id) && $this->bean_implements('ACL') && !ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))){
 			$full_name = $this->last_name;
-		}else{
+		} else if($this->createLocaleFormattedName) {
 		//END SUGARCRM flav=pro ONLY
 		    // Bug 38648 - If the given saluation doesn't exist in the dropdown, don't display it as part of the full name
 		    $salutation = '';
@@ -67,6 +70,8 @@ class Person extends Basic
 		    }
 			$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name, $salutation, $this->title);
 		//BEGIN SUGARCRM flav=pro ONLY
+		} else {
+			$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
 		}
 		//END SUGARCRM flav=pro ONLY
 		$this->name = $full_name;
