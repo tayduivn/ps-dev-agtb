@@ -277,7 +277,7 @@ class Task extends SugarBean {
         if($override_date_for_subpanel){
             $task_fields['DATE_START']= "<font class='$taskClass'>$date_due</font>";
         }
-    }33333333333333333333333333333333333333333333333333333333333
+    }
 
 	function get_list_view_data(){
 		global $action, $currentModule, $focus, $current_module_strings, $app_list_strings, $timedate;
