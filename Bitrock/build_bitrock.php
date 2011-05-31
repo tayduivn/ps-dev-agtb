@@ -100,6 +100,9 @@ function copy_sugarcrm($FLAVOR, $PLATFORM){
         case 'ent':
             $PREFIX = "SugarEnt";
             break;
+        case 'ult':
+            $PREFIX = "SugarUlt";
+            break;
         default:
             $lpr =& getPrinterInstance();
             $lpr->output("WARNING: flavor is $FLAVOR, hit default case\n");
@@ -372,7 +375,7 @@ if( $BUILD_WINDOWS == 1 ){
     //    build_installer($FLAVOR, 'windows', $OUTPUT);
     //}
     build_installer('ce', 'windows', $OUTPUT);
-    build_installer('ult', 'windows', $OUTPUT);  // to build ent offline client
+    build_installer('ult', 'windows', $OUTPUT);  // to build ult offline client
     build_installer('ent', 'windows', $OUTPUT);  // to build ent offline client
     build_installer('pro', 'windows', $OUTPUT);  // to build pro offline client
     $lpr->output( "+ Completing Windows build." );
