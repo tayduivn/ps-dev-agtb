@@ -76,6 +76,12 @@ class QuotesSugarpdfStandard extends QuotesSugarpdfQuotes{
                             $mod_strings["LBL_PDF_ITEM_DISCOUNT"] =>"10%"
          //                   $mod_strings["LBL_PDF_ITEM_SELECT_DISCOUNT"]=>"8%"
                         ),
+                        'stretch' => array(
+                            $mod_strings["LBL_PDF_ITEM_LIST_PRICE"] => Sugarpdf::STRETCH_SCALE,
+                            $mod_strings["LBL_PDF_ITEM_UNIT_PRICE"] => Sugarpdf::STRETCH_SCALE,
+                            $mod_strings["LBL_PDF_ITEM_EXT_PRICE"] => Sugarpdf::STRETCH_SCALE,
+                            $mod_strings["LBL_PDF_ITEM_DISCOUNT"] => Sugarpdf::STRETCH_SCALE
+                        )
         );
         $this->totalOptions = array(
                             "isheader"=>false,

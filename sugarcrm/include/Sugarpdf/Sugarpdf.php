@@ -32,6 +32,14 @@ require_once('include/Sugarpdf/SugarpdfHelper.php');
 
 class Sugarpdf extends TCPDF
 {
+    /**
+     * Stretch options constants
+     */
+    const STRETCH_NONE = 0;
+    const STRETCH_SCALE = 1;
+    const STRETCH_SCALE_FORCED = 2;
+    const STRETCH_SPACING = 3;
+    const STRETCH_SPACING_FORCED = 4; 
 
     /**
      * This array is meant to hold an objects/data that we would like to pass between
@@ -294,10 +302,11 @@ class Sugarpdf extends TCPDF
      * @param $item Array[line number (0 to x)][cell header] = Cell content OR 
      *              Array[line number (0 to x)][cell header]['value'] = Cell content AND 
      *              Array[line number (0 to x)][cell header]['options'] = Array[cell properties] = values
-     * @param $options Array which can contain : width (array 'column name'=>'width value + % OR nothing'), isheader (bool), header (array), fill (string: HTML color), ishtml (bool) default: false, border (0: no border (defaul), 1: frame or all of the following characters: L ,T ,R ,B), align (L: left align, C: center, R: right align, J: justification)
+     * @param $options Array which can contain : width (array 'column name'=>'width value + % OR nothing'), isheader (bool), header (array), fill (string: HTML color), ishtml (bool) default: false, border (0: no border (defaul), 1: frame or all of the following characters: L ,T ,R ,B), align (L: left align, C: center, R: right align, J: justification), stretch (array 'column name'=>stretch type)
      * @see MultiCell()
      */
-    public function writeCellTable($item, $options=NULL){
+    public function writeCellTable($item, $options=NULL)
+    {
         // Save initial font values
         $fontFamily = $this->getFontFamily();
         $fontSize = $this->getFontSizePt();
@@ -316,9 +325,8 @@ class Sugarpdf extends TCPDF
                 $header[$k]=$k;
             }
             $h = $this->getLineHeightFromArray($header, $options["width"]);
-            foreach($header as $v){
-                $this->MultiCell($options["width"][$v],$h,$v,$headerOptions['border'],$headerOptions['align'],$headerOptions['fillstate'],0,'','',true,0,$headerOptions['ishtml']);
-            }
+            foreach ($header as $v)
+                $this->MultiCell($options["width"][$v],$h,$v,$headerOptions['border'],$headerOptions['align'],$headerOptions['fillstate'],0,'','',true, $options['stretch'][$v], $headerOptions['ishtml']);
             $this->SetFillColorArray($this->convertHTMLColorToDec($options['fill']));
             $this->Ln();
         }
@@ -351,8 +359,7 @@ class Sugarpdf extends TCPDF
                     $this->SetFillColorArray($this->convertHTMLColorToDec($options['oddcolor']));
                     $cellOptions['fillstate']=1;
                 }
-                
-                $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true,0,$cellOptions['ishtml']);
+                $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true, $options['stretch'][$kk], $cellOptions['ishtml']);
                 
                 $this->SetFillColorArray($this->convertHTMLColorToDec($options['fill']));
             }
@@ -506,7 +513,10 @@ class Sugarpdf extends TCPDF
         if(empty($options['border'])){
             $options['border'] = 0;
         }
-        
+        foreach($item[0] as $k => $v)
+            if (empty($options['stretch'][$k]))
+                $options['stretch'][$k] = self::STRETCH_NONE;
+
         if(!empty($options['fill'])){
             $this->SetFillColorArray($this->convertHTMLColorToDec($options['fill']));
             $options['fillstate']=1;
