@@ -224,17 +224,24 @@ class ConnectorsController extends SugarController {
 
     function action_CallConnectorFunc() {
         $this->view = 'ajax';
-        
-        $source_id = $_REQUEST['source_id'];
-		require_once('include/connectors/sources/SourceFactory.php');
-        $source = SourceFactory::getSource($source_id);
-
-        $method = 'ext_'.$_REQUEST['source_func'];
         $json = getJSONobj();
-        if ( method_exists($source,$method) ) {
-            echo $json->encode($source->$method($_REQUEST));
-        } else {
-            echo $json->encode(array('error'=>true,'errorMessage'=>'Could Not Find Function: '.$method.' in class: '.get_class($source)));
+
+        if(!empty($_REQUEST['source_id']))
+        {
+            $source_id = $_REQUEST['source_id'];
+            require_once('include/connectors/sources/SourceFactory.php');
+            $source = SourceFactory::getSource($source_id);
+
+            $method = 'ext_'.$_REQUEST['source_func'];
+            if ( method_exists($source,$method) ) {
+                echo $json->encode($source->$method($_REQUEST));
+            } else {
+                echo $json->encode(array('error'=>true,'errorMessage'=>'Could Not Find Function: '.$method.' in class: '.get_class($source)));
+            }
+        }
+        else
+        {
+            echo $json->encode(array('error'=>true,'errorMessage'=>'Source Id is not specified.'));
         }
     }
 

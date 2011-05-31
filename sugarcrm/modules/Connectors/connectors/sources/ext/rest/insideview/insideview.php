@@ -61,8 +61,6 @@ class ext_rest_insideview extends ext_rest {
 
         $removeList = $this->allowedModuleList;
 
-        print_r($mapping);
-
         if ( is_array($mapping['beans']) ) {
             foreach($mapping['beans'] as $module => $ignore) {
                 unset($removeList[$module]);

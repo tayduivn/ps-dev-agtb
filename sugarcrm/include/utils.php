@@ -3102,7 +3102,12 @@ function check_logic_hook_file($module_name, $event, $action_array){
 		} else {
 			$add_logic = true;
 
-			$logic_count = count($hook_array[$event]);
+            $logic_count = 0;
+            if(!empty($hook_array[$event]))
+            {
+			    $logic_count = count($hook_array[$event]);
+            }
+            
 			if($action_array[0]==""){
 				$action_array[0] = $logic_count  + 1;
 			}
