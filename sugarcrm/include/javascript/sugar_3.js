@@ -1634,6 +1634,12 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
+
     // we don't need to check if the data is changed in the search popup
     if (theForm.id == 'popup_query_form') {
     	return;
@@ -1645,11 +1651,6 @@ function initEditView(theForm) {
     	SUGAR.loadedForms = new Object();
     }
 
-    // console.log('DEBUG: Adding checks for '+theForm.id);
-    if ( theForm == null || theForm.id == null ) {
-        // Not much we can do here.
-        return;
-    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
 
@@ -2770,7 +2771,7 @@ SUGAR.util = function () {
                   	document.body.appendChild(script);
 	              }
 	              catch(e) {
-                      if(console && console.log)
+                      if(typeof(console) != "undefined" && typeof(console.log) == "function")
                       {
                           console.log("error adding script");
                           console.log(e);

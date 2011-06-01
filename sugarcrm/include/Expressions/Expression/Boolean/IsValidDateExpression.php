@@ -35,7 +35,7 @@ class IsValidDateExpression extends BooleanExpression {
         $dtStr = $this->getParameters()->evaluate();
 
         if(empty($dtStr)) {
-            return AbstractExpression::$FALSE;
+            return AbstractExpression::$TRUE;
         }
         try {
             $date = TimeDate::getInstance()->fromUser($dtStr, $current_user);
@@ -59,6 +59,8 @@ class IsValidDateExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 		var dtStr = this.getParameters().evaluate();
+		if ( typeof dtStr != "string" ) return SUGAR.expressions.Expression.FALSE;
+		if (dtStr == "") return SUGAR.expressions.Expression.TRUE;
         var format = "Y-m-d";
         if (SUGAR.expressions.userPrefs)
             format = SUGAR.expressions.userPrefs.datef;
