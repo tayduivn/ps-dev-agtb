@@ -52,7 +52,7 @@ class AddDaysExpression extends DateExpression
 	static function getJSEvaluate() {
 		return <<<EOQ
 		    var params = this.getParameters();
-			var date = SUGAR.util.DateUtils.parse(params[0].evaluate());
+			var date = SUGAR.util.DateUtils.parse(params[0].evaluate(), 'user');
 			var days = params[1].evaluate();
 
 		    //Clone the object to prevent possible issues with other operations on this variable.

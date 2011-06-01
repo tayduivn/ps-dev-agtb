@@ -3824,3 +3824,4 @@ $app_list_strings['kbdocument_status_dom'] = array (
         2 => 'Access',
         3 => 'Invalid',
     );
+  ?>
