@@ -59,7 +59,6 @@ function method_callback (o) {
 	}
 }
 
-
 //////////////////////////////////////////////////
 // class: SugarVCalClient
 // async retrieval/parsing of vCal freebusy info 
@@ -75,7 +74,6 @@ function SugarVCalClient() {
 SugarVCalClient.prototype.init = function() {}
 
 SugarVCalClient.prototype.load = function(user_id, request_id) {
-
     this.user_id = user_id;
 
     // Bug 44239: Removed reliance on jsolait
@@ -195,9 +193,13 @@ SugarRPCClient.prototype.init = function() {
 	this.serviceURL = './index.php?entryPoint=json_server';
 }
 
-// send a 3rd argument of value 'true' to make the call synchronous.
-// in synchronous mode, the return will be the result.
-// in asynchronous mode, the return will be the request_id to map the call-back function to.
+/**
+ * This method used to depend on JSOlait which is now removed. It has been reworked to use YUI for the aynchronous call
+ * and the synchronous call in sugar_3.js.
+ * @param method
+ * @param args
+ * @param synchronous Pass in true if synchronous call is desired
+ */
 SugarRPCClient.prototype.call_method = function(method, args, synchronous) {
     var result,
         transaction,
@@ -219,6 +221,5 @@ SugarRPCClient.prototype.call_method = function(method, args, synchronous) {
         this._showError(e);
     }
 }
-
 
 var global_rpcClient =  new SugarRPCClient();
