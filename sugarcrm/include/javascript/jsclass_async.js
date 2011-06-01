@@ -185,12 +185,10 @@ function SugarRPCClient() {
 SugarRPCClient.prototype.allowed_methods = ['retrieve','query','save','set_accept_status', 'get_objects_from_module', 'email', 'get_user_array', 'get_full_list'];
 
 SugarRPCClient.prototype.init = function() {
-	this._serviceProxy;
 	this._showError= function (e){
 		alert("ERROR CONNECTING to: ./index.php?entryPoint=json_server, ERROR:"+e);
 	}
 	this.serviceURL = './index.php?entryPoint=json_server';
-    console.log("Service URL " + this.serviceURL);
 }
 
 // send a 3rd argument of value 'true' to make the call synchronous.
