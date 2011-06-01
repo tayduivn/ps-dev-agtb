@@ -1304,11 +1304,10 @@ var global_xmlhttp = getXMLHTTPinstance();
 
 function http_fetch_sync(url,post_data) {
 	global_xmlhttp = getXMLHTTPinstance();
-	var method = 'GET';
-
-	if(typeof(post_data) != 'undefined') method = 'POST';
+	var method = (typeof(post_data) != 'undefined') ? 'POST' : 'GET';
+    
 	try {
-		global_xmlhttp.open(method, url,false);
+		global_xmlhttp.open(method, url, false);
 	}
 	catch(e) {
 		alert('message:'+e.message+":url:"+url);
