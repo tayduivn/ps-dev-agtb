@@ -124,7 +124,9 @@ SUGAR.ajaxUI = {
         SA.cleanGlobals();
         //Don't ajax load certain modules
         var form = YAHOO.util.Dom.get(formname) || document.forms[formname];
-        if (SA.canAjaxLoadModule(form.module.value))
+        if (SA.canAjaxLoadModule(form.module.value)
+            //Do not try to submit a form that contains a file input via ajax.
+            && typeof(YAHOO.util.Selector.query("input[type=file]", form)[0]) == "undefined")
         {
             YAHOO.util.Connect.setForm(form);
             YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
