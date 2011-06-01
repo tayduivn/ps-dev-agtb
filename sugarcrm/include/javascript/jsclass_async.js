@@ -35,23 +35,27 @@
 
 //////////////////////////////////////////////////////////////////
 
-function method_callback (request_id,rslt,e) {
-	if(rslt == null) {
+function method_callback (o) {
+    var resp = YAHOO.lang.JSON.parse(o.responseText),
+        request_id = resp.id,
+        result = resp.result;
+
+	if(result == null) {
 		//BEGIN SUGARCRM flav=int ONLY
-	    if(typeof(e) == 'object' && typeof (e.error_msg) != 'undefined') {
-			alert("Error from json server: "+e.error_msg);
+	    if (typeof(o) == 'object' && typeof (o.statusText) != 'undefined') {
+			alert("Error from json server: " + o.statusText);
 	    } else {
-			alert("Error calling json server: "+e);
+			alert("Error calling json server: " + o.statusText);
 	    }
 	    debugger;
 	   	//END SUGARCRM flav=int ONLY
 	    return;
 	}
-
+    
 	if(typeof (global_request_registry[request_id]) != 'undefined') {
 	    widget = global_request_registry[request_id][0];
 	    method_name = global_request_registry[request_id][1];
-	    widget[method_name](rslt);
+	    widget[method_name](result);
 	}
 }
 
@@ -195,8 +199,6 @@ SugarRPCClient.prototype.init = function() {
 // in synchronous mode, the return will be the result.
 // in asynchronous mode, the return will be the request_id to map the call-back function to.
 SugarRPCClient.prototype.call_method = function(method, args, synchronous) {
-    console.log("SUGARRPCClient.call_method()");
-
     var result,
         transaction,
         post_data = YAHOO.lang.JSON.stringify({method: method, id: 1, params: [args]});
@@ -209,10 +211,9 @@ SugarRPCClient.prototype.call_method = function(method, args, synchronous) {
             result = YAHOO.lang.JSON.parse(result.responseText).result;
             return result;
         } else { // asynchronous call
-            console.log("Asynchronous");
-            transaction = YAHOO.util.Connect.asyncRequest('POST', this.serviceURL, method_callback, post_data);
-            this._serviceProxy[method](args, method_callback);
-            return this._serviceProxy.httpConn.request_id;
+            // note: Unfortunately we don't have a separate error handler and it is built into the method_callback. Maybe a future todo.
+            transaction = YAHOO.util.Connect.asyncRequest('POST', this.serviceURL, {success: method_callback, failure: method_callback}, post_data);
+            return transaction.tId;
         }
     } catch(e) { // error before calling server
         this._showError(e);
