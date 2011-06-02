@@ -1638,24 +1638,34 @@ function getUserVariable($localVarName, $varName) {
     }
 
     function getArrowUpDownStart($upDown) {
-        $ext = ( SugarThemeRegistry::current()->pngSupport ? "png" : "gif" );
-
         if (!isset($upDown) || empty($upDown)) {
             $upDown = "";
         }
-        return "&nbsp;<img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
+
+        return "&nbsp;<img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.gif")."' ";
     }
 
-    function getArrowEnd() {
-        $imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow.gif"));
+	function getArrowEnd() {
+		$imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow.gif"));
 
         list($width,$height) = ListView::getArrowImageSize();
-        return '.'.$imgFileParts['extension']."' width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">";
+
+		return '.'.$imgFileParts['extension']."' width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">";
+    }
+    
+    function getArrowUpDownEnd($upDown) {
+        if (!isset($upDown) || empty($upDown)) {
+            $upDown = "";
+        }
+        $imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.gif"));
+
+        list($width,$height) = ListView::getArrowUpDownImageSize();
+        return " width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">";
     }
 
-    function getArrowImageSize() {
-        // just get the non-sort image's size.. the up and down have be the same.
-        $image = SugarThemeRegistry::current()->getImageURL("arrow.gif",false);
+	function getArrowImageSize() {
+	    // just get the non-sort image's size.. the up and down have be the same.
+		$image = SugarThemeRegistry::current()->getImageURL("arrow.gif",false);
 
         $cache_key = 'arrow_size.'.$image;
 
@@ -1669,14 +1679,31 @@ function getUserVariable($localVarName, $varName) {
         sugar_cache_put($cache_key, $result);
         return $result;
     }
+    
+    function getArrowUpDownImageSize($upDown) {
+        // just get the non-sort image's size.. the up and down have be the same.
+        $image = SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.gif",false);
 
-    function getOrderByInfo($html_varName)
-    {
-        $orderBy = $this->getSessionVariable($html_varName, "OBL");
-        $desc = $this->getSessionVariable($html_varName, $orderBy.'S');
-        $orderBy = str_replace('.', '_', $orderBy);
-        return array($orderBy,$desc);
+        $cache_key = 'arrowupdown_size.'.$image;
+
+        // Check the cache
+        $result = sugar_cache_retrieve($cache_key);
+        if(!empty($result))
+        return $result;
+
+        // No cache hit.  Calculate the value and return.
+        $result = getimagesize($image);
+        sugar_cache_put($cache_key, $result);
+        return $result;
     }
+
+	function getOrderByInfo($html_varName)
+	{
+		$orderBy = $this->getSessionVariable($html_varName, "OBL");
+		$desc = $this->getSessionVariable($html_varName, $orderBy.'S');
+		$orderBy = str_replace('.', '_', $orderBy);
+		return array($orderBy,$desc);
+	}
 
     function processSortArrows($html_varName)
     {
