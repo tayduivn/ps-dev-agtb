@@ -651,7 +651,7 @@ require_once('include/EditView/EditView2.php');
                 
                 $operator = 'like';
                 if(!empty($parms['operator'])) {
-                    $operator = $parms['operator'];
+                    $operator = strtolower($parms['operator']);
                 }
 
                 if(is_array($parms['value'])) {
@@ -673,7 +673,7 @@ require_once('include/EditView/EditView2.php');
                                    if (!empty($field_value)) {
                                        $field_value .= ' or ';
                                    }
-                                   $field_value .= "$db_field like '%^$qVal^%'";
+                                   $field_value .= "$db_field like '$like_char^$qVal^$like_char'";
                             } else {
                                 $field_value .= '('.$db_field . ' IS NULL or '.$db_field."='^^' or ".$db_field."='')";
                             }
@@ -898,7 +898,7 @@ require_once('include/EditView/EditView2.php');
                             $where .= " OR ";
                         }
                         
-                        switch(strtolower($operator)) {
+                        switch($operator) {
                             case 'subquery':
                                 $in = 'IN';
                                 if ( isset($parms['subquery_in_clause']) ) {
@@ -921,14 +921,14 @@ require_once('include/EditView/EditView2.php');
                                         if(!$first){
                                             $where .= $and_or;
                                         }
-                                        $where .= " {$db_field} $in ({$q} '{$field_value}%') ";
+                                        $where .= " {$db_field} $in ({$q} '{$field_value}{$like_char}') ";
                                         $first = false;
                                     }
                                 }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
                                     $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
                                     $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
                                 }else{
-                                    $where .= "{$db_field} $in ({$parms['subquery']} '{$field_value}%')";
+                                    $where .= "{$db_field} $in ({$parms['subquery']} '{$field_value}{$like_char}')";
                                 }
 
                                 break;
@@ -952,8 +952,8 @@ require_once('include/EditView/EditView2.php');
                                         //when a search is done with a space, we concatenate and search against the full name.
                                         if(count($string)>1){
                                             //add where clause against concatenated fields
-                                            $where .= $GLOBALS['db']->concat($column_name[0],array('first_name','last_name')) . " LIKE '{$field_value}%'";
-                                            $where .= ' OR ' . $GLOBALS['db']->concat($column_name[0],array('last_name','first_name')) . " LIKE '{$field_value}%'";
+                                            $where .= $GLOBALS['db']->concat($column_name[0],array('first_name','last_name')) . " LIKE '{$field_value}{$like_char}'";
+                                            $where .= ' OR ' . $GLOBALS['db']->concat($column_name[0],array('last_name','first_name')) . " LIKE '{$field_value}{$like_char}'";
                                         }else{
                                             //no space was found, add normal where clause
                                             $where .=  $db_field . " like '".$field_value.$like_char."'";
@@ -1021,7 +1021,7 @@ require_once('include/EditView/EditView2.php');
                                 $where .= $db_field . " >= '".$field_value[0] . "' AND " .$db_field . " <= '".$field_value[1]."'";
                                 break;
                             case 'innerjoin':
-                                $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";
+                                $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "$like_char')";
                                 break;
                             case 'not_equal':
                                 $where .= $db_field . " != '". $field_value . "'";

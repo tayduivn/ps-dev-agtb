@@ -97,7 +97,7 @@ class SugarWidgetField extends SugarWidget {
 		$this->local_current_module = $_REQUEST['module'];
 		$this->is_dynamic = true;
 		// don't show sort links if name isn't defined
-		if (empty ($layout_def['name'])) {
+		if (empty ($layout_def['name']) || (isset ($layout_def['sortable']) && !$layout_def['sortable']) ) {
 			return $layout_def['label'];
 		}
 		if (isset ($layout_def['sortable']) && !$layout_def['sortable']) {

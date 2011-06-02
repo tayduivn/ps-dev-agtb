@@ -1712,23 +1712,25 @@ function getUserVariable($localVarName, $varName) {
 
         list($orderBy,$desc) = $this->getOrderByInfo($html_varName);
 
-        $imgArrow = "_down";
-        if($desc) {
-            $imgArrow = "_up";
-        }
-
-        if($orderBy == 'amount*1')
-        {
-            $this->xTemplateAssign('amount_arrow', $imgArrow);
-        }
-        else if($orderBy == 'amount_usdollar*1')
-        {
-            $this->xTemplateAssign('amount_usdollar_arrow', $imgArrow);
-        }
-        else
-        {
-            $this->xTemplateAssign($orderBy.'_arrow', $imgArrow);
-        }
+		$imgArrow = "_down";
+		if($desc) {
+			$imgArrow = "_up";
+		}
+		/**
+		 * @deprecated only used by legacy opportunites listview, nothing current. Leaving for BC
+		 */
+		if($orderBy == 'amount*1')
+		{
+			$this->xTemplateAssign('amount_arrow', $imgArrow);
+		}
+		else if($orderBy == 'amount_usdollar*1')
+		{
+			$this->xTemplateAssign('amount_usdollar_arrow', $imgArrow);
+		}
+		else
+		{
+			$this->xTemplateAssign($orderBy.'_arrow', $imgArrow);
+		}
 
         $this->xTemplateAssign('arrow_end', $this->getArrowEnd());
     }
