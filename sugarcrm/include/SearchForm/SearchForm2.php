@@ -935,7 +935,8 @@ require_once('include/EditView/EditView2.php');
 
                             case 'like':
                                 if($type == 'bool' && $field_value == 0) {
-                                    $where .=  $db_field . " = '0' OR " . $db_field . " IS NULL";
+                                    // Bug 43452 - FG - Added parenthesis surrounding the OR (without them the WHERE clause would be broken)
+                                    $where .=  "( " . $db_field . " = '0' OR " . $db_field . " IS NULL )";
                                 }
                                 else {
                                 	//check to see if this is coming from unified search or not
