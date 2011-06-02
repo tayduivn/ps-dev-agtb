@@ -26,7 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{if count($SHORTCUT_MENU) > 0 && $MODULE_TAB != 'Home'}
+{* FG - Bug 41467 - Let Home module have Shortcuts *}
+{if count($SHORTCUT_MENU) > 0}
 <div id="shortcuts" class="headerList">
     <b style="white-space:nowrap;">{$APP.LBL_LINK_ACTIONS}:&nbsp;&nbsp;</b>
     <span>
