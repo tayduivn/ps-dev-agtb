@@ -57,7 +57,7 @@
                             {/if}
 						{else}
 							{sugar_image name=$button.imageTitle width=$button.size height=$button.size}
-						{/if}</a></td>{debug}
+						{/if}</a></td>
 					 </tr>
 					 <tr>
 						 <td align="center"><a class='studiolink' id='{$button.linkId}' href="javascript:void(0)">
