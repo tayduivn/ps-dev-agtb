@@ -177,9 +177,9 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
                             'modules'  => array('Accounts','Contacts','Leads'),
                             'md5'   => false,
                         ));
-        $this->assertTrue( isset($results['Accounts']['LBL_NAME']) );
-        $this->assertTrue( isset($results['Contacts']['LBL_NAME']) );
-        $this->assertTrue( isset($results['Leads']['LBL_ID']) );
+        $this->assertTrue( isset($results['Accounts']['LBL_NAME']), "Unable to get multiple module language for Accounts, result: " . var_export($results['Accounts'],true) );
+        $this->assertTrue( isset($results['Contacts']['LBL_NAME']), "Unable to get multiple module language for Contacts, result: " . var_export($results['Contacts'],true) );
+        $this->assertTrue( isset($results['Leads']['LBL_LEAD_SOURCE']), "Unable to get multiple module language for Leads, result: " . var_export($results['Leads'],true) );
     }
 
     public function testGetMultipleModuleLanguageAndAppStrings()
@@ -199,7 +199,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue( isset($results['app_list_strings']['account_type_dom']) );
         $this->assertTrue( isset($results['app_list_strings']['moduleList']) );
         $this->assertTrue( isset($results['Contacts']['LBL_NAME']) );
-        $this->assertTrue( isset($results['Leads']['LBL_ID']) );
+        $this->assertTrue( isset($results['Leads']['LBL_LEAD_SOURCE']) );
     }
     //BEGIN SUGARCRM flav=pro ONLY
     public function testGetQuotesPDFContents()
