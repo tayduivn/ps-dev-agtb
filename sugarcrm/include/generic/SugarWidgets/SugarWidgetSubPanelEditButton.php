@@ -81,6 +81,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 //BEGIN SUGARCRM flav=pro ONLY
 	function isQuickCreateValid($module) {
+        return false;  //THIS IS A HACK TO DISABLE QUICKEDITS FOR SODA TESTS TO FINISH!!
 		$isValid = false;
 		if(file_exists('custom/modules/'.$module.'/metadata/quickcreatedefs.php')) {
 			$isValid = true;
