@@ -3,7 +3,7 @@
 require_once 'modules/Expressions/Expression.php';
 
 /**
- * $group bug38903
+ * @ticket 38903
  */
 class Bug38903Test extends Sugar_PHPUnit_Framework_TestCase
 {

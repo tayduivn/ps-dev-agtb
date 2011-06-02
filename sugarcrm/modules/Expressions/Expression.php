@@ -54,7 +54,7 @@ class Expression extends SugarBean {
 	var $created_by_name;
 	var $modified_by_name;
 
-	//construction
+	//construction                     
 	var $name;
 
 
@@ -245,7 +245,11 @@ class Expression extends SugarBean {
 		}
 	
 		if($type=='field'){
-		    $temp_module = get_module_info($dom_name);
+		    $temp_module = SugarModule::get($dom_name)->loadBean();
+		    if ( !is_object($temp_module) ) {
+		        var_dump($dom_name);
+		        display_stack_trace(true);
+		    }
 		    if(isset($trigger_type) && !empty($trigger_type)){
 		    	global $process_dictionary;	
 		    	include_once('modules/WorkFlowTriggerShells/MetaArray.php');
