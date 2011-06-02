@@ -118,6 +118,7 @@
     <tr>
 	    <td colspan='4' align='right'>
 	        <input type='submit' class='button' value='{$strings.save}'>
+	        <input type='submit' class='button' value='{$strings.clear}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
 	    </td>    
 	</tr>
 </table>

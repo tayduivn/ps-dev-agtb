@@ -70,6 +70,7 @@
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
+        <input type='submit' class='button' value='{$clearLBL}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
    	</td>
 </tr>
 </table>
