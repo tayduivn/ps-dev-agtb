@@ -409,6 +409,7 @@ var $myFavoritesOnly = false;
 		$ss->assign('autenticationPendingLBL', translate('LBL_AUTHENTICATION_PENDING', 'SugarFeed'));
         $ss->assign('rowsLBL', translate('LBL_ROWS', 'SugarFeed'));
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
+        $ss->assign('clearLBL', $app_strings['LBL_CLEAR_BUTTON_LABEL']);
 //BEGIN SUGARCRM flav=pro ONLY
         $ss->assign('myFavoritesOnlyLBL', translate('LBL_MY_FAVORITES_ONLY', 'SugarFeed'));
 //END SUGARCRM flav=pro ONLY
