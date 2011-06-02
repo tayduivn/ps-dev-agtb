@@ -9,3 +9,7 @@ sugarcrm/config_si.php
 translations/
 /.idea
 /.settings
+sugarcrm/custom/include/
+sugarcrm/custom/modules/
+sugarcrm/custom/Extension/
+sugarcrm/custom/themes/
