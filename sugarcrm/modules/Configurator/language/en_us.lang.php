@@ -207,6 +207,7 @@ $mod_strings = array (
 	'LBL_LOGGER_DEFAULT_DATE_FORMAT'=>'Default date format',
 	'LBL_LOGGER_LOG_LEVEL'=>'Log Level',
         'LBL_LEAD_CONV_OPTION' => 'Lead Conversion Options',
+        'LEAD_CONV_OPT_HELP' => 'Placeholder for lead conversion option help',
 	'LBL_LOGGER_MAX_LOGS'=>'Maximum number of logs (before rolling)',
 	'LBL_LOGGER_FILENAME_SUFFIX' =>'Append after filename',
 	'LBL_VCAL_PERIOD' => 'vCal Updates Time Period:',

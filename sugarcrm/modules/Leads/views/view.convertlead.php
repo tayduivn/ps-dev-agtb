@@ -104,6 +104,8 @@ class ViewConvertLead extends SugarView
         $smarty->assign("view", "convertlead");
         $smarty->assign("bean", $this->focus);
 		$smarty->assign("record_id", $this->focus->id);
+        global $mod_strings;
+        $smarty->assign('MOD', $mod_strings);
         $smarty->display("modules/Leads/tpls/ConvertLeadHeader.tpl");
 
         echo "<div class='edit view' style='width:auto;'>";

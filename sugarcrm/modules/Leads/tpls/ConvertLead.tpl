@@ -50,7 +50,7 @@
  {rdelim}
  {{/if}}
  {if !empty($def.default_action) && $def.default_action == "create"}
-     {if $lead_conv_activity_opt == 'move' || $lead_conv_activity_opt == 'copy'}
+     {if $lead_conv_activity_opt == 'move' || $lead_conv_activity_opt == 'copy' || $lead_conv_activity_opt == ''}
         YAHOO.util.Event.onContentReady('lead_conv_ac_op_sel', function(){ldelim}
      {else}
         YAHOO.util.Event.onContentReady('create{{$module}}', function(){ldelim}

@@ -159,6 +159,10 @@
             <div id="container_upload"></div>
             <input type='text' id='company_logo' name='company_logo' style="display:none">
     </tr>
+    <tr>
+            <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
+            <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
+    </tr>
 </table>
 
 {* //BEGIN SUGARCRM flav!=sales ONLY*}
@@ -360,8 +364,6 @@
 		<td >
 			<input type='text' size='4' name='vcal_time' value='{$config.vcal_time}'>
 		</td>
-                <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION} </td>
-                <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
 	</tr>
 
 

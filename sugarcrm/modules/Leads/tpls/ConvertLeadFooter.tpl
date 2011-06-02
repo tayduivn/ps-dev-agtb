@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+<script type='text/javascript' src='{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}'></script>
 {literal}
 <script type="text/javascript">
     var accountText = document.getElementById('account_name');
@@ -52,7 +53,7 @@
         }
         if (!found && checkbox.checked) {
             var opt = document.createElement("option");
-            opt.text = SUGAR.language.get('app_strings', 'LBL_'+module.toUpperCase());
+            opt.text = SUGAR.language.get('app_list_strings', "moduleListSingular")[module];
             opt.value = module;
             opt.label = opt.text;
             dropdown.options.add(opt);
@@ -88,7 +89,7 @@
         }
         if (!found && account_name.value != '') {
             var opt = document.createElement("option");
-            opt.text = SUGAR.language.get('app_strings', 'LBL_'+module.toUpperCase());
+            opt.text = SUGAR.language.get('app_list_strings', "moduleListSingular")[module];
             opt.value = module;
             opt.label = opt.text;
             dropdown.options.add(opt);
@@ -104,25 +105,25 @@
 {if $lead_conv_activity_opt == 'move'}
 <table width="100%" border="0" cellspacing="1" cellpadding="0"  class="{$def.templateMeta.panelClass|default:'edit view'}" id ="lead_conv_ac_op">
 <tr>
-    <td width="15%">
-        {sugar_translate label='LBL_ACTIVITIES_MOVE' module='Leads'}:
+    <td width="15%" class="rssItemDate">
+        {sugar_translate label='LBL_ACTIVITIES_MOVE' module='Leads'}:&nbsp;{sugar_help text=$MOD.LBL_ACTIVITIES_MOVE_HELP}
     </td>
     <td>
         <select id="lead_conv_ac_op_sel" name="lead_conv_ac_op_sel">
-            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACTS' module=''}">{sugar_translate label='LBL_CONTACTS' module=''}</option>
+            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}">{sugar_translate label='LBL_CONTACT' module='Contacts'}</option>
         </select>
     </td>
 </tr>
 </table>
-{elseif $lead_conv_activity_opt == 'copy'}
+{elseif $lead_conv_activity_opt == 'copy' || $lead_conv_activity_opt == ''}
 <table width="100%" border="0" cellspacing="1" cellpadding="0"  class="{$def.templateMeta.panelClass|default:'edit view'}" id ="lead_conv_ac_op">
 <tr>
-    <td width="15%">
-        {sugar_translate label='LBL_ACTIVITIES_COPY' module='Leads'}:
+    <td width="15%" class="rssItemDate">
+        {sugar_translate label='LBL_ACTIVITIES_COPY' module='Leads'}:&nbsp;{sugar_help text=$MOD.LBL_ACTIVITIES_COPY_HELP}
     </td>
     <td>
         <select id="lead_conv_ac_op_sel" name="lead_conv_ac_op_sel[]" size="5" multiple="">
-            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACTS' module=''}">{sugar_translate label='LBL_CONTACTS' module=''}</option>
+            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}">{sugar_translate label='LBL_CONTACT' module='Contacts'}</option>
         </select>
     </td>
 </tr>

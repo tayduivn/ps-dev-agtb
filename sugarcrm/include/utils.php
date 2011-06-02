@@ -180,7 +180,6 @@ function make_sugar_config(&$sugar_config)
 	'default_navigation_paradigm' => empty($navigation_paradigm) ? 'gm' : $navigation_paradigm,
     'default_call_status' => 'Planned',
 	'js_lang_version' => 1,
-        'lead_conv_activity_opt' => 'copy',
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
 	    'SystemGeneratedPasswordON' => '',
@@ -350,7 +349,7 @@ function get_sugar_config_defaults() {
 	'verify_client_ip' => true,
 	'js_custom_version' => '',
 	'js_lang_version' => 1,
-        'lead_conv_activity_opt' => 'copy',
+        'lead_conv_activity_opt' => 'move',
 	'default_number_grouping_seperator' => ',',
 	'default_decimal_seperator' => '.',
 	'lock_homepage' => false,
