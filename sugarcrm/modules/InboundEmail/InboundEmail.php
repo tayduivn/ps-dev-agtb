@@ -3037,6 +3037,32 @@ class InboundEmail extends SugarBean {
 		}
 		return $contactAddr;
 	}
+
+	/**
+	 * Gets part by following breadcrumb path
+	 * @param string $bc the breadcrumb string in format (1.1.1)
+	 * @param array parts the root level parts array
+	 */
+	protected function getPartByPath($bc, $parts)
+	{
+		if(strstr($bc,'.')) {
+			$exBc = explode('.', $bc);
+		} else {
+			$exBc = array($bc);
+		}
+
+		foreach($exBc as $step) {
+		    if(empty($parts)) return false;
+		    $res = $parts[$step-1]; // MIME starts with 1, array starts with 0
+		    if(!empty($res->parts)) {
+		        $parts = $res->parts;
+		    } else {
+		        $parts = false;
+		    }
+		}
+		return $res;
+ 	}
+
 	/**
 	 * takes a breadcrumb and returns the encoding at that level
 	 * @param	string bc the breadcrumb string in format (1.1.1)
@@ -3069,24 +3095,12 @@ class InboundEmail extends SugarBean {
 	 * @param array parts 1 level above ROOT array of Objects representing a multipart body
 	 * @return string charset name
 	 */
-	function getCharsetFromBreadCrumb($bc, $parts) {
-		if(strstr($bc,'.')) {
-			$exBc = explode('.', $bc);
-		} else {
-			$exBc[0] = $bc;
-		}
-
-		foreach($exBc as $crumb) {
-			$tempObj = $parts[$crumb-1];
-			if(is_array($tempObj->parts)) {
-				$parts = $tempObj->parts;
-			}
-		}
-
+	function getCharsetFromBreadCrumb($bc, $parts)
+	{
+		$tempObj = $this->getPartByPath($bc, $parts);
 		// now we have the tempObj at the end of the breadCrumb trail
-		//$GLOBALS['log']->fatal(print_r(debug_backtrace(), true));
 
-		if($tempObj->ifparameters) {
+		if(!empty($tempObj->ifparameters)) {
 			foreach($tempObj->parameters as $param) {
 				if(strtolower($param->attribute) == 'charset') {
 					return $param->value;
@@ -3173,7 +3187,9 @@ class InboundEmail extends SugarBean {
 						    $msgPartRaw .= $this->getMessageTextFromSingleMimePart($msgNo,$bcTrail,$structure);
 						 else {
 							// deal with inline image
-							$partid = substr($structure->parts[$bcArryKey]->id, 1, -1);
+							$part = $this->getPartByPath($bcTrail, $structure->parts);
+							if(empty($part) || empty($part->id)) continue;
+							$partid = substr($part->id, 1, -1); // strip <> around
 							if(isset($this->inlineImages[$partid])) {
 								$imageName = $this->inlineImages[$partid];
 								$newImagePath = "class=\"image\" src=\"{$this->imagePrefix}{$imageName}\"";
@@ -3523,7 +3539,6 @@ class InboundEmail extends SugarBean {
 						// only save if doing a full import, else we want only the binaries
 						$attach->save();
 					}
-					$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 				} // end if disposition type 'attachment'
 			}// end ifdisposition
 			//Retrieve contents of subtype rfc8822
@@ -3541,7 +3556,6 @@ class InboundEmail extends SugarBean {
 			        // only save if doing a full import, else we want only the binaries
 			        $attach->save();
 			    }
-			    $this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 			} elseif(!$part->ifdisposition && $part->type != 1 && $part->type != 2 && $thisBc != '1') {
         		// No disposition here, but some IMAP servers lie about disposition headers, try to find the truth
 				// Also Outlook puts inline attachments as type 5 (image) without a disposition
@@ -3567,7 +3581,6 @@ class InboundEmail extends SugarBean {
 						// only save if doing a full import, else we want only the binaries
 						$attach->save();
 					}
-					$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
 				}
 			}
 			$this->saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay);
@@ -3676,7 +3689,8 @@ class InboundEmail extends SugarBean {
 			$this->tempAttachment[$fileName] = urldecode($attach->filename);
 			if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
 					|| ($part->type == 5)) {
-                $this->inlineImages[] = $attach->id.".".strtolower($part->subtype);
+                $id = substr($part->id, 1, -1); //strip <> around
+                $this->inlineImages[$id] = $attach->id.".".strtolower($part->subtype);
 			}
 		}
 	}
@@ -3817,6 +3831,10 @@ class InboundEmail extends SugarBean {
 	    if(strtolower($attr) == "href") return true;
 	    $items = parse_url($value);
 	    if(empty($items)) return false;
+	    if(!empty($items['scheme']) && strtolower($items['scheme']) != 'http' && strtolower($items['scheme']) != 'https') {
+	        // do not touch non-HTTP URLs
+	        return true;
+	    }
 	// don't allow relative URLs
 		if(empty($items['host'])) return false;
 	// allow URLs with no query
@@ -4004,9 +4022,6 @@ class InboundEmail extends SugarBean {
 	 * If the importOneEmail returns false, then findout if the duplicate email
 	 */
 	function getDuplicateEmailId($msgNo, $uid) {
-		if(!class_exists('Email')) {
-
-		}
 		global $timedate;
 		global $app_strings;
 		global $app_list_strings;
