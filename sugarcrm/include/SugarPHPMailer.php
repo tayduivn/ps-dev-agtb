@@ -283,26 +283,25 @@ eoq;
 		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
 		$this->ClearAttachments();
 		require_once('include/upload_file.php');
-
+        $upload = new UploadFile();
 		//Handle legacy attachments
-        $fileBasePath = "{$sugar_config['upload_dir']}";
-		$filePatternSearch = "{$sugar_config['upload_dir']}";
-		$filePatternSearch = str_replace("/", '\/', $filePatternSearch);
-		if(strpos($this->Body, "\"{$fileBasePath}")) {
+		$filePatternSearch = $upload->get_upload_url();
+		if(strpos($this->Body, "\"{$filePatternSearch}")) {
 			$matches = array();
-			preg_match_all("/{$filePatternSearch}.+?\"/i", $this->Body, $matches);
+			// FIXME: what if $filePatternSearch is URL-encoded?
+			preg_match_all("|{$filePatternSearch}.+?\"|i", $this->Body, $matches);
 			foreach($matches[0] as $match) {
-				$filename = str_replace($fileBasePath, '', $match);
-				$filename = urldecode(substr($filename, 0, -1));
+				$filename = str_replace($filePatternSearch, '', $match);
+				$filename = urldecode(substr($filename, 0, -1)); // this strips final " from the $filename
 				$cid = $filename;
-				$file_location = clean_path("{$sugar_config['upload_dir']}{$filename}");
-				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+				$file_location = $upload->get_upload_path($filename);
+				$mime_type = "image/".strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 				if(file_exists($file_location)) {
 					$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
 				}
 			}
             //replace references to cache with cid tag
-            $this->Body = str_replace($fileBasePath,'cid:',$this->Body);
+            $this->Body = str_replace($filePatternSearch,'cid:',$this->Body);
 		}
 
 		//Handle secure embeded images.
@@ -328,7 +327,7 @@ eoq;
             $this->Body = str_replace($fullMatch, $replaceMatch, $this->Body);
 
             //Attach the file
-            $file_location = clean_path("{$sugar_config['upload_dir']}{$noteId}");
+            $file_location = $upload->get_upload_path($noteId);
 
             if(file_exists($file_location))
 					$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
@@ -352,7 +351,7 @@ eoq;
 					}
 				} elseif($note->object_name == 'DocumentRevision') { // from Documents
 					$filename = $note->id.$note->filename;
-					$file_location = $GLOBALS['sugar_config']['upload_dir'].$filename;
+					$file_location = $upload->get_upload_path($filename);
 					$mime_type = $note->file_mime_type;
 				}
 

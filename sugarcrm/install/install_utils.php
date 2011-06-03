@@ -1010,7 +1010,7 @@ function handleSugarConfig() {
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
     $sugar_config['tmp_dir']                        = $cache_dir.'xml/';
-    $sugar_config['upload_dir']                 = $cache_dir.'upload/';
+    $sugar_config['upload_dir']                 = 'upload/';
 //    $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
 //BEGIN SUGARCRM flav=com ONLY
     if( isset($_SESSION['setup_site_sugarbeet_anonymous_stats']) ){
@@ -1120,7 +1120,7 @@ EOQ;
 /**
  * (re)write the web.config file to prevent browser access to the log file
  */
-function handleWebConfig() 
+function handleWebConfig()
 {
     if ( !isset($_SERVER['IIS_UrlRewriteModule']) ) {
         return;
@@ -1245,7 +1245,7 @@ function create_default_users(){
     global $setup_site_admin_user_name;
     global $create_default_user;
     global $sugar_config;
-    
+
 	require_once('install/UserDemoData.php');
 
     //Create default admin user

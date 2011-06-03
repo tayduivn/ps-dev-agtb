@@ -31,7 +31,7 @@ if( !isset( $install_script ) || !$install_script ){
 ///////////////////////////////////////////////////////////////////////////////
 ////    PREFILL $sugar_config VARS
 if(empty($sugar_config['upload_dir'])) {
-    $sugar_config['upload_dir'] = $sugar_config['cache_dir'].'upload/';
+    $sugar_config['upload_dir'] = 'upload/';
 }
 if(empty($sugar_config['upload_maxsize'])) {
     $sugar_config['upload_maxsize'] = 8192000;
@@ -68,7 +68,7 @@ if(isset($_REQUEST['languagePackAction']) && !empty($_REQUEST['languagePackActio
         if(isset($_REQUEST['release_id']) && $_REQUEST['release_id'] != ""){
             require_once('ModuleInstall/PackageManager/PackageManager.php');
             $pm = new PackageManager();
-            $tempFile = $pm->download($_REQUEST['release_id'], getcwd().'/'.$sugar_config['upload_dir']);
+            $tempFile = $pm->download($_REQUEST['release_id'], $sugar_config['upload_dir']);
             $perform = true;
             //$base_filename = urldecode($tempFile);
         }else{

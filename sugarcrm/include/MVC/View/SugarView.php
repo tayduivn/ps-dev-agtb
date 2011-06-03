@@ -756,7 +756,7 @@ EOHTML;
             $js_vars = array(
                 "sugar_cache_dir" => "cache/",
             // FIXME: assumes uploads are under cache dir
-                "sugar_upload_dir" => "cache/uploads/",
+                "sugar_upload_dir" => "upload/",
                 );
 
             if(isset($this->bean->module_dir)){
@@ -774,7 +774,7 @@ EOHTML;
             echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
             echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
             echo getVersionedScript('include/javascript/calendar.js');
-            
+
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
@@ -820,7 +820,7 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
-	
+
 	protected function _getModLanguageJS(){
 		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
 			require_once ('include/language/jsLanguage.php');
@@ -828,7 +828,7 @@ EOHTML;
 		}
 		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
 	}
-	
+
     /**
      * Called from process(). This method will display the footer on the page.
      */
