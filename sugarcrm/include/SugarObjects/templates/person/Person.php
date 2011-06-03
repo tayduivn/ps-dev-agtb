@@ -33,6 +33,7 @@ require_once('include/SugarObjects/templates/basic/Basic.php');
 class Person extends Basic
 {	
     var $picture;
+    var $createLocaleFormattedName = true;
     
 	function Person(){
 		parent::Basic();
