@@ -10,8 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 require_once('include/SugarPHPMailer.php');
-
 require_once('include/Pear/HTML_Safe/Safe.php');
+require_once 'include/upload_file.php';
 
 class Email extends SugarBean {
 	/* SugarBean schema */
@@ -134,6 +134,7 @@ class Email extends SugarBean {
 		//END SUGARCRM flav=pro ONLY
 
 		$this->safe = new HTML_Safe();
+		$this->safe->whiteProtocols[] = "cid";
 		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
 		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";

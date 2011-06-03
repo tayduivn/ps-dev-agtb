@@ -2007,7 +2007,7 @@ function clean_xss($str, $cleanImg=true) {
 
 	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
-	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
+	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?https?://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
 
 
@@ -4749,7 +4749,7 @@ function verify_image_file($path, $jpeg = false)
                 return true;
     	    }
         } else {
-        	return false;	
+        	return false;
         }
 	} else {
 	    // check image manually
