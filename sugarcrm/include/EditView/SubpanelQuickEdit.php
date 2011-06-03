@@ -62,7 +62,7 @@ class SubpanelQuickEdit{
 	    $this->ev->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		$this->ev->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
 		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');
-		
+        $this->ev->defs['templateMeta']['form']['hideAudit'] = true;
 
 		
 		$viewEditSource = 'modules/'.$module.'/views/view.edit.php';

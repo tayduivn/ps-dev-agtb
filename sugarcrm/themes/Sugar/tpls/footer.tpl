@@ -44,20 +44,10 @@
         {$COPYRIGHT}
     </div>
 </div>
-<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png' style='display:none'></iframe>
-<input id='ajaxUI-history-field' type='hidden'>
 <script>
 {literal}
 if(SUGAR.util.isTouchScreen()) {
 	setTimeout(resizeHeader,10000);
-}
-
-if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)
-{
-    YAHOO.util.History.register('ajaxUILoc', "", SUGAR.ajaxUI.go);
-    {/literal}{if $smarty.request.module != "ModuleBuilder"}{* Module builder will init YUI history on its own *}
-    YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
-    {/if}{literal}
 }
 
 //qe_init function sets listeners to click event on elements of 'quickEdit' class

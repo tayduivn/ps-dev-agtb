@@ -494,7 +494,7 @@ SUGAR.subpanelUtils = function() {
 
 				var slideDown = new YAHOO.util.Anim(theDiv + '_newDiv', {
 					height: { from: 0, to: form_height }
-				},1.5, YAHOO.util.Easing.easeOut);
+				}, .5, YAHOO.util.Easing.easeOut);
 				slideDown.animate();
 
 				subpanelLocked[theDiv] = false;
@@ -542,7 +542,7 @@ SUGAR.subpanelUtils = function() {
 
 			var slideUp = new YAHOO.util.Anim(theDiv + '_newDiv', {
 				height: { to: 0 }
-			},1.5, YAHOO.util.Easing.easeOut);
+			}, .5, YAHOO.util.Easing.easeOut);
 			slideUp.animate();
 
 			slideUp.onComplete.subscribe(function() {
