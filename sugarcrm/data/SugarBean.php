@@ -4231,7 +4231,8 @@ function save_relationship_changes($is_update, $exclude=array())
             }
             if(!empty($sugar_config['disable_count_query']) && !empty($limit))
             {
-                $rows_found = $row_offset + count($list);
+            	//C.L. Bug 43535 - Use the $index value to set the $rows_found value here
+                $rows_found = $index;
                 if(count($list) >= $limit)
                 {
                     array_pop($list);
