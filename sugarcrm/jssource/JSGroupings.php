@@ -132,6 +132,7 @@
             'modules/Emails/javascript/EmailUICompose.js' => 'include/javascript/sugar_grp_emails.js',
              'modules/Emails/javascript/ajax.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/grid.js' => 'include/javascript/sugar_grp_emails.js',
+            'modules/Emails/javascript/init.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/composeEmailTemplate.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/displayOneEmailTemplate.js' => 'include/javascript/sugar_grp_emails.js',
