@@ -56,16 +56,22 @@ class Person extends Basic
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($GLOBALS['current_user']->id) && $this->bean_implements('ACL') && !ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))){
 			$full_name = $this->last_name;
-		}else{
+
+		} else {
 		//END SUGARCRM flav=pro ONLY
-		    // Bug 38648 - If the given saluation doesn't exist in the dropdown, don't display it as part of the full name
-		    $salutation = '';
-		    if(isset($this->field_defs['salutation']['options']) 
-		            && isset($app_list_strings[$this->field_defs['salutation']['options']])
-		            && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
-		        $salutation = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
-		    }
-			$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name, $salutation, $this->title);
+			if($this->createLocaleFormattedName)
+			{
+			    // Bug 38648 - If the given saluation doesn't exist in the dropdown, don't display it as part of the full name
+				$salutation = '';
+			    if(isset($this->field_defs['salutation']['options']) 
+			            && isset($app_list_strings[$this->field_defs['salutation']['options']])
+			            && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
+			        $salutation = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
+			    }
+				$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name, $salutation, $this->title);
+			} else {
+				$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
+			}
 		//BEGIN SUGARCRM flav=pro ONLY
 		}
 		//END SUGARCRM flav=pro ONLY
