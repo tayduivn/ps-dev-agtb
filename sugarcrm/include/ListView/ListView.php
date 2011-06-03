@@ -1659,7 +1659,7 @@ function getUserVariable($localVarName, $varName) {
         }
         $imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.gif"));
 
-        list($width,$height) = ListView::getArrowUpDownImageSize();
+        list($width,$height) = ListView::getArrowUpDownImageSize($upDown);
         return " width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">";
     }
 

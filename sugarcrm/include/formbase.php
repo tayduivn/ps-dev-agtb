@@ -231,15 +231,21 @@ function handleRedirect($return_id='', $return_module='')
     if (!isset($isDuplicate) || !$isDuplicate)
     {
         $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action";
-        $ajax_ret = array(
-             'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-             'menu' => array(
-                 'module' => $return_module,
-                 'label' => translate($return_module),
-             ),
-        );
-        $json = getJSONobj();
-        echo $json->encode($ajax_ret);
+        if(!empty($_REQUEST['ajaxUILoc']))
+        {
+            $ajax_ret = array(
+                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
+                'menu' => array(
+                    'module' => $return_module,
+                    'label' => translate($return_module),
+                ),
+            );
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        } else {
+            header("Location: $url");
+            exit;
+        }
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
    		$add = '';
@@ -256,15 +262,21 @@ function handleRedirect($return_id='', $return_module='')
     		$add = "&" . $add;
     	}
         $url="index.php?{$standard}{$add}";
-        $ajax_ret = array(
-             'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-             'menu' => array(
-                 'module' => $return_module,
-                 'label' => translate($return_module),
-             ),
-        );
-        $json = getJSONobj();
-        echo $json->encode($ajax_ret);
+        if(!empty($_REQUEST['ajaxUILoc']))
+        {
+            $ajax_ret = array(
+                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
+                 'menu' => array(
+                     'module' => $return_module,
+                     'label' => translate($return_module),
+                 ),
+            );
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        } else {
+            header("Location: $url");
+            exit;
+        }
     }
 	exit;
 }
