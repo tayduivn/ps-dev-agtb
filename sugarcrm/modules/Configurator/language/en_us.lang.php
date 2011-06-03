@@ -206,6 +206,8 @@ $mod_strings = array (
 	'LBL_LOGGER_MAX_LOG_SIZE'=>'Maximum log size',
 	'LBL_LOGGER_DEFAULT_DATE_FORMAT'=>'Default date format',
 	'LBL_LOGGER_LOG_LEVEL'=>'Log Level',
+        'LBL_LEAD_CONV_OPTION' => 'Lead Conversion Options',
+        'LEAD_CONV_OPT_HELP' => 'Placeholder for lead conversion option help',
 	'LBL_LOGGER_MAX_LOGS'=>'Maximum number of logs (before rolling)',
 	'LBL_LOGGER_FILENAME_SUFFIX' =>'Append after filename',
 	'LBL_VCAL_PERIOD' => 'vCal Updates Time Period:',
@@ -439,7 +441,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_WIZARD_SYSTEM_DESC' => 'Provide your organization\'s name and logo in order to brand your Sugar.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify how you would like data in Sugar to be displayed, based on your geographical location. The settings you provide here will be the default settings. Users will be able set their own preferences.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide the email account that will be used to send emails, such as the assignment notifications and new user passwords. Users will receive emails from Sugar, as sent from the specified email account.',
-    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the Sugar Mobile iPhone client.',
+    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the Sugar Mobile native clients',
 );
 
 

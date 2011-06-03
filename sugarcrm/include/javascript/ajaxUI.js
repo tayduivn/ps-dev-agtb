@@ -92,7 +92,8 @@ SUGAR.ajaxUI = {
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
             }
-            var module = /module=([^&]*)/.exec(url)[1];
+            var mRegex = /module=([^&]*)/.exec(url);
+            var module = mRegex ? mRegex[1] : false;
             //If we can't ajax load the module (blacklisted), set the URL directly.
             if (!ui.canAjaxLoadModule(module)) {
                 window.location = url;
@@ -105,6 +106,7 @@ SUGAR.ajaxUI = {
             }
 
             if (!/action=ajaxui/.exec(window.location))
+                //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
             else {
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
@@ -124,7 +126,11 @@ SUGAR.ajaxUI = {
         SA.cleanGlobals();
         //Don't ajax load certain modules
         var form = YAHOO.util.Dom.get(formname) || document.forms[formname];
-        if (SA.canAjaxLoadModule(form.module.value))
+        if (SA.canAjaxLoadModule(form.module.value)
+            //Do not try to submit a form that contains a file input via ajax.
+            && typeof(YAHOO.util.Selector.query("input[type=file]", form)[0]) == "undefined"
+            //Do not try to ajax submit a form if the ajaxUI is not initialized
+            && /action=ajaxui/.exec(window.location))
         {
             YAHOO.util.Connect.setForm(form);
             YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
@@ -147,6 +153,7 @@ SUGAR.ajaxUI = {
             SUGAR.EmailAddressWidget.instances = {};
             SUGAR.EmailAddressWidget.count = {};
         }
+        YAHOO.util.Event.removeListener(window, 'resize');
 
     },
     firstLoad : function()

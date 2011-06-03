@@ -546,6 +546,7 @@ function isDBName(str) {
 }
 var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 function isTime(timeStr) {
+    var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 	time_reg_format = time_reg_format.replace('([ap]m)', '');
 	time_reg_format = time_reg_format.replace('([AP]M)', '');
 	if(timeStr.length== 0){
@@ -3950,6 +3951,13 @@ function set_return(popup_reply_data)
 	}else{
 		set_return_basic(popup_reply_data,/\S/);
 	}
+}
+
+function set_return_lead_conv(popup_reply_data) {
+    set_return(popup_reply_data);
+    if (document.getElementById('lead_conv_ac_op_sel') && typeof onBlurKeyUpHandler=='function') {
+        onBlurKeyUpHandler();
+    }
 }
 
 function set_return_and_save(popup_reply_data)

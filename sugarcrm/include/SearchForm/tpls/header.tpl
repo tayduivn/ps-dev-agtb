@@ -42,4 +42,4 @@
 {foreach name=tabIteration from=$TAB_ARRAY key=tabkey item=tabData}
 <div id='{$module}{$tabData.name}_searchSearchForm' style='{$tabData.displayDiv}' class="edit view search {$tabData.name}">{if $tabData.displayDiv}{else}{$return_txt}{/if}</div>
 {/foreach}
-<div id='{$module}saved_viewsSearchForm' {{if $displayView != 'saved_views'}}style='display: none';{{/if}}>{$saved_views_txt}</div>
+<div id='{$module}saved_viewsSearchForm' {{if $displayView != 'saved_views'}}style='display: none;'{{/if}}>{$saved_views_txt}</div>

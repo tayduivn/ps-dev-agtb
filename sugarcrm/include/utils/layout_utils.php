@@ -334,8 +334,8 @@ function insert_popup_header(
 <title>{$app_strings['LBL_BROWSER_TITLE']}</title>
 {$themeCSS}
 EOHTML;
-    echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . '"></script>';
-    echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp1.js') . '"></script>';
+    echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
+    echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
     echo <<<EOHTML
 </head>
 <body class="popupBody">

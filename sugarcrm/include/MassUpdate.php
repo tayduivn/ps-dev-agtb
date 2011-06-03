@@ -90,9 +90,10 @@ class MassUpdate
 		global $sugar_config;
 		global $current_user;
 
-		$temp = array_merge($_GET, $_POST);
-        unset($temp['current_query_by_page']);
-		$query = base64_encode(serialize($temp));
+		unset($_REQUEST['current_query_by_page']);
+		unset($_REQUEST[session_name()]);
+		unset($_REQUEST['PHPSESSID']);
+		$query = base64_encode(serialize($_REQUEST));
 
         $bean = loadBean($_REQUEST['module']);
        $order_by_name = $bean->module_dir.'2_'.strtoupper($bean->object_name).'_ORDER_BY' ;
@@ -398,7 +399,7 @@ eoq;
 
 
 		$should_use = false;
-		$html = "<div id='massupdate_form' style='display:none;'><table width='100%' cellpadding='0' cellspacing='0' border='0' class='formHeader h3Row'><tr><td nowrap><h3><span>" . $app_strings['LBL_MASS_UPDATE']."</h3></td></tr></table>";
+		$html = "<div id='massupdate_form' style='display:none;'><table width='100%' cellpadding='0' cellspacing='0' border='0' class='formHeader h3Row'><tr><td nowrap><h3>" . $app_strings['LBL_MASS_UPDATE']."</h3></td></tr></table>";
 		$html .= "<div id='mass_update_div'><table cellpadding='0' cellspacing='1' border='0' width='100%' class='edit view' id='mass_update_table'>";
 
 		$even = true;

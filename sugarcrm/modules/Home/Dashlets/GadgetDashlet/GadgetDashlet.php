@@ -103,6 +103,7 @@ class GadgetDashlet extends Dashlet {
         
         $ss = new Sugar_Smarty();
         $this->dashletStrings['LBL_SAVE'] = $app_strings['LBL_SAVE_BUTTON_LABEL'];
+        $this->dashletStrings['LBL_CLEAR'] = $app_strings['LBL_CLEAR_BUTTON_LABEL'];
         $ss->assign('lang', $this->dashletStrings);
         $ss->assign('id', $this->id);
         $ss->assign('title', $this->title);
