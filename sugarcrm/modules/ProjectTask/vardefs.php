@@ -101,9 +101,17 @@ $dictionary['ProjectTask'] = array('audited'=>true,
         //BEGIN SUGARCRM flav=pro ONLY
         'resource_id' => array(
             'name' => 'resource_id',
+            'vname' => 'LBL_RESOURCE_ID',
+            'required' => false,
+            'type' => 'text',
+            'hidden' => true,
+        ),
+        'resource_name' => array(
+            'name' => 'resource_name',
             'vname' => 'LBL_RESOURCE',
             'required' => false,
             'type' => 'text',
+            'source' => 'non-db',
         ),
         //END SUGARCRM flav=pro ONLY
         'predecessors' => array(
@@ -153,7 +161,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
         'duration_unit' => array(
             'name' => 'duration_unit',
             'vname' => 'LBL_DURATION_UNIT',
-            'options' => 'project_duration_units_dom',        
+            'options' => 'project_duration_units_dom',
             'type' => 'text',
         ),
         'actual_duration' => array(
@@ -201,7 +209,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'dbType' => 'id',
 			'reportable'=>true,
 		),
-		'modified_by_name' => 
+		'modified_by_name' =>
 	  array (
 	    'name' => 'modified_by_name',
 	    'vname' => 'LBL_MODIFIED_NAME',
@@ -213,8 +221,8 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 	    'id_name' => 'modified_user_id',
 	    'module'=>'Users',
 	    'link'=>'modified_user_link',
-	    'duplicate_merge'=>'disabled' 
-	  ),  
+	    'duplicate_merge'=>'disabled'
+	  ),
         'priority' => array(
             'name' => 'priority',
             'vname' => 'LBL_PRIORITY',
@@ -232,7 +240,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
 			'dbType' => 'id',
 			'reportable'=>true,
 		),
-		'created_by_name' => 
+		'created_by_name' =>
 	  array (
 	    'name' => 'created_by_name',
 		'vname' => 'LBL_CREATED',
