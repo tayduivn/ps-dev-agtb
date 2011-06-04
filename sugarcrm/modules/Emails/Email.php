@@ -137,7 +137,7 @@ class Email extends SugarBean {
 		$this->safe->whiteProtocols[] = "cid";
 		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
-		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";
+		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
 		$this->email_uploads = "modules/Emails/{$current_user->id}";
 	}
 
@@ -2060,6 +2060,35 @@ class Email extends SugarBean {
 	}
 
 	/**
+	 * Replace images with locations specified by regex with cid: images
+	 * and attach needed files
+	 * @param  $mail Mail object
+	 * @param string $regex Regular expression
+	 * @param string $local_prefix Prefix where local files are stored
+	 */
+	function replaceImageByRegex($mail, $regex, $local_prefix, $bean = null)
+	{
+		preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*\"($regex)(.+?)\"#im", $mail->Body, $matches);
+        foreach($matches[2] as $match) {
+			$filename = urldecode($match);
+			$cid = $filename;
+			$file_location = $local_prefix.$filename;
+			if(!file_exists($file_location)) continue;
+			if(!empty($bean)) {
+			    $bean->retrieve($filename);
+			    $mime_type = $bean->file_mime_type;
+			} else {
+			    $mime_type = "image/".strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+			}
+		    $mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+        }
+		//replace references to cache with cid tag
+		$mail->Body = preg_replace("|\"$regex|i",'"cid:',$mail->Body);
+		// remove bad img line from outbound email
+		$mail->Body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', '', $mail->Body);
+	}
+
+	/**
 	 * Retrieve function from handlebody() to unit test easily
 	 * @param $mail
 	 * @return formatted $mail body
@@ -2080,86 +2109,17 @@ class Email extends SugarBean {
 		$mail->AltBody = $plainText;
 		$this->description = $plainText;
 
-		$fileBasePath = sugar_cached("images/");
-		$filePatternSearch = "{$sugar_config['cache_dir']}";
-		$filePatternSearch = str_replace("/", '\/', $filePatternSearch);
-		$filePatternSearch = $filePatternSearch . 'images\/';
-		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
-		{  //cache/images
-			$matches = array();
-			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
-			foreach($matches[0] as $match) {
-				$filename = str_replace($fileBasePath, '', $match);
-				$filename = urldecode(substr($filename, 0, -1));
-				$cid = $filename;
-				$file_location = sugar_cached("images/$filename");
-				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
 
-				if(file_exists($file_location)) {
-					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
-				}
-			}
-
-			//replace references to cache with cid tag
-			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
-			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
-			// remove bad img line from outbound email
-			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
-			$mail->Body = preg_replace($regex, '', $mail->Body);
-		}
+		$this->replaceImageByRegex($mail, $sugar_config['site_url']."/?cache/images/", sugar_cached("images/"));
+		$this->replaceImageByRegex($mail, "cache/images/", sugar_cached("images/"));
 
 		$upload = new UploadFile();
-		$filePatternSearch = $upload->get_upload_url();
-		if(strpos($mail->Body, "\"{$filePatternSearch}")) {
-			$matches = array();
-			// FIXME: what if $filePatternSearch is URL-encoded?
-			preg_match_all("|{$filePatternSearch}.+?\"|i", $this->Body, $matches);
-			foreach($matches[0] as $match) {
-				$filename = str_replace($filePatternSearch, '', $match);
-				$filename = urldecode(substr($filename, 0, -1)); // this strips final " from the $filename
-				$cid = $filename;
-				$file_location = $upload->get_upload_path($filename);
-				$mime_type = "image/".strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-				if(file_exists($file_location)) {
-					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
-				}
-			}
-            //replace references to cache with cid tag
-            $mail->Body = str_replace($filePatternSearch,'cid:',$mail->Body);
-            $regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
-			$mail->Body = preg_replace($regex, '', $mail->Body);
-		}
+		$this->replaceImageByRegex($mail, $upload->get_upload_url(), $upload->get_upload_dir());
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$noteImgRegex = '/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im';
-        $embededImageMatches = array();
-        preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
-
-        foreach ($embededImageMatches as $singleMatch )
-        {
-            $fullMatch = $singleMatch[0];
-            $noteId = $singleMatch[1];
-            $cid = $noteId;
-            $filename = $noteId;
-
-            //Retrieve note for mimetype
-            $tmpNote = new Note();
-            $tmpNote->retrieve($noteId);
-            //Replace the src part of img tag with new cid tag
-            $cidRegex = "/src=\"([^\"]*)\"/im";
-            $replaceMatch = preg_replace($cidRegex, "src=\"cid:$noteId\"", $fullMatch);
-
-            //Replace the body, old tag for new tag
-            $mail->Body = str_replace($fullMatch, $replaceMatch, $mail->Body);
-
-            //Attach the file
-            $file_location = $upload->get_upload_path($noteId);
-
-            if(file_exists($file_location))
-					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
-        }
-        //End Replace
-
+		$tmpNote = new Note();
+		$this->replaceImageByRegex($mail, "({$sugar_config['site_url']})?index.php[?]entryPoint=download&(amp;)?[^\"]+?id=", $upload->get_upload_dir(), $tmpNote);
+		$this->replaceImageByRegex($mail, "index.php[?]entryPoint=download&amp;id=", $upload->get_upload_dir(), $tmpNote);
 
 		$mail->Body = from_html($mail->Body);
 	}
@@ -3250,13 +3210,13 @@ eoq;
          */
         public function cid2Link($noteId, $noteType)
         {
-            $upload = new UploadFile();
             if(empty($this->description_html)) return;
 			list($type, $subtype) = explode('/', $noteType);
 			if(strtolower($type) != 'image') {
 			    return;
 			}
-		    $this->description_html = preg_replace("#class=\"image\" src=\"cid:$noteId\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"", $this->description_html);
+            $upload = new UploadFile();
+			$this->description_html = preg_replace("#class=\"image\" src=\"cid:$noteId\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"", $this->description_html);
 	        // ensure the image is in the cache
 			$imgfilename = sugar_cached("images/")."$noteId.".strtolower($subtype);
 			$src = $upload->get_upload_path($noteId);
@@ -3265,4 +3225,16 @@ eoq;
 			}
         }
 
+        /**
+         * Convert all cid: links in this email into URLs
+         */
+    	function cids2Links()
+    	{
+            if(empty($this->description_html)) return;
+    	    $q = "SELECT id, file_mime_type FROM notes WHERE parent_id = '{$this->id}' AND deleted = 0";
+    		$r = $this->db->query($q);
+            while($a = $this->db->fetchByAssoc($r)) {
+                $this->cid2Link($a['id'], $a['file_mime_type']);
+            }
+    	}
 } // end class def

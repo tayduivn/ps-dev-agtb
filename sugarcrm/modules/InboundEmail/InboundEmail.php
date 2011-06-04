@@ -181,7 +181,7 @@ class InboundEmail extends SugarBean {
 
 		$this->smarty = new Sugar_Smarty();
 		$this->overview = new Overview();
-		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";
+		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
 	}
 
 	/**
@@ -1764,9 +1764,6 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
 
 		if(!isset($this->email) && !isset($this->email->et)) {
-			if(!class_exists('Email')) {
-
-			}
 			$this->email = new Email();
 			$this->email->email2init();
 		}
@@ -1795,9 +1792,6 @@ class InboundEmail extends SugarBean {
 	function getOverviewsFromCacheFile($uids, $mailbox='', $remove=false) {
 		global $app_strings;
 		if(!isset($this->email) && !isset($this->email->et)) {
-			if(!class_exists('Email')) {
-
-			}
 			$this->email = new Email();
 			$this->email->email2init();
 		}
@@ -2714,9 +2708,6 @@ class InboundEmail extends SugarBean {
 					$to[0]['display'] = $email->from_name;
 				}
 
-				if(!class_exists('EmailTemplate')) {
-
-				}
 				$et = new EmailTemplate();
 				$et->retrieve($this->template_id);
 				if(empty($et->subject))		{ $et->subject = ''; }
@@ -2749,9 +2740,6 @@ class InboundEmail extends SugarBean {
 
     //BEGIN SUGARCRM flav!=sales ONLY
 	function handleCaseAssignment($email) {
-		if(!class_exists('aCase')) {
-
-		}
 		$c = new aCase();
 		if($caseId = $this->getCaseIdFromCaseNumber($email->name, $c)) {
 			//BEGIN SUGARCRM flav=int ONLY
@@ -2821,9 +2809,6 @@ class InboundEmail extends SugarBean {
 		global $current_user, $mod_strings, $current_language;
 		$mod_strings = return_module_language($current_language, "Emails");
 		$GLOBALS['log']->debug('In handleCreateCase');
-		if(!class_exists('aCase')) {
-
-		}
 		$c = new aCase();
 		$this->getCaseIdFromCaseNumber($email->name, $c);
 
@@ -2903,9 +2888,6 @@ class InboundEmail extends SugarBean {
 					$to[0]['display'] = $email->from_name;
 				}
 
-				if(!class_exists('EmailTemplate')) {
-
-				}
 				$et = new EmailTemplate();
 				$et->retrieve($createCaseTemplateId);
 				if(empty($et->subject))		{ $et->subject = ''; }
@@ -2997,9 +2979,6 @@ class InboundEmail extends SugarBean {
 			$email->load_relationship('leads');
 			$email->leads->add($leadIds);
 
-			if(!class_exists('Lead')) {
-
-			}
 			foreach($leadIds as $leadId) {
 				$lead = new Lead();
 				$lead->retrieve($leadId);
@@ -3020,10 +2999,6 @@ class InboundEmail extends SugarBean {
 			// link the account to the email
 			$email->load_relationship('accounts');
 			$email->accounts->add($accountIds);
-
-			if(!class_exists('Account')) {
-
-			}
 
 			/* cn: bug 9171 another cause of dying I-E - bad linking
 			foreach($accountIds as $accountId) {
@@ -3658,39 +3633,29 @@ class InboundEmail extends SugarBean {
 		// decide what name to save file as
 		$fileName = $attach->id;
 
-		// deal with attachment encoding and decode the text string
+		// download the attachment if we didn't do it yet
 		if(!file_exists($uploadDir.$fileName)) {
 			$msgPartRaw = imap_fetchbody($this->conn, $msgNo, $thisBc);
+    		// deal with attachment encoding and decode the text string
 			$msgPart = $this->handleTranserEncoding($msgPartRaw, $part->encoding);
 
-			if($fp = fopen($uploadDir.$fileName, 'wb')) {
-				if(fwrite($fp, $msgPart)) {
-					$this->tempAttachment[$fileName] = urldecode($attach->filename);
-					$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
-				} else {
-					$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename ." - temp file target: [ {$uploadDir}{$fileName} ]");
-				}
-				fclose($fp);
-
-				// if all was successful, feel for inline and cache Note ID for display:
-				if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
-					|| ($part->type == 5)) {
-					if(copy($uploadDir.$fileName,
-						sugar_cached("images/{$fileName}.").strtolower($part->subtype))) {
-						$id = substr($part->id, 1, -1); //strip <> around
-						$this->inlineImages[$id] = $attach->id.".".strtolower($part->subtype);
-					}
-				}
+			if(file_put_contents($uploadDir.$fileName, $msgPart)) {
+				$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
 			} else {
-				$GLOBALS['log']->debug('InboundEmail could not open a filepointer to: '.$uploadDir.$fileName);
+                $GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename ." - temp file target: [ {$uploadDir}{$fileName} ]");
+                return;
 			}
-		} else {
-			// binary is in cache already, just prep necessary metadata
-			$this->tempAttachment[$fileName] = urldecode($attach->filename);
-			if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
-					|| ($part->type == 5)) {
-                $id = substr($part->id, 1, -1); //strip <> around
-                $this->inlineImages[$id] = $attach->id.".".strtolower($part->subtype);
+		}
+
+		$this->tempAttachment[$fileName] = urldecode($attach->filename);
+		// if all was successful, feel for inline and cache Note ID for display:
+		if((strtolower($part->disposition) == 'inline' && in_array($part->subtype, $this->imageTypes))
+		    || ($part->type == 5)) {
+		    if(copy($uploadDir.$fileName, sugar_cached("images/{$fileName}.").strtolower($part->subtype))) {
+			    $id = substr($part->id, 1, -1); //strip <> around
+			    $this->inlineImages[$id] = $attach->id.".".strtolower($part->subtype);
+			} else {
+				$GLOBALS['log']->debug('InboundEmail could not copy '.$uploadDir.$fileName.' to cache');
 			}
 		}
 	}
@@ -4064,10 +4029,6 @@ class InboundEmail extends SugarBean {
 	 * @param clean_email boolean, default true,
 	 */
 	function importOneEmail($msgNo, $uid, $forDisplay=false, $clean_email=true) {
-		if(!class_exists('Email')) {
-
-		}
-
 		$GLOBALS['log']->debug("InboundEmail processing 1 email {$msgNo}-----------------------------------------------------------------------------------------");
 		global $timedate;
 		global $app_strings;
@@ -4639,9 +4600,6 @@ class InboundEmail extends SugarBean {
 		global $app_list_strings;
 
 		////	Case Macro
-		if(!class_exists('aCase')) {
-
-		}
 		$c = new aCase();
 
 		$macro = $c->getEmailSubjectMacro();
@@ -5858,7 +5816,7 @@ eoq;
 			$r = $this->db->query($q);
 			$i = 0;
 			while($a = $this->db->fetchByAssoc($r)) {
-				$url = "index.php?entryPoint=download&id={$a['id']}&type=notes";
+				$url = "index.php?entryPoint=download&type=notes&id={$a['id']}";
 				$lbl = ($i == 0) ? $app_strings['LBL_EMAIL_ATTACHMENTS'].":" : '';
 				$i++;
 				$attachments .=<<<EOQ
@@ -5885,7 +5843,7 @@ EOQ;
 					$name = $this->getTempFilename(true).$i;
 					$tempName = urlencode($this->tempAttachment[$name]);
 
-					$url = "index.php?entryPoint=download&id={$name}&type=temp&isTempFile=true&ieId={$this->id}&tempName={$tempName}";
+					$url = "index.php?entryPoint=download&type=temp&isTempFile=true&ieId={$this->id}&tempName={$tempName}&id={$name}";
 
 					$attachments .=<<<eoq
 						<tr>

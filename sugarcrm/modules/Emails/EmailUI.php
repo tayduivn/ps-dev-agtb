@@ -150,7 +150,7 @@ class EmailUI {
 		$this->smarty->assign('dateFormatExample', str_replace(array("Y", "m", "d"), array("yyyy", "mm", "dd"), $cuDatePref['date']));
 		$this->smarty->assign('calFormat', $timedate->get_cal_date_format());
         $this->smarty->assign('TIME_FORMAT', $timedate->get_user_time_format());
-		
+
 		$ieAccounts = $ie->retrieveByGroupId($current_user->id);
 		$ieAccountsOptions = "<option value=''>{$app_strings['LBL_NONE']}</option>\n";
 
@@ -270,7 +270,7 @@ class EmailUI {
 				loader.insert();
 
 				{$preloadFolder};
-	
+
 			</script>
 eoq;
 
@@ -320,7 +320,7 @@ eoq;
                 $QCAvailableModules[] = $module;
             }
         }
-        
+
         return $QCAvailableModules;
     }
 
@@ -1334,14 +1334,11 @@ eoq;
 				$this->parseAttachmentInfo($actualAttachmentInfo, $attachmentHtmlData);
 				if (sizeof($actualAttachmentInfo) > 0) {
 					foreach($actualAttachmentInfo as $key => $value) {
-						$datasplit = explode("&", $value);
-						$attachmentIdArray = explode("=", $datasplit[0]);
-						$attachmentid = $attachmentIdArray[1];
-
-						$fileNameArray = explode("=", $datasplit[4]);
-						$fileName = $fileNameArray[1];
+					    $info_vars = array();
+					    parse_str($value, $info_vars);
+					    $fileName = $info_vars['tempName'];
+					    $attachmentid = $info_vars['id'];
 						$guid = create_guid();
-						//$destination = clean_path("{$this->userCacheDir}/{$guid}{$fileName}");
 						$destination = clean_path("{$this->userCacheDir}/{$guid}");
 
 						$attachmentFilePath = sugar_cached("modules/Emails/{$ie->id}/attachments/{$attachmentid}");
@@ -2193,6 +2190,7 @@ eoq;
 		$ea = new SugarEmailAddress();
 
 		if(!empty($email)) {
+		    $email->cids2Links();
 			$description = (empty($email->description_html)) ? $email->description : $email->description_html;
 		}
 
