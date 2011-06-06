@@ -19,11 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Implementation by SugarCRM, not shipped by ZF.
- *
- */
-
 
 /**
  * @see Zend_Gdata
@@ -51,7 +46,7 @@ class Zend_Gdata_Contacts extends Zend_Gdata
     const AUTH_SERVICE_NAME = 'cp';
     const DEFAULT_MAJOR_PROTOCOL_VERSION = 3;
 
-
+    protected $maxResults = 10;
     /**
      * Namespaces used for Zend_Gdata_Calendar
      *
@@ -84,7 +79,31 @@ class Zend_Gdata_Contacts extends Zend_Gdata
      */
     public function getContactListFeed()
     {
-        return parent::getFeed(self::CONTACT_FEED_URI,'Zend_Gdata_Contacts_ListFeed');
+        $query = new Zend_Gdata_Query(self::CONTACT_FEED_URI);
+        $query->maxResults = $this->maxResults;
+        return parent::getFeed($query,'Zend_Gdata_Contacts_ListFeed');
+    }
+
+    /**
+     * Retrieve a single feed object by id
+     *
+     * @param string $entryID
+     * @return string|Zend_Gdata_App_Feed
+     */
+    public function getContactEntry($entryID)
+    {
+        return parent::getEntry($entryID,'Zend_Gdata_Contacts_ListEntry');
+    }
+
+    /**
+     * Set the max results that the feed should return.
+     * 
+     * @param  $maxResults
+     * @return void
+     */
+    public function setMaxResults($maxResults)
+    {
+        $this->maxResults = $maxResults;
     }
 
 }

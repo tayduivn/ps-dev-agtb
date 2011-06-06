@@ -19,10 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Implementation by SugarCRM, not shipped by ZF.
- *
- */
 require_once 'Zend/Gdata/Extension.php';
 
 
@@ -31,9 +27,9 @@ class Zend_Gdata_Contacts_Extension_PhoneNumber extends Zend_Gdata_Extension
 
     protected $_rootNamespace = 'gd';
     protected $_rootElement = 'phoneNumber';
-    protected $_value = null;
     protected $_isPrimaryNumber = FALSE;
     protected $_phoneType = null;
+
     /**
      * Constructs a new Zend_Gdata_Contacts_Extension_Name object.
      * @param string $value (optional) The text content of the element.
