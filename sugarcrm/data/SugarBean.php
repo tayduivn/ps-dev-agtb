@@ -1740,7 +1740,10 @@ class SugarBean
     {
         if (empty($this->id) || $this->new_with_id)
             return;
-        global $dictionary, $updating_relationships, $saved_beans;
+        global $dictionary, $updating_relationships, $saved_beans, $sugar_config;
+        if(!empty($sugar_config['disable_related_calc_fields'])){
+            return;
+        }
         if ($updating_relationships)
         {
             $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");
