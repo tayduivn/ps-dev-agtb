@@ -1306,6 +1306,11 @@ class SugarBean
     */
     function save($check_notify = FALSE)
     {
+        echo ("saving $this->module_dir $this->id<br/>");
+        echo "<pre>";
+        debug_print_backtrace();
+        echo "</pre>";
+
         // cn: SECURITY - strip XSS potential vectors
         $this->cleanBean();
         // This is used so custom/3rd-party code can be upgraded with fewer issues, this will be removed in a future release
@@ -1363,6 +1368,19 @@ class SugarBean
                 $this->id = create_guid();
             }
             $query = "INSERT into ";
+        }
+        //Prevent cascading saves
+        //BEGIN SUGARCRM flav=pro ONLY
+        $updateRelCalcFields = false;
+        //END SUGARCRM flav=pro ONLY
+        global $saved_beans;
+        if (empty($saved_beans))
+            $saved_beans = array();
+        if (empty($saved_beans[$this->module_name]))
+                $saved_beans[$this->module_name] = array();
+        if (empty($saved_beans[$this->module_name][$this->id]))
+        {
+            $saved_beans[$this->module_name][$this->id] = true;
         }
         //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
@@ -1664,17 +1682,8 @@ class SugarBean
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        //Prevent cascading saves
-        global $saved_beans;
-        if (empty($saved_beans))
-            $saved_beans = array();
-        if (empty($saved_beans[$this->module_name]))
-                $saved_beans[$this->module_name] = array();
-        if (empty($saved_beans[$this->module_name][$this->id]))
-        {
-            $saved_beans[$this->module_name][$this->id] = true;
+        if ($updateRelCalcFields)
             $this->updateRelatedCalcFields();
-        }
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
