@@ -74,7 +74,7 @@ class JSON
 //            return $meta['jsonObject'];
 //        }
         
-        return json_decode($string,true);
+        return json_decode($string,$assoc);
 
     }
 
