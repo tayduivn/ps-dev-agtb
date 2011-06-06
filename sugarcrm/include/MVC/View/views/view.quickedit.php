@@ -124,6 +124,7 @@ class ViewQuickedit extends ViewAjax
 		$this->ev->defs['templateMeta']['form']['button_location'] = 'bottom';
 		$this->ev->defs['templateMeta']['form']['hidden'] = '<input type="hidden" name="is_ajax_call" value="1" />';
 		$this->ev->defs['templateMeta']['form']['hidden'] .= '<input type="hidden" name="from_dcmenu" value="1" />';
+        $this->ev->defs['templateMeta']['form']['hideAudit']=true;
 		$defaultProcess = true;
 
 		if($defaultProcess) {

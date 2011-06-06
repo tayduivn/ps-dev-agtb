@@ -1786,6 +1786,12 @@ $app_list_strings = array (
 		'less_than_equals' => 'Less Than Or Equal To',
 		'between' => 'Is Between',
 	),
+        'lead_conv_activity_opt' =>
+        array(
+                'copy' => 'Copy',
+                'move' => 'Move',
+                'donothing' => 'Do Nothing'
+        ),
 );
 
 $app_strings = array (
@@ -3824,3 +3830,4 @@ $app_list_strings['kbdocument_status_dom'] = array (
         2 => 'Access',
         3 => 'Invalid',
     );
+  ?>

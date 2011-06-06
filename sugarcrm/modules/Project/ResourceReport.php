@@ -190,7 +190,7 @@ if (!empty($_REQUEST['resource'])) {
                 else
                     $dateRangeArray[$displayDate] += $remainingDuration;
             }
-            if (!isset($isHoliday[$dateStart])){
+            if (!isset($isHoliday[$dateStart->ts])){
 	            $remainingDuration -= $workDayHours;
             }
             $dateStart->modify("+1 day");
