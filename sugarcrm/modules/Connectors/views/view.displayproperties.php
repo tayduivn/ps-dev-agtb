@@ -76,6 +76,12 @@ class ViewDisplayProperties extends ViewList
 			}
 		}
 
+        $s = SourceFactory::getSource($source);
+        
+        // Not all sources can be connected to all modules
+        $enabled_modules = $s->filterAllowedModules($enabled_modules);
+        $disabled_modules = $s->filterAllowedModules($disabled_modules);
+
 		asort($enabled_modules);
     	asort($disabled_modules);
 
@@ -93,6 +99,11 @@ class ViewDisplayProperties extends ViewList
     	$this->ss->assign('theme', $GLOBALS['theme']);
    	    $this->ss->assign('external', !empty($sources[$source]['eapm']));
    	    $this->ss->assign('externalOnly', !empty($sources[$source]['eapm']['only']));
+
+        // We don't want to tell the user to set the properties of the connector if there aren't any
+        $fields = $s->getRequiredConfigFields();
+   	    $this->ss->assign('externalHasProperties', !empty($fields));
+
    	    $this->ss->assign('externalChecked', !empty($sources[$source]['eapm']['enabled'])?" checked":"");
    	    echo $this->ss->fetch('modules/Connectors/tpls/display_properties.tpl');
     }

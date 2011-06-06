@@ -1126,6 +1126,7 @@ eoq;
                 $ret[$def] = $oe->$def;
             }
             $ret['mail_smtppass']=''; // don't send back the password
+            $ret['has_password'] =  isset($oe->mail_smtppass);
 
             $out = $json->encode($ret, true);
             echo $out;

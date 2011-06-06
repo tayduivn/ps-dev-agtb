@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class JSON
 {
+
     /**
      * JSON encode a string
      *
@@ -44,6 +45,7 @@ class JSON
         if($addSecurityEnvelope) {
             $encodedString = $encodedString;
         }
+
 
         if ($encodeSpecial)
         {
@@ -64,7 +66,7 @@ class JSON
      * @param bool $examineEnvelope Default false, true to extract and verify envelope
      * @return string 
      */
-    public static function decode($string, $examineEnvelope=false)
+    public static function decode($string, $examineEnvelope=false, $assoc = true)
     {
 //        if ($examineEnvelope) {
 //            $meta = json_decode($string,true);
@@ -73,6 +75,7 @@ class JSON
 //        }
         
         return json_decode($string,true);
+
     }
 
     /**

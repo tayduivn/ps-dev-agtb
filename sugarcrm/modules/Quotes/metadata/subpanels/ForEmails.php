@@ -52,7 +52,7 @@ $subpanel_layout = array(
 			'width' => '32%',
 			'target_record_key' => 'account_id',
 			'target_module' => 'Accounts',
-			'sortable' => false,
+            'sortable' => false,
 		),
 		'total_usdollar'=>array(
 			'vname' => 'LBL_LIST_AMOUNT_USDOLLAR',

@@ -64,7 +64,7 @@ padding: 10px 20px;
 float: left;
 }
 
-.legend table td {
+.legend table td.label {
 padding: 0px 20px 5px 0px;
 text-align: left;
 }

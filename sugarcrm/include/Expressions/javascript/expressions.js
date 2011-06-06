@@ -1101,7 +1101,8 @@ SUGAR.util.DateUtils = {
 	{
 		var min = date.getMinutes();
 
-		if (min < 16) { min = 15; }
+		if (min < 1) { min = 0; }
+		else if (min < 16) { min = 15; }
 		else if (min < 31) { min = 30; }
 		else if (min < 46) { min = 45; }
 		else { min = 0; date.setHours(date.getHours() + 1)}

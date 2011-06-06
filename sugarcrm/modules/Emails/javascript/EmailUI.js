@@ -308,6 +308,7 @@ SE.accounts = {
 
         this.inboundAccountEditDialog.render();
         this.inboundAccountEditDialog.show();
+        SUGAR.util.setEmailPasswordDisplay('email_password', clear == false);
     },
 
     /**
@@ -523,6 +524,7 @@ SE.accounts = {
         document.forms['ieAccount'].elements['ssl'].checked = true;
         document.forms['ieAccount'].elements['protocol'].value = "imap";
         SUGAR.email2.accounts.setPortDefault();
+        SUGAR.util.setEmailPasswordDisplay('email_password', false);
     },
     /**
      * Sets Port field to selected protocol and SSL settings defaults
@@ -681,7 +683,7 @@ SE.accounts = {
         document.ieAccount.protocol.options[0].selected = true;
         // handle SSL
         document.getElementById('ssl').checked = false;
-
+        SUGAR.util.setEmailPasswordDisplay('email_password', false);
     },
 
     /**
@@ -881,7 +883,7 @@ SE.accounts = {
         form = document.getElementById('ieAccount');
 
         if(SE.accounts.checkIeCreds()) {
-            ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(form.server_url.value), form.protocol.value, trim(form.port.value), trim(form.email_user.value), Rot13.write(form.email_password.value), trim(form.mailbox.value), form.ssl.checked, true, "ieAccount");
+            ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(form.server_url.value), form.protocol.value, trim(form.port.value), trim(form.email_user.value), Rot13.write(form.email_password.value), trim(form.mailbox.value), form.ssl.checked, true, "ieAccount", form.ie_id.value);
         }
     },
 
@@ -3470,7 +3472,6 @@ SE.settings = {
         }
 
     }
-
 };
 ////    END SE.settings
 ///////////////////////////////////////////////////////////////////////////////

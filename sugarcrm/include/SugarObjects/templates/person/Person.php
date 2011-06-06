@@ -33,6 +33,7 @@ require_once('include/SugarObjects/templates/basic/Basic.php');
 class Person extends Basic
 {	
     var $picture;
+    var $createLocaleFormattedName = true;
     
     //Variable to control whether or not to invoke the getLocalFormatttedName method with title and salutation
     var $createLocaleFormattedName = true;
@@ -59,6 +60,7 @@ class Person extends Basic
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(isset($GLOBALS['current_user']->id) && $this->bean_implements('ACL') && !ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))){
 			$full_name = $this->last_name;
+
 		} else {
 		//END SUGARCRM flav=pro ONLY
 			if($this->createLocaleFormattedName)
