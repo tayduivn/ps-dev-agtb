@@ -540,7 +540,7 @@ class ViewConvertLead extends SugarView
                 $key = $relObj->rhs_key;
                 $activity->$key = $bean->id;
             }
-            $activity->$rel->add($bean->id);
+            $activity->$rel->add($bean);
         }
 
         // set the new parent id and type

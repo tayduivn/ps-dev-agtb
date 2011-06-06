@@ -36,6 +36,8 @@ if(!empty($config['cleanCache'])){
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/themes");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/blowfish");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/dashlets");
+        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/include/javascript/sugar_grp1.js");
+        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/include/javascript/sugar_grp1_yui.js");
     }
 }
 if(!empty($config['base_dir'])){
