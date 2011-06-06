@@ -17,7 +17,15 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp() 
 	{
-        $this->markTestSkipped('');
+        require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;
+	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = 1;
+	    $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
+	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
+		$GLOBALS['current_user']->setPreference('timef', "h.iA");
+        
 		$this->_lvd = new ListViewData();
 		$this->_product = new Product();
 		$this->_product->disable_row_level_security = true;
