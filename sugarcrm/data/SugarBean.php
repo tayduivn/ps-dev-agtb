@@ -1306,11 +1306,6 @@ class SugarBean
     */
     function save($check_notify = FALSE)
     {
-        echo ("saving $this->module_dir $this->id<br/>");
-        echo "<pre>";
-        debug_print_backtrace();
-        echo "</pre>";
-
         // cn: SECURITY - strip XSS potential vectors
         $this->cleanBean();
         // This is used so custom/3rd-party code can be upgraded with fewer issues, this will be removed in a future release
