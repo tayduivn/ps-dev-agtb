@@ -43,11 +43,17 @@ if (isset($_SESSION['setup_db_host_instance']) && !empty($_SESSION['setup_db_hos
 	$instanceName = $_SESSION['setup_db_host_instance'];
 }
 
-if($_SESSION['setup_db_type'] == 'oci8') {
+$setupDbPortNum ='';
+if (isset($_SESSION['setup_db_port_num']) && !empty($_SESSION['setup_db_port_num'])){
+	$setupDbPortNum = $_SESSION['setup_db_port_num'];
+}
+
+
+if($_SESSION['setup_db_type'] == 'oci8'){ //} || $_SESSION['setup_db_type'] == 'ibm_db2') {
 //BEGIN SUGARCRM flav=ent ONLY
 	$dbSplit1 = '<input type="hidden" name="setup_db_host_name" value="'.$_SESSION['setup_db_host_name'].'" /></td>';
     $dbSplit1 .= '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG1'].'</td></tr>';
-	$oci8sid = "(SID from tnsnames.ora)";
+    $oci8sid = "(SID from tnsnames.ora)";
 	$dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="no" />';
 //END SUGARCRM flav=ent ONLY
 }else {
@@ -63,12 +69,24 @@ if($_SESSION['setup_db_type'] == 'oci8') {
 		 <td nowrap><b>'.$host_lbl.'</b></td>
 		 <td align="left">
 			<input type="text" name="setup_db_host_name" id="setup_db_host_name" value="'.$_SESSION['setup_db_host_name'].'" />';
+
 			if (isset($_SESSION['setup_db_type']) && $_SESSION['setup_db_type'] =='mssql'){
 				$dbSplit1 .= '&nbsp;\&nbsp;<input type="text" name="setup_db_host_instance" id="setup_db_host_instance" value="'.$instanceName.'" />';
 			}
 		$dbSplit1 .= '</td>
 	</tr>';
 
+//BEGIN SUGARCRM flav=ent ONLY
+    if($_SESSION['setup_db_type'] == 'ibm_db2') {
+        $dbSplit1 .= '<tr>
+		 <td></td>
+		 <td nowrap><b>'.$mod_strings['LBL_DBCONF_HOST_PORT'].'</b></td>
+		 <td align="left">
+			<input type="text" name="setup_db_port_num" id="setup_db_port_num" value="'.$setupDbPortNum.'" />';
+
+        $dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="no" />';
+    }
+//END SUGARCRM flav=ent ONLY
 
 }
 
@@ -135,7 +153,6 @@ $out2 =<<<EOQ2
          <input type="text" name="setup_db_database_name"  value="{$_SESSION['setup_db_database_name']}"><br>&nbsp;
     </td>
 </tr>
-
 
 
 {$dbSplit1}
@@ -342,6 +359,9 @@ function callDBCheck(){
                 postData += "&setup_db_database_name="+document.setConfig.setup_db_database_name.value;
                 if(typeof(document.setConfig.setup_db_host_instance) != 'undefined'){
                     postData += "&setup_db_host_instance="+document.setConfig.setup_db_host_instance.value;
+                }
+                if(typeof(document.setConfig.setup_db_port_num) != 'undefined'){
+                    postData += "&setup_db_port_num="+document.setConfig.setup_db_port_num.value;
                 }
                 postData += "&setup_db_host_name="+document.setConfig.setup_db_host_name.value;
                 postData += "&setup_db_admin_user_name="+document.setConfig.setup_db_admin_user_name.value;

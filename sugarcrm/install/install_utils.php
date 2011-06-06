@@ -526,6 +526,7 @@ function getDbConnection()
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
     global $setup_db_host_instance;
+    global $setup_db_port_num;
     global $setup_db_database_name;
     global $setup_db_create_database;
 
@@ -534,6 +535,7 @@ function getDbConnection()
                 "db_user_name" => $setup_db_admin_user_name,
                 "db_password" => $setup_db_admin_password,
                 "db_host_instance" => $setup_db_host_instance,
+                "db_port" => $setup_db_port_num,
     );
     if(empty($setup_db_create_database)) {
             $dbconfig["db_name"] = $setup_db_database_name;
@@ -552,6 +554,7 @@ function handleDbCreateSugarUser() {
     global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
+    global $setup_db_port_num;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
     global $sugar_config;
@@ -603,6 +606,7 @@ function handleDbCreateDatabase() {
     global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
+    global $setup_db_port_num;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
     global $sugar_config;
@@ -668,6 +672,7 @@ function handleSugarConfig() {
     global $mod_strings;
     global $setup_db_host_name;
     global $setup_db_host_instance;
+    global $setup_db_port_num;
     global $setup_db_sugarsales_user;
     global $setup_db_sugarsales_password;
     global $setup_db_database_name;
@@ -705,9 +710,8 @@ function handleSugarConfig() {
     $sugar_config['dbconfig']['db_password']        = $setup_db_sugarsales_password;
     $sugar_config['dbconfig']['db_name']            = $setup_db_database_name;
     $sugar_config['dbconfig']['db_type']            = $_SESSION['setup_db_type'];
-    if(isset($_SESSION['setup_db_port_num'])){
-        $sugar_config['dbconfig']['db_port'] = $_SESSION['setup_db_port_num'];
-    }
+    $sugar_config['dbconfig']['db_port']            = $setup_db_port_num;
+
     $sugar_config['cache_dir']                      = $cache_dir;
     $sugar_config['default_charset']                = $mod_strings['DEFAULT_CHARSET'];
     $sugar_config['default_email_client']           = 'sugar';

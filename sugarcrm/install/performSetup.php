@@ -58,6 +58,7 @@ $setup_db_create_sugarsales_user    = $_SESSION['setup_db_create_sugarsales_user
 $setup_db_database_name             = $_SESSION['setup_db_database_name'];
 $setup_db_drop_tables               = $_SESSION['setup_db_drop_tables'];
 $setup_db_host_instance             = $_SESSION['setup_db_host_instance'];
+$setup_db_port_num                  = $_SESSION['setup_db_port_num'];
 $setup_db_host_name                 = $_SESSION['setup_db_host_name'];
 $demoData                           = $_SESSION['demoData'];
 $setup_db_sugarsales_password       = $_SESSION['setup_db_sugarsales_password'];

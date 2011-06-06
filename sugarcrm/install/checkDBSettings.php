@@ -64,6 +64,11 @@ function checkDBSettings($silent=false) {
                 "db_host_name" => $_SESSION['setup_db_host_name'],
                 "db_host_instance" => $_SESSION['setup_db_host_instance'],
         );
+
+        if(isset($_SESSION['setup_db_port_num']) && $_SESSION['setup_db_port_num'] != '') {
+            $dbconfig["db_port"] = $_SESSION['setup_db_port_num'];
+        }
+
         // Needed for database implementation that do not allow connections to the server directly
         // and that typically require the manual setup of a database instances such as DB2
         if(empty($_SESSION['setup_db_create_database'])) {
@@ -239,9 +244,12 @@ function copyInputsIntoSession(){
             if(isset($_REQUEST['setup_db_host_name'])){$_SESSION['setup_db_host_name']              = $_REQUEST['setup_db_host_name'];}
 
             if(isset($_REQUEST['setup_db_host_instance'])){
-                $_SESSION['setup_db_host_instance']             = $_REQUEST['setup_db_host_instance'];
+                $_SESSION['setup_db_host_instance'] = $_REQUEST['setup_db_host_instance'];
             }
 
+            if(isset($_REQUEST['setup_db_port_num'])){
+                $_SESSION['setup_db_port_num'] = $_REQUEST['setup_db_port_num'];
+            }
 
             // on a silent install, copy values from $_SESSION into $_REQUEST
             if (isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall') {
