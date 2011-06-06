@@ -448,7 +448,7 @@ function isBefore(value1, value2) {
 }
 
 function isValidEmail(emailStr) {
-	
+
     if(emailStr.length== 0) {
 		return true;
 	}
@@ -600,7 +600,7 @@ function add_error_style(formname, input, txt, flash) {
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
-	
+
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
@@ -780,8 +780,8 @@ function validate_form(formname, startsWith){
                     if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
                     {
                        continue;
-                    }					
-					
+                    }
+
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
 						//BEGIN SUGARCRM flav=pro ONLY
@@ -821,12 +821,12 @@ function validate_form(formname, startsWith){
 						case 'alphanumeric':
 							break;
 						case 'file':
-						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
+						      if( validate[formname][i][requiredIndex] && form[validate[formname][i][nameIndex] + '_file'] != undefined && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
 
 						          isError = true;
 						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
-						      }					      
-						  break;	
+						      }
+						  break;
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
@@ -924,7 +924,7 @@ function validate_form(formname, startsWith){
 										date1 = trim(form[validate[formname][i][nameIndex]].value);
 
 										if(trim(date1).length != 0 && !isBefore(date1,date2)){
-										
+
 											isError = true;
 											//jc:#12287 - adding translation for the is not before message
 											add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + "(" + date1 + ") " + SUGAR.language.get('app_strings', 'MSG_IS_NOT_BEFORE') + ' ' +date2);
@@ -1661,7 +1661,7 @@ function onUnloadEditView(theForm) {
 
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' ) { 
+    if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;
     }
@@ -2453,13 +2453,13 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	
+
 	    if(num_grp_sep != '')
 	    {
 	       num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
 		   n = n.replace(num_grp_sep_re, '');
 	    }
-	    
+
 		n = n.replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
@@ -2606,7 +2606,7 @@ SUGAR.unifiedSearchAdvanced = function() {
 		   YAHOO.util.Event.addListener('unified_search_advanced_img', 'click', SUGAR.unifiedSearchAdvanced.get_content);
 		},
 
-		get_content: function(e) 
+		get_content: function(e)
 		{
 		    query_string = trim(document.getElementById('query_string').value);
 		    if(query_string != '')
@@ -3597,11 +3597,11 @@ SUGAR.language = function() {
             }
             return SUGAR.language.languages[module][str];
         },
-        
+
         translate: function(module, str)
         {
             text = this.get(module, str);
-            return text != 'undefined' ? text : this.get('app_strings', str);  	
+            return text != 'undefined' ? text : this.get('app_strings', str);
         }
     }
 }();
@@ -3808,11 +3808,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-	
-	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
+
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800
 	width = (width == 600) ? 800 : width;
 	height = (height == 400) ? 800 : height;
-	
+
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
