@@ -1375,7 +1375,7 @@ class SugarBean
                 $saved_beans[$this->module_name] = array();
         if (empty($saved_beans[$this->module_name][$this->id]))
         {
-            $saved_beans[$this->module_name][$this->id] = true;
+            $saved_beans[$this->module_name][$this->id] = 'in_progress';
         }
         //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
@@ -1694,6 +1694,7 @@ class SugarBean
 
         //Now that the record has been saved, we don't want to insert again on further saves
         $this->new_with_id = false;
+        $saved_beans[$this->module_name][$this->id] = 'done';
         return $this->id;
     }
 
@@ -1740,7 +1741,10 @@ class SugarBean
     {
         if (empty($this->id) || $this->new_with_id)
             return;
-        global $dictionary, $updating_relationships, $saved_beans;
+        global $dictionary, $updating_relationships, $saved_beans, $sugar_config;
+        if(!empty($sugar_config['disable_related_calc_fields'])){
+            return;
+        }
         if ($updating_relationships)
         {
             $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");

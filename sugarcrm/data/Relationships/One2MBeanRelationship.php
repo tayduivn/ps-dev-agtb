@@ -51,7 +51,7 @@ class One2MBeanRelationship extends One2MRelationship
         }
         //Need to call save to update the bean as the relationship is saved on the main table
         //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
-        if(empty($saved_beans[$rhs->module_name][$rhs->id]))
+        if(empty($saved_beans[$rhs->module_name][$rhs->id]) || $saved_beans[$rhs->module_name][$rhs->id] === 'done')
             $rhs->save();
 
         $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
