@@ -35,6 +35,11 @@
 
 //////////////////////////////////////////////////////////////////
 
+/**
+ * This is the callback function called from SugarRPCClient.prototype.call_method
+ * found below.
+ * @param o The response object returned by YUI2's ajax request.
+ */
 function method_callback (o) {
     var resp = YAHOO.lang.JSON.parse(o.responseText),
         request_id = resp.id,
@@ -47,7 +52,6 @@ function method_callback (o) {
 	    } else {
 			alert("Error calling json server: " + o.statusText);
 	    }
-	    debugger;
 	   	//END SUGARCRM flav=int ONLY
 	    return;
 	}
@@ -194,7 +198,7 @@ SugarRPCClient.prototype.init = function() {
 }
 
 /**
- * This method used to depend on JSOlait which is now removed. It has been reworked to use YUI for the aynchronous call
+ * Note: This method used to depend on JSOlait which is now removed. It has been reworked to use YUI for the aynchronous call
  * and the synchronous call in sugar_3.js.
  * @param method
  * @param args
