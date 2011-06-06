@@ -2066,21 +2066,40 @@ class Email extends SugarBean {
 	 * @param string $regex Regular expression
 	 * @param string $local_prefix Prefix where local files are stored
 	 */
-	function replaceImageByRegex($mail, $regex, $local_prefix, $bean = null)
+	function replaceImageByRegex($mail, $regex, $local_prefix, $object = false)
 	{
 		preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*\"($regex)(.+?)\"#im", $mail->Body, $matches);
+		$i = 0;
         foreach($matches[2] as $match) {
 			$filename = urldecode($match);
 			$cid = $filename;
 			$file_location = $local_prefix.$filename;
 			if(!file_exists($file_location)) continue;
-			if(!empty($bean)) {
-			    $bean->retrieve($filename);
-			    $mime_type = $bean->file_mime_type;
+			if($object) {
+			    if(preg_match('#&(?:amp;)?type=([\w]+)#i', $matches[0][$i], $typematch)) {
+			        switch(strtolower($typematch[1])) {
+			            case 'documents':
+			                $beanname = 'DocumentRevisions';
+			                break;
+			            case 'notes':
+			                $beanname = 'Notes';
+			                break;
+			        }
+			    }
+			    $mime_type = "application/octet-stream";
+			    if(isset($beanname)) {
+			        $bean = SugarModule::get($beanname)->loadBean();
+    			    $bean->retrieve($filename);
+    			    if(!empty($bean->id)) {
+        			    $mime_type = $bean->file_mime_type;
+        			    $filename = $bean->filename;
+    			    }
+			    }
 			} else {
 			    $mime_type = "image/".strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 			}
 		    $mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+		    $i++;
         }
 		//replace references to cache with cid tag
 		$mail->Body = preg_replace("|\"$regex|i",'"cid:',$mail->Body);
@@ -2117,9 +2136,7 @@ class Email extends SugarBean {
 		$this->replaceImageByRegex($mail, $upload->get_upload_url(), $upload->get_upload_dir());
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$tmpNote = new Note();
-		$this->replaceImageByRegex($mail, "({$sugar_config['site_url']})?index.php[?]entryPoint=download&(amp;)?[^\"]+?id=", $upload->get_upload_dir(), $tmpNote);
-		$this->replaceImageByRegex($mail, "index.php[?]entryPoint=download&amp;id=", $upload->get_upload_dir(), $tmpNote);
+		$this->replaceImageByRegex($mail, "(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", $upload->get_upload_dir(), true);
 
 		$mail->Body = from_html($mail->Body);
 	}

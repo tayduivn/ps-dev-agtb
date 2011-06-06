@@ -34,7 +34,7 @@ class UploadFile
 	var $use_soap = false;
 	var $file;
 	var $file_ext;
-	protected $url = "uploads/";
+	protected $url = "upload/";
 	protected $upload_dir;
 
 	protected static $filesError = array(

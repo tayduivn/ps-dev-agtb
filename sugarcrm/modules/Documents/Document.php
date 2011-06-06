@@ -215,7 +215,11 @@ class Document extends SugarBean {
 		$mod_strings = return_module_language($current_language, 'Documents');
 
         if (!empty($this->document_revision_id)) {
-            $query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date, document_revisions.filename AS filename, document_revisions.revision AS revision, document_revisions.file_ext AS file_ext FROM users, document_revisions WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";
+            $query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date,
+            	 document_revisions.filename AS filename, document_revisions.revision AS revision,
+            	 document_revisions.file_ext AS file_ext, document_revisions.file_mime_type AS file_mime_type
+            	 FROM users, document_revisions
+            	 WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";
             $result = $this->db->query($query);
             $row = $this->db->fetchByAssoc($result);
 
@@ -259,6 +263,7 @@ class Document extends SugarBean {
 			$this->last_rev_created_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 
 			$this->last_rev_create_date = $timedate->to_display_date_time($row['rev_date']);
+			$this->last_rev_mime_type = $row['file_mime_type'];
 		}
 
 		global $app_list_strings;
