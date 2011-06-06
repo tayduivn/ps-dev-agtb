@@ -231,7 +231,7 @@ function handleRedirect($return_id='', $return_module='')
     if (!isset($isDuplicate) || !$isDuplicate)
     {
         $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action";
-        if(!empty($_REQUEST['ajaxUILoc']))
+        if(!empty($_REQUEST['ajax_load']))
         {
             $ajax_ret = array(
                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
@@ -262,7 +262,7 @@ function handleRedirect($return_id='', $return_module='')
     		$add = "&" . $add;
     	}
         $url="index.php?{$standard}{$add}";
-        if(!empty($_REQUEST['ajaxUILoc']))
+        if(!empty($_REQUEST['ajax_load']))
         {
             $ajax_ret = array(
                  'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",

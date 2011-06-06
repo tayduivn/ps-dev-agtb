@@ -73,7 +73,8 @@ SUGAR.ajaxUI = {
         if(YAHOO.lang.trim(url) != "")
         {
             //Don't ajax load certain modules
-            var module = /module=(\w+)/.exec(url)[1];
+            var mRegex = /module=([^&]*)/.exec(url);
+            var module = mRegex ? mRegex[1] : false;
             if (module && SUGAR.ajaxUI.canAjaxLoadModule(module))
             {
                 YAHOO.util.History.navigate('ajaxUILoc',  url);

@@ -23,6 +23,7 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        global $saved_beans;
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
@@ -48,7 +49,10 @@ class One2MBeanRelationship extends One2MRelationship
         {
             $rhs->$field = $val;
         }
-        $rhs->save();
+        //Need to call save to update the bean as the relationship is saved on the main table
+        //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
+        if(empty($saved_beans[$rhs->module_name][$rhs->id]))
+            $rhs->save();
 
         $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
         $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
