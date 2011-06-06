@@ -29,6 +29,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('include/OutboundEmail/OutboundEmail.php');
+require_once('modules/Configurator/Configurator.php');
+
+$configurator = new Configurator();
 global $current_user;
 if ( !is_admin($current_user)
 		&& !is_admin_for_module($GLOBALS['current_user'],'Emails')
@@ -72,7 +75,7 @@ if( !empty($_POST['notify_allow_default_outbound']) )
 $focus->saveConfig();
 
 // save User defaults for emails
-$sugar_config['email_default_delete_attachments'] = (isset($_REQUEST['email_default_delete_attachments'])) ? true : false;
+$configurator->config['email_default_delete_attachments'] = (isset($_REQUEST['email_default_delete_attachments'])) ? true : false;
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	SECURITY
@@ -92,13 +95,13 @@ if(isset($_REQUEST['style'])) $security['style'] = 'style';
 if(isset($_REQUEST['xmp'])) $security['xmp'] = 'xmp';
 $security['script'] = 'script';
 
-$sugar_config['email_xss'] = base64_encode(serialize($security));
+$configurator->config['email_xss'] = base64_encode(serialize($security));
 
 ////	SECURITY
 ///////////////////////////////////////////////////////////////////////////////
 
 ksort($sugar_config);
-write_array_to_file('sugar_config', $sugar_config, 'config.php');
+$configurator->handleOverride();
 
 header("Location: index.php?action={$_POST['return_action']}&module={$_POST['return_module']}");
 ?>
