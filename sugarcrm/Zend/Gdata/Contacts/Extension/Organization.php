@@ -19,21 +19,18 @@
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Implementation by SugarCRM, not shipped by ZF.
- *
- */
+
 require_once 'Zend/Gdata/Extension.php';
 
 
-class Zend_Gdata_Contacts_Extension_Email extends Zend_Gdata_Extension
+class Zend_Gdata_Contacts_Extension_Organization extends Zend_Gdata_Extension
 {
 
     protected $_rootNamespace = 'gd';
-    protected $_rootElement = 'email';
-    protected $_isPrimary = FALSE;
-    protected $_emailType = null;
-    protected $_email = null;
+    protected $_rootElement = 'organization';
+    protected $_orgName = null;
+    protected $_orgTitle = null;
+
     /**
      * Constructs a new Zend_Gdata_Contacts_Extension_Name object.
      * @param string $value (optional) The text content of the element.
@@ -47,61 +44,45 @@ class Zend_Gdata_Contacts_Extension_Email extends Zend_Gdata_Extension
     protected function takeChildFromDOM($child)
     {
         $absoluteNodeName = $child->namespaceURI . ':' . $child->localName;
+
         switch ($absoluteNodeName)
         {
+            case $this->lookupNamespace('gd') . ':' . 'orgName';
+                $entry = new Zend_Gdata_Entry();
+                $entry->transferFromDOM($child);
+                $this->_orgName = $entry;
+                break;
+
+            case $this->lookupNamespace('gd') . ':' . 'orgTitle';
+                $entry = new Zend_Gdata_Entry();
+                $entry->transferFromDOM($child);
+                $this->_orgTitle = $entry;
+                break;
+
             default:
                 parent::takeChildFromDOM($child);
                 break;
         }
     }
 
-    /**
-     * Extracts XML attributes from the DOM and converts them to the
-     * appropriate object members.
-     *
-     * @param DOMNode $attribute The DOMNode attribute to be handled.
-     */
-    protected function takeAttributeFromDOM($attribute)
+
+    public function getOrganizationName()
     {
-        switch ($attribute->localName)
-        {
-            case 'primary':
-                if(strtolower($attribute->nodeValue) == 'true')
-                    $this->_isPrimary = true;
-                else
-                    $this->_isPrimary = false;
-            break;
-            
-            case 'rel':
-                $this->_emailType = $attribute->nodeValue;
-            break;
-
-            case 'address':
-                $this->_email = $attribute->nodeValue;
-            break;
-
-            default:
-                parent::takeAttributeFromDOM($attribute);
-            break;
-        }
-    }
-
-    public function getEmailType()
-    {
-        if($this->_emailType == null)
-            return '';
+        if($this->_orgName != null)
+            return $this->_orgName->getText();
         else
-            return str_replace($this->lookupNamespace('gd') . '#', '', $this->_emailType);
+            return '';
     }
-    
-    public function getEmail()
+    public function getOrganizationTitle()
     {
-        return $this->_email;
+        if($this->_orgTitle != null)
+            return $this->_orgTitle->getText();
+        else
+            return '';
     }
 
-    public function isPrimary()
-    {
-        return $this->_isPrimary;
-    }
+
+
 }
- 
+
+

@@ -87,16 +87,5 @@ class Zend_Gdata_Contacts extends Zend_Gdata
         return parent::getFeed(self::CONTACT_FEED_URI,'Zend_Gdata_Contacts_ListFeed');
     }
 
-    /**
-     * TODO: implement insert
-     *
-     * @param  $contact
-     * @param null $uri
-     * @return void
-     */
-    public function insertContact($contact, $uri=null)
-    {
-
-    }
 }
  
