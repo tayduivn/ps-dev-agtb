@@ -384,9 +384,11 @@ class UploadFile
 	 * @param string bean_id ID of the parent bean
 	 * @param string file_name File's name
 	 */
-	function unlink_file($bean_id,$file_name)
+	function unlink_file($bean_id,$file_name = '')
 	{
-        return unlink($this->upload_dir.$bean_id.$file_name);
+	    if(file_exists($this->upload_dir.$bean_id.$file_name)) {
+            return unlink($this->upload_dir.$bean_id.$file_name);
+	    }
     }
 
     public function get_upload_url()

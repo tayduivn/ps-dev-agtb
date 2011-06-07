@@ -26,10 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry)
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-
-
 require_once ('include/upload_file.php');
-
 
 // User is used to store Forecast information.
 class KBDocument extends SugarBean {
@@ -429,9 +426,9 @@ class KBDocument extends SugarBean {
         $i=0;
         $ret = array()	;
         $ret['attachments'] = array();
-
+        $upload = new UploadFile();
 		while($a = $GLOBALS['db']->fetchByAssoc($result)) {
-			$fileLocation = "{$sugar_config['upload_dir']}{$a['id']}";
+			$fileLocation = $upload->get_upload_path($a['id']);
 			$note = new Note();
 			$note->id = create_guid();
 			$note->new_with_id = true; // duplicating the note with files
@@ -439,10 +436,10 @@ class KBDocument extends SugarBean {
 			//$note->parent_type = $this->module_dir;
 			$note->name = $a['filename'];
 			$note->filename = $a['filename'];
-			$noteFile = "{$sugar_config['upload_dir']}{$note->id}";
+			$noteFile = $upload->get_upload_path($note->id);
 			$note->file_mime_type = $a['file_mime_type'];
 			if(!copy($fileLocation, $noteFile)) {
-				$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to {$sugar_config['upload_dir']} [ {$fileLocation} ]");
+				$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file $fileLocation => $noteFile");
 			}
 			$note->save();
 
