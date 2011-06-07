@@ -237,7 +237,7 @@ $dictionary['Note'] = array(
  'contact_name'=>
  	array(
 		'name'=>'contact_name',
-		'rname'=>'last_name',
+		'rname'=>'name',
 		'id_name'=>'contact_id',
 		'vname'=>'LBL_CONTACT_NAME',
         'table'=>'contacts',
