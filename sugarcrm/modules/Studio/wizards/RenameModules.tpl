@@ -43,6 +43,11 @@
     {
         border-width:0;cursor:move;
     }
+    .helpText
+    {
+        color: #999999;
+        font-size: 13px;
+    }
 </style>
 {/literal}
 
@@ -51,7 +56,10 @@
 	<tr>
 		<td>
             <h2 style='margin-bottom:10px;'>{$title}</h2>
-<table cellspacing="2">
+<table cellspacing="4">
+    <tr>
+        <td colspan="3"><span class="helpText">{$MOD.LBL_RENAME_MOD_SAVE_HELP}</span></td>
+    </tr>
     <tr>
         <td valign="center">
             <input type="button" value="{$MOD.LBL_BTN_UNDO}" onclick="jstransaction.undo()" name="{$MOD.LBL_BTN_UNDO}" />
