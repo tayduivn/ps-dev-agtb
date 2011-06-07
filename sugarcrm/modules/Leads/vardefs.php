@@ -213,6 +213,14 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'vname'=>'LBL_OPPORTUNITY_ID',
 	'comment' => 'If converted, Opportunity ID resulting from the conversion'
   ),
+  'opportunity' => array (
+    'name' => 'opportunity',
+    'type' => 'link',
+    'link_type' => 'one',
+    'relationship' => 'opportunity_leads',
+    'source'=>'non-db',
+    'vname'=>'LBL_LEADS',
+  ),
   'opportunity_name' =>
   array (
     'name' => 'opportunity_name',
