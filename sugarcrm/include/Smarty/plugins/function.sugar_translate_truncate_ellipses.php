@@ -27,11 +27,11 @@ Modification information for LGPL compliance
  * @param array
  * @param Smarty
  */
-function smarty_function_sugar_translate_truncate_ellipses($params, $smarty,$length = 16)
+function smarty_function_sugar_translate_truncate_ellipses($params, &$smarty,$length = 16)
 {
     //call translate function
     require_once('include/Smarty/plugins/function.sugar_translate.php');
-    $value =  smarty_function_sugar_translate($params, &$smarty);
+    $value =  smarty_function_sugar_translate($params, $smarty);
     //if returned value is longer than allowed length, then replace with ellipses
     if(strlen($value)>$length){
         $first_end = $length/2;
