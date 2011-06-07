@@ -279,10 +279,29 @@ class SugarFieldBase {
     function getEditView() {
     }
 
-    function getSearchInput() {
+    /**
+     * getSearchInput
+     * 
+     * This function allows the SugarFields to handle returning the search input value given arguments (typically from $_REQUEST/$_POST)
+     * and a search string.
+     * 
+     * @param $key String value of key to search for
+     * @param $args Mixed value containing haystack to search for value in
+     * @return $value Mixed value that the SugarField should return
+     */
+    function getSearchInput($key='', $args=array()) 
+    {
+    	//Nothing specified return empty string
+    	if(empty($key) || empty($args))
+    	{
+    		return ''; 
+    	}
+    	
+    	return isset($args[$key]) ? $args[$key] : '';
     }
 
     function getQueryLike() {
+    	
     }
 
     function getQueryIn() {
