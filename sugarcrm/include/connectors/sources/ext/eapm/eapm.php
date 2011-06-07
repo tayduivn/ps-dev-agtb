@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -8,26 +7,41 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *not use this file except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
  *Software without first paying applicable fees is strictly prohibited.  You do not have the
  *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/connectors/sources/ext/eapm/eapm.php');
+require_once('include/connectors/sources/default/source.php');
 
-class ext_eapm_lotuslive extends ext_eapm {
-	protected $_enable_in_wizard = false;
-	protected $_enable_in_hover = false;
-	protected $_has_testing_enabled = false;
+abstract class ext_eapm extends source{
 
-	public function getItem($args=array(), $module=null){}
-	public function getList($args=array(), $module=null) {}
+    /**
+     * The ExternalAPI Base that instantiated this connector.
+     * @var _eapm
+     */
+    protected $_eapm;
+
+    public function setEAPM(ExternalAPIBase $eapm)
+    {
+        $GLOBALS['log']->debug("Connector is setting eapm");
+        $this->_eapm = $eapm;
+    }
+
+    public function getEAPM()
+    {
+        $GLOBALS['log']->debug("Connector is getting eapm");
+        return $this->_eapm;
+    }
+
 }
+?>
