@@ -36,16 +36,27 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
 	        // For Bug 39186
 	        array('qfflats-@uol.com.br',true),
 	        array('atendimento-hd.@uol.com.br',true),
+	        // For Bug 44338
+	        array('jo&hn@john.com',true),
+	        array('joh#n@john.com.br',true),
+	        array('&#john@john.com', true),
+	        array('atendimento-hd.?uol.com.br',false),
+	        array('atendimento-hd.?uol.com.br;aaa@com.it',false),
+	        array('f.grande@pokerspa.it',true),
+	        array('fabio.grande@softwareontheroad.it',true),
+	        array('fabio$grande@softwareontheroad.it',true),
 	        );
 	}
     
     /**
      * @ticket 13765
      * @ticket 39186
+     * @ticket 44338
      * @dataProvider providerEmailAddressRegex
      */
 	public function testEmailAddressRegex($email, $valid) 
     {
+        $startTime = microtime(true);
         $sea = new SugarEmailAddress;
         
         if ( $valid ) {
@@ -53,6 +64,10 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
         }
         else {
             $this->assertNotRegExp($sea->regex,$email);
-        }     
+        }
+        
+        // Checking for elapsed time. I expect that evaluation takes less than a second.
+        $timeElapsed = microtime(true) - $startTime;
+        $this->assertLessThan(1.0, $timeElapsed);
     }
 }
