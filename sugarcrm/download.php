@@ -25,7 +25,6 @@ global $db;
 if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authenticated_user_id'])) {
 	die("Not a Valid Entry Point");
 } else {
-    require_once 'include/upload_file.php';
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in hearder may be incorrect.
     // cn: bug 8753: current_user's preferred export charset not being honored
     $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
@@ -86,13 +85,11 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
         }
 
     } // if
-    $upload = new UploadFile();
-
 	$local_location = (isset($_REQUEST['isTempFile'])) ? sugar_cached("modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}")
-		 : $upload->get_upload_path($_REQUEST['id']);
+		 : "upload://{$_REQUEST['id']}";
 
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
-	    $local_location =  $upload->get_upload_path($_REQUEST['id']);
+	    $local_location =  "upload://{$_REQUEST['id']}";
     }
 
 	if(!file_exists( $local_location ) || strpos($local_location, "..")) {
@@ -146,7 +143,7 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 				die($app_strings['ERROR_NO_RECORD']);
 			}
 			$name = $row['name'];
-			$download_location = $upload->get_upload_path($_REQUEST['id']);
+			$download_location = "upload://{$_REQUEST['id']}";
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;

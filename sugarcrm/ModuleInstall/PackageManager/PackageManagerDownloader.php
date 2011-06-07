@@ -27,7 +27,6 @@
  ********************************************************************************/
 define('PACKAGE_MANAGER_DOWNLOAD_SERVER', 'https://depot.sugarcrm.com/depot/');
 define('PACKAGE_MANAGER_DOWNLOAD_PAGE', 'download.php');
-define('PACKAGE_MANAGER_DOWNLOAD_PATH', $GLOBALS['sugar_config']['upload_dir']);
 class PackageManagerDownloader{
 
 	/**
@@ -42,7 +41,7 @@ class PackageManagerDownloader{
 	 */
 	function download($session_id, $file_name, $save_dir = '', $download_server = ''){
 		if(empty($save_dir)){
-			$save_dir = PACKAGE_MANAGER_DOWNLOAD_PATH;
+			$save_dir = "upload://";
 		}
 		if(empty($download_server)){
 			$download_server = PACKAGE_MANAGER_DOWNLOAD_SERVER;

@@ -117,43 +117,10 @@ class KBDocumentRevision extends SugarBean {
 	}
 
 	function fill_in_additional_list_fields() {
-		//$this->fill_in_additional_detail_fields();
 	}
 
 	function fill_in_additional_detail_fields()
-	{/*
-		global $theme;
-		global $current_language;
-		$mod_strings=return_module_language($current_language, 'KBDocuments');
-		
-		//find the document name and current version.
-		$query = "SELECT kbdocument_name, revision, kbdocument_revision_id FROM kbdocuments, document_revisions where kbdocuments.id = '$this->document_id' AND document_revisions.id = documents.document_revision_id";
-		$result = $this->db->query($query,true,"Error fetching document details...:");
-		$row = $this->db->fetchByAssoc($result);
-		if ($row != null) {
-			$this->document_name = $row['document_name'];
-			$this->latest_revision = $row['revision'];	
-			$this->latest_revision_id = $row['document_revision_id'];
-		}
-		//populate the file url. 
-		//image is selected based on the extension name <ext>_image_inline, extension is stored in document_revisions.
-		//if file is not found then default image file will be used.
-		global $img_name;
-		global $img_name_bare;
-		if (!empty($this->file_ext)) {
-			$img_name = SugarThemeRegistry::current()->getImageURL("{$this->file_ext}_image_inline.gif");	
-			$img_name_bare = "{$this->file_ext}_image_inline";		
-		}
-		
-		//set default file name.
-		if (!empty($img_name) && file_exists($img_name)) {
-			$img_name = $img_name_bare;			
-		}
-		else {
-			$img_name = "def_image_inline";  //todo change the default image.						
-		}
-		$this->file_url = "<a href='".UploadFile::get_url($this->filename,$this->id)."' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name,'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
-	*/			
+	{
 	}
 	
 	/**

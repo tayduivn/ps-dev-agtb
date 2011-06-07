@@ -454,7 +454,7 @@ function toggleDisplay_2(div_string){
                 case 'size':
                     alert(SUGAR.language.get('Configurator','LBL_ALERT_SIZE_RATIO'));
                     document.getElementById(forQuotes + "_logo").value=file_type['path'];
-                    document.getElementById(forQuotes + "_logo_image").src=file_type['path'];
+                    document.getElementById(forQuotes + "_logo_image").src=file_type['url'];
                     break;
                 case 'file_error':
                     alert(SUGAR.language.get('Configurator','ERR_ALERT_FILE_UPLOAD'));
@@ -463,7 +463,7 @@ function toggleDisplay_2(div_string){
                 //File good
                 case 'ok':
                     document.getElementById(forQuotes + "_logo").value=file_type['path'];
-                    document.getElementById(forQuotes + "_logo_image").src=file_type['path'];
+                    document.getElementById(forQuotes + "_logo_image").src=file_type['url'];
                     break;
                 //error in getimagesize because unsupported type
                 default:

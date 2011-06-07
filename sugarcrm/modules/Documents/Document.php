@@ -147,18 +147,16 @@ class Document extends SugarBean {
             $Revision->new_with_id = true;
 
             $createRevision = false;
-            $upload = new UploadFile();
-
             //Move file saved during populatefrompost to match the revision id rather than document id
             if (!empty($_FILES['filename_file'])) {
-                rename($upload->get_upload_path($this->id), $upload->get_upload_path($Revision->id));
+                rename("upload://{$this->id}", "upload://{$Revision->id}");
                 $createRevision = true;
             } else if ( $isDuplicate && ( empty($this->doc_type) || $this->doc_type == 'Sugar' ) ) {
                 // Looks like we need to duplicate a file, this is tricky
                 $oldDocument = new Document();
                 $oldDocument->retrieve($_REQUEST['duplicateId']);
-                $old_name = $upload->get_upload_path($oldDocument->document_revision_id);
-                $new_name = $upload->get_upload_path($Revision->id);
+                $old_name = "upload://{$oldDocument->document_revision_id}";
+                $new_name = "upload://{$Revision->id}";
                 $GLOBALS['log']->debug("Attempting to copy from $old_name to $new_name");
                 copy($old_name, $new_name);
                 $createRevision = true;
@@ -246,13 +244,12 @@ class Document extends SugarBean {
 			$img_name = "def_image_inline"; //todo change the default image.
 		}
 		if($this->ACLAccess('DetailView')){
-		    $upload = new UploadFile();
-		    $file_url = "<a href='index.php?entryPoint=download&id=".$upload->get_url($this->filename, $this->document_revision_id)."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+		    $file_url = "<a href='index.php?entryPoint=download&id={$this->document_revision_id}&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
 
 			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_url))
                 $file_url= "<a href='".$this->doc_url."' target='_blank'>".SugarThemeRegistry::current()->getImage($this->doc_type.'_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
     		$this->file_url = $file_url;
-    		$this->file_url_noimage = $upload->get_url($this->filename, $this->document_revision_id);
+    		$this->file_url_noimage = UploadFile::get_url($this->filename, $this->document_revision_id);
 		}else{
             $this->file_url = "";
             $this->file_url_noimage = "";

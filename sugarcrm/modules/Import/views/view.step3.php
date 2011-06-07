@@ -87,7 +87,7 @@ class ImportViewStep3 extends SugarView
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings, $app_list_strings;
-	    
+
 	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
 	    if (!empty($iconPath) && !$browserTitle) {
@@ -98,7 +98,7 @@ class ImportViewStep3 extends SugarView
     	}
 	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
 	    $returnArray[] = $mod_strings['LBL_STEP_3_TITLE'];
-    	
+
 	    return $returnArray;
     }
 
@@ -108,13 +108,13 @@ class ImportViewStep3 extends SugarView
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $app_list_strings, $locale;
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] =
             ( empty($sugar_config['import_max_records_per_file'])
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
-        
+
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
@@ -155,9 +155,9 @@ class ImportViewStep3 extends SugarView
             }
             if ( class_exists($classname) ) {
                 $mapping_file = new $classname;
-                if (isset($mapping_file->delimiter)) 
+                if (isset($mapping_file->delimiter))
                     $_REQUEST['custom_delimiter'] = $mapping_file->delimiter;
-                if (isset($mapping_file->enclosure)) 
+                if (isset($mapping_file->enclosure))
                     $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
                 $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
                 $field_map = $mapping_file->getMapping($_REQUEST['import_module']);
@@ -173,8 +173,8 @@ class ImportViewStep3 extends SugarView
         $uploadFile = new UploadFile('userfile');
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
         {
-            $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
-            $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
+            $uploadFileName = 'IMPORT_'.$this->bean->object_name.'_'.$current_user->id;
+            $uploadFile->final_move($uploadFileName);
         }
         else {
             $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
@@ -183,7 +183,7 @@ class ImportViewStep3 extends SugarView
 
         // split file into parts
         $splitter = new ImportFileSplitter(
-                $uploadFileName,
+                "upload://$uploadFileName",
                 $sugar_config['import_max_records_per_file']);
         $splitter->splitSourceFile(
                 $_REQUEST['custom_delimiter'],
@@ -193,7 +193,7 @@ class ImportViewStep3 extends SugarView
 
         // Now parse the file and look for errors
         $importFile = new ImportFile(
-                $uploadFileName,
+                "upload://$uploadFileName",
                 $_REQUEST['custom_delimiter'],
                 html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
             );
@@ -562,13 +562,13 @@ eoq;
      * @param string $action what page we should go back to
      */
     protected function _showImportError(
-        $message, 
+        $message,
         $module,
         $action = 'Step1'
         )
     {
         $ss = new Sugar_Smarty();
-        
+
         $ss->assign("MESSAGE",$message);
         $ss->assign("ACTION",$action);
         $ss->assign("IMPORT_MODULE",$module);
@@ -576,10 +576,10 @@ eoq;
         $ss->assign("SOURCE","");
         if ( isset($_REQUEST['source']) )
             $ss->assign("SOURCE", $_REQUEST['source']);
-        
+
         echo $ss->fetch('modules/Import/tpls/error.tpl');
     }
-    
+
     /**
      * Returns JS used in this view
      *

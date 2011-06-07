@@ -4739,13 +4739,20 @@ function verify_image_file($path, $jpeg = false)
 		$filetype = $img_size['mime'];
 		//if filetype is jpeg or if we are only allowing jpegs, create jpg image
         if($filetype == "image/jpeg" || $jpeg) {
-            if(imagejpeg($img, $path)) {
+            ob_start();
+            imagejpeg($img);
+            $image = ob_get_clean();
+            // not writing directly because imagejpeg does not work with streams
+            if(file_put_contents($path, $image)) {
                 return true;
             }
         } elseif ($filetype == "image/png") { // else if the filetype is png, create png
         	imagealphablending($img, true);
         	imagesavealpha($img, true);
-    	    if(imagepng($img, $path)) {
+        	ob_start();
+            imagepng($img);
+            $image = ob_get_clean();
+    	    if(file_put_contents($path, $image)) {
                 return true;
     	    }
         } else {

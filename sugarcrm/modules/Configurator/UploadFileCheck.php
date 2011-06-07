@@ -38,9 +38,8 @@ $upload_ok = false;
 if(isset($_FILES['file_1'])){
     $upload = new UploadFile('file_1');
     if($upload->confirm_upload()) {
-        $file_name = "tmp_logo_{$returnArray['forQuotes']}_upload/".$upload->get_stored_file_name();
+        $file_name = "upload://tmp_logo_{$returnArray['forQuotes']}_upload/".$upload->get_stored_file_name();
         if($upload->final_move($file_name)) {
-            $file_name = $upload->get_upload_path($file_name);
             $upload_ok = true;
         }
     }
@@ -51,8 +50,9 @@ if(!$upload_ok) {
     sugar_cleanup();
     exit();
 }
-if(file_exists($file_name) && is_file($file_name)){
-    $returnArray['path']=$file_name;
+if(file_exists($file_name) && is_file($file_name)) {
+    $returnArray['path']=substr($file_name, 9); // strip upload prefix
+    $returnArray['url']= 'cache/images/'.$upload->get_stored_file_name();
     if(!verify_uploaded_image($file_name, $returnArray['forQuotes'] == 'quotes')) {
         $returnArray['data']='other';
         $returnArray['path'] = '';
@@ -66,6 +66,7 @@ if(file_exists($file_name) && is_file($file_name)){
         }
         if (($test>20 || $test<3)&& $returnArray['forQuotes'] == 'quotes')
             $returnArray['data']='size';
+        copy($file_name, sugar_cached('images/'.$upload->get_stored_file_name()));
     }
     if(!empty($returnArray['data'])){
         echo $json->encode($returnArray);
@@ -78,8 +79,5 @@ if(file_exists($file_name) && is_file($file_name)){
     $returnArray['data']='file_error';
     echo $json->encode($returnArray);
 }
-if($rmdir)
-    rmdir_recursive($uploadTmpDir);
 sugar_cleanup();
 exit();
-?>

@@ -3625,9 +3625,7 @@ class InboundEmail extends SugarBean {
 	 */
 	function saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay) {
 		// decide where to place the file temporarily
-		require_once 'include/upload_file.php';
-		$upload = new UploadFile();
-		$uploadDir = ($forDisplay) ? "{$this->EmailCachePath}/{$this->id}/attachments/" : $upload->get_upload_dir();
+		$uploadDir = ($forDisplay) ? "{$this->EmailCachePath}/{$this->id}/attachments/" : "upload://";
 
 		// decide what name to save file as
 		$fileName = $attach->id;
@@ -4397,7 +4395,6 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
 		/* include PHP_Compat library; it auto-feels for PHP5's compiled convert_uuencode() function */
 		require_once('include/PHP_Compat/convert_uudecode.php');
-        require_once 'include/upload_file.php';
 
 		$attach = new Note();
 		$attach->parent_id = $id;
@@ -4438,8 +4435,7 @@ class InboundEmail extends SugarBean {
 		$attach->save();
 
 		$bin = convert_uudecode($UUEncode);
-		$upload = new UploadFile();
-		$filename = $upload->get_upload_path($attach->id);
+		$filename = "upload://{$attach->id}";
 		if(file_put_contents($filename, $bin)) {
     		$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$filename);
 		} else {

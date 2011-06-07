@@ -34,8 +34,7 @@ class UploadFile
 	var $use_soap = false;
 	var $file;
 	var $file_ext;
-	protected $url = "upload/";
-	protected $upload_dir;
+	protected static $url = "upload/";
 
 	protected static $filesError = array(
 			UPLOAD_ERR_OK => 'UPLOAD_ERR_OK - There is no error, the file uploaded with success.',
@@ -54,11 +53,6 @@ class UploadFile
 		// $field_name is the name of your passed file selector field in your form
 		// i.e., for Emails, it is "email_attachmentX" where X is 0-9
 		$this->field_name = $field_name;
-		$this->upload_dir = clean_path(rtrim($GLOBALS['sugar_config']['upload_dir'], '/\\'))."/";
-		// Bug 28408 -  Add automatic creation of upload cache directory if it doesn't exist
-		if ( !is_dir($this->upload_dir ) ) {
-            mkdir($this->upload_dir, 0755, true);
-		}
 	}
 
 	function set_for_soap($filename, $file) {
@@ -73,13 +67,13 @@ class UploadFile
 	 * @param string bean_id note bean ID
 	 * @return string path with file name
 	 */
-	function get_url($stored_file_name, $bean_id)
+	public static function get_url($stored_file_name, $bean_id)
 	{
 		if ( empty($bean_id) && empty($stored_file_name) ) {
-            return $this->url;
+            return self::$url;
 		}
 
-		return $this->url . $bean_id;
+		return self::$url . $bean_id;
 	}
 
 	/**
@@ -87,12 +81,12 @@ class UploadFile
 	 * @param string $filename
 	 * @param string $bean_id
 	 */
-	protected function tryRename($filename, $bean_id)
+	protected static function tryRename($filename, $bean_id)
 	{
-	    $fullname = $this->upload_dir.$bean_id.$filename;
+	    $fullname = "upload://$bean_id.$filename";
 	    if(file_exists($fullname)) {
-            if(!rename($fullname,  $this->upload_dir. $bean_id)) {
-                $GLOBALS['log']->fatal("unable to rename file: $fullname => {$this->upload_dir}$bean_id");
+            if(!rename($fullname,  "upload://$bean_id")) {
+                $GLOBALS['log']->fatal("unable to rename file: $fullname => $bean_id");
             }
 	        return true;
 	    }
@@ -105,23 +99,23 @@ class UploadFile
 	 * @param string bean_id note bean ID
 	 * @return string path with file name
 	 */
-	function get_file_path($stored_file_name,$bean_id, $skip_rename = false)
+	static public function get_file_path($stored_file_name, $bean_id, $skip_rename = false)
 	{
 		global $locale;
 
         // if the parameters are empty strings, just return back the upload_dir
 		if ( empty($bean_id) && empty($stored_file_name) ) {
-            return $this->upload_dir;
+            return "upload://";
 		}
 
 		if(!$skip_rename) {
-    		$this->tryRename(rawurlencode($stored_file_name), $bean_id) ||
-    		$this->tryRename(urlencode($stored_file_name), $bean_id) ||
-    		$this->tryRename($stored_file_name, $bean_id) ||
-    		$this->tryRename($locale->translateCharset( $stored_file_name, 'UTF-8', $locale->getExportCharset()), $bean_id);
+    		self::tryRename(rawurlencode($stored_file_name), $bean_id) ||
+    		self::tryRename(urlencode($stored_file_name), $bean_id) ||
+    		self::tryRename($stored_file_name, $bean_id) ||
+    		self::tryRename($locale->translateCharset( $stored_file_name, 'UTF-8', $locale->getExportCharset()), $bean_id);
 		}
 
-		return $this->upload_dir . $bean_id;
+		return "upload://$bean_id";
 	}
 
 	/**
@@ -130,12 +124,12 @@ class UploadFile
 	 * @param string new_id ID of new (copied) note
 	 * @param string filename Filename of file (deprecated)
 	 */
-	function duplicate_file($old_id, $new_id, $file_name)
+	public static function duplicate_file($old_id, $new_id, $file_name)
 	{
 		global $sugar_config;
 
 		// current file system (GUID)
-		$source = $this->upload_dir . $old_id;
+		$source = "upload://$old_id";
 
 		if(!file_exists($source)) {
 			// old-style file system (GUID.filename.extension)
@@ -153,7 +147,7 @@ class UploadFile
 			}
 		}
 
-		$destination = $this->upload_dir.$new_id;
+		$destination = "upload://$new_id";
 		if(!copy($source, $destination)) {
 			$GLOBALS['log']->error("upload_file could not copy [ {$source} ] to [ {$destination} ]");
 		}
@@ -193,8 +187,8 @@ class UploadFile
 			return false;
 		}
 
-		if(!is_writable($this->upload_dir)) {
-		    $GLOBALS['log']->fatal("ERROR: cannot write to directory: {$this->upload_dir} for uploads");
+		if(!UploadStream::writable()) {
+		    $GLOBALS['log']->fatal("ERROR: cannot write to upload directory");
 			return false;
 		}
 
@@ -296,11 +290,10 @@ class UploadFile
 	 */
 	function final_move($bean_id)
 	{
-        $destination = $this->get_upload_path($bean_id);
-        $dest_dir = dirname($destination);
-        if(!file_exists($dest_dir)) {
-            mkdir($dest_dir, 0755, true);
-        }
+	    $destination = $bean_id;
+	    if(substr($destination, 0, 9) != "upload://") {
+            $destination = "upload://$bean_id";
+	    }
         if($this->use_soap) {
         	if(!file_put_contents($destination, $this->file)){
         	    $GLOBALS['log']->fatal("ERROR: can't save file to $destination");
@@ -308,7 +301,7 @@ class UploadFile
                 return false;
         	}
 		} else {
-			if(!move_uploaded_file($_FILES[$this->field_name]['tmp_name'], $destination)) {
+			if(!UploadStream::move_uploaded_file($_FILES[$this->field_name]['tmp_name'], $destination)) {
 			    $GLOBALS['log']->fatal("ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
 // FIXME:				die("ERROR: can't move_uploaded_file to $destination. You should try making the directory writable by the webserver");
                 return false;
@@ -376,7 +369,7 @@ class UploadFile
 		$end = (strlen($file_name) > 212) ? 212 : strlen($file_name);
 		$ret_file_name = substr($file_name, 0, $end);
 
-		return $this->upload_dir.$ret_file_name;
+		return "upload://$ret_file_name";
 	}
 
 	/**
@@ -384,10 +377,10 @@ class UploadFile
 	 * @param string bean_id ID of the parent bean
 	 * @param string file_name File's name
 	 */
-	function unlink_file($bean_id,$file_name = '')
+	static public function unlink_file($bean_id,$file_name = '')
 	{
-	    if(file_exists($this->upload_dir.$bean_id.$file_name)) {
-            return unlink($this->upload_dir.$bean_id.$file_name);
+	    if(file_exists("upload://$bean_id$file_name")) {
+            return unlink("upload://$bean_id$file_name");
 	    }
     }
 
@@ -398,7 +391,178 @@ class UploadFile
 
     public function get_upload_dir()
     {
-        return $this->upload_dir;
+        return "upload://";
+    }
+}
+
+class UploadStream
+{
+    const STREAM_NAME = "upload";
+    protected static $upload_dir;
+
+    public static function getDir()
+    {
+        if(empty(self::$upload_dir)) {
+            self::$upload_dir = rtrim($GLOBALS['sugar_config']['upload_dir'], '/\\');
+            if(empty(self::$upload_dir)) {
+                self::$upload_dir = "upload";
+            }
+            if(!file_exists(self::$upload_dir)) {
+                mkdir(self::$upload_dir, 0755, true);
+                make_writable(self::$upload_dir);
+            }
+        }
+        return self::$upload_dir;
+    }
+
+    public static function writable()
+    {
+        return is_writable(self::getDir());
+    }
+
+    public function register()
+    {
+        stream_register_wrapper(self::STREAM_NAME, __CLASS__, 0);
+    }
+
+    public static function path($path)
+    {
+        return self::getDir()."/".substr($path, strlen(self::STREAM_NAME)+3); // cut off upload://
+    }
+
+    public static function ensureDir($path, $writable = true)
+    {
+        $path = self::path($path);
+        if(!is_dir($path)) {
+            $res = mkdir($path, 0755, true);
+            if($res && $writable) {
+                make_writable($path);
+            }
+           return $res;
+        }
+        return true;
+    }
+
+    public function dir_closedir()
+    {
+        closedir($this->dirp);
+    }
+
+    public function dir_opendir ($path, $options )
+    {
+        $this->dirp = opendir(self::path($path));
+        return !empty($this->dirp);
+    }
+
+    public function dir_readdir()
+    {
+        return readdir($this->dirp);
+    }
+
+    public function dir_rewinddir()
+    {
+        return rewinddir($this->dirp);
+    }
+
+    public function mkdir($path, $mode, $options)
+    {
+        return mkdir(self::path($path), $mode, ($options&STREAM_MKDIR_RECURSIVE) != 0);
+    }
+
+    public function rename($path_from, $path_to)
+    {
+        return rename(self::path($path_from), self::path($path_to));
+    }
+
+    public function rmdir($path, $options)
+    {
+        return rmdir(self::path($path));
+    }
+
+    public function stream_cast ($cast_as)
+    {
+        return $this->fp;
+    }
+
+    public function stream_close ()
+    {
+        fclose($this->fp);
+        return true;
+    }
+
+    public function stream_eof ()
+    {
+        return feof($this->fp);
+    }
+   public function stream_flush ()
+    {
+        return fflush($this->fp);
+    }
+
+    public function stream_lock($operation)
+    {
+        return flock($this->fp, $operation);
+    }
+
+    public function stream_open($path, $mode)
+    {
+        $fullpath = self::path($path);
+        if($mode == 'r') {
+            $this->fp = fopen($fullpath, $mode);
+        } else {
+            // if we will be writing, try to transparently create the directory
+            $this->fp = @fopen($fullpath, $mode);
+            if(!$this->fp && !file_exists(dirname($fullpath))) {
+                mkdir(dirname($fullpath), 0755, true);
+                $this->fp = fopen($fullpath, $mode);
+            }
+        }
+        return !empty($this->fp);
+    }
+
+    public function stream_read($count)
+    {
+        return fread($this->fp, $count);
+    }
+
+    public function stream_seek($offset, $whence = SEEK_SET)
+    {
+        return fseek($this->fp, $offset, $whence) == 0;
+    }
+
+    public function stream_set_option($option, $arg1, $arg2)
+    {
+        return true;
+    }
+
+    public function stream_stat()
+    {
+        return fstat($this->fp);
+    }
+
+    public function stream_tell()
+    {
+        return ftell($this->fp);
+    }
+    public function stream_write($data)
+    {
+        return fwrite($this->fp, $data);
+    }
+
+    public function unlink($path)
+    {
+        unlink(self::path($path));
+        return true;
+    }
+
+    public function url_stat($path, $flags)
+    {
+        return @stat(self::path($path));
+    }
+
+    public static function move_uploaded_file($upload, $path)
+    {
+        return move_uploaded_file($upload, self::path($path));
     }
 }
 

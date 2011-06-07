@@ -205,8 +205,8 @@ function commitPatch($unlink = false, $type = 'patch'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(sugar_cached("upload/upgrades"))) {
-            $files = findAllFiles(sugar_cached("upload/upgrades/$type"), $files);
+    if(is_dir($base_upgrade_dir)) {
+            $files = findAllFiles("$base_upgrade_dir/$type", $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
@@ -1906,15 +1906,15 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
     $files = array();
 
     // duh, new installs won't have the upgrade folders
-   if(!is_dir(sugar_cached("upload/upgrades"))) {
-	    mkdir_recursive( "$base_upgrade_dir");
+   if(!is_dir($base_upgrade_dir)) {
+	    mkdir_recursive( $base_upgrade_dir);
 	}
 	$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 	foreach( $subdirs as $subdir ){
 		mkdir_recursive( "$base_upgrade_dir/$subdir" );
 	}
 
-    $files = findAllFiles(sugar_cached("upload/upgrades"), $files);
+    $files = findAllFiles($base_upgrade_dir, $files);
     $hidden_input = '';
     unset($_SESSION['hidden_input']);
 
@@ -2034,63 +2034,51 @@ function unlinkTempFiles($manifest, $zipFile) {
 }
 }
 
-function langPackUnpack($unpack_type = 'langpack', $full_file = '') {
+function langPackUnpack($unpack_type, $full_file)
+{
     global $sugar_config;
     global $base_upgrade_dir;
     global $base_tmp_upgrade_dir;
 
     $manifest = array();
     if(!empty($full_file)){
-        $tempFile = $full_file;
-        $base_filename = urldecode($tempFile);
-        $base_filename = preg_replace( "#\\\\#", "/", $base_filename );
-        $base_filename = basename( $base_filename );
-    }else{
-        $tempFile = $sugar_config['upload_dir'].$_FILES['language_pack']['name'];
-        $base_filename = $_FILES['language_pack']['name'];
+        $base_filename = pathinfo(urldecode($full_file), PATHINFO_FILENAME );
+    } else {
+        return "Empty filename supplied";
     }
-    $manifest_file = extractManifest($tempFile, $base_tmp_upgrade_dir);
+    $manifest_file = extractManifest($full_file, $base_tmp_upgrade_dir);
     if($unpack_type == 'module')
-        $license_file = extractFile($tempFile, 'LICENSE.txt', $base_tmp_upgrade_dir);
+        $license_file = extractFile($full_file, 'LICENSE.txt', $base_tmp_upgrade_dir);
 
     if(is_file($manifest_file)) {
 
         if($unpack_type == 'module' && is_file($license_file)){
-            copy($license_file, $sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-license.txt");
+            copy($license_file, $base_upgrade_dir.'/'.$unpack_type.'/'.$base_filename."-license.txt");
         }
-        copy($manifest_file, $sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-manifest.php");
+        copy($manifest_file, $base_upgrade_dir.'/'.$unpack_type.'/'.$base_filename."-manifest.php");
 
         require_once( $manifest_file );
         validate_manifest( $manifest );
         $upgrade_zip_type = $manifest['type'];
 
-        // exclude the bad permutations
-        /*if($upgrade_zip_type != "langpack") {
-            unlinkTempFiles($manifest_file, $tempFile);
-            die( "You can only upload module packs, theme packs, and language packs on this page." );
-        }*/
-
-        //$base_filename = urldecode( $_REQUEST['language_pack_escaped'] );
-        $base_filename = preg_replace( "#\\\\#", "/", $base_filename );
-        $base_filename = basename( $base_filename );
-
         mkdir_recursive( "$base_upgrade_dir/$upgrade_zip_type" );
-        $target_path = getcwd()."/$base_upgrade_dir/$upgrade_zip_type/$base_filename";
-        $target_manifest = remove_file_extension( $target_path ) . "-manifest.php";
+        $target_path = "$base_upgrade_dir/$upgrade_zip_type/$base_filename";
+        $target_manifest = $target_path . "-manifest.php";
 
         if( isset($manifest['icon']) && $manifest['icon'] != "" ) {
-            $icon_location = extractFile( $tempFile, $manifest['icon'], $base_tmp_upgrade_dir );
+            $icon_location = extractFile( $full_file, $manifest['icon'], $base_tmp_upgrade_dir );
             $path_parts = pathinfo( $icon_location );
-            copy( $icon_location, remove_file_extension( $target_path ) . "-icon." . $path_parts['extension'] );
+            copy( $icon_location, $target_path . "-icon." . $path_parts['extension'] );
         }
 
-        // move file from cache/upload to cache/upload/langpack
-        if( copy( $tempFile , $target_path ) ){
+        // move file from uploads to cache
+        // FIXME: where should it be?
+        if( copy( $full_file , $target_path.".zip" ) ){
             copy( $manifest_file, $target_manifest );
-            unlink($tempFile); // remove tempFile
+            unlink($full_file); // remove tempFile
             return "The file $base_filename has been uploaded.<br>\n";
         } else {
-            unlinkTempFiles($manifest_file, $tempFile);
+            unlinkTempFiles($manifest_file, $full_file);
             return "There was an error uploading the file, please try again!<br>\n";
         }
     } else {

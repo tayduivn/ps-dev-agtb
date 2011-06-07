@@ -400,10 +400,6 @@ class EmailMan extends SugarBean{
                 $this->ref_email->status='sent';
                 $retId = $this->ref_email->save();
 
-                if (count($notes) > 0 ) {
-                    if (!class_exists('UploadFile')) require_once('include/upload_file.php');
-                }
-                $upload = new UploadFile();
                 foreach($notes as $note) {
                     if($note->object_name == 'Note') {
                         if (! empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) {
@@ -411,13 +407,13 @@ class EmailMan extends SugarBean{
                             $filename = $note->file->original_file_name;
                             $mime_type = $note->file->mime_type;
                         } else {
-                            $file_location = rawurldecode($upload->get_file_path($note->filename,$note->id));
+                            $file_location = rawurldecode(UploadFile::get_file_path($note->filename,$note->id));
                             $filename = $note->id.$note->filename;
                             $mime_type = $note->file_mime_type;
                         }
                     } elseif($note->object_name == 'DocumentRevision') { // from Documents
                         $filename = $note->id.$note->filename;
-                        $file_location = $upload->get_upload_path($filename);
+                        $file_location = "upload://$filename";
                         $mime_type = $note->file_mime_type;
                     }
 
@@ -429,7 +425,7 @@ class EmailMan extends SugarBean{
                     $noteAudit->file_mime_type=$mime_type;
                     $noteAudit_id=$noteAudit->save();
 
-                    $upload->duplicate_file($note->id, $noteAudit_id, $filename);
+                    UploadFile::duplicate_file($note->id, $noteAudit_id, $filename);
                 }
             }
 

@@ -142,7 +142,6 @@ EOQ;
 		$emailTemplateBodyHtml = from_html($focus->body_html);
 		if(strpos($emailTemplateBodyHtml, '"cache/images/')) {
 			$matches = array();
-			$upload = new UploadFile();
 			preg_match_all('#<img[^>]*[\s]+src[^=]*=[\s]*["\']cache/images/(.+?)["\']#si', $emailTemplateBodyHtml, $matches);
 			foreach($matches[1] as $match) {
 				$filename = urldecode($match);
@@ -152,7 +151,7 @@ EOQ;
 
 				if(file_exists($file_location)) {
 					$id = create_guid();
-					$newFileLocation = $upload->get_upload_path($id);
+					$newFileLocation = "upload://$id";
 					if(!copy($file_location, $newFileLocation)) {
 						$GLOBALS['log']->debug("EMAIL Template could not copy attachment to $newFileLocation");
 					} else {
@@ -258,8 +257,7 @@ EOQ;
 					$newNote->date_entered = '';
 					$newNoteId = $newNote->save();
 
-					$dupeFile = new UploadFile('duplicate');
-					$dupeFile->duplicate_file($note->id, $newNoteId, $note->filename);
+					UploadFile::duplicate_file($note->id, $newNoteId, $note->filename);
 				}
 				continue;
 			}
@@ -296,7 +294,6 @@ EOQ;
 			$doc = new Document();
 			$docRev = new DocumentRevision();
 			$docNote = new Note();
-			$noteFile = new UploadFile('none');
 
 			$doc->retrieve($_REQUEST['documentId'.$i]);
 			$docRev->retrieve($doc->document_revision_id);
@@ -311,7 +308,7 @@ EOQ;
 			$docNote->file_mime_type = $docRev->file_mime_type;
 			$docId = $docNote = $docNote->save();
 
-			$noteFile->duplicate_file($docRev->id, $docId, $docRev->filename);
+			UploadFile::duplicate_file($docRev->id, $docId, $docRev->filename);
 		}
 
 	}

@@ -269,6 +269,54 @@ eoq;
 	}
 
 	/**
+	 * Replace images with locations specified by regex with cid: images
+	 * and attach needed files
+	 * @param string $regex Regular expression
+	 * @param string $local_prefix Prefix where local files are stored
+	 * @param bool $object Use attachment object
+	 */
+	public function replaceImageByRegex($regex, $local_prefix, $object = false)
+	{
+		preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $this->Body, $matches);
+		$i = 0;
+        foreach($matches[2] as $match) {
+			$filename = urldecode($match);
+			$cid = $filename;
+			$file_location = $local_prefix.$filename;
+			if(!file_exists($file_location)) continue;
+			if($object) {
+			    if(preg_match('#&(?:amp;)?type=([\w]+)#i', $matches[0][$i], $typematch)) {
+			        switch(strtolower($typematch[1])) {
+			            case 'documents':
+			                $beanname = 'DocumentRevisions';
+			                break;
+			            case 'notes':
+			                $beanname = 'Notes';
+			                break;
+			        }
+			    }
+			    $mime_type = "application/octet-stream";
+			    if(isset($beanname)) {
+			        $bean = SugarModule::get($beanname)->loadBean();
+    			    $bean->retrieve($filename);
+    			    if(!empty($bean->id)) {
+        			    $mime_type = $bean->file_mime_type;
+        			    $filename = $bean->filename;
+    			    }
+			    }
+			} else {
+			    $mime_type = "image/".strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+			}
+		    $this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+		    $i++;
+        }
+		//replace references to cache with cid tag
+		$this->Body = preg_replace("|\"$regex|i",'"cid:',$this->Body);
+		// remove bad img line from outbound email
+		$this->Body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', '', $this->Body);
+	}
+
+	/**
 	 * @param notes	array of note beans
 	 */
 	function handleAttachments($notes) {
@@ -282,56 +330,11 @@ eoq;
 		}
 		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
 		$this->ClearAttachments();
-		require_once('include/upload_file.php');
-        $upload = new UploadFile();
-		//Handle legacy attachments
-		$filePatternSearch = $upload->get_upload_url();
-		if(strpos($this->Body, "\"{$filePatternSearch}")) {
-			$matches = array();
-			// FIXME: what if $filePatternSearch is URL-encoded?
-			preg_match_all("|{$filePatternSearch}.+?\"|i", $this->Body, $matches);
-			foreach($matches[0] as $match) {
-				$filename = str_replace($filePatternSearch, '', $match);
-				$filename = urldecode(substr($filename, 0, -1)); // this strips final " from the $filename
-				$cid = $filename;
-				$file_location = $upload->get_upload_path($filename);
-				$mime_type = "image/".strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-				if(file_exists($file_location)) {
-					$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
-				}
-			}
-            //replace references to cache with cid tag
-            $this->Body = str_replace($filePatternSearch,'cid:',$this->Body);
-		}
 
-		//Handle secure embeded images.
-		$noteImgRegex = '/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download(\&amp;|\&)id=([^\&]*)[^>]*>/im';
-        $embededImageMatches = array();
-        preg_match_all($noteImgRegex, $this->Body, $embededImageMatches,PREG_SET_ORDER);
+		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
 
-        foreach ($embededImageMatches as $singleMatch )
-        {
-            $fullMatch = $singleMatch[0];
-            $noteId = $singleMatch[2];
-            $cid = $noteId;
-            $filename = $noteId;
-
-            //Retrieve note for mimetype
-            $tmpNote = new Note();
-            $tmpNote->retrieve($noteId);
-            //Replace the src part of img tag with new cid tag
-            $cidRegex = "/src=\"([^\"]*)\"/im";
-            $replaceMatch = preg_replace($cidRegex, "src=\"cid:$noteId\"", $fullMatch);
-
-            //Replace the body, old tag for new tag
-            $this->Body = str_replace($fullMatch, $replaceMatch, $this->Body);
-
-            //Attach the file
-            $file_location = $upload->get_upload_path($noteId);
-
-            if(file_exists($file_location))
-					$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
-        }
+		//Replace any embeded images using the secure entryPoint for src url.
+		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
 
 		//Handle regular attachments.
 		foreach($notes as $note) {
@@ -351,7 +354,7 @@ eoq;
 					}
 				} elseif($note->object_name == 'DocumentRevision') { // from Documents
 					$filename = $note->id.$note->filename;
-					$file_location = $upload->get_upload_path($filename);
+					$file_location = "upload://$filename";
 					$mime_type = $note->file_mime_type;
 				}
 

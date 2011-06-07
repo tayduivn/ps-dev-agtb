@@ -149,7 +149,7 @@
             $GLOBALS['log']->debug("PACKAGE ID: ".$package_id);
             $GLOBALS['log']->debug("CATEGORY ID: ".$category_id);
             $GLOBALS['log']->debug("RELEASE ID: ".$release_id);
-            $result = $this->_pm->download($category_id, $package_id, $release_id, $sugar_config['upload_dir']);
+            $result = $this->_pm->download($category_id, $package_id, $release_id);
             $GLOBALS['log']->debug("RESULT: ".print_r($result,true));
             $success = 'false';
             if($result != null){

@@ -51,7 +51,7 @@ $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    PREP VARS FOR LANG PACK
-    $base_upgrade_dir       = $sugar_config['upload_dir'] . "upgrades";
+    $base_upgrade_dir       = sugar_cached("upgrades");
     $base_tmp_upgrade_dir   = $base_upgrade_dir."/temp";
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ if(isset($_REQUEST['languagePackAction']) && !empty($_REQUEST['languagePackActio
         if(isset($_REQUEST['release_id']) && $_REQUEST['release_id'] != ""){
             require_once('ModuleInstall/PackageManager/PackageManager.php');
             $pm = new PackageManager();
-            $tempFile = $pm->download($_REQUEST['release_id'], $sugar_config['upload_dir']);
+            $tempFile = $pm->download($_REQUEST['release_id']);
             $perform = true;
             //$base_filename = urldecode($tempFile);
         }else{
@@ -76,7 +76,8 @@ if(isset($_REQUEST['languagePackAction']) && !empty($_REQUEST['languagePackActio
             if($file->confirm_upload()){
             $perform = true;
              if(strpos($file->mime_type, 'zip') !== false) { // only .zip files
-                    if(langPackFinalMove($file)) {
+					$tempFile = $file->get_stored_filename();
+					if($file->final_move($tempFile)) {
                         $perform = true;
                     }
                     else {

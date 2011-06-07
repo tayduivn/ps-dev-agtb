@@ -828,7 +828,7 @@ function get_document_revision($session, $id) {
     $dr = new DocumentRevision();
     $dr->retrieve($id);
     if(!empty($dr->filename)){
-        $filename = $sugar_config['upload_dir']."/".$dr->id;
+        $filename = "upload://{$dr->id}";
         if (filesize($filename) > 0) {
         	$contents = sugar_file_get_contents($filename);
         } else {

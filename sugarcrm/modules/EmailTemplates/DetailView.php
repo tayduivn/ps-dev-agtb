@@ -145,8 +145,7 @@ if(! isset($notes_list)) {
 $attachments = '';
 for($i=0; $i<count($notes_list); $i++) {
 	$the_note = $notes_list[$i];
-	//$attachments .= "<a href=\"".UploadFile::get_url($the_note->filename,$the_note->id)."\" target=\"_blank\">". $the_note->filename ."</a><br>";
-	$attachments .= "<a href=\"index.php?entryPoint=download&id=".$the_note->id."&type=Notes\">".$the_note->name.$the_note->description."</a><br />";
+	$attachments .= "<a href=\"index.php?entryPoint=download&id={$the_note->id}&type=Notes\">".$the_note->name.$the_note->description."</a><br />";
 }
 
 $xtpl->assign("ATTACHMENTS", $attachments);

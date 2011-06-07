@@ -43,7 +43,7 @@ class ImportCacheFiles
      */
     public static function getImportDir()
     {
-        return $sugar_config['upload_dir']."import";
+        return "upload://import";
     }
 
     /**
@@ -52,18 +52,12 @@ class ImportCacheFiles
      * @param  string $type string to prepend to the filename, typically to indicate the file's use
      * @return string filename
      */
-    private static function _createFileName(
-        $type = 'misc'
-        )
+    private static function _createFileName($type = 'misc')
     {
-        global $sugar_config, $current_user;
+        global $current_user;
         $importdir = self::getImportDir();
-        if( !is_dir($importdir)) {
-            sugar_mkdir($importdir, 0775, true);
-        }
-
-        if( !is_writable($importdir) )
-            return false;
+        // ensure dir exists and writable
+        UploadStream::ensureDir($importdir, true);
 
         return "$importdir/{$type}_{$current_user->id}.csv";
     }

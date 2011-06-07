@@ -26,8 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry)
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once ('include/upload_file.php');
-
 // User is used to store Forecast information.
 class KBDocument extends SugarBean {
 
@@ -204,7 +202,7 @@ class KBDocument extends SugarBean {
 			$img_name = "def_image_inline"; //todo change the default image.
 		}
 
-		$this->file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+		$this->file_url = "<a href='index.php?entryPoint=download&id={$this->document_revision_id}&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
 		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
 
 		//get last_rev_by user name.
@@ -426,9 +424,8 @@ class KBDocument extends SugarBean {
         $i=0;
         $ret = array()	;
         $ret['attachments'] = array();
-        $upload = new UploadFile();
 		while($a = $GLOBALS['db']->fetchByAssoc($result)) {
-			$fileLocation = $upload->get_upload_path($a['id']);
+			$fileLocation = "upload://{$a['id']}";
 			$note = new Note();
 			$note->id = create_guid();
 			$note->new_with_id = true; // duplicating the note with files
@@ -436,7 +433,7 @@ class KBDocument extends SugarBean {
 			//$note->parent_type = $this->module_dir;
 			$note->name = $a['filename'];
 			$note->filename = $a['filename'];
-			$noteFile = $upload->get_upload_path($note->id);
+			$noteFile = "upload://$note->id";
 			$note->file_mime_type = $a['file_mime_type'];
 			if(!copy($fileLocation, $noteFile)) {
 				$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file $fileLocation => $noteFile");

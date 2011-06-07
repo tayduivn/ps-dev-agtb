@@ -27,8 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once 'include/upload_file.php';
-
 global $mod_strings;
 global $sugar_config;
 
@@ -41,7 +39,6 @@ if(!$focus->ACLAccess('Delete')){
 	sugar_cleanup(true);
 }
 
-$upload = new UploadFile();
 //Retrieve all related kbdocument revisions.
 $kbdocrevs = KBDocument::get_kbdocument_revisions($_REQUEST['record']);
 //Loop through kbdocument revisions and delete one by one.
@@ -55,8 +52,8 @@ if (!empty($kbdocrevs) && is_array($kbdocrevs)) {
 			$thisdocrev = new DocumentRevision();
 			$thisdocrev->retrieve($docrev_id);
 
-           	$upload->unlink_file($docrev_id,$thisdocrev->filename);
-           	$upload->unlink_file($docrev_id);
+           	UploadFile::unlink_file($docrev_id,$thisdocrev->filename);
+           	UploadFile::unlink_file($docrev_id);
 			//mark version deleted
 			$thisdocrev->mark_deleted($thisdocrev->id);
         }

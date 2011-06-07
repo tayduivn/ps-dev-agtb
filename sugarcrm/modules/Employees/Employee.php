@@ -239,7 +239,7 @@ class Employee extends Person {
 		//remove file
 		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
 		{
-			$upload_file->unlink_file($this->picture);
+			UploadFile::unlink_file($this->picture);
 			$this->picture="";			
 		}		
 		
