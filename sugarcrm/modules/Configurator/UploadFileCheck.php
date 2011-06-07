@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/JSON.php');
 require_once('include/entryPoint.php');
+require_once 'include/upload_file.php';
 
 global $sugar_config;
 $supportedExtensions = array('jpg', 'png', 'jpeg');
@@ -33,25 +34,18 @@ if($json->decode(html_entity_decode($_REQUEST['forQuotes']))){
 }else{
     $returnArray['forQuotes']="company";
 }
+$upload_ok = false;
 if(isset($_FILES['file_1'])){
-    $uploadTmpDir=$sugar_config['upload_dir'].'tmp_logo_'.$returnArray['forQuotes'].'_upload';
-    $file_name = $uploadTmpDir . DIRECTORY_SEPARATOR .  cleanFileName(basename($_FILES['file_1']['name']));
-    if(file_exists($uploadTmpDir))
-       rmdir_recursive($uploadTmpDir);
-
-    mkdir_recursive( $uploadTmpDir,null,true );
-    if (!empty($_FILES['file_1']['error'])){
-        rmdir_recursive($uploadTmpDir);
-        $returnArray['data']='not_recognize';
-        echo $json->encode($returnArray);
-        sugar_cleanup();
-        exit();
+    $upload = new UploadFile('file_1');
+    if($upload->confirm_upload()) {
+        $file_name = "tmp_logo_{$returnArray['forQuotes']}_upload/".$upload->get_stored_file_name();
+        if($upload->final_move($file_name)) {
+            $file_name = $upload->get_upload_path($file_name);
+            $upload_ok = true;
+        }
     }
-    if (!move_uploaded_file($_FILES['file_1']['tmp_name'], $file_name)){
-        rmdir_recursive($uploadTmpDir);
-        die("Possible file upload attack!\n");
-    }
-}else{
+}
+if(!$upload_ok) {
     $returnArray['data']='not_recognize';
     echo $json->encode($returnArray);
     sugar_cleanup();

@@ -2068,7 +2068,7 @@ class Email extends SugarBean {
 	 */
 	function replaceImageByRegex($mail, $regex, $local_prefix, $object = false)
 	{
-		preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*\"($regex)(.+?)\"#im", $mail->Body, $matches);
+		preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $mail->Body, $matches);
 		$i = 0;
         foreach($matches[2] as $match) {
 			$filename = urldecode($match);

@@ -3624,11 +3624,10 @@ class InboundEmail extends SugarBean {
 	 * @param bool $forDisplay
 	 */
 	function saveAttachmentBinaries($attach, $msgNo, $thisBc, $part, $forDisplay) {
-		global $sugar_config;
-
 		// decide where to place the file temporarily
-		$uploadDir = $sugar_config['upload_dir']; // typically "cache/uploads/"
-		$uploadDir = ($forDisplay) ? "{$this->EmailCachePath}/{$this->id}/attachments/" : $uploadDir;
+		require_once 'include/upload_file.php';
+		$upload = new UploadFile();
+		$uploadDir = ($forDisplay) ? "{$this->EmailCachePath}/{$this->id}/attachments/" : $upload->get_upload_dir();
 
 		// decide what name to save file as
 		$fileName = $attach->id;
@@ -4398,7 +4397,7 @@ class InboundEmail extends SugarBean {
 		global $sugar_config;
 		/* include PHP_Compat library; it auto-feels for PHP5's compiled convert_uuencode() function */
 		require_once('include/PHP_Compat/convert_uudecode.php');
-
+        require_once 'include/upload_file.php';
 
 		$attach = new Note();
 		$attach->parent_id = $id;
@@ -4439,16 +4438,12 @@ class InboundEmail extends SugarBean {
 		$attach->save();
 
 		$bin = convert_uudecode($UUEncode);
-		if($fp = fopen($sugar_config['upload_dir'].$attach->id, 'wb')) {
-			if(fwrite($fp, $bin)) {
-				$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$attach->filename);
-			} else {
-				$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$attach->filename);
-			}
-			fclose($fp);
+		$upload = new UploadFile();
+		$filename = $upload->get_upload_path($attach->id);
+		if(file_put_contents($filename, $bin)) {
+    		$GLOBALS['log']->debug('InboundEmail saved attachment file: '.$filename);
 		} else {
-			//kbrill Bug#17125
-			$GLOBALS['log']->debug('InboundEmail could not open a filepointer to: '.$sugar_config['upload_dir'].$attach->id);
+    		$GLOBALS['log']->debug('InboundEmail could not create attachment file: '.$filename);
 		}
 	}
 

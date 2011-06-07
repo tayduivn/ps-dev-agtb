@@ -117,7 +117,9 @@ class Note extends SugarBean {
 
 		if($this->parent_type == 'Emails') {
 			if(isset($sugar_config['email_default_delete_attachments']) && $sugar_config['email_default_delete_attachments'] == true) {
-				$removeFile = "{$sugar_config['upload_dir']}{$id}";
+			    require_once 'include/upload_file.php';
+			    $upload = new UploadFile();
+				$removeFile = $upload->get_upload_path($id);
 				if(file_exists($removeFile)) {
 					if(!unlink($removeFile)) {
 						$GLOBALS['log']->error("*** Could not unlink() file: [ {$removeFile} ]");
@@ -135,7 +137,9 @@ class Note extends SugarBean {
 			if($isduplicate=="true"){
 				return true;
 			}
-            $removeFile = clean_path(getAbsolutePath("{$GLOBALS['sugar_config']['upload_dir']}{$this->id}"));
+			require_once 'include/upload_file.php';
+			$upload = new UploadFile();
+			$removeFile = $upload->get_upload_path($this->id);
 		}
 		if(!empty($this->doc_type) && !empty($this->doc_id)){
             $document = ExternalAPIFactory::loadAPI($this->doc_type);
@@ -145,7 +149,7 @@ class Note extends SugarBean {
             $this->doc_id = '';
             $this->doc_url = '';
             $this->filename = '';
-            $this->file_mime_type = ''; 
+            $this->file_mime_type = '';
 		}
 		if(file_exists($removeFile)) {
 			if(!unlink($removeFile)) {
@@ -159,7 +163,7 @@ class Note extends SugarBean {
 			}
 		} else {
 			$this->filename = '';
-			$this->file_mime_type = ''; 
+			$this->file_mime_type = '';
 			$this->file = '';
 			$this->doc_id = '';
 			$this->save();
@@ -316,7 +320,7 @@ class Note extends SugarBean {
 			case 'ACL':return true;
 		}
 		return false;
-	}	
+	}
 }
 
 ?>
