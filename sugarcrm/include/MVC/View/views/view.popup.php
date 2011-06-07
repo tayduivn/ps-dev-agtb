@@ -38,12 +38,7 @@ class ViewPopup extends SugarView{
             ACLController::displayNoAccess();
             sugar_cleanup(true);
         }  
-        
-        //C.L.: Bug 43395 - Do not apply locale formatting to Popup names
-        if($this->bean instanceof Person)
-        {
-           $this->bean->createLocaleFormattedName = false;
-        }
+
         
 		if(isset($_REQUEST['metadata']) && strpos($_REQUEST['metadata'], "..") !== false)
 			die("Directory navigation attack denied.");
