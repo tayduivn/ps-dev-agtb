@@ -21,9 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/connectors/sources/ext/eapm/eapm.php');
+require_once('include/connectors/sources/default/source.php');
 
-class ext_eapm_google extends ext_eapm {
+class ext_eapm_google extends source {
 	protected $_enable_in_wizard = false;
 	protected $_enable_in_hover = false;
 	protected $_has_testing_enabled = false;
