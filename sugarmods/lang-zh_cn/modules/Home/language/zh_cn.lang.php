@@ -206,7 +206,6 @@ $mod_strings = array (
   'LBL_SOURCE_DOMITRSS' => 'DOMIT RSS - 基于domit纯PHP XML解析器的RSS feed解析器.',
   'LBL_SOURCE_PNGBEHAVIOR' => 'PNG Behavior - 使IE支持PNG图形格式.',
   'LBL_SOURCE_HTTP_WEBDAV_SERVER' => 'HTTP_WebDAV_Server - PHP实现的WebDAV服务器.',
-  'LBL_SOURCE_JS_O_LAIT' => 'JavaScript O Lait - Jan-Klaas Kollho开发的一个包含可重用模块和组件的JavaScript增强库.',
   'LBL_SOURCE_PCLZIP' => 'PclZip - Vincent Blavet开发的为Zip格式的文章提供压缩和抽取功能的库',
   'LBL_SOURCE_SMARTY' => 'Smarty - 一个PHP的模板引擎.',
   'LBL_SOURCE_OVERLIBMWS' => 'Overlibmws - 客户端窗口的JavaScript库.',
