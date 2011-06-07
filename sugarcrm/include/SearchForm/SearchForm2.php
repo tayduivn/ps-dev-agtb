@@ -494,8 +494,12 @@ require_once('include/EditView/EditView2.php');
                                 if (!empty($params['type']) && $params['type'] == 'parent'
                                     && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
                                 {
+                                	    require_once('include/SugarFields/SugarFieldHandler.php');
+										$sfh = new SugarFieldHandler();
+                   						$sf = $sfh->getSugarField('Parent');
+                                	
                                         $this->searchFields[$params['type_name']] = array('query_type' => 'default',
-                                                                                          'value'      => $array[$params['type_name']]);
+                                                                                          'value'      => $sf->getSearchInput($params['type_name'], $array));
                                 }
                                 
                                 if(empty($this->fieldDefs[$long_name]['value'])) {
