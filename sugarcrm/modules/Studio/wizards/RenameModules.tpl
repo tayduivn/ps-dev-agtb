@@ -62,15 +62,13 @@
     </tr>
     <tr>
         <td valign="center">
+            <input type="button" value="{$MOD.LBL_BTN_SAVE}"  onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'name="{$MOD.LBL_BTN_SAVE}" />
+        </td>
+        <td valign="center">
             <input type="button" value="{$MOD.LBL_BTN_UNDO}" onclick="jstransaction.undo()" name="{$MOD.LBL_BTN_UNDO}" />
         </td>
         <td valign="center">
             <input type="button" value="{$MOD.LBL_BTN_REDO}" onclick="jstransaction.redo()" name="{$MOD.LBL_BTN_REDO}" />
-        </td>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_SAVE}"
-                onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'
-                name="{$MOD.LBL_BTN_SAVE}" />
         </td>
     </tr>
 </table>
