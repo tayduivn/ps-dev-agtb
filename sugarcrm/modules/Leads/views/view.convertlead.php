@@ -388,14 +388,9 @@ class ViewConvertLead extends SugarView
 				{
 
 					$bean->load_relationship ($leadsRel) ;
-					$relObject = $bean->$leadsRel->getRelationshipObject();
-					if ($relObject->relationship_type == "one-to-many" && $bean->$leadsRel->_get_bean_position())
-					{
-						$id_field = $relObject->rhs_key;
-						$lead->$id_field = $bean->id;
-					} else {
-						$bean->$leadsRel->add($lead);
-					}
+                                        if (!$bean->$leadsRel->isParentRelationship()) {
+                                            $bean->$leadsRel->add($lead);
+                                        }
 				}
 			}
 			//Special case code for opportunities->Accounts
