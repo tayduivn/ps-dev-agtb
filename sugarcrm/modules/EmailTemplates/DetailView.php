@@ -110,11 +110,11 @@ $xtpl->assign("DATE_ENTERED", $focus->date_entered);
 $xtpl->assign("ASSIGNED_USER_NAME", $focus->assigned_user_name);
 
 
-if(ACLController::checkAccess('EmailTemplates', 'edit', true)) {
+if($focus->ACLAccess('EditView')) {
 	$xtpl->parse("main.edit");
 	//$xtpl->out("EDIT");
-		
-} 
+
+}
 //BEGIN SUGARCRM flav=pro ONLY
 
 require_once('modules/Teams/TeamSetManager.php');
