@@ -244,6 +244,13 @@ Calendar.setup = function (params) {
                     } else {
                         input.value = "";
                     }
+					
+					//bug 44147 fix
+                    //does not trigger onchange event
+                    if(input.onchange)
+                    	input.onchange();
+                    //end bugfix
+                    
 
                     dialog.hide();
 					//Fire any on-change events for this input field
