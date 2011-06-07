@@ -215,6 +215,10 @@ class Link2 {
 		return $this->relationship->isSelfReferencing();
 	}
 
+    public function isParentRelationship(){
+        return $this->relationship->isParentRelationship();
+    }
+
 	function getJoin($params, $return_array =false)
 	{
         return $this->relationship->getJoin($this, $params, $return_array);

@@ -144,4 +144,36 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($related[$account2->id]);
     
     }
+
+    public function testParentRelationships()
+	{
+        $lead  = BeanFactory::newBean("Leads");
+        $lead->last_name = "Parent Lead";
+        $lead->save();
+        $this->createdBeans[] = $lead;
+
+        $note1  = BeanFactory::newBean("Notes");
+        $note1->name = "Lead Note 1";
+        $note1->save();
+        $this->createdBeans[] = $note1;
+
+        $note2  = BeanFactory::newBean("Notes");
+        $note2->name = "Lead Note 2";
+        $note2->save();
+        $this->createdBeans[] = $note2;
+
+        //Test saving from the RHS
+        $note1->load_relationship ('leads') ;
+        $note1->leads->add($lead);
+
+        $this->assertEquals($note1->parent_id, $lead->id);
+        $this->assertEquals($note1->parent_type, "Leads");
+
+        //Test saving from the LHS
+        $lead->load_relationship ('notes') ;
+        $lead->notes->add($note2);
+
+        $this->assertEquals($note2->parent_id, $lead->id);
+        $this->assertEquals($note2->parent_type, "Leads");
+    }
 }

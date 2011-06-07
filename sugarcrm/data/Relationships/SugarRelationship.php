@@ -65,7 +65,7 @@ abstract class SugarRelationship
         {
             if (empty($related->id))
                 continue;
-            
+
             if ($link->getSide() == REL_LHS)
                 $this->remove($focus, $relBean);
             else
@@ -155,7 +155,7 @@ abstract class SugarRelationship
         $whereString = "WHERE " . implode(" AND ", $stringSets);
 
         $query = "UPDATE {$this->getRelationshipTable()} set deleted=1 , date_modified = '$date_modified' $whereString";
-        
+
         return DBManagerFactory::getInstance()->query($query);
 
     }
@@ -232,11 +232,22 @@ abstract class SugarRelationship
 	//end function _add_optional_where_clause
 	}
 
+    public function isParentRelationship()
+    {
+        //Update role fields
+        if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"])
+           && $this->def["relationship_role_column"] == "parent_type" && $this->def['rhs_key'] == "parent_id")
+        {
+            return true;
+        }
+        return false;
+    }
+
     public function __get($name)
     {
         if (isset($this->def[$name]))
             return $this->def[$name];
-        
+
         switch($name)
         {
             case "relationship_type":
