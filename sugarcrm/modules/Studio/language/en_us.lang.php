@@ -178,5 +178,6 @@ $mod_strings = array (
 'LBL_LANGUAGE_TOOLTIP' => 'Select the language to edit.',
 'LBL_SINGULAR' => 'Singular Label',
 'LBL_PLURAL' => 'Plural Label',
+'LBL_RENAME_MOD_SAVE_HELP' => 'Click <b>Save</b> to apply the changes.'
 );
 ?>
