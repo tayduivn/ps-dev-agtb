@@ -271,62 +271,53 @@ function multiFiles( list_target){
 		new_row_chk_box.checked =false;
 		new_row_chk_box.disabled =true;
 
-	   var new_row_attach_file = document.createElement( 'input' );
-	   new_row_attach_file.type = 'image';
-       new_row_attach_file.value ='/index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=company_logo.png';
-       new_row_attach_file.disabled ='true';
+        var new_row_attach_file = document.createElement( 'input' );
+        new_row_attach_file.type = 'image';
+        new_row_attach_file.value ='/index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=company_logo.png';
+        new_row_attach_file.disabled ='true';
 
-    var imgElement = document.createElement("img");
-	imgElement.setAttribute("src", "index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=Accounts.gif");
-	imgElement.setAttribute("align","absmiddle");
-	imgElement.setAttribute("alt",lbl_email_attachments_file);
-	imgElement.setAttribute("border","0");
-	imgElement.setAttribute("height","16");
-	imgElement.setAttribute("width","16");
+        var imgElement = document.createElement("img");
+        imgElement.setAttribute("src", "index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=Accounts.gif");
+        imgElement.setAttribute("align","absmiddle");
+        imgElement.setAttribute("alt",lbl_email_attachments_file);
+        imgElement.setAttribute("border","0");
+        imgElement.setAttribute("height","16");
+        imgElement.setAttribute("width","16");
 
-	var new_row_button_embed = document.createElement("img");
-	new_row_button_embed.setAttribute("src", "index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=attachment.gif");
-	new_row_button_embed.setAttribute("align","absmiddle");
-	new_row_button_embed.setAttribute("alt",lbl_email_attachments_embeded);
-	new_row_button_embed.setAttribute("border","0");
-	new_row_button_embed.setAttribute("height","16");
-	new_row_button_embed.setAttribute("width","16");
+        var new_row_button_embed = document.createElement("img");
+        new_row_button_embed.setAttribute("src", "index.php?entryPoint=getImage&themeName="+SUGAR.themes.theme_name+"&imageName=attachment.gif");
+        new_row_button_embed.setAttribute("align","absmiddle");
+        new_row_button_embed.setAttribute("alt",lbl_email_attachments_embeded);
+        new_row_button_embed.setAttribute("border","0");
+        new_row_button_embed.setAttribute("height","16");
+        new_row_button_embed.setAttribute("width","16");
 
-
-
-       /*
-		var new_row_button_embed = document.createElement( 'input' );
-        new_row_button_embed.type = 'button';
-		new_row_button_embed.value = 'Embed';
-       */
 		// References
 		new_row.element = element;
         element.size='40';
+
 		// Delete function
-		new_row_button_remove.onclick= function(){
-			// Remove element from form
-			this.parentNode.element.parentNode.removeChild( this.parentNode.element );
-			var filename = this.parentNode.element.value;
-			filename =  filename.replace(/\\/g,'/');
-			var text = filename.split("/");
-			nbr_elements = text.length;
-	    	if(text[nbr_elements-1].indexOf('gif')>=0 || text[nbr_elements-1].indexOf('bmp') >= 0 || text[nbr_elements-1].indexOf('png') >= 0
-	    	   || text[nbr_elements-1].indexOf('jpg') >= 0 || text[nbr_elements-1].indexOf('GIF')>=0 || text[nbr_elements-1].indexOf('BMP') >= 0
-	    	   || text[nbr_elements-1].indexOf('PNG') >= 0 || text[nbr_elements-1].indexOf('JPG') >= 0)
-	    	   {
-	    		//var imglocation = unescape(document.location.pathname.substr(1));
-	    		//imglocation = imglocation.substring(0,imglocation.lastIndexOf('/')+1);
-                var tiny = tinyMCE.getInstanceById('body_text');
-				var currValTiny = tiny.getContent();
-	            while(currValTiny.indexOf(unescape(text[nbr_elements-1])) != -1){
-				   //check where the space is and keep replacing with $#32
-				   currValTiny = currValTiny.replace(unescape(text[nbr_elements-1]),'QW%%^%%WQ');
-                   currValTiny = currValTiny.replace(/<img[^<]*QW%%\^%%WQ[^>]*>?/,'&#32');
-				}
-				tiny.setContent(currValTiny);
-	    	}
+		new_row_button_remove.onclick = function() {
+			var filePathComponents = this.parentNode.element.value.split("\\"),
+                fileName = (filePathComponents[filePathComponents.length - 1]),
+            
+                // tinymce related
+                tiny = tinyMCE.getInstanceById('body_text'),
+                currValTiny = tiny.getContent();
+
+			// Remove row element from form
+			this.parentNode.element.parentNode.removeChild(this.parentNode.element);
+
+            // find instances of the file and set it to ''
+            while (currValTiny.indexOf(fileName) !== -1) {
+                currValTiny = currValTiny.replace(fileName, 'QW%%^%%WQ');
+                currValTiny = currValTiny.replace(/<img[^<]*QW%%\^%%WQ[^>]*>?/, '');
+            }
+
+		    tiny.setContent(currValTiny);
+
 			// Remove this row from the list
-			this.parentNode.parentNode.removeChild( this.parentNode );
+			this.parentNode.parentNode.removeChild(this.parentNode);
 
 			// Decrement counter
 			this.parentNode.element.multi_selector.count--;
@@ -340,6 +331,7 @@ function multiFiles( list_target){
 			return false;
 		};
 
+        // Embed image into the email body template
         new_row_button_embed.onclick = function() {
             var filePathComponents = element.value.split("\\"),
                 fileName = filePathComponents[filePathComponents.length - 1],
@@ -348,14 +340,10 @@ function multiFiles( list_target){
                 allowedTypes = ['gif', 'bmp', 'png', 'jpg', 'jpeg'],
                 imglocation = sugar_cache_dir + 'images/';
 
-            //check if the file name has a space
-            // fileName = fileName.replace(/ /g, '&#32');
-            fileName = encodeURI(fileName);
-
             //check if filetype is valid
             if (SUGAR.util.validateFileExt(fileName, allowedTypes)) {
                 cid = 'cid:' + fileName;
-                embedImage = "<img src=" + imglocation + decodeURI(fileName) + ">";
+                embedImage = "<img src=" + imglocation + fileName + ">";
                 insert_variable(embedImage);
 
                 this.parentNode.childNodes[2].checked = 'true';
