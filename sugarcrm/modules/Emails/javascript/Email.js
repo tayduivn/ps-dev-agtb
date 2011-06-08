@@ -307,7 +307,7 @@ function multiFiles( list_target){
 			// Remove element from form
 			this.parentNode.element.parentNode.removeChild( this.parentNode.element );
 			var filename = this.parentNode.element.value;
-			var filename =  filename.replace(/\\/g,'/');
+			filename =  filename.replace(/\\/g,'/');
 			var text = filename.split("/");
 			nbr_elements = text.length;
 	    	if(text[nbr_elements-1].indexOf('gif')>=0 || text[nbr_elements-1].indexOf('bmp') >= 0 || text[nbr_elements-1].indexOf('png') >= 0
@@ -340,40 +340,29 @@ function multiFiles( list_target){
 			return false;
 		};
 
-		new_row_button_embed.onclick= function(){
+        new_row_button_embed.onclick = function() {
+            var filePathComponents = element.value.split("\\"),
+                fileName = filePathComponents[filePathComponents.length - 1],
 
-	    	var filename =  element.value.replace(/\\/g,'/')
-			var text = filename.split("/");
-			nbr_elements = text.length;
+                // constants
+                allowedTypes = ['gif', 'bmp', 'png', 'jpg', 'jpeg'],
+                imglocation = sugar_cache_dir + 'images/';
 
-			//check if the file name has a space
-	    	text[nbr_elements-1]=text[nbr_elements-1].replace(/ /g,'&#32');
+            //check if the file name has a space
+            // fileName = fileName.replace(/ /g, '&#32');
+            fileName = encodeURI(fileName);
 
-			if(text[nbr_elements-1].indexOf('gif')>=0 || text[nbr_elements-1].indexOf('bmp') >= 0 || text[nbr_elements-1].indexOf('png') >= 0
-	    	   || text[nbr_elements-1].indexOf('jpg') >= 0 || text[nbr_elements-1].indexOf('GIF')>=0 || text[nbr_elements-1].indexOf('BMP') >= 0
-	    	   || text[nbr_elements-1].indexOf('PNG') >= 0 || text[nbr_elements-1].indexOf('JPG') >= 0)
-               {
-	 			 cid='cid:'+text[nbr_elements-1];
-	 			 /*
-	             var imglocation = unescape(document.location.pathname.substr(1));
-	             imglocation = imglocation.substring(0,imglocation.lastIndexOf('/')+1);
-	             imglocation='/'+imglocation+sugar_cache_dir+'images/';
-	             */
-	             var imglocation = sugar_cache_dir+'images/';
-	             embedImage="<img src="+imglocation+unescape(text[nbr_elements-1])+'>';
-	             //var tiny = tinyMCE.getInstanceById('body_text');
-	             embedImage = embedImage;
-	             embedImage1="<img src=cid:"+text[nbr_elements-1]+' width="1" height="1" >';
-	             //insert_variable(embedImage1);
-	             insert_variable(embedImage);
+            //check if filetype is valid
+            if (SUGAR.util.validateFileExt(fileName, allowedTypes)) {
+                cid = 'cid:' + fileName;
+                embedImage = "<img src=" + imglocation + decodeURI(fileName) + ">";
+                insert_variable(embedImage);
 
-		         this.parentNode.childNodes[2].checked='true';
-               }
-              else{
-              	 alert(select_image);
-              }
-
-		};
+                this.parentNode.childNodes[2].checked = 'true';
+            } else {
+                alert(select_image);
+            }
+        };
 
 		// Set row value
 	/*
