@@ -177,9 +177,18 @@ class ImportViewStep3 extends SugarView
             //file extension should be set to csv ONLY
             $uploadedFileExtension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
             if(empty($uploadedFileExtension) || $uploadedFileExtension != 'csv' ){
-
                 //if the mime type is not text/csv then return error message
                 $this->_showImportError($mod_strings['LBL_IMPORT_ERROR_MIME_TYPE'],$_REQUEST['import_module'],'Step2');
+                return;
+            }
+
+            //Ensure we don't exceed the maximum number of records allowed per import.
+            $lineCount = ImportFile::getNumberOfLinesInfile($_FILES['userfile']['tmp_name']);
+            $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
+            if($lineCount > $maxLineCount)
+            {
+                $errorMsg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
+                $this->_showImportError($errorMsg ,$_REQUEST['import_module'],'Step2');
                 return;
             }
 
@@ -192,21 +201,11 @@ class ImportViewStep3 extends SugarView
         }
 
         // split file into parts
-        $splitter = new ImportFileSplitter(
-                $uploadFileName,
-                $sugar_config['import_max_records_per_file']);
-        $splitter->splitSourceFile(
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES),
-                $has_header
-            );
+        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
+        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile(
-                $uploadFileName,
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
-            );
+        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');

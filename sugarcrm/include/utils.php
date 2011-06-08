@@ -138,6 +138,7 @@ function make_sugar_config(&$sugar_config)
 	'host_name' => empty($host_name) ? 'localhost' : $host_name,
 	'import_dir' => $import_dir,  // this must be set!!
 	'import_max_records_per_file' => 100,
+    'import_max_records_total_limit' => 5000,
 	'languages' => empty($languages) ? array('en_us' => 'English (US)') : $languages,
 	'list_max_entries_per_page' => empty($list_max_entries_per_page) ? 20 : $list_max_entries_per_page,
 	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 10 : $list_max_entries_per_subpanel,

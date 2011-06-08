@@ -22,9 +22,9 @@
 
 // $Id: sugar_version.php 56713 2010-05-27 20:55:55Z kjing $
 
-$sugar_version      = '@_SUGAR_VERSION';
-$sugar_db_version   = '@_SUGAR_VERSION';
-$sugar_flavor       = '@_SUGAR_FLAV';
+$sugar_version      = '6.2.0';
+$sugar_db_version   = '6.2.0';
+$sugar_flavor       = 'ent';
 $sugar_build		= '999';
 $sugar_timestamp    = '2008-08-01 12:00am';
 
