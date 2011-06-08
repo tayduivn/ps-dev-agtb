@@ -114,6 +114,7 @@ $mod_strings = array (
     'LBL_MODULE_NAME' => 'Import',
     'LBL_TRY_AGAIN' => 'Try Again',
     'LBL_ERROR' => 'Error:',
+    'LBL_IMPORT_ERROR_MIME_TYPE' => 'The type of file that you are attempting to upload cannot be used for importing. Please check to make sure that the file extension is .csv and that the file contains comma-separated values.',
 	'ERR_IMPORT_SYSTEM_ADMININSTRATOR'  => 'You cannot import a system administrator user',
     'ERR_MULTIPLE' => 'Multiple columns have been defined with the same field name.',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required fields:',
