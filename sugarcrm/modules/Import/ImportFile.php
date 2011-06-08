@@ -319,4 +319,29 @@ class ImportFile
         else
             ++$this->_updatedCount;
     }
+
+    /**
+     * Determine the number of lines in an actual file.
+     *
+     * @static
+     * @param  $fileName
+     * @return int
+     */
+    static public function getNumberOfLinesInfile($fileName)
+    {
+        $lineCount = 0;
+        //Small performance hit but intentional.
+        ini_set('auto_detect_line_endings', '1');
+        if ($fp = fopen($fileName, "r"))
+        {
+            while( !feof($fp) )
+            {
+                if( fgets($fp) !== FALSE)
+                    $lineCount++;
+            }
+            fclose($fp);
+        }
+        ini_restore('auto_detect_line_endings');
+        return $lineCount;
+    }
 }
