@@ -397,7 +397,7 @@ class RenameModules
 
         foreach($dashletsFiles as $dashletName => $dashletData)
         {
-            if( !isset($dashletData['module']) || $dashletData['module'] != $moduleName || !file_exists($dashletData['meta']) )
+            if( isset($dashletData['module']) && $dashletData['module'] == $moduleName && file_exists($dashletData['meta']) )
             {
                 require_once( $dashletData['meta'] );
                 $dashletTitle = $dashletMeta[$dashletName]['title'];
