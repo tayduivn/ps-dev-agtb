@@ -174,9 +174,10 @@ class ImportViewStep3 extends SugarView
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
         {
 
-            //mimetype is strict and should be set to text/csv ONLY
-            $uploadedMimeType = $uploadFile->getMime($_FILES['userfile']);
-            if(strtolower(($uploadedMimeType)) != 'text/csv'){
+            //file extension should be set to csv ONLY
+            $uploadedFileExtension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
+            if(empty($uploadedFileExtension) || $uploadedFileExtension != 'csv' ){
+
                 //if the mime type is not text/csv then return error message
                 $this->_showImportError($mod_strings['LBL_IMPORT_ERROR_MIME_TYPE'],$_REQUEST['import_module'],'Step2');
                 return;
