@@ -181,16 +181,6 @@ class ImportViewStep3 extends SugarView
                 return;
             }
 
-            //Ensure we don't exceed the maximum number of records allowed per import.
-            $lineCount = ImportFile::getNumberOfLinesInfile($_FILES['userfile']['tmp_name']);
-            $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
-            if($lineCount > $maxLineCount)
-            {
-                $errorMsg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
-                $this->_showImportError($errorMsg ,$_REQUEST['import_module'],'Step2');
-                return;
-            }
-
             $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
             $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
@@ -210,6 +200,17 @@ class ImportViewStep3 extends SugarView
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
             return;
         }
+
+         //Check if we will exceed the maximum number of records allowed per import.
+         $maxRecordsExceeded = FALSE;
+         $maxRecordsWarningMessg = "";
+         $lineCount = $importFile->getNumberOfLinesInfile();
+         $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
+         if($lineCount > $maxLineCount)
+         {
+             $maxRecordsExceeded = TRUE;
+             $maxRecordsWarningMessg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
+         }
 
         // retrieve first 3 rows
         $rows = array();
@@ -556,8 +557,7 @@ eoq;
         // include anything needed for quicksearch to work
         require_once("include/TemplateHandler/TemplateHandler.php");
         $quicksearch_js = TemplateHandler::createQuickSearchCode($fields,$fields,'importstep3');
-        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required));
-
+        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required, $maxRecordsExceeded, $maxRecordsWarningMessg));
         $this->ss->assign('required_fields',implode(', ',$required));
         $this->ss->display('modules/Import/tpls/step3.tpl');
     }
@@ -594,7 +594,7 @@ eoq;
      * @param  array $required fields that are required for the import
      * @return string HTML output with JS code
      */
-    protected function _getJS($required)
+    protected function _getJS($required, $maxRecordsExceeded = FALSE, $maxRecordsWarningMessg = "")
     {
         global $mod_strings;
 
@@ -733,6 +733,17 @@ document.getElementById('addrow').onclick = function(){
 }
 
 YAHOO.util.Event.onDOMReady(function(){
+    if($maxRecordsExceeded)
+    {
+        var contImport = confirm('$maxRecordsWarningMessg');
+        if(!contImport)
+        {
+            var module = document.getElementById('importstep3').import_module.value;
+            var source = document.getElementById('importstep3').source.value;
+            var returnUrl = "index.php?module=Import&action=Step2&import_module=" + module + "&source=" + source;
+            document.location.href = returnUrl;
+        }
+    }
     var selects = document.getElementsByTagName('select');
     for (var i = 0; i < selects.length; ++i ){
         if (selects[i].name.indexOf("colnum_") != -1 ) {

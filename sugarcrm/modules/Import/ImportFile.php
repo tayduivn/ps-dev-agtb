@@ -126,13 +126,21 @@ class ImportFile
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
 
-        // Bug 39494 - Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
-        $bomCheck = fread($this->_fp, 3); 
+        $this->setFpAfterBOM();
+    }
+
+    /**
+     * Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
+     * @return void
+     */
+    private function setFpAfterBOM()
+    {
+        rewind($this->_fp);
+        $bomCheck = fread($this->_fp, 3);
         if($bomCheck != pack("CCC",0xef,0xbb,0xbf)) {
             rewind($this->_fp);
         }
     }
-    
     /**
      * Destructor
      *
@@ -321,27 +329,26 @@ class ImportFile
     }
 
     /**
-     * Determine the number of lines in an actual file.
+     * Determine the number of lines in this file.
      *
-     * @static
-     * @param  $fileName
      * @return int
      */
-    static public function getNumberOfLinesInfile($fileName)
+    public function getNumberOfLinesInfile()
     {
         $lineCount = 0;
-        //Small performance hit but intentional.
-        ini_set('auto_detect_line_endings', '1');
-        if ($fp = fopen($fileName, "r"))
+
+        if ($this->_fp )
         {
-            while( !feof($fp) )
+            rewind($this->_fp);
+            while( !feof($this->_fp) )
             {
-                if( fgets($fp) !== FALSE)
+                if( fgets($this->_fp) !== FALSE)
                     $lineCount++;
             }
-            fclose($fp);
+            //Reset the fp to after the bom if applicable.
+            $this->setFpAfterBOM();
         }
-        ini_restore('auto_detect_line_endings');
+
         return $lineCount;
     }
 }

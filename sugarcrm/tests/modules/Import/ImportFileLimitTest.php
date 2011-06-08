@@ -54,10 +54,15 @@ class ImportFileLimitTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetFileRowCount()
     {
-        $this->assertEquals($this->_fileLineCount1, ImportFile::getNumberOfLinesInfile( $this->_fileSample1) );
-        $this->assertEquals($this->_fileLineCount2, ImportFile::getNumberOfLinesInfile( $this->_fileSample2) );
-        $this->assertEquals($this->_fileLineCount3, ImportFile::getNumberOfLinesInfile( $this->_fileSample3) );
-        $this->assertEquals($this->_fileLineCount4, ImportFile::getNumberOfLinesInfile( $this->_fileSample4) );
+        $if1 = new ImportFile($this->_fileSample1, ',', "\"", FALSE);
+        $if2 = new ImportFile($this->_fileSample2, ',', "\"", FALSE);
+        $if3 = new ImportFile($this->_fileSample3, ',', "\"", FALSE);
+        $if4 = new ImportFile($this->_fileSample4, ',', "\"", FALSE);
+
+        $this->assertEquals($this->_fileLineCount1, $if1->getNumberOfLinesInfile() );
+        $this->assertEquals($this->_fileLineCount2, $if2->getNumberOfLinesInfile() );
+        $this->assertEquals($this->_fileLineCount3, $if3->getNumberOfLinesInfile() );
+        $this->assertEquals($this->_fileLineCount4, $if4->getNumberOfLinesInfile() );
     }
 }
 
