@@ -38,7 +38,7 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
 	function displayList(&$layout_def)
 	{
 		global $focus;
-        
+
 		$module = '';
 		$record = '';
 
@@ -56,8 +56,8 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
 		} else {
 			$value = $layout_def['fields'][$key];
 		}
-			
-		
+
+
 		if(empty($layout_def['target_record_key']))
 		{
 			$record = $layout_def['fields']['ID'];
@@ -68,12 +68,12 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
 			$record = $layout_def['fields'][$record_key];
 		}
 
-		if(!empty($layout_def['target_module_key'])) { 
+		if(!empty($layout_def['target_module_key'])) {
 			if (!empty($layout_def['fields'][strtoupper($layout_def['target_module_key'])])) {
 				$module=$layout_def['fields'][strtoupper($layout_def['target_module_key'])];
-			}	
-		}		
-        
+			}
+		}
+
         if (empty($module)) {
 			if(empty($layout_def['target_module']))
 			{
@@ -84,47 +84,53 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
 				$module = $layout_def['target_module'];
 			}
 		}
-		
+
         //links to email module now need additional information.
         //this is to resolve the information about the target of the emails. necessitated by feature that allow
         //only on email record for the whole campaign.
-        $parent='';       
+        $parent='';
         if (!empty($layout_def['parent_info'])) {
 			if (!empty($focus)){
 	            $parent="&parent_id=".$focus->id;
 	            $parent.="&parent_module=".$focus->module_dir;
-			}				
+			}
         } else {
-            if(!empty($layout_def['parent_id'])) { 
+            if(!empty($layout_def['parent_id'])) {
                 if (isset($layout_def['fields'][strtoupper($layout_def['parent_id'])])) {
                     $parent.="&parent_id=".$layout_def['fields'][strtoupper($layout_def['parent_id'])];
                 }
-            }        
-            if(!empty($layout_def['parent_module'])) { 
+            }
+            if(!empty($layout_def['parent_module'])) {
                 if (isset($layout_def['fields'][strtoupper($layout_def['parent_module'])])) {
                     $parent.="&parent_module=".$layout_def['fields'][strtoupper($layout_def['parent_module'])];
                 }
-            }        
+            }
         }
-		$action = 'DetailView';
-		$value = $layout_def['fields'][$key];
-		global $current_user;
-		if(  !empty($record) &&
-			($layout_def['DetailView'] && !$layout_def['owner_module'] 
-			||  $layout_def['DetailView'] && !ACLController::moduleSupportsACL($layout_def['owner_module']) 
-			|| ACLController::checkAccess($layout_def['owner_module'], 'view', $layout_def['owner_id'] == $current_user->id))){
-                if(!empty($parent)){
-            return '<a href="index.php?module='.$module.'&action='.$action.'&record='.$record.$parent.'" >'."$value</a>";
-                    }
-                
-                return "<a href='#' "
-    			. " onMouseOver=\"javascript:subp_nav('".$module.$parent."', '".$record."', 'd', this);\" " 
-                ." onFocus=\"javascript:subp_nav('".$module."', '".$record."', 'd', this);\">$value</a>";
-		}else{
-			return $value;
-		}
-		
-	}
+        $action = 'DetailView';
+        $value = $layout_def['fields'][$key];
+
+        if (strlen($value) > 60) {
+            $value = substr($value, 0, 60) . ' ...';
+        }
+
+        global $current_user;
+        if (!empty($record) &&
+            ($layout_def['DetailView'] && !$layout_def['owner_module']
+            || $layout_def['DetailView'] && !ACLController::moduleSupportsACL($layout_def['owner_module'])
+            || ACLController::checkAccess($layout_def['owner_module'], 'view', $layout_def['owner_id'] == $current_user->id))) {
+
+            if (!empty($parent)) {
+                return '<a href="index.php?module='.$module.'&action='.$action.'&record='.$record.$parent.'" >'."$value</a>";
+            }
+
+            return "<a href='#' "
+            . " onMouseOver=\"javascript:subp_nav('".$module.$parent."', '".$record."', 'd', this);\" "
+            . " onFocus=\"javascript:subp_nav('".$module."', '".$record."', 'd', this);\">$value</a>";
+        } else {
+            return $value;
+        }
+
+    }
 }
 
 ?>
