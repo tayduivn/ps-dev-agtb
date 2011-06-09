@@ -47,6 +47,9 @@
 	var scrollSpeed = 1;
 	var curTeam = 'all';
 	var scrolling = true;
+
+    var scrollTimeOut;
+    var noticeTimeOut;
 	
     {/literal}{foreach name=rowIteration from=$data key=id item=rowData}{literal}
 	user_notices.push(["{/literal}{$rowData.id}{literal}","{/literal}{$rowData.name}{literal}", "{/literal}{$rowData.description|regex_replace:"/\r*\n/":'<br>'}{literal}", "{/literal}{$rowData.url_title}{literal}", "{/literal}{$rowData.url}{literal}"]);
@@ -76,9 +79,11 @@
 				scrolling = false;
 			}
 		}
-    		setTimeout("scrollNotice()", 100);
+    	    noticeTimeOut = setTimeout("scrollNotice()", 100);
 	}
 	function nextNotice(){
+      //   alert('here now');
+        
 		if(scrolling){
 			if(user_notices.length > 0){
 				if(index >= user_notices.length	){
@@ -103,7 +108,7 @@
 				if(curTeam != 'all'){
 					
 					
-				setTimeout("nextNotice()", delay);
+				scrollTimeOut = setTimeout("nextNotice()", delay);
 				}
 				
 		}
@@ -127,15 +132,16 @@
 </table>
 {literal}
 <script type="text/javascript">
-<!--
-if(window.addEventListener){
-	window.addEventListener("load", nextNotice, false);
-	window.addEventListener("load", scrollNotice, false);
-}else{
-	window.attachEvent("onload", nextNotice);
-	window.attachEvent("onload", scrollNotice);	
-}
--->
+
+    YAHOO.util.Event.onDOMReady(function(){
+
+        clearTimeout(scrollTimeOut);    // clear any previous timeouts
+        clearTimeout(noticeTimeOut);
+
+        nextNotice(); scrollNotice();   // these will set new timeouts 
+
+   });
+    
 </script>
 {/literal}
 
