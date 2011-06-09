@@ -529,8 +529,7 @@ class ImportViewStep4 extends SugarView
                 
             unset($defaultRowValue);
         }
-        
-/////////<<----------------
+
         // save mapping if requested
         $mappingValsArr = $importColumns;
         if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
@@ -555,8 +554,7 @@ class ImportViewStep4 extends SugarView
 
             //set mapping
             $mapping_file->setMapping($mappingValsArr);
-/////////////<<-----
-            
+
             // save default fields
             $defaultValues = array();
             for ( $i = 0; $i < $_REQUEST['columncount']; $i++ )
