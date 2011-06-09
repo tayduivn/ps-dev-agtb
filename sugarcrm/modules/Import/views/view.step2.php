@@ -227,7 +227,7 @@ document.getElementById('goback').onclick = function(){
 }
 
 document.getElementById('gonext').onclick = function(){
-    document.getElementById('importstep2').action.value = 'Step3';
+    document.getElementById('importstep2').action.value = 'Confirm';
     clear_all_errors();
     var isError = false;
     // be sure we specify a file to upload

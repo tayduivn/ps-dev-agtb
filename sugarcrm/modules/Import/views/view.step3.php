@@ -115,11 +115,6 @@ class ImportViewStep3 extends SugarView
             ( empty($sugar_config['import_max_records_per_file'])
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
 
-        // Clear out this user's last import
-        $seedUsersLastImport = new UsersLastImport();
-        $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
-        ImportCacheFiles::clearCacheFiles();
-
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
         $field_map = array();
@@ -201,27 +196,7 @@ class ImportViewStep3 extends SugarView
         }
 
 
-        // handle uploaded file
-        $uploadFile = new UploadFile('userfile');
-        if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
-        {
-
-            //file extension should be set to csv ONLY
-            $uploadedFileExtension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
-            if(empty($uploadedFileExtension) || $uploadedFileExtension != 'csv' ){
-                //if the extension is not .csv then return error message
-                $this->_showImportError($mod_strings['LBL_IMPORT_ERROR_MIME_TYPE'],$_REQUEST['import_module'],'Step2');
-                return;
-            }
-
-            $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
-            $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
-        }
-        else {
-            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
-            return;
-        }
-
+        $uploadFileName = $_REQUEST['file_name'];
         // split file into parts
         $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
         $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
@@ -233,18 +208,6 @@ class ImportViewStep3 extends SugarView
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
             return;
         }
-
-         //Check if we will exceed the maximum number of records allowed per import.
-         $maxRecordsExceeded = FALSE;
-         $maxRecordsWarningMessg = "";
-         $lineCount = $importFile->getNumberOfLinesInfile();
-         $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
-         
-         if( !empty($maxLineCount) && ($lineCount > $maxLineCount) )
-         {
-             $maxRecordsExceeded = TRUE;
-             $maxRecordsWarningMessg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
-         }
 
         // retrieve first 3 rows
         $rows = array();
@@ -593,7 +556,7 @@ eoq;
         // include anything needed for quicksearch to work
         require_once("include/TemplateHandler/TemplateHandler.php");
         $quicksearch_js = TemplateHandler::createQuickSearchCode($fields,$fields,'importstep3');
-        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required, $maxRecordsExceeded, $maxRecordsWarningMessg));
+        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required));
 
         $this->ss->assign('required_fields',implode(', ',$required));
         $this->ss->display('modules/Import/tpls/step3.tpl');
@@ -631,7 +594,7 @@ eoq;
      * @param  array $required fields that are required for the import
      * @return string HTML output with JS code
      */
-    protected function _getJS($required, $maxRecordsExceeded = FALSE, $maxRecordsWarningMessg = "")
+    protected function _getJS($required)
     {
         global $mod_strings;
 
@@ -639,14 +602,13 @@ eoq;
         foreach ($required as $name=>$display) {
             $print_required_array .= "required['$name'] = '". $display . "';\n";
         }
-        $maxRecordsExceededJS = $maxRecordsExceeded?"true":"false";
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
 document.getElementById('goback').onclick = function(){
-    document.getElementById('importstep3').action.value = 'Step2';
+    document.getElementById('importstep3').action.value = 'Confirm';
     document.getElementById('importstep3').to_pdf.value = '0';
     return true;
 }
@@ -770,17 +732,6 @@ document.getElementById('addrow').onclick = function(){
 }
 
 YAHOO.util.Event.onDOMReady(function(){
-    if($maxRecordsExceededJS)
-    {
-        var contImport = confirm('$maxRecordsWarningMessg');
-        if(!contImport)
-        {
-            var module = document.getElementById('importstep3').import_module.value;
-            var source = document.getElementById('importstep3').source.value;
-            var returnUrl = "index.php?module=Import&action=Step2&import_module=" + module + "&source=" + source;
-            document.location.href = returnUrl;
-        }
-    }
     var selects = document.getElementsByTagName('select');
     for (var i = 0; i < selects.length; ++i ){
         if (selects[i].name.indexOf("colnum_") != -1 ) {
