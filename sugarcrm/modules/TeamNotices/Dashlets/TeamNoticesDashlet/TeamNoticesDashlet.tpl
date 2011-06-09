@@ -47,7 +47,6 @@
 	var scrollSpeed = 1;
 	var curTeam = 'all';
 	var scrolling = true;
-
     var scrollTimeOut;
     var noticeTimeOut;
 	
@@ -82,7 +81,6 @@
     	    noticeTimeOut = setTimeout("scrollNotice()", 100);
 	}
 	function nextNotice(){
-      //   alert('here now');
         
 		if(scrolling){
 			if(user_notices.length > 0){
