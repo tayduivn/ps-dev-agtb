@@ -199,43 +199,34 @@ function multiFiles( list_target){
 			// Add reference to this object
 			element.multi_selector = this;
 			// What to do when a file is selected
-            element.onchange = function(){
+            element.onchange = function() {
+                var url = 'index.php?to_pdf=1&module=EmailTemplates&action=AttachFiles',
+                    new_element;
 
-	        //AJAX call begins
-	        var callback = {
-			    upload:function(r) {
-	                var rets = YAHOO.lang.JSON.parse(r.responseText);
-			    }
-	        }
+                //AJAX call begins
+                YAHOO.util.Connect.setForm(document.getElementById("upload_form"), true, true);
+                YAHOO.util.Connect.asyncRequest('POST', url, {upload: function() {}}, null);
+                //AJAX call ends
 
-	        var url ='index.php?to_pdf=1&module=EmailTemplates&action=AttachFiles';
-		    YAHOO.util.Connect.setForm(document.getElementById("upload_form"), true,true);
-            YAHOO.util.Connect.asyncRequest('POST', url, callback,null);
-            //AJAX call ends
+                // New file input
+                new_element = document.createElement('input');
+                new_element.type = 'file';
+                // new_element.name = 'email_attachment' +up++;
 
-               //var theForm = document.getElementById('upload_form');
-                 var theForm = document.getElementById('EditView');
-
-
-				// New file input
-				var new_element = document.createElement( 'input' );
-				new_element.type = 'file';
-		   	   // new_element.name = 'email_attachment' +up++;
-
-				// Add new element
-				this.parentNode.insertBefore( new_element, this );
-				// Apply 'update' to element
-				this.multi_selector.addElement( new_element );
-				// Update list
-				this.multi_selector.addListRow( this );
-				// Hide this: we can't use display:none because Safari doesn't like it
-                 //this.style.display='none';
+                // Add new element
+                this.parentNode.insertBefore(new_element, this);
+                // Apply 'update' to element
+                this.multi_selector.addElement(new_element);
+                // Update list
+                this.multi_selector.addListRow(this);
+                // Hide this: we can't use display:none because Safari doesn't like it
+                //this.style.display='none';
                 //display none works fine for FF and IE
                 this.style.display = 'none';
                 //later for Safari add following
-				//this.style.position = 'absolute';
-				//this.style.left = '-5000px';
-		};
+                //this.style.position = 'absolute';
+                //this.style.left = '-5000px';
+            };
 			// File element counter
 			this.count++;
 			// Most recent element

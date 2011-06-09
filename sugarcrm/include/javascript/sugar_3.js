@@ -4230,6 +4230,7 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
  * Compares a filename with a supplied array of allowed file extensions.
  * @param fileName string
  * @param allowedTypes array of allowed file extensions
+ * @return bool
  */
 SUGAR.util.validateFileExt = function(fileName, allowedTypes) {
     var ext = fileName.split('.').pop();
