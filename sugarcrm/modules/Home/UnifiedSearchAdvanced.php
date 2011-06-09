@@ -144,21 +144,21 @@ class UnifiedSearchAdvanced {
 		return $sugar_smarty->fetch($tpl);
 	}
 
-	
+
 	function search() {
 		if(!file_exists($this->cache_search))
 		{
 			$this->buildCache();
 		}
 		include $this->cache_search;
-		
+
 		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
 		   $this->createUnifiedSearchModulesDisplay();
 		}
-		include('custom/modules/unified_search_modules_display.php');		
-		
-		
+		include('custom/modules/unified_search_modules_display.php');
+
+
 		require_once 'include/ListView/ListViewSmarty.php';
 
 		global $modListHeader, $beanList, $beanFiles, $current_language, $app_strings, $current_user, $mod_strings;
@@ -357,7 +357,7 @@ class UnifiedSearchAdvanced {
 	{
 
 		global $beanList, $beanFiles, $dictionary;
-		
+
 		$supported_modules = array();
 
 		foreach($beanList as $moduleName=>$beanName)
@@ -388,11 +388,11 @@ class UnifiedSearchAdvanced {
 			}
 
 			//Load custom SearchFields.php if it exists
-			if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php")) 
+			if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php"))
 			{
 				require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
-			}				
-			
+			}
+
 			$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $moduleName);
 
 			//If the bean supports unified search or if it's a custom module bean and unified search is not defined
@@ -409,13 +409,13 @@ class UnifiedSearchAdvanced {
 					{
 						$field = 'email' ;
 					}
-						
+
 					//bug: 38139 - allow phone to be searched through Global Search
 					if (strpos($field,'phone') !== false)
 					{
 						$field = 'phone' ;
 					}
-					
+
 					if ( !empty($def['unified_search']) && isset ( $searchFields [ $moduleName ] [ $field ]  ))
 					{
 						$fields [ $field ] = $searchFields [ $moduleName ] [ $field ] ;
@@ -424,7 +424,7 @@ class UnifiedSearchAdvanced {
 
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
-					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) 
+					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE)
 					{
                         $supported_modules [$moduleName]['default'] = true;
                     } else {
@@ -452,9 +452,9 @@ class UnifiedSearchAdvanced {
 		{
 			$this->createUnifiedSearchModulesDisplay();
 		}
-		
+
 		include('custom/modules/unified_search_modules_display.php');
-				
+
 		$sugar_smarty = new Sugar_Smarty();
 		$sugar_smarty->assign('APP', $app_strings);
 		$sugar_smarty->assign('MOD', $mod_strings);
@@ -523,8 +523,8 @@ class UnifiedSearchAdvanced {
 		}
 
 		include('custom/modules/unified_search_modules_display.php');
-		
-		if(isset($_REQUEST['enabled_modules'])) 
+
+		if(isset($_REQUEST['enabled_modules']))
 		{
 			$new_unified_search_modules_display = array();
 
@@ -548,10 +548,11 @@ class UnifiedSearchAdvanced {
 
 	public static function unlinkUnifiedSearchModulesFile() {
 		//clear the unified_search_module.php file
-    	if(file_exists($this->cache_search))
+		$cache_search = sugar_cached('modules/unified_search_modules.php');
+    	if(file_exists($cache_search))
     	{
-    		$GLOBALS['log']->info("unlink {$this->cache_search} file");
-    		unlink($this->cache_search);
+    		$GLOBALS['log']->info("unlink {$cache_search}");
+    		unlink($cache_search);
     	}
 	}
 
@@ -604,8 +605,8 @@ class UnifiedSearchAdvanced {
 		{
 		   return false;
 		}
-		
-	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php')) 
+
+	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php'))
 	    {
 	    	//Log error message and throw Exception
 	    	global $app_strings;
