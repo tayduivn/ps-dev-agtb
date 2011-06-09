@@ -43,36 +43,31 @@
     {
         border-width:0;cursor:move;
     }
-    .helpText
+    div.moduleTitle
     {
-        color: #999999;
-        font-size: 13px;
+        margin-bottom: 5px;
     }
 </style>
 {/literal}
 
-<br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
-            <h2 style='margin-bottom:10px;'>{$title}</h2>
-<table cellspacing="4">
+           {$title}
+<table cellspacing="2">
     <tr>
-        <td colspan="3"><span class="helpText">{$MOD.LBL_RENAME_MOD_SAVE_HELP}</span></td>
+        <td colspan="3">{$MOD.LBL_RENAME_MOD_SAVE_HELP}</td>
     </tr>
+    <tr><td>&nbsp;</td></tr>
     <tr>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_SAVE}"  onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'name="{$MOD.LBL_BTN_SAVE}" />
-        </td>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_UNDO}" onclick="jstransaction.undo()" name="{$MOD.LBL_BTN_UNDO}" />
-        </td>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_REDO}" onclick="jstransaction.redo()" name="{$MOD.LBL_BTN_REDO}" />
+        <td colspan="3">
+            <input type="button" class="button primary" value="{$MOD.LBL_BTN_SAVE}"  onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'name="{$MOD.LBL_BTN_SAVE}" />
+            <input type="button" class="button" value="{$MOD.LBL_BTN_UNDO}" onclick="jstransaction.undo()" name="{$MOD.LBL_BTN_UNDO}" />
+            <input type="button" class="button" value="{$MOD.LBL_BTN_REDO}" onclick="jstransaction.redo()" name="{$MOD.LBL_BTN_REDO}" />
         </td>
     </tr>
 </table>
-
+<div style="height:10px">&nbsp;</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class='edit view' >
 <tr>
     <td>
