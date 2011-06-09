@@ -115,11 +115,19 @@ class SugarView
                 'title' => $this->getBrowserTitle(),
             );
         }
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         if ($this->_getOption('json_output'))
             ob_start();
+        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
+        
 
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
+       
+        if ($this->action === 'Login') {
+            //this is needed for a faster loading login page ie won't render unless the tables are closed
+            ob_flush();
+        }
+        if ($this->_getOption('show_footer')) $this->displayFooter();
+        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
         if ($this->_getOption('json_output'))
         {
             $ajax_ret['content'] .= ob_get_clean();
@@ -128,12 +136,6 @@ class SugarView
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
         }
-        if ($this->action === 'Login') {
-            //this is needed for a faster loading login page ie won't render unless the tables are closed
-            ob_flush();
-        }
-        if ($this->_getOption('show_footer')) $this->displayFooter();
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
         //Do not track if there is no module or if module is not a String
         $this->_track();
     }
