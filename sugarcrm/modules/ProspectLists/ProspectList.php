@@ -175,7 +175,7 @@ class ProspectList extends SugarBean {
 
 	function create_export_members_query($record_id)
 	{
-		$leads_query = "SELECT l.id AS id, 'Leads' AS related_type, '' AS \"name\", l.first_name AS first_name, l.last_name AS last_name,
+		$leads_query = "SELECT l.id AS id, 'Leads' AS related_type, '' AS \"name\", l.first_name AS first_name, l.last_name AS last_name,l.title as title,
 				l.primary_address_street AS primary_address_street,l.primary_address_city AS primary_address_city, l.primary_address_state AS primary_address_state, l.primary_address_postalcode AS primary_address_postalcode, l.primary_address_country AS primary_address_country,
 				l.account_name AS account_name,
 				ea.email_address AS primary_email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -187,7 +187,7 @@ class ProspectList extends SugarBean {
 				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
 				AND l.deleted=0
 				AND ear.deleted=0";
-		$users_query = "SELECT u.id AS id, 'Users' AS related_type, '' AS \"name\", u.first_name AS first_name, u.last_name AS last_name,
+		$users_query = "SELECT u.id AS id, 'Users' AS related_type, '' AS \"name\", u.first_name AS first_name, u.last_name AS last_name,u.title as title,
 				u.address_street AS primary_address_street,u.address_city AS primary_address_city, u.address_state AS primary_address_state,  u.address_postalcode AS primary_address_postalcode, u.address_country AS primary_address_country,
 				'' AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -199,7 +199,7 @@ class ProspectList extends SugarBean {
 				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
 				AND u.deleted=0
 				AND ear.deleted=0";
-		$contacts_query = "SELECT c.id AS id, 'Contacts' AS related_type, '' AS \"name\", c.first_name AS first_name, c.last_name AS last_name,
+		$contacts_query = "SELECT c.id AS id, 'Contacts' AS related_type, '' AS \"name\", c.first_name AS first_name, c.last_name AS last_name,c.title as title,
 				c.primary_address_street AS primary_address_street,c.primary_address_city AS primary_address_city, c.primary_address_state AS primary_address_state,  c.primary_address_postalcode AS primary_address_postalcode, c.primary_address_country AS primary_address_country,
 				a.name AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -213,7 +213,7 @@ class ProspectList extends SugarBean {
 				AND ac.contact_id=c.id
 				AND ac.account_id=a.id
 				AND ear.deleted=0";
-		$prospects_query = "SELECT p.id AS id, 'Prospects' AS related_type, '' AS \"name\", p.first_name AS first_name, p.last_name AS last_name,
+		$prospects_query = "SELECT p.id AS id, 'Prospects' AS related_type, '' AS \"name\", p.first_name AS first_name, p.last_name AS last_name,p.title as title,
 				p.primary_address_street AS primary_address_street,p.primary_address_city AS primary_address_city, '' AS primary_address_state,  p.primary_address_postalcode AS primary_address_postalcode, p.primary_address_country AS primary_address_country,
 				p.account_name AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
@@ -225,7 +225,7 @@ class ProspectList extends SugarBean {
 				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0 
 				AND p.deleted=0
 				AND ear.deleted=0";	
-		$accounts_query = "SELECT a.id AS id, 'Accounts' AS related_type, a.name AS \"name\", '' AS first_name, '' AS last_name,
+		$accounts_query = "SELECT a.id AS id, 'Accounts' AS related_type, a.name AS \"name\", '' AS first_name, '' AS last_name,'' as title,
 				a.billing_address_street AS primary_address_street,a.billing_address_city AS primary_address_city, a.billing_address_state AS primary_address_state, a.billing_address_postalcode AS primary_address_postalcode, a.billing_address_country AS primary_address_country,
 				'' AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
