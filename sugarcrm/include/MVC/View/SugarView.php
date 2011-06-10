@@ -83,6 +83,14 @@ class SugarView
         //trackView has to be here in order to track for breadcrumbs
         $this->_trackView();
 
+        //For the ajaxUI, we need to use output buffering to return the page in an ajax friendly format
+        if ($this->_getOption('json_output')){
+			ob_start();
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+				echo $this->_getModLanguageJS();
+			}
+		}
+
         if ($this->_getOption('show_header')) {
             $this->displayHeader();
         } else {
@@ -92,14 +100,20 @@ class SugarView
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();
-        $ajax_ret = array();
-		if ($this->_getOption('json_output')){
-			ob_start();
-			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
-				echo $this->_getModLanguageJS();
-			}
-		}
+
         $this->display();
+
+        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
+        
+
+        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
+       
+        if ($this->action === 'Login') {
+            //this is needed for a faster loading login page ie won't render unless the tables are closed
+            ob_flush();
+        }
+        if ($this->_getOption('show_footer')) $this->displayFooter();
+        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
         if ($this->_getOption('json_output'))
         {
             $content = ob_get_clean();
@@ -114,27 +128,12 @@ class SugarView
                 'moduleList' => $this->displayHeader(true),
                 'title' => $this->getBrowserTitle(),
             );
-        }
-        if ($this->_getOption('json_output'))
-            ob_start();
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        
-
-        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
-       
-        if ($this->action === 'Login') {
-            //this is needed for a faster loading login page ie won't render unless the tables are closed
-            ob_flush();
-        }
-        if ($this->_getOption('show_footer')) $this->displayFooter();
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
-        if ($this->_getOption('json_output'))
-        {
-            $ajax_ret['content'] .= ob_get_clean();
             if(empty($this->responseTime)) $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
+            $GLOBALS['app']->headerDisplayed = false;
+            ob_flush();
         }
         //Do not track if there is no module or if module is not a String
         $this->_track();

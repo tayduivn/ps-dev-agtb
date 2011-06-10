@@ -252,6 +252,8 @@ abstract class SugarRelationship
         {
             case "relationship_type":
                 return $this->type;
+            case 'relationship_name':
+                return $this->name;
             case "lhs_module":
                 return $this->getLHSModule();
             case "rhs_module":
@@ -264,6 +266,9 @@ abstract class SugarRelationship
                 return array('lhs_table', 'lhs_key', 'rhs_module', 'rhs_table', 'rhs_key', 'relationship_type');
         }
 
-        return $this->$name;
+        if (isset($this->$name))
+            return $this->$name;
+
+        return null;
     }
 }

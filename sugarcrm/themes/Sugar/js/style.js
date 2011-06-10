@@ -315,11 +315,21 @@ SUGAR.themes.loadModuleList = function()
         if (el && el.parentNode)
         {
             var parent = el.parentNode;
-            YAHOO.util.Event.purgeElement(el, true);
-            for( var i in allMenuBars)
-            {
-                if (allMenuBars[i].destroy)
-                    allMenuBars[i].destroy();
+            
+            try{
+                //This can fail hard if multiple events fired at the same time
+                YAHOO.util.Event.purgeElement(el, true);
+                for( var i in allMenuBars)
+                {
+                    if (allMenuBars[i].destroy)
+                        allMenuBars[i].destroy();
+                }
+            }catch (e){
+                if (typeof(console) != "undefined" && typeof(console.log) == "function")
+                {
+                    console.log("Error cleaning up menu");
+                    console.log(e);
+                }
             }
             parent.removeChild(el);
             parent.innerHTML += html;
