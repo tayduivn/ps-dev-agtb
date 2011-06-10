@@ -162,10 +162,7 @@ function sugar_cache_reset()
 }
 
 /**
- * Turn off external caching for the rest of this round trip and for all round 
- * trips for the next cache timeout.  This function should be called when global arrays
- * are affected (studio, module loader, upgrade wizard, ... ) and it is not ok to 
- * wait for the cache to expire in order to see the change.
+ * Clean out whatever opcode cache we may have out there.
  */
 function sugar_clean_opcodes()
 {
