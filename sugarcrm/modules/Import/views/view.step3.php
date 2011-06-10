@@ -114,7 +114,7 @@ class ImportViewStep3 extends SugarView
         $sugar_config['import_max_records_per_file'] =
             ( empty($sugar_config['import_max_records_per_file'])
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
-        
+
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
@@ -292,7 +292,7 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("FIRSTROW", base64_encode(serialize($rows[0])));
 
         // Now build template
-        $this->ss->assign("TMP_FILE", $uploadFileName );
+        $this->ss->assign("TMP_FILE", UploadFile::relativeName($uploadFileName));
         $this->ss->assign("FILECOUNT", $splitter->getFileCount() );
         $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);

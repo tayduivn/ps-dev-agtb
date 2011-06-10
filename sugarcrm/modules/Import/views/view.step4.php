@@ -106,12 +106,13 @@ class ImportViewStep4 extends SugarView
             = $_REQUEST['importlocale_default_locale_name_format'];
 
         // Check to be sure we are getting an import file that is in the right place
-        if(!file_exists("upload://".$_REQUEST['tmp_file'])) {
+        $uploadFile = "upload://".basename($_REQUEST['tmp_file']);
+        if(!file_exists($uploadFile)) {
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
         }
         // Open the import file
         $importFile = new ImportFile(
-                        "upload://".$_REQUEST['tmp_file'],
+                        $uploadFile,
                         $_REQUEST['custom_delimiter'],
                         html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
                         );
@@ -719,5 +720,5 @@ class ImportViewStep4 extends SugarView
         }
         return $advancedMappingSettings;
     }
-    
+
 }
