@@ -38,18 +38,14 @@ if(!is_admin($current_user)) {
 }
 
 require_once('include/utils/db_utils.php');
-
 require_once('include/utils/zip_utils.php');
-
 require_once('modules/UpgradeWizard/uw_utils.php');
-
 require_once('modules/Administration/UpgradeHistory.php');
 
 $GLOBALS['top_message'] = '';
 
 
 if(!isset($locale) || empty($locale)) {
-
 	$locale = new Localization();
 }
 global $sugar_config;
@@ -57,9 +53,9 @@ global $sugar_flavor;
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	SYSTEM PREP
-$base_upgrade_dir       = $sugar_config['upload_dir'] . "upgrades";
-$base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
-$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
+$base_upgrade_dir       = "upload://upgrades";
+$base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
+$subdirs = array('full', 'langpack', 'module', 'patch', 'theme');
 
 global $sugar_flavor;
 

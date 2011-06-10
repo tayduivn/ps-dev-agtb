@@ -62,7 +62,7 @@ switch($run) {
             if(!empty($_SESSION['ML_PATCHES'])){
             	$release_map = $_SESSION['ML_PATCHES'][$_REQUEST['release_id']];
             	if(!empty($release_map)){
-            		$tempFile = $pm->download($release_map['category_id'], $release_map['package_id'], $_REQUEST['release_id'], $sugar_config['upload_dir']);
+            		$tempFile = $pm->download($release_map['category_id'], $release_map['package_id'], $_REQUEST['release_id']);
             		$perform = true;
 					if($release_map['type'] != 'patch'){
 						$pm->performSetup($tempFile, $release_map['type'], false);
@@ -72,29 +72,30 @@ switch($run) {
             }
 
             $base_filename = urldecode($tempFile);
-        }
-        else if( empty( $_FILES['upgrade_zip']['tmp_name'] ) ) {
-			logThis('ERROR: no file uploaded!');
-			echo $mod_strings['ERR_UW_NO_FILE_UPLOADED'];
-
-			// add PHP error if isset
-			if(isset($_FILES['upgrade_zip']['error']) && !empty($_FILES['upgrade_zip']['error'])) {
-				$out = "<b><span class='error'>{$mod_strings['ERR_UW_PHP_FILE_ERRORS'][$_FILES['upgrade_zip']['error']]}</span></b><br />";
-			}
-		} else {
-			if(!move_uploaded_file($_FILES['upgrade_zip']['tmp_name'], $sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'])) {
-				logThis('ERROR: could not move temporary file to final destination!');
-				unlinkTempFiles();
-				$out = "<b><span class='error'>{$mod_strings['ERR_UW_NOT_VALID_UPLOAD']}</span></b><br />";
-			} else {
-				$tempFile = $sugar_config['upload_dir'].$_FILES['upgrade_zip']['name'];
-				logThis('File uploaded to '.$tempFile);
-                $base_filename = urldecode( $_REQUEST['upgrade_zip_escaped'] );
-                $perform = true;
-			}
+        } else {
+            $upload = new UploadFile('upgrade_zip');
+            if(!$upload->confirm_upload()) {
+    			logThis('ERROR: no file uploaded!');
+	    		echo $mod_strings['ERR_UW_NO_FILE_UPLOADED'];
+                $error = $upload->get_upload_error();
+		    	// add PHP error if isset
+			    if($error) {
+				    $out = "<b><span class='error'>{$mod_strings['ERR_UW_PHP_FILE_ERRORS'][$error]}</span></b><br />";
+			    }
+            } else {
+               $tempFile = $upload->get_stored_file_name();
+               if(!$upload->final_move($tempFile)) {
+    				logThis('ERROR: could not move temporary file to final destination!');
+    				unlinkUWTempFiles();
+    				$out = "<b><span class='error'>{$mod_strings['ERR_UW_NOT_VALID_UPLOAD']}</span></b><br />";
+               } else {
+    				logThis('File uploaded to '.$tempFile);
+                    $base_filename = urldecode( $_REQUEST['upgrade_zip_escaped'] );
+                    $perform = true;
+               }
+            }
         }
         if($perform){
-
 		    $manifest_file = extractManifest($tempFile);
 
 			if(is_file($manifest_file)) {
@@ -109,7 +110,7 @@ switch($run) {
 				// exclude the bad permutations
 				if($upgrade_zip_type != "patch") {
 					logThis('ERROR: incorrect patch type found: '.$upgrade_zip_type);
-					unlinkTempFiles();
+					unlinkUWTempFiles();
 					$out = "<b><span class='error'>{$mod_strings['ERR_UW_ONLY_PATCHES']}</span></b><br />";
 					break;
 				}

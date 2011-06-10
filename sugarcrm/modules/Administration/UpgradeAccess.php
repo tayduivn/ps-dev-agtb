@@ -35,7 +35,7 @@ RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
 RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
-RedirectMatch 403 {$ignoreCase}/+cache/+upload
+RedirectMatch 403 {$ignoreCase}/+upload
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 # END SUGARCRM RESTRICTIONS
@@ -64,18 +64,10 @@ $uploadDir='';
 $uploadHta='';
 
 if (empty($GLOBALS['sugar_config']['upload_dir'])) {
-    $GLOBALS['sugar_config']['upload_dir']=sugar_cached('upload/');
+    $GLOBALS['sugar_config']['upload_dir']='upload/';
 }
-$uploadDir = $sugar_config['upload_dir'];
-if(file_exists($uploadDir)){
-	$uploadHta = $uploadDir.".htaccess";
-}
-else{
-	mkdir_recursive($uploadDir);
-	if(is_dir($uploadDir)){
-		$uploadHta = $uploadDir.".htaccess";
-	}
-}
+
+$uploadHta = "upload://.htaccess";
 
 $denyAll =<<<eoq
 <Directory>

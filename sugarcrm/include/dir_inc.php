@@ -176,6 +176,7 @@ function findAllFiles( $the_dir, $the_array, $include_dirs=false, $ext='', $excl
 			}
 		}
 	}
+	$the_dir = rtrim($the_dir, "/\\");
 	//end
     if(!is_dir($the_dir)) {
 		return $the_array;
@@ -201,10 +202,10 @@ function findAllFiles( $the_dir, $the_array, $include_dirs=false, $ext='', $excl
 			if($include_dirs) {
 				$the_array[] = clean_path("$the_dir/$f");
 			}
-            $the_array = findAllFiles( "$the_dir/$f/", $the_array, $include_dirs, $ext);
+            $the_array = findAllFiles( "$the_dir/$f", $the_array, $include_dirs, $ext);
         } else {
 			if(empty($ext) || preg_match('/'.$ext.'$/i', $f)){
-				$the_array[] = clean_path("$the_dir/$f");
+				$the_array[] = "$the_dir/$f";
 			}
         }
 

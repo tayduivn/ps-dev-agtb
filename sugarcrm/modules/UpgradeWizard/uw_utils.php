@@ -603,7 +603,7 @@ function deleteCache(){
 	       	}
 		}
 	}
-	
+
 	//Clean jsLanguage from cache
 	$cachedir = sugar_cached('jsLanguage');
 	if(is_dir($cachedir)){
@@ -3152,18 +3152,16 @@ function unlinkUploadFiles() {
 //	}
 }
 
-if ( !function_exists('unlinkTempFiles') ) {
 /**
  * deletes files created by unzipping a package
  */
-function unlinkTempFiles() {
+function unlinkUWTempFiles() {
 	global $sugar_config;
 	global $path;
 
 	logThis('at unlinkTempFiles()');
 	$tempDir='';
-	$sugar_config['upload_dir']=sugar_cached('upload/');
-    $tempDir = clean_path($sugar_config['upload_dir'].'upgrades/temp');
+    $tempDir = sugar_cached('upgrades/temp');
 
     if(file_exists($tempDir) && is_dir($tempDir)){
 		$files = findAllFiles($tempDir, array(), false);
@@ -3182,14 +3180,13 @@ function unlinkTempFiles() {
 				@rmdir($dir);
 			}
 		}
-		$cacheFile = "modules/UpgradeWizard/_persistence.php";
+		$cacheFile = sugar_cached("modules/UpgradeWizard/_persistence.php");
 		if(is_file($cacheFile)) {
 			logThis("Unlinking Upgrade cache file: '_persistence.php'", $path);
 			@unlink($cacheFile);
 		}
 	}
 	logThis("finished!");
-}
 }
 
 /**
@@ -4841,7 +4838,7 @@ function upgradeTeamColumn($bean, $column_name) {
 			$GLOBALS['db']->addColumn($bean->table_name, $bean->field_defs['team_set_id']);
 		}
 		$indexArray =  $GLOBALS['db']->helper->get_indices($bean->table_name);
-		
+
         $indexName = getValidDBName('idx_'.strtolower($bean->table_name).'_tmst_id', true, 34);
         $indexDef = array(
 					 array(
@@ -4960,12 +4957,12 @@ function upgradeModulesForTeam() {
             {
 	            //grab the existing system tabs
 	            $tabs = $newTB->get_system_tabs();
-	
+
 	            //add the new tabs to the array
 	            foreach($newModuleList as $nm ){
 	              $tabs[$nm] = $nm;
 	            }
-	
+
 	            $newTB->set_system_tabs($tabs);
             }
             logThis('module tabs updated',$path);
@@ -5805,7 +5802,7 @@ function upgradeSugarCache($file)
 
 /**
  * upgradeDisplayedTabsAndSubpanels
- * 
+ *
  * @param $version String value of current system version (pre upgrade)
  */
 function upgradeDisplayedTabsAndSubpanels($version)
@@ -5814,33 +5811,33 @@ function upgradeDisplayedTabsAndSubpanels($version)
 	{
 		logThis('start upgrading system displayed tabs and subpanels');
 	    require_once('modules/MySettings/TabController.php');
-	    $tc = new TabController();	
-	    
-	    //grab the existing system tabs
-	    $tabs = $tc->get_tabs_system();  
+	    $tc = new TabController();
 
-	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists) 
+	    //grab the existing system tabs
+	    $tabs = $tc->get_tabs_system();
+
+	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists)
 	    //to displayed tabs unless explicitly set to hidden
 	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
 	    $added_tabs = array();
-	    
+
 	    foreach($modules_to_add as $module)
 	    {
 		       $tabs[0][$module] = $module;
 		       $added_tabs[] = $module;
 	    }
-	    
+
 	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
-	    $tc->set_system_tabs($tabs[0]);    
-	    logThis('finish upgrading system displayed tabs and subpanels'); 
+	    $tc->set_system_tabs($tabs[0]);
+	    logThis('finish upgrading system displayed tabs and subpanels');
 	}
 }
 
 
 /**
  * unlinkUpgradeFiles
- * This is a helper function to clean up 
- * 
+ * This is a helper function to clean up
+ *
  * @param $version String value of current system version (pre upgrade)
  */
 function unlinkUpgradeFiles($version)
@@ -5849,24 +5846,24 @@ function unlinkUpgradeFiles($version)
 	{
 	   return;
 	}
-	
+
 	logThis('start unlinking files from previous upgrade');
 	if($version < '620')
 	{
 	   //list of files to remove
 	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/sugarColors.xml');
-	   
+
 	   foreach($files_to_remove as $f)
 	   {
 		   if(file_exists($f))
 		   {
 		   	  logThis('removing file: ' . $f);
 		   	  unlink($f);
-		   }  
+		   }
 	   }
 	}
 	logThis('end unlinking files from previous upgrade');
-	
+
 	if($version < '620')
 	{
 		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php)');
@@ -5879,7 +5876,7 @@ function unlinkUpgradeFiles($version)
 			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
 	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
 	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
-	        );		
+	        );
 		} else {
 			$dr_files = array(
 	         'modules/DocumentRevisions/DetailView.html' => 'a8356ff20cd995daffe6cb7f7b8b2340',
@@ -5888,30 +5885,30 @@ function unlinkUpgradeFiles($version)
 	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
 	        );
 		}
-	
+
 		foreach($dr_files as $rev_file=>$hash)
 		{
 			if(file_exists($rev_file))
 			{
 				//It's a match here so let's just remove the file
-				if (md5(file_get_contents($rev_file)) == $hash) 
+				if (md5(file_get_contents($rev_file)) == $hash)
 				{
 					logThis('removing file ' . $rev_file);
 					unlink($rev_file);
 				} else {
-					if(!copy($rev_file, $rev_file . '.suback.bak')) 
+					if(!copy($rev_file, $rev_file . '.suback.bak'))
 					{
 					  logThis('error making backup for file ' . $rev_file);
 					} else {
 					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
 					  unlink($rev_file);
 					}
-				} 
+				}
 			}
 		}
-		
+
 		logThis('end upgrade for DocumentRevisions classic files');
-	}	
+	}
 }
 
 if (!function_exists("getValidDBName"))

@@ -26,29 +26,21 @@ define("CREDENTIAL_CATEGORY", "ml");
 define("CREDENTIAL_USERNAME", "username");
 define("CREDENTIAL_PASSWORD", "password");
 
-
-
-
-
 require_once('include/nusoap/nusoap.php');
-
 require_once('include/utils/zip_utils.php');
-
 require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
 require_once('ModuleInstall/ModuleInstaller.php');
-
 require_once('include/entryPoint.php');
 require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
 
-
- class PackageManager{
+class PackageManager{
     var $soap_client;
 
     /**
      * Constructor: In this method we will initialize the nusoap client to point to the hearbeat server
      */
     function PackageManager(){
-        $this->db = & DBManagerFactory::getInstance();
+        $this->db = DBManagerFactory::getInstance();
     }
 
     function initializeComm(){
@@ -628,43 +620,32 @@ require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
         global $sugar_config;
         global $current_language;
         $uh = new UpgradeHistory();
-        $base_upgrade_dir       = sugar_cached("/upgrades");
-        $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
-        $uContent = findAllFiles( "$base_upgrade_dir", array() , false, 'zip',$base_tmp_upgrade_dir);
-         //other variations of zip file i.e. ZIP, zIp,zIP,Zip,ZIp,ZiP
-        $extns = array( 'ZIP','ZIp','ZiP','Zip','zIP','zIp','ziP');
-        foreach($extns as $extn){
-        	$uContent = array_merge($uContent,findAllFiles( "$base_upgrade_dir", array() , false, $extn,$base_tmp_upgrade_dir));
-        }
+        $base_upgrade_dir       = "upload://upgrades";
+        $base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
+        $uContent = findAllFiles( $base_upgrade_dir, array() , false, 'zip');
         $upgrade_contents = array();
         $content_values = array_values($uContent);
         $alreadyProcessed = array();
         foreach($content_values as $val){
         	if(empty($alreadyProcessed[$val])){
         		$upgrade_contents[] = $val;
-        		$alreadyProcessed["$val"] = true;
+        		$alreadyProcessed[$val] = true;
         	}
         }
 
         $upgrades_available = 0;
         $packages = array();
         $mod_strings = return_module_language($current_language, "Administration");
-        foreach($upgrade_contents as $upgrade_content)
-        {
-            if(!preg_match("#.*\.zip\$#", strtolower($upgrade_content)) || preg_match("#.*./zips/.*#", strtolower($upgrade_content)))
-            {
+        foreach($upgrade_contents as $upgrade_content) {
+            if(!preg_match('#.*\.zip$#', strtolower($upgrade_content)) || preg_match("#.*./zips/.*#", strtolower($upgrade_content))) {
                 continue;
             }
 
-            $upgrade_content = clean_path($upgrade_content);
-            // Bug 22285 - fix for UNC paths
-            if ( substr($upgrade_content,0,2) == '\\\\' )
-                $upgrade_content = '\\\\'.$upgrade_content;
             $the_base = basename($upgrade_content);
             $the_md5 = md5_file($upgrade_content);
             $md5_matches = $uh->findByMd5($the_md5);
     		$file_install = $upgrade_content;
-            if(0 == sizeof($md5_matches))
+            if(empty($md5_matches))
             {
                 $target_manifest = remove_file_extension( $upgrade_content ) . '-manifest.php';
                 require_once($target_manifest);
@@ -683,45 +664,35 @@ require_once('ModuleInstall/PackageManager/PackageManagerComm.php');
 				}
 
 				//check dependencies first
-				if(!empty($dependencies)){
-
+				if(!empty($dependencies)) {
 					$uh = new UpgradeHistory();
 					$not_found = $uh->checkDependencies($dependencies);
 					if(!empty($not_found) && count($not_found) > 0){
 							$file_install = 'errors_'.$mod_strings['ERR_UW_NO_DEPENDENCY']."[".implode(',', $not_found)."]";
-					}//fi
+					}
 				}
 
-                if($view == 'default' && $manifest_type != 'patch')
-                {
+                if($view == 'default' && $manifest_type != 'patch') {
                     continue;
                 }
 
                 if($view == 'module'
-                    && $manifest_type != 'module' && $manifest_type != 'theme' && $manifest_type != 'langpack')
-                {
+                    && $manifest_type != 'module' && $manifest_type != 'theme' && $manifest_type != 'langpack') {
                     continue;
                 }
 
-                if(empty($manifest['icon'])){
+                if(empty($manifest['icon'])) {
                     $icon = $this->getImageForType( $manifest['type'] );
-                }else{
+                } else {
                     $path_parts = pathinfo( $manifest['icon'] );
                     $icon = "<img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
                 }
 
                 $upgrades_available++;
 
-				// uploaded file in cache/upload
-				// FIXME: where to store the file
-		        $fileS = explode('/', $upgrade_content);
-		        $c = count($fileS);
-		        $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-		        $upload_file = "uploads://$fileName";
-
-                $upgrade_content = urlencode($upgrade_content);
-                $upload_content = urlencode($upload_file);
-                $packages[] = array('name' => $name, 'version' => $version, 'published_date' => $published_date, 'description' => $description, 'uninstallable' =>$uninstallable, 'type' => $type, 'file_install' => fileToHash($file_install), 'file' => fileToHash($upgrade_content), 'upload_file' => $upload_content);
+                $packages[] = array('name' => $name, 'version' => $version, 'published_date' => $published_date,
+                	'description' => $description, 'uninstallable' =>$uninstallable, 'type' => $type,
+                	'file' => fileToHash($upgrade_content), 'file_install' => fileToHash($upgrade_content));
             }//fi
         }//rof
         return $packages;

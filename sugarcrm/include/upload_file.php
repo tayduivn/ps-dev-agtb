@@ -155,7 +155,7 @@ class UploadFile
 
 	public function get_upload_error()
 	{
-	    if(isset($this->field_name) && isset($_FILES['email_attachment']['error'])) {
+	    if(isset($this->field_name) && isset($_FILES[$this->field_name]['error'])) {
 	        return $_FILES[$this->field_name]['error'];
 	    }
 	    return false;
@@ -354,6 +354,7 @@ class UploadFile
                 unlink($new_destination);
             }
         }
+
 	}
 
 	/**
@@ -392,6 +393,31 @@ class UploadFile
     public function get_upload_dir()
     {
         return "upload://";
+    }
+
+    /**
+     * Return real FS path of the file
+     * @param string $path
+     */
+    public static function realpath($path)
+    {
+       if(substr($path, 0, 9) == "upload://") {
+            return realpath(UploadStream::path($path));
+       } else {
+            return realpath($path);
+       }
+    }
+
+    /**
+     * Return path of uploaded file relative to uploads dir
+     * @param string $path
+     */
+    public static function relativeName($path)
+    {
+        if(substr($path, 0, 9) == "upload://") {
+            $path = substr($path, 9);
+        }
+        return $path;
     }
 }
 

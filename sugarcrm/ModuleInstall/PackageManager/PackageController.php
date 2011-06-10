@@ -326,6 +326,20 @@
             echo 'result = ' . $json->encode(array('result' => 'true'));
         }
 
+        /**
+         * Remove metadata files such as foo-manifest
+         * Enter description here ...
+         * @param unknown_type $file
+         * @param unknown_type $meta
+         */
+        protected function rmMetaFile($file, $meta)
+        {
+            $metafile = pathinfo($file, PATHINFO_DIRNAME)."/". pathinfo($file, PATHINFO_FILENAME)."-$meta.php";
+            if(file_exists($metafile)) {
+                unlink($metafile);
+            }
+        }
+
  		function remove(){
         	$json = getJSONobj();
             $file = '';
@@ -336,6 +350,9 @@
             $GLOBALS['log']->debug("FILE TO REMOVE: ".$file);
             if(!empty($file)){
             	unlink($file);
+            	foreach(array("manifest", "icon") as $meta) {
+            	    $this->rmMetaFile($file, $meta);
+            	}
             }
             echo 'result = ' . $json->encode(array('result' => 'true'));
         }
