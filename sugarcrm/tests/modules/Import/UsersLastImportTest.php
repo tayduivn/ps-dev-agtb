@@ -97,7 +97,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
        
-        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
     }
     
     public function testUndo()
@@ -116,7 +116,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
     }
     
     /**
@@ -130,7 +130,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
         $focus = new Account();
         $focus->id = "Account_".$unid;
         
-        $last_import = new UsersLastImport();
+        $last_import = new UsersLastImport();http://www.php.net/manual/en/refs.database.php
         $last_import->assigned_user_id = $GLOBALS['current_user']->id;
         $last_import->import_module = 'Accounts';
         $last_import->bean_type = 'Account';
@@ -160,11 +160,11 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
     	
     	$result = $GLOBALS['db']->query("SELECT * FROM email_addr_bean_rel where id = '{$this->email_addr_bean_rel_id}'");
 		$rows = $GLOBALS['db']->fetchByAssoc($result);
-    	$this->assertNull($rows);
+    	$this->assertFalse($rows);
     	
     	$result = $GLOBALS['db']->query("SELECT * FROM email_addresses where id = '{$this->email_address_id}'");
 		$rows = $GLOBALS['db']->fetchByAssoc($result);
-    	$this->assertNull($rows);
+    	$this->assertFalse($rows);
         
         $GLOBALS['db']->query("DELETE FROM users_last_import WHERE id = '{$last_import->id}'");
     }
@@ -184,7 +184,7 @@ class UsersLastImportTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertNull($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
 
     }
     
