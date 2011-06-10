@@ -181,28 +181,16 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 
         $delete_me = hashToFile($delete_me);
 
-        $checkFile = clean_path(trim(strtolower($delete_me)));
+        $checkFile = strtolower($delete_me);
 
-		if(false !== strpos($checkFile, '.zip')) { // is zip file?
-			if(false !== strpos($checkFile, $sugar_config['upload_dir'])) { // is in upload dir?
-				if(false === strpos($checkFile, "..")) { // no dir navigation
-					if(!file_exists($checkFile)) { // file exists?
-						if(unlink($delete_me)) { // successful deletion?
-							echo "Package $delete_me has been removed.<br>";
-						} else {
-							die("Problem removing package $delete_me.");
-						}
-					} else {
-						die("<span class='error'>File to be deleted does not exist.</span>");
-					}
-				} else {
-					die("<span class='error'>Path is trying to navigate folders.</span>");
-				}
-			} else {
-				die("<span class='error'>File is not located in SugarCRM's upload directory.</span>");
-			}
+        if(substr($delete_me, -4) != ".zip" || substr($delete_me, 0, 9) != "upload://" ||
+        strpos($checkFile, "..") !== false || !file_exists($checkFile)) {
+            die("<span class='error'>File is not a zipped archive.</span>");
+        }
+		if(unlink($delete_me)) { // successful deletion?
+			echo "Package $delete_me has been removed.<br>";
 		} else {
-			die("<span class='error'>File is not a zipped archive.</span>");
+			die("Problem removing package $delete_me.");
 		}
     }
 }
