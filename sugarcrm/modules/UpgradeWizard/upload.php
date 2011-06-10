@@ -83,14 +83,14 @@ switch($run) {
 				    $out = "<b><span class='error'>{$mod_strings['ERR_UW_PHP_FILE_ERRORS'][$error]}</span></b><br />";
 			    }
             } else {
-               $tempFile = $upload->get_stored_file_name();
+               $tempFile = "upload://".$upload->get_stored_file_name();
                if(!$upload->final_move($tempFile)) {
     				logThis('ERROR: could not move temporary file to final destination!');
     				unlinkUWTempFiles();
     				$out = "<b><span class='error'>{$mod_strings['ERR_UW_NOT_VALID_UPLOAD']}</span></b><br />";
                } else {
     				logThis('File uploaded to '.$tempFile);
-                    $base_filename = urldecode( $_REQUEST['upgrade_zip_escaped'] );
+                    $base_filename = urldecode(basename($tempFile));
                     $perform = true;
                }
             }
@@ -115,10 +115,6 @@ switch($run) {
 					break;
 				}
 
-
-				$base_filename = preg_replace( "#\\\\#", "/", $base_filename );
-				$base_filename = basename( $base_filename );
-
 				mkdir_recursive( "$base_upgrade_dir/$upgrade_zip_type" );
 				$target_path = "$base_upgrade_dir/$upgrade_zip_type/$base_filename";
 				$target_manifest = remove_file_extension( $target_path ) . "-manifest.php";
@@ -127,10 +123,10 @@ switch($run) {
 					logThis('extracting icons.');
 					 $icon_location = extractFile( $tempFile ,$manifest['icon'] );
 					 $path_parts = pathinfo( $icon_location );
-					 copy( $icon_location, remove_file_extension( $target_path ) . "-icon." . $path_parts['extension'] );
+					 copy( $icon_location, remove_file_extension( $target_path ) . "-icon." . pathinfo($icon_location, PATHINFO_EXTENSION) );
 				}
 
-				if(copy($tempFile , $target_path)){
+				if(rename($tempFile , $target_path)){
 					logThis('copying manifest.php to final destination.');
 					copy($manifest_file, $target_manifest);
 					$out .= "<b>{$base_filename} {$mod_strings['LBL_UW_FILE_UPLOADED']}.</b><br>\n";
@@ -141,11 +137,11 @@ switch($run) {
 				}
 			} else {
 				logThis('ERROR: no manifest.php file found!');
-				unlinkTempFiles();
+				unlinkUWTempFiles();
 				$out = "<b><span class='error'>{$mod_strings['ERR_UW_NO_MANIFEST']}</span></b><br />";
 				break;
 			}
-			$_SESSION['install_file'] = clean_path($tempFile);
+			$_SESSION['install_file'] = basename($tempFile);
 			logThis('zip file moved to ['.$_SESSION['install_file'].']');
 			//rrs serialize manifest for saving in the db
 			$serial_manifest = array();
@@ -156,7 +152,7 @@ switch($run) {
 		}
 
 		if(!empty($tempFile)) {
-			upgradeUWFiles($tempFile);
+			upgradeUWFiles($target_path);
 			//set the upgrade progress status. actually it should be set when a file is uploaded
 			set_upgrade_progress('upload','done');
 
@@ -197,8 +193,7 @@ switch($run) {
 			$out = "<b><span class='error'>{$error}</span></b><br />";
         }
 
-        unlinkTempFiles();
-        unlinkUploadFiles();
+        unlinkUWTempFiles();
         //set the upgrade progress status. actually it should be set when a file is uploaded
 		set_upgrade_progress('upload','in_progress');
 
@@ -325,37 +320,10 @@ $form3 =<<<eoq2
    		alert('Not a zip file');
    		document.getElementById("upgrade_zip").value='';
    		document.getElementById("upload_button").disabled='disabled';
+   } else{
+       document.getElementById("upload_button").disabled='';
    }
-   else{
-	//AJAX call for checking the file size and comparing with php.ini settings.
-	var callback = {
-		 success:function(r) {
-		     var file_size = r.responseText;
-		     //alert(file_size.length);
-		     if(file_size.length >0){
-		       var msg = SUGAR.language.get('UpgradeWizard','LBL_UW_FILE_SIZE');
-		       msg1 =SUGAR.language.get('UpgradeWizard','LBL_UW_FILE_BIGGER_MSG');
-		       msg2 = SUGAR.language.get('UpgradeWizard','LBL_BYTES_WEBSERVER_MSG');
-		       if(msg  == 'undefined') msg = 'The file size, ';
-		       if(msg1 == 'undefined') msg1 = ' Bytes, is greater than what is allowed by the upload_max_filesize and/or the post_max_size settings in php.ini. Change the settings so that they are greater than ';
-		       if(msg2 == 'undefined') msg2 = ' Bytes and restart the webserver.';
-		       msg = msg+file_size+msg1;
-		       msg = msg+file_size+msg2;
-		       alert(msg);
-		       document.getElementById("upload_button").disabled='disabled';
-		     }
-		     else{
-		       document.getElementById("upload_button").disabled='';
-		     }
-		 }
-	}
-
-    //var file_name = document.getElementById('upgrade_zip').value;
-	var file_name = document.the_form.upgrade_zip.value;
-	postData = 'file_name=' + JSON.stringify(file_name) + '&module=UpgradeWizard&action=UploadFileCheck&to_pdf=1';
-	YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
-   }
-}
+ }
 </script>
 eoq2;
 $form5 =<<<eoq5

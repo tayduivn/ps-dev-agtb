@@ -653,53 +653,62 @@ function deleteChance(){
  * @param	string file Path to uploaded zip file
  */
 function upgradeUWFiles($file) {
-	global $sugar_config;
-
-	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
+	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached("upgrades/temp"));
 
 	unzip($file, $cacheUploadUpgradesTemp);
 
-	if(!file_exists(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"))) {
+	if(!file_exists("$cacheUploadUpgradesTemp/manifest.php")) {
 		logThis("*** ERROR: no manifest file detected while bootstraping upgrade wizard files!");
 		return;
 	} else {
-		include(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"));
+		include("$cacheUploadUpgradesTemp/manifest.php");
 	}
 
 	$allFiles = array();
+	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
 	// upgradeWizard
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/modules/UpgradeWizard"))) {
-		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/modules/UpgradeWizard"), $allFiles);
+	if(file_exists("$from_dir/modules/UpgradeWizard")) {
+		$allFiles = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
 	}
 	// moduleInstaller
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/ModuleInstall"))) {
-		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/ModuleInstall"), $allFiles);
+	if(file_exists("$from_dir/ModuleInstall")) {
+		$allFiles = findAllFiles("$from_dir/ModuleInstall", $allFiles);
 	}
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/javascript/yui"))) {
-		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/javascript/yui"), $allFiles);
+	if(file_exists("$from_dir/include/javascript/yui")) {
+		$allFiles = findAllFiles("$from_dir/include/javascript/yui", $allFiles);
 	}
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/HandleAjaxCall.php"))) {
-		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/HandleAjaxCall.php");
+	if(file_exists("$from_dir/HandleAjaxCall.php")) {
+		$allFiles[] = "$from_dir/HandleAjaxCall.php";
 	}
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"))) {
-		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarTheme"), $allFiles);
+	if(file_exists("$from_dir/include/SugarTheme")) {
+		$allFiles = findAllFiles("$from_dir/include/SugarTheme", $allFiles);
 	}
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
-		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	if(file_exists("$from_dir/include/SugarCache")) {
+		$allFiles = findAllFiles("$from_dir/include/SugarCache", $allFiles);
 	}
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
-		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	if(file_exists("$from_dir/include/utils/external_cache.php")) {
+		$allFiles[] = "$from_dir/include/utils/external_cache.php";
+	}
+	if(file_exists("$from_dir/include/upload_file.php")) {
+		$allFiles[] = "$from_dir/include/upload_file.php";
+	}
+	if(file_exists("$from_dir/include/file_utils.php")) {
+		$allFiles[] = "$from_dir/include/file_utils.php";
+	}
+	if(file_exists("$from_dir/include/upload_file.php")) {
+		$allFiles[] = "$from_dir/include/upload_file.php";
+	}
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
 
 	/*
 	 * /home/chris/workspace/maint450/cache/upload/upgrades/temp/DlNnqP/
 	 * SugarEnt-Patch-4.5.0c/modules/Leads/ConvertLead.html
 	 */
-	$cwd = clean_path(getcwd());
 
 	foreach($allFiles as $k => $file) {
-		$file = clean_path($file);
-		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+       $destFile = str_replace($from_dir."/", "", $file);
        if(!is_dir(dirname($destFile))) {
 			mkdir_recursive(dirname($destFile)); // make sure the directory exists
 		}
@@ -709,12 +718,6 @@ function upgradeUWFiles($file) {
             logThis('updating UpgradeWizard code: '.$destFile);
             copy_recursive($file, $destFile);
         }
-	}
-	logThis ('is sugar_file_util there '.file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php")));
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php"))) {
-		$file = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php");
-		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
-        copy($file,$destFile);
 	}
 }
 
@@ -730,7 +733,7 @@ function getValidPatchName($returnFull = true) {
 	global $sugar_version;
     global $sugar_config;
     $uh = new UpgradeHistory();
-    $base_upgrade_dir = $sugar_config['upload_dir'] . "upgrades";
+    $base_upgrade_dir = "upload://upgrades";
 	$return = array();
 
 	// scan for new files (that are not installed)
@@ -738,10 +741,6 @@ function getValidPatchName($returnFull = true) {
 	$upgrade_content = '';
 	$upgrade_contents = findAllFiles($base_upgrade_dir, array(), false, 'zip');
 	//other variations of zip file i.e. ZIP, zIp,zIP,Zip,ZIp,ZiP
-    $extns = array('ZIP','ZIp','ZiP','Zip','zIP','zIp','ziP');
-    foreach($extns as $extn){
-    	$upgrade_contents = array_merge($upgrade_contents,findAllFiles( "$base_upgrade_dir", array() , false, $extn));
-    }
 	$ready = "<ul>\n";
 	$ready .= "
 		<table>
@@ -782,11 +781,10 @@ function getValidPatchName($returnFull = true) {
 	$disabled = '';
 
 	foreach($upgrade_contents as $upgrade_content) {
-		if(!preg_match("#.*\.zip\$#i", strtolower($upgrade_content))) {
+		if(!preg_match("#.*\.zip\$#i", $upgrade_content)) {
 			continue;
 		}
 
-		$upgrade_content = clean_path($upgrade_content);
 		$the_base = basename($upgrade_content);
 		$the_md5 = md5_file($upgrade_content);
 
@@ -2423,24 +2421,11 @@ function preLicenseCheck() {
 if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		$base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
-		$base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
+		$base_upgrade_dir		= "upload://upgrades";
+		$base_tmp_upgrade_dir	= sugar_cached("upgrades/temp");
 		$unzip_dir = '';
 		//also come up with mechanism to read from upgrade-progress file
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
-			/*
-			if ($handle = opendir(clean_path($sugar_config['upload_dir']))) {
-	    		while (false !== ($file = readdir($handle))) {
-	    		if($file !="." && $file !="..")	{
-				   $far = explode(".",$file);
-				   if($far[sizeof($far)-1] == 'zip') {
-				   		echo $sugar_config['upload_dir'].'/'.$file;
-				   		$_SESSION['install_file'] =  $sugar_config['upload_dir'].'/'.$file;
-				   }
-		       	 }
-	    		}
-    		}
-    		*/
 			if (file_exists(clean_path($base_tmp_upgrade_dir)) && $handle = opendir(clean_path($base_tmp_upgrade_dir))) {
 		    		while (false !== ($file = readdir($handle))) {
 		    		if($file !="." && $file !="..")	{
@@ -2452,8 +2437,8 @@ if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists($sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip')){
-					 			$_SESSION['install_file'] = $sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip';
+					 		if(file_exists('upload://upgrades/patch/'.$package_name.'.zip')){
+					 			$_SESSION['install_file'] = $package_name.".zip";
 					 			break;
 					 		}
 						}
@@ -2462,8 +2447,8 @@ if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		    	}
 			}
 		}
-        if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file'])){
-        	unlinkTempFiles();
+        if(empty($_SESSION['install_file'])){
+        	unlinkUWTempFiles();
         	resetUwSession();
         	echo 'Upload File not found so redirecting to Upgrade Start ';
         	$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
@@ -2480,7 +2465,7 @@ eoq;
 $uwMain = $upgrade_directories_not_found;
 				return '';
         }
-		$install_file			= urldecode( $_SESSION['install_file'] );
+		$install_file			= 'upload://upgrades/patch/'.basename(urldecode( $_SESSION['install_file'] ));
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
@@ -2600,7 +2585,6 @@ $uwMain = $upgrade_directories_not_found;
 		$parserFiles = findAllFiles(clean_path($unzip_dir.'/'.$zip_from_dir."/UpgradeWizard510Files"), $parserFiles);
 		foreach($parserFiles as $file) {
 			$srcFile = clean_path($file);
-			//$targetFile = clean_path(getcwd() . '/' . $srcFile);
 	        if (strpos($srcFile,".svn") !== false) {
 			  //do nothing
 		    }
@@ -2652,13 +2636,13 @@ function preflightCheck() {
 	if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		$base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
-		$base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
+		$base_upgrade_dir		= "upload://upgrades";
+		$base_tmp_upgrade_dir	= sugar_cached("upgrades/temp");
 		$unzip_dir = '';
 		//Following is if User logged out unexpectedly and then logged into UpgradeWizard again.
 		//also come up with mechanism to read from upgrade-progress file.
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
-			if (file_exists(clean_path($base_tmp_upgrade_dir)) && $handle = opendir(clean_path($base_tmp_upgrade_dir))) {
+			if (file_exists($base_tmp_upgrade_dir) && $handle = opendir($base_tmp_upgrade_dir)) {
 		    	while (false !== ($file = readdir($handle))) {
 		    		if($file !="." && $file !="..")	{
 					 //echo $base_tmp_upgrade_dir."/".$file.'</br>';
@@ -2669,8 +2653,8 @@ function preflightCheck() {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists($sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip')){
-					 			$_SESSION['install_file'] = $sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip';
+					 		if(file_exists('upload://upgrades/patch/'.$package_name.'.zip')){
+					 			$_SESSION['install_file'] = $package_name.".zip";
 					 			break;
 					 		}
 						}
@@ -2679,8 +2663,8 @@ function preflightCheck() {
 		    	}
 			}
 		}
-        if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file'])){
-        	unlinkTempFiles();
+        if(empty($_SESSION['install_file'])){
+        	unlinkUWTempFiles();
         	resetUwSession();
         	echo 'Upload File not found so redirecting to Upgrade Start ';
         	$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
@@ -2698,7 +2682,7 @@ $uwMain = $upgrade_directories_not_found;
 				return '';
 
         }
-		$install_file			= urldecode( $_SESSION['install_file'] );
+		$install_file			= 'upload://upgrades/patch/'.basename(urldecode( $_SESSION['install_file'] ));
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
@@ -2771,10 +2755,6 @@ $uwMain = $upgrade_directories_not_found;
 	//copy minimum required files
 	fileCopy('include/utils/sugar_file_utils.php');
 
-
-	if(file_exists('include/utils/file_utils.php')){
-
-	}
 	$upgradeFiles = findAllFiles(clean_path("$unzip_dir/$zip_from_dir"), array());
 	$cache_html_files= array();
 
@@ -2906,16 +2886,17 @@ function prepSystemForUpgrade() {
 	///////////////////////////////////////////////////////////////////////////////
 	////	Make sure variables exist
 	if(!isset($base_upgrade_dir) || empty($base_upgrade_dir)){
-		$base_upgrade_dir       = getcwd().'/'.$sugar_config['upload_dir'] . "upgrades";
+		$base_upgrade_dir       = "upload://upgrades";
 	}
 	if(!isset($base_tmp_upgrade_dir) || empty($base_tmp_upgrade_dir)){
-		$base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
+		$base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
 	}
+	mkdir_recursive($base_tmp_upgrade_dir);
 	if(!isset($subdirs) || empty($subdirs)){
-		$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
+		$subdirs = array('full', 'langpack', 'module', 'patch', 'theme');
 	}
 
-    $upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+    $upgrade_progress_dir = $base_tmp_upgrade_dir;
     $upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
     if(file_exists($upgrade_progress_file)){
     	if(function_exists('get_upgrade_progress') && function_exists('didThisStepRunBefore')){
@@ -3555,7 +3536,7 @@ function getFilesForPermsCheck() {
 	$skipDirs = array(
 		$sugar_config['upload_dir'],
 	);
-	$files = uwFindAllFiles(getcwd(), array(), true, $skipDirs, true);
+	$files = uwFindAllFiles(".", array(), true, $skipDirs, true);
 	return $files;
 }
 
@@ -3647,11 +3628,11 @@ function deletePackageOnCancel(){
     $fileS = explode('/', $delete_me);
     $c = count($fileS);
     $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-    $deleteUpload = $sugar_config['upload_dir'].$fileName;
+    $deleteUpload = "upload://$fileName";
     logThis('Trying to delete '.$deleteUpload);
     if(!@unlink($deleteUpload)) {
     	logThis('ERROR: could not delete: ['.$deleteUpload.']');
-    	$error = $mod_strings['ERR_UW_FILE_NOT_DELETED'].$sugar_config['upload_dir'].$fileName;
+    	$error = $mod_strings['ERR_UW_FILE_NOT_DELETED']."upload://".$fileName;
     }
     if(!empty($error)) {
 		$out = "<b><span class='error'>{$error}</span></b><br />";
@@ -3810,7 +3791,7 @@ function getAlterTable($query){
 
 function set_upgrade_vars(){
 	logThis('setting session variables...');
-	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = sugar_cached('upgrades/temp');
 	if(!is_dir($upgrade_progress_dir)){
 		mkdir_recursive($upgrade_progress_dir);
 	}
@@ -3866,7 +3847,7 @@ function set_upgrade_vars(){
 }
 
 function initialize_session_vars(){
-  $upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+  $upgrade_progress_dir = sugar_cached('upgrades/temp');
   $upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
   if(file_exists($upgrade_progress_file)){
   	include($upgrade_progress_file);
@@ -3890,7 +3871,7 @@ function initialize_session_vars(){
 //track the upgrade progress on each step
 function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubState=''){
 
-	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = sugar_cached('upgrades/temp');
 	if(!is_dir($upgrade_progress_dir)){
 		mkdir_recursive($upgrade_progress_dir);
 	}
@@ -3968,7 +3949,7 @@ function set_upgrade_progress($currStep,$currState,$currStepSub='',$currStepSubS
 }
 
 function get_upgrade_progress(){
-	$upgrade_progress_dir = $GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = sugar_cached('upgrades/temp');
 	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 	$currState = '';
 
@@ -4022,7 +4003,7 @@ function currUpgradeState($currState){
 
 function didThisStepRunBefore($step,$SubStep=''){
 	if($step == null) return;
-	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = sugar_cached('upgrades/temp');
 	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 	$currState = '';
 	$stepRan = false;
@@ -4078,10 +4059,10 @@ function didThisStepRunBefore($step,$SubStep=''){
 
 //get and set post install status
 function post_install_progress($progArray='',$action=''){
-	if($action=='' || $action=='get'){
+	$upgrade_progress_dir = sugar_cached('upgrades/temp');
+	$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
+    if($action=='' || $action=='get'){
 		//get the state of post install
-		$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
-		$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
         $currProg = array();
 		if(file_exists($upgrade_progress_file)){
 			include($upgrade_progress_file);
@@ -4094,11 +4075,9 @@ function post_install_progress($progArray='',$action=''){
 		return $currProg;
 	}
 	elseif($action=='set'){
-		$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
 		if(!is_dir($upgrade_progress_dir)){
 			mkdir($upgrade_progress_dir);
 		}
-		$upgrade_progress_file = $upgrade_progress_dir.'/upgrade_progress.php';
 		if(file_exists($upgrade_progress_file)){
 			include($upgrade_progress_file);
 		}
@@ -5758,7 +5737,7 @@ function add_unified_search_to_custom_modules_vardefs()
 function upgradeSugarCache($file)
 {
 	global $sugar_config;
-	$cacheUploadUpgradesTemp = clean_path(mk_temp_dir("{$sugar_config['upload_dir']}upgrades/temp"));
+	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached('/upgrade_progress.php'));
 
 	unzip($file, $cacheUploadUpgradesTemp);
 
@@ -5769,18 +5748,20 @@ function upgradeSugarCache($file)
 		include(clean_path("{$cacheUploadUpgradesTemp}/manifest.php"));
 	}
 
+	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
 	$allFiles = array();
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
-		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
+	if(file_exists("$from_dir/include/SugarCache")) {
+		$allFiles = findAllFiles("$from_dir/include/SugarCache", $allFiles);
 	}
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php"))) {
-		$allFiles[] = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/external_cache.php");
+	if(file_exists("$from_dir/include/utils/external_cache.php")) {
+		$allFiles[] = "$from_dir/include/utils/external_cache.php";
 	}
-	$cwd = clean_path(getcwd());
+	if(file_exists("$from_dir/include/utils/sugar_file_utils.php")) {
+		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
+	}
 
 	foreach($allFiles as $k => $file) {
-		$file = clean_path($file);
-		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
+		$destFile = str_replace($from_dir."/", "", $file);
        if(!is_dir(dirname($destFile))) {
 			mkdir_recursive(dirname($destFile)); // make sure the directory exists
 		}
@@ -5790,12 +5771,6 @@ function upgradeSugarCache($file)
             logThis('updating UpgradeWizard code: '.$destFile);
             copy_recursive($file, $destFile);
         }
-	}
-	logThis ('is sugar_file_util there '.file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php")));
-	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php"))) {
-		$file = clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/utils/sugar_file_utils.php");
-		$destFile = str_replace(clean_path($cacheUploadUpgradesTemp.'/'.$manifest['copy_files']['from_dir']), $cwd, $file);
-        copy($file,$destFile);
 	}
 }
 
