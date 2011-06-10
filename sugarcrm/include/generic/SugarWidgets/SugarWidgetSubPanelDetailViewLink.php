@@ -107,7 +107,7 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
             }
         }
         $action = 'DetailView';
-        $value = $layout_def['fields'][$key];
+        $title = $value = $layout_def['fields'][$key];
 
         if (strlen($value) > 60) {
             $value = substr($value, 0, 60) . ' ...';
@@ -119,17 +119,18 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
             || $layout_def['DetailView'] && !ACLController::moduleSupportsACL($layout_def['owner_module'])
             || ACLController::checkAccess($layout_def['owner_module'], 'view', $layout_def['owner_id'] == $current_user->id))) {
 
+            $title = ($title != $value) ? ' title="' . htmlentities($title, ENT_QUOTES) . '"' : '';
+
             if (!empty($parent)) {
-                return '<a href="index.php?module='.$module.'&action='.$action.'&record='.$record.$parent.'" >'."$value</a>";
+                return '<a href="index.php?module='.$module.'&action='.$action.'&record='.$record.$parent.'"'.$title.'>'."$value</a>";
             }
 
             return "<a href='#' "
             . " onMouseOver=\"javascript:subp_nav('".$module.$parent."', '".$record."', 'd', this);\" "
-            . " onFocus=\"javascript:subp_nav('".$module."', '".$record."', 'd', this);\">$value</a>";
+            . " onFocus=\"javascript:subp_nav('".$module."', '".$record."', 'd', this);\"$title>$value</a>";
         } else {
             return $value;
         }
-
     }
 }
 
