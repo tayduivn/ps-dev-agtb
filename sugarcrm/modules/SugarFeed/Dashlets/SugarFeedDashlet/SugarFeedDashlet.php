@@ -254,7 +254,7 @@ var $myFavoritesOnly = false;
 
             foreach($this->lvs->data['data'] as $row => $data) {
 
-                $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['ASSIGNED_USER_ID']),$data['NAME']);
+                $this->lvs->data['data'][$row]['NAME'] = str_replace("{this.CREATED_BY}",get_assigned_user_name($this->lvs->data['data'][$row]['CREATED_BY']),$data['NAME']);
 
             }
 
@@ -326,9 +326,9 @@ var $myFavoritesOnly = false;
             
             if ( empty($item['IMAGE_URL']) ) {
                 $item['IMAGE_URL'] = 'include/images/default_user_feed_picture.png';
-                if ( isset($item['ASSIGNED_USER_ID']) ) {
+                if ( isset($item['CREATED_BY']) ) {
                     $user = loadBean('Users');
-                    $user->retrieve($item['ASSIGNED_USER_ID']);
+                    $user->retrieve($item['CREATED_BY']);
                     if ( !empty($user->picture) ) {
                         $item['IMAGE_URL'] = 'index.php?entryPoint=download&id='.$user->picture.'&type=SugarFieldImage&isTempFile=1';
                     }
