@@ -136,7 +136,9 @@ SUGAR.themes.loadModuleList = function()
 				data = YAHOO.lang.JSON.parse(o.responseText);
 				aItems = oMenuBar.getItems();
 				oItem = aItems[parentIndex];
-				oSubmenu = oItem.cfg.getProperty("submenu");
+				if(!oItem) return;
+                
+                oSubmenu = oItem.cfg.getProperty("submenu");
 				oSubmenu.removeItem(1,1);
 				oSubmenu.addItems(data,1);
 
