@@ -218,7 +218,7 @@ class LanguageManager{
 
 		// Retrieve the vardefs from cache.
 		$key = self::getLanguageCacheKey($module,$lang);
-		
+
 		if(!$refresh)
 		{
 			$return_result = sugar_cache_retrieve($key);
@@ -228,7 +228,8 @@ class LanguageManager{
 		}
 
 		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
-		if($refresh || !file_exists($cachedfile = sugar_cached('modules/').$module.'/language/'.$lang.'.lang.php')){
+		$cachedfile = sugar_cached('modules/').$module.'/language/'.$lang.'.lang.php';
+		if($refresh || !file_exists($cachedfile)){
 			LanguageManager::refreshLanguage($module, $lang);
 		}
 
