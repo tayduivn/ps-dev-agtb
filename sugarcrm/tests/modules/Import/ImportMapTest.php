@@ -98,7 +98,7 @@ class ImportMapTest extends Sugar_PHPUnit_Framework_TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertTrue($GLOBALS['db']->fetchByAssoc($result),'Row not added');
+        $this->assertTrue($GLOBALS['db']->fetchByAssoc($result) != false,'Row not added');
     }
     
     public function testSetAndGetMapping()
