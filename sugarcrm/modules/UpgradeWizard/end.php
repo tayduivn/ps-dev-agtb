@@ -100,7 +100,7 @@ foreach ($dictionary as $meta) {
 
 logThis('database repaired', $path);
 
-$ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt');
+$ce_to_pro_ent = isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 
 //BEGIN SUGARCRM flav=pro ONLY
 // Run this code if we are upgrading from pre-550 version or if we are doing a CE to PRO/ENT conversion
