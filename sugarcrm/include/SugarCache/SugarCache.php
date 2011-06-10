@@ -77,6 +77,40 @@ class SugarCache
         
         return self::$_cacheInstance;
     }
+    
+    /**
+     * Try to reset any opcode caches we know about
+     *
+     * @todo make it so developers can extend this somehow
+     */
+    public static function cleanOpcodes()
+    {
+        // APC
+        if ( function_exists('apc_clear_cache') ) {
+            apc_clear_cache();
+        }
+        // Wincache
+        if ( function_exists('wincache_refresh_if_changed') ) {
+            wincache_refresh_if_changed();
+        }
+        // Zend
+        if ( function_exists('accelerator_reset') ) {
+            accelerator_reset();
+        }
+        // eAccelerator
+        if ( function_exists('eaccelerator_clear') ) {
+            eaccelerator_clear();
+        }
+        // XCache
+        if ( function_exists('xcache_clear_cache') ) {
+            $max = xcache_count(XC_TYPE_PHP);
+            for ($i = 0; $i < $max; $i++) {
+                if (!xcache_clear_cache(XC_TYPE_PHP, $i)) {
+                    break;
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -124,6 +158,18 @@ function sugar_cache_clear($key)
 function sugar_cache_reset()
 {
     SugarCache::instance()->reset();
+    SugarCache::cleanOpcodes();
+}
+
+/**
+ * Turn off external caching for the rest of this round trip and for all round 
+ * trips for the next cache timeout.  This function should be called when global arrays
+ * are affected (studio, module loader, upgrade wizard, ... ) and it is not ok to 
+ * wait for the cache to expire in order to see the change.
+ */
+function sugar_clean_opcodes()
+{
+    SugarCache::cleanOpcodes();
 }
 
 /**
