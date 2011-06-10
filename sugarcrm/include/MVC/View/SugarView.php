@@ -104,10 +104,10 @@ class SugarView
         $this->display();
 
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        
+
 
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
-       
+
         if ($this->action === 'Login') {
             //this is needed for a faster loading login page ie won't render unless the tables are closed
             ob_flush();
@@ -669,7 +669,7 @@ class SugarView
         if(isset($_REQUEST['action'])){
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
-        echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+        echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file("include/javascript/sugar_grp1.js")) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
@@ -765,7 +765,7 @@ EOHTML;
             if(isset($_REQUEST['action'])){
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
-            echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+            echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
             if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -774,7 +774,7 @@ EOHTML;
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
-            
+
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
@@ -794,9 +794,9 @@ EOHTML;
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
             echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
-			
+
 			echo $this->_getModLanguageJS();
-			
+
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
             echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
@@ -820,7 +820,7 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
-	
+
 	protected function _getModLanguageJS(){
 		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
 			require_once ('include/language/jsLanguage.php');
@@ -828,7 +828,7 @@ EOHTML;
 		}
 		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
 	}
-	
+
     /**
      * Called from process(). This method will display the footer on the page.
      */
@@ -1346,7 +1346,7 @@ EOHTML;
 			} else {
 				return $firstParam;
 			}
-    	} 
+    	}
     	else {
 		    if (!empty($iconPath) && !$browserTitle) {
 				return "<a href='index.php?module={$this->module}&action=index'>"
@@ -1357,12 +1357,12 @@ EOHTML;
     	}
     }
 
-    protected function getModuleTitleIconPath($module) 
+    protected function getModuleTitleIconPath($module)
     {
     	$iconPath = "";
     	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
-    	} 
+    	}
     	else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     	}
