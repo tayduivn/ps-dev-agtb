@@ -435,7 +435,6 @@ class UploadStream
             }
             if(!file_exists(self::$upload_dir)) {
                 mkdir(self::$upload_dir, 0755, true);
-                make_writable(self::$upload_dir);
             }
         }
         return self::$upload_dir;

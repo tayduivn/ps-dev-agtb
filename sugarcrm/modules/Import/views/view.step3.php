@@ -238,7 +238,7 @@ class ImportViewStep3 extends SugarView
          $maxRecordsExceeded = FALSE;
          $maxRecordsWarningMessg = "";
          $lineCount = $importFile->getNumberOfLinesInfile();
-         $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
+         $maxLineCount = !empty($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
          if($lineCount > $maxLineCount)
          {
              $maxRecordsExceeded = TRUE;
@@ -638,7 +638,7 @@ eoq;
         foreach ($required as $name=>$display) {
             $print_required_array .= "required['$name'] = '". $display . "';\n";
         }
-
+        $maxRecordsExceededJS = $maxRecordsExceeded?"true":"false";
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 
         return <<<EOJAVASCRIPT
@@ -769,7 +769,7 @@ document.getElementById('addrow').onclick = function(){
 }
 
 YAHOO.util.Event.onDOMReady(function(){
-    if($maxRecordsExceeded)
+    if($maxRecordsExceededJS)
     {
         var contImport = confirm('$maxRecordsWarningMessg');
         if(!contImport)
