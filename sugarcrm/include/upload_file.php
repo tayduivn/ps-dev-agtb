@@ -459,11 +459,7 @@ class UploadStream
     {
         $path = self::path($path);
         if(!is_dir($path)) {
-            $res = mkdir($path, 0755, true);
-            if($res && $writable) {
-                make_writable($path);
-            }
-           return $res;
+           return mkdir($path, 0755, true);
         }
         return true;
     }
