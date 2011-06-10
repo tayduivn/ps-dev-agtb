@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Import/ImportCacheFiles.php';
 
 class SugarTestImportUtilities
@@ -37,7 +37,7 @@ class SugarTestImportUtilities
 
     public static function createFile($lines = 2000,$columns = 3)
     {
-        $filename = ImportCacheFiles::getImportDir().'test'. uniqid();
+        $filename = ImportCacheFiles::getImportDir().'/test'. uniqid();
         $fp = fopen($filename,"w");
         for ($i = 0; $i < $lines; $i++) {
             $line = array();
@@ -51,13 +51,13 @@ class SugarTestImportUtilities
 
         return $filename;
     }
-	
+
     public static function createFileWithEOL(
         $lines = 2000,
         $columns = 3
-        ) 
+        )
     {
-        $filename = ImportCacheFiles::getImportDir().'/test'.date("YmdHis");
+        $filename = ImportCacheFiles::getImportDir().'/test'.uniqid();
         $fp = fopen($filename,"w");
         for ($i = 0; $i < $lines; $i++) {
             $line = array();
@@ -68,15 +68,15 @@ class SugarTestImportUtilities
             fputcsv($fp,$line);
         }
         fclose($fp);
-        
+
         self::$_createdFiles[] = $filename;
-        
+
         return $filename;
     }
-	
-    public static function createFileWithWhiteSpace() 
+
+    public static function createFileWithWhiteSpace()
     {
-        $filename = ImportCacheFiles::getImportDir().'/testWhiteSpace'.date("YmdHis");
+        $filename = ImportCacheFiles::getImportDir().'/testWhiteSpace'.uniqid();
         $contents = <<<EOTEXT
 account2,foo bar
 EOTEXT;
