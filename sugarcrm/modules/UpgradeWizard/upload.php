@@ -169,24 +169,13 @@ switch($run) {
         }
 
         // delete file in upgrades/patch
-        $delete_me = urldecode( $_REQUEST['install_file'] );
+        $delete_me = 'upload://upgrades/patch/'.basename(urldecode( $_REQUEST['install_file'] ));
         if(@unlink($delete_me)) {
         	logThis('unlinking: '.$delete_me);
             $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
         } else {
         	logThis('ERROR: could not delete ['.$delete_me.']');
 			$error = $mod_strings['ERR_UW_FILE_NOT_DELETED'].$delete_me;
-        }
-
-        // delete file in cache/upload
-        $fileS = explode('/', $delete_me);
-        $c = count($fileS);
-        $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-        $deleteUpload = $sugar_config['upload_dir'].$fileName;
-        logThis('Trying to delete '.$deleteUpload);
-        if(!@unlink($deleteUpload)) {
-        	logThis('ERROR: could not delete: ['.$deleteUpload.']');
-        	$error = $mod_strings['ERR_UW_FILE_NOT_DELETED'].$sugar_config['upload_dir'].$fileName;
         }
 
         if(!empty($error)) {

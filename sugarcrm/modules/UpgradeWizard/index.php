@@ -124,28 +124,17 @@ if(isset($_REQUEST['delete_package']) && $_REQUEST['delete_package'] == 'true') 
         }
 
         // delete file in upgrades/patch
-        $delete_me = urldecode( $_REQUEST['install_file'] );
+        $delete_me = 'upload://upgrades/patch/'.basename(urldecode( $_REQUEST['install_file'] ));
         if(is_file($delete_me) && !@unlink($delete_me)) {
         	logThis('ERROR: could not delete: '.$delete_me);
             $error .= $mod_strings['ERR_UW_FILE_NOT_DELETED'].$delete_me.'<br>';
         }
 
         // delete back up instance
-        $delete_dir = clean_path(remove_file_extension(urldecode($_REQUEST['install_file'])) . "-restore");
+        $delete_dir = 'upload://upgrades/patch/'.remove_file_extension(urldecode($_REQUEST['install_file'])) . "-restore";
         if(is_dir($delete_dir) && !@rmdir_recursive($delete_dir)) {
         	logThis('ERROR: could not delete: '.$delete_dir);
         	$error .= $mod_strings['ERR_UW_FILE_NOT_DELETED'].$delete_dir.'<br>';
-        }
-
-        // delete file in cache/upload
-        $fileS = explode('/', $delete_me);
-        $c = count($fileS);
-        $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-        $deleteUpload = $sugar_config['upload_dir'].$fileName;
-        logThis('Trying to delete '.$deleteUpload);
-        if(is_file($deleteUpload) && !@unlink($deleteUpload)) {
-        	logThis('ERROR: could not delete: ['.$deleteUpload.']');
-        	$error .= $mod_strings['ERR_UW_FILE_NOT_DELETED'].$sugar_config['upload_dir'].$fileName;
         }
 
         if(!empty($error)) {

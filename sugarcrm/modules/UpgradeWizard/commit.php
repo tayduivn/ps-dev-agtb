@@ -99,8 +99,8 @@ if(!isset($_SESSION['committed'])) {
 	if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		$base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
-		$base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
+		$base_upgrade_dir		= "upload://upgrades";
+		$base_tmp_upgrade_dir	= sugar_cached("upgrades/temp");
 		$unzip_dir = '';
 		//also come up with mechanism to read from upgrade-progress file
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
@@ -115,8 +115,8 @@ if(!isset($_SESSION['committed'])) {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists($sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip')){
-					 			$_SESSION['install_file'] = $sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip';
+					 		if(file_exists('upload://upgrades/patch/'.$package_name.'.zip')){
+					 			$_SESSION['install_file'] = $package_name.'.zip';
 					 			break;
 					 		}
 						}
@@ -143,7 +143,7 @@ eoq;
 $uwMain = $upgrade_directories_not_found;
 				return '';
         }
-		$install_file			= urldecode( $_SESSION['install_file'] );
+		$install_file			= 'upload://upgrades/patch/'.basename(urldecode( $_SESSION['install_file'] ));
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );

@@ -329,11 +329,11 @@ function preflightCheckJsonFindUpgradeFiles($persistence) {
 		logThis('unzipping files in upgrade archive...');
 
 		$errors					= array();
-		$base_upgrade_dir      = $sugar_config['upload_dir'] . "/upgrades";
-		$base_tmp_upgrade_dir  = "$base_upgrade_dir/temp";
+		$base_upgrade_dir      = "upload://upgrades";
+		$base_tmp_upgrade_dir  = sugar_cached("upgrades/temp");
 		$install_file			= urldecode( $persistence['install_file'] );
 		$show_files				= true;
-		$unzip_dir				= clean_path(mk_temp_dir( $base_tmp_upgrade_dir ));
+		$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
 		$zip_from_dir			= ".";
 		$zip_to_dir			= ".";
 		$zip_force_copy			= array();
@@ -791,7 +791,7 @@ function systemCheckJsonGetFiles($persistence) {
 	// add directories here that should be skipped when doing file permissions checks (cache/upload is the nasty one)
 	$skipDirs = array(
 		$sugar_config['upload_dir'],
-		getcwd().'/themes',
+		'themes',
 	);
 
 	if(!isset($persistence['dirs_checked'])) {

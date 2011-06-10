@@ -1811,10 +1811,6 @@ function createOci8Temp($table) {
 			$db->query(strtoupper($tempTable));
 			logThis('OCI8 Keyword-named table found - logic fork: '.$tempTable);
 		}
-    } else {
-    	//BEGIN SUGARCRM flav=int ONLY
-    	logThis("Found {$table}__UW_TEMP - skipping temp table creation.");
-    	//END SUGARCRM flav=int ONLY
     }
 }
 
@@ -3615,7 +3611,7 @@ function deletePackageOnCancel(){
         $error = $mod_strings['ERR_UW_NO_FILE_UPLOADED'];
     }
     // delete file in upgrades/patch
-    $delete_me = urldecode( $_SESSION['install_file'] );
+    $delete_me = 'upload://upgrades/patch/'.basename(urldecode( $_REQUEST['install_file'] ));
     if(@unlink($delete_me)) {
     	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
@@ -3624,16 +3620,6 @@ function deletePackageOnCancel(){
 		$error = $mod_strings['ERR_UW_FILE_NOT_DELETED'].$delete_me;
     }
 
-    // delete file in cache/upload
-    $fileS = explode('/', $delete_me);
-    $c = count($fileS);
-    $fileName = (isset($fileS[$c-1]) && !empty($fileS[$c-1])) ? $fileS[$c-1] : $fileS[$c-2];
-    $deleteUpload = "upload://$fileName";
-    logThis('Trying to delete '.$deleteUpload);
-    if(!@unlink($deleteUpload)) {
-    	logThis('ERROR: could not delete: ['.$deleteUpload.']');
-    	$error = $mod_strings['ERR_UW_FILE_NOT_DELETED']."upload://".$fileName;
-    }
     if(!empty($error)) {
 		$out = "<b><span class='error'>{$error}</span></b><br />";
     }

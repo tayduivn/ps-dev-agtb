@@ -45,8 +45,8 @@ function prepSystemForUpgradeSilent() {
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-		if(!is_dir(clean_path("{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
-	    	mkdir_recursive(clean_path("{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		if(!is_dir("upload://upgrades/{$subdir}")) {
+	    	mkdir_recursive("upload://upgrades/{$subdir}");
 		}
 	}
 }

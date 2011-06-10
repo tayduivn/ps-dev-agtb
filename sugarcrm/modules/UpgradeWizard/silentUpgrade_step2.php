@@ -294,8 +294,8 @@ $errors = array();
 
 /////retrieve admin user
 
-$unzip_dir = clean_path("{$sugar_config['upload_dir']}upgrades/temp");
-$install_file = clean_path("{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
+$unzip_dir = sugar_cached("upgrades/temp");
+$install_file = "upload://upgrades/patch/".basename($argv[1]);
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -368,7 +368,7 @@ if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
-	
+
 //Add the cache cleaning here.
 if(function_exists('deleteCache'))
 {
@@ -398,13 +398,13 @@ foreach ($beanFiles as $bean => $file) {
 		}
 
 		if (($focus instanceOf SugarBean)) {
-			if(!isset($repairedTables[$focus->table_name])) 
+			if(!isset($repairedTables[$focus->table_name]))
 			{
 				$sql = $GLOBALS['db']->repairTable($focus, true);
 				logThis('Running sql:' . $sql, $path);
 				$repairedTables[$focus->table_name] = true;
 			}
-			
+
 			//Check to see if we need to create the audit table
 		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
                logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
@@ -439,7 +439,7 @@ logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
 
-include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
+include("$unzip_dir/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
@@ -499,7 +499,7 @@ if($ce_to_pro_ent) {
 if($origVersion < '620'){
 	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 	upgradeDateTimeFields($path);
-	
+
 	//upgrade the documents and meetings for lotus support
 	upgradeDocumentTypeFields($path);
 }
