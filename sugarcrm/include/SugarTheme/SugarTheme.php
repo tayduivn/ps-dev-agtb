@@ -772,7 +772,7 @@ EOHTML;
     {
         if ( isset($this->_jsCache[$jsFileName]) && sugar_is_file(sugar_cached($this->_jsCache[$jsFileName])) ) {
             if ( $returnURL )
-                return getJSPath($this->_jsCache[$jsFileName]);
+                return getJSPath("cache/".$this->_jsCache[$jsFileName]);
             else
                 return sugar_cached($this->_jsCache[$jsFileName]);
         }

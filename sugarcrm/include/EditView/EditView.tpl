@@ -130,7 +130,7 @@ class="yui-navset"
               {capture name="overlibStuff" assign="overlibStuff"}{overlib_includes}{/capture}
               {sugar_help text=$popupText WIDTH=-1}
             {{/if}}
-          
+
 		</td>
 		{{/if}}
 		{counter name="fieldsUsed"}
@@ -236,7 +236,7 @@ class="yui-navset"
 {{include file=$footerTpl}}
 {$overlibStuff}
 {{if $useTabs}}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+{sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 <script type="text/javascript">
 var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
 {{$form_name}}_tabs.selectTab(0);
