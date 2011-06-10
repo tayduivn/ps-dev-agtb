@@ -4564,7 +4564,7 @@ function upgradeUserPreferences() {
 	 * For the CE version, we are checking to see that there are no entries enabled for PRO/ENT versions
 	 * we are checking for Tracker sessions, performance and queries.
 	 */
-	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt')) {
+	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt')) {
 		//Set tracker settings. Disable tracker session, performance and queries
 		$category = 'tracker';
 		$value = 1;
@@ -4925,7 +4925,7 @@ function upgradeModulesForTeam() {
     } //while
 
     //Update the team_set_id and default_team columns
-    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
+    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
 
     //Update team_set_id
 	if($ce_to_pro_or_ent) {

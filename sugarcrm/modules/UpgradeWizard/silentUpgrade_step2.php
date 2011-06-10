@@ -438,7 +438,7 @@ logThis('Start rebuild relationships.', $path);
 logThis('End rebuild relationships.', $path);
 
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
     global $silent_upgrade_vars_loaded;
