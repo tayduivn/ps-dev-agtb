@@ -5723,7 +5723,7 @@ function add_unified_search_to_custom_modules_vardefs()
 function upgradeSugarCache($file)
 {
 	global $sugar_config;
-	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached('/upgrade_progress.php'));
+	$cacheUploadUpgradesTemp = mk_temp_dir(sugar_cached('upgrades/temp'));
 
 	unzip($file, $cacheUploadUpgradesTemp);
 
