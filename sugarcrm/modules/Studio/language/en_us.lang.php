@@ -124,6 +124,7 @@ $mod_strings = array (
 
 //BUTTONS
 'LBL_BTN_SAVE'=>'Save',
+'LBL_BTN_CANCEL'=>'Cancel',
 'LBL_BTN_SAVEPUBLISH'=>'Save & Deploy',
 'LBL_BTN_HISTORY'=>'History',
 'LBL_BTN_NEXT'=>'Next',

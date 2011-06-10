@@ -62,8 +62,7 @@
     <tr>
         <td colspan="3">
             <input type="button" class="button primary" value="{$MOD.LBL_BTN_SAVE}"  onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'name="{$MOD.LBL_BTN_SAVE}" />
-            <input type="button" class="button" value="{$MOD.LBL_BTN_UNDO}" onclick="jstransaction.undo()" name="{$MOD.LBL_BTN_UNDO}" />
-            <input type="button" class="button" value="{$MOD.LBL_BTN_REDO}" onclick="jstransaction.redo()" name="{$MOD.LBL_BTN_REDO}" />
+            <input type="button" class="button" value="{$MOD.LBL_BTN_CANCEL}"  name="{$MOD.LBL_BTN_CANCEL}" onclick="document.editdropdown.action.value='index'; document.editdropdown.module.value='Administration';document.editdropdown.submit()" />
         </td>
     </tr>
 </table>
@@ -139,13 +138,7 @@
 
 {literal}
 <script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
-<script type="text/javascript" src="modules/Studio/JSTransaction.js" ></script>
-<script>
-    var jstransaction = new JSTransaction();
-</script>
 <script src = "include/javascript/yui/dragdrop.js" ></script>
-<script type="text/javascript" src="modules/Studio/studiodd.js" ></script>
-<script type="text/javascript" src="modules/Studio/studio.js" ></script>
 <script>
 
     var lastField = '';
@@ -175,21 +168,6 @@
         textspan.style.display='inline'
         text.focus();
     }
-
-    var undoDropDownChange = function(transaction)
-    {
-        setDropDownValue(transaction['row'], transaction['old'], false);
-        document.getElementById('slot' + transaction['row'] + '_stext').value = transaction['sold'];
-        document.getElementById('svalue_'+ transaction['row']).value = transaction['sold'];
-    }
-    var redoDropDownChange = function(transaction)
-    {
-        setDropDownValue(transaction['row'], transaction['new'], false);
-        document.getElementById('slot' + transaction['row'] + '_stext').value = transaction['snew'];
-        document.getElementById('svalue_'+ transaction['row']).value = transaction['snew'];
-
-    }
-    jstransaction.register('changeDropDownValue', undoDropDownChange, redoDropDownChange);
 
     function checkForErrors(rowCount)
     {
@@ -221,7 +199,6 @@
                      'snew' : document.getElementById('slot' + rowCount + '_stext').value,
                      'old':document.getElementById('value_'+ rowCount).value,
                      'sold':document.getElementById('svalue_'+ rowCount).value};
-            jstransaction.record('changeDropDownValue', d);
         }
         document.getElementById('value_' + rowCount).value = val;
         var text =  document.getElementById('slot' + rowCount + '_text');
