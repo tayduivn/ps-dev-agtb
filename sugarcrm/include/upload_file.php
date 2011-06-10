@@ -402,10 +402,10 @@ class UploadFile
     public static function realpath($path)
     {
        if(substr($path, 0, 9) == "upload://") {
-            return realpath(UploadStream::path($path));
-       } else {
-            return realpath($path);
+           $path = UploadStream::path($path);
        }
+       $ret = realpath($path);
+       return $ret?$ret:$path;
     }
 
     /**
