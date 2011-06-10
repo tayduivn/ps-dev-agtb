@@ -2518,7 +2518,7 @@ $uwMain = $upgrade_directories_not_found;
 	if(!isset($_SESSION['unzip_dir']) || !file_exists($_SESSION['unzip_dir'])
 		|| !isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !file_exists($_SESSION['install_file'])){
 		    //redirect to start
-	    unlinkTempFiles();
+	    unlinkUWTempFiles();
 		resetUwSession();
 		echo 'Upload File not found so redirecting to Upgrade Start ';
 		$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
@@ -2735,7 +2735,7 @@ $uwMain = $upgrade_directories_not_found;
 	if(!isset($_SESSION['unzip_dir']) || !file_exists($_SESSION['unzip_dir'])
 		|| !isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !file_exists($_SESSION['install_file'])){
 		    //redirect to start
-	    unlinkTempFiles();
+	    unlinkUWTempFiles();
 		resetUwSession();
 		echo 'Upload File not found so redirecting to Upgrade Start ';
 		$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
@@ -3140,7 +3140,7 @@ function unlinkUWTempFiles() {
 	global $sugar_config;
 	global $path;
 
-	logThis('at unlinkTempFiles()');
+	logThis('at unlinkUWTempFiles()');
 	$tempDir='';
     $tempDir = sugar_cached('upgrades/temp');
 

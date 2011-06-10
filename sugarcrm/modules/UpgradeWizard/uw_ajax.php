@@ -154,7 +154,7 @@ function commitAjaxFinalTouches($persistence) {
 	///////////////////////////////////////////////////////////////////////////////
 
 	// clean up
-	unlinkTempFiles();
+	unlinkUWTempFiles();
 
 	ob_start();
 	echo 'done';

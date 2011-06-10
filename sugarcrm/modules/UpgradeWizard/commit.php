@@ -126,7 +126,7 @@ if(!isset($_SESSION['committed'])) {
 			}
 		}
         if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file'])){
-        	unlinkTempFiles();
+        	unlinkUWTempFiles();
         	resetUwSession();
         	echo 'Upload File not found so redirecting to Upgrade Start ';
         	$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
@@ -196,7 +196,7 @@ $uwMain = $upgrade_directories_not_found;
 	if(!isset($_SESSION['unzip_dir']) || !file_exists($_SESSION['unzip_dir'])
 		|| !isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !file_exists($_SESSION['install_file'])){
 		    //redirect to start
-	    unlinkTempFiles();
+	    unlinkUWTempFiles();
 		resetUwSession();
 		echo 'Upload File not found so redirecting to Upgrade Start ';
 		$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
@@ -351,8 +351,8 @@ $uwMain = $upgrade_directories_not_found;
 	logThis('post_install() done.');
 	//// END POSTINSTALL SCRIPTS
 	///////////////////////////////////////////////////////////////////////////////
-	
-logThis('check if current_db_version in $_SESSION equals target_db_version in $_SESSION');	
+
+logThis('check if current_db_version in $_SESSION equals target_db_version in $_SESSION');
 if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
 
 	logThis('current_db_version in $_SESSION and target_db_version in $_SESSION are equal');
@@ -387,7 +387,7 @@ if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
            	}
        }
     }
-    
+
 }
 logThis('finished check to see if current_db_version in $_SESSION equals target_db_version in $_SESSION');
 
@@ -522,10 +522,6 @@ $rebuildResult = "<b>{$mod_strings['LBL_UW_REBUILD_TITLE']}</b><br />";
 $rebuildResult .= "<a href='javascript:void(0); toggleRebuild();'>{$mod_strings['LBL_UW_SHOW']}</a> <div id='rebuildResult'></div>";
 
 $rebuildResult = '';
-
-//moving unlink files to last
-//unlinkTempFiles();
-
 
 $skipped_queries_Desc='';
 if(isset($_SESSION['sqlSkippedQueries']) && $_SESSION['sqlSkippedQueries'] != null && is_array($_SESSION['sqlSkippedQueries']) && sizeof($_SESSION['sqlSkippedQueries'])>0){

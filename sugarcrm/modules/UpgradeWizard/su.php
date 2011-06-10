@@ -397,7 +397,7 @@ if(empty($errors)) {
 ////	TAKE OUT TRASH
 if(empty($errors)) {
 	logThis('Taking out the trash, unlinking temp files.', $path);
-	unlinkTempFiles();
+	unlinkUWTempFiles();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
