@@ -115,10 +115,6 @@ class ImportViewStep3 extends SugarView
             ( empty($sugar_config['import_max_records_per_file'])
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
 
-        // Clear out this user's last import
-        $seedUsersLastImport = new UsersLastImport();
-        $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
-        ImportCacheFiles::clearCacheFiles();
 
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
@@ -169,44 +165,54 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("CUSTOM_ENCLOSURE",
             ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
-        // handle uploaded file
-        $uploadFile = new UploadFile('userfile');
-        if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
-        {
-            $uploadFileName = 'IMPORT_'.$this->bean->object_name.'_'.$current_user->id;
-            $uploadFile->final_move($uploadFileName);
-        }
-        else {
-            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
-            return;
+
+       //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
+
+        // get list of valid date/time formats
+        $timeFormat = $current_user->getUserDateTimePreferences();
+        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
+        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
+
+        // get list of valid timezones
+        $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
+
+        //get currency id
+        $cur_id = isset($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
+
+        //get significant digits preference
+        $significantDigits = isset($field_map['importlocale_default_currency_significant_digits'])? $field_map['importlocale_default_currency_significant_digits'] :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
+
+        //get number and decimal seps
+        $num_grp_sep = isset($field_map['importlocale_num_grp_sep'])? $field_map['importlocale_num_grp_sep'] : $current_user->getPreference('num_grp_sep');
+        $dec_sep = isset($field_map['importlocale_dec_sep'])? $field_map['importlocale_dec_sep'] : $current_user->getPreference('dec_sep');
+
+        //get localized name format
+        $localized_name_format = isset($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
+
+        //set local char set
+        if(isset ($field_map['importlocale_charset'])){
+            $user_charset = $field_map['importlocale_charset'];
+        }else{
+            $user_charset = $locale->getExportCharset();
         }
 
+
+        $uploadFileName = $_REQUEST['file_name'];
         // split file into parts
-        $splitter = new ImportFileSplitter(
-                "upload://$uploadFileName",
-                $sugar_config['import_max_records_per_file']);
-        $splitter->splitSourceFile(
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES),
-                $has_header
-            );
+        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
+        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile(
-                "upload://$uploadFileName",
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
-            );
+        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
             return;
         }
-
         // retrieve first 3 rows
         $rows = array();
         $system_charset = $locale->default_export_charset;
-        $user_charset = $locale->getExportCharset();
+
         $other_charsets = 'UTF-8, UTF-7, ASCII, CP1252, EUC-JP, SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
         $detectable_charsets = "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}";
         // Bug 26824 - mb_detect_encoding() thinks CP1252 is IS0-8859-1, so use that instead in the encoding list passed to the function
@@ -227,6 +233,7 @@ class ImportViewStep3 extends SugarView
                 }
             }
         }
+
         $ret_field_count = $importFile->getFieldCount();
 
         // Bug 14689 - Parse the first data row to make sure it has non-empty data in it
@@ -428,15 +435,11 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("rows",$columns);
 
         // get list of valid date/time formats
-        $timeFormat = $current_user->getUserDateTimePreferences();
-        $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
-        $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
         $this->ss->assign('TIMEOPTIONS', $timeOptions);
         $this->ss->assign('DATEOPTIONS', $dateOptions);
         $this->ss->assign('datetimeformat', $GLOBALS['timedate']->get_cal_date_time_format());
 
         // get list of valid timezones
-        $userTZ = $current_user->getPreference('timezone');
         if(empty($userTZ))
             $userTZ = TimeDate::userTimezone();
 
@@ -446,7 +449,6 @@ class ImportViewStep3 extends SugarView
         // get currency preference
         require_once('modules/Currencies/ListCurrency.php');
         $currency = new ListCurrency();
-        $cur_id = $locale->getPrecedentPreference('currency', $current_user);
         if($cur_id) {
             $selectCurrency = $currency->getSelectOptions($cur_id);
             $this->ss->assign("CURRENCY", $selectCurrency);
@@ -472,7 +474,6 @@ eoq;
 
 
         // fill significant digits dropdown
-        $significantDigits = $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
         $sigDigits = '';
         for($i=0; $i<=6; $i++) {
             if($significantDigits == $i) {
@@ -484,8 +485,6 @@ eoq;
 
         $this->ss->assign('sigDigits', $sigDigits);
 
-        $num_grp_sep = $current_user->getPreference('num_grp_sep');
-        $dec_sep = $current_user->getPreference('dec_sep');
         $this->ss->assign("NUM_GRP_SEP",
             ( empty($num_grp_sep)
                 ? $sugar_config['default_number_grouping_seperator'] : $num_grp_sep ));
@@ -495,7 +494,7 @@ eoq;
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
 
         // Name display format
-        $this->ss->assign('default_locale_name_format', $locale->getLocaleFormatMacro($current_user));
+        $this->ss->assign('default_locale_name_format', $localized_name_format);
         $this->ss->assign('getNameJs', $locale->getNameJs());
 
         // Charset
@@ -512,6 +511,15 @@ eoq;
         $chooser_array[0] = array();
         $idc = new ImportDuplicateCheck($this->bean);
         $chooser_array[1] = $idc->getDuplicateCheckIndexes();
+
+        //check for saved entries from mapping
+        foreach($chooser_array[1] as $ck=>$cv){
+            if(isset($field_map['dupe_'.$ck])){
+                //index is defined in mapping, so set this index as selected and remove from available list
+                $chooser_array[0][$ck]=$cv;
+                unset($chooser_array[1][$ck]);
+            }
+        }
 
         $chooser = new TemplateGroupChooser();
         $chooser->args['id'] = 'selected_indices';
@@ -601,7 +609,7 @@ eoq;
 <script type="text/javascript">
 <!--
 document.getElementById('goback').onclick = function(){
-    document.getElementById('importstep3').action.value = 'Step2';
+    document.getElementById('importstep3').action.value = 'Confirm';
     document.getElementById('importstep3').to_pdf.value = '0';
     return true;
 }
