@@ -238,8 +238,9 @@ class ImportViewStep3 extends SugarView
          $maxRecordsExceeded = FALSE;
          $maxRecordsWarningMessg = "";
          $lineCount = $importFile->getNumberOfLinesInfile();
-         $maxLineCount = !empty($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
-         if($lineCount > $maxLineCount)
+         $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
+         
+         if( !empty($maxLineCount) && ($lineCount > $maxLineCount) )
          {
              $maxRecordsExceeded = TRUE;
              $maxRecordsWarningMessg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
