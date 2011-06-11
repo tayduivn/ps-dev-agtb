@@ -126,13 +126,21 @@ class ImportFile
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
 
-        // Bug 39494 - Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
-        $bomCheck = fread($this->_fp, 3); 
+        $this->setFpAfterBOM();
+    }
+
+    /**
+     * Remove the BOM (Byte Order Mark) from the beginning of the import row if it exists
+     * @return void
+     */
+    private function setFpAfterBOM()
+    {
+        rewind($this->_fp);
+        $bomCheck = fread($this->_fp, 3);
         if($bomCheck != pack("CCC",0xef,0xbb,0xbf)) {
             rewind($this->_fp);
         }
     }
-    
     /**
      * Destructor
      *
@@ -318,5 +326,29 @@ class ImportFile
             ++$this->_createdCount;
         else
             ++$this->_updatedCount;
+    }
+
+    /**
+     * Determine the number of lines in this file.
+     *
+     * @return int
+     */
+    public function getNumberOfLinesInfile()
+    {
+        $lineCount = 0;
+
+        if ($this->_fp )
+        {
+            rewind($this->_fp);
+            while( !feof($this->_fp) )
+            {
+                if( fgets($this->_fp) !== FALSE)
+                    $lineCount++;
+            }
+            //Reset the fp to after the bom if applicable.
+            $this->setFpAfterBOM();
+        }
+
+        return $lineCount;
     }
 }

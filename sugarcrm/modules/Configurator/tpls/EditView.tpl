@@ -364,6 +364,11 @@
 		<td >
 			<input type='text' size='4' name='vcal_time' value='{$config.vcal_time}'>
 		</td>
+        <td scope="row">{$MOD.LBL_IMPORT_MAX_RECORDS} {sugar_help text=$MOD.LBL_IMPORT_MAX_RECORDS_HELP}</td>
+		<td >
+			<input type='text' size='4' name='import_max_records_total_limit' value='{$config.import_max_records_total_limit}'>
+		</td>
+
 	</tr>
 
 

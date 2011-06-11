@@ -35,12 +35,9 @@ class SugarTestImportUtilities
         self::removeAllCreatedFiles();
     }
 
-    public static function createFile(
-        $lines = 2000,
-        $columns = 3
-        ) 
+    public static function createFile($lines = 2000,$columns = 3)
     {
-        $filename = $GLOBALS['sugar_config']['import_dir'].'test'.date("YmdHis");
+        $filename = $GLOBALS['sugar_config']['import_dir'].'test'. uniqid();
         $fp = fopen($filename,"w");
         for ($i = 0; $i < $lines; $i++) {
             $line = array();

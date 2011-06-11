@@ -87,7 +87,7 @@ class ImportViewStep3 extends SugarView
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings, $app_list_strings;
-	    
+
 	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
 	    if (!empty($iconPath) && !$browserTitle) {
@@ -98,7 +98,7 @@ class ImportViewStep3 extends SugarView
     	}
 	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
 	    $returnArray[] = $mod_strings['LBL_STEP_3_TITLE'];
-    	
+
 	    return $returnArray;
     }
 
@@ -108,13 +108,13 @@ class ImportViewStep3 extends SugarView
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $app_list_strings, $locale;
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] =
             ( empty($sugar_config['import_max_records_per_file'])
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
-        
+
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
@@ -155,9 +155,9 @@ class ImportViewStep3 extends SugarView
             }
             if ( class_exists($classname) ) {
                 $mapping_file = new $classname;
-                if (isset($mapping_file->delimiter)) 
+                if (isset($mapping_file->delimiter))
                     $_REQUEST['custom_delimiter'] = $mapping_file->delimiter;
-                if (isset($mapping_file->enclosure)) 
+                if (isset($mapping_file->enclosure))
                     $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
                 $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
                 $field_map = $mapping_file->getMapping($_REQUEST['import_module']);
@@ -169,10 +169,51 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("CUSTOM_ENCLOSURE",
             ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
+
+       //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
+
+        // get list of valid date/time formats
+        $timeFormat = $current_user->getUserDateTimePreferences();
+        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
+        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
+
+        // get list of valid timezones
+        $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
+
+        //get currency id
+        $cur_id = isset($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
+
+        //get significant digits preference
+        $significantDigits = isset($field_map['importlocale_default_currency_significant_digits'])? $field_map['importlocale_default_currency_significant_digits'] :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
+
+        //get number and decimal seps
+        $num_grp_sep = isset($field_map['importlocale_num_grp_sep'])? $field_map['importlocale_num_grp_sep'] : $current_user->getPreference('num_grp_sep');
+        $dec_sep = isset($field_map['importlocale_dec_sep'])? $field_map['importlocale_dec_sep'] : $current_user->getPreference('dec_sep');
+
+        //get localized name format
+        $localized_name_format = isset($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
+
+        //set local char set
+        if(isset ($field_map['importlocale_charset'])){
+            $user_charset = $field_map['importlocale_charset'];
+        }else{
+            $user_charset = $locale->getExportCharset();
+        }
+
+
         // handle uploaded file
         $uploadFile = new UploadFile('userfile');
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
         {
+
+            //file extension should be set to csv ONLY
+            $uploadedFileExtension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
+            if(empty($uploadedFileExtension) || $uploadedFileExtension != 'csv' ){
+                //if the extension is not .csv then return error message
+                $this->_showImportError($mod_strings['LBL_IMPORT_ERROR_MIME_TYPE'],$_REQUEST['import_module'],'Step2');
+                return;
+            }
+
             $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
             $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
@@ -182,31 +223,33 @@ class ImportViewStep3 extends SugarView
         }
 
         // split file into parts
-        $splitter = new ImportFileSplitter(
-                $uploadFileName,
-                $sugar_config['import_max_records_per_file']);
-        $splitter->splitSourceFile(
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES),
-                $has_header
-            );
+        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
+        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile(
-                $uploadFileName,
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
-            );
+        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
             return;
         }
 
+         //Check if we will exceed the maximum number of records allowed per import.
+         $maxRecordsExceeded = FALSE;
+         $maxRecordsWarningMessg = "";
+         $lineCount = $importFile->getNumberOfLinesInfile();
+         $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
+         
+         if( !empty($maxLineCount) && ($lineCount > $maxLineCount) )
+         {
+             $maxRecordsExceeded = TRUE;
+             $maxRecordsWarningMessg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
+         }
+
         // retrieve first 3 rows
         $rows = array();
         $system_charset = $locale->default_export_charset;
-        $user_charset = $locale->getExportCharset();
+
         $other_charsets = 'UTF-8, UTF-7, ASCII, CP1252, EUC-JP, SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
         $detectable_charsets = "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}";
         // Bug 26824 - mb_detect_encoding() thinks CP1252 is IS0-8859-1, so use that instead in the encoding list passed to the function
@@ -227,6 +270,7 @@ class ImportViewStep3 extends SugarView
                 }
             }
         }
+
         $ret_field_count = $importFile->getFieldCount();
 
         // Bug 14689 - Parse the first data row to make sure it has non-empty data in it
@@ -428,15 +472,11 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("rows",$columns);
 
         // get list of valid date/time formats
-        $timeFormat = $current_user->getUserDateTimePreferences();
-        $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
-        $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
         $this->ss->assign('TIMEOPTIONS', $timeOptions);
         $this->ss->assign('DATEOPTIONS', $dateOptions);
         $this->ss->assign('datetimeformat', $GLOBALS['timedate']->get_cal_date_time_format());
 
         // get list of valid timezones
-        $userTZ = $current_user->getPreference('timezone');
         if(empty($userTZ))
             $userTZ = TimeDate::userTimezone();
 
@@ -446,7 +486,6 @@ class ImportViewStep3 extends SugarView
         // get currency preference
         require_once('modules/Currencies/ListCurrency.php');
         $currency = new ListCurrency();
-        $cur_id = $locale->getPrecedentPreference('currency', $current_user);
         if($cur_id) {
             $selectCurrency = $currency->getSelectOptions($cur_id);
             $this->ss->assign("CURRENCY", $selectCurrency);
@@ -472,7 +511,6 @@ eoq;
 
 
         // fill significant digits dropdown
-        $significantDigits = $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
         $sigDigits = '';
         for($i=0; $i<=6; $i++) {
             if($significantDigits == $i) {
@@ -484,8 +522,6 @@ eoq;
 
         $this->ss->assign('sigDigits', $sigDigits);
 
-        $num_grp_sep = $current_user->getPreference('num_grp_sep');
-        $dec_sep = $current_user->getPreference('dec_sep');
         $this->ss->assign("NUM_GRP_SEP",
             ( empty($num_grp_sep)
                 ? $sugar_config['default_number_grouping_seperator'] : $num_grp_sep ));
@@ -495,7 +531,7 @@ eoq;
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
 
         // Name display format
-        $this->ss->assign('default_locale_name_format', $locale->getLocaleFormatMacro($current_user));
+        $this->ss->assign('default_locale_name_format', $localized_name_format);
         $this->ss->assign('getNameJs', $locale->getNameJs());
 
         // Charset
@@ -512,6 +548,15 @@ eoq;
         $chooser_array[0] = array();
         $idc = new ImportDuplicateCheck($this->bean);
         $chooser_array[1] = $idc->getDuplicateCheckIndexes();
+
+        //check for saved entries from mapping
+        foreach($chooser_array[1] as $ck=>$cv){
+            if(isset($field_map['dupe_'.$ck])){
+                //index is defined in mapping, so set this index as selected and remove from available list
+                $chooser_array[0][$ck]=$cv;
+                unset($chooser_array[1][$ck]);
+            }
+        }
 
         $chooser = new TemplateGroupChooser();
         $chooser->args['id'] = 'selected_indices';
@@ -548,7 +593,7 @@ eoq;
         // include anything needed for quicksearch to work
         require_once("include/TemplateHandler/TemplateHandler.php");
         $quicksearch_js = TemplateHandler::createQuickSearchCode($fields,$fields,'importstep3');
-        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required));
+        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required, $maxRecordsExceeded, $maxRecordsWarningMessg));
 
         $this->ss->assign('required_fields',implode(', ',$required));
         $this->ss->display('modules/Import/tpls/step3.tpl');
@@ -562,13 +607,13 @@ eoq;
      * @param string $action what page we should go back to
      */
     protected function _showImportError(
-        $message, 
+        $message,
         $module,
         $action = 'Step1'
         )
     {
         $ss = new Sugar_Smarty();
-        
+
         $ss->assign("MESSAGE",$message);
         $ss->assign("ACTION",$action);
         $ss->assign("IMPORT_MODULE",$module);
@@ -576,17 +621,17 @@ eoq;
         $ss->assign("SOURCE","");
         if ( isset($_REQUEST['source']) )
             $ss->assign("SOURCE", $_REQUEST['source']);
-        
+
         echo $ss->fetch('modules/Import/tpls/error.tpl');
     }
-    
+
     /**
      * Returns JS used in this view
      *
      * @param  array $required fields that are required for the import
      * @return string HTML output with JS code
      */
-    protected function _getJS($required)
+    protected function _getJS($required, $maxRecordsExceeded = FALSE, $maxRecordsWarningMessg = "")
     {
         global $mod_strings;
 
@@ -594,7 +639,7 @@ eoq;
         foreach ($required as $name=>$display) {
             $print_required_array .= "required['$name'] = '". $display . "';\n";
         }
-
+        $maxRecordsExceededJS = $maxRecordsExceeded?"true":"false";
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 
         return <<<EOJAVASCRIPT
@@ -725,6 +770,17 @@ document.getElementById('addrow').onclick = function(){
 }
 
 YAHOO.util.Event.onDOMReady(function(){
+    if($maxRecordsExceededJS)
+    {
+        var contImport = confirm('$maxRecordsWarningMessg');
+        if(!contImport)
+        {
+            var module = document.getElementById('importstep3').import_module.value;
+            var source = document.getElementById('importstep3').source.value;
+            var returnUrl = "index.php?module=Import&action=Step2&import_module=" + module + "&source=" + source;
+            document.location.href = returnUrl;
+        }
+    }
     var selects = document.getElementsByTagName('select');
     for (var i = 0; i < selects.length; ++i ){
         if (selects[i].name.indexOf("colnum_") != -1 ) {

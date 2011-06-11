@@ -529,8 +529,9 @@ class ImportViewStep4 extends SugarView
                 
             unset($defaultRowValue);
         }
-        
+
         // save mapping if requested
+        $mappingValsArr = $importColumns;
         if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
             $mapping_file = new ImportMap();
             if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on') {
@@ -540,12 +541,20 @@ class ImportViewStep4 extends SugarView
                         $header_to_field[$firstrow[$pos]] = $field_name;
                     }
                 }
-                $mapping_file->setMapping($header_to_field);
-            } 
-            else {
-                $mapping_file->setMapping($importColumns);
+                //$mapping_file->setMapping($header_to_field);
+                $mappingValsArr = $header_to_field;
             }
-            
+            //get array of values to save for duplicate and locale settings
+            $advMapping = $this->retrieveAdvancedMapping();
+
+            //merge with mappingVals array
+            if(!empty($advMapping) && is_array($advMapping)){
+                $mappingValsArr = array_merge($mappingValsArr,$advMapping);
+            }
+
+            //set mapping
+            $mapping_file->setMapping($mappingValsArr);
+
             // save default fields
             $defaultValues = array();
             for ( $i = 0; $i < $_REQUEST['columncount']; $i++ )
@@ -687,4 +696,28 @@ class ImportViewStep4 extends SugarView
     
         return true;
     }
+
+
+
+    public function retrieveAdvancedMapping(){
+        $advancedMappingSettings = array();
+
+        //harvest the dupe index settings
+        if( isset($_REQUEST['display_tabs_def']) ){
+            $dupe_ind = explode('&', $_REQUEST['display_tabs_def']);
+            foreach($dupe_ind as $dupe){
+                $advancedMappingSettings['dupe_'.$dupe] = $dupe;
+            }
+        }
+
+        foreach($_REQUEST as $rk=>$rv){
+            //harvest the import locale settings
+            if(strpos($rk,'portlocale_')>0){
+                $advancedMappingSettings[$rk] = $rv;
+            }
+
+        }
+        return $advancedMappingSettings;
+    }
+    
 }
