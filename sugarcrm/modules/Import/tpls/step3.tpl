@@ -143,10 +143,6 @@ textarea { width: 20em }
                     <h4>{$MOD.LBL_IMPORT_FILE_SETTINGS}&nbsp;{sugar_help text=$MOD.LBL_IMPORT_FILE_SETTINGS_HELP}</h4>
                     <table border=0 class="edit view">
                     <tr>
-                        <td scope="row"><slot>{$MOD.LBL_CHARSET}</slot></td>
-                        <td ><slot><select tabindex='4' name='importlocale_charset'>{$CHARSETOPTIONS}</select></slot></td>
-                    </tr>
-                    <tr>
                         <td scope="row"><slot>{$MOD.LBL_DATE_FORMAT}</slot></td>
                         <td ><slot><select tabindex='4' name='importlocale_dateformat'>{$DATEOPTIONS}</select></slot></td>
                     </tr>

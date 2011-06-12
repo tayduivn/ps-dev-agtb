@@ -106,14 +106,14 @@ class ImportViewConfirm extends SugarView
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user;
-        global $sugar_config;
+        global $sugar_config, $locale;
 
 
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
         $this->ss->assign("SOURCE", $_REQUEST['source']);
         $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
-
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
 
@@ -161,14 +161,45 @@ class ImportViewConfirm extends SugarView
          $maxRecordsWarningMessg = "";
          $lineCount = $importFile->getNumberOfLinesInfile();
          $maxLineCount = isset($sugar_config['import_max_records_total_limit'] ) ? $sugar_config['import_max_records_total_limit'] : 5000;
-         if($lineCount > $maxLineCount)
+         if( !empty($maxLineCount) && ($lineCount > $maxLineCount) )
          {
              $maxRecordsExceeded = TRUE;
              $maxRecordsWarningMessg = string_format($mod_strings['LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED'], array($lineCount, $maxLineCount) );
          }
 
-        $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg ));
+        //Retrieve a sample set of data
+        $rows = array();
 
+        $user_charset = $locale->getExportCharset();
+        $system_charset = $locale->default_export_charset;
+        $other_charsets = 'UTF-8, UTF-7, ASCII, CP1252, EUC-JP, SJIS, eucJP-win, SJIS-win, JIS, ISO-2022-JP';
+        $detectable_charsets = "UTF-8, {$user_charset}, {$system_charset}, {$other_charsets}";
+        // Bug 26824 - mb_detect_encoding() thinks CP1252 is IS0-8859-1, so use that instead in the encoding list passed to the function
+        $detectable_charsets = str_replace('CP1252','ISO-8859-1',$detectable_charsets);
+        $charset_for_import = $user_charset; //We will set the default import charset option by user's preference.
+        $able_to_detect = function_exists('mb_detect_encoding');
+        for ( $i = 0; $i < 3; $i++ ) {
+            $rows[$i] = $importFile->getNextRow();
+            if(!empty($rows[$i]) && $able_to_detect) {
+                foreach($rows[$i] as & $temp_value) {
+                    $current_charset = mb_detect_encoding($temp_value, $detectable_charsets);
+                    if(!empty($current_charset) && $current_charset != "UTF-8") {
+                        $temp_value = $locale->translateCharset($temp_value, $current_charset);// we will use utf-8 for displaying the data on the page.
+                        $charset_for_import = $current_charset;
+                        //set the default import charset option according to the current_charset.
+                        //If it is not utf-8, tt may be overwritten by the later one. So the uploaded file should not contain two types of charset($user_charset, $system_charset), and I think this situation will not occur.
+                    }
+                }
+            }
+        }
+
+        // Charset
+        $charsetOptions = get_select_options_with_id(
+        $locale->getCharsetSelect(), $charset_for_import);//wdong,  bug 25927, here we should use the charset testing results from above.
+        $this->ss->assign('CHARSETOPTIONS', $charsetOptions);
+
+        $this->ss->assign("SAMPLE_ROWS",$rows);
+        $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg ));
         $this->ss->display('modules/Import/tpls/confirm.tpl');
     }
     
@@ -178,32 +209,68 @@ class ImportViewConfirm extends SugarView
     private function _getJS($maxRecordsExceeded, $maxRecordsWarningMessg )
     {
         global $mod_strings;
-        
+        $maxRecordsExceededJS = $maxRecordsExceeded?"true":"false";
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 
 document.getElementById('goback').onclick = function(){
-    document.getElementById('importstep2').action.value = 'Step2';
+    document.getElementById('importconfirm').action.value = 'Step2';
     return true;
 }
 
 document.getElementById('gonext').onclick = function(){
-    document.getElementById('importstep2').action.value = 'Step3';
+    document.getElementById('importconfirm').action.value = 'Step3';
     return true;
 }
 
+document.getElementById('custom_enclosure').onchange = function()
+{
+    document.getElementById('importconfirm').custom_enclosure_other.style.display = ( this.value == 'other' ? '' : 'none' );
+}
+
 YAHOO.util.Event.onDOMReady(function(){
-    if($maxRecordsExceeded)
+    if($maxRecordsExceededJS)
     {
         var contImport = confirm('$maxRecordsWarningMessg');
         if(!contImport)
         {
-            var module = document.getElementById('importstep3').import_module.value;
-            var source = document.getElementById('importstep3').source.value;
+            var module = document.getElementById('importconfirm').import_module.value;
+            var source = document.getElementById('importconfirm').source.value;
             var returnUrl = "index.php?module=Import&action=Step2&import_module=" + module + "&source=" + source;
             document.location.href = returnUrl;
         }
     }
+
+    function refreshDataTable(e)
+    {
+        var callback = {
+          success: function(o) {
+            document.getElementById('confirm_table').innerHTML = o.responseText;
+          },
+          failure: function(o) {},
+        };
+
+        var importFile = document.getElementById('importconfirm').file_name.value;
+        var fieldDelimeter = document.getElementById('custom_delimiter').value;
+        var fieldQualifier = document.getElementById('custom_enclosure').value;
+        if(fieldQualifier == 'other' && this.id == 'custom_enclosure')
+        {
+            return;
+        }
+        else if( fieldQualifier == 'other' )
+        {
+            fieldQualifier = document.getElementById('custom_enclosure_other').value;
+        }
+
+        var url = 'index.php?action=RefreshMapping&module=Import&importFile=' + importFile
+                    + '&delim=' + fieldDelimeter + '&qualif=' + fieldQualifier;
+
+        YAHOO.util.Connect.asyncRequest('GET', url, callback);
+    }
+    YAHOO.util.Event.addListener("custom_delimiter", "change", refreshDataTable);
+    YAHOO.util.Event.addListener("custom_enclosure", "change", refreshDataTable);
+    YAHOO.util.Event.addListener("custom_enclosure_other", "change", refreshDataTable);
+
 });
 </script>
 

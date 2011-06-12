@@ -72,7 +72,29 @@ class ImportController extends SugarController
     {
         $this->action_Step1();
     }
-    
+
+    function action_RefreshMapping()
+    {
+        require_once('modules/Import/ImportFile.php');
+        
+        $fileName = $_REQUEST['importFile'];
+        $delim = $_REQUEST['delim'];
+        $enclosure = $_REQUEST['qualif'];
+        $enclosure = html_entity_decode($enclosure, ENT_QUOTES);
+
+        $rows = array();
+        $importFile = new ImportFile( $fileName, $delim, $enclosure, FALSE);
+        for($i=0;$i<3;$i++)
+        {
+            $rows[] = $importFile->getNextRow();
+        }
+
+        $ss = new Sugar_Smarty();
+        $ss->assign("SAMPLE_ROWS",$rows);
+        $ss->display('modules/Import/tpls/confirm_table.tpl');
+        sugar_cleanup(TRUE);
+
+    }
 	function action_Step1()
     {
 		$this->view = 'step1';
@@ -82,7 +104,12 @@ class ImportController extends SugarController
     {
 		$this->view = 'step2';
     }
-    
+
+    function action_Confirm()
+    {
+		$this->view = 'confirm';
+    }
+
     function action_Step3()
     {
 		$this->view = 'step3';

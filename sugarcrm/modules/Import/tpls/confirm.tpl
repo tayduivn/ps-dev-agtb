@@ -53,12 +53,52 @@ textarea { width: 20em }
 <input type="hidden" name="has_header" value="{$HAS_HEADER}">
 <input type="hidden" name="file_name" value="{$FILE_NAME}">
 
+<div id="confirm_table">
+    {include file='modules/Import/tpls/confirm_table.tpl'}
+</div>
 
-<table border="0" cellpadding="0" width="100%" id="importTable" class="detail view">
-    TODO: FIX ME :)
-</table>
-<br />
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<div>
+    <h4>{$MOD.LBL_IMPORT_FILE_SETTINGS}&nbsp;{sugar_help text=$MOD.LBL_IMPORT_FILE_SETTINGS_HELP}</h4>
+    <table border=0 class="edit view">
+        <tr>
+            <td scope="row">
+                <slot>{$MOD.LBL_CHARSET}</slot>
+            </td>
+            <td>
+                <slot><select tabindex='4' name='importlocale_charset'>{$CHARSETOPTIONS}</select></slot>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row">
+                <slot>{$MOD.LBL_CUSTOM_DELIMITER}</slot>
+            </td>
+            <td>
+                <slot><input type="text" id="custom_delimiter" name="custom_delimiter" value="{$CUSTOM_DELIMITER}" style="width: 5em;" maxlength="1" /></slot>
+            </td>
+        </tr>
+        <tr>
+            <td scope="row">
+                <slot>{$MOD.LBL_CUSTOM_ENCLOSURE}</slot>
+            </td>
+            <td>
+                <slot>
+                    <select name="custom_enclosure" id="custom_enclosure">
+                        <option value="&quot;" selected="selected">{$MOD.LBL_OPTION_ENCLOSURE_DOUBLEQUOTE}</option>
+                        <option value="'">{$MOD.LBL_OPTION_ENCLOSURE_QUOTE}</option>
+                        <option value="">{$MOD.LBL_OPTION_ENCLOSURE_NONE}</option>
+                        <option value="other">{$MOD.LBL_OPTION_ENCLOSURE_OTHER}</option>
+                    </select>
+                    <input type="text" name="custom_enclosure_other" id="custom_enclosure_other" style="display: none; width: 5em;" maxlength="1" />
+                    {sugar_help text=$MOD.LBL_ENCLOSURE_HELP}
+
+                </slot>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+    <table width="100%" cellpadding="2" cellspacing="0" border="0">
 <tr>
     <td align="left">
         <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
@@ -68,8 +108,5 @@ textarea { width: 20em }
 </table>
 
 </form>
-{literal}
-<script type="text/javascript">
 
-</script>
-{/literal}
+{$JAVASCRIPT}
