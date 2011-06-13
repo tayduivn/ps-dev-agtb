@@ -122,11 +122,12 @@ class ImportViewStep3 extends SugarView
 
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
-        $field_map = array();
+        $mapping_file = new ImportMap();
+        $field_map = $mapping_file->set_get_import_wizard_fields();
         $default_values = array();
 		$ignored_fields = array();
+
         if ( !empty( $_REQUEST['source_id'])) {
-            $mapping_file = new ImportMap();
             $mapping_file->retrieve( $_REQUEST['source_id'],false);
             $_REQUEST['source'] = $mapping_file->source;
             $has_header = $mapping_file->has_header;
@@ -160,45 +161,42 @@ class ImportViewStep3 extends SugarView
                 if (isset($mapping_file->enclosure))
                     $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
                 $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
-                $field_map = $mapping_file->getMapping($_REQUEST['import_module']);
+                $field_map2 = $mapping_file->getMapping($_REQUEST['import_module']);
+                $field_map = array_merge($field_map,$field_map2);
             }
         }
+
+
+       //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
 
         $this->ss->assign("CUSTOM_DELIMITER",
             ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
         $this->ss->assign("CUSTOM_ENCLOSURE",
             ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
-
-       //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
-
         // get list of valid date/time formats
         $timeFormat = $current_user->getUserDateTimePreferences();
-        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
-        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
+        $timeOptions = !empty($field_map['importlocale_timeformat'])? get_select_options_with_id($sugar_config['time_formats'],$field_map['importlocale_timeformat']) : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
+        $dateOptions = !empty($field_map['importlocale_dateformat'])?  get_select_options_with_id($sugar_config['date_formats'], $field_map['importlocale_dateformat']) : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
 
         // get list of valid timezones
-        $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
+        $userTZ = !empty($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
 
         //get currency id
-        $cur_id = isset($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
+        $cur_id = !empty($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
 
         //get significant digits preference
-        $significantDigits = isset($field_map['importlocale_default_currency_significant_digits'])? $field_map['importlocale_default_currency_significant_digits'] :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
+        $significantDigits = !empty($field_map['importlocale_default_currency_significant_digits'])? $field_map['importlocale_default_currency_significant_digits'] :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
 
         //get number and decimal seps
-        $num_grp_sep = isset($field_map['importlocale_num_grp_sep'])? $field_map['importlocale_num_grp_sep'] : $current_user->getPreference('num_grp_sep');
-        $dec_sep = isset($field_map['importlocale_dec_sep'])? $field_map['importlocale_dec_sep'] : $current_user->getPreference('dec_sep');
+        $num_grp_sep = !empty($field_map['importlocale_num_grp_sep'])? $field_map['importlocale_num_grp_sep'] : $current_user->getPreference('num_grp_sep');
+        $dec_sep = !empty($field_map['importlocale_dec_sep'])? $field_map['importlocale_dec_sep'] : $current_user->getPreference('dec_sep');
 
         //get localized name format
-        $localized_name_format = isset($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
+        $localized_name_format = !empty($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
 
         //set local char set
-        if(isset ($field_map['importlocale_charset'])){
-            $user_charset = $field_map['importlocale_charset'];
-        }else{
-            $user_charset = $locale->getExportCharset();
-        }
+        $user_charset = !empty($field_map['importlocale_charset'])? $field_map['importlocale_charset'] : $locale->getExportCharset();
 
 
         // handle uploaded file
@@ -550,11 +548,16 @@ eoq;
         $chooser_array[1] = $idc->getDuplicateCheckIndexes();
 
         //check for saved entries from mapping
-        foreach($chooser_array[1] as $ck=>$cv){
-            if(isset($field_map['dupe_'.$ck])){
-                //index is defined in mapping, so set this index as selected and remove from available list
-                $chooser_array[0][$ck]=$cv;
-                unset($chooser_array[1][$ck]);
+        if(isset($field_map['display_tabs_def'])){
+            //index is defined in mapping, so iterate through and set this index as selected and remove from available list
+            $dupe_ind = explode('::', $field_map['display_tabs_def']);
+            foreach($dupe_ind as $dupe){
+                if(empty($chooser_array[1][$dupe])){
+                    continue;
+                }
+                $chooser_array[0][$dupe]=$chooser_array[1][$dupe];
+                unset($chooser_array[1][$dupe]);
+
             }
         }
 
