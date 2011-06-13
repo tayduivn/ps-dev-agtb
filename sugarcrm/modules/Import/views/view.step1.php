@@ -142,29 +142,6 @@ class ImportViewStep1 extends SugarView
         
         }
         
-        //BEGIN SUGARCRM flav!=sales ONLY
-        // trigger showing other software packages
-        $this->ss->assign("show_salesforce",false);
-        $this->ss->assign("show_outlook",false);
-        $this->ss->assign("show_act",false);
-        switch ($_REQUEST['import_module']) {
-            case "Prospects":
-                break;
-            case "Accounts":
-                $this->ss->assign("show_salesforce",true);
-                $this->ss->assign("show_act",true);
-                break;
-            case "Contacts":
-                $this->ss->assign("show_salesforce",true);
-                $this->ss->assign("show_outlook",true);
-                $this->ss->assign("show_act",true);
-                break;
-            default:
-                $this->ss->assign("show_salesforce",true);
-                break;
-        }
-        //END SUGARCRM flav!=sales ONLY
-        
         // show any custom mappings
         if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import')) 
         {
