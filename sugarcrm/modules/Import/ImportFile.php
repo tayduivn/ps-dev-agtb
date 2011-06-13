@@ -97,7 +97,12 @@ class ImportFile
      * True if the current row has already had an error it in, so we don't increase the $_errorCount
      */
     private $_rowCountedForErrors = false;
-    
+
+    /**
+     * True if the csv file has a header row.
+     */
+    private $_hasHeader = FALSE;
+
     /**
      * Constructor
      *
@@ -417,5 +422,15 @@ class ImportFile
 
         return $charset_for_import;
 
+    }
+
+    public function setHeaderRow($hasHeader)
+    {
+        $this->_hasHeader = $hasHeader;
+    }
+
+    public function hasHeaderRow()
+    {
+        return $this->_hasHeader;
     }
 }

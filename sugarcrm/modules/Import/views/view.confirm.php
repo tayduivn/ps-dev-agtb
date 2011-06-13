@@ -116,7 +116,6 @@ class ImportViewConfirm extends SugarView
         $this->ss->assign("SOURCE", $_REQUEST['source']);
         $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
-        $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
 
         // Clear out this user's last import
@@ -153,6 +152,8 @@ class ImportViewConfirm extends SugarView
 
         $this->ss->assign("CUSTOM_DELIMITER", $importFile->getFieldDelimeter() );
         $this->ss->assign("CUSTOM_ENCLOSURE", $importFile->getFieldEnclosure() );
+        $hasHeader = $importFile->hasHeaderRow() ? " CHECKED" : "";
+        $this->ss->assign("HAS_HEADER_CHECKED", $hasHeader);
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
@@ -171,11 +172,7 @@ class ImportViewConfirm extends SugarView
          }
 
         //Retrieve a sample set of data
-        $rows = array();
-        for($i=0; $i < self::SAMPLE_ROW_SIZE; $i++)
-        {
-            $rows[] = $importFile->getNextRow();
-        }
+        $rows = $this->getSampleSet($importFile);
 
         $charset_for_import = $importFile->autoDetectCharacterSet();
 
@@ -187,7 +184,23 @@ class ImportViewConfirm extends SugarView
         $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg ));
         $this->ss->display('modules/Import/tpls/confirm.tpl');
     }
-    
+
+    public function getSampleSet($importFile)
+    {
+        $rows = array();
+        for($i=0; $i < self::SAMPLE_ROW_SIZE; $i++)
+        {
+            $rows[] = $importFile->getNextRow();
+        }
+
+        if( ! $importFile->hasHeaderRow() )
+        {
+            array_unshift($rows, array_fill(0, count($rows[0]),'') );
+        }
+
+        return $rows;
+    }
+
     /**
      * Returns JS used in this view
      */
@@ -238,6 +251,8 @@ YAHOO.util.Event.onDOMReady(function(){
         var importFile = document.getElementById('importconfirm').file_name.value;
         var fieldDelimeter = document.getElementById('custom_delimiter').value;
         var fieldQualifier = document.getElementById('custom_enclosure').value;
+        var hasHeader = document.getElementById('importconfirm').has_header.checked ? 'true' : '';
+
         if(fieldQualifier == 'other' && this.id == 'custom_enclosure')
         {
             return;
@@ -248,13 +263,12 @@ YAHOO.util.Event.onDOMReady(function(){
         }
 
         var url = 'index.php?action=RefreshMapping&module=Import&importFile=' + importFile
-                    + '&delim=' + fieldDelimeter + '&qualif=' + fieldQualifier;
+                    + '&delim=' + fieldDelimeter + '&qualif=' + fieldQualifier + "&header=" + hasHeader;
 
         YAHOO.util.Connect.asyncRequest('GET', url, callback);
     }
-    YAHOO.util.Event.addListener("custom_delimiter", "change", refreshDataTable);
-    YAHOO.util.Event.addListener("custom_enclosure", "change", refreshDataTable);
-    YAHOO.util.Event.addListener("custom_enclosure_other", "change", refreshDataTable);
+    var subscribers = ["custom_delimiter", "custom_enclosure", "custom_enclosure_other", "has_header", "importlocale_charset"];
+    YAHOO.util.Event.addListener(subscribers, "change", refreshDataTable);
 
 });
 </script>

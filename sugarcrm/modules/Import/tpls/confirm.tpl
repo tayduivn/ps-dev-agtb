@@ -54,7 +54,6 @@ textarea { width: 20em }
 <input type="hidden" name="action" value="Step3">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="import_type" value="{$TYPE}">
-<input type="hidden" name="has_header" value="{$HAS_HEADER}">
 <input type="hidden" name="file_name" value="{$FILE_NAME}">
 
 <div id="confirm_table">
@@ -94,10 +93,18 @@ textarea { width: 20em }
                     </select>
                     <input type="text" name="custom_enclosure_other" id="custom_enclosure_other" style="display: none; width: 5em;" maxlength="1" />
                     {sugar_help text=$MOD.LBL_ENCLOSURE_HELP}
-
                 </slot>
             </td>
         </tr>
+
+        <tr>
+            <td scope="row">
+                {$MOD.LBL_HAS_HEADER}
+            </td>
+            <td>
+                <input class="checkBox" value='on' type="checkbox" name="has_header" id="has_header" {$HAS_HEADER_CHECKED}>
+            </td>
+	    </tr>
     </table>
 </div>
 

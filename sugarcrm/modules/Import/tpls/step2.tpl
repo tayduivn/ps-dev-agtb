@@ -68,23 +68,13 @@
 <tr>
 <td>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
-	<tr>
-	<td align="left" scope="row" colspan="4">{$MOD.LBL_SELECT_FILE}</td>
-	</tr>
-	<tr>
-	<td scope="row">
-	<input type="hidden" />
-	<input size="60" name="userfile" type="file"/>
-	</td>
-	</tr>
-	<tr>
-	<td scope="row">
-	{$MOD.LBL_HAS_HEADER}&nbsp;<input class="checkBox" value='on' type="checkbox" name="has_header"{$HAS_HEADER_CHECKED}>
-	</td>
-	</tr>
+        <tr>
+            <td align="left" scope="row" colspan="4">{$MOD.LBL_SELECT_FILE}</td>
+        </tr>
+        <tr>
+            <td scope="row"><input type="hidden" /><input size="60" name="userfile" type="file"/></td>
+        </tr>
 	</table>
-
-
 </td>
 </tr>
 </table>

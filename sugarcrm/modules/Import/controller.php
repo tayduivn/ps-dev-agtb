@@ -76,18 +76,18 @@ class ImportController extends SugarController
     function action_RefreshMapping()
     {
         require_once('modules/Import/ImportFile.php');
-        
+        require_once('modules/Import/views/view.confirm.php');
+        $v = new ImportViewConfirm();
         $fileName = $_REQUEST['importFile'];
         $delim = $_REQUEST['delim'];
         $enclosure = $_REQUEST['qualif'];
         $enclosure = html_entity_decode($enclosure, ENT_QUOTES);
+        $hasHeader = isset($_REQUEST['header']) && !empty($_REQUEST['header']) ? TRUE : FALSE;
 
-        $rows = array();
         $importFile = new ImportFile( $fileName, $delim, $enclosure, FALSE);
-        for($i=0;$i<3;$i++)
-        {
-            $rows[] = $importFile->getNextRow();
-        }
+        $importFile->setHeaderRow($hasHeader);
+        
+        $rows = $v->getSampleSet($importFile);
 
         $ss = new Sugar_Smarty();
         $ss->assign("SAMPLE_ROWS",$rows);
