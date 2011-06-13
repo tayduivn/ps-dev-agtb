@@ -138,7 +138,7 @@ EOQ;
          $str .= "<script>
                 object_refs['{$this->args['left_name']}'] = document.getElementById('{$this->args['left_name']}');
                 </script></tr>
-            </table>";
+            </table></div>";
 
                 
         return $str;
