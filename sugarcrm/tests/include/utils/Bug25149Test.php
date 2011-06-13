@@ -13,15 +13,16 @@ class Bug25149Test extends Sugar_PHPUnit_Framework_TestCase
 
         $order_by = array();
         $where = '';
-        $query = $product->create_export_query($order_by, $where) . ' LIMIT 1';
+        $query = $product->create_export_query($order_by, $where);
 
         $db = DBManagerFactory::getInstance();
-        $result = $db->query($query, true, '');
-        $fields = $db->getFieldsArray($result, true);
+        $result = $db->limitQuery($query, 1, 1, true, '');
+        $export_fields = $db->getFieldsArray($result, true);
 
-        $query = 'DESCRIBE '.$product->table_name;
-        $result = $db->query($query, true, '');
+        $query = 'SELECT * FROM '.$product->table_name;
+        $result = $db->limitQuery($query, 1, 1, true, '');
+        $table_fields = $db->getFieldsArray($result, true);
 
-        $this->assertGreaterThanOrEqual($db->getRowCount($result), count($fields));
+        $this->assertGreaterThanOrEqual(count($table_fields), count($export_fields));
     }
 }

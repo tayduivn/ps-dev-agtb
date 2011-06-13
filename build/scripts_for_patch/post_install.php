@@ -392,12 +392,20 @@ function post_install() {
     }
 	//END SUGARCRM flav=pro ONLY	
 
-    //Remove jssource/src_files directory if it still exists
-    if(file_exists('jssource/src_files'))
+    //Remove jssource/src_files sub-directories if they still exist
+    $jssource_dirs = array('jssource/src_files/include/javascript/ext-2.0', 
+    					   'jssource/src_files/include/javascript/ext-1.1.1',
+    					   'jssource/src_files/include/javascript/yui'
+                          );
+                          
+    foreach($jssource_dirs as $js_dir)
     {
-       _logThis('Remove jssource/src_files directory');
-       rmdir_recursive('jssource/src_files');
-       _logThis('Finished removing jssource/src_files directory');	
+	    if(file_exists($js_dir))
+	    {
+	       _logThis("Remove {$js_dir} directory");
+	       rmdir_recursive($js_dir);
+	       _logThis("Finished removing {$js_dir} directory");	
+	    }
     }
 }
 /**

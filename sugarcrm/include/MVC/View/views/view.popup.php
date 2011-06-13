@@ -37,7 +37,7 @@ class ViewPopup extends SugarView{
         if(($this->bean instanceOf SugarBean) && !$this->bean->ACLAccess('list')){
             ACLController::displayNoAccess();
             sugar_cleanup(true);
-        }
+        }  
         
         //C.L.: Bug 43395 - Do not apply locale formatting to Popup names
         if($this->bean instanceof Person)

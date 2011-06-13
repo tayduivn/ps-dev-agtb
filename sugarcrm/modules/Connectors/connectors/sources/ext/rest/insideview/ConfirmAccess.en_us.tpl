@@ -8,10 +8,11 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
 </script>
 <div id='insideViewDiv' style='width:100%;overflow:hidden'>
   <div id='insideViewConfirm'>
-  InsideView is a sales intelligence solution that helps you find, qualify, engage, and close more sales by providing relevant company information. The InsideView connector allows you to access useful information about the record you are currently viewing. In order to access this information, the connector sends information about you and your company to InsideView.
+  InsideView now comes preinstalled in Sugar, giving you access to relevant company information, contacts, news, and social media insights all within your CRM. The InsideView connector is a FREE service that automatically displays in your leads, accounts, contacts and opportunities.
   <br/><br/>
-  Do you authorize the sending of this information to InsideView in order to use the connector?
-  <br/><br/><button onclick="allowInsideView(); return false;" class='button primary'>Yes, Connect to InsideView</button>
+  By clicking 'Continue' you agree to InsideView's terms of <a href='http://www.insideview.com/cat-terms-use.html' target='_blank'>use</a> . Your SugarCRM user information will be used to create your new InsideView account and will be protected in accordance with InsideView's <a href='http://www.insideview.com/cat-privacy.html' target='_blank'>privacy policy</a> . Click 'Continue' to get started with InsideView.
+  <br/><br/><button onclick="allowInsideView(); return false;" class='button primary'>Continue</button>
+  <br/><br/>
   </div>
   <iframe id='insideViewFrame' src='about:blank' style='border:0px; width:100%;height:480px;overflow:hidden;display:none;'></iframe>
 </div>
