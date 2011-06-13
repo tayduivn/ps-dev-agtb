@@ -41,10 +41,10 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
         document.getElementById('globalLinks').style.width = "auto";
     }
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-        var module = Y.one('#globalLinksModule');
+        var module = Y.get('#globalLinksModule');
     
         if ( Get_Cookie('globalLinksOpen') && Get_Cookie('globalLinksOpen') == 'true' ) {
-            var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
+            var content = module.query('#globalLinks').plug(Y.Plugin.NodeFX, {
             from: { width: 0
                      
             },
@@ -60,7 +60,7 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
             module.toggleClass('yui-closed');
             
         } else {
-        var content = module.one('#globalLinks').plug(Y.Plugin.NodeFX, {
+        var content = module.query('#globalLinks').plug(Y.Plugin.NodeFX, {
             from: { width: 
                     function(node) { // dynamic in case of change
                         return node.get('scrollWidth'); 
@@ -89,7 +89,7 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
         '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
         );
         
-        module.one('#globalLinksCtrl').appendChild(control);
+        module.query('#globalLinksCtrl').appendChild(control);
         control.on('click', onClick);
     });
 });
@@ -145,7 +145,10 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 				oSubmenu.addItems(data,1);
 				
 				//update shadow height to accomodate new items
-
+				oShadowBody = oShadow.firstChild;
+				oShadowBody.style.height = (oShadow.offsetHeight)+"px";
+				oShadowBodyCenter = oShadowBody.childNodes[1];
+				oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
 				oVR = oShadow.previousSibling;
 				oVR.style.height = (oShadow.offsetHeight - 35)+"px";
 
@@ -195,7 +198,60 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 		oElement.style.left = newLeft + "px";	
 		oBd = oElement.firstChild;
 		oShadow = oElement.lastChild;
-		oElement.style.top = oElement.offsetTop + 1 + "px";
+		if(oShadow.innerHTML == "") {
+			oShadowBody = document.createElement("div");
+			oShadowBody.setAttribute("class","shadow-bd");
+			oShadowBody.setAttribute("className","shadow-bd");
+			
+			oShadowBodyMl = document.createElement("div");
+			oShadowBodyMl.setAttribute("class","ml");
+			oShadowBodyMl.setAttribute("className","ml");
+			oShadowBody.appendChild(oShadowBodyMl);
+			
+			oShadowBodyCenter = document.createElement("div");
+			oShadowBodyCenter.setAttribute("class","bd-center");
+			oShadowBodyCenter.setAttribute("className","bd-center");
+			oShadowBodyCenter.style.backgroundColor = "#fff";
+			oShadowBody.appendChild(oShadowBodyCenter);
+			
+			oShadowBodyMr = document.createElement("div");
+			oShadowBodyMr.setAttribute("class","mr");
+			oShadowBodyMr.setAttribute("className","mr");
+			oShadowBody.appendChild(oShadowBodyMr);
+			
+			oShadow.appendChild(oShadowBody);
+			
+			oShadowFt = document.createElement("div");
+			oShadowFt.setAttribute("class","ft");
+			oShadowFt.setAttribute("className","ft");
+			
+			oShadowFtBl = document.createElement("div");
+			oShadowFtBl.setAttribute("class","bl");
+			oShadowFtBl.setAttribute("className","bl");
+			oShadowFt.appendChild(oShadowFtBl);
+			
+			oShadowFtCenter = document.createElement("div");
+			oShadowFtCenter.setAttribute("class","ft-center");
+			oShadowFtCenter.setAttribute("className","ft-center");
+			oShadowFt.appendChild(oShadowFtCenter);
+			
+			oShadowFtBr = document.createElement("div");
+			oShadowFtBr.setAttribute("class","br");
+			oShadowFtBr.setAttribute("className","br");
+			oShadowFt.appendChild(oShadowFtBr);
+			
+			oShadow.appendChild(oShadowFt);
+			
+		} else {
+			oShadowBody = oShadow.firstChild;
+		}
+			
+		
+		oShadowBody.style.height = (oShadow.offsetHeight)+"px";
+		oShadowBodyCenter = oShadowBody.childNodes[1];
+		oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
+		oShadowBodyCenter.style.width = (oBd.offsetWidth)+"px";
+		
 		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
 			if(oShadow.previousSibling.className != "vr") {
 			
@@ -204,8 +260,8 @@ YAHOO.util.Event.onContentReady("moduleList", function()
 			oVR.setAttribute("className", "vr");
 			oElement.insertBefore(oVR,oShadow);
 			
-			oVR.style.height = (oBd.offsetHeight - 15)+"px";
-			oVR.style.top = (oBd.offsetTop+8) +"px";
+			oVR.style.height = (oBd.offsetHeight - 35)+"px";
+			oVR.style.top = (oBd.offsetTop+25) +"px";
 			oVR.style.left = ((oBd.offsetWidth/2)-10) +"px";
 
 			}
@@ -224,7 +280,7 @@ YAHOO.util.Event.onContentReady("moduleList", function()
             visible: false,
 		    hidedelay: 750, 
 		    lazyload: true });
-       
+        
         
 	    /*
 	      Subscribe to the "beforeShow" and "show" events for 
@@ -269,13 +325,13 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
 {
     YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("anim", function(Y) 
     {
-        var content = Y.one('#content');
+        var content = Y.get('#content');
         //BEGIN SUGARCRM flav!=sales ONLY
-        var addPage = Y.one('#add_page');
+        var addPage = Y.get('#add_page');
         //END SUGARCRM flav!=sales ONLY
-        var tabListContainer = Y.one('#tabListContainer');
-        var tabList = Y.one('#tabList');
-        var dashletCtrlsElem = Y.one('#dashletCtrls');
+        var tabListContainer = Y.get('#tabListContainer');
+        var tabList = Y.get('#tabList');
+        var dashletCtrlsElem = Y.get('#dashletCtrls');
         var contentWidth = content.get('offsetWidth');
         var dashletCtrlsWidth = dashletCtrlsElem.get('offsetWidth')+10;
         //BEGIN SUGARCRM flav!=sales ONLY
@@ -307,7 +363,7 @@ YAHOO.util.Event.onContentReady("tabListContainer", function()
         //END SUGARCRM flav!=sales ONLY
         
     
-        var node = Y.one('#tabListContainer .yui-bd');
+        var node = Y.get('#tabListContainer .yui-bd');
         var anim = new Y.Anim({
             node: node,
             to: {
@@ -342,7 +398,7 @@ function sugar_theme_gm_switch( groupName ) {
     oMenuBar = allMenuBars[groupName];
 }
 
-offsetPadding = 0;
+offsetPadding = 15;
 
 function resizeHeader() {
 	var e = document.getElementById("contentTable");
