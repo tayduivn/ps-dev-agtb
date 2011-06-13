@@ -1042,8 +1042,13 @@ function validate_user($user_name, $password){
 			}
 		    $arr = array();
 
-		    $query = "select id, deleted from {$focus->table_name} WHERE name='".$seed->db->quote($account_name)."'";
-		    $result = $seed->db->query($query) or sugar_die("Error selecting sugarbean: ".mysql_error());
+            if(!($account_id == '')) {
+               $query = "select id, deleted from {$focus->table_name} WHERE id='".$seed->db->quote($account_id)."'";
+            }
+            else {
+               $query = "select id, deleted from {$focus->table_name} WHERE name='".$seed->db->quote($account_name)."'";
+            }
+            $result = $seed->db->query($query) or sugar_die("Error selecting sugarbean: ".mysql_error());
 
 		    $row = $seed->db->fetchByAssoc($result, -1, false);
 
