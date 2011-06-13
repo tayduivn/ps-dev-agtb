@@ -201,7 +201,7 @@ EOQ;
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back_teams('$currentModule',document.MassUpdate,'mass[]','" .$app_strings['ERR_NOTHING_SELECTED']."', request_data);\" title='"
 				.$app_strings['LBL_SELECT_BUTTON_TITLE']."' accesskey='"
 				.$app_strings['LBL_SELECT_BUTTON_KEY']."' value='  "
-				.$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' />\n";
+				.$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' id='search_form_select' />\n";
 		}
 
 		//END:FOR MULTI-SELECT
@@ -210,12 +210,12 @@ EOQ;
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
 				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
 				.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
-				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' />\n";
+				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' id='search_form_clear' />\n";
 		}
 		$button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"
 			.$app_strings['LBL_CANCEL_BUTTON_TITLE']."' accesskey='"
 			.$app_strings['LBL_CANCEL_BUTTON_KEY']."' value='  "
-			.$app_strings['LBL_CANCEL_BUTTON_LABEL']."  ' />\n";
+			.$app_strings['LBL_CANCEL_BUTTON_LABEL']."  ' id='search_form_cancel' />\n";
 
 		if(isset($this->_popupMeta['templateForm'])) { 
 			$form = new XTemplate($this->_popupMeta['templateForm']);

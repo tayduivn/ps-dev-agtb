@@ -206,7 +206,6 @@ $mod_strings = array (
   'LBL_SOURCE_JSCALENDAR' => 'JS Calendar - A calendar for entering dates created by Mihai Bazon',
   'LBL_SOURCE_PHPPDF' => 'PHP PDF - A library for creating PDF documents created by Wayne Munro',
   'LBL_SOURCE_HTTP_WEBDAV_SERVER' => 'HTTP_WebDAV_Server - A WebDAV Server Implementation in PHP.',
-  'LBL_SOURCE_JS_O_LAIT' => 'JavaScript O Lait - A library of reusable modules and components to enhance JavaScript by Jan-Klaas Kollhof.',
   'LBL_SOURCE_PCLZIP' => 'PclZip - library offers compression and extraction functions for Zip formatted archives by Vincent Blavet',
   'LBL_SOURCE_SMARTY' => 'Smarty - A template engine for PHP.',
   'LBL_SOURCE_OVERLIBMWS' => 'Overlibmws - JavaScript library for client-side windowing.',

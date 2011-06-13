@@ -394,12 +394,9 @@ FRA;
                     $additionalFields = isset($this->displayParams['additionalFields']) ? $this->displayParams['additionalFields'] : null;
                     $sqs_objects[$name1] = $qsd->getQSAccount($nameKey, $idKey, $billingKey, $shippingKey, $additionalFields);
                 } 
-                /*
-                else if($matches[0] == 'Contacts'){
-                    $sqs_objects[$name1] = $qsd->getQSContact($name1, "id_".$name1);
-                }
-                */
-                $temp_array = array('field_list'=>array(),'populate_list'=>array());
+
+               
+				$temp_array = array('field_list'=>array(),'populate_list'=>array());
                 foreach($sqs_objects[$name1]['field_list'] as $k=>$v){
                     if(!in_array($v, array('name','id'))){
                         $sqs_objects[$name1]['primary_field_list'][]=$v;
