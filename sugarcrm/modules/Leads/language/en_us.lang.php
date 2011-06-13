@@ -240,8 +240,8 @@ $mod_strings = array (
 	'LBL_DELETE_TIP'	=> 'Remove this module from the convert layout.',
         'LBL_ACTIVITIES_MOVE'   => 'Move Activities to',
         'LBL_ACTIVITIES_COPY'   => 'Copy Activities to',
-        'LBL_ACTIVITIES_MOVE_HELP'   => 'Placeholder for move help',
-        'LBL_ACTIVITIES_COPY_HELP'   => 'Placeholder for copy help',
+        'LBL_ACTIVITIES_MOVE_HELP'   => "Select the record to which to move the Lead's activities. Tasks, Calls, Meetings, Notes and Emails will be moved to the selected record(s).",
+        'LBL_ACTIVITIES_COPY_HELP'   => "Select the record(s) for which to create copies of the Lead's activities. New Tasks, Calls, Meetings and Notes will be created for each of the selected record(s). Emails will be related to the selected record(s).",
 );
 
 
