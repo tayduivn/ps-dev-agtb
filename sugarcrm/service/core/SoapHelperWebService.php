@@ -1042,6 +1042,7 @@ function validate_user($user_name, $password){
 			}
 		    $arr = array();
 
+       
             if(!($account_id == '')) {
                $query = "select id, deleted from {$focus->table_name} WHERE id='".$seed->db->quote($account_id)."'";
             }
