@@ -2166,7 +2166,7 @@ class Email extends SugarBean {
 					$filename = $note->file->original_file_name;
 					$mime_type = $note->file->mime_type;
 				} else { // attachment coming from template/forward
-					$file_location = rawurldecode(UploadFile::get_file_path($note->filename,$note->id));
+					$file_location = "upload://{$note->id}";
 					// cn: bug 9723 - documents from EmailTemplates sent with Doc Name, not file name.
 					$filename = !empty($note->filename) ? $note->filename : $note->name;
 					$mime_type = $note->file_mime_type;

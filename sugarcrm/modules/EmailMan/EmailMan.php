@@ -407,7 +407,7 @@ class EmailMan extends SugarBean{
                             $filename = $note->file->original_file_name;
                             $mime_type = $note->file->mime_type;
                         } else {
-                            $file_location = rawurldecode(UploadFile::get_file_path($note->filename,$note->id));
+                            $file_location = "upload://{$note->id}";
                             $filename = $note->id.$note->filename;
                             $mime_type = $note->file_mime_type;
                         }

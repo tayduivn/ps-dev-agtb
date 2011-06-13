@@ -244,12 +244,10 @@ class Note extends SugarBean {
 			$note_fields['PARENT_MODULE'] = $this->parent_type;
 		}
 
-		if(!isset($this->filename) || $this->filename != ''){
-            $file_path = UploadFile::get_file_path($this->filename,$this->id);
-
-            if(file_exists($file_path)){
+		if(!empty($this->filename)) {
+            if(file_exists("upload://{$this->id}")){
                 $note_fields['FILENAME'] = $this->filename;
-                $note_fields['FILE_URL'] = "index.php?entryPoint=download&id={$this->id}&type=Notes";
+                $note_fields['FILE_URL'] = UploadFile::get_upload_url($this);
             }
             //BEGIN SUGARCRM flav=pro ONLY
             elseif(!empty($sugar_config['disc_client']) && $sugar_config['disc_client']){

@@ -249,7 +249,7 @@ class Document extends SugarBean {
 			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_url))
                 $file_url= "<a href='".$this->doc_url."' target='_blank'>".SugarThemeRegistry::current()->getImage($this->doc_type.'_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
     		$this->file_url = $file_url;
-    		$this->file_url_noimage = UploadFile::get_url($this->filename, $this->document_revision_id);
+    		$this->file_url_noimage = "index.php?entryPoint=download&type=Documents&&id={$this->document_revision_id}";
 		}else{
             $this->file_url = "";
             $this->file_url_noimage = "";

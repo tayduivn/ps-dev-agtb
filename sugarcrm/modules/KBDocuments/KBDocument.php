@@ -203,7 +203,7 @@ class KBDocument extends SugarBean {
 		}
 
 		$this->file_url = "<a href='index.php?entryPoint=download&id={$this->document_revision_id}&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
-		$this->file_url_noimage = basename(UploadFile :: get_url($this->filename, $this->document_revision_id));
+		$this->file_url_noimage = "index.php?entryPoint=download&id={$this->document_revision_id}&type=Documents";
 
 		//get last_rev_by user name.
 		$query = "SELECT first_name,last_name, document_revisions.date_entered as rev_date FROM users, document_revisions WHERE users.id = document_revisions.created_by and document_revisions.id = '$this->document_revision_id'";
@@ -474,8 +474,7 @@ class KBDocument extends SugarBean {
 			for($i=0;$i<count($docrevs);$i++){
 			     $doc_rev_id = $docrevs[$i]['id'];
 			     $filename = $docrevs[$i]['filename'];
-			     $file_url_noimage = basename(UploadFile :: get_url($filename, $doc_rev_id));
-				 $kbdoc_atts .="<div id=tag$i> <a href='index.php?entryPoint=download&id=$file_url_noimage&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;</div>";
+				 $kbdoc_atts .="<div id=tag$i> <a href='index.php?entryPoint=download&id=$doc_rev_id&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;</div>";
 			}
 		}
 		if($screen =='Edit'){
@@ -484,21 +483,13 @@ class KBDocument extends SugarBean {
 			for($i=0;$i<count($docrevs);$i++){
 			     $doc_rev_id = $docrevs[$i]['id'];
 			     $filename = $docrevs[$i]['filename'];
-			     //$doc_id = $docrevs[$i]['document_id'];
-			     $file_url_noimage = basename(UploadFile :: get_url($filename, $doc_rev_id));
-			     //$kbdoc_atts .="<input title='Create Revision' accessKey='Create Revision' class='button' onclick='this.form.return_module.value=KBDocuments'; this.form.return_action.value='EditView'; this.form.return_id.value=$doc_rev_id; this.form.action.value='EditView' type='submit' name='Edit' value'Create Revision'>&nbsp;&nbsp;";
 			     $cDoc = "'" . "Doc".$i . "'";
 			     $att = true;
 			     $doc_rev ="'$doc_rev_id'";
 			     $kbdoc_atts .="<div id=$cDoc>";
-			     //$kbdoc_atts .="<input id=$doc$i name=$doc$i value='$doc_rev_id' type='hidden'>";
-                 //$kbdoc_atts .="<div id=tag$i";
-			     //$kbdoc_atts .="<div id='aa'<input class=button onclick=\"this.form.module.value='DocumentRevisions';this.form.id.value='$doc_rev_id';this.form.action.value='EditView';\" type='submit' value='Create Rev'>&nbsp;&nbsp;";
 			     $kbdoc_atts .='<img src="'.SugarThemeRegistry::current()->getImageURL('delete.gif').'" alt="Remove" onclick="SUGAR.kb.strikeOutFromImage('.$cDoc.','.$doc_rev.','.$att.');SUGAR.kb.setCheckBox('.$doc_rev.')">';//.'&nbsp;&nbsp;';
-                 //$kbdoc_atts .= '<input type="checkbox" name="remove_attachment[]" value="'.$doc_rev_id.'"> '.$app_strings['LNK_REMOVE'].'&nbsp;</div>';
-				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$file_url_noimage&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
+				 $kbdoc_atts .="<a href='index.php?entryPoint=download&id=$doc_rev_id&type=KBDocuments' class='tabDetailViewDFLink'>$filename</a>&nbsp;";
 				 $kbdoc_atts .= '<input id="'.$doc_rev_id.'" type="checkbox"  style="visibility:hidden" onclick="SUGAR.kb.strikeOutFromBox('.$cDoc.','.$doc_rev.')" name="'.$doc_rev_id.'" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
-				 //$kbdoc_atts .= '<input type="checkbox"  style="visibility:hidden" name="remove_atts[]" value="'.$doc_rev_id.'">';//.$app_strings['LNK_REMOVE'].'&nbsp;&nbsp;';
 				 $kbdoc_atts .="</div>";
 			}
 		}

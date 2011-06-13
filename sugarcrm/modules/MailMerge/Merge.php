@@ -124,7 +124,7 @@ write_array_to_file('merge_array', $merge_array, $dataDir.$dataFileName);
 //Save the temp file so we can remove when we are done
 $_SESSION['MAILMERGE_TEMP_FILE_'.$mTime] = $dataDir.$dataFileName;
 $site_url = $sugar_config['site_url'];
-$templateFile = $site_url.'/'.UploadFile::get_url(from_html($document->filename),$document->id);
+$templateFile = $site_url.UploadFile::get_upload_url($document);
 $dataFile =$dataFileName;
 $redirectUrl = 'index.php?action=index&step=5&module=MailMerge&mtime='.$mTime;
 $startUrl = 'index.php?action=index&module=MailMerge&reset=true';

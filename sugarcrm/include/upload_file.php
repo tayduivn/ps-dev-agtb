@@ -62,7 +62,8 @@ class UploadFile
 	}
 
 	/**
-	 * wrapper for this::get_file_path()
+	 * Get URL for a document
+	 * @deprecated
 	 * @param string stored_file_name File name in filesystem
 	 * @param string bean_id note bean ID
 	 * @return string path with file name
@@ -74,6 +75,19 @@ class UploadFile
 		}
 
 		return self::$url . $bean_id;
+	}
+
+	/**
+	 * Get URL of the uploaded file related to the document
+	 * @param SugarBean $document
+	 * @param string $type Type of the document, if different from $document
+	 */
+	public static function get_upload_url($document, $type = null)
+	{
+	    if(empty($type)) {
+	        $type = $document->module_dir;
+	    }
+	    return "index.php?entryPoint=download&type=$type&id={$document->id}";
 	}
 
 	/**
@@ -383,11 +397,6 @@ class UploadFile
 	    if(file_exists("upload://$bean_id$file_name")) {
             return unlink("upload://$bean_id$file_name");
 	    }
-    }
-
-    public function get_upload_url()
-    {
-        return $this->url;
     }
 
     public function get_upload_dir()
