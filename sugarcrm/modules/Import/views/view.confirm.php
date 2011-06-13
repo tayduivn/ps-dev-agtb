@@ -124,9 +124,6 @@ class ImportViewConfirm extends SugarView
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
         ImportCacheFiles::clearCacheFiles();
 
-        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
-        $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
-
         // handle uploaded file
         $uploadFile = new UploadFile('userfile');
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
@@ -152,6 +149,10 @@ class ImportViewConfirm extends SugarView
 
         // Now parse the file and look for errors
         $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
+        $importFile->autoDetectCSVProperties();
+
+        $this->ss->assign("CUSTOM_DELIMITER", $importFile->getFieldDelimeter() );
+        $this->ss->assign("CUSTOM_ENCLOSURE", $importFile->getFieldEnclosure() );
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');

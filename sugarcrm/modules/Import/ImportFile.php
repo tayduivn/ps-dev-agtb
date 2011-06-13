@@ -358,6 +358,24 @@ class ImportFile
         return $lineCount;
     }
 
+    //TODO: Add auto detection for field delim and qualifier properteis.
+    public function autoDetectCSVProperties()
+    {
+        //Stub for now
+        $this->_delimiter  = ",";
+        $this->_enclosure  = '"';
+    }
+
+    public function getFieldDelimeter()
+    {
+        return $this->_delimiter;
+    }
+
+    public function getFieldEnclosure()
+    {
+        return $this->_enclosure;
+    }
+
     public function autoDetectCharacterSet()
     {
         global $locale;

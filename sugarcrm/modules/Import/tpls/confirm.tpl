@@ -34,6 +34,10 @@
 <style>
 <!--
 textarea { width: 20em }
+
+.impSample {
+    word-wrap: break-word;
+}
 -->
 </style>
 {/literal}

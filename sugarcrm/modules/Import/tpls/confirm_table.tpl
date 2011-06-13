@@ -6,7 +6,7 @@
                     {if $smarty.foreach.row.first}
                         <td scope="row" style="text-align: left;">{$value}</td>
                      {else}
-                        <td>{$value}</td>
+                        <td class="impSample">{$value}</td>
                      {/if}
 
                 {/foreach}
