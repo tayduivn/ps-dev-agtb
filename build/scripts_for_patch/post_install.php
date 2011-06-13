@@ -239,7 +239,7 @@ function clearCompanyLogo(){
 
 
 
-function genericFunctions(){	
+function genericFunctions(){
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
@@ -340,13 +340,13 @@ function post_install() {
 		//END SUGARCRM flav=pro ONLY
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
-	  
+
 	//Set the chart engine
 	if ($origVersion < '620') {
 		_logThis('Set chartEngine in config.php to JS Charts', $path);
 		$sugar_config['chartEngine'] = 'Jit';
 	}
-	
+
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
     if(file_exists('modules/Administration/SaveTabs.php'))
@@ -374,7 +374,6 @@ function post_install() {
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){
-		global $sugar_config;
 		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);
 		require_once('install/lang.config.php');
 
@@ -406,6 +405,25 @@ function post_install() {
             rename($sugar_config['cache_dir']."blowfish", "custom/blowfish");
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
+
+    if($origVersion < '630') {
+        // move uploads dir
+           if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
+               _logThis('Moving upload directory');
+               $sugar_config['upload_dir'] = 'upload/';
+               rename($sugar_config['cache_dir'].'upload/', 'upload');
+               if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
+        	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
+        	   }else{
+        			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
+        	   }
+               mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
+               if(file_exists('upload/temp')) {
+                   rename('upload/temp', $sugar_config['cache_dir'].'upgrades/temp');
+               }
+           }
+    }
+
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
