@@ -116,7 +116,13 @@ class ImportFile
         if ( !is_file($filename) || !is_readable($filename) ) {
             return false;
         }
-        
+
+        if ( realpath(dirname($filename).'/') != realpath($GLOBALS['sugar_config']['upload_dir']) )
+        {
+            $GLOBALS['log']->fatal("ImportFile detected attempt to access to the following file not within the sugar upload dir: $filename");
+            return null;
+        }
+
         // turn on auto-detection of line endings to fix bug #10770
         ini_set('auto_detect_line_endings', '1');
         
