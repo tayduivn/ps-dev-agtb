@@ -150,7 +150,8 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
 {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}{/capture}
 {capture assign=action}{if $act}{$act}{else}DetailView{/if}{/capture}
 {capture assign=record}{$rowData[$params.id]|default:$rowData.ID}{/capture}
-                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="#ajaxUILoc=index.php%3Fmodule%3D{$linkModule}%26offset%3D{$offset}%26stamp%3D{$pageData.stamp}%26return_module%3D{$linkModule}%26action%3D{$action}%26record%3D{$record}">
+{capture assign=url}"index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}"{/capture}
+                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="{sugar_ajax_url url=$url}">
 					{/if}
 					{if $params.customCode} 
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
