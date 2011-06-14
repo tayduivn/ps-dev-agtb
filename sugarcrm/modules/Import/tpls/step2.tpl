@@ -30,6 +30,7 @@
 // $Id: step2.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
+{overlib_includes}
 {$MODULE_TITLE}
 <form enctype="multipart/form-data" name="importstep2" method="POST" action="index.php" id="importstep2">
 <input type="hidden" name="module" value="Import">
@@ -90,6 +91,61 @@
             </td>
           </tr>
 	</table>
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+          {foreach from=$custom_mappings item=item name=custommappings}
+          {capture assign=mapping_label}{$MOD.LBL_CUSTOM_MAPPING_}{$item|upper}{/capture}
+          <tr>
+            <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="{$item}" />
+              &nbsp;{$mapping_label}</td>
+          </tr>
+          {/foreach}
+
+          {foreach from=$custom_imports key=key item=item name=saved}
+          {if $smarty.foreach.saved.first}
+          <tr>
+            <td scope="row" colspan="3">
+                <h5>{$MOD.LBL_MY_SAVED}&nbsp;{sugar_help text=$MOD.LBL_MY_SAVED_HELP}</h5></td>
+          </tr>
+          {/if}
+          <tr>
+            <td scope="row" colspan="2">
+                <input class="radio" type="radio" name="source" value="custom:{$item.IMPORT_ID}"/>
+                &nbsp;{$item.IMPORT_NAME}
+            </td>
+            <td scope="row">
+                {if $is_admin}
+                <input type="button" name="publish" value="{$MOD.LBL_PUBLISH}" class="button"
+                    onclick="document.location.href = 'index.php?publish=yes&amp;import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;import_map_id={$item.IMPORT_ID}'">
+                {/if}
+                <input type="button" name="delete" value="{$MOD.LBL_DELETE}" class="button"
+					onclick="if(confirm('{$MOD.LBL_DELETE_MAP_CONFIRMATION}')){literal}{{/literal}document.location.href = 'index.php?import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;delete_map_id={$item.IMPORT_ID}'{literal}}{/literal}">
+            </td>
+          </tr>
+          {/foreach}
+
+          {foreach from=$published_imports key=key item=item name=published}
+          {if $smarty.foreach.published.first}
+          <tr>
+            <td scope="row" colspan="3">
+                <h5>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_MY_PUBLISHED_HELP}</h5></td>
+          </tr>
+          {/if}
+          <tr>
+            <td scope="row" colspan="2">
+                <input class="radio" type="radio" name="source" value="custom:{$item.IMPORT_ID}"/>
+                &nbsp;{$item.IMPORT_NAME}
+            </td>
+            <td scope="row">
+                {if $is_admin}
+                <input type="button" name="publish" value="{$MOD.LBL_UNPUBLISH}" class="button"
+                    onclick="document.location.href = 'index.php?publish=no&amp;import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;import_map_id={$item.IMPORT_ID}'">
+                <input type="button" name="delete" value="{$MOD.LBL_DELETE}" class="button"
+                    onclick="if(confirm('{$MOD.LBL_DELETE_MAP_CONFIRMATION}')){literal}{{/literal}document.location.href = 'index.php?import_module={$IMPORT_MODULE}&amp;module=Import&amp;action=step1&amp;delete_map_id={$item.IMPORT_ID}'{literal}}{/literal}">
+                {/if}
+            </td>
+          </tr>
+          {/foreach}
+    </table>
 </td>
 </tr>
 </table>

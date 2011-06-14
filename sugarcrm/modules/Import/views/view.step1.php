@@ -150,62 +150,7 @@ class ImportViewStep1 extends SugarView
 
         }
 
-        // show any custom mappings
-        if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import'))
-        {
-            while (($file = readdir($dir)) !== false)
-            {
-                if (sugar_is_file("custom/modules/Import/{$file}") && strpos($file,".php") !== false)
-                {
-	                require_once("custom/modules/Import/{$file}");
-	                $classname = str_replace('.php','',$file);
-	                $mappingClass = new $classname;
-	                $custom_mappings[] = $mappingClass->name;
-                }
-            }
-        }
-
-
-        // get user defined import maps
-        $this->ss->assign('is_admin',is_admin($current_user));
-        $import_map_seed = new ImportMap();
-        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'assigned_user_id' => $current_user->id,
-                'is_published'     => 'no',
-                'module'           => $_REQUEST['import_module'],
-                )
-            );
-
-        if ( count($custom_imports_arr) ) {
-            $custom = array();
-            foreach ( $custom_imports_arr as $import) {
-                $custom[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
-            }
-            $this->ss->assign('custom_imports',$custom);
-        }
-
-        // get globally defined import maps
-        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'is_published' => 'yes',
-                'module'       => $_REQUEST['import_module'],
-                )
-            );
-
-        if ( count($published_imports_arr) ) {
-            $published = array();
-            foreach ( $published_imports_arr as $import) {
-                $published[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
-            }
-            $this->ss->assign('published_imports',$published);
-        }
+        
 
         $this->ss->display('modules/Import/tpls/step1.tpl');
     }
