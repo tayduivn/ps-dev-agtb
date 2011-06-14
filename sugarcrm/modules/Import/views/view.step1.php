@@ -246,7 +246,6 @@ document.getElementById('gonext').onclick = function()
 {
     clear_all_errors();
     var sourceSelected = false;
-    var typeSelected = false;
     var isError = false;
     var inputs = document.getElementsByTagName('input');
     for (var i = 0; i < inputs.length; ++i ){ 
@@ -259,52 +258,14 @@ document.getElementById('gonext').onclick = function()
                 }
             }
         }
-        if ( !typeSelected && inputs[i].name == 'type' ){
-            if (inputs[i].checked) {
-                typeSelected = true;
-            }
-        }
     }
     if ( !sourceSelected ) {
         add_error_style('importstep1','source\'][\'' + (document.getElementById('importstep1').source.length - 1) + '',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_WHAT_IS']}");
         isError = true;
     }
-    if ( !typeSelected ) {
-        add_error_style('importstep1','type\'][\'1',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_IMPORT_TYPE']}");
-        isError = true;
-    }
     return !isError;
 }
 
-YAHOO.util.Event.onDOMReady(function()
-{ 
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){ 
-        if (inputs[i].name == 'source' ) {
-            inputs[i].onclick = function() 
-            {
-                parentRow = this.parentNode.parentNode;
-                switch(this.value) {
-                case 'other':
-                    enclosureRow = document.getElementById('customEnclosure').parentNode.removeChild(document.getElementById('customEnclosure'));
-                    parentRow.parentNode.insertBefore(enclosureRow, document.getElementById('customDelimiter').nextSibling);
-                    document.getElementById('customDelimiter').style.display = '';
-                    document.getElementById('customEnclosure').style.display = '';
-                    break;
-                case 'tab': case 'csv':
-                    enclosureRow = document.getElementById('customEnclosure').parentNode.removeChild(document.getElementById('customEnclosure'));
-                    parentRow.parentNode.insertBefore(enclosureRow, parentRow.nextSibling);
-                    document.getElementById('customDelimiter').style.display = 'none';
-                    document.getElementById('customEnclosure').style.display = '';
-                    break;
-                default:
-                    document.getElementById('customDelimiter').style.display = 'none';
-                    document.getElementById('customEnclosure').style.display = 'none';
-                }
-            }
-        }
-    }
-});
 -->
 </script>
 

@@ -76,20 +76,7 @@
                 {sugar_help text=$MOD.LBL_ENCLOSURE_HELP}
             </td>
           </tr>
-          <tr>
-            <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="tab" />
-              &nbsp;{$MOD.LBL_TAB}&nbsp;{sugar_help text=$MOD.LBL_DELIMITER_TAB_HELP}</td>
-          </tr>
-          <tr>
-            <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="other" />
-              &nbsp;{$MOD.LBL_CUSTOM_DELIMITED}&nbsp;{sugar_help text=$MOD.LBL_DELIMITER_CUSTOM_HELP}</td>
-          </tr>
-          <tr id="customDelimiter" style='display:none'>
-            <td scope="row">&nbsp;&nbsp;{$MOD.LBL_CUSTOM_DELIMITER}&nbsp;<span class="required">*</span></td>
-            <td colspan="2" scope="row">
-                <input type="text" name="custom_delimiter" value="" style="width: 5em;" maxlength="1" />
-            </td>
-          </tr>
+
           {foreach from=$custom_mappings item=item name=custommappings}
           {capture assign=mapping_label}{$MOD.LBL_CUSTOM_MAPPING_}{$item|upper}{/capture}
           <tr>
@@ -141,22 +128,6 @@
             </td>
           </tr>
           {/foreach}
-          <tr>
-            <td scope="row" colspan="3">
-                <h3>{$MOD.LBL_IMPORT_TYPE}&nbsp;<span class="required">*</span></h3></td>
-          </tr>
-          <tr>
-            <td scope="row" colspan="3">
-                <input class="radio" type="radio" name="type" value="import" checked="checked" />
-                &nbsp;{$MOD.LBL_IMPORT_BUTTON}
-            </td>
-          </tr>
-          <tr>
-            <td scope="row" colspan="3">
-                <input class="radio" type="radio" name="type" value="update" />
-                &nbsp;{$MOD.LBL_UPDATE_BUTTON}
-            </td>
-          </tr>
           </table>
         </td>
       </tr>

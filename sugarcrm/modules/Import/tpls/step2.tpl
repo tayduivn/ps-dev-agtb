@@ -35,13 +35,12 @@
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
 <input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">
-<input type="hidden" name="type" value="{$TYPE}">
 <input type="hidden" name="source" value="{$SOURCE}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="action" value="Step3">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 {foreach from=$instructions key=key item=item name=instructions}
-{if $smarty.foreach.instructions.first}          
+{if $smarty.foreach.instructions.first}
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 	<td align="left"><p>{$INSTRUCTIONS_TITLE}</p></td>
@@ -74,6 +73,22 @@
         <tr>
             <td scope="row"><input type="hidden" /><input size="60" name="userfile" type="file"/></td>
         </tr>
+        <tr>
+            <td scope="row" colspan="3">
+                <h3>{$MOD.LBL_IMPORT_TYPE}&nbsp;<span class="required">*</span></h3></td>
+          </tr>
+          <tr>
+            <td scope="row" colspan="3">
+                <input class="radio" type="radio" name="type" value="import" checked="checked" />
+                &nbsp;{$MOD.LBL_IMPORT_BUTTON}
+            </td>
+          </tr>
+          <tr>
+            <td scope="row" colspan="3">
+                <input class="radio" type="radio" name="type" value="update" />
+                &nbsp;{$MOD.LBL_UPDATE_BUTTON}
+            </td>
+          </tr>
 	</table>
 </td>
 </tr>
