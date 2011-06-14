@@ -390,6 +390,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
     'bean_name'=>'User',
     'source'=>'non-db',
   ),
+  #Bug 43267
   'project_name_link' =>
   array (
     'name' => 'project_name_link',
@@ -397,7 +398,7 @@ $dictionary['ProjectTask'] = array('audited'=>true,
     'relationship' => 'projects_project_tasks',
     'vname' => 'LBL_PROJECT_NAME',
     'link_type' => 'one',
-    'module'=>'Projects',
+    'module'=>'Project',
     'bean_name'=>'Project',
     'source'=>'non-db',
   ),
