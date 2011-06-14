@@ -1414,8 +1414,8 @@ EOHTML;
         if ( isset($sugar_config['quicksearch_querydelay']) ) {
             $config_js[] = "SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};";
         }
-        if ( !isset($sugar_config['disableAjaxUI']) || $sugar_config['disableAjaxUI'] == false ) {
-            $config_js[] = "SUGAR.config.disableAjaxUI = true;";
+        if ( empty($sugar_config['disableAjaxUI']) ) {
+            $config_js[] = "SUGAR.config.disableAjaxUI = false;";
         }
         else{
             $config_js[] = "SUGAR.config.disableAjaxUI = true;";

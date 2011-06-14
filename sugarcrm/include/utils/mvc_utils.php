@@ -443,7 +443,7 @@ function ajaxLink($url)
     $match = array();
     preg_match('/module=([^&]*)/i', $url, $match);
 
-    if(!isset($GLOBALS['sugar_config']['disableAjaxUI']) || $GLOBALS['sugar_config']['disableAjaxUI'] == true){
+    if(!empty($sugar_config['disableAjaxUI'])){
         return $url;
     }
     else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
