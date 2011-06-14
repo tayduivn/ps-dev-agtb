@@ -84,11 +84,12 @@ textarea { width: 20em }
         {sugar_help text=$MOD.LBL_ROW_HELP}
     </td>
     {if $HAS_HEADER != 'on'}
-    <td style="text-align: left;"><b>{$MOD.LBL_ROW} 2</b></td>
+    <td style="text-align: left;" scope="row"><b>{$MOD.LBL_ROW} 2</b></td>
     {/if}
-    <td style="text-align: left;" scope="row">
-        <b>{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
-        {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}
+    <td style="text-align: left;" scope="row" id="default_column_header">
+        <a id="hide_default_link">{sugar_image image="advanced_search.gif" name="advanced_search" height="8" width="8" align="top"}</a>
+        <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
+        {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
     </td>
 </tr>
 {/if}

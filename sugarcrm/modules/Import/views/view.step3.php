@@ -709,7 +709,40 @@ document.getElementById('addrow').onclick = function(){
     }
 }
 
+function toggleDefaultColumnVisibility()
+{
+    var currentStyle = YAHOO.util.Dom.getStyle('default_column_header_span', 'display');
+
+    if(currentStyle == 'none')
+    {
+        var newStyle = '';
+        var newSrc = 'themes/default/images/advanced_search.gif';
+    }
+    else
+    {
+        var newStyle = 'none';
+        var newSrc = 'themes/default/images/basic_search.gif';
+    }
+
+    YAHOO.util.Dom.setStyle('default_column_header_span', 'display', newStyle);
+
+    //Toggle the image
+    var linkElem = document.getElementById('hide_default_link');
+    var imgElement = linkElem.getElementsByTagName('img')[0];
+    imgElement.src = newSrc;
+
+    //Toggle all rows.
+    var columnCount = document.getElementById('importstep3').columncount.value;
+    for(i=0;i<columnCount;i++)
+    {
+        YAHOO.util.Dom.setStyle('defaultvaluepicker_' + i, 'display', newStyle);
+    }
+}
+
 YAHOO.util.Event.onDOMReady(function(){
+
+    YAHOO.util.Event.addListener('hide_default_link', "click", toggleDefaultColumnVisibility);
+
     var selects = document.getElementsByTagName('select');
     for (var i = 0; i < selects.length; ++i ){
         if (selects[i].name.indexOf("colnum_") != -1 ) {
