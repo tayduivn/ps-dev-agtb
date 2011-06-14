@@ -57,6 +57,7 @@ function export($type, $records = null, $members = false) {
 	global $app_strings;
 	global $app_list_strings;
 	global $timedate;
+    global $mod_strings;
 	$contact_fields = array(
 		"id"=>"Contact ID"
 		,"lead_source"=>"Lead Source"
@@ -184,8 +185,26 @@ function export($type, $records = null, $members = false) {
 	
 	$fields_array = $db->getFieldsArray($result,true);
 
+    //grab the focus module strings
+    $temp_mod_strings = $mod_strings;
+	$mod_strings = return_module_language($current_language, $focus->module_dir);
+    //iterate through db fields and attempt to retrieve label from field mapping
+    foreach($fields_array as $dbname){
+        //if label exists in mapping and in mod strings, then set the value to the label
+        if (!empty($focus->field_name_map[$dbname]['vname']) && !empty($mod_strings[$focus->field_name_map[$dbname]['vname']])){
+            $field_labels[$dbname] = $mod_strings[$focus->field_name_map[$dbname]['vname']];
+            //remove any colons
+            $field_labels[$dbname] =  preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", '', trim($field_labels[$dbname]));
+        }else{
+            //default to the db name of label does not exist
+            $field_labels[$dbname] = $dbname;
+        }
+    }
+    //reset the mod_strings back to original
+    $mod_strings = $temp_mod_strings;
+
 	// setup the "header" line with proper delimiters
-	$header = implode("\"".getDelimiter()."\"", array_values($fields_array));
+	$header = implode("\"".getDelimiter()."\"", array_values($field_labels));
 	if($members){
 		$header = str_replace('"ea_deleted"'.getDelimiter().'"ear_deleted"'.getDelimiter().'"primary_address"'.getDelimiter().'','',$header);
 	}
