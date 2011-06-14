@@ -104,27 +104,35 @@ class ImportViewStep1 extends SugarView
     {
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
-        
+
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
-        
-        
+
+        $showModuleSelection = ($_REQUEST['import_module'] == 'Administration');
+        $importableModulesOptions = array();
+        if($showModuleSelection)
+        {
+            $importableModulesOptions = get_select_options_with_id($this->getImportableModules(), '');
+        }
+        $this->ss->assign("showModuleSelection", $showModuleSelection);
+        $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
+
         // handle publishing and deleting import maps
         if (isset($_REQUEST['delete_map_id'])) {
             $import_map = new ImportMap();
             $import_map->mark_deleted($_REQUEST['delete_map_id']);
         }
-        
+
         if (isset($_REQUEST['publish']) ) {
             $import_map = new ImportMap();
             $result = 0;
-        
+
             $import_map = $import_map->retrieve($_REQUEST['import_map_id'], false);
-        
+
             if ($_REQUEST['publish'] == 'yes') {
                 $result = $import_map->mark_published($current_user->id,true);
                 if (!$result) {
@@ -139,13 +147,13 @@ class ImportViewStep1 extends SugarView
                     $this->ss->assign("ERROR",$mod_strings['LBL_ERROR_UNABLE_TO_UNPUBLISH']);
                 }
             }
-        
+
         }
-        
+
         // show any custom mappings
-        if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import')) 
+        if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import'))
         {
-            while (($file = readdir($dir)) !== false) 
+            while (($file = readdir($dir)) !== false)
             {
                 if (sugar_is_file("custom/modules/Import/{$file}") && strpos($file,".php") !== false)
                 {
@@ -156,8 +164,8 @@ class ImportViewStep1 extends SugarView
                 }
             }
         }
-        
-        
+
+
         // get user defined import maps
         $this->ss->assign('is_admin',is_admin($current_user));
         $import_map_seed = new ImportMap();
@@ -168,7 +176,7 @@ class ImportViewStep1 extends SugarView
                 'module'           => $_REQUEST['import_module'],
                 )
             );
-        
+
         if ( count($custom_imports_arr) ) {
             $custom = array();
             foreach ( $custom_imports_arr as $import) {
@@ -179,7 +187,7 @@ class ImportViewStep1 extends SugarView
             }
             $this->ss->assign('custom_imports',$custom);
         }
-        
+
         // get globally defined import maps
         $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
             array(
@@ -187,7 +195,7 @@ class ImportViewStep1 extends SugarView
                 'module'       => $_REQUEST['import_module'],
                 )
             );
-        
+
         if ( count($published_imports_arr) ) {
             $published = array();
             foreach ( $published_imports_arr as $import) {
@@ -198,10 +206,27 @@ class ImportViewStep1 extends SugarView
             }
             $this->ss->assign('published_imports',$published);
         }
-        
+
         $this->ss->display('modules/Import/tpls/step1.tpl');
     }
-    
+
+    private function getImportableModules()
+    {
+        global $beanList;
+        $importableModules = array();
+        foreach ($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) )
+            {
+                $tmp = new $beanName();
+                if( isset($tmp->importable) && $tmp->importable )
+                    $importableModules[$moduleName] = $moduleName;
+            }
+        }
+
+        asort($importableModules);
+        return $importableModules;
+    }
     /**
      * Returns JS used in this view
      */

@@ -132,6 +132,7 @@ $mod_strings = array (
     'LBL_FILE_OPTIONS' => 'File options',
     'LBL_CUSTOM_TAB' => 'Custom tab delimited file',
     'LBL_DONT_MAP' => '-- Do not map this field --',
+    'LBL_STEP_MODULE' => 'Select Module',
     'LBL_STEP_1_TITLE' => 'Step 1: Select Data Source and Import Action',
     'LBL_CONFIRM_TITLE' => 'Confirm: Ensure Correct Mapping',
     'LBL_WHAT_IS' => 'What is the Data Source?',
