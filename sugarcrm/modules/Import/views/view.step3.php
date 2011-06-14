@@ -679,7 +679,6 @@ document.getElementById('addrow').onclick = function(){
             }
         }
     }
-    newrow.appendChild(column0);
 
     if ( document.getElementById('row_0_header') ) {
         column1 = document.getElementById('row_0_header').cloneNode(true);
@@ -687,9 +686,7 @@ document.getElementById('addrow').onclick = function(){
         newrow.appendChild(column1);
     }
 
-    column2 = document.getElementById('defaultvaluepicker_0').cloneNode(true);
-    column2.id = 'defaultvaluepicker_' + rownum;
-    newrow.appendChild(column2);
+    newrow.appendChild(column0);
 
     column3 = document.createElement('td');
     column3.className = 'tabDetailViewDL';
@@ -698,6 +695,10 @@ document.getElementById('addrow').onclick = function(){
     }
     column3.innerHTML = '<input title="{$mod_strings['LBL_REMOVE_ROW']}" accessKey="" id="deleterow_' + rownum + '" class="button" type="button" value="  {$mod_strings['LBL_REMOVE_ROW']}  ">';
     newrow.appendChild(column3);
+
+    column2 = document.getElementById('defaultvaluepicker_0').cloneNode(true);
+    column2.id = 'defaultvaluepicker_' + rownum;
+    newrow.appendChild(column2);
 
     document.getElementById('importstep3').columncount.value = parseInt(document.getElementById('importstep3').columncount.value) + 1;
 
