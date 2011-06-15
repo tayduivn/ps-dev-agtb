@@ -25,6 +25,44 @@ require_once('include/externalAPI/Base/WebDocument.php');
 
 class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
 
+    static protected $llMimeWhitelist = array(
+        'application/msword',
+        'application/pdf',
+        'application/postscript',
+        'application/vnd.ms-excel',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.oasis.opendocument.formula',
+        'application/vnd.oasis.opendocument.graphics',
+        'application/vnd.oasis.opendocument.presentation',
+        'application/vnd.oasis.opendocument.presentation-template',
+        'application/vnd.oasis.opendocument.spreadsheet',
+        'application/vnd.oasis.opendocument.spreadsheet-template',
+        'application/vnd.oasis.opendocument.text',
+        'application/vnd.oasis.opendocument.text-master',
+        'application/vnd.oasis.opendocument.text-template',
+        'application/vnd.oasis.opendocument.text-web',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-word.document.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.template',
+        'application/vnd.ms-word.template.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.ms-excel.sheet.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.template',
+        'application/vnd.ms-excel.template.macroEnabled.12',
+        'application/vnd.ms-excel.sheet.binary.macroEnabled.12',
+        'application/vnd.ms-excel.addin.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+        'application/vnd.ms-powerpoint.presentation.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+        'application/vnd.ms-powerpoint.slideshow.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.presentationml.template',
+        'application/vnd.ms-powerpoint.template.macroEnabled.12',
+        'application/vnd.ms-powerpoint.addin.macroEnabled.12',
+        'application/vnd.openxmlformats-officedocument.presentationml.slide',
+        'application/vnd.ms-powerpoint.slide.macroEnabled.12',
+        'application/vnd.ms-officetheme',
+        'application/onenote',
+        );
     protected $dateFormat = 'm/d/Y H:i:s';
 
     public $authMethod = 'oauth';
@@ -255,11 +293,17 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 
     public function uploadDoc($bean, $fileToUpload, $docName, $mimeType)
     {
+        // Let's see if this is not on the whitelist of mimeTypes
+        if ( empty($mimeType) || ! in_array($mimeType,$this->llMimeWhiteList) ) {
+            // It's not whitelisted
+            $mimeType = 'application/octet-stream';
+        }
+
         $client = $this->getClient();
         $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/folderc/snx:files!{$this->api_data['subscriberId']}";
         $GLOBALS['log']->debug("LOTUS REQUEST: $url");
         $rawResponse = $client->setUri($url)
-            ->setRawData(file_get_contents($fileToUpload), $mimeType?$mimeType:"application/octet-stream")
+            ->setRawData(file_get_contents($fileToUpload), $mimeType)
             ->setHeaders("slug", $docName)
             ->request("POST");
         $reply = array('rawResponse' => $rawResponse->getBody());

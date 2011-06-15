@@ -326,9 +326,8 @@ class SugarEmailAddress extends SugarBean {
                    $fromRequest = true;
                    break;
                 }
-            }
             $widget_id = $_REQUEST[$module .'_email_widget_id'];
-
+    }
 
             //Iterate over the widgets for this module, in case there are multiple email widgets for this module
             while(isset($_REQUEST[$module . $widget_id . "emailAddress" . $widgetCount]))
@@ -682,9 +681,9 @@ class SugarEmailAddress extends SugarBean {
             $this->smarty = new Sugar_Smarty();
 
         global $app_strings, $dictionary, $beanList;
-
+        $this->populateLegacyFields($bean);
         $prefill = 'false';
-
+    }
         $prefillData = 'new Object()';
         $passedModule = $module;
         $module = $this->getCorrectedModule($module);
@@ -736,7 +735,7 @@ class SugarEmailAddress extends SugarBean {
         //Set addDefaultAddress flag (do not add if it's from the Email module)
         $this->smarty->assign('addDefaultAddress', (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Emails') ? 'false' : 'true');
         $form = $this->view;
-
+        }
         if ($this->view == "QuickCreate")
         $form = 'form_'.$this->view .'_'.$module;
         $this->smarty->assign('emailView', $form);
@@ -992,8 +991,7 @@ class SugarEmailAddress extends SugarBean {
 function getEmailAddressWidget($focus, $field, $value, $view, $tabindex='') {
     $sea = new SugarEmailAddress();
     $sea->setView($view);
-
-    //BEGIN SUGARCRM flav=pro ONLY
+    }
     $aclAccessLevel = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $focus->isOwner($GLOBALS['current_user']->id));
     if($aclAccessLevel > 1) {
     //END SUGARCRM flav=pro ONLY
@@ -1014,5 +1012,7 @@ function getEmailAddressWidget($focus, $field, $value, $view, $tabindex='') {
     //END SUGARCRM flav=pro ONLY
     return $sea->getEmailAddressWidgetDetailView($focus);
 }
+
+?>
 
 ?>

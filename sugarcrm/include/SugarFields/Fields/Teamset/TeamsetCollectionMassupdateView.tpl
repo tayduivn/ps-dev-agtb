@@ -63,7 +63,7 @@
     <tr id="lineFields_{$displayParams.formName}_{$vardef.name}_0" class="lineFields_{$displayParams.formName}_{$vardef.name}">
         <td valign="top">
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name='teamset_div'>   
-            <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$vardef.name}_collection_0" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
+            <input type="text" name="{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" id="{$displayParams.formName}_{$vardef.name}_collection_0" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
             <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$vardef.name}_collection_0" value="">
             </span>
         </td>
@@ -111,7 +111,26 @@ and push it outside the screen.
  <input style='position:absolute; left:-9999px; width: 0px; height: 0px;' accesskey='T' halign='left' type="button" class="button" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}" {literal},"field_name":"team_name","field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true);'>
 
 <script type="text/javascript"> 
-    collection["{$displayParams.formName}_{$vardef.name}"].add_secondaries(collection["{$displayParams.formName}_{$vardef.name}"].secondaries_values);
+(function() {ldelim}
+    SUGAR_callsInProgress++;
+    var field_id = '{$displayParams.formName}_{$vardef.name}';
+    YAHOO.util.Event.onContentReady(field_id + "_table", function(){ldelim}
+        SUGAR_callsInProgress--;
+		if(collection[field_id] && collection[field_id].secondaries_values.length == 0) {ldelim}
+            {if !empty($values.secondaries)}
+                {foreach from=$values.secondaries item=secondary_field}
+                var temp_array = new Array();
+                temp_array['name'] = '{$secondary_field.name}';
+                temp_array['id'] = '{$secondary_field.id}';
+                collection[field_id].secondaries_values.push(temp_array);
+                {/foreach}
+            {/if}
+            var collection_field = collection[field_id];
+			collection_field.add_secondaries(collection_field.secondaries_values);
+        {rdelim}
+    {rdelim});
+{rdelim})();
+//	collection["{$displayParams.formName}_{$vardef.name}"].add_secondaries(collection["{$displayParams.formName}_{$vardef.name}"].secondaries_values);
 </script>
 {$quickSearchCode}
 

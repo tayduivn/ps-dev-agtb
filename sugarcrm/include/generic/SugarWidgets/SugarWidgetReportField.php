@@ -83,8 +83,6 @@ class SugarWidgetReportField extends SugarWidgetField
         }
  }
 
-
-
  function _get_column_select_special($layout_def)
  {
  		$alias = '';
@@ -138,7 +136,7 @@ class SugarWidgetReportField extends SugarWidgetField
 
  function querySelect(&$layout_def)
  {
-			return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)."\n";
+    return $this->_get_column_select($layout_def)." ".$this->_get_column_alias($layout_def)."\n";
  }
 
  function queryGroupBy($layout_def)

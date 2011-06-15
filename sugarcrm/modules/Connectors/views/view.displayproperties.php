@@ -47,7 +47,6 @@ class ViewDisplayProperties extends ViewList
     	$source = $_REQUEST['source_id'];
         $sources = ConnectorUtils::getConnectors();
         $modules_sources = ConnectorUtils::getDisplayConfig();
-    	//$json = getJSONobj();
 
     	$enabled_modules = array();
     	$disabled_modules = array();
@@ -56,7 +55,7 @@ class ViewDisplayProperties extends ViewList
     	foreach($modules_sources as $module=>$mapping) {
     		foreach($modules_sources[$module] as $entry) {
     			if($entry == $source) {
-    			   $enabled_modules[$module] = $module;
+    			   $enabled_modules[$module] = isset($GLOBALS['app_list_strings']['moduleList'][$module]) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module;
     			}
     		}
    		}
@@ -72,7 +71,7 @@ class ViewDisplayProperties extends ViewList
 			if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
 			if(empty($enabled_modules[$e]) && file_exists('modules/' . $e . '/metadata/studio.php') && file_exists('modules/' . $e . '/metadata/detailviewdefs.php') && isset($GLOBALS [ 'beanList' ][$e]) && (in_array($e, $access) || is_admin($current_user))) // installed modules must also exist in the beanList
 			{
-				$disabled_modules[$e] = $e;
+				$disabled_modules[$e] = isset($GLOBALS['app_list_strings']['moduleList'][$e]) ? $GLOBALS['app_list_strings']['moduleList'][$e] : $e;
 			}
 		}
 
@@ -93,6 +92,12 @@ class ViewDisplayProperties extends ViewList
     	$this->ss->assign('theme', $GLOBALS['theme']);
    	    $this->ss->assign('external', !empty($sources[$source]['eapm']));
    	    $this->ss->assign('externalOnly', !empty($sources[$source]['eapm']['only']));
+
+        // We don't want to tell the user to set the properties of the connector if there aren't any
+        $s = SourceFactory::getSource($source);
+        $fields = $s->getRequiredConfigFields();
+   	    $this->ss->assign('externalHasProperties', !empty($fields));
+
    	    $this->ss->assign('externalChecked', !empty($sources[$source]['eapm']['enabled'])?" checked":"");
    	    echo $this->ss->fetch('modules/Connectors/tpls/display_properties.tpl');
     }

@@ -23,7 +23,7 @@ require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
 
 /**
  * <b>isValidDate(String date)</b><br/>
- * Returns true if <i>date</i> is a valid date string or is empty.
+ * Returns true if <i>date</i> is a valid date string.
  *
  */
 class IsValidDateExpression extends BooleanExpression {
@@ -35,10 +35,15 @@ class IsValidDateExpression extends BooleanExpression {
         $dtStr = $this->getParameters()->evaluate();
 
         if(empty($dtStr)) {
-            return AbstractExpression::$FALSE;
+            return AbstractExpression::$TRUE;
         }
         try {
-            $date = TimeDate::getInstance()->fromUser($dtStr);
+            $date = TimeDate::getInstance()->fromUser($dtStr, $current_user);
+            if(!empty($date)) {
+                return AbstractExpression::$TRUE;
+            }
+            //Next try without time
+            $date = TimeDate::getInstance()->fromUserDate($dtStr, $current_user);
             if(!empty($date)) {
                 return AbstractExpression::$TRUE;
             }
@@ -54,6 +59,8 @@ class IsValidDateExpression extends BooleanExpression {
 	static function getJSEvaluate() {
 		return <<<EOQ
 		var dtStr = this.getParameters().evaluate();
+		if ( typeof dtStr != "string" ) return SUGAR.expressions.Expression.FALSE;
+		if (dtStr == "") return SUGAR.expressions.Expression.TRUE;
         var format = "Y-m-d";
         if (SUGAR.expressions.userPrefs)
             format = SUGAR.expressions.userPrefs.datef;

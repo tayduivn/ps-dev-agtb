@@ -27,7 +27,7 @@
  */
 *}
 {if !empty($external)}
-<input type="checkbox" value="1" name="{$source_id}_external" id="{$source_id}_external"{$externalChecked}> <label for="{$source_id}_external">{$mod.LBL_EXTERNAL}</label><br/>
+<input type="checkbox" value="1" name="{$source_id}_external" id="{$source_id}_external"{$externalChecked}> <label for="{$source_id}_external">{$mod.LBL_EXTERNAL} {if !empty($externalHasProperties)}{$mod.LBL_EXTERNAL_SET_PROPERTIES}{/if}</label><br/>
 <br/>
 {/if}
 {if empty($externalOnly)}
@@ -45,8 +45,8 @@
 <td>
 <div id="{$source_id}:enabled_div" class="enabled_module_workarea">
 <ul id="{$source_id}:enabled_ul" class="module_draglist">
-{foreach from=$enabled_modules item=module}
-<li id="{$source_id}:{$module}" class="noBullet2">{$module}</li>
+{foreach from=$enabled_modules item=module key=moduleKey}
+<li id="{$source_id}:{$moduleKey}" class="noBullet2">{$module}</li>
 {/foreach}
 </ul>
 </div>
@@ -54,8 +54,8 @@
 <td>
 <div id="{$source_id}:disabled_div" class="disabled_module_workarea">
 <ul id="{$source_id}:disabled_ul" class="module_draglist">
-{foreach from=$disabled_modules item=module}
-<li id="{$source_id}:{$module}" class="noBullet2">{$module}</li>
+{foreach from=$disabled_modules item=module key=moduleKey}
+<li id="{$source_id}:{$moduleKey}" class="noBullet2">{$module}</li>
 {/foreach}
 </ul>
 </div>
@@ -79,12 +79,12 @@ init: function() {
 	new YAHOO.util.DDTarget("{$source_id}:enabled_ul");
 	new YAHOO.util.DDTarget("{$source_id}:disabled_ul");
 
-	{foreach from=$enabled_modules item=module}
-	     new YAHOO.example.DDList("{$source_id}:{$module}");
+	{foreach from=$enabled_modules item=module key=moduleKey}
+	     new YAHOO.example.DDList("{$source_id}:{$moduleKey}");
 	{/foreach}
 
-	{foreach from=$disabled_modules item=module}
-	     new YAHOO.example.DDList("{$source_id}:{$module}");
+	{foreach from=$disabled_modules item=module key=moduleKey}
+	     new YAHOO.example.DDList("{$source_id}:{$moduleKey}");
 	{/foreach}
 {literal}
 }

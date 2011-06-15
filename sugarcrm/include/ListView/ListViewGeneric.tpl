@@ -75,7 +75,7 @@
                             <a href='javascript:sListView.order_checks("ASC", "{$params.orderBy|default:$colHeader|lower}" , "{$pageData.bean.moduleDir}{"2_"}{$pageData.bean.objectName|upper}{"_ORDER_BY"}")' class='listViewThLinkS1'>
                         {/if}
                     {/if}
-                    {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
+                    {sugar_translate_truncate_ellipses label=$params.label module=$pageData.bean.moduleDir}
 					</a>&nbsp;&nbsp;
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
@@ -131,7 +131,12 @@
 			<td width='2%' nowrap>
                 {if $pageData.rowAccess[$id].edit}
                 <a title='{$editLinkString}'
-href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}">
+href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}"
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}'
+ data-list = 'true' class="quickEdit"
+{* //END SUGARCRM flav=pro ONLY *}
+                >
                 <img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>
                 {/if}
             </td>
@@ -145,7 +150,8 @@ href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&re
 {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}{/capture}
 {capture assign=action}{if $act}{$act}{else}DetailView{/if}{/capture}
 {capture assign=record}{$rowData[$params.id]|default:$rowData.ID}{/capture}
-                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="javascript:SUGAR.ajaxUI.loadContent('index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}')">
+{capture assign=url}index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}{/capture}
+                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="{sugar_ajax_url url=$url}">
 					{/if}
 					{if $params.customCode} 
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
@@ -199,5 +205,12 @@ function lvg_nav(m,id,act,offset,t){
 {literal}
     function lvg_dtails(id){{/literal}
         return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir|default:$params.module}',id, 'adspan_'+id);{literal}}{/literal}
+{* //BEGIN SUGARCRM flav=pro ONLY *}
+{literal}
+    if(typeof(qe_init) != 'undefined'){
+        qe_init(); //qe_init is defined in footer.tpl
+    }
+{/literal}
+{* //END SUGARCRM flav=pro ONLY *}
 </script>
 {/if}

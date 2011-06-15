@@ -206,9 +206,13 @@ $mod_strings = array (
 	'LBL_LOGGER_MAX_LOG_SIZE'=>'Maximum log size',
 	'LBL_LOGGER_DEFAULT_DATE_FORMAT'=>'Default date format',
 	'LBL_LOGGER_LOG_LEVEL'=>'Log Level',
+        'LBL_LEAD_CONV_OPTION' => 'Lead Conversion Options',
+        'LEAD_CONV_OPT_HELP' => "Copy - Creates and relates copies of all of the Lead's activities to new records that are selected by the user during conversion. Copies are created for each of the selected records.<br><br>Move - Moves all of the Lead's activities to a new record that is selected by the user during conversion.<br><br>Do Nothing - Does nothing with the Lead's activities during conversion. The activities remain related to the Lead only.",
 	'LBL_LOGGER_MAX_LOGS'=>'Maximum number of logs (before rolling)',
 	'LBL_LOGGER_FILENAME_SUFFIX' =>'Append after filename',
 	'LBL_VCAL_PERIOD' => 'vCal Updates Time Period:',
+    'LBL_IMPORT_MAX_RECORDS' => 'Import - Maximum Number of Rows:',
+    'LBL_IMPORT_MAX_RECORDS_HELP' => 'Specify how many rows are allowed within import files. If the number of rows in an import file exceeds this number, the user will be alerted. If no number is entered, an unlimited number of rows are allowed.',
 	'vCAL_HELP' => 'Use this setting to determine the number of months in advance of the current date that Free/Busy information for calls and meetings is published.<BR>To turn Free/Busy publishing off, enter "0".  The minimum is 1 month; the maximum is 12 months.',
 //BEGIN SUGARCRM flav=dce ONLY
     'DCE_TEMPLATES_DIR'=>'Templates directory in DCE',
@@ -439,7 +443,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_WIZARD_SYSTEM_DESC' => 'Provide your organization\'s name and logo in order to brand your Sugar.',
     'LBL_WIZARD_LOCALE_DESC' => 'Specify how you would like data in Sugar to be displayed, based on your geographical location. The settings you provide here will be the default settings. Users will be able set their own preferences.',
     'LBL_WIZARD_SMTP_DESC' => 'Provide the email account that will be used to send emails, such as the assignment notifications and new user passwords. Users will receive emails from Sugar, as sent from the specified email account.',
-    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the Sugar Mobile iPhone client.',
+    'LBL_MOBILE_MOD_REPORTS_RESTRICTION' => '* The Reports module is only available for the Sugar Mobile native clients',
 );
 
 

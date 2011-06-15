@@ -201,26 +201,20 @@ if(typeof(SUGAR.collection) == "undefined") {
          * Add the secondaries rows on load of the page.
          */
         add_secondaries: function(){
-            clone_id = this.form + '_' + this.field + '_collection_0';
-            
-            if(typeof sqs_objects == 'undefined' || typeof sqs_objects[clone_id] == 'undefined') {
-            	setTimeout('collection["'+this.field_element_name+'"].add_secondaries();',1000);
-            } else if(typeof document.getElementById(this.form + '_' + this.field + '_collection_0') == 'undefined'){
-            	setTimeout('collection["'+this.field_element_name+'"].add_secondaries();',1000);
-            } else {
-                this.create_clone();
+            var clone_id = this.form + '_' + this.field + '_collection_0';
+            YAHOO.util.Event.onContentReady(clone_id, function(c){
+                c.create_clone();
                 enableQS();
-                this.changePrimary(true);
-                for(key in this.secondaries_values){
+                c.changePrimary(true);
+                for(key in c.secondaries_values){
                     if (isInteger(key)) {
-                        this.add(this.secondaries_values[key]);
+                        c.add(c.secondaries_values[key]);
                     }
                 }
-                this.js_more();
-                this.js_more();
-            }
-            // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
-            initEditView(document.forms[this.form]);
+                c.js_more();
+                // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
+                initEditView(document.forms[c.form]);
+            }, this);
         },
         /*
          * Create the new row from a cloned row. 
@@ -407,9 +401,9 @@ if(typeof(SUGAR.collection) == "undefined") {
          */
         create_clone: function() {
             var oneField = document.getElementById('lineFields_'+this.field_element_name+'_0');
-            this.cloneField[0] = SUGAR.isIE ? 
-            	SUGAR.collection.safe_clone(oneField, true) : 
-            	oneField.cloneNode(true);
+            this.cloneField[0] = SUGAR.isIE ?
+                SUGAR.collection.safe_clone(oneField, true) :
+                oneField.cloneNode(true);
             this.cloneField[1] = oneField.parentNode;
             this.more_status = true;
             var clone_id = this.form + '_' + this.field + '_collection_0';
@@ -588,7 +582,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             }
             return false;
         }
-    }
+    };
 
 	SUGAR.collection.safe_clone = function(e, recursive)
 	{

@@ -1350,6 +1350,19 @@ class SugarBean
                 $this->id = create_guid();
             }
         }
+        //Prevent cascading saves
+        //BEGIN SUGARCRM flav=pro ONLY
+        $updateRelCalcFields = false;
+        //END SUGARCRM flav=pro ONLY
+        global $saved_beans;
+        if (empty($saved_beans))
+            $saved_beans = array();
+        if (empty($saved_beans[$this->module_name]))
+                $saved_beans[$this->module_name] = array();
+        if (empty($saved_beans[$this->module_name][$this->id]))
+        {
+            $saved_beans[$this->module_name][$this->id] = 'in_progress';
+        }
         //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
         // currently, the default_team is only enforced in the presentation layer-- this enforces it at the data layer as well
@@ -1436,17 +1449,8 @@ class SugarBean
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        //Prevent cascading saves
-        global $saved_beans;
-        if (empty($saved_beans))
-            $saved_beans = array();
-        if (empty($saved_beans[$this->module_name]))
-                $saved_beans[$this->module_name] = array();
-        if (empty($saved_beans[$this->module_name][$this->id]))
-        {
-            $saved_beans[$this->module_name][$this->id] = true;
+        if ($updateRelCalcFields)
             $this->updateRelatedCalcFields();
-        }
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1460,6 +1464,9 @@ class SugarBean
 
         $this->call_custom_logic('after_save', '');
 
+        //Now that the record has been saved, we don't want to insert again on further saves
+        $this->new_with_id = false;
+        $saved_beans[$this->module_name][$this->id] = 'done';
         return $this->id;
     }
 
@@ -1506,7 +1513,10 @@ class SugarBean
     {
         if (empty($this->id) || $this->new_with_id)
             return;
-        global $dictionary, $updating_relationships, $saved_beans;
+        global $dictionary, $updating_relationships, $saved_beans, $sugar_config;
+        if(!empty($sugar_config['disable_related_calc_fields'])){
+            return;
+        }
         if ($updating_relationships)
         {
             $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");
@@ -2127,7 +2137,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     if ( preg_match('/(am|pm)/i',$this->$field) ) {
                         // This time appears to be formatted in the user's format
-                        $this->$field = $timedate->asDbTime($timedate->fromUserTime($this->$field));
+                        $this->$field = $timedate->fromUserTime($this->$field)->format(TimeDate::DB_TIME_FORMAT);
                         $reformatted = true;
                     }
                     break;

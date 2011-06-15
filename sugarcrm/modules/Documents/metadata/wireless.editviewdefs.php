@@ -42,12 +42,6 @@ $viewdefs['Documents']['EditView'] = array(
       			'label' => 'LBL_DOC_NAME',
     		),
     	),
-     	array (
-     		array (
-      			'name' => 'uploadfile',
-      			'displayParams' => array('link'=>'uploadfile', 'id'=>'id'),
-     		),
-    	),
       	array ('active_date'),
       	array ('exp_date'),
   		//BEGIN SUGARCRM flav=pro ONLY

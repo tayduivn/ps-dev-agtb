@@ -100,7 +100,7 @@ function isSupportedIE() {
 	// IE Check supports ActiveX controls
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		if(version >= 5.5 ) {
+		if(version >= 5.5 && version < 9) {
 			return true;
 		} else {
 			return false;
@@ -448,7 +448,7 @@ function isBefore(value1, value2) {
 }
 
 function isValidEmail(emailStr) {
-	
+
     if(emailStr.length== 0) {
 		return true;
 	}
@@ -546,6 +546,7 @@ function isDBName(str) {
 }
 var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 function isTime(timeStr) {
+    var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 	time_reg_format = time_reg_format.replace('([ap]m)', '');
 	time_reg_format = time_reg_format.replace('([AP]M)', '');
 	if(timeStr.length== 0){
@@ -599,7 +600,7 @@ function add_error_style(formname, input, txt, flash) {
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
-	
+
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
@@ -779,8 +780,8 @@ function validate_form(formname, startsWith){
                     if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
                     {
                        continue;
-                    }					
-					
+                    }
+
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
 						//BEGIN SUGARCRM flav=pro ONLY
@@ -820,12 +821,12 @@ function validate_form(formname, startsWith){
 						case 'alphanumeric':
 							break;
 						case 'file':
-						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
-
+						    var file_input = form[validate[formname][i][nameIndex] + '_file'];
+                            if( file_input && validate[formname][i][requiredIndex] && trim(file_input.value) == "" && !file_input.disabled ) {
 						          isError = true;
 						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
-						      }					      
-						  break;	
+						      }
+						  break;
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
@@ -923,7 +924,7 @@ function validate_form(formname, startsWith){
 										date1 = trim(form[validate[formname][i][nameIndex]].value);
 
 										if(trim(date1).length != 0 && !isBefore(date1,date2)){
-										
+
 											isError = true;
 											//jc:#12287 - adding translation for the is not before message
 											add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + "(" + date1 + ") " + SUGAR.language.get('app_strings', 'MSG_IS_NOT_BEFORE') + ' ' +date2);
@@ -1634,6 +1635,12 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
+
     // we don't need to check if the data is changed in the search popup
     if (theForm.id == 'popup_query_form') {
     	return;
@@ -1645,11 +1652,6 @@ function initEditView(theForm) {
     	SUGAR.loadedForms = new Object();
     }
 
-    // console.log('DEBUG: Adding checks for '+theForm.id);
-    if ( theForm == null || theForm.id == null ) {
-        // Not much we can do here.
-        return;
-    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
 
@@ -1659,7 +1661,7 @@ function onUnloadEditView(theForm) {
 
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' ) { 
+    if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;
     }
@@ -2451,13 +2453,13 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	
+
 	    if(num_grp_sep != '')
 	    {
 	       num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
 		   n = n.replace(num_grp_sep_re, '');
 	    }
-	    
+
 		n = n.replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
@@ -2604,7 +2606,7 @@ SUGAR.unifiedSearchAdvanced = function() {
 		   YAHOO.util.Event.addListener('unified_search_advanced_img', 'click', SUGAR.unifiedSearchAdvanced.get_content);
 		},
 
-		get_content: function(e) 
+		get_content: function(e)
 		{
 		    query_string = trim(document.getElementById('query_string').value);
 		    if(query_string != '')
@@ -2761,16 +2763,21 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9\&\/\.\?=:]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{
                   		script.text = result[2];
                   	}
-                  	document.body.appendChild(script)
+                  	document.body.appendChild(script);
 	              }
 	              catch(e) {
-
+                      if(typeof(console) != "undefined" && typeof(console.log) == "function")
+                      {
+                          console.log("error adding script");
+                          console.log(e);
+                          console.log(result);
+                      }
                   }
                   result =  objRegex.exec(text);
 			}
@@ -3590,11 +3597,11 @@ SUGAR.language = function() {
             }
             return SUGAR.language.languages[module][str];
         },
-        
+
         translate: function(module, str)
         {
             text = this.get(module, str);
-            return text != 'undefined' ? text : this.get('app_strings', str);  	
+            return text != 'undefined' ? text : this.get('app_strings', str);
         }
     }
 }();
@@ -3801,11 +3808,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-	
-	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
+
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800
 	width = (width == 600) ? 800 : width;
 	height = (height == 400) ? 800 : height;
-	
+
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -3814,7 +3821,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	if (initial_filter != '') {
 		URL += '&query=true' + initial_filter;
 		// Bug 41891 - Popup Window Name
-		popupName = initial_filter.replace(/[^a-z_\-0-9]+/ig, '_');
+		popupName = initial_filter.replace(/[^a-z_0-9]+/ig, '_');
 		windowName = module_name + '_popup_window' + popupName;
 	} else {
 		windowName = module_name + '_popup_window' + popupCount;
@@ -3882,11 +3889,17 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+							var tempEvent = window.document.createEvent('HTMLEvents');
+							tempEvent.initEvent('change', true, true);
+							selectField.dispatchEvent(tempEvent);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+					var tempEvent = document.createEvent('HTMLEvents');
+					tempEvent.initEvent('change', true, true);
+					window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
@@ -3938,6 +3951,13 @@ function set_return(popup_reply_data)
 	}else{
 		set_return_basic(popup_reply_data,/\S/);
 	}
+}
+
+function set_return_lead_conv(popup_reply_data) {
+    set_return(popup_reply_data);
+    if (document.getElementById('lead_conv_ac_op_sel') && typeof onBlurKeyUpHandler=='function') {
+        onBlurKeyUpHandler();
+    }
 }
 
 function set_return_and_save(popup_reply_data)

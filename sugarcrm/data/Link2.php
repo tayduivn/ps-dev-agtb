@@ -215,6 +215,10 @@ class Link2 {
 		return $this->relationship->isSelfReferencing();
 	}
 
+    public function isParentRelationship(){
+        return $this->relationship->isParentRelationship();
+    }
+
 	function getJoin($params, $return_array =false)
 	{
         return $this->relationship->getJoin($this, $params, $return_array);
@@ -286,6 +290,8 @@ class Link2 {
 	 *
 	 */
 	function delete($id, $related_id='') {
+        if (empty($this->focus->id))
+            $this->focus = BeanFactory::getBean($this->focus->module_name, $id);
         if (!empty($related_id))
         {
             if (!is_a($related_id, "SugarBean")) {

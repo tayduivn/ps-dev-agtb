@@ -23,6 +23,7 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
+        global $saved_beans;
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
@@ -41,14 +42,12 @@ class One2MBeanRelationship extends One2MRelationship
             echo ("Unable to load RHS module {$rhs->module_name} link $rhsLinkName\n");
         }
 
-        //Now update the RHS bean's ID field
-        $rhsID = $this->def['rhs_key'];
-        $rhs->$rhsID = $lhs->id;
-        foreach($additionalFields as $field => $val)
-        {
-            $rhs->$field = $val;
-        }
-        $rhs->save();
+        $this->updateFields($lhs, $rhs, $additionalFields);
+
+        //Need to call save to update the bean as the relationship is saved on the main table
+        //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
+        if(empty($saved_beans[$rhs->module_name][$rhs->id]) || $saved_beans[$rhs->module_name][$rhs->id] === 'done')
+            $rhs->save();
 
         $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
         $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
@@ -57,6 +56,22 @@ class One2MBeanRelationship extends One2MRelationship
         $this->callAfterAdd($rhs, $lhs);
     }
 
+    protected function updateFields($lhs, $rhs, $additionalFields)
+    {
+        //Now update the RHS bean's ID field
+        $rhsID = $this->def['rhs_key'];
+        $rhs->$rhsID = $lhs->id;
+        foreach($additionalFields as $field => $val)
+        {
+            $rhs->$field = $val;
+        }
+        //Update role fields
+        if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
+        {
+            $roleField = $this->def["relationship_role_column"];
+            $rhs->$roleField = $this->def["relationship_role_column_value"];
+        }
+    }
 
     public function remove($lhs, $rhs, $save = true)
     {

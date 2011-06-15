@@ -138,6 +138,7 @@ function make_sugar_config(&$sugar_config)
 	'host_name' => empty($host_name) ? 'localhost' : $host_name,
 	'import_dir' => $import_dir,  // this must be set!!
 	'import_max_records_per_file' => 100,
+    'import_max_records_total_limit' => '',
 	'languages' => empty($languages) ? array('en_us' => 'English (US)') : $languages,
 	'list_max_entries_per_page' => empty($list_max_entries_per_page) ? 20 : $list_max_entries_per_page,
 	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 10 : $list_max_entries_per_subpanel,
@@ -303,6 +304,7 @@ function get_sugar_config_defaults() {
 	'history_max_viewed' => 50,
 	'installer_locked' => true,
 	'import_max_records_per_file' => 100,
+    'import_max_records_total_limit' => '',
 	'languages' => array('en_us' => 'English (US)'),
 	'large_scale_test' => false,
 	'list_max_entries_per_page' => 20,
@@ -349,6 +351,7 @@ function get_sugar_config_defaults() {
 	'verify_client_ip' => true,
 	'js_custom_version' => '',
 	'js_lang_version' => 1,
+        'lead_conv_activity_opt' => 'move',
 	'default_number_grouping_seperator' => ',',
 	'default_decimal_seperator' => '.',
 	'lock_homepage' => false,
@@ -1094,14 +1097,16 @@ function return_module_language($language, $module, $refresh=false)
 		return array();
 	}
 
-	$cache_key = LanguageManager::getLanguageCacheKey($module, $language);
-	// Check for cached value
-	$cache_entry = sugar_cache_retrieve($cache_key);
-	if(!empty($cache_entry))
-	{
-		return $cache_entry;
-	}
-
+    if( !$refresh )
+    {
+        $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
+        // Check for cached value
+        $cache_entry = sugar_cache_retrieve($cache_key);
+        if(!empty($cache_entry))
+        {
+            return $cache_entry;
+        }
+    }
 	// Store the current mod strings for later
 	$temp_mod_strings = $mod_strings;
 	$loaded_mod_strings = array();
@@ -3714,11 +3719,6 @@ function getJSONobj() {
 }
 
 require_once('include/utils/db_utils.php');
-//check to see if custom utils exists
-if(file_exists('custom/include/custom_utils.php')){
-	include_once('custom/include/custom_utils.php');
-}
-
 
 /**
  * Set default php.ini settings for entry points
@@ -4681,7 +4681,7 @@ function getUrls($string)
 /**
  * Sanitize image file from hostile content
  * @param string $path Image file
- * @param bool $jpeg Recode as JPEG (false - recode as PNG)
+ * @param bool $jpeg  Accept only JPEGs?
  */
 function verify_image_file($path, $jpeg = false)
 {
@@ -4690,16 +4690,21 @@ function verify_image_file($path, $jpeg = false)
     	if(!$img) {
     	    return false;
     	}
-        if($jpeg) {
+    	$img_size = getimagesize($path);
+		$filetype = $img_size['mime'];
+		//if filetype is jpeg or if we are only allowing jpegs, create jpg image
+        if($filetype == "image/jpeg" || $jpeg) {
             if(imagejpeg($img, $path)) {
                 return true;
             }
-        } else {
+        } elseif ($filetype == "image/png") { // else if the filetype is png, create png
         	imagealphablending($img, true);
         	imagesavealpha($img, true);
     	    if(imagepng($img, $path)) {
                 return true;
     	    }
+        } else {
+        	return false;	
         }
 	} else {
 	    // check image manually
@@ -4743,4 +4748,42 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	}
     return verify_image_file($path, $jpeg_only);
 }
-?>
+
+function cmp_beans($a, $b)
+{
+    global $sugar_web_service_order_by;
+    //If the order_by field is not valid, return 0;
+    if (empty($sugar_web_service_order_by) || !isset($a->$sugar_web_service_order_by) || !isset($b->$sugar_web_service_order_by)){
+        return 0;
+    }
+    if (is_object($a->$sugar_web_service_order_by) || is_object($b->$sugar_web_service_order_by)
+        || is_array($a->$sugar_web_service_order_by) || is_array($b->$sugar_web_service_order_by))
+    {
+        return 0;
+    }
+    if ($a->$sugar_web_service_order_by < $b->$sugar_web_service_order_by)
+    {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+function order_beans($beans, $field_name)
+{
+    //Since php 5.2 doesn't include closures, we must use a global to pass the order field to cmp_beans.
+    global $sugar_web_service_order_by;
+    $sugar_web_service_order_by = $field_name;
+    usort($beans, "cmp_beans");
+    return $beans;
+}
+
+//check to see if custom utils exists
+if(file_exists('custom/include/custom_utils.php')){
+	include_once('custom/include/custom_utils.php');
+}
+
+//check to see if custom utils exists in Extension framework
+if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
+    include_once('custom/application/Ext/Utils/custom_utils.ext.php');
+}

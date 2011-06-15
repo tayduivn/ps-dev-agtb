@@ -25,7 +25,7 @@ require_once('include/externalAPI/Base/WebDocument.php');
 require_once('Zend/Gdata/Docs.php');
 require_once('Zend/Gdata/Docs/Query.php');
 require_once('Zend/Gdata/ClientLogin.php');
-
+require_once('Zend/Gdata/Contacts.php');
 /**
  * ExtAPIGoogle
  * 
@@ -96,19 +96,64 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
         return $reply;
     }
 
-    protected function getClient(){
+    /**
+     * Retrieve the gdata client.
+     *
+     * @param  String $gdType The Gdata type
+     * @return
+     */
+    public function getClient($gdType = "docs"){
         if ( isset($this->httpClient) ) {
             // Already logged in
             return;
         }
-		$service = Zend_Gdata_Docs::AUTH_SERVICE_NAME; // predefined service name for Google Documents
+		$service = $this->getServiceAuthName($gdType);
 		if( $this->authMethod == 'oauth') {
 		    // FIXME: bail if auth token not set
             $this->httpClient = $this->authData->getHttpClient($this);
 		} else {
 		    $this->httpClient = Zend_Gdata_ClientLogin::getHttpClient($this->account_name, $this->account_password, $service);
 		}
-		$this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
+
+        $this->setGDataClient($gdType);
+    }
+
+    private function getServiceAuthName($type)
+    {
+        switch($type)
+        {
+            case "docs":
+                return Zend_Gdata_Docs::AUTH_SERVICE_NAME;
+            case "contacts":
+                return Zend_Gdata_Contacts::AUTH_SERVICE_NAME;
+            default:
+                return '';
+        }
+
+    }
+    /**
+     * Set the Gdata container based upon the type.
+     *
+     * @param  String $type
+     * @return void
+     */
+    protected function setGDataClient($type)
+    {
+        switch($type)
+        {
+            case "docs":
+                $GLOBALS['log']->debug("Loading Docs GData");
+                $this->gdClient = new Zend_Gdata_Docs($this->httpClient, 'SugarCRM-GDocs-0.1');
+                break;
+            case "contacts":
+                $GLOBALS['log']->debug("Loading Contacts GData");
+                $this->gdClient = new Zend_Gdata_Contacts($this->httpClient);
+                break;
+            default:
+                $GLOBALS['log']->debug("Loading Regular GData");
+                $this->gdClient = new Zend_Gdata($this->httpClient);
+                break;
+        }
     }
 
 	function uploadDoc($bean, $fileToUpload, $docName, $mimeType){

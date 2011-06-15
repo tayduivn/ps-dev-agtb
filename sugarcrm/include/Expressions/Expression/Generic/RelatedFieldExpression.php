@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=een ONLY
 /************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
