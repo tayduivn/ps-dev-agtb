@@ -1,0 +1,265 @@
+#!/bin/sh
+####################################################
+# Script to merge feature branches from ibm on top
+# of the ibm branch into a seperate branch
+####################################################
+
+# settings which can be overriden by cli options
+DIFF_TOOL="kdiff3" 				# -d xxx
+MODE="interactive" 				# -a (auto mode)
+BRANCH_TARGET="ibm_current"		# -t target branch name
+FLUSH_TARGET="no"				# -f
+
+# other stuff
+DIR_SCRIPT=`pwd`
+DIR_TO_BASE="../.."
+BRANCH_BASE="ibm"
+BRANCH_LIST="branch_list.txt"
+GIT_REMOTE="origin"
+GIT_URL="ssh://git@github.com/sugarcrm/Mango.git"
+
+# track merge status
+MERGE_OK=""
+MERGE_NOK=""
+
+# function to die if last cmd was unsuccesful
+check_cmd_status() {
+	if [ ! $? -eq 0 ]; then
+		echo "failed"
+		exit 1
+	fi
+	sleep 1
+	echo "ok"
+}
+
+# parse cli options
+while getopts "hd:t:af" opt; do
+	case $opt in
+		d) DIFF_TOOL=$OPTARG;;
+		t) BRANCH_TARGET=$OPTARG;;
+		a) MODE="auto";;
+		f) FLUSH_TARGET="flush";;
+		*) 	echo "";
+			echo " Possible options :";
+			echo "  -a          Enable automatic mode, skipping failed merges";
+			echo "  -d tool     Specify the difftool to use in interactive mode (default kdiff3)";
+			echo "  -t branch   Override the target branch (default ibm_current)";
+			echo "  -f          Flush the target branch locally and remotely";
+			echo "";
+			exit 1;;
+	esac
+done
+
+# lets get things started
+echo "###### START AUTO BRANCH MERGER for IBM ######"
+echo ""
+echo "*** Preflight checks ***"
+
+# determine absolute base path
+cd $DIR_TO_BASE
+DIR_BASE=`pwd`
+echo "Using base dir $DIR_BASE"
+
+# check if difftool exists in interactive mode
+if [ "$MODE" == "interactive" ]; then
+	echo -e "Searching for difftool $DIFF_TOOL ... \c"
+	which $DIFF_TOOL &> /dev/null
+	check_cmd_status
+fi
+
+# check for git repo
+echo -e "Checking for git repo ... \c"
+git status &> /dev/null
+check_cmd_status
+
+# check if remote is defined and pointing to the correct url
+echo -e "Checking git remote \"${GIT_REMOTE}\" ... \c"
+git remote show $GIT_REMOTE | grep "Push  URL: $GIT_URL" &> /dev/null
+check_cmd_status
+
+# fetch from origin to update our refs
+echo -e "Fetching from remote \"${GIT_REMOTE}\" ... \c"
+git fetch $GIT_REMOTE &> /dev/null
+check_cmd_status
+
+# be sure our local base exists
+echo -e "Checking base branch \"${BRANCH_BASE}\" ... \c"
+git checkout $BRANCH_BASE &> /dev/null
+check_cmd_status
+
+# pull from base
+echo -e "Pulling latest changes for \"${BRANCH_BASE}\" ... \c"
+git pull $GIT_REMOTE &> /dev/null
+check_cmd_status
+
+# if we flush the target, we recreate it from the baes branch
+if [ "$FLUSH_TARGET" == "flush" ]; then
+
+	# flush local/remote target branch
+	git push $GIT_REMOTE :$BRANCH_TARGET &> /dev/null
+	git branch -D $BRANCH_TARGET &> /dev/null
+
+	# create local target branch
+	echo -e "Creating target branch \"${BRANCH_TARGET}\" ... \c"
+	git checkout -b $BRANCH_TARGET &> /dev/null
+	check_cmd_status
+
+# if we don't flush checkout the target branch from remote or create it if non-exist
+else
+
+	# remove the local target branch in case it exists
+	git branch -D $BRANCH_TARGET &> /dev/null
+
+	# check if our target branch already exists on remote
+	echo -e "Checking for \"$BRANCH_TARGET\" on \"$GIT_REMOTE\" ... \c"
+	git branch -r | grep "${GIT_REMOTE}/${BRANCH_TARGET}$" &> /dev/null
+	if [ $? -eq 0 ]; then
+		echo "ok"
+		echo -e "Checking out target branch \"$BRANCH_TARGET\" from \"$GIT_REMOTE\" ... \c"
+		git checkout -b $BRANCH_TARGET $GIT_REMOTE/$BRANCH_TARGET &> /dev/null
+		check_cmd_status
+	else
+		echo "not found"
+		echo -e "Creating new target branch \"$BRANCH_TARGET\" for \"$GIT_REMOTE\" ... \c"
+		git checkout -b $BRANCH_TARGET &> /dev/null
+		check_cmd_status
+	fi
+
+fi
+
+# check for branch list file
+echo -e "Looking for feature branch list ... \c"
+cat $DIR_SCRIPT/$BRANCH_LIST &> /dev/null
+check_cmd_status
+
+echo "*** Preflight checks done ***"
+echo
+
+# just be sure we are in our target branch
+cd $DIR_BASE
+git checkout $BRANCH_TARGET &> /dev/null
+
+# check if branches exist on remote
+while read branch; do
+	if [ "$branch" != "" ]; then
+		echo ""
+		echo "*** AutoMerging branch \"${branch}\" ***"
+		
+		# check if remote branch exists
+		echo -e "Searching for $GIT_REMOTE/$branch ... \c"
+		git branch -r | grep "${GIT_REMOTE}/${branch}$" &> /dev/null
+		check_cmd_status
+
+		# merge remote branch
+		CLEAN_MERGE="ok"
+		echo -e "Trying to merge \"$branch\" into \"$BRANCH_TARGET\" ... \c"
+		git merge --no-ff --no-commit ${GIT_REMOTE}/${branch} &> /dev/null
+		if [ ! $? -eq 0 ]; then
+			CLEAN_MERGE="failed"
+		fi
+		echo $CLEAN_MERGE
+
+		# ignore the readme file
+		git reset HEAD readme.txt &> /dev/null
+		git checkout -- readme.txt &> /dev/null
+
+		if [ "$CLEAN_MERGE" == "ok" ]; then
+
+			# log
+			MERGE_OK="$MERGE_OK\n$branch"
+
+			# commit the merge
+			echo -e "Committing merge ... \c"
+			git commit -m "AUTOMERGER: merge $branch" &> /dev/null
+			if [ ! $? -eq 0 ]; then
+				echo "no changes"
+				MERGE_OK="$MERGE_OK (no changes)"
+			else
+				echo "ok"
+			fi
+
+		else
+
+			# in automatic mode we just skip current feature branch and go on
+			if [ "$MODE" == "auto" ]; then
+			
+				# log
+				MERGE_NOK="$MERGE_NOK\n$branch"
+
+				# forget this merge
+				echo -e "Skipping this merge ... \c"
+				git reset --hard &> /dev/null
+				check_cmd_status
+
+			# in interactive mode use our difftool to resolve the conflicts
+			else
+
+				# use the mergetool to manually resolve conflicts
+				git mergetool -y -t $DIFF_TOOL &> /dev/null
+		
+				# check if all conflicts are resolved
+				echo -e "Checking if all conflicts are resolved ... \c"
+				git status -s | grep "^UU" &> /dev/null
+				if [ $? -eq 0 ]; then
+					echo "failed"
+					MERGE_NOK="$MERGE_NOK\n$branch"
+
+					# forget this merge
+					echo -e "Skipping this merge ... \c"
+					git reset --hard &> /dev/null
+					check_cmd_status
+				else
+					echo "ok"
+					MERGE_OK="$MERGE_OK\n$branch"
+				
+					# commit the merge
+					echo -e "Committing merge ... \c"
+					git commit -m "AUTOMERGER: merge $branch (manually resolved conflicts)" &> /dev/null
+					if [ ! $? -eq 0 ]; then
+						echo "no changes"
+						MERGE_OK="$MERGE_OK (no changes)"
+					else
+						echo "ok"
+						MERGE_OK="$MERGE_OK (manually resolved conflicts)"
+					fi
+
+				fi # conflicts resolved
+
+			fi # auto mode
+
+		fi # clean merge
+
+	fi # valid branch name
+
+done < $DIR_SCRIPT/branch_list.txt
+
+# push our target branch to the remote
+echo ""
+echo "*** Post merge tasks ***"
+
+# setup readme file
+echo -e "Setting up readme ... \c"
+TIMESTAMP=`date`
+echo "*** AUTO MERGE BRANCH ***" > readme.txt
+echo "Update date: $TIMESTAMP" >> readme.txt
+echo "Base branch: $BRANCH_BASE" >> readme.txt
+echo "This branch: $BRANCH_TARGET" >> readme.txt
+echo "Mode: $MODE" >> readme.txt
+echo "Flush: $FLUSH_TARGET" >> readme.txt
+echo -e "\nSuccesfully merged branches:\n$MERGE_OK" >> readme.txt
+echo -e "\nFailed (skipped) branches:\n$MERGE_NOK\n" >> readme.txt
+git add readme.txt
+git commit -m "AUTOMERGER: updating status" &> /dev/null
+check_cmd_status
+
+# push local target branch to remote
+echo -e "Pushing $BRANCH_TARGET to $GIT_REMOTE ... \c"
+git push $GIT_REMOTE $BRANCH_TARGET:$BRANCH_TARGET &> /dev/null
+check_cmd_status
+
+echo ""
+echo "###### END - AUTO BRANCH MERGER for IBM ######"
+
+# go back to our script dir
+cd $SCRIPT_DIR
+exit 0
