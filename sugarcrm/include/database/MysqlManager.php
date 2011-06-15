@@ -728,11 +728,12 @@ class MysqlManager extends DBManager
      */
 	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
+        // always return as array for post-processing
         $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
 
-        if ( $ref['colType'] == 'int'
-                && !empty($fieldDef['len']) )
+        if ( $ref['colType'] == 'int' && !empty($fieldDef['len']) ) {
             $ref['colType'] .= "(".$fieldDef['len'].")";
+        }
 
         // bug 22338 - don't set a default value on text or blob fields
         if ( isset($ref['default']) &&

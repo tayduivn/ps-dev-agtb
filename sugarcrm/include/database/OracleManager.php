@@ -925,10 +925,7 @@ class OracleManager extends DBManager
     {
 		//Bug 25814
 		if(isset($fieldDef['name'])){
-			$name = $fieldDef['name'];
-	        $type = $this->getFieldType($fieldDef);
-	        $colType = $this->getColumnType($type, $name, $table);
-	    	if(stristr($colType, 'decimal')){
+        	if(stristr($this->getFieldType($fieldDef), 'decimal') && isset($fieldDef['len'])){
 				$fieldDef['len'] = min($fieldDef['len'],38);
 			}
 		}

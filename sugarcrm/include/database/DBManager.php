@@ -2205,7 +2205,7 @@ abstract class DBManager
      * Returns the defintion for a single column
      *
      * @param  array  $fieldDef
-     * @param  bool   $ignoreRequired  Optional, true if we should ignor this being a required field
+     * @param  bool   $ignoreRequired  Optional, true if we should ignore this being a required field
      * @param  string $table           Optional, table name
      * @param  bool   $return_as_array Optional, true if we should return the result as an array instead of sql
      * @return string or array if $return_as_array is true
@@ -2214,7 +2214,7 @@ abstract class DBManager
     {
         $name = $fieldDef['name'];
         $type = $this->getFieldType($fieldDef);
-        $colType = $this->getColumnType($type, $name, $table);
+        $colType = $this->getColumnType($type);
 
         if (( $colType == 'nvarchar'
 				or $colType == 'nchar'
@@ -2253,9 +2253,8 @@ abstract class DBManager
 
         $required = 'NULL';  // MySQL defaults to NULL, SQL Server defaults to NOT NULL -- must specify
         //Starting in 6.0, only ID and auto_increment fields will be NOT NULL in the DB.
-        if ((empty($fieldDef['isnull'])  || strtolower($fieldDef['isnull']) == 'false') &&
-		(!empty($auto_increment) || $name == 'id' || ($fieldDef['type'] == 'id' && isset($fieldDef['required']) && $fieldDef['required'])))
-		{
+        if ((empty($fieldDef['isnull']) || strtolower($fieldDef['isnull']) == 'false') &&
+		    (!empty($auto_increment) || $name == 'id' || ($fieldDef['type'] == 'id' && !empty($fieldDef['required'])))) {
             $required =  "NOT NULL";
         }
 		if ($ignoreRequired)

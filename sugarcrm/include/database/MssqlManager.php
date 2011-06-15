@@ -637,8 +637,8 @@ class MssqlManager extends DBManager
         while ($i<$count && $offset<strlen($p_sql)) {
             if ($offset > strlen($p_sql))
             {
-				break;   
-            }     	
+				break;
+            }
 
             $beg_sin = strpos($p_sql, $strip_beg, $offset);
             if (!$beg_sin)
@@ -1709,20 +1709,17 @@ EOQ;
     {
     	//Bug 25814
 		if(isset($fieldDef['name'])){
-			$name = $fieldDef['name'];
-	        $type = $this->getFieldType($fieldDef);
-	        $colType = $this->getColumnType($type, $name, $table);
-	    	if(stristr($colType, 'decimal')){
-				$fieldDef['len'] = isset($fieldDef['len'])? min($fieldDef['len'],38) : 38;
+		    $colType = $this->getFieldType($fieldDef);
+        	if(stristr($this->getFieldType($fieldDef), 'decimal') && isset($fieldDef['len'])){
+				$fieldDef['len'] = min($fieldDef['len'],38);
 			}
-			//bug: 39690 float(8) is interpreted as real and this generates a diff when doing repair
-			if(stristr($colType, 'float')){
-				if(isset($fieldDef['len']) && $fieldDef['len'] == 8){
-					unset($fieldDef['len']);
-				}
+		    //bug: 39690 float(8) is interpreted as real and this generates a diff when doing repair
+			if(stristr($colType, 'float') && isset($fieldDef['len']) && $fieldDef['len'] == 8){
+				unset($fieldDef['len']);
 			}
 		}
 
+		// always return as array for post-processing
 		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
 
 		// Bug 24307 - Don't add precision for float fields.

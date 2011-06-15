@@ -120,7 +120,7 @@ class IBMDB2Manager  extends DBManager
             'currency' => 'float',
             'decimal'  => 'float',
             'decimal2' => 'float',
-     );    
+     );
 
     /**+
      * @var array
@@ -247,7 +247,7 @@ class IBMDB2Manager  extends DBManager
     protected function checkDB2STMTerror($obj)
     {
         if(!$obj) return true;
-        
+
         $err = db2_stmt_error($obj);
         if ($err != false){
             $result = false;
@@ -754,27 +754,28 @@ class IBMDB2Manager  extends DBManager
         return $sql;
 	}
 
-    
+
 	/**~
      * @see DBHelper::oneColumnSQLRep()
      */
     protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
 		if(isset($fieldDef['name'])){
-			$name = $fieldDef['name'];
-	        $type = $this->getFieldType($fieldDef);
-	        $colType = $this->getColumnType($type, $name, $table);
-	    	if(stristr($colType, 'decimal')){
+        	if(stristr($this->getFieldType($fieldDef), 'decimal') && isset($fieldDef['len'])) {
 				$fieldDef['len'] = min($fieldDef['len'],31); // DB2 max precision is 31 for LUW, may be different for other OSs
 			}
 		}
         //May need to add primary key and sequence stuff here
-		$colspec = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array);
-        if(!preg_match('/not\s+null/i', $colspec)) {
-            $colspec = str_replace(array('NULL', 'null'), '', $colspec); // DB2 doesn't like NULL specs
-        }
-        return $colspec;
-	}
+		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
+		if($ref['required'] == 'NULL') {
+		    // DB2 doesn't have NULL definition, only NOT NULL
+		    $ref['required'] = '';
+		}
+        if ( $return_as_array )
+            return $ref;
+        else
+            return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
+    }
 
     /**
      * @see DBManager::changeColumnSQL()
@@ -830,10 +831,10 @@ class IBMDB2Manager  extends DBManager
         $seqName = $this->_getSequenceName($table, $field_name, true);
         return "NEXTVAL FOR $seqName";
     }
-    
+
 
     /**~
-     * Generate an DB2 SEQUENCE name similar to Oracle. 
+     * Generate an DB2 SEQUENCE name similar to Oracle.
      *
      * @param string $table
      * @param string $field_name
