@@ -432,22 +432,6 @@ function get_mime_content_type_from_filename($filename)
     return '';
 }
 
-/**
- * Get filename in cache directory
- * @param string $file
- */
-function sugar_cached($file)
-{
-    static $cdir = null;
-    if(empty($cdir)) {
-        $cdir = rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\');
-    }
-    if(empty($cdir)) {
-        $cdir = "cache";
-    }
-    return "$cdir/$file";
-}
-
 function cleanFileName($name)
 {
     return preg_replace('/[^\w-._]+/i', '', $name);
