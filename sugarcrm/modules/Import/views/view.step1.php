@@ -150,62 +150,7 @@ class ImportViewStep1 extends SugarView
 
         }
 
-        // show any custom mappings
-        if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import'))
-        {
-            while (($file = readdir($dir)) !== false)
-            {
-                if (sugar_is_file("custom/modules/Import/{$file}") && strpos($file,".php") !== false)
-                {
-	                require_once("custom/modules/Import/{$file}");
-	                $classname = str_replace('.php','',$file);
-	                $mappingClass = new $classname;
-	                $custom_mappings[] = $mappingClass->name;
-                }
-            }
-        }
-
-
-        // get user defined import maps
-        $this->ss->assign('is_admin',is_admin($current_user));
-        $import_map_seed = new ImportMap();
-        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'assigned_user_id' => $current_user->id,
-                'is_published'     => 'no',
-                'module'           => $_REQUEST['import_module'],
-                )
-            );
-
-        if ( count($custom_imports_arr) ) {
-            $custom = array();
-            foreach ( $custom_imports_arr as $import) {
-                $custom[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
-            }
-            $this->ss->assign('custom_imports',$custom);
-        }
-
-        // get globally defined import maps
-        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'is_published' => 'yes',
-                'module'       => $_REQUEST['import_module'],
-                )
-            );
-
-        if ( count($published_imports_arr) ) {
-            $published = array();
-            foreach ( $published_imports_arr as $import) {
-                $published[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
-            }
-            $this->ss->assign('published_imports',$published);
-        }
+        
 
         $this->ss->display('modules/Import/tpls/step1.tpl');
     }
@@ -246,7 +191,6 @@ document.getElementById('gonext').onclick = function()
 {
     clear_all_errors();
     var sourceSelected = false;
-    var typeSelected = false;
     var isError = false;
     var inputs = document.getElementsByTagName('input');
     for (var i = 0; i < inputs.length; ++i ){ 
@@ -259,52 +203,14 @@ document.getElementById('gonext').onclick = function()
                 }
             }
         }
-        if ( !typeSelected && inputs[i].name == 'type' ){
-            if (inputs[i].checked) {
-                typeSelected = true;
-            }
-        }
     }
     if ( !sourceSelected ) {
         add_error_style('importstep1','source\'][\'' + (document.getElementById('importstep1').source.length - 1) + '',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_WHAT_IS']}");
         isError = true;
     }
-    if ( !typeSelected ) {
-        add_error_style('importstep1','type\'][\'1',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_IMPORT_TYPE']}");
-        isError = true;
-    }
     return !isError;
 }
 
-YAHOO.util.Event.onDOMReady(function()
-{ 
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){ 
-        if (inputs[i].name == 'source' ) {
-            inputs[i].onclick = function() 
-            {
-                parentRow = this.parentNode.parentNode;
-                switch(this.value) {
-                case 'other':
-                    enclosureRow = document.getElementById('customEnclosure').parentNode.removeChild(document.getElementById('customEnclosure'));
-                    parentRow.parentNode.insertBefore(enclosureRow, document.getElementById('customDelimiter').nextSibling);
-                    document.getElementById('customDelimiter').style.display = '';
-                    document.getElementById('customEnclosure').style.display = '';
-                    break;
-                case 'tab': case 'csv':
-                    enclosureRow = document.getElementById('customEnclosure').parentNode.removeChild(document.getElementById('customEnclosure'));
-                    parentRow.parentNode.insertBefore(enclosureRow, parentRow.nextSibling);
-                    document.getElementById('customDelimiter').style.display = 'none';
-                    document.getElementById('customEnclosure').style.display = '';
-                    break;
-                default:
-                    document.getElementById('customDelimiter').style.display = 'none';
-                    document.getElementById('customEnclosure').style.display = 'none';
-                }
-            }
-        }
-    }
-});
 -->
 </script>
 

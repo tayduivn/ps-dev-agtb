@@ -69,10 +69,6 @@ textarea { width: 20em }
 {foreach from=$rows key=key item=item name=rows}
 {if $smarty.foreach.rows.first}
 <tr>
-    <td style="text-align: left;" scope="row">
-        <b>{$MOD.LBL_DATABASE_FIELD}</b>&nbsp;
-        {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
-    </td>
     {if $HAS_HEADER == 'on'}
     <td style="text-align: left;" scope="row">
         <b>{$MOD.LBL_HEADER_ROW}</b>&nbsp;
@@ -80,30 +76,32 @@ textarea { width: 20em }
     </td>
     {/if}
     <td style="text-align: left;" scope="row">
-        <b>{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
-        {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}
+        <b>{$MOD.LBL_DATABASE_FIELD}</b>&nbsp;
+        {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
     </td>
     <td style="text-align: left;" scope="row">
         <b>{$MOD.LBL_ROW} 1</b>&nbsp;
         {sugar_help text=$MOD.LBL_ROW_HELP}
     </td>
     {if $HAS_HEADER != 'on'}
-    <td style="text-align: left;"><b>{$MOD.LBL_ROW} 2</b></td>
+    <td style="text-align: left;" scope="row"><b>{$MOD.LBL_ROW} 2</b></td>
     {/if}
+    <td style="text-align: left;" scope="row" id="default_column_header">
+        <a id="hide_default_link">{sugar_image image="advanced_search.gif" name="advanced_search" height="8" width="8" align="top"}</a>
+        <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
+        {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
+    </td>
 </tr>
 {/if}
 <tr>
+    {if $HAS_HEADER == 'on'}
+    <td id="row_{$smarty.foreach.rows.index}_header">{$item.cell1}</td>
+    {/if}
     <td valign="top" align="left" id="row_{$smarty.foreach.rows.index}_col_0">
         <select class='fixedwidth' name="colnum_{$smarty.foreach.rows.index}">
             <option value="-1">{$MOD.LBL_DONT_MAP}</option>
             {$item.field_choices}
         </select>
-    </td>
-    {if $HAS_HEADER == 'on'}
-    <td id="row_{$smarty.foreach.rows.index}_header">{$item.cell1}</td>
-    {/if}
-    <td id="defaultvaluepicker_{$smarty.foreach.rows.index}" nowrap="nowrap">
-        {$item.default_field}
     </td>
     {if $item.show_remove}
     <td colspan="2">
@@ -117,6 +115,9 @@ textarea { width: 20em }
     {/if}
     <td id="row_{$smarty.foreach.rows.index}_col_2" scope="row">{$item.cell2}</td>
     {/if}
+    <td id="defaultvaluepicker_{$smarty.foreach.rows.index}" nowrap="nowrap">
+        {$item.default_field}
+    </td>
 </tr>
 {/foreach}
 <tr>
