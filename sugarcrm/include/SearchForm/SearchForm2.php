@@ -449,15 +449,15 @@ require_once('include/EditView/EditView2.php');
                 $fromMergeRecords = isset($array['merge_module']);
 
                 foreach($this->searchFields as $name => $params) {
-                    $long_name = $name.'_'.$SearchName;           
+                    $long_name = $name.'_'.$SearchName;
                     /*nsingh 21648: Add additional check for bool values=0. empty() considers 0 to be empty Only repopulates if value is 0 or 1:( */
                     if(isset($array[$long_name]) && !$this->isEmptyDropdownField($long_name, $array[$long_name]) && ( $array[$long_name] !== '' || (isset($this->fieldDefs[$long_name]['type']) && $this->fieldDefs[$long_name]['type'] == 'bool'&& ($array[$long_name]=='0' || $array[$long_name]=='1'))))
-                    { //advanced*/              
+                    { //advanced*/
                         $this->searchFields[$name]['value'] = $array[$long_name];
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                             $this->fieldDefs[$long_name]['value'] = $array[$long_name];
                         }
-                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic           
+                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic
                         $this->searchFields[$name]['value'] = $array[$name];
                         if(empty($this->fieldDefs[$name]['value'])) {
                             $this->fieldDefs[$name]['value'] = $array[$name];
@@ -477,7 +477,7 @@ require_once('include/EditView/EditView2.php');
                         global $timedate;
                         $date_value = $timedate->to_db_date($this->searchFields[$name]['value']);
                         $this->searchFields[$name]['value'] = $date_value == '' ? $this->searchFields[$name]['value'] : $date_value;
-                    }                    
+                    }
                 }
 
                 if((empty($array['massupdate']) || $array['massupdate'] == 'false') && $addAllBeanFields) {
@@ -485,19 +485,19 @@ require_once('include/EditView/EditView2.php');
                         if($key != 'assigned_user_name' && $key != 'modified_by_name')
                         {
                             $long_name = $key.'_'.$SearchName;
-                            
-                            if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name])) 
-                            {                               
-                                
+
+                            if(in_array($key.'_'.$SearchName, $arrayKeys) && !in_array($key, $searchFieldsKeys) && !$this->isEmptyDropdownField($long_name, $array[$long_name]))
+                            {
+
                                 $this->searchFields[$key] = array('query_type' => 'default', 'value' => $array[$long_name]);
-                                
+
                                 if (!empty($params['type']) && $params['type'] == 'parent'
                                     && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
                                 {
                                         $this->searchFields[$params['type_name']] = array('query_type' => 'default',
                                                                                           'value'      => $array[$params['type_name']]);
                                 }
-                                
+
                                 if(empty($this->fieldDefs[$long_name]['value'])) {
                                     $this->fieldDefs[$long_name]['value'] =  $array[$long_name];
                                 }
@@ -565,7 +565,6 @@ require_once('include/EditView/EditView2.php');
         $values = $this->searchFields;
 
         $where_clauses = array();
-        % = '%';
         $table_name = $this->seed->object_name;
         $this->seed->fill_in_additional_detail_fields();
 
@@ -586,7 +585,7 @@ require_once('include/EditView/EditView2.php');
             $type = (!empty($this->seed->field_name_map[$field]['type']))?$this->seed->field_name_map[$field]['type']:'';
 
             if(!empty($parms['enable_range_search']) && empty($type))
-            {               
+            {
                 if(preg_match('/^start_range_(.*?)$/', $field, $match))
                 {
                     $real_field = $match[1];
@@ -594,7 +593,7 @@ require_once('include/EditView/EditView2.php');
                     $end_field = 'end_range_' . $real_field;
 
                     if(isset($this->searchFields[$start_field]['value']) && isset($this->searchFields[$end_field]['value']))
-                    {                               
+                    {
                         $this->searchFields[$real_field]['value'] = $this->searchFields[$start_field]['value'] . '<>' . $this->searchFields[$end_field]['value'];
                         $this->searchFields[$real_field]['operator'] = 'between';
                         $parms['value'] = $this->searchFields[$real_field]['value'];
@@ -604,19 +603,19 @@ require_once('include/EditView/EditView2.php');
                     }
                 } else if (preg_match('/^range_(.*?)$/', $field, $match) && isset($this->searchFields[$field]['value'])) {
                     $real_field = $match[1];
-                    
+
                     //Special case for datetime and datetimecombo fields.  By setting the type here we allow an actual between search
                     if($parms['operator'] == '=')
                     {
-                       $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';                   
+                       $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';
                        if($field_type == 'datetimecombo' || $field_type == 'datetime')
                        {
                           $type = $field_type;
                        }
                     }
-                    
+
                     $this->searchFields[$real_field]['value'] = $this->searchFields[$field]['value'];
-                    $this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];                     
+                    $this->searchFields[$real_field]['operator'] = $this->searchFields[$field]['operator'];
                     $params['value'] = $this->searchFields[$field]['value'];
                     $params['operator'] = $this->searchFields[$field]['operator'];
                     unset($this->searchFields[$field]['value']);
@@ -626,7 +625,7 @@ require_once('include/EditView/EditView2.php');
                     continue;
                 }
             }
-            
+
             if(!empty($this->seed->field_name_map[$field]['source'])
                 && ($this->seed->field_name_map[$field]['source'] == 'custom_fields' ||
                     //Non-db custom fields, such as custom relates
@@ -899,14 +898,14 @@ require_once('include/EditView/EditView2.php');
                                         if(!$first){
                                             $where .= $and_or;
                                         }
-                                        $where .= " {$db_field} $in ({$q} '{$field_value}%') ";
+                                        $where .= " {$db_field} $in ({$q} ".$this->seed->db->quoted($field_value.'%').") ";
                                         $first = false;
                                     }
                                 }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
                                     $stringFormatParams = array(0 => $field_value, 1 => $GLOBALS['current_user']->id);
                                     $where .= "{$db_field} $in (".string_format($parms['subquery'], $stringFormatParams).")";
                                 }else{
-                                    $where .= "{$db_field} $in ({$parms['subquery']} '{$field_value}%')";
+                                    $where .= "{$db_field} $in ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').")";
                                 }
 
                                 break;
@@ -930,11 +929,11 @@ require_once('include/EditView/EditView2.php');
                                         //when a search is done with a space, we concatenate and search against the full name.
                                         if(count($string)>1){
                                             //add where clause against concatenated fields
-                                            $where .= $GLOBALS['db']->concat($column_name[0],array('first_name','last_name')) . " LIKE '{$field_value}%'";
-                                            $where .= ' OR ' . $GLOBALS['db']->concat($column_name[0],array('last_name','first_name')) . " LIKE '{$field_value}%'";
+                                            $where .= $this->seed->db->concat($column_name[0],array('first_name','last_name')) . " LIKE ".$this->seed->db->quoted($field_value.'%');
+                                            $where .= ' OR ' . $this->seed->db->concat($column_name[0],array('last_name','first_name')) . " LIKE ".$this->seed->db->quoted($field_value.'%');
                                         }else{
                                             //no space was found, add normal where clause
-                                            $where .=  $db_field . " like '".$field_value.%."'";
+                                            $where .=  $db_field . " like ".$this->seed->db->quoted($field_value.'%');
                                         }
 
                                     }else {
@@ -960,7 +959,7 @@ require_once('include/EditView/EditView2.php');
                                         }
 
                                         //field is not last name or this is not from global unified search, so do normal where clause
-                                        $where .=  $db_field . " like '".$field_value.%."'";
+                                        $where .=  $db_field . " like ".$this->seed->db->quoted($field_value.'%');
                                     }
                                 }
                                 break;
@@ -1047,14 +1046,14 @@ require_once('include/EditView/EditView2.php');
 
         return $where_clauses;
     }
-    
-    
+
+
     /**
      * isEmptyDropdownField
-     * 
+     *
      * This function checks to see if a blank dropdown field was supplied.  This scenario will occur where
      * a dropdown select is in single selection mode
-     * 
+     *
      * @param $value Mixed dropdown value
      */
     private function isEmptyDropdownField($name='', $value=array())
@@ -1062,6 +1061,6 @@ require_once('include/EditView/EditView2.php');
         $result = is_array($value) && isset($value[0]) && $value[0] == '';
         $GLOBALS['log']->debug("Found empty value for {$name} dropdown search key");
         return $result;
-    }    
+    }
  }
 ?>
