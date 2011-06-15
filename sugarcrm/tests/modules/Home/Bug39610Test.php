@@ -35,6 +35,9 @@ class Bug39610Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        $GLOBALS['system_notification_buffer'] = array();
+		$GLOBALS['buffer_system_notifications'] = true;
+		$GLOBALS['system_notification_count'] = 0;
         global $app_strings, $app_list_strings;
         $app_strings = return_application_language($GLOBALS['current_language']);
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']); 
@@ -45,6 +48,9 @@ class Bug39610Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        unset($GLOBALS['system_notification_buffer']);
+        unset($GLOBALS['buffer_system_notifications']);
+        unset($GLOBALS['system_notification_count']);
     }
     
     public function testUseCustomViewAndCustomClassName()
