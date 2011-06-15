@@ -98,7 +98,9 @@ class SugarFieldRelate extends SugarFieldBase {
                 'call_back_function' => $call_back_function,
                 'form_name' => $form_name,
                 'field_to_name_array' => array(
-                          'id' => (empty($displayParams['idName']) ? $vardef['id_name'] : ($displayParams['idName'] . '_' . $vardef['id_name'])) ,
+                          //'id' => (empty($displayParams['idName']) ? $vardef['id_name'] : ($displayParams['idName'] . '_' . $vardef['id_name'])) ,
+                          //bug 43770: Assigned to value could not be saved during lead conversion
+                          'id' => (empty($displayParams['idNameHidden']) ? $vardef['id_name'] : ($displayParams['idNameHidden'] . $vardef['id_name'])) ,
                           ((empty($vardef['rname'])) ? 'name' : $vardef['rname']) => (empty($displayParams['idName']) ? $vardef['name'] : $displayParams['idName']),
                     ),
                 );
