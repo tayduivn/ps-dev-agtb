@@ -5911,7 +5911,9 @@ function getUWDirs()
         global $sugar_config;
         return array($sugar_config['upload_dir'] . "/upgrades", $sugar_config['cache_dir'] . "upload/upgrades/temp");
     } else {
-        @UploadStream::register(); // just in case file was copied, but not run
+        if(!in_array("upload", stream_get_wrappers())) {
+            UploadStream::register(); // just in case file was copied, but not run
+        }
         return array("upload://upgrades", sugar_cached("upgrades/temp"));
     }
 }
