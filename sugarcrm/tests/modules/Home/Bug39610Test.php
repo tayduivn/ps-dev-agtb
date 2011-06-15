@@ -65,7 +65,7 @@ EOQ;
             'target_module' => $target_module,
             'action' => 'SubpanelCreates',
             );
-        $controller = new SugarControllerMock;
+        $controller = new SugarControllerMockBug39610Test;
         $controller->setup();
         $controller->do_action = 'SubpanelCreates';
         $controller->process();
@@ -84,7 +84,7 @@ EOQ;
 
 }
 
-class SugarControllerMock extends SugarController
+class SugarControllerMockBug39610Test extends SugarController
 {
     public $do_action;
     
