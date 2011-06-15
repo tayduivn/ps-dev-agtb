@@ -21,10 +21,42 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 
 /*********************************************************************************
- * Description: Class to detect csv file settings (delimiter, enclosure, etc
+ * Description: Class to detect csv file settings (delimiter, enclosure, etc)
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
+
+/* sample usage
+
+    $auto = new CsvAutoDetect('/tmp/_books.csv', 10);
+
+    $delimiter = $enclosure = $heading = false;
+
+    $ret = $auto->getCsvSettings($delimiter, $enclosure, $heading);
+    if ($ret) {
+        echo "found delimiter = ".$delimiter."<br>";
+        echo "found enclosure = ".$enclosure."<br>";
+        $header = $heading?'true':'false';
+        echo "found heading = ".$header."<br>";
+    } else {
+        echo "couldn't find settings<br>";
+    }
+
+    $date_format = $auto->getDateFormat();
+    if ($date_format) {
+        echo "found date format=".$date_format."<br>";
+    } else {
+        echo "couldn't find date format<br>";
+    }
+
+    $time_format = $auto->getTimeFormat();
+    if ($time_format) {
+        echo "found time format=".$time_format."<br>";
+    } else {
+        echo "couldn't find time format<br>";
+    }
+
+*/
 
 require_once('include/parsecsv.lib.php');
 
