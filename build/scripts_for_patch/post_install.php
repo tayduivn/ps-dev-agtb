@@ -411,15 +411,15 @@ function post_install() {
            if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
                _logThis('Moving upload directory');
                $sugar_config['upload_dir'] = 'upload/';
-               rename($sugar_config['cache_dir'].'upload/', 'upload');
+               rename($sugar_config['cache_dir'].'upload', 'upload');
                if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
-        	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
+        	        _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
         	   }else{
-        			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
+        			_logThis('sugar_config array in config.php has been updated with upload config contents', $path);
         	   }
                mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
-               if(file_exists('upload/temp')) {
-                   rename('upload/temp', $sugar_config['cache_dir'].'upgrades/temp');
+               if(file_exists('upload/upgrades/temp')) {
+                   rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
                }
            }
     }

@@ -733,8 +733,8 @@ function getValidPatchName($returnFull = true) {
 	global $sugar_version;
     global $sugar_config;
     $uh = new UpgradeHistory();
-    $base_upgrade_dir = "upload://upgrades";
-	$return = array();
+    list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
+    $return = array();
 
 	// scan for new files (that are not installed)
 	logThis('finding new files for upgrade');
@@ -2417,8 +2417,7 @@ function preLicenseCheck() {
 if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		$base_upgrade_dir		= "upload://upgrades";
-		$base_tmp_upgrade_dir	= sugar_cached("upgrades/temp");
+		list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
 		$unzip_dir = '';
 		//also come up with mechanism to read from upgrade-progress file
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
@@ -2433,7 +2432,7 @@ if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists('upload://upgrades/patch/'.$package_name.'.zip')){
+					 		if(file_exists("$base_upgrade_dir/patch/".$package_name.'.zip')){
 					 			$_SESSION['install_file'] = $package_name.".zip";
 					 			break;
 					 		}
@@ -2461,7 +2460,7 @@ eoq;
 $uwMain = $upgrade_directories_not_found;
 				return '';
         }
-		$install_file			= 'upload://upgrades/patch/'.basename(urldecode( $_SESSION['install_file'] ));
+		$install_file			= "$base_upgrade_dir/patch/".basename(urldecode( $_SESSION['install_file'] ));
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
@@ -2632,8 +2631,7 @@ function preflightCheck() {
 	if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		$base_upgrade_dir		= "upload://upgrades";
-		$base_tmp_upgrade_dir	= sugar_cached("upgrades/temp");
+		list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
 		$unzip_dir = '';
 		//Following is if User logged out unexpectedly and then logged into UpgradeWizard again.
 		//also come up with mechanism to read from upgrade-progress file.
@@ -2649,7 +2647,7 @@ function preflightCheck() {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists('upload://upgrades/patch/'.$package_name.'.zip')){
+					 		if(file_exists("$base_upgrade_dir/patch/".$package_name.'.zip')){
 					 			$_SESSION['install_file'] = $package_name.".zip";
 					 			break;
 					 		}
@@ -2678,7 +2676,7 @@ $uwMain = $upgrade_directories_not_found;
 				return '';
 
         }
-		$install_file			= 'upload://upgrades/patch/'.basename(urldecode( $_SESSION['install_file'] ));
+		$install_file			= "$base_upgrade_dir/patch/".basename(urldecode( $_SESSION['install_file'] ));
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
@@ -2878,14 +2876,14 @@ function prepSystemForUpgrade() {
 	global $subdirs;
 	global $base_upgrade_dir;
 	global $base_tmp_upgrade_dir;
-
+    list($p_base_upgrade_dir, $p_base_tmp_upgrade_dir) = getUWDirs();
 	///////////////////////////////////////////////////////////////////////////////
 	////	Make sure variables exist
-	if(!isset($base_upgrade_dir) || empty($base_upgrade_dir)){
-		$base_upgrade_dir       = "upload://upgrades";
+	if(empty($base_upgrade_dir)){
+		$base_upgrade_dir       = $p_base_upgrade_dir;
 	}
-	if(!isset($base_tmp_upgrade_dir) || empty($base_tmp_upgrade_dir)){
-		$base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
+	if(empty($base_tmp_upgrade_dir)){
+		$base_tmp_upgrade_dir   = $p_base_tmp_upgrade_dir;
 	}
 	mkdir_recursive($base_tmp_upgrade_dir);
 	if(!isset($subdirs) || empty($subdirs)){
@@ -3138,7 +3136,7 @@ function unlinkUWTempFiles() {
 
 	logThis('at unlinkUWTempFiles()');
 	$tempDir='';
-    $tempDir = sugar_cached('upgrades/temp');
+	list($upgDir, $tempDir) = getUWDirs();
 
     if(file_exists($tempDir) && is_dir($tempDir)){
 		$files = findAllFiles($tempDir, array(), false);
@@ -3605,13 +3603,14 @@ function checkFiles($files, $echo=false) {
 function deletePackageOnCancel(){
 	global $mod_strings;
 	global $sugar_config;
+	list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
 	logThis('running delete');
     if(!isset($_SESSION['install_file']) || ($_SESSION['install_file'] == "")) {
     	logThis('ERROR: trying to delete non-existent file: ['.$_REQUEST['install_file'].']');
         $error = $mod_strings['ERR_UW_NO_FILE_UPLOADED'];
     }
     // delete file in upgrades/patch
-    $delete_me = 'upload://upgrades/patch/'.basename(urldecode( $_REQUEST['install_file'] ));
+    $delete_me = "$base_upgrade_dir/patch/".basename(urldecode( $_REQUEST['install_file'] ));
     if(@unlink($delete_me)) {
     	//logThis('unlinking: '.$delete_me);
         $out = basename($delete_me).$mod_strings['LBL_UW_FILE_DELETED'];
@@ -5900,3 +5899,21 @@ if (!function_exists("getValidDBName"))
         return strtolower ( $result ) ;
     }
 }
+
+/**
+ * Get UW directories
+ * Provides compatibility with both 6.3 and pre-6.3 setup
+ */
+function getUWDirs()
+{
+    if(!class_exists('UploadStream')) {
+        // we're still running the old code
+        global $sugar_config;
+        return array($sugar_config['upload_dir'] . "/upgrades", $sugar_config['cache_dir'] . "upload/upgrades/temp");
+    } else {
+        @UploadStream::register(); // just in case file was copied, but not run
+        return array("upload://upgrades", sugar_cached("upgrades/temp"));
+    }
+}
+
+

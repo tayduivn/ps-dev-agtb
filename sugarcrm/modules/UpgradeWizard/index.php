@@ -44,7 +44,6 @@ require_once('modules/Administration/UpgradeHistory.php');
 
 $GLOBALS['top_message'] = '';
 
-
 if(!isset($locale) || empty($locale)) {
 	$locale = new Localization();
 }
@@ -53,8 +52,7 @@ global $sugar_flavor;
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	SYSTEM PREP
-$base_upgrade_dir       = "upload://upgrades";
-$base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
+list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
 $subdirs = array('full', 'langpack', 'module', 'patch', 'theme');
 
 global $sugar_flavor;

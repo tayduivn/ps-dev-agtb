@@ -99,8 +99,7 @@ if(!isset($_SESSION['committed'])) {
 	if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		$base_upgrade_dir		= "upload://upgrades";
-		$base_tmp_upgrade_dir	= sugar_cached("upgrades/temp");
+		list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
 		$unzip_dir = '';
 		//also come up with mechanism to read from upgrade-progress file
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
@@ -115,7 +114,7 @@ if(!isset($_SESSION['committed'])) {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists('upload://upgrades/patch/'.$package_name.'.zip')){
+					 		if(file_exists("$base_upgrade_dir/patch/".$package_name.'.zip')){
 					 			$_SESSION['install_file'] = $package_name.'.zip';
 					 			break;
 					 		}
@@ -131,7 +130,7 @@ if(!isset($_SESSION['committed'])) {
         	echo 'Upload File not found so redirecting to Upgrade Start ';
         	$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
         	echo '<form name="redirect" action="' .$redirect_new_wizard. '"  method="POST">';
-$upgrade_directories_not_found =<<<eoq
+            $upgrade_directories_not_found =<<<eoq
 	<table cellpadding="3" cellspacing="0" border="0">
 		<tr>
 			<th colspan="2" align="left">
@@ -140,10 +139,10 @@ $upgrade_directories_not_found =<<<eoq
 		</tr>
 	</table>
 eoq;
-$uwMain = $upgrade_directories_not_found;
-				return '';
+            $uwMain = $upgrade_directories_not_found;
+			return '';
         }
-		$install_file			= 'upload://upgrades/patch/'.basename(urldecode( $_SESSION['install_file'] ));
+		$install_file			= "$base_upgrade_dir/patch/".basename(urldecode( $_SESSION['install_file'] ));
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
@@ -201,7 +200,7 @@ $uwMain = $upgrade_directories_not_found;
 		echo 'Upload File not found so redirecting to Upgrade Start ';
 		$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
 		echo '<form name="redirect" action="' .$redirect_new_wizard. '"  method="POST">';
-$upgrade_directories_not_found =<<<eoq
+        $upgrade_directories_not_found =<<<eoq
 	<table cellpadding="3" cellspacing="0" border="0">
 		<tr>
 			<th colspan="2" align="left">
@@ -210,16 +209,16 @@ $upgrade_directories_not_found =<<<eoq
 		</tr>
 	</table>
 eoq;
-$uwMain = $upgrade_directories_not_found;
-				return '';
+        $uwMain = $upgrade_directories_not_found;
+		return '';
 	}
-	$install_file		= urldecode($_SESSION['install_file']);
+	$install_file		= "$base_upgrade_dir/patch/".basename(urldecode( $_SESSION['install_file'] ));
 	$file_action		= "";
 	$uh_status			= "";
 	$errors				= array();
 	$out				= '';
 	$backupFilesExist	= false;
-	$rest_dir			= clean_path(remove_file_extension($install_file) . "-restore");
+	$rest_dir			= remove_file_extension($install_file) . "-restore";
 
 	///////////////////////////////////////////////////////////////////////////////
 	////	MAKE BACKUPS OF TARGET FILES
@@ -406,7 +405,7 @@ if(function_exists('deleteCache'))
 }
 
 //add tabs
-$from_dir = clean_path(remove_file_extension($install_file) . "-restore");
+$from_dir = remove_file_extension($install_file) . "-restore";
 logThis('call addNewSystemTabsFromUpgrade(' . $from_dir . ')');
 addNewSystemTabsFromUpgrade($from_dir);
 logThis('finished addNewSystemTabsFromUpgrade');
