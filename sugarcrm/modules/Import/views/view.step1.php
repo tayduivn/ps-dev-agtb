@@ -121,37 +121,6 @@ class ImportViewStep1 extends SugarView
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
 
-        // handle publishing and deleting import maps
-        if (isset($_REQUEST['delete_map_id'])) {
-            $import_map = new ImportMap();
-            $import_map->mark_deleted($_REQUEST['delete_map_id']);
-        }
-
-        if (isset($_REQUEST['publish']) ) {
-            $import_map = new ImportMap();
-            $result = 0;
-
-            $import_map = $import_map->retrieve($_REQUEST['import_map_id'], false);
-
-            if ($_REQUEST['publish'] == 'yes') {
-                $result = $import_map->mark_published($current_user->id,true);
-                if (!$result) {
-                    $this->ss->assign("ERROR",$mod_strings['LBL_ERROR_UNABLE_TO_PUBLISH']);
-                }
-            }
-            elseif ( $_REQUEST['publish'] == 'no') {
-                // if you don't own this importmap, you do now!
-                // unless you have a map by the same name
-                $result = $import_map->mark_published($current_user->id,false);
-                if (!$result) {
-                    $this->ss->assign("ERROR",$mod_strings['LBL_ERROR_UNABLE_TO_UNPUBLISH']);
-                }
-            }
-
-        }
-
-        
-
         $this->ss->display('modules/Import/tpls/step1.tpl');
     }
 

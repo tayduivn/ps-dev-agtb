@@ -45,8 +45,9 @@ class ImportController extends SugarController
     public function loadBean()
     {
         global $mod_strings;
-        
-        $this->bean = loadBean($_REQUEST['import_module']);
+
+        $importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+        $this->bean = loadBean($importModule);
         if ( $this->bean ) {
             if ( !$this->bean->importable )
                 $this->bean = false;
@@ -73,6 +74,41 @@ class ImportController extends SugarController
         $this->action_Step1();
     }
 
+    function action_mapping()
+    {
+        global $mod_strings, $current_user;
+        $results = array('message' => '');
+        // handle publishing and deleting import maps
+        if(isset($_REQUEST['delete_map_id']))
+        {
+            $import_map = new ImportMap();
+            $import_map->mark_deleted($_REQUEST['delete_map_id']);
+        }
+
+        if(isset($_REQUEST['publish']) )
+        {
+            $import_map = new ImportMap();
+
+            $import_map = $import_map->retrieve($_REQUEST['import_map_id'], false);
+
+            if($_REQUEST['publish'] == 'yes')
+            {
+                $result = $import_map->mark_published($current_user->id,true);
+                if (!$result)
+                    $results['message'] = $mod_strings['LBL_ERROR_UNABLE_TO_PUBLISH'];
+            }
+            elseif( $_REQUEST['publish'] == 'no')
+            {
+                // if you don't own this importmap, you do now, unless you have a map by the same name
+                $result = $import_map->mark_published($current_user->id,false);
+                if (!$result)
+                    $results['message'] = $mod_strings['LBL_ERROR_UNABLE_TO_UNPUBLISH'];
+            }
+        }
+        
+        echo json_encode($results);
+        sugar_cleanup(TRUE);
+    }
     function action_RefreshMapping()
     {
         require_once('modules/Import/ImportFile.php');

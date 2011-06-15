@@ -121,8 +121,6 @@ class ImportViewStep2 extends SugarView
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
 
-
-
         //Start custom mapping
         // show any custom mappings
         if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import'))
@@ -141,48 +139,30 @@ class ImportViewStep2 extends SugarView
         // get user defined import maps
         $this->ss->assign('is_admin',is_admin($current_user));
         $import_map_seed = new ImportMap();
-        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'assigned_user_id' => $current_user->id,
-                'is_published'     => 'no',
-                'module'           => $_REQUEST['import_module'],
-                )
-            );
+        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields( array('assigned_user_id' => $current_user->id, 'is_published' => 'no','module' => $_REQUEST['import_module']));
 
-        if ( count($custom_imports_arr) ) {
+        if( count($custom_imports_arr) )
+        {
             $custom = array();
-            foreach ( $custom_imports_arr as $import) {
-                $custom[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
+            foreach ( $custom_imports_arr as $import)
+            {
+                $custom[] = array( "IMPORT_NAME" => $import->name,"IMPORT_ID"   => $import->id);
             }
             $this->ss->assign('custom_imports',$custom);
         }
         
         // get globally defined import maps
-        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'is_published' => 'yes',
-                'module'       => $_REQUEST['import_module'],
-                )
-            );
-
-        if ( count($published_imports_arr) ) {
+        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(array('is_published' => 'yes', 'module' => $_REQUEST['import_module'],) );
+        if ( count($published_imports_arr) )
+        {
             $published = array();
-            foreach ( $published_imports_arr as $import) {
-                $published[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
+            foreach ( $published_imports_arr as $import)
+            {
+                $published[] = array("IMPORT_NAME" => $import->name, "IMPORT_ID"   => $import->id);
             }
             $this->ss->assign('published_imports',$published);
         }
         //End custom mapping
-
-
-
-
 
         // special for importing from Outlook
         if ($_REQUEST['source'] == "outlook") {
@@ -299,6 +279,57 @@ document.getElementById('gonext').onclick = function(){
         isError = true;
     }
     return !isError;
+}
+
+function publishMapping(elem, publish, mappingId)
+{
+    if( typeof(elem.publish) != 'undefined' )
+        publish = elem.publish;
+        
+    var url = 'index.php?action=mapping&module=Import&publish=' + publish + '&import_map_id=' + mappingId;
+    var callback = {
+                        success: function(o)
+                        {
+                            var r = YAHOO.lang.JSON.parse(o.responseText);
+                            if( r.message != '')
+                                alert(r.message);
+                        },
+                        failure: function(o) {}
+                   };
+    YAHOO.util.Connect.asyncRequest('GET', url, callback);
+    //Toggle the button title
+    if(publish == 'yes')
+    {
+        var newTitle = SUGAR.language.get('Import','LBL_UNPUBLISH');
+        var newPublish = 'no';
+    }
+    else
+    {
+        var newTitle = SUGAR.language.get('Import','LBL_PUBLISH');
+        var newPublish = 'yes';
+    }
+        
+    elem.value = newTitle;
+    elem.publish = newPublish;
+
+}
+function deleteMapping(elemId, mappingId )
+{
+    var elem = document.getElementById(elemId);
+    var table = elem.parentNode;
+    table.deleteRow(elem.rowIndex);
+
+    var url = 'index.php?action=mapping&module=Import&delete_map_id=' + mappingId;
+    var callback = {
+                        success: function(o)
+                        {
+                            var r = YAHOO.lang.JSON.parse(o.responseText);
+                            if( r.message != '')
+                                alert(r.message);
+                        },
+                        failure: function(o) {}
+                   };
+    YAHOO.util.Connect.asyncRequest('GET', url, callback);
 }
 -->
 </script>
