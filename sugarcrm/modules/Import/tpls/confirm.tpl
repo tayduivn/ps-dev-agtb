@@ -105,6 +105,19 @@ textarea { width: 20em }
                 <input class="checkBox" value='on' type="checkbox" name="has_header" id="has_header" {$HAS_HEADER_CHECKED}>
             </td>
 	    </tr>
+        <tr>
+            <td scope="row" colspan="3">
+                <h5>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h5></td>
+          </tr>
+        <tr>
+            <td colspan="2" scope="row"><input class="radio" type="radio" name="source" value="salesforce" id='sf_map' />
+            &nbsp;{$MOD.LBL_SALESFORCE}</td>
+        </tr>
+        <tr>
+            <td colspan="2" scope="row"><input class="radio" type="radio" name="source" value="outlook" id='outlook_map'/>
+            &nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
+        </tr>
+        
     </table>
 </div>
 

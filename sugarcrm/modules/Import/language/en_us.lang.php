@@ -309,5 +309,7 @@ $mod_strings = array (
     'LBL_IMPORT_FILE_SETTINGS' => 'Import File Settings',
     'LBL_RECORD_CANNOT_BE_UPDATED' => 'The record could not be updated due to a permissions issue',
     'LBL_DELETE_MAP_CONFIRMATION' => 'Are you sure you want to delete this mapping?',
+    'LBL_THIRD_PARTY_CSV_SOURCES' => 'Indicate if this csv is from any of the following 3rd party sources',
+    'LBL_THIRD_PARTY_CSV_SOURCES_HELP' => 'Additional help text here...',
 );
 ?>

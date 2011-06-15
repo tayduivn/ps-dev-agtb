@@ -180,10 +180,30 @@ class ImportViewConfirm extends SugarView
         $charsetOptions = get_select_options_with_id( $locale->getCharsetSelect(), $charset_for_import);//wdong,  bug 25927, here we should use the charset testing results from above.
         $this->ss->assign('CHARSETOPTIONS', $charsetOptions);
 
+        $importMappingJS = $this->getImportMappingJS();
+        
         $this->ss->assign("SAMPLE_ROWS",$rows);
-        $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg ));
+        $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS ));
         $this->ss->display('modules/Import/tpls/confirm.tpl');
     }
+
+    protected function getImportMappingJS()
+    {
+        $results = array();
+        $importMappings = array('ImportMapSalesforce', 'ImportMapOutlook');
+        foreach($importMappings as $importMap)
+        {
+            $tmpFile = "modules/Import/$importMap.php";
+            if( file_exists($tmpFile) )
+            {
+                require_once($tmpFile);
+                $t = new $importMap();
+                $results[$t->name] = array('delim' => $t->delimiter, 'enclos' => $t->enclosure, 'has_header' => $t->has_header);
+            }
+        }
+        return $results;
+    }
+
 
     public function getSampleSet($importFile)
     {
@@ -204,13 +224,15 @@ class ImportViewConfirm extends SugarView
     /**
      * Returns JS used in this view
      */
-    private function _getJS($maxRecordsExceeded, $maxRecordsWarningMessg )
+    private function _getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS)
     {
         global $mod_strings;
         $maxRecordsExceededJS = $maxRecordsExceeded?"true":"false";
+        $importMappingJS = json_encode($importMappingJS);
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 
+var import_mapping_js = $importMappingJS;
 document.getElementById('goback').onclick = function(){
     document.getElementById('importconfirm').action.value = 'Step2';
     return true;
@@ -270,6 +292,20 @@ YAHOO.util.Event.onDOMReady(function(){
     var subscribers = ["custom_delimiter", "custom_enclosure", "custom_enclosure_other", "has_header", "importlocale_charset"];
     YAHOO.util.Event.addListener(subscribers, "change", refreshDataTable);
 
+    function setMappingProperties(el)
+    {
+        var selectedMap = this.value;
+        if( typeof(import_mapping_js[selectedMap]) == 'undefined')
+
+            return;
+
+        document.getElementById('custom_delimiter').value = import_mapping_js[selectedMap].delim;
+        document.getElementById('custom_enclosure').value = import_mapping_js[selectedMap].enclos;
+        document.getElementById('has_header').checked = import_mapping_js[selectedMap].has_header;
+        
+        refreshDataTable();
+    }
+    YAHOO.util.Event.addListener(['sf_map', 'outlook_map'], "click", setMappingProperties);
 });
 </script>
 
