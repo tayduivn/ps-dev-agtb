@@ -63,19 +63,6 @@
             <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="csv" checked="checked" />
               &nbsp;{$MOD.LBL_CSV}&nbsp;{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}</td>
           </tr>
-          <tr id="customEnclosure">
-            <td scope="row">&nbsp;&nbsp;{$MOD.LBL_CUSTOM_ENCLOSURE}</td>
-            <td colspan="2" scope="row">
-                <select name="custom_enclosure" id="custom_enclosure">
-                    <option value="&quot;" selected="selected">{$MOD.LBL_OPTION_ENCLOSURE_DOUBLEQUOTE}</option>
-                    <option value="'">{$MOD.LBL_OPTION_ENCLOSURE_QUOTE}</option>
-                    <option value="">{$MOD.LBL_OPTION_ENCLOSURE_NONE}</option>
-                    <option value="other">{$MOD.LBL_OPTION_ENCLOSURE_OTHER}</option>
-                </select>
-                <input type="text" name="custom_enclosure_other" style="display: none; width: 5em;" maxlength="1" />
-                {sugar_help text=$MOD.LBL_ENCLOSURE_HELP}
-            </td>
-          </tr>
           </table>
         </td>
       </tr>
