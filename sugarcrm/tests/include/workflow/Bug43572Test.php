@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 require_once('include/workflow/workflow_utils.php');
 require_once('modules/Expressions/Expression.php');
 require_once('include/workflow/glue.php');
