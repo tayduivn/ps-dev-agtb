@@ -390,7 +390,6 @@ $dictionary['ProjectTask'] = array('audited'=>true,
     'bean_name'=>'User',
     'source'=>'non-db',
   ),
-  #Bug 43267
   'project_name_link' =>
   array (
     'name' => 'project_name_link',
