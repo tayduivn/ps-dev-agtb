@@ -6,3 +6,4 @@ ibmf_paneltabs
 ibmf_pluschar
 ibmf_wildcardsrch
 ibmf_custom
+ibmf_sugaralerts
