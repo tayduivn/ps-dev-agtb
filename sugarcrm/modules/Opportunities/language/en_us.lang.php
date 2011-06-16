@@ -144,6 +144,9 @@ $mod_strings = array (
 //END SUGARCRM flav!=sales ONLY
   'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
 	'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
+
+  //For export labels
+  'LBL_CAMPAIGN_ID' => 'Campaign Id',
 );
 
 ?>
