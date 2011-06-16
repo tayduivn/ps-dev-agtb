@@ -3683,7 +3683,7 @@ if (!class_exists('TCPDF', false)) {
 		* @since 1.3
 		* @see SetFont(), SetDrawColor(), SetFillColor(), SetTextColor(), SetLineWidth(), Cell(), Write(), SetAutoPageBreak()
 		*/
-		public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0) {	
+		public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0, $addpage=true) {
 			if ($this->empty_string($this->lasth) OR $reseth) {
 				//set row height
 				$this->lasth = $this->FontSize * $this->cell_height_ratio;
@@ -3693,8 +3693,11 @@ if (!class_exists('TCPDF', false)) {
 			} else {
 				$y = $this->GetY();
 			}
-			// check for page break
-			$this->checkPageBreak($h);
+			// should not add page for each cell
+            if ($addpage) {
+			    // check for page break
+                $this->checkPageBreak($h);
+            }
 			$y = $this->GetY();
 			// get current page number
 			$startpage = $this->page;
