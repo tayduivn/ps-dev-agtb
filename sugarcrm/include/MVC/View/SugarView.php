@@ -104,10 +104,10 @@ class SugarView
         $this->display();
 
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        
+
 
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
-       
+
         if ($this->action === 'Login') {
             //this is needed for a faster loading login page ie won't render unless the tables are closed
             ob_flush();
@@ -757,8 +757,6 @@ EOQ;
 EOHTML;
             $js_vars = array(
                 "sugar_cache_dir" => "cache/",
-            // FIXME: assumes uploads are under cache dir
-                "sugar_upload_dir" => "upload/",
                 );
 
             if(isset($this->bean->module_dir)){
@@ -824,11 +822,11 @@ EOHTML;
     }
 
 	protected function _getModLanguageJS(){
-		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+		if (!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
 			require_once ('include/language/jsLanguage.php');
 			jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
 		}
-		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+		return getVersionedScript("cache/jsLanguage/{$this->module}/". $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
 	}
 
     /**
