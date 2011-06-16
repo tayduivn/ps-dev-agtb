@@ -58,6 +58,7 @@ function export($type, $records = null, $members = false) {
 	global $app_list_strings;
 	global $timedate;
     global $mod_strings;
+    global $current_language;
 	$contact_fields = array(
 		"id"=>"Contact ID"
 		,"lead_source"=>"Lead Source"
@@ -190,17 +191,28 @@ function export($type, $records = null, $members = false) {
 	$mod_strings = return_module_language($current_language, $focus->module_dir);
     //iterate through db fields and attempt to retrieve label from field mapping
     foreach($fields_array as $dbname){
-        //if label exists in mapping and in mod strings, then set the value to the label
+        $fieldLabel = '';
+        //first check to see if label exists in mapping, and in mod strings
         if (!empty($focus->field_name_map[$dbname]['vname']) && !empty($mod_strings[$focus->field_name_map[$dbname]['vname']])){
-            $field_labels[$dbname] = $mod_strings[$focus->field_name_map[$dbname]['vname']];
-            //remove any colons
-            $field_labels[$dbname] =  preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", '', trim($field_labels[$dbname]));
+            $fieldLabel = $mod_strings[$focus->field_name_map[$dbname]['vname']];
+        }elseif (!empty($focus->field_name_map[$dbname]['vname']) && !empty($app_strings[$focus->field_name_map[$dbname]['vname']])){
+            //check to see if label exists in mapping and in app strings
+            $fieldLabel = $app_strings[$focus->field_name_map[$dbname]['vname']];
+        }elseif (!empty($mod_strings['LBL_'.strtoupper($dbname)])){
+            //field is not in mapping, so check to see if db can be uppercased and found in mod strings
+            $fieldLabel = $mod_strings['LBL_'.strtoupper($dbname)];
+        }elseif (!empty($app_strings['LBL_'.strtoupper($dbname)])){
+            //check to see if db can be uppercased and found in app strings
+            $fieldLabel = $app_strings['LBL_'.strtoupper($dbname)];
         }else{
-            //default to the db name of label does not exist
-            $field_labels[$dbname] = $dbname;
+            //we could not find the label in mod_strings or app_strings based on either a mapping entry
+            //or on the db_name itself, so default to the db name as a last resort
+            $fieldLabel = $dbname;
         }
+        //strip the label of any columns, and set in field label array
+        $field_labels[$dbname] = preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", '', trim($fieldLabel));;
     }
-    //reset the mod_strings back to original
+    //reset the bean mod_strings back to original import strings
     $mod_strings = $temp_mod_strings;
 
 	// setup the "header" line with proper delimiters
