@@ -68,7 +68,7 @@ class Bug41050Test extends Sugar_PHPUnit_Framework_TestCase
 		
         //relate the two with different roles on relationship
         $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Bill To', '$time', 0)");
-        $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', {$quote->id}', '{$account->id}', 'Ship To', '$time', 0)");
+        $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Ship To', '$time', 0)");
     }
     
     public function tearDown()
