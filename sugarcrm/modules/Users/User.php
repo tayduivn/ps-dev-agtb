@@ -1575,18 +1575,41 @@ EOQ;
 
    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
    {	//call parent method, specifying for array to be returned
-   		$ret_array = parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, true,$parentbean, $singleSelect);
+   	$ret_array = parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, true,$parentbean, $singleSelect);
 
-   		//if this is being called from webservices, then run additional code
-   		if(!empty($GLOBALS['soap_server_object'])){
+   	//if this is being called from webservices, then run additional code
+   	if(!empty($GLOBALS['soap_server_object'])){
 
-	   		//if this is a single select, then secondary queries are being run that may result in duplicate rows being returned through the
-	   		//left joins with meetings/tasks/call.  Add a group by to return one user record (bug 40250)
-	       	if($singleSelect)
+		//if this is a single select, then secondary queries are being run that may result in duplicate rows being returned through the
+		//left joins with meetings/tasks/call.  We need to change the left joins to include a null check (bug 40250)
+	   	if($singleSelect)
 	    	{
-	    		$ret_array['order_by'] = ' Group By '.$this->table_name.'.id '.$ret_array['order_by'];
+			//retrieve the 'from' string and make lowercase for easier manipulation
+		        $left_str = strtolower($ret_array['from']);
+		        $lefts = explode('left join', $left_str);
+		        $new_left_str = '';
+
+        		//explode on the left joins and process each one
+		        foreach($lefts as $ljVal){
+		        	//grab the join alias
+	        	        $onPos = strpos( $ljVal, ' on');
+	                	if($onPos === false){
+		                	$new_left_str .=' '.$ljVal.' ';
+		                        continue;
+		                }
+		                $spacePos = strrpos(substr($ljVal, 0, $onPos),' ');
+		                $alias = substr($ljVal,$spacePos,$onPos-$spacePos);
+
+		                //add null check to end of the Join statement
+		                $ljVal ='  LEFT JOIN '.$ljVal.' and '.$alias.'.id is null ';
+
+		                //add statement into new string
+		                $new_left_str .= $ljVal;
+		         }
+	        	 //replace the old string with the new one
+        		 $ret_array['from'] = $new_left_str;
 	    	}
-   		}
+   	}
 
    		//return array or query string
    		if($return_array)
