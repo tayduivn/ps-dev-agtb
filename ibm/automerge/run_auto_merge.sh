@@ -7,6 +7,7 @@
 # base stuff
 DIR_SCRIPT=`pwd`
 DIR_TO_BASE="../.."
+BIN_MAIL="/bin/mail"
 
 # settings which can be overriden by cli options
 DIFF_TOOL="kdiff3" 				# -d xxx
@@ -96,6 +97,18 @@ echo "Loaded ${#BRANCH_LIST[@]} branches:"
 for branch in ${BRANCH_LIST[@]}; do
 	echo " -> $branch"
 done
+
+# load email settings
+if [ "$NOTIFY" == "yes" ]; then
+	echo -e "Searching email executable $BIN_MAIL ... \c"
+	which $BIN_MAIL &> /dev/null
+	check_cmd_status
+
+	echo -e "Loading email notification config ... \c"
+    cat $DIR_SCRIPT/email_settings.conf &> /dev/null
+	check_cmd_status
+	source $DIR_SCRIPT/email_settings.conf
+fi
 
 # check for git repo
 echo -e "Checking for git repo ... \c"
@@ -263,10 +276,10 @@ echo "*** Post merge tasks ***"
 echo -e "Setting up readme ... \c"
 TIMESTAMP=`date`
 if [ "$MERGE_OK" == "" ]; then
-	$MERGE_OK="none"
+	MERGE_OK="none"
 fi
 if [ "$MERGE_NOK" == "" ]; then
-	$MERGE_NOK="none"
+	MERGE_NOK="none"
 fi
 echo "" > readme.txt
 echo "*** AUTO MERGER RESULTS ***" >> readme.txt
@@ -288,20 +301,13 @@ check_cmd_status
 
 # send email notifications
 if [ "$NOTIFY" == "yes" ]; then
-	
-	# load email settings
-	cat $SCRIPT_DIR/email_settings.conf
-	if [ $? -eq 0 ]; then
-		source $SCRIPT_DIR/email_settings.conf
-		cat readme.txt | /bin/mail -r "$MAIL_FROM" -c "$MAIL_CC" -s "$MAIL_SUBJECT" "$MAIL_TO"
-	else
-		echo "No email configuration found, skipping notifications !"
-	fi
-
+	echo -e "Sending email notifications ... \c"
+	cat readme.txt | /bin/mail -r "$MAIL_FROM" -c "$MAIL_CC" -s "$MAIL_SUBJECT - $BRANCH_TARGET" "$MAIL_TO"
+	check_cmd_status
 fi
 
 # finish 
 echo ""
 echo "###### END - AUTO BRANCH MERGER for IBM ######"
-cd $SCRIPT_DIR
+cd $DIR_SCRIPT
 exit 0
