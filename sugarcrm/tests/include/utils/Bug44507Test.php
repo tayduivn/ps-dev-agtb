@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,41 +26,122 @@
  
 require_once('include/database/MysqliManager.php');
 
+/**
+ * Bug44507Test
+ * This test simulates the query that is run when a non-admin user makes a call to the get_bean_select_array method
+ * in include/utils.php.  Bug 44507 is due to the problem 
+ *
+ */
 class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
 {    
+	var $originalGlobalDb;
+	var $skipped = false;
+	
     public function setUp()
     {
+    	if($GLOBALS['db']->dbType != 'mysql')
+    	{
+    		$this->markTestSkipped('Skipping Test Bug44507');
+    		$this->skipped = true;
+    		return;
+    	}
+    	
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$GLOBALS['current_user']->is_admin = false;
-	    $this->useOutputBuffering = false;
-	    $GLOBALS['sugar_config']['disable_count_query'] = true;
+    	
+    	$randomTeam = SugarTestTeamUtilities::createAnonymousTeam();
+        $randomTeam->add_user_to_team($GLOBALS['current_user']->id);
+        
+	    //$this->useOutputBuffering = false;
+	    
+	    global $sugar_config, $dbinstances;
+	    $sugar_config['disable_count_query'] = true;
+	    $this->originalGlobalDb = $GLOBALS['db'];
+	    
+	    $mockDb = new Bug44507SqlManager();
+	    $GLOBALS['db'] = $mockDb;	   
+	    $dbinstances[''] = $mockDb; 
     }
     
     public function tearDown()
     {
+    	if($this->skipped)
+    	{
+    		return;
+    	}
+    	
+    	global $db, $sugar_config, $dbinstances;
+    	$db = $this->originalGlobalDb;
+    	$dbinstances[''] = $db;
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+		SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
     }
     
-    public function testEmailMarketing()
+    public function testGetBeanSelectArray()
     {
-	    $mockDb = new Bug44507SqlManager();
-	    $GLOBALS['db'] = $mockDb;
-	    
-		$email_templates_arr = get_bean_select_array('true', 'EmailTemplate', 'name');
-		
-		$email_templates_arr = get_bean_select_array(true, 'EmailTemplate','name','','name');
+    	//From EmailMarketing/DetailView this covers most of the cases where EmailTemplate module is queries against
+		global $db;
+    	get_bean_select_array('true', 'EmailTemplate', 'name');
+    	$sql = $db->getExpectedSql();
+		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
+    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");
+    	
+		//From Emailmarketing/EditView
+		get_bean_select_array(true, 'EmailTemplate','name','','name');
+    	$sql = $db->getExpectedSql();
+		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
+    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");	
+
+    	//From Expressions/Expressions.php
+    	get_bean_select_array(true, 'ACLRole','name');
+    	$sql = $db->getExpectedSql();
+		$this->assertRegExp('/acl_roles\.id/', $sql, 'Assert that acl_roles.id is not ambiguous');
+    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");
+    	
+    	//From Contracts/Contract.php
+    	get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
+    	$sql = $db->getExpectedSql();
+		$this->assertRegExp('/contract_types\.id/', $sql, 'Assert that contract_types.id is not ambiguous');
+    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");    	
     }
 }
 
 class Bug44507SqlManager extends MysqliManager 
 {	
-	protected function addDistinctClause(&$sql)
-	{
-		echo $sql . "\n";
-		$newSql = parent::addDistinctClause($sql, true);
-		echo '----->' .  $newSql . "\n";
-	}
+	var $expectedSql;
+
+    protected function addDistinctClause(&$sql)
+    {
+    	parent::addDistinctClause($sql);
+    	$this->expectedSql = $sql;
+    }
+    
+    public function getExpectedSql()
+    {
+    	return $this->expectedSql;
+    }
+	
+    /**
+     * @see DBManager::checkError()
+     */
+    public function checkError(
+        $msg = '',
+        $dieOnError = false
+        )
+    {
+        if (DBManager::checkError($msg, $dieOnError))
+        {
+            return true;
+        }
+            
+        if (mysqli_errno($this->getDatabase()))
+        {
+            return true;
+        }
+        
+        return false;
+    }    
 }
 
 ?>
