@@ -63,6 +63,7 @@ class History implements HistoryInterface
                 $this->_list [ ] = $filename ;
             }
         }
+
         // now sort the files, oldest first
         if (count ( $this->_list ) > 0)
         {
@@ -113,7 +114,14 @@ class History implements HistoryInterface
      */
     public function getNth ( $index )
     {
-        return isset( $this->_list[ $index ] ) ? $this->_list[ $index ] : false;
+        $value = end ( $this->_list ) ;
+        $i = 0 ;
+        while ( $i < $index )
+        {
+            $value = prev ( $this->_list ) ;
+            $i ++ ;
+        }
+        return $value ;
     }
 
     /*
@@ -135,6 +143,7 @@ class History implements HistoryInterface
             $time = $now->__get('ts');
             $retries ++ ;
         }
+
         // now we have a unique filename, copy the file into the history
         copy ( $path, $new_file ) ;
         $this->_list [ ] = $time ;
