@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ####################################################
 # Script to merge feature branches from ibm on top
 # of the ibm branch into a seperate branch
