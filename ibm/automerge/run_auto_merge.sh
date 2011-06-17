@@ -4,19 +4,19 @@
 # of the ibm branch into a seperate branch
 ####################################################
 
+# base stuff
+DIR_SCRIPT=`pwd`
+DIR_TO_BASE="../.."
+
 # settings which can be overriden by cli options
 DIFF_TOOL="kdiff3" 				# -d xxx
 MODE="interactive" 				# -a (auto mode)
 BRANCH_TARGET="ibm_current"		# -t target branch name
 FLUSH_TARGET="no"				# -f
-
-# other stuff
-DIR_SCRIPT=`pwd`
-DIR_TO_BASE="../.."
-BRANCH_BASE="ibm"
-GIT_REMOTE="origin"
-GIT_URL="ssh://git@github.com/sugarcrm/Mango.git"
-BRANCH_LIST_FILE="branch_list.txt"
+BRANCH_BASE="ibm"				# -b xxx
+GIT_REMOTE="origin"				# -r xxx
+BRANCH_LIST_FILE="$DIR_SCRIPT/branch_list.txt" # -l xxx
+GIT_URL="ssh://git@github.com/sugarcrm/Mango.git" # -u git_url
 
 # track merge status
 MERGE_OK=""
@@ -33,18 +33,27 @@ check_cmd_status() {
 }
 
 # parse cli options
-while getopts "hd:t:af" opt; do
+while getopts "hd:t:afb:r:l:u:" opt; do
 	case $opt in
 		d) DIFF_TOOL=$OPTARG;;
 		t) BRANCH_TARGET=$OPTARG;;
 		a) MODE="auto";;
 		f) FLUSH_TARGET="flush";;
+		b) BRANCH_BASE=$OPTARG;;
+		r) GIT_REMOTE=$OPTARG;;
+		l) BRANCH_LIST_FILE=$OPTARG;;
+		u) GIT_URL=$OPTARG;;
 		*) 	echo "";
 			echo " Possible options :";
+			echo "  -h          Show this help screen";
 			echo "  -a          Enable automatic mode, skipping failed merges";
 			echo "  -d tool     Specify the difftool to use in interactive mode (default kdiff3)";
 			echo "  -t branch   Override the target branch (default ibm_current)";
 			echo "  -f          Flush the target branch locally and remotely";
+			echo "  -b branch   Override base branch (default ibm)";
+			echo "  -r remote   Override remote name (default origin)";
+			echo "  -l file     Override branch list file (default branch_list_txt)";
+			echo "  -u giturl   Override git push url (default ssh://git@github.com/sugarcrm/Mango.git)";
 			echo "";
 			exit 1;;
 	esac
@@ -71,7 +80,7 @@ fi
 IFS_OLD=$IFS
 IFS=$'\n'
 echo -e "Loading branches to be merged ... \c"
-BRANCH_LIST=($(cat $DIR_SCRIPT/$BRANCH_LIST_FILE))
+BRANCH_LIST=($(cat $BRANCH_LIST_FILE))
 check_cmd_status
 IFS=$IFS_OLD
 
