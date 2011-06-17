@@ -301,11 +301,11 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_helper->massageValue(123,array('name'=>'foo','type'=>'int')),
             123
             );
-        if ( $this->_db->dbType == 'mssql'
+        if (in_array($this->_db->dbType, array('mssql'
             //BEGIN SUGARCRM flav=ent ONLY
-            || $this->_db->dbType == 'oci8'
+            ,'oci8', 'ibm_db2'
             //END SUGARCRM flav=ent ONLY
-            )
+            )))
             $this->assertEquals(
                 $this->_helper->massageValue("'dog'",array('name'=>'foo','type'=>'varchar')),
                 "'''dog'''"
@@ -319,18 +319,16 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetColumnType()
     {
+        switch($this->_db->dbType){
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->assertEquals(
-                $this->_helper->getColumnType('int'),
-                'number'
-                );
-        else
+            case 'oci8': $expected_type = 'number'; break;
+            case 'ibm_db2': $expected_type = 'integer'; break;
         //END SUGARCRM flav=ent ONLY
-            $this->assertEquals(
-                $this->_helper->getColumnType('int'),
-                'int'
-                );
+            default:
+                $expected_type = 'int';
+        }
+
+        $this->assertEquals($expected_type, $this->_helper->getColumnType('int'));
     }
 
     public function testIsFieldArray()
@@ -457,8 +455,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testEmptyPrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+            if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+                $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
@@ -492,8 +490,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testBlankSpacePrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
@@ -527,8 +525,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetPrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
@@ -564,8 +562,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetPrecisionInLen()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
@@ -599,8 +597,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testEmptyPrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $fielddef = array(
                'required' => false,
@@ -629,8 +627,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testBlankSpacePrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $fielddef = array(
                'required' => false,
@@ -659,8 +657,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetPrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $fielddef = array(
                'required' => false,
@@ -689,8 +687,8 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testSetPrecisionInLenMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if ( $this->_db->dbType == 'oci8' )
-            $this->markTestSkipped('Skipping on Oracle; doesn\'t apply to this backend');
+        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2')))
+            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         //END SUGARCRM flav=ent ONLY
         $fielddef = array(
                'required' => false,
