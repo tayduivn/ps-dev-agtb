@@ -213,7 +213,7 @@ for branch in ${BRANCH_LIST[@]}; do
 
 		# extra comments for base branch
 		if [ "$branch" == "$BRANCH_BASE" ]; then
-			MERGE_OK="$MERGE_OK - base_branch"
+			MERGE_OK="$MERGE_OK *base_branch*"
 		fi
 
 		# commit the merge
@@ -236,7 +236,7 @@ for branch in ${BRANCH_LIST[@]}; do
 
 			# extra comments for base branch
 			if [ "$branch" == "$BRANCH_BASE" ]; then
-				MERGE_NOK="$MERGE_NOK - base_branch"
+				MERGE_NOK="$MERGE_NOK *base_branch*"
 			fi
 
 			# forget this merge
@@ -259,7 +259,7 @@ for branch in ${BRANCH_LIST[@]}; do
 
 				# extra comments for base branch
 				if [ "$branch" == "$BRANCH_BASE" ]; then
-					MERGE_NOK="$MERGE_NOK - base_branch"
+					MERGE_NOK="$MERGE_NOK *base_branch*"
 				fi
 
 				# forget this merge
@@ -272,7 +272,7 @@ for branch in ${BRANCH_LIST[@]}; do
 				
 				# extra comments for base branch
 				if [ "$branch" == "$BRANCH_BASE" ]; then
-					MERGE_OK="$MERGE_OK - base_branch"
+					MERGE_OK="$MERGE_OK *base_branch*"
 				fi
 
 				# commit the merge
