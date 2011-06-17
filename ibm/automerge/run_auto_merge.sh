@@ -259,7 +259,14 @@ echo "*** Post merge tasks ***"
 # setup readme file
 echo -e "Setting up readme ... \c"
 TIMESTAMP=`date`
-echo "*** AUTO MERGE BRANCH ***" > readme.txt
+if [ "$MERGE_OK" == "" ]; then
+	$MERGE_OK="none"
+fi
+if [ "$MERGE_NOK" == "" ]; then
+	$MERGE_NOK="none"
+fi
+echo "" > readme.txt
+echo "*** AUTO MERGER RESULTS ***" >> readme.txt
 echo "Update date: $TIMESTAMP" >> readme.txt
 echo "Base branch: $BRANCH_BASE" >> readme.txt
 echo "This branch: $BRANCH_TARGET" >> readme.txt
@@ -276,9 +283,22 @@ echo -e "Pushing $BRANCH_TARGET to $GIT_REMOTE ... \c"
 git push $GIT_REMOTE $BRANCH_TARGET:$BRANCH_TARGET &> /dev/null
 check_cmd_status
 
+# send email notifications
+if [ "$NOTIFY" == "yes" ]; then
+	
+	# load email settings
+	cat $SCRIPT_DIR/email_settings.conf
+	if [ $? -eq 0 ]; then
+		source $SCRIPT_DIR/email_settings.conf
+		cat readme.txt | /bin/mail -r "$MAIL_FROM" -c "$MAIL_CC" -s "$MAIL_SUBJECT" "$MAIL_TO"
+	else
+		echo "No email configuration found, skipping notifications !"
+	fi
+
+fi
+
+# finish 
 echo ""
 echo "###### END - AUTO BRANCH MERGER for IBM ######"
-
-# go back to our script dir
 cd $SCRIPT_DIR
 exit 0
