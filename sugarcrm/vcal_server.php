@@ -27,11 +27,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  ********************************************************************************/
 // moved code to a new location
 require_once('include/entryPoint.php');
-// bug 44147 fix
-if(!isset($_SESSION))
-	session_start();
-$GLOBALS['current_user']->retrieve($_SESSION['assigned_user_id']);
-//end bug 44147 fix
+
 require("modules/vCals/Server.php");
 
 ?>
