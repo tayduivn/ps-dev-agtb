@@ -250,8 +250,9 @@ class ExternalAPIFactory
      * @param string $moduleName
      * @param bool $ignoreAuth Ignore if we have authentication details or not
      * @param bool $addEmptyEntry Add empty entry?
+     * @param string $appStringTranslKey Which app_string_list key to use for translation.
      */
-     public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false) {
+     public static function getModuleDropDown($moduleName, $ignoreAuth = false, $addEmptyEntry = false, $appStringTranslKey = 'eapm_list') {
         global $app_list_strings;
 
         $apiList = self::listAPI($moduleName,$ignoreAuth);
@@ -263,8 +264,8 @@ class ExternalAPIFactory
 
         foreach ( $apiList as $apiName => $ignore ) {
 
-            if ( !empty($app_list_strings['eapm_list'][$apiName]) ) {
-                $apiDropdown[$apiName] = $app_list_strings['eapm_list'][$apiName];
+            if ( isset($app_list_strings[$appStringTranslKey]) && !empty($app_list_strings[$appStringTranslKey][$apiName]) ) {
+                $apiDropdown[$apiName] = $app_list_strings[$appStringTranslKey][$apiName];
             } else {
                 $apiDropdown[$apiName] = $apiName;
             }

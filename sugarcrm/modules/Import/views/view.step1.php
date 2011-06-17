@@ -146,7 +146,7 @@ class ImportViewStep1 extends SugarView
     {
         require_once('include/externalAPI/ExternalAPIFactory.php');
 
-        return ExternalAPIFactory::getModuleDropDown('Import');
+        return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE, 'eapm_import_list');
     }
     /**
      * Returns JS used in this view
