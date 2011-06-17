@@ -37,7 +37,7 @@ require_once('include/MVC/View/SugarView.php');
 
         
 class ImportViewStep2 extends SugarView 
-{	
+{
  	/**
      * @see SugarView::getMenu()
      */
@@ -105,7 +105,6 @@ class ImportViewStep2 extends SugarView
     {
         global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
         global $import_mod_strings;
-        
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
@@ -121,6 +120,9 @@ class ImportViewStep2 extends SugarView
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
 
+        $displayBackBttn = isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != 'index'? TRUE : FALSE;
+        $this->ss->assign("displayBackBttn", $displayBackBttn);
+        
         $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
         //Start custom mapping
         // show any custom mappings

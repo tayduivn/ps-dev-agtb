@@ -39,6 +39,7 @@
 <form enctype="multipart/form-data" name="importstep1" method="post" action="index.php" id="importstep1">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="action" value="Step2">
+<input type="hidden" name="return_action" value="Step1">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <p>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
