@@ -353,7 +353,7 @@ class IBMDB2Manager  extends DBManager
         return false;
     }
 
-    /**+
+    /**~
      * Get list of DB column definitions
      *
      * More info can be found here:
@@ -381,11 +381,13 @@ class IBMDB2Manager  extends DBManager
                 default: $columns[$name]['len'] = $row['length'];
             }
             if ( !empty($row['default']) ) {
-                $matches = array();
-                $row['data_default'] = html_entity_decode($row['data_default'],ENT_QUOTES);
-                if ( preg_match("/'(.*)'/i",$row['data_default'],$matches) ) // NOT sure if DB2 ever puts () around a default
-                    $columns[$name]['default'] = $matches[1];
+                //$matches = array();
+                //$row['default'] = html_entity_decode($row['default'],ENT_QUOTES); // Not sure if this is required for DB2
+                //if ( preg_match("/'(.*)'/i",$row['default'],$matches) ) // NOT sure if DB2 ever puts () around a default
+                //$columns[$name]['default'] = $matches[1];
+                $columns[$name]['default'] = $row['default'];
             }
+            // TODO add logic to make this generated when there is a sequence being used
             if($row['generated'] == 'A' || $row['generated'] == 'D')
                 $columns[$name]['auto_increment'] = '1';
             $columns[$name]['required'] = ( $row['nulls'] == 'N' );
