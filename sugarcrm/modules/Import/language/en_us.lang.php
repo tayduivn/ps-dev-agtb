@@ -126,6 +126,7 @@ $mod_strings = array (
     'LBL_CUSTOM' => 'Custom',
     'LBL_CUSTOM_CSV' => 'Custom comma delimited file',
     'LBL_CSV' => 'Comma delimited file',
+    'LBL_EXTERNAL_SOURCE' => 'External Source',
     'LBL_TAB' => 'Tab delimited file',
     'LBL_CUSTOM_DELIMITED' => 'Custom delimited file',
     'LBL_CUSTOM_DELIMITER' => 'Fields Delimited By:',
@@ -311,5 +312,6 @@ $mod_strings = array (
     'LBL_DELETE_MAP_CONFIRMATION' => 'Are you sure you want to delete this mapping?',
     'LBL_THIRD_PARTY_CSV_SOURCES' => 'Indicate if this csv is from any of the following 3rd party sources',
     'LBL_THIRD_PARTY_CSV_SOURCES_HELP' => 'Additional help text here...',
+    'LBL_EXTERNAL_SOURCE_HELP' => ''
 );
 ?>

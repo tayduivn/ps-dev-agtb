@@ -120,7 +120,7 @@ class ImportViewStep1 extends SugarView
         }
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
-
+        $this->ss->assign("EXTERNAL_SOURCES_OPTIONS", get_select_options_with_id($this->getImportableExternalEAPMs(),'') );
         $this->ss->display('modules/Import/tpls/step1.tpl');
     }
 
@@ -141,6 +141,13 @@ class ImportViewStep1 extends SugarView
         asort($importableModules);
         return $importableModules;
     }
+
+    private function getImportableExternalEAPMs()
+    {
+        require_once('include/externalAPI/ExternalAPIFactory.php');
+
+        return ExternalAPIFactory::getModuleDropDown('Import');
+    }
     /**
      * Returns JS used in this view
      */
@@ -151,10 +158,6 @@ class ImportViewStep1 extends SugarView
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
-document.getElementById('custom_enclosure').onchange = function()
-{
-    document.getElementById('importstep1').custom_enclosure_other.style.display = ( this.value == 'other' ? '' : 'none' );
-}
 
 document.getElementById('gonext').onclick = function()
 {
@@ -180,6 +183,20 @@ document.getElementById('gonext').onclick = function()
     return !isError;
 }
 
+
+YAHOO.util.Event.onDOMReady(function(){
+
+    function toggleExternalSource(el)
+    {
+        var trEl = document.getElementById('external_sources_tr');
+        var currentVisibility = trEl.style.display;
+        var newVisibility = (currentVisibility == 'none') ? '' : 'none';
+        trEl.style.display = newVisibility;
+    }
+    
+    YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
+
+});
 -->
 </script>
 
