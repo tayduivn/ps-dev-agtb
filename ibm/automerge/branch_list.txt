@@ -1,4 +1,3 @@
-ibm
 ibmf_theme
 ibmf_altdata
 ibmf_httpauth

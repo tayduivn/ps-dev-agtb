@@ -93,6 +93,10 @@ if [ ${#BRANCH_LIST[@]} -eq 0 ]; then
 	echo "No branches found in $BRANCH_LIST_FILE !"
 	exit 1
 fi
+
+# add base branch to the list
+BRANCH_LIST[${#BRANCH_LIST[@]}]=$BRANCH_BASE
+
 echo "Loaded ${#BRANCH_LIST[@]} branches:"
 for branch in ${BRANCH_LIST[@]}; do
 	echo " -> $branch"
@@ -135,7 +139,7 @@ echo -e "Pulling latest changes for \"${BRANCH_BASE}\" ... \c"
 git pull $GIT_REMOTE &> /dev/null
 check_cmd_status
 
-# if we flush the target, we recreate it from the baes branch
+# if we flush the target, we recreate it from the base branch
 if [ "$FLUSH_TARGET" == "flush" ]; then
 
 	# flush local/remote target branch
@@ -175,7 +179,9 @@ echo
 
 # just be sure we are in our target branch
 cd $DIR_BASE
+echo -e "*** Switching to target branch ... \c"
 git checkout $BRANCH_TARGET &> /dev/null
+check_cmd_status
 
 # check if branches exist on remote
 for branch in ${BRANCH_LIST[@]}; do
@@ -205,6 +211,11 @@ for branch in ${BRANCH_LIST[@]}; do
 		# log
 		MERGE_OK="$MERGE_OK\n$branch"
 
+		# extra comments for base branch
+		if [ "$branch" == "$BRANCH_BASE" ]; then
+			MERGE_OK="$MERGE_OK - base_branch"
+		fi
+
 		# commit the merge
 		echo -e "Committing merge ... \c"
 		git commit -m "AUTOMERGER: merge $branch" &> /dev/null
@@ -222,6 +233,11 @@ for branch in ${BRANCH_LIST[@]}; do
 			
 			# log
 			MERGE_NOK="$MERGE_NOK\n$branch"
+
+			# extra comments for base branch
+			if [ "$branch" == "$BRANCH_BASE" ]; then
+				MERGE_NOK="$MERGE_NOK - base_branch"
+			fi
 
 			# forget this merge
 			echo -e "Skipping this merge ... \c"
@@ -241,6 +257,11 @@ for branch in ${BRANCH_LIST[@]}; do
 				echo "failed"
 				MERGE_NOK="$MERGE_NOK\n$branch"
 
+				# extra comments for base branch
+				if [ "$branch" == "$BRANCH_BASE" ]; then
+					MERGE_NOK="$MERGE_NOK - base_branch"
+				fi
+
 				# forget this merge
 				echo -e "Skipping this merge ... \c"
 				git reset --hard &> /dev/null
@@ -249,6 +270,11 @@ for branch in ${BRANCH_LIST[@]}; do
 				echo "ok"
 				MERGE_OK="$MERGE_OK\n$branch"
 				
+				# extra comments for base branch
+				if [ "$branch" == "$BRANCH_BASE" ]; then
+					MERGE_OK="$MERGE_OK - base_branch"
+				fi
+
 				# commit the merge
 				echo -e "Committing merge ... \c"
 				git commit -m "AUTOMERGER: merge $branch (manually resolved conflicts)" &> /dev/null
@@ -283,9 +309,9 @@ if [ "$MERGE_NOK" == "" ]; then
 fi
 echo "" > readme.txt
 echo "*** AUTO MERGER RESULTS ***" >> readme.txt
-echo "Update date: $TIMESTAMP" >> readme.txt
+echo "Timestamp: $TIMESTAMP" >> readme.txt
 echo "Base branch: $BRANCH_BASE" >> readme.txt
-echo "This branch: $BRANCH_TARGET" >> readme.txt
+echo "Target branch: $BRANCH_TARGET" >> readme.txt
 echo "Mode: $MODE" >> readme.txt
 echo "Flush: $FLUSH_TARGET" >> readme.txt
 echo -e "\nSuccesfully merged branches:\n$MERGE_OK" >> readme.txt
