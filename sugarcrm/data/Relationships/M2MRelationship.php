@@ -53,6 +53,10 @@ class M2MRelationship extends SugarRelationship
             return false;
         }
 
+        //Make sure we load the current relationship state to the links
+        $lhs->$lhsLinkName->getBeans();
+        $rhs->$rhsLinkName->getBeans();
+
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = array(
             "id" => create_guid(),
@@ -64,6 +68,9 @@ class M2MRelationship extends SugarRelationship
         $dataToInsert = array_merge($dataToInsert, $additionalFields);
 
         $this->addRow($dataToInsert);
+
+        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+        $rhs->$rhsLinkName->beans[$lhs->id] = $lhs;
 
         $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
         $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
@@ -92,6 +99,9 @@ class M2MRelationship extends SugarRelationship
         );
 
         $this->removeRow($dataToRemove);
+
+        $lhs->$lhsLinkName->load();
+        $rhs->$rhsLinkName->load();
 
         $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
         $this->callAfterDelete($rhs, $lhs, $rhsLinkName);

@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *******************************************************************************/
 
 require_once('modules/DynamicFields/DynamicField.php');
+require_once("data/Relationships/RelationshipFactory.php");
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -1144,12 +1145,12 @@ class SugarBean
         {
             if ($this->load_relationship($name))
             {
-                $GLOBALS['log']->debug('relationship loaded');
+                $GLOBALS['log']->debug("relationship $name loaded");
                 $this->$name->delete($id);
             }
             else
             {
-                $GLOBALS['log']->error('error loading relationship');
+                $GLOBALS['log']->error("error loading relationship $name");
             }
         }
     }
@@ -1364,19 +1365,8 @@ class SugarBean
             }
             $query = "INSERT into ";
         }
-        //Prevent cascading saves
-        //BEGIN SUGARCRM flav=pro ONLY
-        $updateRelCalcFields = false;
-        //END SUGARCRM flav=pro ONLY
-        global $saved_beans;
-        if (empty($saved_beans))
-            $saved_beans = array();
-        if (empty($saved_beans[$this->module_name]))
-                $saved_beans[$this->module_name] = array();
-        if (empty($saved_beans[$this->module_name][$this->id]))
-        {
-            $saved_beans[$this->module_name][$this->id] = 'in_progress';
-        }
+
+        
         //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
         // currently, the default_team is only enforced in the presentation layer-- this enforces it at the data layer as well
@@ -1677,8 +1667,8 @@ class SugarBean
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ($updateRelCalcFields)
-            $this->updateRelatedCalcFields();
+        if (empty($GLOBALS['resavingRelatedBeans']))
+            SugarRelationship::resaveRelatedBeans();
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1694,7 +1684,6 @@ class SugarBean
 
         //Now that the record has been saved, we don't want to insert again on further saves
         $this->new_with_id = false;
-        $saved_beans[$this->module_name][$this->id] = 'done';
         return $this->id;
     }
 
@@ -1739,69 +1728,54 @@ class SugarBean
 
     function updateRelatedCalcFields($linkName = "")
     {
-        if (empty($this->id) || $this->new_with_id)
+
+        if (empty($this->id) || $this->new_with_id) {
             return;
-        global $dictionary, $updating_relationships, $saved_beans, $sugar_config;
+        }
+
+        global $dictionary, $updating_relationships, $sugar_config;
+
         if(!empty($sugar_config['disable_related_calc_fields'])){
             return;
         }
+
         if ($updating_relationships)
         {
-            $GLOBALS['log']->debug("not updating updateRelatedCalcFields on $this->name because updating_relationships was true");
             return;
         }
+
         $updating_relationships = true;
-        if (empty($saved_beans))
-            $saved_beans = array();
+
         $GLOBALS['log']->debug("Updating records related to {$this->module_dir} {$this->id}");
         if (!empty($dictionary[$this->object_name]['related_calc_fields']))
         {
             $links = $dictionary[$this->object_name]['related_calc_fields'];
             foreach($links as $lname)
             {
-                $GLOBALS['log']->debug("checking $lname");
                 if (empty($this->$lname))
                 {
-                    $GLOBALS['log']->debug("loading relationship $lname");
                     $this->load_relationship($lname);
                 }
-                $rmodule = $this->$lname->getRelatedModuleName();
-                $beans = array();
-                if(isset($this->$lname->beans))
+                $beans = $this->$lname->getBeans();
+                //Resave any related beans
+                if(!empty($beans))
                 {
-                    $beans = $this->$lname->beans;
-                    $GLOBALS['log']->debug("beans for $lname were already loaded");
-                }
-                else
-                {
-                    $GLOBALS['log']->debug("loading beans for $lname");
-                    //now we need a seed of the related module to load.
-                    global $beanList;
-                    if (empty($beanList[$rmodule]))
-                       continue;
-                    $bName = $beanList[$rmodule];
-                    $seed = new $bName();
-
-                    $beans = $this->$lname->getBeans($seed);
-                    $this->$lname->beans = $beans;
-                }
-                if (empty($saved_beans[$rmodule]))
-                    $saved_beans[$rmodule] = array();
-                foreach($beans as $rBean)
-                {
-                    if (empty($rBean->deleted) && empty($saved_beans[$rmodule][$rBean->id])) {
-                        $GLOBALS['log']->debug("resaving {$rBean->module_dir} {$rBean->id}");
-                        $rBean->save();
-                        $saved_beans[$rmodule][$rBean->id] = true;
+                    foreach($beans as $rBean)
+                    {
+                        if (empty($rBean->deleted)) {
+                            SugarRelationship::addToResaveList($rBean);
+                        }
                     }
                 }
             }
         }
-        if (empty($saved_beans[$this->module_name][$this->id]) && $this->has_calc_field_with_link($linkName))
+
+        if ($this->has_calc_field_with_link($linkName))
         {
             //Save will updated the saved_beans array
-            $this->save();
-        } 
+            SugarRelationship::addToResaveList($this);
+        }
+
         $updating_relationships = false;
     }
 
@@ -4642,7 +4616,7 @@ function save_relationship_changes($is_update, $exclude=array())
 			// call the custom business logic
 			$custom_logic_arguments['id'] = $id;
 			$this->call_custom_logic("before_delete", $custom_logic_arguments);
-
+            $this->mark_relationships_deleted($id);
             if ( isset($this->field_defs['modified_user_id']) ) {
                 if (!empty($current_user)) {
                     $this->modified_user_id = $current_user->id;
@@ -4654,7 +4628,8 @@ function save_relationship_changes($is_update, $exclude=array())
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
             $this->db->query($query, true,"Error marking record deleted: ");
             $this->deleted = 1;
-            $this->mark_relationships_deleted($id);
+
+            SugarRelationship::resaveRelatedBeans();
 
             // Take the item off the recently viewed lists
             $tracker = new Tracker();
@@ -5413,9 +5388,9 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if ($event == "after_relationship_add" || $event == "after_relationship_delete")
+            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || "before_delete")
             {
-                $this->updateRelatedCalcFields($arguments['link']);
+                $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
             }
             //END SUGARCRM flav=pro ONLY
         }
