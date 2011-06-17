@@ -17,6 +17,7 @@ BRANCH_BASE="ibm"				# -b xxx
 GIT_REMOTE="origin"				# -r xxx
 BRANCH_LIST_FILE="$DIR_SCRIPT/branch_list.txt" # -l xxx
 GIT_URL="ssh://git@github.com/sugarcrm/Mango.git" # -u git_url
+NOTIFY="no"						# -n
 
 # track merge status
 MERGE_OK=""
@@ -33,7 +34,7 @@ check_cmd_status() {
 }
 
 # parse cli options
-while getopts "hd:t:afb:r:l:u:" opt; do
+while getopts "hd:t:afb:r:l:u:n" opt; do
 	case $opt in
 		d) DIFF_TOOL=$OPTARG;;
 		t) BRANCH_TARGET=$OPTARG;;
@@ -43,6 +44,7 @@ while getopts "hd:t:afb:r:l:u:" opt; do
 		r) GIT_REMOTE=$OPTARG;;
 		l) BRANCH_LIST_FILE=$OPTARG;;
 		u) GIT_URL=$OPTARG;;
+		n) NOTIFY="yes";;
 		*) 	echo "";
 			echo " Possible options :";
 			echo "  -h          Show this help screen";
@@ -54,6 +56,7 @@ while getopts "hd:t:afb:r:l:u:" opt; do
 			echo "  -r remote   Override remote name (default origin)";
 			echo "  -l file     Override branch list file (default branch_list_txt)";
 			echo "  -u giturl   Override git push url (default ssh://git@github.com/sugarcrm/Mango.git)";
+			echo "  -n          Send email notifications (settings in email_settings.conf)";
 			echo "";
 			exit 1;;
 	esac
