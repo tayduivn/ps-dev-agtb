@@ -121,6 +121,7 @@ class ImportViewStep2 extends SugarView
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
 
+        $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
         //Start custom mapping
         // show any custom mappings
         if (sugar_is_dir('custom/modules/Import') && $dir = opendir('custom/modules/Import'))
@@ -165,15 +166,15 @@ class ImportViewStep2 extends SugarView
         //End custom mapping
 
         // special for importing from Outlook
-        if ($_REQUEST['source'] == "outlook") {
-            $this->ss->assign("SOURCE", $_REQUEST['source']);
+        if ($importSource == "outlook") {
+            $this->ss->assign("SOURCE", $importSource);
             $this->ss->assign("SOURCE_NAME","Outlook ");
             $this->ss->assign("HAS_HEADER_CHECKED"," CHECKED");
         }
         // see if the source starts with 'custom'
         // if so, pull off the id, load that map, and get the name
-        elseif ( strncasecmp("custom:",$_REQUEST['source'],7) == 0) {
-            $id = substr($_REQUEST['source'],7);
+        elseif ( strncasecmp("custom:",$importSource,7) == 0) {
+            $id = substr($importSource,7);
             $import_map_seed = new ImportMap();
             $import_map_seed->retrieve($id, false);
         
@@ -188,7 +189,7 @@ class ImportViewStep2 extends SugarView
                 $this->ss->assign("HAS_HEADER_CHECKED"," CHECKED");
         }
         else {
-            $classname = 'ImportMap' . ucfirst($_REQUEST['source']);
+            $classname = 'ImportMap' . ucfirst($importSource);
             if ( file_exists("modules/Import/{$classname}.php") )
                 require_once("modules/Import/{$classname}.php");
             elseif ( file_exists("custom/modules/Import/{$classname}.php") )
@@ -196,7 +197,7 @@ class ImportViewStep2 extends SugarView
             else {
                 require_once("custom/modules/Import/ImportMapOther.php");
                 $classname = 'ImportMapOther';
-                $_REQUEST['source'] = 'other';
+                $importSource = 'other';
             }
             if ( class_exists($classname) ) {
                 $import_map_seed = new $classname;
@@ -206,16 +207,16 @@ class ImportViewStep2 extends SugarView
                     $this->ss->assign("CUSTOM_ENCLOSURE", htmlentities($import_map_seed->enclosure));
                 if ($import_map_seed->has_header)
                     $this->ss->assign("HAS_HEADER_CHECKED"," CHECKED");
-                $this->ss->assign("SOURCE", $_REQUEST['source']);
+                $this->ss->assign("SOURCE", $importSource);
             }
         }
         
         // add instructions for anything other than custom_delimited
-        if ($_REQUEST['source'] != 'other')
+        if ($importSource != 'other')
         {
             $instructions = array();
             $lang_key = '';
-            switch($_REQUEST['source']) {
+            switch($importSource) {
             	//BEGIN SUGARCRM flav!=sales ONLY
                 case "act":
                     $lang_key = "ACT";

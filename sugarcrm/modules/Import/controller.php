@@ -46,8 +46,8 @@ class ImportController extends SugarController
     {
         global $mod_strings;
 
-        $importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
-        $this->bean = loadBean($importModule);
+        $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+        $this->bean = loadBean($this->importModule);
         if ( $this->bean ) {
             if ( !$this->bean->importable )
                 $this->bean = false;
@@ -131,9 +131,13 @@ class ImportController extends SugarController
         sugar_cleanup(TRUE);
 
     }
+
 	function action_Step1()
     {
-		$this->view = 'step1';
+        if($this->importModule == 'Administration' || $this->bean instanceof Person )
+    		$this->view = 'step1';
+        else
+            $this->view = 'step2';
     }
     
     function action_Step2()
