@@ -42,6 +42,14 @@ require_once('include/upload_file.php');
 
 class ImportViewStep3 extends SugarView
 {
+    private $currentStep;
+    
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+    }
+
     /**
      * @see SugarView::getMenu()
      */
@@ -97,8 +105,8 @@ class ImportViewStep3 extends SugarView
     	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
     	}
 	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-	    $returnArray[] = $mod_strings['LBL_STEP_3_TITLE'];
-
+        $returnArray[] = string_format($mod_strings['LBL_STEP_3_TITLE'], array($this->currentStep));
+        
 	    return $returnArray;
     }
 
@@ -114,7 +122,7 @@ class ImportViewStep3 extends SugarView
         $sugar_config['import_max_records_per_file'] =
             ( empty($sugar_config['import_max_records_per_file'])
                 ? 1000 : $sugar_config['import_max_records_per_file'] );
-
+        $this->ss->assign("CURRENT_STEP", $this->currentStep);
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
         $field_map = array();

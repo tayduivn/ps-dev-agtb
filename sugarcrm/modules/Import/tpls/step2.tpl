@@ -39,6 +39,7 @@
 <input type="hidden" name="source" value="{$SOURCE}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="action" value="Step3">
+<input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 {foreach from=$instructions key=key item=item name=instructions}
 {if $smarty.foreach.instructions.first}

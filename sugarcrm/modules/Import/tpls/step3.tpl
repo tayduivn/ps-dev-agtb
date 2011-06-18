@@ -55,6 +55,7 @@ textarea { width: 20em }
 <input type="hidden" name="tmp_file_base" value="{$TMP_FILE}">
 <input type="hidden" name="firstrow" value="{$FIRSTROW}">
 <input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
+<input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="display_tabs_def">
 
 <div align="right">

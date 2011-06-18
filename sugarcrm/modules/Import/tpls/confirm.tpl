@@ -55,7 +55,8 @@ textarea { width: 20em }
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="import_type" value="{$TYPE}">
 <input type="hidden" name="file_name" value="{$FILE_NAME}">
-
+<input type="hidden" name="current_step" value="{$CURRENT_STEP}">
+    
 <div id="confirm_table">
     {include file='modules/Import/tpls/confirm_table.tpl'}
 </div>

@@ -42,7 +42,14 @@ require_once('modules/Import/ImportFieldSanitize.php');
 require_once('modules/Import/ImportDuplicateCheck.php');
 
 class ImportViewStep4 extends SugarView 
-{	
+{
+    private $currentStep;
+
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+    }
     /** 
      * @see SugarView::display()
      */

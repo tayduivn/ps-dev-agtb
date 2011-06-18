@@ -38,6 +38,15 @@ require_once('include/MVC/View/SugarView.php');
         
 class ImportViewStep2 extends SugarView 
 {
+    private $currentStep;
+
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+    }
+
+
  	/**
      * @see SugarView::getMenu()
      */
@@ -83,7 +92,7 @@ class ImportViewStep2 extends SugarView
 	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings, $app_list_strings;
-	    
+
 	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
 	    if (!empty($iconPath) && !$browserTitle) {
@@ -93,7 +102,7 @@ class ImportViewStep2 extends SugarView
     	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
     	}
 	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-	    $returnArray[] = $mod_strings['LBL_STEP_2_TITLE'];
+	    $returnArray[] = string_format($mod_strings['LBL_STEP_2_TITLE'], array($this->currentStep));
     	
 	    return $returnArray;
     }
@@ -107,6 +116,7 @@ class ImportViewStep2 extends SugarView
         global $import_mod_strings;
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("IMP", $import_mod_strings);
+        $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
         $this->ss->assign("CUSTOM_DELIMITER",
             ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
@@ -267,9 +277,12 @@ class ImportViewStep2 extends SugarView
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
-document.getElementById('goback').onclick = function(){
-    document.getElementById('importstep2').action.value = 'Step1';
-    return true;
+if( typeof(document.getElementById('goback')) != 'undefined' )
+{
+    document.getElementById('goback').onclick = function(){
+        document.getElementById('importstep2').action.value = 'Step1';
+        return true;
+    }
 }
 
 document.getElementById('gonext').onclick = function(){

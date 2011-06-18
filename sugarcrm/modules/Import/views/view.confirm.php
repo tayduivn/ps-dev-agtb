@@ -42,6 +42,13 @@ class ImportViewConfirm extends SugarView
 {
     const SAMPLE_ROW_SIZE = 3;
 
+    private $currentStep;
+
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+    }
  	/**
      * @see SugarView::getMenu()
      */
@@ -97,8 +104,8 @@ class ImportViewConfirm extends SugarView
     	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
     	}
 	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-	    $returnArray[] = $mod_strings['LBL_CONFIRM_TITLE'];
-    	
+    	$returnArray[] = string_format($mod_strings['LBL_CONFIRM_TITLE'], array($this->currentStep));
+
 	    return $returnArray;
     }
     
@@ -116,6 +123,7 @@ class ImportViewConfirm extends SugarView
         $this->ss->assign("SOURCE", $_REQUEST['source']);
         $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
+        $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
 
         // Clear out this user's last import
