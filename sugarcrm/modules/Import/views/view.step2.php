@@ -277,7 +277,7 @@ class ImportViewStep2 extends SugarView
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
-if( typeof(document.getElementById('goback')) != 'undefined' )
+if( document.getElementById('goback') )
 {
     document.getElementById('goback').onclick = function(){
         document.getElementById('importstep2').action.value = 'Step1';
