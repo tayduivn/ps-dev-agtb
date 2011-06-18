@@ -30,9 +30,7 @@
 SUGAR.mySugar.sugarCharts = function() {
 
 var activeTab = activePage,
-    charts = new Object(),
-	windowWidth = 0,
-    firstLoad = (SUGAR.isIE) ? true: false;
+    charts = new Object();
 
 	return {
 		loadSugarCharts: function(activeTab) {
@@ -45,7 +43,8 @@ var activeTab = activePage,
 											 charts[activeTab][id]['chartId'], 
 											 charts[activeTab][id]['jsonFilename'],
 											 charts[activeTab][id]['css'],
-											 charts[activeTab][id]['chartConfig']
+											 charts[activeTab][id]['chartConfig'],
+											 numCols
 											 );
 				}
 			}
@@ -77,39 +76,6 @@ var activeTab = activePage,
 			charts[activeTab][chartId]['css'] = css;	
 			charts[activeTab][chartId]['chartConfig'] = chartConfig;		
 	
-		},
-		refreshPage: function() {
-			var newWidth = document.body.offsetWidth;			
-			if(newWidth != windowWidth && !firstLoad){
-				//BEGIN SUGARCRM flav=pro ONLY
-				if(SUGAR.isIE) { 
-					SUGAR.mySugar.loading.show();
-					document.getElementById('loading_c').style.display = 'inline';
-					setTimeout(function() {location.reload();}, 500);
-										
-				} else {
-					SUGAR.mySugar.retrievePage(activePage);	
-				}
-				//END SUGARCRM flav=pro ONLY
-				
-				//BEGIN SUGARCRM flav=com ONLY
-				setTimeout(function() {location.reload();}, 500);
-				//END SUGARCRM flav=com ONLY
-					
-				SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
-						
-			}
-			firstLoad = false;		
-			windowWidth = newWidth;	
-			
-		},
-		refreshGraphs: function() {
-
-			setTimeout("SUGAR.mySugar.sugarCharts.refreshPage()", 1000);	
-		} 
-		
-		
+		}
 	}
 }();
-
-YAHOO.util.Event.addListener(window, 'resize', SUGAR.mySugar.sugarCharts.refreshGraphs);

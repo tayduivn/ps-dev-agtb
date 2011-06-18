@@ -2161,6 +2161,11 @@ padding-left: 0px;
     padding: 0px 10px 0px 10px;
 }
 
+.teamNoticeText p {
+	padding: 0px 10px 10px 10px;
+	font-size: 13px;	
+}
+
 /* to force border to display on tiny-mce controls */
 .mceToolbarTop 
 {

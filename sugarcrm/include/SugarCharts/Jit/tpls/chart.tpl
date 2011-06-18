@@ -50,7 +50,7 @@
 	function loadCustomChartForReports() {ldelim}
 
 	
-		loadSugarChart('{$chartId}','{$filename}',css,chartConfig);
+		loadSugarChart('{$chartId}','{$filename}',css,chartConfig,1);
 	{rdelim}
 </script>
 
