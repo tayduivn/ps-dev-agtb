@@ -1,0 +1,247 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Enterprise Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-enterprise-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+/*********************************************************************************
+ * $Id: view.step1.php 31561 2008-02-04 18:41:10Z jmertic $
+ * Description: view handler for step 1 of the import process
+ * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
+ * All Rights Reserved.
+ ********************************************************************************/
+require_once('include/MVC/View/SugarView.php');
+require_once('modules/Import/ImportFile.php');
+require_once('modules/Import/ImportFileSplitter.php');
+require_once('modules/Import/ImportCacheFiles.php');
+require_once('modules/Import/ImportDuplicateCheck.php');
+
+require_once('include/upload_file.php');
+
+class ImportViewDupcheck extends SugarView
+{
+    private $currentStep;
+
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+    }
+ 	/**
+     * @see SugarView::getMenu()
+     */
+    public function getMenu(
+        $module = null
+        )
+    {
+        global $mod_strings, $current_language;
+
+        if ( empty($module) )
+            $module = $_REQUEST['import_module'];
+
+        $old_mod_strings = $mod_strings;
+        $mod_strings = return_module_language($current_language, $module);
+        $returnMenu = parent::getMenu($module);
+        $mod_strings = $old_mod_strings;
+
+        return $returnMenu;
+    }
+
+ 	/**
+     * @see SugarView::_getModuleTab()
+     */
+ 	protected function _getModuleTab()
+    {
+        global $app_list_strings, $moduleTabMap;
+
+ 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
+        if ( !empty($_REQUEST['module_tab']) )
+            return $_REQUEST['module_tab'];
+        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
+            return $moduleTabMap[$_REQUEST['import_module']];
+        // Default anonymous pages to be under Home
+        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
+            return 'Home';
+        else
+            return $_REQUEST['import_module'];
+ 	}
+
+ 	/**
+	 * @see SugarView::_getModuleTitleParams()
+	 */
+	protected function _getModuleTitleParams($browserTitle = false)
+	{
+	    global $mod_strings, $app_list_strings;
+
+	    $iconPath = $this->getModuleTitleIconPath($this->module);
+	    $returnArray = array();
+	    if (!empty($iconPath) && !$browserTitle) {
+	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
+    	}
+    	else {
+    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
+    	}
+	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
+        $returnArray[] = string_format($mod_strings['LBL_STEP_DUP_TITLE'], array($this->currentStep));
+
+        return $returnArray;
+    }
+
+ 	/**
+     * @see SugarView::display()
+     */
+ 	public function display()
+    {
+        global $mod_strings, $app_strings, $current_user;
+        global $sugar_config;
+
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
+        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
+        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
+        $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
+        $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
+        $this->ss->assign("JAVASCRIPT", $this->_getJS());
+
+        //TAB CHOOSER
+        require_once("include/templates/TemplateGroupChooser.php");
+
+        $chooser_array = array();
+        $chooser_array[0] = array();
+        $idc = new ImportDuplicateCheck($this->bean);
+        $chooser_array[1] = $idc->getDuplicateCheckIndexes();
+
+        //check for saved entries from mapping
+        foreach($chooser_array[1] as $ck=>$cv){
+            if(isset($field_map['dupe_'.$ck])){
+                //index is defined in mapping, so set this index as selected and remove from available list
+                $chooser_array[0][$ck]=$cv;
+                unset($chooser_array[1][$ck]);
+            }
+        }
+
+        $chooser = new TemplateGroupChooser();
+        $chooser->args['id'] = 'selected_indices';
+        $chooser->args['values_array'] = $chooser_array;
+        $chooser->args['left_name'] = 'choose_index';
+        $chooser->args['right_name'] = 'ignore_index';
+        $chooser->args['left_label'] =  $mod_strings['LBL_INDEX_USED'];
+        $chooser->args['right_label'] =  $mod_strings['LBL_INDEX_NOT_USED'];
+        $this->ss->assign("TAB_CHOOSER", $chooser->display());
+        //END TAB CHOOSER
+
+        // split file into parts
+        $uploadFileName = $_REQUEST['file_name'];
+        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
+        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
+
+
+        $this->ss->assign("FILECOUNT", $splitter->getFileCount() );
+        $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
+
+
+        $this->ss->display('modules/Import/tpls/dupcheck.tpl');
+    }
+
+    private function getImportableModules()
+    {
+        global $beanList;
+        $importableModules = array();
+        foreach ($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) )
+            {
+                $tmp = new $beanName();
+                if( isset($tmp->importable) && $tmp->importable )
+                    $importableModules[$moduleName] = $moduleName;
+            }
+        }
+
+        asort($importableModules);
+        return $importableModules;
+    }
+
+    private function getImportableExternalEAPMs()
+    {
+        require_once('include/externalAPI/ExternalAPIFactory.php');
+
+        return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE, 'eapm_import_list');
+    }
+    /**
+     * Returns JS used in this view
+     */
+    private function _getJS()
+    {
+        global $mod_strings;
+
+        return <<<EOJAVASCRIPT
+<script type="text/javascript">
+<!--
+
+document.getElementById('gonext').onclick = function()
+{
+    clear_all_errors();
+    var sourceSelected = false;
+    var isError = false;
+    var inputs = document.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; ++i ){
+        if ( !sourceSelected && inputs[i].name == 'source' ){
+            if (inputs[i].checked) {
+                sourceSelected = true;
+                if ( inputs[i].value == 'other' && document.getElementById('importstep1').custom_delimiter.value == '' ) {
+                    add_error_style('importstep1','custom_delimiter',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_CUSTOM_DELIMITER']}");
+                    isError = true;
+                }
+            }
+        }
+    }
+    if ( !sourceSelected ) {
+        add_error_style('importstep1','source\'][\'' + (document.getElementById('importstep1').source.length - 1) + '',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_WHAT_IS']}");
+        isError = true;
+    }
+    return !isError;
+}
+
+
+YAHOO.util.Event.onDOMReady(function(){
+
+    function toggleExternalSource(el)
+    {
+        var trEl = document.getElementById('external_sources_tr');
+        var currentVisibility = trEl.style.display;
+        var newVisibility = (currentVisibility == 'none') ? '' : 'none';
+        trEl.style.display = newVisibility;
+    }
+
+    YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
+
+});
+-->
+</script>
+
+EOJAVASCRIPT;
+    }
+}
+
+?>
