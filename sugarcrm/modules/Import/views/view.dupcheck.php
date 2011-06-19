@@ -117,6 +117,8 @@ class ImportViewDupcheck extends SugarView
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
 
+        $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
+
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
@@ -152,14 +154,13 @@ class ImportViewDupcheck extends SugarView
         //END TAB CHOOSER
 
         // split file into parts
-        $uploadFileName = $_REQUEST['file_name'];
+        $uploadFileName = $_REQUEST['tmp_file'];
         $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
         $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
 
-
         $this->ss->assign("FILECOUNT", $splitter->getFileCount() );
         $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
-
+        $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
 
         $this->ss->display('modules/Import/tpls/dupcheck.tpl');
     }
@@ -197,47 +198,26 @@ class ImportViewDupcheck extends SugarView
 
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
-<!--
 
-document.getElementById('gonext').onclick = function()
-{
-    clear_all_errors();
-    var sourceSelected = false;
-    var isError = false;
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){
-        if ( !sourceSelected && inputs[i].name == 'source' ){
-            if (inputs[i].checked) {
-                sourceSelected = true;
-                if ( inputs[i].value == 'other' && document.getElementById('importstep1').custom_delimiter.value == '' ) {
-                    add_error_style('importstep1','custom_delimiter',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_CUSTOM_DELIMITER']}");
-                    isError = true;
-                }
-            }
-        }
+document.getElementById('importnow').onclick = function(){
+    // get the list of indices chosen
+    var chosen_indices = '';
+    var selectedOptions = document.getElementById('choose_index_td').getElementsByTagName('select')[0].options.length;
+    for (i = 0; i < selectedOptions; i++)
+    {
+        chosen_indices += document.getElementById('choose_index_td').getElementsByTagName('select')[0].options[i].value;
+        if (i != (selectedOptions - 1))
+        chosen_indices += "&";
     }
-    if ( !sourceSelected ) {
-        add_error_style('importstep1','source\'][\'' + (document.getElementById('importstep1').source.length - 1) + '',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_WHAT_IS']}");
-        isError = true;
-    }
-    return !isError;
+    document.getElementById('importstepdup').display_tabs_def.value = chosen_indices;
+    var form = document.getElementById('importstepdup');
+    // Move on to next step
+    document.getElementById('importstepdup').action.value = 'Step4';
+    ProcessImport.begin();
 }
 
 
-YAHOO.util.Event.onDOMReady(function(){
 
-    function toggleExternalSource(el)
-    {
-        var trEl = document.getElementById('external_sources_tr');
-        var currentVisibility = trEl.style.display;
-        var newVisibility = (currentVisibility == 'none') ? '' : 'none';
-        trEl.style.display = newVisibility;
-    }
-
-    YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
-
-});
--->
 </script>
 
 EOJAVASCRIPT;

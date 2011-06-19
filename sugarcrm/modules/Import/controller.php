@@ -154,7 +154,12 @@ class ImportController extends SugarController
     {
 		$this->view = 'step3';
     }
-    
+
+    function action_DupCheck()
+    {
+		$this->view = 'dupcheck';
+    }
+
     function action_Step4()
     {
 		$this->view = 'step4';

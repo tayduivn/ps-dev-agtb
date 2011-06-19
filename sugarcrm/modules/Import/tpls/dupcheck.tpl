@@ -40,22 +40,22 @@ textarea { width: 20em }
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 {$MODULE_TITLE}
-<form enctype="multipart/form-data" real_id="importstep3" id="importstep3" name="importstep3" method="POST" action="index.php">
+<form enctype="multipart/form-data" real_id="importstepdup" id="importstepdup" name="importstepdup" method="POST" action="index.php">
+
+{foreach from=$smarty.request key=k item=v}
+<input type="hidden" name="{$k}" value="{$v}">
+{/foreach}
+    
 <input type="hidden" name="module" value="Import">
-<input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
-<input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">
 <input type="hidden" name="import_type" value="{$TYPE}">
 <input type="hidden" name="source" value="{$SOURCE}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
-<input type="hidden" name="action" value="Step3">
-<input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="to_pdf" value="1">
-<input type="hidden" name="has_header" value="{$HAS_HEADER}">
-<input type="hidden" name="tmp_file" value="{$TMP_FILE}">
-<input type="hidden" name="tmp_file_base" value="{$TMP_FILE}">
-<input type="hidden" name="firstrow" value="{$FIRSTROW}">
-<input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
+
+
+
+    
 <input type="hidden" name="display_tabs_def">
 
 <br />
@@ -127,9 +127,9 @@ ProcessImport = new function()
      */
     this.submit = function()
     {
-        document.getElementById("importstep3").tmp_file.value =
-            document.getElementById("importstep3").tmp_file_base.value + '-' + this.fileCount;
-        YAHOO.util.Connect.setForm(document.getElementById("importstep3"));
+        document.getElementById("importstepdup").tmp_file.value =
+            document.getElementById("importstepdup").tmp_file_base.value + '-' + this.fileCount;
+        YAHOO.util.Connect.setForm(document.getElementById("importstepdup"));
         YAHOO.util.Connect.asyncRequest('POST', 'index.php',
             {
                 success: function(o) {
@@ -146,7 +146,7 @@ ProcessImport = new function()
                         	SUGAR.util.hrefURL(locationStr);
                         }
                         else {
-                            document.getElementById("importstep3").save_map_as.value = '';
+                            document.getElementById("importstepdup").save_map_as.value = '';
                             ProcessImport.fileCount++;
                             ProcessImport.submit();
                         }
@@ -201,9 +201,6 @@ enableQS(false);
 {/literal}{$getNameJs}{literal}
 {/literal}{$getNumberJs}{literal}
 {/literal}{$currencySymbolJs}{literal}
-	setSymbolValue(document.getElementById('currency_select').selectedIndex);
-	setSigDigits();
-
 {/literal}{$confirmReassignJs}{literal}
 </script>
 {/literal}
