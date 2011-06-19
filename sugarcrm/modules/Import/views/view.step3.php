@@ -205,12 +205,9 @@ class ImportViewStep3 extends SugarView
 
 
         $uploadFileName = $_REQUEST['file_name'];
-        // split file into parts
-        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
-        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
+        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
@@ -247,9 +244,6 @@ class ImportViewStep3 extends SugarView
 
         // Now build template
         $this->ss->assign("TMP_FILE", $uploadFileName );
-        $this->ss->assign("FILECOUNT", $splitter->getFileCount() );
-        $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
-        $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
         $this->ss->assign("SOURCE", $_REQUEST['source'] );
         $this->ss->assign("TYPE", $_REQUEST['type'] );
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
@@ -490,31 +484,6 @@ eoq;
         // handle building index selector
         global $dictionary, $current_language;
 
-        require_once("include/templates/TemplateGroupChooser.php");
-
-        $chooser_array = array();
-        $chooser_array[0] = array();
-        $idc = new ImportDuplicateCheck($this->bean);
-        $chooser_array[1] = $idc->getDuplicateCheckIndexes();
-
-        //check for saved entries from mapping
-        foreach($chooser_array[1] as $ck=>$cv){
-            if(isset($field_map['dupe_'.$ck])){
-                //index is defined in mapping, so set this index as selected and remove from available list
-                $chooser_array[0][$ck]=$cv;
-                unset($chooser_array[1][$ck]);
-            }
-        }
-
-        $chooser = new TemplateGroupChooser();
-        $chooser->args['id'] = 'selected_indices';
-        $chooser->args['values_array'] = $chooser_array;
-        $chooser->args['left_name'] = 'choose_index';
-        $chooser->args['right_name'] = 'ignore_index';
-        $chooser->args['left_label'] =  $mod_strings['LBL_INDEX_USED'];
-        $chooser->args['right_label'] =  $mod_strings['LBL_INDEX_NOT_USED'];
-        $this->ss->assign("TAB_CHOOSER", $chooser->display());
-
         // show notes
         if ( $this->bean instanceof Person )
             $module_key = "LBL_CONTACTS_NOTE_";
@@ -594,21 +563,10 @@ eoq;
 <!--
 document.getElementById('goback').onclick = function(){
     document.getElementById('importstep3').action.value = 'Confirm';
-    document.getElementById('importstep3').to_pdf.value = '0';
     return true;
 }
 
-document.getElementById('importnow').onclick = function(){
-    // get the list of indices chosen
-    var chosen_indices = '';
-    var selectedOptions = document.getElementById('choose_index_td').getElementsByTagName('select')[0].options.length;
-    for (i = 0; i < selectedOptions; i++)
-    {
-        chosen_indices += document.getElementById('choose_index_td').getElementsByTagName('select')[0].options[i].value;
-        if (i != (selectedOptions - 1))
-            chosen_indices += "&";
-    }
-    document.getElementById('importstep3').display_tabs_def.value = chosen_indices;
+document.getElementById('gonext').onclick = function(){
 
     // validate form
     clear_all_errors();
@@ -650,8 +608,8 @@ document.getElementById('importnow').onclick = function(){
 	}
 
     // Move on to next step
-    document.getElementById('importstep3').action.value = 'Step4';
-    ProcessImport.begin();
+    document.getElementById('importstep3').action.value = 'dupcheck';
+    return true;
 }
 
 // handle adding new row

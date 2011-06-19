@@ -49,13 +49,14 @@ textarea { width: 20em }
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="action" value="Step3">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
-<input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="has_header" value="{$HAS_HEADER}">
 <input type="hidden" name="tmp_file" value="{$TMP_FILE}">
 <input type="hidden" name="tmp_file_base" value="{$TMP_FILE}">
 <input type="hidden" name="firstrow" value="{$FIRSTROW}">
 <input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
+<input type="hidden" name="importlocale_charset" value="{$smarty.request.importlocale_charset}">
+
 <input type="hidden" name="display_tabs_def">
 
 <div align="right">
@@ -128,12 +129,6 @@ textarea { width: 20em }
         <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleImportOptions" class="button" type="button"
             name="button" value="  {$MOD.LBL_SHOW_ADVANCED_OPTIONS}  ">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong></span>
-        <span >
-            <input type="text" name="save_map_as" id="save_map_as" value=""
-                style="width: 20em" maxlength="254">
-            &nbsp;{sugar_help text=$MOD.LBL_SAVE_MAPPING_HELP}
-        </span>
     </td>
 </tr>
 <tr style="display: none;" id="importOptions">
@@ -209,12 +204,6 @@ textarea { width: 20em }
                     </table>
                 </div>
             </td>
-            <td valign="top" width="50%">
-                <div>
-                    <h4>{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</h4>
-                    {$TAB_CHOOSER}
-                </div>
-            </td>
         </tr>
         </table>
     </td>
@@ -237,112 +226,12 @@ textarea { width: 20em }
 <tr>
     <td align="left">
         <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
-        <input title="{$MOD.LBL_IMPORT_NOW}" accessKey="" id="importnow" class="button" type="button" name="button" value="  {$MOD.LBL_IMPORT_NOW}  ">
+        <input title="{$MOD.LBL_NEXT}" accessKey="" id="gonext" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  ">
     </td>
 </tr>
 </table>
 
 </form>
-{literal}
-<script type="text/javascript">
-<!--
-/**
- * Singleton to handle processing the import
- */
-ProcessImport = new function()
-{
-    /*
-     * number of file to process processed
-     */
-    this.fileCount         = 0;
-
-    /*
-     * total files to processs
-     */
-    this.fileTotal         = {/literal}{$FILECOUNT-1}{literal};
-
-    /*
-     * total records to process
-     */
-    this.recordCount       = {/literal}{$RECORDCOUNT}{literal};
-
-    /*
-     * maximum number of records per file
-     */
-    this.recordThreshold   = {/literal}{$RECORDTHRESHOLD}{literal};
-
-    /*
-     * submits the form
-     */
-    this.submit = function()
-    {
-        document.getElementById("importstep3").tmp_file.value =
-            document.getElementById("importstep3").tmp_file_base.value + '-' + this.fileCount;
-        YAHOO.util.Connect.setForm(document.getElementById("importstep3"));
-        YAHOO.util.Connect.asyncRequest('POST', 'index.php',
-            {
-                success: function(o) {
-                    if (o.responseText.replace(/^\s+|\s+$/g, '') != '') {
-                        this.failure(o);
-                    }
-                    else {
-                        var locationStr = "index.php?module=Import"
-                            + "&action=Last"
-                            + "&type={/literal}{$TYPE}{literal}"
-                            + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
-                        if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
-                        	YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETE}{literal}');
-                        	SUGAR.util.hrefURL(locationStr);
-                        }
-                        else {
-                            document.getElementById("importstep3").save_map_as.value = '';
-                            ProcessImport.fileCount++;
-                            ProcessImport.submit();
-                        }
-                    }
-                },
-                failure: function(o) {
-                	YAHOO.SUGAR.MessageBox.minWidth = 500;
-                	YAHOO.SUGAR.MessageBox.show({
-                    	type:  "alert",
-                    	title: '{/literal}{$MOD.LBL_IMPORT_ERROR}{literal}',
-                    	msg:   o.responseText,
-                        fn: function() { window.location.reload(true); }
-                    });
-                }
-            }
-        );
-        var move = 0;
-        if ( this.fileTotal > 0 ) {
-            move = this.fileCount/this.fileTotal;
-        }
-        YAHOO.SUGAR.MessageBox.updateProgress( move,
-            "{/literal}{$MOD.LBL_IMPORT_RECORDS}{literal} " + ((this.fileCount * this.recordThreshold) + 1)
-                        + " {/literal}{$MOD.LBL_IMPORT_RECORDS_TO}{literal} " + Math.min(((this.fileCount+1) * this.recordThreshold),this.recordCount)
-                        + " {/literal}{$MOD.LBL_IMPORT_RECORDS_OF}{literal} " + this.recordCount );
-    }
-
-    /*
-     * begins the form submission process
-     */
-    this.begin = function()
-    {
-        datestarted = '{/literal}{$MOD.LBL_IMPORT_STARTED}{literal} ' +
-                YAHOO.util.Date.format('{/literal}{$datetimeformat}{literal}');
-        YAHOO.SUGAR.MessageBox.show({
-            title: '{/literal}{$STEP4_TITLE}{literal}',
-            msg: datestarted,
-            width: 500,
-            type: "progress",
-            closable:false,
-            animEl: 'importnow'
-        });
-        this.submit();
-    }
-}
--->
-</script>
-{/literal}
 {$JAVASCRIPT}
 {literal}
 <script type="text/javascript" language="Javascript">
