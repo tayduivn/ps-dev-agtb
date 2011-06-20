@@ -57,6 +57,14 @@ textarea { width: 20em }
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="importlocale_charset" value="{$smarty.request.importlocale_charset}">
 
+<input type="hidden" name="importlocale_dateformat" value="{$smarty.request.importlocale_dateformat}">
+<input type="hidden" name="importlocale_timeformat" value="{$smarty.request.importlocale_timeformat}">
+<input type="hidden" name="importlocale_timezone" value="{$smarty.request.importlocale_timezone}">
+<input type="hidden" name="importlocale_currency" value="{$smarty.request.importlocale_currency}">
+<input type="hidden" name="importlocale_default_currency_significant_digits" value="{$smarty.request.importlocale_default_currency_significant_digits}">
+<input type="hidden" name="importlocale_num_grp_sep" value="{$smarty.request.importlocale_num_grp_sep}">
+<input type="hidden" name="importlocale_dec_sep" value="{$smarty.request.importlocale_dec_sep}">
+<input type="hidden" name="importlocale_default_locale_name_format" value="{$smarty.request.importlocale_default_locale_name_format}">
 <input type="hidden" name="display_tabs_def">
 
 <div align="right">

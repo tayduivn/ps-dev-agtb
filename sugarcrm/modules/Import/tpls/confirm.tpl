@@ -139,9 +139,6 @@ textarea { width: 20em }
             <td scope="row"><slot><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:</slot></td>
             <td ><slot><input type="text" disabled id="sigDigitsExample" name="sigDigitsExample"></slot></td>
         </tr>
-
-
-
         <tr>
             <td scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}</slot></td>
             <td ><slot>
@@ -168,11 +165,6 @@ textarea { width: 20em }
             <td scope="row" valign="top"><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i> </td>
             <td  valign="top"><input tabindex='4' id="nameTarget" name="no_value" id=":q" value="" style="border: none;" disabled size="50"></td>
         </tr>
-
-
-
-
-
 
         <tr>
             <td scope="row" colspan="3">
