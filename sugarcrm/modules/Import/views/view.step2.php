@@ -129,6 +129,7 @@ class ImportViewStep2 extends SugarView
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
+        $this->ss->assign("SAMPLE_URL", "<a onclick=\"window.location.href='index.php?entryPoint=export&module=".$_REQUEST['import_module']."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>");
 
         $displayBackBttn = isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != 'index'? TRUE : FALSE;
         $this->ss->assign("displayBackBttn", $displayBackBttn);

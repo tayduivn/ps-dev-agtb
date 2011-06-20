@@ -63,8 +63,9 @@
 {/if}
 {/foreach}
 
-<br>
+<p><b>{$SAMPLE_URL}</b></p>
 
+<br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
 <tr>
 <td>
