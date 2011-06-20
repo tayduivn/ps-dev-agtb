@@ -201,7 +201,7 @@ if(typeof(SUGAR.collection) == "undefined") {
          * Add the secondaries rows on load of the page.
          */
         add_secondaries: function(){
-            var clone_id = this.form + '_' + this.field + '_collection_0';
+            clone_id = this.form + '_' + this.field + '_collection_0';
             YAHOO.util.Event.onContentReady(clone_id, function(c){
                 c.create_clone();
                 enableQS();
