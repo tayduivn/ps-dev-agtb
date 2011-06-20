@@ -34,6 +34,12 @@
 <style>
 <!--
 textarea { width: 20em }
+
+#selected_indices
+{
+    padding-left:30px;
+    padding-right:30px;
+}
 -->
 </style>
 {/literal}
@@ -59,15 +65,15 @@ textarea { width: 20em }
 <input type="hidden" name="display_tabs_def">
 
 <br />
-<table border="0" cellpadding="0" width="50%" id="importTable" class="detail view">
+<div style="padding-left:20px">
+<table border="0" cellpadding="30" id="importTable" class="detail view" style="width:60% !important;">
 <tr>
     <td scope="row" align="left" colspan="2" style="text-align: left;">{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</td>
 </tr>
 <tr>
-    <td  width="50%">
+    <td  width="40%" colspan="2">
             {$TAB_CHOOSER}
     </td>
-    <td></td>
 </tr>
 <tr>
     <td align="left" colspan="4" style="background: transparent;">
@@ -81,6 +87,8 @@ textarea { width: 20em }
     </td>
 </tr>
 </table>
+</div>
+
 {$JAVASCRIPT_CHOOSER}
 
 <br />
