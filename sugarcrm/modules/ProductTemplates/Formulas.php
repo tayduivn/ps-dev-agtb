@@ -31,6 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // To add a new formula, you will need to register the new file below and in the pricing_formula_dom array 
 // in modules/ProductTemplates/language/<lang>.lang.php
+// FG - No more need to change local file. Added inclusion of custom/modules/ProductTemplates/formulas/*.php 
 //global $price_formulas;
 
 $GLOBALS['price_formulas'] = array(
@@ -49,6 +50,19 @@ $GLOBALS['price_formulas'] = array(
 	//List: $discount_price = $list_price  
 	,'IsList'=>'modules/ProductTemplates/formulas/price_list.php'
 	);
+
+// FG - Bug 44515 - Added inclusion of all .php formula files in custom/modules/ProductTemplates/formulas (if exists).
+//                  Every file must contain a class whose name must equals the file name (without extension) all lowercase except the first letter, uppercase.
+//                  Here devs can add classes for custom formulas - The Upgrade Safe Way
+if (sugar_is_dir("custom/modules/ProductTemplates/formulas"))
+{
+    $_files = glob("custom/modules/ProductTemplates/formulas/*.php");
+    foreach ($_files as $filename) 
+    {
+        $_formulaId = ucfirst(basename(strtolower($filename), ".php"));
+        $GLOBALS['price_formulas'][$_formulaId] = $filename;
+    }
+}
 
 function get_formula_details($pricing_factor) {
 	global $price_formulas;
