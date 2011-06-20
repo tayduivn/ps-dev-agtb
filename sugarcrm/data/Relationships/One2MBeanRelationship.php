@@ -36,13 +36,10 @@ class One2MBeanRelationship extends One2MRelationship
             {
                 $this->remove($oldLHS, $rhs, false);
             }
-        } else
-        {
-            echo ("Unable to load RHS module {$rhs->module_name} link $rhsLinkName\n");
         }
 
         //Make sure we load the current relationship state to the LHS link
-        if (isset($lhs->$lhsLinkName) && is_object($lhs->$lhsLinkName)) {
+        if (isset($lhs->$lhsLinkName) || $lhs->load_relationship($lhsLinkName)) {
             $lhs->$lhsLinkName->getBeans();
         }
 

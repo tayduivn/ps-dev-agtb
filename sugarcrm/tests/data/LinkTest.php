@@ -110,35 +110,41 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $this->createdBeans[] = $lead;
 
         //Start by adding it from the Account side.
-        $link = new Link2("leads", $account);
-        $this->assertTrue($link->loadedSuccesfully());
-        $link->add($lead);
+        $this->assertTrue($account->load_relationship("leads"));
+        $this->assertInstanceOf("Link2", $account->leads);
+        $this->assertTrue($account->leads->loadedSuccesfully());
+        $account->leads->add($lead);
 
-        $related = $link->getBeans(null);
+        $related = $account->leads->getBeans();
         $this->assertNotEmpty($related);
         $this->assertNotEmpty($related[$lead->id]);
 
 
         //Test loading the link from the Lead side.
-        $link = new Link2("accounts", $lead);
-        $this->assertTrue($link->loadedSuccesfully());
-        $related = $link->getBeans(null);
+        $this->assertTrue($lead->load_relationship("accounts"));
+        $this->assertInstanceOf("Link2", $lead->accounts);
+        $this->assertTrue($lead->accounts->loadedSuccesfully());
+
+        $related = $lead->accounts->getBeans();
         $this->assertNotEmpty($related);
         $this->assertNotEmpty($related[$account->id]);
 
 
         //Test overriding the one side
-        $link = new Link2("leads", $account2);
-        $this->assertTrue($link->loadedSuccesfully());
-        $link->add($lead);
-        $related = $link->getBeans(null);
+        $this->assertTrue($account2->load_relationship("leads"));
+        $this->assertInstanceOf("Link2", $account2->leads);
+        $this->assertTrue($account2->leads->loadedSuccesfully());
+        $account2->leads->add($lead);
+        $related = $account2->leads->getBeans();
         $this->assertNotEmpty($related);
         $this->assertNotEmpty($related[$lead->id]);
 
         //Verify only one on the Lead side.
-        $link = new Link2("accounts", $lead);
-        $this->assertTrue($link->loadedSuccesfully());
-        $related = $link->getBeans(null);
+        $this->assertTrue($lead->load_relationship("accounts"));
+        $this->assertInstanceOf("Link2", $lead->accounts);
+        $this->assertTrue($lead->accounts->loadedSuccesfully());
+
+        $related = $lead->accounts->getBeans();
         $this->assertNotEmpty($related);
         $this->assertTrue(empty($related[$account->id]));
         $this->assertNotEmpty($related[$account2->id]);

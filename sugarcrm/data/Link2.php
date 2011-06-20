@@ -110,6 +110,7 @@ class Link2 {
         $data = $this->relationship->load($this);
         $this->beans = $data['beans'];
         $this->rows = $data['rows'];
+        $this->loaded = true;
     }
 
 	/* This method will return the following based on cardinality of the relationship.
@@ -235,8 +236,9 @@ class Link2 {
     }
 
 	function getBeans() {
-        if (!$this->loaded)
+        if (!$this->loaded) {
             $this->load();
+        }
 
         return $this->beans;
 	}
