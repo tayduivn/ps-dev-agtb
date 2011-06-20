@@ -313,6 +313,7 @@ $mod_strings = array (
     'LBL_DELETE_MAP_CONFIRMATION' => 'Are you sure you want to delete this mapping?',
     'LBL_THIRD_PARTY_CSV_SOURCES' => 'Indicate if this csv is from any of the following 3rd party sources',
     'LBL_THIRD_PARTY_CSV_SOURCES_HELP' => 'Additional help text here...',
-    'LBL_EXTERNAL_SOURCE_HELP' => ''
+    'LBL_EXTERNAL_SOURCE_HELP' => '',
+    'LBL_EXAMPLE_FILE' => 'Download a sample CSV file',
 );
 ?>
