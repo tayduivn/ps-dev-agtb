@@ -202,19 +202,25 @@ if(typeof(SUGAR.collection) == "undefined") {
          */
         add_secondaries: function(){
             clone_id = this.form + '_' + this.field + '_collection_0';
-            YAHOO.util.Event.onContentReady(clone_id, function(c){
-                c.create_clone();
+
+            if(typeof sqs_objects == 'undefined' || typeof sqs_objects[clone_id] == 'undefined') {
+            	setTimeout('collection["'+this.field_element_name+'"].add_secondaries();',100); // Lowering timeout as per dwheeler to avoid SODA errors
+            } else if(typeof document.getElementById(this.form + '_' + this.field + '_collection_0') == 'undefined'){
+            	setTimeout('collection["'+this.field_element_name+'"].add_secondaries();',100);
+            } else {
+                this.create_clone();
                 enableQS();
-                c.changePrimary(true);
-                for(key in c.secondaries_values){
+                this.changePrimary(true);
+                for(key in this.secondaries_values){
                     if (isInteger(key)) {
-                        c.add(c.secondaries_values[key]);
+                        this.add(this.secondaries_values[key]);
                     }
                 }
-                c.js_more();
-                // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
-                initEditView(document.forms[c.form]);
-            }, this);
+                this.js_more();
+                this.js_more();
+            }
+            // Update the "hash" of the unchanged form, because this is just adding data, not actually changing anything
+            initEditView(document.forms[this.form]);
         },
         /*
          * Create the new row from a cloned row.
@@ -402,8 +408,8 @@ if(typeof(SUGAR.collection) == "undefined") {
         create_clone: function() {
             var oneField = document.getElementById('lineFields_'+this.field_element_name+'_0');
             this.cloneField[0] = SUGAR.isIE ?
-                SUGAR.collection.safe_clone(oneField, true) :
-                oneField.cloneNode(true);
+            	SUGAR.collection.safe_clone(oneField, true) :
+            	oneField.cloneNode(true);
             this.cloneField[1] = oneField.parentNode;
             this.more_status = true;
             var clone_id = this.form + '_' + this.field + '_collection_0';
@@ -582,7 +588,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             }
             return false;
         }
-    };
+    }
 
 	SUGAR.collection.safe_clone = function(e, recursive)
 	{
