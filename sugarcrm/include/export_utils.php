@@ -551,11 +551,13 @@ function generateSearchWhere($module, $query) {//this function is similar with f
                                          $returnContent .= '"",';
 
                                      }
+                     break;
                 
                 case "enum":
                      //enum?
                 case "url":
                      $returnContent .= '"https://www.sugarcrm.com",';
+                     break;
                 default:
                     //type is not matched, fill in with empty string and continue;
                     $returnContent .= '"",';
