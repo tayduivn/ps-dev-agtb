@@ -315,6 +315,7 @@ $mod_strings = array (
     'LBL_THIRD_PARTY_CSV_SOURCES_HELP' => 'Additional help text here...',
     'LBL_EXTERNAL_SOURCE_HELP' => '',
     'LBL_EXAMPLE_FILE' => 'Download a sample CSV file',
+    'LBL_CONFIRM_IMPORT' => 'Records created during the import process can be deleted in the next step for any reason. However, updates made to existing records during the import process cannot be undone. Start the import now?',
     'LBL_CONFIRM_MAP_OVERRIDE' => 'Warning: You have already selected a custom mapping for this import, do you want to continue?'
 );
 ?>
