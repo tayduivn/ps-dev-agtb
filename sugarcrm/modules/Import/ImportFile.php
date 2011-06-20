@@ -104,6 +104,11 @@ class ImportFile
     private $_hasHeader = FALSE;
 
     /**
+     * The import file map that this import file inherits properties from.
+     */
+    private $_importFile = null;
+
+    /**
      * Constructor
      *
      * @param string $filename
@@ -432,5 +437,16 @@ class ImportFile
     public function hasHeaderRow()
     {
         return $this->_hasHeader;
+    }
+
+    public function setImportFileMap($map)
+    {
+        $this->_importFile = $map;
+        $importMapProperties = array('_delimiter' => 'delimiter','_enclosure' => 'enclosure', '_hasHeader' => 'has_header');
+        //Inject properties from the import map
+        foreach($importMapProperties as $k => $v)
+        {
+            $this->$k = $map->$v;
+        }
     }
 }

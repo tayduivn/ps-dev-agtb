@@ -162,21 +162,20 @@ class ImportViewConfirm extends SugarView
         {
             $GLOBALS['log']->fatal("Auto detecing csv properties...");
             $importFile->autoDetectCSVProperties();
-            $delimeter = $importFile->getFieldDelimeter();
-            $enclosure = $importFile->getFieldEnclosure();
-            $hasHeader = $importFile->hasHeaderRow();
         }
         else
         {
             $GLOBALS['log']->fatal("Using import map for import properties.");
-            $import_map_seed = $this->getImportMap($importSource);
-            $delimeter = $import_map_seed->delimiter;
-            $enclosure = htmlentities($import_map_seed->enclosure);
-            $hasHeader = $import_map_seed->has_header;
+            $importFile->setImportFileMap( $this->getImportMap($importSource) );
         }
+        
+        $delimeter = $importFile->getFieldDelimeter();
+        $enclosure = $importFile->getFieldEnclosure();
+        $hasHeader = $importFile->hasHeaderRow();
 
+        $this->ss->assign("IMPORT_ENCLOSURE_OPTIONS",  get_select_options_with_id( $GLOBALS['app_list_strings']['import_enclosure_options'], $enclosure));
         $this->ss->assign("CUSTOM_DELIMITER",  $delimeter);
-        $this->ss->assign("CUSTOM_ENCLOSURE",  $enclosure);
+        $this->ss->assign("CUSTOM_ENCLOSURE",  htmlentities($enclosure));
         $hasHeaderFlag = $hasHeader ? " CHECKED" : "";
         $this->ss->assign("HAS_HEADER_CHECKED", $hasHeaderFlag);
 
