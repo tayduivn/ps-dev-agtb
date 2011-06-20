@@ -49,7 +49,7 @@ textarea { width: 20em }
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
 <input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">
 <input type="hidden" name="type" value="{$TYPE}">
-<input type="hidden" name="source" value="{$SOURCE}">
+<input type="hidden" name="source" id="source" value="{$SOURCE}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="action" value="Step3">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
@@ -169,11 +169,11 @@ textarea { width: 20em }
         <table border=0 class="edit view">
             <tr><td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h4></td></tr>
             <tr>
-                <td colspan="2" scope="row"><input class="radio" type="radio" name="source" value="salesforce" id='sf_map' />
+                <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map' />
                     &nbsp;{$MOD.LBL_SALESFORCE}</td>
             </tr>
             <tr>
-                <td colspan="2" scope="row"><input class="radio" type="radio" name="source" value="outlook" id='outlook_map'/>
+                <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>
                     &nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
             </tr>
         </table>

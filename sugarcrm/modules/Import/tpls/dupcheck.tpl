@@ -58,10 +58,6 @@ textarea { width: 20em }
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
-
-
-
-    
 <input type="hidden" name="display_tabs_def">
 
 <br />

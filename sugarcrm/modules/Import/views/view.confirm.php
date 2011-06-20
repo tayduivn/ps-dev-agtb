@@ -405,16 +405,34 @@ YAHOO.util.Event.onDOMReady(function(){
 
     function setMappingProperties(el)
     {
+       var sourceEl = document.getElementById('source');
+       if(sourceEl.value != '' && sourceEl.value != 'csv')
+       {
+           if( !confirm(SUGAR.language.get('Import','LBL_CONFIRM_MAP_OVERRIDE')) )
+           {
+                deSelectExternalSources();
+                return;
+           }
+        }
         var selectedMap = this.value;
         if( typeof(import_mapping_js[selectedMap]) == 'undefined')
-
             return;
 
+        sourceEl.value = selectedMap;
         document.getElementById('custom_delimiter').value = import_mapping_js[selectedMap].delim;
         document.getElementById('custom_enclosure').value = import_mapping_js[selectedMap].enclos;
         document.getElementById('has_header').checked = import_mapping_js[selectedMap].has_header;
         
         refreshDataTable();
+    }
+
+    function deSelectExternalSources()
+    {
+        var els = document.getElementsByName('external_source');
+        for(i=0;i<els.length;i++)
+        {
+            els[i].checked = false;
+        }
     }
     YAHOO.util.Event.addListener(['sf_map', 'outlook_map'], "click", setMappingProperties);
 });
