@@ -3076,7 +3076,24 @@ $app_strings = array (
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
 
     //External API Error Messages
-    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
+
+    //IMPORT SAMPLE TEXT
+    'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
+    "You have downloaded a sample csv page which provides an example of the expected contents of a file that is ready for import.\r\n\
+    Please note that the columns are the field labels as you would see them in the application, but the data base field could also be used instead.\r\n\\r\n\
+
+    This is useful if you are relying on phpMyAdmin or some other database tool to provide the exported list.
+    Also note that the column order is not critical as the import process will match the proper field to the proper column based on the header row.
+
+    To use this same file as a template, you will need to do the following:
+    1. Remove the sample rows of data
+    2. Remove the tutorial text you are reading right now.
+    3. Input your own data into the proper columns
+    4. Save the file to a known location.
+    5. Click on the import option from the menu and choose this template.
+   ',
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

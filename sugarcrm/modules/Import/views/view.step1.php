@@ -111,6 +111,8 @@ class ImportViewStep1 extends SugarView
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
+        $this->ss->assign("SAMPLE_URL", "<a onclick=\"window.location.href='index.php?entryPoint=export&module=".$_REQUEST['import_module']."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>");
+
 
         $showModuleSelection = ($_REQUEST['import_module'] == 'Administration');
         $importableModulesOptions = array();
