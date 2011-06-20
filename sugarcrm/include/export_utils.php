@@ -184,8 +184,8 @@ function export($type, $records = null, $members = false, $sample=false) {
     $result = '';
     $populate = false;
     if($sample) {
-        $result = $db->limitQuery($query, 0, $sampleRecordNum, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
-        if( $db->countQuery($query)<1 ){
+       $result = $db->limitQuery($query, 0, $sampleRecordNum, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
+        if( $focus->_get_num_rows_in_query($query)<1 ){
             $populate = true;
         }
 	}else{
