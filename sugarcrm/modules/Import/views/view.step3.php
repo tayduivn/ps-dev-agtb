@@ -175,17 +175,6 @@ class ImportViewStep3 extends SugarView
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
 
-        // get list of valid date/time formats
-        $timeFormat = $current_user->getUserDateTimePreferences();
-        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
-        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
-
-        // get list of valid timezones
-        $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
-
-        //get currency id
-        $cur_id = isset($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
-
         //get significant digits preference
         $significantDigits = isset($field_map['importlocale_default_currency_significant_digits'])? $field_map['importlocale_default_currency_significant_digits'] :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
 
@@ -418,44 +407,7 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("COLUMNCOUNT",$ret_field_count);
         $this->ss->assign("rows",$columns);
 
-        // get list of valid date/time formats
-        $this->ss->assign('TIMEOPTIONS', $timeOptions);
-        $this->ss->assign('DATEOPTIONS', $dateOptions);
         $this->ss->assign('datetimeformat', $GLOBALS['timedate']->get_cal_date_time_format());
-
-        // get list of valid timezones
-        if(empty($userTZ))
-            $userTZ = TimeDate::userTimezone();
-
-        $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
-        $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
-
-        // get currency preference
-        require_once('modules/Currencies/ListCurrency.php');
-        $currency = new ListCurrency();
-        if($cur_id) {
-            $selectCurrency = $currency->getSelectOptions($cur_id);
-            $this->ss->assign("CURRENCY", $selectCurrency);
-        } else {
-            $selectCurrency = $currency->getSelectOptions();
-            $this->ss->assign("CURRENCY", $selectCurrency);
-        }
-
-        $currenciesVars = "";
-        $i=0;
-        foreach($locale->currencies as $id => $arrVal) {
-            $currenciesVars .= "currencies[{$i}] = '{$arrVal['symbol']}';\n";
-            $i++;
-        }
-        $currencySymbolsJs = <<<eoq
-var currencies = new Object;
-{$currenciesVars}
-function setSymbolValue(id) {
-    document.getElementById('symbol').value = currencies[id];
-}
-eoq;
-        $this->ss->assign('currencySymbolJs', $currencySymbolsJs);
-
 
         // fill significant digits dropdown
         $sigDigits = '';

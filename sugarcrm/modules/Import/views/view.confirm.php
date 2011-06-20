@@ -182,17 +182,77 @@ class ImportViewConfirm extends SugarView
         //Retrieve a sample set of data
         $rows = $this->getSampleSet($importFile);
 
-        $charset_for_import = $importFile->autoDetectCharacterSet();
 
-        // Charset
-        $charsetOptions = get_select_options_with_id( $locale->getCharsetSelect(), $charset_for_import);//wdong,  bug 25927, here we should use the charset testing results from above.
-        $this->ss->assign('CHARSETOPTIONS', $charsetOptions);
+
+        $this->setImportFileCharacterSet($importFile);
+        $this->setDateTimeProperties();
+        $this->setCurrencyOptions();
 
         $importMappingJS = $this->getImportMappingJS();
         
         $this->ss->assign("SAMPLE_ROWS",$rows);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS ));
         $this->ss->display('modules/Import/tpls/confirm.tpl');
+    }
+
+    private function setCurrencyOptions($field_map = array() )
+    {
+        global $locale, $current_user;
+        $cur_id = isset($field_map['importlocale_currency'])? $field_map['importlocale_currency'] : $locale->getPrecedentPreference('currency', $current_user);
+        // get currency preference
+        require_once('modules/Currencies/ListCurrency.php');
+        $currency = new ListCurrency();
+        if($cur_id)
+            $selectCurrency = $currency->getSelectOptions($cur_id);
+        else
+            $selectCurrency = $currency->getSelectOptions();
+
+        $this->ss->assign("CURRENCY", $selectCurrency);
+
+        $currenciesVars = "";
+        $i=0;
+        foreach($locale->currencies as $id => $arrVal)
+        {
+            $currenciesVars .= "currencies[{$i}] = '{$arrVal['symbol']}';\n";
+            $i++;
+        }
+        $currencySymbolsJs = <<<eoq
+var currencies = new Object;
+{$currenciesVars}
+function setSymbolValue(id) {
+    document.getElementById('symbol').value = currencies[id];
+}
+eoq;
+        $this->ss->assign('currencySymbolJs', $currencySymbolsJs);
+
+    }
+
+
+    private function setDateTimeProperties( $field_map = array() )
+    {
+        global $current_user, $sugar_config;
+
+        $timeFormat = $current_user->getUserDateTimePreferences();
+        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
+        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
+
+        // get list of valid timezones
+        $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
+        if(empty($userTZ))
+            $userTZ = TimeDate::userTimezone();
+
+        $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
+        $this->ss->assign('TIMEOPTIONS', $timeOptions);
+        $this->ss->assign('DATEOPTIONS', $dateOptions);
+        $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
+    }
+
+    private function setImportFileCharacterSet($importFile)
+    {
+        global $locale;
+        $charset_for_import = $importFile->autoDetectCharacterSet();
+        $charsetOptions = get_select_options_with_id( $locale->getCharsetSelect(), $charset_for_import);//wdong,  bug 25927, here we should use the charset testing results from above.
+        $this->ss->assign('CHARSETOPTIONS', $charsetOptions);
     }
 
     protected function getImportMappingJS()

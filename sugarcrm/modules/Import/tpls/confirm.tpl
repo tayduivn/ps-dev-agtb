@@ -106,6 +106,31 @@ textarea { width: 20em }
                 <input class="checkBox" value='on' type="checkbox" name="has_header" id="has_header" {$HAS_HEADER_CHECKED}>
             </td>
 	    </tr>
+
+
+
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_DATE_FORMAT}</slot></td>
+            <td ><slot><select tabindex='4' name='importlocale_dateformat'>{$DATEOPTIONS}</select></slot></td>
+        </tr>
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_TIME_FORMAT}</slot></td>
+            <td ><slot><select tabindex='4' name='importlocale_timeformat'>{$TIMEOPTIONS}</select></slot></td>
+        </tr>
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_TIMEZONE}</slot></td>
+            <td ><slot><select tabindex='4' name='importlocale_timezone'>{html_options options=$TIMEZONEOPTIONS selected=$TIMEZONE_CURRENT}</select></slot></td>
+        </tr>
+
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_CURRENCY}</slot></td>
+            <td ><slot>
+                <select tabindex='4' id='currency_select' name='importlocale_currency' onchange='setSymbolValue(this.selectedIndex);setSigDigits();'>{$CURRENCY}</select>
+                <input type="hidden" id="symbol" value="">
+            </slot></td>
+        </tr>
+
+        
         <tr>
             <td scope="row" colspan="3">
                 <h5>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h5></td>
@@ -135,3 +160,9 @@ textarea { width: 20em }
 </form>
 
 {$JAVASCRIPT}
+
+{literal}
+<script type="text/javascript" language="Javascript">
+{/literal}{$currencySymbolJs}{literal}
+</script>
+{/literal}

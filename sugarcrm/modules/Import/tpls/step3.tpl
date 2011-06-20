@@ -139,41 +139,8 @@ textarea { width: 20em }
                 <div>
                     <h4>{$MOD.LBL_IMPORT_FILE_SETTINGS}&nbsp;{sugar_help text=$MOD.LBL_IMPORT_FILE_SETTINGS_HELP}</h4>
                     <table border=0 class="edit view">
-                    <tr>
-                        <td scope="row"><slot>{$MOD.LBL_DATE_FORMAT}</slot></td>
-                        <td ><slot><select tabindex='4' name='importlocale_dateformat'>{$DATEOPTIONS}</select></slot></td>
-                    </tr>
-                    <tr>
-                        <td scope="row"><slot>{$MOD.LBL_TIME_FORMAT}</slot></td>
-                        <td ><slot><select tabindex='4' name='importlocale_timeformat'>{$TIMEOPTIONS}</select></slot></td>
-                    </tr>
-                    <tr>
-                        <td scope="row"><slot>{$MOD.LBL_TIMEZONE}</slot></td>
-                        <td ><slot><select tabindex='4' name='importlocale_timezone'>{html_options options=$TIMEZONEOPTIONS selected=$TIMEZONE_CURRENT}</select></slot></td>
-                    </tr>
-                    <tr>
-                        <td scope="row"><slot>{$MOD.LBL_CURRENCY}</slot></td>
-                        <td ><slot>
-                            <select tabindex='4' id='currency_select' name='importlocale_currency' onchange='setSymbolValue(this.selectedIndex);setSigDigits();'>{$CURRENCY}</select>
-                            <input type="hidden" id="symbol" value="">
-                        </slot></td>
-                    </tr>
-                    <tr>
-                        <td scope="row"><slot>
-                            {$MOD.LBL_CURRENCY_SIG_DIGITS}:
-                        </slot></td>
-                        <td ><slot>
-                            <select id='sigDigits' onchange='setSigDigits(this.value);' name='importlocale_default_currency_significant_digits'>{$sigDigits}</select>
-                        </slot></td>
-                    </tr>
-                    <tr>
-                        <td scope="row"><slot>
-                            <i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:
-                        </slot></td>
-                        <td ><slot>
-                            <input type="text" disabled id="sigDigitsExample" name="sigDigitsExample">
-                        </slot></td>
-                    </tr>
+
+
                     <tr>
                         <td scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}</slot></td>
                         <td ><slot>
@@ -238,7 +205,6 @@ textarea { width: 20em }
 enableQS(false);
 {/literal}{$getNameJs}{literal}
 {/literal}{$getNumberJs}{literal}
-{/literal}{$currencySymbolJs}{literal}
 	setSymbolValue(document.getElementById('currency_select').selectedIndex);
 	setSigDigits();
 
