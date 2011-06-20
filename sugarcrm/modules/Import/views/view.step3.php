@@ -175,16 +175,6 @@ class ImportViewStep3 extends SugarView
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
 
-        //get significant digits preference
-        $significantDigits = isset($field_map['importlocale_default_currency_significant_digits'])? $field_map['importlocale_default_currency_significant_digits'] :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
-
-        //get number and decimal seps
-        $num_grp_sep = isset($field_map['importlocale_num_grp_sep'])? $field_map['importlocale_num_grp_sep'] : $current_user->getPreference('num_grp_sep');
-        $dec_sep = isset($field_map['importlocale_dec_sep'])? $field_map['importlocale_dec_sep'] : $current_user->getPreference('dec_sep');
-
-        //get localized name format
-        $localized_name_format = isset($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
-
         //set local char set
         if(isset ($field_map['importlocale_charset'])){
             $user_charset = $field_map['importlocale_charset'];
@@ -408,30 +398,6 @@ class ImportViewStep3 extends SugarView
         $this->ss->assign("rows",$columns);
 
         $this->ss->assign('datetimeformat', $GLOBALS['timedate']->get_cal_date_time_format());
-
-        // fill significant digits dropdown
-        $sigDigits = '';
-        for($i=0; $i<=6; $i++) {
-            if($significantDigits == $i) {
-               $sigDigits .= '<option value="'.$i.'" selected="true">'.$i.'</option>';
-            } else {
-               $sigDigits .= '<option value="'.$i.'">'.$i.'</option>';
-            }
-        }
-
-        $this->ss->assign('sigDigits', $sigDigits);
-
-        $this->ss->assign("NUM_GRP_SEP",
-            ( empty($num_grp_sep)
-                ? $sugar_config['default_number_grouping_seperator'] : $num_grp_sep ));
-        $this->ss->assign("DEC_SEP",
-            ( empty($dec_sep)
-                ? $sugar_config['default_decimal_seperator'] : $dec_sep ));
-        $this->ss->assign('getNumberJs', $locale->getNumberJs());
-
-        // Name display format
-        $this->ss->assign('default_locale_name_format', $localized_name_format);
-        $this->ss->assign('getNameJs', $locale->getNameJs());
 
         // handle building index selector
         global $dictionary, $current_language;

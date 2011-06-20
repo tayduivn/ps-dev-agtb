@@ -130,7 +130,50 @@ textarea { width: 20em }
             </slot></td>
         </tr>
 
-        
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_CURRENCY_SIG_DIGITS}:</slot></td>
+            <td ><slot><select id='sigDigits' onchange='setSigDigits(this.value);' name='importlocale_default_currency_significant_digits'>{$sigDigits}</select>
+            </slot></td>
+        </tr>
+        <tr>
+            <td scope="row"><slot><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:</slot></td>
+            <td ><slot><input type="text" disabled id="sigDigitsExample" name="sigDigitsExample"></slot></td>
+        </tr>
+
+
+
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_NUMBER_GROUPING_SEP}</slot></td>
+            <td ><slot>
+                <input tabindex='4' name='importlocale_num_grp_sep' id='default_number_grouping_seperator'
+                       type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}' onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
+            </slot></td>
+        </tr>
+        <tr>
+            <td scope="row"><slot>{$MOD.LBL_DECIMAL_SEP}</slot></td>
+            <td ><slot>
+                <input tabindex='4' name='importlocale_dec_sep' id='default_decimal_seperator'
+                       type='text' maxlength='1' size='1' value='{$DEC_SEP}' onkeydown='setSigDigits();' onkeyup='setSigDigits();'>
+            </slot></td>
+        </tr>
+
+        <tr>
+            <td scope="row" valign="top">{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}: </td>
+            <td  valign="top">
+                <input onkeyup="setPreview();" onkeydown="setPreview();" id="default_locale_name_format" type="text" tabindex='4' name="importlocale_default_locale_name_format" value="{$default_locale_name_format}">
+                <br />{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}
+            </td>
+        </tr>
+        <tr>
+            <td scope="row" valign="top"><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i> </td>
+            <td  valign="top"><input tabindex='4' id="nameTarget" name="no_value" id=":q" value="" style="border: none;" disabled size="50"></td>
+        </tr>
+
+
+
+
+
+
         <tr>
             <td scope="row" colspan="3">
                 <h5>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h5></td>
@@ -164,5 +207,9 @@ textarea { width: 20em }
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}{$currencySymbolJs}{literal}
+{/literal}{$getNumberJs}{literal}
+{/literal}{$getNameJs}{literal}
+setSigDigits();
+setSymbolValue(document.getElementById('currency_select').selectedIndex);
 </script>
 {/literal}

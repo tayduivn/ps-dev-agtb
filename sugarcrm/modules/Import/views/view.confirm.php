@@ -183,17 +183,60 @@ class ImportViewConfirm extends SugarView
         $rows = $this->getSampleSet($importFile);
 
 
-
+        $this->ss->assign('getNumberJs', $locale->getNumberJs());
         $this->setImportFileCharacterSet($importFile);
         $this->setDateTimeProperties();
         $this->setCurrencyOptions();
-
+        $this->setNumberFormatOptions();
+        $this->setNameFormatProperties();
+        
         $importMappingJS = $this->getImportMappingJS();
         
         $this->ss->assign("SAMPLE_ROWS",$rows);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS ));
         $this->ss->display('modules/Import/tpls/confirm.tpl');
     }
+
+
+    private function setNameFormatProperties($field_map = array())
+    {
+        global $locale, $current_user;
+        
+        $localized_name_format = isset($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
+        $this->ss->assign('default_locale_name_format', $localized_name_format);
+        $this->ss->assign('getNameJs', $locale->getNameJs());
+
+    }
+
+    private function setNumberFormatOptions($field_map = array())
+    {
+        global $locale, $current_user, $sugar_config;
+
+        $num_grp_sep = isset($field_map['importlocale_num_grp_sep'])? $field_map['importlocale_num_grp_sep'] : $current_user->getPreference('num_grp_sep');
+        $dec_sep = isset($field_map['importlocale_dec_sep'])? $field_map['importlocale_dec_sep'] : $current_user->getPreference('dec_sep');
+
+        $this->ss->assign("NUM_GRP_SEP",( empty($num_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $num_grp_sep ));
+        $this->ss->assign("DEC_SEP",( empty($dec_sep)? $sugar_config['default_decimal_seperator'] : $dec_sep ));
+
+
+        $significantDigits = isset($field_map['importlocale_default_currency_significant_digits']) ? $field_map['importlocale_default_currency_significant_digits']
+                                :  $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
+
+        $sigDigits = '';
+        for($i=0; $i<=6; $i++)
+        {
+            if($significantDigits == $i)
+            {
+                $sigDigits .= '<option value="'.$i.'" selected="true">'.$i.'</option>';
+            } else
+            {
+                $sigDigits .= '<option value="'.$i.'">'.$i.'</option>';
+            }
+        }
+
+        $this->ss->assign('sigDigits', $sigDigits);
+    }
+
 
     private function setCurrencyOptions($field_map = array() )
     {
@@ -380,7 +423,7 @@ YAHOO.util.Event.onDOMReady(function(){
 EOJAVASCRIPT;
     }
 
-        /**
+    /**
      * Displays the Smarty template for an error
      *
      * @param string $message error message to show
