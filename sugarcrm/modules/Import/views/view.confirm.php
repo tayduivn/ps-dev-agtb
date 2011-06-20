@@ -117,7 +117,7 @@ class ImportViewConfirm extends SugarView
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config, $locale;
 
-
+        //echo "<pre>";print_r($_REQUEST);die();
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
         $this->ss->assign("SOURCE", $_REQUEST['source']);
@@ -125,6 +125,7 @@ class ImportViewConfirm extends SugarView
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
+        $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
 
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
@@ -135,7 +136,6 @@ class ImportViewConfirm extends SugarView
         $uploadFile = new UploadFile('userfile');
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
         {
-
             //file extension should be set to csv ONLY
             $uploadedFileExtension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
             if(empty($uploadedFileExtension) || $uploadedFileExtension != 'csv' ){
@@ -147,7 +147,8 @@ class ImportViewConfirm extends SugarView
             $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
             $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
-        else {
+        else
+        {
             $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
             return;
         }
@@ -156,12 +157,28 @@ class ImportViewConfirm extends SugarView
 
         // Now parse the file and look for errors
         $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
-        $importFile->autoDetectCSVProperties();
 
-        $this->ss->assign("CUSTOM_DELIMITER", $importFile->getFieldDelimeter() );
-        $this->ss->assign("CUSTOM_ENCLOSURE", $importFile->getFieldEnclosure() );
-        $hasHeader = $importFile->hasHeaderRow() ? " CHECKED" : "";
-        $this->ss->assign("HAS_HEADER_CHECKED", $hasHeader);
+        if( $this->shouldAutoDetectProperties($importSource) )
+        {
+            $GLOBALS['log']->fatal("Auto detecing csv properties...");
+            $importFile->autoDetectCSVProperties();
+            $delimeter = $importFile->getFieldDelimeter();
+            $enclosure = $importFile->getFieldEnclosure();
+            $hasHeader = $importFile->hasHeaderRow();
+        }
+        else
+        {
+            $GLOBALS['log']->fatal("Using import map for import properties.");
+            $import_map_seed = $this->getImportMap($importSource);
+            $delimeter = $import_map_seed->delimiter;
+            $enclosure = htmlentities($import_map_seed->enclosure);
+            $hasHeader = $import_map_seed->has_header;
+        }
+
+        $this->ss->assign("CUSTOM_DELIMITER",  $delimeter);
+        $this->ss->assign("CUSTOM_ENCLOSURE",  $enclosure);
+        $hasHeaderFlag = $hasHeader ? " CHECKED" : "";
+        $this->ss->assign("HAS_HEADER_CHECKED", $hasHeaderFlag);
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
@@ -197,6 +214,48 @@ class ImportViewConfirm extends SugarView
         $this->ss->display('modules/Import/tpls/confirm.tpl');
     }
 
+    private function shouldAutoDetectProperties($importSource)
+    {
+        if($importSource == 'csv')
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    private function getImportMap($importSource)
+    {
+        if ( strncasecmp("custom:",$importSource,7) == 0)
+        {
+            $id = substr($importSource,7);
+            $import_map_seed = new ImportMap();
+            $import_map_seed->retrieve($id, false);
+
+            $this->ss->assign("SOURCE_ID", $import_map_seed->id);
+            $this->ss->assign("SOURCE_NAME", $import_map_seed->name);
+            $this->ss->assign("SOURCE", $import_map_seed->source);
+        }
+        else
+        {
+            $classname = 'ImportMap' . ucfirst($importSource);
+            if ( file_exists("modules/Import/{$classname}.php") )
+                require_once("modules/Import/{$classname}.php");
+            elseif ( file_exists("custom/modules/Import/{$classname}.php") )
+                require_once("custom/modules/Import/{$classname}.php");
+            else
+            {
+                require_once("custom/modules/Import/ImportMapOther.php");
+                $classname = 'ImportMapOther';
+                $importSource = 'other';
+            }
+            if ( class_exists($classname) )
+            {
+                $import_map_seed = new $classname;
+                $this->ss->assign("SOURCE", $importSource);
+            }
+        }
+
+        return $import_map_seed;
+    }
 
     private function setNameFormatProperties($field_map = array())
     {
