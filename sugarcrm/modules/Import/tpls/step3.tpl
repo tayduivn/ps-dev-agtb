@@ -126,24 +126,7 @@ textarea { width: 20em }
     <td align="left" colspan="4" style="background: transparent;">
         <input title="{$MOD.LBL_ADD_ROW}" accessKey="" id="addrow" class="button" type="button"
             name="button" value="  {$MOD.LBL_ADD_ROW}  ">
-        <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleImportOptions" class="button" type="button"
-            name="button" value="  {$MOD.LBL_SHOW_ADVANCED_OPTIONS}  ">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    </td>
-</tr>
-<tr style="display: none;" id="importOptions">
-    <td valign="middle" colspan="4">
-        <table border="0" width="100%">
-        <tr>
-            <td valign="top" width="50%">
-                <div>
-                    <h4>{$MOD.LBL_IMPORT_FILE_SETTINGS}&nbsp;{sugar_help text=$MOD.LBL_IMPORT_FILE_SETTINGS_HELP}</h4>
-                    <table border=0 class="edit view">
-                    </table>
-                </div>
-            </td>
-        </tr>
-        </table>
     </td>
 </tr>
 </table>
