@@ -53,7 +53,7 @@ textarea { width: 20em }
 {/foreach}
     
 <input type="hidden" name="module" value="Import">
-<input type="hidden" name="import_type" value="{$TYPE}">
+<input type="hidden" name="import_type" value="{$smarty.request.import_type}">
 <input type="hidden" name="source" value="{$SOURCE}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="to_pdf" value="1">
