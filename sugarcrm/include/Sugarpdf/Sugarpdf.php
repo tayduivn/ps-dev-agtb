@@ -336,10 +336,18 @@ class Sugarpdf extends TCPDF
         $this->SetFont($fontFamily,$fontStyle,$fontSize);
         $this->SetTextColor(0, 0, 0);
         $even=true;
+        $firstrow = true;
         // LINES
         foreach($item as $k=>$line){
             $even=!$even;
             $h = $this->getLineHeightFromArray($line, $options["width"]);
+            // in the case when cell height is greater than page height
+            // need to adjust the current page number
+            // so the following output will not overlap the previous output
+            if ($this->getNumPages() != $this->getPage()) {
+                $this->setPage($this->getNumPages());
+            }
+            $firstcell = true;
             //CELLS
             foreach($line as $kk=>$cell){
                 $cellOptions = $options;
@@ -359,11 +367,23 @@ class Sugarpdf extends TCPDF
                     $this->SetFillColorArray($this->convertHTMLColorToDec($options['oddcolor']));
                     $cellOptions['fillstate']=1;
                 }
-                $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true, $options['stretch'][$kk], $cellOptions['ishtml']);
+
+                if ($firstrow) {
+                    $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true, $options['stretch'][$kk], $cellOptions['ishtml'], true, 0, false);
+                } else {
+                    if ($firstcell) {
+                        // add page only once (for the first cell)
+                        $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true,0,$cellOptions['ishtml'], true, 0, true);
+                        $firstcell = false;
+                    } else {
+                        $this->MultiCell($options["width"][$kk],$h,$value,$cellOptions['border'],$cellOptions['align'],$cellOptions['fillstate'],0,'','',true,0,$cellOptions['ishtml'], true, 0, false);
+                    }
+                }
                 
                 $this->SetFillColorArray($this->convertHTMLColorToDec($options['fill']));
             }
             $this->Ln();
+            $firstrow = false;
         }
         $this->SetFont($fontFamily,$fontStyle,$fontSize);
         $this->SetTextColor(0, 0, 0);

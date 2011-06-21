@@ -62,6 +62,7 @@ height: 10px;
 var numPages = {$numPages};
 var loadedPages = new Array();
 loadedPages[0] = '{$loadedPage}';
+var numCols = {$numCols};
 //END SUGARCRM flav=pro ONLY
 var activePage = {$activePage};
 var theme = '{$theme}';

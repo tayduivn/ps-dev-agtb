@@ -50,6 +50,8 @@ class Bug43395Test extends Sugar_PHPUnit_Framework_OutputTestCase
     
     public function testPersonLocaleNameFormattting()
     {
+        $GLOBALS['current_user']->setPreference('default_locale_name_format', 's f l');
+
     	self::$contact->createLocaleFormattedName = true;
     	self::$contact->_create_proper_name_field();
     	$this->assertContains('Mr.',self::$contact->name, 'Assert that _create_proper_name_field with createLocaleFormattedName set to true returns salutation');

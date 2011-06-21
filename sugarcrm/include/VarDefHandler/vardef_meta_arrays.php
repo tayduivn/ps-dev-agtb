@@ -245,7 +245,7 @@ $vardef_meta_array = array (
 			'custom_type' => array('id', 'link'),
 			'reportable' => array('false'),
 			'source' => array('non-db'),
-			'name' => array('created_by', 'parent_type', 'deleted', 'assigned_user_name','amount_usdollar', 'filename', 'file_mime_type', 'file_url'),
+			'name' => array('created_by', 'parent_type', 'deleted', 'assigned_user_name', 'filename', 'file_mime_type', 'file_url'),
 		//end exclusion
 		),
 

@@ -3208,18 +3208,18 @@ function unlinkTempFiles() {
  * @param bool include_dir True if we want to include directories in the
  * returned collection
  */
-function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(), $echo=false) {
+function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), $echo=false) {
 	// check skips
-	foreach($skip_dirs as $skipMe) {
-		if(strpos(clean_path($dir), $skipMe) !== false) {
-			return $the_array;
-		}
+    if (whetherNeedToSkipDir($dir, $skipDirs))
+	{
+	    return $theArray;
 	}
 
 	$d = dir($dir);
 
 	while($f = $d->read()) {
-	    if($f == "." || $f == "..") { // skip *nix self/parent
+	                                // bug 40793 Skip Directories array in upgradeWizard does not function correctly
+	    if($f == "." || $f == ".." || whetherNeedToSkipDir("$dir/$f", $skipDirs)) { // skip *nix self/parent
 	        continue;
 	    }
 
@@ -3230,20 +3230,20 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
     	}
 
 	    if(is_dir("$dir/$f")) {
-			if($include_dirs) { // add the directory if flagged
-				$the_array[] = clean_path("$dir/$f");
+			if($includeDirs) { // add the directory if flagged
+				$theArray[] = clean_path("$dir/$f");
 			}
 
 			// recurse in
-	        $the_array = uwFindAllFiles("$dir/$f/", $the_array, $include_dirs, $skip_dirs, $echo);
+	        $theArray = uwFindAllFiles("$dir/$f/", $theArray, $includeDirs, $skipDirs, $echo);
 	    } else {
-	        $the_array[] = clean_path("$dir/$f");
+	        $theArray[] = clean_path("$dir/$f");
 	    }
 
 
 	}
-	rsort($the_array);
-	return $the_array;
+	rsort($theArray);
+	return $theArray;
 }
 
 
@@ -4564,7 +4564,7 @@ function upgradeUserPreferences() {
 	 * For the CE version, we are checking to see that there are no entries enabled for PRO/ENT versions
 	 * we are checking for Tracker sessions, performance and queries.
 	 */
-	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt')) {
+	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt')) {
 		//Set tracker settings. Disable tracker session, performance and queries
 		$category = 'tracker';
 		$value = 1;
@@ -4925,7 +4925,7 @@ function upgradeModulesForTeam() {
     } //while
 
     //Update the team_set_id and default_team columns
-    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt'));
+    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
 
     //Update team_set_id
 	if($ce_to_pro_or_ent) {
@@ -5905,7 +5905,7 @@ function unlinkUpgradeFiles($version)
 	
 	if($version < '620')
 	{
-		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php)');
+		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php, Save.php)');
 
 		//Use a md5 comparison check to see if we can just remove the file where an exact match is found
 		if($version < '610')
@@ -5915,6 +5915,7 @@ function unlinkUpgradeFiles($version)
 			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
 	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
 	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
+			 'modules/DocumentRevisions/Save.php' => 'd7e39293a5fb4d605ca2046e7d1fcf28',
 	        );		
 		} else {
 			$dr_files = array(
@@ -5922,6 +5923,7 @@ function unlinkUpgradeFiles($version)
 			 'modules/DocumentRevisions/DetailView.php' => '20edf45dd785469c484fbddff1a3f8f2',
 	         'modules/DocumentRevisions/EditView.php' => 'fb31958496f04031b2851dcb4ce87d50',
 	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
+			 'modules/DocumentRevisions/Save.php' => '7fb62e4ebff879bafc07a08da62902aa',
 	        );
 		}
 	
@@ -5977,4 +5979,20 @@ if (!function_exists("getValidDBName"))
         }
         return strtolower ( $result ) ;
     }
+}
+
+/**
+ * Whether directory exists within list of directories to skip
+ * @param string $dir dir to be checked
+ * @param array $skipDirs list with skipped dirs
+ * @return boolean
+ */
+function whetherNeedToSkipDir($dir, $skipDirs) 
+{
+    foreach($skipDirs as $skipMe) {
+		if(strpos( clean_path($dir), $skipMe ) !== false) {
+			return true;
+		}
+	}
+    return false;
 }

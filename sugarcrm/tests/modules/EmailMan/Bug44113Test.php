@@ -14,8 +14,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
 	{
-
-	    $GLOBALS['current_user']->is_admin = '1';
+        $GLOBALS['current_user']->is_admin = '1';
 
           // email_xss settings to be saved using config_override
         $this->email_xss = array(
@@ -32,7 +31,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
 		unset($this->cfg);
         unset($this->emailMan);
         unset($this->email_xss);
-        
+        unset($GLOBALS['current_user']);
 
 	}
 

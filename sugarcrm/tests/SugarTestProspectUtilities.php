@@ -45,17 +45,15 @@ class SugarTestProspectUtilities
 
     public static function createProspect($id = '') 
     {
-        //$time = mt_rand();
-    	$first_name = 'SugarProspectFirst';
+        $first_name = 'SugarProspectFirst';
     	$last_name = 'SugarProspectLast';
     	$email1 = 'prospect@sugar.com';
 		$title = 'Test prospect title';
     	$prospect = new Prospect();
-        $prospect->first_name = $first_name . $time;
+        $prospect->first_name = $first_name;
         $prospect->last_name = $last_name ;
-		$prospect->title = $title ;
-        //$contact->email1 = 'contact@'. $time. 'sugar.com';
-		$contact->email1 = 'prospect@184395988sugar.com';
+		$prospect->title = $title;
+        $prospect->email1 = 'prospect@sugar.com';
 		  
         if(!empty($id))
         {

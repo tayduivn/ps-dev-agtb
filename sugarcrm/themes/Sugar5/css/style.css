@@ -1179,6 +1179,7 @@ div.indent_right {
     padding-top: 10px;
     text-align: center;
     padding-bottom: 5px;
+    clear: both;
 }
 
 #themePicker, #langPicker 

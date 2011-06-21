@@ -26,15 +26,15 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
- 
-require_once 'include/MVC/Controller/SugarController.php';
-require_once 'include/MVC/View/views/view.classic.php';
-require_once 'include/MVC/View/views/view.classic.config.php';
+require_once 'include/EditView/SubpanelQuickCreate.php';
 
 class Bug39610Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        global $app_strings, $app_list_strings;
+        $app_strings = return_application_language($GLOBALS['current_language']);
+        $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
     
@@ -46,13 +46,21 @@ class Bug39610Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testUseCustomViewAndCustomClassName()
     {
-        $target_module = 'Accounts';
+        $target_module = 'Contacts';
         sugar_mkdir('custom/modules/'. $target_module . '/views/',null,true);
-        if( $fh = @fopen('custom/modules/'. $target_module . '/views/view.subpanelquickcreate.php', 'w') )
+        if( $fh = @fopen('custom/modules/'. $target_module . '/views/view.edit.php', 'w') )
         {
 $string = <<<EOQ
 <?php
-class CustomAccountsSubpanelQuickCreate {};
+class CustomContactsViewEdit
+{
+     var \$useForSubpanel = false;
+
+     public function CustomContactsViewEdit() 
+     {
+          \$GLOBALS['CustomContactsSubpanelQuickCreated'] = true;
+     }
+};
 ?>
 EOQ;
             fputs( $fh, $string);
@@ -60,62 +68,23 @@ EOQ;
         }
 
         
-        $_REQUEST = array(
-            'module' => 'Home',
-            'target_module' => $target_module,
-            'action' => 'SubpanelCreates',
-            );
-        $controller = new SugarControllerMock;
-        $controller->setup();
-        $controller->do_action = 'SubpanelCreates';
-        $controller->process();
-        $GLOBALS['app']->controller = $controller;
-        $view = new ViewClassicMock();
-		$view->init(loadBean($target_module));
-        $GLOBALS['current_view'] = $view;
-        ob_start();
-        $view->process();
-        ob_clean();
-        
-        $this->assertEquals('CustomAccountsSubpanelQuickCreate', $view->_sqc);
-        
+        $subpanelMock = new SubpanelQuickCreateMockBug39610Test($target_module, 'SubpanelQuickCreate');
+        $this->assertTrue(!empty($GLOBALS['CustomContactsSubpanelQuickCreated']), "Assert that CustomContactsEditView constructor was called");
         @unlink('custom/modules/'. $target_module . '/views/view.subpanelquickcreate.php');
     }
 
 }
 
-class SugarControllerMock extends SugarController
-{
-    public $do_action;
-    
-    public function callLegacyCode()
-    {
-        return parent::callLegacyCode();
-    }
-}
 
-class ViewClassicMock extends ViewClassic
+class SubpanelQuickCreateMockBug39610Test extends SubpanelQuickCreate
 {
-    var $_sqc = '';
-    
-    public function includeClassicFile($file)
-    {
-        global $sqc;
-        ob_clean();
-        
-        // BEGIN DUPLICATE FROM SugarView::includeClassicFile
-        
-        global $sugar_config, $theme, $current_user, $sugar_version, $sugar_flavor, $mod_strings, $app_strings, $app_list_strings, $action, $timezones;
-        global $gridline, $request_string, $modListHeader, $dashletData, $authController, $locale, $currentModule, $import_bean_map, $image_path, $license;
-        global $user_unique_key, $server_unique_key, $barChartColors, $modules_exempt_from_availability_check, $dictionary, $current_language, $beanList, $beanFiles, $sugar_build, $sugar_codename;
-        global $timedate, $login_error; // cn: bug 13855 - timedate not available to classic views.
-        $currentModule = $this->module;
-        require_once ($file);
-       
-        // END DUPLICATE FROM SugarView::includeClassicFile
-        
-        if (is_object($sqc)) {
-            $this->_sqc = get_class($sqc);
-        }            
-    }    
+	public function SubpanelQuickCreateMockBug39610Test($module, $view='QuickCreate', $proccessOverride = false)
+	{
+		parent::SubpanelQuickCreate($module, $view, $proccessOverride);	
+	}
+	
+	public function process()
+	{
+		//no-op
+	}
 }

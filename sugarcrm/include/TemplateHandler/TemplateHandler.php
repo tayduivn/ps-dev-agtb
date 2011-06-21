@@ -428,7 +428,8 @@ class TemplateHandler {
                             $shippingKey = SugarArray::staticGet($f, 'displayParams.shippingKey');
                             $additionalFields = SugarArray::staticGet($f, 'displayParams.additionalFields');
                             $sqs_objects[$name] = $qsd->getQSAccount($nameKey, $idKey, $billingKey, $shippingKey, $additionalFields);
-                        } 
+
+                        }
                     } else {
                         $sqs_objects[$name] = $qsd->getQSParent($field['module']);
                         if(!isset($field['field_list']) && !isset($field['populate_list'])) {

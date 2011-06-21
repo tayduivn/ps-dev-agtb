@@ -241,7 +241,11 @@ class ModuleBuilderController extends SugarController
 
             //clear "is_admin_for_module" cache
             $sessionVar = 'MLA_'.$current_user->user_name;
-            if (isset($_SESSION[$sessionVar][$info['name']])) unset($_SESSION[$sessionVar][$info['name']]);
+            foreach ($mb->packages as $package) {
+                foreach ($package->modules as $module) {
+                    $_SESSION[$sessionVar][$package->name . '_' . $module->name] = true;
+                }
+            }
 
             //recreate acl cache
             $actions = ACLAction::getUserActions($current_user->id, true);

@@ -74,7 +74,7 @@ class Bug43805Test extends Sugar_PHPUnit_Framework_TestCase
         $current_user = SugarTestUserUtilities::createAnonymousUser();;
         $this->_prospects[] = self::createProspect();
         $this->_prospectList = self::createProspectList($this->_prospects[0]);
-        self::attachProspectToProspectList($this->_prospectList, $this->_prospects[1]);
+        self::attachProspectToProspectList($this->_prospectList, $this->_prospects[0]);
     }
 
     /**
