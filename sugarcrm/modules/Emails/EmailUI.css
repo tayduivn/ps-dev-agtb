@@ -259,6 +259,8 @@ li.yuimenuitem-disabled {
 }
 #lefttabs .yui-content {
     border: none;  
+   	overflow: auto;
+    
 }
 
 #lefttabs .yui-dt-empty {
