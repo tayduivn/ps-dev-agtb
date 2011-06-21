@@ -161,12 +161,15 @@ class ImportViewConfirm extends SugarView
         {
             $GLOBALS['log']->fatal("Auto detecing csv properties...");
             $importFile->autoDetectCSVProperties();
+            $importFileMap = array();
             $this->ss->assign("SOURCE", 'csv');
         }
         else
         {
             $GLOBALS['log']->fatal("Using import map for import properties." . $importSource);
-            $importFile->setImportFileMap( $this->getImportMap($importSource) );
+            $impotMapSeed = $this->getImportMap($importSource);
+            $importFile->setImportFileMap($impotMapSeed);
+            $importFileMap = $impotMapSeed->getMapping();
         }
         
         $delimeter = $importFile->getFieldDelimeter();
@@ -201,10 +204,10 @@ class ImportViewConfirm extends SugarView
 
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
         $this->setImportFileCharacterSet($importFile);
-        $this->setDateTimeProperties();
-        $this->setCurrencyOptions();
-        $this->setNumberFormatOptions();
-        $this->setNameFormatProperties();
+        $this->setDateTimeProperties($importFileMap);
+        $this->setCurrencyOptions($importFileMap);
+        $this->setNumberFormatOptions($importFileMap);
+        $this->setNameFormatProperties($importFileMap);
         
         $importMappingJS = $this->getImportMappingJS();
         
@@ -334,8 +337,11 @@ eoq;
         global $current_user, $sugar_config;
 
         $timeFormat = $current_user->getUserDateTimePreferences();
-        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
-        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
+        $defaultTimeOption = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : $timeFormat['time'];
+        $defaultDateOption = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : $timeFormat['date'];
+
+        $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $defaultTimeOption);
+        $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $defaultDateOption);
 
         // get list of valid timezones
         $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
