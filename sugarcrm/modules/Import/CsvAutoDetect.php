@@ -168,16 +168,43 @@ class CsvAutoDetect {
             return false;
         }
 
-        // checking heading
-        $heading = true;
+        $total_count = count($this->_parser->data[0]);
+        if ($total_count == 0) {
+            return false;
+        }
+
+        if (!isset($GLOBALS['beanList'][$module])) {
+            return false;
+        }
+
+        $bean = new $GLOBALS['beanList'][$module]();
+
+        $match_count = 0;
+
+        // process only the first row
         foreach ($this->_parser->data[0] as $val) {
-            // if it contains number, then it's probably not a header
-            // this can be very unreliable, but now way this can be 100%
-            $ret = preg_match("/[0-9]/", $val);
-            if ($ret) {
-                $heading = false;
-                break;
+            foreach ($bean->field_defs as $field_name=>$defs) {
+
+                // check if the CSV item matches field name
+                if (!strcasecmp($val, $field_name)) {
+                    $match_count++;
+                    break;
+                }
+                // check if the CSV item is part of the label
+                else if (isset($defs['vname']) && isset($GLOBALS['app_strings'][$defs['vname']])) {
+                    if (stripos($GLOBALS['app_strings'][$defs['vname']], $val) !== false) {
+                        $match_count++;
+                        break;
+                    }
+                }
             }
+        }
+
+        // if more than 50% matched, consider it a header
+        if ($match_count/$total_count >= 0.5) {
+            $heading = true;
+        } else {
+            $heading = false;
         }
 
         return true;
