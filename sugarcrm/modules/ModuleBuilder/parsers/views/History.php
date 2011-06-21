@@ -61,7 +61,6 @@ class History
                 }
             }
         }
-
         // now sort the files, oldest first
         if (count ( $this->_list ) > 0)
         {
@@ -112,14 +111,7 @@ class History
      */
     function getNth ($index)
     {
-        $value = end ( $this->_list ) ;
-        $i = 0 ;
-        while ( $i < $index )
-        {
-            $value = prev ( $this->_list ) ;
-            $i ++ ;
-        }
-        return $value ;
+        return isset( $this->_list[ $index ] ) ? $this->_list[ $index ] : false;
     }
 
     /*
@@ -141,7 +133,6 @@ class History
             $time = $now->__get('ts');
             $retries ++ ;
         }
-
         // now we have a unique filename, copy the file into the history
         copy ( $path, $this->_previewFilename . "_" . $time ) ;
         $this->_list [ $time ] = $time ;

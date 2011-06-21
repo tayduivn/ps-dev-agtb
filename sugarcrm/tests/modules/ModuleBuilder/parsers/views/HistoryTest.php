@@ -4,7 +4,6 @@ require_once("modules/ModuleBuilder/parsers/views/History.php");
 
 class HistoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     /**
      * @var string
      */
@@ -17,6 +16,7 @@ class HistoryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        //can't use sys_get_temp_dir() because it doesn't work on Windows 7
         $this->_path = tempnam(dirname(__FILE__), 'history');
         $this->_history = new History($this->_path);
     }
@@ -39,24 +39,6 @@ class HistoryTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(file_exists($this->_path), '->undoRestore removes file');
     }
 
-    public function testPositioning()
-    {
-        $other_file = tempnam(dirname(__FILE__), 'history');
-        
-        $el1 = $this->_history->append($other_file);
-        $el2 = $this->_history->append($other_file);
-        $el3 = $this->_history->append($other_file);
-
-        $this->assertEquals($this->_history->getCount(), 3);
-        $this->assertEquals($this->_history->getFirst(), $el3);
-        $this->assertEquals($this->_history->getLast(), $el1);
-        $this->assertEquals($this->_history->getNth(1), $el2);
-        $this->assertEquals($this->_history->getNext(), $el1);
-        $this->assertFalse($this->_history->getNext());
-
-        unlink($other_file);
-    }
-
     private function getHistoryDir()
     {
         return dirname($this->_path) . DIRECTORY_SEPARATOR . md5(basename($this->_path));
@@ -64,7 +46,7 @@ class HistoryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        if(file_exists($this->_path)) unlink($this->_path);
-        rmdir_recursive($this->getHistoryDir());
+        @unlink($this->_path);
+        @rmdir($this->getHistoryDir());
     }
 }
