@@ -576,10 +576,6 @@ $GLOBALS['sugar_config']['lock_subpanels'] = $locked;
 
 $sugar_smarty->display('modules/Users/DetailView.tpl');
 
-if(SugarOAuthServer::enabled()) {
-    $subpanel = new SubPanelTiles($focus, 'UserOAuth');
-    $oauth_tokens = $subpanel->display(true,true);
-}
 // Roles Grid and Roles subpanel should not be displayed for group and portal users
 if($show_roles){
     echo "<div>";
