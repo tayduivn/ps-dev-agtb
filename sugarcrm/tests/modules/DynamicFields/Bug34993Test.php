@@ -74,7 +74,7 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
            unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test2_c.php');
         }
         
-        VardefManager::clearVardef();
+        VardefManager::clearVardef('Accounts', 'Account');
         VardefManager::refreshVardefs('Accounts', 'Account');
     }
 
