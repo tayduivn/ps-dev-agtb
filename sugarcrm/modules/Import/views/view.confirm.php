@@ -32,61 +32,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/SugarView.php');
+require_once('modules/Import/views/ImportView.php');
 require_once('modules/Import/ImportFile.php');
 require_once('modules/Import/ImportFileSplitter.php');
 
 require_once('include/upload_file.php');
 
-class ImportViewConfirm extends SugarView
+class ImportViewConfirm extends ImportView
 {
     const SAMPLE_ROW_SIZE = 3;
-
-    private $currentStep;
-
-    public function __construct($bean = null, $view_object_map = array())
-    {
-        parent::__construct($bean, $view_object_map);
-        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
-    }
- 	/**
-     * @see SugarView::getMenu()
-     */
-    public function getMenu(
-        $module = null
-        )
-    {
-        global $mod_strings, $current_language;
-        
-        if ( empty($module) )
-            $module = $_REQUEST['import_module'];
-        
-        $old_mod_strings = $mod_strings;
-        $mod_strings = return_module_language($current_language, $module);
-        $returnMenu = parent::getMenu($module);
-        $mod_strings = $old_mod_strings;
-        
-        return $returnMenu;
-    }
-    
- 	/**
-     * @see SugarView::_getModuleTab()
-     */
- 	protected function _getModuleTab()
-    {
-        global $app_list_strings, $moduleTabMap;
-        
- 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
-        if ( !empty($_REQUEST['module_tab']) )
-            return $_REQUEST['module_tab'];
-        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
-            return $moduleTabMap[$_REQUEST['import_module']];
-        // Default anonymous pages to be under Home
-        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
-            return 'Home';
-        else
-            return $_REQUEST['import_module'];
- 	}
  	
  	/**
 	 * @see SugarView::_getModuleTitleParams()
@@ -146,6 +100,10 @@ class ImportViewConfirm extends SugarView
             $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
             $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
+        elseif( !empty($_REQUEST['tmp_file']) )
+        {
+            $uploadFileName = $_REQUEST['tmp_file'];
+        }
         else
         {
             $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
@@ -161,12 +119,15 @@ class ImportViewConfirm extends SugarView
         {
             $GLOBALS['log']->fatal("Auto detecing csv properties...");
             $importFile->autoDetectCSVProperties();
+            $importFileMap = array();
             $this->ss->assign("SOURCE", 'csv');
         }
         else
         {
             $GLOBALS['log']->fatal("Using import map for import properties." . $importSource);
-            $importFile->setImportFileMap( $this->getImportMap($importSource) );
+            $impotMapSeed = $this->getImportMap($importSource);
+            $importFile->setImportFileMap($impotMapSeed);
+            $importFileMap = $impotMapSeed->getMapping();
         }
         
         $delimeter = $importFile->getFieldDelimeter();
@@ -201,10 +162,10 @@ class ImportViewConfirm extends SugarView
 
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
         $this->setImportFileCharacterSet($importFile);
-        $this->setDateTimeProperties();
-        $this->setCurrencyOptions();
-        $this->setNumberFormatOptions();
-        $this->setNameFormatProperties();
+        $this->setDateTimeProperties($importFileMap);
+        $this->setCurrencyOptions($importFileMap);
+        $this->setNumberFormatOptions($importFileMap);
+        $this->setNameFormatProperties($importFileMap);
         
         $importMappingJS = $this->getImportMappingJS();
         
@@ -334,8 +295,11 @@ eoq;
         global $current_user, $sugar_config;
 
         $timeFormat = $current_user->getUserDateTimePreferences();
-        $timeOptions = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : get_select_options_with_id($sugar_config['time_formats'], $timeFormat['time']);
-        $dateOptions = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : get_select_options_with_id($sugar_config['date_formats'], $timeFormat['date']);
+        $defaultTimeOption = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : $timeFormat['time'];
+        $defaultDateOption = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : $timeFormat['date'];
+
+        $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $defaultTimeOption);
+        $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $defaultDateOption);
 
         // get list of valid timezones
         $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');

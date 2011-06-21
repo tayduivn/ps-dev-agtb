@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/SugarView.php');
+require_once('modules/Import/views/ImportView.php');
 require_once('modules/Import/ImportFile.php');
 require_once('modules/Import/ImportFileSplitter.php');
 require_once('modules/Import/ImportCacheFiles.php');
@@ -40,53 +40,8 @@ require_once('modules/Import/ImportDuplicateCheck.php');
 
 require_once('include/upload_file.php');
 
-class ImportViewDupcheck extends SugarView
+class ImportViewDupcheck extends ImportView
 {
-    private $currentStep;
-
-    public function __construct($bean = null, $view_object_map = array())
-    {
-        parent::__construct($bean, $view_object_map);
-        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
-    }
- 	/**
-     * @see SugarView::getMenu()
-     */
-    public function getMenu(
-        $module = null
-        )
-    {
-        global $mod_strings, $current_language;
-
-        if ( empty($module) )
-            $module = $_REQUEST['import_module'];
-
-        $old_mod_strings = $mod_strings;
-        $mod_strings = return_module_language($current_language, $module);
-        $returnMenu = parent::getMenu($module);
-        $mod_strings = $old_mod_strings;
-
-        return $returnMenu;
-    }
-
- 	/**
-     * @see SugarView::_getModuleTab()
-     */
- 	protected function _getModuleTab()
-    {
-        global $app_list_strings, $moduleTabMap;
-
- 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
-        if ( !empty($_REQUEST['module_tab']) )
-            return $_REQUEST['module_tab'];
-        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
-            return $moduleTabMap[$_REQUEST['import_module']];
-        // Default anonymous pages to be under Home
-        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
-            return 'Home';
-        else
-            return $_REQUEST['import_module'];
- 	}
 
  	/**
 	 * @see SugarView::_getModuleTitleParams()
@@ -134,6 +89,7 @@ class ImportViewDupcheck extends SugarView
         $idc = new ImportDuplicateCheck($this->bean);
         $chooser_array[1] = $idc->getDuplicateCheckIndexes();
 
+        $field_map = $this->getImportMap();
         //check for saved entries from mapping
         foreach($chooser_array[1] as $ck=>$cv){
             if(isset($field_map['dupe_'.$ck])){
@@ -163,6 +119,21 @@ class ImportViewDupcheck extends SugarView
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
 
         $this->ss->display('modules/Import/tpls/dupcheck.tpl');
+    }
+
+    private function getImportMap()
+    {
+        if( !empty($_REQUEST['source_id']) )
+        {
+            $import_map_seed = new ImportMap();
+            $import_map_seed->retrieve($_REQUEST['source_id'], false);
+
+            return $import_map_seed->getMapping();
+        }
+        else
+        {
+            return array();
+        }
     }
 
     private function getImportableModules()
@@ -198,6 +169,12 @@ class ImportViewDupcheck extends SugarView
 
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
+
+document.getElementById('goback').onclick = function(){
+    document.getElementById('importstepdup').action.value = 'step3';
+    document.getElementById('importstepdup').to_pdf.value = '0';
+    return true;
+}
 
 document.getElementById('importnow').onclick = function(){
     // get the list of indices chosen
