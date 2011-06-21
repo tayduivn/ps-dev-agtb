@@ -1,3 +1,4 @@
+ibmf_custom
 ibmf_theme
 ibmf_altdata
 ibmf_httpauth
@@ -5,5 +6,5 @@ ibmf_myitems
 ibmf_paneltabs
 ibmf_pluschar
 ibmf_wildcardsrch
-ibmf_custom
 ibmf_sugaralerts
+ibmf_custominstallhooks

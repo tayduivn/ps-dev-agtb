@@ -328,7 +328,9 @@ check_cmd_status
 # send email notifications
 if [ "$NOTIFY" == "yes" ]; then
 	echo -e "Sending email notifications ... \c"
-	cat readme.txt | /bin/mail -r "$MAIL_FROM" -c "$MAIL_CC" -s "$MAIL_SUBJECT - $BRANCH_TARGET" "$MAIL_TO"
+	if [ "$MAIL_CC" != "" ]; then
+		MAIL_CC="-c \"$MAIL_CC\""
+	cat readme.txt | /bin/mail -r "$MAIL_FROM" $MAIL_CC -s "$MAIL_SUBJECT - $BRANCH_TARGET" "$MAIL_TO"
 	check_cmd_status
 fi
 
