@@ -35,6 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
  
 require_once('modules/Import/ImportCacheFiles.php');
+require_once('modules/Import/CsvAutoDetect.php');
 
 class ImportFile
 {
@@ -102,6 +103,21 @@ class ImportFile
      * True if the csv file has a header row.
      */
     private $_hasHeader = FALSE;
+
+    /**
+     * True if the csv file has a header row.
+     */
+    private $_detector = null;
+
+    /**
+     * CSV date format
+     */
+    private $_date_format = false;
+
+    /**
+     * CSV time format
+     */
+    private $_time_format = false;
 
     /**
      * The import file map that this import file inherits properties from.
@@ -371,9 +387,19 @@ class ImportFile
     //TODO: Add auto detection for field delim and qualifier properteis.
     public function autoDetectCSVProperties()
     {
-        //Stub for now
+        // defaults
         $this->_delimiter  = ",";
         $this->_enclosure  = '"';
+
+        $this->_detector = new CsvAutoDetect($this->_filename, 20);
+
+        $delimiter = $enclosure = false;
+
+        $ret = $this->_detector->getCsvSettings($delimiter, $enclosure);
+        if ($ret) {
+            $this->_delimiter = $delimiter;
+            $this->_enclosure = $enclosure;
+        }
     }
 
     public function getFieldDelimeter()
@@ -429,6 +455,24 @@ class ImportFile
 
     }
 
+    public function getDateFormat()
+    {
+        if ($this->_detector) {
+            $this->_date_format = $this->_detector->getDateFormat();
+        }
+
+        return $this->_date_format;
+    }
+
+    public function getTimeFormat()
+    {
+        if ($this->_detector) {
+            $this->_time_format = $this->_detector->getTimeFormat();
+        }
+
+        return $this->_time_format;
+    }
+
     public function setHeaderRow($hasHeader)
     {
         $this->_hasHeader = $hasHeader;
@@ -436,6 +480,17 @@ class ImportFile
 
     public function hasHeaderRow()
     {
+        $ret = false;
+        $heading = false;
+
+        if ($this->_detector) {
+            $ret = $this->_detector->hasHeader($heading);
+        }
+
+        if ($ret) {
+            $this->_hasHeader = $heading;
+        }
+
         return $this->_hasHeader;
     }
 
