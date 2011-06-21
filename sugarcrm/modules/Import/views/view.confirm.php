@@ -146,6 +146,10 @@ class ImportViewConfirm extends SugarView
             $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
             $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
+        elseif( !empty($_REQUEST['tmp_file']) )
+        {
+            $uploadFileName = $_REQUEST['tmp_file'];
+        }
         else
         {
             $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');

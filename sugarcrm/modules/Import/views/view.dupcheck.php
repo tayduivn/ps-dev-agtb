@@ -215,6 +215,12 @@ class ImportViewDupcheck extends SugarView
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 
+document.getElementById('goback').onclick = function(){
+    document.getElementById('importstepdup').action.value = 'step3';
+    document.getElementById('importstepdup').to_pdf.value = '0';
+    return true;
+}
+
 document.getElementById('importnow').onclick = function(){
     // get the list of indices chosen
     var chosen_indices = '';
