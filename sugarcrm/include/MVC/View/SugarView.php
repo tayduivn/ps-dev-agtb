@@ -1122,6 +1122,11 @@ EOHTML;
         if ( empty($module) )
             $module = $this->module;
 
+        //Need to make sure the mod_strings match the requested module or Menus may fail
+        $curr_mod_strings = $mod_strings;
+        $mod_strings = return_module_language ( $current_language, $module ) ;
+
+
         $final_module_menu = array();
 
         if (file_exists('modules/' . $module . '/Menu.php')) {
@@ -1155,6 +1160,8 @@ EOHTML;
             $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
         $module_menu = $final_module_menu;
+
+        $mod_strings = $curr_mod_strings;
 
         return $module_menu;
     }
