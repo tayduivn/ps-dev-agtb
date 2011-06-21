@@ -330,6 +330,7 @@ if [ "$NOTIFY" == "yes" ]; then
 	echo -e "Sending email notifications ... \c"
 	if [ "$MAIL_CC" != "" ]; then
 		MAIL_CC="-c \"$MAIL_CC\""
+	fi
 	cat readme.txt | /bin/mail -r "$MAIL_FROM" $MAIL_CC -s "$MAIL_SUBJECT - $BRANCH_TARGET" "$MAIL_TO"
 	check_cmd_status
 fi
