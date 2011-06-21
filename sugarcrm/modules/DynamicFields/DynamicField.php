@@ -538,10 +538,12 @@ class DynamicField {
             	//The second is to modify the column created in the custom table to set the default value
             	//We do this so that the existing entries in the custom table don't have the default value set
             	$field->default = '';
+            	$field->default_value = '';
                 $query = $field->get_db_add_alter_table($this->bean->table_name . '_cstm');
                 if(!empty($query)){
                 	$GLOBALS['db']->query($query);
 	                $field->default = $fmd->default_value;
+	                $field->default_value = $fmd->default_value;
 	                $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
 	                if(!empty($query)){
 	                	$GLOBALS['db']->query($query);
