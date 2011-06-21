@@ -67,7 +67,9 @@ class ViewModulefield extends SugarView
                                // fields we override this so don't create a new dynamic field instead of updating the existing field
 
         $isClone = false;
-        if(!empty($this->view_object_map['is_clone']) && $this->view_object_map['is_clone'])
+        if(!empty($this->view_object_map['is_clone']) && $this->view_object_map['is_clone']
+            && (strcmp($field_name, "name") != 0)   // bug #35767, do not allow cloning of name field
+            )
             $isClone = true;
 		/*
 		$field_types =  array('varchar'=>'YourField', 'int'=>'Integer', 'float'=>'Decimal','bool'=>'Checkbox','enum'=>'DropDown',
@@ -256,9 +258,11 @@ class ViewModulefield extends SugarView
 	        }
 		}
 		
-        if(!empty($vardef['studio']) && is_array($vardef['studio']) && !empty($vardef['studio']['no_duplicate']) && $vardef['studio']['no_duplicate'] == true) {
-            $fv->ss->assign('no_duplicate', true);
-        }
+        if((!empty($vardef['studio']) && is_array($vardef['studio']) && !empty($vardef['studio']['no_duplicate']) && $vardef['studio']['no_duplicate'] == true)
+           || (strcmp($field_name, "name") == 0)) // bug #35767, do not allow cloning of name field
+            {
+               $fv->ss->assign('no_duplicate', true);
+            }
 
         $fv->ss->assign('action',$action);
         $fv->ss->assign('isClone', ($isClone ? 1 : 0));
