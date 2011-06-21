@@ -522,8 +522,18 @@ function set_entry($session,$module_name, $name_value_list){
 
 	foreach($name_value_list as $value){
 		if($value['name'] == 'id'){
-			$seed->retrieve($value['value']);
-			break;
+			$result = $seed->retrieve($value['value']);
+            //bug: 44680 - check to ensure the user has access before proceeding.
+            if(is_null($result))
+            {
+                $error->set_error('no_access');
+		        return array('id'=>-1, 'error'=>$error->get_soap_array());
+            }
+            else
+            {
+                break;
+            }
+
 		}
 	}
 	foreach($name_value_list as $value){
