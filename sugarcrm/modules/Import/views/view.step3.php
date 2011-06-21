@@ -472,7 +472,7 @@ class ImportViewStep3 extends SugarView
         }
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 
-        return <<<EOJAVASCRIPT
+        $js1 = <<<EOJAVASCRIPT1
 <script type="text/javascript">
 <!--
 document.getElementById('goback').onclick = function(){
@@ -482,12 +482,17 @@ document.getElementById('goback').onclick = function(){
 
 document.getElementById('gonext').onclick = function(){
 
+EOJAVASCRIPT1;
+        $js2 = <<<EOJAVASCRIPT2
     // warning message that tells user that updates can not be undone
     ret = confirm(SUGAR.language.get("Import", 'LBL_CONFIRM_IMPORT'));
     if (!ret) {
         return false;
     }
 
+EOJAVASCRIPT2;
+
+        $js3 = <<<EOJAVASCRIPT3
     // validate form
     clear_all_errors();
     var form = document.getElementById('importstep3');
@@ -670,6 +675,12 @@ YAHOO.util.Event.onDOMReady(function(){
 -->
 </script>
 
-EOJAVASCRIPT;
+EOJAVASCRIPT3;
+
+        // only display warning ($js2) if it's update
+        if (isset($_REQUEST['type']) && $_REQUEST['type']=='update') {
+            return $js1 . $js2 . $js3;
+        }
+        return $js1 . $js3;
     }
 }
