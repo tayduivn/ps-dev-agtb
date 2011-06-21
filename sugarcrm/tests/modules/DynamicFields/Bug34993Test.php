@@ -57,12 +57,25 @@ class Bug34993Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
-        $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c'");
+        $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c')");
         if ( isset($this->_old_installing) ) {
             $GLOBALS['installing'] = $this->_old_installing;
         } else {
             unset($GLOBALS['installing']);
         }
+        
+        if(file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test_c.php'))
+        {
+           unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test_c.php');
+        }
+        
+        if(file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test2_c.php'))
+        {
+           unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test2_c.php');
+        }
+        
+        VardefManager::clearVardef();
+        VardefManager::refreshVardefs('Accounts', 'Account');
     }
 
     public function testCustomFieldDefaultValue()
