@@ -175,6 +175,7 @@ class InsideViewLogicHook {
                     $tplName = $tplName.$GLOBALS['current_language'].'.tpl';
                 }
                 $smarty->assign('URL',$url);
+                $smarty->assign('logo',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview.png'));
                 echo $smarty->fetch($tplName);
             } else {
                 echo "<div id='insideViewDiv' style='width:100%;height:400px;overflow:hidden'><iframe id='insideViewFrame' src='$url' style='border:0px; width:100%;height:480px;overflow:hidden'></iframe></div>";
