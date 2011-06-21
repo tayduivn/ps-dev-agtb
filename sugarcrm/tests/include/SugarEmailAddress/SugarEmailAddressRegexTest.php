@@ -45,6 +45,8 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
 	        array('f.grande@pokerspa.it',true),
 	        array('fabio.grande@softwareontheroad.it',true),
 	        array('fabio$grande@softwareontheroad.it',true),
+	        // For Bug 44473
+	        array('ettingshallprimaryschool@wolverhampton.gov.u',false),
 	        );
 	}
     
@@ -52,6 +54,7 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
      * @ticket 13765
      * @ticket 39186
      * @ticket 44338
+     * @ticket 44473
      * @dataProvider providerEmailAddressRegex
      */
 	public function testEmailAddressRegex($email, $valid) 
