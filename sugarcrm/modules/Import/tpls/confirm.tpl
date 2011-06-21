@@ -91,10 +91,7 @@ textarea { width: 20em }
                     <td>
                         <slot>
                             <select name="custom_enclosure" id="custom_enclosure">
-                                <option value="&quot;" selected="selected">{$MOD.LBL_OPTION_ENCLOSURE_DOUBLEQUOTE}</option>
-                                <option value="'">{$MOD.LBL_OPTION_ENCLOSURE_QUOTE}</option>
-                                <option value="">{$MOD.LBL_OPTION_ENCLOSURE_NONE}</option>
-                                <option value="other">{$MOD.LBL_OPTION_ENCLOSURE_OTHER}</option>
+                                {$IMPORT_ENCLOSURE_OPTIONS}
                             </select>
                             <input type="text" name="custom_enclosure_other" id="custom_enclosure_other" style="display: none; width: 5em;" maxlength="1" />
                             {sugar_help text=$MOD.LBL_ENCLOSURE_HELP}

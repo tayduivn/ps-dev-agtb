@@ -1735,6 +1735,13 @@ $app_list_strings = array (
         '1' => 'SSL',
         '2' => 'TLS',
     ),
+    'import_enclosure_options' =>
+    array (
+        '\'' => 'Single Quote (\')',
+        '"' => 'Double Quote (")',
+        '' => 'None',
+        'other' => 'Other:',
+    ),
     'link_target_dom' =>
     array (
         '_blank' => 'New Window',

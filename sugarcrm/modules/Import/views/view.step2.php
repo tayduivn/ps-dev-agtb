@@ -118,8 +118,7 @@ class ImportViewStep2 extends SugarView
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
-        $this->ss->assign("CUSTOM_DELIMITER",
-            ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
+        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
         $this->ss->assign("CUSTOM_ENCLOSURE",htmlentities(
             ( !empty($_REQUEST['custom_enclosure']) && $_REQUEST['custom_enclosure'] != 'other' 
                 ? $_REQUEST['custom_enclosure'] : 
@@ -178,92 +177,19 @@ class ImportViewStep2 extends SugarView
         }
         //End custom mapping
 
-        // special for importing from Outlook
-        if ($importSource == "outlook") {
-            $this->ss->assign("SOURCE", $importSource);
-            $this->ss->assign("SOURCE_NAME","Outlook ");
-            $this->ss->assign("HAS_HEADER_CHECKED"," CHECKED");
-        }
-        // see if the source starts with 'custom'
-        // if so, pull off the id, load that map, and get the name
-        elseif ( strncasecmp("custom:",$importSource,7) == 0) {
-            $id = substr($importSource,7);
-            $import_map_seed = new ImportMap();
-            $import_map_seed->retrieve($id, false);
-        
-            $this->ss->assign("SOURCE_ID", $import_map_seed->id);
-            $this->ss->assign("SOURCE_NAME", $import_map_seed->name);
-            $this->ss->assign("SOURCE", $import_map_seed->source);
-            if (isset($import_map_seed->delimiter)) 
-                $this->ss->assign("CUSTOM_DELIMITER", $import_map_seed->delimiter);
-            if (isset($import_map_seed->enclosure)) 
-                $this->ss->assign("CUSTOM_ENCLOSURE", htmlentities($import_map_seed->enclosure));
-            if ($import_map_seed->has_header)
-                $this->ss->assign("HAS_HEADER_CHECKED"," CHECKED");
-        }
-        else {
-            $classname = 'ImportMap' . ucfirst($importSource);
-            if ( file_exists("modules/Import/{$classname}.php") )
-                require_once("modules/Import/{$classname}.php");
-            elseif ( file_exists("custom/modules/Import/{$classname}.php") )
-                require_once("custom/modules/Import/{$classname}.php");
-            else {
-                require_once("custom/modules/Import/ImportMapOther.php");
-                $classname = 'ImportMapOther';
-                $importSource = 'other';
-            }
-            if ( class_exists($classname) ) {
-                $import_map_seed = new $classname;
-                if (isset($import_map_seed->delimiter)) 
-                    $this->ss->assign("CUSTOM_DELIMITER", $import_map_seed->delimiter);
-                if (isset($import_map_seed->enclosure)) 
-                    $this->ss->assign("CUSTOM_ENCLOSURE", htmlentities($import_map_seed->enclosure));
-                if ($import_map_seed->has_header)
-                    $this->ss->assign("HAS_HEADER_CHECKED"," CHECKED");
-                $this->ss->assign("SOURCE", $importSource);
-            }
-        }
-        
         // add instructions for anything other than custom_delimited
-        if ($importSource != 'other')
+        $instructions = array();
+        $lang_key = "CUSTOM";
+
+        for ($i = 1; isset($mod_strings["LBL_{$lang_key}_NUM_$i"]);$i++)
         {
-            $instructions = array();
-            $lang_key = '';
-            switch($importSource) {
-            	//BEGIN SUGARCRM flav!=sales ONLY
-                case "act":
-                    $lang_key = "ACT";
-                    break;
-                case "outlook":
-                    $lang_key = "OUTLOOK";
-                    break;
-                case "salesforce":
-                    $lang_key = "SF";
-                    break;
-                //END SUGARCRM flav!=sales ONLY
-                case "tab":
-                    $lang_key = "TAB";
-                    break;
-                case "csv":
-                    $lang_key = "CUSTOM";
-                    break;
-                case "other":
-                    break;
-                default:
-                    $lang_key = "CUSTOM_MAPPING_".strtoupper($import_map_seed->name);
-                    break;
-            }
-            if ( $lang_key != '' ) {
-                for ($i = 1; isset($mod_strings["LBL_{$lang_key}_NUM_$i"]);$i++) {
-                    $instructions[] = array(
-                        "STEP_NUM"         => $mod_strings["LBL_NUM_$i"],
-                        "INSTRUCTION_STEP" => $mod_strings["LBL_{$lang_key}_NUM_$i"],
-                    );
-                }
-                $this->ss->assign("INSTRUCTIONS_TITLE",$mod_strings["LBL_IMPORT_{$lang_key}_TITLE"]);
-                $this->ss->assign("instructions",$instructions);
-            }
+            $instructions[] = array(
+                "STEP_NUM"         => $mod_strings["LBL_NUM_$i"],
+                "INSTRUCTION_STEP" => $mod_strings["LBL_{$lang_key}_NUM_$i"],
+            );
         }
+        $this->ss->assign("INSTRUCTIONS_TITLE",$mod_strings["LBL_IMPORT_{$lang_key}_TITLE"]);
+        $this->ss->assign("instructions",$instructions);
         
         $this->ss->display('modules/Import/tpls/step2.tpl');
     }
