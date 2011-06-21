@@ -111,7 +111,14 @@ class History
      */
     function getNth ($index)
     {
-        return isset( $this->_list[ $index ] ) ? $this->_list[ $index ] : false;
+        $value = end ( $this->_list ) ;
+        $i = 0 ;
+        while ( $i < $index )
+        {
+            $value = prev ( $this->_list ) ;
+            $i ++ ;
+        }
+        return $value ;
     }
 
     /*
