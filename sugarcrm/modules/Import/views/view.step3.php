@@ -43,26 +43,7 @@ require_once('include/upload_file.php');
 class ImportViewStep3 extends ImportView
 {
 
- 	/**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams($browserTitle = false)
-	{
-	    global $mod_strings, $app_list_strings;
-
-	    $iconPath = $this->getModuleTitleIconPath($this->module);
-	    $returnArray = array();
-	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
-    	}
-    	else {
-    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
-    	}
-	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-        $returnArray[] = string_format($mod_strings['LBL_STEP_3_TITLE'], array($this->currentStep));
-        
-	    return $returnArray;
-    }
+    protected $pageTitleKey = 'LBL_STEP_3_TITLE';
 
  	/**
      * @see SugarView::display()
@@ -426,7 +407,7 @@ class ImportViewStep3 extends ImportView
         }
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 
-        $js1 = <<<EOJAVASCRIPT1
+        return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
 document.getElementById('goback').onclick = function(){
@@ -436,17 +417,14 @@ document.getElementById('goback').onclick = function(){
 
 document.getElementById('gonext').onclick = function(){
 
-EOJAVASCRIPT1;
-        $js2 = <<<EOJAVASCRIPT2
     // warning message that tells user that updates can not be undone
-    ret = confirm(SUGAR.language.get("Import", 'LBL_CONFIRM_IMPORT'));
-    if (!ret) {
-        return false;
+    if(document.getElementById('importstep3').import_type.value == 'update')
+    {
+        ret = confirm(SUGAR.language.get("Import", 'LBL_CONFIRM_IMPORT'));
+        if (!ret) {
+            return false;
+        }
     }
-
-EOJAVASCRIPT2;
-
-        $js3 = <<<EOJAVASCRIPT3
     // validate form
     clear_all_errors();
     var form = document.getElementById('importstep3');
@@ -629,12 +607,6 @@ YAHOO.util.Event.onDOMReady(function(){
 -->
 </script>
 
-EOJAVASCRIPT3;
-
-        // only display warning ($js2) if it's update
-        if (isset($_REQUEST['type']) && $_REQUEST['type']=='update') {
-            return $js1 . $js2 . $js3;
-        }
-        return $js1 . $js3;
+EOJAVASCRIPT;
     }
 }

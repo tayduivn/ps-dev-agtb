@@ -41,27 +41,7 @@ require_once('include/upload_file.php');
 class ImportViewConfirm extends ImportView
 {
     const SAMPLE_ROW_SIZE = 3;
- 	
- 	/**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams($browserTitle = false)
-	{
-	    global $mod_strings, $app_list_strings;
-	    
-	    $iconPath = $this->getModuleTitleIconPath($this->module);
-	    $returnArray = array();
-	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
-    	}
-    	else {
-    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
-    	}
-	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-    	$returnArray[] = string_format($mod_strings['LBL_CONFIRM_TITLE'], array($this->currentStep));
-
-	    return $returnArray;
-    }
+ 	protected $pageTitleKey = 'LBL_CONFIRM_TITLE';
     
  	/** 
      * @see SugarView::display()
@@ -379,6 +359,19 @@ document.getElementById('gonext').onclick = function(){
 document.getElementById('custom_enclosure').onchange = function()
 {
     document.getElementById('importconfirm').custom_enclosure_other.style.display = ( this.value == 'other' ? '' : 'none' );
+}
+
+document.getElementById('toggleImportOptions').onclick = function() {
+    if (document.getElementById('importOptions').style.display == 'none'){
+        document.getElementById('importOptions').style.display = '';
+        document.getElementById('toggleImportOptions').value='  {$mod_strings['LBL_HIDE_ADVANCED_OPTIONS']}  ';
+        document.getElementById('toggleImportOptions').title='{$mod_strings['LBL_HIDE_ADVANCED_OPTIONS']}';
+    }
+    else {
+        document.getElementById('importOptions').style.display = 'none';
+        document.getElementById('toggleImportOptions').value='  {$mod_strings['LBL_SHOW_ADVANCED_OPTIONS']}  ';
+        document.getElementById('toggleImportOptions').title='{$mod_strings['LBL_SHOW_ADVANCED_OPTIONS']}';
+    }
 }
 
 YAHOO.util.Event.onDOMReady(function(){
