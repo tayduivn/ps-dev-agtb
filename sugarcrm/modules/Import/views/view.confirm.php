@@ -381,6 +381,19 @@ document.getElementById('custom_enclosure').onchange = function()
     document.getElementById('importconfirm').custom_enclosure_other.style.display = ( this.value == 'other' ? '' : 'none' );
 }
 
+document.getElementById('toggleImportOptions').onclick = function() {
+    if (document.getElementById('importOptions').style.display == 'none'){
+        document.getElementById('importOptions').style.display = '';
+        document.getElementById('toggleImportOptions').value='  {$mod_strings['LBL_HIDE_ADVANCED_OPTIONS']}  ';
+        document.getElementById('toggleImportOptions').title='{$mod_strings['LBL_HIDE_ADVANCED_OPTIONS']}';
+    }
+    else {
+        document.getElementById('importOptions').style.display = 'none';
+        document.getElementById('toggleImportOptions').value='  {$mod_strings['LBL_SHOW_ADVANCED_OPTIONS']}  ';
+        document.getElementById('toggleImportOptions').title='{$mod_strings['LBL_SHOW_ADVANCED_OPTIONS']}';
+    }
+}
+
 YAHOO.util.Event.onDOMReady(function(){
     if($maxRecordsExceededJS)
     {
