@@ -134,6 +134,7 @@ class ImportViewDupcheck extends SugarView
         $idc = new ImportDuplicateCheck($this->bean);
         $chooser_array[1] = $idc->getDuplicateCheckIndexes();
 
+        $field_map = $this->getImportMap();
         //check for saved entries from mapping
         foreach($chooser_array[1] as $ck=>$cv){
             if(isset($field_map['dupe_'.$ck])){
@@ -163,6 +164,21 @@ class ImportViewDupcheck extends SugarView
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
 
         $this->ss->display('modules/Import/tpls/dupcheck.tpl');
+    }
+
+    private function getImportMap()
+    {
+        if( !empty($_REQUEST['source_id']) )
+        {
+            $import_map_seed = new ImportMap();
+            $import_map_seed->retrieve($_REQUEST['source_id'], false);
+
+            return $import_map_seed->getMapping();
+        }
+        else
+        {
+            return array();
+        }
     }
 
     private function getImportableModules()

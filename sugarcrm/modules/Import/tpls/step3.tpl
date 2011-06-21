@@ -45,8 +45,8 @@ textarea { width: 20em }
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
 <input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">
 <input type="hidden" name="import_type" value="{$TYPE}">
-<input type="hidden" name="source" value="{$SOURCE}">
-<input type="hidden" name="source_id" value="{$SOURCE_ID}">
+<input type="hidden" name="source" value="{$smarty.request.source}">
+<input type="hidden" name="source_id" value="{$smarty.request.source_id}">
 <input type="hidden" name="action" value="Step3">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="has_header" value="{$HAS_HEADER}">
@@ -65,7 +65,6 @@ textarea { width: 20em }
 <input type="hidden" name="importlocale_num_grp_sep" value="{$smarty.request.importlocale_num_grp_sep}">
 <input type="hidden" name="importlocale_dec_sep" value="{$smarty.request.importlocale_dec_sep}">
 <input type="hidden" name="importlocale_default_locale_name_format" value="{$smarty.request.importlocale_default_locale_name_format}">
-<input type="hidden" name="display_tabs_def">
 
 <div align="right">
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
