@@ -32,14 +32,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
     $delimiter = $enclosure = $heading = false;
 
-    $ret = $auto->getCsvSettings($delimiter, $enclosure, $heading);
+    $ret = $auto->getCsvSettings($delimiter, $enclosure);
     if ($ret) {
         echo "found delimiter = ".$delimiter."<br>";
         echo "found enclosure = ".$enclosure."<br>";
+    } else {
+        echo "couldn't find settings<br>";
+    }
+
+    $ret = $auto->hasHeader($heading);
+    if ($ret) {
         $header = $heading?'true':'false';
         echo "found heading = ".$header."<br>";
     } else {
-        echo "couldn't find settings<br>";
+        echo "couldn't determine header info<br>";
     }
 
     $date_format = $auto->getDateFormat();
@@ -71,28 +77,28 @@ class CsvAutoDetect {
     protected $_parsed = false;
 
     static protected $_date_formats = array(
-        '12/23/2010' => "/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/\d\d\d\d/",
-        '23/12/2010' => "/(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d\d\d\d/",
-        '2010/12/23' => "/\d\d\d\d\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/",
-        '12-23-2010' => "/(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-\d\d\d\d/",
-        '23-12-2010' => "/(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-\d\d\d\d/",
-        '2010-12-23' => "/\d\d\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])/",
-        '12.23.2010' => "/(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])\.\d\d\d\d/",
-        '23.12.2010' => "/(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d\d\d\d/",
-        '2010.12.23' => "/\d\d\d\d\.(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])/"
+        'm/d/Y' => "/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/\d\d\d\d/", // 12/23/2010
+        'd/m/Y' => "/(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/\d\d\d\d/", // 23/12/2010
+        'Y/m/d' => "/\d\d\d\d\/(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])/", // 2010/12/23
+        'm-d-Y' => "/(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])-\d\d\d\d/", // 12-23-2010
+        'd-m-Y' => "/(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[012])-\d\d\d\d/", // 23-12-2010
+        'Y-m-d' => "/\d\d\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])/", // 2010-12-23
+        'm.d.Y' => "/(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])\.\d\d\d\d/", // 12.23.2010
+        'd.m.Y' => "/(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.\d\d\d\d/", // 23.12.2010
+        'Y.m.d' => "/\d\d\d\d\.(0[1-9]|1[012])\.(0[1-9]|[12][0-9]|3[01])/" // 2010.12.23
     );
 
     static protected $_time_formats =  array(
-        '11:00:00pm' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])[am|pm]/",
-        '11:00:00PM' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])[AM|PM]/",
-        '11:00:00 pm' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) [am|pm]/",
-        '11:00:00 PM' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) [AM|PM]/",
-        '23:00:00' => "/(0[0-9]|1[0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9])/",
-        '11.00.00pm' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9])[am|pm]/",
-        '11.00.00PM' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9])[AM|PM]/",
-        '11.00.00 pm' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9]) [am|pm]/",
-        '11.00.00 PM' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9]) [AM|PM]/",
-        '23.00.00' => "/(0[0-9]|1[0-9]|2[0-4])\.([0-5][0-9])\.([0-5][0-9])/"
+        'h:i:sa' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])[am|pm]/", // 11:00:00pm
+        'h:i:sA' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])[AM|PM]/", // 11:00:00PM
+        'h:i:s a' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) [am|pm]/", // 11:00:00 pm
+        'h:i:s A' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) [AM|PM]/", // 11:00:00 PM
+        'H:i:s' => "/(0[0-9]|1[0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9])/", // 23:00:00
+        'h.i.sa' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9])[am|pm]/", // 11.00.00pm
+        'h.i.sA' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9])[AM|PM]/", // 11.00.00PM
+        'h.i.s a' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9]) [am|pm]/", // 11.00.00 pm
+        'h.i.s A' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9]) [AM|PM]/", // 11.00.00 PM
+        'H.i.s' => "/(0[0-9]|1[0-9]|2[0-4])\.([0-5][0-9])\.([0-5][0-9])/" // 23.00.00
     );
 
 
@@ -114,14 +120,15 @@ class CsvAutoDetect {
 
 
     /**
-     * To get the possible csv settings (delimiter, enclosure, heading)
+     * To get the possible csv settings (delimiter, enclosure).
+     * This function causes CSV to be parsed.
+     * So call this function before calling others.
      *
      * @param string $delimiter
      * @param string $enclosure
-     * @param bool $heading
      * @return bool true if settings are found, false otherwise
      */
-    public function getCsvSettings(&$delimiter, &$enclosure, &$heading) {
+    public function getCsvSettings(&$delimiter, &$enclosure) {
         // try parsing the file to find possible delimiter and enclosure
         $this->_parser->heading = false;
 
@@ -144,19 +151,34 @@ class CsvAutoDetect {
             return false;
         }
 
+        $this->_parsed = true;
+
+        return true;
+    }
+
+    /**
+     * To check CSV heading
+     *
+     * @param bool $heading true of it has header, false if not
+     * @return bool true if header is found, false if error
+     */
+    public function hasHeader(&$heading) {
+
+        if (!$this->_parsed) {
+            return false;
+        }
+
         // checking heading
         $heading = true;
         foreach ($this->_parser->data[0] as $val) {
             // if it contains number, then it's probably not a header
-            // this can be very unreliable, but...
+            // this can be very unreliable, but now way this can be 100%
             $ret = preg_match("/[0-9]/", $val);
             if ($ret) {
                 $heading = false;
                 break;
             }
         }
-
-        $this->_parsed = true;
 
         return true;
     }
