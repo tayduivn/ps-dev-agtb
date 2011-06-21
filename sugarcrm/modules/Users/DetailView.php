@@ -31,6 +31,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/DetailView/DetailView.php');
 require_once('include/export_utils.php');
 require_once('include/SugarOAuthServer.php');
+require_once('include/SubPanel/SubPanelTiles.php');
+
 global $current_user;
 global $theme;
 global $app_strings;
@@ -566,7 +568,6 @@ $GLOBALS['sugar_config']['lock_subpanels'] = true;
 //BEGIN SUGARCRM flav=pro ONLY
 // User Holidays subpanels should not be displayed for group and portal users
 if($show_roles){
-    require_once('include/SubPanel/SubPanelTiles.php');
     $subpanel = new SubPanelTiles($focus, 'UsersHolidays');
 
     $sugar_smarty->assign('USER_HOLIDAYS_SUBPANEL',$subpanel->display(true,true));
