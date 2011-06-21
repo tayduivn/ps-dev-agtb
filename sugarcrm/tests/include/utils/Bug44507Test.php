@@ -34,7 +34,7 @@ require_once('include/database/MysqliManager.php');
  */
 class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
 {    
-	var $originalGlobalDb;
+	var $disableCountQuery;
 	var $skipped = false;
 	
     public function setUp()
@@ -52,15 +52,11 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     	$randomTeam = SugarTestTeamUtilities::createAnonymousTeam();
         $randomTeam->add_user_to_team($GLOBALS['current_user']->id);
         
-	    //$this->useOutputBuffering = false;
+	    $this->useOutputBuffering = false;
 	    
-	    global $sugar_config, $dbinstances;
+	    global $sugar_config;
+	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
 	    $sugar_config['disable_count_query'] = true;
-	    $this->originalGlobalDb = $GLOBALS['db'];
-	    
-	    $mockDb = new Bug44507SqlManager();
-	    $GLOBALS['db'] = $mockDb;	   
-	    $dbinstances[''] = $mockDb; 
     }
     
     public function tearDown()
@@ -70,9 +66,9 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     		return;
     	}
     	
-    	global $db, $sugar_config, $dbinstances;
-    	$db = $this->originalGlobalDb;
-    	$dbinstances[''] = $db;
+    	global $sugar_config;
+    	$sugar_config['disable_count_query'] = $this->disableCountQuery;
+    	
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
@@ -80,30 +76,42 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testGetBeanSelectArray()
     {
+    	if($this->skipped)
+    	{
+    		return;
+    	}
+    	
     	//From EmailMarketing/DetailView this covers most of the cases where EmailTemplate module is queries against
-		global $db;
+		$localDb = new Bug44507SqlManager();
+		
+		global $dbinstances;
+		$tempDbInstances = $dbinstances;
+		$dbinstances[''] = $localDb;
+		
     	get_bean_select_array('true', 'EmailTemplate', 'name');
-    	$sql = $db->getExpectedSql();
+    	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
-    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");
+    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
     	
 		//From Emailmarketing/EditView
 		get_bean_select_array(true, 'EmailTemplate','name','','name');
-    	$sql = $db->getExpectedSql();
+    	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
-    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");	
+    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");	
 
     	//From Expressions/Expressions.php
     	get_bean_select_array(true, 'ACLRole','name');
-    	$sql = $db->getExpectedSql();
+    	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/acl_roles\.id/', $sql, 'Assert that acl_roles.id is not ambiguous');
-    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");
+    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
     	
     	//From Contracts/Contract.php
     	get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
-    	$sql = $db->getExpectedSql();
+    	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/contract_types\.id/', $sql, 'Assert that contract_types.id is not ambiguous');
-    	$this->assertFalse($db->checkError(), "Assert we could run SQL:{$sql}");    	
+    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");  
+
+    	$dbinstances = $tempDbInstances;
     }
 }
 
