@@ -119,16 +119,16 @@ class ImportViewStep3 extends SugarView
 
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
-        $sugar_config['import_max_records_per_file'] =
-            ( empty($sugar_config['import_max_records_per_file'])
-                ? 1000 : $sugar_config['import_max_records_per_file'] );
+        $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         // attempt to lookup a preexisting field map
         // use the custom one if specfied to do so in step 1
         $field_map = array();
         $default_values = array();
 		$ignored_fields = array();
-        if ( !empty( $_REQUEST['source_id'])) {
+        if ( !empty( $_REQUEST['source_id']))
+        {
+            $GLOBALS['log']->fatal("Loading import map properties.");
             $mapping_file = new ImportMap();
             $mapping_file->retrieve( $_REQUEST['source_id'],false);
             $_REQUEST['source'] = $mapping_file->source;
@@ -138,11 +138,13 @@ class ImportViewStep3 extends SugarView
             if (isset($mapping_file->enclosure))
                 $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
             $field_map = $mapping_file->getMapping();
+            //print_r($field_map);die();
 			$default_values = $mapping_file->getDefaultValues();
             $this->ss->assign("MAPNAME",$mapping_file->name);
             $this->ss->assign("CHECKMAP",'checked="checked" value="on"');
         }
-        else {
+        else
+        {
             // Try to see if we have a custom mapping we can use
             // based upon the where the records are coming from
             // and what module we are importing into
@@ -156,7 +158,9 @@ class ImportViewStep3 extends SugarView
                 $classname = 'ImportMapOther';
                 $_REQUEST['source'] = 'other';
             }
-            if ( class_exists($classname) ) {
+
+            if ( class_exists($classname) )
+            {
                 $mapping_file = new $classname;
                 if (isset($mapping_file->delimiter))
                     $_REQUEST['custom_delimiter'] = $mapping_file->delimiter;
@@ -167,22 +171,12 @@ class ImportViewStep3 extends SugarView
             }
         }
 
-        $this->ss->assign("CUSTOM_DELIMITER",
-            ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
-        $this->ss->assign("CUSTOM_ENCLOSURE",
-            ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
+        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
+        $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
-
-        //set local char set
-        if(isset ($field_map['importlocale_charset'])){
-            $user_charset = $field_map['importlocale_charset'];
-        }else{
-            $user_charset = $locale->getExportCharset();
-        }
-
-
+        
         $uploadFileName = $_REQUEST['file_name'];
 
         // Now parse the file and look for errors
@@ -282,11 +276,13 @@ class ImportViewStep3 extends SugarView
                 // see if we have a match
                 $selected = '';
                 if ( !empty($defaultValue) && !in_array($fieldname,$mappedFields)
-						&& !in_array($fieldname,$ignored_fields) ) {
+						&& !in_array($fieldname,$ignored_fields) )
+                {
                     if ( strtolower($fieldname) == strtolower($defaultValue)
                         || strtolower($fieldname) == str_replace(" ","_",strtolower($defaultValue))
                         || strtolower($displayname) == strtolower($defaultValue)
-                        || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) ) {
+                        || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) )
+                    {
                         $selected = ' selected="selected" ';
                         $defaultField = $fieldname;
                         $mappedFields[] = $fieldname;

@@ -120,7 +120,6 @@ class ImportViewConfirm extends SugarView
         //echo "<pre>";print_r($_REQUEST);die();
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
-        $this->ss->assign("SOURCE", $_REQUEST['source']);
         $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
@@ -162,10 +161,11 @@ class ImportViewConfirm extends SugarView
         {
             $GLOBALS['log']->fatal("Auto detecing csv properties...");
             $importFile->autoDetectCSVProperties();
+            $this->ss->assign("SOURCE", 'csv');
         }
         else
         {
-            $GLOBALS['log']->fatal("Using import map for import properties.");
+            $GLOBALS['log']->fatal("Using import map for import properties." . $importSource);
             $importFile->setImportFileMap( $this->getImportMap($importSource) );
         }
         
@@ -215,7 +215,7 @@ class ImportViewConfirm extends SugarView
 
     private function shouldAutoDetectProperties($importSource)
     {
-        if($importSource == 'csv')
+        if(empty($importSource) || $importSource == 'csv' )
             return TRUE;
         else
             return FALSE;
