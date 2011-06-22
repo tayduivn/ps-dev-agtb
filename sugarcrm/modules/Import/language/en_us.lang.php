@@ -115,7 +115,7 @@ $mod_strings = array (
     'LBL_TRY_AGAIN' => 'Try Again',
     'LBL_ERROR' => 'Error:',
     'LBL_IMPORT_ERROR_MIME_TYPE' => 'The type of file that you are attempting to upload cannot be used for importing. Please check to make sure that the file extension is .csv and that the file contains comma-separated values.',
-	'LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED' => 'The import file contains {0} rows. The optimal number of rows is {1}. More rows may slow the import process. Continue importing?',
+	'LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED' => 'The import file contains {0} rows. The optimal number of rows is {1}. More rows may slow the import process. Click OK to continue importing. Click Cancel to revise and re-upload the import file.',
     'ERR_IMPORT_SYSTEM_ADMININSTRATOR'  => 'You cannot import a system administrator user',
     'ERR_MULTIPLE' => 'Multiple columns have been defined with the same field name.',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required fields:',
@@ -316,6 +316,7 @@ $mod_strings = array (
     'LBL_EXTERNAL_SOURCE_HELP' => '',
     'LBL_EXAMPLE_FILE' => 'Download a sample CSV file',
     'LBL_CONFIRM_IMPORT' => 'Records created during the import process can be deleted in the next step for any reason. However, updates made to existing records during the import process cannot be undone. Start the import now?',
-    'LBL_CONFIRM_MAP_OVERRIDE' => 'Warning: You have already selected a custom mapping for this import, do you want to continue?'
+    'LBL_CONFIRM_MAP_OVERRIDE' => 'Warning: You have already selected a custom mapping for this import, do you want to continue?',
+    'LBL_EXTERNAL_FIELD' => 'External Field'
 );
 ?>
