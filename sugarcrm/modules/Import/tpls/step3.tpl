@@ -71,8 +71,20 @@ textarea { width: 20em }
 </div>
 
 <p>
-{$MOD.LBL_SELECT_FIELDS_TO_MAP}
+    {$MOD.LBL_SELECT_FIELDS_TO_MAP}
 </p>
+<br>
+{if $NOTETEXT != '' || $required_fields != ''}
+    <p>
+        <b>{$MOD.LBL_NOTES}</b>
+        <ul>
+            <li>{$MOD.LBL_REQUIRED_NOTE}{$required_fields}</li>
+            {$NOTETEXT}
+        </ul>
+    </p>
+{/if}
+
+
 <br />
 <table border="0" cellpadding="0" width="100%" id="importTable" class="detail view">
 {foreach from=$rows key=key item=item name=rows}
@@ -138,16 +150,6 @@ textarea { width: 20em }
 </tr>
 </table>
 {$JAVASCRIPT_CHOOSER}
-
-{if $NOTETEXT != '' || $required_fields != ''}
-<p>
-<b>{$MOD.LBL_NOTES}</b>
-<ul>
-<li>{$MOD.LBL_REQUIRED_NOTE}{$required_fields}</li>
-{$NOTETEXT}
-</ul>
-</p>
-{/if}
 
 <br />
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
