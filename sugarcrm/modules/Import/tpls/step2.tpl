@@ -67,7 +67,7 @@
         </tr>
         <tr>
             <td scope="row" colspan="3">
-                <h3>{$MOD.LBL_IMPORT_TYPE}&nbsp;<span class="required">*</span></h3></td>
+                <h3>{$MOD.LBL_IMPORT_TYPE}&nbsp;</h3></td>
           </tr>
           <tr>
             <td scope="row" colspan="3">
@@ -78,7 +78,7 @@
           <tr>
             <td scope="row" colspan="3">
                 <input class="radio" type="radio" name="type" value="update" />
-                &nbsp;{$MOD.LBL_UPDATE_BUTTON}
+                &nbsp;{$MOD.LBL_UPDATE_BUTTON} &nbsp;{sugar_help text=$MOD.LBL_UPDATE_BUTTON_HELP}
             </td>
           </tr>
 	</table>
@@ -95,7 +95,7 @@
           {if $smarty.foreach.saved.first}
           <tr>
             <td scope="row" colspan="3">
-                <h5>{$MOD.LBL_MY_SAVED}&nbsp;{sugar_help text=$MOD.LBL_MY_SAVED_HELP}</h5></td>
+                <h5>{$MOD.LBL_MY_SAVED}&nbsp;{sugar_help text=$savedMappingHelpText}</h5></td>
           </tr>
           {/if}
           <tr id="custom_import_{$smarty.foreach.saved.index}">
