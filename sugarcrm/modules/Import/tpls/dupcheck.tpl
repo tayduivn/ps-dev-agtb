@@ -49,7 +49,9 @@ textarea { width: 20em }
 <form enctype="multipart/form-data" real_id="importstepdup" id="importstepdup" name="importstepdup" method="POST" action="index.php">
 
 {foreach from=$smarty.request key=k item=v}
-<input type="hidden" name="{$k}" value="{$v}">
+    {if $k neq 'current_step'}
+    <input type="hidden" name="{$k}" value="{$v}">
+    {/if}
 {/foreach}
 
 <input type="hidden" name="module" value="Import">
@@ -61,7 +63,8 @@ textarea { width: 20em }
 <input type="hidden" name="display_tabs_def">
 <input type="hidden" id="enabled_dupes" name="enabled_dupes" value="">
 <input type="hidden" id="disabled_dupes" name="disabled_dupes" value="">
-
+<input type="hidden" id="current_step" name="current_step" value="{$CURRENT_STEP}">
+    
     <br />
     <div style="padding-left:20px">
     <table border="0" cellpadding="30" id="importTable" class="detail view" style="width:60% !important;">
