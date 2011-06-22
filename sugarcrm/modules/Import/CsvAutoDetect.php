@@ -195,7 +195,6 @@ class CsvAutoDetect {
                 // check if the CSV item is part of the label
                 else if (isset($defs['vname']) && isset($mod_strings[$defs['vname']])) {
                     if (stripos($mod_strings[$defs['vname']], $val) !== false) {
-                        error_log('jchen: found in mod string='.$defs['vname']);
                         $match_count++;
                         break;
                     }
