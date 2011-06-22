@@ -480,11 +480,16 @@ class ImportFile
 
     public function hasHeaderRow()
     {
+        if (!isset($_REQUEST['import_module'])) {
+            return false;
+        }
+        $module = $_REQUEST['import_module'];
+
         $ret = false;
         $heading = false;
 
         if ($this->_detector) {
-            $ret = $this->_detector->hasHeader($heading);
+            $ret = $this->_detector->hasHeader($heading, $module);
         }
 
         if ($ret) {

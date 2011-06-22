@@ -89,16 +89,16 @@ class CsvAutoDetect {
     );
 
     static protected $_time_formats =  array(
-        'h:i:sa' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])[am|pm]/", // 11:00:00pm
-        'h:i:sA' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9])[AM|PM]/", // 11:00:00PM
-        'h:i:s a' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) [am|pm]/", // 11:00:00 pm
-        'h:i:s A' => "/(0[0-9]|1[0-2]):([0-5][0-9]):([0-5][0-9]) [AM|PM]/", // 11:00:00 PM
-        'H:i:s' => "/(0[0-9]|1[0-9]|2[0-4]):([0-5][0-9]):([0-5][0-9])/", // 23:00:00
-        'h.i.sa' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9])[am|pm]/", // 11.00.00pm
-        'h.i.sA' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9])[AM|PM]/", // 11.00.00PM
-        'h.i.s a' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9]) [am|pm]/", // 11.00.00 pm
-        'h.i.s A' => "/(0[0-9]|1[0-2])\.([0-5][0-9])\.([0-5][0-9]) [AM|PM]/", // 11.00.00 PM
-        'H.i.s' => "/(0[0-9]|1[0-9]|2[0-4])\.([0-5][0-9])\.([0-5][0-9])/" // 23.00.00
+        'h:ia' => "/(0[0-9]|1[0-2]):([0-5][0-9])(:[0-5][0-9])?[am|pm]/", // 11:00pm or 11:00:00pm
+        'h:iA' => "/(0[0-9]|1[0-2]):([0-5][0-9])(:[0-5][0-9])?[AM|PM]/", // 11:00PM or 11:00:00PM
+        'h:i a' => "/(0[0-9]|1[0-2]):([0-5][0-9])(:[0-5][0-9])? [am|pm]/", // 11:00 pm or 11:00:00 pm
+        'h:i A' => "/(0[0-9]|1[0-2]):([0-5][0-9])(:[0-5][0-9])? [AM|PM]/", // 11:00 PM or 11:00:00 PM
+        'H:i' => "/(0[0-9]|1[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?/", // 23:00 or 23:00:00
+        'h.ia' => "/(0[0-9]|1[0-2])\.([0-5][0-9])(\.[0-5][0-9])?[am|pm]/", // 11.00pm or 11.00.00pm
+        'h.iA' => "/(0[0-9]|1[0-2])\.([0-5][0-9])(\.[0-5][0-9])?[AM|PM]/", // 11.00PM or 11.00.00PM
+        'h.i a' => "/(0[0-9]|1[0-2])\.([0-5][0-9])(\.[0-5][0-9])? [am|pm]/", // 11.00 pm or 11.00.00 pm
+        'h.i A' => "/(0[0-9]|1[0-2])\.([0-5][0-9])(\.[0-5][0-9])? [AM|PM]/", // 11.00 PM or 11.00.00 PM
+        'H.i' => "/(0[0-9]|1[0-9]|2[0-4])\.([0-5][0-9])(\.[0-5][0-9])?/" // 23.00 or 23.00.00
     );
 
 
@@ -162,22 +162,49 @@ class CsvAutoDetect {
      * @param bool $heading true of it has header, false if not
      * @return bool true if header is found, false if error
      */
-    public function hasHeader(&$heading) {
+    public function hasHeader(&$heading, $module) {
 
         if (!$this->_parsed) {
             return false;
         }
 
-        // checking heading
-        $heading = true;
+        $total_count = count($this->_parser->data[0]);
+        if ($total_count == 0) {
+            return false;
+        }
+
+        if (!isset($GLOBALS['beanList'][$module])) {
+            return false;
+        }
+
+        $bean = new $GLOBALS['beanList'][$module]();
+
+        $match_count = 0;
+
+        // process only the first row
         foreach ($this->_parser->data[0] as $val) {
-            // if it contains number, then it's probably not a header
-            // this can be very unreliable, but now way this can be 100%
-            $ret = preg_match("/[0-9]/", $val);
-            if ($ret) {
-                $heading = false;
-                break;
+            foreach ($bean->field_defs as $field_name=>$defs) {
+
+                // check if the CSV item matches field name
+                if (!strcasecmp($val, $field_name)) {
+                    $match_count++;
+                    break;
+                }
+                // check if the CSV item is part of the label
+                else if (isset($defs['vname']) && isset($GLOBALS['app_strings'][$defs['vname']])) {
+                    if (stripos($GLOBALS['app_strings'][$defs['vname']], $val) !== false) {
+                        $match_count++;
+                        break;
+                    }
+                }
             }
+        }
+
+        // if more than 50% matched, consider it a header
+        if ($match_count/$total_count >= 0.5) {
+            $heading = true;
+        } else {
+            $heading = false;
         }
 
         return true;
