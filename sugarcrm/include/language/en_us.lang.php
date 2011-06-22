@@ -3087,18 +3087,18 @@ $app_strings = array (
 
     //IMPORT SAMPLE TEXT
     'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
-    "You have downloaded a sample csv page which provides an example of the expected contents of a file that is ready for import.\r\n\
-    Please note that the columns are the field labels as you would see them in the application, but the data base field could also be used instead.\r\n\\r\n\
+    This is a sample import file which provides an example of the expected contents of a file that is ready for import. The file is a comma-delimited .csv file, using double-quotes as the field qualifier.
 
-    This is useful if you are relying on phpMyAdmin or some other database tool to provide the exported list.
-    Also note that the column order is not critical as the import process will match the proper field to the proper column based on the header row.
+The header row contains the field labels as you would see them in the application, and these labels are used for mapping the data in the file to the fields in the application.
 
-    To use this same file as a template, you will need to do the following:
-    1. Remove the sample rows of data
-    2. Remove the tutorial text you are reading right now.
-    3. Input your own data into the proper columns
-    4. Save the file to a known location.
-    5. Click on the import option from the menu and choose this template.
+Notes: The database names could also be used in the header row. This is useful when you are using phpMyAdmin or another database tool to provide an exported list of data to import. The column order is not critical as the import process matches the data to the appropriate fields based on the header row.
+
+To use this file as a template, do the following:
+1. Remove the sample rows of data
+2. Remove the help text that you are reading right now
+3. Input your own data into the appropriate rows and columns
+4. Save the file to a known location on your system
+5. Click on the Import option from the Actions menu in the application and choose the file to upload
    ',
 
     );
