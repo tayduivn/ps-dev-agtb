@@ -99,5 +99,9 @@ $mod_strings = array (
 	'LBL_SHOW_IN_PORTAL' => 'Show in Portal',
 	//END SUGARCRM flav=pro ONLY
 	'LBL_BUG_INFORMATION' => 'Bug Overview',
+
+    //For export labels
+	'LBL_FOUND_IN_RELEASE_NAME' => 'Found In Release Name',
+
   );
 ?>

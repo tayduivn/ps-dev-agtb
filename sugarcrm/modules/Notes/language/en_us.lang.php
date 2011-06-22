@@ -89,6 +89,10 @@ $mod_strings = array (
 	'LBL_PANEL_DETAILS' => 'Details',
 	'LBL_NOTE_INFORMATION' => 'Note Overview',
 	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
+
+    //For export labels
+	'LBL_FIRST_NAME' => 'First Name',
+    'LBL_LAST_NAME' => 'Last Name',
 );
 
 ?>
