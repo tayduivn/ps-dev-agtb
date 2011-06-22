@@ -308,7 +308,9 @@ $mod_strings = array (
     'LBL_SAVE_MAPPING_HELP' => 'Enter a name to save the import settings, including the field mappings and indexes used for the duplicate check. Saved import settings can be used for future imports.',
     'LBL_IMPORT_FILE_SETTINGS_HELP' => 'Specify the settings in the import file to ensure that the data is imported<br> correctly.  These settings will not override your preferences. The records<br> created or updated will contain the settings specified in your My Account page.',
 	'LBL_IMPORT_FILE_SETTINGS' => 'Import File Settings',
-    'LBL_VERIFY_DUPLCATES_HELP' => 'Select the fields to use to check for data matching the mapped data in the import file in order to avoid creating duplicate records. If matches are found, new records will not be created for the rows in the import file containing the matched data. These rows will be listed in the Import results page.',
+
+    'LBL_VERIFY_DUPLCATES_HELP' => 'Find existing records in the system that could be considered duplicates of the records about to be imported  by performing a duplicate check for matching data.  Fields dragged into the "Check Data" column will be used for the duplicate check.  The rows in your import file containing matching data will be listed within the next page, and you will be able to select which rows to import',
+
     'LBL_IMPORT_STARTED' => 'Import Started:',
     'LBL_IMPORT_FILE_SETTINGS' => 'Import File Settings',
     'LBL_RECORD_CANNOT_BE_UPDATED' => 'The record could not be updated due to a permissions issue',
