@@ -329,7 +329,7 @@ eoq;
             $rows[] = $importFile->getNextRow();
         }
 
-        if( ! $importFile->hasHeaderRow() )
+        if( ! $importFile->hasHeaderRow(FALSE) )
         {
             array_unshift($rows, array_fill(0, count($rows[0]),'') );
         }
