@@ -101,6 +101,18 @@ class CsvAutoDetect {
         'H.i' => "/(0[0-9]|1[0-9]|2[0-4])\.([0-5][0-9])(\.[0-5][0-9])?/" // 23.00 or 23.00.00
     );
 
+    static protected $_time_strings = array(
+        'h:ia' => "11:00pm",
+        'h:iA' => "11:00PM",
+        'h:i a' => "11:00 pm",
+        'h:i A' => "11:00 PM",
+        'H:i' => "23:00",
+        'h.ia' => "11.00pm",
+        'h.iA' => "11.00PM",
+        'h.i a' => "11.00 pm",
+        'h.i A' => "11.00 PM",
+        'H.i' => "23.00"
+    );
 
     /**
      * Constructor
@@ -116,6 +128,13 @@ class CsvAutoDetect {
         $this->_parser->auto_depth = $max_depth;
 
         $this->_max_depth = $max_depth;
+    }
+
+
+    static public function getTimeStrings() {
+
+        return self::$_time_strings;
+
     }
 
 

@@ -35,6 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Import/views/ImportView.php');
 require_once('modules/Import/ImportFile.php');
 require_once('modules/Import/ImportFileSplitter.php');
+require_once('modules/Import/CsvAutoDetect.php');
 
 require_once('include/upload_file.php');
 
@@ -142,7 +143,7 @@ class ImportViewConfirm extends ImportView
 
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
         $this->setImportFileCharacterSet($importFile);
-        $this->setDateTimeProperties($importFileMap);
+        $this->setDateTimeProperties($importFile, $importFileMap);
         $this->setCurrencyOptions($importFileMap);
         $this->setNumberFormatOptions($importFileMap);
         $this->setNameFormatProperties($importFileMap);
@@ -270,16 +271,16 @@ eoq;
     }
 
 
-    private function setDateTimeProperties( $field_map = array() )
+    private function setDateTimeProperties( $importFile, $field_map = array() )
     {
         global $current_user, $sugar_config;
 
-        $timeFormat = $current_user->getUserDateTimePreferences();
-        $defaultTimeOption = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : $timeFormat['time'];
-        $defaultDateOption = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : $timeFormat['date'];
+        $time_strings = CsvAutoDetect::getTimeStrings();
+        $csv_time_format = $importFile->getTimeFormat();
+        $csv_date_format = $importFile->getDateFormat();
 
-        $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $defaultTimeOption);
-        $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $defaultDateOption);
+        $timeOptions = get_select_options_with_id($time_strings, $csv_time_format);
+        $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $csv_date_format);
 
         // get list of valid timezones
         $userTZ = isset($field_map['importlocale_timezone'])? $field_map['importlocale_timezone'] : $current_user->getPreference('timezone');
