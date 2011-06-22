@@ -106,25 +106,24 @@ class ImportViewStep1 extends ImportView
 document.getElementById('gonext').onclick = function()
 {
     clear_all_errors();
-    var sourceSelected = false;
-    var isError = false;
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){ 
-        if ( !sourceSelected && inputs[i].name == 'source' ){
-            if (inputs[i].checked) {
-                sourceSelected = true;
-                if ( inputs[i].value == 'other' && document.getElementById('importstep1').custom_delimiter.value == '' ) {
-                    add_error_style('importstep1','custom_delimiter',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_CUSTOM_DELIMITER']}");
-                    isError = true;
-                }
-            }
+    var isCsvSource = document.getElementById('csv_source').checked;
+    if( isCsvSource )
+    {
+        document.getElementById('importstep1').action.value = 'Step2';
+        return true;
+    }
+    else
+    {
+        var extEl = document.getElementById('exteranl_source');
+        if(extEl.selectedIndex == -1 || extEl.options[extEl.selectedIndex].value == '')
+        {
+            add_error_style('importstep1','exteranl_source',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_EXTERNAL_SOURCE']}");
+            return false;
         }
+        
+        document.getElementById('importstep1').action.value = 'ExtStep1';
+        return true;
     }
-    if ( !sourceSelected ) {
-        add_error_style('importstep1','source\'][\'' + (document.getElementById('importstep1').source.length - 1) + '',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_WHAT_IS']}");
-        isError = true;
-    }
-    return !isError;
 }
 
 
