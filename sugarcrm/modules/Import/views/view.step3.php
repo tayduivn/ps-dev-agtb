@@ -366,32 +366,6 @@ class ImportViewStep3 extends ImportView
     }
 
     /**
-     * Displays the Smarty template for an error
-     *
-     * @param string $message error message to show
-     * @param string $module what module we were importing into
-     * @param string $action what page we should go back to
-     */
-    protected function _showImportError(
-        $message,
-        $module,
-        $action = 'Step1'
-        )
-    {
-        $ss = new Sugar_Smarty();
-
-        $ss->assign("MESSAGE",$message);
-        $ss->assign("ACTION",$action);
-        $ss->assign("IMPORT_MODULE",$module);
-        $ss->assign("MOD", $GLOBALS['mod_strings']);
-        $ss->assign("SOURCE","");
-        if ( isset($_REQUEST['source']) )
-            $ss->assign("SOURCE", $_REQUEST['source']);
-
-        echo $ss->fetch('modules/Import/tpls/error.tpl');
-    }
-
-    /**
      * Returns JS used in this view
      *
      * @param  array $required fields that are required for the import
