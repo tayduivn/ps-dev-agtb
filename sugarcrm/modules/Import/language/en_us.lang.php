@@ -137,6 +137,7 @@ $mod_strings = array (
     'LBL_STEP_MODULE' => 'Select Module',
     'LBL_STEP_1_TITLE' => 'Step 1: Select Data Source and Import Action',
     'LBL_CONFIRM_TITLE' => 'Step {0}: Confirm Import File Properties',
+    'LBL_CONFIRM_EXT_TITLE' => 'Step {0}: Confirm External Source Properties',
     'LBL_WHAT_IS' => 'Where is the source of the data that you would like to import?',
     'LBL_MICROSOFT_OUTLOOK' => 'Microsoft Outlook',
     'LBL_ACT' => 'Act!',
