@@ -8,3 +8,5 @@ ibmf_pluschar
 ibmf_wildcardsrch
 ibmf_sugaralerts
 ibmf_custominstallhooks
+ibmf_2314_myitems
+ibmf_usersmod
