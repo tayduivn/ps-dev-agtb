@@ -60,7 +60,7 @@ class ImportViewDupcheck extends ImportView
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
-
+        $this->ss->assign("CURRENT_STEP", $this->currentStep);
         //TAB CHOOSER
         require_once("include/templates/TemplateGroupChooser.php");
 

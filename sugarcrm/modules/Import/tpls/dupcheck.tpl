@@ -58,7 +58,6 @@ textarea { width: 20em }
 <input type="hidden" name="file_name" value="{$smarty.request.tmp_file}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="to_pdf" value="1">
-<input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="display_tabs_def">
 
 <br />
@@ -72,18 +71,14 @@ textarea { width: 20em }
             {$TAB_CHOOSER}
     </td>
 </tr>
-<tr>
-    <td align="left" colspan="4" style="background: transparent;">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong></span>
+</table>
+<br>
+<span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong></span>
         <span >
             <input type="text" name="save_map_as" id="save_map_as" value=""
                 style="width: 20em" maxlength="254">
             &nbsp;{sugar_help text=$MOD.LBL_SAVE_MAPPING_HELP}
         </span>
-    </td>
-</tr>
-</table>
 </div>
 
 {$JAVASCRIPT_CHOOSER}
@@ -144,6 +139,7 @@ ProcessImport = new function()
                     else {
                         var locationStr = "index.php?module=Import"
                             + "&action=Last"
+                            + "&current_step=" + document.getElementById("importstepdup").current_step.value
                             + "&type={/literal}{$TYPE}{literal}"
                             + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
                         if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
