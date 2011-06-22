@@ -421,7 +421,7 @@ YAHOO.util.Event.onDOMReady(function(){
     function setMappingProperties(el)
     {
        var sourceEl = document.getElementById('source');
-       if(sourceEl.value != '' && sourceEl.value != 'csv')
+       if(sourceEl.value != '' && sourceEl.value != 'csv' && sourceEl.value != 'salesforce' && sourceEl.value != 'outlook')
        {
            if( !confirm(SUGAR.language.get('Import','LBL_CONFIRM_MAP_OVERRIDE')) )
            {
