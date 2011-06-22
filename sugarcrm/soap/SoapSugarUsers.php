@@ -521,7 +521,7 @@ function set_entry($session,$module_name, $name_value_list){
 	$seed = new $class_name();
 
 	foreach($name_value_list as $value){
-		if($value['name'] == 'id'){
+        if($value['name'] == 'id' && isset($value['value']) && strlen($value['value']) > 0){
 			$result = $seed->retrieve($value['value']);
             //bug: 44680 - check to ensure the user has access before proceeding.
             if(is_null($result))
