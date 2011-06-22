@@ -51,7 +51,7 @@
         <td valign="top" width='50%' scope="row"><table border="0" cellpadding="0" cellspacing="0">
             {if $showModuleSelection}
             <tr>
-                <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_STEP_MODULE}&nbsp;<span class="required">*</span></h3></td>
+                <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_STEP_MODULE}&nbsp;</h3></td>
             </tr>
             <tr>
                 <td><select tabindex='4' name='import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
@@ -59,7 +59,7 @@
 
             {/if}
           <tr>
-            <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;<span class="required">*</span></h3></td>
+            <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
           </tr>
           <tr>
             <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
@@ -71,7 +71,7 @@
           </tr>
           <tr id="external_sources_tr" style="display:none;" >
                 <td>&nbsp;</td>
-                <td><select tabindex='4' name='exteranl_source'>{$EXTERNAL_SOURCES_OPTIONS}</select></td>
+                <td><select tabindex='4' name='exteranl_source' id='exteranl_source' >{$EXTERNAL_SOURCES_OPTIONS}</select></td>
           </tr>
           </table>
         </td>
