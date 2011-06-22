@@ -137,7 +137,7 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
     public function toArray()
     {
         
-        $entry = array('first' => '', 'last' => '', 'full' => '', 'id' => '', 'birthday' => '', 'phones' => array(),
+        $entry = array('first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '', 'phones' => array(),
                        'title' => '', 'account_name' => '', 'addresses' => array(), 'emails' => array(), 'notes' => '');
         
         if($this->_names != null)
