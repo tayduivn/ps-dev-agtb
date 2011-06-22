@@ -181,6 +181,8 @@ class CsvAutoDetect {
 
         $match_count = 0;
 
+        $mod_strings = return_module_language($GLOBALS['current_language'], $module);
+
         // process only the first row
         foreach ($this->_parser->data[0] as $val) {
             foreach ($bean->field_defs as $field_name=>$defs) {
@@ -191,6 +193,12 @@ class CsvAutoDetect {
                     break;
                 }
                 // check if the CSV item is part of the label
+                else if (isset($defs['vname']) && isset($mod_strings[$defs['vname']])) {
+                    if (stripos($mod_strings[$defs['vname']], $val) !== false) {
+                        $match_count++;
+                        break;
+                    }
+                }
                 else if (isset($defs['vname']) && isset($GLOBALS['app_strings'][$defs['vname']])) {
                     if (stripos($GLOBALS['app_strings'][$defs['vname']], $val) !== false) {
                         $match_count++;
