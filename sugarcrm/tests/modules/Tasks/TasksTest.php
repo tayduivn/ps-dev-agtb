@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once "modules/Tasks/Task.php";
 
 class TasksTest extends Sugar_PHPUnit_Framework_TestCase
@@ -59,8 +59,7 @@ class TasksTest extends Sugar_PHPUnit_Framework_TestCase
         $task->name = "New Task";
         $task->date_due = $GLOBALS['timedate']->to_display_date_time("2010-08-30 15:00:00");
         $listViewFields = $task->get_list_view_data();
-
-        $this->assertEquals($listViewFields['TIME_DUE'], $GLOBALS['timedate']->to_display_time("15:00:00"));
+        $this->assertEquals($GLOBALS['timedate']->to_display_time("15:00:00"), $listViewFields['TIME_DUE']);
     }
 
     /**
