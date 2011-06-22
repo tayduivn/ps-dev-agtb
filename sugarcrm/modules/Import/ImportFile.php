@@ -396,9 +396,15 @@ class ImportFile
         $delimiter = $enclosure = false;
 
         $ret = $this->_detector->getCsvSettings($delimiter, $enclosure);
-        if ($ret) {
+        if ($ret)
+        {
             $this->_delimiter = $delimiter;
             $this->_enclosure = $enclosure;
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
         }
     }
 

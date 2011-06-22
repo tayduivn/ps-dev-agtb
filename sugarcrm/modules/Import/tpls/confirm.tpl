@@ -49,6 +49,11 @@ div.confirmTable {
 div.leftPadded {
     padding-left: 15px;
 }
+div.errorMessage {
+    padding-left: 15px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
 -->
 </style>
 {/literal}
@@ -69,6 +74,11 @@ div.leftPadded {
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 
 <div class='dashletPanel'>
+
+    <div class="errorMessage">
+        <span class="error">{$AUTO_DETECT_ERROR}</span>
+    </div>
+
     <div id="confirm_table" class="confirmTable leftPadded">
         {include file='modules/Import/tpls/confirm_table.tpl'}
     </div>

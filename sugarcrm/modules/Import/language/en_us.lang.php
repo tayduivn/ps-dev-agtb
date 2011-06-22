@@ -320,6 +320,7 @@ $mod_strings = array (
     'LBL_CONFIRM_IMPORT' => 'Records created during the import process can be deleted in the next step for any reason. However, updates made to existing records during the import process cannot be undone. Start the import now?',
     'LBL_CONFIRM_MAP_OVERRIDE' => 'Warning: You have already selected a custom mapping for this import, do you want to continue?',
     'LBL_EXTERNAL_FIELD' => 'External Field',
-    'LBL_SAMPLE_URL_HELP' => 'Download a sample import file containing a header row of the module fields. The file can be used as a template to create an import file containing the data that you would like to import.'
+    'LBL_SAMPLE_URL_HELP' => 'Download a sample import file containing a header row of the module fields. The file can be used as a template to create an import file containing the data that you would like to import.',
+    'LBL_AUTO_DETECT_ERROR' => 'We were unable to auto-detect the import file settings.  Please verify the settings under the Advanced Properties section.'
 );
 ?>

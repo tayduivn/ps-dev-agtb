@@ -98,13 +98,16 @@ class ImportViewConfirm extends ImportView
         if( $this->shouldAutoDetectProperties($importSource) )
         {
             $GLOBALS['log']->fatal("Auto detecing csv properties...");
-            $importFile->autoDetectCSVProperties();
+            $autoDetectOk = $importFile->autoDetectCSVProperties();
             $importFileMap = array();
             $this->ss->assign("SOURCE", 'csv');
+            if($autoDetectOk === FALSE)
+            {
+                $this->ss->assign("AUTO_DETECT_ERROR",  $mod_strings['LBL_AUTO_DETECT_ERROR']);
+            }
         }
         else
         {
-            $GLOBALS['log']->fatal("Using import map for import properties." . $importSource);
             $impotMapSeed = $this->getImportMap($importSource);
             $importFile->setImportFileMap($impotMapSeed);
             $importFileMap = $impotMapSeed->getMapping();
