@@ -51,7 +51,7 @@ textarea { width: 20em }
 {foreach from=$smarty.request key=k item=v}
 <input type="hidden" name="{$k}" value="{$v}">
 {/foreach}
-    
+
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="import_type" value="{$smarty.request.import_type}">
 <input type="hidden" name="type" value="{$smarty.request.type}">
@@ -59,27 +59,40 @@ textarea { width: 20em }
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="display_tabs_def">
+<input type="hidden" id="enabled_dupes" name="enabled_dupes" value="">
+<input type="hidden" id="disabled_dupes" name="disabled_dupes" value="">
 
-<br />
-<div style="padding-left:20px">
-<table border="0" cellpadding="30" id="importTable" class="detail view" style="width:60% !important;">
-<tr>
-    <td scope="row" align="left" colspan="2" style="text-align: left;">{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</td>
-</tr>
-<tr>
-    <td  width="40%" colspan="2">
-            {$TAB_CHOOSER}
-    </td>
-</tr>
-</table>
-<br>
-<span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong></span>
-        <span >
-            <input type="text" name="save_map_as" id="save_map_as" value=""
-                style="width: 20em" maxlength="254">
-            &nbsp;{sugar_help text=$MOD.LBL_SAVE_MAPPING_HELP}
-        </span>
-</div>
+    <br />
+    <div style="padding-left:20px">
+    <table border="0" cellpadding="30" id="importTable" class="detail view" style="width:60% !important;">
+    <tr>
+        <td scope="row" align="left" colspan="2" style="text-align: left;">{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</td>
+    </tr>
+    <tr>
+        <td  width="40%" colspan="2">
+           <table id="DupeCheck" class="themeSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        <div id="enabled_div" class="enabled_tab_workarea">
+                        </div>
+                    </td>
+                    <td>
+                        <div id="disabled_div" class="disabled_tab_workarea">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </table>
+    <br>
+    <span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong></span>
+            <span >
+                <input type="text" name="save_map_as" id="save_map_as" value=""
+                    style="width: 20em" maxlength="254">
+                &nbsp;{sugar_help text=$MOD.LBL_SAVE_MAPPING_HELP}
+            </span>
+    </div>
 
 {$JAVASCRIPT_CHOOSER}
 
@@ -189,9 +202,77 @@ ProcessImport = new function()
             closable:false,
             animEl: 'importnow'
         });
+        SUGAR.saveConfigureDupes();
         this.submit();
     }
 }
+{/literal}
+//begin dragdrop code
+	var enabled_dupes = {$enabled_dupes};
+	var disabled_dupes = {$disabled_dupes};
+	var lblEnabled = '{sugar_translate label="LBL_INDEX_USED"}';
+	var lblDisabled = '{sugar_translate label="LBL_INDEX_NOT_USED"}';
+	{literal}
+
+	SUGAR.enabledDupesTable = new YAHOO.SUGAR.DragDropTable(
+		"enabled_div",
+		[{key:"label",  label: lblEnabled, width: 200, sortable: false},
+		 {key:"module", label: lblEnabled, hidden:true}],
+		new YAHOO.util.LocalDataSource(enabled_dupes, {
+			responseSchema: {
+			   resultsList : "dupeVal",
+			   fields : [{key : "dupeVal"}, {key : "label"}]
+			}
+		}),
+		{
+			height: "300px",
+			group: ["enabled_div", "disabled_div"]
+		}
+	);
+	SUGAR.disabledDupesTable = new YAHOO.SUGAR.DragDropTable(
+		"disabled_div",
+		[{key:"label",  label: lblDisabled, width: 200, sortable: false},
+		 {key:"module", label: lblDisabled, hidden:true}],
+		new YAHOO.util.LocalDataSource(disabled_dupes, {
+			responseSchema: {
+			   resultsList : "dupeVal",
+			   fields : [{key : "dupeVal"}, {key : "label"}]
+			}
+		}),
+		{
+			height: "300px",
+		 	group: ["enabled_div", "disabled_div"]
+		 }
+	);
+	SUGAR.enabledDupesTable.disableEmptyRows = true;
+    SUGAR.disabledDupesTable.disableEmptyRows = true;
+    SUGAR.enabledDupesTable.addRow({module: "", label: ""});
+    SUGAR.disabledDupesTable.addRow({module: "", label: ""});
+	SUGAR.enabledDupesTable.render();
+	SUGAR.disabledDupesTable.render();
+
+
+	SUGAR.saveConfigureDupes = function()
+	{
+		var enabledTable = SUGAR.enabledDupesTable;
+		var dupeVal = [];
+		for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
+			var data = enabledTable.getRecord(i).getData();
+			if (data.dupeVal && data.dupeVal != '')
+			    dupeVal[i] = data.dupeVal;
+		}
+		    YAHOO.util.Dom.get('enabled_dupes').value = YAHOO.lang.JSON.stringify(dupeVal);
+
+        var disabledTable = SUGAR.disabledDupesTable;
+		var dupeVal = [];
+		for(var i=0; i < disabledTable.getRecordSet().getLength(); i++){
+			var data = disabledTable.getRecord(i).getData();
+			if (data.dupeVal && data.dupeVal != '')
+			    dupeVal[i] = data.dupeVal;
+		}
+			YAHOO.util.Dom.get('disabled_dupes').value = YAHOO.lang.JSON.stringify(dupeVal);
+	}
+
 -->
 </script>
 {/literal}

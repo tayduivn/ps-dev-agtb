@@ -61,33 +61,31 @@ class ImportViewDupcheck extends ImportView
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
-        //TAB CHOOSER
-        require_once("include/templates/TemplateGroupChooser.php");
 
-        $chooser_array = array();
-        $chooser_array[0] = array();
+        //BEGIN DRAG DROP WIDGET
         $idc = new ImportDuplicateCheck($this->bean);
-        $chooser_array[1] = $idc->getDuplicateCheckIndexes();
+        $dupe_indexes = $idc->getDuplicateCheckIndexes();
 
         $field_map = $this->getImportMap();
+
         //check for saved entries from mapping
-        foreach($chooser_array[1] as $ck=>$cv){
-            if(isset($field_map['dupe_'.$ck])){
-                //index is defined in mapping, so set this index as selected and remove from available list
-                $chooser_array[0][$ck]=$cv;
-                unset($chooser_array[1][$ck]);
+        $dupe_disabled =  array();
+        $dupe_enabled =  array();
+        foreach($dupe_indexes as $dk=>$dv){
+            if(isset($field_map['dupe_'.$dk])){
+                //index is defined in mapping, so set this index as enabled
+                $dupe_enabled[] =  array("dupeVal" => $dk, "label" => $dv);
+            }else{
+                //index is not defined in mapping, so display as disabled
+                $dupe_disabled[] =  array("dupeVal" => $dk, "label" => $dv);
             }
         }
 
-        $chooser = new TemplateGroupChooser();
-        $chooser->args['id'] = 'selected_indices';
-        $chooser->args['values_array'] = $chooser_array;
-        $chooser->args['left_name'] = 'choose_index';
-        $chooser->args['right_name'] = 'ignore_index';
-        $chooser->args['left_label'] =  $mod_strings['LBL_INDEX_USED'];
-        $chooser->args['right_label'] =  $mod_strings['LBL_INDEX_NOT_USED'];
-        $this->ss->assign("TAB_CHOOSER", $chooser->display());
-        //END TAB CHOOSER
+
+        //set dragdrop value
+        $this->ss->assign('enabled_dupes', json_encode($dupe_enabled));
+        $this->ss->assign('disabled_dupes', json_encode($dupe_disabled));
+        //END DRAG DROP WIDGET
 
         // split file into parts
         $uploadFileName = $_REQUEST['tmp_file'];
@@ -157,16 +155,8 @@ document.getElementById('goback').onclick = function(){
 }
 
 document.getElementById('importnow').onclick = function(){
-    // get the list of indices chosen
-    var chosen_indices = '';
-    var selectedOptions = document.getElementById('choose_index_td').getElementsByTagName('select')[0].options.length;
-    for (i = 0; i < selectedOptions; i++)
-    {
-        chosen_indices += document.getElementById('choose_index_td').getElementsByTagName('select')[0].options[i].value;
-        if (i != (selectedOptions - 1))
-        chosen_indices += "&";
-    }
-    document.getElementById('importstepdup').display_tabs_def.value = chosen_indices;
+    SUGAR.saveConfigureDupes();
+
     var form = document.getElementById('importstepdup');
     // Move on to next step
     document.getElementById('importstepdup').action.value = 'Step4';

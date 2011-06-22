@@ -411,9 +411,12 @@ class ImportViewStep4 extends SugarView
             }
             
             // check to see that the indexes being entered are unique.
-            if (isset($_REQUEST['display_tabs_def']) && $_REQUEST['display_tabs_def'] != ""){
+            if (isset($_REQUEST['enabled_dupes']) && $_REQUEST['enabled_dupes'] != ""){
+                $toDecode = html_entity_decode  ($_REQUEST['enabled_dupes'], ENT_QUOTES);
+                $enabled_dupes = json_decode($toDecode);
                 $idc = new ImportDuplicateCheck($focus);
-                if ( $idc->isADuplicateRecord(explode('&', $_REQUEST['display_tabs_def'])) ){
+                
+                if ( $idc->isADuplicateRecord($enabled_dupes) ){
                     $importFile->markRowAsDuplicate();
                     $this->_undoCreatedBeans($ifs->createdBeans);
                     continue;
@@ -710,8 +713,10 @@ class ImportViewStep4 extends SugarView
         $advancedMappingSettings = array();
 
         //harvest the dupe index settings
-        if( isset($_REQUEST['display_tabs_def']) ){
-            $dupe_ind = explode('&', $_REQUEST['display_tabs_def']);
+        if( isset($_REQUEST['enabled_dupes']) ){
+            $toDecode = html_entity_decode  ($_REQUEST['enabled_dupes'], ENT_QUOTES);
+            $dupe_ind = json_decode($toDecode);
+            
             foreach($dupe_ind as $dupe){
                 $advancedMappingSettings['dupe_'.$dupe] = $dupe;
             }
