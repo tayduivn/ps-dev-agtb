@@ -30,6 +30,18 @@
 // $Id: step2.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
+{literal}
+
+<style>
+
+.link {
+    text-decoration:underline
+}
+
+</style>
+{/literal}
+
+
 {overlib_includes}
 {$MODULE_TITLE}
 <form enctype="multipart/form-data" name="importstep2" method="POST" action="index.php" id="importstep2">
@@ -41,29 +53,6 @@
 <input type="hidden" name="action" value="Step3">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
-{foreach from=$instructions key=key item=item name=instructions}
-{if $smarty.foreach.instructions.first}
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-	<td align="left"><p>{$INSTRUCTIONS_TITLE}</p></td>
-</tr>
-<tr>
-	<td>
-	<table width="50%">
-{/if}
-	<tr>
-		<td valign="top"><b>{$item.STEP_NUM}</b></td>
-		<td>{$item.INSTRUCTION_STEP}</td>
-	</tr>
-{if $smarty.foreach.instructions.last}
-    </table>
-	</td>
-</tr>
-</table>
-{/if}
-{/foreach}
-
-<p><b>{$SAMPLE_URL}</b></p>
 
 <br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
@@ -71,10 +60,10 @@
 <td>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
         <tr>
-            <td align="left" scope="row" colspan="4">{$MOD.LBL_SELECT_FILE}</td>
+            <td align="left" scope="row" colspan="4">{$SAMPLE_URL} &nbsp;{sugar_help text=$MOD.LBL_SAMPLE_URL_HELP}</td>
         </tr>
         <tr>
-            <td scope="row"><input type="hidden" /><input size="60" name="userfile" type="file"/></td>
+            <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="60" name="userfile" type="file"/></td>
         </tr>
         <tr>
             <td scope="row" colspan="3">
