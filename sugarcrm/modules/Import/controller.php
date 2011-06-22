@@ -122,7 +122,6 @@ class ImportController extends SugarController
 
         $importFile = new ImportFile( $fileName, $delim, $enclosure, FALSE);
         $importFile->setHeaderRow($hasHeader);
-        
         $rows = $v->getSampleSet($importFile);
 
         $ss = new Sugar_Smarty();
@@ -179,7 +178,12 @@ class ImportController extends SugarController
     {
 		$this->view = 'error';
     }
-    
+
+    function action_ExtStep1()
+    {
+        $this->view = 'extStep1';
+    }
+
     function action_GetControl()
     {
         echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);

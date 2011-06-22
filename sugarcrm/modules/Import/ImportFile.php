@@ -396,9 +396,15 @@ class ImportFile
         $delimiter = $enclosure = false;
 
         $ret = $this->_detector->getCsvSettings($delimiter, $enclosure);
-        if ($ret) {
+        if ($ret)
+        {
             $this->_delimiter = $delimiter;
             $this->_enclosure = $enclosure;
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
         }
     }
 
@@ -478,24 +484,24 @@ class ImportFile
         $this->_hasHeader = $hasHeader;
     }
 
-    public function hasHeaderRow()
+    public function hasHeaderRow($autoDetect = TRUE)
     {
-        if (!isset($_REQUEST['import_module'])) {
-            return false;
+        if($autoDetect)
+        {
+            if (!isset($_REQUEST['import_module']))
+                return FALSE;
+
+            $module = $_REQUEST['import_module'];
+
+            $ret = FALSE;
+            $heading = FALSE;
+
+            if ($this->_detector)
+                $ret = $this->_detector->hasHeader($heading, $module);
+
+            if ($ret)
+                $this->_hasHeader = $heading;
         }
-        $module = $_REQUEST['import_module'];
-
-        $ret = false;
-        $heading = false;
-
-        if ($this->_detector) {
-            $ret = $this->_detector->hasHeader($heading, $module);
-        }
-
-        if ($ret) {
-            $this->_hasHeader = $heading;
-        }
-
         return $this->_hasHeader;
     }
 
