@@ -80,8 +80,15 @@
 </tr>
 {/foreach}
 </table>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+<tr>
+    <td align="left">
+        <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
+        <input title="{$MOD.LBL_NEXT}" accessKey="" id="gonext" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  ">
+    </td>
+</tr>
+</table>
 </form>
-
 {$JAVASCRIPT}
 {literal}
 <script type="text/javascript" language="Javascript">

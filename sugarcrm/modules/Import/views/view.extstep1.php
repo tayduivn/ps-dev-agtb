@@ -57,11 +57,20 @@ class ImportViewExtStep1 extends ImportView
             return;
         }
 
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
+        // get list of required fields
+        $required = array();
+        foreach ( array_keys($this->bean->get_import_required_fields()) as $name ) {
+            $properties = $this->bean->getFieldDefinition($name);
+            if (!empty ($properties['vname']))
+                $required[$name] = str_replace(":","",translate($properties['vname'] ,$this->bean->module_dir));
+            else
+                $required[$name] = str_replace(":","",translate($properties['name'] ,$this->bean->module_dir));
+        }
 
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("rows",$this->getMappingRows($importModule) );
         $this->ss->assign("IMPORT_MODULE", $importModule);
-        $this->ss->assign("JAVASCRIPT", $this->_getJS());
+        $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
 
         $this->ss->display('modules/Import/tpls/extstep1.tpl');
     }
@@ -179,16 +188,69 @@ class ImportViewExtStep1 extends ImportView
     /**
      * Returns JS used in this view
      */
-    private function _getJS()
+    private function _getJS($required)
     {
         global $mod_strings;
+        $print_required_array = "";
+        foreach ($required as $name=>$display) {
+            $print_required_array .= "required['$name'] = '". $display . "';\n";
+        }
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
 
+document.getElementById('goback').onclick = function(){
+    document.getElementById('extstep1').action.value = 'Step1';
+    return true;
+}
+
+document.getElementById('gonext').onclick = function(){
+    // validate form
+    clear_all_errors();
+    var form = document.getElementById('extstep1');
+    var hash = new Object();
+    var required = new Object();
+    $print_required_array
+    var isError = false;
+    for ( i = 0; i < form.length; i++ ) {
+		if ( form.elements[i].name.indexOf("colnum",0) == 0) {
+            if ( form.elements[i].value == "-1") {
+                continue;
+            }
+            if ( hash[ form.elements[i].value ] == 1) {
+                isError = true;
+                add_error_style('extstep1',form.elements[i].name,"{$mod_strings['ERR_MULTIPLE']}");
+            }
+            hash[form.elements[i].value] = 1;
+        }
+    }
+
+    // check for required fields
+	for(var field_name in required) {
+		// contacts hack to bypass errors if full_name is set
+		if (field_name == 'last_name' &&
+				hash['full_name'] == 1) {
+			continue;
+		}
+		if ( hash[ field_name ] != 1 ) {
+            isError = true;
+            add_error_style('extstep1',form.colnum_0.name,
+                "{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} " + required[field_name]);
+		}
+	}
+
+    // return false if we got errors
+	if (isError == true) {
+		return false;
+	}
+
+    // Move on to next step
+    document.getElementById('extstep1').action.value = 'dupcheck';
+    return true;
+}
+
 YAHOO.util.Event.onDOMReady(function(){
-    alert('hi');
     var selects = document.getElementsByTagName('select');
     for (var i = 0; i < selects.length; ++i ){
         if (selects[i].name.indexOf("colnum_") != -1 ) {
