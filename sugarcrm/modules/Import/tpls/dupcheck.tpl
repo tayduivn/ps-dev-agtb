@@ -64,22 +64,22 @@ textarea { width: 20em }
 <input type="hidden" id="enabled_dupes" name="enabled_dupes" value="">
 <input type="hidden" id="disabled_dupes" name="disabled_dupes" value="">
 <input type="hidden" id="current_step" name="current_step" value="{$CURRENT_STEP}">
-    
+
     <br />
     <div style="padding-left:20px">
-    <table border="0" cellpadding="30" id="importTable" class="detail view" style="width:60% !important;">
+    <table border="0" cellpadding="30" id="importTable" class="themeSettings edit view" style="width:60% !important;">
     <tr>
         <td scope="row" align="left" colspan="2" style="text-align: left;">{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</td>
     </tr>
     <tr>
         <td  width="40%" colspan="2">
-           <table id="DupeCheck" class="themeSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="0" cellpadding="0">
+           <table id="DupeCheck" class="themeSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="10" cellpadding="0"  width = '100%'>
                 <tr>
-                    <td>
+                    <td align="right">
                         <div id="enabled_div" class="enabled_tab_workarea">
                         </div>
                     </td>
-                    <td>
+                    <td align="left">
                         <div id="disabled_div" class="disabled_tab_workarea">
                         </div>
                     </td>
@@ -219,7 +219,7 @@ ProcessImport = new function()
 
 	SUGAR.enabledDupesTable = new YAHOO.SUGAR.DragDropTable(
 		"enabled_div",
-		[{key:"label",  label: lblEnabled, width: 200, sortable: false},
+		[{key:"label",  label: lblEnabled, width: 225, sortable: false},
 		 {key:"module", label: lblEnabled, hidden:true}],
 		new YAHOO.util.LocalDataSource(enabled_dupes, {
 			responseSchema: {
@@ -234,7 +234,7 @@ ProcessImport = new function()
 	);
 	SUGAR.disabledDupesTable = new YAHOO.SUGAR.DragDropTable(
 		"disabled_div",
-		[{key:"label",  label: lblDisabled, width: 200, sortable: false},
+		[{key:"label",  label: lblDisabled, width: 225, sortable: false},
 		 {key:"module", label: lblDisabled, hidden:true}],
 		new YAHOO.util.LocalDataSource(disabled_dupes, {
 			responseSchema: {
