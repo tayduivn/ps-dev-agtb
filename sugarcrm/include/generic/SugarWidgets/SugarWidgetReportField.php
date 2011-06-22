@@ -220,7 +220,7 @@ class SugarWidgetReportField extends SugarWidgetField
             // unable to retrieve the vardef here, exclude columns of type clob/text from being sortable
             $header_cell = "<a class=\"listViewThLinkS1\" href=\"".$start.$sort_by.$end."\">";
             $header_cell .= $this->displayHeaderCellPlain($layout_def);
-            $header_cell .= ListView::getArrowUpDownStart($layout_def['sort']);
+            $header_cell .= ListView::getArrowUpDownStart(isset($layout_def['sort']) ? $layout_def['sort'] : '');
             $header_cell .= ListView::getArrowEnd();
             $header_cell .= "</a>";
                 
