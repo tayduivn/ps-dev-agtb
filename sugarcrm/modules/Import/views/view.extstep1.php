@@ -48,7 +48,7 @@ class ImportViewExtStep1 extends ImportViewStep3
      */
  	public function display()
     {
-        $source = !empty($_REQUEST['exteranl_source']) ? $_REQUEST['exteranl_source'] : '';
+        $source = !empty($_REQUEST['external_source']) ? $_REQUEST['external_source'] : '';
         $importModule = $_REQUEST['import_module'];
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;

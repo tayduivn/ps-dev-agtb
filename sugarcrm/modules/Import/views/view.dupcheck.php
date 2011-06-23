@@ -114,30 +114,6 @@ class ImportViewDupcheck extends ImportView
         }
     }
 
-    private function getImportableModules()
-    {
-        global $beanList;
-        $importableModules = array();
-        foreach ($beanList as $moduleName => $beanName)
-        {
-            if( class_exists($beanName) )
-            {
-                $tmp = new $beanName();
-                if( isset($tmp->importable) && $tmp->importable )
-                    $importableModules[$moduleName] = $moduleName;
-            }
-        }
-
-        asort($importableModules);
-        return $importableModules;
-    }
-
-    private function getImportableExternalEAPMs()
-    {
-        require_once('include/externalAPI/ExternalAPIFactory.php');
-
-        return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE, 'eapm_import_list');
-    }
     /**
      * Returns JS used in this view
      */
