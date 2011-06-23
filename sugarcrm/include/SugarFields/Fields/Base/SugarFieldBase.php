@@ -99,26 +99,8 @@ class SugarFieldBase {
     }
 
     function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
-        // FIXME: Rework the listview to use two-pass rendering like the DetailView
-
         $tabindex = 1;
-        $isArray = is_array($parentFieldArray);
-        $fieldName = $vardef['name'];
-
-        if ( $isArray ) {
-        	$fieldNameUpper = strtoupper($fieldName);
-            if ( isset($parentFieldArray[$fieldNameUpper])) {
-                $parentFieldArray[$fieldName] = $this->formatField($parentFieldArray[$fieldNameUpper],$vardef);
-            } else {
-                $parentFieldArray[$fieldName] = '';
-            }
-        } else {
-            if ( isset($parentFieldArray->$fieldName) ) {
-                $parentFieldArray->$fieldName = $this->formatField($parentFieldArray->$fieldName,$vardef);
-            } else {
-                $parentFieldArray->$fieldName = '';
-            }
-        }
+		$parentFieldArray = $this->setupFieldArray($parentFieldArray, $vardef);
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
 
         $this->ss->left_delimiter = '{';
@@ -413,4 +395,39 @@ class SugarFieldBase {
     {
      	return !empty($vardef['enable_range_search']) && !empty($_REQUEST['action']) && $_REQUEST['action']!='Popup';
     }
+    
+    
+    /**
+     * setupFieldArray
+     * This method takes the $parentFieldArray mixed variable which may be an Array or object and attempts
+     * to call any custom fieldSpecific formatting to the value depending on the field type.
+     * 
+     * @see SugarFieldEnum.php, SugarFieldInt.php, SugarFieldFloat.php, SugarFieldRelate.php
+     * @param	mixed	$parentFieldArray Array or Object of data where the field's value comes from
+     * @param	array	$vardef The vardef entry linked to the SugarField instance
+     * @return	array   $parentFieldArray The formatted $parentFieldArray with the formatField method possibly applied 
+     */
+    protected function setupFieldArray($parentFieldArray, $vardef)
+    {
+        $fieldName = $vardef['name'];
+        if ( is_array($parentFieldArray) )
+        {
+            $fieldNameUpper = strtoupper($fieldName);
+            if ( isset($parentFieldArray[$fieldNameUpper]))
+            {
+                $parentFieldArray[$fieldName] = $this->formatField($parentFieldArray[$fieldNameUpper],$vardef);
+            } else {
+                $parentFieldArray[$fieldName] = '';
+            }
+        } elseif (is_object($parentFieldArray)) {
+            if ( isset($parentFieldArray->$fieldName) )
+            {
+                $parentFieldArray->$fieldName = $this->formatField($parentFieldArray->$fieldName,$vardef);
+            } else {
+                $parentFieldArray->$fieldName = '';
+            }
+        }
+        return $parentFieldArray;
+    }    
 }
+?>
