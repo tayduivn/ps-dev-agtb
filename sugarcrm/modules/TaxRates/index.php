@@ -42,6 +42,7 @@ $is_edit = false;
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);
     $focus->value = format_number($focus->value, 5, 5);
+    $focus->value = strtr($focus->value,'.',$sugar_config['default_decimal_seperator']);
     if($result == null)
     {
     	sugar_die($app_strings['ERROR_NO_RECORD']);
