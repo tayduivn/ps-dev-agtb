@@ -30,6 +30,8 @@ require_once('modules/ModuleBuilder/views/view.modulefield.php');
  
 class ViewModulefields extends SugarView
 {
+    var $mbModule;
+    
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
@@ -104,12 +106,12 @@ class ViewModulefields extends SugarView
             $package = $mb->packages[$_REQUEST['view_package']];
 
             $package->getModule($module_name);
-            $this->module = $package->modules[$module_name];
+            $this->mbModule = $package->modules[$module_name];
             $this->loadPackageHelp($module_name);
-            $this->module->getVardefs(true);
-            $this->module->mbvardefs->vardefs['fields'] = array_reverse($this->module->mbvardefs->vardefs['fields'], true);
+            $this->mbModule->getVardefs(true);
+            $this->mbModule->mbvardefs->vardefs['fields'] = array_reverse($this->mbModule->mbvardefs->vardefs['fields'], true);
             $loadedFields = array();
-            foreach($this->module->mbvardefs->vardefs['fields'] as $k=>$v){
+            foreach($this->mbModule->mbvardefs->vardefs['fields'] as $k=>$v){
                 if($k != $module_name)
                     $titleLBL[$k]=translate("LBL_".strtoupper($k),'ModuleBuilder');
                 else{
@@ -118,23 +120,23 @@ class ViewModulefields extends SugarView
                 foreach($v as $field => $def)
                 {
                 	if (isset($loadedFields[$field]))
-                		unset($this->module->mbvardefs->vardefs['fields'][$k][$field]);
+                		unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
                 	else
                 	   $loadedFields[$field] = true;
                 }
             }
-            $this->module->mbvardefs->vardefs['fields'][$module_name] = $this->cullFields($this->module->mbvardefs->vardefs['fields'][$module_name]);
-            if(file_exists($this->module->path. '/language/'.$GLOBALS['current_language'].'.lang.php')){
-                include($this->module->path .'/language/'. $GLOBALS['current_language'].'.lang.php');
-                $this->module->setModStrings($GLOBALS['current_language'],$mod_strings);
+            $this->mbModule->mbvardefs->vardefs['fields'][$module_name] = $this->cullFields($this->mbModule->mbvardefs->vardefs['fields'][$module_name]);
+            if(file_exists($this->mbModule->path. '/language/'.$GLOBALS['current_language'].'.lang.php')){
+                include($this->mbModule->path .'/language/'. $GLOBALS['current_language'].'.lang.php');
+                $this->mbModule->setModStrings($GLOBALS['current_language'],$mod_strings);
             }
-            elseif(file_exists($this->module->path. '/language/en_us.lang.php')){
-                include($this->module->path .'/language/en_us.lang.php');
-                $this->module->setModStrings('en_us',$mod_strings);
+            elseif(file_exists($this->mbModule->path. '/language/en_us.lang.php')){
+                include($this->mbModule->path .'/language/en_us.lang.php');
+                $this->mbModule->setModStrings('en_us',$mod_strings);
             }
             $smarty->assign('title', $titleLBL);
             $smarty->assign('package', $package);
-            $smarty->assign('module', $this->module);
+            $smarty->assign('module', $this->mbModule);
             $smarty->assign('editLabelsMb','1'); //need to merge MB labels and studio labels. quick fix for now.
 
 
@@ -156,8 +158,9 @@ class ViewModulefields extends SugarView
         $name
         )
     {
-        $this->module->help['default'] = (empty($name))?'create':'modify';
-        $this->module->help['group'] = 'module';
+        $this->mbModule->help['default'] = (empty($name))?'create':'modify';
+        $this->mbModule->help['group'] = 'module';
+        $this->mbModule->help['group'] = 'module';
     }
 
     function cullFields(
