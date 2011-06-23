@@ -44,7 +44,9 @@ class ImportViewStep3 extends ImportView
 {
 
     protected $pageTitleKey = 'LBL_STEP_3_TITLE';
-
+    protected $currentFormID = 'importstep3';
+    protected $previousAction = 'Confirm';
+    protected $nextAction = 'dupcheck';
  	/**
      * @see SugarView::display()
      */
@@ -362,9 +364,30 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required));
 
         $this->ss->assign('required_fields',implode(', ',$required));
+        $this->ss->assign('CSS', $this->_getCSS());
         $this->ss->display('modules/Import/tpls/step3.tpl');
     }
 
+    protected function _getCSS()
+    {
+        return <<<EOCSS
+            <style>
+                textarea { width: 20em }
+
+                span.collapse{
+                    background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat 0 -90px;
+                    padding-left: 10px;
+                }
+
+                span.expand{
+                    background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat -0 -110px;
+                    padding-left: 10px;
+                }
+
+            </style>
+EOCSS;
+
+    }
     /**
      * Returns JS used in this view
      *
@@ -385,14 +408,14 @@ class ImportViewStep3 extends ImportView
 <script type="text/javascript">
 <!--
 document.getElementById('goback').onclick = function(){
-    document.getElementById('importstep3').action.value = 'Confirm';
+    document.getElementById('{$this->currentFormID}').action.value = '{$this->previousAction}';
     return true;
 }
 
 document.getElementById('gonext').onclick = function(){
 
     // warning message that tells user that updates can not be undone
-    if(document.getElementById('importstep3').import_type.value == 'update')
+    if(document.getElementById('{$this->currentFormID}').import_type.value == 'update')
     {
         ret = confirm(SUGAR.language.get("Import", 'LBL_CONFIRM_IMPORT'));
         if (!ret) {
@@ -401,7 +424,7 @@ document.getElementById('gonext').onclick = function(){
     }
     // validate form
     clear_all_errors();
-    var form = document.getElementById('importstep3');
+    var form = document.getElementById('{$this->currentFormID}');
     var hash = new Object();
     var required = new Object();
     $print_required_array
@@ -413,7 +436,7 @@ document.getElementById('gonext').onclick = function(){
             }
             if ( hash[ form.elements[i].value ] == 1) {
                 isError = true;
-                add_error_style('importstep3',form.elements[i].name,"{$mod_strings['ERR_MULTIPLE']}");
+                add_error_style('{$this->currentFormID}',form.elements[i].name,"{$mod_strings['ERR_MULTIPLE']}");
             }
             hash[form.elements[i].value] = 1;
         }
@@ -428,7 +451,7 @@ document.getElementById('gonext').onclick = function(){
 		}
 		if ( hash[ field_name ] != 1 ) {
             isError = true;
-            add_error_style('importstep3',form.colnum_0.name,
+            add_error_style('{$this->currentFormID}',form.colnum_0.name,
                 "{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} " + required[field_name]);
 		}
 	}
@@ -439,13 +462,13 @@ document.getElementById('gonext').onclick = function(){
 	}
 
     // Move on to next step
-    document.getElementById('importstep3').action.value = 'dupcheck';
+    document.getElementById('{$this->currentFormID}').action.value = '{$this->nextAction}';
     return true;
 }
 
 // handle adding new row
 document.getElementById('addrow').onclick = function(){
-    rownum = document.getElementById('importstep3').columncount.value;
+    rownum = document.getElementById('{$this->currentFormID}').columncount.value;
     newrow = document.createElement("tr");
 
     column0 = document.getElementById('row_0_col_0').cloneNode(true);
@@ -454,7 +477,7 @@ document.getElementById('addrow').onclick = function(){
         if ( column0.childNodes[i].name == 'colnum_0' ) {
             column0.childNodes[i].name = 'colnum_' + rownum;
             column0.childNodes[i].onchange = function(){
-                var module    = document.getElementById('importstep3').import_module.value;
+                var module    = document.getElementById('{$this->currentFormID}').import_module.value;
                 var fieldname = this.value;
                 var matches   = /colnum_([0-9]+)/i.exec(this.name);
                 var fieldnum  = matches[1];
@@ -497,7 +520,7 @@ document.getElementById('addrow').onclick = function(){
     column2.id = 'defaultvaluepicker_' + rownum;
     newrow.appendChild(column2);
 
-    document.getElementById('importstep3').columncount.value = parseInt(document.getElementById('importstep3').columncount.value) + 1;
+    document.getElementById('{$this->currentFormID}').columncount.value = parseInt(document.getElementById('{$this->currentFormID}').columncount.value) + 1;
 
     document.getElementById('row_0_col_0').parentNode.parentNode.insertBefore(newrow,this.parentNode.parentNode);
 
@@ -525,7 +548,7 @@ function toggleDefaultColumnVisibility()
     YAHOO.util.Dom.setStyle('default_column_header_span', 'display', newStyle);
 
     //Toggle all rows.
-    var columnCount = document.getElementById('importstep3').columncount.value;
+    var columnCount = document.getElementById('{$this->currentFormID}').columncount.value;
     for(i=0;i<columnCount;i++)
     {
         YAHOO.util.Dom.setStyle('defaultvaluepicker_' + i, 'display', newStyle);
@@ -541,7 +564,7 @@ YAHOO.util.Event.onDOMReady(function(){
         if (selects[i].name.indexOf("colnum_") != -1 ) {
             // fetch the field input control via ajax
             selects[i].onchange = function(){
-                var module    = document.getElementById('importstep3').import_module.value;
+                var module    = document.getElementById('{$this->currentFormID}').import_module.value;
                 var fieldname = this.value;
                 var matches   = /colnum_([0-9]+)/i.exec(this.name);
                 var fieldnum  = matches[1];

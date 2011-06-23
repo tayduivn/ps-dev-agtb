@@ -31,24 +31,7 @@
 
 *}
 {literal}
-<style>
-<!--
-textarea { width: 20em }
 
-span.collapse{
-    background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat 0 -90px;
-    padding-left: 10px;
-}
-
-span.expand{
-    background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat -0 -110px;
-    padding-left: 10px;
-}
-
--->
-
-
-</style>
 {/literal}
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
