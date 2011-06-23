@@ -48,19 +48,19 @@ class SugarFieldTeamset extends SugarFieldBase {
 
 	//the name of the field, defaults to team_name
 	var $field_name = 'team_name';
-
+	
 	//reference to the smarty class
 	var $smarty = null;
-
+	
 	//reference to the ViewSugarFieldTeamsetCollection instance
 	var $view = null;
-
+	
 	var $params = null;
-
+	
 	var $fields;
-
+	
 	var $add_user_private_team = true;
-
+	
 	/*
 	 * render
 	 * 
@@ -76,7 +76,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$method = $this->params['displayType'];
 		return $this->$method();
 	}
-
+	
     
     function initialize() {
     	$this->fields = $this->smarty->get_template_vars('fields');
@@ -92,9 +92,9 @@ class SugarFieldTeamset extends SugarFieldBase {
 		} else {
 		   $this->view->action_type = strtolower($formName);
 		}
-
+		
     	$this->view->module_dir = $_REQUEST['module'];
-
+	    
 		if($this->view->module_dir == 'Import'){
 		   $this->view->module_dir = $_REQUEST['import_module'];
 		} else if($this->view->action_type == 'quickcreate') {
@@ -102,7 +102,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		}	
 
 		$this->view->form_name = $formName;	
-
+		
 		//rather than retrieve the bean try to pull the values from the form
 		if(!empty($this->fields['team_set_id'])){
 			if(!empty($this->fields['team_set_id']['value'])){
@@ -115,7 +115,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 			$this->view->team_id = $this->fields['team_id']['value'];
 			$this->view->add_user_private_team = false;
 		}
-
+		
         $this->view->populate();
 		$this->view->setup();
     }    
@@ -146,7 +146,7 @@ class SugarFieldTeamset extends SugarFieldBase {
      */
 	function renderEditView(){
 		$this->initialize();
-
+		
 		//Get the team_arrow_value user preference and set it
 		//This user preference is used to remember whether or not the display of the
 		//teams widget should be collapsed or expanded
@@ -157,11 +157,11 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->view->displayParams['arrow'] = isset($arrow_value) ? $arrow_value : 'hide';	
 		*/
 		$this->view->displayParams['arrow'] = 'hide';
-
+		
 		$this->process();
 		return $this->display();
 	}
-
+	
 	/**
 	 * renderDetailView
 	 * This method is called to display the detail view of the teams widget
@@ -172,7 +172,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     	require_once('modules/Teams/TeamSetManager.php');
     	return TeamSetManager::getCommaDelimitedTeams($this->fields['team_set_id']['value'], $this->fields['team_id']['value'], true);
 	}
-
+	
 	/**
 	 * renderSearchView
 	 * 
@@ -191,7 +191,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->process();
 		return $this->display();
 	}
-
+	
 	/**
 	 * renderImportView
      *
@@ -204,11 +204,11 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->view->displayParams = $this->params;
 		$this->view->vardef = $team_name_vardef;
 		$this->view->module_dir = $_REQUEST['module'];
-
+	    
 		if($this->view->module_dir == 'Import'){
 			$this->view->module_dir = $_REQUEST['import_module'];
 		}
-
+		
 		$formName = $this->params['formName'];
 		$this->view->action_type = strtolower($formName);
 		$this->view->form_name = $formName;		
@@ -239,7 +239,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->process();
 		return $this->display();		
 	}
-
+	
 	function initClassicView($fields, $formName='EditView'){
 		require_once('include/SugarFields/Fields/Teamset/ViewSugarFieldTeamsetCollection.php');
 		$this->view = new ViewSugarFieldTeamsetCollection();
@@ -263,7 +263,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->view->process();
 		$this->view->init_tpl();
 	}
-
+	
 	/**
 	 * getClassicView
 	 * 
@@ -276,11 +276,11 @@ class SugarFieldTeamset extends SugarFieldBase {
 		}
 		return $this->view->display();
 	}
-
+	
 	function getClassicViewQS() {
 		return $this->view->createQuickSearchCode(false);
 	}
-
+	
 	/**
 	 * getEditViewSmarty
 	 * Returns the Smarty code portion to render the edit view of the field
@@ -294,7 +294,7 @@ class SugarFieldTeamset extends SugarFieldBase {
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderEditView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');
+		return $this->fetch($this->findTemplate('Teamset'));
     }	
 
 	/**
@@ -304,10 +304,10 @@ class SugarFieldTeamset extends SugarFieldBase {
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
 		$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderDetailView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');
+		return $this->fetch($this->findTemplate('Teamset'));
 	}
 
-
+	
 	/**
 	 * getMassUpdateViewSmarty
 	 * 
@@ -320,22 +320,22 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$this->view->displayParams = $displayParams;
 		$this->view->vardef = $vardef;
 		$this->view->module_dir = $_REQUEST['module'];
-
+		
 		$this->view->team_set_id = !empty($GLOBALS['current_user']->team_set_id) ? $GLOBALS['current_user']->team_set_id : '';
 		$this->view->team_id =  !empty($GLOBALS['current_user']->team_id) ? $GLOBALS['current_user']->team_id : '';
-
+		
         $this->view->populate();
 		$this->view->setup();
 		$this->view->process();
 		$this->view->init_tpl();
 		return $this->view->display();	
 	}
-
+	
 	function getPopupViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex){
     	$displayParams['formName'] = 'popup_query_form';
     	return $this->getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex);
     }
-
+	
 	function getSearchViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
 		if(empty($displayParams['formName'])){
 			$displayParams['formName'] = 'search_form';
@@ -343,37 +343,29 @@ class SugarFieldTeamset extends SugarFieldBase {
     	$this->view->displayParams = $displayParams;
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
     	$this->ss->assign('renderView', 'renderSearchView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');		
+		return $this->fetch($this->findTemplate('Teamset'));		
 	}
 
-    /**
-     * @param mixed $parentFieldArray
-     * @param array $vardef
-     * @param array $displayParams
-     * @param string $col
-     */
-    public function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col)
-    {
+	function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
         $tabindex = 1;
-        $parentFieldArray = $this->setupFieldArray($parentFieldArray, $vardef);
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         $this->ss->assign('rowData',$parentFieldArray);
         $this->ss->assign('col',$vardef['name']);
-        return $this->fetch('include/SugarFields/Fields/Teamset/TeamsetListView.tpl');
-    }
-
+		return $this->fetch($this->findTemplate('TeamsetListView'));
+	}
+	
 	function getImportViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex) {
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 		$this->ss->assign('renderView', 'renderImportView');
-		return $this->fetch('include/SugarFields/Fields/Teamset/Teamset.tpl');
+		return $this->fetch($this->findTemplate('Teamset'));
     }	
-
+	
 	/**
 	 * getTeamIdSearchField
 	 * 
 	 */
 	public function getTeamIdSearchField($field) {
-
+		
 		if(isset($_REQUEST[$field])) {
 			$primary_team_index = $_REQUEST[$field];
 			if(preg_match('/(team_name_.*?_collection)$/', $field, $matches)) {
@@ -386,7 +378,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 					     'db_field' => array('team_id'));
 		}	
 	}
-
+	
 	/**
 	 * getTeamSetIdSearchField
 	 * 
@@ -394,7 +386,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 	 * @return unknown_type
 	 */
 	public function getTeamSetIdSearchField($field, $type = 'any', $teams = array(), $params = array()){
-
+		
 		if(empty($teams)){
 			$teams = $this->getTeamsFromRequest($field, $params);
 		}
@@ -408,7 +400,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 		if($type == 'exact') {
 			//Calculate the team_md5 value
 			sort($teams, SORT_STRING);
-
+			
             $team_md5 = '';
             $uniqueTeams = array();
 			foreach($teams as $team_id){
@@ -417,7 +409,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 					$uniqueTeams[] = $team_id;
 				}
 			}
-
+			
 			$team_md5 = md5($team_md5);
 
 			return array('query_type' => 'format',
@@ -425,7 +417,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 						 'operator' => 'subquery',
 			             'subquery' => "SELECT id FROM team_sets WHERE team_md5 = '{0}'",
 						 'db_field' => array('team_set_id'));			
-
+			
 	    } else if($type == 'all' && $team_count > 1) {
 			return array('query_type' => 'format',
 			             'value' => $teams,
@@ -440,7 +432,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 						 'db_field' => array('team_set_id'));
 		}
 	}
-
+	
 	/**
 	 * Obtain the set of teams selected from the REQUEST
 	 *
@@ -470,7 +462,7 @@ class SugarFieldTeamset extends SugarFieldBase {
 
 	    return $team_ids;
 	}
-
+	
 	/**
 	 * Given the REQUEST, return the selected primary team id, if none found, then return ''
 	 *
@@ -486,7 +478,7 @@ class SugarFieldTeamset extends SugarFieldBase {
         }
         return '';
 	}
-
+	
 	/**
 	 * Given the bean and the REQUEST attempt to save the selected team ids to the bean
 	 *
@@ -515,9 +507,89 @@ class SugarFieldTeamset extends SugarFieldBase {
 	        if(!empty($params[$field.'_type'])){
 	        	$method = $params[$field.'_type'];
 	        }
-
+	        
 	        $bean->teams->$method($team_ids, array(), false);
 		}
 	}
+    
+    /**
+     * @see SugarFieldBase::importSanitize()
+     */
+    public function importSanitize(
+        $value,
+        $vardef,
+        $focus,
+        ImportFieldSanitize $settings
+        )
+    {
+        static $teamBean;
+        if ( !isset($teamBean) ) {
+            $teamBean = loadBean('Teams');
+        }
+        
+    	if(!is_array($value)){
+	        // We will need to break it apart to put test it.
+       		$value = explode(",",$value);
+       		if(!is_array($value))
+       			$value = array($value);
+		}
+		$team_ids = array();
+		foreach($value as $val){
+			//1) check if this is a team id
+			$val = trim($val);
+            if ( empty($val) ) {
+                continue;
+            }
+			if(!$this->_isTeamId($val, 'Teams')){
+				//2) check if it is a team name
+				$fieldname = $vardef['rname'];
+                $teamid = $teamBean->retrieve_team_id($val);
+                if($teamid !== false){
+                    $team_ids[] = $teamid;
+                    continue;
+                } else {
+                    continue;
+                }
+                //3) ok we did not find the id, so we need to create a team.
+                $newbean = loadBean('Teams');
+                 if ( $newbean->ACLAccess('save') ) {
+                 	$newbean->$vardef['rname'] = $val;
+                 	
+                    if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' ){
+                    	$newbean->assigned_user_id = $GLOBALS['current_user']->id;
+                    }else{
+                    	$newbean->assigned_user_id = $focus->assigned_user_id;
+                    }
+                    
+                    if ( !isset($focus->modified_user_id) || $focus->modified_user_id == '' ){
+                    	$newbean->modified_user_id = $GLOBALS['current_user']->id;
+                    }else{
+                    	$newbean->modified_user_id = $focus->modified_user_id;
+                    }
+                    
+                    $newbean->save(false);
+                    $team_ids[] = $newbean->id;
+                 }
+			}else{
+				$team_ids[] = $val;
+			}
+		}
+
+		if(!empty($team_ids)){
+			$focus->load_relationship('teams');
+			$focus->teams->replace($team_ids, array(), true);
+			$focus->team_id = $team_ids[0];
+		} else {
+            $focus->setDefaultTeam();
+        }
+    }
+    
+    private function _isTeamId($value, $module){
+    	$checkfocus = loadBean($module);
+        if ( $checkfocus && is_null($checkfocus->retrieve($value)) ){
+        	return false;
+        }
+        return true;
+    }
 }
 ?>
