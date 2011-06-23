@@ -3087,18 +3087,22 @@ $app_strings = array (
 
     //IMPORT SAMPLE TEXT
     'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
-    This is a sample import file which provides an example of the expected contents of a file that is ready for import. The file is a comma-delimited .csv file, using double-quotes as the field qualifier.
+"This is a sample import file which provides an example of the expected contents of a file that is ready for import."
+"The file is a comma-delimited .csv file, using double-quotes as the field qualifier."
 
-The header row contains the field labels as you would see them in the application, and these labels are used for mapping the data in the file to the fields in the application.
+"The header row is the top-most row in the file and contains the field labels as you would see them in the application."
+"These labels are used for mapping the data in the file to the fields in the application."
 
-Notes: The database names could also be used in the header row. This is useful when you are using phpMyAdmin or another database tool to provide an exported list of data to import. The column order is not critical as the import process matches the data to the appropriate fields based on the header row.
+"Notes: The database names could also be used in the header row. This is useful when you are using phpMyAdmin or another database tool to provide an exported list of data to import."
+"The column order is not critical as the import process matches the data to the appropriate fields based on the header row."
 
-To use this file as a template, do the following:
-1. Remove the sample rows of data
-2. Remove the help text that you are reading right now
-3. Input your own data into the appropriate rows and columns
-4. Save the file to a known location on your system
-5. Click on the Import option from the Actions menu in the application and choose the file to upload
+
+"To use this file as a template, do the following:"
+"1. Remove the sample rows of data"
+"2. Remove the help text that you are reading right now"
+"3. Input your own data into the appropriate rows and columns"
+"4. Save the file to a known location on your system"
+"5. Click on the Import option from the Actions menu in the application and choose the file to upload"
    ',
 
     );
