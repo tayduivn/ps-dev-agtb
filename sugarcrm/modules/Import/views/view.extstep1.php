@@ -32,13 +32,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('modules/Import/views/ImportView.php');
+require_once('modules/Import/views/view.step3.php');
 
         
-class ImportViewExtStep1 extends ImportView
+class ImportViewExtStep1 extends ImportViewStep3
 {
 
     protected $pageTitleKey = 'LBL_CONFIRM_EXT_TITLE';
+    protected $currentFormID = 'extstep1';
+    protected $previousAction = 'Step1';
+    protected $nextAction = 'extdupcheck';
 
  	/** 
      * @see SugarView::display()
@@ -68,11 +71,13 @@ class ImportViewExtStep1 extends ImportView
                 $required[$name] = str_replace(":","",translate($properties['name'] ,$this->bean->module_dir));
         }
 
+        $mappedRows = $this->getMappingRows($importModule, $extSourceToSugarFieldMapping);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
-        $this->ss->assign("rows",$this->getMappingRows($importModule, $extSourceToSugarFieldMapping) );
+        $this->ss->assign("rows", $mappedRows);
+        $this->ss->assign("COLUMNCOUNT", count($mappedRows));
         $this->ss->assign("IMPORT_MODULE", $importModule);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
-
+        $this->ss->assign('CSS', $this->_getCSS());
         $this->ss->display('modules/Import/tpls/extstep1.tpl');
     }
 
@@ -179,114 +184,6 @@ class ImportViewExtStep1 extends ImportView
         return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE, 'eapm_import_list');
     }
 
-    /**
-     * Returns JS used in this view
-     */
-    private function _getJS($required)
-    {
-        global $mod_strings;
-        $print_required_array = "";
-        foreach ($required as $name=>$display) {
-            $print_required_array .= "required['$name'] = '". $display . "';\n";
-        }
-        $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
-        return <<<EOJAVASCRIPT
-<script type="text/javascript">
-<!--
-
-document.getElementById('goback').onclick = function(){
-    document.getElementById('extstep1').action.value = 'Step1';
-    return true;
-}
-
-document.getElementById('gonext').onclick = function(){
-    // validate form
-    clear_all_errors();
-    var form = document.getElementById('extstep1');
-    var hash = new Object();
-    var required = new Object();
-    $print_required_array
-    var isError = false;
-    for ( i = 0; i < form.length; i++ ) {
-		if ( form.elements[i].name.indexOf("colnum",0) == 0) {
-            if ( form.elements[i].value == "-1") {
-                continue;
-            }
-            if ( hash[ form.elements[i].value ] == 1) {
-                isError = true;
-                add_error_style('extstep1',form.elements[i].name,"{$mod_strings['ERR_MULTIPLE']}");
-            }
-            hash[form.elements[i].value] = 1;
-        }
-    }
-
-    // check for required fields
-	for(var field_name in required) {
-		// contacts hack to bypass errors if full_name is set
-		if (field_name == 'last_name' &&
-				hash['full_name'] == 1) {
-			continue;
-		}
-		if ( hash[ field_name ] != 1 ) {
-            isError = true;
-            add_error_style('extstep1',form.colnum_0.name,
-                "{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} " + required[field_name]);
-		}
-	}
-
-    // return false if we got errors
-	if (isError == true) {
-		return false;
-	}
-
-    // Move on to next step
-    document.getElementById('extstep1').action.value = 'dupcheck';
-    return true;
-}
-
-YAHOO.util.Event.onDOMReady(function(){
-    var selects = document.getElementsByTagName('select');
-    for (var i = 0; i < selects.length; ++i ){
-        if (selects[i].name.indexOf("colnum_") != -1 ) {
-            // fetch the field input control via ajax
-            selects[i].onchange = function(){
-                var module    = document.getElementById('extstep1').import_module.value;
-                var fieldname = this.value;
-                var matches   = /colnum_([0-9]+)/i.exec(this.name);
-                var fieldnum  = matches[1];
-                if ( fieldname == -1 ) {
-                    document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '';
-                    return;
-                }
-
-                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<img src="{$sqsWaitImage}" />'
-                YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action=GetControl&import_module='+module+'&field_name='+fieldname,
-                    {
-                        success: function(o)
-                        {
-                            document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = o.responseText;
-                            SUGAR.util.evalScript(o.responseText);
-                            enableQS(true);
-                        },
-                        failure: function(o) {/*failure handler code*/}
-                    });
-            }
-        }
-    }
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){
-        if (inputs[i].id.indexOf("deleterow_") != -1 ) {
-            inputs[i].onclick = function(){
-                this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
-            }
-        }
-    }
-});
--->
-</script>
-
-EOJAVASCRIPT;
-    }
 }
 
 ?>
