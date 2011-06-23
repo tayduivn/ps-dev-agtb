@@ -56,6 +56,7 @@ class ImportViewExtStep1 extends ImportView
             $this->_showImportError($mod_strings['ERR_MISSING_MAP_NAME'],$_REQUEST['import_module'],'Step1');
             return;
         }
+        $extSourceToSugarFieldMapping = $mappingFile->getMapping();
 
         // get list of required fields
         $required = array();
@@ -68,14 +69,14 @@ class ImportViewExtStep1 extends ImportView
         }
 
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
-        $this->ss->assign("rows",$this->getMappingRows($importModule) );
+        $this->ss->assign("rows",$this->getMappingRows($importModule, $extSourceToSugarFieldMapping) );
         $this->ss->assign("IMPORT_MODULE", $importModule);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
 
         $this->ss->display('modules/Import/tpls/extstep1.tpl');
     }
 
-    private function getMappingRows($module)
+    private function getMappingRows($module, $extSourceToSugarFieldMapping)
     {
         global $app_strings, $current_language;
         $columns = array();
@@ -83,12 +84,7 @@ class ImportViewExtStep1 extends ImportView
         $mod_strings = return_module_language($current_language, $module);
         $ignored_fields = array();
 
-        $mappingConfig = array(
-          'first_name' => array('sugar_key' => 'first_name', 'sugar_label' => 'LBL_FIRST_NAME'),
-          'last_name' => array('sugar_key' => 'last_name', 'sugar_label' => 'LBL_LAST_NAME'),
-        );
-
-        foreach($mappingConfig as $externalKey => $sugarMapping)
+        foreach($extSourceToSugarFieldMapping as $externalKey => $sugarMapping)
         {
             // See if we have any field map matches
             $defaultValue = $externalKey;
@@ -115,10 +111,7 @@ class ImportViewExtStep1 extends ImportView
                 $selected = '';
                 if ( !empty($defaultValue) && !in_array($fieldname,$mappedFields) && !in_array($fieldname,$ignored_fields) )
                 {
-                    if ( strtolower($fieldname) == strtolower($defaultValue)
-                        || strtolower($fieldname) == str_replace(" ","_",strtolower($defaultValue))
-                        || strtolower($displayname) == strtolower($defaultValue)
-                        || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) )
+                    if ( strtolower($fieldname) == strtolower($sugarMapping['sugar_key']) )
                     {
                         $selected = ' selected="selected" ';
                         $defaultField = $fieldname;
@@ -148,10 +141,11 @@ class ImportViewExtStep1 extends ImportView
             // Bug 27046 - Sort the column name picker alphabetically
             ksort($options);
 
+            $rowLabel = isset($mod_strings[$sugarMapping['sugar_label']]) ? $mod_strings[$sugarMapping['sugar_label']] : $sugarMapping['default_label'] ;
             $columns[] = array(
                 'field_choices' => implode('',$options),
                 'default_field' => $defaultFieldHTML,
-                'cell1'         => str_replace(":",'',$mod_strings[$sugarMapping['sugar_label']]),
+                'cell1'         => str_replace(":",'', $rowLabel),
                 'show_remove'   => false,
                 );
         }

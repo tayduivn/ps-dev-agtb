@@ -136,9 +136,8 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 
     public function toArray()
     {
-        
-        $entry = array('first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '', 'phones' => array(),
-                       'title' => '', 'account_name' => '', 'addresses' => array(), 'emails' => array(), 'notes' => '');
+        $entry = array('first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '',
+                       'title' => '', 'account_name' => '', 'emails' => array(), 'notes' => '');
         
         if($this->_names != null)
             $entry = array_merge($entry, $this->_names->toArray() );
@@ -157,13 +156,13 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         //Get addresses
         foreach($this->_addresses as $address)
         {
-            $entry['addresses'][] = $address->toArray();
+            $entry = array_merge($entry, $address->toArray() );
         }
         //Process phones
         foreach($this->_phones as $phoneEntry)
         {
-            $entry['phones'][] = array('number' => $phoneEntry->getNumber() , 'primary' => $phoneEntry->isPrimary(),
-                                       'type' => $phoneEntry->getPhoneType() );
+            $key = "phone_" . $phoneEntry->getPhoneType();
+            $entry[$key] = $phoneEntry->getNumber();
         }
 
         //Process emails
