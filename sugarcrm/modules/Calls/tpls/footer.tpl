@@ -42,15 +42,16 @@ require_once("'".$externalJSFile."'");
 
 <script type="text/javascript">
 {literal}
+SUGAR.calls = {};
 var callsLoader = new YAHOO.util.YUILoader({
-    require : ["jsclass_scheduler"],
+    require : ["sugar_grp_jsolait", "jsclass_scheduler"],
     loadOptional: true,
 	//BEGIN SUGARCRM flav=int ONLY
 	filter: 'debug',
 	//END SUGARCRM flav=int ONLY
     skin: { base: 'blank', defaultSkin: '' },
 	onSuccess: function(){
-		function fill_invitees() {
+		SUGAR.calls.fill_invitees = function() {
 			if (typeof(GLOBAL_REGISTRY) != 'undefined')  {
 				SugarWidgetScheduler.fill_invitees(document.EditView);
 			}
@@ -61,7 +62,7 @@ var callsLoader = new YAHOO.util.YUILoader({
 		if ( document.getElementById('save_and_continue') ) {
 			var oldclick = document.getElementById('save_and_continue').attributes['onclick'].nodeValue;
 			document.getElementById('save_and_continue').onclick = function(){
-				fill_invitees();
+				SUGAR.calls.fill_invitees();
 				eval(oldclick);
 			}
 		}
