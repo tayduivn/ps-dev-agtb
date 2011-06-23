@@ -63,7 +63,13 @@
             <td align="left" scope="row" colspan="4">{$SAMPLE_URL} &nbsp;{sugar_help text=$MOD.LBL_SAMPLE_URL_HELP}</td>
         </tr>
         <tr>
+            <td scope="row" colspan="4"></td>
+        </tr>
+        <tr>
             <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="60" name="userfile" type="file"/></td>
+        </tr>
+        <tr>
+            <td scope="row" colspan="4"></td>
         </tr>
         <tr>
             <td scope="row" colspan="3">

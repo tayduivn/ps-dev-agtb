@@ -62,12 +62,15 @@
             <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
           </tr>
           <tr>
-            <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
-              &nbsp;{$MOD.LBL_CSV}&nbsp;{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}</td>
+            <td colspan="3" scope="row">
+                <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
+              &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
+            </td>
           </tr>
             <tr>
-            <td colspan="3" scope="row"><input class="radio" type="radio" name="source" value="external" id="ext_source" />
-              &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}</td>
+                <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
+                  &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
+                </td>
           </tr>
           <tr id="external_sources_tr" style="display:none;" >
                 <td>&nbsp;</td>

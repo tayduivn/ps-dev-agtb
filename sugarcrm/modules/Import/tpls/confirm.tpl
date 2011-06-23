@@ -87,32 +87,23 @@ div.errorMessage {
     <div class="leftPadded">
         <table>
             <tr>
-                <td>
-                    <table border=0 class="edit view">
-                        <tr>
-                            <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}
-                                &nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h4></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source"
-                                                               value="salesforce" id='sf_map'/>
-                                &nbsp;{$MOD.LBL_SALESFORCE}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source"
-                                                               value="outlook" id='outlook_map'/>
-                                &nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
-                        </tr>
-                    </table>
+                <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h4></td>
+            </tr>
+            <tr>
+                <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/> &nbsp;{$MOD.LBL_SALESFORCE}</td>
+            </tr>
+            <tr>
+                <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
+            </tr>
+            <tr>
+                <td colspan="2">&nbsp;</td>
+            </tr>
+            <tr>
+                <td align="left" colspan="4" style="background: transparent;">
+                    <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleImportOptions" class="button" type="button"
+                        name="button" value="  {$MOD.LBL_SHOW_ADVANCED_OPTIONS}  "> {sugar_help text=$MOD.LBL_IMPORT_FILE_SETTINGS_HELP}
                 </td>
             </tr>
-        <tr>
-            <td align="left" colspan="4" style="background: transparent;">
-                <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleImportOptions" class="button" type="button"
-                    name="button" value="  {$MOD.LBL_SHOW_ADVANCED_OPTIONS}  "> {sugar_help text=$MOD.LBL_IMPORT_FILE_SETTINGS_HELP}
-            </td>
-        </tr>
-            <td>&nbsp;</td>
         <tr>
             <td>
                 <table border=0 class="edit view" style="display: none;" id="importOptions">
@@ -127,7 +118,9 @@ div.errorMessage {
                             <slot>{$MOD.LBL_CUSTOM_DELIMITER}</slot>
                         </td>
                         <td>
-                            <slot><input type="text" id="custom_delimiter" name="custom_delimiter" value="{$CUSTOM_DELIMITER}" style="width: 5em;" maxlength="1" /></slot>
+                            <slot><input type="text" id="custom_delimiter" name="custom_delimiter" value="{$CUSTOM_DELIMITER}" style="width: 5em;" maxlength="1" />
+                            {sugar_help text=$MOD.LBL_FIELD_DELIMETED_HELP}
+                            </slot>
                         </td>
                     </tr>
                     <tr>
@@ -147,7 +140,7 @@ div.errorMessage {
                             {$MOD.LBL_HAS_HEADER}
                         </td>
                         <td>
-                            <input class="checkBox" value='on' type="checkbox" name="has_header" id="has_header" {$HAS_HEADER_CHECKED}>
+                            <input class="checkBox" value='on' type="checkbox" name="has_header" id="has_header" {$HAS_HEADER_CHECKED}> {sugar_help text=$MOD.LBL_HEADER_ROW_OPTION_HELP}
                         </td>
                     </tr>
                     <tr>
