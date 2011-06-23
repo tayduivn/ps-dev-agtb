@@ -509,24 +509,20 @@ document.getElementById('addrow').onclick = function(){
 function toggleDefaultColumnVisibility()
 {
     var currentStyle = YAHOO.util.Dom.getStyle('default_column_header_span', 'display');
-
     if(currentStyle == 'none')
     {
         var newStyle = '';
-        var newSrc = 'themes/default/images/advanced_search.gif';
+        YAHOO.util.Dom.addClass('hide_default_link', 'collapse');
+        YAHOO.util.Dom.removeClass('hide_default_link', 'expand');
     }
     else
     {
         var newStyle = 'none';
-        var newSrc = 'themes/default/images/basic_search.gif';
+        YAHOO.util.Dom.addClass('hide_default_link', 'expand');
+        YAHOO.util.Dom.removeClass('hide_default_link', 'collapse');
     }
 
     YAHOO.util.Dom.setStyle('default_column_header_span', 'display', newStyle);
-
-    //Toggle the image
-    var linkElem = document.getElementById('hide_default_link');
-    var imgElement = linkElem.getElementsByTagName('img')[0];
-    imgElement.src = newSrc;
 
     //Toggle all rows.
     var columnCount = document.getElementById('importstep3').columncount.value;
@@ -537,7 +533,7 @@ function toggleDefaultColumnVisibility()
 }
 
 YAHOO.util.Event.onDOMReady(function(){
-
+    toggleDefaultColumnVisibility();
     YAHOO.util.Event.addListener('hide_default_link', "click", toggleDefaultColumnVisibility);
 
     var selects = document.getElementsByTagName('select');

@@ -34,7 +34,20 @@
 <style>
 <!--
 textarea { width: 20em }
+
+span.collapse{
+    background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat 0 -90px;
+    padding-left: 10px;
+}
+
+span.expand{
+    background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat -0 -110px;
+    padding-left: 10px;
+}
+
 -->
+
+
 </style>
 {/literal}
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
@@ -108,7 +121,7 @@ textarea { width: 20em }
     <td style="text-align: left;" scope="row"><b>{$MOD.LBL_ROW} 2</b></td>
     {/if}
     <td style="text-align: left;" scope="row" id="default_column_header">
-        <a id="hide_default_link">{sugar_image image="advanced_search.gif" name="advanced_search" height="8" width="8" align="top"}</a>
+        <span id="hide_default_link" class="expand">&nbsp;</span>
         <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
     </td>
