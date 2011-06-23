@@ -108,7 +108,6 @@ $mod_strings = array (
     'LBL_TEAM_COUNT_MOD' => 'Team Count Mod',
     'LBL_TEAM_NAME_OWNER' => 'Team Name Owner',
     'LBL_TEAM_NAME_MOD' => 'Team Name Mod',
-    'LBL_EXPORT_TEAM_COUNT' => 'Team Count',
     'LBL_ACCOUNT_NAME_OWNER' => 'Account Name Owner',
     'LBL_ACCOUNT_NAME_MOD' => 'Account Name Mod',
     'LBL_MODIFIED_USER_NAME' => 'Modified User Name',
@@ -116,6 +115,12 @@ $mod_strings = array (
     'LBL_MODIFIED_USER_NAME_MOD' => 'Modified User Name Mod',
     'LBL_PORTAL_VIEWABLE' => 'Portal Viewable',
     'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+    'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+    'LBL_EXPORT_CREATED_BY_NAME' => 'Created By User Name',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_TEAM_COUNT' => 'Team Count',
+
 );
 
 

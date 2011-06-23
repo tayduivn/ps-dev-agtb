@@ -130,5 +130,8 @@ $mod_strings = array (
     'LBL_EXPORT_DISPLAYED_URL' => 'Displayed Url',
     'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
     'LBL_EXPORT_EXTERNAL_ID' => 'External ID',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 );
 ?>

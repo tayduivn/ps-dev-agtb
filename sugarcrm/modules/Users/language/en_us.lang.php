@@ -617,6 +617,17 @@ $mod_strings = array (
 	'LBL_EAPM_SUBPANEL_TITLE' => 'External Accounts',
     'LBL_OAUTH_TOKENS' => 'OAuth Tokens',
     'LBL_OAUTH_TOKENS_SUBPANEL_TITLE' => "OAuth Access Tokens",
+
+    //For export labels
+    'LBL_MODIFIED_USER_ID' => 'Modified User ID',
+    'LBL_PHONE_HOME' => 'Phone Home',
+    'LBL_PHONE_MOBILE' => 'Phone Mobile',
+    'LBL_PHONE_WORK' => 'Phone Work',
+    'LBL_PHONE_OTHER' => 'Phone Other',
+    'LBL_PHONE_FAX' => 'Phone Fax',
+    'LBL_PORTAL_ONLY' => 'Portal Only',
+    'LBL_IS_GROUP' => 'Is Group',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 ); // END STRINGS DEFS
 
 ?>

@@ -99,13 +99,19 @@ $mod_strings = array (
   'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
 
 
-  //For export labels
+    //For export labels
+  'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+  'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+  'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+  'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   'LBL_TYPE_ID'=> 'Type ID',
   'LBL_MANUFACTURER_ID'=> 'Manufacturer ID',
   'LBL_CATEGORY_ID'=> 'Category ID',
   'LBL_WEBSITE'=> 'Website',
   'LBL_QTY_IN_STOCK'=> 'Stock Quantity',
-  'LBL_EXPORT_CURRENCY'=> 'Currency ID',
+  'LBL_EXPORT_CURRENCY'=> 'Currency',
+  'LBL_EXPORT_CURRENCY_ID'=> 'Currency ID',
+  'LBL_EXPORT_COST_PRICE'=> 'Cost Price',
 
 );
 
