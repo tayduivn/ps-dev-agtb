@@ -36,18 +36,6 @@ class ImportMapGoogle extends ImportMapOther
      * String identifier for this import
      */
     public $name = 'google';
-	/**
-     * Field delimiter
-     */
-    public $delimiter = ',';
-    /**
-     * Field enclosure
-     */
-    public $enclosure = '"';
-	/**
-     * Do we have a header?
-     */
-    public $has_header = true;
     
     /**
      * Gets the default mapping for a module
@@ -55,24 +43,35 @@ class ImportMapGoogle extends ImportMapOther
      * @param  string $module
      * @return array field mappings
      */
-	public function getMapping($module)
+	public function getMapping()
     {
-        $return_array = parent::getMapping($module);
-        switch ($module) {
-        case 'Contacts':
-        case 'Leads':
-            return $return_array + array(
-                "Job Title"=>"title",
-                "Home Country"=>"alt_address_country",
-                "E-mail 2 Address"=>"email2",
-                );
-            break;
-        case 'Accounts':
-            return $return_array;
-            break;
-        default:
-            return $return_array;
-        }
+         $return_array = array(
+             'first_name' => array('sugar_key' => 'first_name', 'sugar_label' => 'LBL_FIRST_NAME', 'default_label' => ''),
+             'last_name' => array('sugar_key' => 'last_name', 'sugar_label' => 'LBL_LAST_NAME', 'default_label' => ''),
+             'birthday' => array('sugar_key' => 'birthdate', 'sugar_label' => 'LBL_BIRTHDATE', 'default_label' => ''),
+             'title' => array('sugar_key' => 'title', 'sugar_label' => 'LBL_TITLE', 'default_label' => ''),
+             'notes' => array('sugar_key' => 'description', 'sugar_label' => 'LBL_DESCRIPTION', 'default_label' => 'Description'),
+
+             'alt_address_street' => array('sugar_key' => 'alt_address_street', 'sugar_label' => 'LBL_ALT_ADDRESS_STREET', 'default_label' => ''),
+             'alt_address_postcode' => array('sugar_key' => 'alt_address_postalcode', 'sugar_label' => 'LBL_ALT_ADDRESS_POSTALCODE', 'default_label' => ''),
+             'alt_address_city' => array('sugar_key' => 'alt_address_city', 'sugar_label' => 'LBL_ALT_ADDRESS_CITY', 'default_label' => ''),
+             'alt_address_state' => array('sugar_key' => 'alt_address_state', 'sugar_label' => 'LBL_ALT_ADDRESS_STATE', 'default_label' => ''),
+             'alt_address_country' => array('sugar_key' => 'alt_address_country', 'sugar_label' => 'LBL_ALT_ADDRESS_POSTALCODE', 'default_label' => ''),
+
+             'primary_address_street' => array('sugar_key' => 'primary_address_street', 'sugar_label' => 'LBL_PRIMARY_ADDRESS_STREET', 'default_label' => ''),
+             'primary_address_postcode' => array('sugar_key' => 'primary_address_postalcode', 'sugar_label' => 'LBL_PRIMARY_ADDRESS_POSTALCODE', 'default_label' => ''),
+             'primary_address_city' => array('sugar_key' => 'primary_address_city', 'sugar_label' => 'LBL_PRIMARY_ADDRESS_CITY', 'default_label' => ''),
+             'primary_address_state' => array('sugar_key' => 'primary_address_state', 'sugar_label' => 'LBL_PRIMARY_ADDRESS_STATE', 'default_label' => ''),
+             'primary_address_country' => array('sugar_key' => 'primary_address_country', 'sugar_label' => 'LBL_PRIMARY_ADDRESS_COUNTRY', 'default_label' => ''),
+
+             'phone_main' => array('sugar_key' => '', 'sugar_label' => '', 'default_label' => 'Phone'),
+             'phone_mobile' => array('sugar_key' => 'phone_mobile', 'sugar_label' => 'LBL_MOBILE_PHONE', 'default_label' => ''),
+             'phone_home' => array('sugar_key' => 'phone_home', 'sugar_label' => 'LBL_HOME_PHONE', 'default_label' => ''),
+             'phone_work' => array('sugar_key' => 'phone_work', 'sugar_label' => 'LBL_OFFICE_PHONE', 'default_label' => ''),
+             'phone_fax' => array('sugar_key' => 'phone_fax', 'sugar_label' => 'LBL_FAX_PHONE', 'default_label' => ''),
+             );
+
+         return $return_array;
     }
 }
 
