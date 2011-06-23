@@ -53,10 +53,6 @@ class M2MRelationship extends SugarRelationship
             return false;
         }
 
-        //Make sure we load the current relationship state to the links
-        $lhs->$lhsLinkName->getBeans();
-        $rhs->$rhsLinkName->getBeans();
-
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = array(
             "id" => create_guid(),
