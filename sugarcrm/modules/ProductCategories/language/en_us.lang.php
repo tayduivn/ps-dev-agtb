@@ -58,6 +58,9 @@ $mod_strings = array (
 
   //For export labels  
   'LBL_PARENT_CATEGORY'=> 'Parent Category',
+  'LBL_EXPORT_PARENT_ID'=> 'Parent Category ID',
+  'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified User ID',
+  'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   );
 
 

@@ -102,6 +102,10 @@ $mod_strings = array (
 
     //For export labels
 	'LBL_FOUND_IN_RELEASE_NAME' => 'Found In Release Name',
+    'LBL_PORTAL_VIEWABLE' => 'Portal Viewable',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+
 
   );
 ?>

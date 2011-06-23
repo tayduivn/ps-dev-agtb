@@ -97,6 +97,16 @@ $mod_strings = array (
   'LNK_NEW_SHIPPER' => 'Shipping Providers',
   'LNK_PRODUCT_LIST' => 'View Product Catalog',
   'NTC_DELETE_CONFIRMATION' => 'Are you sure you want to delete this record?',
+
+
+  //For export labels
+  'LBL_TYPE_ID'=> 'Type ID',
+  'LBL_MANUFACTURER_ID'=> 'Manufacturer ID',
+  'LBL_CATEGORY_ID'=> 'Category ID',
+  'LBL_WEBSITE'=> 'Website',
+  'LBL_QTY_IN_STOCK'=> 'Stock Quantity',
+  'LBL_EXPORT_CURRENCY'=> 'Currency ID',
+
 );
 
 

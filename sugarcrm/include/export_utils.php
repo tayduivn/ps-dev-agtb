@@ -192,9 +192,14 @@ function export($type, $records = null, $members = false) {
     //iterate through db fields and attempt to retrieve label from field mapping
     foreach($fields_array as $dbname){
         $fieldLabel = '';
-        //first check to see if label exists in mapping, and in mod strings
-        if (!empty($focus->field_name_map[$dbname]['vname']) && !empty($mod_strings[$focus->field_name_map[$dbname]['vname']])){
-            $fieldLabel = $mod_strings[$focus->field_name_map[$dbname]['vname']];
+
+        //first check to see if we are overriding the label for export.
+        if (!empty($mod_strings['LBL_EXPORT_'.strtoupper($dbname)])){
+            //entry exists which means we are overriding this value for exporting, use this label
+            $fieldLabel = $mod_strings['LBL_EXPORT_'.strtoupper($dbname)];
+        }elseif (!empty($focus->field_name_map[$dbname]['vname']) && !empty($app_strings[$focus->field_name_map[$dbname]['vname']])){
+            //check to see if label exists in mapping and in app strings
+            $fieldLabel = $app_strings[$focus->field_name_map[$dbname]['vname']];        
         }elseif (!empty($focus->field_name_map[$dbname]['vname']) && !empty($app_strings[$focus->field_name_map[$dbname]['vname']])){
             //check to see if label exists in mapping and in app strings
             $fieldLabel = $app_strings[$focus->field_name_map[$dbname]['vname']];
