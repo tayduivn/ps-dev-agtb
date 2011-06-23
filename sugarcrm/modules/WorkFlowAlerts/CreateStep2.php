@@ -161,6 +161,7 @@ if(		$focus->user_type=="rel_user_custom"){
 		
     $form->assign("FIELD_VALUE",$focus->field_value);
     $form->assign("REL_EMAIL_VALUE",$focus->rel_email_value);
+    $form->assign("ADDRESS_TYPE",$focus->address_type);
     $form->assign("RELATE_TYPE","Self");		
 	$form->assign("ARRAY_TYPE","future");	
 
