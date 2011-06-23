@@ -160,7 +160,7 @@ class IBMDB2Manager  extends DBManager
     /**~
      * @see DBManager::checkError()
      */
-    public function checkError($msg = '', $dieOnError = false)
+    public function checkError($msg = '', $dieOnError = false, $stmt = false)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
@@ -171,11 +171,11 @@ class IBMDB2Manager  extends DBManager
             $msg = $this->handleError($msg, $dieOnError, $logmsg);
             $result = true;
         }
-//        if (db2_stmt_error()) {/* TODO: Add statement resource from context*/
-//            $logmsg = "IBM_DB2 statement error ".db2_stmt_error().": ".db2_stmt_errormsg();
-//            $msg = $this->handleError($msg, $dieOnError, $logmsg);
-//            $result = true;
-//        }
+        if (!empty($stmt) && db2_stmt_error($stmt)) {/* TODO: Add statement resource from context*/
+            $logmsg = "IBM_DB2 statement error ".db2_stmt_error($stmt).": ".db2_stmt_errormsg($stmt);
+            $this->handleError($msg, $dieOnError, $logmsg);
+            $result = true;
+        }
         return $result;
     }
 
@@ -233,7 +233,7 @@ class IBMDB2Manager  extends DBManager
 		if($keepResult)
 		    $this->lastResult = $result;
 
-		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
+		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt);
         return $result;
     }
 
@@ -753,6 +753,7 @@ class IBMDB2Manager  extends DBManager
             return false;
 
         $sql = "CREATE TABLE $tablename ($columns)";
+        $GLOBALS['log']->info("IBMDB2Manager.createTableSQLParams: ".$sql);
         return $sql;
 	}
 
@@ -769,14 +770,102 @@ class IBMDB2Manager  extends DBManager
 		}
         //May need to add primary key and sequence stuff here
 		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
-		if($ref['required'] == 'NULL') {
-		    // DB2 doesn't have NULL definition, only NOT NULL
-		    $ref['required'] = '';
-		}
         if ( $return_as_array )
             return $ref;
-        else
+        else{
+            if($ref['required'] == 'NULL') {
+                // DB2 doesn't have NULL definition, only NOT NULL
+                $ref['required'] = ''; // ONLY important when statement is rendered
+            }
             return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
+        }
+    }
+
+    protected function alterTableSQL($tablename, $columnspecs)
+    {
+        return "ALTER TABLE $tablename $columnspecs";
+    }
+
+    protected function alterTableColumnSQL($action, $columnspec)
+    {
+        return "$action COLUMN $columnspec";
+    }
+
+    /**
+     * 
+     * Generates a sequence of SQL statements to accomplish the required column alterations
+     *
+     * @param  $tablename
+     * @param  $def
+     * @param bool $ignoreRequired
+     * @return void
+     */
+    protected function alterOneColumnSQL($tablename, $def, $ignoreRequired = false) {
+        // Column attributes can only be modified one sql statement at a time
+        // http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/c0023297.htm
+        // Some rework maybe needed when targetting other versions than LUW 9.7
+        // http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.wn.doc/doc/c0053726.html
+        $sql = '';
+        $req = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
+        $alter = $this->alterTableSQL($tablename, $this->alterTableColumnSQL('ALTER', $req['name']));
+        $descr = $this->describeField($req['name'], $tablename);
+
+        $GLOBALS['log']->info("IBMDB2Manager.alterOneColumnSQL old field description for column {$req['name']} in table '$tablename'" . print_r($descr, true));
+
+        // NOTE not checking if datatype changed since it is a compound and as it will not cause any errors if the type is already the same
+        $sql .= "$alter SET DATA TYPE {$req['colType']};";
+        $sql .= "$alter SET NOT NULL;";
+
+//        if($descr['required'] != $req['required'])
+//        {
+//            switch($req['required']) {
+//                case 'NULL':        $sql .= "$alter DROP NOT NULL;\n";   break;
+//                case 'NOT NULL':    $sql .= "$alter SET NOT NULL;\n";    break;
+//            }
+//        }
+
+//        if($descr['default'] != $req['default'])
+//        {
+//            if($req['default'] == '') {
+//                $sql .= "$alter DROP DEFAULT; ";
+//            } else {
+//                $sql .= "$alter SET DEFAULT {$req['default']}; ";
+//            }
+//        }
+
+        return $sql;
+    }
+
+    /**
+     *
+     * Generates the column specific SQL statement to accomplish the change action.
+     * This can be used as part of an ALTER TABLE statement for the ADD and DROP or
+     * is a standalone sequence of SQL statement for the MODIFY action.
+     *
+     * @param   string  $tablename
+     * @param   array   $def                 Column definition
+     * @param   string  $action              Change Action
+     * @param   bool    $ignoreRequired
+     * @return  string                       Returns the SQL required to change this one column
+     */
+    protected function changeOneColumnSQL($tablename, $def, $action, $ignoreRequired = false) {
+        switch($action) {
+            case "ADD":
+                $sql = $this->alterTableColumnSQL($action,
+                                                  $this->oneColumnSQLRep($def, $ignoreRequired, $tablename));
+                break;
+            case "DROP":
+                $sql = $this->alterTableColumnSQL($action, $def['name']);
+                break;
+            case "MODIFY":
+                $sql = $this->alterOneColumnSQL($tablename, $def, $ignoreRequired);
+                break;
+            default:
+                $sql = null;
+                $GLOBALS['log']->fatal("IBMDB2Manager.changeOneColumnSQL unknown change action '$action' for table '$tablename'");
+                break;
+        }
+        return $sql;
     }
 
     /**
@@ -784,22 +873,23 @@ class IBMDB2Manager  extends DBManager
      */
     protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
     {
+        $action = strtoupper($action);
         $columns = array();
         if ($this->isFieldArray($fieldDefs)){
             foreach ($fieldDefs as $def){
-                if ($action == 'drop')
-                    $columns[] = $def['name'];
-                else
-                    $columns[] = $this->oneColumnSQLRep($def, $ignoreRequired);
+                $columns[] = $this->changeOneColumnSQL($tablename, $def, $action, $ignoreRequired);
             }
         } else {
-            if ($action == 'drop')
-                $columns[] = $fieldDefs['name'];
-        else
-            $columns[] = $this->oneColumnSQLRep($fieldDefs);
+            $columns[] = $this->changeOneColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired);
         }
 
-        return "ALTER TABLE $tablename $action COLUMN ".implode(",$action column ", $columns);
+        if($action == 'MODIFY') {
+            $sql =  implode("; ", $columns); // Column alteration statements are 1 or multiple self contained statements
+        } else {
+            $sql =  $this->alterTableSQL($tablename, implode(" ", $columns));
+        }
+
+        return $sql;
     }
 
 
