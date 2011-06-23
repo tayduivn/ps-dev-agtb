@@ -253,7 +253,7 @@ class Task extends SugarBean {
 	}
 
 
-    protected function formatStartAndDueDates($task_fields, $dbtime, $override_date_for_subpanel)
+    protected function formatStartAndDueDates(&$task_fields, $dbtime, $override_date_for_subpanel)
     {
         global $timedate;
 

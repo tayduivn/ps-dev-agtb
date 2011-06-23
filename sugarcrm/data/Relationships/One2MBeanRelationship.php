@@ -23,7 +23,6 @@ class One2MBeanRelationship extends One2MRelationship
      */
     public function add($lhs, $rhs, $additionalFields = array())
     {
-        global $saved_beans;
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
@@ -37,20 +36,24 @@ class One2MBeanRelationship extends One2MRelationship
             {
                 $this->remove($oldLHS, $rhs, false);
             }
-        } else
-        {
-            echo ("Unable to load RHS module {$rhs->module_name} link $rhsLinkName\n");
+        }
+
+        //Make sure we load the current relationship state to the LHS link
+        if ((isset($lhs->$lhsLinkName) && is_a($lhs->$lhsLinkName, "Link2")) || $lhs->load_relationship($lhsLinkName)) {
+            $lhs->$lhsLinkName->getBeans();
         }
 
         $this->updateFields($lhs, $rhs, $additionalFields);
 
         //Need to call save to update the bean as the relationship is saved on the main table
         //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
-        if(empty($saved_beans[$rhs->module_name][$rhs->id]) || $saved_beans[$rhs->module_name][$rhs->id] === 'done')
-            $rhs->save();
-
-        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-        $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
+        SugarRelationship::addToResaveList($rhs);
+        
+        if (isset($lhs->$lhsLinkName))
+            $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+        //RHS only has one bean ever, so we don't need to preload the relationship
+        if (isset($rhs->$rhsLinkName))
+            $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
 
         $this->callAfterAdd($lhs, $rhs);
         $this->callAfterAdd($rhs, $lhs);
@@ -80,6 +83,9 @@ class One2MBeanRelationship extends One2MRelationship
 
         if ($save)
             $rhs->save();
+
+        $rhsID = $this->def['rhs_key'];
+        $rhs->$rhsID = '';
 
         $this->callAfterDelete($lhs, $rhs);
         $this->callAfterDelete($rhs, $lhs);
