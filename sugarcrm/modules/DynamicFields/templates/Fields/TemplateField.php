@@ -309,10 +309,7 @@ class TemplateField{
 	 * mysql requires the datatype caluse in the alter statment.it will be no-op anyway.
 	 */
 	function get_db_modify_alter_table($table){
-		global $db;
-		$db_default=$this->get_db_default(true);
-		$db_required=$this->get_db_required(true);
-		return $db->alterColumnSQL($table, $this->get_field_def());
+		return $GLOBALS['db']->alterColumnSQL($table, $this->get_field_def());
 	}
 
 

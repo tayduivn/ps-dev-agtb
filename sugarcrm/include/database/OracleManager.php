@@ -195,6 +195,9 @@ class OracleManager extends DBManager
      */
     public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
+        if(is_array($sql)) {
+            return $this->queryArray($sql, $dieOnError, $msg, $suppress);
+        }
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query: ' . $sql);
         $this->checkConnection();
@@ -948,7 +951,7 @@ class OracleManager extends DBManager
 	}
 
 	/**
-     * @see DBHelper::changeColumnSQL()
+     * @see DBManager::changeColumnSQL()
      *
      * Oracle's ALTER TABLE syntax is a bit different from the other rdbmss
      */

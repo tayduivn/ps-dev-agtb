@@ -125,6 +125,9 @@ class MysqliManager extends MysqlManager
      */
     public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
+        if(is_array($sql)) {
+            return $this->queryArray($sql, $dieOnError, $msg, $suppress);
+        }
         static $queryMD5 = array();
 		//BEGIN SUGARCRM flav=pro ONLY
         $this->addDistinctClause($sql);

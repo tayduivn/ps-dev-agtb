@@ -282,6 +282,9 @@ class MssqlManager extends DBManager
 	 */
 	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
+        if(is_array($sql)) {
+            return $this->queryArray($sql, $dieOnError, $msg, $suppress);
+        }
         // Flag if there are odd number of single quotes
         if ((substr_count($sql, "'") & 1))
             $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");

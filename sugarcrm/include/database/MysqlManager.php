@@ -186,6 +186,9 @@ class MysqlManager extends DBManager
      */
     public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
+        if(is_array($sql)) {
+            return $this->queryArray($sql, $dieOnError, $msg, $suppress);
+        }
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();

@@ -769,8 +769,11 @@ abstract class DBManager
 			    {
 				    $ignorerequired = true;
 			    }
-
-                $sql .= $this->alterColumnSQL($tablename, $value,$ignorerequired) .  "\n";
+                $altersql = $this->alterColumnSQL($tablename, $value,$ignorerequired);
+                if(is_array($altersql)) {
+                    $altersql = join('\n', $altersql);
+                }
+                $sql .= $altersql .  "\n";
                 if($execute){
                     $this->alterColumn($tablename, $value, $ignorerequired);
                 }
@@ -1099,18 +1102,20 @@ abstract class DBManager
         if ($this->isFieldArray($newFieldDef)){
             $columns = array();
             foreach ($newFieldDef as $fieldDef) {
-                unset(self::$table_descriptions[$tablename][$fieldDef['name']]);
                 $columns[] = $fieldDef['name'];
             }
             $columns = implode(",", $columns);
         }
         else {
-            unset(self::$table_descriptions[$tablename][$newFieldDef['name']]);
             $columns = $newFieldDef['name'];
         }
 
         $msg = "Error altering column(s) $columns on table: $tablename:";
-        return $this->query($sql,true,$msg);
+        $res = $this->query($sql,true,$msg);
+        if($res) {
+            $this->getTableDescription($tablename, true); // reload table description after altering
+        }
+        return $res;
     }
 
     /**
@@ -2379,7 +2384,7 @@ abstract class DBManager
      * @param  string $tablename
      * @param  array  $newFieldDefs
      * @param  bool   $ignoreRequired Optional, true if we should ignor this being a required field
-     * @return string SQL statement
+     * @return string|array SQL statement(s)
      */
 	public function alterColumnSQL($tablename, $newFieldDefs, $ignorerequired = false)
     {
@@ -3037,6 +3042,25 @@ abstract class DBManager
     }
 
     /**
+     * Execute multiple queries one after another
+     * @param array $sqls Queries
+     * @param bool $dieOnError Die on error, passed to query()
+     * @param string $msg Error message, passed to query()
+     * @param bool $suppress Supress errors, passed to query()
+     * @return resource|bool result set or success/failure bool
+     */
+    public function queryArray(array $sqls, $dieOnError = false, $msg = '', $suppress = false)
+    {
+        $last = true;
+        foreach($sqls as $sql) {
+            if(!($last = $this->query($sql, $dieOnError, $msg, $suppress))) {
+                break;
+            }
+        }
+        return $last;
+    }
+
+    /**
      * Get DB driver name used for install/upgrade scripts
      * @return string
      */
@@ -3096,7 +3120,7 @@ abstract class DBManager
      * @param  bool     $dieOnError True if we want to call die if the query returns errors
      * @param  string   $msg        Message to log if error occurs
      * @param  bool     $suppress   Flag to suppress all error output unless in debug logging mode.
-     * @return resource result set
+     * @return resource|bool result set or success/failure bool
      */
     abstract public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false);
 
@@ -3263,7 +3287,7 @@ abstract class DBManager
      * @param array  $fieldDefs
      * @param string $action
      * @param bool   $ignoreRequired Optional, true if we should ignor this being a required field
-     * @return string
+     * @return string|array
 	 */
 	abstract protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false);
 
