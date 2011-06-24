@@ -391,14 +391,6 @@ document.getElementById('goback').onclick = function(){
 
 document.getElementById('gonext').onclick = function(){
 
-    // warning message that tells user that updates can not be undone
-    if(document.getElementById('importstep3').import_type.value == 'update')
-    {
-        ret = confirm(SUGAR.language.get("Import", 'LBL_CONFIRM_IMPORT'));
-        if (!ret) {
-            return false;
-        }
-    }
     // validate form
     clear_all_errors();
     var form = document.getElementById('importstep3');

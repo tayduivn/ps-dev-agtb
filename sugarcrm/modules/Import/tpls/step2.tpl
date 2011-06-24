@@ -77,13 +77,13 @@
           </tr>
           <tr>
             <td scope="row" colspan="3">
-                <input class="radio" type="radio" name="type" value="import" checked="checked" />
+                <input id="import_create" class="radio" type="radio" name="type" value="import" checked="checked" />
                 &nbsp;{$MOD.LBL_IMPORT_BUTTON}
             </td>
           </tr>
           <tr>
             <td scope="row" colspan="3">
-                <input class="radio" type="radio" name="type" value="update" />
+                <input id="import_update" class="radio" type="radio" name="type" value="update" />
                 &nbsp;{$MOD.LBL_UPDATE_BUTTON} &nbsp;{sugar_help text=$MOD.LBL_UPDATE_BUTTON_HELP}
             </td>
           </tr>
