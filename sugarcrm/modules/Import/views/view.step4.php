@@ -71,46 +71,12 @@ class ImportViewStep4 extends SugarView
         
         $update_only = ( isset($_REQUEST['import_type']) && $_REQUEST['import_type'] == 'update' );
         $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
-        
-        // All the Look Up Caches are initialized here
-        $enum_lookup_cache=array();
-        
-        // setup the importable fields array.
-        $importable_fields = $this->bean->get_importable_fields();
-        
+
         // loop through all request variables
-        $importColumns = array();
-        foreach ($_REQUEST as $name => $value) {
-            // only look for var names that start with "fieldNum"
-            if (strncasecmp($name, "colnum_", 7) != 0) {
-                continue;
-            }
-            
-            // pull out the column position for this field name
-            $pos = substr($name, 7);
-            
-            if ( isset($importable_fields[$value]) ) {
-                // now mark that we've seen this field
-                $importColumns[$pos] = $value;
-            }
-        }
-        
+        $importColumns = $this->getImportColumns();
         
         // set the default locale settings
-        $ifs = new ImportFieldSanitize();
-        $ifs->dateformat = $_REQUEST['importlocale_dateformat'];
-        $ifs->timeformat = $_REQUEST['importlocale_timeformat'];
-        $ifs->timezone = $_REQUEST['importlocale_timezone'];
-        $currency = new Currency();
-        $currency->retrieve($_REQUEST['importlocale_currency']);
-        $ifs->currency_symbol = $currency->symbol;
-        $ifs->default_currency_significant_digits 
-            = $_REQUEST['importlocale_default_currency_significant_digits'];
-        $ifs->num_grp_sep 
-            = $_REQUEST['importlocale_num_grp_sep'];
-        $ifs->dec_sep = $_REQUEST['importlocale_dec_sep'];
-        $ifs->default_locale_name_format 
-            = $_REQUEST['importlocale_default_locale_name_format'];
+        $ifs = $this->getFieldSanitizer();
         
         // Check to be sure we are getting an import file that is in the right place
         if ( realpath(dirname($_REQUEST['tmp_file']).'/') != realpath($sugar_config['upload_dir']) )
@@ -619,15 +585,52 @@ class ImportViewStep4 extends SugarView
         
         $importFile->writeStatus();
     }
-    
+
+    protected function getImportColumns()
+    {
+        $importable_fields = $this->bean->get_importable_fields();
+        $importColumns = array();
+        foreach ($_REQUEST as $name => $value)
+        {
+            // only look for var names that start with "fieldNum"
+            if (strncasecmp($name, "colnum_", 7) != 0)
+                continue;
+
+            // pull out the column position for this field name
+            $pos = substr($name, 7);
+
+            if ( isset($importable_fields[$value]) )
+            {
+                // now mark that we've seen this field
+                $importColumns[$pos] = $value;
+            }
+        }
+
+        return $importColumns;
+    }
+
+    protected function getFieldSanitizer()
+    {
+        $ifs = new ImportFieldSanitize();
+        $ifs->dateformat = $_REQUEST['importlocale_dateformat'];
+        $ifs->timeformat = $_REQUEST['importlocale_timeformat'];
+        $ifs->timezone = $_REQUEST['importlocale_timezone'];
+        $currency = new Currency();
+        $currency->retrieve($_REQUEST['importlocale_currency']);
+        $ifs->currency_symbol = $currency->symbol;
+        $ifs->default_currency_significant_digits = $_REQUEST['importlocale_default_currency_significant_digits'];
+        $ifs->num_grp_sep  = $_REQUEST['importlocale_num_grp_sep'];
+        $ifs->dec_sep = $_REQUEST['importlocale_dec_sep'];
+        $ifs->default_locale_name_format  = $_REQUEST['importlocale_default_locale_name_format'];
+
+        return $ifs;
+    }
     /**
      * If a bean save is not done for some reason, this method will undo any of the beans that were created
      *
      * @param array $ids ids of user_last_import records created
      */
-    protected function _undoCreatedBeans(
-        array $ids
-        )
+    protected function _undoCreatedBeans( array $ids )
     {
         $focus = new UsersLastImport();
         foreach ($ids as $id)
@@ -640,11 +643,9 @@ class ImportViewStep4 extends SugarView
      * @param  string $string
      * @return string
      */
-    protected function _convertId(
-        $string
-        )
+    protected function _convertId($string)
     {
-        return preg_replace_callback( 
+        return preg_replace_callback(
             '|[^A-Za-z0-9\-]|',
             create_function(
             // single quotes are essential here,
@@ -663,68 +664,69 @@ class ImportViewStep4 extends SugarView
      * @param string $errfile
      * @param string $errline
      */
-    public static function handleImportErrors(
-        $errno, 
-        $errstr, 
-        $errfile, 
-        $errline
-        )
+       public static function handleImportErrors($errno, $errstr, $errfile, $errline)
     {
         if ( !defined('E_DEPRECATED') )
             define('E_DEPRECATED','8192');
         if ( !defined('E_USER_DEPRECATED') )
             define('E_USER_DEPRECATED','16384');
-        
+
         // check to see if current reporting level should be included based upon error_reporting() setting, if not
         // then just return
         if ( !(error_reporting() & $errno) )
             return true;
-    
-        switch ($errno) {
-        case E_USER_ERROR:
-            echo "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
-            exit(1);
-            break;
-        case E_USER_WARNING:
-        case E_WARNING:
-            echo "WARNING: [$errno] $errstr on line $errline in file $errfile<br />\n";
-            break;
-        case E_USER_NOTICE:
-        case E_NOTICE:
-            echo "NOTICE: [$errno] $errstr on line $errline in file $errfile<br />\n";
-            break;
-        case E_STRICT: 
-        case E_DEPRECATED:
-        case E_USER_DEPRECATED:   
-            // don't worry about these
-            //echo "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
-            break;
-        default:
-            echo "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
-            break;
+
+        switch ($errno)
+        {
+            case E_USER_ERROR:
+                echo "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                exit(1);
+                break;
+            case E_USER_WARNING:
+            case E_WARNING:
+                echo "WARNING: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                break;
+            case E_USER_NOTICE:
+            case E_NOTICE:
+                echo "NOTICE: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                break;
+            case E_STRICT:
+            case E_DEPRECATED:
+            case E_USER_DEPRECATED:
+                // don't worry about these
+                //echo "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                break;
+            default:
+                echo "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
+                break;
         }
-    
+
         return true;
     }
 
 
 
-    public function retrieveAdvancedMapping(){
+    public function retrieveAdvancedMapping()
+    {
         $advancedMappingSettings = array();
 
         //harvest the dupe index settings
-        if( isset($_REQUEST['enabled_dupes']) ){
+        if( isset($_REQUEST['enabled_dupes']) )
+        {
             $toDecode = html_entity_decode  ($_REQUEST['enabled_dupes'], ENT_QUOTES);
             $dupe_ind = json_decode($toDecode);
-            
-            foreach($dupe_ind as $dupe){
+
+            foreach($dupe_ind as $dupe)
+            {
                 $advancedMappingSettings['dupe_'.$dupe] = $dupe;
             }
         }
 
-        foreach($_REQUEST as $rk=>$rv){
+        foreach($_REQUEST as $rk=>$rv)
+        {
             //harvest the import locale settings
-            if(strpos($rk,'portlocale_')>0){
+            if(strpos($rk,'portlocale_')>0)
+            {
                 $advancedMappingSettings[$rk] = $rv;
             }
 
