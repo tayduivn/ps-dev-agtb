@@ -43,7 +43,20 @@ require_once('include/upload_file.php');
 class ImportViewExtimport extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_DUP_TITLE';
+    protected $adapter = FALSE;
+    protected $externalSource = '';
+    protected $offset = 0;
+    protected $recordsPerImport = 10;
 
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->externalSource = isset($_REQUEST['external_source']) ? $_REQUEST['external_source'] : '';
+        $this->offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : '0';
+        $this->recordsPerImport = !empty($_REQUEST['records_per_import']) ? $_REQUEST['records_per_import'] : '';
+        $this->adapter = $this->getExternalSourceAdapter();
+        $GLOBALS['log']->fatal("Initiating external source import- source:{$this->externalSource}, offset: {$this->offset}, recordsPerImport: {$this->recordsPerImport}");
+    }
  	/**
      * @see SugarView::display()
      */
@@ -51,6 +64,84 @@ class ImportViewExtimport extends ImportView
     {
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
+
+        $columncount = isset($_REQUEST['columncount']) ? $_REQUEST['columncount'] : '';
+
+        if($this->adapter === FALSE)
+        {
+            $GLOBALS['log']->fatal("Found invalid adapter");
+            $resp = array('totalCount' => -1, 'done' => FALSE);
+            echo json_encode($resp);
+            sugar_cleanup(TRUE);
+        }
+
+
+
+        $userMapping = $this->getUserMapping($columncount);
+
+        $recordSet = $this->adapter->getRecordSet($this->offset, $this->recordsPerImport);
+        $GLOBALS['log']->fatal("Record set is: " . var_export($recordSet, TRUE));
+        $result = $recordSet['meta'];
+
+        echo json_encode($result);
+        sugar_cleanup(TRUE);
+        //sleep(2);
+
+    }
+
+    protected function getExternalSourceAdapter()
+    {
+        $externalSourceName = ucfirst($this->externalSource);
+        $externalSourceClassName = "ExternalSource{$externalSourceName}Adapter";
+        $externalSourceFile = "modules/Import/adapters/{$externalSourceClassName}.php";
+        if( file_exists("custom/" . $externalSourceFile) )
+        {
+            require_once("custom/" . $externalSourceFile);
+        }
+        else if( file_exists($externalSourceFile) )
+        {
+            require_once($externalSourceFile);
+        }
+        else
+        {
+            $GLOBALS['log']->fatal("Unable to load external source adapter.");
+            return FALSE;
+        }
+
+        if( class_exists($externalSourceClassName) )
+        {
+            $GLOBALS['log']->fatal("RETURNING EXTENRAL SOURCE CLASS");
+            return new $externalSourceClassName();
+        }
+        else
+        {
+            $GLOBALS['log']->fatal("Unable to load external source adapter class.");
+            return FALSE;
+        }
+    }
+    /**
+     * Return the user mapping that was constructed during the first page of import.
+     *
+     * @param  $columncount
+     * @return array
+     */
+    protected function getUserMapping($columncount)
+    {
+        $userMapping = array();
+        for($i=0;$i<$columncount;$i++)
+        {
+            $sugarKeyIndex = 'colnum_' . $i;
+            $extKeyIndex = 'extkey_' . $i;
+            $sugarKey = $_REQUEST[$sugarKeyIndex];
+            //User specified don't map, keep going.
+            if($sugarKey == -1)
+                continue;
+
+            $extKey = $_REQUEST[$extKeyIndex];
+            $defaultValue = $_REQUEST[$sugarKey];
+            $userMapping[] = array('sugar_key'=> $sugarKey, 'ext_key' => $extKey, 'default_value' => $defaultValue);
+        }
         
+        return $userMapping;
     }
 }

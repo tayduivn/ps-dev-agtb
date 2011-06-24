@@ -66,9 +66,20 @@ class ext_eapm_google extends source {
     }
 	public function getList($args=array(), $module=null)
     {
+        $feed = array();
         $this->loadGdClient();
 
-        $feed = array();
+        if( !empty($args['maxResults']) )
+        {
+            $this->_gdClient->setMaxResults($args['maxResults']);
+        }
+
+        if( !empty($args['startIndex']) )
+        {
+            $this->_gdClient->setStartIndex($args['startIndex']);
+        }
+
+
         try
         {
             $feed = $this->_gdClient->getContactListFeed($args);

@@ -60,6 +60,7 @@ textarea { width: 20em }
 <input type="hidden" name="file_name" value="{$smarty.request.tmp_file}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
+<input type="hidden" name="records_per_import" value="{$RECORDTHRESHOLD}">
 <input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="display_tabs_def">
@@ -147,7 +148,7 @@ ProcessESImport = new function()
                            this.failure(o);
                     }
 
-                    ProcessESImport.totalRecordCount = resp['totalCount'];
+                    ProcessESImport.totalRecordCount = resp['totalRecordCount'];
                     var locationStr = "index.php?module=Import"
                         + "&action=Last"
                         + "&current_step=" + document.getElementById("importstepdup").current_step.value
