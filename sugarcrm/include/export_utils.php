@@ -293,6 +293,24 @@ function export($type, $records = null, $members = false) {
 				$value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
 			}
 			//END SUGARCRM flav=pro ONLY
+
+			//replace user_name with full name if use_real_name preference setting is enabled
+            //and this is a user name field
+            $useRealNames = $current_user->getPreference('use_real_names');
+            if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
+               && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
+               && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
+               && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'){
+
+                global $locale;
+                $userFocus = new User();
+                $userFocus->retrieve_by_string_fields(
+                    array('user_name' => $value ));
+                if ( !empty($userFocus->id) ) {
+                    $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
+                }
+			}
+
 			array_push($new_arr, preg_replace("/\"/","\"\"", $value));
 		}
 		$line = implode("\"".getDelimiter()."\"", $new_arr);
@@ -378,9 +396,9 @@ function generateSearchWhere($module, $query) {//this function is similar with f
     //to have the db names as key values, or as labels
     function get_field_order_mapping($name='',$reorderArr = ''){
 
-        //define the ordering of fields
+        //define the ordering of fields, note that the key value is what is important, and should be the db field name
         $field_order_array = array();
-        $field_order_array['accounts'] = array('id'=>'ID', 'name'=>'Name', 'website'=>'Website', 'email_address' =>'Email Address', 'phone_office' =>'Office Phone', 'phone_alternate' => 'Alternate Phone', 'phone_fax' => 'Fax', 'billing_address_street' => 'Billing Street', 'billing_address_city' => 'Billing City', 'billing_address_state' => 'Billing State', 'billing_address_postalcode' => 'Billing Postal Code', 'billing_address_country' => 'Billing Country', 'shipping_address_street' => 'Shipping Street', 'shipping_address_city' => 'Shipping City', 'shipping_address_state' => 'Shipping State', 'shipping_address_postalcode' => 'Shipping Postal Code', 'shipping_address_country' => 'Shipping Country', 'description' => 'Description', 'account_type' => 'Type', 'industry' =>'Industry', 'annual_revenue' => 'Annual Revenue', 'employees' => 'Employees', 'sic_code' => 'SIC Code', 'ticker_symbol' => 'Ticker Symbol', 'parent_id' => 'Parent Account ID', 'ownership' =>'Ownership', 'campaign_id' =>'Campaign ID', 'rating' =>'Rating', 'assigned_user_id' =>'Assigned to', 'team_id' =>'Team Id', 'team_name' =>'Teams', 'team_set_id' =>'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
+        $field_order_array['accounts'] = array('id'=>'ID', 'name'=>'Name', 'website'=>'Website', 'email_address' =>'Email Address', 'phone_office' =>'Office Phone', 'phone_alternate' => 'Alternate Phone', 'phone_fax' => 'Fax', 'billing_address_street' => 'Billing Street', 'billing_address_city' => 'Billing City', 'billing_address_state' => 'Billing State', 'billing_address_postalcode' => 'Billing Postal Code', 'billing_address_country' => 'Billing Country', 'shipping_address_street' => 'Shipping Street', 'shipping_address_city' => 'Shipping City', 'shipping_address_state' => 'Shipping State', 'shipping_address_postalcode' => 'Shipping Postal Code', 'shipping_address_country' => 'Shipping Country', 'description' => 'Description', 'account_type' => 'Type', 'industry' =>'Industry', 'annual_revenue' => 'Annual Revenue', 'employees' => 'Employees', 'sic_code' => 'SIC Code', 'ticker_symbol' => 'Ticker Symbol', 'parent_id' => 'Parent Account ID', 'ownership' =>'Ownership', 'campaign_id' =>'Campaign ID', 'rating' =>'Rating', 'assigned_user_name' =>'Assigned to', 'team_id' =>'Team Id', 'team_name' =>'Teams', 'team_set_id' =>'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
 
         //of array is passed in for reordering, process array
         if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
