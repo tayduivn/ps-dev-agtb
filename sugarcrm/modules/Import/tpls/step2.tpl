@@ -67,7 +67,7 @@
             <td scope="row" colspan="4"></td>
         </tr>
         <tr>
-            <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="60" name="userfile" type="file"/></td>
+            <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="60" name="userfile" type="file"/> &nbsp;{sugar_help text=$MOD.LBL_FILE_UPLOAD_WIDGET_HELP}</td>
         </tr>
         <tr>
             <td scope="row" colspan="4"></td>

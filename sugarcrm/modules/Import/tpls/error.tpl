@@ -30,21 +30,13 @@
 // $Id: error.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-
-<form name="importerror" method="GET" action="index.php" id="importerror">
-<input type="hidden" name="module" value="Import">
-<input type="hidden" name="action" value="{$ACTION}">
-<input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
-<input type="hidden" name="source" value="{$SOURCE}">
-
-<p class="error">{$MESSAGE}</p>
-
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-    <td align="left">
-        <input title="{$MOD.LBL_TRY_AGAIN}" accessKey="" class="button" type="submit" 
-            name="button" value="{$MOD.LBL_TRY_AGAIN}">
-    </td>
-</tr>
-</table>
-</form>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script>
+    {literal}
+    errorBox = {};
+    {/literal}
+    modalBod = "<p> {$MESSAGE}</p>  <p><input title='{$MOD.LBL_START_OVER}' class='button' type='button' name='button' value='{$MOD.LBL_START_OVER}' onclick='document.location.href=\"index.php?module=Import&action={$ACTION}&import_module={$IMPORT_MODULE}&source={$SOURCE}\"></p>";
+    errorBox.title = '{$MOD.LBL_ERROR}';
+    errorBox.msg = modalBod;
+    YAHOO.SUGAR.MessageBox.show(errorBox);
+</script>

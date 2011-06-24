@@ -114,9 +114,9 @@ $mod_strings = array (
     'LBL_IMPORT_MODULE_ERROR_LARGE_FILE_END' => 'Bytes. Change $sugar_config[\'upload_maxsize\'] in config.php',
     'LBL_MODULE_NAME' => 'Import',
     'LBL_TRY_AGAIN' => 'Try Again',
+    'LBL_START_OVER' => 'Start Over',
     'LBL_ERROR' => 'Error:',
-    'LBL_IMPORT_ERROR_MIME_TYPE' => 'The type of file that you are attempting to upload cannot be used for importing. Please check to make sure that the file extension is .csv and that the file contains comma-separated values.',
-	'LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED' => 'The import file contains {0} rows. The optimal number of rows is {1}. More rows may slow the import process. Click OK to continue importing. Click Cancel to revise and re-upload the import file.',
+    'LBL_IMPORT_ERROR_MAX_REC_LIMIT_REACHED' => 'The import file contains {0} rows. The optimal number of rows is {1}. More rows may slow the import process. Click OK to continue importing. Click Cancel to revise and re-upload the import file.',
     'ERR_IMPORT_SYSTEM_ADMININSTRATOR'  => 'You cannot import a system administrator user',
     'ERR_MULTIPLE' => 'Multiple columns have been defined with the same field name.',
     'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required fields:',
@@ -324,6 +324,7 @@ $mod_strings = array (
     'LBL_EXTERNAL_FIELD' => 'External Field',
     'LBL_SAMPLE_URL_HELP' => 'Download a sample import file containing a header row of the module fields. The file can be used as a template to create an import file containing the data that you would like to import.',
     'LBL_AUTO_DETECT_ERROR' => 'We were unable to auto-detect the import file settings. Please verify the settings in the Import File Properties.',
-    'LBL_FIELD_DELIMETED_HELP' => 'The field delimiter specifies the character used to separate the field columns.'
+    'LBL_FIELD_DELIMETED_HELP' => 'The field delimiter specifies the character used to separate the field columns.',
+    'LBL_FILE_UPLOAD_WIDGET_HELP' => 'Select a file containing data that is separated by a delimiter, such as a comma- or tab- delimited file.  Files of the type .csv are recommended.',
 );
 ?>

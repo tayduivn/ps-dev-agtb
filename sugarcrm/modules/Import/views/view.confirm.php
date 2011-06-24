@@ -70,14 +70,6 @@ class ImportViewConfirm extends ImportView
         $uploadFile = new UploadFile('userfile');
         if (isset($_FILES['userfile']) && $uploadFile->confirm_upload())
         {
-            //file extension should be set to csv ONLY
-            $uploadedFileExtension = pathinfo($_FILES['userfile']['name'], PATHINFO_EXTENSION);
-            if(empty($uploadedFileExtension) || $uploadedFileExtension != 'csv' ){
-                //if the extension is not .csv then return error message
-                $this->_showImportError($mod_strings['LBL_IMPORT_ERROR_MIME_TYPE'],$_REQUEST['import_module'],'Step2');
-                return;
-            }
-
             $uploadFile->final_move('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
             $uploadFileName = $uploadFile->get_upload_path('IMPORT_'.$this->bean->object_name.'_'.$current_user->id);
         }
