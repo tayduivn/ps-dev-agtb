@@ -45,24 +45,49 @@
   
 <script type="text/javascript">
 {literal}
-function fill_invitees() { 
-	if (typeof(GLOBAL_REGISTRY) != 'undefined')  {    
-		SugarWidgetScheduler.fill_invitees(document.EditView);
-	} 
-}
-{/literal}
-
-var root_div = document.getElementById('scheduler');
-var sugarContainer_instance = new SugarContainer(document.getElementById('scheduler'));
-sugarContainer_instance.start(SugarWidgetScheduler);
-{literal}
-if ( document.getElementById('save_and_continue') ) {
-    var oldclick = document.getElementById('save_and_continue').attributes['onclick'].nodeValue;
-    document.getElementById('save_and_continue').onclick = function(){
-        fill_invitees();
-        eval(oldclick);
-    }
-}
+SUGAR.meetings = {};
+var meetingsLoader = new YAHOO.util.YUILoader({
+    require : ["sugar_grp_jsolait", "jsclass_scheduler"],
+    loadOptional: true,
+	//BEGIN SUGARCRM flav=int ONLY
+	filter: 'debug',
+	//END SUGARCRM flav=int ONLY
+    skin: { base: 'blank', defaultSkin: '' },
+	onSuccess: function(){
+		SUGAR.meetings.fill_invitees = function() {
+			if (typeof(GLOBAL_REGISTRY) != 'undefined')  {
+				SugarWidgetScheduler.fill_invitees(document.EditView);
+			}
+		}
+		var root_div = document.getElementById('scheduler');
+		var sugarContainer_instance = new SugarContainer(document.getElementById('scheduler'));
+		sugarContainer_instance.start(SugarWidgetScheduler);
+		if ( document.getElementById('save_and_continue') ) {
+			var oldclick = document.getElementById('save_and_continue').attributes['onclick'].nodeValue;
+			document.getElementById('save_and_continue').onclick = function(){
+				SUGAR.meetings.fill_invitees();
+				eval(oldclick);
+			}
+		}
+	},
+    allowRollup: true,
+    base: "include/javascript/yui/build/"
+});
+meetingsLoader.addModule({
+    name :"sugar_grp_jsolait",
+    type : "js",
+    fullpath: "include/javascript/sugar_grp_jsolait.js",
+    varName: "global_rpcClient",
+    requires: []
+});
+meetingsLoader.addModule({
+    name :"jsclass_scheduler",
+    type : "js",
+    fullpath: "modules/Meetings/jsclass_scheduler.js",
+    varName: "DL_GetElementTop",
+    requires: ["sugar_grp_jsolait"]
+});
+meetingsLoader.insert();
 {/literal}
 </script>
 </form>
