@@ -386,12 +386,21 @@ class DashletGeneric extends Dashlet {
         $lvdOrderBy = $this->lvs->lvd->getOrderBy(); // has this list been ordered, if not use default
 
         $nameRelatedFields = array();
-        if(empty($lvdOrderBy['orderBy'])) {
-            foreach($displayColumns as $colName => $colParams) {
-                if(!empty($colParams['defaultOrderColumn'])) {
-                    $lvsParams['overrideOrder'] = true;
-                    $lvsParams['orderBy'] = $colName;
-                    $lvsParams['sortOrder'] = $colParams['defaultOrderColumn']['sortOrder'];
+
+        //bug: 44592 - dashlet sort order was not being preserved between logins
+        if(!empty($lvsParams['orderBy']) && !empty($lvsParams['sortOrder']))
+        {
+            $lvsParams['overrideOrder'] = true;
+        }
+        else
+        {
+            if(empty($lvdOrderBy['orderBy'])) {
+                foreach($displayColumns as $colName => $colParams) {
+                    if(!empty($colParams['defaultOrderColumn'])) {
+                        $lvsParams['overrideOrder'] = true;
+                        $lvsParams['orderBy'] = $colName;
+                        $lvsParams['sortOrder'] = $colParams['defaultOrderColumn']['sortOrder'];
+                    }
                 }
             }
         }
