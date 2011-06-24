@@ -189,6 +189,11 @@ class ImportController extends SugarController
         $this->view = 'extdupcheck';
     }
 
+    function action_Extimport()
+    {
+        $this->view = 'extimport';
+    }
+
     function action_GetControl()
     {
         echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);

@@ -59,11 +59,12 @@ textarea { width: 20em }
 <input type="hidden" name="type" value="{$smarty.request.type}">
 <input type="hidden" name="file_name" value="{$smarty.request.tmp_file}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
+<input type="hidden" name="current_step" value="{$CURRENT_STEP}">
+<input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="display_tabs_def">
 <input type="hidden" id="enabled_dupes" name="enabled_dupes" value="">
 <input type="hidden" id="disabled_dupes" name="disabled_dupes" value="">
-<input type="hidden" id="current_step" name="current_step" value="{$CURRENT_STEP}">
 
     <br />
     <div style="padding-left:20px">
@@ -108,34 +109,59 @@ textarea { width: 20em }
 /**
  * Singleton to handle processing the import
  */
-ProcessImport = new function()
+ProcessESImport = new function()
 {
+    /*
+     * number of file to process processed
+     */
+    this.offsetStart         = 0;
+
+    /*
+     * Total number of records to process, unknown when import starts.
+     */
+    this.totalRecordCount    = 0;
+
+    /*
+     * maximum number of records per file
+     */
+    this.recordsPerImport   = {/literal}{$RECORDTHRESHOLD}{literal};
+
     /*
      * submits the form
      */
     this.submit = function()
     {
+        document.getElementById("importstepdup").offset.value = this.offsetStart * this.recordsPerImport;
+
         YAHOO.util.Connect.setForm(document.getElementById("importstepdup"));
         YAHOO.util.Connect.asyncRequest('POST', 'index.php',
             {
                 success: function(o) {
-                    if (o.responseText.replace(/^\s+|\s+$/g, '') != '') {
-                        this.failure(o);
+                    var resp = false;
+                    try
+                    {
+                        resp = JSON.parse(o.responseText);
                     }
-                    else {
-                        var locationStr = "index.php?module=Import"
-                            + "&action=Last"
-                            + "&current_step=" + document.getElementById("importstepdup").current_step.value
-                            + "&type={/literal}{$TYPE}{literal}"
-                            + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
-                        if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
-                        	YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETE}{literal}');
-                        	SUGAR.util.hrefURL(locationStr);
-                        }
-                        else {
-                            ProcessImport.fileCount++;
-                            ProcessImport.submit();
-                        }
+                    catch(e)
+                    {
+                           this.failure(o);
+                    }
+
+                    ProcessESImport.totalRecordCount = resp['totalCount'];
+                    var locationStr = "index.php?module=Import"
+                        + "&action=Last"
+                        + "&current_step=" + document.getElementById("importstepdup").current_step.value
+                        + "&type={/literal}{$TYPE}{literal}"
+                        + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
+                    if ( resp['done'] || (ProcessESImport.recordsPerImport * (ProcessESImport.offsetStart + 1) >= ProcessESImport.totalRecordCount) )
+                    {
+                        YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETE}{literal}');
+                        SUGAR.util.hrefURL(locationStr);
+                    }
+                    else
+                    {
+                        ProcessESImport.offsetStart++;
+                        ProcessESImport.submit();
                     }
                 },
                 failure: function(o) {
@@ -150,13 +176,18 @@ ProcessImport = new function()
             }
         );
         var move = 0;
-        if ( this.fileTotal > 0 ) {
-            move = this.fileCount/this.fileTotal;
+        if ( ProcessESImport.offsetStart > 0 ) {
+            move = (ProcessESImport.offsetStart * ProcessESImport.recordsPerImport) / ProcessESImport.totalRecordCount;
         }
-        YAHOO.SUGAR.MessageBox.updateProgress( move,
-            "{/literal}{$MOD.LBL_IMPORT_RECORDS}{literal} " + ((this.fileCount * this.recordThreshold) + 1)
-                        + " {/literal}{$MOD.LBL_IMPORT_RECORDS_TO}{literal} " + Math.min(((this.fileCount+1) * this.recordThreshold),this.recordCount)
-                        + " {/literal}{$MOD.LBL_IMPORT_RECORDS_OF}{literal} " + this.recordCount );
+
+        if(this.totalRecordCount == 0 )
+            displayMessg = "{/literal}{$MOD.LBL_IMPORT_RECORDS}{literal} ";
+        else
+            displayMessg = "{/literal}{$MOD.LBL_IMPORT_RECORDS}{literal} " + ((this.offsetStart * this.recordsPerImport) + 1)
+                            + " {/literal}{$MOD.LBL_IMPORT_RECORDS_TO}{literal} " + Math.min(((this.offsetStart+1) * this.recordsPerImport),this.totalRecordCount)
+                            + " {/literal}{$MOD.LBL_IMPORT_RECORDS_OF}{literal} " + this.totalRecordCount;
+
+        YAHOO.SUGAR.MessageBox.updateProgress( move,displayMessg);
     }
 
     /*
@@ -174,7 +205,6 @@ ProcessImport = new function()
             closable:false,
             animEl: 'importnow'
         });
-        SUGAR.saveConfigureDupes();
         this.submit();
     }
 }

@@ -78,6 +78,7 @@ class ImportViewExtStep1 extends ImportViewStep3
         $this->ss->assign("IMPORT_MODULE", $importModule);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
         $this->ss->assign('CSS', $this->_getCSS());
+        $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->display('modules/Import/tpls/extstep1.tpl');
     }
 
