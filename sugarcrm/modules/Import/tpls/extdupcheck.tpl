@@ -177,7 +177,7 @@ ProcessESImport = new function()
         );
         var move = 0;
         if ( ProcessESImport.offsetStart > 0 ) {
-            move = (ProcessESImport.offsetStart * ProcessESImport.recordsPerImport) / ProcessESImport.totalRecordCount;
+            move = ((ProcessESImport.offsetStart * ProcessESImport.recordsPerImport) / ProcessESImport.totalRecordCount) * 100;
         }
 
         if(this.totalRecordCount == 0 )

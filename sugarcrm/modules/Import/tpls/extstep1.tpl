@@ -75,6 +75,7 @@
             <option value="-1">{$MOD.LBL_DONT_MAP}</option>
             {$item.field_choices}
         </select>
+        <input type="hidden" name="extkey_{$smarty.foreach.rows.index}" value="{$item.ext_key}">
     </td>
     <td id="defaultvaluepicker_{$smarty.foreach.rows.index}" nowrap="nowrap">
         {$item.default_field}

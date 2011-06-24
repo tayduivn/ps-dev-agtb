@@ -153,6 +153,7 @@ class ImportViewExtStep1 extends ImportViewStep3
                 'default_field' => $defaultFieldHTML,
                 'cell1'         => str_replace(":",'', $rowLabel),
                 'show_remove'   => false,
+                'ext_key'       => $externalKey
                 );
         }
 
