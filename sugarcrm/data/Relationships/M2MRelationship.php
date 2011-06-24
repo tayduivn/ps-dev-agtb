@@ -145,7 +145,8 @@ class M2MRelationship extends SugarRelationship
             return array(
                 'select' => "SELECT $targetKey id",
                 'from' => "FROM {$this->getRelationshipTable()}",
-                'where' => "WHERE $knownKey = '{$link->getFocus()->id}' AND deleted=0",
+                'where' => "WHERE $knownKey = '{$link->getFocus()->id}'"
+                         . " AND {$this->getRelationshipTable()}.deleted=0",
             );
         }
     }
