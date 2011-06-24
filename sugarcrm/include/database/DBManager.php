@@ -894,7 +894,7 @@ abstract class DBManager
                     $returnArray['msg'] = 'match';
                     foreach($row1 as $key => $value){
                         //ignore keys when checking we will check them when we do the index check
-                        if( !isset($ignore_filter[$key]) && $row1[$key] !== $row2[$key]){
+                        if( !isset($ignore_filter[$key]) && (!isset($row2[$key]) || $row1[$key] !== $row2[$key])){
                             $returnArray['msg'] = 'no_match';
                         }
                     }

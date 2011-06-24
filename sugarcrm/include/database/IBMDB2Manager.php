@@ -794,7 +794,7 @@ class IBMDB2Manager  extends DBManager
         return "$action COLUMN $columnspec";
     }
 
-    /**
+    /**+
      * 
      * Generates a sequence of SQL statements to accomplish the required column alterations
      *
@@ -808,38 +808,36 @@ class IBMDB2Manager  extends DBManager
         // http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/c0023297.htm
         // Some rework maybe needed when targetting other versions than LUW 9.7
         // http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.wn.doc/doc/c0053726.html
-        $sql = '';
+        $sql = array();
         $req = $this->oneColumnSQLRep($def, $ignoreRequired, $tablename, true);
         $alter = $this->alterTableSQL($tablename, $this->alterTableColumnSQL('ALTER', $req['name']));
-        $descr = $this->describeField($req['name'], $tablename);
 
-        $GLOBALS['log']->info("IBMDB2Manager.alterOneColumnSQL old field description for column {$req['name']} in table '$tablename'" . print_r($descr, true));
+        switch($req['required']) {
+            case 'NULL':        $sql[]= "$alter DROP NOT NULL";   break;
+            case 'NOT NULL':    $sql[]= "$alter SET NOT NULL";    break;
+        }
 
-        // NOTE not checking if datatype changed since it is a compound and as it will not cause any errors if the type is already the same
-        $sql .= "$alter SET DATA TYPE {$req['colType']};";
-        $sql .= "$alter SET NOT NULL;";
+        $sql[]= "$alter SET DATA TYPE {$req['colType']}";
 
-//        if($descr['required'] != $req['required'])
-//        {
-//            switch($req['required']) {
-//                case 'NULL':        $sql .= "$alter DROP NOT NULL;\n";   break;
-//                case 'NOT NULL':    $sql .= "$alter SET NOT NULL;\n";    break;
-//            }
-//        }
-
-//        if($descr['default'] != $req['default'])
-//        {
-//            if($req['default'] == '') {
-//                $sql .= "$alter DROP DEFAULT; ";
-//            } else {
-//                $sql .= "$alter SET DEFAULT {$req['default']}; ";
-//            }
-//        }
+        if(strlen($req['default']) > 0) {
+            $sql[]= "$alter SET {$req['default']}";
+        } else {
+            // NOTE: DB2 throws an exception when calling DROP DEFAULT on a column that does not have a default.
+            //       As a result we need to check if there is a default. We could use this verification also for
+            //       setting the DEFAULT. However for performance reasons we will always update the default if
+            //       there is a new one without making an extra call to the database.
+            $cols = $this->get_columns($tablename);
+            $olddef = trim($cols[$req['name']]['default']);
+            if($olddef != ''){
+                $GLOBALS['log']->info("IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty");
+                $sql[]= "$alter DROP DEFAULT";
+            }
+        }
 
         return $sql;
     }
 
-    /**
+    /**+
      *
      * Generates the column specific SQL statement to accomplish the change action.
      * This can be used as part of an ALTER TABLE statement for the ADD and DROP or
@@ -871,7 +869,7 @@ class IBMDB2Manager  extends DBManager
         return $sql;
     }
 
-    /**
+    /**+
      * @see DBManager::changeColumnSQL()
      */
     protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
@@ -887,7 +885,7 @@ class IBMDB2Manager  extends DBManager
         }
 
         if($action == 'MODIFY') {
-            $sql =  implode("; ", $columns); // Column alteration statements are 1 or multiple self contained statements
+            $sql = call_user_func_array('array_merge', $columns); // Modify returns an array of SQL statements
         } else {
             $sql =  $this->alterTableSQL($tablename, implode(" ", $columns));
         }
