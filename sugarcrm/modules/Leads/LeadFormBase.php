@@ -316,7 +316,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false, $do_save=true, $
             //create campaing_log entry
 
             if(isset($focus->campaign_id) && $focus->campaign_id != null){
-                campaign_log_lead_or_contact_entry($focus->campaign_id,$prospect, $focus,'lead');
+                campaign_log_lead_entry($focus->campaign_id,$prospect, $focus,'lead');
             }
         }
 	}
