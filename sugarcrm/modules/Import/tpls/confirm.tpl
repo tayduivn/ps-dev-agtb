@@ -52,7 +52,7 @@ div.leftPadded {
 div.errorMessage {
     padding-left: 15px;
     padding-top: 20px;
-    padding-bottom: 20px;
+    padding-bottom: 0px;
 }
 -->
 </style>
@@ -90,7 +90,7 @@ div.errorMessage {
                 <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h4></td>
             </tr>
             <tr>
-                <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/> &nbsp;{$MOD.LBL_SALESFORCE}</td>
+                <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
             </tr>
             <tr>
                 <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
