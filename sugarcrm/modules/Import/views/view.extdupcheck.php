@@ -40,7 +40,7 @@ require_once('modules/Import/ImportDuplicateCheck.php');
 
 require_once('include/upload_file.php');
 
-class ImportViewDupcheck extends ImportView
+class ImportViewExtdupcheck extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_DUP_TITLE';
 
@@ -51,8 +51,6 @@ class ImportViewDupcheck extends ImportView
     {
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
-
-        $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
 
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
@@ -66,52 +64,20 @@ class ImportViewDupcheck extends ImportView
         $idc = new ImportDuplicateCheck($this->bean);
         $dupe_indexes = $idc->getDuplicateCheckIndexes();
 
-        $field_map = $this->getImportMap();
-
-        //check for saved entries from mapping
         $dupe_disabled =  array();
-        $dupe_enabled =  array();
+
         foreach($dupe_indexes as $dk=>$dv){
-            if(isset($field_map['dupe_'.$dk])){
-                //index is defined in mapping, so set this index as enabled
-                $dupe_enabled[] =  array("dupeVal" => $dk, "label" => $dv);
-            }else{
-                //index is not defined in mapping, so display as disabled
                 $dupe_disabled[] =  array("dupeVal" => $dk, "label" => $dv);
-            }
         }
 
 
         //set dragdrop value
-        $this->ss->assign('enabled_dupes', json_encode($dupe_enabled));
+        $this->ss->assign('enabled_dupes', json_encode(array()));
         $this->ss->assign('disabled_dupes', json_encode($dupe_disabled));
         //END DRAG DROP WIDGET
 
-        // split file into parts
-        $uploadFileName = $_REQUEST['tmp_file'];
-        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
-        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
-
-        $this->ss->assign("FILECOUNT", $splitter->getFileCount() );
-        $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
-
-        $this->ss->display('modules/Import/tpls/dupcheck.tpl');
-    }
-
-    private function getImportMap()
-    {
-        if( !empty($_REQUEST['source_id']) )
-        {
-            $import_map_seed = new ImportMap();
-            $import_map_seed->retrieve($_REQUEST['source_id'], false);
-
-            return $import_map_seed->getMapping();
-        }
-        else
-        {
-            return array();
-        }
+        $this->ss->display('modules/Import/tpls/extdupcheck.tpl');
     }
 
     /**
@@ -125,18 +91,16 @@ class ImportViewDupcheck extends ImportView
 <script type="text/javascript">
 
 document.getElementById('goback').onclick = function(){
-    document.getElementById('importstepdup').action.value = 'step3';
+    document.getElementById('importstepdup').action.value = 'extstep1';
     document.getElementById('importstepdup').to_pdf.value = '0';
     return true;
 }
 
 document.getElementById('importnow').onclick = function(){
-    SUGAR.saveConfigureDupes();
-
     var form = document.getElementById('importstepdup');
     // Move on to next step
-    document.getElementById('importstepdup').action.value = 'Step4';
-    ProcessImport.begin();
+    document.getElementById('importstepdup').action.value = 'extimport';
+    ProcessESImport.begin();
 }
 
 

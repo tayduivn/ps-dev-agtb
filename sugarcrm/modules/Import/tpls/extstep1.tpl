@@ -27,6 +27,7 @@
  */
 *}
 
+{$CSS}
 
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
@@ -34,11 +35,12 @@
 <form enctype="multipart/form-data" real_id="extstep1" id="extstep1" name="extstep1" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="import_type" value="{$TYPE}">
-<input type="hidden" name="source" value="{$smarty.request.external_source}">
+<input type="hidden" name="external_source" value="{$smarty.request.external_source}">
 <input type="hidden" name="action" value="ExtStep1">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
-    
+<input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
+
 <div align="right">
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
 </div>
@@ -60,7 +62,7 @@
         {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
     </td>
     <td style="text-align: left;" scope="row" id="default_column_header">
-        <a id="hide_default_link">{sugar_image image="advanced_search.gif" name="advanced_search" height="8" width="8" align="top"}</a>
+        <span id="hide_default_link" class="expand">&nbsp;</span>
         <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
     </td>
@@ -79,6 +81,13 @@
     </td>
 </tr>
 {/foreach}
+    <tr>
+    <td align="left" colspan="4" style="display: none;">
+        <input title="{$MOD.LBL_ADD_ROW}" accessKey="" id="addrow" class="button" type="button"
+            name="button" value="  {$MOD.LBL_ADD_ROW}  ">
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </td>
+</tr>
 </table>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
 <tr>

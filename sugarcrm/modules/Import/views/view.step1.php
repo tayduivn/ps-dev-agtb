@@ -114,10 +114,10 @@ document.getElementById('gonext').onclick = function()
     }
     else
     {
-        var extEl = document.getElementById('exteranl_source');
+        var extEl = document.getElementById('external_source');
         if(extEl.selectedIndex == -1 || extEl.options[extEl.selectedIndex].value == '')
         {
-            add_error_style('importstep1','exteranl_source',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_EXTERNAL_SOURCE']}");
+            add_error_style('importstep1','external_source',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_EXTERNAL_SOURCE']}");
             return false;
         }
         

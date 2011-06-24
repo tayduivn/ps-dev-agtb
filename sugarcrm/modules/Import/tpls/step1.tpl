@@ -74,7 +74,7 @@
           </tr>
           <tr id="external_sources_tr" style="display:none;" >
                 <td>&nbsp;</td>
-                <td><select tabindex='4' name='exteranl_source' id='exteranl_source' >{$EXTERNAL_SOURCES_OPTIONS}</select></td>
+                <td><select tabindex='4' name='external_source' id='external_source' >{$EXTERNAL_SOURCES_OPTIONS}</select></td>
           </tr>
           </table>
         </td>
