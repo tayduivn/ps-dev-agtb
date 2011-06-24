@@ -203,10 +203,11 @@ class OracleManager extends DBManager
         $this->checkConnection();
         $this->query_time = microtime(true);
         $db = $this->getDatabase();
+        $result = false;
 
         $stmt = $suppress?@oci_parse($db, $sql):oci_parse($db, $sql);
 		if(!$this->checkOCIerror($db)) {
-			$suppress?@oci_execute($stmt):oci_execute($stmt);
+			$exec_result = $suppress?@oci_execute($stmt):oci_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 	        $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
 	        //BEGIN SUGARCRM flav=pro ONLY
@@ -214,14 +215,18 @@ class OracleManager extends DBManager
 			    $this->track_slow_queries($sql);
 			}
 			//END SUGARCRM flav=pro ONLY
+			if($exec_result) {
+			    $result = $stmt;
+			}
 		}
 
-		$result = $stmt;
 		$this->lastQuery = $sql;
 		if($keepResult)
 		    $this->lastResult = $result;
 
-		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
+		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError)) {
+		    return false;
+		}
         return $result;
     }
 

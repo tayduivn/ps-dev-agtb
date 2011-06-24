@@ -199,6 +199,7 @@ class IBMDB2Manager  extends DBManager
         $this->checkConnection();
         $this->query_time = microtime(true);
         $db = $this->getDatabase();
+        $result = false;
 
         $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
 		if(!$this->checkDB2STMTerror($stmt)) {
@@ -216,10 +217,12 @@ class IBMDB2Manager  extends DBManager
 			$rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
 	        $this->query_time = microtime(true) - $this->query_time;
 
-            if($rc)
-                $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
-            else
+            $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
+            if(!$rc) {
                 $GLOBALS['log']->error("Query Failed: $sql");
+            } else {
+                $result = $stmt;
+            }
 
             if(isset($sp_msg) && $sp_msg != '')
             {
@@ -231,12 +234,12 @@ class IBMDB2Manager  extends DBManager
 			}
 		}
 
-		$result = $stmt;
-		$this->lastQuery = $sql;
 		if($keepResult)
 		    $this->lastResult = $result;
 
-		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt);
+		if($this->checkError($msg.' Query Failed: ' . $sql, $dieOnError, $stmt)) {
+		    return false;
+		}
         return $result;
     }
 
@@ -245,7 +248,7 @@ class IBMDB2Manager  extends DBManager
      * Checks for db2_stmt_error in the given resource
      *
      * @param  resource $obj
-     * @return bool
+     * @return bool Was there an error?
      */
     protected function checkDB2STMTerror($obj)
     {
@@ -253,7 +256,6 @@ class IBMDB2Manager  extends DBManager
 
         $err = db2_stmt_error($obj);
         if ($err != false){
-            $result = false;
             $GLOBALS['log']->fatal("DB2 Statement error: ".var_export($err, true));
             return true;
         }
@@ -795,7 +797,7 @@ class IBMDB2Manager  extends DBManager
     }
 
     /**+
-     * 
+     *
      * Generates a sequence of SQL statements to accomplish the required column alterations
      *
      * @param  $tablename
