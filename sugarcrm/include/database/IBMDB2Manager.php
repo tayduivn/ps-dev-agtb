@@ -171,8 +171,14 @@ class IBMDB2Manager  extends DBManager
             $msg = $this->handleError($msg, $dieOnError, $logmsg);
             $result = true;
         }
-        if (!empty($stmt) && db2_stmt_error($stmt)) {/* TODO: Add statement resource from context*/
-            $logmsg = "IBM_DB2 statement error ".db2_stmt_error($stmt).": ".db2_stmt_errormsg($stmt);
+        if (!empty($stmt)){
+            if(db2_stmt_error($stmt)) {/* TODO: Add statement resource from context*/
+                $logmsg = "IBM_DB2 statement error ".db2_stmt_error($stmt).": ".db2_stmt_errormsg($stmt);
+                $this->handleError($msg, $dieOnError, $logmsg);
+                $result = true;
+            }
+        } else if(db2_stmt_error()) {/* TODO: Add statement resource from context*/
+            $logmsg = "IBM_DB2 statement error ".db2_stmt_error().": ".db2_stmt_errormsg();
             $this->handleError($msg, $dieOnError, $logmsg);
             $result = true;
         }
@@ -202,7 +208,7 @@ class IBMDB2Manager  extends DBManager
         $result = false;
 
         $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
-		if(!$this->checkDB2STMTerror($stmt)) {
+		if(true){//!$this->checkDB2STMTerror($stmt)) {
             $sp_msg = '';
             if(preg_match('/^CALL.+,\s*\?/i', $sql))
             {
@@ -222,16 +228,15 @@ class IBMDB2Manager  extends DBManager
                 $GLOBALS['log']->error("Query Failed: $sql");
             } else {
                 $result = $stmt;
-            }
+                if(isset($sp_msg) && $sp_msg != '')
+                {
+                    $GLOBALS['log']->info("Return message from stored procedure call '$sql': $sp_msg");
+                }
 
-            if(isset($sp_msg) && $sp_msg != '')
-            {
-                $GLOBALS['log']->info("Return message from stored procedure call '$sql': $sp_msg");
+                if($this->dump_slow_queries($sql)) {
+                    $this->track_slow_queries($sql);
+                }
             }
-
-		    if($this->dump_slow_queries($sql)) {
-			    $this->track_slow_queries($sql);
-			}
 		}
 
 		if($keepResult)
