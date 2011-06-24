@@ -32,6 +32,7 @@
 *}
 {literal}
 
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <style>
 
 .link {

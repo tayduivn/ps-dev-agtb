@@ -171,6 +171,23 @@ document.getElementById('gonext').onclick = function(){
         add_error_style(document.getElementById('importstep2').name,'userfile',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['ERR_SELECT_FILE']}");
         isError = true;
     }
+
+
+    //grab the upload file value and check the file extension
+    upl_file_name = document.getElementById('importstep2').userfile.value;
+    upl_file_ext = upl_file_name.substring(upl_file_name.length - 4);
+
+    //if the extension does not end in '.csv' then throw error
+    if(upl_file_ext.toLowerCase() != '.csv'){
+
+        errorBox.title = '{$mod_strings['LBL_ERROR']}';
+        errorBox.title = '';
+        errorBox.msg = '{$mod_strings['LBL_IMPORT_ERROR_MIME_TYPE']}';
+        YAHOO.SUGAR.MessageBox.show(errorBox);
+
+        add_error_style(document.getElementById('importstep2').name,'userfile',"{$mod_strings['LBL_IMPORT_ERROR_MIME_TYPE']}");
+        isError = true;
+    }    
     return !isError;
 }
 
