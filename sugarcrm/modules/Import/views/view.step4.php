@@ -254,11 +254,7 @@ class ImportViewStep4 extends SugarView
                                     $returnValue = $this->ifs->enum($defaultRowValue,$fieldDef);
                             if ( $returnValue === FALSE )
                             {
-                                $importFile->writeError(
-                                    $mod_strings['LBL_ERROR_NOT_IN_ENUM']
-                                    . implode(",",$app_list_strings[$fieldDef['options']]),
-                                    $fieldTranslated,
-                                    $rowValue);
+                                $importFile->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
                                 $do_save = 0;
                             }
                             else
@@ -342,7 +338,7 @@ class ImportViewStep4 extends SugarView
                 // check if it already exists
                 $query = "SELECT * FROM {$focus->table_name} WHERE id='".$focus->db->quote($focus->id)."'";
                 $result = $focus->db->query($query)
-                or sugar_die("Error selecting sugarbean: ");
+                            or sugar_die("Error selecting sugarbean: ");
 
                 $dbrow = $focus->db->fetchByAssoc($result);
 
@@ -351,43 +347,30 @@ class ImportViewStep4 extends SugarView
                     // if it exists but was deleted, just remove it
                     if (isset ($dbrow['deleted']) && $dbrow['deleted'] == 1 && $update_only==false)
                     {
-                        $query2 = "DELETE FROM {$focus->table_name} WHERE id='".$focus->db->quote($focus->id)."'";
-                        $result2 = $focus->db->query($query2) or sugar_die($mod_strings['LBL_ERROR_DELETING_RECORD']." ".$focus->id);
-                        if ($focus->hasCustomFields())
-                        {
-                            $query3 = "DELETE FROM {$focus->table_name}_cstm WHERE id_c='".$focus->db->quote($focus->id)."'";
-                            $result2 = $focus->db->query($query3);
-                        }
+                        $this->removeDeletedBean($focus);
                         $focus->new_with_id = true;
                     }
                     else
                     {
                         if( !$update_only )
                         {
-                            $do_save = 0;
                             $importFile->writeError($mod_strings['LBL_ID_EXISTS_ALREADY'],'ID',$focus->id);
                             $this->_undoCreatedBeans($this->ifs->createdBeans);
                             continue;
                         }
-                        $existing_focus = clone $this->bean;
-                        $newRecord = false;
-                        if ( !( $existing_focus->retrieve($dbrow['id']) instanceOf SugarBean ) )
+
+                        $clonedBean = $this->cloneExistingBean($focus, $importColumns);
+                        if($clonedBean === FALSE)
                         {
-                            $do_save = 0;
                             $importFile->writeError($mod_strings['LBL_RECORD_CANNOT_BE_UPDATED'],'ID',$focus->id);
                             $this->_undoCreatedBeans($this->ifs->createdBeans);
                             continue;
                         }
                         else
                         {
-                            $newData = $focus->toArray();
-                            foreach ( $newData as $focus_key => $focus_value )
-                                if ( in_array($focus_key,$importColumns) )
-                                    $existing_focus->$focus_key = $focus_value;
-
-                            $focus = $existing_focus;
+                            $focus = $clonedBean;
+                            $newRecord = FALSE;
                         }
-                        unset($existing_focus);
                     }
                 }
                 else
@@ -398,62 +381,9 @@ class ImportViewStep4 extends SugarView
 
             if ($do_save)
             {
-                // Populate in any default values to the bean
-                $focus->populateDefaultValues();
-
-                if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord )
-                {
-                    $focus->assigned_user_id = $current_user->id;
-                }
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord )
-                {
-                    $focus->team_id = $current_user->default_team;
-                }
-                //END SUGARCRM flav=pro ONLY
-                /*
-                * Bug 34854: Added all conditions besides the empty check on date modified. Currently, if
-                * we do an update to a record, it doesn't update the date_modified value.
-                * Hack note: I'm doing a to_display and back to_db on the fetched row to make sure that any truncating that happens
-                * when $focus->date_modified goes to_display and back to_db also happens on the fetched db value. Otherwise,
-                * in some cases we truncate the seconds on one and not the other, and the comparison fails when it should pass
-                */
-                if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
-                     ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-                )
-                    $focus->update_date_modified = false;
-
-                $focus->optimistic_lock = false;
-                if ( $focus->object_name == "Contacts" && isset($focus->sync_contact) )
-                {
-                    //copy the potential sync list to another varible
-                    $list_of_users=$focus->sync_contact;
-                    //and set it to false for the save
-                    $focus->sync_contact=false;
-                }
-                else if($focus->object_name == "User" && !empty($current_user) && $focus->is_admin && !is_admin($current_user) && is_admin_for_module($current_user, 'Users')) {
-                    sugar_die($GLOBALS['mod_strings']['ERR_IMPORT_SYSTEM_ADMININSTRATOR']);
-                }
-                //bug# 40260 setting it true as the module in focus is involved in an import
-                $focus->in_import=true;
-                // call any logic needed for the module preSave
-                $focus->beforeImportSave();
-
-
-                $focus->save(false);
-
-                // call any logic needed for the module postSave
-                $focus->afterImportSave();
-
-                if ( $focus->object_name == "Contacts" && isset($list_of_users) )
-                    $focus->process_sync_to_outlook($list_of_users);
-
+                $this->saveImportBean($focus, $newRecord);
                 // Update the created/updated counter
                 $importFile->markRowAsImported($newRecord);
-
-                // Add ID to User's Last Import records
-                if ( $newRecord )
-                    ImportFile::writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
             }
             else
                 $this->_undoCreatedBeans($this->ifs->createdBeans);
@@ -471,6 +401,94 @@ class ImportViewStep4 extends SugarView
         
         $importFile->writeStatus();
     }
+
+    protected function cloneExistingBean($focus, $importColumns)
+    {
+        $existing_focus = clone $this->bean;
+        if ( !( $existing_focus->retrieve($focus->id) instanceOf SugarBean ) )
+        {
+            return FALSE;
+        }
+        else
+        {
+            $newData = $focus->toArray();
+            foreach ( $newData as $focus_key => $focus_value )
+                if ( in_array($focus_key,$importColumns) )
+                    $existing_focus->$focus_key = $focus_value;
+
+            return $existing_focus;
+        }
+    }
+
+    protected function removeDeletedBean($focus)
+    {
+        global $mod_strings;
+
+        $query2 = "DELETE FROM {$focus->table_name} WHERE id='".$focus->db->quote($focus->id)."'";
+        $result2 = $focus->db->query($query2) or sugar_die($mod_strings['LBL_ERROR_DELETING_RECORD']." ".$focus->id);
+        if ($focus->hasCustomFields())
+        {
+            $query3 = "DELETE FROM {$focus->table_name}_cstm WHERE id_c='".$focus->db->quote($focus->id)."'";
+            $result2 = $focus->db->query($query3);
+        }
+    }
+
+
+    protected function saveImportBean($focus, $newRecord)
+    {
+        global $timedate, $current_user;
+
+        // Populate in any default values to the bean
+        $focus->populateDefaultValues();
+
+        if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord )
+        {
+            $focus->assigned_user_id = $current_user->id;
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord )
+        {
+            $focus->team_id = $current_user->default_team;
+        }
+        //END SUGARCRM flav=pro ONLY
+        /*
+        * Bug 34854: Added all conditions besides the empty check on date modified.
+        */
+        if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
+             ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
+        )
+            $focus->update_date_modified = false;
+
+        $focus->optimistic_lock = false;
+        if ( $focus->object_name == "Contacts" && isset($focus->sync_contact) )
+        {
+            //copy the potential sync list to another varible
+            $list_of_users=$focus->sync_contact;
+            //and set it to false for the save
+            $focus->sync_contact=false;
+        }
+        else if($focus->object_name == "User" && !empty($current_user) && $focus->is_admin && !is_admin($current_user) && is_admin_for_module($current_user, 'Users')) {
+            sugar_die($GLOBALS['mod_strings']['ERR_IMPORT_SYSTEM_ADMININSTRATOR']);
+        }
+        //bug# 40260 setting it true as the module in focus is involved in an import
+        $focus->in_import=true;
+        // call any logic needed for the module preSave
+        $focus->beforeImportSave();
+
+        $focus->save(false);
+
+        // call any logic needed for the module postSave
+        $focus->afterImportSave();
+
+        if ( $focus->object_name == "Contacts" && isset($list_of_users) )
+            $focus->process_sync_to_outlook($list_of_users);
+
+        // Add ID to User's Last Import records
+        if ( $newRecord )
+            ImportFile::writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
+
+    }
+
 
     protected function saveMappingFile($importColumns, $focus)
     {
@@ -665,8 +683,8 @@ class ImportViewStep4 extends SugarView
      * @param string $errfile
      * @param string $errline
      */
-       public static function handleImportErrors($errno, $errstr, $errfile, $errline)
-    {
+     public static function handleImportErrors($errno, $errstr, $errfile, $errline)
+     {
         if ( !defined('E_DEPRECATED') )
             define('E_DEPRECATED','8192');
         if ( !defined('E_USER_DEPRECATED') )
