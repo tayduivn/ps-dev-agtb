@@ -83,337 +83,297 @@ class ImportViewStep4 extends SugarView
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
         
         // Open the import file
-        $importFile = new ImportFile(
-                        $_REQUEST['tmp_file'],
-                        $_REQUEST['custom_delimiter'],
-                        html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
-                        );
+        $importFile = new ImportFile($_REQUEST['tmp_file'],$_REQUEST['custom_delimiter'],html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
         
-        if ( !$importFile->fileExists() ) {
+        if ( !$importFile->fileExists() )
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
-        }
+
         
         $fieldDefs = $this->bean->getFieldDefinitions();
         
-        while ( $row = $importFile->getNextRow() ) {
+        while ( $row = $importFile->getNextRow() )
+        {
             $focus = clone $this->bean;
             $focus->unPopulateDefaultValues();
             $focus->save_from_post = false;
             $focus->team_id = null;
             $ifs->createdBeans = array();
-        
+
             $do_save = true;
-            
-            for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ ) {
+
+            for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
+            {
                 // loop if this column isn't set
-                if ( !isset($importColumns[$fieldNum]) ) {
+                if ( !isset($importColumns[$fieldNum]) )
                     continue;
-                }
-                
+
                 // get this field's properties
                 $field           = $importColumns[$fieldNum];
                 $fieldDef        = $focus->getFieldDefinition($field);
                 $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']),
-                                        $_REQUEST['module'])." (".$fieldDef['name'].")";
-                
+                    $_REQUEST['module'])." (".$fieldDef['name'].")";
+
                 // Bug 37241 - Don't re-import over a field we already set during the importing of another field
-                if ( !empty($focus->$field) ) {
+                if ( !empty($focus->$field) )
                     continue;
-                }
-                
+
+
                 //DETERMINE WHETHER OR NOT $fieldDef['name'] IS DATE_MODIFIED AND SET A VAR, USE DOWN BELOW
-                
+
                 // translate strings
                 global $locale;
-                if(empty($locale)) {
+                if(empty($locale))
+                {
                     $locale = new Localization();
                 }
                 if ( isset($row[$fieldNum]) )
-                    $rowValue = $locale->translateCharset(
-                                    strip_tags(trim($row[$fieldNum])), 
-                                    $_REQUEST['importlocale_charset'],
-                                    $sugar_config['default_charset']
-                                    );
+                    $rowValue = $locale->translateCharset(strip_tags(trim($row[$fieldNum])),$_REQUEST['importlocale_charset'],$sugar_config['default_charset']);
                 else
                     $rowValue = '';
-                
+
                 // If there is an default value then use it instead
-                if ( !empty($_REQUEST[$field]) ) {
+                if ( !empty($_REQUEST[$field]) )
+                {
                     if ( is_array($_REQUEST[$field]) )
                         $defaultRowValue = encodeMultienumValue($_REQUEST[$field]);
                     else
                         $defaultRowValue = $_REQUEST[$field];
-                    // translate default values to the date/time format for the import file               
-                    if ( $fieldDef['type'] == 'date' 
-                            && $ifs->dateformat != $timedate->get_date_format() )
-                        $defaultRowValue = $timedate->swap_formats(
-                            $defaultRowValue, $ifs->dateformat, $timedate->get_date_format());
-                    if ( $fieldDef['type'] == 'time' 
-                            && $ifs->timeformat != $timedate->get_time_format() )
-                        $defaultRowValue = $timedate->swap_formats(
-                            $defaultRowValue, $ifs->timeformat, $timedate->get_time_format());
-                    if ( ($fieldDef['type'] == 'datetime' || $fieldDef['type'] == 'datetimecombo') 
-                            && $ifs->dateformat.' '.$ifs->timeformat != $timedate->get_date_time_format() )
-                        $defaultRowValue = $timedate->swap_formats(
-                            $defaultRowValue, $ifs->dateformat.' '.$ifs->timeformat, 
-                            $timedate->get_date_time_format());
-                    if ( in_array($fieldDef['type'],array('currency','float','int','num'))
-                            && $ifs->num_grp_sep != $current_user->getPreference('num_grp_sep') )
-                        $defaultRowValue = str_replace($current_user->getPreference('num_grp_sep'),
-                            $ifs->num_grp_sep,$defaultRowValue);
-                    if ( in_array($fieldDef['type'],array('currency','float'))
-                            && $ifs->dec_sep != $current_user->getPreference('dec_sep') )
-                        $defaultRowValue = str_replace($current_user->getPreference('dec_sep'),
-                            $ifs->dec_sep,$defaultRowValue);
+                    // translate default values to the date/time format for the import file
+                    if( $fieldDef['type'] == 'date' && $ifs->dateformat != $timedate->get_date_format() )
+                        $defaultRowValue = $timedate->swap_formats($defaultRowValue, $ifs->dateformat, $timedate->get_date_format());
+
+                    if( $fieldDef['type'] == 'time' && $ifs->timeformat != $timedate->get_time_format() )
+                        $defaultRowValue = $timedate->swap_formats($defaultRowValue, $ifs->timeformat, $timedate->get_time_format());
+
+                    if( ($fieldDef['type'] == 'datetime' || $fieldDef['type'] == 'datetimecombo')
+                        && $ifs->dateformat.' '.$ifs->timeformat != $timedate->get_date_time_format() )
+                        $defaultRowValue = $timedate->swap_formats($defaultRowValue, $ifs->dateformat.' '.$ifs->timeformat,$timedate->get_date_time_format());
+
+                    if ( in_array($fieldDef['type'],array('currency','float','int','num')) && $ifs->num_grp_sep != $current_user->getPreference('num_grp_sep') )
+                        $defaultRowValue = str_replace($current_user->getPreference('num_grp_sep'), $ifs->num_grp_sep,$defaultRowValue);
+
+                    if ( in_array($fieldDef['type'],array('currency','float')) && $ifs->dec_sep != $current_user->getPreference('dec_sep') )
+                        $defaultRowValue = str_replace($current_user->getPreference('dec_sep'), $ifs->dec_sep,$defaultRowValue);
+
                     $currency->retrieve('-99');
                     $user_currency_symbol = $currency->symbol;
-                    if ( $fieldDef['type'] == 'currency' 
-                            && $ifs->currency_symbol != $user_currency_symbol )
-                        $defaultRowValue = str_replace($user_currency_symbol,
-                            $ifs->currency_symbol,$defaultRowValue);
-                            
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue)){
-                    	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-						$sugar_field = new SugarFieldTeamset('Teamset');
-						$rowValue = implode(', ',$sugar_field->getTeamsFromRequest($field));
+                    if ( $fieldDef['type'] == 'currency' && $ifs->currency_symbol != $user_currency_symbol )
+                        $defaultRowValue = str_replace($user_currency_symbol, $ifs->currency_symbol,$defaultRowValue);
 
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset' && empty($rowValue))
+                    {
+                        require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+                        $sugar_field = new SugarFieldTeamset('Teamset');
+                        $rowValue = implode(', ',$sugar_field->getTeamsFromRequest($field));
                     }
                     //END SUGARCRM flav=pro ONLY
-                    
-                    if ( empty($rowValue) ) {
+
+                    if ( empty($rowValue) )
+                    {
                         $rowValue = $defaultRowValue;
                         unset($defaultRowValue);
                     }
                 }
-                
+
                 // Bug 22705 - Don't update the First Name or Last Name value if Full Name is set
                 if ( in_array($field, array('first_name','last_name')) && !empty($focus->full_name) )
                     continue;
-                
+
                 // loop if this value has not been set
                 if ( !isset($rowValue) )
                     continue;
-                
+
                 // If the field is required and blank then error out
-                if ( array_key_exists($field,$focus->get_import_required_fields())
-                        && empty($rowValue) 
-                        && $rowValue!='0') {
-                    $importFile->writeError(
-                        $mod_strings['LBL_REQUIRED_VALUE'],
-                        $fieldTranslated,
-                        'NULL'
-                        );
+                if ( array_key_exists($field,$focus->get_import_required_fields()) && empty($rowValue) && $rowValue!='0')
+                {
+                    $importFile->writeError( $mod_strings['LBL_REQUIRED_VALUE'],$fieldTranslated,'NULL');
                     $do_save = false;
                 }
-    
+
                 // Handle the special case "Sync to Outlook"
-                if ( $focus->object_name == "Contacts" && $field == 'sync_contact' ) {
+                if ( $focus->object_name == "Contacts" && $field == 'sync_contact' )
+                {
                     $bad_names = array();
-                    $returnValue = $ifs->synctooutlook(
-                            $rowValue, 
-                            $fieldDef, 
-                            $bad_names);
+                    $returnValue = $ifs->synctooutlook($rowValue,$fieldDef,$bad_names);
                     // try the default value on fail
                     if ( !$returnValue && !empty($defaultRowValue) )
-                        $returnValue = $ifs->synctooutlook(
-                            $defaultRowValue, 
-                            $fieldDef, 
-                            $bad_names);
-                    if ( !$returnValue ) {
-                        $importFile->writeError(
-                            $mod_strings['LBL_ERROR_SYNC_USERS'],
-                            $fieldTranslated,
-                            explode(",",$bad_names));
+                        $returnValue = $ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
+                    if ( !$returnValue )
+                    {
+                        $importFile->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
                         $do_save = 0;
                     }
                 }
-                
+
                 // Handle email1 and email2 fields ( these don't have the type of email )
-                if ( $field == 'email1' || $field == 'email2' ) {
+                if ( $field == 'email1' || $field == 'email2' )
+                {
                     $returnValue = $ifs->email($rowValue, $fieldDef, $focus);
                     // try the default value on fail
                     if ( !$returnValue && !empty($defaultRowValue) )
-                        $returnValue = $ifs->email(
-                            $defaultRowValue, 
-                            $fieldDef);
-                    if ( $returnValue === FALSE ) {
+                        $returnValue = $ifs->email( $defaultRowValue, $fieldDef);
+                    if ( $returnValue === FALSE )
+                    {
                         $do_save=0;
-                        $importFile->writeError(
-                            $mod_strings['LBL_ERROR_INVALID_EMAIL'],
-                            $fieldTranslated,
-                            $rowValue);
+                        $importFile->writeError( $mod_strings['LBL_ERROR_INVALID_EMAIL'], $fieldTranslated, $rowValue);
                     }
-                    else {
+                    else
+                    {
                         $rowValue = $returnValue;
                         // check for current opt_out and invalid email settings for this email address
                         // if we find any, set them now
-                        $emailres = $focus->db->query(
-                            "SELECT opt_out, invalid_email FROM email_addresses 
-                                WHERE email_address = '".$focus->db->quote($rowValue)."'");
-                        if ( $emailrow = $focus->db->fetchByAssoc($emailres) ) {
+                        $emailres = $focus->db->query( "SELECT opt_out, invalid_email FROM email_addresses WHERE email_address = '".$focus->db->quote($rowValue)."'");
+                        if ( $emailrow = $focus->db->fetchByAssoc($emailres) )
+                        {
                             $focus->email_opt_out = $emailrow['opt_out'];
                             $focus->invalid_email = $emailrow['invalid_email'];
                         }
                     }
                 }
-                
+
                 // Handle splitting Full Name into First and Last Name parts
-                if ( $field == 'full_name' && !empty($rowValue) ) {
-                    $ifs->fullname(
-                            $rowValue, 
-                            $fieldDef,
-                            $focus);
+                if ( $field == 'full_name' && !empty($rowValue) )
+                {
+                    $ifs->fullname($rowValue,$fieldDef,$focus);
                 }
-                
+
                 // to maintain 451 compatiblity
                 if(!isset($fieldDef['module']) && $fieldDef['type']=='relate')
                     $fieldDef['module'] = ucfirst($fieldDef['table']);
-    
+
                 if(isset($fieldDef['custom_type']) && !empty($fieldDef['custom_type']))
                     $fieldDef['type'] = $fieldDef['custom_type'];
-                
+
                 // If the field is empty then there is no need to check the data
-                if( !empty($rowValue) ) {  
-                    switch ($fieldDef['type']) {
-                    case 'enum':
-                    case 'multienum':
-                        if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" ) 
-                            $returnValue = $ifs->multienum($rowValue,$fieldDef);
-                        else
-                            $returnValue = $ifs->enum($rowValue,$fieldDef);
-                        // try the default value on fail
-                        if ( !$returnValue && !empty($defaultRowValue) )
-                            if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" ) 
-                                $returnValue = $ifs->multienum($defaultRowValue,$fieldDef);
+                if( !empty($rowValue) )
+                {
+                    switch ($fieldDef['type'])
+                    {
+                        case 'enum':
+                        case 'multienum':
+                            if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" )
+                                $returnValue = $ifs->multienum($rowValue,$fieldDef);
                             else
-                                $returnValue = $ifs->enum($defaultRowValue,$fieldDef);
-                        if ( $returnValue === FALSE ) {
-                            $importFile->writeError(
-                                $mod_strings['LBL_ERROR_NOT_IN_ENUM']
+                                $returnValue = $ifs->enum($rowValue,$fieldDef);
+                            // try the default value on fail
+                            if ( !$returnValue && !empty($defaultRowValue) )
+                                if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" )
+                                    $returnValue = $ifs->multienum($defaultRowValue,$fieldDef);
+                                else
+                                    $returnValue = $ifs->enum($defaultRowValue,$fieldDef);
+                            if ( $returnValue === FALSE )
+                            {
+                                $importFile->writeError(
+                                    $mod_strings['LBL_ERROR_NOT_IN_ENUM']
                                     . implode(",",$app_list_strings[$fieldDef['options']]),
-                                $fieldTranslated,
-                                $rowValue);
-                            $do_save = 0;
-                        }
-                        else
-                            $rowValue = $returnValue;
-                        
-                        break;
-                    case 'relate':
-                    case 'parent':
-                        $returnValue = $ifs->relate(
-                            $rowValue, 
-                            $fieldDef, 
-                            $focus,
-                            empty($defaultRowValue));
-                        if ( !$returnValue && !empty($defaultRowValue) )
-                            $returnValue = $ifs->relate(
-                                $defaultRowValue, 
-                                $fieldDef, 
-                                $focus);
-                        // Bug 33623 - Set the id value found from the above method call as an importColumn
-                        if ( $returnValue !== false )
-                            $importColumns[] = $fieldDef['id_name'];
-                        break;
-                    case 'teamset':
-                        $returnValue = $ifs->teamset(
-                            $rowValue, 
-                            $fieldDef, 
-                            $focus);
+                                    $fieldTranslated,
+                                    $rowValue);
+                                $do_save = 0;
+                            }
+                            else
+                                $rowValue = $returnValue;
+
+                            break;
+                        case 'relate':
+                        case 'parent':
+                            $returnValue = $ifs->relate($rowValue, $fieldDef, $focus, empty($defaultRowValue));
+                            if (!$returnValue && !empty($defaultRowValue))
+                                $returnValue = $ifs->relate($defaultRowValue,$fieldDef, $focus);
+                            // Bug 33623 - Set the id value found from the above method call as an importColumn
+                            if ($returnValue !== false)
+                                $importColumns[] = $fieldDef['id_name'];
+                            break;
+                        case 'teamset':
+                            $returnValue = $ifs->teamset($rowValue,$fieldDef,$focus);
                             $importColumns[] = 'team_set_id';
                             $importColumns[] = 'team_id';
-                        break;
-                    case 'fullname':
-                        break;
-                    default:
-                        $fieldtype = $fieldDef['type'];
-                        $returnValue = $ifs->$fieldtype($rowValue, $fieldDef, $focus);
-                        // try the default value on fail
-                        if ( !$returnValue && !empty($defaultRowValue) )
-                            $returnValue = $ifs->$fieldtype(
-                                $defaultRowValue, 
-                                $fieldDef, 
-                                $focus);
-                        if ( !$returnValue ) {
-                            $do_save=0;
-                            $importFile->writeError(
-                                $mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],
-                                $fieldTranslated,
-                                $rowValue, 
-                                $focus);
-                        }
-                        else {
-                            $rowValue = $returnValue;
-                        }
+                            break;
+                        case 'fullname':
+                            break;
+                        default:
+                            $fieldtype = $fieldDef['type'];
+                            $returnValue = $ifs->$fieldtype($rowValue, $fieldDef, $focus);
+                            // try the default value on fail
+                            if ( !$returnValue && !empty($defaultRowValue) )
+                                $returnValue = $ifs->$fieldtype($defaultRowValue,$fieldDef, $focus);
+                            if ( !$returnValue ) {
+                                $do_save=0;
+                                $importFile->writeError($mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],$fieldTranslated,$rowValue,$focus);
+                            }
+                            else {
+                                $rowValue = $returnValue;
+                            }
                     }
                 }
                 $focus->$field = $rowValue;
                 unset($defaultRowValue);
             }
-            
+
             // Now try to validate flex relate fields
-            if ( isset($focus->field_defs['parent_name']) 
-                    && isset($focus->parent_name)
-                    && ($focus->field_defs['parent_name']['type'] == 'parent') ) {
+            if ( isset($focus->field_defs['parent_name']) && isset($focus->parent_name) && ($focus->field_defs['parent_name']['type'] == 'parent') )
+            {
                 // populate values from the picker widget if the import file doesn't have them
                 $parent_idField = $focus->field_defs['parent_name']['id_name'];
                 if ( empty($focus->$parent_idField) && !empty($_REQUEST[$parent_idField]) )
                     $focus->$parent_idField = $_REQUEST[$parent_idField];
+
                 $parent_typeField = $focus->field_defs['parent_name']['type_name'];
+
                 if ( empty($focus->$parent_typeField) && !empty($_REQUEST[$parent_typeField]) )
                     $focus->$parent_typeField = $_REQUEST[$parent_typeField];
                 // now validate it
-                $returnValue = $ifs->parent(
-                    $focus->parent_name, 
-                    $focus->field_defs['parent_name'], 
-                    $focus,
-                    empty($_REQUEST['parent_name']));
+                $returnValue = $ifs->parent($focus->parent_name,$focus->field_defs['parent_name'],$focus, empty($_REQUEST['parent_name']));
                 if ( !$returnValue && !empty($_REQUEST['parent_name']) )
-                    $returnValue = $ifs->parent(
-                        $_REQUEST['parent_name'], 
-                        $focus->field_defs['parent_name'], 
-                        $focus);
+                    $returnValue = $ifs->parent( $_REQUEST['parent_name'],$focus->field_defs['parent_name'], $focus);
             }
-            
+
             // check to see that the indexes being entered are unique.
-            if (isset($_REQUEST['enabled_dupes']) && $_REQUEST['enabled_dupes'] != ""){
+            if (isset($_REQUEST['enabled_dupes']) && $_REQUEST['enabled_dupes'] != "")
+            {
                 $toDecode = html_entity_decode  ($_REQUEST['enabled_dupes'], ENT_QUOTES);
                 $enabled_dupes = json_decode($toDecode);
                 $idc = new ImportDuplicateCheck($focus);
-                
-                if ( $idc->isADuplicateRecord($enabled_dupes) ){
+
+                if ( $idc->isADuplicateRecord($enabled_dupes) )
+                {
                     $importFile->markRowAsDuplicate();
                     $this->_undoCreatedBeans($ifs->createdBeans);
                     continue;
                 }
             }
-        
+
             // if the id was specified
             $newRecord = true;
-            if ( !empty($focus->id) ) {
+            if ( !empty($focus->id) )
+            {
                 $focus->id = $this->_convertId($focus->id);
-        
+
                 // check if it already exists
                 $query = "SELECT * FROM {$focus->table_name} WHERE id='".$focus->db->quote($focus->id)."'";
-                $result = $focus->db->query($query) 
-                            or sugar_die("Error selecting sugarbean: ");
-        
+                $result = $focus->db->query($query)
+                or sugar_die("Error selecting sugarbean: ");
+
                 $dbrow = $focus->db->fetchByAssoc($result);
-        
-                if (isset ($dbrow['id']) && $dbrow['id'] != -1) {
+
+                if (isset ($dbrow['id']) && $dbrow['id'] != -1)
+                {
                     // if it exists but was deleted, just remove it
-                    if (isset ($dbrow['deleted']) && $dbrow['deleted'] == 1 && $update_only==false) {
+                    if (isset ($dbrow['deleted']) && $dbrow['deleted'] == 1 && $update_only==false)
+                    {
                         $query2 = "DELETE FROM {$focus->table_name} WHERE id='".$focus->db->quote($focus->id)."'";
                         $result2 = $focus->db->query($query2) or sugar_die($mod_strings['LBL_ERROR_DELETING_RECORD']." ".$focus->id);
-                        if ($focus->hasCustomFields()) {
+                        if ($focus->hasCustomFields())
+                        {
                             $query3 = "DELETE FROM {$focus->table_name}_cstm WHERE id_c='".$focus->db->quote($focus->id)."'";
                             $result2 = $focus->db->query($query3);
                         }
                         $focus->new_with_id = true;
-                    } 
-                    else {
-                        if( !$update_only ) {
+                    }
+                    else
+                    {
+                        if( !$update_only )
+                        {
                             $do_save = 0;
                             $importFile->writeError($mod_strings['LBL_ID_EXISTS_ALREADY'],'ID',$focus->id);
                             $this->_undoCreatedBeans($ifs->createdBeans);
@@ -421,170 +381,191 @@ class ImportViewStep4 extends SugarView
                         }
                         $existing_focus = clone $this->bean;
                         $newRecord = false;
-                        if ( !( $existing_focus->retrieve($dbrow['id']) instanceOf SugarBean ) ) {
+                        if ( !( $existing_focus->retrieve($dbrow['id']) instanceOf SugarBean ) )
+                        {
                             $do_save = 0;
                             $importFile->writeError($mod_strings['LBL_RECORD_CANNOT_BE_UPDATED'],'ID',$focus->id);
                             $this->_undoCreatedBeans($ifs->createdBeans);
                             continue;
                         }
-                        else {
+                        else
+                        {
                             $newData = $focus->toArray();
                             foreach ( $newData as $focus_key => $focus_value )
                                 if ( in_array($focus_key,$importColumns) )
                                     $existing_focus->$focus_key = $focus_value;
-                                                   
+
                             $focus = $existing_focus;
                         }
                         unset($existing_focus);
                     }
                 }
-                else {
+                else
+                {
                     $focus->new_with_id = true;
                 }
             }
-        
-            if ($do_save) {
+
+            if ($do_save)
+            {
                 // Populate in any default values to the bean
                 $focus->populateDefaultValues();
-                
-                if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord ) {
+
+                if ( !isset($focus->assigned_user_id) || $focus->assigned_user_id == '' && $newRecord )
+                {
                     $focus->assigned_user_id = $current_user->id;
                 }
                 //BEGIN SUGARCRM flav=pro ONLY
-                if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord ) {
+                if ( !isset($focus->team_id) || $focus->team_id == '' && $newRecord )
+                {
                     $focus->team_id = $current_user->default_team;
                 }
                 //END SUGARCRM flav=pro ONLY
                 /*
-                 * Bug 34854: Added all conditions besides the empty check on date modified. Currently, if
-                 * we do an update to a record, it doesn't update the date_modified value.
-                 * Hack note: I'm doing a to_display and back to_db on the fetched row to make sure that any truncating that happens
-                 * when $focus->date_modified goes to_display and back to_db also happens on the fetched db value. Otherwise,
-                 * in some cases we truncate the seconds on one and not the other, and the comparison fails when it should pass
-                 */
+                * Bug 34854: Added all conditions besides the empty check on date modified. Currently, if
+                * we do an update to a record, it doesn't update the date_modified value.
+                * Hack note: I'm doing a to_display and back to_db on the fetched row to make sure that any truncating that happens
+                * when $focus->date_modified goes to_display and back to_db also happens on the fetched db value. Otherwise,
+                * in some cases we truncate the seconds on one and not the other, and the comparison fails when it should pass
+                */
                 if ( ( !empty($focus->new_with_id) && !empty($focus->date_modified) ) ||
                      ( empty($focus->new_with_id) && $timedate->to_db($focus->date_modified) != $timedate->to_db($timedate->to_display_date_time($focus->fetched_row['date_modified'])) )
-                   )
+                )
                     $focus->update_date_modified = false;
 
                 $focus->optimistic_lock = false;
-                if ( $focus->object_name == "Contacts" && isset($focus->sync_contact) ) {
+                if ( $focus->object_name == "Contacts" && isset($focus->sync_contact) )
+                {
                     //copy the potential sync list to another varible
                     $list_of_users=$focus->sync_contact;
                     //and set it to false for the save
                     $focus->sync_contact=false;
-                } else if($focus->object_name == "User" && !empty($current_user) && $focus->is_admin && !is_admin($current_user) && is_admin_for_module($current_user, 'Users')) {
-                	sugar_die($GLOBALS['mod_strings']['ERR_IMPORT_SYSTEM_ADMININSTRATOR']);
+                }
+                else if($focus->object_name == "User" && !empty($current_user) && $focus->is_admin && !is_admin($current_user) && is_admin_for_module($current_user, 'Users')) {
+                    sugar_die($GLOBALS['mod_strings']['ERR_IMPORT_SYSTEM_ADMININSTRATOR']);
                 }
                 //bug# 40260 setting it true as the module in focus is involved in an import
                 $focus->in_import=true;
                 // call any logic needed for the module preSave
                 $focus->beforeImportSave();
-                
-                
+
+
                 $focus->save(false);
-                
+
                 // call any logic needed for the module postSave
                 $focus->afterImportSave();
-                
-                if ( $focus->object_name == "Contacts" && isset($list_of_users) ) 
+
+                if ( $focus->object_name == "Contacts" && isset($list_of_users) )
                     $focus->process_sync_to_outlook($list_of_users);
-                
+
                 // Update the created/updated counter
                 $importFile->markRowAsImported($newRecord);
-                
+
                 // Add ID to User's Last Import records
                 if ( $newRecord )
-                    ImportFile::writeRowToLastImport(
-                        $_REQUEST['import_module'],
-                        ($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),
-                        $focus->id);
+                    ImportFile::writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
             }
             else
                 $this->_undoCreatedBeans($ifs->createdBeans);
-                
+
             unset($defaultRowValue);
         }
+        //End while loop
+
 
         // save mapping if requested
-        $mappingValsArr = $importColumns;
-        if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
-            $mapping_file = new ImportMap();
-            if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on') {
-                $header_to_field = array ();
-                foreach ($importColumns as $pos => $field_name) {
-                    if (isset($firstrow[$pos]) && isset($field_name)) {
-                        $header_to_field[$firstrow[$pos]] = $field_name;
-                    }
-                }
-                //$mapping_file->setMapping($header_to_field);
-                $mappingValsArr = $header_to_field;
-            }
-            //get array of values to save for duplicate and locale settings
-            $advMapping = $this->retrieveAdvancedMapping();
-
-            //merge with mappingVals array
-            if(!empty($advMapping) && is_array($advMapping)){
-                $mappingValsArr = array_merge($mappingValsArr,$advMapping);
-            }
-
-            //set mapping
-            $mapping_file->setMapping($mappingValsArr);
-
-            // save default fields
-            $defaultValues = array();
-            for ( $i = 0; $i < $_REQUEST['columncount']; $i++ )
-                
-            if (isset($importColumns[$i]) && !empty($_REQUEST[$importColumns[$i]])) {
-            	$field = $importColumns[$i];
-                $fieldDef = $focus->getFieldDefinition($field);
- 				if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset') {
-                  require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
-				  $sugar_field = new SugarFieldTeamset('Teamset');
-				  $teams = $sugar_field->getTeamsFromRequest($field);
-				  if(isset($_REQUEST['primary_team_name_collection'])) {
-				  	 $primary_index = $_REQUEST['primary_team_name_collection'];
-				  }	
-				  
-				  //If primary_index was selected, ensure that the first Array entry is the primary team
-				  if(isset($primary_index)) {
-					  $count = 0;
-					  $new_teams = array();	
-					  foreach($teams as $id=>$name) {
-					  	 if($primary_index == $count++) {
-					  	 	$new_teams[$id] = $name;
-					  	 	unset($teams[$id]);				  	 	
-					  	 	break;
-					  	 }
-					  }
-					  
-				  	  foreach($teams as $id=>$name) {
-				  		 $new_teams[$id] = $name;
-				  	  }
-				  	  $teams = $new_teams;						  
-				  } //if
-				  
-				  $json = getJSONobj();
-				  $defaultValues[$field] = $json->encode($teams);
- 				} else {
-               	  $defaultValues[$field] = $_REQUEST[$importColumns[$i]];
- 				}
-            }
-                    
-            $mapping_file->setDefaultValues($defaultValues);      
-            $result = $mapping_file->save(
-                $current_user->id, 
-                $_REQUEST['save_map_as'], 
-                $_REQUEST['import_module'], 
-                $_REQUEST['source'],
-                ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on'),
-                $_REQUEST['custom_delimiter'],
-                html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
-                );
+        if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' )
+        {
+            $this->saveMappingFile($importColumns, $focus);
         }
         
         $importFile->writeStatus();
     }
+
+    protected function saveMappingFile($importColumns, $focus)
+    {
+        $mappingValsArr = $importColumns;
+        $mapping_file = new ImportMap();
+        if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on')
+        {
+            $header_to_field = array ();
+            foreach ($importColumns as $pos => $field_name)
+            {
+                if (isset($firstrow[$pos]) && isset($field_name))
+                {
+                    $header_to_field[$firstrow[$pos]] = $field_name;
+                }
+            }
+
+            $mappingValsArr = $header_to_field;
+        }
+        //get array of values to save for duplicate and locale settings
+        $advMapping = $this->retrieveAdvancedMapping();
+
+        //merge with mappingVals array
+        if(!empty($advMapping) && is_array($advMapping))
+        {
+            $mappingValsArr = array_merge($mappingValsArr,$advMapping);
+        }
+
+        //set mapping
+        $mapping_file->setMapping($mappingValsArr);
+
+        // save default fields
+        $defaultValues = array();
+        for ( $i = 0; $i < $_REQUEST['columncount']; $i++ )
+        {
+            if (isset($importColumns[$i]) && !empty($_REQUEST[$importColumns[$i]]))
+            {
+                $field = $importColumns[$i];
+                $fieldDef = $focus->getFieldDefinition($field);
+                if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset')
+                {
+                    require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+                    $sugar_field = new SugarFieldTeamset('Teamset');
+                    $teams = $sugar_field->getTeamsFromRequest($field);
+                    if(isset($_REQUEST['primary_team_name_collection']))
+                    {
+                        $primary_index = $_REQUEST['primary_team_name_collection'];
+                    }
+
+                    //If primary_index was selected, ensure that the first Array entry is the primary team
+                    if(isset($primary_index))
+                    {
+                        $count = 0;
+                        $new_teams = array();
+                        foreach($teams as $id=>$name)
+                        {
+                            if($primary_index == $count++)
+                            {
+                                $new_teams[$id] = $name;
+                                unset($teams[$id]);
+                                break;
+                            }
+                        }
+
+                        foreach($teams as $id=>$name)
+                        {
+                            $new_teams[$id] = $name;
+                        }
+                        $teams = $new_teams;
+                    } //if
+
+                    $json = getJSONobj();
+                    $defaultValues[$field] = $json->encode($teams);
+                }
+                else
+                {
+                    $defaultValues[$field] = $_REQUEST[$importColumns[$i]];
+                }
+            }
+        }
+        $mapping_file->setDefaultValues($defaultValues);
+        $result = $mapping_file->save( $current_user->id,  $_REQUEST['save_map_as'], $_REQUEST['import_module'], $_REQUEST['source'],
+            ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on'), $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES)
+        );
+    }
+
 
     protected function getImportColumns()
     {
