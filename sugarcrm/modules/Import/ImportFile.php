@@ -37,7 +37,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Import/ImportCacheFiles.php');
 require_once('modules/Import/CsvAutoDetect.php');
 
-class ImportFile
+class ImportFile implements Iterator
 {
     /**
      * Delimiter string we are using (i.e. , or ;)
@@ -67,7 +67,7 @@ class ImportFile
     /**
      * Array of the values in the current array we are in
      */
-    private $_currentRow;
+    private $_currentRow = FALSE;
     
     /**
      * Count of rows processed
@@ -208,6 +208,8 @@ class ImportFile
      */
     public function getNextRow()
     {
+        $this->_currentRow = FALSE;
+        
         if (!$this->fileExists()) 
             return false;
         
@@ -515,4 +517,33 @@ class ImportFile
             $this->$k = $map->$v;
         }
     }
+
+    //Begin Implementation for SPL's Iterator interface
+    public function key()
+    {
+        return $this->_rowsCount;
+    }
+
+    public function current()
+    {
+        return $this->_currentRow;
+    }
+
+    public function next()
+    {
+        $this->getNextRow();
+    }
+
+    public function valid()
+    {
+        return $this->_currentRow !== FALSE;
+    }
+
+    public function rewind()
+    {
+        $this->setFpAfterBOM();
+        //Load our first row
+        $this->getNextRow();
+    }
+
 }

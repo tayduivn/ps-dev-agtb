@@ -38,6 +38,7 @@ class ImportView extends SugarView
     {
         parent::__construct($bean, $view_object_map);
         $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+        $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
     }
 
     /**
@@ -48,7 +49,7 @@ class ImportView extends SugarView
         global $mod_strings, $current_language;
 
         if ( empty($module) )
-            $module = $_REQUEST['import_module'];
+            $module = $this->importModule;
 
         $old_mod_strings = $mod_strings;
         $mod_strings = return_module_language($current_language, $module);
@@ -68,13 +69,13 @@ class ImportView extends SugarView
  		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
         if ( !empty($_REQUEST['module_tab']) )
             return $_REQUEST['module_tab'];
-        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
-            return $moduleTabMap[$_REQUEST['import_module']];
+        elseif ( isset($moduleTabMap[$this->importModule]) )
+            return $moduleTabMap[$this->importModule];
         // Default anonymous pages to be under Home
-        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
+        elseif ( !isset($app_list_strings['moduleList'][$this->importModule]) )
             return 'Home';
         else
-            return $_REQUEST['import_module'];
+            return $this->importModule;
  	}
 
     /**
@@ -90,9 +91,9 @@ class ImportView extends SugarView
 	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
     	}
     	else {
-    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
+    	    $returnArray[] = $app_list_strings['moduleList'][$this->importModule];
     	}
-	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
+	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$this->importModule}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
 	    $returnArray[] = string_format($mod_strings[$this->pageTitleKey], array($this->currentStep));
 
 	    return $returnArray;

@@ -110,7 +110,7 @@ class Importer
 
     public function import()
     {
-        while ( $row = $this->importFile->getNextRow() )
+        foreach($this->importFile as $row)
         {
             $this->importRow($row);
         }
@@ -129,7 +129,6 @@ class Importer
 
     protected function importRow($row)
     {
-        $GLOBALS['log']->fatal("Importing row: $row");
         global $sugar_config;
 
         $focus = clone $this->bean;
@@ -144,7 +143,7 @@ class Importer
         {
             // loop if this column isn't set
             if ( !isset($this->importColumns[$fieldNum]) )
-                return;
+                continue;
 
             // get this field's properties
             $field           = $this->importColumns[$fieldNum];
@@ -153,7 +152,7 @@ class Importer
             $defaultRowValue = '';
             // Bug 37241 - Don't re-import over a field we already set during the importing of another field
             if ( !empty($focus->$field) )
-                return;
+                continue;
 
             // translate strings
             global $locale;
@@ -189,11 +188,11 @@ class Importer
 
             // Bug 22705 - Don't update the First Name or Last Name value if Full Name is set
             if ( in_array($field, array('first_name','last_name')) && !empty($focus->full_name) )
-                return;
+                continue;
 
             // loop if this value has not been set
             if ( !isset($rowValue) )
-                return;
+                continue;
 
             // If the field is required and blank then error out
             if ( array_key_exists($field,$focus->get_import_required_fields()) && empty($rowValue) && $rowValue!='0')
@@ -262,7 +261,7 @@ class Importer
                 //Start
                 $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
                 if($rowValue === FALSE)
-                    return;
+                    continue;
 
             }
             $focus->$field = $rowValue;
