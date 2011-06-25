@@ -30,9 +30,9 @@
 // $Id: step3.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-{literal}
 
-{/literal}
+{$CSS}
+
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 {$MODULE_TITLE}
