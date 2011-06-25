@@ -55,10 +55,28 @@ class ImportViewStep4 extends SugarView
      */
     private $defaultUserCurrency;
 
+    /**
+     * @var importColumns
+     */
+    private $importColumns;
+
+    /**
+     * @var importFile
+     */
+    private $importFile;
+
+
     public function __construct($bean = null, $view_object_map = array())
     {
         parent::__construct($bean, $view_object_map);
         $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+
+
+    }
+
+    public function init($bean = null,$view_object_map = array() )
+    {
+        parent::init($bean, $view_object_map);
 
         // set the default locale settings
         $this->ifs = $this->getFieldSanitizer();
@@ -66,6 +84,12 @@ class ImportViewStep4 extends SugarView
         //Get the default user currency
         $this->defaultUserCurrency = new Currency();
         $this->defaultUserCurrency->retrieve('-99');
+
+        //Get our import column definitions
+        $this->importColumns = $this->getImportColumns();
+
+        // Open the import file
+        $this->importFile = new ImportFile($_REQUEST['tmp_file'],$_REQUEST['custom_delimiter'],html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
     }
     /** 
      * @see SugarView::display()
@@ -87,25 +111,15 @@ class ImportViewStep4 extends SugarView
         global $app_list_strings, $timedate;
         
         $update_only = ( isset($_REQUEST['import_type']) && $_REQUEST['import_type'] == 'update' );
-        $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
-
-        // loop through all request variables
-        $importColumns = $this->getImportColumns();
 
         // Check to be sure we are getting an import file that is in the right place
         if ( realpath(dirname($_REQUEST['tmp_file']).'/') != realpath($sugar_config['upload_dir']) )
             trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
-        
-        // Open the import file
-        $importFile = new ImportFile($_REQUEST['tmp_file'],$_REQUEST['custom_delimiter'],html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
-        
-        if ( !$importFile->fileExists() )
-            trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
 
+        if ( !$this->importFile->fileExists() )
+            trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
         
-        $fieldDefs = $this->bean->getFieldDefinitions();
-        
-        while ( $row = $importFile->getNextRow() )
+        while ( $row = $this->importFile->getNextRow() )
         {
             $focus = clone $this->bean;
             $focus->unPopulateDefaultValues();
@@ -118,15 +132,14 @@ class ImportViewStep4 extends SugarView
             for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
             {
                 // loop if this column isn't set
-                if ( !isset($importColumns[$fieldNum]) )
+                if ( !isset($this->importColumns[$fieldNum]) )
                     continue;
 
                 // get this field's properties
-                $field           = $importColumns[$fieldNum];
+                $field           = $this->importColumns[$fieldNum];
                 $fieldDef        = $focus->getFieldDefinition($field);
-                $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']),
-                    $_REQUEST['module'])." (".$fieldDef['name'].")";
-
+                $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']), $_REQUEST['module'])." (".$fieldDef['name'].")";
+                $defaultRowValue = '';
                 // Bug 37241 - Don't re-import over a field we already set during the importing of another field
                 if ( !empty($focus->$field) )
                     continue;
@@ -177,7 +190,7 @@ class ImportViewStep4 extends SugarView
                 // If the field is required and blank then error out
                 if ( array_key_exists($field,$focus->get_import_required_fields()) && empty($rowValue) && $rowValue!='0')
                 {
-                    $importFile->writeError( $mod_strings['LBL_REQUIRED_VALUE'],$fieldTranslated,'NULL');
+                    $this->importFile->writeError( $mod_strings['LBL_REQUIRED_VALUE'],$fieldTranslated,'NULL');
                     $do_save = false;
                 }
 
@@ -191,7 +204,7 @@ class ImportViewStep4 extends SugarView
                         $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
                     if ( !$returnValue )
                     {
-                        $importFile->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
+                        $this->importFile->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
                         $do_save = 0;
                     }
                 }
@@ -206,7 +219,7 @@ class ImportViewStep4 extends SugarView
                     if ( $returnValue === FALSE )
                     {
                         $do_save=0;
-                        $importFile->writeError( $mod_strings['LBL_ERROR_INVALID_EMAIL'], $fieldTranslated, $rowValue);
+                        $this->importFile->writeError( $mod_strings['LBL_ERROR_INVALID_EMAIL'], $fieldTranslated, $rowValue);
                     }
                     else
                     {
@@ -238,59 +251,11 @@ class ImportViewStep4 extends SugarView
                 // If the field is empty then there is no need to check the data
                 if( !empty($rowValue) )
                 {
-                    switch ($fieldDef['type'])
-                    {
-                        case 'enum':
-                        case 'multienum':
-                            if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" )
-                                $returnValue = $this->ifs->multienum($rowValue,$fieldDef);
-                            else
-                                $returnValue = $this->ifs->enum($rowValue,$fieldDef);
-                            // try the default value on fail
-                            if ( !$returnValue && !empty($defaultRowValue) )
-                                if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" )
-                                    $returnValue = $this->ifs->multienum($defaultRowValue,$fieldDef);
-                                else
-                                    $returnValue = $this->ifs->enum($defaultRowValue,$fieldDef);
-                            if ( $returnValue === FALSE )
-                            {
-                                $importFile->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
-                                $do_save = 0;
-                            }
-                            else
-                                $rowValue = $returnValue;
+                    //Start
+                    $rowValue = $this->sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated);
+                    if($rowValue === FALSE)
+                        continue;
 
-                            break;
-                        case 'relate':
-                        case 'parent':
-                            $returnValue = $this->ifs->relate($rowValue, $fieldDef, $focus, empty($defaultRowValue));
-                            if (!$returnValue && !empty($defaultRowValue))
-                                $returnValue = $this->ifs->relate($defaultRowValue,$fieldDef, $focus);
-                            // Bug 33623 - Set the id value found from the above method call as an importColumn
-                            if ($returnValue !== false)
-                                $importColumns[] = $fieldDef['id_name'];
-                            break;
-                        case 'teamset':
-                            $returnValue = $this->ifs->teamset($rowValue,$fieldDef,$focus);
-                            $importColumns[] = 'team_set_id';
-                            $importColumns[] = 'team_id';
-                            break;
-                        case 'fullname':
-                            break;
-                        default:
-                            $fieldtype = $fieldDef['type'];
-                            $returnValue = $this->ifs->$fieldtype($rowValue, $fieldDef, $focus);
-                            // try the default value on fail
-                            if ( !$returnValue && !empty($defaultRowValue) )
-                                $returnValue = $this->ifs->$fieldtype($defaultRowValue,$fieldDef, $focus);
-                            if ( !$returnValue ) {
-                                $do_save=0;
-                                $importFile->writeError($mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],$fieldTranslated,$rowValue,$focus);
-                            }
-                            else {
-                                $rowValue = $returnValue;
-                            }
-                    }
                 }
                 $focus->$field = $rowValue;
                 unset($defaultRowValue);
@@ -323,7 +288,7 @@ class ImportViewStep4 extends SugarView
 
                 if ( $idc->isADuplicateRecord($enabled_dupes) )
                 {
-                    $importFile->markRowAsDuplicate();
+                    $this->importFile->markRowAsDuplicate();
                     $this->_undoCreatedBeans($this->ifs->createdBeans);
                     continue;
                 }
@@ -354,15 +319,15 @@ class ImportViewStep4 extends SugarView
                     {
                         if( !$update_only )
                         {
-                            $importFile->writeError($mod_strings['LBL_ID_EXISTS_ALREADY'],'ID',$focus->id);
+                            $this->importFile->writeError($mod_strings['LBL_ID_EXISTS_ALREADY'],'ID',$focus->id);
                             $this->_undoCreatedBeans($this->ifs->createdBeans);
                             continue;
                         }
 
-                        $clonedBean = $this->cloneExistingBean($focus, $importColumns);
+                        $clonedBean = $this->cloneExistingBean($focus);
                         if($clonedBean === FALSE)
                         {
-                            $importFile->writeError($mod_strings['LBL_RECORD_CANNOT_BE_UPDATED'],'ID',$focus->id);
+                            $this->importFile->writeError($mod_strings['LBL_RECORD_CANNOT_BE_UPDATED'],'ID',$focus->id);
                             $this->_undoCreatedBeans($this->ifs->createdBeans);
                             continue;
                         }
@@ -383,7 +348,7 @@ class ImportViewStep4 extends SugarView
             {
                 $this->saveImportBean($focus, $newRecord);
                 // Update the created/updated counter
-                $importFile->markRowAsImported($newRecord);
+                $this->importFile->markRowAsImported($newRecord);
             }
             else
                 $this->_undoCreatedBeans($this->ifs->createdBeans);
@@ -396,13 +361,75 @@ class ImportViewStep4 extends SugarView
         // save mapping if requested
         if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' )
         {
-            $this->saveMappingFile($importColumns, $focus);
+            $this->saveMappingFile($focus);
         }
         
-        $importFile->writeStatus();
+        $this->importFile->writeStatus();
     }
 
-    protected function cloneExistingBean($focus, $importColumns)
+    protected function sanitizeFieldValueByType($rowValue, $fieldDef, $defaultRowValue, $focus, $fieldTranslated)
+    {
+        global $mod_strings, $app_list_strings;
+        switch ($fieldDef['type'])
+        {
+            case 'enum':
+            case 'multienum':
+                if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" )
+                    $returnValue = $this->ifs->multienum($rowValue,$fieldDef);
+                else
+                    $returnValue = $this->ifs->enum($rowValue,$fieldDef);
+                // try the default value on fail
+                if ( !$returnValue && !empty($defaultRowValue) )
+                {
+                    if ( isset($fieldDef['type']) && $fieldDef['type'] == "multienum" )
+                        $returnValue = $this->ifs->multienum($defaultRowValue,$fieldDef);
+                    else
+                        $returnValue = $this->ifs->enum($defaultRowValue,$fieldDef);
+                }
+                if ( $returnValue === FALSE )
+                {
+                    $this->importFile->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
+                    return FALSE;
+                }
+                else
+                    return $returnValue;
+
+                break;
+            case 'relate':
+            case 'parent':
+                $returnValue = $this->ifs->relate($rowValue, $fieldDef, $focus, empty($defaultRowValue));
+                if (!$returnValue && !empty($defaultRowValue))
+                    $returnValue = $this->ifs->relate($defaultRowValue,$fieldDef, $focus);
+                // Bug 33623 - Set the id value found from the above method call as an importColumn
+                if ($returnValue !== false)
+                    $this->importColumns[] = $fieldDef['id_name'];
+                return $rowValue;
+                break;
+            case 'teamset':
+                $this->ifs->teamset($rowValue,$fieldDef,$focus);
+                $this->importColumns[] = 'team_set_id';
+                $this->importColumns[] = 'team_id';
+                return $rowValue;
+                break;
+            case 'fullname':
+                return $rowValue;
+                break;
+            default:
+                $fieldtype = $fieldDef['type'];
+                $returnValue = $this->ifs->$fieldtype($rowValue, $fieldDef, $focus);
+                // try the default value on fail
+                if ( !$returnValue && !empty($defaultRowValue) )
+                    $returnValue = $this->ifs->$fieldtype($defaultRowValue,$fieldDef, $focus);
+                if ( !$returnValue )
+                {
+                    $this->importFile->writeError($mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],$fieldTranslated,$rowValue,$focus);
+                    return FALSE;
+                }
+                return $returnValue;
+        }
+    }
+
+    protected function cloneExistingBean($focus)
     {
         $existing_focus = clone $this->bean;
         if ( !( $existing_focus->retrieve($focus->id) instanceOf SugarBean ) )
@@ -413,7 +440,7 @@ class ImportViewStep4 extends SugarView
         {
             $newData = $focus->toArray();
             foreach ( $newData as $focus_key => $focus_value )
-                if ( in_array($focus_key,$importColumns) )
+                if ( in_array($focus_key,$this->importColumns) )
                     $existing_focus->$focus_key = $focus_value;
 
             return $existing_focus;
@@ -432,7 +459,6 @@ class ImportViewStep4 extends SugarView
             $result2 = $focus->db->query($query3);
         }
     }
-
 
     protected function saveImportBean($focus, $newRecord)
     {
@@ -489,15 +515,15 @@ class ImportViewStep4 extends SugarView
 
     }
 
-
-    protected function saveMappingFile($importColumns, $focus)
+    protected function saveMappingFile($focus)
     {
-        $mappingValsArr = $importColumns;
+        $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
+        $mappingValsArr = $this->importColumns;
         $mapping_file = new ImportMap();
         if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on')
         {
             $header_to_field = array ();
-            foreach ($importColumns as $pos => $field_name)
+            foreach ($this->importColumns as $pos => $field_name)
             {
                 if (isset($firstrow[$pos]) && isset($field_name))
                 {
@@ -523,9 +549,9 @@ class ImportViewStep4 extends SugarView
         $defaultValues = array();
         for ( $i = 0; $i < $_REQUEST['columncount']; $i++ )
         {
-            if (isset($importColumns[$i]) && !empty($_REQUEST[$importColumns[$i]]))
+            if (isset($this->importColumns[$i]) && !empty($_REQUEST[$this->importColumns[$i]]))
             {
-                $field = $importColumns[$i];
+                $field = $this->importColumns[$i];
                 $fieldDef = $focus->getFieldDefinition($field);
                 if(!empty($fieldDef['custom_type']) && $fieldDef['custom_type'] == 'teamset')
                 {
@@ -564,7 +590,7 @@ class ImportViewStep4 extends SugarView
                 }
                 else
                 {
-                    $defaultValues[$field] = $_REQUEST[$importColumns[$i]];
+                    $defaultValues[$field] = $_REQUEST[$this->importColumns[$i]];
                 }
             }
         }
@@ -605,6 +631,7 @@ class ImportViewStep4 extends SugarView
 
         return $defaultRowValue;
     }
+    
     protected function getImportColumns()
     {
         $importable_fields = $this->bean->get_importable_fields();
