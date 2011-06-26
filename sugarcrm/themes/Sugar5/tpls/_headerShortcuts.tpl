@@ -33,7 +33,11 @@
     <span>
     {foreach from=$SHORTCUT_MENU item=item}
     <span style="white-space:nowrap;">
-        <a href="{$item.URL}">{$item.IMAGE}&nbsp;<span>{$item.LABEL}</span></a>
+        {if $item.URL == "-"}
+          <a></a><span>&nbsp;</span>
+        {else}
+          <a href="{$item.URL}">{$item.IMAGE}&nbsp;<span>{$item.LABEL}</span></a>
+        {/if}
     </span>
     {/foreach}
     </span>
