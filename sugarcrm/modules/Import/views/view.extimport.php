@@ -65,27 +65,43 @@ class ImportViewExtimport extends ImportView
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
 
-        $columncount = isset($_REQUEST['columncount']) ? $_REQUEST['columncount'] : '';
-
         if($this->adapter === FALSE)
         {
             $GLOBALS['log']->fatal("Found invalid adapter");
-            $resp = array('totalCount' => -1, 'done' => FALSE);
+            $resp = array('totalCount' => -1, 'done' => TRUE);
             echo json_encode($resp);
             sugar_cleanup(TRUE);
         }
 
-
-
+        $columncount = isset($_REQUEST['columncount']) ? $_REQUEST['columncount'] : '';
         $userMapping = $this->getUserMapping($columncount);
 
-        $recordSet = $this->adapter->getRecordSet($this->offset, $this->recordsPerImport);
-        $GLOBALS['log']->fatal("Record set is: " . var_export($recordSet, TRUE));
-        $result = $recordSet['meta'];
+        try
+        {
+            $recordSet = $this->adapter->getRecordSet($this->offset, $this->recordsPerImport);
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to import external feed, exception: " . $e->getMessage() );
+            $resp = array('totalCount' => -1, 'done' => TRUE);
+            echo json_encode($resp);
+            sugar_cleanup(TRUE);
+        }
 
+        //Begin our import
+        $this->importRecordSet($recordSet['data'], $userMapping);
+
+
+        //Send back our results.
+        $result = $recordSet['meta'];
         echo json_encode($result);
         sugar_cleanup(TRUE);
-        //sleep(2);
+    }
+
+    protected function importRecordSet($rows, $userMapping)
+    {
+        $GLOBALS['log']->fatal("Importing into module: {$this->importModule}");
+
 
     }
 

@@ -47,7 +47,7 @@ class ext_eapm_google extends source {
         
         $this->loadGdClient();
 
-        $entry = array();
+        $entry = FALSE;
         try
         {
             $entry = $this->_gdClient->getContactEntry( $args['id'] );
@@ -66,7 +66,7 @@ class ext_eapm_google extends source {
     }
 	public function getList($args=array(), $module=null)
     {
-        $feed = array();
+        $feed = FALSE;
         $this->loadGdClient();
 
         if( !empty($args['maxResults']) )
