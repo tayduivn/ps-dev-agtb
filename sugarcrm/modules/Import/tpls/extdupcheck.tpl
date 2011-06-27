@@ -212,6 +212,7 @@ ProcessESImport = new function()
      */
     this.begin = function()
     {
+        SUGAR.saveConfigureDupes();
         datestarted = '{/literal}{$MOD.LBL_IMPORT_STARTED}{literal} ' +
                 YAHOO.util.Date.format('{/literal}{$datetimeformat}{literal}');
         YAHOO.SUGAR.MessageBox.show({

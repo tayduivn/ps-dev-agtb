@@ -256,12 +256,15 @@ class ImportViewStep3 extends ImportView
             // Bug 27046 - Sort the column name picker alphabetically
             ksort($options);
 
+            $cellOneData = isset($rows[0][$field_count]) ? $rows[0][$field_count] : '';
+            $cellTwoData = isset($rows[1][$field_count]) ? $rows[1][$field_count] : '';
+            $cellThreeData = isset($rows[2][$field_count]) ? $rows[2][$field_count] : '';
             $columns[] = array(
                 'field_choices' => implode('',$options),
                 'default_field' => $defaultFieldHTML,
-                'cell1'         => str_replace("&quot;",'',htmlspecialchars($rows[0][$field_count])),
-                'cell2'         => str_replace("&quot;",'',htmlspecialchars($rows[1][$field_count])),
-                'cell3'         => str_replace("&quot;",'',htmlspecialchars($rows[2][$field_count])),
+                'cell1'         => str_replace("&quot;",'', htmlspecialchars($cellOneData)),
+                'cell2'         => str_replace("&quot;",'', htmlspecialchars($cellTwoData)),
+                'cell3'         => str_replace("&quot;",'', htmlspecialchars($cellThreeData)),
                 'show_remove'   => false,
                 );
         }

@@ -28,7 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/sources/ImportFile.php');
 require_once('modules/Import/ImportCacheFiles.php');
 require_once('modules/Import/ImportFieldSanitize.php');
 require_once('modules/Import/ImportDuplicateCheck.php');
@@ -62,9 +61,14 @@ class Importer
     private $isUpdateOnly;
 
     /**
-     * @param  $bean
+     * @var  $bean
      */
     private $bean;
+
+    /**
+     * @var sugarToExternalSourceFieldMap
+     */
+    private $sugarToExternalSourceFieldMap = array();
 
 
     public function __construct($importSource, $bean)
@@ -94,7 +98,6 @@ class Importer
 
         //Get our import column definitions
         $this->importColumns = $this->getImportColumns();
-
         $this->isUpdateOnly = ( isset($_REQUEST['import_type']) && $_REQUEST['import_type'] == 'update' );
     }
 
@@ -126,7 +129,7 @@ class Importer
         $focus->save_from_post = false;
         $focus->team_id = null;
         $this->ifs->createdBeans = array();
-
+        $this->importSource->resetRowErrorCounter();
         $do_save = true;
 
         for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
@@ -138,7 +141,7 @@ class Importer
             // get this field's properties
             $field           = $this->importColumns[$fieldNum];
             $fieldDef        = $focus->getFieldDefinition($field);
-            $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']), $_REQUEST['module'])." (".$fieldDef['name'].")";
+            $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']), $focus->module_dir)." (".$fieldDef['name'].")";
             $defaultRowValue = '';
             // Bug 37241 - Don't re-import over a field we already set during the importing of another field
             if ( !empty($focus->$field) )
@@ -151,9 +154,17 @@ class Importer
                 $locale = new Localization();
             }
             if ( isset($row[$fieldNum]) )
-                $rowValue = $locale->translateCharset(strip_tags(trim($row[$fieldNum])),$_REQUEST['importlocale_charset'],$sugar_config['default_charset']);
+            {
+                $rowValue = $locale->translateCharset(strip_tags(trim($row[$fieldNum])),$this->importSource->importlocale_charset,$sugar_config['default_charset']);
+            }
+            else if( isset($this->sugarToExternalSourceFieldMap[$field]) && isset($row[$this->sugarToExternalSourceFieldMap[$field]]) )
+            {
+                $rowValue = $locale->translateCharset(strip_tags(trim($row[$this->sugarToExternalSourceFieldMap[$field]])),$this->importSource->importlocale_charset,$sugar_config['default_charset']);
+            }
             else
+            {
                 $rowValue = '';
+            }
 
             // If there is an default value then use it instead
             if ( !empty($_REQUEST[$field]) )
@@ -505,7 +516,7 @@ class Importer
 
         // Add ID to User's Last Import records
         if ( $newRecord )
-            ImportFile::writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
+            $this->importSource->writeRowToLastImport( $_REQUEST['import_module'],($focus->object_name == 'Case' ? 'aCase' : $focus->object_name),$focus->id);
 
     }
 
@@ -654,19 +665,32 @@ class Importer
     protected function getFieldSanitizer()
     {
         $ifs = new ImportFieldSanitize();
-        $ifs->dateformat = $_REQUEST['importlocale_dateformat'];
-        $ifs->timeformat = $_REQUEST['importlocale_timeformat'];
-        $ifs->timezone = $_REQUEST['importlocale_timezone'];
-        $currency = new Currency();
-        $currency->retrieve($_REQUEST['importlocale_currency']);
-        $ifs->currency_symbol = $currency->symbol;
-        $ifs->default_currency_significant_digits = $_REQUEST['importlocale_default_currency_significant_digits'];
-        $ifs->num_grp_sep  = $_REQUEST['importlocale_num_grp_sep'];
-        $ifs->dec_sep = $_REQUEST['importlocale_dec_sep'];
-        $ifs->default_locale_name_format  = $_REQUEST['importlocale_default_locale_name_format'];
+        $copyFields = array('dateformat','timeformat','timezone','default_currency_significant_digits','num_grp_sep','dec_sep','default_locale_name_format');
+        foreach($copyFields as $field)
+        {
+            $fieldKey = "importlocale_$field";
+            $ifs->$field = $this->importSource->$fieldKey;
+        }
 
+        $currency = new Currency();
+        $currency->retrieve($this->importSource->importlocale_currency);
+        $ifs->currency_symbol = $currency->symbol;
+        
         return $ifs;
     }
+
+    /**
+     * Sets a translation map from sugar field key to external source key used while importing a row.  This allows external sources
+     * to return a data set that is an associative array rather than numerically indexed.
+     *
+     * @param  $translator
+     * @return void
+     */
+    public function setFieldKeyTranslator($translator)
+    {
+        $this->sugarToExternalSourceFieldMap = $translator;
+    }
+
     /**
      * If a bean save is not done for some reason, this method will undo any of the beans that were created
      *

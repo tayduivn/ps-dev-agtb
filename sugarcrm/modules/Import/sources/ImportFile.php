@@ -77,6 +77,16 @@ class ImportFile extends ImportDataSource
     private $_importFile = null;
 
     /**
+     * Delimiter string we are using (i.e. , or ;)
+     */
+    private $_delimiter;
+
+    /**
+     * Enclosure string we are using (i.e. ' or ")
+     */
+    private $_enclosure;
+
+    /**
      * Constructor
      *
      * @param string $filename
@@ -183,7 +193,6 @@ class ImportFile extends ImportDataSource
         }
             
         $this->_rowsCount++;
-        $this->_rowCountedForErrors = false;
         
         return $this->_currentRow;
     }

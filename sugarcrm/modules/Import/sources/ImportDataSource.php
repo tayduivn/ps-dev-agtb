@@ -75,14 +75,11 @@ abstract class ImportDataSource implements Iterator
     protected $_currentRow = FALSE;
 
     /**
-     * Delimiter string we are using (i.e. , or ;)
+     * Holds any locale settings needed for import.  These can be provided by the user
+     * or explicitly set by the user.
      */
-    protected $_delimiter;
+    protected $_localeSettings = array();
 
-    /**
-     * Enclosure string we are using (i.e. ' or ")
-     */
-    protected $_enclosure;
 
     /**
      * Add this row to the UsersLastImport table
@@ -135,6 +132,10 @@ abstract class ImportDataSource implements Iterator
         }
     }
 
+    public function resetRowErrorCounter()
+    {
+        $this->_rowCountedForErrors = false;
+    }
 
     /**
      * Writes the totals and filename out to the ImportCacheFiles::getStatusFileName() file
@@ -154,10 +155,7 @@ abstract class ImportDataSource implements Iterator
     public function markRowAsDuplicate()
     {
         $fp = sugar_fopen(ImportCacheFiles::getDuplicateFileName(),'a');
-        if ( empty($this->_enclosure) )
-            fputs($fp,implode($this->_delimiter,$this->_currentRow).PHP_EOL);
-        else
-            fputcsv($fp,$this->_currentRow, $this->_delimiter, $this->_enclosure);
+        fputcsv($fp, $this->_currentRow);
         fclose($fp);
 
         $this->_dupeCount++;
@@ -182,11 +180,18 @@ abstract class ImportDataSource implements Iterator
     public function writeErrorRecord()
     {
         $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsFileName(),'a');
-        if ( empty($this->_enclosure) )
-            fputs($fp,implode($this->_delimiter,$this->_currentRow).PHP_EOL);
-        else
-            fputcsv($fp,$this->_currentRow, $this->_delimiter, $this->_enclosure);
+        fputcsv($fp, !$this->_currentRow ? array() : $this->_currentRow);
         fclose($fp);
+    }
+
+    public function __get($var)
+    {
+        if( isset($_REQUEST[$var]) )
+            return $_REQUEST[$var];
+        else if( isset($this->_localeSettings[$var]) )
+            return $this->_localeSettings[$var];
+        else
+            return $this->$var;
     }
     
 }
