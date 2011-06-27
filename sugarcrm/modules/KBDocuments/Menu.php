@@ -30,7 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $mod_strings;
 global $current_user;
 
-
 if(ACLController::checkAccess('KBDocuments', 'edit', true))$module_menu[]=Array("index.php?module=KBDocuments&action=EditView&return_module=KBDocuments&return_action=DetailView", $mod_strings['LNK_NEW_ARTICLE'],"CreateKBArticle");
 //if(ACLController::checkAccess('KBDocuments', 'list', true))$module_menu[]=Array("index.php?module=KBDocuments&action=index", $mod_strings['LNK_KBDOCUMENT_LIST'],"Documents");
 if(ACLController::checkAccess('KBDocuments', 'edit', true)){
@@ -43,7 +42,7 @@ if(ACLController::checkAccess('KBDocuments', 'edit', true)){
 	}
 }
 if(ACLController::checkAccess('KBDocuments', 'list', true))$module_menu[]=Array("index.php?module=KBDocuments&action=SearchHome", $mod_strings['LBL_LIST_ARTICLES'],"KBArticle");
-if(is_admin($current_user) || is_admin_for_module($current_user,'KBDocuments')){
+if($current_user->isAdminForModule('KBDocuments')){
 	if(ACLController::checkAccess('KBDocuments', 'list', true))$module_menu[]=Array("index.php?module=KBDocuments&action=KBAdminView", $mod_strings['LBL_KNOWLEDGE_BASE_ADMIN_MENU'],"KB");
 }
 ?>
