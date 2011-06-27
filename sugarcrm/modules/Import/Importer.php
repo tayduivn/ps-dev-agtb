@@ -648,17 +648,17 @@ class Importer
     protected function getFieldSanitizer()
     {
         $ifs = new ImportFieldSanitize();
-        $ifs->dateformat = $_REQUEST['importlocale_dateformat'];
-        $ifs->timeformat = $_REQUEST['importlocale_timeformat'];
-        $ifs->timezone = $_REQUEST['importlocale_timezone'];
-        $currency = new Currency();
-        $currency->retrieve($_REQUEST['importlocale_currency']);
-        $ifs->currency_symbol = $currency->symbol;
-        $ifs->default_currency_significant_digits = $_REQUEST['importlocale_default_currency_significant_digits'];
-        $ifs->num_grp_sep  = $_REQUEST['importlocale_num_grp_sep'];
-        $ifs->dec_sep = $_REQUEST['importlocale_dec_sep'];
-        $ifs->default_locale_name_format  = $_REQUEST['importlocale_default_locale_name_format'];
+        $copyFields = array('dateformat','timeformat','timezone','default_currency_significant_digits','num_grp_sep','dec_sep','default_locale_name_format');
+        foreach($copyFields as $field)
+        {
+            $fieldKey = "importlocale_$field";
+            $ifs->$field = $this->importSource->$fieldKey;
+        }
 
+        $currency = new Currency();
+        $currency->retrieve($this->importSource->importlocale_currency);
+        $ifs->currency_symbol = $currency->symbol;
+        
         return $ifs;
     }
     /**

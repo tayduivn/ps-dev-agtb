@@ -46,7 +46,15 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
      */
     private $_recordSet = array();
 
-
+    protected $_localeSettings = array('importlocale_dateformat' => '',
+                                       'importlocale_timeformat' => '',
+                                       'importlocale_timezone' => '',
+                                       'importlocale_currency' => '',
+                                       'importlocale_default_currency_significant_digits' => '',
+                                       'importlocale_num_grp_sep' => '',
+                                       'importlocale_dec_sep' => '',
+                                       'importlocale_default_locale_name_format' => '');
+    
     /**
      * Return a feed of google contacts using the EAPM and Connectors farmework.
      *
