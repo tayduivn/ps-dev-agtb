@@ -1564,7 +1564,12 @@ EOQ;
 
         global $beanList;
         $myModules = array();
-        // These modules don't take kindly to the studio trying to muck about with them.
+
+        if (!is_array($beanList) ) {
+            return $myModules;
+        }
+
+        // These modules don't take kindly to the studio trying to play about with them.
         static $ignoredModuleList = array('iFrames','Feeds','Home','Dashboard','Calendar','Activities','Reports');
 
         
