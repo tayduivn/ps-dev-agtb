@@ -254,6 +254,12 @@ class Importer
                     continue;
 
             }
+
+            // if the parent type is in singular form, get the real module name for parent_type
+            if (isset($fieldDef['type']) && $fieldDef['type']=='parent_type') {
+                $rowValue = get_module_from_singular($rowValue);
+            }
+
             $focus->$field = $rowValue;
             unset($defaultRowValue);
         }
