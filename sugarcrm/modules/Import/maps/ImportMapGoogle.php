@@ -69,6 +69,9 @@ class ImportMapGoogle extends ImportMapOther
              'phone_home' => array('sugar_key' => 'phone_home', 'sugar_label' => 'LBL_HOME_PHONE', 'default_label' => ''),
              'phone_work' => array('sugar_key' => 'phone_work', 'sugar_label' => 'LBL_OFFICE_PHONE', 'default_label' => ''),
              'phone_fax' => array('sugar_key' => 'phone_fax', 'sugar_label' => 'LBL_FAX_PHONE', 'default_label' => ''),
+
+             'email1' => array('sugar_key' => 'email1', 'sugar_label' => 'LBL_EMAIL_ADDRESS', 'default_label' => 'Email Address'),
+             'email2' => array('sugar_key' => 'email2', 'sugar_label' => 'LBL_OTHER_EMAIL_ADDRESS', 'default_label' => 'Other Email'),
              );
 
          return $return_array;

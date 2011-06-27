@@ -70,7 +70,7 @@ class ImportViewExtimport extends ImportView
         }
 
         $columncount = isset($_REQUEST['columncount']) ? $_REQUEST['columncount'] : '';
-        $userMapping = $this->getUserMapping($columncount);
+        $fieldKeyTranslator = $this->getSugarToExternalFieldMapping($columncount);
 
         try
         {
@@ -83,6 +83,7 @@ class ImportViewExtimport extends ImportView
         }
 
         $importer = new Importer($this->importSource, $this->bean);
+        $importer->setFieldKeyTranslator($fieldKeyTranslator);
         $importer->import();
 
         //Send back our results.
@@ -135,7 +136,7 @@ class ImportViewExtimport extends ImportView
      * @param  $columncount
      * @return array
      */
-    protected function getUserMapping($columncount)
+    protected function getSugarToExternalFieldMapping($columncount)
     {
         $userMapping = array();
         for($i=0;$i<$columncount;$i++)
@@ -148,8 +149,8 @@ class ImportViewExtimport extends ImportView
                 continue;
 
             $extKey = $_REQUEST[$extKeyIndex];
-            $defaultValue = $_REQUEST[$sugarKey];
-            $userMapping[] = array('sugar_key'=> $sugarKey, 'ext_key' => $extKey, 'default_value' => $defaultValue);
+            //$defaultValue = $_REQUEST[$sugarKey];
+            $userMapping[$sugarKey] = $extKey;
         }
         
         return $userMapping;

@@ -62,9 +62,14 @@ class Importer
     private $isUpdateOnly;
 
     /**
-     * @param  $bean
+     * @var  $bean
      */
     private $bean;
+
+    /**
+     * @var sugarToExternalSourceFieldMap
+     */
+    private $sugarToExternalSourceFieldMap = array();
 
 
     public function __construct($importSource, $bean)
@@ -94,7 +99,6 @@ class Importer
 
         //Get our import column definitions
         $this->importColumns = $this->getImportColumns();
-
         $this->isUpdateOnly = ( isset($_REQUEST['import_type']) && $_REQUEST['import_type'] == 'update' );
     }
 
@@ -151,9 +155,17 @@ class Importer
                 $locale = new Localization();
             }
             if ( isset($row[$fieldNum]) )
-                $rowValue = $locale->translateCharset(strip_tags(trim($row[$fieldNum])),$_REQUEST['importlocale_charset'],$sugar_config['default_charset']);
+            {
+                $rowValue = $locale->translateCharset(strip_tags(trim($row[$fieldNum])),$this->importSource->importlocale_charset,$sugar_config['default_charset']);
+            }
+            else if( isset($this->sugarToExternalSourceFieldMap[$field]) && isset($row[$this->sugarToExternalSourceFieldMap[$field]]) )
+            {
+                $rowValue = $locale->translateCharset(strip_tags(trim($row[$this->sugarToExternalSourceFieldMap[$field]])),$this->importSource->importlocale_charset,$sugar_config['default_charset']);
+            }
             else
+            {
                 $rowValue = '';
+            }
 
             // If there is an default value then use it instead
             if ( !empty($_REQUEST[$field]) )
@@ -661,6 +673,19 @@ class Importer
         
         return $ifs;
     }
+
+    /**
+     * Sets a translation map from sugar field key to external source key used while importing a row.  This allows external sources
+     * to return a data set that is an associative array rather than numerically indexed.
+     *
+     * @param  $translator
+     * @return void
+     */
+    public function setFieldKeyTranslator($translator)
+    {
+        $this->sugarToExternalSourceFieldMap = $translator;
+    }
+
     /**
      * If a bean save is not done for some reason, this method will undo any of the beans that were created
      *

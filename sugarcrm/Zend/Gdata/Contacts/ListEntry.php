@@ -137,7 +137,7 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
     public function toArray()
     {
         $entry = array('first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '',
-                       'title' => '', 'account_name' => '', 'emails' => array(), 'notes' => '');
+                       'title' => '', 'account_name' => '', 'notes' => '');
         
         if($this->_names != null)
             $entry = array_merge($entry, $this->_names->toArray() );
@@ -166,11 +166,7 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         }
 
         //Process emails
-        foreach($this->_emails as $emailEntry)
-        {
-            $entry['emails'][] = array('email' => $emailEntry->getEmail() , 'primary' => $emailEntry->isPrimary(),
-                                       'type' => $emailEntry->getEmailType() );
-        }
+         $entry = array_merge($entry, $this->getEmailAddresses() );
 
         //Get Notes
         if($this->_content != null)
@@ -193,5 +189,52 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         return $entry;
     }
 
+    protected function getEmailAddresses()
+    {
+        $results = array();
+        $primaryEmail = $this->getPrimaryEmail();
+        if($primaryEmail !== FALSE)
+            $results['email1'] =  $primaryEmail;
+        else
+        {
+            $nonPrimaryEmail = $this->getNextNonPrimaryEmail();
+            if($nonPrimaryEmail !== FALSE)
+                $results['email1'] = $nonPrimaryEmail;
+            else
+                return array();
+        }
+
+        $secondaryEmail = $this->getNextNonPrimaryEmail();
+        if($secondaryEmail !== FALSE)
+            $results['email2'] = $secondaryEmail;
+        
+        return $results;
+
+    }
+    protected function getPrimaryEmail()
+    {
+        $results = FALSE;
+        foreach($this->_emails as $emailEntry)
+        {
+            if( $emailEntry->isPrimary() )
+                return $emailEntry->getEmail();
+        }
+        return $results;
+    }
+
+    protected function getNextNonPrimaryEmail()
+    {
+        $results = FALSE;
+        foreach($this->_emails as $k => $emailEntry)
+        {
+            if( !$emailEntry->isPrimary() )
+            {
+                $results = $emailEntry->getEmail();
+                unset($this->_emails[$k]);
+                return $results;
+            }
+        }
+        return $results;
+    }
 
 }

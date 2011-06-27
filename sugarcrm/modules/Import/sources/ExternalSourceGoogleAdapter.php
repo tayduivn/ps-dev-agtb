@@ -46,15 +46,28 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
      */
     private $_recordSet = array();
 
-    protected $_localeSettings = array('importlocale_dateformat' => '',
-                                       'importlocale_timeformat' => '',
+    protected $_localeSettings = array('importlocale_charset' => 'UTF-8',
+                                       'importlocale_dateformat' => 'Y-m-d',
+                                       'importlocale_timeformat' => 'H:i',
                                        'importlocale_timezone' => '',
                                        'importlocale_currency' => '',
                                        'importlocale_default_currency_significant_digits' => '',
                                        'importlocale_num_grp_sep' => '',
                                        'importlocale_dec_sep' => '',
                                        'importlocale_default_locale_name_format' => '');
-    
+
+
+    public function __construct()
+    {
+        global $current_user, $locale;
+
+        $this->_localeSettings['importlocale_num_grp_sep'] = $current_user->getPreference('num_grp_sep');
+        $this->_localeSettings['importlocale_dec_sep'] = $current_user->getPreference('dec_sep');
+        $this->_localeSettings['importlocale_default_currency_significant_digits'] = $locale->getPrecedentPreference('default_currency_significant_digits', $current_user);
+        $this->_localeSettings['importlocale_default_locale_name_format'] = $locale->getLocaleFormatMacro($current_user);
+        $this->_localeSettings['importlocale_currency'] = $locale->getPrecedentPreference('currency', $current_user);
+        $this->_localeSettings['importlocale_timezone'] = $current_user->getPreference('timezone');
+    }
     /**
      * Return a feed of google contacts using the EAPM and Connectors farmework.
      *
