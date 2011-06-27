@@ -33,20 +33,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
-require_once('modules/Import/ImportFile.php');
-require_once('modules/Import/ImportFileSplitter.php');
-require_once('modules/Import/ImportCacheFiles.php');
-require_once('modules/Import/ImportDuplicateCheck.php');
+require_once('modules/Import/Importer.php');
 
 require_once('include/upload_file.php');
 
 class ImportViewExtimport extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_DUP_TITLE';
-    protected $adapter = FALSE;
+    protected $importSource = FALSE;
     protected $externalSource = '';
     protected $offset = 0;
     protected $recordsPerImport = 10;
+    protected $importDone = FALSE;
 
     public function __construct($bean = null, $view_object_map = array())
     {
@@ -54,7 +52,7 @@ class ImportViewExtimport extends ImportView
         $this->externalSource = isset($_REQUEST['external_source']) ? $_REQUEST['external_source'] : '';
         $this->offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : '0';
         $this->recordsPerImport = !empty($_REQUEST['records_per_import']) ? $_REQUEST['records_per_import'] : '';
-        $this->adapter = $this->getExternalSourceAdapter();
+        $this->importSource = $this->getExternalSourceAdapter();
         $GLOBALS['log']->fatal("Initiating external source import- source:{$this->externalSource}, offset: {$this->offset}, recordsPerImport: {$this->recordsPerImport}");
     }
  	/**
@@ -65,12 +63,10 @@ class ImportViewExtimport extends ImportView
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
 
-        if($this->adapter === FALSE)
+        if($this->importSource === FALSE)
         {
             $GLOBALS['log']->fatal("Found invalid adapter");
-            $resp = array('totalCount' => -1, 'done' => TRUE, 'error' => $mod_strings['LBL_EXTERNAL_ERROR_NO_SOURCE']);
-            echo json_encode($resp);
-            sugar_cleanup(TRUE);
+            $this->handleImportError($mod_strings['LBL_EXTERNAL_ERROR_NO_SOURCE']);
         }
 
         $columncount = isset($_REQUEST['columncount']) ? $_REQUEST['columncount'] : '';
@@ -78,30 +74,28 @@ class ImportViewExtimport extends ImportView
 
         try
         {
-            $recordSet = $this->adapter->getRecordSet($this->offset, $this->recordsPerImport);
+            $this->importSource->loadExternalRecordSet($this->offset, $this->recordsPerImport);
         }
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to import external feed, exception: " . $e->getMessage() );
-            $resp = array('totalCount' => -1, 'done' => TRUE, 'error' => $mod_strings['LBL_EXTERNAL_ERROR_FEED_CORRUPTED']);
-            echo json_encode($resp);
-            sugar_cleanup(TRUE);
+            $this->handleImportError($mod_strings['LBL_EXTERNAL_ERROR_FEED_CORRUPTED']);
         }
 
-        //Begin our import
-        $this->importRecordSet($recordSet['data'], $userMapping);
-
+        $importer = new Importer($this->importSource, $this->bean);
+        $importer->import();
 
         //Send back our results.
-        $result = $recordSet['meta'];
-        echo json_encode($result);
+        $metaResult = array('done' => FALSE, 'totalRecordCount' => $this->importSource->getTotalRecordCount() );
+        echo json_encode($metaResult);
         sugar_cleanup(TRUE);
     }
 
-    protected function importRecordSet($rows, $userMapping)
+    protected function handleImportError($errorMessage)
     {
-        $GLOBALS['log']->fatal("Importing into module: {$this->importModule}");
-
+        $resp = array('totalRecordCount' => -1, 'done' => TRUE, 'error' => $errorMessage);
+        echo json_encode($resp);
+        sugar_cleanup(TRUE);
 
     }
 

@@ -53,7 +53,6 @@ class ImportViewExtStep1 extends ImportViewStep3
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
 
-
         $mappingFile = $this->getMappingFile($source);
         if ( $mappingFile == null ) {
             $this->_showImportError($mod_strings['ERR_MISSING_MAP_NAME'],$_REQUEST['import_module'],'Step1');
@@ -163,10 +162,10 @@ class ImportViewExtStep1 extends ImportViewStep3
     private function getMappingFile($source)
     {
         $classname = 'ImportMap' . ucfirst($source);
-        if ( file_exists("modules/Import/{$classname}.php") )
-            require_once("modules/Import/{$classname}.php");
-        elseif ( file_exists("custom/modules/Import/{$classname}.php") )
-            require_once("custom/modules/Import/{$classname}.php");
+        if ( file_exists("modules/Import/maps/{$classname}.php") )
+            require_once("modules/Import/maps/{$classname}.php");
+        elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
+            require_once("custom/modules/Import/maps/{$classname}.php");
         else
             return null;
 

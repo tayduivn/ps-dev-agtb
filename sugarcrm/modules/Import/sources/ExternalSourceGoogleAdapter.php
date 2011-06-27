@@ -21,15 +21,30 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/adapters/ExternalSourceAdapter.php');
+require_once('modules/Import/sources/ExternalSourceAdapter.php');
 
-class ExternalSourceGoogleAdapter implements ExternalSourceAdapter
+class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
 {
 
     /**
      * @var string The name of the EAPM object.
      */
     private $_eapmName = 'Google';
+
+    /**
+     * @var int Total record count of rows that will be imported
+     */
+    private $_totalRecordCount = -1;
+
+    /**
+     * @var int The offset start index
+     */
+    private $_offsetStart;
+
+    /**
+     * @var The record set loaded from the external source
+     */
+    private $_recordSet = array();
 
 
     /**
@@ -40,7 +55,7 @@ class ExternalSourceGoogleAdapter implements ExternalSourceAdapter
      * @param  $maxResults
      * @return array
      */
-    public function getRecordSet($startIndex, $maxResults)
+    public function loadExternalRecordSet($startIndex, $maxResults)
     {
          if ( !$eapmBean = EAPM::getLoginInfo($this->_eapmName,true) )
          {
@@ -52,13 +67,12 @@ class ExternalSourceGoogleAdapter implements ExternalSourceAdapter
         $conn = $api->getConnector();
 
         $rows = array();
-        $meta = array('totalResults' => -1 );
 
         $feed = $conn->getList(array('maxResults' => $maxResults, 'startIndex' => $startIndex));
         if($feed !== FALSE)
         {
-            $meta['totalRecordCount'] = $feed->totalResults->getText();
-            $meta['startIndex'] = $feed->startIndex->getText();
+            $this->_totalRecordCount = $feed->totalResults->getText();
+            $this->_offsetStart = $feed->startIndex->getText();
 
             foreach ($feed->entries as $entry)
             {
@@ -70,10 +84,43 @@ class ExternalSourceGoogleAdapter implements ExternalSourceAdapter
             throw new Exception('Unable to retrieve google contact feed.');
         }
 
-        $results['meta'] = $meta;
-        $results['data'] = $rows;
+        $this->_recordSet = $rows;
+    }
 
-        return array('meta' => $meta, 'data' => $rows);
+    public function getTotalRecordCount()
+    {
+        return $this->_totalRecordCount;
+    }
+
+    public function setSourceName($sourceName = '')
+    {
+        $this->_sourcename = $this->_eapmName;
+    }
+
+    //Begin Implementation for SPL's Iterator interface
+    public function current()
+    {
+        return current($this->_recordSet);
+    }
+
+    public function key()
+    {
+        return key($this->_recordSet);
+    }
+    
+    public function rewind()
+    {
+        reset($this->_recordSet);
+    }
+
+    public function next()
+    {
+        next($this->_recordSet);
+    }
+
+    public function valid()
+    {
+        return (current($this->_recordSet) !== FALSE);
     }
 }
 

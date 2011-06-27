@@ -20,8 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/Import/sources/ImportDataSource.php');
 
-interface ExternalSourceAdapter
+
+abstract class ExternalSourceAdapter extends ImportDataSource
 {
 
     /**
@@ -35,8 +37,24 @@ interface ExternalSourceAdapter
      * @param  int $maxResults
      * @return void
      */
-    public function getRecordSet($startIndex, $maxResults);
+    abstract public function loadExternalRecordSet($startIndex, $maxResults);
 
+    /**
+     * Set the source name.
+     *
+     * @abstract
+     * @param  $sourceName
+     * @return void
+     */
+    abstract public function setSourceName($sourceName = '');
+
+    /**
+     * Return the total count of records that will be imported.
+     *
+     * @abstract
+     * @return int
+     */
+    abstract public function getTotalRecordCount();
 
 
 }

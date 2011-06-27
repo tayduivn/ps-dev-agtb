@@ -145,13 +145,16 @@ ProcessESImport = new function()
                     }
                     catch(e)
                     {
-                           this.failure(o);
+                           this.showErrorMessage(o);
                     }
 
                     //Check if we encountered any errors first
-                    if( typeof(resp['error']) != 'undefined' && resp['error'] != ''  )
+                    if( !resp || (typeof(resp['error']) != 'undefined' && resp['error'] != '')  )
                     {
-                        ProcessESImport.showErrorMessage(resp['error']);
+                        var errorMessage = o.responseText;
+                        if(resp)
+                            errorMessage = resp['error'];
+                        ProcessESImport.showErrorMessage(errorMessage);
                         return;
                     }
 

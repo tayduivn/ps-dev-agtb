@@ -119,7 +119,7 @@ class Importer
 
     protected function importRow($row)
     {
-        global $sugar_config;
+        global $sugar_config, $mod_strings;
 
         $focus = clone $this->bean;
         $focus->unPopulateDefaultValues();

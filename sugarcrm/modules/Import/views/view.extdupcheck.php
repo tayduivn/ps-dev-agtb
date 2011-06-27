@@ -33,9 +33,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
-require_once('modules/Import/ImportFile.php');
-require_once('modules/Import/ImportFileSplitter.php');
-require_once('modules/Import/ImportCacheFiles.php');
 require_once('modules/Import/ImportDuplicateCheck.php');
 
 require_once('include/upload_file.php');
