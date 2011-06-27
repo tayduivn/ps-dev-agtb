@@ -1709,7 +1709,7 @@ abstract class DBManager
 		foreach ($bean->getFieldDefinitions() as $field => $fieldDef)
 		{
             if (isset($fieldDef['source']) && $fieldDef['source'] != 'db')  continue;
-            //custom fields handle there save seperatley
+            //custom fields handle there save separately
             if(isset($bean->field_name_map) && !empty($bean->field_name_map[$field]['custom_type'])) continue;
 
             if(isset($bean->$field)) {
