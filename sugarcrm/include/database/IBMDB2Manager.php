@@ -834,7 +834,7 @@ class IBMDB2Manager  extends DBManager
             //       setting the DEFAULT. However for performance reasons we will always update the default if
             //       there is a new one without making an extra call to the database.
             $cols = $this->get_columns($tablename);
-            $olddef = trim($cols[$req['name']]['default']);
+            $olddef = isset($cols[$req['name']]['default'])? trim($cols[$req['name']]['default']) : '';
             if($olddef != ''){
                 $GLOBALS['log']->info("IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty");
                 $sql[]= "$alter DROP DEFAULT";
