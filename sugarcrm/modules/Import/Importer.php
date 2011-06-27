@@ -53,9 +53,9 @@ class Importer
     private $importColumns;
 
     /**
-     * @var importFile
+     * @var importSource
      */
-    private $importFile;
+    private $importSource;
 
     /**
      * @var $isUpdateOnly
@@ -68,10 +68,12 @@ class Importer
     private $bean;
 
 
-    public function __construct($bean)
+    public function __construct($importSource, $bean)
     {
         global $mod_strings, $sugar_config;
 
+        $this->importSource = $importSource;
+        
         //Vanilla copy of the bean object.
         $this->bean = $bean;
 
@@ -94,23 +96,12 @@ class Importer
         //Get our import column definitions
         $this->importColumns = $this->getImportColumns();
 
-        // Check to be sure we are getting an import file that is in the right place
-        if ( realpath(dirname($_REQUEST['tmp_file']).'/') != realpath($sugar_config['upload_dir']) )
-            trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
-
-        // Open the import file
-        $this->importFile = new ImportFile($_REQUEST['tmp_file'],$_REQUEST['custom_delimiter'],html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
-
-        //Ensure we have a valid file.
-        if ( !$this->importFile->fileExists() )
-            trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
-
         $this->isUpdateOnly = ( isset($_REQUEST['import_type']) && $_REQUEST['import_type'] == 'update' );
     }
 
     public function import()
     {
-        foreach($this->importFile as $row)
+        foreach($this->importSource as $row)
         {
             $this->importRow($row);
         }
@@ -121,7 +112,7 @@ class Importer
             $this->saveMappingFile();
         }
 
-        $this->importFile->writeStatus();
+        $this->importSource->writeStatus();
 
         //All done, remove file.
     }
@@ -197,7 +188,7 @@ class Importer
             // If the field is required and blank then error out
             if ( array_key_exists($field,$focus->get_import_required_fields()) && empty($rowValue) && $rowValue!='0')
             {
-                $this->importFile->writeError( $mod_strings['LBL_REQUIRED_VALUE'],$fieldTranslated,'NULL');
+                $this->importSource->writeError( $mod_strings['LBL_REQUIRED_VALUE'],$fieldTranslated,'NULL');
                 $do_save = false;
             }
 
@@ -211,7 +202,7 @@ class Importer
                     $returnValue = $this->ifs->synctooutlook($defaultRowValue, $fieldDef, $bad_names);
                 if ( !$returnValue )
                 {
-                    $this->importFile->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
+                    $this->importSource->writeError($mod_strings['LBL_ERROR_SYNC_USERS'], $fieldTranslated, explode(",",$bad_names));
                     $do_save = 0;
                 }
             }
@@ -226,7 +217,7 @@ class Importer
                 if ( $returnValue === FALSE )
                 {
                     $do_save=0;
-                    $this->importFile->writeError( $mod_strings['LBL_ERROR_INVALID_EMAIL'], $fieldTranslated, $rowValue);
+                    $this->importSource->writeError( $mod_strings['LBL_ERROR_INVALID_EMAIL'], $fieldTranslated, $rowValue);
                 }
                 else
                 {
@@ -295,7 +286,7 @@ class Importer
 
             if ( $idc->isADuplicateRecord($enabled_dupes) )
             {
-                $this->importFile->markRowAsDuplicate();
+                $this->importSource->markRowAsDuplicate();
                 $this->_undoCreatedBeans($this->ifs->createdBeans);
                 return;
             }
@@ -326,7 +317,7 @@ class Importer
                 {
                     if( ! $this->isUpdateOnly )
                     {
-                        $this->importFile->writeError($mod_strings['LBL_ID_EXISTS_ALREADY'],'ID',$focus->id);
+                        $this->importSource->writeError($mod_strings['LBL_ID_EXISTS_ALREADY'],'ID',$focus->id);
                         $this->_undoCreatedBeans($this->ifs->createdBeans);
                         return;
                     }
@@ -334,7 +325,7 @@ class Importer
                     $clonedBean = $this->cloneExistingBean($focus);
                     if($clonedBean === FALSE)
                     {
-                        $this->importFile->writeError($mod_strings['LBL_RECORD_CANNOT_BE_UPDATED'],'ID',$focus->id);
+                        $this->importSource->writeError($mod_strings['LBL_RECORD_CANNOT_BE_UPDATED'],'ID',$focus->id);
                         $this->_undoCreatedBeans($this->ifs->createdBeans);
                         return;
                     }
@@ -355,7 +346,7 @@ class Importer
         {
             $this->saveImportBean($focus, $newRecord);
             // Update the created/updated counter
-            $this->importFile->markRowAsImported($newRecord);
+            $this->importSource->markRowAsImported($newRecord);
         }
         else
             $this->_undoCreatedBeans($this->ifs->createdBeans);
@@ -386,7 +377,7 @@ class Importer
                 }
                 if ( $returnValue === FALSE )
                 {
-                    $this->importFile->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
+                    $this->importSource->writeError($mod_strings['LBL_ERROR_NOT_IN_ENUM'] . implode(",",$app_list_strings[$fieldDef['options']]), $fieldTranslated,$rowValue);
                     return FALSE;
                 }
                 else
@@ -420,7 +411,7 @@ class Importer
                     $returnValue = $this->ifs->$fieldtype($defaultRowValue,$fieldDef, $focus);
                 if ( !$returnValue )
                 {
-                    $this->importFile->writeError($mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],$fieldTranslated,$rowValue,$focus);
+                    $this->importSource->writeError($mod_strings['LBL_ERROR_INVALID_'.strtoupper($fieldDef['type'])],$fieldTranslated,$rowValue,$focus);
                     return FALSE;
                 }
                 return $returnValue;

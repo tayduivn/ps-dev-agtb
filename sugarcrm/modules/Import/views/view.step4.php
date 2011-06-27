@@ -52,7 +52,20 @@ class ImportViewStep4 extends SugarView
      */
  	public function display()
     {
-        $importer = new Importer($this->bean);
+        global $mod_strings, $sugar_config;
+
+        // Check to be sure we are getting an import file that is in the right place
+        if ( realpath(dirname($_REQUEST['tmp_file']).'/') != realpath($sugar_config['upload_dir']) )
+            trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
+
+        // Open the import file
+        $importSource = new ImportFile($_REQUEST['tmp_file'],$_REQUEST['custom_delimiter'],html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES));
+
+        //Ensure we have a valid file.
+        if ( !$importSource->fileExists() )
+            trigger_error($mod_strings['LBL_CANNOT_OPEN'],E_USER_ERROR);
+
+        $importer = new Importer($importSource, $this->bean);
         $importer->import();
     }
 }
