@@ -132,6 +132,10 @@ abstract class ImportDataSource implements Iterator
         }
     }
 
+    public function resetRowErrorCounter()
+    {
+        $this->_rowCountedForErrors = false;
+    }
 
     /**
      * Writes the totals and filename out to the ImportCacheFiles::getStatusFileName() file

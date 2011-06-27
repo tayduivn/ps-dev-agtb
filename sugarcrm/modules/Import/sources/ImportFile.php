@@ -193,7 +193,6 @@ class ImportFile extends ImportDataSource
         }
             
         $this->_rowsCount++;
-        $this->_rowCountedForErrors = false;
         
         return $this->_currentRow;
     }

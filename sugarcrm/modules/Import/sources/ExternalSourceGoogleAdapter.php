@@ -67,6 +67,8 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
         $this->_localeSettings['importlocale_default_locale_name_format'] = $locale->getLocaleFormatMacro($current_user);
         $this->_localeSettings['importlocale_currency'] = $locale->getPrecedentPreference('currency', $current_user);
         $this->_localeSettings['importlocale_timezone'] = $current_user->getPreference('timezone');
+
+        $this->setSourceName();
     }
     /**
      * Return a feed of google contacts using the EAPM and Connectors farmework.
@@ -121,7 +123,8 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
     //Begin Implementation for SPL's Iterator interface
     public function current()
     {
-        return current($this->_recordSet);
+        $this->_currentRow =  current($this->_recordSet);
+        return $this->_currentRow;
     }
 
     public function key()
@@ -136,6 +139,7 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
 
     public function next()
     {
+        $this->_rowsCount++;
         next($this->_recordSet);
     }
 

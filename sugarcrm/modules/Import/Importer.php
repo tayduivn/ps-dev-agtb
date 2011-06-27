@@ -129,7 +129,7 @@ class Importer
         $focus->save_from_post = false;
         $focus->team_id = null;
         $this->ifs->createdBeans = array();
-
+        $this->importSource->resetRowErrorCounter();
         $do_save = true;
 
         for ( $fieldNum = 0; $fieldNum < $_REQUEST['columncount']; $fieldNum++ )
@@ -141,7 +141,7 @@ class Importer
             // get this field's properties
             $field           = $this->importColumns[$fieldNum];
             $fieldDef        = $focus->getFieldDefinition($field);
-            $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']), $_REQUEST['module'])." (".$fieldDef['name'].")";
+            $fieldTranslated = translate((isset($fieldDef['vname'])?$fieldDef['vname']:$fieldDef['name']), $focus->module_dir)." (".$fieldDef['name'].")";
             $defaultRowValue = '';
             // Bug 37241 - Don't re-import over a field we already set during the importing of another field
             if ( !empty($focus->$field) )
