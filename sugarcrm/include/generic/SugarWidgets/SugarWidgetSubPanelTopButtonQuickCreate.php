@@ -36,6 +36,7 @@ require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButton.php');
 class SugarWidgetSubPanelTopButtonQuickCreate extends SugarWidgetSubPanelTopButton
 {
 
+
 	function &_get_form($defines, $additionalFormFields = null)
 	{
 		global $app_strings;
