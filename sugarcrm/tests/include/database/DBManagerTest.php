@@ -841,70 +841,82 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_db->dropTableName($tablename2);
     }
 
-
-
-    public function testAlterColumn()
+    public function alterColumnDataProvider()
     {
-        $foo_col = array ('name' => 'foo', 'type' => 'varchar', 'len' => '255'); // Common column between tables
-
-        // test inputs may be moved to a seperate file or database in the future
-        $testinputs = array(
-            1 => array(
+        return array(
+            array(
+                 1,
                 'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255', 'required' => true, 'default' => 'sugar'),
                 'temp' => array ('name' => 'foobar', 'type' => 'int')                           // Check if type conversion works
             ),
-            2 => array(
+            array(
+                2,
                 'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255', 'default' => 'kilroy'),
                 'temp' => array ('name' => 'foobar', 'type' => 'double', 'default' => '99999')  // Check if default gets replaced
             ),
-            3 => array(
+            array(
+                3,
                 'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255'),
                 'temp' => array ('name' => 'foobar', 'type' => 'double', 'default' => '99999')  // Check if default gets dropped
             ),
-            4 => array(
+            array(
+                4,
                 'target' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '255', 'required' => true, 'default' => 'sweet'),
                 'temp' => array ('name' => 'foobar', 'type' => 'varchar', 'len' => '1500',)      // Check varchar shortening
             ),
-            5 => array(
+            array(
+                5,
                 'target' => array ('name' => 'foobar', 'type' => 'longtext', 'required' => true),
                 'temp' => array ('name' => 'foobar', 'type' => 'text', 'default' => 'dextrose') // Check clob(65k) to clob(2M or so) conversion
             ),
-            6 => array(
+            array(
+                6,
                 'target' => array ('name' => 'foobar', 'type' => 'double', 'required' => true),
                 'temp' => array ('name' => 'foobar', 'type' => 'int', 'default' => 0)           // Check int to double change
             ),
         );
+    }
+
+
+
+    /**
+     * @dataProvider alterColumnDataProvider
+     * @param  $i
+     * @param  $target
+     * @param  $temp
+     * @return void
+     */
+    public function testAlterColumn($i, $target, $temp)
+    {
+        $foo_col = array ('name' => 'foo', 'type' => 'varchar', 'len' => '255'); // Common column between tables
 
         $tablebase = 'testac_'. mt_rand() . '_';
 
-        foreach($testinputs as $i => $test) {
-            $t1 = $tablebase . $i .'A';
-            $t2 = $tablebase . $i .'B';
-            $this->_db->createTableParams(  $t1,
-                                            array('foo' => $foo_col, 'foobar' => $testinputs[$i]['target']),
-                                            array());
-            $this->_db->createTableParams(  $t2,
-                                            array('foo' => $foo_col, 'foobar' => $testinputs[$i]['temp']),
-                                            array());
+        $t1 = $tablebase . $i .'A';
+        $t2 = $tablebase . $i .'B';
+        $this->_db->createTableParams(  $t1,
+                                        array('foo' => $foo_col, 'foobar' => $target),
+                                        array());
+        $this->_db->createTableParams(  $t2,
+                                        array('foo' => $foo_col, 'foobar' => $temp),
+                                        array());
 
-            $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
+        $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
 
-            $this->assertEquals('no_match', $res['msg'],
-                                "testAlterColumn table columns match while they shouldn't for table $t1 and $t2: "
-                                . print_r($res,true) );
+        $this->assertEquals('no_match', $res['msg'],
+                            "testAlterColumn table columns match while they shouldn't for table $t1 and $t2: "
+                            . print_r($res,true) );
 
-            $this->_db->alterColumn($t2, array('foobar' => $testinputs[$i]['target']));
+        $this->_db->alterColumn($t2, array('foobar' => $target));
 
-            $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
+        $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
 
-            $this->assertEquals('match', $res['msg'],
-                                "testAlterColumn table columns don't match while they should for table $t1 and $t2: "
-                                . print_r($res,true) );
+        $this->assertEquals('match', $res['msg'],
+                            "testAlterColumn table columns don't match while they should for table $t1 and $t2: "
+                            . print_r($res,true) );
 
-            $this->_db->dropTableName($t1);
-            $this->_db->dropTableName($t2);
-        }
-
+        $this->_db->dropTableName($t1);
+        $this->_db->dropTableName($t2);
     }
 
     public function testDropTable()
