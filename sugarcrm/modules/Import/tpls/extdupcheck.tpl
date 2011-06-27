@@ -148,12 +148,20 @@ ProcessESImport = new function()
                            this.failure(o);
                     }
 
+                    //Check if we encountered any errors first
+                    if( typeof(resp['error']) != 'undefined' && resp['error'] != ''  )
+                    {
+                        ProcessESImport.showErrorMessage(resp['error']);
+                        return;
+                    }
+
+                    //Continue the import if no errors were detected
                     ProcessESImport.totalRecordCount = resp['totalRecordCount'];
-                    var locationStr = "index.php?module=Import"
-                        + "&action=Last"
+                    var locationStr = "index.php?module=Import&action=Last"
                         + "&current_step=" + document.getElementById("importstepdup").current_step.value
-                        + "&type={/literal}{$TYPE}{literal}"
-                        + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
+                        + "&type={/literal}{$TYPE}{literal}" + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
+
+                    //Determine if we are not or not.
                     if ( resp['done'] || (ProcessESImport.recordsPerImport * (ProcessESImport.offsetStart + 1) >= ProcessESImport.totalRecordCount) )
                     {
                         YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETE}{literal}');
@@ -166,13 +174,8 @@ ProcessESImport = new function()
                     }
                 },
                 failure: function(o) {
-                	YAHOO.SUGAR.MessageBox.minWidth = 500;
-                	YAHOO.SUGAR.MessageBox.show({
-                    	type:  "alert",
-                    	title: '{/literal}{$MOD.LBL_IMPORT_ERROR}{literal}',
-                    	msg:   o.responseText,
-                        fn: function() { window.location.reload(true); }
-                    });
+                    ProcessESImport.showErrorMessage(o.responseText);
+                    return;
                 }
             }
         );
@@ -191,6 +194,16 @@ ProcessESImport = new function()
         YAHOO.SUGAR.MessageBox.updateProgress( move,displayMessg);
     }
 
+    this.showErrorMessage = function(errorMessage)
+    {
+        YAHOO.SUGAR.MessageBox.minWidth = 500;
+        YAHOO.SUGAR.MessageBox.show({
+            type:  "alert",
+            title: '{/literal}{$MOD.LBL_IMPORT_ERROR}{literal}',
+            msg:   errorMessage,
+            fn: function() { }
+        });
+    }
     /*
      * begins the form submission process
      */

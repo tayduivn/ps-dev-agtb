@@ -326,5 +326,7 @@ $mod_strings = array (
     'LBL_AUTO_DETECT_ERROR' => 'We were unable to auto-detect the import file settings. Please verify the settings in the Import File Properties.',
     'LBL_FIELD_DELIMETED_HELP' => 'The field delimiter specifies the character used to separate the field columns.',
     'LBL_FILE_UPLOAD_WIDGET_HELP' => 'Select a file containing data that is separated by a delimiter, such as a comma- or tab- delimited file.  Files of the type .csv are recommended.',
+    'LBL_EXTERNAL_ERROR_NO_SOURCE' => 'Unable to retrieve source adapter, please try again later.',
+    'LBL_EXTERNAL_ERROR_FEED_CORRUPTED' => 'Unable to retrieve external feed, please try again later.'
 );
 ?>

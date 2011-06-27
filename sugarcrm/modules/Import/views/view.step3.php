@@ -86,12 +86,12 @@ class ImportViewStep3 extends ImportView
             // based upon the where the records are coming from
             // and what module we are importing into
             $classname = 'ImportMap' . ucfirst($_REQUEST['source']);
-            if ( file_exists("modules/Import/{$classname}.php") )
-                require_once("modules/Import/{$classname}.php");
-            elseif ( file_exists("custom/modules/Import/{$classname}.php") )
-                require_once("custom/modules/Import/{$classname}.php");
+            if ( file_exists("modules/Import/maps/{$classname}.php") )
+                require_once("modules/Import/maps/{$classname}.php");
+            elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
+                require_once("custom/modules/Import/maps/{$classname}.php");
             else {
-                require_once("custom/modules/Import/ImportMapOther.php");
+                require_once("custom/modules/Import/maps/ImportMapOther.php");
                 $classname = 'ImportMapOther';
                 $_REQUEST['source'] = 'other';
             }

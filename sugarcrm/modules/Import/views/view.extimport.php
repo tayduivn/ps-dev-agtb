@@ -68,7 +68,7 @@ class ImportViewExtimport extends ImportView
         if($this->adapter === FALSE)
         {
             $GLOBALS['log']->fatal("Found invalid adapter");
-            $resp = array('totalCount' => -1, 'done' => TRUE);
+            $resp = array('totalCount' => -1, 'done' => TRUE, 'error' => $mod_strings['LBL_EXTERNAL_ERROR_NO_SOURCE']);
             echo json_encode($resp);
             sugar_cleanup(TRUE);
         }
@@ -83,7 +83,7 @@ class ImportViewExtimport extends ImportView
         catch(Exception $e)
         {
             $GLOBALS['log']->fatal("Unable to import external feed, exception: " . $e->getMessage() );
-            $resp = array('totalCount' => -1, 'done' => TRUE);
+            $resp = array('totalCount' => -1, 'done' => TRUE, 'error' => $mod_strings['LBL_EXTERNAL_ERROR_FEED_CORRUPTED']);
             echo json_encode($resp);
             sugar_cleanup(TRUE);
         }
@@ -109,7 +109,7 @@ class ImportViewExtimport extends ImportView
     {
         $externalSourceName = ucfirst($this->externalSource);
         $externalSourceClassName = "ExternalSource{$externalSourceName}Adapter";
-        $externalSourceFile = "modules/Import/adapters/{$externalSourceClassName}.php";
+        $externalSourceFile = "modules/Import/sources/{$externalSourceClassName}.php";
         if( file_exists("custom/" . $externalSourceFile) )
         {
             require_once("custom/" . $externalSourceFile);
@@ -120,18 +120,18 @@ class ImportViewExtimport extends ImportView
         }
         else
         {
-            $GLOBALS['log']->fatal("Unable to load external source adapter.");
+            $GLOBALS['log']->fatal("Unable to load external source adapter, file does not exist: {$externalSourceFile} ");
             return FALSE;
         }
 
         if( class_exists($externalSourceClassName) )
         {
-            $GLOBALS['log']->fatal("RETURNING EXTENRAL SOURCE CLASS");
+            $GLOBALS['log']->fatal("Returning external source: $externalSourceClassName");
             return new $externalSourceClassName();
         }
         else
         {
-            $GLOBALS['log']->fatal("Unable to load external source adapter class.");
+            $GLOBALS['log']->fatal("Unable to load external source adapter class: $externalSourceClassName");
             return FALSE;
         }
     }
