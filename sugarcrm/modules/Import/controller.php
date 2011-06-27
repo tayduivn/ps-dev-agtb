@@ -111,7 +111,7 @@ class ImportController extends SugarController
     }
     function action_RefreshMapping()
     {
-        require_once('modules/Import/ImportFile.php');
+        require_once('modules/Import/sources/ImportFile.php');
         require_once('modules/Import/views/view.confirm.php');
         $v = new ImportViewConfirm();
         $fileName = $_REQUEST['importFile'];
