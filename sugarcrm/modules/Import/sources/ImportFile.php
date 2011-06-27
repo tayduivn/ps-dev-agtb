@@ -42,16 +42,6 @@ require_once('modules/Import/sources/ImportDataSource.php');
 class ImportFile extends ImportDataSource
 {
     /**
-     * Delimiter string we are using (i.e. , or ;)
-     */
-    private $_delimiter;
-    
-    /**
-     * Enclosure string we are using (i.e. ' or ")
-     */
-    private $_enclosure;
-    
-    /**
      * Stores whether or not we are deleting the import file in the destructor
      */
     private $_deleteFile;
@@ -60,11 +50,6 @@ class ImportFile extends ImportDataSource
      * File pointer returned from fopen() call
      */
     private $_fp;
-    
-    /**
-     * Array of the values in the current array we are in
-     */
-    private $_currentRow = FALSE;
 
     /**
      * True if the csv file has a header row.

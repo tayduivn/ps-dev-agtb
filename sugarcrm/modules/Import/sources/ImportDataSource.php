@@ -34,17 +34,15 @@ require_once('modules/Import/ImportCacheFiles.php');
 
 abstract class ImportDataSource implements Iterator
 {
-
-
     /**
      * Count of rows processed
      */
-    private $_rowsCount = 0;
+    protected $_rowsCount = 0;
 
     /**
      * True if the current row has already had an error it in, so we don't increase the $_errorCount
      */
-    private $_rowCountedForErrors = false;
+    protected $_rowCountedForErrors = false;
 
     /**
      * Count of rows with errors
@@ -69,7 +67,22 @@ abstract class ImportDataSource implements Iterator
     /**
      * Sourcename used as an identifier for this import
      */
-    private $_sourcename;
+    protected $_sourcename;
+
+    /**
+     * Array of the values in the current array we are in
+     */
+    protected $_currentRow = FALSE;
+
+    /**
+     * Delimiter string we are using (i.e. , or ;)
+     */
+    protected $_delimiter;
+
+    /**
+     * Enclosure string we are using (i.e. ' or ")
+     */
+    protected $_enclosure;
 
     /**
      * Add this row to the UsersLastImport table
