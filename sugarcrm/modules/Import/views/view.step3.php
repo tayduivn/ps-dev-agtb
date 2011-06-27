@@ -126,12 +126,15 @@ class ImportViewStep3 extends ImportView
 
         // retrieve first 3 rows
         $rows = array();
+
+        //Keep track of the largest row count found.
+        $maxFieldCount = 0;
         for ( $i = 0; $i < 3; $i++ )
         {
             $rows[] = $importFile->getNextRow();
+            $maxFieldCount = $importFile->getFieldCount() > $maxFieldCount ?  $importFile->getFieldCount() : $maxFieldCount;
         }
-
-        $ret_field_count = $importFile->getFieldCount();
+        $ret_field_count = $maxFieldCount;
 
         // Bug 14689 - Parse the first data row to make sure it has non-empty data in it
         $isempty = true;
