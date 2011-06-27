@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav!=sales ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise Subscription
@@ -28,60 +27,28 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2007 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
- * $Id: ImportMapOutlook.php 31561 2008-02-04 18:41:10Z jmertic $
- * Description: Holds import setting for Outlook files
+ * $Id: ImportMapOther.php 31561 2008-02-04 18:41:10Z jmertic $
+ * Description: Holds import setting for TSV (Tab Delimited) files
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
+ 
+require_once('modules/Import/maps/ImportMapOther.php');
 
-require_once('modules/Import/ImportMapOther.php');
-
-class ImportMapOutlook extends ImportMapOther
+class ImportMapTab extends ImportMapOther
 {
 	/**
      * String identifier for this import
      */
-    public $name = 'outlook';
+    public $name = 'tab';
 	/**
      * Field delimiter
      */
-    public $delimiter = ',';
+    public $delimiter = "\t";
     /**
      * Field enclosure
      */
-    public $enclosure = '"';
-	/**
-     * Do we have a header?
-     */
-    public $has_header = true;
-    
-    /**
-     * Gets the default mapping for a module
-     *
-     * @param  string $module
-     * @return array field mappings
-     */
-	public function getMapping(
-        $module
-        )
-    {
-        $return_array = parent::getMapping($module);
-        switch ($module) {
-        case 'Contacts':
-        case 'Leads':
-            return $return_array + array(
-                "Job Title"=>"title",
-                "Home Country"=>"alt_address_country",
-                "E-mail 2 Address"=>"email2",
-                );
-            break;
-        case 'Accounts':
-            return $return_array;
-            break;
-        default:
-            return $return_array;
-        }
-    }
+    public $enclosure;
 }
 
 

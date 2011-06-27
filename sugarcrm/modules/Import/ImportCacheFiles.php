@@ -43,9 +43,7 @@ class ImportCacheFiles
      * @param  string $type string to prepend to the filename, typically to indicate the file's use
      * @return string filename
      */
-    private static function _createFileName(
-        $type = 'misc'
-        )
+    private static function _createFileName($type = 'misc')
     {
         global $sugar_config, $current_user;
         
