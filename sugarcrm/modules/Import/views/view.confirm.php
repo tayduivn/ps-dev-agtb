@@ -184,13 +184,13 @@ class ImportViewConfirm extends ImportView
         else
         {
             $classname = 'ImportMap' . ucfirst($importSource);
-            if ( file_exists("modules/Import/{$classname}.php") )
-                require_once("modules/Import/{$classname}.php");
-            elseif ( file_exists("custom/modules/Import/{$classname}.php") )
-                require_once("custom/modules/Import/{$classname}.php");
+            if ( file_exists("modules/Import/maps/{$classname}.php") )
+                require_once("modules/Import/maps/{$classname}.php");
+            elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
+                require_once("custom/modules/Import/maps/{$classname}.php");
             else
             {
-                require_once("custom/modules/Import/ImportMapOther.php");
+                require_once("custom/modules/Import/maps/ImportMapOther.php");
                 $classname = 'ImportMapOther';
                 $importSource = 'other';
             }

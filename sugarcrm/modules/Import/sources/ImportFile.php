@@ -33,11 +33,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('modules/Import/ImportCacheFiles.php');
-require_once('modules/Import/CsvAutoDetect.php');
 
-class ImportFile implements Iterator
+require_once('modules/Import/CsvAutoDetect.php');
+require_once('modules/Import/sources/ImportDataSource.php');
+
+
+
+class ImportFile extends ImportDataSource
 {
     /**
      * Delimiter string we are using (i.e. , or ;)
@@ -60,44 +62,9 @@ class ImportFile implements Iterator
     private $_fp;
     
     /**
-     * Filename of file we are importing
-     */
-    private $_filename;
-    
-    /**
      * Array of the values in the current array we are in
      */
     private $_currentRow = FALSE;
-    
-    /**
-     * Count of rows processed
-     */
-    private $_rowsCount = 0;
-    
-    /**
-     * Count of rows with errors
-     */
-    private $_errorCount = 0;
-    
-    /**
-     * Count of duplicate rows
-     */
-    private $_dupeCount = 0;
-    
-    /**
-     * Count of newly created rows
-     */
-    private $_createdCount = 0;
-    
-    /**
-     * Count of updated rows
-     */
-    private $_updatedCount = 0;
-    
-    /**
-     * True if the current row has already had an error it in, so we don't increase the $_errorCount
-     */
-    private $_rowCountedForErrors = false;
 
     /**
      * True if the csv file has a header row.
@@ -132,12 +99,7 @@ class ImportFile implements Iterator
      * @param string $enclosure
      * @param bool   $deleteFile
      */
-    public function __construct( 
-        $filename, 
-        $delimiter  = ',',
-        $enclosure  = '',
-        $deleteFile = true
-        )
+    public function __construct( $filename, $delimiter  = ',', $enclosure  = '',$deleteFile = true )
     {
         if ( !is_file($filename) || !is_readable($filename) ) {
             return false;
@@ -153,7 +115,7 @@ class ImportFile implements Iterator
         ini_set('auto_detect_line_endings', '1');
         
         $this->_fp         = sugar_fopen($filename,'r');
-        $this->_filename   = $filename;
+        $this->_sourcename   = $filename;
         $this->_deleteFile = $deleteFile;
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
@@ -183,8 +145,8 @@ class ImportFile implements Iterator
         if ( $this->_deleteFile && $this->fileExists() ) {
             fclose($this->_fp);
             //Make sure the file exists before unlinking
-            if(file_exists($this->_filename)) {
-               unlink($this->_filename);
+            if(file_exists($this->_sourcename)) {
+               unlink($this->_sourcename);
             }
         }
         
@@ -250,117 +212,6 @@ class ImportFile implements Iterator
     {
         return count($this->_currentRow);
     }
-    
-    /**
-     * Writes the row out to the ImportCacheFiles::getDuplicateFileName() file
-     */
-    public function markRowAsDuplicate()
-    {
-        $fp = sugar_fopen(ImportCacheFiles::getDuplicateFileName(),'a');
-        if ( empty($this->_enclosure) )
-            fputs($fp,implode($this->_delimiter,$this->_currentRow).PHP_EOL);
-        else
-            fputcsv($fp,$this->_currentRow, $this->_delimiter, $this->_enclosure);
-        fclose($fp);
-        
-        $this->_dupeCount++;
-    }
-    
-    /**
-     * Writes the row out to the ImportCacheFiles::getErrorFileName() file
-     *
-     * @param $error string
-     * @param $fieldName string
-     * @param $fieldValue mixed
-     */
-    public function writeError(
-        $error,
-        $fieldName,
-        $fieldValue
-        )
-    {
-        $fp = sugar_fopen(ImportCacheFiles::getErrorFileName(),'a');
-        fputcsv($fp,array($error,$fieldName,$fieldValue,$this->_rowsCount));
-        fclose($fp);
-        
-        if ( !$this->_rowCountedForErrors ) {
-            $this->_errorCount++;
-            $this->_rowCountedForErrors = true;
-            $this->writeErrorRecord();
-        }
-    }
-    
-    /**
-     * Writes the row out to the ImportCacheFiles::getErrorRecordsFileName() file
-     */
-    public function writeErrorRecord()
-    {
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsFileName(),'a');
-        if ( empty($this->_enclosure) )
-            fputs($fp,implode($this->_delimiter,$this->_currentRow).PHP_EOL);
-        else
-            fputcsv($fp,$this->_currentRow, $this->_delimiter, $this->_enclosure);
-        fclose($fp);
-    }
-    
-    /**
-     * Writes the totals and filename out to the ImportCacheFiles::getStatusFileName() file
-     */
-    public function writeStatus()
-    {
-        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(),'a');
-        fputcsv($fp,array($this->_rowsCount,$this->_errorCount,$this->_dupeCount,
-            $this->_createdCount,$this->_updatedCount,$this->_filename));
-        fclose($fp);
-    }
-    
-    /**
-     * Add this row to the UsersLastImport table
-     *
-     * @param string $import_module name of the module we are doing the import into
-     * @param string $module        name of the bean we are creating for this import
-     * @param string $id            id of the recorded created in the $module
-     */
-    public static function writeRowToLastImport(
-        $import_module,
-        $module,
-        $id
-        )
-    {
-        // cache $last_import instance
-        static $last_import;
-        
-        if ( !($last_import instanceof UsersLastImport) ) 
-            $last_import = new UsersLastImport();
-        
-        $last_import->id = null;
-        $last_import->deleted = null;
-        $last_import->assigned_user_id = $GLOBALS['current_user']->id;
-        $last_import->import_module = $import_module;
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if ( $module == 'Case' ) {
-            $module = 'aCase';
-        }
-        //END SUGARCRM flav!=sales ONLY
-        $last_import->bean_type = $module;
-        $last_import->bean_id = $id;
-        return $last_import->save();
-    }
-    
-    /**
-     * Marks whether this row created a new record or not
-     *
-     * @param $createdRecord bool true if record is created, false if it is just updated 
-     */
-    public function markRowAsImported(
-        $createdRecord = true
-        )
-    {
-        if ( $createdRecord )
-            ++$this->_createdCount;
-        else
-            ++$this->_updatedCount;
-    }
 
     /**
      * Determine the number of lines in this file.
@@ -393,7 +244,7 @@ class ImportFile implements Iterator
         $this->_delimiter  = ",";
         $this->_enclosure  = '"';
 
-        $this->_detector = new CsvAutoDetect($this->_filename, 20);
+        $this->_detector = new CsvAutoDetect($this->_sourcename, 20);
 
         $delimiter = $enclosure = false;
 

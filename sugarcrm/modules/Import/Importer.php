@@ -29,7 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/Import/ImportFile.php');
-require_once('modules/Import/ImportFileSplitter.php');
 require_once('modules/Import/ImportCacheFiles.php');
 require_once('modules/Import/ImportFieldSanitize.php');
 require_once('modules/Import/ImportDuplicateCheck.php');
@@ -506,6 +505,8 @@ class Importer
 
     protected function saveMappingFile()
     {
+        global $current_user;
+        
         $firstrow    = unserialize(base64_decode($_REQUEST['firstrow']));
         $mappingValsArr = $this->importColumns;
         $mapping_file = new ImportMap();
