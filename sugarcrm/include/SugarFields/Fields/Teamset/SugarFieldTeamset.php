@@ -346,8 +346,10 @@ class SugarFieldTeamset extends SugarFieldBase {
 		return $this->fetch($this->findTemplate('Teamset'));		
 	}
 
-	function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
+    public function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col)
+    {	
         $tabindex = 1;
+        $parentFieldArray = $this->setupFieldArray($parentFieldArray, $vardef);
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         $this->ss->assign('rowData',$parentFieldArray);
         $this->ss->assign('col',$vardef['name']);

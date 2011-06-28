@@ -2916,6 +2916,17 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     //END SUGARCRM flav=pro ONLY
                 }
+                
+		        //BEGIN SUGARCRM flav=pro ONLY
+		        //Retrieve team_set.team_count column as well
+		        if(!empty($list_fields['team_name']) && empty($list_fields['team_count'])){
+		            $list_fields['team_count'] = true;
+		
+		            //Add the team_id entry so that we can retrieve the team_id to display primary team
+		            $list_fields['team_id'] = true;
+		        }
+		        //END SUGARCRM flav=pro ONLY                
+                
                 if(!$subpanel_def->isCollection() && isset($list_fields[$order_by]) && isset($submodule->field_defs[$order_by])&& (!isset($submodule->field_defs[$order_by]['source']) || $submodule->field_defs[$order_by]['source'] == 'db'))
                 {
                     $order_by = $submodule->table_name .'.'. $order_by;
@@ -2928,7 +2939,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 $params['joined_tables'] = $query_array['join_tables'];
                 $params['include_custom_fields'] = !$subpanel_def->isCollection();
                 $params['collection_list'] = $subpanel_def->get_inst_prop_value('collection_list');
-
+                
                 $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean);
 
                 $subquery['select'] = $subquery['select']." , '$panel_name' panel_name ";
