@@ -3445,19 +3445,37 @@ function get_singular_bean_name($bean_name){
 	}
 }
 
+/*
+ * Given the potential module name (singular name, renamed module name)
+ * Return the real internal module name.
+ */
 function get_module_from_singular($singular) {
 
-    if (!isset($GLOBALS['app_list_strings']['moduleListSingular'])) {
-        return $singular;
-    }
+    // find the internal module name for a singular name
+    if (isset($GLOBALS['app_list_strings']['moduleListSingular'])) {
 
-    $singular_modules = $GLOBALS['app_list_strings']['moduleListSingular'];
+        $singular_modules = $GLOBALS['app_list_strings']['moduleListSingular'];
 
-    foreach ($singular_modules as $mod_name=>$sin_name) {
-        if ($singular == $sin_name and $mod_name != $sin_name) {
-            return $mod_name;
+        foreach ($singular_modules as $mod_name=>$sin_name) {
+            if ($singular == $sin_name and $mod_name != $sin_name) {
+                return $mod_name;
+            }
         }
     }
+
+    // find the internal module name for a renamed module
+    if (isset($GLOBALS['app_list_strings']['moduleList'])) {
+
+        $moduleList = $GLOBALS['app_list_strings']['moduleList'];
+
+        foreach ($moduleList as $mod_name=>$name) {
+            if ($singular == $name and $mod_name != $name) {
+                return $mod_name;
+            }
+        }
+    }
+
+    // if it's not a singular name, nor a renamed name, return the original value
     return $singular;
 }
 
