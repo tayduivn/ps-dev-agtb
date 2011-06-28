@@ -35,7 +35,7 @@ class SugarTestImportUtilities
         self::removeAllCreatedFiles();
     }
 
-    public static function createFile($lines = 2000,$columns = 3, $dir = 'import_dir')
+    public static function createFile($lines = 2000,$columns = 3, $dir = 'upload_dir')
     {
         $filename = $GLOBALS['sugar_config'][$dir].'test'. uniqid();
         $fp = fopen($filename,"w");
@@ -76,7 +76,7 @@ class SugarTestImportUtilities
 	
     public static function createFileWithWhiteSpace() 
     {
-        $filename = $GLOBALS['sugar_config']['import_dir'].'testWhiteSpace'.date("YmdHis");
+        $filename = $GLOBALS['sugar_config']['upload_dir'].'testWhiteSpace'.date("YmdHis");
         $contents = <<<EOTEXT
 account2,foo bar
 EOTEXT;
