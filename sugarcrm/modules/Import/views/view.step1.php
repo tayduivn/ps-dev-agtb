@@ -90,7 +90,7 @@ class ImportViewStep1 extends ImportView
     {
         require_once('include/externalAPI/ExternalAPIFactory.php');
 
-        return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE, 'eapm_import_list');
+        return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE);
     }
     /**
      * Returns JS used in this view
