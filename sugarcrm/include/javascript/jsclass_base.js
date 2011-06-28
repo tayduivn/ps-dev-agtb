@@ -363,7 +363,6 @@ alert(str);
     })
     
     var HTTPConnectionHandler = Class("HTTPConnectionHandler", BaseConnectionHandler, function(publ, supr){
-        var urllib;
         publ.request_id = 1;
         publ.init=function(url, localService){
             urllib=importModule("urllib");

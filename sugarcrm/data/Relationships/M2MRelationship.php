@@ -65,6 +65,9 @@ class M2MRelationship extends SugarRelationship
 
         $this->addRow($dataToInsert);
 
+        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+        $rhs->$rhsLinkName->beans[$lhs->id] = $lhs;
+
         $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
         $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
     }
@@ -92,6 +95,9 @@ class M2MRelationship extends SugarRelationship
         );
 
         $this->removeRow($dataToRemove);
+
+        $lhs->$lhsLinkName->load();
+        $rhs->$rhsLinkName->load();
 
         $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
         $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
@@ -139,7 +145,8 @@ class M2MRelationship extends SugarRelationship
             return array(
                 'select' => "SELECT $targetKey id",
                 'from' => "FROM {$this->getRelationshipTable()}",
-                'where' => "WHERE $knownKey = '{$link->getFocus()->id}' AND deleted=0",
+                'where' => "WHERE $knownKey = '{$link->getFocus()->id}'"
+                         . " AND {$this->getRelationshipTable()}.deleted=0",
             );
         }
     }

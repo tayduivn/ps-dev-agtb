@@ -248,8 +248,9 @@ class VardefManager{
             $object = 'Case';
         }
         //END SUGARCRM flav!=sales ONLY
-        if (empty($dictionary[$object]))
-            self::refreshVardefs($module, $object);
+        if (empty($dictionary[$object])) {
+            self::loadVardef($module, $object);
+        }
         if (empty($dictionary[$object]))
         {
             $GLOBALS['log']->debug("Failed to load vardefs for $module:$object in linkFieldsForModule<br/>");
@@ -376,7 +377,7 @@ class VardefManager{
     {
         global $dictionary;
         if (empty($dictionary[$object]))
-            self::refreshVardefs($module, $object);
+            self::loadVardef($module, $object);
         if (empty($dictionary[$object]))
             return false;
 

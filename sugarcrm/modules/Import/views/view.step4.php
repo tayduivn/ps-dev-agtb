@@ -529,9 +529,10 @@ class ImportViewStep4 extends SugarView
                 
             unset($defaultRowValue);
         }
-        
+
         // save mapping if requested
-        if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
+        $mappingValsArr = $importColumns;
+        //if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
             $mapping_file = new ImportMap();
             if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on') {
                 $header_to_field = array ();
@@ -540,12 +541,29 @@ class ImportViewStep4 extends SugarView
                         $header_to_field[$firstrow[$pos]] = $field_name;
                     }
                 }
-                $mapping_file->setMapping($header_to_field);
-            } 
-            else {
-                $mapping_file->setMapping($importColumns);
+                //$mapping_file->setMapping($header_to_field);
+                $mappingValsArr = $header_to_field;
             }
-            
+            //get array of values to save for duplicate and locale settings
+            $advMapping = $this->retrieveAdvancedMapping();
+
+            //merge with mappingVals array
+            if(!empty($advMapping) && is_array($advMapping)){
+                $mappingValsArr = array_merge($mappingValsArr,$advMapping);
+            }
+
+        //save values to user preferences for reuse
+        $mapping_file->set_get_import_wizard_fields($mappingValsArr);
+
+
+
+        // save mapping if requested
+        if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
+            //set mapping
+            $mapping_file->setMapping($mappingValsArr);
+
+
+
             // save default fields
             $defaultValues = array();
             for ( $i = 0; $i < $_REQUEST['columncount']; $i++ )
@@ -687,4 +705,28 @@ class ImportViewStep4 extends SugarView
     
         return true;
     }
+
+
+
+    public function retrieveAdvancedMapping(){
+        $advancedMappingSettings = array();
+
+        //harvest the dupe index settings
+        if( isset($_REQUEST['display_tabs_def']) ){
+            $display_tabs_def = $_REQUEST['display_tabs_def'];
+            //replace ampersand delimiter with double colon, as the ampersand interferes with ImportMap->getMapping() function
+            $display_tabs_def = str_replace('&','::',$display_tabs_def);
+            $advancedMappingSettings['display_tabs_def'] = $display_tabs_def;
+        }
+
+        foreach($_REQUEST as $rk=>$rv){
+            //harvest the import locale settings
+            if(strpos($rk,'portlocale_')>0){
+                $advancedMappingSettings[$rk] = $rv;
+            }
+
+        }
+        return $advancedMappingSettings;
+    }
+    
 }

@@ -126,6 +126,9 @@ $mod_strings = array (
 	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',
 	//END SUGARCRM flav=pro ONLY
 	'LNK_IMPORT_PRODUCTS' => 'Import Products',
+
+  //For export labels
+    'LBL_EXPORT_CURRENCY_ID' => 'Currency ID',
 );
 
 

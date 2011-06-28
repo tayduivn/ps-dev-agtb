@@ -19,10 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Implementation by SugarCRM, not shipped by ZF.
- *
- */
 require_once 'Zend/Gdata/Extension.php';
 
 
@@ -88,7 +84,10 @@ class Zend_Gdata_Contacts_Extension_Email extends Zend_Gdata_Extension
 
     public function getEmailType()
     {
-        return str_replace($this->lookupNamespace('gd') . '#', '', $this->_emailType);
+        if($this->_emailType == null)
+            return '';
+        else
+            return str_replace($this->lookupNamespace('gd') . '#', '', $this->_emailType);
     }
     
     public function getEmail()

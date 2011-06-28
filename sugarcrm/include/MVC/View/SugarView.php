@@ -83,6 +83,14 @@ class SugarView
         //trackView has to be here in order to track for breadcrumbs
         $this->_trackView();
 
+        //For the ajaxUI, we need to use output buffering to return the page in an ajax friendly format
+        if ($this->_getOption('json_output')){
+			ob_start();
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+				echo $this->_getModLanguageJS();
+			}
+		}
+
         if ($this->_getOption('show_header')) {
             $this->displayHeader();
         } else {
@@ -92,14 +100,20 @@ class SugarView
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();
-        $ajax_ret = array();
-		if ($this->_getOption('json_output')){
-			ob_start();
-			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
-				echo $this->_getModLanguageJS();
-			}
-		}
+
         $this->display();
+
+        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
+
+
+        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
+
+        if ($this->action === 'Login') {
+            //this is needed for a faster loading login page ie won't render unless the tables are closed
+            ob_flush();
+        }
+        if ($this->_getOption('show_footer')) $this->displayFooter();
+        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
         if ($this->_getOption('json_output'))
         {
             $content = ob_get_clean();
@@ -114,26 +128,13 @@ class SugarView
                 'moduleList' => $this->displayHeader(true),
                 'title' => $this->getBrowserTitle(),
             );
-        }
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-        if ($this->_getOption('json_output'))
-            ob_start();
-
-        if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
-        if ($this->_getOption('json_output'))
-        {
-            $ajax_ret['content'] .= ob_get_clean();
             if(empty($this->responseTime)) $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
-        }
-        if ($this->action === 'Login') {
-            //this is needed for a faster loading login page ie won't render unless the tables are closed
+            $GLOBALS['app']->headerDisplayed = false;
             ob_flush();
         }
-        if ($this->_getOption('show_footer')) $this->displayFooter();
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_footer');
         //Do not track if there is no module or if module is not a String
         $this->_track();
     }
@@ -653,7 +654,8 @@ class SugarView
         global $gridline, $request_string, $modListHeader, $dashletData, $authController, $locale, $currentModule, $import_bean_map, $image_path, $license;
         global $user_unique_key, $server_unique_key, $barChartColors, $modules_exempt_from_availability_check, $dictionary, $current_language, $beanList, $beanFiles, $sugar_build, $sugar_codename;
         global $timedate, $login_error; // cn: bug 13855 - timedate not available to classic views.
-        $currentModule = $this->module;
+        if (!empty($this->module))
+            $currentModule = $this->module;
         require_once ($file);
     }
 
@@ -667,7 +669,7 @@ class SugarView
         if(isset($_REQUEST['action'])){
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
-        echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+        echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file("include/javascript/sugar_grp1.js")) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
@@ -763,7 +765,7 @@ EOHTML;
             if(isset($_REQUEST['action'])){
                 echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
             }
-            echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+            echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
             if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -772,7 +774,7 @@ EOHTML;
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
             echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
-            
+
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
@@ -792,9 +794,9 @@ EOHTML;
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
             echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
-			
+
 			echo $this->_getModLanguageJS();
-			
+
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
             echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
@@ -818,7 +820,7 @@ EOHTML;
             echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
-	
+
 	protected function _getModLanguageJS(){
 		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
 			require_once ('include/language/jsLanguage.php');
@@ -826,7 +828,7 @@ EOHTML;
 		}
 		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
 	}
-	
+
     /**
      * Called from process(). This method will display the footer on the page.
      */
@@ -1120,6 +1122,11 @@ EOHTML;
         if ( empty($module) )
             $module = $this->module;
 
+        //Need to make sure the mod_strings match the requested module or Menus may fail
+        $curr_mod_strings = $mod_strings;
+        $mod_strings = return_module_language ( $current_language, $module ) ;
+
+
         $final_module_menu = array();
 
         if (file_exists('modules/' . $module . '/Menu.php')) {
@@ -1153,6 +1160,8 @@ EOHTML;
             $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
         $module_menu = $final_module_menu;
+
+        $mod_strings = $curr_mod_strings;
 
         return $module_menu;
     }
@@ -1344,7 +1353,7 @@ EOHTML;
 			} else {
 				return $firstParam;
 			}
-    	} 
+    	}
     	else {
 		    if (!empty($iconPath) && !$browserTitle) {
 				return "<a href='index.php?module={$this->module}&action=index'>"
@@ -1355,12 +1364,12 @@ EOHTML;
     	}
     }
 
-    protected function getModuleTitleIconPath($module) 
+    protected function getModuleTitleIconPath($module)
     {
     	$iconPath = "";
     	if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
-    	} 
+    	}
     	else if (is_file(SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png',false))) {
     		$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.ucfirst($module).'_32.png');
     	}
@@ -1412,7 +1421,7 @@ EOHTML;
         if ( isset($sugar_config['quicksearch_querydelay']) ) {
             $config_js[] = "SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};";
         }
-        if ( !isset($sugar_config['disableAjaxUI']) || $sugar_config['disableAjaxUI'] == false ) {
+        if ( empty($sugar_config['disableAjaxUI']) ) {
             $config_js[] = "SUGAR.config.disableAjaxUI = false;";
         }
         else{
