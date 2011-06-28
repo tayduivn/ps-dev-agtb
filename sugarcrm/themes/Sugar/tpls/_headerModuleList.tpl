@@ -69,11 +69,9 @@
 										<ul class="shortCutsUl">
 										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
 										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
-										  {if $shortcut_item.URL == "-"}
-                                                                                    <hr style="margin-top: 2px; margin-bottom: 2px" />
-										  {else}
-                                                                                    <li class="yuimenuitem"><a href="{$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
-										  {/if}
+										
+											<li class="yuimenuitem"><a href="{$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
+										
 										{/foreach}
 										</ul>
 										{if $groupTabId}
