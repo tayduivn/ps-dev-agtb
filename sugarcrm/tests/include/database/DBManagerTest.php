@@ -50,7 +50,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->_db = DBManagerFactory::getInstance();
+        if(empty($this->_db)){
+            $this->_db = DBManagerFactory::getInstance();
+        }
     }
 
     private function _createRecords(
@@ -1212,10 +1214,16 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function vardefProvider()
     {
-        $emptydate = "0000-00-00";
-        if($this->_db instanceof MssqlManager || $this->_db instanceof OracleManager) {
-            $emptydate = "1970-01-01";
-        }
+//        $emptydate = "0000-00-00";
+//        if($this->_db instanceof MssqlManager || $this->_db instanceof OracleManager) {
+//            $emptydate = "1970-01-01";
+//        }
+        $GLOBALS['log']->info('DBManagerTest.vardefProvider: _db = ' . print_r($this->_db));
+        $this->setUp(); // Just in case the DB driver is not created yet. 
+        $emptydate = $this->_db->emptyValue("date");
+        $emptytime = $this->_db->emptyValue("time");
+        $emptydatetime = $this->_db->emptyValue("datetime");
+
         return array(
             array("testid", array (
                   'id' =>
@@ -1372,8 +1380,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                   ),
                   array(),
                   array("id" => "''", 'intval' => 0, 'floatval' => 0,
-                  		'money' => 0, 'test_dtm' => "'$emptydate 00:00:00'", 'test_dtm2' => "'$emptydate 00:00:00'",
-                        'test_dt' => "'$emptydate'", 'test_tm' => '\'00:00:00\''
+                  		'money' => 0, 'test_dtm' => "$emptydatetime", 'test_dtm2' => "$emptydatetime",
+                        'test_dt' => "$emptydate", 'test_tm' => "$emptytime"
                   ),
                   array(),
             ),
@@ -1506,8 +1514,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $obj->$k = $v;
         }
         $sql = $this->_db->insertSQL($obj);
-        $names = join('\s*,\s*',array_keys($result));
-        $values = join('\s*,\s*',array_values($result));
+        $names = join('\s*,\s*',array_map('preg_quote', array_keys($result)));
+        $values = join('\s*,\s*',array_map('preg_quote', array_values($result)));
         $this->assertRegExp("/INSERT INTO $name\s+\(\s*$names\s*\)\s+VALUES\s+\(\s*$values\s*\)/is", $sql, "Bad sql: $sql");
     }
 
