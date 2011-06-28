@@ -332,8 +332,8 @@ function get_sugar_config_defaults() {
     'sugarbeet' => true,
 //END SUGARCRM flav=com ONLY
     'time_formats' => array (
-	'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM',
-	'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM' ),
+        'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM', 'h:i a'=>'11:00 pm', 'h:i A'=>'11:00 PM',
+        'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM', 'h.i a'=>'11.00 pm', 'h.i A'=>'11.00 PM' ),
 //BEGIN SUGARCRM flav=com ONLY
     'tracker_max_display_length' => 15,
 //END SUGARCRM flav=com ONLY
