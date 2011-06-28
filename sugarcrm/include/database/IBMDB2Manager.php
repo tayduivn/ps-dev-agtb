@@ -659,6 +659,9 @@ class IBMDB2Manager  extends DBManager
 
     /**~
     * @see DBManager::convert()
+     *
+     * TODO revisit this for other versions of DB2
+     * http://stackoverflow.com/questions/4852139/converting-a-string-to-a-date-in-db2
     */
    public function convert($string, $type, array $additional_parameters = array())
    {
@@ -679,10 +682,11 @@ class IBMDB2Manager  extends DBManager
                return "to_date($string, 'YYYY-MM-DD')";
            case 'time':
                return "to_date($string, 'HH24:MI:SS')";
+           case 'timestamp':
            case 'datetime':
                return "to_date($string, 'YYYY-MM-DD HH24:MI:SS'$additional_parameters_string)";
            case 'today':
-               return "sysdate";
+               return "CURRENT_DATE";
            case 'left':
                return "LTRIM($string$additional_parameters_string)";
            case 'date_format':
@@ -748,6 +752,7 @@ class IBMDB2Manager  extends DBManager
         switch($type) {
             case 'date': return substr($string, 0, 10);
             case 'time': return substr($string, 11,8);
+            case 'timestamp':
             case 'datetime': return substr($string, 0,19);
 		}
 		return $string;
@@ -1216,13 +1221,20 @@ EOQ;
 
     public function emptyValue($type)
     {
+        // http://www.devx.com/dbzone/Article/28713
+        // http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.sql.ref.doc/doc/r0008474.html
+
         $ctype = $this->getColumnType($type);
-        if($ctype == "datetime") {
-            return $this->convert($this->quoted("0000-00-00 00:00:00"), "datetime");
+        if($ctype == "datetime" || $ctype == "timestamp") {
+            return $this->convert($this->quoted("0001-01-01 00:00:00"), "datetime");
         }
         if($ctype == "date") {
-            return $this->convert($this->quoted("0000-00-00"), "date");
+            return $this->convert($this->quoted("0001-01-01"), "date");
         }
+        if($ctype == "time") {
+            return $this->convert($this->quoted("00:00:00"), "time");
+        }
+
         return parent::emptyValue($type);
     }
 
