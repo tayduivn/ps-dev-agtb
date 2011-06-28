@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class Bug44831Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44831Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     public function setUp()
     {
@@ -112,16 +112,16 @@ EOQ;
         require_once('include/MVC/Controller/ControllerFactory.php');
         require_once('include/MVC/View/ViewFactory.php');
         $GLOBALS['app']->controller = ControllerFactory::getController($_REQUEST['module']);
-        ob_start();
+        //ob_start();
         $GLOBALS['app']->controller->execute();
-        $tStr = ob_get_clean();
+        //$tStr = ob_get_clean();
         
         // First of all, need to be sure that I'm actually dealing with my new custom DetailView Layout
-        $this->assertRegExp("/.*HiddenPlaceHolder.*/", $tStr);
+        $this->expectOutputRegex('/.*HiddenPlaceHolder.*/');
         // Then check inclusion of LeadJS1.js
-        $this->assertRegExp('/.*<script src="custom\/modules\/Leads\/javascript\/LeadJS1\.js.*"><\/script>.*/', $tStr);
+        $this->expectOutputRegex('/.*<script src=\"custom\/modules\/Leads\/javascript\/LeadJS1\.js.*\"><\/script>.*/');
         // Then check inclusion of LeadJS2.js
-        $this->assertRegExp('/.*<script src="custom\/modules\/Leads\/javascript\/LeadJS2\.js.*"><\/script>.*/', $tStr);
+        $this->expectOutputRegex('/.*<script src=\"custom\/modules\/Leads\/javascript\/LeadJS2\.js.*\"><\/script>.*/');
         
         unset($GLOBALS['app']->controller);
         unset($_REQUEST['module']);
