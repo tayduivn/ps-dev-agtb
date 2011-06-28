@@ -30,11 +30,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * @license    http://www.sugarcrm.com/crm/products/sugar-professional-eula.html  SugarCRM Professional End User License
  * @since      Class available since Release 4.5.1
  */
-class quicksearchQuery {
+class quicksearchQuery
+{
+    /**
+     * Condition operators
+     * @var string
+     */
+    const CONDITION_CONTAINS = 'contains';
+    const CONDITION_LIKE_CUSTOM = 'like_custom';
+    const CONDITION_EQUAL = 'equal';
+
     /**
      * Internal function to construct where clauses
+     * @param	array	$query_obj
+     * @param	Object	$focus
+     * @return	string
      */
-    function constructWhere(&$query_obj, $focus) {
+    private function constructWhere($query_obj, $focus) 
+    {
         $table = $focus->getTableName();
     	if (! empty($table)) {
             $table .= ".";
@@ -45,39 +58,50 @@ class quicksearchQuery {
             $query_obj['conditions'] = array();
         }
   
-        foreach($query_obj['conditions'] as $condition) {
-	   		if($condition['op'] == 'contains') {
-	       		array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '%".$GLOBALS['db']->quote($condition['value'])."%'");
-	        } else if($condition['op'] == 'like_custom') {
-	        	$like = '';
-	           if(!empty($condition['begin'])) $like .= $GLOBALS['db']->quote($condition['begin']);
-	           $like .= $GLOBALS['db']->quote($condition['value']);
-	           if(!empty($condition['end'])) $like .= $GLOBALS['db']->quote($condition['end']);
-	               
-	           if ($focus instanceof Person){
-	           		$nameFormat = $GLOBALS['locale']->getLocaleFormatMacro($GLOBALS['current_user']);
-                    if ( strpos($nameFormat,'l') > strpos($nameFormat,'f') ) {
-                        array_push($cond_arr,db_concat(rtrim($table,'.'),array('first_name','last_name')) . " like '$like'");
+        foreach($query_obj['conditions'] as $condition) 
+        {
+            switch ($condition['op'])
+            {
+                case self::CONDITION_CONTAINS:
+                    array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '%".$GLOBALS['db']->quote($condition['value'])."%'");
+                    break;
+                case self::CONDITION_LIKE_CUSTOM:
+                    $like = '';
+                    if(!empty($condition['begin'])) $like .= $GLOBALS['db']->quote($condition['begin']);
+                    $like .= $GLOBALS['db']->quote($condition['value']);
+                    if(!empty($condition['end'])) $like .= $GLOBALS['db']->quote($condition['end']);
+
+                    if ($focus instanceof Person){
+                        $nameFormat = $GLOBALS['locale']->getLocaleFormatMacro($GLOBALS['current_user']);
+                        if ( strpos($nameFormat,'l') > strpos($nameFormat,'f') ) {
+                            array_push($cond_arr,db_concat(rtrim($table,'.'),array('first_name','last_name')) . " like '$like'");
+                        }
+                        else {
+                            array_push($cond_arr,db_concat(rtrim($table,'.'),array('last_name','first_name')) . " like '$like'");
+                        }
                     }
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    elseif ($focus instanceof Team){
+                        array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'");
+
+                        $condition['exclude_private_teams'] = true;
+                        array_push($cond_arr,$GLOBALS['db']->quote($table.'name_2')." like '".$GLOBALS['db']->quote($condition['value'])."%'");
+
+                    }
+                    //END SUGARCRM flav=pro ONLY
                     else {
-                        array_push($cond_arr,db_concat(rtrim($table,'.'),array('last_name','first_name')) . " like '$like'");
+                        array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '$like'");
                     }
-	           }
-	           //BEGIN SUGARCRM flav=pro ONLY
-	           elseif ($focus instanceof Team){
-	           	array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'");
-	                	
-	            $condition['exclude_private_teams'] = true;
-	            array_push($cond_arr,$GLOBALS['db']->quote($table.'name_2')." like '".$GLOBALS['db']->quote($condition['value'])."%'");
-	
-	           }
-	           //END SUGARCRM flav=pro ONLY
-	           else {
-	           	array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '$like'");
-	           }
-	        } else { // starts_with
-	        	 array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'");
-	        }
+                    break;
+                case self::CONDITION_EQUAL:
+                    if ($condition['value'])
+                    {
+                        $query_obj['whereExtra'] .= '(' . $GLOBALS['db']->quote($condition['name']) . ' = \'' . $GLOBALS['db']->quote($condition['value']) . '\')';
+                    }
+                    break;
+                default:
+                    array_push($cond_arr,$GLOBALS['db']->quote($table.$condition['name'])." like '".$GLOBALS['db']->quote($condition['value'])."%'");
+            }
 	    }
 	    
         $whereClause = '('.implode(" {$query_obj['group']} ",$cond_arr).')';
@@ -93,7 +117,7 @@ class quicksearchQuery {
 		
         return $whereClause;
     }
-    
+
     /**
      * Query a module for a list of items
      * 
@@ -215,12 +239,42 @@ class quicksearchQuery {
         }
         return $list_arr;
     }
+
+    /**
+     * Filter duplicate results from the list
+     * @param array $list
+     * @return	array
+     */
+    private function filterResults($list)
+    {
+        $fieldsFiltered = array();
+        foreach ($list['fields'] as $field)
+        {
+            $found = false;
+            foreach ($fieldsFiltered as $item)
+            {
+                if ($item === $field)
+                {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found)
+            {
+                $fieldsFiltered[] = $field;
+            }
+        }
+        $list['totalCount'] = count($fieldsFiltered);
+        $list['fields'] = $fieldsFiltered;
+        return $list;
+    }
     
     /**
      * get_contact_array
      * 
      */
-    function get_contact_array($args) {
+    public function get_contact_array($args) 
+    {
         $json = getJSONobj();
         global $sugar_config, $beanFiles, $beanList, $locale;
         
@@ -244,7 +298,7 @@ class quicksearchQuery {
             $query_where = $this->constructWhere($args, $focus);
             $list_arr = array();
             if($focus->ACLAccess('ListView', true)) {
-                $curlist = $focus->get_list($query_orderby, $query_where, 0, $query_limit, -1, 0);
+                $curlist = $focus->get_list($query_orderby, $query_where, 0, $query_limit, -1, 0, true);
                 $list_return = array_merge($list_return,$curlist['list']);
             }
         }
@@ -271,6 +325,7 @@ class quicksearchQuery {
             $list_arr['fields'][$i][$args['field_list'][0]] = $contactName;
         } //for
        	
+        $list_arr = $this->filterResults($list_arr);
         $str = $json->encodeReal($list_arr); 
         return $str;    
     }
@@ -366,7 +421,8 @@ $json = getJSONobj();
 $data = $json->decode(html_entity_decode($_REQUEST['data']));
 if(isset($_REQUEST['query']) && !empty($_REQUEST['query'])){
     foreach($data['conditions'] as $k=>$v){
-    	if(empty($data['conditions'][$k]['value'])){
+    	if (empty($data['conditions'][$k]['value']) && ($data['conditions'][$k]['op'] != quicksearchQuery::CONDITION_EQUAL)) 
+    	{
        		$data['conditions'][$k]['value']=$_REQUEST['query'];
     	}
     }
@@ -378,5 +434,3 @@ $method = !empty($data['method']) ? $data['method'] : 'query';
 if(method_exists($quicksearchQuery, $method)) {
    echo $quicksearchQuery->$method($data);
 }
-
-?>
