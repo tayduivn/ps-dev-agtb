@@ -3445,6 +3445,22 @@ function get_singular_bean_name($bean_name){
 	}
 }
 
+function get_module_from_singular($singular) {
+
+    if (!isset($GLOBALS['app_list_strings']['moduleListSingular'])) {
+        return $singular;
+    }
+
+    $singular_modules = $GLOBALS['app_list_strings']['moduleListSingular'];
+
+    foreach ($singular_modules as $mod_name=>$sin_name) {
+        if ($singular == $sin_name and $mod_name != $sin_name) {
+            return $mod_name;
+        }
+    }
+    return $singular;
+}
+
 function get_label($label_tag, $temp_module_strings){
 	global $app_strings;
 	if(!empty($temp_module_strings[$label_tag])){
