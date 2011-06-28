@@ -480,17 +480,12 @@ class EditView
         global $mod_strings, $sugar_config, $app_strings, $app_list_strings, $theme, $current_user;
 
 
-        if(isset($this->defs['templateMeta']['javascript'])) 
-        {
-            if(is_array($this->defs['templateMeta']['javascript'])) 
-            {
-                //$this->th->ss->assign('externalJSFile', 'modules/' . $this->module . '/metadata/editvewdefs.js');
-                $this->th->ss->assign('externalJSFile', $this->defs['templateMeta']['javascript']);
-            }
-            else
-            {
-                $this->th->ss->assign('scriptBlocks', $this->defs['templateMeta']['javascript']);
-            }
+        if(isset($this->defs['templateMeta']['javascript'])) {
+           if(is_array($this->defs['templateMeta']['javascript'])) {
+           	 $this->th->ss->assign('externalJSFile', 'modules/' . $this->module . '/metadata/editvewdefs.js');
+           } else {
+             $this->th->ss->assign('scriptBlocks', $this->defs['templateMeta']['javascript']);
+           }
         }
 
         $this->th->ss->assign('id', $this->fieldDefs['id']['value']);
@@ -546,7 +541,6 @@ class EditView
           $this->th->ss->assign('closeFormBeforeCustomButtons', $this->defs['templateMeta']['form']['closeFormBeforeCustomButtons']);
         }
         if(isset($this->defs['templateMeta']['form']['enctype'])) {
-
           $this->th->ss->assign('enctype', 'enctype="'.$this->defs['templateMeta']['form']['enctype'].'"');
         }
         //for SugarFieldImage, we must set form enctype to "multipart/form-data"

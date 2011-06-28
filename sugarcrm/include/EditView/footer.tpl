@@ -43,7 +43,7 @@
 {{/if}}
 </form>
 {{if $externalJSFile}}
-{sugar_include include=$externalJSFile}
+require_once("'".$externalJSFile."'");
 {{/if}}
 
 {$set_focus_block}
