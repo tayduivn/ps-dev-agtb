@@ -162,8 +162,6 @@ document.getElementById('gonext').onclick = function(){
             return false;
         }
     }
-
-    document.getElementById('importstep2').action.value = 'Confirm';
     clear_all_errors();
     var isError = false;
     // be sure we specify a file to upload
