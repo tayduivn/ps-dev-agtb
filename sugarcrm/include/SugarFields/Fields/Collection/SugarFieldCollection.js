@@ -524,8 +524,8 @@ if(typeof(SUGAR.collection) == "undefined") {
         	for (var i = 0; i <= this.fields_count; i++) {
         		var div_el = document.getElementById(this.field_element_name + '_input_div_' + i);
                 if(div_el) { 
-		        	var name_field = document.getElementById(this.field+"_collection_" + i);
-					var id_field = document.getElementById("id_"+this.field+"_collection_" + i);
+		        	var name_field = document.getElementById(this.field_element_name+"_collection_" + i);
+					var id_field = document.getElementById("id_"+this.field_element_name+"_collection_" + i);
 		        	name_field.value = values['name'];
 		        	id_field.value = values['id'];
 		        	break;
