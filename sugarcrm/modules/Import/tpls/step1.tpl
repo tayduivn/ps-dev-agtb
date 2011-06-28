@@ -30,7 +30,6 @@
 // $Id: step1.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-{overlib_includes}
 {$MODULE_TITLE}
 {if $ERROR != ''}
 <span class="error">{$ERROR}</span>

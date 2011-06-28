@@ -1,3 +1,4 @@
+{overlib_includes}
 <div class="dashletPanelMenu">
     <div class="hd">
         <div class="tl"></div>
