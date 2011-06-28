@@ -83,7 +83,10 @@ class ImportViewExtStep1 extends ImportViewStep3
         $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
         $this->ss->assign('CSS', $this->_getCSS());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
-        $this->ss->display('modules/Import/tpls/extstep1.tpl');
+
+        $content = $this->ss->fetch('modules/Import/tpls/extstep1.tpl');
+        $this->ss->assign("CONTENT",$content);
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
     private function getMappingRows($module, $extSourceToSugarFieldMapping)
