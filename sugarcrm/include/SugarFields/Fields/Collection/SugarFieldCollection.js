@@ -545,7 +545,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                 if(div_el) {        
 	                input_els = div_el.getElementsByTagName('input');
 	                for ( var x = 0; x < input_els.length; x++ ){
-	                	if(input_els[x].id && input_els[x].id == (this.field + '_collection_' + i) && trim(input_els[x].value) == '') {
+	                	if(input_els[x].id && input_els[x].name == (this.field + '_collection_' + i) && trim(input_els[x].value) == '') {
 	                		if(divCount == 0){
 	                			isFirstFieldEmpty = true;
 	                		} else {
