@@ -131,8 +131,10 @@ class ImportViewStep2 extends ImportView
         }
         $this->ss->assign("INSTRUCTIONS_TITLE",$mod_strings["LBL_IMPORT_{$lang_key}_TITLE"]);
         $this->ss->assign("instructions",$instructions);
-        
-        $this->ss->display('modules/Import/tpls/step2.tpl');
+
+        $content = $this->ss->fetch('modules/Import/tpls/step2.tpl');
+        $this->ss->assign("CONTENT",$content);
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
     
     /**

@@ -96,7 +96,9 @@ class ImportViewDupcheck extends ImportView
         $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
 
-        $this->ss->display('modules/Import/tpls/dupcheck.tpl');
+        $content = $this->ss->fetch('modules/Import/tpls/dupcheck.tpl');
+        $this->ss->assign("CONTENT",$content);
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
     private function getImportMap()

@@ -158,7 +158,10 @@ class ImportViewConfirm extends ImportView
         
         $this->ss->assign("SAMPLE_ROWS",$rows);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS ));
-        $this->ss->display('modules/Import/tpls/confirm.tpl');
+
+        $content = $this->ss->fetch('modules/Import/tpls/confirm.tpl');
+        $this->ss->assign("CONTENT",$content);
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
     private function shouldAutoDetectProperties($importSource)
