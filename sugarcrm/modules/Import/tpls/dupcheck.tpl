@@ -67,7 +67,7 @@ textarea { width: 20em }
 
     <br />
     <div style="padding-left:20px">
-    <table border="0" cellpadding="30" id="importTable" class="themeSettings edit view" style="width:60% !important;">
+    <table border="0" cellpadding="30" id="importTable" style="width:60% !important;">
     <tr>
         <td scope="row" align="left" colspan="2" style="text-align: left;">{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</td>
     </tr>

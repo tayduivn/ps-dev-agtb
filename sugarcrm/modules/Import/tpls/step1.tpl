@@ -43,7 +43,7 @@
 <input type="hidden" name="return_action" value="Step1">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <p>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
     <td>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">

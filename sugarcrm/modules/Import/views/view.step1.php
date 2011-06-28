@@ -65,7 +65,10 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
         $this->ss->assign("EXTERNAL_SOURCES_OPTIONS", get_select_options_with_id($this->getImportableExternalEAPMs(),'') );
-        $this->ss->display('modules/Import/tpls/step1.tpl');
+
+        $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
+        $this->ss->assign("CONTENT",$content);
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
     private function getImportableModules()

@@ -45,6 +45,9 @@
 
 {overlib_includes}
 {$MODULE_TITLE}
+
+
+
 <form enctype="multipart/form-data" name="importstep2" method="POST" action="index.php" id="importstep2">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
@@ -56,7 +59,7 @@
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 
 <br>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -64,13 +67,19 @@
             <td align="left" scope="row" colspan="4">{$SAMPLE_URL} &nbsp;{sugar_help text=$MOD.LBL_SAMPLE_URL_HELP}</td>
         </tr>
         <tr>
-            <td scope="row" colspan="4"></td>
+            <td scope="row" colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td scope="row" colspan="4">&nbsp;</td>
         </tr>
         <tr>
             <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="60" name="userfile" type="file"/> &nbsp;{sugar_help text=$MOD.LBL_FILE_UPLOAD_WIDGET_HELP}</td>
         </tr>
         <tr>
-            <td scope="row" colspan="4"></td>
+            <td scope="row" colspan="4">&nbsp;</td>
+        </tr>
+        <tr>
+            <td scope="row" colspan="4">&nbsp;</td>
         </tr>
         <tr>
             <td scope="row" colspan="3">
