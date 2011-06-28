@@ -52,12 +52,32 @@ class Bug33806Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
-        echo "singular=$singular\n";
-        echo "expected=$expectedName\n";
         $module = get_module_from_singular($singular);
-        echo "got =$module\n";
 
         $this->assertEquals($expectedName, $module);
     }
 
+    function _moduleNameProvider2()
+    {
+        return array(
+            array( 'renamed' => 'Acct', 'module' => 'Accounts'),
+        );
+    }
+
+    /**
+     * Test the getMime function for the use case where the mime type is already provided.
+     *
+     * @dataProvider _moduleNameProvider2
+     */
+    public function testGetModuleFromRenamed($renamed, $expectedName)
+    {
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+
+        // manually rename the module name to 'Acct'
+        $GLOBALS['app_list_strings']['moduleList']['Accounts'] = 'Acct';
+        
+        $module = get_module_from_singular($renamed);
+
+        $this->assertEquals($expectedName, $module);
+    }
 }
