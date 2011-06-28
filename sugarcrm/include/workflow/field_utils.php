@@ -130,7 +130,9 @@ include_once('include/workflow/expression_utils.php');
 				//Set the value select
 				$sorted_fields = array();
 				$sorted_fields = $app_list_strings[$target_field_array['options']];
-				asort($sorted_fields);
+				if (isset($sorted_fields)) {
+					asort($sorted_fields);
+				}
 				$column_select = get_select_options_with_id($sorted_fields, $selected_value);
 				//if(!empty($target_field_array['isMultiSelect']) && $target_field_array['isMultiSelect'] == true){
 				//	$selected_operator = "in";
@@ -316,7 +318,7 @@ include_once('include/workflow/expression_utils.php');
 			//end if type datetime
 			}
 
-			if($field_type=="assigned_user_name" || $field_name == 'assigned_user_id'
+			if($field_type=="assigned_user_name" || $field_name == 'assigned_user_id' || $field_type=="getContractTypesDropDown"
 			){
 				//Real type is just a surface variable used by javascript to determine dual type actions
 				//in the javascript
@@ -327,7 +329,11 @@ include_once('include/workflow/expression_utils.php');
 				//check for multi_select and that this is the same dropdown as previous;
 
 				//Set the value select
-				$user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
+				if($field_type == "getContractTypesDropDown"){
+					$user_array = getContractTypesDropDown();
+				}else{
+				    $user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
+				}
 
 				//$column_select = get_select_options_with_id($app_list_strings[$target_field_array['options']], $selected_value);
 				$column_select = get_select_options_with_id($user_array, $selected_value);
