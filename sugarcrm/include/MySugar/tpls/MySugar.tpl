@@ -96,41 +96,38 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 		//END SUGARCRM flav=pro || flav=sales ONLY
 		SUGAR.mySugar.maxCount = 	{/literal}{$maxCount}{literal};
 		SUGAR.mySugar.homepage_dd = new Array();
-		SUGAR.mySugar.init = function () {
-			j = 0;
+		var j = 0;
 
-			{/literal}
-			dashletIds = {$dashletIds};
+		{/literal}
+		var dashletIds = {$dashletIds};
 
-			{if !$lock_homepage}
-			<!--//BEGIN SUGARCRM flav=pro ONLY -->
-			SUGAR.mySugar.attachDashletCtrlEvent();
-			<!--//END SUGARCRM flav=pro ONLY -->
-			{literal}
-			for(i in dashletIds) {
-				SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
-				SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
-				SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
-				SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
-				j++;
-			}
-			for(var wp = 0; wp <= {/literal}{$hiddenCounter}{literal}; wp++) {
-				SUGAR.mySugar.homepage_dd[j++] = new ygDDListBoundary('page_'+activePage+'_hidden' + wp);
-			}
-
-			YAHOO.util.DDM.mode = 1;
-			{/literal}
-			{/if}
-			{literal}
-			SUGAR.mySugar.renderDashletsDialog();
-			//BEGIN SUGARCRM flav=pro ONLY
-			SUGAR.mySugar.renderAddPageDialog();
-			SUGAR.mySugar.renderChangeLayoutDialog();
-			SUGAR.mySugar.renderLoadingDialog();
-			//END SUGARCRM flav=pro ONLY
-			SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
+		{if !$lock_homepage}
+		<!--//BEGIN SUGARCRM flav=pro ONLY -->
+		SUGAR.mySugar.attachDashletCtrlEvent();
+		<!--//END SUGARCRM flav=pro ONLY -->
+		{literal}
+		for(i in dashletIds) {
+			SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
+			SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
+			SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
+			SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
+			j++;
 		}
-		YAHOO.util.Event.addListener(window, 'load', SUGAR.mySugar.init);
+		for(var wp = 0; wp <= {/literal}{$hiddenCounter}{literal}; wp++) {
+			SUGAR.mySugar.homepage_dd[j++] = new ygDDListBoundary('page_'+activePage+'_hidden' + wp);
+		}
+
+		YAHOO.util.DDM.mode = 1;
+		{/literal}
+		{/if}
+		{literal}
+		SUGAR.mySugar.renderDashletsDialog();
+		//BEGIN SUGARCRM flav=pro ONLY
+		SUGAR.mySugar.renderAddPageDialog();
+		SUGAR.mySugar.renderChangeLayoutDialog();
+		SUGAR.mySugar.renderLoadingDialog();
+		//END SUGARCRM flav=pro ONLY
+		SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
 		{/literal}
 		//BEGIN SUGARCRM flav=pro ONLY
 		{$activeTabJavascript}
