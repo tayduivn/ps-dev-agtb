@@ -75,7 +75,7 @@
                             <a href='javascript:sListView.order_checks("ASC", "{$params.orderBy|default:$colHeader|lower}" , "{$pageData.bean.moduleDir}{"2_"}{$pageData.bean.objectName|upper}{"_ORDER_BY"}")' class='listViewThLinkS1'>
                         {/if}
                     {/if}
-                    {sugar_translate_truncate_ellipses label=$params.label module=$pageData.bean.moduleDir}
+                    {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
 					</a>&nbsp;&nbsp;
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
