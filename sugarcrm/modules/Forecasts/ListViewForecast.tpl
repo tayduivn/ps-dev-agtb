@@ -121,7 +121,7 @@
 		{foreach from=$displayColumns key=colHeader item=params}
 		    {if !$params.hidden}
 				<th width='{$params.width}%' align='{$params.align}' >
-					<div style='white-space: nowrap;'width='100%' align='{$params.align|default:"left"}'>
+					<div style='white-space: normal;'width='100%' align='{$params.align|default:"left"}'>
 					{if $params.sortable|default:true}
 						<a href='javascript:list_nav({$params.order_by_object},"CommitEditView")' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
 						{assign var=default_order value=$params.tablename|default:''}

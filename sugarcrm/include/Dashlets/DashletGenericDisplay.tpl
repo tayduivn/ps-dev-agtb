@@ -98,8 +98,8 @@
     </tr>
     <tr height='20'>
         {foreach from=$displayColumns key=colHeader item=params}
-	        <th scope='col' width='{$params.width}%' nowrap="nowrap">
-				<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+	        <th scope='col' width='{$params.width}%'>
+				<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
                 {if $params.sortable|default:true} 
 	                <a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}&sugar_body_only=1&id={$dashletId}")' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}</a>&nbsp;&nbsp;
 	                {if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
