@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once 'modules/Import/ImportFile.php';
+require_once('modules/Import/sources/ImportFile.php');
 
 class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
 {

@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once 'modules/Import/ImportFile.php';
+require_once('modules/Import/sources/ImportFile.php');
 require_once 'modules/Import/ImportFileSplitter.php';
 
 class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
