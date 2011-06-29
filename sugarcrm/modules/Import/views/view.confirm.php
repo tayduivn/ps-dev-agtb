@@ -145,8 +145,8 @@ class ImportViewConfirm extends ImportView
 
         //Retrieve a sample set of data
         $rows = $this->getSampleSet($importFile);
-
-
+        $this->ss->assign('column_count', $this->getMaxColumnsInSampleSet($rows) );
+        $this->ss->assign('HAS_HEADER', $importFile->hasHeaderRow(FALSE) );
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
         $this->setImportFileCharacterSet($importFile);
         $this->setDateTimeProperties($importFileMap);
@@ -328,7 +328,20 @@ eoq;
         return $results;
     }
 
+    public function getMaxColumnsInSampleSet($sampleSet)
+    {
+        $maxColumns = 0;
+        foreach($sampleSet as $v)
+        {
+            if(count($v) > $maxColumns)
+                $maxColumns = count($v);
+            else
+                continue;
+        }
 
+        return $maxColumns;
+    }
+    
     public function getSampleSet($importFile)
     {
         $rows = array();
@@ -339,7 +352,7 @@ eoq;
 
         if( ! $importFile->hasHeaderRow(FALSE) )
         {
-            array_unshift($rows, array_fill(0, count($rows[0]),'') );
+            array_unshift($rows, array_fill(0,1,'') );
         }
 
         return $rows;

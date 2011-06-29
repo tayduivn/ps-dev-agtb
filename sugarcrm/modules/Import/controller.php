@@ -111,6 +111,7 @@ class ImportController extends SugarController
     }
     function action_RefreshMapping()
     {
+        global $mod_strings;
         require_once('modules/Import/sources/ImportFile.php');
         require_once('modules/Import/views/view.confirm.php');
         $v = new ImportViewConfirm();
@@ -126,6 +127,9 @@ class ImportController extends SugarController
 
         $ss = new Sugar_Smarty();
         $ss->assign("SAMPLE_ROWS",$rows);
+        $ss->assign("HAS_HEADER",$hasHeader);
+        $ss->assign("column_count",$v->getMaxColumnsInSampleSet($rows));
+        $ss->assign("MOD",$mod_strings);
         $ss->display('modules/Import/tpls/confirm_table.tpl');
         sugar_cleanup(TRUE);
 
@@ -193,7 +197,7 @@ class ImportController extends SugarController
     {
         $this->view = 'extimport';
     }
-
+    
     function action_GetControl()
     {
         echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);

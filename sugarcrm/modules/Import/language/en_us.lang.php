@@ -328,6 +328,7 @@ $mod_strings = array (
     'LBL_FILE_UPLOAD_WIDGET_HELP' => 'Select a file containing data that is separated by a delimiter, such as a comma- or tab- delimited file.  Files of the type .csv are recommended.',
     'LBL_EXTERNAL_ERROR_NO_SOURCE' => 'Unable to retrieve source adapter, please try again later.',
     'LBL_EXTERNAL_ERROR_FEED_CORRUPTED' => 'Unable to retrieve external feed, please try again later.',
-    'LBL_ADD_FIELD_HELP' => 'Select this option to add an additional field to the import'
+    'LBL_ADD_FIELD_HELP' => 'Select this option to add an additional field to the import',
+    'LBL_MISSING_HEADER_ROW' => 'No Header Row Found'
 );
 ?>
