@@ -115,9 +115,11 @@ document.body.setAttribute("class", "yui-skin-sam");
 
 </div>
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
+	{if !$lock_homepage}
 	<div id="addPage">
 		<a href='javascript:void(0)' id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"><img src='{sugar_getimagepath file="info-add-page.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'></a>
 	</div>
+	{/if}
 <!--//END SUGARCRM flav=pro ONLY -->
 </td>
 
