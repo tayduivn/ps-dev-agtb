@@ -39,7 +39,8 @@ class quicksearchQuery
         if (!is_array($query_obj['conditions'])) {
             $query_obj['conditions'] = array();
         }
-
+        
+        $query_obj['whereExtra'] = '';
         foreach($query_obj['conditions'] as $condition)
         {
             switch ($condition['op'])
