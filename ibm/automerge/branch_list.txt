@@ -8,3 +8,4 @@ ibmf_pluschar
 ibmf_wildcardsrch
 ibmf_sugaralerts
 ibmf_custominstallhooks
+ibmf_quicksearchextend
