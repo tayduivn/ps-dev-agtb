@@ -480,6 +480,10 @@ class CalendarActivity
 				$start = $start_ts_obj->get_day_begin(1);
 				$end = $end_ts_obj->get("first day of next month")->get_day_begin();
 				break;
+            case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
+                $start = $start_ts_obj;
+                $end = $end_ts_obj;
+                break;
 			default:
 				// Date for the past 5 days as that is the maximum duration of a single activity
 				$start = $start_ts_obj->get("-5 days")->get_day_begin();
