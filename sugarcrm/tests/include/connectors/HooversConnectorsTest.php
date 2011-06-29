@@ -31,7 +31,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
 	var $qual_module;
 	var $listArgs;
 	var $company_id;
-
+    
     function setUp() {
         parent::setUp();
     	ConnectorFactory::$source_map = array();
@@ -66,6 +66,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$this->qual_module = 'Accounts';
     	$this->company_id = '2205698';
     	$this->listArgs = array('name' => 'Gannett');
+    	//$this->useOutputBuffering = false;
     }
 
     function tearDown() {
@@ -77,7 +78,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
     	$account = new Account();
     	$account = $source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);
-    	$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
+    	$this->assertRegExp('/Gannett/i', $account->name, "Assert that account name is like Gannett");
     }
 
     function test_hoovers_fillBeans() {
@@ -85,7 +86,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$accounts = array();
     	$accounts = $source_instance->fillBeans($this->listArgs, $this->qual_module, $accounts);
         foreach($accounts as $count=>$account) {
-    		$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that a bean has been filled with account name like Gannett");
+    		$this->assertRegExp('/Gannett/i', $account->name, "Assert that a bean has been filled with account name like Gannett");
     		break;
     	}
     }
