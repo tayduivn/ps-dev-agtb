@@ -393,6 +393,10 @@ class ImportViewStep3 extends ImportView
                     background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat -0 -110px;
                     padding-left: 10px;
                 }
+                .removeButton{
+                    border: none !important;
+                    background-image: none !important;
+                }
 
             </style>
 EOCSS;
@@ -502,6 +506,8 @@ document.getElementById('addrow').onclick = function(){
         }
     }
 
+    column0.innerHTML += '<button title="{$mod_strings['LBL_REMOVE_ROW']}" class="removeButton" accessKey="" id="deleterow_' + rownum + '"><img vertical-align="bottom"src="index.php?entryPoint=getImage&themeName=Sugar&imageName=id-ff-remove.png"></button>';
+
     if ( document.getElementById('row_0_header') ) {
         column1 = document.getElementById('row_0_header').cloneNode(true);
         column1.innerHTML = '&nbsp;';
@@ -515,7 +521,7 @@ document.getElementById('addrow').onclick = function(){
     if ( !document.getElementById('row_0_header') ) {
         column3.colSpan = 2;
     }
-    column3.innerHTML = '<input title="{$mod_strings['LBL_REMOVE_ROW']}" accessKey="" id="deleterow_' + rownum + '" class="button" type="button" value="  {$mod_strings['LBL_REMOVE_ROW']}  ">';
+    
     newrow.appendChild(column3);
 
     column2 = document.getElementById('defaultvaluepicker_0').cloneNode(true);

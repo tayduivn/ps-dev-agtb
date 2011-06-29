@@ -140,7 +140,7 @@
 <tr>
     <td align="left" colspan="4" style="background: transparent;">
         <input title="{$MOD.LBL_ADD_ROW}" accessKey="" id="addrow" class="button" type="button"
-            name="button" value="  {$MOD.LBL_ADD_ROW}  ">
+            name="button" value="  {$MOD.LBL_ADD_ROW}  "> {sugar_help text=$MOD.LBL_ADD_FIELD_HELP}
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </td>
 </tr>

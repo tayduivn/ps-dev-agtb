@@ -47,7 +47,7 @@
     <td>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td valign="top" width='50%' scope="row"><table border="0" cellpadding="0" cellspacing="0">
+        <td valign="top" width='50%' scope="row"><table border="0" cellpadding="0" cellspacing="5">
             {if $showModuleSelection}
             <tr>
                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_STEP_MODULE}&nbsp;</h3></td>
@@ -55,11 +55,14 @@
             <tr>
                 <td><select tabindex='4' name='import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
             </tr>
-
+            <tr>
+            <td align="left" scope="row">&nbsp;</td>
+          </tr>
             {/if}
           <tr>
             <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
           </tr>
+
           <tr>
             <td colspan="3" scope="row">
                 <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
