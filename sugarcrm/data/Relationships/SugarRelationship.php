@@ -271,7 +271,7 @@ abstract class SugarRelationship
         {
             foreach ($beans as $bean)
             {
-                if (empty($bean->deleted))
+                if (empty($bean->deleted) && empty($bean->in_save))
                 {
                     $bean->save();
                 }
