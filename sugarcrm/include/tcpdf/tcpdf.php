@@ -4450,6 +4450,8 @@ if (!class_exists('TCPDF', false)) {
 					$w = $h * $pixw / $pixh;
 				}
 			} else if ($resize) { // Added resize case
+                // Note: The issue here is that $w and $h represent abstract sizes, we pass it in as pixels,
+                // but tcpdf treats it as document units.
                 $wratio = $pixw / $w;
                 $hratio = $pixh / $h;
 
@@ -4468,8 +4470,8 @@ if (!class_exists('TCPDF', false)) {
                 // Calculate the new boundaries that also happen to fit the box..
                 // Dividing by the unit conversion $this->k seems to make the size not blow up
                 // later down in the code.
-                $w = floor($pixw / $favoredRatio / $this->k);
-                $h = floor($pixh / $favoredRatio / $this->k);
+                $w = $pixw / $favoredRatio / $this->k;
+                $h = $pixh / $favoredRatio / $this->k;
             }
 			// calculate new minimum dimensions in pixels
 			$neww = round($w * $this->k * $dpi / $this->dpi);
