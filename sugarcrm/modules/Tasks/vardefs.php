@@ -245,6 +245,17 @@ $dictionary['Task'] = array('table' => 'tasks',
     'source'=>'non-db',
     'vname'=>'LBL_PROJECT_TASKS',
   ),
+    'notes' =>
+  array (
+  	'name' => 'notes',
+    'type' => 'link',
+    'relationship' => 'tasks_notes',
+    'module'=>'Notes',
+    'bean_name'=>'Note',
+    'source'=>'non-db',
+		'vname'=>'LBL_NOTES',
+  ),
+  
 //BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
   array (
@@ -265,6 +276,15 @@ $dictionary['Task'] = array('table' => 'tasks',
 )
 ,
  'relationships' => array (
+		'tasks_notes' => array(
+			'lhs_module'		=> 'Tasks',
+			'lhs_table'			=> 'tasks',
+			'lhs_key'			=> 'id',
+			'rhs_module'		=> 'Notes',
+			'rhs_table'			=> 'notes',
+			'rhs_key'			=> 'parent_id',
+			'relationship_type'	=> 'one-to-many',
+		),
 
   'tasks_assigned_user' =>
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',

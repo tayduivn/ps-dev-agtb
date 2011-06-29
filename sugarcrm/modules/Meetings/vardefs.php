@@ -374,10 +374,6 @@ $dictionary['Meeting'] = array('table' => 'meetings',
    'rhs_module'=> 'Meetings', 'rhs_table'=> 'meetings', 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many')
 
-	,'meetings_notes' => array('lhs_module'=> 'Meetings', 'lhs_table'=> 'meetings', 'lhs_key' => 'id',
-							  'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'parent_id',
-							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-							  'relationship_role_column_value'=>'Meetings')
 	)
 
                                                       , 'indices' => array (
