@@ -129,7 +129,22 @@ include_once('include/workflow/expression_utils.php');
 
 				//Set the value select
 				$sorted_fields = array();
-				$sorted_fields = $app_list_strings[$target_field_array['options']];
+				if(!empty($target_field_array['function'])){ 
+					$function = $target_field_array['function'];
+					if(is_array($function) && isset($function['name'])){
+	       				$function = $target_field_array['function']['name'];
+	       			}else{
+	       				$function = $target_field_array['function'];
+	       			}
+	       	 		if(!empty($target_field_array['function']['returns']) && $target_field_array['function']['returns'] == 'html'){
+						if(!empty($target_field_array['function']['include'])){
+								require_once($target_field_array['function']['include']);
+						}
+					}	
+					$sorted_fields = $function();					
+				}else{	
+					$sorted_fields = $app_list_strings[$target_field_array['options']];
+				}
 				if (isset($sorted_fields)) {
 					asort($sorted_fields);
 				}
@@ -318,7 +333,7 @@ include_once('include/workflow/expression_utils.php');
 			//end if type datetime
 			}
 
-			if($field_type=="assigned_user_name" || $field_name == 'assigned_user_id' || $field_type=="getContractTypesDropDown"
+			if($field_type=="assigned_user_name" || $field_name == 'assigned_user_id'
 			){
 				//Real type is just a surface variable used by javascript to determine dual type actions
 				//in the javascript
@@ -329,12 +344,8 @@ include_once('include/workflow/expression_utils.php');
 				//check for multi_select and that this is the same dropdown as previous;
 
 				//Set the value select
-				if($field_type == "getContractTypesDropDown"){
-					$user_array = getContractTypesDropDown();
-				}else{
-				    $user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
-				}
-
+				$user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
+				
 				//$column_select = get_select_options_with_id($app_list_strings[$target_field_array['options']], $selected_value);
 				$column_select = get_select_options_with_id($user_array, $selected_value);
 				$value_select =  "<select id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."_field_value' tabindex='2'>".$column_select."</select>";
