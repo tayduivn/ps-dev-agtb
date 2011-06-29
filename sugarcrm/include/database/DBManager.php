@@ -2262,6 +2262,12 @@ abstract class DBManager
 		    (!empty($auto_increment) || $name == 'id' || ($fieldDef['type'] == 'id' && !empty($fieldDef['required'])))) {
             $required =  "NOT NULL";
         }
+        // If the field is marked both required & isnull=>false - alwqys make it not null
+        // Use this to ensure primary key fields never defined as null
+        if(isset($fieldDef['isnull']) && (strtolower($fieldDef['isnull']) == 'false' || $fieldDef['isnull'] === false)
+            && !empty($fieldDef['required'])) {
+            $required =  "NOT NULL";
+        }
 		if ($ignoreRequired)
             $required = "";
 
