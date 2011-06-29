@@ -43,7 +43,7 @@ class Bug44831Test extends Sugar_PHPUnit_Framework_OutputTestCase
         // Create a very simple custom EditView Layout
         if( $fh = @fopen("custom/modules/Leads/metadata/editviewdefs.php", 'w+') ) 
         {
-	    $string = <<<EOQ
+$string = <<<EOQ
 <?php
 \$viewdefs['Leads']['EditView'] = array('templateMeta' => array (
                                                                  'form' => array('buttons' => array ('SAVE', 'CANCEL'),
@@ -123,7 +123,7 @@ EOQ;
         // Then check inclusion of LeadJS2.js
         $this->expectOutputRegex('/.*<script src=\"custom\/modules\/Leads\/javascript\/LeadJS2\.js.*\"><\/script>.*/');
         
-        unset($GLOBALS['app']->controller);
+        //unset($GLOBALS['app']->controller);
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
         unset($_REQUEST['record']);
