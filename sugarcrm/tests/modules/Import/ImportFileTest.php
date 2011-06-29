@@ -69,12 +69,15 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadFileWithByteOrderMark()
     {
-        $importFile = new ImportFile('tests/modules/Import/Bug39494ImportFile.txt',"\t",'',false);
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/Bug39494ImportFile.txt';
+        copy('tests/modules/Import/Bug39494ImportFile.txt', $sample_file);
+        $importFile = new ImportFile($sample_file,"\t",'',false);
         $this->assertTrue($importFile->fileExists());
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('name','city'));
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('tester1','wuhan'));
+        unlink($sample_file);
     }
     
     public function testGetNextRow()

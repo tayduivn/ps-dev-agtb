@@ -57,7 +57,7 @@ class SugarTestImportUtilities
         $columns = 3
         ) 
     {
-        $filename = $GLOBALS['sugar_config']['import_dir'].'test'.date("YmdHis");
+        $filename = $GLOBALS['sugar_config']['upload_dir'].'test'.date("YmdHis");
         $fp = fopen($filename,"w");
         for ($i = 0; $i < $lines; $i++) {
             $line = array();
