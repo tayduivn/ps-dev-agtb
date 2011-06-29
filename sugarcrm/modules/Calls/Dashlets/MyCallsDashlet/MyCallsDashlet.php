@@ -49,11 +49,11 @@ class MyCallsDashlet extends DashletGeneric {
 			}
         }
         $this->columns = $dashletData['MyCallsDashlet']['columns'];
-        $this->columns['set_accept_links']= array('width'    => '10', 
+        /*$this->columns['set_accept_links']= array('width'    => '10', 
                                               'label'    => translate('LBL_ACCEPT_THIS', 'Meetings'),
                                               'sortable' => false,
                                               'related_fields' => array('status'),
-                                              'default' => 'true');
+                                              'default' => 'true');*/
         $this->seedBean = new Call();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->seedBean->disable_row_level_security = true;
