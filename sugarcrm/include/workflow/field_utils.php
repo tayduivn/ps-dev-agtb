@@ -129,8 +129,25 @@ include_once('include/workflow/expression_utils.php');
 
 				//Set the value select
 				$sorted_fields = array();
-				$sorted_fields = $app_list_strings[$target_field_array['options']];
-				asort($sorted_fields);
+				if(!empty($target_field_array['function'])){ 
+					$function = $target_field_array['function'];
+					if(is_array($function) && isset($function['name'])){
+	       				$function = $target_field_array['function']['name'];
+	       			}else{
+	       				$function = $target_field_array['function'];
+	       			}
+	       	 		if(!empty($target_field_array['function']['returns']) && $target_field_array['function']['returns'] == 'html'){
+						if(!empty($target_field_array['function']['include'])){
+								require_once($target_field_array['function']['include']);
+						}
+					}	
+					$sorted_fields = $function();					
+				}else{	
+					$sorted_fields = $app_list_strings[$target_field_array['options']];
+				}
+				if (isset($sorted_fields)) {
+					asort($sorted_fields);
+				}
 				$column_select = get_select_options_with_id($sorted_fields, $selected_value);
 				//if(!empty($target_field_array['isMultiSelect']) && $target_field_array['isMultiSelect'] == true){
 				//	$selected_operator = "in";
@@ -328,7 +345,7 @@ include_once('include/workflow/expression_utils.php');
 
 				//Set the value select
 				$user_array = get_user_array(TRUE, "Active", "", true, null, ' AND is_group=0 ');
-
+				
 				//$column_select = get_select_options_with_id($app_list_strings[$target_field_array['options']], $selected_value);
 				$column_select = get_select_options_with_id($user_array, $selected_value);
 				$value_select =  "<select id='".$meta_array['parent_type']."__field_value' name='".$meta_array['parent_type']."_field_value' tabindex='2'>".$column_select."</select>";
