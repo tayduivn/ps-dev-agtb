@@ -506,7 +506,14 @@ document.getElementById('addrow').onclick = function(){
         }
     }
 
-    column0.innerHTML += '<button title="{$mod_strings['LBL_REMOVE_ROW']}" class="removeButton" accessKey="" id="deleterow_' + rownum + '"><img vertical-align="bottom"src="index.php?entryPoint=getImage&themeName=Sugar&imageName=id-ff-remove.png"></button>';
+    var removeButton = document.createElement("button");
+    removeButton.title = "{$mod_strings['LBL_REMOVE_ROW']}";
+    removeButton.id = 'deleterow_' + rownum;
+    removeButton.className = "removeButton";
+    var imgButton = document.createElement("img");
+    imgButton.src = "index.php?entryPoint=getImage&themeName=Sugar&imageName=id-ff-remove.png";
+    removeButton.appendChild(imgButton);
+    column0.appendChild(removeButton);
 
     if ( document.getElementById('row_0_header') ) {
         column1 = document.getElementById('row_0_header').cloneNode(true);
@@ -516,6 +523,8 @@ document.getElementById('addrow').onclick = function(){
 
     newrow.appendChild(column0);
 
+
+                            
     column3 = document.createElement('td');
     column3.className = 'tabDetailViewDL';
     if ( !document.getElementById('row_0_header') ) {
@@ -535,6 +544,8 @@ document.getElementById('addrow').onclick = function(){
     document.getElementById('deleterow_' + rownum).onclick = function(){
         this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
     }
+
+
 }
 
 function toggleDefaultColumnVisibility()
