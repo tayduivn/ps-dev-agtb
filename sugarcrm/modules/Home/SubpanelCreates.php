@@ -48,7 +48,7 @@ if(file_exists('modules/'. $_REQUEST['target_module'] . '/EditView.php')) {
 	$view = (!empty($_REQUEST['target_view'])) ? $_REQUEST['target_view'] : 'QuickCreate';
 	//Check if there is a custom override, then check for module override, finally use default (SubpanelQuickCreate)
 	if(file_exists('custom/' . $subpanelView)) {
-		require_once('custom/' . $subpanelView);
+		require_once($subpanelView);
 		$subpanelClass = $target_module . 'SubpanelQuickCreate';
 		$sqc  = new $subpanelClass($target_module, $view);
 	} else if(file_exists($subpanelView)) {
@@ -61,3 +61,4 @@ if(file_exists('modules/'. $_REQUEST['target_module'] . '/EditView.php')) {
 	}
 }	
 
+?>
