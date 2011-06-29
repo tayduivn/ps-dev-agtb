@@ -83,6 +83,13 @@ class ImportViewConfirm extends ImportView
             return;
         }
 
+        //check the file size, we dont want to process an empty file
+        if(isset($_FILES['userfile']['size']) && $_FILES['userfile']['size'] == 0){
+            //this file is empty, throw error message
+            $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2');
+            return;
+        }
+
         $this->ss->assign("FILE_NAME", $uploadFileName);
 
         // Now parse the file and look for errors
@@ -96,7 +103,10 @@ class ImportViewConfirm extends ImportView
             $this->ss->assign("SOURCE", 'csv');
             if($autoDetectOk === FALSE)
             {
-                $this->ss->assign("AUTO_DETECT_ERROR",  $mod_strings['LBL_AUTO_DETECT_ERROR']);
+                 $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_1'];
+                 $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_2'];
+                 $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2');
+                 $this->ss->assign("AUTO_DETECT_ERROR",  $mod_strings['LBL_AUTO_DETECT_ERROR']);
             }
             else
             {
@@ -493,9 +503,16 @@ EOJAVASCRIPT;
         $action = 'Step1'
         )
     {
+        if(!is_array($message)){
+            $message = array($message);
+        }
         $ss = new Sugar_Smarty();
+        $display_msg = '';
+        foreach($message as $m){
+            $display_msg .= '<p>'.htmlentities($m, ENT_QUOTES).'</p><br>';
+        }
 
-        $ss->assign("MESSAGE",$message);
+        $ss->assign("MESSAGE",$display_msg);
         $ss->assign("ACTION",$action);
         $ss->assign("IMPORT_MODULE",$module);
         $ss->assign("MOD", $GLOBALS['mod_strings']);
