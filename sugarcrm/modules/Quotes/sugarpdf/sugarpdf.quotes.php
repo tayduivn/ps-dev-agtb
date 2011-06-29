@@ -49,7 +49,14 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
         if (($headerdata['logo']) AND ($headerdata['logo'] != K_BLANK_IMAGE)) {
             $logo = K_PATH_CUSTOM_IMAGES.$headerdata['logo'];
             $imsize = @getimagesize($logo);
-
+            if ($imsize === FALSE) {
+                // encode spaces on filename
+                $logo = str_replace(' ', '%20', $logo);
+                $imsize = @getimagesize($logo);
+                if ($imsize === FALSE) {
+                    $logo = K_PATH_IMAGES.$headerdata['logo'];
+                }
+            }
             // Print of the logo
             // The way that the 3rd and 4th parameters work in Image() is weird. I have added a case to check if
             // w and h are set as well as resize = true so that we can get what fitbox was supposed to do.
