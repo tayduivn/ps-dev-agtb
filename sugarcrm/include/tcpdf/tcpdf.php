@@ -4460,6 +4460,9 @@ if (!class_exists('TCPDF', false)) {
                     $favoredRatio = $wratio;
                 } else if ($hratio > 1) {
                     $favoredRatio = $hratio;
+                } else {
+                    $favoredRatio = 1;
+                    $resize = false;
                 }
 
                 // Calculate the new boundaries that also happen to fit the box..
@@ -4471,7 +4474,6 @@ if (!class_exists('TCPDF', false)) {
 			// calculate new minimum dimensions in pixels
 			$neww = round($w * $this->k * $dpi / $this->dpi);
 			$newh = round($h * $this->k * $dpi / $this->dpi);
-
 			// check if resize is necessary (resize is used only to reduce the image)
 
             // - commmented out by pete d.
