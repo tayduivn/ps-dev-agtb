@@ -137,7 +137,7 @@ SUGAR.ajaxUI = {
             YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
                 success: SA.callback
             });
-            window.location="index.php?action=ajaxui#ajaxUILoc=";
+            //window.location="index.php?action=ajaxui#ajaxUILoc=";
             return true;
         } else {
             // window.location = url;

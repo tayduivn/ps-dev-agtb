@@ -44,13 +44,8 @@ require_once("'".$externalJSFile."'");
 {literal}
 SUGAR.calls = {};
 var callsLoader = new YAHOO.util.YUILoader({
-    require : ["sugar_grp_jsolait", "jsclass_scheduler"],
-    loadOptional: true,
-	//BEGIN SUGARCRM flav=int ONLY
-	filter: 'debug',
-	//END SUGARCRM flav=int ONLY
-    skin: { base: 'blank', defaultSkin: '' },
-	onSuccess: function(){
+    require : ["sugar_grp_jsolait"],
+    onSuccess: function(){
 		SUGAR.calls.fill_invitees = function() {
 			if (typeof(GLOBAL_REGISTRY) != 'undefined')  {
 				SugarWidgetScheduler.fill_invitees(document.EditView);
@@ -66,9 +61,7 @@ var callsLoader = new YAHOO.util.YUILoader({
 				eval(oldclick);
 			}
 		}
-	},
-    allowRollup: true,
-    base: "include/javascript/yui/build/"
+	}
 });
 callsLoader.addModule({
     name :"sugar_grp_jsolait",
@@ -76,13 +69,6 @@ callsLoader.addModule({
     fullpath: "include/javascript/sugar_grp_jsolait.js",
     varName: "global_rpcClient",
     requires: []
-});
-callsLoader.addModule({
-    name :"jsclass_scheduler",
-    type : "js",
-    fullpath: "modules/Meetings/jsclass_scheduler.js",
-    varName: "DL_GetElementTop",
-    requires: ["sugar_grp_jsolait"]
 });
 callsLoader.insert();
 {/literal}
