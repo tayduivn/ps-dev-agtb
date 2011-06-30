@@ -2240,5 +2240,4 @@ function return_date_filter($dbType, $field, $filter, $filter_date='', $filter_d
         }
 
     }
- ?>
-
+?>

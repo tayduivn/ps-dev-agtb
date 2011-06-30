@@ -24,7 +24,12 @@ require_once('include/Sugarpdf/Sugarpdf.php');
 
 class QuotesSugarpdfQuotes extends Sugarpdf{
     var $aclAction = "detail";
-    
+
+    // Defines the boundaries of the header image
+    const MAX_WIDTH = 348;
+    const MAX_HEIGHT = 60;
+    const DPI = 500; // We use a high dpi to help reduce artifacting when resizing
+
     /**
      * Override
      */
@@ -53,7 +58,10 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
                 }
             }
             // Print of the logo
-            $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), $headerdata['logo_width']);
+            // The way that the 3rd and 4th parameters work in Image() is weird. I have added a case to check if
+            // w and h are set as well as resize = true so that we can get what fitbox was supposed to do.
+            // w and h are used as boundary sizes in this case.
+            $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), self::MAX_WIDTH, self::MAX_HEIGHT, '', '', '', true, self::DPI);
         }
         // This table split the header in 3 parts of equal width. The last part (on the right) contain the header text.
         $table[0]["logo"]="";

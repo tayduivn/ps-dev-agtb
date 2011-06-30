@@ -4409,6 +4409,9 @@ if (!class_exists('TCPDF', false)) {
 		* @return image information
 		* @access public
 		* @since 1.1
+        *
+        * peter d: Upgrading tcpdf to the latest version causes the whole thing to blow up since we have modifications to the original source as well as sugarpdf which
+        * also extend from this. The only option is to add a workaround for some of the bugs in this function.
 		*/
 		public function Image($file, $x='', $y='', $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false) {
 			if ($x === '') {
@@ -4440,19 +4443,47 @@ if (!class_exists('TCPDF', false)) {
 				$h = $w * $pixh / $pixw;
 			} elseif ($fitbox AND ($w > 0) AND ($h > 0)) {
 				// scale image dimensions proportionally to fit within the ($w, $h) box
+                // NOTE: This section doesn't actually work very well, use the resize = true case I added.
 				if ((($w * $pixh) / ($h * $pixw)) < 1) {
 					$h = $w * $pixh / $pixw;
 				} else {
 					$w = $h * $pixw / $pixh;
 				}
-			}
+			} else if ($resize) { // Added resize case
+                // Note: The issue here is that $w and $h represent abstract sizes, we pass it in as pixels,
+                // but tcpdf treats it as document units.
+                $wratio = $pixw / $w;
+                $hratio = $pixh / $h;
+
+                // Check if our image exceeds the boundaries of $w and $h
+                if ($wratio > 1 AND $hratio > 1) {
+                    $favoredRatio = ($wratio > $hratio) ? $wratio : $hratio;
+                } else if ($wratio > 1) {
+                    $favoredRatio = $wratio;
+                } else if ($hratio > 1) {
+                    $favoredRatio = $hratio;
+                } else {
+                    $favoredRatio = 1;
+                    $resize = false;
+                }
+
+                // Calculate the new boundaries that also happen to fit the box..
+                // Dividing by the unit conversion $this->k seems to make the size not blow up
+                // later down in the code.
+                $w = $pixw / $favoredRatio / $this->k;
+                $h = $pixh / $favoredRatio / $this->k;
+            }
 			// calculate new minimum dimensions in pixels
 			$neww = round($w * $this->k * $dpi / $this->dpi);
 			$newh = round($h * $this->k * $dpi / $this->dpi);
 			// check if resize is necessary (resize is used only to reduce the image)
-			if (($neww * $newh) >= ($pixw * $pixh)) {
-				$resize = false;
-			}
+
+            // - commmented out by pete d.
+            // this is not a good way of checking for resize. and it might overwrite resize if the flag is enabled.
+			// if (($neww * $newh) >= ($pixw * $pixh)) {
+			//	$resize = false;
+			// }
+
 			// check if image has been already added on document
 			if (!in_array($file, $this->imagekeys)) {
 				//First use of image, get info

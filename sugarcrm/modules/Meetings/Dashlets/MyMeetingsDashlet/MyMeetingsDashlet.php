@@ -51,11 +51,11 @@ class MyMeetingsDashlet extends DashletGeneric {
 			}
         }
         $this->columns = $dashletData['MyMeetingsDashlet']['columns'];
-        $this->columns['set_accept_links']= array('width'    => '10', 
+        /*$this->columns['set_accept_links']= array('width'    => '10', 
                                               'label'    => translate('LBL_ACCEPT_THIS', 'Meetings'),
                                               'sortable' => false,
                                               'default' => true,
-                                              'related_fields' => array('status'));
+                                              'related_fields' => array('status'));*/
         $this->hasScript = true;  // dashlet has javascript attached to it                
         $this->seedBean = new Meeting();
         //BEGIN SUGARCRM flav=pro ONLY

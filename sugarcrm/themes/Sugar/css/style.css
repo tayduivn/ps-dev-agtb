@@ -2937,6 +2937,11 @@ embed
 	margin: 0px 0px 12px 0px;
 }
 
+/* Bug 43177 Predefined HTML Background Colors Do Not Display in the Detailview, but do in the Editview */
+div#html_div td {
+	background-color: inherit;
+}
+
 /* for smtp button on the email settings page */
 #smtpButtonGroup button
 {
