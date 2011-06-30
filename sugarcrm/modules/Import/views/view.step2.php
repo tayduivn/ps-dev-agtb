@@ -47,6 +47,10 @@ class ImportViewStep2 extends ImportView
     {
         global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
         global $import_mod_strings;
+
+        $this->instruction = 'LBL_SELECT_UPLOAD_INSTRUCTION';
+        $this->ss->assign('INSTRUCTION', $this->getInstruction());
+
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);

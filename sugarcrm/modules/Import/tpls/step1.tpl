@@ -34,6 +34,7 @@
 {if $ERROR != ''}
 <span class="error">{$ERROR}</span>
 {/if}
+{$INSTRUCTION}
 
 <form enctype="multipart/form-data" name="importstep1" method="post" action="index.php" id="importstep1">
 <input type="hidden" name="module" value="Import">

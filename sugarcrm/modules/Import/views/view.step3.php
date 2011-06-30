@@ -161,6 +161,10 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("TYPE", $_REQUEST['type'] );
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
+
+        $this->instruction = 'LBL_SELECT_MAPPING_INSTRUCTION';
+        $this->ss->assign('INSTRUCTION', $this->getInstruction());
+
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("STEP4_TITLE",
             strip_tags(str_replace("\n","",getClassicModuleTitle(

@@ -54,6 +54,9 @@ class ImportViewDupcheck extends ImportView
 
         $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
 
+        $this->instruction = 'LBL_SELECT_DUPLICATE_INSTRUCTION';
+        $this->ss->assign('INSTRUCTION', $this->getInstruction());
+
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));

@@ -333,7 +333,12 @@ $mod_strings = array (
     'LBL_ADD_FIELD_HELP' => 'Select this option to add an additional field to the import',
     'LBL_MISSING_HEADER_ROW' => 'No Header Row Found',
     'LBL_CANCEL' => 'Cancel',
-    'LBL_MIME_TYPE_ERROR' => 'The file you have uploaded does not appear to be a file that is commonly used to contain a properly formatted delimited list.  Please try again.'
+    'LBL_MIME_TYPE_ERROR' => 'The file you have uploaded does not appear to be a file that is commonly used to contain a properly formatted delimited list.  Please try again.',
+    'LBL_SELECT_DS_INSTRUCTION' => 'Ready to start importing? Select the source of the data that you would like to import.',
+    'LBL_SELECT_UPLOAD_INSTRUCTION' => 'Select a file on your computer that contains the data that you would like to import, or download the template to get a head start on creating the import file.',
+    'LBL_SELECT_PROPERTY_INSTRUCTION' => 'Here is how the the first several rows of the import file appear with the detected file properties. If a header row was detected, it is displayed in the top row of the table. View the import file properties to make changes to the detected properties and to set additional properties. Updating the settings will update the data appearing in the table.',
+    'LBL_SELECT_MAPPING_INSTRUCTION' => 'The table below contains all of the fields in the module that can be mapped to the data in the import file. If the file contains a header row, the columns in the file have been mapped to matching fields. Check the mappings to make sure that they are what you expect, and make changes, as necessary. To help you check the mappings, Row 1 displays the data in the file. Be sure to map to all of the required fields (noted by an asterisk).',
+    'LBL_SELECT_DUPLICATE_INSTRUCTION' => 'To avoid creating duplicate records, select which of the mapped fields you would like to use for the duplicate check that is performed while data is being imported. Values within existing records in the selected fields will be checked against the data in the import file. If matching data is found, the rows in the import file containing the data will be displayed along with the import results (next page). You will then be able to select which of these rows to continue importing.',
 
 );
 ?>

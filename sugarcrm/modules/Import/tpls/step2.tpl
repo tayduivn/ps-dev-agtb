@@ -45,6 +45,7 @@
 
 {overlib_includes}
 {$MODULE_TITLE}
+{$INSTRUCTION}
 
 
 

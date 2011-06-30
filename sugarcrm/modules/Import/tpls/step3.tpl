@@ -36,6 +36,7 @@
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 {$MODULE_TITLE}
+{$INSTRUCTION}
 <form enctype="multipart/form-data" real_id="importstep3" id="importstep3" name="importstep3" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
