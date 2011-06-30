@@ -166,8 +166,7 @@ class InsideViewLogicHook {
 
         if ( $url != '' ) {
             // Check if the user should be shown the frame or not
-            if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 ) {
-                $smarty = new Sugar_Smarty();
+               $smarty = new Sugar_Smarty();
                 $tplName = 'modules/Connectors/connectors/sources/ext/rest/insideview/ConfirmAccess.';
                 if ( ! file_exists($tplName.$GLOBALS['current_language'].'.tpl') ) {
                     $tplName = $tplName.'en_us.tpl';
@@ -175,11 +174,14 @@ class InsideViewLogicHook {
                     $tplName = $tplName.$GLOBALS['current_language'].'.tpl';
                 }
                 $smarty->assign('URL',$url);
+             if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 ) {
+                $smarty->assign('showInsideView',false);
                 $smarty->assign('logo',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview.png'));
-                echo $smarty->fetch($tplName);
             } else {
-                echo "<div id='insideViewDiv' style='width:100%;height:400px;overflow:hidden'><iframe id='insideViewFrame' src='$url' style='border:0px; width:100%;height:480px;overflow:hidden'></iframe></div>";
+                $smarty->assign('showInsideView',true);
+                //echo "<div id='insideViewDiv' style='width:100%;height:400px;overflow:hidden'><iframe id='insideViewFrame' src='$url' style='border:0px; width:100%;height:480px;overflow:hidden'></iframe></div>";
             }
+            echo $smarty->fetch($tplName);
         }
     }
 }
