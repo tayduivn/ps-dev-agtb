@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,15 +20,30 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
-$dictionary['products_category_tree'] = array ( 'table' => 'category_tree'
-                                  , 'fields' => array (
-       array('name' =>'self_id', 'type' =>'varchar', 'len'=>'36' )
-      , array('name' =>'node_id', 'type' =>'int', 'auto_increment'=>true, 'required'=>true)
-      , array('name' =>'parent_node_id', 'type' =>'int','default'=>'0')
-      , array ('name' => 'type','type' => 'varchar', 'len'=>'36' )
-                                                      )                                  , 'indices' => array (
-       array('name' =>'categorytreepk', 'type' =>'primary', 'fields'=>array('node_id'))
-      , array('name' =>'idx_categorytree', 'type' =>'index', 'fields'=>array('self_id'))
-                                                      )
-                                  )
-?>
+$dictionary['products_category_tree'] =
+        array('table' => 'category_tree',
+                'fields' => array(
+                    array('name' => 'self_id',
+                          'type' => 'varchar',
+                          'len' => '36'
+                    ),
+                    array('name' => 'node_id',
+                          'type' => 'int',
+                          'auto_increment' => true,
+                          'required' => true,
+                          'isnull' => false         // Making sure it's not NULLABLE since it is the primary key.
+                    ),
+                    array('name' => 'parent_node_id',
+                          'type' => 'int',
+                          'default' => '0'
+                    ),
+                    array('name' => 'type',
+                          'type' => 'varchar',
+                          'len' => '36'
+                    )
+                ),
+                'indices' => array(
+                    array('name' => 'categorytreepk', 'type' => 'primary', 'fields' => array('node_id')),
+                    array('name' => 'idx_categorytree', 'type' => 'index', 'fields' => array('self_id'))
+                )
+        );
