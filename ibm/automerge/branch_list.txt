@@ -9,3 +9,4 @@ ibmf_wildcardsrch
 ibmf_sugaralerts
 ibmf_custominstallhooks
 ibmf_quicksearchextend
+ibmf_searchformoverride
