@@ -2,8 +2,8 @@
 function allowInsideView() {ldelim}
 document.getElementById('insideViewFrame').src = '{$URL}';
 document.getElementById('insideViewConfirm').style.display = 'none';
-document.getElementById('insideViewFrame').style.display = 'block';
-document.getElementById('insideViewDiv').style.height='400px';
+document.getElementById('insideViewFrame').style.display = '';
+document.getElementById('insideViewDiv').style.height='430px';
 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallConnectorFunc&source_id=ext_rest_insideview&source_func=allowInsideView', {ldelim}{rdelim}, null);
 {rdelim}
     YAHOO.util.Event.onDOMReady(function(){ldelim}
@@ -44,7 +44,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
         </tbody>
     </table>
   <div id='subpanel_insideview' style='width:100%'>
-      <div id='insideViewConfirm' class="detail view" style="padding: 10px;">
+      <div id='insideViewConfirm' class="detail view" style="padding: 10px;{if $showInsideView}display:none;{/if}">
 
       <a href='http://www.insideview.com/' target='_blank' style='text-decoration: none;'><strong style='color: #d71e00;'>InsideView</strong></a> now comes preinstalled in <strong>SugarCRM</strong>, giving you access to relevant company information, contacts, news, and social media insights all within your CRM. The InsideView connector is a <strong>FREE</strong> service that automatically displays in your leads, accounts, contacts and opportunities.
       <br/><br/>
@@ -53,6 +53,6 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
       <hr>
       <a href='http://www.insideview.com/' target='_blank'><img src="{$logo}" border="0" style="margin-bottom: 5px;"></a> <button onclick="allowInsideView(); return false;" class='button primary' style='float: right; border: 1px solid #d71e00; background-color: #eeeeee; background-image: none; text-shadow: none; color: #222; margin-top: 5px;'>Get Started</button>
       </div>
-      <iframe id='insideViewFrame' src='about:blank' style='border:0px; width:100%;height:480px;overflow:hidden;display:none;'></iframe>
+      <iframe id='insideViewFrame' src='{$URL}' scrolling="no" style='border:0px; width:100%;height:400px;overflow:hidden;{if !$showInsideView}display:none;{/if}'></iframe>
    </div>
 </div>
