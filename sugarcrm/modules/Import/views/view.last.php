@@ -89,7 +89,7 @@ class ImportViewLast extends ImportView
         $this->ss->assign("createdCount",$createdCount);
         $this->ss->assign("updatedCount",$updatedCount);
         $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
-        $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsFileName());
+        $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsWithoutErrorFileName());
         $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
         
         //BEGIN SUGARCRM flav!=sales ONLY

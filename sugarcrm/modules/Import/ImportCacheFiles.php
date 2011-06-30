@@ -85,7 +85,17 @@ class ImportCacheFiles
     {
         return self::_createFileName("errorrecords");
     }
-    
+
+    /**
+     * Returns the error records filename
+     *
+     * @return string filename
+     */
+    public static function getErrorRecordsWithoutErrorFileName()
+    {
+        return self::_createFileName("errorrecordsonly");
+    }
+
     /**
      * Returns the status filename
      *
