@@ -116,7 +116,7 @@ function template_cal_tabs($args) {
 			    else {
 			        $callStatus = '';
 			    }
-				echo '<td>' . SugarThemeRegistry::current()->getImage('Calls','alt="'.$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"') . '</td>
+				echo '<td>' . SugarThemeRegistry::current()->getImage('Calls','alt="'.$callStatus.': '.$act->sugar_bean->name.'"') . '</td>
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Calls&action=DetailView&record=' .
 						$act->sugar_bean->id . '">' . $callStatus . ': ' . $act->sugar_bean->name . '</a></td>';
 			} else if($act->sugar_bean->object_name == 'Meeting') {
@@ -126,7 +126,7 @@ function template_cal_tabs($args) {
 			    else {
 			        $meetingStatus = '';
 			    }
-				$out = '<td>' . SugarThemeRegistry::current()->getImage('Meetings','alt="'.$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name.'"') . '</td>
+				$out = '<td>' . SugarThemeRegistry::current()->getImage('Meetings','alt="'.$meetingStatus.': '.$act->sugar_bean->name.'"') . '</td>
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Meetings&action=DetailView&record=' .
 						$act->sugar_bean->id . '">' . $meetingStatus . ': ' . $act->sugar_bean->name .'</a>';
 
