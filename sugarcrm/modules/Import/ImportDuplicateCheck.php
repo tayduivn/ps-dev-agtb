@@ -119,6 +119,17 @@ class ImportDuplicateCheck
         $indexlist
         )
     {
+
+        //lets strip the indexes of the name field in the value and leave only the index name
+       $origIndexList = $indexlist;
+        $indexlist=array();
+        foreach($origIndexList as $iv){
+            if(empty($iv)) continue;
+            $field_index_array = explode('::',$iv);
+            $indexlist[] = $field_index_array[0];
+        }
+
+
         // loop through var def indexes and compare with selected indexes
         foreach ( $this->_getIndexVardefs() as $index ) {
             // if we get an index not in the indexlist, loop
@@ -164,6 +175,46 @@ class ImportDuplicateCheck
             }
         }
         return false;
+    }
+
+
+    public function getDuplicateCheckIndexedFiles()
+    {
+
+        $import_fields = $this->_focus->get_importable_fields();
+        $importable_keys = array_keys($import_fields);
+        $super_language_pack = sugarArrayMerge(
+            return_module_language($GLOBALS['current_language'], $this->_focus->module_dir),
+            $GLOBALS['app_strings']
+            );
+
+        $index_array = array();
+        $fields_used = array();
+        foreach ($this->_getIndexVardefs() as $index){
+            if ($index['type'] == "index"){
+
+                foreach ($index['fields'] as $field){
+                    $fieldName='';
+                    if ($field == 'deleted' || !in_array($field, $importable_keys)) continue;
+                    $fieldDef = $this->_focus->getFieldDefinition($field);
+
+                    //skip if this field is already defined (from another index)
+                    if (in_array($fieldDef['name'],$fields_used)) continue;
+
+                    if ( isset($fieldDef['vname']) && isset($super_language_pack[$fieldDef['vname']]) ){
+                        $fieldName = $super_language_pack[$fieldDef['vname']];
+                    }else{
+                        $fieldName = $fieldDef['name'];
+                    }
+                    $fieldName = str_replace(":", "",$fieldName);
+                    $index_array[$index['name'].'::'.$fieldDef['name']] = $fieldName;
+                    $fields_used[] = $fieldDef['name'];
+                }
+
+            }
+        }
+
+        return $index_array;
     }
 }
  
