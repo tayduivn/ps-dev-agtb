@@ -43,8 +43,8 @@ class ImportViewConfirm extends ImportView
 {
     const SAMPLE_ROW_SIZE = 3;
  	protected $pageTitleKey = 'LBL_CONFIRM_TITLE';
-    
- 	/** 
+
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
@@ -90,6 +90,17 @@ class ImportViewConfirm extends ImportView
             return;
         }
 
+        $mimeTypeOk = true;
+
+        //check to see if the file mime type is not a form of text or application octed streramand fire error if not
+        if(isset($_FILES['userfile']['type']) && strpos($_FILES['userfile']['type'],'octet-stream') === false && strpos($_FILES['userfile']['type'],'text') === false){
+            //this file does not have a known text or application type of mime type, issue the warning
+            $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR'];
+            $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_2'];
+            $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2', true);
+            $mimeTypeOk = false;
+        }
+
         $this->ss->assign("FILE_NAME", $uploadFileName);
 
         // Now parse the file and look for errors
@@ -103,9 +114,13 @@ class ImportViewConfirm extends ImportView
             $this->ss->assign("SOURCE", 'csv');
             if($autoDetectOk === FALSE)
             {
-                 $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_1'];
-                 $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_2'];
-                 $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2');
+                //show error in modal only if previous mime type check has passed
+                if($mimeTypeOk){
+                    $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_1'];
+                           $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_2'];
+                           $this->_showImportError($error_msgs['LBL_AUTO_DETECT_ERROR'],$_REQUEST['import_module'],'Step2', true);
+                 }
+                 //always display error on screen , true);
                  $this->ss->assign("AUTO_DETECT_ERROR",  $mod_strings['LBL_AUTO_DETECT_ERROR']);
             }
             else
@@ -126,7 +141,7 @@ class ImportViewConfirm extends ImportView
             $importFile->setImportFileMap($impotMapSeed);
             $importFileMap = $impotMapSeed->getMapping();
         }
-        
+
         $delimeter = $importFile->getFieldDelimeter();
         $enclosure = $importFile->getFieldEnclosure();
         $hasHeader = $importFile->hasHeaderRow();
@@ -163,9 +178,9 @@ class ImportViewConfirm extends ImportView
         $this->setCurrencyOptions($importFileMap);
         $this->setNumberFormatOptions($importFileMap);
         $this->setNameFormatProperties($importFileMap);
-        
+
         $importMappingJS = $this->getImportMappingJS();
-        
+
         $this->ss->assign("SAMPLE_ROWS",$rows);
         $this->ss->assign("JAVASCRIPT", $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS ));
 
@@ -220,7 +235,7 @@ class ImportViewConfirm extends ImportView
     private function setNameFormatProperties($field_map = array())
     {
         global $locale, $current_user;
-        
+
         $localized_name_format = isset($field_map['importlocale_default_locale_name_format'])? $field_map['importlocale_default_locale_name_format'] : $locale->getLocaleFormatMacro($current_user);
         $this->ss->assign('default_locale_name_format', $localized_name_format);
         $this->ss->assign('getNameJs', $locale->getNameJs());
@@ -351,7 +366,7 @@ eoq;
 
         return $maxColumns;
     }
-    
+
     public function getSampleSet($importFile)
     {
         $rows = array();
@@ -471,7 +486,7 @@ YAHOO.util.Event.onDOMReady(function(){
         document.getElementById('custom_delimiter').value = import_mapping_js[selectedMap].delim;
         document.getElementById('custom_enclosure').value = import_mapping_js[selectedMap].enclos;
         document.getElementById('has_header').checked = import_mapping_js[selectedMap].has_header;
-        
+
         refreshDataTable();
     }
 
@@ -500,7 +515,8 @@ EOJAVASCRIPT;
     protected function _showImportError(
         $message,
         $module,
-        $action = 'Step1'
+        $action = 'Step1',
+        $showCancel = false
         )
     {
         if(!is_array($message)){
@@ -517,6 +533,7 @@ EOJAVASCRIPT;
         $ss->assign("IMPORT_MODULE",$module);
         $ss->assign("MOD", $GLOBALS['mod_strings']);
         $ss->assign("SOURCE","");
+        $ss->assign("SHOWCANCEL",$showCancel);
         if ( isset($_REQUEST['source']) )
             $ss->assign("SOURCE", $_REQUEST['source']);
 
