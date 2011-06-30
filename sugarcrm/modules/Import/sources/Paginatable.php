@@ -41,6 +41,6 @@ interface Paginatable
 
     public function getHeaderColumns();
     
-    public function loadDataSet($totalItems);
+    public function loadDataSet($totalItems = 0);
     
 }
