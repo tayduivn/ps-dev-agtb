@@ -29,11 +29,11 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
                         <span>
                             <a name="insideview"> </a>
                             <span id="show_link_insideview" style="display: none">
-                                <a href="#" class="utilsLink" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="themes/default/images/advanced_search.gif?s=10c8793605d02302b4c4992681454492&amp;c=1" width="8" height="8" alt="Show" border="0 align=" absmiddle""=""></a>
+                                <a href="#" class="utilsLink" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo}" border="0" style="margin-bottom: 5px;"></a>
                             </span>
                             <span id="hide_link_insideview" style="display: ">
-                                <a href="#" class="utilsLink" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="themes/default/images/basic_search.gif?s=10c8793605d02302b4c4992681454492&amp;c=1" width="8" height="8" alt="Hide" border="0" align="absmiddle"></a>
-                            </span>&nbsp;InsideView
+                                <a href="#" class="utilsLink" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo}" border="0" style="margin-bottom: 5px;"></a>
+                            </span>
                         </span>
                     </h3>
                 </td>
