@@ -36,6 +36,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once("modules/Import/Forms.php");
 require_once("include/MVC/Controller/SugarController.php");
+require_once('modules/Import/sources/ImportFile.php');
+require_once('modules/Import/views/ImportListView.php');
 
 class ImportController extends SugarController
 {
@@ -111,6 +113,7 @@ class ImportController extends SugarController
     }
     function action_RefreshMapping()
     {
+        global $mod_strings;
         require_once('modules/Import/sources/ImportFile.php');
         require_once('modules/Import/views/view.confirm.php');
         $v = new ImportViewConfirm();
@@ -126,11 +129,32 @@ class ImportController extends SugarController
 
         $ss = new Sugar_Smarty();
         $ss->assign("SAMPLE_ROWS",$rows);
+        $ss->assign("HAS_HEADER",$hasHeader);
+        $ss->assign("column_count",$v->getMaxColumnsInSampleSet($rows));
+        $ss->assign("MOD",$mod_strings);
         $ss->display('modules/Import/tpls/confirm_table.tpl');
         sugar_cleanup(TRUE);
 
     }
 
+    function action_RefreshTable()
+    {
+        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
+        $tableID = isset($_REQUEST['tableID']) ? $_REQUEST['tableID'] : 'errors';
+        $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
+        if($tableID == 'dup')
+            $tableFilename = ImportCacheFiles::getDuplicateFileName();
+        else
+            $tableFilename = ImportCacheFiles::getErrorRecordsFileName();
+
+        $if = new ImportFile($tableFilename, ",", '"', FALSE, FALSE);
+        $if->setHeaderRow($has_header);
+        $lv = new ImportListView($if,array('offset'=> $offset), $tableID);
+        $lv->display(FALSE);
+        
+        sugar_cleanup(TRUE);
+    }
+    
 	function action_Step1()
     {
         if($this->importModule == 'Administration' || $this->bean instanceof Person )
@@ -193,7 +217,7 @@ class ImportController extends SugarController
     {
         $this->view = 'extimport';
     }
-
+    
     function action_GetControl()
     {
         echo getControl($_REQUEST['import_module'],$_REQUEST['field_name']);

@@ -36,10 +36,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Import/CsvAutoDetect.php');
 require_once('modules/Import/sources/ImportDataSource.php');
+require_once('modules/Import/sources/Paginatable.php');
 
-
-
-class ImportFile extends ImportDataSource
+class ImportFile extends ImportDataSource implements Paginatable
 {
     /**
      * Stores whether or not we are deleting the import file in the destructor
@@ -49,7 +48,7 @@ class ImportFile extends ImportDataSource
     /**
      * File pointer returned from fopen() call
      */
-    private $_fp;
+    private $_fp = FALSE;
 
     /**
      * True if the csv file has a header row.
@@ -87,6 +86,17 @@ class ImportFile extends ImportDataSource
     private $_enclosure;
 
     /**
+     * Stores a subset or entire portion of the data set requested.
+     */
+    protected $_dataSet = array();
+
+    /**
+     * The current offset the data set should start at
+     */
+    protected $_offset = 0;
+
+    
+    /**
      * Constructor
      *
      * @param string $filename
@@ -94,13 +104,13 @@ class ImportFile extends ImportDataSource
      * @param string $enclosure
      * @param bool   $deleteFile
      */
-    public function __construct( $filename, $delimiter  = ',', $enclosure  = '',$deleteFile = true )
+    public function __construct( $filename, $delimiter  = ',', $enclosure  = '',$deleteFile = true, $checkUploadPath = TRUE )
     {
         if ( !is_file($filename) || !is_readable($filename) ) {
             return false;
         }
 
-        if ( realpath(dirname($filename).'/') != realpath($GLOBALS['sugar_config']['upload_dir']) )
+        if ( $checkUploadPath && realpath(dirname($filename).'/') != realpath($GLOBALS['sugar_config']['upload_dir']) )
         {
             $GLOBALS['log']->fatal("ImportFile detected attempt to access to the following file not within the sugar upload dir: $filename");
             return null;
@@ -114,7 +124,6 @@ class ImportFile extends ImportDataSource
         $this->_deleteFile = $deleteFile;
         $this->_delimiter  = ( empty($delimiter) ? ',' : $delimiter );
         $this->_enclosure  = ( empty($enclosure) ? '' : trim($enclosure) );
-
         $this->setFpAfterBOM();
     }
 
@@ -124,6 +133,9 @@ class ImportFile extends ImportDataSource
      */
     private function setFpAfterBOM()
     {
+        if($this->_fp === FALSE)
+            return;
+
         rewind($this->_fp);
         $bomCheck = fread($this->_fp, 3);
         if($bomCheck != pack("CCC",0xef,0xbb,0xbf)) {
@@ -389,6 +401,62 @@ class ImportFile extends ImportDataSource
         $this->setFpAfterBOM();
         //Load our first row
         $this->getNextRow();
+    }
+
+    public function setCurrentOffset($offset)
+    {
+        $this->_offset = $offset;
+    }
+
+    public function getCurrentOffset()
+    {
+        return $this->_offset;
+    }
+    
+    public function getDataSet()
+    {
+        return $this->_dataSet;
+    }
+
+    public function getTotalRecordCount()
+    {
+        $totalCount = $this->getNumberOfLinesInfile();
+        if($this->hasHeaderRow(FALSE) && $totalCount > 0)
+        {
+            $totalCount--;
+        }
+        return $totalCount;
+    }
+    
+    public function loadDataSet($totalItems = 0)
+    {
+        $currentLine = 0;
+        $this->_dataSet = array();
+        $this->rewind();
+        //If there's a header don't include it.
+        if( $this->hasHeaderRow(FALSE) )
+            $this->next();
+        
+        while( $this->valid() &&  $totalItems > count($this->_dataSet) )
+        {
+            if($currentLine >= $this->_offset)
+            {
+                $this->_dataSet[] = $this->_currentRow;
+            }
+            $this->next();
+            $currentLine++;
+        }
+
+        return $this;
+    }
+
+    public function getHeaderColumns()
+    {
+        $this->rewind();
+        if($this->hasHeaderRow(FALSE))
+            return $this->_currentRow;
+        else
+            return FALSE;
     }
 
 }
