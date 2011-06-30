@@ -160,7 +160,7 @@ ProcessImport = new function()
                             + "&import_module={/literal}{$IMPORT_MODULE}{literal}"
                             + "&has_header=" +  document.getElementById("importstepdup").has_header.value ;
                         if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
-                        	YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETE}{literal}');
+                        	YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETED}{literal}');
                         	SUGAR.util.hrefURL(locationStr);
                         }
                         else {

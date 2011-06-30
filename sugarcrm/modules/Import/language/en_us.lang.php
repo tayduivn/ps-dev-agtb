@@ -283,6 +283,7 @@ $mod_strings = array (
     'LBL_OPTION_ENCLOSURE_NONE' => 'None',
     'LBL_OPTION_ENCLOSURE_OTHER' => 'Other:',
     'LBL_IMPORT_COMPLETE' => 'Exit',
+    'LBL_IMPORT_COMPLETED' => 'Import Completed',
     'LBL_IMPORT_ERROR' => 'Import Errors Occurred',
     'LBL_IMPORT_RECORDS' => 'Importing Records',
     'LBL_IMPORT_RECORDS_OF' => 'of',
