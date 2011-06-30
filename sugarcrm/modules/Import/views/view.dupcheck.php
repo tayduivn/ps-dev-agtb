@@ -66,21 +66,26 @@ class ImportViewDupcheck extends ImportView
         $idc = new ImportDuplicateCheck($this->bean);
         $dupe_indexes = $idc->getDuplicateCheckIndexes();
 
+        //grab all the import enabled fields and the field map
+        $import_fields = $this->bean->get_importable_fields();
         $field_map = $this->getImportMap();
+        $idc = new ImportDuplicateCheck($this->bean);
+
+        $import_fields = $idc->getDuplicateCheckIndexedFiles();
 
         //check for saved entries from mapping
         $dupe_disabled =  array();
         $dupe_enabled =  array();
-        foreach($dupe_indexes as $dk=>$dv){
-            if(isset($field_map['dupe_'.$dk])){
-                //index is defined in mapping, so set this index as enabled
-                $dupe_enabled[] =  array("dupeVal" => $dk, "label" => $dv);
+
+        foreach($import_fields as $ik=>$iv){
+            if(isset($field_map['dupe_'.$ik])){
+                //index is defined in mapping, so set this index as enabled if not already defined
+                $dupe_enabled[] =  array("dupeVal" => $ik, "label" => $iv);
             }else{
-                //index is not defined in mapping, so display as disabled
-                $dupe_disabled[] =  array("dupeVal" => $dk, "label" => $dv);
+                //index is not defined in mapping, so display as disabled if not already defined
+                $dupe_disabled[] =  array("dupeVal" => $ik, "label" => $iv);
             }
         }
-
 
         //set dragdrop value
         $this->ss->assign('enabled_dupes', json_encode($dupe_enabled));
