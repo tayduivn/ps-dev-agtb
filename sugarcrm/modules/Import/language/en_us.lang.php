@@ -223,7 +223,7 @@ $mod_strings = array (
     'LBL_' => '',
     'LBL_CANNOT_OPEN' => 'Cannot open the imported file for reading',
     'LBL_NOT_SAME_NUMBER' => 'There were not the same number of fields per line in your file',
-    'LBL_NO_LINES' => 'There were no lines in your import file',
+    'LBL_NO_LINES' => 'There were no lines in your import file.  Please try again.',
     'LBL_FILE_ALREADY_BEEN_OR' => 'The import file has already been processed or does not exist',
     'LBL_SUCCESS' => 'Success:',
 	'LBL_FAILURE' => 'Import Failed:',
@@ -325,12 +325,15 @@ $mod_strings = array (
     'LBL_SAMPLE_URL_HELP' => 'Download a sample import file containing a header row of the module fields. The file can be used as a template to create an import file containing the data that you would like to import.',
     'LBL_AUTO_DETECT_ERROR' => 'We were unable to auto-detect the import file settings. Please verify the settings in the Import File Properties.',
     'LBL_AUTO_DETECT_FILE_TYPE_ERROR_1' => 'We were unable to auto-detect the import file settings. This may be because the uploaded file type is not a properly delimiter format file.  Please try uploading a properly formatted file.',
-    'LBL_AUTO_DETECT_FILE_TYPE_ERROR_2' => 'If you feel the file is correct, then click the "X" above to cancel and verify the settings in the Import File Properties.',
+    'LBL_AUTO_DETECT_FILE_TYPE_ERROR_2' => 'If you feel the file is correct, then click the cancel button and verify the settings in the Import File Properties.',
     'LBL_FIELD_DELIMETED_HELP' => 'The field delimiter specifies the character used to separate the field columns.',
     'LBL_FILE_UPLOAD_WIDGET_HELP' => 'Select a file containing data that is separated by a delimiter, such as a comma- or tab- delimited file.  Files of the type .csv are recommended.',
     'LBL_EXTERNAL_ERROR_NO_SOURCE' => 'Unable to retrieve source adapter, please try again later.',
     'LBL_EXTERNAL_ERROR_FEED_CORRUPTED' => 'Unable to retrieve external feed, please try again later.',
     'LBL_ADD_FIELD_HELP' => 'Select this option to add an additional field to the import',
-    'LBL_MISSING_HEADER_ROW' => 'No Header Row Found'
+    'LBL_MISSING_HEADER_ROW' => 'No Header Row Found',
+    'LBL_CANCEL' => 'Cancel',
+    'LBL_MIME_TYPE_ERROR' => 'The file you have uploaded does not appear to be a file that is commonly used to contain a properly formatted delimited list.  Please try again.'
+
 );
 ?>
