@@ -2,7 +2,7 @@
 function allowInsideView() {ldelim}
 document.getElementById('insideViewFrame').src = '{$URL}';
 document.getElementById('insideViewConfirm').style.display = 'none';
-document.getElementById('insideViewFrame').style.display = '';
+document.getElementById('insideViewFrame').style.display = 'block';
 document.getElementById('insideViewDiv').style.height='430px';
 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallConnectorFunc&source_id=ext_rest_insideview&source_func=allowInsideView', {ldelim}{rdelim}, null);
 {rdelim}
@@ -53,6 +53,6 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
       <hr>
       <a href='http://www.insideview.com/' target='_blank'><img src="{$logo}" border="0" style="margin-bottom: 5px;"></a> <button onclick="allowInsideView(); return false;" class='button primary' style='float: right; border: 1px solid #d71e00; background-color: #eeeeee; background-image: none; text-shadow: none; color: #222; margin-top: 5px;'>Get Started</button>
       </div>
-      <iframe id='insideViewFrame' src='{$URL}' scrolling="no" style='border:0px; width:100%;height:400px;overflow:hidden;{if !$showInsideView}display:none;{/if}'></iframe>
+      <iframe id='insideViewFrame' src='{$URL}' scrolling="no" style='border:0px; width:100%;height:400px;overflow:hidden;{if !$showInsideView}display:none;{else}display:block;{/if}'></iframe>
    </div>
 </div>
