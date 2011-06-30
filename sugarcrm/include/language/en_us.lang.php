@@ -2496,6 +2496,7 @@ $app_strings = array (
     'LBL_MAILMERGE_KEY' => 'M',
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
+    'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
