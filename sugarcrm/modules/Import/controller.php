@@ -36,6 +36,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once("modules/Import/Forms.php");
 require_once("include/MVC/Controller/SugarController.php");
+require_once('modules/Import/sources/ImportFile.php');
+require_once('modules/Import/views/ImportListView.php');
 
 class ImportController extends SugarController
 {
@@ -135,6 +137,24 @@ class ImportController extends SugarController
 
     }
 
+    function action_RefreshTable()
+    {
+        $offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : 0;
+        $tableID = isset($_REQUEST['tableID']) ? $_REQUEST['tableID'] : 'errors';
+        $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
+        if($tableID == 'dup')
+            $tableFilename = ImportCacheFiles::getDuplicateFileName();
+        else
+            $tableFilename = ImportCacheFiles::getErrorRecordsFileName();
+
+        $if = new ImportFile($tableFilename, ",", '"', FALSE, FALSE);
+        $if->setHeaderRow($has_header);
+        $lv = new ImportListView($if,array('offset'=> $offset), $tableID);
+        $lv->display(FALSE);
+        
+        sugar_cleanup(TRUE);
+    }
+    
 	function action_Step1()
     {
         if($this->importModule == 'Administration' || $this->bean instanceof Person )

@@ -157,7 +157,8 @@ ProcessImport = new function()
                             + "&action=Last"
                             + "&current_step=" + document.getElementById("importstepdup").current_step.value
                             + "&type={/literal}{$TYPE}{literal}"
-                            + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
+                            + "&import_module={/literal}{$IMPORT_MODULE}{literal}"
+                            + "&has_header=" +  document.getElementById("importstepdup").has_header.value ;
                         if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
                         	YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETE}{literal}');
                         	SUGAR.util.hrefURL(locationStr);
