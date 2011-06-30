@@ -47,7 +47,7 @@ class ImportViewStep2 extends ImportView
     {
         global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
         global $import_mod_strings;
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
