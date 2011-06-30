@@ -56,7 +56,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
         $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
         $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;

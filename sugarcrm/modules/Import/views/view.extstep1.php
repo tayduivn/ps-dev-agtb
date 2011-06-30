@@ -76,7 +76,7 @@ class ImportViewExtStep1 extends ImportViewStep3
         }
 
         $mappedRows = $this->getMappingRows($importModule, $extSourceToSugarFieldMapping);
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("rows", $mappedRows);
         $this->ss->assign("COLUMNCOUNT", count($mappedRows));
         $this->ss->assign("IMPORT_MODULE", $importModule);
