@@ -128,10 +128,17 @@ abstract class ImportDataSource implements Iterator
         {
             $this->_errorCount++;
             $this->_rowCountedForErrors = true;
-            $this->writeErrorRecord();
+            $this->writeErrorRecord($this->formatErrorMessage($error, $fieldName, $fieldValue));
         }
     }
 
+    protected function formatErrorMessage($error, $fieldName, $fieldValue)
+    {
+        global $mod_strings;
+        return "<b>{$mod_strings['LBL_ERROR']}</b> $error <br/>".
+               "<b>{$mod_strings['LBL_FIELD_NAME']}</b> $fieldName <br/>" .
+               "<b>{$mod_strings['LBL_VALUE']}</b> $fieldValue <br/>";
+    }
     public function resetRowErrorCounter()
     {
         $this->_rowCountedForErrors = false;
@@ -177,11 +184,21 @@ abstract class ImportDataSource implements Iterator
     /**
      * Writes the row out to the ImportCacheFiles::getErrorRecordsFileName() file
      */
-    public function writeErrorRecord()
+    public function writeErrorRecord($errorMessage = '')
     {
+        $rowData = !$this->_currentRow ? array() : $this->_currentRow;
         $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsFileName(),'a');
-        fputcsv($fp, !$this->_currentRow ? array() : $this->_currentRow);
+        $fpNoErrors = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'a');
+
+        //Write records only for download without error message.
+        fputcsv($fpNoErrors, $rowData);
+
+        //Add the error message to the first column
+        array_unshift($rowData, $errorMessage);
+        fputcsv($fp, $rowData);
+        
         fclose($fp);
+        fclose($fpNoErrors);
     }
 
     public function __get($var)
