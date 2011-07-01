@@ -221,22 +221,14 @@ class SugarWidgetReportField extends SugarWidgetField
                 if(!in_array($layout_def['name'], array('description', 'account_description', 'lead_source_description', 'status_description', 'to_addrs', 'cc_addrs', 'bcc_addrs', 'work_log', 'objective', 'resolution'))) {
                     $header_cell = "<a class=\"listViewThLinkS1\" href=\"".$start.$sort_by.$end."\">";
                     $header_cell .= $this->displayHeaderCellPlain($layout_def);
-                    $imgArrow = '';
-
-                    if (isset($layout_def['sort']))
-                    {
-                            $imgArrow = $layout_def['sort'];
-                    }
-                    $arrow_start = ListView::getArrowUpDownStart($imgArrow);
-                    $arrow_end = ListView::getArrowEnd();
-                    $header_cell .= ' ' . $arrow_start.$arrow_end."</a>";
-                }
-                else {
-                    $header_cell = $this->displayHeaderCellPlain($layout_def);
-                }
-
-                return $header_cell;
-        }
+                    $header_cell .= ListView::getArrowUpDownStart(isset($layout_def['sort']) ? $layout_def['sort'] : '');
+                    $header_cell .= ListView::getArrowEnd();
+		            $header_cell .= "</a>";
+					return $header_cell;
+				}
+             
+		        return $this->displayHeaderCellPlain($layout_def);
+    }
 
 	function query($layout_def)
  	{

@@ -242,6 +242,19 @@ $mod_strings = array (
         'LBL_ACTIVITIES_COPY'   => 'Copy Activities to',
         'LBL_ACTIVITIES_MOVE_HELP'   => "Select the record to which to move the Lead's activities. Tasks, Calls, Meetings, Notes and Emails will be moved to the selected record(s).",
         'LBL_ACTIVITIES_COPY_HELP'   => "Select the record(s) for which to create copies of the Lead's activities. New Tasks, Calls, Meetings and Notes will be created for each of the selected record(s). Emails will be related to the selected record(s).",
+
+    //For export labels
+    'LBL_PHONE_HOME' => 'Phone Home',
+    'LBL_PHONE_MOBILE' => 'Phone Mobile',
+    'LBL_PHONE_WORK' => 'Phone Work',
+    'LBL_PHONE_OTHER' => 'Phone Other',
+    'LBL_PHONE_FAX' => 'Phone Fax',
+    'LBL_CAMPAIGN_ID' => 'Campaign ID',
+
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+    'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 );
 
 

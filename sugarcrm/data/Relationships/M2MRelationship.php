@@ -53,10 +53,6 @@ class M2MRelationship extends SugarRelationship
             return false;
         }
 
-        //Make sure we load the current relationship state to the links
-        $lhs->$lhsLinkName->getBeans();
-        $rhs->$rhsLinkName->getBeans();
-
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
         $dataToInsert = array(
             "id" => create_guid(),
@@ -153,7 +149,8 @@ class M2MRelationship extends SugarRelationship
             return array(
                 'select' => "SELECT $targetKey id",
                 'from' => "FROM {$this->getRelationshipTable()}",
-                'where' => "WHERE $knownKey = '{$link->getFocus()->id}' AND deleted=0",
+                'where' => "WHERE $knownKey = '{$link->getFocus()->id}'"
+                         . " AND {$this->getRelationshipTable()}.deleted=0",
             );
         }
     }
@@ -290,8 +287,6 @@ class M2MRelationship extends SugarRelationship
             return $this->def['table'];
         else if(!empty($this->def['join_table']))
             return $this->def['join_table'];
-        else
-           echo "WTF? " . print_r($this->def, true) . "\n";
 
         return false;
     }

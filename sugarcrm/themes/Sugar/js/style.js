@@ -139,7 +139,8 @@ SUGAR.themes.loadModuleList = function()
 				if(!oItem) return;
                 
                 oSubmenu = oItem.cfg.getProperty("submenu");
-				oSubmenu.removeItem(1,1);
+				if (!oSubmenu) return;
+                oSubmenu.removeItem(1,1);
 				oSubmenu.addItems(data,1);
 
 				//update shadow height to accomodate new items
@@ -327,11 +328,8 @@ SUGAR.themes.loadModuleList = function()
                         allMenuBars[i].destroy();
                 }
             }catch (e){
-                if (typeof(console) != "undefined" && typeof(console.log) == "function")
-                {
-                    console.log("Error cleaning up menu");
-                    console.log(e);
-                }
+                //If the menu fails to load, we can get leave the user stranded, reload the page instead. 
+                window.location.reload();
             }
             parent.removeChild(el);
             parent.innerHTML += html;

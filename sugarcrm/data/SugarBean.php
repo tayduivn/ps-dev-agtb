@@ -1298,6 +1298,7 @@ class SugarBean
     */
     function save($check_notify = FALSE)
     {
+        $this->in_save = true;
         // cn: SECURITY - strip XSS potential vectors
         $this->cleanBean();
         // This is used so custom/3rd-party code can be upgraded with fewer issues, this will be removed in a future release
@@ -1456,6 +1457,7 @@ class SugarBean
 
         //Now that the record has been saved, we don't want to insert again on further saves
         $this->new_with_id = false;
+        $this->in_save = false;
         return $this->id;
     }
 
