@@ -63,21 +63,21 @@
 <input type="hidden" name="importlocale_dec_sep" value="{$smarty.request.importlocale_dec_sep}">
 <input type="hidden" name="importlocale_default_locale_name_format" value="{$smarty.request.importlocale_default_locale_name_format}">
 
-<div align="right">
-    <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
-</div>
-
 <p>
     {$MOD.LBL_SELECT_FIELDS_TO_MAP}
 </p>
 <br>
 {if $NOTETEXT != '' || $required_fields != ''}
     <p>
-        <b>{$MOD.LBL_NOTES}</b>
-        <ul>
-            <li>{$MOD.LBL_REQUIRED_NOTE}{$required_fields}</li>
-            {$NOTETEXT}
-        </ul>
+        {* <b>{$MOD.LBL_NOTES}</b> *}
+        <input title="{$MOD.LBL_SHOW_NOTES}" accessKey="" id="toggleNotes" class="button" type="button"
+               name="button" value="  {$MOD.LBL_SHOW_NOTES}  ">
+        <div id="importNotes" style="display: none;">
+            <ul>
+                <li>{$MOD.LBL_REQUIRED_NOTE}{$required_fields}</li>
+                {$NOTETEXT}
+            </ul>
+        </div>
     </p>
 {/if}
 
