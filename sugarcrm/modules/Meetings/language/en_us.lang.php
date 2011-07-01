@@ -123,5 +123,9 @@ $mod_strings = array (
     'LBL_EXTNOSTART_HEADER' => 'Error: Cannot Start Meeting',
     'LBL_EXTNOSTART_MAIN' => 'You cannot start this meeting because you are not an Administrator or the owner of the meeting.',
 
+    //for Export
+    'LBL_EXPORT_DATE_START' => 'Start Date and Time',
+    'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
+    'LBL_EXPORT_PARENT_ID' => 'Related To ID',
 );
 ?>

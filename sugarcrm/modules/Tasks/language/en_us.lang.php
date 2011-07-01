@@ -89,6 +89,10 @@ $mod_strings = array (
   'LBL_PARENT_NAME' => 'Parent Type:',
   'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
   'LBL_TASK_INFORMATION' => 'Task Overview',
+
+    //for Export
+    'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
+    'LBL_EXPORT_PARENT_ID' => 'Related To ID',
 );
 
 
