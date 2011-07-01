@@ -583,46 +583,45 @@ function generateSearchWhere($module, $query) {//this function is similar with f
     global $current_language;
     $mod_strings = return_module_language($current_language, $focus->module_dir);
     $fieldLabel = '';
-_pp($field_db_name);
-//_pp($focus->field_name_map[$field_db_name]['vname']);
+
      //!! first check to see if we are overriding the label for export.
      if (!empty($mod_strings['LBL_EXPORT_'.strtoupper($field_db_name)])){
          //entry exists which means we are overriding this value for exporting, use this label
          $fieldLabel = $mod_strings['LBL_EXPORT_'.strtoupper($field_db_name)];
-_pp($fieldLabel);
+
      }
      //!! next check to see if we are overriding the label for export on app_strings.
      elseif (!empty($app_strings['LBL_EXPORT_'.strtoupper($field_db_name)])){
          //entry exists which means we are overriding this value for exporting, use this label
          $fieldLabel = $app_strings['LBL_EXPORT_'.strtoupper($field_db_name)];
-_pp($fieldLabel);
+
      }//check to see if label exists in mapping and in mod strings
      elseif (!empty($focus->field_name_map[$field_db_name]['vname']) && !empty($mod_strings[$focus->field_name_map[$field_db_name]['vname']])){
          $fieldLabel = $mod_strings[$focus->field_name_map[$field_db_name]['vname']];
-_pp($fieldLabel);
+
      }//check to see if label exists in mapping and in app strings
      elseif (!empty($focus->field_name_map[$field_db_name]['vname']) && !empty($app_strings[$focus->field_name_map[$field_db_name]['vname']])){
          $fieldLabel = $app_strings[$focus->field_name_map[$field_db_name]['vname']];
-_pp($fieldLabel);
+
      }//field is not in mapping, so check to see if db can be uppercased and found in mod strings
      elseif (!empty($mod_strings['LBL_'.strtoupper($field_db_name)])){
          $fieldLabel = $mod_strings['LBL_'.strtoupper($field_db_name)];
-_pp($fieldLabel);
+
      }//check to see if db can be uppercased and found in app strings
      elseif (!empty($app_strings['LBL_'.strtoupper($field_db_name)])){
          $fieldLabel = $app_strings['LBL_'.strtoupper($field_db_name)];
-_pp($fieldLabel);
+
      }else{
          //we could not find the label in mod_strings or app_strings based on either a mapping entry
          //or on the db_name itself or being overwritten, so default to the db name as a last resort
          $fieldLabel = $field_db_name;
-_pp($fieldLabel);
+
      }
      //strip the label of any columns
      $fieldLabel= preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", '', trim($fieldLabel));
 
- //reset the bean mod_strings back to original import strings
-        $mod_strings = $temp_mod_strings;
+     //reset the bean mod_strings back to original import strings
+     $mod_strings = $temp_mod_strings;
      return $fieldLabel;
 
  }
