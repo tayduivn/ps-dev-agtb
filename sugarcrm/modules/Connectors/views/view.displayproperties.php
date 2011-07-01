@@ -66,7 +66,7 @@ class ViewDisplayProperties extends ViewList
     	//Do filtering here?
     	$count = 0;
    		global $current_user;
-		$access = get_admin_modules_for_user($current_user);
+		$access = $current_user->getDeveloperModules();
 	    $d = dir('modules');
 		while($e = $d->read()){
 			if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;

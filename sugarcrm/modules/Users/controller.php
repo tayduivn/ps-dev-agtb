@@ -54,11 +54,11 @@ class UsersController extends SugarController
     //END SUGARCRM flav=pro || flav=sales ONLY	
 	protected function action_delete()
 	{
-	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')
+	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && ($GLOBALS['current_user']->isAdminForModule('Users')
 //BEGIN SUGARCRM flav=sales ONLY
 || $GLOBALS['current_user']->user_type == 'UserAdministrator'
 //END SUGARCRM flav=sales ONLY
-	    ))
+            ))
         {
             $u = new User();
             $u->retrieve($_REQUEST['record']);
@@ -94,7 +94,7 @@ class UsersController extends SugarController
 	 */
 	protected function action_clearreassignrecords()
 	{
-        if( is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Users'))
+        if( $GLOBALS['current_user']->isAdminForModule('Users'))
             unset($_SESSION['reassignRecords']);
         else
 	       sugar_die("You cannot access this page.");
