@@ -37,7 +37,7 @@ class Bug36008Test extends Sugar_PHPUnit_Framework_TestCase {
              WHERE id=1');
         $this->globalTeam = $this->db->fetchByAssoc($resultGlobal);
          
-        $this->db->query('TRUNCATE TABLE ' . $teamsTableName);
+        $this->db->query('TRUNCATE TABLE ' . $this->teamsTableName);
         $_POST = array(	
             'module' => 'Administration',	
             'action' => 'RepairTeams',	
@@ -62,7 +62,7 @@ class Bug36008Test extends Sugar_PHPUnit_Framework_TestCase {
                 $this->newPrivateTeams[] = $newPrivateTeam;
             } 
         }
-        $this->assertEquals($this->oldPrivateTeams, $newPrivateTeams);
+        $this->assertEquals($this->oldPrivateTeams, $this->newPrivateTeams);
     }
     
     function testGlobalTeamRepair()
