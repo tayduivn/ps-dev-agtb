@@ -62,7 +62,7 @@ $subpanel_layout = array(
 global $current_user;
 $result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='$_REQUEST[record]'");
 $row = $GLOBALS['db']->fetchByAssoc($result);
-if(!is_admin($current_user)&& is_admin_for_module($current_user,'Users')&& $row['is_admin']==1){
+if(!is_admin($current_user)&& $current_user->isAdminForModule('Users')&& $row['is_admin']==1){
 	unset($subpanel_layout['list_fields']['edit_button']);
 }
 ?>

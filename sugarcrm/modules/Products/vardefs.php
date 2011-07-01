@@ -128,6 +128,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
+        	'studio' => array('editview'=>false, 'detailview'=>false, 'quickcreate'=>false),
         ),
   'name' =>
   array (

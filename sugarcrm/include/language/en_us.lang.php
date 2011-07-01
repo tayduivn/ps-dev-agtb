@@ -2496,6 +2496,7 @@ $app_strings = array (
     'LBL_MAILMERGE_KEY' => 'M',
     'LBL_MAILMERGE' => 'Mail Merge',
     'LBL_MASS_UPDATE' => 'Mass Update',
+    'LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE' => 'There are no fields available for the Mass Update operation',
     'LBL_OPT_OUT_FLAG_PRIMARY' => 'Opt out Primary Email',
     'LBL_MEETINGS'=>'Meetings',
     'LBL_MEETING'=>'Meeting',
@@ -3069,7 +3070,9 @@ $app_strings = array (
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
     
     //External API Error Messages
-    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
+    'LBL_REMOVING_ATTACHMENT'               => 'Removing attachment',
+    'ERR_REMOVING_ATTACHMENT'               => 'Error in Removing attachment',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
