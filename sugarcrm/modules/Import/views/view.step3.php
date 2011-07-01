@@ -578,18 +578,23 @@ function toggleDefaultColumnVisibility()
     }
 }
 
-document.getElementById('toggleNotes').onclick = function() {
-    if (document.getElementById('importNotes').style.display == 'none'){
-        document.getElementById('importNotes').style.display = '';
-        document.getElementById('toggleNotes').value='  {$mod_strings['LBL_HIDE_NOTES']}  ';
-        document.getElementById('toggleNotes').title='{$mod_strings['LBL_HIDE_NOTES']}';
-    }
-    else {
-        document.getElementById('importNotes').style.display = 'none';
-        document.getElementById('toggleNotes').value='  {$mod_strings['LBL_SHOW_NOTES']}  ';
-        document.getElementById('toggleNotes').title='{$mod_strings['LBL_SHOW_NOTES']}';
+var notesEl = document.getElementById('toggleNotes');
+if(notesEl)
+{
+    notesEl.onclick = function() {
+        if (document.getElementById('importNotes').style.display == 'none'){
+            document.getElementById('importNotes').style.display = '';
+            document.getElementById('toggleNotes').value='  {$mod_strings['LBL_HIDE_NOTES']}  ';
+            document.getElementById('toggleNotes').title='{$mod_strings['LBL_HIDE_NOTES']}';
+        }
+        else {
+            document.getElementById('importNotes').style.display = 'none';
+            document.getElementById('toggleNotes').value='  {$mod_strings['LBL_SHOW_NOTES']}  ';
+            document.getElementById('toggleNotes').title='{$mod_strings['LBL_SHOW_NOTES']}';
+        }
     }
 }
+
 
 YAHOO.util.Event.onDOMReady(function(){
     toggleDefaultColumnVisibility();

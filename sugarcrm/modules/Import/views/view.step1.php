@@ -33,7 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
-
+require_once('include/externalAPI/ExternalAPIFactory.php');
         
 class ImportViewStep1 extends ImportView
 {
@@ -67,7 +67,9 @@ class ImportViewStep1 extends ImportView
         }
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
-        $this->ss->assign("EXTERNAL_SOURCES_OPTIONS", get_select_options_with_id($this->getImportableExternalEAPMs(),'') );
+        $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
+        $this->ss->assign("EXTERNAL_SOURCES_OPTIONS", get_select_options_with_id($this->getAllImportableExternalEAPMs(),$selectExternal) );
+        $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
 
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
         $this->ss->assign("CONTENT",$content);
@@ -92,10 +94,14 @@ class ImportViewStep1 extends ImportView
         return $importableModules;
     }
 
-    private function getImportableExternalEAPMs()
+    private function getAllImportableExternalEAPMs()
     {
-        require_once('include/externalAPI/ExternalAPIFactory.php');
+        ExternalAPIFactory::clearCache();
+        return ExternalAPIFactory::getModuleDropDown('Import', TRUE, TRUE);
+    }
 
+    private function getAuthenticatedImportableExternalEAPMs()
+    {
         return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE);
     }
     /**
@@ -126,7 +132,7 @@ document.getElementById('gonext').onclick = function()
             add_error_style('importstep1','external_source',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_EXTERNAL_SOURCE']}");
             return false;
         }
-        
+
         document.getElementById('importstep1').action.value = 'ExtStep1';
         return true;
     }
@@ -141,10 +147,72 @@ YAHOO.util.Event.onDOMReady(function(){
         var currentVisibility = trEl.style.display;
         var newVisibility = (currentVisibility == 'none') ? '' : 'none';
         trEl.style.display = newVisibility;
+        if(newVisibility == 'none')
+        {
+            document.getElementById('gonext').disabled = false;
+            document.getElementById('external_source').selectedIndex = 0;
+            document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+        }
+        else
+        {
+            document.getElementById('gonext').disabled = true;
+        }
     }
     
     YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
 
+    function isExtSourceAuthenticated(source)
+    {
+        if( typeof(auth_sources[source]) != 'undefined')
+            return true;
+        else
+            return false;
+    }
+    
+    function isExtSourceValid(el)
+    {
+        if(this.value == '')
+        {
+            document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+            return '';
+        }
+        if( !isExtSourceAuthenticated(this.value) )
+        {
+            document.getElementById('ext_source_sign_in_bttn').style.display = '';
+            document.getElementById('gonext').disabled = true;
+        }
+        else
+        {
+            document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+            document.getElementById('gonext').disabled = false;
+        }
+    }
+    YAHOO.util.Event.addListener('external_source', "click", isExtSourceValid);
+
+
+    function openExtAuthWindow()
+    {
+        var extSource = document.getElementById('external_source').value;
+
+        var import_module = document.getElementById('importstep1').import_module.value;
+        var url = "index.php?module=EAPM&return_module=Import&action=EditView&application=" + extSource + "&return_action=" + import_module;
+        document.location = url;
+    }
+
+    YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+
+    function initExtSourceSelection()
+    {
+        var el1 = YAHOO.util.Dom.get('ext_source');
+        var el2 = YAHOO.util.Dom.get('external_source');
+        if(el2.value == '')
+            return;
+            
+        el1.checked = true;
+        toggleExternalSource();
+        isExtSourceValid.call({value:el2.value});
+    }
+    initExtSourceSelection();
 });
 -->
 </script>

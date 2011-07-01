@@ -75,9 +75,14 @@
                   &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
                 </td>
           </tr>
-          <tr id="external_sources_tr" style="display:none;" >
-                <td>&nbsp;</td>
-                <td><select tabindex='4' name='external_source' id='external_source' >{$EXTERNAL_SOURCES_OPTIONS}</select></td>
+          <tr scope="row" id="external_sources_tr" style="display:none;" >
+                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>
+                    <select tabindex='4' name='external_source' id='external_source' >{$EXTERNAL_SOURCES_OPTIONS}</select>
+                </td>
+                <td>
+                    <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
+                </td>
           </tr>
           </table>
         </td>
@@ -97,3 +102,9 @@
 
 </form>
 {$JAVASCRIPT}
+
+{literal}
+<script>
+{/literal} var auth_sources = {$EXTERNAL_AUTHENTICATED_SOURCES}{literal}
+</script>
+{/literal}
