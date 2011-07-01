@@ -77,8 +77,8 @@ class InsideViewLogicHook {
 
     protected function getOpportunityFrameUrl($bean, $extraUrl) {
         $url = self::urlBase.'analyseAccount.do?crm_context=opportunity&';
-        $fieldMap = array('crm_account_name'=>'parent_account_name',
-                          'crm_account_id'=>'parent_account_id',
+        $fieldMap = array('crm_account_name'=>'account_name',
+                          'crm_account_id'=>'account_id',
                           'crm_opportunity_id'=>'id',
         );
         
