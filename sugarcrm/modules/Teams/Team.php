@@ -121,7 +121,7 @@ class Team extends SugarBean
 
 		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
 		{
-			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) 
+			if ($current_user->isAdminForModule('Users')) 
 			{
 			    $list_form->parse($xTemplateSection.".row.admin_team");
 			    $list_form->parse($xTemplateSection.".row.admin_edit");

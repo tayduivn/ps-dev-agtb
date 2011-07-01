@@ -75,15 +75,15 @@ class ModuleBuilderController extends SugarController
     function process(){
     	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;
         global $current_user;
-        $access = get_admin_modules_for_user($current_user);
+        $access = $current_user->getDeveloperModules();
 		//BEGIN SUGARCRM flav=sales ONLY
 		if(!empty($_REQUEST['type']) && $_REQUEST['type'] == 'mb'){
 			$this->hasAccess = false;
 		}else
 		//END SUGARCRM flav=sales ONLY
-		if(is_admin($current_user) || (is_admin_for_any_module($current_user) && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package'))||
+            if($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package'))||
           (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access)|| empty($_REQUEST['view_module']))) ||
-          (isset($_REQUEST['type']) && (($_REQUEST['type']=='dropdowns' && is_admin_for_any_module($current_user))||
+               (isset($_REQUEST['type']) && (($_REQUEST['type']=='dropdowns' && $current_user->isDeveloperForAnyModule())||
           ($_REQUEST['type']=='studio' && displayStudioForCurrentUser() == true))))
         {
             $this->hasAccess = true;

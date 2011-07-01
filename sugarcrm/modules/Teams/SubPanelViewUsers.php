@@ -65,7 +65,7 @@ class SubPanelViewUsers {
 		$button .= "<input type='hidden' name='return_module' value='Users'>\n";
 		$button .= "<input type='hidden' name='return_action' value='".$action."'>\n";
 		$button .= "<input type='hidden' name='return_id' value='".$this->focus->id."'>\n";
-		if (is_admin($current_user) || is_admin_for_module($current_user,'Users'))
+		if ($current_user->isAdminForModule('Users'))
 		{
 			///////////////////////////////////////
 			///
