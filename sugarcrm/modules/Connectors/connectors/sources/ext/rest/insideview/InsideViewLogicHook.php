@@ -49,7 +49,7 @@ class InsideViewLogicHook {
 
         $outStr = '';
         foreach ( $outArray as $k => $v ) {
-            $outStr .= $k.'='.urlencode($v).'&';
+            $outStr .= $k.'='.rawurlencode(html_entity_decode($v,ENT_QUOTES)).'&';
         }
         
         $outStr = rtrim($outStr,'&');
