@@ -160,7 +160,7 @@ class IBMDB2Manager  extends DBManager
     /**~
      * @see DBManager::checkError()
      */
-    public function checkError($msg = '', $dieOnError = false, $stmt = false)
+    public function checkError($msg = '', $dieOnError = false, $stmt = null)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
@@ -171,16 +171,20 @@ class IBMDB2Manager  extends DBManager
             $msg = $this->handleError($msg, $dieOnError, $logmsg);
             $result = true;
         }
-        if (!empty($stmt)){
-            if(db2_stmt_error($stmt)) {/* TODO: Add statement resource from context*/
-                $logmsg = "IBM_DB2 statement error ".db2_stmt_error($stmt).": ".db2_stmt_errormsg($stmt);
+        if (is_resource($stmt)){ // Being more strict than just checking for boolean false
+            $error = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
+            if($error) {
+                $logmsg = "IBM_DB2 statement error ".$error.": ".db2_stmt_errormsg($stmt);
                 $this->handleError($msg, $dieOnError, $logmsg);
                 $result = true;
             }
-        } else if(db2_stmt_error()) {/* TODO: Add statement resource from context*/
-            $logmsg = "IBM_DB2 statement error ".db2_stmt_error().": ".db2_stmt_errormsg();
-            $this->handleError($msg, $dieOnError, $logmsg);
-            $result = true;
+        } else {
+            $error = db2_stmt_error(); // Using local variable because a successive call will return no problem!
+            if($error) {
+                $logmsg = "IBM_DB2 statement error ".$error.": ".db2_stmt_errormsg();
+                $this->handleError($msg, $dieOnError, $logmsg);
+                $result = true;
+            }
         }
         return $result;
     }
@@ -203,39 +207,37 @@ class IBMDB2Manager  extends DBManager
         parent::countQuery($sql);
         $GLOBALS['log']->info('Query: ' . $sql);
         $this->checkConnection();
-        $this->query_time = microtime(true);
         $db = $this->getDatabase();
         $result = false;
 
         $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
-		if(true){//!$this->checkDB2STMTerror($stmt)) {
+
+		if($stmt){
             $sp_msg = '';
-            if(preg_match('/^CALL.+,\s*\?/i', $sql))
-            {
-                // 20110519 Frank Steegmans: Note at the time of this implementation we are not using stored procedures
-                // anywhere except for creating full text indexes in add_drop_contraint. Furthermore
-                // we are also not using parameterized prepared queries. If either one of these assumptions
-                // changes this code needs to be revisited.
-                if($suppress) @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
-                else db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
-            }
 
-			$rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
-	        $this->query_time = microtime(true) - $this->query_time;
+            if($this->bindPreparedSqlParams($sql, $suppress, $stmt, $sp_msg)) {
 
-            $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
-            if(!$rc) {
-                $GLOBALS['log']->error("Query Failed: $sql");
+                $this->query_time = microtime(true);
+                $rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
+                $this->query_time = microtime(true) - $this->query_time;
+                $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
+
+                if(!$rc) {
+                    $GLOBALS['log']->error("Query Failed: $sql");
+                    $stmt = false; // Making sure we don't use the statement resource for error reporting
+                } else {
+                    $result = $stmt;
+                    if(isset($sp_msg) && $sp_msg != '')
+                    {
+                        $GLOBALS['log']->info("Return message from stored procedure call '$sql': $sp_msg");
+                    }
+
+                    if($this->dump_slow_queries($sql)) {
+                        $this->track_slow_queries($sql);
+                    }
+                }
             } else {
-                $result = $stmt;
-                if(isset($sp_msg) && $sp_msg != '')
-                {
-                    $GLOBALS['log']->info("Return message from stored procedure call '$sql': $sp_msg");
-                }
-
-                if($this->dump_slow_queries($sql)) {
-                    $this->track_slow_queries($sql);
-                }
+                $GLOBALS['log']->error("Failed to bind parameter for query : $sql");
             }
 		}
 
@@ -246,6 +248,32 @@ class IBMDB2Manager  extends DBManager
 		    return false;
 		}
         return $result;
+    }
+
+
+    /**
+     * Inspects the SQL statement to deduce if binding parameters is necessary and if so
+     * also binds the parameters. Currently only a stored procedure message is supported.
+     * @param $sql
+     * @param $suppress
+     * @param $stmt
+     * @param $sp_msg
+     * @return bool         false if binding failed, true if binding succeeded or wasn't necessary
+     */
+    protected function bindPreparedSqlParams($sql, $suppress, $stmt, &$sp_msg)
+    {
+        
+        if (preg_match('/^CALL.+,\s*\?/i', $sql)) {
+            // 20110519 Frank Steegmans: Note at the time of this implementation we are not using stored procedures
+            // anywhere except for creating full text indexes in add_drop_contraint. Furthermore
+            // we are also not using parameterized prepared queries. If either one of these assumptions
+            // changes this code needs to be revisited.
+            $sp_msg = '';
+            $proceed = ($suppress) ? @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT) :
+                    db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
+            return $proceed;
+        }
+        return true;
     }
 
 
@@ -400,7 +428,7 @@ class IBMDB2Manager  extends DBManager
             // TODO add logic to make this generated when there is a sequence being used
             if($row['generated'] == 'A' || $row['generated'] == 'D')
                 $columns[$name]['auto_increment'] = '1';
-            $columns[$name]['required'] = ( $row['nulls'] == 'N' );
+            $columns[$name]['required'] = ( $row['nulls'] == 'N' )?'true':'';
         }
         return $columns;
     }
