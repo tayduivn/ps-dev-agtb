@@ -45,14 +45,17 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
     </table>
   <div id='subpanel_insideview' style='width:100%'>
       <div id='insideViewConfirm' class="detail view" style="padding: 10px;{if $showInsideView}display:none;{/if}">
-
+	<div style="float: left; padding-bottom: 10px; width: 80%;">
       <a href='http://www.insideview.com/' target='_blank' style='text-decoration: none;'><strong style='color: #d71e00;'>InsideView</strong></a> <strong>now comes preinstalled in SugarCRM.</strong>
 
           <br><br>
-           <div>Get relevant company information, contacts, news, and social media insights all within your CRM. The InsideView connector is a <strong>FREE</strong> service that automatically displays in your leads, accounts, contacts and opportunities.
+           Get relevant company information, contacts, news, and social media insights all within your CRM. The InsideView connector is a <strong>FREE</strong> service that automatically displays in your leads, accounts, contacts and opportunities.
 
-       <div style="float: right; width: 250px; text-align: center;"><img  src="{$video}"/>InsideView in<br>30 seconds.</div>
+       
       </div>
+      
+      <div style="float: right; padding-bottom: 10px; width: 190px;"><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/><a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>InsideView in<br>30 seconds.</a></div>
+      
                <hr>
      By clicking 'Get Started' you agree to InsideView's  <a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>terms of use</a> and <a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>privacy policy</a>.
 
