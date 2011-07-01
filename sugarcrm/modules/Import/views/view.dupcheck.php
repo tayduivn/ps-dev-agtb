@@ -79,9 +79,29 @@ class ImportViewDupcheck extends ImportView
         //check for saved entries from mapping
         $dupe_disabled =  array();
         $dupe_enabled =  array();
+        $mapped_fields = array();
 
-        foreach($import_fields as $ik=>$iv){
-            if(isset($field_map['dupe_'.$ik])){
+         //grab the list of user mapped fields
+         foreach($_REQUEST as $req_k => $req_v){
+             if(strpos($req_k,'olnum')>0){
+                 if(empty($req_v) || $req_v != '-1'){
+                     $mapped_fields[] = $req_v;
+                 }
+             }
+         }
+
+         foreach($import_fields as $ik=>$iv){
+
+             //grab the field value from the key
+             $ik_field = explode('::', $ik);
+
+             //field was not included in the key, or was not in mapped fields, so skip
+             if(empty($ik_field[1]) || !in_array($ik_field[1], $mapped_fields)){_pp($ik_field);
+                 //skip indexed fields that are not defined in user mapping
+                 continue;
+             }
+
+             if(isset($field_map['dupe_'.$ik])){
                 //index is defined in mapping, so set this index as enabled if not already defined
                 $dupe_enabled[] =  array("dupeVal" => $ik, "label" => $iv);
             }else{
