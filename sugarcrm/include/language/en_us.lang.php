@@ -3108,6 +3108,7 @@ $app_strings = array (
     //define labels to be used for overriding local values during import/export
     'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned To',
     'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To',
+    'LBL_EXPORT_FULL_NAME' => 'Full Name',
 
 
     );

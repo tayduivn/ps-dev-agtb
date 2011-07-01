@@ -129,6 +129,16 @@ class ImportDuplicateCheck
             $indexlist[] = $field_index_array[0];
         }
 
+        //if full_name is set, then manually search on the first and last name fields before iterating through rest of fields
+        //this is a special handling of the name fields on people objects, the rest of the fields are checked individually
+        if(in_array('full_name',$indexlist)){
+            $newfocus = loadBean($this->_focus->module_dir);
+            $result = $newfocus->retrieve_by_string_fields(array('deleted', 'first_name', 'last_name'),true);
+
+            if ( !is_null($result) ){
+                return true;
+            }
+        }
 
         // loop through var def indexes and compare with selected indexes
         foreach ( $this->_getIndexVardefs() as $index ) {
@@ -185,9 +195,10 @@ class ImportDuplicateCheck
         $importable_keys = array_keys($import_fields);
         $index_array = array();
         $fields_used = array();
-        $mstr_exclude_array = array('contacts'=>array('email2'), array('leads'=>'reports_to_id'), array('prospects'=>'tracker_key'));
+        $mstr_exclude_array = array('all'=>array('team_set_id'),'contacts'=>array('email2'), array('leads'=>'reports_to_id'), array('prospects'=>'tracker_key'));
 
-        $exclude_array =  isset($mstr_exclude_array[strtolower($this->_focus->module_dir)])?$mstr_exclude_array[strtolower($this->_focus->module_dir)]:array();
+        //create exclude array from subset of applicable mstr_exclude_array elements
+        $exclude_array =  isset($mstr_exclude_array[strtolower($this->_focus->module_dir)])?array_merge($mstr_exclude_array[strtolower($this->_focus->module_dir)], $mstr_exclude_array['all']) : $mstr_exclude_array['all'];
 
         foreach ($this->_getIndexVardefs() as $index){
             if ($index['type'] == "index"){
@@ -210,6 +221,13 @@ class ImportDuplicateCheck
 
             }
         }
+        //special handling for beans with first_name and last_name
+        if(in_array('first_name', $fields_used) && in_array('last_name', $fields_used)){
+            //since both full name and last name fields have been mapped, add full name index
+            $index_array['full_name::full_name'] = translateForExport('full_name',$this->_focus);
+            $fields_used[] = 'full_name';
+        }
+
         asort($index_array);
         return $index_array;
     }

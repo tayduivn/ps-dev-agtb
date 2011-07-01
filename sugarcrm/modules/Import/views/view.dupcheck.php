@@ -79,7 +79,7 @@ class ImportViewDupcheck extends ImportView
         //check for saved entries from mapping
         $dupe_disabled =  array();
         $dupe_enabled =  array();
-        $mapped_fields = array();
+        $mapped_fields = array('full_name');
 
          //grab the list of user mapped fields
          foreach($_REQUEST as $req_k => $req_v){
