@@ -57,12 +57,13 @@ class Bug36008Test extends Sugar_PHPUnit_Framework_TestCase {
             'SELECT name, name2, associated_user_id, description 
              FROM ' . $this->teamsTableName . ' 
              WHERE private=1 AND associated_user_id IN(' . implode(',', $this->anonymousUserIds) . ')' );
+        $newPrivateTeams = null;
         if ($resultNew) {
             while ($newPrivateTeam = $this->db->fetchByAssoc($resultNew)) {
-                $this->newPrivateTeams[] = $newPrivateTeam;
+                $newPrivateTeams[] = $newPrivateTeam;
             } 
         }
-        $this->assertEquals($this->oldPrivateTeams, $this->newPrivateTeams);
+        $this->assertEquals($this->oldPrivateTeams, $newPrivateTeams);
     }
     
     function testGlobalTeamRepair()

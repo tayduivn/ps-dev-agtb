@@ -11,6 +11,7 @@ var $account;
 	
 public function setUp()
 {
+    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	$this->account = SugarTestAccountUtilities::createAccount();
 }	
 

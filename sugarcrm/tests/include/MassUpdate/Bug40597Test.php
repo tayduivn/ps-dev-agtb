@@ -43,11 +43,13 @@ class Bug40597 extends Sugar_PHPUnit_Framework_TestCase
 		global $app_strings, $app_list_strings;
 		global $current_language;
 		$current_language = 'en_us';
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		$app_strings = return_application_language($GLOBALS['current_language']);
 		$app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
 		$this->testAccount = SugarTestAccountUtilities::createAccount();
 		$this->testAccount->field_defs = array();
 		$this->useOutputBuffering = false;
+
 	}
 	
 	public function tearDown()
