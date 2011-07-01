@@ -175,6 +175,9 @@ class InsideViewLogicHook {
              }
              $smarty->assign('URL',$url);
              $smarty->assign('logo',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview.png'));
+            $smarty->assign('video',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/video.png'));
+            $smarty->assign('logo_expanded',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_expanded.png'));
+            $smarty->assign('logo_collapsed',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_collapsed.png'));
 
              if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 )
              {
