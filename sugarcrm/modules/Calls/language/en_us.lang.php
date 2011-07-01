@@ -108,6 +108,9 @@ $mod_strings = array (
     'NOTICE_DURATION_TIME' => 'Duration time must be greater than 0',
     'LBL_CALL_INFORMATION' => 'Call Overview',
     'LBL_REMOVE' => 'rem',
+    //for Export
+    'LBL_EXPORT_DATE_START' => 'Start Date and Time',
+    'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
 );
 
 

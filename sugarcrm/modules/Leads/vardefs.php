@@ -508,6 +508,8 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
         array('name' =>'idx_lead_assigned', 'type'=>'index', 'fields'=>array('assigned_user_id')),
         array('name' =>'idx_lead_contact', 'type'=>'index', 'fields'=>array('contact_id')),
         array('name' =>'idx_reports_to', 'type'=>'index', 'fields'=>array('reports_to_id')),
+        array('name' =>'idx_lead_phone_work', 'type'=>'index', 'fields'=>array('phone_work')),
+       array('name' =>'idx_leads_id_del', 'type'=>'index', 'fields'=>array('id','deleted',)),
 
                                              )
 , 'relationships' => array (

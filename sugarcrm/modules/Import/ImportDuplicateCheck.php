@@ -180,42 +180,39 @@ class ImportDuplicateCheck
 
     public function getDuplicateCheckIndexedFiles()
     {
-
+        require_once('include/export_utils.php');
         $import_fields = $this->_focus->get_importable_fields();
         $importable_keys = array_keys($import_fields);
-        $super_language_pack = sugarArrayMerge(
-            return_module_language($GLOBALS['current_language'], $this->_focus->module_dir),
-            $GLOBALS['app_strings']
-            );
-
         $index_array = array();
         $fields_used = array();
+        $mstr_exclude_array = array('contacts'=>array('email2'), array('leads'=>'reports_to_id'), array('prospects'=>'tracker_key'));
+
+        $exclude_array =  isset($mstr_exclude_array[strtolower($this->_focus->module_dir)])?$mstr_exclude_array[strtolower($this->_focus->module_dir)]:array();
+
         foreach ($this->_getIndexVardefs() as $index){
             if ($index['type'] == "index"){
 
                 foreach ($index['fields'] as $field){
                     $fieldName='';
-                    if ($field == 'deleted' || !in_array($field, $importable_keys)) continue;
+                    if ($field == 'deleted' || !in_array($field, $importable_keys) || in_array($field, $exclude_array)) continue;
                     $fieldDef = $this->_focus->getFieldDefinition($field);
 
                     //skip if this field is already defined (from another index)
                     if (in_array($fieldDef['name'],$fields_used)) continue;
 
-                    if ( isset($fieldDef['vname']) && isset($super_language_pack[$fieldDef['vname']]) ){
-                        $fieldName = $super_language_pack[$fieldDef['vname']];
-                    }else{
-                        $fieldName = $fieldDef['name'];
-                    }
-                    $fieldName = str_replace(":", "",$fieldName);
+                    //get the proper export label
+                    $fieldName = translateForExport($fieldDef['name'],$this->_focus);
+
+
                     $index_array[$index['name'].'::'.$fieldDef['name']] = $fieldName;
                     $fields_used[] = $fieldDef['name'];
                 }
 
             }
         }
-
+        asort($index_array);
         return $index_array;
     }
 }
- 
+
 ?>

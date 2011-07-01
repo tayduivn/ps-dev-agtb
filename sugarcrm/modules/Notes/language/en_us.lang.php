@@ -89,6 +89,9 @@ $mod_strings = array (
 	'LBL_PANEL_DETAILS' => 'Details',
 	'LBL_NOTE_INFORMATION' => 'Note Overview',
 	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
+    //for Export
+    'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
+    'LBL_EXPORT_PARENT_ID' => 'Related To ID',
 );
 
 ?>

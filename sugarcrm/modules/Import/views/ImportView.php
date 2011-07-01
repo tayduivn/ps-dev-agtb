@@ -33,6 +33,7 @@ class ImportView extends SugarView
 {
     protected $currentStep;
     protected $pageTitleKey;
+    protected $instruction;
 
     public function __construct($bean = null, $view_object_map = array())
     {
@@ -97,6 +98,20 @@ class ImportView extends SugarView
 	    $returnArray[] = string_format($mod_strings[$this->pageTitleKey], array($this->currentStep));
 
 	    return $returnArray;
+    }
+
+    protected function getInstruction()
+    {
+        global $mod_strings;
+
+        $ins = '';
+        
+        if ($this->instruction) {
+            $ins_string = $mod_strings[$this->instruction];
+            $ins = '<div class="import_instruction">' . $ins_string . '</div>';
+        }
+
+        return $ins;
     }
 
      /**

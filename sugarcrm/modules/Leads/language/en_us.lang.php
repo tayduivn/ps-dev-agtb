@@ -242,6 +242,8 @@ $mod_strings = array (
         'LBL_ACTIVITIES_COPY'   => 'Copy Activities to',
         'LBL_ACTIVITIES_MOVE_HELP'   => 'Placeholder for move help',
         'LBL_ACTIVITIES_COPY_HELP'   => 'Placeholder for copy help',
+    //For Export
+    'LBL_EXPORT_EMAIL2'=>'Other Email Address',
 );
 
 

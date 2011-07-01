@@ -178,5 +178,8 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
+
+    //For Export
+    'LBL_EXPORT_PARENT_ID' => 'Member of',
 );
 ?>

@@ -167,5 +167,7 @@ $mod_strings = array (
   'LBL_MODIFIED_USER' => 'Modified User',
   'LBL_CAMPAIGNS_SUBPANEL_TITLE' => 'Campaigns',
   'LBL_HISTORY_SUBPANEL_TITLE'=>'History',
+    //For Export
+  'LBL_EXPORT_EMAIL2'=>'Other Email Address',
 );
 ?>

@@ -2268,6 +2268,7 @@ $app_strings = array (
     'LBL_TEAMS' =>'Teams',
     'LBL_TEAM_ID'=>'Team ID:',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
+    'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
@@ -3104,6 +3105,10 @@ $app_strings = array (
 "4. Save the file to a known location on your system"
 "5. Click on the Import option from the Actions menu in the application and choose the file to upload"
    ',
+    //define labels to be used for overriding local values during import/export
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned To',
+    'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To',
+
 
     );
 
