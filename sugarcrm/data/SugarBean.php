@@ -5127,7 +5127,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $table_alias = $this->table_name;
         }
 
-        if ( ( (!is_admin($current_user) && !is_admin_for_module($current_user,$this->module_dir)) || $force_admin ) &&
+        if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
@@ -5463,7 +5463,9 @@ function save_relationship_changes($is_update, $exclude=array())
     function ACLAccess($view,$is_owner='not_set')
     {
         global $current_user;
-        if(is_admin($current_user)||is_admin_for_module($current_user,$this->getACLCategory()))return true;
+        if($current_user->isAdminForModule($this->getACLCategory())) {
+            return true;
+        }
         $not_set = false;
         if($is_owner == 'not_set')
         {
