@@ -166,31 +166,53 @@ class ImportDuplicateCheck
     {
 
         //lets strip the indexes of the name field in the value and leave only the index name
-       $origIndexList = $indexlist;
+        $origIndexList = $indexlist;
         $indexlist=array();
+        $fieldlist=array();
+        $customIndexlist=array();
         foreach($origIndexList as $iv){
             if(empty($iv)) continue;
             $field_index_array = explode('::',$iv);
-            $indexlist[] = $field_index_array[0];
+            if($field_index_array[0] == 'customfield'){
+                //this is a custom field, so place in custom array
+                $customIndexlist[] = $field_index_array[1];
+
+            }else{
+                //this is not a custom field, so place in index list
+                $indexlist[] = $field_index_array[0];
+                $fieldlist[] = $field_index_array[1];
+            }
         }
 
         //if full_name is set, then manually search on the first and last name fields before iterating through rest of fields
         //this is a special handling of the name fields on people objects, the rest of the fields are checked individually
         if(in_array('full_name',$indexlist)){
             $newfocus = loadBean($this->_focus->module_dir);
-            $result = $newfocus->retrieve_by_string_fields(array('deleted', 'first_name', 'last_name'),true);
+            $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', 'first_name'=>$this->_focus->first_name, 'last_name'=>$this->_focus->last_name),true);
 
             if ( !is_null($result) ){
                 return true;
             }
         }
 
+        //search on any custom fields
+        foreach($customIndexlist as $cust_val){
+            $newfocus = loadBean($this->_focus->module_dir);
+            $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', $cust_val => $this->_focus->$cust_val), true);
+
+            if ( !is_null($result) ){
+                return true;
+            }
+
+        }
+
+
         // loop through var def indexes and compare with selected indexes
         foreach ( $this->_getIndexVardefs() as $index ) {
             // if we get an index not in the indexlist, loop
             if ( !in_array($index['name'],$indexlist) )
                 continue;
-            
+
             // This handles the special case of duplicate email checking
             if ( $index['name'] == 'special_idx_email1' || $index['name'] == 'special_idx_email2' ) {
                 $emailAddress = new SugarEmailAddress();
@@ -210,21 +232,22 @@ class ImportDuplicateCheck
             }
             else {
                 $index_fields = array('deleted' => '0');
+                //search only for the field we have selected
                 foreach($index['fields'] as $field){
-                    if ($field == 'deleted') 
+                    if ($field == 'deleted' ||  !in_array($field,$fieldlist))
                         continue;
                     if (!in_array($field,$index_fields))
                         if (strlen($this->_focus->$field) > 0)
                             $index_fields[$field] = $this->_focus->$field;
                 }
-                
+
                 // if there are no valid fields in the index field list, loop
                 if ( count($index_fields) <= 1 )
                     continue;
-                
+
                 $newfocus = loadBean($this->_focus->module_dir);
                 $result = $newfocus->retrieve_by_string_fields($index_fields,true);
-                
+
                 if ( !is_null($result) )
                     return true;
             }
@@ -237,7 +260,8 @@ class ImportDuplicateCheck
     {
         require_once('include/export_utils.php');
         $import_fields = $this->_focus->get_importable_fields();
-        $importable_keys = array_keys($import_fields);
+        $importable_keys = array_keys($import_fields);//
+
         $index_array = array();
         $fields_used = array();
         $mstr_exclude_array = array('all'=>array('team_set_id'),'contacts'=>array('email2'), array('leads'=>'reports_to_id'), array('prospects'=>'tracker_key'));
@@ -245,11 +269,14 @@ class ImportDuplicateCheck
         //create exclude array from subset of applicable mstr_exclude_array elements
         $exclude_array =  isset($mstr_exclude_array[strtolower($this->_focus->module_dir)])?array_merge($mstr_exclude_array[strtolower($this->_focus->module_dir)], $mstr_exclude_array['all']) : $mstr_exclude_array['all'];
 
+        //process all fields belonging to indexes
         foreach ($this->_getIndexVardefs() as $index){
             if ($index['type'] == "index"){
 
                 foreach ($index['fields'] as $field){
                     $fieldName='';
+
+                    //skip this field if it is the deleted field, not in the importable keys array, or a field in the exclude array
                     if ($field == 'deleted' || !in_array($field, $importable_keys) || in_array($field, $exclude_array)) continue;
                     $fieldDef = $this->_focus->getFieldDefinition($field);
 
@@ -266,12 +293,35 @@ class ImportDuplicateCheck
 
             }
         }
+
         //special handling for beans with first_name and last_name
         if(in_array('first_name', $fields_used) && in_array('last_name', $fields_used)){
             //since both full name and last name fields have been mapped, add full name index
             $index_array['full_name::full_name'] = translateForExport('full_name',$this->_focus);
             $fields_used[] = 'full_name';
         }
+
+        //now process any custom fields that are marked as importable.
+        //we already have the array of importable fields, iterate for custom fields
+        foreach($import_fields as $cstm_k => $cstm_v){
+            if(!empty($cstm_v['source']) && $cstm_v['source'] == 'custom_fields'){
+                //this is a custom field so populate if it hasnt been used yet
+                    if (in_array($cstm_v['name'],$fields_used)) continue;
+
+                    //get the proper export label
+                    $fieldName = translateForExport($cstm_v['name'],$this->_focus);
+
+
+                    $index_array['customfield::'.$cstm_v['name']] = $fieldName;
+                    $fields_used[] = $cstm_v['name'];
+
+            }
+
+
+
+
+        }
+
 
         asort($index_array);
         return $index_array;
