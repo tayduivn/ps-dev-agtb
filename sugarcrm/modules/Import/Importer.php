@@ -311,9 +311,9 @@ class Importer
         //Allow fields to be passed in for dup check as well (used by external adapters)
         else if( !empty($_REQUEST['enabled_dup_fields']) )
         {
-            $enabled_dup_fields = json_decode($_REQUEST['enabled_dup_fields']);
+            $toDecode = html_entity_decode  ($_REQUEST['enabled_dup_fields'], ENT_QUOTES);
+            $enabled_dup_fields = json_decode($toDecode);
             $idc = new ImportDuplicateCheck($focus);
-
             if ( $idc->isADuplicateRecordByFields($enabled_dup_fields) )
             {
                 $this->importSource->markRowAsDuplicate();

@@ -43,6 +43,7 @@
 <input type="hidden" name="enabled_dup_fields" value ="{$ENABLED_DUP_FIELDS}">
 <input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
+<input type="hidden" name="has_header" value="off">    
     
 <div align="right">
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
@@ -160,7 +161,9 @@ ProcessESImport = new function()
                     ProcessESImport.totalRecordCount = resp['totalRecordCount'];
                     var locationStr = "index.php?module=Import&action=Last"
                         + "&current_step=" + document.getElementById("extstep1").current_step.value
-                        + "&type={/literal}{$TYPE}{literal}" + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
+                        + "&type={/literal}{$TYPE}{literal}"
+                        + "&import_module={/literal}{$IMPORT_MODULE}{literal}"
+                        + "&has_header=" +  document.getElementById("extstep1").has_header.value ;
 
                     //Determine if we are not or not.
                     if ( resp['done'] || (ProcessESImport.recordsPerImport * (ProcessESImport.offsetStart + 1) >= ProcessESImport.totalRecordCount) )
