@@ -122,7 +122,7 @@ $layout_defs['UserRoles'] = array(
 	),
 	);
 global $current_user;
-if($current_user->isAdminForModule('Users')){
+if(is_admin($current_user)|| is_admin_for_module($current_user, 'Users')){
 	$layout_defs['UserRoles']['subpanel_setup']['aclroles']['subpanel_name'] = 'admin';
 }else{
 	$layout_defs['UserRoles']['subpanel_setup']['aclroles']['top_buttons'] = array();
@@ -152,7 +152,7 @@ $layout_defs['UserEAPM'] = array(
 //remove the administrator create button holiday for the user admin only
 $result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='$_REQUEST[record]'");
 $row = $GLOBALS['db']->fetchByAssoc($result);
-if(!is_admin($current_user)&& $current_user->isAdminForModule('Users')&& $row['is_admin']==1){
+if(!is_admin($current_user)&& is_admin_for_module($current_user,'Users')&& $row['is_admin']==1){
 	$layout_defs['Users']['subpanel_setup']['holidays']['top_buttons']= array();
 }
 //END SUGARCRM flav=pro ONLY

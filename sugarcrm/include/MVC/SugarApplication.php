@@ -281,7 +281,7 @@ class SugarApplication
 	 * Handles everything related to authorization.
 	 */
 	function handleAccessControl(){
-		if($GLOBALS['current_user']->isDeveloperForAnyModule())
+		if(is_admin($GLOBALS['current_user']) || is_admin_for_any_module($GLOBALS['current_user']))
 			return;
 	    if(!empty($_REQUEST['action']) && $_REQUEST['action']=="RetrieveEmail")
             return;

@@ -93,7 +93,7 @@ function disableReturnSubmission(e) {
     <div class="nav-buttons">
         <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
             class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
-            onclick="SugarWizard.changeScreen('personalinfo',false);" id="next_tab_personalinfo" />
+            onclick="SugarWizard.changeScreen('personalinfo',false);" />
     </div>
 </div>
 
@@ -162,15 +162,15 @@ function disableReturnSubmission(e) {
         {if $SKIP_WELCOME}
         <input title="{$MOD.LBL_BACK}"
             onclick="document.location.href='index.php?module=Configurator&action=AdminWizard&page=smtp';" class="button"
-            type="button" name="cancel" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  " id="wizard_cancel"/>&nbsp;
+            type="button" name="cancel" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  " />&nbsp;
         {else}
         <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
-            onclick="SugarWizard.changeScreen('welcome',true);" id="previous_tab_welcome" />&nbsp;
+            onclick="SugarWizard.changeScreen('welcome',true);" />&nbsp;
         {/if}
         <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
             class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
-            onclick="SugarWizard.changeScreen('locale',false);" id="next_tab_locale" />
+            onclick="SugarWizard.changeScreen('locale',false);" />
     </div>
 </div>
 
@@ -258,13 +258,13 @@ function disableReturnSubmission(e) {
     <div class="nav-buttons">
         <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
-            onclick="SugarWizard.changeScreen('personalinfo',true);" id="previous_tab_personalinfo" />&nbsp;
+            onclick="SugarWizard.changeScreen('personalinfo',true);" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
             class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
-            onclick="SugarWizard.changeScreen('smtp',false);" id="next_tab_smtp" />
+            onclick="SugarWizard.changeScreen('smtp',false);" />
             {else}
-            onclick="SugarWizard.changeScreen('finish',false);" id="next_tab_finish" />
+            onclick="SugarWizard.changeScreen('finish',false);" />
             {/if}
     </div>
 </div>
@@ -316,10 +316,10 @@ function disableReturnSubmission(e) {
     <div class="nav-buttons">
         <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
-            onclick="SugarWizard.changeScreen('locale',true);" id="previous_tab_locale" />&nbsp;
+            onclick="SugarWizard.changeScreen('locale',true);" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
             class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
-            onclick="SugarWizard.changeScreen('finish',false);" id="next_tab_finish" />
+            onclick="SugarWizard.changeScreen('finish',false);" />
     </div>
 </div>
 {/if}
@@ -344,9 +344,9 @@ function disableReturnSubmission(e) {
         <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
             class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
             {if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
-            onclick="SugarWizard.changeScreen('smtp',true);" id="previous_tab_smtp" />&nbsp;
+            onclick="SugarWizard.changeScreen('smtp',true);" />&nbsp;
             {else}
-            onclick="SugarWizard.changeScreen('locale',true);" id="previous_tab_locale" />&nbsp;
+            onclick="SugarWizard.changeScreen('locale',true);" />&nbsp;
             {/if}
         <input title="{$MOD.LBL_WIZARD_FINISH_BUTTON}" class="button primary"
             type="submit" name="save" value="  {$MOD.LBL_WIZARD_FINISH_BUTTON}  " />&nbsp;

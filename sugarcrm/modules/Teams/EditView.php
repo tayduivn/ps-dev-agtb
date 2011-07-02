@@ -39,7 +39,7 @@ global $current_user;
 
 $GLOBALS['log']->info("Team edit view");
 
-if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
+if (!is_admin($current_user)&& !is_admin_for_module($GLOBALS['current_user'],'Users')) sugar_die("Unauthorized access to administration.");
 
 $focus = new Team();
 
@@ -69,7 +69,7 @@ $xtpl->assign("DESCRIPTION", $focus->description);
 
 
 global $current_user;
-if($current_user->isAdminForModule('Users') && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
+if((is_admin($current_user) || is_admin_for_module($current_user,'Users')) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){	
 	$record = '';
 	if(!empty($_REQUEST['record'])){
 		$record = 	$_REQUEST['record'];

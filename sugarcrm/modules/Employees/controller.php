@@ -42,7 +42,7 @@ class EmployeesController extends SugarController{
 	
 	protected function action_delete()
 	{
-	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && $GLOBALS['current_user']->isAdminForModule('Users'))
+	    if($_REQUEST['record'] != $GLOBALS['current_user']->id && (is_admin($GLOBALS['current_user'])||is_admin_for_module($GLOBALS['current_user'],'Users')))
         {
             $u = new User();
             $u->retrieve($_REQUEST['record']);

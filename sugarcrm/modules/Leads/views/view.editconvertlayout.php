@@ -39,7 +39,8 @@ class ViewEditConvertLayout extends SugarView {
     {
 	    parent::SugarView();
         global $current_user;
-        if(!$current_user->isAdmin() && !$current_user->isDeveloperForModule("Leads"))
+        $access = get_admin_modules_for_user($current_user);
+        if(!is_admin($current_user) && !is_admin_for_module($current_user, "Leads"))
         {
             die("Unauthorized Acccess to Administration");
         }

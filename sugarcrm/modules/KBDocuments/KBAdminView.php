@@ -42,7 +42,7 @@ global $current_user;
 global $sugar_version;
 global $sugar_config;
 
-if(!$current_user->isAdminForModule('KBDocuments') ){
+if(!is_admin($current_user) && !is_admin_for_module($current_user,'KBDocuments') ){
 	die($mod_strings['LBL_NOT_AN_ADMIN_USER']);
 }
 

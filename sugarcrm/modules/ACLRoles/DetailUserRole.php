@@ -37,7 +37,7 @@ if ( !is_admin($focus) ) {
     $categories = ACLAction::getUserActions($_REQUEST['record'],true);
     
     //clear out any removed tabs from user display
-    if(!$GLOBALS['current_user']->isAdminForModule('Users')){
+    if(!is_admin($current_user)&& !is_admin_for_module($GLOBALS['current_user'],'Users')){
         $tabs = $focus->getPreference('display_tabs');
         global $modInvisList;
         if(!empty($tabs)){

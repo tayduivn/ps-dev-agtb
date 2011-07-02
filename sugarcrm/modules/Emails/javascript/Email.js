@@ -334,7 +334,7 @@ function multiFiles( list_target){
             //check if filetype is valid
             if (SUGAR.util.validateFileExt(fileName, allowedTypes)) {
                 cid = 'cid:' + fileName;
-                embedImage = '<img src="' + imglocation + encodeURI(fileName) + '">';
+                embedImage = "<img src=" + imglocation + fileName + ">";
                 insert_variable(embedImage);
 
                 this.parentNode.childNodes[2].checked = 'true';

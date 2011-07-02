@@ -272,7 +272,7 @@ class SavedSearch extends SugarBean {
 			if(!empty($value) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $input, $match))
 			{
 			   $field = $match[2];
-			   if(isset($searchModuleBean->field_defs[$field]['type']) && empty($searchModuleBean->field_defs[$field]['disable_num_format']))
+			   if(isset($searchModuleBean->field_defs[$field]['type']))
 			   {
 			   	  $type = $searchModuleBean->field_defs[$field]['type'];
 			   	  
@@ -369,7 +369,7 @@ class SavedSearch extends SugarBean {
             	if(isset($searchModuleBean) && !empty($val) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
             	{
             	   $field = $match[2];
-				   if(isset($searchModuleBean->field_defs[$field]['type'])  && empty($searchModuleBean->field_defs[$field]['disable_num_format']))
+				   if(isset($searchModuleBean->field_defs[$field]['type']))
 				   {
 				   	  $type = $searchModuleBean->field_defs[$field]['type'];
 				   	  

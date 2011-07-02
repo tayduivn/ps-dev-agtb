@@ -495,7 +495,7 @@ EOHTML;
 
 
 			 //process the admin actions now..
-			 if ($current_user->isDeveloperForAnyModule()) {
+			 if (is_admin($current_user) or is_admin_for_any_module($current_user)) {
 			 	global $admin_group_header;
 			 	require("modules/Administration/metadata/adminpaneldefs.php");
 

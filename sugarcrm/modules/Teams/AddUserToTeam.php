@@ -34,7 +34,7 @@ global $mod_strings;
 global $current_user;
 
 
-if (!$GLOBALS['current_user']->isAdminForModule('Users')) sugar_die("Unauthorized access to administration.");
+if (!is_admin($current_user)&& !is_admin_for_module($GLOBALS['current_user'],'Users')) sugar_die("Unauthorized access to administration.");
 
 $focus = new Team();
 
