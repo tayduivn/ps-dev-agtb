@@ -14,6 +14,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
     
 	public function setUp()
 	{
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
 
           // email_xss settings to be saved using config_override
