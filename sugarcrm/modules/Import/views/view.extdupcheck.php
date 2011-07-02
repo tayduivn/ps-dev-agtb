@@ -96,12 +96,6 @@ document.getElementById('goback').onclick = function(){
     return true;
 }
 
-document.getElementById('importnow').onclick = function(){
-    var form = document.getElementById('importstepdup');
-    // Move on to next step
-    document.getElementById('importstepdup').action.value = 'extimport';
-    ProcessESImport.begin();
-}
 
 
 

@@ -108,16 +108,61 @@ class ImportDuplicateCheck
         
         return $index_array;
     }
-    
+
+    /**
+     * Checks to see if the given bean is a duplicate based off the given fields
+     *
+     * @param  array $indexlist
+     * @return bool true if this bean is a duplicate or false if it isn't
+     */
+    public function isADuplicateRecordByFields($fieldList)
+    {
+        foreach($fieldList as $field)
+        {
+            if ( $field == 'email1' || $field == 'email2' )
+            {
+                $emailAddress = new SugarEmailAddress();
+                $email = $field;
+                if ( $emailAddress->getCountEmailAddressByBean($this->_focus->$email,$this->_focus,($field == 'email1')) > 0 )
+                    return true;
+            }
+            else
+            {
+                $index_fields = array('deleted' => '0');
+                if( is_array($field) )
+                {
+                    foreach($field as $tmpField)
+                    {
+                        if ($tmpField == 'deleted')
+                            continue;
+                        if (strlen($this->_focus->$tmpField) > 0)
+                            $index_fields[$tmpField] = $this->_focus->$tmpField;
+                    }
+                }
+                elseif($field != 'deleted' && strlen($this->_focus->$field) > 0)
+                    $index_fields[$field] = $this->_focus->$field;
+
+                if ( count($index_fields) <= 1 )
+                    continue;
+
+                $newfocus = loadBean($this->_focus->module_dir);
+                $result = $newfocus->retrieve_by_string_fields($index_fields,true);
+
+                if ( !is_null($result) )
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Checks to see if the given bean is a duplicate based off the given indexes
      *
      * @param  array $indexlist
      * @return bool true if this bean is a duplicate or false if it isn't
      */
-    public function isADuplicateRecord(
-        $indexlist
-        )
+    public function isADuplicateRecord( $indexlist )
     {
 
         //lets strip the indexes of the name field in the value and leave only the index name

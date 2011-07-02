@@ -430,50 +430,70 @@ document.getElementById('goback').onclick = function(){
     return true;
 }
 
-document.getElementById('gonext').onclick = function(){
 
-    // validate form
-    clear_all_errors();
-    var form = document.getElementById('{$this->currentFormID}');
-    var hash = new Object();
-    var required = new Object();
-    $print_required_array
-    var isError = false;
-    for ( i = 0; i < form.length; i++ ) {
-		if ( form.elements[i].name.indexOf("colnum",0) == 0) {
-            if ( form.elements[i].value == "-1") {
+ImportView = {
+
+    validateMappings : function()
+    {
+        // validate form
+        clear_all_errors();
+        var form = document.getElementById('{$this->currentFormID}');
+        var hash = new Object();
+        var required = new Object();
+        $print_required_array
+        var isError = false;
+        for ( i = 0; i < form.length; i++ ) {
+            if ( form.elements[i].name.indexOf("colnum",0) == 0) {
+                if ( form.elements[i].value == "-1") {
+                    continue;
+                }
+                if ( hash[ form.elements[i].value ] == 1) {
+                    isError = true;
+                    add_error_style('{$this->currentFormID}',form.elements[i].name,"{$mod_strings['ERR_MULTIPLE']}");
+                }
+                hash[form.elements[i].value] = 1;
+            }
+        }
+
+        // check for required fields
+        for(var field_name in required) {
+            // contacts hack to bypass errors if full_name is set
+            if (field_name == 'last_name' &&
+                    hash['full_name'] == 1) {
                 continue;
             }
-            if ( hash[ form.elements[i].value ] == 1) {
+            if ( hash[ field_name ] != 1 ) {
                 isError = true;
-                add_error_style('{$this->currentFormID}',form.elements[i].name,"{$mod_strings['ERR_MULTIPLE']}");
+                add_error_style('{$this->currentFormID}',form.colnum_0.name,
+                    "{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} " + required[field_name]);
             }
-            hash[form.elements[i].value] = 1;
         }
+
+        // return false if we got errors
+        if (isError == true) {
+            return false;
+        }
+
+
+        return true;
+
     }
 
-    // check for required fields
-	for(var field_name in required) {
-		// contacts hack to bypass errors if full_name is set
-		if (field_name == 'last_name' &&
-				hash['full_name'] == 1) {
-			continue;
-		}
-		if ( hash[ field_name ] != 1 ) {
-            isError = true;
-            add_error_style('{$this->currentFormID}',form.colnum_0.name,
-                "{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} " + required[field_name]);
-		}
-	}
+}
 
-    // return false if we got errors
-	if (isError == true) {
-		return false;
-	}
+if( document.getElementById('gonext') )
+{
+    document.getElementById('gonext').onclick = function(){
 
-    // Move on to next step
-    document.getElementById('{$this->currentFormID}').action.value = '{$this->nextAction}';
-    return true;
+        if( ImportView.validateMappings() )
+        {
+            // Move on to next step
+            document.getElementById('{$this->currentFormID}').action.value = '{$this->nextAction}';
+            return true;
+        }
+        else
+            return false;
+    }
 }
 
 // handle adding new row

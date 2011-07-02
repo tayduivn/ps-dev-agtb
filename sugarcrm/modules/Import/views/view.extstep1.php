@@ -50,9 +50,8 @@ class ImportViewExtStep1 extends ImportViewStep3
     {
         $source = !empty($_REQUEST['external_source']) ? $_REQUEST['external_source'] : '';
         $importModule = $_REQUEST['import_module'];
-        global $mod_strings, $app_strings, $current_user;
-        global $sugar_config;
-
+        global $mod_strings, $app_strings, $current_user, $sugar_config;
+        
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
@@ -84,10 +83,18 @@ class ImportViewExtStep1 extends ImportViewStep3
         $this->ss->assign('CSS', $this->_getCSS());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
 
+        $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
+        $this->ss->assign("ENABLED_DUP_FIELDS", htmlentities(json_encode($this->getFieldsForDuplicateCheck()), ENT_QUOTES));
         $content = $this->ss->fetch('modules/Import/tpls/extstep1.tpl');
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
+
+    private function getFieldsForDuplicateCheck()
+    {
+        return array('email1', array('first_name', 'last_name'));
+    }
+
 
     private function getMappingRows($module, $extSourceToSugarFieldMapping)
     {

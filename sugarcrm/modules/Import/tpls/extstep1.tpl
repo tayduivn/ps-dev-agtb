@@ -40,7 +40,10 @@
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
-
+<input type="hidden" name="enabled_dup_fields" value ="{$ENABLED_DUP_FIELDS}">
+<input type="hidden" name="offset" value="0">
+<input type="hidden" name="to_pdf" value="1">
+    
 <div align="right">
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
 </div>
@@ -94,14 +97,149 @@
 <tr>
     <td align="left">
         <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
-        <input title="{$MOD.LBL_NEXT}" accessKey="" id="gonext" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  ">
+        <input title="{$MOD.LBL_IMPORT_NOW}" accessKey="" id="importnow" class="button" type="button" name="button" value="  {$MOD.LBL_IMPORT_NOW}  ">
     </td>
 </tr>
 </table>
 </form>
 {$JAVASCRIPT}
 {literal}
-<script type="text/javascript" language="Javascript">
+<script type="text/javascript">
+/**
+ * Singleton to handle processing the import
+ */
+ProcessESImport = new function()
+{
+    /*
+     * number of file to process processed
+     */
+    this.offsetStart         = 0;
+
+    /*
+     * Total number of records to process, unknown when import starts.
+     */
+    this.totalRecordCount    = 0;
+
+    /*
+     * maximum number of records per file
+     */
+    this.recordsPerImport   = {/literal}{$RECORDTHRESHOLD}{literal};
+
+    /*
+     * submits the form
+     */
+    this.submit = function()
+    {
+        document.getElementById("extstep1").offset.value = this.offsetStart * this.recordsPerImport;
+
+        YAHOO.util.Connect.setForm(document.getElementById("extstep1"));
+        YAHOO.util.Connect.asyncRequest('POST', 'index.php',
+            {
+                success: function(o) {
+                    var resp = false;
+                    try
+                    {
+                        resp = JSON.parse(o.responseText);
+                    }
+                    catch(e)
+                    {
+                           this.showErrorMessage(o);
+                    }
+
+                    //Check if we encountered any errors first
+                    if( !resp || (typeof(resp['error']) != 'undefined' && resp['error'] != '')  )
+                    {
+                        var errorMessage = o.responseText;
+                        if(resp)
+                            errorMessage = resp['error'];
+                        ProcessESImport.showErrorMessage(errorMessage);
+                        return;
+                    }
+
+                    //Continue the import if no errors were detected
+                    ProcessESImport.totalRecordCount = resp['totalRecordCount'];
+                    var locationStr = "index.php?module=Import&action=Last"
+                        + "&current_step=" + document.getElementById("extstep1").current_step.value
+                        + "&type={/literal}{$TYPE}{literal}" + "&import_module={/literal}{$IMPORT_MODULE}{literal}";
+
+                    //Determine if we are not or not.
+                    if ( resp['done'] || (ProcessESImport.recordsPerImport * (ProcessESImport.offsetStart + 1) >= ProcessESImport.totalRecordCount) )
+                    {
+                        YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETED}{literal}');
+                        SUGAR.util.hrefURL(locationStr);
+                    }
+                    else
+                    {
+                        ProcessESImport.offsetStart++;
+                        ProcessESImport.submit();
+                    }
+                },
+                failure: function(o) {
+                    ProcessESImport.showErrorMessage(o.responseText);
+                    return;
+                }
+            }
+        );
+        var move = 0;
+        if ( ProcessESImport.offsetStart > 0 ) {
+            move = ((ProcessESImport.offsetStart * ProcessESImport.recordsPerImport) / ProcessESImport.totalRecordCount) * 100;
+        }
+
+        if(this.totalRecordCount == 0 )
+            displayMessg = "{/literal}{$MOD.LBL_IMPORT_RECORDS}{literal} ";
+        else
+            displayMessg = "{/literal}{$MOD.LBL_IMPORT_RECORDS}{literal} " + ((this.offsetStart * this.recordsPerImport) + 1)
+                            + " {/literal}{$MOD.LBL_IMPORT_RECORDS_TO}{literal} " + Math.min(((this.offsetStart+1) * this.recordsPerImport),this.totalRecordCount)
+                            + " {/literal}{$MOD.LBL_IMPORT_RECORDS_OF}{literal} " + this.totalRecordCount;
+
+        YAHOO.SUGAR.MessageBox.updateProgress( move,displayMessg);
+    }
+
+    this.showErrorMessage = function(errorMessage)
+    {
+        YAHOO.SUGAR.MessageBox.minWidth = 500;
+        YAHOO.SUGAR.MessageBox.show({
+            type:  "alert",
+            title: '{/literal}{$MOD.LBL_IMPORT_ERROR}{literal}',
+            msg:   errorMessage,
+            fn: function() { }
+        });
+    }
+    /*
+     * begins the form submission process
+     */
+    this.begin = function()
+    {
+        datestarted = '{/literal}{$MOD.LBL_IMPORT_STARTED}{literal} ' +
+                YAHOO.util.Date.format('{/literal}{$datetimeformat}{literal}');
+        YAHOO.SUGAR.MessageBox.show({
+            title: '{/literal}{$STEP4_TITLE}{literal}',
+            msg: datestarted,
+            width: 500,
+            type: "progress",
+            closable:false,
+            animEl: 'importnow'
+        });
+        this.submit();
+    }
+}
 enableQS(false);
+
+document.getElementById('importnow').onclick = function(){
+
+    if( ImportView.validateMappings() )
+    {
+        var form = document.getElementById('extstep1');
+        // Move on to next step
+        document.getElementById('extstep1').action.value = 'extimport';
+        ProcessESImport.begin();
+        return false;
+    }
+    else
+        return false;
+
+
+}
+
 </script>
 {/literal}

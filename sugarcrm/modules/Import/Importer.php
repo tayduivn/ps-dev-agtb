@@ -307,6 +307,19 @@ class Importer
                 return;
             }
         }
+        //Allow fields to be passed in for dup check as well (used by external adapters)
+        else if( !empty($_REQUEST['enabled_dup_fields']) )
+        {
+            $enabled_dup_fields = json_decode($_REQUEST['enabled_dup_fields']);
+            $idc = new ImportDuplicateCheck($focus);
+
+            if ( $idc->isADuplicateRecordByFields($enabled_dup_fields) )
+            {
+                $this->importSource->markRowAsDuplicate();
+                $this->_undoCreatedBeans($this->ifs->createdBeans);
+                return;
+            }
+        }
 
         // if the id was specified
         $newRecord = true;
