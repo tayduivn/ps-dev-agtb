@@ -183,7 +183,8 @@ class Importer
                 if( empty($rowValue))
                 {
                     $rowValue = $defaultRowValue;
-                    unset($defaultRowValue);
+                    //reset the default value to empty
+                    $defaultRowValue='';
                 }
             }
 

@@ -187,6 +187,9 @@ div.errorMessage {
             <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
         </tr>
         <tr>
+            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="none" id='none_map' checked="true"/>&nbsp;{$MOD.LBL_NONE}</td>
+        </tr>
+        <tr>
             <td colspan="2">&nbsp;</td>
         </tr>
     </table>

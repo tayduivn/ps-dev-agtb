@@ -67,14 +67,12 @@
     {$MOD.LBL_SELECT_FIELDS_TO_MAP}
 </p>
 <br>
-{if $NOTETEXT != '' || $required_fields != ''}
+{if $NOTETEXT != ''}
     <p>
-        {* <b>{$MOD.LBL_NOTES}</b> *}
         <input title="{$MOD.LBL_SHOW_NOTES}" accessKey="" id="toggleNotes" class="button" type="button"
                name="button" value="  {$MOD.LBL_SHOW_NOTES}  ">
         <div id="importNotes" style="display: none;">
             <ul>
-                <li>{$MOD.LBL_REQUIRED_NOTE}{$required_fields}</li>
                 {$NOTETEXT}
             </ul>
         </div>
@@ -105,9 +103,9 @@
     <td style="text-align: left;" scope="row"><b>{$MOD.LBL_ROW} 2</b></td>
     {/if}
     <td style="text-align: left;" scope="row" id="default_column_header">
-        <span id="hide_default_link" class="expand">&nbsp;</span>
-        <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
+        <span id="hide_default_link" class="expand">&nbsp;<b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
+        <span id="default_column_header_span">&nbsp;</span>
     </td>
 </tr>
 {/if}
