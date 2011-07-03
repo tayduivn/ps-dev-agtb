@@ -99,8 +99,8 @@ class ImportViewConfirm extends ImportView
         //check to see if the file mime type is not a form of text or application octed streramand fire error if not
         if(isset($_FILES['userfile']['type']) && strpos($_FILES['userfile']['type'],'octet-stream') === false && strpos($_FILES['userfile']['type'],'text') === false){
             //this file does not have a known text or application type of mime type, issue the warning
-            $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR'];
-            $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_2'];
+            $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_1'];
+            $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_2'];
             $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2', true);
             $mimeTypeOk = false;
         }
@@ -118,14 +118,10 @@ class ImportViewConfirm extends ImportView
             $this->ss->assign("SOURCE", 'csv');
             if($autoDetectOk === FALSE)
             {
-                //show error in modal only if previous mime type check has passed
+                //show error only if previous mime type check has passed
                 if($mimeTypeOk){
-                    $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_1'];
-                           $error_msgs[] = $mod_strings['LBL_AUTO_DETECT_FILE_TYPE_ERROR_2'];
-                           $this->_showImportError($error_msgs['LBL_AUTO_DETECT_ERROR'],$_REQUEST['import_module'],'Step2', true);
+                     $this->ss->assign("AUTO_DETECT_ERROR",  $mod_strings['LBL_AUTO_DETECT_ERROR']);
                  }
-                 //always display error on screen , true);
-                 $this->ss->assign("AUTO_DETECT_ERROR",  $mod_strings['LBL_AUTO_DETECT_ERROR']);
             }
             else
             {

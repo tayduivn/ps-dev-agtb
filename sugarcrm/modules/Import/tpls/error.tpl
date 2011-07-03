@@ -36,7 +36,7 @@
     //set the variables
     var modalBod = "{$MESSAGE}";
     var cnfgtitle = '{$MOD.LBL_ERROR}';
-    var startOverLBL = '{$MOD.LBL_START_OVER}';
+    var startOverLBL = '{$MOD.LBL_TRY_AGAIN}';
     var cancelLBL = '{$MOD.LBL_CANCEL}';
     var actionVAR = '{$ACTION}';
     var importModuleVAR = '{$IMPORT_MODULE}';
