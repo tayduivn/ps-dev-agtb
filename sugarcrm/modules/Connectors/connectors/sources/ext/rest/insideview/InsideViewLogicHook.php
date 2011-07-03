@@ -49,7 +49,7 @@ class InsideViewLogicHook {
 
         $outStr = '';
         foreach ( $outArray as $k => $v ) {
-            $outStr .= $k.'='.urlencode($v).'&';
+            $outStr .= $k.'='.rawurlencode(html_entity_decode($v,ENT_QUOTES)).'&';
         }
         
         $outStr = rtrim($outStr,'&');
@@ -77,8 +77,8 @@ class InsideViewLogicHook {
 
     protected function getOpportunityFrameUrl($bean, $extraUrl) {
         $url = self::urlBase.'analyseAccount.do?crm_context=opportunity&';
-        $fieldMap = array('crm_account_name'=>'parent_account_name',
-                          'crm_account_id'=>'parent_account_id',
+        $fieldMap = array('crm_account_name'=>'account_name',
+                          'crm_account_id'=>'account_id',
                           'crm_opportunity_id'=>'id',
         );
         
@@ -175,6 +175,9 @@ class InsideViewLogicHook {
              }
              $smarty->assign('URL',$url);
              $smarty->assign('logo',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview.png'));
+            $smarty->assign('video',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/video.png'));
+            $smarty->assign('logo_expanded',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_expanded.png'));
+            $smarty->assign('logo_collapsed',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_collapsed.png'));
 
              if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 )
              {
