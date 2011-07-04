@@ -43,8 +43,8 @@
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}
 		{foreach from=$displayColumns key=colHeader item=params}
-			<td scope='col' width='{$params.width}%'  nowrap>
-				<span sugar="sugar{$colCounter}"><div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+			<td scope='col' width='{$params.width}%' >
+				<span sugar="sugar{$colCounter}"><div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
                 {if !$params.ajaxSort|default:false}
 	                {* normal sort is specified, so set the proper urls*}
 	                {if $params.sortable|default:true}

@@ -44,7 +44,7 @@
 {include file='include/ListView/ListViewPagination.tpl'}
 <tr height='20'>
 		{if $prerow}
-			<th scope='col' nowrap="nowrap" width='1%' class="selectCol">
+			<th scope='col' width='1%' class="selectCol">
 				<div>
 				<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 				{$selectLink}
@@ -63,8 +63,8 @@
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}
 		{foreach from=$displayColumns key=colHeader item=params}
-			<th scope='col' width='{$params.width}%' nowrap="nowrap">
-				<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+			<th scope='col' width='{$params.width}%'>
+				<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
                 {if $params.sortable|default:true}
                     {if $params.url_sort}
                         <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1'>

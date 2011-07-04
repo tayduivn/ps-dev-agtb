@@ -105,7 +105,7 @@
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=colHeader item=params}
 				<th scope='col' width='{$params.width}%' nowrap="nowrap">
-					<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+					<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
 	                {if $params.sortable|default:true}              
 		                <a href='javascript:void(0)' onclick='location.href="{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}"; return sListView.save_checks(0, "{$moduleString}");' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}

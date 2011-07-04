@@ -159,6 +159,7 @@
                 'include/jsolait/urllib.js'             => 'include/javascript/sugar_grp_jsolait.js',
                 'include/javascript/jsclass_base.js'    => 'include/javascript/sugar_grp_jsolait.js',
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
+                'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
         );
 

@@ -283,8 +283,6 @@ class M2MRelationship extends SugarRelationship
             return $this->def['table'];
         else if(!empty($this->def['join_table']))
             return $this->def['join_table'];
-        else
-           echo "WTF? " . print_r($this->def, true) . "\n";
 
         return false;
     }
