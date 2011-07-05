@@ -36,7 +36,7 @@
         <tr height='20'>
             {counter start=0 name="colCounter" print=false assign="colCounter"}
             {if $displayColumns eq false}
-                <th scope='col'  style="text-align: center;" nowrap="nowrap" colspan="{$maxColumns}">{$MOD.LBL_MISSING_HEADER_ROW}</th>
+                <th scope='col'  style="text-align: left;" nowrap="nowrap" colspan="{$maxColumns}">{$MOD.LBL_MISSING_HEADER_ROW}</th>
             {else}
                 {foreach from=$displayColumns key=colHeader item=label}
                     <th scope='col' nowrap="nowrap">
