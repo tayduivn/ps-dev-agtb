@@ -309,12 +309,11 @@ eoq;
     {
         global $current_user, $sugar_config;
 
-        $time_strings = CsvAutoDetect::getTimeStrings();
         $timeFormat = $current_user->getUserDateTimePreferences();
         $defaultTimeOption = isset($field_map['importlocale_timeformat'])? $field_map['importlocale_timeformat'] : $timeFormat['time'];
         $defaultDateOption = isset($field_map['importlocale_dateformat'])? $field_map['importlocale_dateformat'] : $timeFormat['date'];
 
-        $timeOptions = get_select_options_with_id($time_strings, $defaultTimeOption);
+        $timeOptions = get_select_options_with_id($sugar_config['time_formats'], $defaultTimeOption);
         $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $defaultDateOption);
 
         // get list of valid timezones

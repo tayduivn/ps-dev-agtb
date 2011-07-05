@@ -101,18 +101,6 @@ class CsvAutoDetect {
         'H.i' => "/(^| )(0?[0-9]|1[0-9]|2[0-4])\.(0?[0-9]|[1-5][0-9])(\.0?[0-9]|[1-5][0-9])?/", // 23.00 or 23.00.00 or 9.3
     );
 
-    static protected $_time_strings = array(
-        'h:ia' => "11:00pm",
-        'h:iA' => "11:00PM",
-        'h:i a' => "11:00 pm",
-        'h:i A' => "11:00 PM",
-        'H:i' => "23:00",
-        'h.ia' => "11.00pm",
-        'h.iA' => "11.00PM",
-        'h.i a' => "11.00 pm",
-        'h.i A' => "11.00 PM",
-        'H.i' => "23.00"
-    );
 
     /**
      * Constructor
@@ -120,7 +108,7 @@ class CsvAutoDetect {
      * @param string $csv_filename
      * @param int $max_depth
      */
-    public function __construct($csv_filename, $max_depth = 15) {
+    public function __construct($csv_filename, $max_depth = 10) {
         $this->_csv_file = $csv_filename;
 
         $this->_parser = new parseCSV();
@@ -130,12 +118,6 @@ class CsvAutoDetect {
         $this->_max_depth = $max_depth;
     }
 
-
-    static public function getTimeStrings() {
-
-        return self::$_time_strings;
-
-    }
 
 
     /**

@@ -250,7 +250,7 @@ class ImportFile extends ImportDataSource implements Paginatable
         $this->_delimiter  = ",";
         $this->_enclosure  = '"';
 
-        $this->_detector = new CsvAutoDetect($this->_sourcename, 20);
+        $this->_detector = new CsvAutoDetect($this->_sourcename);
 
         $delimiter = $enclosure = false;
 
