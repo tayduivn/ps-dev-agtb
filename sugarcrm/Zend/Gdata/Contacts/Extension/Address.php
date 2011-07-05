@@ -94,6 +94,8 @@ class Zend_Gdata_Contacts_Extension_Address extends Zend_Gdata_Extension
 
         foreach($this->_extensionElements as $elem)
         {
+            if( $elem->_rootElement  == 'formattedAddress')
+                continue;
             $elemKey = $elem->_rootElement == 'region' ? 'state' : $elem->_rootElement;
             $elemKey = "$keyPrefix" . "_address_" . "$elemKey";
             $results[$elemKey] = $elem->getText();

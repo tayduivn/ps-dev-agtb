@@ -148,7 +148,6 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             $linkRel = $linkEntry->getRel();
             if( $linkRel != null && $linkRel == "self" )
             {
-                $entry['self_link'] = $linkEntry->getHref();
                 continue;
             }
         }

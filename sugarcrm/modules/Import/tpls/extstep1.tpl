@@ -37,6 +37,7 @@
 <input type="hidden" name="import_type" value="{$TYPE}">
 <input type="hidden" name="external_source" value="{$smarty.request.external_source}">
 <input type="hidden" name="action" value="ExtStep1">
+<input type="hidden" name="records_per_import" value="{$RECORDTHRESHOLD}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
