@@ -136,9 +136,12 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 
     public function toArray()
     {
-        $entry = array('first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '',
-                       'title' => '', 'account_name' => '', 'notes' => '');
-        
+        $entry = array( 'first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '','email1' => '','email2' => '',
+                        'title' => '', 'account_name' => '', 'notes' => '', 'phone_main' => '','phone_mobile' => '',
+                        'alt_address_street' => '','alt_address_postcode' => '','alt_address_city' => '','alt_address_state' => '','alt_address_country' => '',
+                        'primary_address_street' => '','primary_address_postcode' => '','primary_address_city' => '','primary_address_state' => '','primary_address_country' => '',
+                        );
+
         if($this->_names != null)
             $entry = array_merge($entry, $this->_names->toArray() );
 
@@ -148,7 +151,6 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             $linkRel = $linkEntry->getRel();
             if( $linkRel != null && $linkRel == "self" )
             {
-                $entry['self_link'] = $linkEntry->getHref();
                 continue;
             }
         }

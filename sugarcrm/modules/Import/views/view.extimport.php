@@ -51,7 +51,7 @@ class ImportViewExtimport extends ImportView
         parent::__construct($bean, $view_object_map);
         $this->externalSource = isset($_REQUEST['external_source']) ? $_REQUEST['external_source'] : '';
         $this->offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : '0';
-        $this->recordsPerImport = !empty($_REQUEST['records_per_import']) ? $_REQUEST['records_per_import'] : '';
+        $this->recordsPerImport = !empty($_REQUEST['records_per_import']) ? $_REQUEST['records_per_import'] : $this->recordsPerImport;
         $this->importSource = $this->getExternalSourceAdapter();
         $GLOBALS['log']->fatal("Initiating external source import- source:{$this->externalSource}, offset: {$this->offset}, recordsPerImport: {$this->recordsPerImport}");
     }
