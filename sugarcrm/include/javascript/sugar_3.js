@@ -100,7 +100,8 @@ function isSupportedIE() {
 	// IE Check supports ActiveX controls
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		if(version >= 5.5) {
+
+		if(version >= 5.5 && version < 9) {
 			return true;
 		} else {
 			return false;
@@ -546,6 +547,7 @@ function isDBName(str) {
 }
 var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 function isTime(timeStr) {
+    var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 	time_reg_format = time_reg_format.replace('([ap]m)', '');
 	time_reg_format = time_reg_format.replace('([AP]M)', '');
 	if(timeStr.length== 0){
@@ -1301,11 +1303,10 @@ var global_xmlhttp = getXMLHTTPinstance();
 
 function http_fetch_sync(url,post_data) {
 	global_xmlhttp = getXMLHTTPinstance();
-	var method = 'GET';
-
-	if(typeof(post_data) != 'undefined') method = 'POST';
+	var method = (typeof(post_data) != 'undefined') ? 'POST' : 'GET';
+    
 	try {
-		global_xmlhttp.open(method, url,false);
+		global_xmlhttp.open(method, url, false);
 	}
 	catch(e) {
 		alert('message:'+e.message+":url:"+url);
@@ -4225,3 +4226,20 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
 	link.style.display = 'none';
 }
 
+/**
+ * Compares a filename with a supplied array of allowed file extensions.
+ * @param fileName string
+ * @param allowedTypes array of allowed file extensions
+ * @return bool
+ */
+SUGAR.util.validateFileExt = function(fileName, allowedTypes) {
+    var ext = fileName.split('.').pop();
+    
+    for (var i = allowedTypes.length; i > 0; i--) {
+        if (ext === allowedTypes[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}

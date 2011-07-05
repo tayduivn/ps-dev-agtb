@@ -28,6 +28,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ReportsController extends SugarController
 {	
+	/** 
+	 * @see SugarController::setup($module = '')
+	 */
+	
+	public function setup($module = '')
+	{
+		$result = parent::setup($module);
+		
+		// bug 41860 fix
+		if(!empty($_REQUEST['id']))
+			$this->record = $_REQUEST['id'];
+		// end bugfix
+		
+		return $result;
+	}
+	
     /**
      * @see SugarController::loadBean()
      */
@@ -97,4 +113,19 @@ class ReportsController extends SugarController
 		}
 		echo $quicksearch_js;
 	}
+
+    protected function action_massupdate(){
+        //bug: 44857 - Reports calls MasUpdate passing back the 'module' parameter, but that is also a parameter in the database
+        //so when we call MassUpdate with $addAllBeanFields then it will use this in the query.
+        if(!empty($_REQUEST['current_query_by_page']))
+        {
+            $query = unserialize(base64_decode($_REQUEST['current_query_by_page']));
+            if(!empty($query['module']))
+            {
+                unset($query['module']);
+                $_REQUEST['current_query_by_page'] = base64_encode(serialize($query));
+            }
+        }
+        parent::action_massupdate();
+    }
 }

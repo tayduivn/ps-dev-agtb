@@ -1028,22 +1028,29 @@ function validate_user($user_name, $password){
 			$class = get_class($seed);
 			$temp = new $class();
 			$temp->retrieve($seed->id);
-			if ((!isset($account_name) || $account_name == '')) {
+			if ( empty($account_name) && empty($account_id)) {
 				return;
 			} // if
 			if (!isset($seed->accounts)){
 			    $seed->load_relationship('accounts');
 			} // if
 
-			if($seed->account_name = '' && isset($temp->account_id)){
+			if($seed->account_name == '' && isset($temp->account_id)){
 				$seed->accounts->delete($seed->id, $temp->account_id);
 				$GLOBALS['log']->info('End: SoapHelperWebServices->add_create_account');
 				return;
 			}
 		    $arr = array();
 
-		    $query = "select id, deleted from {$focus->table_name} WHERE name='".$seed->db->quote($account_name)."'";
-		    $result = $seed->db->query($query) or sugar_die("Error selecting sugarbean: ".mysql_error());
+            if(!empty($account_id))  // bug # 44280
+            {
+               $query = "select id, deleted from {$focus->table_name} WHERE id='".$seed->db->quote($account_id)."'";
+            }
+            else
+            {
+               $query = "select id, deleted from {$focus->table_name} WHERE name='".$seed->db->quote($account_name)."'";
+            }
+            $result = $seed->db->query($query) or sugar_die("Error selecting sugarbean: ".mysql_error());
 
 		    $row = $seed->db->fetchByAssoc($result, -1, false);
 

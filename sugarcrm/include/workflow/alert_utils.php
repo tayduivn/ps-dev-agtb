@@ -374,6 +374,8 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $alert_shell_array, $check_for_bridge=false){
 	require_once("include/SugarPHPMailer.php");
+    $mail_object = new SugarPHPMailer;
+
 	global $locale;
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 	$invite_person = false;
@@ -408,7 +410,6 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 	        $mail_objects = array();
 			foreach($address_array['to'] as $key => $user_info_array)
 			{
-			    $mail_object = new SugarPHPMailer;
 			    $mail_object->AddAddress($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 			    if($invite_person == true) 
 			    {
@@ -418,7 +419,6 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 			}
 
 			foreach($address_array['cc'] as $key => $user_info_array){
-				$mail_object = new SugarPHPMailer;
 				$mail_object->AddCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 				if($invite_person == true)
 				{
@@ -427,7 +427,6 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 			}
 
 			foreach($address_array['bcc'] as $key => $user_info_array){
-				$mail_object = new SugarPHPMailer;
 				$mail_object->AddBCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 				if($invite_person == true) 
 				{

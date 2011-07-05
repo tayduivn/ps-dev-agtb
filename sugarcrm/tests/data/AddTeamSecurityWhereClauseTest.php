@@ -1,6 +1,7 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-/********************************************************************************
+
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -179,7 +180,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testAddTeamSecurityWhereClauseForAdminForModule()
 	{
-	    $_SESSION['MLA_'.$GLOBALS['current_user']->user_name]['Foo'] = true;
+	    $_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user'] = array('Foo');
 	    
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
@@ -193,6 +194,6 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
         
-        unset($_SESSION['MLA_'.$GLOBALS['current_user']->user_name]);
+        unset($_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user']);
     }
 }

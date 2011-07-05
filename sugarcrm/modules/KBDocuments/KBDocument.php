@@ -67,6 +67,7 @@ class KBDocument extends SugarBean {
 	//additional fields.
 	var $revision;
 	var $kbdocument_revision_number;
+    var $kbdocument_revision_id;
 	var $last_rev_create_date;
 	var $last_rev_created_by;
 	var $last_rev_created_name;

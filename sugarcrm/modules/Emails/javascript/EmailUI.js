@@ -883,7 +883,7 @@ SE.accounts = {
         form = document.getElementById('ieAccount');
 
         if(SE.accounts.checkIeCreds()) {
-            ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(form.server_url.value), form.protocol.value, trim(form.port.value), trim(form.email_user.value), Rot13.write(form.email_password.value), trim(form.mailbox.value), form.ssl.checked, true, "ieAccount");
+            ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(form.server_url.value), form.protocol.value, trim(form.port.value), trim(form.email_user.value), Rot13.write(form.email_password.value), trim(form.mailbox.value), form.ssl.checked, true, "ieAccount", form.ie_id.value);
         }
     },
 
@@ -914,7 +914,11 @@ SE.accounts = {
         var protocol = Dom.get('protocol').value;
         var port = Dom.get('port').value;
         var oe = Dom.get('outbound_email');
-        var oe_value = typeof(oe.options[oe.selectedIndex]) == 'undefined' ? "" : oe.options[oe.selectedIndex].value;
+
+        // Bug 44392: IE9 and possibly previous versions have a quirk where selectedIndex is -1 if you have nothing selected vs 0 for
+        // other browsers. And if you check options[-1] it returns "unknown" instead of undefined. Also other options out of index
+        // return null instead of undefined for other browsers, thus we need to check for all the possible outcomes.
+        var oe_value = (typeof(oe.options[oe.selectedIndex]) === 'undefined' || typeof(oe.options[oe.selectedIndex]) === 'unknown' || typeof(oe.options[oe.selectedIndex]) === null) ? "" : oe.options[oe.selectedIndex].value;
 
         var outboundUserName = Dom.get('inbound_mail_smtpuser').value;
         var outboundPass = Dom.get('inbound_mail_smtppass').value;

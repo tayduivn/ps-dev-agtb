@@ -37,11 +37,7 @@ function document_set_return(popup_reply_data)
 	related_doc_id='EMPTY';
 	for (var the_key in name_to_value_array)
 	{
-		if(the_key == 'toJSON')
-		{
-			/* just ignore */
-		}
-		else
+		if(the_key != 'toJSON')
 		{
 			var displayValue=name_to_value_array[the_key];
 			displayValue=displayValue.replace('&#039;',"'");  //restore escaped single quote.
@@ -59,17 +55,12 @@ function document_set_return(popup_reply_data)
 	//make request for document revisions data.
 	var conditions  = new Array();
     conditions[conditions.length] = {"name":"document_id","op":"starts_with","value":related_doc_id};
- 	var query = new Array();
  	var query = {"module":"DocumentRevisions","field_list":['id','revision','date_entered'],"conditions":conditions,"order":'date_entered desc'};
     
  	//make the call call synchronous for now...
     //todo: convert to async, test on mozilla..
     result = global_rpcClient.call_method('query',query,true);
     rhandle.display(result);
-    
-	//req_id = global_rpcClient.call_method('query',query);
-    //register the callback mathod.
-	//global_request_registry[req_id] = [rhandle, 'display'];
 }
 
 

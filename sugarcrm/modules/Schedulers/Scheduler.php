@@ -173,7 +173,8 @@ class Scheduler extends SugarBean {
 					if($a2 != null) {
 						$GLOBALS['log']->debug("-----> Scheduler found [ {$a['name']} ] 'In Progress' with most recent Execute Time at [ {$a2['execute_time']} GMT-0 ]");
 
-						$execTime = strtotime($a2['execute_time']);
+						$execTime = TimeDate::getInstance()->fromDB($a2['execute_time'])->ts;
+
 						if($execTime > $lowerLimit) {
 							if(($now - $execTime) >= (60 * $this->timeOutMins)) {
 								$GLOBALS['log']->info("-----> Scheduler found a dead Job.  Flushing status and reseting Job");

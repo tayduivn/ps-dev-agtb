@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-if(!is_admin($current_user)&&!is_admin_for_module($GLOBALS['current_user'],'Users')){
+if(!$GLOBALS['current_user']->isAdminForModule('Users')){
 	sugar_die('No Access');
 }
 $record = '';

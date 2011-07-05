@@ -519,7 +519,7 @@ qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_stri
 qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
 filter_defs['date'] = qualifiers;
 filter_defs['datetime'] = qualifiers;
-/*
+
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'on',value:'<?php echo $mod_strings['LBL_ON']; ?>'};
 qualifiers[qualifiers.length] = {name:'before',value:'<?php echo $mod_strings['LBL_BEFORE']; ?>'};
@@ -528,7 +528,20 @@ qualifiers[qualifiers.length] = {name:'between_datetimes',value:'<?php echo $mod
 qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_NOT_ON']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
-*/
+qualifiers[qualifiers.length] = {name:'tp_yesterday',value:'<?php echo $mod_strings['LBL_YESTERDAY']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_today',value:'<?php echo $mod_strings['LBL_TODAY']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_tomorrow',value:'<?php echo $mod_strings['LBL_TOMORROW']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_last_7_days',value:'<?php echo $mod_strings['LBL_LAST_7_DAYS']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_7_days',value:'<?php echo $mod_strings['LBL_NEXT_7_DAYS']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_last_month',value:'<?php echo $mod_strings['LBL_LAST_MONTH']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_strings['LBL_THIS_MONTH']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
+
+qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
 filter_defs['datetimecombo'] = qualifiers;
 
 var qualifiers =  new Array();
