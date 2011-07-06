@@ -49,13 +49,12 @@ class Bug7566Test extends Sugar_PHPUnit_Framework_TestCase
     {
 		require_once("modules/Administration/QuickRepairAndRebuild.php");
 		$this->_rac = new RepairAndClear();
-		
-		require_once("modules/Accounts/Account.php");
-		$this->_bean = new Account();
+		$this->_bean =  SugarTestAccountUtilities::createAccount();
     }
 
     public function tearDown()
 	{	
+		SugarTestAccountUtilities::removeAllCreatedAccounts();
 		unset($this->_bean);
 		unset($this->_rac);
 	}
