@@ -57,7 +57,7 @@ $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
 
 //copy compaign targets on duplicate
-if((isset($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'])){
+if( !empty($_REQUEST['duplicateSave']) &&  !empty($_REQUEST['duplicateId']) ){
 	$copyFromCompaign = new Campaign();
 	$copyFromCompaign->retrieve($_REQUEST['duplicateId']);
 	$copyFromCompaign->load_relationship('prospectlists');
