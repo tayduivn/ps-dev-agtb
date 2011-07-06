@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 require_once 'include/database/OracleManager.php';
 
 class OracleManagerTest extends Sugar_PHPUnit_Framework_TestCase
