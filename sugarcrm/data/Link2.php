@@ -296,7 +296,7 @@ class Link2 {
             $this->focus = BeanFactory::getBean($this->focus->module_name, $id);
         if (!empty($related_id))
         {
-            if (!is_a($related_id, "SugarBean")) {
+            if (!($related_id instanceof SugarBean)) {
                 $related_id = $this->getRelatedBean($related_id);
             }
             if ($this->getSide() == REL_LHS) {
