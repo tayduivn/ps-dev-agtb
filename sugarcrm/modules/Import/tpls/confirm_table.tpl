@@ -1,4 +1,4 @@
-<table border="0" cellpadding="0" width="100%" id="importTable" class="detail view">
+<table border="0" cellpadding="0" width="100%" id="importTable" class="detail view noBorder">
     <tbody>
         {foreach from=$SAMPLE_ROWS item=row name=row}
             <tr>
