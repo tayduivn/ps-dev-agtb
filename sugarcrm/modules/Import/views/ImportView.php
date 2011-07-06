@@ -36,7 +36,7 @@ class ImportView extends SugarView
     protected $instruction;
 
     public function __construct($bean = null, $view_object_map = array())
-    {
+    {_pp($_REQUEST);
         parent::__construct($bean, $view_object_map);
         $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
         $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
