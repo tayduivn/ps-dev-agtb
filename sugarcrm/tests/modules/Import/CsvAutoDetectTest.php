@@ -31,54 +31,41 @@ require_once 'modules/Import/CsvAutoDetect.php';
 
 class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private static $CsvContent = array (
+        0 => "\"date_entered\",\"description\"\n\"3/26/2011 10:02am\",\"test description\"",
+        1 => "\"date_entered\"\t\"description\"\n\"2011-3-26 10:2 am\"\t\"test description\"",
+        2 => "\"date_entered\",\"description\"\n\"3.26.2011 15.02\",\"test description\"",
+        3 => "\"3/26/2011 10:02am\",\"some text\"\n\"4/26/2011 11:20am\",\"some more text\"",
+    );
+
     public function setUp()
     {
-        $str1 = <<<STR1
-"date_entered","description"
-"3/26/2011 10:02am","test description"
-STR1;
-        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test1.csv', $str1);
-
-        $str2 = '"date_entered"'."\t".'"description"'."\n".
-'"2011-3-26 10:2 am"'."\t".'"test description"'."\t";
-        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test2.csv', $str2);
-
-        $str3 = <<<STR3
-"date_entered","description"
-"3.26.2011 15.02","test description"
-STR3;
-        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test3.csv', $str3);
-
-        $str4 = <<<STR4
-"3/26/2011 10:02am","some text"
-"4/26/2011 11:20am","some other text"
-STR4;
-        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test4.csv', $str4);
     }
 
     public function tearDown()
     {
-        unlink($GLOBALS['sugar_config']['tmp_dir'].'test1.csv');
-        unlink($GLOBALS['sugar_config']['tmp_dir'].'test2.csv');
-        unlink($GLOBALS['sugar_config']['tmp_dir'].'test3.csv');
-        unlink($GLOBALS['sugar_config']['tmp_dir'].'test4.csv');
+        unlink($GLOBALS['sugar_config']['tmp_dir'].'test.csv');
     }
 
     public function providerCsvData()
     {
         return array(
-            array($GLOBALS['sugar_config']['tmp_dir'].'test1.csv', ',', '"', 'm/d/Y', 'h:ia', true),
-            array($GLOBALS['sugar_config']['tmp_dir'].'test2.csv', "\t", '"', 'Y-m-d', 'h:i a', true),
-            array($GLOBALS['sugar_config']['tmp_dir'].'test3.csv', ",", '"', 'm.d.Y', 'H.i', true),
-            array($GLOBALS['sugar_config']['tmp_dir'].'test4.csv', ',', '"', 'm/d/Y', 'h:ia', false),
+            array(0, ',', '"', 'm/d/Y', 'h:ia', true),
+            array(1, "\t", '"', 'Y-m-d', 'h:i a', true),
+            array(2, ",", '"', 'm.d.Y', 'H.i', true),
+            array(3, ',', '"', 'm/d/Y', 'h:ia', false),
             );
     }
 
     /**
      * @dataProvider providerCsvData
      */
-    public function testGetCsvProperties($file, $delimiter, $enclosure, $date, $time, $header)
+    public function testGetCsvProperties($content_idx, $delimiter, $enclosure, $date, $time, $header)
     {
+        $file = $GLOBALS['sugar_config']['tmp_dir'].'test.csv';
+        $ret = file_put_contents($file, self::$CsvContent[$content_idx]);
+        $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.$content_idx);
+
         $auto = new CsvAutoDetect($file);
         $del = $enc = $hasHeader = false;
         $ret = $auto->getCsvSettings($del, $enc);
