@@ -139,7 +139,7 @@ SUGAR.gantt = function() {
 	        /* Add Calendar Dates to Top Row of Gantt Chart */
 	        ganttDates = document.createElement('tr');
 	        ganttDates.setAttribute('bgcolor', bgcolor);
-	        ganttDates.setAttribute('height', '35');
+	        ganttDates.setAttribute('height', '34');
 	        ganttDateEmptyFirstCell = document.createElement('td');
 	        ganttDateEmptyFirstCell.setAttribute('align', 'middle');
 	        ganttDateEmptyFirstCell.setAttribute('width', '5%');
@@ -205,7 +205,7 @@ SUGAR.gantt = function() {
 	        ganttRow = document.createElement('tr');
 	        ganttRow.setAttribute('id', 'header_row');
 	        ganttRow.setAttribute('bgcolor', bgcolor);
-	        ganttRow.setAttribute('height', '15');
+	        ganttRow.setAttribute('height', '14');
 	        ganttEmptyFirstCell = document.createElement('td');
 	        ganttEmptyFirstCell.setAttribute('width', '5%');
 	        ganttEmptyFirstCell.innerHTML = '\u00a0';
@@ -532,8 +532,9 @@ SUGAR.gantt = function() {
 
 	        var row = tbl.insertRow(rowIndex);
 	        var row_id = 'gantt_row_'+SUGAR.grid.getMappedRow(task_num);
-	        row.setAttribute('id', 'gantt_row_'+SUGAR.grid.getMappedRow(task_num));
-        	row.setAttribute('height', '23');
+	        row.setAttribute('id', 'gantt_row_'+ row_id);
+        	row.setAttribute('height', document.getElementById('project_task_row_' + task_num).offsetHeight);
+
 	        //row.setAttribute('onMouseOver', 'SUGAR.gantt.focusRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
 	        //row.setAttribute('onMouseOut', 'SUGAR.gantt.fadeRow(\'task_'+SUGAR.grid.getMappedRow(task_num)+'_row\')');
 	        //row.setAttribute('onClick', 'SUGAR.gantt.selectRow(\''+SUGAR.grid.getMappedRow(task_num)+'\')');

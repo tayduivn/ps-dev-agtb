@@ -3076,7 +3076,9 @@ $app_strings = array (
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
 
     //External API Error Messages
-    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
+    'LBL_REMOVING_ATTACHMENT'               => 'Removing attachment',
+    'ERR_REMOVING_ATTACHMENT'               => 'Error in Removing attachment',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

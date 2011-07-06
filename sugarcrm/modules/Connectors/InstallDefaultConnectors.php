@@ -30,6 +30,7 @@ $default_modules_sources = array (
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
+     'ext_rest_insideview' => 'ext_rest_insideview',
   ),
   'Contacts' =>
   array (
@@ -37,6 +38,7 @@ $default_modules_sources = array (
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
+     'ext_rest_insideview' => 'ext_rest_insideview',
   ),
 
   'Leads' =>
@@ -47,6 +49,7 @@ $default_modules_sources = array (
     //BEGIN SUGARCRM flav=pro ONLY
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
+     'ext_rest_insideview' => 'ext_rest_insideview',
   ),
   'Prospects' =>
   array (
@@ -58,7 +61,10 @@ $default_modules_sources = array (
      'ext_rest_twitter' => 'ext_rest_twitter',
     //END SUGARCRM flav=pro ONLY
   ),
-
+  'Opportunities' =>
+  array (
+    'ext_rest_insideview' => 'ext_rest_insideview',
+  ),
 );
 
 $previous_connectors = array();

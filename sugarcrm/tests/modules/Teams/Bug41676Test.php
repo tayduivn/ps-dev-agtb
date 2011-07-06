@@ -81,7 +81,7 @@ class Bug41676Test extends Sugar_PHPUnit_Framework_TestCase
         $row = $GLOBALS['db']->fetchByAssoc($results);
         $this->assertEquals($row['deleted'], 1, 'Assert that deleted flag is correctly set');
         
-        $query = "SELECT count(*) as total FROM team_memberships WHERE team_id = '{$team->id} AND deleted = 0";
+        $query = "SELECT count(*) as total FROM team_memberships WHERE team_id = '{$team->id}' AND deleted = 0";
         $results = $GLOBALS['db']->query($query);
         $row = $GLOBALS['db']->fetchByAssoc($results);
         $this->assertTrue(is_null($row['total']) || $row['total'] == 0, 'Assert that team_memberships table has been correctly set');        

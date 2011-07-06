@@ -182,7 +182,7 @@ class TeamSet extends SugarBean{
     * @param array $team_ids
     * @return array
     */
-    private function _getStatistics($team_ids){
+    protected function _getStatistics($team_ids){
         $team_md5 = '';
         sort($team_ids, SORT_STRING);
         $primary_team_id = '';
@@ -197,13 +197,16 @@ class TeamSet extends SugarBean{
             $primary_team_id = $team_ids[0];
             }
         } else {
-            foreach($team_ids as $team_id){
-                if(!in_array($team_id, $teams)){
+            for($i=0; $i<$team_count; $i++) {
+
+                $team_id = $team_ids[$i];
+
+                if(!array_key_exists("$team_id", $teams)){
                     $team_md5 .= $team_id;
                     if(empty($this->primary_team_id)){
                         $primary_team_id = $team_id;
                     }
-                    $teams[] = $team_id;
+                    $teams["$team_id"] = $team_id;
                 }
             }
             $team_md5 = md5($team_md5);

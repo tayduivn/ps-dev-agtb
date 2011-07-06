@@ -55,7 +55,8 @@
 
             $sugar_grp1_yui = array(
 			//YUI scripts loaded on first page
-			'include/javascript/yui/build/yahoo/yahoo.js'           => 'include/javascript/sugar_grp1_yui.js',
+            'include/javascript/yui3/build/yui/yui-min.js'              => 'include/javascript/sugar_grp1_yui.js',
+			'include/javascript/yui/build/yahoo/yahoo-min.js'           => 'include/javascript/sugar_grp1_yui.js',
             'include/javascript/yui/build/dom/dom-min.js'               => 'include/javascript/sugar_grp1_yui.js',
 			'include/javascript/yui/build/yahoo-dom-event/yahoo-dom-event-min.js'
 			    => 'include/javascript/sugar_grp1_yui.js',
@@ -133,8 +134,8 @@
             'modules/Emails/javascript/EmailUICompose.js' => 'include/javascript/sugar_grp_emails.js',
              'modules/Emails/javascript/ajax.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/grid.js' => 'include/javascript/sugar_grp_emails.js',
-            'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/init.js' => 'include/javascript/sugar_grp_emails.js',
+            'modules/Emails/javascript/complexLayout.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/composeEmailTemplate.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/displayOneEmailTemplate.js' => 'include/javascript/sugar_grp_emails.js',
             'modules/Emails/javascript/viewPrintable.js' => 'include/javascript/sugar_grp_emails.js',

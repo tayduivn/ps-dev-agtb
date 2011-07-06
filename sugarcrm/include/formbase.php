@@ -116,19 +116,36 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 }
 
 
+function add_hidden_elements($key, $value) {
+
+    $elements = '';
+
+    // if it's an array, we need to loop into the array and use square brackets []
+    if (is_array($value)) {
+        foreach ($value as $k=>$v) {
+            $elements .= "<input type='hidden' name='$key"."[$k]' value='$v'>\n";
+        }
+    } else {
+        $elements = "<input type='hidden' name='$key' value='$value'>\n";
+    }
+
+    return $elements;
+}
+
+
 function getPostToForm($ignore='', $isRegularExpression=false)
 {
 	$fields = '';
 	if(!empty($ignore) && $isRegularExpression) {
 		foreach ($_POST as $key=>$value){
 			if(!preg_match($ignore, $key)) {
-				$fields.= "<input type='hidden' name='$key' value='$value'>\n";
+                                $fields .= add_hidden_elements($key, $value);
 			}
 		}	
 	} else {
 		foreach ($_POST as $key=>$value){
 			if($key != $ignore) {
-			   $fields.= "<input type='hidden' name='$key' value='$value'>\n";
+                                $fields .= add_hidden_elements($key, $value);
 			}
 		}
 	}

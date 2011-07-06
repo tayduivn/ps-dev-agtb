@@ -387,7 +387,11 @@ require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
-$rac->clearExternalAPICache();
+//bug: 44431 - defensive check to ensure the method exists since upgrades to 6.2.0 may not have this method define yet.
+if(method_exists($rac, 'clearExternalAPICache'))
+{
+    $rac->clearExternalAPICache();
+}
 
 $repairedTables = array();
 foreach ($beanFiles as $bean => $file) {
@@ -442,7 +446,7 @@ logThis('Start rebuild relationships.', $path);
 logThis('End rebuild relationships.', $path);
 
 include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
     global $silent_upgrade_vars_loaded;

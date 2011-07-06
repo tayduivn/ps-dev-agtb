@@ -448,7 +448,7 @@ function isBefore(value1, value2) {
 }
 
 function isValidEmail(emailStr) {
-
+	
     if(emailStr.length== 0) {
 		return true;
 	}
@@ -600,7 +600,7 @@ function add_error_style(formname, input, txt, flash) {
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
-
+	
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
@@ -1303,11 +1303,10 @@ var global_xmlhttp = getXMLHTTPinstance();
 
 function http_fetch_sync(url,post_data) {
 	global_xmlhttp = getXMLHTTPinstance();
-	var method = 'GET';
-
-	if(typeof(post_data) != 'undefined') method = 'POST';
+	var method = (typeof(post_data) != 'undefined') ? 'POST' : 'GET';
+    
 	try {
-		global_xmlhttp.open(method, url,false);
+		global_xmlhttp.open(method, url, false);
 	}
 	catch(e) {
 		alert('message:'+e.message+":url:"+url);
@@ -1369,10 +1368,10 @@ function call_json_method(module,action,vars,variable_name,callback) {
 		if(global_xmlhttp.readyState==4) {
 			if(global_xmlhttp.status == 200) {
 				// cn: bug 12274 - pass through JSON.parse() to remove security envelope
-				json_objects[variable_name] = JSON.parse(global_xmlhttp.responseText);
+				json_objects[variable_name] = YAHOO.lang.JSON.parse(global_xmlhttp.responseText);
 
 				// cn: bug 12274 - safe from CSRF, render response as expected
-				var respText = JSON.parseNoSecurity(global_xmlhttp.responseText);
+				var respText = YAHOO.lang.JSON.parse(global_xmlhttp.responseText);
 				var args = {responseText:respText, responseXML:global_xmlhttp.responseXML};
 				callback.call(document, args);
 			}
@@ -4353,3 +4352,20 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
 	link.style.display = 'none';
 }
 
+/**
+ * Compares a filename with a supplied array of allowed file extensions.
+ * @param fileName string
+ * @param allowedTypes array of allowed file extensions
+ * @return bool
+ */
+SUGAR.util.validateFileExt = function(fileName, allowedTypes) {
+    var ext = fileName.split('.').pop();
+    
+    for (var i = allowedTypes.length; i > 0; i--) {
+        if (ext === allowedTypes[i]) {
+            return true;
+        }
+    }
+
+    return false;
+}

@@ -100,9 +100,10 @@ class SugarView
         $this->_buildModuleList();
         $this->preDisplay();
         $this->displayErrors();
-
         $this->display();
-
+        if ( !empty($this->module) ) {
+            $GLOBALS['logic_hook']->call_custom_logic($this->module, 'after_ui_frame');
+        }
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
 
 
@@ -786,8 +787,8 @@ EOHTML;
                 $_SESSION['asynchronous_key'] = create_guid();
             }
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
-            echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
-            echo '<script type="text/javascript"> var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
+            echo '<script type="text/javascript">SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
+            echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo self::getJavascriptValidation();
             if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
@@ -799,7 +800,7 @@ EOHTML;
 
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
                 echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
-            echo '<script src="' . getJSPath('include/javascript/yui3/build/yui/yui-min.js') . '" type="text/javascript"></script>';
+
             //BEGIN SUGARCRM flav=pro ONLY
             if (!is_file("cache/Expressions/functions_cache.js")) {
                 $GLOBALS['updateSilent'] = true;
@@ -813,11 +814,6 @@ EOHTML;
             require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
             //END SUGARCRM flav=pro ONLY
-        }
-
-        if (isset($_REQUEST['popup']) && !empty($_REQUEST['popup'])) {
-            // cn: bug 12274 - add security metadata envelope for async calls in popups
-            echo '<script type="text/javascript">var asynchronous_key = "' . $_SESSION['asynchronous_key'] . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
         }
     }
 
@@ -1066,7 +1062,7 @@ EOHTML;
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];
-        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' <span id="responseTime">' . number_format(round($deltaTime, 2), 2) . '</span> ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
+        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . " " . number_format(round($deltaTime, 2), 2) . " " . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
         $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY

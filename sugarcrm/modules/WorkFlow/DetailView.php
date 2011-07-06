@@ -76,7 +76,7 @@ $params = array();
 $params[] = "<a href='index.php?module=WorkFlow&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>";
 $params[] = $focus->get_summary_text();
 
-echo getClassicModuleTitle("Workflow", $params, true);
+echo getClassicModuleTitle("WorkFlow", $params, true);
 
 $GLOBALS['log']->info("WorkFlow detail view");
 

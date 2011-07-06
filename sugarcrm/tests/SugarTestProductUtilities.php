@@ -27,7 +27,7 @@ require_once 'modules/Products/Product.php';
 
 class SugarTestProductUtilities
 {
-    private static $_createdProducts = array();
+    protected static $_createdProducts = array();
 
     private function __construct() {}
 
