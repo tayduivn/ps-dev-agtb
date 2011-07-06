@@ -1100,8 +1100,6 @@ abstract class DBHelper
 
 				if (!empty($bean->fetched_row) && array_key_exists($field, $bean->fetched_row)) {
 
-					$before_value=$bean->fetched_row[$field];
-					$after_value=$bean->$field;
 					if (isset($properties['type']))
 						$field_type=$properties['type'];
 					else {
@@ -1113,6 +1111,16 @@ abstract class DBHelper
 							$field_type=$properties['dbtype'];
 					}
 
+                     // Bug # 44624 - check for currency type and cast to float
+                     // this ensures proper matching for change log
+                     if ( (strcmp($field_type,"currency")==0) ) {
+                         $before_value=(float)$bean->fetched_row[$field];
+                         $after_value=(float)$bean->$field;
+                     } else {
+                         $before_value=$bean->fetched_row[$field];
+                         $after_value=$bean->$field;
+ 	                 }
+
 					//Because of bug #25078(sqlserver haven't 'date' type, trim extra "00:00:00" when insert into *_cstm table). so when we read the audit datetime field from sqlserver, we have to replace the extra "00:00:00" again.
 					if(!empty($field_type) && $field_type == 'date'){
 						$before_value = from_db_convert($before_value , $field_type);
@@ -1122,7 +1130,7 @@ abstract class DBHelper
 						if (trim($before_value) !== trim($after_value)) {
 							if (!($this->_isTypeNumber($field_type) && (trim($before_value)+0) == (trim($after_value)+0))) {
 								if (!($this->_isTypeBoolean($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
-									$changed_values[$field]=array('field_name'=>$field,
+                                   $changed_values[$field]=array('field_name'=>$field,
 										'data_type'=>$field_type,
 										'before'=>$before_value,
 										'after'=>$after_value);
