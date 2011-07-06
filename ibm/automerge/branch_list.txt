@@ -1,5 +1,6 @@
 ibmf_custom
 ibmf_theme
+ibmf_unittestfixes
 ibmf_altdata
 ibmf_httpauth
 ibmf_myitems
