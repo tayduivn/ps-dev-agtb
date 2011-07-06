@@ -82,7 +82,13 @@ class ImportViewLast extends ImportView
         	$this->ss->assign("noSuccess",TRUE);        	
         }
 
-        $activeTab = ($errorCount > 0 &&  ($createdCount <= 0 && $updatedCount <= 0)) ? 2 : 0;
+        if ($errorCount > 0 &&  ($createdCount <= 0 && $updatedCount <= 0))
+            $activeTab = 2;
+        else if($dupeCount > 0 &&  ($createdCount <= 0 && $updatedCount <= 0))
+            $activeTab = 1;
+        else
+            $activeTab = 0;
+        
         $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
