@@ -54,13 +54,7 @@ class M2MRelationship extends SugarRelationship
         }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
-        $dataToInsert = array(
-            "id" => create_guid(),
-            $this->def['join_key_lhs'] => $lhs->id,
-            $this->def['join_key_rhs'] => $rhs->id,
-            'date_modified' => TimeDate::getInstance()->getNow()->asDb(),
-            'deleted' => 0,
-        );
+        $dataToInsert = $this->getRowToInsert($lhs, $rhs);
         $dataToInsert = array_merge($dataToInsert, $additionalFields);
 
         $this->addRow($dataToInsert);
@@ -70,6 +64,25 @@ class M2MRelationship extends SugarRelationship
 
         $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
         $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+    }
+
+    protected function getRowToInsert($lhs, $rhs)
+    {
+        $row = array(
+            "id" => create_guid(),
+            $this->def['join_key_lhs'] => $lhs->id,
+            $this->def['join_key_rhs'] => $rhs->id,
+            'date_modified' => TimeDate::getInstance()->getNow()->asDb(),
+            'deleted' => 0,
+        );
+
+
+        if (!empty($this->def['relationship_role_column']) && !empty($this->def['relationship_role_column_value']) && !$this->ignore_role_filter )
+        {
+            $row[$this->relationship_role_column] = $this->relationship_role_column_value;
+        }
+
+        return $row;
     }
 
 
