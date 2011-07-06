@@ -127,6 +127,7 @@ class SugarView
                  ),
                 'moduleList' => $this->displayHeader(true),
                 'title' => $this->getBrowserTitle(),
+                'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
             );
             if(empty($this->responseTime)) $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
