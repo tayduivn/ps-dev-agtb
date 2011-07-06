@@ -81,7 +81,7 @@
         <td valign='top'>
             <span id='{$displayParams.formName}_{$vardef.name}_input_div_0' name='teamset_div'>          
             <input type="text" name="{$vardef.name}_collection_0" id="{$displayParams.formName}_{$vardef.name}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
-            <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$vardef.name}_collection_0" value="">
+            <input type="hidden" name="id_{$vardef.name}_collection_0" id="id_{$displayParams.formName}_{$vardef.name}_collection_0"" value="">
             </span>
         </td>
 <!-- BEGIN Remove and Radio -->
