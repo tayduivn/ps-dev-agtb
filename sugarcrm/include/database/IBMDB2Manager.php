@@ -172,11 +172,13 @@ class IBMDB2Manager  extends DBManager
             $result = true;
         }
         if (is_resource($stmt)){ // Being more strict than just checking for boolean false
-            $error = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
-            if($error) {
-                $logmsg = "IBM_DB2 statement error ".$error.": ".db2_stmt_errormsg($stmt);
-                $this->handleError($msg, $dieOnError, $logmsg);
-                $result = true;
+            // NOTE that if we get a statement here, it's because the operation was successful
+            // Hence we are only checking for additional information, no errors.
+            
+            $info = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
+            if($info) {
+                $logmsg = "IBM_DB2 statement SQLSTATE after successful execution ".$info.": ".db2_stmt_errormsg($stmt);
+                $GLOBALS['log']->debug($logmsg);
             }
         } else {
             $error = db2_stmt_error(); // Using local variable because a successive call will return no problem!
