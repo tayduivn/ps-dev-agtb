@@ -187,7 +187,7 @@ YAHOO.util.Event.onDOMReady(function(){
             document.getElementById('gonext').disabled = false;
         }
     }
-    YAHOO.util.Event.addListener('external_source', "click", isExtSourceValid);
+    YAHOO.util.Event.addListener('external_source', "change", isExtSourceValid);
 
 
     function openExtAuthWindow()
