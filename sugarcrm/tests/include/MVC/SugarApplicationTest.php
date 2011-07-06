@@ -255,6 +255,8 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         if ( isset($prevRefererList) ) {
             $GLOBALS['sugar_config']['http_referer']['list'] = $prevRefererList;
+        } else {
+            unset($GLOBALS['sugar_config']['http_referer']['list']);
         }
     }
 
