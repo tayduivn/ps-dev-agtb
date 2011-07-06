@@ -63,14 +63,10 @@
 <input type="hidden" name="importlocale_dec_sep" value="{$smarty.request.importlocale_dec_sep}">
 <input type="hidden" name="importlocale_default_locale_name_format" value="{$smarty.request.importlocale_default_locale_name_format}">
 
-<p>
-    {$MOD.LBL_SELECT_FIELDS_TO_MAP}
-</p>
 <br>
 {if $NOTETEXT != ''}
-    <p>
-        <input title="{$MOD.LBL_SHOW_NOTES}" accessKey="" id="toggleNotes" class="button" type="button"
-               name="button" value="  {$MOD.LBL_SHOW_NOTES}  ">
+    <p style="padding-left:10px">
+        <a id="toggleNotes" href="javascript:void(0);">{$MOD.LBL_SHOW_NOTES}</a>
         <div id="importNotes" style="display: none;">
             <ul>
                 {$NOTETEXT}
@@ -102,7 +98,7 @@
     {if $HAS_HEADER != 'on'}
     <td style="text-align: left;" scope="row"><b>{$MOD.LBL_ROW} 2</b></td>
     {/if}
-    <td style="text-align: left;" scope="row" id="default_column_header">
+    <td style="text-align: left;" scope="row" id="default_column_header" width="10%">
         <span id="hide_default_link" class="expand">&nbsp;<b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
         <span id="default_column_header_span">&nbsp;</span>
