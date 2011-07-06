@@ -243,8 +243,7 @@ class ImportDuplicateCheck
                 $index_fields = array('deleted' => '0');
                 //search only for the field we have selected
                 foreach($index['fields'] as $field){
-                    //if ($field == 'deleted' ||  !in_array($field,$fieldlist))
-                    if ($field == 'deleted')
+                    if ($field == 'deleted' ||  !in_array($field,$fieldlist))
                         continue;
                     if (!in_array($field,$index_fields))
                         if (strlen($this->_focus->$field) > 0)
