@@ -28,7 +28,7 @@
  */
 *}
 <style type="text/css">{literal}
-.warn { font-size:large
+.warn { font-size:large;
         font-style:italic;
         font-weight:bold;
 }{/literal}
