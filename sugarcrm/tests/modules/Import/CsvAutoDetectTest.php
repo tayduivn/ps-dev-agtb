@@ -40,6 +40,9 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        if (!isset($GLOBALS['beanList'])) {
+            require_once('include/modules');
+        }
     }
 
     public function tearDown()
