@@ -40,6 +40,7 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        // if beanList got unset, set it back
         if (!isset($GLOBALS['beanList'])) {
             require('include/modules.php');
             $GLOBALS['beanList'] = $beanList;
@@ -88,13 +89,6 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
         // time format
         $time_format = $auto->getTimeFormat();
         $this->assertEquals($time, $time_format, 'Incorrect time format');
-
-        // test
-        $this->assertTrue(isset($GLOBALS['beanList']), 'beanList not defined');
-        $this->assertTrue(isset($GLOBALS['beanList']['Contacts']), 'beanList Contacts not defined');
-        $this->assertTrue(isset($GLOBALS['current_language']), 'current language not defined');
-        $mod_strings = return_module_language($GLOBALS['current_language'], 'Accounts');
-        $this->assertGreaterThan(0, count($mod_strings), 'mod strings empty');
 
         // header
         $auto->hasHeader($hasHeader, 'Contacts');
