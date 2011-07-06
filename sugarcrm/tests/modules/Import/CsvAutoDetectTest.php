@@ -69,25 +69,25 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
         $auto = new CsvAutoDetect($file);
         $del = $enc = $hasHeader = false;
         $ret = $auto->getCsvSettings($del, $enc);
-        $this->assertTrue($ret);
+        $this->assertEquals(true, $ret, 'Failed to parse and get csv properties');
 
         // delimiter
-        $this->assertEquals($delimiter, $del);
+        $this->assertEquals($delimiter, $del, 'Incorrect delimiter');
 
         // enclosure
-        $this->assertEquals($enclosure, $enc);
+        $this->assertEquals($enclosure, $enc, 'Incorrect enclosure');
 
         // date format
         $date_format = $auto->getDateFormat();
-        $this->assertEquals($date, $date_format);
+        $this->assertEquals($date, $date_format, 'Incorrect date format');
 
         // time format
         $time_format = $auto->getTimeFormat();
-        $this->assertEquals($time, $time_format);
+        $this->assertEquals($time, $time_format, 'Incorrect time format');
 
         // header
         $auto->hasHeader($hasHeader, 'Accounts');
-        $this->assertEquals($header, $hasHeader);
+        $this->assertEquals($header, $hasHeader, 'Incorrect header');
     }
 
 }
