@@ -119,7 +119,7 @@ class ImportViewLast extends ImportView
 
         $this->ss->assign("RESULTS_TABLE", $resultsTable);
         $this->ss->assign("ERROR_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getErrorRecordsFileName(), 'errors') );
-        $this->ss->assign("DUP_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getDuplicateFileName(), 'dup'));
+        $this->ss->assign("DUP_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getDuplicateFileDisplayName(), 'dup'));
 
         $content = $this->ss->fetch('modules/Import/tpls/last.tpl');
         $this->ss->assign("CONTENT",$content);
