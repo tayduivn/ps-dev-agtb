@@ -140,6 +140,7 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
                         'title' => '', 'account_name' => '', 'notes' => '', 'phone_main' => '','phone_mobile' => '',
                         'alt_address_street' => '','alt_address_postcode' => '','alt_address_city' => '','alt_address_state' => '','alt_address_country' => '',
                         'primary_address_street' => '','primary_address_postcode' => '','primary_address_city' => '','primary_address_state' => '','primary_address_country' => '',
+                        'team_name' => '', 'assigned_user_name' => ''
                         );
 
         if($this->_names != null)

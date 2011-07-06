@@ -72,6 +72,10 @@ class ImportMapGoogle extends ImportMapOther
 
              'email1' => array('sugar_key' => 'email1', 'sugar_label' => 'LBL_EMAIL_ADDRESS', 'default_label' => 'Email Address'),
              'email2' => array('sugar_key' => 'email2', 'sugar_label' => 'LBL_OTHER_EMAIL_ADDRESS', 'default_label' => 'Other Email'),
+
+             'assigned_user_name' => array('sugar_key' => 'assigned_user_name', 'sugar_label' => 'LBL_ASSIGNED_TO_NAME', 'default_label' => 'Assigned To'),
+             'team_name' => array('sugar_key' => 'team_name', 'sugar_label' => 'LBL_TEAMS', 'default_label' => 'Teams'),
+
              );
 
          return $return_array;
