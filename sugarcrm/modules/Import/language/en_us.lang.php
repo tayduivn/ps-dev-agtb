@@ -36,7 +36,7 @@ global $timedate;
  
 $mod_strings = array (
     'LBL_GOOD_FILE' => 'Import File Read Successfully',
-    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'records were not imported due to error.',
+    'LBL_RECORDS_SKIPPED_DUE_TO_ERROR' => 'rows were not imported due to error',
     'LBL_UPDATE_SUCCESSFULLY' => 'records updated successfully',
     'LBL_SUCCESSFULLY_IMPORTED' => 'records created successfully',
     'LBL_STEP_4_TITLE' => 'Step {0}: Import File',
@@ -237,12 +237,12 @@ $mod_strings = array (
     'LBL_IMPORT_MORE' => 'Import More',
     'LBL_FINISHED' => 'Return to ',
     'LBL_UNDO_LAST_IMPORT' => 'Undo Import',
-    'LBL_LAST_IMPORTED'=>'Last Created',
+    'LBL_LAST_IMPORTED'=>'Created',
     'ERR_MULTIPLE_PARENTS' => 'You can only have one Parent ID defined',
     'LBL_DUPLICATES' => 'Duplicates Found',
     'LNK_DUPLICATE_LIST' => 'Download list of duplicates',
     'LNK_ERROR_LIST' => 'Download list of errors',
-    'LNK_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Download list of records that were not imported',
+    'LNK_RECORDS_SKIPPED_DUE_TO_ERROR' => 'Download list of rows that were not imported',
     'LBL_UNIQUE_INDEX' => 'Choose index for duplicate comparison',
     'LBL_VERIFY_DUPS' => 'To check for existing records matching data in the import file, select the fields to check.',
     'LBL_INDEX_USED' => 'Fields to Check:',
@@ -341,6 +341,8 @@ $mod_strings = array (
     'LBL_SELECT_PROPERTY_INSTRUCTION' => 'Here is how the the first several rows of the import file appear with the detected file properties. If a header row was detected, it is displayed in the top row of the table. View the import file properties to make changes to the detected properties and to set additional properties. Updating the settings will update the data appearing in the table.',
     'LBL_SELECT_MAPPING_INSTRUCTION' => 'The table below contains all of the fields in the module that can be mapped to the data in the import file. If the file contains a header row, the columns in the file have been mapped to matching fields. Check the mappings to make sure that they are what you expect, and make changes, as necessary. To help you check the mappings, Row 1 displays the data in the file. Be sure to map to all of the required fields (noted by an asterisk).',
     'LBL_SELECT_DUPLICATE_INSTRUCTION' => 'To avoid creating duplicate records, select which of the mapped fields you would like to use to perform a duplicate check while data is being imported. Values within existing records in the selected fields will be checked against the data in the import file. If matching data is found, the rows in the import file containing the data will be displayed along with the import results (next page). You will then be able to select which of these rows to continue importing.',
-    'LBL_EXT_SOURCE_SIGN_IN' => 'Sign In'
+    'LBL_EXT_SOURCE_SIGN_IN' => 'Sign In',
+    'LBL_DUP_HELP' => 'Here are the rows in the import file that were not imported because they contain data that matches values in existing records based on the duplicate check.',
+    'LBL_SUMMARY' => 'Summary'
 );
 ?>
