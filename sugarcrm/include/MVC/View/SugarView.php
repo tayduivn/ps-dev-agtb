@@ -782,10 +782,6 @@ EOHTML;
                 echo "<script>\n".implode("\n", $config_js)."</script>\n";
             }
 
-            // cn: bug 12274 - prepare secret guid for asynchronous calls
-            if (!isset($_SESSION['asynchronous_key']) || empty($_SESSION['asynchronous_key'])) {
-                $_SESSION['asynchronous_key'] = create_guid();
-            }
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
             echo '<script type="text/javascript">SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
@@ -1062,7 +1058,7 @@ EOHTML;
     {
         $endTime = microtime(true);
         $deltaTime = $endTime - $GLOBALS['startTime'];
-        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . " " . number_format(round($deltaTime, 2), 2) . " " . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
+        $response_time_string = $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME'] . ' <span id="responseTime">' . number_format(round($deltaTime, 2), 2) . '</span> ' . $GLOBALS['app_strings']['LBL_SERVER_RESPONSE_TIME_SECONDS'];
         $return = $response_time_string;
         $return .= '<br />';
         //BEGIN SUGARCRM flav=int ONLY

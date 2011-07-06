@@ -152,4 +152,4 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 
 		return parent::display($defines, $additionalFormFields);
 	}
-}
+}?>

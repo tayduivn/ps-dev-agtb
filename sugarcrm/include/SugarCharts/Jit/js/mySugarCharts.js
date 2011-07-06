@@ -80,6 +80,4 @@ var activeTab = activePage,
 		}
 	}
 }();
-
-YAHOO.util.Event.addListener(window, 'resize', SUGAR.mySugar.sugarCharts.refreshGraphs);
 };
