@@ -112,7 +112,7 @@ class ImportViewConfirm extends ImportView
 
         if( $this->shouldAutoDetectProperties($importSource) )
         {
-            $GLOBALS['log']->fatal("Auto detecing csv properties...");
+            $GLOBALS['log']->debug("Auto detecing csv properties...");
             $autoDetectOk = $importFile->autoDetectCSVProperties();
             $importFileMap = array();
             $this->ss->assign("SOURCE", 'csv');
@@ -146,7 +146,16 @@ class ImportViewConfirm extends ImportView
         $enclosure = $importFile->getFieldEnclosure();
         $hasHeader = $importFile->hasHeaderRow();
 
-        $this->ss->assign("IMPORT_ENCLOSURE_OPTIONS",  get_select_options_with_id( $GLOBALS['app_list_strings']['import_enclosure_options'], $enclosure));
+        //Handle users navigating back through the wizard.
+        if( !empty($_REQUEST['previous_action']) && $_REQUEST['previous_action'] == 'Confirm')
+        {
+            $importFileMap = $this->overloadImportFileMapFromRequest($importFileMap);
+            $delimeter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : $delimeter;
+            $enclosure = !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : $enclosure;
+            $hasHeader = !empty($_REQUEST['has_header']) ? $_REQUEST['has_header'] : $hasHeader;
+        }
+
+        $this->ss->assign("IMPORT_ENCLOSURE_OPTIONS",  $this->getEnclosureOptions($enclosure));
         $this->ss->assign("CUSTOM_DELIMITER",  $delimeter);
         $this->ss->assign("CUSTOM_ENCLOSURE",  htmlentities($enclosure));
         $hasHeaderFlag = $hasHeader ? " CHECKED" : "";
@@ -173,7 +182,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign('column_count', $this->getMaxColumnsInSampleSet($rows) );
         $this->ss->assign('HAS_HEADER', $importFile->hasHeaderRow(FALSE) );
         $this->ss->assign('getNumberJs', $locale->getNumberJs());
-        $this->setImportFileCharacterSet($importFile);
+        $this->setImportFileCharacterSet($importFile, $importFileMap);
         $this->setDateTimeProperties($importFileMap);
         $this->setCurrencyOptions($importFileMap);
         $this->setNumberFormatOptions($importFileMap);
@@ -187,6 +196,33 @@ class ImportViewConfirm extends ImportView
         $content = $this->ss->fetch('modules/Import/tpls/confirm.tpl');
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+    }
+
+    private function getEnclosureOptions($enclosure)
+    {
+        $results = array();
+        foreach ($GLOBALS['app_list_strings']['import_enclosure_options'] as $k => $v)
+        {
+            $results[htmlentities($k, ENT_QUOTES)] = $v;
+        }
+
+        return get_select_options_with_id($results, htmlentities($enclosure, ENT_QUOTES));
+    }
+
+    private function overloadImportFileMapFromRequest($importFileMap)
+    {
+        $overideKeys = array(
+            'importlocale_dateformat','importlocale_timeformat','importlocale_timezone','importlocale_charset',
+            'importlocale_currency','importlocale_default_currency_significant_digits','importlocale_num_grp_sep',
+            'importlocale_dec_sep','importlocale_default_locale_name_format','custom_delimiter', 'custom_enclosure'
+        );
+
+        foreach($overideKeys as $key)
+        {
+            if( !empty( $_REQUEST[$key]) )
+                $importFileMap[$key] = $_REQUEST[$key];
+        }
+        return $importFileMap;
     }
 
     private function shouldAutoDetectProperties($importSource)
@@ -327,10 +363,10 @@ eoq;
         $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
     }
 
-    private function setImportFileCharacterSet($importFile)
+    private function setImportFileCharacterSet($importFile, $field_map = array())
     {
         global $locale;
-        $charset_for_import = $importFile->autoDetectCharacterSet();
+        $charset_for_import = isset($field_map['importlocale_charset']) ? $field_map['importlocale_charset'] : $importFile->autoDetectCharacterSet();
         $charsetOptions = get_select_options_with_id( $locale->getCharsetSelect(), $charset_for_import);//wdong,  bug 25927, here we should use the charset testing results from above.
         $this->ss->assign('CHARSETOPTIONS', $charsetOptions);
     }
@@ -511,12 +547,7 @@ EOJAVASCRIPT;
      * @param string $module what module we were importing into
      * @param string $action what page we should go back to
      */
-    protected function _showImportError(
-        $message,
-        $module,
-        $action = 'Step1',
-        $showCancel = false
-        )
+    protected function _showImportError($message,$module,$action = 'Step1',$showCancel = false)
     {
         if(!is_array($message)){
             $message = array($message);

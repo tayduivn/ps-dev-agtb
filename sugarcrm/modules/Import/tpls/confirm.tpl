@@ -67,8 +67,6 @@ table.noBorder {
 {$INSTRUCTION}
 <form enctype="multipart/form-data" real_id="importconfirm" id="importconfirm" name="importconfirm" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
-<input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
-<input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">
 <input type="hidden" name="type" value="{$TYPE}">
 <input type="hidden" name="source" id="source" value="{$SOURCE}">
 <input type="hidden" name="source_id" value="{$SOURCE_ID}">
