@@ -86,13 +86,14 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($time, $time_format, 'Incorrect time format');
 
         // test
-        $this->assertTrue(isset($GLOBALS['beanList']['Accounts']), 'beanList Accounts not defined');
+        $this->assertTrue(isset($GLOBALS['beanList']), 'beanList not defined');
+        $this->assertTrue(isset($GLOBALS['beanList']['Contacts']), 'beanList Contacts not defined');
         $this->assertTrue(isset($GLOBALS['current_language']), 'current language not defined');
         $mod_strings = return_module_language($GLOBALS['current_language'], 'Accounts');
         $this->assertGreaterThan(0, count($mod_strings), 'mod strings empty');
 
         // header
-        $auto->hasHeader($hasHeader, 'Accounts');
+        $auto->hasHeader($hasHeader, 'Contacts');
         $this->assertEquals($header, $hasHeader, 'Incorrect header');
     }
 
