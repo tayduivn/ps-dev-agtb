@@ -54,6 +54,10 @@ div.errorMessage {
     padding-top: 20px;
     padding-bottom: 0px;
 }
+
+table.noBorder {
+    border: none;
+}
 -->
 </style>
 {/literal}
@@ -93,8 +97,11 @@ div.errorMessage {
             </td>
         </tr>
         <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
             <td>
-                <table border=0 class="edit view" style="display: none;" id="importOptions">
+                <table border=0 class="edit view noBorder" style="display: none;" id="importOptions">
                     <tr>
                         <td scope="row">
                             <slot>{$MOD.LBL_CHARSET}</slot>
@@ -181,13 +188,13 @@ div.errorMessage {
             <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h4></td>
         </tr>
         <tr>
+            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="none" id='none_map' checked="true"/>&nbsp;{$MOD.LBL_NONE}</td>
+        </tr>
+        <tr>
             <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
         </tr>
         <tr>
             <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
-        </tr>
-        <tr>
-            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="none" id='none_map' checked="true"/>&nbsp;{$MOD.LBL_NONE}</td>
         </tr>
         <tr>
             <td colspan="2">&nbsp;</td>
