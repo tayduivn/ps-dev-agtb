@@ -57,7 +57,7 @@ class ImportCacheFiles
     }
     
     /**
-     * Returns the duplicates filename
+     * Returns the duplicates filename (the ones used to download to csv file
      *
      * @return string filename
      */
@@ -65,7 +65,17 @@ class ImportCacheFiles
     {
         return self::_createFileName("dupes");
     }
-    
+
+    /**
+     * Returns the duplicates display filename (the one used for display in html)
+     *
+     * @return string filename
+     */
+    public static function getDuplicateFileDisplayName()
+    {
+        return self::_createFileName("dupesdisplay");
+    }
+
     /**
      * Returns the error filename
      *

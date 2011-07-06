@@ -59,8 +59,6 @@ class ImportViewLast extends ImportView
             return_module_language($current_language, $_REQUEST['import_module']);
         $this->ss->assign("MODULENAME",$module_mod_strings['LBL_MODULE_NAME']);
         
-        $this->ss->assign("JAVASCRIPT", $this->_getJS());
-        
         // read status file to get totals for records imported, errors, and duplicates
         $count        = 0;
         $errorCount   = 0;
@@ -83,7 +81,9 @@ class ImportViewLast extends ImportView
         {
         	$this->ss->assign("noSuccess",TRUE);        	
         }
-              
+
+        $activeTab = ($errorCount > 0 &&  ($createdCount <= 0 && $updatedCount <= 0)) ? 2 : 0;
+        $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
@@ -119,7 +119,7 @@ class ImportViewLast extends ImportView
 
         $this->ss->assign("RESULTS_TABLE", $resultsTable);
         $this->ss->assign("ERROR_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getErrorRecordsFileName(), 'errors') );
-        $this->ss->assign("DUP_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getDuplicateFileName(), 'dup'));
+        $this->ss->assign("DUP_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getDuplicateFileDisplayName(), 'dup'));
 
         $content = $this->ss->fetch('modules/Import/tpls/last.tpl');
         $this->ss->assign("CONTENT",$content);
@@ -178,7 +178,7 @@ class ImportViewLast extends ImportView
     /**
      * Returns JS used in this view
      */
-    private function _getJS()
+    private function _getJS($activeTab)
     {
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
@@ -253,6 +253,8 @@ SUGAR.IV = {
         }
     }
 }
+
+SUGAR.IV.togglePages('$activeTab');
 -->
 </script>
 

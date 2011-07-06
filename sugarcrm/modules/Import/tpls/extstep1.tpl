@@ -50,11 +50,6 @@
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
 </div>
 
-<p>
-{$MOD.LBL_SELECT_FIELDS_TO_MAP}
-</p>
-<br />
-
 <table border="0" cellpadding="0" width="100%" id="importTable" class="detail view">
 {foreach from=$rows key=key item=item name=rows}
 {if $smarty.foreach.rows.first}
@@ -66,7 +61,7 @@
         <b>{$MOD.LBL_DATABASE_FIELD}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
     </td>
-    <td style="text-align: left;" scope="row" id="default_column_header">
+    <td style="text-align: left;" scope="row" id="default_column_header" width="10%">
         <span id="hide_default_link" class="expand">&nbsp;</span>
         <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>

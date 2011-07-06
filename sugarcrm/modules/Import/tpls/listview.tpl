@@ -27,6 +27,12 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
+<style type="text/css">{literal}
+.warn { font-size:large
+        font-style:italic;
+        font-weight:bold;
+}{/literal}
+</style>
 
 <script type='text/javascript' src='{sugar_getjspath file='include/javascript/popup_helper.js'}'></script>
 

@@ -40,6 +40,11 @@ class ImportDuplicateCheck
      * Private reference to the bean we're dealing with
      */
     private $_focus;
+
+    /*
+     * holds current field when a duplicate has been found
+     */
+    public $_dupedField ='';
     
     /** 
      * Constructor
@@ -191,6 +196,8 @@ class ImportDuplicateCheck
             $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', 'first_name'=>$this->_focus->first_name, 'last_name'=>$this->_focus->last_name),true);
 
             if ( !is_null($result) ){
+                //set dupe field to full_name
+                $this->_dupedField = 'full_name';
                 return true;
             }
         }
@@ -201,6 +208,8 @@ class ImportDuplicateCheck
             $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', $cust_val => $this->_focus->$cust_val), true);
 
             if ( !is_null($result) ){
+                //set the dupe field to custom value
+                $this->_dupedField = $cust_val;
                 return true;
             }
 
@@ -249,8 +258,13 @@ class ImportDuplicateCheck
                 $newfocus = loadBean($this->_focus->module_dir);
                 $result = $newfocus->retrieve_by_string_fields($index_fields,true);
 
-                if ( !is_null($result) )
+                if ( !is_null($result) ){
+                    //create string based on array of dupe fields
+                    $this->_dupedField = implode(",", array_keys($index_fields));
+                    //remove deleted from the list
+                    $this->_dupedField = str_replace('deleted,','',$this->_dupedField);
                     return true;
+                }
             }
         }
         return false;

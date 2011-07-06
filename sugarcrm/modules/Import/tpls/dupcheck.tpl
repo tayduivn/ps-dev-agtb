@@ -40,6 +40,10 @@ textarea { width: 20em }
     padding-left:30px;
     padding-right:30px;
 }
+
+table.noBorder {
+    border: none;
+}
 -->
 </style>
 {/literal}
@@ -70,11 +74,8 @@ textarea { width: 20em }
     <div style="padding-left:20px">
     <table border="0" cellpadding="30" id="importTable" style="width:60% !important;">
     <tr>
-        <td scope="row" align="left" colspan="2" style="text-align: left;">{$MOD.LBL_VERIFY_DUPS}&nbsp;{sugar_help text=$MOD.LBL_VERIFY_DUPLCATES_HELP}</td>
-    </tr>
-    <tr>
         <td  width="40%" colspan="2">
-           <table id="DupeCheck" class="themeSettings edit view" style='margin-bottom:0px;' border="0" cellspacing="10" cellpadding="0"  width = '100%'>
+           <table id="DupeCheck" class="themeSettings edit view noBorder" style='margin-bottom:0px;' border="0" cellspacing="10" cellpadding="0"  width = '100%'>
                 <tr>
                     <td align="right">
                         <div id="enabled_div" class="enabled_tab_workarea">
@@ -90,11 +91,9 @@ textarea { width: 20em }
     </tr>
     </table>
     <br>
-    <span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong></span>
+    <span scope="row"><strong>{$MOD.LBL_SAVE_MAPPING_AS}</strong> {sugar_help text=$MOD.LBL_SAVE_MAPPING_HELP}</span>
             <span >
-                <input type="text" name="save_map_as" id="save_map_as" value=""
-                    style="width: 20em" maxlength="254">
-                &nbsp;{sugar_help text=$MOD.LBL_SAVE_MAPPING_HELP}
+                <input type="text" name="save_map_as" id="save_map_as" value="" style="width: 20em" maxlength="254">
             </span>
     </div>
 

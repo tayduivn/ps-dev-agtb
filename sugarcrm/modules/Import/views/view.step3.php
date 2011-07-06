@@ -498,6 +498,8 @@ if( document.getElementById('gonext') )
 
 // handle adding new row
 document.getElementById('addrow').onclick = function(){
+
+    toggleDefaultColumnVisibility(false);
     rownum = document.getElementById('{$this->currentFormID}').columncount.value;
     newrow = document.createElement("tr");
 
@@ -572,9 +574,16 @@ document.getElementById('addrow').onclick = function(){
 
 }
 
-function toggleDefaultColumnVisibility()
+function toggleDefaultColumnVisibility(hide)
 {
-    var currentStyle = YAHOO.util.Dom.getStyle('default_column_header_span', 'display');
+    if( typeof(hide) != 'undefined' && typeof(hide) == 'boolean')
+    {
+        var currentStyle = hide ? '' : 'none';
+    }
+    else
+    {
+        var currentStyle = YAHOO.util.Dom.getStyle('default_column_header_span', 'display');
+    }
     if(currentStyle == 'none')
     {
         var newStyle = '';
@@ -604,13 +613,11 @@ if(notesEl)
     notesEl.onclick = function() {
         if (document.getElementById('importNotes').style.display == 'none'){
             document.getElementById('importNotes').style.display = '';
-            document.getElementById('toggleNotes').value='  {$mod_strings['LBL_HIDE_NOTES']}  ';
-            document.getElementById('toggleNotes').title='{$mod_strings['LBL_HIDE_NOTES']}';
+            document.getElementById('toggleNotes').innerHTML='{$mod_strings['LBL_HIDE_NOTES']}';
         }
         else {
             document.getElementById('importNotes').style.display = 'none';
-            document.getElementById('toggleNotes').value='  {$mod_strings['LBL_SHOW_NOTES']}  ';
-            document.getElementById('toggleNotes').title='{$mod_strings['LBL_SHOW_NOTES']}';
+            document.getElementById('toggleNotes').innerHTML='{$mod_strings['LBL_SHOW_NOTES']}';
         }
     }
 }

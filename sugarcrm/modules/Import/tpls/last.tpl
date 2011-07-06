@@ -40,12 +40,11 @@ div.resultsTable {
 {/literal}
 
 {$MODULE_TITLE}
-<span>
-{if $noSuccess}
-	<p>{$MOD.LBL_FAILURE}</p>
-{else}
-	<p>{$MOD.LBL_SUCCESS}</p>
-{/if}
+<h2>
+	<p>{$MOD.LBL_SUMMARY}</p>
+</h2>
+<br/>
+<span style="font-size: 14px">
 {if $createdCount > 0}
 <b>{$createdCount}</b>&nbsp;{$MOD.LBL_SUCCESSFULLY_IMPORTED}<br />
 {/if}
@@ -58,7 +57,7 @@ div.resultsTable {
 {if $dupeCount > 0}
 <b>{$dupeCount}</b>&nbsp;{$MOD.LBL_DUPLICATES}<br />
 {/if}
-
+</span>
 <form name="importlast" id="importlast" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="action" value="Undo">
@@ -149,6 +148,7 @@ div.resultsTable {
             <a href ="{$dupeFile}" target='_blank'>{$MOD.LNK_DUPLICATE_LIST}</a><br />
         {/if}
         <br/>
+        {$MOD.LBL_DUP_HELP}
         <div id="dup_table" class="resultsTable">
             {$DUP_TABLE}
         </div>
