@@ -300,6 +300,12 @@ $errors = array();
 $unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp");
 $install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
 
+if(!file_exists("{$sugar_config['upload_dir']}upgrades/patch"))
+{
+	logThis("Create directory " . dirname($install_file), $path);
+	mkdir_recursive("{$sugar_config['upload_dir']}upgrades/patch");
+}
+
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
