@@ -184,8 +184,19 @@ function enableQS(noReload){
                     if(/^(billing_|shipping_)?account_name$/.exec(qsFields[qsField].name))
                     {
                       
-                       //C.L. Bug 36106 no-op function for clearFields (do not clear out values)
-                       search.clearFields = function() {};
+                       //C.L. Bug 36106 only clear the name and id fields
+                       search.clearFields = function() {
+                           for(var i in {name:0, id:1}) {
+	                    		for (var key in this.qs_obj.field_list) {
+                                    //Check that the field exists
+	                	           if (i == this.qs_obj.field_list[key] &&
+	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]])
+                                   {
+                                       document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value = "";
+                                   }
+                                }
+                           }
+                       };
                     	
                        search.setFields = function(data, filter) 
                        {

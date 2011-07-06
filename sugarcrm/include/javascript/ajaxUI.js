@@ -133,14 +133,20 @@ SUGAR.ajaxUI = {
             //Do not try to ajax submit a form if the ajaxUI is not initialized
             && /action=ajaxui/.exec(window.location))
         {
-            YAHOO.util.Connect.setForm(form);
-            YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
-                success: SA.callback
-            });
-            window.location="index.php?action=ajaxui#ajaxUILoc=";
+            var string = con.setForm(form);
+            //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
+            if(string.length > 200)
+            {
+                con.asyncRequest('POST', 'index.php?ajax_load=1', {
+                    success: SA.callback
+                });
+                window.location="index.php?action=ajaxui#ajaxUILoc=";
+            } else {
+                con.resetFormState();
+                window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent("index.php?" + string);
+            }
             return true;
         } else {
-            // window.location = url;
             form.submit();
             return false;
         }
