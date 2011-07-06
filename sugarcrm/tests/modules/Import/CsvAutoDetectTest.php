@@ -37,40 +37,40 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
 "date_entered","description"
 "3/26/2011 10:02am","test description"
 STR1;
-        file_put_contents('tests/modules/Import/test1.csv', $str1);
+        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test1.csv', $str1);
 
         $str2 = '"date_entered"'."\t".'"description"'."\n".
 '"2011-3-26 10:2 am"'."\t".'"test description"'."\t";
-        file_put_contents('tests/modules/Import/test2.csv', $str2);
+        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test2.csv', $str2);
 
         $str3 = <<<STR3
 "date_entered","description"
 "3.26.2011 15.02","test description"
 STR3;
-        file_put_contents('tests/modules/Import/test3.csv', $str3);
+        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test3.csv', $str3);
 
         $str4 = <<<STR4
 "3/26/2011 10:02am","some text"
 "4/26/2011 11:20am","some other text"
 STR4;
-        file_put_contents('tests/modules/Import/test4.csv', $str4);
+        file_put_contents($GLOBALS['sugar_config']['tmp_dir'].'test4.csv', $str4);
     }
 
     public function tearDown()
     {
-        unlink('tests/modules/Import/test1.csv');
-        unlink('tests/modules/Import/test2.csv');
-        unlink('tests/modules/Import/test3.csv');
-        unlink('tests/modules/Import/test4.csv');
+        unlink($GLOBALS['sugar_config']['tmp_dir'].'test1.csv');
+        unlink($GLOBALS['sugar_config']['tmp_dir'].'test2.csv');
+        unlink($GLOBALS['sugar_config']['tmp_dir'].'test3.csv');
+        unlink($GLOBALS['sugar_config']['tmp_dir'].'test4.csv');
     }
 
     public function providerCsvData()
     {
         return array(
-            array('tests/modules/Import/test1.csv', ',', '"', 'm/d/Y', 'h:ia', true),
-            array('tests/modules/Import/test2.csv', "\t", '"', 'Y-m-d', 'h:i a', true),
-            array('tests/modules/Import/test3.csv', ",", '"', 'm.d.Y', 'H.i', true),
-            array('tests/modules/Import/test4.csv', ',', '"', 'm/d/Y', 'h:ia', false),
+            array($GLOBALS['sugar_config']['tmp_dir'].'test1.csv', ',', '"', 'm/d/Y', 'h:ia', true),
+            array($GLOBALS['sugar_config']['tmp_dir'].'test2.csv', "\t", '"', 'Y-m-d', 'h:i a', true),
+            array($GLOBALS['sugar_config']['tmp_dir'].'test3.csv', ",", '"', 'm.d.Y', 'H.i', true),
+            array($GLOBALS['sugar_config']['tmp_dir'].'test4.csv', ',', '"', 'm/d/Y', 'h:ia', false),
             );
     }
 
