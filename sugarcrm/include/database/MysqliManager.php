@@ -72,9 +72,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
-//Technically we can port all the functions in the latest bean to this file
-// that is what PEAR is doing anyways.
-
 require_once('include/database/MysqlManager.php');
 
 class MysqliManager extends MysqlManager

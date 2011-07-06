@@ -89,12 +89,10 @@ class DBManagerFactory
         	$instanceName = '';
         }
         if(!isset(self::$instances[$instanceName])){
-            //BEGIN SUGARCRM flav=ent ONLY
+            $config = $sugar_config['dbconfig'];
             $count++;
-            if(empty($instanceName)){
-                $config = $sugar_config['dbconfig'];
-            }
-            else{
+            //BEGIN SUGARCRM flav=ent ONLY
+            if(!empty($instanceName)){
                 $config = $sugar_config['db'][$instanceName];
                 //trace the parent dbs until we get a real db
                 $parentInstanceName = '';

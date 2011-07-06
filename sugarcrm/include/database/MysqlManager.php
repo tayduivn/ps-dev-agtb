@@ -72,9 +72,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
-//Technically we can port all the functions in the latest bean to this file
-// that is what PEAR is doing anyways.
-
 class MysqlManager extends DBManager
 {
     /**
@@ -310,9 +307,6 @@ class MysqlManager extends DBManager
         foreach($badQuery as $table=>$data ){
             if(!empty($data)){
                 $warning = ' Table:' . $table . ' Data:' . $data;
-                //BEGIN SUGARCRM flav=int ONLY
-                // _pp('Warning Check Query:' . $warning);
-                //END SUGARCRM flav=int ONLY
                 if(!empty($GLOBALS['sugar_config']['check_query_log'])){
                     $GLOBALS['log']->fatal($sql);
                     $GLOBALS['log']->fatal('CHECK QUERY:' .$warning);
