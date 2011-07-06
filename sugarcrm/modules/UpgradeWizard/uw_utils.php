@@ -4024,12 +4024,12 @@ function upgradeModulesForTeam() {
 	 *
 	 * @param path String location to log file, empty by default
 	 */
-	function upgradeDateTimeFields()
+	function upgradeDateTimeFields($path)
 	{
 		//bug: 39757
 		global $db;
-		$meetingsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_hours'));
-		$callsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_hours'));
+		$meetingsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
+		$callsSql = "UPDATE calls SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
     	logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
 		$db->query($meetingsSql);
 
