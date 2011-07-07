@@ -92,7 +92,6 @@ class SugarWidgetSubPanelTopScheduleCallButton extends SugarWidgetSubPanelTopBut
 		$button .= '<input type="hidden" name="return_module" value="' . $currentModule . "\" />\n";
 		$button .= '<input type="hidden" name="return_action" value="' . $defines['action'] . "\" />\n";
 		$button .= '<input type="hidden" name="return_id" value="' . $defines['focus']->id . "\" />\n";
-		$button .= '<input type="hidden" name="record" value="" />';
 
 		// TODO: move this out and get $additionalFormFields working properly
 		if(empty($additionalFormFields['parent_type']))
@@ -141,14 +140,5 @@ class SugarWidgetSubPanelTopScheduleCallButton extends SugarWidgetSubPanelTopBut
 		return $button;
 	}
 
-	function display($defines, $additionalFormFields = null)
-	{
-	    $focus = new Call;
-		if ( !$focus->ACLAccess('EditView') ) {
-		    return '';
-	    }
-		
-		return parent::display($defines, $additionalFormFields);
-	}
 }
 ?>

@@ -1,27 +1,4 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
- 
 require_once('modules/Emails/EmailUI.php');
 
 class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
@@ -30,18 +7,14 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
     
     public function setUp()
     {
-        global $current_user;
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->eui = new EmailUIMock();
-
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->eui = new EmailUI();
         $this->_folders = array();
-		
-		$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
     }
     
     public function tearDown()
@@ -54,15 +27,8 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        
-        unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
-        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
-            
-        foreach ($this->_folders as $f) {
-            $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
-            $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
-        }
+        unset($GLOBALS['beanList']);
     }
 
     /**
@@ -130,109 +96,13 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $person['bean_module'] = $a['module'];
         $person['email'] = $a['email_address'];
         
-        //Cleanup
-    	$GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$account->id}'");
-    	$GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contact->id}'");
-        
         $this->assertEquals("test@test.com", $person['email']);
-    }
-    
-    /**
-     * @ticket 29521
-     */
-    public function testLoadQuickCreateModules()
-    {
-        $qArray = $this->eui->_loadQuickCreateModules();
-
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Leads', 'Tasks'), $qArray);
-    }
-    
-    /**
-     * @ticket 29521
-     */
-    public function testLoadCustomQuickCreateModulesCanMergeModules()
-    {
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        file_put_contents(
-            'custom/modules/Emails/metadata/qcmodulesdefs.php',
-            '<?php $QCModules[] = "Users"; ?>'
-            );
         
-        $qArray = $this->eui->_loadQuickCreateModules();
-
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak','custom/modules/Emails/metadata/qcmodulesdefs.php');
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        else {
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
-        }
-        
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Leads', 'Tasks', 'Users'), $qArray);
-    }
-    
-    /**
-     * @ticket 29521
-     */
-    public function testLoadQuickCreateModulesInvalidModule()
-    {
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        file_put_contents(
-            'custom/modules/Emails/metadata/qcmodulesdefs.php',
-            '<?php $QCModules[] = "EmailUIUnitTest"; ?>'
-            );
-        
-        $qArray = $this->eui->_loadQuickCreateModules();
-
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak','custom/modules/Emails/metadata/qcmodulesdefs.php');
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        else {
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
-        }
-        
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Leads', 'Tasks'), $qArray);
-    }
-    
-    /**
-     * @ticket 29521
-     */
-    public function testLoadQuickCreateModulesCanOverrideDefaultModules()
-    {
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        file_put_contents(
-            'custom/modules/Emails/metadata/qcmodulesdefs.php',
-            '<?php $QCModules = array("Users"); ?>'
-            );
-        
-        $qArray = $this->eui->_loadQuickCreateModules();
-
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak','custom/modules/Emails/metadata/qcmodulesdefs.php');
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        else {
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
-        }
-        
-        $this->assertEquals(array("Users"), $qArray);
-    }
-}
-
-class EmailUIMock extends EmailUI
-{
-    public function _loadQuickCreateModules()
-    {
-        return parent::_loadQuickCreateModules();
+        //Cleanup
+    	$contact->deleted = true;
+        $contact->save(false);
+        $account->deleted = true;
+    	$account->save(false);
+    	
     }
 }

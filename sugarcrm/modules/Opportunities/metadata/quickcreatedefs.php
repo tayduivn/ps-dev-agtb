@@ -71,8 +71,14 @@ $viewdefs = array (
             ),            
           ),
           array (
-            'amount',
-            'date_closed'          
+            array (
+              'name' => 'amount',
+              'displayParams'=>array('required'=>true),
+            ),
+            array (
+              'name' => 'date_closed',
+              'displayParams'=>array('required'=>true),
+            ),            
           ),
           array (
              'next_step',

@@ -1,29 +1,6 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
- 
 require_once('modules/Import/ImportFieldSanitize.php');
-require_once('modules/Import/sources/ImportFile.php');
+require_once("modules/Import/ImportFile.php");
 require_once('tests/SugarTestLangPackCreator.php');
 
 class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
@@ -33,21 +10,21 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs = new ImportFieldSanitize();
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['timedate'] = TimeDate::getInstance();
+        $GLOBALS['timedate'] = new TimeDate();
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
     }
-
+    
     public function tearDown()
     {
 	 	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['beanList']);
-        $GLOBALS['timedate'] = TimeDate::getInstance();
+        $GLOBALS['timedate'] = new TimeDate();
     }
-
+    
 	public function testValidBool()
     {
         $this->assertEquals($this->_ifs->bool(0,array()),0);
@@ -59,11 +36,11 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->_ifs->bool('on',array()),1);
         $this->assertEquals($this->_ifs->bool(1,array()),1);
     }
-
+    
     public function testValidBoolVarchar()
     {
         $vardefs = array('dbType' => 'varchar');
-
+        
         $this->assertEquals($this->_ifs->bool(0,$vardefs),'off');
         $this->assertEquals($this->_ifs->bool('no',$vardefs),'off');
         $this->assertEquals($this->_ifs->bool('off',$vardefs),'off');
@@ -73,33 +50,33 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($this->_ifs->bool('on',$vardefs),'on');
         $this->assertEquals($this->_ifs->bool(1,$vardefs),'on');
     }
-
+    
     public function testInvalidBool()
     {
         $this->assertFalse($this->_ifs->bool('OK',array()));
         $this->assertFalse($this->_ifs->bool('yep',array()));
     }
-
+    
     public function testValidCurrency()
     {
         $this->_ifs->dec_sep = '.';
         $this->_ifs->currency_symbol = '$';
-
+        
         $this->assertEquals($this->_ifs->currency('$100',array()),100);
     }
-
+    
     public function testInvalidCurrency()
     {
         $this->_ifs->dec_sep = '.';
         $this->_ifs->currency_symbol = '�';
-
+        
         $this->assertNotEquals($this->_ifs->currency('$123.23',array()),123.23);
     }
-
+    
     public function testValidDatetimeSameFormat()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $this->_ifs->timezone = 'America/New_York';
@@ -110,24 +87,24 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['timedate']->get_db_date_time_format(),
             strtotime(
                 $GLOBALS['timedate']->handle_offset(
-                    $date, $GLOBALS['timedate']->get_date_time_format(), false,
+                    $date, $GLOBALS['timedate']->get_date_time_format(), false, 
                     $GLOBALS['current_user'], 'America/New_York')
                 )
             );
-
+        
         $this->assertEquals(
             $this->_ifs->datetime(
                 $date,
                 $vardef),
             $comparedate);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testValidDatetimeDifferentFormat()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->dateformat   = 'm/d/Y';
         if ( $this->_ifs->dateformat == $GLOBALS['timedate']->get_date_format() )
             $this->_ifs->dateformat = 'Y/m/d';
@@ -137,28 +114,28 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->timezone = 'America/New_York';
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->dateformat . ' ' . $this->_ifs->timeformat);
-
+        
         $comparedate = date(
             $GLOBALS['timedate']->get_db_date_time_format(),
             strtotime(
                 $GLOBALS['timedate']->handle_offset(
-                    $date, $GLOBALS['timedate']->get_date_time_format(), false,
+                    $date, $GLOBALS['timedate']->get_date_time_format(), false, 
                     $GLOBALS['current_user'], 'America/New_York')
                 ));
-
+        
         $this->assertEquals(
             $this->_ifs->datetime(
                 $date,
                 $vardef),
             $comparedate);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testValidDatetimeDifferentTimezones()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $format = $GLOBALS['timedate']->get_date_time_format();
@@ -169,23 +146,23 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['timedate']->get_db_date_time_format(),
             strtotime('+2 hours',strtotime(
                 $GLOBALS['timedate']->handle_offset(
-                    $date, $GLOBALS['timedate']->get_date_time_format(), false,
+                    $date, $GLOBALS['timedate']->get_date_time_format(), false, 
                     $GLOBALS['current_user'], 'America/New_York')
                 )));
-
+        
         $this->assertEquals(
             $this->_ifs->datetime(
                 $date,
                 $vardef),
             $comparedate);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testValidDatetimeDateEntered()
     {
         $_SESSION[$GLOBALS['current_user']->id.'_PREFERENCES']['global']['timezone'] = 'Atlantic/Cape_Verde';
-
+        
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $format = $GLOBALS['timedate']->get_date_time_format();
@@ -195,20 +172,20 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_db_date_time_format(),
             strtotime('+1 hours',strtotime($date)));
-
+        
         $this->assertEquals(
             $this->_ifs->datetime(
                 $date,
                 $vardef),
             $comparedate);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testValidDatetimeDateOnly()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $format = $GLOBALS['timedate']->get_date_format();
@@ -218,53 +195,51 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_db_date_time_format(),
             strtotime($date));
-
+        
         $this->assertTrue(
             (bool) $this->_ifs->datetime(
                 $date,
                 $vardef));
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testInvalidDatetime()
     {
         $this->_ifs->dateformat = 'm.d.Y';
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
-
+        
         $this->assertFalse(
             $this->_ifs->datetime(
                 '11/22/2008 11:21',
                 array('name' => 'some_date')));
     }
-
+    
     public function testInvalidDatetimeBadDayBadHour()
     {
         $this->_ifs->dateformat = 'm.d.Y';
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
-
+        
         $this->assertFalse(
             $this->_ifs->datetime(
                 '11/40/2008 18:21',
                 array('name' => 'some_date')));
     }
-
+    
     public function testValidDateSameFormat()
     {
         $this->_ifs->dateformat = $GLOBALS['timedate']->get_date_format();
         $date = date($this->_ifs->dateformat);
-        $focus = new stdClass;
         
         $this->assertEquals(
             $this->_ifs->date(
                 $date,
-                array(),
-                $focus),
+                array()),
             $date);
     }
-
+    
     public function testValidDateDifferentFormat()
     {
         $this->_ifs->dateformat = 'm/d/Y';
@@ -274,40 +249,34 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_date_format(),
             strtotime($date));
-        $focus = new stdClass;
         
         $this->assertEquals(
             $this->_ifs->date(
                 $date,
-                array(),
-                $focus),
+                array()),
             $comparedate);
     }
-
+    
     public function testInvalidDate()
     {
         $this->_ifs->dateformat = 'm/d/Y';
-        $focus = new stdClass;
         
         $this->assertFalse(
             $this->_ifs->date(
                 '11/22/08',
-                array(),
-                $focus));
+                array()));
     }
-
+    
     public function testInvalidDateBadMonth()
     {
         $this->_ifs->dateformat = 'm/d/Y';
-        $focus = new stdClass;
         
         $this->assertFalse(
             $this->_ifs->date(
                 '22/11/08',
-                array(),
-                $focus));
+                array()));
     }
-
+    
     public function testValidEmail()
     {
         $this->assertEquals(
@@ -315,109 +284,109 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 'sugas@sugarcrm.com',array()),
             'sugas@sugarcrm.com');
     }
-
+    
     public function testInvalidEmail()
     {
         $this->assertFalse(
             $this->_ifs->email(
                 'sug$%$@as@sugarcrm.com',array()));
     }
-
+    
     public function testValidEnum()
     {
         $vardefs = array('options' => 'salutation_dom');
-
+        
         $this->assertEquals(
             $this->_ifs->enum(
                 'Mr.',$vardefs),
             'Mr.');
     }
-
+    
     public function testInvalidEnum()
     {
         $vardefs = array('options' => 'salutation_dom');
-
+        
         $this->assertFalse(
             $this->_ifs->enum(
                 'Foo.',$vardefs));
     }
-
+    
     /**
-	 * @ticket 23485
+	 * @group bug23485
 	 */
     public function testEnumWithDisplayValue()
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setAppListString('checkbox_dom',array(''=>'','1'=>'Yep','2'=>'Nada'));
         $langpack->save();
-
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
+        
         $vardefs = array('options' => 'checkbox_dom');
-
+        
         $this->assertEquals(
             $this->_ifs->enum(
                 'Yep',$vardefs),
             '1');
     }
-
+    
     /**
-     * @ticket 27467
+     * @group bug27467
      */
     public function testEnumWithExtraSpacesAtTheEnd()
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setAppListString('checkbox_dom',array(''=>'','1'=>'Yep','2'=>'Nada'));
         $langpack->save();
-
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
+        
         $vardefs = array('options' => 'checkbox_dom');
-
+        
         $this->assertEquals(
             $this->_ifs->enum(
                 '    1  ',$vardefs),
             '1');
     }
-
+    
     /**
-     * @ticket 33328
+     * @group bug33328
      */
     public function testEnumWithKeyInDifferentCase()
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setAppListString('gender_list',array('male' => 'Male','female' => 'Female',));
         $langpack->save();
-
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
+        
         $vardefs = array('options' => 'gender_list');
-
+        
         $this->assertEquals(
             $this->_ifs->enum(
                 'MALE',$vardefs),
             'male');
     }
-
+    
     /**
-     * @ticket 33328
+     * @group bug33328
      */
     public function testEnumWithValueInDifferentCase()
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setAppListString('checkbox_dom',array(''=>'','1'=>'Yep','2'=>'Nada'));
         $langpack->save();
-
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
+        
         $vardefs = array('options' => 'checkbox_dom');
-
+        
         $this->assertEquals(
             $this->_ifs->enum(
                 'YEP',$vardefs),
             '1');
     }
-
+    
     public function testValidId()
     {
         $this->assertEquals(
@@ -425,23 +394,23 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 '1234567890',array()),
             '1234567890');
     }
-
+    
     public function testInvalidId()
     {
         $this->assertFalse(
             $this->_ifs->id(
                 '1234567890123456789012345678901234567890',array()));
     }
-
+    
     public function testValidInt()
     {
         $this->assertEquals($this->_ifs->int('100',array()),100);
-
+        
         $this->_ifs->num_grp_sep = ',';
-
+        
         $this->assertEquals($this->_ifs->int('1,123',array()),1123);
     }
-
+    
     public function testInvalidInt()
     {
         $this->_ifs->num_grp_sep = '.';
@@ -449,58 +418,58 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_ifs->num_grp_sep = ',';
         $this->assertFalse($this->_ifs->int('123.23',array()));
     }
-
+    
     public function testValidFloat()
     {
         $this->_ifs->dec_sep = '.';
-
+        
         $this->assertEquals($this->_ifs->currency('100',array()),100);
         $this->assertEquals($this->_ifs->currency('123.23',array()),123.23);
-
+        
         $this->_ifs->dec_sep = ',';
-
+        
         $this->assertEquals($this->_ifs->currency('123,23',array()),123.23);
-
+        
         $this->_ifs->num_grp_sep = ',';
-
+        
         $this->assertEquals($this->_ifs->currency('1,123.23',array()),1123.23);
     }
-
+    
     public function testInvalidFloat()
     {
         $this->_ifs->dec_sep = '.';
-
+        
         $this->assertNotEquals($this->_ifs->currency('123,23',array()),123.23);
     }
-
+    
     public function testValidFullname()
     {
         $this->_ifs->default_locale_name_format = 'l f';
-
+        
         $focus = loadBean('Contacts');
-
+        
         $this->_ifs->fullname('Bar Foo',array(),$focus);
-
+        
         $this->assertEquals($focus->first_name,'Foo');
         $this->assertEquals($focus->last_name,'Bar');
     }
-
+    
     public function testInvalidFullname()
     {
         $this->_ifs->default_locale_name_format = 'f l';
-
+        
         $focus = loadBean('Contacts');
-
+        
         $this->_ifs->fullname('Bar Foo',array(),$focus);
-
+        
         $this->assertNotEquals($focus->first_name,'Foo');
         $this->assertNotEquals($focus->last_name,'Bar');
     }
-
+    
     public function testValidMultiEnum()
     {
         $vardefs = array('options' => 'salutation_dom');
-
+        
         $this->assertEquals(
             $this->_ifs->multienum(
                 'Mr.,Mrs.',$vardefs),
@@ -527,12 +496,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testInvalidMultiEnum()
     {
         $vardefs = array('options' => 'salutation_dom');
-
+        
         $this->assertFalse(
             $this->_ifs->multienum(
                 'Mr.,foo.',$vardefs));
     }
-
+    
     public function testValidName()
     {
         $this->assertEquals(
@@ -540,7 +509,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 '1234567890',array('len' => 12)),
             '1234567890');
     }
-
+    
     public function testInvalidName()
     {
         $this->assertEquals(
@@ -548,7 +517,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 '1234567890123456789012345678901234567890',array('len' => 12)),
             '123456789012');
     }
-
+    
     public function testParent()
     {
         $account_name = 'test case account'.date("YmdHis");
@@ -556,7 +525,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $focus->name = $account_name;
         $focus->save();
         $account_id = $focus->id;
-
+        
         $focus = loadBean('Contacts');
         $vardef = array(
           'required' => false,
@@ -582,17 +551,17 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $focus->parent_name = '';
         $focus->parent_id = '';
         $focus->parent_type = 'Accounts';
-
+        
         $this->_ifs->parent(
             $account_name,
             $vardef,
             $focus);
-
+        
         $this->assertEquals($focus->parent_id,$account_id);
-
+        
         $GLOBALS['db']->query("DELETE FROM accounts where id = '$account_id'");
     }
-
+    
     public function testRelate()
     {
         $account_name = 'test case account'.date("YmdHis");
@@ -600,7 +569,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $focus->name = $account_name;
         $focus->save();
         $account_id = $focus->id;
-
+        
         $focus = loadBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
@@ -618,21 +587,21 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 			'source' => 'non-db',
 			'unified_search' => true,
 		);
-
+        
         $this->_ifs->relate(
             $account_name,
             $vardef,
             $focus);
-
+        
         $this->assertEquals($focus->account_id,$account_id);
-
+        
         $GLOBALS['db']->query("DELETE FROM accounts where id = '$account_id'");
     }
-
+    
     public function testRelateCreateRecord()
     {
         $account_name = 'test case account'.date("YmdHis");
-
+        
         $focus = loadBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
@@ -650,36 +619,36 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 			'source' => 'non-db',
 			'unified_search' => true,
 		);
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
-
+        
         $this->_ifs->relate(
             $account_name,
             $vardef,
             $focus);
-
+        
         // teardown
         unset($GLOBALS['beanList']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
-
+        
         $this->assertEquals($focus->account_id,$relaterow['id']);
-
+        
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     /**
-     * @ticket 38356
+     * @group bug38356
      */
     public function testRelateCreateRecordNoTableInVardef()
     {
         $account_name = 'test case account'.date("YmdHis");
-
+        
         $focus = loadBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
@@ -696,36 +665,36 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 			'source' => 'non-db',
 			'unified_search' => true,
 		);
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
-
+        
         $this->_ifs->relate(
             $account_name,
             $vardef,
             $focus);
-
+        
         // teardown
         unset($GLOBALS['beanList']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
-
+        
         $this->assertEquals($focus->account_id,$relaterow['id']);
-
+        
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     /**
-     * @ticket 32869
+     * @group bug32869
      */
     public function testRelateCreateRecordIfNoRnameParameter()
     {
         $account_name = 'test case account'.date("YmdHis");
-
+        
         $focus = loadBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
@@ -742,36 +711,36 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 			'source' => 'non-db',
 			'unified_search' => true,
 		);
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
-
+        
         $this->_ifs->relate(
             $account_name,
             $vardef,
             $focus);
-
+        
         // teardown
         unset($GLOBALS['beanList']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
-
+        
         $this->assertEquals($focus->account_id,$relaterow['id']);
-
+        
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     /**
-     * @ticket 26897
+     * @group bug26897
      */
     public function testRelateCreateRecordCheckACL()
     {
         $account_name = 'test case account '.date("YmdHis");
-
+        
         $focus = new Import_Bug26897_Mock;
         $vardef = array (
             'name' => 'account_name',
@@ -788,7 +757,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             'len' => '255',
             'source' => 'non-db',
             );
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
@@ -796,28 +765,28 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $beanFiles['Import_Bug26897_Mock'] = 'modules/Accounts/Account.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-
+        
         $this->_ifs->relate(
             $account_name,
             $vardef,
             $focus);
-
+        
         // teardown
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
-
+        
         $this->assertTrue(empty($focus->account_id),'Category ID should not be set');
         $this->assertNull($relaterow,'Record should not be added to the related table');
         
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     /**
-     * @ticket 33704
+     * @group bug33704
      */
     public function testRelateDoNotCreateRecordIfRelatedModuleIsUsers()
     {
@@ -838,28 +807,28 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             'len' => '255',
             'source' => 'non-db',
             );
-
+        
         $this->_ifs->relate(
             $account_name,
             $vardef,
             $focus);
-
+        
         // teardown
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
-
+        
         $this->assertTrue(empty($focus->account_id),'Category ID should not be set');
         $this->assertNull($relaterow,'Record should not be added to the related table');
         
         $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     /**
-     * @ticket 38885
+     * @group bug38885
      */
     public function testRelateToUserNameWhenFullNameIsGiven()
     {
@@ -868,7 +837,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-
+        
         $accountFocus = new Account;
         $userFocus = SugarTestUserUtilities::createAnonymousUser();
         $vardef = array(
@@ -884,7 +853,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             "module" => "Users",
             "duplicate_merge" => "disabled",
             );
-
+        
         $this->assertEquals(
             $userFocus->user_name,
             $this->_ifs->relate(
@@ -893,21 +862,21 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $accountFocus,
                 false)
             );
-
+        
         // teardown
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
     }
-
+    
     /**
-     * @ticket 27562
+     * @group bug27562
      */
     public function testRelateCreateRecordUsingMultipleFieldToLinkRecords()
     {
         $contact_name = 'testcase contact'.date("YmdHis");
-
+        
         $focus = new Import_Bug27562_Mock;
-
+        
         $vardef = array (
             'name' => 'contact_name',
             'rname' => 'name',
@@ -923,7 +892,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             'len' => '255',
             'source' => 'non-db',
             );
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
@@ -931,30 +900,30 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $beanFiles['Import_Bug27562_Mock'] = 'modules/Contacts/Contact.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-
+        
         $this->_ifs->relate(
             $contact_name,
             $vardef,
             $focus);
-
+        
         // teardown
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
-
+        
         $nameParts = explode(' ',$contact_name);
         $result = $GLOBALS['db']->query(
             "SELECT id FROM contacts where first_name = '{$nameParts[0]}' and last_name = '{$nameParts[1]}'");
         $relaterow = $focus->db->fetchByAssoc($result);
-
+        
         $this->assertEquals($focus->contact_id,$relaterow['id']);
-
+        
         $GLOBALS['db']->query("DELETE FROM contacts where id = '{$relaterow['id']}'");
     }
-
+    
     public function testRelateDontCreateRecord()
     {
         $account_name = 'test case account'.date("YmdHis");
-
+        
         $focus = loadBean('Contacts');
         $vardef = array (
 			'name' => 'account_name',
@@ -972,12 +941,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
 			'source' => 'non-db',
 			'unified_search' => true,
 		);
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
-
+        
         $this->assertFalse(
             $this->_ifs->relate(
                 $account_name,
@@ -986,10 +955,10 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 false),
             'Should return false since record could not be found'
             );
-
+        
         // teardown
         unset($GLOBALS['beanList']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
@@ -997,20 +966,20 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         if ( $relaterow )
             $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     /**
-     * @ticket 27046
+     * @group bug27046
      */
     public function testRelateWithInvalidDataFormatting()
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setAppListString('checkbox_dom',array(''=>'','1'=>'Yep','2'=>'Nada'));
         $langpack->save();
-
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-
+        
         $account_name = 'test case category'.date("YmdHis");
-
+        
         $focus = new Import_Bug27046_Mock;
         $vardef = array (
             'name' => 'account_name',
@@ -1028,7 +997,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
             'source' => 'non-db',
             'rtype' => 'int',
             );
-
+        
         // setup
         $beanList = array();
         require('include/modules.php');
@@ -1036,7 +1005,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $beanFiles['Import_Bug27046_Mock'] = 'modules/Accounts/Account.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-
+        
         $this->assertFalse(
             $this->_ifs->relate(
                 $account_name,
@@ -1044,10 +1013,10 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $focus),
             'Should return false since field format is invalid'
             );
-
+        
         // teardown
         unset($GLOBALS['beanList']);
-
+        
         $result = $GLOBALS['db']->query(
             "SELECT id FROM accounts where name = '$account_name'");
         $relaterow = $focus->db->fetchByAssoc($result);
@@ -1055,12 +1024,12 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         if ( $relaterow )
             $GLOBALS['db']->query("DELETE FROM accounts where id = '{$relaterow['id']}'");
     }
-
+    
     public function testValidSyncToOutlookUser()
     {
         $value = $GLOBALS['current_user']->id . ',' . $GLOBALS['current_user']->user_name;
         $bad_names = array();
-
+        
         $this->assertTrue(
             (bool) $this->_ifs->synctooutlook(
                 $value,
@@ -1068,17 +1037,17 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $bad_names
                 ),
             'Test $this->_ifs->synctooutlook() not returning false');
-
+        
         $this->assertEquals($bad_names,array());
     }
     //BEGIN SUGARCRM flav=pro ONLY
     public function testValidSyncToOutlookTeam()
     {
         $team = SugarTestTeamUtilities::createAnonymousTeam();
-
+        
         $value = $team->id . ',' . $team->name;
         $bad_names = array();
-
+        
         $this->assertTrue(
             (bool) $this->_ifs->synctooutlook(
                 $value,
@@ -1086,9 +1055,9 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 $bad_names
                 ),
             'Test $this->_ifs->synctooutlook() not returning false');
-
+        
         $this->assertEquals($bad_names,array());
-
+        
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }
     //END SUGARCRM flav=pro ONLY
@@ -1096,7 +1065,7 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $value = "jghu8h8yhuh8hhi889898898";
         $bad_names = array();
-
+        
         $this->assertFalse(
             $this->_ifs->synctooutlook(
                 $value,
@@ -1105,57 +1074,53 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             'Test $this->_ifs->synctooutlook() should return false');
     }
-
+    
     public function testValidTimeSameFormat()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $this->_ifs->timezone = 'America/New_York';
         $vardef = array('name' => 'some_date');
         $date = date($this->_ifs->timeformat);
-        $focus = new stdClass;
         
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
-                $vardef,
-                $focus),
+                $vardef),
             $date);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testValidTimeDifferentFormat()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->timeformat = 'h:ia';
         if ( $this->_ifs->timeformat == $GLOBALS['timedate']->get_time_format() )
             $this->_ifs->timeformat = 'h.ia';
         $this->_ifs->timezone = 'America/New_York';
         $vardef = array('name' => 'some_date');
-
+        
         $date = date($this->_ifs->timeformat);
         $comparedate = date(
             $GLOBALS['timedate']->get_time_format(),
             strtotime($date));
-        $focus = new stdClass;
         
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
-                $vardef,
-                $focus),
+                $vardef),
             $comparedate);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testValidTimeDifferentTimezones()
     {
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone'] = 'America/New_York';
-
+        
         $this->_ifs->timeformat = $GLOBALS['timedate']->get_time_format();
         $this->_ifs->timezone = 'America/Denver';
         $vardef = array('name' => 'some_date');
@@ -1163,42 +1128,36 @@ class ImportFieldSanitizeTest extends Sugar_PHPUnit_Framework_TestCase
         $comparedate = date(
             $GLOBALS['timedate']->get_time_format(),
             strtotime('+2 hours',strtotime($date)));
-        $focus = new stdClass;
         
         $this->assertEquals(
             $this->_ifs->time(
                 $date,
-                $vardef,
-                $focus),
+                $vardef),
             $comparedate);
-
+        
         unset($_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['timezone']);
     }
-
+    
     public function testInvalidTime()
     {
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
-        $focus = new stdClass;
         
         $this->assertFalse(
             $this->_ifs->time(
                 '11:21',
-                array('name' => 'some_date'),
-                $focus));
+                array('name' => 'some_date')));
     }
-
+    
     public function testInvalidTimeBadSeconds()
     {
         $this->_ifs->timeformat = 'h:ia';
         $this->_ifs->timezone = 'America/New_York';
-        $focus = new stdClass;
         
         $this->assertFalse(
             $this->_ifs->time(
                 '11:60',
-                array('name' => 'some_date'),
-                $focus));
+                array('name' => 'some_date')));
     }
 }
 
@@ -1208,7 +1167,7 @@ class Import_Bug26897_Mock extends Account
     {
         return false;
     }
-
+    
     function bean_implements($interface)
     {
 		return true;
@@ -1217,8 +1176,6 @@ class Import_Bug26897_Mock extends Account
 
 class Import_Bug27562_Mock extends Contact
 {
-    var $contact_id;
-    
     function ACLAccess($view,$is_owner='not_set')
     {
         return true;
@@ -1231,12 +1188,12 @@ class Import_Bug27046_Mock extends Account
     {
         return false;
     }
-
+    
     function bean_implements($interface)
     {
 		return true;
     }
-
+    
     function getFieldDefintion($name)
     {
         return array(

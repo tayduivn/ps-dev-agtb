@@ -115,9 +115,7 @@
 	                    <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
 	                {/if}
 	           {else}
-                    {if !isset($params.noHeader) || $params.noHeader == false} 
-	           		  {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
-                    {/if}
+	           		{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
 	           {/if}
 			   </div>
             </th>
@@ -164,11 +162,7 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' class='{$_rowColor}S1' bgcolor='{$_bgColor}' nowrap>
 				{if $pageData.access.edit}
-					<a
-                        {* //BEGIN SUGARCRM flav=pro ONLY *}
-                        class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData[$params.parent_id]|default:$rowData.ID}' data-module='{$params.module|default:$pageData.bean.moduleDir}'
-                        {* //END SUGARCRM flav=pro ONLY *}
-                        title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="edit_inline.png"}"></a>
+					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="edit_inline.png"}"></a>
 				{/if}
 				{if $pageData.access.view}
 					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="view_inline.png"}"></a>
@@ -184,4 +178,3 @@
 	</tr>
 	{/foreach}
 </table>
-

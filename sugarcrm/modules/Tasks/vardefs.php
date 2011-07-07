@@ -41,7 +41,6 @@ $dictionary['Task'] = array('table' => 'tasks',
     'options' => 'task_status_dom',
     'len' => 100,
     'required' => 'true',
-    'default' => 'Not Started',
   ),
   'date_due_flag' =>
   array (
@@ -60,8 +59,6 @@ $dictionary['Task'] = array('table' => 'tasks',
     'dbType' => 'datetime',
     'group'=>'date_due',
     'studio' => array('required' => true, 'no_duplicate' => true),
-    'enable_range_search' => true,
-    'options' => 'date_range_search_dom',
     ),
   'time_due' =>
   array (
@@ -91,8 +88,6 @@ $dictionary['Task'] = array('table' => 'tasks',
     'group'=>'date_start',
     'validation' => array('type' => 'isbefore', 'compareto' => 'date_due', 'blank' => false),
     'studio' => array('required' => true, 'no_duplicate' => true),
-    'enable_range_search' => true,
-    'options' => 'date_range_search_dom',
     ),
  'parent_type'=>
   array(
@@ -284,7 +279,6 @@ $dictionary['Task'] = array('table' => 'tasks',
        array('name' =>'idx_task_con_del', 'type'=>'index', 'fields'=>array('contact_id','deleted')),
        array('name' =>'idx_task_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
        array('name' =>'idx_task_assigned', 'type'=>'index', 'fields'=>array('assigned_user_id')),
-        array('name' =>'idx_task_status', 'type'=>'index', 'fields'=>array('status')),
              )
 
         //This enables optimistic locking for Saves From EditView

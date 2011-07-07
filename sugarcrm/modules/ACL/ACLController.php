@@ -22,14 +22,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/ACLActions/actiondefs.php');
 require_once('modules/ACL/ACLJSController.php');
 class ACLController {
-
-
+	
+	
 	function checkAccess($category, $action, $is_owner=false, $type='module'){
-
+		
 		global $current_user;
 		if(is_admin($current_user))return true;
 		//calendar is a special case since it has 3 modules in it (calls, meetings, tasks)
-
+		
 		if($category == 'Calendar'){
 			return ACLAction::userHasAccess($current_user->id, 'Calls', $action,$type, $is_owner) || ACLAction::userHasAccess($current_user->id, 'Meetings', $action,'module', $is_owner) || ACLAction::userHasAccess($current_user->id, 'Tasks', $action,'module', $is_owner);
 		}
@@ -38,19 +38,18 @@ class ACLController {
 		}
 		return ACLAction::userHasAccess($current_user->id, $category, $action,$type, $is_owner);
 	}
-
+	
 	function requireOwner($category, $value, $type='module'){
 			global $current_user;
 			if(is_admin($current_user))return false;
 			return ACLAction::userNeedsOwnership($current_user->id, $category, $value,$type);
 	}
-
+	
 	function filterModuleList(&$moduleList, $by_value=true){
-
+		
 		global $aclModuleList, $current_user;
-		if(is_admin($current_user)) return;
 		$actions = ACLAction::getUserActions($current_user->id, false);
-
+		
 		$compList = array();
 		if($by_value){
 			foreach($moduleList as $key=>$value){
@@ -60,7 +59,7 @@ class ACLController {
 			$compList =& $moduleList;
 		}
 		foreach($actions as $action_name=>$action){
-
+			
 			if(!empty($action['module'])){
 				$aclModuleList[$action_name] = $action_name;
 				if(isset($compList[$action_name])){
@@ -74,7 +73,7 @@ class ACLController {
 				}
 			}
 		}
-		if(isset($compList['Calendar']) &&
+		if(isset($compList['Calendar']) && 
 			!( ACLController::checkModuleAllowed('Calls', $actions) || ACLController::checkModuleAllowed('Meetings', $actions) || ACLController::checkModuleAllowed('Tasks', $actions)))
 	    {
 			if($by_value){
@@ -82,7 +81,7 @@ class ACLController {
 			}else{
 				unset($moduleList['Calendar']);
 			}
-			if(isset($compList['Activities']) &&
+			if(isset($compList['Activities']) && 
 				!( ACLController::checkModuleAllowed('Notes', $actions) || ACLController::checkModuleAllowed('Notes', $actions))){
 				if($by_value){
 					unset($moduleList[$compList['Activities']]);
@@ -91,9 +90,9 @@ class ACLController {
 				}
 			}
 		}
-
+		
 	}
-
+	
 	/**
 	 * Check to see if the module is available for this user.
 	 *
@@ -102,18 +101,17 @@ class ACLController {
 	 */
 	function checkModuleAllowed($module_name, $actions)
 	{
-	    if(!empty($actions[$module_name]['module']['access']['aclaccess']) &&
+		if(!empty($actions[$module_name]['module']['access']['aclaccess']) && 
 			ACL_ALLOW_ENABLED == $actions[$module_name]['module']['access']['aclaccess'])
 		{
 			return true;
 		}
-
+		
 		return false;
 	}
-
+	
 	function disabledModuleList($moduleList, $by_value=true,$view='list'){
 		global $aclModuleList, $current_user;
-		if(is_admin($GLOBALS['current_user'])) return array();
 		$actions = ACLAction::getUserActions($current_user->id, false);
 		$disabled = array();
 		$compList = array();
@@ -128,9 +126,9 @@ class ACLController {
 		if(isset($moduleList['ProductTemplates'])){
 			$moduleList['Products'] ='Products';
 		}
-
+		
 		foreach($actions as $action_name=>$action){
-
+					
 			if(!empty($action['module'])){
 				$aclModuleList[$action_name] = $action_name;
 				if(isset($compList[$action_name])){
@@ -161,19 +159,19 @@ class ACLController {
 		if(isset($disabled['Products'])){
 			$disabled['ProductTemplates'] = 'ProductTemplates';
 		}
-
-
+		
+		
 		return $disabled;
-
+		
 	}
-
-
-
+	
+	
+	
 	function addJavascript($category,$form_name='', $is_owner=false){
 		$jscontroller = new ACLJSController($category, $form_name, $is_owner);
 		echo $jscontroller->getJavascript();
 	}
-
+	
 	function moduleSupportsACL($module){
 		static $checkModules = array();
 		global $beanFiles, $beanList;
@@ -182,7 +180,7 @@ class ACLController {
 		}
 		if(!isset($beanList[$module])){
 			$checkModules[$module] = false;
-
+			
 		}else{
 			$class = $beanList[$module];
 			require_once($beanFiles[$class]);
@@ -196,18 +194,18 @@ class ACLController {
 		return $checkModules[$module] ;
 
 	}
-
+	
 	function displayNoAccess($redirect_home = false){
 		echo '<script>function set_focus(){}</script><p class="error">' . translate('LBL_NO_ACCESS', 'ACL') . '</p>';
 		if($redirect_home)echo 'Redirect to Home in <span id="seconds_left">3</span> seconds<script> function redirect_countdown(left){document.getElementById("seconds_left").innerHTML = left; if(left == 0){document.location.href = "index.php";}else{left--; setTimeout("redirect_countdown("+ left+")", 1000)}};setTimeout("redirect_countdown(3)", 1000)</script>';
 	}
-
+	
 }
 
 
-
-
-
+	
+	
+	
 
 
 

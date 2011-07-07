@@ -97,7 +97,7 @@ class LanguageManager{
 		include($file);
 		
 		// put the item in the sugar cache.
-		$key = self::getLanguageCacheKey($module,$lang);
+		$key = "LanguageManager.$module.$lang";
 		sugar_cache_put($key,$loaded_mod_strings);
 	}
 	
@@ -143,7 +143,7 @@ class LanguageManager{
 			$file = $GLOBALS['sugar_config']['cache_dir'].'modules/'.$module_dir.'/language/'.$lang.'.lang.php';
 			if(file_exists($file)){
 				unlink($file);
-				$key = self::getLanguageCacheKey($module_dir,$lang);
+				$key = "LanguageManager.$module_dir.$lang";
 				sugar_cache_clear($key);
 			}
 		}
@@ -217,7 +217,7 @@ class LanguageManager{
 		//if either our session or the system is set to developerMode then refresh is set to true
 		
 		// Retrieve the vardefs from cache.
-		$key = self::getLanguageCacheKey($module,$lang);
+		$key = "LanguageManager.$module.$lang";
 		
 		if(!$refresh)
 		{
@@ -253,41 +253,6 @@ class LanguageManager{
     	}
     		//END SUGARCRM flav=int ONLY
 	}
-
-    /**
-     * Return the cache key for the module language definition
-     *
-     * @static
-     * @param  $module
-     * @param  $lang
-     * @return string
-     */
-    public static function getLanguageCacheKey($module, $lang)
-	{
-         return "LanguageManager.$module.$lang";
-	}
-
-    /**
-     * Remove any cached js language strings.
-     *
-     * @static
-     * @return void
-     */
-    public static function removeJSLanguageFiles()
-    {
-        $jsFiles = array();
-        getFiles($jsFiles, $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage');
-        foreach($jsFiles as $file) {
-            unlink($file);
-        }
-
-        if( empty($GLOBALS['sugar_config']['js_lang_version']) )
-            $GLOBALS['sugar_config']['js_lang_version'] = 1;
-        else
-            $GLOBALS['sugar_config']['js_lang_version'] += 1;
-
-        write_array_to_file( "sugar_config", $GLOBALS['sugar_config'], "config.php");
-    }
 }
 
 function translated_prefix($key){

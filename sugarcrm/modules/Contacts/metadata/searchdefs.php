@@ -26,9 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $searchdefs['Contacts'] = array(
-  		  'templateMeta' => array(
-  		  					'maxColumns' => '3', 
-							'maxColumnsBasic' => '4',
+  		  'templateMeta' => array('maxColumns' => '3', 
                             'widths' => array('label' => '10', 'field' => '30'), 
                            ),
 		  'layout' => array (

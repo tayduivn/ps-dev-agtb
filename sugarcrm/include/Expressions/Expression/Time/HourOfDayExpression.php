@@ -30,11 +30,8 @@ class HourOfDayExpression extends TimeExpression
 	 * Returns the entire enumeration bare.
 	 */
 	function evaluate() {
-		$params = DateExpression::parse($this->getParameters()->evaluate());
-		if(!$params) {
-		    return false;
-		}
-		return $params->hour;
+		$params = $this->getParameters()->evaluate();
+		return floatval( substr( $params, 0, 2 ) );
 	}
 
 

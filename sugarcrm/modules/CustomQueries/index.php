@@ -44,7 +44,7 @@ if (!is_admin($current_user))
 
 if(empty($_REQUEST['action']) || $_REQUEST['action']=="index") $_REQUEST['action'] = "ListView";
 $focus = new CustomQuery();
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_TITLE']), true); 
+echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_TITLE'], true); 
 $is_edit = false;
 if(!empty($_REQUEST['record'])) {
     $result = $focus->retrieve($_REQUEST['record']);

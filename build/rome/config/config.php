@@ -37,16 +37,11 @@ $config['builds']['exp']['lic'] = array('sub'=>'sub');
 $config['builds']['pro']['flav'] = array('pro');
 $config['builds']['pro']['lic'] = array('sub');
 
-$config['builds']['corp']['flav'] = array('pro','corp');
-$config['builds']['corp']['lic'] = array('sub');
-
-$config['builds']['ent']['flav'] = array('pro','ent','corp');
+$config['builds']['ent']['flav'] = array('pro','ent');
 $config['builds']['ent']['lic'] = array('sub');
 
-$config['builds']['ult']['flav'] = array('pro','corp','ent','ult');
-$config['builds']['ult']['lic'] = array('sub');
 
-$config['builds']['dev']['flav'] = array('een','ent','pro','dev','ult','corp');
+$config['builds']['dev']['flav'] = array('een','ent','pro','dev');
 $config['builds']['dev']['lic'] = array('sub');
 
 $config['builds']['dce']['flav'] = array('ent'=>1, 'pro'=>1);

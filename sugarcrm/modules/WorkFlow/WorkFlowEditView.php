@@ -90,7 +90,7 @@ if (isset($_REQUEST['filename']) && $_REQUEST['isDuplicate'] != 'true') {
         $focus->filename = $_REQUEST['filename'];
 }
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_ID'], array($mod_strings['LBL_ALERT_TEMPLATES'],$focus->name), true); 
+echo get_module_title($mod_strings['LBL_MODULE_ID'], $mod_strings['LBL_ALERT_TEMPLATES'].": ".$focus->name, true); 
 
 $GLOBALS['log']->info("EmailTemplate detail view");
 

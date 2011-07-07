@@ -38,7 +38,7 @@ function ConvertDiscClient(){
     $xtpl->assign("MOD", $mod_strings);
     $xtpl->assign("APP", $app_strings);
 
-    echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_UPGRADE_CONVERT_DISC_CLIENT_TITLE']), false);
+    echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$mod_strings['LBL_UPGRADE_CONVERT_DISC_CLIENT_TITLE'], true);
     
     require_once('include/nusoap/nusoap.php');
 

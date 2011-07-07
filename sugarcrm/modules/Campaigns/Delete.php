@@ -45,14 +45,6 @@ if (isset($_REQUEST['mode']) and  $_REQUEST['mode']=='Test') {
 		$query.="inner join campaign_log on campaign_log.related_id = emails.id and campaign_log.campaign_id = '{$focus->id}' ";
 		$query.="inner join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test' ";
 		$query.="set emails.deleted=1 ";
-	} elseif ($focus->db->dbType=='mssql') {
-        $query="update  emails ";
-        $query.="set emails.deleted=1 ";
-        $query.="where id in ( ";
-        $query.="select related_id from campaign_log ";
-        $query.="inner join prospect_lists on campaign_log.list_id = prospect_lists.id ";
-        $query.="and prospect_lists.list_type='test' ";
-        $query.="and campaign_log.campaign_id = '{$focus->id}' ) ";
 	} else {
 //BEGIN SUGARCRM flav=ent ONLY
 		//oracle oci8.
@@ -72,13 +64,7 @@ if (isset($_REQUEST['mode']) and  $_REQUEST['mode']=='Test') {
 		$query="delete emailman.* from emailman ";
 		$query.="inner join prospect_lists on emailman.list_id = prospect_lists.id and prospect_lists.list_type='test' ";
 		$query.="WHERE emailman.campaign_id = '{$focus->id}' ";
-	} elseif ($focus->db->dbType=='mssql') {
-        $query="delete from emailman ";
-        $query.="where list_id in ( ";
-        $query.="       select prospect_list_id from prospect_list_campaigns ";
-        $query.="       inner join prospect_lists on prospect_list_campaigns.prospect_list_id = prospect_lists.id ";
-        $query.="       where prospect_lists.list_type='test' and prospect_list_campaigns.campaign_id = '{$focus->id}' ) ";
-    } else {
+	} else {
 //BEGIN SUGARCRM flav=ent ONLY
 		//oracle oci8.
 		$query="delete from emailman ";
@@ -96,13 +82,6 @@ if (isset($_REQUEST['mode']) and  $_REQUEST['mode']=='Test') {
 		$query.="inner join prospect_lists on campaign_log.list_id = prospect_lists.id and prospect_lists.list_type='test' ";
 		$query.="set campaign_log.deleted=1 ";
 		$query.="where campaign_log.campaign_id='{$focus->id}' ";
-	} elseif ($focus->db->dbType=='mssql') {
-        $query="update  campaign_log ";
-        $query.="set campaign_log.deleted=1 ";
-        $query.="where list_id in ( ";
-        $query.="                       select id from prospect_lists ";
-        $query.="                       where prospect_lists.list_type='test') ";
-        $query.="and campaign_log.campaign_id='{$focus->id}' ";
 	} else {
 //BEGIN SUGARCRM flav=ent ONLY
 		//oracle oci8.
@@ -123,5 +102,5 @@ if (isset($_REQUEST['mode']) and  $_REQUEST['mode']=='Test') {
 	$focus->mark_deleted($_REQUEST['record']);
 }
 $return_id=!empty($_REQUEST['return_id'])?$_REQUEST['return_id']:$focus->id;
-require_once ('include/formbase.php');
-handleRedirect($return_id, $_REQUEST['return_module']);
+header("Location: index.php?module=".$_REQUEST['return_module']."&action=".$_REQUEST['return_action']."&record=".$return_id);
+?>

@@ -115,10 +115,5 @@ $listViewDefs['Products'] = array(
         'label' => 'LBL_LIST_TEAM',
         'default' => false),
 //END SUGARCRM flav=pro ONLY
-	'DATE_ENTERED' =>  array (
-	    'type' => 'datetime',
-	    'label' => 'LBL_DATE_ENTERED',
-	    'width' => '10',
-	    'default' => true),
 );
 ?>

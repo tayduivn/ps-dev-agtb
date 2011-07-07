@@ -289,7 +289,7 @@ color:#ef3067;
 color: #ff1255;
 }
 
-a.utilsLink:link, a.utilsLink:visited, #bottomLinks a {
+a.utilsLink:link, a.utilsLink:visited {
 color:#ef3067;
 }
 
@@ -304,7 +304,7 @@ color:#ef3067;
 .search_form .view {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=search-basic-bg.png");
 border-color:#FF95C7;
-background-color: #efb9d2;
+background-color: transparent;
 }
 
 .search_form .view.advanced {

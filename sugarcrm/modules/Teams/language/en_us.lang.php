@@ -32,7 +32,6 @@ $mod_strings = array (
     'ERR_DUP_NAME' => 'Team Name already existed, please choose another one.',
 	'ERR_DELETE_RECORD' => 'You must specify a record number to delete this team.',
     'ERR_INVALID_TEAM_REASSIGNMENT' => 'Error.  The selected team <b>({0})</b> is a team you have chosen to delete.  Please select another team.',
-	'ERR_CANNOT_REMOVE_PRIVATE_TEAM' => 'Error.  You may not delete a user whose private team has not been deleted.',
 
 	'LBL_DESCRIPTION' => 'Description:',
 	'LBL_GLOBAL_TEAM_DESC' => 'Globally Visible',

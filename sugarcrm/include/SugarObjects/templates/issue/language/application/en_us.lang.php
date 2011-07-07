@@ -1,4 +1,4 @@
-<?php
+ <?php
  /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -66,3 +66,4 @@ $object_name = strtolower($object_name);
   ),
   );
 ?>
+

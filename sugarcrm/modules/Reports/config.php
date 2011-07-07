@@ -105,7 +105,7 @@ function getAllowedReportModules(&$local_modListHeader) {
     $report_modules['Currencies']='Currency';
 	//add prospects
 	$report_modules['Prospects']='Prospect';
-    $report_modules['DocumentRevisions'] = 'DocumentRevision';
+    
     $report_modules['ProductCategories'] = 'ProductCategory';
     $report_modules['ProductTypes'] = 'ProductType';
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -132,7 +132,7 @@ function getAllowedReportModules(&$local_modListHeader) {
 
 	global $beanFiles;
 	
-    $exemptModules = array('ProspectLists','Reports');
+    $exemptModules = array('Dashboard','Reports');
     
 	foreach($report_modules as $module=>$class_name) {
 		if(!isset($beanFiles[$class_name]) || in_array($module, $exemptModules)) {

@@ -120,7 +120,7 @@ $dictionary['WorkFlowActionShell'] = array('table' => 'workflow_actionshells'
     'name' => 'action_module',
     'vname' => 'LBL_ACTION_MODULE',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '50',
   ),
      'actions' => 
   array (

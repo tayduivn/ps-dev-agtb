@@ -92,7 +92,6 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 		$button .= '<input type="hidden" name="return_module" value="' . $currentModule . "\" />\n";
 		$button .= '<input type="hidden" name="return_action" value="' . $defines['action'] . "\" />\n";
 		$button .= '<input type="hidden" name="return_id" value="' . $defines['focus']->id . "\" />\n";
-		$button .= '<input type="hidden" name="record" value="" />';
 
 		// TODO: move this out and get $additionalFormFields working properly
 		if(empty($additionalFormFields['parent_type']))
@@ -142,18 +141,8 @@ class SugarWidgetSubPanelTopScheduleMeetingButton extends SugarWidgetSubPanelTop
 		$button .='<script type="text/javascript" src="include/javascript/jsclass_base.js"></script>'."\n";
 		$button .='<script type="text/javascript" src="include/javascript/jsclass_async.js"></script>'."\n";
 		$button .='<script type="text/javascript" src="modules/Meetings/jsclass_scheduler.js"></script>'."\n";
-
+		
 		return $button;
-	}
-
-	function display($defines, $additionalFormFields = null)
-	{
-	    $focus = new Meeting;
-		if ( !$focus->ACLAccess('EditView') ) {
-		    return '';
-	    }
-
-		return parent::display($defines, $additionalFormFields);
 	}
 }
 ?>

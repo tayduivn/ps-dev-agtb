@@ -27,12 +27,8 @@ require_once('include/SugarFolders/SugarFolders.php');
 global $current_user;
 
 $focus = new InboundEmail();
-if(!empty($_REQUEST['record'])) {
-    $focus->retrieve($_REQUEST['record']);
-} elseif(!empty($_REQUEST['origin_id'])) {
-    $focus->retrieve($_REQUEST['origin_id']);
-    unset($focus->id);
-}
+$focus->retrieve($_REQUEST['record']);
+
 foreach($focus->column_fields as $field) {
     if($field == 'email_password' && empty($_REQUEST['email_password']) && !empty($_REQUEST['email_user'])) {
         continue;
@@ -55,11 +51,6 @@ foreach($focus->required_fields as $field) {
 		$focus->$field = $value;
 	}
 }
-
-if(!empty($_REQUEST['email_password'])) {
-    $focus->email_password = $_REQUEST['email_password'];
-}
-
 $focus->protocol = $_REQUEST['protocol'];
 
 if( isset($_REQUEST['is_create_case']) && $_REQUEST['is_create_case'] == 'on' )

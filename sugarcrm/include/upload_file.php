@@ -23,7 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * $Id: upload_file.php 55278 2010-03-15 13:45:13Z jmertic $
  * Description:
  ********************************************************************************/
-require_once('include/externalAPI/ExternalAPIFactory.php');
 
 class UploadFile 
 {
@@ -178,12 +177,8 @@ class UploadFile
 	{
 
 		$filename = $_FILES_element['name'];
-        $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-        //If no file extension is available and the mime is octet-stream try to determine the mime type.
-        $recheckMime = empty($file_ext) && ($_FILES_element['type']  == 'application/octet-stream');
-
-		if( $_FILES_element['type'] && !$recheckMime)
+		if( $_FILES_element['type'] )
 		{
 			$mime = $_FILES_element['type'];
 		}
@@ -272,52 +267,6 @@ class UploadFile
 			}
 		}
 		return true;
-	}
-	
-	function upload_doc(&$bean, $bean_id, $doc_type, $file_name, $mime_type){
-        
-		if(!empty($doc_type)&&$doc_type!='Sugar') {
-			global $sugar_config;
-	        $destination = clean_path($this->get_upload_path($bean_id));
-	        sugar_rename($destination, str_replace($bean_id, $bean_id.'_'.$file_name, $destination));
-	        $new_destination = clean_path($this->get_upload_path($bean_id.'_'.$file_name));
-	                    
-		    try{
-                $this->api = ExternalAPIFactory::loadAPI($doc_type);
-
-                if ( isset($this->api) && $this->api !== false ) {
-                    $result = $this->api->uploadDoc(
-                        $bean,
-                        $new_destination,
-                        $file_name,
-                        $mime_type
-                        );
-                } else {
-                    $result['success'] = FALSE;
-                    // FIXME: Translate
-                    $GLOBALS['log']->error("Could not load the requested API (".$doc_type.")");
-                    $result['errorMessage'] = 'Could not find a proper API';
-                }
-            }catch(Exception $e){
-                $result['success'] = FALSE;
-                $result['errorMessage'] = $e->getMessage();
-                $GLOBALS['log']->error("Caught exception: (".$e->getMessage().") ");
-            }
-            if ( !$result['success'] ) {
-                sugar_rename($new_destination, str_replace($bean_id.'_'.$file_name, $bean_id, $new_destination));
-                $bean->doc_type = 'Sugar';
-                // FIXME: Translate
-                if ( ! is_array($_SESSION['user_error_message']) ) 
-                    $_SESSION['user_error_message'] = array(); 
-
-                $error_message = isset($result['errorMessage']) ? $result['errorMessage'] : $GLOBALS['app_strings']['ERR_EXTERNAL_API_SAVE_FAIL'];
-                $_SESSION['user_error_message'][] = $error_message;
-
-            }
-            else {
-                unlink($new_destination);
-            }
-        }
 	}
 
 	/**

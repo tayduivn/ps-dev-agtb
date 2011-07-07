@@ -30,61 +30,21 @@
 // $Id: error.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
-<script>
 
-    //set the variables
-    var modalBod = "{$MESSAGE}";
-    var cnfgtitle = '{$MOD.LBL_ERROR}';
-    var startOverLBL = '{$MOD.LBL_TRY_AGAIN}';
-    var cancelLBL = '{$MOD.LBL_CANCEL}';
-    var actionVAR = '{$ACTION}';
-    var importModuleVAR = '{$IMPORT_MODULE}';
-    var sourceVAR = '{$SOURCE}';
-    var showCancelVAR = '{$SHOWCANCEL}';
+<form name="importerror" method="GET" action="index.php" id="importerror">
+<input type="hidden" name="module" value="Import">
+<input type="hidden" name="action" value="{$ACTION}">
+<input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
+<input type="hidden" name="source" value="{$SOURCE}">
 
-{literal}
-    //function called when 'start over' button is pressed
-    var chooseToStartOver = function() {
-        //hide the modal and redirect window to previous step
-        this.hide();
-        document.location.href='index.php?module=Import&action='+actionVAR+'&import_module='+importModuleVAR+'&source='+sourceVAR;
-    };
-    var chooseToCancel = function() {
-        //do nothing, just hide the modal
-        this.hide();
-    };
+<p class="error">{$MESSAGE}</p>
 
-    //define the buttons to be used in modal popup
-    var importButtons = '';
-    if(showCancelVAR){
-        importButtons = [{ text: startOverLBL, handler: chooseToStartOver, isDefault:true },{ text:cancelLBL, handler: chooseToCancel}];
-    }else{
-        importButtons = [{ text: startOverLBL, handler: chooseToStartOver, isDefault:true }];
-    }
-
-    //define import error modal window
-    ImportErrorBox = new YAHOO.widget.SimpleDialog('importMsgWindow', {
-        type : 'alert',
-        modal: true,
-        width: '350px',
-        id: 'importMsgWindow',
-        close: true,
-        visible: true,
-        fixedcenter: true,
-        constraintoviewport: true,
-        draggable: true,
-        buttons: importButtons
-    });
-{/literal}
-    //display the window
-    ImportErrorBox.setHeader(cnfgtitle);
-    ImportErrorBox.setBody(modalBod);
-    ImportErrorBox.render(document.body);
-    ImportErrorBox.show();
-
-
-
-
-
-</script>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+    <td align="left">
+        <input title="{$MOD.LBL_TRY_AGAIN}" accessKey="" class="button" type="submit" 
+            name="button" value="{$MOD.LBL_TRY_AGAIN}">
+    </td>
+</tr>
+</table>
+</form>

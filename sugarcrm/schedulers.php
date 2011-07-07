@@ -77,7 +77,7 @@ if(true) {
 
 			$job = new SchedulersJob();
 			$job->retrieve($_REQUEST['record']);
-			$job->runtime = TimeDate::getInstance()->nowDb();
+			$job->runtime = gmdate('Y-m-d H:i:s', strtotime('now'));
 
 			if($job->startJob($job_id)) {
 				$GLOBALS['log']->debug('----->Job [ '.$job_id.' ] was fired successfully');

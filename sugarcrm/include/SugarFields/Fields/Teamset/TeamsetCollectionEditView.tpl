@@ -88,8 +88,8 @@
     <tr id="lineFields_{$displayParams.formName}_{$idname}_0">
         <td valign='top'>
             <span id='{$displayParams.formName}_{$idname}_input_div_0' name='teamset_div'>          
-            <input type="text" name="{$idname}_collection_0" id="{$displayParams.formName}_{$idname}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
-            <input type="hidden" name="id_{$idname}_collection_0" id="id_{$displayParams.formName}_{$idname}_collection_0" value="">
+            <input type="text" name="{$idname}_collection_0" id="{$idname}_collection_0" class="sqsEnabled" tabindex="{$tabindex}" size="{$displayParams.size}" value="" title='{$vardef.help}' autocomplete="off" {$displayParams.readOnly} {$displayParams.field}>
+            <input type="hidden" name="id_{$idname}_collection_0" id="id_{$idname}_collection_0" value="">
             </span>
         </td>
 <!-- BEGIN Remove and Radio -->
@@ -117,26 +117,24 @@ and push it outside the screen.
 -->
  <input style='position:absolute; left:-9999px; width: 0px; height: 0px;' accesskey='T' halign='left' type="button" class="button" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();'>
 <script type="text/javascript">
-(function() {ldelim}
-    SUGAR_callsInProgress++;
-    var field_id = '{$displayParams.formName}_{$vardef.name}';
-    YAHOO.util.Event.onContentReady(field_id + "_table", function(){ldelim}
-        if(collection[field_id] && collection[field_id].secondaries_values.length == 0) {ldelim}
-            {if !empty($values.secondaries)}
-                {foreach from=$values.secondaries item=secondary_field}
-                var temp_array = new Array();
-                temp_array['name'] = '{$secondary_field.name}';
-                temp_array['id'] = '{$secondary_field.id}';
-                collection[field_id].secondaries_values.push(temp_array);
-                {/foreach}
-            {/if}
-            var collection_field = collection[field_id];
-            collection_field.add_secondaries(collection_field.secondaries_values);
-        {rdelim}
-    {rdelim});
-{rdelim})();
- 	document.getElementById("id_{$displayParams.formName}_{$idname}_collection_0").value = "{$values.primary.id}";
- 	document.getElementById("{$displayParams.formName}_{$idname}_collection_0").value = "{$values.primary.name}";
+	SUGAR_callsInProgress++;
+	if(collection["{$displayParams.formName}_{$idname}"] && collection["{$displayParams.formName}_{$idname}"].secondaries_values.length == 0) {ldelim}
+		{if !empty($values.secondaries)}
+			{foreach from=$values.secondaries item=secondary_field}   
+			var temp_array = new Array();  
+			temp_array['name'] = '{$secondary_field.name}';
+			temp_array['id'] = '{$secondary_field.id}';
+			collection["{$displayParams.formName}_{$idname}"].secondaries_values.push(temp_array);
+			{/foreach}
+		{/if}
+	    collection_field = collection["{$displayParams.formName}_{$idname}"];
+		collection_field.add_secondaries(collection_field.secondaries_values);	
+	{rdelim}
+</script>
+
+<script type="text/javascript">
+ 	document.getElementById("id_{$idname}_collection_0").value = "{$values.primary.id}"; 	
+ 	document.getElementById("{$idname}_collection_0").value = "{$values.primary.name}";
     {if isset($displayParams.arrow) && $displayParams.arrow == 'show'}
         setTimeout('call_js_more(collection_field)',1000);
     {else}

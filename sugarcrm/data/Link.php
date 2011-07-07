@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 
 
+
 class Link {
 
 	/* Private variables.*/
@@ -64,13 +65,11 @@ class Link {
 	 * 		$_key_name: optional, name of the primary key column for _table_name
 	 */
 	function Link($_rel_name, &$_bean, $fieldDef, $_table_name='', $_key_name=''){
-		global $dictionary;
-        require_once("modules/TableDictionary.php");
-        $GLOBALS['log']->debug("Link Constructor, relationship name: ".$_rel_name);
+		$GLOBALS['log']->debug("Link Constructor, relationship name: ".$_rel_name);
 		$GLOBALS['log']->debug("Link Constructor, Table name: ".$_table_name);
 		$GLOBALS['log']->debug("Link Constructor, Key name: ".$_key_name);
-
-        $this->_relationship_name=$_rel_name;
+		//_pp(func_get_args());
+		$this->_relationship_name=$_rel_name;
 		$this->relationship_fields = (!empty($fieldDef['rel_fields']))?$fieldDef['rel_fields']: array();
 		$this->_bean=&$_bean;
 		$this->_relationship=new Relationship();
@@ -105,18 +104,18 @@ class Link {
 
 			}
 		}
-
-		if ($this->_relationship->lhs_table == $this->_relationship->rhs_table && isset($fieldDef['side']) && $fieldDef['side'] == 'right'){
+		
+		if ($this->_relationship->lhs_table == $this->_relationship->rhs_table && isset($fieldDef['side']) && $fieldDef['side'] == 'right'){ 
 		    $this->_swap_sides = true;
 		}
-
+		
 		if (!empty($fieldDef['rhs_key_override'])) {
 			$this->_rhs_key_override = true;
 		}
 		if (!empty($fieldDef['bean_filter_field'])) {
 			$this->_bean_filter_field = $fieldDef['bean_filter_field'];
-		}
-
+		}		
+		
 		//default to id if not set.
 		if (empty($this->_bean_key_name))$this->_bean_key_name='id';
 
@@ -126,10 +125,6 @@ class Link {
 		else $GLOBALS['log']->debug("Link Constructor, No relationship record.") ;
 
 	}
-
-    function loadedSuccesfully() {
-        return !empty($this->_relationship->id);
-    }
 
 	/* This method will return the following based on cardinality of the relationship.
 	 *  # one-to-many, many-to-many: empty array if not data is found else array of keys.
@@ -202,7 +197,7 @@ class Link {
 	function getRelatedField($name){
 		return (!empty($this->relationship_fields[$name]))? $this->relationship_fields[$name]: null;
 	}
-
+	
 	function getRelationshipObject() {
 	   return $this->_relationship;
 	}
@@ -217,7 +212,7 @@ class Link {
 		if ($this->_relationship->rhs_table == $this->_bean_table_name &&  $this->_relationship->rhs_key == $this->_bean_key_name) {
 			$position =  false;
 		}
-
+		
 		if($this->_swap_sides){
 			return 	!$position;
 		}
@@ -612,7 +607,7 @@ class Link {
 		}
 		$query.=' WHERE '.$this->_relationship->rhs_table.".id='".$where_key_value."'";
 
-		$GLOBALS['log']->fatal("Relationship Query ".$query);
+		$GLOBALS['log']->debug("Relationship Query ".$query);
 
 		$result=$this->_db->query($query, true);
 	}
@@ -630,7 +625,6 @@ class Link {
 	   	if (!empty($this->_relationship->relationship_role_column)) {
 	   		$bean->{$this->_relationship->relationship_role_column}=$this->_relationship->relationship_role_column_value;
 	   	}
-	   	$GLOBALS['log']->fatal("Adding many to one bean based {$bean->module_dir} {$bean->id}");
 	   	$bean->save();
 	}
 
@@ -643,18 +637,18 @@ class Link {
 	 * the values should be passed as key value pairs with column name as the key name and column value as key value.
 	 */
 	function add($rel_keys,$additional_values=array()) {
-
+		
 		if (!isset($rel_keys) or empty($rel_keys)) {
-			$GLOBALS['log']->fatal("Link.add, Null key passed, no-op, returning... ");
+			$GLOBALS['log']->debug("Link.add, Null key passed, no-op, returning... ");
 			return;
 		}
-
+		
 		//check to ensure that we do in fact have an id on the bean.
 		if(empty($this->_bean->id)){
-			$GLOBALS['log']->fatal("Link.add, No id on the bean... ");
+			$GLOBALS['log']->debug("Link.add, No id on the bean... ");
 			return;
 		}
-
+		
 		if (!is_array($rel_keys)) {
 			$keys[]=$rel_keys;
 		} else {
@@ -663,7 +657,7 @@ class Link {
 
 		$bean_is_lhs=$this->_get_bean_position();
 		if (!isset($bean_is_lhs)) {
-			$GLOBALS['log']->fatal("Invalid relationship parameters. Exiting..");
+			$GLOBALS['log']->debug("Invalid relationship parameters. Exiting..");
 			return null;
 		}
 		//if multiple keys are passed then check for unsupported relationship types.
@@ -671,16 +665,16 @@ class Link {
 			if (($this->_relationship->relationship_type == 'one-to-one')
 				or ($this->_relationship->relationship_type == 'one-to-many' and !$bean_is_lhs)
 				or ($this->_relationship->relationship_type == 'many-to-one')) {
-					$GLOBALS['log']->fatal("Invalid parameters passed to function, the relationship does not support addition of multiple records.");
+					$GLOBALS['log']->error("Invalid parameters passed to function, the relationship does not support addition of multiple records.");
 					return;
 				}
 		}
-        $GLOBALS['log']->fatal("Relationship type = {$this->_relationship->relationship_type}");
-        foreach($keys as $key) {
+        $GLOBALS['log']->debug("Relationship type = {$this->_relationship->relationship_type}");
+	    foreach($keys as $key) {
 
 			//fetch the related record using the key and update.
-			if ($this->_relationship->relationship_type=='one-to-one' || $this->_relationship->relationship_type == 'one-to-many' ) {
-                $this->_add_one_to_many_table_based($key,$bean_is_lhs);
+			if ($this->_relationship->relationship_type=='one-to-one' or $this->_relationship->relationship_type == 'one-to-many') {
+				$this->_add_one_to_many_table_based($key,$bean_is_lhs);
 			}
 
 			//updates the bean passed to the instance....
@@ -691,19 +685,8 @@ class Link {
 
 		    //insert record in the link table.
 			if ($this->_relationship->relationship_type=='many-to-many' ) {
-                //replace existing relationships for one-to-one
-                if(!empty($GLOBALS['dictionary'][$this->_relationship_name]['true_relationship_type']) &&
-					($GLOBALS['dictionary'][$this->_relationship_name]['true_relationship_type'] == 'one-to-one'))
-                {
-                    //Remove all existing links with either bean. 
-                    $old_rev = isset($this->_relationship->reverse) ? false : $this->_relationship->reverse;
-                    $this->_relationship->reverse = true;
-                    $this->delete($key);
-                    $this->delete($this->_bean->id);
-                    $this->_relationship->reverse = $old_rev;
-                }
 
-				//Swap the bean positions for self relationships not coming from subpanels.
+				//Swap the bean positions for self relationships not coming from subpanels. 
 				//such as one-to-many relationship fields generated in studio/MB
 				$swap = !isset($_REQUEST['subpanel_id']) && $this->_swap_sides;
 				//add keys from the 2 tables to the additional keys array..
@@ -724,7 +707,7 @@ class Link {
 				$this->_add_many_to_many($additional_values);
 
 				//reverse will be set to true only for self-referencing many-to-many relationships.
-				if ($this->_is_self_relationship() && !empty($GLOBALS['dictionary'][$this->_relationship_name]) &&
+				if ($this->_is_self_relationship() && !empty($GLOBALS['dictionary'][$this->_relationship_name]) && 
 					!empty($GLOBALS['dictionary'][$this->_relationship_name]['true_relationship_type']) &&
 					$GLOBALS['dictionary'][$this->_relationship_name]['true_relationship_type'] == 'many-to-many' ||
 				(!empty($this->_relationship->reverse) && $this->_relationship->reverse == true )){
@@ -736,42 +719,42 @@ class Link {
 					$this->_add_many_to_many($additional_values);
 				}
 			}
-            $custom_logic_arguments = array();
-            $custom_reverse_arguments = array();
-            $custom_logic_arguments['related_id'] = $key;
-            $custom_logic_arguments['id'] =  $this->_bean->id;
-            $custom_reverse_arguments['related_id'] = $this->_bean->id;
-            $custom_reverse_arguments['id'] = $key;
-            if($bean_is_lhs) {
-                $custom_logic_arguments['module'] = $this->_relationship->lhs_module;
-                $custom_logic_arguments['related_module'] = $this->_relationship->rhs_module;
-                $custom_reverse_arguments['module'] = $this->_relationship->rhs_module;
-                $custom_reverse_arguments['related_module'] = $this->_relationship->lhs_module;
-            } else {
-                $custom_logic_arguments['related_module'] = $this->_relationship->lhs_module;
-                $custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
-                $custom_logic_arguments['module'] = $this->_relationship->rhs_module;
-                $custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
-            }
-            /**** CALL IT FROM THE MAIN BEAN FIRST ********/
-            $this->_bean->call_custom_logic('after_relationship_add', $custom_logic_arguments);
-            /**** NOW WE HAVE TO CALL THE LOGIC HOOK THE OTHER WAY SINCE IT TAKES TWO FOR A RELATIONSHIP****/
-            global $beanList;
-            if ( isset($beanList[$custom_logic_arguments['related_module']]) ) {
-                $class = $beanList[$custom_logic_arguments['related_module']];
-                if ( !empty($class) ) {
-                    $rbean = new $class();
-                    $rbean->id = $key;
-                    $rbean->call_custom_logic('after_relationship_add', $custom_reverse_arguments);
-                }
-            }
+		$custom_logic_arguments = array();
+		$custom_reverse_arguments = array();
+		$custom_logic_arguments['related_id'] = $key;
+		$custom_logic_arguments['id'] =  $this->_bean->id;
+		$custom_reverse_arguments['related_id'] = $this->_bean->id;
+		$custom_reverse_arguments['id'] = $key;
+		if($bean_is_lhs) {
+			$custom_logic_arguments['module'] = $this->_relationship->lhs_module; 
+			$custom_logic_arguments['related_module'] = $this->_relationship->rhs_module; 
+			$custom_reverse_arguments['module'] = $this->_relationship->rhs_module;
+			$custom_reverse_arguments['related_module'] = $this->_relationship->lhs_module; 
+		} else {
+			$custom_logic_arguments['related_module'] = $this->_relationship->lhs_module;
+			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
+			$custom_logic_arguments['module'] = $this->_relationship->rhs_module;
+			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
 		}
+		/**** CALL IT FROM THE MAIN BEAN FIRST ********/
+		$this->_bean->call_custom_logic('after_relationship_add', $custom_logic_arguments);
+		/**** NOW WE HAVE TO CALL THE LOGIC HOOK THE OTHER WAY SINCE IT TAKES TWO FOR A RELATIONSHIP****/	
+		global $beanList;
+		$class = $beanList[$custom_logic_arguments['related_module']];
+		if ( !empty($class) ) {
+            $rbean = new $class();
+            $rbean->id = $key;
+            $rbean->call_custom_logic('after_relationship_add', $custom_reverse_arguments);
+		}
+
+		}
+		
 	}
 
 	function _add_many_to_many($add_values) {
 
 		//add date modified.
-		$add_values['date_modified']=  $GLOBALS['timedate']->nowDb();
+		$add_values['date_modified']=  gmdate($GLOBALS['timedate']->get_db_date_time_format(), time());
 
 		//check whether duplicate exist or not.
 		if ($this->relationship_exists($this->_relationship->join_table,$add_values)) {
@@ -799,7 +782,7 @@ class Link {
 	}
 
 	function _delete_row($table_name,$key) {
-		$query="UPDATE $table_name SET deleted=1, date_modified='" .$GLOBALS['timedate']->nowDb()."' WHERE id='$key'";
+		$query='UPDATE '.$table_name." SET deleted=1, date_modified=" .gmdate($GLOBALS['timedate']->get_db_date_time_format(), time())."' WHERE id='".$key."'";
 		$GLOBALS['log']->debug("Relationship Delete Statement :".$query);
 
 		$result=$this->_db->query($query, true);
@@ -862,7 +845,7 @@ class Link {
 	    if ($_relationship->relationship_type=='one-to-many' or $_relationship->relationship_type=='one-to-one' ) {
     		if ($bean_is_lhs) {
     			//update rhs_table set rhs_key = null, relation_column_name = null where rhs_key= this_bean_id
-    			$query='UPDATE '.$_relationship->rhs_table.' SET '.$_relationship->rhs_key."=NULL, date_modified='".$GLOBALS['timedate']->nowDb()."'";
+    			$query='UPDATE '.$_relationship->rhs_table.' SET '.$_relationship->rhs_key."=NULL, date_modified='".gmdate($GLOBALS['timedate']->get_db_date_time_format(), time())."'";
 
     			if (!empty($_relationship->relationship_role_column) && !empty($_relationship->relationship_role_column_value)) {
     				$query.=','.$_relationship->relationship_role_column."= NULL ";
@@ -895,7 +878,7 @@ class Link {
 
 		if ($_relationship->relationship_type=='many-to-many' ) {
 			$use_bean_is_lhs = isset($_REQUEST['ajaxSubpanel']) || $this->_swap_sides !== true;
-    		$query='UPDATE '.$_relationship->join_table." SET deleted=1, date_modified='".$GLOBALS['timedate']->nowDb()."'";
+    		$query='UPDATE '.$_relationship->join_table." SET deleted=1, date_modified='".gmdate($GLOBALS['timedate']->get_db_date_time_format(), time())."'";
     		if ($bean_is_lhs && $use_bean_is_lhs) {
     			if (!empty($this->_relationship->reverse) && ($this->_relationship->reverse == true or $this->_relationship->reverse == 1)){
     				if (empty($related_id)) {
@@ -931,7 +914,7 @@ class Link {
 		}
 		//if query string is not empty execute it.
 		if (isset($query)) {
-            $GLOBALS['log']->fatal('Link.Delete:Delete Query: '.$query);
+			$GLOBALS['log']->debug('Link.Delete:Delete Query: '.$query);
 			$this->_db->query($query,true);
 		}
 		$custom_logic_arguments = array();
@@ -941,58 +924,24 @@ class Link {
 		$custom_reverse_arguments['related_id'] = $id;
 		$custom_reverse_arguments['id'] = $related_id;
 		if($bean_is_lhs) {
-			$custom_logic_arguments['module'] = $this->_relationship->lhs_module;
-			$custom_logic_arguments['related_module'] = $this->_relationship->rhs_module;
-			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
-			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
+			$custom_logic_arguments['module'] = $this->_relationship->lhs_module; 
+			$custom_logic_arguments['related_module'] = $this->_relationship->rhs_module; 
+			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module; 
+			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module; 
 		} else {
-			$custom_logic_arguments['module'] = $this->_relationship->rhs_module;
+			$custom_logic_arguments['module'] = $this->_relationship->rhs_module; 
 			$custom_logic_arguments['related_module'] = $this->_relationship->lhs_module;
-			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module;
-			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module;
+			$custom_reverse_arguments['module'] = $this->_relationship->lhs_module; 
+			$custom_reverse_arguments['related_module'] = $this->_relationship->rhs_module; 
 		}
-
-        if (empty($this->_bean->id)) {
-            $this->_bean->retrieve($id);//!$bean_is_lhs || empty($related_id) ? $id : $related_id);
-        }
-        //BEGIN SUGARCRM flav=een ONLY
-        $linkField = VardefManager::getLinkFieldForRelationship(
-            $this->_bean->module_dir, $this->_bean->object_name, $this->_relationship_name
-        );
-        //Resave records with calculated relate fields to update those fields
-        if (!empty($this->_bean->id) && empty($this->_bean->deleted)
-                && VardefManager::modHasCalcFieldsWithLink($this->_bean->module_dir, $this->_bean->object_name, $linkField['name'])
-                && empty($GLOBALS['saving_relationships']))
-        {
-            $GLOBALS['saving_relationships'] = true;
-            $this->_bean->save();
-            $GLOBALS['saving_relationships'] = false;
-        }
-        //END SUGARCRM flav=een ONLY
-        $this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
-		//NOW THE REVERSE WAY SINCE A RELATIONSHIP TAKES TWO
+		$this->_bean->call_custom_logic('after_relationship_delete', $custom_logic_arguments);
+		//NOW THE REVERSE WAY SINCE A RELATIONSHIP TAKES TWO 
 		global $beanList;
-		if ( isset($beanList[$custom_logic_arguments['related_module']]) ) {
-            $class = $beanList[$custom_logic_arguments['related_module']];
-            if ( !empty($class) ) {
-                $rbean = new $class();
-                $rbean->retrieve(empty($related_id) ? $id : $related_id);
-                //BEGIN SUGARCRM flav=een ONLY
-                $linkField = VardefManager::getLinkFieldForRelationship(
-                    $custom_logic_arguments['related_module'], $class, $this->_relationship_name
-                );
-                //Resave records with calculated relate fields to update those fields
-                if (!empty($rbean->id) && empty($rbean->deleted)
-                        && VardefManager::modHasCalcFieldsWithLink($custom_logic_arguments['related_module'], $class, $linkField['name'])
-                        && empty($GLOBALS['saving_relationships']))
-                {
-                    $GLOBALS['saving_relationships'] = true;
-                    $rbean->save();
-                    $GLOBALS['saving_relationships'] = false;
-                }
-                //END SUGARCRM flav=een ONLY
-                $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);
-            }
+		$class = $beanList[$custom_logic_arguments['related_module']];
+		if ( !empty($class) ) {
+            $rbean = new $class();
+            $rbean->id = $id;
+            $rbean->call_custom_logic('after_relationship_delete', $custom_reverse_arguments);
         }
 	}
 
@@ -1046,9 +995,11 @@ class Link {
 		$indices=Link::_get_link_table_definition($table_name,'indices');
 		if (!empty($indices)) {
 			foreach ($indices as $index) {
-                if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {
-                    return $index['fields'];
-                }
+				foreach ($index as $key=>$value) {
+					if ($key=='type' && $value=='alternate_key') {
+						return $index['fields'];
+					}
+				}
 			}
 		}
 		$relationships=Link::_get_link_table_definition($table_name,'relationships');
@@ -1078,11 +1029,11 @@ class Link {
             $relationshipName = preg_replace( '/_c$/' , '' , $table_name ) ;
 
             $locations = array ( 'metadata/' , 'custom/metadata/' ) ;
-
+    
             foreach ( $locations as $basepath )
             {
                 $path = $basepath . $relationshipName . 'MetaData.php' ;
-
+				
                 if (file_exists($path))
                 {
                     include($path);
@@ -1093,7 +1044,7 @@ class Link {
             }
             // couldn't find the metadata for the table in either the standard or custom locations
             $GLOBALS['log']->debug('Error fetching field defs for join table '.$table_name);
-
+            
             return null;
         }
 

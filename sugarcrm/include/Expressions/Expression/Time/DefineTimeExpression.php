@@ -30,11 +30,7 @@ class DefineTimeExpression extends TimeExpression
 	 */
 	function evaluate() {
 		$params = $this->getParameters()->evaluate();
-		if(!$params) {
-		    return false;
-		}
-
-		$time = TimeDate::fromUserTime($params);
+		$time = strtotime($params);
 
 		if ( $time == false ) {
 			throw new Exception("Incorrect time format");

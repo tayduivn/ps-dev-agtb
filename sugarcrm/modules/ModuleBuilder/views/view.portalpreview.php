@@ -45,13 +45,13 @@ class ViewPortalPreview extends SugarView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams($browserTitle = false)
+	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   ModuleBuilderController::getModuleTitle(),
+    	   $mod_strings['LBL_MODULEBUILDER'],
     	   );
     }
 	
@@ -62,6 +62,7 @@ class ViewPortalPreview extends SugarView
 
 	function display() 
 	{
+        //echo get_module_title($GLOBALS['mod_strings']['LBL_MODULE_TITLE'], $GLOBALS['mod_strings']['LBL_MODULE_TITLE'], true);
         $smarty = new Sugar_Smarty();
         $smarty->assign('mod', $GLOBALS['mod_strings']);
         $smarty->assign('app', $GLOBALS['app_strings']);

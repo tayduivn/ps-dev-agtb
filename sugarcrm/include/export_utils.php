@@ -50,14 +50,13 @@ function getDelimiter() {
  * @param array records an array of records if coming directly from a query
  * @return string delimited string for export
  */
-function export($type, $records = null, $members = false, $sample=false) {
+function export($type, $records = null, $members = false) {
 	global $beanList;
 	global $beanFiles;
 	global $current_user;
 	global $app_strings;
 	global $app_list_strings;
 	global $timedate;
-    $sampleRecordNum = 5;
 	$contact_fields = array(
 		"id"=>"Contact ID"
 		,"lead_source"=>"Lead Source"
@@ -180,18 +179,8 @@ function export($type, $records = null, $members = false, $sample=false) {
         }
     }
 
-
-    $result = '';
-    $populate = false;
-    if($sample) {
-       $result = $db->limitQuery($query, 0, $sampleRecordNum, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
-        if( $focus->_get_num_rows_in_query($query)<1 ){
-            $populate = true;
-        }
-	}else{
-        $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
-    }
-
+   
+	$result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
 	
 	$fields_array = $db->getFieldsArray($result,true);
 
@@ -204,80 +193,69 @@ function export($type, $records = null, $members = false, $sample=false) {
 	$header .= "\"\r\n";
 	$content .= $header;
 	$pre_id = '';
+	
+	while($val = $db->fetchByAssoc($result, -1, false)) {
+		$new_arr = array();
+		//BEGIN SUGARCRM flav=pro ONLY
+		if(!is_admin($current_user)){
+			$focus->id = (!empty($val['id']))?$val['id']:'';
+			$focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
+			$focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
+			ACLField::listFilter($val, $focus->module_dir,$current_user->id, $focus->isOwner($current_user->id), true, 1, true );
+		}
 
-
-    if($populate){
-        //this is a sample request with no data, so create fake datarows
-
-            $content .= returnFakeDataRow($focus,$fields_array,$sampleRecordNum);
-
-
-    }else{
-        //process retrieved record
-    	while($val = $db->fetchByAssoc($result, -1, false)) {
-            $new_arr = array();
-            //BEGIN SUGARCRM flav=pro ONLY
-            if(!is_admin($current_user)){
-                $focus->id = (!empty($val['id']))?$val['id']:'';
-                $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
-                $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
-                ACLField::listFilter($val, $focus->module_dir,$current_user->id, $focus->isOwner($current_user->id), true, 1, true );
-            }
-
-            //END SUGARCRM flav=pro ONLY
-            if($members){
-                if($pre_id == $val['id'])
-                    continue;
-                if($val['ea_deleted']==1 || $val['ear_deleted']==1){
-                    $val['primary_email_address'] = '';
-                }
-                unset($val['ea_deleted']);
-                unset($val['ear_deleted']);
-                unset($val['primary_address']);
-            }
-            $pre_id = $val['id'];
-            $vals = array_values($val);
-            foreach ($vals as $key => $value) {
-                //if our value is a datetime field, then apply the users locale
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && ($focus->field_name_map[$fields_array[$key]]['type'] == 'datetime' || $focus->field_name_map[$fields_array[$key]]['type'] == 'datetimecombo')){
-                    $value = $timedate->to_display_date_time($value);
-                    $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
-                }
-                //kbrill Bug #16296
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'date'){
-                    $value = $timedate->to_display_date($value, false);
-                }
-                // Bug 32463 - Properly have multienum field translated into something useful for the client
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'multienum'){
-                    $value = str_replace("^","",$value);
-                    if ( isset($focus->field_name_map[$fields_array[$key]]['options'])
-                            && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) ) {
-                        $valueArray = explode(",",$value);
-                        foreach ( $valueArray as $multikey => $multivalue ) {
-                            if ( isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) ) {
-                                $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
-                            }
+		//END SUGARCRM flav=pro ONLY
+		if($members){
+			if($pre_id == $val['id'])
+				continue;
+			if($val['ea_deleted']==1 || $val['ear_deleted']==1){	
+				$val['primary_email_address'] = '';
+			}
+			unset($val['ea_deleted']);
+			unset($val['ear_deleted']);	
+			unset($val['primary_address']);			
+		}
+		$pre_id = $val['id'];
+		$vals = array_values($val);
+		foreach ($vals as $key => $value) {
+			//if our value is a datetime field, then apply the users locale
+			if(isset($focus->field_name_map[$fields_array[$key]]['type']) && ($focus->field_name_map[$fields_array[$key]]['type'] == 'datetime' || $focus->field_name_map[$fields_array[$key]]['type'] == 'datetimecombo')){
+				$value = $timedate->to_display_date_time($value);
+				$value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
+			}
+			//kbrill Bug #16296
+			if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'date'){
+				$value = $timedate->to_display_date($value, false);
+			}
+			// Bug 32463 - Properly have multienum field translated into something useful for the client
+			if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'multienum'){
+			    $value = str_replace("^","",$value);
+			    if ( isset($focus->field_name_map[$fields_array[$key]]['options'])
+			            && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) ) {
+                    $valueArray = explode(",",$value);
+                    foreach ( $valueArray as $multikey => $multivalue ) {
+                        if ( isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) ) {
+                            $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
                         }
-                        $value = implode(",",$valueArray);
                     }
-                }
-                //BEGIN SUGARCRM flav=pro ONLY
-                if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
-                    require_once('modules/Teams/TeamSetManager.php');
-                    $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
-                }
-                //END SUGARCRM flav=pro ONLY
-                array_push($new_arr, preg_replace("/\"/","\"\"", $value));
-            }
-            $line = implode("\"".getDelimiter()."\"", $new_arr);
-            $line = "\"" .$line;
-            $line .= "\"\r\n";
+                    $value = implode(",",$valueArray);
+			    }
+			}
+			//BEGIN SUGARCRM flav=pro ONLY
+			if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
+				require_once('modules/Teams/TeamSetManager.php');
+				$value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
+			}
+			//END SUGARCRM flav=pro ONLY
+			array_push($new_arr, preg_replace("/\"/","\"\"", $value));
+		}
+		$line = implode("\"".getDelimiter()."\"", $new_arr);
+		$line = "\"" .$line;
+		$line .= "\"\r\n";
 
-            $content .= $line;
-        }
-    }
+		$content .= $line;
+	}
 	return $content;
-    
 }
 
 function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
@@ -347,284 +325,6 @@ function generateSearchWhere($module, $query) {//this function is similar with f
     $ret_array['searchFields'] = $searchForm->searchFields;
     return $ret_array;
 }
-/**
-  * calls export method to build up a delimited string and some sample instructional text on how to use this file
-  * @param string type the bean-type to export
-  * @return string delimited string for export with some tutorial text
-  */
-     function exportSample($type) {
-         global $app_strings;
-
-         //first grab the
-         $_REQUEST['all']=true;
-
-         //retrieve the export content
-         $content = export($type, null, false, true);
-
-         //add details on removing the sample data
-         return $content . $app_strings['LBL_IMPORT_SAMPLE_FILE_TEXT'];
-
-     }
- //this function will take in the bean and field mapping and return a proper value
- function returnFakeDataRow($focus,$field_array,$rowsToReturn = 5){
-
-    if(empty($focus) || empty($field_array))
-     return ;
-
-     //include the file that defines $sugar_demodata
-     include('install/demoData.en_us.php');
-
-    $person_bean = false;
-    if( isset($focus->first_name)){
-        $person_bean = true;
-    }
-
-     $returnContent = '';
-     $counter = 0;
-     $new_arr = array();
-
-     //iterate through the record creation process as many times as defined.  Each iteration will create a new row
-     while($counter < $rowsToReturn){
-         $counter++;
-         //go through each field and populate with dummy data if possible
-         foreach($field_array as $field_name){
-
-            if(empty($focus->field_name_map[$field_name]) || empty($focus->field_name_map[$field_name]['type'])){
-                //type is not set, fill in with empty string and continue;
-                $returnContent .= '"",';
-                continue;
-            }
-            $field = $focus->field_name_map[$field_name];
-                         //fill in value according to type
-            $type = $field['type'];
-
-             switch ($type) {
-
-                 case "id":
-                 case "assigned_user_name":
-                     //return new guid string
-                    $returnContent .= '"'.create_guid().'",';
-                     break;
-                 case "int":
-                     //return random number`
-                    $returnContent .= '"'.mt_rand(0,4).'",';
-                     break;
-                 case "name":
-                     //return first, last, user name, or random name string
-                     if($field['name'] == 'first_name'){
-                         $count = count($sugar_demodata['first_name_array']) - 1;
-                        $returnContent .= '"'.$sugar_demodata['last_name_array'][mt_rand(0,$count)].'",';
-                     }elseif($field['name'] == 'last_name'){
-                         $count = count($sugar_demodata['last_name_array']) - 1;
-                         $returnContent .= '"'.$sugar_demodata['last_name_array'][mt_rand(0,$count)].'",';
-                     }elseif($field['name'] == 'user_name'){
-                       $count = count($sugar_demodata['first_name_array']) - 1;
-                        $returnContent .= '"'.$sugar_demodata['last_name_array'][mt_rand(0,$count)].'_'.mt_rand(1,111).'",';
-                     }else{
-                         //return based on bean
-                         if($focus->module_dir =='Accounts'){
-                             $count = count($sugar_demodata['company_name_array']) - 1;
-                            $returnContent .= '"'.$sugar_demodata['company_name_array'][mt_rand(0,$count)].'",';
-
-                         }elseif($focus->module_dir =='Bugs'){
-                             $count = count($sugar_demodata['bug_seed_names']) - 1;
-                            $returnContent .= '"'.$sugar_demodata['bug_seed_names'][mt_rand(0,$count)].'",';
-                         }elseif($focus->module_dir =='Notes'){
-                             $count = count($sugar_demodata['note_seed_names_and_Descriptions']) - 1;
-                            $returnContent .= '"'.$sugar_demodata['note_seed_names_and_Descriptions'][mt_rand(0,$count)].'",';
-
-                         }elseif($focus->module_dir =='Calls'){
-                              $count = count($sugar_demodata['call_seed_data_names']) - 1;
-                            $returnContent .= '"'.$sugar_demodata['call_seed_data_names'][mt_rand(0,$count)].'",';
-
-                         }elseif($focus->module_dir =='Tasks'){
-                             $count = count($sugar_demodata['task_seed_data_names']) - 1;
-                           $returnContent .= '"'.$sugar_demodata['task_seed_data_names'][mt_rand(0,$count)].'",';
-
-                         }elseif($focus->module_dir =='Meetings'){
-                             $count = count($sugar_demodata['meeting_seed_data_names']) - 1;
-                           $returnContent .= '"'.$sugar_demodata['meeting_seed_data_names'][mt_rand(0,$count)].'",';
-
-                         }elseif($focus->module_dir =='ProductCategories'){
-                             $count = count($sugar_demodata['productcategory_seed_data_names']) - 1;
-                           $returnContent .= '"'.$sugar_demodata['productcategory_seed_data_names'][mt_rand(0,$count)].'",';
 
 
-                         }elseif($focus->module_dir =='ProductTypes'){
-                             $count = count($sugar_demodata['producttype_seed_data_names']) - 1;
-                           $returnContent .= '"'.$sugar_demodata['producttype_seed_data_names'][mt_rand(0,$count)].'",';
-
-
-                         }elseif($focus->module_dir =='ProductTemplates'){
-                             $count = count($sugar_demodata['producttemplate_seed_data']) - 1;
-                           $returnContent .= '"'.$sugar_demodata['producttemplate_seed_data'][mt_rand(0,$count)].'",';
-
-                         }else{
-                           $returnContent .= '"Default Name for '.$focus->module_dir.'",';
-
-                         }
-
-                     }
-
-                    break;
-                 case "relate":
-                     if($field['name'] == 'team_name'){
-                         //apply team names and user_name
-                         $teams_count = count($sugar_demodata['teams']) - 1;
-                         $users_count = count($sugar_demodata['users']) - 1;
-
-                     $returnContent .= '"'.$sugar_demodata['teams'][mt_rand(0,$teams_count)]['name'].','.$sugar_demodata['users'][mt_rand(0,$users_count)]['user_name'].'",';
-
-                     }else{
-                         //apply GUID
-                         $returnContent .= '"'.create_guid().'",';
-                     }
-                     break;
-                 case "bool":
-                     //return 0 or 1
-                     $returnContent .= '"'.mt_rand(0,1).'",';
-                     break;
-
-                 case "text":
-                     //return random text
-                     $returnContent .= '"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna",';
-                     break;
-
-                 case "team_list":
-                     $teams_count = count($sugar_demodata['teams']) - 1;
-                     //give fake team names (East,West,North,South)
-                     $returnContent .= '"'.$sugar_demodata['teams'][mt_rand(0,$teams_count)]['name'].'",';
-                     break;
-
-                 case "date":
-                     //return formatted date
-                     $timeStamp = strtotime('now');
-                     $value =    date($timedate->dbDayFormat, $timeStamp);
-                     $returnContent .= '"'.$timedate->to_display_date_time($value).'",';
-                     break;
-
-                 case "datetime":
-                 case "datetimecombo":
-                    global $timedate;
-                     //return formatted date time
-                     $timeStamp = strtotime('now');
-                     //Start with db date
-                     $value =    date($timedate->dbDayFormat.' '.$timedate->dbTimeFormat, $timeStamp);
-                     //use timedate to convert to user display format
-                     $value = $timedate->to_display_date_time($value);
-                     //finally forma the am/pm to have a space so it can be recognized as a date field in excel
-                     $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
-                     $returnContent .= '"'.$value.'",';
-
-                     break;
-                case "phone":
-                    $value = '('.mt_rand(300,999).') '.mt_rand(300,999).'-'.mt_rand(1000,9999);
-                      $returnContent .= '"'.$value.'",';
-                     break;
-                 case "varchar":
-                                     //process varchar for possible values
-                                     if($field['name'] == 'first_name'){
-                                         $count = count($sugar_demodata['first_name_array']) - 1;
-                                        $returnContent .= '"'.$sugar_demodata['last_name_array'][mt_rand(0,$count)].'",';
-                                     }elseif($field['name'] == 'last_name'){
-                                         $count = count($sugar_demodata['last_name_array']) - 1;
-                                         $returnContent .= '"'.$sugar_demodata['last_name_array'][mt_rand(0,$count)].'",';
-                                     }elseif($field['name'] == 'user_name'){
-                                       $count = count($sugar_demodata['first_name_array']) - 1;
-                                        $returnContent .= '"'.$sugar_demodata['last_name_array'][mt_rand(0,$count)].'_'.mt_rand(1,111).'",';
-                                     }elseif($field['name'] == 'title'){
-                                         $count = count($sugar_demodata['titles']) - 1;
-                                         $returnContent .= '"'.$sugar_demodata['titles'][mt_rand(0,$count)].'",';
-                                     }elseif(strpos($field['name'],'address_street')>0){
-                                       $count = count($sugar_demodata['street_address_array']) - 1;
-                                        $returnContent .= '"'.$sugar_demodata['street_address_array'][mt_rand(0,$count)].'",';
-                                     }elseif(strpos($field['name'],'address_city')>0){
-                                       $count = count($sugar_demodata['city_array']) - 1;
-                                        $returnContent .= '"'.$sugar_demodata['city_array'][mt_rand(0,$count)].'",';
-                                     }elseif(strpos($field['name'],'address_state')>0){
-                                         $state_arr = array('CA','NY','CO','TX','NV');
-                                       $count = count($state_arr) - 1;
-                                        $returnContent .= '"'.$state_arr[mt_rand(0,$count)].'",';
-                                     }elseif(strpos($field['name'],'address_postalcode')>0){
-                                        $returnContent .= '"'.mt_rand(12345,99999).'",';
-                                     }else{
-                                         $returnContent .= '"",';
-
-                                     }
-                     break;
-                case "url":
-                     $returnContent .= '"https://www.sugarcrm.com",';
-                     break;
-
-                case "enum":
-                     //enum?
-                default:
-                    //type is not matched, fill in with empty string and continue;
-                    $returnContent .= '"",';
-
-             }
-         }
-         $returnContent .= "\r\n";
-     }
-     return $returnContent;
- }
-
-
- //expects the field name to translate and a bean of the type being translated (to access field map and mod_strings)
- function translateForExport($field_db_name,$focus){
-     global $mod_strings,$app_strings;
-
-     if (empty($field_db_name) || empty($focus)){
-        return false;
-     }
-
-    //grab the focus module strings
-    $temp_mod_strings = $mod_strings;
-    global $current_language;
-    $mod_strings = return_module_language($current_language, $focus->module_dir);
-    $fieldLabel = '';
-
-     //!! first check to see if we are overriding the label for export.
-     if (!empty($mod_strings['LBL_EXPORT_'.strtoupper($field_db_name)])){
-         //entry exists which means we are overriding this value for exporting, use this label
-         $fieldLabel = $mod_strings['LBL_EXPORT_'.strtoupper($field_db_name)];
-
-     }
-     //!! next check to see if we are overriding the label for export on app_strings.
-     elseif (!empty($app_strings['LBL_EXPORT_'.strtoupper($field_db_name)])){
-         //entry exists which means we are overriding this value for exporting, use this label
-         $fieldLabel = $app_strings['LBL_EXPORT_'.strtoupper($field_db_name)];
-
-     }//check to see if label exists in mapping and in mod strings
-     elseif (!empty($focus->field_name_map[$field_db_name]['vname']) && !empty($mod_strings[$focus->field_name_map[$field_db_name]['vname']])){
-         $fieldLabel = $mod_strings[$focus->field_name_map[$field_db_name]['vname']];
-
-     }//check to see if label exists in mapping and in app strings
-     elseif (!empty($focus->field_name_map[$field_db_name]['vname']) && !empty($app_strings[$focus->field_name_map[$field_db_name]['vname']])){
-         $fieldLabel = $app_strings[$focus->field_name_map[$field_db_name]['vname']];
-
-     }//field is not in mapping, so check to see if db can be uppercased and found in mod strings
-     elseif (!empty($mod_strings['LBL_'.strtoupper($field_db_name)])){
-         $fieldLabel = $mod_strings['LBL_'.strtoupper($field_db_name)];
-
-     }//check to see if db can be uppercased and found in app strings
-     elseif (!empty($app_strings['LBL_'.strtoupper($field_db_name)])){
-         $fieldLabel = $app_strings['LBL_'.strtoupper($field_db_name)];
-
-     }else{
-         //we could not find the label in mod_strings or app_strings based on either a mapping entry
-         //or on the db_name itself or being overwritten, so default to the db name as a last resort
-         $fieldLabel = $field_db_name;
-
-     }
-     //strip the label of any columns
-     $fieldLabel= preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", '', trim($fieldLabel));
-
-     //reset the bean mod_strings back to original import strings
-     $mod_strings = $temp_mod_strings;
-     return $fieldLabel;
-
- }
-
- ?>
-
+?>

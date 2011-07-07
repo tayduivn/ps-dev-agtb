@@ -70,7 +70,7 @@ foreach($focus->child_ids as $k => $id) {
 	$child .= "<a href='".$sugar_config['site_url']."/index.php?module=Queues&action=DetailView&record=".$id."'>".$a['name']."</a><br>";
 }
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_NAME'],$focus->name), true);
+echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_MODULE_NAME'].": ".$focus->name, true);
 
 /* end standard DetailView layout process */
 

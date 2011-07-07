@@ -228,14 +228,13 @@ class Report
             foreach($this->report_def['links_def'] as $old_link )
             {
                 $tmpBean->load_relationship($old_link);
-                $linkObject = $tmpBean->$old_link;
                 $relationship = $tmpBean->$old_link->_relationship;
                 $newIndex = $tempFullTableList['self']['module'].':'. $linked_fields[$old_link]['name'];
                 $upgrade_lookup[$old_link] = $newIndex; 
                 $tempFullTableList[$newIndex]['label'] = translate($linked_fields[$old_link]['vname']);
                 $tempFullTableList[$newIndex]['link_def']['relationship_name'] = $linked_fields[$old_link]['relationship'];
                 $tempFullTableList[$newIndex]['link_def']['name'] = $linked_fields[$old_link]['name'];
-                $tempFullTableList[$newIndex]['link_def']['link_type'] = $linkObject->getType();
+                $tempFullTableList[$newIndex]['link_def']['link_type'] = $relationship->relationship_type;
                 $tempFullTableList[$newIndex]['link_def']['label'] = $tempFullTableList[$newIndex]['label'];
                 $tempFullTableList[$newIndex]['link_def']['table_key'] = $newIndex;
 
@@ -253,8 +252,18 @@ class Report
 
                 //Update the parent with one of us children
                 $tempFullTableList['self']['children'][$old_link] = $old_link;
-                $tempFullTableList[$newIndex]['module'] = $linkObject->getRelatedModuleName();
-                $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = $linkObject->_get_bean_position() ? 1 : 0;
+
+                $tmpBean_is_left = $tmpBean->$old_link->_get_bean_position();
+                if ( $tmpBean_is_left == true )
+                {
+                    $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = 1;
+                    $tempFullTableList[$newIndex]['module'] = $relationship->rhs_module;
+                }
+                else
+                {
+                    $tempFullTableList[$newIndex]['link_def']['bean_is_lhs'] = 0;
+                    $tempFullTableList[$newIndex]['module'] = $relationship->lhs_module;
+                }
                 $tempFullTableList[$newIndex]['name'] = $tempFullTableList['self']['module']." > ". $tempFullTableList[$newIndex]['module'] ;
                 
             }
@@ -1169,10 +1178,21 @@ print "<BR>";
             }
             if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])) {
                 $field_def = $this->all_fields[$display_column['column_key']];
-                
-                if (!empty($field_def['ext2'])) 
-                {
-                	$select_piece = $this->getExt2FieldDefSelectPiece($field_def);
+                if (!empty($field_def['ext2'])) {
+                    global $beanList;
+                    $extModule = new $beanList[$field_def['ext2']];
+                    $secondaryTableAlias = $field_def['secondary_table'];
+                    if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']])){
+                        $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]['join_table_alias'];                       
+                    }
+                    else if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])){
+                        $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];                      
+                    }                   
+                    if (isset($extModule->field_defs['name']['db_concat_fields']))
+                        $select_piece = db_concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']).' '.$secondaryTableAlias.'_name';
+                    else
+                        $select_piece = $secondaryTableAlias.'.name '. $secondaryTableAlias.'_name';
+
                     array_push($this->$field_list_name,$select_piece);
                 }
             }
@@ -1253,70 +1273,40 @@ print "<BR>";
             $this->group_order_by_arr = array();
             // $group_column = $this->report_def['group_defs'][0];
             foreach ( $this->report_def['group_defs'] as $group_column )
-        	{
-	            $this->layout_manager->setAttribute('context', 'GroupBy');
-	            $this->register_field_for_query($group_column);
-	            $group_by = $this->layout_manager->widgetQuery($group_column);
-	            $this->layout_manager->setAttribute('context', 'OrderBy');
-	            $order_by = $this->layout_manager->widgetQuery($group_column);
-	            $this->layout_manager->setAttribute('context', 'Select');
-	
-	            if (! empty($group_column['qualifier']))
-	            {
-	                $group_column['column_function'] = $group_column['qualifier'];
-	            }
-	
-	            $select = $this->layout_manager->widgetQuery($group_column);
-	
-	            if (! $this->select_already_defined($select,'select_fields'))
-	            {
-	                array_push($this->select_fields,$select);
-	            }
-	
-	            if (! $this->select_already_defined($select,'summary_select_fields'))
-	      		{
-	                array_push($this->summary_select_fields,$select);
-	      		}
-	
-	            if (! empty($register_group_by))
-	            {
-	                $this->group_by_arr[] = $group_by;
+        {
+                $this->layout_manager->setAttribute('context', 'GroupBy');
+            $this->register_field_for_query($group_column);
+            $group_by = $this->layout_manager->widgetQuery($group_column);
+            $this->layout_manager->setAttribute('context', 'OrderBy');
+            $order_by = $this->layout_manager->widgetQuery($group_column);
+            $this->layout_manager->setAttribute('context', 'Select');
 
-	            	if ($this->db->dbType != 'mysql' && (!empty($group_column['column_key']) && !empty($this->all_fields[$group_column['column_key']]))) 
-	            	{
-						$field_def = $this->all_fields[$group_column['column_key']];
-						if (!empty($field_def['ext2'])) 
-						{
-							$select_piece = $this->getExt2FieldDefSelectPiece($field_def, false);	
+            if (! empty($group_column['qualifier']))
+            {
+                $group_column['column_function'] = $group_column['qualifier'];
+            }
 
-							if($this->db->dbType == 'mssql' && strpos($select_piece, '+'))
-							{
-							   $select_piece = $this->fixMssqlConcatenation($select_piece);
-							} 
-							
-							//BEGIN SUGARCRM flav=int ONLY
-							/*
-							else if($this->db->dbType == 'mysql') {
-							   //Remove the TRIM and alias fields if found
-							   if(preg_match('/^\s*?TRIM\((.*?)$/', $select_piece, $matches))
-							   {
-							   	  $select_piece = $matches[1];
-							   	  if(preg_match('/(.*?)\)\s[a-zA-Z_0-9]*?$/', $select_piece, $matches))
-							   	  {
-							   	  	 $select_piece = $matches[1];
-							   	  }
-							   }
-							}
-							*/
-					        //END SUGARCRM flav=int ONLY
-					        
-							$this->group_by_arr[] = $select_piece;
-						}
-				    }	                
-	            }
-	                //$this->group_order_by_arr[] = $order_by;
-	                // Changed the sort order, so it would sort by the initial options first
-	            array_unshift($this->group_order_by_arr,$order_by);
+          $select = $this->layout_manager->widgetQuery($group_column);
+
+            if (! $this->select_already_defined($select,'select_fields'))
+            {
+                array_push($this->select_fields,$select);
+            }
+
+            if (! $this->select_already_defined($select,'summary_select_fields'))
+      {
+                array_push($this->summary_select_fields,$select);
+      }
+
+                if (! empty($register_group_by))
+            {
+                    $this->group_by_arr[] = $group_by;
+                    //$this->child_filter_arr[] = array('column' => $group_column['table_alias'] . '.' . $group_column['name'],
+                    //                                'name' => $group_column['table_alias'] . '_' . $group_column['name']);
+                }
+                //$this->group_order_by_arr[] = $order_by;
+                // Changed the sort order, so it would sort by the initial options first
+                array_unshift($this->group_order_by_arr,$order_by);
             }
             //$this->group_by = $group_by;
             //$this->child_filter = $group_column['table_alias'] . '.' . $group_column['name'];
@@ -1417,10 +1407,7 @@ print "<BR>";
                         $this->full_bean_list[$table_def['parent']]->load_relationships();
                         $params['primary_table_name'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
                                     
-                        if (isset($this->full_bean_list[$table_def['parent']]->$link_name))
-                        {
-                            if (!$this->full_bean_list[$table_def['parent']]->$link_name->loadedSuccesfully())
-                                sugar_die("Unable to load link: $link_name for bean {$table_def['parent']}");
+                        if (isset($this->full_bean_list[$table_def['parent']]->$link_name)) {
                             // Start ACL check
                             global $current_user, $mod_strings;
                             $linkModName = $this->full_bean_list[$table_def['parent']]->$link_name->getRelatedModuleName();
@@ -1447,10 +1434,6 @@ print "<BR>";
                             $list_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'list',$type='module');
                             $view_action = ACLAction::getUserAccessLevel($current_user->id, $linkModName, 'view',$type='module');
 
-                            if (!$this->full_bean_list[$table_def['parent']]->$rel_name->loadedSuccesfully())
-                            {
-                                sugar_die("Unable to load link: $rel_name");
-                            }
                             if ($list_action == ACL_ALLOW_NONE || $view_action == ACL_ALLOW_NONE)
                                 sugar_die($mod_strings['LBL_NO_ACCESS']."----". $linkModName);
                             $this->from .= $this->full_bean_list[$table_def['parent']]->$rel_name->getJoin($params);
@@ -1522,10 +1505,10 @@ print "<BR>";
                     //if it has a space, then it is aliased, let's process
                     //to see if it has a period
                     $has_space = strrpos($field, " ");
-                    if($has_space && !stristr($field, "' '")){
+                    if($has_space && !stristr("' '",$field)){
                         $temp_field_name = substr($field,0,$has_space);
                         $temp_field_alias  = substr($field,$has_space+1);
-                        if ( stristr($temp_field_name, 'ISNULL') ) {
+                        if ( stristr('ISNULL',$temp_field_name) ) {
                             $newField .= "$temp_field_name $temp_field_alias";
                         }
                         else {
@@ -1533,7 +1516,7 @@ print "<BR>";
                         }
                     }
                     else {
-                        if ( stristr($field, 'ISNULL') ) {
+                        if ( stristr('ISNULL',$field) ) {
                             $newField .= "$field + ";
                         }
                         else {
@@ -1687,30 +1670,21 @@ print "<BR>";
                                 //If more than one, then create string to use in conjunction
                                 //with a charindex function.  This will make sure we can get
                                 //the order list in the defined order
-                                foreach($summ_order_by as $ob)
-                                {
-                                    if(empty($ASC_DESC))
-                                    {
-                                    	$ASC_DESC = substr($ob,strrpos($ob," "));
-                                	}
+                                foreach($summ_order_by as $ob){
+                                    if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
 
-                                    if(empty($groupby))
-                                    {
+                                    if(empty($groupby)){
 										$groupby = substr($ob,0,strrpos($ob,"="));
                                         // Begin Bug 43874 - Since we made changes for Bug 42448, we might get a group by such as (accounts.account_type
 										if (substr($groupby,0,1) == '(' && substr($groupby,-1) != ')')
-										{
-											$groupby = substr($groupby,1); 
-										}
+											$groupby = substr($groupby,1);
                                         // End Bug 43874
 									}
-
                                     $ob = trim($ob);
                                     $beg_sing_pos = strpos($ob,"'");
-                                    
                                     if($beg_sing_pos>0){
-	                                    $end_sing_pos = strrpos($ob,"'");
-	                                    $summ_order_by_string .= substr($ob,$beg_sing_pos+1,$end_sing_pos-$beg_sing_pos-1) ."``";
+                                    $end_sing_pos = strrpos($ob,"'");
+                                    $summ_order_by_string .= substr($ob,$beg_sing_pos+1,$end_sing_pos-$beg_sing_pos-1) ."``";
                                     }else{
                                         if(empty($order_by_string)) $order_by_string = '';
                                         $order_by_string .= $ob ."``";
@@ -2433,94 +2407,6 @@ print "<BR>";
       
       return strtoupper(substr($column_name,0,22) . substr(md5(strtolower($column_name)), 0, 6));   
   }
-  
-  
-  
-  /**
-   * getExt2FieldDefSelectPiece
-   * 
-   * This is a private helper function to separate a piece of code that creates the select statement for a field where
-   * there is an aggregation of columns
-   * 
-   * @param $field_def Array representing the field definition to build the select piece for
-   * @param $add_alias boolean true to add the column alias, false otherwise (you would want false for group by)
-   */
-  private function getExt2FieldDefSelectPiece($field_def, $add_alias=true) 
-  {
-        global $beanList;
-        $extModule = new $beanList[$field_def['ext2']];
-        $secondaryTableAlias = $field_def['secondary_table'];
-        if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]))
-		{
-           $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table'].'_'.$field_def['name']]['join_table_alias'];
-        } else if(!empty($this->selected_loaded_custom_links) && !empty($this->selected_loaded_custom_links[$field_def['secondary_table']])) {
-           $secondaryTableAlias = $this->selected_loaded_custom_links[$field_def['secondary_table']]['join_table_alias'];                      
-        }                   
-                    
-		if (isset($extModule->field_defs['name']['db_concat_fields']))
-        {
-           $select_piece = db_concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']); 
-        } else {
-           $select_piece = $secondaryTableAlias.'.name'; //. $secondaryTableAlias.'_name';
-		}
-
-        $select_piece .= $add_alias ? " {$secondaryTableAlias}_name" : ' ';
-
-		return $select_piece;
-  }  
-  
-  
-  /**
-   * fixMssqlConcatenation
-   * 
-   * This method correctly fixes SQL for SQL Server where the database fields are concatenated with the + character
-   * 
-   * @param $sql String value of SQL to fix
-   */
-  private function fixMssqlConcatenation($sql)
-  {
-		$fieldsInField = explode('+',trim($sql));
-		
-		if(empty($fieldsInField))
-		{
-		   return $sql;
-		}
-		
-        $newField = '';
-        foreach ( $fieldsInField as $field ) 
-        {
-            $field = trim($field);
-            //if it has a space, then it is aliased, let's process
-            //to see if it has a period
-            $has_space = strrpos($field, " ");
-            if($has_space && !stristr($field, "' '"))
-			{
-                $temp_field_name = substr($field,0,$has_space);
-                $temp_field_alias  = substr($field,$has_space+1);
-                if ( stristr($temp_field_name, 'ISNULL') ) 
-                {
-                    $newField .= "$temp_field_name $temp_field_alias";
-                } else {
-                    $newField .= "ISNULL({$temp_field_name},' ') $temp_field_alias";
-                }
-            } else {
-                if ( stristr($field, 'ISNULL') ) 
-				{
-                    $newField .= "$field + ";
-                } else {
-                    $newField .= "ISNULL({$field},' ') + ";
-                }
-            }
-		}
-
-		//Safety check here.  If it ends with a + sign, remove it
-		if(preg_match('/(.*?)\+\s*?$/', $newField, $matches))
-        {
-		   $newField = $matches[1];
-        }
-
-		return $newField;
-   }
   
 }
 

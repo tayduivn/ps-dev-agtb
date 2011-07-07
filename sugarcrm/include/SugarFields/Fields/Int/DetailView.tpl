@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<span class="sugar_field" id="{{sugarvar key='name'}}">
+<span id="{{sugarvar key='name'}}">
 {{if $vardef.disable_num_format}}
 {assign var="value" value={{sugarvar key='value' string=true}} }
 {$value}

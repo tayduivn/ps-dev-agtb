@@ -35,7 +35,7 @@ include_once('include/workflow/field_utils.php');
 include_once('include/utils/expression_utils.php');
 
 function process_workflow_alerts(& $target_module, $alert_user_array, $alert_shell_array, $check_for_bridge=false){
-
+	
 	$admin = new Administration();
 	$admin->retrieveSettings();
 
@@ -165,25 +165,25 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	//end if specific team
 	}
 
-
+	
 	//If the user selected the team assigned to the module.
 	if($user_meta_array['user_type'] == "assigned_team_target")
 	{
 	    if( empty($focus->team_set_id) && empty($focus->team_id) )
 	       return;
 
-	    $GLOBALS['log']->debug("Processing alerts for team assigned to module {$focus->team_set_id}");
-
+	    $GLOBALS['log']->debug("Processing alerts for team assigned to module {$focus->team_set_id}");  
+	    
 	    if( ! empty($focus->team_set_id) )
-	    {
+	    {   
     	    $ts = new TeamSet();
     	    $teams = $ts->getTeams($focus->team_set_id);
 	    }
-	    else
+	    else 
 	        $teams = array($focus->team_id => '');
-
+	        
 	    $tmpUserList = array();
-
+	    
 	    //Iterate over all teams associated with the team set and grab all users.
 	    foreach ($teams as $singleTeamId => $singleTeam)
 	    {
@@ -195,16 +195,16 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 		    foreach($team_user_list as $user_object)
 			    $tmpUserList[$user_object->id] = $user_object;
 	   }
-
+	   
 	   //Check if admins have overriden the default limit.
 	   $maxAlloweedUsers = !empty($GLOBALS['sugar_config']['max_users_team_notification'] ) ? $GLOBALS['sugar_config']['max_users_team_notification'] : 100;
-
+	   
 	   if (count($tmpUserList) > $maxAlloweedUsers) //Ensure the list isn't too large, hard coded for now.
 	   {
-	       $GLOBALS['log']->fatal("When sending alerts to associated team, max number of users alloweed exceeded.  Refusing to send notification.");
+	       $GLOBALS['log']->fatal("When sending alerts to associated team, max number of users alloweed exceeded.  Refusing to send notification."); 
 	       return;
-	   }
-
+	   }   
+	   
 	   //For the clean user list, now grab the email information.
 	   foreach($tmpUserList as $tmpUserId => $tmpUserObject)
 	   {
@@ -279,7 +279,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 			//return false if there is no email set
 			return false;
 		}
-
+		
 		if ($notify_user->status == "Inactive")
 		{
 			$GLOBALS['log']->fatal("workflow attempting to send alert to inactive user {$notify_user->name}");
@@ -340,7 +340,7 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 			$current_language = $_SESSION['authenticated_user_language'];
 		}
 
-
+		
 		$xtpl = new XTemplate(get_notify_template_file($current_language));
 
 		$template_name = $focus->object_name;
@@ -374,9 +374,8 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $alert_shell_array, $check_for_bridge=false){
 	require_once("include/SugarPHPMailer.php");
-    $mail_object = new SugarPHPMailer;
-
-	global $locale;
+	$mail_object = new SugarPHPMailer;
+    global $locale;
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 	$invite_person = false;
 
@@ -407,31 +406,21 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 		get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array);
 
 	} else {
-	        $mail_objects = array();
-			foreach($address_array['to'] as $key => $user_info_array)
-			{
-			    $mail_object->AddAddress($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-			    if($invite_person == true) 
-			    {
-			    	populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-			    }
+
+			foreach($address_array['to'] as $key => $user_info_array){
+			$mail_object->AddAddress($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+			if($invite_person == true) populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
 
 			}
 
 			foreach($address_array['cc'] as $key => $user_info_array){
 				$mail_object->AddCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-				if($invite_person == true)
-				{
-					populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-				}
+				if($invite_person == true) populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
 			}
 
 			foreach($address_array['bcc'] as $key => $user_info_array){
 				$mail_object->AddBCC($user_info_array['address'],$locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-				if($invite_person == true) 
-				{
-					populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
-				}
+				if($invite_person == true) populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
 			}
 
 
@@ -457,10 +446,8 @@ function send_workflow_alert(& $focus, $address_array, $alert_msg, & $admin, $al
 			$error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array);
             $mail_object->prepForOutbound();
             
-			if($error == false)
-			{
-				if(!$mail_object->Send()) 
-				{
+			if($error == false){
+				if(!$mail_object->Send()) {
 					$GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mail_object->Mailer}), (error: {$mail_object->ErrorInfo})");
 				}
 				//end if error is false
@@ -480,20 +467,20 @@ function setup_mail_object(& $mail_object, & $admin){
 		$mail_object->Mailer = "smtp";
 		$mail_object->Host = $admin->settings['mail_smtpserver'];
 		$mail_object->Port = $admin->settings['mail_smtpport'];
-		if ($admin->settings['mail_smtpssl'] == 1)
+		if ($admin->settings['mail_smtpssl'] == 1) 
     	   $mail_object->SMTPSecure = 'ssl';
-    	else if ($admin->settings['mail_smtpssl'] == 2)
+    	else if ($admin->settings['mail_smtpssl'] == 2) 
     	   $mail_object->SMTPSecure = 'tls';
-    	else
-    	   $mail_object->SMTPSecure = '';
+    	else 
+    	   $mail_object->SMTPSecure = '';   
 
-		if ($admin->settings['mail_smtpssl'] == 1)
+		if ($admin->settings['mail_smtpssl'] == 1) 
     	   $mail_object->SMTPSecure = 'ssl';
-    	else if ($admin->settings['mail_smtpssl'] == 2)
+    	else if ($admin->settings['mail_smtpssl'] == 2) 
     	   $mail_object->SMTPSecure = 'tls';
-    	else
+    	else 
     	   $mail_object->SMTPSecure = '';
-
+    	   
 		if ($admin->settings['mail_smtpauth_req']) {
 			$mail_object->SMTPAuth = TRUE;
 			$mail_object->Username = $admin->settings['mail_smtpuser'];
@@ -598,7 +585,7 @@ function get_related_array(& $focus, & $user_meta_array, & $address_array){
 }
 
 
-function compile_rel_user_info($target_object, $user_meta_array, &$address_array){
+function compile_rel_user_info(& $target_object, & $user_meta_array, & $address_array){
 		//compile user address info based on target object
 
 		if($user_meta_array['rel_email_value']==""){
@@ -641,7 +628,7 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 function fill_mail_object(& $mail_object, & $focus, $template_id, $source_field, $notify_user_id=""){
 
 
-
+	
 	$template_object = new EmailTemplate();
 	$template_object->disable_row_level_security = true;
 
@@ -732,7 +719,7 @@ function parse_target_body($target_body, $base_module){
 }
 
 
-function reconstruct_target_body($focus, $target_body, $component_array, $notify_user_id=""){
+function reconstruct_target_body(& $focus, $target_body, $component_array, $notify_user_id=""){
 	global $beanList;
 
 	$replace_array = Array();
@@ -755,10 +742,12 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 				}
 
 				if($field_array['value_type'] == 'future'){
-					$replacement_value = check_special_fields($field_array['name'], $focus, false, array("notify_user" => $notify_user_object));
+					$replacement_value = check_special_fields($field_array['name'], $focus);
+					//$replacement_value = $focus->$field_array['name'];
 				}
 				if($field_array['value_type'] == 'past'){
-					$replacement_value = check_special_fields($field_array['name'], $focus, true, array("notify_user" => $notify_user_object));
+					$replacement_value = check_special_fields($field_array['name'], $focus, true);
+					//$replacement_value = $focus->fetched_row[$field_array['name']];
 				}
 
 				$replace_array[$field_array['original']] = $replacement_value;
@@ -773,8 +762,8 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 			//Confirm this is an actual module in the beanlist
 			if(isset($beanList[$module_name]) || isset($focus->field_defs[$module_name])){
 				///Build the relationship information using the Relationship handler
-				$rel_handler = $focus->call_relationship_handler("module_dir", true);
-
+				$rel_handler = & $focus->call_relationship_handler("module_dir", true);
+                
                 if(isset($focus->field_defs[$module_name])) {
                     $rel_handler->rel1_relationship_name = $focus->field_defs[$module_name]['relationship'];
                     $rel_module = get_rel_module_name($focus->module_dir, $rel_handler->rel1_relationship_name, $focus->db);
@@ -795,13 +784,13 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 				//obtain the rel_module object
 				$rel_list = $rel_handler->build_related_list("base");
 				//$rel_list = $focus->get_linked_beans($relationship_name, $bean_name);
-				if(!empty($rel_list[0]))
-				{
+				if(!empty($rel_list[0])){
 					$rel_object = $rel_list[0];
 					$rel_module_present = true;
 				} else {
 					$rel_module_present = false;
 				}
+
 
 				foreach($module_array as $field => $field_array){
 
@@ -815,7 +804,7 @@ function reconstruct_target_body($focus, $target_body, $component_array, $notify
 							$replacement_value = get_invite_link($rel_object, $notify_user_id);
 						} else {
 							//use future always for rel because fetched should always be the same
-							$replacement_value = check_special_fields($field_array['name'], $rel_object, false, array("notify_user" => $notify_user_object));
+							$replacement_value = check_special_fields($field_array['name'], $rel_object);
 						}
 					} else {
 						$replacement_value = "Invalid Value";
@@ -1088,7 +1077,7 @@ function get_system_default_body(&$mail_object, $focus, & $notify_user){
 			$current_language = $_SESSION['authenticated_user_language'];
 		}
 
-
+		
 		$xtpl = new XTemplate("include/language/{$current_language}.notify_template.html");
 
 		$template_name = $focus->object_name;

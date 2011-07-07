@@ -100,9 +100,6 @@ function copy_sugarcrm($FLAVOR, $PLATFORM){
         case 'ent':
             $PREFIX = "SugarEnt";
             break;
-        case 'ult':
-            $PREFIX = "SugarUlt";
-            break;
         default:
             $lpr =& getPrinterInstance();
             $lpr->output("WARNING: flavor is $FLAVOR, hit default case\n");
@@ -135,7 +132,7 @@ function build_installer($FLAVOR, $PLATFORM, $OUTPUT){
 
     $BASE_BITROCK_DIR = "$BITROCK_BASE/base";
     $BASE_LICENSE_DIR = "$BITROCK_BASE/license";
-    $BASE_PROJECT_DIR= "/home/build/sugarsvn/build-bitrock_pineapple/Bitrock/project";
+    $BASE_PROJECT_DIR= "/home/build/sugarsvn/build-bitrock_mango/Bitrock/project";
     $BASE_MYSQL_DIR = "$BITROCK_BASE/mysql";
 
     $INSTALL_BUILDER_EXE = "/opt/installbuilder-6.0.3/bin/builder";
@@ -180,7 +177,7 @@ function build_installer($FLAVOR, $PLATFORM, $OUTPUT){
         }
 
     // Copy Offline Client project file
-    if ( ($FLAVOR == 'pro' || $FLAVOR == 'ent' || $FLAVOR == 'ult') && ($PLATFORM == 'windows' || $PLATFORM == 'mssql') ){
+    if ( ($FLAVOR == 'pro' || $FLAVOR == 'ent') && ($PLATFORM == 'windows' || $PLATFORM == 'mssql') ){
         system_copy( "$BASE_PROJECT_DIR/sugarcrm-offline-$FLAVOR.xml", "$TMP_DIR/$PLATFORM/$FLAVOR/sugarcrm-offline-client-$SUGAR_VERSION.xml" );
     }
     
@@ -223,13 +220,13 @@ $lpr->output( "+--->  Done copying license files" );
     chdir( "$TMP_DIR/$PLATFORM/$FLAVOR" );
 
     // Running the installbuilder executable
-     if ($FLAVOR == 'ce' || $FLAVOR == 'ent' ) {
+     if ($FLAVOR == 'ce') {
     	$lpr->output( "+--->  Compiling using command: $INSTALL_BUILDER_EXE build ./sugarcrm-$SUGAR_VERSION.xml $BUILD_PLATFORM" );
     	system( "$INSTALL_BUILDER_EXE build ./sugarcrm-$SUGAR_VERSION.xml $BUILD_PLATFORM" );
     	$lpr->output( "+--->  Compiling done"  );
      }
     // Running the installbuilder executable for offline client
-    if ( ($FLAVOR == 'pro' || $FLAVOR == 'ent' || $FLAVOR == 'ult') && ($PLATFORM == 'windows') ){
+    if ( ($FLAVOR == 'pro' || $FLAVOR == 'ent') && ($PLATFORM == 'windows') ){
         $lpr->output( "+ Building Offline Client $FLAVOR version" );
         system( "$INSTALL_BUILDER_EXE build ./sugarcrm-offline-client-$SUGAR_VERSION.xml $PLATFORM" );   
     }
@@ -375,7 +372,6 @@ if( $BUILD_WINDOWS == 1 ){
     //    build_installer($FLAVOR, 'windows', $OUTPUT);
     //}
     build_installer('ce', 'windows', $OUTPUT);
-    build_installer('ult', 'windows', $OUTPUT);  // to build ult offline client
     build_installer('ent', 'windows', $OUTPUT);  // to build ent offline client
     build_installer('pro', 'windows', $OUTPUT);  // to build pro offline client
     $lpr->output( "+ Completing Windows build." );

@@ -40,7 +40,7 @@ require_once('modules/KBDocuments/SearchUtils.php');
 $json_config = new json_config();
 
 
-global $app_strings, $theme;
+global $app_strings;$theme;
 global $app_list_strings;
 global $mod_strings;
 global $current_user;
@@ -101,9 +101,9 @@ if(isset($_REQUEST['email_id']) && !empty($_REQUEST['email_id'])){
 
 $params = array();
 if(empty($focus->id)){
-	$params[] = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
+	$params[] = "<span class='pointer'>&raquo;</span>".$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'];
 }else{
-	$params[] = "<a href='index.php?module=KBDocuments&action=DetailView&record={$focus->id}'>{$focus->kbdocument_name}</a>";
+	$params[] = "<span class='pointer'>&raquo;</span>"."<a href='index.php?module=KBDocuments&action=DetailView&record={$focus->id}'>{$focus->kbdocument_name}</a>";
 	$params[] = $GLOBALS['app_strings']['LBL_EDIT_BUTTON_LABEL'];
 }
 echo getClassicModuleTitle("KBDocuments", $params, true);
@@ -120,7 +120,7 @@ $popup_request_data = array(
 	'form_name' => 'EditView',
 	'field_to_name_array' => array(
 		'id' => 'kbdoc_approver_id',
-		'user_name' => 'kbdoc_approver_name',
+		'name' => 'kbdoc_approver_name',
 		),
 	);
 $xtpl->assign('encoded_approvers_popup_request_data', $json->encode($popup_request_data));
@@ -307,7 +307,7 @@ $xtpl->assign("EXP_DATE",$focus->exp_date);
 
 if (isset($focus->status_id)){
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], $focus->status_id));
-
+	
 }
 else{
 	$xtpl->assign("STATUS_OPTIONS", get_select_options_with_id($app_list_strings['kbdocument_status_dom'], ''));
@@ -328,7 +328,7 @@ $xtpl->assign("DEFAULT_TEAM_NAME", $current_user->default_team_name);
 $xtpl->assign("DEFAULT_TEAM_ID", $current_user->default_team);
 
 if (!empty($focus->kbdoc_approver_id)) {
-
+	
 	$user = new User();
 	$user->retrieve($focus->kbdoc_approver_id,true);
 	$xtpl->assign("KBDOC_APPROVER_NAME", $user->name);
@@ -506,7 +506,7 @@ foreach($javascript->sugarbean->field_name_map as $field=>$value){
 $javascript->addFieldGeneric('kbdocument_name', '','LBL_ARTICLE_TITLE','true');
 $javascript->addFieldGeneric('assigned_user_name', 'varchar', $mod_strings['LBL_ARTICLE_AUTHOR'] ,'true');
 $javascript->addToValidateBinaryDependency('assigned_user_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_ARTICLE_AUTHOR'], 'false', '', 'assigned_user_id');
-$javascript->addToValidateBinaryDependency('kbdoc_approver_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_ARTICLE_APPROVED_BY'], 'false', '', 'kbdoc_approver_id');
+$javascript->addToValidateBinaryDependency('kbdoc_approver_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $mod_strings['LBL_ARTICLE_AUTHOR'], 'false', '', 'kbdoc_approver_id');
 $javascript->addFieldGeneric('kbdocument_revision_number', '', 'LBL_DOC_VERSION' ,'true');
 $javascript->addFieldGeneric('team_name', 'varchar', $app_strings['LBL_TEAM'] ,'true');
 $javascript->addToValidateBinaryDependency('team_name', 'alpha', $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_TEAM'], 'false', '', 'team_id');

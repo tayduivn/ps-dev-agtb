@@ -64,7 +64,7 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 }
 
 $params = array();
-$params[] = $focus->kbdocument_name;
+$params[] = "<span class='pointer'>&raquo;</span>".$focus->kbdocument_name;
 
 echo getClassicModuleTitle("KBDocuments", $params, true);
 

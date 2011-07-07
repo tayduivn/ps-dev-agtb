@@ -134,32 +134,6 @@ class WorkFlowActionShell extends SugarBean {
 	}
 
 
-    function save($check_notify = FALSE)
-    {
-        parent::save($check_notify);
-        //check for an remove invalid actions from this shell
-        if (!empty($this->id))
-        {
-            $actions = $this->get_actions($this->id);
-            $workflow_object = $this->get_workflow_object();
-            $temp_module = get_module_info($workflow_object->base_module);
-            $temp_module->call_vardef_handler("action_filter");
-            $field_array = $temp_module->vardef_handler->get_vardef_array();
-            foreach($actions as $action)
-            {
-                if (!empty($action->field))
-                {
-                    //Check if the actions field is still valid, if not remove the action
-                    if (empty($field_array[$action->field]))
-                    {
-                        $action->mark_deleted($action->id);
-                    }
-                }
-            }
-        }
-    }
-
-
 
 
 	/** Returns a list of the associated product_templates
@@ -219,13 +193,13 @@ class WorkFlowActionShell extends SugarBean {
 		if($this->action_type=='update'){
 			$natural_language = $current_module_strings['LBL_ACTION_UPDATE']." ".$current_module_strings['LBL_RECORD'];
 		}		
-		*/
+		*/	
 		//begin - rsmith
     	include_once('include/ListView/ProcessView.php');
-        $ProcessView = new ProcessView($this->get_workflow_object(), $this);
-		$results = $ProcessView->get_action_shell_display_text($this, false);
-        $result = $results["RESULT_ARRAY"];
-        $table_html = "<table id='tbl_$this->id' style='display:none'>";
+		$ProcessView = new ProcessView($this->get_workflow_object(), $this);
+		$results = $ProcessView->get_action_shell_display_text($this);
+		$result = $results["RESULT_ARRAY"];
+		$table_html = "<table id='tbl_$this->id' style='display:none'>";
 		foreach($result as $key=>$value)
 		{
 			if(!empty($value["ACTION_DISPLAY_TEXT"]))
@@ -237,7 +211,7 @@ class WorkFlowActionShell extends SugarBean {
 			{
 				//There was an error in this action
 				$table_html .= "<tr><td>";
-                $table_html .= "<span class='error'>" . translate('LBL_ACTION_ERROR') . "</span>";
+                $table_html .= "<li class='error'>" . translate('LBL_ACTION_ERROR') . "</li>";
                 $table_html .= "</td></tr>";
                 if (empty($this->hasError))
                 {
@@ -347,7 +321,7 @@ class WorkFlowActionShell extends SugarBean {
 					WHERE $this->rel_action_table.parent_id = '".$this->id."'
 					AND ".$this->rel_action_table.".field = '".$field_name."'
 					AND ".$this->rel_action_table.".deleted=0";
-        $result = $this->db->query($query,true," Error grabbing action id: ");
+		$result = $this->db->query($query,true," Error grabbing action id: ");
 		// Get the id and the name.
 		$row = $this->db->fetchByAssoc($result);
 

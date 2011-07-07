@@ -36,41 +36,28 @@
 <input type='hidden' name='action' value='ConfigureDashlet'>
 <input type='hidden' name='to_pdf' value='true'>
 <input type='hidden' name='configure' value='true'>
-<table width="100%" cellpadding="0" cellspacing="0" border="0" class="edit view" align="center">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" class="tabForm" align="center">
 <tr>
-    <td scope='row'>{$titleLBL}</td>
-    <td>
+    <td valign='top' nowrap class='dataLabel'>{$titleLBL}</td>
+    <td valign='top' class='dataField'>
     	<input class="text" name="title" size='20' maxlength='80' value='{$title}'>
     </td>
 </tr>
-{if $isRefreshable}
 <tr>
-    <td scope='row'>
-        {$autoRefresh}
-    </td>
-    <td>
-        <select name='autoRefresh'>
-            {html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
-        </select>
-    </td>
-</tr>
-{/if}
-<tr>
-    <td scope='row'>{$urlLBL}</td>
-    <td>
+    <td valign='top' nowrap class='dataLabel'>{$urlLBL}</td>
+    <td valign='top' class='dataField'>
     	<input class="text" name="url" size='20' maxlength='255' value='{$url}'>
     </td>
 </tr>
 <tr>
-    <td scope='row'>{$heightLBL}</td>
-    <td>
+    <td valign='top' nowrap class='dataLabel'>{$heightLBL}</td>
+    <td valign='top' class='dataField'>
     	<input class="text" name="height" size='20' maxlength='80' value='{$height}'>
     </td>
 </tr>
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLBL}'>
-        <input type='submit' class='button' value='{$clearLBL}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
    	</td>
 </tr>
 </table>

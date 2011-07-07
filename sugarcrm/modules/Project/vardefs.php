@@ -49,17 +49,13 @@ $dictionary['Project'] = array(
 			'name' => 'date_entered',
 			'vname' => 'LBL_DATE_ENTERED',
 			'type' => 'datetime',
-			'comment' => 'Date record created',
-		    'enable_range_search' => true,
-		    'options' => 'date_range_search_dom',
+			'comment' => 'Date record created'
 		),
 		'date_modified' => array(
 			'name' => 'date_modified',
 			'vname' => 'LBL_DATE_MODIFIED',
 			'type' => 'datetime',
-			'comment' => 'Date record last modified',
-		    'enable_range_search' => true,
-		    'options' => 'date_range_search_dom',
+			'comment' => 'Date record last modified'
 		),
 		'assigned_user_id' => array(
 			'name' => 'assigned_user_id',
@@ -164,7 +160,6 @@ $dictionary['Project'] = array(
             'type' => 'date',
             'importable' => 'required',
             'required' => true,
-            'enable_range_search' => true,
         ),
         'estimated_end_date' =>
         array(
@@ -174,7 +169,6 @@ $dictionary['Project'] = array(
             'type' => 'date',
             'importable' => 'required',
             'required' => true,
-            'enable_range_search' => true,
         ),
         'status' =>
         array(

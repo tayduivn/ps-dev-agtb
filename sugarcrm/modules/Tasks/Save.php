@@ -41,11 +41,11 @@ if(preg_match('/\d+([^\d])\d+([^\d]*)/s', $time_format, $match)) {
 }
 
 if(!empty($_POST[$prefix.'due_meridiem'])) {
-	$_POST[$prefix.'time_due'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_due'],$timedate->get_time_format(), $_POST[$prefix.'due_meridiem']);
+	$_POST[$prefix.'time_due'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_due'],$timedate->get_time_format(true), $_POST[$prefix.'due_meridiem']);
 }
 
 if(!empty($_POST[$prefix.'start_meridiem'])) {
-	$_POST[$prefix.'time_start'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_start'],$timedate->get_time_format(), $_POST[$prefix.'start_meridiem']);
+	$_POST[$prefix.'time_start'] = $timedate->merge_time_meridiem($_POST[$prefix.'time_start'],$timedate->get_time_format(true), $_POST[$prefix.'start_meridiem']);
 }
 
 if(isset($_POST[$prefix.'time_due']) && !empty($_POST[$prefix.'time_due'])) {
@@ -111,13 +111,6 @@ if(isset($_REQUEST['inbound_email_id']) && !empty($_REQUEST['inbound_email_id'])
 ////	END INBOUND EMAIL HANDLING
 ///////////////////////////////////////////////////////////////////////////////	
 
-// CCL - Bugs 41103 and 43751.  41103 address the issue where the parent_id is set, but
-// the relate_id field overrides the relationship.  43751 fixes the problem where the relate_id and
-// parent_id are the same value (in which case it should just use relate_id) by adding the != check
-if ((!empty($_REQUEST['relate_id']) && !empty($_REQUEST['parent_id'])) && ($_REQUEST['relate_id'] != $_REQUEST['parent_id']))
-{
-	$_REQUEST['relate_id'] = false;
-}
 
 // avoid undefined index
 if (!isset($GLOBALS['check_notify'])) {

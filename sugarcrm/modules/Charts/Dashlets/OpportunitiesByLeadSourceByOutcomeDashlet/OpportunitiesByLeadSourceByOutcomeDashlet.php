@@ -36,14 +36,8 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
     public $lsbo_lead_sources = array();
     public $lsbo_ids          = array();
     
-    /**
-     * @see DashletGenericChart::$_seedName
-     */
     protected $_seedName = 'Opportunities';
     
-    /**
-     * @see DashletGenericChart::displayOptions()
-     */
     public function displayOptions()
     {
         global $app_list_strings;
@@ -64,17 +58,14 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         return parent::displayOptions();
     }
 
-    /**
-     * @see DashletGenericChart::display()
-     */
     public function display() 
     {
     	global $current_user, $sugar_config;
         require("modules/Charts/chartdefs.php");
         $chartDef = $chartDefs['lead_source_by_outcome'];
 		
-        require_once('include/SugarCharts/SugarChartFactory.php');
-        $sugarChart = SugarChartFactory::getInstance();
+        require_once('include/SugarCharts/SugarChart.php');
+        $sugarChart = new SugarChart();
         $sugarChart->is_currency = true;   
         $currency_symbol = $sugar_config['default_currency_symbol'];
         if ($current_user->getPreference('currency')){
@@ -96,12 +87,9 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         $sugarChart->saveXMLFile($xmlFile, $sugarChart->generateXML());
 	
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div>'. $this->processAutoRefresh();
+            '<div align="center">' . $sugarChart->display($this->id, $xmlFile, '100%', '480', false) . '</div><br />';
 	}
     
-    /**
-     * @see DashletGenericChart::constructQuery()
-     */
     protected function constuctQuery()
     {
         $query = "SELECT lead_source,sales_stage,sum(amount_usdollar/1000) as total, ".
@@ -121,3 +109,5 @@ class OpportunitiesByLeadSourceByOutcomeDashlet extends DashletGenericChart
         return $query;
 	}
 }
+
+?>

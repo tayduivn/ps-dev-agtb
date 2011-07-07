@@ -44,7 +44,7 @@
 		<slot>{DISPLAY_TEXT}
 
 <!-- BEGIN: address_type -->			
-		{LBL_ADDRESS_TYPE}<a id='href_add_{LANG_ID}' href="javascript:void(0)" onclick="get_single_selector2('href_add_{LANG_ID}','dom_array', '{ADDRESS_TYPE_DOM}', 'address_type_{LANG_ID}');">{ADDRESS_TYPE_TARGET}</a>
+		{LBL_ADDRESS_TYPE}<a id='href_add_{LANG_ID}' href="#" onclick="get_single_selector2('href_add_{LANG_ID}','dom_array', '{ADDRESS_TYPE_DOM}', 'address_type_{LANG_ID}');">{ADDRESS_TYPE_TARGET}</a>	
 		<input type="hidden" id ='address_type_{LANG_ID}' name="address_type_{LANG_ID}" value="{ADDRESS_TYPE}">
 <!-- END: address_type -->	
 		</slot></td>
@@ -66,7 +66,7 @@
 		<td><select id='rel1_type' name='rel1_type' tabindex='2' onchange="toggle_filter('rel1');">{REL1_TYPE}</select></td>
 		</tr>
 		<tr id='lang_rel1'>
-		<td><slot>{REL1_DISPLAY_TEXT}<a id='href_rel1' href="javascript:void(0)" onclick="get_filter_selector('count_trigger', 'rel1_exp_id', 'rel1_lhs_module', 'rel1_lhs_field', 'rel1_rhs_value', 'rel1_operator', 'rel1', '', 'rel1');">{REL1_TEXT}</a>
+		<td><slot>{REL1_DISPLAY_TEXT}<a id='href_rel1' href="#" onclick="get_filter_selector('count_trigger', 'rel1_exp_id', 'rel1_lhs_module', 'rel1_lhs_field', 'rel1_rhs_value', 'rel1_operator', 'rel1', '', 'rel1');">{REL1_TEXT}</a>
 		</slot></td>
 		<input type="hidden" id='rel1_lhs_module' name="rel1_lhs_module" value="{REL1_BASE_MODULE}">
 		<input type="hidden" id='rel1_lhs_field' name="rel1_lhs_field" value="{REL1_LHS_FIELD}">
@@ -80,7 +80,7 @@
 		<td><select id='rel2_type' name='rel2_type' tabindex='2' onchange="toggle_filter('rel2');">{REL2_TYPE}</select></td>
 		</tr>
 		<tr id='lang_rel2'>
-		<td><slot>{REL2_DISPLAY_TEXT}<a id='href_rel2' href="javascript:void(0)" onclick="get_filter_selector('count_trigger', 'rel2_exp_id', 'rel2_lhs_module', 'rel2_lhs_field', 'rel2_rhs_value', 'rel2_operator', 'rel2', '', 'rel2');">{REL2_TEXT}</a>
+		<td><slot>{REL2_DISPLAY_TEXT}<a id='href_rel2' href="#" onclick="get_filter_selector('count_trigger', 'rel2_exp_id', 'rel2_lhs_module', 'rel2_lhs_field', 'rel2_rhs_value', 'rel2_operator', 'rel2', '', 'rel2');">{REL2_TEXT}</a>
 		</slot></td>
 		<input type="hidden" id='rel2_lhs_module' name="rel2_lhs_module" value="{REL2_BASE_MODULE}">
 		<input type="hidden" id='rel2_lhs_field' name="rel2_lhs_field" value="{REL2_LHS_FIELD}">

@@ -1,36 +1,18 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
+
 class Bug36978Test extends Sugar_PHPUnit_Framework_TestCase {
 
 var $rel_guid;	
 var $has_custom_table_dictionary;	
 var $moduleList;
 
-function setUp() 
-{
-    $this->markTestSkipped("Skipping unless otherwise specified");
-    
+function setUp() {
+	
+    if(true) {
+       $this->markTestSkipped("Skipping unless otherwise specified");
+       return;
+    }	
+	
     $admin = new User();
     $GLOBALS['current_user'] = $admin->retrieve('1');	
 	
@@ -252,33 +234,17 @@ function tearDown() {
        unlink('modules/abc_Test/metadata/studio.php'); 
     }    
     
-    if(is_dir('custom/Extension/modules/abc_Test/Ext/Vardefs')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Vardefs');
-    }
-    if(is_dir('custom/Extension/modules/abc_Test/Ext/Layoutdefs')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Layoutdefs');
-    }
-    if(is_dir('custom/Extension/modules/abc_Test/Ext')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test/Ext');
-    }
-    if(is_dir('custom/Extension/modules/abc_Test')) {
-        rmdir_recursive('custom/Extension/modules/abc_Test');
-    }
-    if(is_dir('modules/abc_Test/metadata')) {
-        rmdir_recursive('modules/abc_Test/metadata');
-    }
-    if(is_dir('modules/abc_Test')) {
-        rmdir_recursive('modules/abc_Test');
-    }
+	rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Vardefs');
+	rmdir_recursive('custom/Extension/modules/abc_Test/Ext/Layoutdefs');
+	rmdir_recursive('custom/Extension/modules/abc_Test/Ext');
+	rmdir_recursive('custom/Extension/modules/abc_Test');
+	rmdir_recursive('modules/abc_Test/metadata');
+	rmdir_recursive('modules/abc_Test');
 	
-    if ( !empty($this->rel_guid) ) {
-        $sql = "DELETE FROM relationships WHERE id = '{$this->rel_guid}'";
-        $GLOBALS['db']->query($sql);
-	}
+	$sql = "DELETE FROM relationships WHERE id = '{$this->rel_guid}'";
+	$GLOBALS['db']->query($sql);
 	
-	if ( !empty($this->moduleList) ) {
-        $GLOBALS['moduleList'] = $this->moduleList;
-    }
+	$GLOBALS['moduleList'] = $this->moduleList;
 }
 
 

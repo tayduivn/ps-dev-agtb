@@ -108,8 +108,6 @@ abstract class DashletGenericChart extends Dashlet
         
         if ( empty($options['title']) ) 
             $this->title = $this->dashletStrings['LBL_TITLE'];
-        if ( isset($options['autoRefresh']) ) 
-            $this->autoRefresh = $options['autoRefresh'];
         
         $this->layoutManager = new LayoutManager();
         $this->layoutManager->setAttribute('context', 'Report');
@@ -119,9 +117,6 @@ abstract class DashletGenericChart extends Dashlet
         $this->layoutManager->setAttributePtr('reporter', $temp);
     }
 
-    /**
-     * @see Dashlet::setRefreshIcon()
-     */
     public function setRefreshIcon()
     {
     	$additionalTitle = '';
@@ -139,11 +134,21 @@ abstract class DashletGenericChart extends Dashlet
      */
     public function displayScript() 
     {
+    	global $sugar_config, $current_user, $current_language;
+		
+		$xmlFile = $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml';
+		$chartStringsXML = $GLOBALS['sugar_config']['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';    
+    	
+    	$ss = new Sugar_Smarty();
+        $ss->assign('chartName', $this->id);
+        $ss->assign('chartXMLFile', $xmlFile);    
 
-		require_once('include/SugarCharts/SugarChartFactory.php');
-		$sugarChart = SugarChartFactory::getInstance();
-		return $sugarChart->getDashletScript($this->id);
-
+        $ss->assign('chartStyleCSS', SugarThemeRegistry::current()->getCSSURL('chart.css'));
+        $ss->assign('chartColorsXML', SugarThemeRegistry::current()->getImageURL('sugarColors.xml'));
+        $ss->assign('chartStringsXML', $chartStringsXML);
+                
+        $str = $ss->fetch('include/Dashlets/DashletGenericChartScript.tpl');     
+        return $str;
     }
     
     /**
@@ -195,8 +200,6 @@ abstract class DashletGenericChart extends Dashlet
         if (!empty($req['dashletTitle']))
             $options['title'] = $req['dashletTitle'];
         
-        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
-        
         return $options;
     }
     
@@ -238,19 +241,11 @@ abstract class DashletGenericChart extends Dashlet
         $this->currentSearchFields = $currentSearchFields;
         $this->getConfigureSmartyInstance()->assign('title',translate('LBL_TITLE','Charts'));
         $this->getConfigureSmartyInstance()->assign('save',$GLOBALS['app_strings']['LBL_SAVE_BUTTON_LABEL']);
-        $this->getConfigureSmartyInstance()->assign('clear',$GLOBALS['app_strings']['LBL_CLEAR_BUTTON_LABEL']);
         $this->getConfigureSmartyInstance()->assign('id', $this->id);
         $this->getConfigureSmartyInstance()->assign('searchFields', $this->currentSearchFields);
         $this->getConfigureSmartyInstance()->assign('dashletTitle', $this->title);
         $this->getConfigureSmartyInstance()->assign('dashletType', 'predefined_chart');
         $this->getConfigureSmartyInstance()->assign('module', $_REQUEST['module']);
-        
-        if($this->isAutoRefreshable()) {
-       		$this->getConfigureSmartyInstance()->assign('isRefreshable', true);
-			$this->getConfigureSmartyInstance()->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
-			$this->getConfigureSmartyInstance()->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
-			$this->getConfigureSmartyInstance()->assign('autoRefreshSelect', $this->autoRefresh);
-		}
         
         return parent::displayOptions() . $this->getConfigureSmartyInstance()->fetch($this->_configureTpl);
     }
@@ -263,8 +258,8 @@ abstract class DashletGenericChart extends Dashlet
      */
     protected function getSeedBean()
     {
-        if ( !($this->_seedBean instanceof SugarBean) )
-            $this->_seedBean = SugarModule::get($this->_seedName)->loadBean();
+        if ( !($this->_seedBean instanceof $this->_seedName) )
+            $this->_seedBean = loadBean($this->_seedName);
         
         return $this->_seedBean;
     }
@@ -288,58 +283,5 @@ abstract class DashletGenericChart extends Dashlet
     {
         return array();
     }
-    
-    /**
-     * Displays the Dashlet, must call process() prior to calling this
-     *
-     * @return string HTML that displays Dashlet
-     */
-    public function display() 
-    {
-        return parent::display() . $this->processAutoRefresh();
-    }
-    
-    /**
-     * Processes and displays the auto refresh code for the dashlet
-     *
-     * @param int $dashletOffset
-     * @return string HTML code
-     */
-    protected function processAutoRefresh($dashletOffset = 0) 
-    {
-        global $sugar_config;
-        
-        if ( empty($dashletOffset) ) {
-            $dashletOffset = 0;
-            $module = $_REQUEST['module'];
-            if(isset($_REQUEST[$module.'2_'.strtoupper($this->getSeedBean()->object_name).'_offset'])) {
-            	$dashletOffset = $_REQUEST[$module.'2_'.strtoupper($this->getSeedBean()->object_name).'_offset'];
-            }
-        }
-        
-        if ( !$this->isRefreshable ) {
-            return '';
-        }
-        if ( !empty($sugar_config['dashlet_auto_refresh_min']) && $sugar_config['dashlet_auto_refresh_min'] == -1 ) {
-            return '';
-        }
-        $autoRefreshSS = new Sugar_Smarty();	
-        $autoRefreshSS->assign('dashletOffset', $dashletOffset);
-        $autoRefreshSS->assign('dashletId', $this->id);
-        $autoRefreshSS->assign('strippedDashletId', str_replace("-","",$this->id)); //javascript doesn't like "-" in function names
-        if ( empty($this->autoRefresh) ) {
-            $this->autoRefresh = 0;
-        }
-        elseif ( !empty($sugar_config['dashlet_auto_refresh_min']) ) {
-            $this->autoRefresh = min($sugar_config['dashlet_auto_refresh_min'],$this->autoRefresh);
-        }
-        $autoRefreshSS->assign('dashletRefreshInterval', $this->autoRefresh * 1000);
-        $autoRefreshSS->assign('url', "predefined_chart");
-        $tpl = 'include/Dashlets/DashletGenericAutoRefresh.tpl';
-        if ( $_REQUEST['action'] == "DynamicAction" ) {
-            $tpl = 'include/Dashlets/DashletGenericAutoRefreshDynamic.tpl';
-        }
-        
-        return $autoRefreshSS->fetch($tpl);
-    }
 }
+?>

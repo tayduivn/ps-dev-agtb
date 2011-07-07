@@ -81,9 +81,10 @@ class StudioWizard{
                 $newWiz->display();
                 break;
             case 'RenameTabs':
-                require_once('modules/Studio/wizards/RenameModules.php');
-                $newWiz = new RenameModules();
-                $newWiz->process();
+                $_REQUEST['dropdown_name'] = 'moduleList';
+                require_once('modules/Studio/wizards/EditDropDownWizard.php');
+                $newWiz = new EditDropDownWizard();
+                $newWiz->process('EditDropdown');
                 break; 
             //BEGIN SUGARCRM flav!=sales ONLY
             case 'ConfigureTabs':
@@ -123,7 +124,7 @@ class StudioWizard{
     
     function fetch($error = ''){
     	 global $mod_strings;
-        echo getClassicModuleTitle($mod_strings['LBL_MODULE_TITLE'], array($mod_strings['LBL_MODULE_TITLE']), false); 
+        echo get_module_title($mod_strings['LBL_MODULE_TITLE'], $mod_strings['LBL_MODULE_TITLE'], true); 
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('welcome', $this->welcome());
         $sugar_smarty->assign('options', $this->options());

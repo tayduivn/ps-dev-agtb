@@ -1,28 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
- 
 require_once('modules/Trackers/TrackerManager.php');
 
 class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
@@ -42,7 +18,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
         $monitor->setValue('module_name', 'Contacts');
         $monitor->setValue('item_id', '10909d69-2b55-094d-ba89-47b23d3121dd');
         $monitor->setValue('item_summary', 'Foo');
-        $monitor->setValue('date_modified', TimeDate::getInstance()->nowDb(), strtotime("-1 day")+5000);
+        $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format()), strtotime("-1 day")+5000);
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);
@@ -97,9 +73,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
         $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'" ,"datetime");
-        $result = $GLOBALS['db']->query($query);
-        $count = 0;
-        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
+        $count = $GLOBALS['db']->getRowCount($GLOBALS['db']->query($query));
         $this->assertEquals($count,1);
     }
     
@@ -107,9 +81,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
         $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 week")) ."'" ,"datetime");
-        $result = $GLOBALS['db']->query($query);
-        $count = 0;
-        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
+        $count = $GLOBALS['db']->getRowCount($GLOBALS['db']->query($query));
         $this->assertEquals($count,2);
     }
     
@@ -117,9 +89,7 @@ class TrackerReportsUsageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
         $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 month")) ."'" ,"datetime");
-        $result = $GLOBALS['db']->query($query);
-        $count = 0;
-        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
+        $count = $GLOBALS['db']->getRowCount($GLOBALS['db']->query($query));
         $this->assertEquals($count,3);   	
     }
 }

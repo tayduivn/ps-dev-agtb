@@ -167,7 +167,7 @@ SUGAR.routing.xhr = {
 	 */
     handleFailure : function(o) {
 		// Failure handler
-		SUGAR.showMessageBox('Exception occurred...', o.statusText);
+		overlay('Exception occurred...', o.statusText);
 		debugger;
 		//document.getElementById(this.target).innerHTML = o.statusText;
 	},
@@ -205,7 +205,7 @@ SUGAR.routing.xhr = {
 	 */
 	saveRule : function(formId) {
 		if(SUGAR.routing.ui.checkRule(formId)) {
-			SUGAR.showMessageBox(SUGAR.routing.strings.LBL_ROUTING_SAVING_RULE, SUGAR.routing.strings.LBL_ROUTING_ONE_MOMENT);
+			overlay(SUGAR.routing.strings.LBL_ROUTING_SAVING_RULE, SUGAR.routing.strings.LBL_ROUTING_ONE_MOMENT);
 			var values = YAHOO.util.Connect.setForm(document.getElementById(formId));
 			this.startRequest(callback.saveRule, SUGAR.routing.urlStandard);
 		}
@@ -670,7 +670,7 @@ SUGAR.routing.ui.checkRule = function(formId) {
 	}
 	
 	if(!ret) {
-		SUGAR.showMessageBox(SUGAR.routing.strings.LBL_ROUTING_CHECK_RULE, SUGAR.routing.strings.LBL_ROUTING_CHECK_RULE_DESC);
+		overlay(SUGAR.routing.strings.LBL_ROUTING_CHECK_RULE, SUGAR.routing.strings.LBL_ROUTING_CHECK_RULE_DESC);
 
 		for(var j=0; j<SUGAR.routing.ui.errors.length; j++) {
 			var focusEl = document.getElementById(SUGAR.routing.ui.errors[j]);
@@ -717,7 +717,7 @@ callback = {
 	},
 	saveRule : {
 		success : function() {
-			SUGAR.hideMessageBox();
+			hideOverlay();
 			SUGAR.routing.ui.cancelRule(); // hide rule form
 			AjaxObject.startRequest(callbackLoadRules, urlStandard + "&emailUIAction=loadRulesForSettings");
 		},

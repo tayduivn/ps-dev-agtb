@@ -27,7 +27,6 @@
  */
 
 *}
-{$chartResources}
 <div id='progress_div' ></div>
 <script>
 document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepath file="bar_loader.gif"}">';

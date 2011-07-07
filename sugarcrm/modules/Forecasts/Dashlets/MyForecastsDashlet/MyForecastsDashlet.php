@@ -51,6 +51,7 @@ class MyForecastsDashlet extends Dashlet {
         $this->loadLanguage('MyForecastsDashlet', 'modules/Forecasts/Dashlets/'); // load the language strings here
 
         parent::Dashlet($id); // call parent constructor
+        $this->isConfigurable = false; // dashlet is not configurable
         $this->hasScript = true;  // dashlet has javascript attached to it
 
         $this->$id = $id;
@@ -58,7 +59,6 @@ class MyForecastsDashlet extends Dashlet {
         if(empty($def['title'])) $this->title = $this->dashletStrings['LBL_TITLE'];
         else $this->title = $def['title'];
         
-        if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
         
         if(!empty($def['timeperiod_id']))  // load default text is none is defined
             $this->current_timeperiod = $def['timeperiod_id'];
@@ -180,6 +180,7 @@ class MyForecastsDashlet extends Dashlet {
      
         return parent::display() . $str; // return parent::display for title and such
     }
+    
     /**
      * Displays the javascript for the dashlet
      * 
@@ -189,7 +190,6 @@ class MyForecastsDashlet extends Dashlet {
         $ss = new Sugar_Smarty();
         $ss->assign('saving', $this->dashletStrings['LBL_SAVING']);
         $ss->assign('saved', $this->dashletStrings['LBL_SAVED']);
-        $ss->assign('titleLbl', $this->dashletStrings['LBL_CONFIGURE_TITLE']);
         $ss->assign('id', $this->id);
         //get current language for the forecasts module and load the module strings for that language
         global $current_language;
@@ -204,24 +204,7 @@ class MyForecastsDashlet extends Dashlet {
      * 
      * @return string html to display form
      */
-    function displayOptions() 
-    {
-        global $app_strings;
-        
-        $ss = new Sugar_Smarty();
-        $this->dashletStrings['LBL_SAVE'] = $app_strings['LBL_SAVE_BUTTON_LABEL'];
-        $ss->assign('lang', $this->dashletStrings);
-        $ss->assign('id', $this->id);
-        $ss->assign('title', $this->title);
-        if($this->isAutoRefreshable()) {
-       		$ss->assign('isRefreshable', true);
-			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
-			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
-			$ss->assign('autoRefreshSelect', $this->autoRefresh);
-		}
-       
-        $str = $ss->fetch('modules/Forecasts/Dashlets/MyForecastsDashlet/MyForecastsDashletOptions.tpl');  
-        return parent::displayOptions() . $str;
+    function displayOptions() {
     }  
 
     /**
@@ -230,13 +213,7 @@ class MyForecastsDashlet extends Dashlet {
      * @param array $req $_REQUEST
      * @return array filtered options to save
      */  
-    function saveOptions($req) 
-    {
-        $options = array();
-        $options['title'] = $req['title'];
-        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
-        
-        return $options;
+    function saveOptions($req) {
     }
 
     /**

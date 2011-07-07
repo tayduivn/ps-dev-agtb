@@ -47,13 +47,13 @@ class ViewPortalLayoutView extends ViewLayoutView
 	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams($browserTitle = false)
+	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
 	    
     	return array(
     	   translate('LBL_MODULE_NAME','Administration'),
-    	   ModuleBuilderController::getModuleTitle(),
+    	   $mod_strings['LBL_MODULEBUILDER'],
     	   );
     }
 
@@ -111,7 +111,6 @@ class ViewPortalLayoutView extends ViewLayoutView
 
 		// assign fields and layout
 		$smarty->assign('available_fields', $this->parser->getAvailableFields());
-        $smarty->assign ( 'field_defs', $this->parser->getFieldDefs () ) ;
 		$smarty->assign('layout', $this->parser->getLayout());
 		$smarty->assign('view_module', $this->editModule);
 		$smarty->assign('calc_field_list', json_encode($this->parser->getCalculatedFields()));

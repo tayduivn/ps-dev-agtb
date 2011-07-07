@@ -592,23 +592,6 @@ class EditViewMerge{
 					}
 					
 					if(is_string($field_name)) {
-                        // We need to replace all instances of the fake uploadfile field with the real filename field
-                        if ( $field_name == 'uploadfile' && !empty($col['customCode'])) {
-                            $replaceField = false;
-                            if ( !empty($col['customCode']) ) {
-                                $replaceField = true;
-                                unset($col['customCode']);
-                            }
-                            
-                            if( !empty($col['displayParams']) && !empty($col['displayParams']['link']) ) {
-                                $replaceField = true;
-                            } 
-                            
-                            if ( $replaceField ) {
-                                $field_name = 'filename';
-                                $col['name'] = 'filename';
-                            }
-                        }
 						$fields[$field_name] = array('data'=>$col, 'loc'=>array('panel'=>"{$panel_id}", 'row'=>"{$row_id}", 'col'=>"{$col_id}"));
 					}
 				}

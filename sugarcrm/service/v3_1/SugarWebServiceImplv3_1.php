@@ -174,7 +174,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                 self::$helperObject->trackView($seed, 'detailview');
             }
         }
-
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
         return array('entry_list'=>$output_list, 'relationship_list' => $linkoutput_list);
     }
@@ -263,7 +262,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      *                                         - user_default_team_id, user_is_admin, user_default_dateformat, user_default_timeformat
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    public function login($user_auth, $application, $name_value_list = array()){
+    public function login($user_auth, $application, $name_value_list){
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->login');
         global $sugar_config, $system_config;
         $error = new SoapError();
@@ -480,7 +479,6 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         return $results;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Get the base64 contents of a quote pdf.
      *
@@ -566,9 +564,8 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
-    //END SUGARCRM flav=pro ONLY
-    
-    /**
+
+        /**
      * Retrieve the layout metadata for a given module given a specific type and view.
      *
      * @param String $session -- Session ID returned by a previous call to login.
@@ -635,7 +632,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
      *	     		 'relationship_list' -- Array - The records link field data. The example is if asked about accounts email address then return data would look like Array ( [0] => Array ( [name] => email_addresses [records] => Array ( [0] => Array ( [0] => Array ( [name] => id [value] => 3fb16797-8d90-0a94-ac12-490b63a6be67 ) [1] => Array ( [name] => email_address [value] => hr.kid.qa@example.com ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 1 ) ) [1] => Array ( [0] => Array ( [name] => id [value] => 403f8da1-214b-6a88-9cef-490b63d43566 ) [1] => Array ( [name] => email_address [value] => kid.hr@example.name ) [2] => Array ( [name] => opt_out [value] => 0 ) [3] => Array ( [name] => primary_address [value] => 0 ) ) ) ) )
     * @exception 'SoapFault' -- The SOAP error, if any
     */
-    function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted, $favorites = false ){
+    function get_entry_list($session, $module_name, $query, $order_by,$offset, $select_fields, $link_name_to_fields_array, $max_results, $deleted, $favorites ){
 
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_entry_list');
         global  $beanList, $beanFiles;

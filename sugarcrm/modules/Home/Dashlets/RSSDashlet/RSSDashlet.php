@@ -57,8 +57,6 @@ class RSSDashlet extends Dashlet
         else
             $this->title = $this->dashletStrings['LBL_TITLE'];
         
-        if(isset($def['autoRefresh'])) $this->autoRefresh = $def['autoRefresh'];
-        
         parent::Dashlet($id); // call parent constructor
          
         $this->isConfigurable = true; // dashlet is configurable
@@ -95,17 +93,10 @@ class RSSDashlet extends Dashlet
         $ss->assign('heightLbl', $this->dashletStrings['LBL_CONFIGURE_HEIGHT']);
         $ss->assign('rssUrlLbl', $this->dashletStrings['LBL_CONFIGURE_RSSURL']);
         $ss->assign('saveLbl', $app_strings['LBL_SAVE_BUTTON_LABEL']);
-        $ss->assign('clearLbl', $app_strings['LBL_CLEAR_BUTTON_LABEL']);
         $ss->assign('title', $this->title);
         $ss->assign('height', $this->height);
         $ss->assign('url', $this->url);
         $ss->assign('id', $this->id);
-        if($this->isAutoRefreshable()) {
-       		$ss->assign('isRefreshable', true);
-			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
-			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
-			$ss->assign('autoRefreshSelect', $this->autoRefresh);
-		}
         
         return parent::displayOptions() . $ss->fetch('modules/Home/Dashlets/RSSDashlet/RSSDashletOptions.tpl');
     }  
@@ -124,8 +115,7 @@ class RSSDashlet extends Dashlet
         $options['title'] = $req['title'];
         $options['url'] = $req['url'];
         $options['height'] = $req['height'];
-        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
-        
+         
         return $options;
     }
     
@@ -159,14 +149,10 @@ EOHTML;
         }
         else {
             foreach ( $rssdoc->entry as $entry ) {
-                $link = trim($entry->link);
-                if ( empty($link) ) {
-                    $link = $entry->link[0]['href'];
-                }
                 $output .= <<<EOHTML
 <tr>
 <td>
-    <h3><a href="{$link}" target="_child">{$entry->title}</a></h3>
+    <h3><a href="{$entry->link}" target="_child">{$entry->title}</a></h3>
     {$entry->summary}
 </td>
 </tr>

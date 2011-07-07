@@ -77,7 +77,7 @@ $mod_strings = array (
     'LBL_CONVERTLEAD_WARNING' => 'Warning: The status of the Lead you are about to convert is "Converted". Contact and/or Account records may already have been created from the Lead. If you wish to continue with converting the Lead, click Save. To go back to the Lead without converting it, click Cancel.',
     'LBL_CONVERTLEAD_WARNING_INTO_RECORD' => ' Possible Contact: ',
     'LBL_COUNTRY' => 'Country:',
-    'LBL_CREATED_NEW' => 'Created a new',
+    'LBL_CREATED_NEW' => 'Created a new ',
 	'LBL_CREATED_ACCOUNT' => 'Created a new account',
     'LBL_CREATED_CALL' => 'Created a new call',
     'LBL_CREATED_CONTACT' => 'Created a new contact',
@@ -238,12 +238,6 @@ $mod_strings = array (
 	'LBL_SELECTION_TIP' => 'Modules with a relate field in Contacts can be selected rather than created during the convert lead process.',
 	'LBL_EDIT_TIP'		=> 'Modify the convert layout for this module.',
 	'LBL_DELETE_TIP'	=> 'Remove this module from the convert layout.',
-        'LBL_ACTIVITIES_MOVE'   => 'Move Activities to',
-        'LBL_ACTIVITIES_COPY'   => 'Copy Activities to',
-        'LBL_ACTIVITIES_MOVE_HELP'   => 'Placeholder for move help',
-        'LBL_ACTIVITIES_COPY_HELP'   => 'Placeholder for copy help',
-    //For Export
-    'LBL_EXPORT_EMAIL2'=>'Other Email Address',
 );
 
 

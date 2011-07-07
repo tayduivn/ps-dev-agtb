@@ -46,15 +46,9 @@ switch ($_REQUEST['view']) {
 		$GLOBALS['log']->info("Administration SupportPortal");
 
 		$iframe_url = add_http("www.sugarcrm.com/network/redirect.php?tmpl=network");
-        
-        echo getClassicModuleTitle(
-            "Administration", 
-            array(
-                "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
-               $mod_strings['LBL_SUPPORT_TITLE'],
-               ), 
-            false
-            );
+        $mod_title = $mod_strings['LBL_SUPPORT_TITLE'];
+
+        echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_title, true);
         
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('iframeURL', $iframe_url);
@@ -222,7 +216,7 @@ function getHelpBar($moduleName)
 	$helpBar = "<table width='100%'><tr><td align='right'>" .
 			"<a href='javascript:window.print()'>" . $mod_strings['LBL_HELP_PRINT'] . "</a> - " .
 			"<a href='mailto:?subject=" . $mod_strings['LBL_SUGARCRM_HELP'] . "&body=" . rawurlencode(getCurrentURL()) . "'>" . $mod_strings['LBL_HELP_EMAIL'] . "</a> - " .
-			"<a href='javascript:void(0)' onmousedown=\"createBookmarkLink('" . $mod_strings['LBL_SUGARCRM_HELP'] . " - " . $moduleName . "', '" . getCurrentURL() . "'" .")\">" . $mod_strings['LBL_HELP_BOOKMARK'] . "</a>" .
+			"<a href='#' onmousedown=\"createBookmarkLink('" . $mod_strings['LBL_SUGARCRM_HELP'] . " - " . $moduleName . "', '" . getCurrentURL() . "'" .")\">" . $mod_strings['LBL_HELP_BOOKMARK'] . "</a>" .
 			"</td></tr></table>";
 
 	return $helpBar;

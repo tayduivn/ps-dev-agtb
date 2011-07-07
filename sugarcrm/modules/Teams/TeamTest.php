@@ -106,7 +106,6 @@ function displayTeamsData($data, $old, $expected){
 
 
 function saveResults($results){
-    global $timedate;
 	$save = array();
 
 	foreach($results as $tid=>$test){
@@ -117,7 +116,7 @@ function saveResults($results){
 	}
 $the_string =   "<?php\n" .
                     '//FILE SUGARCRM flav=int ONLY
-					// created: ' . $timedate->nowDb() . "\n" .
+					// created: ' . date('Y-m-d H:i:s') . "\n" .
                     "\$expected_results = " .
                     var_export_helper( $save ) .
                     ";\n?>\n";

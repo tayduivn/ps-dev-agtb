@@ -29,43 +29,36 @@
   
 class VardefManager{
 	static $custom_disabled_modules = array();
-    static $linkFields;
 
-    /**
+	/**
 	 * this method is called within a vardefs.php file which extends from a SugarObject.
 	 * It is meant to load the vardefs from the SugarObject.
-     */
-    static function createVardef($module, $object, $templates = array('default'), $object_name = false)
-    {
-        global $dictionary;
+	 */
+   static function createVardef($module,$object, $templates=array('default'), $object_name=false){
+                        global $dictionary;
 
-        include_once('modules/TableDictionary.php');
+                        //reverse the sort order so priority goes highest to lowest;
+                    $templates = array_reverse($templates);
+                        foreach($templates as $template){
+                                VardefManager::addTemplate($module,$object,$template, $object_name);
+                        }
+                        LanguageManager::createLanguageFile($module, $templates);
 
-        //reverse the sort order so priority goes highest to lowest;
-        $templates = array_reverse($templates);
-        foreach ($templates as $template)
-        {
-            VardefManager::addTemplate($module, $object, $template, $object_name);
-        }
-        LanguageManager::createLanguageFile($module, $templates);
+        if (isset(VardefManager::$custom_disabled_modules[$module])) {
+                        $vardef_paths = array(
+                                'custom/modules/'.$module.'/Ext/Vardefs/vardefs.ext.php',
+                                'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
+                        );
 
-        if (isset(VardefManager::$custom_disabled_modules[$module]))
-        {
-            $vardef_paths = array(
-                'custom/modules/' . $module . '/Ext/Vardefs/vardefs.ext.php',
-                'custom/Extension/modules/' . $module . '/Ext/Vardefs/vardefs.php'
-            );
-
-            //search a predefined set of locations for the vardef files
-            foreach ($vardef_paths as $path)
-            {
-                if (file_exists($path)) {
-                    require($path);
-                }
-            }
+                        //search a predefined set of locations for the vardef files
+                        foreach($vardef_paths as $path){
+                                if(file_exists($path)){
+                                        require($path);
+                                }
+                        }
         }
     }
-
+	
 	/**
 	 * Enables/Disables the loading of custom vardefs for a module.
 	 * @param String $module Module to be enabled/disabled
@@ -134,9 +127,7 @@ class VardefManager{
 		
 		$file = create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
 		write_array_to_file('GLOBALS["dictionary"]["'. $object . '"]',$GLOBALS['dictionary'][$object], $file);
-		if ( is_readable($file) ) {
-		    include($file);
-		}
+		include($file);
 		
 		// put the item in the sugar cache.
 		$key = "VardefManager.$module.$object";
@@ -223,180 +214,12 @@ class VardefManager{
 			$df = new DynamicField ($module) ;
         	$df->buildCache($module);
 		}
-        //BEGIN SUGARCRM flav=pro ONLY
-        self::updateRelCFModules($module, $object);
-        //END SUGARCRM flav=pro ONLY
 		
 		//great! now that we have loaded all of our vardefs.
 		//let's go save them to the cache file.
-		if(!empty($GLOBALS['dictionary'][$object])) {
+		if(!empty($GLOBALS['dictionary'][$object]))
 			VardefManager::saveCache($module, $object);
-        }
 	}
-
-    /**
-     * @static
-     * @param  $module
-     * @param  $object
-     * @return array|bool  returns a list of all fields in the module of type 'link'.
-     */
-    protected static function getLinkFieldsForModule($module, $object)
-    {
-        global $dictionary;
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if($object == 'aCase') {
-            $object = 'Case';
-        }
-        //END SUGARCRM flav!=sales ONLY
-        if (empty($dictionary[$object]))
-            self::refreshVardefs($module, $object);
-        if (empty($dictionary[$object]))
-        {
-            $GLOBALS['log']->debug("Failed to load vardefs for $module:$object in linkFieldsForModule<br/>");
-            return false;
-        }
-
-        //Cache link fields for this call in a static variable
-        if (!isset(self::$linkFields))
-            self::$linkFields = array();
-
-        if (isset(self::$linkFields[$object]))
-            return self::$linkFields[$object];
-
-        $vardef = $dictionary[$object];
-        $links = array();
-        foreach($vardef['fields'] as $name => $def)
-        {
-            //Look through all link fields for related modules that have calculated fields that use that relationship
-            if(!empty($def['type']) && $def['type'] == 'link' && !empty($def['relationship']))
-            {
-                $links[$name] = $def;
-            }
-        }
-        return $links;
-    }
-
-
-    public static function getLinkFieldForRelationship($module, $object, $relName)
-    {
-        $relLinkFields = self::getLinkFieldsForModule($module, $object);
-        $matches = array();
-        if (!empty($relLinkFields))
-        {
-            foreach($relLinkFields as $rfName => $rfDef)
-            {
-                if ($rfDef['relationship'] == $relName)
-                {
-                    $matches[] = $rfDef;
-                }
-            }
-        }
-        if (empty($matches))
-            return false;
-        if (sizeof($matches) == 1)
-            return $matches[0];
-        //For relationships where both sides are the same module, more than one link will be returned
-        return $matches;
-    }
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * @static
-     * @param  $module String name of module.
-     * @param  $object String name of module Bean.
-     * Updates a list of link fields which have relationships to modules with calculated fields
-     * that use this module. Needed to cause an update to those modules when this module is updated.
-     * @return bool
-     */
-    protected static function updateRelCFModules($module, $object){
-        global $dictionary, $beanList;
-        if (empty($dictionary[$object]) || empty($dictionary[$object]['fields']))
-            return false;
-
-        $linkFields = self::getLinkFieldsForModule($module, $object);
-        if (empty($linkFields))
-            return false;
-
-        $linksWithCFs = array();
-
-        foreach($linkFields as $name => $def)
-        {
-            $relName = $def['relationship'];
-
-            //Start by getting the relation
-            $relDef = false;
-            if (!empty($def['module']))
-                $relMod = $def['module'];
-            else {
-                if (!empty($dictionary[$relName]['relationships'][$relName]))
-                    $relDef = $dictionary[$relName]['relationships'][$relName];//[$relName];
-                else if (!empty($dictionary[$object][$relName]))
-                    $relDef = $dictionary[$object][$relName];
-                else {
-                    continue;
-                }
-
-                if(empty($relDef['lhs_module']))
-                {
-                    continue;
-                }
-                $relMod = $relDef['lhs_module'] == $module ? $relDef['rhs_module'] : $relDef['lhs_module'];
-            }
-
-            if (empty($beanList[$relMod]))
-                continue;
-            $relbean = $beanList[$relMod];
-
-            $relLinkFields = self::getLinkFieldsForModule($relMod, $relbean);
-            if (!empty($relLinkFields))
-            {
-                foreach($relLinkFields as $rfName => $rfDef)
-                {
-                    if ($rfDef['relationship'] == $relName && self::modHasCalcFieldsWithLink($relMod, $relbean, $rfName))
-                    {
-                        $linksWithCFs[$name] = true;
-                    }
-                }
-            }
-        }
-
-        $dictionary[$object]['related_calc_fields'] = array_keys($linksWithCFs);
-    }
-
-
-
-    /**
-     * @static
-     * @param  $module
-     * @param  $object
-     * @param  $linkName
-     * @return bool return true if the module contains calculated fields with the specified link in the formula.
-     */
-    public static function modHasCalcFieldsWithLink($module, $object, $linkName)
-    {
-        global $dictionary;
-        if (empty($dictionary[$object]))
-            self::refreshVardefs($module, $object);
-        if (empty($dictionary[$object]))
-            return false;
-
-        $vardef = $dictionary[$object];
-        $hasFieldsWithLink = false;
-        if (!empty($vardef['fields']))
-        {
-            foreach($vardef['fields'] as $name => $def)
-            {
-                //Look through all calculated fields for uses of this link field
-                if(!empty($def['formula']) && preg_match('/\W\$' . $linkName . '\W/', $def['formula']))
-                {
-                    $hasFieldsWithLink = true;
-                    break;
-                }
-            }
-        }
-        return $hasFieldsWithLink;
-    }
-    //END SUGARCRM flav=pro ONLY
 	
 	/**
 	 * load the vardefs for a given module and object
@@ -437,9 +260,8 @@ class VardefManager{
 			//which was created from the refreshVardefs so let's try to load it.
 			if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php'))
 			{
-			    if ( is_readable($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php') ) {
-			        include_once($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php');
-				}
+				include_once($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php');
+				
 				// now that we hae loaded the data from disk, put it in the cache.
 				if(!empty($GLOBALS['dictionary'][$object]))
 					sugar_cache_put($key,$GLOBALS['dictionary'][$object]);

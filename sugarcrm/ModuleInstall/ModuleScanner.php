@@ -277,8 +277,7 @@ class ModuleScanner{
 	 */
 	public function sugarFileExists($path){
 		static $md5 = array();
-		if(empty($md5) && file_exists('files.md5'))
-		{
+		if(empty($md5)){
 			include('files.md5');
 			$md5 = $md5_string;
 		}

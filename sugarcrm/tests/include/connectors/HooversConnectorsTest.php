@@ -1,39 +1,17 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
+require_once('include/connectors/utils/ConnectorUtils.php');
+require_once('modules/Connectors/controller.php');
 
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
- 
-require_once('include/connectors/ConnectorsTestCase.php');
+class HooversConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 
-class HooversConnectorsTest extends Sugar_Connectors_TestCase
-{
+	var $original_modules_sources;
+	var $original_searchdefs;
 	var $qual_module;
 	var $listArgs;
 	var $company_id;
-
+    
     function setUp() {
-        parent::setUp();
     	ConnectorFactory::$source_map = array();
 		//Skip if we do not have an internet connection
 		require('modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
@@ -41,8 +19,18 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
 		$contents = @file_get_contents($url);
 		if(empty($contents)) {
 		   $this->markTestSkipped("Unable to retrieve Hoovers wsdl.  Skipping.");
-		}
-
+		} 	
+    	
+    	//Enable mapping for Accounts
+    	ConnectorUtils::getDisplayConfig();
+    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
+    	$this->original_modules_sources = $modules_sources;    
+    	    	
+    	//Remove the current file and rebuild with default
+    	unlink(CONNECTOR_DISPLAY_CONFIG_FILE);    	
+    	$this->original_searchdefs = ConnectorUtils::getSearchDefs();
+    	ConnectorUtils::getSearchDefs(true);
+    	
     	//Enable the Hoovers Connector
     	$_REQUEST['module'] = 'Connectors';
     	$_REQUEST['from_unit_test'] = true;
@@ -60,19 +48,20 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$_REQUEST['source1'] = 'ext_soap_hoovers';
     	$_REQUEST['mapping_values'] = 'ext_soap_hoovers:Accounts:country=billing_address_country,ext_soap_hoovers:Accounts:id=id,ext_soap_hoovers:Accounts:city=billing_address_city,ext_soap_hoovers:Accounts:addrzip=billing_address_postalcode,ext_soap_hoovers:Accounts:recname=name,ext_soap_hoovers:Accounts:stateorprovince=billing_address_state';
     	$_REQUEST['mapping_sources'] = 'ext_soap_hoovers';
-    	$_REQUEST['reset_to_default'] = '';
+    	$_REQUEST['reset_to_default'] = '';    	
     	$controller->action_SaveModifyMapping();
     	//Test parameters
     	$this->qual_module = 'Accounts';
     	$this->company_id = '2205698';
     	$this->listArgs = array('name' => 'Gannett');
     }
-
+    
     function tearDown() {
-        parent::tearDown();
+   	    write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
+        write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
         ConnectorFactory::$source_map = array();
     }
-
+    
     function test_hoovers_fillBean() {
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
     	$account = new Account();
@@ -88,7 +77,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     		$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that a bean has been filled with account name like Gannett");
     		break;
     	}
-    }
-
-}
+    } 
+    
+}  
 ?>

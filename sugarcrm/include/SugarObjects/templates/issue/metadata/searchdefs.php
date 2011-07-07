@@ -36,7 +36,6 @@ $_object_name = '<_object_name>';
   $searchdefs[$module_name] = array(
 					'templateMeta' => array(
 							'maxColumns' => '3', 
-							'maxColumnsBasic' => '4', 
                             'widths' => array('label' => '10', 'field' => '30'),                 
                            ),
                     'layout' => array(  					
@@ -46,7 +45,6 @@ $_object_name = '<_object_name>';
 							//BEGIN SUGARCRM flav=pro ONLY
 							array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
 							//END SUGARCRM flav=pro ONLY
-							array ('name' => 'open_only', 'label' => 'LBL_OPEN_ITEMS', 'type' => 'bool', 'default' => false, 'width' => '10%'),
 							),
 						'advanced_search' => array(
 							$_object_name. '_number', 

@@ -111,7 +111,7 @@
 {sugar_translate label='LBL_COPY_ADDRESS_FROM_LEFT' module=''}:
 </td>
 <td>
-<input id="{{$displayParams.key}}_checkbox" name="{{$displayParams.key}}_checkbox" type="checkbox" onclick="syncFields('{{$displayParams.copy}}', '{{$displayParams.key}}');">
+<input id="{{$displayParams.key}}_checkbox" name="{{$displayParams.key}}_checkbox" type="checkbox" onclick="syncFields('{{$displayParams.copy}}', '{{$displayParams.key}}');"; CHECKED>
 </td>
 </tr>
 {{else}}

@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Delete.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
+ * Description:  
  ********************************************************************************/
 
 
@@ -57,7 +57,7 @@ if(!isset($_REQUEST['record']))
 		$ProcessView = new ProcessView($workflow_object, $focus);
 		$found = false;
 		foreach($target_meta_array as $element => $specific_array){
-				if($ProcessView->build_this_type($specific_array)){
+				if($ProcessView->build_this_type($specific_array)=="true"){
 						//we have found a trigger that is compatible with the workflow
 						$trigger_type = $specific_array['trigger_type'];
 						//now we must find a trigger on the workflow that is of this type
@@ -65,7 +65,7 @@ if(!isset($_REQUEST['record']))
 						//else continue
 						$trigger_list = $workflow_object->get_linked_beans('trigger_filters','WorkFlowTriggerShell');
 						foreach($trigger_list as $trigger){
-
+					
 								if($trigger->type == $element){
 										$trigger->frame_type = "Primary";
 										$trigger->save();
@@ -80,7 +80,7 @@ if(!isset($_REQUEST['record']))
 		}
 		//bug 25791, In the for-loop above $target_meta_array can be empty and the $trigger->frame_type is not changed.
 		//In that case, just use the first trigger as the primary.
-        if(!$found) {
+        if(!$found) { 
             $trigger_list = $workflow_object->get_linked_beans('trigger_filters','WorkFlowTriggerShell');
             if (isset($trigger_list[0])) {
             	$trigger_list[0]->frame_type = "Primary";
@@ -90,7 +90,7 @@ if(!isset($_REQUEST['record']))
 	}
 	//rsmith
     //reload $workflow_object to make the trigger changes take effect.
-	$workflow_object = $focus->get_workflow_type();
+	$workflow_object = $focus->get_workflow_type(); 
 	$workflow_object->write_workflow();
 
 header("Location: index.php?module=".$_REQUEST['return_module']."&action=".$_REQUEST['return_action']."&record=".$_REQUEST['return_id']);

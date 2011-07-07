@@ -363,48 +363,18 @@ function pruneDatabase() {
 				if(empty($colName)) {
 					$GLOBALS['log']->fatal('pruneDatabase() could not get the columns for table ('.$table.')');
 				}
-				
-				if(array_search($table.'_cstm', $tables) !== FALSE && array_search('id', $colName) !== FALSE && array_key_exists('id', $aDel)) {
-                    // build custom column names
-                    $rColsCstm = $db->query('SHOW COLUMNS FROM '.$table.'_cstm');
-                    $colNameCstm = array();
-
-                    while($aColsCstm = $db->fetchByAssoc($rColsCstm)) {
-                        $colNameCstm[] = $aColsCstm['Field'];
-                    }
-
-                    $qDelCstm = 'SELECT * FROM '.$table.'_cstm WHERE id_c = "'.$db->quote($aDel['id']).'"';
-                    $rDelCstm = $db->query($qDelCstm);// OR continue; // continue if no 'deleted' column
-
-                    // make a backup INSERT query if we are deleting.
-                    while($aDelCstm = $db->fetchByAssoc($rDelCstm)) {
-
-                        $query = 'INSERT INTO '.$table.'_cstm (';
-                        $values = '';
-
-                        foreach($colNameCstm as $kC => $column) {
-                            $query .= $column.', ';
-                            $values .= '"'.$aDelCstm[$column].'", ';
-                        }
-
-                        $query  = substr($query, 0, (strlen($query) - 2));
-                        $values = substr($values, 0, (strlen($values) - 2));
-                        $query .= ') VALUES ('.str_replace("'", "&#039;", $values).');';
-
-                        $queryString[] = $query;
-
-                        if(empty($colNameCstm)) {
-                            $GLOBALS['log']->fatal('pruneDatabase() could not get the columns for table ('.$table.'_cstm)');
-                        }
-                    } // end aDel while()                
-
-                    $db->query('DELETE FROM '.$table.'_cstm WHERE id_c = "'.$db->quote($aDel['id']).'"');
-                }
 			} // end aDel while()
 			// now do the actual delete
 			$db->query('DELETE FROM '.$table.' WHERE deleted = 1');
 		} // foreach() tables
 
+		// now output file with SQL
+		if(!function_exists('mkdir_recursive')) {
+			
+		}
+		if(!function_exists('write_array_to_file')) {
+			
+		}
 		if(!file_exists($backupDir) || !file_exists($backupDir.'/'.$backupFile)) {
 			// create directory if not existent
 			mkdir_recursive($backupDir, false);
@@ -429,7 +399,7 @@ function pruneDatabase() {
 
 function trimTracker()
 {
-    global $sugar_config, $timedate;
+    global $sugar_config;
 	$GLOBALS['log']->info('----->Scheduler fired job of type trimTracker()');
 	$db = DBManagerFactory::getInstance();
 	
@@ -447,7 +417,7 @@ function trimTracker()
 		   continue;
 		}
 
-	    $timeStamp = db_convert("'". $timedate->asDb($timedate->getNow()->get("+"+$prune_interval+" days")) ."'" ,"datetime");
+	    $timeStamp = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(),time()+(86400 * -$prune_interval))."'" ,"datetime");
 		if($tableName == 'tracker_sessions') {
 		   $query = "DELETE FROM $tableName WHERE date_end < $timeStamp";
 		} else {
@@ -540,12 +510,12 @@ function dceActionCleanup() {
  * Job 9
  */
 function updateTrackerSessions() {
-    global $sugar_config, $timedate;
+    global $sugar_config;
 	$GLOBALS['log']->info('----->Scheduler fired job of type updateTrackerSessions()');
 	$db = DBManagerFactory::getInstance();
     require_once('include/utils/db_utils.php');
 	//Update tracker_sessions to set active flag to false
-	$sessionTimeout = db_convert("'".$timedate->getNow()->get("-6 hours")->asDb()."'" ,"datetime");
+	$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-6 hours"))."'" ,"datetime");
 	$query = "UPDATE tracker_sessions set active = 0 where date_end < $sessionTimeout";
 	$GLOBALS['log']->info("----->Scheduler is about to update tracker_sessions table by running the query $query");
 	$db->query($query);
@@ -607,10 +577,5 @@ All in all, Exit looks like an exciting action puzzle game that should showoff t
 
 if (file_exists('custom/modules/Schedulers/_AddJobsHere.php')) {
 	require('custom/modules/Schedulers/_AddJobsHere.php');
-}
-
-if (file_exists('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php'))
-{
-	require('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php');
 }
 ?>

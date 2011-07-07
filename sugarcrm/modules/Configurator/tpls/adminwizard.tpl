@@ -309,7 +309,7 @@ function disableReturnSubmission(e) {
                                 </td>
                                 <td width="20%" scope="row" nowrap="nowrap"><span id="mail_smtpssl_label">{$APP.LBL_EMAIL_SMTP_SSL_OR_TLS}</span></td>
                                 <td width="30%">
-                                <select id="mail_smtpssl" name="mail_smtpssl" onchange="setDefaultSMTPPort()" tabindex="501">{$MAIL_SSL_OPTIONS}</select>
+                                <select id="mail_smtpssl" name="mail_smtpssl" tabindex="501">{$MAIL_SSL_OPTIONS}</select>
                                 </td>
                             </tr>
                             <tr id="smtp_auth1">
@@ -619,7 +619,6 @@ function changeEmailScreenDisplay(smtptype)
         break;
     }
     notify_setrequired();
-    setDefaultSMTPPort();
 }
 //changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}");
 
@@ -785,19 +784,6 @@ function notify_setrequired() {
 	return true;
 }
 notify_setrequired();
-
-function setDefaultSMTPPort() 
-{
-    useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
-    
-    if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
-        document.getElementById("mail_smtpport").value = '465';
-    }
-    if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
-        document.getElementById("mail_smtpport").value = '25';
-    }
-        
-}
 {/literal}
 {$getNameJs}
 -->

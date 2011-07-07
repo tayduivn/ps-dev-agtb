@@ -230,22 +230,7 @@ function handleRedirect($return_id='', $return_module='')
     
     if (!isset($isDuplicate) || !$isDuplicate)
     {
-        $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action";
-        if(!empty($_REQUEST['ajax_load']))
-        {
-            $ajax_ret = array(
-                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-                'menu' => array(
-                    'module' => $return_module,
-                    'label' => translate($return_module),
-                ),
-            );
-            $json = getJSONobj();
-            echo $json->encode($ajax_ret);
-        } else {
-            header("Location: $url");
-            exit;
-        }
+        header("Location: index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action");
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
    		$add = '';
@@ -261,22 +246,7 @@ function handleRedirect($return_id='', $return_module='')
     	if(!empty($add)) {
     		$add = "&" . $add;
     	}
-        $url="index.php?{$standard}{$add}";
-        if(!empty($_REQUEST['ajax_load']))
-        {
-            $ajax_ret = array(
-                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-                 'menu' => array(
-                     'module' => $return_module,
-                     'label' => translate($return_module),
-                 ),
-            );
-            $json = getJSONobj();
-            echo $json->encode($ajax_ret);
-        } else {
-            header("Location: $url");
-            exit;
-        }
+        header("Location: index.php?{$standard}{$add}");
     }
 	exit;
 }

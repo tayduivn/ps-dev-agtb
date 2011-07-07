@@ -118,7 +118,6 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     //END SUGARCRM flav=pro ONLY
-    'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECTS_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
@@ -144,8 +143,6 @@ $mod_strings = array (
 //END SUGARCRM flav!=sales ONLY
   'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
 	'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
-    //For Export
-    'LBL_EXPORT_NAME'=>'Name',
 );
 
 ?>

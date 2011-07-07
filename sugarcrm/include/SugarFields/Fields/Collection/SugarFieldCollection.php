@@ -20,7 +20,7 @@ class SugarFieldCollection extends SugarFieldBase {
         $this->ss->assign('vardefJSON', '{literal}'.$vardefJSON.'{/literal}');
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         if(empty($this->tpl_path)){
-        	$this->tpl_path = $this->findTemplate('DetailView');
+        	$this->tpl_path = 'include/SugarFields/Fields/Collection/DetailView.tpl';
         }
         return $this->fetch($this->tpl_path);
     }
@@ -40,7 +40,7 @@ class SugarFieldCollection extends SugarFieldBase {
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
 	    if(!$searchView) {
 	    	if(empty($this->tpl_path)){
-        		$this->tpl_path = $this->findTemplate('EditView');
+        		$this->tpl_path = 'include/SugarFields/Fields/Collection/EditView.tpl';
         	}
 	    	return $this->fetch($this->tpl_path);
 	    }

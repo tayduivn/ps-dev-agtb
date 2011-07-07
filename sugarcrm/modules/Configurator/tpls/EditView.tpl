@@ -125,13 +125,9 @@
 		{* //END SUGARCRM flav!=sales ONLY*}
 	</tr>
 	<tr>
-		<td scope="row" width='15%' nowrap>{$MOD.SYSTEM_NAME} </td>
-		<td width='35%'>
+		<td  scope="row" width='15%' nowrap>{$MOD.SYSTEM_NAME} </td>
+		<td   width='35%'>
 			<input type='text' name='system_name' value='{$settings.system_name}'>
-		</td>
-		<td scope="row" width='15%' nowrap>{$MOD.LBL_MIN_AUTO_REFRESH_INTERVAL} &nbsp;{sugar_help text=$MOD.LBL_MIN_AUTO_REFRESH_INTERVAL_HELP} </td>
-		<td width='35%'>
-		    <select name='dashlet_auto_refresh_min' id='dashlet_auto_refresh_min'>{$AUTO_REFRESH_INTERVAL_OPTIONS}</select>
 		</td>
     </tr>
     <tr>
@@ -141,27 +137,14 @@
         <td width='35%' >
             <img id="company_logo_image" src='{$company_logo}' height="40" width="212">
         </td>
-        //BEGIN SUGARCRM flav!=com && flav!=sales ONLY
-        <td  scope="row"> {$MOD.SHOW_DOWNLOADS_TAB}: &nbsp;{sugar_help text=$MOD.SHOW_DOWNLOADS_TAB_HELP} </td>
-		{if !isset($config.show_download_tab) || !empty($config.show_download_tab)}
-			{assign var='show_download_tab_checked' value='CHECKED'}
-		{else}
-			{assign var='show_download_tab_checked' value=''}
-		{/if}
-		<td ><input type='hidden' name='show_download_tab' value='false'><input name='show_download_tab'  type="checkbox" value='true' {$show_download_tab_checked}></td>
-        //END SUGARCRM flav!=com && flav!=sales ONLY
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
-            {$MOD.NEW_LOGO}&nbsp;{sugar_help text=$MOD.NEW_LOGO_HELP}
+            {$MOD.NEW_LOGO}:&nbsp{sugar_help text=$MOD.NEW_LOGO_HELP}
         </td>
         <td  width='35%'>
             <div id="container_upload"></div>
             <input type='text' id='company_logo' name='company_logo' style="display:none">
-    </tr>
-    <tr>
-            <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
-            <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
     </tr>
 </table>
 
@@ -364,15 +347,7 @@
 		<td >
 			<input type='text' size='4' name='vcal_time' value='{$config.vcal_time}'>
 		</td>
-        <td scope="row">{$MOD.LBL_IMPORT_MAX_RECORDS} {sugar_help text=$MOD.LBL_IMPORT_MAX_RECORDS_HELP}</td>
-		<td >
-			<input type='text' size='4' name='import_max_records_total_limit' value='{$config.import_max_records_total_limit}'>
-		</td>
-
 	</tr>
-
-
-
 </table>
 
 

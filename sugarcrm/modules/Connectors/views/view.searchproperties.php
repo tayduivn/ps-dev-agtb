@@ -91,10 +91,8 @@ class ViewSearchProperties extends ViewList
 	    		}
 	
 	    		$modules_sources[$module] = array_merge($enabled, $disabled);
-
 	    		asort($disabled);
-	    		$display_data[$module] = array('enabled' => $enabled, 'disabled' => $disabled,
-                                               'module_name' => isset($GLOBALS['app_list_strings']['moduleList'][$module]) ? $GLOBALS['app_list_strings']['moduleList'][$module] : $module);
+	    		$display_data[$module] = array('enabled' => $enabled, 'disabled' => $disabled);
 	    	}	
         }
         

@@ -69,7 +69,6 @@ array (
       ),
       'filename' => 
       array (
-        'type' => 'name',
         'name' => 'filename',
         'default' => true,
         'width' => '10%',
@@ -91,7 +90,6 @@ array (
   'templateMeta' => 
   array (
     'maxColumns' => '3',
-    'maxColumnsBasic' => '4', 
     'widths' => 
     array (
       'label' => '10',

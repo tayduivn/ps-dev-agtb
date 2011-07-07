@@ -32,22 +32,19 @@ class UsersViewList extends ViewList
 {
  	public function preDisplay()
  	{
- 	    if ( !is_admin($GLOBALS['current_user'])
-                //BEGIN SUGARCRM flav=sales ONLY
-                && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-                //END SUGARCRM flav=sales ONLY
-                && !is_admin_for_module($GLOBALS['current_user'],'Users') ) {
-            //instead of just dying here with unauthorized access will send the user back to his/her settings
-             SugarApplication::redirect('index.php?module=Users&action=DetailView&record='.$GLOBALS['current_user']->id);
-        }
+ 	    if (   !is_admin($GLOBALS['current_user'])
+           //BEGIN SUGARCRM flav=sales ONLY
+           && $GLOBALS['current_user']->user_type != 'UserAdministrator'
+           //END SUGARCRM flav=sales ONLY
+ 	       && !is_admin_for_module($GLOBALS['current_user'],'Users') ) 
+ 	        sugar_die("Unauthorized access to administration.");
+ 	    
  	    $this->lv = new ListViewSmarty();
- 	    $this->lv->delete = false;
- 	    $this->lv->email = false;
+ 		$this->lv->delete = false;
  	}
 
 //BEGIN SUGARCRM flav=sales ONLY
- 	public function listViewProcess()
- 	{
+ 	public function listViewProcess(){
  		$this->processSearchForm();
 		$this->lv->searchColumns = $this->searchForm->searchColumns;
 		

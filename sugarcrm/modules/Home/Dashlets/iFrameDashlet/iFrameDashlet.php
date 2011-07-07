@@ -60,7 +60,6 @@ class iFrameDashlet extends Dashlet {
             $this->height = (int)$options['height'];
         }
 
-        if(isset($options['autoRefresh'])) $this->autoRefresh = $options['autoRefresh'];
     }
 
     protected function checkURL()
@@ -82,15 +81,8 @@ class iFrameDashlet extends Dashlet {
         $ss->assign('id', $this->id);
         $ss->assign('height', $this->height);
         $ss->assign('saveLBL', $app_strings['LBL_SAVE_BUTTON_LABEL']);
-        $ss->assign('clearLBL', $app_strings['LBL_CLEAR_BUTTON_LABEL']);
-        if($this->isAutoRefreshable()) {
-       		$ss->assign('isRefreshable', true);
-			$ss->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);
-			$ss->assign('autoRefreshOptions', $this->getAutoRefreshOptions());
-			$ss->assign('autoRefreshSelect', $this->autoRefresh);
-		}
-        
-        return  $ss->fetch('modules/Home/Dashlets/iFrameDashlet/configure.tpl');        
+
+        return  $ss->fetch('modules/Home/Dashlets/iFrameDashlet/configure.tpl');
     }
 
     function saveOptions($req) {
@@ -105,7 +97,6 @@ class iFrameDashlet extends Dashlet {
         if ( isset($req['height']) ) {
             $options['height'] = (int)$req['height'];
         }
-        $options['autoRefresh'] = empty($req['autoRefresh']) ? '0' : $req['autoRefresh'];
 
         return $options;
     }

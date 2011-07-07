@@ -40,7 +40,7 @@ if(file_exists('custom/modules/Project/metadata/listviewdefs.php')){
 
 require_once('include/SearchForm/SearchForm.php');
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_PROJECT_TEMPLATES_TITLE']), true);
+echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_PROJECT_TEMPLATES_TITLE'], true);
 
 $header_text = '';
 

@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav=pro ONLY
 class TrackerReporter{
-
+	
 	private $queries = array(
                        'mysql' => array(
 							"ShowLastModifiedRecords" => "", //See function below
@@ -61,22 +61,22 @@ class TrackerReporter{
                             "ShowMyCumulativeLoggedInTime" => "select sum(seconds) as total_login_time from tracker_sessions where user_id = '{0}' and date_start > {1}",
                             "ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"),
 		                );
-
-
+	
+		                
     //Customize sort types for non-string values.  Strings are used by default
     public $sort_types = array(
                             "ShowMyModuleUsage"=>array("total_count"=>"asInt"),
                             "ShowTop3ModulesUsed"=>array("total_count"=>"asInt")
                         );
 	private $included_methods = array();
-
+	
 	/*
 	 * Default Constructor
 	 * Also load up custom file here. To define the custom file would be as follows:
-	 *
+	 * 
 	 * $queries['ShowMeStuff'] = 'SELECT * FROM tracker';
 	 * $queries['ShowMeStuff2'] = 'SELECT * FROM tracker_perf';
-	 *
+	 * 
 	 * function ShowMyLatest(){
 	 * 	return '<SOME_QUERY_TO_RUN>';
 	 * }
@@ -91,7 +91,7 @@ class TrackerReporter{
 			$this->included_methods = $this->getFileMethods('custom/modules/Trackers/tracker_reporter.php');
 		}
 	}
-
+	
 	/*
 	 * Default method is the override is not defined.  Check the $queries variable
 	 * to see if the method is defined in there if so then run the query and return the result set.
@@ -108,14 +108,14 @@ class TrackerReporter{
 		return $this->execute($this->setup($method, $args));
 	}
 
-
+	
 	/**
 	 * Show last 10 modified records in the system
-	 *
+	 * 
 	 * @return array - dataset
 	 */
 	public function ShowLastModifiedRecords() {
-	    $query = "SELECT module_name, item_summary, item_id, date_modified from tracker where action = 'save' and module_name != 'UserPreferences' order by date_modified desc";
+	    $query = "SELECT module_name, item_summary, item_id, date_modified from tracker where action = 'save' and module_name != 'UserPreferences' order by date_modified desc";	
 		$result = $GLOBALS['db']->limitQuery($query, 0, 10);
 	    $data = array();
 		if($result) {
@@ -128,10 +128,10 @@ class TrackerReporter{
 		  return $data;
 	    } else {
 	      return null;
-	    }
+	    }		    		
 	}
-
-
+	
+	
 	/**
 	 * Show currently active users.
 	 *
@@ -141,8 +141,8 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$sessionTimeout = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$sessionTimeout = db_convert("'".$GLOBALS['timedate']->getNow()->get("-20 minutes")->asDb()."'" ,"datetime");
-
+			$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-20 minutes"))."'" ,"datetime");
+		
 		$result = $this->execute($this->setup('ShowActiveUsers', array($sessionTimeout)));
 	    $data = array();
 	    foreach($result as $row) {
@@ -151,7 +151,7 @@ class TrackerReporter{
 	    }
 	    return array_values($data);
 	}
-
+	
 	/**
 	 * Show number of logged in users.
 	 *
@@ -161,10 +161,10 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$sessionTimeout = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$sessionTimeout = db_convert("'".$GLOBALS['timedate']->getNow()->get("-20 minutes")->asDb()."'","datetime");
+			$sessionTimeout = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-20 minutes"))."'" ,"datetime");
 		return $this->execute($this->setup('ShowLoggedInUserCount', array($sessionTimeout)));
 	}
-
+	
 	/**
 	 * Show module usage for currently logged in user.
 	 *
@@ -180,15 +180,15 @@ class TrackerReporter{
         }
         return $data;
     }
-
-
+	
+	
 	/**
      * Show top user as determined by total tracker entry count
-     *
+     * 
      * @return array - dataset
      */
 	public function ShowTopUser() {
-	    $query = "select u.user_name as user_name, count(t.id) as total_count from tracker t, users u where t.user_id = u.id group by u.user_name order by total_count desc";
+	    $query = "select u.user_name as user_name, count(t.id) as total_count from tracker t, users u where t.user_id = u.id group by u.user_name order by total_count desc";	
 		$query = string_format($query, array($GLOBALS['current_user']->id));
 		$result = $GLOBALS['db']->limitQuery($query, 0, 1);
 	    $data = array();
@@ -199,9 +199,9 @@ class TrackerReporter{
 		  return $data;
 	    } else {
 	      return null;
-	    }
+	    }	
 	}
-
+	
 	/**
 	 * Show the top 3 modules used for current user
 	 *
@@ -223,7 +223,7 @@ class TrackerReporter{
 	      return null;
 	    }
 	}
-
+	
 	/**
 	 * Show what the current user has done this week.
 	 *
@@ -234,20 +234,20 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get("-1 week")->asDb()."'" ,"datetime");
-
+			$timeSpan = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 1 week"))."'" ,"datetime");
+		
 		$args = array($user, $timeSpan);
-
+		
 		//First query
 		$query = string_format("select count(id) as total_count from tracker where user_id = '{0}' and module_name != 'UserPreferences' and date_modified > {1}", $args);
 	    $data = array();
 	    $queryData = array();
-
+	    
 	    $result = $this->execute($query);
 		foreach($result as $row) {
 	    	$queryData['total_count'] = $row['total_count'];
 	    }
-
+	    
 	    //Second query
 	    $query = string_format("select count(id) as total_count from tracker where user_id = '{0}' and action = 'save' and module_name != 'UserPreferences' and date_modified > {1}", $args);
 		$result = $this->execute($query);
@@ -270,19 +270,19 @@ class TrackerReporter{
 		  $row = $GLOBALS['db']->fetchByAssoc($result);
 		  $queryData['top_module'] = $this->_getTranslatedModuleName($row['module_name']);
 	    } else {
-	      $queryData['top_module'] = '';
+	      $queryData['top_module'] = '';	
 	    }
 	    $data[] = $queryData;
-
+	    
 	    return array_values($data);
 	}
-
+	
 	/**
 	 * ShowMyCumulativeLoggedInTime
-	 *
-	 * Returns a time formmated display of total time logged in for current user from
+	 * 
+	 * Returns a time formmated display of total time logged in for current user from 
 	 * the given date interval
-	 *
+	 * 
 	 * @param $data_selected - Optional date filter value (default is one week from today)
 	 * @return Array - dataset
 	 */
@@ -291,7 +291,7 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get("-1 week")->asDb()."'", "datetime");
+			$timeSpan = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 1 week"))."'" ,"datetime");
 		$args = array($user, $timeSpan);
 		$result = $this->execute($this->setup('ShowMyCumulativeLoggedInTime', $args));
 	    $data = array();
@@ -304,10 +304,10 @@ class TrackerReporter{
 
 	/**
 	 * ShowUsersCumulativeLoggedInTime
-	 *
-	 * Returns a time formmated display of total time logged in for all users from
+	 * 
+	 * Returns a time formmated display of total time logged in for all users from 
 	 * the given date interval
-	 *
+	 * 
 	 * @param $data_selected - Optional date filter value (default is one week from today)
 	 * @return Array - dataset
 	 */
@@ -315,43 +315,43 @@ class TrackerReporter{
 		if(!empty($date_selected))
 			$timeSpan = db_convert("'".$date_selected."'" ,"datetime");
 		else
-			$timeSpan = db_convert("'".$GLOBALS['timedate']->getNow()->get("-1 week")->asDb()."'", "datetime");
+			$timeSpan = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 1 week"))."'" ,"datetime");
 		$args = array($timeSpan);
 		$result = $this->execute($this->setup('ShowUsersCumulativeLoggedInTime', $args));
 		$data = array();
 	    foreach($result as $row) {
-	    	$data[] = array('username'=>$row['user_name'],
+	    	$data[] = array('username'=>$row['user_name'], 
                             'total_login_time'=>$this->convertSecondsToTime($row['total_login_time'], true)
                             );
 	    }
 	    return array_values($data);
 	}
 
-
+	
 	private function convertSecondsToTime($seconds=0, $padHours=false) {
 	    $val = "";
-	    $hours = intval(intval($seconds) / 3600);
-
+	    $hours = intval(intval($seconds) / 3600); 
+	
 	    $val .= ($padHours) ? str_pad($hours, 2, "0", STR_PAD_LEFT). ':' : $hours. ':';
-	    $minutes = intval(($seconds / 60) % 60);
+	    $minutes = intval(($seconds / 60) % 60); 
 
 	    $val .= str_pad($minutes, 2, "0", STR_PAD_LEFT). ':';
-	    $seconds = intval($seconds % 60);
-
+	    $seconds = intval($seconds % 60); 
+	
 	    $val .= str_pad($seconds, 2, "0", STR_PAD_LEFT);
 	    return $val;
 	}
-
-
+	
+	
 	/**
 	 * Returns array of name/value pairs for the query methods where name is the localzied
 	 * String label to display and value is the method to call
-	 *
-	 * @return array - array of name/value pairs for the query methods where name is the
+	 * 
+	 * @return array - array of name/value pairs for the query methods where name is the 
 	 * localzied String label to display and value is the method to call
 	 */
 	public function getComboData() {
-
+		
 		$tQueries = $this->getQueries();
         $module_strings = return_module_language($GLOBALS['current_language'], 'Trackers');
         $comboData = array();
@@ -359,16 +359,16 @@ class TrackerReporter{
         	$name = isset($module_strings[$value]) ? $module_strings[$value] : $value;
         	$comboData[] = array($name, $value);
         }
-        return $comboData;
+        return $comboData;		
 	}
-
+	
 	/**
 	 * getDateSelectionQueries
-	 *
+	 * 
 	 * Returns an array of functions which support the date picker on th the dashlet. This is important
 	 * because we do not want to show the Date Picker when it is not necessary, although even if it is shown
 	 * it will not affect functionality. It may only lead to user confustion.
-	 *
+	 * 
 	 * @return array - array of query/function names which require the date picker to be active.
 	 */
 	public function getDateDependentQueries(){
@@ -391,7 +391,7 @@ class TrackerReporter{
 			if(!in_array($methods[$i], $blackList))
 				$queryMethods[] = $methods[$i];
 		}
-
+		
 		$queries = array_merge($keys, $queryMethods);
 		$foundQueries = array();
 		foreach($queries as $query){
@@ -400,7 +400,7 @@ class TrackerReporter{
 		}
 		return $foundQueries;
 	}
-
+	
 	/**
 	 * Execute a given query and return the data set.
 	 *
@@ -408,7 +408,7 @@ class TrackerReporter{
 	 * @return array - rows of data.
 	 */
 	private function execute($query){
-		if(!empty($query)){
+		if(!empty($query)){	
 			$db = &DBManagerFactory::getInstance('reports');
 			$result = $db->query($query);
 			$data = array();
@@ -420,7 +420,7 @@ class TrackerReporter{
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Given a query(method_name) and some arguments attempt to build the query
 	 *
@@ -431,13 +431,13 @@ class TrackerReporter{
 	private function setup($query, $args){
 		if(!empty($this->queries[$GLOBALS['db']->dbType][$query])){
 			if(empty($args[0]))
-				$args = array();
+				$args = array();				
 			return string_format($this->queries[$GLOBALS['db']->dbType][$query], $args);
 		}else{
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Return list of functions defined in file.
 	 *
@@ -453,7 +453,7 @@ class TrackerReporter{
 	    }
     	return $arr_methods;
 	}
-
+    
     /**
      * Translate the given module name into the current language
      *
@@ -465,7 +465,7 @@ class TrackerReporter{
         )
     {
         $module_strings = return_module_language($GLOBALS['current_language'], $moduleName);
-
+        
         // Bug 25524 - Translate the module name
         if (!empty($GLOBALS['app_list_strings']['moduleList'][$moduleName]))
             $moduleName = $GLOBALS['app_list_strings']['moduleList'][$moduleName];
@@ -475,6 +475,6 @@ class TrackerReporter{
             $moduleName = $module_strings['LBL_MODULE_NAME'];
         return $moduleName;
     }
-
+	
 }
 ?>

@@ -82,7 +82,6 @@ class Email extends SugarBean {
 	var $new_schema = true;
 	var $table_name = 'emails';
 	var $module_dir = 'Emails';
-    var $module_name = 'Emails';
 	var $object_name = 'Email';
 	var $db;
 
@@ -314,9 +313,6 @@ class Email extends SugarBean {
 	 * @return string MIME-type
 	 */
 	function email2GetMime($fileLocation) {
-	    if(!is_readable($fileLocation)) {
-	        return 'application/octet-stream';
-	    }
 		if(function_exists('mime_content_type')) {
 			$mime = mime_content_type($fileLocation);
 		} elseif(function_exists('ext2mime')) {
@@ -860,7 +856,8 @@ class Email extends SugarBean {
 			//END SUGARCRM flav=pro ONLY
 			$this->assigned_user_id = $current_user->id;
 
-			$this->date_sent = $timedate->now();
+			$this->date_sent = $timedate->convert_to_gmt_datetime('now');
+	        $this->date_sent = $timedate->to_display_date_time($this->date_sent);
 			///////////////////////////////////////////////////////////////////
 			////	LINK EMAIL TO SUGARBEANS BASED ON EMAIL ADDY
 
@@ -938,16 +935,11 @@ class Email extends SugarBean {
 	/**
 	 * Generates a comma sperated name and addresses to be used in compose email screen for contacts or leads
 	 * from listview
-	 *
-	 * @param $module string module name
-	 * @param $idsArray array of record ids to get the email address for
-	 * @return string comma delimited list of email addresses
 	 */
-	public function getNamePlusEmailAddressesForCompose($module, $idsArray)
-	{
+	function getNamePlusEmailAddressesForCompose($table, $idsArray) {
 		global $locale;
 		global $db;
-		$table = SugarModule::get($module)->loadBean()->table_name;
+		$table = strtolower($table);
 		$returndata = array();
 		$idsString = "";
 		foreach($idsArray as $id) {
@@ -958,14 +950,9 @@ class Email extends SugarBean {
 		} // foreach
 		$where = "({$table}.deleted = 0 AND {$table}.id in ({$idsString}))";
 
-		if ($module == 'Users' || $module == 'Employees') {
-			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.title";
-		}
-		elseif (SugarModule::get($module)->moduleImplements('Person')) {
-			$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
-		}
-		else {
-		    $selectColumn = "{$table}.name";
+		$selectColumn = "{$table}.first_name, {$table}.last_name, {$table}.salutation, {$table}.title";
+		if ($table == 'accounts') {
+			$selectColumn = "{$table}.name";
 		}
 		$query = "SELECT {$table}.id, {$selectColumn}, eabr.primary_address, ea.email_address";
 		$query .= " FROM {$table} ";
@@ -979,16 +966,11 @@ class Email extends SugarBean {
 
 		while($a = $this->db->fetchByAssoc($r)) {
 			if (!isset($returndata[$a['id']])) {
-				if ($module == 'Users' || $module == 'Employees') {
-				    $full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], '', $a['title']));
-					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
-				}
-				elseif (SugarModule::get($module)->moduleImplements('Person')) {
+				if ($table == 'accounts') {
+					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
+				} else {
 					$full_name = from_html($locale->getLocaleFormattedName($a['first_name'], $a['last_name'], $a['salutation'], $a['title']));
 					$returndata[$a['id']] = "{$full_name} <".from_html($a['email_address']).">";
-				}
-				else {
-					$returndata[$a['id']] = from_html($a['name']) . " <".from_html($a['email_address']).">";
 				} // else
 			}
 		}
@@ -1024,30 +1006,8 @@ class Email extends SugarBean {
 
 			// handle legacy concatenation of date and time fields
 			if(empty($this->date_sent)) $this->date_sent = $this->date_start." ".$this->time_start;
-
 			parent::save($check_notify);
-
-			if(!empty($this->parent_type) && !empty($this->parent_id)) {
-                if(!empty($this->fetched_row) && !empty($this->fetched_row['parent_id']) && !empty($this->fetched_row['parent_type'])) {
-                    if($this->fetched_row['parent_id'] != $this->parent_id || $this->fetched_row['parent_type'] != $this->parent_type) {
-                        $mod = strtolower($this->fetched_row['parent_type']);
-                        $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
-                        if($this->load_relationship($rel) ) {
-                            $this->$rel->delete($this->id, $this->fetched_row['parent_id']);
-                        }
-                    } else {
-                        // we already have this relationship, don't add it
-                        return;
-                    }
-                }
-                $mod = strtolower($this->parent_type);
-                $rel = array_key_exists($mod, $this->field_defs) ? $mod : $mod . "_activities_emails"; //Custom modules rel name
-                if($this->load_relationship($rel) ) {
-                    $this->$rel->add($this->parent_id);
-                }
-			}
 		}
-		$GLOBALS['log']->debug('-------------------------------> Email save() done');
 	}
 
 	/**
@@ -2870,18 +2830,17 @@ class Email extends SugarBean {
 		      }
         }
 
-        $isDateFromSearchSet = !empty($_REQUEST['searchDateFrom']);
-        $isdateToSearchSet = !empty($_REQUEST['searchDateTo']);
-
+        $isDateFromSearchSet = !empty($_REQUEST['dateFrom']);
+        $isdateToSearchSet = !empty($_REQUEST['dateTo']);
         $bothDateRangesSet = $isDateFromSearchSet & $isdateToSearchSet;
 
         //Hanlde date from and to seperately
         if($bothDateRangesSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
 
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
 
             $additionalWhereClause[] = "( emails.date_sent >= $dbFormatDateFrom AND
@@ -2889,13 +2848,13 @@ class Email extends SugarBean {
         }
         elseif ($isdateToSearchSet)
         {
-            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['searchDateTo'], false);
+            $dbFormatDateTo = $timedate->to_db_date($_REQUEST['dateTo'], false);
             $dbFormatDateTo = db_convert("'" . $dbFormatDateTo . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent <= $dbFormatDateTo ";
         }
         elseif ($isDateFromSearchSet)
         {
-            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['searchDateFrom'], false);
+            $dbFormatDateFrom = $timedate->to_db_date($_REQUEST['dateFrom'], false);
             $dbFormatDateFrom = db_convert("'" . $dbFormatDateFrom . "'",'datetime');
             $additionalWhereClause[] = "emails.date_sent >= $dbFormatDateFrom ";
         }

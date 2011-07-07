@@ -21,9 +21,11 @@
 require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/formbase.php');
 
-class ViewInlineFieldSave extends ViewAjax 
-{
+class ViewInlineFieldSave extends ViewAjax {
 	var $type ='detail';
+	function ViewInlineField(){
+ 		parent::ViewAjax();
+ 	}
  	
 	function display(){
 		$bean = $this->bean;

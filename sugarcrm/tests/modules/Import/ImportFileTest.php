@@ -1,28 +1,5 @@
 <?php
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Professional End User
- * License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You may
- * not use this file except in compliance with the License. Under the terms of the
- * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
- * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
- * use the Software for timesharing or service bureau purposes such as hosting the
- * Software for commercial gain and/or for the benefit of a third party.  Use of
- * the Software may be subject to applicable fees and any use of the Software
- * without first paying applicable fees is strictly prohibited.  You do not have
- * the right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.  Your Warranty, Limitations of liability and Indemnity are
- * expressly stated in the License.  Please refer to the License for the specific
- * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
- * All Rights Reserved.
- ********************************************************************************/
- 
-require_once('modules/Import/sources/ImportFile.php');
+require_once 'modules/Import/ImportFile.php';
 
 class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -39,12 +16,12 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
- 	 * @ticket 23380
+ 	 * @group bug23380
  	 */
 	public function testFileImportNoEnclosers()
     {
     	$file = SugarTestImportUtilities::createFile(2,1);
-    	$importFile = new ImportFile($file,',','', TRUE, FALSE);
+    	$importFile = new ImportFile($file,',','');
         $row = $importFile->getNextRow();
         $this->assertEquals($row, array('foo00'));
         $row = $importFile->getNextRow();
@@ -60,7 +37,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadGoodFile()
     {
         $file = SugarTestImportUtilities::createFile(2,1);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         $this->assertTrue($importFile->fileExists());
     }
     
@@ -69,21 +46,18 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadFileWithByteOrderMark()
     {
-        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/Bug39494ImportFile.txt';
-        copy('tests/modules/Import/Bug39494ImportFile.txt', $sample_file);
-        $importFile = new ImportFile($sample_file,"\t",'',false);
+        $importFile = new ImportFile('tests/modules/Import/Bug39494ImportFile.txt',"\t",'',false);
         $this->assertTrue($importFile->fileExists());
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('name','city'));
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('tester1','wuhan'));
-        unlink($sample_file);
     }
     
     public function testGetNextRow()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $row = $importFile->getNextRow();
         $this->assertEquals(array("foo00","foo01"),$row);
@@ -99,7 +73,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetNextRowWithEOL()
     {
         $file = SugarTestImportUtilities::createFileWithEOL(1, 1);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         $row = $importFile->getNextRow();
         // both \r\n and \n should be properly replaced with PHP_EOL
         $this->assertEquals(array("start0".PHP_EOL."0".PHP_EOL."end"), $row);
@@ -124,7 +98,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDeleteFileOnDestroy()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"',true, FALSE);
+        $importFile = new ImportFile($file,',','"',true);
         
         unset($importFile);
         
@@ -144,16 +118,16 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetFieldCount()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"',TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $importFile->getNextRow();
-        $this->assertEquals(2,$importFile->getFieldCount());
+        $this->assertEquals($importFile->getFieldCount(),2);
     }
     
     public function testMarkRowAsDuplicate()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $row = $importFile->getNextRow();
         $importFile->markRowAsDuplicate();
@@ -168,7 +142,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testWriteError()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $row = $importFile->getNextRow();
         $importFile->writeError('Some Error','field1','foo');
@@ -179,7 +153,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals(array('Some Error','field1','foo',1),$errorrow);
         
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsFileName(),'r');
         $errorrecordrow = fgetcsv($fp);
         fclose($fp);
         
@@ -189,12 +163,12 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testWriteErrorRecord()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $row = $importFile->getNextRow();
         $importFile->writeErrorRecord();
         
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsFileName(),'r');
         $errorrecordrow = fgetcsv($fp);
         fclose($fp);
         
@@ -204,7 +178,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testWriteStatus()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $importFile->getNextRow();
         $importFile->writeError('Some Error','field1','foo');
@@ -224,7 +198,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testWriteStatusWithTwoErrorsInOneRow()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $row = $importFile->getNextRow();
         $importFile->writeError('Some Error','field1','foo');
@@ -241,11 +215,10 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertEquals(array(3,1,0,2,0,$file),$statusrow);
         
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsFileName(),'r');
         $errorrecordrow = fgetcsv($fp);
-
+        
         $this->assertEquals($row,$errorrecordrow);
-
         $this->assertFalse(fgetcsv($fp),'Should be only 1 record in the csv file');
         fclose($fp);
         
@@ -254,7 +227,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function testWriteStatusWithTwoUpdatedRecords()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file,',','"');
         
         $row = $importFile->getNextRow();
         $importFile->markRowAsImported(false);
@@ -267,7 +240,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(),'r');
         $statusrow = fgetcsv($fp);
         fclose($fp);
-
+        
         $this->assertEquals(array(3,0,0,2,1,$file),$statusrow);
     }
     

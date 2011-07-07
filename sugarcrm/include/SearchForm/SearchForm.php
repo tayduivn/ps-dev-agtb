@@ -251,7 +251,7 @@ class SearchForm {
             if(isset($parms['value']) && $parms['value'] != "") {
                 $operator = 'like';
                 if(!empty($parms['operator'])) {
-                    $operator = strtolower($parms['operator']);
+                    $operator = $parms['operator'];
                 }
 
                 if(is_array($parms['value'])) {
@@ -353,7 +353,7 @@ class SearchForm {
                         if(!empty($where)) {
                             $where .= " OR ";
                         }
-                        switch($operator) {
+                        switch(strtolower($operator)) {
                         	case 'subquery':
                                 $in = 'IN';
                                 if ( isset($parms['subquery_in_clause']) ) {

@@ -335,7 +335,7 @@ function checkSchema($execute=false,$return=false){
 	global $dictionary;
 	set_time_limit(3600);
 	
-	$db = DBManagerFactory::getInstance();
+	$db = &DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
 	}
@@ -516,7 +516,6 @@ function checkSchema($execute=false,$return=false){
 	if(file_exists($dbscan_file)) {
 		unlink($dbscan_file);
 	}
-    global $mod_strings;
 	if(!file_exists($dbscan_file)) {
 		if(function_exists('sugar_fopen')){
 			$fp = @sugar_fopen($dbscan_file, 'w+'); // attempts to create file
@@ -531,7 +530,7 @@ function checkSchema($execute=false,$return=false){
 	}
 
 	if(@fwrite($fp, $db_scan) === false) {
-			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log');
+			$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
 			die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
 	 }
 }
@@ -542,16 +541,19 @@ function checkSchema($execute=false,$return=false){
 
 function getDbStats(){
 	global $sugar_config;
+	global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
+	//$db = &DBManagerFactory::getInstance('information_schema');
 	$db_name= $sugar_config['dbconfig']['db_name'];
 	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
     $setup_db_host_instance = $sugar_config['dbconfig']['db_host_instance'];
     $setup_db_admin_password = $sugar_config['dbconfig']['db_password'];
     $tables_count= '';
+	$coulmns_count= '';
 	$relationships_count= '';
 	$indices_count= '';
 
@@ -621,10 +623,12 @@ function getDbStats(){
 
 function getAllTables(){
 	global $sugar_config;
+	global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
+	//$db = &DBManagerFactory::getInstance('information_schema');
 	$db_name= $sugar_config['dbconfig']['db_name'];
 	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
@@ -633,7 +637,7 @@ function getAllTables(){
     $tables= array();
 
 
-    if(function_exists("mysqli_connect")){
+    if(function_exists(mysqli_connect)){
 		$link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
 	    mysqli_select_db($link,'information_schema');
 	    $qu="SELECT table_name FROM information_schema.tables where table_schema='trunk'";
@@ -659,16 +663,18 @@ function getAllTables(){
 
 function getAllRelationShips(){
 	global $sugar_config;
+	global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
+	//$db = &DBManagerFactory::getInstance('information_schema');
 	$db_name= $sugar_config['dbconfig']['db_name'];
 	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
     $setup_db_host_instance = $sugar_config['dbconfig']['db_host_instance'];
     $setup_db_admin_password = $sugar_config['dbconfig']['db_password'];
-    if(function_exists("mysqli_connect")){
+    if(function_exists(mysqli_connect)){
 		$link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
 	    mysqli_select_db($link,$db_name);
     	$qu="SELECT relationship_name FROM relationships";
@@ -692,6 +698,7 @@ function getAllRelationShips(){
 function tableColumns(&$colsDrop,$table_name){
 
 	global $sugar_config;
+	global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
@@ -702,7 +709,7 @@ function tableColumns(&$colsDrop,$table_name){
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
     $setup_db_host_instance = $sugar_config['dbconfig']['db_host_instance'];
     $setup_db_admin_password = $sugar_config['dbconfig']['db_password'];
-    if(function_exists("mysqli_connect")){
+    if(function_exists(mysqli_connect)){
 		$link = @mysqli_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
 	    mysqli_select_db($link,'information_schema');
     	$qu="SELECT column_name FROM information_schema.columns WHERE table_schema = '".$db_name."' AND table_name = '".$table_name;
@@ -726,6 +733,7 @@ function tableColumns(&$colsDrop,$table_name){
 ////FUNCTIONS for checking table, column, index, data type/////
 function checkTableExists($table_name){
 	global $sugar_config;
+	global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
@@ -778,10 +786,12 @@ function checkTableExists($table_name){
 }
 function checkColumnExists($table_name,$column_name){
 	global $sugar_config;
+	global $setup_db_database_name;
     global $setup_db_host_name;
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
+	$db = &DBManagerFactory::getInstance('information_schema');
 	$db_name= $sugar_config['dbconfig']['db_name'];
 	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];

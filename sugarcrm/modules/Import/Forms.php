@@ -35,6 +35,124 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 /**
+ * Returns the bean object of the given module
+ *
+ * @param  string $module
+ * @return object
+ */
+function loadImportBean(
+    $module
+    )
+{
+    $focus = SugarModule::get($module)->loadBean();
+    if ( $focus ) {
+        if ( !$focus->importable )
+            return false;
+        if ( $module == 'Users' && !is_admin($GLOBALS['current_user'])
+             && !is_admin_for_module($GLOBALS['current_user'],'Users')
+             //BEGIN SUGARCRM flav=sales ONLY
+             && $GLOBALS['current_user']->user_type != 'UserAdministrator'
+             //END SUGARCRM flav=sales ONLY
+           )
+            return false;
+        if ( $focus->bean_implements('ACL')){
+            if(!ACLController::checkAccess($focus->module_dir, 'import', true)){
+                ACLController::displayNoAccess();
+                sugar_die('');
+            }
+        }
+    }
+    else {
+        return false;
+    }
+    
+    return $focus;
+}
+
+/**
+ * Displays the Smarty template for an error
+ *
+ * @param string $message error message to show
+ * @param string $module what module we were importing into
+ * @param string $action what page we should go back to
+ */
+function showImportError(
+    $message, 
+    $module,
+    $action = 'Step1'
+    )
+{
+    $ss = new Sugar_Smarty();
+    
+	$ss->assign("MESSAGE",$message);
+    $ss->assign("ACTION",$action);
+    $ss->assign("IMPORT_MODULE",$module);
+    $ss->assign("MOD", $GLOBALS['mod_strings']);
+    $ss->assign("SOURCE","");
+    if ( isset($_REQUEST['source']) )
+        $ss->assign("SOURCE", $_REQUEST['source']);
+    
+    echo $ss->fetch('modules/Import/tpls/error.tpl');
+}
+
+/**
+ * Replaces PHP error handler in Step4
+ *
+ * @param int    $errno
+ * @param string $errstr
+ * @param string $errfile
+ * @param string $errline
+ */
+function handleImportErrors(
+    $errno, 
+    $errstr, 
+    $errfile, 
+    $errline
+    )
+{
+    if ( !defined('E_DEPRECATED') )
+        define('E_DEPRECATED','8192');
+    if ( !defined('E_USER_DEPRECATED') )
+        define('E_USER_DEPRECATED','16384');
+    
+    // check to see if current reporting level should be included based upon error_reporting() setting, if not
+    // then just return
+    if ( !(error_reporting() & $errno) )
+        return true;
+    
+    switch ($errno) {
+    case E_USER_ERROR:
+    	$err_str = "ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+    	$GLOBALS['log']->fatal('IMPORT ERROR:: '.$err_str);
+        echo $err_str;
+        exit(1);
+        break;
+    case E_USER_WARNING:
+    case E_WARNING:
+        $GLOBALS['log']->fatal("IMPORT WARNING::  [$errno] $errstr on line $errline in file $errfile<br />\n");
+        break;
+    case E_USER_NOTICE:
+    case E_NOTICE:
+    	$GLOBALS['log']->fatal("IMPORT NOTICE::   [$errno] $errstr on line $errline in file $errfile<br />\n");
+        break;
+    case E_STRICT:
+    case E_DEPRECATED:
+    case E_USER_DEPRECATED:
+        // don't worry about these
+        //echo "STRICT ERROR: [$errno] $errstr on line $errline in file $errfile<br />\n";
+        break;
+    default:
+    	$err_str = "Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n";
+        echo $err_str;
+        $GLOBALS['log']->fatal('IMPORT ERROR:: '.$err_str);
+        break;
+    }
+
+    return true;
+}
+
+
+/**
  * Returns an input control for this fieldname given
  *
  * @param  string $module
@@ -58,8 +176,8 @@ function getControl(
  	// set the filename for this control
     $file = create_cache_directory('modules/Import/') . $module . $fieldname . '.tpl';
 
-    if ( !is_file($file)
-            || !empty($GLOBALS['sugar_config']['developerMode'])
+    if ( !is_file($file) 
+            || !empty($GLOBALS['sugar_config']['developerMode']) 
             || !empty($_SESSION['developerMode']) ) {
         
         if ( !isset($vardef) ) {
@@ -104,7 +222,7 @@ function getControl(
                 && ( $vardef['function'] == 'getCurrencyDropDown' 
                     || $vardef['function']['name'] == 'getCurrencyDropDown' ) )
         $contents .= "{literal}<script>function CurrencyConvertAll() { return; }</script>{/literal}";
-
+        
         // Save it to the cache file
         if($fh = @sugar_fopen($file, 'w')) {
             fputs($fh, $contents);
@@ -157,11 +275,8 @@ function getControl(
             $fieldlist[$name]['options'][''] = '';
     }
     // fill in function return values
-    if ( !in_array($fieldname,array('email1','email2')) )
-    {
-        if (!empty($fieldlist[$fieldname]['function']['returns']) && $fieldlist[$fieldname]['function']['returns'] == 'html')
-        {
-
+    if ( !in_array($fieldname,array('email1','email2')) ) {
+        if (!empty($fieldlist[$fieldname]['function']['returns']) && $fieldlist[$fieldname]['function']['returns'] == 'html'){
             $function = $fieldlist[$fieldname]['function']['name'];
             // include various functions required in the various vardefs
             if ( isset($fieldlist[$fieldname]['function']['include']) && is_file($fieldlist[$fieldname]['function']['include']))
@@ -170,15 +285,6 @@ function getControl(
             // Bug 22730 - add a hack for the currency type dropdown, since it's built by a function.
             if ( preg_match('/getCurrency.*DropDown/s',$function)  )
                 $value = str_ireplace('</select>','<option value="">'.$app_strings['LBL_NONE'].'</option></select>',$value);
-        }
-        elseif($fieldname == 'assigned_user_name' && empty($value))
-        {
-            $fieldlist['assigned_user_id']['value'] = $GLOBALS['current_user']->id;
-            $value = get_assigned_user_name($GLOBALS['current_user']->id);
-        }
-        elseif($fieldname == 'team_name' && empty($value))
-        {
-            $value = json_encode(array());
         }
     }
     $fieldlist[$fieldname]['value'] = $value;

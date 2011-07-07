@@ -330,14 +330,14 @@ function bothExist(item1, item2) {
 	return true;
 }
 
-var trim = function(s)
-    {
-      try {
+trim = function(s)
+       {
+          try {
 	     return s.replace(/^\s+|\s+$/g, "");
 	  } catch(e) {
 	     return s;
 	  }
-    };
+       }; 
 
 function check_form(formname) {
 	if (typeof(siw) != 'undefined' && siw 

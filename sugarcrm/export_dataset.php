@@ -34,7 +34,7 @@ header("Pragma: cache");
 header("Content-Disposition: inline; filename={$_REQUEST['module']}.csv");
 header("Content-Type: text/csv; charset=UTF-8");
 header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-header("Last-Modified: " . TimeDate::httpTime() );
+header( "Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT" );
 header( "Cache-Control: post-check=0, pre-check=0", false );
 header("Content-Length: ".strlen($csv_output));
 print $csv_output;

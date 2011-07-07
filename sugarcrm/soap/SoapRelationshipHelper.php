@@ -192,7 +192,7 @@ function retrieve_modified_relationships($module_name, $related_module, $relatio
 	}
 
 	if($has_join == false){
-		$query .= " inner join $mod->table_name m2 on $table_alias.$mod2_key = m2.id AND m2.id = '$current_user->id'";
+		$query .= " inner join $mod->table_name m2 on $table_alias.$mod2_key = m2.id ";
 		//BEGIN SUGARCRM flav=pro ONLY
 		if(!$mod2->disable_row_level_security && !is_admin($current_user))
 		$query .= "	inner join team_memberships tm2 on tm2.user_id = '$current_user->id' AND tm2.team_id = $table_alias.team_id AND tm2.deleted=0 AND m2.id = '$current_user->id'";

@@ -61,21 +61,11 @@
 	    <td scope='row'>
 		    {$strings.displayRows}
         </td>
-        <td{if !$isRefreshable} colspan='3'{/if}>
+        <td colspan='3'>
             <select name='displayRows'>
 				{html_options values=$displayRowOptions output=$displayRowOptions selected=$displayRowSelect}
            	</select>
         </td>
-        {if $isRefreshable}
-        <td scope='row'>
-		    {$strings.autoRefresh}
-        </td>
-        <td>
-            <select name='autoRefresh'>
-				{html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
-           	</select>
-        </td>
-        {/if}
     </tr>
     <tr>
         <td colspan='4' align='center'>
@@ -118,7 +108,6 @@
     <tr>
 	    <td colspan='4' align='right'>
 	        <input type='submit' class='button' value='{$strings.save}'>
-	        <input type='submit' class='button' value='{$strings.clear}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
 	    </td>    
 	</tr>
 </table>

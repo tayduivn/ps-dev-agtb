@@ -78,7 +78,7 @@ $GLOBALS['dictionary']['UserPreference'] = array('table' => 'user_preferences',
   'contents' => 
   array (
     'name' => 'contents',
-    'type' => 'longtext',
+    'type' => 'text',
     'vname' => 'LBL_DESCRIPTION',
     'isnull' => true,
   ),

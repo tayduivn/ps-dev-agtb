@@ -153,12 +153,12 @@ function buildTableForm($rows, $mod='Accounts'){
 		$form .= "<tr class='$rowColor'>";
 		if ($action != 'ShowDuplicates')
 		{
-		$form .= "<td width='1%' nowrap><a href='javascript:void(0)' onclick='document.dupAccounts.selectedAccount.value=\"${row['id']}\"; document.dupAccounts.submit(); '>[${app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
+		$form .= "<td width='1%' nowrap><a href='#' onclick='document.dupAccounts.selectedAccount.value=\"${row['id']}\"; document.dupAccounts.submit(); '>[${app_strings['LBL_SELECT_BUTTON_LABEL']}]</a>&nbsp;&nbsp;</td>\n";
 		}
 		foreach ($row as $key=>$value){
 				if($key != 'id'){
                     if(isset($_POST['popup']) && $_POST['popup']==true){
-                        $form .= "<td scope='row'><a  href='javascript:void(0)' onclick=\"window.opener.location='index.php?module=Accounts&action=DetailView&record=${row['id']}'\">$value</a></td>\n";
+                        $form .= "<td scope='row'><a  href='#' onclick=\"window.opener.location='index.php?module=Accounts&action=DetailView&record=${row['id']}'\">$value</a></td>\n";
                     }   
                     else
 					    $form .= "<td><a target='_blank' href='index.php?module=Accounts&action=DetailView&record=${row['id']}'>$value</a></td>\n";
@@ -181,9 +181,9 @@ function buildTableForm($rows, $mod='Accounts'){
 		$form .= "<input type='hidden' name='selectedAccount' id='selectedAccount' value=''><input title='${app_strings['LBL_SAVE_BUTTON_TITLE']}' accessKey='${app_strings['LBL_SAVE_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='Save';\" type='submit' name='button' value='  ${app_strings['LBL_SAVE_BUTTON_LABEL']}  '>\n";
 	    
         if (!empty($_REQUEST['return_module']) && !empty($_REQUEST['return_action']) && !empty($_REQUEST['return_id']))
-            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value='".$_REQUEST['return_module']."';this.form.action.value='".$_REQUEST['return_action']."';this.form.record.value='".$_REQUEST['return_id']."'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
+            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value=".$_REQUEST['return_module'].";this.form.action.value=".$_REQUEST['return_action'].";this.form.record.value=".$_REQUEST['return_id']."'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
         else if (!empty($_POST['return_module']) && !empty($_POST['return_action']))
-            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value='".$_POST['return_module']."';this.form.action.value='". $_POST['return_action'].";'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
+            $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.module.value=".$_POST['return_module'].";this.form.action.value=". $_POST['return_action'].";'\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
         else
             $form .= "<input title='${app_strings['LBL_CANCEL_BUTTON_TITLE']}' accessKey='${app_strings['LBL_CANCEL_BUTTON_KEY']}' class='button' onclick=\"this.form.action.value='ListView';\" type='submit' name='button' value='  ${app_strings['LBL_CANCEL_BUTTON_LABEL']}  '>";
 	} else {
@@ -421,15 +421,6 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 		if(isset($duplicateAccounts)){
 			$location='module=Accounts&action=ShowDuplicates';
 			$get = '';
-
-			// Bug 25311 - Add special handling for when the form specifies many-to-many relationships
-			if(isset($_POST['relate_to']) && !empty($_POST['relate_to'])) {
-				$get .= '&Accountsrelate_to='.$_POST['relate_to'];
-			}
-			if(isset($_POST['relate_id']) && !empty($_POST['relate_id'])) {
-				$get .= '&Accountsrelate_id='.$_POST['relate_id'];
-			}
-			
 			//add all of the post fields to redirect get string
 			foreach ($focus->column_fields as $field)
 			{
@@ -492,7 +483,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
             	ob_clean();
                 $json = getJSONobj();
                 $_SESSION['SHOW_DUPLICATES'] = $get;
-                echo $json->encode(array('status' => 'dupe', 'get' => $location));
+                echo $json->encode(array('status' => 'dupe', 'get' => $location . $get));
             } else {
                 if(!empty($_POST['to_pdf'])) $location .= '&to_pdf='.$_POST['to_pdf'];
                 $_SESSION['SHOW_DUPLICATES'] = $get;
@@ -517,7 +508,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
         echo $json->encode(array('status' => 'success',
                                  'get' => ''));
    	 	$trackerManager = TrackerManager::getInstance();
-        $timeStamp = TimeDate::getInstance()->nowDb();
+        $timeStamp = gmdate($GLOBALS['timedate']->get_db_date_time_format());
         if($monitor = $trackerManager->getMonitor('tracker')){ 
 	        //BEGIN SUGARCRM flav=pro ONLY
 	        $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());

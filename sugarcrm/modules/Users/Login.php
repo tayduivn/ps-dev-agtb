@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
+ *not use this file except in compliance with the License. Under the terms of the license, You 
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the 
+ *right to remove SugarCRM copyrights from the source code or user interface. 
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
+ * (i) the "Powered by SugarCRM" logo and 
+ * (ii) the SugarCRM copyright notice 
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
 /*********************************************************************************
  * $Id: Login.php 56650 2010-05-24 18:53:17Z jenny $
@@ -26,12 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-if(isset($_SESSION['authenticated_user_id'])) {
-	ob_clean();
-   	header("Location: index.php?module=Home&action=index");
-    sugar_cleanup(true);
-   	return;
-}
 global $current_language, $mod_strings, $app_strings;
 if(isset($_REQUEST['login_language'])){
     $lang = $_REQUEST['login_language'];
@@ -59,47 +53,12 @@ elseif (checkForMobile()){
         $url .= '&login_action='.$_REQUEST['login_action'];
     if ( !empty($_REQUEST['login_record']) )
         $url .= '&login_record='.$_REQUEST['login_record'];
-    	header( "Location: ". $url );
+    	header( "Location: ". $url );  
 }
 //END SUGARCRM flav=pro || flav=sales ONLY
 global $app_language, $sugar_config;
 //we don't want the parent module's string file, but rather the string file specifc to this subpanel
 global $current_language;
-
-// Get the login page image
-if ( sugar_is_file('custom/include/images/sugar_md.png') ) {
-    $login_image = '<IMG src="custom/include/images/sugar_md.png" alt="Sugar" width="340" height="25">';
-}
-else {
-    //BEGIN SUGARCRM flav=pro && flav!=ent ONLY
-    $login_image = '<IMG src="include/images/sugar_md.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=pro && flav!=ent ONLY
-    //BEGIN SUGARCRM flav=sales ONLY
-    $login_image = '<IMG src="include/images/sugar_md_sales.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
-    //END SUGARCRM flav=sales ONLY
-    //BEGIN SUGARCRM flav=dev ONLY
-    $login_image = '<IMG src="include/images/sugar_md_dev.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=dev ONLY
-    //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-    $login_image = '<IMG src="include/images/sugar_md_express.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
-    //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
-    //BEGIN SUGARCRM flav=com && lic!=sub ONLY
-    $login_image = '<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
-    //END SUGARCRM flav=com && lic!=sub ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    $login_image = '<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=dce ONLY
-    //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
-    $login_image = '<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=ent && flav!=dev ONLY
-    //BEGIN SUGARCRM flav=corp ONLY
-    $login_image = '<IMG src="include/images/sugar_md_corp.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=corp ONLY
-    //BEGIN SUGARCRM flav=ult ONLY
-    $login_image = '<IMG src="include/images/sugar_md_ult.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=ult ONLY
-}
-$sugar_smarty->assign('LOGIN_IMAGE',$login_image);
 
 // See if any messages were passed along to display to the user.
 if(isset($_COOKIE['loginErrorMessage'])) {
@@ -112,7 +71,7 @@ if(isset($_REQUEST['loginErrorMessage'])) {
     if (isset($mod_strings[$_REQUEST['loginErrorMessage']])) {
         echo "<p align='center' class='error' > ". $mod_strings[$_REQUEST['loginErrorMessage']]. "</p>";
     } else if (isset($app_strings[$_REQUEST['loginErrorMessage']])) {
-        echo "<p align='center' class='error' > ". $app_strings[$_REQUEST['loginErrorMessage']]. "</p>";
+        echo "<p align='center' class='error' > ". $app_strings[$_REQUEST['loginErrorMessage']]. "</p>";        
     }
 }
 //BEGIN SUGARCRM dep=od ONLY
@@ -127,40 +86,40 @@ $query = "SELECT count(id) as total from users WHERE status='Active' AND deleted
 
 
 // This section of code is a portion of the code referred
-// to as Critical Control Software under the End User
-// License Agreement.  Neither the Company nor the Users
+// to as Critical Control Software under the End User 
+// License Agreement.  Neither the Company nor the Users 
 // may modify any portion of the Critical Control Software.
 if(!isset($_SESSION['LICENSE_EXPIRES_IN'])){
 	checkSystemLicenseStatus();
 }
 
 if(!ocLicense() && isset($_SESSION['LICENSE_EXPIRES_IN']) && $_SESSION['LICENSE_EXPIRES_IN'] != 'valid' && $_SESSION['LICENSE_EXPIRES_IN'] < -30 ) {
-	echo  " <p align='center' class='error' >". $GLOBALS['app_strings']['ERROR_FULLY_EXPIRED']. "</p>";
+	echo  " <p align='center' class='error' >". $GLOBALS['app_strings']['ERROR_FULLY_EXPIRED']. "</p>"; 
 } elseif(!ocLicense() && isset($_SESSION['VALIDATION_EXPIRES_IN']) && $_SESSION['VALIDATION_EXPIRES_IN'] != 'valid' && $_SESSION['VALIDATION_EXPIRES_IN'] < -30 ) {
-	echo "<p align='center' class='error' > ". $GLOBALS['app_strings']['ERROR_LICENSE_EXPIRED']. "</p>";
+	echo "<p align='center' class='error' > ". $GLOBALS['app_strings']['ERROR_LICENSE_EXPIRED']. "</p>"; 
 }
 //END REQUIRED CODE  DO NOT MODIFY
 
 // BEGIN CE-OD License User Limit Enforcement
 global $sugar_flavor;
-if((isset($sugar_flavor) && $sugar_flavor != null) &&
+if((isset($sugar_flavor) && $sugar_flavor != null) && 
 	($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
-
+	
 	global $db;
 	//$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
 	$result = $db->query($query, true, "Error filling in user array: ");
 	$row = $db->fetchByAssoc($result);
    	$admin = new Administration();
     $admin->retrieveSettings();
-    $license_users = $admin->settings['license_users'];
+    $license_users = $admin->settings['license_users'];	
     $license_seats_needed = $row['total'] - $license_users;
 	if( $license_seats_needed > 0 ){
 		$_SESSION['EXCEEDS_MAX_USERS'] = 1;
-		echo "<p align='center' class='error' > ". $GLOBALS['app_strings']['WARN_LICENSE_SEATS_MAXED']. $GLOBALS['app_strings']['WARN_ONLY_ADMINS']."</p>";
+		echo "<p align='center' class='error' > ". $GLOBALS['app_strings']['WARN_LICENSE_SEATS_MAXED']. $GLOBALS['app_strings']['WARN_ONLY_ADMINS']."</p>"; 
 	}
 }
 // END CE-OD License User Limit Enforcement
-
+ 
 
 	//END SUGARCRM lic=sub ONLY
 
@@ -224,17 +183,17 @@ if ( !empty($logindisplay) )
 	$sugar_smarty->assign('LOGIN_DISPLAY', $logindisplay);;
 
 // RECAPTCHA
-
+	
 	$admin = new Administration();
 	$admin->retrieveSettings('captcha');
 	$captcha_privatekey = "";
 	$captcha_publickey="";
 	$captcha_js = "";
 	$Captcha='';
-
-	// if the admin set the captcha stuff, assign javascript and div
+	
+	// if the admin set the captcha stuff, assign javascript and div		
 	if(isset($admin->settings['captcha_on'])&& $admin->settings['captcha_on']=='1' && !empty($admin->settings['captcha_private_key']) && !empty($admin->settings['captcha_public_key'])){
-
+		
 			$captcha_privatekey = $admin->settings['captcha_private_key'];
 			$captcha_publickey = $admin->settings['captcha_public_key'];
 			$captcha_js .="<script type='text/javascript' src='" . getJSPath('include/javascript/sugar_grp1_yui.js') . "'></script><script type='text/javascript' src='" . getJSPath('include/javascript/sugar_grp_yui2.js') . "'></script>
@@ -244,7 +203,7 @@ if ( !empty($logindisplay) )
 			Recaptcha.create('$captcha_publickey' ,'captchaImage',{theme:'custom'});
 			}
 			window.onload=initCaptcha;
-
+		
 			var handleFailure=handleSuccess;
 			var handleSuccess = function(o){
 				if(o.responseText!==undefined && o.responseText =='Success'){
@@ -258,7 +217,7 @@ if ( !empty($logindisplay) )
 				}
 			}
 			var callback2 ={ success:handleSuccess, failure: handleFailure };
-
+			
 			function validateAndSubmit(){
 					var form = document.getElementById('form');
 					var url = '&to_pdf=1&module=Home&action=index&entryPoint=Changenewpassword&recaptcha_challenge_field='+Recaptcha.get_challenge()+'&recaptcha_response_field='+ Recaptcha.get_response();
@@ -267,10 +226,10 @@ if ( !empty($logindisplay) )
 		$Captcha.="<tr>
 			<td scope='row' width='20%'>".$mod_strings['LBL_RECAPTCHA_INSTRUCTION'].":</td>
 		    <td width='70%'><input type='text' size='26' id='recaptcha_response_field' value=''></td>
-
+			
 		</tr>
-		<tr>
-
+		<tr>		
+				 	
 		 	<td colspan='2'><div style='margin-left:2px'class='x-sqs-list' id='recaptcha_image'></div></td>
 		</tr>
 		<tr>
@@ -281,7 +240,7 @@ if ( !empty($logindisplay) )
 		</tr>";
 		$sugar_smarty->assign('CAPTCHA', $Captcha);
 		echo $captcha_js;
-
+	
 	}else{
 		echo "<script>
 		function validateAndSubmit(){generatepwd();}

@@ -45,20 +45,10 @@ $viewdefs['Prospects']['DetailView'] = array(
 'panels' =>array (
   'lbl_prospect_information' => array(
   array (
-    array (
-    'name'=>'full_name',
-    //BEGIN SUGARCRM flav=pro ONLY
-    'displayParams' => array (
-        'enableConnectors' => true,
-        'module' => 'Prospects',
-        'connectors' => 
-        array (
-            0 => 'ext_rest_twitter',
-        ),
+    'full_name',
+    
+    
     ),
-    //END SUGARCRM flav=pro ONLY 	    
-    ),
-  ),
 
   array (
     'title',
@@ -74,19 +64,7 @@ $viewdefs['Prospects']['DetailView'] = array(
   ),
   
   array (
-    array (
-        'name' => 'account_name',
-	    //BEGIN SUGARCRM flav=pro ONLY
-	    'displayParams' => array (
-	       'enableConnectors' => true,
-	       'module' => 'Prospects',
-	       'connectors' => 
-	       array (
-	          0 => 'ext_rest_linkedin',
-	       ),
-	    ),
-	    //END SUGARCRM flav=pro ONLY 
-    ),  
+    'account_name',
   	'phone_fax',
   ),
   

@@ -25,8 +25,7 @@ $disable_date_format = true;
 
 class SoapHelperWebServices {
 
-	function get_field_list($value, $fields, $translate=true)
-	{
+	function get_field_list($value,$fields,  $translate=true) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list');
 		$module_fields = array();
 		$link_fields = array();
@@ -34,7 +33,7 @@ class SoapHelperWebServices {
 
 			foreach($value->field_defs as $var){
 				if(!empty($fields) && !in_array( $var['name'], $fields))continue;
-				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' && $var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
+				if(isset($var['source']) && ($var['source'] != 'db' && $var['source'] != 'non-db' &&$var['source'] != 'custom_fields') && $var['name'] != 'email1' && $var['name'] != 'email2' && (!isset($var['type'])|| $var['type'] != 'relate'))continue;
 				if ($var['source'] == 'non_db' && (isset($var['type']) && $var['type'] != 'link')) {
 					continue;
 				}
@@ -43,7 +42,6 @@ class SoapHelperWebServices {
 				$options_ret = array();
 				// Apparently the only purpose of this check is to make sure we only return fields
 				//   when we've read a record.  Otherwise this function is identical to get_module_field_list
-
 				if( isset($var['required']) && $var['required'] && $var['required'] !== 'false' ){
 					$required = 1;
 				}
@@ -309,12 +307,17 @@ function validate_user($user_name, $password){
 		$app_list_strings = return_app_list_strings_language($current_language);
 		$modules = query_module_access_list($user);
 		ACLController :: filterModuleList($modules, false);
-		global $modInvisList;
+		global $modInvisList, $modInvisListActivities;
 
 		foreach($modInvisList as $invis){
 			$modules[$invis] = 'read_only';
 		}
 
+		if(isset($modules['Calendar']) || $modules['Activities']){
+			foreach($modInvisListActivities as $invis){
+					$modules[$invis] = $invis;
+			}
+		}
 		$actions = ACLAction::getUserActions($user->id,true);
 		foreach($actions as $key=>$value){
 			if(isset($value['module']) && $value['module']['access']['aclaccess'] < ACL_ALLOW_ENABLED){
@@ -354,7 +357,7 @@ function validate_user($user_name, $password){
 
 	}
 
-	function get_name_value_list($value){
+	function get_name_value_list(&$value){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list');
 		global $app_list_strings;
 		$list = array();
@@ -469,7 +472,7 @@ function validate_user($user_name, $password){
 		return $list;
 
 	} // fn
-
+	
 	function array_get_name_value_list($array){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->array_get_name_value_list');
 		$list = array();
@@ -543,37 +546,80 @@ function validate_user($user_name, $password){
 	function getRelationshipResults($bean, $link_field_name, $link_module_fields, $optional_where = '') {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->getRelationshipResults');
 		require_once('include/TimeDate.php');
-		global $current_user, $disable_date_format,  $timedate;;
+		global  $beanList, $beanFiles, $current_user;
+		global $disable_date_format;
 
 		$bean->load_relationship($link_field_name);
 		if (isset($bean->$link_field_name)) {
-			//First get all the related beans
-            $related_beans = $bean->$link_field_name->getBeans();
+			// get the query object for this link field
+			$query_array = $bean->$link_field_name->getQuery(true,array(),0,'',true);
+			if (isset($query_array['where'])) {
+				$query_array['where'] = str_ireplace("where", "", $query_array['where']);
+				if (!empty($optional_where)) {
+					$optional_where = $query_array['where'] . " and " . $optional_where;
+				} else {
+					$optional_where = $query_array['where'];
+				} // else
+			} // if
+
+			$params = array();
+			$params['joined_tables'] = $query_array['join_tables'];
+
+			// get the related module name and instantiate a bean for that.
+			$submodulename = $bean->$link_field_name->getRelatedModuleName();
+			$submoduleclass = $beanList[$submodulename];
+			require_once($beanFiles[$submoduleclass]);
+			$submodule = new $submoduleclass();
 			$filterFields = $this->filter_fields($submodule, $link_module_fields);
-            //Create a list of field/value rows based on $link_module_fields
+			$relFields = $bean->$link_field_name->getRelatedFields();
+			$roleSelect = '';
+
+			$idSetInSubModule = false;
+			if($submodulename == 'Users' && !in_array('id', $link_module_fields)){
+				$link_module_fields[] = 'id';
+				$idSetInSubModule = true;
+			}
+
+			if(!empty($relFields)){
+				foreach($link_module_fields as $field){
+					if(!empty($relFields[$field])){
+						$roleSelect .= ', ' . $query_array['join_tables'][0] . '.'. $field;
+					}
+				}
+			}
+			// create a query
+			$subquery = $submodule->create_new_list_query('',$optional_where ,$filterFields,$params, 0,'', true,$bean);
+			$query =  $subquery['select'].$roleSelect .   $subquery['from'].$query_array['join']. $subquery['where'];
+			$GLOBALS['log']->info('SoapHelperWebServices->getRelationshipResults query = ' . $query);
+
+			$result = $submodule->db->query($query, true);
 			$list = array();
-            foreach($related_beans as $id => $bean)
-            {
-                $row = array();
-                foreach ($filterFields as $field) {
-                    if (isset($bean->$field))
-                    {
-                        if (isset($bean->field_defs[$field]['type']) && $bean->field_defs[$field]['type'] == 'date') {
-                            $row[$field] = $timedate->to_display_date_time($bean->$field);
-                        }
-                        $row[$field] = $bean->$field;
-                    }
-                    else
-                    {
-                        $row[$field] = "";
-                    }
-                }
-                //Users can't see other user's hashes
-                if(is_a($bean, 'User') && $current_user->id != $bean->id && isset($row['user_hash'])) {
-                    $row['user_hash'] = "";
-                }
-                $list[] = $row;
-            }
+			while($row = $submodule->db->fetchByAssoc($result)) {
+				if (!$disable_date_format) {
+					foreach ($filterFields as $field) {
+						if (isset($submodule->field_defs[$field]) &&
+							isset($submodule->field_defs[$field]['type']) &&
+							isset($row[$field])) {
+
+								if ($submodule->field_defs[$field]['type'] == 'date') {
+									global $timedate;
+									$row[$field] = $timedate->to_display_date_time($row[$field]);
+								}
+								if ($submodule->field_defs[$field]['type'] == 'currency') {
+									// TODO: convert data from db to user preferred format absed on the community input
+								} // if
+						} // if
+
+					} // foreach
+				}
+				if($submodulename == 'Users' && $current_user->id != $row['id']) {
+					$row['user_hash'] = "";
+				} // if
+				if ($idSetInSubModule) {
+					unset($row['id']);
+				} // if
+				$list[] = $row;
+			}
 			$GLOBALS['log']->info('End: SoapHelperWebServices->getRelationshipResults');
 			return array('rows' => $list, 'fields_set_on_rows' => $filterFields);
 		} else {
@@ -695,10 +741,11 @@ function validate_user($user_name, $password){
 
 	function new_handle_set_entries($module_name, $name_value_lists, $select_fields = FALSE) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->new_handle_set_entries');
-		global $beanList, $beanFiles, $current_user, $app_list_strings;
+		global $beanList, $beanFiles, $current_user;
 
 		$ret_values = array();
 
+		global $current_user;
 		$class_name = $beanList[$module_name];
 		require_once($beanFiles[$class_name]);
 		$ids = array();
@@ -836,7 +883,7 @@ function validate_user($user_name, $password){
 		}
 	}
 
-	function get_return_value($value, $module){
+	function get_return_value(&$value, $module){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_return_value');
 		global $module_name, $current_user;
 		$module_name = $module;
@@ -861,7 +908,7 @@ function validate_user($user_name, $password){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_report_value');
 		$field_list = array();
 		$output_list = array();
-		$report = new Report(html_entity_decode($seed->content),'','',true);
+		$report = new Report(html_entity_decode($seed->content));
 		$report->enable_paging = false; //set paging = false for report.
 
 		$next_row_fn = 'get_next_row';
@@ -1047,7 +1094,7 @@ function validate_user($user_name, $password){
 	    } // else
 	} // fn
 
-	function check_for_duplicate_contacts($seed){
+	function check_for_duplicate_contacts(&$seed){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->check_for_duplicate_contacts');
 		require_once('modules/Contacts/Contact.php');
 

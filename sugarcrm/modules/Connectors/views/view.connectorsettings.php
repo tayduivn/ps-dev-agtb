@@ -26,7 +26,7 @@ class ViewConnectorSettings extends SugarView
  	/**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
-	protected function _getModuleTitleParams($browserTitle = false)
+	protected function _getModuleTitleParams()
 	{
 	    global $mod_strings;
 	    
@@ -51,7 +51,7 @@ class ViewConnectorSettings extends SugarView
     {
 		global $mod_strings, $app_strings;
 		
-		echo $this->getModuleTitle(false);
+		echo $this->getModuleTitle();
 		
 		$this->ss->assign('mod', $mod_strings);
 		$this->ss->assign('app', $app_strings);

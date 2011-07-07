@@ -181,14 +181,6 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
     'source'=>'non-db',
 		'vname'=>'LBL_EMAILS'
   ),
-  'documents'=>
-  array (
-      'name' => 'documents',
-      'type' => 'link',
-      'relationship' => 'documents_bugs',
-      'source' => 'non-db',
-      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
-  ),
   'contacts' =>
   array (
   	'name' => 'contacts',
@@ -256,10 +248,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        array('name' =>'bug_number', 'type' =>'unique', 'fields'=>array('bug_number', 'system_id')),
        //END SUGARCRM flav=pro ONLY
 
-       array('name' =>'idx_bug_name', 'type' =>'index', 'fields'=>array('name')),
-
-       array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id')),
-
+         array('name' =>'idx_bug_name', 'type' =>'index', 'fields'=>array('name'))
                                                       )
 
 , 'relationships' => array (

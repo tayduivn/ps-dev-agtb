@@ -56,7 +56,7 @@ global $theme;
 global $urlPrefix;
 
 
-echo getClassicModuleTitle("Query_Builder", array($mod_strings['LBL_MODULE_TITLE']), true); 
+echo get_module_title("Query_Builder", $mod_strings['LBL_MODULE_TITLE'], true); 
 if (!isset($where)) $where = "";
 
 $seed = new QueryBuilder();

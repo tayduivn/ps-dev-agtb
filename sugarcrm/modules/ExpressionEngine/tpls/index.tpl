@@ -19,61 +19,47 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<script src="include/javascript/sugarwidgets/SugarYUILoader.js"></script>
+{ext_includes}
 {literal}
 <script type="text/javascript">
-var loader = new YAHOO.util.YUILoader({
-    require : ["sugarwidgets"],
-    loadOptional: true,
-	//BEGIN SUGARCRM flav=int ONLY
-	filter: 'debug',
-	//END SUGARCRM flav=int ONLY
-    skin: { base: 'blank', defaultSkin: '' },
-	onSuccess: function(){console.log("loaded")},
-    allowRollup: true,
-    base: "include/javascript/yui/build/"
-});
-loader.addModule({
-    name :"sugarwidgets",
-    type : "js",
-    fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
-    varName: "YAHOO.SUGAR",
-    requires: ["datatable", "dragdrop", "treeview", "tabview"]
-});
-loader.insert();
-var DDEditorWindow = false;
-showEditor = function() {
-    if (!DDEditorWindow)
-        DDEditorWindow = new YAHOO.SUGAR.AsyncPanel('DDEditorWindow', {
-            width: 256,
-            draggable: true,
-            close: true,
-            constraintoviewport: true,
-            fixedcenter: false,
-            script: true,
-            modal: true
-        });
-    var win = DDEditorWindow;
-    win.setHeader("Dropdown Editor");
-    win.setBody("loading...");
-    win.render(document.body);
-    win.params = {
-        module:"ExpressionEngine",
-        action:"editDepDropdown",
-        loadExt:false,
-        embed: true,
-        view_module:"Accounts",
-        field: 'sub_industry_c',
-        package:"",
-        to_pdf:1
-    };
-    win.load('index.php?' + SUGAR.util.paramsToUrl(win.params), null, function()
-    {
-        DDEditorWindow.center();
-        SUGAR.util.evalScript(DDEditorWindow.body.innerHTML);
-    });
-    win.show();
-    win.center();
+	displayResult = function(result){
+		Ext.getCmp('formulaBuilderWindow').close();
+		console.log(result);
+	};
+	positionWindow = function() {
+		//Hack for window.center() which is broken under FF3
+		var win = Ext.getCmp('formulaBuilderWindow');
+		var view = {width:document.body.clientWidth, height:document.body.clientHeight};//Ext.getBody().getSize();
+		win.setPosition(Math.max(0, (view.width - win.getSize().width) / 2), 
+						Math.max(0, (view.height -win.getSize().height) / 2));
+	}
+	showEditor = function() {
+	var EditorWindow = new Ext.Window({
+		id: 'formulaBuilderWindow',
+		autoLoad: {
+			url:"index.php",
+			params: {
+				module:"ExpressionEngine",
+				action:"editFormula",
+				onSave:"displayResult",
+				onLoad:"positionWindow",
+				onClose:"function(){Ext.getCmp('formulaBuilderWindow').close();}",
+				loadExt:false,
+				embed: true,
+				targetModule:"Opportunities"
+			},
+			scripts: true
+		},
+		renderTo:"editorDiv",
+		modal:true,
+		plain:true,
+		resizable:false,
+		nodyBorder:false,
+		width:800
+		//autoHeight:true,
+		//autoWidth:true
+	});
+	EditorWindow.show();
 }
 </script>
 {/literal}

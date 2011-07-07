@@ -27,11 +27,18 @@ require_once('include/Expressions/Expression/Date/DateExpression.php');
 class DefineDateExpression extends DateExpression
 {
 	/**
-	 * Get the date from date expression, understands all strftime() formats
+	 * Returns the entire enumeration bare.
 	 */
-	function evaluate() {
+	function evaluate() {		
+		$this->includeTime = true;
 		$params = $this->getParameters()->evaluate();
-		return DateExpression::parse($params);
+		//$params = $this->convertFromUserFormat($params);
+		$time = strtotime($params);
+
+		if ( $time == false ) {
+			throw new Exception("Incorrect date format");
+		}
+		return date($this->internalDateTimeFormat, $time);
 	}
 
 
@@ -41,7 +48,7 @@ class DefineDateExpression extends DateExpression
 	static function getJSEvaluate() {
 		return <<<EOQ
 			var params = this.getParameters().evaluate();
-			var time   = SUGAR.util.DateUtils.parse(params, 'user');
+			var time   = SUGAR.util.DateUtils.convert(params);
 			if (time == false)	throw "Incorrect date format";
 
 			return time;

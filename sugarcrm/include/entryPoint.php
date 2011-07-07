@@ -78,11 +78,6 @@ set_include_path(
     get_include_path()
 );
 
-if (!defined('PHP_VERSION_ID')) {
-    $version_array = explode('.', phpversion());
-    define('PHP_VERSION_ID', ($version_array[0]*10000 + $version_array[1]*100 + $version_array[2]));
-}
-
 if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 {
 	header('Location: install.php');
@@ -151,9 +146,8 @@ require_once('modules/Users/authentication/AuthenticationController.php');
 require_once('include/utils/LogicHook.php');
 require_once('include/SugarTheme/SugarTheme.php');
 require_once('include/MVC/SugarModule.php');
-require_once('include/SugarCache/SugarCache.php');
-require('modules/Currencies/Currency.php');
 require_once('include/MVC/SugarApplication.php');
+require('modules/Currencies/Currency.php');
 //
 //SugarApplication::startSession();
 
@@ -182,8 +176,7 @@ if(!empty($sugar_config['session_dir'])) {
 }
 
 SugarApplication::preLoadLanguages();
-
-$timedate = TimeDate::getInstance();
+$timedate = new TimeDate();
 
 $GLOBALS['sugar_version'] = $sugar_version;
 $GLOBALS['sugar_flavor'] = $sugar_flavor;
