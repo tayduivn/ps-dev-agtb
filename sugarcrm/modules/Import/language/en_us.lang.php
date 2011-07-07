@@ -344,6 +344,12 @@ $mod_strings = array (
     'LBL_EXT_SOURCE_SIGN_IN' => 'Sign In',
     'LBL_DUP_HELP' => 'Here are the rows in the import file that were not imported because they contain data that matches values in existing records based on the duplicate check.',
     'LBL_SUMMARY' => 'Summary',
-    'LBL_ERROR_HELP' => 'Here are the rows in the import file that were not imported due to errors.'
+    'LBL_ERROR_HELP' => 'Here are the rows in the import file that were not imported due to errors.',
+    'LBL_EXTERNAL_MAP_HELP' => 'The table below contains the fields in the external source and the module fields to which they are mapped. Check the mappings to make sure that they are what you expect, and make changes, as necessary. Be sure to map to all of the required fields (noted by an asterisk).',
+    'LBL_EXTERNAL_MAP_SUB_HELP' => 'Click <b>Import Now</b> to import and duplicates will be identified based on matching names or email addresses.',
+    'LBL_EXTERNAL_FIELD_TOOLTIP' => 'This column displays the fields in the external source containing data that will be used to create new records.',
+    'LBL_EXTERNAL_DEFAULT_TOOPLTIP' => 'Indicate a value to use for the field in the created record if the field in the external source contains no data.',
+    'LBL_EXTERNAL_ASSIGNED_TOOLTIP' => 'To assign the new records to a user other than yourself, use the Default Value column to select a different user.',
+    'LBL_EXTERNAL_TEAM_TOOLTIP' => 'To assign the new records to teams other than your default team(s), use the Default Value column to select different teams.'
 );
 ?>
