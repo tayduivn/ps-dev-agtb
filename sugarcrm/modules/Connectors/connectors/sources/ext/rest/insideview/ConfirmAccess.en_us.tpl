@@ -24,15 +24,15 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
         <tbody>
             <tr>
-                <td nowrap="">
-                    <h3>
+                <td nowrap="" style="padding: 0px;">
+                    <h3 style="margin: -6px;">
                         <span>
                             <a name="insideview"> </a>
                             <span id="show_link_insideview" style="display: none">
-                                <a href="#" class="utilsLink" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo_expanded}" border="0" style="margin-bottom: 5px;"></a>
+                                <a href="#" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo_expanded}" border="0"></a>
                             </span>
                             <span id="hide_link_insideview" style="display: ">
-                                <a href="#" class="utilsLink" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo_collapsed}" border="0" style="margin-bottom: 5px;"></a>
+                                <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo_collapsed}" border="0"></a>
                             </span>
                         </span>
                     </h3>
@@ -44,22 +44,32 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
         </tbody>
     </table>
   <div id='subpanel_insideview' style='width:100%'>
-      <div id='insideViewConfirm' class="detail view" style="padding: 10px;{if $showInsideView}display:none;{/if}">
-	<div style="float: left; padding-bottom: 10px; width: 80%;">
-      <a href='http://www.insideview.com/' target='_blank' style='text-decoration: none;'><strong style='color: #d71e00;'>InsideView</strong></a> <strong>now comes preinstalled in SugarCRM.</strong>
+      <div id='insideViewConfirm' class="detail view" style="padding: 15px; width: 775px;{if $showInsideView}display:none;{/if}">
+      <div style="font-size: 14px;">
+      	<a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>InsideView</strong></a> <strong>now comes preinstalled in SugarCRM.</strong>
+      </div>
+      
+   
+      
+      
+	<div style="float: left; padding-bottom: 10px; font-size: 13px; padding-right: 20px; padding-top: 10px;">
+      
 
-          <br><br>
-           Get relevant company information, contacts, news, and social media insights all within your CRM. The InsideView connector is a <strong>FREE</strong> service that automatically displays in your leads, accounts, contacts and opportunities.
+       
+           Get relevant company information, contacts, news, and social media insights all within your CRM.<br> The InsideView connector is a <strong>FREE</strong> service that automatically displays in your leads, accounts,<br> contacts and opportunities.
 
        
       </div>
       
-      <div style="float: right; padding-bottom: 10px; width: 190px;"><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/><a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>InsideView in<br>30 seconds.</a></div>
       
-               <hr>
+         <div style="float: left; padding-bottom: 10px; width: 190px;"><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/><a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>InsideView in<br>30 seconds.</a></div>
+      
+      
+               <hr style="width: 770px;">
      By clicking 'Get Started' you agree to InsideView's  <a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>terms of use</a> and <a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>privacy policy</a>.
 
-      <button onclick="allowInsideView(); return false;" class='button primary' style='float: right; border: 1px solid #d71e00; background-color: #eeeeee; background-image: none; text-shadow: none; color: #222; margin-bottom: 5px;'>Get Started!</button>
+      <button onclick="allowInsideView(); return false;" class='button primary' style='float: right; border: 1px solid #d71e00; background-color: #eeeeee; background-image: none; text-shadow: 1px 1px #FFFFFF; color: #222; margin-bottom: 5px; background-image: -moz-linear-gradient(center top , #F9F9F9 0%, #F2F2F2 50%, #F1F1F1 50%, #DDDDDD 100%);'>Get Started!</button>
+      <div class="clear"></div>
       
       </div>
       <iframe id='insideViewFrame' src='{$URL}' scrolling="no" style='border:0px; width:100%;height:400px;overflow:hidden;{if !$showInsideView}display:none;{else}display:block;{/if}'></iframe>
