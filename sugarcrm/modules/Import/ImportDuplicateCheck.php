@@ -278,7 +278,7 @@ class ImportDuplicateCheck
 
         $index_array = array();
         $fields_used = array();
-        $mstr_exclude_array = array('all'=>array('team_set_id','id','deleted'),'contacts'=>array('email2'), array('leads'=>'reports_to_id'), array('prospects'=>'tracker_key'));
+        $mstr_exclude_array = array('all'=>array('team_set_id'),'contacts'=>array('email2'), array('leads'=>'reports_to_id'), array('prospects'=>'tracker_key'));
 
         //create exclude array from subset of applicable mstr_exclude_array elements
         $exclude_array =  isset($mstr_exclude_array[strtolower($this->_focus->module_dir)])?array_merge($mstr_exclude_array[strtolower($this->_focus->module_dir)], $mstr_exclude_array['all']) : $mstr_exclude_array['all'];
@@ -291,7 +291,7 @@ class ImportDuplicateCheck
                     $fieldName='';
 
                     //skip this field if it is the deleted field, not in the importable keys array, or a field in the exclude array
-                    if (!in_array($field, $importable_keys) || in_array($field, $exclude_array)) continue;
+                    if ($field == 'deleted' || !in_array($field, $importable_keys) || in_array($field, $exclude_array)) continue;
                     $fieldDef = $this->_focus->getFieldDefinition($field);
 
                     //skip if this field is already defined (from another index)
@@ -318,7 +318,7 @@ class ImportDuplicateCheck
         //now process any custom fields that are marked as importable.
         //we already have the array of importable fields, iterate for custom fields
         foreach($import_fields as $cstm_k => $cstm_v){
-            if(!empty($cstm_v['source']) && $cstm_v['source'] == 'custom_fields' && isset($this->_focus->$cstm_v['name'])){
+            if(!empty($cstm_v['source']) && $cstm_v['source'] == 'custom_fields'){
                 //this is a custom field so populate if it hasnt been used yet
                     if (in_array($cstm_v['name'],$fields_used)) continue;
 
