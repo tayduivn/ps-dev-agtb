@@ -125,7 +125,7 @@ class Link2 {
     public function get($role = false) {
         if (!$this->loaded)
             $this->load();
-        
+
         return array_keys($this->beans);
     }
 
@@ -140,7 +140,7 @@ class Link2 {
 
 	public function getRelatedModuleName() {
 		if (!$this->relationship) return false;
-        
+
         if ($this->getSide() == REL_LHS) {
             return $this->relationship->getRHSModule();
 		} else {
@@ -263,9 +263,9 @@ class Link2 {
 
         foreach($rel_keys as $key)
         {
-            if (!is_a($key, "SugarBean")) {
+            if (!($key instanceof SugarBean)) {
                 $key = $this->getRelatedBean($key);
-                if (!is_a($key, "SugarBean")) {
+                if (!($key instanceof SugarBean)) {
                     $GLOBALS['log']->error("Unable to load related bean by id");
                     return false;
                 }
@@ -296,7 +296,7 @@ class Link2 {
             $this->focus = BeanFactory::getBean($this->focus->module_name, $id);
         if (!empty($related_id))
         {
-            if (!is_a($related_id, "SugarBean")) {
+            if (!($related_id instanceof SugarBean)) {
                 $related_id = $this->getRelatedBean($related_id);
             }
             if ($this->getSide() == REL_LHS) {
