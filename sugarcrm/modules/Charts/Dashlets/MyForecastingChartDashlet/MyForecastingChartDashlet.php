@@ -34,7 +34,17 @@ require_once('include/Dashlets/DashletGenericChart.php');
 
 class MyForecastingChartDashlet extends DashletGenericChart 
 {
-    public $isConfigurable = false;
+    /**
+     * @see Dashlet::$isConfigurable
+     */
+    public $isConfigurable = true;
+    
+    
+    /**
+     * @see DashletGenericChart::$_seedName
+     */
+    protected $_seedName = 'Forecasts';
+    
     
     /**
      * @see DashletGenericChart::display()
@@ -45,8 +55,9 @@ class MyForecastingChartDashlet extends DashletGenericChart
         $forecasting_chart = new forecast_charts();
         
         return $this->getTitle('<div align="center"></div>') . 
-            '<div align="center"><script type="text/javascript" src="' . getJSPath('include/javascript/swfobject.js') . '"></script>' . 
-            $forecasting_chart->forecast_history($GLOBALS['current_user'],gmdate($GLOBALS['timedate']->get_db_date_time_format()),'Direct',5,true,$this->id) . '</div><br />';
+            '<div align="center">' . 
+            $forecasting_chart->forecast_history($GLOBALS['current_user'],TimeDate::getInstance()->nowDb(),'Direct',5,true,$this->id) . '</div>'
+			. $this->processAutoRefresh();
     }  
 
 }

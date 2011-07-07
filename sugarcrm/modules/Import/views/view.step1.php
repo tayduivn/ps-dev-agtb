@@ -32,185 +32,78 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/MVC/View/SugarView.php');
+require_once('modules/Import/views/ImportView.php');
+require_once('include/externalAPI/ExternalAPIFactory.php');
+        
+class ImportViewStep1 extends ImportView
+{
 
-        
-class ImportViewStep1 extends SugarView 
-{	
- 	/**
-     * @see SugarView::getMenu()
-     */
-    public function getMenu(
-        $module = null
-        )
-    {
-        global $mod_strings, $current_language;
-        
-        if ( empty($module) )
-            $module = $_REQUEST['import_module'];
-        
-        $old_mod_strings = $mod_strings;
-        $mod_strings = return_module_language($current_language, $module);
-        $returnMenu = parent::getMenu($module);
-        $mod_strings = $old_mod_strings;
-        
-        return $returnMenu;
-    }
-    
- 	/**
-     * @see SugarView::_getModuleTab()
-     */
- 	protected function _getModuleTab()
-    {
-        global $app_list_strings, $moduleTabMap;
-        
- 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
-        if ( !empty($_REQUEST['module_tab']) )
-            return $_REQUEST['module_tab'];
-        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
-            return $moduleTabMap[$_REQUEST['import_module']];
-        // Default anonymous pages to be under Home
-        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
-            return 'Home';
-        else
-            return $_REQUEST['import_module'];
- 	}
- 	
- 	/**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams()
-	{
-	    global $mod_strings;
-	    
-    	return array(
-           "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='".SugarThemeRegistry::current()->getImageURL('icon_'.$_REQUEST['import_module'].'_32.png')."' alt='".$_REQUEST['import_module']."' title='".$_REQUEST['import_module']."' align='absmiddle'></a>",
-    	   "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>",
-    	   $mod_strings['LBL_STEP_1_TITLE'],
-    	   );
-    }
-    
+    protected $pageTitleKey = 'LBL_STEP_1_TITLE';
+
  	/** 
      * @see SugarView::display()
      */
  	public function display()
     {
-        global $mod_strings, $app_list_strings, $app_strings, $current_user;
+        global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
-        
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle());
-        $this->ss->assign("MOD", $mod_strings);
-        $this->ss->assign("APP", $app_strings);
+
+        $this->instruction = 'LBL_SELECT_DS_INSTRUCTION';
+        $this->ss->assign('INSTRUCTION', $this->getInstruction());
+
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
-        
-        
-        // handle publishing and deleting import maps
-        if (isset($_REQUEST['delete_map_id'])) {
-            $import_map = new ImportMap();
-            $import_map->mark_deleted($_REQUEST['delete_map_id']);
+
+
+        $showModuleSelection = ($_REQUEST['import_module'] == 'Administration');
+        $importableModulesOptions = array();
+        if($showModuleSelection)
+        {
+            $importableModulesOptions = get_select_options_with_id($this->getImportableModules(), '');
         }
-        
-        if (isset($_REQUEST['publish']) ) {
-            $import_map = new ImportMap();
-            $result = 0;
-        
-            $import_map = $import_map->retrieve($_REQUEST['import_map_id'], false);
-        
-            if ($_REQUEST['publish'] == 'yes') {
-                $result = $import_map->mark_published($current_user->id,true);
-                if (!$result) {
-                    $this->ss->assign("ERROR",$mod_strings['LBL_ERROR_UNABLE_TO_PUBLISH']);
-                }
-            }
-            elseif ( $_REQUEST['publish'] == 'no') {
-                // if you don't own this importmap, you do now!
-                // unless you have a map by the same name
-                $result = $import_map->mark_published($current_user->id,false);
-                if (!$result) {
-                    $this->ss->assign("ERROR",$mod_strings['LBL_ERROR_UNABLE_TO_UNPUBLISH']);
-                }
-            }
-        
-        }
-        
-        // load bean
-        $focus = loadImportBean($_REQUEST['import_module']);
-        if ( !$focus ) {
-            showImportError($mod_strings['LBL_ERROR_IMPORTS_NOT_SET_UP'],$_REQUEST['import_module']);
-            return;
-        }
-        
-        //BEGIN SUGARCRM flav!=sales ONLY
-        // trigger showing other software packages
-        $this->ss->assign("show_salesforce",false);
-        $this->ss->assign("show_outlook",false);
-        $this->ss->assign("show_act",false);
-        switch ($_REQUEST['import_module']) {
-            case "Prospects":
-                break;
-            case "Accounts":
-                $this->ss->assign("show_salesforce",true);
-                $this->ss->assign("show_act",true);
-                break;
-            case "Contacts":
-                $this->ss->assign("show_salesforce",true);
-                $this->ss->assign("show_outlook",true);
-                $this->ss->assign("show_act",true);
-                break;
-            default:
-                $this->ss->assign("show_salesforce",true);
-                break;
-        }
-        //END SUGARCRM flav!=sales ONLY
-        
-        // get user defined import maps
-        $this->ss->assign('is_admin',is_admin($current_user));
-        $import_map_seed = new ImportMap();
-        $custom_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'assigned_user_id' => $current_user->id,
-                'is_published'     => 'no',
-                'module'           => $_REQUEST['import_module'],
-                )
-            );
-        
-        if ( count($custom_imports_arr) ) {
-            $custom = array();
-            foreach ( $custom_imports_arr as $import) {
-                $custom[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
-            }
-            $this->ss->assign('custom_imports',$custom);
-        }
-        
-        // get globally defined import maps
-        $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(
-            array(
-                'is_published' => 'yes',
-                'module'       => $_REQUEST['import_module'],
-                )
-            );
-        
-        if ( count($published_imports_arr) ) {
-            $published = array();
-            foreach ( $published_imports_arr as $import) {
-                $published[] = array(
-                    "IMPORT_NAME" => $import->name,
-                    "IMPORT_ID"   => $import->id,
-                    );
-            }
-            $this->ss->assign('published_imports',$published);
-        }
-        
-        $this->ss->display('modules/Import/tpls/step1.tpl');
+        $this->ss->assign("showModuleSelection", $showModuleSelection);
+        $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
+        $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
+        $this->ss->assign("EXTERNAL_SOURCES_OPTIONS", get_select_options_with_id($this->getAllImportableExternalEAPMs(),$selectExternal) );
+        $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
+
+        $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
+        $this->ss->assign("CONTENT",$content);
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
-    
+
+    private function getImportableModules()
+    {
+        global $beanList;
+        $importableModules = array();
+        foreach ($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) )
+            {
+                $tmp = new $beanName();
+                if( isset($tmp->importable) && $tmp->importable )
+                    $importableModules[$moduleName] = $moduleName;
+            }
+        }
+
+        asort($importableModules);
+        return $importableModules;
+    }
+
+    private function getAllImportableExternalEAPMs()
+    {
+        ExternalAPIFactory::clearCache();
+        return ExternalAPIFactory::getModuleDropDown('Import', TRUE, TRUE);
+    }
+
+    private function getAuthenticatedImportableExternalEAPMs()
+    {
+        return ExternalAPIFactory::getModuleDropDown('Import', FALSE, FALSE);
+    }
     /**
      * Returns JS used in this view
      */
@@ -221,73 +114,105 @@ class ImportViewStep1 extends SugarView
         return <<<EOJAVASCRIPT
 <script type="text/javascript">
 <!--
-document.getElementById('custom_enclosure').onchange = function()
-{
-    document.getElementById('importstep1').custom_enclosure_other.style.display = ( this.value == 'other' ? '' : 'none' );
-}
 
 document.getElementById('gonext').onclick = function()
 {
     clear_all_errors();
-    var sourceSelected = false;
-    var typeSelected = false;
-    var isError = false;
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){ 
-        if ( !sourceSelected && inputs[i].name == 'source' ){
-            if (inputs[i].checked) {
-                sourceSelected = true;
-                if ( inputs[i].value == 'other' && document.getElementById('importstep1').custom_delimiter.value == '' ) {
-                    add_error_style('importstep1','custom_delimiter',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_CUSTOM_DELIMITER']}");
-                    isError = true;
-                }
-            }
+    var isCsvSource = document.getElementById('csv_source').checked;
+    if( isCsvSource )
+    {
+        document.getElementById('importstep1').action.value = 'Step2';
+        return true;
+    }
+    else
+    {
+        var extEl = document.getElementById('external_source');
+        if(extEl.selectedIndex == -1 || extEl.options[extEl.selectedIndex].value == '')
+        {
+            add_error_style('importstep1','external_source',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_EXTERNAL_SOURCE']}");
+            return false;
         }
-        if ( !typeSelected && inputs[i].name == 'type' ){
-            if (inputs[i].checked) {
-                typeSelected = true;
-            }
-        }
+
+        document.getElementById('importstep1').action.value = 'ExtStep1';
+        return true;
     }
-    if ( !sourceSelected ) {
-        add_error_style('importstep1','source\'][\'' + (document.getElementById('importstep1').source.length - 1) + '',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_WHAT_IS']}");
-        isError = true;
-    }
-    if ( !typeSelected ) {
-        add_error_style('importstep1','type\'][\'1',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_IMPORT_TYPE']}");
-        isError = true;
-    }
-    return !isError;
 }
 
-YAHOO.util.Event.onDOMReady(function()
-{ 
-    var inputs = document.getElementsByTagName('input');
-    for (var i = 0; i < inputs.length; ++i ){ 
-        if (inputs[i].name == 'source' ) {
-            inputs[i].onclick = function() 
-            {
-                parentRow = this.parentNode.parentNode;
-                switch(this.value) {
-                case 'other':
-                    enclosureRow = document.getElementById('customEnclosure').parentNode.removeChild(document.getElementById('customEnclosure'));
-                    parentRow.parentNode.insertBefore(enclosureRow, document.getElementById('customDelimiter').nextSibling);
-                    document.getElementById('customDelimiter').style.display = '';
-                    document.getElementById('customEnclosure').style.display = '';
-                    break;
-                case 'tab': case 'csv':
-                    enclosureRow = document.getElementById('customEnclosure').parentNode.removeChild(document.getElementById('customEnclosure'));
-                    parentRow.parentNode.insertBefore(enclosureRow, parentRow.nextSibling);
-                    document.getElementById('customDelimiter').style.display = 'none';
-                    document.getElementById('customEnclosure').style.display = '';
-                    break;
-                default:
-                    document.getElementById('customDelimiter').style.display = 'none';
-                    document.getElementById('customEnclosure').style.display = 'none';
-                }
-            }
+
+YAHOO.util.Event.onDOMReady(function(){
+
+    function toggleExternalSource(el)
+    {
+        var trEl = document.getElementById('external_sources_tr');
+        var currentVisibility = trEl.style.display;
+        var newVisibility = (currentVisibility == 'none') ? '' : 'none';
+        trEl.style.display = newVisibility;
+        if(newVisibility == 'none')
+        {
+            document.getElementById('gonext').disabled = false;
+            document.getElementById('external_source').selectedIndex = 0;
+            document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+        }
+        else
+        {
+            document.getElementById('gonext').disabled = true;
         }
     }
+    
+    YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
+
+    function isExtSourceAuthenticated(source)
+    {
+        if( typeof(auth_sources[source]) != 'undefined')
+            return true;
+        else
+            return false;
+    }
+    
+    function isExtSourceValid(el)
+    {
+        if(this.value == '')
+        {
+            document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+            return '';
+        }
+        if( !isExtSourceAuthenticated(this.value) )
+        {
+            document.getElementById('ext_source_sign_in_bttn').style.display = '';
+            document.getElementById('gonext').disabled = true;
+        }
+        else
+        {
+            document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+            document.getElementById('gonext').disabled = false;
+        }
+    }
+    YAHOO.util.Event.addListener('external_source', "change", isExtSourceValid);
+
+
+    function openExtAuthWindow()
+    {
+        var extSource = document.getElementById('external_source').value;
+
+        var import_module = document.getElementById('importstep1').import_module.value;
+        var url = "index.php?module=EAPM&return_module=Import&action=EditView&application=" + extSource + "&return_action=" + import_module;
+        document.location = url;
+    }
+
+    YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+
+    function initExtSourceSelection()
+    {
+        var el1 = YAHOO.util.Dom.get('ext_source');
+        var el2 = YAHOO.util.Dom.get('external_source');
+        if(el2.value == '')
+            return;
+            
+        el1.checked = true;
+        toggleExternalSource();
+        isExtSourceValid.call({value:el2.value});
+    }
+    initExtSourceSelection();
 });
 -->
 </script>

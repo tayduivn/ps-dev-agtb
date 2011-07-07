@@ -83,9 +83,6 @@ $listViewDefs['Opportunities'] = array(
 		'width' => '10', 
 		'label' => 'LBL_LIST_DATE_CLOSED',
         'default' => true),
-    'DATE_ENTERED' => array(
-        'width' => '10', 
-        'label' => 'LBL_DATE_ENTERED'),
     'CREATED_BY_NAME' => array(
         'width' => '10', 
         'label' => 'LBL_CREATED'),
@@ -103,7 +100,11 @@ $listViewDefs['Opportunities'] = array(
         'default' => true),
     'MODIFIED_BY_NAME' => array(
         'width' => '5', 
-        'label' => 'LBL_MODIFIED')
+        'label' => 'LBL_MODIFIED'),
+    'DATE_ENTERED' => array(
+        'width' => '10', 
+        'label' => 'LBL_DATE_ENTERED',
+		'default' => true)
 );
 
 ?>

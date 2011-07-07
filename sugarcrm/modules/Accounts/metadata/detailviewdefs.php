@@ -3,7 +3,14 @@
  * The contents of this file are subject to
  * *******************************************************************************/
 $viewdefs['Accounts']['DetailView'] = array(
-    'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES')),
+    'templateMeta' => array('form' => array('buttons'=>array('EDIT', 
+    'DUPLICATE', 
+    'DELETE', 
+    'FIND_DUPLICATES',
+//BEGIN SUGARCRM flav!=com ONLY
+	'CONNECTOR'
+//END SUGARCRM flav!= com ONLY
+)),
                             'maxColumns' => '2',
                             //BEGIN SUGARCRM flav=pro || flav=sales ONLY
                             'useTabs' => true,
@@ -25,6 +32,18 @@ $viewdefs['Accounts']['DetailView'] = array(
             'name' => 'name',
             'comment' => 'Name of the Company',
             'label' => 'LBL_NAME',
+            'displayParams' => 
+              array (
+                'enableConnectors' => true,
+                'module' => 'Accounts',
+                'connectors' => 
+                array (
+                  0 => 'ext_rest_linkedin',
+                  //BEGIN SUGARCRM flav=pro ONLY
+                  1 => 'ext_rest_twitter',
+                  //END SUGARCRM flav=pro ONLY
+                ),
+            ),          
           ),
           array (
             'name' => 'phone_office',

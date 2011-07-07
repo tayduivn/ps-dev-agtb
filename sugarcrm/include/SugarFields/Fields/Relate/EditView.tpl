@@ -48,7 +48,7 @@ onclick='open_popup(
 	"single", 
 	true
 );' {{if isset($displayParams.javascript.btn)}}{{$displayParams.javascript.btn}}{{/if}}><img src="{sugar_getimagepath file="id-ff-select.png"}"></button>{{if empty($displayParams.selectOnly) }}<button type="button" name="btn_clr_{{$idname}}" id="btn_clr_{{$idname}}" tabindex="{{$tabindex}}" title="{$APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" class="button lastChild" 
-onclick="this.form.{{$idname}}.value = ''; this.form.{{if !empty($displayParams.idName)}}{{$displayParams.idName}}_{{/if}}{{sugarvar key='id_name'}}.value = '';" 
+onclick="document.forms['{$form_name}'].{{$idname}}.value = ''; document.forms['{$form_name}'].{{if !empty($displayParams.idName)}}{{$displayParams.idName}}_{{/if}}{{sugarvar key='id_name'}}.value = ''; var tempEvent = document.createEvent('HTMLEvents'); tempEvent.initEvent('change', true, true); document.forms['{$form_name}'].{{$idname}}.dispatchEvent(tempEvent); var tempEvent = document.createEvent('HTMLEvents'); tempEvent.initEvent('change', true, true); document.forms['{$form_name}'].{{if !empty($displayParams.idName)}}{{$displayParams.idName}}_{{/if}}{{sugarvar key='id_name'}}.dispatchEvent(tempEvent);"
 value="{$APP.LBL_CLEAR_BUTTON_LABEL}" {{if isset($displayParams.javascript.btn_clear)}}{{$displayParams.javascript.btn_clear}}{{/if}}><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
 {{/if}}
 </span>

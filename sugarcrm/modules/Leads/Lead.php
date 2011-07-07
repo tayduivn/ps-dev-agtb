@@ -261,7 +261,7 @@ class Lead extends Person {
 		if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
-                                leads.*, email_addresses.email_address email1,
+                                leads.*, email_addresses.email_address email_address,
                                 users.user_name assigned_user_name";
                          //BEGIN SUGARCRM flav=pro ONLY
                          $query .= ", teams.name team_name";
@@ -581,7 +581,22 @@ class Lead extends Person {
         
         return $return_array;
     }
-	
+
+    /**
+     * Returns array of lead conversion activity options
+     *
+     * @return string SQL statement
+     */
+    public static function getActivitiesOptions() {
+
+        if (isset($GLOBALS['app_list_strings']['lead_conv_activity_opt'])) {
+            return $GLOBALS['app_list_strings']['lead_conv_activity_opt'];
+        }
+        else {
+            return array();
+        }
+    }
+
     /**
      * Returns query to find the related meetings created pre-5.1
      *

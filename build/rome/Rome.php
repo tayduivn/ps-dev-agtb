@@ -492,9 +492,9 @@ public function buildFile ($path, $startPath, $skipBuilds = array() ){
 public function cleanPath($path){
 		if(empty($this->startPath))return $path;
         else if(empty ($this->config['mergeDirs']) ){
-         	return str_replace($this->startPath . '/', '', $path);
+         	return str_replace($this->startPath . DIRECTORY_SEPARATOR, '', $path);
         }else {
-        	$path = str_replace($this->startPath . '/', '', $path);
+        	$path = str_replace($this->startPath . DIRECTORY_SEPARATOR, '', $path);
         	return str_replace( 'translations', $this->config['mergeDirs']['translations'], $path);
         }
 }
@@ -517,7 +517,7 @@ protected function writeFiles($path, $skipBuilds=array()){
                 	if ( $data != '') $o = str_replace("$var", "$data", $o);
                 }
                 //str_replace is equiv to dos2unix command
-                 file_put_contents($this->buildPath . '/' . $f . '/' . $path, str_replace("\r\n", "\n", $o));
+                 file_put_contents($this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path, str_replace("\r\n", "\n", $o));
         }
 
 }
@@ -539,7 +539,7 @@ protected function quickCopy($orig_path, $skipBuilds){
       foreach($this->active as $f=>$a){
             if(!empty($this->config['blackList'][$f][$path]) || !empty($skipBuilds[$f]) || !empty($this->config['skipBuilds'][$f]))continue;
               $this->makeDirs(dirname($path), $f);
-              $b_path = $this->buildPath . '/' . $f . '/' . $path;
+              $b_path = $this->buildPath . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . $path;
               copy($orig_path, $b_path);
 
      }

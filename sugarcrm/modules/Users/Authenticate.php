@@ -26,7 +26,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-session_regenerate_id(false); 
+if (!defined('SUGAR_PHPUNIT_RUNNER')) {
+    session_regenerate_id(false); 
+}
 global $mod_strings;
 //BEGIN SUGARCRM flav=pro ONLY
 $res = $GLOBALS['sugar_config']['passwordsetting'];
@@ -35,15 +37,16 @@ $authController->login($_REQUEST['user_name'], $_REQUEST['user_password']);
 // authController will set the authenticated_user_id session variable
 if(isset($_SESSION['authenticated_user_id'])) {
 	// Login is successful
-	if( $_SESSION['hasExpiredPassword'] == '1' && $_REQUEST['action'] != 'Save'){
+	if ( $_SESSION['hasExpiredPassword'] == '1' && $_REQUEST['action'] != 'Save') {
 		$GLOBALS['module'] = 'Users';
         $GLOBALS['action'] = 'ChangePassword';
         ob_clean();
         header("Location: index.php?module=Users&action=ChangePassword");
         sugar_cleanup(true);
-}
+    }
     global $record;
     global $current_user;
+    global $sugar_config;
     
     //BEGIN SUGARCRM flav=pro ONLY
     if ( isset($_SESSION['isMobile']) 
@@ -57,10 +60,10 @@ if(isset($_SESSION['authenticated_user_id'])) {
     }
     //END SUGARCRM flav=pro ONLY
     
-    $GLOBALS['module'] = !empty($_REQUEST['login_module']) ? '?module='.$_REQUEST['login_module'] : '?module=Home';
-   	$GLOBALS['action'] = !empty($_REQUEST['login_action']) ? '&action='.$_REQUEST['login_action'] : '&action=index';
+    $GLOBALS['module'] = !empty($_REQUEST['login_module']) ? '?module='.$_REQUEST['login_module'] : '?module='.( !empty($sugar_config['default_module']) ? $sugar_config['default_module'] : 'Home' );
+    $GLOBALS['action'] = !empty($_REQUEST['login_action']) ? '&action='.$_REQUEST['login_action'] : '&action='.( !empty($sugar_config['default_action']) ? $sugar_config['default_action'] : 'index' );
     $GLOBALS['record']= !empty($_REQUEST['login_record']) ? '&record='.$_REQUEST['login_record'] : '';
-
+    
 	// awu: $module is somehow undefined even though the super globals is set, so we set the local variable here
 	$module = $GLOBALS['module'];
 	$action = $GLOBALS['action'];
@@ -68,7 +71,12 @@ if(isset($_SESSION['authenticated_user_id'])) {
      
     global $current_user;
     //C.L. Added $hasHistory check to respect the login_XXX settings if they are set
-    $hasHistory = (!empty($_REQUEST['login_module']) || !empty($_REQUEST['login_action']) || !empty($_REQUEST['login_record']));
+    $hasHistory = (!empty($_REQUEST['login_module']) 
+        || !empty($_REQUEST['login_action']) 
+        || !empty($_REQUEST['login_record']) 
+        || !empty($sugar_config['default_module']) 
+        || !empty($sugar_config['default_action']) 
+        );
     if(isset($current_user) && !$hasHistory){
 	    $modListHeader = query_module_access_list($current_user);
 	    //try to get the user's tabs
@@ -99,6 +107,7 @@ if(isset($_SESSION['isMobile'])){
 
 //adding this for bug: 21712.
 $GLOBALS['app']->headerDisplayed = true;
-sugar_cleanup();
-header($url);
-?>
+if (!defined('SUGAR_PHPUNIT_RUNNER')) {
+    sugar_cleanup();
+    header($url);
+}

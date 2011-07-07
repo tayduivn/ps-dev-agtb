@@ -480,6 +480,7 @@ function createSchema($execute=false,$return=false,&$response){
 		if(file_exists($fk_schema_file)) {
 			unlink($fk_schema_file);
 		}
+        global $mod_strings;
         if(!file_exists($fk_schema_file)) {
 			if(function_exists('sugar_fopen')){
 				$fp = @sugar_fopen($fk_schema_file, 'w+'); // attempts to create file
@@ -494,7 +495,7 @@ function createSchema($execute=false,$return=false,&$response){
 		}
 
         if(@fwrite($fp, $sql_fk) === false) {
-				$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
+				$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log');
 				die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
 		 }
 
@@ -528,7 +529,7 @@ function createSchema($execute=false,$return=false,&$response){
 		}
 
 	    if(@fwrite($fp, $sql) === false) {
-				$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
+				$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log');
 				die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
 		 }
 		if(file_exists($comments_schema_file)) {
@@ -561,7 +562,7 @@ function createSchema($execute=false,$return=false,&$response){
 		}
 
 	    if(@fwrite($fp, $comments_sql) === false) {
-				$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log: '.$entry);
+				$GLOBALS['log']->fatal('UpgradeWizard could not write to upgradeWizard.log');
 				die($mod_strings['ERR_UW_LOG_FILE_UNWRITABLE']);
 		 }
 

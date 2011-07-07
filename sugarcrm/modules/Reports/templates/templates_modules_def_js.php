@@ -91,21 +91,9 @@ var link_defs_<?php echo $module_name; ?> = new Object();
 	    }	
 		if(empty($relationships[$linked_field['relationship']]))
 		{
-			$relationships[$linked_field['relationship']] = $module->$field->_relationship;
+			$relationships[$linked_field['relationship']] = $module->$field->relationship;
 		}
 	
-		$bean_is_lhs=$module->$field->_get_bean_position();
-	
-		$position_js = '"bean_is_lhs":false';
-		if($bean_is_lhs== true)
-		{
-			$position_js = '"bean_is_lhs":true';
-		}
-		$link_type = ',"link_type":"many"';
-		if(! empty($linked_field['link_type']))
-		{
-			$link_type = ',"link_type":"'.$linked_field['link_type'].'"';
-		}
 		if(! empty($linked_field['vname']))
 		{
 			$linked_field['label'] =translate($linked_field['vname']);
@@ -114,10 +102,15 @@ var link_defs_<?php echo $module_name; ?> = new Object();
 		}
 	  	$linked_field['label'] = preg_replace('/:$/','',$linked_field['label']);
 		$linked_field['label'] = addslashes($linked_field['label']);
-?>
-link_defs_<?php echo $module_name; ?>[ "<?php echo $linked_field['name']; ?>"] = {"name":"<?php echo $linked_field['name'];?>","relationship_name":"<?php echo $linked_field['relationship']; ?>",<?php echo $position_js;?><?php echo $link_type; ?>,"label":"<?php echo $linked_field['label']; ?>"};
 
-<?php
+        echo "link_defs_{$module_name}[ '{$linked_field['name']}' ] = " . json_encode(array(
+            'name' => $linked_field['name'],
+            'relationship_name' => $linked_field['relationship'],
+            'bean_is_lhs' => $module->$field->getSide() == REL_LHS,
+            'link_type' => $module->$field->getType(),
+            'label' => $linked_field['label'],
+            'module' => $module->$field->getRelatedModuleName()
+        )) . ";\n";
     }
 ?>
 var field_defs_<?php echo $module_name; ?> = new Object();
@@ -342,10 +335,11 @@ module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes($app_l
 		$rhs_bean_name = $beanList[$relationship->rhs_module];
 		array_push($rel_defs_array, "\"lhs_bean_name\":\"".$lhs_bean_name."\"");
 		array_push($rel_defs_array, "\"rhs_bean_name\":\"".$rhs_bean_name."\"");
-	
-		foreach($relationship->list_fields as $rel_field)
+        
+		foreach($relationship->def as $rel_field => $value)
 		{
-			array_push($rel_defs_array, "\"$rel_field\":\"".$relationship->$rel_field."\"");
+		    if (!is_array($value) && !is_object($value))
+                array_push($rel_defs_array, '"' . $rel_field . '":"' . $value . '"');
 		}
 		$rel_defs = "{".implode(',',$rel_defs_array)."}";
 	
@@ -528,6 +522,20 @@ qualifiers[qualifiers.length] = {name:'between_datetimes',value:'<?php echo $mod
 qualifiers[qualifiers.length] = {name:'not_equals_str',value:'<?php echo $mod_strings['LBL_NOT_ON']; ?>'};
 qualifiers[qualifiers.length] = {name:'empty',value:'<?php echo $mod_strings['LBL_IS_EMPTY']; ?>'};
 qualifiers[qualifiers.length] = {name:'not_empty',value:'<?php echo $mod_strings['LBL_IS_NOT_EMPTY']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_yesterday',value:'<?php echo $mod_strings['LBL_YESTERDAY']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_today',value:'<?php echo $mod_strings['LBL_TODAY']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_tomorrow',value:'<?php echo $mod_strings['LBL_TOMORROW']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_last_7_days',value:'<?php echo $mod_strings['LBL_LAST_7_DAYS']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_7_days',value:'<?php echo $mod_strings['LBL_NEXT_7_DAYS']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_last_month',value:'<?php echo $mod_strings['LBL_LAST_MONTH']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_this_month',value:'<?php echo $mod_strings['LBL_THIS_MONTH']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_month',value:'<?php echo $mod_strings['LBL_NEXT_MONTH']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_last_30_days',value:'<?php echo $mod_strings['LBL_LAST_30_DAYS']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_30_days',value:'<?php echo $mod_strings['LBL_NEXT_30_DAYS']; ?>'};
+
+qualifiers[qualifiers.length] = {name:'tp_last_year',value:'<?php echo $mod_strings['LBL_LAST_YEAR']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_this_year',value:'<?php echo $mod_strings['LBL_THIS_YEAR']; ?>'};
+qualifiers[qualifiers.length] = {name:'tp_next_year',value:'<?php echo $mod_strings['LBL_NEXT_YEAR']; ?>'};
 filter_defs['datetimecombo'] = qualifiers;
 
 var qualifiers =  new Array();

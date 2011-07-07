@@ -57,10 +57,10 @@ function email2init() {
          mode: tinyConfig.mode,
          strict_loading_mode : true,
 		 force_br_newlines : true,
-         forced_root_block : ''
+         forced_root_block : '',
+         directionality : (typeof(rtl) == "undefined") ? "ltr" : "rtl"
      });
     }
-         //alert('loadedTiny');
 
     // initialze message overlay
     SUGAR.email2.e2overlay = new YAHOO.widget.Dialog("SUGAR.email2.e2overlay", {
@@ -318,7 +318,7 @@ function email2init() {
 		},
         {
             text: app_strings.LBL_EMAIL_MENU_RENAME,
-            onclick:{ fn: function() { overlay(app_strings.LBL_EMAIL_LIST_RENAME_TITLE, app_strings.LBL_EMAIL_LIST_RENAME_DESC,
+            onclick:{ fn: function() { SUGAR.showMessageBox(app_strings.LBL_EMAIL_LIST_RENAME_TITLE, app_strings.LBL_EMAIL_LIST_RENAME_DESC,
              'prompt', {fn: SUGAR.email2.addressBook.renameMailingList}); } }
         }
 	]);

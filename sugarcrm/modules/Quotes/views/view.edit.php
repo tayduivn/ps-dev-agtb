@@ -221,11 +221,12 @@ class QuotesViewEdit extends ViewEdit
 			if(is_array($product_bundle_list)){
 
 				$ordered_bundle_list = array();
-				for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-					$index = $product_bundle_list[$cnt]->get_index($this->bean->id);
-					$ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
-				}
-				ksort($ordered_bundle_list);
+                foreach ($product_bundle_list as $id => $bean)
+                {
+                    $index = $bean->get_index($this->bean->id);
+                    $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
+                } //for
+                ksort($ordered_bundle_list);
 				foreach ($ordered_bundle_list as $product_bundle) {
 					$product_list = $product_bundle->get_products();
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
@@ -268,11 +269,12 @@ class QuotesViewEdit extends ViewEdit
 			if(is_array($product_bundle_list)){
 
 				$ordered_bundle_list = array();
-				for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
-					$index =& $product_bundle_list[$cnt]->get_index($original_quote->id);
-					$ordered_bundle_list[$cnt] = $product_bundle_list[$cnt];
-				}
-				ksort($ordered_bundle_list);
+                foreach ($product_bundle_list as $id => $bean)
+                {
+                    $index = $bean->get_index($this->bean->id);
+                    $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
+                } //for
+                ksort($ordered_bundle_list);
 
 				foreach ($ordered_bundle_list as $product_bundle) {
 

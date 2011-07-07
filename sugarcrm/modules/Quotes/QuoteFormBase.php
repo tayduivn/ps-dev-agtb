@@ -286,7 +286,7 @@ $encoded_popup_request_data = $json->encode($popup_request_data);
 
 //
 ///////////////////////////////////////
-$default_date_start = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat),false);
+$default_date_start = $timedate->asUserDate($timedate->getNow());
 $cal_dateformat = $timedate->get_cal_date_format();
 $jsCalendarImage = SugarThemeRegistry::current()->getImageURL("jscalendar.gif");
 $the_form = <<<EOQ

@@ -38,5 +38,12 @@ $searchFields['Cases'] =
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
 			'db_field'=>array('id')),
 		//END SUGARCRM flav=pro ONLY
+		'open_only' => array(
+			'query_type'=>'default',
+			'db_field'=>array('status'),
+			'operator'=>'not in',
+			'closed_values' => array('Closed', 'Rejected', 'Duplicate'),
+			'type'=>'bool',
+		),		
     );
 ?>

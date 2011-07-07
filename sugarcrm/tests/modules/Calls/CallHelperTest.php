@@ -1,4 +1,26 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
 require_once('modules/Calls/Call.php');
 require_once('modules/Calls/CallHelper.php');
 
@@ -41,7 +63,8 @@ EOHTML
 <OPTION value='45'>45</OPTION></select>
 EOHTML
                 ),
-            //BEGIN SUGARCRM flav=pro ONLY 
+            //BEGIN SUGARCRM flav=pro ONLY
+
             array('wirelessedit',<<<EOHTML
 <select id="duration_minutes"tabindex="1" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
@@ -50,7 +73,8 @@ EOHTML
 <OPTION value='45'>45</OPTION></select>
 EOHTML
                 ),
-            //END SUGARCRM flav=pro ONLY 
+            //END SUGARCRM flav=pro ONLY
+
             array('DetailView','15'),
         );
     }
@@ -152,7 +176,8 @@ EOHTML
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML
                 ),
-            //BEGIN SUGARCRM flav=pro ONLY 
+            //BEGIN SUGARCRM flav=pro ONLY
+
             array('wirelessedit',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
@@ -163,7 +188,8 @@ EOHTML
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML
                 ),
-            //END SUGARCRM flav=pro ONLY 
+            //END SUGARCRM flav=pro ONLY
+
             array('DetailView',''),
         );
     }

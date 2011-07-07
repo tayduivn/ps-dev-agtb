@@ -191,7 +191,8 @@ class SugarController{
 	/**
 	 * Given a record id load the bean. This bean is accessible from any sub controllers.
 	 */
-	public function loadBean(){
+	public function loadBean()
+	{
 		if(!empty($GLOBALS['beanList'][$this->module])){
 			$class = $GLOBALS['beanList'][$this->module];
 			if(!empty($GLOBALS['beanFiles'][$class])){
@@ -228,6 +229,16 @@ class SugarController{
 			}
 			if(file_exists('custom/include/MVC/Controller/'. $var . '.php')){
 				require('custom/include/MVC/Controller/'. $var . '.php');
+			}
+
+            // entry_point_registry -> EntryPointRegistry
+
+			$varname = str_replace(" ","",ucwords(str_replace("_"," ", $var)));
+            if(file_exists("custom/application/Ext/$varname/$var.ext.php")){
+				require("custom/application/Ext/$varname/$var.ext.php");
+	        }
+			if(file_exists("custom/modules/{$this->module}/Ext/$varname/$var.ext.php")){
+				require("custom/modules/{$this->module}/Ext/$varname/$var.ext.php");
 			}
 
 			sugar_cache_put("CONTROLLER_". $var . "_".$this->module, $$var);
@@ -428,9 +439,6 @@ class SugarController{
 		foreach($this->bean->field_defs as $field => $properties) {
 			$type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
 		    $sf = $sfh->getSugarField(ucfirst($type), true);
-            if($sf != null){
-                $sf->save($this->bean, $_POST, $field, $properties);
-            }
 			if(isset($_POST[$field])) {
 				if(is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
 					if(empty($_POST[$field][0])) {
@@ -442,6 +450,9 @@ class SugarController{
 			} else if(!empty($properties['isMultiSelect']) && !isset($_POST[$field]) && isset($_POST[$field . '_multiselect'])) {
 				$this->bean->$field = '';
 			}
+            if($sf != null){
+                $sf->save($this->bean, $_POST, $field, $properties);
+            }
 		}
 
 		foreach($this->bean->relationship_fields as $field=>$link){

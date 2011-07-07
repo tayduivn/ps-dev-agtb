@@ -38,6 +38,7 @@ $viewdefs['Tasks']['DetailView'] = array(
 		array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),    
 	    array('priority'),    
 	    array('status'),
+        array('date_start'),
 	    array('date_due'),
 	    array('description'),
 		array('assigned_user_name'),

@@ -1,141 +1,80 @@
-<?php 
+<?php
 //FILE SUGARCRM flav=pro ONLY
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
 require_once('include/nusoap/nusoap.php');
+require_once 'tests/service/SOAPTestCase.php';
 
 /**
- * @group bug38100
+ * @ticket 38100
  */
-class Bug38100Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug38100Test extends SOAPTestCase
 {
-	public $_user = null;
-	public $_soapClient = null;
-	public $_session = null;
-	public $_sessionId = '';
     public $_contactId = '';
-    var $c = null;
-    var $a1 = null;
-	
+
     /**
      * Create test user
      *
      */
-	public function setUp() 
+	public function setUp()
     {
-        $this->markTestSkipped('Skip this soap test.');
-    	$this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php',false,false,false,false,false,600,600);
-        $this->_setupTestUser();
-        
-        $unid = uniqid();
-		$time = date('Y-m-d H:i:s');
+    	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
 
-		$contact = new Contact();
-		$contact->id = 'c_'.$unid;
-        $contact->first_name = 'testfirst';
-        $contact->last_name = 'testlast';
-        $contact->new_with_id = true;
-        $contact->disable_custom_fields = true;
-        $contact->save();
-		$this->c = $contact;
-		/*
-		$account = new Account();
-		$account->id = 'a_'.$unid;
-        $account->name = 'acctfirst';
-        $account->new_with_id = true;
-        $account->disable_custom_fields = true;
-        $account->save();
-        $this->a1 = $account;
-        
-        $this->c->load_relationship('accounts');
-      	$this->c->accounts->add($this->a1->id);
-      	*/
-     
 		$beanList = array();
 		$beanFiles = array();
 		require('include/modules.php');
 		$GLOBALS['beanList'] = $beanList;
 		$GLOBALS['beanFiles'] = $beanFiles;
-    	
+
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-       
+
+		parent::setUp();
     }
 
-    /**
-     * Remove anything that was used during this test
-     *
-     */
-    public function tearDown() {
-    	global $soap_version_test_accountId, $soap_version_test_opportunityId, $soap_version_test_contactId;
-        $this->_tearDownTestUser();
-        $this->_user = null;
-        $this->_sessionId = '';
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
-        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id= '{$this->c->id}'");
-       // $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$this->a1->id}'");
-        
-        //unset($this->a);
-        unset($soap_version_test_accountId);
-        unset($soap_version_test_opportunityId);
-        unset($soap_version_test_contactId);
-    }	
-    
-    public function testGetReportEntries() {
+    public function tearDown()
+    {
+		unset($GLOBALS['beanList']);
+		unset($GLOBALS['beanFiles']);
+		unset($GLOBALS['app_list_strings']);
+    }
+
+    public function testGetReportEntries()
+    {
     	require_once('service/core/SoapHelperWebService.php');
     	require_once('modules/Reports/Report.php');
     	require_once('modules/Reports/SavedReport.php');
-    	$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports");
+    	$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports WHERE deleted=0");
+    	if(!$savedReportId) {
+    	    $this->markTestSkipped("No live reports!");
+    	}
     	$savedReport = new SavedReport();
     	$savedReport->retrieve($savedReportId);
     	$helperObject = new SoapHelperWebServices();
     	$helperResult = $helperObject->get_report_value($savedReport, array());
     	$this->_login();
 		$result = $this->_soapClient->call('get_report_entries',array('session'=>$this->_sessionId,'ids' => array($savedReportId),'select_fields' => array()));
+
 		$this->assertTrue(!empty($result['field_list']));
 		$this->assertTrue(!empty($result['entry_list']));
     } // fn
-    
-	/**********************************
-     * HELPER PUBLIC FUNCTIONS
-     **********************************/
-    
-    /**
-     * Attempt to login to the soap server
-     *
-     * @return $set_entry_result - this should contain an id and error.  The id corresponds
-     * to the session_id.
-     */
-    public function _login(){
-		global $current_user;  	
-    	$result = $this->_soapClient->call('login',
-            array('user_auth' => 
-                array('user_name' => $current_user->user_name,
-                    'password' => $current_user->user_hash, 
-                    'version' => '.01'), 
-                'application_name' => 'SoapTest')
-            );
-        $this->_sessionId = $result['id'];
-		return $result;
-    }
-    
- /**
-     * Create a test user
-     *
-     */
-	public function _setupTestUser() {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_user->status = 'Active';
-        $this->_user->is_admin = 1;
-        $this->_user->save();
-        $GLOBALS['current_user'] = $this->_user;
-    }
-        
-    /**
-     * Remove user created for test
-     *
-     */
-	public function _tearDownTestUser() {
-       SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-       unset($GLOBALS['current_user']);
-    }
-	
 }
-?>

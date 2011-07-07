@@ -43,9 +43,6 @@ class TabGroupHelper{
        foreach($GLOBALS['moduleList'] as $value){
            $availableModules[$value] = array('label'=>$specifyLanguageAppListStrings['moduleList'][$value], 'value'=>$value);
        }
-       foreach($GLOBALS['modInvisListActivities'] as $value){
-           $availableModules[$value] = array('label'=>$specifyLanguageAppListStrings['moduleList'][$value], 'value'=>$value);
-       }
        
        if(should_hide_iframes() && isset($availableModules['iFrames'])) {
           unset($availableModules['iFrames']);

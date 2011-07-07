@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
- 
+
 // $Id: layout_defs.php 17862 2006-11-22 06:37:45Z awu $
 
 $layout_defs['Users'] = array(
@@ -48,6 +48,17 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
+        'tokens' => array(
+			'order' => 40,
+			'module' => 'OAuthTokens',
+			'sort_order' => 'asc',
+			'sort_by' => 'token_ts',
+			'subpanel_name' => 'ForUser',
+			'get_subpanel_data' => 'oauth_tokens',
+			'title_key' => 'LBL_OAUTH_TOKENS_SUBPANEL_TITLE',
+            'top_buttons' => array(),
+		),
+
 		//END SUGARCRM flav=pro ONLY
 	),
 	'default_subpanel_define' => array(
@@ -127,11 +138,35 @@ if(is_admin($current_user)|| is_admin_for_module($current_user, 'Users')){
 	$layout_defs['UserRoles']['subpanel_setup']['aclroles']['top_buttons'] = array();
 }
 
+$layout_defs['UserEAPM'] = array(
+	'subpanel_setup' => array(
+        'eapm' => array(
+			'order' => 30,
+			'module' => 'EAPM',
+			'sort_order' => 'asc',
+			'sort_by' => 'name',
+			'subpanel_name' => 'default',
+			'get_subpanel_data' => 'eapm',
+			'add_subpanel_data' => 'assigned_user_id',
+			'title_key' => 'LBL_EAPM_SUBPANEL_TITLE',
+			'top_buttons' => array(
+				array('widget_class' => 'SubPanelTopCreateButton'),
+			),
+		),
+
+    ),
+);
+
+$layout_defs['UsersHolidays']['subpanel_setup']['holidays'] = $layout_defs['Users']['subpanel_setup']['holidays'];
+$layout_defs['UserOAuth']['subpanel_setup']['tokens'] = $layout_defs['Users']['subpanel_setup']['tokens'];
+
 //BEGIN SUGARCRM flav=pro ONLY
 //remove the administrator create button holiday for the user admin only
-$result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='$_REQUEST[record]'");
-$row = $GLOBALS['db']->fetchByAssoc($result);
-if(!is_admin($current_user)&& is_admin_for_module($current_user,'Users')&& $row['is_admin']==1){
-	$layout_defs['Users']['subpanel_setup']['holidays']['top_buttons']= array();
+if ( !empty($_REQUEST['record']) ) {
+    $result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='{$_REQUEST['record']}'");
+    $row = $GLOBALS['db']->fetchByAssoc($result);
+    if(!is_admin($current_user)&& is_admin_for_module($current_user,'Users')&& $row['is_admin']==1){
+        $layout_defs['Users']['subpanel_setup']['holidays']['top_buttons']= array();
+    }
 }
 //END SUGARCRM flav=pro ONLY

@@ -68,6 +68,7 @@ class QueryGroupBy extends QueryBuilder
     var $module_dir = "QueryBuilder";
     var $object_name = "QueryGroupBy";
     var $new_schema = true;
+	public $disable_row_level_security = true;
     var $column_fields = Array("id" , "date_entered" , "date_modified" , "modified_user_id" , "created_by" , "groupby_axis" , "groupby_type" , "groupby_calc_module" , "groupby_calc_field" , "groupby_module" , "groupby_field" , "groupby_calc_type" , "groupby_qualifier_qty" , "groupby_qualifier" , "groupby_qualifier_start" , "list_order_x" , "list_order_y" , "parent_id");
     // This is used to retrieve related fields from form posts.
     var $additional_column_fields = Array("column_name" , "column_type" , "column_module");
@@ -75,11 +76,6 @@ class QueryGroupBy extends QueryBuilder
     var $list_fields = array();
     // This is the list of fields that are required
     var $required_fields = array("column_name" => 1);
-    function QueryGroupBy ()
-    {
-        parent::SugarBean();
-        $this->disable_row_level_security = true;
-    }
     //Controller Array for list_order stuff
     var $controller_def = Array("list_x" => "Y" , "list_y" => "Y" , "parent_var" => "parent_id" , "start_var" => "list_order_x" , "start_axis" => "x");
     function get_summary_text ()
@@ -266,10 +262,11 @@ class QueryGroupBy extends QueryBuilder
         return $groupby_array['groupby_qualifier_qty'];
         //end function get_time_info
     }
-    ////BUILDING THE QUERY PARTS//////////	
+    ////BUILDING THE QUERY PARTS//////////
     function get_select_part (& $select_array)
     {
-        if (! empty($this->groupby_type) && $this->groupby_type == "Time") 
+        global $sugar_config;
+        if (! empty($this->groupby_type) && $this->groupby_type == "Time")
         {
             //Calculate out time interval parts	
             //default mulitplier value
@@ -319,8 +316,8 @@ class QueryGroupBy extends QueryBuilder
                     $select_part .= " < (DATE_ADD(" . $qualifier . "," . $next_interval . ", GETDATE()))";
                     $select_part .= ", " . $calc_field_table . "";
                     $select_part .= ",0)) as '" . $this->groupby_qualifier . "" . $i . "'";
-                } 
-                else 
+                }
+                else
                 {
                     $select_part = $this->groupby_calc_type . "(IF(";
                     $select_part .= $field_table;

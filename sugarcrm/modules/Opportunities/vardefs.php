@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, 'unified_search' => true,'duplicate_merge'=>true,
+$dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, 'unified_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
 		'comment' => 'An opportunity is the target of selling activities',
 		'fields' => array (
   'name' =>
@@ -99,7 +99,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 		'id_name'=>'campaign_id',
 		'vname'=>'LBL_CAMPAIGN',
 		'type'=>'relate',
-		'link' => 'campaign_opportunities',   	      	   
+		'link' => 'campaign_opportunities',
 		'isnull'=>'true',
 		'table' => 'campaigns',
 		'module'=>'Campaigns',
@@ -136,6 +136,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'importable' => 'required',
     'duplicate_merge'=>'1',
     'required' => true,
+  	'options' => 'numeric_range_search_dom',
+    'enable_range_search' => true,
   ),
   'amount_usdollar' =>
   array (
@@ -147,7 +149,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'disable_num_format' => true,
     'duplicate_merge'=>'0',
     'audited'=>true,
-    'comment' => 'Formatted amount of the opportunity'
+    'comment' => 'Formatted amount of the opportunity',
   ),
   'currency_id' =>
   array (
@@ -198,6 +200,8 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'comment' => 'Expected or actual date the oppportunity will close',
 	'importable' => 'required',
     'required' => true,
+    'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
   ),
   'next_step' =>
   array (
@@ -230,7 +234,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'audited'=>true,
     'comment' => 'The probability of closure',
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
-    'merge_filter' => 'enabled', 
+    'merge_filter' => 'enabled',
   ),
   'accounts' =>
   array (
@@ -294,6 +298,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'source'=>'non-db',
 		'vname'=>'LBL_EMAILS',
   ),
+  'documents'=>
+  array (
+      'name' => 'documents',
+      'type' => 'link',
+      'relationship' => 'documents_opportunities',
+      'source' => 'non-db',
+      'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
+  ),
 //BEGIN SUGARCRM flav=pro ONLY
   'quotes' =>
   array (
@@ -323,7 +335,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'source'=>'non-db',
 		'vname'=>'LBL_LEADS',
   ),
-  
+
   'campaigns' =>
 		array (
   			'name' => 'campaigns',
@@ -363,7 +375,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 	'relationship' => 'contracts_opportunities',
 	//'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
 	'source' => 'non-db',
-    
+
   ),
  //END SUGARCRM flav=pro ONLY
 ),
@@ -377,6 +389,11 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 				'name' => 'idx_opp_assigned',
 				'type' => 'index',
 				'fields' => array('assigned_user_id'),
+			),
+			array(
+				'name' => 'idx_opp_id_deleted',
+				'type' => 'index',
+				'fields' => array('id,deleted'),
 			),
 		),
 

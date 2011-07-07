@@ -98,6 +98,16 @@ class ViewWirelesssave extends SugarWirelessView{
 	 * Do some processing before saving the bean to the database.
 	 */
 	protected function pre_save(){
+	    // handle date save
+		if (isset($_POST['wl_date'])){
+            $date = $_POST['wl_date_Year'] . '-' . $_POST['wl_date_Month'] . '-' . $_POST['wl_date_Day'];
+            $dateFormat = 'Y-m-d';
+			$_POST[$_POST['wl_date']] = $GLOBALS['timedate']->swap_formats(
+                $date,
+                $dateFormat,
+                $GLOBALS['timedate']->get_date_format());
+		}
+		
 		// handle datetime save
 		if (isset($_POST['wl_datetime'])){
             $date = $_POST['wl_date_Year'] . '-' . $_POST['wl_date_Month'] . '-' . $_POST['wl_date_Day'];

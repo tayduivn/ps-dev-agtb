@@ -1,71 +1,80 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-require_once('include/connectors/utils/ConnectorUtils.php');
-require_once('include/connectors/ConnectorsTestUtility.php');
 
-class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
+require_once('include/connectors/ConnectorsTestCase.php');
 
-    var $original_modules_sources;
-	var $original_searchdefs;
-    
-    function setUp() {
-        if(!file_exists(CONNECTOR_DISPLAY_CONFIG_FILE)) {
-    	   ConnectorUtils::getDisplayConfig();
-    	}
-    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_modules_sources = $modules_sources;
-    	
-    	//Remove the current file and rebuild with default
-    	unlink(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_searchdefs = ConnectorUtils::getSearchDefs();
-    	
+class ConnectorsPropertiesTest extends Sugar_Connectors_TestCase
+{
+	function setUp() {
+        parent::setUp();
     	if(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php')) {
     	   mkdir_recursive('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');
-    	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');		
+    	   copy_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');
     	} else {
-    	   mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');	
+    	   mkdir_recursive('custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
     	}
     }
-    
+
     function tearDown() {
-    	write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
-        write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');
+        parent::tearDown();
         if(file_exists('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers')) {
     	   copy_recursive('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers', 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers');
            ConnectorsTestUtility::rmdirr('custom/modules/Connectors/backup/connectors/sources/ext/soap/hoovers');
         }
-        
+
         if(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php')) {
            require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
            if(empty($config['properties']['hoovers_api_key'])) {
 				$config = array (
 				  'name' => 'Hoovers&#169;',
-				  'properties' => 
+				  'properties' =>
 				  array (
 				    'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
     				'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
 				  ),
-				);   
-				write_array_to_file('config', $config, 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');           	
+				);
+				write_array_to_file('config', $config, 'custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
            }
         }
-    
+
     }
 
     function test_get_data_button_without_api_key() {
-    	
+
 		$config = array (
 		  'name' => 'Hoovers&#169;',
-		  'properties' => 
+		  'properties' =>
 		  array (
 		    'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
    			'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
 		    'hoovers_api_key' => '',
 		  ),
-		);       	
+		);
 
 		write_array_to_file('config', $config, "custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php");
-		
+
         require_once('modules/Connectors/controller.php');
     	require_once('include/MVC/Controller/SugarController.php');
     	$controller = new ConnectorsController();
@@ -83,25 +92,25 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
     	foreach($viewdefs['Leads']['DetailView']['templateMeta']['form']['buttons'] as $button) {
     	        if(!is_array($button) && $button == 'CONNECTOR') {
                    $hasConnectorButton = true;
-                }    		
+                }
     	}
     	$this->assertTrue($hasConnectorButton);
     }
 
     function test_get_data_button_with_api_key() {
-    	
+
 		$config = array (
 		  'name' => 'Hoovers&#169;',
-		  'properties' => 
+		  'properties' =>
 		  array (
    			'hoovers_endpoint' => 'http://hapi.hoovers.com/HooversAPI-33',
     		'hoovers_wsdl' => 'http://hapi.hoovers.com/HooversAPI-33/hooversAPI/hooversAPI.wsdl',
 		    'hoovers_api_key' => '',
 		  ),
-		);       	
+		);
 
 		write_array_to_file('config', $config, "custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php");
-		
+
         require_once('modules/Connectors/controller.php');
     	require_once('include/MVC/Controller/SugarController.php');
     	$controller = new ConnectorsController();
@@ -118,10 +127,10 @@ class ConnectorsPropertiesTest extends Sugar_PHPUnit_Framework_TestCase {
     	foreach($viewdefs['Leads']['DetailView']['templateMeta']['form']['buttons'] as $button) {
     	        if(!is_array($button) && $button == 'CONNECTOR') {
                    $hasConnectorButton = true;
-                }    		
+                }
     	}
     	$this->assertTrue($hasConnectorButton);
-    }     
-    
-}  
+    }
+
+}
 ?>

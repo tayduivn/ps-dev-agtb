@@ -76,8 +76,8 @@ class ViewEditConvert extends SugarView {
     	$ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_STUDIO', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
         $ajax->addCrumb(translate('LBL_MODULE_NAME'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module=Leads")');
-        $ajax->addCrumb(translate('LBL_LAYOUTS', 'ModuleBuilder'), "");
-        $ajax->addCrumb("Convert", "");
+        $ajax->addCrumb(translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view=layouts&view_module=Leads")');
+        $ajax->addCrumb(translate('LBL_CONVERTLEAD'), "");
         $ajax->addSection ( 'center', 'Convert Layout', $smarty->fetch ( "modules/Leads/tpls/EditConvertLead.tpl" ) ) ;
 
         echo $ajax->getJavascript();

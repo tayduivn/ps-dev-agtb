@@ -363,7 +363,7 @@ class Contact extends Person {
 			if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
-                                contacts.*,email_addresses.email_address email1,
+                                contacts.*,email_addresses.email_address email_address,
                                 accounts.name as account_name,
                                 users.user_name as assigned_user_name ";
 //BEGIN SUGARCRM flav=pro ONLY
@@ -423,8 +423,9 @@ class Contact extends Person {
 
 	function fill_in_additional_detail_fields() {
 		parent::fill_in_additional_detail_fields();
-		global $locale, $app_list_strings, $current_user;
-		
+        if(empty($this->id)) return;
+
+        global $locale, $app_list_strings, $current_user;
 
 		// retrieve the account information and the information about the person the contact reports to.
 		$query = "SELECT acc.id, acc.name, con_reports_to.first_name, con_reports_to.last_name
@@ -433,7 +434,11 @@ class Contact extends Person {
 		left join accounts acc on a_c.account_id = acc.id and acc.deleted=0
 		left join contacts con_reports_to on con_reports_to.id = contacts.reports_to_id
 		where contacts.id = '".$this->id."'";
-
+		// Bug 43196 - If a contact is related to multiple accounts, make sure we pull the one we are looking for
+		if ( !empty($this->account_id) ) {
+		    $query .= " and acc.id = '{$this->account_id}'";
+		}
+		
 		$result = $this->db->query($query,true," Error filling in additional detail fields: ");
 
 		// Get the id and the name.
@@ -485,20 +490,11 @@ class Contact extends Person {
 		global $current_user;
 
 		$this->load_relationship("user_sync");
-		$query_array=$this->user_sync->getQuery(true);
-
-		$query_array['where'] .= " AND users.id = '$current_user->id'";
-
-		$query='';
-		foreach ($query_array as $qstring) {
-			$query.=' '.$qstring;
-		}
-
-		$list = $this->build_related_list($query, new User());
-		if(!empty($list)){
-			//this should only return one possible value so set it
-			$this->contacts_users_id = $list[0]->id;
-		}
+        $beans = $this->user_sync->getBeans();
+        if (!empty($beans[$current_user->id]))
+        {
+            $this->contacts_users_id = $current_user->id;
+        }
 	}
 
 	function get_list_view_data($filter_fields = array()) {

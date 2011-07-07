@@ -33,21 +33,21 @@ require_once('modules/DCEInstances/DCEInstance_sugar.php');
 
 
 class DCEInstance extends DCEInstance_sugar {
-	
-	function DCEInstance(){	
+
+	function DCEInstance(){
 		parent::DCEInstance_sugar();
 	}
-	
+
 	function fill_in_relationship_fields(){
 	    $this->dcetemplate_name = '';
 	    parent::fill_in_relationship_fields();
 	}
-	
+
 	function save_relationship_changes($is_update){
 		parent::save_relationship_changes($is_update);
 
 		if(!$is_update){
-			
+
 			$cronSchedule = new DCECronSchedule();
 			$cronSchedule->instance_id = $this->id;
 			$cronSchedule->save();
@@ -59,7 +59,7 @@ class DCEInstance extends DCEInstance_sugar {
             $this->set_dceinstance_user_relationship($this->user_id);
         }
 	}
-    
+
    /** Returns a list of the associated contacts
      * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc..
      * All Rights Reserved..
@@ -69,14 +69,14 @@ class DCEInstance extends DCEInstance_sugar {
     {
         $this->load_relationship('contacts');
         $query_array=$this->contacts->getQuery(true);
-        
+
         //update the select clause in the retruned query.
         $query_array['select']="SELECT contacts.id, contacts.first_name, contacts.last_name, contacts.title, contacts.phone_work, dceinstances_contacts.contact_role as dceinstance_role, dceinstances_contacts.id as dceinstance_rel_id ";
-    
+
         $query='';
         foreach ($query_array as $qstring) {
             $query.=' '.$qstring;
-        }   
+        }
         $temp = Array('id', 'first_name', 'last_name', 'title', 'phone_work', 'dceinstance_role', 'dceinstance_rel_id');
         return $this->build_related_list2($query, new Contact(), $temp);
     }
@@ -89,18 +89,18 @@ class DCEInstance extends DCEInstance_sugar {
     {
         $this->load_relationship('users');
         $query_array=$this->users->getQuery(true);
-        
+
         //update the select clause in the retruned query.
         $query_array['select']="SELECT users.id, users.first_name, users.last_name, users.title users.phone_work, dceinstances_users.user_role as dceinstance_role, dceinstances_users.id as dceinstance_rel_id ";
-    
+
         $query='';
         foreach ($query_array as $qstring) {
             $query.=' '.$qstring;
-        }   
+        }
         $temp = Array('id', 'first_name', 'last_name', 'title', 'phone_work', 'dceinstance_role', 'dceinstance_rel_id');
         return $this->build_related_list2($query, new user(), $temp);
     }
-    
+
     function set_dceinstance_contact_relationship($contact_id)
     {
         global $app_list_strings;
@@ -108,7 +108,7 @@ class DCEInstance extends DCEInstance_sugar {
         $this->load_relationship('contacts');
         $this->contacts->add($contact_id,array('contact_role'=>$default));
     }
-    
+
     function set_dceinstance_user_relationship($user_id)
     {
         global $app_list_strings;
@@ -122,12 +122,12 @@ class DCEInstance extends DCEInstance_sugar {
     function create_action($record, $actionType, $startDate='',$priority='',$upgradeVars='',$dbCloned=false){
         global $timedate;
         if( (isset($record) && !empty($record))
-        && (isset($actionType) && !empty($actionType) )){             
+        && (isset($actionType) && !empty($actionType) )){
             //retieve Instance
-            
+
             $inst = new DCEInstance();
             $inst->retrieve($record);
-    
+
             //set the priority (default to medium)
             if(empty($priority)){
                 $priority = '1';
@@ -139,7 +139,7 @@ class DCEInstance extends DCEInstance_sugar {
                      //support user was already created once, so this action is requesting immediate clean up
                      //change priority settings and resave
                         $actionType = 'toggle_off';
-                                  
+
                     }else{
                         $actionType = 'toggle_on';
                     }
@@ -147,7 +147,7 @@ class DCEInstance extends DCEInstance_sugar {
             }
 
             //create dce action
-            
+
             $action = new DCEAction();
             $action->name = $inst->name.' '.$actionType.' action';
             $action->instance_id = $inst->id;
@@ -155,10 +155,10 @@ class DCEInstance extends DCEInstance_sugar {
             $action->template_id = $inst->dcetemplate_id;
             $action->type = $actionType;//'create';
             $action->status = 'queued';
-            $action->start_date = $timedate->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format()));
+            $action->start_date = $timedate->now();
             $action->priority = $priority;
             $action->action_parms .= ', previous_status:'.$inst->status;
-            
+
             //reset start time if set.
             if(!empty($startDate)){
                 $action->start_date = $startDate;
@@ -174,22 +174,22 @@ class DCEInstance extends DCEInstance_sugar {
                 $inst->status = 'live';
                 $inst->type = 'production';
                 $action->status = 'completed';
-            }            
+            }
 
-            //if action is create and parent_id is set, then this is a clone, 
+            //if action is create and parent_id is set, then this is a clone,
             //check to see if db should be cloned
             if($actionType=='create'){
                 global $sugar_config;
                 if(!empty($sugar_config['unique_key'])){
                     $action->action_parms .= ',unique_key:'.$sugar_config['unique_key'].' ' ;
                 }
-                
+
                 if(!empty($inst->dce_parent_id) &&$dbCloned){
                                 $action->action_parms .= ',clone_db:true ' ;
                 }
-            }  
+            }
 
-            //if this is an upgrade, then create the upgrade variables to be 
+            //if this is an upgrade, then create the upgrade variables to be
             //used for processing the action on the dn side
             if(strpos($actionType, 'upgrade')!==false && !empty($upgradeVars)){
                 if(is_array($upgradeVars)){
@@ -197,17 +197,17 @@ class DCEInstance extends DCEInstance_sugar {
                         $action->action_parms .= ", $k:$v ";
                     }
                 }
-            }  
-                        
-            
-            //save action   
+            }
+
+
+            //save action
             $action->save();
 
-            
+
             //if action is toggle, then create a toggle_on and toggle_off action
             if(strpos($actionType,'toggle')!==false && !$inst->support_user){
 
-                 //create second action to disable    
+                 //create second action to disable
                     $action2 = new DCEAction();
                     $action2->name = $inst->name.' '.$actionType.' off action';
                     $action2->instance_id = $inst->id;
@@ -216,53 +216,38 @@ class DCEInstance extends DCEInstance_sugar {
                     $action2->priority = '1';
                     $action2->type = 'toggle_off';
                     $action2->status = 'queued';
-    
+
                   //add start date in future
                    //retrieve num of hours for expiration of user from settings
                     $adm = new Administration();
                     $adm->retrieveSettings();
                     $exp_hours =$adm->settings['dce_support_user_time_limit'];
                     if(empty($exp_hours)) $exp_hours = 5;
-    
-                    //change time into timestamp
-                    $stim = strtotime($action->start_date);
-                    //add day to timestamp
-                    $tim = mktime(date("H",$stim)+$exp_hours, date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim),   date("Y",$stim));
-      
-                    //convert back into date format
-                    $future = $timedate->to_display_date_time(date($GLOBALS['timedate']->get_db_date_time_format(),$tim));
-                    $action2->start_date = $future;
+
+                    $action2->start_date = $timedate->fromUser($action->start_date)->modify("+$exp_hours hours")->asUser();
                     $action2->save();
 
                     //support user is not already set, then create new action to disable and set support user
                     $inst->support_user = 1;
             }
             //save unless instance has been deleted.  We do not save because
-            //deletion requires to know what the instance status is for instance location on DN side, 
+            //deletion requires to know what the instance status is for instance location on DN side,
             //and we do not want to accidentally change it.
             if($actionType!='delete') $inst->save();
         }else{
          //could not create action.
-            
-        }   
+
+        }
 
     }
-    
+
     function returnExpirationDate($lic_start,$lic_duration){
         global $timedate;
         if(empty($lic_start) || empty($lic_duration)){
             return false;
         }
-        $lic_duration_d = $lic_duration;
-        //make a date out of the start date, and add the number of days
-        $stim = strtotime($lic_start);
-        //add day to timestamp
-        $tim = mktime(date("H",$stim), date("i",$stim), date("s",$stim), date("m",$stim), date("d",$stim)+$lic_duration_d,   date("Y",$stim));
-        //convert back into date format
-        $future = $timedate->to_display_date(date($GLOBALS['timedate']->dbDayFormat,$tim),false);
-        return $future;        
-        
+        // license start date plus $duration days
+        return TimeDate::fromDbFormat($lic_start, $timedate->get_db_date_format())->modify("+{$lic_duration} days")->asDbDate();
     }
-    
+
 }
-?>

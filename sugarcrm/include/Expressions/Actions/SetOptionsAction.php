@@ -25,9 +25,10 @@ class SetOptionsAction extends AbstractAction{
 	protected $labelsExpressions =  "";
 	
 	function SetOptionsAction($params) {
+        $this->params = $params;
 		$this->targetField = $params['target'];
-		$this->keysExpression = $params['keys'];
-		$this->labelsExpression = $params['labels'];
+		$this->keysExpression = str_replace("\n", "",$params['keys']);
+		$this->labelsExpression = str_replace("\n", "",$params['labels']);
 	}
 	
 	/**
@@ -44,12 +45,14 @@ class SetOptionsAction extends AbstractAction{
 		};
 				
 		SUGAR.util.extend(SUGAR.forms.SetOptionsAction, SUGAR.forms.AbstractAction, {
-			exec: function() {
-				var field = SUGAR.forms.AssignmentHandler.VARIABLE_MAP[this.target];
+			exec: function(context) {
+			    if (typeof(context) == 'undefined')
+                    context = this.context;
+				var field = SUGAR.forms.AssignmentHandler.getElement(this.target);
 				if ( field == null )	return null;		
 				
-				var keys = SUGAR.forms.evalVariableExpression(this.keyExpr).evaluate();
-				var labels = SUGAR.forms.evalVariableExpression(this.labelExpr).evaluate();
+				var keys = this.evalExpression(this.keyExpr, context);
+				var labels = this.evalExpression(this.labelExpr, context);
 				var selected = '';
 				
 				if (keys instanceof Array && field.options != null) 
@@ -66,6 +69,16 @@ class SetOptionsAction extends AbstractAction{
 					while (options.length > 0) {
 						field.remove(options[0]);
 					}
+
+					if (typeof(labels) == 'string') //get translated values from Sugar Language
+					{
+					    var fullSet = SUGAR.language.get('app_list_strings', labels);
+					    labels = [];
+					    for (var i in keys)
+					    {
+					        labels[i] = fullSet[keys[i]];
+					    }
+					}
 					
 					var new_opt;
 					for (var i in keys) {
@@ -81,7 +94,8 @@ class SetOptionsAction extends AbstractAction{
 									new_opt = options[options.length] = new Option(keys[i], keys[i], keys[i] == selected);
 								}
 							}
-						} else //Use the keys as labels
+						}
+						else //Use the keys as labels
 						{
 							if (typeof keys[0] == 'undefined') {
 								if (typeof(keys[i]) == 'string') {
@@ -104,6 +118,7 @@ class SetOptionsAction extends AbstractAction{
 					//Hide fields with empty lists
 					var empty =  field.options.length == 1 && field.value == '';
 					var visAction = new SUGAR.forms.VisibilityAction(this.target, empty ? 'false' : 'true', '');
+					visAction.setContext(context);
 					visAction.exec();
 					
 					if ( SUGAR.forms.AssignmentHandler.ANIMATE && !empty)
@@ -132,22 +147,6 @@ class SetOptionsAction extends AbstractAction{
 	 */
 	function fire(&$target) {
 		
-		/*$expr = Parser::replaceVariables($this->expression, $target);
-		$result = Parser::evaluate($expr)->evaluate();
-		$field = $this->targetField;
-		$target->$field = $result;*/
-	}
-	
-	/**
-	 * Returns the definition of this action in array format.
-	 *
-	 */
-	function getDefinition() {
-		return array(	
-			"action" => $this->getActionName(), 
-	        "target" => $this->targetField, 
-	        "value" => $this->expression,
-	    );
 	}
 	
 	static function getActionName() {

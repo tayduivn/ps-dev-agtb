@@ -26,7 +26,9 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{$fields[{{sugarvar key='salutation' stringFormat=true}}].value}&nbsp;{$fields[{{sugarvar key='first_name' stringFormat=true}}].value}&nbsp;{$fields[{{sugarvar key='last_name' stringFormat=true}}].value}
+<span class="sugar_field" id="{{sugarvar key='name'}}">
+{$fields[{{sugarvar key='salutation' stringFormat=true}}].value} {$fields[{{sugarvar key='first_name' stringFormat=true}}].value} {$fields[{{sugarvar key='last_name' stringFormat=true}}].value}
+</span>
 {{if !empty($displayParams.enableConnectors)}}
 {{sugarvar_connector view='DetailView'}} 
 {{/if}}

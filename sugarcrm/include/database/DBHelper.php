@@ -49,6 +49,11 @@ abstract class DBHelper
     public $bean;
 
     /**
+     * Maximum length of identifiers
+     */
+    protected static $maxNameLengths;
+
+    /**
 	 * Generates sql for create table statement for a bean.
 	 *
 	 * @param  object $bean SugarBean instance
@@ -964,6 +969,49 @@ abstract class DBHelper
             $fieldDef['required'] = 'true';
     }
 
+    /*
+     * Return a version of $proposed that can be used as a column name in any of our supported databases
+     * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+     * @param string $name Proposed name for the column
+     * @param string $ensureUnique
+     * @return string Valid column name trimmed to right length and with invalid characters removed
+     */
+     public static function getValidDBName ($name, $ensureUnique = false, $type = 'column')
+    {
+        if(is_array($name))
+        {
+            $result = array();
+            foreach($name as $field)
+            {
+                $result[] = self::getValidDBName($field, $ensureUnique, $type);
+            }
+        }else
+        {
+            // first strip any invalid characters - all but alphanumerics and -
+            $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
+            $len = strlen ( $name ) ;
+            $result = $name;
+            $maxLen = empty(self::$maxNameLengths[$type]) ? self::$maxNameLengths[$type]['column'] : self::$maxNameLengths[$type];
+            if ($len <= $maxLen)
+            {
+                return strtolower($name);
+            }
+            if ($ensureUnique)
+            {
+                $md5str = md5($name);
+                $tail = substr ( $name, -11) ;
+                $temp = substr($md5str , strlen($md5str)-4 );
+                $result = substr ( $name, 0, 10) . $temp . $tail ;
+            }
+            else
+            {
+                $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen);
+            }
+
+            return strtolower ( $result ) ;
+        }
+    }
+
     /**
      * Returns the valid type for a column given the type in fieldDef
      *
@@ -1023,10 +1071,7 @@ abstract class DBHelper
      * @param array  $changes changes
      * @see DBHelper::getDataChanges()
      */
-    public function save_audit_records(
-        SugarBean &$bean,
-        &$changes
-        )
+    public function save_audit_records(SugarBean $bean, $changes)
 	{
 		global $current_user;
 		$sql = "INSERT INTO ".$bean->get_audit_table_name();
@@ -1048,7 +1093,7 @@ abstract class DBHelper
 			$values['before_value_string']=$bean->dbManager->getHelper()->massageValue($changes['before'], $fieldDefs['before_value_string']);
 			$values['after_value_string']=$bean->dbManager->getHelper()->massageValue($changes['after'], $fieldDefs['after_value_string']);
 		}
-		$values['date_created']=$bean->dbManager->getHelper()->massageValue(gmdate($GLOBALS['timedate']->get_db_date_time_format()), $fieldDefs['date_created']);
+		$values['date_created']=$bean->dbManager->getHelper()->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
 		$values['created_by']=$bean->dbManager->getHelper()->massageValue($current_user->id, $fieldDefs['created_by']);
 
 		$sql .= "(".implode(",", array_keys($values)).") ";

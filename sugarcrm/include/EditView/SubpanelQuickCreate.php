@@ -49,8 +49,16 @@ class SubpanelQuickCreate{
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 		//$_REQUEST['return_action'] = 'SubPanelViewer';
-		$this->ev->setup($module, null, $source);
-		
+
+        $class = $GLOBALS['beanList'][$module];
+        $bean = new $class();
+        if(!empty($_REQUEST['record'])) {
+            $bean->retrieve($_REQUEST['record']);
+        }
+		$this->ev->setup($module, $bean, $source);
+		unset($bean);
+
+
 	    $this->ev->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		$this->ev->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
 		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');

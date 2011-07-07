@@ -1,83 +1,86 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
+
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
+ 
 require_once('include/connectors/ConnectorFactory.php');
 require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/utils/ConnectorUtils.php');
 require_once('modules/Connectors/controller.php');
+require_once('include/connectors/ConnectorsTestCase.php');
 
-class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
+class ZoominfoConnectorsTest extends Sugar_Connectors_TestCase
+{
+	protected $qual_module;
 
-	var $qual_module;
-
-    function setUp() {
-		$this->markTestSkipped("Marked as skipped until we can resolve Hoovers nusoapclient issues.");
-  	    return;
-  	    
+    public function setUp()
+    {
+        parent::setUp();
 		require('modules/Connectors/connectors/sources/ext/rest/zoominfocompany/config.php');
 		$url = $config['properties']['company_search_url'] . $config['properties']['api_key'] . '&CompanyID=18579882';
 		$contents = @file_get_contents($url);
 
 	    if(empty($contents)) {
-	       $this->markTestSkipped("Skipping Zoominfo test");   
-	    }       	
-    	
-    	ConnectorFactory::$source_map = array();  
-    	ConnectorUtils::getConnectors(true);
-    	ConnectorUtils::getDisplayConfig();
-    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-    	$this->original_modules_sources = $modules_sources;      	
+	       $this->markTestSkipped("Skipping Zoominfo test");
+	    }
 
-    	
-	    
-        if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany/mapping.php')) {
+    	ConnectorFactory::$source_map = array();
+
+    	if(file_exists('custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany/mapping.php')) {
            unlink('custom/modules/Connectors/connectors/sources/ext/rest/zoominfocompany/mapping.php');
-        }	    
-	    
-    	
+        }
+
+
     	require('modules/Connectors/connectors/sources/ext/rest/zoominfocompany/config.php');
 		$url = $config['properties']['company_search_url'] . $config['properties']['api_key'] . '&CompanyID=18579882';
 		$contents = @file_get_contents($url);
 		if(empty($contents)) {
 		    $this->markTestSkipped("Skipping... Zoominfocompany service is unavailable.");
-		} else {	
-    	
-	    	ConnectorFactory::$source_map = array();  
-	    	ConnectorUtils::getConnectors(true);
-	    	ConnectorUtils::getDisplayConfig();
-	    	require(CONNECTOR_DISPLAY_CONFIG_FILE);
-	    	$this->original_modules_sources = $modules_sources;      	
-	    	
-	    	//Remove the current file and rebuild with default
-	    	unlink(CONNECTOR_DISPLAY_CONFIG_FILE);    	
-	    	$this->original_searchdefs = ConnectorUtils::getSearchDefs();
-	    	ConnectorUtils::getSearchDefs(true);    	
-	    	
+		} else {
+	    	ConnectorFactory::$source_map = array();
+
 	    	$_REQUEST['module'] = 'Connectors';
 	    	$_REQUEST['from_unit_test'] = true;
 	    	$_REQUEST['modify'] = true;
 	    	$_REQUEST['action'] = 'SaveModifyDisplay';
 	    	$_REQUEST['display_values'] = 'ext_rest_zoominfoperson:Leads,ext_rest_zoominfocompany:Leads';
 	    	$_REQUEST['display_sources'] = 'ext_soap_hoovers,ext_rest_linkedin,ext_rest_zoominfocompany,ext_rest_zoominfoperson';
-	    	
+
 	    	$controller = new ConnectorsController();
 	    	$controller->action_SaveModifyDisplay();
-	    	    	
+
 	    	$_REQUEST['action'] = 'SaveModifyMapping';
 	    	$_REQUEST['mapping_values'] = 'ext_rest_zoominfoperson:Leads:firstname=first_name,ext_rest_zoominfoperson:Leads:lastname=last_name,ext_rest_zoominfoperson:Leads:jobtitle=title,ext_rest_zoominfoperson:Leads:companyname=account_name,ext_rest_zoominfocompany:Leads:companyname=account_name,ext_rest_zoominfocompany:Leads:companydescription=description';
 	    	$_REQUEST['mapping_sources'] = 'ext_rest_zoominfoperson,ext_rest_zoominfocompany';
 	    	$controller->action_SaveModifyMapping();
-	    	
-	    	$this->qual_module = 'Leads'; 
-		} 	
+
+	    	$this->qual_module = 'Leads';
+		}
     }
-    
-    function tearDown() {
-    	write_array_to_file('modules_sources', $this->original_modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE);
-        write_array_to_file('searchdefs', $this->original_searchdefs, 'custom/modules/Connectors/metadata/searchdefs.php');    
-        ConnectorFactory::$source_map = array();
-    }    
-    
-    function test_zoominfocompany_fillBeans() {
+
+    public function testZoominfoCompanyFillBeans()
+    {
     	require_once('modules/Leads/Lead.php');
     	$source_instance = ConnectorFactory::getInstance('ext_rest_zoominfocompany');
     	$source_instance->getSource()->loadMapping();
@@ -88,8 +91,9 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     		break;
     	}
     }
-    
-    function test_zoominfocompany_fillBean() {
+
+    public function testZoominfoCompanyFillBean()
+    {
     	require_once('modules/Leads/Lead.php');
     	$source_instance = ConnectorFactory::getInstance('ext_rest_zoominfocompany');
     	$source_instance->getSource()->loadMapping();
@@ -99,8 +103,9 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
     		$this->assertTrue(trim($lead->website) == 'www.ibm.com');
     	}
     }
-    
-    function test_zoominfoperson_fillBeans() {
+
+    public function testZoominfoPersonFillBeans()
+    {
     	require_once('modules/Leads/Lead.php');
     	$source_instance = SourceFactory::getSource('ext_rest_zoominfoperson');
     	$args = array('firstname'=>'John', 'lastname'=>'Roberts');
@@ -115,6 +120,4 @@ class ZoominfoConnectorsTest extends Sugar_PHPUnit_Framework_TestCase {
 	    	}
     	}
     }
-    
-}  
-?>
+}

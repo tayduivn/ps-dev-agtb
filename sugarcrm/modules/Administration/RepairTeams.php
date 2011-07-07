@@ -101,7 +101,7 @@ class ScanTeams{
 				FROM users WHERE id NOT IN 
 					(SELECT tm.user_id FROM team_memberships tm 
 						INNER JOIN teams ON teams.id = tm.team_id AND teams.deleted = 0 AND teams.private=1 
-					WHERE tm.deleted = 0 AND tm.explicit_assign=1) and default_team != '' AND default_team IS NOT NULL"; 
+					WHERE tm.deleted = 0 AND tm.explicit_assign=1) and ( default_team = '' OR default_team IS NULL ) "; 
 		$result = $GLOBALS['db']->query($query);
 		$row = $GLOBALS['db']->fetchByAssoc($result);
 		if(empty($row['missing_count'])){
@@ -305,7 +305,7 @@ function process_team_access($process_global_teams=false, $process_private_teams
     //run thru all the users.
     if (!$do_nothing) {
         $team = new Team();
-        $query="select id, reports_to_id from users where deleted=0 AND default_team != '' AND default_team IS NOT NULL";
+        $query="select id, reports_to_id from users where deleted=0";
         $result=$user->db->query($query);
         $reporting=array();
         while (($row=$user->db->fetchByAssoc($result)) != null) 
@@ -411,12 +411,16 @@ function process_all_team_access($user,$add_to_global_team=false,$private_team=f
 
         $team_id = $user->getPrivateTeamID();
         //create a private team
-        if(empty($team_id)) {
+        if(empty($team_id) && !empty($user->user_name) ) {
             $GLOBALS['log']->debug("RepairTeams:No private team found creating new for $user->user_name");
-
-            $name = "({$user->user_name})";
+            if ( !empty($user->first_name) ) {
+                $name = $user->first_name;
+            }
+            else {
+                $name = "({$user->user_name})";
+            }
             $description = "{$mod_strings['LBL_PRIVATE_TEAM_FOR']} {$user->user_name}";
-            $team_id = Team::create_team($name, $description, create_guid(), 1);
+            $team_id = Team::create_team($name, $description, create_guid(), 1, '', $user->id);
         }
         $GLOBALS['log']->debug("RepairTeams:User $user->user_name private team id is $team_id");        
         

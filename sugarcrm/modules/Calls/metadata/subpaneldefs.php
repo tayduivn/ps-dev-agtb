@@ -72,7 +72,7 @@ $layout_defs['Calls'] = array(
 			'collection_list' => array(		
 				'notes' => array(
 					'module' => 'Notes',
-					'subpanel_name' => 'ForHistory',
+					'subpanel_name' => 'ForCalls',
 					'get_subpanel_data' => 'notes',
 				),		
 			),	

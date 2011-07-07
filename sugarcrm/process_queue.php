@@ -46,10 +46,11 @@ $app_strings = return_application_language($language);
 $report_schedule = new ReportSchedule();
 $reports_to_email = $report_schedule->get_reports_to_email();
 
-//BEGIN SUGARCRM flav=int ONLY
+//BEGIN SUGARCRM flav=ent ONLY
 //Process Enterprise Schedule reports via CSV
+//bug: 23934 - enable Advanced reports
 require_once('modules/ReportMaker/process_scheduled.php');
-//END SUGARCRM flav=int ONLY
+//END SUGARCRM flav=ent ONLY
 
 
 
