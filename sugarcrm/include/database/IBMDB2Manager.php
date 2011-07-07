@@ -936,6 +936,7 @@ class IBMDB2Manager  extends DBManager
     }
 
 
+
     /**+
      * Returns the next value for an auto increment
      *
@@ -1191,6 +1192,17 @@ EOQ;
     {
         return parent::dropTableNameSQL(strtoupper($name));
 	}
+
+    /**+
+     * Truncate table
+     * @param  $name
+     * @return string
+     */
+    public function truncateTableSQL($name)
+    {
+        return "TRUNCATE TABLE " . strtoupper($name) . " IMMEDIATE";
+    }
+
 
     public function dropIndexes($tablename, $indexes, $execute = true)
     {
