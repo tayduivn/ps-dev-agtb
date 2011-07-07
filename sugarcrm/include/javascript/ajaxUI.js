@@ -27,6 +27,10 @@ SUGAR.ajaxUI = {
             {
                 document.title = r.title.replace(/&raquo;/g, '>').replace(/&nbsp;/g, ' ');
             }
+            if (r.action)
+            {
+                action_sugar_grp1 = r.action;
+            }
             //SUGAR.themes.setCurrentTab(r.menu);
             var c = document.getElementById("content");
             c.innerHTML = cont;

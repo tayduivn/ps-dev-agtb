@@ -311,9 +311,9 @@ mySugarLoader.insert();
 			<br /><br />
 			<table align="center" cellpadding="15">
 				<tr>
-					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(1);"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/></a></td>
-					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(2);"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/></a></td>
-					<td align="center"><a href="javascript:SUGAR.mySugar.changePageLayout(3);"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/></a></td>						
+					<td align="center"><a id="change_layout_1_column" href="javascript:SUGAR.mySugar.changePageLayout(1);"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/></a></td>
+					<td align="center"><a id="change_layout_2_column" href="javascript:SUGAR.mySugar.changePageLayout(2);"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/></a></td>
+					<td align="center"><a id="change_layout_3_column" href="javascript:SUGAR.mySugar.changePageLayout(3);"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/></a></td>
 				</tr>
 			</table>
 		</div>

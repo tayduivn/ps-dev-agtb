@@ -37,7 +37,7 @@ class DCMenu extends DashletContainer
         else
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 	    return <<<EOQ
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}'></a></li>	
+		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}' id="dcMenu_{$module}_quick_create_icon" ></a></li>
 EOQ;
 
 	}
