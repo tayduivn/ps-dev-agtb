@@ -1,6 +1,6 @@
 <script type="text/javascript">
 function allowInsideView() {ldelim}
-document.getElementById('insideViewFrame').src = '{$URL}';
+document.getElementById('insideViewFrame').src = '{$AJAX_URL}';
 document.getElementById('insideViewConfirm').style.display = 'none';
 document.getElementById('insideViewFrame').style.display = 'block';
 document.getElementById('insideViewDiv').style.height='430px';

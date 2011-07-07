@@ -173,18 +173,18 @@ class InsideViewLogicHook {
              } else {
                 $tplName = $tplName.$GLOBALS['current_language'].'.tpl';
              }
-             $smarty->assign('URL',$url);
              $smarty->assign('logo',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview.png'));
             $smarty->assign('video',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/video.png'));
             $smarty->assign('logo_expanded',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_expanded.png'));
             $smarty->assign('logo_collapsed',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_collapsed.png'));
-
+            $smarty->assign('AJAX_URL',$url);
              if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 )
              {
                 $smarty->assign('showInsideView',false);
 
              }else {
                 $smarty->assign('showInsideView',true);
+                $smarty->assign('URL',$url);
                 //echo "<div id='insideViewDiv' style='width:100%;height:400px;overflow:hidden'><iframe id='insideViewFrame' src='$url' style='border:0px; width:100%;height:480px;overflow:hidden'></iframe></div>";
              }
             echo $smarty->fetch($tplName);
