@@ -20,7 +20,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
         {rdelim}
     {rdelim});
 </script>
-<div id='insideViewDiv' style='width:100%'>
+<div id='insideViewDiv' style='width:100%' class="doNotPrint">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
         <tbody>
             <tr>
