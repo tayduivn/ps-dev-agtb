@@ -29,10 +29,10 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
                         <span>
                             <a name="insideview"> </a>
                             <span id="show_link_insideview" style="display: none">
-                                <a href="#" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo_expanded}" border="0"></a>
+                                <a href="#" onclick="current_child_field = 'insideview';showSubPanel('insideview',null,null,'insideview');document.getElementById('show_link_insideview').style.display='none';document.getElementById('hide_link_insideview').style.display='';return false;"><img src="{$logo_collapsed}" border="0"></a>
                             </span>
                             <span id="hide_link_insideview" style="display: ">
-                                <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo_collapsed}" border="0"></a>
+                                <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$logo_expanded}" border="0"></a>
                             </span>
                         </span>
                     </h3>
@@ -43,8 +43,12 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
             </tr>
         </tbody>
     </table>
-  <div id='subpanel_insideview' style='width:100%'>
-      <div id='insideViewConfirm' class="detail view" style="padding: 15px; width: 775px;{if $showInsideView}display:none;{/if}">
+  <div id='subpanel_insideview' style='width:100%' {if !$showInsideView}align="center"{/if}>
+      <div id='insideViewConfirm' class="detail view" style="padding: 15px; width: 775px; text-align: left; position: relative;{if $showInsideView}display:none;{/if}">
+      
+      <a href="#" onclick="hideSubPanel('insideview');document.getElementById('hide_link_insideview').style.display='none';document.getElementById('show_link_insideview').style.display='';return false;"><img src="{$close}" border="0" style='position: absolute; top: -8px; right: -9px;'></a>
+      
+      
       <div style="font-size: 14px;">
       	<a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>InsideView</strong></a> <strong>now comes preinstalled in SugarCRM.</strong>
       </div>
@@ -68,7 +72,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
                <hr style="width: 770px;">
      By clicking 'Get Started' you agree to InsideView's  <a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>terms of use</a> and <a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>privacy policy</a>.
 
-      <button onclick="allowInsideView(); return false;" class='button primary' style='float: right; border: 1px solid #d71e00; background-color: #eeeeee; background-image: none; text-shadow: 1px 1px #FFFFFF; color: #222; margin-bottom: 5px; background-image: -moz-linear-gradient(center top , #F9F9F9 0%, #F2F2F2 50%, #F1F1F1 50%, #DDDDDD 100%);'>Get Started!</button>
+      <button onclick="allowInsideView(); return false;" class='button primary' style='float: right; border: 1px solid #821200; background-color: #eeeeee; background-image: none; text-shadow: 1px 1px #FFFFFF; color: #222; margin-bottom: 5px; background-image: -moz-linear-gradient(center top , #F9F9F9 0%, #F2F2F2 50%, #F1F1F1 50%, #DDDDDD 100%);'>Get Started!</button>
       <div class="clear"></div>
       
       </div>
