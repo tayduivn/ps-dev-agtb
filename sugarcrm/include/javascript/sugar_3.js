@@ -109,6 +109,8 @@ function isSupportedIE() {
 }
 
 SUGAR.isIE = isSupportedIE();
+SUGAR.isIE7 = (navigator.userAgent.toLowerCase().indexOf('msie 7')!=-1);
+alert(SUGAR.isIE7);
 var isSafari = (navigator.userAgent.toLowerCase().indexOf('safari')!=-1);
 
 // escapes regular expression characters
