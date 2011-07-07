@@ -64,7 +64,6 @@ class Bug43466 extends Sugar_PHPUnit_Framework_TestCase
      * @group bug43466 
      */
 
-
 	public function providerRepairTableParams()
 	{
 		$fieldDefs = array (

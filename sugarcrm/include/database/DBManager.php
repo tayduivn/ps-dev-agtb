@@ -791,7 +791,7 @@ abstract class DBManager
         // do index comparisions
         $sql .=	"/* INDEXES */\n";
         $correctedIndexs = array();
-		
+
 		// do indicies comparisons case-insensitive
 		foreach($compareIndices as $k => $value){
 			$value['name'] = strtolower($value['name']);
