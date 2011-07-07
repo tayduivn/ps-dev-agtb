@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -145,7 +146,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
  * @author alex
  *
  */
-class SugarTestProductUtilitiesWithTypes extends SugarTestProductUtilities 
+class SugarTestProductUtilitiesWithTypes2 extends SugarTestProductUtilities 
 {
 
 	/**
