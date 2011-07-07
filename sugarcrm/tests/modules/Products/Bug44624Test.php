@@ -37,7 +37,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->is_admin = 1;
 	    $GLOBALS['module'] = "Products";
 		SugarTestProductTypesUtilities::createType(false, '1');
-		$this->_product = SugarTestProductUtilitiesWithTypes::createProduct("1");
+		$this->_product = SugarTestProductUtilitiesWithTypes2::createProduct("1");
         $this->_product->disable_row_level_security = true;
 
 
@@ -45,7 +45,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-		SugarTestProductUtilitiesWithTypes::removeAllCreatedProducts();
+		SugarTestProductUtilitiesWithTypes2::removeAllCreatedProducts();
 		SugarTestProductTypesUtilities::removeAllCreatedtypes();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
