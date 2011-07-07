@@ -101,7 +101,7 @@ class Bug9170Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function tearDown() 
     {
-        $GLOBALS['db']->query("TRUNCATE TABLE {$this->rs->table_name}", "Unable to cleanup Bug 9170 Test");
+        $GLOBALS['db']->truncateTableSQL($this->rs->table_name);
 	}
 
 }

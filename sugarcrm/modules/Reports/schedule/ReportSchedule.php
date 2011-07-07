@@ -38,9 +38,14 @@ function ReportSchedule(){
 
 }
 
-
+/**
+ * @deprecated deprecated since this syntax is only supported by MySQL
+ * @return void
+ * TODO THIS FUNCTIONALITY SHOULD BE REMOVED AFTER CONVERSION TO SUGARBEAN USE
+ */
 function drop_tables ()
 {
+    // TODO This code should never be used
     $query = 'DROP TABLE IF EXISTS '.$this->table_name;
     $this->db->query($query);
 }
@@ -103,6 +108,28 @@ function getNextRunDate($date_start,$interval)
     return $timedate->fromTimestamp($date_start)->asDb();
 }
 
+/**
+ * Converts datetime values from the database type
+ * NOTE that this is currently hardcoded as this whole module should
+ * be converted to using SugarBeans, which would make this obsolete
+ * @param $row
+ * @return converted row
+ * TODO XXX Move this whole module to use SugarBeans
+ */
+protected function fromConvertReportScheduleDBRow($row){
+
+    foreach($row as $name => $value){
+        switch($name){
+            case 'date_start':
+            case 'next_run':
+            case 'date_modified':
+                $row[$name] = $this->db->fromConvert($row[$name], 'datetime');
+            default: break;
+        }
+    }
+    return $row;
+}
+
 function get_users_schedule($id=''){
 		if(empty($id)){
 			global $current_user;
@@ -112,7 +139,7 @@ function get_users_schedule($id=''){
 		$query = "SELECT * FROM $this->table_name WHERE user_id='$id'";
 		$results = $this->db->query($query);
 		while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $row;
+			$return_array[$row['report_id']] = $this->fromConvertReportScheduleDBRow($row);
 		}
 		return $return_array;
 }
@@ -125,7 +152,7 @@ function get_report_schedule_for_user($report_id, $user_id=''){
 	$query = "SELECT * FROM $this->table_name WHERE report_id='$report_id' AND user_id='$user_id' AND deleted=0";
 	$results = $this->db->query($query);
 	$row = $this->db->fetchByAssoc($results);
-	return $row;
+	return $this->fromConvertReportScheduleDBRow($row);
 }
 
 function get_report_schedule($report_id){
@@ -133,7 +160,7 @@ function get_report_schedule($report_id){
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[] = $row;
+		$return_array[] = $this->fromConvertReportScheduleDBRow($row);
 	}
 	return $return_array;
 }
@@ -159,7 +186,7 @@ function get_reports_to_email($user_id= '', $schedule_type="pro"){
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $row;
+			$return_array[$row['report_id']] = $this->fromConvertReportScheduleDBRow($row);
 	}
 	return $return_array;
 
@@ -184,7 +211,7 @@ function get_ent_reports_to_email($user_id= '', $schedule_type="ent"){
 	$results = $this->db->query($query);
 	$return_array = array();
 	while($row = $this->db->fetchByAssoc($results)){
-			$return_array[$row['report_id']] = $row;
+			$return_array[$row['report_id']] = $this->fromConvertReportScheduleDBRow($row);
 	}
 	return $return_array;
 
