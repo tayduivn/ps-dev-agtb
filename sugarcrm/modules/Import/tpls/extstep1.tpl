@@ -70,9 +70,9 @@
         {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
     </td>
     <td style="text-align: left;" scope="row" id="default_column_header" width="10%">
-        <span id="hide_default_link" class="expand">&nbsp;</span>
-        <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
+        <span id="hide_default_link" class="expand">&nbsp;<b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
         {sugar_help text=$MOD.LBL_EXTERNAL_DEFAULT_TOOPLTIP}</span>
+        <span id="default_column_header_span">&nbsp;</span>
     </td>
 </tr>
 {/if}
