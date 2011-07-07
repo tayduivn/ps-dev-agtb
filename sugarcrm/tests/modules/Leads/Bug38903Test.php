@@ -9,6 +9,10 @@ class Bug38903Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testAccountNameExists()
     {
+        //Reset moduleList, beanList and beanFiles
+        global $beanList, $beanFiles, $moduleList;
+        require('include/modules.php');
+        
         $bean = new Expression();
 
         // just to remove php notice
