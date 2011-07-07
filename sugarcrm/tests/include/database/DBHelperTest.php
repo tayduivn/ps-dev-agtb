@@ -1,52 +1,75 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
+ 
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
-//BEGIN SUGARCRM flav!=sales ONLY 
+//BEGIN SUGARCRM flav!=sales ONLY
 require_once 'modules/Cases/Case.php';
-//END SUGARCRM flav!=sales ONLY 
+//END SUGARCRM flav!=sales ONLY
 
 class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_db;
     private $_helper;
-    
+
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->_db = &DBManagerFactory::getInstance();
         $this->_helper = $this->_db->getHelper();
     }
-    
-    public function tearDown() 
+
+    public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         $this->_db->disconnect();
     }
-    
+
     public function testCreateTableSQL()
     {
         $sql = $this->_helper->createTableSQL(new Contact);
-    
+
         $this->assertRegExp("/create\s*table\s*contacts/i",$sql);
     }
-    
+
     public function testCreateTableSQLParams()
     {
         $bean = new Contact;
-        
+
         $sql = $this->_helper->createTableSQLParams(
             $bean->getTableName(),
             $bean->getFieldDefinitions(),
             $bean->getIndices());
-        
+
         $this->assertRegExp("/create\s*table\s*contacts/i",$sql);
     }
-    
+
     public function testInsertSQL()
     {
         $sql = $this->_helper->insertSQL(new Contact);
-    
+
         $this->assertRegExp("/insert\s*into\s*contacts/i",$sql);
     }
     
@@ -66,7 +89,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testUpdateSQL()
     {
         $sql = $this->_helper->updateSQL(new Contact, array("id" => "1"));
-    
+
         $this->assertRegExp("/update\s*contacts\s*set/i",$sql);
         $this->assertRegExp("/where\s*contacts.id\s*=\s*'1'/i",$sql);
     }
@@ -87,49 +110,49 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDeleteSQL()
     {
         $sql = $this->_helper->deleteSQL(new Contact, array("id" => "1"));
-    
+
         $this->assertRegExp("/update\s*contacts\s*set\s*deleted\s*=\s*1/i",$sql);
         $this->assertRegExp("/where\s*contacts.id\s*=\s*'1'/i",$sql);
     }
-    
+
     public function testRetrieveSQL()
     {
         $sql = $this->_helper->retrieveSQL(new Contact, array("id" => "1"));
-    
+
         $this->assertRegExp("/select\s*\*\s*from\s*contacts/i",$sql);
         $this->assertRegExp("/where\s*contacts.id\s*=\s*'1'/i",$sql);
     }
-    
+
     public function testRetrieveViewSQL()
     {
         // TODO: write this test
     }
-    
+
     public function testCreateIndexSQL()
     {
         $sql = $this->_helper->createIndexSQL(
             new Contact,
             array('id' => array('name'=>'id')),
             'idx_id');
-        
+
         $this->assertRegExp("/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i",$sql);
-        
+
         $sql = $this->_helper->createIndexSQL(
             new Contact,
             array('id' => array('name'=>'id')),
             'idx_id',
             false);
-        
+
         $this->assertRegExp("/create\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i",$sql);
-        
+
         $sql = $this->_helper->createIndexSQL(
             new Contact,
             array('id' => array('name'=>'id'),'deleted' => array('name'=>'deleted')),
             'idx_id');
-        
+
         $this->assertRegExp("/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*,\s*deleted\s*\)/i",$sql);
     }
-    
+
     public function testGetFieldType()
     {
         $fieldDef = array(
@@ -139,7 +162,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             'Type'      => 'bool',
             'data_type' => 'email',
             );
-        
+
         $this->assertEquals($this->_helper->getFieldType($fieldDef),'varchar');
         unset($fieldDef['dbType']);
         $this->assertEquals($this->_helper->getFieldType($fieldDef),'int');
@@ -150,7 +173,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         unset($fieldDef['Type']);
         $this->assertEquals($this->_helper->getFieldType($fieldDef),'email');
     }
-    //BEGIN SUGARCRM flav!=sales ONLY 
+    //BEGIN SUGARCRM flav!=sales ONLY
     public function testGetAutoIncrement()
     {
         $case = new aCase();
@@ -158,21 +181,25 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case->save();
         $case->retrieve($case->id);
         $lastAuto = $case->case_number;
-        $this->assertEquals($lastAuto + 1, $this->_helper->getAutoIncrement("cases", "case_number"));
-        $case->deleted = true;
-        $case->save();
+        $helperResult = $this->_helper->getAutoIncrement("cases", "case_number");
+        
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
+        
+        $this->assertEquals($lastAuto + 1, $helperResult);
     }
-    //END SUGARCRM flav!=sales ONLY 
-    //BEGIN SUGARCRM flav=ent ONLY 
+    //END SUGARCRM flav!=sales ONLY
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testGetAutoIncrementSQL()
     {
-        if( $this->_db->dbType == 'oci8') {
-            $sql = $this->_helper->getAutoIncrementSQL('cases', 'case_number');
-            $this->assertRegExp("/" . getSequenceName('cases', 'case_number') . "\.nextval/i",$sql);
+        if( $this->_db->dbType != 'oci8') {
+            $this->markTestSkipped('Only applies to Oracle');
         }
+        
+        $sql = $this->_helper->getAutoIncrementSQL('cases', 'case_number');
+        $this->assertRegExp("/cases_case_number_seq\.nextval/i",$sql);
     }
-    //END SUGARCRM flav=ent ONLY 
-    //BEGIN SUGARCRM flav!=sales ONLY 
+    //END SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav!=sales ONLY
     public function testSetAutoIncrementStart()
     {
         $case = new aCase();
@@ -188,45 +215,48 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $case2->name = "foo2";
         $case2->save();
         $case2->retrieve($case2->id);
-        $this->assertEquals($newAuto, $case2->case_number);
-        $case2->deleted = true;
-        $case2->save();
+        $case_number = $case2->case_number;
+        
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case->id}'");
+        $GLOBALS['db']->query("DELETE FROM cases WHERE id= '{$case2->id}'");
+        
+        $this->assertEquals($newAuto, $case_number);
     }
-    //END SUGARCRM flav!=sales ONLY 
+    //END SUGARCRM flav!=sales ONLY
     public function testAddColumnSQL()
     {
         $sql = $this->_helper->addColumnSQL(
             'contacts',
             array('foo' => array('name'=>'foo','type'=>'varchar'))
             );
-        
+
         $this->assertRegExp("/alter\s*table\s*contacts/i",$sql);
     }
-    
+
     public function testAlterColumnSQL()
     {
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
             array('foo' => array('name'=>'foo','type'=>'varchar'))
             );
-        
+
         $this->assertRegExp("/alter\s*table\s*contacts/i",$sql);
     }
-    
+
     public function testDropTableSQL()
     {
         $sql = $this->_helper->dropTableSQL(new Contact);
-    
+
         $this->assertRegExp("/drop\s*table.*contacts/i",$sql);
     }
-    
+
     public function testDropTableNameSQL()
     {
         $sql = $this->_helper->dropTableNameSQL('contacts');
-        
+
         $this->assertRegExp("/drop\s*table.*contacts/i",$sql);
     }
-    
+
     public function testDeleteColumnSQL()
     {
         $sql = $this->_helper->deleteColumnSQL(
@@ -235,12 +265,12 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             );
         //BEGIN SUGARCRM flav=ent ONLY
         if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i",$sql);
+            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*\(\s*foo\s*\)/i",$sql);
         else
         //END SUGARCRM flav=ent ONLY
             $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*foo/i",$sql);
     }
-    
+
     public function testDropColumnSQL()
     {
         $sql = $this->_helper->dropColumnSQL(
@@ -249,19 +279,19 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             );
         //BEGIN SUGARCRM flav=ent ONLY
         if ( $this->_db->dbType == 'oci8' )
-            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i",$sql);
+            $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*\(\s*foo\s*\)/i",$sql);
         else
         //END SUGARCRM flav=ent ONLY
             $this->assertRegExp("/alter\s*table\s*contacts\s*drop\s*column\s*foo/i",$sql);
     }
-    
+
     public function testMassageValue()
     {
         $this->assertEquals(
             $this->_helper->massageValue(123,array('name'=>'foo','type'=>'int')),
             123
             );
-        if ( $this->_db->dbType == 'mssql' 
+        if ( $this->_db->dbType == 'mssql'
             //BEGIN SUGARCRM flav=ent ONLY
             || $this->_db->dbType == 'oci8'
             //END SUGARCRM flav=ent ONLY
@@ -276,7 +306,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 "'\'dog\''"
                 );
     }
-    
+
     public function testGetColumnType()
     {
         //BEGIN SUGARCRM flav=ent ONLY
@@ -285,43 +315,43 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 $this->_helper->getColumnType('int'),
                 'number'
                 );
-        else 
+        else
         //END SUGARCRM flav=ent ONLY
             $this->assertEquals(
                 $this->_helper->getColumnType('int'),
                 'int'
                 );
     }
-    
+
     public function testIsFieldArray()
     {
         $this->assertTrue(
             $this->_helper->isFieldArray(array('name'=>'foo','type'=>array('int')))
             );
-        
+
         $this->assertFalse(
             $this->_helper->isFieldArray(array('name'=>'foo','type'=>'int'))
             );
-        
+
         $this->assertTrue(
             $this->_helper->isFieldArray(array('name'=>'foo'))
             );
-        
+
         $this->assertFalse(
             $this->_helper->isFieldArray(1)
             );
     }
-    
+
     public function testSaveAuditRecords()
     {
         // TODO: write this test
     }
-    
+
     public function testGetDataChanges()
     {
         // TODO: write this test
     }
-    
+
     public function testQuote()
     {
         $this->assertEquals(
@@ -329,7 +359,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             "'".$this->_db->quote('foobar')."'"
             );
     }
-    
+
     public function testEscapeQuote()
     {
         $this->assertEquals(
@@ -337,18 +367,18 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db->quote('foobar')
             );
     }
-    
+
     public function testGetIndices()
     {
         $indices = $this->_helper->get_indices('contacts');
-        
+
         foreach ( $indices as $index ) {
             $this->assertTrue(!empty($index['name']));
             $this->assertTrue(!empty($index['type']));
             $this->assertTrue(!empty($index['fields']));
         }
     }
-    
+
     public function testAddDropConstraint()
     {
         $tablename = 'test' . date("YmdHis");
@@ -361,10 +391,10 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             false
             );
-        
+
         $this->assertRegExp("/idx_foo/i",$sql);
         $this->assertRegExp("/foo/i",$sql);
-        
+
         $tablename = 'test' . date("YmdHis");
         $sql = $this->_helper->add_drop_constraint(
             $tablename,
@@ -375,17 +405,17 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             true
             );
-        
+
         $this->assertRegExp("/idx_foo/i",$sql);
         $this->assertRegExp("/foo/i",$sql);
         $this->assertRegExp("/drop/i",$sql);
     }
-    
+
     public function testRenameIndex()
     {
         // TODO: write this test
     }
-    
+
     public function testNumberOfColumns()
     {
         $tablename = 'test' . date("YmdHis");
@@ -399,28 +429,28 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                 ),
             array()
             );
-        
+
         $this->assertEquals($this->_helper->number_of_columns($tablename),1);
-        
+
         $this->_db->dropTableName($tablename);
     }
-    
+
     public function testGetColumns()
     {
         $vardefs = $this->_helper->get_columns('contacts');
-        
+
         $this->assertTrue(isset($vardefs['id']));
         $this->assertTrue(isset($vardefs['id']['name']));
         $this->assertTrue(isset($vardefs['id']['type']));
     }
-    
+
     public function testMassageFieldDefs()
     {
         // TODO: write this test
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testEmptyPrecision()
     {
@@ -430,7 +460,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
-            array('compensation_min' => 
+            array('compensation_min' =>
                  array(
                    'required' => false,
                    'name' => 'compensation_min',
@@ -449,13 +479,13 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                    ),
                  )
             );
-        
+
         $this->assertNotRegExp("/float\s*\(18,\s*\)/i",$sql);
         $this->assertRegExp("/float\s*\(18\)/i",$sql);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testBlankSpacePrecision()
     {
@@ -465,7 +495,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
-            array('compensation_min' => 
+            array('compensation_min' =>
                  array(
                    'required' => false,
                    'name' => 'compensation_min',
@@ -484,13 +514,13 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                    ),
                  )
             );
-        
+
         $this->assertNotRegExp("/float\s*\(18,\s*\)/i",$sql);
         $this->assertRegExp("/float\s*\(18\)/i",$sql);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecision()
     {
@@ -500,7 +530,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
-            array('compensation_min' => 
+            array('compensation_min' =>
                  array(
                    'required' => false,
                    'name' => 'compensation_min',
@@ -519,15 +549,15 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                    ),
                  )
             );
-        
+
         if ( $this->_db->dbType == 'mssql' )
 			$this->assertRegExp("/float\s*\(18\)/i",$sql);
         else
         	$this->assertRegExp("/float\s*\(18,2\)/i",$sql);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionInLen()
     {
@@ -537,7 +567,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=ent ONLY
         $sql = $this->_helper->alterColumnSQL(
             'contacts',
-            array('compensation_min' => 
+            array('compensation_min' =>
                  array(
                    'required' => false,
                    'name' => 'compensation_min',
@@ -560,9 +590,9 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
         else
         	$this->assertRegExp("/float\s*\(18,2\)/i",$sql);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testEmptyPrecisionMassageFieldDef()
     {
@@ -587,12 +617,12 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                'precision' => '',
             );
         $this->_helper->massageFieldDef($fielddef,'mytable');
-        
+
         $this->assertEquals("18",$fielddef['len']);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testBlankSpacePrecisionMassageFieldDef()
     {
@@ -617,12 +647,12 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                'precision' => ' ',
             );
         $this->_helper->massageFieldDef($fielddef,'mytable');
-        
+
         $this->assertEquals("18",$fielddef['len']);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionMassageFieldDef()
     {
@@ -647,12 +677,12 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                'precision' => '2',
             );
         $this->_helper->massageFieldDef($fielddef,'mytable');
-        
+
         $this->assertEquals("18,2",$fielddef['len']);
     }
-    
+
     /**
-     * @group bug22921
+     * @ticket 22921
      */
     public function testSetPrecisionInLenMassageFieldDef()
     {
@@ -676,7 +706,35 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
                'len' => '18,2',
             );
         $this->_helper->massageFieldDef($fielddef,'mytable');
-        
+
         $this->assertEquals("18,2",$fielddef['len']);
+    }
+
+    public function testGetSelectFieldsFromQuery()
+    {
+        $i=0;
+        foreach(array("", "DISTINCT ") as $distinct) {
+            $fields = array();
+            $expected = array();
+            foreach(array("field", "''", "'data'", "sometable.field") as $data) {
+                if($data[0] != "'") {
+                    $data .= $i++;
+                    $fields[] = "{$distinct}$data";
+                    $dotfields = explode('.', $data);
+                    $expected[] = $dotfields[count($dotfields)-1];
+                }
+                $as = "otherfield".($i++);
+                $fields[] = "{$distinct}$data $as";
+                $expected[] = $as;
+                $as = "otherfield".($i++);
+                $fields[] = "{$distinct}$data as $as";
+                $expected[] = $as;
+            }
+            $query = "SELECT ".join(', ', $fields);
+            $result = $this->_helper->getSelectFieldsFromQuery($query);
+            foreach($expected as $expect) {
+                $this->assertContains($expect, array_keys($result), "Result should include $expect");
+            }
+        }
     }
 }

@@ -31,7 +31,7 @@
 {foreach from=$display_data key=module item=data}
 <table border="0" cellspacing="1" cellpadding="1" name="{$module}" id="{$module}">
 <tr>
-<td colspan="2"><span><font size="3">{$module}</font></span></td>
+<td colspan="2"><span><font size="3">{$data.module_name}</font></span></td>
 </tr>
 <tr>
 <td><b>{$mod.LBL_DEFAULT}</b></td>
@@ -75,10 +75,10 @@ YAHOO.example.DDApp = {
 init: function() { 
 {/literal}	    
 {foreach from=$modules_sources key=module item=field_defs}  
-    new YAHOO.util.DDTarget("{$source_id}:{$module}:enabled_ul"); 
-	new YAHOO.util.DDTarget("{$source_id}:{$module}:disabled_ul"); 
+    new YAHOO.util.DDTarget("{$source_id}:{$module}:enabled_ul", "{$source_id}:{$module}"); 
+	new YAHOO.util.DDTarget("{$source_id}:{$module}:disabled_ul", "{$source_id}:{$module}"); 
 	{foreach from=$field_defs key=index item=field}
-	     new YAHOO.example.DDList("{$source_id}:{$module}:{$index}");
+	     new YAHOO.example.DDList("{$source_id}:{$module}:{$index}", "{$source_id}:{$module}");
 	{/foreach}
 {/foreach}    
 {literal}	        

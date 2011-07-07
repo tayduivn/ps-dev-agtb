@@ -56,6 +56,8 @@ class Quota extends SugarBean {
 	var $module_dir = 'Quotas';
 	var $object_name = "Quota";
 	
+	//Here value of tracker_visibility is false, as this module should not be tracked.
+	var $tracker_visibility = false;
 	
 	var $new_schema = true;
 

@@ -79,35 +79,6 @@ if($focus->private && !empty($focus->associated_user_id)){
 	}
 }
 
-//before we save let's do some logic to ensure that we split the name properly
-if($focus->private && !empty($focus->associated_user_id)){
-	$tokens = explode(' ', $focus->name);
-	if(count($tokens) == 2){
-		$focus->name = trim($tokens[0]);
-		$focus->name_2 = trim($tokens[1]);
-	}elseif(count($tokens) > 2){
-		//e.g. Jean Paul Jones
-		
-			//since this is a private team we can try to match what the user's name is
-			$user = new User();
-			$user->retrieve($focus->associated_user_id);
-			$tokenStr = '';
-			$index = count($tokens);
-			for($i = (count($tokens)-1); $i > 0; $i--){
-				$tokenStr .= $tokens[$i];
-				if(strcmp($tokenStr,$user->last_name) == 0){
-					$focus->name_2 = $tokenStr;
-					$index = $i;
-					break;
-				}
-			}
-			$newTokens = array_slice($tokens, 0, $index);
-			$focus->name = implode($newTokens, ' ');
-	}else{
-		$focus->name_2 = '';
-	}
-}
-
 //do a dup check on name before saving 
 function checkDupTeamName($focus){
     global $db;

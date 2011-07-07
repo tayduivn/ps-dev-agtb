@@ -20,8 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 //FILE SUGARCRM flav=ent ONLY
-chdir('../');
-
 require_once('soap/SoapError.php');
 require_once('soap/SoapHelperFunctions.php');
 

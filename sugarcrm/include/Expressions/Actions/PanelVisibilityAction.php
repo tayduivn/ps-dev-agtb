@@ -26,7 +26,7 @@ class PanelVisibilityAction extends AbstractAction{
 	
 	function PanelVisibilityAction($params) {
 		$this->targetPanel = $params['target'];
-		$this->expression = $params['value'];
+		$this->expression = str_replace("\n", "",$params['value']);
 	}
 	
 	/**
@@ -82,10 +82,12 @@ SUGAR.util.extend(SUGAR.forms.PanelVisibilityAction, SUGAR.forms.AbstractAction,
     /**
      * Triggers the style dependencies.
      */
-    exec: function()
+    exec: function(context)
     {
+        if (typeof(context) == 'undefined')
+            context = this.context;
         try {
-            var visibility = SUGAR.forms.evalVariableExpression(this.expr).evaluate();
+            var visibility = this.evalExpression(this.expr, context);
             var target = document.getElementById(this.target);
             if (target != null) {               
                 if (target.style.display != 'none')

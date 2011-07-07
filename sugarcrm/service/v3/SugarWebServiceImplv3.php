@@ -182,7 +182,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	require_once('sugar_version.php');
     	$GLOBALS['log']->info('End: SugarWebServiceImpl->get_server_info');
     	
-    	return array('flavor' => $GLOBALS['sugar_flavor'], 'version' => $GLOBALS['sugar_version'], 'gmt_time' => gmdate('Y-m-d H:i:s'));
+    	return array('flavor' => $GLOBALS['sugar_flavor'], 'version' => $GLOBALS['sugar_version'], 'gmt_time' => TimeDate::getInstance()->nowDb());
     } // fn
 
     /**
@@ -195,7 +195,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_module_layout($session, $a_module_names, $a_type, $a_view,$md5 = FALSE){
-    	$GLOBALS['log']->fatal('Begin: SugarWebServiceImpl->get_module_layout');
+    	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_layout');
     
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
@@ -567,8 +567,7 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     * @exception 'SoapFault' -- The SOAP error, if any
     */
     function get_relationships($session, $module_name, $module_id, $link_field_name, $related_module_query, $related_fields, $related_module_link_name_to_fields_array, $deleted, $order_by = ''){
-    
-    	$GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_relationships');
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_relationships');
     	global  $beanList, $beanFiles;
     	$error = new SoapError();
     	if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error)) {

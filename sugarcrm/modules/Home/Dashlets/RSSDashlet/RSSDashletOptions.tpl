@@ -45,6 +45,18 @@
     	<input class="text" name="title" size='20' value='{$title}'>
     </td>
 </tr>
+{if $isRefreshable}
+<tr>
+    <td scope='row'>
+        {$autoRefresh}
+    </td>
+    <td>
+        <select name='autoRefresh'>
+            {html_options options=$autoRefreshOptions selected=$autoRefreshSelect}
+        </select>
+    </td>
+</tr>
+{/if}
 <tr>
     <td valign='top' nowrap scope='row'>{$rssUrlLbl}</td>
     <td valign='top'>
@@ -60,6 +72,7 @@
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$saveLbl}'>
+        <input type='submit' class='button' value='{$clearLbl}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
    	</td>
 </tr>
 </table>

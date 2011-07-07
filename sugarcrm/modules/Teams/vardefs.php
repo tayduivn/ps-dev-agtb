@@ -119,6 +119,18 @@ $dictionary['Team'] = array ( 'table' => 'teams'
     'source'=>'non-db',
 	'vname'=>'LBL_USERS',
   ),
+    'teams_sets' =>
+    array (
+        'name' => 'teams_sets',
+        'type' => 'link',
+        'relationship' => 'team_sets_teams',
+        'link_type' => 'many',
+        'side' => 'right',
+        'source' => 'non-db',
+        'vname' => 'LBL_TEAMS',
+        'studio' => false,
+        'duplicate_merge'=> 'disabled',
+    ),
   
 )   , 'indices' => array (
       array('name' =>'teamspk', 'type' =>'primary', 'fields'=>array('id')),

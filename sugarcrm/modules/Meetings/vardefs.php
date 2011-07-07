@@ -19,8 +19,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$dictionary['Meeting'] = array('table' => 'meetings', 
-	'unified_search' => true,
+$dictionary['Meeting'] = array('table' => 'meetings',
+	'unified_search' => true, 'unified_search_default_enabled' => true,
 	'comment' => 'Meeting activities'
                                ,'fields' => array (
   'name' =>
@@ -60,6 +60,74 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'len' => '50',
     'comment' => 'Meeting location'
   ),
+  'password' =>
+  array (
+    'name' => 'password',
+    'vname' => 'LBL_PASSWORD',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting password',
+    //BEGIN SUGARCRM flav=com ONLY  
+    'studio' => 'false',
+    //END SUGARCRM flav=com ONLY    
+	//BEGIN SUGARCRM flav!=com ONLY    
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+    'dependency' => 'isInEnum($type,getDD("extapi_meeting_password"))',
+    //END SUGARCRM flav!=com ONLY
+  ),
+  'join_url' =>
+  array (
+    'name' => 'join_url',
+    'vname' => 'LBL_URL',
+    'type' => 'varchar',
+    'len' => '200',
+    'comment' => 'Join URL',
+    'studio' => 'false',
+    'reportable' => false,
+  ),
+  'host_url' =>
+  array (
+    'name' => 'host_url',
+    'vname' => 'LBL_URL',
+    'type' => 'varchar',
+    'len' => '400',
+    'comment' => 'Host URL',
+    'studio' => 'false',
+    'reportable' => false,
+  ),
+  'displayed_url' =>
+  array (
+    'name' => 'displayed_url',
+    'vname' => 'LBL_URL',
+    'type' => 'url',
+    'len' => '400',
+    'comment' => 'Meeting URL',
+    //BEGIN SUGARCRM flav=com ONLY  
+    'studio' => 'false',
+    //END SUGARCRM flav=com ONLY  
+    //BEGIN SUGARCRM flav!=com ONLY
+    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+    'dependency' => 'and(isAlpha($type),not(equal($type,"Sugar")))',
+    //END SUGARCRM flav!=com ONLY
+  ),
+  'creator' =>
+  array (
+    'name' => 'creator',
+    'vname' => 'LBL_CREATOR',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting creator',
+    'studio' => 'false',
+  ),
+  'external_id' =>
+  array (
+    'name' => 'external_id',
+    'vname' => 'LBL_EXTERNALID',
+    'type' => 'varchar',
+    'len' => '50',
+    'comment' => 'Meeting ID for external app API',
+    'studio' => 'false',
+   ),
   'duration_hours' =>
   array (
     'name' => 'duration_hours',
@@ -89,15 +157,17 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'comment' => 'Date of start of meeting',
     'importable' => 'required',
     'required' => true,
+    'enable_range_search' => true,
   ),
 
   'date_end' =>
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'date',
+    'type' => 'datetime',
     'massupdate'=>false,
-    'comment' => 'Date meeting ends'
+    'comment' => 'Date meeting ends',
+    'enable_range_search' => true,
   ),
   'parent_type' =>
   array (
@@ -116,8 +186,27 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'type' => 'enum',
     'len' => 100,
     'options' => 'meeting_status_dom',
-    'comment' => 'Meeting status (ex: Planned, Held, Not held)'
+    'comment' => 'Meeting status (ex: Planned, Held, Not held)',
+    'default' => 'Planned',
   ),
+  'type' =>
+   array (
+     'name' => 'type',
+     'vname' => 'LBL_TYPE',
+     'type' => 'enum',
+     'len' => 255,
+     'function' => 'getMeetingsExternalApiDropDown',
+     'comment' => 'Meeting type (ex: WebEx, Other)',
+     'options' => 'eapm_list',
+     'default'	=> 'Sugar',
+     'massupdate' => false,
+   	 //BEGIN SUGARCRM flav=com ONLY
+   	 'studio' => 'false',
+     //END SUGARCRM flav=com ONLY
+   	 //BEGIN SUGARCRM flav!=com ONLY
+   	 'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'wirelesslistview'=>false, 'wireless_basic_search'=>false),
+   	 //END SUGARCRM flav!=com ONLY
+   ),
   // Bug 24170 - Added only to allow the sidequickcreate form to work correctly
   'direction' =>
   array (
@@ -131,7 +220,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'importable' => 'false',
     'massupdate'=>false,
     'reportable'=>false,
-	'studio' => false,
+	'studio' => 'false',
   ),
   'parent_id' =>
   array (
@@ -293,7 +382,8 @@ $dictionary['Meeting'] = array('table' => 'meetings',
        array('name' =>'idx_mtg_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_meet_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
        array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id', 'status', 'deleted')),
-      
+       array('name' => 'idx_meet_date_start', 'type' => 'index', 'fields'=> array('date_start')),
+
                                                    )
 //This enables optimistic locking for Saves From EditView
 	,'optimistic_locking'=>true,

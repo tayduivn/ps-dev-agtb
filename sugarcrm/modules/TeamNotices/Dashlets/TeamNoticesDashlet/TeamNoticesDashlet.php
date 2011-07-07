@@ -18,9 +18,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * 
+ *
  * $Id: TeamNoticesDashlet.php 45763 2009-04-01 19:16:18Z majed $
- * Description: Handles the User Preferences and stores them in a seperate table. 
+ * Description: Handles the User Preferences and stores them in a seperate table.
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
@@ -28,45 +28,40 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/Dashlets/Dashlet.php');
 
-class TeamNoticesDashlet extends Dashlet 
+class TeamNoticesDashlet extends Dashlet
 {
     public $isRefreshable = false;
     public $hasScript     = true;
 
-    public function __construct(
-        $id
-        ) 
+    public function __construct($id)
     {
         parent::Dashlet($id);
-        if(empty($def['title'])) 
-            $this->title = translate('LBL_MODULE_NAME', 'TeamNotices');        
+        $this->title = translate('LBL_MODULE_NAME', 'TeamNotices');
     }
-    
-    public function displayScript() 
+
+    public function displayScript()
     {
     }
-    
-    public function display() 
+
+    public function display()
     {
         $data = array();
-        
-        
+
+
         $ss = new Sugar_Smarty();
-        
-        
+
+
         $focus = new TeamNotice();
-        
-        $today = db_convert("'".gmdate($GLOBALS['timedate']->dbDayFormat)."'", 'date');
+
+        $today = db_convert("'".TimeDate::getInstance()->nowDbDate()."'", 'date');
         $query = $focus->create_new_list_query("date_start",$focus->table_name.".date_start <= $today and ".$focus->table_name.".date_end >= $today and ".$focus->table_name.'.status=\'Visible\'');
-        
-        if ( $result = $focus->db->query($query) ) 
+
+        if ( $result = $focus->db->query($query) )
             while ( $row = $focus->db->fetchByAssoc($result) )
                 $data[] = $row;
-        
+
         $ss->assign("data", $data);
-        
+
         return parent::display() . $ss->fetch('modules/TeamNotices/Dashlets/TeamNoticesDashlet/TeamNoticesDashlet.tpl');
     }
 }
-
-?>

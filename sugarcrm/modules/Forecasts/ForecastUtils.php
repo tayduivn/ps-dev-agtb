@@ -406,7 +406,7 @@ function upsert_worksheet_record($owner_id, $timeperiod_id, $forecast_type, $wk_
 		$ret_id = $wk->save();
 	} else {
 		//		_pp('updating');
-        $date_modified = gmdate($GLOBALS['timedate']->get_db_date_time_format());
+        $date_modified = TimeDate::getInstance()->nowDb();
 		$query = "update worksheet set likely_case=$likely_case, best_case=$best_case, worst_case=$worst_case, modified_user_id='{$current_user->id}', date_modified='{$date_modified}' where id='{$row['id']}'";
         $resource = $GLOBALS['db']->query($query);
 	}
@@ -453,7 +453,7 @@ function get_chart_for_user($user=null,$user_id=null,$forecast_type='Direct') {
     }
     require_once('modules/Forecasts/Charts.php');
     $chart= new forecast_charts();
-    return $chart->forecast_history($user,gmdate($GLOBALS['timedate']->get_db_date_time_format()),$forecast_type,5);
+    return $chart->forecast_history($user,TimeDate::getInstance()->nowDb(),$forecast_type,5);
 }
 /**
  * Display the export link

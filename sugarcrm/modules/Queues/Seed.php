@@ -40,7 +40,7 @@ $db =& $focus->db;
 $qGlobal = "INSERT INTO queues 
 			(id, deleted, date_entered, date_modified, modified_user_id, 
 			created_by, name, status, owner_id, queue_type, workflows, team_id)
-			VALUES ('1', 0, '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '".gmdate($GLOBALS['timedate']->get_db_date_time_format())."', '1', '1', 'Global', 'Active', '1', 'Global','roundRobin', '1')";
+			VALUES ('1', 0, '".TimeDate::getInstance()->nowDb()."', '".TimeDate::getInstance()->nowDb()."', '1', '1', 'Global', 'Active', '1', 'Global','roundRobin', '1')";
 $rGlobal = $db->query($qGlobal);
 
 $res = $focus->db->query('SELECT id,first_name,last_name FROM users');
@@ -52,8 +52,8 @@ while($a = $focus->db->fetchByAssoc($res)) {
 			VALUES(
 				'".$guid."', 
 				0, 
-				'".date($GLOBALS['timedate']->get_db_date_time_format())."', 
-				'".date($GLOBALS['timedate']->get_db_date_time_format())."', 
+				'".$timedate->nowDb()."', 
+				'".$timedate->nowDb()."', 
 				'1', 
 				'1', 
 				'".trim($a['first_name']." ".$a['last_name'])."\'s queue', 
@@ -82,8 +82,8 @@ while($aTeams = $db->fetchByAssoc($rTeams)) {
 			VALUES(
 				'".$guid."',
 				0,
-				'".date($GLOBALS['timedate']->get_db_date_time_format())."', 
-				'".date($GLOBALS['timedate']->get_db_date_time_format())."', 
+				'".$timedate->nowDb()."', 
+				'".$timedate->nowDb()."', 
 				'1', 
 				'1',
 				'".$aTeams['name']."',
@@ -115,8 +115,8 @@ while($a4 = $db->fetchByAssoc($res4)) {
 				VALUES(
 				'".$guid."',
 				0,
-				'".date($GLOBALS['timedate']->get_db_date_time_format())."', 
-				'".date($GLOBALS['timedate']->get_db_date_time_format())."',
+				'".$timedate->nowDb()."', 
+				'".$timedate->nowDb()."',
 				'".$ac['id']."',
 	 			'".$ap['id']."')";
 		$r5 = $db->query($q5);
@@ -131,7 +131,7 @@ while($aAllQueues = $db->fetchByAssoc($rAllQueues)) {
 	$guid = create_guid();
 	$qQQ = "INSERT INTO queues_queue
 			(id, deleted, date_entered, date_modified, queue_id, parent_id) 
-			VALUES ('".$guid."', 0, '".date($GLOBALS['timedate']->get_db_date_time_format())."', '".date($GLOBALS['timedate']->get_db_date_time_format())."', '".$aAllQueues['id']."', '1')";
+			VALUES ('".$guid."', 0, '".$timedate->nowDb()."', '".$timedate->nowDb()."', '".$aAllQueues['id']."', '1')";
 	$rQQ = $db->query($qQQ);
 }
 // clean up any User/Team queues that dist to global

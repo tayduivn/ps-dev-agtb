@@ -38,7 +38,13 @@ abstract class source{
 	protected $_has_testing_enabled = false;
 	protected $_required_config_fields = array();
 	protected $_required_config_fields_for_button = array();	
-	
+
+    /**
+     * The ExternalAPI Base that instantiated this connector.
+     * @var _eapm
+     */
+    protected $_eapm = null;
+
 	public function __construct(){
 		$this->loadConfig();
 		$this->loadMapping();
@@ -93,6 +99,18 @@ abstract class source{
  	
 	public function saveConfig() {
 		$config_str = "<?php\n/***CONNECTOR SOURCE***/\n";
+
+        // Handle encryption
+        if(isset($this->_config['encrypt_properties'])&&is_array($this->_config['encrypt_properties'])&&isset($this->_config['properties'])){
+            require_once('include/utils/encryption_utils.php');
+            foreach($this->_config['encrypt_properties'] as $name) {
+                if(isset($this->_config['properties'][$name])) {
+                    $this->_config['properties'][$name] = blowfishEncode(blowfishGetKey('encrypt_field'),$this->_config['properties'][$name]);
+                }
+            }
+        }
+        
+
 		foreach($this->_config as $key => $val) {
 			if(!empty($val)){
 				$config_str .= override_value_to_string_recursive2('config', $key, $val, false);
@@ -118,6 +136,18 @@ abstract class source{
 			require("custom/modules/Connectors/connectors/sources/{$dir}/config.php");
 		}
 		$this->_config = $config;
+
+        // Handle decryption
+        if(isset($this->_config['encrypt_properties'])&&is_array($this->_config['encrypt_properties'])&&isset($this->_config['properties'])){
+            require_once('include/utils/encryption_utils.php');
+            foreach($this->_config['encrypt_properties'] as $name) {
+                if(isset($this->_config['properties'][$name])) {
+                    $this->_config['properties'][$name] = blowfishDecode(blowfishGetKey('encrypt_field'),$this->_config['properties'][$name]);
+                }
+            }
+        }
+        
+
 		
 		//If there are no required config fields specified, we will default them to all be required
 		if(empty($this->_required_config_fields)) {
@@ -158,7 +188,14 @@ abstract class source{
  	public function setConfig($config){
  		$this->_config = $config;
  	}
- 	
+
+    public function setEAPM(ExternalAPIBase $eapm){
+        $this->_eapm = $eapm;
+    }
+
+    public function getEAPM(){
+        return $this->_eapm;
+    }
  	public function setProperties($properties=array()) {
  	 	if(!empty($this->_config) && isset($this->_config['properties'])) {
  		   $this->_config['properties'] = $properties;
@@ -174,8 +211,8 @@ abstract class source{
 
  	public function getProperty($name){
  		$properties = $this->getProperties();
- 		if(!empty($properties['name'])){
- 			return $properties['name'];
+ 		if(!empty($properties[$name])){
+ 			return $properties[$name];
  		}else{
  			return '';
  		}

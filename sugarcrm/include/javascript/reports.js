@@ -3177,7 +3177,11 @@ SUGAR.reports = function() {
 							//full_table_list[parentsStrSoFar].module = fieldGridCell.store.data.items[fieldGridCell.selModel.last].data.module_name;
 							full_table_list[parentsStrSoFar].dependents =[rowId];
 							var relationship = link_defs[j].relationship_name;
-							if (link_defs[j].bean_is_lhs && rel_defs[relationship].rhs_module) {
+							if (link_defs[j].module)
+							{
+								full_table_list[parentsStrSoFar].module = link_defs[j].module;
+							}
+							else if (link_defs[j].bean_is_lhs && rel_defs[relationship].rhs_module) {
 								full_table_list[parentsStrSoFar].module = rel_defs[relationship].rhs_module;
 							}
 							else {

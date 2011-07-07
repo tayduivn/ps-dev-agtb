@@ -55,7 +55,7 @@ $mod_strings = array (
 	'LBL_MODULE_TITLE' => 'Notes: Home',
 	'LBL_NEW_FORM_TITLE' => 'Create Note or Add Attachment',
 	'LBL_NOTE_STATUS' => 'Note',
-	'LBL_NOTE_SUBJECT' => 'Note Subject:',
+	'LBL_NOTE_SUBJECT' => 'Subject:',
 	'LBL_NOTES_SUBPANEL_TITLE' => 'Attachments',
 	'LBL_NOTE' => 'Note:',
 	'LBL_OPPORTUNITY_ID' => 'Opportunity ID:',
@@ -88,6 +88,10 @@ $mod_strings = array (
 	'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
 	'LBL_PANEL_DETAILS' => 'Details',
 	'LBL_NOTE_INFORMATION' => 'Note Overview',
+	'LBL_MY_NOTES_DASHLETNAME' => 'My Notes',
+    //for Export
+    'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
+    'LBL_EXPORT_PARENT_ID' => 'Related To ID',
 );
 
 ?>

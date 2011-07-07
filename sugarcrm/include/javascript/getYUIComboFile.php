@@ -42,19 +42,19 @@ foreach ($_REQUEST as $param => $val)
 	//No backtracking in the path
 	if (strpos($param, "..") !== false)
         continue;
-    
+
 	$version = explode("/", $param);
 	$version = $version[0];
     if (empty($yui_path[$version])) continue;
-    
+
     $path = $yui_path[$version] . substr($param, strlen($version));
-	
+
 	$extension = substr($path, strrpos($path, "_") + 1);
-	
+
 	//Only allowed file extensions
 	if (empty($types[$extension]))
 	   continue;
-	   
+
 	if (empty($contentType))
     {
         $contentType = $types[$extension];
@@ -77,6 +77,6 @@ $etag = '"'.md5($allpath).'"';
 header("Cache-Control: private");
 header("Pragma: dummy=bogus");
 header("Etag: $etag");
-header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 86400) . 'GMT');
+header('Expires: ' . TimeDate::httpTime(time()+86400));
 header("Content-Type: $contentType");
-echo ($out); 
+echo ($out);

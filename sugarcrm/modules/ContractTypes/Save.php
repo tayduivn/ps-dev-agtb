@@ -61,5 +61,5 @@ $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 $location="Location: index.php?action=".$_REQUEST['return_action']."&module=".$_REQUEST['return_module']."&record=".$return_id;
 if (isset($_REQUEST['edit'])) $location.="&edit=".$_REQUEST['edit'];
 if (isset($_REQUEST['isDuplicate'])) $location.="&isDuplicate=".$_REQUEST['isDuplicate'];
-header($location);
-?>
+
+handleRedirect($return_id, $_REQUEST['return_module']);

@@ -114,7 +114,7 @@ class Prospect extends Person {
 		if($custom_join)
 				$custom_join['join'] .= $relate_link_join;
                          $query = "SELECT
-                                prospects.*,email_addresses.email_address email1,
+                                prospects.*,email_addresses.email_address email_address,
                                 users.user_name as assigned_user_name ";
 //BEGIN SUGARCRM flav=pro ONLY
 						 $query .= ", teams.name AS team_name ";

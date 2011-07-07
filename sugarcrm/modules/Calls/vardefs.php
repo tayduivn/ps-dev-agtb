@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activity representing a phone call',
-                               'unified_search' => true,'fields' => array (
+                               'unified_search' => true, 'unified_search_default_enabled' => true, 'fields' => array (
 
   'name' =>
   array (
@@ -65,15 +65,19 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'Date in which call is schedule to (or did) start',
     'importable' => 'required',
 	'required' => true,
+    'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
   ),
 
   'date_end' =>
   array (
     'name' => 'date_end',
     'vname' => 'LBL_DATE_END',
-    'type' => 'date',
+    'type' => 'datetime',
     'massupdate'=>false,
-    'comment' => 'Date is which call is scheduled to (or did) end'
+    'comment' => 'Date is which call is scheduled to (or did) end',
+    'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
   ),
 
  'parent_type'=>
@@ -111,6 +115,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'comment' => 'The status of the call (Held, Not Held, etc.)',
 	'required' => true,
 	'importable' => 'required',
+    'default' => 'Planned',
   ),
   'direction' =>
   array (
@@ -196,15 +201,6 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     'len' => 36,
     'importable' => 'false',
     'studio' => array('required' => false, 'listview'=>true, 'visible' => false),
-  ),
-  'account' =>
-  array (
-  	'name' => 'account',
-    'type' => 'link',
-    'relationship' => 'account_calls',
-		'link_type'=>'one',
-    'source'=>'non-db',
-		'vname'=>'LBL_OLD_ACCOUNT_LINK',
   ),
   'opportunity' =>
   array (
@@ -330,7 +326,11 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
     	'name' => 'idx_calls_par_del',
     	'type' => 'index',
     	'fields' => array('parent_id','parent_type','deleted')
-    )
+    ),
+    array(
+        'name' =>'idx_calls_assigned_del',
+        'type' =>'index',
+        'fields'=>array( 'deleted', 'assigned_user_id')),
 ),
 'relationships' => array (
 		'calls_assigned_user' => array(

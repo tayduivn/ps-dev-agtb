@@ -331,11 +331,12 @@ class SecurityAudit {
 	}
 	
 	function doPhpHtmlAudit() {
+        global $timedate;
 		// start output buffer
 		ob_start();
 		$badHack = array();
 		$returned = '';
-		$startTime = mktime();
+		$startTime = $timedate->getNow()->ts;
 		$idx = 0;
 		$goodReturn = 0;
 		

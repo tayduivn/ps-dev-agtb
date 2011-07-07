@@ -135,7 +135,20 @@ include("metadata/contacts_dceclustersMetaData.php");
 include("metadata/users_dceclustersMetaData.php");
 include("metadata/dceinstances_casesMetaData.php");
 //END SUGARCRM flav=dce ONLY
+
+// Documents, so we can start replacing Notes as the primary way to attach something to something else.
+include("metadata/documents_accountsMetaData.php");
+include("metadata/documents_contactsMetaData.php");
+include("metadata/documents_opportunitiesMetaData.php");
+include("metadata/documents_casesMetaData.php");
+include("metadata/documents_bugsMetaData.php");
+//BEGIN SUGARCRM flav=pro ONLY
+include("metadata/documents_productsMetaData.php");
+include("metadata/documents_quotesMetaData.php");
+//END SUGARCRM flav=pro ONLY
+include("metadata/oauth_nonce.php");
+
 if(file_exists('custom/application/Ext/TableDictionary/tabledictionary.ext.php')){
-	include('custom/application/Ext/TableDictionary/tabledictionary.ext.php');	
+	include('custom/application/Ext/TableDictionary/tabledictionary.ext.php');
 }
 ?>

@@ -102,7 +102,7 @@ function getEncryptedPassword(login, password, mailbox) {
 	return words;
 } // fn
 
-function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, height, mail_server, protocol, port, login, password, mailbox, ssl, personal, formName)
+function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, height, mail_server, protocol, port, login, password, mailbox, ssl, personal, formName, ie_id)
 {
 	if (!formName) formName = "testSettingsView";
 	var words = getEncryptedPassword(login, password, mailbox);
@@ -111,7 +111,9 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 	if (!isDataValid(formName, true)) {
 		return;
 	}
-	ie_id = document.getElementById(formName).ie_id.value;
+
+	ie_id = (typeof document.getElementById(formName).ie_id != 'undefined') ? document.getElementById(formName).ie_id : '';
+
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -173,9 +175,6 @@ function isDataValid(formName, validateMonitoredFolder) {
     }
     if(trim(formObject.email_user.value) == "") {
         errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_USER'));
-    }
-    if(trim(formObject.email_password.value) == "" && trim(formObject.ie_id.value) == "") {
-    	errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_PASSWORD'));
     }
     if(formObject.protocol.protocol == "") {
         errors.push(SUGAR.language.get('app_strings', 'LBL_EMAIL_ERROR_PROTOCOL'));

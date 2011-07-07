@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 $config['builds']['pro']['flav'] = array('pro');
-$config['builds']['pro']['languages']= array('bg_BG','da_DK', 'de_DE','es_ES', 'fr_FR','hu_HU', 'it_it', 'lt_LT','ja_JP','nb_NO', 'nl_NL', 'pt_PT','ro_RO','ru_RU','sv_SE','tr_TR',  'zh_CN' );
+$config['builds']['pro']['languages']= array('bg_BG','cs_CZ','da_DK', 'de_DE','es_ES', 'et_EE', 'fr_FR','he_IL', 'hu_HU', 'it_it', 'lt_LT','ja_JP','nb_NO', 'nl_NL','pl_PL', 'pt_PT','ro_RO','ru_RU','sv_SE','tr_TR',  'zh_CN' );
 $config['builds']['pro']['lic'] = array('sub');
 $config['blackList']['pro'] = array(
 'sugarcrm/build'=>1,
@@ -47,14 +47,17 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/DataSets'=>1,
 'sugarcrm/modules/ReportMaker'=>1,
 
+'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
+'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
+
 'sugarcrm/themes/default/images/gmail_logo.png'=>1,
 'sugarcrm/themes/default/images/yahoomail_logo.png'=>1,
 'sugarcrm/themes/default/images/exchange_logo.png'=>1,
 
+'sugarcrm/modules/SugarFollowing'=>1,
 'sugarcrm/themes/default/images/user_follow.png'=>1,    
 'sugarcrm/themes/default/images/user_unfollow.png'=>1,
 
-'sugarcrm/modules/SugarFollowing'=>1,
 'sugarcrm/include/EditView/InlineEdit.css'=>1,
 'sugarcrm/include/EditView/InlineEdit.js'=>1,
 'sugarcrm/include/EditView/InlineEdit.php'=>1,
@@ -95,12 +98,15 @@ $config['blackList']['pro'] = array(
 'sugarcrm/include/images/sugarsales_lg_ent.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_express.png'=>1,
 'sugarcrm/include/images/sugarsales_lg_open.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_corp.png'=>1,
+'sugarcrm/include/images/sugarsales_lg_ult.png'=>1,
 'sugarcrm/include/images/sugar_md_dce.png'=>1,
 'sugarcrm/include/images/sugar_md_dev.png'=>1,
 'sugarcrm/include/images/sugar_md_ent.png'=>1,
 'sugarcrm/include/images/sugar_md_express.png'=>1,
 'sugarcrm/include/images/sugar_md_open.png'=>1,
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
-
+'sugarcrm/include/images/sugar_md_corp.png'=>1,
+'sugarcrm/include/images/sugar_md_ult.png'=>1,
 );
 $build = 'pro';

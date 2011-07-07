@@ -46,7 +46,7 @@ insert_popup_header();
 
 $GLOBALS['log']->info("Project Resource Report view");
 
-echo get_module_title($mod_strings['LBL_MODULE_NAME'], $mod_strings['LBL_RESOURCE_REPORT'], false);
+echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_RESOURCE_REPORT']), false);
 
 $sugar_smarty = new Sugar_Smarty();
 ///
@@ -57,7 +57,7 @@ $sugar_smarty->assign('APP', $app_strings);
 $sugar_smarty->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
-$sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
+$sugar_smarty->assign("DATE_FORMAT", $timedate->get_date_format());
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
 $sugar_smarty->assign("CALENDAR_LANG_FILE", getJSPath('jscalendar/lang/calendar-' . substr($GLOBALS['current_language'], 0, 2).'.js'));
 
@@ -78,11 +78,11 @@ $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 
 $resources = array();
-for ($i = 0; $i < count($users); $i++) {
-    $resources[$users[$i]->full_name] = $users[$i];
+foreach($users as $user) {
+    $resources[$user->full_name] = $user;
 }
-for ($i = 0; $i < count($contacts); $i++) {
-    $resources[$contacts[$i]->full_name] = $contacts[$i];    
+foreach($contacts as $contact) {
+    $resources[$contact->full_name] = $contact;
 }
 ksort($resources);
 $sugar_smarty->assign("RESOURCES", $resources);
@@ -100,106 +100,103 @@ if (!empty($_REQUEST['resource'])) {
     $sugar_smarty->assign("DATE_FINISH", $_REQUEST['date_finish']);
     $sugar_smarty->assign("SELECTED_RESOURCE", $_REQUEST['resource']);
 
-    $query = "SELECT project_task.id as id, project.id as project_id FROM project_task, project WHERE project_task.resource_id like '".$_REQUEST['resource']."'".
-        " AND (project_task.date_start BETWEEN '". $timedate->to_db_date($_REQUEST['date_start'], false) .
-        "' AND '". $timedate->to_db_date($_REQUEST['date_finish'], false)."' OR project_task.date_finish BETWEEN '".
-        $timedate->to_db_date($_REQUEST['date_start'], false) ."' AND '" . $timedate->to_db_date($_REQUEST['date_finish'], false).
-        "') AND project_task.deleted=0 AND (project_task.project_id = project.id) AND (project.is_template = 0) order by project_task.date_start";
+    $dateStartDb = $timedate->to_db_date($_REQUEST['date_start'], false);
+    $dateFinishDb = $timedate->to_db_date($_REQUEST['date_finish'], false);
+
+    $query = "SELECT project_task.id as id, project.id as project_id FROM project_task, project WHERE project_task.resource_id like '".$projectTaskBean->db->quote($_REQUEST['resource'])."'".
+        " AND (project_task.date_start BETWEEN '$dateStartDb' AND '$dateFinishDb' OR project_task.date_finish BETWEEN '$dateStartDb' AND '$dateFinishDb')".
+        " AND project_task.deleted=0 AND (project_task.project_id = project.id) AND (project.is_template = 0) order by project_task.date_start";
 
     $result = $projectTaskBean->db->query($query, true, "");
-    $row = $projectTaskBean->db->fetchByAssoc($result);
-    while ($row != null) {
+    while(($row = $projectTaskBean->db->fetchByAssoc($result)) != null) {
         $projectTask = new ProjectTask();
         $projectTask->id = $row['id'];
         $projectTask->retrieve();
-        array_push($projectTasks, $projectTask);
-        $row = $projectTaskBean->db->fetchByAssoc($result);
+        $projectTasks[] = $projectTask;
     }
-     
+
     //Projects //////////////////////
     $result = $projectBean->db->query($query, true, "");
-    $row = $projectBean->db->fetchByAssoc($result);
-    while ($row != null) {
+    while(($row = $projectBean->db->fetchByAssoc($result)) != null) {
         $project = new Project();
         $project->id = $row['project_id'];
         $project->retrieve();
         $projects[$project->id] = $project;
-        $row = $projectBean->db->fetchByAssoc($result);
     }
 
     //Holidays //////////////////////
-    
-    
     $query = "select holidays.*, holidays.holiday_date AS hol_date, project.name AS project_name from holidays, project where ";
-    $query .= "person_id like '". $_REQUEST['resource'] ."'";    
-    $query .= " and holiday_date between '". $timedate->to_db_date($_REQUEST['date_start'], false) ."' and '". $timedate->to_db_date($_REQUEST['date_finish'], false) ."'".
-    " AND holidays.related_module_id = project.id AND holidays.deleted=0 ";
-    $query .= "UNION ALL "; 
+    $query .= "person_id like '". $holidayBean->db->quote($_REQUEST['resource']) ."'";
+    $query .= " and holiday_date between '$dateStartDb' and '$dateFinishDb'".
+    	" AND holidays.related_module_id = project.id AND holidays.deleted=0 ";
+    $query .= "UNION ALL ";
     $query .= "select holidays.*, holidays.holiday_date AS hol_date, '" . $mod_strings['LBL_PERSONAL_HOLIDAY'] . "' AS project_name from holidays where ";
-    $query .= "person_id like '". $_REQUEST['resource'] ."'";    
-    $query .= " and holiday_date between '". $timedate->to_db_date($_REQUEST['date_start'], false) ."' and '". $timedate->to_db_date($_REQUEST['date_finish'], false) ."'".
+    $query .= "person_id like '". $holidayBean->db->quote($_REQUEST['resource']) ."'";
+    $query .= " and holiday_date between '$dateStartDb' and '$dateFinishDb'".
     " AND holidays.related_module_id IS NULL AND holidays.deleted=0 ORDER BY hol_date ";
-    $result = $holidayBean->db->query($query, true, "");   
-    $row = $holidayBean->db->fetchByAssoc($result);
-    
+    $result = $holidayBean->db->query($query, true, "");
+
     $i = 0;
     $isHoliday = array();
-    while ($row != null) {
+    while (($row = $holidayBean->db->fetchByAssoc($result)) != null) {
         $holiday = new Holiday();
         $holiday->id = $row['id'];
         $holiday->retrieve();
-        $holidayDate = date($timedate->to_db_date($holiday->holiday_date, false)); 
-        $holidays[$i]['holidayDate'] = $timedate->to_display_date($holidayDate, false, false);
+        $holidayDate = $timedate->fromUserDate($holiday->holiday_date, false);
+        $holidays[$i]['holidayDate'] = $timedate->asUserDate($holidayDate, false);
         $holidays[$i]['projectName'] = $row['project_name'];
-        $isHoliday[$holidayDate] = true;
-        $row = $holidayBean->db->fetchByAssoc($result);    
+        $isHoliday[$holidayDate->ts] = true;
         $i++;
     }
-    
+
     // Daily Report //////////////////////
     $workDayHours = 8;
-    
-    $dateRangeStart = date($timedate->to_db_date($_REQUEST['date_start'], false));
-    $dateRangeFinish = date($timedate->to_db_date($_REQUEST['date_finish'], false));
-    $dateStart = $dateRangeStart;
-    
-    while (strtotime($dateStart) <= strtotime($dateRangeFinish)) {
-        $dateRangeArray[$timedate->to_display_date($dateStart, false, false)] = 0;  
-        $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
-        while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0)
-            $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
+
+//    $dateRangeStart = $timedate->to_db_date($_REQUEST['date_start'], false);
+//    $dateRangeFinish = $timedate->to_db_date($_REQUEST['date_finish'], false);
+//    $dateStart = $dateRangeStart;
+    $dateRangeStart = $timedate->fromDbDate($dateStartDb);
+    $dateRangeFinish = $timedate->fromDbDate($dateFinishDb);
+    $dateRangeFinishTs = $dateRangeFinish->ts;
+
+    while ($dateRangeStart->ts <= $dateRangeFinishTs) {
+        $dateRangeArray[$timedate->asUserDate($dateRangeStart, false)] = 0;
+        $dateRangeStart->modify("+1 day");
+        while ($dateRangeStart->day_of_week == 6 || $dateRangeStart->day_of_week == 0) {
+            $dateRangeStart->modify("+1 day");
+        }
     }
 
     foreach($projectTasks as $projectTask) {
         $duration = $projectTask->duration;
-        $dateStart = date($timedate->to_db_date($projectTask->date_start, false)); 
-        $dateFinish = date($timedate->to_db_date($projectTask->date_finish, false)); 
-        
+        $dateStart = $timedate->fromDbFormat($timedate->to_db_date($projectTask->date_start, false), TimeDate::DB_DATE_FORMAT);
+        $dateFinish = $timedate->fromDbFormat($timedate->to_db_date($projectTask->date_finish, false), TimeDate::DB_DATE_FORMAT);
+        $dateFinishTs = $dateFinish->ts;
+
         if ($projectTask->duration_unit == "Days") {
-            $duration = $duration * $workDayHours; 
+            $duration = $duration * $workDayHours;
         }
         $remainingDuration = $duration;
-        
+
         while ($remainingDuration > 0) {
-            
-            // We don't need to look at tasks that finish outside our selected date range.
-            if (strtotime($dateStart) > strtotime($dateRangeFinish))
+            // We don't need to look at tasks that start outside our selected date range.
+            if ($dateStart->ts > $dateRangeFinishTs)
                 break;
 
-            $displayDate = $timedate->to_display_date($dateStart, false, false);
+            $displayDate = $timedate->asUserDate($dateStart, false);
             if (isset($dateRangeArray[$displayDate])) {
-                if ($remainingDuration > $workDayHours)            
+                if ($remainingDuration > $workDayHours)
                     $dateRangeArray[$displayDate] += $workDayHours;
-                else 
+                else
                     $dateRangeArray[$displayDate] += $remainingDuration;
             }
-            if (!isset($isHoliday[$dateStart])){
+            if (!isset($isHoliday[$dateStart->ts])){
 	            $remainingDuration -= $workDayHours;
             }
-            $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
-            while (date("w", strtotime($dateStart)) == 6 || date("w", strtotime($dateStart)) == 0 || isset($isHoliday[$dateStart])) {
-                $dateStart = date($GLOBALS['timedate']->dbDayFormat, strtotime($dateStart) + 86400);
-            }          
+            $dateStart->modify("+1 day");
+            while ($dateStart->day_of_week == 6 || $dateStart->day_of_week == 0 || isset($isHoliday[$dateStart->ts])) {
+                $dateStart->modify("+1 day");
+            }
         }
     }
 
@@ -226,4 +223,3 @@ $sugar_smarty->assign("DATE_RANGE_ARRAY", $dateRangeArray);
 
 echo $sugar_smarty->fetch('modules/Project/ResourceReport.tpl');
 insert_popup_footer();
-?>

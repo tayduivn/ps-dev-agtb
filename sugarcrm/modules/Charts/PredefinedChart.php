@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -31,10 +31,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class PredefinedChart{
 	var $params = array();
-	
+
 	function PredefinedChart(){
 	}
-	
+
 	function predefinedChartQuery($chart, $params=array()){
 		switch($chart){
 			case 'pipeline_by_sales_stage':
@@ -50,24 +50,24 @@ class PredefinedChart{
 		        return $this->myModuleUsageLast30Days();
 		    //BEGIN SUGARCRM flav=pro ONLY
             case 'my_team_modules_used_last_30_days':
-				return $this->myTeamModuleUsageLast30Days();		        
+				return $this->myTeamModuleUsageLast30Days();
 			//END SUGARCRM flav=pro ONLY
 			default:
 				return $this->customChartQuery($chart);
 		}
 		return;
 	}
-	
+
 	function pipelineBySalesStageQuery(){
-		
-		
+
+
 		global $current_user;
 		global $timedate;
 		global $app_list_strings;
-		
+
 		//get the dates to display
 		$user_date_start = $current_user->getPreference('pbss_date_start');
-		
+
 		if (!empty($user_date_start) && !isset($_REQUEST['pbss_date_start'])) {
 			$date_start = $timedate->to_display_date($user_date_start, false);
 			$GLOBALS['log']->debug("USER PREFERENCES['pbss_date_start'] is:");
@@ -83,9 +83,9 @@ class PredefinedChart{
 			$GLOBALS['log']->debug($current_user->getPreference('pbss_date_start'));
 		}
 		else {
-			$date_start = date($timedate->get_date_format(), time());
+			$date_start = $timedate->nowDate();
 		}
-		
+
 		$user_date_end = $current_user->getPreference('pbss_date_end');
 		if (!empty($user_date_end) && !isset($_REQUEST['pbss_date_end'])) {
 			$date_end = $timedate->to_display_date($user_date_end, false);
@@ -102,10 +102,10 @@ class PredefinedChart{
 			$GLOBALS['log']->debug( $current_user->getPreference('pbss_date_end'));
 		}
 		else {
-			$date_end = date($timedate->get_date_format(), strtotime('2010-01-01'));
+			$date_end = $timedate->asUserDate($timedate->fromString("2010-01-01"));
 			$GLOBALS['log']->debug("USER PREFERENCES['pbss_date_end'] not found. Using: ".$date_end);
 		}
-		
+
 		$tempx = array();
 		$datax = array();
 		$datax_selected= array();
@@ -124,7 +124,7 @@ class PredefinedChart{
 			$GLOBALS['log']->debug("USER PREFERENCES['pbss_sales_stages'] is:");
 			$GLOBALS['log']->debug($current_user->getPreference('pbss_sales_stages'));
 		}
-		
+
 		//set $datax using selected sales stage keys
 		if (count($tempx) > 0) {
 			foreach ($tempx as $key) {
@@ -138,14 +138,14 @@ class PredefinedChart{
 		}
 		$GLOBALS['log']->debug("datax is:");
 		$GLOBALS['log']->debug($datax);
-		
+
 		$ids = array();
 		$new_ids = array();
 		$user_ids = $current_user->getPreference('pbss_ids');
 		//get list of user ids for which to display data
 		if (!empty($user_ids) && count($user_ids) != 0 && !isset($_REQUEST['pbss_ids'])) {
 			$ids = $user_ids;
-		
+
 			$GLOBALS['log']->debug("USER PREFERENCES['pbss_ids'] is:");
 			$GLOBALS['log']->debug($user_ids);
 		}
@@ -160,8 +160,8 @@ class PredefinedChart{
 		else {
 			$ids = get_user_array(false);
 			$ids = array_keys($ids);
-		
-		}	
+
+		}
 
 		$user_id = $ids;
 		$opp = new Opportunity;
@@ -194,9 +194,9 @@ class PredefinedChart{
 		}
 
 		$date_start = $timedate->swap_formats($date_start, $timedate->get_date_format(), $timedate->dbDayFormat);
-		$date_end = $timedate->swap_formats($date_end, $timedate->get_date_format(), $timedate->dbDayFormat);		
+		$date_end = $timedate->swap_formats($date_end, $timedate->get_date_format(), $timedate->dbDayFormat);
 		//build the where clause for the query that matches $date_start and $date_end
-		$where .= "	AND opportunities.date_closed >= ". db_convert("'".$date_start."'",'date'). " 
+		$where .= "	AND opportunities.date_closed >= ". db_convert("'".$date_start."'",'date'). "
 					AND opportunities.date_closed <= ".db_convert("'".$date_end."'",'date') ;
 		$where .= "	AND opportunities.assigned_user_id = users.id  AND opportunities.deleted=0 ";
 
@@ -213,17 +213,17 @@ class PredefinedChart{
 		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE " .$where;
 		$query .= " GROUP BY opportunities.sales_stage";
-		
+
 		$additional_params = array( 'date_start' => $date_start, 'date_closed' => $date_end, );
-		
+
 		$this->params = $additional_params;
 
 		return $query;
 	}
-	
+
 	function leadSourceByOutcomeQuery($filters){
-		
-		
+
+
 		global $current_user;
 		global $app_list_strings;
 
@@ -255,10 +255,10 @@ class PredefinedChart{
 		else {
 			$datax = $app_list_strings['lead_source_dom'];
 			$selected_datax = array_keys($app_list_strings['lead_source_dom']);
-		}		
-		
+		}
+
 		$datay = $datax;
-		
+
 		$ids = $filters['lsbo_ids'];
 		//get list of user ids for which to display data
 		if (!empty($ids) && count($ids) != 0 && !isset($_REQUEST['lsbo_ids'])) {
@@ -279,7 +279,7 @@ class PredefinedChart{
 		}
 
 		$user_id = $ids;
-		
+
 		$opp = new Opportunity();
 		$where="";
 		//build the where clause for the query that matches $user
@@ -311,13 +311,13 @@ class PredefinedChart{
 		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE " .$where." AND opportunities.deleted=0 ";
 		$query .= " GROUP BY sales_stage,lead_source ORDER BY lead_source,sales_stage";
-		
+
 		return $query;
 	}
-	
+
 	function outcomeByMonthQuery(){
-		
-		
+
+
 		global $current_user;
 		global $timedate;
 
@@ -355,7 +355,7 @@ class PredefinedChart{
 		else {
 			$date_end = date('Y').'-12-31';
 		}
-				
+
 		$ids = array();
 		//get list of user ids for which to display data
 		$user_ids = $current_user->getPreference('obm_ids');
@@ -376,9 +376,9 @@ class PredefinedChart{
 			$ids = get_user_array(false);
 			$ids = array_keys($ids);
 		}
-		
+
 		$user_id = $ids;
-		
+
 		$where = "";
 		//build the where clause for the query that matches $user
 		$count = count($user_id);
@@ -393,8 +393,8 @@ class PredefinedChart{
 		}
 
 		// cn: adding user-pref date handling
-		$dateStartDisplay = date($timedate->get_date_format(), strtotime($date_start));
-		$dateEndDisplay = date($timedate->get_date_format(), strtotime($date_end));
+		$dateStartDisplay = $timedate->asUserDate($timedate->fromString($date_start));
+		$dateEndDisplay = $timedate->asUserDate($timedate->fromString($date_end));
 
 		$opp = new Opportunity();
 		//build the where clause for the query that matches $date_start and $date_end
@@ -404,20 +404,20 @@ class PredefinedChart{
 		$opp->add_team_security_where_clause($query);
 		//END SUGARCRM flav=pro ONLY
 		$query .= "WHERE ".$where;
-		$query .= " GROUP BY sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))."ORDER BY m";		
+		$query .= " GROUP BY sales_stage,".db_convert('opportunities.date_closed','date_format',array("'%Y-%m'"),array("'YYYY-MM'"))."ORDER BY m";
 		return $query;
 	}
-	
+
 	function pipelineByLeadSourceQuery($filters){
-		
-		
+
+
 		global $current_user;
 		global $app_list_strings;
-		
+
 		$tempx = array();
 		$datax = array();
 		$selected_datax = array();
-		
+
 		//get list of sales stage keys to display
 		$user_tempx = $filters['pbls_lead_sources'];
 		if (!empty($user_tempx) && count($user_tempx) > 0 && !isset($_REQUEST['pbls_lead_sources'])) {
@@ -433,7 +433,7 @@ class PredefinedChart{
 			$GLOBALS['log']->debug("USER PREFERENCES['pbls_lead_sources'] is:");
 			$GLOBALS['log']->debug($current_user->getPreference('pbls_lead_sources'));
 		}
-		
+
 		//set $datax using selected sales stage keys
 		if (count($tempx) > 0) {
 			foreach ($tempx as $key) {
@@ -445,9 +445,9 @@ class PredefinedChart{
 			$datax = $app_list_strings['lead_source_dom'];
 			$selected_datax = array_keys($app_list_strings['lead_source_dom']);
 		}
-				
+
 		$legends = $datax;
-		
+
 		$ids = array();
 		$user_ids = $filters['pbls_ids'];
 		//get list of user ids for which to display data
@@ -458,7 +458,7 @@ class PredefinedChart{
 			$ids = get_user_array(false);
 			$ids = array_keys($ids);
 		}
-		
+
 		$user_id = $ids;
 		$opp = new Opportunity;
 		//Now do the db queries
@@ -495,42 +495,43 @@ class PredefinedChart{
 		$query .= "WHERE ".$where." AND opportunities.deleted=0 ";
 		$query .= "GROUP BY lead_source ORDER BY total DESC";
 
-		return $query;		
-	}	
-	
+		return $query;
+	}
+
 	function myModuleUsageLast30Days() {
 		global $current_user;
-		$dateValue = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 30 days"))."'" ,"datetime");
+		$dateValue = db_convert("'".$timedate->getNow()->modify("-30 days")->asDb()."'" ,"datetime");
 
         $query  = "SELECT tracker.module_name as module_name ";
         $query .= ",COUNT(*) count FROM tracker ";
         $query .= "WHERE tracker.user_id = '$current_user->id' AND tracker.module_name != 'UserPreferences' AND tracker.date_modified > $dateValue ";
         $query .= "GROUP BY tracker.module_name ORDER BY count DESC";
 
-		return $query;		
+		return $query;
 	}
-	
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	function myTeamModuleUsageLast30Days() {
-		$dateValue = db_convert("'".gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("- 30 days"))."'" ,"datetime");
+        global $timedate;
+		$dateValue = db_convert("'".$timedate->getNow()->modify("-30 days")->asDb()."'" ,"datetime");
         global $current_user;
 	    $query =  "SELECT l1.user_name, tracker.module_name, count(*) count ";
 	    $query .= "FROM tracker INNER JOIN users l1 ON l1.id = tracker.user_id and l1.deleted = 0 ";
-	    $query .= "WHERE tracker.deleted = 0 AND tracker.module_name != 'UserPreferences' AND tracker.date_modified > $dateValue ";	    
+	    $query .= "WHERE tracker.deleted = 0 AND tracker.module_name != 'UserPreferences' AND tracker.date_modified > $dateValue ";
 	    $query .= "AND tracker.user_id in (Select id from users where reports_to_id = '$current_user->id') ";
 	    $query .= "GROUP BY l1.user_name, tracker.module_name ";
 	    $query .= "ORDER BY l1.user_name ASC";
-        return $query;   	
+        return $query;
 	}
 	//END SUGARCRM flav=pro ONLY
-	
+
 	// This function will grab a query from the custom directory to be used for charting
 	function customChartQuery($chart){
 		if (file_exists('custom/Charts/' . $chart . '.php')){
-			require_once('custom/Charts/' . $chart . '.php');			
+			require_once('custom/Charts/' . $chart . '.php');
 			return customChartQuery();
 		}
-		else return false;		
+		else return false;
 	}
 }
 

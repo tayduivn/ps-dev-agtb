@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['Campaign'] = array ('audited'=>true,
 	'comment' => 'Campaigns are a series of operations undertaken to accomplish a purpose, usually acquiring leads',
 	'table' => 'campaigns',
-
+	'unified_search' => true,
 	'fields' => array (
 		'tracker_key' => array (
 			'name' => 'tracker_key',
@@ -51,6 +51,7 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'comment' => 'The name of the campaign',
 			'importable' => 'required',
             'required' => true,
+			'unified_search' => true,
 			),
 		'refer_url' => array (
 			'name' => 'refer_url',
@@ -76,6 +77,8 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'audited'=>true,
 			'comment' => 'Starting date of the campaign',
 		    'validation' => array ('type' => 'isbefore', 'compareto' => 'end_date'),
+		    'enable_range_search' => true,
+		    'options' => 'date_range_search_dom',
 		),
 		'end_date' => array (
 			'name' => 'end_date',
@@ -85,6 +88,8 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'comment' => 'Ending date of the campaign',
 			'importable' => 'required',
             'required' => true,
+		    'enable_range_search' => true,
+		    'options' => 'date_range_search_dom',
 		),
 		'status' => array (
 			'name' => 'status',

@@ -1327,7 +1327,15 @@ SE.composeLayout = {
         var box_title = mod_strings.LBL_EMAILTEMPLATE_MESSAGE_SHOW_TITLE;
 		var box_msg = mod_strings.LBL_EMAILTEMPLATE_MESSAGE_SHOW_MSG;
 		var box_none_msg = mod_strings.LBL_EMAILTEMPLATE_MESSAGE_CLEAR_MSG;
-
+		
+		//bug #6224
+		var to_addr = document.getElementById('addressTO'+idx);
+		if (to_addr.value.search(/[^;,]{6,}[;,][^;,]{6,}/) != -1) 
+		{
+			box_title = mod_strings.LBL_EMAILTEMPLATE_MESSAGE_WARNING_TITLE;
+			box_msg = mod_strings.LBL_EMAILTEMPLATE_MESSAGE_MULTIPLE_RECIPIENTS + '<br /><br />' + box_msg;
+		}
+		
 		// id is selected index of email template drop-down
 		if(id == '' || id == "0") {
 			YAHOO.SUGAR.MessageBox.show({
@@ -1752,7 +1760,7 @@ SE.composeLayout = {
 
         if( typeof(SUGAR.email2.composeLayout.outboundAccountErrors[obAccountID]) != 'undefined' )
         {
-            overlay(app_strings.LBL_EMAIL_ERROR_DESC, SUGAR.email2.composeLayout.outboundAccountErrors[obAccountID], 'alert');
+            SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, SUGAR.email2.composeLayout.outboundAccountErrors[obAccountID], 'alert');
             return false;
         }
 
@@ -1819,7 +1827,7 @@ SE.composeLayout = {
         SE.util.clearHiddenFieldValues('emailCompose' + idx);
 		document.getElementById('data_parent_id' + idx).value = parentIdValue;
 		var title = (isDraft) ? app_strings.LBL_EMAIL_SAVE_DRAFT : app_strings.LBL_EMAIL_SENDING_EMAIL;
-        overlay(title, app_strings.LBL_EMAIL_ONE_MOMENT);
+        SUGAR.showMessageBox(title, app_strings.LBL_EMAIL_ONE_MOMENT);
         html = html.replace(/&lt;/ig, "sugarLessThan");
         html = html.replace(/&gt;/ig, "sugarGreaterThan");
 
@@ -2228,7 +2236,7 @@ SE.composeLayout = {
      */
     replyForwardEmailStage2 : function() {
         SE.util.clearHiddenFieldValues('emailUIForm');
-        overlay(app_strings.LBL_EMAIL_RETRIEVING_MESSAGE, app_strings.LBL_EMAIL_ONE_MOMENT);
+        SUGAR.showMessageBox(app_strings.LBL_EMAIL_RETRIEVING_MESSAGE, app_strings.LBL_EMAIL_ONE_MOMENT);
 
         var ieId = SE.composeLayout.replyForwardObj.ieId;
         var uid = SE.composeLayout.replyForwardObj.uid;

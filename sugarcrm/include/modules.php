@@ -28,8 +28,11 @@ $moduleList = array();
 //the order of this list is the default order displayed - do not change the order unless it is on purpose
 $moduleList[] = 'Home';
 //BEGIN SUGARCRM flav!=dce ONLY
-
-$moduleList[] = 'Activities';
+$moduleList[] = 'Calendar';
+$moduleList[] = 'Calls';
+$moduleList[] = 'Meetings';
+$moduleList[] = 'Tasks';
+$moduleList[] = 'Notes';
 //BEGIN SUGARCRM flav=pro || flav=sales ONLY
 $moduleList[] = 'Reports';
 //END SUGARCRM flav=pro || flav=sales ONLY
@@ -43,6 +46,8 @@ $moduleList[] = 'Opportunities';
 //BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Emails';
 $moduleList[] = 'Campaigns';
+$moduleList[] = 'Prospects';
+$moduleList[] = 'ProspectLists';
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 $moduleList[] = 'Quotes';
@@ -285,7 +290,7 @@ $beanFiles['TrackerPerf']      = 'modules/Trackers/TrackerPerf.php';
 $beanFiles['TrackerSession']   = 'modules/Trackers/TrackerSession.php';
 $beanFiles['TrackerQuery']     = 'modules/Trackers/TrackerQuery.php';
 //END SUGARCRM flav=pro ONLY
-$beanFiles['ImportMap']     = 'modules/Import/ImportMap.php';
+$beanFiles['ImportMap']     = 'modules/Import/maps/ImportMap.php';
 $beanFiles['UsersLastImport']= 'modules/Import/UsersLastImport.php';
 $beanFiles['Administration']= 'modules/Administration/Administration.php';
 $beanFiles['UpgradeHistory']= 'modules/Administration/UpgradeHistory.php';
@@ -374,7 +379,7 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 //END SUGARCRM flav=int ONLY
 
 
-// TODO: Remove the Library module, it is an example. 
+// TODO: Remove the Library module, it is an example.
 //$moduleList[] = 'Library';
 //$beanList['Library']= 'Library';
 //$beanFiles['Library'] = 'modules/Library/Library.php';
@@ -402,9 +407,9 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'Users',  'Versions', 'LabelEditor','Roles','EmailMarketing'
     ,'OptimisticLock', 'TeamMemberships', 'TeamSets', 'TeamSetModule', 'Audit', 'MailMerge', 'MergeRecords', 'EmailAddresses',
     //BEGIN SUGARCRM flav=int ONLY
-	'TeamHierarchy', 
+    'TeamHierarchy',
     //END SUGARCRM flav=int ONLY
-    'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates', 
+    'Schedulers','Schedulers_jobs', /*'Queues',*/ 'EmailTemplates',
     //BEGIN SUGARCRM flav!=sales ONLY
     'CampaignTrackers', 'CampaignLog', 'EmailMan', 'Prospects', 'ProspectLists',
     //END SUGARCRM flav!=sales ONLY
@@ -422,7 +427,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav!=dce ONLY
     'ProjectTask',
     //END SUGARCRM flav!=dce ONLY
-	  //BEGIN SUGARCRM flav=sales ONLY
+    //BEGIN SUGARCRM flav=sales ONLY
     'Emails',
     //END SUGARCRM flav=sales ONLY
     );
@@ -445,10 +450,6 @@ $adminOnlyList = array(
                     'UpgradeWizard' => array('all' => 1),
                     'Studio' => array('all' => 1),
                     );
-
-
-$modInvisListActivities = array('Calls', 'Meetings','Notes','Tasks','Calendar');
-
 
 //BEGIN SUGARCRM flav=ent ONLY
 $modInvisList[] = 'CustomQueries';
@@ -481,12 +482,11 @@ $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
 
-//BEGIN SUGARCRM flav=notifications ONLY
+//BEGIN SUGARCRM flav=pro OR flav=sales ONLY
 $beanList['Notifications'] = 'Notifications';
 $beanFiles['Notifications'] = 'modules/Notifications/Notifications.php';
 $modInvisList[] = 'Notifications';
-//END SUGARCRM flav=notification ONLY
-
+//END SUGARCRM flav=pro OR flav=sales ONLY
 // This is the mapping for modules that appear under a different module's tab
 // Be sure to also add the modules to $modInvisList, otherwise their tab will still appear
 $GLOBALS['moduleTabMap'] = array(
@@ -506,15 +506,26 @@ $GLOBALS['moduleTabMap'] = array(
     'CustomQueries' => 'ReportMaker',
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
-    'ProspectLists' => 'Campaigns',
-    'Prospects' => 'Campaigns',
-	'EmailMarketing' => 'Campaigns',
+    'EmailMarketing' => 'Campaigns',
 //END SUGARCRM flav!=sales ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'Quotas' => 'Forecasts',
     'TeamNotices' => 'Teams',
 //END SUGARCRM flav=pro ONLY
-);
+ );
+$beanList['EAPM'] = 'EAPM';
+$beanFiles['EAPM'] = 'modules/EAPM/EAPM.php';
+$modules_exempt_from_availability_check['EAPM'] = 'EAPM';
+$modInvisList[] = 'EAPM';
+$beanList['OAuthKeys'] = 'OAuthKey';
+$beanFiles['OAuthKey'] = 'modules/OAuthKeys/OAuthKey.php';
+$modules_exempt_from_availability_check['OAuthKeys'] = 'OAuthKeys';
+$modInvisList[] = 'OAuthKeys';
+$beanList['OAuthTokens'] = 'OAuthToken';
+$beanFiles['OAuthToken'] = 'modules/OAuthTokens/OAuthToken.php';
+$modules_exempt_from_availability_check['OAuthTokens'] = 'OAuthTokens';
+$modInvisList[] = 'OAuthTokens';
+
 //BEGIN SUGARCRM flav=pro ONLY
 $beanList['SugarFavorites'] = 'SugarFavorites';
 $beanFiles['SugarFavorites'] = 'modules/SugarFavorites/SugarFavorites.php';

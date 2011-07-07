@@ -105,14 +105,14 @@ class DCEInstancesController extends SugarController{
         $lic_duration = $this->bean->license_duration;
         $this->bean->license_expire_date = $this->bean->returnExpirationDate($lic_start,$lic_duration);
         parent::action_save();
-        
+
         //Fire "key" action if license key has changed.
         if(isset($_REQUEST['license_field_change']) && $_REQUEST['license_field_change']== true && $this->bean->status == 'live'){
             $this->bean->create_action($this->bean->id, 'key');
         }
     }
     function action_CreateAction()
-    {        
+    {
         if((empty($_REQUEST['uid']) || empty($_REQUEST['record'])) && empty($_REQUEST['actionType'])){
             $header="Location: index.php?module=".$_REQUEST['module'];
             if(isset($_REQUEST['return_action'])){
@@ -128,32 +128,32 @@ class DCEInstancesController extends SugarController{
         }
         $record =  '';
         $actionType = '';
-        $startDate = ''; 
+        $startDate = '';
         $priority = '';
         $upgradeVars = array();
- 
+
         if(isset($_REQUEST['record'])){$record = $_REQUEST['record'];}
         if(isset($_REQUEST['actionType'])){$actionType= $_REQUEST['actionType'];}
-        if(isset($_REQUEST['startDate'])){$startDate = $_REQUEST['startDate'];} 
+        if(isset($_REQUEST['startDate'])){$startDate = $_REQUEST['startDate'];}
         if(isset($_REQUEST['priority'])){$priority = $_REQUEST['priority'];}
-        
+
         //create instance to be used to call createAction method
         $inst = new DCEInstance();
-        
-        
+
+
         if(strpos($actionType,'clone')!==false){
-            
-            
+
+
         }elseif($actionType=='create'  && !empty($inst->dce_parent_id)){
           if(isset($_REQUEST['clonse_db']) and ($_REQUEST['clonse_db']!==false ||$_REQUEST['clonse_db']!=='false' )){
             $inst->create_action($record, $actionType, '', '', '', true);
-          }  
-               
-            
+          }
+
+
         }elseif(strpos($actionType, 'upgrade')!==false){
 
         //if action type is from upgrade
-        
+
             if(!empty($_REQUEST['uid'])){
                 $uids = explode(",", $_REQUEST['uid']);
             }else{
@@ -162,8 +162,8 @@ class DCEInstancesController extends SugarController{
 
             if(isset($_REQUEST['delete_clone'])  && !empty($_REQUEST['delete_clone'])){
                     $upgradeVars['delete_clone'] = $_REQUEST['delete_clone'];
-                }    
-            
+                }
+
             if(empty($priority)){
                 $priority= 1;
             }
@@ -181,7 +181,7 @@ class DCEInstancesController extends SugarController{
         }else{
             $inst->create_action($record, $actionType, $startDate, $priority, '');
         }
-        
+
         $urlSTR = 'index.php?module=DCEInstances';
         if(!empty($_REQUEST['return_id']))$urlSTR .='&record='.$_REQUEST['return_id'];
         if(!empty($_REQUEST['return_action']))$urlSTR .='&action='.$_REQUEST['return_action'];
@@ -200,14 +200,14 @@ class DCEInstancesController extends SugarController{
      * Specify what happens after the deletion has occurred.
      */
     protected function pre_delete(){
-        //create delete action, ONLY if status is not set to new 
+        //create delete action, ONLY if status is not set to new
         //if new, it means no instance has been deployed and we do not need to delete on dn
-        if($this->bean->status != 'new'){            
+        if($this->bean->status != 'new'){
             $inst = new DCEInstance();
-            $inst->retrieve($this->bean->id);            
+            $inst->retrieve($this->bean->id);
             $inst->create_action($_REQUEST['record'], 'delete', '', '', '');
         }
-            
+
     }
     function action_License_Key(){
         global $timedate;
@@ -221,8 +221,7 @@ class DCEInstancesController extends SugarController{
         $inst = new DCEInstance;
 
         //set the new expiration date
-        $_POST['license_expire_date'] = $inst->returnExpirationDate($lic_start, $lic_duration);
-
+        $_POST['license_expire_date'] = $timedate->to_display_date($inst->returnExpirationDate($lic_start, $lic_duration), false);
 
         //populate license details
         foreach($license_details as $k=>$v){
@@ -235,16 +234,16 @@ class DCEInstancesController extends SugarController{
             if ($_POST['license_key_status'] == true){
                 $license_details['disable_license']=true;
                 $license_details['enable_license']=false;
-            }else{ 
+            }else{
                 $license_details['enable_license']=true;
                 $license_details['disable_license']=false;
             }
         }
-        
+
         $account_details = array('billing_address_street'=>'', 'billing_address_city'=>'', 'billing_address_state'=>'', 'billing_address_postalcode'=>'', 'billing_address_country'=>'');
         $contact_details = array('first_name'=>'', 'last_name'=>'', 'email1'=>'');
         if(isset($_POST['account_id'])){
-            
+
             $account = new Account();
             $account->retrieve($_POST['account_id']);
             $account->load_relationship('contacts');
@@ -265,7 +264,7 @@ class DCEInstancesController extends SugarController{
         }
         $user_details = array('user_name'=>'', 'first_name'=>'', 'last_name'=>'', 'email1'=>'');
         if(isset($_POST['current_user_id'])){
-            
+
             $user = new User();
             $user->retrieve($_POST['current_user_id']);
             foreach($user_details as $k=>$v){
@@ -284,7 +283,7 @@ class DCEInstancesController extends SugarController{
             $result = array('error'=>array('number'=>100,'name'=>'Unknown Error','description'=>$tmp));
         }
         echo $json->encode($result);
-        
+
     }
     function action_dce_get_key($input_array){
         require_once('include/nusoap/nusoap.php');
@@ -311,37 +310,37 @@ class DCEInstancesController extends SugarController{
 
 private function get_license_from_server($soapclient, $input_array, $rec=false){
 
-        $result = '';    
+        $result = '';
         //if authentication has not happened, authenticate
         if(!isset($_SESSION['dce_authentication_session_id']) || empty($_SESSION['dce_authentication_session_id']) || $rec){
                $result = $this->authenticate_license_session($soapclient);
         }
 
-        //if authenticated, get the key    
+        //if authenticated, get the key
         if(isset($_SESSION['dce_authentication_session_id']) && !empty($_SESSION['dce_authentication_session_id'])){
 
             $result = $soapclient->call('dce_get_key',array('session_id'=>$_SESSION['dce_authentication_session_id'], 'input_array'=>$input_array));
-            
+
             if(isset($result['get_key_result']) && is_array($result['get_key_result'])){
                 $result['get_key_result']=name_value_lists_get_array($result['get_key_result']);
             }
-            
+
             //if session on license server expired, make recursive call toe repeat authentication and license retrieval
             //pass in true to recursive call so it runs only once and avoids an infinite loop
             if(isset($result['error']) && ($result['error']['number'] === '101' ||$result['error']['number'] === 101 )&& !$rec){
                 $result =$this->get_license_from_server($soapclient, $input_array, true);
             }
-            
+
             if(isset($result['error']) && $result['error']['number'] != 111){
                 return $result;
             }
         }else{
             //not authenticated, return error message
-            return $result;   
+            return $result;
         }
     }
 
-               
+
 
 
     private function authenticate_license_session($soapclient = ''){
@@ -355,7 +354,7 @@ private function get_license_from_server($soapclient, $input_array, $rec=false){
                     die();
                 }
             }
-            
+
             //retrieve proper settings for auth array
              require('config.php');
             $focus = new Administration();
@@ -367,7 +366,7 @@ private function get_license_from_server($soapclient, $input_array, $rec=false){
             //create auth array
             $auth_array = array(
                             'application_id'=>'eaa40b743f9cbd1d4e87c1f7ef0b08dc',
-                            'user_name'=>$focus->settings['dce_licensing_user'], 
+                            'user_name'=>$focus->settings['dce_licensing_user'],
                             'password'=>md5(blowfishDecode(blowfishGetKey('dce_licensing_password'), $focus->settings['dce_licensing_password']))
                         );
             $auth_array = array_get_name_value_lists($auth_array);
@@ -382,7 +381,7 @@ private function get_license_from_server($soapclient, $input_array, $rec=false){
             }else{
                 return $result;
             }
-    
+
     }
 
     /**
@@ -415,7 +414,7 @@ private function get_license_from_server($soapclient, $input_array, $rec=false){
     }
     /*
      * Call by editview.js
-     * Calculate the expiration date for a specific start date and duration 
+     * Calculate the expiration date for a specific start date and duration
      */
     function action_returnExpirationDate(){
         if(!empty($_REQUEST['start_date']) && !empty($_REQUEST['duration'])){
@@ -423,7 +422,7 @@ private function get_license_from_server($soapclient, $input_array, $rec=false){
             $lic_start = $timedate->to_db_date($_REQUEST['start_date'], false);
             $lic_duration = $_REQUEST['duration'];
             $inst = new DCEInstance;
-            echo $inst->returnExpirationDate($lic_start, $lic_duration);
+            echo $timedate->to_display_date($inst->returnExpirationDate($lic_start, $lic_duration), false);
         }
     }
 }

@@ -96,13 +96,7 @@ class SearchMerge extends ListViewMerge{
 				unset($this->mergedFields[$id]);
 			}
 		}
-		//now deal with the rest 
-		/*
-		foreach($this->mergedFields as $id =>$field){
-			    $field['data']['default'] = false;
-				$panels[$field['loc']['panel']][] = $field['data'];
-		}
-        */
+
 		return $panels;
 	}
 	
@@ -160,5 +154,19 @@ class SearchMerge extends ListViewMerge{
 		if(!$save)return true;
 		return false;
 	}	
+	
+	protected function mergeTemplateMeta()
+	{
+	    if( isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName]) )
+	    {
+	       $this->newData[$this->module][$this->viewDefs][$this->templateMetaName] = $this->customData[$this->module][$this->viewDefs][$this->templateMetaName];
+	    }
+	    
+	    if(!isset($this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumnsBasic']) && isset($this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumns']))
+	    {
+	    	$this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumnsBasic'] = $this->newData[$this->module][$this->viewDefs][$this->templateMetaName]['maxColumns'];
+	    }
+	}	
+	
 }
 ?>

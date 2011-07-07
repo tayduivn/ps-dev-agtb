@@ -41,7 +41,7 @@ $listViewDefs['EmailTemplates'] = array(
         'sortable' => false,
         'label' => 'LBL_DESCRIPTION'),
     'ASSIGNED_USER_NAME' => array (
-        'width' => '10%',
+        'width' => '10',
         'label' => 'LBL_LIST_ASSIGNED_USER',
         'module' => 'Employees',
         'id' => 'ASSIGNED_USER_ID',
@@ -50,5 +50,9 @@ $listViewDefs['EmailTemplates'] = array(
         'width' => '10', 
         'default' => true,
         'label' => 'LBL_DATE_MODIFIED'),
+	'DATE_ENTERED' => array (
+	    'width' => '10',
+	    'label' => 'LBL_DATE_ENTERED',
+	    'default' => true),
 );
 ?>

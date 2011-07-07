@@ -35,9 +35,6 @@ $app_list_strings = array (
   'moduleList' =>
   array (
     'Home' => 'Home',
-	//BEGIN SUGARCRM flav!=sales ONLY
-    'Dashboard' => 'Dashboard',
-	//END SUGARCRM flav!=sales ONLY
     'Contacts' => 'Contacts',
     'Accounts' => 'Accounts',
     'Opportunities' => 'Opportunities',
@@ -87,6 +84,7 @@ $app_list_strings = array (
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
     'Documents'=>'Documents',
+    'DocumentRevisions'=>'Document Revisions',
     //END SUGARCRM flav!=sales ONLY
     'Connectors'=>'Connectors',
     'Roles'=>'Roles',
@@ -96,12 +94,13 @@ $app_list_strings = array (
     'Notifications'=>'Notifications',
     'Sync'=>'Sync',
 //BEGIN SUGARCRM flav=ent ONLY
-    'ReportMaker' => ' Enterprise Reports',
+    'ReportMaker' => 'Advanced Reports',
     'DataSets' => 'Data Formats',
     'CustomQueries' => 'Custom Queries',
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
+    'EAPM' => 'External Accounts',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -136,6 +135,7 @@ $app_list_strings = array (
     'DCEActions' => 'Actions',
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
+    'OAuthKeys' => 'OAuth Consumer Keys',
         ),
   'moduleListSingular' =>
   array (
@@ -184,7 +184,7 @@ $app_list_strings = array (
 //END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow',
-
+    'EAPM' => 'External Account',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'User',
 	'SugarFavorites'=>'SugarFavorites'
@@ -399,6 +399,15 @@ $app_list_strings = array (
     'Held' => 'Held',
     'Not Held' => 'Not Held',
   ),
+  'extapi_meeting_password' =>
+  array (
+      'WebEx' => 'WebEx',
+  ),
+  'meeting_type_dom' =>
+   array (
+      'Other' => 'Other',
+      'SugarCRM' => 'SugarCRM',
+   ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
   array (
@@ -872,32 +881,6 @@ $app_list_strings = array (
   array (
     'SMTP' => 'SMTP',
   ),
-  'dom_timezones' => array('-12'=>'(GMT - 12) International Date Line West',
-                            '-11'=>'(GMT - 11) Midway Island, Samoa',
-                            '-10'=>'(GMT - 10) Hawaii',
-                            '-9'=>'(GMT - 9) Alaska',
-                            '-8'=>'(GMT - 8) San Francisco',
-                            '-7'=>'(GMT - 7) Phoenix',
-                            '-6'=>'(GMT - 6) Saskatchewan',
-                            '-5'=>'(GMT - 5) New York',
-                            '-4'=>'(GMT - 4) Santiago',
-                            '-3'=>'(GMT - 3) Buenos Aires',
-                            '-2'=>'(GMT - 2) Mid-Atlantic',
-                            '-1'=>'(GMT - 1) Azores',
-                            '0'=>'(GMT)',
-                            '1'=>'(GMT + 1) Madrid',
-                            '2'=>'(GMT + 2) Athens',
-                            '3'=>'(GMT + 3) Moscow',
-                            '4'=>'(GMT + 4) Kabul',
-                            '5'=>'(GMT + 5) Ekaterinburg',
-                            '6'=>'(GMT + 6) Astana',
-                            '7'=>'(GMT + 7) Bangkok',
-                            '8'=>'(GMT + 8) Perth',
-                            '9'=>'(GMT + 9) Seol',
-                            '10'=>'(GMT + 10) Brisbane',
-                            '11'=>'(GMT + 11) Solomone Is.',
-                            '12'=>'(GMT + 12) Auckland',
-                            ),
       'dom_cal_month_long'=>array(
                 '0'=>"",
                 '1'=>"January",
@@ -1455,10 +1438,10 @@ $app_list_strings = array (
     'advance' => 'Move dropdown forwards by ',
   ),
   'wflow_record_type_dom' =>
-        array (
-    'All' => 'New and Existing Records',
+   array (
+    'All' => 'New and Updated Records',
     'New' => 'New Records Only',
-    'Update' => 'Existing Records Only',
+    'Update' => 'Updated Records Only',
   ),
   'wflow_rel_type_dom' =>
         array (
@@ -1471,34 +1454,6 @@ $app_list_strings = array (
     'all' => 'all related',
     'any' => 'any related',
         ),
-    //I added the PST, CST, MST, EST denotations here
-  'dom_timezones_extra' => array('-12'=>'(GMT-12) International Date Line West',
-                            '-11'=>'(GMT-11) Midway Island, Samoa',
-                            '-10'=>'(GMT-10) Hawaii',
-                            '-9'=>'(GMT-9) Alaska',
-                            '-8'=>'(GMT-8) (PST)',
-                            '-7'=>'(GMT-7) (MST)',
-                            '-6'=>'(GMT-6) (CST)',
-                            '-5'=>'(GMT-5) (EST)',
-                            '-4'=>'(GMT-4) Santiago',
-                            '-3'=>'(GMT-3) Buenos Aires',
-                            '-2'=>'(GMT-2) Mid-Atlantic',
-                            '-1'=>'(GMT-1) Azores',
-                            '0'=>'(GMT)',
-                            '1'=>'(GMT+1) Madrid',
-                            '2'=>'(GMT+2) Athens',
-                            '3'=>'(GMT+3) Moscow',
-                            '4'=>'(GMT+4) Kabul',
-                            '5'=>'(GMT+5) Ekaterinburg',
-                            '6'=>'(GMT+6) Astana',
-                            '7'=>'(GMT+7) Bangkok',
-                            '8'=>'(GMT+8) Perth',
-                            '9'=>'(GMT+9) Seol',
-                            '10'=>'(GMT+10) Brisbane',
-                            '11'=>'(GMT+11) Solomone Is.',
-                            '12'=>'(GMT+12) Auckland',
-                            ),
-
         'wflow_fire_order_dom' => array('alerts_actions'=>'Alerts then Actions',
                                     'actions_alerts'=>'Actions then Alerts'),
 
@@ -1780,11 +1735,70 @@ $app_list_strings = array (
         '1' => 'SSL',
         '2' => 'TLS',
     ),
+    'import_enclosure_options' =>
+    array (
+        '\'' => 'Single Quote (\')',
+        '"' => 'Double Quote (")',
+        '' => 'None',
+        'other' => 'Other:',
+    ),
     'link_target_dom' =>
     array (
         '_blank' => 'New Window',
         '_self' => 'Same Window',
     ),
+    'dashlet_auto_refresh_options' =>
+    array (
+        '-1' 	=> 'Do not auto-refresh',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
+	'dashlet_auto_refresh_options_admin' =>
+    array (
+        '-1' 	=> 'Never',
+        '30' 	=> 'Every 30 seconds',
+        '60' 	=> 'Every 1 minute',
+        '180' 	=> 'Every 3 minutes',
+        '300' 	=> 'Every 5 minutes',
+        '600' 	=> 'Every 10 minutes',
+		),
+	'date_range_search_dom' =>
+	array(
+		'=' => 'Equals',
+		'not_equal' => 'Not On',
+		'greater_than' => 'After',
+		'less_than' => 'Before',
+		'last_7_days' => 'Last 7 Days',
+		'next_7_days' => 'Next 7 Days',
+		'last_30_days' => 'Last 30 Days',
+		'next_30_days' => 'Next 30 Days',
+		'last_month' => 'Last Month',
+		'this_month' => 'This Month',
+		'next_month' => 'Next Month',
+		'last_year' => 'Last Year',
+		'this_year' => 'This Year',
+		'next_year' => 'Next Year',
+		'between' => 'Is Between',
+	),
+	'numeric_range_search_dom' =>
+	array(
+		'=' => 'Equals',
+		'not_equal' => 'Does Not Equal',
+		'greater_than' => 'Greater Than',
+		'greater_than_equals' => 'Greater Than Or Equal To',
+		'less_than' => 'Less Than',
+		'less_than_equals' => 'Less Than Or Equal To',
+		'between' => 'Is Between',
+	),
+        'lead_conv_activity_opt' =>
+        array(
+                'copy' => 'Copy',
+                'move' => 'Move',
+                'donothing' => 'Do Nothing'
+        ),
 );
 
 $app_strings = array (
@@ -1845,8 +1859,7 @@ $app_strings = array (
     'LBL_ROUTING_TO'                        => 'to',
     'LBL_ROUTING_TO_ADDRESS'                => 'to address',
     'LBL_ROUTING_WITH_TEMPLATE'             => 'with template',
-
-	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'You currently have values in your form for the Phone and Address fields. To overwrite these values with the phone/address of the Acccount that you selected, click "OK". To keep the current values, click "Cancel".',
+	'NTC_OVERWRITE_ADDRESS_PHONE_CONFIRM' => 'This record currently contains values in the Office Phone and Address fields. To overwrite these values with the following Office Phone and Address of the Account that you selected, click "OK". To keep the current values, click "Cancel".',
 	'LBL_DROP_HERE' => '[Drop Here]',
     'LBL_EMAIL_ACCOUNTS_EDIT'               => 'Edit',
     'LBL_EMAIL_ACCOUNTS_GMAIL_DEFAULTS'     => 'Prefill Gmail&#153; Defaults',
@@ -2089,6 +2102,7 @@ $app_strings = array (
     'LBL_EMAIL_OPTIONS'                     => 'Options',
     'LBL_EMAIL_QUICK_COMPOSE'				=> 'Quick Compose',
     'LBL_EMAIL_OPT_OUT'                     => 'Opted Out',
+    'LBL_EMAIL_OPT_OUT_AND_INVALID'         => 'Opted Out and Invalid',
     'LBL_EMAIL_PAGE_AFTER'                  => 'of {0}',
     'LBL_EMAIL_PAGE_BEFORE'                 => 'Page',
     'LBL_EMAIL_PERFORMING_TASK'             => 'Performing Task',
@@ -2247,12 +2261,14 @@ $app_strings = array (
     'LBL_CLOSE_ACTIVITY_HEADER' => "Confirm",
     'LBL_CLOSE_ACTIVITY_CONFIRM' => "Do you want to close this #module#?",
     'LBL_CLOSE_ACTIVITY_REMEMBER' => "Do not display this message in the future: &nbsp;",
+    'LBL_INVALID_FILE_EXTENSION' => 'Invalid File Extension',
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_LIST_TEAM' => 'Team',
     'LBL_TEAM' => 'Team:',
     'LBL_TEAMS' =>'Teams',
     'LBL_TEAM_ID'=>'Team ID:',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
+    'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
@@ -2262,7 +2278,6 @@ $app_strings = array (
     'LBL_QUERY_VALID'=>'Valid',
     'LBL_QUERY_ERROR'=>'Error!',
     'LBL_QUERY_CHILD'=>'Valid Sub-Query',
-    'LBL_CLOSE_BUTTON_TITLE' => 'Close',
     'LBL_CLOSE_BUTTON_KEY' => 'C',
     'LBL_CLOSE_BUTTON_LABEL' => 'Close',
     'ERROR_EXAMINE_MSG' => '  Please examine the error message below:',
@@ -2304,8 +2319,11 @@ $app_strings = array (
     'ERR_ADDRESS_KEY_NOT_SPECIFIED' => 'Please specify \'key\' index in displayParams attribute for the Meta-Data definition',
     'ERR_EXISTING_PORTAL_USERNAME'=>'Error: The Portal Name is already assigned to another contact.',
     'ERR_COMPATIBLE_PRECISION_VALUE' => 'Field value is not compatible with precision value',
+    'ERR_EXTERNAL_API_SAVE_FAIL' => 'An error occurred when trying to save to the external account.',
+    'ERR_EXTERNAL_API_UPLOAD_FAIL' => 'An error occurred while uploading.  Please ensure the file you are uploading is not empty.',
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
+    'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
 
     'LBL_ACCOUNT'=>'Account',
     'LBL_OLD_ACCOUNT_LINK'=>'Old Account',
@@ -2376,6 +2394,7 @@ $app_strings = array (
     'LBL_CLOSE_AND_CREATE_BUTTON_LABEL' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_TITLE' => 'Close and Create New',
     'LBL_CLOSE_AND_CREATE_BUTTON_KEY' => 'C',
+    'LBL_OPEN_ITEMS' => 'Open Items:',
     'LBL_COMPOSE_EMAIL_BUTTON_KEY' => 'L',
     'LBL_COMPOSE_EMAIL_BUTTON_LABEL' => 'Compose Email',
     'LBL_COMPOSE_EMAIL_BUTTON_TITLE' => 'Compose Email [Alt+L]',
@@ -2578,6 +2597,7 @@ $app_strings = array (
     'LBL_SEARCH_BUTTON_LABEL' => 'Search',
     'LBL_SEARCH_BUTTON_TITLE' => 'Search [Alt+Q]',
     'LBL_SEARCH' => 'Search',
+    'LBL_SEARCH_MORE' => 'more',
     'LBL_SEE_ALL' => 'See All',
     'LBL_UPLOAD_IMAGE_FILE_INVALID' => 'Invalid file format, only image file can be uploaded.',
     'LBL_SELECT_BUTTON_KEY' => 'T',
@@ -2680,6 +2700,7 @@ $app_strings = array (
     'LNK_GET_LATEST'=>'Get latest',
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',
+    'LNK_CREATE' => 'Create',
     'LNK_LIST_END' => 'End',
     'LNK_LIST_NEXT' => 'Next',
     'LNK_LIST_PREVIOUS' => 'Previous',
@@ -2688,6 +2709,7 @@ $app_strings = array (
     'LNK_LOAD_SIGNED'=>'Sign',
     'LNK_LOAD_SIGNED_TOOLTIP'=>'Replace with signed document',
     'LNK_PRINT' => 'Print',
+    'LNK_BACKTOTOP' => 'Back to top',
     'LNK_REMOVE' => 'rem',
     'LNK_RESUME' => 'Resume',
     'LNK_VIEW_CHANGE_LOG' => 'View Change Log',
@@ -2705,7 +2727,7 @@ $app_strings = array (
     'NTC_DELETE_SELECTED_RECORDS' =>' selected record(s)?',
     'NTC_LOGIN_MESSAGE' => 'Please enter your user name and password.',
     'NTC_NO_ITEMS_DISPLAY' => 'none',
-    'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship?',
+    'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this relationship? Only the relationship will be removed. The record will not be deleted.',
     'NTC_REQUIRED' => 'Indicates required field',
     'NTC_SUPPORT_SUGARCRM' => 'Support the SugarCRM open source project with a donation through PayPal - it\'s fast, free and secure!',
     'NTC_TIME_FORMAT' => '(24:00)',
@@ -2765,10 +2787,8 @@ $app_strings = array (
     'MSG_JS_ALERT_MTG_REMINDER_TIME' => 'Time: ',
     'MSG_JS_ALERT_MTG_REMINDER_LOC' => 'Location: ',
     'MSG_JS_ALERT_MTG_REMINDER_DESC' => 'Description: ',
-    'MSG_JS_ALERT_MTG_REMINDER_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
-	'ERROR_USER_PREFS' => "WARNING: Not all of your data could be saved because your data limit has been reached.",
-	'ERROR_USER_PREFS_DASH' => "WARNING: The Sugar dashlet could not be added because your data limit has been reached.",
-	'ERROR_USER_PREFS_TAB' => "WARNING: The Home Page could not be added because your data limit has been reached.",
+    'MSG_JS_ALERT_MTG_REMINDER_CALL_MSG' => "\nClick OK to view this call or click Cancel to dismiss this message.",
+	'MSG_JS_ALERT_MTG_REMINDER_MEETING_MSG' => "\nClick OK to view this meeting or click Cancel to dismiss this message.",
     // contextMenu strings
     'LBL_ADD_TO_FAVORITES' => 'Add to My Favorites',
     'LBL_MARK_AS_FAVORITES' => 'Mark as Favorite',
@@ -2993,8 +3013,9 @@ $app_strings = array (
     'LBL_FASTCGI_LOGGING'      => 'For optimal experience using IIS/FastCGI sapi, set fastcgi.logging to 0 in your php.ini file.',
 
     //cma
-    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'Sorry, you cannot delete the global team. Aborting',
-    'LBL_MASSUPDATE_DELETE_PRIVATE_TEAMS'=>'Sorry, you cannot delete private team(s). Aborting',
+    'LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'=> 'The Global team cannot be deleted.',
+    'LBL_MASSUPDATE_DELETE_USER_EXISTS'=>'This private team [{0}] cannot be deleted until the user [{1}] is deleted.',
+
     //martin #25548
     'LBL_NO_FLASH_PLAYER' => 'You either have Abobe Flash turned off or are using an older version of the Adobe Flash Player. To get the latest version of the Flash Player, <a href="http://www.adobe.com/go/getflashplayer/">click here</a>.',
 	//Collection Field
@@ -3029,6 +3050,67 @@ $app_strings = array (
     'LBL_MINUTES' => 'Minutes',
     'LBL_MERIDIEM' => 'Meridiem',
     'LBL_DATE' => 'Date',
+    'LBL_DASHLET_CONFIGURE_AUTOREFRESH' => 'Auto-Refresh',
+
+    //Calendar widget labels
+    'LBL_CHOOSE_MONTH' => 'Choose Month',
+    'LBL_ENTER_YEAR' => 'Enter Year',
+    'LBL_ENTER_VALID_YEAR' => 'Please enter a valid year',
+
+    //SugarFieldPhone labels
+    'LBL_INVALID_USA_PHONE_FORMAT' => 'Please enter a numeric U.S. phone number, including area code.',
+
+    //File write error label
+    'ERR_FILE_WRITE' => 'Error: Could not write file {0}.  Please check system and web server permissions.',
+	'ERR_FILE_NOT_FOUND' => 'Error: Could not load file {0}.  Please check system and web server permissions.',
+
+    'LBL_AND' => 'And',
+    'LBL_BEFORE' => 'Before',
+
+    // File fields
+    'LBL_UPLOAD_FROM_COMPUTER' => 'Upload From Your Computer',
+    'LBL_SEARCH_EXTERNAL_API' => 'File on External Source',
+    'LBL_EXTERNAL_SECURITY_LEVEL' => 'Security',
+    'LBL_SHARE_PRIVATE' => 'Private',
+    'LBL_SHARE_COMPANY' => 'Company',
+    'LBL_SHARE_LINKABLE' => 'Linkable',
+    'LBL_SHARE_PUBLIC' => 'Public',
+
+
+    // Web Services REST RSS
+    'LBL_RSS_FEED' => 'RSS Feed',
+    'LBL_RSS_RECORDS_FOUND' => 'record(s) found',
+    'ERR_RSS_INVALID_INPUT' => 'RSS is not a valid input_type',
+    'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
+
+    //External API Error Messages
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
+
+    //IMPORT SAMPLE TEXT
+    'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
+"This is a sample import file which provides an example of the expected contents of a file that is ready for import."
+"The file is a comma-delimited .csv file, using double-quotes as the field qualifier."
+
+"The header row is the top-most row in the file and contains the field labels as you would see them in the application."
+"These labels are used for mapping the data in the file to the fields in the application."
+
+"Notes: The database names could also be used in the header row. This is useful when you are using phpMyAdmin or another database tool to provide an exported list of data to import."
+"The column order is not critical as the import process matches the data to the appropriate fields based on the header row."
+
+
+"To use this file as a template, do the following:"
+"1. Remove the sample rows of data"
+"2. Remove the help text that you are reading right now"
+"3. Input your own data into the appropriate rows and columns"
+"4. Save the file to a known location on your system"
+"5. Click on the Import option from the Actions menu in the application and choose the file to upload"
+   ',
+    //define labels to be used for overriding local values during import/export
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned To',
+    'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To',
+    'LBL_EXPORT_FULL_NAME' => 'Full Name',
+
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
@@ -3763,5 +3845,29 @@ $app_list_strings['kbdocument_status_dom'] = array (
   );
 
   $app_list_strings['moduleList']['Sugar_Favorites'] = 'Favorites';
-
-?>
+  $app_list_strings['eapm_list']= array(
+  	'Sugar'=>'Sugar',
+  	'WebEx'=>'WebEx',
+  	'GoToMeeting'=>'GoToMeeting',
+  	'LotusLive'=>'LotusLive',
+  	'Google' => 'Google',
+    'Box' => 'Box.net',
+    'Facebook'=>'Facebook',
+    'Twitter'=>'Twitter',
+  );
+  $app_list_strings['eapm_list_import']= array(
+  	'Google' => 'Google Contacts',
+  );
+$app_list_strings['eapm_list_documents']= array(
+  	'Google' => 'Google Docs',
+  );
+  $app_list_strings['LBL_API_TYPE_ENUM'] = array(
+    'password' => 'Username/Password',
+    'oauth' => 'OAuth',
+    );
+	$app_list_strings['token_status'] = array(
+        1 => 'Request',
+        2 => 'Access',
+        3 => 'Invalid',
+    );
+  ?>

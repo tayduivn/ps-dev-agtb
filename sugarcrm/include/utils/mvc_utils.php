@@ -46,6 +46,9 @@ if(!class_exists('Tracker')){
     var $object_name = 'Tracker';
 	var $disable_var_defs = true;
 	var $acltype = 'Tracker';
+    //BEGIN SUGARCRM flav=pro ONLY
+    var $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
 
     var $column_fields = Array(
         "id",
@@ -144,7 +147,7 @@ if(!class_exists('Tracker')){
     	   if(isset($configEntry['bean']) && $configEntry['bean'] != 'Tracker') {
 	    	   $bean = new $configEntry['bean']();
     		   if($bean->bean_implements('ACL')) {
-                  ACLAction::addActions($bean->module_dir, $configEntry['bean']);
+                  ACLAction::addActions($bean->getACLCategory(), $configEntry['bean']);
                }
     	   }
     	}
@@ -210,8 +213,8 @@ if(!function_exists('amsi')){
 		global $login_error;
 		$q = 0;
 		$m = '';
-		$str = '';
-		foreach ($as as $k) {
+		$str = '';		
+			foreach ($as as $k) {
 			if (!empty ($k['m'])) {
 				$temp = vcmsi($k['g'], $k['m'], $k['a'], $k['l']);
 			} else {
@@ -308,5 +311,148 @@ if(!function_exists('mvclog')){
 	}
 }
 //END ENCODE
+
+function getPrintLink()
+{
+    if (isset($_REQUEST['action']) && $_REQUEST['action'] == "ajaxui")
+    {
+        return "javascript:SUGAR.ajaxUI.print();";
+    }
+    return "javascript:void window.open('index.php?{$GLOBALS['request_string']}',"
+         . "'printwin','menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1')";
+}
+
+
+function ajaxBannedModules(){
+    $bannedModules = array(
+        'Calendar',
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        'Reports',
+        //END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
+        'Emails',
+        'Campaigns',
+        'Documents',
+        'DocumentRevisions',
+        'Project',
+        'ProjectTask',
+        'EmailMarketing',
+        'CampaignLog',
+        'CampaignTrackers',
+        'Releases',
+        'Groups',
+        'EmailMan',
+        //END SUGARCRM flav!=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        'ACLFields',
+        'ACLRoles',
+        'ACLActions',
+        'TrackerSessions',
+        'TrackerPerfs',
+        'TrackerQueries',
+        'Teams',
+        'TeamMemberships',
+        'TeamSets',
+        'TeamSetModules',
+        'Quotes',
+        'Products',
+        'ProductBundles',
+        'ProductBundleNotes',
+        'ProductTemplates',
+        'ProductTypes',
+        'ProductCategories',
+        'Manufacturers',
+        'Shippers',
+        'TaxRates',
+        'TeamNotices',
+        'TimePeriods',
+        'Forecasts',
+        'ForecastSchedule',
+        'Worksheet',
+        'ForecastOpportunities',
+        'Quotas',
+        'WorkFlow',
+        'WorkFlowTriggerShells',
+        'WorkFlowAlertShells',
+        'WorkFlowAlerts',
+        'WorkFlowActionShells',
+        'WorkFlowActions',
+        'Expressions',
+        'Contracts',
+        'KBDocuments',
+        'KBDocumentRevisions',
+        'KBTags',
+        'KBDocumentKBTags',
+        'KBContents',
+        'ContractTypes',
+        'Holidays',
+        'ProjectResources',
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        'CustomQueries',
+        'DataSets',
+        'ReportMaker',
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=dce ONLY
+        'DCEInstances',
+        'DCEClusters',
+        'DCEDataBases',
+        'DCETemplates',
+        'DCEActions',
+        'DCEReports',
+        //END SUGARCRM flav=dce ONLY
+        "Administration",
+        "ModuleBuilder",
+        'Schedulers',
+        'SchedulersJobs',
+        'DynamicFields',
+        'EditCustomFields',
+        'EmailTemplates',
+        'Users',
+        'Currencies',
+        'Trackers',
+        'Connectors',
+        'Import_1',
+        'Import_2',
+        'Versions',
+        'vCals',
+        'CustomFields',
+        'Roles',
+        'Audit',
+        'InboundEmail',
+        'SavedSearch',
+        'UserPreferences',
+        'MergeRecords',
+        'EmailAddresses',
+        'Relationships',
+        'Employees',
+        'Import'
+    );
+
+    if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){
+        $bannedModules = array_merge($bannedModules, $GLOBALS['sugar_config']['addAjaxBannedModules']);
+    }
+    if(!empty($GLOBALS['sugar_config']['overrideAjaxBannedModules'])){
+        $bannedModules = $GLOBALS['sugar_config']['overrideAjaxBannedModules'];
+    }
+
+    return $bannedModules;
+}
+
+function ajaxLink($url)
+{
+    $match = array();
+    preg_match('/module=([^&]*)/i', $url, $match);
+
+    if(isset($GLOBALS['sugar_config']['disableAjaxUI']) && $GLOBALS['sugar_config']['disableAjaxUI'] == true){
+        return $url;
+    }
+    else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
+        return $url;
+    }
+    else{
+        return "#ajaxUILoc=" . urlencode($url);
+    }
+}
 
 ?>

@@ -57,15 +57,13 @@ $app_strings = return_application_language($language);
 // retrieve the user
 
 //Process Enterprise Schedule reports via CSV
-$reports_to_email_ent = $report_schedule->get_reports_to_email("", "ent");
-
+$reports_to_email_ent = $report_schedule->get_ent_reports_to_email("", "ent");
 
 global $report_modules,$modListHeader;
 global $locale;
 
 foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 {
-
 	$user = new User();
 	$user->retrieve($schedule_info['user_id']);
 	$current_user =$user;
@@ -87,8 +85,6 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 //Aquire the enterprise report to be sent				
 	$report_object = new ReportMaker();			
 	$report_object->retrieve($schedule_info['report_id']);			
-
-	$module_for_lang = $report_object->module;
 	$mod_strings = return_module_language($language, 'Reports');
 	
 	
@@ -97,13 +93,14 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 	//loop through data sets;
 	$data_set_array = $report_object->get_data_sets();
 	$temp_file_array = array();
-	
 	foreach($data_set_array as $key =>$data_set_object){
 		
 		$csv_output = $data_set_object->export_csv();
+		
 		$filenamestamp = '';
 		$filenamestamp .= $data_set_object->name.'_'.$user->user_name;
 		$filenamestamp .= '_'.date(translate('LBL_CSV_TIMESTAMP', 'Reports'), time());
+
 		$filename = str_replace(' ', '_', $report_object->name. $filenamestamp.  ".csv");
 		$fp = sugar_fopen($GLOBALS['sugar_config']['cache_dir'].'csv/'.$filename,'w');
 		fwrite($fp, $csv_output);
@@ -114,6 +111,7 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 	}	
 
 	$mail = new PHPMailer();
+	$OBCharset = $locale->getPrecedentPreference('default_email_charset');
 	$mail->AddAddress($address, $locale->translateCharsetMIME(trim($name), 'UTF-8', $OBCharset));
 
 	$admin = new Administration();
@@ -131,6 +129,12 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 			$mail->Username = $admin->settings['mail_smtpuser'];
 			$mail->Password = $admin->settings['mail_smtppass'];
 		}
+		if ($admin->settings['mail_smtpssl'] == 1) {
+                $mail->SMTPSecure = 'ssl';
+    	}
+    	else if ($admin->settings['mail_smtpssl'] == 2) {
+                $mail->SMTPSecure = 'tls';
+    	}
 	}
 
 
@@ -153,8 +157,8 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 		$body .= " $name";
 	}
 	$body .= ",\n\n";
-	$body .= 	$mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO']. $saved_report->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
-				 . $reporter->report_def['report_name'] . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
+	$body .= 	$mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO']. $report_object->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
+				 . $report_object->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
 	$mail->Body = $body;
 
 	if($address == '')

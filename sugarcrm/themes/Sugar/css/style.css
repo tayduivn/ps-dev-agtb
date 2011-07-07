@@ -39,6 +39,11 @@ body
 	margin: 0px;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
 }
+
+body.popupBody {
+	margin: 10px;
+}
+
 fieldset, table, pre 
 {
     margin-bottom:0;
@@ -126,7 +131,7 @@ th, td
 
 /* layout the header elements */
 #header {
-
+min-width: 1050px;
 }
 
 .headerLarge {
@@ -433,7 +438,7 @@ cursor:pointer;
 div#content
 {
     padding-top: 0px;  
-    padding-bottom: 20px;
+    padding-bottom: 10px;
     margin-left: 20px;
     margin-right: 20px;
 }
@@ -557,6 +562,13 @@ visibility:visible;
     white-space: nowrap;
 }
 
+
+/* import instruction */
+div.import_instruction
+{
+    padding-left: 5px;
+    margin-bottom: 5px;
+}
 
 /* module title */
 div.moduleTitle
@@ -967,6 +979,9 @@ border-radius: 6px;
     word-wrap: break-word;
 }
 
+#wizard .detail.view {
+	background-color: #fff;	
+}
 /* detail view */
 .detail.view {
 box-shadow: #ccc 0px 0px 10px;
@@ -1246,6 +1261,10 @@ div.indent_right {
 	background:url(../../../../index.php?entryPoint=getImage&imageName=search-advanced-bg.png) repeat-x top center #ccc; 
 }
 
+.search_form .view.advanced .help {
+text-align: right;	
+}
+
 .search_form .view a {
 	color: #005a9b;
 	font-size: 12px;
@@ -1282,6 +1301,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 
 .search_form  .edit tr td[scope="row"] {
 	background-color: transparent;
+}
+
+.search_form .sumbitButtons {
+	padding-left: 10px !important;
+}
+
+.search_form .helpIcon {
+	text-align: right;
 }
 
 /* sitemap */
@@ -1335,12 +1362,31 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     margin-left: 2px;
 }
 
+#bottomLinks {
+	padding: 0 25px;
+	float: right;	
+}
+
+#bottomLinks a {
+	color: #666;
+	text-decoration: none;	
+}
+
+#bottomLinks a.bottomLink {
+}
+
+#bottomLinks img {
+	border: 0px;
+	margin-bottom: -3px;
+	margin-left: 5px;
+}
 /* Footer styles */
 #footer 
 {
     padding-top: 10px;
     text-align: center;
     padding-bottom: 5px;
+    clear: both;
 }
 
 #themePicker, #langPicker 
@@ -2109,7 +2155,7 @@ padding-left: 0px;
 /* for team notices and my portal dashlets */
 .teamNoticeBox 
 {
-    border-width: 0px 1px 1px 1px;
+    border-width: 0px 1px 0px 1px;
     border-style: solid;
     padding: 0;
     background: #fff;
@@ -2355,8 +2401,10 @@ border-radius: 0px 0px 6px 6px;
 
 .sugarFeedDashlet
 {
+	position: relative;
+	z-index:1;
 	overflow:auto;
-	max-height:375px;
+    max-height:375px;
 	height:expression(this.scrollHeight>375?'375px':'auto');
 }
 
@@ -2484,6 +2532,7 @@ embed
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
 	margin-bottom: 20px;
+	border: 1px solid #ccc\9;
 	}
 	
 	.dashletPanel .hd {
@@ -3164,7 +3213,7 @@ a.utilsLink:link, a.utilsLink:visited
     font-weight: normal;
     text-decoration: none;
     padding-bottom: 3px;
-	color: #999;
+	color: #666;
 }
 a.tabFormAdvLink:link, a.tabFormAdvLink:visited, a.tabFormAdvLink:hover 
 {
@@ -4164,6 +4213,13 @@ a.tabFormAdvLink:link, a.tabFormAdvLink:visited
 }
 
 /* calendar styles */
+
+
+table#calendarModule > tbody > tr > td:first-child {
+	padding-right: 10px;
+	padding-top: 2px;
+}
+
 #daily_cal_table_outside {
 box-shadow: #ccc 0px 0px 10px;
 -moz-box-shadow: #ccc 0px 0px 10px;
@@ -4511,6 +4567,11 @@ margin-top: 1px\9;
 background:url(../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=dashlet-tab-bg-bottom.png) repeat-x;
 }
 
+
+#dashletCtrlsTD {
+text-align: right;
+}
+
 #addPage {
 height: 30px;
 margin-top: 2px;
@@ -4618,6 +4679,11 @@ margin: 0 4px 0 0;
 .yui-navset .yui-nav li a em, .yui-navset-top .yui-nav li a em, .yui-navset-bottom .yui-nav li a em {
 *height: 19px; /* ie 7 hack */
 }
+
+.yui-navset .yui-nav {
+	overflow: hidden;	
+}
+
 
 .yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav, .yui-layout .yui-layout-hd {
 
@@ -4847,6 +4913,17 @@ input, select, textarea, button
 	-webkit-box-shadow:0 0 10px #CCCCCC;
 	border: 1px solid #98C6EA;
 }
+
+.reportChartContainer {
+	-moz-border-radius:0px 0px 6px 6px;
+	border-radius:0px 0px 6px 6px;
+	-webkit-border-radius:0px 0px 6px 6px;
+	-moz-box-shadow:0 0 10px #CCCCCC;
+	box-shadow:0 0 10px #CCCCCC;
+	-webkit-box-shadow:0 0 10px #CCCCCC;
+	border: 1px solid #98C6EA;
+	margin-bottom: 20px;
+	}
 
 /* for all views */
 .view tr, .view td, .view h4, .view div
@@ -5126,6 +5203,7 @@ color:blue;
 height:55px;
 background-image:url('../../../../index.php?entryPoint=getImage&imageName=dcmenugrade.png');
 background-repeat:repeat-x;
+min-width: 1050px;
 }
 
 
@@ -5388,6 +5466,39 @@ color: #0B578F;
 	height: 26px;
 }
 
+table.dcListView th,table.dcListView td {
+	text-align: left;
+	color: #666;
+	padding: 5px 10px;
+}
+
+table.dcListView th {
+	background-color:#EBEBED;
+}
+
+
+table.dcListView th a.listViewThLinkS1 {
+color:#666666;
+text-decoration: none;
+}
+
+table.dcListView th a.listViewThLinkS1:hover {
+text-decoration: underline;
+}
+
+table.dcListView td {
+	border-bottom: 1px solid #eee;
+	white-space: nowrap;
+}
+
+table.dcSearch {
+	margin-bottom: 10px;	
+}
+
+.dcSubmit {
+margin-left:10px;	
+}
+		
 #sugar_spot_search_div {
 	background: url(../../../../index.php?entryPoint=getImage&imageName=dcMenuSearchBox.png) no-repeat top left;
 	height: 26px;
@@ -5412,6 +5523,12 @@ color: #0B578F;
 	margin:0 10px 0 0px;
 }
 
+#notificationsDivider {
+ 	float: left; 
+ 	margin-right: 10px;
+ 	margin-left: 15px;
+ 	}
+ 	
 .dashletPanel .dccontent {
 	border: 1px solid #aaa;
 	padding: 10px;
@@ -5449,6 +5566,12 @@ padding: 2px;
 border: 0px;
 margin-top: 7px;
 }
+.dashletPanel.dc .hd button {
+    vertical-align: top;
+    margin-top: 8px;
+    margin-right: 6px;
+}
+
 
 .dashletPanel.dc .bd .bd-center {
 	padding-top: 15px;

@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $listViewDefs['Prospects'] = array(
 	'FULL_NAME' => array(
-		'width' => '25', 
+		'width' => '20', 
 		'label' => 'LBL_LIST_NAME', 
 		'link' => true,
         'related_fields' => array('first_name', 'last_name'),
@@ -52,6 +52,12 @@ $listViewDefs['Prospects'] = array(
         'width' => '10', 
         'label' => 'LBL_LIST_PHONE', 
         'link' => false,
-        'default' => true),   
+        'default' => true), 
+	'DATE_ENTERED' => array (
+	    'type' => 'datetime',
+	    'label' => 'LBL_DATE_ENTERED',
+	    'width' => '10',
+	    'default' => true,
+	  ),  
 );
 ?>

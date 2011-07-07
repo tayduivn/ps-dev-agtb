@@ -119,14 +119,24 @@ class Team extends SugarBean
 	function list_view_parse_additional_sections(&$list_form, $xTemplateSection) {
 		global $current_user;
 
-		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) {
-			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) {
-				$list_form->parse($xTemplateSection.".row.admin_team");
-				$list_form->parse($xTemplateSection.".row.admin_edit");
-			}
-			else {
+		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
+		{
+			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) 
+			{
+			    $list_form->parse($xTemplateSection.".row.admin_team");
+			    $list_form->parse($xTemplateSection.".row.admin_edit");
+                $record = isset($_REQUEST['record']) ? $_REQUEST['record'] : '';
+			    if ($this->associated_user_id == $record) {
+                    $list_form->parse($xTemplateSection.".row.user_rem");
+				} else if ( isset($this->implicit_assign) && $this->implicit_assign == '1' ) {
+			        $list_form->parse($xTemplateSection.".row.user_rem");
+			    } else {
+			        $list_form->parse($xTemplateSection.".row.admin_rem");
+			    }
+			} else {
 				$list_form->parse($xTemplateSection.".row.user_team");
 				$list_form->parse($xTemplateSection.".row.user_edit");
+				$list_form->parse($xTemplateSection.".row.user_rem");
 			}
 		}
 
@@ -232,10 +242,7 @@ class Team extends SugarBean
 	}
 
 	function mark_deleted() {
-		$this->delete_team();	
-		// Take the item off the recently viewed lists
-		$tracker = new Tracker();
-		$tracker->makeInvisibleForAll($this->id);			
+		$this->delete_team();			
 	}
 	
 	/**
@@ -244,24 +251,38 @@ class Team extends SugarBean
 	function delete_team() {
 		//todo: Verify that no items are still assigned to this team.
 		if($this->id == $this->global_team) {
-			die($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM']);
+			$msg = $GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_GLOBAL_TEAM'];
+			$GLOBALS['log']->fatal($msg);
+			die($msg);
 		}
-		if ($this->private == '1') {
-			die($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_PRIVATE_TEAMS']);
+		
+		//Check if the associated user is deleted
+		$user = new User();
+		$user->retrieve($this->associated_user_id);
+		if($this->private == 1 && (!empty($user->id) && $user->deleted != 1))
+		{
+			$msg = string_format($GLOBALS['app_strings']['LBL_MASSUPDATE_DELETE_USER_EXISTS'], array(Team::getDisplayName($this->name, $this->name_2), $user->full_name));
+			$GLOBALS['log']->error($msg);
+            SugarApplication::appendErrorMessage($msg);
+            return false;
 		}
 
-		// Delete all team memberships for this team_id.
-		$query = "delete from team_memberships where team_id='{$this->id}'";
+		// Update team_memberships table and set deleted = 1
+		$query = "UPDATE team_memberships SET deleted = 1 WHERE team_id='{$this->id}'";
 		$this->db->query($query,true,"Error deleting memberships while deleting team: ");
 
-		// Delete the team record itself.
-		$query = "delete from teams where id='{$this->id}'";
+		// Update teams and set deleted = 1
+		$query = "UPDATE teams SET deleted = 1 WHERE id='{$this->id}'";
 		$this->db->query($query,true,"Error deleting team: ");
 		
 		require_once('modules/Teams/TeamSetManager.php');
 		TeamSetManager::flushBackendCache();
 		//clean up any team sets that use this team id
 		TeamSetManager::removeTeamFromSets($this->id);
+		
+	    // Take the item off the recently viewed lists
+	    $tracker = new Tracker();
+	    $tracker->makeInvisibleForAll($this->id);	
 	}
 
 	/**
@@ -483,12 +504,20 @@ class Team extends SugarBean
 		if(isset($user_override))
 		{
 			$focus=$user_override;
-		}
-		else
-		{
+		} else {
 			$focus->retrieve($user_id);
 		}
 
+		// Check to see if the user being deleted is the user's private team
+		// the is_null($user_override) check is done because this function is also called from user_manager_changed
+		// in which case we are not deleting the team, but changing who the user reports to
+		if(is_null($user_override) && $this->id == $focus->getPrivateTeamID() && $this->deleted == 0)
+		{
+		   $error_message = translate('ERR_CANNOT_REMOVE_PRIVATE_TEAM', 'Teams');
+		   $GLOBALS['log']->fatal($error_message);
+		   throw new Exception($error_message);
+		}
+		
 		// Step1: Add the current focus to the visited list
 		$visited_users[$focus->id] = $focus->user_name;
 

@@ -31,7 +31,7 @@ require_once('include/utils/array_utils.php');
  */
 function create_include_lang_dir()
 {
-   
+
 	if(!is_dir("custom/include/language"))
 	   return sugar_mkdir("custom/include/language", null, true);
 
@@ -45,10 +45,10 @@ function create_include_lang_dir()
  */
 function create_module_lang_dir($module)
 {
-   
+
 	if(!is_dir("custom/modules/$module/language"))
        return sugar_mkdir("custom/modules/$module/language", null, true);
-       
+
    return true;
 }
 
@@ -60,12 +60,12 @@ function create_module_lang_dir($module)
 function &create_field_lang_pak_contents($old_contents, $key, $value, $language, $module)
 {
 	if(!empty($old_contents))
-	{ 
-		
+	{
+
 		$old_contents = preg_replace("'[^\[\n\r]+\[\'{$key}\'\][^\;]+;[\ \r\n]*'i", '', $old_contents);
 		$contents = str_replace("\n?>","\n\$mod_strings['{$key}'] = '$value';\n?>", $old_contents);
-		
-	
+
+
 	}
 	else
 	{
@@ -142,7 +142,7 @@ function create_field_label($module, $language, $key, $value, $overwrite=false)
 
       if(!$dir_exists)
       {
-      	
+
          $dir_exists = create_module_lang_dir($module);
       }
 
@@ -150,14 +150,12 @@ function create_field_label($module, $language, $key, $value, $overwrite=false)
       {
          $filename = "$dirname/$language.lang.php";
          	if(is_file($filename) && filesize($filename) > 0){
-        	 	$handle = sugar_fopen($filename, 'rb');
-				$old_contents = fread($handle, filesize($filename));
-				fclose($handle);
+				$old_contents = file_get_contents($filename);
          	}else{
-         		$old_contents = '';	
+         		$old_contents = '';
          	}
 			$handle = sugar_fopen($filename, 'wb');
-         
+
 
          if($handle)
          {
@@ -268,7 +266,7 @@ function save_custom_app_list_strings(&$app_list_strings, $language)
 {
 	$return_value = false;
    	$dirname = 'custom/include/language';
-	
+
    $dir_exists = is_dir($dirname);
 
    if(!$dir_exists)
@@ -314,11 +312,11 @@ if($return_value){
 function return_custom_app_list_strings_file_contents($language, $custom_filename = '')
 {
 	$contents = '';
-	
+
 	$filename = "custom/include/language/$language.lang.php";
 	if(!empty($custom_filename))
 		$filename = $custom_filename;
-	
+
 	if (is_file($filename))
 	{
 		$contents = file_get_contents($filename);
@@ -478,7 +476,7 @@ function dropdown_item_move_down($dropdown_type, $language, $index)
 		$contents = return_custom_app_list_strings_file_contents($language);
 		$new_contents = replace_or_add_dropdown_type($dropdown_type,
 			$dropdown_array, $contents);
-        
+
 		save_custom_app_list_strings_contents($new_contents, $language);
 	}
 }
@@ -555,7 +553,7 @@ function replace_or_add_dropdown_type($dropdown_type, &$dropdown_array,
 		if($new_contents == $file_contents)
 		{
 			// replace failed, append to end of file
-			$new_contents = str_replace("?>", '', $file_contents); 
+			$new_contents = str_replace("?>", '', $file_contents);
 			$new_contents .= "\n$new_entry\n?>";
 		}
 	}
@@ -606,23 +604,23 @@ function dropdown_duplicate_check($dropdown_type, &$file_contents)
 
 		$result = array();
 		preg_match_all($pattern, $file_contents, $result);
-		
+
 		if(count($result[0]) > 1)
 		{
 			$new_entry = $result[0][0];
 			$new_contents = preg_replace($pattern, '', $file_contents);
-			
+
 			// Append the new entry.
 			$new_contents = str_replace("?>", '', $new_contents);
 			$new_contents .= "\n$new_entry\n?>";
 			return $new_contents;
 		}
-		
+
 		return $file_contents;
 	}
-	
+
 	return $file_contents;
-	
+
 }
 
 function replace_dropdown_type($dropdown_type, &$dropdown_array,
@@ -669,10 +667,10 @@ function app_string_duplicate_check($name, &$file_contents)
 		!empty($file_contents))
 	{
 		$pattern = '/\$app_strings\[\''. $name .'\'\][\ ]*=[\ ]*\'[^\']*\'[\ ]*;/';
-		
+
 		$result = array();
 		preg_match_all($pattern, $file_contents, $result);
-	
+
 		if(count($result[0]) > 1)
 		{
 			$new_entry = $result[0][0];
@@ -685,9 +683,9 @@ function app_string_duplicate_check($name, &$file_contents)
 		}
 		return $file_contents;
 	}
-	
+
 	return $file_contents;
-	
+
 }
 
 ?>

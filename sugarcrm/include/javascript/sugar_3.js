@@ -100,7 +100,7 @@ function isSupportedIE() {
 	// IE Check supports ActiveX controls
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		if(version >= 5.5 ) {
+		if(version >= 5.5 && version < 9) {
 			return true;
 		} else {
 			return false;
@@ -265,10 +265,20 @@ function addToValidateMoreThan(formname, name, type, required, msg, min) {
 	validate[formname][validate[formname].length - 1][jstypeIndex] = 'more';
     validate[formname][validate[formname].length - 1][minIndex] = min;
 }
+
+//BEGIN SUGARCRM flav=int ONLY
+function addToValidateUSAPhone(formname, name, type, required, msg) {
+	addToValidate(formname, name, type, required, msg);
+	validate[formname][validate[formname].length - 1][jstypeIndex] = 'usa_phone';
+}
+//END SUGARCRM flav=int ONLY
+
 function removeFromValidate(formname, name) {
-	for(i = 0; i < validate[formname].length; i++){
-		if(validate[formname][i][nameIndex] == name){
-			validate[formname].splice(i, 1);
+	for(i = 0; i < validate[formname].length; i++)
+	{
+		if(validate[formname][i][nameIndex] == name)
+		{
+			validate[formname].splice(i--,1); // We subtract 1 from i since the slice removed an element, and we'll skip over the next item we scan
 		}
 	}
 }
@@ -414,6 +424,8 @@ function getDateObject(dtStr) {
     if(typeof(dtar[1])!='undefined' && isTime(dtar[1])) {//if it is a timedate, we should make date1 to have time value
         var t1 = dtar[1].replace(/am/i,' AM');
         var t1 = t1.replace(/pm/i,' PM');
+        //bug #37977: where time format 23.00 causes java script error
+        t1=t1.replace(/\./, ':');
         date1 = new Date(Date.parse(mh+'/'+dy+ '/'+yr+' '+t1));
     }
     else
@@ -436,7 +448,7 @@ function isBefore(value1, value2) {
 }
 
 function isValidEmail(emailStr) {
-	
+
     if(emailStr.length== 0) {
 		return true;
 	}
@@ -534,6 +546,7 @@ function isDBName(str) {
 }
 var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 function isTime(timeStr) {
+    var time_reg_format = "[0-9]{1,2}\:[0-9]{2}";
 	time_reg_format = time_reg_format.replace('([ap]m)', '');
 	time_reg_format = time_reg_format.replace('([AP]M)', '');
 	if(timeStr.length== 0){
@@ -544,7 +557,7 @@ function isTime(timeStr) {
 	if(!myregexp.test(timeStr))
 		return false
 
-	return true
+	return true;
 }
 
 function inRange(value, min, max) {
@@ -581,7 +594,14 @@ function add_error_style(formname, input, txt, flash) {
 	if ( txt.substring(txt.length-1) == ':' )
 	    txt = txt.substring(0,txt.length-1)
 
-	if(inputHandle.parentNode.innerHTML.search(txt) == -1) {
+	// Bug 28249 - To help avoid duplicate messages for an element, strip off extra messages and
+	// match on the field name itself
+	requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
+    invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
+    nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
+    matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
+
+	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
         errorTextNode.innerHTML = '<br />' + txt;
@@ -704,7 +724,25 @@ function fade_error_style(normalStyle, percent) {
 	}
 }
 
-
+function isFieldTypeExceptFromEmptyCheck(fieldType)
+{
+    var results = false;
+    var exemptList = ['bool','file'];
+    for(var i=0;i<exemptList.length;i++)
+    {
+        if(fieldType == exemptList[i])
+            return true;
+    }
+    return results;
+}
+//BEGIN SUGARCRM flav=pro ONLY
+function isFieldHidden(field)
+{
+    var Dom = YAHOO.util.Dom;
+	var td = Dom.getAncestorByTagName(field, 'TD');
+	return Dom.hasClass(td, 'vis_action_hidden');
+}
+//END SUGARCRM flav=pro ONLY
 function validate_form(formname, startsWith){
     requiredTxt = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
@@ -734,17 +772,22 @@ function validate_form(formname, startsWith){
 	inputsWithErrors = new Array();
 	for(var i = 0; i < validate[formname].length; i++){
 			if(validate[formname][i][nameIndex].indexOf(startsWith) == 0){
-				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined'){
+				if(typeof form[validate[formname][i][nameIndex]]  != 'undefined' && typeof form[validate[formname][i][nameIndex]].value != 'undefined'){
 					var bail = false;
 
                     //If a field is not required and it is blank or is binarydependant, skip validation.
                     //Example of binary dependant fields would be the hour/min/meridian dropdowns in a date time combo widget, which require further processing than a blank check
                     if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
                     {
-                        continue;
+                       continue;
                     }
 
-					if(validate[formname][i][requiredIndex] && validate[formname][i][typeIndex] != 'bool'){
+					if(validate[formname][i][requiredIndex]
+						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
+						//BEGIN SUGARCRM flav=pro ONLY
+						&& !isFieldHidden(form[validate[formname][i][nameIndex]])
+						//END SUGARCRM flav=pro ONLY
+					){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
 							add_error_style(formname, validate[formname][i][nameIndex], requiredTxt +' ' + validate[formname][i][msgIndex]);
 							isError = true;
@@ -777,6 +820,13 @@ function validate_form(formname, startsWith){
 							break;
 						case 'alphanumeric':
 							break;
+						case 'file':
+						    var file_input = form[validate[formname][i][nameIndex] + '_file'];
+                            if( file_input && validate[formname][i][requiredIndex] && trim(file_input.value) == "" && !file_input.disabled ) {
+						          isError = true;
+						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
+						      }
+						  break;
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
@@ -874,6 +924,7 @@ function validate_form(formname, startsWith){
 										date1 = trim(form[validate[formname][i][nameIndex]].value);
 
 										if(trim(date1).length != 0 && !isBefore(date1,date2)){
+
 											isError = true;
 											//jc:#12287 - adding translation for the is not before message
 											add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + "(" + date1 + ") " + SUGAR.language.get('app_strings', 'MSG_IS_NOT_BEFORE') + ' ' +date2);
@@ -948,6 +999,24 @@ function validate_form(formname, startsWith){
 							   isError = true;
 							}
 							break;
+							//BEGIN SUGARCRM flav=int ONLY
+							case 'usa_phone':
+								var nodes = YAHOO.util.Selector.query('input[name=' + validate[formname][i][nameIndex] + ']', form);
+								for(el in nodes)
+								{
+									if(typeof nodes[el].type != 'undefined' && nodes[el].type == 'text')
+									{
+									    phone = trim(nodes[el].value);
+										if(phone.length != 0 && !/^[+]?[1]?[- .]?[\(]?[2-9]\d{2}[\)]?[- .]?[\d]{3}[- .]?[\d]{4}$/.test(phone))
+									    {
+									       isError = true;
+									       add_error_style(formname, nodes[el], invalidTxt + " " +	validate[formname][i][msgIndex]);
+									    }
+									    break;
+									}
+								}
+							break;
+							//END SUGARCRM flav=int ONLY
 							}
 						}
 					}
@@ -1254,7 +1323,7 @@ function http_fetch_sync(url,post_data) {
 
 	var args = {"responseText" : global_xmlhttp.responseText,
 				"responseXML" : global_xmlhttp.responseXML,
-				"request_id" : request_id};
+				"request_id" : typeof(request_id) != "undefined" ? request_id : 0};
 	return args;
 
 }
@@ -1566,6 +1635,12 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }
+
     // we don't need to check if the data is changed in the search popup
     if (theForm.id == 'popup_query_form') {
     	return;
@@ -1577,7 +1652,6 @@ function initEditView(theForm) {
     	SUGAR.loadedForms = new Object();
     }
 
-    // console.log('DEBUG: Adding checks for '+theForm.id);
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
 
@@ -1612,7 +1686,7 @@ function onUnloadEditView(theForm) {
         }
     } else {
         // Just need to check a single form for changes
-		if ( editViewSnapshots == null  || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
+		if ( editViewSnapshots == null  || typeof theForm.id == 'undefined' || typeof editViewSnapshots[theForm.id] == 'undefined' || editViewSnapshots[theForm.id] == null ) {
             return;
         }
 
@@ -1633,7 +1707,7 @@ function onUnloadEditView(theForm) {
 
 function disableOnUnloadEditView(theForm) {
     // If you don't pass anything in, it disables all checking
-    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
+    if ( typeof theForm == 'undefined' || typeof editViewSnapshots == 'undefined' || theForm == null || editViewSnapshots == null) {
         window.onbeforeunload = null;
         editViewSnapshots = null;
 
@@ -2379,8 +2453,14 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	    num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
-	    n = n.replace(num_grp_sep_re, '').replace(dec_sep, '.');
+
+	    if(num_grp_sep != '')
+	    {
+	       num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
+		   n = n.replace(num_grp_sep_re, '');
+	    }
+
+		n = n.replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
             // Need to strip out the currency symbols from the start.
@@ -2423,7 +2503,7 @@ function formatNumber(n, num_grp_sep, dec_sep, round, precision) {
   }
 
   regex = /(\d+)(\d{3})/;
-  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].replace(regex, '$1' + num_grp_sep + '$2');
+  while(num_grp_sep != '' && regex.test(n[0])) n[0] = n[0].toString().replace(regex, '$1' + num_grp_sep + '$2');
   return n[0] + (n.length > 1 && n[1] != '' ? dec_sep + n[1] : '');
 }
 
@@ -2526,13 +2606,15 @@ SUGAR.unifiedSearchAdvanced = function() {
 		   YAHOO.util.Event.addListener('unified_search_advanced_img', 'click', SUGAR.unifiedSearchAdvanced.get_content);
 		},
 
-		get_content: function(e) {
-	   		if(SUGAR.unifiedSearchAdvanced.usa_content == null) {
-		   		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
-				var cObj = YAHOO.util.Connect.asyncRequest('GET','index.php?to_pdf=1&module=Home&action=UnifiedSearch&usa_form=true',
-														  {success: SUGAR.unifiedSearchAdvanced.animate, failure: SUGAR.unifiedSearchAdvanced.animate}, null);
-			}
-			else SUGAR.unifiedSearchAdvanced.animate();
+		get_content: function(e)
+		{
+		    query_string = trim(document.getElementById('query_string').value);
+		    if(query_string != '')
+		    {
+		    	window.location.href = 'index.php?module=Home&action=UnifiedSearch&query_string=' + query_string;
+		    } else {
+		        window.location.href = 'index.php?module=Home&action=UnifiedSearch&form_only=true';
+		    }
 	    },
 
 		animate: function(data) {
@@ -2681,16 +2763,21 @@ SUGAR.util = function () {
 					var script = document.createElement('script');
                   	script.type= 'text/javascript';
                   	if(result[1].indexOf("src=") > -1){
-						var srcRegex = /.*src=['"]([a-zA-Z0-9\&\/\.\?=:]*)['"].*/igm;
+						var srcRegex = /.*src=['"]([a-zA-Z0-9_\&\/\.\?=:]*)['"].*/igm;
 						var srcResult =  result[1].replace(srcRegex, '$1');
 						script.src = srcResult;
                   	}else{
                   		script.text = result[2];
                   	}
-                  	document.body.appendChild(script)
+                  	document.body.appendChild(script);
 	              }
 	              catch(e) {
-
+                      if(typeof(console) != "undefined" && typeof(console.log) == "function")
+                      {
+                          console.log("error adding script");
+                          console.log(e);
+                          console.log(result);
+                      }
                   }
                   result =  objRegex.exec(text);
 			}
@@ -2918,6 +3005,10 @@ SUGAR.util = function () {
 				win = window.open(URL, windowName, windowFeatures);
 			}
 			return win;
+		},
+        //Reset the scroll on the window
+        top : function() {
+			window.scroll(0,0);
 		}
 	};
 }(); // end util
@@ -2991,7 +3082,7 @@ SUGAR.savedViews = function() {
 				// search and redirect back
 				document.search_form.action.value = 'index';
 			}
-			document.search_form.submit();
+			SUGAR.ajaxUI.submitForm(document.search_form);
 		},
 		shortcut_select: function(selectBox, module) {
 			//build url
@@ -3500,13 +3591,19 @@ SUGAR.language = function() {
         },
 
         get: function(module, str) {
-            if(typeof SUGAR.language.languages[module] == 'undefined'
-            || typeof SUGAR.language.languages[module][str] == 'undefined')
+            if(typeof SUGAR.language.languages[module] == 'undefined' || typeof SUGAR.language.languages[module][str] == 'undefined')
+            {
                 return 'undefined';
-
+            }
             return SUGAR.language.languages[module][str];
+        },
+
+        translate: function(module, str)
+        {
+            text = this.get(module, str);
+            return text != 'undefined' ? text : this.get('app_strings', str);
         }
-    };
+    }
 }();
 
 SUGAR.contextMenu = function() {
@@ -3712,6 +3809,10 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
 
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800
+	width = (width == 600) ? 800 : width;
+	height = (height == 400) ? 800 : height;
+
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -3720,7 +3821,7 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	if (initial_filter != '') {
 		URL += '&query=true' + initial_filter;
 		// Bug 41891 - Popup Window Name
-		popupName = initial_filter.replace(/[^a-z_\-0-9]+/ig, '_');
+		popupName = initial_filter.replace(/[^a-z_0-9]+/ig, '_');
 		windowName = module_name + '_popup_window' + popupName;
 	} else {
 		windowName = module_name + '_popup_window' + popupCount;
@@ -3788,11 +3889,17 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+							var tempEvent = window.document.createEvent('HTMLEvents');
+							tempEvent.initEvent('change', true, true);
+							selectField.dispatchEvent(tempEvent);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+					var tempEvent = document.createEvent('HTMLEvents');
+					tempEvent.initEvent('change', true, true);
+					window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
@@ -3844,6 +3951,13 @@ function set_return(popup_reply_data)
 	}else{
 		set_return_basic(popup_reply_data,/\S/);
 	}
+}
+
+function set_return_lead_conv(popup_reply_data) {
+    set_return(popup_reply_data);
+    if (document.getElementById('lead_conv_ac_op_sel') && typeof onBlurKeyUpHandler=='function') {
+        onBlurKeyUpHandler();
+    }
 }
 
 function set_return_and_save(popup_reply_data)
@@ -4043,6 +4157,16 @@ SUGAR.util.ajaxCallInProgress = function(){
 	return SUGAR_callsInProgress != 0;
 }
 
+SUGAR.util.callOnChangeListers = function(field){
+	var listeners = YAHOO.util.Event.getListeners(field, 'change');
+	if (listeners != null) {
+		for (var i = 0; i < listeners.length; i++) {
+			var l = listeners[i];
+			l.fn.call(l.scope ? l.scope : this, l.obj);
+		}
+	}
+}
+
 SUGAR.util.closeActivityPanel = {
     show:function(module,id,new_status,viewType,parentContainerId){
         if (SUGAR.util.closeActivityPanel.panel)
@@ -4125,3 +4249,4 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
 	pwd.style.display = '';
 	link.style.display = 'none';
 }
+

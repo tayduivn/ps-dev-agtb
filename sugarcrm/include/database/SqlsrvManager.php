@@ -134,7 +134,7 @@ class SqlsrvManager extends MssqlManager
                     "Database" => $configOptions['db_name'],
                     "CharacterSet" => "UTF-8",
                     "ReturnDatesAsStrings" => true,
-                    "MultipleActiveResultSets" => false,
+                    "MultipleActiveResultSets" => true,
                     )
                 );
         if(empty($this->database)) {
@@ -145,6 +145,8 @@ class SqlsrvManager extends MssqlManager
         if($this->checkError('Could Not Connect:', $dieOnError))
             $GLOBALS['log']->info("connected to db");
 
+        sqlsrv_query($this->database, 'SET DATEFORMAT mdy');
+        
         $GLOBALS['log']->info("Connect:".$this->database);
     }
 
@@ -161,8 +163,10 @@ class SqlsrvManager extends MssqlManager
 
         $sqlmsg = $this->_getLastErrorMessages();
         $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        if ( $sqlpos !== false )
-            $sqlmsg = '';  // empty out sqlmsg if its 'Changed database context to'
+        $sqlpos2 = strpos($sqlmsg, 'Warning:');
+        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false )
+            $sqlmsg = '';  // empty out sqlmsg if its something we will ignor
         else {
             global $app_strings;
             //ERR_MSSQL_DB_CONTEXT: localized version of 'Changed database context to' message
@@ -201,13 +205,9 @@ class SqlsrvManager extends MssqlManager
         )
     {
 		global $app_strings;
-		
-		// Flag if there are odd number of single quotes
-        if ((substr_count($sql, "'") & 1))
-            $GLOBALS['log']->error("SQL statement[" . $sql . "] has odd number of single quotes.");
 
-        $sql = $this->_appendN($sql);
-        
+		$sql = $this->_appendN($sql);
+
         $this->countQuery($sql);
         $GLOBALS['log']->info('Query:' . $sql);
         $this->checkConnection();
@@ -226,12 +226,8 @@ class SqlsrvManager extends MssqlManager
         else {
             $result = @sqlsrv_query($this->database, $sql);
         }
-		// the sqlsrv driver will sometimes return false from sqlsrv_query()
-        // on delete queries, so we'll also check to see if we get an error
-        // message as well.
-        // see this forum post for more info
-        // http://forums.microsoft.com/MSDN/ShowPost.aspx?PostID=3685918&SiteID=1
-        if (!$result && ( $this->_getLastErrorMessages() != '' ) ) {
+
+        if (!$result) {
             // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
             // 				  and difficult to reproduce error. The message is only a warning, and does
             //				  not affect the functionality of the query
@@ -239,8 +235,8 @@ class SqlsrvManager extends MssqlManager
             $sqlmsg = $this->_getLastErrorMessages();
             $sqlpos = strpos($sqlmsg, 'Changed database context to');
 			$sqlpos2 = strpos($sqlmsg, 'Warning:');
-
-			if ($sqlpos !== false || $sqlpos2 !== false)		// if sqlmsg has 'Changed database context to', just log it
+			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
 				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
 			else {
 				//BEGIN SUGARCRM flav=int ONLY
@@ -260,25 +256,14 @@ class SqlsrvManager extends MssqlManager
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if($this->dump_slow_queries($sql) && parent::$trackSlowQuery) {
+        if($this->dump_slow_queries($sql)) {
             $this->track_slow_queries($sql);
         }
         //END SUGARCRM flav=pro ONLY
 
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
-        
-        // fetch all the returned rows into an the resultsCache
-        if ( is_resource($result) ) {
-			$i = 0;
-			while ( $row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC) )
-				$this->_resultsCache[$this->_lastResultsCacheKey][$i++] = $row;
-			
-			sqlsrv_free_stmt($result);
-			
-			return $this->_lastResultsCacheKey++;
-		}
-		else
-			return $result;
+
+        return $result;
     }
 
 	/**
@@ -291,10 +276,12 @@ class SqlsrvManager extends MssqlManager
 	{
         $field_array = array();
 
-        if ( !is_int($result) || !isset($this->_resultsCache[$result]) )
+        if ( !$result ) {
         	return false;
-        
-        foreach ( $this->_resultsCache[$result][0] as $key => $value ) {
+        }
+
+        foreach ( sqlsrv_field_metadata($result) as $fieldMetadata ) {
+            $key = $fieldMetadata['Name'];
             if($make_lower_case==true)
                 $key = strtolower($key);
 
@@ -313,41 +300,35 @@ class SqlsrvManager extends MssqlManager
         $encode = true
         )
     {
-        static $last_returned_result = array();
-		
-        if ( !is_int($result) || !isset($this->_resultsCache[$result]) )
-        	return false;
-        
-        if ( !isset($last_returned_result[$result]) )
-            $last_returned_result[$result] = 0;
-        
-        if ( !isset($this->_resultsCache[$result][$last_returned_result[$result]]) ) {
-            $this->_resultsCache[$result] = null;
-            unset($this->_resultsCache[$result]);
+        if (!$result) {
+            return false;
+        }
+
+        $row = sqlsrv_fetch_array($result,SQLSRV_FETCH_ASSOC);
+        if (empty($row)) {
             return false;
         }
         
-        $row = $this->_resultsCache[$result][$last_returned_result[$result]];
-        if ( $last_returned_result[$result] >= count($this->_resultsCache[$result]) ) {
-            $this->_resultsCache[$result] = null;
-            unset($this->_resultsCache[$result]);
-        }
-        $last_returned_result[$result]++;
-        //MSSQL returns a space " " when a varchar column is empty ("") and not null.
-        //We need to iterate through the returned row array and strip empty spaces
-        if(!empty($row)){
-            foreach($row as $key => $column) {
-                //notice we only strip if one space is returned.  we do not want to strip
-                //strings with intentional spaces (" foo ")
-                if (!empty($column) && $column ==" ") {
-                    $row[$key] = '';
-                }
+        foreach($row as $key => $column) {
+            // MSSQL returns a space " " when a varchar column is empty ("") and not null.
+            // We need to strip empty spaces
+            // notice we only strip if one space is returned.  we do not want to strip
+            // strings with intentional spaces (" foo ")
+            if (!empty($column) && $column ==" ") {
+                $row[$key] = '';
             }
+            // Strip off the extra .000 off of datetime fields
+            $matches = array();
+            preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}).[0-9]{3}$/',$column,$matches);
+            if ( !empty($matches) && !empty($matches[1]) ) {
+                $row[$key] = $matches[1];
+            }
+            // HTML encode if needed
+            if($encode && $this->encode) {
+                $row[$key] = to_html($row[$key]);
+            }    
         }
 
-        if($encode && $this->encode&& is_array($row))
-            return array_map('to_html', $row);
-        
         return $row;
 	}
 
@@ -360,22 +341,7 @@ class SqlsrvManager extends MssqlManager
     {
         return $this->getOne('SELECT @@ROWCOUNT');
 	}
-    
-	/**
-     * Have this function always return true, since the result is already freed
-     *
-     * @see DBManager::freeResult()
-     */
-    protected function freeResult(
-        $result = false
-        )
-    {
-    	if ( is_int($result) && isset($this->_resultsCache[$result]) )
-			unset($this->_resultsCache[$result]);
-		
-    	return true;
-    }
-    
+
     /**
      * Emulates old mssql_get_last_message() behavior, giving us any error messages from the previous
      * function call

@@ -38,11 +38,11 @@ class NotificationsController extends SugarController
     function action_checkNewNotifications()
     {
 	    global $timedate;
-	    
-	    $thirtySecondAgo = time() - 30;
-	    $thirtySecondsAgoFormatted = gmdate($timedate->get_db_date_time_format(), $thirtySecondAgo);
-	    
-	    $now = gmdate($timedate->get_db_date_time_format());
+	   
+	    $thirtySecondsAgoFormatted = $timedate->getNow()->get("30 seconds ago")->asDb();
+
+	    $now = $timedate->nowDb();
+
 	    $lastNotiticationCheck = !empty($_SESSION['lastNotificationCheck']) ? $_SESSION['lastNotificationCheck'] : $thirtySecondsAgoFormatted;
 	    
         $n = new Notifications();
