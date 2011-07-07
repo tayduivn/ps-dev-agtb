@@ -1,6 +1,6 @@
 <script type="text/javascript">
 function allowInsideView() {ldelim}
-document.getElementById('insideViewFrame').src = '{$URL}';
+document.getElementById('insideViewFrame').src = '{$AJAX_URL}';
 document.getElementById('insideViewConfirm').style.display = 'none';
 document.getElementById('insideViewFrame').style.display = 'block';
 document.getElementById('insideViewDiv').style.height='430px';
@@ -18,9 +18,23 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
                 document.getElementById('show_link_insideview').style.display='';
             {rdelim}
         {rdelim}
+        toggleGettingStartedButton();
     {rdelim});
+
+    function toggleGettingStartedButton(){ldelim}
+        var acceptBox  = document.getElementById( "insideview_accept_box" );
+        var gettingStartedButton  = document.getElementById( "insideview_accept_button" );
+
+        if( acceptBox.checked ){ldelim}
+            gettingStartedButton.disabled = '';
+            gettingStartedButton.focus();
+        {rdelim}
+        else {ldelim}
+            gettingStartedButton.disabled = "disabled";
+        {rdelim}
+    {rdelim}
 </script>
-<div id='insideViewDiv' style='width:100%'>
+<div id='insideViewDiv' style='width:100%' class="doNotPrint">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" class="formHeader h3Row">
         <tbody>
             <tr>
@@ -50,7 +64,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
       
       
       <div style="font-size: 14px;">
-      	<a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>InsideView</strong></a> <strong>now comes preinstalled in SugarCRM.</strong>
+      	<a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>InsideView</strong></a> <strong>now comes preinstalled in SugarCRM.</strong>
       </div>
       
    
@@ -66,8 +80,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
       </div>
       
       
-         <div style="float: left; padding-bottom: 10px; width: 190px;"><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/><a href='http://www.insideview.com/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>InsideView in<br>30 seconds.</a></div>
-      
+         <div style="float: left; padding-bottom: 10px; width: 190px;"><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>InsideView in<br>30 seconds.</a></div>
       
                <hr style="width: 775px; border-color: #eee;">
      By clicking 'Get Started' you agree to InsideView's  <a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>terms of use</a> and <a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>privacy policy</a>.
