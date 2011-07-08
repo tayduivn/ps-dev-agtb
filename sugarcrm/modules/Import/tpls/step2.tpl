@@ -89,7 +89,7 @@
           <tr>
             <td scope="row" colspan="3">
                 <input id="import_create" class="radio" type="radio" name="type" value="import" checked="checked" />
-                &nbsp;{$MOD.LBL_IMPORT_BUTTON}
+                &nbsp;{$MOD.LBL_IMPORT_BUTTON} &nbsp;{sugar_help text=$MOD.LBL_CREATE_BUTTON_HELP}
             </td>
           </tr>
           <tr>
