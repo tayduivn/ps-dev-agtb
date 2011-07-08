@@ -94,7 +94,7 @@ EOQ;
 
 		while($row = $db->fetchByAssoc($result)) {
 			// need to concatenate since GMT times can bridge two local days
-			$timeStart = strtotime($row['date_start']);
+			$timeStart = strtotime($db->fromConvert($row['date_start'], 'datetime'));
 			$timeRemind = $row['reminder_time'];
 			$timeStart -= $timeRemind;
 
@@ -119,14 +119,14 @@ EOQ;
 			}
 
 			// sanitize agenda
-			$desc = '';
+			$desc1 = '';
 			if(!empty($row['description'])) {
-				$desc = from_html($row['description']);
+				$desc1 = from_html($row['description']);
 				// addAlert() uses double-quotes to pass to popup - escape double-quotes
 				//$desc = str_replace('"', '\"', $desc);
 			}
 
-			$description = empty($desc) ? '' : $app_strings['MSG_JS_ALERT_MTG_REMINDER_AGENDA'].$desc."\n";
+			$description = empty($desc1) ? '' : $app_strings['MSG_JS_ALERT_MTG_REMINDER_AGENDA'].$desc1."\n";
 
 			//BEGIN SUGARCRM flav=notifications ONLY
 			//Add the notification
@@ -139,7 +139,7 @@ EOQ;
 
 			// standard functionality
 			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_MEETING'], $meetingName,
-				$app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($row['date_start']),
+				$app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($db->fromConvert($row['date_start'], 'datetime')),
 				$app_strings['MSG_JS_ALERT_MTG_REMINDER_LOC'].$row['location'].
 				$description.
 				$instructions,
@@ -164,7 +164,7 @@ EOQ;
 
 		while($row = $db->fetchByAssoc($result)){
 			// need to concatenate since GMT times can bridge two local days
-			$timeStart = strtotime($row['date_start']);
+			$timeStart = strtotime($db->fromConvert($row['date_start'], 'datetime'));
 			$timeRemind = $row['reminder_time'];
 			$timeStart -= $timeRemind;
 			$row['description'] = (isset($row['description'])) ? $row['description'] : '';
@@ -178,7 +178,7 @@ EOQ;
 			$n->save(FALSE);
 			//END SUGARCRM flav=notifications ONLY
 
-			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($row['date_start']) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'] , $timeStart - strtotime($dateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
+			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($db->fromConvert($row['date_start'], 'datetime')) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'] , $timeStart - strtotime($dateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
 		}
 	}
 
