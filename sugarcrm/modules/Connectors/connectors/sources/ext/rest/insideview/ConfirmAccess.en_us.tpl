@@ -39,7 +39,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
         <tbody>
             <tr>
                 <td nowrap="" style="padding: 0px;">
-                    <h3 style="margin: -6px;">
+                    <h3>
                         <span>
                             <a name="insideview"> </a>
                             <span id="show_link_insideview" style="display: none">
@@ -52,7 +52,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
                     </h3>
                 </td>
                 <td width="100%">
-                    <img height="1" width="1" src="themes/default/images/blank.gif?s=10c8793605d02302b4c4992681454492&amp;c=1" alt="">
+                    <img height="1" width="1" src="{sugar_getimagepath file='blank.gif'}" alt="">
                 </td>
             </tr>
         </tbody>
