@@ -89,7 +89,7 @@
           <tr>
             <td scope="row" colspan="3">
                 <input id="import_create" class="radio" type="radio" name="type" value="import" checked="checked" />
-                &nbsp;{$MOD.LBL_IMPORT_BUTTON}
+                &nbsp;{$MOD.LBL_IMPORT_BUTTON} &nbsp;{sugar_help text=$MOD.LBL_CREATE_BUTTON_HELP}
             </td>
           </tr>
           <tr>
@@ -99,7 +99,7 @@
             </td>
           </tr>
 	</table>
-    <table border="0" cellspacing="0" cellpadding="0" width="100%">
+    <table border="0" cellspacing="5px" cellpadding="0" width="100%">
           {foreach from=$custom_mappings item=item name=custommappings}
           {capture assign=mapping_label}{$MOD.LBL_CUSTOM_MAPPING_}{$item|upper}{/capture}
           <tr>
@@ -112,7 +112,7 @@
           {if $smarty.foreach.saved.first}
           <tr>
             <td scope="row" colspan="3">
-                <h5>{$MOD.LBL_MY_SAVED}&nbsp;{sugar_help text=$savedMappingHelpText}</h5></td>
+                <h5>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a>&nbsp;{sugar_help text=$savedMappingHelpText}</h5></td>
           </tr>
           {/if}
           <tr id="custom_import_{$smarty.foreach.saved.index}">
@@ -132,12 +132,6 @@
           {/foreach}
 
           {foreach from=$published_imports key=key item=item name=published}
-          {if $smarty.foreach.published.first}
-          <tr>
-            <td scope="row" colspan="3">
-                <h5>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_MY_PUBLISHED_HELP}</h5></td>
-          </tr>
-          {/if}
           <tr id="published_import_{$smarty.foreach.published.index}">
             <td scope="row" colspan="2">
                 <input class="radio" type="radio" name="source" value="custom:{$item.IMPORT_ID}"/>
