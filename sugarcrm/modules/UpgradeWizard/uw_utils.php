@@ -5651,7 +5651,7 @@ function upgradeEnableInsideViewConnector($path='')
     }
  
     require_once('include/connectors/sources/SourceFactory.php');
-    $source = SourceFactory::getSource('ext_rest_insdeview');
+    $source = SourceFactory::getSource('ext_rest_insideview');
 
     // $mapping is brought in from the mapping.php file above
     $source->saveMappingHook($mapping);
