@@ -44,7 +44,7 @@ class ImportDuplicateCheck
     /*
      * holds current field when a duplicate has been found
      */
-    public $_dupedField ='';
+    public $_dupedFields =array();
     
     /** 
      * Constructor
@@ -196,9 +196,11 @@ class ImportDuplicateCheck
             $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', 'first_name'=>$this->_focus->first_name, 'last_name'=>$this->_focus->last_name),true);
 
             if ( !is_null($result) ){
-                //set dupe field to full_name
-                $this->_dupedField = 'full_name';
-                return true;
+                //set dupe field to full_name and name fields
+                $this->_dupedFields[] = 'full_name';
+                $this->_dupedFields[] = 'first_name';
+                $this->_dupedFields[] = 'last_name';
+
             }
         }
 
@@ -209,8 +211,8 @@ class ImportDuplicateCheck
 
             if ( !is_null($result) ){
                 //set the dupe field to custom value
-                $this->_dupedField = $cust_val;
-                return true;
+                $this->_dupedFields[] = $cust_val;
+                
             }
 
         }
@@ -230,8 +232,11 @@ class ImportDuplicateCheck
                         $this->_focus->$email,
                         $this->_focus,
                         ($index['name'] == 'special_idx_email1')
-                        ) > 0 )
-                    return true;
+                        ) > 0 ){ foreach($index['fields'] as $field){
+                        if($field !='deleted')
+                            $this->_dupedFields[] = $field;
+                    }
+                }
             }
             // Adds a hook so you can define a method in the bean to handle dupe checking
             elseif ( isset($index['dupeCheckFunction']) ) {
@@ -258,14 +263,20 @@ class ImportDuplicateCheck
                 $result = $newfocus->retrieve_by_string_fields($index_fields,true);
 
                 if ( !is_null($result) ){
+                    //remove deleted as a duped field
+                    unset($index_fields['deleted']);
+
                     //create string based on array of dupe fields
-                    $this->_dupedField = implode(",", array_keys($index_fields));
-                    //remove deleted from the list
-                    $this->_dupedField = str_replace('deleted,','',$this->_dupedField);
-                    return true;
+                    $this->_dupedFields = array_merge(array_keys($index_fields),$this->_dupedFields);
                 }
             }
         }
+
+        //return true if any dupes were found
+        if(!empty($this->_dupedFields)){
+            return true;
+        }
+        
         return false;
     }
 

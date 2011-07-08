@@ -68,7 +68,9 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
         $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
-        $this->ss->assign("EXTERNAL_SOURCES_OPTIONS", get_select_options_with_id($this->getAllImportableExternalEAPMs(),$selectExternal) );
+
+        $this->ss->assign("selectExternalSource", $selectExternal);
+        $this->ss->assign("EXTERNAL_SOURCES", $this->getAllImportableExternalEAPMs());
         $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
 
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
@@ -97,7 +99,7 @@ class ImportViewStep1 extends ImportView
     private function getAllImportableExternalEAPMs()
     {
         ExternalAPIFactory::clearCache();
-        return ExternalAPIFactory::getModuleDropDown('Import', TRUE, TRUE);
+        return ExternalAPIFactory::getModuleDropDown('Import', TRUE, FALSE);
     }
 
     private function getAuthenticatedImportableExternalEAPMs()
@@ -126,20 +128,22 @@ document.getElementById('gonext').onclick = function()
     }
     else
     {
-        var extEl = document.getElementById('external_source');
-        if(extEl.selectedIndex == -1 || extEl.options[extEl.selectedIndex].value == '')
+        if(selectedExternalSource == '')
         {
             add_error_style('importstep1','external_source',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['LBL_EXTERNAL_SOURCE']}");
             return false;
         }
 
         document.getElementById('importstep1').action.value = 'ExtStep1';
+        document.getElementById('importstep1').external_source.value = selectedExternalSource;
         return true;
     }
 }
 
 
 YAHOO.util.Event.onDOMReady(function(){
+
+    var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
 
     function toggleExternalSource(el)
     {
@@ -150,8 +154,15 @@ YAHOO.util.Event.onDOMReady(function(){
         if(newVisibility == 'none')
         {
             document.getElementById('gonext').disabled = false;
-            document.getElementById('external_source').selectedIndex = 0;
             document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
+
+            //Turn off ext source selection
+            var bttns = oButtonGroup.getButtons();
+            oButtonGroup.set("checkedButton", null, true);
+            for(i=0;i<bttns.length;i++)
+            {
+                bttns[i].set("checked", false, true);
+            }
         }
         else
         {
@@ -169,14 +180,14 @@ YAHOO.util.Event.onDOMReady(function(){
             return false;
     }
     
-    function isExtSourceValid(el)
+    function isExtSourceValid(v)
     {
-        if(this.value == '')
+        if(v == '')
         {
             document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
             return '';
         }
-        if( !isExtSourceAuthenticated(this.value) )
+        if( !isExtSourceAuthenticated(v) )
         {
             document.getElementById('ext_source_sign_in_bttn').style.display = '';
             document.getElementById('gonext').disabled = true;
@@ -187,30 +198,32 @@ YAHOO.util.Event.onDOMReady(function(){
             document.getElementById('gonext').disabled = false;
         }
     }
-    YAHOO.util.Event.addListener('external_source', "change", isExtSourceValid);
-
 
     function openExtAuthWindow()
     {
-        var extSource = document.getElementById('external_source').value;
-
         var import_module = document.getElementById('importstep1').import_module.value;
-        var url = "index.php?module=EAPM&return_module=Import&action=EditView&application=" + extSource + "&return_action=" + import_module;
+        var url = "index.php?module=EAPM&return_module=Import&action=EditView&application=" + selectedExternalSource + "&return_action=" + import_module;
         document.location = url;
     }
 
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
 
+
+    oButtonGroup.subscribe('checkedButtonChange', function(e)
+    {
+        selectedExternalSource = e.newValue.get('value');
+        isExtSourceValid(selectedExternalSource);
+    });
+
     function initExtSourceSelection()
     {
         var el1 = YAHOO.util.Dom.get('ext_source');
-        var el2 = YAHOO.util.Dom.get('external_source');
-        if(el2.value == '')
+        if(selectedExternalSource == '')
             return;
             
         el1.checked = true;
         toggleExternalSource();
-        isExtSourceValid.call({value:el2.value});
+        isExtSourceValid(selectedExternalSource);
     }
     initExtSourceSelection();
 });
