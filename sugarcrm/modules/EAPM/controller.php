@@ -50,6 +50,10 @@ class EAPMController extends SugarController
         SugarApplication::appendErrorMessage($error);
         $GLOBALS['log']->error("Login error: $error");
         $url = 'index.php?module=EAPM&action=EditView&record='.$this->bean->id;
+
+        if($this->return_module == 'Import'){
+            $url .= "&application={$this->bean->application}&return_module={$this->return_module}&return_action={$this->return_action}";
+        }
         return $this->set_redirect($url);
     }
 

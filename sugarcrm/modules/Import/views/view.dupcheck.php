@@ -69,17 +69,14 @@ class ImportViewDupcheck extends ImportView
         $idc = new ImportDuplicateCheck($this->bean);
         $dupe_indexes = $idc->getDuplicateCheckIndexes();
 
-        //grab all the import enabled fields and the field map
-        $import_fields = $this->bean->get_importable_fields();
-        $field_map = $this->getImportMap();
-        $idc = new ImportDuplicateCheck($this->bean);
+         //grab all the import enabled fields and the field map
+         $field_map = $this->getImportMap();
+         $import_fields = $idc->getDuplicateCheckIndexedFiles();
 
-        $import_fields = $idc->getDuplicateCheckIndexedFiles();
-
-        //check for saved entries from mapping
-        $dupe_disabled =  array();
-        $dupe_enabled =  array();
-        $mapped_fields = array('full_name');
+         //check for saved entries from mapping
+         $dupe_disabled =  array();
+         $dupe_enabled =  array();
+         $mapped_fields = array('full_name');
 
          //grab the list of user mapped fields
          foreach($_REQUEST as $req_k => $req_v){
@@ -95,10 +92,10 @@ class ImportViewDupcheck extends ImportView
              //grab the field value from the key
              $ik_field = explode('::', $ik);
 
-             //field was not included in the key, or was not in mapped fields, so skip
-             if(empty($ik_field[1]) || !in_array($ik_field[1], $mapped_fields)){_pp($ik_field);
-                 //skip indexed fields that are not defined in user mapping
-                 continue;
+             //field is not a custom field and was not included in the key, or was not in mapped fields, so skip
+             if(strpos($ik_field[0],'ustomfield::')>0 && (empty($ik_field[1]) || !in_array($ik_field[1], $mapped_fields))){
+             //skip indexed fields that are not defined in user mapping or
+                continue;
              }
 
              if(isset($field_map['dupe_'.$ik])){

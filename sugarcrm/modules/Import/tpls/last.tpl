@@ -154,7 +154,9 @@ div.resultsTable {
         </div>
     </div>
     <div id="pageNum_2_div" style="display: none;" ><br/>
+        {$MOD.LBL_ERROR_HELP}
         {if $errorCount > 0}
+            <br/><br/>
             <a href="{$errorFile}" target='_blank'>{$MOD.LNK_ERROR_LIST}</a><br />
             <a href ="{$errorrecordsFile}" target='_blank'>{$MOD.LNK_RECORDS_SKIPPED_DUE_TO_ERROR}</a><br />
         {/if}

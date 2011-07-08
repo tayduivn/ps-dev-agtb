@@ -45,6 +45,13 @@
 <input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="has_header" value="off">    
+
+<p>
+    {$MOD.LBL_EXTERNAL_MAP_HELP}
+    <br/>
+    <br/>
+    {$MOD.LBL_EXTERNAL_MAP_SUB_HELP}
+</p>
     
 <div align="right">
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}
@@ -56,20 +63,26 @@
 <tr>
     <td style="text-align: left;" scope="row">
         <b>{$MOD.LBL_EXTERNAL_FIELD}</b>&nbsp;
+        {sugar_help text=$MOD.LBL_EXTERNAL_FIELD_TOOLTIP}
     </td>
     <td style="text-align: left;" scope="row">
         <b>{$MOD.LBL_DATABASE_FIELD}</b>&nbsp;
         {sugar_help text=$MOD.LBL_DATABASE_FIELD_HELP}
     </td>
     <td style="text-align: left;" scope="row" id="default_column_header" width="10%">
-        <span id="hide_default_link" class="expand">&nbsp;</span>
-        <span id="default_column_header_span"><b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
-        {sugar_help text=$MOD.LBL_DEFAULT_VALUE_HELP}</span>
+        <span id="hide_default_link" class="expand">&nbsp;<b id="">{$MOD.LBL_DEFAULT_VALUE}</b>&nbsp;
+        {sugar_help text=$MOD.LBL_EXTERNAL_DEFAULT_TOOPLTIP}</span>
+        <span id="default_column_header_span">&nbsp;</span>
     </td>
 </tr>
 {/if}
 <tr>
-    <td id="row_{$smarty.foreach.rows.index}_header">{$item.cell1}</td>
+    <td id="row_{$smarty.foreach.rows.index}_header">{$item.cell1}
+        {if $item.help_text != ''}
+            {sugar_help text=$item.help_text}
+        {/if}
+    </td>
+
     <td valign="top" align="left" id="row_{$smarty.foreach.rows.index}_col_0">
         <select class='fixedwidth' name="colnum_{$smarty.foreach.rows.index}">
             <option value="-1">{$MOD.LBL_DONT_MAP}</option>

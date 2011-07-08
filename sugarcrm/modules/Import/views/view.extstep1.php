@@ -102,6 +102,7 @@ class ImportViewExtStep1 extends ImportViewStep3
         $columns = array();
         $mappedFields = array();
         $mod_strings = return_module_language($current_language, $module);
+        $import_mod_strings = return_module_language($current_language, 'Import');
         $ignored_fields = array();
 
         foreach($extSourceToSugarFieldMapping as $externalKey => $sugarMapping)
@@ -161,13 +162,15 @@ class ImportViewExtStep1 extends ImportViewStep3
             // Bug 27046 - Sort the column name picker alphabetically
             ksort($options);
 
+            $help_text = isset($sugarMapping['sugar_help_key']) ? $import_mod_strings[$sugarMapping['sugar_help_key']] : '';
             $rowLabel = isset($mod_strings[$sugarMapping['sugar_label']]) ? $mod_strings[$sugarMapping['sugar_label']] : $sugarMapping['default_label'] ;
             $columns[] = array(
                 'field_choices' => implode('',$options),
                 'default_field' => $defaultFieldHTML,
                 'cell1'         => str_replace(":",'', $rowLabel),
                 'show_remove'   => false,
-                'ext_key'       => $externalKey
+                'ext_key'       => $externalKey,
+                'help_text'     => $help_text
                 );
         }
 

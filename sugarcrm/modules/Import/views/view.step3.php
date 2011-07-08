@@ -99,10 +99,6 @@ class ImportViewStep3 extends ImportView
             if ( class_exists($classname) )
             {
                 $mapping_file = new $classname;
-                if (isset($mapping_file->delimiter))
-                    $_REQUEST['custom_delimiter'] = $mapping_file->delimiter;
-                if (isset($mapping_file->enclosure))
-                    $_REQUEST['custom_enclosure'] = htmlentities($mapping_file->enclosure);
                 $ignored_fields = $mapping_file->getIgnoredFields($_REQUEST['import_module']);
                 $field_map = $mapping_file->getMapping($_REQUEST['import_module']);
             }
@@ -110,7 +106,6 @@ class ImportViewStep3 extends ImportView
 
         $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
         $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
-
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
         

@@ -39,6 +39,7 @@
 {$INSTRUCTION}
 <form enctype="multipart/form-data" real_id="importstep3" id="importstep3" name="importstep3" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
+<input type="hidden" name="previous_action" value="Confirm">
 <input type="hidden" name="custom_delimiter" value="{$CUSTOM_DELIMITER}">
 <input type="hidden" name="custom_enclosure" value="{$CUSTOM_ENCLOSURE}">
 <input type="hidden" name="import_type" value="{$TYPE}">
@@ -53,7 +54,6 @@
 <input type="hidden" name="columncount" value ="{$COLUMNCOUNT}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="importlocale_charset" value="{$smarty.request.importlocale_charset}">
-
 <input type="hidden" name="importlocale_dateformat" value="{$smarty.request.importlocale_dateformat}">
 <input type="hidden" name="importlocale_timeformat" value="{$smarty.request.importlocale_timeformat}">
 <input type="hidden" name="importlocale_timezone" value="{$smarty.request.importlocale_timezone}">
