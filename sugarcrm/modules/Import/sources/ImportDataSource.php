@@ -159,7 +159,7 @@ abstract class ImportDataSource implements Iterator
     /**
      * Writes the row out to the ImportCacheFiles::getDuplicateFileName() file
      */
-    public function markRowAsDuplicate($field_name='')
+    public function markRowAsDuplicate($field_names=array())
     {
         $fp = sugar_fopen(ImportCacheFiles::getDuplicateFileName(),'a');
         fputcsv($fp, $this->_currentRow);
@@ -167,15 +167,14 @@ abstract class ImportDataSource implements Iterator
 
 
         //if available, grab the column number based on passed in field_name
-        if(!empty($field_name)){
+        if(!empty($field_names)){
             $colkey = '';
             $colnums = array();
-            $fields_to_process = explode(',', $field_name);
+
 
             //REQUEST should have the field names in order as they appear in the row to be written, get the key values
             //of passed in fields into an array
-            //<<-----we need to add array support here for multiple lists, AND for full name
-            foreach($fields_to_process as $fv){
+            foreach($field_names as $fv){
                 $fv = trim($fv);
                 if(empty($fv) || $fv == 'delete') continue;
                 $new_keys = array_keys($_REQUEST, $fv);
@@ -190,12 +189,12 @@ abstract class ImportDataSource implements Iterator
                     if(strpos($column_key,'colnum_') == 0){
                         $colkey = substr($column_key,7);
                     }
-                }
 
-                //if we have the column key, then lets add a span tag with styling reference to the original value
-                if(!empty($colkey)){
-                    $hilited_val = $this->_currentRow[$colkey];
-                    $this->_currentRow[$colkey]= '<span class=warn>'.$hilited_val.'</span>';
+                    //if we have the column key, then lets add a span tag with styling reference to the original value
+                    if(!empty($colkey)){
+                        $hilited_val = $this->_currentRow[$colkey];
+                        $this->_currentRow[$colkey]= '<span class=warn>'.$hilited_val.'</span>';
+                    }
                 }
             }
         }

@@ -303,7 +303,7 @@ class Importer
 
             if ( $idc->isADuplicateRecord($enabled_dupes) )
             {
-                $this->importSource->markRowAsDuplicate($idc->_dupedField);
+                $this->importSource->markRowAsDuplicate($idc->_dupedFields);
                 $this->_undoCreatedBeans($this->ifs->createdBeans);
                 return;
             }
@@ -316,7 +316,7 @@ class Importer
             $idc = new ImportDuplicateCheck($focus);
             if ( $idc->isADuplicateRecordByFields($enabled_dup_fields) )
             {
-                $this->importSource->markRowAsDuplicate($idc->_dupedField);
+                $this->importSource->markRowAsDuplicate($idc->_dupedFields);
                 $this->_undoCreatedBeans($this->ifs->createdBeans);
                 return;
             }
