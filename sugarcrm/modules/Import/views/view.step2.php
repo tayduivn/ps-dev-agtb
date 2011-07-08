@@ -228,6 +228,17 @@ function deleteMapping(elemId, mappingId )
                    };
     YAHOO.util.Connect.asyncRequest('GET', url, callback);
 }
+var deselectEl = document.getElementById('deselect');
+if(deselectEl)
+{
+    deselectEl.onclick = function() {
+        var els = document.getElementsByName('source');
+        for(i=0;i<els.length;i++)
+        {
+            els[i].checked = false;
+        }
+    }
+}
 -->
 </script>
 

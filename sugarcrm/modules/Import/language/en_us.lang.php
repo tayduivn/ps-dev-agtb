@@ -299,8 +299,8 @@ $mod_strings = array (
     'LBL_LOCALE_EXAMPLE_NAME_FORMAT' => 'Example',
     'LBL_LOCALE_NAME_FORMAT_DESC' => '<i>"s" Salutation, "f" First Name, "l" Last Name</i>',
     'LBL_CHARSET' => 'File Encoding',
-    'LBL_MY_SAVED_HELP' => 'Use this option to apply your saved import settings, including import properties, mappings, and any duplicate check settings, to this import.<br><br>Click <b>Delete</b> to delete a mapping for all users.',
-    'LBL_MY_SAVED_ADMIN_HELP' => 'Use this option to apply your saved import settings, including import properties, mappings, and any duplicate check settings, to this import.<br><br>Click <b>Publish</b> to make the mapping available to other users.<br>Click <b>Un-Publish</b> to make the mapping unavailable to other users.<br>Click <b>Delete</b> to delete a mapping for all users.',
+    'LBL_MY_SAVED_HELP' => 'Use this option to apply your pre-set import settings, including import properties, mappings, and any duplicate check settings, to this import.<br><br>Click <b>Delete</b> to delete a mapping for all users.',
+    'LBL_MY_SAVED_ADMIN_HELP' => 'Use this option to apply your pre-set import settings, including import properties, mappings, and any duplicate check settings, to this import.<br><br>Click <b>Publish</b> to make the mapping available to other users.<br>Click <b>Un-Publish</b> to make the mapping unavailable to other users.<br>Click <b>Delete</b> to delete a mapping for all users.',
     'LBL_MY_PUBLISHED_HELP' => 'Use this option to apply pre-set import settings, including import properties, mappings, and any duplicate check settings, to this import.',
     'LBL_ENCLOSURE_HELP' => '<p>The <b>qualifier character</b> is used to enclose the intended field content, including any characters that are used as delimiters.<br><br>Example: If the delimiter is a comma (,) and the qualifier is a quotation mark ("),<br><b>"Cupertino, California"</b> is imported into one field in the application and appears as <b>Cupertino, California</b>.<br>If there are no qualifier characters, or if a different character is the qualifier,<br><b>"Cupertino, California"</b> is imported into two adjacent fields as <b>"Cupertino</b> and <b>"California"</b>.<br><br>Note: The import file might not contain any qualifier characters.<br>The default qualifier character for comma- and tab- delimited files created in Excel is a quotation mark.</p>',
     'LBL_DELIMITER_COMMA_HELP' => 'Use this option to select and upload a spreadsheet file containing the data that you would like to import. Examples: comma-delimited .csv file or export file from Microsoft Outlook.',
@@ -343,6 +343,7 @@ $mod_strings = array (
     'LBL_SELECT_DUPLICATE_INSTRUCTION' => 'To avoid creating duplicate records, select which of the mapped fields you would like to use to perform a duplicate check while data is being imported. Values within existing records in the selected fields will be checked against the data in the import file. If matching data is found, the rows in the import file containing the data will be displayed along with the import results (next page). You will then be able to select which of these rows to continue importing.',
     'LBL_EXT_SOURCE_SIGN_IN' => 'Sign In',
     'LBL_DUP_HELP' => 'Here are the rows in the import file that were not imported because they contain data that matches values in existing records based on the duplicate check.',
+    'LBL_DESELECT' => 'deselect',
     'LBL_SUMMARY' => 'Summary'
 );
 ?>
