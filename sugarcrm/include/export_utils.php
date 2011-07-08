@@ -195,8 +195,18 @@ function export($type, $records = null, $members = false, $sample=false) {
 	
 	$fields_array = $db->getFieldsArray($result,true);
 
+    //set up the order on the header row
+    $fields_array = get_field_order_mapping($focus->module_dir, $fields_array);
+
+    //set up labels to be used for the header row
+    $field_labels = $fields_array;
+    foreach($fields_array as $dbname){
+        //default to the db name of label does not exist
+        $field_labels[$dbname] = translateForExport($dbname,$focus);
+    }
+
 	// setup the "header" line with proper delimiters
-	$header = implode("\"".getDelimiter()."\"", array_values($fields_array));
+	$header = implode("\"".getDelimiter()."\"", array_values($field_labels));
 	if($members){
 		$header = str_replace('"ea_deleted"'.getDelimiter().'"ear_deleted"'.getDelimiter().'"primary_address"'.getDelimiter().'','',$header);
 	}
@@ -215,6 +225,10 @@ function export($type, $records = null, $members = false, $sample=false) {
     }else{
         //process retrieved record
     	while($val = $db->fetchByAssoc($result, -1, false)) {
+
+            //order the values in the record array
+            $val = get_field_order_mapping($focus->module_dir,$val);
+
             $new_arr = array();
             //BEGIN SUGARCRM flav=pro ONLY
             if(!is_admin($current_user)){
@@ -570,6 +584,8 @@ function generateSearchWhere($module, $query) {//this function is similar with f
  }
 
 
+
+
  //expects the field name to translate and a bean of the type being translated (to access field map and mod_strings)
  function translateForExport($field_db_name,$focus){
      global $mod_strings,$app_strings;
@@ -625,6 +641,66 @@ function generateSearchWhere($module, $query) {//this function is similar with f
      return $fieldLabel;
 
  }
+
+    //call this function to retrurn the desired order to display columns for export in.
+    //if you pass in an array, it will reorder the array and send back to you.  It expects the array
+    //to have the db names as key values, or as labels
+    function get_field_order_mapping($name='',$reorderArr = ''){
+
+
+        //define the ordering of fields, note that the key value is what is important, and should be the db field name
+        $field_order_array = array();
+        $field_order_array['accounts'] = array('id'=>'ID', 'name'=>'Name', 'website'=>'Website', 'email_address' =>'Email Address', 'phone_office' =>'Office Phone', 'phone_alternate' => 'Alternate Phone', 'phone_fax' => 'Fax', 'billing_address_street' => 'Billing Street', 'billing_address_city' => 'Billing City', 'billing_address_state' => 'Billing State', 'billing_address_postalcode' => 'Billing Postal Code', 'billing_address_country' => 'Billing Country', 'shipping_address_street' => 'Shipping Street', 'shipping_address_city' => 'Shipping City', 'shipping_address_state' => 'Shipping State', 'shipping_address_postalcode' => 'Shipping Postal Code', 'shipping_address_country' => 'Shipping Country', 'description' => 'Description', 'account_type' => 'Type', 'industry' =>'Industry', 'annual_revenue' => 'Annual Revenue', 'employees' => 'Employees', 'sic_code' => 'SIC Code', 'ticker_symbol' => 'Ticker Symbol', 'parent_id' => 'Parent Account ID', 'ownership' =>'Ownership', 'campaign_id' =>'Campaign ID', 'rating' =>'Rating', 'assigned_user_name' =>'Assigned to', 'team_id' =>'Team Id', 'team_name' =>'Teams', 'team_set_id' =>'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
+        $field_order_array['contacts'] = array('id'=>'ID', 'first_name' => 'First Name', 'last_name' => 'Last Name', 'salutation' => 'Salutation', 'title' => 'Title', 'department' => 'Department', 'account_name' => 'Account Name', 'email_address' => 'Email Address', 'phone_work' => 'Phone Work', 'phone_mobile' => 'Phone Mobile', 'phone_home' => 'Phone Home', 'phone_fax' => 'Phone Fax', 'phone_other' => 'Phone Other', 'primary_address_street' => 'Primary Address Street', 'primary_address_city' => 'Primary Address City', 'primary_address_state' => 'Primary Address State', 'primary_address_postalcode' => 'Primary Address Postal Code', 'primary_address_country' => 'Primary Address Country', 'alternate_address_street' => 'Alternate Address Street', 'alternate_address_city' => 'Alternate Address City', 'alternate_address_state' => 'Alternate Address State', 'alternate_address_postalcode' => 'Alternate Address Postal Code', 'alternate_address_country' => 'Alternate Address Country', 'description' => 'Description', 'birthdate' => 'Birthdate', 'lead_source' => 'Lead Source', 'campaign_id' => 'campaign_id', 'do_not_call' => 'Do Not Call', 'portal_name' => 'Portal Name', 'portal_active' => 'Portal Active', 'portal_password' => 'Portal Password', 'portal_application' => 'Portal Application', 'reports_to_id' => 'Reports to ID', 'assistant' => 'Assistant', 'assistant_phone' => 'Assistant Phone', 'picture' => 'Picture', 'assigned_user_name' => 'Assigned User Name', 'assigned_user_' => 'Assigned User ID', 'team' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_created' => 'Date Created', '' => 'Date Modified', '' => 'Modified By ID', '' => 'Created By ID', '' => 'Deleted');
+        $field_order_array['leads']    = array('id'=>'ID', 'first_name' => 'First Name', 'last_name' => 'Last Name', 'salutation' => 'Salutation', 'title' => 'Title', 'department' => 'Department', 'account_name' => 'Account Name', 'account_description' =>  'Account Description', 'website' =>  'Website', 'email_address' =>  'Email Address', 'phone_mobile' =>  'Phone Mobile', 'phone_work' =>  'Phone Work', 'phone_home' =>  'Phone Home', 'phone_order' =>  'Phone Other', 'phone_fax' =>  'Phone Fax', 'primary_address_street' =>  'Primary Address Street', 'primary_address_city' =>  'Primary Address City', 'primary_address_state' =>  'Primary Address State', 'primary_address_postalcode' =>  'Primary Address Postal Code', 'primary_address_country' =>  'Primary Address Country', 'alternate_address_street' =>  'Alt Address Street', 'alternate_address_city' =>  'Alt Address City', 'alternate_address_state' =>  'Alt Address State', 'alternate_address_postalcode' =>  'Alt Address Postalcode', 'alternate_address_country' =>  'Alt Address Country', 'birthdate' =>  'Birthdate', 'converted' =>  'Converted', 'status' =>  'Status', 'status_description' =>  'Status Description', 'lead_source' =>  'Lead Source', 'lead_source_description' =>  'Lead Source Description', 'campaign_id' =>  'campaign_id', 'referred_by' =>  'Referred By', 'do_not_call' =>  'Do Not Call', 'portal_name' =>  'Portal Name', 'portal_application' =>  'Portal Application', 'reports_to_id' =>  'Reports To ID', 'assistant' =>  'Assistant', 'assistant_phone' =>  'Assistant Phone', 'contact_id' =>  'Contact ID', 'account_id' =>  'Account ID', 'opportunity_id' =>  'Opportunity ID', 'name' =>  'Opportunity Name', 'amount' =>  'Opportunity Amount', 'assigned_user_name' =>  'Assigned User Name', 'assigned_user_id' =>  'Assigned User ID', 'team_name' =>  'Teams', 'team_id' =>  'Team id', 'team_set_id' =>  'Team Set ID', 'date-created' =>  'Date Created', 'date_modified' =>  'Date Modified', 'created_by' =>  'Created By ID', 'modified_user_id' =>  'Modified By ID', 'deleted' =>  'Deleted');
+        $field_order_array['opportunities'] = array('id'=>'ID', 'name' => 'Opportunity Name', 'amount' => 'Opportunity Amount', 'currency_id' => 'Currency', 'date_closed' => 'Expected Close Date', 'sales_stage' => 'Sales Stage', 'probability' => 'Probability (%)', 'next_step' => 'Next Step', 'opportunity_type' => 'Opportunity Type', 'account_name' => 'Account Name', 'description' => 'Description', 'amount_usdollar' => 'Amount', 'lead_source' => 'Lead Source', 'campaign_id' => 'campaign_id', 'assigned_user_name' => 'Assigned User Name', 'assigned_user_id' => 'Assigned User ID', 'team_name' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' => 'Date Created', 'date_modified' => 'Date Modified', 'created_by' => 'Created By ID', 'modified_user_id' => 'Modified By ID', 'deleted' => 'Deleted');
+
+        //of array is passed in for reordering, process array
+        if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
+
+            //make sure reorderArr has values as keys, if not then itereate through and assign the value as the key
+            $newReorder = array();
+            foreach($reorderArr as $rk=> $rv){
+                if(is_int($rk)){
+                    $newReorder[$rv]=$rv;
+                }else{
+                    $newReorder[$rk]=$rv;
+                }
+
+            }
+
+            //lets iterate through and create a reordered temporary array using
+            //the  newly formatted copy of passed in array
+            $temp_result_arr = array();
+            foreach($field_order_array[strtolower($name)] as $fk=> $fv){
+
+                //if the value exists as a key in the passed in array, add to temp array and remove from reorder array.
+                //Do not force into the temp array as we don't want to violate acl's
+                if(array_key_exists($fk,$newReorder)){
+                    $temp_result_arr[$fk] = $newReorder[$fk];
+                    unset($newReorder[$fk]);
+                }
+            }
+
+            //add in all the left over values that were not in our ordered list
+            //array_splice($temp_result_arr, count($temp_result_arr), 0, $newReorder);
+            foreach($newReorder as $nrk=>$nrv){
+                $temp_result_arr[$nrk] = $nrv;
+            }
+
+
+            //return temp ordered list
+            return $temp_result_arr;
+        }
+
+        //if no array was passed in, pass back either the list of ordered columns by module, or the entireorder array
+        if(empty($name)){
+            return $field_order_array;
+        }else{
+            return $field_order_array[strtolower($name)];
+        }
+
+    }
 
  ?>
 
