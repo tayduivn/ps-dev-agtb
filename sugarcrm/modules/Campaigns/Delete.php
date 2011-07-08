@@ -120,6 +120,14 @@ if (isset($_REQUEST['mode']) and  $_REQUEST['mode']=='Test') {
 		ACLController::displayNoAccess(true);
 		sugar_cleanup(true);
 	}
+	
+	//Bug 44870 Deleted Campaign Is Not Removed From campaign_id Column in Accounts & Contacts Tables
+	$query = "update accounts set `campaign_id`=null where `campaign_id` = '{$focus->id}' ";
+	$focus->db->query($query);
+	
+	$query = "update contacts set `campaign_id`=null where `campaign_id` = '{$focus->id}' ";
+	$focus->db->query($query);
+	
 	$focus->mark_deleted($_REQUEST['record']);
 }
 $return_id=!empty($_REQUEST['return_id'])?$_REQUEST['return_id']:$focus->id;

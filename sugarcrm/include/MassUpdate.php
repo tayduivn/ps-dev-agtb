@@ -238,6 +238,15 @@ eoq;
 						    	continue;
 						    }
 						    //END SUGARCRM flav=pro ONLY
+						    
+						    //Bug 44870 Deleted Campaign Is Not Removed From campaign_id Column in Accounts & Contacts Tables
+						    if ($this->sugarbean->object_name == 'Campaign'){
+						    	$query = "update accounts set `campaign_id`=null where `campaign_id` = '{$id}' ";
+						    	$db->query($query);
+						    
+						    	$query = "update contacts set `campaign_id`=null where `campaign_id` = '{$id}' ";
+						    	$db->query($query);
+						    }
 							$this->sugarbean->mark_deleted($id);
 						}
 					}
