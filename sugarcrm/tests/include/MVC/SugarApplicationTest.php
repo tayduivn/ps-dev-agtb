@@ -43,6 +43,8 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         if ( isset($GLOBALS['sugar_config']['http_referer']) ) {
             $this->prevRefererList = $GLOBALS['sugar_config']['http_referer'];
         }
+
+        $GLOBALS['sugar_config']['http_referer'] = array('list' => array(), 'actions' => array());
     }
 
     private function _loadUser()
@@ -79,6 +81,8 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         if ( isset($this->prevRefererList)) {
             $GLOBALS['sugar_config']['http_referer'] = $this->prevRefererList;
+        } else {
+            unset ($GLOBALS['sugar_config']['http_referer']);
         }
     }
 
@@ -259,6 +263,8 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         if(!$this->_app->checkHTTPReferer())
             echo "\nreferrer should have been true\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
+        else
+            echo "\nreferrer was correctly true\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
         
         $this->assertTrue($this->_app->checkHTTPReferer());
     }
@@ -273,6 +279,8 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         if($this->_app->checkHTTPReferer())
             echo "\n referrer should have been false\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
+        else
+            echo "\n referrer was correctly fasle\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
 
         $this->assertFalse($this->_app->checkHTTPReferer());
     }
@@ -285,6 +293,8 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         if(!$this->_app->checkHTTPReferer())
             echo "\n referrer should have been true based on action\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
+        else
+            echo "\n referrer was correctly false based on action\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
 
         $this->assertTrue($this->_app->checkHTTPReferer());
     }
