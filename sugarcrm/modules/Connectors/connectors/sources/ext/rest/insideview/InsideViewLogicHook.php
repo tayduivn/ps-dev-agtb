@@ -129,11 +129,8 @@ class InsideViewLogicHook {
 
         // Build the base arguments
         static $userFieldMap = array('crm_user_id' => 'id',
-                                     'crm_user_name' => 'user_name',
                                      'crm_user_fn' => 'first_name',
                                      'crm_user_ln' => 'last_name',
-                                     'crm_user_title' => 'title',
-                                     'crm_user_phone' => 'phone_work',
                                      'crm_user_email' => 'email1',
         );
 
