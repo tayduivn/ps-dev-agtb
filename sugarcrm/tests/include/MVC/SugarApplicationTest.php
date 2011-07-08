@@ -261,11 +261,6 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         
         $GLOBALS['sugar_config']['http_referer']['list'][] = 'dog';
 
-        if(!$this->_app->checkHTTPReferer())
-            echo "\nreferrer should have been true\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
-        else
-            echo "\nreferrer was correctly true\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
-        
         $this->assertTrue($this->_app->checkHTTPReferer());
     }
     
@@ -277,11 +272,6 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['http_referer']['list'] = array();
 
-        if($this->_app->checkHTTPReferer())
-            echo "\n referrer should have been false\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
-        else
-            echo "\n referrer was correctly fasle\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
-
         $this->assertFalse($this->_app->checkHTTPReferer());
     }
     
@@ -290,11 +280,6 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'index';
-
-        if(!$this->_app->checkHTTPReferer())
-            echo "\n referrer should have been true based on action\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
-        else
-            echo "\n referrer was correctly false based on action\n" . print_r($GLOBALS['sugar_config']['http_referer'], true) . "\n";
 
         $this->assertTrue($this->_app->checkHTTPReferer());
     }
