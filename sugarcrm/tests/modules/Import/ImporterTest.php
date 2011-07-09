@@ -81,7 +81,6 @@ class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.$content_idx);
 
         $importSource = new ImportFile($file, ',', '"');
-        $importSource->setHeaderRow(true);
 
         $bean = loadBean($this->_importModule);
 
@@ -89,7 +88,6 @@ class ImporterTest extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['colnum_0'] = 'date_entered';
         $_REQUEST['colnum_1'] = 'last_name';
         $_REQUEST['import_module'] = 'Contacts';
-        $_REQUEST['has_header'] = 'on';
         $_REQUEST['importlocale_charset'] = 'UTF-8';
         $_REQUEST['importlocale_dateformat'] = $date_format;
         $_REQUEST['importlocale_timeformat'] = $time_format;
