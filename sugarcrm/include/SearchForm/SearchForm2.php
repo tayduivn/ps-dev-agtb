@@ -174,6 +174,7 @@ require_once('include/EditView/EditView2.php');
           $this->th->ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M" . $pm);
         }
         $this->th->ss->assign('TIME_SEPARATOR', $time_separator);
+        $this->th->ss->assign('CALENDAR_FDOW', $timedate->get_first_day_of_week());
 
         //Show and hide the good tab form
         foreach($this->tabs as $tabkey=>$viewtab){

@@ -49,6 +49,7 @@ daFormat : "{$CALENDAR_FORMAT}",
 button : "{{$idname}}_trigger",
 singleClick : true,
 dateStr : "{$date_value}",
+startWeekday: {$CALENDAR_FDOW|default:'0'},
 step : 1,
 weekNumbers:false
 {rdelim}

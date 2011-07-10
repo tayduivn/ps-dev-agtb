@@ -389,6 +389,19 @@ if(!$focus->getPreference('ut')) {
 $sugar_smarty->assign('TIMEZONE_CURRENT', $userTZ);
 $sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
 
+// FG - Bug 4236 - Managed First Day of Week
+$fdowDays = array();
+foreach ($app_list_strings['dom_cal_day_long'] as $d)
+{
+  if ($d != "")
+    $fdowDays[] = $d;
+}
+$sugar_smarty->assign("FDOWOPTIONS", $fdowDays);
+$currentFDOW = $focus->getPreference('fdow');
+if (!isset($currentFDOW))
+  $currentFDOW = 0;
+$sugar_smarty->assign("FDOWCURRENT", $currentFDOW);
+
 //// Numbers and Currency display
 require_once('modules/Currencies/ListCurrency.php');
 $currency = new ListCurrency();

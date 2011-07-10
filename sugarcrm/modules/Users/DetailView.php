@@ -372,7 +372,9 @@ $dec_sep = $focus->getPreference('dec_sep');
 $sugar_smarty->assign("NUM_GRP_SEP", (empty($num_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $num_grp_sep));
 $sugar_smarty->assign("DEC_SEP", (empty($dec_sep) ? $sugar_config['default_decimal_seperator'] : $dec_sep));
 
-
+// FG - Bug 4236 - Managed FirstDayOfWeek
+$fdow = $focus->getPreference('fdow');
+$sugar_smarty->assign("FDOW", (empty($fdow) ? $app_list_strings['dom_cal_day_long'][1] : $app_list_strings['dom_cal_day_long'][$fdow + 1]));
 
 $currency  = new Currency();
 if($focus->getPreference('currency') ) {

@@ -358,6 +358,10 @@ user_detailview_tabs.on('contentReady', function(e){
                     <td width="15%" scope="row"><slot>{$MOD.LBL_LOCALE_DEFAULT_NAME_FORMAT}:</slot></td>
                     <td><slot>{$NAME_FORMAT}&nbsp;</slot></td>
                     <td><slot></slot>{$MOD.LBL_LOCALE_NAME_FORMAT_DESC}&nbsp;</td>
+                </tr><tr> 
+                    <td width="15%" scope="row"><slot>{$MOD.LBL_FDOW}:</slot></td>
+                    <td><slot>{$FDOW}&nbsp;</slot></td>
+                    <td><slot></slot>{$MOD.LBL_FDOW_TEXT}&nbsp;</td>
                 </tr>
             </table>
         </div>

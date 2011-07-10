@@ -677,6 +677,10 @@ EditView_tabs.on('contentReady', function(e){
                         <tr>
                             <td  scope="row" valign="top"><i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}:</i> </td>
                             <td   valign="top"><input tabindex='14' name="no_value" id="nameTarget" value="" style="border: none;" disabled size="50"></td>
+                            <td width="17%" scope="row"><slot>{$MOD.LBL_FDOW}:</slot>&nbsp;{sugar_help text=$MOD.LBL_FDOW_TEXT}</td>
+                            <td ><slot>
+                                <select tabindex='14' name='fdow'>{html_options options=$FDOWOPTIONS selected=$TIMEZONE_CURRENT}</select>
+                            </slot></td>
                         </tr>
                     </table>
         </div>

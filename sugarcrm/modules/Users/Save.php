@@ -273,6 +273,7 @@ if(!$current_user->is_admin  && !is_admin_for_module($GLOBALS['current_user'],'U
 		if(isset($_POST['default_currency_significant_digits'])) $focus->setPreference('default_currency_significant_digits',$_POST['default_currency_significant_digits'], 0, 'global');
 		if(isset($_POST['num_grp_sep'])) $focus->setPreference('num_grp_sep', $_POST['num_grp_sep'], 0, 'global');
 		if(isset($_POST['dec_sep'])) $focus->setPreference('dec_sep', $_POST['dec_sep'], 0, 'global');
+                if(isset($_POST['fdow'])) $focus->setPreference('fdow', $_POST['fdow'], 0, 'global');
 		if(isset($_POST['dateformat'])) $focus->setPreference('datef',$_POST['dateformat'], 0, 'global');
 		if(isset($_POST['timeformat'])) $focus->setPreference('timef',$_POST['timeformat'], 0, 'global');
 		if(isset($_POST['timezone'])) $focus->setPreference('timezone',$_POST['timezone'], 0, 'global');

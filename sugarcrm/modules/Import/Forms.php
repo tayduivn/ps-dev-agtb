@@ -134,6 +134,8 @@ function getControl(
         $pm = $match[2] == "pm" ? "%P" : "%p";
         $ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M" . $pm);
     }
+
+    $ss->assign('CALENDAR_FDOW', $timedate->get_first_day_of_week());
     
     // populate the fieldlist from the vardefs
     $fieldlist = array();
