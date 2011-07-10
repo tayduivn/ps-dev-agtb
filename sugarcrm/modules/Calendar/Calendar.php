@@ -154,14 +154,19 @@ class Calendar
 
 	function create_slices()
 	{
-		global $current_user;
+		global $current_user, $timedate;
 
 		if ( $this->view == 'month')
 		{
 			$days_in_month = $this->date_time->days_in_month;
 
 			$first_day_of_month = $this->date_time->get_day_by_index_this_month(0);
-			$num_of_prev_days = $first_day_of_month->day_of_week;
+                        $num_of_prev_days = $timedate->get_first_day_of_week() + $first_day_of_month->day_of_week - 1;
+                        if ($num_of_prev_days > 6)
+                            $num_of_prev_days -= 7;
+                        if ($num_of_prev_days < 0)
+                            $num_of_prev_days = 0;
+
 			// do 42 slices (6x7 grid)
 
 			for($i=0;$i < 42;$i++)

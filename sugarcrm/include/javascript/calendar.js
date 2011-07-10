@@ -58,6 +58,7 @@ Calendar.setup = function (params) {
         var showButton = params.button ? params.button : params.buttonObj;
         var userDateFormat = params.ifFormat ? params.ifFormat : (params.daFormat ? params.daFormat : "m/d/Y");
         var inputField = params.inputField ? params.inputField : params.inputFieldObj;
+        var startWeekday = params.startWeekday ? params.startWeekday : 0;
         var dateFormat = userDateFormat.substr(0,10);
         var date_field_delimiter = /([-.\\/])/.exec(dateFormat)[0];
         dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
@@ -154,6 +155,7 @@ Calendar.setup = function (params) {
                 calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos+1);
                 calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos+1);
                 calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos+1);
+                calendar.cfg.setProperty('START_WEEKDAY', startWeekday);
                 
                 //Configure the month and days label with localization support where defined
                 if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined' && SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
