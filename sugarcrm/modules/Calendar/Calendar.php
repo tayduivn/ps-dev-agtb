@@ -161,11 +161,9 @@ class Calendar
 			$days_in_month = $this->date_time->days_in_month;
 
 			$first_day_of_month = $this->date_time->get_day_by_index_this_month(0);
-                        $num_of_prev_days = $timedate->get_first_day_of_week() + $first_day_of_month->day_of_week - 1;
-                        if ($num_of_prev_days > 6)
-                            $num_of_prev_days -= 7;
+                        $num_of_prev_days = $first_day_of_month->day_of_week - $timedate->get_first_day_of_week();
                         if ($num_of_prev_days < 0)
-                            $num_of_prev_days = 0;
+                            $num_of_prev_days += 7
 
 			// do 42 slices (6x7 grid)
 
@@ -180,8 +178,8 @@ class Calendar
 		else if ( $this->view == 'week' || $this->view == 'shared')
 		{
 			$days_in_week = 7;
-
-			for($i=0;$i<$days_in_week;$i++)
+                        $d = $timedate->get_first_day_of_week();
+			for($i=$d;$i<($d+$days_in_week);$i++)
 			{
 				$slice = new Slice('day',$this->date_time->get_day_by_index_this_week($i));
 				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
