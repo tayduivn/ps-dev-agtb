@@ -99,7 +99,8 @@
             </td>
           </tr>
 	</table>
-    <table border="0" cellspacing="5px" cellpadding="0" width="100%">
+    <br>
+    <table border="0" cellspacing="0" cellpadding="0" width="100%">
           {foreach from=$custom_mappings item=item name=custommappings}
           {capture assign=mapping_label}{$MOD.LBL_CUSTOM_MAPPING_}{$item|upper}{/capture}
           <tr>
@@ -108,13 +109,14 @@
           </tr>
           {/foreach}
 
-          {foreach from=$custom_imports key=key item=item name=saved}
-          {if $smarty.foreach.saved.first}
+          {if !empty($custom_imports) || !empty($published_imports)}
           <tr>
             <td scope="row" colspan="3">
-                <h5>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$savedMappingHelpText}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a></h5></td>
+                <h3>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$savedMappingHelpText}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a></h3></td>
           </tr>
           {/if}
+
+          {foreach from=$custom_imports key=key item=item name=saved}
           <tr id="custom_import_{$smarty.foreach.saved.index}">
             <td scope="row" colspan="2">
                 <input class="radio" type="radio" name="source" value="custom:{$item.IMPORT_ID}"/>
