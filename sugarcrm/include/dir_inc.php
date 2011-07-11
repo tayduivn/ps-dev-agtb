@@ -91,12 +91,6 @@ function rmdir_recursive( $path ){
 
     $d = dir( $path );
     
-    if(!is_object($d))
-    {
-       $GLOBALS['log']->error( "ERROR: rmdir_recursive dir method on $path resulted in non-object");
-       return( false );
-    }    
-    
     while(($f = $d->read()) !== false){
         if( $f == "." || $f == ".." ){
             continue;
