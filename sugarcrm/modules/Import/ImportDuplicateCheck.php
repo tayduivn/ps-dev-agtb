@@ -66,7 +66,13 @@ class ImportDuplicateCheck
     private function _getIndexVardefs()
     {
         $indexes = $this->_focus->getIndices();
-        
+
+        //grab any custom indexes if they exist
+        if($this->_focus->hasCustomFields()){
+            $custmIndexes = $this->_focus->db->helper->get_indices($this->_focus->table_name.'_cstm');
+            $indexes = array_merge($custmIndexes,$indexes);
+        }
+
         if ( $this->_focus->getFieldDefinition('email1') )
             $indexes[] = array(
                 'name' => 'special_idx_email1',
@@ -204,22 +210,8 @@ class ImportDuplicateCheck
             }
         }
 
-        //search on any custom fields
-        foreach($customIndexlist as $cust_val){
-            $newfocus = loadBean($this->_focus->module_dir);
-            $result = $newfocus->retrieve_by_string_fields(array('deleted' =>'0', $cust_val => $this->_focus->$cust_val), true);
-
-            if ( !is_null($result) ){
-                //set the dupe field to custom value
-                $this->_dupedFields[] = $cust_val;
-                
-            }
-
-        }
-
-
         // loop through var def indexes and compare with selected indexes
-        foreach ( $this->_getIndexVardefs() as $index ) {
+        foreach ($this->_getIndexVardefs() as $index){
             // if we get an index not in the indexlist, loop
             if ( !in_array($index['name'],$indexlist) )
                 continue;
@@ -251,7 +243,7 @@ class ImportDuplicateCheck
                     if ($field == 'deleted' ||  !in_array($field,$fieldlist))
                         continue;
                     if (!in_array($field,$index_fields))
-                        if (strlen($this->_focus->$field) > 0)
+                        if (isset($this->_focus->$field) && strlen($this->_focus->$field) > 0)
                             $index_fields[$field] = $this->_focus->$field;
                 }
 
@@ -294,6 +286,8 @@ class ImportDuplicateCheck
         //create exclude array from subset of applicable mstr_exclude_array elements
         $exclude_array =  isset($mstr_exclude_array[strtolower($this->_focus->module_dir)])?array_merge($mstr_exclude_array[strtolower($this->_focus->module_dir)], $mstr_exclude_array['all']) : $mstr_exclude_array['all'];
 
+
+
         //process all fields belonging to indexes
         foreach ($this->_getIndexVardefs() as $index){
             if ($index['type'] == "index"){
@@ -325,28 +319,6 @@ class ImportDuplicateCheck
             $index_array['full_name::full_name'] = translateForExport('full_name',$this->_focus);
             $fields_used[] = 'full_name';
         }
-
-        //now process any custom fields that are marked as importable.
-        //we already have the array of importable fields, iterate for custom fields
-        foreach($import_fields as $cstm_k => $cstm_v){
-            if(!empty($cstm_v['source']) && $cstm_v['source'] == 'custom_fields' && isset($this->_focus->$cstm_v['name'])){
-                //this is a custom field so populate if it hasnt been used yet
-                    if (in_array($cstm_v['name'],$fields_used)) continue;
-
-                    //get the proper export label
-                    $fieldName = translateForExport($cstm_v['name'],$this->_focus);
-
-
-                    $index_array['customfield::'.$cstm_v['name']] = $fieldName;
-                    $fields_used[] = $cstm_v['name'];
-
-            }
-
-
-
-
-        }
-
 
         asort($index_array);
         return $index_array;
