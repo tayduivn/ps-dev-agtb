@@ -99,7 +99,7 @@ abstract class ImportDataSource implements Iterator
      * @param  int $maxResults
      * @return void
      */
-    abstract public function loadDataSet($maxResults);
+    abstract public function loadDataSet($maxResults = 0);
 
     /**
      * Return the total count of records that will be imported.
