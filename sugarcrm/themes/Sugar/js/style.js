@@ -136,8 +136,11 @@ SUGAR.themes.loadModuleList = function()
 				data = YAHOO.lang.JSON.parse(o.responseText);
 				aItems = oMenuBar.getItems();
 				oItem = aItems[parentIndex];
-				oSubmenu = oItem.cfg.getProperty("submenu");
-				oSubmenu.removeItem(1,1);
+				if(!oItem) return;
+                
+                oSubmenu = oItem.cfg.getProperty("submenu");
+				if (!oSubmenu) return;
+                oSubmenu.removeItem(1,1);
 				oSubmenu.addItems(data,1);
 
 				//update shadow height to accomodate new items
@@ -315,11 +318,18 @@ SUGAR.themes.loadModuleList = function()
         if (el && el.parentNode)
         {
             var parent = el.parentNode;
-            YAHOO.util.Event.purgeElement(el, true);
-            for( var i in allMenuBars)
-            {
-                if (allMenuBars[i].destroy)
-                    allMenuBars[i].destroy();
+            
+            try{
+                //This can fail hard if multiple events fired at the same time
+                YAHOO.util.Event.purgeElement(el, true);
+                for( var i in allMenuBars)
+                {
+                    if (allMenuBars[i].destroy)
+                        allMenuBars[i].destroy();
+                }
+            }catch (e){
+                //If the menu fails to load, we can get leave the user stranded, reload the page instead. 
+                window.location.reload();
             }
             parent.removeChild(el);
             parent.innerHTML += html;

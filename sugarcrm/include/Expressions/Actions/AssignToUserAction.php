@@ -115,8 +115,8 @@ class AssignToUserAction extends AbstractAction{
         $result = $qs->query($data);
 		$resultBean = $json->decodeReal($result);
         print_r($resultBean);
-        die();
-	}
+
+    }
 
 	/**
 	 * Returns the definition of this action in array format.

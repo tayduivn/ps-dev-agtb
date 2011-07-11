@@ -396,6 +396,7 @@ class SugarDateTime extends DateTime
         $newdate->setTime(0,0);
         return $newdate;
 	}
+
 	/*
 	 * Print datetime in standard DB format
 	 *
@@ -413,6 +414,25 @@ class SugarDateTime extends DateTime
             $this->setTimezone(self::$_gmt);
         }
         return $this->format(TimeDate::DB_DATETIME_FORMAT);
+	}
+
+	/*
+	 * Print date in standard DB format
+	 *
+	 * Set $tz parameter to false if you are sure if the date is in UTC.
+	 *
+	 * @param bool $tz do conversion to UTC
+	 * @return string
+	 */
+	function asDbDate($tz = true)
+	{
+        if($tz) {
+            if(empty(self::$_gmt)) {
+                self::$_gmt = new DateTimeZone("UTC");
+            }
+            $this->setTimezone(self::$_gmt);
+        }
+        return $this->format(TimeDate::DB_DATE_FORMAT);
 	}
 
 	/**

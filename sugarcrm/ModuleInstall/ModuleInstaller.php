@@ -334,7 +334,11 @@ class ModuleInstaller{
         if(isset($this->installdefs[$section])){
 			$this->log(sprintf(translate("LBL_MI_IN_EXT"), $section));
 			foreach($this->installdefs[$section] as $item){
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
 				if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
@@ -352,7 +356,9 @@ class ModuleInstaller{
 				} else {
 				    $target = $this->id_name;
 				}
-				copy_recursive($from , "$path/$target.php");
+				if(!empty($from)) {
+				    copy_recursive($from , "$path/$target.php");
+				}
 			}
 		}
 	}
@@ -368,8 +374,12 @@ class ModuleInstaller{
         if(isset($this->installdefs[$section])){
 			$this->log(sprintf(translate("LBL_MI_UN_EXT"), $section));
 			foreach($this->installdefs[$section] as $item){
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
-				if(!empty($module)) {
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
+			    if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
 				$GLOBALS['log']->debug("Uninstalling section $section from $from for " .$item['to_module'] );
@@ -388,9 +398,9 @@ class ModuleInstaller{
 				    rmdir_recursive("$path/$target.php");
                 } else if (file_exists("$disabled_path/$target.php")) {
                     rmdir_recursive("$disabled_path/$target.php");
-				} else if (file_exists($path . '/'. basename($from))) {
+				} else if (!empty($from) && file_exists($path . '/'. basename($from))) {
 				    rmdir_recursive( $path . '/'. basename($from));
-                } else if (file_exists($disabled_path . '/'. basename($from))) {
+                } else if (!empty($from) && file_exists($disabled_path . '/'. basename($from))) {
 					rmdir_recursive( $disabled_path . '/'. basename($from));
 				}
 		    }
@@ -418,7 +428,11 @@ class ModuleInstaller{
 	{
 		if(isset($this->installdefs[$section])) {
 			foreach($this->installdefs[$section] as $item) {
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
 				if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
@@ -437,7 +451,7 @@ class ModuleInstaller{
                 if (file_exists("$path/$target.php")) {
 					mkdir_recursive($disabled_path, true);
 					rename("$path/$target.php", "$disabled_path/$target.php");
-				} else if (file_exists($path . '/'. basename($from))) {
+				} else if (!empty($from) && file_exists($path . '/'. basename($from))) {
 					mkdir_recursive($disabled_path, true);
 				    rename( $path . '/'. basename($from), $disabled_path.'/'. basename($from));
 				}
@@ -455,8 +469,12 @@ class ModuleInstaller{
 	{
 		if(isset($this->installdefs[$section])) {
 			foreach($this->installdefs[$section] as $item) {
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
-				if(!empty($module)) {
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
+			    if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
 				$GLOBALS['log']->debug("Enabling $extname ... from $from for " .$item['to_module']);
@@ -478,7 +496,7 @@ class ModuleInstaller{
 				if (file_exists("$disabled_path/$target.php")) {
 					rename("$disabled_path/$target.php",  "$path/$target.php");
 				}
-				if (file_exists($disabled_path . '/'. basename($from))) {
+				if (!empty($from) && file_exists($disabled_path . '/'. basename($from))) {
 					rename($disabled_path.'/'. basename($from),  $path . '/'. basename($from));
 				}
 			}

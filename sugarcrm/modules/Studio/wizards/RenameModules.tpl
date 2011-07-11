@@ -43,30 +43,30 @@
     {
         border-width:0;cursor:move;
     }
+    div.moduleTitle
+    {
+        margin-bottom: 5px;
+    }
 </style>
 {/literal}
 
-<br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 		<td>
-            <h2 style='margin-bottom:10px;'>{$title}</h2>
+           {$title}
 <table cellspacing="2">
     <tr>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_UNDO}" onclick="jstransaction.undo()" name="{$MOD.LBL_BTN_UNDO}" />
-        </td>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_REDO}" onclick="jstransaction.redo()" name="{$MOD.LBL_BTN_REDO}" />
-        </td>
-        <td valign="center">
-            <input type="button" value="{$MOD.LBL_BTN_SAVE}"
-                onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'
-                name="{$MOD.LBL_BTN_SAVE}" />
+        <td colspan="3">{$MOD.LBL_RENAME_MOD_SAVE_HELP}</td>
+    </tr>
+    <tr><td>&nbsp;</td></tr>
+    <tr>
+        <td colspan="3">
+            <input type="button" class="button primary" value="{$MOD.LBL_BTN_SAVE}"  onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'name="{$MOD.LBL_BTN_SAVE}" />
+            <input type="button" class="button" value="{$MOD.LBL_BTN_CANCEL}"  name="{$MOD.LBL_BTN_CANCEL}" onclick="document.editdropdown.action.value='index'; document.editdropdown.module.value='Administration';document.editdropdown.submit()" />
         </td>
     </tr>
 </table>
-
+<div style="height:10px">&nbsp;</div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class='edit view' >
 <tr>
     <td>
@@ -138,13 +138,7 @@
 
 {literal}
 <script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
-<script type="text/javascript" src="modules/Studio/JSTransaction.js" ></script>
-<script>
-    var jstransaction = new JSTransaction();
-</script>
 <script src = "include/javascript/yui/dragdrop.js" ></script>
-<script type="text/javascript" src="modules/Studio/studiodd.js" ></script>
-<script type="text/javascript" src="modules/Studio/studio.js" ></script>
 <script>
 
     var lastField = '';
@@ -174,21 +168,6 @@
         textspan.style.display='inline'
         text.focus();
     }
-
-    var undoDropDownChange = function(transaction)
-    {
-        setDropDownValue(transaction['row'], transaction['old'], false);
-        document.getElementById('slot' + transaction['row'] + '_stext').value = transaction['sold'];
-        document.getElementById('svalue_'+ transaction['row']).value = transaction['sold'];
-    }
-    var redoDropDownChange = function(transaction)
-    {
-        setDropDownValue(transaction['row'], transaction['new'], false);
-        document.getElementById('slot' + transaction['row'] + '_stext').value = transaction['snew'];
-        document.getElementById('svalue_'+ transaction['row']).value = transaction['snew'];
-
-    }
-    jstransaction.register('changeDropDownValue', undoDropDownChange, redoDropDownChange);
 
     function checkForErrors(rowCount)
     {
@@ -220,7 +199,6 @@
                      'snew' : document.getElementById('slot' + rowCount + '_stext').value,
                      'old':document.getElementById('value_'+ rowCount).value,
                      'sold':document.getElementById('svalue_'+ rowCount).value};
-            jstransaction.record('changeDropDownValue', d);
         }
         document.getElementById('value_' + rowCount).value = val;
         var text =  document.getElementById('slot' + rowCount + '_text');

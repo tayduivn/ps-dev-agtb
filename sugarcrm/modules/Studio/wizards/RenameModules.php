@@ -84,7 +84,7 @@ class RenameModules
         
         $smarty = new Sugar_Smarty();
         $smarty->assign('MOD', $GLOBALS['mod_strings']);
-        $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_RENAME_TABS']), false);
+        $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array("<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>", $mod_strings['LBL_RENAME_TABS']), false);
         $smarty->assign('title', $title);
 
         $selected_lang = (!empty($_REQUEST['dropdown_lang'])?$_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
@@ -156,7 +156,7 @@ class RenameModules
         $this->changedModules = $this->getChangedModules();
 
         //Change module, appStrings, subpanels, and related links.
-        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels();
+        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels()->renameAllDashlets();
 
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
         if($redirect)
@@ -361,6 +361,65 @@ class RenameModules
         LanguageManager::clearLanguageCache();
     }
 
+    /**
+     * Rename all module strings within the application for dashlets.
+     *
+     * @return RenameModules
+     */
+    private function renameAllDashlets()
+    {
+        //Load the Dashlet metadata so we know what needs to be changed
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php'))
+        {
+            require_once('include/Dashlets/DashletCacheBuilder.php');
+            $dc = new DashletCacheBuilder();
+            $dc->buildCache();
+		}
+		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+
+        foreach($this->changedModules as $moduleName => $replacementLabels)
+        {
+            $this->changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles);
+        }
+
+        return $this;
+
+    }
+
+    /*
+     * Rename the title value for all dashlets associated with a particular module
+     *
+     */
+    private function changeModuleDashletStrings($moduleName, $replacementLabels, $dashletsFiles)
+    {
+        $GLOBALS['log']->debug("Beginning to change module dashlet labels for: $moduleName ");
+        $replacementStrings = array();
+
+        foreach($dashletsFiles as $dashletName => $dashletData)
+        {
+            if( isset($dashletData['module']) && $dashletData['module'] == $moduleName && file_exists($dashletData['meta']) )
+            {
+                require_once( $dashletData['meta'] );
+                $dashletTitle = $dashletMeta[$dashletName]['title'];
+                $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
+                $modStringKey = array_search($dashletTitle,$currentModuleStrings);
+                if($modStringKey !== FALSE)
+                {
+                    $replacedString = str_replace($replacementLabels['prev_plural'], $replacementLabels['plural'], $dashletTitle);
+                    $replacedString = str_replace($replacementLabels['prev_singular'], $replacementLabels['singular'], $replacedString);
+                    $replacementStrings[$modStringKey] = $replacedString;
+                }
+            }
+        }
+
+        //Now we can write out the replaced language strings for each module
+        if(count($replacementStrings) > 0)
+        {
+            $GLOBALS['log']->debug("Writing out labels for dashlet changes for module $moduleName, labels: " . var_export($replacementStrings,true));
+            ParserLabel::addLabels($this->selectedLanguage, $replacementStrings, $moduleName);
+        }
+    }
+
 
     /**
      * Rename all module strings within the application.
@@ -398,7 +457,7 @@ class RenameModules
             array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'plural'),
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
             array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
-
+            array('name' => 'LBL_HOMEPAGE_TITLE', 'type' => 'plural'),
         );
 
         $replacedLabels = array();

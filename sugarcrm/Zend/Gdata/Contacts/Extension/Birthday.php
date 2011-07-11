@@ -19,11 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Implementation by SugarCRM, not shipped by ZF.
- *
- */
-
 
 require_once 'Zend/Gdata/Extension.php';
 

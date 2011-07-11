@@ -61,7 +61,6 @@ height: 10px;
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
 <script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
-<script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 {$chartResources}
 {$mySugarChartResources}
@@ -78,8 +77,80 @@ current_user_id = '{$current_user}';
 jsChartsArray = new Array();
 var moduleName = '{$module}';
 document.body.setAttribute("class", "yui-skin-sam");
-initMySugar();
-initmySugarCharts();
+{literal}
+var mySugarLoader = new YAHOO.util.YUILoader({
+	require : ["my_sugar", "sugar_charts"],
+	onSuccess: function(){
+		initMySugar();
+		initmySugarCharts();
+		//BEGIN SUGARCRM flav=pro || flav=sales ONLY
+		{/literal}
+		{counter assign=hiddenCounter start=0 print=false}
+		{foreach from=$columns key=colNum item=data}
+			{foreach from=$data.dashlets key=id item=dashlet}
+				SUGAR.mySugar.attachToggleToolsetEvent('{$id}');
+			{/foreach}
+		{counter}
+		{/foreach}
+		{literal}
+		//END SUGARCRM flav=pro || flav=sales ONLY
+		SUGAR.mySugar.maxCount = 	{/literal}{$maxCount}{literal};
+		SUGAR.mySugar.homepage_dd = new Array();
+		var j = 0;
+
+		{/literal}
+		var dashletIds = {$dashletIds};
+
+		{if !$lock_homepage}
+		<!--//BEGIN SUGARCRM flav=pro ONLY -->
+		SUGAR.mySugar.attachDashletCtrlEvent();
+		<!--//END SUGARCRM flav=pro ONLY -->
+		{literal}
+		for(i in dashletIds) {
+			SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
+			SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
+			SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
+			SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
+			j++;
+		}
+		for(var wp = 0; wp <= {/literal}{$hiddenCounter}{literal}; wp++) {
+			SUGAR.mySugar.homepage_dd[j++] = new ygDDListBoundary('page_'+activePage+'_hidden' + wp);
+		}
+
+		YAHOO.util.DDM.mode = 1;
+		{/literal}
+		{/if}
+		{literal}
+		SUGAR.mySugar.renderDashletsDialog();
+		//BEGIN SUGARCRM flav=pro ONLY
+		SUGAR.mySugar.renderAddPageDialog();
+		SUGAR.mySugar.renderChangeLayoutDialog();
+		SUGAR.mySugar.renderLoadingDialog();
+		//END SUGARCRM flav=pro ONLY
+		SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
+		{/literal}
+		//BEGIN SUGARCRM flav=pro ONLY
+		{$activeTabJavascript}
+		//END SUGARCRM flav=pro ONLY
+		{literal}
+	}
+});
+mySugarLoader.addModule({
+	name :"my_sugar",
+	type : "js",
+	fullpath: {/literal}"{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}"{literal},
+	varName: "initMySugar",
+	requires: []
+});
+mySugarLoader.addModule({
+	name :"sugar_charts",
+	type : "js",
+	fullpath: {/literal}"{sugar_getjspath file="include/SugarCharts/Jit/js/mySugarCharts.js"}"{literal},
+	varName: "initmySugarCharts",
+	requires: []
+});
+mySugarLoader.insert();
+{/literal}
 </script>
 
 
@@ -91,12 +162,12 @@ initmySugarCharts();
 <tr>
 <td nowrap id="tabListContainerTD">
 <div id="tabListContainer" class="yui-module yui-scroll">
-    <div class="yui-hd">
-        <span class="yui-scroll-controls">
-            <a title="scroll left" class="yui-scrollup"><em>scroll left</em></a>
-            <a title="scroll right" class="yui-scrolldown"><em>scroll right</em></a>
-        </span>
-    </div>
+	<div class="yui-hd">
+		<span class="yui-scroll-controls">
+			<a title="scroll left" class="yui-scrollup"><em>scroll left</em></a>
+			<a title="scroll right" class="yui-scrolldown"><em>scroll right</em></a>
+		</span>
+	</div>
 
 	<div class="yui-bd">
 		<ul class="subpanelTablist" id="tabList">
@@ -128,15 +199,15 @@ initmySugarCharts();
 {if !$lock_homepage}
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
-            <a href="javascript:void(0)" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
+			<a href="javascript:void(0)" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
 			<img src='{sugar_getimagepath file="info-add.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
-			    {$mod.LBL_ADD_DASHLETS}
-            </a>
+				{$mod.LBL_ADD_DASHLETS}
+			</a>
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
-            <a href="javascript:void(0)" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
+			<a href="javascript:void(0)" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
 			<img src='{sugar_getimagepath file="info-layout.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
-			    {$app.LBL_CHANGE_LAYOUT}
-            </a>
+				{$app.LBL_CHANGE_LAYOUT}
+			</a>
 			<!--//END SUGARCRM flav=pro ONLY -->
 	</div>
 </td>
@@ -189,20 +260,15 @@ initmySugarCharts();
 		<td valign='top' width='{$data.width}'>
 			<ul class='noBullet' id='col_{$activePage}_{$colNum}'>
 				<li id='page_{$activePage}_hidden{$hiddenCounter}b' style='height: 5px; margin-top: 12px\9;' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
-		        {foreach from=$data.dashlets key=id item=dashlet}		
+				{foreach from=$data.dashlets key=id item=dashlet}		
 				<li class='noBullet' id='dashlet_{$id}'>
 					<div id='dashlet_entire_{$id}' class='dashletPanel'>
 						{$dashlet.script}
-                        {$dashlet.displayHeader}
+					{$dashlet.displayHeader}
 						{$dashlet.display}
-                        {$dashlet.displayFooter}
-                  </div> 
+						{$dashlet.displayFooter}
+				  </div> 
 				</li>
-				{* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
-				<script>
-				SUGAR.mySugar.attachToggleToolsetEvent('{$id}');
-				</script>
-				{* //END SUGARCRM flav=pro || flav=sales ONLY *}
 				{/foreach}
 				<li id='page_{$activePage}_hidden{$hiddenCounter}' style='height: 5px' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
 			</ul>
@@ -230,7 +296,7 @@ initmySugarCharts();
 						<td align="center"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="1" /></td>
 						<td align="center"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="2" checked="yes" /></td>
 						<td align="center"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="3" /></td>
-                    </tr>
+					</tr>
 				</table>
 			</form>
 		</div>
@@ -266,57 +332,3 @@ initmySugarCharts();
 				
 	
 </div>
-
-{literal}
-<script type="text/javascript">
-SUGAR.mySugar.maxCount = 	{/literal}{$maxCount}{literal};
-SUGAR.mySugar.homepage_dd = new Array();
-SUGAR.mySugar.init = function () {
-	j = 0;
-	
-	{/literal}
-	dashletIds = {$dashletIds};
-	
-	{if !$lock_homepage}
-	<!--//BEGIN SUGARCRM flav=pro ONLY -->
-	SUGAR.mySugar.attachDashletCtrlEvent();
-	<!--//END SUGARCRM flav=pro ONLY -->
-	{literal}
-	for(i in dashletIds) {
-		SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
-		SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
-		SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;  
-		SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
-		j++;
-	}
-	for(var wp = 0; wp <= {/literal}{$hiddenCounter}{literal}; wp++) {
-	    SUGAR.mySugar.homepage_dd[j++] = new ygDDListBoundary('page_'+activePage+'_hidden' + wp);
-	}
-
-	YAHOO.util.DDM.mode = 1;
-	{/literal}
-	{/if}
-	{literal}
-	SUGAR.mySugar.renderDashletsDialog();
-	//BEGIN SUGARCRM flav=pro ONLY
-	SUGAR.mySugar.renderAddPageDialog();
-	SUGAR.mySugar.renderChangeLayoutDialog();
-	SUGAR.mySugar.renderLoadingDialog();
-	{/literal}
-	{if $default}
-//	SUGAR.mySugar.renderFirstLoadDialog();
-	{/if}
-    {literal}
-	//END SUGARCRM flav=pro ONLY
-	SUGAR.mySugar.sugarCharts.loadSugarCharts(activePage);
-}
-
-</script>
-{/literal}
-
-<script type="text/javascript">
-	YAHOO.util.Event.addListener(window, 'load', SUGAR.mySugar.init); 
-	<!--//BEGIN SUGARCRM flav=pro ONLY -->
-	{$activeTabJavascript}
-	<!--//END SUGARCRM flav=pro ONLY -->
-</script>

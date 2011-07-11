@@ -448,7 +448,7 @@ function isBefore(value1, value2) {
 }
 
 function isValidEmail(emailStr) {
-	
+
     if(emailStr.length== 0) {
 		return true;
 	}
@@ -600,7 +600,7 @@ function add_error_style(formname, input, txt, flash) {
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
-	
+
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('span');
         errorTextNode.className = 'required';
@@ -780,8 +780,8 @@ function validate_form(formname, startsWith){
                     if(!validate[formname][i][requiredIndex] && trim(form[validate[formname][i][nameIndex]].value) == '' && (typeof(validate[formname][i][jstypeIndex]) != 'undefined' && validate[formname][i][jstypeIndex]  != 'binarydep'))
                     {
                        continue;
-                    }					
-					
+                    }
+
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
 						//BEGIN SUGARCRM flav=pro ONLY
@@ -821,12 +821,12 @@ function validate_form(formname, startsWith){
 						case 'alphanumeric':
 							break;
 						case 'file':
-						      if( validate[formname][i][requiredIndex] && trim( form[validate[formname][i][nameIndex] + '_file'].value) == "" && !form[validate[formname][i][nameIndex] + '_file'].disabled ) {
-
+						    var file_input = form[validate[formname][i][nameIndex] + '_file'];
+                            if( file_input && validate[formname][i][requiredIndex] && trim(file_input.value) == "" && !file_input.disabled ) {
 						          isError = true;
 						          add_error_style(formname, validate[formname][i][nameIndex], requiredTxt + " " +	validate[formname][i][msgIndex]);
-						      }					      
-						  break;	
+						      }
+						  break;
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
@@ -841,20 +841,20 @@ function validate_form(formname, startsWith){
 							}
 							break;
 						case 'teamset_mass':
-							div_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_operation_div';
-							input_elements = YAHOO.util.Selector.query('input', document.getElementById(div_element_id));
-							primary_field_id = '';
-							validation_passed = false;
-							replace_selected = false;
+							var div_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_operation_div';
+							var input_elements = YAHOO.util.Selector.query('input', document.getElementById(div_element_id));
+							var primary_field_id = '';
+							var validation_passed = false;
+							var replace_selected = false;
 
 							//Loop through the option elements (replace or add currently)
 							for(t in input_elements) {
 								if(input_elements[t].type && input_elements[t].type == 'radio' && input_elements[t].checked == true && input_elements[t].value == 'replace') {
 
 						           //Now find where the primary radio button is and if a value has been set
-						           radio_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(formname + '_team_name_table'));
+						           var radio_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(formname + '_team_name_table'));
 
-						           for(x in radio_elements) {
+						           for(var x = 0; x < radio_elements.length; x++) {
 						        	   if(radio_elements[x].name != 'team_name_type') {
 						        		  primary_field_id = 'team_name_collection_' + radio_elements[x].value;
 						        		  if(radio_elements[x].checked) {
@@ -877,11 +877,11 @@ function validate_form(formname, startsWith){
 							}
 							break;
 						case 'teamset':
-							   table_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_table';
+							   var table_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_table';
 							   if(document.getElementById(table_element_id)) {
-								   input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
-								   has_primary = false;
-								   primary_field_id = form[validate[formname][i][nameIndex]].name + '_collection_0';
+								   var input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
+								   var has_primary = false;
+								   var primary_field_id = form[validate[formname][i][nameIndex]].name + '_collection_0';
 
 								   for(t in input_elements) {
 									    primary_field_id = form[validate[formname][i][nameIndex]].name + '_collection_' + input_elements[t].value;
@@ -895,7 +895,7 @@ function validate_form(formname, startsWith){
 
 								   if(!has_primary) {
 									  isError = true;
-									  field_id = form[validate[formname][i][nameIndex]].name + '_collection_' + input_elements[0].value;
+									  var field_id = form[validate[formname][i][nameIndex]].name + '_collection_' + input_elements[0].value;
 									  add_error_style(formname, field_id, SUGAR.language.get('app_strings', 'ERR_NO_PRIMARY_TEAM_SPECIFIED'));
 								   }
 							   }
@@ -924,7 +924,7 @@ function validate_form(formname, startsWith){
 										date1 = trim(form[validate[formname][i][nameIndex]].value);
 
 										if(trim(date1).length != 0 && !isBefore(date1,date2)){
-										
+
 											isError = true;
 											//jc:#12287 - adding translation for the is not before message
 											add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + "(" + date1 + ") " + SUGAR.language.get('app_strings', 'MSG_IS_NOT_BEFORE') + ' ' +date2);
@@ -1661,7 +1661,7 @@ function onUnloadEditView(theForm) {
 
 	var dataHasChanged = false;
 
-    if ( typeof editViewSnapshots == 'undefined' ) { 
+    if ( typeof editViewSnapshots == 'undefined' ) {
         // No snapshots, move along
         return;
     }
@@ -2453,13 +2453,13 @@ function unformatNumberNoParse(n, num_grp_sep, dec_sep) {
 	if(typeof num_grp_sep == 'undefined' || typeof dec_sep == 'undefined') return n;
 	n = n ? n.toString() : '';
 	if(n.length > 0) {
-	
+
 	    if(num_grp_sep != '')
 	    {
 	       num_grp_sep_re = new RegExp('\\'+num_grp_sep, 'g');
 		   n = n.replace(num_grp_sep_re, '');
 	    }
-	    
+
 		n = n.replace(dec_sep, '.');
 
         if(typeof CurrencySymbols != 'undefined') {
@@ -2606,7 +2606,7 @@ SUGAR.unifiedSearchAdvanced = function() {
 		   YAHOO.util.Event.addListener('unified_search_advanced_img', 'click', SUGAR.unifiedSearchAdvanced.get_content);
 		},
 
-		get_content: function(e) 
+		get_content: function(e)
 		{
 		    query_string = trim(document.getElementById('query_string').value);
 		    if(query_string != '')
@@ -3009,7 +3009,116 @@ SUGAR.util = function () {
         //Reset the scroll on the window
         top : function() {
 			window.scroll(0,0);
-		}
+		},
+
+        //Based on YUI onAvailible, but will use any boolean function instead of an ID
+        doWhen : function(condition, fn, params, scope)
+        {
+            this._doWhenStack.push({
+                check:condition,
+                fn:         fn,
+                obj:        params,
+                overrideContext:   scope
+            });
+
+            this._doWhenretryCount = 50;
+            this._startDoWhenInterval();
+        },
+
+        _startDoWhenInterval : function(){
+            if (!this._doWhenInterval) {
+                this._doWhenInterval = YAHOO.lang.later(50, this, this._doWhenCheck, null, true);
+            }
+        },
+        _doWhenStack : [],
+        _doWhenInterval : false,
+        _doWhenCheck : function() {
+                if (this._doWhenStack.length === 0) {
+                    this._doWhenretryCount = 0;
+                    if (this._doWhenInterval) {
+                        // clearInterval(this._interval);
+                        this._doWhenInterval.cancel();
+                        this._doWhenInterval = null;
+                    }
+                    return;
+                }
+
+                if (this._doWhenLocked) {
+                    return;
+                }
+
+                if (SUGAR.isIE) {
+                    // Hold off if DOMReady has not fired and check current
+                    // readyState to protect against the IE operation aborted
+                    // issue.
+                    if (!YAHOO.util.Event.DOMReady) {
+                        this._startDoWhenInterval();
+                        return;
+                    }
+                }
+
+                this._doWhenLocked = true;
+
+
+                // keep trying until after the page is loaded.  We need to
+                // check the page load state prior to trying to bind the
+                // elements so that we can be certain all elements have been
+                // tested appropriately
+                var tryAgain = YAHOO.util.Event.DOMReady;
+                if (!tryAgain) {
+                    tryAgain = (this._doWhenretryCount > 0 && this._doWhenStack.length > 0);
+                }
+
+                // onAvailable
+                var notAvail = [];
+
+                var executeItem = function (context, item) {
+                    if (item.overrideContext) {
+                        if (item.overrideContext === true) {
+                            context = item.obj;
+                        } else {
+                            context = item.overrideContext;
+                        }
+                    }
+                    item.fn.call(context, item.obj);
+                };
+
+                var i, len, item, test;
+
+                // onAvailable onContentReady
+                for (i=0, len=this._doWhenStack.length; i<len; i=i+1) {
+                    item = this._doWhenStack[i];
+                    if (item) {
+                        test = item.check;
+                        if ((typeof(test) == "string" && eval(test)) || (typeof(test) == "function" && test())) {
+                            executeItem(this, item);
+                            this._doWhenStack[i] = null;
+                        }
+                         else {
+                            notAvail.push(item);
+                        }
+                    }
+                }
+
+                this._doWhenretryCount--;
+
+                if (tryAgain) {
+                    for (i=this._doWhenStack.length-1; i>-1; i--) {
+                        item = this._doWhenStack[i];
+                        if (!item || !item.check) {
+                            this._doWhenStack.splice(i, 1);
+                        }
+                    }
+                    this._startDoWhenInterval();
+                } else {
+                    if (this._doWhenInterval) {
+                        // clearInterval(this._interval);
+                        this._doWhenInterval.cancel();
+                        this._doWhenInterval = null;
+                    }
+                }
+                this._doWhenLocked = false;
+            }
 	};
 }(); // end util
 SUGAR.util.additionalDetailsCache = new Array();
@@ -3597,11 +3706,11 @@ SUGAR.language = function() {
             }
             return SUGAR.language.languages[module][str];
         },
-        
+
         translate: function(module, str)
         {
             text = this.get(module, str);
-            return text != 'undefined' ? text : this.get('app_strings', str);  	
+            return text != 'undefined' ? text : this.get('app_strings', str);
         }
     }
 }();
@@ -3808,11 +3917,11 @@ function open_popup(module_name, width, height, initial_filter, close_popup, hid
 	// set the variables that the popup will pull from
 	window.document.popup_request_data = popup_request_data;
 	window.document.close_popup = close_popup;
-	
-	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800 
+
+	//globally changing width and height of standard pop up window from 600 x 400 to 800 x 800
 	width = (width == 600) ? 800 : width;
 	height = (height == 400) ? 800 : height;
-	
+
 	// launch the popup
 	URL = 'index.php?'
 		+ 'module=' + module_name
@@ -3889,17 +3998,11 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
-							var tempEvent = window.document.createEvent('HTMLEvents');
-							tempEvent.initEvent('change', true, true);
-							selectField.dispatchEvent(tempEvent);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
-					var tempEvent = document.createEvent('HTMLEvents');
-					tempEvent.initEvent('change', true, true);
-					window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)

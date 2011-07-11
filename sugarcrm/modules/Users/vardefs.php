@@ -91,7 +91,7 @@ $dictionary['User'] = array(
             'type' => 'image',
             'dbType' => 'varchar',
             'len' => '255',
-            'width' => '',
+            'width' => '120',
             'height' => '',
             'border' => '',
         ) ,
@@ -468,12 +468,8 @@ $dictionary['User'] = array(
         'employee_status' => array(
             'name' => 'employee_status',
             'vname' => 'LBL_EMPLOYEE_STATUS',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getEmployeeStatusOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'employee_status_dom',
             'len' => 100,
         ) ,
         'messenger_id' => array(
@@ -485,12 +481,8 @@ $dictionary['User'] = array(
         'messenger_type' => array(
             'name' => 'messenger_type',
             'vname' => 'LBL_MESSENGER_TYPE',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getMessengerTypeOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'messenger_type_dom',
             'len' => 100,
         ) ,
         'calls' => array(

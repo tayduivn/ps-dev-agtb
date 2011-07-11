@@ -54,6 +54,9 @@ $mod_strings = array (
     'Active' => 'Active',
     'Inactive' => 'Inactive',
   ),
+  //For export labels
+  'LBL_EXPORT_MODIFIED_USER_ID'=> 'Modified User ID',
+  'LBL_EXPORT_CREATED_BY'=> 'Created By ID',
 );
 
 

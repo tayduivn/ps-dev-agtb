@@ -19,10 +19,6 @@
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * Implementation by SugarCRM, not shipped by ZF.
- *
- */
 
 /**
  * @see Zend_Gdata_Entry
@@ -40,15 +36,24 @@ require_once 'Zend/Gdata/Contacts/Extension/Name.php';
 require_once 'Zend/Gdata/Contacts/Extension/Birthday.php';
 
 /**
- * @see Zend_Gdata_Contacts_Extension_Birthday
+ * @see Zend_Gdata_Contacts_Extension_PhoneNumber
  */
 require_once 'Zend/Gdata/Contacts/Extension/PhoneNumber.php';
 
 /**
- * @see Zend_Gdata_Contacts_Extension_Birthday
+ * @see Zend_Gdata_Contacts_Extension_Email
  */
 require_once 'Zend/Gdata/Contacts/Extension/Email.php';
 
+/**
+ * @see Zend_Gdata_Contacts_Extension_Address
+ */
+require_once 'Zend/Gdata/Contacts/Extension/Address.php';
+
+/**
+ * @see Zend_Gdata_Contacts_Extension_Address
+ */
+require_once 'Zend/Gdata/Contacts/Extension/Organization.php';
 
 /**
  * @see Zend_Extension_Where
@@ -66,6 +71,9 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
     protected $_birthday = null;
     protected $_phones = array();
     protected $_emails = array();
+    protected $_addresses = array();
+    protected $_organization = null;
+
 
     public function __construct($element = null)
     {
@@ -103,9 +111,21 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             break;
 
             case $this->lookupNamespace('gd') . ':' . 'email';
-                $item = new Zend_Gdata_Contacts_Extension_email();
+                $item = new Zend_Gdata_Contacts_Extension_Email();
                 $item->transferFromDOM($child);
                 $this->_emails[] = $item;
+            break;
+
+            case $this->lookupNamespace('gd') . ':' . 'structuredPostalAddress';
+                $item = new Zend_Gdata_Contacts_Extension_Address();
+                $item->transferFromDOM($child);
+                $this->_addresses[] = $item;
+            break;
+
+            case $this->lookupNamespace('gd') . ':' . 'organization';
+                $item = new Zend_Gdata_Contacts_Extension_Organization();
+                $item->transferFromDOM($child);
+                $this->_organization = $item;
             break;
 
             default:
@@ -116,8 +136,9 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 
     public function toArray()
     {
+        
         $entry = array('first' => '', 'last' => '', 'full' => '', 'id' => '', 'birthday' => '', 'phones' => array(),
-                        'emails' => array(), 'notes' => '');
+                       'title' => '', 'account_name' => '', 'addresses' => array(), 'emails' => array(), 'notes' => '');
         
         if($this->_names != null)
             $entry = array_merge($entry, $this->_names->toArray() );
@@ -133,6 +154,11 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             }
         }
 
+        //Get addresses
+        foreach($this->_addresses as $address)
+        {
+            $entry['addresses'][] = $address->toArray();
+        }
         //Process phones
         foreach($this->_phones as $phoneEntry)
         {
@@ -157,7 +183,14 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         //Birthday
         if($this->_birthday != null)
             $entry['birthday'] = $this->_birthday->getBirthday();
-        
+
+        //Organization name and title
+        if($this->_organization != null)
+        {
+            $entry['account_name'] = $this->_organization->getOrganizationName();
+            $entry['title'] = $this->_organization->getOrganizationTitle();
+        }
+
         return $entry;
     }
 

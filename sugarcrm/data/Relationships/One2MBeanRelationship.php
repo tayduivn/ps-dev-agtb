@@ -36,11 +36,31 @@ class One2MBeanRelationship extends One2MRelationship
             {
                 $this->remove($oldLHS, $rhs, false);
             }
-        } else
-        {
-            echo ("Unable to load RHS module {$rhs->module_name} link $rhsLinkName\n");
         }
 
+        //Make sure we load the current relationship state to the LHS link
+        if ((isset($lhs->$lhsLinkName) && is_a($lhs->$lhsLinkName, "Link2")) || $lhs->load_relationship($lhsLinkName)) {
+            $lhs->$lhsLinkName->getBeans();
+        }
+
+        $this->updateFields($lhs, $rhs, $additionalFields);
+
+        //Need to call save to update the bean as the relationship is saved on the main table
+        //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
+        SugarRelationship::addToResaveList($rhs);
+        
+        if (isset($lhs->$lhsLinkName))
+            $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+        //RHS only has one bean ever, so we don't need to preload the relationship
+        if (isset($rhs->$rhsLinkName))
+            $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
+
+        $this->callAfterAdd($lhs, $rhs);
+        $this->callAfterAdd($rhs, $lhs);
+    }
+
+    protected function updateFields($lhs, $rhs, $additionalFields)
+    {
         //Now update the RHS bean's ID field
         $rhsID = $this->def['rhs_key'];
         $rhs->$rhsID = $lhs->id;
@@ -48,15 +68,13 @@ class One2MBeanRelationship extends One2MRelationship
         {
             $rhs->$field = $val;
         }
-        $rhs->save();
-
-        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-        $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
-
-        $this->callAfterAdd($lhs, $rhs);
-        $this->callAfterAdd($rhs, $lhs);
+        //Update role fields
+        if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
+        {
+            $roleField = $this->def["relationship_role_column"];
+            $rhs->$roleField = $this->def["relationship_role_column_value"];
+        }
     }
-
 
     public function remove($lhs, $rhs, $save = true)
     {
@@ -65,6 +83,9 @@ class One2MBeanRelationship extends One2MRelationship
 
         if ($save)
             $rhs->save();
+
+        $rhsID = $this->def['rhs_key'];
+        $rhs->$rhsID = '';
 
         $this->callAfterDelete($lhs, $rhs);
         $this->callAfterDelete($rhs, $lhs);

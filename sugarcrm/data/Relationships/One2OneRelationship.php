@@ -21,4 +21,51 @@ class One2OneRelationship extends One2MRelationship
 
         parent::add($lhs, $rhs, $additionalFields);
     }
+
+    public function getRelationshipTable()
+    {
+        if (!empty($this->def['rhs_table']))
+            return $this->def['rhs_table'];
+        else if(!empty($this->def['lhs_table']))
+            return $this->def['lhs_table'];
+        
+        return false;
+    }
+
+    public function getJoin($link, $params = array(), $return_array = false)
+    {
+        $linkIsLHS = $link->getSide() == REL_LHS;
+        $startingTable = $link->getFocus()->table_name;
+        $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
+        $targetTable = $linkIsLHS ? $this->def['rhs_table'] : $this->def['lhs_table'];
+        $targetTableWithAlias = $targetTable;
+        $targetKey = $linkIsLHS ? $this->def['rhs_key'] : $this->def['lhs_key'];
+        $join_type= isset($params['join_type']) ? $params['join_type'] : ' INNER JOIN ';
+
+        $join = '';
+
+        if ( ! empty($params['join_table_alias']))
+        {
+            $targetTableWithAlias = $targetTable . " ". $params['join_table_alias'];
+            $targetTable = $params['join_table_alias'];
+        }
+
+        //First add any role filters
+        $join .= $this->getRoleFilterForJoin() . "\n"
+        //Then finally join the related module's table
+               . "$join_type $targetTableWithAlias ON $targetTable.$targetKey=$startingTable.$startingKey "
+               . "AND $targetTable.deleted=0\n";
+
+		if($return_array){
+			return array(
+                'join' => $join,
+                'type' => $this->type,
+                'rel_key' => $targetKey,
+                'join_tables' => array($targetTable),
+                'where' => "",
+                'select' => "$targetTable.id",
+            );
+		}
+		return $join;
+    }
 }

@@ -346,6 +346,60 @@ class ImportMap extends SugarBean
         return $obj_arr;
     }
 
+    /**
+     * set and get field elements in request field to and from user preferences
+     *
+     * @param  array $fields_array
+     * @return array $obj_arr
+     */
+    public function set_get_import_wizard_fields($ForceValsArr = '')
+    {
+        global $current_user;
+        $set = false;
+        //list of field values we track during import wizard
+        $import_step_fields = array(
+        //step1
+          //  'import_module', 'source', 'custom_enclosure', 'custom_enclosure_other', 'custom_delimiter', 'type',
+        //step2
+           // 'custom_delimiter', 'custom_enclosure', 'type', 'source', 'source_id', 'import_module', 'has_header',
+         //step3
+            'display_tabs_def','custom_delimiter', 'custom_enclosure', 'import_type', 'source', 'source_id', 'import_module', 'has_header', 'importlocale_charset',
+            'importlocale_dateformat', 'importlocale_timeformat', 'importlocale_timezone', 'importlocale_currency',
+            'importlocale_default_currency_significant_digits', 'importlocale_num_grp_sep', 'importlocale_dec_sep',
+        '   importlocale_default_locale_name_format');
+
+        //retrieve user preferences and populate preference array
+        $preference_values_str = $current_user->getPreference('field_values', 'import');
+        $preference_values = json_decode($preference_values_str,true);
+
+        foreach ($import_step_fields as $val){
+            //overwrite preference array with new values from request if the value is different or new
+            if((isset($_REQUEST[$val]) && !isset($preference_values[$val])) || (isset($_REQUEST[$val]) && $preference_values[$val] != $_REQUEST[$val])){
+                $preference_values[$val] = $_REQUEST[$val];
+                $set = true;
+            }
+        }
+
+        //force the values to passed in array if array is set
+        if(!empty($ForceValsArr) && is_array($ForceValsArr)){
+            foreach ($ForceValsArr as $forceKey=>$forceVal){
+                $preference_values[$forceKey] = $forceVal;
+                $set = true;
+            }
+        }
+
+        //set preferences if any changes were made and return the new array
+        if($set){
+            $preference_values_str =  json_encode($preference_values);
+            $current_user->setPreference('field_values', $preference_values_str, 0, 'import');
+        }
+        if(empty($preference_values)){
+            return array();
+        }
+
+        return $preference_values;
+    }
+
 }
 
 

@@ -157,7 +157,7 @@ function getAnyToForm($ignore='', $usePostAsAuthority = false)
 
 }
 
-function handleRedirect($return_id='', $return_module='')
+function handleRedirect($return_id='', $return_module='', $additionalFlags = false)
 {
 	if(isset($_REQUEST['return_url']) && $_REQUEST['return_url'] != "")
 	{
@@ -227,11 +227,18 @@ function handleRedirect($return_id='', $return_module='')
 	{
 		$return_id = $_REQUEST['return_id'];
 	}
+
+    $add = "";
+    if(isset($additionalFlags) && !empty($additionalFlags)) {
+        foreach($additionalFlags as $k => $v) {
+            $add .= "&{$k}={$v}";
+        }
+    }
     
     if (!isset($isDuplicate) || !$isDuplicate)
     {
-        $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action";
-        if(!empty($_REQUEST['ajaxUILoc']))
+        $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action{$add}";
+        if(!empty($_REQUEST['ajax_load']))
         {
             $ajax_ret = array(
                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
@@ -248,21 +255,8 @@ function handleRedirect($return_id='', $return_module='')
         }
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
-   		$add = '';
-
-    	if(isset($additionalFlags) && !empty($additionalFlags)) {
-    		foreach($additionalFlags as $k => $v) {
-    			if(!empty($add)) {
-    				$add .= "&";
-    			}
-    			$add .= "{$k}={$v}";
-    		}
-    	}
-    	if(!empty($add)) {
-    		$add = "&" . $add;
-    	}
         $url="index.php?{$standard}{$add}";
-        if(!empty($_REQUEST['ajaxUILoc']))
+        if(!empty($_REQUEST['ajax_load']))
         {
             $ajax_ret = array(
                  'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",

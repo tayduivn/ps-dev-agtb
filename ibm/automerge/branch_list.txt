@@ -1,5 +1,6 @@
 ibmf_custom
 ibmf_theme
+ibmf_unittestfixes
 ibmf_altdata
 ibmf_httpauth
 ibmf_myitems
@@ -9,4 +10,5 @@ ibmf_wildcardsrch
 ibmf_sugaralerts
 ibmf_custominstallhooks
 ibmf_2314_myitems
-ibmf_usersmod
+ibmf_quicksearchext
+ibmf_searchformoverride

@@ -27,6 +27,7 @@ require_once('include/export_utils.php');
 global $sugar_config;
 global $locale;
 global $current_user;
+global $app_list_strings;
 
 $the_module = clean_string($_REQUEST['module']);
 
@@ -42,6 +43,12 @@ if(!empty($_REQUEST['uid'])){
 	$content = export(clean_string($_REQUEST['module']));
 }
 $filename = $_REQUEST['module'];
+//use label if one is defined
+if(!empty($app_list_strings['moduleList'][$_REQUEST['module']])){
+    $filename = $app_list_strings['moduleList'][$_REQUEST['module']];
+}
+
+
 if($_REQUEST['members'] == true)
 	$filename .= '_'.'members';
 ///////////////////////////////////////////////////////////////////////////////
