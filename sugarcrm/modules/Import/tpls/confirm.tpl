@@ -76,10 +76,11 @@ table.noBorder {
 <input type="hidden" name="file_name" value="{$FILE_NAME}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 
-
-<div class="errorMessage">
-    <span class="error">{$AUTO_DETECT_ERROR}</span>
-</div>
+{if $AUTO_DETECT_ERROR != ''}
+    <div class="errorMessage">
+        <span class="error">{$AUTO_DETECT_ERROR}</span>
+    </div>
+{/if}
 
 <div id="confirm_table" class="confirmTable leftPadded">
 {include file='modules/Import/tpls/confirm_table.tpl'}
