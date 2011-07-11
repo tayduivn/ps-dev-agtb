@@ -183,7 +183,7 @@ table.noBorder {
             </td>
         </tr>
         <tr>
-            <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a>&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h4></td>
+            <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a></h4></td>
         </tr>
         <tr>
             <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
