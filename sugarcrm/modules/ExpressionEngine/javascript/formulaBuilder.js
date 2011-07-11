@@ -333,8 +333,6 @@ SUGAR.expressions.GridToolTip = {
 			case "stddev":
 			case "charAt":
 			case "formatName":
-			case "rollup":
-			case "count":
 			case "sugarField":
 				continue;
 				break;

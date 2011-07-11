@@ -841,20 +841,20 @@ function validate_form(formname, startsWith){
 							}
 							break;
 						case 'teamset_mass':
-							div_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_operation_div';
-							input_elements = YAHOO.util.Selector.query('input', document.getElementById(div_element_id));
-							primary_field_id = '';
-							validation_passed = false;
-							replace_selected = false;
+							var div_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_operation_div';
+							var input_elements = YAHOO.util.Selector.query('input', document.getElementById(div_element_id));
+							var primary_field_id = '';
+							var validation_passed = false;
+							var replace_selected = false;
 
 							//Loop through the option elements (replace or add currently)
 							for(t in input_elements) {
 								if(input_elements[t].type && input_elements[t].type == 'radio' && input_elements[t].checked == true && input_elements[t].value == 'replace') {
 
 						           //Now find where the primary radio button is and if a value has been set
-						           radio_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(formname + '_team_name_table'));
+						           var radio_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(formname + '_team_name_table'));
 
-						           for(x in radio_elements) {
+						           for(var x = 0; x < radio_elements.length; x++) {
 						        	   if(radio_elements[x].name != 'team_name_type') {
 						        		  primary_field_id = 'team_name_collection_' + radio_elements[x].value;
 						        		  if(radio_elements[x].checked) {
@@ -877,11 +877,11 @@ function validate_form(formname, startsWith){
 							}
 							break;
 						case 'teamset':
-							   table_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_table';
+							   var table_element_id = formname + '_' + form[validate[formname][i][nameIndex]].name + '_table';
 							   if(document.getElementById(table_element_id)) {
-								   input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
-								   has_primary = false;
-								   primary_field_id = form[validate[formname][i][nameIndex]].name + '_collection_0';
+								   var input_elements = YAHOO.util.Selector.query('input[type=radio]', document.getElementById(table_element_id));
+								   var has_primary = false;
+								   var primary_field_id = form[validate[formname][i][nameIndex]].name + '_collection_0';
 
 								   for(t in input_elements) {
 									    primary_field_id = form[validate[formname][i][nameIndex]].name + '_collection_' + input_elements[t].value;
@@ -895,7 +895,7 @@ function validate_form(formname, startsWith){
 
 								   if(!has_primary) {
 									  isError = true;
-									  field_id = form[validate[formname][i][nameIndex]].name + '_collection_' + input_elements[0].value;
+									  var field_id = form[validate[formname][i][nameIndex]].name + '_collection_' + input_elements[0].value;
 									  add_error_style(formname, field_id, SUGAR.language.get('app_strings', 'ERR_NO_PRIMARY_TEAM_SPECIFIED'));
 								   }
 							   }
@@ -3009,7 +3009,116 @@ SUGAR.util = function () {
         //Reset the scroll on the window
         top : function() {
 			window.scroll(0,0);
-		}
+		},
+
+        //Based on YUI onAvailible, but will use any boolean function instead of an ID
+        doWhen : function(condition, fn, params, scope)
+        {
+            this._doWhenStack.push({
+                check:condition,
+                fn:         fn,
+                obj:        params,
+                overrideContext:   scope
+            });
+
+            this._doWhenretryCount = 50;
+            this._startDoWhenInterval();
+        },
+
+        _startDoWhenInterval : function(){
+            if (!this._doWhenInterval) {
+                this._doWhenInterval = YAHOO.lang.later(50, this, this._doWhenCheck, null, true);
+            }
+        },
+        _doWhenStack : [],
+        _doWhenInterval : false,
+        _doWhenCheck : function() {
+                if (this._doWhenStack.length === 0) {
+                    this._doWhenretryCount = 0;
+                    if (this._doWhenInterval) {
+                        // clearInterval(this._interval);
+                        this._doWhenInterval.cancel();
+                        this._doWhenInterval = null;
+                    }
+                    return;
+                }
+
+                if (this._doWhenLocked) {
+                    return;
+                }
+
+                if (SUGAR.isIE) {
+                    // Hold off if DOMReady has not fired and check current
+                    // readyState to protect against the IE operation aborted
+                    // issue.
+                    if (!YAHOO.util.Event.DOMReady) {
+                        this._startDoWhenInterval();
+                        return;
+                    }
+                }
+
+                this._doWhenLocked = true;
+
+
+                // keep trying until after the page is loaded.  We need to
+                // check the page load state prior to trying to bind the
+                // elements so that we can be certain all elements have been
+                // tested appropriately
+                var tryAgain = YAHOO.util.Event.DOMReady;
+                if (!tryAgain) {
+                    tryAgain = (this._doWhenretryCount > 0 && this._doWhenStack.length > 0);
+                }
+
+                // onAvailable
+                var notAvail = [];
+
+                var executeItem = function (context, item) {
+                    if (item.overrideContext) {
+                        if (item.overrideContext === true) {
+                            context = item.obj;
+                        } else {
+                            context = item.overrideContext;
+                        }
+                    }
+                    item.fn.call(context, item.obj);
+                };
+
+                var i, len, item, test;
+
+                // onAvailable onContentReady
+                for (i=0, len=this._doWhenStack.length; i<len; i=i+1) {
+                    item = this._doWhenStack[i];
+                    if (item) {
+                        test = item.check;
+                        if ((typeof(test) == "string" && eval(test)) || (typeof(test) == "function" && test())) {
+                            executeItem(this, item);
+                            this._doWhenStack[i] = null;
+                        }
+                         else {
+                            notAvail.push(item);
+                        }
+                    }
+                }
+
+                this._doWhenretryCount--;
+
+                if (tryAgain) {
+                    for (i=this._doWhenStack.length-1; i>-1; i--) {
+                        item = this._doWhenStack[i];
+                        if (!item || !item.check) {
+                            this._doWhenStack.splice(i, 1);
+                        }
+                    }
+                    this._startDoWhenInterval();
+                } else {
+                    if (this._doWhenInterval) {
+                        // clearInterval(this._interval);
+                        this._doWhenInterval.cancel();
+                        this._doWhenInterval = null;
+                    }
+                }
+                this._doWhenLocked = false;
+            }
 	};
 }(); // end util
 SUGAR.util.additionalDetailsCache = new Array();
@@ -3889,17 +3998,11 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
-							var tempEvent = window.document.createEvent('HTMLEvents');
-							tempEvent.initEvent('change', true, true);
-							selectField.dispatchEvent(tempEvent);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
-					var tempEvent = document.createEvent('HTMLEvents');
-					tempEvent.initEvent('change', true, true);
-					window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)

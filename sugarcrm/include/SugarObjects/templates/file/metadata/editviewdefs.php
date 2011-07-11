@@ -40,10 +40,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                                             ),
 'javascript' =>
 	'{sugar_getscript file="include/javascript/popup_parent_helper.js"}
-	{sugar_getscript file="include/jsolait/init.js"}
-	{sugar_getscript file="include/jsolait/lib/urllib.js"}
-	{sugar_getscript file="include/javascript/jsclass_base.js"}
-	{sugar_getscript file="include/javascript/jsclass_async.js"}
+	{sugar_getscript file="cache/include/javascript/sugar_grp_jsolait.js"}
 	{sugar_getscript file="modules/Documents/documents.js"}',
 ),
  'panels' =>array (

@@ -235,7 +235,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             var count = this.fields_count;
             
             //Clone the table element containing the fields for each row, use safe_clone uder IE to prevent events from being cloned
-            Field0 = SUGAR.isIE ? 
+            var Field0 = SUGAR.isIE ? 
             	SUGAR.collection.safe_clone(this.cloneField[0], true) : 
             	this.cloneField[0].cloneNode(true);
 
@@ -285,6 +285,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                 var re = new RegExp(toreplace, 'g');
                 var name = currentNode.name;                
                 var new_name = name.replace(re, this.field + "_collection_" + this.fields_count);
+                var new_id = currentNode.id.replace(re, this.field + "_collection_" + this.fields_count);
 
                 switch (name) {
                     case toreplace:
@@ -306,12 +307,12 @@ if(typeof(SUGAR.collection) == "undefined") {
                         }
                         
                         currentNode.name = new_name;
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         currentNode.value = values['name'];
                         break;
                     case "id_" + toreplace:
                         currentNode.name = new_name.replace(RegExp('_0', 'g'), "_" + this.fields_count);
-                        currentNode.id = new_name.replace(RegExp('_0', 'g'), "_" + this.fields_count);
+                        currentNode.id = new_id.replace(RegExp('_0', 'g'), "_" + this.fields_count);
                         currentNode.value = values['id'];
                         break;
                     case "btn_" + toreplace:
@@ -321,11 +322,11 @@ if(typeof(SUGAR.collection) == "undefined") {
                         break;
                     case "allow_new_value_" + toreplace:
                         currentNode.name = new_name;
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         break;
                     case "remove_" + toreplace:
                         currentNode.name = new_name;
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         currentNode.setAttribute('collection_id', this.field_element_name);
                         currentNode.setAttribute('remove_id', this.fields_count);
                         currentNode.onclick = function() { 
@@ -333,7 +334,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                         };
                         break;
                     case "primary_" + this.field + "_collection":
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         currentNode.value = this.fields_count;
                         currentNode.checked = false; //Firefox
                         currentNode.setAttribute('defaultChecked', '');
@@ -524,8 +525,8 @@ if(typeof(SUGAR.collection) == "undefined") {
         	for (var i = 0; i <= this.fields_count; i++) {
         		var div_el = document.getElementById(this.field_element_name + '_input_div_' + i);
                 if(div_el) { 
-		        	var name_field = document.getElementById(this.field+"_collection_" + i);
-					var id_field = document.getElementById("id_"+this.field+"_collection_" + i);
+		        	var name_field = document.getElementById(this.field_element_name+"_collection_" + i);
+					var id_field = document.getElementById("id_"+this.field_element_name+"_collection_" + i);
 		        	name_field.value = values['name'];
 		        	id_field.value = values['id'];
 		        	break;
@@ -545,7 +546,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                 if(div_el) {        
 	                input_els = div_el.getElementsByTagName('input');
 	                for ( var x = 0; x < input_els.length; x++ ){
-	                	if(input_els[x].id && input_els[x].id == (this.field + '_collection_' + i) && trim(input_els[x].value) == '') {
+	                	if(input_els[x].id && input_els[x].name == (this.field + '_collection_' + i) && trim(input_els[x].value) == '') {
 	                		if(divCount == 0){
 	                			isFirstFieldEmpty = true;
 	                		} else {

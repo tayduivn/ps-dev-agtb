@@ -363,7 +363,6 @@ alert(str);
     })
     
     var HTTPConnectionHandler = Class("HTTPConnectionHandler", BaseConnectionHandler, function(publ, supr){
-        var urllib;
         publ.request_id = 1;
         publ.init=function(url, localService){
             urllib=importModule("urllib");
@@ -567,7 +566,8 @@ SugarContainer.prototype.start = function(root_widget) {
 jsolait.baseURL = 'include/jsolait/lib';
 urllib = importModule('urllib');
 
-var global_request_registry = new Object();
+if(typeof(global_request_registry) == "undefined")
+    var global_request_registry = new Object();
 
 
 var jsolait_baseURL = 'include/jsolait/lib';

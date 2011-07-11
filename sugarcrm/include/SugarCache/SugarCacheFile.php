@@ -106,6 +106,8 @@ class SugarCacheFile extends SugarCacheAbstract
 
         if ( isset($this->_localStore[$key]) )
             return $this->_localStore[$key];
+
+        return null;
     }
 
     /**

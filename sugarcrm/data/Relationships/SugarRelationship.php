@@ -25,6 +25,9 @@ abstract class SugarRelationship
     protected $def;
     protected $lhsLink;
     protected $rhsLink;
+    protected $ignore_role_filter = false;
+
+    protected static $beansToResave = array();
 
     public abstract function add($lhs, $rhs, $additionalFields = array());
 
@@ -60,11 +63,12 @@ abstract class SugarRelationship
     public function removeAll($link)
     {
         $focus = $link->getFocus();
-        $related = $link->getBeans(null);
+        $related = $link->getBeans();
         foreach($related as $relBean)
         {
-            if (empty($related->id))
+            if (empty($relBean->id)) {
                 continue;
+            }
 
             if ($link->getSide() == REL_LHS)
                 $this->remove($focus, $relBean);
@@ -139,6 +143,7 @@ abstract class SugarRelationship
 
         $query = "UPDATE {$this->getRelationshipTable()} set $newVals WHERE id='$id'";
 
+        return DBManagerFactory::getInstance()->query($query);
     }
 
     protected function removeRow($where)
@@ -196,14 +201,28 @@ abstract class SugarRelationship
         $custom_logic_arguments['related_module'] = $related->module_dir;
         $custom_logic_arguments['link'] = $link_name;
         $custom_logic_arguments['relationship'] = $this->name;
+
+        return $custom_logic_arguments;
     }
 
+    /**
+     * @param  SugarBean $focus
+     * @param  SugarBean $related
+     * @param string $link_name
+     * @return void
+     */
     protected function callAfterAdd($focus, $related, $link_name="")
     {
         $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
         $focus->call_custom_logic('after_relationship_add', $custom_logic_arguments);
     }
 
+    /**
+     * @param  SugarBean $focus
+     * @param  SugarBean $related
+     * @param string $link_name
+     * @return void
+     */
     protected function callAfterDelete($focus, $related, $link_name="")
     {
         $custom_logic_arguments = $this->getCustomLogicArguments($focus, $related, $link_name);
@@ -231,6 +250,42 @@ abstract class SugarRelationship
 		return '';
 	//end function _add_optional_where_clause
 	}
+
+    /**
+     * @param  SugarBean $bean
+     * @return void
+     */
+    public static function addToResaveList($bean)
+    {
+        if (!isset(self::$beansToResave[$bean->module_dir]))
+        {
+            self::$beansToResave[$bean->module_dir] = array();
+        }
+        self::$beansToResave[$bean->module_dir][$bean->module_dir] = $bean;
+    }
+
+    public static function resaveRelatedBeans()
+    {
+        $GLOBALS['resavingRelatedBeans'] = true;
+
+        //Resave any bean not currently in the middle of a save operation
+        foreach(self::$beansToResave as $module => $beans)
+        {
+            foreach ($beans as $bean)
+            {
+                if (empty($bean->deleted) && empty($bean->in_save))
+                {
+                    $bean->save();
+                }
+            }
+        }
+
+        $GLOBALS['resavingRelatedBeans'] = false;
+
+        //Reset the list of beans that will need to be resaved
+        self::$beansToResave = array();
+    }
+
 
     public function isParentRelationship()
     {

@@ -339,7 +339,7 @@ class Contract extends SugarBean {
 	 */
 	function get_contract_documents() {
 		$this->load_relationship('contracts_documents');
-		$query_array = $this->contracts_documents->getQuery(true);
+        $query_array = $this->contracts_documents->getQuery(array('return_as_array' => true));
 		$query = <<<KGB
             SELECT documents.*,
 				documents.document_revision_id AS latest_revision_id,
@@ -355,7 +355,8 @@ KGB;
 					
 		$query .= $query_array['from'];
 		$query .= <<<CIA
-			LEFT JOIN document_revisions for_latest_revision 
+			LEFT JOIN documents ON documents.id = linked_documents.document_id
+			LEFT JOIN document_revisions for_latest_revision
 				ON for_latest_revision.id = documents.document_revision_id
 			INNER JOIN contracts 
 				ON contracts.id = linked_documents.parent_id

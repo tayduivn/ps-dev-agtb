@@ -32,5 +32,10 @@
 *}
 
 <script>
-    SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartName}', '{$chartXMLFile}', '100%', '480', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}');
+SUGAR.util.doWhen(
+	"SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts",
+	function(){ldelim}
+		SUGAR.mySugar.sugarCharts.addToChartsArray('{$chartName}', '{$chartXMLFile}', '100%', '480', '{$chartStyleCSS}', '{$chartColorsXML}', '{$chartStringsXML}');
+	{rdelim}
+);
 </script>

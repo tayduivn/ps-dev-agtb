@@ -195,7 +195,8 @@ SUGAR.mySugar = function() {
 
 		//BEGIN SUGARCRM flav=pro ONLY
         retrievePage: function(pageNum){
-			document.getElementById('loading_c').style.display = '';
+			if (document.getElementById('loading_c'))
+                document.getElementById('loading_c').style.display = '';
 			SUGAR.mySugar.loading.show();
 
             var pageCount = num_pages;
@@ -277,7 +278,8 @@ SUGAR.mySugar = function() {
 
 
 				SUGAR.mySugar.loading.hide();                                                  
-				document.getElementById('loading_c').style.display = 'none';
+				if (document.getElementById('loading_c'))
+                    document.getElementById('loading_c').style.display = 'none';
             }
 
             var cObj = YAHOO.util.Connect.asyncRequest('GET', url,
@@ -1073,9 +1075,8 @@ SUGAR.mySugar = function() {
 			});
 			SUGAR.mySugar.loading.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
 			SUGAR.mySugar.loading.render(document.body);		
-			document.getElementById('loading_c').style.display = 'none';													
-
-
+			if (document.getElementById('loading_c'))
+                document.getElementById('loading_c').style.display = 'none';
 		},
 		//END SUGARCRM flav=pro ONLY
 		

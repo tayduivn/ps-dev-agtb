@@ -224,7 +224,7 @@ class OracleHelper extends DBHelper
             'currency' => 'number(26,6)',
             'decimal'  => 'number (20,2)',
             'decimal2' => 'number (30,6)',
-            'url'=>'varchar2(255)',
+            'url'=>'varchar2',
             'encrypt'=>'varchar2(255)',
             'file'     => 'varchar2(255)',
             );
@@ -663,9 +663,15 @@ EOQ;
         $tablename
         )
     {
-        //find all unique indexes and primary keys.
-        $result = $this->db->query(
-            "SELECT * FROM user_tab_columns WHERE TABLE_NAME = '".strtoupper($tablename)."'");
+        $tablename_up = strtoupper($tablename);
+        //find all columns and also see which ones are in PK
+        $result = $this->db->query("SELECT user_tab_columns.*,keys.constraint_type FROM user_tab_columns LEFT JOIN
+(SELECT cons.constraint_type, cols.column_name
+FROM user_constraints cons, user_cons_columns cols
+WHERE cons.constraint_type = 'P'
+AND cols.table_name='$tablename_up'
+AND cons.constraint_name = cols.constraint_name) keys ON keys.column_name = user_tab_columns.column_name
+where table_name='$tablename_up'");
 
         $columns = array();
         while (($row=$this->db->fetchByAssoc($result)) !=null) {
@@ -694,8 +700,9 @@ EOQ;
             $sequence_name = $this->_getSequenceName($tablename, $row['column_name'], true);
             if ($this->_findSequence($sequence_name))
                 $columns[$name]['auto_increment'] = '1';
-            elseif ( $row['nullable'] == 'N' )
+            elseif ( $row['nullable'] == 'N' && $row['constraint_type'] != 'P') {
                 $columns[$name]['required'] = 'true';
+            }
         }
         return $columns;
     }

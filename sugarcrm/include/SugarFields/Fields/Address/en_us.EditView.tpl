@@ -122,8 +122,11 @@
 </table>
 </fieldset>
 <script type="text/javascript">
-    var fromKey = '{{$displayParams.copy}}';
-    var toKey = '{{$displayParams.key}}';
-    var checkbox = toKey + "_checkbox";
-    var obj = new TestCheckboxReady(checkbox);
+    SUGAR.util.doWhen("typeof(TestCheckboxReady) != 'undefined'", function(){ldelim}
+		 //TODO: None of these should be in the global scope, but TestChecboxReady requires it.
+		 fromKey = '{{$displayParams.copy}}';
+		 toKey = '{{$displayParams.key}}';
+		 checkbox = toKey + "_checkbox";
+		 obj = new TestCheckboxReady(checkbox);
+	{rdelim});
 </script>

@@ -233,7 +233,7 @@ SUGAR.mySugar.init = function () {
 	SUGAR.mySugar.renderChangeLayoutDialog();
 }
 
-YAHOO.util.Event.addListener(window, 'load', SUGAR.mySugar.init);  
+YAHOO.util.Event.addListener(window, 'load', SUGAR.mySugar.init);
 
 </script>
 {/literal}

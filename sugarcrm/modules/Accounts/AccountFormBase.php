@@ -486,16 +486,21 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 			if(!empty($_POST['popup'])) $get .= '&popup='.$_POST['popup'];
 			if(!empty($_POST['create'])) $get .= '&create='.$_POST['create'];
 			
+			$_SESSION['SHOW_DUPLICATES'] = $get;
 			//now redirect the post to modules/Accounts/ShowDuplicates.php
             if (!empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1')
             {
             	ob_clean();
                 $json = getJSONobj();
-                $_SESSION['SHOW_DUPLICATES'] = $get;
                 echo $json->encode(array('status' => 'dupe', 'get' => $location));
-            } else {
-                if(!empty($_POST['to_pdf'])) $location .= '&to_pdf='.$_POST['to_pdf'];
-                $_SESSION['SHOW_DUPLICATES'] = $get;
+            }
+            else if(!empty($_REQUEST['ajax_load']))
+            {
+                echo "<script>SUGAR.ajaxUI.loadContent('index.php?$location');</script>";
+            }
+            else {
+                if(!empty($_POST['to_pdf']))
+                    $location .= '&to_pdf='.$_POST['to_pdf'];
                 header("Location: index.php?$location");
             }
 			return null;

@@ -116,7 +116,6 @@ class SugarFieldExpression extends GenericExpression
             return $this->context->$fieldName->beans;
 
         $beans = $this->context->$fieldName->getBeans();
-        $this->context->$fieldName->beans = $beans;
 
         return $beans;
     }

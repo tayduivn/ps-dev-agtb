@@ -48,6 +48,7 @@ class Parser {
         //Related field shorthand
         if (preg_match('/^\$[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+$/', $expr))
         {
+            require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
             require_once( "include/Expressions/Expression/Generic/RelatedFieldExpression.php");
             $link = substr($expr, 1, strpos($expr, ".") - 1);
             $related = substr($expr, strpos($expr, ".") + 1);
@@ -84,7 +85,7 @@ class Parser {
 				$GLOBALS['updateSilent'] = true;
 				include("include/Expressions/updatecache.php");
 			}
-			require_once( sugar_cached('Expressions/functionmap.php') );
+			require_once( sugar_cached('Expressions/functionmap.php'));
 		}
 			
 

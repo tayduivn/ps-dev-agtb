@@ -127,6 +127,7 @@ class SugarView
                  ),
                 'moduleList' => $this->displayHeader(true),
                 'title' => $this->getBrowserTitle(),
+                'action' => isset($_REQUEST['action']) ? $_REQUEST['action'] : "",
             );
             if(empty($this->responseTime)) $this->_calculateFooterMetrics();
             $ajax_ret['responseTime'] = $this->responseTime;
@@ -669,7 +670,7 @@ class SugarView
         if(isset($_REQUEST['action'])){
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
-        echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+        echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
         if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
@@ -765,7 +766,7 @@ EOHTML;
             if(isset($_REQUEST['action'])){
                 $js_vars['action_sugar_grp1'] = $_REQUEST['action'];
             }
-            echo '<script>jscal_today = ' . (1000*$timedate->asUserTs($timedate->getNow())) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
+            echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
             if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js"))) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
@@ -1122,6 +1123,11 @@ EOHTML;
         if ( empty($module) )
             $module = $this->module;
 
+        //Need to make sure the mod_strings match the requested module or Menus may fail
+        $curr_mod_strings = $mod_strings;
+        $mod_strings = return_module_language ( $current_language, $module ) ;
+
+
         $final_module_menu = array();
 
         if (file_exists('modules/' . $module . '/Menu.php')) {
@@ -1155,6 +1161,8 @@ EOHTML;
             $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
         $module_menu = $final_module_menu;
+
+        $mod_strings = $curr_mod_strings;
 
         return $module_menu;
     }
@@ -1414,7 +1422,7 @@ EOHTML;
         if ( isset($sugar_config['quicksearch_querydelay']) ) {
             $config_js[] = "SUGAR.config.quicksearch_querydelay = {$GLOBALS['sugar_config']['quicksearch_querydelay']};";
         }
-        if ( !isset($sugar_config['disableAjaxUI']) || $sugar_config['disableAjaxUI'] == false ) {
+        if ( empty($sugar_config['disableAjaxUI']) ) {
             $config_js[] = "SUGAR.config.disableAjaxUI = false;";
         }
         else{

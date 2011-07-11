@@ -55,6 +55,12 @@ $mod_strings = array (
   'NTC_DELETE_GRAFT_CONFIRMATION' => 'Are you sure you want to delete this category?  All sub-categories and products will remain.',
   'LBL_PARENT_NAME' => 'Parent Category:',
   'LBL_CATEGORIES'=> 'Categories',
+
+  //For export labels  
+  'LBL_PARENT_CATEGORY'=> 'Parent Category',
+  'LBL_EXPORT_PARENT_ID'=> 'Parent Category ID',
+  'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified User ID',
+  'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   );
 
 

@@ -533,7 +533,7 @@ class ImportViewStep4 extends SugarView
 
         // save mapping if requested
         $mappingValsArr = $importColumns;
-        if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
+        //if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
             $mapping_file = new ImportMap();
             if ( isset($_REQUEST['has_header']) && $_REQUEST['has_header'] == 'on') {
                 $header_to_field = array ();
@@ -553,8 +553,17 @@ class ImportViewStep4 extends SugarView
                 $mappingValsArr = array_merge($mappingValsArr,$advMapping);
             }
 
+        //save values to user preferences for reuse
+        $mapping_file->set_get_import_wizard_fields($mappingValsArr);
+
+
+
+        // save mapping if requested
+        if ( isset($_REQUEST['save_map_as']) && $_REQUEST['save_map_as'] != '' ) {
             //set mapping
             $mapping_file->setMapping($mappingValsArr);
+
+
 
             // save default fields
             $defaultValues = array();
@@ -705,10 +714,10 @@ class ImportViewStep4 extends SugarView
 
         //harvest the dupe index settings
         if( isset($_REQUEST['display_tabs_def']) ){
-            $dupe_ind = explode('&', $_REQUEST['display_tabs_def']);
-            foreach($dupe_ind as $dupe){
-                $advancedMappingSettings['dupe_'.$dupe] = $dupe;
-            }
+            $display_tabs_def = $_REQUEST['display_tabs_def'];
+            //replace ampersand delimiter with double colon, as the ampersand interferes with ImportMap->getMapping() function
+            $display_tabs_def = str_replace('&','::',$display_tabs_def);
+            $advancedMappingSettings['display_tabs_def'] = $display_tabs_def;
         }
 
         foreach($_REQUEST as $rk=>$rv){
