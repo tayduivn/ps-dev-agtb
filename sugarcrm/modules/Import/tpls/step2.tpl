@@ -112,7 +112,7 @@
           {if $smarty.foreach.saved.first}
           <tr>
             <td scope="row" colspan="3">
-                <h5>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a>&nbsp;{sugar_help text=$savedMappingHelpText}</h5></td>
+                <h5>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$savedMappingHelpText}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a></h5></td>
           </tr>
           {/if}
           <tr id="custom_import_{$smarty.foreach.saved.index}">
