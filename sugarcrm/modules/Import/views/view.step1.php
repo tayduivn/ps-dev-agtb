@@ -67,11 +67,12 @@ class ImportViewStep1 extends ImportView
         }
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
-        $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
 
-        $this->ss->assign("selectExternalSource", $selectExternal);
-        $this->ss->assign("EXTERNAL_SOURCES", $this->getAllImportableExternalEAPMs());
+        $externalEAPMS = $this->getAllImportableExternalEAPMs();
+        $this->ss->assign("EXTERNAL_SOURCES", $externalEAPMS);
         $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
+        $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : key($externalEAPMS);
+        $this->ss->assign("selectExternalSource", $selectExternal);
 
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
         $this->ss->assign("CONTENT",$content);
