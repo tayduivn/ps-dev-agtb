@@ -164,7 +164,7 @@ class InsideViewLogicHook {
         if ( $url != '' ) {
             // Check if the user should be shown the frame or not
             $smarty = new Sugar_Smarty();
-             $tplName = 'modules/Connectors/connectors/sources/ext/rest/insideview/ConfirmAccess.';
+             $tplName = 'modules/Connectors/connectors/sources/ext/rest/insideview/InsideView.';
              if ( ! file_exists($tplName.$GLOBALS['current_language'].'.tpl') ) {
                 $tplName = $tplName.'en_us.tpl';
              } else {
@@ -174,8 +174,8 @@ class InsideViewLogicHook {
             $smarty->assign('video',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/video.png'));
 
             $smarty->assign('close',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/close.png'));
-            $smarty->assign('logo_collapsed',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_expanded.png'));
-            $smarty->assign('logo_expanded',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_collapsed.png'));
+            $smarty->assign('logo_expanded',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_expanded.png'));
+            $smarty->assign('logo_collapsed',getWebPath('modules/Connectors/connectors/sources/ext/rest/insideview/images/insideview_collapsed.png'));
 
             $smarty->assign('AJAX_URL',$url);
              if ( $GLOBALS['current_user']->getPreference('allowInsideView','Connectors') != 1 )
