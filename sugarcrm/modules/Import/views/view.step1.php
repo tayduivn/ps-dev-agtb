@@ -68,10 +68,9 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
 
-        $externalEAPMS = $this->getAllImportableExternalEAPMs();
-        $this->ss->assign("EXTERNAL_SOURCES", $externalEAPMS);
+        $this->ss->assign("EXTERNAL_SOURCES", $this->getAllImportableExternalEAPMs());
         $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
-        $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : key($externalEAPMS);
+        $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
         $this->ss->assign("selectExternalSource", $selectExternal);
 
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
@@ -149,25 +148,33 @@ YAHOO.util.Event.onDOMReady(function(){
     function toggleExternalSource(el)
     {
         var trEl = document.getElementById('external_sources_tr');
-        var currentVisibility = trEl.style.display;
-        var newVisibility = (currentVisibility == 'none') ? '' : 'none';
-        trEl.style.display = newVisibility;
-        if(newVisibility == 'none')
+        var externalSourceBttns = oButtonGroup.getButtons();
+
+        if(this.value == 'csv')
         {
+            trEl.style.display = 'none';
             document.getElementById('gonext').disabled = false;
             document.getElementById('ext_source_sign_in_bttn').style.display = 'none';
 
             //Turn off ext source selection
-            var bttns = oButtonGroup.getButtons();
             oButtonGroup.set("checkedButton", null, true);
-            for(i=0;i<bttns.length;i++)
+            for(i=0;i<externalSourceBttns.length;i++)
             {
-                bttns[i].set("checked", false, true);
+                externalSourceBttns[i].set("checked", true, true);
             }
         }
         else
         {
+            trEl.style.display = '';
             document.getElementById('gonext').disabled = true;
+
+            //Highlight the first selection by default
+            if(externalSourceBttns.length >= 1)
+            {
+                selectedExternalSource = externalSourceBttns[0].get("value");
+                externalSourceBttns[0].set("checked", true, true);
+                isExtSourceValid(selectedExternalSource);
+            }
         }
     }
     
