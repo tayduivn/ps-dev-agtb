@@ -48,6 +48,7 @@ $mod_strings = array (
     'LBL_IMPORT_TYPE' => 'What would you like to do with the imported data?',
     'LBL_IMPORT_BUTTON' => 'Create new records only',
     'LBL_UPDATE_BUTTON' => 'Create new records and update existing records',
+    'LBL_CREATE_BUTTON_HELP' => 'Use this option to create new records. Note: Rows in the import file containing values that match the IDs of existing records will not be imported if the values are mapped to the ID field.',
     'LBL_UPDATE_BUTTON_HELP' => 'Use this option to update existing records. The data in the import file will be matched to existing records based on the record ID in the import file.',
     'LBL_ERROR_INVALID_BOOL'=>'Invalid boolean value',
     'LBL_NO_ID' => 'ID Required',
