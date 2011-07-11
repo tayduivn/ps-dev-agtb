@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
 require_once('modules/Import/Importer.php');
-
+require_once('modules/Import/sources/ExternalSourceEAPMAdapter.php');
 require_once('include/upload_file.php');
 
 class ImportViewExtimport extends ImportView
@@ -53,6 +53,7 @@ class ImportViewExtimport extends ImportView
         $this->offset = isset($_REQUEST['offset']) ? $_REQUEST['offset'] : '0';
         $this->recordsPerImport = !empty($_REQUEST['records_per_import']) ? $_REQUEST['records_per_import'] : $this->recordsPerImport;
         $this->importSource = $this->getExternalSourceAdapter();
+        $this->importSource->setCurrentOffset($this->offset);
         $GLOBALS['log']->fatal("Initiating external source import- source:{$this->externalSource}, offset: {$this->offset}, recordsPerImport: {$this->recordsPerImport}");
     }
  	/**
@@ -74,7 +75,7 @@ class ImportViewExtimport extends ImportView
 
         try
         {
-            $this->importSource->loadExternalRecordSet($this->offset, $this->recordsPerImport);
+            $this->importSource->loadDataSet($this->recordsPerImport);
         }
         catch(Exception $e)
         {
@@ -101,6 +102,18 @@ class ImportViewExtimport extends ImportView
     }
 
     protected function getExternalSourceAdapter()
+    {
+        if( substr($this->externalSource,7) == 'custom:')
+        {
+            return $this->getCustomExternalSourceAdapter();
+        }
+        else
+        {
+            return new ExternalSourceEAPMAdapter();
+        }
+    }
+
+    protected function getCustomExternalSourceAdapter()
     {
         $externalSourceName = ucfirst($this->externalSource);
         $externalSourceClassName = "ExternalSource{$externalSourceName}Adapter";
@@ -129,7 +142,9 @@ class ImportViewExtimport extends ImportView
             $GLOBALS['log']->fatal("Unable to load external source adapter class: $externalSourceClassName");
             return FALSE;
         }
+
     }
+
     /**
      * Return the user mapping that was constructed during the first page of import.
      *

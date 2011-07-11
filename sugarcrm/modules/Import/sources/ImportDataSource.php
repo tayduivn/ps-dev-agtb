@@ -35,6 +35,11 @@ require_once('modules/Import/ImportCacheFiles.php');
 abstract class ImportDataSource implements Iterator
 {
     /**
+     * The current offset the data set should start at
+     */
+    protected $_offset = 0;
+
+    /**
      * Count of rows processed
      */
     protected $_rowsCount = 0;
@@ -80,6 +85,78 @@ abstract class ImportDataSource implements Iterator
      */
     protected $_localeSettings = array();
 
+    /**
+     * Stores a subset or entire portion of the data set requested.
+     */
+    protected $_dataSet = array();
+
+    /**
+     * Return a result set from the external source as an associative array with the key value equal to the
+     * external field name and the rvalue equal to the actual value.  
+     *
+     * @abstract
+     * @param  int $startIndex
+     * @param  int $maxResults
+     * @return void
+     */
+    abstract public function loadDataSet($maxResults);
+
+    /**
+     * Return the total count of records that will be imported.
+     *
+     * @abstract
+     * @return int
+     */
+    abstract public function getTotalRecordCount();
+
+    /**
+     * @abstract
+     * @return void
+     */
+    abstract public function getHeaderColumns();
+    
+    /**
+     * Set the source name.
+     *
+     * @param  $sourceName
+     * @return void
+     */
+    public function setSourceName($sourceName = '')
+    {
+        $this->_sourcename = $sourceName;
+    }
+
+
+    /**
+     * Set the current offset.
+     *
+     * @param $offset
+     * @return void
+     */
+    public function setCurrentOffset($offset)
+    {
+        $this->_offset = $offset;
+    }
+
+    /**
+     * Return the current offset
+     *
+     * @return int
+     */
+    public function getCurrentOffset()
+    {
+        return $this->_offset;
+    }
+
+    /**
+     * Return the current data set loaded.
+     *
+     * @return array
+     */
+    public function getDataSet()
+    {
+        return $this->_dataSet;
+    }
 
     /**
      * Add this row to the UsersLastImport table
@@ -101,9 +178,9 @@ abstract class ImportDataSource implements Iterator
         $last_import->assigned_user_id = $GLOBALS['current_user']->id;
         $last_import->import_module = $import_module;
         //BEGIN SUGARCRM flav!=sales ONLY
-        if ( $module == 'Case' ) {
+        if ( $module == 'Case' )
             $module = 'aCase';
-        }
+        
         //END SUGARCRM flav!=sales ONLY
         $last_import->bean_type = $module;
         $last_import->bean_id = $id;
@@ -165,33 +242,38 @@ abstract class ImportDataSource implements Iterator
         fputcsv($fp, $this->_currentRow);
         fclose($fp);
 
-
         //if available, grab the column number based on passed in field_name
-        if(!empty($field_names)){
+        if(!empty($field_names))
+        {
             $colkey = '';
             $colnums = array();
 
-
             //REQUEST should have the field names in order as they appear in the row to be written, get the key values
             //of passed in fields into an array
-            foreach($field_names as $fv){
+            foreach($field_names as $fv)
+            {
                 $fv = trim($fv);
-                if(empty($fv) || $fv == 'delete') continue;
+                if(empty($fv) || $fv == 'delete')
+                    continue;
                 $new_keys = array_keys($_REQUEST, $fv);
                 $colnums = array_merge($colnums,$new_keys);
             }
 
 
             //if values were found, process for number position
-            if(!empty($colnums)){
+            if(!empty($colnums))
+            {
                 //foreach column, strip the 'colnum_' prefix to the get the column key value
-                foreach($colnums as $column_key){
-                    if(strpos($column_key,'colnum_') == 0){
+                foreach($colnums as $column_key)
+                {
+                    if(strpos($column_key,'colnum_') == 0)
+                    {
                         $colkey = substr($column_key,7);
                     }
 
                     //if we have the column key, then lets add a span tag with styling reference to the original value
-                    if(!empty($colkey)){
+                    if(!empty($colkey))
+                    {
                         $hilited_val = $this->_currentRow[$colkey];
                         $this->_currentRow[$colkey]= '<span class=warn>'.$hilited_val.'</span>';
                     }

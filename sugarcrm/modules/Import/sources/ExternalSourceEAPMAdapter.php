@@ -21,9 +21,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/sources/ExternalSourceAdapter.php');
+require_once('modules/Import/sources/ImportDataSource.php');
 
-class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
+
+class ExternalSourceEAPMAdapter extends ImportDataSource
 {
 
     /**
@@ -35,11 +36,6 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
      * @var int Total record count of rows that will be imported
      */
     private $_totalRecordCount = -1;
-
-    /**
-     * @var int The offset start index
-     */
-    private $_offsetStart;
 
     /**
      * @var The record set loaded from the external source
@@ -74,11 +70,10 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
      * Return a feed of google contacts using the EAPM and Connectors farmework.
      *
      * @throws Exception
-     * @param  $startIndex
      * @param  $maxResults
      * @return array
      */
-    public function loadExternalRecordSet($startIndex, $maxResults)
+    public function loadDataSet($maxResults)
     {
          if ( !$eapmBean = EAPM::getLoginInfo($this->_eapmName,true) )
          {
@@ -91,11 +86,10 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
 
         $rows = array();
 
-        $feed = $conn->getList(array('maxResults' => $maxResults, 'startIndex' => $startIndex));
+        $feed = $conn->getList(array('maxResults' => $maxResults, 'startIndex' => $this->_offset));
         if($feed !== FALSE)
         {
             $this->_totalRecordCount = $feed->totalResults->getText();
-            $this->_offsetStart = $feed->startIndex->getText();
 
             foreach ($feed->entries as $entry)
             {
@@ -110,6 +104,11 @@ class ExternalSourceGoogleAdapter extends ExternalSourceAdapter
         $this->_recordSet = $rows;
     }
 
+    public function getHeaderColumns()
+    {
+        return '';
+    }
+    
     public function getTotalRecordCount()
     {
         return $this->_totalRecordCount;

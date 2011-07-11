@@ -36,9 +36,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Import/CsvAutoDetect.php');
 require_once('modules/Import/sources/ImportDataSource.php');
-require_once('modules/Import/sources/Paginatable.php');
 
-class ImportFile extends ImportDataSource implements Paginatable
+class ImportFile extends ImportDataSource
 {
     /**
      * Stores whether or not we are deleting the import file in the destructor
@@ -84,16 +83,6 @@ class ImportFile extends ImportDataSource implements Paginatable
      * Enclosure string we are using (i.e. ' or ")
      */
     private $_enclosure;
-
-    /**
-     * Stores a subset or entire portion of the data set requested.
-     */
-    protected $_dataSet = array();
-
-    /**
-     * The current offset the data set should start at
-     */
-    protected $_offset = 0;
 
     
     /**
@@ -401,21 +390,6 @@ class ImportFile extends ImportDataSource implements Paginatable
         $this->setFpAfterBOM();
         //Load our first row
         $this->getNextRow();
-    }
-
-    public function setCurrentOffset($offset)
-    {
-        $this->_offset = $offset;
-    }
-
-    public function getCurrentOffset()
-    {
-        return $this->_offset;
-    }
-    
-    public function getDataSet()
-    {
-        return $this->_dataSet;
     }
 
     public function getTotalRecordCount()
