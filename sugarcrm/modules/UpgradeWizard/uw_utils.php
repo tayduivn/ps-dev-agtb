@@ -596,12 +596,7 @@ function deleteCache(){
 		{
 	       	if(file_exists($file))
 	       	{
-	       		if(is_dir($file))
-	       		{
-				  rmdir_recursive($file);
-	       		} else {
-	       		  unlink($file);
-	       		}
+	       	   unlink($file);
 	       	}
 		}
 	}
