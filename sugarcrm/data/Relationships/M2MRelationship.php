@@ -59,11 +59,14 @@ class M2MRelationship extends SugarRelationship
 
         $this->addRow($dataToInsert);
 
-        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-        $rhs->$rhsLinkName->beans[$lhs->id] = $lhs;
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+            $rhs->$rhsLinkName->beans[$lhs->id] = $lhs;
 
-        $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
-        $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+            $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+            $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+        }
     }
 
     protected function getRowToInsert($lhs, $rhs)
@@ -109,11 +112,14 @@ class M2MRelationship extends SugarRelationship
 
         $this->removeRow($dataToRemove);
 
-        $lhs->$lhsLinkName->load();
-        $rhs->$rhsLinkName->load();
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $lhs->$lhsLinkName->load();
+            $rhs->$rhsLinkName->load();
 
-        $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
-        $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
+            $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
+            $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
+        }
     }
 
     /**
@@ -132,10 +138,9 @@ class M2MRelationship extends SugarRelationship
         while ($row = $db->fetchByAssoc($result))
         {
             $id = $row[$idField];
-            $beans[$id] = BeanFactory::getBean($relatedModule, $id);
             $rows[$id] = $row;
         }
-        return array("beans" => $beans, "rows" => $rows);
+        return array("rows" => $rows);
     }
 
     public function getQuery($link, $params = array())

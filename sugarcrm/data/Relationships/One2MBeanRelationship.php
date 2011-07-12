@@ -45,18 +45,22 @@ class One2MBeanRelationship extends One2MRelationship
 
         $this->updateFields($lhs, $rhs, $additionalFields);
 
-        //Need to call save to update the bean as the relationship is saved on the main table
-        //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
-        SugarRelationship::addToResaveList($rhs);
-        
-        if (isset($lhs->$lhsLinkName))
-            $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-        //RHS only has one bean ever, so we don't need to preload the relationship
-        if (isset($rhs->$rhsLinkName))
-            $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
 
-        $this->callAfterAdd($lhs, $rhs);
-        $this->callAfterAdd($rhs, $lhs);
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            //Need to call save to update the bean as the relationship is saved on the main table
+            //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
+            SugarRelationship::addToResaveList($rhs);
+
+            if (isset($lhs->$lhsLinkName))
+                $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+            //RHS only has one bean ever, so we don't need to preload the relationship
+            if (isset($rhs->$rhsLinkName))
+                $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
+
+            $this->callAfterAdd($lhs, $rhs);
+            $this->callAfterAdd($rhs, $lhs);
+        }
     }
 
     protected function updateFields($lhs, $rhs, $additionalFields)
@@ -87,8 +91,11 @@ class One2MBeanRelationship extends One2MRelationship
         $rhsID = $this->def['rhs_key'];
         $rhs->$rhsID = '';
 
-        $this->callAfterDelete($lhs, $rhs);
-        $this->callAfterDelete($rhs, $lhs);
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $this->callAfterDelete($lhs, $rhs);
+            $this->callAfterDelete($rhs, $lhs);
+        }
     }
 
     /**
@@ -98,8 +105,6 @@ class One2MBeanRelationship extends One2MRelationship
     public function load($link)
     {
         $relatedModule = $link->getSide() == REL_LHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
-        $rhsLinkName = $this->rhsLink;
-        $beans = array();
         $rows = array();
         //The related bean ID is stored on the RHS table.
         //If the link is RHS, just grab it from the focus.
@@ -109,7 +114,7 @@ class One2MBeanRelationship extends One2MRelationship
             $id = $link->getFocus()->$rhsID;
             if (!empty($id))
             {
-                $beans[$id] = BeanFactory::getBean($relatedModule, $id);
+                $rows[$id] = array('id' => $id);
             }
         }
         else //If the link is LHS, we need to query to get the full list and load all the beans.
@@ -124,12 +129,11 @@ class One2MBeanRelationship extends One2MRelationship
             while ($row = $db->fetchByAssoc($result))
             {
                 $id = $row['id'];
-                $beans[$id] = BeanFactory::getBean($relatedModule, $id);
                 $rows[$id] = $row;
             }
         }
 
-        return array("beans" => $beans, "rows" => $rows);
+        return array("rows" => $rows);
     }
 
     public function getQuery($link, $return_as_array = false)
