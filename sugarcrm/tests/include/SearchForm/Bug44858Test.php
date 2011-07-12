@@ -38,7 +38,7 @@ class Bug44858Test extends Sugar_PHPUnit_Framework_TestCase
     	
     	require 'modules/Accounts/vardefs.php';
     	require 'modules/Accounts/metadata/SearchFields.php';
-    	require 'modules/Accounts/metadata/Searchdefs.php';
+    	require 'modules/Accounts/metadata/searchdefs.php';
         $searchForm->searchFields = $searchFields[$searchForm->module]; 
         $searchForm->searchdefs = $searchdefs[$searchForm->module];                          
     	$searchForm->populateFromArray($requestArray,'basic_search',false);
