@@ -451,12 +451,34 @@ class Link2 {
         return $this->$name;
     }
 
-    public function __set($name, $value)
+    public function __set($name, $val)
     {
-        if ($name == "beans")
-        {
-            
-        }
+        if($name == "beans")
+            $this->beans = $val;
+
+    }
+
+    /**
+     * @param SugarBean $bean
+     * @return void
+     */
+    public function addBean($bean)
+    {
+        if (!is_array($this->beans))
+            $this->getBeans();
+        $this->beans[$bean->id] = $bean;
+    }
+
+    /**
+     * @param SugarBean $bean
+     * @return void
+     */
+    public function removeBean($bean)
+    {
+        if (!is_array($this->beans))
+            $this->getBeans();
+        unset($this->beans[$bean->id]);
+        unset($this->rows[$bean->id]);
     }
 }
 ?>

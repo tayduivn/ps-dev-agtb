@@ -61,8 +61,8 @@ class M2MRelationship extends SugarRelationship
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
         {
-            $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-            $rhs->$rhsLinkName->beans[$lhs->id] = $lhs;
+            $lhs->$lhsLinkName->addBean($rhs);
+            $rhs->$rhsLinkName->addBean($lhs);
 
             $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
             $this->callAfterAdd($rhs, $lhs, $rhsLinkName);

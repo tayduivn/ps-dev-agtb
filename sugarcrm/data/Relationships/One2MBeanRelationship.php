@@ -53,7 +53,7 @@ class One2MBeanRelationship extends One2MRelationship
             SugarRelationship::addToResaveList($rhs);
 
             if (isset($lhs->$lhsLinkName))
-                $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
+                $lhs->$lhsLinkName->addBean($rhs);
             //RHS only has one bean ever, so we don't need to preload the relationship
             if (isset($rhs->$rhsLinkName))
                 $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
