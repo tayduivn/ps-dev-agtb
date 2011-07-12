@@ -115,6 +115,7 @@ class Link2 {
     {
         $data = $this->relationship->load($this);
         $this->rows = $data['rows'];
+        $this->beans = null;
         $this->loaded = true;
     }
 
