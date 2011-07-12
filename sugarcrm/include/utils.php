@@ -1159,6 +1159,7 @@ function return_module_language($language, $module, $refresh=false)
 	else
 		$mod_strings = $temp_mod_strings;
 
+    $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
     sugar_cache_put($cache_key, $return_value);
 	return $return_value;
 }
