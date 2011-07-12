@@ -93,7 +93,7 @@ class InsideViewLogicHook {
                           'crm_lead_firstname'=>'first_name',
                           'crm_lead_lastname'=>'last_name',
                           'crm_lead_title'=>'title',
-                          'crm_account_id'=>'account_id',
+                          'crm_account_id'=>'id',
                           'crm_account_name'=>'account_name',
                           'crm_account_website'=>'website',
         );
