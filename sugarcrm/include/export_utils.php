@@ -414,6 +414,9 @@ function generateSearchWhere($module, $query) {//this function is similar with f
 
             }
 
+            if(!isset($field_order_array[strtolower($name)]))
+                return $newReorder;
+
             //lets iterate through and create a reordered temporary array using
             //the  newly formatted copy of passed in array
             $temp_result_arr = array();
