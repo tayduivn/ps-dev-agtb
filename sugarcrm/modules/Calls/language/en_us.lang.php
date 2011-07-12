@@ -111,6 +111,7 @@ $mod_strings = array (
     //for Export
     'LBL_EXPORT_DATE_START' => 'Start Date and Time',
     'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
+    'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
 );
 
 
