@@ -136,10 +136,13 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
 
     public function toArray()
     {
-        
-        $entry = array('first' => '', 'last' => '', 'full' => '', 'id' => '', 'birthday' => '', 'phones' => array(),
-                       'title' => '', 'account_name' => '', 'addresses' => array(), 'emails' => array(), 'notes' => '');
-        
+        $entry = array( 'first_name' => '', 'last_name' => '', 'full_name' => '', 'id' => '', 'birthday' => '','email1' => '','email2' => '',
+                        'title' => '', 'account_name' => '', 'notes' => '', 'phone_main' => '','phone_mobile' => '',
+                        'alt_address_street' => '','alt_address_postcode' => '','alt_address_city' => '','alt_address_state' => '','alt_address_country' => '',
+                        'primary_address_street' => '','primary_address_postcode' => '','primary_address_city' => '','primary_address_state' => '','primary_address_country' => '',
+                        'team_name' => '', 'assigned_user_name' => ''
+                        );
+
         if($this->_names != null)
             $entry = array_merge($entry, $this->_names->toArray() );
 
@@ -149,7 +152,6 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
             $linkRel = $linkEntry->getRel();
             if( $linkRel != null && $linkRel == "self" )
             {
-                $entry['self_link'] = $linkEntry->getHref();
                 continue;
             }
         }
@@ -157,21 +159,17 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         //Get addresses
         foreach($this->_addresses as $address)
         {
-            $entry['addresses'][] = $address->toArray();
+            $entry = array_merge($entry, $address->toArray() );
         }
         //Process phones
         foreach($this->_phones as $phoneEntry)
         {
-            $entry['phones'][] = array('number' => $phoneEntry->getNumber() , 'primary' => $phoneEntry->isPrimary(),
-                                       'type' => $phoneEntry->getPhoneType() );
+            $key = "phone_" . $phoneEntry->getPhoneType();
+            $entry[$key] = $phoneEntry->getNumber();
         }
 
         //Process emails
-        foreach($this->_emails as $emailEntry)
-        {
-            $entry['emails'][] = array('email' => $emailEntry->getEmail() , 'primary' => $emailEntry->isPrimary(),
-                                       'type' => $emailEntry->getEmailType() );
-        }
+         $entry = array_merge($entry, $this->getEmailAddresses() );
 
         //Get Notes
         if($this->_content != null)
@@ -194,5 +192,52 @@ class Zend_Gdata_Contacts_ListEntry extends Zend_Gdata_Entry
         return $entry;
     }
 
+    protected function getEmailAddresses()
+    {
+        $results = array();
+        $primaryEmail = $this->getPrimaryEmail();
+        if($primaryEmail !== FALSE)
+            $results['email1'] =  $primaryEmail;
+        else
+        {
+            $nonPrimaryEmail = $this->getNextNonPrimaryEmail();
+            if($nonPrimaryEmail !== FALSE)
+                $results['email1'] = $nonPrimaryEmail;
+            else
+                return array();
+        }
+
+        $secondaryEmail = $this->getNextNonPrimaryEmail();
+        if($secondaryEmail !== FALSE)
+            $results['email2'] = $secondaryEmail;
+        
+        return $results;
+
+    }
+    protected function getPrimaryEmail()
+    {
+        $results = FALSE;
+        foreach($this->_emails as $emailEntry)
+        {
+            if( $emailEntry->isPrimary() )
+                return $emailEntry->getEmail();
+        }
+        return $results;
+    }
+
+    protected function getNextNonPrimaryEmail()
+    {
+        $results = FALSE;
+        foreach($this->_emails as $k => $emailEntry)
+        {
+            if( !$emailEntry->isPrimary() )
+            {
+                $results = $emailEntry->getEmail();
+                unset($this->_emails[$k]);
+                return $results;
+            }
+        }
+        return $results;
+    }
 
 }

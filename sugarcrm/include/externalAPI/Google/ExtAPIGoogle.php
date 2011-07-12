@@ -43,7 +43,7 @@ require_once('Zend/Gdata/Contacts.php');
  */
 class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 	
-    public $supportedModules = array('Documents', 'Notes');
+    public $supportedModules = array('Documents', 'Notes','Import');
     public $authMethod = 'password';
     public $connector = "ext_eapm_google";
 
