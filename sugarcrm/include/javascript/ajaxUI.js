@@ -171,12 +171,16 @@ SUGAR.ajaxUI = {
     {
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
+        var aRegex = /action=([^&]*)/.exec(window.location);
+        var action = aRegex ? aRegex[1] : false;
+        var go = url != null || action == "ajaxui";
         url = url ? url : 'index.php?module=Home&action=index';
-
         YAHOO.util.History.register('ajaxUILoc', url, SUGAR.ajaxUI.go);
         YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
         SUGAR.ajaxUI.hist_loaded = true;
-        SUGAR.ajaxUI.go(url);
+        if (go)
+            SUGAR.ajaxUI.go(url);
+        SUGAR_callsInProgress--;
     },
     print: function()
     {
