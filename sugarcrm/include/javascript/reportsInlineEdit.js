@@ -49,6 +49,9 @@ SUGAR.reportsInlineEdit = function() {
 					option_value = options[i].value;
 				}
 				selected = false;
+                if (option_value == current_value)
+                    selected = true;
+
 				var option_info = new Object();
 				option_info['value'] = option_value;
 				option_info['text'] = option_text;
