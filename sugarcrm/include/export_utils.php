@@ -645,7 +645,7 @@ function generateSearchWhere($module, $query) {//this function is similar with f
     //call this function to retrurn the desired order to display columns for export in.
     //if you pass in an array, it will reorder the array and send back to you.  It expects the array
     //to have the db names as key values, or as labels
-    function get_field_order_mapping($name='',$reorderArr = ''){
+    function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
 
 
         //define the ordering of fields, note that the key value is what is important, and should be the db field name
@@ -654,6 +654,16 @@ function generateSearchWhere($module, $query) {//this function is similar with f
         $field_order_array['contacts'] = array('id'=>'ID', 'first_name' => 'First Name', 'last_name' => 'Last Name', 'salutation' => 'Salutation', 'title' => 'Title', 'department' => 'Department', 'account_name' => 'Account Name', 'email_address' => 'Email Address', 'phone_work' => 'Phone Work', 'phone_mobile' => 'Phone Mobile', 'phone_home' => 'Phone Home', 'phone_fax' => 'Phone Fax', 'phone_other' => 'Phone Other', 'primary_address_street' => 'Primary Address Street', 'primary_address_city' => 'Primary Address City', 'primary_address_state' => 'Primary Address State', 'primary_address_postalcode' => 'Primary Address Postal Code', 'primary_address_country' => 'Primary Address Country', 'alternate_address_street' => 'Alternate Address Street', 'alternate_address_city' => 'Alternate Address City', 'alternate_address_state' => 'Alternate Address State', 'alternate_address_postalcode' => 'Alternate Address Postal Code', 'alternate_address_country' => 'Alternate Address Country', 'description' => 'Description', 'birthdate' => 'Birthdate', 'lead_source' => 'Lead Source', 'campaign_id' => 'campaign_id', 'do_not_call' => 'Do Not Call', 'portal_name' => 'Portal Name', 'portal_active' => 'Portal Active', 'portal_password' => 'Portal Password', 'portal_application' => 'Portal Application', 'reports_to_id' => 'Reports to ID', 'assistant' => 'Assistant', 'assistant_phone' => 'Assistant Phone', 'picture' => 'Picture', 'assigned_user_name' => 'Assigned User Name', 'assigned_user_' => 'Assigned User ID', 'team' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_created' => 'Date Created', '' => 'Date Modified', '' => 'Modified By ID', '' => 'Created By ID', '' => 'Deleted');
         $field_order_array['leads']    = array('id'=>'ID', 'first_name' => 'First Name', 'last_name' => 'Last Name', 'salutation' => 'Salutation', 'title' => 'Title', 'department' => 'Department', 'account_name' => 'Account Name', 'account_description' =>  'Account Description', 'website' =>  'Website', 'email_address' =>  'Email Address', 'phone_mobile' =>  'Phone Mobile', 'phone_work' =>  'Phone Work', 'phone_home' =>  'Phone Home', 'phone_order' =>  'Phone Other', 'phone_fax' =>  'Phone Fax', 'primary_address_street' =>  'Primary Address Street', 'primary_address_city' =>  'Primary Address City', 'primary_address_state' =>  'Primary Address State', 'primary_address_postalcode' =>  'Primary Address Postal Code', 'primary_address_country' =>  'Primary Address Country', 'alternate_address_street' =>  'Alt Address Street', 'alternate_address_city' =>  'Alt Address City', 'alternate_address_state' =>  'Alt Address State', 'alternate_address_postalcode' =>  'Alt Address Postalcode', 'alternate_address_country' =>  'Alt Address Country', 'birthdate' =>  'Birthdate', 'converted' =>  'Converted', 'status' =>  'Status', 'status_description' =>  'Status Description', 'lead_source' =>  'Lead Source', 'lead_source_description' =>  'Lead Source Description', 'campaign_id' =>  'campaign_id', 'referred_by' =>  'Referred By', 'do_not_call' =>  'Do Not Call', 'portal_name' =>  'Portal Name', 'portal_application' =>  'Portal Application', 'reports_to_id' =>  'Reports To ID', 'assistant' =>  'Assistant', 'assistant_phone' =>  'Assistant Phone', 'contact_id' =>  'Contact ID', 'account_id' =>  'Account ID', 'opportunity_id' =>  'Opportunity ID', 'name' =>  'Opportunity Name', 'amount' =>  'Opportunity Amount', 'assigned_user_name' =>  'Assigned User Name', 'assigned_user_id' =>  'Assigned User ID', 'team_name' =>  'Teams', 'team_id' =>  'Team id', 'team_set_id' =>  'Team Set ID', 'date-created' =>  'Date Created', 'date_modified' =>  'Date Modified', 'created_by' =>  'Created By ID', 'modified_user_id' =>  'Modified By ID', 'deleted' =>  'Deleted');
         $field_order_array['opportunities'] = array('id'=>'ID', 'name' => 'Opportunity Name', 'amount' => 'Opportunity Amount', 'currency_id' => 'Currency', 'date_closed' => 'Expected Close Date', 'sales_stage' => 'Sales Stage', 'probability' => 'Probability (%)', 'next_step' => 'Next Step', 'opportunity_type' => 'Opportunity Type', 'account_name' => 'Account Name', 'description' => 'Description', 'amount_usdollar' => 'Amount', 'lead_source' => 'Lead Source', 'campaign_id' => 'campaign_id', 'assigned_user_name' => 'Assigned User Name', 'assigned_user_id' => 'Assigned User ID', 'team_name' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' => 'Date Created', 'date_modified' => 'Date Modified', 'created_by' => 'Created By ID', 'modified_user_id' => 'Modified By ID', 'deleted' => 'Deleted');
+        $field_order_array['notes'] =         array('id'=>'ID', 'name' => 'Name', 'description' => 'Description', 'filename' => 'Attachment', 'parent_type' => 'Parent Type', 'parent_id' => 'Parent ID', 'contact_id' => 'Contact ID', 'portal_flag' => 'Display in Portal?', 'assigned_user_id' => 'assigned_user_id', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' => 'Date Created', 'date_modified' => 'Date Modified',  'created_by' => 'Created By ID', 'modified_user_id' => 'Modified By ID', 'deleted' => 'Deleted' );
+        $field_order_array['bug_tracker'] =   array('id' => 'ID', 'bug_number' => 'Bug Number', 'name' => 'Subject', 'description' => 'Description', 'status' => 'Status', 'type' => 'Type', 'priority' => 'Priority', 'resolution' => 'Resolution', 'work_log' => 'Work Log', 'found_in_release' => 'Found In Release', 'fixed_in_release' => 'Fixed In Release', 'found_in_release_name' => 'Found In Release Name', 'fixed_in_release_name' => 'Fixed In Release', 'product_category' => 'Category', 'source' => 'Source', 'portal_viewable' => 'Portal Viewable', 'system_id' => 'System ID', 'assigned_user_id' => 'Assigned User ID', 'assigned_user_name' => 'Assigned User Name', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
+        $field_order_array['tasks'] =   array('id'=>'ID', 'name'=>'Subject', 'description'=>'Description', 'status'=>'Status', 'date_start'=>'Date Start', 'date_due'=>'Date Due','priority'=>'Priority', 'parent_type'=>'Parent Type', 'parent_id'=>'Parent ID', 'contact_id'=>'Contact ID', 'assigned_user_id'=>'Assigned User ID', 'team_name'=>'Teams', 'team_id'=>'Team id', 'team_set_id'=>'Team Set ID', 'date_entered'=>'Date Created', 'date_modified'=>'Date Modified', 'created_by'=>'Created By ID', 'modified_user_id'=>'Modified By ID', 'deleted'=>'Deleted');
+        $field_order_array['calls'] =   array('id'=>'ID', 'name'=>'Subject', 'description'=>'Description', 'status'=>'Status', 'direction'=>'Direction', 'date_start'=>'Date', 'date_end'=>'Date End', 'duration_hours'=>'Duration Hours', 'duration_minutes'=>'Duration Minutes', 'reminder_time'=>'Reminder Time', 'parent_type'=>'Parent Type', 'parent_id'=>'Parent ID', 'outlook_id'=>'Outlook ID', 'assigned_user_id'=>'Assigned User ID', 'team_name'=>'Teams', 'team_id'=>'Team id', 'team_set_id'=>'Team Set ID', 'date_entered'=>'Date Created', 'date_modified'=>'Date Modified', 'created_by'=>'Created By ID', 'modified_user_id'=>'Modified By ID', 'deleted'=>'Deleted');
+        $field_order_array['meetings'] =array('id'=>'ID', 'name'=>'Subject', 'description'=>'Description', 'status'=>'Status', 'location'=>'Location', 'date_start'=>'Date', 'date_end'=>'Date End', 'duration_hours'=>'Duration Hours', 'duration_minutes'=>'Duration Minutes', 'reminder_time'=>'Reminder Time', 'type'=>'Meeting Type', 'external_id'=>'External ID', 'password'=>'Meeting Password', 'join_url'=>'Join Url', 'host_url'=>'Host Url', 'displayed_url'=>'Displayed Url', 'creator'=>'Meeting Creator', 'parent_type'=>'Related to', 'parent_id'=>'Related to', 'outlook_id'=>'Outlook ID', 'assigned_user_name' => 'Assigned User Name', 'assigned_user_id' => 'Assigned User ID', 'team_name' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' => 'Date Created', 'date_modified' => 'Date Modified', 'created_by' => 'Created By ID', 'modified_user_id' => 'Modified By ID', 'deleted' => 'Deleted');
+
+        $fields_to_exclude = array();
+        $fields_to_exclude['accounts'] = array('account_name');
+        $fields_to_exclude['notes'] = array('first_name','last_name', 'file_mime_type','embed_flag');
+        $fields_to_exclude['tasks'] = array('date_start_flag', 'date_due_flag');
 
         //of array is passed in for reordering, process array
         if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
@@ -674,6 +684,16 @@ function generateSearchWhere($module, $query) {//this function is similar with f
             $temp_result_arr = array();
             foreach($field_order_array[strtolower($name)] as $fk=> $fv){
 
+                //skip id fields as they are inserted in second place
+                if($fk == 'id') continue;
+
+                //if a csv file begins with ID, Excel thinks of it as a SYLK file and will not open the file.
+                //We need to make sure ID is the second column for each mapping
+                 if(count($temp_result_arr) === 1 ){
+                    $temp_result_arr['id'] = $newReorder['id'];
+                    unset($newReorder['id']);
+                }
+
                 //if the value exists as a key in the passed in array, add to temp array and remove from reorder array.
                 //Do not force into the temp array as we don't want to violate acl's
                 if(array_key_exists($fk,$newReorder)){
@@ -688,11 +708,15 @@ function generateSearchWhere($module, $query) {//this function is similar with f
                 $temp_result_arr[$nrk] = $nrv;
             }
 
-                //Accounts has a duplicate field in the query, name and account_name are the same field, with account_name being the alias
-                if ($name=='accounts'){
-                    unset($temp_result_arr['account_name']);
-                }
 
+            if($exclude){
+                //Some arrays have values we wish to exclude
+                if (isset($fields_to_exclude[strtolower($name)])){
+                    foreach($fields_to_exclude[strtolower($name)] as $exclude_field){
+                        unset($temp_result_arr[$exclude_field]);
+                    }
+                }
+            }
 
             //return temp ordered list
             return $temp_result_arr;
