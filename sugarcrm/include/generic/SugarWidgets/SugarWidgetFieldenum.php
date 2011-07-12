@@ -126,7 +126,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
         $str = "<div id='$div_id'>".$cell;
 
         global $sugar_config;
-        if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit']) {
+        if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit'] && !empty($record)) {
             $str .= "&nbsp;" .SugarThemeRegistry::current()->getImage("edit_inline","border='0' alt='Edit Layout' align='bottom' onClick='SUGAR.reportsInlineEdit.inlineEdit(\"$div_id\",\"$cell\",\"$module\",\"$record\",\"$field_name\",\"$field_type\");'");
         }
         $str .= "</div>";
