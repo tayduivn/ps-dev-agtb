@@ -71,6 +71,21 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
         //BEGIN SUGARCRM flav=pro ONLY
 		$str .= " <a href=\"#\" data-record=$record data-module=$module class=\"quickEdit\"' ><img border=\"0\" src=\"themes/Sugar/images/edit_inline.png\"></a>";
         //END SUGARCRM flav=pro ONLY
+
+
+        global $sugar_config;
+        if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit']) {
+            $div_id = "$module&$record&$name";
+            $str = "<div id='$div_id'><a target='_blank' href=\"index.php?action=DetailView&module=$module&record=$record\">";
+            $value = $this->displayListPlain($layout_def);
+            $str .= $value;
+            $field_name = $layout_def['name'];
+            $field_type = $field_def['type'];
+            $str .= "</a>";
+            if ($field_name == 'name')
+                $str .= "&nbsp;" .SugarThemeRegistry::current()->getImage("edit_inline","border='0' alt='Edit Layout' align='bottom' onClick='SUGAR.reportsInlineEdit.inlineEdit(\"$div_id\",\"$value\",\"$module\",\"$record\",\"$field_name\",\"$field_type\");'");
+            $str .= "</div>";
+        }
 		return $str;
 	}
 
