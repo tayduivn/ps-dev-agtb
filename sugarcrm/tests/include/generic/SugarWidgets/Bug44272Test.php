@@ -11,6 +11,12 @@ var $account;
 	
 public function setUp()
 {
+    $beanList = array();
+    $beanFiles = array();
+    require('include/modules.php');
+    $GLOBALS['beanList'] = $beanList;
+    $GLOBALS['beanFiles'] = $beanFiles;
+    
 	$this->account = SugarTestAccountUtilities::createAccount();
 }	
 
@@ -28,7 +34,7 @@ public function testSugarWidgetSubpanelTopButtonQuickCreate()
 
 	$subpanel_definitions = new SubPanelDefinitions(new Contact());
 	$contactSubpanelDef = $subpanel_definitions->load_subpanel('contacts');
-	
+
 	$subpanel = new SubPanel('Accounts', $this->account->id, 'contacts', $contactSubpanelDef, 'Accounts');
 	$defines['subpanel_definition'] = $subpanel->subpanel_defs;
 	
