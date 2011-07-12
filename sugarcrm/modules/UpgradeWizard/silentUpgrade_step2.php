@@ -523,6 +523,14 @@ if($origVersion < '610' && function_exists('upgrade_connectors'))
    upgrade_connectors($path);
 }
 
+// Enable the InsideView connector by default
+if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
+    logThis("Looks like we need to enable the InsideView connector\n",$path);
+    upgradeEnableInsideViewConnector($path);
+}
+
+
+
 //bug: 36845 - ability to provide global search support for custom modules
 if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
    logThis('Add global search for custom modules start .', $path);
