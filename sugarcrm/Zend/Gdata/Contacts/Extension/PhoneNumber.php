@@ -28,7 +28,7 @@ class Zend_Gdata_Contacts_Extension_PhoneNumber extends Zend_Gdata_Extension
     protected $_rootNamespace = 'gd';
     protected $_rootElement = 'phoneNumber';
     protected $_isPrimaryNumber = FALSE;
-    protected $_phoneType = null;
+    protected $_phoneType = 'main';
 
     /**
      * Constructs a new Zend_Gdata_Contacts_Extension_Name object.

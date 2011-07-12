@@ -34,7 +34,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Import/ImportMapOther.php');
+require_once('modules/Import/maps/ImportMapOther.php');
 
 class ImportMapSalesforce extends ImportMapOther
 {

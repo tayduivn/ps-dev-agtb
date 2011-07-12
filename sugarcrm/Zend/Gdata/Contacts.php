@@ -47,6 +47,7 @@ class Zend_Gdata_Contacts extends Zend_Gdata
     const DEFAULT_MAJOR_PROTOCOL_VERSION = 3;
 
     protected $maxResults = 10;
+    protected $startIndex = 1;
     /**
      * Namespaces used for Zend_Gdata_Calendar
      *
@@ -81,6 +82,7 @@ class Zend_Gdata_Contacts extends Zend_Gdata
     {
         $query = new Zend_Gdata_Query(self::CONTACT_FEED_URI);
         $query->maxResults = $this->maxResults;
+        $query->startIndex = $this->startIndex;
         return parent::getFeed($query,'Zend_Gdata_Contacts_ListFeed');
     }
 
@@ -104,6 +106,17 @@ class Zend_Gdata_Contacts extends Zend_Gdata
     public function setMaxResults($maxResults)
     {
         $this->maxResults = $maxResults;
+    }
+
+    /**
+     * Set the start index.
+     *
+     * @param  $value
+     * @return void
+     */
+    public function setStartIndex($value)
+    {
+        $this->startIndex = $value;
     }
 
 }
