@@ -4,6 +4,7 @@
 .settings/
 .idea
 build/rome/builds/
+build
 sugarcrm/config_si.php
 *~
 translations/
