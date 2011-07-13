@@ -3366,7 +3366,7 @@ SUGAR.searchForm = function() {
                     continue;
                 }
                 
-                if ( typeof(elem.type) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
+                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
                     continue;
                 }
 
