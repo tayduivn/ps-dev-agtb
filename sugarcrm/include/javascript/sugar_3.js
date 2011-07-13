@@ -93,6 +93,17 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
+//rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
+if (typeof new Array().indexOf == "undefined") {
+  Array.prototype.indexOf = function (obj, start) {
+    for (var i = (start || 0); i < this.length; i++) {
+      if (this[i] == obj) {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
 
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
@@ -3344,7 +3355,7 @@ SUGAR.searchForm = function() {
 			}
 		},
         // This function is here to clear the form, instead of "resubmitting it
-		clear_form: function(form) {
+		clear_form: function(form, skipElementNames) {
             var elemList = form.elements;
             var elem;
             var elemType;
@@ -3352,6 +3363,10 @@ SUGAR.searchForm = function() {
             for( var i = 0; i < elemList.length ; i++ ) {
                 elem = elemList[i];
                 if ( typeof(elem.type) == 'undefined' ) {
+                    continue;
+                }
+                
+                if ( typeof(elem.type) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
                     continue;
                 }
 
