@@ -132,9 +132,11 @@ $mod_strings = array (
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
     'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+
     'LBL_EXPORT_DATE_START' => 'Start Date and Time',
-    'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
-    'LBL_EXPORT_PARENT_ID' => 'Related To ID',
+    'LBL_EXPORT_DATE_END' => 'End Date and Time',
+    'LBL_EXPORT_PARENT_TYPE' => 'Related Type',
+    'LBL_EXPORT_PARENT_ID' => 'Parent ID',
     'LBL_EXPORT_REMINDER_TIME' =>'Reminder Time (in minutes)',
 );
 ?>

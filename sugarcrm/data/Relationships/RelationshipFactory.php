@@ -71,8 +71,14 @@ class SugarRelationshipFactory {
                 }
                 break;
             case "one-to-one":
-                require_once("data/Relationships/One2OneRelationship.php");
-                return new One2OneRelationship($def);
+                if (empty($def['true_relationship_type'])){
+                    require_once("data/Relationships/One2OneBeanRelationship.php");
+                    return new One2OneBeanRelationship($def);
+                }
+                else {
+                    require_once("data/Relationships/One2OneRelationship.php");
+                    return new One2OneRelationship($def);
+                }
                 break;
         }
 

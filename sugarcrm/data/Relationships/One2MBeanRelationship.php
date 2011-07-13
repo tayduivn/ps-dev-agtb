@@ -52,15 +52,20 @@ class One2MBeanRelationship extends One2MRelationship
             //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
             SugarRelationship::addToResaveList($rhs);
 
-            if (isset($lhs->$lhsLinkName))
-                $lhs->$lhsLinkName->addBean($rhs);
-            //RHS only has one bean ever, so we don't need to preload the relationship
-            if (isset($rhs->$rhsLinkName))
-                $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
+            $this->updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName);
 
             $this->callAfterAdd($lhs, $rhs);
             $this->callAfterAdd($rhs, $lhs);
         }
+    }
+
+    protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
+    {
+        if (isset($lhs->$lhsLinkName))
+            $lhs->$lhsLinkName->addBean($rhs);
+        //RHS only has one bean ever, so we don't need to preload the relationship
+        if (isset($rhs->$rhsLinkName))
+            $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
     }
 
     protected function updateFields($lhs, $rhs, $additionalFields)
