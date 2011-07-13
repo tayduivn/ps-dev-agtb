@@ -61,4 +61,18 @@ class RetrieveEmailFieldsTest extends SOAPTestCase
         $this->assertEquals('test@test.com', $result['entry_list'][0]['name_value_list'][1]['value']);
     }
 
+    public function testGetEmailModuleFields()
+    {
+       $this->_login();
+
+        $result = $this->_soapClient->call('get_module_fields',array('session'=>$this->_sessionId,"module_name" => 'Emails'));
+		$foundFromAddrsName = false;
+        foreach($result['module_fields'] as $field){
+            if($field['name'] == 'from_addr_name'){
+                $foundFromAddrsName = true;
+            }
+        }
+        $this->assertTrue($foundFromAddrsName, "Did not find from_addr_name");
+    }
+
 }
