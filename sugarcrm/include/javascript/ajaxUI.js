@@ -69,7 +69,8 @@ SUGAR.ajaxUI = {
         if(typeof(SUGAR.config.overrideAjaxBannedModules) != 'undefined'){
             bannedModules = SUGAR.config.overrideAjaxBannedModules;
         }
-        return bannedModules.indexOf(module) == -1;
+        
+        return SUGAR.util.arrayIndexOf(bannedModules, module) == -1;
     },
 
     loadContent : function(url, params)
