@@ -228,6 +228,8 @@ class Relationship extends SugarBean {
 		if (file_exists($filename)) {
 			unlink($filename);	
 		}
+        require_once("data/Relationships/RelationshipFactory.php");
+        SugarRelationshipFactory::deleteCache();
 	}
 	
 		
