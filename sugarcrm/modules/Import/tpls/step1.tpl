@@ -79,6 +79,7 @@
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
                                 </td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr id="ext_source_tr">
                                 <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
                   &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
@@ -103,6 +104,7 @@
                                     <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
                                 </td>
                             </tr>
+                            {* //END SUGARCRM flav=pro ONLY *}
                             </table>
                         </td>
                     </tr>

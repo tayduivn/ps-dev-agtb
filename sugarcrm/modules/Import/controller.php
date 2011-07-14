@@ -157,8 +157,14 @@ class ImportController extends SugarController
     
 	function action_Step1()
     {
-        if($this->importModule == 'Administration' || $this->bean instanceof Person )
+        if( $this->importModule == 'Administration'
+           //BEGIN SUGARCRM flav=pro ONLY
+            || $this->bean instanceof Person
+            //END SUGARCRM flav=pro ONLY
+        )
+        {
     		$this->view = 'step1';
+        }
         else
             $this->view = 'step2';
     }
