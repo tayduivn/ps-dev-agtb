@@ -207,7 +207,7 @@ function handleRedirect($return_id='', $return_module='')
             // END Meeting Integration
         } 
 		// if we create a new record "Save", we want to redirect to the DetailView
-		else if($_REQUEST['action'] == "Save" 
+		else if(isset($_REQUEST['action']) && $_REQUEST['action'] == "Save" 
 			&& $_REQUEST['return_module'] != 'Activities'
 //BEGIN SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'WorkFlow'  

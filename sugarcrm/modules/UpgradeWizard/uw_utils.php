@@ -591,17 +591,12 @@ function deleteCache(){
 	//Clean modules from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles,true);
+		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
 		foreach($allModFiles as $file)
 		{
 	       	if(file_exists($file))
 	       	{
-	       		if(is_dir($file))
-	       		{
-				  rmdir_recursive($file);
-	       		} else {
-	       		  unlink($file);
-	       		}
+	       	   unlink($file);
 	       	}
 		}
 	}
@@ -5651,10 +5646,24 @@ function upgradeEnableInsideViewConnector($path='')
     }
  
     require_once('include/connectors/sources/SourceFactory.php');
-    $source = SourceFactory::getSource('ext_rest_insdeview');
+    $source = SourceFactory::getSource('ext_rest_insideview');
 
     // $mapping is brought in from the mapping.php file above
     $source->saveMappingHook($mapping);
+
+    require_once('include/connectors/utils/ConnectorUtils.php');
+    ConnectorUtils::installSource('ext_rest_insideview');
+
+    // Now time to set the various modules to active, because this part ignores the default config
+    require(CONNECTOR_DISPLAY_CONFIG_FILE);
+    // $modules_sources come from that config file
+    foreach ( $source->allowedModuleList as $module ) {
+        $modules_sources[$module]['ext_rest_insideview'] = 'ext_rest_insideview';
+    }
+    if(!write_array_to_file('modules_sources', $modules_sources, CONNECTOR_DISPLAY_CONFIG_FILE)) {
+        //Log error and return empty array
+        logThis("Cannot write \$modules_sources to " . CONNECTOR_DISPLAY_CONFIG_FILE,$path);
+    }
 
     logThis('End upgradeEnableInsideViewConnector', $path);
 

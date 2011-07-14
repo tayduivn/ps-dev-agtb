@@ -90,7 +90,8 @@ function rmdir_recursive( $path ){
     $status = true;
 
     $d = dir( $path );
-    while( $f = $d->read() ){
+    
+    while(($f = $d->read()) !== false){
         if( $f == "." || $f == ".." ){
             continue;
         }
