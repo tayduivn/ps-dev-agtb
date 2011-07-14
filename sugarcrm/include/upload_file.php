@@ -443,7 +443,7 @@ class UploadStream
                 self::$upload_dir = "upload";
             }
             if(!file_exists(self::$upload_dir)) {
-                mkdir(self::$upload_dir, 0755, true);
+                sugar_mkdir(self::$upload_dir, 0755, true);
             }
         }
         return self::$upload_dir;
@@ -468,7 +468,7 @@ class UploadStream
     {
         $path = self::path($path);
         if(!is_dir($path)) {
-           return mkdir($path, 0755, true);
+           return sugar_mkdir($path, 0755, true);
         }
         return true;
     }
