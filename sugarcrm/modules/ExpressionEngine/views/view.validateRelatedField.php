@@ -19,11 +19,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('include/MVC/View/views/view.ajax.php');
-require_once('include/Expressions/Expression/Parser/Parser.php');
 require_once("data/BeanFactory.php");
-class ViewExecFunction extends ViewAjax
+
+class ViewValidateRelatedField extends ViewAjax
 {
-    var $vars = array("tmodule", "id", "params", "function");
+    var $vars = array("tmodule", "link", "related");
 
     function __construct()
     {
@@ -37,12 +37,29 @@ class ViewExecFunction extends ViewAjax
 
     }
 
- 	function display() {
-        //First load the primary bean
-        $focus = BeanFactory::getBean($this->tmodule, $this->id);
+    function display() {
+        //First, create a dummy bean to access the relationship info
+        $focus = BeanFactory::newBean($this->tmodule);
+        $focus->id = create_guid();
+        //Next, figure out what the related module is
+        $linkName = $this->link;
+        if(!$focus->load_relationship($linkName)){
+            echo "invalid link";
+            return;
+        }
+        $relModule = $focus->$linkName->getRelatedModuleName();
+        //Now get the field info for the related field
+        $relBean = BeanFactory::newBean($relModule);
 
-        $params = implode(",", json_decode(html_entity_decode($this->params)));
-        $result = Parser::evaluate("{$this->function}($params)", $focus)->evaluate();
-        echo json_encode($result);
+        //First check if the field exists
+        if(!isset($relBean->field_defs[$this->related]) || !is_array($relBean->field_defs[$this->related]))
+        {
+            echo(json_encode("unknown field"));
+        }
+        //Otherwise, send it to the formula builder to evaluate further
+        else
+        {
+            echo json_encode($relBean->field_defs[$this->related]);
+        }
     }
 }

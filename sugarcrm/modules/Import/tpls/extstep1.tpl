@@ -237,6 +237,13 @@ ProcessESImport = new function()
 }
 enableQS(false);
 
+
+document.getElementById('goback').onclick = function(){
+    document.getElementById('extstep1').to_pdf.value = '';
+    document.getElementById('extstep1').action.value = 'step1';
+    return true;
+}
+
 document.getElementById('importnow').onclick = function(){
 
     if( ImportView.validateMappings() )

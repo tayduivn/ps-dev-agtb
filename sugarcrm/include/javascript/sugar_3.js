@@ -4353,3 +4353,13 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
 	link.style.display = 'none';
 }
 
+SUGAR.util.arrayIndexOf = function(arr, val, start) {
+    if (typeof arr.indexOf == "function")
+        return arr.indexOf(val, start);
+    for (var i = (start || 0), j = arr.length; i < j; i++) {
+        if (arr[i] === val) {
+            return i;
+        }
+    }
+    return -1;
+};
