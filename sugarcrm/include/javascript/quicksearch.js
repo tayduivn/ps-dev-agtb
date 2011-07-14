@@ -164,14 +164,17 @@ function enableQS(noReload){
 	                	        	   //bug: 30823 - remove the apostrophe
 	                	        	   var displayValue = data[i].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
 	                	        	   document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value = displayValue;
+                                       SUGAR.util.callOnChangeListers(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]]);
 	                	           }
 	                	       }
-	                    	}		                    	
+	                    	}
+                            SUGAR.util.callOnChangeListers(this._elTextbox);
 	                    },
 	                    clearFields : function() {
 	                    	for (var key in this.qs_obj.field_list) {
 	                    	    if (document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]]){
                 	        	    document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]].value = "";
+                                    SUGAR.util.callOnChangeListers(document.forms[this.qs_obj.form].elements[this.qs_obj.populate_list[key]]);
                 	            }
 	                    	}
 							this.oldValue = "";

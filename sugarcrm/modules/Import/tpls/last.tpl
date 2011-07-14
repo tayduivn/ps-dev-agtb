@@ -67,7 +67,7 @@ div.resultsTable {
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
     <tr>
         <td align="left" style="padding-bottom: 2px;">
-            {if !$noSuccess}
+            {if $showUndoButton}
                 <input title="{$MOD.LBL_UNDO_LAST_IMPORT}" accessKey="" class="button"
                     type="submit" name="undo" id="undo" value="  {$MOD.LBL_UNDO_LAST_IMPORT}  ">
             {/if}
