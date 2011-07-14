@@ -64,7 +64,7 @@
                                     <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_STEP_MODULE}&nbsp;</h3></td>
                                 </tr>
                                 <tr>
-                                    <td><select tabindex='4' name='import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
+                                    <td><select tabindex='4' name='admin_import_module' id='admin_import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
                                 </tr>
                                 <tr>
                                     <td align="left" scope="row">&nbsp;</td>

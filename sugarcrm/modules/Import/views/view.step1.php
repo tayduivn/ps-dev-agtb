@@ -62,7 +62,9 @@ class ImportViewStep1 extends ImportView
         //If we are coming from the admin link, get the module list.
         if($showModuleSelection)
         {
-            $importableModulesOptions = get_select_options_with_id($this->getImportableModules(), '');
+            $tmpImportable = $this->getImportableModules();
+            $importableModulesOptions = get_select_options_with_id($tmpImportable, '');
+            $this->ss->assign("IMPORT_MODULE", key($tmpImportable));
         }
         else
         {
@@ -219,7 +221,12 @@ YAHOO.util.Event.onDOMReady(function(){
         document.location = url;
     }
 
+    function setImportModule()
+    {
+        document.getElementById('importstep1').import_module.value = document.getElementById('admin_import_module').value;
+    }
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+    YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 
 
     oButtonGroup.subscribe('checkedButtonChange', function(e)
