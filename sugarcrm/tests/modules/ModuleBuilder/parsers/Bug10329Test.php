@@ -50,15 +50,18 @@ class Bug10329Test extends Sugar_PHPUnit_Framework_TestCase
 	 
     public function setUp()
     {
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;    	
     	$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     	require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
-		$this->_parser = ParserFactory::getParser('editview','Accounts','');
+		$this->_parser = ParserFactory::getParser('EditView','Accounts');
     }
 
     public function tearDown()
 	{
-		unset($GLOBALS['app_list_strings']);
-		unset($this->_parser);
+		//unset($GLOBALS['app_list_strings']);
+		//unset($this->_parser);
 	}
 
     public function testTranslateLabel()
