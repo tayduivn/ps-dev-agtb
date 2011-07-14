@@ -51,6 +51,10 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
 	        array('Ert.F.Suu.-PA@pumpaudio.com',true),
 	        // For Bug 23202
 	        array('test--user@example.com',true),
+	        // For Bug 42403
+	        array('test@t--est.com',true),
+	        // For Bug 42404
+	        array('t.-est@test.com',true),
 	        );
 	}
     
@@ -61,6 +65,8 @@ class SugarEmailAddressRegexTest extends Sugar_PHPUnit_Framework_TestCase
      * @ticket 44473
      * @ticket 13018
      * @ticket 23202
+     * @ticket 42403
+     * @ticket 42404
      * @dataProvider providerEmailAddressRegex
      */
 	public function testEmailAddressRegex($email, $valid) 
