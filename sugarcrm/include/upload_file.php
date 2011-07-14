@@ -461,7 +461,13 @@ class UploadStream
 
     public static function path($path)
     {
-        return self::getDir()."/".substr($path, strlen(self::STREAM_NAME)+3); // cut off upload://
+    	$path = substr($path, strlen(self::STREAM_NAME)+3); // cut off upload://
+    	$path = str_replace("\\", "/", $path); // canonicalize path
+    	if($path == ".." || substr($path, 0, 3) == "../" || substr($path, -3, 3) == "/.." || strstr($path, "/../")) {
+    		$GLOBALS['log']->fatal("Invalid uploaded file name supplied: $path");
+    		return null;
+    	}
+        return self::getDir()."/".$path;
     }
 
     public static function ensureDir($path, $writable = true)

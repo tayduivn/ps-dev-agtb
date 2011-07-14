@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/Import/sources/ImportFile.php');
 require_once 'modules/Import/ImportFileSplitter.php';
 require_once 'modules/Import/ImportCacheFiles.php';
@@ -34,14 +34,14 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    	$this->_goodFile = SugarTestImportUtilities::createFile();
+    	$this->_goodFile = SugarTestImportUtilities::createFile(2000, 3);
 		$this->_badFile  = ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis");
 		$this->_whiteSpaceFile  = SugarTestImportUtilities::createFileWithWhiteSpace();
     }
 
     public function tearDown()
     {
-        SugarTestImportUtilities::removeAllCreatedFiles();
+  //      SugarTestImportUtilities::removeAllCreatedFiles();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
@@ -63,8 +63,8 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
         $importFileSplitter->splitSourceFile(',','"');
 
-        $this->assertEquals($importFileSplitter->getRecordCount(),2000);
-        $this->assertEquals($importFileSplitter->getFileCount(),2);
+        $this->assertEquals(2000, $importFileSplitter->getRecordCount());
+        $this->assertEquals(2, $importFileSplitter->getFileCount());
     }
 
     public function testSplitSourceFileNoEnclosure()
@@ -72,8 +72,8 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
         $importFileSplitter->splitSourceFile(',','');
 
-        $this->assertEquals($importFileSplitter->getRecordCount(),2000);
-        $this->assertEquals($importFileSplitter->getFileCount(),2);
+        $this->assertEquals(2000, $importFileSplitter->getRecordCount());
+        $this->assertEquals(2, $importFileSplitter->getFileCount());
     }
 
     public function testSplitSourceFileWithHeader()
@@ -81,8 +81,8 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
         $importFileSplitter->splitSourceFile(',','"',true);
 
-        $this->assertEquals($importFileSplitter->getRecordCount(),1999);
-        $this->assertEquals($importFileSplitter->getFileCount(),2);
+        $this->assertEquals(1999, $importFileSplitter->getRecordCount());
+        $this->assertEquals(2, $importFileSplitter->getFileCount());
     }
 
     public function testSplitSourceFileWithThreshold()
@@ -90,8 +90,8 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
         $importFileSplitter = new ImportFileSplitter($this->_goodFile,500);
         $importFileSplitter->splitSourceFile(',','"');
 
-        $this->assertEquals($importFileSplitter->getRecordCount(),2000);
-        $this->assertEquals($importFileSplitter->getFileCount(),4);
+        $this->assertEquals(2000, $importFileSplitter->getRecordCount());
+        $this->assertEquals(4, $importFileSplitter->getFileCount());
     }
 
     public function testGetSplitFileName()
@@ -111,7 +111,7 @@ class ImportFileSplitterTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $splitter = new ImportFileSplitter($this->_whiteSpaceFile);
         $splitter->splitSourceFile(',',' ',false);
-        
+
         $this->assertEquals(
             trim(file_get_contents("{$this->_whiteSpaceFile}-0")),
             trim(file_get_contents("{$this->_whiteSpaceFile}"))

@@ -35,7 +35,7 @@ class SugarTestImportUtilities
         self::removeAllCreatedFiles();
     }
 
-    public static function createFile($lines = 2000,$columns = 3, $dir = 'upload_dir')
+    public static function createFile($lines = 2000,$columns = 3)
     {
 		$filename = ImportCacheFiles::getImportDir().'/test'. uniqid();
         $fp = fopen($filename,"w");
