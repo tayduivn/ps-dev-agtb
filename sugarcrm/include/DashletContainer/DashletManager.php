@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /**
- * The DashletManager is a way for searching for Dashlets installed on the current system as well as providing a method for accessing 
+ * The DashletManager is a way for searching for Dashlets installed on the current system as well as providing a method for accessing
  * a specific Dashlets information. It also allows for instantiating an instance of a Dashlet.
  * @author mitani
  *
@@ -34,9 +34,9 @@ class DashletManager
 	 * All methods should be called statically prevent instantiation of this class
 	 */
 	private function __construct()
-	{	
+	{
 	}
-	
+
 	/**
 	 * Allows for searching for a specific dashlet available on the installation to add to a given layout. Search may filter on name, category and type
 	 * Returns an array in the format
@@ -52,18 +52,18 @@ class DashletManager
 	 * @param string $type - type of dashlet to search for Standard, FocusBean by default it searches for both. Acceptable values: standard, bean, both
 	 * @static
 	 * @return Associative Array containing search results keyed by dashlet id
-	 * 
+	 *
 	 */
 	public static function search(
-	    $name = null, 
-	    $module = null, 
-	    $category = null, 
+	    $name = null,
+	    $module = null,
+	    $category = null,
 	    $type = null)
 	{
 	}
-	
+
 	/**
-	 * Provides information for a given dashlet in the form of 
+	 * Provides information for a given dashlet in the form of
 	 * array(
 	 * 		'name'=> dashlet name
 	 * 		'type'=> dashlet type
@@ -81,9 +81,9 @@ class DashletManager
 	public static function info(
 	    $dashletID
 	    )
-	{	
+	{
 	}
-	
+
 	/**
 	 * Returns an instance of a Dashlet based on the provided DashletID
 	 * @param GUID $dashletID - ID of Dashlet to be instantiated
@@ -91,10 +91,10 @@ class DashletManager
 	 * @param Object $focusBean - the bean used to generate the dashlet (optional)
 	 * @return Dashlet
 	 */
-	
+
 	public static function getDashlet(
 	    $dashletID,
-	    $options = array(), 
+	    $options = array(),
 	    $focusBean = null
 	    )
 	{
@@ -104,16 +104,16 @@ class DashletManager
             $options = (isset(DashletManager::$dashletCache[$dashletID]['options'])) ? DashletManager::$dashletCache[$dashletID]['options'] : array();
         }
         $dashlet = DashletManager::$dashletCache[$dashletID]['class'](rand(0,100000),$options);
-        
+
         return $dashlet;
 	}
-	
-	
+
+
 	public static function getDashletFromSubDef(
-	    $subdefID, 
+	    $subdefID,
 	    $focusBean
 	    )
-	{		
+	{
         if(empty(DashletManager::$dashDefs[$focusBean->module_dir])){
             $dashletdefs = array();
             $filePath = 'modules/' . $focusBean->module_dir . '/metadata/subdashdefs.php';
@@ -126,7 +126,7 @@ class DashletManager
                 DashletManager::$dashDefs[$focusBean->module_dir] = $dashletdefs;
             }
         }
-        
+
         if(isset($_SESSION['dlets'][$subdefID]))$subdefID = $_SESSION['dlets'][$subdefID];
         if(isset(DashletManager::$dashDefs[$focusBean->module_dir]['dashlets'][$subdefID])){
             $dashID = DashletManager::$dashDefs[$focusBean->module_dir]['dashlets'][$subdefID]['type'];
@@ -138,21 +138,21 @@ class DashletManager
             throw new Exception('Dashlet Not Found : ' . $subdefID, '4002');
         }
 	}
-	
-	
+
+
 	private static function _loadCache(
 	    $refresh = false
 	    )
 	{
-		if($refresh || !is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
+		if($refresh || !is_file(sugar_cached('dashlets/dashlets.php'))) {
             require_once('include/Dashlets/DashletCacheBuilder.php');
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}
-		
+
 		$dashletsFiles = array();
-		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+		require_once(sugar_cached('dashlets/dashlets.php'));
 		DashletManager::$dashletCache = $dashletsFiles;
-		
+
 	}
 }

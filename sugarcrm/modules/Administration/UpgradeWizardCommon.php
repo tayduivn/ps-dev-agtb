@@ -32,11 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // $Id: UpgradeWizardCommon.php 53409 2010-01-04 03:31:15Z roger $
 
 require_once('include/utils/db_utils.php');
-
 require_once('include/utils/zip_utils.php');
-
-
-
 
 // increase the cuttoff time to 1 hour
 ini_set("max_execution_time", "3600");
@@ -53,9 +49,10 @@ else{
 $form_action = "index.php?module=Administration&view=" . $view . "&action=UpgradeWizard";
 
 
-$base_upgrade_dir       = $sugar_config['upload_dir'] . "/upgrades";
-$base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
-$GLOBALS['subdirs'] = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
+$base_upgrade_dir       = "upload://upgrades";
+$base_tmp_upgrade_dir   = sugar_cached('upgrades/temp');
+
+$GLOBALS['subdirs'] = array('full', 'langpack', 'module', 'patch', 'theme');
 // array of special scripts that are executed during (un)installation-- key is type of script, value is filename
 
 if(!defined('SUGARCRM_PRE_INSTALL_FILE'))
@@ -76,7 +73,7 @@ $script_files = array(
 function extractFile( $zip_file, $file_in_zip ){
     global $base_tmp_upgrade_dir;
 	if(empty($base_tmp_upgrade_dir)){
-    	$base_tmp_upgrade_dir   = $GLOBALS['sugar_config']['upload_dir'] . "upgrades/temp";
+    	$base_tmp_upgrade_dir   = sugar_cached("upgrades/temp");
     }
     $my_zip_dir = mk_temp_dir( $base_tmp_upgrade_dir );
     unzip_file( $zip_file, $file_in_zip, $my_zip_dir );
@@ -90,7 +87,7 @@ function extractManifest( $zip_file ){
 function getInstallType( $type_string ){
     // detect file type
     global $subdirs;
-	
+
     foreach( $subdirs as $subdir ){
         if( preg_match( "#/$subdir/#", $type_string ) ){
             return( $subdir );
@@ -101,7 +98,7 @@ function getInstallType( $type_string ){
 }
 
 function getImageForType( $type ){
-    
+
     $icon = "";
     switch( $type ){
         case "full":
@@ -252,6 +249,6 @@ function getDiffFiles($unzip_dir, $install_file, $is_install = true, $previous_v
 			}//fi
 		}//rof
 	}//fi
-	return $modified_files;		
+	return $modified_files;
 }
 ?>

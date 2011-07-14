@@ -26,19 +26,19 @@ class SugarModule
     protected static $_moduleCache = array();
     //END SUGARCRM flav=sugarmdle ONLY
     protected static $_instances = array();
-    
+
     protected $_moduleName;
-    
+
     public static function get(
         $moduleName
         )
     {
         if ( !isset(self::$_instances[$moduleName]) )
             self::$_instances[$moduleName] = new SugarModule($moduleName);
-            
+
         return self::$_instances[$moduleName];
-    }   
-    
+    }
+
     public function __construct(
         $moduleName
         )
@@ -47,7 +47,7 @@ class SugarModule
         //BEGIN SUGARCRM flav=sugarmdle ONLY
         if ( empty($this->_moduleCache) )
             $this->_buildCache();
-        
+
         // set the default module properties
         if ( isset($this->_moduleCache[$moduleName]['beanName']) )
             $this->beanName = $this->_moduleCache[$moduleName]['beanName'];
@@ -63,7 +63,7 @@ class SugarModule
             $this->parentModule = $this->_moduleCache[$moduleName]['parentModule'];
         //END SUGARCRM flav=sugarmdle ONLY
     }
-    
+
     //BEGIN SUGARCRM flav=sugarmdle ONLY
     public function __get(
         $name
@@ -71,7 +71,7 @@ class SugarModule
     {
         return $this->$name;
     }
-    
+
     protected function _buildCache()
     {
         // before anything, see if this is in external cache before building it again
@@ -80,7 +80,7 @@ class SugarModule
             if ( !empty($this->_moduleCache) )
                 return;
         }
-        
+
         // first, look in the legacy locations
         $moduleList = array();
         $beanList = array();
@@ -93,7 +93,7 @@ class SugarModule
             include('include/modules_override.php');
         if (file_exists('custom/application/Ext/Include/modules.ext.php'))
             include('custom/application/Ext/Include/modules.ext.php');
-        
+
         // convert these arrays to the object values
 		foreach ( $moduleList as $moduleName ) {
 		    if ( isset($beanList[$moduleName]) )
@@ -109,14 +109,14 @@ class SugarModule
             if ( isset($moduleTabMap[$moduleName]) )
                 $this->_moduleCache[$moduleName]['parentModule'] = $moduleTabMap[$moduleName];
 		}
-		
+
 		// now start looking in the new locations
 		$locations = array('modules','custom/modules');
 		foreach ( $locations as $location ) {
             if (sugar_is_dir($location) && $dir = opendir($location)) {
                 while (($moduleDir = readdir($dir)) !== false) {
-                    if ($moduleDir == ".." 
-                            || $moduleDir == "." 
+                    if ($moduleDir == ".."
+                            || $moduleDir == "."
                             || !is_dir($moduleDir)
                             || !is_file("{$location}/{$moduleDir}/moduledef.php")
                             )
@@ -127,12 +127,12 @@ class SugarModule
                 }
             }
         }
-        
+
         // push into external cache
         if ( !inDeveloperMode() )
             sugar_cache_put('sugar_module_cache',$this->_moduleCache);
     }
-    
+
     /**
      * Retrieves a module's language file and returns the array of strings included.
      *
@@ -148,17 +148,17 @@ class SugarModule
         global $mod_strings;
         global $sugar_config;
         global $currentModule;
-    
+
         // Store the current mod strings for later
         $temp_mod_strings = $mod_strings;
         $loaded_mod_strings = array();
         if(empty($language))
             $language = $GLOBALS['current_language'];
         $language_used = $language;
-    
+
         // Bug 21559 - So we can get all the strings defined in the template, refresh
         // the vardefs file if the cached language file doesn't exist.
-        if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $this->_moduleName . '/language/'.$language.'.lang.php') 
+        if(!file_exists(sugar_cached('modules/'. $this->_moduleName . '/language/'.$language.'.lang.php'))
                 && !empty($GLOBALS['beanList'][$this->_moduleName])){
             $object = $GLOBALS['beanList'][$this->_moduleName];
             //BEGIN SUGARCRM flav!=sales ONLY
@@ -168,33 +168,33 @@ class SugarModule
             //END SUGARCRM flav!=sales ONLY
             VardefManager::refreshVardefs($this->_moduleName,$object);
         }
-        
+
         $loaded_mod_strings = LanguageManager::loadModuleLanguage($this->_moduleName, $language,$refresh);
-    
+
         // cn: bug 6048 - merge en_us with requested language
         if($language != $sugar_config['default_language'])
             $loaded_mod_strings = sugarArrayMerge(
                 LanguageManager::loadModuleLanguage($this->_moduleName, $sugar_config['default_language'],$refresh),
                     $loaded_mod_strings
                 );
-        
+
         // If we are in debug mode for translating, turn on the prefix now!
         if($sugar_config['translation_string_prefix']) {
             foreach($loaded_mod_strings as $entry_key=>$entry_value) {
                 $loaded_mod_strings[$entry_key] = $language_used.' '.$entry_value;
             }
         }
-    
+
         $return_value = $loaded_mod_strings;
         if(!isset($mod_strings)){
             $mod_strings = $return_value;
         }
         else
             $mod_strings = $temp_mod_strings;
-    
+
         return $return_value;
     }
-    
+
     /**
      * Retrieves a module's language file and returns the array of list strings included.
      *
@@ -208,58 +208,58 @@ class SugarModule
         global $mod_list_strings;
         global $sugar_config;
         global $currentModule;
-    
+
         $cache_key = "mod_list_str_lang.".$language.$this->_moduleName;
-    
+
         // Check for cached value
         $cache_entry = sugar_cache_retrieve($cache_key);
         if(!empty($cache_entry))
         {
             return $cache_entry;
         }
-    
+
         if(empty($language))
             $language = $GLOBALS['current_language'];
         $language_used = $language;
         $temp_mod_list_strings = $mod_list_strings;
         $default_language = $sugar_config['default_language'];
-    
+
         if($currentModule == $this->_moduleName && isset($mod_list_strings) && $mod_list_strings != null) {
             return $mod_list_strings;
         }
-    
+
         // cn: bug 6351 - include en_us if file langpack not available
         // cn: bug 6048 - merge en_us with requested language
         include("modules/$this->_moduleName/language/en_us.lang.php");
         $en_mod_list_strings = array();
         if($language_used != $default_language)
         $en_mod_list_strings = $mod_list_strings;
-    
+
         if(file_exists("modules/$this->_moduleName/language/$language.lang.php")) {
             include("modules/$this->_moduleName/language/$language.lang.php");
         }
-    
+
         if(file_exists("modules/$this->_moduleName/language/$language.lang.override.php")){
             include("modules/$this->_moduleName/language/$language.lang.override.php");
         }
-    
+
         if(file_exists("modules/$this->_moduleName/language/$language.lang.php.override")){
             echo 'Please Change:<br>' . "modules/$this->_moduleName/language/$language.lang.php.override" . '<br>to<br>' . 'Please Change:<br>' . "modules/$module/language/$language.lang.override.php";
             include("modules/$this->_moduleName/language/$language.lang.php.override");
         }
-    
+
         // cn: bug 6048 - merge en_us with requested language
         $mod_list_strings = sugarArrayMerge($en_mod_list_strings, $mod_list_strings);
-    
+
         // if we still don't have a language pack, then log an error
         if(!isset($mod_list_strings)) {
             $GLOBALS['log']->fatal("Unable to load the application list language file for the selected language($language) or the default language($default_language) for module({$module})");
             return null;
         }
-    
+
         $return_value = $mod_list_strings;
         $mod_list_strings = $temp_mod_list_strings;
-    
+
         sugar_cache_put($cache_key, $return_value);
         return $return_value;
 	}
@@ -275,13 +275,13 @@ class SugarModule
         )
     {
         $focus = self::loadBean();
-        
+
         if ( !$focus )
             return false;
-        
+
         return is_a($focus,$template);
     }
-    
+
     /**
      * Returns the bean object of the given module
      *

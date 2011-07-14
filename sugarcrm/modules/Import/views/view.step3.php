@@ -154,7 +154,7 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("FIRSTROW", base64_encode(serialize($rows[0])));
 
         // Now build template
-        $this->ss->assign("TMP_FILE", $uploadFileName );
+        $this->ss->assign("TMP_FILE", UploadFile::relativeName($uploadFileName) );
         $this->ss->assign("SOURCE", $_REQUEST['source'] );
         $this->ss->assign("TYPE", $_REQUEST['type'] );
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));

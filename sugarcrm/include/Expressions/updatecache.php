@@ -49,7 +49,7 @@ function recursiveParse($dir, $silent = false)
 	if ( !is_dir($dir) )	return;
 	$directory = opendir($dir);
 	if ( !$directory )	return;
-	
+
 	// First get a list of all the files in this directory.
 	$entries = array();
 	while( $entry = readdir($directory) )
@@ -169,11 +169,11 @@ $js_contents .= "});\n\n";
 		foreach ($op_name as $alias)
 		{
 	        //echo the entry
-			if ($silent === false) 
+			if ($silent === false)
 			{
 				echo "<li>($alias) $entry<br>";
 			}
-	
+
 			$contents .= <<<EOQ
 			'$alias' => array(
 						'class'	=>	'$entry',
@@ -182,7 +182,7 @@ $js_contents .= "});\n\n";
 EOQ;
 		}
 	}
-	if ($silent === false) 
+	if ($silent === false)
 	{
 		echo "</ul>";
 	}
@@ -213,8 +213,9 @@ $new_contents .= "?>";
 
 create_cache_directory("Expressions/functionmap.php");
 
+$fmap = sugar_cached("Expressions/functionmap.php");
 // now write the new contents to functionmap.php
-$fh = fopen("cache/Expressions/functionmap.php", 'w');
+$fh = fopen($fmap, 'w');
 fwrite($fh, $new_contents);
 fclose($fh);
 
@@ -222,7 +223,7 @@ fclose($fh);
 // write the functions cache file
 $cache_contents = $contents["javascript"];
 
-require_once('cache/Expressions/functionmap.php');
+require_once $fmap;
 
 $cache_contents .= <<<EOQ
 /**
@@ -261,10 +262,10 @@ $cache_contents = substr($cache_contents, 0, -1);
 $cache_contents .= "};\n";
 
 create_cache_directory("Expressions/functions_cache_debug.js");
-file_put_contents("cache/Expressions/functions_cache_debug.js", $cache_contents);
+file_put_contents(sugar_cached("Expressions/functions_cache_debug.js"), $cache_contents);
 
 
 require_once("jssource/minify_utils.php");
-CompressFiles('cache/Expressions/functions_cache_debug.js', 'cache/Expressions/functions_cache.js');
+CompressFiles(sugar_cached('Expressions/functions_cache_debug.js'), sugar_cached('Expressions/functions_cache.js'));
 if (!$silent) echo "complete.";
 ?>

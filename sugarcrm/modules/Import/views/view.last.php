@@ -49,13 +49,13 @@ class ImportViewLast extends ImportView
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $current_language;
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         // lookup this module's $mod_strings to get the correct module name
-        $module_mod_strings = 
+        $module_mod_strings =
             return_module_language($current_language, $_REQUEST['import_module']);
         $this->ss->assign("MODULENAME",$module_mod_strings['LBL_MODULE_NAME']);
         
@@ -97,7 +97,7 @@ class ImportViewLast extends ImportView
         $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
         $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsWithoutErrorFileName());
         $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
         {
@@ -272,7 +272,7 @@ EOJAVASCRIPT;
      *
      * @return string html code to display button
      */
-    private function _addToProspectListButton() 
+    private function _addToProspectListButton()
     {
         global $app_strings, $sugar_version, $sugar_config, $current_user;
         
@@ -303,23 +303,23 @@ EOJAVASCRIPT;
                 'child_id'=>'id',
                 'link_attribute'=>'prospects',
                 'link_type'=>'default',	 //polymorphic or default
-            )				
+            )
         );
-    
+
         $popup_request_data['passthru_data']['query'] = urlencode($query);
-    
+
         $json = getJSONobj();
-        $encoded_popup_request_data = $json->encode($popup_request_data);	
-    
+        $encoded_popup_request_data = $json->encode($popup_request_data);
+        $script = getVersionedScript('include/SubPanel/SubPanelTiles.js');
         return <<<EOHTML
-<script type="text/javascript" src="include/SubPanel/SubPanelTiles.js?s={$sugar_version}&c={$sugar_config['js_custom_version']}"></script>
+$script
 <input align=right" type="button" name="select_button" id="select_button" class="button"
      title="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      accesskey="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY']}"
      value="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      onclick='open_popup("ProspectLists",600,400,"",true,true,$encoded_popup_request_data,"Single","true");' />
 EOHTML;
-    
+
     }
     //END SUGARCRM flav!=sales ONLY
 }

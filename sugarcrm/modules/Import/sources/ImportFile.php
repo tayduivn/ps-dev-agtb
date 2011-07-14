@@ -43,7 +43,7 @@ class ImportFile extends ImportDataSource
      * Stores whether or not we are deleting the import file in the destructor
      */
     private $_deleteFile;
-    
+
     /**
      * File pointer returned from fopen() call
      */
@@ -84,7 +84,7 @@ class ImportFile extends ImportDataSource
      */
     private $_enclosure;
 
-    
+
     /**
      * Constructor
      *
@@ -99,7 +99,7 @@ class ImportFile extends ImportDataSource
             return false;
         }
 
-        if ( $checkUploadPath && realpath(dirname($filename).'/') != realpath($GLOBALS['sugar_config']['upload_dir']) )
+        if ( $checkUploadPath && UploadStream::path($filename) == null )
         {
             $GLOBALS['log']->fatal("ImportFile detected attempt to access to the following file not within the sugar upload dir: $filename");
             return null;
@@ -107,7 +107,7 @@ class ImportFile extends ImportDataSource
 
         // turn on auto-detection of line endings to fix bug #10770
         ini_set('auto_detect_line_endings', '1');
-        
+
         $this->_fp         = sugar_fopen($filename,'r');
         $this->_sourcename   = $filename;
         $this->_deleteFile = $deleteFile;
@@ -145,10 +145,10 @@ class ImportFile extends ImportDataSource
                unlink($this->_sourcename);
             }
         }
-        
+
         ini_restore('auto_detect_line_endings');
     }
-    
+
     /**
      * Returns true if the filename given exists and is readable
      *
@@ -158,7 +158,7 @@ class ImportFile extends ImportDataSource
     {
     	return !$this->_fp ? false : true;
     }
-    
+
     /**
      * Gets the next row from $_importFile
      *
@@ -167,10 +167,10 @@ class ImportFile extends ImportDataSource
     public function getNextRow()
     {
         $this->_currentRow = FALSE;
-        
-        if (!$this->fileExists()) 
+
+        if (!$this->fileExists())
             return false;
-        
+
         // explode on delimiter instead if enclosure is an empty string
         if ( empty($this->_enclosure) ) {
             $row = explode($this->_delimiter,rtrim(fgets($this->_fp, 8192),"\r\n"));
@@ -186,18 +186,18 @@ class ImportFile extends ImportDataSource
             else
                 return false;
         }
-        
+
         // Bug 26219 - Convert all line endings to the same style as PHP_EOL
         foreach ( $this->_currentRow as $key => $value ) {
             // use preg_replace instead of str_replace as str_replace may cause extra lines on Windows
             $this->_currentRow[$key] = preg_replace("[\r\n|\n|\r]", PHP_EOL, $value);
         }
-            
+
         $this->_rowsCount++;
-        
+
         return $this->_currentRow;
     }
-    
+
     /**
      * Returns the number of fields in the current row
      *
@@ -271,7 +271,7 @@ class ImportFile extends ImportDataSource
         global $locale;
 
         $this->setFpAfterBOM();
-        
+
         //Retrieve a sample set of data
         $rows = array();
 
@@ -401,7 +401,7 @@ class ImportFile extends ImportDataSource
         }
         return $totalCount;
     }
-    
+
     public function loadDataSet($totalItems = 0)
     {
         $currentLine = 0;
@@ -410,7 +410,7 @@ class ImportFile extends ImportDataSource
         //If there's a header don't include it.
         if( $this->hasHeaderRow(FALSE) )
             $this->next();
-        
+
         while( $this->valid() &&  $totalItems > count($this->_dataSet) )
         {
             if($currentLine >= $this->_offset)

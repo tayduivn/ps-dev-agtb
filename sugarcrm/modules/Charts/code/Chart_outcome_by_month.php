@@ -134,7 +134,7 @@ $seps				= array("-", "/");
 $dates				= array($date_start, $date_end);
 $dateFileNameSafe	= str_replace($seps, "_", $dates);
 
-$cache_file_name = $current_user->getUserPrivGuid()."_outcome_by_month_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
+$cache_file_name = sugar_cached("xml/").$current_user->getUserPrivGuid()."_outcome_by_month_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
 
 $GLOBALS['log']->debug("cache file name is: $cache_file_name");
 
@@ -173,7 +173,7 @@ if (empty($_SESSION['obm_ids'])) $_SESSION['obm_ids'] = "";
 </p>
 <?php
 // draw chart
-echo "<p align='center'>".$this->gen_xml($date_start, $date_end, $ids, $sugar_config['tmp_dir'].$cache_file_name, $refresh,$current_module_strings)."</p>";
+echo "<p align='center'>".$this->gen_xml($date_start, $date_end, $ids, $cache_file_name, $refresh,$current_module_strings)."</p>";
 echo "<P align='center'><span class='chartFootnote'>".$current_module_strings['LBL_MONTH_BY_OUTCOME_DESC']."</span></P>";
 
 
@@ -182,8 +182,8 @@ echo "<P align='center'><span class='chartFootnote'>".$current_module_strings['L
 
 
 <?php
-	if (file_exists($sugar_config['tmp_dir'].$cache_file_name)) {
-		$file_date = $timedate->asUser($timedate->fromTimestamp(filemtime($sugar_config['tmp_dir'].$cache_file_name)));
+	if (file_exists($cache_file_name)) {
+		$file_date = $timedate->asUser($timedate->fromTimestamp(filemtime($cache_file_name)));
 	}
 	else {
 		$file_date = '';

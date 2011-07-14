@@ -69,10 +69,7 @@ $colsDropDown = '';
 $relDropDown = '';
 
 
-echo"<script type='text/javascript' src='include/JSON.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}'></script>
-	 <script type='text/javascript' src='modules/Administration/javascript/dbSchema.js'></script>";
-
-
+echo getVersionedScript('include/JSON.js').getVersionedScript('modules/Administration/javascript/dbSchema.js');
 echo "<form name='checkSchema'>
 	    <link rel='stylesheet' type='text/css' href='include/javascript/yui-old/assets/container.css' />
 	   <div  id='checkingDiv' style='display:none''>
@@ -325,11 +322,11 @@ function checkColumnKeysIndices($relationship,$table,$rel_key,&$col_data_type,&$
 
 function checkSchema($execute=false,$return=false){
 
-	
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
-	
+
 	$db = &DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
@@ -502,12 +499,9 @@ function checkSchema($execute=false,$return=false){
 		$db_scan .= "****************************************************************************************************"."\n";
 	}
 
-	$cwd = getcwd();
-
-	mkdir_recursive(clean_path("{$cwd}/{$GLOBALS['sugar_config']['upload_dir']}dbscan"));
-	$dbscan_dir =clean_path("{$cwd}/{$GLOBALS['sugar_config']['upload_dir']}dbscan");
+	$dbscan_dir =sugar_cached("dbscan");
+	mkdir_recursive($dbscan_dir);
 	$dbscan_file =$dbscan_dir.'/schema_inconsistencies.txt';
-	//$fk_schema_file =$schema_dir.'/fkschema.sql';
 	if(file_exists($dbscan_file)) {
 		unlink($dbscan_file);
 	}
@@ -742,8 +736,8 @@ function checkIndexExists($table_name,$column_name){
 
 function getTablesWithRelations(){
 	include ('include/modules.php') ;
-	
-	
+
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 

@@ -37,7 +37,7 @@ function template_cal_tabs($args) {
 	$tabs = array('day', 'week', 'month', 'year', 'shared');
 
 	if($args['view'] != 'day') {
-		echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp_overlib.js') . '"></script>
+		echo '<script type="text/javascript" src="' . getJSPath('cache/include/javascript/sugar_grp_overlib.js') . '"></script>
 			<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>';
 	}
 
