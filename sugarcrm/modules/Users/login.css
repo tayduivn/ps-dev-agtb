@@ -61,8 +61,18 @@ form {
 
 .loginBox {
 /*//BEGIN SUGARCRM flav!=com ONLY*/
-	background-image: url(../../themes/default/images/login-bg.png); 
-	background-repeat: repeat-x;
+	background-image: -moz-linear-gradient(center top, 	#fdfdfd 0%,
+	#e8e8e8 100%
+	);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, #fdfdfd),
+	    color-stop(1, #e8e8e8)
+    );	
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e8e8e8');	
+    
 	border: 1px solid #999999; 
 	background-color: #e8e8e8;
 	-moz-border-radius: 6px;
@@ -89,6 +99,7 @@ form {
 	-webkit-box-shadow:0 0 10px #aaa;
 	border: 1px solid #999;
 	padding: 15px;
-	background:url(../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png) repeat;
+	background-color:rgba(204,204,204,.8);
+	background-color: #cccccc\9;
 	}
 /*//END SUGARCRM flav!=com ONLY*/

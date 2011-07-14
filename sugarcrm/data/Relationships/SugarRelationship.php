@@ -25,6 +25,7 @@ abstract class SugarRelationship
     protected $def;
     protected $lhsLink;
     protected $rhsLink;
+    protected $ignore_role_filter = false;
 
     protected static $beansToResave = array();
 
@@ -142,6 +143,7 @@ abstract class SugarRelationship
 
         $query = "UPDATE {$this->getRelationshipTable()} set $newVals WHERE id='$id'";
 
+        return DBManagerFactory::getInstance()->query($query);
     }
 
     protected function removeRow($where)
@@ -259,7 +261,7 @@ abstract class SugarRelationship
         {
             self::$beansToResave[$bean->module_dir] = array();
         }
-        self::$beansToResave[$bean->module_dir][$bean->module_dir] = $bean;
+        self::$beansToResave[$bean->module_dir][$bean->id] = $bean;
     }
 
     public static function resaveRelatedBeans()

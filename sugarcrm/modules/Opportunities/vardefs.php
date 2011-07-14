@@ -390,6 +390,11 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 				'type' => 'index',
 				'fields' => array('assigned_user_id'),
 			),
+			array(
+				'name' => 'idx_opp_id_deleted',
+				'type' => 'index',
+				'fields' => array('id','deleted'),
+			),
 		),
 
  'relationships' => array (

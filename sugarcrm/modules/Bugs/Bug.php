@@ -197,6 +197,9 @@ class Bug extends SugarBean {
                                 r1.name found_in_release_name,
                                 r2.name fixed_in_release_name,
                                 users.user_name assigned_user_name";
+//BEGIN SUGARCRM flav=pro ONLY
+						 $query .= ", teams.name AS team_name ";
+//END SUGARCRM flav=pro ONLY
                                  if($custom_join){
 									$query .=  $custom_join['select'];
 								}
@@ -209,6 +212,9 @@ class Bug extends SugarBean {
 								LEFT JOIN releases r2 ON bugs.fixed_in_release = r2.id
 								LEFT JOIN users
                                 ON bugs.assigned_user_id=users.id";
+//BEGIN SUGARCRM flav=pro ONLY
+						 $query .= getTeamSetNameJoin('bugs');
+//END SUGARCRM flav=pro ONLY
                                  if($custom_join){
 									$query .=  $custom_join['join'];
 								}

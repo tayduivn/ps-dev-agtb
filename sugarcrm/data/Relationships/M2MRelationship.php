@@ -54,22 +54,38 @@ class M2MRelationship extends SugarRelationship
         }
 
         //Many to many has no additional logic, so just add a new row to the table and notify the beans.
-        $dataToInsert = array(
+        $dataToInsert = $this->getRowToInsert($lhs, $rhs);
+        $dataToInsert = array_merge($dataToInsert, $additionalFields);
+
+        $this->addRow($dataToInsert);
+
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $lhs->$lhsLinkName->addBean($rhs);
+            $rhs->$rhsLinkName->addBean($lhs);
+
+            $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
+            $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+        }
+    }
+
+    protected function getRowToInsert($lhs, $rhs)
+    {
+        $row = array(
             "id" => create_guid(),
             $this->def['join_key_lhs'] => $lhs->id,
             $this->def['join_key_rhs'] => $rhs->id,
             'date_modified' => TimeDate::getInstance()->getNow()->asDb(),
             'deleted' => 0,
         );
-        $dataToInsert = array_merge($dataToInsert, $additionalFields);
 
-        $this->addRow($dataToInsert);
 
-        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-        $rhs->$rhsLinkName->beans[$lhs->id] = $lhs;
+        if (!empty($this->def['relationship_role_column']) && !empty($this->def['relationship_role_column_value']) && !$this->ignore_role_filter )
+        {
+            $row[$this->relationship_role_column] = $this->relationship_role_column_value;
+        }
 
-        $this->callAfterAdd($lhs, $rhs, $lhsLinkName);
-        $this->callAfterAdd($rhs, $lhs, $rhsLinkName);
+        return $row;
     }
 
 
@@ -96,11 +112,14 @@ class M2MRelationship extends SugarRelationship
 
         $this->removeRow($dataToRemove);
 
-        $lhs->$lhsLinkName->load();
-        $rhs->$rhsLinkName->load();
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $lhs->$lhsLinkName->load();
+            $rhs->$rhsLinkName->load();
 
-        $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
-        $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
+            $this->callAfterDelete($lhs, $rhs, $lhsLinkName);
+            $this->callAfterDelete($rhs, $lhs, $rhsLinkName);
+        }
     }
 
     /**
@@ -119,10 +138,9 @@ class M2MRelationship extends SugarRelationship
         while ($row = $db->fetchByAssoc($result))
         {
             $id = $row[$idField];
-            $beans[$id] = BeanFactory::getBean($relatedModule, $id);
             $rows[$id] = $row;
         }
-        return array("beans" => $beans, "rows" => $rows);
+        return array("rows" => $rows);
     }
 
     public function getQuery($link, $params = array())

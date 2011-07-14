@@ -1297,9 +1297,13 @@ function getModuleInFilter(filter) {
 	return selected_module;
 }
 //builds the html for a select 
-function buildSelectHTML(info, showHidden) {
+function buildSelectHTML(info, showHidden, id,onBlur) {
 	var text;
 	text = "<select";
+	if (onBlur)
+		text +=	" onBlur="+onBlur;
+	if (id)
+		text += " id="+id;
 	if (showHidden != null && showHidden) {
 		text = text + " style='display:none'";
 		//text = text + " disabled";

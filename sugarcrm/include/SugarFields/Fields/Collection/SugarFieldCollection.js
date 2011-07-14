@@ -235,7 +235,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             var count = this.fields_count;
             
             //Clone the table element containing the fields for each row, use safe_clone uder IE to prevent events from being cloned
-            Field0 = SUGAR.isIE ? 
+            var Field0 = SUGAR.isIE ? 
             	SUGAR.collection.safe_clone(this.cloneField[0], true) : 
             	this.cloneField[0].cloneNode(true);
 
@@ -285,6 +285,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                 var re = new RegExp(toreplace, 'g');
                 var name = currentNode.name;                
                 var new_name = name.replace(re, this.field + "_collection_" + this.fields_count);
+                var new_id = currentNode.id.replace(re, this.field + "_collection_" + this.fields_count);
 
                 switch (name) {
                     case toreplace:
@@ -306,12 +307,12 @@ if(typeof(SUGAR.collection) == "undefined") {
                         }
                         
                         currentNode.name = new_name;
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         currentNode.value = values['name'];
                         break;
                     case "id_" + toreplace:
                         currentNode.name = new_name.replace(RegExp('_0', 'g'), "_" + this.fields_count);
-                        currentNode.id = new_name.replace(RegExp('_0', 'g'), "_" + this.fields_count);
+                        currentNode.id = new_id.replace(RegExp('_0', 'g'), "_" + this.fields_count);
                         currentNode.value = values['id'];
                         break;
                     case "btn_" + toreplace:
@@ -321,11 +322,11 @@ if(typeof(SUGAR.collection) == "undefined") {
                         break;
                     case "allow_new_value_" + toreplace:
                         currentNode.name = new_name;
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         break;
                     case "remove_" + toreplace:
                         currentNode.name = new_name;
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         currentNode.setAttribute('collection_id', this.field_element_name);
                         currentNode.setAttribute('remove_id', this.fields_count);
                         currentNode.onclick = function() { 
@@ -333,7 +334,7 @@ if(typeof(SUGAR.collection) == "undefined") {
                         };
                         break;
                     case "primary_" + this.field + "_collection":
-                        currentNode.id = new_name;
+                        currentNode.id = new_id;
                         currentNode.value = this.fields_count;
                         currentNode.checked = false; //Firefox
                         currentNode.setAttribute('defaultChecked', '');

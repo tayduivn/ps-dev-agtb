@@ -1735,6 +1735,13 @@ $app_list_strings = array (
         '1' => 'SSL',
         '2' => 'TLS',
     ),
+    'import_enclosure_options' =>
+    array (
+        '\'' => 'Single Quote (\')',
+        '"' => 'Double Quote (")',
+        '' => 'None',
+        'other' => 'Other:',
+    ),
     'link_target_dom' =>
     array (
         '_blank' => 'New Window',
@@ -2261,6 +2268,7 @@ $app_strings = array (
     'LBL_TEAMS' =>'Teams',
     'LBL_TEAM_ID'=>'Team ID:',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
+    'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
@@ -3076,7 +3084,34 @@ $app_strings = array (
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
 
     //External API Error Messages
-    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
+
+    //IMPORT SAMPLE TEXT
+    'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
+"This is a sample import file which provides an example of the expected contents of a file that is ready for import."
+"The file is a comma-delimited .csv file, using double-quotes as the field qualifier."
+
+"The header row is the top-most row in the file and contains the field labels as you would see them in the application."
+"These labels are used for mapping the data in the file to the fields in the application."
+
+"Notes: The database names could also be used in the header row. This is useful when you are using phpMyAdmin or another database tool to provide an exported list of data to import."
+"The column order is not critical as the import process matches the data to the appropriate fields based on the header row."
+
+
+"To use this file as a template, do the following:"
+"1. Remove the sample rows of data"
+"2. Remove the help text that you are reading right now"
+"3. Input your own data into the appropriate rows and columns"
+"4. Save the file to a known location on your system"
+"5. Click on the Import option from the Actions menu in the application and choose the file to upload"
+   ',
+    //define labels to be used for overriding local values during import/export
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned To',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User',
+    'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To',
+    'LBL_EXPORT_FULL_NAME' => 'Full Name',
+
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
@@ -3816,10 +3851,16 @@ $app_list_strings['kbdocument_status_dom'] = array (
   	'WebEx'=>'WebEx',
   	'GoToMeeting'=>'GoToMeeting',
   	'LotusLive'=>'LotusLive',
-  	'Google' => 'Google Docs',
+  	'Google' => 'Google',
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',
     'Twitter'=>'Twitter',
+  );
+  $app_list_strings['eapm_list_import']= array(
+  	'Google' => 'Google Contacts',
+  );
+$app_list_strings['eapm_list_documents']= array(
+  	'Google' => 'Google Docs',
   );
   $app_list_strings['LBL_API_TYPE_ENUM'] = array(
     'password' => 'Username/Password',
