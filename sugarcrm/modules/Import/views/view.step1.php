@@ -58,12 +58,13 @@ class ImportViewStep1 extends ImportView
 
         $showModuleSelection = ($_REQUEST['import_module'] == 'Administration');
         $importableModulesOptions = array();
-
+        $importablePersonModules = array();
         //If we are coming from the admin link, get the module list.
         if($showModuleSelection)
         {
             $tmpImportable = $this->getImportableModules();
             $importableModulesOptions = get_select_options_with_id($tmpImportable, '');
+            $importablePersonModules = $this->getImportablePersonModulesJS();
             $this->ss->assign("IMPORT_MODULE", key($tmpImportable));
         }
         else
@@ -71,7 +72,7 @@ class ImportViewStep1 extends ImportView
             $this->instruction = 'LBL_SELECT_DS_INSTRUCTION';
             $this->ss->assign('INSTRUCTION', $this->getInstruction());
         }
-
+        $this->ss->assign("PERSON_MODULE_LIST", json_encode($importablePersonModules));
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
 
@@ -101,6 +102,23 @@ class ImportViewStep1 extends ImportView
 
         asort($importableModules);
         return $importableModules;
+    }
+
+    private function getImportablePersonModulesJS()
+    {
+        global $beanList;
+        $results = array();
+        foreach ($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) )
+            {
+                $tmp = new $beanName();
+                if( isset($tmp->importable) && $tmp->importable && ($tmp instanceof Person))
+                    $results[$moduleName] = $moduleName;
+            }
+        }
+
+        return $results;
     }
 
     private function getAllImportableExternalEAPMs()
@@ -223,7 +241,27 @@ YAHOO.util.Event.onDOMReady(function(){
 
     function setImportModule()
     {
-        document.getElementById('importstep1').import_module.value = document.getElementById('admin_import_module').value;
+        var selectedModuleEl = document.getElementById('admin_import_module');
+        if(!selectedModuleEl)
+        {
+            return;
+        }
+
+        //Check if the module selected by the admin is a person type module, if not hide
+        //the external source.
+        var selectedModule = selectedModuleEl.value;
+        document.getElementById('importstep1').import_module.value = selectedModule;
+        if( personModules[selectedModule] )
+        {
+            document.getElementById('ext_source_tr').style.display = '';
+        }
+        else
+        {
+            document.getElementById('ext_source_tr').style.display = 'none';
+            document.getElementById('external_sources_tr').style.display = 'none';
+            document.getElementById('csv_source').checked = true;
+        }
+
     }
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
@@ -246,6 +284,8 @@ YAHOO.util.Event.onDOMReady(function(){
         isExtSourceValid(selectedExternalSource);
     }
     initExtSourceSelection();
+
+    setImportModule();
 });
 -->
 </script>

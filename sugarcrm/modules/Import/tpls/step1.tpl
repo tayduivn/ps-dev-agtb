@@ -79,7 +79,7 @@
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
                                 </td>
                             </tr>
-                            <tr>
+                            <tr id="ext_source_tr">
                                 <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
                   &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
                                 </td>
@@ -127,6 +127,7 @@
 {/literal}
 var auth_sources = {$EXTERNAL_AUTHENTICATED_SOURCES}
 var selectedExternalSource = '{$selectExternalSource}';
+var personModules = {$PERSON_MODULE_LIST};
 {literal}
 
 
