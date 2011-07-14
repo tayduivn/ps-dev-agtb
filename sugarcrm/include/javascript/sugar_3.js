@@ -4378,3 +4378,16 @@ SUGAR.util.arrayIndexOf = function(arr, val, start) {
     }
     return -1;
 };
+
+SUGAR.clearRelateField = function(form, name, id)
+{
+    if (typeof form[name] == "object"){
+        form[name].value = '';
+        SUGAR.util.callOnChangeListers(form[name]);
+    }
+
+    if (typeof form[id] == "object"){
+        form[id].value = '';
+        SUGAR.util.callOnChangeListers(form[id]);
+    }
+};
