@@ -223,7 +223,7 @@ $lpr->output( "+--->  Done copying license files" );
     chdir( "$TMP_DIR/$PLATFORM/$FLAVOR" );
 
     // Running the installbuilder executable
-     if ($FLAVOR == 'ce' || $FLAVOR == 'ent' ) {
+     if ($FLAVOR == 'ce' ) {
     	$lpr->output( "+--->  Compiling using command: $INSTALL_BUILDER_EXE build ./sugarcrm-$SUGAR_VERSION.xml $BUILD_PLATFORM" );
     	system( "$INSTALL_BUILDER_EXE build ./sugarcrm-$SUGAR_VERSION.xml $BUILD_PLATFORM" );
     	$lpr->output( "+--->  Compiling done"  );
