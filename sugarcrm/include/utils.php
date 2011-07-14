@@ -332,8 +332,8 @@ function get_sugar_config_defaults() {
     'sugarbeet' => true,
 //END SUGARCRM flav=com ONLY
     'time_formats' => array (
-	'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM',
-	'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM' ),
+        'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM', 'h:i a'=>'11:00 pm', 'h:i A'=>'11:00 PM',
+        'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM', 'h.i a'=>'11.00 pm', 'h.i A'=>'11.00 PM' ),
 //BEGIN SUGARCRM flav=com ONLY
     'tracker_max_display_length' => 15,
 //END SUGARCRM flav=com ONLY
@@ -1160,6 +1160,7 @@ function return_module_language($language, $module, $refresh=false)
 	else
 		$mod_strings = $temp_mod_strings;
 
+    $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
     sugar_cache_put($cache_key, $return_value);
 	return $return_value;
 }
@@ -3465,6 +3466,40 @@ function get_singular_bean_name($bean_name){
 	else{
 		return $bean_name;
 	}
+}
+
+/*
+ * Given the potential module name (singular name, renamed module name)
+ * Return the real internal module name.
+ */
+function get_module_from_singular($singular) {
+
+    // find the internal module name for a singular name
+    if (isset($GLOBALS['app_list_strings']['moduleListSingular'])) {
+
+        $singular_modules = $GLOBALS['app_list_strings']['moduleListSingular'];
+
+        foreach ($singular_modules as $mod_name=>$sin_name) {
+            if ($singular == $sin_name and $mod_name != $sin_name) {
+                return $mod_name;
+            }
+        }
+    }
+
+    // find the internal module name for a renamed module
+    if (isset($GLOBALS['app_list_strings']['moduleList'])) {
+
+        $moduleList = $GLOBALS['app_list_strings']['moduleList'];
+
+        foreach ($moduleList as $mod_name=>$name) {
+            if ($singular == $name and $mod_name != $name) {
+                return $mod_name;
+            }
+        }
+    }
+
+    // if it's not a singular name, nor a renamed name, return the original value
+    return $singular;
 }
 
 function get_label($label_tag, $temp_module_strings){

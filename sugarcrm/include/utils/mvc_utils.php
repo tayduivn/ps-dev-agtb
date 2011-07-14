@@ -426,6 +426,7 @@ function ajaxBannedModules(){
         'EmailAddresses',
         'Relationships',
         'Employees',
+        'Import'
     );
 
     if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){

@@ -134,7 +134,7 @@ class VardefManager{
 
 		$file = create_cache_directory('modules/' . $module . '/' . $object . 'vardefs.php');
 		write_array_to_file('GLOBALS["dictionary"]["'. $object . '"]',$GLOBALS['dictionary'][$object], $file);
-		if ( is_readable($file) ) {
+		if ( sugar_is_file($file) && is_readable($file)) {
 		    include($file);
 		}
 

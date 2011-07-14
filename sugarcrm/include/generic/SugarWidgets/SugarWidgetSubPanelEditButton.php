@@ -55,7 +55,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		$formname = $this->getFormName($layout_def);
 
 		$onclick = "document.forms['{$formname}'].record.value='{$layout_def['fields']['ID']}';";
-		$onclick .= "document.forms['{$formname}'].action.value='SubPanelEdits';";
+		$onclick .= "document.forms['{$formname}'].action.value='SubpanelEdits';";
 		$onclick .= "retValz = SUGAR.subpanelUtils.sendAndRetrieve('" . $formname
 			. "', 'subpanel_" . $layout_def['subpanel_id'] . "', '" . addslashes($app_strings['LBL_LOADING'])
 			. "', '" . $layout_def['subpanel_id'] . "');";
@@ -82,7 +82,6 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 //BEGIN SUGARCRM flav=pro ONLY
 	function isQuickCreateValid($module) {
-        return false;  //THIS IS A HACK TO DISABLE QUICKEDITS FOR SODA TESTS TO FINISH!!
 		$isValid = false;
 		if(file_exists('custom/modules/'.$module.'/metadata/quickcreatedefs.php')) {
 			$isValid = true;

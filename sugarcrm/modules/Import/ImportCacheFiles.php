@@ -63,13 +63,23 @@ class ImportCacheFiles
     }
 
     /**
-     * Returns the duplicates filename
+     * Returns the duplicates filename (the ones used to download to csv file
      *
      * @return string filename
      */
     public static function getDuplicateFileName()
     {
         return self::_createFileName("dupes");
+    }
+
+    /**
+     * Returns the duplicates display filename (the one used for display in html)
+     *
+     * @return string filename
+     */
+    public static function getDuplicateFileDisplayName()
+    {
+        return self::_createFileName("dupesdisplay");
     }
 
     /**
@@ -90,6 +100,16 @@ class ImportCacheFiles
     public static function getErrorRecordsFileName()
     {
         return self::_createFileName("errorrecords");
+    }
+
+    /**
+     * Returns the error records filename
+     *
+     * @return string filename
+     */
+    public static function getErrorRecordsWithoutErrorFileName()
+    {
+        return self::_createFileName("errorrecordsonly");
     }
 
     /**

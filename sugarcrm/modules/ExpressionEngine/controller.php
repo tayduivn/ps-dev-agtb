@@ -24,8 +24,55 @@ require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 class ExpressionEngineController extends SugarController
 {
 	var $action_remap = array ( ) ;
+    var $non_admin_actions = array("functionDetail", "execFunction");
 	
-	function ExpressionEngineController() {
+	function process(){
+    	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;
+        global $current_user;
+        $access = get_admin_modules_for_user($current_user);
+		//BEGIN SUGARCRM flav=sales ONLY
+		if(!empty($_REQUEST['type']) && $_REQUEST['type'] == 'mb'){
+			$this->hasAccess = false;
+		}else
+		//END SUGARCRM flav=sales ONLY
+		//Non admins can still execute functions
+        if((!empty($_REQUEST['action']) && in_array($_REQUEST['action'], $this->non_admin_actions))
+           || $this->isModuleAdmin($access))
+        {
+            $this->hasAccess = true;
+        }
+        else
+        {
+            $this->hasAccess = false;
+        }
+        parent::process();
+    }
+
+    function isModuleAdmin($access)
+    {
+        global $current_user;
+        //Global admins have full access
+        if (is_admin($current_user))
+            return true;
+
+        $module = "";
+        if (!empty($_REQUEST['targetModule']))
+            $module = $_REQUEST['targetModule'];
+        if (!empty($_REQUEST['tmodule']))
+            $module = $_REQUEST['tmodule'];
+
+        //If the user is an admin of some module, and no module was set, assume they have access.
+        if (is_admin_for_any_module($current_user) && empty($module) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package')){
+            return true;
+        }
+
+        //If the module was set, check that the user has access
+        if (!empty($module) && in_array($module, $access)) {
+            return true;
+        }
+    }
+
+    function ExpressionEngineController() {
 		$this->view = 'editFormula';
 	}
 	
@@ -66,6 +113,10 @@ class ExpressionEngineController extends SugarController
 
     function action_functionDetail() {
     	$this->view = 'functionDetail'; 
+    }
+
+    function action_validateRelatedField(){
+        $this->view = 'validateRelatedField';
     }
 }
 ?>

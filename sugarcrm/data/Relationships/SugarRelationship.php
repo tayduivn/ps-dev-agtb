@@ -261,7 +261,7 @@ abstract class SugarRelationship
         {
             self::$beansToResave[$bean->module_dir] = array();
         }
-        self::$beansToResave[$bean->module_dir][$bean->module_dir] = $bean;
+        self::$beansToResave[$bean->module_dir][$bean->id] = $bean;
     }
 
     public static function resaveRelatedBeans()

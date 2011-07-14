@@ -20,6 +20,7 @@
  ********************************************************************************/
 require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/Expressions/Expression/Parser/Parser.php');
+require_once("data/BeanFactory.php");
 class ViewExecFunction extends ViewAjax
 {
     var $vars = array("tmodule", "id", "params", "function");
@@ -38,20 +39,10 @@ class ViewExecFunction extends ViewAjax
 
  	function display() {
         //First load the primary bean
-        $focus = $this->getBean($this->tmodule);
-        $focus->retrieve($this->id);
+        $focus = BeanFactory::getBean($this->tmodule, $this->id);
 
         $params = implode(",", json_decode(html_entity_decode($this->params)));
         $result = Parser::evaluate("{$this->function}($params)", $focus)->evaluate();
         echo json_encode($result);
-     }
-
-    function getBean($module)
-    {
-       global $beanList;
-       if (empty($beanList[$module]))
-           sugar_die("No bean for module $module");
-       $bean = $beanList[$module];
-       return new $bean();
     }
 }

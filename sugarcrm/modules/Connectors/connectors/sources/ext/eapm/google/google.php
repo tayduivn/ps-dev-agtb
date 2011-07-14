@@ -21,9 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/connectors/sources/ext/eapm/eapm.php');
+require_once('include/connectors/sources/default/source.php');
 
-class ext_eapm_google extends ext_eapm {
+class ext_eapm_google extends source {
 	protected $_enable_in_wizard = false;
 	protected $_enable_in_hover = false;
 	protected $_has_testing_enabled = false;
@@ -47,7 +47,7 @@ class ext_eapm_google extends ext_eapm {
         
         $this->loadGdClient();
 
-        $entry = array();
+        $entry = FALSE;
         try
         {
             $entry = $this->_gdClient->getContactEntry( $args['id'] );
@@ -66,9 +66,20 @@ class ext_eapm_google extends ext_eapm {
     }
 	public function getList($args=array(), $module=null)
     {
+        $feed = FALSE;
         $this->loadGdClient();
 
-        $feed = array();
+        if( !empty($args['maxResults']) )
+        {
+            $this->_gdClient->setMaxResults($args['maxResults']);
+        }
+
+        if( !empty($args['startIndex']) )
+        {
+            $this->_gdClient->setStartIndex($args['startIndex']);
+        }
+
+
         try
         {
             $feed = $this->_gdClient->getContactListFeed($args);

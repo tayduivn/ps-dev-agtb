@@ -1028,13 +1028,16 @@ class ModuleInstaller{
 
 
 
+
+            Relationship::delete_cache();
             $this->rebuild_vardefs () ;
             $this->rebuild_layoutdefs () ;
             if ($save_table_dictionary)
             {
                 $this->rebuild_tabledictionary () ;
             }
-
+            require_once("data/Relationships/RelationshipFactory.php");
+            SugarRelationshipFactory::deleteCache();
         }
     }
 

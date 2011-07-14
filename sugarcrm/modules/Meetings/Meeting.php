@@ -253,7 +253,7 @@ class Meeting extends SugarBean {
 		$contact_required = stristr($where, "contacts");
 
 		if($contact_required) {
-			$query = "SELECT meetings.*, contacts.first_name, contacts.last_name, contacts.assigned_user_id contact_name_owner ";
+			$query = "SELECT meetings.*, contacts.first_name, contacts.last_name, contacts.assigned_user_id contact_name_owner, users.user_name as assigned_user_name   ";
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
@@ -263,7 +263,7 @@ class Meeting extends SugarBean {
 			$query .= " FROM contacts, meetings, meetings_contacts ";
 			$where_auto = " meetings_contacts.contact_id = contacts.id AND meetings_contacts.meeting_id = meetings.id AND meetings.deleted=0 AND contacts.deleted=0";
 		} else {
-			$query = 'SELECT meetings.*';
+			$query = 'SELECT meetings.*, users.user_name as assigned_user_name  ';
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
@@ -278,6 +278,7 @@ class Meeting extends SugarBean {
 		$this->add_team_security_where_clause($query);
 		$query .= getTeamSetNameJoin('meetings');
 		//END SUGARCRM flav=pro ONLY
+		$query .= "  LEFT JOIN users ON meetings.assigned_user_id=users.id ";
 
 		if($custom_join) {
 			$query .= $custom_join['join'];

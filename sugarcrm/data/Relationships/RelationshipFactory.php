@@ -24,6 +24,20 @@ class SugarRelationshipFactory {
         return self::$rfInstance;
     }
 
+    public static function rebuildCache()
+    {
+        self::getInstance()->buildRelationshipCache();
+    }
+
+    public static function deleteCache()
+    {
+        $file = self::getInstance()->getCacheFile();
+        if(sugar_is_file($file))
+        {
+            unlink($file);
+        }
+    }
+
     /**
      * @param  $relationshipName String name of relationship to load
      * @return void
@@ -57,8 +71,14 @@ class SugarRelationshipFactory {
                 }
                 break;
             case "one-to-one":
-                require_once("data/Relationships/One2OneRelationship.php");
-                return new One2OneRelationship($def);
+                if (empty($def['true_relationship_type'])){
+                    require_once("data/Relationships/One2OneBeanRelationship.php");
+                    return new One2OneBeanRelationship($def);
+                }
+                else {
+                    require_once("data/Relationships/One2OneRelationship.php");
+                    return new One2OneRelationship($def);
+                }
                 break;
         }
 

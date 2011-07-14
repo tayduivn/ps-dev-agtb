@@ -352,6 +352,7 @@ var lbl_related_table_blank = "{$mod_strings.LBL_RELATED_TABLE_BLANK}";
 var lbl_optional_help = "{$mod_strings.LBL_OPTIONAL_HELP}";
 </script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/reportCriteria.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/reportsInlineEdit.js'}"></script>
 <script language="javascript">
 visible_modules = {$allowed_modules_js};
 report_def = {$reporter_report_def_str1};

@@ -25,12 +25,7 @@ class ViewAjaxUI extends SugarView
 
     public function display()
  	{
- 		echo "<script type='text/javascript'>
-            SUGAR._ajax_hist_loaded = true;
-            YAHOO.util.Event.onContentReady('ajaxUI-history-field', SUGAR.ajaxUI.firstLoad);
-        </script>";
         //Prevent double footers
         $GLOBALS['app']->headerDisplayed = false;
-
  	}
 }

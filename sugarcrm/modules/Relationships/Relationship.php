@@ -208,22 +208,25 @@ class Relationship extends SugarBean {
 		$handle=sugar_fopen(Relationship::cache_file_dir().'/'.Relationship::cache_file_name_only(),'w');
 		fwrite($handle,$rel_string);
 		fclose($handle);
+        require_once("data/Relationships/RelationshipFactory.php");
+        SugarRelationshipFactory::deleteCache();
 	}
 
 
-	function cache_file_dir() {
+	public static function cache_file_dir() {
 		return sugar_cached("modules/Relationships");
 	}
-
-	function cache_file_name_only() {
+	public static function cache_file_name_only() {
 		return 'relationships.cache.php';
 	}
-
-	function delete_cache() {
+	
+	public static function delete_cache() {
 		$filename=Relationship::cache_file_dir().'/'.Relationship::cache_file_name_only();
 		if (file_exists($filename)) {
 			unlink($filename);
 		}
+        require_once("data/Relationships/RelationshipFactory.php");
+        SugarRelationshipFactory::deleteCache();
 	}
 
 

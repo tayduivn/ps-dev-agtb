@@ -510,11 +510,9 @@ class ModuleBuilderController extends SugarController
         $GLOBALS['log']->debug("\n\nSTART BUILD");
         if (empty($_REQUEST [ 'view_package' ])) {
             $relationships->build () ;
-
             LanguageManager::clearLanguageCache($_REQUEST [ 'view_module' ]);
         }
         $GLOBALS['log']->debug("\n\nEND BUILD");
-
         $this->view = 'relationships' ;
     }
 
@@ -537,6 +535,8 @@ class ModuleBuilderController extends SugarController
             }
             $relationships->delete ( $_REQUEST [ 'relationship_name' ] ) ;
             $relationships->save () ;
+            require_once("data/Relationships/RelationshipFactory.php");
+            SugarRelationshipFactory::deleteCache();
         }
         $this->view = 'relationships' ;
     }

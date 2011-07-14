@@ -132,6 +132,50 @@ SUGAR.expressions.validateReturnTypes = function(t)
 		}
 	}
 };
+
+SUGAR.expressions.validateRelateFunctions = function(t)
+{
+	var SU = SUGAR.util, SE = SUGAR.expressions;
+    if (t.type == "function")
+	{
+		//Depth first recursion
+		for(var i in t.args)
+		{
+			SE.validateRelateFunctions(t.args[i]);
+		}
+
+		//these functions all take a link and a string for a related field
+        var relFuncs = ["related", "rollupAve", "rollupMax", "rollupMin", "rollupSum"];
+
+		if (SU.arrayIndexOf(relFuncs, t.name) == -1)
+            return true;
+
+        var url = "index.php?" + SU.paramsToUrl({
+            module : "ExpressionEngine",
+            action : "validateRelatedField",
+            tmodule : ModuleBuilder.module,
+            link : t.args[0].name,
+            related : t.args[1].value
+        });
+        var resp = http_fetch_sync(url);
+        var def = YAHOO.lang.JSON.parse(resp.responseText);
+
+        //Check if a field was found
+        if (typeof(def) == "string"){
+            throw(t.name + ": " + def);
+        }
+        if (def.calculated && (typeof(def.calculated) != "string"  || def.calculated.toLowerCase() !== "false"))
+        {
+            throw (t.name + ": Cannot use calculated field " + t.args[1].value)
+        }
+        if (t.name != "related" && def.type && SU.arrayIndexOf(["decimal", "int", "float", "currency"], def.type) == -1)
+        {
+            throw (t.name + ": related field  " + t.args[1].value + " must be a number ");
+        }
+
+        return;
+	}
+};
 SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 	try {
 		var varTypeMap = {};
@@ -142,6 +186,7 @@ SUGAR.expressions.validateCurrExpression = function(silent, matchType) {
 		var tokens = new SUGAR.expressions.ExpressionParser().tokenize(expression);
 		SUGAR.expressions.setReturnTypes(tokens, varTypeMap);
 		SUGAR.expressions.validateReturnTypes(tokens);
+        SUGAR.expressions.validateRelateFunctions(tokens);
 		if (matchType && matchType != tokens.returnType)
 		{
 			Msg.show({
