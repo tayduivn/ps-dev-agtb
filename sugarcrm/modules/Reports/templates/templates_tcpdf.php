@@ -31,7 +31,7 @@ function preprocess($type = NULL, $reporter){
 
 function process($pdf, $reportname, $stream){
     global $current_user;
-    
+
     $pdf->process();
     @ob_clean();
     $filenamestamp = '';
@@ -48,11 +48,12 @@ function process($pdf, $reportname, $stream){
         //Force download as a file
         $pdf->Output($filename,'D');
     }else{
-        $fp = sugar_fopen('cache/pdf/'.$filename,'w');
+        $cachefile = sugar_cached('pdf/').$filename;
+        $fp = sugar_fopen($cachefile, 'w');
         fwrite($fp, $pdf->Output('','S'));
         fclose($fp);
 
-        return 'cache/pdf/'.$filename;
+        return $cachefile;
     }
     return $filename;
 }
@@ -82,7 +83,7 @@ function template_handle_pdf(&$reporter, $stream = true) {
     } elseif(!empty($reporter->report_def['display_columns'])) {
         $type = "listview";
     }
-    
+
     $pdf=preprocess($type, $reporter);
     return process($pdf, $reporter->name, $stream);
 }

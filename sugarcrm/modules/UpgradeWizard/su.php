@@ -33,13 +33,12 @@
 ////	UTILITIES THAT MUST BE LOCAL :(
 function prepSystemForUpgradeSilent() {
 	global $subdirs;
-	global $cwd;
 	global $sugar_config;
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-		if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
-	    	mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		if(!is_dir("upload://upgrades/{$subdir}")) {
+	    	mkdir_recursive("upload://upgrades/{$subdir}");
 		}
 	}
 }
@@ -188,8 +187,8 @@ if(isset($current_user) && $current_user->user_name == null){
 ////	UPGRADE PREP
 prepSystemForUpgradeSilent();
 
-$unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp");
-$install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
+$unzip_dir = sugar_cached("upgrades/temp/su_temp");
+$install_file = "upload://upgrades/patch/".basename($argv[1]);
 mkdir_recursive($unzip_dir);
 if(!is_dir($unzip_dir)) {
 	die("\nFAILURE\n");
@@ -202,13 +201,13 @@ copy($argv[1], $install_file);
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	UPGRADE UPGRADEWIZARD
-$zipBasePath = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/{$zip_from_dir}");
-$uwFiles = findAllFiles(clean_path("{$zipBasePath}/modules/UpgradeWizard"), array());
+$zipBasePath = "$unzip_dir/{$zip_from_dir}";
+$uwFiles = findAllFiles("{$zipBasePath}/modules/UpgradeWizard", array());
 $destFiles = array();
 
 foreach($uwFiles as $uwFile) {
-	$destFile = clean_path(str_replace($zipBasePath, $cwd, $uwFile));
-	copy($uwFile, $destFile);
+	$destFile = str_replace($zipBasePath."/", '', $uwFile);
+    copy($uwFile, $destFile);
 }
 require_once('modules/UpgradeWizard/uw_utils.php'); // must upgrade UW first
 logThis("*** SILENT UPGRADE INITIATED.", $path);
@@ -232,13 +231,13 @@ if($configOptions['db_type'] == 'mysql'){
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	MAKE SURE PATCH IS COMPATIBLE
-if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php")) {
+if(is_file("$unzip_dir/manifest.php")) {
 	// provides $manifest array
-	include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php");
+	include("$unzip_dir/manifest.php");
 	if(!isset($manifest)) {
 		die("\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
 	} else {
-		copy("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/su_temp/manifest.php", "{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/{$zip_from_dir}-manifest.php");
+		copy("$unzip_dir/manifest.php", "upload://upgrades/patch/{$zip_from_dir}-manifest.php");
 
 		$error = validate_manifest($manifest);
 		if(!empty($error)) {
@@ -323,9 +322,10 @@ if(empty($errors)) {
 }
 
 //Clean smarty from cache
-if(is_dir($GLOBALS['sugar_config']['cache_dir'].'smarty')){
+$cachedir = sugar_cached('smarty');
+if(is_dir($cachedir)){
 	$allModFiles = array();
-	$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'smarty',$allModFiles);
+	$allModFiles = findAllFiles($cachedir,$allModFiles);
    foreach($allModFiles as $file){
        	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
        	if(file_exists($file)){
@@ -397,7 +397,7 @@ if(empty($errors)) {
 ////	TAKE OUT TRASH
 if(empty($errors)) {
 	logThis('Taking out the trash, unlinking temp files.', $path);
-	unlinkTempFiles();
+	unlinkUWTempFiles();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -31,7 +31,7 @@ class ViewSpot extends ViewAjax
      */
     public function display()
     {
-        if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
+        if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {
             $usa = new UnifiedSearchAdvanced();
             $usa->buildCache();
         }      
@@ -72,13 +72,13 @@ class ViewSpot extends ViewAjax
 
 
 		$offset = -1;
-		
+
 		// make sure the current module appears first in the list
 		if(isset($modules[$this->module])) {
 		    unset($modules[$this->module]);
 		    $modules = array_merge(array($this->module=>$this->module),$modules);
 		}
-		
+
 		if(!empty($_REQUEST['zoom']) && isset($modules[$_REQUEST['zoom']])){
 			$modules = array($_REQUEST['zoom']);
 			if(isset($_REQUEST['offset'])){

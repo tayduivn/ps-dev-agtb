@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * SugarRouting class
- * 
+ *
  * Routing and Rules implementation, initially for Email 2.0.
  */
 class SugarRouting {
@@ -37,7 +37,7 @@ class SugarRouting {
 		'delete_mail',
 	);
 	var $customActions;
-	  
+
 	/**
 	 * Sole constructor
 	 */
@@ -52,8 +52,8 @@ class SugarRouting {
 			$this->loadRules();
 		}
 	}
-	
-	
+
+
 	/**
 	 * Saves a rule
 	 * @param array $rules Passed $_REQUEST var
@@ -62,40 +62,40 @@ class SugarRouting {
 		require_once('include/SugarDependentDropdown/SugarDependentDropdown.php');
 		global $beanFiles;
 		global $sugar_config;
-		
+
 		// get seed bean & load rules
 		if(empty($beanFiles)) {
 			include("include/modules.php");
 		}
-		
+
 		if(isset($beanFiles[$rules['bean']])) {
 			require_once($beanFiles[$rules['bean']]);
 			$bean = new $rules['bean']();
 		} else {
 			$bean = new SugarBean();
 		}
-		
+
 		$this->loadRules();
-		
+
 		// need $sdd->metadata
 		$sdd = new SugarDependentDropdown("include/SugarDependentDropdown/metadata/dependentDropdown.php");
-		
+
 		$dd = $sdd->metadata;
-		
-		// 
+
+		//
 		$tmpRuleGroup = array();
 		foreach($rules as $k => $v) {
 			if(strpos($k, "::") !== false) {
 				$exItem = explode("::", $k);
-				
+
 				if(!isset($tmpRuleGroup[$exItem[0]])) {
 					$tmpRuleGroup[$exItem[0]] = array();
 				}
-				
+
 				$tmpRuleGroup[$exItem[0]][$exItem[1]][$exItem[2]] = $v;
 			}
 		}
-		
+
 		// clean out index so it back to 0-index, 1 increment
 		$ruleGroup = array();
 		foreach($tmpRuleGroup as $item => $toClean) {
@@ -104,10 +104,10 @@ class SugarRouting {
 			foreach($toClean as $dirtyItem) {
 				$cleaned[] = $dirtyItem;
 			}
-			
+
 			$ruleGroup[$item] = $cleaned;
 		}
-		/* should now have something like: 
+		/* should now have something like:
 		Array(
 		    [criteriaGroup] => Array
 			(
@@ -141,7 +141,7 @@ class SugarRouting {
 		*/
 
 		//_pp($ruleGroup);
-		
+
 		/* create the rule array */
 		$criteria = array();
 		foreach($ruleGroup['criteriaGroup'] as $index => $grouping) {
@@ -151,7 +151,7 @@ class SugarRouting {
 		foreach($ruleGroup['actionGroup'] as $index => $grouping) {
 			$actions[$index]['action'] = $grouping;
 		}
-		
+
 		$guid = (empty($rules['id'])) ? create_guid() : $rules['id'];
 		$all = ($rules['all'] == 1) ? true : false;
 		$newrule = array(
@@ -163,7 +163,7 @@ class SugarRouting {
 			'actions'	=> $actions,
 		);
 		//_pp($newrule);
-		
+
 		$new = true;
 		if(isset($this->rules) && is_array($this->rules)) {
 			foreach($this->rules as $k => $rule) {
@@ -181,11 +181,11 @@ class SugarRouting {
 		if($new) {
 			$this->rules[] = $newrule;
 		}
-		
+
 		//_ppd($this->rules);
 		$this->saveRulesToFile();
 	}
-	
+
 	/**
 	 * Enables/disables a rule
 	 */
@@ -198,29 +198,29 @@ class SugarRouting {
 				return;
 			}
 		}
-		
+
 		$GLOBALS['log']->fatal("SUGARROUTING: Could not save rule status [ {$status} ] for user [ {$this->user->user_name} ] rule [ {$id} ]");
 	}
-	
+
 	/**
 	 * Deletes a rule
 	 */
 	function deleteRule($rule_id) {
 		$this->loadRules();
-		
+
 		$rules = $this->rules;
-		
+
 		$newRules = array();
 		foreach($rules as $k => $rule) {
 			if($rule['id'] != $rule_id) {
 				$newRules[$k] = $rule;
 			}
 		}
-		
+
 		$this->rules = $newRules;
 		$this->saveRulesToFile();
 	}
-	
+
 	/**
 	 * Takes the values in $this->rules and writes it to the appropriate cache
 	 * file
@@ -232,47 +232,44 @@ class SugarRouting {
 		$GLOBALS['log']->info("SUGARROUTING: Saving rules file [ {$file} ]");
 		write_array_to_file('routingRules', $this->rules, $file);
 	}
-	
+
 	/**
 	 * Tries to load a rule set based on passed bean
 	 */
 	function loadRules() {
 		global $sugar_config;
-		
+
 		$this->preflightCache();
-		
+
 		$file = $this->rulesCache."/{$this->user->id}.php";
-		
+
 		$routingRules = array();
-		
+
 		if(file_exists($file))
 			include($file); // force include locally
-		
+
 		$this->rules = $routingRules;
 	}
-	
+
 	/**
 	 * Prepares cache dir for a ruleset.
 	 * Sets $this->rulesCache
 	 */
 	function preflightCache() {
-		global $sugar_config;
-		
 		$moduleDir = (isset($this->bean->module_dir) && !empty($this->bean->module_dir)) ? $this->bean->module_dir : "General";
-		$this->rulesCache = clean_path(getcwd()."/{$sugar_config['cache_dir']}/routing/{$moduleDir}");
+		$this->rulesCache = sugar_cached("routing/{$moduleDir}");
 
 		if(!file_exists($this->rulesCache)) {
-			$relative = str_replace(getcwd()."/", "",$this->rulesCache);
-			mkdir_recursive($relative);
+			mkdir_recursive($this->rulesCache);
 		}
 	}
-	
+
 	/**
 	 * Takes a bean and a rule key as an argument and processes the bean according to the rule
 	 * @param object $bean Focus bean
 	 * @param string $ruleKey Key to the rules array
 	 * @return bool
-	 * 
+	 *
 	 * rule format:
 		$routingRules['1'] = array(
 			0 => array(
@@ -302,7 +299,7 @@ class SugarRouting {
 						),
 					),
 				),
-				
+
 				'actions' => array(
 					0	=> array(
 						'function' => 'move_mail',
@@ -332,7 +329,7 @@ class SugarRouting {
 					),
 				),
 			),
-			
+
 			1 => array(
 				'id' => 'yyyyyyyyyyyyyyyyyyy',
 				'name' => 'Move Email to IMAP Folder [test]',
@@ -350,7 +347,7 @@ class SugarRouting {
 						'regex' => '/chris@sugarcrm.com/i',
 					),
 				),
-				
+
 				'actions' => array(
 					array(
 						'function' => 'move_mail',
@@ -379,7 +376,7 @@ class SugarRouting {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Iterates through all rulesets to apply them to a given message
 	 * @param object $bean SugarBean to be manipulated
@@ -392,13 +389,13 @@ class SugarRouting {
 		}
 
 		$GLOBALS['log']->debug("**** SUGARROUTING: processing for [ {$bean->name} ]");
-		
+
 		// basic sandboxing
 		if(!isset($this->rules) || empty($this->rules)) {
 			$GLOBALS['log']->debug("**** SUGARROUTING: processRules - no rule defined, returning false");
 			return false;
 		}
-		
+
 		foreach($this->rules as $order => $focusRule) {
 			if($focusRule['active']) {
 				$result = $this->processRule($bean, $focusRule, $args);
@@ -408,21 +405,21 @@ class SugarRouting {
 			}
 		}
 	}
-	
-	
+
+
 	function _executeAction($bean, $focusRule, $extraArgs) {
 		if(!isset($focusRule['actions'])) {
 			return false;
 		}
-		
+
 		include_once("include/SugarRouting/baseActions.php");
-		
+
 		$ruleProcessed = false;
-		
+
 		foreach($focusRule['actions'] as $actionBox) {
 			$action = $actionBox['action'];
 			$function = $action['action0'];
-			
+
 			if(function_exists($function)) {
 				/*
 				 * The switch() statement below should define a series of
@@ -434,12 +431,12 @@ class SugarRouting {
 					case 'forward':
 					case 'reply':
 					// end forward/reply manipulations
-					
+
 					case "mark_unread":
 					case "mark_read":
 					case "mark_flagged":
 					// end mail markup manipulations - uses same args as move/copy
-					
+
 					case "delete_mail":
 					case "move_mail":
 					case "copy_mail":
@@ -447,10 +444,10 @@ class SugarRouting {
 						$args .= ', \$extraArgs'; // in this case it is the InboundEmail instance in focus
 					break; // end move/copy email manipulation actions
 				}
-				
+
 				$customCall = "return call_user_func('{$function}', {$args});";
 				$GLOBALS['log']->debug("********** SUGARROUTING: action eval'd [ {$customCall} ]");
-				
+
 				$ruleProcessed = eval($customCall);
 			} else {
 				$GLOBALS['log']->fatal("********** SUGARROUTING: action not matched [ {$function} ] - not processing action");
@@ -458,18 +455,18 @@ class SugarRouting {
 		}
 		if($ruleProcessed)
 			$GLOBALS['log']->debug("SUGARROUTING: returning TRUE from _executeAction()");
-		else 
+		else
 			$GLOBALS['log']->debug("SUGARROUTING: returning FALSE from _executeAction()");
-			
+
 		return $ruleProcessed;
 	}
-	
+
 	/**
 	 * processes a rule's matching criteria, returns true on good match
 	 * @param object $bean SugarBean to process
 	 * @param array $focusRule Ruleset to use matching criteria
 	 * @return bool
-	 * 
+	 *
 	 * ******************************************************************
 	 * ******************************************************************
 	 * DO NOT CHANGE THIS METHOD UNLESS CHRIS (OR CURRENT OWNER) IS FULLY
@@ -484,16 +481,16 @@ class SugarRouting {
 			$GLOBALS['log']->debug("********** SUGARROUTING: focusCriteria['criteria'] empty");
 			return false;
 		}
-		
+
 		/**
 		 * matches criteria
 		 * We will force a return of TRUE if the "any" flag is checked and some criteria is satisfied.
 		 * We will force a return of FALSE if the "all" flag is checked and some criteria is NOT satisfied (catch-all).
 		 */
 		$allCriteriaFilled = false;
-		
+
 		//_ppl("got [ {$bean->name} ] from [ {$bean->from_addr} ]");
-		
+
 		foreach($focusRule['criteria'] as $criteria) {
 			if(is_array($criteria)) {
 				$crit = $criteria['action'];
@@ -504,7 +501,7 @@ class SugarRouting {
 					case "priority_low":
 						$GLOBALS['log']->debug("********* SUGARROUTING: got priority criteria");
 						$flagged = ($bean->flagged == 1) ? 'priority_high' : 'priority_normal';
-						
+
 						// no match
 						if($flagged != $crit['crit0']) {
 							if($focusRule['all'] == true) {
@@ -536,7 +533,7 @@ class SugarRouting {
 								if(isset($bean->$crit['crit0'])) {
 									$regex = "/{$crit['crit2']}/i";
 									$field = $bean->$crit['crit0'];
-									
+
 									if(!preg_match($regex, $field)) {
 										if($focusRule['all'] == true) {
 											$GLOBALS['log']->debug("********** SUGARROUTING: 'ALL' flag found and crit field not matched: [ {$crit['crit0']} -> {$crit['crit2']} for bean of type {$bean->module_dir} ]");
@@ -555,7 +552,7 @@ class SugarRouting {
 									$GLOBALS['log']->debug("********** SUGARROUTING: crit field not found: [ {$crit['crit0']} for bean of type {$bean->module_dir} ]");
 								}
 							break;
-							
+
 							/**
 							 * Criteria for "does not match" type
 							 */
@@ -563,7 +560,7 @@ class SugarRouting {
 								if(isset($bean->$crit['crit0'])) {
 									$regex = "/{$crit['crit2']}/i";
 									$field = $bean->$crit['crit0'];
-									
+
 									if(preg_match($regex, $field)) {
 										// got a match - we want to return a false flag
 										if($focusRule['all'] == true) {
@@ -582,9 +579,9 @@ class SugarRouting {
 								} else {
 									$GLOBALS['log']->debug("********** SUGARROUTING: crit field not found: [ {$crit['crit0']} for bean of type {$bean->module_dir} ]");
 								}
-							
+
 							break;
-														
+
 						}
 					break; // end string matching
 
@@ -598,14 +595,14 @@ class SugarRouting {
 				}
 			}
 		}
-		
+
 		// match 'all' - if it gets this far, it has
 		return $allCriteriaFilled;
 	}
-	
-	
-	
-	
+
+
+
+
 	///////////////////////////////////////////////////////////////////////////
 	////	UI ELEMENTS
 	/**
@@ -617,38 +614,38 @@ class SugarRouting {
 		$ret = array(
 			'strings' => array()
 		);
-		
+
 		foreach($app_strings as $k => $v) {
 			if(strpos($k, "LBL_ROUTING_") !== false) {
 				$ret['strings'][$k] = $v;
 			}
 		}
-		
+
 		// matchDom
 		$ret['matchDom'] = $this->getMatchDOM();
-		
+
 		// matchTypeDOM
 		$ret['matchTypeDom'] = $this->getMatchTypeDOM();
-		
+
 		// get actions
 		$ret['actions'] = $this->getActionsDOM();
-		
+
 		return $ret;
 	}
-	
+
 	function getMatchTypeDOM() {
 		global $app_strings;
-		
+
 		$ret = array(
 			'match' => $app_strings['LBL_ROUTING_MATCH_TYPE_MATCH'],
 			'notmatch' => $app_strings['LBL_ROUTING_MATCH_TYPE_NOT_MATCH'],
 		);
 		return $ret;
 	}
-	
+
 	function getMatchDOM() {
 		global $app_strings;
-		
+
 		$ret = array(
 			'from_addr' => $app_strings['LBL_ROUTING_MATCH_FROM_ADDR'],
 			'to_addr' => $app_strings['LBL_ROUTING_MATCH_TO_ADDR'],
@@ -661,21 +658,20 @@ class SugarRouting {
 			'priority_normal' => $app_strings['LBL_ROUTING_MATCH_PRIORITY_NORMAL'],
 			//'priority_low' => $app_strings['LBL_ROUTING_MATCH_PRIORITY_LOW'], // no support in PHP_IMAP
 		);
-		
+
 		return $ret;
 	}
 
 	function getActionsDOM() {
-		global $sugar_config;
 		global $app_strings;
-		
-		$this->customActions = "{$sugar_config['cache_dir']}/routing/customActions.php";
+
+		$this->customActions = sugar_cached("routing/customActions.php");
 		if(file_exists($this->customActions)) {
 			$customActions = array();
 			include($this->customActions); // should provide custom actions
 			$this->actions = array_merge($this->actions, $customActions);
 		}
-		
+
 		$ret = array();
 		$break = -1;
 		foreach($this->actions as $k => $action) {
@@ -688,11 +684,11 @@ class SugarRouting {
 			}
 			$ret[$action] = $app_strings[$lblKey];
 		}
-		
+
 		return $ret;
 	}
-	
-	
+
+
 	/**
 	 * Returns one rule's metadata
 	 * @param string $id ID of rule
@@ -700,7 +696,7 @@ class SugarRouting {
 	 */
 	function getRule($id) {
 		$this->loadRules();
-		
+
 		$rule = array(
 			'id' => '',
 			'name' => '',
@@ -708,7 +704,7 @@ class SugarRouting {
 			'criteria' => array(
 				'all'	=> false,
 			),
-			
+
 			'actions' => array(
 				array(
 					'function' => '',
@@ -719,7 +715,7 @@ class SugarRouting {
 				),
 			),
 		);
-		
+
 		if(!empty($id)) {
 			foreach($this->rules as $rule) {
 				if($rule['id'] == $id) {
@@ -730,7 +726,7 @@ class SugarRouting {
 
 		return $rule;
 	}
-	
+
 	/**
 	 * Renders the Rules List
 	 * @return string HTML form insertable in a table cell or something similar
@@ -738,29 +734,29 @@ class SugarRouting {
 	function getRulesList() {
 		global $app_strings;
 		global $theme;
-		
+
 		$this->loadRules();
 		$rulesDiv = $app_strings['LBL_NONE'];
-		
+
 		if(isset($this->rules)) {
 			$focusRules = $this->rules;
-			
+
 			$rulesDiv = "<table cellpadding='0' cellspacing='0' border='0' height='100%'>";
 			foreach($focusRules as $k => $rule) {
 				$rulesDiv .= $this->renderRuleRow($rule);
 			}
 			$rulesDiv .= "</table>";
-		}	
-				
+		}
+
 		$smarty = new Sugar_Smarty();
 		$smarty->assign('app_strings', $app_strings);
 		$smarty->assign('theme', $theme);
 		$smarty->assign('savedRules', $rulesDiv);
 		$ret = $smarty->fetch("include/SugarRouting/templates/rulesList.tpl");
-		
+
 		return $ret;
 	}
-	
+
 	/**
 	 * provides HTML for 1 rule in the List
 	 * @param array $rule Metadata for a rule
@@ -768,7 +764,7 @@ class SugarRouting {
 	 */
 	function renderRuleRow($rule) {
 		global $theme;
-		$active = ($rule['active'] == true) ? " CHECKED" : ""; 
+		$active = ($rule['active'] == true) ? " CHECKED" : "";
 		$ret  = "<tr>";
 		$ret .= "<td style='padding:2px;' id='cb{$rule['id']}'>";
 		$ret .= "<input class='input' id='{$rule['id']}' onclick='SUGAR.routing.ui.setRuleStatus(this);' type='checkbox' name='activeRules[]' value='{$rule['id']}'{$active}>";
@@ -779,8 +775,8 @@ class SugarRouting {
 		$ret .= "<td style='padding:2px;' id='remove{$rule['id']}'>";
 		$ret .= "<a class='listViewThLinkS1' href='javascript:SUGAR.routing.ui.deleteRule(\"{$rule['id']}\")'><img class='img' src='".SugarThemeRegistry::current()->getImageURL('minus.gif')."' border='0'></a>";
 		$ret .= "</td>";
-		$ret .= "</tr>"; 
-		
+		$ret .= "</tr>";
+
 		return $ret;
 	}
 	////	END UI ELEMENTS

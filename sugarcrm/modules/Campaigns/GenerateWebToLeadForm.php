@@ -105,7 +105,7 @@ if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
  $xtpl->assign("APP", $app_strings);
  $Web_To_Lead_Form_html = '';
  $Web_To_Lead_Form_html .='<link rel="stylesheet" type="text/css" media="all" href="' . getJSPath(SugarThemeRegistry::current()->getCSSURL('calendar-win2k-cold-1.css')) . '">';
- $Web_To_Lead_Form_html .= "<script type=\"text/javascript\" src='" . getJSPath('include/javascript/sugar_grp1.js') . "'></script>";
+ $Web_To_Lead_Form_html .= "<script type=\"text/javascript\" language=\"Javascript\" src='" . getJSPath('cache/include/javascript/sugar_grp1.js') . "'></script>";
  $Web_To_Lead_Form_html .= '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
  $Web_To_Lead_Form_html .="<form action='$web_post_url' name='WebToLeadForm' method='POST' id='WebToLeadForm'>";
  $Web_To_Lead_Form_html .= "<table width='100%' style='border-top: 1px solid;
@@ -495,7 +495,7 @@ if(!empty($boolean_fields)){
 			$add_captcha = 1;
 			$captcha_privatekey = $admin->settings['captcha_private_key'];
 			$captcha_publickey = $admin->settings['captcha_public_key'];
-			$captcha_js .="<script type='text/javascript' src='" . getJSPath('include/javascript/sugar_grp1_yui.js') . "'></script><script type='text/javascript' src='" . getJSPath('include/javascript/sugar_grp_yui2.js') . "'></script>
+			$captcha_js .="<script type='text/javascript' src='" . getJSPath('cache/include/javascript/sugar_grp1_yui.js') . "'></script><script type='text/javascript' src='" . getJSPath('cache/include/javascript/sugar_grp_yui2.js') . "'></script>
 			<script type='text/javascript' src='http://api.recaptcha.net/js/recaptcha_ajax.js'></script>
 	<script> var oldFormAction = document.getElementById('WebToLeadForm').action; //save old action
 		function initCaptcha(){

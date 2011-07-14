@@ -53,14 +53,14 @@ height: 10px;
 {/literal}
 
 <!-- begin includes for overlib -->
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}"></script>
+{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
 <!-- end includes for overlib -->
 
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
-<script type="text/javascript" src='{sugar_getjspath file='include/JSON.js'}'></script>
+{sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
+{sugar_getscript file='include/javascript/dashlets.js'}
+{sugar_getscript file='include/JSON.js'}
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 {$chartResources}
 {$mySugarChartResources}
@@ -183,7 +183,7 @@ mySugarLoader.insert();
 			<img id="pageNum_{$pageNum}_delete_page_img" class="deletePageImg" style="display: none;" onclick="return SUGAR.mySugar.deletePage()" src='{sugar_getimagepath file="info-del.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
 		   </a>
 	   </li>
-	   {/foreach}	
+	   {/foreach}
 		</ul>
 	</div>
 
@@ -228,9 +228,9 @@ mySugarLoader.insert();
  		{if $numCols > 2}
  		{* //END SUGARCRM flav=pro ONLY*}
 	 	<td>
-		
+
 		</td>
-	
+
 		<td rowspan="3">
 				<img src='{sugar_getimagepath file='blank.gif'}' width='40' height='1' border='0'>
 		</td>
@@ -238,12 +238,12 @@ mySugarLoader.insert();
 		{/if}
 		{if $numCols > 1}
 		<td>
-		
+
 		</td>
 		<td rowspan="3">
 				<img src='{sugar_getimagepath file='blank.gif'}' width='40' height='1' border='0'>
 		</td>
-		{/if}	
+		{/if}
 		{* //END SUGARCRM flav=pro ONLY*}
 		{* //BEGIN SUGARCRM flav=com ONLY*}
 		<td align='right'>
@@ -260,14 +260,14 @@ mySugarLoader.insert();
 		<td valign='top' width='{$data.width}'>
 			<ul class='noBullet' id='col_{$activePage}_{$colNum}'>
 				<li id='page_{$activePage}_hidden{$hiddenCounter}b' style='height: 5px; margin-top: 12px\9;' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
-				{foreach from=$data.dashlets key=id item=dashlet}		
+		        {foreach from=$data.dashlets key=id item=dashlet}
 				<li class='noBullet' id='dashlet_{$id}'>
 					<div id='dashlet_entire_{$id}' class='dashletPanel'>
 						{$dashlet.script}
 					{$dashlet.displayHeader}
 						{$dashlet.display}
-						{$dashlet.displayFooter}
-				  </div> 
+                        {$dashlet.displayFooter}
+                  </div>
 				</li>
 				{/foreach}
 				<li id='page_{$activePage}_hidden{$hiddenCounter}' style='height: 5px' class='noBullet'>&nbsp;&nbsp;&nbsp;</li>
@@ -278,7 +278,7 @@ mySugarLoader.insert();
 	</tr>
 </table>
 	</div>
-	
+
 	{foreach from=$divPages key=divPageIndex item=divPageNum}
 	<div id="pageNum_{$divPageNum}_div" style="display:none;">
 	</div>
@@ -300,9 +300,9 @@ mySugarLoader.insert();
 				</table>
 			</form>
 		</div>
-	</div>				
+	</div>
 	{* //END SUGARCRM flav=pro ONLY*}
-	
+
 	{* //BEGIN SUGARCRM flav=pro ONLY*}
 	<div id="changeLayoutDialog" style="display:none;">
 		<div class="hd">{$lblChangeLayout}</div>
@@ -319,15 +319,15 @@ mySugarLoader.insert();
 		</div>
 	</div>
 	{* //END SUGARCRM flav=pro ONLY*}
-	
+
 	<div id="dashletsDialog" style="display:none;">
 		<div class="hd" id="dashletsDialogHeader"><a href="javascript:void(0)" onClick="javascript:SUGAR.mySugar.closeDashletsDialog();">
 			<div class="container-close">&nbsp;</div></a>{$lblAdd}
-		</div>	
+		</div>
 		<div class="bd" id="dashletsList">
 			<form></form>
 		</div>
-		
+
 	</div>
 				
 	

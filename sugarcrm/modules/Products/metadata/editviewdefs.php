@@ -119,7 +119,7 @@ $viewdefs['Products']['EditView'] = array(
     array (
       'vendor_part_num',
       'type_id',
-    ),    
+    ),
 
     array (
       'description',

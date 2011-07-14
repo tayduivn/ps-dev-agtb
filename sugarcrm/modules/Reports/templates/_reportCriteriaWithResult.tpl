@@ -39,7 +39,7 @@
 {$chartResources}
 
 
-<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
+{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
@@ -68,27 +68,27 @@
 <tr>
 <td>
 
-<input type="submit" class="button" name="runReportButton" id="runReportButton" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}" 
+<input type="submit" class="button" name="runReportButton" id="runReportButton" accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
 	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='';">
 {* //BEGIN SUGARCRM flav=sales ONLY*}
-<input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();"> 
+<input type="button" class="button" name="showHideReportDetails" id="showHideReportDetails" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
 {* //END SUGARCRM flav=sales ONLY*}
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}" 
+<input type="submit" class="button" name="editReportButton" id="editReportButton" accessKey="{$app_strings.LBL_EDIT_BUTTON_KEY}" value="{$app_strings.LBL_EDIT_BUTTON_LABEL}" title="{$app_strings.LBL_EDIT_BUTTON_TITLE}"
 	onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.action.value='ReportsWizard';">
-{/if}    
+{/if}
 {$duplicateButtons}
 {if ($report_edit_access)}
-<input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}" 
+<input type="button" class="button"  name="scheduleReportButton" id="scheduleReportButton" value="{$mod_strings.LBL_REPORT_SCHEDULE_TITLE}"
 	onclick="schedulePOPUP()">
 {/if}
 {* //END SUGARCRM flav=pro ONLY*}
-{if ($report_export_access)}	
-<input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}" 
+{if ($report_export_access)}
+<input type="submit" class="button" name="printPDFButton" id="printPDFButton" accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
 	 onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
-    
+
 {/if}
 {if ($report_export_as_csv_access)}
 <input type="button" class="button"  name="exportReportButton" id="exportReportButton" value="{$mod_strings.LBL_EXPORT}" onclick="do_export();">
@@ -96,9 +96,9 @@
 
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 {if ($report_edit_access)}
-<input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}" 
-	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}">	
-{/if}    
+<input type="button" class="button"  name="deleteReportButton" id="deleteReportButton" accessKey="{$app_strings.LBL_DELETE_BUTTON_KEY}" value="{$app_strings.LBL_DELETE_BUTTON_LABEL}" title="{$app_strings.LBL_DELETE_BUTTON_TITLE}"
+	onclick="if (confirm(SUGAR.language.get('app_strings','NTC_DELETE_CONFIRMATION'))){literal}{{/literal}this.form.to_pdf.value='';this.form.to_csv.value='';this.form.is_delete.value='1';this.form.action.value='ReportsWizard';this.form.submit();{literal}}{/literal}">
+{/if}
 {* //END SUGARCRM flav=pro ONLY*}
 </td>
 </tr>
@@ -123,7 +123,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 	$reportType = ($reporter->report_def['report_type'] == 'tabular' ? $mod_strings['LBL_ROWS_AND_COLUMNS_REPORT'] : $mod_strings['LBL_SUMMATION_REPORT']);
 	if (!empty($reporter->report_def['display_columns']) &&
 		!empty($reporter->report_def['group_defs'])) {
-		
+
 		$reportType = $mod_strings['LBL_SUMMATION_WITH_DETAILS'];
 	} // if
 	if (isset($reporter->report_def['layout_options'])) {
@@ -144,7 +144,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 		} else {
  			if (!isset($fullTableListArray[$value['name']])) {
  				$fullTableListArray[$value['name']] = $value['name'];
- 			} // if		
+ 			} // if
 		} // else
 	} // foreach
 	$displayColumnsList = $reporter->report_def['display_columns'];
@@ -171,7 +171,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 		$summaryAndGroupDefData = '<tr><td wrap="true">';
 		$summaryAndGroupDefData = $summaryAndGroupDefData . "<b>" . $mod_strings['LBL_GROUP_BY'] . ": </b>" . implode(", ", $group_defsArray) . "</td><td wrap=\"true\">";
 		$summaryAndGroupDefData = $summaryAndGroupDefData . "<b>" . $mod_strings['LBL_SUMMARY_COLUMNS'] . ": </b>" . implode(", ", $summaryColumnsArray) . "</td></tr>";
-	
+
 	} else if (!empty($group_defs) || !empty($summary_columnsList)) {
 		$summaryAndGroupDefData = '<tr><td wrap="true">';
 		if (!empty($group_defs)) {
@@ -188,7 +188,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 	} else {
 	    $reportFilters = "<span id=\"filter_results\" valign=\"bottom\">&nbsp;<img id=\"filter_results_image\" src=\"".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."\" width=\"8px\" height=\"10px\" onclick=\"showFilterString();\"></span><span id=\"filter_results_text\" style=\"visibility:hidden;\"></span>";
 	} // else
-	
+
 	$this->assign('reportFilters', $reportFilters);
 	$this->assign('reportName', $reportName);
 	$this->assign('reportType', $reportType);
@@ -214,7 +214,7 @@ ACLAllowedModules = {$ACLAllowedModules};
 {* //BEGIN SUGARCRM flav=pro ONLY*}
 <table width="100%" cellspacing=0 cellpadding=0 class="actionsContainer">
 <tr>
-<td><input type=button name="showHideReportDetails" id="showHideReportDetails" class="button" title="{$reportDetailsButtonTitle}" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();"> 
+<td><input type=button name="showHideReportDetails" id="showHideReportDetails" class="button" title="{$reportDetailsButtonTitle}" value="{$reportDetailsButtonTitle}" onClick="showHideReportDetailsButton();">
 </td>
 </tr>
 </table>
@@ -307,11 +307,11 @@ ACLAllowedModules = {$ACLAllowedModules};
 <script>
 var current_db_type = '{$reporter_db_dbType}';
 </script>
-<script type="text/javascript" src="{$cache_path}modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
-                                                                                                       
+
 var visible_modules;
 var report_def;
 var current_module;
@@ -331,7 +331,7 @@ var hidden_summary_ref = 'hidden';
 var users_array = new Array();
 
 </script>
-<script type="text/javascript" src="include/JSON.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/JSON.js'}"></script>
 <script language="javascript">
 var image_path = "{$args_image_path}";
 var lbl_and = "{$mod_strings.LBL_AND}";
@@ -351,8 +351,8 @@ var lbl_alert_cant_add = "{$mod_strings.LBL_ALERT_CANT_ADD}";
 var lbl_related_table_blank = "{$mod_strings.LBL_RELATED_TABLE_BLANK}";
 var lbl_optional_help = "{$mod_strings.LBL_OPTIONAL_HELP}";
 </script>
-<script type="text/javascript" src="include/javascript/reportCriteria.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
-<script type="text/javascript" src="include/javascript/reportsInlineEdit.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/reportCriteria.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/reportsInlineEdit.js'}"></script>
 <script language="javascript">
 visible_modules = {$allowed_modules_js};
 report_def = {$reporter_report_def_str1};
@@ -365,7 +365,7 @@ function report_onload() {
 	    	anch.focus();
 	  	} // if
 	} else {
-		// no op		
+		// no op
 	}
 } // fn
 
@@ -413,7 +413,7 @@ function showHideReportDetailsButton() {
 		saveReportOptionsState("showDetails", "1");
 		reportDetailsTable.style.display = "";
 		showHideReportDetailsButton.title = {/literal}"{$mod_strings.LBL_REPORT_HIDE_DETAILS}";
-		{literal}showHideReportDetailsButton.value = {/literal}"{$mod_strings.LBL_REPORT_HIDE_DETAILS}";{literal}		
+		{literal}showHideReportDetailsButton.value = {/literal}"{$mod_strings.LBL_REPORT_HIDE_DETAILS}";{literal}
 	} else {
 		saveReportOptionsState("showDetails", "0");
 		reportDetailsTable.style.display = "none";
@@ -484,8 +484,8 @@ function loadChartForReports() {
 	} // if
 	var chartId = document.getElementById(id + '_div');
 	var showHideChartButton = document.getElementById('showHideChartButton');
-	if (chartId == null && showHideChartButton != null) {		
-		showHideChartButton.style.display = 'none';	
+	if (chartId == null && showHideChartButton != null) {
+		showHideChartButton.style.display = 'none';
 	} // if
 } // fn
 

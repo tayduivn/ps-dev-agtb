@@ -83,7 +83,7 @@ function make_sugar_config(&$sugar_config)
 	global $passwordsetting;
 
 	// assumes the following variables must be set:
-	// $dbconfig, $dbconfigoption, $cache_dir, $import_dir, $session_dir, $site_URL, $tmp_dir, $upload_dir
+	// $dbconfig, $dbconfigoption, $cache_dir,  $session_dir, $site_URL, $upload_dir
 
 	$sugar_config = array (
 	'admin_export_only' => empty($admin_export_only) ? false : $admin_export_only,
@@ -1119,7 +1119,7 @@ function return_module_language($language, $module, $refresh=false)
 
 	// Bug 21559 - So we can get all the strings defined in the template, refresh
 	// the vardefs file if the cached language file doesn't exist.
-    if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/language/'.$language.'.lang.php')
+    if(!file_exists(sugar_cached('modules/'). $module . '/language/'.$language.'.lang.php')
 			&& !empty($GLOBALS['beanList'][$module])){
 		$object = $GLOBALS['beanList'][$module];
 		//BEGIN SUGARCRM flav!=sales ONLY
@@ -2010,7 +2010,7 @@ function clean_xss($str, $cleanImg=true) {
 
 	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
-	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
+	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?https?://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
 
 
@@ -4778,17 +4778,24 @@ function verify_image_file($path, $jpeg = false)
 		$filetype = $img_size['mime'];
 		//if filetype is jpeg or if we are only allowing jpegs, create jpg image
         if($filetype == "image/jpeg" || $jpeg) {
-            if(imagejpeg($img, $path)) {
+            ob_start();
+            imagejpeg($img);
+            $image = ob_get_clean();
+            // not writing directly because imagejpeg does not work with streams
+            if(file_put_contents($path, $image)) {
                 return true;
             }
         } elseif ($filetype == "image/png") { // else if the filetype is png, create png
         	imagealphablending($img, true);
         	imagesavealpha($img, true);
-    	    if(imagepng($img, $path)) {
+        	ob_start();
+            imagepng($img);
+            $image = ob_get_clean();
+    	    if(file_put_contents($path, $image)) {
                 return true;
     	    }
         } else {
-        	return false;	
+        	return false;
         }
 	} else {
 	    // check image manually

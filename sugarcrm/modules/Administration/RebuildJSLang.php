@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 if(is_admin($current_user)){
-    
+
     global $mod_strings, $sugar_config;
     echo $mod_strings['LBL_REBUILD_JAVASCRIPT_LANG_DESC'];
 
@@ -31,6 +31,6 @@ if(is_admin($current_user)){
     LanguageManager::clearLanguageCache(); 
 }
 else{
-	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
 ?>

@@ -1,6 +1,4 @@
 <?php
-
-
 require_once('include/ytree/Tree.php');
 require_once('include/ytree/Node.php');
 /*********************************************************************************
@@ -329,12 +327,12 @@ class TeamSet extends SugarBean{
             if ( $teamSetsUsers != null && !empty($teamSetsUsers[$user_id])) {
                 $foundInCache = true;
             }
-
-            if (!$foundInCache && file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetsUsersCache.php') ) {
-            require_once($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetsUsersCache.php');
-            if(!empty($teamSetsUsers[$user_id])){
-                    $foundInCache = true;
-            }
+            $cachedfile = sugar_cached('modules/Teams/TeamSetsUsersCache.php');
+            if (!$foundInCache && file_exists($cachedfile) ) {
+                require_once($cachedfile);
+                if(!empty($teamSetsUsers[$user_id])){
+                        $foundInCache = true;
+                }
             }
 
             $result = $this->db->query($selectQuery, TRUE, "Error finding team memberships: ");
@@ -349,9 +347,11 @@ class TeamSet extends SugarBean{
                 $teamSetsUsers[$user_id] = $row['date_modified'];
                 sugar_cache_put('TeamSetsUsersCache',$teamSetsUsers);
 
-                if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetsUsersCache.php') ) { mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); }
+                if ( ! file_exists($cachedfile) ) {
+                    mkdir_recursive(dirname($cachedfile));
+                }
 
-                $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetsUsersCache.php','w');
+                $fd = fopen($cachedfile,'w');
                 fwrite($fd,"<?php\n\n".'$teamSetsUsers = '.var_export($teamSetsUsers,true).";\n ?>");
                 fclose($fd);
             }

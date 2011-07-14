@@ -35,11 +35,7 @@ global $sugar_config, $mod_strings;
 
 print( $mod_strings['LBL_CLEAR_CHART_DATA_CACHE_FINDING'] . "<br>" );
 
-$search_dir='cache/';
-if (!empty($sugar_config['cache_dir'])) {
-	$search_dir=$sugar_config['cache_dir'];
-}
-  
+$search_dir=sugar_cached("");
 $all_src_files  = findAllFiles($search_dir.'/xml', array() );
 
 print( $mod_strings['LBL_CLEAR_CHART_DATA_CACHE_DELETING1'] . "<br>" );
@@ -50,7 +46,7 @@ foreach( $all_src_files as $src_file ){
 		unlink( "$src_file" );
 	}
 }
- 
+
 include('modules/Versions/ExpectedVersions.php');
 
 

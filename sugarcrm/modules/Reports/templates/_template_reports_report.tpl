@@ -57,23 +57,23 @@
 <td style="padding-bottom: 2px;"">
 {if ($report_edit_access)}
 
-<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}" 
-    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" 
-    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''"> 
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}" 
+<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}"
+    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'"> 
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 {/if}
-{if ($report_export_access)}	
-<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" 
-    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" 
+{if ($report_export_access)}
+<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}"
+    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 {/if}
 </td>
@@ -133,23 +133,23 @@ ACLAllowedModules = {$ACLAllowedModules};
 <td style="padding-bottom: 2px;"">
 {if ($report_edit_access)}
 
-<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}" 
-    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}" 
-    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''"> 
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}" 
+<input type=submit class="button" title="{$mod_strings.LBL_RUN_BUTTON_TITLE}"
+    accessKey="{$mod_strings.LBL_RUN_REPORT_BUTTON_KEY}"
+    value="{$mod_strings.LBL_RUN_REPORT_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value=''">
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_BUTTON_LABEL}"
     onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';">
-<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}" 
-    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}" 
-    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'"> 
+<input type=submit class="button" title="{$app_strings.LBL_SAVE_AS_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_SAVE_AS_BUTTON_KEY}"
+    value="{$app_strings.LBL_SAVE_AS_BUTTON_LABEL}"
+    onclick="this.form.to_pdf.value='';this.form.to_csv.value='';this.form.save_report.value='on';this.form.record.value='';this.form.save_as.value='true'">
 {/if}
-{if ($report_export_access)}	
-<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}" 
-    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}" 
-    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}" 
+{if ($report_export_access)}
+<input type=submit class="button" title="{$app_strings.LBL_VIEW_PDF_BUTTON_TITLE}"
+    accessKey="{$app_strings.LBL_VIEW_PDF_BUTTON_KEY}"
+    value="{$app_strings.LBL_VIEW_PDF_BUTTON_LABEL}"
     onclick="this.form.save_report.value='';this.form.to_csv.value='';this.form.to_pdf.value='on'">
 {/if}
 </td>
@@ -160,11 +160,11 @@ ACLAllowedModules = {$ACLAllowedModules};
 <script>
 var current_db_type = '{$reporter_db_dbType}';
 </script>
-<script type="text/javascript" src="{$cache_path}modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
-                                                                                                       
+
 var visible_modules;
 var report_def;
 var current_module;
@@ -184,7 +184,7 @@ var hidden_summary_ref = 'hidden';
 var users_array = new Array();
 
 </script>
-<script type="text/javascript" src="include/JSON.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/JSON.js'}"></script>
 <script language="javascript">
 var image_path = "{$args_image_path}";
 var lbl_and = "{$mod_strings.LBL_AND}";
@@ -204,7 +204,7 @@ var lbl_alert_cant_add = "{$mod_strings.LBL_ALERT_CANT_ADD}";
 var lbl_related_table_blank = "{$mod_strings.LBL_RELATED_TABLE_BLANK}";
 var lbl_optional_help = "{$mod_strings.LBL_OPTIONAL_HELP}";
 </script>
-<script type="text/javascript" src="include/javascript/report_additionals.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/report_additionals.js'}"></script>
 <script language="javascript">
 visible_modules = {$allowed_modules_js};
 report_def = {$reporter_report_def_str1};
@@ -217,10 +217,10 @@ function report_onload() {
 	    	anch.focus();
 	  	} // if
 	} else {
-		// no op		
+		// no op
 	}
 } // fn
-                                                                                
+
 window.onload = report_onload;
 current_module = report_def.module;
 field_defs = module_defs[current_module].field_defs;

@@ -292,11 +292,11 @@ function checkColumnKeysIndices($relationship,$table,$rel_key,&$col_data_type,&$
 
 function checkSchema($execute=false,$return=false){
 
-	
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
-	
+
 	$db = &DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
@@ -469,12 +469,10 @@ function checkSchema($execute=false,$return=false){
 		$db_scan .= "****************************************************************************************************"."\n";
 	}
 
-	$cwd = getcwd();
 
-	mkdir_recursive(clean_path("{$cwd}/{$GLOBALS['sugar_config']['upload_dir']}dbscan"));
-	$dbscan_dir =clean_path("{$cwd}/{$GLOBALS['sugar_config']['upload_dir']}dbscan");
+	$dbscan_dir =sugar_cached("dbscan");
+	mkdir_recursive($dbscan_dir);
 	$dbscan_file =$dbscan_dir.'/schema_inconsistencies.txt';
-	//$fk_schema_file =$schema_dir.'/fkschema.sql';
 	if(file_exists($dbscan_file)) {
 		unlink($dbscan_file);
 	}
@@ -511,7 +509,7 @@ function getAllTables(){
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
-	$db = &DBManagerFactory::getInstance('information_schema');
+	$db = DBManagerFactory::getInstance('information_schema');
 	$db_name= $sugar_config['dbconfig']['db_name'];
 	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
@@ -537,7 +535,7 @@ function tableColumns(&$colsDrop,$table_name){
     global $setup_db_host_instance;
     global $setup_db_admin_user_name;
     global $setup_db_admin_password;
-	$db = &DBManagerFactory::getInstance('information_schema');
+	$db = DBManagerFactory::getInstance('information_schema');
 	$db_name= $sugar_config['dbconfig']['db_name'];
 	$setup_db_host_name = $sugar_config['dbconfig']['db_host_name'];
   	$setup_db_admin_user_name = $sugar_config['dbconfig']['db_user_name'];
