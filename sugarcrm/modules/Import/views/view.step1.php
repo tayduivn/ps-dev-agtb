@@ -96,7 +96,10 @@ class ImportViewStep1 extends ImportView
             {
                 $tmp = new $beanName();
                 if( isset($tmp->importable) && $tmp->importable )
-                    $importableModules[$moduleName] = $moduleName;
+                {
+                    $label = isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) ? $GLOBALS['app_list_strings']['moduleList'][$moduleName] : $moduleName;
+                    $importableModules[$moduleName] = $label;
+                }
             }
         }
 
