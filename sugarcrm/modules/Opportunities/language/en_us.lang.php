@@ -145,7 +145,7 @@ $mod_strings = array (
   'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
 	'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
   //For export labels
-  'LBL_CAMPAIGN_ID' => 'Campaign ID',
+  'LBL_EXPORT_CAMPAIGN_ID' => 'Campaign ID',
   'LBL_OPPORTUNITY_TYPE' => 'Opportunity Type',
   'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
   'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',

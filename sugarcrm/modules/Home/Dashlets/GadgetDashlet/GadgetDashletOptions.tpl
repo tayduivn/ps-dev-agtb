@@ -69,7 +69,7 @@
 <tr>
     <td align="right" colspan="2">
         <input type='submit' class='button' value='{$lang.LBL_SAVE}'>
-        <input type='submit' class='button' value='{$lang.LBL_CLEAR}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
+        <input type='submit' class='button' value='{$lang.LBL_CLEAR}' onclick='SUGAR.searchForm.clear_form(this.form,["title","autoRefresh"]);return false;'>
    	</td>
 </tr>
 </table>
