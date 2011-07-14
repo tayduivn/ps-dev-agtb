@@ -1869,8 +1869,15 @@ sugarListView.prototype.use_external_mail_client_callback = function(o)
 }
 
 sugarListView.prototype.send_form_for_emails = function(select, currentModule, action, no_record_txt,action_module,totalCount, totalCountError) {
-	if (document.MassUpdate.select_entire_list.value == 1) {
-		if (totalCount > 10) {
+	if ( typeof(SUGAR.config.email_sugarclient_listviewmaxselect) != 'undefined' ) {
+	    maxCount = 10;
+	}
+	else {
+	    maxCount = SUGAR.config.email_sugarclient_listviewmaxselect;
+	}
+    
+    if (document.MassUpdate.select_entire_list.value == 1) {
+		if (totalCount > maxCount) {
 			alert(totalCountError);
 			return;
 		} // if
@@ -1912,7 +1919,7 @@ sugarListView.prototype.send_form_for_emails = function(select, currentModule, a
 	}
 
 	var selectedArray = uidTa.value.split(",");
-	if(selectedArray.length > 10) {
+	if(selectedArray.length > maxCount) {
 		alert(totalCountError);
 		return;
 	} // if
