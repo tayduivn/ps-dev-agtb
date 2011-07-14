@@ -36,6 +36,12 @@ var activeTab = activePage,
 	return {
 		loadSugarCharts: function(activeTab) {
 			var chartFound = false;
+
+			if(typeof numCols == 'undefined')
+			{
+			var numCols = 2;
+			}
+
 			for (id in charts[activeTab]){
 				if(id != 'undefined'){
 					chartFound = true;

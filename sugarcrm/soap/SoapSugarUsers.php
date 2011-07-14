@@ -340,6 +340,10 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 
 	$output_list = array();
 
+    $isEmailModule = false;
+    if($module_name == 'Emails'){
+        $isEmailModule = true;
+    }
 	// retrieve the vardef information on the bean's fields.
 	$field_list = array();
 	foreach($list as $value)
@@ -347,6 +351,9 @@ function get_entry_list($session, $module_name, $query, $order_by,$offset, $sele
 		if(isset($value->emailAddress)){
 			$value->emailAddress->handleLegacyRetrieve($value);
 		}
+        if($isEmailModule){
+            $value->retrieveEmailText();
+        }
 		$value->fill_in_additional_detail_fields();
 		$output_list[] = get_return_value($value, $module_name);
 		if(empty($field_list)){

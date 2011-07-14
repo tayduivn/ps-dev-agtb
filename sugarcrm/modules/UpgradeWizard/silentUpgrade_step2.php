@@ -300,6 +300,12 @@ $errors = array();
 $unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp");
 $install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
 
+if(!file_exists("{$sugar_config['upload_dir']}upgrades/patch"))
+{
+	logThis("Create directory " . dirname($install_file), $path);
+	mkdir_recursive("{$sugar_config['upload_dir']}upgrades/patch");
+}
+
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
 $_SESSION['zip_from_dir'] = $zip_from_dir;
@@ -520,6 +526,14 @@ if($origVersion < '610' && function_exists('upgrade_connectors'))
 {
    upgrade_connectors($path);
 }
+
+// Enable the InsideView connector by default
+if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
+    logThis("Looks like we need to enable the InsideView connector\n",$path);
+    upgradeEnableInsideViewConnector($path);
+}
+
+
 
 //bug: 36845 - ability to provide global search support for custom modules
 if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
