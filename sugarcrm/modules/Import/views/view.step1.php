@@ -48,9 +48,6 @@ class ImportViewStep1 extends ImportView
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
 
-        $this->instruction = 'LBL_SELECT_DS_INSTRUCTION';
-        $this->ss->assign('INSTRUCTION', $this->getInstruction());
-
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
@@ -61,10 +58,18 @@ class ImportViewStep1 extends ImportView
 
         $showModuleSelection = ($_REQUEST['import_module'] == 'Administration');
         $importableModulesOptions = array();
+
+        //If we are coming from the admin link, get the module list.
         if($showModuleSelection)
         {
             $importableModulesOptions = get_select_options_with_id($this->getImportableModules(), '');
         }
+        else
+        {
+            $this->instruction = 'LBL_SELECT_DS_INSTRUCTION';
+            $this->ss->assign('INSTRUCTION', $this->getInstruction());
+        }
+
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
 

@@ -520,7 +520,8 @@ SUGAR.expressions.ExpressionParser.prototype.tokenize = function(expr)
 	{
 		return {
 			type: "constant",
-			returnType : this.getType(fixed)
+			returnType : this.getType(fixed),
+            value : fixed.evaluate()
 		}
 	}
 

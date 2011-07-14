@@ -144,10 +144,7 @@ SUGAR.themes.loadModuleList = function()
 				oSubmenu.addItems(data,1);
 
 				//update shadow height to accomodate new items
-				oShadowBody = oShadow.firstChild;
-				oShadowBody.style.height = (oShadow.offsetHeight)+"px";
-				oShadowBodyCenter = oShadowBody.childNodes[1];
-				oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
+
 				oVR = oShadow.previousSibling;
 				oVR.style.height = (oShadow.offsetHeight - 35)+"px";
 
@@ -197,60 +194,7 @@ SUGAR.themes.loadModuleList = function()
 		oElement.style.left = newLeft + "px";
 		oBd = oElement.firstChild;
 		oShadow = oElement.lastChild;
-		if(oShadow.innerHTML == "") {
-			oShadowBody = document.createElement("div");
-			oShadowBody.setAttribute("class","shadow-bd");
-			oShadowBody.setAttribute("className","shadow-bd");
-
-			oShadowBodyMl = document.createElement("div");
-			oShadowBodyMl.setAttribute("class","ml");
-			oShadowBodyMl.setAttribute("className","ml");
-			oShadowBody.appendChild(oShadowBodyMl);
-
-			oShadowBodyCenter = document.createElement("div");
-			oShadowBodyCenter.setAttribute("class","bd-center");
-			oShadowBodyCenter.setAttribute("className","bd-center");
-			oShadowBodyCenter.style.backgroundColor = "#fff";
-			oShadowBody.appendChild(oShadowBodyCenter);
-
-			oShadowBodyMr = document.createElement("div");
-			oShadowBodyMr.setAttribute("class","mr");
-			oShadowBodyMr.setAttribute("className","mr");
-			oShadowBody.appendChild(oShadowBodyMr);
-
-			oShadow.appendChild(oShadowBody);
-
-			oShadowFt = document.createElement("div");
-			oShadowFt.setAttribute("class","ft");
-			oShadowFt.setAttribute("className","ft");
-
-			oShadowFtBl = document.createElement("div");
-			oShadowFtBl.setAttribute("class","bl");
-			oShadowFtBl.setAttribute("className","bl");
-			oShadowFt.appendChild(oShadowFtBl);
-
-			oShadowFtCenter = document.createElement("div");
-			oShadowFtCenter.setAttribute("class","ft-center");
-			oShadowFtCenter.setAttribute("className","ft-center");
-			oShadowFt.appendChild(oShadowFtCenter);
-
-			oShadowFtBr = document.createElement("div");
-			oShadowFtBr.setAttribute("class","br");
-			oShadowFtBr.setAttribute("className","br");
-			oShadowFt.appendChild(oShadowFtBr);
-
-			oShadow.appendChild(oShadowFt);
-
-		} else {
-			oShadowBody = oShadow.firstChild;
-		}
-
-
-		oShadowBody.style.height = (oShadow.offsetHeight)+"px";
-		oShadowBodyCenter = oShadowBody.childNodes[1];
-		oShadowBodyCenter.style.height = (oShadow.offsetHeight-17)+"px";
-		oShadowBodyCenter.style.width = (oBd.offsetWidth)+"px";
-
+		oElement.style.top = oElement.offsetTop + 1 + "px";
 		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
 			if(oShadow.previousSibling.className != "vr") {
 
@@ -258,9 +202,8 @@ SUGAR.themes.loadModuleList = function()
 			oVR.setAttribute("class", "vr");
 			oVR.setAttribute("className", "vr");
 			oElement.insertBefore(oVR,oShadow);
-
-			oVR.style.height = (oBd.offsetHeight - 35)+"px";
-			oVR.style.top = (oBd.offsetTop+25) +"px";
+			oVR.style.height = (oBd.offsetHeight - 15)+"px";
+			oVR.style.top = (oBd.offsetTop+8) +"px";
 			oVR.style.left = ((oBd.offsetWidth/2)-10) +"px";
 
 			}
@@ -348,8 +291,6 @@ SUGAR.themes.loadModuleList = function()
             visible: false,
 		    hidedelay: 750,
 		    lazyload: true });
-
-
 	    /*
 	      Subscribe to the "beforeShow" and "show" events for
 	      each submenu of the MenuBar instance.
@@ -472,7 +413,7 @@ function sugar_theme_gm_switch( groupName ) {
     oMenuBar = allMenuBars[groupName];
 }
 
-offsetPadding = 15;
+offsetPadding = 0;
 
 function resizeHeader() {
 	var e = document.getElementById("contentTable");

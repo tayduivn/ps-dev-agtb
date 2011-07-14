@@ -393,7 +393,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 			array(
 				'name' => 'idx_opp_id_deleted',
 				'type' => 'index',
-				'fields' => array('id,deleted'),
+				'fields' => array('id','deleted'),
 			),
 		),
 
