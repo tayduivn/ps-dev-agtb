@@ -4013,11 +4013,13 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+                            SUGAR.util.callOnChangeListers(selectField);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+                    SUGAR.util.callOnChangeListers(window.document.forms[form_name].elements[the_key]);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
