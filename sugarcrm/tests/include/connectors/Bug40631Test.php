@@ -671,7 +671,7 @@ EOQ;
         $this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
 
 
-        $account = new Account();
+        //$account = new Account();
         $accounts = array();
         $accounts = $source_instance->fillBeans(array('name' => 'Gannett'), 'Accounts', $accounts);
         foreach($accounts as $count=>$account) {
