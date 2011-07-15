@@ -14,3 +14,4 @@ ibmf_quicksearchext
 ibmf_searchformoverride
 ibmf_logger
 ibmf_defect3055
+ibmf_defect3054
