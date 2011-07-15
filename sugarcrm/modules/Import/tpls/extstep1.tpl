@@ -45,7 +45,9 @@
 <input type="hidden" name="enabled_dup_fields" value ="{$ENABLED_DUP_FIELDS}">
 <input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
-<input type="hidden" name="has_header" value="off">    
+<input type="hidden" name="has_header" value="off">
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
+
 
 <p>
     {$MOD.LBL_EXTERNAL_MAP_HELP}
