@@ -139,7 +139,7 @@ class SugarRelationshipFactory {
     }
 
 	protected function getCacheFile() {
-		return sugar_cached("Relationships/relationships.cache.php");
+		return "{$GLOBALS['sugar_config']['cache_dir']}Relationships/relationships.cache.php";
 	}
 
 

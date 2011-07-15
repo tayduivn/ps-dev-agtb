@@ -1059,7 +1059,8 @@ function is_server_version_greater($left, $right){
 }
 
 function getFile( $zip_file, $file_in_zip ){
-    $base_upgrade_dir = sugar_cached("/upgrades");
+    global $sugar_config;
+    $base_upgrade_dir = $sugar_config['upload_dir'] . "/upgrades";
     $base_tmp_upgrade_dir   = "$base_upgrade_dir/temp";
     $my_zip_dir = mk_temp_dir( $base_tmp_upgrade_dir );
     unzip_file( $zip_file, $file_in_zip, $my_zip_dir );

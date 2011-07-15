@@ -49,7 +49,9 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
             if(strlen($badoutput) > 0) {
                 ob_end_clean();
             }
-            file_put_contents("upload://$fileName", ltrim($tmp));
+            $fp = sugar_fopen($GLOBALS['sugar_config']['upload_dir'].$fileName,'w');
+            fwrite($fp, ltrim($tmp));
+            fclose($fp);
 
             $email_id = $this->email_layout($fileName, $bean);
 
@@ -180,8 +182,8 @@ class QuotesViewSugarpdf extends ViewSugarpdf{
         $note->save();
         $note_id = $note->id;
 
-	    $source = "upload://$file_name";
-	    $destination = "upload://$note_id";
+        $source = $GLOBALS['sugar_config']['upload_dir'].$file_name;
+        $destination = $GLOBALS['sugar_config']['upload_dir'].$note_id;
 
         if (!rename($source, $destination)){
             $msg = str_replace('$destination', $destination, $mod_strings['LBL_RENAME_ERROR']);

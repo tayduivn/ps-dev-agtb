@@ -26,8 +26,8 @@ class UpgradeWizardAddTeamSetIdTest extends Sugar_PHPUnit_Framework_TestCase  {
 
 var $skipTest = true;
 var $module = 'Contacts'; //Just do this for Contacts module for now
-var $team_set_ids;
-var $team_ids;
+var $team_set_ids = array();
+var $team_ids = array();
 
 function setUp() 
 

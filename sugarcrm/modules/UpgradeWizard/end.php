@@ -176,16 +176,13 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
 		//BEGIN SUGARCRM flav=pro ONLY
 		logThis("Adding Saved Report Chart Types", $path);
-		if(file_exists("$unzip_dir/scripts/upgrade_homepage.php")) {
-            require_once("$unzip_dir/scripts/upgrade_homepage.php");
-		    add_report_chart_types();
-		}
+		require_once("$unzip_dir/scripts/upgrade_homepage.php");
+		add_report_chart_types();
+
 		//END SUGARCRM flav=pro ONLY
 		logThis("Upgrading multienum data", $path);
-        if(file_exists("$unzip_dir/scripts/upgrade_multienum_data.php")) {
-            require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-            upgrade_multienum_data();
-        }
+        require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
+        upgrade_multienum_data();
 	 }
 
 
@@ -302,7 +299,7 @@ logThis('End Updating the license ', $path);
 set_upgrade_progress('end','done');
 
 logThis('Cleaning up the session.  Goodbye.');
-unlinkUWTempFiles();
+unlinkTempFiles();
 logThis('Cleaning up the session.  Goodbye.');
 resetUwSession();
 // flag to say upgrade has completed

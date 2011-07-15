@@ -83,36 +83,36 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
 	$form =new XTemplate ('modules/WorkFlowTriggerShells/CreateStepCount.html');
 	$GLOBALS['log']->debug("using file modules/WorkFlowTriggerShells/CreateStepCount.html");
 
-
+	
 	//Bug 12335: We need to include the javascript language file first. And also the language file in WorkFlow is needed.
-        if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
             require_once('include/language/jsLanguage.php');
             jsLanguage::createAppStringsCache($GLOBALS['current_language']);
         }
-        $javascript_language_files = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
-        if(!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+        $javascript_language_files = '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
                 require_once('include/language/jsLanguage.php');
                 jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
         }
-        $javascript_language_files .= getVersionedScript("cache/jsLanguage/{$this->module}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-        if(!is_file(sugar_cached('jsLanguage/WorkFlow/') . $GLOBALS['current_language'] . '.js')) {
+        $javascript_language_files .= '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/WorkFLow/' . $GLOBALS['current_language'] . '.js')) {
             require_once('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache('WorkFlow', $GLOBALS['current_language']);
         }
-        $javascript_language_files .= getVersionedScript("cache/jsLanguage/WorkFlow/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-
+        $javascript_language_files .= '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/WorkFlow/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return() {\n";
         $the_javascript .= "    window.opener.document.EditView.submit();";
         $the_javascript .= "}\n";
-        $the_javascript .= "</script>\n";
-
+        $the_javascript .= "</script>\n";	
+	
 	$form->assign("MOD", $mod_strings);
 	$form->assign("APP", $app_strings);
 	$form->assign("JAVASCRIPT_LANGUAGE_FILES", $javascript_language_files);
 	$form->assign("MODULE_NAME", $currentModule);
 	$form->assign("GRIDLINE", $gridline);
-	$form->assign("SET_RETURN_JS", $the_javascript);
+	$form->assign("SET_RETURN_JS", $the_javascript);	
 
 	$form->assign("BASE_MODULE", $workflow_object->base_module);
 	$form->assign("WORKFLOW_ID", $workflow_object->id);
@@ -126,15 +126,15 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
 		$form->assign("FRAME_TYPE", $_REQUEST['frame_type']);
 	} else {
 		$form->assign("FRAME_TYPE", "Primary");
-	}
-
-
-
+	}		
+ 	
+	
+	
 insert_popup_header($theme);
 
 $form->parse("embeded");
 $form->out("embeded");
-
+	
 
 ////////Middle Items/////////////////////////////
 
@@ -142,7 +142,7 @@ $form->out("embeded");
 	require_once('include/ListView/ProcessView.php');
 	$ProcessView = new ProcessView($workflow_object, $focus);
 	$prev_display_text = $ProcessView->get_prev_text("TriggersCreateStep1", $focus->type);
-
+	
 	$form->assign("PREV_DISPLAY_TEXT", $prev_display_text);
 
 
@@ -159,30 +159,30 @@ $form->out("embeded");
 			$base_expression_text = $base_object->operator." ".$base_object->rhs_module;
 		//end if base is present
 		} else {
-			$base_expression_text = "is this amount";
-		}
-
+			$base_expression_text = "is this amount";	
+		}	
+ 		  
 		$form->assign("TRIGGER1_EXP_ID", $base_object->id);
 		$form->assign("TRIGGER1_RHS_VALUE", $base_object->rhs_value);
 		$form->assign("TRIGGER1_TEXT", $base_expression_text);
 		$form->assign("TRIGGER1_OPERATOR", $base_object->operator);
 		$form->assign("TRIGGER1_LHS_TYPE", $base_object->lhs_type);
 
-
+		
 /////////////////Second Item, which is related module//////////////////////
 		if($base_object->lhs_type=="rel_module") {
 			$rel_expression_text = $base_object->lhs_module;
 			$form->assign("TRIGGER2_CHECKED", "checked");
 		} else {
 			$rel_expression_text = "module";
-		}
+		}	
 
 		$form->assign("TRIGGER2_LHS_MODULE", $base_object->lhs_module);
 		$form->assign("TRIGGER2_TEXT", $rel_expression_text);
 
+	
 
-
-
+	
 //////////////////BEGIN 1st Filter Object	/////////////////////////////////
 
 		$filter1_object = new Expression();
@@ -200,12 +200,12 @@ $form->out("embeded");
 				$filter1_expression_text = $display_array['lhs_field']." ".$display_array['operator']." ".$display_array['rhs_value'];
 			} else {
 				$filter1_expression_text = "field";
-			}
+			}	  	
 		//end if base_id is there
 		} else {
 			$filter1_expression_text = "field";
-		}
-
+		}	
+				
 		$form->assign("TRIGGER3_EXP_ID", $filter1_object->id);
 		$form->assign("TRIGGER3_RHS_VALUE", $filter1_object->rhs_value);
 		$form->assign("TRIGGER3_TEXT", $filter1_expression_text);
@@ -213,14 +213,14 @@ $form->out("embeded");
 		$form->assign("TRIGGER3_EXP_TYPE", $filter1_object->exp_type);
 		$form->assign("TRIGGER3_LHS_MODULE", $workflow_object->base_module);
 		$form->assign("TRIGGER3_LHS_FIELD", $filter1_object->lhs_field);
+		
 
+/////////////////END Filter1 Object/////////////////////////////////	
 
-/////////////////END Filter1 Object/////////////////////////////////
-
-
+	
 
 //////////////////BEGIN 2nd Filter Object	/////////////////////////////////
-
+	
 		$filter2_object = new Expression();
 		//only try to retrieve if there is a base object set
 		if(isset($base_id) && $base_id!="") {
@@ -235,12 +235,12 @@ $form->out("embeded");
 				$filter2_expression_text = $display_array['lhs_field']." ".$display_array['operator']." ".$display_array['rhs_value'];
 			} else {
 				$filter2_expression_text = "field";
-			}
+			}	  	
 		//end if base_id is there
 		} else {
 			$filter2_expression_text = "field";
-		}
-
+		}	
+				
 		$form->assign("TRIGGER4_EXP_ID", $filter2_object->id);
 		$form->assign("TRIGGER4_RHS_VALUE", $filter2_object->rhs_value);
 		$form->assign("TRIGGER4_TEXT", $filter2_expression_text);
@@ -248,23 +248,23 @@ $form->out("embeded");
 		$form->assign("TRIGGER4_EXP_TYPE", $filter2_object->exp_type);
 		$form->assign("TRIGGER4_LHS_MODULE", $workflow_object->base_module);
 		$form->assign("TRIGGER4_LHS_FIELD", $filter2_object->lhs_field);
-
+		
 
 /////////////////END Filter2 Object/////////////////////////////////
-
+	
 
 /////////////////End Items 	//////////////////////
 
 //close window and refresh parent if needed
 
 if(!empty($_REQUEST['special_action']) && $_REQUEST['special_action'] == "refresh"){
-
+	
 	$special_javascript = "window.opener.document.DetailView.action.value = 'DetailView'; \n";
 	$special_javascript .= "window.opener.document.DetailView.submit(); \n";
 	$special_javascript .= "window.close();";
 	$form->assign("SPECIAL_JAVASCRIPT", $special_javascript);
-
-}
+	
+}	
 
 $form->parse("main");
 $form->out("main");

@@ -215,6 +215,8 @@ $xtpl=new XTemplate ('modules/Activities/OpenListView.html');
 $xtpl->assign("MOD", $current_module_strings);
 $xtpl->assign("APP", $app_strings);
 $xtpl->assign('JSON_CONFIG_JAVASCRIPT', $json_config->get_static_json_server());
+$xtpl->assign("SUGAR_VERSION", $sugar_version);
+$xtpl->assign("JS_CUSTOM_VERSION", $sugar_config['js_custom_version']);
 
 // Stick the form header out there.
 $filter = get_select_options_with_id($current_module_strings['appointment_filter_dom'], $appointment_filter );

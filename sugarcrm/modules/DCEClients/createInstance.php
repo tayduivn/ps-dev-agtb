@@ -31,16 +31,16 @@ function process_create_instance($template_path, $instance_path, $template_url, 
 	}
 	$instance_name =  basename($instance_path);
 	if(file_exists($instance_path . 'ini_setup.php'))return false;
-
+	
 	$structure = array(
-	sugar_cached(''),
-	sugar_cached('dashlets'),
-	sugar_cached('dynamic_fields'),
-	sugar_cached('modules'),
-    sugar_cached('import'),
-	rtrim($GLOBALS['sugar_config']['upload_dir'], '/\\'),
-	sugar_cached("xml"),
-	sugar_cached('smarty'),
+	str_replace('/','',$GLOBALS['sugar_config']['cache_dir']),
+	$GLOBALS['sugar_config']['cache_dir'].'dashlets',
+	$GLOBALS['sugar_config']['cache_dir'].'dynamic_fields',
+	$GLOBALS['sugar_config']['cache_dir'].'modules',
+    $GLOBALS['sugar_config']['cache_dir'].'import',
+	str_replace('d/','d',$GLOBALS['sugar_config']['upload_dir']),
+	str_replace('l/','l',$GLOBALS['sugar_config']['tmp_dir']),
+	$GLOBALS['sugar_config']['cache_dir'].'smarty',
 	'custom',
 	'data',
 	'data/upload',
@@ -63,7 +63,7 @@ function process_create_instance($template_path, $instance_path, $template_url, 
 			return false;
 		}
 	}
-
+	
 	foreach($structure as $struct){
 		if(!file_exists($instance_path .$struct))if(!mkdir($instance_path. $struct,MKDIRMODE, true)){
 			print('<br>Could Not Create Directory:'. $instance_path. $struct);
@@ -78,18 +78,18 @@ function process_create_instance($template_path, $instance_path, $template_url, 
 					$fp = fopen($instance_path . $file, 'a');
 					fclose($fp);
 					continue;
-
+				
 				}else{
-					print('<br>Invalid Template - Missing File : ' . $template_path. $file);
+					print('<br>Invalid Template - Missing File : ' . $template_path. $file);					
 					return false;
 				}
 			}
 			copy($template_path. $file , $instance_path . $file);
-
+            
 		}else{
 			if(!file_exists($template_path. $file)){
 				print('<br>Invalid Template - Missing File : ' . $template_path. $file);
-				return false;
+				return false;	
 			}
 			$contents = file_get_contents($template_path. $file );
 			$contents = preg_replace('/\<\?php/', '<?php' . "\nrequire_once('ini_setup.php');\n",$contents, 1 );
@@ -114,7 +114,7 @@ EOQ;
 	fwrite($fp, $ini_setup);
 	fclose($fp);
     chmod($instance_path . '/ini_setup.php', MKDIRMODE);
-
+	
 	$fp = fopen($instance_path . '/.htaccess', 'w');
 	fwrite($fp , 'RedirectMatch 301 /' . $instance_name. '/(?!cache)(?!custom)(.*)\.(gif|jpg|png|css|js|swf|ico) ' . $template_url . '/$1.$2');
 	fclose($fp);

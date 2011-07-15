@@ -30,7 +30,7 @@
 // $Id: EditView.tpl 54689 2010-02-21 02:43:22Z jmertic $
 
 *}
-<script type='text/javascript' src='{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}'></script>
+<script type='text/javascript' src='{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}'></script>
 <form name="ConfigureSettings" enctype='multipart/form-data' method="POST" action="index.php" onSubmit="return (add_checks(document.ConfigureSettings) && check_form('ConfigureSettings'));">
 <input type='hidden' name='action' value='SaveConfig'/>
 <input type='hidden' name='module' value='Configurator'/>
@@ -459,7 +459,7 @@ function toggleDisplay_2(div_string){
                 case 'size':
                     alert(SUGAR.language.get('Configurator','LBL_ALERT_SIZE_RATIO'));
                     document.getElementById(forQuotes + "_logo").value=file_type['path'];
-                    document.getElementById(forQuotes + "_logo_image").src=file_type['url'];
+                    document.getElementById(forQuotes + "_logo_image").src=file_type['path'];
                     break;
                 case 'file_error':
                     alert(SUGAR.language.get('Configurator','ERR_ALERT_FILE_UPLOAD'));
@@ -468,7 +468,7 @@ function toggleDisplay_2(div_string){
                 //File good
                 case 'ok':
                     document.getElementById(forQuotes + "_logo").value=file_type['path'];
-                    document.getElementById(forQuotes + "_logo_image").src=file_type['url'];
+                    document.getElementById(forQuotes + "_logo_image").src=file_type['path'];
                     break;
                 //error in getimagesize because unsupported type
                 default:

@@ -81,7 +81,7 @@ function checkLoggerSettings(){
  		}
 	 }
 }
-
+ 
 function checkResourceSettings(){
 	if(file_exists(getcwd().'/config.php')){
          require(getcwd().'/config.php');
@@ -147,13 +147,13 @@ function verifyArguments($argv,$usage_regular){
         //this should be a regular sugar install
         echo "*******************************************************************************\n";
         echo "*** ERROR: Tried to execute in a non-SugarCRM root directory.\n";
-        exit(1);
+        exit(1);      
     }
 
     if(isset($argv[7]) && file_exists($argv[7].'SugarTemplateUtilties.php')){
         require_once($argv[7].'SugarTemplateUtilties.php');
     }
-
+    
     return $upgradeType;
 }
 
@@ -243,19 +243,19 @@ $errors = array();
 	require_once("{$cwd}/sugar_version.php"); // provides $sugar_version & $sugar_flavor
 
 	global $sugar_config;
-	$configOptions = $sugar_config['dbconfig'];
-
+	$configOptions = $sugar_config['dbconfig'];	
+	
     $GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
 	$patchName		= basename($argv[1]);
 	$zip_from_dir	= substr($patchName, 0, strlen($patchName) - 4); // patch folder name (minus ".zip")
 	$path			= $argv[2]; // custom log file, if blank will use ./upgradeWizard.log
-
+	
 	if($sugar_version < '5.1.0'){
 		$db				= &DBManager :: getInstance();
 	} else{
 		$db				= &DBManagerFactory::getInstance();
 	}
-
+	
 	$UWstrings		= return_module_language('en_us', 'UpgradeWizard');
 	$adminStrings	= return_module_language('en_us', 'Administration');
 	$mod_strings	= array_merge($adminStrings, $UWstrings);
@@ -294,8 +294,11 @@ $errors = array();
 
 /////retrieve admin user
 
-$unzip_dir = sugar_cached("upgrades/temp");
-$install_file = "upload://upgrades/patch/".basename($argv[1]);
+
+
+
+$unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp");
+$install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -350,7 +353,7 @@ $trackerManager->pause();
 $trackerManager->unsetMonitors();
 
 include('modules/ACLActions/actiondefs.php');
-include('include/modules.php');
+include('include/modules.php'); 
 
 // clear out the theme cache
 if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
@@ -368,7 +371,7 @@ if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
-
+	
 //Add the cache cleaning here.
 if(function_exists('deleteCache'))
 {
@@ -376,11 +379,10 @@ if(function_exists('deleteCache'))
 	@deleteCache();
 }
 
-
 //First repair the databse to ensure it is up to date with the new vardefs/tabledefs
 logThis('About to repair the database.', $path);
 //Use Repair and rebuild to update the database.
-global $dictionary;
+global $dictionary; 
 require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
@@ -398,13 +400,13 @@ foreach ($beanFiles as $bean => $file) {
 		}
 
 		if (($focus instanceOf SugarBean)) {
-			if(!isset($repairedTables[$focus->table_name]))
+			if(!isset($repairedTables[$focus->table_name])) 
 			{
 				$sql = $GLOBALS['db']->repairTable($focus, true);
 				logThis('Running sql:' . $sql, $path);
 				$repairedTables[$focus->table_name] = true;
 			}
-
+			
 			//Check to see if we need to create the audit table
 		    if($focus->is_AuditEnabled() && !$focus->db->tableExists($focus->get_audit_table_name())){
                logThis('Creating audit table:' . $focus->get_audit_table_name(), $path);
@@ -422,7 +424,7 @@ foreach ($dictionary as $meta) {
 	if(isset($repairedTables[$tablename])) {
 	   continue;
 	}
-
+	
 	$fielddefs = $meta['fields'];
 	$indices = $meta['indices'];
 	$sql = $GLOBALS['db']->repairTableParams($tablename, $fielddefs, $indices, true);
@@ -430,16 +432,16 @@ foreach ($dictionary as $meta) {
 	    logThis($sql, $path);
 	    $repairedTables[$tablename] = true;
 	}
-
+	
 }
 
-logThis('database repaired', $path);
+logThis('database repaired', $path);  	
 
 logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
 
-include("$unzip_dir/manifest.php");
+include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
@@ -447,10 +449,10 @@ if(!$origVersion){
     logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=pro ONLY 
 // If going from pre 610 to 610+, migrate the report favorites
 // At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
-// so that we can check against that in 6.1.1.
+// so that we can check against that in 6.1.1. 
 if($origVersion < '610'){
     logThis("Since origVersion is {$origVersion}, which is before 6.1.0, we migrate reports favorites", $path);
     logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
@@ -461,9 +463,9 @@ if($origVersion < '610'){
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
-//END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav=pro ONLY 
 
-if($ce_to_pro_ent) {
+if($ce_to_pro_ent) {	
 	//add the global team if it does not exist
 	$globalteam = new Team();
 	$globalteam->retrieve('1');
@@ -474,32 +476,32 @@ if($ce_to_pro_ent) {
 	}else{
 		$globalteam->create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $globalteam->global_team);
 	}
-
+	
 	logThis(" Start Building private teams", $path);
 
     upgradeModulesForTeam();
-    logThis(" Finish Building private teams", $path);
-
+    logThis(" Finish Building private teams", $path);  
+	
     logThis(" Start Building the team_set and team_sets_teams", $path);
     upgradeModulesForTeamsets();
     logThis(" Finish Building the team_set and team_sets_teams", $path);
-
+    	
 	logThis(" Start modules/Administration/upgradeTeams.php", $path);
-        include('modules/Administration/upgradeTeams.php');
+        include('modules/Administration/upgradeTeams.php'); 
         logThis(" Finish modules/Administration/upgradeTeams.php", $path);
-
+        
     if($sugar_config['dbconfig']['db_type'] == 'mssql') {
             if(check_FTS()){
                 $GLOBALS['db']->wakeupFTS();
             }
-    }
+    }  
 }
 
 
 if($origVersion < '620'){
 	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 	upgradeDateTimeFields($path);
-
+	
 	//upgrade the documents and meetings for lotus support
 	upgradeDocumentTypeFields($path);
 }

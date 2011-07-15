@@ -39,8 +39,10 @@ $focus = new KBDocument();
 
 echo getClassicModuleTitle("KBDocuments", array($app_strings['LBL_SEARCH']), true);
 
-echo getVersionedScript('cache/include/javascript/sugar_grp_overlib.js').
-"<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000; max-width: 400px;'></div> ";
+$path = getJSPath('include/javascript/sugar_grp_overlib.js');
+echo "
+<script type='text/javascript' src='$path'></script>
+<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000; max-width: 400px;'></div> ";
 
 $ss = new Sugar_Smarty();
 $ss->assign("MOD", $mod_strings);
@@ -102,7 +104,7 @@ if(isset($_POST['clear_loaded'])){
             $_POST['mode'] = $prefMode;
         }
     }
-
+    
     //Set parameters to be used in rendering initial tabs on form
     if(isset($_POST['mode']) && $_POST['mode'] == 'advanced'){
         //set form display properties to show advanced forms
@@ -139,7 +141,7 @@ if(isset($_POST['clear_loaded'])){
         $current_user->setPreference('KBSearchFormMode', 'basic',0,'KnowledgeBase');
     }
 
-
+    
 ////////////////////////////////// FTS Section ///////////////////////////////////////
 
     //set default so all records are returned
@@ -219,11 +221,11 @@ if(isset($_POST['clear_loaded'])){
     //print out the needed script tags for tree
     echo'<script> var site_url= {"site_url":"'.$sugar_config['site_url'].'"};</script>';
 
-    echo "<link rel='stylesheet' href='".getVersionedPath('include/ytree/TreeView/css/folders/tree.css')."'>";
-    echo getVersionedScript('include/ytree/TreeView/TreeView.js');
-    echo getVersionedScript('include/ytree/TreeView/TaskNode.js');
-    echo getVersionedScript('include/ytree/TreeView/treeutil.js');
-    echo getVersionedScript('include/ytree/TreeView/JSON.js');
+    echo"        <link rel='stylesheet' href='include/ytree/TreeView/css/folders/tree.css'>
+    <script language='JavaScript' src='include/ytree/TreeView/TreeView.js'></script>
+    <script language='JavaScript' src='include/ytree/TreeView/TaskNode.js'></script>
+    <script language='JavaScript' src='include/ytree/treeutil.js'></script>
+    <script language='JavaScript' src='include/JSON.js'></script>";
 
     $ss->assign('BROWSETAB', return_browse_tab());
 
@@ -399,7 +401,7 @@ function perform_advanced_search($focus,$default=false){
     function return_browse_tab(){
         global $theme, $image_path, $app_list_strings, $mod_strings, $app_strings;
 
-
+        
         $ss_brws = new Sugar_Smarty();
         $ss_brws->assign("MOD", $mod_strings);
         $ss_brws->assign("APP", $app_strings);
@@ -458,7 +460,7 @@ function perform_advanced_search($focus,$default=false){
     function return_advanced_tab($focus,$json, $json_config){
         global $theme, $image_path, $app_list_strings, $mod_strings, $app_strings;
 
-
+        
         $ss_adv = new Sugar_Smarty();
         $ss_adv->assign("MOD", $mod_strings);
         $ss_adv->assign("APP", $app_strings);
@@ -617,7 +619,7 @@ function perform_advanced_search($focus,$default=false){
 
 
         if (!empty($focus->kbdoc_approver_id)) {
-
+            
             $user = new User();
             $user->retrieve($focus->kbdoc_approver_id,true);
             $ss_adv->assign("KBDOC_APPROVER_NAME", $user->name);
@@ -651,7 +653,7 @@ function perform_advanced_search($focus,$default=false){
             //END SUGARCRM flav=ent ONLY
 
             //create tree for tag selection modal
-
+            
             $tag = new KBTag();
             $ss_adv->assign("TAG_NAME", $tag->tag_name);
 
@@ -811,7 +813,7 @@ function perform_advanced_search($focus,$default=false){
 
     function saveSearch($s_id, $s_name, $update=false){
         global $current_user;
-
+        
 
         //create new bean instance, and retrieve search if id is provided
         $search_bean = new SavedSearch();
@@ -860,7 +862,7 @@ function perform_advanced_search($focus,$default=false){
      * @param $s_name name of saved search being loaded
      */
     function loadSavedSearch($s_id){
-
+        
         $search_bean = new SavedSearch();
 
         if(isset($s_id)  && !empty($s_id)){
@@ -895,7 +897,7 @@ function perform_advanced_search($focus,$default=false){
      */
     function delSavedSearch($s_id){
      global $current_user, $mod_strings, $app_strings;
-
+        
 
         $search_bean = new SavedSearch();
         if(isset($s_id)  && !empty($s_id)){

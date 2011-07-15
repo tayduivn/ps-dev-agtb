@@ -105,13 +105,13 @@ class SugarFeed extends Basic {
     static function flushBackendCache( ) {
         // This function will flush the cache files used for the module list and the link type lists
         sugar_cache_clear('SugarFeedModules');
-        if ( file_exists($cachefile = sugar_cached('modules/SugarFeed/moduleCache.php'))) {
-            unlink($cachefile);
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/moduleCache.php') ) {
+            unlink($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/moduleCache.php');
         }
 
         sugar_cache_clear('SugarFeedLinkType');
-        if ( file_exists($cachefile = sugar_cached('modules/SugarFeed/linkTypeCache.php'))) {
-            unlink($cachefile);
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/linkTypeCache.php') ) {
+            unlink($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/linkTypeCache.php');
         }
     }
 
@@ -148,8 +148,8 @@ class SugarFeed extends Basic {
         }
 
         // Already stored in a file
-        if ( file_exists($cachefile = sugar_cached('modules/SugarFeed/moduleCache.php'))) {
-            require_once($cachefile);
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/moduleCache.php') ) {
+            require_once($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/moduleCache.php');
             sugar_cache_put('SugarFeedModules',$feedModules);
             return $feedModules;
         }
@@ -175,10 +175,8 @@ class SugarFeed extends Basic {
 
 
         sugar_cache_put('SugarFeedModules',$feedModules);
-        if ( ! file_exists($cachedir = sugar_cached('modules/SugarFeed')))  {
-            mkdir_recursive($cachedir);
-        }
-        $fd = fopen("$cachedir/moduleCache.php",'w');
+        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed') ) { mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed'); }
+        $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/moduleCache.php','w');
         fwrite($fd,'<'."?php\n\n".'$feedModules = '.var_export($feedModules,true).';');
         fclose($fd);
 
@@ -295,8 +293,8 @@ class SugarFeed extends Basic {
         }
 
         // Third fastest, already stored in a file
-        if ( file_exists($cachedfile = sugar_cached('modules/SugarFeed/linkTypeCache.php'))) {
-            require_once($cachedfile);
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/linkTypeCache.php') ) {
+            require_once($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/linkTypeCache.php');
             sugar_cache_put('SugarFeedLinkType',$linkTypeList);
             return $linkTypeList;
         }
@@ -320,10 +318,8 @@ class SugarFeed extends Basic {
         }
 
         sugar_cache_put('SugarFeedLinkType',$linkTypeList);
-        if ( ! file_exists($cachedir = sugar_cached('modules/SugarFeed')) ) {
-            mkdir_recursive($cachedir);
-        }
-        $fd = fopen("$cachedir/linkTypeCache.php",'w');
+        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed') ) { mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed'); }
+        $fd = fopen($GLOBALS['sugar_config']['cache_dir'].'modules/SugarFeed/linkTypeCache.php','w');
         fwrite($fd,'<'."?php\n\n".'$linkTypeList = '.var_export($linkTypeList,true).';');
         fclose($fd);
 

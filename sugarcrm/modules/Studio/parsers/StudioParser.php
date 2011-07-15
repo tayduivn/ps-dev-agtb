@@ -490,7 +490,6 @@ EOQ;
 	function yahooJS() {
 		$custom_module = $_SESSION['studio']['module'];
 		$custom_type = $this->curType;
-		$v = getVersionedPath('');
 		return<<<EOQ
 		<style type='text/css'>
 		.slot {
@@ -506,16 +505,16 @@ EOQ;
 
 	<!-- Namespace source file -->
 
-	<script type="text/javascript" src="modules/Studio/JSTransaction.js?v=$v" ></script>
+	<script type="text/javascript" src="modules/Studio/JSTransaction.js" ></script>
 	<script>
 	var jstransaction = new JSTransaction();
 	</script>
 
 	<!-- Drag and Drop source file -->
-	<script src="include/javascript/yui/dragdrop.js?v=$v" ></script>
+	<script src = "include/javascript/yui/dragdrop.js" ></script>
 
-	<script type="text/javascript" src="modules/Studio/studiodd.js?v=$v" ></script>
-	<script type="text/javascript" src="modules/Studio/studio.js?v=$v" ></script>
+	<script type="text/javascript" src="modules/Studio/studiodd.js" ></script>
+	<script type="text/javascript" src="modules/Studio/studio.js" ></script>
 	<script>
 
 	var yahooSlots = [];

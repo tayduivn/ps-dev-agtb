@@ -81,11 +81,11 @@ class Parser {
 		
 		// handle if function is not valid
 		if(empty($FUNCTION_MAP)) {
-			if (!file_exists(sugar_cached('Expressions/functionmap.php'))) {
+			if (!file_exists('cache/Expressions/functionmap.php')) {
 				$GLOBALS['updateSilent'] = true;
 				include("include/Expressions/updatecache.php");
 			}
-			require_once( sugar_cached('Expressions/functionmap.php'));
+			require_once( "cache/Expressions/functionmap.php" );
 		}
 			
 

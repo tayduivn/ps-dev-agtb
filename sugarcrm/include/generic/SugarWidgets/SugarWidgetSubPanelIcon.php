@@ -131,6 +131,7 @@ class SugarWidgetSubPanelIcon extends SugarWidgetField
 					
 					$key=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['id_field'])];
                     $file=$layout_def['fields'][strtoupper($layout_def['image2_url_field']['filename_field'])];
+                    //$filepath=UploadFile :: get_url(from_html($file), $key);	
                     $filepath="index.php?entryPoint=download&id=".$key."&type=".$layout_def['module'];
 				}
 			} else {

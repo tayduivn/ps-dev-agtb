@@ -37,7 +37,7 @@ function template_chart(& $reporter, $chart_display_style, $is_dashlet = false, 
     foreach ($reporter->chart_header_row as $header_cell) {
      	if($header_cell['column_key'] == 'count') {
           $header_cell['column_key'] = 'self:count';
-        }
+        }       
         if ($header_cell['column_key'] == $reporter->report_def['numerical_chart_column']) {
             $reporter->chart_numerical_position = $i;
         }
@@ -57,7 +57,7 @@ function template_chart(& $reporter, $chart_display_style, $is_dashlet = false, 
 
 function print_currency_symbol($report_defs) {
     static $currency = null;
-
+    
     $currency_symbol = '';
     if (isset($report_defs['numerical_chart_column_type']) && $report_defs['numerical_chart_column_type'] == 'currency'){
     	global $current_user;
@@ -66,13 +66,13 @@ function print_currency_symbol($report_defs) {
 	        $currency->retrieve($current_user->getPreference('currency'));
 	    else
 	        $currency->retrieve('-99');
-
+	        
 	    $currency_symbol = $currency->symbol;
     }
     else if (!isset($report_defs['numerical_chart_column_type'])){
         return '';
     }
-
+    
     return $currency_symbol;
 }
 
@@ -121,7 +121,7 @@ function get_total(& $reporter, & $total_row) {
     }
     $total = $total_row['cells'][$total_index]['val'];
     global $do_thousands;
-    if (get_maximum($reporter) > 100000 && (!isset($reporter->report_def['do_round'])
+    if (get_maximum($reporter) > 100000 && (!isset($reporter->report_def['do_round']) 
     	|| (isset($reporter->report_def['do_round'])  && $reporter->report_def['do_round'] == 1))) {
         $do_thousands = true;
         $total = round(unformat_number($total) / 1000);
@@ -193,7 +193,7 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 	        $do_thousands = false;
 	        $total = unformat_number($total);
 	    }
-	    array_pop($reporter->chart_rows);
+	    array_pop($reporter->chart_rows);    	
 	} else {
 	    $total_row = array_pop($reporter->chart_rows);
 	    $total = get_total($reporter, $total_row);
@@ -201,9 +201,9 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 
     $symbol = print_currency_symbol($reporter->report_def);
     global $current_language, $do_thousands;
-
+    
     $mod_strings = return_module_language($current_language, 'Reports');
-
+      
     $chartTitle = $mod_strings['LBL_TOTAL_IS'] . ' ' . $symbol . format_number($total, 0, 0) . get_k();
 
     $chart_rows = array();
@@ -292,19 +292,20 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 	}
 }
 
-function get_cache_file_name($reporter) {
+function get_cache_file_name(& $reporter) {
     global $current_user, $sugar_config;
 
-    $xml_cache_dir = sugar_cached("xml/");
+    $xml_cache_dir = $sugar_config['tmp_dir'];
     if ($reporter->is_saved_report == true) {
         $filename = $xml_cache_dir . $reporter->saved_report_id . '_saved_chart.xml';
-    } else {
+    }
+    else {
         $filename = $xml_cache_dir . $current_user->id . '_' . time() . '_curr_user_chart.xml';
-    }
-
-    if ( !is_dir(dirname($filename)) ) {
-        create_cache_directory("xml");
-    }
-
+}
+    
+    if ( !is_dir(dirname($filename)) )
+        create_cache_directory(str_ireplace($GLOBALS['sugar_config']['cache_dir'],"",$filename));
+        
     return $filename;
 }
+?>

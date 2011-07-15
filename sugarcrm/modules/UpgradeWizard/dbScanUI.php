@@ -4,7 +4,7 @@
 ////	STANDARD REQUIRED SUGAR INCLUDES AND PRESETS
 function dbFilesExist(){
 	$exists = '0';
-	if(file_exists(sugar_cached('dbscan/schema_inconsistencies.txt'))){
+	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'dbscan/schema_inconsistencies.txt')){
 		$exists = '1';
 	}
 	return $exists;

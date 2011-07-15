@@ -28,32 +28,32 @@
  ********************************************************************************/
 require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
 
-class SugarFieldImage extends SugarFieldBase {
-
-    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
+class SugarFieldImage extends SugarFieldBase {    
+	
+    function getEditViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {    	
     	$displayParams['bean_id']='id';
-    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);    	
 		return $this->fetch($this->findTemplate('EditView'));
-    }
+    }	
 
 	function getDetailViewSmarty($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
 		$displayParams['bean_id']='id';
-		$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
+		$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);		
 		return $this->fetch($this->findTemplate('DetailView'));
 	}
-
-    function getUserEditView($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
+	
+    function getUserEditView($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {    	
     	$displayParams['bean_id']='id';
-    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
+    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);    	
 		return $this->fetch($this->findTemplate('UserEditView'));
-    }
-
-    function getUserDetailView($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {
+    }	
+    
+    function getUserDetailView($parentFieldArray, $vardef, $displayParams, $tabindex, $searchView = false) {    	
     	$displayParams['bean_id']='id';
-    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
+    	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);    	
 		return $this->fetch($this->findTemplate('UserDetailView'));
-    }
-
+    }		
+	
 	public function save(&$bean, $params, $field, $properties, $prefix = ''){
 		require_once('include/upload_file.php');
 		$upload_file = new UploadFile($field);
@@ -76,16 +76,17 @@ class SugarFieldImage extends SugarFieldBase {
 				{
 					$bean->$field = create_guid();
 					$upload_file->final_move($bean->$field);
+					$url=$upload_file->get_url($bean->$field);
 				}
 			}
 		}
-
+		
 		//Check if we have the duplicate value set and use it if $bean->$field is empty
 		if(empty($bean->$field) && !empty($_REQUEST[$field . '_duplicate'])) {
-           $bean->$field = $_REQUEST[$field . '_duplicate'];
-		}
+           $bean->$field = $_REQUEST[$field . '_duplicate'];			
+		}		
 	}
-
-
+	
+	
 }
 ?>

@@ -42,10 +42,10 @@ class SugarTab
     function setup($mainTabs, $otherTabs=array(), $subTabs=array(), $selected_group='All')
     {
         global $sugar_version, $sugar_config, $current_user;
-
+        
         $max_tabs = $current_user->getPreference('max_tabs');
         if(!isset($max_tabs) || $max_tabs <= 0) $max_tabs = $GLOBALS['sugar_config']['default_max_tabs'];
-
+        
         $moreTabs = array_slice($mainTabs,$max_tabs);
         /* If the current tab is in the 'More' menu, move it into the visible menu. */
         if(!empty($moreTabs[$selected_group]))

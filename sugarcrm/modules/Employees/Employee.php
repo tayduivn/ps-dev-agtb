@@ -68,7 +68,7 @@ class Employee extends Person {
 	var $messenger_type;
 	var $employee_status;
 	var $error_string;
-
+	
 	var $module_dir = "Employees";
 
 	//BEGIN SUGARCRM flav=pro ONLY
@@ -85,7 +85,7 @@ class Employee extends Person {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('reports_to_name');
 
-
+    
 
 	var $new_schema = true;
 
@@ -97,11 +97,11 @@ class Employee extends Person {
 		//END SUGARCRM flav=pro ONLY
 		$this->emailAddress = new SugarEmailAddress();
 	}
-
-
+	
+    
 	function get_summary_text() {
         $this->_create_proper_name_field();
-        return $this->name;
+        return $this->name;	
     }
 
 
@@ -150,7 +150,7 @@ class Employee extends Person {
 	}
 
 	function get_list_view_data(){
-
+		
         global $current_user;
 		$this->_create_proper_name_field(); // create proper NAME (by combining first + last)
 		$user_fields = $this->get_list_view_array();
@@ -177,10 +177,10 @@ class Employee extends Person {
 	 * of the implicit assignements that were created based on this user, then recreated all of the implicit
 	 * assignments in the new location
 	 */
-
+	 
 	function update_team_memberships($old_reports_to_id)
 	{
-
+		
 		$team = new Team();
 		$team->user_manager_changed($this->id, $old_reports_to_id, $this->reports_to_id);
 	}
@@ -188,13 +188,13 @@ class Employee extends Person {
 
 	function create_export_query($order_by, $where) {
 		include('modules/Employees/field_arrays.php');
-
+		
 		$cols = '';
 		foreach($fields_array['Employee']['export_fields'] as $field) {
 			$cols .= (empty($cols)) ? '' : ', ';
 			$cols .= $field;
 		}
-
+		
 		$query = "SELECT {$cols} FROM users ";
 
 		$where_auto = " users.deleted = 0";
@@ -211,7 +211,7 @@ class Employee extends Person {
 
 		return $query;
 	}
-
+	
 	//BEGIN SUGARCRM flav=int ONLY
 	//C.L. - Comment this out... the parent class Person has the proper implementation
 	//and the method is now protected so either make this protected as well or just
@@ -225,27 +225,27 @@ class Employee extends Person {
         global $locale;
         $full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
         $this->name = $full_name;
-        $this->full_name = $full_name;
+        $this->full_name = $full_name; 
 	}
 	*/
-
-	function preprocess_fields_on_save(){
-		parent::preprocess_fields_on_save();
-
+	
+	function preprocess_fields_on_save(){		
+		parent::preprocess_fields_on_save();	
+				
 		//BEGIN SUGARCRM flav!=com ONLY
         require_once('include/upload_file.php');
 		$upload_file = new UploadFile("picture");
-
+	
 		//remove file
 		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
 		{
-			UploadFile::unlink_file($this->picture);
-			$this->picture="";
-		}
-
+			$upload_file->unlink_file($this->picture);
+			$this->picture="";			
+		}		
+		
 		//uploadfile
 		if (isset($_FILES['picture']))
-		{
+		{			
 			//confirm only image file type can be uploaded
 			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
 			if (in_array($_FILES['picture']["type"], $imgType))
@@ -253,7 +253,8 @@ class Employee extends Person {
 				if ($upload_file->confirm_upload())
 				{
 					$this->picture = create_guid();
-					$upload_file->final_move($this->picture);
+					$upload_file->final_move( $this->picture);
+					$url=$upload_file->get_url($this->picture);
 				}
 			}
 		}

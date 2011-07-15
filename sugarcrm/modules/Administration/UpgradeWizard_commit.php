@@ -33,8 +33,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/Administration/UpgradeWizardCommon.php');
 require_once('modules/Configurator/Configurator.php');
 function UWrebuild() {
-	global $log;
-	global $db;
+	$log =& $GLOBALS['log'];
+	$db =& $GLOBALS['db'];
 	$log->info('Deleting Relationship Cache. Relationships will automatically refresh.');
 
 	echo "
@@ -99,7 +99,8 @@ function UWrebuild() {
 unset($_SESSION['rebuild_relationships']);
 unset($_SESSION['rebuild_extensions']);
 
-global $log, $db;
+$log =& $GLOBALS['log'];
+$db =& $GLOBALS['db'];
 
 // process commands
 if( !isset($_REQUEST['mode']) || ($_REQUEST['mode'] == "") ){
@@ -117,10 +118,10 @@ if( !isset($_REQUEST['copy_count']) || ($_REQUEST['copy_count'] == "") ){
     die($mod_strings['ERR_UW_NO_FILES']);
 }
 
-if( empty($_REQUEST['unzip_dir']) || $_REQUEST['unzip_dir'] == "." || $_REQUEST['unzip_dir'] == ".."){
+if( !isset($_REQUEST['unzip_dir']) || ($_REQUEST['unzip_dir'] == "") ){
     die($mod_strings['ERR_UW_NO_TEMP_DIR']);
 }
-$unzip_dir = $base_tmp_upgrade_dir. "/". basename($_REQUEST['unzip_dir']);
+$unzip_dir      = $_REQUEST['unzip_dir'];
 
 if(empty($_REQUEST['install_file'])){
     die($mod_strings['ERR_UW_NO_INSTALL_FILE']);
@@ -183,7 +184,7 @@ if($install_type == 'module'){
 $file_action    = "";
 $uh_status      = "";
 
-$rest_dir = remove_file_extension($install_file)."-restore";
+$rest_dir = clean_path( remove_file_extension($install_file)."-restore");
 
 $files_to_handle  = array();
 

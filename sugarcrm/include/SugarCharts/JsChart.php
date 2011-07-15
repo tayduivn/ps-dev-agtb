@@ -123,7 +123,7 @@ class JsChart extends SugarChart {
 		global $sugar_config, $current_user, $current_language;
 		$this->id = $id;
 		$this->chartId = $id;
-		$this->xmlFile = (!$xmlFile) ? sugar_cached("xml/{$current_user->id}_{$this->id}.xml") : $xmlFile;
+		$this->xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
 
 
 		$style = array();

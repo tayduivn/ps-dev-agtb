@@ -33,7 +33,7 @@
 
 
 {literal}
-<br>
+<br>	
 <style type='text/css'>
 .slot {
 	border-width:1px;border-color:#999999;border-style:solid;padding:0px 1px 0px 1px;margin:2px;cursor:move;
@@ -60,8 +60,8 @@
     <input type="button" value="{$MOD.LBL_BTN_REDO}" onclick="jstransaction.redo()" name="{$MOD.LBL_BTN_REDO}" />
 </td>
 <td valign="center">
-    <input type="button" value="{$MOD.LBL_BTN_SAVE}"
-        onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'
+    <input type="button" value="{$MOD.LBL_BTN_SAVE}" 
+        onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}' 
         name="{$MOD.LBL_BTN_SAVE}" />
 </td>
 </tr>
@@ -125,7 +125,7 @@
         <input id='slot{$rowCounter}_text' value='' type='text'  onchange='setDropDownValue({$rowCounter}, this.value, true)' >
         {$value.user_lang}
     </span>
-    <input name='slot_{$rowCounter}' id='slot_{$rowCounter}' value='{$rowCounter}' type = 'hidden'>
+    <input name='slot_{$rowCounter}' id='slot_{$rowCounter}' value='{$rowCounter}' type = 'hidden'> 
     <input name='value_{$rowCounter}' id='value_{$rowCounter}' value='{$value.lang}' type = 'hidden'>
     <input type='hidden' name='key_{$rowCounter}' id='key_{$rowCounter}' value='{$key|default:"BLANK"}'>
     <input type='hidden' id='delete_{$rowCounter}' name='delete_{$rowCounter}' value='0'>
@@ -141,14 +141,15 @@
 </table>
 </table>
 
-<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/JSTransaction.js'}" ></script>
+{literal}
+<script type="text/javascript" src="modules/Studio/JSTransaction.js" ></script>
 			<script>
 			var jstransaction = new JSTransaction();
 			</script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/yui/dragdrop.js'}" ></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studiodd.js'}" ></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studio.js'}" ></script>
-{literal}
+<script src = "include/javascript/yui/dragdrop.js" ></script>
+				 	
+			<script type="text/javascript" src="modules/Studio/studiodd.js" ></script>	
+			<script type="text/javascript" src="modules/Studio/studio.js" ></script>	
 			<script>
 			var lastField = '';
 			var lastRowCount = -1;
@@ -170,11 +171,11 @@
 			        document.getElementById('slot' + rowCount + '_key').style.textDecoration = 'none';
 			        document.getElementById('slot' + rowCount + '_value').style.textDecoration = 'none';
 			    }
-
-
+			    
+			   
 			}
 			function prepChangeDropDownValue(rowCount, field){
-
+			  
 			    var tempLastField = lastField;
 			     if(lastRowCount != -1){
 			        setDropDownValue(lastRowCount, lastField.innerHTML, true);
@@ -182,9 +183,9 @@
 			     if(tempLastField == field)return;
 			    lastField = field;
 			    lastRowCount = rowCount;
-
+			    
 			    field.style.display="none";
-
+			    
 			    var textspan =  document.getElementById('slot' + rowCount + '_textspan');
 			    var text = document.getElementById("slot" + rowCount + "_text");
 			    text.value=field.innerHTML;
@@ -199,7 +200,7 @@
 			}
 			jstransaction.register('changeDropDownValue', undoDropDownChange, redoDropDownChange);
 			function setDropDownValue(rowCount, val, record){
-
+			  
 			    var key = document.getElementById('slot' + rowCount + '_key').innerHTML;
 			    if(key == ''){
 			        key = 'BLANK';
@@ -217,7 +218,7 @@
 			    span.style.display = 'inline';
 			    lastField = '';
 			    lastRowCount = -1;
-
+			    
 			}
 
 			function addDropDown(){
@@ -226,7 +227,7 @@
 		      if(trim(keyValue) == ''){
 		          keyValue = 'BLANK';
 		      }
-
+		      
 		      //Check for the single quote value
 		      //Comment out this if block in case you don't want validation
 		      //or add other rules as needed (e.g. isDBName() from sugar_3.js)
@@ -234,7 +235,7 @@
 		         alert("{/literal}{$MOD.ERROR_INVALID_KEY_VALUE}{literal}");
 		         return false;
 		      }
-
+		      
 		      var addValue =  document.getElementById('addValue')
 		      for(var i = 0; i < slotCount ; i++){
 		          if(typeof(document.getElementById('key_' + i)) != 'undefined'){
@@ -263,7 +264,7 @@
 			  delimage.slotCount = slotCount
 			  delimage.recordKey = keyValue;
 			  delimage.onclick = function(){
-
+			  
 			      deleteDropDownValue(this.slotCount, document.getElementById( 'delete_' + this.slotCount), true);
 			  };
 			  var span2image = document.createElement('span');
@@ -286,36 +287,36 @@
 			  var text2 = document.createElement('input');
 			  text2.type = 'text';
 			  text2.id = 'slot' + slotCount + '_text'
-
+			  
 			  text2.slotCount = slotCount;
 			  text2.onchange = function(){
 			      setDropDownValue(this.slotCount, this.value, true);
 			  }
-
+			  
 			  var text3 = document.createElement('input');
 			  text3.type = 'hidden';
 			  text3.id = 'value_' + slotCount;
 			  text3.name = 'value_' + slotCount;
 			  text3.value = addValue.value;
-
+			  
 			  var text4 = document.createElement('input');
 			  text4.type = 'hidden';
 			  text4.id = 'key_' + slotCount;
 			  text4.name = 'key_' + slotCount;
 			  text4.value = keyValue;
-
+              
               var text5 = document.createElement('input');
 			  text5.type = 'hidden';
 			  text5.id = 'delete_' + slotCount  ;
 			  text5.name = 'delete_' + slotCount  ;
 			  text5.value = '0';
-
+			  
 			  var text6 = document.createElement('input');
 			  text6.type = 'hidden';
 			  text6.id = 'slot_' + slotCount;
 			  text6.name = 'slot_' + slotCount;
 			  text6.value = slotCount;
-
+			  
 			  cell.appendChild(span1);
 			  span2.appendChild(delimage);
 			  span2.appendChild(span2image);
@@ -334,23 +335,23 @@
 			}
 			var slotCount = {/literal}{$rowCounter}{literal};
 			var yahooSlots = [];
-
+			
 			function dragDropInit(){
 				YAHOO.util.DDM.mode = YAHOO.util.DDM.POINT;
-
+					
 				for(mj = 0; mj <= slotCount; mj++){
 					yahooSlots["slot" + mj] = new ygDDSlot("slot" + mj, "studio");
 				}
 					  // initPointMode();
 			}
 			YAHOO.util.Event.addListener(window, "load", dragDropInit);
-
-
-</script>
+			
+			
+</script>	
 {/literal}
 
 
-<div id='logDiv' style='display:none'>
+<div id='logDiv' style='display:none'> 
 </div>
 
 {/if}

@@ -45,7 +45,7 @@ $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 
 
-$cache_dir                          = sugar_cached("");
+$cache_dir                          = 'cache/';
 $line_entry_format                  = "&nbsp&nbsp&nbsp&nbsp&nbsp<b>";
 $line_exit_format                   = "... &nbsp&nbsp</b>";
 $rel_dictionary                 = $dictionary; // sourced by modules/TableDictionary.php
@@ -71,13 +71,13 @@ $setup_site_host_name               = $parsed_url['host'];
 $setup_site_log_dir                 = isset($_SESSION['setup_site_custom_log_dir']) ? $_SESSION['setup_site_log_dir'] : '.';
 $setup_site_log_file                = 'sugarcrm.log';  // may be an option later
 $setup_site_session_path            = isset($_SESSION['setup_site_custom_session_path']) ? $_SESSION['setup_site_session_path'] : '';
-$setup_site_log_level				='fatal';
+$setup_site_log_level				='fatal';		
 
 sugar_cache_clear('TeamSetsCache');
 if ( file_exists($cache_dir .'modules/Teams/TeamSetCache.php') ) {
 	unlink($cache_dir.'modules/Teams/TeamSetCache.php');
 }
-
+        
 sugar_cache_clear('TeamSetsMD5Cache');
 if ( file_exists($cache_dir.'modules/Teams/TeamSetMD5Cache.php') ) {
 	unlink($cache_dir.'modules/Teams/TeamSetMD5Cache.php');
@@ -184,13 +184,13 @@ if ($GLOBALS['db']->dbType=='mssql') {
  VardefManager::clearVardef();
 foreach( $beanFiles as $bean => $file ) {
 	$doNotInit = array('Scheduler', 'SchedulersJob', 'ProjectTask');
-
+	
 	if(in_array($bean, $doNotInit)) {
 		$focus = new $bean(false);
 	} else {
 	    $focus = new $bean();
 	}
-
+	
 	if ( $bean == 'Configurator' )
 	    continue;
 
@@ -209,17 +209,17 @@ foreach( $beanFiles as $bean => $file ) {
         } else {
         	continue; //no further processing needed for ignored beans.
         }
-
+        
         // table has not been setup...we will do it now and remember that
         $processed_tables[] = $table_name;
-
+    
         $focus->db->database = $db->database; // set db connection so we do not need to reconnect
-
+            
         if($setup_db_drop_tables) {
             drop_table_install($focus);
             installLog("dropping table ".$focus->table_name);
         }
-
+        
         if(create_table_if_not_exist($focus)) {
             installLog("creating table ".$focus->table_name);
             if( $bean == "User" ){
@@ -256,7 +256,7 @@ echo "<br>";
 ////    START RELATIONSHIP CREATION
 
     ksort($rel_dictionary);
-    foreach( $rel_dictionary as $rel_name => $rel_data ){
+    foreach( $rel_dictionary as $rel_name => $rel_data ){  
         $table = $rel_data['table'];
 
         if( $setup_db_drop_tables ){
@@ -287,7 +287,7 @@ echo "<br>";
   //BEGIN SUGARCRM lic=sub ONLY
 
     echo $line_entry_format.$mod_strings['LBL_PERFORM_LICENSE_SETTINGS'].$line_exit_format;
-    installLog($mod_strings['LBL_PERFORM_LICENSE_SETTINGS']);
+    installLog($mod_strings['LBL_PERFORM_LICENSE_SETTINGS']);    
     update_license_settings( $_SESSION['setup_license_key_users'], $_SESSION['setup_license_key_expire_date'], $_SESSION['setup_license_key'], $_SESSION['setup_num_lic_oc'] );
     echo $mod_strings['LBL_PERFORM_DONE'];
 
@@ -329,10 +329,10 @@ echo "<br>";
     echo $line_entry_format.$mod_strings['LBL_PERFORM_DEFAULT_SCHEDULER'].$line_exit_format;
     installLog($mod_strings['LBL_PERFORM_DEFAULT_SCHEDULER']);
     $scheduler = new Scheduler();
-    if(isset($sugar_config['demoData']) && $sugar_config['demoData'] != 'no' && $_SESSION['setup_db_type'] == 'mssql') {
+    if(isset($sugar_config['demoData']) && $sugar_config['demoData'] != 'no' && $_SESSION['setup_db_type'] == 'mssql') {    
         $db->query('DELETE FROM schedulers');
         $db->query('DELETE FROM schedulers_times');
-
+        
         //BEGIN SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=dce ONLY
         $sched1 = new Scheduler();
@@ -358,9 +358,9 @@ echo "<br>";
         $sched2->modified_user_id   = '1';
         $sched2->catch_up           = '1';
         $sched2->save();
-
+        
         //END SUGARCRM flav=pro ONLY
-
+                
         $sched3 = new Scheduler();
         $sched3->name               = 'Prune the User History Table';
         $sched3->job                = 'function::trimTracker';
@@ -422,7 +422,7 @@ echo "<br>";
         $sched7->created_by         = '1';
         $sched7->modified_user_id   = '1';
         $sched7->catch_up           = '0';
-        $sched7->save();
+        $sched7->save();    
 //BEGIN SUGARCRM flav=dce ONLY
         $sched8 = new Scheduler();
         $sched8->name               = 'Close loop on completed DCE actions';
@@ -478,19 +478,19 @@ echo "<br>";
 //END SUGARCRM flav=dce ONLY
 
     } else {
-        $scheduler->rebuildDefaultSchedulers();
+        $scheduler->rebuildDefaultSchedulers();     
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
 
     ///create kb tag data.
     installLog("create kb tag default data");
-
+    
 	KBTag::default_install_data();
     //END SUGARCRM flav=pro ONLY
-
+    
     echo $mod_strings['LBL_PERFORM_DONE'];
-
+    
 //BEGIN SUGARCRM flav=dce ONLY
     //create OOB user roles for DCE
     installLog("Create Out Of the Box User Roles");
@@ -518,18 +518,18 @@ echo "<br>";
             'DCEActions'=>array('import'=>-99),
         ),
     );
-
+    
     global $db;
-    addDefaultRoles($ACLaccessOverride);
+    addDefaultRoles($ACLaccessOverride);   
 //END SUGARCRM flav=dce ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 $defaultTrackerRoles = array(
     'Tracker'=>array(
-        'Trackers'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
+        'Trackers'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),     
         'TrackerQueries'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
         'TrackerPerfs'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
-        'TrackerSessions'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90),
+        'TrackerSessions'=>array('admin'=>1, 'access'=>89, 'view'=>90, 'list'=>90, 'edit'=>90, 'delete'=>90, 'import'=>90, 'export'=>90), 
      )
 );
 addDefaultRoles($defaultTrackerRoles);
@@ -560,7 +560,7 @@ enableSugarFeeds();
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
-
+    
     // populating the db with seed data
     installLog("populating the db with seed data");
     if( $_SESSION['demoData'] != 'no' ){
@@ -580,7 +580,7 @@ enableSugarFeeds();
 
     $endTime = microtime(true);
     $deltaTime = $endTime - $startTime;
-
+    
     //BEGIN SUGARCRM flav=pro ONLY
     //////////////////////////////////////////
     /// PERFORM OFFLINE CLIENT INSTALL
@@ -597,7 +597,7 @@ enableSugarFeeds();
     }
     //END SUGARCRM flav=pro ONLY
 
-
+                    
 ///////////////////////////////////////////////////////////////////////////
 ////    FINALIZE LANG PACK INSTALL
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && is_array($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])) {
@@ -609,15 +609,15 @@ enableSugarFeeds();
     require_once('modules/Versions/InstallDefaultVersions.php');
 
 //BEGIN SUGARCRM flav=int ONLY
-    if(is_file(sugar_cached('dashlets/dashlets.php'))){
-        unlink(sugar_cached('dashlets/dashlets.php'));
+    if(is_file('cache/dashlets/dashlets.php')){
+        unlink('cache/dashlets/dashlets.php');
     }
 	require_once('include/Dashlets/DashletCacheBuilder.php');
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 //END SUGARCRM flav=int ONLY
 
-
+    
 //BEGIN SUGARCRM flav=pro || flav=sales || flav=com ONLY
     require_once('modules/Connectors/InstallDefaultConnectors.php');
 //END SUGARCRM flav=pro || flav=sales || flav=com ONLY
@@ -687,30 +687,30 @@ FP;
      </table>
 FP;
    }
-
+    
     if( isset($_SESSION['setup_site_sugarbeet_automatic_checks']) && $_SESSION['setup_site_sugarbeet_automatic_checks'] == true){
         set_CheckUpdates_config_setting('automatic');
     }else{
         set_CheckUpdates_config_setting('manual');
-    }
+    } 
     if(!empty($_SESSION['setup_system_name'])){
         $admin=new Administration();
-        $admin->saveSetting('system','name',$_SESSION['setup_system_name']);
+        $admin->saveSetting('system','name',$_SESSION['setup_system_name']);  
     }
-
+    
     //BEGIN SUGARCRM flav=sales ONLY
     $admin=new Administration();
     $admin->saveSetting('notify','allow_default_outbound', 0);
     //END SUGARCRM flav=sales ONLY
-
+    
     // Bug 28601 - Set the default list of tabs to show
     $enabled_tabs = array();
     $enabled_tabs[] = 'Home';
-
+    
     //BEGIN SUGARCRM flav!=dce ONLY
     $enabled_tabs[] = 'Accounts';
     $enabled_tabs[] = 'Contacts';
-    $enabled_tabs[] = 'Opportunities';
+    $enabled_tabs[] = 'Opportunities';    
     //BEGIN SUGARCRM flav!=sales ONLY
     $enabled_tabs[] = 'Leads';
     //END SUGARCRM flav!=sales ONLY
@@ -741,7 +741,7 @@ FP;
     $enabled_tabs[] = 'ProspectLists';
     //END SUGARCRM flav!=sales ONLY
     //END SUGARCRM flav!=dce ONLY
-
+    
     //BEGIN SUGARCRM flav=dce ONLY
     $enabled_tabs[] = 'Accounts';
     $enabled_tabs[] = 'Contacts';
@@ -753,11 +753,11 @@ FP;
     $enabled_tabs[] = 'Cases';
     $enabled_tabs[] = 'Reports';
     //END SUGARCRM flav=dce ONLY
-
+    
     require_once('modules/MySettings/TabController.php');
     $tabs = new TabController();
     $tabs->set_system_tabs($enabled_tabs);
-
+    
 post_install_modules();
 if( count( $bottle ) > 0 ){
     foreach( $bottle as $bottle_message ){

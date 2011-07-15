@@ -828,7 +828,7 @@ function get_document_revision($session, $id) {
     $dr = new DocumentRevision();
     $dr->retrieve($id);
     if(!empty($dr->filename)){
-        $filename = "upload://{$dr->id}";
+        $filename = $sugar_config['upload_dir']."/".$dr->id;
         if (filesize($filename) > 0) {
         	$contents = sugar_file_get_contents($filename);
         } else {
@@ -877,11 +877,11 @@ function search_by_module($session, $search_string, $modules, $offset, $max_resu
 	require_once('modules/Home/UnifiedSearchAdvanced.php');
 	require_once 'include/utils.php';
 	$usa = new UnifiedSearchAdvanced();
-    if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {
+    if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
         $usa->buildCache();
     }
 
-	include($cachedfile);
+	include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
 	$modules_to_search = array();
 	$unified_search_modules['Users'] =   array('fields' => array());
 
