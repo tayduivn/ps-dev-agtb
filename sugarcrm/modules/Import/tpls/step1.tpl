@@ -28,7 +28,7 @@
  */
 *}
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {literal}
 <style>
 #smtpButtonGroup .yui-radio-button-checked button, .yui-checkbox-button-checked button {
@@ -50,6 +50,7 @@
 <input type="hidden" name="current_step" value="1">
 <input type="hidden" name="return_action" value="Step1">
 <input type="hidden" name="external_source" value="">
+<input type="hidden" name="from_admin_wizard" value="{$FROM_ADMIN}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <p>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -79,6 +80,7 @@
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
                                 </td>
                             </tr>
+                            {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr id="ext_source_tr">
                                 <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
                   &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
@@ -103,6 +105,7 @@
                                     <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
                                 </td>
                             </tr>
+                            {* //END SUGARCRM flav=pro ONLY *}
                             </table>
                         </td>
                     </tr>

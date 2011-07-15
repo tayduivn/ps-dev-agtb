@@ -103,7 +103,9 @@ SUGAR.reportsInlineEdit = function() {
 			var current_value = document.getElementById('input_'+div).value;
 			if (field_type == 'enum') {
 				selectedIndex = document.getElementById('input_'+div).selectedIndex;
-				var current_value = eval("field_defs_" + module)[field_name].options[selectedIndex+1]['text'];
+                if ( eval("field_defs_" + module)[field_name].options[0]['value'] == "")
+                    selectedIndex++;
+				var current_value = eval("field_defs_" + module)[field_name].options[selectedIndex]['text'];
 				old_value = unescape(old_value);
 			}
 			var callback = {
@@ -112,7 +114,7 @@ SUGAR.reportsInlineEdit = function() {
 						if (field_name == 'name')
 							var saved_value = document.getElementById('input_'+div).value;
 						else if (field_type == 'enum') {
-							var saved_value = eval("field_defs_" + module)[field_name].options[selectedIndex+1]['text'];
+							var saved_value = eval("field_defs_" + module)[field_name].options[selectedIndex]['text'];
 						}
 						else if (field_type == 'currency') {
 							var saved_value = result['currency_formatted_value']; //Getting this from the response as this contains the properly formatted currency value.

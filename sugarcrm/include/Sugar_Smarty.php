@@ -52,6 +52,7 @@ class Sugar_Smarty extends Smarty
 		//BEGIN SUGARCRM flav=int ONLY
 		$this->clear_all_cache(); // removes pre-compiled template files for debugging
 		//END SUGARCRM flav=int ONLY
+		$this->assign("VERSION_MARK", getVersionedPath(''));
 	}
 
 }

@@ -62,7 +62,8 @@
 <input type="hidden" name="importlocale_num_grp_sep" value="{$smarty.request.importlocale_num_grp_sep}">
 <input type="hidden" name="importlocale_dec_sep" value="{$smarty.request.importlocale_dec_sep}">
 <input type="hidden" name="importlocale_default_locale_name_format" value="{$smarty.request.importlocale_default_locale_name_format}">
-
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
+    
 <br>
 {if $NOTETEXT != ''}
     <p style="padding-left:10px">

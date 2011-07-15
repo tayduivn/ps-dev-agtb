@@ -33,7 +33,7 @@
 	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 	<link rel='stylesheet' type='text/css' href='include/javascript/yui/assets/tabview/css/round_tabs.css' />
 	<link rel='stylesheet' type='text/css' href='include/javascript/yui/assets/tabview/css/tabs.css' />
-	<script type="text/javascript" src="include/javascript/popup_parent_helper.js?v={VERSION_MARK}"></script>
+	{sugar_getscript file="include/javascript/popup_parent_helper.js"}
 	<input type="hidden" name="mode" id="mode" value="{$mode}">
 
 
@@ -41,9 +41,9 @@
 <tr><td>
 
 	<ul class="tablist" id="groupTabs">
-		<li id="basic_tab_li"  class="active"><a id='basic_tab_link'  class="{$CURRENT_OTHER_BASIC}" href="javascript:select_Tab_CSS('basic_tab');">{$MOD.LBL_TAB_SEARCH}</a></li>		
-		<li id="advanced_tab_li"  class="active"><a id='advanced_tab_link'  class="{$CURRENT_OTHER_ADV}" href="javascript:select_Tab_CSS('advanced_tab');">{$MOD.LBL_TAB_ADVANCED}</a></li>	
-		<li  id='browse_tab_li'  class="active"><a id='browse_tab_link' class="{$CURRENT_OTHER_BROWSE}"  href="javascript:select_Tab_CSS('browse_tab');">{$MOD.LBL_TAB_BROWSE}</a></li>			
+		<li id="basic_tab_li"  class="active"><a id='basic_tab_link'  class="{$CURRENT_OTHER_BASIC}" href="javascript:select_Tab_CSS('basic_tab');">{$MOD.LBL_TAB_SEARCH}</a></li>
+		<li id="advanced_tab_li"  class="active"><a id='advanced_tab_link'  class="{$CURRENT_OTHER_ADV}" href="javascript:select_Tab_CSS('advanced_tab');">{$MOD.LBL_TAB_ADVANCED}</a></li>
+		<li  id='browse_tab_li'  class="active"><a id='browse_tab_link' class="{$CURRENT_OTHER_BROWSE}"  href="javascript:select_Tab_CSS('browse_tab');">{$MOD.LBL_TAB_BROWSE}</a></li>
 	</ul>
 
 		<div id="basic_tab"  style="{$SHOW_INITIAL_BASIC}">
@@ -85,7 +85,7 @@
 		<div id="browse_tab"   style="{$SHOW_INITIAL_BROWSE}">
 
 			{$BROWSETAB}
-		</div>	
+		</div>
 
 
 			<div id='fts_results_form' {$SHOW_INITIAL_LIST}>
