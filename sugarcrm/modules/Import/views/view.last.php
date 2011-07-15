@@ -42,8 +42,8 @@ require_once('include/ListView/ListViewFacade.php');
 class ImportViewLast extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_5_TITLE';
-    
- 	/** 
+
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
@@ -58,7 +58,7 @@ class ImportViewLast extends ImportView
         $module_mod_strings =
             return_module_language($current_language, $_REQUEST['import_module']);
         $this->ss->assign("MODULENAME",$module_mod_strings['LBL_MODULE_NAME']);
-        
+
         // read status file to get totals for records imported, errors, and duplicates
         $count        = 0;
         $errorCount   = 0;
@@ -75,7 +75,7 @@ class ImportViewLast extends ImportView
             $updatedCount  += (int) $row[4];
         }
         fclose($fp);
-    
+
         $this->ss->assign("showUndoButton",FALSE);
         if($createdCount > 0)
         {
@@ -88,15 +88,15 @@ class ImportViewLast extends ImportView
             $activeTab = 1;
         else
             $activeTab = 0;
-        
+
         $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
         $this->ss->assign("updatedCount",$updatedCount);
-        $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
-        $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsWithoutErrorFileName());
-        $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
+        $this->ss->assign("errorFile",$this->getDownloadURL(ImportCacheFiles::getErrorFileName()));
+        $this->ss->assign("errorrecordsFile",$this->getDownloadURL(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
+        $this->ss->assign("dupeFile",$this->getDownloadURL(ImportCacheFiles::getDuplicateFileName()));
 
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
@@ -130,6 +130,12 @@ class ImportViewLast extends ImportView
         $content = $this->ss->fetch('modules/Import/tpls/last.tpl');
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+    }
+
+    protected function getDownloadURL($filename)
+    {
+    	$name = basename(UploadFile::relativeName($filename));
+    	return "index.php?entryPoint=download&type=import&isTempFile=1&tempName={$name}&id={$name}";
     }
 
     protected function getListViewResults()
@@ -275,7 +281,7 @@ EOJAVASCRIPT;
     private function _addToProspectListButton()
     {
         global $app_strings, $sugar_version, $sugar_config, $current_user;
-        
+
         $query = "SELECT distinct prospects.id, prospects.assigned_user_id, prospects.first_name, prospects.last_name, prospects.phone_work, prospects.title,
 				email_addresses.email_address email1, users.user_name as assigned_user_name
 				FROM users_last_import,prospects
@@ -284,7 +290,7 @@ EOJAVASCRIPT;
 				LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id
 				WHERE users_last_import.assigned_user_id = '{$current_user->id}' AND users_last_import.bean_type='Prospect' AND users_last_import.bean_id=prospects.id
 				AND users_last_import.deleted=0 AND prospects.deleted=0";
-        
+
         $popup_request_data = array(
             'call_back_function' => 'set_return_and_save_background',
             'form_name' => 'DetailView',

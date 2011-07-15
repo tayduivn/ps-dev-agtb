@@ -31,11 +31,11 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
     $GLOBALS['current_language'] = $_SESSION['authenticated_user_language'];
     $app_strings = return_application_language($GLOBALS['current_language']);
     $mod_strings = return_module_language($GLOBALS['current_language'], 'ACL');
+	$file_type = strtolower($_REQUEST['type']);
     if(!isset($_REQUEST['isTempFile'])) {
 	    //Custom modules may have capilizations anywhere in thier names. We should check the passed in format first.
 		require('include/modules.php');
 		$module = $db->quote($_REQUEST['type']);
-		$file_type = strtolower($_REQUEST['type']);
 		if(empty($beanList[$module])) {
 			//start guessing at a module name
 			$module = ucfirst($file_type);
@@ -85,8 +85,13 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
         }
 
     } // if
-	$local_location = (isset($_REQUEST['isTempFile'])) ? sugar_cached("modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}")
-		 : "upload://{$_REQUEST['id']}";
+    if(isset($_REQUEST['ieId']) && isset($_REQUEST['isTempFile'])) {
+		$local_location = sugar_cached("modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}");
+    } elseif(isset($_REQUEST['isTempFile']) && $file_type == "import") {
+    	$local_location = "upload://import/{$_REQUEST['tempName']}";
+    } else {
+		$local_location = "upload://{$_REQUEST['id']}";
+    }
 
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 	    $local_location =  "upload://{$_REQUEST['id']}";
