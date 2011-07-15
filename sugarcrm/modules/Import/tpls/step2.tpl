@@ -58,7 +58,7 @@
 <input type="hidden" name="action" value="Confirm">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
-
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
 <br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>

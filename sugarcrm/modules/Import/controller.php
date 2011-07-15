@@ -49,6 +49,7 @@ class ImportController extends SugarController
         global $mod_strings;
 
         $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+
         $this->bean = loadBean($this->importModule);
         if ( $this->bean ) {
             if ( !$this->bean->importable )
@@ -157,8 +158,15 @@ class ImportController extends SugarController
     
 	function action_Step1()
     {
-        if($this->importModule == 'Administration' || $this->bean instanceof Person )
+        $fromAdminView = isset($_REQUEST['from_admin_wizard']) ? $_REQUEST['from_admin_wizard'] : FALSE;
+        if( $this->importModule == 'Administration' || $fromAdminView
+           //BEGIN SUGARCRM flav=pro ONLY
+            || $this->bean instanceof Person
+            //END SUGARCRM flav=pro ONLY
+        )
+        {
     		$this->view = 'step1';
+        }
         else
             $this->view = 'step2';
     }

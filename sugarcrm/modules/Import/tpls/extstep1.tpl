@@ -1,4 +1,5 @@
 {*
+<!--//FILE SUGARCRM flav=pro ONLY -->
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -29,7 +30,7 @@
 
 {$CSS}
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 {$MODULE_TITLE}
 <form enctype="multipart/form-data" real_id="extstep1" id="extstep1" name="extstep1" method="POST" action="index.php">
@@ -44,7 +45,9 @@
 <input type="hidden" name="enabled_dup_fields" value ="{$ENABLED_DUP_FIELDS}">
 <input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
-<input type="hidden" name="has_header" value="off">    
+<input type="hidden" name="has_header" value="off">
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
+
 
 <p>
     {$MOD.LBL_EXTERNAL_MAP_HELP}
