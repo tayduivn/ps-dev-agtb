@@ -138,7 +138,8 @@ class Email extends SugarBean {
 		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
 		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
-		$this->email_uploads = "modules/Emails/{$current_user->id}";
+		if (!empty($current_user->id))
+            $this->email_uploads = "modules/Emails/{$current_user->id}";
 	}
 
 	function email2init() {
