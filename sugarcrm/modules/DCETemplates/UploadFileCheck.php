@@ -26,7 +26,7 @@ require_once('include/pclzip/pclzip.lib.php');
 global $db;
 $rmdir=true;
 if(isset($_FILES['file_1'])){
-    $uploadTmpDir=$GLOBALS['sugar_config']['tmp_dir'].'tmp_'.time();
+    $uploadTmpDir=$GLOBALS['sugar_config']['upload_dir'].'tmp_'.time();
     $file_name = $uploadTmpDir .'/'. basename($_FILES['file_1']['name']);
     mkdir( $uploadTmpDir );
     if (!empty($_FILES['file_1']['error'])){
@@ -71,7 +71,7 @@ if(file_exists($file_name) && is_file($file_name)){
                                 $manifestArr['flavor'][]=$v;
                             }
                         }
-                        
+
                     }if(preg_match('/.*\/sugar_version.php$/',$file['filename'])){
                         $archive->extractByIndex($file['index'], $uploadTmpDir, str_replace("sugar_version.php","",$file['filename']));
                         include("$uploadTmpDir/sugar_version.php");
@@ -88,7 +88,7 @@ if(file_exists($file_name) && is_file($file_name)){
                         else
                             $return = true;
                     }
-                    
+
                 }
                 if($return === true){
                     $upgradeEdition = '';

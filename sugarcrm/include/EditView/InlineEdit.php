@@ -20,20 +20,18 @@
  ********************************************************************************/
 require_once('include/SugarFields/Parsers/MetaParser.php');
 	class InlineEdit{
-		
-		
+
+
 		 private function getHTML(){
-			return " 
-					<script src='include/EditView/InlineEdit.js'></script>
-					<link rel='stylesheet' type='text/css' href='include/EditView/InlineEdit.css'></link>
-";
-			
+			return getVersionedScript('include/EditView/InlineEdit.js').
+			"<link rel='stylesheet' type='text/css' href='".getVersionedPath('include/EditView/InlineEdit.css')."></link>";
+
 		}
-		
+
 		private function getEditInPlace($panels, $bean){
 					$fields = array();
 					$parser = new MetaParser();
-					if(!$parser->hasMultiplePanels($panels)){ 
+					if(!$parser->hasMultiplePanels($panels)){
 						$panels = array($panels);
 					}
 					foreach($panels as $panel){
@@ -56,7 +54,7 @@ require_once('include/SugarFields/Parsers/MetaParser.php');
 									case 'enum':
 										$fields[$field_name] = array('editInPlace'=>true, 'type'=>'enum');
 										break;
-								
+
 									case 'bool':
 										$fields[$field_name] = array('editInPlace'=>true, 'type'=>'checkbox');
 										break;
@@ -65,18 +63,18 @@ require_once('include/SugarFields/Parsers/MetaParser.php');
 										break;
 									case 'text':
 										$fields[$field_name] = array('editInPlace'=>true, 'type'=>'text');
-						
+
 										break;
-										
+
 								}
 							}
 						}
-					
+
 				}
 					}
 				return $fields;
 		}
-		
+
 		public function getEditInPlaceJS($panels, $bean){
 			$fields = $this->getEditInPlace($panels, $bean);
 			$json_fields = json_encode($fields);

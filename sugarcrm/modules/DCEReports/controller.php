@@ -48,7 +48,7 @@ class DCEReportsController extends SugarController{
         $seed = new DCEReport();
         $start_date=strtotime($_REQUEST['startDate_date']);
         $end_date = strtotime("+1 day -1 second", strtotime($_REQUEST['endDate_date']));
-        $end_date=db_convert("'".$timedate->to_db($end_date)."'",'datetime'); 
+        $end_date=db_convert("'".$timedate->to_db($end_date)."'",'datetime');
         $start_date=db_convert("'".$timedate->to_db($start_date)."'",'datetime');
         $first=false;
         $where='(';
@@ -72,7 +72,7 @@ class DCEReportsController extends SugarController{
             $seed->update_key_user_id="";
             $seed->get_key_user_id="";
             $seed->last_name="";
-            
+
             $seed->id=$row['id'];
             if(isset($row['update_key_user_id']))
                 $seed->update_key_user_id=$row['update_key_user_id'];
@@ -104,9 +104,9 @@ class DCEReportsController extends SugarController{
         }
         // For translate the name of the fields
         /*
-        $modules = array(   "Account" => "Accounts", 
-                            "Contact" => "Contacts", 
-                            "User" => "Users", 
+        $modules = array(   "Account" => "Accounts",
+                            "Contact" => "Contacts",
+                            "User" => "Users",
                             "DCEInstance" => "DCEInstances"
                         );
         foreach($fieldList as $field){
@@ -126,7 +126,7 @@ class DCEReportsController extends SugarController{
         $header = "\"" .$header;
         $header .= "\"\r\n";
         $content = $header;
-        
+
         foreach($values as $id=>$va){
             $new_arr = array();
             foreach($fieldList as $k=>$field){
@@ -139,14 +139,14 @@ class DCEReportsController extends SugarController{
             $line = implode("\"".getDelimiter()."\"", $new_arr);
             $line = "\"" .$line;
             $line .= "\"\r\n";
-    
+
             $content .= $line;
         }
-        $TmpFile="{$GLOBALS['sugar_config']['tmp_dir']}LicensingReport.tmp";
+        $TmpFile=sugar_cached("xml/LicensingReport.tmp");
         file_put_contents($TmpFile, $content);
 // ListView
         $where='';
-        
+
         require_once ('include/ListView/ListViewSmarty.php');
         $lv = new ListViewSmarty();
         $lv->lvd->additionalDetailsAjax=false;
@@ -181,7 +181,7 @@ class DCEReportsController extends SugarController{
     function action_Export_LincensingReport()
     {
         global $timedate;
-        $content=file_get_contents("{$GLOBALS['sugar_config']['tmp_dir']}LicensingReport.tmp");
+        $content=file_get_contents(sugar_cached("xml/LicensingReport.tmp"));
         ob_clean();
         header("Pragma: cache");
         header("Content-type: application/octet-stream; charset=".$GLOBALS['locale']->getExportCharset());
@@ -191,9 +191,9 @@ class DCEReportsController extends SugarController{
         header("Last-Modified: " . $timedate->httpTime() . " GMT" );
         header("Cache-Control: post-check=0, pre-check=0", false );
         header("Content-Length: ".strlen($content));
-        
+
         print $GLOBALS['locale']->translateCharset($content, 'UTF-8', $GLOBALS['locale']->getExportCharset());
-        
+
         sugar_cleanup(true);
     }
 }

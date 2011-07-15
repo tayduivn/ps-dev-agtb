@@ -32,8 +32,8 @@
 *}
 
 {if $overlib}
-	<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
-	<script type='text/javascript' src='include/javascript/overlibmws_iframe.js'></script>
+	<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
+	<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws_iframe.js'}"></script>
 	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 {/if}
 
@@ -70,7 +70,7 @@
 			{counter name="colCounter"}
 		{/foreach}
 	</tr>
-		
+
 	{foreach name=rowIteration from=$data key=id item=rowData}
 		{if $smarty.foreach.rowIteration.iteration is odd}
 			{assign var='_rowColor' value=$rowColor[0]}
@@ -92,9 +92,9 @@
 				    {if $params.link && !$params.customCode}
 						<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="#" onMouseOver="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}', '{$rowData[$params.id]|default:$rowData.ID}', 'd', {$smarty.foreach.rowIteration.iteration}, this);"  onFocus="javascript:lvg_nav('{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}', '{$rowData[$params.id]|default:$rowData.ID}', 'd', {$smarty.foreach.rowIteration.iteration}, this);">
 						{/if}
-					{if $params.customCode} 
+					{if $params.customCode}
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
-					{else}	
+					{else}
                        {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
 					{/if}
 					{if empty($rowData.$col)}&nbsp;{/if}
@@ -111,7 +111,7 @@
 	    <td colspan="{$colCount}">
 	        <em>{$APP.LBL_NO_DATA}</em>
 	    </td>
-	</tr>	
+	</tr>
 	{/foreach}
 	{include file='include/ListView/ListViewPagination.tpl'}
 </table>

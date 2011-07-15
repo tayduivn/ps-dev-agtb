@@ -33,12 +33,12 @@
 <script type="text/javascript" language="Javascript">
 {JS_VARS}
 </script>
-<script type="text/javascript" src="include/jsolait/init.js?s={SUGAR_VERSION}&amp;c={JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/javascript/jsclass_base.js?s={SUGAR_VERSION}&amp;c={JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/javascript/jsclass_async.js?s={SUGAR_VERSION}&amp;c={JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="modules/Emails/javascript/Email.js?s={SUGAR_VERSION}&amp;c={JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="modules/Documents/documents.js?s={SUGAR_VERSION}&amp;c={JS_CUSTOM_VERSION}"></script>
-{MESSAGE} 
+<script type="text/javascript" src="include/jsolait/init.js?v={VERSION_MARK}"></script>
+<script type="text/javascript" src="include/javascript/jsclass_base.js?v={VERSION_MARK}"></script>
+<script type="text/javascript" src="include/javascript/jsclass_async.js?v={VERSION_MARK}"></script>
+<script type="text/javascript" src="modules/Emails/javascript/Email.js?v={VERSION_MARK}"></script>
+<script type="text/javascript" src="modules/Documents/documents.js?v={VERSION_MARK}"></script>
+{MESSAGE}
 
 <form action="index.php" method="post" id="EditView" name="EditView" enctype="multipart/form-data">
 	<input type="hidden" name="module" value="Emails" />
@@ -57,7 +57,7 @@
 	<input type="hidden" name="object_id" value="{OBJECT_ID}" />
 	<input type="hidden" name="group" value="{GROUP}" />
 	<input type="hidden" name="origType" value="{TYPE}" />
-	
+
 	<table width="100%" cellpadding="0" cellspacing="0" border="0">
 		<tr>
 			<td>
@@ -81,7 +81,7 @@
 <!-- BEGIN: pro_team -->
 						<td scope="row">
 							<slot>
-								{APP.LBL_TEAM} 
+								{APP.LBL_TEAM}
 								<span class="required">
 									{APP.LBL_REQUIRED_SYMBOL}
 								</span>
@@ -112,24 +112,24 @@
 						</td>
 						<td scope="row" valign="top" align="right">
 							<slot>
-								<select tabindex='2' name='parent_type' onchange="	document.EditView.parent_name.value=''; 
-											changeQS(); 
+								<select tabindex='2' name='parent_type' onchange="	document.EditView.parent_name.value='';
+											changeQS();
 											checkParentType(document.EditView.parent_type.value, document.EditView.change_parent);">
-									{TYPE_OPTIONS}</select>&nbsp; 
+									{TYPE_OPTIONS}</select>&nbsp;
 							</slot>
 						</td>
 						<td  nowrap>
 							<slot>
 								<input id='parent_id' name='parent_id' type="hidden" value='{PARENT_ID}'>
 								<input class="sqsEnabled" id='parent_name' name='parent_name' tabindex='2' type='text' value="{PARENT_NAME}">
-								&nbsp;{CHANGE_PARENT_BUTTON} 
+								&nbsp;{CHANGE_PARENT_BUTTON}
 							</slot>
 						</td>
 					</tr>
 					<tr>
 						<td scope="row">
 							<slot>
-								{APP.LBL_ASSIGNED_TO}&nbsp; 
+								{APP.LBL_ASSIGNED_TO}&nbsp;
 							</slot>
 						</td>
 						<td >
@@ -154,7 +154,7 @@
 					</tr>
 					<tr>
 						<td colspan="5">
-							&nbsp; 
+							&nbsp;
 						</td>
 					</tr>
 					<tr>
@@ -179,7 +179,7 @@
 								<table cellspacing="0" cellpadding="0" border="0">
 									<tr>
 										<td>
-											<textarea id="to_addrs_field" name='to_addrs' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{TO_ADDRS}">{TO_ADDRS}</textarea> 
+											<textarea id="to_addrs_field" name='to_addrs' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{TO_ADDRS}">{TO_ADDRS}</textarea>
 											<input type="hidden" id="to_addrs_ids" name="to_addrs_ids" value="{TO_ADDRS_IDS}" />
 											<input type="hidden" id="to_addrs_emails" name="to_addrs_emails" value="{TO_ADDRS_EMAILS}" />
 											<input type="hidden" id="to_addrs_names" name="to_addrs_names" value="{TO_ADDRS_NAMES}" />
@@ -203,7 +203,7 @@
 								<table cellspacing="0" cellpadding="0" border="0">
 									<tr>
 										<td>
-											<textarea id="cc_addrs_field" name='cc_addrs' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{CC_ADDRS}">{CC_ADDRS}</textarea> 
+											<textarea id="cc_addrs_field" name='cc_addrs' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{CC_ADDRS}">{CC_ADDRS}</textarea>
 											<input type="hidden" id="cc_addrs_ids" name="cc_addrs_ids" value="{CC_ADDRS_IDS}" />
 											<input type="hidden" id="cc_addrs_emails" name="cc_addrs_emails" value="{CC_ADDRS_EMAILS}" />
 											<input type="hidden" id="cc_addrs_names" name="cc_addrs_names" value="{CC_ADDRS_NAMES}" />
@@ -226,7 +226,7 @@
 							<table cellspacing="0" cellpadding="0" border="0">
 								<tr>
 									<td>
-										<textarea id="bcc_addrs_field" name='bcc_addrs' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{BCC_ADDRS}">{BCC_ADDRS}</textarea> 
+										<textarea id="bcc_addrs_field" name='bcc_addrs' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{BCC_ADDRS}">{BCC_ADDRS}</textarea>
 										<input type="hidden" id="bcc_addrs_ids" name="bcc_addrs_ids" value="{BCC_ADDRS_IDS}" />
 										<input type="hidden" id="bcc_addrs_emails" name="bcc_addrs_emails" value="{BCC_ADDRS_EMAILS}" />
 										<input type="hidden" id="bcc_addrs_names" name="bcc_addrs_names" value="{BCC_ADDRS_NAMES}" />
@@ -241,7 +241,7 @@
 					<tr valign="top">
 						<td scope="row">
 							<slot>
-								{MOD.LBL_FROM} 
+								{MOD.LBL_FROM}
 							</slot>
 						</td>
 						<td  colspan="4" nowrap="NOWRAP">
@@ -249,7 +249,7 @@
 								<table cellspacing="0" cellpadding="0" border="0">
 									<tr>
 										<td>
-											<textarea id="from_addr_field" name='from_addr' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{FROM_ADDR}">{FROM_ADDR}</textarea> {FROM_ADDR_GROUP} 
+											<textarea id="from_addr_field" name='from_addr' tabindex='3' cols="80" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" value="{FROM_ADDR}">{FROM_ADDR}</textarea> {FROM_ADDR_GROUP}
 											<input type="hidden" id="from_addr_email" name="from_addr_email" />
 											<input type="hidden" id="from_addr_name" name="from_addr_name" />
 										</td>
@@ -271,7 +271,7 @@
 						</td>
 						<td colspan='4' >
 							<slot>
-								<textarea name='name' tabindex='4' cols="100" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" id="subjectfield">{NAME}</textarea> 
+								<textarea name='name' tabindex='4' cols="100" rows="1" style="height: 1.6.em; overflow-y:auto; font-family:sans-serif,monospace; font-size:inherit;" id="subjectfield">{NAME}</textarea>
 							</slot>
 						</td>
 					</tr>
@@ -284,13 +284,13 @@
 							<slot>
 								<div id="editor_select">
 									<input id="setEditor" name="setEditor" value="1" {EMAIL_EDITOR_OPTION} type="checkbox" onclick="toggle_textonly();">
-									{MOD.LBL_EMAIL_EDITOR_OPTION} 
+									{MOD.LBL_EMAIL_EDITOR_OPTION}
 								</div>
 							</slot>
 						</td>
 						<td scope="row" valign="top">
 							<slot>
-								{MOD.LBL_USE_TEMPLATE}&nbsp; 
+								{MOD.LBL_USE_TEMPLATE}&nbsp;
 							</slot>
 						</td>
 						<td  nowrap width="1">
@@ -313,7 +313,7 @@
 								</div>
 								<div id="alt_text_div">
 									<input id="toggle_textarea_elem" onclick="toggle_textarea();" type="checkbox" name="toggle_html">
-									{MOD.LBL_EDIT_ALT_TEXT} 
+									{MOD.LBL_EDIT_ALT_TEXT}
 								</div>
 								<div id="text_div" style="display: none;">
 									<textarea tabindex='5' id="description" name='description' cols="100" rows="20">{DESCRIPTION}</textarea>
@@ -327,7 +327,7 @@
 							{MOD.LBL_ATTACHMENTS}
 						</td>
 						<td colspan="4">
-							{ATTACHMENTS_JAVASCRIPT} {ATTACHMENTS} 
+							{ATTACHMENTS_JAVASCRIPT} {ATTACHMENTS}
 							<div id="template_attachments">
 							</div>
 							<div id="uploads_div">
@@ -433,14 +433,14 @@
 </form>
 {JAVASCRIPT}
 <script type="text/javascript" language="Javascript">
-	var old_load=window.onload; window.onload = function() { 
+	var old_load=window.onload; window.onload = function() {
 		old_load();
 		setEditor();
-		
+
 		// cn: bug 5845 - use Group Inbox From info
 		if(window.switchEmail) {
 			switchEmail();
-		} 
+		}
 	}
-</script> 
+</script>
 <!-- END: main -->

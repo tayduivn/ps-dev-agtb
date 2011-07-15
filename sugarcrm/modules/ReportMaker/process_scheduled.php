@@ -41,12 +41,6 @@ require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
 require_once("include/phpmailer/class.phpmailer.php");
 
-
-
-
-
-                                                                                                     
-
 $report_schedule = new ReportSchedule();
 
 global $sugar_config;
@@ -86,29 +80,29 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 	$report_object = new ReportMaker();			
 	$report_object->retrieve($schedule_info['report_id']);			
 	$mod_strings = return_module_language($language, 'Reports');
-	
-	
+
+
 //Process data sets into CSV files
 
 	//loop through data sets;
 	$data_set_array = $report_object->get_data_sets();
 	$temp_file_array = array();
 	foreach($data_set_array as $key =>$data_set_object){
-		
+
 		$csv_output = $data_set_object->export_csv();
-		
+
 		$filenamestamp = '';
 		$filenamestamp .= $data_set_object->name.'_'.$user->user_name;
 		$filenamestamp .= '_'.date(translate('LBL_CSV_TIMESTAMP', 'Reports'), time());
 
 		$filename = str_replace(' ', '_', $report_object->name. $filenamestamp.  ".csv");
-		$fp = sugar_fopen($GLOBALS['sugar_config']['cache_dir'].'csv/'.$filename,'w');
+		$fp = sugar_fopen(sugar_cached('csv/').$filename,'w');
 		fwrite($fp, $csv_output);
 		fclose($fp);
-		
+
 		$temp_file_array[$filename] = $filename;
 
-	}	
+	}
 
 	$mail = new PHPMailer();
 	$OBCharset = $locale->getPrecedentPreference('default_email_charset');
@@ -142,16 +136,16 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 	$mail->FromName = empty($admin->settings['notify_fromname']) ?
 							' ' : $admin->settings['notify_fromname'];
 	$mail->Subject = empty($report_object->name) ? 'Report' : $report_object->name;
-	
+
 	$temp_count = 0;
 	foreach($temp_file_array as $filename){
-		$file_path = $GLOBALS['sugar_config']['cache_dir'].'csv/'.$filename;
+		$file_path = sugar_cached('csv/').$filename;
 		$attachment_name = $mail->Subject . '_'.$temp_count.'.csv';
 		$mail->AddAttachment($file_path, $attachment_name, 'base64', 'application/csv');
 		$temp_count ++;
 	//end foreach loop
 	}
-	
+
 	$body = $mod_strings['LBL_HELLO'];
 	if($name != '') {
 		$body .= " $name";
@@ -182,7 +176,7 @@ foreach($reports_to_email_ent as $schedule_id => $schedule_info)
 	//need unlink for loop
 	foreach($temp_file_array as $filename){
 		//only un rem if we need to remove cvs and we can't just stream it
-		$file_path = $GLOBALS['sugar_config']['cache_dir'].'csv/'.$filename;
+		$file_path = sugar_cached('csv/').$filename;
 		unlink($file_path);
 	//end foreach temp_file_array
 	}

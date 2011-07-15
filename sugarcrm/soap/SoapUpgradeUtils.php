@@ -172,7 +172,9 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
     }
 
     require("install/data/disc_client.php");
-    $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
+    $tempdir_parent = create_cache_directory("disc_client");
+    $temp_dir = tempnam($tempdir_parent, "sug");
+    sugar_mkdir($temp_dir, 0775);
     $temp_file  = tempnam( $temp_dir, "sug" );
     write_encoded_file($md5file, $temp_dir, $temp_file );
 
@@ -180,8 +182,9 @@ function get_encoded_zip_file( $session, $md5file, $last_sync, $is_md5_sync = 1)
     //generate md5 files on server
     require_once( $temp_file );
     $server_files       = array();  // used later for removing unneeded local files
-    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session).".zip";
-    $file_list = array();
+    $zip_file = tempnam($tempdir_parent, $session).".zip";
+    $archive = new ZipArchive();
+    $archive->open($zip_file, ZipArchive::OVERWRITE);
     if(!$is_md5_sync){
     	$all_src_files  = findAllTouchedFiles( ".", array(), $last_sync);
     	foreach( $all_src_files as $src_file ){
@@ -395,48 +398,26 @@ function get_disc_client_file_list( $session ){
 
     global $sugar_config;
 
-
-
-
-
-
-
-    $temp_file  = tempnam( $sugar_config['tmp_dir'], "sug" );
+    $tempdir = create_cache_directory("disc_client");
+    $temp_file  = tempnam( $tempdir, "sug" );
 
     $file_list  = array();
-
     $error      = new SoapError();
 
-
-
     // write data to temp file
-
     $all_src_files  = findAllFiles( ".", array() );
-
     foreach( $all_src_files as $src_file ){
-
         $md5 = md5_file( $src_file );
-
         $file_list[] = array( 'filename'=>"$src_file", 'md5'=>"$md5" );
-
     }
-
-
 
     if( !write_array_to_file( "server_file_list", $file_list, $temp_file ) ){
-
         $error->set_error( "get_disc_client_file_list" );
-
-        $error->description = "tmp_dir: " . $sugar_config['tmp_dir'] . " temp_file: " . $temp_file . "SOAP server: Could not write to file: $temp_file";
-
+        $error->description = "temp_dir: " . $tempdir . " temp_file: " . $temp_file . "SOAP server: Could not write to file: $temp_file";
         return( array( 'filename'=>$temp_file, 'md5'=>"", 'data'=>"", 'error'=>$error->get_soap_array() ) );
-
     }
 
-
-
     // return via get_encoded_file
-
     return( get_encoded_file( $session, $temp_file ) );
 
 }
@@ -469,14 +450,16 @@ function get_encoded_portal_zip_file($session, $md5file, $last_sync, $is_md5_syn
     }
 
     require("install/data/disc_client.php");
-    $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
+    $tempdir_parent = create_cache_directory("disc_client");
+    $temp_dir = tempnam($tempdir_parent, "sug");
+    sugar_mkdir($temp_dir, 0775);
     $temp_file  = tempnam( $temp_dir, "sug" );
     write_encoded_file($md5file, $temp_dir, $temp_file );
-   $ignore = false;
+    $ignore = false;
     //generate md5 files on server
     require_once( $temp_file );
     $server_files       = array();  // used later for removing unneeded local files
-    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], $session);
+    $zip_file = tempnam(tempdir_parent, $session);
     $root_files = array();
     $custom_files = array();
     $file_list = array();

@@ -485,8 +485,8 @@ class ConnectorUtils
             return false;
         }
 
-        if(file_exists("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl") && !unlink("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl")) {
-            $GLOBALS['log']->fatal("Cannot delete file {$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl");
+        if(file_exists($cachedfile = sugar_cached("modules/{$module}/DetailView.tpl")) && !unlink($cachedfile)) {
+            $GLOBALS['log']->fatal("Cannot delete file $cachedfile");
             return false;
         }
     }
@@ -618,9 +618,9 @@ class ConnectorUtils
                         return false;
                      }
 
-                     if(file_exists("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl") && !unlink("{$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl")) {
-                        $GLOBALS['log']->fatal("Cannot delete file {$GLOBALS['sugar_config']['cache_dir']}modules/{$module}/DetailView.tpl");
-                        return false;
+                     if(file_exists($cachedfile = sugar_cached("modules/{$module}/DetailView.tpl")) && !unlink($cachedfile)) {
+                         $GLOBALS['log']->fatal("Cannot delete file $cachedfile");
+                         return false;
                      }
               }
            }

@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+{sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 {literal}
 <script>
  /*
@@ -894,7 +894,7 @@ PackageManagerGrid = function(){
             		height: "190px"
         		}),
                 {
-                    MSG_EMPTY: "", 
+                    MSG_EMPTY: "",
                     width : (YAHOO.util.Selector.query('table','content',true).clientWidth - 15) + "px",
                     height: (document.getElementById("patch_downloads").clientHeight - 25 ) + "px"
                 }
@@ -932,10 +932,10 @@ PackageManagerGrid = function(){
       		    {key:'description', label: '{/literal}{$ML_FILEGRIDINSTALLED_COLUMN.Description}{literal}', sortable: true, 'minWidth' : Math.round(minWidth*1.5)}
       		],
       		new YAHOO.util.LocalDataSource(mti_installed_data, {
-          		responseSchema: {fields: ['name', 'file', 'unFile', 'state_file', 'type', 'version', 'date', 'uninstallable', 'description'] }, 
-          	    height: "200px"}), 
+          		responseSchema: {fields: ['name', 'file', 'unFile', 'state_file', 'type', 'version', 'date', 'uninstallable', 'description'] },
+          	    height: "200px"}),
             {
-	    	   MSG_EMPTY: "", 
+	    	   MSG_EMPTY: "",
 	    	   width : (YAHOO.util.Selector.query('table','content',true).clientWidth - 15 ) + "px",
 	    	   height: (document.getElementById("installed_grid").clientHeight - 20 ) + "px"
 	    	}
@@ -945,7 +945,7 @@ PackageManagerGrid = function(){
         _fileGridInstalled.MSG_EMPTY = "empty5";
         //bugfix for http://yuilibrary.com/projects/yui2/ticket/2528034
        	_fileGridInstalled.getColumn = YAHOO.SUGAR.SelectionGrid.prototype.getColumn;
-       	
+
        	_fileGridInstalled.on("renderEvent", function(){
        		if (mti_installed_data.length > 0)
                 setTimeout("if(_fileGridInstalled.getFirstTrEl()) _fileGridInstalled.getFirstTrEl().style.width='100%';", 1000);
@@ -1012,7 +1012,7 @@ PackageManagerGrid.prototype.renderUninstallButton = function(elCell, oRecord, c
 		output += '<input type=hidden name="mode"/>';
         output += '</form></span>';
     }
-    
+
 	elCell.innerHTML = output;
 }
 
@@ -1041,8 +1041,8 @@ PackageManagerGrid.prototype.renderEnableDisableButton = function(elCell, oRecor
 }
 
 PackageManagerGrid.prototype.renderDeleteButton = function(elCell, oRecord, col, file) {
-	
-	var upload_file = oRecord.getData().upload_file;
+
+	var upload_file = oRecord.getData().file;
 var output = "<span style='text-align:center;'><input type='button' class='button' value='{/literal}{$MOD.LBL_UW_BTN_DELETE_PACKAGE}{literal}' onClick='PackageManager.remove(\""+file+"\");'></span>";
 	 	//var output = '<form action="index.php?module=Administration&view=module&action=UpgradeWizard" method="post">';
        // output += '<input type=submit class=\'button\' name="run" value="{/literal}{$MOD.LBL_UW_BTN_DELETE_PACKAGE}{literal}" />';

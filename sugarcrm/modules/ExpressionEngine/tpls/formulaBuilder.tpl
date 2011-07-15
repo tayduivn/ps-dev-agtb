@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link rel="stylesheet" type="text/css" href="modules/ExpressionEngine/tpls/formulaBuilder.css" />
+<link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}" />
 <table width="100%" id="formulaBuilder">
 	<tr style=""><td colspan=3 style="border-bottom:1px solid #AAA; padding-bottom:2px;">
 		<textarea type="text" name="formulaInput" id="formulaInput" style="width:480px;height:120px;">{$formula}</textarea>
@@ -50,12 +50,12 @@
 	</tr>
 </table>
 <div style="width:100%;text-align:right">
-<input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'  
+<input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'
 	onclick="ModuleBuilder.formulaEditorWindow.hide()" >
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}' 
 	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))ModuleBuilder.formulaEditorWindow.hide()">
 </div>
-<script src="modules/ExpressionEngine/javascript/formulaBuilder.js"></script>
+<script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
 {literal}
 var FBLoader = new YAHOO.util.YUILoader({
@@ -72,7 +72,7 @@ var FBLoader = new YAHOO.util.YUILoader({
 FBLoader.addModule({
     name :"formulabuilder",
     type : "js",
-    fullpath: "modules/ExpressionEngine/javascript/formulaBuilder.js",
+    fullpath: "{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}",
     varName: "SUGAR.expressions.initFormulaBuilder",
     requires: ["layout", "element"]
 });

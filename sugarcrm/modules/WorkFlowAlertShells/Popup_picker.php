@@ -33,11 +33,11 @@ global $theme;
 class Popup_Picker
 {
 	/*
-	 * 
+	 *
 	 */
 	function Popup_Picker()
 	{}
-	
+
 	function process_page()
 	{
 		global $theme;
@@ -46,17 +46,17 @@ class Popup_Picker
 		global $currentModule;
 		global $current_language;
 		global $current_module_strings;
-		if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/WorkFLow/' . $GLOBALS['current_language'] . '.js')) {
+        if(!is_file(sugar_cached('jsLanguage/WorkFlow/') . $GLOBALS['current_language'] . '.js')) {
             require_once('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache('WorkFlow', $GLOBALS['current_language']);
         }
-        $javascript_language_files = '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/WorkFlow/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        $javascript_language_files = getVersionedScript("cache/jsLanguage/WorkFlow/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
 		$current_module_strings = return_module_language($current_language, 'WorkFlowAlertShells');
-		
-		
+
+
 		$ListView = new ListView();
 		$header_text = '';
-		
+
 		if(isset($_REQUEST['workflow_id']))
 		{
 			$workflow = new WorkFlow();
@@ -76,14 +76,14 @@ class Popup_Picker
 			$ListView->setHeaderTitle($current_module_strings['LBL_MODULE_NAME_COMBO'] . $header_text);
 			//$ListView->setHeaderText($button);
 			//$ListView->setQuery("workflow_alertshells.alert_type = 'Email'","","", "ALERT");
-			
-			$list = $alerts->get_list("", "workflow_alertshells.alert_type = 'Email'"); 
+
+			$list = $alerts->get_list("", "workflow_alertshells.alert_type = 'Email'");
 			$display_list = $this->cullFromList($list['list'], $workflow->base_module, $workflow->type);
 			$ListView->processListViewTwo($display_list, "main", "ALERT");
 			insert_popup_footer();
 		}
 	}
-	
+
 	function cullFromList($list, $base_module, $type)
 	{
 		$return_list = array();

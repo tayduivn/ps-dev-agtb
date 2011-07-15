@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 class DCMenu extends DashletContainer
-{	
+{
 	protected function getMenuItem($module)
 	{
 	    $imageURL = SugarThemeRegistry::current()->getImageURL("icon_{$module}_bar_32.png");
@@ -41,28 +41,28 @@ class DCMenu extends DashletContainer
 EOQ;
 
 	}
-	
+
 	protected function getDynamicMenuItem($def)
 	{
 		if (!empty($def['icon']))
 			$imageURL = $def['icon'];
 	    else
 	    	$imageURL = SugarThemeRegistry::current()->getImageURL("icon_generic_bar_32.png");
-	    
+
 	    $module = !empty($def['module']) ? $def['module'] : "";
 	    $label = isset($def['label']) ? translate($def['label'], $module) : "";
 	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label');";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
 	    return <<<EOQ
-		<li>$script<a href="javascript: $action"><img class="icon" src="{$imageURL}" alt="{$label}" title="{$label}"></a></li>	
+		<li>$script<a href="javascript: $action"><img class="icon" src="{$imageURL}" alt="{$label}" title="{$label}"></a></li>
 EOQ;
 	}
-	
+
 	public function getLayout()
 	{
 		$record = !empty($_REQUEST['record'])?$_REQUEST['record']:'';
 		$module = !empty($_REQUEST['module'])?$_REQUEST['module']:'';
-		
+
 		global $current_user;
 				$notificationsHTML = '';
 		if(is_admin($current_user)){
@@ -85,25 +85,25 @@ EOQ;
 			$code = '';
 			$class = ' class="none"';
 		}
-		
+
 		$notificationsHTML = <<<EOQ
-		
+
 			<div id="dcmenuSugarCube" $class>
 			  <a href="javascript: DCMenu.notificationsList();" class="notice"><img class='dc_notif_icon' src='$iconImageUrl' border="0"></a>
 			  $code
-			</div>	
-			
+			</div>
+
 EOQ;
 		} else {
 			$iconImageUrl = SugarThemeRegistry::current()->getImageURL("dcMenuSugarCube.png");
 				$code = '';
 				$class = ' class="none"';
 				$notificationsHTML = <<<EOQ
-			
+
 			<div id="dcmenuSugarCube" $class>
 			  <img class='dc_notif_icon' src='$iconImageUrl' border="0">
 			  $code
-			</div>	
+			</div>
 EOQ;
 		}
 		$action = $GLOBALS['app']->controller->action;
@@ -113,17 +113,17 @@ EOQ;
 		$build = urlencode($GLOBALS['sugar_build']);
 		$sugarsurvey = "http://survey-js.sugarcrm.com/SugarSurvey/index.php?do=jssurvey&version={$version}&build={$build}&flavor={$flavor}";
 		//END SUGARCRM flav=sugarsurvey ONLY
-		$html = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+		$html = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
 		// TODO: Come back and make a SugarFields grouping file for all of these
-		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Collection/SugarFieldCollection.js')."'></script>";
-		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Teamset/Teamset.js')."'></script>";
-		$html .= "<script src='".getJSPath('include/JSON.js')."'></script>";
-		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js')."'></script>";
+		$html .= getVersionedScript('include/SugarFields/Fields/Collection/SugarFieldCollection.js');
+		$html .= getVersionedScript('include/SugarFields/Fields/Teamset/Teamset.js');
+		$html .= getVersionedScript('include/JSON.js');
+		$html .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
 		$html .= <<<EOQ
 		<script>
-			
+
 		YUI().use('node-base', 'event-key', function(Y){
-			
+
 			function init(){
 				DCMenu.module = '$module';
 				DCMenu.record = '$record';
@@ -131,7 +131,7 @@ EOQ;
 				//BEGIN SUGARCRM flav=notifications ONLY
 				setInterval("DCMenu.checkForNewNotifications()",10000);
 				//END SUGARCRM flav=notifications ONLY
-				
+
 				// store the return value from Y.on to remove the listener later
     			var handle = Y.on('key', function(e) {
         			DCMenu.spot(document.getElementById('sugar_spot_search').value);
@@ -141,7 +141,7 @@ EOQ;
 
 			}
 	    	Y.on("domready", init);
-			
+
 		});
 		</script>
 		//BEGIN SUGARCRM flav=sugarsurvey ONLY
@@ -164,7 +164,7 @@ EOQ;
 		if (is_file('custom/' . $actions_path))
 		    include('custom/' . $actions_path);
 		else
-		    include($actions_path); 
+		    include($actions_path);
 		if (is_file('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php'))
 			include 'custom/application/Ext/DashletContainer/Containers/dcactions.ext.php';
 
@@ -174,7 +174,7 @@ EOQ;
 			   $ss_admin_whitelist = getSugarSalesAdminWhiteList();
 			   if(!is_admin($GLOBALS['current_user']) || in_array($action, $ss_admin_whitelist))
 			   //END SUGARCRM flav=sales ONLY
-			   $html .= $this->getMenuItem($action);	
+			   $html .= $this->getMenuItem($action);
 			}
 		}
 
@@ -210,7 +210,7 @@ EOQ;
 $html .= <<<EOQ
 		</div>
 		</div>
-		
+
 EOQ;
 		return array('html'=>$html, 'jsfiles'=>array());
 	}

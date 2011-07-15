@@ -41,8 +41,8 @@ else if(!isset($data['forQuickCreate'])) {
 }
 
 /**
- * Initialize the full compose window by creating the compose package 
- * and then including Emails index.php file.  
+ * Initialize the full compose window by creating the compose package
+ * and then including Emails index.php file.
  *
  * @param Array $ret
  */
@@ -58,7 +58,7 @@ function initFullCompose($ret)
 	{
 	    echo $composeOut;
 	}
-	else 
+	else
 	{
 	   //For normal full compose screen
 	   include('modules/Emails/index.php');
@@ -69,7 +69,7 @@ function initFullCompose($ret)
 /**
  * Generate the compose data package consumed by the full and quick compose screens.
  *
- * @param Array $data 
+ * @param Array $data
  * @param Bool $forFullCompose If full compose is set to TRUE, then continue execution and include the full Emails UI.  Otherwise
  *             the data generated is returned.
  */
@@ -130,7 +130,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 
 			require_once("modules/Emails/EmailUI.php");
 			$subject = $bean->kbdocument_name;
-			$article_body = str_replace('/'.$GLOBALS['sugar_config']['cache_dir'].'images/',$GLOBALS['sugar_config']['site_url'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/',KBDocument::get_kbdoc_body_without_incrementing_count($bean->id));
+			$article_body = str_replace('/cache/images/',$GLOBALS['sugar_config']['site_url'].'/cache/images/',KBDocument::get_kbdoc_body_without_incrementing_count($bean->id));
 			$body = from_html($article_body);
 			$attachments = KBDocument::get_kbdoc_attachments_for_newemail($bean->id);
 			$attachments = $attachments['attachments'];
@@ -157,7 +157,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 
 	);
 } else if(isset($_REQUEST['ListView'])) {
-  	
+
 	$email = new Email();
 	$namePlusEmail = $email->getNamePlusEmailAddressesForCompose($_REQUEST['action_module'], (explode(",", $_REQUEST['uid'])));
 	$ret = array(
@@ -226,7 +226,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 		'to_email_addrs' => '',
 		);
 	}
-	
+
 	if($forFullCompose)
 		initFullCompose($ret);
 	else
@@ -236,7 +236,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 function getQuotesRelatedData($bean,$data) {
 	$return = array();
 	$emailId = $data['recordId'];
-  	
+
   	require_once("modules/Emails/EmailUI.php");
 	$email = new Email();
 	$email->retrieve($emailId);

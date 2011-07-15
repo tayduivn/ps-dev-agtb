@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 //BEGIN SUGARCRM flav=pro ONLY
@@ -46,9 +46,9 @@ $return_action = isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] 
 $return_id = isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '';
 if(!empty($return_module))
     $cancel_location = "index.php?module=".$return_module."&action=".$return_action."&record=".$return_id;
-else 
+else
     $cancel_location = "index.php?module=Users&action=index";
-		
+
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
 
 // Include Metadata for processing
@@ -173,7 +173,7 @@ if(!isset($_SESSION['reassignRecords']['assignedModuleListCache'])){
 		}
 	}
 	$beanListDup = array_diff($beanListDup, $exclude_modules);
-	
+
 	//Leon bug 20739
 	$beanListDupDisp=array() ;
 	foreach($beanListDup as $m => $p){
@@ -219,7 +219,7 @@ foreach($moduleFilters as $modFilter => $fieldArray){
 				$multi = "multiple=\"true\"";
 				$name .= "[]";
 				// NO BREAK - Continue into select
-			case "select": 
+			case "select":
 				$tag = "select";
 				$sel = '';
 				if(!empty($_SESSION['reassignRecords']['filters'][$meta['name']])){
@@ -263,12 +263,12 @@ else if(!isset($_GET['execute'])){
 	if($_POST['fromuser'] == $_POST['touser']){
 		sugar_die($mod_strings_users['ERR_REASS_DIFF_USERS']);
 	}
-	
+
 	global $current_user;
 	// Set the from and to user names so that we can display them in the results
 	$fromusername = $_POST['fromuser'];
 	$tousername = $_POST['touser'];
-	
+
 	$query = "select user_name, id from users where id in ('{$_POST['fromuser']}', '{$_POST['touser']}')";
 	$res = $GLOBALS['db']->query($query);
 	while($row = $GLOBALS['db']->fetchByAssoc($res)){
@@ -285,7 +285,7 @@ else if(!isset($_GET['execute'])){
 	$team_id = $teamSetField->getPrimaryTeamIdFromRequest('team_name', $_REQUEST);
 	$teamSet = new TeamSet();
 	$team_set_id = $teamSet->addTeams($team_ids);
-	
+
 	$toteamname = TeamSetManager::getTeamsFromSet($team_set_id);
 	//END SUGARCRM flav=pro ONLY
         echo "{$mod_strings_users['LBL_REASS_DESC_PART2']}\n";
@@ -308,27 +308,27 @@ else if(!isset($_GET['execute'])){
 			continue;
 		}
 		$p_module = $beanListFlip[$module];
-		
+
 		require_once($beanFiles[$module]);
 		$object = new $module();
 		if(empty($object->table_name)){
 //			echo "<h5>Could not find the database table for $p_module.</h5>";
 			continue;
 		}
-		
+
 		echo "<h5>{$mod_strings_users['LBL_REASS_ASSESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
-		
+
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";
-		
+
 		$q_select = "select id";
 		$q_update = "update ";
 		$q_set = " set assigned_user_id = '{$_POST['touser']}', ".
 			      "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
-		
+
 		if(!empty($team_id)){
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
@@ -377,7 +377,7 @@ else if(!isset($_GET['execute'])){
 		$query = "$q_select from $q_tables $q_where";
 		$countquery = "select count(*) AS count from $q_tables $q_where";
 		$updatequery = "$q_update $q_tables $q_set $q_where";
-		
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		$_SESSION['reassignRecords']['toteam'] = $team_id;
 		$_SESSION['reassignRecords']['toteamsetid'] = $team_set_id;
@@ -389,21 +389,21 @@ else if(!isset($_GET['execute'])){
 		$_SESSION['reassignRecords']['tousername'] = $tousername;
 		$_SESSION['reassignRecords']['modules'][$module]['query'] = $query;
 		$_SESSION['reassignRecords']['modules'][$module]['update'] = $updatequery;
-		
+
 		$res = $GLOBALS['db']->query($countquery);
 		$row = $GLOBALS['db']->fetchByAssoc($res);
-		
+
 		echo "{$row['count']} {$mod_strings_users['LBL_REASS_RECORDS_FROM']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_WILL_BE_UPDATED']}\n<BR>\n";
 		echo "<input type=checkbox name={$module}_workflow> {$mod_strings_users['LBL_REASS_WORK_NOTIF_AUDIT']}<BR>\n";
 		echo "</td></tr></table>\n";
 	}
-	
+
 	echo "<BR><input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_GO_BACK']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords\"'>\n";
 	echo "&nbsp;<input type=submit class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_CONTINUE']}\">\n";
 	echo "&nbsp;<input type=button class=\"button\" value=\"{$mod_strings_users['LBL_REASS_BUTTON_RESTART']}\" onclick='document.location=\"index.php?module=Users&action=reassignUserRecords&clear=true\"'>\n";
-	
+
 	echo "</form>\n";
-	
+
 	// debug
 	//print_r($_SESSION['reassignRecords']);
 ///////////////////// END STEP 2 - Confirm Selections /////////////////////////
@@ -419,7 +419,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 	$toteamsetid = $_SESSION['reassignRecords']['toteamsetid'];
 	$toteamname = $_SESSION['reassignRecords']['toteamname'];
 	//END SUGARCRM flav=pro ONLY
-	
+
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);
 
 	foreach($_SESSION['reassignRecords']['modules'] as $module => $queries){
@@ -427,13 +427,13 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 		$workflow = false;
 		if(isset($_POST[$module."_workflow"]) && $_POST[$module."_workflow"] = "on")
 			$workflow = true;
-		
+
 		$query = $workflow ? $queries['query'] : $queries['update'];
-		
+
 		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
-		
+
 		$res = $GLOBALS['db']->query($query, true);
-		
+
 		//echo "<i>Workflow and Notifications <b>".($workflow ? "enabled" : "disabled")."</b> for this module record reassignment</i>\n<BR>\n";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
@@ -445,7 +445,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 		else{
 			$successarr = array();
 			$failarr = array();
-			
+
 			require_once($beanFiles[$module]);
 			while($row = $GLOBALS['db']->fetchByAssoc($res)){
 				$bean = new $module();
@@ -453,11 +453,11 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 					continue;
 				}
 				$bean->retrieve($row['id']);
-				
+
 				// So that we don't create new blank records.
 				if(!isset($bean->id)){
 					continue;
-				}				
+				}
 				$bean->assigned_user_id = $touser;
 				//BEGIN SUGARCRM flav=pro ONLY
 				if($toteam != '0'){
@@ -467,7 +467,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 					$bean->team_set_id = $toteamsetid;
 				}
 				//END SUGARCRM flav=pro ONLY
-				
+
 				if($bean->save()){
 					$linkname = "record with id {$bean->id}";
 					if(!empty($bean->name)){
@@ -489,7 +489,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 					$failarr[] = "{$mod_strings_users['LBL_REASS_FAILED_SAVE']} \"<i><a href=\"index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}\">$linkname</a></i>\".";
 				}
 			}
-			
+
 			if(isset($_POST['verbose']) && $_POST['verbose'] == "on"){
 				echo "<h5>{$mod_strings_users['LBL_REASS_THE_FOLLOWING']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_HAVE_BEEN_UPDATED']}</h5>\n";
 				foreach($successarr as $ord){
@@ -497,7 +497,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 				}
 				if(empty($successarr))
 					echo "{$mod_strings_users['LBL_REASS_NONE']}\n<BR>\n";
-				
+
 				echo "<h5>{$mod_strings_users['LBL_REASS_THE_FOLLOWING']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_CANNOT_PROCESS']}</h5>\n";
 				foreach($failarr as $failure){
 					echo $failure."\n<BR>\n";
@@ -525,8 +525,8 @@ if(!empty($quicksearch_js)){
 	echo $quicksearch_js;
 }
 //END SUGARCRM flav=pro ONLY
+echo getVersionedScript("cache/include/javascript/sugar_grp_overlib.js");
 ?>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
 <script type="text/javascript">
 
 function clearCurrentRecords()
@@ -539,7 +539,7 @@ function clearCurrentRecords()
                     updateDivDisplay(document.getElementById('modulemultiselect'));
                 }
             };
-            
+
     YAHOO.util.Connect.asyncRequest('POST', 'index.php?module=Users&action=clearreassignrecords&to_pdf=1', callback, null);
 }
 
@@ -548,7 +548,7 @@ function updateDivDisplay(multiSelectObj){
     for(var i = 0; i < multiSelectObj.options.length; i++){
         if(multiSelectObj.options[i].selected != allselected[i]){
             allselected[i] = multiSelectObj.options[i].selected;
-            
+
             if(allselected[i]){
                 theElement = document.getElementById('reassign_'+multiSelectObj.options[i].value);
                 if(theElement != null){
@@ -562,7 +562,7 @@ function updateDivDisplay(multiSelectObj){
                 }
             }
         }
-    } 
+    }
 }
 <?php
 if(!isset($_POST['fromuser']) && !isset($_GET['execute'])){

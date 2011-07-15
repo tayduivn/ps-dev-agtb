@@ -10,7 +10,7 @@ $site_url =  $sugar_config['site_url'];
 
 function erFilesExist(){
 	$exists = '0';
-	if(file_exists($GLOBALS['sugar_config']['cache_dir'].'erschema/schema.sql')){
+	if(file_exists(sugar_cached('erschema/schema.sql'))){
 		$exists = '1';
 	}
 	return $exists;

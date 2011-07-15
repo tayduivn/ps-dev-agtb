@@ -45,6 +45,10 @@ if( !isset($_REQUEST['mode']) || ($_REQUEST['mode'] == "") ){
     die( "No mode specified." );
 }
 
+if(!file_exists($base_tmp_upgrade_dir)) {
+    mkdir($base_tmp_upgrade_dir, 0755, true);
+}
+
 $unzip_dir      = mk_temp_dir( $base_tmp_upgrade_dir );
 $install_file   = hashToFile($_REQUEST['install_file']);
 $hidden_fields = "";
@@ -223,8 +227,7 @@ if(empty($new_studio_mod_files)) {
 	echo $mod_strings['LBL_UW_ENABLE_READY'];
 	else
 	echo $mod_strings['LBL_UW_PATCH_READY'];
-}
-else {
+} else {
 	echo $mod_strings['LBL_UW_PATCH_READY2'];
 	echo '<input type="checkbox" onclick="toggle_these(0, ' . count($new_studio_mod_files) . ', this)"> '.$mod_strings['LBL_UW_CHECK_ALL'];
 	foreach($new_studio_mod_files as $the_file) {
@@ -351,7 +354,7 @@ if( $show_files == true ){
 	$new_studio_mod_files = array();
 	$new_sugar_mod_files = array();
 
-	$cache_html_files = findAllFilesRelative( "{$GLOBALS['sugar_config']['cache_dir']}layout", array());
+	$cache_html_files = findAllFilesRelative( sugar_cached("layout"), array());
 
 	foreach($new_files as $the_file) {
 		if(substr(strtolower($the_file), -5, 5) == '.html' && in_array($the_file, $cache_html_files))
@@ -523,12 +526,12 @@ echo '<script>' .
     $fileHash = fileToHash($install_file );
 ?>
     <?php print( $hidden_fields ); ?>
-    <input type=hidden name="copy_count" value="<?php print( $count );?>"/>
-    <input type=hidden name="run" value="commit" />
-    <input type=hidden name="install_file"  value="<?php echo $fileHash; ?>" />
-    <input type=hidden name="unzip_dir"     value="<?php echo $unzip_dir; ?>" />
-    <input type=hidden name="zip_from_dir"  value="<?php echo $zip_from_dir; ?>" />
-    <input type=hidden name="zip_to_dir"    value="<?php echo $zip_to_dir; ?>" />
+    <input type="hidden" name="copy_count" value="<?php print( $count );?>"/>
+    <input type="hidden" name="run" value="commit" />
+    <input type="hidden" name="install_file"  value="<?php echo $fileHash; ?>" />
+    <input type="hidden" name="unzip_dir"     value="<?php echo basename($unzip_dir); ?>" />
+    <input type="hidden" name="zip_from_dir"  value="<?php echo $zip_from_dir; ?>" />
+    <input type="hidden" name="zip_to_dir"    value="<?php echo $zip_to_dir; ?>" />
 </form>
 
 <?php

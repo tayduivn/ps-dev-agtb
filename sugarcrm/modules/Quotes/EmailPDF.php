@@ -29,15 +29,15 @@ function email_layout ($layout) {
 	global $layouts;
 	global $current_user;
 	global $locale;
-	
-	
-	
+
+
+
 	//First Create e-mail draft
 	$email_object = new Email();
 	// set the id for relationships
 	$email_object->id = create_guid();
 	$email_object->new_with_id = true;
-	
+
 	//subject
 	$email_object->name = $mod_strings['LBL_EMAIL_QUOTE_FOR'].$focus->name."";
 	//body
@@ -48,25 +48,25 @@ function email_layout ($layout) {
 	//type is draft
 	$email_object->type = "draft";
 	$email_object->status = "draft";
-	
+
 	// link the sent pdf to the relevant account
 	if(isset($focus->billing_account_id) && !empty($focus->billing_account_id)) {
 		$email_object->load_relationship('accounts');
 		$email_object->accounts->add($focus->billing_account_id);
 	}
-	
+
 	//check to see if there is a billing contact associated with this quote
 	if(!empty($focus->billing_contact_id) && $focus->billing_contact_id!="") {
 		global $beanFiles;
 		require_once($beanFiles['Contact']);
 		$contact = new Contact;
 		$contact->retrieve($focus->billing_contact_id);
-		
+
 		if(!empty($contact->email1) || !empty($contact->email2)) {
 			//contact email is set
 			$email_object->to_addrs_ids = $focus->billing_contact_id;
 			$email_object->to_addrs_names = $focus->billing_contact_name.";";
-			
+
 			if(!empty($contact->email1)){
 				$email_object->to_addrs_emails = $contact->email1.";";
 				$email_object->to_addrs = $focus->billing_contact_name." <".$contact->email1.">";
@@ -74,21 +74,21 @@ function email_layout ($layout) {
 				$email_object->to_addrs_emails = $contact->email2.";";
 				$email_object->to_addrs = $focus->billing_contact_name." <".$contact->email2.">";
 			}
-			
+
 			// create relationship b/t the email(w/pdf) and the contact
 			$contact->load_relationship('emails');
 			$contact->emails->add($email_object->id);
 		}//end if contact name is set
 	} elseif(isset($focus->billing_account_id) && !empty($focus->billing_account_id)) {
-		
+
 		$acct = new Account();
 		$acct->retrieve($focus->billing_account_id);
-		
+
 		if(!empty($acct->email1) || !empty($acct->email2)) {
 			//acct email is set
 			$email_object->to_addrs_ids = $focus->billing_account_id;
 			$email_object->to_addrs_names = $focus->billing_account_name.";";
-			
+
 			if(!empty($acct->email1)){
 				$email_object->to_addrs_emails = $acct->email1.";";
 				$email_object->to_addrs = $focus->billing_account_name." <".$acct->email1.">";
@@ -96,15 +96,15 @@ function email_layout ($layout) {
 				$email_object->to_addrs_emails = $acct->email2.";";
 				$email_object->to_addrs = $focus->billing_account_name." <".$acct->email2.">";
 			}
-			
+
 			// create relationship b/t the email(w/pdf) and the acct
 			$acct->load_relationship('emails');
 			$acct->emails->add($email_object->id);
 		}//end if acct name is set
 	}
-	
-	
-	
+
+
+
 	//team id
 	$email_object->team_id  = $current_user->default_team;
 	//assigned_user_id
@@ -113,7 +113,7 @@ function email_layout ($layout) {
 	global $timedate;
 	$email_object->date_start = $timedate->now();
 	$email_object->save(FALSE);
-	$email_id = $email_object->id;	
+	$email_id = $email_object->id;
 
 	//Handle PDF Attachment
 	$file_name = get_quote_pdf($layout);
@@ -123,16 +123,16 @@ function email_layout ($layout) {
 	$note->file_mime_type = "application/pdf";
 	$lbl_email_attachment = iconv($locale->getExportCharset(),'utf-8',$mod_strings['LBL_EMAIL_ATTACHMENT']);
 	$note->name = $lbl_email_attachment.$file_name;
-	
+
 	//save the pdf attachment note
 	$note->parent_id = $email_object->id;
 	$note->parent_type = "Emails";
 	$note->save();
 	$note_id = $note->id;
-	
-	$source = $GLOBALS['sugar_config']['upload_dir'].$file_name;
-	$destination = $GLOBALS['sugar_config']['upload_dir'].$note_id;
-	
+
+	$source = "upload://$file_name";
+	$destination = "upload://$note_id";
+
 	if (!rename($source, $destination)){
 		$msg = str_replace('$destination', $destination, $mod_strings['LBL_RENAME_ERROR']);
 		die($msg);
@@ -148,7 +148,7 @@ function get_quote_pdf($layout) {
 	global $log, $mod_strings;
 	global $layouts;
 	global $current_user;
-	
+
 	if(!isset($layouts[$layout])) {
 		$msg = $mod_strings['LBL_QUOTE_LAYOUT_REGISTERED_ERROR'];
 		$log->fatal($msg);

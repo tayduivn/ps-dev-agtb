@@ -38,11 +38,6 @@ class UpgradeMetaHelper{
 	var $evparser;
 	var $dvparser;
 	var $path_to_master_copy;
-//BEGIN SUGARCRM flav=int ONLY
-	var $qcparser;
-    var $processQuickCreate = false;
-	var $create_report_file = true;
-//END SUGARCRM flav=int ONLY
 	/**
 	 * UpgradeMetaHelper
 	 * This is the constructor for the UpgradeMetaHelper class
@@ -78,7 +73,7 @@ class UpgradeMetaHelper{
 	 * @return $return_array Two-dimensional Array of [module][modified file(s) Array]
 	 */
 		function getModifiedModules() {
-		
+
 		$md5_string = array();
 		if(file_exists(clean_path(getcwd().'/files.md5'))){
 			require(clean_path(getcwd().'/files.md5'));
@@ -91,9 +86,6 @@ class UpgradeMetaHelper{
 	    	   $editView = "modules/$mod/EditView.html";
 	    	   $detailView = "modules/$mod/DetailView.html";
 	    	   $searchForm = "modules/$mod/SearchForm.html";
-	    	   //BEGIN SUGARCRM flav=int ONLY
-               $quickCreate = "modules/$mod/tpls/QuickCreate.tpl";
-               //END SUGARCRM flav=int ONLY
                if(file_exists($editView) && isset($md5_string['./' . $editView])) {
                	  $fileContents = file_get_contents($editView);
                	  if(md5($fileContents) != $md5_string['./' . $editView]) {
@@ -115,18 +107,13 @@ class UpgradeMetaHelper{
                	  }
                }
 
-			   //BEGIN SUGARCRM flav=int ONLY
-               if(file_exists($quickCreate) && $this->processQuickCreate) {
-               	  $return_array[$mod][] = $quickCreate;
-               }
-			   //END SUGARCRM flav=int ONLY
 	    } //foreach
 
 		return $return_array;
 	}
 
 function saveMatchingFilesQueries($currStep,$value){
-	$upgrade_progress_dir = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].'upgrades/temp';
+	$upgrade_progress_dir = sugar_cached('upgrades/temp');
 	if(!is_dir($upgrade_progress_dir)){
 		mkdir($upgrade_progress_dir);
 	}
@@ -153,7 +140,7 @@ function saveMatchingFilesQueries($currStep,$value){
 }
 
 function getAllCustomizedModulesBeyondStudio() {
-	
+
 	require_once('modules/UpgradeWizard/uw_utils.php');
 	$md5_string = array();
 	if(file_exists(clean_path(getcwd().'/files.md5'))){
@@ -218,7 +205,7 @@ function getAllCustomizedModulesBeyondStudio() {
  * modules. Show the list in the preflight check UI.
  */
 function getAllCustomizedModules() {
-		
+
 		require_once('files.md5');
 
 	    $return_array = array();
@@ -287,11 +274,6 @@ function getAllCustomizedModules() {
 		$this->dvparser = new DetailViewMetaParser();
 		$this->svparser = new SearchFormMetaParser();
 
-		//BEGIN SUGARCRM flav=int ONLY
-		require_once('include/SugarFields/Parsers/QuickCreateMetaParser.php');
-		$this->qcparser = new QuickCreateMetaParser();
-		//END SUGARCRM flav=int ONLY
-
 		foreach($this->upgrade_modules as $module_name=>$files) {
 			$this->parseFile($module_name, $files);
 		} //foreach
@@ -316,9 +298,6 @@ function getAllCustomizedModules() {
                        case 'EditView' : $parser = $this->evparser; break;
                        case 'DetailView' : $parser = $this->dvparser; break;
                        case 'SearchForm' : $parser = $this->svparser; break;
-                       //BEGIN SUGARCRM flav=int ONLY
-                       case 'QuickCreate' : $parser = $this->qcparser; break;
-                       //END SUGARCRM flav=int ONLY
                     }
 
                     $lowerCaseView = $view == 'SearchForm' ? 'search' : strtolower($view);
@@ -335,35 +314,6 @@ function getAllCustomizedModules() {
 											true,
 											$this->path_to_master_copy.'/modules/'.$module_name.'/metadata/'.$lowerCaseView.'defs.php'));
 					fclose($evfp);
-					//BEGIN SUGARCRM flav=int ONLY
-
-					if($this->create_report_file && !empty($parser->mCustomPanels)) {
-					   $masterFile = $this->path_to_master_copy.'/modules/'.$module_name.'/metadata/'.$lowerCaseView.'defs.php';
-					   $parser->createReportFile($parser->mCustomPanels, $newFile, $masterFile, $this->upgrade_dir.'/modules/'.$module_name, $lowerCaseView);
-					}
-
-					if($this->verifyMetaData($newFile, $module_name, $view)) {
-
-						// Copy file to module metadata directory
-						if(!file_exists('custom/modules')) {
-						   mkdir('custom/modules', 0755);
-						}
-
-						if(!file_exists('custom/modules/'.$module_name)) {
-						   mkdir('custom/modules/'.$module_name, 0755);
-						}
-
-						if(!file_exists('custom/modules/'.$module_name.'/metadata/')) {
-						   mkdir('custom/modules/'.$module_name.'/metadata/', 0755);
-						}
-
-						if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'.$module_name)) {
-						   rmdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/'.$module_name);
-						}
-
-						copy($newFile, 'custom/modules/'.$module_name.'/metadata/'.$lowerCaseView.'defs.php');
-					}
-					//END SUGARCRM flav=int ONLY
                 } //if
 		} //foreach
 	}
@@ -392,11 +342,6 @@ function getAllCustomizedModules() {
 			if(!file_exists($dir.'/'.$module.'/metadata')) {
 				mkdir($dir.'/'.$module.'/metadata', 0755);
 			}
-			//BEGIN SUGARCRM flav=int ONLY
-			if(!file_exists($dir.'/'.$module.'/tpls')) {
-				mkdir($dir.'/'.$module.'/tpls', 0755);
-			}
-			//END SUGARCRM flav=int ONLY
 
 			foreach($files as $file) {
 				if(file_exists($file) && is_file($file)) {

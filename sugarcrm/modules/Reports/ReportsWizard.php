@@ -100,7 +100,6 @@ $sugar_smarty->assign("MOD", $mod_strings);
 $sugar_smarty->assign("APP", $app_strings);
 $sugar_smarty->assign("LANG", $current_language);
 $sugar_smarty->assign("ACLAllowedModules", $ACLAllowedModules);
-$sugar_smarty->assign("cache_path", $GLOBALS['sugar_config']['cache_dir']);
 $sugar_smarty->assign("USER_ID_MD5", md5($current_user->id));
 $sugar_smarty->assign("BUTTONS", $buttons);
 $sugar_smarty->assign("IS_ADMIN", $current_user->is_admin);
