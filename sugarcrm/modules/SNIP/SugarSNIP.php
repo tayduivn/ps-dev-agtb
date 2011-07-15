@@ -263,7 +263,7 @@ class SugarSNIP
     {
         $user = new User();
         $user->user_name = self::SNIP_USER;
-        $user->title = translate('LBL_SNIP_USER_DESC');
+        $user->title = translate('LBL_SNIP_USER_DESC', 'SNIP');
         $user->description = $user->title;
         $user->first_name = "";
         $user->last_name = $user->title;
