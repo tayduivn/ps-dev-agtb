@@ -13,4 +13,3 @@ ibmf_2318_2327_2329_custinsthooks
 ibmf_defect3054
 ibmf_quicksearchext
 ibmf_searchformoverride
-ibmf_task3065
