@@ -94,12 +94,12 @@ class M2MRelationship extends SugarRelationship
         $lhsLinkName = $this->lhsLink;
         $rhsLinkName = $this->rhsLink;
 
-        if (!is_object($lhs)) {
-            $GLOBALS['log']->fatal("LHS is not an object");
+        if (!($lhs instanceof SugarBean)) {
+            $GLOBALS['log']->fatal("LHS is not a SugarBean object");
             return false;
         }
-        if (!is_object($rhs)) {
-            $GLOBALS['log']->fatal("RHS is not an object");
+        if (!($rhs instanceof SugarBean)) {
+            $GLOBALS['log']->fatal("RHS is not a SugarBean object");
             return false;
         }
         if (empty($lhs->$lhsLinkName) && !$lhs->load_relationship($lhsLinkName))

@@ -102,6 +102,10 @@ class LogicHook{
 
 	protected static $hooks = array();
 
+        static public function refreshHooks() {
+            self::$hooks = array();
+        }
+
 	public function loadHooks($module_dir)
 	{
 		$hook_array = null;
