@@ -61,7 +61,7 @@ table.noBorder {
 -->
 </style>
 {/literal}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 {$MODULE_TITLE}
 {$INSTRUCTION}
@@ -75,7 +75,8 @@ table.noBorder {
 <input type="hidden" name="import_type" value="{$TYPE}">
 <input type="hidden" name="file_name" value="{$FILE_NAME}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
-
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
+    
 {if $AUTO_DETECT_ERROR != ''}
     <div class="errorMessage">
         <span class="error">{$AUTO_DETECT_ERROR}</span>
