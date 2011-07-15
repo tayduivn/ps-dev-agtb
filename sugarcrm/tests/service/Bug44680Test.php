@@ -38,6 +38,10 @@ class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function setUp() 
     {
+        $beanList = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+
         $this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,600,600);
         
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
