@@ -1153,4 +1153,11 @@ $mod_strings = array (
 // OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",
-);
+    'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
+
+    // SNIP
+    'LBL_SNIP_TITLE' => 'SNIP',
+    'LBL_SNIP_DESC' => 'Configure offline archiving (SNIP)',
+    'LBL_REGISTER_SNIP' => 'Register for SNIP',
+    'LBL_REGISTER_SNIP_DESC' => 'Register this application for the SNIP service',
+	);

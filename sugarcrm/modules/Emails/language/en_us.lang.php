@@ -360,4 +360,8 @@ $mod_strings = array (
 	'LBL_EXCHANGE_SMTPUSER'					=> 'Exchange Username:',
 	'LBL_EXCHANGE_SMTPPORT'					=> 'Exchange Server Port:',
 	'LBL_EXCHANGE_SMTPSERVER'				=> 'Exchange Server:',
+
+	// SNIP
+	'LBL_CONTACTS_SUBPANEL_TITLE_SNIP' => 'Email Contacts',
+	'LBL_EMAILS_MEETINGS_REL' => 'Emails:Meetings',
 );

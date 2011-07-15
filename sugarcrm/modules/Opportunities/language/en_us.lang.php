@@ -152,6 +152,9 @@ $mod_strings = array (
     'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
     'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+
+  // SNIP
+  'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',
 );
 
 ?>
