@@ -197,7 +197,7 @@ class VardefManager{
 	 */
 	static function refreshVardefs($module, $object, $additional_search_paths = null, $cacheCustom = true){
 		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
-		global $dictionary;
+		global $dictionary, $beanList;
 		$vardef_paths = array(
 					'modules/'.$module.'/vardefs.php',
 					'custom/modules/'.$module.'/Ext/Vardefs/vardefs.ext.php',
@@ -209,13 +209,22 @@ class VardefManager{
 		{
 			$vardef_paths = array_merge($vardef_paths, $additional_search_paths);
 		}
+		$found = false;
 		//search a predefined set of locations for the vardef files
 		foreach($vardef_paths as $path){
 			if(file_exists($path)){
-				
 				require($path);
+                $found = true;
 			}
 		}
+        //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
+        if(!$found){
+            $temp = BeanFactory::newBean($module);
+            if ($temp && $temp->module_dir != $temp->module_name && !empty($beanList[$temp->module_dir]))
+            {
+                self::refreshVardefs($temp->module_dir, $beanList[$temp->module_dir], $additional_search_paths, $cacheCustom);
+            }
+        }
 
 		//load custom fields into the vardef cache
 		if($cacheCustom){
@@ -420,10 +429,15 @@ class VardefManager{
 			$return_result = sugar_cache_retrieve($key);
 			if(!empty($return_result))
 			{
-				$GLOBALS['dictionary'][$object] = $return_result;
+                if($module == "TeamMemberships")
+                    echo "found a result without refresh<br/>";
+
+                $GLOBALS['dictionary'][$object] = $return_result;
 				return;
 			}
 		}
+         if($module == "TeamMemberships")
+                echo "doing a refresh<br/>";
 		        
 		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
 		global $dictionary;
@@ -445,11 +459,10 @@ class VardefManager{
 				if(!empty($GLOBALS['dictionary'][$object]))
 					sugar_cache_put($key,$GLOBALS['dictionary'][$object]);
 			}
-    		////BEGIN SUGARCRM flav=int ONLY
     		else{
     			display_notice('<B> MISSING FIELD_DEFS ' . 'modules/'. strtoupper($module) . '/vardefs.php for ' . $object . '</b><BR>');
     		}
-    		//END SUGARCRM flav=int ONLY
+    		
 		}
 	}
 }
