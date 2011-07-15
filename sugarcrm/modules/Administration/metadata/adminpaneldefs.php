@@ -19,6 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 global $current_user,$admin_group_header;
+
 //users and security.
 $admin_option_defs=array();
 $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_TITLE','LBL_MANAGE_USERS','./index.php?module=Users&action=index');
@@ -253,6 +254,11 @@ $admin_group_header[]= array('LBL_CONTRACT_TITLE','',false,$admin_option_defs, '
 //END SUGARCRM flav=pro ONLY
 
 //END SUGARCRM flav!=dce ONLY
+
+// SNIP
+$admin_option_defs = array();
+$admin_option_defs['Administration']['register_snip']=array('icon_AdminThemes','LBL_REGISTER_SNIP','LBL_REGISTER_SNIP_DESC','./index.php?module=SNIP&action=RegisterForSnip');
+$admin_group_header[]= array('LBL_SNIP_TITLE','',false,$admin_option_defs, 'LBL_SNIP_DESC');
 
 if(file_exists('custom/modules/Administration/Ext/Administration/administration.ext.php')){
 	require_once('custom/modules/Administration/Ext/Administration/administration.ext.php');

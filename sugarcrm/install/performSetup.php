@@ -566,6 +566,9 @@ SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
 installLog("Enable SugarFeeds");
 enableSugarFeeds();
 
+// Create the user that will be used by Snip
+require_once ('install/createSnipUser.php');
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
     

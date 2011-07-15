@@ -95,7 +95,9 @@ $mod_strings = array (
     //END SUGARCRM flav=dce ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CASE_INFORMATION' => 'Case Overview',
-);
 
+    // SNIP
+	'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',
+);
 
 ?>
