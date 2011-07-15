@@ -1,4 +1,0 @@
-- Move uploads to separate directory
-- Move inline images to uploads
-- clean up setDocumentToCampaignTemplate in Email.js and its relation to uploads dir
-- what is data/upload? Merge with uploads
