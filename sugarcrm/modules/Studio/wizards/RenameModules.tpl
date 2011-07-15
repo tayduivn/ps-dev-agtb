@@ -212,9 +212,7 @@
         }
         lastField = '';
         lastRowCount = -1;
-        setSingularDropDownValue()
-        document.getElementById('svalue_'+ rowCount).value = document.getElementById('slot' + rowCount + '_stext').value;
-
+        setSingularDropDownValue(rowCount);
     }
 
     var slotCount = {/literal}{$rowCounter}{literal};
