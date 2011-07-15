@@ -102,7 +102,7 @@ class SugarCache
             eaccelerator_clear();
         }
         // XCache
-        if ( function_exists('xcache_clear_cache') ) {
+        if ( function_exists('xcache_clear_cache') && !ini_get('xcache.admin.enable_auth') ) {
             $max = xcache_count(XC_TYPE_PHP);
             for ($i = 0; $i < $max; $i++) {
                 if (!xcache_clear_cache(XC_TYPE_PHP, $i)) {

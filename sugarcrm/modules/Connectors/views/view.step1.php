@@ -209,7 +209,7 @@ class ViewStep1 extends ViewList
 		
 	  	$this->ss->assign('TABS', $tab_panel->display());
        
-        echo $this->getModuleTitle();
+        echo $this->getModuleTitle(false);
         $tplFile = 'modules/Connectors/tpls/step1.tpl';
         if ( file_exists('custom/'.$tplFile) ) {
             $tplFile = 'custom/'.$tplFile;

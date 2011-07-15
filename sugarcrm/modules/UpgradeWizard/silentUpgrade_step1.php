@@ -728,8 +728,10 @@ foreach($parserFiles as $file) {
     else{
     $targetFile = str_replace(clean_path($zipBasePath), $cwd, $srcFile);
 
-	if(!is_dir(dirname($targetFile))) {
-		mkdir_recursive(dirname($targetFile)); // make sure the directory exists
+    if(!file_exists(dirname($targetFile))) 
+    {
+		logThis("Create directory " . dirname($targetFile), $path);
+    	mkdir_recursive(str_replace($argv[3], '', dirname($targetFile))); // make sure the directory exists
 	}
 
 	if(!file_exists($targetFile))

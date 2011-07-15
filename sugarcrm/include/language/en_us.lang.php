@@ -2948,6 +2948,12 @@ $app_strings = array (
     'LBL_PLUGINS_DESC' => 'Read about the plug-in features within the <a href="https://www.sugarcrm.com/crm/support/documentation/SugarPlugIns">Plug-Ins Documentation</a>.',
     //END SUGARCRM flav!=com ONLY
 
+     //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_PLUGINS_LOTUS_TITLE' => 'Sugar Plug-ins for Lotus Notes<sup>TM</sup>',
+    'LBL_PLUGIN_LOTUS_NAME' => 'Sugar Plug-in For Lotus Notes',
+    'LBL_PLUGIN_LOTUS_DESC' => 'Integrate Sugar with Lotus Notes.',
+     //END SUGARCRM flav=ent ONLY
+    
     //BEGIN SUGARCRM flav=dce ONLY
     //DCE
     'LBL_DCEDEPLOY_LABEL' => 'Deploy',
@@ -3085,8 +3091,7 @@ $app_strings = array (
 
     //External API Error Messages
     'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
-    'LBL_REMOVING_ATTACHMENT'               => 'Removing attachment',
-    'ERR_REMOVING_ATTACHMENT'               => 'Error in Removing attachment',
+
     //IMPORT SAMPLE TEXT
     'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
 "This is a sample import file which provides an example of the expected contents of a file that is ready for import."
@@ -3111,6 +3116,11 @@ $app_strings = array (
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User',
     'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To',
     'LBL_EXPORT_FULL_NAME' => 'Full Name',
+    'LBL_EXPORT_TEAM_ID' => 'Team ID',
+    'LBL_EXPORT_TEAM_NAME' => 'Teams',
+    'LBL_EXPORT_TEAM_SET_ID' => 'Team Set ID',
+
+
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
