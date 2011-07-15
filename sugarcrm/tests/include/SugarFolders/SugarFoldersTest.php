@@ -47,6 +47,10 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
+        if (empty($GLOBALS['current_language'])) {
+            $GLOBALS['current_language'] = 'en_us';
+        }
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
 
     public function tearDown()
