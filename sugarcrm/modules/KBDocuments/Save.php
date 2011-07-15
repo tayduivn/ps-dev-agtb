@@ -107,8 +107,8 @@ if (isset($KBDocument->id)) {
   } else{
       $article_body = '';
       $url_arr = parse_url($sugar_config['site_url']);
-      $article_body = str_replace($sugar_config['site_url'].'/cache/images/', $url_arr['path'].'/cache/images/', $_REQUEST['body_html']);
-      $article_body = str_replace($url_arr['path'].'/cache/images/', $sugar_config['site_url'].'/cache/images/', $article_body);
+      $article_body = str_replace($sugar_config['site_url'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $url_arr['path'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $_REQUEST['body_html']);
+      $article_body = str_replace($url_arr['path'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $sugar_config['site_url'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $article_body);
       $KBContent->kbdocument_body = $article_body;
   }
   $KBContent->save();
@@ -189,8 +189,8 @@ else {
 			} else{
 				$article_body = '';
 				$url_arr = parse_url($sugar_config['site_url']);
-	            $article_body = str_replace($sugar_config['site_url'].'/cache/images/', $url_arr['path'].'/cache/images/', $_REQUEST['body_html']);
-            	$article_body = str_replace($url_arr['path'].'/cache/images/', $sugar_config['site_url'].'/cache/images/', $article_body);
+	            $article_body = str_replace($sugar_config['site_url'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $url_arr['path'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $_REQUEST['body_html']);
+            	$article_body = str_replace($url_arr['path'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $sugar_config['site_url'].'/'.$GLOBALS['sugar_config']['cache_dir'].'images/', $article_body);
 	            $KBContent->kbdocument_body = $article_body;
 			}
 			$KBContent->save();

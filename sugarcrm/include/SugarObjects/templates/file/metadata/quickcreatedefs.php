@@ -39,9 +39,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                                             array('label' => '10', 'field' => '30')
                                             ),
 'javascript' =>
-	'{sugar_getscript file="include/javascript/popup_parent_helper.js"}
-	{sugar_getscript file="cache/include/javascript/sugar_grp_jsolait.js"}
-	{sugar_getscript file="modules/Documents/documents.js"}',
+	'<script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+    <script type="text/javascript" src="include/javascript/sugar_grp_jsolait.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+	<script type="text/javascript" src="modules/Documents/documents.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>',
 ),
  'panels' =>array (
   'default' =>
@@ -50,7 +50,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
       'document_name',
       'assigned_user_name',
 	),
-
+	
     array (
       array('name'=>'uploadfile',
             'customCode' => '{if $fields.id.value!=""}
@@ -61,9 +61,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             		  		<input name="uploadfile" type = {$type} size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
             'displayParams'=>array('required'=>true),
             ),
-	//BEGIN SUGARCRM flav=pro ONLY
+	//BEGIN SUGARCRM flav=pro ONLY 
       array('name'=>'team_name','displayParams'=>array('required'=>true)),
-      //END SUGARCRM flav=pro ONLY
+      //END SUGARCRM flav=pro ONLY 
 	),
 
     array (
@@ -73,8 +73,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     array (
        'category_id',
        'subcategory_id',
-    ),
-
+    ),    
+    
     array (
       array('name'=>'description', 'displayParams'=>array('rows'=>10, 'cols'=>120)),
     ),

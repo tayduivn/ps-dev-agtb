@@ -194,11 +194,11 @@ class EmailMan extends SugarBean{
 			$query .= "WHERE ".$where_auto;
 
 
-		if($order_by != "")
+		if($order_by != "") 
 		{
 			$query .= ' ORDER BY ' . $this->process_order_by($order_by, null);
 		}
-
+		
 		return $query;
 
     }
@@ -259,26 +259,26 @@ class EmailMan extends SugarBean{
 	}
 
     function get_list_view_data()
-    {
+    {   
     	global $locale, $current_user;
         $temp_array = parent::get_list_view_array();
 
         $related_type = $temp_array['RELATED_TYPE'];
         $related_id = $temp_array['RELATED_ID'];
         $is_person = SugarModule::get($related_type)->moduleImplements('Person');
-
+        
         if($is_person)
         {
             $query = "SELECT first_name, last_name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
         } else {
             $query = "SELECT name FROM ". strtolower($related_type) ." WHERE id ='". $related_id ."'";
         }
-
+        
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
 
-        if($row)
-        {
+        if($row) 
+        {      
         	$temp_array['RECIPIENT_NAME'] = $is_person ? $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], '') : $row['name'];
         }
 
@@ -287,7 +287,7 @@ class EmailMan extends SugarBean{
 
         $result=$this->db->query($query);
         $row=$this->db->fetchByAssoc($result);
-        if ($row)
+        if ($row) 
         {
             $temp_array['RECIPIENT_EMAIL']=$row['email_address'];
         }
@@ -400,6 +400,12 @@ class EmailMan extends SugarBean{
                 $this->ref_email->status='sent';
                 $retId = $this->ref_email->save();
 
+                if (count($notes) > 0 ) {
+                    if (!class_exists('Note'))
+                    if (!class_exists('UploadFile')) require_once('include/upload_file.php');
+
+                }
+
                 foreach($notes as $note) {
                     if($note->object_name == 'Note') {
                         if (! empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) {
@@ -407,13 +413,13 @@ class EmailMan extends SugarBean{
                             $filename = $note->file->original_file_name;
                             $mime_type = $note->file->mime_type;
                         } else {
-                            $file_location = "upload://{$note->id}";
+                            $file_location = rawurldecode(UploadFile::get_file_path($note->filename,$note->id));
                             $filename = $note->id.$note->filename;
                             $mime_type = $note->file_mime_type;
                         }
                     } elseif($note->object_name == 'DocumentRevision') { // from Documents
                         $filename = $note->id.$note->filename;
-                        $file_location = "upload://$filename";
+                        $file_location = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].$filename;
                         $mime_type = $note->file_mime_type;
                     }
 
@@ -993,7 +999,7 @@ class EmailMan extends SugarBean{
         {
             $query .=  ' ORDER BY '. $this->process_order_by($order_by, null);
         }
-
+        
         return $query;
     }
 }

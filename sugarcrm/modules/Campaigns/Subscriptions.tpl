@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Connectors/tpls/tabs.css'}"/>
 <!-- begin includes for overlib -->
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000"></div>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}"></script>
 <!-- end includes for overlib -->
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

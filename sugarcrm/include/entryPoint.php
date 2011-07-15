@@ -137,6 +137,7 @@ require('include/SugarObjects/VardefManager.php');
 require('modules/DynamicFields/templates/Fields/TemplateText.php');
 
 require_once('include/utils/file_utils.php');
+
 require_once('include/SugarEmailAddress/SugarEmailAddress.php');
 require_once('include/SugarLogger/LoggerManager.php');
 require_once('modules/Trackers/BreadCrumbStack.php');
@@ -153,9 +154,6 @@ require_once('include/MVC/SugarModule.php');
 require_once('include/SugarCache/SugarCache.php');
 require('modules/Currencies/Currency.php');
 require_once('include/MVC/SugarApplication.php');
-
-require_once('include/upload_file.php');
-UploadStream::register();
 //
 //SugarApplication::startSession();
 

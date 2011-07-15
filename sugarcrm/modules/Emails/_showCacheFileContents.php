@@ -12,7 +12,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *********************************************************************************/
 require_once("modules/Emails/EmailUI.php");
 
-$dir = sugar_cached("modules/Emails/");
+$dir = "{$sugar_config['cache_dir']}modules/Emails/";
 $files = findAllFiles($dir, array());
 sort($files);
 $filter = array(
@@ -38,7 +38,7 @@ echo $out;
 
 
 if(isset($_REQUEST['file'])) {
-
+	
 	include($_REQUEST['file']); // provides $cacheFile
 	/*
 	cacheFile = array (
@@ -46,7 +46,7 @@ if(isset($_REQUEST['file'])) {
   'imapFetchOverview' => '
   */
 	$cache = unserialize($cacheFile['imapFetchOverview']);
-
+	
 	echo "<div>";
 	echo "timestamp: ".date('r',$cacheFile['timestamp']);
 	echo "</div>";

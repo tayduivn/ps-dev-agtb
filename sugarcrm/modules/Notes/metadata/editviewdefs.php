@@ -34,7 +34,7 @@ $viewdefs['Notes']['EditView'] = array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
                                             ),
-'javascript' => '{sugar_getscript file="include/javascript/dashlets.js"}
+'javascript' => '<script type="text/javascript" src="include/javascript/dashlets.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script>
 function deleteAttachmentCallBack(text)
 	{literal} { {/literal}

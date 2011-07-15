@@ -38,7 +38,8 @@ logThis('Upgrade started. At start.php');
 //set the upgrade progress status.
 set_upgrade_progress('start','in_progress');
 
-unlinkUWTempFiles();
+unlinkTempFiles();
+unlinkUploadFiles();
 resetUwSession();
 
 if(isset($_REQUEST['showUpdateWizardMessage']) && $_REQUEST['showUpdateWizardMessage'] == true) {

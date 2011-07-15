@@ -274,8 +274,8 @@ class SugarTheme
             }
         }
         if ( !inDeveloperMode() ) {
-            if ( sugar_is_file($cachedfile = sugar_cached($this->getFilePath().'/pathCache.php'))) {
-                $caches = unserialize(file_get_contents($cachedfile));
+            if ( sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php') ) {
+                $caches = unserialize(sugar_file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'));
                 if ( isset($caches['jsCache']) )
                     $this->_jsCache       = $caches['jsCache'];
                 if ( isset($caches['cssCache']) )
@@ -306,8 +306,8 @@ class SugarTheme
 
         // clear out the cache on destroy if we are asked to
         if ( $this->_clearCacheOnDestroy ) {
-            if (is_file($cachedfile = sugar_cached($this->getFilePath().'/pathCache.php')))
-                unlink($cachedfile);
+            if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
+                unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
         }
         elseif ( !inDeveloperMode() ) {
             // only update the caches if they have been changed in this request
@@ -691,37 +691,36 @@ EOHTML;
      * to looking in the base theme.
      *
      * @param  string $cssFileName css file name
-     * @param  bool   $returnURL if true, returns URL with unique image mark, otherwise returns path to the file
+     * @param  bool   $addJSPath call getJSPath() with the results to add some unique image tracking support
      * @return string path of css file to include
      */
-    public function getCSSURL($cssFileName, $returnURL = true)
+    public function getCSSURL(
+        $cssFileName,
+        $addJSPath = true
+        )
     {
-        if ( isset($this->_cssCache[$cssFileName]) && sugar_is_file(sugar_cached($this->_cssCache[$cssFileName])) ) {
-            if ( $returnURL )
-                return getJSPath("cache/".$this->_cssCache[$cssFileName]);
+        if ( isset($this->_cssCache[$cssFileName])) {
+            if ( $addJSPath )
+                return getJSPath($this->_cssCache[$cssFileName]);
             else
-                return sugar_cached($this->_cssCache[$cssFileName]);
+                return $this->_cssCache[$cssFileName];
         }
 
         $cssFileContents = '';
-        $defaultFileName = $this->getDefaultCSSPath().'/'.$cssFileName;
-        $fullFileName = $this->getCSSPath().'/'.$cssFileName;
         if (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
                 && ($filename = SugarThemeRegistry::get($this->parentTheme)->getCSSURL($cssFileName,false)) != '')
             $cssFileContents .= file_get_contents($filename);
         else {
-            if (sugar_is_file($defaultFileName))
-                $cssFileContents .= file_get_contents($defaultFileName);
-            if (sugar_is_file('custom/'.$defaultFileName))
-                $cssFileContents .= file_get_contents('custom/'.$defaultFileName);
+            if (sugar_is_file($this->getDefaultCSSPath().'/'.$cssFileName))
+                $cssFileContents .= file_get_contents($this->getDefaultCSSPath().'/'.$cssFileName);
+            if (sugar_is_file('custom/'.$this->getDefaultCSSPath().'/'.$cssFileName))
+                $cssFileContents .= file_get_contents('custom/'.$this->getDefaultCSSPath().'/'.$cssFileName);
         }
-        if (sugar_is_file($fullFileName)) {
-            $cssFileContents .= file_get_contents($fullFileName);
-        }
-        if (sugar_is_file('custom/'.$fullFileName)) {
-            $cssFileContents .= file_get_contents('custom/'.$fullFileName);
-        }
+        if (sugar_is_file($this->getCSSPath().'/'.$cssFileName))
+            $cssFileContents .= file_get_contents($this->getCSSPath().'/'.$cssFileName);
+        if (sugar_is_file('custom/'.$this->getCSSPath().'/'.$cssFileName))
+            $cssFileContents .= file_get_contents('custom/'.$this->getCSSPath().'/'.$cssFileName);
         if (empty($cssFileContents)) {
             $GLOBALS['log']->warn("CSS File $cssFileName not found");
             return false;
@@ -733,7 +732,7 @@ EOHTML;
             $cssFileContents);
 
         // create the cached file location
-        $cssFilePath = create_cache_directory($fullFileName);
+        $cssFilePath = create_cache_directory($this->getCSSPath()."/$cssFileName");
 
         // if this is the style.css file, prepend the base.css and calendar-win2k-cold-1.css
         // files before the theme styles
@@ -752,12 +751,12 @@ EOHTML;
         // now write the css to cache
         sugar_file_put_contents($cssFilePath,$cssFileContents);
 
-        $this->_cssCache[$cssFileName] = $fullFileName;
+        $this->_cssCache[$cssFileName] = $cssFilePath;
 
-        if ( $returnURL )
-            return getJSPath("cache/".$fullFileName);
+        if ( $addJSPath )
+            return getJSPath($cssFilePath);
 
-        return sugar_cached($fullFileName);
+        return $cssFilePath;
     }
 
     /**
@@ -765,59 +764,60 @@ EOHTML;
      * to looking in the base theme.
      *
      * @param  string $jsFileName js file name
-     * @param  bool   $returnURL if true, returns URL with unique image mark, otherwise returns path to the file
+     * @param  bool   $addJSPath call getJSPath() with the results to add some unique image tracking support
      * @return string path to js file
      */
-    public function getJSURL($jsFileName, $returnURL = true)
+    public function getJSURL(
+        $jsFileName,
+        $addJSPath = true
+        )
     {
-        if ( isset($this->_jsCache[$jsFileName]) && sugar_is_file(sugar_cached($this->_jsCache[$jsFileName])) ) {
-            if ( $returnURL )
-                return getJSPath("cache/".$this->_jsCache[$jsFileName]);
+        if ( isset($this->_jsCache[$jsFileName])) {
+            if ( $addJSPath )
+                return getJSPath($this->_jsCache[$jsFileName]);
             else
-                return sugar_cached($this->_jsCache[$jsFileName]);
+                return $this->_jsCache[$jsFileName];
         }
 
         $jsFileContents = '';
-        $fullFileName = $this->getJSPath().'/'.$jsFileName;
-        $defaultFileName = $this->getDefaultJSPath().'/'.$jsFileName;
+
         if (isset($this->parentTheme)
                 && SugarThemeRegistry::get($this->parentTheme) instanceOf SugarTheme
-                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '') {
-           $jsFileContents .= file_get_contents($filename);
-       } else {
-            if (sugar_is_file($defaultFileName))
-                $jsFileContents .= file_get_contents($defaultFileName);
-            if (sugar_is_file('custom/'.$defaultFileName))
-                $jsFileContents .= file_get_contents('custom/'.$defaultFileName);
+                && ($filename = SugarThemeRegistry::get($this->parentTheme)->getJSURL($jsFileName,false)) != '' && !in_array($jsFileName,$this->ignoreParentFiles))
+            $jsFileContents .= file_get_contents($filename);
+        else {
+            if (sugar_is_file($this->getDefaultJSPath().'/'.$jsFileName))
+                $jsFileContents .= file_get_contents($this->getDefaultJSPath().'/'.$jsFileName);
+            if (sugar_is_file('custom/'.$this->getDefaultJSPath().'/'.$jsFileName))
+                $jsFileContents .= file_get_contents('custom/'.$this->getDefaultJSPath().'/'.$jsFileName);
         }
-        if (sugar_is_file($fullFileName))
-            $jsFileContents .= file_get_contents($fullFileName);
-        if (sugar_is_file('custom/'.$fullFileName))
-            $jsFileContents .= file_get_contents('custom/'.$fullFileName);
+        if (sugar_is_file($this->getJSPath().'/'.$jsFileName))
+            $jsFileContents .= file_get_contents($this->getJSPath().'/'.$jsFileName);
+        if (sugar_is_file('custom/'.$this->getJSPath().'/'.$jsFileName))
+            $jsFileContents .= file_get_contents('custom/'.$this->getJSPath().'/'.$jsFileName);
         if (empty($jsFileContents)) {
             $GLOBALS['log']->warn("Javascript File $jsFileName not found");
             return false;
         }
 
         // create the cached file location
-        $jsFilePath = create_cache_directory($fullFileName);
+        $jsFilePath = create_cache_directory($this->getJSPath()."/$jsFileName");
 
         // minify the js
         if ( !inDeveloperMode()&& !sugar_is_file(str_replace('.js','-min.js',$jsFilePath)) ) {
             $jsFileContents = JSMin::minify($jsFileContents);
             $jsFilePath = str_replace('.js','-min.js',$jsFilePath);
-            $fullFileName = str_replace('.js','-min.js',$fullFileName);
         }
 
         // now write the js to cache
         sugar_file_put_contents($jsFilePath,$jsFileContents);
 
-        $this->_jsCache[$jsFileName] = $fullFileName;
+        $this->_jsCache[$jsFileName] = $jsFilePath;
 
-        if ( $returnURL )
-            return getJSPath("cache/".$fullFileName);
+        if ( $addJSPath )
+            return getJSPath($jsFilePath);
 
-        return sugar_cached($fullFileName);
+        return $jsFilePath;
     }
 
     /**

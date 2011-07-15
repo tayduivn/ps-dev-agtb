@@ -152,7 +152,7 @@ class Popup_Picker
 		} // end Tasks
 
 		foreach ($focus_meetings_list as $meeting) {
-
+			
 			if (empty($meeting->contact_id) && empty($meeting->contact_name)) {
 				$meeting_contacts = $meeting->get_linked_beans('contacts','Contact');
 				if (!empty($meeting_contacts[0]->id) && !empty($meeting_contacts[0]->name)) {
@@ -243,7 +243,7 @@ class Popup_Picker
 		} // end Calls
 
 		foreach ($focus_emails_list as $email) {
-
+			
 			if (empty($email->contact_id) && empty($email->contact_name)) {
 				$email_contacts = $email->get_linked_beans('contacts','Contact');
 				if (!empty($email_contacts[0]->id) && !empty($email_contacts[0]->name)) {
@@ -270,7 +270,7 @@ class Popup_Picker
 		} //end Emails
 
 		foreach ($focus_notes_list as $note) {
-
+			
 			$history_list[] = array('name' => $note->name,
 									 'id' => $note->id,
 									 'type' => "Note",
@@ -291,7 +291,7 @@ class Popup_Picker
 				$count = count($history_list);
 				$count--;
 				$history_list[$count]['filename'] = $note->filename;
-				$history_list[$count]['fileurl'] = UploadFile::get_upload_url($note);
+				$history_list[$count]['fileurl'] = UploadFile::get_url($note->filename,$note->id);
 			}
 		} // end Notes
 

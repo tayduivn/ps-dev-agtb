@@ -13,7 +13,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 /******************************************************************************
- * Extend baseActions.php with custom actions in
+ * Extend baseActions.php with custom actions in 
  * "cache/routing/customActions.php"
  * The file should look like the following:
 	<?php
@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 			'custom1',
 			'custom2'
 		);
-
+		
 		function custom1() {
 			// do something
 			return true;
@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		}
 	?>
  *****************************************************************************/
-$file = sugar_cached("routing/customActions.php");
+$file = "{$sugar_config['cache_dir']}/routing/customActions.php";
 if(file_exists($file)) {
 	include($file);
 }
@@ -64,7 +64,7 @@ function delete_bean($action, $bean) {
  */
 function delete_file($action, $file) {
 	global $sugar_config;
-
+	
 	// file must exist
 	if(file_exists($file)) {
 		// file must be located in the cache dir
@@ -74,7 +74,7 @@ function delete_file($action, $file) {
 			}
 		}
 	}
-
+	
 	$GLOBALS['log']->error("*** SugarRouting: Rule delete_file did not complete successfully [ file: {$file} ].");
 	return false;
 }
@@ -95,45 +95,45 @@ function reply($action, $bean, $ie) {
 	global $current_user;
 
 	$etId = $action['action1'];
-
-
+	
+	
 	$et = new EmailTemplate();
 	$et->retrieve($etId);
 	$ie->setEmailForDisplay($bean->uid, false);
 	$ie->email->name = $app_strings['LBL_ROUTING_FW'].$et->name." - ".$ie->email->name;
-	$ie->email->description = trim($ie->email->description);
-	$ie->email->description_html = trim($ie->email->description_html);
-
+	$ie->email->description = trim($ie->email->description); 
+	$ie->email->description_html = trim($ie->email->description_html); 
+	
 	if(!empty($ie->email->description)) {
 		$ie->email->description = $et->body."\n\n{$app_strings['LBL_ROUTING_ORIGINAL_MESSAGE_FOLLOWS']}\n\n".$ie->email->description;
 	}
 	if(!empty($ie->email->description_html)) {
 		$ie->email->description_html = $et->body_html."<br><br>{$app_strings['LBL_ROUTING_ORIGINAL_MESSAGE_FOLLOWS']}<br><br>".$ie->email->description_html;
 	}
-
+	
 	// set to/from
 	$toEmail = (isset($ie->email->reply_to_email) && !empty($ie->email->reply_to_email)) ? trim($ie->email->reply_to_email) : trim($ie->email->from_addr);
 	$toDisplayName = (isset($ie->email->reply_to_name) && !empty($ie->email->reply_to_name)) ? trim($ie->email->reply_to_name) : trim($ie->email->from_name);
-
+	
 	if($toEmail == $toDisplayName) {
 		$toDisplayName = ''; // where email address is used
 	}
-
+	
 	$ie->email->to_addrs_arr = array(
 		0 => array(
 			'email' => $toEmail,
 			'display' => $toDisplayName,
 		)
 	);
-
+	
 	//_ppl("######### Sending Reply message to [ {$toEmail} ]");
-
+	
 	$ea = new SugarEmailAddress();
 	$ie->email->from_name = $current_user->full_name;
 	//_ppl("from_name:".$ie->email->from_name);
 	$ie->email->from_addr = $ea->getReplyToAddress($current_user);
 	//_ppl("from_addr:".$ie->email->from_addr);
-
+	
 	return $ie->email->send();
 }
 
@@ -145,19 +145,19 @@ function reply($action, $bean, $ie) {
  */
 function forward($action, $bean, $ie) {
 	global $app_strings;
-
+	
 	$to = $action['action1'];
-
+	
 	$ie->setEmailForDisplay($bean->uid, false);
-
+	
 	$ie->email->name = $app_strings['LBL_ROUTING_FW'].$ie->email->name;
-
+	
 	$ie->email->to_addrs_arr = array(
 		0 => array(
 			'email' => $to,
 		)
 	);
-
+	
 	return $ie->email->send();
 }
 
@@ -217,7 +217,7 @@ function copy_mail($action, $bean, $ie, $copy=true) {
 //	_pp($bean->imap_uid);
 //	_ppf($bean, true);
 //	_ppl($action);_ppl($args);
-
+	
 	if($args[0] == 'sugar') {
 		// we're dealing with a target Sugar Folder
 		$folder_id = $args[1];
@@ -226,16 +226,16 @@ function copy_mail($action, $bean, $ie, $copy=true) {
 		// destination is a Sugar folder
 		require_once("include/SugarFolders/SugarFolders.php");
 		$sf = new SugarFolder();
-
+		
 		if($sf->retrieve($folder_id)) {
 			$result = $ie->setEmailForDisplay($bean->uid, false);
-
+			
 			if($result == 'import') {
 				$ie->email->save();
 			}
-
+			
 			$sf->addBean($ie->email);
-
+			
 			if(!$copy) {
 				// remove message from email server
 				/* pending functional abstraction of sugar-side vs imap-side functionality */
@@ -250,7 +250,7 @@ function copy_mail($action, $bean, $ie, $copy=true) {
 		for($i=2; $i<count($args); $i++) {
 			if(!empty($folder))
 				$folder .= ".";
-			$folder .= $args[$i];
+			$folder .= $args[$i]; 
 		}
 
 		$GLOBALS['log']->fatal("*** SUGARROUTING: baseActions:copy_email [ {$folder} ] [ {$ieId} ] [ {$bean->uid} ]");

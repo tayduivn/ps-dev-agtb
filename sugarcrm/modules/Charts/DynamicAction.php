@@ -29,11 +29,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id$
 if(isset($_GET['DynamicAction']) && $_GET['DynamicAction'] == "saveImage") {
-	$cache = sugar_cached("images/");
-
+	$cache = $GLOBALS['sugar_config']['cache_dir']."images/";
+	
+	
 	$filename = $_POST['filename'];
 	$image = str_replace(" ", "+", $_POST["imageStr"]);
 	$data = substr($image, strpos($image, ","));
 
 	file_put_contents($cache.$filename, base64_decode($data));
+	
+
 }

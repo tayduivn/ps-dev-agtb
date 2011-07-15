@@ -17,8 +17,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * copyrights from the source code or user interface.
  *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
+ * (i) the "Powered by SugarCRM" logo and 
+ * (ii) the SugarCRM copyright notice 
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
  *
@@ -36,7 +36,7 @@ function template_reports_functions_js(&$args)
 global $mod_strings;
 global $sugar_config, $sugar_version;
 
-echo getVersionedScript('include/JSON.js');
+echo '<script type="text/javascript" src="include/JSON.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 ?>
 <script language="javascript">
 var image_path = "<?php echo $args['IMAGE_PATH']; ?>";
@@ -57,6 +57,7 @@ var lbl_alert_cant_add = "<?php echo $mod_strings['LBL_ALERT_CANT_ADD']; ?>";
 var lbl_related_table_blank = "<?php echo $mod_strings['LBL_RELATED_TABLE_BLANK']; ?>";
 var lbl_optional_help = "<?php echo $mod_strings['LBL_OPTIONAL_HELP']; ?>";
 </script>
-<?php echo getVersionedScript('include/javascript/report_additionals.js');
+<?php
+echo '<script type="text/javascript" src="include/javascript/report_additionals.js?s=' . $sugar_version . '&c=' . $sugar_config['js_custom_version'] . '"></script>';
 }
 ?>

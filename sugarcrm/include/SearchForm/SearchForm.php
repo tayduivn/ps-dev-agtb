@@ -89,7 +89,7 @@ class SearchForm {
         if(empty($tpl)) {
             $this->tpl = 'modules/' . $module . '/SearchForm.html';
             if(!empty($GLOBALS['layout_edit_mode'])){
-            	 $this->tpl = sugar_cached('studio/custom/working/modules/' . $module . '/SearchForm.html');
+            	 $this->tpl = $GLOBALS['sugar_config']['cache_dir'].'studio/custom/working/modules/' . $module . '/SearchForm.html';
             }
         }
         else {

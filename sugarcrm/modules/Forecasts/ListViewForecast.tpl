@@ -41,10 +41,10 @@
    {if $pageData.urls.prevPage}
        jsonObjs[1] = {$prevPageJSON};
    {/if}
-
+   
    {if $pageData.urls.nextPage}
        jsonObjs[2] = {$nextPageJSON};
-   {/if}
+   {/if}   
 
    {if $pageData.urls.endPage}
 
@@ -61,19 +61,19 @@
 </script>
 
 {if $overlib}
-	<script type='text/javascript' src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
+	<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
 	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 	<script>var image_path="{$IMAGE_PATH}";
-		{literal}
+		{literal} 
 		function unformat_currency(amt) {
-		{/literal}
+		{/literal} 
 			var csymbol="{$CURRENCY_SYMBOL}";
 			var num_grp_sep="{$NUM_GRP_SEP}";
 			var dec_sep="{$DEC_SEP}";
 			return unformatNumber(amt.replace(csymbol,''),num_grp_sep,dec_sep);
-		{literal}
+		{literal} 
 		}
-		{/literal}
+		{/literal} 
 	</script>
 {/if}
 
@@ -93,11 +93,11 @@
 	<input type="hidden" name="sel_timeperiod_id" value="{$SEL_TIMEPERIOD_ID}">
 	<input type="hidden" name="sel_forecast_type" value="{$SEL_FORECASTTYPE}">
 	<table width="100%"  border="0" cellspacing="0" cellpadding="0" >
-	    <tr>
+	    <tr>			
 			<td>
 				<span><strong>{$LBL_FORECAST_FOR}</strong>&nbsp;{$USER_FORECAST_TYPE}&nbsp;<strong>{$LBL_TP_QUOTA}</strong>&nbsp;{$QUOTA_VALUE}</span>
 			</td>
-			<td align="right">
+			<td align="right">	
 				<input title="{$LBL_SAVE_WOKSHEET}" class="button"  type = "button" onclick="this.form.call_back_function.value='save_worksheet';formsubmit(this.form);" name="saveworksheet" value="  {$LBL_SAVE_WOKSHEET} ">
 				<input title="{$LBL_RESET_WOKSHEET}" class="button"  type = "button" onclick="if (!confirm('{$LBL_RESET_CHECK}')) return false;this.form.call_back_function.value='reset_worksheet';formsubmit(this.form); " name="resetworksheet" value="  {$LBL_RESET_WOKSHEET} ">
 				<input title="{$LBL_SHOW_CHART}" class="button"  type = "button" onclick="this.form.call_back_function.value='get_chart';get_chart(this.form)" name="getchart" value="  {$LBL_SHOW_CHART} ">
@@ -109,7 +109,7 @@
 {/if}
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class="list view">
 	{include file='include/ListView/ListViewPagination.tpl'}
-
+	
 
 	{* processing header row with column labels *}
 	<tr height='20'>
@@ -125,7 +125,7 @@
 					{if $params.sortable|default:true}
 						<a href='javascript:list_nav({$params.order_by_object},"CommitEditView")' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}
 						{assign var=default_order value=$params.tablename|default:''}
-						{if $default_order|count_characters > 0 }
+						{if $default_order|count_characters > 0 } 
 							{assign var=default_order value=$default_order|cat:"."}
 						{/if}
 						{assign var=default_order value=$default_order|cat:$colHeader|lower}
@@ -150,8 +150,8 @@
 			{/if}
 		{/foreach}
 	</tr>
-
-	{* processing data rows *}
+	
+	{* processing data rows *}		
 	{foreach name=rowIteration from=$data key=id item=rowData}
 		{if $smarty.foreach.rowIteration.iteration is odd}
 			{assign var='_rowColor' value=$rowColor[0]}
@@ -163,16 +163,16 @@
 				<td><input onclick='sListView.check_item(this, document.MassUpdate)' type='checkbox' class='checkbox' name='mass[]' value='{$id}'></td>
 			{/if}
 			{foreach from=$displayColumns key=col item=params name=colIteration}
-				{if $params.hidden}
-                   	<input type="hidden" name="{$col}_{$rowData[$params.id]|default:$rowData.ID}" id="{$col}_{$rowData[$params.id]|default:$rowData.ID}" value="{$rowData.$col}">
+				{if $params.hidden}	
+                   	<input type="hidden" name="{$col}_{$rowData[$params.id]|default:$rowData.ID}" id="{$col}_{$rowData[$params.id]|default:$rowData.ID}" value="{$rowData.$col}">				
 				{else}
 					<td scope='row' align='{$params.align|default:'left'}' valign="top">
 						{if $smarty.foreach.colIteration.index == 0}
 							{$pageData.additionalDetails.$id}
 						{/if}
-	                    {if $params.edit}
+	                    {if $params.edit}	
 	                    	<input type="text"  maxlength=10 onchange="update_adj_amount(this,'{$col}_TOTAL')" name="{$col}_{$rowData[$params.id]|default:$rowData.ID}" id="{$col}_{$rowData[$params.id]|default:$rowData.ID}" old_value="{$rowData.$col}" value="{$rowData.$col}">
-	                    {else}
+	                    {else}			
 							{if $params.link}
 								{if $params.customCode}
 									{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
@@ -199,11 +199,11 @@
 				<td align='{$params.align|default:'left'}' valign='top'>
 				<div style='white-space: nowrap;'width='100%' align='{$params.align|default:"left"}'>
 				<span id="{$col}_TOTAL_DISPLAY">{$totals.$col}</span>
-				<input type=hidden id="{$col}_TOTAL" value="{$totals.$col}"></div></td>
-
+				<input type=hidden id="{$col}_TOTAL" value="{$totals.$col}"></div></td>		
+			
 			{/if}
 		{/foreach}
-	</tr>
+	</tr>	
 </table>
 <BR/>
 {if $prerow}
@@ -223,10 +223,10 @@
 			<td scope="row" >{$LBL_LIKELY_CASE}&nbsp;<input id='commit_likely_case' name='likely_case'   maxlength='10' size=10 type="text" value="{$COMMITVALUELIKELY}"></td>
 			<td scope="row" >{$LBL_WORST_CASE}&nbsp;<input id='commit_worst_case' name='worst_case'   maxlength='10' size=10 type="text" value="{$COMMITVALUEWORST}"></td>
 		</tr>
-    	<tr>
-    		<td colspan=3 scope="row">&nbsp;</td>
+    	<tr>	
+    		<td colspan=3 scope="row">&nbsp;</td>	
 			<td align="right" scope="row">{$COPY_LINK}&nbsp;<input title="{$LBL_QC_COMMIT_BUTTON}" class="button"  type = "button" onclick="if (commitverify(this.form,'{$ERR_FORECAST_AMOUNT}','{$LBL_COMMIT_MESSAGE}'))  formsubmit(this.form);" name="rollupcommit" value="{$LBL_QC_COMMIT_BUTTON}" id='btn_commit'></td>
-		</tr>
+		</tr>		
 {/if}
 
 	</table>

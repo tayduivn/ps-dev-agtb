@@ -191,7 +191,7 @@ if (isset($ids)) {
 $GLOBALS['log']->debug("ids is:");
 $GLOBALS['log']->debug($ids);
 
-$cache_file_name	= sugar_cached("xml/").$current_user->getUserPrivGuid()."_lead_source_by_outcome_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
+$cache_file_name	= $current_user->getUserPrivGuid()."_lead_source_by_outcome_".$dateFileNameSafe[0]."_".$dateFileNameSafe[1].".xml";
 
 $GLOBALS['log']->debug("cache file name is: $cache_file_name");
 
@@ -254,11 +254,11 @@ Calendar.setup ({
 	<?php
 
 // draw table
-echo "<P align='center'>".$this->gen_xml($datax, $dateXml[0], $dateXml[1], $ids, $cache_file_name, $refresh,'hBarF',$current_module_strings)."</P>";
+echo "<P align='center'>".$this->gen_xml($datax, $dateXml[0], $dateXml[1], $ids, $sugar_config['tmp_dir'].$cache_file_name, $refresh,'hBarF',$current_module_strings)."</P>";
 echo "<P align='center'><span class='chartFootnote'>".$current_module_strings['LBL_SALES_STAGE_FORM_DESC']."</span></P>";
 
-	if (file_exists($cache_file_name)) {
-		$file_date = $timedate->asUser($timedate->fromTimestamp(filemtime($cache_file_name)));
+	if (file_exists($sugar_config['tmp_dir'].$cache_file_name)) {
+		$file_date = $timedate->asUser($timedate->fromTimestamp(filemtime($sugar_config['tmp_dir'].$cache_file_name)));
 	}
 	else {
 		$file_date = '';

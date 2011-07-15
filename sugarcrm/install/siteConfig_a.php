@@ -26,7 +26,11 @@ if( !isset( $install_script ) || !$install_script ){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
 
+
 if( is_file("config.php") ){
+	
+    
+
 	if(!empty($sugar_config['default_theme']))
       $_SESSION['site_default_theme'] = $sugar_config['default_theme'];
 
@@ -144,7 +148,7 @@ EOQ;
 }
 
 $out .=<<<EOQ
-
+       
     <tr><td colspan="3" align="left"> {$mod_strings['LBL_SITECFG_PASSWORD_MSG']}</td></tr>
     <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_SITECFG_ADMIN_Name']}</b><br>
@@ -159,7 +163,7 @@ $out .=<<<EOQ
        <td align="left"><input type="password" name="setup_site_admin_password_retype" value="{$_SESSION['setup_site_admin_password_retype']}" size="20" /></td></tr>
 
 EOQ;
-
+ 
 $out .= <<<EOQ
 </table>
 </td>

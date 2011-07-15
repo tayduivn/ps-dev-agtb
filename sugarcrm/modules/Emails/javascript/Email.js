@@ -353,8 +353,18 @@ function multiFiles( list_target){
 	    	   || text[nbr_elements-1].indexOf('jpg') >= 0 || text[nbr_elements-1].indexOf('GIF')>=0 || text[nbr_elements-1].indexOf('BMP') >= 0
 	    	   || text[nbr_elements-1].indexOf('PNG') >= 0 || text[nbr_elements-1].indexOf('JPG') >= 0)
                {
-	             embedImage='<img src="cache/images/'+unescape(text[nbr_elements-1])+'">';
+	 			 cid='cid:'+text[nbr_elements-1];
+	 			 /*
+	             var imglocation = unescape(document.location.pathname.substr(1));
+	             imglocation = imglocation.substring(0,imglocation.lastIndexOf('/')+1);
+	             imglocation='/'+imglocation+sugar_cache_dir+'images/';
+	             */
+	             var imglocation = sugar_cache_dir+'images/';
+	             embedImage="<img src="+imglocation+unescape(text[nbr_elements-1])+'>';
+	             //var tiny = tinyMCE.getInstanceById('body_text');
 	             embedImage = embedImage;
+	             embedImage1="<img src=cid:"+text[nbr_elements-1]+' width="1" height="1" >';
+	             //insert_variable(embedImage1);
 	             insert_variable(embedImage);
 
 		         this.parentNode.childNodes[2].checked='true';
@@ -502,9 +512,13 @@ function docUpload() {
         this.parentNode.childNodes[2].checked='true';
         var documentRevisionId = this.parentNode.childNodes[4].value;
         var mime_type = this.parentNode.childNodes[5].value;
-		if(mime_type == "image/gif" || mime_type == "image/bmp" || mime_type == "image/png" || mime_type == "image/x-png" || mime_type == "image/jpg" || mime_type == "image/jpeg")
+		if(mime_type == "image/gif" || mime_type == "image/bmp" || mime_type == "image/png" || mime_type == "image/x-png" || mime_type == "image/jpg")
         {
-            embedImage='<img src="index.php?entryPoint=download&type=Documents&id='+documentRevisionId+'">';
+            var imglocation = unescape(document.location.pathname.substr(1));
+            imglocation = imglocation.substring(0,imglocation.lastIndexOf('/')+1);
+            imglocation='/'+imglocation+sugar_upload_dir;
+            embedImage='<img src='+imglocation+documentRevisionId+'>';
+            embedImage1='<img src=cid:'+documentRevisionId+' width="1" height="1" >';
             insert_variable(embedImage);
         }
         else{

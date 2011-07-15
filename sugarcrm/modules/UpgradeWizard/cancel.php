@@ -41,7 +41,7 @@ logThis('cleaning up files and session.  goodbye.');
 if(isset($_SESSION['install_file']) && file_exists(isset($_SESSION['install_file']))){
 	@unlink(isset($_SESSION['install_file']));
 }
-unlinkUWTempFiles();
+unlinkTempFiles();
 unlinkUploadFiles();
 resetUwSession();
 

@@ -36,7 +36,7 @@ require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
 
 
 
-// BEGIN SUGARCRM flav=pro ONLY
+// BEGIN SUGARCRM flav=pro ONLY 
 /**
  * repair the workflow sessions
  */
@@ -63,7 +63,7 @@ function do_repair_workflow_conditions() {
 	$workflow_object = new WorkFlow();
 	$workflow_object->repair_workflow();
 }
-// END SUGARCRM flav=pro ONLY
+// END SUGARCRM flav=pro ONLY 
 
 function add_EZ_PDF() {
 	$cust_file =  "<?php\n";
@@ -74,8 +74,8 @@ function add_EZ_PDF() {
 	if(!file_exists('custom/include/Sugarpdf')) {
 		mkdir_recursive('custom/include/Sugarpdf'); // make sure the directory exists
 	}
-
-	file_put_contents($file,$cust_file);
+	
+	file_put_contents($file,$cust_file);	
 }
 
 
@@ -83,18 +83,18 @@ function rebuild_dashlets(){
     if(is_file('cache/dashlets/dashlets.php')) {
         unlink('cache/dashlets/dashlets.php');
     }
-
+    
     global $sugar_version;
     if($sugar_version < '5.5.0') {
         require_once('include/SugarTheme/SugarTheme.php');
     }
-
+    
     require_once('include/Dashlets/DashletCacheBuilder.php');
 
     $dc = new DashletCacheBuilder();
     $dc->buildCache();
 }
-// BEGIN SUGARCRM flav=pro ONLY
+// BEGIN SUGARCRM flav=pro ONLY 
 function rebuild_teams(){
 	global $sugar_version;
     if($sugar_version < '5.5.0') {
@@ -105,13 +105,13 @@ function rebuild_teams(){
 
     process_team_access(false, false,true,'1');
 }
-// END SUGARCRM flav=pro ONLY
+// END SUGARCRM flav=pro ONLY 
 function rebuild_roles(){
   $_REQUEST['upgradeWizard'] = true;
   require_once("data/SugarBean.php");
   global $ACLActions, $beanList, $beanFiles;
   include('modules/ACLActions/actiondefs.php');
-  include('include/modules.php');
+  include('include/modules.php'); 
   global $sugar_version;
   if($sugar_version < '5.5.0') {
   	require_once('include/ListView/ListView.php');
@@ -158,7 +158,7 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 				$schemaFileName = $schemaFileName . '_oracle.sql';
 				break;
 		}
-
+		
 
 		$schemaFile = $_SESSION['unzip_dir'].'/scripts/'.$schemaFileName;
 		_logThis("Running SQL file $schemaFile", $path);
@@ -179,8 +179,8 @@ function runSqlFiles($origVersion,$destVersion,$queryType,$resumeFromQuery=''){
 function clearSugarImages(){
     $skipFiles = array('ACLRoles.gif','close.gif','delete.gif','delete_inline.gif','plus_inline.gif','sugar-yui-sprites-green.png',
              'sugar-yui-sprites-purple.png','sugar-yui-sprites-red.png','sugar-yui-sprites.png','themePreview.png');
-    $themePath = clean_path(getcwd() . '/themes/Sugar/images');
-    $allFiles = array();
+    $themePath = clean_path(getcwd() . '/themes/Sugar/images');    
+    $allFiles = array();    
     $allFiles = findSugarImages($themePath, $allFiles, $skipFiles);
 
     foreach( $allFiles as $the_file ){
@@ -188,7 +188,7 @@ function clearSugarImages(){
             unlink( $the_file );
             _logThis("Deleted file: $the_file", $path);
         }
-    }
+    }    
 }
 
 function findSugarImages($the_dir, $the_array, $skipFiles){
@@ -225,8 +225,8 @@ function findCompanyLogo($the_dir, $the_array){
 }
 
 function clearCompanyLogo(){
-    $themePath = clean_path(getcwd() . '/themes');
-    $allFiles = array();
+    $themePath = clean_path(getcwd() . '/themes');    
+    $allFiles = array();    
     $allFiles = findCompanyLogo($themePath,$allFiles);
 
     foreach( $allFiles as $the_file ){
@@ -234,12 +234,12 @@ function clearCompanyLogo(){
             unlink( $the_file );
             _logThis("Deleted file: $the_file", $path);
         }
-    }
+    }    
 }
 
 
 
-function genericFunctions(){
+function genericFunctions(){	
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
@@ -248,7 +248,7 @@ function genericFunctions(){
 	    _logThis("Applying .htaccess update security fix.", $path);
         include_once("modules/Administration/UpgradeAccess.php");
 	}
-
+	
 	///////////////////////////////////////////////////////////////////////////
     ////    CLEAR SUGARLOGIC CACHE
 	_logThis("Rebuilding SugarLogic Cache", $path);
@@ -257,12 +257,12 @@ function genericFunctions(){
 	///////////////////////////////////////////////////////////////////////////
 	////	PRO/ENT ONLY FINAL TOUCHES
 
-	//BEGIN SUGARCRM flav=pro ONLY
+	//BEGIN SUGARCRM flav=pro ONLY 
 	///////////////////////////////////////////////////////////////////////////
 	////	WORKFLOW REPAIR
 	_logThis("Repairing WorkFlows", $path);
 	do_repair_workflow_conditions();
-	//END SUGARCRM flav=pro ONLY
+	//END SUGARCRM flav=pro ONLY 
 
 		///////////////////////////////////////////////////////////////////////////
 	////	REBUILD JS LANG
@@ -312,7 +312,7 @@ function post_install() {
 	$new_sugar_version = getUpgradeVersion();
 	$origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
 	$destVersion = substr(preg_replace("/[^0-9]/", "", $new_sugar_version),0,3);
-
+	
     $post_action = status_post_install_action('sql_query');
 	if($post_action != null){
 	   if($post_action != 'done'){
@@ -331,99 +331,74 @@ function post_install() {
 
 	//if upgrading from 50GA we only need to do the version update.
 	if ($origVersion>'500') {
-		genericFunctions();
-
-		//BEGIN SUGARCRM flav=pro ONLY
+		genericFunctions();		
+	
+		//BEGIN SUGARCRM flav=pro ONLY 
 		// add User field in Role
 		include_once("modules/ACLActions/ACLAction.php");
 		ACLAction::addActions('Users', 'module');
-		//END SUGARCRM flav=pro ONLY
+		//END SUGARCRM flav=pro ONLY 
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
-
+	  
 	//Set the chart engine
 	if ($origVersion < '620') {
 		_logThis('Set chartEngine in config.php to JS Charts', $path);
 		$sugar_config['chartEngine'] = 'Jit';
 	}
-
+	
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
-	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
+	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs). 
     if(file_exists('modules/Administration/SaveTabs.php'))
         unlink('modules/Administration/SaveTabs.php');
 	// End Bug 40044 //////////////////
-
+	
     // Bug 40119 - JennyG - The location of this file changed since 60RC.  So we need to remove it for
     // old instances that have this file.
     if(file_exists('include/Expressions/Expression/Enum/IndexValueExpression.php'))
         unlink('include/Expressions/Expression/Enum/IndexValueExpression.php');
     // End Bug 40119///////////////////
-
+               
     // Bug 40382 - JennyG - This file was removed in 6.0.
     if(file_exists('modules/Leads/ConvertLead.php'))
         unlink('modules/Leads/ConvertLead.php');
     // End Bug 40382///////////////////
-
+             
     // Bug 40458 - JennyG - This file was removed in 6.1. and we need to remove it for upgraded instances.
     if(file_exists('modules/Reports/add_schedule.php'))
         unlink('modules/Reports/add_schedule.php');
     // End Bug 40458///////////////////
 
     upgradeGroupInboundEmailAccounts();
-
+    	
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
    	if(is_file('install/lang.config.php')){
-		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);
+		global $sugar_config;
+		_logThis('install/lang.config.php exists lets import the file/array insto sugar_config/config.php', $path);	
 		require_once('install/lang.config.php');
 
 		foreach($config['languages'] as $k=>$v){
 			$sugar_config['languages'][$k] = $v;
 		}
-
+		
 		if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
 	        _logThis('*** ERROR: could not write language config information to config.php!!', $path);
 	    }else{
 			_logThis('sugar_config array in config.php has been updated with language config contents', $path);
-		}
+		}		
     }else{
     	_logThis('*** ERROR: install/lang.config.php was not found and writen to config.php!!', $path);
     }
-	//END SUGARCRM flav=pro ONLY
+	//END SUGARCRM flav=pro ONLY	
 
     //Remove jssource/src_files directory if it still exists
     if(file_exists('jssource/src_files'))
     {
        _logThis('Remove jssource/src_files directory');
        rmdir_recursive('jssource/src_files');
-       _logThis('Finished removing jssource/src_files directory');
+       _logThis('Finished removing jssource/src_files directory');	
     }
-
-    // move blowfish dir
-    if(file_exists($sugar_config['cache_dir']."blowfish") && !file_exists("custom/blowfish")) {
-           _logThis('Renaming cache/blowfish');
-            rename($sugar_config['cache_dir']."blowfish", "custom/blowfish");
-           _logThis('Renamed cache/blowfish to custom/blowfish');
-    }
-
-    if($origVersion < '630') {
-        // move uploads dir
-           if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
-               _logThis('Moving upload directory');
-               $sugar_config['upload_dir'] = 'upload/';
-               rename($sugar_config['cache_dir'].'upload', 'upload');
-               if( !write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
-        	        _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
-        	   }else{
-        			_logThis('sugar_config array in config.php has been updated with upload config contents', $path);
-        	   }
-               mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
-               if(file_exists('upload/upgrades/temp')) {
-                   rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
-               }
-           }
-    }
-
 }
 /**
  * Group Inbound Email accounts should have the allow outbound selection enabled by default.
@@ -450,14 +425,14 @@ function upgradeGroupInboundEmailAccounts() {
 	    $updateQuery = "UPDATE inbound_email SET stored_options = '$options' WHERE id = '$id' ";
 	    $GLOBALS['db']->query($updateQuery);
 	}
-	_logThis("Finished upgrade group inbound email accounts", $path);
+	_logThis("Finished upgrade group inbound email accounts", $path);	
 }
 
 function upgradeOutboundSetting(){
 	$query = "select count(*) as count from outbound_email where name='system' and mail_sendtype='sendmail' ";
 	$result = $GLOBALS['db']->query($query);
 	$row = $GLOBALS['db']->fetchByAssoc($result);
-
+	
 	if($row['count']>0) {
 		require_once('modules/Configurator/Configurator.php');
 		$configurator = new Configurator();
@@ -465,6 +440,7 @@ function upgradeOutboundSetting(){
 		$configurator->handleOverride();
 	}
 }
+
 
 /**
  * write_to_modules_ext_php
@@ -499,10 +475,10 @@ function write_to_modules_ext_php($class, $module, $path, $show=false) {
 		$out = sugar_fopen("custom/Extension/application/Ext/Include/{$module}.php", 'w');
 		fwrite($out,$str);
 		fclose($out);
-
+		
 		require_once('ModuleInstall/ModuleInstaller.php');
   		$moduleInstaller = new ModuleInstaller();
-		$moduleInstaller->merge_files('Ext/Include', 'modules.ext.php', '', true);
+		$moduleInstaller->merge_files('Ext/Include', 'modules.ext.php', '', true);			
 	}
 
 }

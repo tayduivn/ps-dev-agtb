@@ -31,8 +31,10 @@ $viewdefs['Products']['EditView'] = array(
                                             array('label' => '10', 'field' => '30'),
                                             array('label' => '10', 'field' => '30')
                                             ),
-    'javascript' => '{sugar_getscript file="include/JSON.js"}
-{sugar_getscript file="cache/include/javascript/sugar_grp_jsolait.js"}
+    'javascript' => '
+<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+<script type="text/javascript" src="include/javascript/sugar_grp_jsolait.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
+<script type="text/javascript" src="modules/Products/EditView.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>'
 ),
 
 'panels' =>array (
@@ -118,7 +120,7 @@ $viewdefs['Products']['EditView'] = array(
     array (
       'vendor_part_num',
       'type_id',
-    ),
+    ),    
 
     array (
       'description',

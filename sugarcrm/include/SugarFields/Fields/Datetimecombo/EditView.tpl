@@ -47,14 +47,14 @@
 {{if $displayParams.showNoneCheckbox}}
 <script type="text/javascript">
 function set_{{$idname}}_values(form) {ldelim}
- if(form.{{$idname}}_flag.checked)  {ldelim}
+ if(form.{{$idname}}_flag.checked)  {ldelim} 
 	form.{{$idname}}_flag.value=1;
 	form.{{$idname}}.value="";
 	form.{{$idname}}.readOnly=true;
- {rdelim} else  {ldelim}
+ {rdelim} else  {ldelim} 
 	form.{{$idname}}_flag.value=0;
 	form.{{$idname}}.readOnly=false;
- {rdelim}
+ {rdelim} 
 {rdelim}
 </script>
 {{/if}}
@@ -72,7 +72,7 @@ function set_{{$idname}}_values(form) {ldelim}
 {{/if}}
 </table>
 <input type="hidden" class="DateTimeCombo" id="{{$idname}}" name="{{$idname}}" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}">
-<script type="text/javascript" src="{sugar_getjspath file="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"}"></script>
+<script type="text/javascript" src="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"></script>
 <script type="text/javascript">
 var combo_{{$idname}} = new Datetimecombo("{$fields[{{sugarvar key='name' stringFormat=true}}].value}", "{{$idname}}", "{$TIME_FORMAT}", "{{$tabindex}}", '{{$displayParams.showNoneCheckbox}}', false, true);
 //Render the remaining widget fields
@@ -101,7 +101,7 @@ YAHOO.util.Event.onDOMReady(function()
 	weekNumbers: false,
 	comboObject: combo_{{$idname}}
 	{rdelim});
-
+	
 	//Call update for first time to round hours and minute values
 	combo_{{$idname}}.update(false);
 

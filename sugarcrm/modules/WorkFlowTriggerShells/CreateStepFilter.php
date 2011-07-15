@@ -84,34 +84,34 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
 	$form =new XTemplate ('modules/WorkFlowTriggerShells/CreateStepFilter.html');
 	$log->debug("using file modules/WorkFlowTriggerShells/CreateStepFilter.html");
 //Bug 12335: We need to include the javascript language file first. And also the language file in WorkFlow is needed.
-        if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
             require_once('include/language/jsLanguage.php');
             jsLanguage::createAppStringsCache($GLOBALS['current_language']);
         }
-        $javascript_language_files = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
-        if(!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+        $javascript_language_files = '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
                 require_once('include/language/jsLanguage.php');
                 jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
         }
-        $javascript_language_files .= getVersionedScript("cache/jsLanguage/{$this->module}/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-        if(!is_file(sugar_cached('jsLanguage/WorkFlow/') . $GLOBALS['current_language'] . '.js')) {
+        $javascript_language_files .= '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/WorkFLow/' . $GLOBALS['current_language'] . '.js')) {
             require_once('include/language/jsLanguage.php');
             jsLanguage::createModuleStringsCache('WorkFlow', $GLOBALS['current_language']);
         }
-        $javascript_language_files .= getVersionedScript("cache/jsLanguage/WorkFlow/{$GLOBALS['current_language']}.js", $GLOBALS['sugar_config']['js_lang_version']);
-
+        $javascript_language_files .= '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/WorkFlow/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+        
         $the_javascript  = "<script type='text/javascript' language='JavaScript'>\n";
         $the_javascript .= "function set_return() {\n";
         $the_javascript .= "    window.opener.document.EditView.submit();";
         $the_javascript .= "}\n";
-        $the_javascript .= "</script>\n";
-
+        $the_javascript .= "</script>\n";	
+	
 	$form->assign("MOD", $mod_strings);
 	$form->assign("APP", $app_strings);
 	$form->assign("JAVASCRIPT_LANGUAGE_FILES", $javascript_language_files);
 	$form->assign("MODULE_NAME", $currentModule);
 	$form->assign("GRIDLINE", $gridline);
-	$form->assign("SET_RETURN_JS", $the_javascript);
+	$form->assign("SET_RETURN_JS", $the_javascript);	
 
 	$form->assign("BASE_MODULE", $workflow_object->base_module);
 	$form->assign("WORKFLOW_ID", $workflow_object->id);
@@ -121,20 +121,20 @@ if(!empty($_REQUEST['type']) && $_REQUEST['type']!="") {
 	$form->assign("TRIGGER_TYPE", $workflow_object->type);
 	$form->assign("TYPE", $focus->type);
 
-	//Check multi_trigger filter conditions
-	if(!empty($_REQUEST['frame_type'])){
+	//Check multi_trigger filter conditions	
+	if(!empty($_REQUEST['frame_type'])){		
 		$form->assign("FRAME_TYPE", $_REQUEST['frame_type']);
 	} else {
 		$form->assign("FRAME_TYPE", $focus->frame_type);
-	}
-
-
-
+	}		
+ 	
+	
+	
 insert_popup_header($theme);
 
 $form->parse("embeded");
 $form->out("embeded");
-
+	
 
 ////////Middle Items/////////////////////////////
 /*
@@ -148,33 +148,33 @@ $form->out("embeded");
 /////Top secondary items////////////////
 
 	if($focus->type=="filter_rel_field"){
-
+		
 		//process out the actual name of the rel module
-
-
+		
+		
 		///Build the relationship information using the Relationship handler
 		require_once('modules/Relationships/RelationshipHandler.php');
 		$rel_handler = $workflow_object->call_relationship_handler("base_module", true);
 		$rel_handler->set_rel_vardef_fields(strtolower($focus->rel_module));
 		$rel_handler->build_info(false);
 		$rel_handler->build_module_labels(false);
-
+		
 		$target_module = $rel_handler->rel1_module;
 
 		$rel_module_type_options =get_select_options_with_id($app_list_strings['wflow_relfilter_type_dom'],$focus->rel_module_type);
 		$rel_module_type_select = "<select name='rel_module_type' tabindex='2'>$rel_module_type_options</select>";
 		$form->assign("FILTER_TOP_DISPLAY", $mod_strings['LBL_FILTER_FIELD_PART1']." ".$app_list_strings['wflow_relfilter_type_dom'][$focus->rel_module_type]." ".$rel_handler->rel1_array['slabel'].$mod_strings['LBL_SPECIFIC_FIELD']);
-		$form->assign("FILTER_BOTTOM_DISPLAY", $mod_strings['LBL_FILTER_FIELD_PART1']." ".$rel_module_type_select." ".$rel_handler->rel1_array['slabel'].$mod_strings['LBL_APOSTROPHE_S']);
+		$form->assign("FILTER_BOTTOM_DISPLAY", $mod_strings['LBL_FILTER_FIELD_PART1']." ".$rel_module_type_select." ".$rel_handler->rel1_array['slabel'].$mod_strings['LBL_APOSTROPHE_S']);		
 
 	} else {
 		$target_module = $workflow_object->base_module;
 		$form->assign("FILTER_TOP_DISPLAY", $mod_strings['LBL_WHEN_VALUE1']);
 		$form->assign("FILTER_BOTTOM_DISPLAY", $mod_strings['LBL_WHEN_VALUE2']);
-		//end if else filter_rel_field or filter_field
-	}
-
-
-
+		//end if else filter_rel_field or filter_field	
+	}	
+	
+	
+	
 //////////////////BEGIN 1st Filter Object	/////////////////////////////////
 
 		$filter1_object = new Expression();
@@ -192,12 +192,12 @@ $form->out("embeded");
 				$filter1_expression_text = $display_array['lhs_field']." ".$display_array['operator']." ".$display_array['rhs_value'];
 			} else {
 				$filter1_expression_text = $mod_strings['LBL_SPECIFIC_FIELD_LNK'];
-			}
+			}	  	
 		//end if base_id is there
 		} else {
 			$filter1_expression_text = $mod_strings['LBL_SPECIFIC_FIELD_LNK'];
-		}
-
+		}	
+				
 		$form->assign("TRIGGER_EXP_ID", $filter1_object->id);
 		$form->assign("TRIGGER_RHS_VALUE", $filter1_object->rhs_value);
 		$form->assign("TRIGGER_TEXT", $filter1_expression_text);
@@ -205,22 +205,22 @@ $form->out("embeded");
 		$form->assign("TRIGGER_EXP_TYPE", $filter1_object->exp_type);
 		$form->assign("TRIGGER_LHS_MODULE", $target_module);
 		$form->assign("TRIGGER_LHS_FIELD", $filter1_object->lhs_field);
+		
 
-
-/////////////////END Filter1 Object/////////////////////////////////
+/////////////////END Filter1 Object/////////////////////////////////	
 
 /////////////////End Items 	//////////////////////
 
 //close window and refresh parent if needed
 
 if(!empty($_REQUEST['special_action']) && $_REQUEST['special_action'] == "refresh"){
-
+	
 	$special_javascript = "window.opener.document.DetailView.action.value = 'DetailView'; \n";
 	$special_javascript .= "window.opener.document.DetailView.submit(); \n";
 	$special_javascript .= "window.close();";
 	$form->assign("SPECIAL_JAVASCRIPT", $special_javascript);
-
-}
+	
+}	
 
 $form->parse("main");
 $form->out("main");
