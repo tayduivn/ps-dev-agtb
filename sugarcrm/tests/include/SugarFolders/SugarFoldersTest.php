@@ -176,6 +176,11 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
     function testGetUserFolders()
     {
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
+        echo "\ncurrent_language=".$GLOBALS['current_language']."\n";
+        echo "beanList count=".count($GLOBALS['beanList'])."\n";
+        echo "mod_strings count=".count($GLOBALS['mod_strings'])."\n";
+        echo "app_strings count=".count($GLOBALS['app_strings'])."\n";
+        echo "LNK_MY_INBOX=".$GLOBALS['mod_strings']['LNK_MY_INBOX']."\n";
         require_once('modules/Emails/EmailUI.php');
         $emailUI = new EmailUI();
         $emailUI->preflightUser($GLOBALS['current_user']);
