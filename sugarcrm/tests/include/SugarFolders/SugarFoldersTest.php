@@ -42,7 +42,12 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->folder = new SugarFolder(); 
 		$this->additionalFolders = array();
 		$this->emails = array();
-	}
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+    }
 
     public function tearDown()
     {
