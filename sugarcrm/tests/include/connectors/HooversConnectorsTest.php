@@ -78,7 +78,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
     	$account = new Account();
     	$account = $source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);
-        if(empty($account))
+        if(empty($account) || !is_string($account->name))
     	{
     	   $this->markTestSkipped('No account returned.  API Service may be down.  Skip test');
     	   return;
@@ -97,8 +97,11 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	}
     	
         foreach($accounts as $count=>$account) {
-    		$this->assertRegExp('/Gannett/i', $account->name, "Assert that a bean has been filled with account name like Gannett");
-    		break;
+        	if(empty($account)  && is_string($account->name))
+        	{
+	    		$this->assertRegExp('/Gannett/i', $account->name, "Assert that a bean has been filled with account name like Gannett");
+	    		break;
+        	}
     	}
     }
 
