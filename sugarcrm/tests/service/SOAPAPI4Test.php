@@ -87,7 +87,7 @@ class SOAPAPI4Test extends SOAPTestCase
         $sf->record_id = $contact->id;
         $sf->save(FALSE);
 
-        $this->_login();
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
         $result = $this->_soapClient->call(
             'get_entry_list',
             array(
@@ -113,7 +113,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     public function testSearchByModule()
     {
-        $this->_login();
 
         $seedData = self::$helperObject->populateSeedDataForSearchTest($this->_user->id);
 
@@ -122,6 +121,8 @@ class SOAPAPI4Test extends SOAPTestCase
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
+
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
         $results = $this->_soapClient->call('search_by_module',
                         array(
@@ -148,7 +149,6 @@ class SOAPAPI4Test extends SOAPTestCase
 
     public function testSearchByModuleWithFavorites()
     {
-        $this->_login();
 
         $seedData = self::$helperObject->populateSeedDataForSearchTest($this->_user->id);
 
@@ -167,6 +167,8 @@ class SOAPAPI4Test extends SOAPTestCase
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
+
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
         $results = $this->_soapClient->call('search_by_module',
                         array(

@@ -116,6 +116,8 @@ require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
 //END SUGARCRM flav=pro ONLY
 
+$GLOBALS['db']->commit();
+
 // define our testcase subclass
 class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
 {

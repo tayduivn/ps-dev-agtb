@@ -73,14 +73,14 @@ class SOAPAPI3Test extends SOAPTestCase
 
     public function testSearchByModule()
     {
-        $this->_login();
-
         $seedData = self::$helperObject->populateSeedDataForSearchTest($this->_user->id);
 
         $searchModules = array('Accounts','Contacts','Opportunities');
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
+
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
         $results = $this->_soapClient->call('search_by_module',
                         array(
@@ -104,8 +104,6 @@ class SOAPAPI3Test extends SOAPTestCase
 
     public function testSearchByModuleWithReturnFields()
     {
-        $this->_login();
-
         $seedData = self::$helperObject->populateSeedDataForSearchTest($this->_user->id);
 
         $returnFields = array('name','id','deleted');
@@ -113,6 +111,8 @@ class SOAPAPI3Test extends SOAPTestCase
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
+
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
         $results = $this->_soapClient->call('search_by_module',
                         array(
@@ -155,8 +155,8 @@ class SOAPAPI3Test extends SOAPTestCase
 
     public function testGetUpcomingActivities()
     {
-         $this->_login();
          $expected = $this->_createUpcomingActivities(); //Seed the data.
+         $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
          $results = $this->_soapClient->call('get_upcoming_activities',array('session'=>$this->_sessionId));
 
          $this->assertEquals($expected[0] ,$results[0]['id'] , 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);

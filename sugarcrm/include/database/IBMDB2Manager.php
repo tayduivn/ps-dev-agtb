@@ -307,6 +307,7 @@ class IBMDB2Manager  extends DBManager
     {
     	$GLOBALS['log']->debug('Calling IBMDB2::disconnect()');
         if(!empty($this->database)){
+            $this->commit();    // Commit any pending changes as most of our code assumes auto commits
             $this->freeResult();
             db2_close($this->database);
             $this->database = null;
@@ -633,9 +634,18 @@ class IBMDB2Manager  extends DBManager
             }
         }
 
-        if($this->checkError('Could Not Connect:', $dieOnError))
+//        if($this->checkError('Could Not Connect:', $dieOnError))
+//            $GLOBALS['log']->info("connected to db");
+        if(!$this->checkError('Could Not Connect:', $dieOnError))
+        {
             $GLOBALS['log']->info("connected to db");
 
+            if(db2_autocommit($this->database, DB2_AUTOCOMMIT_OFF))
+				$GLOBALS['log']->info("turned autocommit off");
+			else
+				$GLOBALS['log']->error("failed to turn autocommit off!");
+
+		}
         $GLOBALS['log']->info("Connect:".$this->database);
         return true;
     }
@@ -1568,4 +1578,36 @@ EOQ;
     {
         return function_exists("db2_connect");
     }
+
+    /**
+     * Commits pending changes to the database when the driver is setup to support transactions.
+     *
+     * @return bool true if commit succeeded, false if it failed
+     */
+    public function commit()
+    {
+        $GLOBALS['log']->info("IBMDB2Manager.commit(): before db check");
+        if ($this->database) {
+            $success = db2_commit($this->database);
+            $GLOBALS['log']->info("IBMDB2Manager.commit(): $success");
+            return $success;
+        }
+        return true;
+    }
+
+    /**
+     * Rollsback pending changes to the database when the driver is setup to support transactions.
+     *
+     * @return bool true if rollback succeeded, false if it failed
+     */
+    public function rollback()
+    {
+        if ($this->database) {
+            $success = db2_rollback($this->database);
+            $GLOBALS['log']->info("IBMDB2Manager.rollback(): $success");
+            return $success;
+        }
+        return false;
+    }
+
 }

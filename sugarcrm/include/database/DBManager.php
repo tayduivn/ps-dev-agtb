@@ -427,7 +427,7 @@ abstract class DBManager
         if (!isset($this->database))
             $this->connect();
     }
-
+    
     /**
      * Sets the dieOnError value
      *
@@ -3074,6 +3074,31 @@ abstract class DBManager
     {
         // Usually the same name as dbType
         return $this->dbType;
+    }
+
+    /**
+     * Commits pending changes to the database when the driver is setup to support transactions.
+     * Note that the default implementation is applicable for transaction-less or auto commit scenarios.
+     *
+     * @return bool true if commit succeeded, false if it failed
+     */
+    public function commit()
+    {
+        $GLOBALS['log']->info("DBManager.commit() stub");
+        return true;
+    }
+
+    /**
+     * Rollsback pending changes to the database when the driver is setup to support transactions.
+     * Note that the default implementation is applicable for transaction-less or auto commit scenarios.
+     * Since rollbacks cannot be done, this implementation always returns false.
+     *
+     * @return bool true if rollback succeeded, false if it failed
+     */
+    public function rollback()
+    {
+        $GLOBALS['log']->info("DBManager.rollback() stub");
+        return false;
     }
 
     /**

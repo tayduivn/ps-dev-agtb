@@ -37,7 +37,9 @@ class RestApiTest extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['current_user'] = $this->_user;
 		if(!function_exists('curl_init')) {
            $this->markTestSkipped("Skipping test because there is no CURL support");
-		}
+		} else {
+            $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
+        }
     }
 
     public function tearDown()
@@ -53,7 +55,7 @@ class RestApiTest extends Sugar_PHPUnit_Framework_TestCase
 		if (!empty($result) and is_array($result) and isset($result['name_value_list']['user_id']['value'])) {
 			$resp=$result['name_value_list']['user_id']['value'];
         }
-        $this->assertEquals($resp,$this->_user->id,'Unable to find the user id');
+        $this->assertEquals($this->_user->id,$resp,'Unable to find the user id');
 
     }
 

@@ -96,6 +96,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _login()
     {
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
         return $this->_makeRESTCall('login',
             array(
                 'user_auth' =>
@@ -204,12 +205,12 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     //BEGIN SUGARCRM flav=pro ONLY
     public function testGetQuotesPDFContents()
     {
-        $result = $this->_login();
-        $session = $result['id'];
-
         $quote = new Quote();
         $quote->name = "Test " . uniqid();
         $quote->save(FALSE);
+
+        $result = $this->_login(); // Logging in just before the REST call as this will also commit any pending DB changes
+        $session = $result['id'];
 
         $results = $this->_makeRESTCall('get_quotes_pdf',
                         array(

@@ -66,7 +66,7 @@ class Bug40250Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->assertGreaterThanOrEqual(1, $count, 'no users were retrieved so the test user was not set up correctly');
     	
 		//now retrieve the list of users
-    	$usersArr =   $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,'module_name'=>'Users','query'=>" users.status = 'Active' ", 'user_name','0'  ,'select_field'=>array('user_name'),100,0));
+    	$usersArr =   $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,'module_name'=>'Users','query'=>" users.status = 'Active' ", 'user_name','0'  ,'select_field'=>array('user_name'),10000,0));
     	$usersCount = $usersArr['result_count'];
     	
     	//the count from both functions should be the same
@@ -88,6 +88,7 @@ class Bug40250Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function _login(){
 		global $current_user;  	
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
     	$result = $this->_soapClient->call('login',
             array('user_auth' => 
                 array('user_name' => $this->_user->user_name,

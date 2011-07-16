@@ -82,6 +82,7 @@ class SOAPAPI1Test extends SOAPTestCase
 
     public function testSearchContactByEmail()
     {
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
     	$result = $this->_soapClient->call('contact_by_email', array('user_name' => $this->_user->user_name, 'password' => $this->_user->user_hash, 'email_address' => $this->_contact->email1));
     	$this->assertTrue(!empty($result) && count($result) > 0, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
     	$this->assertEquals($result[0]['name1'], $this->_contact->first_name, 'Incorrect result found');
@@ -114,9 +115,9 @@ class SOAPAPI1Test extends SOAPTestCase
 
 	public function testGetAttendeeList()
     {
-    	$this->_login();
     	$this->_meeting->load_relationship('contacts');
     	$this->_meeting->contacts->add($this->_contact->id);
+        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 		$result = $this->_soapClient->call('get_attendee_list', array('session' => $this->_sessionId, 'module_name' => 'Meetings', 'id' => $this->_meeting->id));
     	$decoded = base64_decode($result['result']);
         $decoded = simplexml_load_string($decoded);
@@ -147,6 +148,7 @@ class SOAPAPI1Test extends SOAPTestCase
         $this->_contact = SugarTestContactUtilities::createContact();
         $this->_contact->contacts_users_id = $this->_user->id;
         $this->_contact->save();
+        $GLOBALS['db']->commit(); // Making sure these changes are committed to the database
     }
 
 }

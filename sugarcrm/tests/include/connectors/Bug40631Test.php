@@ -653,6 +653,8 @@ EOQ;
 
         require_once('modules/UpgradeWizard/uw_utils.php');
         upgrade_connectors('sugarcrm.log');
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
+
 
         //Check that config.php was modified correctly
         require('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
