@@ -18,6 +18,10 @@ class MysqlManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        if ( $GLOBALS['db']->dbType != 'mysql' ) {
+            $this->markTestSkipped('Only applies to MySQL');
+        }
+
         $this->_db = new MysqlManager();
     }
 
