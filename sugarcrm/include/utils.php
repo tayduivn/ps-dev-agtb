@@ -2310,7 +2310,9 @@ function getVersionedPath($path, $additional_attrs='')
 	// cutting 2 last chars here because since md5 is 32 chars, it's always ==
 	$str = substr(base64_encode(md5("$js_version_key|{$GLOBALS['sugar_config']['js_custom_version']}|$dev|$additional_attrs", true)), 0, -2);
 	// remove / - it confuses some parsers
-	$str = str_replace('/', '-', $str);
+	$str = strtr($str, '/+', '-_');
+	if(empty($path)) return $str;
+
 	return $path . "?v=$str";
 }
 
