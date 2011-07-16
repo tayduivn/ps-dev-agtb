@@ -51,7 +51,7 @@ $base_tmp_upgrade_dir   = sugar_cached('upgrades/temp');
 // make sure dirs exist
 foreach( $GLOBALS['subdirs'] as $subdir ){
     if(!file_exists("$base_upgrade_dir/$subdir")) {
-        mkdir_recursive( "$base_upgrade_dir/$subdir" );
+        sugar_mkdir("$base_upgrade_dir/$subdir", 0770, true);
     }
 }
 
@@ -154,7 +154,7 @@ if( isset( $_REQUEST['run'] ) && ($_REQUEST['run'] != "") ){
 
     			$base_filename = pathinfo($tempFile, PATHINFO_BASENAME);
 
-    			mkdir_recursive( "$base_upgrade_dir/$upgrade_zip_type" );
+    			sugar_mkdir( "$base_upgrade_dir/$upgrade_zip_type", 0770, true );
 	    		$target_path = "$base_upgrade_dir/$upgrade_zip_type/$base_filename";
 			    $target_manifest = remove_file_extension( $target_path ) . "-manifest.php";
 
