@@ -37,8 +37,13 @@ parse_str($tabs_def,$DISPLAY_ARR);
 //record and swap out their record_id with the admin employee_id which would cause the email address
 //of the non-admin user to be associated with the admin user thereby allowing the non-admin to reset the password
 //of the admin user.
-if(isset($_POST['record']) && !is_admin($current_user) && !$GLOBALS['current_user']->isAdminForModule('Employees') && ($_POST['record'] != $GLOBALS['current_user']->id)) {
+if(isset($_POST['record']) && !is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule('Employees') && ($_POST['record'] != $GLOBALS['current_user']->id))
+{
     sugar_die("Unauthorized access to administration.");
+}
+elseif (!isset($_POST['record']) && !is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule('Employees'))
+{
+    sugar_die ("Unauthorized access to user administration.");
 }
 
 $focus = new Employee();
