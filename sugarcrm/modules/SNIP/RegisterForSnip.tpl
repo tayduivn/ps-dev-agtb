@@ -104,6 +104,10 @@
 <script type='text/javascript'>
     (function(){
     	snipurlui=document.getElementById('snipurlui');
+
+    	//if the ui isn't there, don't run the js
+    	if (snipurlui==null)
+    		return;
         snipurlspan = document.getElementById('snipurl');
         ourl = snipurlspan.innerHTML;
         var islabelui = document.createElement('input');
