@@ -1134,4 +1134,6 @@ $mod_strings = array (
     'LBL_SNIP_DESC' => 'Configure offline archiving (SNIP)',
     'LBL_REGISTER_SNIP' => 'Register for SNIP',
     'LBL_REGISTER_SNIP_DESC' => 'Register this application for the SNIP service',
+    'LBL_CONFIGURE_SNIP' => 'Configure SNIP',
+    'LBL_CONFIGURE_SNIP_DESC' => 'Configure settings for the SNIP service'
 	);

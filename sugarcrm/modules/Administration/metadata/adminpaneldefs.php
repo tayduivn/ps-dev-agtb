@@ -257,7 +257,7 @@ $admin_group_header[]= array('LBL_CONTRACT_TITLE','',false,$admin_option_defs, '
 
 // SNIP
 $admin_option_defs = array();
-$admin_option_defs['Administration']['register_snip']=array('icon_AdminThemes','LBL_REGISTER_SNIP','LBL_REGISTER_SNIP_DESC','./index.php?module=SNIP&action=RegisterForSnip');
+$admin_option_defs['Administration']['register_snip']=array('icon_AdminThemes','LBL_CONFIGURE_SNIP','LBL_CONFIGURE_SNIP_DESC','./index.php?module=SNIP&action=RegisterForSnip');
 $admin_group_header[]= array('LBL_SNIP_TITLE','',false,$admin_option_defs, 'LBL_SNIP_DESC');
 
 if(file_exists('custom/modules/Administration/Ext/Administration/administration.ext.php')){
