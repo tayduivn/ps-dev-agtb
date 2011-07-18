@@ -4,7 +4,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('SugarSNIP.php');
 
 class SugarSNIP_offlinetest extends SugarSNIP{
-	private $ot_status='purchased_disabled';
+	private $ot_status='purchased_enabled';
 
 	public static function getInstance()
     {

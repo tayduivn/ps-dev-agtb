@@ -2,7 +2,7 @@
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * http://www.Sugarcrm.com/EULA.  By installing or using this file, You have
  * unconditionally agreed to the terms and conditions of the License, and You
  * may not use this file except in compliance with the License.  Under the
  * terms of the license, You shall not, among other things: 1) sublicense,
@@ -104,6 +104,10 @@
 <script type='text/javascript'>
     (function(){
     	snipurlui=document.getElementById('snipurlui');
+
+    	//if the ui isn't there, don't run the js
+    	if (snipurlui==null)
+    		return;
         snipurlspan = document.getElementById('snipurl');
         ourl = snipurlspan.innerHTML;
         var islabelui = document.createElement('input');
