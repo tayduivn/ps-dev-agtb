@@ -116,7 +116,23 @@ class SugarFavorites extends Basic
 	    
 	    return $response['list'];
 	}
-	
+
+    public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
+    {
+        $focus = new SugarFavorites();
+        $focus->mark_records_deleted_in_favorites($record_id, $date_modified, $modified_user_id);
+    }
+
+    public function mark_records_deleted_in_favorites($record_id, $date_modified, $modified_user_id = "")
+    {
+        if (isset($modified_user))
+            $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$modified_user_id' where record_id='$record_id'";
+        else
+            $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where record_id='$record_id'";
+
+        $this->db->query($query, true, "Error marking favorites deleted: ");
+    }
+
 	public function fill_in_additional_list_fields()
 	{
 	    parent::fill_in_additional_list_fields();
