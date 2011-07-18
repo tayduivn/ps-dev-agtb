@@ -409,6 +409,26 @@ class VardefManager{
     //END SUGARCRM flav=pro ONLY
 	
 	/**
+	 * apply global "account_required" setting if possible
+	 * @param array    $vardef
+	 * @return array   updated $vardef
+	 */
+    static function applyGlobalAccountRequirements($vardef)
+    {
+        if (isset($GLOBALS['sugar_config']['require_accounts'])) {
+            if (isset($vardef['fields']) &&
+                isset($vardef['fields']['account_name']) &&
+                isset($vardef['fields']['account_name']['required']))
+            {
+                $vardef['fields']['account_name']['required'] = $GLOBALS['sugar_config']['require_accounts'];
+            }
+
+        }
+
+        return $vardef;
+    }
+
+	/**
 	 * load the vardefs for a given module and object
 	 * @param string $module the given module we want to load the vardefs for
 	 * @param string $object the given object we wish to load the vardefs for
@@ -427,6 +447,8 @@ class VardefManager{
 		if(!$refresh)
 		{
 			$return_result = sugar_cache_retrieve($key);
+			$return_result = self::applyGlobalAccountRequirements($return_result);
+
 			if(!empty($return_result))
 			{
 				$GLOBALS['dictionary'][$object] = $return_result;
@@ -447,12 +469,16 @@ class VardefManager{
 			//which was created from the refreshVardefs so let's try to load it.
 			if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php'))
 			{
-			    if ( is_readable($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php') ) {
+			    if ( is_readable($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php') )
+                {
 			        include_once($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php');
 				}
 				// now that we hae loaded the data from disk, put it in the cache.
 				if(!empty($GLOBALS['dictionary'][$object]))
+                {
+				    $GLOBALS['dictionary'][$object] = self::applyGlobalAccountRequirements($GLOBALS['dictionary'][$object]);
 					sugar_cache_put($key,$GLOBALS['dictionary'][$object]);
+				}
 			}
     		////BEGIN SUGARCRM flav=int ONLY
     		else{
