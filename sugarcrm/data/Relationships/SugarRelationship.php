@@ -48,7 +48,7 @@ abstract class SugarRelationship
      * @param  $link Link Object to get query for.
      * @return void
      */
-    public abstract function getQuery($link);
+    public abstract function getQuery($link, $params = array());
 
     public abstract function getJoin($link);
 
