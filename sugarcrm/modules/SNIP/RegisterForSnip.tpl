@@ -2,7 +2,7 @@
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * http://www.Sugarcrm.com/EULA.  By installing or using this file, You have
  * unconditionally agreed to the terms and conditions of the License, and You
  * may not use this file except in compliance with the License.  Under the
  * terms of the license, You shall not, among other things: 1) sublicense,
@@ -28,116 +28,47 @@
 
 // $Id: PasswordManager.tpl 37436 2009-06-01 01:14:03Z Faissah $
 *}
-<form name="RegisterForSnip" method="POST" action="index.php" >
-<input type='hidden' name='action' value='RegisterForSnip'/>
-<input type='hidden' name='module' value='SNIP'/>
-<input type='hidden' id='save_config' name='save_config' value='0'/>
-<table border="0" cellspacing="1" cellpadding="1">
-	<tr>
-		<td>
-		<input title="{$MOD.LBL_CONFIGURE_SNIP}" class="button" onclick="document.getElementById('save_config').value='1'" type="submit" name="button" value="{$MOD.LBL_CONFIGURE_SNIP}">
-{if $SNIP_ACTIVE}
-		<input title="{$MOD.LBL_DISABLE_SNIP}" class="button" onclick="document.getElementById('save_config').value='disable'" type="submit" name="button" value="{$MOD.LBL_DISABLE_SNIP}">
-{/if}
-		<input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.location.href='index.php?module=Administration&action=index'" type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
-		</td>
-	</tr>
-</table>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-			<td>
-				<table id="registerForSnip" name="registerForSnip" width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
-					<tr>
-						<th align="left" scope="row" colspan="4">
-							<h4>
-								{$MOD.LBL_REGISTER_SNIP}
-							</h4>
-						</th>
-					</tr>
-					<tr>
-						<!--<td>
-							<table width="100%" border="0" cellspacing="0" cellpadding="0">
-								<tr>
-							-->
-									<td  scope="row" width='25%'>
-										{$MOD.LBL_SNIP_SUGAR_URL}:
-									</td>
-									<td width='25%' >
-										<input type='text' size='42' disabled='true' name='unique_key' value='{$SUGAR_URL}'>
-										<input type='hidden'  name='unique_key' value='{$SUGAR_URL}'>
-									</td>
-									<td width='25%' colspan='2'>
-										&nbsp;
-									</td>
-								</tr>
-								<tr>
-									<td  scope="row" width='25%'>
-										{$MOD.LBL_SNIP_CALLBACK_URL}:
-									</td>
-									<td width='25%' >
-										<input type='text' size='42' name='snip_url' value='{$SNIP_URL}'>
-									</td>
-									<td width='25%' colspan='2'>
-										&nbsp;
-									</td>
-								</tr>
-							<!--</table>
-						</td>
-					</tr>-->
-				</table>
-			</td>
-		</tr>
-	</table>
 
-<table border="0" cellspacing="1" cellpadding="1">
-	<tr>
-		<td>
-		<input title="{$MOD.LBL_CONFIGURE_SNIP}" class="button" onclick="document.getElementById('save_config').value='1'" type="submit" name="button" value="{$MOD.LBL_CONFIGURE_SNIP}">
-{if $SNIP_ACTIVE}
-		<input title="{$MOD.LBL_DISABLE_SNIP}" class="button" onclick="document.getElementById('save_config').value='disable'" type="submit" name="button" value="{$MOD.LBL_DISABLE_SNIP}">
+<form name="SnipConfig" method="POST" action="" >
+<input type='hidden' id='save_config' name='save_config' value='0'/>
+
+
+<h2>SNIP</h2>
+{if $SNIP_STATUS == 'purchased_enabled'}
+	<b>Status message: </b>SNIP is enabled and purchased.<br>
+	<b>Additional info: </b>
+	<ul>
+		<li>This Sugar instance URL: {$SUGAR_URL}</li>
+		<li>SNIP service URL: {$SNIP_URL}</li>
+	</ul>
+	<b>UI options: </b> <input class='button' type='submit' value='Disable Snip' onclick='document.getElementById("save_config").value="disable"'>
+{elseif $SNIP_STATUS == 'purchased_disabled'}
+	<b>Status message: </b>Snip is currently disabled.<br>
+	<b>Additional info: </b>
+	<ul>
+		<li>This Sugar instance URL: {$SUGAR_URL}</li>
+		<li>SNIP service URL: {$SNIP_URL}</li>
+	</ul>
+	<b>UI options: </b> <input class='button' type='submit' value='Enable Snip' onclick='document.getElementById("save_config").value="enable"'>
+{elseif $SNIP_STATUS == 'purchased_down'}
+	<b>Status message: </b>Snip is enabled but the SNIP server is down. Sorry but you cannot send requests to the SNIP server right now.<br>
+	<b>Additional info: </b>
+	<ul>
+		<li>This Sugar instance URL: {$SUGAR_URL}</li>
+		<li>SNIP service URL: {$SNIP_URL}</li>
+	</ul>
+{elseif $SNIP_STATUS == 'notpurchased'}
+	<b>Status message: </b>This Sugar instance does not have a SNIP license. Would you like to purchase one?<br>
+	<b>Additional info: </b>
+	<ul>
+		<li>This Sugar instance URL: {$SUGAR_URL}</li>
+		<li>SNIP service URL: {$SNIP_URL}</li>
+	</ul>
+	<b>UI options: </b> &lt;link to purchase snip with key {$UNIQUEKEY}, snip user {$SNIP_USER} and snip user password {$SNIP_PASS}&gt;
 {/if}
-		<input title="{$APP.LBL_CANCEL_BUTTON_LABEL}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="document.location.href='index.php?module=Administration&action=index'" type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
-		</td>
-	</tr>
-</table>
-{if $SNIP_ACTIVE}
-<br/>
-<table class="list view" border="1" cellspacing="1" cellpadding="1" width="80%" align="center">
-<tr>
-<td colspan="3" align="center">{$MOD.LBL_SNIP_STATUS_SUMMARY}</td>
-</tr>
-<tr class="oddListRowS1">
-<th>{$MOD.LBL_SNIP_ACCOUNT}</th>
-<th>{$MOD.LBL_SNIP_STATUS|escape}</th>
-<th>{$MOD.LBL_SNIP_LAST_SUCCESS}</th>
-</tr>
-<tr>
-<td>{$MOD.LBL_SNIP_ACCOUNT_INSTANCE}</td>
-<td>
-{if !$SNIP_STATUS_OK}
-<span class="error">
-{else}
-<span>
-{/if}
-{$SNIP_STATUS}</span></td>
-</tr>
-{foreach from=$SNIP_ACCTS item=acct}
-{if $smarty.foreach.rowIteration.iteration is odd}
-	{assign var='_rowColor' value="oddListRowS1"}
-{else}
-	{assign var='_rowColor' value="evenListRowS1"}
-{/if}
-<tr class="{$_rowColor}">
-<td>{$acct.name|escape}</td>
-<td>
-{if !$acct.ok}
-<span class="error">
-{else}
-<span>
-{/if}
-{$acct.status|escape}</span></td>
-<td>{$acct.last}</td>
-</tr>
-{/foreach}
-</table>
+<br><br>
+{if $FORM_ERROR}
+	<b>Form Error: </b>{$FORM_ERROR}
+{elseif $FORM_SUCCESS}
+	<b>Form Success Message: </b>{$FORM_SUCCESS}
 {/if}

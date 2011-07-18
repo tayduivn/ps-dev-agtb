@@ -27,48 +27,47 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once 'modules/SNIP/SugarSNIP.php';
+require_once 'modules/SNIP/SugarSNIP_offlinetest.php';
 
 if (!is_admin($current_user)) {
 	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
 global $sugar_config;
 
-$snip = SugarSNIP::getInstance();
+/**
+    use SugarSNIP instead of SugarSNIP_offlinetest for production
+**/
+$snip = SugarSNIP_offlinetest::getInstance();
 $title = get_module_title("", translate('LBL_REGISTER_SNIP').":", true);
 $sugar_smarty = new Sugar_Smarty();
 
-$sugar_smarty->assign('APP', $GLOBALS['app_strings']);
-$sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
-$sugar_smarty->assign('SUGAR_URL', $snip->getURL());
-$snip_active = $snip->isActive();
-$sugar_smarty->assign('SNIP_ACTIVE', $snip_active);
-if($snip_active) {
-    $status = $snip->getStatus();
-    if(empty($status)) {
-	    $sugar_smarty->assign('SNIP_STATUS_OK', false);
-	    $sugar_smarty->assign('SNIP_STATUS', translate('LBL_SNIP_STATUS_FAIL'));
+if (isset($_REQUEST['save_config']) && $_REQUEST['save_config'] != '0') {
+    if(!registerApplication($snip)) {
+        $sugar_smarty->assign('FORM_ERROR','Failed to contact SNIP service!');
     } else {
-	    $ok = $status->status == 'success' || $status->status == 'reset';
-	    $sugar_smarty->assign('SNIP_STATUS_OK', $ok);
-	    $sugar_smarty->assign('SNIP_STATUS', snipStatusToText($status->status));
-	    $accts = array();
-	    foreach($status->accounts as $acct) {
-	        $accts[] = array("ok" => $acct->status == 'success', "name" => $acct->name,
-	        	"status" => snipStatusToText($acct->status), "last" => snipTimeToDisplay($acct->lastcheck));
-	    }
-	    $sugar_smarty->assign('SNIP_ACCTS', $accts);
+        if ($_REQUEST['save_config']=='disable'){
+            $sugar_smarty->assign('FORM_SUCCESS','SNIP successfully disabled!');
+        }
+        elseif ($_REQUEST['save_config']=='enable'){
+            $sugar_smarty->assign('FORM_SUCCESS','SNIP successfully enabled!');
+        }
     }
 }
-$sugar_smarty->assign('SNIP_URL', $snip_active?$snip->getSnipURL():"http://localhost:20000/");
-if (isset($_REQUEST['save_config']) && $_REQUEST['save_config'] != '0') {
-	if(!registerApplication($snip)) {
-		echo sprintf(translate('LBL_REGISTER_SNIP_FAIL'), (isset($snip->last_result)&&is_object($snip->last_result)&&isset($snip->last_result->result))?$snip->last_result->result:'');
-	} else {
-		header('Location: index.php?action=index&module=Administration');
-		return;
-	}
+
+$sugar_smarty->assign('APP', $GLOBALS['app_strings']);
+$sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
+$status=$snip->getStatus();
+
+if ($status=='notpurchased'){
+    $snipuser = $snip->getSnipUser();
+    $sugar_smarty->assign('UNIQUEKEY',$sugar_config['unique_key']);
+    $sugar_smarty->assign('SNIP_USER',$snipuser->user_name);
+    $sugar_smarty->assign('SNIP_PASS',$snipuser->user_hash);
 }
+$sugar_smarty->assign('SNIP_STATUS',$status);
+$sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
+$sugar_smarty->assign('SUGAR_URL',$snip->getURL());
+
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
 
 /**
@@ -81,7 +80,7 @@ function registerApplication($snip)
         return $snip->unregister();
     } else {
         return $snip->register(array(
-            "url" => $_REQUEST['snip_url']
+            "url" => $snip->getSnipURL()
 	    ));
     }
 }
