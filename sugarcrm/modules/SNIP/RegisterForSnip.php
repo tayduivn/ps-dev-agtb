@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/SNIP/SugarSNIP.php';
 
 if (!is_admin($current_user)) {
-	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
+    sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
 global $sugar_config;
 
@@ -60,16 +60,21 @@ if($snip_active) {
 	    $sugar_smarty->assign('SNIP_ACCTS', $accts);
     }
 }
-$sugar_smarty->assign('SNIP_URL', $snip_active?$snip->getSnipURL():"http://localhost:20000/");
-if (isset($_REQUEST['save_config']) && $_REQUEST['save_config'] != '0') {
-	if(!registerApplication($snip)) {
-		echo sprintf(translate('LBL_REGISTER_SNIP_FAIL'), (isset($snip->last_result)&&is_object($snip->last_result)&&isset($snip->last_result->result))?$snip->last_result->result:'');
-	} else {
-		header('Location: index.php?action=index&module=Administration');
-		return;
-	}
+
+$sugar_smarty->assign('APP', $GLOBALS['app_strings']);
+$sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
+$status=$snip->getStatus();
+
+if ($status=='notpurchased'){
+    $snipuser = $snip->getSnipUser();
+    $sugar_smarty->assign('SNIP_PURCHASEURL',createPurchaseURL($snipuser));
 }
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
+
+function createPurchaseURL($snipuser){
+    global $sugar_config;
+    return "localhost:1337/purchaseSnip?uniquekey={$sugar_config['unique_key']}&snipuser={$snipuser->user_name}&pass={$snipuser->user_hash}";
+}
 
 /**
  * Register or unregister this instance with SNIP server
