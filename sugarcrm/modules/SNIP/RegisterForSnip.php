@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'modules/SNIP/SugarSNIP_offlinetest.php';
 
 if (!is_admin($current_user)) {
-	sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
+    sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
 global $sugar_config;
 
@@ -60,15 +60,18 @@ $status=$snip->getStatus();
 
 if ($status=='notpurchased'){
     $snipuser = $snip->getSnipUser();
-    $sugar_smarty->assign('UNIQUEKEY',$sugar_config['unique_key']);
-    $sugar_smarty->assign('SNIP_USER',$snipuser->user_name);
-    $sugar_smarty->assign('SNIP_PASS',$snipuser->user_hash);
+    $sugar_smarty->assign('SNIP_PURCHASEURL',createPurchaseURL($snipuser));
 }
 $sugar_smarty->assign('SNIP_STATUS',$status);
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
 
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
+
+function createPurchaseURL($snipuser){
+    global $sugar_config;
+    return "localhost:1337/purchaseSnip?uniquekey={$sugar_config['unique_key']}&snipuser={$snipuser->user_name}&pass={$snipuser->user_hash}";
+}
 
 /**
  * Register or unregister this instance with SNIP server

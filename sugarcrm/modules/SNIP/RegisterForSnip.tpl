@@ -29,46 +29,121 @@
 // $Id: PasswordManager.tpl 37436 2009-06-01 01:14:03Z Faissah $
 *}
 
-<form name="SnipConfig" method="POST" action="" >
-<input type='hidden' id='save_config' name='save_config' value='0'/>
+	<h2>SNIP</h2>
+
+	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
+		<tr>
+		<td>
+			{if $SNIP_STATUS=='notpurchased'}
+				SNIP is an automatic email archiving system. It allows you to see emails that were sent to or from your contacts inside SugarCRM, without you having to manually import and link the emails.<br><br>
+
+				In order to use SNIP, you must <a href="{$SNIP_PURCHASEURL}">purchase a license</a> for your SugarCRM instance.
+			{else}
+			
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td scope="row">
+						<slot>SNIP Status</slot>
+
+					</td>
+
+					<td>
+						<form name='ToggleSnipStatus' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
+						<input type='hidden' id='save_config' name='save_config' value='0'/>
+						{if $SNIP_STATUS == 'purchased_enabled'}
+							<div style='font-size:15px;display:inline'><span style='color:green;font-weight:bold'>Enabled (Service Online)</span></div>
+							<input class='button' type='submit' value='Disable' onclick='document.getElementById("save_config").value="disable"'>
+							{if $FORM_ERROR}<br><span style='color:red'>{$FORM_ERROR}</span><br>{/if}
+							<br>This instance has a SNIP license, and the service is enabled and running.
+						{elseif $SNIP_STATUS == 'purchased_disabled'}
+							<div style='font-size:15px;display:inline'><span style='color:#777777;font-weight:bold'>Disabled</span></div>
+							<input class='button' type='submit' value='Enable' onclick='document.getElementById("save_config").value="enable"'>	
+							{if $FORM_ERROR}<br><span style='color:red'>{$FORM_ERROR}</span><br>{/if}
+							<br>This instance has a SNIP license, but you have disabled SNIP.
+							
+						{elseif $SNIP_STATUS == 'purchased_down'}
+							<div style='font-size:15px;display:inline'><span style='color:red;font-weight:bold'>Service Down</span></div>
+							<br>This instance has a SNIP license and you have enabled SNIP, but the the service is currently unavailable.
+						{/if}
+						</form>
+						<br>
+					</td>
+				</tr>
+				<tr>
+					<td width="15%" scope="row">
+						<slot>{$MOD.LBL_SNIP_SUGAR_URL}</slot>
+					</td>
+					<td width="85%">
+						<slot>{$SUGAR_URL}</slot>
+					</td>
+				</tr>
+				<tr>
+					<td scope="row">
+						<slot>{$MOD.LBL_SNIP_CALLBACK_URL}</slot>
+					</td>
+					<td>
+						<slot><div style='float:left;width:325px' id='snipurl'>{$SNIP_URL}</div>
+						<form id='snipurlui' style='float:left;margin-top:-3px;margin-left:12px' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
+							
+						</form></slot>
+					</td>
+				</tr>
+			</table>
+			{/if}
+		</td>
+		</tr>
+	</table>
+
+	
+	
 
 
-<h2>SNIP</h2>
-{if $SNIP_STATUS == 'purchased_enabled'}
-	<b>Status message: </b>SNIP is enabled and purchased.<br>
-	<b>Additional info: </b>
-	<ul>
-		<li>This Sugar instance URL: {$SUGAR_URL}</li>
-		<li>SNIP service URL: {$SNIP_URL}</li>
-	</ul>
-	<b>UI options: </b> <input class='button' type='submit' value='Disable Snip' onclick='document.getElementById("save_config").value="disable"'>
-{elseif $SNIP_STATUS == 'purchased_disabled'}
-	<b>Status message: </b>Snip is currently disabled.<br>
-	<b>Additional info: </b>
-	<ul>
-		<li>This Sugar instance URL: {$SUGAR_URL}</li>
-		<li>SNIP service URL: {$SNIP_URL}</li>
-	</ul>
-	<b>UI options: </b> <input class='button' type='submit' value='Enable Snip' onclick='document.getElementById("save_config").value="enable"'>
-{elseif $SNIP_STATUS == 'purchased_down'}
-	<b>Status message: </b>Snip is enabled but the SNIP server is down. Sorry but you cannot send requests to the SNIP server right now.<br>
-	<b>Additional info: </b>
-	<ul>
-		<li>This Sugar instance URL: {$SUGAR_URL}</li>
-		<li>SNIP service URL: {$SNIP_URL}</li>
-	</ul>
-{elseif $SNIP_STATUS == 'notpurchased'}
-	<b>Status message: </b>This Sugar instance does not have a SNIP license. Would you like to purchase one?<br>
-	<b>Additional info: </b>
-	<ul>
-		<li>This Sugar instance URL: {$SUGAR_URL}</li>
-		<li>SNIP service URL: {$SNIP_URL}</li>
-	</ul>
-	<b>UI options: </b> &lt;link to purchase snip with key {$UNIQUEKEY}, snip user {$SNIP_USER} and snip user password {$SNIP_PASS}&gt;
-{/if}
-<br><br>
-{if $FORM_ERROR}
-	<b>Form Error: </b>{$FORM_ERROR}
-{elseif $FORM_SUCCESS}
-	<b>Form Success Message: </b>{$FORM_SUCCESS}
-{/if}
+
+
+{literal}
+<script type='text/javascript'>
+    (function(){
+    	snipurlui=document.getElementById('snipurlui');
+        snipurlspan = document.getElementById('snipurl');
+        ourl = snipurlspan.innerHTML;
+        var islabelui = document.createElement('input');
+        islabelui.setAttribute('type','button');
+        islabelui.setAttribute('value','Edit');
+
+        var istextui = document.createElement('span');
+            var istextui_cancel = document.createElement('input');
+            istextui_cancel.setAttribute('type','button');
+            istextui_cancel.setAttribute('value','Cancel');
+
+            var istextui_save = document.createElement('input');
+            istextui_save.setAttribute('type','button');
+            istextui_save.setAttribute('value','Save');
+        
+        istextui.appendChild(istextui_cancel);
+        istextui.appendChild(istextui_save);
+
+        function setUI(ui){
+            while (snipurlui.childNodes.length>0)
+                snipurlui.removeChild(snipurlui.firstChild); 
+            snipurlui.appendChild(ui);
+        }
+
+        islabelui.onclick=function(){
+            snipurl = snipurlspan.firstChild.innerHTML;
+            snipurlspan.innerHTML="<input type='text' style='width:325px;margin-top:-1px' name='change_snipurl' value='"+snipurl+"'>";
+            setUI(istextui);
+        }
+
+        istextui_cancel.onclick = function(){
+            snipurlspan.innerHTML="<div style='float:left;background-color:#F1F1F1;width:320px;height:17px;padding-top:3px;padding-left:5px'>"+ourl+"</div>";
+            setUI(islabelui);
+        }
+
+        istextui_save.onclick = function(){
+            document.getElementById('snipurlui').submit();
+        }
+
+        istextui_cancel.onclick();
+    })()
+</script>
+{/literal}
