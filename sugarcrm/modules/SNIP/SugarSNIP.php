@@ -71,7 +71,7 @@ class SugarSNIP
             $url = $params['url'];
             unset($params['url']);
         } else {
-            $url = $this->config['snip_url'];
+            $url = $this->getSnipURL();
         }
 
         $url .= $name;
@@ -121,6 +121,8 @@ class SugarSNIP
      */
     public function getSnipURL()
     {
+        if (!isset($this->config['snip_url']))
+            return 'http://localhost:20000/';
         return $this->config['snip_url'];
     }
 
@@ -243,6 +245,11 @@ class SugarSNIP
 
     /**
      * Get status of the SNIP installation
+     * Expects to receive one of the following:
+     * - purchased_enabled  (instance has snip license, and snip is enabled)
+     * - purchased_down     (instance has snip license, but snip server is down)
+     * - purchased_disabled (instance has snip license, but snip has been disabled by instance admin)
+     * - notpurchased       (instance has no active snip license)
      */
     public function getStatus()
     {
