@@ -115,7 +115,7 @@ class QuickSearchDefaults {
         return $qsUser;
     }
     //BEGIN SUGARCRM flav!=sales ONLY
-    function getQSCampaigns() {
+    function getQSCampaigns($c_name = 'campaign_name', $c_id = 'campaign_id') {
         global $app_strings;
 
         $qsCampaign = array('form' => $this->form_name,
@@ -123,7 +123,7 @@ class QuickSearchDefaults {
                             'modules'=> array('Campaigns'),
                             'group' => 'or',
                             'field_list' => array('name', 'id'),
-                            'populate_list' => array('campaign_name', 'campaign_id'),
+                            'populate_list' => array($c_name, $c_id),
                             'conditions' => array(array('name'=>'name','op'=>'like_custom','end'=>'%','value'=>'')),
                             'required_list' => array('campaign_id'),
                             'order' => 'name',
@@ -135,7 +135,7 @@ class QuickSearchDefaults {
     //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
 
-    function getQSTeam() {
+    function getQSTeam($t_name = 'team_name', $t_id = 'team_id') {
         global $app_strings;
 
         $qsTeam = array(
@@ -144,7 +144,7 @@ class QuickSearchDefaults {
                     'modules'=> array('Teams'),
                     'group' => 'or',
                     'field_list' => array('name', 'id'),
-                    'populate_list' => array('team_name', 'team_id'),
+                    'populate_list' => array($t_name, $t_id),
                     'required_list' => array('team_id'),
                     'whereExtra'=> "( teams.associated_user_id IS NULL OR teams.associated_user_id NOT IN ( SELECT id FROM users WHERE status = 'Inactive' OR portal_only = '1' ))",
                     'conditions' => array(array('name'=>'name','op'=>'like_custom','end'=>'%','value'=>''),
@@ -153,6 +153,43 @@ class QuickSearchDefaults {
         return $qsTeam;
     }
     //END SUGARCRM flav=pro ONLY
+    
+    //BEGIN SUGARCRM flav!=sales ONLY
+    /**
+     * Loads Quick Search Object for any object (if suitable method is defined)
+     *
+     * @param string $module the given module we want to load the vardefs for
+     * @param string $object the given object we wish to load the vardefs for
+     * @param string $relationName the name of the relation between entities
+     * @param type $nameField the name of the field to populate
+     * @param type $idField the id of the field to populate
+     */
+    function loadQSObject($module, $object, $relationName, $nameField, $idField)
+    {
+        $result = array();
+        VardefManager::loadVardef($module, $object);
+        if (array_key_exists($relationName, $GLOBALS['dictionary'][$object]['relationships']))
+        {
+            if (method_exists($this, 'getQS' . $module))
+            {
+                $result = $this->{'getQS' . $module};
+            } elseif (method_exists($this, 'getQS' . $object))
+            {
+                $result = $this->{'getQS' . $object};
+            }
+        } else
+        {
+            if (method_exists($this, 'getQS' . $module))
+            {
+                $result = $this->{'getQS' . $module}($nameField, $idField);
+            } elseif (method_exists($this, 'getQS' . $object))
+            {
+                $result = $this->{'getQS' . $object}($nameField, $idField);
+            }
+        }
+        return $result;
+    }
+    //END SUGARCRM flav!=sales ONLY
 
     // BEGIN QuickSearch functions for 4.5.x backwards compatibility support
     function getQSScripts() {
