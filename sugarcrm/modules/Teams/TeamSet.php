@@ -282,6 +282,7 @@ class TeamSet extends SugarBean{
 
         $result = $this->db->query($sql, TRUE, "Error finding team memberships: ");
         $row = $this->db->fetchByAssoc($result);
+
         if ($row != null) {
             return true;
         }
