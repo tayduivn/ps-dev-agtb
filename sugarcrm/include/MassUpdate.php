@@ -1220,6 +1220,12 @@ EOQ;
         } else {
         	$oldTime = $timedate->now();
         }
+        $oldTime = explode(" ", $oldTime);
+        if (isset($oldTime[1])) {
+        	$oldTime = $oldTime[1];
+        } else {
+        	$oldTime = $oldTime[0];
+        }
         $value = explode(" ", $value);
         $value = $value[0];
 	    return $value." ".$oldTime;
