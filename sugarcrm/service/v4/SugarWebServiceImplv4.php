@@ -746,7 +746,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      * @param String $session -- Session ID returned by a previous call to login.
      * @exception 'SoapFault' -- The SOAP error, if any
      */
-    function snip_import_emails($session, $email)
+    public function snip_import_emails($session, $email)
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->import_emails');
         $error = new SoapError();
@@ -767,7 +767,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      * @param string $session
      * @param int $timestamp
      */
-    function snip_update_contacts($session, $timestamp)
+    public function snip_update_contacts($session, $timestamp)
     {
         $GLOBALS['log']->info('Begin: SugarWebServiceImpl->snip_update_contacts');
         $error = new SoapError();
