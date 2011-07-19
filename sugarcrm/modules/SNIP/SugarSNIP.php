@@ -99,7 +99,7 @@ class SugarSNIP
      */
     public function getURL()
     {
-        return $this->config['site_url'].'/service/v3snip/rest.php';
+        return $this->config['site_url'].'/service/v4/rest.php';
     }
 
     /**
