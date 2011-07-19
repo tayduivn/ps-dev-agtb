@@ -235,7 +235,7 @@ class VardefManager{
         //BEGIN SUGARCRM flav=pro ONLY
         self::updateRelCFModules($module, $object);
         //END SUGARCRM flav=pro ONLY
-		
+
 		//great! now that we have loaded all of our vardefs.
 		//let's go save them to the cache file.
 		if(!empty($GLOBALS['dictionary'][$object])) {
@@ -407,7 +407,7 @@ class VardefManager{
         return $hasFieldsWithLink;
     }
     //END SUGARCRM flav=pro ONLY
-	
+
 	/**
 	 * load the vardefs for a given module and object
 	 * @param string $module the given module we want to load the vardefs for
@@ -429,9 +429,6 @@ class VardefManager{
 			$return_result = sugar_cache_retrieve($key);
 			if(!empty($return_result))
 			{
-                if($module == "TeamMemberships")
-                    echo "found a result without refresh<br/>";
-
                 $GLOBALS['dictionary'][$object] = $return_result;
 				return;
 			}
