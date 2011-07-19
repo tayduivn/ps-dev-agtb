@@ -54,6 +54,8 @@ class SugarWirelessView extends SugarView
 	 */
     public $wl_mod_create_list;
 
+    public $subpanel_layout_defs = array();
+
 	/**
 	 * Constructor for the view, it performs the following tasks:
 	 *
@@ -156,30 +158,110 @@ class SugarWirelessView extends SugarView
  	 *
  	 * @param - $child_seed the subpanel module bean
  	 * @param - $related_field the subpanel module
+     * @param - $related_field the subpanel module
  	 * @return - Array of child_seed objects
  	 */
- 	protected function wl_get_subpanel_data($child_seed, $related_field){
+
+    /**
+     * Protected function that retrieves subpanel data for a given bean
+ 	 *
+ 	 * This function will return an array with the subpanel data for a bean. The
+ 	 * function needs to attain the relationship and modify the query. It will
+ 	 * inject team security code into the query if that is needed, and construct
+ 	 * a final query. Finally, it will call the list_query function to attain the
+ 	 * subpanel data list.
+     * @param SugarBean - $child_seed the subpanel module bean
+     * @param String - $related_field the link field to use
+     * @param aSubPanel - $subpanel_def defninition of this subpanel
+     * @return 
+     */
+ 	protected function wl_get_subpanel_data($child_seed, $related_field, $subpanel = null){
+ 		
  		// load the relationship of the subpanel module to the current loaded bean
 		$this->bean->load_relationship($related_field);
 		// attain the query
-    	$query_array = $this->bean->$related_field->getQuery(true);
-    	$where = $query_array['where'];
-
-    	// this code is needed to plug the correct INNER JOIN from the team security
-    	// where clause
-    	$from = explode(' ', $query_array['from'], 3);
-    	$from[1] = $from[1] . ' ';
-    	//BEGIN SUGARCRM flav=pro ONLY
-    	$child_seed->add_team_security_where_clause($from[1]);
-    	//END SUGARCRM flav=pro ONLY
-    	// reconstruct the FROM clause
-		$query_array['from'] = implode(' ', $from);
-
-    	$query = 'SELECT '.$child_seed->table_name.'.* ' . $query_array['from'] . ' ' . $where;
+    	$data = SugarBean::get_union_related_list($this->bean, null, null, null, null, null, null, null, $subpanel);
 
     	// return the list
-    	return $child_seed->process_list_query($query, 0);
+    	return $child_seed->process_list_query($data['query'], 0);
  	}
+
+    public function getDataForSubpanel($parent, $subpanel, $subpaneldefs)
+    {
+        require_once("include/SubPanel/SubPanelDefinitions.php");
+        $ret = array();
+        $module = $subpaneldefs['module'];
+        $seed = BeanFactory::newBean($module);
+
+        // check if the user has access to the subpanel module
+        if ($seed)
+        {
+            // include and instantiate child seed
+            $link = $subpaneldefs['get_subpanel_data'];
+            if (empty($subpaneldefs['subpanel_name']))
+                $subpaneldefs['subpanel_name'] = $subpanel;
+
+            $subpanel_data = array();
+            if (isset($parent->$link))
+            {
+                // attain subpanel data
+                $subpanel_data = $this->wl_get_subpanel_data($seed, $link, new aSubPanel($subpanel, $subpaneldefs, $seed));
+
+                $ret = array(
+                    'count' => $subpanel_data['row_count'],
+                    'module' => $module,
+                    'list' => array()
+                );
+
+                if($subpanel_data['row_count'] > 0)
+                {
+                    // construct array for smarty consumption
+                    $count = 0;
+                    $wl_list_max_entries_per_subpanel = 3;
+                    if (isset($GLOBALS['sugar_config']['wl_list_max_entries_per_subpanel']))
+                        $wl_list_max_entries_per_subpanel = $GLOBALS['sugar_config']['wl_list_max_entries_per_subpanel'];
+
+                    foreach($subpanel_data['list'] as $data)
+                    {
+                        if ($count < $wl_list_max_entries_per_subpanel)
+                        {
+                            $ret['list'][$data->id] = $data->name;
+                            $count++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $ret;
+    }
+
+    public function getSubpanelDefs($layout_def_key = "", $original_only = false) {
+        $layout_defs  = array(
+            $this->module => array ( ),
+            $layout_def_key  =>  array ( )
+        );
+
+		if (empty ( $this->subpanel_layout_defs ) || (! empty ( $layout_def_key ) && empty ( $layout_defs [ $layout_def_key ] )))
+		{
+			require_once("include/SubPanel/SubPanelDefinitions.php");
+            if (!$original_only && file_exists('custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
+                require_once('custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
+            }
+            else if (file_exists('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
+                require_once('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
+            }
+            if (! $original_only && file_exists ( 'custom/modules/' . $this->module . '/Ext/Layoutdefs/wireless.subpaneldefs.ext.php' ))
+				require ('custom/modules/' . $this->module . '/Ext/Layoutdefs/wireless.subpaneldefs.ext.php') ;
+
+			if (! empty ( $layout_def_key ))
+				$this->subpanel_layout_defs = $layout_defs [ $layout_def_key ] ;
+			else
+				$this->subpanel_layout_defs = $layout_defs [ $this->module] ;
+		}
+        
+        return $this->subpanel_layout_defs;
+    }
 
  	/**
  	 * Retrieve the meta data file and module name for a particular view

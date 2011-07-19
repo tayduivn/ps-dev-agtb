@@ -30,7 +30,7 @@
 // $Id: error.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script>
 
     //set the variables
