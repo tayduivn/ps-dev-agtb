@@ -250,7 +250,14 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
             array('foo' => array('name'=>'foo','type'=>'varchar'))
             );
 
-        $this->assertRegExp('/alter\s*table\s*contacts/i',$sql);
+        // Generated SQL may be a sequence of statements
+		switch(gettype($sql)){
+			case 'array':
+				$sql = $sql[0];
+			case 'string':
+				$this->assertRegExp('/alter\s*table\s*contacts/i',$sql);
+				break;
+			}
     }
 
     public function testDropTableSQL()
