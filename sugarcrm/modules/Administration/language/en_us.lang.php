@@ -1143,7 +1143,6 @@ $mod_strings = array (
    'LBL_SAML_LOGIN_URL' => 'Login URL',
    'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-<<<<<<< HEAD
    'LBL_GLOBAL_SEARCH_SETTINGS_TITLE' => 'Select the module(s) that users will be able to search against using the Global Search.',
    'LBL_SELECT_MODULES' => 'Advanced',
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
@@ -1156,8 +1155,6 @@ $mod_strings = array (
     'LBL_OAUTH' => "OAuth key management",
     'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-=======
->>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
     // SNIP
     'LBL_SNIP_TITLE' => 'SNIP',
     'LBL_SNIP_DESC' => 'Configure offline archiving (SNIP)',

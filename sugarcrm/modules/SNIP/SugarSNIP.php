@@ -270,18 +270,14 @@ class SugarSNIP
     {
         $user = new User();
         $user->user_name = self::SNIP_USER;
-<<<<<<< HEAD
-        $user->title = translate('LBL_SNIP_USER_DESC');
-=======
         $user->title = translate('LBL_SNIP_USER_DESC', 'SNIP');
->>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
         $user->description = $user->title;
         $user->first_name = "";
         $user->last_name = $user->title;
         $user->status='Active';
         $user->external_auth_only = 1;
         $user->receive_notifications = 0;
-        $user->is_admin = 1;
+        $user->is_admin = 0;
         $user->user_hash = strtolower(md5(time().mt_rand()));
         //$user->default_team = '1'; // TODO: which team should we set?
         $user->save();

@@ -179,7 +179,6 @@ $mod_strings = array (
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
 
-<<<<<<< HEAD
     //For export labels
     'LBL_ACCOUNT_TYPE' => 'Account Type',
     'LBL_CAMPAIGN_ID' => 'Campaign ID',
@@ -187,8 +186,6 @@ $mod_strings = array (
     'LBL_PHONE_ALTERNATE' => 'Phone Alternate',
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
 
-=======
->>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History'
 );
