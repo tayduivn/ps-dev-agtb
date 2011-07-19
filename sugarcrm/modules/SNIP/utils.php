@@ -36,6 +36,7 @@ function get_unlinked_email_query_via_link($params)
         $where = str_replace("%1", $bean->case_number, 	$bean->getEmailSubjectMacro());
 	    $return_array["where"] .= " AND emails.name LIKE '%$where%'";
     }
+    $return_array['join_tables'][0] = '';
 	return $return_array;
 }
 
@@ -59,5 +60,6 @@ function get_beans_by_email_addr($module_dir)
 ";
     // exclude directly linked emails
     $return_array['where']="WHERE direct_link.bean_id IS NULL";
+    $return_array['join_tables'][0] = '';
     return $return_array;
 } // fn
