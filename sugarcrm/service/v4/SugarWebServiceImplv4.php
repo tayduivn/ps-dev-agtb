@@ -752,13 +752,13 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         $error = new SoapError();
         // TODO: permissions?
         if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '',  $error)) {
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->import_emails denied.');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->snip_import_emails denied.');
             return;
         } // if
         require_once 'modules/SNIP/SugarSNIP.php';
         $snip = SugarSNIP::getInstance();
         $snip->importEmail($email);
-        $GLOBALS['log']->info('End: SugarWebServiceImpl->import_emails');
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->snip_import_emails');
         return array('results' => TRUE, 'count' => 1, 'message' => '');
     }
 
@@ -769,10 +769,10 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
      */
     function snip_update_contacts($session, $timestamp)
     {
-        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->update_contacts');
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->snip_update_contacts');
         $error = new SoapError();
         if (! self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', 'read', 'no_access',  $error)) {
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->update_contacts denied.');
+            $GLOBALS['log']->info('End: SugarWebServiceImpl->snip_update_contacts denied.');
             return;
         } // if
 
