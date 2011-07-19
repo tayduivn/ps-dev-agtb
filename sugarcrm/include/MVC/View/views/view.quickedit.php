@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All copies of the Covered Code must include on each user interface screen:
  *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full lfooter.icense for
+ * in the same form as they appear in the distribution.  See full license for
  * requirements.
  *
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
