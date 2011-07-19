@@ -101,6 +101,15 @@ class SugarFieldRelate extends SugarFieldBase {
         } else {
            $displayParams['readOnly'] = $displayParams['readOnly'] == false ? '' : 'READONLY';  
         }
+        
+        $keys = $this->getAccessKey($vardef,'RELATE',$vardef['module']);
+        $displayParams['accessKeySelect'] = $keys['accessKeySelect'];
+        $displayParams['accessKeySelectLabel'] = $keys['accessKeySelectLabel'];
+        $displayParams['accessKeySelectTitle'] = $keys['accessKeySelectTitle'];
+        $displayParams['accessKeyClear'] = $keys['accessKeyClear'];
+        $displayParams['accessKeyClearLabel'] = $keys['accessKeyClearLabel'];
+        $displayParams['accessKeyClearTitle'] = $keys['accessKeyClearTitle'];
+
         $this->setup($parentFieldArray, $vardef, $displayParams, $tabindex);
         return $this->fetch($this->findTemplate('EditView')); 
     }
