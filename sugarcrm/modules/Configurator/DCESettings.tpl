@@ -32,16 +32,16 @@
 *}
 <!--//FILE SUGARCRM flav=dce ONLY -->
 
-<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
+<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
 <BR>
 <form name="ConfigureDCESettings" enctype='multipart/form-data' method="POST" action="index.php?action=DCESettings&module=Configurator" onSubmit="return (check_form('ConfigureDCESettings'));">
 <span class='error'>{$error.main}</span>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
-
+            
     <td>
         <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button"  type="submit"  name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " >
-        &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " > </td>
+        &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " > </td> 
     </tr>
 </table>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -119,11 +119,11 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
+    </tr>    
     <tr>
         <td  scope="row">{$MOD.CREATE_EVAL_SUCCESS_MSG}: </td>
         <td  >
-        		<select name="dce_create_tmpl" id = "create_tmpl" >{$CREATE_DRPDWN}</select>
+        		<select name="dce_create_tmpl" id = "create_tmpl" >{$CREATE_DRPDWN}</select>        		
         </td>
         <td  scope="row"> </td>
         <td  >
@@ -137,7 +137,7 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
+    </tr>    
     <tr>
         <td  scope="row">{$MOD.ARCHIVE_INSTANCE_MSG}: </td>
         <td  >
@@ -145,7 +145,7 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
+    </tr>    
     <tr>
         <td  scope="row">{$MOD.SUPPORT_USER_MSG}: </td>
         <td  >
@@ -153,7 +153,7 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
+    </tr>    
     <tr>
         <td  scope="row">{$MOD.UPGRADE_LIVE_MSG}: </td>
         <td  >
@@ -161,7 +161,7 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
+    </tr>    
     <tr>
         <td  scope="row">{$MOD.UPGRADE_TEST_MSG}: </td>
         <td  >
@@ -169,7 +169,7 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
+    </tr>    
     <tr>
         <td  scope="row">{$MOD.ERROR_MESSAGE_MSG}: </td>
         <td  >
@@ -177,13 +177,13 @@
         </td>
         <td  scope="row"> </td>
         <td  ></td>
-    </tr>
-
+    </tr>    
+    
 </table>
 </td></tr>
 </table>
 
-
+    
 <div style="padding-top: 2px;">
 <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button"  type="submit" name="save" value="  {$APP.LBL_SAVE_BUTTON_LABEL}  " />
 &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="  {$APP.LBL_CANCEL_BUTTON_LABEL}  " />

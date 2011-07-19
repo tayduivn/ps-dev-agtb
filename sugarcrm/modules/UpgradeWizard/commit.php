@@ -99,7 +99,8 @@ if(!isset($_SESSION['committed'])) {
 	if(!isset($_SESSION['unzip_dir']) || empty($_SESSION['unzip_dir'])) {
 		logThis('unzipping files in upgrade archive...');
 		$errors					= array();
-		list($base_upgrade_dir, $base_tmp_upgrade_dir) = getUWDirs();
+		$base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
+		$base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
 		$unzip_dir = '';
 		//also come up with mechanism to read from upgrade-progress file
 		if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !is_file($_SESSION['install_file'])) {
@@ -114,8 +115,8 @@ if(!isset($_SESSION['committed'])) {
 					 	if(file_exists($base_tmp_upgrade_dir."/".$file."/".$package_name) && file_exists($base_tmp_upgrade_dir."/".$file."/scripts") && file_exists($base_tmp_upgrade_dir."/".$file."/manifest.php")){
 					 		//echo 'Yeah this the directory '. $base_tmp_upgrade_dir."/".$file;
 					 		$unzip_dir = $base_tmp_upgrade_dir."/".$file;
-					 		if(file_exists("$base_upgrade_dir/patch/".$package_name.'.zip')){
-					 			$_SESSION['install_file'] = $package_name.'.zip';
+					 		if(file_exists($sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip')){
+					 			$_SESSION['install_file'] = $sugar_config['upload_dir'].'/upgrades/patch/'.$package_name.'.zip';
 					 			break;
 					 		}
 						}
@@ -125,12 +126,12 @@ if(!isset($_SESSION['committed'])) {
 			}
 		}
         if(!isset($_SESSION['install_file']) || empty($_SESSION['install_file'])){
-        	unlinkUWTempFiles();
+        	unlinkTempFiles();
         	resetUwSession();
         	echo 'Upload File not found so redirecting to Upgrade Start ';
         	$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
         	echo '<form name="redirect" action="' .$redirect_new_wizard. '"  method="POST">';
-            $upgrade_directories_not_found =<<<eoq
+$upgrade_directories_not_found =<<<eoq
 	<table cellpadding="3" cellspacing="0" border="0">
 		<tr>
 			<th colspan="2" align="left">
@@ -139,10 +140,10 @@ if(!isset($_SESSION['committed'])) {
 		</tr>
 	</table>
 eoq;
-            $uwMain = $upgrade_directories_not_found;
-			return '';
+$uwMain = $upgrade_directories_not_found;
+				return '';
         }
-		$install_file			= "$base_upgrade_dir/patch/".basename(urldecode( $_SESSION['install_file'] ));
+		$install_file			= urldecode( $_SESSION['install_file'] );
 		$show_files				= true;
 		if(empty($unzip_dir)){
 			$unzip_dir				= mk_temp_dir( $base_tmp_upgrade_dir );
@@ -195,12 +196,12 @@ eoq;
 	if(!isset($_SESSION['unzip_dir']) || !file_exists($_SESSION['unzip_dir'])
 		|| !isset($_SESSION['install_file']) || empty($_SESSION['install_file']) || !file_exists($_SESSION['install_file'])){
 		    //redirect to start
-	    unlinkUWTempFiles();
+	    unlinkTempFiles();
 		resetUwSession();
 		echo 'Upload File not found so redirecting to Upgrade Start ';
 		$redirect_new_wizard = $sugar_config['site_url' ].'/index.php?module=UpgradeWizard&action=index';
 		echo '<form name="redirect" action="' .$redirect_new_wizard. '"  method="POST">';
-        $upgrade_directories_not_found =<<<eoq
+$upgrade_directories_not_found =<<<eoq
 	<table cellpadding="3" cellspacing="0" border="0">
 		<tr>
 			<th colspan="2" align="left">
@@ -209,16 +210,16 @@ eoq;
 		</tr>
 	</table>
 eoq;
-        $uwMain = $upgrade_directories_not_found;
-		return '';
+$uwMain = $upgrade_directories_not_found;
+				return '';
 	}
-	$install_file		= "$base_upgrade_dir/patch/".basename(urldecode( $_SESSION['install_file'] ));
+	$install_file		= urldecode($_SESSION['install_file']);
 	$file_action		= "";
 	$uh_status			= "";
 	$errors				= array();
 	$out				= '';
 	$backupFilesExist	= false;
-	$rest_dir			= remove_file_extension($install_file) . "-restore";
+	$rest_dir			= clean_path(remove_file_extension($install_file) . "-restore");
 
 	///////////////////////////////////////////////////////////////////////////////
 	////	MAKE BACKUPS OF TARGET FILES
@@ -251,10 +252,9 @@ eoq;
 	////	HANDLE PREINSTALL SCRIPTS
 	///////////////////////////////////////////////////////////////////////////////
         //Clean smarty from cache
-	    $cachedir = sugar_cached('smarty');
-	    if(is_dir($cachedir)){
+        if(is_dir($GLOBALS['sugar_config']['cache_dir'].'smarty')){
         	$allModFiles = array();
-        	$allModFiles = findAllFiles($cachedir,$allModFiles);
+        	$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'smarty',$allModFiles);
            foreach($allModFiles as $file){
 	           	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 	           	if(file_exists($file)){
@@ -350,18 +350,17 @@ eoq;
 	logThis('post_install() done.');
 	//// END POSTINSTALL SCRIPTS
 	///////////////////////////////////////////////////////////////////////////////
-
-logThis('check if current_db_version in $_SESSION equals target_db_version in $_SESSION');
+	
+logThis('check if current_db_version in $_SESSION equals target_db_version in $_SESSION');	
 if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
 
 	logThis('current_db_version in $_SESSION and target_db_version in $_SESSION are equal');
 	$_SESSION['license_seats_needed'] = '';
 	//Clean modules from cache
-	$cachedir = sugar_cached("modules");
-    if(is_dir($cachedir)){
-		logThis("clear $cachedir files");
-    	$allModFiles = array();
-    	$allModFiles = findAllFiles($cachedir,$allModFiles);
+    if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
+       logThis('clear ' . $GLOBALS['sugar_config']['cache_dir'].'modules' . ' files');
+       $allModFiles = array();
+       $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
        foreach($allModFiles as $file){
            	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
            	if(file_exists($file))
@@ -372,11 +371,11 @@ if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
        }
     }
     //Clean jsLanguage from cache
-    $cachedir = sugar_cached("jsLanguage");
-    if(is_dir($cachedir)){
-		logThis("clear $cachedir files");
-    	$allModFiles = array();
-    	$allModFiles = findAllFiles($cachedir,$allModFiles);
+    if(is_dir($GLOBALS['sugar_config']['cache_dir'].'jsLanguage'))
+    {
+       logThis('clear ' . $GLOBALS['sugar_config']['cache_dir'].'jsLanguage' . ' files');
+       $allModFiles = array();
+       $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'jsLanguage',$allModFiles);
        foreach($allModFiles as $file){
            	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
            	if(file_exists($file))
@@ -386,9 +385,30 @@ if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
            	}
        }
     }
-
+    
 }
 logThis('finished check to see if current_db_version in $_SESSION equals target_db_version in $_SESSION');
+
+//BEGIN SUGARCRM flav=int ONLY
+//This should be removed as there is no 5.x -> 6.2 upgrade path
+/*
+//cleanup cache modules
+if(substr($sugar_version,0,1) == 5)
+{
+	//Clean modules from cache
+    if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
+       $allModFiles = array();
+       $allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
+       foreach($allModFiles as $file){
+           	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
+           	if(file_exists($file)){
+				unlink($file);
+           	}
+       }
+    }
+}
+*/
+//END SUGARCRM flav=int ONLY
 
 //Look for chance folder and delete it if found. Bug 23595
 if(function_exists('deleteChance'))
@@ -405,7 +425,7 @@ if(function_exists('deleteCache'))
 }
 
 //add tabs
-$from_dir = remove_file_extension($install_file) . "-restore";
+$from_dir = clean_path(remove_file_extension($install_file) . "-restore");
 logThis('call addNewSystemTabsFromUpgrade(' . $from_dir . ')');
 addNewSystemTabsFromUpgrade($from_dir);
 logThis('finished addNewSystemTabsFromUpgrade');
@@ -521,6 +541,10 @@ $rebuildResult = "<b>{$mod_strings['LBL_UW_REBUILD_TITLE']}</b><br />";
 $rebuildResult .= "<a href='javascript:void(0); toggleRebuild();'>{$mod_strings['LBL_UW_SHOW']}</a> <div id='rebuildResult'></div>";
 
 $rebuildResult = '';
+
+//moving unlink files to last
+//unlinkTempFiles();
+
 
 $skipped_queries_Desc='';
 if(isset($_SESSION['sqlSkippedQueries']) && $_SESSION['sqlSkippedQueries'] != null && is_array($_SESSION['sqlSkippedQueries']) && sizeof($_SESSION['sqlSkippedQueries'])>0){

@@ -136,9 +136,9 @@
 </table>
 </table>
 
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
-{sugar_getscript file="include/javascript/yui/dragdrop.js"}
 {literal}
+<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
+<script src = "include/javascript/yui/dragdrop.js" ></script>
 <script>
 
     var lastField = '';
@@ -212,9 +212,7 @@
         }
         lastField = '';
         lastRowCount = -1;
-        setSingularDropDownValue()
-        document.getElementById('svalue_'+ rowCount).value = document.getElementById('slot' + rowCount + '_stext').value;
-
+        setSingularDropDownValue(rowCount);
     }
 
     var slotCount = {/literal}{$rowCounter}{literal};

@@ -10,8 +10,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
 require_once('include/SugarPHPMailer.php');
+
 require_once('include/Pear/HTML_Safe/Safe.php');
-require_once 'include/upload_file.php';
 
 class Email extends SugarBean {
 	/* SugarBean schema */
@@ -116,30 +116,22 @@ class Email extends SugarBean {
 
 	/* public */
 	var $et;		// EmailUI object
-	// prefix to use when importing inlinge images in emails
-	public $imagePrefix;
-	//
-	protected $email_uploads;
+
+
 
 	/**
 	 * sole constructor
 	 */
-	function Email()
-	{
-	    global $current_user;
-	    $this->cachePath = sugar_cached('modules/Emails');
+	function Email() {
+	    $this->cachePath = $GLOBALS['sugar_config']['cache_dir'].'modules/Emails';
 		parent::SugarBean();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY
 
 		$this->safe = new HTML_Safe();
-		$this->safe->whiteProtocols[] = "cid";
 		$this->safe->clear();
 		$this->emailAddress = new SugarEmailAddress();
-		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
-		if (!empty($current_user->id))
-            $this->email_uploads = "modules/Emails/{$current_user->id}";
 	}
 
 	function email2init() {
@@ -159,15 +151,24 @@ class Email extends SugarBean {
 	 * DOES NOT CREATE A NOTE
 	 * @return string ID of note associated with the attachment
 	 */
-	public function email2saveAttachment()
-	{
-		$upload = new UploadFile('email_attachment');
-		if(!$upload->confirm_upload()) {
-		    $err = $upload->get_upload_error();
-   		    if($err) {
-   		        $GLOBALS['log']->error("Email Attachment could not be attached due to error: $err");
-   		    }
-   		    return array();
+	function email2saveAttachment() {
+		global $sugar_config;
+
+		$filesError = array(
+			0 => 'UPLOAD_ERR_OK - There is no error, the file uploaded with success.',
+			1 => 'UPLOAD_ERR_INI_SIZE - The uploaded file exceeds the upload_max_filesize directive in php.ini.',
+			2 => 'UPLOAD_ERR_FORM_SIZE - The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+			3 => 'UPLOAD_ERR_PARTIAL - The uploaded file was only partially uploaded.',
+			4 => 'UPLOAD_ERR_NO_FILE - No file was uploaded.',
+			5 => 'UNKNOWN ERROR',
+			6 => 'UPLOAD_ERR_NO_TMP_DIR - Missing a temporary folder. Introduced in PHP 4.3.10 and PHP 5.0.3.',
+			7 => 'UPLOAD_ERR_CANT_WRITE - Failed to write file to disk. Introduced in PHP 5.1.0.',
+		);
+
+		// cn: Bug 5995 - rudimentary error checking
+		if($_FILES['email_attachment']['error'] != 0 && $_FILES['email_attachment']['error'] != 4) {
+			$GLOBALS['log']->debug('Email Attachment could not be attach due to error: '.$filesError[$_FILES['email_attachment']['error']]);
+			return array();
 		}
 
 		$guid = create_guid();
@@ -180,10 +181,11 @@ class Email extends SugarBean {
 					'name' => $GLOBALS['db']->helper->escape_quote($fileName),
 					'nameForDisplay' => $fileName
 				);
-        } else {
-			$GLOBALS['log']->debug("Email Attachment [$fileName] could not be moved to upload dir");
-			return array();
-        }
+			} else {
+				$GLOBALS['log']->debug("Email Attachment [ {$cleanAttachmentFileName} ] could not be moved to cache dir");
+				return array();
+			}
+		}
 	}
 
 	function safeAttachmentName($filename) {
@@ -656,6 +658,7 @@ class Email extends SugarBean {
 						$note->parent_type = $this->module_dir;
 						$note->name = $filename;
 						$note->filename = $filename;
+						$noteFile = "{$sugar_config['upload_dir']}{$note->id}";
 						$note->file_mime_type = $this->email2GetMime($fileLocation);
 						//BEGIN SUGARCRM flav=pro ONLY
             			$note->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
@@ -663,9 +666,9 @@ class Email extends SugarBean {
             			$noteteamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
             			$note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
 						//END SUGARCRM flav=pro ONLY
-                        $dest = "upload://{$note->id}";
-						if(!copy($fileLocation, $dest)) {
-							$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
+
+						if(!copy($fileLocation, $noteFile)) {
+							$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to cache/upload [ {$fileLocation} ]");
 						}
 
 						$note->save();
@@ -678,6 +681,9 @@ class Email extends SugarBean {
 		if(!empty($request['documents'])) {
 			$exDocs = explode("::", $request['documents']);
 
+
+
+
 			foreach($exDocs as $docId) {
 				$docId = trim($docId);
 				if(!empty($docId)) {
@@ -687,7 +693,7 @@ class Email extends SugarBean {
 					$docRev->retrieve($doc->document_revision_id);
 
 					$filename = $docRev->filename;
-					$fileLocation = "upload://{$docRev->id}";
+					$fileLocation = "{$sugar_config['upload_dir']}{$docRev->id}";
 					$mime_type = $docRev->file_mime_type;
 					$mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
 
@@ -705,9 +711,10 @@ class Email extends SugarBean {
 						$note->team_id = $this->team_id;
 						$note->team_set_id = $this->team_set_id;
 						//END SUGARCRM flav=pro ONLY
-                        $dest = "upload://{$note->id}";
-						if(!copy($fileLocation, $dest)) {
-							$GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
+						$noteFile = "{$sugar_config['upload_dir']}{$note->id}";
+
+						if(!copy($fileLocation, $noteFile)) {
+							$GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file to {$sugar_config['upload_dir']} [ {$fileLocation} ]");
 						}
 
 						$note->save();
@@ -727,7 +734,7 @@ class Email extends SugarBean {
 					$note->retrieve($noteId);
 					if (!empty($note->id)) {
 						$filename = $note->filename;
-						$fileLocation = "upload://{$note->id}";
+						$fileLocation = "{$sugar_config['upload_dir']}{$note->id}";
 						$mime_type = $note->file_mime_type;
 						if (!$note->embed_flag) {
 							$mail->AddAttachment($fileLocation,$filename, 'base64', $mime_type);
@@ -1043,6 +1050,8 @@ class Email extends SugarBean {
 	 */
 	function saveTempNoteAttachments($filename,$fileLocation, $mimeType)
 	{
+	    global $sugar_config;
+
 	    $tmpNote = new Note();
 	    $tmpNote->id = create_guid();
 	    $tmpNote->new_with_id = true;
@@ -1055,10 +1064,9 @@ class Email extends SugarBean {
 	    $tmpNote->team_id = $this->team_id;
 	    $tmpNote->team_set_id = $this->team_set_id;
 	    //END SUGARCRM flav=pro ONLY
-	    $noteFile = "upload://{$tmpNote->id}";
-	    if(!copy($fileLocation, $noteFile)) {
-    	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
-	    }
+	    $noteFile = "{$sugar_config['upload_dir']}{$tmpNote->id}";
+	    if(!copy($fileLocation, $noteFile))
+    	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file to {$sugar_config['upload_dir']} [ {$fileLocation} ]");
 	    $tmpNote->save();
 	}
 	/**
@@ -1371,7 +1379,7 @@ class Email extends SugarBean {
 					$noteDupe->parent_id = $this->id;
 					$noteDupe->parent_type = $this->module_dir;
 
-					$noteFile = new UploadFile();
+					$noteFile = new UploadFile('none');
 					$noteFile->duplicate_file($a['id'], $note->id, $note->filename);
 
 					$note->save();
@@ -1661,7 +1669,7 @@ class Email extends SugarBean {
 
 			//// get the email to see if we're dealing with a dupe
 			//// what crappy coding
-			preg_match('/[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i',$v, $match);
+			preg_match("/[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i",$v, $match);
 
 			if(!empty($match[0]) && !in_array(trim($match[0]), $knownEmails)) {
 				$knownEmails[] = $match[0];
@@ -1769,7 +1777,7 @@ class Email extends SugarBean {
 				$noteTemplate->team_id = $this->team_id;
 				//END SUGARCRM flav=pro ONLY
 
-				$noteFile = new UploadFile();
+				$noteFile = new UploadFile('none');
 				$noteFile->duplicate_file($noteId, $noteTemplate->id, $noteTemplate->filename);
 				$noteArray[] = $noteTemplate;
 			}
@@ -1862,7 +1870,7 @@ class Email extends SugarBean {
 				$doc = new Document();
 				$docRev = new DocumentRevision();
 				$docNote = new Note();
-				$noteFile = new UploadFile();
+				$noteFile = new UploadFile('none');
 
 				$doc->retrieve($_REQUEST['documentId'.$i]);
 				$docRev->retrieve($doc->document_revision_id);
@@ -2058,7 +2066,6 @@ class Email extends SugarBean {
 		return $mail;
 	}
 
-
 	/**
 	 * Retrieve function from handlebody() to unit test easily
 	 * @param $mail
@@ -2080,10 +2087,91 @@ class Email extends SugarBean {
 		$mail->AltBody = $plainText;
 		$this->description = $plainText;
 
-		$mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
+		$fileBasePath = "{$sugar_config['cache_dir']}images/";
+		$filePatternSearch = "{$sugar_config['cache_dir']}";
+		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		$filePatternSearch = $filePatternSearch . "images\/";
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
+		{  //cache/images
+			$matches = array();
+			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
+			foreach($matches[0] as $match) {
+				$filename = str_replace($fileBasePath, '', $match);
+				$filename = urldecode(substr($filename, 0, -1));
+				$cid = $filename;
+				$file_location = clean_path(getcwd()."/{$sugar_config['cache_dir']}images/{$filename}");
+				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+
+				if(file_exists($file_location)) {
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+				}
+			}
+
+			//replace references to cache with cid tag
+			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
+			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
+			// remove bad img line from outbound email
+			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
+			$mail->Body = preg_replace($regex, '', $mail->Body);
+		}
+		$fileBasePath = "{$sugar_config['upload_dir']}";
+		$filePatternSearch = "{$sugar_config['upload_dir']}";
+		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
+		{
+			$matches = array();
+			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
+			foreach($matches[0] as $match) {
+				$filename = str_replace($fileBasePath, '', $match);
+				$filename = urldecode(substr($filename, 0, -1));
+				$cid = $filename;
+				$file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$filename}");
+				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+
+				if(file_exists($file_location)) {
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+				}
+			}
+
+			//replace references to cache with cid tag
+			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
+			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
+
+			// remove bad img line from outbound email
+			$regex = '#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim';
+			$mail->Body = preg_replace($regex, '', $mail->Body);
+		}
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
+		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im";
+        $embededImageMatches = array();
+        preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
+
+        foreach ($embededImageMatches as $singleMatch )
+        {
+            $fullMatch = $singleMatch[0];
+            $noteId = $singleMatch[1];
+            $cid = $noteId;
+            $filename = $noteId;
+
+            //Retrieve note for mimetype
+            $tmpNote = new Note();
+            $tmpNote->retrieve($noteId);
+            //Replace the src part of img tag with new cid tag
+            $cidRegex = "/src=\"([^\"]*)\"/im";
+            $replaceMatch = preg_replace($cidRegex, "src=\"cid:$noteId\"", $fullMatch);
+
+            //Replace the body, old tag for new tag
+            $mail->Body = str_replace($fullMatch, $replaceMatch, $mail->Body);
+
+            //Attach the file
+            $file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$noteId}");
+
+            if(file_exists($file_location))
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
+        }
+        //End Replace
+
 
 		$mail->Body = from_html($mail->Body);
 	}
@@ -2163,11 +2251,11 @@ class Email extends SugarBean {
 			$mime_type = 'text/plain';
 			if($note->object_name == 'Note') {
 				if(!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) { // brandy-new file upload/attachment
-					$file_location = "upload://$note->id";
+					$file_location = $sugar_config['upload_dir'].$note->id;
 					$filename = $note->file->original_file_name;
 					$mime_type = $note->file->mime_type;
 				} else { // attachment coming from template/forward
-					$file_location = "upload://{$note->id}";
+					$file_location = rawurldecode(UploadFile::get_file_path($note->filename,$note->id));
 					// cn: bug 9723 - documents from EmailTemplates sent with Doc Name, not file name.
 					$filename = !empty($note->filename) ? $note->filename : $note->name;
 					$mime_type = $note->file_mime_type;
@@ -2176,14 +2264,21 @@ class Email extends SugarBean {
 				$filePathName = $note->id;
 				// cn: bug 9723 - Emails with documents send GUID instead of Doc name
 				$filename = $note->getDocumentRevisionNameForDisplay();
-				$file_location = "upload://$note->id";
+				$file_location = getcwd().'/'.$GLOBALS['sugar_config']['upload_dir'].$filePathName;
 				$mime_type = $note->file_mime_type;
 			}
 
 			// strip out the "Email attachment label if exists
 			$filename = str_replace($mod_strings['LBL_EMAIL_ATTACHMENT'].': ', '', $filename);
-            $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
+
 			//is attachment in our list of bad files extensions?  If so, append .txt to file location
+			//get position of last "." in file name
+			$file_ext_beg = strrpos($file_location,".");
+			$file_ext = "";
+			//get file extension
+			if($file_ext_beg >0){
+				$file_ext = substr($file_location, $file_ext_beg+1 );
+			}
 			//check to see if this is a file with extension located in "badext"
 			foreach($sugar_config['upload_badext'] as $badExt) {
 		       	if(strtolower($file_ext) == strtolower($badExt)) {
@@ -3158,39 +3253,6 @@ eoq;
                 }
         }
 
-        /**
-         * Convert reference to inline image (stored as Note) to URL link
-         * Enter description here ...
-         * @param string $note ID of the note
-         * @param string $ext type of the note
-         */
-        public function cid2Link($noteId, $noteType)
-        {
-            if(empty($this->description_html)) return;
-			list($type, $subtype) = explode('/', $noteType);
-			if(strtolower($type) != 'image') {
-			    return;
-			}
-            $upload = new UploadFile();
-			$this->description_html = preg_replace("#class=\"image\" src=\"cid:$noteId\.(.+?)\"#", "class=\"image\" src=\"{$this->imagePrefix}{$noteId}.\\1\"", $this->description_html);
-	        // ensure the image is in the cache
-			$imgfilename = sugar_cached("images/")."$noteId.".strtolower($subtype);
-			$src = "upload://$noteId";
-			if(!file_exists($imgfilename) && file_exists($src)) {
-				copy($src, $imgfilename);
-			}
-        }
 
-        /**
-         * Convert all cid: links in this email into URLs
-         */
-    	function cids2Links()
-    	{
-            if(empty($this->description_html)) return;
-    	    $q = "SELECT id, file_mime_type FROM notes WHERE parent_id = '{$this->id}' AND deleted = 0";
-    		$r = $this->db->query($q);
-            while($a = $this->db->fetchByAssoc($r)) {
-                $this->cid2Link($a['id'], $a['file_mime_type']);
-            }
-    	}
+
 } // end class def

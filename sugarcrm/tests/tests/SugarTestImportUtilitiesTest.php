@@ -21,15 +21,15 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
+ 
 class SugarTestImportUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function tearDown()
+    public function tearDown() 
     {
-     //   SugarTestImportUtilities::removeAllCreatedFiles();
+        SugarTestImportUtilities::removeAllCreatedFiles();
     }
 
-    public function testCanCreateFile()
+    public function testCanCreateFile() 
     {
         $filename = SugarTestImportUtilities::createFile();
 
@@ -48,26 +48,26 @@ class SugarTestImportUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count($columns),3);
     }
 
-    public function testCanCreateFileAndSpecifyLines()
+    public function testCanCreateFileAndSpecifyLines() 
     {
         $filename = SugarTestImportUtilities::createFile(1);
+
         $this->assertTrue(is_file($filename));
         $fp = fopen($filename,"r");
         $i = 0;
         $buffer = '';
         while (!feof($fp)) {
+            $columns = $buffer;
             $buffer = fgetcsv($fp, 4096);
-            if ( $buffer !== false ) {
+            if ( $buffer !== false )
                 $i++;
-                $columns = $buffer;
-            }
         }
         fclose($fp);
-        $this->assertEquals(1,$i);
-        $this->assertEquals(3, count($columns));
+        $this->assertEquals($i,1);
+        $this->assertEquals(count($columns),3);
     }
-
-    public function testCanCreateFileAndSpecifyLinesAndColumns()
+    
+    public function testCanCreateFileAndSpecifyLinesAndColumns() 
     {
         $filename = SugarTestImportUtilities::createFile(2,5);
 
@@ -86,16 +86,16 @@ class SugarTestImportUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(count($columns),5);
     }
 
-    public function testCanRemoveAllCreatedFiles()
+    public function testCanRemoveAllCreatedFiles() 
     {
         $filesCreated = array();
-
-        for ($i = 0; $i < 5; $i++)
+        
+        for ($i = 0; $i < 5; $i++) 
             $filesCreated[] = SugarTestImportUtilities::createFile();
         $filesCreated[] = $filesCreated[4].'-0';
-
+        
         SugarTestImportUtilities::removeAllCreatedFiles();
-
+        
         foreach ( $filesCreated as $filename )
             $this->assertFalse(is_file($filename));
     }

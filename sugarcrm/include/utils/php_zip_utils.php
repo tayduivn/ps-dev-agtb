@@ -42,7 +42,7 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
         return false;
     }
     $zip = new ZipArchive;
-    $res = $zip->open(UploadFile::realpath($zip_archive)); // we need realpath here for PHP streams support
+    $res = $zip->open($zip_archive);
     if($res !== true) {
         if (!defined('SUGAR_PHPUNIT_RUNNER'))
             die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
@@ -50,9 +50,9 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
     }
 
     if($archive_file !== null) {
-        $res = $zip->extractTo(UploadFile::realpath($zip_dir), $archive_file);
+        $res = $zip->extractTo($zip_dir, $archive_file);
     } else {
-        $res = $zip->extractTo(UploadFile::realpath($zip_dir));
+        $res = $zip->extractTo($zip_dir);
     }
     if($res !== true) {
         if (!defined('SUGAR_PHPUNIT_RUNNER'))
@@ -70,8 +70,8 @@ function zip_dir( $zip_dir, $zip_archive )
         return false;
     }
     $zip = new ZipArchive();
-    $zip->open(UploadFile::realpath($zip_archive), ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE); // we need realpath here for PHP streams support
-    $path = UploadFile::realpath($zip_dir);
+    $zip->open($zip_archive, ZIPARCHIVE::CREATE|ZIPARCHIVE::OVERWRITE);
+    $path = realpath($zip_dir);
     $chop = strlen($path)+1;
     $dir = new RecursiveDirectoryIterator($path);
     $it = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::SELF_FIRST);
@@ -87,7 +87,6 @@ function zip_dir( $zip_dir, $zip_archive )
 
 /**
  * Zip list of files, optionally stripping prefix
- * FIXME: check what happens with streams
  * @param string $zip_file
  * @param array $file_list
  * @param string $prefix Regular expression for the prefix to strip
@@ -95,7 +94,7 @@ function zip_dir( $zip_dir, $zip_archive )
 function zip_files_list($zip_file, $file_list, $prefix = '')
 {
     $archive    = new ZipArchive();
-    $res = $archive->open(UploadFile::realpath($zip_file), ZipArchive::CREATE|ZipArchive::OVERWRITE); // we need realpath here for PHP streams support
+    $res = $archive->open($zip_file, ZipArchive::CREATE|ZipArchive::OVERWRITE);
     if($res !== TRUE)
     {
         $GLOBALS['log']->fatal("Unable to open zip file, check directory permissions: $zip_file");

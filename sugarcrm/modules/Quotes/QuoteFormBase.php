@@ -31,7 +31,7 @@ class QuoteFormBase{
 
 function checkForDuplicates($prefix){
 	require_once('include/formbase.php');
-
+	
 	$focus = new Quote();
 	if(!checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
@@ -44,7 +44,7 @@ function checkForDuplicates($prefix){
 	}
 	if(!empty($query)){
 		$rows = array();
-
+		
 		$db = DBManagerFactory::getInstance();
 		$result = $db->query($query.');');
 		if($db->getRowCount($result) == 0){
@@ -127,8 +127,8 @@ $lbl_save_button_label = $app_strings['LBL_SAVE_BUTTON_LABEL'];
 
 
 $the_form = get_left_form_header($mod_strings['LBL_NEW_FORM_TITLE']);
-$the_form .= getVersionedScript("modules/Quotes/Forms.js");
 $the_form .= <<<EOQ
+<script type="text/javascript" src="modules/Quotes/Forms.js"></script>
 		<form name="{$prefix}EditView" onSubmit="return check_form('{$prefix}EditView')" method="POST" action="index.php">
 			<input type="hidden" name="{$prefix}module" value="Quotes">
 			<input type="hidden" name="${prefix}action" value="Save">
@@ -149,7 +149,7 @@ function getWideFormBody($prefix, $mod='Quotes', $formname='', $lead=''){
 	if(!ACLController::checkAccess('Quotes', 'edit', true)){
 		return '';
 	}
-
+	
 	if(empty($lead)){
 		$lead = new Lead();
 	}
@@ -306,7 +306,7 @@ $the_form = <<<EOQ
 		${mod_strings['LBL_ACCOUNT_NAME']}&nbsp;<span class="required">${lbl_required_symbol}</span><br>
 		<input name='{$prefix}billing_account_name' type='text' readonly value="" size="16">
 		<input name='billing_account_id' type="hidden" value=''>&nbsp;<input title="{$app_strings['LBL_SELECT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_SELECT_BUTTON_KEY']}" type="button" class="button" value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1 onclick='open_popup("Accounts", 600, 400, "", true, false, {$encoded_popup_request_data});' /><br>
-		${mod_strings['LBL_DATE_QUOTE_EXPECTED_CLOSED']}&nbsp;<span class="required">${lbl_required_symbol}</span><br>
+		${mod_strings['LBL_DATE_QUOTE_EXPECTED_CLOSED']}&nbsp;<span class="required">${lbl_required_symbol}</span><br>		
 		<input name='{$prefix}date_quote_expected_closed' id='{$prefix}date_quote_expected_closed' onblur="parseDate(this, '$cal_dateformat');" type="text" maxlength="10" value="${default_date_start}"> <img src="{$jsCalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="date_quote_expected_closed_trigger" align="absmiddle"><br>
 		$lbl_quote_stage&nbsp;<span class="required">$lbl_required_symbol</span><br>
 		<select name='{$prefix}quote_stage'>
@@ -337,10 +337,10 @@ return $the_form;
 
 
 function handleSave($prefix,$redirect=true, $useRequired=false){
-
-
+	
+	
 	require_once('include/formbase.php');
-
+	
 	$focus = new Quote();
 	if($useRequired &&  !checkRequired($prefix, array_keys($focus->required_fields))){
 		return null;
@@ -352,7 +352,7 @@ function handleSave($prefix,$redirect=true, $useRequired=false){
 	}
 	$focus->save($GLOBALS['check_notify']);
 	$return_id = $focus->id;
-
+    
 	$GLOBALS['log']->debug("Saved record with id of ".$return_id);
 	if($redirect){
 		handleRedirect($return_id,"Quotes" );

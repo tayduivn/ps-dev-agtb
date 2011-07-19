@@ -113,13 +113,13 @@ function createDatabaseForER_Diagram($sql) {
 }
 
 function createSchema($execute=false,$return=false,&$response){
-
+	
 	global $current_user, $beanFiles;
 	global $dictionary;
 	set_time_limit(3600);
 	$commentsAll = array();
 	$commentsNot = array();
-
+	
 	$db = &DBManagerFactory::getInstance();
 	foreach( $beanFiles as $bean => $file ){
     	require_once( $file );
@@ -397,7 +397,7 @@ function createSchema($execute=false,$return=false,&$response){
             $currTable_Orig = $currTable = $sqlArray[$tableName];
             unset($sqlArray[$tableName]);
             if ( $debugTable ) { echo(__LINE__.": currTable_Orig=$currTable_Orig<br>"); }
-
+            
             // We need to extract the data columns from the indexes.
             $currTableColumns = substr($currTable,stripos($currTable,'(')+1);
             $currTableColumns = substr($currTableColumns,0,strripos($currTableColumns,')'));
@@ -417,7 +417,7 @@ function createSchema($execute=false,$return=false,&$response){
             // This one replaces the DEFAULT ',' in import_maps
             $currTableColumns = str_replace("','","'^^^'",$currTableColumns);
             if ( $debugTable ) { echo(__LINE__.": currTableColumns after: $currTableColumns<br>"); }
-
+            
             //$currTable= substr($currTable,stripos($currTable,'(')+1,strripos($currTable,')')-1 );
             $currTableDataColumnsTmp = explode(',',$currTableColumns);
             $currTableDataColumns = array();
@@ -429,7 +429,7 @@ function createSchema($execute=false,$return=false,&$response){
             if ( $debugTable ) { echo(__LINE__.": currTableDataColumns=<pre>\n".print_r($currTableDataColumns,true)."</pre><br>"); }
 
             $currTableSql_comments = "CREATE TABLE {$tableName} (";
-
+            
             if(isset($tabArray['table'])&& $tabArray['table'] != null){
                 $comments_sql .="ALTER TABLE {$tableName} COMMENT '".addslashes($tabArray['table'])."';"."\n";
             }
@@ -441,7 +441,7 @@ function createSchema($execute=false,$return=false,&$response){
                 }
                 //if($tableName == 'accounts') print_r($colName).'</br>';
                 if(isset($tabArray['columns'][$colName]) && $tabArray['columns'][$colName] != null){
-
+                    
                     //get the column comment
                     $colComment = $tabArray['columns'][$colName];
                     //add to the column an dprepare alter statement
@@ -470,8 +470,9 @@ function createSchema($execute=false,$return=false,&$response){
 
       //echo '**************************COMMENTS***************************';
       //print_r($comments_er);
-		$schema_dir =sugar_cached("erschema");
-        mkdir_recursive($schema_dir);
+       $cwd = getcwd();
+		mkdir_recursive(clean_path("{$cwd}/{$GLOBALS['sugar_config']['cache_dir']}erschema"));
+		$schema_dir =clean_path("{$cwd}/{$GLOBALS['sugar_config']['cache_dir']}erschema");
 	 	$schema_file =$schema_dir.'/schema.sql';
 	 	$fk_schema_file =$schema_dir.'/fkschema.sql';
 	 	$comments_schema_file =$schema_dir.'/comments.sql';

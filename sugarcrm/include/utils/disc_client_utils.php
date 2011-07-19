@@ -284,8 +284,7 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
     	$is_first_sync = true;
     }
 
-    $tempdir = create_cache_directory("disc_client");
-    $temp_file  = tempnam($tempdir, "sug" );
+    $temp_file  = tempnam(getcwd()."/".$sugar_config['tmp_dir'], "sug" );
     $file_list = array();
     if(!$is_first_sync){
     	$all_src_files  = findAllTouchedFiles( ".", array(), $last_local_sync);
@@ -319,11 +318,11 @@ function disc_client_get_zip( $soapclient, $session, $verbose=false , $attempts 
 
     // encode data
     $data = base64_encode($contents);
-    $md5file  = array('filename'=>$temp_file, 'md5'=>$md5, 'data'=>$data, 'error' => null);
+   $md5file  = array('filename'=>$temp_file, 'md5'=>$md5, 'data'=>$data, 'error' => null);
     $result = $soapclient->call('get_encoded_zip_file', array( 'session'=>$session, 'md5file'=>$md5file, 'last_sync' => $last_server_sync, 'is_md5_sync' => $is_first_sync));
 
     //3) at this point we could have the zip file
-    $zip_file = tempnam($tempdir, "zip" ).'.zip';
+    $zip_file = tempnam(getcwd()."/".$sugar_config['tmp_dir'], "zip" ).'.zip';
     if(isset($result['result']) && !empty($result['result'])){
     	$fh = sugar_fopen($zip_file, 'w');
     	fwrite($fh, base64_decode($result['result']));
@@ -371,9 +370,7 @@ function get_required_upgrades($soapclient, $session){
 
     $result = $soapclient->call('get_required_upgrades', array('session'=>$session, 'client_upgrade_history' => $history, 'client_version' => $sugar_version));
 
-    $tempdir_parent = create_cache_directory("disc_client");
-    $temp_dir = tempnam($tempdir_parent, "sug");
-    sugar_mkdir($temp_dir, 0775);
+    $temp_dir = mk_temp_dir($sugar_config['tmp_dir'], "sug" );
 
     $upgrade_installed = false;
 
@@ -428,23 +425,34 @@ function get_required_upgrades($soapclient, $session){
     return $upgrade_installed;
 }
 
-function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempts = 0)
-{
+function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempts = 0){
 	$max_attempts = 3;
     global $sugar_config;
 
+
+
     // files might be big
+
     ini_set( "memory_limit", "-1" );
+
+
+
     $return_str  = "";
 
-    $tempdir_parent = create_cache_directory("disc_client");
-    $temp_dir = tempnam($tempdir_parent, "sug");
-    sugar_mkdir($temp_dir, 0775);
-    if( !is_dir( $temp_dir ) ) {
+
+
+    $temp_dir = mk_temp_dir( getcwd() . '/' . $sugar_config['tmp_dir'], "sug" );
+
+    if( !is_dir( $temp_dir ) ){
+
         die( "Could not create a temp dir." );
+
     }
 
+
+
     // get pattern file
+
     $result = $soapclient->call( 'get_encoded_file', array( 'session'=>$session, 'filename'=>"install/data/disc_client.php" ) );
 
     if( !empty($soapclient->error_str)){

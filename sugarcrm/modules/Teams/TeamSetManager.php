@@ -35,27 +35,27 @@ class TeamSetManager {
 
 	private static $instance;
 	private static $_setHash = array();
-
+	
 	/**
 	 * Constructor for TrackerManager.  Declared private for singleton pattern.
 	 *
 	 */
 	private function __construct() {}
-
+	
 	/**
 	 * getInstance
 	 * Singleton method to return static instance of TrackerManager
-	 * @returns static TrackerManager instance
+	 * @returns static TrackerManager instance 
 	 */
-	static function getInstance(){
+	static function getInstance(){	
 	    if (!isset(self::$instance)) {
 	        self::$instance = new TeamSetManager();
 			//Set global variable for tracker monitor instances that are disabled
-	        self::$instance->setup();
+	        self::$instance->setup();  
 	    } // if
 	    return self::$instance;
 	}
-
+	
 	/**
 	 * Add a team_set_id and module combination to the hash for later flushing to the db.
 	 *
@@ -67,7 +67,7 @@ class TeamSetManager {
 			self::$_setHash[$team_set_id][] = $table_name;
 		}
 	}
-
+	
 	/**
 	 * Go through each of the team_sets_modules and find sets that are no longer in use
 	 *
@@ -77,7 +77,7 @@ class TeamSetManager {
 		//maintain a list of the team set ids we would like to remove
 		$setsToRemove = array();
 		$setsToRemain = array();
-
+		
 		$tsmResult = $teamSetModule->db->query('SELECT team_sets_modules.*  FROM team_sets_modules  where team_sets_modules.deleted=0',true,"Error retrieving TeamSetModule list: ");
 		while($tsmRow = $teamSetModule->db->fetchByAssoc($tsmResult)){
 			//pull off the team_set_id and module and run a query to see if we find if the module is still using this team_set
@@ -104,7 +104,7 @@ class TeamSetManager {
 			}else{
 				$query = "SELECT count(*) count FROM $module_table_name WHERE team_set_id = '$team_set_id'";
 				$result = $teamSetModule->db->query($query);
-
+			
 	    		if($row = $teamSetModule->db->fetchByAssoc($result))
 	    		{
 	    			if(empty($row['count'])){
@@ -115,21 +115,21 @@ class TeamSetManager {
 	    		}
 			}
 		}
-
+		
 		//compute the difference between the sets that have been designated to remain and those set to remove
 		$arrayDiff = array_diff_key($setsToRemove, $setsToRemain);
-
+		
 		//now we have our list of team_set_ids we would like to remove, let's go ahead and do it and remember
 		//to update the TeamSetModule table.
 		foreach($arrayDiff as $team_set_id => $key){
 			//1) remove from team_sets_teams
 			$query1 = "DELETE FROM team_sets_teams WHERE team_set_id = '$team_set_id'";
 			$teamSetModule->db->query($query1);
-
+			
 			//2) remove from team_sets
 			$query2 = "DELETE FROM team_sets WHERE id = '$team_set_id'";
 			$teamSetModule->db->query($query2);
-
+			
 			//3) remove from team_sets_modules
 			$query3 = "DELETE FROM $teamSetModule->table_name WHERE team_set_id = '$team_set_id'";
 			$teamSetModule->db->query($query3);
@@ -137,19 +137,19 @@ class TeamSetManager {
 		//clear out the cache
 		self::flushBackendCache();
 	}
-
+	
 	/**
 	 * Save the data in the hash to the database using TeamSetModule object
 	 *
 	 */
 	public static function save(){
-		//if this entry is set in the config file, then store the set
+		//if this entry is set in the config file, then store the set 
 		//and modules in the team_set_modules table
 		if(!empty($GLOBALS['sugar_config']['enable_team_module_save'])){
 			foreach(self::$_setHash as $team_set_id => $table_names){
 				$teamSetModule = new TeamSetModule();
 				$teamSetModule->team_set_id = $team_set_id;
-
+				
 				foreach($table_names as $table_name){
 					$teamSetModule->module_table_name = $table_name;
 					//remove the id so we do not think this is an update
@@ -159,7 +159,7 @@ class TeamSetManager {
 			}
 		}
 	}
-
+	
 	/**
 	 * The above method "save" will flush the entire cache, saveTeamSetModule will just save one entry.
 	 *
@@ -167,7 +167,7 @@ class TeamSetManager {
 	 * @param string $tableName	the corresponding table name
 	 */
 	public static function saveTeamSetModule($teamSetId, $tableName){
-		//if this entry is set in the config file, then store the set
+		//if this entry is set in the config file, then store the set 
 		//and modules in the team_set_modules table
 		if(!empty($GLOBALS['sugar_config']['enable_team_module_save'])){
 			$teamSetModule = new TeamSetModule();
@@ -176,13 +176,13 @@ class TeamSetManager {
 			$teamSetModule->save();
 		}
 	}
-
+	
 	public static function getFormattedTeamNames($teams_arr=array()) {
 		//Add a safety check (in the event that team_set_id is not set (maybe perhaps from manual SQL or failed unit tests)
 		if(!is_array($teams_arr)) {
 		   return array();
 		}
-
+		
 		//now format the returned values relative to how the user has their locale
     	$teams = array();
 	    foreach($teams_arr as $team){
@@ -191,7 +191,7 @@ class TeamSetManager {
 		}
 		return $teams;
 	}
-
+	
 	/**
 	 * Check if we have an md5 relationship to a team set id
 	 *
@@ -203,17 +203,17 @@ class TeamSetManager {
         if ( $teamSetsMD5 != null && !empty($teamSetsMD5[$md5])) {
             return $teamSetsMD5[$md5];
         }
-
-	 	if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php') )) {
-            require_once($cachefile);
+        
+	 	if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) {
+            require_once($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php');
             sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
-            if(!empty($teamSetsMD5[$md5])){
+            if(!empty($teamSetsMD5[$md5])){       
             	return $teamSetsMD5[$md5];
             }
         }
         return null;
 	}
-
+	
 	public static function addTeamSetMD5($team_set_id, $md5){
 		$teamSetsMD5 = sugar_cache_retrieve(TEAM_SET_MD5_CACHE_KEY);
 		if(empty($teamSetsMD5) || !is_array($teamSetsMD5)){
@@ -222,31 +222,31 @@ class TeamSetManager {
         if ( $teamSetsMD5 != null && !empty($teamSetsMD5[$md5])) {
             return;
         }
-
-	 	if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php')) ) {
-            require_once($cachefile);
-            sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
-            if(!empty($teamSetsMD5[$md5])){
+        
+	 	if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) {
+            require_once($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php');
+           sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
+            if(!empty($teamSetsMD5[$md5])){       
             	return;
             }
         }
-
+       
         $teamSetsMD5[$md5] = $team_set_id;
         sugar_cache_put(TEAM_SET_MD5_CACHE_KEY,$teamSetsMD5);
-
-        if ( ! file_exists($cachefile) ) {
-            mkdir_recursive(dirname($cachefile));
+	 	
+        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) { 
+            mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); 
         }
-        $fd = @fopen($cachefile,'w');
+        $fd = @fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php','w');
         if ($fd) {
             fwrite($fd,"<?php\n\n".'$teamSetsMD5 = '.var_export($teamSetsMD5,true).";\n ?>");
             fclose($fd);
         }
         else {
-            $GLOBALS['log']->error("File '$cachefile' could not be written");
+            $GLOBALS['log']->error('File "'.$GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php" could not be written');
         }
 	}
-
+	
 	/**
 	 * Retrieve a list of team associated with a set
 	 *
@@ -262,15 +262,15 @@ class TeamSetManager {
         }
 
         // Already stored in a file
-        if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetCache.php')) ) {
-            require_once($cachefile);
-            if(!empty($teamSets[$team_set_id])){
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php') ) {
+            require_once($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php');
+            if(!empty($teamSets[$team_set_id])){       
             	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
             	return $teamSets[$team_set_id];
             }
         }
-
-
+        		
+		
 		$teamSet = new TeamSet();
 		$teams = $teamSet->getTeams($team_set_id);
 		$team_names = array();
@@ -285,25 +285,25 @@ class TeamSetManager {
 			$tm = $teams[$team_id];
 			$teamSets[$team_set_id][] = array('id' => $team_id, 'name' => $team_name, 'name_2' => $tm->name_2);
 		}
-
+		
 	 	sugar_cache_put(TEAM_SET_CACHE_KEY,$teamSets);
-
-        if ( ! file_exists($cachefile) ) {
-            mkdir_recursive(dirname($cachefile));
+	 	
+        if ( ! file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php') ) { 
+            mkdir_recursive($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/'); 
         }
-
-        $fd = @fopen($cachefile,'w');
+        
+        $fd = @fopen($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php','w');
         if ( $fd ) {
             fwrite($fd,"<?php\n\n".'$teamSets = '.var_export($teamSets,true).";\n ?>");
             fclose($fd);
         }
         else {
-            $GLOBALS['log']->error("File $cachefile could not be written");
+            $GLOBALS['log']->error('File "'.$GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php" could not be written');
         }
-
+        
         return isset($teamSets[$team_set_id])?$teamSets[$team_set_id]:'';
 	}
-
+	
 	/**
 	 * Retrieve a list of team associated with a set for display purposes
 	 *
@@ -314,7 +314,7 @@ class TeamSetManager {
 		if(empty($team_set_id)) return array();
 		return self::getFormattedTeamNames(self::getUnformattedTeamsFromSet($team_set_id));
 	}
-
+	
 	/**
 	 * Return a comma delimited list of teams for display purposes
 	 *
@@ -345,7 +345,7 @@ class TeamSetManager {
 	   	$value = $primary.$value;
 	   	return substr($value, 2);
 	}
-
+	
 	/**
 	 * clear out the cache
 	 *
@@ -353,41 +353,40 @@ class TeamSetManager {
 	public static function flushBackendCache( ) {
         // This function will flush the cache files used for the module list and the link type lists
         sugar_cache_clear(TEAM_SET_CACHE_KEY);
-
-        if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetCache.php')) ) {
-            unlink($cachefile);
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php') ) {
+            unlink($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetCache.php');
         }
-
+        
         sugar_cache_clear(TEAM_SET_MD5_CACHE_KEY);
-        if ( file_exists($cachefile = sugar_cached('modules/Teams/TeamSetMD5Cache.php')) ) {
-            unlink($cachefile);
+        if ( file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php') ) {
+            unlink($GLOBALS['sugar_config']['cache_dir'].'modules/Teams/TeamSetMD5Cache.php');
         }
     }
-
+    
     /**
      * Rebuild the team_sets_teams relationship and remove any teams that have been deleted from the system from the team set
      * Go through each team set and check if each team on the set is still in the teams table.
-     *
+     * 
      * @return the team sets that have been affected as well as the team ids within those team sets
      */
     public static function rebuildTeamSets(){
-
+		
 		$teamSet = new TeamSet();
 		$sql = "SELECT id FROM $teamSet->table_name WHERE deleted = 0";
-
-		$result = $teamSet->db->query($sql);
-		$affectedTeamSets = array();
+		
+		$result = $teamSet->db->query($sql);	
+		$affectedTeamSets = array();	
 		while($row = $teamSet->db->fetchByAssoc($result)){
 			$team_set_id = $row['id'];
 			$teamSetTeamIds = $teamSet->getTeams($team_set_id);
-
+			
 			$teamSqlNoDelete = "SELECT team_id FROM team_sets_teams team_set_id = '$team_set_id'";
 			$resultNoDelete = $teamSet->db->query($teamSqlNoDelete);
 			$teamIdsNoDelete = array();
 			while($rowNoDelete = $teamSet->db->fetchByAssoc($resultNoDelete)){
 	    		$teamIdsNoDelete[] = $rowNoDelete['id'];
 	    	}
-
+	    	
 	    	//no we have a set of teams actually in the table: $teamIdsNoDelete
 	    	//and a list of teams joined against the teams table: $teamSetTeamIds
 	    	//let's compare them and see if there are any differences.
@@ -405,7 +404,7 @@ class TeamSetManager {
 		}
 		return $affectedTeamSets;
     }
-
+    
     /**
      * Given a particular team id, remove the team from all team sets that it belongs to
      *
@@ -413,21 +412,21 @@ class TeamSetManager {
      * @return Array of team_set ids that were affected
      */
     public static function removeTeamFromSets($team_id){
-
+    	
 		$teamSet = new TeamSet();
 		$sql = "SELECT tsm.team_set_id, tsm.module_table_name FROM team_sets_modules tsm inner join team_sets_teams tst on tsm.team_set_id = tst.team_set_id where tst.team_id = '$team_id'";
     	$result = $teamSet->db->query($sql);
     	$affectedTeamSets = array();
-
+    	
     	$team_set_id_modules = array();
     	while($row = $teamSet->db->fetchByAssoc($result)) {
     		  $team_set_id_modules[$row['team_set_id']][] = $row['module_table_name'];
     	}
-
+    	
     	foreach($team_set_id_modules as $team_set_id=>$modules) {
     	      $teamSet->id = $team_set_id;
     	      $teamSet->removeTeamFromSet($team_id);
-
+    	      
     	      //Now check if the new team_md5 value already exists.  If it does, we have to go and
     	      //update all the records that to use an existing team_set_id and get rid of this team set since
     	      //it is essentially a duplicate
@@ -441,26 +440,26 @@ class TeamSetManager {
                         $GLOBALS['log']->info($sql);
     	      	    	$teamSet->db->query($sql);
     	      	    }
-
+    	      	    
     	      	    //Remove the team set entry
                     $sql = "DELETE FROM team_sets WHERE id = '{$teamSet->id}'";
                     $GLOBALS['log']->info($sql);
                     $teamSet->db->query($sql);
-
+                    
                     //Remove the team_sets_teams entries
                     $sql = "DELETE FROM team_sets_teams WHERE team_set_id = '{$teamSet->id}'";
                     $GLOBALS['log']->info($sql);
                     $teamSet->db->query($sql);
-
+                     
                     //Remove the team_sets_modules entries
                     $sql = "DELETE FROM team_sets_modules WHERE team_set_id = '{$teamSet->id}'";
                     $GLOBALS['log']->info($sql);
                     $teamSet->db->query($sql);
     	      }
-
+    	      
     	      $affectedTeamSets[$team_set_id] = $row[$team_set_id];
     	}
-
+    	
 	    return $affectedTeamSets;
     }
 }

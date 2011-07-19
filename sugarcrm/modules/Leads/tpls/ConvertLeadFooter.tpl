@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
+<script type='text/javascript' src='{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}'></script>
 {literal}
 <script type="text/javascript">
     var accountText = document.getElementById('account_name');
@@ -110,7 +110,7 @@
     </td>
     <td>
         <select id="lead_conv_ac_op_sel" name="lead_conv_ac_op_sel">
-            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}">{sugar_translate label='LBL_CONTACT' module='Contacts'}</option>
+            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}"><script>document.write(SUGAR.language.get('app_list_strings', "moduleListSingular")['Contacts']);</script></option>
         </select>
     </td>
 </tr>
@@ -123,7 +123,7 @@
     </td>
     <td>
         <select id="lead_conv_ac_op_sel" name="lead_conv_ac_op_sel[]" size="5" multiple="">
-            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}">{sugar_translate label='LBL_CONTACT' module='Contacts'}</option>
+            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}"><script>document.write(SUGAR.language.get('app_list_strings', "moduleListSingular")['Contacts']);</script></option>
         </select>
     </td>
 </tr>
@@ -134,22 +134,22 @@
 <tr>
 <td class="buttons">
 {if $bean->aclAccess("save")}
-    <input title='{sugar_translate label="LBL_SAVE_BUTTON_LABEL"}' accessKey="{sugar_translate label='LBL_SAVE_BUTTON_KEY}" class="button primary"
+    <input title='{sugar_translate label="LBL_SAVE_BUTTON_LABEL"}' accessKey="{sugar_translate label='LBL_SAVE_BUTTON_KEY}" class="button primary" 
         onclick="return check_form('{$form_name}');"
         type="submit" name="button" value="{sugar_translate label='LBL_SAVE_BUTTON_LABEL'}">
 {/if}
 
 {if !empty($smarty.request.return_action) && ($smarty.request.return_action == "DetailView" && !empty($record_id))}
-    <input title="{sugar_translate label='LBL_CANCEL_BUTTON'}" accessKey="{sugar_translate label='LBL_CANCEL_BUTTON_KEY'}" class="button"
-        onclick="this.form.action.value='DetailView'; this.form.module.value='{$smarty.request.return_module}'; this.form.record.value='{$smarty.request.return_id}';"
+    <input title="{sugar_translate label='LBL_CANCEL_BUTTON'}" accessKey="{sugar_translate label='LBL_CANCEL_BUTTON_KEY'}" class="button" 
+        onclick="this.form.action.value='DetailView'; this.form.module.value='{$smarty.request.return_module}'; this.form.record.value='{$smarty.request.return_id}';" 
         type="submit" name="button" value="{sugar_translate label='LBL_CANCEL_BUTTON_LABEL'}">
 {elseif !empty($smarty.request.return_action) && ($smarty.request.return_action == "DetailView" && !empty($smarty.request.return_id))}';
-    <input title="{sugar_translate label='LBL_CANCEL_BUTTON_TITLE'}" accessKey="{sugar_translate label='LBL_CANCEL_BUTTON_KEY'}" class="button"
-        onclick="this.form.action.value='DetailView'; this.form.module.value='{$smarty.request.return_module}'; this.form.record.value='{$smarty.request.return_id}';"
+    <input title="{sugar_translate label='LBL_CANCEL_BUTTON_TITLE'}" accessKey="{sugar_translate label='LBL_CANCEL_BUTTON_KEY'}" class="button" 
+        onclick="this.form.action.value='DetailView'; this.form.module.value='{$smarty.request.return_module}'; this.form.record.value='{$smarty.request.return_id}';" 
         type="submit" name="button" value="{sugar_translate label='LBL_CANCEL_BUTTON_LABEL'}">
 {else}
-    <input title="{sugar_translate label='LBL_CANCEL_BUTTON_TITLE'}" accessKey="{sugar_translate label='LBL_CANCEL_BUTTON_KEY'}" class="button"
-        onclick="this.form.action.value='DetailView'; this.form.module.value='Leads'; this.form.record.value='{$smarty.request.record}';"
+    <input title="{sugar_translate label='LBL_CANCEL_BUTTON_TITLE'}" accessKey="{sugar_translate label='LBL_CANCEL_BUTTON_KEY'}" class="button" 
+        onclick="this.form.action.value='DetailView'; this.form.module.value='Leads'; this.form.record.value='{$smarty.request.record}';" 
         type="submit" name="button" value="{sugar_translate label='LBL_CANCEL_BUTTON_LABEL'}">
 {/if}
 </td>

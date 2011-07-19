@@ -33,7 +33,7 @@ ul li {
 list-style-type: square;
 }
 </style>
-<?php echo getVersionedScript("modules/Home/about.js"); ?>
+<script language="javascript" src="modules/Home/about.js"></script>
 <span>
 <div class="about" style="padding: 10px 15px 20px 15px;">
 <p>
@@ -48,7 +48,7 @@ list-style-type: square;
 <!-- //END SUGARCRM flav=dev ONLY
 <!-- //BEGIN SUGARCRM flav=com && lic=sub && flav!=dev ONLY
 <IMG src="include/images/sugar_md_express.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
-<!-- //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY
+<!-- //END SUGARCRM flav=com && lic=sub && flav!=dev ONLY		
 <!-- //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 <IMG src="include/images/sugar_md_open.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'>
 <!--//END SUGARCRM flav=com && lic!=sub ONLY
@@ -89,7 +89,7 @@ echo "<P>Copyright ".$app_strings['LBL_SUGAR_COPYRIGHT_SUB']."</P>";
 $viewLicenseText = $mod_strings['LBL_VIEWLICENSE_COM'];
 
 //END SUGARCRM flav=com  && dep=os ONLY
-
+ 
 //BEGIN SUGARCRM flav=int ONLY
 
 $viewLicenseText = "";
@@ -106,7 +106,7 @@ echo $viewLicenseText;
 $imgTagString = '<img style="margin-top: 2px" border="0" width="106" height="23" src="include/images/poweredby_sugarcrm.png" alt="Powered By SugarCRM">';
 
 //END SUGARCRM flav=com  && dep=os ONLY
-
+ 
   //BEGIN SUGARCRM lic=sub ONLY
 
 $imgTagString = '<P><A href="http://www.sugarcrm.com" target="_blank"> <img style="margin-top: 2px" border="0" width="106" height="23" src="include/images/poweredby_sugarcrm.png" alt="Powered By SugarCRM"></A>';
@@ -122,7 +122,7 @@ echo $imgTagString;
 $additionalTerm = $mod_strings['LBL_ADD_TERM_COM'];
 
 //END SUGARCRM flav=com  && dep=os ONLY
-
+ 
 //BEGIN SUGARCRM flav=int ONLY
 
 $additionalTerm = "";

@@ -18,7 +18,7 @@ class TemplateHandler {
     var $templateDir = 'modules/';
     var $ss;
     function TemplateHandler() {
-      $this->cacheDir = sugar_cached('');
+      $this->cacheDir = $GLOBALS['sugar_config']['cache_dir'];
     }
 
     function loadSmarty(){

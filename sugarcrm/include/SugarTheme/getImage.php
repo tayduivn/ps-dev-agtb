@@ -55,7 +55,6 @@ $etag = '"'.md5_file($filename).'"';
 header("Cache-Control: private");
 header("Pragma: dummy=bogus");
 header("Etag: $etag");
-header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 
 $ifmod = isset($_SERVER['HTTP_IF_MODIFIED_SINCE'])
     ? strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $last_modified_time : null;
@@ -66,6 +65,7 @@ if (($ifmod || $iftag) && ($ifmod !== false && $iftag !== false)) {
     die;
 }
 
+header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 header("Last-Modified: ".gmdate('D, d M Y H:i:s \G\M\T', $last_modified_time));
 
 // now send the content

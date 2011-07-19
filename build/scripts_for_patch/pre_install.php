@@ -56,18 +56,18 @@ function pre_install() {
         _logThis("Begin Upgrade passwords in table config", $path);
         upgrade_config_pwd();
         _logThis("End Upgrade passwords in table config", $path);
-
-// BEGIN SUGARCRM flav=com ONLY
+        
+// BEGIN SUGARCRM flav=com ONLY 
         _logThis("Begin remove ACL actions for Trackers", $path);
-        include('include/modules.php');
+        include('include/modules.php');        
         if(isset($beanFiles['Tracker']) && file_exists($beanFiles['Tracker']))
         {
             require_once('modules/ACLActions/ACLAction.php');
             ACLAction::removeActions('Trackers', 'Tracker');
-        }
+        }   
         _logThis("End remove ACL actions for Trackers", $path);
-// END SUGARCRM flav=com ONLY
-
+// END SUGARCRM flav=com ONLY 
+    
     }
 	return true;
 }

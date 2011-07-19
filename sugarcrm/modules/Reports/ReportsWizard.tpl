@@ -38,10 +38,10 @@ document.getElementById('progress_div').innerHTML = '<img src="{sugar_getimagepa
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}" />
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file='modules/Reports/tpls/reports.css'}" />
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/reports.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/FiltersWidget.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/JSON.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_overlib.js'}"></script>
 {* //BEGIN SUGARCRM flav!=sales ONLY*}
 <script type="text/javascript" src="{sugar_getjspath file='include/SugarFields/Fields/Teamset/Teamset.js'}"></script>
 {* //END SUGARCRM flav!=sales ONLY*}

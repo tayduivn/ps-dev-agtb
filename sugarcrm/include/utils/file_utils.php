@@ -23,11 +23,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/utils/array_utils.php');
 require_once('include/utils/sugar_file_utils.php');
 
-/**
- * Convert all \ to / in path, remove multiple '/'s and '/./'
- * @param string $path
- * @return string
- */
 function clean_path( $path )
 {
     // clean directory/file path with a functional equivalent
@@ -45,7 +40,7 @@ function clean_path( $path )
 function create_cache_directory($file)
 {
     $paths = explode('/',$file);
-    $dir = rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\');
+    $dir = str_replace('/','',$GLOBALS['sugar_config']['cache_dir']);
     if(!file_exists($dir))
     {
         sugar_mkdir($dir, 0775);
@@ -81,7 +76,7 @@ function get_module_dir_list()
 
 function mk_temp_dir( $base_dir, $prefix="" )
 {
-    $temp_dir = tempnam( $base_dir, $prefix );
+    $temp_dir = tempnam( getcwd() .'/'. $base_dir, $prefix );
     if( !$temp_dir || !unlink( $temp_dir ) )
     {
         return( false );
@@ -119,7 +114,7 @@ function write_encoded_file( $soap_result, $write_to_dir, $write_to_file="" )
     // this function dies when encountering an error -- use with caution!
     // the path/file is returned upon success
 
-
+    
 
     if( $write_to_file == "" )
     {
@@ -312,7 +307,7 @@ function fileToHash($file){
 		$_SESSION['file2Hash'][$hash] = $file;
 		return $hash;
 	}
-
+	
 function hashToFile($hash){
 		if(!empty($_SESSION['file2Hash'][$hash])){
 			return $_SESSION['file2Hash'][$hash];
@@ -325,10 +320,10 @@ function hashToFile($hash){
 /**
  * get_file_extension
  * This function returns the file extension portion of a given filename
- *
+ * 
  * @param $filename String of filename to return extension
  * @param $string_to_lower boolean value indicating whether or not to return value as lowercase, true by default
- *
+ * 
  * @return extension String value, blank if no extension found
  */
 function get_file_extension($filename, $string_to_lower=true)
@@ -337,7 +332,7 @@ function get_file_extension($filename, $string_to_lower=true)
     {
        return $string_to_lower ? strtolower(array_pop(explode('.',$filename))) : array_pop(explode('.',$filename));
     }
-
+    
     return '';
 }
 
@@ -347,12 +342,12 @@ function get_file_extension($filename, $string_to_lower=true)
  * This function is similar to mime_content_type, but does not require a real
  * file or path location.  Instead, the function merely checks the filename
  * extension and returns a best guess mime content type.
- *
+ * 
  * @param $filename String of filename to return mime content type
  * @return mime content type as String value (defaults to 'application/octet-stream' for filenames with extension, empty otherwise)
- *
+ * 
  */
-function get_mime_content_type_from_filename($filename)
+function get_mime_content_type_from_filename($filename) 
 {
 	if(strpos($filename, '.') !== false)
 	{
@@ -415,10 +410,10 @@ function get_mime_content_type_from_filename($filename)
         if (array_key_exists($ext, $mime_types)) {
             return $mime_types[$ext];
         }
-
-        return 'application/octet-stream';
+        
+        return 'application/octet-stream';    
 	}
-
+	
     return '';
 }
 
@@ -426,3 +421,5 @@ function cleanFileName($name)
 {
     return preg_replace('/[^\w-._]+/i', '', $name);
 }
+
+?>

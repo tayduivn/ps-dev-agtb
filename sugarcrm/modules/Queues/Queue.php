@@ -73,14 +73,14 @@ class Queue extends SugarBean {
 										'queue_id' => 'queues_workflow');
 	var $required_fields		= array('name');
 
-	/**
+	/** 
 	 * Sole constructor
 	 */
 	function Queue() {
 		parent::SugarBean();
-
-		$this->queueCachePath = sugar_cached('modules/Queues');
-
+		
+		$this->queueCachePath = $GLOBALS['sugar_config']['cache_dir'].'modules/Queues';
+		
 		// these load if SugarBean fails to.
 		if(empty($this->field_defs)) {
 			require_once('modules/Queues/vardefs.php');
@@ -93,14 +93,14 @@ class Queue extends SugarBean {
 			$this->required_fields = $fields_array['Queues']['required_fields'];
 		}
 	}
-
+	
 	function forceLoadFieldDefs() {
 		$dictionary = '';
 		require('modules/Queues/vardefs.php');
-
-		$this->field_defs = $dictionary['Queues']['fields'];
+		
+		$this->field_defs = $dictionary['Queues']['fields']; 	
 	}
-
+	
 	/**
 	 * scans 2 directories for Queue-specific workflows to assign to queues
 	 * @return	$workflows	multi-dimensional array of key/values of
@@ -116,15 +116,15 @@ class Queue extends SugarBean {
 			require_once('modules/Queues/StandardWorkflows.php');
 			$workflows = array_merge($workflows, $standards);
 		}
-
+		
 		return $workflows;
 	}
-
-
-
+	
+	
+	
 	/**
 	 * moves items from a parent queue into this
-	 *
+	 * 
 	 * @param	$limit		int max number of items to move
 	 */
 	function moveItemsIntoMyQueue($limit) {
@@ -132,32 +132,32 @@ class Queue extends SugarBean {
 				'	LEFT JOIN queues ON (queues_queue.queue_id = queues.id) ' .
 				'	WHERE queues_queue.deleted = 0 AND queues.deleted=0 ' .
 				'	AND queues.status = "Active" AND queue_id = "'.$this->id.'"';
-
+		
 		$rParent = $this->db->query($qParent);
 		if($this->db->getRowCount($rParent) > 0) {
 			$qMove = 'UPDATE queues_beans SET queue_id = "'.$this->id.'" WHERE deleted = 0 AND queue_id IN (';
-
+		
 			while($aParent = $this->db->fetchByAssoc($rParent)) {
-				$qMove .= "'".$aParent['parent_id']."', ";
+				$qMove .= "'".$aParent['parent_id']."', "; 
 			}
-
+		
 			$qMove = substr_replace($qMove, '', -2);
-
+			
 			$qMove .= ') ORDER BY date_entered ASC ';
 			$qMove .= ' LIMIT '.$limit;
-
+			
 			$this->db->query($qMove);
 		}
 	}
-
-	/**
+	
+	/** 
 	 * This function gets all valid queue items recursively
 	 * @param	$seen	breadcrumb trail array of queue IDs
 	 * @return array Objects
 	 */
 	function getQueueItemsRecursively($seen = array()) {
 		$thisItems = $this->getQueueItems();//_pp($this->name.' has '.count($thisItems).' items');
-
+		
 		$q = 'SELECT parent_id FROM queues_queue WHERE queue_id = "'.$this->id.'"';
 		$r = $this->db->query($q);
 
@@ -165,7 +165,7 @@ class Queue extends SugarBean {
 			/* loop through parent queues, get them to return their items*/
 			$parentItems = array();
 			while($a = $this->db->fetchByAssoc($r)) {
-
+				
 				if(in_array($a['parent_id'], $seen)) { // seen this parent already
 					continue;
 				} else { // new queue to get items from
@@ -181,7 +181,7 @@ class Queue extends SugarBean {
 			return $thisItems;
 		}
 	}
-
+	
 	/**
 	 * This function gets SugarBeans from one Queue
 	 */
@@ -194,7 +194,7 @@ class Queue extends SugarBean {
 				// hardcode
 				$a['module_dir'] = 'Emails';
 				$objectName = $beanList[$a['module_dir']];
-
+				
 				require_once('modules/'.$a['module_dir'].'/'.$objectName.'.php');
 				$newObject = new $objectName();
 				$newObject->retrieve($a['object_id']);
@@ -205,8 +205,8 @@ class Queue extends SugarBean {
 			return;
 		}
 	}
-
-
+	
+	
 	/**
 	 * This function returns the number of items in queue
 	 */
@@ -219,9 +219,9 @@ class Queue extends SugarBean {
 			return $a['count'];
 		}
 	}
+	
 
-
-
+	
 	/**
 	 * This function retrieves a queue based on its owner id
 	 * @param	$id		GUID of owner object
@@ -231,7 +231,7 @@ class Queue extends SugarBean {
 		$r = $this->db->query($q);
 		if($this->db->getRowCount($r) > 0) {
 			$a = $this->db->fetchByAssoc($r);
-
+			
 			if(!$self) {
 				$queue = new Queue();
 //				$queue->disable_row_level_security = true;
@@ -245,16 +245,16 @@ class Queue extends SugarBean {
 			return false;
 		}
 	}
-
-	/**
+	
+	/** 
 	 * takes all existing queues and writes it to a cached file for performance
 	 */
 	function writeToCache() {
 		if(!function_exists('mkdir_recursive')) {
-
+			
 		}
 		if(!function_exists('write_array_to_file')) {
-
+			
 		}
 		// cache results
 		if(!file_exists($this->queueCachePath) || !file_exists($this->queueCachePath.'/'.$this->queueCacheFile)) {
@@ -264,13 +264,13 @@ class Queue extends SugarBean {
 		// write cache file
 		write_array_to_file('queuesCached', $this->getQueuesWithGuids(), $this->queueCachePath.'/'.$this->queueCacheFile);
 	}
-
+	
 	/**
 	 * This function gathers all parent and children queues
 	 */
 	function getQueues() {
 		if(empty($this->db)) {
-
+			
 			$this->db = DBManagerFactory::getInstance();
 		}
 		$defaultWhere = " AND queues.deleted = 0 AND queues_queue.deleted=0 AND queues.status = 'Active'";
@@ -287,22 +287,22 @@ class Queue extends SugarBean {
 			}
 		}
 		$this->child_ids = $children;
-
+		
 		// parent queues
-		$q2 = "	SELECT parent_id FROM queues_queue LEFT JOIN queues ON (queues.id = queues_queue.queue_id)
-				WHERE queue_id = '".$this->id."' ".$defaultWhere;
+		$q2 = "	SELECT parent_id FROM queues_queue LEFT JOIN queues ON (queues.id = queues_queue.queue_id) 
+				WHERE queue_id = '".$this->id."' ".$defaultWhere;	
 		$r2 = $this->db->query($q2);
 		$rows2 = $this->db->getRowCount($r2);
 		$parents = array();
 		if($rows2 > 0) {
 			while($a2 = $this->db->fetchByAssoc($r2)) {
-				$parents[] = $a2['parent_id'];
-			}
+				$parents[] = $a2['parent_id'];	
+			}	
 		}
 		$this->parent_ids = $parents;
 	}
-
-
+	
+		
 	/**
 	 * Returns an associative array with GUID => Queue Name of all queues in the
 	 * db
@@ -315,9 +315,9 @@ class Queue extends SugarBean {
 		}
 		return $queueArray;
 	}
-
-
-
+	
+	
+	
 	/**
 	 * gets a piece of persistent_memory, or creates it if non-existent
 	 * @param	$key	key to the array for the value requested
@@ -330,11 +330,11 @@ class Queue extends SugarBean {
 		if(empty($persistent_memory[$key])) {
 			_pp($this->name.' did not return anything from $persistent_memory with key of '.$key);
 			return false;
-		}
+		} 
 		$this->persistent_memory = $persistent_memory;
 		return $persistent_memory[$key];
 	}
-
+	
 	/**
 	 * sets a value in the persistent_memory array
 	 * @param	$key	key to the array
@@ -345,7 +345,7 @@ class Queue extends SugarBean {
 		$b64ser = base64_encode(serialize($this->persistent_memory));
 		$r = $this->db->query('UPDATE queues SET persistent_memory = "'.$b64ser.'" WHERE id = "'.$this->id.'"');
 	}
-
+	
 	/**
 	 * Removes an item from queue
 	 * @param	$id		id of the bean to be removed
@@ -355,8 +355,8 @@ class Queue extends SugarBean {
 		$q = 'UPDATE queues_beans SET deleted=1 WHERE queue_id = "'.$parentQueue->id.'" AND object_id = "'.$itemId.'"';
 		$this->db->query($q);
 	}
-
-	/**
+	
+	/** 
 	 * Adds bean to queue_beans table then redistributes them if a workflow
 	 * exists for it.
 	 * @param	$beanId		the bean id
@@ -368,9 +368,9 @@ class Queue extends SugarBean {
 		if($remove) {
 			$this->removeItemFromQueue($parentQueue, $beanId);
 		}
-
-		$q = "INSERT INTO queues_beans
-				(id, deleted, date_entered, date_modified, queue_id, module_dir, object_id)
+		
+		$q = "INSERT INTO queues_beans 
+				(id, deleted, date_entered, date_modified, queue_id, module_dir, object_id) 
 				VALUES (
 					'".create_guid()."',
 					0,
@@ -378,16 +378,16 @@ class Queue extends SugarBean {
 					'".TimeDate::getInstance()->nowDb()."',
 					'".$this->id."',
 					'".$beanDir."',
-					'".$beanId."')";
+					'".$beanId."')"; 
 		$r = $this->db->query($q);
-
+		
 		$GLOBALS['log']->debug($q);
-
+		
 		if(!empty($this->workflows)) {
 			$GLOBALS['log']->debug('InboundEmail @queue->addItemToQueue() found Queue ('.$this->name.') workflow: '.$this->workflows);
 			// have to re-require this every time if we go deeper than 1 queue - something stomps out the values in the queue object
 			require('modules/Queues/StandardWorkflows.php');
-
+		
 			$func = "return \$this->".$standards[$this->workflows]['function'];
 			$GLOBALS['log']->debug('evaling: '.$func);
 			if(eval($func)) {
@@ -397,16 +397,16 @@ class Queue extends SugarBean {
 				$GLOBALS['log']->fatal('Workflow [ '.$standards[$this->workflows]['function'].' ] completed successfully.');
 				_pp('died in NO WORKFLOW');
 			}
-
+			
 		} else {
 			$GLOBALS['log']->debug('InboundEmail found Queue ('.$this->name.') with NO WORKFLOW!');
 		}
-
+		
 		return;
 	}
-
+	
 	/**
-	 * checks Child queues against inactive Users and Queues
+	 * checks Child queues against inactive Users and Queues 
 	 */
 	function getActiveQueues() {
 		global $app_list_strings;
@@ -415,18 +415,18 @@ class Queue extends SugarBean {
 			$this->load_relationship('child_queues');
 		}
 		$childIds = $this->child_queues->get();
-
+		
 		if(!empty($childIds)) {
 			$childIdsRev = array_flip($childIds);
-
-			$r = $this->db->query('SELECT queues.id AS qid FROM queues LEFT JOIN users ON owner_id = users.id
+			
+			$r = $this->db->query('SELECT queues.id AS qid FROM queues LEFT JOIN users ON owner_id = users.id 
 					WHERE queues.deleted=0 AND users.deleted=0 AND users.status = "'.$app_list_strings['user_status_dom']['Inactive'].'" ' .
 							'OR queues.status="'.$app_list_strings['user_status_dom']['Inactive'].'"');
 			if($this->db->getRowCount($r) > 0) {
 				while($a = $this->db->fetchByAssoc($r)) {
 					$inactive[] = $a['qid'];
 				}
-
+				
 				foreach($childIds as $k => $id) {
 					if(in_array($id, $inactive)) {
 						unset($childIdsRev[$id]);
@@ -474,16 +474,16 @@ class Queue extends SugarBean {
 	////	WORKFLOW FUNCTIONS
 	///////////////////////////////////////////////////////////////////////////
 	function doNothing() {
-
+		
 		_pp($this->name.' is doNothing()');
 		return true;
 	}
-
+	
 	function roundRobin($beanId, $beanName) {
 		_pp('----- IN ROUNDROBIN for queue: '.$this->name.'---Using object_name ['.$beanName.'] -----');
 		$GLOBALS['log']->info('InboundEmail got distribution type of "roundRobin"');
 		global $beanFiles;
-
+		
 		// get the child queues' IDs
 		if(!$this->load_relationship('child_queues')) {
 			$GLOBALS['log']->debug('Workflow roundRobin COULD NOT LOAD RELATIONSHIPS!');
@@ -524,14 +524,14 @@ class Queue extends SugarBean {
 			// now set last_robin to nextQ's id
 			//_pp('lastRobin: '.$lastRobin.'::nextRobin:'.$nextId);
 			$this->setPersistentMemory('last_robin', $nextId);
-
+			
 			// now that we have a target Queue, prep the item to add to it
 			if(!class_exists($beanName)) {
 				require($beanFiles[$beanName]);
 			}
 			$addBean = new $beanName();
 			$addBean->retrieve($beanId);
-
+			
 			_pp('adding item for: '.$nextQ->name);
 			$nextQ->addItemToQueue($addBean->id, $addBean->module_dir, $addBean->object_name, true, $this);
 			//_pp('finished item for: '.$nextQ->name);
@@ -542,18 +542,18 @@ class Queue extends SugarBean {
 			return false;
 		}
 	}
-
+	
 	function leastBusy($beanId, $beanName) {
 		_pp('----- IN LEASTBUSY for queue: '.$this->name.'---Using object_name ['.$beanName.'] -----');
 		$GLOBALS['log']->info('InboundEmail got distribution type of "leastBusy"');
 		global $beanFiles;
-
+		
 		// get the child queues' IDs
 		if(!$this->load_relationship('child_queues')) {
 			$GLOBALS['log']->fatal('Workflow leastBusy COULD NOT LOAD RELATIONSHIPS!');
 			return false;
 		}
-
+		
 		$childIds = $this->getActiveQueues();
 		$counts = array();
 		_pp('Initialized $counts array for '.$this->name);
@@ -567,25 +567,25 @@ class Queue extends SugarBean {
 		$leastBusy = array_shift($countsKeys); // pop top value (lowest item count)
 		$nextQueue = new Queue();
 		$nextQueue->retrieve($leastBusy);
-
-
+		
+		
 		// instantiate new class of passed bean info
 		$addBean = new $beanName();
 		$addBean->retrieve($beanId);
-
-
+		
+		
 		_pp('Adding item ('.$addBean->object_name.':'.$addBean->name.') to Queue ('.$nextQueue->name.')');
 		$nextQueue->addItemToQueue($addBean->id, $addBean->module_dir, $addBean->object_name, true, $this);
 //		_ppd('got this far');
 		return true;
 	}
+	
 
-
-
+	
 	function manualPick() {
-
+	
 	}
-
+	
 	///////////////////////////////////////////////////////////////////////////
 	////	SugarBean OVERRIDES
 	//////////////////////////////////////////////////////////////////////////
@@ -595,7 +595,7 @@ class Queue extends SugarBean {
 	function create_export_query($order_by, $where, $show_deleted = 0) {
 		return $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted = 0);
 	}
-
+	
 	/**
 	 * Override's SugarBean's
 	 */
@@ -620,7 +620,7 @@ class Queue extends SugarBean {
 	 */
 	function get_list_view_data(){
 		global $standards;
-		if(empty($standards)) {
+		if(empty($standards)) { 
 			include('modules/Queues/StandardWorkflows.php');
 		}
 		$temp_array = $this->get_list_view_array();
@@ -634,7 +634,7 @@ class Queue extends SugarBean {
 	function get_summary_text() {
 		return $this->name;
 	}
-
+	
 	/**
 	 * This function overrides SugarBean's
 	 */

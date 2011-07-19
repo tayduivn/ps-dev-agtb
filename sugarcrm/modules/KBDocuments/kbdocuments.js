@@ -429,9 +429,9 @@ SUGAR.kb = function() {
 
 			}
 		},
-
+		
 		selectArticles:function(action){
-			save_kb_checks(0);
+			save_kb_checks(0); 
 			if(document.KBAdminView.uid.value != '')
 			{
 			  selectedArticleIds = document.KBAdminView.uid.value.split(',');
@@ -457,8 +457,8 @@ SUGAR.kb = function() {
 		},
 
 		deleteArticles:function(){
-			save_kb_checks(0);
-
+			save_kb_checks(0); 
+			
 			if(document.KBAdminView.uid.value != '')
 			{
 			  selectedArticleIds = document.KBAdminView.uid.value.split(',');
@@ -466,7 +466,7 @@ SUGAR.kb = function() {
 			} else {
 			  selected = false;
 			}
-
+			
 		    if(!selected){
 		      alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_SELECT_ARTICLES_TO_DELETE'));
 		      return false;
@@ -501,7 +501,7 @@ SUGAR.kb = function() {
 		var handleCancel = function() {
 			this.cancel();
 		}
-
+		
 		var handleSubmit = function() {
 		    tree = new YAHOO.widget.TreeView('tagstreeMoveDocsModal');
 		    document.getElementById('moveDlg').style.display='';
@@ -515,7 +515,7 @@ SUGAR.kb = function() {
 		    linked_tags.appendChild(attId);
 		    this.submit();
 		}
-
+		
 		var myButtons = [ //{ text:"Ok", handler:handleSubmit },
 						  //{ text:'', handler:handleCancel,visible:false}
 						  ];
@@ -662,20 +662,20 @@ SUGAR.kb = function() {
 		    if(tagId == document.getElementById('tag_selected_move_from_id').value){
 		    	alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_SOURCE_AND_TARGET_TAGS_ARE_SAME'));
 		    }
-
+		    
 			var selected = false;
 			var selectedArticleIds = new Array();
 
 		    selectedArticleIds[0] = document.getElementById('tag_selected_move_from_id').value;
 			selectedArticleIds[1] = tagId;
 			var j = 2;
-
+			
 			if(document.KBAdminView.uid.value != '')
 			{
 			   els = document.KBAdminView.uid.value.split(',');
 			   for(x in els)
 			   {
-				   selectedArticleIds[j] = els[x];
+				   selectedArticleIds[j] = els[x];  
 				   j++;
 			   }
 			   selected = true;
@@ -716,7 +716,7 @@ SUGAR.kb = function() {
 
 		   selectedTagsArticlesIds[0] = countTags;
 		   countArticles = 0;
-
+		   
 		   if(document.KBAdminView.uid.value != '')
 		   {
 			 var els = document.KBAdminView.uid.value.split(',');
@@ -726,9 +726,9 @@ SUGAR.kb = function() {
 				 j++;
 				 countArticles++;
 			 }
-			 selected = true;
+			 selected = true;  
 		   }
-
+		   
 
 		   selectedTagsArticlesIds[1] = countArticles;
 
@@ -814,7 +814,7 @@ SUGAR.kb = function() {
 						     }
 					     }
 				    }
-
+				    
 				    postData = SUGAR.util.paramsToUrl({
 				    	newTagName:  YAHOO.lang.JSON.stringify(idName),
 				    	module: "KBTags",
@@ -1103,8 +1103,8 @@ SUGAR.kb = function() {
 							  ];
 			ajaxStatus.showStatus(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_LAUNCHING_TAG_BROWSING'));
 			myDialog = new YAHOO.widget.SimpleDialog('dialog1',
-			    {
-			        visible:false,
+			    { 
+			        visible:false, 
 			        effect:[{effect:YAHOO.widget.ContainerEffect.SLIDE, duration:0.5}],
 					fixedcenter:true,
 					modal:true,
@@ -1821,7 +1821,12 @@ SUGAR.kb = function() {
 				new_row_button_embed.onclick= function(){
            	         var filename = this.parentNode.parentNode.id;
 		 			 cid='cid:'+filename;
-                     var imglocation=sugar_cache_dir+'images/';
+		 			 /*
+		             var imglocation = unescape(document.location.pathname.substr(1));
+                    imglocation = imglocation.substring(0,imglocation.lastIndexOf('/')+1);
+                    imglocation='/'+imglocation+sugar_cache_dir+'images/';
+                    */
+                    var imglocation=sugar_cache_dir+'images/';
 		             embedImage="<img src="+imglocation+unescape(filename)+">";
 		     		 var tiny = tinyMCE.getInstanceById('body_html');
 		             embedImage = embedImage;
@@ -1930,13 +1935,13 @@ SUGAR.kb = function() {
 		externalChecked:function(defalut_team_name,default_team_id){
 			if(document.getElementById('is_external').checked)
 			   {
-			   var temp_array = [];
+			   var temp_array = []; 
 			 	temp_array['name'] = 'Global';
 	         	temp_array['id'] = '1';
 	         	collection['EditView_team_name'].replace_first(temp_array);
 			}
 			else{
-				var temp_array = [];
+				var temp_array = []; 
 			 	temp_array['name'] = defalut_team_name;
 	         	temp_array['id'] = default_team_id;
 	         	collection['EditView_team_name'].replace_first(temp_array);
@@ -1950,7 +1955,7 @@ SUGAR.kb = function() {
 		externalCheckedOnLoad:function(){
 			if(document.getElementById('is_external').checked)
 			  {
-			   var temp_array = [];
+			   var temp_array = []; 
 			 	temp_array['name'] = 'Global';
 	         	temp_array['id'] = '1';
 	         	collection['EditView_team_name'].replace_first(temp_array);
@@ -2304,12 +2309,12 @@ SUGAR.kb = function() {
 			      alert(SUGAR.kb.getLocalizedLabels('KBDocuments','LBL_TYPE_THE_NEW_TAG_NAME'));
 		     }
 		 },
-
+		
 		paginateList:function(url, mode) {
 			    if(mode == 'browse')
 			    {
 					var callback =	{
-						  success: function(o) {
+						  success: function(o) {    
 							    	var targetdiv=document.getElementById('selected_directory_children');
 							    	targetdiv.innerHTML=o.responseText;
 							    	SUGAR.util.evalScript(o.responseText);
@@ -2318,7 +2323,7 @@ SUGAR.kb = function() {
 						  //argument: [target, targettype]
 					}
 					var trobj = YAHOO.util.Connect.asyncRequest('POST', url, callback);
-
+					
 			    } else {
 			    	document.location.href = url;
 			    }

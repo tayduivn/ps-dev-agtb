@@ -152,5 +152,6 @@ var toggle = 0;
 <!-- END: main -->
 
 <!-- BEGIN: subpanel -->
-{sugar_getscript file="modules/Campaigns/DetailView.js"}
+<script type="text/javascript" src="modules/Campaigns/DetailView.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <slot>{$SUBPANEL}</slot>
+<!-- END: subpanel -->

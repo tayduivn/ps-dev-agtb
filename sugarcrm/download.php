@@ -93,13 +93,17 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 		$local_location = "upload://{$_REQUEST['id']}";
     }
 
+	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"
+		 : $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
+
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
-	    $local_location =  "upload://{$_REQUEST['id']}";
+	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
     }
 
 	if(!file_exists( $local_location ) || strpos($local_location, "..")) {
 		die($app_strings['ERR_INVALID_FILE_REFERENCE']);
-	} else {
+	}
+	else {
 		$doQuery = true;
 
 		if($file_type == 'documents') {
@@ -148,7 +152,7 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 				die($app_strings['ERROR_NO_RECORD']);
 			}
 			$name = $row['name'];
-			$download_location = "upload://{$_REQUEST['id']}";
+			$download_location = $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;

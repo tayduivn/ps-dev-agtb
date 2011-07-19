@@ -2975,7 +2975,7 @@ function save_relationship_changes($is_update, $exclude=array())
      *
      * It constructs union queries for activities subpanel.
      *
-     * @param Object $parentbean constructing queries for link attributes in this bean
+     * @param SugarBean $parentbean constructing queries for link attributes in this bean
      * @param string $order_by Optional, order by clause
      * @param string $sort_order Optional, sort order
      * @param string $where Optional, additional where clause
@@ -4168,8 +4168,6 @@ function save_relationship_changes($is_update, $exclude=array())
                                     if(empty($this->$param))
                                     {
                                         $can_execute = false;
-                                    } else if($param == '$this') {
-                                        $execute_params[] = $this;
                                     }
                                     else
                                     {
@@ -4180,8 +4178,6 @@ function save_relationship_changes($is_update, $exclude=array())
                                     if(empty($current_bean->$param))
                                     {
                                         $can_execute = false;
-                                    } else if($param == '$this') {
-                                        $execute_params[] = $current_bean;
                                     }
                                     else
                                     {

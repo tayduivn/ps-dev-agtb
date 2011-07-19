@@ -45,8 +45,8 @@ function prepSystemForUpgradeSilent() {
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-		if(!is_dir("upload://upgrades/{$subdir}")) {
-	    	mkdir_recursive("upload://upgrades/{$subdir}");
+		if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
+	    	mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
 		}
 	}
 }
@@ -110,7 +110,7 @@ function checkLoggerSettings(){
  		}
 	 }
 }
-
+ 
 function checkResourceSettings(){
 	if(file_exists(getcwd().'/config.php')){
          require(getcwd().'/config.php');
@@ -245,7 +245,7 @@ function createMissingRels(){
  * @param   $sugar_version
  * @return  bool true if successful
  */
-function merge_passwordsetting($sugar_config, $sugar_version) {
+function merge_passwordsetting($sugar_config, $sugar_version) {	
     //BEGIN SUGARCRM flav=com ONLY
     $passwordsetting_defaults = array(
     'passwordsetting' => array (
@@ -261,9 +261,9 @@ function merge_passwordsetting($sugar_config, $sugar_version) {
         'systexpirationtype' => '0',
         'systexpirationlogin' => '',
         ) ,
-    );
+    );    
     //END SUGARCRM flav=com ONLY
-
+   
 	//BEGIN SUGARCRM flav=pro ONLY
      $passwordsetting_defaults = array (
         'passwordsetting' => array (
@@ -297,7 +297,7 @@ function merge_passwordsetting($sugar_config, $sugar_version) {
         ),
     );
     //END SUGARCRM flav=pro ONLY
-
+        
     $sugar_config = sugarArrayMerge($passwordsetting_defaults, $sugar_config );
 
     // need to override version with default no matter what
@@ -394,13 +394,13 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
         //this should be a regular sugar install
         echo "*******************************************************************************\n";
         echo "*** ERROR: Tried to execute in a non-SugarCRM root directory.\n";
-        exit(1);
+        exit(1);     
     }
 
     if(isset($argv[7]) && file_exists($argv[7].'SugarTemplateUtilties.php')){
         require_once($argv[7].'SugarTemplateUtilties.php');
     }
-
+    
     return $upgradeType;
 }
 
@@ -551,23 +551,23 @@ if($upgradeType == constant('DCE_INSTANCE')){
    	//$instanceUpgradePath = "{$argv[1]}/DCEUpgrade/{$zip_from_dir}";
    	//$instanceUpgradePath = "{$argv[1]}";
 	include ("ini_setup.php");
-
+	
 	//get new template path for use in later processing
     $dceupgrade_pos = strpos($argv[1], '/DCEUpgrade');
     $newtemplate_path = substr($argv[1], 0, $dceupgrade_pos);
-
+	
 	require("{$argv[4]}/sugar_version.php");
 	global $sugar_version;
 
 	//load up entrypoint from original template
-   	require_once("{$argv[4]}/include/entryPoint.php");
+   	require_once("{$argv[4]}/include/entryPoint.php");	
 	require_once("{$argv[4]}/include/utils/zip_utils.php");
 	require_once("{$argv[4]}/modules/Administration/UpgradeHistory.php");
-	// We need to run the silent upgrade as the admin user,
+	// We need to run the silent upgrade as the admin user, 
 	global $current_user;
 	$current_user = new User();
 	$current_user->retrieve('1');
-
+	
 	//This is DCE instance
       global $sugar_config;
       global $sugar_version;
@@ -627,7 +627,7 @@ if($upgradeType == constant('DCE_INSTANCE')){
 
     $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
 	$_SESSION['upgrade_from_flavor'] = $manifest['name'];
-
+	
 	//get the latest uw_utils.php
 //	require_once("{$instanceUpgradePath}/modules/UpgradeWizard/uw_utils.php");
     logThis("*** SILENT DCE UPGRADE INITIATED.", $path);
@@ -707,5 +707,5 @@ if(count($errors) > 0) {
 		logThis("****** SilentUpgrade ERROR: {$error}", $path);
 	}
 	echo "FAILED\n";
-}
+} 
 ?>
