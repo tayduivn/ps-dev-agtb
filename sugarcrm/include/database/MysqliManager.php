@@ -135,7 +135,7 @@ class MysqliManager extends MysqlManager
         $this->checkConnection();
         $this->query_time = microtime(true);
         $this->lastsql = $sql;
-        $result = @mysqli_query($this->database,$sql);
+        $result = $suppress?@mysqli_query($this->database,$sql):mysqli_query($this->database,$sql);
         $md5 = md5($sql);
 
         if (empty($queryMD5[$md5]))
