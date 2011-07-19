@@ -72,7 +72,7 @@ SUGAR.AutoComplete.{$ac_key}.ds = SUGAR.AutoComplete.getSourceFromOptions("{{$va
 {{else}}
 {literal}
 // Create a new YUI instance and populate it with the required modules.
-YUI().use('datasource', 'datasource-jsonschema', 'skin-sam-widget', function (Y) {
+YUI().use('datasource', 'datasource-jsonschema', function (Y) {
 	// DataSource is available and ready for use.
 	SUGAR.AutoComplete.{/literal}{$ac_key}{literal}.ds = new Y.DataSource.Get({
 		source: 'index.php?module=Accounts&action=ajaxautocomplete&to_pdf=1'
@@ -89,7 +89,7 @@ YUI().use('datasource', 'datasource-jsonschema', 'skin-sam-widget', function (Y)
 {{/if}}
 {literal}
 
-YUI().use("autocomplete", "autocomplete-filters", "autocomplete-highlighters", "node", "skin-sam-widget", function (Y) {
+YUI().use("autocomplete", "autocomplete-filters", "autocomplete-highlighters", "node", function (Y) {
 	{/literal}
 	
 	SUGAR.AutoComplete.{$ac_key}.inputNode = Y.one('#{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input');
