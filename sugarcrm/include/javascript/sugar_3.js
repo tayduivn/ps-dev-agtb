@@ -326,14 +326,14 @@ function isValidPrecision(value, precision){
 	    return true;
 	//#27021
 	if( (precision == "0") ){
-		if (value.indexOf(".")== -1){
+		if (value.indexOf(dec_sep)== -1){
 			return true;
 		}else{
 			return false;
 		}
 	}
 	//#27021   end
-	var actualPrecision = value.substr(value.indexOf(".")+1, value.length).length;
+	var actualPrecision = value.substr(value.indexOf(dec_sep)+1, value.length).length;
 	return actualPrecision == precision;
 }
 function toDecimal(original, precision) {
