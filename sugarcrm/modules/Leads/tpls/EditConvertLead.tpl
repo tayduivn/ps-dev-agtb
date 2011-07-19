@@ -47,6 +47,16 @@
 <script>
 {literal}
 
+function getModuleNameFromLabel(label) {
+    var moduleList = SUGAR.language.get('app_list_strings', "moduleList");
+    for ( var i in moduleList) {
+        if (moduleList[i] == label) {
+            return i;
+        }
+    }
+    return label;
+}
+
 var editLayout = function(row)
 {
 	var panel = ModuleBuilder.findTabById('convEditor');
@@ -66,7 +76,7 @@ var editLayout = function(row)
     var params = {
         module: 'Leads',
         action: 'editconvertlayout',
-        view_module: row.module,
+        view_module: getModuleNameFromLabel(row.module),
         json: false,
         id:'convEditor'
     };
@@ -84,7 +94,7 @@ var removeLayout = function(row)
 	        module: 'Leads',
 	        action: 'editconvert',
 	        removeLayout: true,
-	        targetModule:row.module
+                targetModule:getModuleNameFromLabel(row.module)
 	    };
 	    
 	    ModuleBuilder.asyncRequest(params, function(o) {
@@ -198,6 +208,7 @@ ModuleBuilder.saveConvertLeadLayout = function()
     var out = {};
     for (var i in rows) {
         out[i] = rows[i].getData();
+        out[i].module = getModuleNameFromLabel(out[i].module);
     }
     var params = {
         module: 'Leads',

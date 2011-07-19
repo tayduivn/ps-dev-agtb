@@ -3120,7 +3120,7 @@ $app_strings = array (
     'LBL_EXPORT_TEAM_NAME' => 'Teams',
     'LBL_EXPORT_TEAM_SET_ID' => 'Team Set ID',
 
-
+    'LBL_QUICKEDIT_NODEFS_NAVIGATION'=> 'Navigating... ',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

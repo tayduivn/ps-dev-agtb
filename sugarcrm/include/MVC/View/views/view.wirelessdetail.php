@@ -48,47 +48,17 @@ class ViewWirelessdetail extends SugarWirelessView{
  	 * Public function to attain the subpanel data for a record
  	 */
  	public function bean_subpanels(){
- 		if (file_exists('custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
- 	    	require_once('custom/modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
- 		}
- 		else if (file_exists('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
- 	    	require_once('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
- 		}
- 	    
- 	    $bean_subpanel_data = array();
+ 	    $layout_defs = $this->getSubpanelDefs();
+        $bean_subpanel_data = array();
  	    // make sure the layout_defs array has been initialized
- 	    if (isset($layout_defs)){
+ 	    if (isset($layout_defs) && !empty($layout_defs['subpanel_setup'])){
  	    	$available_subpanel_data = false;
-	 	    foreach($layout_defs[$this->module]['subpanel_setup'] as $subpanel=>$subpaneldefs){	   
-	 	    	$subpanel = $subpaneldefs['module'];
-	 	    	// check if the user has access to the subpanel module
-				if (in_array($subpanel, $GLOBALS['moduleList'])){
-					// include and instantiate child seed 	    	
-		 	        require_once($GLOBALS['beanFiles'][$GLOBALS['beanList'][$subpanel]]);
-		 	        $obj = new $GLOBALS['beanList'][$subpaneldefs['module']]();
-		 	        $table = $subpaneldefs['get_subpanel_data'];
-
-                    $subpanel_data = array();
-		 	        if (isset($this->bean->$table)){
-		 	        	// attain subpanel data
-		 	            $subpanel_data = $this->wl_get_subpanel_data($obj,$table);
-		               	$bean_subpanel_data[$subpanel] = array('count' => $subpanel_data['row_count']);
-		                
-		                // construct array for smarty consumption
-		                $count = 0;
-		                $wl_list_max_entries_per_subpanel = isset($GLOBALS['sugar_config']['wl_list_max_entries_per_subpanel']) ? $GLOBALS['sugar_config']['wl_list_max_entries_per_subpanel'] : 3;
-		                		                
-		     	        foreach($subpanel_data['list'] as $data){
-		     	            if ($count == $wl_list_max_entries_per_subpanel) continue;
-		                    $bean_subpanel_data[$subpanel][$data->id] = $data->name;
-		                    $count++;
-		 	            }
-		 	            // flag to set to say there is subpanel data
-		 	            if ($available_subpanel_data == false && $count > 0){ 
-		 	            	$available_subpanel_data = true;
-		 	            }
-		 	        }
-				}
+	 	    foreach($layout_defs['subpanel_setup'] as $subpanel=>$subpaneldefs){
+	 	    	$data = $this->getDataForSubpanel($this->bean, $subpanel, $subpaneldefs);
+                $bean_subpanel_data[$subpanel] = $data;
+                if (!empty($data)) {
+                    $available_subpanel_data = true;
+                }
 	 	    }
 	 	    // sets appropriate smarty flags
 	 	    $this->ss->assign('AVAILABLE_SUBPANELS', true);

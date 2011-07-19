@@ -4278,8 +4278,11 @@ SUGAR.util.ajaxCallInProgress = function(){
 }
 
 SUGAR.util.callOnChangeListers = function(field){
-	var listeners = YAHOO.util.Event.getListeners(field, 'change');
-	if (listeners != null) {
+	var listeners = YAHOO.util.Event.getListeners(field, 'change')
+    if (listeners == null && field.id)
+       listeners = YAHOO.util.Event.getListeners(field.id, 'change');
+	
+    if (listeners != null) {
 		for (var i = 0; i < listeners.length; i++) {
 			var l = listeners[i];
 			l.fn.call(l.scope ? l.scope : this, l.obj);

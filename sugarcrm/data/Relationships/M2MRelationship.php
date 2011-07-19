@@ -260,7 +260,10 @@ class M2MRelationship extends SugarRelationship
         //Next add any role filters
                . $this->getRoleFilterForJoin() . "\n";
 
-		if($return_array){
+		if (!empty($params['return_as_array'])) {
+            $return_array = true;
+        }
+        if($return_array){
 			return array(
                 'join' => $query,
                 'type' => $this->type,
