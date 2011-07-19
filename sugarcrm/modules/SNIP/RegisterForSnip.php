@@ -72,7 +72,11 @@ echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
 
 function createPurchaseURL($snipuser){
     global $sugar_config;
-    return "localhost:1337/purchaseSnip?uniquekey={$sugar_config['unique_key']}&snipuser={$snipuser->user_name}&pass={$snipuser->user_hash}";
+    $json = getJSONobj();
+    $msg=base64_encode($json->encode(array('unique_key' => $sugar_config['unique_key'],
+                                           'snipuser'   => $snipuser->user_name,
+                                           'password'   => $snipuser->user_hash)));
+    return "localhost:1337/purchaseSnip?info=$msg";
 }
 
 /**
