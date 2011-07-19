@@ -36,8 +36,8 @@ if( !isset( $install_script ) || !$install_script ){
 // DB split
 $oci8sid = '';
 $createDbCheckbox = '';
-$createDb = (isset($_SESSION['setup_db_create_database']) && !empty($_SESSION['setup_db_create_database'])) ? 'checked="checked"' : '';
-$dropCreate = (isset($_SESSION['setup_db_drop_tables']) && !empty($_SESSION['setup_db_drop_tables'])) ? 'checked="checked"' : '';
+$createDb = (!empty($_SESSION['setup_db_create_database'])) ? 'checked="checked"' : '';
+$dropCreate = (!empty($_SESSION['setup_db_drop_tables'])) ? 'checked="checked"' : '';
 $instanceName = '';
 if (isset($_SESSION['setup_db_host_instance']) && !empty($_SESSION['setup_db_host_instance'])){
 	$instanceName = $_SESSION['setup_db_host_instance'];
@@ -54,7 +54,7 @@ if($_SESSION['setup_db_type'] == 'oci8'){ //} || $_SESSION['setup_db_type'] == '
 	$dbSplit1 = '<input type="hidden" name="setup_db_host_name" value="'.$_SESSION['setup_db_host_name'].'" /></td>';
     $dbSplit1 .= '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG1'].'</td></tr>';
     $oci8sid = "(SID from tnsnames.ora)";
-	$dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="no" />';
+	$dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="0" />';
 //END SUGARCRM flav=ent ONLY
 }else {
 
@@ -84,7 +84,7 @@ if($_SESSION['setup_db_type'] == 'oci8'){ //} || $_SESSION['setup_db_type'] == '
 		 <td align="left">
 			<input type="text" name="setup_db_port_num" id="setup_db_port_num" value="'.$setupDbPortNum.'" />';
 
-        $dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="no" />';
+        $dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="0" />';
     }
 //END SUGARCRM flav=ent ONLY
 
@@ -123,7 +123,7 @@ $out .= '<body onload="document.getElementById(\'defaultFocus\').focus();">';
 
 $out2 =<<<EOQ2
 <form action="install.php" method="post" name="setConfig" id="form">
-<input type='hidden' name='setup_db_drop_tables' id='setup_db_drop_tables' value='false'>
+<input type='hidden' name='setup_db_drop_tables' id='setup_db_drop_tables' value=''>
 <input type="hidden" id="hidden_goto" name="goto" value="{$mod_strings['LBL_BACK']}" />
 <table cellspacing="0" cellpadding="0" border="0" align="center" class="shell">
 

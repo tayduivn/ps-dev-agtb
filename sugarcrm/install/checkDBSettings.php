@@ -275,10 +275,8 @@ function copyInputsIntoSession(){
               $_SESSION['setup_db_create_sugarsales_user']      = false;
               $_SESSION['setup_db_create_database']             = false;
 
-            }//elseif(isset($_SESSION['install_type'])  && !empty($_SESSION['install_type'])  && strtolower($_SESSION['install_type'])=='typical'){
-            else{
-
-
+            } else {
+            	$_SESSION['setup_db_create_database']             = true;
                 //retrieve the value from dropdown in order to know what settings the user
                 //wants to use for the sugar db user.
 
@@ -321,25 +319,16 @@ function copyInputsIntoSession(){
                 $_SESSION['demoData'] = 'no';
             }
             if(isset($_REQUEST['demoData'])){$_SESSION['demoData'] = $_REQUEST['demoData'] ;}
+
+            if(!empty($_SESSION['setup_db_create_database'])) {
+            	// if we're dropping DB, no need to drop tables
+            	$_SESSION['setup_db_drop_tables']  = false;
+            }
+
             if (isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall' && isset($_SESSION['setup_db_drop_tables'])) {
                 //set up for Oracle Silent Installer
                 $_REQUEST['setup_db_drop_tables'] = $_SESSION['setup_db_drop_tables'] ;
             }
-            if (!empty($_REQUEST['setup_db_drop_tables'])
-                || ((isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall' && !empty($_SESSION['setup_db_drop_tables'])))
-            ){
-                $_SESSION['setup_db_drop_tables']       = true;
-                $_SESSION['setup_db_create_database']   = false;
-
-            }
-    // TODO fsteegmans: Verify the following commented out lines as I am not sure why we are hardcoding this based
-    // on the request while these are already defaults. Furthermore this hardcoding overrides previous logic
-    // such as setting setup_db_create_database to false for Oracle and DB2.
-
-//            else{
-//                $_SESSION['setup_db_drop_tables']       = false;
-//                $_SESSION['setup_db_create_database']   = true;
-//            }
 }
 
 ////    END PAGEOUTPUT
