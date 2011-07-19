@@ -57,7 +57,7 @@ title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{$displayParams.field}}
 <input
 	id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
 	name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
-	size="60"
+	size="30"
 	value="{$field_val|lookup:$field_options}"
 	type="text" style="vertical-align: top;"> <img src="{sugar_getimagepath file="down_arrow.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image">
 	
