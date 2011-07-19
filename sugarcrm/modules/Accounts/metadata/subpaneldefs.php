@@ -27,7 +27,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
-
  */
 // $Id: layout_defs.php 14538 2006-07-12 00:27:59Z awu $
 
@@ -319,6 +318,22 @@ $layout_defs['Accounts'] = array(
 			),			
 		),
         //END SUGARCRM flav=pro ONLY
+
+        // SNIP
+        'contact_history' => array (
+			'order' => 21,
+			'sort_order' => 'desc',
+			'sort_by' => 'date_entered',
+			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
+			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
+			'module' => 'Emails',
+            'subpanel_name' => 'ForContactHistory',
+            'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
+  		    'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
+            'generate_select'=>true,
+    	    'get_distinct_data' => true,
+            'top_buttons' => array(),
+		),
 //END SUGARCRM flav!=dce && flav!=sales ONLY
 	),
 );
