@@ -37,7 +37,12 @@ if($sugar_config['disable_export'] 	|| (!empty($sugar_config['admin_export_only'
 	die($GLOBALS['app_strings']['ERR_EXPORT_DISABLED']);
 }
 
-if(!empty($_REQUEST['uid'])){
+//check to see if this is a request for a sample or for a regular export
+if(!empty($_REQUEST['sample'])){
+    //call special method that will create dummy data for bean as well as insert standard help message.
+    $content = exportSample(clean_string($_REQUEST['module']));
+
+}else if(!empty($_REQUEST['uid'])){
 	$content = export(clean_string($_REQUEST['module']), $_REQUEST['uid'], isset($_REQUEST['members']) ? $_REQUEST['members'] : false);
 }else{
 	$content = export(clean_string($_REQUEST['module']));

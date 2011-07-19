@@ -927,10 +927,11 @@ class SugarBean
             //initialize a variable of type Link
             require_once('data/Link2.php');
             $class = load_link_class($fieldDefs[$rel_name]);
-            if (isset($this->$rel_name) && $this->$rel_name instanceof $class)
-                return true;
+            if (isset($this->$rel_name) && $this->$rel_name instanceof $class) {
+                    return true;
+            }
             //if rel_name is provided, search the fieldef array keys by name.
-            if (array_search('link',$fieldDefs[$rel_name]) === 'type')
+            if (isset($fieldDefs[$rel_name]['type']) && $fieldDefs[$rel_name]['type'] == 'link')
             {
                 if ($class == "Link2")
                     $this->$rel_name = new $class($rel_name, $this);
@@ -938,7 +939,6 @@ class SugarBean
                     $this->$rel_name = new $class($fieldDefs[$rel_name]['relationship'], $this, $fieldDefs[$rel_name]);
 
                 if (empty($this->$rel_name) ||
-                        (isset($this->$rel_name->_relationship) && empty($this->$rel_name->_relationship->id)) ||
                         (method_exists($this->$rel_name, "loadedSuccesfully") && !$this->$rel_name->loadedSuccesfully()))
                 {
                     unset($this->$rel_name);
@@ -1368,7 +1368,7 @@ class SugarBean
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 
-        if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']))
+        if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']) && empty ($GLOBALS['resavingRelatedBeans']))
         {
             $GLOBALS['saving_relationships'] = true;
         // let subclasses save related field changes
@@ -1526,9 +1526,9 @@ class SugarBean
             $links = $dictionary[$this->object_name]['related_calc_fields'];
             foreach($links as $lname)
             {
-                if (empty($this->$lname))
+                if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2))
                 {
-                    $this->load_relationship($lname);
+                    continue;
                 }
                 $beans = $this->$lname->getBeans();
                 //Resave any related beans
@@ -1849,33 +1849,30 @@ function save_relationship_changes($is_update, $exclude=array())
 
         foreach ( $this->field_defs as $def )
         {
-           if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset ( $def[ 'save' ]) )
-        {
-            if (  in_array( $def['id_name'], $exclude) || in_array( $def['id_name'], $this->relationship_fields ) )
-                continue ; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
-
-            if (isset( $this->field_defs[ $def [ 'link' ] ] ))
+            if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset ( $def[ 'save' ]) )
             {
+                if (  in_array( $def['id_name'], $exclude) || in_array( $def['id_name'], $this->relationship_fields ) )
+                    continue ; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
 
-                    $linkfield = $this->field_defs[$def [ 'link' ]] ;
+                $linkField = $def [ 'link' ] ;
+                if (isset( $this->field_defs[$linkField ] ))
+                {
+                    $linkfield = $this->field_defs[$linkField] ;
 
-                    if ($this->load_relationship ( $def [ 'link' ])){
-                        if (!empty($this->rel_fields_before_value[$def [ 'id_name' ]]))
-                        {
-                            //if before value is not empty then attempt to delete relationship
-                            $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
-                            $this->$def ['link' ]->delete($this->id, $this->rel_fields_before_value[$def [ 'id_name' ]] );
-                        }
-                        if (!empty($this->$def['id_name']) && is_string($this->$def['id_name']))
+                    if ($this->load_relationship ( $linkField))
+                    {
+                        $idName = $def['id_name'];
+                        if (!empty($this->$idName) && is_string($this->$idName))
                         {
                             $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}" );
-                            $this->$def ['link' ]->add($this->$def['id_name']);
+
+                            $this->$linkField->add($this->$idName);
                         }
                     } else {
-                        $GLOBALS['log']->fatal("Failed to load relationship {$def [ 'link' ]} while saving {$this->module_dir}");
+                        $GLOBALS['log']->fatal("Failed to load relationship {$linkField} while saving {$this->module_dir}");
                     }
                 }
-        }
+            }
         }
 
         // Finally, we update a field listed in the _REQUEST['*/relate_id']/_REQUEST['relate_to'] mechanism (if it hasn't already been updated above)
@@ -1913,7 +1910,6 @@ function save_relationship_changes($is_update, $exclude=array())
             }
 
         }
-
     }
 
     /**
@@ -4282,9 +4278,12 @@ function save_relationship_changes($is_update, $exclude=array())
     * Fill in fields where type = relate
     */
     function fill_in_relationship_fields(){
-        if(!empty($this->relDepth)) {
-            if($this->relDepth > 1)return;
-        }else $this->relDepth = 0;
+        global $fill_in_rel_depth;
+        if(empty($fill_in_rel_depth) || $fill_in_rel_depth < 0)
+            $fill_in_rel_depth = 0;
+        if($fill_in_rel_depth > 1)
+            return;
+        $fill_in_rel_depth++;
 
         foreach($this->field_defs as $field)
         {
@@ -4306,7 +4305,6 @@ function save_relationship_changes($is_update, $exclude=array())
                             if(!empty($this->$id_name) && file_exists($GLOBALS['beanFiles'][$class]) && isset($this->$name)){
                                 require_once($GLOBALS['beanFiles'][$class]);
                                 $mod = new $class();
-                                $mod->relDepth = $this->relDepth + 1;
                                 $mod->retrieve($this->$id_name);
                                 if (!empty($field['rname'])) {
                                     $this->$name = $mod->$field['rname'];
@@ -4333,6 +4331,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
             }
         }
+        $fill_in_rel_depth--;
     }
 
     /**
@@ -5135,7 +5134,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || "before_delete")
+            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || $event == "before_delete")
             {
                 $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
             }

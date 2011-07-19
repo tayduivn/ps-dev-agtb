@@ -113,7 +113,7 @@
                 <table style="margin-left:15px;">
                     <tr>
                         <td align="right">{$MOD.LBL_SINGULAR}</td>
-                        <td align="left"><input id='slot{$rowCounter}_stext' value='{$value.singular}' type='text'></td>
+                        <td align="left"><input id='slot{$rowCounter}_stext' value='{$value.singular}' onchange='setSingularDropDownValue({$rowCounter});' type='text'></td>
                     </tr>
                     <tr>
                         <td align="right">{$MOD.LBL_PLURAL}</td>
@@ -187,31 +187,32 @@
 
         return foundErrors;
     }
-    function setDropDownValue(rowCount, val, record)
+
+    function setSingularDropDownValue(rowCount)
+    {
+        document.getElementById('svalue_'+ rowCount).value = document.getElementById('slot' + rowCount + '_stext').value;
+    }
+
+    function setDropDownValue(rowCount, val, collapse)
     {
         //Check for validation errors first
         if(checkForErrors(rowCount))
             return true;
 
-        if(record){
-            var d = {'row':rowCount,
-                     'new':val,
-                     'snew' : document.getElementById('slot' + rowCount + '_stext').value,
-                     'old':document.getElementById('value_'+ rowCount).value,
-                     'sold':document.getElementById('svalue_'+ rowCount).value};
-        }
         document.getElementById('value_' + rowCount).value = val;
         var text =  document.getElementById('slot' + rowCount + '_text');
         var textspan =  document.getElementById('slot' + rowCount + '_textspan');
         var span = document.getElementById('slot' + rowCount + '_value');
-        span.innerHTML  = val;
-        textspan.style.display = 'none';
-        text.value = '';
-        span.style.display = 'inline';
+        if(collapse)
+        {
+            span.innerHTML  = val;
+            textspan.style.display = 'none';
+            text.value = '';
+            span.style.display = 'inline';
+        }
         lastField = '';
         lastRowCount = -1;
-        document.getElementById('svalue_'+ rowCount).value = document.getElementById('slot' + rowCount + '_stext').value;
-
+        setSingularDropDownValue(rowCount);
     }
 
     var slotCount = {/literal}{$rowCounter}{literal};

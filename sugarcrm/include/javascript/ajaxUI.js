@@ -27,6 +27,10 @@ SUGAR.ajaxUI = {
             {
                 document.title = r.title.replace(/&raquo;/g, '>').replace(/&nbsp;/g, ' ');
             }
+            if (r.action)
+            {
+                action_sugar_grp1 = r.action;
+            }
             //SUGAR.themes.setCurrentTab(r.menu);
             var c = document.getElementById("content");
             c.innerHTML = cont;
@@ -65,7 +69,8 @@ SUGAR.ajaxUI = {
         if(typeof(SUGAR.config.overrideAjaxBannedModules) != 'undefined'){
             bannedModules = SUGAR.config.overrideAjaxBannedModules;
         }
-        return bannedModules.indexOf(module) == -1;
+        
+        return SUGAR.util.arrayIndexOf(bannedModules, module) == -1;
     },
 
     loadContent : function(url, params)
@@ -133,14 +138,20 @@ SUGAR.ajaxUI = {
             //Do not try to ajax submit a form if the ajaxUI is not initialized
             && /action=ajaxui/.exec(window.location))
         {
-            YAHOO.util.Connect.setForm(form);
-            YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
-                success: SA.callback
-            });
-            window.location="index.php?action=ajaxui#ajaxUILoc=";
+            var string = con.setForm(form);
+            //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
+            if(string.length > 200)
+            {
+                con.asyncRequest('POST', 'index.php?ajax_load=1', {
+                    success: SA.callback
+                });
+                window.location="index.php?action=ajaxui#ajaxUILoc=";
+            } else {
+                con.resetFormState();
+                window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent("index.php?" + string);
+            }
             return true;
         } else {
-            // window.location = url;
             form.submit();
             return false;
         }
@@ -161,12 +172,21 @@ SUGAR.ajaxUI = {
     {
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
-        url = url ? url : 'index.php?module=Home&action=index';
-
-        YAHOO.util.History.register('ajaxUILoc', url, SUGAR.ajaxUI.go);
-        YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
-        SUGAR.ajaxUI.hist_loaded = true;
-        SUGAR.ajaxUI.go(url);
+        var aRegex = /action=([^&]*)/.exec(window.location);
+        var action = aRegex ? aRegex[1] : false;
+        var mRegex = /module=([^&]*)/.exec(window.location);
+        var module = mRegex ? mRegex[1] : false;
+        if (module != "ModuleBuilder")
+        {
+            var go = url != null || action == "ajaxui";
+            url = url ? url : 'index.php?module=Home&action=index';
+            YAHOO.util.History.register('ajaxUILoc', url, SUGAR.ajaxUI.go);
+            YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
+            SUGAR.ajaxUI.hist_loaded = true;
+            if (go)
+                SUGAR.ajaxUI.go(url);
+        }
+        SUGAR_callsInProgress--;
     },
     print: function()
     {

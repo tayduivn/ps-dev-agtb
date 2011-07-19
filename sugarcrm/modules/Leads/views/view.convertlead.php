@@ -25,6 +25,7 @@ require_once("include/upload_file.php");
 class ViewConvertLead extends SugarView
 {
     protected $fileName = "modules/Leads/metadata/convertdefs.php";
+    protected $new_contact = false;
 
     public function __construct(
         $bean = null,
@@ -308,6 +309,7 @@ class ViewConvertLead extends SugarView
                 echo $contactForm->buildTableForm($duplicateContacts,  'Contacts');
                 return;
             }
+            $this->new_contact = true;
         }
         if ( !empty($_REQUEST['selectedAccount']) ) {
             $_REQUEST['account_id'] = $_REQUEST['selectedAccount'];
@@ -429,7 +431,7 @@ class ViewConvertLead extends SugarView
         foreach($beans as $bean)
         {
             $beanName = $bean->object_name;
-            if ( $beanName == 'Contact' && !$bean->new_with_id ) {
+            if ( $beanName == 'Contact' && !$this->new_contact ) {
                 echo "<li>" . translate("LBL_EXISTING_CONTACT") . " -
                     <a href='index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}'>
                        {$bean->get_summary_text()}

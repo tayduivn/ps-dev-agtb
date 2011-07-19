@@ -93,6 +93,17 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
+//rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
+if (typeof new Array().indexOf == "undefined") {
+  Array.prototype.indexOf = function (obj, start) {
+    for (var i = (start || 0); i < this.length; i++) {
+      if (this[i] == obj) {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
 
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
@@ -639,7 +650,7 @@ function add_error_style(formname, input, txt, flash) {
 	            }
 	        }
 		}
-		window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
+		window.setTimeout("if (inputsWithErrors[" + (inputsWithErrors.length - 1) + "]) inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
     }
 
   } catch ( e ) {
@@ -3344,7 +3355,7 @@ SUGAR.searchForm = function() {
 			}
 		},
         // This function is here to clear the form, instead of "resubmitting it
-		clear_form: function(form) {
+		clear_form: function(form, skipElementNames) {
             var elemList = form.elements;
             var elem;
             var elemType;
@@ -3352,6 +3363,10 @@ SUGAR.searchForm = function() {
             for( var i = 0; i < elemList.length ; i++ ) {
                 elem = elemList[i];
                 if ( typeof(elem.type) == 'undefined' ) {
+                    continue;
+                }
+                
+                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
                     continue;
                 }
 
@@ -3998,11 +4013,13 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+                            SUGAR.util.callOnChangeListers(selectField);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+                    SUGAR.util.callOnChangeListers(window.document.forms[form_name].elements[the_key]);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
@@ -4353,3 +4370,26 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
 	link.style.display = 'none';
 }
 
+SUGAR.util.arrayIndexOf = function(arr, val, start) {
+    if (typeof arr.indexOf == "function")
+        return arr.indexOf(val, start);
+    for (var i = (start || 0), j = arr.length; i < j; i++) {
+        if (arr[i] === val) {
+            return i;
+        }
+    }
+    return -1;
+};
+
+SUGAR.clearRelateField = function(form, name, id)
+{
+    if (typeof form[name] == "object"){
+        form[name].value = '';
+        SUGAR.util.callOnChangeListers(form[name]);
+    }
+
+    if (typeof form[id] == "object"){
+        form[id].value = '';
+        SUGAR.util.callOnChangeListers(form[id]);
+    }
+};

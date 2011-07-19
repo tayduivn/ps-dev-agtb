@@ -36,7 +36,7 @@
 body
 {
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=bg.png'); 
-	background-color: #fff;
+	background-color: #f4c3da;
 }
 
 a:link, a:visited {
@@ -44,37 +44,94 @@ color:#ef3067;
 }
 
 .dcmenu {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dcmenugrade.png");
-height:55px;
+min-width: 1050px;
+background-color: #0d3a62;
+background: -moz-linear-gradient(center top,	rgba(240,120,156,.9) 0%,
+	rgba(236,72,121,.9) 78%, 
+	rgba(0,0,0,.3) 78%, 
+	rgba(0,0,0,0) 100%); 
+	background-color: transparent;
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, rgba(240,120,156,.9)),
+    color-stop(0.78, rgba(236,72,121,.9)),
+    color-stop(0.78, rgba(0,0,0,.3)),
+    color-stop(1, rgba(0,0,0,0))
+    );
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f0789c', endColorstr='#ec4779');
+height: 43px\9;;
 }
 
 .dcmenuDivider  {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=dcMenuDivider.png");
 }
 
-#sugar_spot_search_div  {
-background:url("../../../../index.php?entryPoint=getImage&imageName=dcMenuSearchBox.png") no-repeat scroll left top transparent;
-}
+
 #glblSearchBtn {
 margin-top:8px;
 }
 
 #moduleList  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png");
+background: -moz-linear-gradient(center top,
+		transparent 0%,
+		transparent 12%,		rgba(255,255,255,.9) 13%,  
+		rgba(255,255,255,.8) 45%,
+		rgba(255,255,255,.6) 45%, 
+		rgba(255,255,255,.6) 76%,
+		rgba(0,0,0,.1) 76%, 
+		rgba(0,0,0,0) 100%
+	); 
+	background-color: transparent;
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, rgba(255,255,255,0)),
+    color-stop(0.12, rgba(255,255,255,0)),
+    color-stop(0.13, rgba(255,255,255,.9)),
+    color-stop(0.45, rgba(255,255,255,.8)),
+    color-stop(0.45, rgba(255,255,255,.6)),
+    color-stop(0.74, rgba(255,255,255,.6)),
+    color-stop(0.74, rgba(0,0,0,.1)),
+    color-stop(1, rgba(0,0,0,0))
+    );
+background-image:url("../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png")/9;
 height:50px;
 }
 
+#moduleList.yuimenubar li.current {
+margin-right: -1px;	
+}
+
 #moduleList.yuimenubar li.current .yuimenuitemlabel, li.current a.yuimenuitemlabel, li.current a.yuimenuitemlabel:link, li.current a.yuimenuitemlabel:visited {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=currentTab.png");
+	background-image: -moz-linear-gradient(center top, 
+	#f9d3dd 0%,	#f5b4c7 2%,	#f26b91 52%,
+	#ef4475 52%,
+	#e586a1 100%
+	);
+	background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #f9d3dd),
+    color-stop(.05, #f5b4c7),
+    color-stop(.52, #f26b91),
+    color-stop(.52, #ef4475),
+    color-stop(1, #e586a1)
+   );	
+	-moz-border-radius: 10px 10px 0px 0px;
+	border-radius: 10px 10px 0px 0px;
+	-webkit-border-top-left-radius: 10px;
+	-webkit-border-top-right-radius: 10px;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9d3dd', endColorstr='#e586a1');
+	
 padding-bottom: 4px;
 padding-top: 6px\9;
 text-shadow:-1px -1px #F04476;
 }
 
-#moduleList.yuimenubar li.currentTabRight .yuimenuitemlabel {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=currentTab.png");
-height:38px;
-}
 
 #moduleList .yuimenuitemlabel, a.yuimenuitemlabel, a.yuimenuitemlabel:link, a.yuimenuitemlabel:visited {
 padding:1px 15px 2px;
@@ -91,29 +148,41 @@ border-right:1px solid #F0B9D3;
 }
 
 #moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=otherTab.png");
+	background-image: -moz-linear-gradient(center top, 
+	#ffffff 0%,	rgba(255,255,255,.6) 100%
+	);
+	background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #ffffff),
+    color-stop(1, rgba(255,255,255,.6))
+   );	
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#fefefe');
 border-color: #fbe9f1;
 }
 
-#welcome  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=globalLinksCenter.png");
-height:35px;
-}
-
-#globalLinks  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=globalLinksCenter.png");
-height:35px;
+#welcome, #globalLinks  {
+ height: 20px;
+ background-image: none;
+ background-color: rgba(252,184,194,.6);
+ background-color: #fce2e6/9;
+ border-color: #f2bdd5;
 }
 
 #globalLinksCtrl a.yui-toggle {
 background-image:url("../../../../index.php?entryPoint=getImage&imageName=globalLinksToggle.png");
-height:35px;
+height:29px;
 }
 
 .dashletPanel {
 -moz-box-shadow:0 2px 10px #666666;
 box-shadow: #666666 0px 2px 10px;
 -webkit-box-shadow: #666666 0px 2px 10px;
+}
+
+#moduleList .dashletPanelMenu .bd {
+	border-color: #ccc;	
 }
 
 .dashletPanel.dc .hd {
@@ -188,11 +257,14 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-
 }
 
 #moduleList .dashletPanelMenu,#moduleList .more .dashletPanelMenu,#moduleList .moduleTabGroupMenu .dashletPanelMenu {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd-menu.png");
+background-color: rgba(255,255,255,.5);
+background-color: #ffffff\9;  /*ie hack */
+border-color: #ffffff;
+box-shadow: 0 2px 5px #999999;
 }
 
 #moduleList li.more div.bd { 
-border: none;
+
 }
 
 .dashletPanel .dccontent {
@@ -205,7 +277,17 @@ border:1px solid #F079B1;
 
 
 .dashletPanel .hd .hd-center, .dashletPanel .hd .tl, .dashletPanel .hd .tr{
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-hd.png");
+	background-image: -moz-linear-gradient(center top, 
+	rgba(254,249,251,.9) 0%,	rgba(248,224,235,.9) 100%
+	);
+	background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0,rgba(254,249,251,.9)),
+    color-stop(1, rgba(248,224,235,.9))
+   );	
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fef9fb', endColorstr='#f8e0eb');
 border-color:#FF95C7;
 }
 
@@ -223,7 +305,8 @@ border-color:#FF95C7 !important;
 
 .dashletPanel .dashletNonTable {
 border-color:#FF95C7 #FF95C7 #CCCCCC;
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd.png");
+background-color: rgba(255,255,255,.6);
+background-color: #f5e7ed\9;
 }
 
 .teamNoticeBox {
@@ -246,7 +329,26 @@ border-color:#efefef;
 }
 
 #tabListContainerTD  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dashlet-tab-bg-bottom.png");
+background-image: -moz-linear-gradient(center top, 
+	transparent 0%, 
+	rgba(255,255,255, 0) 92%, 
+	#ffffff 92%, 
+	#FFFFFF 97%, 
+	transparent 98%, 
+	transparent 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, rgba(255,255,255,0)),
+    color-stop(.92, rgba(255,255,255,0)),
+    color-stop(.92, rgba(255,255,255,1)),
+    color-stop(.98, rgba(255,255,255,1)),
+    color-stop(.98, rgba(255,255,255,0)),
+    color-stop(1, rgba(255,255,255,0))
+   );
+background-image:url("../../../../index.php?entryPoint=getImage&imageName=dashlet-tab-bg-bottom.png")\9;
 }
 
 ul.tablist, ul.subpanelTablist {
@@ -275,9 +377,23 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=scroll
 #tabListContainer .yui-hd .yui-scroll-controls a {
 border-bottom:2px solid #FFFFFF;
 }
-
+ 
 #tabListContainer ul.subpanelTablist li a.current,#tabListContainer ul.subpanelTablist li a:hover  {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dashlet-tab-current.png");
+background-image: -moz-linear-gradient(center top, 
+	#f1cfdf 0%,	#faedf3 50%,
+	#f9e9f0 50%,
+	#fdfafb 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #f1cfdf),
+    color-stop(.5, #faedf3),
+    color-stop(.5, #f9e9f0),
+    color-stop(1, #fdfafb)
+   );	
+background-color: #fff\9;;
 border-color: #fff;
 }
 
@@ -301,22 +417,43 @@ color:#ef3067;
 color:#ef3067;
 }
 
-.search_form .view {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=search-basic-bg.png");
+.search_form .view, .search_form .view.advanced {
+	background-color: #efb9d2;
+background-image: -moz-linear-gradient(center top, 
+	rgba(254,249,251,.9) 0%,	rgba(248,224,235,.9) 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0,rgba(254,249,251,.9)),
+    color-stop(1, rgba(248,224,235,.9))
+   );	
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fef9fb', endColorstr='#f8e0eb');
 border-color:#FF95C7;
-background-color: #efb9d2;
-}
-
-.search_form .view.advanced {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=search-advanced-bg.png");
-background-color: transparent;
 }
 
 .search_form .view a {
 color:#ef3067;
 }
 button, input[type="submit"], input[type="reset"], input[type="button"], .button, .buttons .button, .yui-button button {
-background-color:#FFDEEE;
+
+background-image: -moz-linear-gradient(center top, 
+	#fdfdfd 0%,	#f8f8f8 50%,
+	#f1f1f1 50%,
+	#e6e6e6 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #fdfdfd),
+    color-stop(.5, #f8f8f8),
+    color-stop(.5, #f1f1f1),
+    color-stop(1, #e6e6e6)
+   );	
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6');
+
 color:#888888;
 border:1px solid #DC79A8;
 }
@@ -324,7 +461,23 @@ border:1px solid #DC79A8;
 
 .button.primary, .yui-dialog .ft span.default button {
 background-color:#ef3066;
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=form-button-primary-bg.png");
+
+background-image: -moz-linear-gradient(center top, 
+	#f9c8d7 0%,	#f15380 50%,
+	#ef3167 50%,
+	#f57398 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #f9c8d7),
+    color-stop(.5, #f15380),
+    color-stop(.5, #ef3167),
+    color-stop(1, #f57398)
+   );	
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9c8d7', endColorstr='#f57398');
+   
 border:1px solid #ef3067;
 text-shadow:-1px -1px #ef3067;
 color: #fff;
@@ -334,7 +487,21 @@ button:hover, input[type=submit]:hover, input[type=reset]:hover, input[type=butt
 button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=button]:focus,
 button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
 {
-	background-color: #ffe9f4;
+background-image: -moz-linear-gradient(center top, 
+	#fdfdfd 0%,	#f8f8f8 50%,
+	#f1f1f1 50%,
+	#e6e6e6 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #fdfdfd),
+    color-stop(.5, #f8f8f8),
+    color-stop(.5, #f1f1f1),
+    color-stop(1, #e6e6e6)
+   );	
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endColorstr='#e6e6e6');
 	border-color: #DC79A8;
 }
 
@@ -342,7 +509,21 @@ button[selected], input[type=submit][selected], input[type=reset][selected], inp
 	border: 1px solid #ef3067;
 	background-color: #ef3067;
 	text-shadow: -1px -1px #ef3067;
-	background-image: url(../../../../index.php?entryPoint=getImage&imageName=form-button-primary-bg.png);
+background-image: -moz-linear-gradient(center top, 
+	#f9c8d7 0%,	#f15380 50%,
+	#ef3167 50%,
+	#f57398 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #f9c8d7),
+    color-stop(.5, #f15380),
+    color-stop(.5, #ef3167),
+    color-stop(1, #f57398)
+   );	
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9c8d7', endColorstr='#f57398');
 }
 
 
@@ -373,7 +554,17 @@ height:32px;
 
 .monthHeader,.monthFooter td  {
 background-color: transparent;
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=calendar-header-bg.png");
+background-image: -moz-linear-gradient(center top, 
+	rgba(254,249,251,.9) 0%,	rgba(248,224,235,.9) 100%
+	);
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0,rgba(254,249,251,.9)),
+    color-stop(1, rgba(248,224,235,.9))
+   );	
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fef9fb', endColorstr='#f8e0eb');
 }
 .monthFooter td:first-child  {
 -moz-border-radius:0px 0px 0px 6px;

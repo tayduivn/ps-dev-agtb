@@ -284,7 +284,7 @@ class Call extends SugarBean
 			$contact_required = stristr($where, "contacts");
             if($contact_required)
             {
-                    $query = "SELECT calls.*, contacts.first_name, contacts.last_name";
+                    $query = "SELECT calls.*, contacts.first_name, contacts.last_name, users.user_name as assigned_user_name ";
                     //BEGIN SUGARCRM flav=pro ONLY
                     $query .= ", teams.name AS team_name";
                     //END SUGARCRM flav=pro ONLY
@@ -296,7 +296,7 @@ class Call extends SugarBean
             }
             else
             {
-                    $query = 'SELECT calls.*';
+                    $query = 'SELECT calls.*, users.user_name as assigned_user_name ';
                     //BEGIN SUGARCRM flav=pro ONLY
                     $query .= ", teams.name AS team_name";
                     //END SUGARCRM flav=pro ONLY
@@ -315,6 +315,8 @@ class Call extends SugarBean
 				//BEGIN SUGARCRM flav=pro ONLY
 				$query .= getTeamSetNameJoin('calls');
 				//END SUGARCRM flav=pro ONLY
+			$query .= "  LEFT JOIN users ON calls.assigned_user_id=users.id ";
+
 			if($custom_join){
   				$query .= $custom_join['join'];
 			}
