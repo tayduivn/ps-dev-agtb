@@ -97,6 +97,7 @@ $mod_strings = array (
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CASE_INFORMATION' => 'Case Overview',
 
+<<<<<<< HEAD
     //For export labels
     'LBL_MODIFIED_BY_NAME_OWNER' => 'Modified By Name Owner',
     'LBL_MODIFIED_BY_NAME_MOD' => 'Modified By Name Mod',
@@ -122,6 +123,8 @@ $mod_strings = array (
     'LBL_EXPORT_TEAM_COUNT' => 'Team Count',
 
 
+=======
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
     // SNIP
 	'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',
 );

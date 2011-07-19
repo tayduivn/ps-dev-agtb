@@ -27,13 +27,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
+<<<<<<< HEAD
 require_once 'modules/SNIP/SugarSNIP.php';
+=======
+require_once 'modules/SNIP/SugarSNIP_offlinetest.php';
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
 
 if (!is_admin($current_user)) {
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
 global $sugar_config;
 
+<<<<<<< HEAD
 $snip = SugarSNIP::getInstance();
 $title = get_module_title("", translate('LBL_REGISTER_SNIP').":", true);
 $sugar_smarty = new Sugar_Smarty();
@@ -58,6 +63,25 @@ if($snip_active) {
 	        	"status" => snipStatusToText($acct->status), "last" => snipTimeToDisplay($acct->lastcheck));
 	    }
 	    $sugar_smarty->assign('SNIP_ACCTS', $accts);
+=======
+/**
+    use SugarSNIP instead of SugarSNIP_offlinetest for production
+**/
+$snip = SugarSNIP_offlinetest::getInstance();
+$title = get_module_title("", translate('LBL_REGISTER_SNIP').":", true);
+$sugar_smarty = new Sugar_Smarty();
+
+if (isset($_REQUEST['save_config']) && $_REQUEST['save_config'] != '0') {
+    if(!registerApplication($snip)) {
+        $sugar_smarty->assign('FORM_ERROR','Failed to contact SNIP service!');
+    } else {
+        if ($_REQUEST['save_config']=='disable'){
+            $sugar_smarty->assign('FORM_SUCCESS','SNIP successfully disabled!');
+        }
+        elseif ($_REQUEST['save_config']=='enable'){
+            $sugar_smarty->assign('FORM_SUCCESS','SNIP successfully enabled!');
+        }
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
     }
 }
 
@@ -69,6 +93,13 @@ if ($status=='notpurchased'){
     $snipuser = $snip->getSnipUser();
     $sugar_smarty->assign('SNIP_PURCHASEURL',createPurchaseURL($snipuser));
 }
+<<<<<<< HEAD
+=======
+$sugar_smarty->assign('SNIP_STATUS',$status);
+$sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
+$sugar_smarty->assign('SUGAR_URL',$snip->getURL());
+
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
 
 function createPurchaseURL($snipuser){
@@ -86,7 +117,11 @@ function registerApplication($snip)
         return $snip->unregister();
     } else {
         return $snip->register(array(
+<<<<<<< HEAD
             "url" => $_REQUEST['snip_url']
+=======
+            "url" => $snip->getSnipURL()
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
 	    ));
     }
 }

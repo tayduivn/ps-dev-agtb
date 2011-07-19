@@ -1,6 +1,7 @@
 <?php
 installLog("creating new user for Snip");
 
+<<<<<<< HEAD
 $snip_user = new User();
 $snip_user->save ();
 
@@ -26,5 +27,10 @@ function random_password () {
 
 	return $randompass;
 }
+=======
+require_once 'modules/SNIP/SugarSNIP.php';
+$snip = SugarSNIP::getInstance();
+$snip->getSnipUser();
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
 
 ?>

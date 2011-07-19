@@ -145,6 +145,7 @@ $mod_strings = array (
   'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
 	'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
 
+<<<<<<< HEAD
   //For export labels
     'LBL_CAMPAIGN_ID' => 'Campaign ID',
     'LBL_OPPORTUNITY_TYPE' => 'Opportunity Type',
@@ -153,6 +154,8 @@ $mod_strings = array (
     'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 
+=======
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
   // SNIP
   'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',
 );

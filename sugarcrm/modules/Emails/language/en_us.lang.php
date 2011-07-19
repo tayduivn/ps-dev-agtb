@@ -364,4 +364,8 @@ $mod_strings = array (
 	// SNIP
 	'LBL_CONTACTS_SUBPANEL_TITLE_SNIP' => 'Email Contacts',
 	'LBL_EMAILS_MEETINGS_REL' => 'Emails:Meetings',
+<<<<<<< HEAD
 );
+=======
+);
+>>>>>>> 58edcfe7cf12a9472b35ada95f0746c341fa3015
