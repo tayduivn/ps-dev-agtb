@@ -475,7 +475,8 @@ require_once('include/EditView/EditView2.php');
 					if(!empty($params['is_date_field']) && isset($this->searchFields[$name]['value']))
 					{
 						global $timedate;
-						$date_value = $timedate->to_db_date($this->searchFields[$name]['value']);
+                                                // FG - bug 45287 - to db conversion is ok, but don't adjust timezone (not now), otherwise you'll jump to the day before (if at GMT-xx)
+						$date_value = $timedate->to_db_date($this->searchFields[$name]['value'], false);
 						$this->searchFields[$name]['value'] = $date_value == '' ? $this->searchFields[$name]['value'] : $date_value;
 					}                    
                 }
@@ -587,6 +588,13 @@ require_once('include/EditView/EditView2.php');
 						$this->searchFields[$real_field]['operator'] = 'between';
 						$parms['value'] = $this->searchFields[$real_field]['value'];
 						$parms['operator'] = 'between';
+
+					        $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';					
+					        if($field_type == 'datetimecombo' || $field_type == 'datetime')
+					        {
+					   	    $type = $field_type;
+					        }
+
 						$field = $real_field;
 						unset($this->searchFields[$end_field]['value']);
 					}
@@ -820,7 +828,23 @@ require_once('include/EditView/EditView2.php');
 
                         if($type == 'datetime' || $type == 'datetimecombo') {
                         	try {
-	                            $dates = $timedate->getDayStartEndGMT($field_value);
+                                    // FG - bug45287 - If User asked for a range, takes edges from it.
+                                    $placeholderPos = strpos($field_value, "<>");
+                                    if ($placeholderPos !== FALSE && $placeholderPos > 0)
+                                    {
+                                      $datesLimit = explode("<>", $field_value);
+                                      $dateStart = $timedate->getDayStartEndGMT($datesLimit[0]);
+                                      $dateEnd = $timedate->getDayStartEndGMT($datesLimit[1]);
+	                              $dates = $dateStart;
+                                      $dates['end'] = $dateEnd['end'];
+                                      $dates['enddate'] = $dateEnd['enddate'];
+                                      $dates['endtime'] = $dateEnd['endtime'];
+                                    }
+                                    else
+                                    {
+	                              $dates = $timedate->getDayStartEndGMT($field_value);
+                                    }
+                                    // FG - bug45287 - Not "start" and "end" are the correct interval at GMT timezone
 	                            $field_value = $dates["start"] . "<>" . $dates["end"];
 	                            $operator = 'between';
                         	} catch(Exception $timeException) {
