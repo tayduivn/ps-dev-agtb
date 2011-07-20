@@ -151,13 +151,19 @@ class ImportViewConfirm extends ImportView
         {
             $importFileMap = $this->overloadImportFileMapFromRequest($importFileMap);
             $delimeter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : $delimeter;
-            $enclosure = !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : $enclosure;
+            $enclosure = isset($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : $enclosure;
+            $enclosure = html_entity_decode($enclosure, ENT_QUOTES);
             $hasHeader = !empty($_REQUEST['has_header']) ? $_REQUEST['has_header'] : $hasHeader;
+            if ($hasHeader == 'on') {
+                $hasHeader = true;
+            } else if ($hasHeader == 'off') {
+                $hasHeader = false;
+            }
         }
 
         $this->ss->assign("IMPORT_ENCLOSURE_OPTIONS",  $this->getEnclosureOptions($enclosure));
         $this->ss->assign("CUSTOM_DELIMITER",  $delimeter);
-        $this->ss->assign("CUSTOM_ENCLOSURE",  htmlentities($enclosure));
+        $this->ss->assign("CUSTOM_ENCLOSURE",  htmlentities($enclosure, ENT_QUOTES));
         $hasHeaderFlag = $hasHeader ? " CHECKED" : "";
         $this->ss->assign("HAS_HEADER_CHECKED", $hasHeaderFlag);
 
