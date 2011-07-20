@@ -9,7 +9,6 @@ ibmf_sugaralerts
 ibmf_wildcardsrch
 ibmf_unittestfixes
 ibmf_2314_myitems
-ibmf_2318_2327_2329_custinsthooks
 ibmf_defect3054
 ibmf_quicksearchext
 ibmf_searchformoverride
