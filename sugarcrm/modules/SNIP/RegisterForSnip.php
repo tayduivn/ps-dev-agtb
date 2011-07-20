@@ -38,7 +38,8 @@ global $sugar_config;
 /**
     use SugarSNIP instead of SugarSNIP_offlinetest for production
 **/
-$snip = SugarSNIP_offlinetest::getInstance();
+
+$snip = SugarSNIP::getInstance();
 $title = get_module_title("", translate('LBL_REGISTER_SNIP').":", true);
 $sugar_smarty = new Sugar_Smarty();
 
@@ -72,8 +73,7 @@ echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
 
 function createPurchaseURL($snipuser){
     global $sugar_config;
-    $json = getJSONobj();
-    $msg=base64_encode($json->encode(array('unique_key' => $sugar_config['unique_key'],
+    $msg=base64_encode(json_encode(array('unique_key' => $sugar_config['unique_key'],
                                            'snipuser'   => $snipuser->user_name,
                                            'password'   => $snipuser->user_hash)));
     return "localhost:1337/purchaseSnip?info=$msg";
@@ -94,23 +94,6 @@ function registerApplication($snip)
     }
 }
 
-/**
- * Convert status string from SNIP server into display string
- * @param string $status
- */
-function snipStatusToText($status)
-{
-    if($status == 'success') {
-        return translate('LBL_SNIP_STATUS_OK');
-    }
-    if($status == 'reset') {
-        return translate('LBL_SNIP_STATUS_RESET');
-    }
-    if($status == 'down') {
-        return translate('LBL_SNIP_STATUS_DOWN');
-    }
-    return sprintf(translate('LBL_SNIP_STATUS_PROBLEM'), $status);
-}
 
 /**
  * Convert timestamp from SNIP server into display string

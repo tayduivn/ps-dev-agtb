@@ -65,7 +65,7 @@ class SugarSNIP
      * @param bool $json encode params as JSON in data var or send as query?
      * @return bool Success?
      */
-    public function callRest($name, $params = array(), $json = false)
+    public function callRest($name, $params = array(), $json = false, &$connectionfailed=false)
     {
         if(isset($params['url'])) {
             $url = $params['url'];
@@ -86,6 +86,7 @@ class SugarSNIP
             $result = json_decode($response);
         } else {
             $GLOBALS['log']->debug("SNIP: REST request failed");
+            $connectionfailed=true;
             return false;
         }
         $this->last_result = $result;
@@ -122,7 +123,7 @@ class SugarSNIP
     public function getSnipURL()
     {
         if (!isset($this->config['snip_url']))
-            return 'http://localhost:20000/';
+            return 'http://localhost:20000';
         return $this->config['snip_url'];
     }
 
@@ -244,22 +245,32 @@ class SugarSNIP
     }
 
     /**
-     * Get status of the SNIP installation
-     * Expects to receive one of the following:
-     * - purchased_enabled  (instance has snip license, and snip is enabled)
-     * - purchased_down     (instance has snip license, but snip server is down)
-     * - purchased_disabled (instance has snip license, but snip has been disabled by instance admin)
-     * - notpurchased       (instance has no active snip license)
-     */
-    public function getStatus()
-    {
+    * Get status of the SNIP installation
+    * returns one of the following:
+    * - purchased  (instance has snip license)
+    * - notpurchased     (instance does not have snip license)
+    * - down (snip server unresponsive)
+    */
+    public function getStatus(){
+        //if inactive, 
         if(!$this->isActive()) {
-            return false;
+            return 'notpurchased';
         }
-        if($this->callRest("status")) {
-            return $this->getLastResult();
+
+        $connectionfailed=false;
+        $this->callRest('status',false,$json=false,$connectionfailed);
+
+        //check if server is down
+        if ($connectionfailed){
+            return 'down';
         }
-        return false;
+
+        //server is up, check if not purchased
+        if ($this->last_result->result=='instance not found')
+            return 'notpurchased';
+        
+        //server is up and snip is purchased
+        return 'purchased';
     }
 
     /**
@@ -591,6 +602,7 @@ class SugarSNIPClient
         curl_setopt($curl, CURLOPT_HEADER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $postArgs);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
         $GLOBALS['log']->debug("SNIP call: $url -> $postArgs");
         $response = curl_exec($curl);
         if($response === false) {

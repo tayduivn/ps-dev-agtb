@@ -50,20 +50,15 @@
 					<td>
 						<form name='ToggleSnipStatus' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
 						<input type='hidden' id='save_config' name='save_config' value='0'/>
-						{if $SNIP_STATUS == 'purchased_enabled'}
-							<div style='font-size:15px;display:inline'><span style='color:green;font-weight:bold'>Enabled (Service Online)</span></div>
-							<input class='button' type='submit' value='Disable' onclick='document.getElementById("save_config").value="disable"'>
-							{if $FORM_ERROR}<br><span style='color:red'>{$FORM_ERROR}</span><br>{/if}
-							<br>This instance has a SNIP license, and the service is enabled and running.
-						{elseif $SNIP_STATUS == 'purchased_disabled'}
-							<div style='font-size:15px;display:inline'><span style='color:#777777;font-weight:bold'>Disabled</span></div>
-							<input class='button' type='submit' value='Enable' onclick='document.getElementById("save_config").value="enable"'>	
-							{if $FORM_ERROR}<br><span style='color:red'>{$FORM_ERROR}</span><br>{/if}
-							<br>This instance has a SNIP license, but you have disabled SNIP.
+						{if $SNIP_STATUS == 'purchased'}
+							<div style='float:left;margin-bottom:5px;font-size:15px;display:inline;'><span style='color:green;font-weight:bold'>Enabled (Service Online)</span></div>
+							<div style='clear:both'></div>
+							<div style='float:left;margin-bottom:10px'>This instance has a SNIP license, and the service is running.</div>
+						{elseif $SNIP_STATUS == 'down'}
+							<div style='float:left;margin-bottom:5px;font-size:15px;display:inline;'><span style='color:red;font-weight:bold'>Cannot connect to SNIP server</span></div>
+							<div style='clear:both'></div>
+							<div style='float:left;margin-bottom:10px'>Sorry, the SNIP service is currently unavailable (either the service is down or the connection failed on your end).</div>
 							
-						{elseif $SNIP_STATUS == 'purchased_down'}
-							<div style='font-size:15px;display:inline'><span style='color:red;font-weight:bold'>Service Down</span></div>
-							<br>This instance has a SNIP license and you have enabled SNIP, but the the service is currently unavailable.
 						{/if}
 						</form>
 						<br>
