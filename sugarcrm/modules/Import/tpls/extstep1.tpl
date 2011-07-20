@@ -53,6 +53,9 @@
     {$MOD.LBL_EXTERNAL_MAP_HELP}
     <br/>
     <br/>
+    {$MOD.LBL_EXTERNAL_MAP_NOTE}
+    <br/>
+    <br/>
     {$MOD.LBL_EXTERNAL_MAP_SUB_HELP}
 </p>
     
