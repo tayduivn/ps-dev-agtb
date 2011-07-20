@@ -77,10 +77,7 @@
 						<slot>{$MOD.LBL_SNIP_CALLBACK_URL}</slot>
 					</td>
 					<td>
-						<slot><div style='float:left;width:325px' id='snipurl'>{$SNIP_URL}</div>
-						<form id='snipurlui' style='float:left;margin-top:-3px;margin-left:12px' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
-							
-						</form></slot>
+						<slot>{$SNIP_URL}</slot>
 					</td>
 				</tr>
 			</table>
@@ -88,61 +85,3 @@
 		</td>
 		</tr>
 	</table>
-
-	
-	
-
-
-
-
-{literal}
-<script type='text/javascript'>
-    (function(){
-    	snipurlui=document.getElementById('snipurlui');
-
-    	//if the ui isn't there, don't run the js
-    	if (snipurlui==null)
-    		return;
-        snipurlspan = document.getElementById('snipurl');
-        ourl = snipurlspan.innerHTML;
-        var islabelui = document.createElement('input');
-        islabelui.setAttribute('type','button');
-        islabelui.setAttribute('value','Edit');
-
-        var istextui = document.createElement('span');
-            var istextui_cancel = document.createElement('input');
-            istextui_cancel.setAttribute('type','button');
-            istextui_cancel.setAttribute('value','Cancel');
-
-            var istextui_save = document.createElement('input');
-            istextui_save.setAttribute('type','button');
-            istextui_save.setAttribute('value','Save');
-        
-        istextui.appendChild(istextui_cancel);
-        istextui.appendChild(istextui_save);
-
-        function setUI(ui){
-            while (snipurlui.childNodes.length>0)
-                snipurlui.removeChild(snipurlui.firstChild); 
-            snipurlui.appendChild(ui);
-        }
-
-        islabelui.onclick=function(){
-            snipurl = snipurlspan.firstChild.innerHTML;
-            snipurlspan.innerHTML="<input type='text' style='width:325px;margin-top:-1px' name='change_snipurl' value='"+snipurl+"'>";
-            setUI(istextui);
-        }
-
-        istextui_cancel.onclick = function(){
-            snipurlspan.innerHTML="<div style='float:left;background-color:#F1F1F1;width:320px;height:17px;padding-top:3px;padding-left:5px'>"+ourl+"</div>";
-            setUI(islabelui);
-        }
-
-        istextui_save.onclick = function(){
-            document.getElementById('snipurlui').submit();
-        }
-
-        istextui_cancel.onclick();
-    })()
-</script>
-{/literal}

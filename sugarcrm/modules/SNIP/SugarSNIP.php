@@ -123,7 +123,7 @@ class SugarSNIP
     public function getSnipURL()
     {
         if (!isset($this->config['snip_url']))
-            return 'http://localhost:20000';
+            return '';
         return $this->config['snip_url'];
     }
 
