@@ -89,7 +89,7 @@
 <tr>
     <td align="right" colspan="2">
         <input type='button' class='button' value='{$saveLBL}' id='save_{$id}' onclick='promptAuthentication(); if(SUGAR.dashlets.postForm("configure_{$id}", SUGAR.mySugar.uncoverPage)) this.form.submit();'>
-        <input type='submit' class='button' value='{$clearLBL}' onclick='SUGAR.searchForm.clear_form(this.form,["title","autoRefresh"]);return false;'>
+        <input type='submit' class='button' value='{$clearLBL}' onclick='SUGAR.searchForm.clear_form(this.form,["title","autoRefresh","rows"]);return false;'>
    	</td>
 </tr>
 </table>
