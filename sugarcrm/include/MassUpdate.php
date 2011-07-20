@@ -153,7 +153,8 @@ eoq;
 					$_POST[$post] = '';
 				}else{
 				unset($_POST[$post]);
-			}
+			}elseif ( $value == '--null--'){  #Bug36693 MassUpdate for ENUM with Option '0'
+				$_POST[$post] = '';	
 			}
 			if(is_string($value) && isset($this->sugarbean->field_defs[$post])) {
 		        if(($this->sugarbean->field_defs[$post]['type'] == 'bool'
@@ -1035,6 +1036,13 @@ EOQ;
 			   	   $new_options[$key] = $value;
 			   }
 			   $options = $new_options;
+			}else{  #Bug36693 MassUpdate for ENUM with Option '0'
+				$new_options[''] = '';
+				$new_options['--null--'] = isset($options['']) ? $options[''] : $options['0'];
+				foreach($options as $key=>$value) {
+			   	   $new_options[$key] = $value;
+			    }
+			    $options = $new_options;
 			}
 			$options = get_select_options_with_id_separate_key($options, $options, '', true);;
 			$html .= '<select id="mass_'.$varname.'" name="'.$varname.'">'.$options.'</select>';
