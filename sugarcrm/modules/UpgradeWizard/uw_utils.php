@@ -591,17 +591,14 @@ function deleteCache(){
 	//Clean modules from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles,true);
+		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
 		foreach($allModFiles as $file)
 		{
-            if(file_exists($file)) {
-	       		if(is_dir($file)) {
-				  rmdir_recursive($file);
-	       		} else {
-	       		  unlink($file);
-	       		}
-               }
-	    }
+	       	if(file_exists($file))
+	       	{
+	       	   unlink($file);
+	       	}
+		}
 	}
 	
 	//Clean jsLanguage from cache
