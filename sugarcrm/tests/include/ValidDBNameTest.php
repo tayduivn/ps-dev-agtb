@@ -80,7 +80,7 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testInvalidOracleNameReturnsFalse()
     {
-        $this->assertFalse(isValidDBName('sugar=CRM', 'oci8'));
+        $this->assertFalse(isValidDBName('sugar\CRM', 'oci8'));
         $this->assertFalse(isValidDBName('sugar crm', 'oci8'));
         $this->assertFalse(isValidDBName('sugarCRM_ver#63', 'oci8'));
     }
