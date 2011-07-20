@@ -61,13 +61,10 @@ title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{$displayParams.field}}
 	type="text" style="vertical-align: top;">
 
 <span class="id-ff multiple">
-    <button type="button"><img src="{sugar_getimagepath file="id-ff-down.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image"></button>
-	<button type="button"
+    <button type="button"><img src="{sugar_getimagepath file="id-ff-down.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image"></button><button type="button"
         id="btn-clear-{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
         title="Clear"
-        onclick="SUGAR.clearRelateField(this.form, '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input', '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}');">
-        <img src="{sugar_getimagepath file="id-ff-clear.png"}">
-    </button>
+        onclick="SUGAR.clearRelateField(this.form, '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input', '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}');"><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
 </span>
 {literal}
 <script>
