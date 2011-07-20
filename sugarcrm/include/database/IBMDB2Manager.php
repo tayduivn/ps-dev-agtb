@@ -212,7 +212,12 @@ class IBMDB2Manager  extends DBManager
         $db = $this->getDatabase();
         $result = false;
 
-        $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
+        try {
+            $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
+        } catch(Exception $e) {
+            $GLOBALS['log']->error("IBMDB2Manager.query caught exception when running db2_prepare for: $sql -> " . $e->getMessage());
+            throw $e;
+        }
 
 		if($stmt){
             $sp_msg = '';
@@ -220,7 +225,13 @@ class IBMDB2Manager  extends DBManager
             if($this->bindPreparedSqlParams($sql, $suppress, $stmt, $sp_msg)) {
 
                 $this->query_time = microtime(true);
-                $rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
+                try {
+                    $rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
+                } catch(Exception $e) {
+                    $GLOBALS['log']->error("IBMDB2Manager.query caught exception when running db2_execute for: $sql -> " . $e->getMessage());
+                    $GLOBALS['log']->error("The exception type is: " . get_class($e));
+                    throw $e;
+                }
                 $this->query_time = microtime(true) - $this->query_time;
                 $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
 
@@ -270,10 +281,15 @@ class IBMDB2Manager  extends DBManager
             // anywhere except for creating full text indexes in add_drop_contraint. Furthermore
             // we are also not using parameterized prepared queries. If either one of these assumptions
             // changes this code needs to be revisited.
-            $sp_msg = '';
-            $proceed = ($suppress) ? @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT) :
-                    db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
-            return $proceed;
+            try {
+                $sp_msg = '';
+                $proceed = ($suppress) ? @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT) :
+                        db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
+                return $proceed;
+            } catch(Exception $e) {
+                $GLOBALS['log']->error("IBMDB2Manager.query caught exception when running db2_bind_param for: $sql -> " . $e->getMessage());
+                throw $e;
+            }
         }
         return true;
     }
