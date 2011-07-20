@@ -86,10 +86,8 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
             }
         }
 
-        $defs = $this->restoreInvisibleFields($this->_invisibleFields,$this->_viewdefs); // unlike our parent, do not force the field names back to upper case
-        $defs = $this->makeRelateFieldsAsLink($defs);
-        $this->implementation->deploy ($defs); 
-     }
+        $this->implementation->deploy ( $this->restoreInvisibleFields ( $this->_invisibleFields , $this->_viewdefs ) ) ; // unlike our parent, do not force the field names back to upper case
+    }
 
     /**
      * Return a list of the default fields for a subpanel
@@ -145,30 +143,5 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
         return $listDef;
     }
 
-    
-	/**
-     * makeRelateFieldsAsLink
-     * This method will go through the subpanel definition entries being saved and then apply formatting to any that are 
-     * relate field so that a link to the related record may be shown in the subpanel code.  This is done by adding the
-     * widget_class, target_module and target_record_key deltas to the related subpanel definition entry. 
-     * 
-     * @param Array of subpanel definitions to possibly alter
-     * @return $defs Array of formatted subpanel definition entries to include any relate field attributes for Subpanels
-     */
-    protected function makeRelateFieldsAsLink($defs) 
-    {
-        foreach($defs as $index => $fieldData) 
-        {
-            if (isset($fieldData['type']) && $fieldData['type'] == 'relate') 
-            {
-                $defs[$index]['widget_class'] = 'SubPanelDetailViewLink';
-                $defs[$index]['target_module'] = isset($this->_fielddefs[$index]['module']) ? $this->_fielddefs[$index]['module'] : $this->_moduleName;
-                $defs[$index]['target_record_key'] = $this->_fielddefs[$index]['id_name'];
-            }
-        }
-
-        return $defs;
-    }        
-    
 }
 ?>
