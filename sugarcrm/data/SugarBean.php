@@ -4612,8 +4612,19 @@ function save_relationship_changes($is_update, $exclude=array())
                     $this->modified_user_id = 1;
                 }
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$this->modified_user_id' where id='$id'";
-            } else
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
+                }
+                //END SUGARCRM flav=pro ONLY
+            } else {
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
+                }
+                //END SUGARCRM flav=pro ONLY
+            }
             $this->db->query($query, true,"Error marking record deleted: ");
             $this->deleted = 1;
             $this->mark_relationships_deleted($id);
