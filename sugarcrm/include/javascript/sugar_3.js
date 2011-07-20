@@ -93,6 +93,17 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
+//rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
+if (typeof new Array().indexOf == "undefined") {
+  Array.prototype.indexOf = function (obj, start) {
+    for (var i = (start || 0); i < this.length; i++) {
+      if (this[i] == obj) {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
 
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
@@ -3344,7 +3355,7 @@ SUGAR.searchForm = function() {
 			}
 		},
         // This function is here to clear the form, instead of "resubmitting it
-		clear_form: function(form) {
+		clear_form: function(form, skipElementNames) {
             var elemList = form.elements;
             var elem;
             var elemType;
@@ -3352,6 +3363,10 @@ SUGAR.searchForm = function() {
             for( var i = 0; i < elemList.length ; i++ ) {
                 elem = elemList[i];
                 if ( typeof(elem.type) == 'undefined' ) {
+                    continue;
+                }
+                
+                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
                     continue;
                 }
 
@@ -3998,11 +4013,13 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+                            SUGAR.util.callOnChangeListers(selectField);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+                    SUGAR.util.callOnChangeListers(window.document.forms[form_name].elements[the_key]);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
@@ -4261,8 +4278,11 @@ SUGAR.util.ajaxCallInProgress = function(){
 }
 
 SUGAR.util.callOnChangeListers = function(field){
-	var listeners = YAHOO.util.Event.getListeners(field, 'change');
-	if (listeners != null) {
+	var listeners = YAHOO.util.Event.getListeners(field, 'change')
+    if (listeners == null && field.id)
+       listeners = YAHOO.util.Event.getListeners(field.id, 'change');
+	
+    if (listeners != null) {
 		for (var i = 0; i < listeners.length; i++) {
 			var l = listeners[i];
 			l.fn.call(l.scope ? l.scope : this, l.obj);
@@ -4362,4 +4382,17 @@ SUGAR.util.arrayIndexOf = function(arr, val, start) {
         }
     }
     return -1;
+};
+
+SUGAR.clearRelateField = function(form, name, id)
+{
+    if (typeof form[name] == "object"){
+        form[name].value = '';
+        SUGAR.util.callOnChangeListers(form[name]);
+    }
+
+    if (typeof form[id] == "object"){
+        form[id].value = '';
+        SUGAR.util.callOnChangeListers(form[id]);
+    }
 };

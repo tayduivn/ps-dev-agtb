@@ -76,10 +76,10 @@ class ImportViewLast extends ImportView
         }
         fclose($fp);
     
-        $this->ss->assign("noSuccess",FALSE);
-        if(($count == $errorCount) || ($dupeCount == $count))
+        $this->ss->assign("showUndoButton",FALSE);
+        if($createdCount > 0)
         {
-        	$this->ss->assign("noSuccess",TRUE);        	
+        	$this->ss->assign("showUndoButton",TRUE);
         }
 
         if ($errorCount > 0 &&  ($createdCount <= 0 && $updatedCount <= 0))

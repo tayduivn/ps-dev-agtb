@@ -75,7 +75,8 @@ table.noBorder {
 <input type="hidden" name="import_type" value="{$TYPE}">
 <input type="hidden" name="file_name" value="{$FILE_NAME}">
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
-
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
+    
 {if $AUTO_DETECT_ERROR != ''}
     <div class="errorMessage">
         <span class="error">{$AUTO_DETECT_ERROR}</span>
@@ -190,7 +191,7 @@ table.noBorder {
             <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
         </tr>
         <tr>
-            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}</td>
+            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="outlook" id='outlook_map'/>&nbsp;{$MOD.LBL_MICROSOFT_OUTLOOK}&nbsp;{sugar_help text=$MOD.LBL_MICROSOFT_OUTLOOK_HELP}</td>
         </tr>
         <tr>
             <td colspan="2">&nbsp;</td>

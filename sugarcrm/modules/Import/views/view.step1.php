@@ -40,6 +40,16 @@ class ImportViewStep1 extends ImportView
 
     protected $pageTitleKey = 'LBL_STEP_1_TITLE';
 
+    public function __construct($bean = null, $view_object_map = array())
+    {
+        parent::__construct($bean, $view_object_map);
+        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+        $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+        if( isset($_REQUEST['from_admin_wizard']) &&  $_REQUEST['from_admin_wizard'] )
+            $this->importModule = 'Administration';
+    }
+
+
  	/** 
      * @see SugarView::display()
      */
@@ -55,21 +65,24 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
 
-
-        $showModuleSelection = ($_REQUEST['import_module'] == 'Administration');
+        $showModuleSelection = ($this->importModule == 'Administration');
         $importableModulesOptions = array();
-
+        $importablePersonModules = array();
         //If we are coming from the admin link, get the module list.
         if($showModuleSelection)
         {
-            $importableModulesOptions = get_select_options_with_id($this->getImportableModules(), '');
+            $tmpImportable = $this->getImportableModules();
+            $importableModulesOptions = get_select_options_with_id($tmpImportable, '');
+            $importablePersonModules = $this->getImportablePersonModulesJS();
+            $this->ss->assign("IMPORT_MODULE", key($tmpImportable));
         }
         else
         {
             $this->instruction = 'LBL_SELECT_DS_INSTRUCTION';
             $this->ss->assign('INSTRUCTION', $this->getInstruction());
         }
-
+        $this->ss->assign("FROM_ADMIN", $showModuleSelection);
+        $this->ss->assign("PERSON_MODULE_LIST", json_encode($importablePersonModules));
         $this->ss->assign("showModuleSelection", $showModuleSelection);
         $this->ss->assign("IMPORTABLE_MODULES_OPTIONS", $importableModulesOptions);
 
@@ -93,12 +106,32 @@ class ImportViewStep1 extends ImportView
             {
                 $tmp = new $beanName();
                 if( isset($tmp->importable) && $tmp->importable )
-                    $importableModules[$moduleName] = $moduleName;
+                {
+                    $label = isset($GLOBALS['app_list_strings']['moduleList'][$moduleName]) ? $GLOBALS['app_list_strings']['moduleList'][$moduleName] : $moduleName;
+                    $importableModules[$moduleName] = $label;
+                }
             }
         }
 
         asort($importableModules);
         return $importableModules;
+    }
+
+    private function getImportablePersonModulesJS()
+    {
+        global $beanList;
+        $results = array();
+        foreach ($beanList as $moduleName => $beanName)
+        {
+            if( class_exists($beanName) )
+            {
+                $tmp = new $beanName();
+                if( isset($tmp->importable) && $tmp->importable && ($tmp instanceof Person))
+                    $results[$moduleName] = $moduleName;
+            }
+        }
+
+        return $results;
     }
 
     private function getAllImportableExternalEAPMs()
@@ -219,7 +252,33 @@ YAHOO.util.Event.onDOMReady(function(){
         document.location = url;
     }
 
+    function setImportModule()
+    {
+        var selectedModuleEl = document.getElementById('admin_import_module');
+        if(!selectedModuleEl)
+        {
+            return;
+        }
+
+        //Check if the module selected by the admin is a person type module, if not hide
+        //the external source.
+        var selectedModule = selectedModuleEl.value;
+        document.getElementById('importstep1').import_module.value = selectedModule;
+        //BEGIN SUGARCRM flav=pro ONLY
+        if( personModules[selectedModule] )
+        {
+            document.getElementById('ext_source_tr').style.display = '';
+        }
+        else
+        {
+            document.getElementById('ext_source_tr').style.display = 'none';
+            document.getElementById('external_sources_tr').style.display = 'none';
+            document.getElementById('csv_source').checked = true;
+        }
+        //END SUGARCRM flav=pro ONLY
+    }
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+    YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 
 
     oButtonGroup.subscribe('checkedButtonChange', function(e)
@@ -239,6 +298,8 @@ YAHOO.util.Event.onDOMReady(function(){
         isExtSourceValid(selectedExternalSource);
     }
     initExtSourceSelection();
+
+    setImportModule();
 });
 -->
 </script>

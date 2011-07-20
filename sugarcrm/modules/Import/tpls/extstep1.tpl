@@ -1,4 +1,5 @@
 {*
+<!--//FILE SUGARCRM flav=pro ONLY -->
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -44,10 +45,15 @@
 <input type="hidden" name="enabled_dup_fields" value ="{$ENABLED_DUP_FIELDS}">
 <input type="hidden" name="offset" value="0">
 <input type="hidden" name="to_pdf" value="1">
-<input type="hidden" name="has_header" value="off">    
+<input type="hidden" name="has_header" value="off">
+<input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
+
 
 <p>
     {$MOD.LBL_EXTERNAL_MAP_HELP}
+    <br/>
+    <br/>
+    {$MOD.LBL_EXTERNAL_MAP_NOTE}
     <br/>
     <br/>
     {$MOD.LBL_EXTERNAL_MAP_SUB_HELP}

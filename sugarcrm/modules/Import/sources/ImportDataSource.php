@@ -211,7 +211,8 @@ abstract class ImportDataSource implements Iterator
 
     protected function formatErrorMessage($error, $fieldName, $fieldValue)
     {
-        global $mod_strings;
+        global $current_language;
+        $mod_strings = return_module_language($current_language, 'Import');
         return "<b>{$mod_strings['LBL_ERROR']}</b> $error <br/>".
                "<b>{$mod_strings['LBL_FIELD_NAME']}</b> $fieldName <br/>" .
                "<b>{$mod_strings['LBL_VALUE']}</b> $fieldValue <br/>";

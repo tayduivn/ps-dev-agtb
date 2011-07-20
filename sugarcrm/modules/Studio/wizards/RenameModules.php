@@ -156,7 +156,7 @@ class RenameModules
         $this->changedModules = $this->getChangedModules();
 
         //Change module, appStrings, subpanels, and related links.
-        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels()->renameAllDashlets();
+        $this->changeAppStringEntries()->changeAllModuleModStrings()->renameAllRelatedLinks()->renameAllSubpanels()->renameAllDashlets()->renameLeadsModuleModStrings();
 
         //Refresh the page again so module tabs are changed as the save process happens after module tabs are already generated.
         if($redirect)
@@ -435,6 +435,58 @@ class RenameModules
 
         return $this;
     }
+
+   /**
+     * Rename all module strings within the leads module.
+     *
+     * @return RenameModules
+     */
+    private function renameLeadsModuleModStrings()
+    {
+        $GLOBALS['log']->debug("Begining to rename leads module");
+        foreach($this->changedModules as $moduleName => $replacementLabels)
+        {
+            $this->changeLeadsModuleModStrings($moduleName, $replacementLabels);
+        }
+
+        return $this;
+    }
+
+      /**
+     * For a particular module, rename any relevant module strings that need to be replaced.
+     *
+     * @param  string $moduleName The name of the module to be renamed.
+     * @param  $replacementLabels
+     * @return void
+     */
+    private function changeLeadsModuleModStrings($moduleName, $replacementLabels)
+    {
+        $GLOBALS['log']->debug("Begining to change module labels for Leads: $moduleName");
+        $currentModuleStrings = return_module_language($this->selectedLanguage, 'Leads');
+        $labelKeysToReplace = array(
+            array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
+            array('name' => 'LNK_SELECT_###MODULE_PLURAL###', 'type' => 'singular'),
+            array('name' => 'LNK_SELECT_###MODULE_SINGULAR###', 'type' => 'singular'),
+        );
+
+        $replacedLabels = array();
+        foreach($labelKeysToReplace as $entry)
+        {
+            $formattedLanguageKey = $this->formatModuleLanguageKey($entry['name'], $replacementLabels);
+
+            //If the static of dynamic key exists it should be replaced.
+            if( isset($currentModuleStrings[$formattedLanguageKey]) )
+            {
+                $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
+                $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($oldStringValue, $replacementLabels, $entry);
+            }
+        }
+
+        //Save all entries
+        ParserLabel::addLabels($this->selectedLanguage, $replacedLabels, 'Leads');
+        $this->renamedModules['Leads'] = true;
+    }
+
 
     /**
      * For a particular module, rename any relevant module strings that need to be replaced.

@@ -50,6 +50,7 @@
 <input type="hidden" name="current_step" value="1">
 <input type="hidden" name="return_action" value="Step1">
 <input type="hidden" name="external_source" value="">
+<input type="hidden" name="from_admin_wizard" value="{$FROM_ADMIN}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <p>
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -64,7 +65,7 @@
                                     <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_STEP_MODULE}&nbsp;</h3></td>
                                 </tr>
                                 <tr>
-                                    <td><select tabindex='4' name='import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
+                                    <td><select tabindex='4' name='admin_import_module' id='admin_import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
                                 </tr>
                                 <tr>
                                     <td align="left" scope="row">&nbsp;</td>
@@ -79,7 +80,8 @@
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
                                 </td>
                             </tr>
-                            <tr>
+                            {* //BEGIN SUGARCRM flav=pro ONLY *}
+                            <tr id="ext_source_tr">
                                 <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
                   &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
                                 </td>
@@ -103,6 +105,7 @@
                                     <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
                                 </td>
                             </tr>
+                            {* //END SUGARCRM flav=pro ONLY *}
                             </table>
                         </td>
                     </tr>
@@ -127,6 +130,7 @@
 {/literal}
 var auth_sources = {$EXTERNAL_AUTHENTICATED_SOURCES}
 var selectedExternalSource = '{$selectExternalSource}';
+var personModules = {$PERSON_MODULE_LIST};
 {literal}
 
 

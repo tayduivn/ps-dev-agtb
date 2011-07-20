@@ -24,7 +24,7 @@ class BeanFactory {
 
         $beanClass = self::getBeanName($module);
 
-        if (empty($beanClass)) return false;
+        if (empty($beanClass) || !class_exists($beanClass)) return false;
 
         if (!empty($id))
         {

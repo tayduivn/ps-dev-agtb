@@ -32,8 +32,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/EditView/EditView2.php');
 
-echo'Quickedit';
-
 
 class ViewQuickedit extends ViewAjax
 {
@@ -110,6 +108,22 @@ class ViewQuickedit extends ViewAjax
 			}
 		}
 
+        //in some cases, the source file will not exist.  In these cases lets just navigate to the full form directlhy
+        if(!file_exists($source)){
+            global $app_strings;
+            //write out jscript that will get evaluated and redirect the browser window.
+            $no_defs_html = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id .'";</script>';
+            if($this->bean->module_dir == 'Reports'){
+                //if this is reports then go to detail view, not edit view
+                $no_defs_html = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id .'";</script>';
+            }
+            $no_defs_html .= '<br>'.$app_strings['LBL_QUICKEDIT_NODEFS_NAVIGATION'].'</br>';
+
+            echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id ,'html'=> $no_defs_html, 'eval'=>true));
+          return;
+
+        }
+        
 		$this->ev = new EditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();

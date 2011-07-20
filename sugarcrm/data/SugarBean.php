@@ -2093,6 +2093,14 @@ function save_relationship_changes($is_update, $exclude=array())
                     if ($this->load_relationship ( $linkField))
                     {
                         $idName = $def['id_name'];
+
+                        if (!empty($this->rel_fields_before_value[$idName]))
+                        {
+                            //if before value is not empty then attempt to delete relationship
+                            $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
+                            $this->$def ['link' ]->delete($this->id, $this->rel_fields_before_value[$def [ 'id_name' ]] );
+                        }
+
                         if (!empty($this->$idName) && is_string($this->$idName))
                         {
                             $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}" );
@@ -2975,7 +2983,7 @@ function save_relationship_changes($is_update, $exclude=array())
      *
      * It constructs union queries for activities subpanel.
      *
-     * @param Object $parentbean constructing queries for link attributes in this bean
+     * @param SugarBean $parentbean constructing queries for link attributes in this bean
      * @param string $order_by Optional, order by clause
      * @param string $sort_order Optional, sort order
      * @param string $where Optional, additional where clause
