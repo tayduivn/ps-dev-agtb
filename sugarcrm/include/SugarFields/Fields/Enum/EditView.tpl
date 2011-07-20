@@ -42,7 +42,6 @@ title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{$displayParams.field}}
 </select>
 
 {{else}}
-
 {assign var="field_options" value={{sugarvar key='options' string="true"}} }
 {capture name="field_val"}{{sugarvar key='value'}}{/capture}
 {assign var="field_val" value=$smarty.capture.field_val}
@@ -60,8 +59,17 @@ title='{{$vardef.help}}' tabindex="{{$tabindex}}" {{$displayParams.field}}
 	size="30"
     {{if isset($displayParams.javascript)}}{{$displayParams.javascript}}{{/if}}
 	value="{$field_val|lookup:$field_options}"
-	type="text" style="vertical-align: top;"> <img src="{sugar_getimagepath file="down_arrow.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image">
-	
+	type="text" style="vertical-align: top;">
+
+<span class="id-ff multiple">
+    <button type="button"><img src="{sugar_getimagepath file="id-ff-down.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image"></button>
+	<button type="button"
+        id="btn-clear-{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
+        title="Clear"
+        onclick="SUGAR.clearRelateField(this.form, '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input', '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}');">
+        <img src="{sugar_getimagepath file="id-ff-clear.png"}">
+    </button>
+</span>
 {literal}
 <script>
 
