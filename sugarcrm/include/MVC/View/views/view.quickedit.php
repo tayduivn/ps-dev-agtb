@@ -113,7 +113,9 @@ class ViewQuickedit extends ViewAjax
             global $app_strings;
             //write out jscript that will get evaluated and redirect the browser window.
             $no_defs_html = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id .'";</script>';
-            if($this->bean->module_dir == 'Reports'){
+            if(!file_exists('custom/' . $base . 'editviewdefs.php') && !file_exists($base . 'editviewdefs.php')
+            && !file_exists('custom/modules/' . $module .'/EditView.php') && !file_exists('modules/' . $module .'/EditView.php')
+            ){
                 //if this is reports then go to detail view, not edit view
                 $no_defs_html = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id .'";</script>';
             }
