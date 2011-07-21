@@ -95,14 +95,19 @@ $viewdefs['Documents']['DetailView'] = array(
 	    ),
 	    //END SUGARCRM flav!=sales ONLY
 
-         array ('assigned_user_name'),
-          
-		//BEGIN SUGARCRM flav=pro ONLY
-	    array (
-	      'team_name'
+       array (
+        array (
+            'name' => 'assigned_user_name',
+            'label' => 'LBL_ASSIGNED_TO_NAME',
+            ),
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        array (
+	      'name' => 'team_name',
+          'label' => 'LBL_TEAM',
 	    ),
-	    //END SUGARCRM flav=pro ONLY
-        
+        //END SUGARCRM flav=pro ONLY
+        ),
       ),
       'LBL_REVISIONS_PANEL' => 
       array (
