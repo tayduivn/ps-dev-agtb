@@ -32,7 +32,21 @@
 /**
  * Namespace for Sugar Objects
  */
-if ( typeof(SUGAR) == "undefined" )	SUGAR = {};
+if ( typeof(SUGAR) == "undefined" )	SUGAR = {
+
+    /**
+     * Creates a namespace if it doesn't exist and then returns it.
+     *
+     * Note: this implementation only creates a top-level namespace. Extend this function if
+     * multi-level namespaces are needed.
+     * @param ns
+     */
+    namespace: function(ns) {
+        SUGAR[ns] = SUGAR[ns] || {};
+        return SUGAR[ns];
+    }
+};
+
 if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
 
 
@@ -4371,6 +4385,24 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
 	if(!pwd || !link) return;
 	pwd.style.display = '';
 	link.style.display = 'none';
+}
+
+/**
+ * Compares a filename with a supplied array of allowed file extensions.
+ * @param fileName string
+ * @param allowedTypes array of allowed file extensions
+ * @return bool
+ */
+SUGAR.util.validateFileExt = function(fileName, allowedTypes) {
+    var ext = fileName.split('.').pop();
+
+    for (var i = allowedTypes.length; i > 0; i--) {
+        if (ext === allowedTypes[i]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 SUGAR.util.arrayIndexOf = function(arr, val, start) {
