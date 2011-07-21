@@ -454,10 +454,11 @@ class VardefManager{
 				if(!empty($GLOBALS['dictionary'][$object]))
 					sugar_cache_put($key,$GLOBALS['dictionary'][$object]);
 			}
-    		else{
+//BEGIN SUGARCRM flav=int ONLY
+			else{
     			display_notice('<B> MISSING FIELD_DEFS ' . 'modules/'. strtoupper($module) . '/vardefs.php for ' . $object . '</b><BR>');
     		}
-
+//END SUGARCRM flav=int ONLY
 		}
 	}
 }
