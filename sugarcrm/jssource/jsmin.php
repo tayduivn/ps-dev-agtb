@@ -19,7 +19,7 @@ class JSMin {
  * deep compression make sure the script has passed JSLint.
  */
 class SugarMin {
-    protected $noSpaceChars = array('\\', "$", '_', '/');
+    protected $noSpaceChars = array('\\', '$', '_', '/');
     protected $postNewLineSafeChars = array('\\', '$', '_', '{', '[', '(', '+', '-');
     protected $preNewLineSafeChars = array('\\', '$', '_', '}', ']', ')', '+', '-', '"', "'");
     protected $regexChars = array('(', ',',  '=', ':', '[', '!', '&', '|', '?', '{', '}', ';');
@@ -84,7 +84,7 @@ class SugarMin {
             if ($lastChar != " " && $lastChar != "\n" && $lastChar != null) {
                 $prevChar = $lastChar;
             }
-            
+
             switch ($char) {
                 case "\\": // If escape character
                     $stripped_js .= $char.$js[$i + 1];
