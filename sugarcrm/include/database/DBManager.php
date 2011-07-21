@@ -427,7 +427,7 @@ abstract class DBManager
         if (!isset($this->database))
             $this->connect();
     }
-    
+
     /**
      * Sets the dieOnError value
      *
@@ -468,22 +468,22 @@ abstract class DBManager
             if(isset($data[$field])) {
                 // clean the incoming value..
                 $val = from_html($data[$field]);
+	            if ($fieldDef['name'] == 'deleted') {
+	                $values['deleted'] = (int)$val;
+	            } else {
+	                // need to do some thing about types of values
+	                $values[$field] = $this->massageValue($val, $fieldDef);
+	            }
             } else {
-                continue;
-            }
+	            // handle auto increment values here - we may have to do something like nextval for oracle
+            	if (!empty($fieldDef['auto_increment'])) {
+                	$auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
+                	if(!empty($auto)) {
+                    	$values[$field] = $auto;
+                	}
+            	}
+          	}
 
-            //handle auto increment values here - we may have to do something like nextval for oracle
-            if (!empty($fieldDef['auto_increment'])) {
-                $auto = $this->getAutoIncrementSQL($table, $fieldDef['name']);
-                if(!empty($auto)) {
-                    $values[$field] = $auto;
-                }
-            } elseif ($fieldDef['name'] == 'deleted') {
-                $values['deleted'] = (int)$val;
-            } else {
-                // need to do some thing about types of values
-                $values[$field] = $this->massageValue($val, $fieldDef);
-            }
 		}
 		if (empty($values))
             return true; // no columns set
