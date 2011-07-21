@@ -95,6 +95,8 @@ $viewdefs['Documents']['DetailView'] = array(
 	    ),
 	    //END SUGARCRM flav!=sales ONLY
 
+         array ('assigned_user_name'),
+          
 		//BEGIN SUGARCRM flav=pro ONLY
 	    array (
 	      'team_name'
