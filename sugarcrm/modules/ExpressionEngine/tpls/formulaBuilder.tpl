@@ -52,7 +52,7 @@
 <div style="width:100%;text-align:right">
 <input type='button' class='button' name='formulacancelbtn' value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_CANCEL"}'
 	onclick="ModuleBuilder.formulaEditorWindow.hide()" >
-<input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}' 
+<input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}'
 	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))ModuleBuilder.formulaEditorWindow.hide()">
 </div>
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
@@ -72,7 +72,7 @@ var FBLoader = new YAHOO.util.YUILoader({
 FBLoader.addModule({
     name :"formulabuilder",
     type : "js",
-    fullpath: "{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}",
+    fullpath: "{/literal}{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}{literal}",
     varName: "SUGAR.expressions.initFormulaBuilder",
     requires: ["layout", "element"]
 });
