@@ -85,6 +85,14 @@ class M2MRelationship extends SugarRelationship
             $row[$this->relationship_role_column] = $this->relationship_role_column_value;
         }
 
+        foreach($this->def['fields'] as $fieldDef)
+        {
+            if (!empty($fieldDef['name']) && !isset($row[$fieldDef['name']]) && !empty($fieldDef['default']))
+            {
+                $row[$fieldDef['name']] = $fieldDef['default'];
+            }
+        }
+
         return $row;
     }
 
