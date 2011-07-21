@@ -135,6 +135,7 @@ class IBMDB2Manager  extends DBManager
         "limit_subquery" => true,
     );
 
+
     /**+
      * Handles logging the error message
      *
@@ -146,12 +147,12 @@ class IBMDB2Manager  extends DBManager
     protected function handleError($msg, $dieOnError, $logmsg)
     {
         if ($this->dieOnError || $dieOnError){
-            $GLOBALS['log']->fatal($logmsg);
+            $this->log->fatal($logmsg);
             sugar_die ($logmsg);
         }
         else {
             $this->last_error = $msg.$logmsg;
-            $GLOBALS['log']->error($logmsg);
+            $this->log->error($logmsg);
             return $this->last_error;
         }
         return $msg;
@@ -178,7 +179,7 @@ class IBMDB2Manager  extends DBManager
             $info = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
             if($info) {
                 $logmsg = "IBM_DB2 statement SQLSTATE after successful execution ".$info.": ".db2_stmt_errormsg($stmt);
-                $GLOBALS['log']->debug($logmsg);
+                $this->log->debug($logmsg);
             }
         } else {
             $error = db2_stmt_error(); // Using local variable because a successive call will return no problem!
@@ -207,7 +208,7 @@ class IBMDB2Manager  extends DBManager
             return $this->queryArray($sql, $dieOnError, $msg, $suppress);
         }
         parent::countQuery($sql);
-        $GLOBALS['log']->info('Query: ' . $sql);
+        $this->log->info('Query: ' . $sql);
         $this->checkConnection();
         $db = $this->getDatabase();
         $result = false;
@@ -215,7 +216,7 @@ class IBMDB2Manager  extends DBManager
         try {
             $stmt = $suppress?@db2_prepare($db, $sql):db2_prepare($db, $sql);
         } catch(Exception $e) {
-            $GLOBALS['log']->error("IBMDB2Manager.query caught exception when running db2_prepare for: $sql -> " . $e->getMessage());
+            $this->log->error("IBMDB2Manager.query caught exception when running db2_prepare for: $sql -> " . $e->getMessage());
             throw $e;
         }
 
@@ -228,21 +229,21 @@ class IBMDB2Manager  extends DBManager
                 try {
                     $rc = $suppress?@db2_execute($stmt):db2_execute($stmt);
                 } catch(Exception $e) {
-                    $GLOBALS['log']->error("IBMDB2Manager.query caught exception when running db2_execute for: $sql -> " . $e->getMessage());
-                    $GLOBALS['log']->error("The exception type is: " . get_class($e));
+                    $this->log->error("IBMDB2Manager.query caught exception when running db2_execute for: $sql -> " . $e->getMessage());
+                    $this->log->error("The exception type is: " . get_class($e));
                     throw $e;
                 }
                 $this->query_time = microtime(true) - $this->query_time;
-                $GLOBALS['log']->info('Query Execution Time: '.$this->query_time);
+                $this->log->info('Query Execution Time: '.$this->query_time);
 
                 if(!$rc) {
-                    $GLOBALS['log']->error("Query Failed: $sql");
+                    $this->log->error("Query Failed: $sql");
                     $stmt = false; // Making sure we don't use the statement resource for error reporting
                 } else {
                     $result = $stmt;
                     if(isset($sp_msg) && $sp_msg != '')
                     {
-                        $GLOBALS['log']->info("Return message from stored procedure call '$sql': $sp_msg");
+                        $this->log->info("Return message from stored procedure call '$sql': $sp_msg");
                     }
 
                     if($this->dump_slow_queries($sql)) {
@@ -250,7 +251,7 @@ class IBMDB2Manager  extends DBManager
                     }
                 }
             } else {
-                $GLOBALS['log']->error("Failed to bind parameter for query : $sql");
+                $this->log->error("Failed to bind parameter for query : $sql");
             }
 		}
 
@@ -287,7 +288,7 @@ class IBMDB2Manager  extends DBManager
                         db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
                 return $proceed;
             } catch(Exception $e) {
-                $GLOBALS['log']->error("IBMDB2Manager.query caught exception when running db2_bind_param for: $sql -> " . $e->getMessage());
+                $this->log->error("IBMDB2Manager.query caught exception when running db2_bind_param for: $sql -> " . $e->getMessage());
                 throw $e;
             }
         }
@@ -307,7 +308,7 @@ class IBMDB2Manager  extends DBManager
 
         $err = db2_stmt_error($obj);
         if ($err != false){
-            $GLOBALS['log']->fatal("DB2 Statement error: ".var_export($err, true));
+            $this->log->fatal("DB2 Statement error: ".var_export($err, true));
             return true;
         }
         return false;
@@ -321,7 +322,7 @@ class IBMDB2Manager  extends DBManager
      */
     public function disconnect()
     {
-    	$GLOBALS['log']->debug('Calling IBMDB2::disconnect()');
+    	$this->log->debug('Calling IBMDB2::disconnect()');
         if(!empty($this->database)){
             $this->commit();    // Commit any pending changes as most of our code assumes auto commits
             $this->freeResult();
@@ -351,7 +352,7 @@ class IBMDB2Manager  extends DBManager
     {
         if ($start < 0)
             $start = 0;
-        $GLOBALS['log']->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
+        $this->log->debug('IBM DB2 Limit Query:' . $sql. ' Start: ' .$start . ' count: ' . $count);
 
         $sql = "SELECT * FROM ($sql) LIMIT $start,$count";
         $this->lastsql = $sql;
@@ -398,11 +399,11 @@ class IBMDB2Manager  extends DBManager
                 // _pp('Warning Check Query:' . $warning);
                 //END SUGARCRM flav=int ONLY
                 if(!empty($GLOBALS['sugar_config']['check_query_log'])){
-                    $GLOBALS['log']->fatal($sql);
-                    $GLOBALS['log']->fatal('CHECK QUERY:' .$warning);
+                    $this->log->fatal($sql);
+                    $this->log->fatal('CHECK QUERY:' .$warning);
                 }
                 else{
-                    $GLOBALS['log']->warn('CHECK QUERY:' .$warning);
+                    $this->log->warn('CHECK QUERY:' .$warning);
                 }
             }
         }
@@ -651,18 +652,18 @@ class IBMDB2Manager  extends DBManager
         }
 
 //        if($this->checkError('Could Not Connect:', $dieOnError))
-//            $GLOBALS['log']->info("connected to db");
+//            $this->log->info("connected to db");
         if(!$this->checkError('Could Not Connect:', $dieOnError))
         {
-            $GLOBALS['log']->info("connected to db");
+            $this->log->info("connected to db");
 
             if(db2_autocommit($this->database, DB2_AUTOCOMMIT_OFF))
-				$GLOBALS['log']->info("turned autocommit off");
+				$this->log->info("turned autocommit off");
 			else
-				$GLOBALS['log']->error("failed to turn autocommit off!");
+				$this->log->error("failed to turn autocommit off!");
 
 		}
-        $GLOBALS['log']->info("Connect:".$this->database);
+        $this->log->info("Connect:".$this->database);
         return true;
     }
 
@@ -824,7 +825,7 @@ class IBMDB2Manager  extends DBManager
             return false;
 
         $sql = "CREATE TABLE $tablename ($columns)";
-        $GLOBALS['log']->info("IBMDB2Manager.createTableSQLParams: ".$sql);
+        $this->log->info("IBMDB2Manager.createTableSQLParams: ".$sql);
         return $sql;
 	}
 
@@ -897,7 +898,7 @@ class IBMDB2Manager  extends DBManager
             $cols = $this->get_columns($tablename);
             $olddef = isset($cols[$req['name']]['default'])? trim($cols[$req['name']]['default']) : '';
             if($olddef != ''){
-                $GLOBALS['log']->info("IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty");
+                $this->log->info("IBMDB2Manager.alterOneColumnSQL: dropping old default $olddef as new one is empty");
                 $sql[]= "$alter DROP DEFAULT";
             }
         }
@@ -925,13 +926,15 @@ class IBMDB2Manager  extends DBManager
                 break;
             case "DROP":
                 $sql = $this->alterTableColumnSQL($action, $def['name']);
+                $this->reorgQueueAddTable($tablename); // Column DROP operations require TABLE REORGS
                 break;
             case "MODIFY":
                 $sql = $this->alterOneColumnSQL($tablename, $def, $ignoreRequired);
+                $this->reorgQueueAddTable($tablename); // Some modification (DROP IS NULL, etc.) require TABLE REORGS, so just to be sure adding table to queue for reorg
                 break;
             default:
                 $sql = null;
-                $GLOBALS['log']->fatal("IBMDB2Manager.changeOneColumnSQL unknown change action '$action' for table '$tablename'");
+                $this->log->fatal("IBMDB2Manager.changeOneColumnSQL unknown change action '$action' for table '$tablename'");
                 break;
         }
         return $sql;
@@ -1163,7 +1166,7 @@ EOQ;
             break;
         }
 
-        $GLOBALS['log']->info("IBMDB2Manager.add_drop_constraint: ".$sql);
+        $this->log->info("IBMDB2Manager.add_drop_constraint: ".$sql);
         return $sql;
     }
 
@@ -1602,10 +1605,10 @@ EOQ;
      */
     public function commit()
     {
-        $GLOBALS['log']->info("IBMDB2Manager.commit(): before db check");
         if ($this->database) {
             $success = db2_commit($this->database);
-            $GLOBALS['log']->info("IBMDB2Manager.commit(): $success");
+            $this->log->info("IBMDB2Manager.commit(): $success");
+            $this->executeReorgs();
             return $success;
         }
         return true;
@@ -1620,10 +1623,40 @@ EOQ;
     {
         if ($this->database) {
             $success = db2_rollback($this->database);
-            $GLOBALS['log']->info("IBMDB2Manager.rollback(): $success");
+            $this->log->info("IBMDB2Manager.rollback(): $success");
             return $success;
         }
         return false;
     }
+
+
+    /// START REORG QUEUE FUNCTIONALITY
+
+    protected $reorgQueues = array(
+        'table' => array(),
+        //'index' => array(), // We currently don't need to reorg indexes, this is for future changes
+    );
+
+    protected function reorgQueueAddTable($name)
+    {
+        $this->reorgQueues['table'] []= $name;
+    }
+
+    protected function executeReorgs()
+    {
+        $tables = array_unique($this->reorgQueues['table']);
+        foreach($tables as $table)
+        {
+            $sql = "CALL ADMIN_CMD('REORG TABLE $table ALLOW READ ACCESS')";
+            $this->query($sql, false,"REORG problem");
+        }
+        if(count($tables) > 0)
+        {
+            $this->log->info("Table REORG completed on: ". implode(', ', $tables) );
+            $this->reorgQueues['table'] = array(); // Clearing out queue
+        }
+    }
+
+    /// END REORG QUEUE FUNCTIONALITY
 
 }
