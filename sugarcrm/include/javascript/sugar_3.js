@@ -93,17 +93,6 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
-//rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
-if (typeof new Array().indexOf == "undefined") {
-  Array.prototype.indexOf = function (obj, start) {
-    for (var i = (start || 0); i < this.length; i++) {
-      if (this[i] == obj) {
-        return i;
-      }
-    }
-    return -1;
-  }
-}
 
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
