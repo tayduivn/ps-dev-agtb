@@ -213,7 +213,9 @@ YAHOO.util.Event.onDOMReady(function()
 /**
  * For the module list menu
  */
-SUGAR.themes = {
+SUGAR.themes = SUGAR.namespace("themes");
+
+SUGAR.extend(SUGAR.themes, {
     allMenuBars: {},
     setModuleTabs: function(html) {
         var el = document.getElementById('ajaxHeader');
@@ -247,7 +249,7 @@ SUGAR.themes = {
             currMenuBar;
         this.allMenuBars = {};
 
-        for ( var i = 0 ; i < nodes.length ; i++ ) {
+        for (var i = 0 ; i < nodes.length ; i++) {
             currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
                 autosubmenudisplay: true,
                 visible: false,
@@ -268,6 +270,6 @@ SUGAR.themes = {
             }
         }
     }
-};
+});
 
 YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);

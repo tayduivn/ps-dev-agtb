@@ -32,20 +32,31 @@
 /**
  * Namespace for Sugar Objects
  */
-if ( typeof(SUGAR) == "undefined" )	SUGAR = {
+if (typeof(SUGAR) == "undefined") {
+    SUGAR = {
 
-    /**
-     * Creates a namespace if it doesn't exist and then returns it.
-     *
-     * Note: this implementation only creates a top-level namespace. Extend this function if
-     * multi-level namespaces are needed.
-     * @param ns
-     */
-    namespace: function(ns) {
-        SUGAR[ns] = SUGAR[ns] || {};
-        return SUGAR[ns];
-    }
-};
+        /**
+         * Creates a namespace if it doesn't exist and then returns it.
+         *
+         * Note: this implementation only creates a top-level namespace. Extend this function if
+         * multi-level namespaces are needed.
+         * @param ns
+         */
+        namespace: function(ns) {
+            SUGAR[ns] = SUGAR[ns] || {};
+
+            return ((typeof SUGAR[ns] === "object") && (SUGAR[ns] !== null)) ? SUGAR[ns] : false;
+        },
+        
+        extend: function(target, obj) {
+            for (var prop in obj) {
+                if (obj[prop] !== void 0) target[prop] = obj[prop];
+            }
+
+            return target;
+        }
+    };
+}
 
 if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
 
