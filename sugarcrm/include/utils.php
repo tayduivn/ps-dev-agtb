@@ -2077,7 +2077,7 @@ function clean_string($str, $filter = "STANDARD") {
 	"NUMBER"          => '#[^0-9\-]#i',
 	"SQL_COLUMN_LIST" => '#[^A-Z0-9,_\.]#i',
 	"PATH_NO_URL"     => '#://#i',
-	"SAFED_GET"		  => '#[^A-Z0-9\@\=\&\?\.\/\-_~]#i', /* range of allowed characters in a GET string */
+	"SAFED_GET"		  => '#[^A-Z0-9\@\=\&\?\.\/\-_~+]#i', /* range of allowed characters in a GET string */
 	"UNIFIED_SEARCH"	=> "#[\\x00]#", /* cn: bug 3356 & 9236 - MBCS search strings */
 	"AUTO_INCREMENT"	=> '#[^0-9\-,\ ]#i',
 	"ALPHANUM"        => '#[^A-Z0-9\-]#i',
