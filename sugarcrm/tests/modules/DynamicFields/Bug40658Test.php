@@ -71,7 +71,12 @@ require_once('modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php');
 
 class SubpanelMetaDataParserMock extends SubpanelMetaDataParser
 {
-	
+	//Override constructor... don't do anything
+	function __construct ($subpanelName , $moduleName , $packageName = '')
+	{
+		
+	}
+		
 	public function makeRelateFieldsAsLink($defs)
 	{
 		$this->_moduleName = 'def_M1';
