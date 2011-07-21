@@ -280,7 +280,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
 	miniDetailViewResults = function(id, data){
 		setBody(Y.JSON.parse(data.responseText), 0);
-		Y.get('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+		Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
 	}
 
 	DCMenu.save = function(id){
