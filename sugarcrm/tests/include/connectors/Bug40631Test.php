@@ -26,6 +26,7 @@
 require_once('include/connectors/ConnectorFactory.php');
 require_once('include/connectors/sources/SourceFactory.php');
 require_once('include/connectors/formatters/FormatterFactory.php');
+require_once('tests/include/connectors/HooversHelper.php');
 
 /**
  * @outputBuffering enabled
@@ -634,6 +635,13 @@ EOQ;
     }
 
 
+    private function getResultData($filename)
+    {
+    	$result = '';
+    	require(dirname(__FILE__)."/$filename");
+    	return $result;
+    }
+
     public function testHooversCustomizationUpgrade()
     {
         $this->assertTrue(file_exists('custom/modules/Connectors/connectors/sources/ext/soap/hoovers/hoovers_custom_functions.php'));
@@ -666,6 +674,16 @@ EOQ;
         $this->assertEquals('bal.specialtyCriteria.companyName', $dictionary['ext_soap_hoovers']['fields']['recname']['input'], "Assert that the input key for recname entry was changed to 'bal.specialtyCriteria.companyName'");
 
         $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
+//BEGIN SUGARCRM flav!=int ONLY
+		$mock = $this->getMockFromWsdl(
+          		dirname(__FILE__).'/hooversAPI.wsdl', 'HooversAPIMock'
+        	);
+        $mockClient = new HooversConnectorsMockClient($mock);
+        $source_instance->getSource()->setClient($mockClient);
+    	$mock->expects($this->once())
+    		->method('GetCompanyDetail')
+    		->will($this->returnValue($this->getResultData('gannett.php')));
+//END SUGARCRM flav!=int ONLY
         $account = new Account();
         $account = $source_instance->fillBean(array('id'=>'2205698'), 'Accounts', $account);
         $this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
