@@ -4,7 +4,10 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setup()
     {
-    	$this->useOutputBuffering = false;
+	    require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;	
+	    //$this->useOutputBuffering = false;
     }
     
     public function testGetRelateJoin()
@@ -45,6 +48,7 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
 		
 	    $joinTableAlias = 'jt1';
 	    $relatedJoinInfo = $dynamicField->getRelateJoin($field_def, $joinTableAlias);
+	    //echo var_export($relatedJoinInfo, true);
 	    $this->assertEquals(', accounts_cstm.def_m1_id_c, jt1.name m1_related_c ', $relatedJoinInfo['select']);
     }
     
