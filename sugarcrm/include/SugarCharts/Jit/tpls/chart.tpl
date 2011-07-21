@@ -31,7 +31,7 @@
 <script type="text/javascript">
 	{literal}
 	SUGAR.util.doWhen(
-		"SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts",
+		"(SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts) || SUGAR.loadChart",
 		function(){
 			{/literal}
 			var css = new Array();

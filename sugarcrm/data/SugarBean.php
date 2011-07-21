@@ -1005,9 +1005,10 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        $this->load_relationship($field_name);
-
-        return $this->$field_name->getBeans();
+        if($this->load_relationship($field_name))
+            return array_values($this->$field_name->getBeans());
+        else
+            return array();
     }
 
     /**
