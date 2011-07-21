@@ -11,5 +11,4 @@ ibmc_unittestfixes
 ibmc_defect3054
 ibmc_quicksearchext
 ibmc_searchformoverride
-ibmf_2314_myitems
 ibmt_3219
