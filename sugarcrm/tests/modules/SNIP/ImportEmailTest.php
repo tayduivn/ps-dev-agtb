@@ -27,6 +27,10 @@ require_once('modules/SNIP/SugarSNIP.php');
 require_once('modules/Emails/Email.php');
 require_once('include/TimeDate.php');
 
+/*
+ * Tests SNIP's import email feature by calling $snip->importEmail() using dummy data. Does not test object creation.
+ */
+
 class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 	private $snip;
 	private $date_time_format;
