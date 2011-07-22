@@ -120,7 +120,7 @@ class SugarView
             $content = ob_get_clean();
             $module = $this->module;
             $ajax_ret = array(
-                 'content' => $content,
+                 'content' => utf8_encode($content),
                  'menu' => array(
                      'module' => $module,
                      'label' => translate($module),
