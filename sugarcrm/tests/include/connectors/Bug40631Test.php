@@ -676,7 +676,7 @@ EOQ;
         $source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
 //BEGIN SUGARCRM flav!=int ONLY
 		$mock = $this->getMockFromWsdl(
-          		dirname(__FILE__).'/hooversAPI.wsdl', 'HooversAPIMock'
+          		dirname(__FILE__).'/hooversAPI.wsdl', 'HooversAPIMock2'
         	);
         $mockClient = new HooversConnectorsMockClient($mock);
         $source_instance->getSource()->setClient($mockClient);
