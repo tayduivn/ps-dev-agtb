@@ -310,8 +310,36 @@ class M2MRelationship extends SugarRelationship
      */
     public function relationship_exists($lhs, $rhs)
     {
+        $query = "SELECT * FROM {$this->getRelationshipTable()} WHERE {$this->join_key_lhs} = {$lhs->id} AND {$this->join_key_rhs} = {$rhs->id}";
 
-        return false;
+        //Roles can allow for multiple links between two records with different roles
+        $query .= $this->getRoleFilterForJoin() . " and deleted = 0";
+
+        $result = DBManagerFactory::getInstance()->query($query);
+        $row = $this->_db->fetchByAssoc($result);
+
+		if ($row == null) {
+			return false;
+		}
+		else {
+			return $row['id'];
+		}
+    }
+
+    /**
+     * @return Array - set of fields that uniquely identify an entry in this relationship
+     */
+    protected function getAlternateKeyFields()
+    {
+        $fields = array($this->join_key_lhs, $this->join_key_rhs);
+
+        //Roles can allow for multiple links between two records with different roles
+        if (!empty($this->def['relationship_role_column']) && !$this->ignore_role_filter)
+        {
+            $fields[] = $this->relationship_role_column;
+        }
+
+        return $fields;
     }
 
     public function getRelationshipTable()
