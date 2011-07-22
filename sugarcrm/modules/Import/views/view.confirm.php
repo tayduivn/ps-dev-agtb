@@ -101,7 +101,7 @@ class ImportViewConfirm extends ImportView
             //this file does not have a known text or application type of mime type, issue the warning
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_1'];
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_2'];
-            $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2', true);
+            $this->_showImportError($error_msgs,$_REQUEST['import_module'],'Step2', true, $mod_strings['LBL_OK']);
             $mimeTypeOk = false;
         }
 
@@ -564,7 +564,7 @@ EOJAVASCRIPT;
      * @param string $module what module we were importing into
      * @param string $action what page we should go back to
      */
-    protected function _showImportError($message,$module,$action = 'Step1',$showCancel = false)
+    protected function _showImportError($message,$module,$action = 'Step1',$showCancel = false, $cancelLabel = null)
     {
         if(!is_array($message)){
             $message = array($message);
@@ -583,6 +583,10 @@ EOJAVASCRIPT;
         $ss->assign("SHOWCANCEL",$showCancel);
         if ( isset($_REQUEST['source']) )
             $ss->assign("SOURCE", $_REQUEST['source']);
+
+        if ($cancelLabel) {
+            $ss->assign('CANCELLABEL', $cancelLabel);
+        }
 
         echo $ss->fetch('modules/Import/tpls/error.tpl');
     }

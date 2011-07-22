@@ -258,7 +258,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
 
        array('name' =>'idx_bug_name', 'type' =>'index', 'fields'=>array('name')),
 
-       array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id')),
+       array('name' => 'idx_bugs_assigned_user', 'type' => 'index', 'fields'=> array('assigned_user_id')),
 
                                                       )
 
