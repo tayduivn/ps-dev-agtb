@@ -47,8 +47,13 @@ if (typeof(SUGAR) == "undefined") {
 
             return ((typeof SUGAR[ns] === "object") && (SUGAR[ns] !== null)) ? SUGAR[ns] : false;
         },
-        
-        extend: function(target, obj) {
+
+        /**
+         * Add properties of an object to target object.
+         * @param target
+         * @param obj
+         */
+        append: function(target, obj) {
             for (var prop in obj) {
                 if (obj[prop] !== void 0) target[prop] = obj[prop];
             }

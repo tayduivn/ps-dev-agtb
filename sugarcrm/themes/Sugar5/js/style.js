@@ -215,7 +215,7 @@ YAHOO.util.Event.onDOMReady(function()
  */
 SUGAR.themes = SUGAR.namespace("themes");
 
-SUGAR.extend(SUGAR.themes, {
+SUGAR.append(SUGAR.themes, {
     allMenuBars: {},
     setModuleTabs: function(html) {
         var el = document.getElementById('ajaxHeader');

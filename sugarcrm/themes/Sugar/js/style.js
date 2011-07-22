@@ -94,10 +94,69 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
     });
 });
 
-SUGAR.themes.loadModuleList = function()
-{
+SUGAR.themes = SUGAR.namespace("themes");
 
+SUGAR.append(SUGAR.themes, {
+    setRightMenuTab: function(el, params) {
+        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
+        var extraMenu = Dom.get("moduleTabExtraMenuAll");
+        //Check if the menu we want to show is in the more menu
+        if (Dom.isAncestor("MoreAll", el)) {
+            var currRight = Dom.getPreviousSibling(extraMenu);
+            if (currRight.id == "moduleTab_")
+                currRight = Dom.getPreviousSibling(extraMenu);
+            //Insert the el to the menu
+            Dom.insertAfter(el, currRight);
+            //Move the curr right back into the more menu
+            Dom.insertBefore(currRight, Sel.query("ul>li", "MoreAll", true));
+            Dom.removeClass(currRight, "yuimenubaritem");
+            Dom.removeClass(currRight, "yuimenubaritem-hassubmenu");
+            Dom.removeClass(currRight, "current");
+        }
+    },
+    setCurrentTab: function(params) {
+        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
+        var el = document.getElementById('moduleTab_' + params.module);
+        if (el && el.parentNode) {
+            el = el.parentNode;
+            SUGAR.themes.setRightMenuTab(el, params);
+            var currActiveTab = Sel.query("li.yuimenubaritem.current", "themeTabGroupMenu_All", true);
+            if (currActiveTab) {
+                if (currActiveTab == el) return;
+                Dom.removeClass(currActiveTab, "current");
+            }
+            Dom.addClass(el, "yuimenubaritem  yuimenubaritem-hassubmenu current");
+            var right = Sel.query("li.yuimenubaritem.currentTabRight", "themeTabGroupMenu_All", true);
+            Dom.insertAfter(right, el);
+        }
+    },
+    setModuleTabs: function(html) {
+        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
+        var el = document.getElementById('moduleList');
+        if (el && el.parentNode) {
+            var parent = el.parentNode;
 
+            try {
+                //This can fail hard if multiple events fired at the same time
+                YAHOO.util.Event.purgeElement(el, true);
+                for (var i in allMenuBars) {
+                    if (allMenuBars[i].destroy)
+                        allMenuBars[i].destroy();
+                }
+            } catch (e) {
+                //If the menu fails to load, we can get leave the user stranded, reload the page instead.
+                window.location.reload();
+            }
+            parent.removeChild(el);
+            parent.innerHTML += html;
+            el = document.getElementById('moduleList');
+            this.loadModuleList();
+        }
+    },
+
+    loadModuleList: function() {
+
+    // Indentation not changed to preserve history.
     function onSubmenuBeforeShow(p_sType, p_sArgs)
     {
 		var oElement,
@@ -137,7 +196,7 @@ SUGAR.themes.loadModuleList = function()
 				aItems = oMenuBar.getItems();
 				oItem = aItems[parentIndex];
 				if(!oItem) return;
-                
+
                 oSubmenu = oItem.cfg.getProperty("submenu");
 				if (!oSubmenu) return;
                 oSubmenu.removeItem(1,1);
@@ -162,8 +221,7 @@ SUGAR.themes.loadModuleList = function()
 			var callback =
 			{
 			  success:handleSuccess,
-			  failure:handleFailure,
-			  argument: { foo:"foo", bar:"bar" }
+			  failure:handleFailure
 			};
 
 			var sUrl = "index.php?module="+moduleName+"&action=modulelistmenu";
@@ -213,77 +271,8 @@ SUGAR.themes.loadModuleList = function()
 
 	}
 
-     SUGAR.themes.setRightMenuTab = function(el, params)
-    {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var extraMenu = Dom.get("moduleTabExtraMenuAll");
-        //Check if the menu we want to show is in the more menu
-        if (Dom.isAncestor("MoreAll", el))
-        {
-            var currRight = Dom.getPreviousSibling(extraMenu);
-            if (currRight.id == "moduleTab_")
-                currRight = Dom.getPreviousSibling(extraMenu);
-            //Insert the el to the menu
-            Dom.insertAfter(el, currRight);
-            //Move the curr right back into the more menu
-            Dom.insertBefore(currRight, Sel.query("ul>li", "MoreAll", true));
-            Dom.removeClass(currRight, "yuimenubaritem");
-            Dom.removeClass(currRight, "yuimenubaritem-hassubmenu");
-            Dom.removeClass(currRight, "current");
-
-        }
-    }
-
-
-    SUGAR.themes.setCurrentTab = function(params)
-    {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleTab_' + params.module);
-        if (el && el.parentNode)
-        {
-            el = el.parentNode;
-            SUGAR.themes.setRightMenuTab(el, params);
-            var currActiveTab = Sel.query("li.yuimenubaritem.current", "themeTabGroupMenu_All", true);
-            if (currActiveTab){
-                if (currActiveTab == el) return;
-                Dom.removeClass(currActiveTab, "current");
-            }
-            Dom.addClass(el, "yuimenubaritem  yuimenubaritem-hassubmenu current");
-            var right =  Sel.query("li.yuimenubaritem.currentTabRight", "themeTabGroupMenu_All", true);
-            Dom.insertAfter(right, el);
-        }
-    }
-
-    SUGAR.themes.setModuleTabs = function(html)
-    {
-        var Dom = YAHOO.util.Dom, Sel = YAHOO.util.Selector;
-        var el = document.getElementById('moduleList');
-        if (el && el.parentNode)
-        {
-            var parent = el.parentNode;
-            
-            try{
-                //This can fail hard if multiple events fired at the same time
-                YAHOO.util.Event.purgeElement(el, true);
-                for( var i in allMenuBars)
-                {
-                    if (allMenuBars[i].destroy)
-                        allMenuBars[i].destroy();
-                }
-            }catch (e){
-                //If the menu fails to load, we can get leave the user stranded, reload the page instead. 
-                window.location.reload();
-            }
-            parent.removeChild(el);
-            parent.innerHTML += html;
-            el = document.getElementById('moduleList');
-            //Dom.insertBefore(el, Dom.getPreviousSibling(Dom.getPreviousSibling(el)));
-            SUGAR.themes.loadModuleList();
-        }
-    }
-
     var nodes = YAHOO.util.Selector.query('#moduleList>div');
-    allMenuBars = new Object();
+    allMenuBars = {};
 
     for ( var i = 0 ; i < nodes.length ; i++ ) {
 	    var currMenuBar = SUGAR.themes.currMenuBar = new YAHOO.widget.MenuBar(nodes[i].id, {
@@ -325,8 +314,8 @@ SUGAR.themes.loadModuleList = function()
 	    });
 	}
 
-};
-
+    } // loadModuleList()
+});
 
 /**
  * For the module list menu
