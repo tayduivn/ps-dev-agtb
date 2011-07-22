@@ -155,7 +155,7 @@ function promptAuthentication()
      categoryElement = YAHOO.util.Dom.get('categories_{$id}');  
 {literal} 
     //Only check for prompt warning if the 'ALL' option was selected
-    if(categoryElement.options[categoryElement.selectedIndex].value != 'ALL')
+    if(categoryElement.selectedIndex != -1 && categoryElement.options[categoryElement.selectedIndex].value != 'ALL')
     {
        return;
     }
