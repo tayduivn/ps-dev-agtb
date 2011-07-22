@@ -160,105 +160,6 @@ class SugarSNIP
     }
 
     /**
-     * Register this installation with SNIP
-     * @param array $params Registration parameters
-     */
-    public function register($params)
-    {
-        $params["client_api_url"] = $this->getURL();
-        $user = $this->getSnipUser();
-        $params["user"] = $user->user_name;
-        $params["password"] = $user->user_hash;
-        $res = $this->callRest("registerApplication", $params, true);
-        if($res) {
-            SugarSNIPHook::installHook();
-            $this->setSnipURL($params['url']);
-        }
-        return $res;
-    }
-
-    /**
-     * Register this installation with SNIP
-     * @param array $params Registration parameters
-     */
-    public function unregister()
-    {
-        $res = $this->callRest("unregisterApplication", array(), true);
-        if($res) {
-            SugarSNIPHook::removeHook();
-            $this->setSnipURL('');
-        }
-        return $res;
-    }
-
-    /**
-     * Adds emails to SNIP system
-     * @param string|array $params one email or list of emails
-     */
-    public function addEmails($params)
-    {
-        if(!is_array($params)) {
-            $params = array($params);
-        }
-        foreach($params as $mail) {
-            if(is_array($mail)) {
-                $mail = $mail["email_address"];
-            }
-            if(empty($mail)) continue;
-            if(!$this->callRest("addContact", array("emailaddress" => $mail), false)) return false;
-        }
-        return true;
-    }
-
-    /**
-     * Add email account for SNIP monitoring
-     *
-     * @param InboundEmail $acct Inbound email account object
-     * @param user $user user object
-     */
-    public function addAccount(InboundEmail $acct, User $user, $password_encoded = true)
-    {
-        $service = explode('::', $acct->service);
-        if($acct->protocol != 'imap') {
-            $GLOBALS['log']->error("SNIP: cannot add non-IMAP account");
-            return false;
-        }
-        $password = $acct->email_password;
-        if($password_encoded) {
-            $password = blowfishDecode(blowfishGetKey('InboundEmail'), $password);
-        }
-        $data = array(
-            "server" => $acct->server_url,
-            "user" => $acct->email_user,
-            "password" => $password,
-            "params" => array("port" => $acct->port),
-            "sugaruser" => $user->user_name,
-        );
-        if(!empty($acct->snip_mailbox)) {
-            $GLOBALS['log']->debug("Setting SNIP mailbox values to:");
-            $GLOBALS['log']->debug($acct->snip_mailbox);
-            $data['params']['mailbox'] = explode(',', $acct->snip_mailbox);
-        }
-        if($service[2] == 'ssl') {
-            $data['params']['ssl'] = true;
-        }
-        return $this->callRest("monitorAccount", $data, true);
-    }
-
-    /**
-     * Remove account from SNIP monitoring
-     * @param InboundEmail $acct Inbound email account object
-     */
-    public function removeAccount(InboundEmail $acct)
-    {
-        $data = array(
-            "server" => $acct->server_url,
-            "user" => $acct->email_user,
-        );
-        return $this->callRest("removeAccount", $data, true);
-    }
-
-    /**
     * Get status of the SNIP installation
     * @return array Returns an associative array ('status'=>string, 'message'=>string|null), with 'status' as one of the following:
     *  - purchased  (instance has snip license)
@@ -268,7 +169,7 @@ class SugarSNIP
     * Iff 'status' is 'purchased_error', 'message' will be the error returned by the server. Otherwise $message will be NULL.
     */
     public function getStatus(){
-        //if inactive, 
+        //if inactive,
         if(!$this->isActive()) {
             return array('status'=>'notpurchased','message'=>null);
         }
@@ -288,13 +189,13 @@ class SugarSNIP
         //server is up, snip is purchased. check if status is good
         if (isset($this->last_result->status) && $this->last_result->status=='success')
             return array('status'=>'purchased','message'=>null);
-        
-        //server is up, snip is purchased, but status is not good. return error message. 
+
+        //server is up, snip is purchased, but status is not good. return error message.
         if (!isset($this->last_result->status) || empty($this->last_result->status))
             return array('status'=>'purchased_error','message'=>'');
         else
             return array('status'=>'purchased_error','message'=>$this->last_result->status);
-            
+
     }
 
     /**
@@ -636,74 +537,5 @@ class SugarSNIPClient
         $GLOBALS['log']->debug("SNIP response: $response");
         curl_close($curl);
         return $response;
-    }
-}
-
-/**
- * Workflow hooks processing
- */
-class SugarSNIPHook
-{
-    public static $hooks = array(
-      // Disabled for snipLite  array('EmailAddresses', "after_save", Array(1, 'SNIP push contacts', 'modules/SNIP/SugarSNIP.php', __CLASS__, 'saveEmail')),
-      // Disabled for snipLite  array('Emails', "before_save", Array(1, 'SNIP link teams', 'modules/SNIP/SugarSNIP.php', __CLASS__, 'setTeams')),
-        );
-    /**
-     * Install the workflow hooks
-     */
-    public static function installHook()
-    {
-        foreach(self::$hooks as $hook) {
-            call_user_func_array('check_logic_hook_file', $hook);
-        }
-    }
-
-    /**
-     * Remove the workflow hooks
-     */
-    public static function removeHook()
-    {
-        foreach(self::$hooks as $hook) {
-            call_user_func_array('remove_logic_hook', $hook);
-        }
-    }
-
-    /**
-     * Called when new EmailAddress is saved
-     * @param SugarBean $bean
-     * @param string $event will be 'after_save'
-     * @param array $args call arguments
-     */
-    public function saveEmail($bean, $event, $args)
-    {
-        // ignore user emails
-        if($args["module"] == "Users") return true;
-        if(empty($bean->addresses)) return true;
-
-        $snip = SugarSNIP::getInstance();
-        $snip->addEmails($bean->addresses);
-        // TODO: handle deletes?
-    }
-
-    /**
-     * Assign email to related user's teams
-     * @param SugarBean $bean
-     * @param string $event will be 'before_save'
-     * @param array $args call arguments
-     */
-    public function setTeams($bean, $event, $args)
-    {
-        $query = "SELECT u.id as userid FROM users u
-        JOIN email_addr_bean_rel eabr ON eabr.bean_module='Users' AND eabr.bean_id=u.id AND eabr.deleted=0
-        JOIN emails_email_addr_rel eear ON eear.email_address_id=eabr.email_address_id AND eear.deleted=0
-        WHERE eear.email_id = '{$bean->id}' AND u.deleted=0";
-        $res = $bean->db->query($query);
-        while($row = $bean->db->fetchByAssoc($res)) {
-            SugarSNIP::assignUserTeam($bean, $row["userid"]);
-        }
-        if(empty($bean->teams)) {
-            return;
-        }
-        $bean->teams->save(false);
     }
 }
