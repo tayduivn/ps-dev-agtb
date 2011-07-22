@@ -1,6 +1,6 @@
 ibmf_custom
 ibmc_altdata
-ibmc_custominstallhooks
+ibmc_2318_2327_2329_custinsthooks
 ibmc_httpauth
 ibmc_myitems
 ibmc_paneltabs
@@ -9,7 +9,5 @@ ibmc_sugaralerts
 ibmc_wildcardsrch
 ibmc_unittestfixes
 ibmc_defect3054
-ibmc_quicksearchext
-ibmc_searchformoverride
 ibmt_3219
 ibmt_3233_3239
