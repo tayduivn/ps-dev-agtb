@@ -168,7 +168,7 @@ class QuickSearchDefaults {
     {
         $result = array();
         VardefManager::loadVardef($module, $object);
-        if (array_key_exists($relationName, $GLOBALS['dictionary'][$object]['relationships']))
+        if (isset($GLOBALS['dictionary'][$object]['relationships']) && array_key_exists($relationName, $GLOBALS['dictionary'][$object]['relationships']))
         {
             if (method_exists($this, 'getQS' . $module))
             {
