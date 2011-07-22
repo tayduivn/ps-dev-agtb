@@ -75,7 +75,7 @@ class TrackerSessionsDatabaseStore implements Store {
 		  $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
 		  $GLOBALS['db']->query($query);
        } else {
-       	  $query = "UPDATE $monitor->table_name SET date_end = '{$monitor->date_end}' , seconds = {$monitor->seconds}, active = '{$monitor->active}', round_trips = $monitor->round_trips WHERE session_id = '{$monitor->session_id}'";
+       	  $query = "UPDATE $monitor->table_name SET date_end = '{$monitor->date_end}' , seconds = ".sprintf('%d',$monitor->seconds).", active = '{$monitor->active}', round_trips = $monitor->round_trips WHERE session_id = '{$monitor->session_id}'";
        	  $GLOBALS['db']->query($query);
        }
     }
