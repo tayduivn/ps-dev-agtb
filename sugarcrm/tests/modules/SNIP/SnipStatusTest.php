@@ -20,8 +20,11 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require ('modules/SNIP/SugarSNIP.php');
+require_once ('modules/SNIP/SugarSNIP.php');
 
+/*
+ * Tests the getStatus() function of SugarSNIP to ensure that the return value is correct for various server responses.
+ */
 class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $snip;
@@ -83,7 +86,7 @@ class MockClient extends SugarSNIPClient
 		$this->status = $status;
 	}
 
-	//override callRest to provide a status message based on the prameter
+	//overrides callRest to provide a status message based on the prameter
 	public function callRest($url, $postArgs)
     {
     	if (preg_match('`^'.$this->snip->getSnipURL().'status/?`',$url))
