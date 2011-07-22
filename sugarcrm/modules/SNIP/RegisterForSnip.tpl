@@ -1,7 +1,4 @@
-
-
-	<h2>SNIP</h2>
-
+{$TITLE}
 	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
 		<tr>
 		<td>
@@ -10,7 +7,7 @@
 
 				In order to use SNIP, you must <a href="{$SNIP_PURCHASEURL}">purchase a license</a> for your SugarCRM instance.
 			{else}
-			
+
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td scope="row">
@@ -21,7 +18,7 @@
 					<td>
 						<form name='ToggleSnipStatus' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
 						<input type='hidden' id='save_config' name='save_config' value='0'/>
-							
+
 
 						{if $SNIP_STATUS == 'purchased'}
 							<div style='float:left;margin-bottom:5px;font-size:15px;display:inline;'><span style='color:green;font-weight:bold'>Enabled (Service Online)</span></div>
@@ -31,7 +28,7 @@
 							<div style='float:left;margin-bottom:5px;font-size:15px;display:inline;'><span style='color:red;font-weight:bold'>Cannot connect to SNIP server</span></div>
 							<div style='clear:both'></div>
 							<div style='float:left;margin-bottom:10px'>Sorry, the SNIP service is currently unavailable (either the service is down or the connection failed on your end).</div>
-							
+
 						{elseif $SNIP_STATUS == 'purchased_error'}
 							<div style='float:left;margin-bottom:5px;font-size:15px;display:inline;'><span style='color:red;font-weight:bold'>Error returned from SNIP server</span></div>
 							<div style='clear:both'></div>

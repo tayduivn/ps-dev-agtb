@@ -38,7 +38,9 @@ global $sugar_config;
 **/
 
 $snip = SugarSNIP::getInstance();
-$title = get_module_title("", translate('LBL_REGISTER_SNIP').":", true);
+$title = getClassicModuleTitle('Administration', array(
+	"<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
+	translate('LBL_CONFIGURE_SNIP')), false);
 $sugar_smarty = new Sugar_Smarty();
 
 $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
@@ -57,6 +59,7 @@ if ($status=='purchased_error'){
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 }
 
+$sugar_smarty->assign('TITLE',$title);
 $sugar_smarty->assign('SNIP_STATUS',$status);
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
