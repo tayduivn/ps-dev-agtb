@@ -81,6 +81,7 @@ class SugarSNIP
         } else {
             $postArgs = http_build_query($params);
         }
+
         $response = $this->client->callRest($url, $postArgs);
         if(!empty($response)) {
             $result = json_decode($response);
@@ -92,6 +93,19 @@ class SugarSNIP
         $this->last_result = $result;
         $GLOBALS['log']->debug(var_export($result, true));
         return is_object($result) && $result->result == 'ok';
+    }
+
+    /**
+    * Generate the url that the user can visit to purchase SNIP.
+    * @return string the generated url
+    */
+    public function createPurchaseURL($snipuser)
+    {
+        global $sugar_config;
+        $msg=base64_encode(json_encode(array('unique_key' => $sugar_config['unique_key'],
+                                               'snipuser'   => $snipuser->user_name,
+                                               'password'   => $snipuser->user_hash)));
+        return "localhost:1337/purchaseSnip?info=$msg";
     }
 
     /**
@@ -246,31 +260,41 @@ class SugarSNIP
 
     /**
     * Get status of the SNIP installation
-    * returns one of the following:
-    * - purchased  (instance has snip license)
-    * - notpurchased     (instance does not have snip license)
-    * - down (snip server unresponsive)
+    * @return array Returns an associative array ('status'=>string, 'message'=>string|null), with 'status' as one of the following:
+    *  - purchased  (instance has snip license)
+    *  - notpurchased     (instance does not have snip license)
+    *  - down (snip server unresponsive)
+    *  - purchased_error (instance has snip license, server is not down, but server detects something is wrong).
+    * Iff 'status' is 'purchased_error', 'message' will be the error returned by the server. Otherwise $message will be NULL.
     */
     public function getStatus(){
         //if inactive, 
         if(!$this->isActive()) {
-            return 'notpurchased';
+            return array('status'=>'notpurchased','message'=>null);
         }
 
         $connectionfailed=false;
         $this->callRest('status',false,$json=false,$connectionfailed);
 
         //check if server is down
-        if ($connectionfailed){
-            return 'down';
+        if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found'){
+            return array('status'=>'down','message'=>null);
         }
 
-        //server is up, check if not purchased
-        if ($this->last_result->result=='instance not found')
-            return 'notpurchased';
+        //server is up but snip is not purchased
+        if ($this->last_result->result == 'instance not found')
+            return array('status'=>'notpurchased','message'=>null);
+
+        //server is up, snip is purchased. check if status is good
+        if (isset($this->last_result->status) && $this->last_result->status=='success')
+            return array('status'=>'purchased','message'=>null);
         
-        //server is up and snip is purchased
-        return 'purchased';
+        //server is up, snip is purchased, but status is not good. return error message. 
+        if (!isset($this->last_result->status) || empty($this->last_result->status))
+            return array('status'=>'purchased_error','message'=>'');
+        else
+            return array('status'=>'purchased_error','message'=>$this->last_result->status);
+            
     }
 
     /**

@@ -28,8 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'modules/SNIP/SugarSNIP.php';
-require_once 'modules/SNIP/SugarSNIP_offlinetest.php';
-
 if (!is_admin($current_user)) {
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
@@ -43,26 +41,20 @@ $snip = SugarSNIP::getInstance();
 $title = get_module_title("", translate('LBL_REGISTER_SNIP').":", true);
 $sugar_smarty = new Sugar_Smarty();
 
-if (isset($_REQUEST['save_config']) && $_REQUEST['save_config'] != '0') {
-    if(!registerApplication($snip)) {
-        $sugar_smarty->assign('FORM_ERROR','Failed to contact SNIP service!');
-    } else {
-        if ($_REQUEST['save_config']=='disable'){
-            $sugar_smarty->assign('FORM_SUCCESS','SNIP successfully disabled!');
-        }
-        elseif ($_REQUEST['save_config']=='enable'){
-            $sugar_smarty->assign('FORM_SUCCESS','SNIP successfully enabled!');
-        }
-    }
-}
-
 $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
 $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
 $status=$snip->getStatus();
 
+$message=$status['message'];
+$status=$status['status'];
+
 if ($status=='notpurchased'){
     $snipuser = $snip->getSnipUser();
-    $sugar_smarty->assign('SNIP_PURCHASEURL',createPurchaseURL($snipuser));
+    $sugar_smarty->assign('SNIP_PURCHASEURL',$snip->createPurchaseURL($snipuser));
+}
+
+if ($status=='purchased_error'){
+	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 }
 
 $sugar_smarty->assign('SNIP_STATUS',$status);
@@ -70,40 +62,3 @@ $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
 
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
-
-function createPurchaseURL($snipuser){
-    global $sugar_config;
-    $msg=base64_encode(json_encode(array('unique_key' => $sugar_config['unique_key'],
-                                           'snipuser'   => $snipuser->user_name,
-                                           'password'   => $snipuser->user_hash)));
-    return "localhost:1337/purchaseSnip?info=$msg";
-}
-
-/**
- * Register or unregister this instance with SNIP server
- * @param SugarSNIP $snip SNIP service objects
- */
-function registerApplication($snip)
-{
-    if($_REQUEST['save_config'] == 'disable') {
-        return $snip->unregister();
-    } else {
-        return $snip->register(array(
-            "url" => $snip->getSnipURL()
-	    ));
-    }
-}
-
-
-/**
- * Convert timestamp from SNIP server into display string
- * @param int $time
- */
-function snipTimeToDisplay($time)
-{
-    if($time) {
-        return $GLOBALS['timedate']->to_display_date_time(gmdate($GLOBALS['timedate']->get_db_date_time_format(),$time));
-    } else {
-        return translate('LBL_SNIP_NEVER');
-    }
-}
