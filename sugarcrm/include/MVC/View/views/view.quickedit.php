@@ -111,17 +111,19 @@ class ViewQuickedit extends ViewAjax
         //in some cases, the source file will not exist.  In these cases lets just navigate to the full form directlhy
         if(!file_exists($source)){
             global $app_strings;
+
             //write out jscript that will get evaluated and redirect the browser window.
-            $no_defs_html = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id .'";</script>';
+            $no_defs_js = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id .'";</script>';
+
+            //if there are no edit view files then go to detail view
             if(!file_exists('custom/' . $base . 'editviewdefs.php') && !file_exists($base . 'editviewdefs.php')
             && !file_exists('custom/modules/' . $module .'/EditView.php') && !file_exists('modules/' . $module .'/EditView.php')
             ){
-                //if this is reports then go to detail view, not edit view
-                $no_defs_html = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id .'";</script>';
+                $no_defs_js = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id .'";</script>';
             }
-            $no_defs_html .= '<br>'.$app_strings['LBL_QUICKEDIT_NODEFS_NAVIGATION'].'</br>';
+            
+            echo json_encode(array('scriptOnly'=> $no_defs_js));
 
-            echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id ,'html'=> $no_defs_html, 'eval'=>true));
           return;
 
         }

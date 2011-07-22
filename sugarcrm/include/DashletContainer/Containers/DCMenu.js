@@ -279,8 +279,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id , miniDetailViewResults);
 	}
 	miniDetailViewResults = function(id, data){
-		setBody(Y.JSON.parse(data.responseText), 0);
-		Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+        r = Y.JSON.parse(data.responseText);
+        if(typeof(r.scriptOnly) != 'undefined' && typeof(r.scriptOnly)=='string' && r.scriptOnly.length >0){
+            SUGAR.util.evalScript(r.scriptOnly);
+        }else{
+            setBody(r, 0);
+            Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+        }
 	}
 
 	DCMenu.save = function(id){
