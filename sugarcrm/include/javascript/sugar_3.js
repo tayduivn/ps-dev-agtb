@@ -357,6 +357,16 @@ function isInteger(s) {
 	return parseFloat(s) == parseInt(s) && !isNaN(s);
 }
 
+
+function isDecimal(s) {
+	if(!/^-*[0-9]+\.?[0-9]*$/.test(s)) {
+		return false
+	}
+	else {
+		return true;
+	}
+}
+
 function isNumeric(s) {
   if(!/^-*[0-9\.]+$/.test(s)) {
    		return false
@@ -830,6 +840,12 @@ function validate_form(formname, startsWith){
 						  break;	
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
+								isError = true;
+								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
+							}
+							break;
+						case 'decimal':
+							if(!isDecimal(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
 								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
 							}
