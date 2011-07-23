@@ -409,7 +409,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             this.more_status = true;
             var clone_id = this.form + '_' + this.field + '_collection_0';
 
-            if (typeof sqs_objects[clone_id] != 'undefined') {
+            if (typeof sqs_objects != 'undefined' && typeof sqs_objects[clone_id] != 'undefined') {
                 var clone = YAHOO.lang.JSON.stringify(sqs_objects[clone_id]);
                 eval('this.sqs_clone=' + clone);
             }
@@ -489,7 +489,7 @@ if(typeof(SUGAR.collection) == "undefined") {
 
                 qs_id = this.form + '_' + qs_id;
 
-                if(typeof sqs_objects[qs_id] != 'undefined' && sqs_objects[qs_id]['primary_field_list']){
+                if(typeof sqs_objects != 'undefined' && typeof sqs_objects[qs_id] != 'undefined' && sqs_objects[qs_id]['primary_field_list']){
                     for (var ii = 0; ii < sqs_objects[qs_id]['primary_field_list'].length; ii++) {
                         if (radios[k].checked && qs_id != old_primary) {
                             sqs_objects[qs_id]['field_list'].push(sqs_objects[qs_id]['primary_field_list'][ii]);
