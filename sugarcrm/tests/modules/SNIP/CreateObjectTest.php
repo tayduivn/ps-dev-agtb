@@ -171,7 +171,9 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		// delete our test createdefs and restore original file
 		unlink ('custom/modules/SNIP/createdefs.php');
-		rename ($this->orig_file, 'custom/modules/SNIP/createdefs.php');
+		if(!empty($this->orig_file)) {
+			rename ($this->orig_file, 'custom/modules/SNIP/createdefs.php');
+		}
 
 		unset ($this->snip);
 	}
