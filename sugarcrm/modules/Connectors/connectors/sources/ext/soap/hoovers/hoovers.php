@@ -204,14 +204,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  		}
 
  		$lookup_mapping = array();
- 		
+
  		$countries = array();
  		$states = array();
- 		
+
  		if(file_exists(HOOVERS_LOOKUP_MAPPING_FILE)) {
  		   require(HOOVERS_LOOKUP_MAPPING_FILE);
  		   $countries = array_flip($lookup_mapping['countries']);
- 		   $states = array_flip($lookup_mapping['states']); 		   
+ 		   $states = array_flip($lookup_mapping['states']);
  		}
 
  	    $data = array();
@@ -390,21 +390,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  		try {
  			$result = $this->_client->call($function, array($function.'Request'=>$args[0]), $namespace='http://applications.dnb.com/webservice/schema/');
-	 		//BEGIN SUGARCRM flav=int ONLY
- 			//$result = $this->_client->__soapCall($function, array('parameters'=>$args[0]), NULL);
-	        //END SUGARCRM flav=int ONLY
-
+			$GLOBALS['log']->fatal("SOAP: ".var_export($result, true));
  			if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->response)) {
-	 		//BEGIN SUGARCRM flav=int ONLY
- 			//if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->__getLastResponse())) {
- 			//END SUGARCRM flav=int ONLY
 
 	 		   $errorCode = 'Unknown';
 	 		   if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->response, $matches)) {
-	 		   //BEGIN SUGARCRM flav=int ONLY
-	 		   //if(preg_match('/\<h1\>([^\<]+?)\<\/h1\>/', $this->_client->__getLastResponse(), $matches)) {
-	 		   //END SUGARCRM flav=int ONLY
-
 	 		   	  $errorCode = $matches[1];
 	 		   }
 	 	       $errorMessage = string_format($GLOBALS['app_strings']['ERROR_UNABLE_TO_RETRIEVE_DATA'], array(get_class($this), $errorCode));
@@ -494,6 +484,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 	/**
+	 * Set client implementation for tests
+	 * @param object $client
+	 */
+	public function setClient($client)
+	{
+		$this->_client = $client;
+		return $this;
+	}
+
+	/**
 	 * getLookupValue
 	 * This method returns the lookup value used by Hoovers based on the mapping file
 	 * of the search parameters created
@@ -501,7 +501,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	 * @param String $value String value of the value to lookup
 	 * @return String $lookupValue String value that should be used for lookup
 	 */
-	private function getLookupValue($category='', $value='') 
+	private function getLookupValue($category='', $value='')
 	{
 	   if(empty($category) || empty($value) || empty($this->_lookupMap)) {
 	   	  return $value;

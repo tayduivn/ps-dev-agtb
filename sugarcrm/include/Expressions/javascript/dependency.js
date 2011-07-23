@@ -217,6 +217,17 @@ SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
 	return YAHOO.lang.trim(field.innerText);
 }
 
+/**
+ * @STATIC
+ * Retrieve the element behind a variable.
+ */
+SUGAR.forms.AssignmentHandler.getLink = function(variable, view) {
+	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
+
+	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
+		return SUGAR.forms.AssignmentHandler.LINKS[view][variable];
+}
+
 
 /**
  * @STATIC
@@ -440,7 +451,13 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 	setValue: function(varname, value)
 	{
 		SUGAR.forms.AssignmentHandler.assign(varname, value, true);
-	}
+	},
+    getLink : function(varname)
+    {
+        if(SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname])
+            return SUGAR.forms.AssignmentHandler.LINKS[this.formName][varname];
+        return false;
+    }
 });
 
 

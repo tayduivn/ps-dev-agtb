@@ -39,13 +39,11 @@
     {if !$AUTHENTICATED}
     <br /><br />
     {/if}
-    {include file="_headerModuleList.tpl" theme_template=true}
+    <div id="ajaxHeader">
+        {include file="_headerModuleList.tpl" theme_template=true}
+    </div>
     <div class="clear"></div>
     <div class="line"></div>
-    {if $AUTHENTICATED}
-    {include file="_headerLastViewed.tpl" theme_template=true}
-    {include file="_headerShortcuts.tpl" theme_template=true}
-    {/if}
 </div>
 
 {literal}
