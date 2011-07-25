@@ -113,23 +113,24 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
             $field_def = $layout_def['fields'];
         }
         $cell = $this->displayListPlain($layout_def);
-        $module = $this->reporter->all_fields[$layout_def['column_key']]['module'];
-        $name = $layout_def['name'];
-        $layout_def['name'] = 'id';
-        $key = $this->_get_column_alias($layout_def);
-        $key = strtoupper($key);
-
-        $record = $layout_def['fields'][$key];
-        $field_name = $field_def['name'];
-        $field_type = $field_def['type'];
-        $div_id = $field_def['module'] ."&$record&$field_name";
-        $str = "<div id='$div_id'>".$cell;
-
+        $str = $cell;
         global $sugar_config;
         if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit'] && !empty($record)) {
+            $module = $this->reporter->all_fields[$layout_def['column_key']]['module'];
+            $name = $layout_def['name'];
+            $layout_def['name'] = 'id';
+            $key = $this->_get_column_alias($layout_def);
+            $key = strtoupper($key);
+
+            $record = $layout_def['fields'][$key];
+            $field_name = $field_def['name'];
+            $field_type = $field_def['type'];
+            $div_id = $field_def['module'] ."&$record&$field_name";
+            $str = "<div id='$div_id'>".$cell;
+
             $str .= "&nbsp;" .SugarThemeRegistry::current()->getImage("edit_inline","border='0' alt='Edit Layout' align='bottom' onClick='SUGAR.reportsInlineEdit.inlineEdit(\"$div_id\",\"$cell\",\"$module\",\"$record\",\"$field_name\",\"$field_type\");'");
+            $str .= "</div>";
         }
-        $str .= "</div>";
         return $str;
     }
 	function & displayListPlain($layout_def) {
