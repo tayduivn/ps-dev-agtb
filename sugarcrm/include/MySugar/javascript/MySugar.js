@@ -226,7 +226,7 @@ SUGAR.mySugar = function() {
                 //-------------------start new registration for drag drop--------------------
                 var counter = SUGAR.mySugar.homepage_dd.length;
 
-                if(YAHOO.util.DDM.mode == 1) {
+                if(YAHOO.util.DDM.mode == 1 && typeof(scriptResponse) != 'undefined') {
                     for(i in scriptResponse['newDashletsToReg']) {
                         SUGAR.mySugar.homepage_dd[counter] = new ygDDList('dashlet_' + scriptResponse['newDashletsToReg'][i]);
                         SUGAR.mySugar.homepage_dd[counter].setHandleElId('dashlet_header_' + scriptResponse['newDashletsToReg'][i]);
