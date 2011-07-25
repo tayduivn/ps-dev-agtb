@@ -150,10 +150,11 @@ eoq;
 				}
 			}elseif(strlen($value) == 0){
 				if( isset($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) ){
-					$_POST[$post] = '';
+				  $_POST[$post] = '';
 				}else{
-				unset($_POST[$post]);
-			}elseif ( $value == '--null--'){  #Bug36693 MassUpdate for ENUM with Option '0'
+				  unset($_POST[$post]);
+			        }
+                        }elseif ( $value == '--null--'){  //Bug36693 MassUpdate for ENUM with Option '0'
 				$_POST[$post] = '';	
 			}
 			if(is_string($value) && isset($this->sugarbean->field_defs[$post])) {

@@ -206,15 +206,13 @@ class ProspectList extends SugarBean {
 				a.name AS account_name,
 				ea.email_address AS email_address, ea.invalid_email AS invalid_email, ea.opt_out AS opt_out, ea.deleted AS ea_deleted, ear.deleted AS ear_deleted, ear.primary_address AS primary_address,
 				c.do_not_call AS do_not_call, c.phone_fax AS phone_fax, c.phone_other AS phone_other, c.phone_home AS phone_home, c.phone_mobile AS phone_mobile, c.phone_work AS phone_work
-				FROM  accounts a,accounts_contacts ac, prospect_lists_prospects plp
-				INNER JOIN contacts c ON plp.related_id=c.id
-				LEFT JOIN email_addr_bean_rel ear ON  ear.bean_id=c.id
+FROM prospect_lists_prospects plp
+				INNER JOIN contacts c ON plp.related_id=c.id LEFT JOIN accounts_contacts ac ON ac.contact_id=c.id LEFT JOIN accounts a ON ac.account_id=a.id
+				LEFT JOIN email_addr_bean_rel ear ON ear.bean_id=c.id
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
-				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0 
+				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
 				AND c.deleted=0
-				AND ac.contact_id=c.id
-				AND ac.account_id=a.id
-				AND ear.deleted=0";
+				AND (ear.deleted=0 OR ear.deleted IS NULL)";
 
 		$prospects_query = "SELECT p.id AS id, 'Prospects' AS related_type, '' AS \"name\", p.first_name AS first_name, p.last_name AS last_name,p.title AS title,
 				p.primary_address_street AS primary_address_street,p.primary_address_city AS primary_address_city, '' AS primary_address_state,  p.primary_address_postalcode AS primary_address_postalcode, p.primary_address_country AS primary_address_country,
