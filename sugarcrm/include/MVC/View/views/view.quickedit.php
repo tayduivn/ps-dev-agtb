@@ -32,8 +32,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/MVC/View/views/view.ajax.php');
 require_once('include/EditView/EditView2.php');
 
-echo'Quickedit';
-
 
 class ViewQuickedit extends ViewAjax
 {
@@ -110,6 +108,26 @@ class ViewQuickedit extends ViewAjax
 			}
 		}
 
+        //in some cases, the source file will not exist.  In these cases lets just navigate to the full form directlhy
+        if(!file_exists($source)){
+            global $app_strings;
+
+            //write out jscript that will get evaluated and redirect the browser window.
+            $no_defs_js = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id .'";</script>';
+
+            //if there are no edit view files then go to detail view
+            if(!file_exists('custom/' . $base . 'editviewdefs.php') && !file_exists($base . 'editviewdefs.php')
+            && !file_exists('custom/modules/' . $module .'/EditView.php') && !file_exists('modules/' . $module .'/EditView.php')
+            ){
+                $no_defs_js = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id .'";</script>';
+            }
+            
+            echo json_encode(array('scriptOnly'=> $no_defs_js));
+
+          return;
+
+        }
+        
 		$this->ev = new EditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();

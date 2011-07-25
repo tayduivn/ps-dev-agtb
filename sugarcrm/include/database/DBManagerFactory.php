@@ -118,10 +118,13 @@ class DBManagerFactory
             }
             else{
                 //END SUGARCRM flav=ent ONLY
-                self::$instances[$instanceName] = self::getTypeInstance($config['db_type'], $config);
-                self::$instances[$instanceName]->connect($config, true);
-                self::$instances[$instanceName]->count_id = $count;
-                self::$instances[$instanceName]->references = 0;
+                require_once("include/database/{$my_db_manager}.php");
+                $dbinstances[$instanceName] = new $my_db_manager();
+                $dbinstances[$instanceName]->getHelper();
+                $dbinstances[$instanceName]->connect($config, true);
+                $dbinstances[$instanceName]->count_id = $count;
+                $dbinstances[$instanceName]->references = 0;
+                $dbinstances[$instanceName]->getHelper()->db = $dbinstances[$instanceName];
                 //BEGIN SUGARCRM flav=ent ONLY
             }
             //END SUGARCRM flav=ent ONLY

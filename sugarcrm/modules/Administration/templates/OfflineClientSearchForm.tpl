@@ -42,8 +42,8 @@
         <input type="hidden" name="action" value="ViewOfflineClients"/>
         <input type="hidden" name="query" value="true"/>
         <input type="hidden" name="module" value="Administration" />
-        <input title="{$APP.LBL_SEARCH_BUTTON_TITLE}" accessKey="{$APP.LBL_SEARCH_BUTTON_KEY}" class="button" type="submit" name="button" value="{$APP.LBL_SEARCH_BUTTON_LABEL}"/>
-        <input title="{$APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" onclick="clear_form(this.form);" class="button" type="button" name="clear" value=" {$APP.LBL_CLEAR_BUTTON_LABEL} "/>
+        <input title="{$APP.LBL_SEARCH_BUTTON_TITLE}" accessKey="{$APP.LBL_SEARCH_BUTTON_KEY}" id="search_form_submit" class="button" type="submit" name="button" value="{$APP.LBL_SEARCH_BUTTON_LABEL}"/>
+        <input title="{$APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" id="search_form_clear" onclick="clear_form(this.form);" class="button" type="button" name="clear" value=" {$APP.LBL_CLEAR_BUTTON_LABEL} "/>
     </td>
 </tr>
 </table>

@@ -34,6 +34,12 @@ function checkDBSettings($silent=false) {
             installLog("ERROR::  {$errors['ERR_DB_NAME']}");
         }
 
+        if (!isValidDBName($_SESSION['setup_db_database_name'], $_SESSION['setup_db_type'])) {
+            $errIdx = 'ERR_DB_' . strtoupper($_SESSION['setup_db_type']) . '_DB_NAME_INVALID';
+            $errors[$errIdx] = $mod_strings[$errIdx];
+            installLog("ERROR::  {$errors[$errIdx]}");
+        }
+
         if($_SESSION['setup_db_type'] != 'oci8') {
             // Oracle doesn't need host name, others do
             if( trim($_SESSION['setup_db_host_name']) == '' ){

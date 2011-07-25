@@ -175,7 +175,7 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' class='{$_rowColor}S1' bgcolor='{$_bgColor}' nowrap>
 				{if $pageData.access.edit}
-					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}&return_id={$rowData[$params.id]|default:$rowData.ID}&return_action=KBAdminView'><img border=0 src={$imagePath}edit_inline.gif></a>
+					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}&return_id={$rowData[$params.id]|default:$rowData.ID}&return_action=KBAdminView'><img border=0 src={$imagePath}edit_inline.gif></a>
 				{/if}
 			</td>
 	    	</tr>

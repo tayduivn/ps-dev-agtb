@@ -327,7 +327,6 @@ var hidden_summary_ref = 'hidden';
 var users_array = new Array();
 
 </script>
-<script type="text/javascript" src="include/JSON.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
 <script language="javascript">
 var image_path = "{$args_image_path}";
 var lbl_and = "{$mod_strings.LBL_AND}";

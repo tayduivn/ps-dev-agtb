@@ -159,21 +159,21 @@ class Common {
         //current system date must fall between forecast start date (forecast schedule) and end date (time period)
         //not checking systemdate against the time period start date because users may  want to start forecasting before the actual
         //time period begins.
-        $query  = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy";
-        $query .= " from forecast_schedule a, timeperiods b";
-        $query .= " where a.timeperiod_id = b.id";
-        $query .= " and a.forecast_start_date <= $nowdate";
-        $query .= " and b.end_date >= $nowdate";
-        $query .= " and a.deleted = 0";
-        $query .= " and b.deleted = 0";
-        $query .= " and a.status = 'Active'";
+        $query = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy"
+            . " FROM forecast_schedule a, timeperiods b"
+            . " WHERE a.timeperiod_id = b.id"
+            . " AND " . $this->db->convert('a.forecast_start_date','date_format',array($format)) . " <= ". $this->db->convert($this->db->convert('','today'),'date_format',array($format))
+            . " AND " . $this->db->convert('b.end_date','date_format',array($format)) . " >= ".$this->db->convert($this->db->convert('','today'),'date_format',array($format))
+            . " AND a.deleted = 0"
+            . " AND b.deleted = 0"
+            . " AND a.status = 'Active'"
+            . " ORDER BY b.start_date, b.end_date";
         //check whether the logged in user needs to forecast for this period or not.
         //for all the rows returned make sure that user_id is the logged in user
         //or someone this user report's to.
         $result = $this->db->query($query,false," Error filling in list of timeperiods to be forecasted: ");
 
         while (($row = $this->db->fetchByAssoc($result)) != null) {
-
 
             if ($row['user_id'] == $this->current_user || ( $row['cascade_hierarchy'] == '1' && in_array($row['user_id'],$this->my_managers)))  {
 
@@ -183,9 +183,7 @@ class Common {
                 }
             }
         }
-        //print_r("<BR>my_timeperiods<BR>");
-        //print_r($this->my_timeperiods);
-	}
+    }
 
 	//returns a list of timeperiods that users has commited forecats for.
 	//sorted by timeperiod start date descending.
@@ -274,4 +272,4 @@ class Common {
 		}
 	}
 }
-?>
+

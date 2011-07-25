@@ -211,7 +211,7 @@ private function upgradeUserPreferencesCopy() {
 	 * For the CE version, we are checking to see that there are no entries enabled for PRO/ENT versions 
 	 * we are checking for Tracker sessions, performance and queries.	
 	 */		
-	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt')) {
+	if(isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt')) {
 		//Set tracker settings. Disable tracker session, performance and queries
 		$category = 'tracker';
 		$value =1;

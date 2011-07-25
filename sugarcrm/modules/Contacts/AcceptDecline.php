@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-global $sugar_config, $dbconfig, $beanList, $beanFiles, $app_strings, $app_list_strings;
+global $sugar_config, $dbconfig, $beanList, $beanFiles, $app_strings, $app_list_strings,$current_user;
 
 
 if ( !empty($_REQUEST['user_id'])) {

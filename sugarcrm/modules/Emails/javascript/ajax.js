@@ -57,7 +57,7 @@ var AjaxObject = {
 	composeCache : function(o) {
 		var idx = SUGAR.email2.composeLayout.currentInstanceId; // post instance increment
 		// get email templates and user signatures
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 
 		SUGAR.email2.composeLayout.emailTemplates = ret.emailTemplates;
 		SUGAR.email2.composeLayout.signatures = ret.signatures;
@@ -93,7 +93,7 @@ var AjaxObject = {
 
 	handleDeleteSignature : function(o) {
 		SUGAR.hideMessageBox();
-		var ret = JSON.parse(o.responseText);
+        var ret = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.email2.composeLayout.signatures = ret.signatures;
     	var field = document.getElementById('signature_id');
 		SUGAR.email2.util.emptySelectOptions(field);
@@ -132,7 +132,7 @@ var AjaxObject = {
 	},
 
 	handleReplyForward : function(o) {
-		var a = JSON.parse(o.responseText);
+		var a = YAHOO.lang.JSON.parse(o.responseText);
 		globalA = a;
 		var idx = SUGAR.email2.composeLayout.currentInstanceId;
 
@@ -156,7 +156,7 @@ var AjaxObject = {
 	},
 
 	handleReplyForwardForDraft : function(o) {
-		var a = JSON.parse(o.responseText);
+		var a = YAHOO.lang.JSON.parse(o.responseText);
 		globalA = a;
 		var idx = SUGAR.email2.composeLayout.currentInstanceId;
 
@@ -209,26 +209,22 @@ var AjaxObject = {
 	 */
 	ieDeleteSuccess : function(o) {
 		SUGAR.hideMessageBox();
-
-		var ret = JSON.parse(o.responseText);
-
 		SUGAR.email2.accounts.refreshInboundAccountTable();
 		alert(app_strings.LBL_EMAIL_IE_DELETE_SUCCESSFUL);
 		SUGAR.email2.accounts.rebuildFolderList();
-
 	},
 
 	/**
 	 */
 	ieSaveSuccess : function(o) {
 		document.getElementById('saveButton').disabled = false;
-		var a = JSON.parse(o.responseText);
+		var a = YAHOO.lang.JSON.parse(o.responseText);
 		if (a) {
 			if(a.error) {
 				SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, app_strings.LBL_EMAIL_ERROR_CHECK_IE_SETTINGS, 'alert');
 				SUGAR.email2.accounts.ieAccountError(SUGAR.email2.accounts.errorStyle);
 			} else {
-				resp = JSON.parse(o.responseText);
+				resp = YAHOO.lang.JSON.parse(o.responseText);
 				SUGAR.email2.accounts.refreshInboundAccountTable();
 				SUGAR.email2.accounts.refreshOuboundAccountTable();
 				SUGAR.email2.folders.startEmailCheckOneAccount(resp.id, true);
@@ -244,7 +240,7 @@ var AjaxObject = {
 	/**
 	 */
 	loadAttachments : function(o) {
-		var result = JSON.parse(o.responseText);
+		var result = YAHOO.lang.JSON.parse(o.responseText);
 
 		SUGAR.email2.composeLayout.loadAttachments(result);
 	},
@@ -252,7 +248,7 @@ var AjaxObject = {
 	/**
 	 */
 	loadSignature : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.email2.signatures[ret.id] = ret.signature_html;
 		SUGAR.email2.composeLayout.setSignature(SUGAR.email2.signatures.targetInstance);
 	},
@@ -261,7 +257,7 @@ var AjaxObject = {
 	 * Follow up to mark email read|unread|flagged
 	 */
 	markEmailCleanup : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		if (!ret['status']) {
         	SUGAR.hideMessageBox();
 			SUGAR.showMessageBox(app_strings.LBL_EMAIL_ERROR_DESC, ret['message'], 'alert');
@@ -273,7 +269,7 @@ var AjaxObject = {
 	/**
 	 */
 	rebuildShowFolders : function(o) {
-		var t = JSON.parse(o.responseText);
+		var t = YAHOO.lang.JSON.parse(o.responseText);
 		var show = document.getElementById('ieAccountListShow');
 
 		SUGAR.email2.util.emptySelectOptions(show);
@@ -309,14 +305,19 @@ var AjaxObject = {
 	 *
 	 */
 	sendEmailCleanUp : function(o) {
-		SUGAR.hideMessageBox();
-		var ret = JSON.parse(o.responseText);
-		if (ret) {
-		  SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
-		  //SUGAR.email2.addressBook.showContactMatches(ret.possibleMatches);
-		} else if (o.responseText) {
-		  SUGAR.showMessageBox(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
-		}
+        var ret;
+        SUGAR.hideMessageBox();
+
+        try {
+            ret = YAHOO.lang.JSON.parse(o.responseText);
+            SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
+            //SUGAR.email2.addressBook.showContactMatches(ret.possibleMatches);
+        } catch(err) {
+            if (o.responseText) {
+                SUGAR.showMessageBox(mod_strings.LBL_SEND_EMAIL_FAIL_TITLE, o.responseText, 'alert');
+		    }
+            // Else we have an error here.
+        }        
 
 		if (typeof(SE.grid) != 'undefined')
 			SE.listView.refreshGrid();
@@ -344,7 +345,7 @@ var AjaxObject = {
 	 */
 	settingsFolderRefresh : function(o) {
 		//SUGAR.email2.accounts.rebuildFolderList(); // refresh frameFolder
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		var user = document.getElementById('userFolders');
 
 		SUGAR.email2.util.emptySelectOptions(user);
@@ -395,7 +396,7 @@ var AjaxObject = {
 	/**
 	 */
 	updateUserPrefs : function(o) {
-		SUGAR.email2.userPrefs = JSON.parse(o.responseText);
+		SUGAR.email2.userPrefs = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.email2.folders.startCheckTimer(); // starts the auto-check interval
 	},
 
@@ -404,8 +405,8 @@ var AjaxObject = {
 	uploadAttachmentSuccessful : function(o) {
 		// clear out field
 		document.getElementById('email_attachment').value = '';
-
-		var ret = JSON.parse(o.responseText);
+		
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		var idx = SUGAR.email2.composeLayout.currentInstanceId;
 		var overall = document.getElementById('addedFiles' + idx);
 		var index = overall.childNodes.length;
@@ -452,7 +453,7 @@ AjaxObject.accounts = {
 	callbackEditOutbound : {
 		success	: function(o)
 		{
-			var ret = JSON.parse(o.responseText);
+			var ret = YAHOO.lang.JSON.parse(o.responseText);
 			// show overlay
 			SUGAR.email2.accounts.showAddSmtp();
 
@@ -486,7 +487,7 @@ AjaxObject.accounts = {
 	},
 	callbackDeleteOutbound : {
 		success	: function(o) {
-		    var ret = JSON.parse(o.responseText);
+		    var ret = YAHOO.lang.JSON.parse(o.responseText);
 		    if(ret.is_error)
 		    {
 		        if(confirm(ret.error_message))
@@ -516,7 +517,7 @@ AjaxObject.accounts = {
 	       }
 
 	       //Check for server timeout / errors
-	       var ret = JSON.parse(o.responseText);
+	       var ret = YAHOO.lang.JSON.parse(o.responseText);
 	       var done = false;
 
 	       if (typeof(o.responseText) == 'undefined' || o.responseText == "" || ret == false) {
@@ -590,14 +591,19 @@ AjaxObject.composeLayout = {
 	/**
 	 * Populates the record id
 	 */
-	saveDraftCleanup : function(o) {
-		SUGAR.hideMessageBox();
-		var ret = JSON.parse(o.responseText);
-		if(ret)
-		  SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
-		else if (o.responseText)
-		  SUGAR.showMessageBox(mod_strings.LBL_ERROR_SAVING_DRAFT, o.responseText, 'alert');
-	}
+    saveDraftCleanup : function(o) {
+        var ret;
+        hideOverlay();
+
+        try {
+            ret = YAHOO.lang.JSON.parse(o.responseText);
+            SUGAR.email2.composeLayout.forceCloseCompose(ret.composeLayoutId);
+        } catch(err) {
+            if (o.responseText) {
+                SUGAR.showMessageBox(mod_strings.LBL_ERROR_SAVING_DRAFT, o.responseText, 'alert');
+            }
+        }
+    }
 };
 
 AjaxObject.composeLayout.callback = {
@@ -614,7 +620,7 @@ AjaxObject.detailView = {
 	 * Pops-up a printable view of an email
 	 */
 	displayPrintable : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		var displayTemplate = new YAHOO.SUGAR.Template(SUGAR.email2.templates['viewPrintable']);
 		// 2 below must be in global context
 		meta = ret.meta;
@@ -645,7 +651,7 @@ AjaxObject.detailView = {
 	 */
 	displayView : function(o) {
 		var SED = SUGAR.email2.detailView;
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 
 		if(!SED.viewDialog) {
 			SED.viewDialog = new YAHOO.widget.Dialog("viewDialog", {
@@ -676,7 +682,7 @@ AjaxObject.detailView = {
 	 */
 	showQuickCreateForm : function(o) {
 		var SED = SUGAR.email2.detailView;
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 
 		if(!SED.quickCreateDialog) {
 			SED.quickCreateDialog = new YAHOO.widget.Dialog("quickCreate", {
@@ -751,8 +757,8 @@ AjaxObject.detailView = {
 	},
 
 	saveQuickCreateFormAndReply : function(o) {
-	    SUGAR.hideMessageBox();
-	    var ret = JSON.parse(o.responseText);
+        SUGAR.hideMessageBox();
+        var ret = YAHOO.lang.JSON.parse(o.responseText);
         SUGAR.email2.detailView.quickCreateDialog.hide();
         var qcd = SUGAR.email2.detailView.quickCreateDialog;
         var type = (qcd.qcmodule == 'Cases') ? 'replyCase' : 'reply';
@@ -855,7 +861,7 @@ AjaxObject.detailView = {
 	showEmailDetailView : function(o) {
         SUGAR.hideMessageBox();
         var SED = SUGAR.email2.detailView;
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 
 		if(!SED.quickCreateDialog) {
 			SED.quickCreateDialog = new YAHOO.widget.Dialog("emailDetailDialog", {
@@ -890,7 +896,7 @@ AjaxObject.detailView = {
 	showAssignmentDialogWithData : function(o) {
         var SEC = SUGAR.email2.contextMenus;
 		SUGAR.hideMessageBox();
-        var ret = JSON.parse(o.responseText);
+        var ret = YAHOO.lang.JSON.parse(o.responseText);
         if (!SEC.assignmentDialog) {
 	        SEC.assignmentDialog = new YAHOO.widget.Dialog("assignmentDialog", {
 	        	visible:false,
@@ -917,8 +923,8 @@ AjaxObject.detailView = {
 
 	showImportForm : function(o) {
 		var SED = SUGAR.email2.detailView;
-		var ret = JSON.parse(o.responseText);
-
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
+        
         document.getElementById('quickCreateContent').innerHTML = "";
         SUGAR.hideMessageBox();
         if (!ret) {
@@ -1026,7 +1032,7 @@ AjaxObject.detailView = {
     },
     showRelateForm : function(o) {
         var SED = SUGAR.email2.detailView;
-    	var ret = JSON.parse(o.responseText);
+    	var ret = YAHOO.lang.JSON.parse(o.responseText);
         document.getElementById('quickCreateContent').innerHTML = "";
         SUGAR.hideMessageBox();
         if (!ret) {
@@ -1103,7 +1109,7 @@ AjaxObject.detailView.callback = {
 	emailDetail : {
 		success	: function(o) {
 			SUGAR.email2.o = o;
-			var ret = JSON.parse(o.responseText);
+			var ret = YAHOO.lang.JSON.parse(o.responseText);
 			SUGAR.email2.detailView.consumeMetaDetail(ret);
 		},
 		argument: [targetDiv],
@@ -1114,7 +1120,7 @@ AjaxObject.detailView.callback = {
 	emailPreview : {
 		success	: function(o) {
 			SUGAR.email2.o = o;
-			var ret = JSON.parse(o.responseText);
+			var ret = YAHOO.lang.JSON.parse(o.responseText);
 			SUGAR.email2.detailView.consumeMetaPreview(ret);
 		},
 		failure	: AjaxObject.handleFailure,
@@ -1157,7 +1163,7 @@ AjaxObject.folders = {
 	rebuildFolders : function(o) {
 		SUGAR.hideMessageBox();
 
-		var data = JSON.parse(o.responseText);
+		var data = YAHOO.lang.JSON.parse(o.responseText);
 
 		email2treeinit(SUGAR.email2.tree, data.tree_data, 'frameFolders', data.param);
 		SUGAR.email2.folders.setSugarFolders();
@@ -1213,7 +1219,7 @@ var callbackOutboundTest = {
 
 var callbackTeamInfoForSettings = {
 success : function (o) {
-	var data = JSON.parse(o.responseText);
+	var data = YAHOO.lang.JSON.parse(o.responseText);
 	document.getElementById('EditViewGroupFolderTeamTD').innerHTML = data.defaultgroupfolder;
 },
 failure	: AjaxObject.handleFailure,
@@ -1227,7 +1233,7 @@ success : function (o) {
 	SUGAR.hideMessageBox();
 	if (o.responseText != "")  {
 		var statusString = "";
-		var data = JSON.parse(o.responseText);
+		var data = YAHOO.lang.JSON.parse(o.responseText);
 		for(i=0; i<data.length; i++) {
 			statusString = statusString + data[i] + '<br/>';
 		}
@@ -1256,7 +1262,7 @@ var callbackDelete = {
 var callbackEmailDetailMultiple = {
 	success	: function(o) {
 		SUGAR.hideMessageBox();
-		var retMulti = JSON.parse(o.responseText);
+        var retMulti = YAHOO.lang.JSON.parse(o.responseText);
 		var ret = new Object();
 
 		for(var i=0; i<retMulti.length; i++) {
@@ -1302,7 +1308,7 @@ var callbackFolderRename = {
 };
 var callbackFolderDelete = {
 	success	: function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		if (ret.status) {
 		    if (ret.folder_id) {
 		        var node = SUGAR.email2.folders.getNodeFromId(ret.folder_id);
@@ -1326,7 +1332,7 @@ var callbackFolderDelete = {
 };
 var callbackFolderSave = {
 	success	: function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 
 		switch(ret.action) {
 			case 'newFolderSave':
@@ -1511,7 +1517,7 @@ var callbackRebuildShowAccountList = {
 
 var callbackRefreshSugarFolders = {
 	success	: function(o) {
-		var t = JSON.parse(o.responseText);
+		var t = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.email2.folders.setSugarFoldersEnd(t);
 	},
 	failure	: AjaxObject.handleFailure,
@@ -1637,7 +1643,7 @@ var callbackUploadAttachment = {
 };
 var callbackUserPrefs = {
 	success	: function(o) {
-		SUGAR.email2.userPrefs = JSON.parse(o.responseText);
+		SUGAR.email2.userPrefs = YAHOO.lang.JSON.parse(o.responseText);
 	},
 	failure	: AjaxObject.handleFailure,
 	timeout	: AjaxObject.timeout,
@@ -1655,7 +1661,7 @@ var callbackContextmenus = {
 //BEGIN SUGARCRM flav=pro ONLY
 var updateMailingLists = {
 	success	: function(o) {
-		SUGAR.email2.userPrefs.emailLists = JSON.parse(o.responseText);
+		SUGAR.email2.userPrefs.emailLists = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.email2.addressBook.setLists();
 	},
 	failure	: AjaxObject.handleFailure,
@@ -1666,7 +1672,7 @@ var updateMailingLists = {
 
 var callbackCheckEmail2 = {
 	success : function(o) {
-		var ret = JSON.parse(o.responseText);
+        var ret = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.showMessageBox(app_strings.LBL_EMAIL_CHECKING_NEW, ret.text);
 
 

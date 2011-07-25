@@ -35,7 +35,7 @@ array (
         array (
           0 => 
           array (
-			'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
+			'customCode' => '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id ="SAVE" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
 		  ),
           1 => 'CANCEL',
           2 => 
@@ -63,10 +63,9 @@ array (
           'field' => '30',
         ),
       ),
-      'javascript' => '<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
+      'javascript' => '<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
 <script type="text/javascript" src="include/javascript/sugar_grp_jsolait.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
-<script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim} 
+<script>toggle_portal_flag();function toggle_portal_flag()  {ldelim} {$TOGGLE_JS} {rdelim}
 function formSubmitCheck(){ldelim}if(check_form(\'EditView\') && isValidDuration()){ldelim}document.EditView.submit();{rdelim}{rdelim}</script>',
       'useTabs' => false,
     ),

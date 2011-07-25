@@ -405,6 +405,10 @@ SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
 installLog("Enable SugarFeeds");
 enableSugarFeeds();
 
+// Enable the InsideView connector and add all modules
+installLog("Enable InsideView Connector");
+enableInsideViewConnector();
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA
 

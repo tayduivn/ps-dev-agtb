@@ -58,7 +58,7 @@ if(SUGAR.util.isTouchScreen()) {
 function qe_init(){
 
     //do not process if YUI is undefined
-    if(typeof(YUI)=='undefined'){
+    if(typeof(YUI)=='undefined' || typeof(DCMenu) == 'undefined'){
         return;
     }
 

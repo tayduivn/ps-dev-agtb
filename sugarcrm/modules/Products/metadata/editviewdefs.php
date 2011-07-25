@@ -32,7 +32,6 @@ $viewdefs['Products']['EditView'] = array(
                                             array('label' => '10', 'field' => '30')
                                             ),
     'javascript' => '
-<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" src="include/javascript/sugar_grp_jsolait.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" src="modules/Products/EditView.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>'
 ),

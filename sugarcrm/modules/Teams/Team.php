@@ -121,7 +121,7 @@ class Team extends SugarBean
 
 		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
 		{
-			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) 
+			if ($current_user->isAdminForModule('Users')) 
 			{
 			    $list_form->parse($xTemplateSection.".row.admin_team");
 			    $list_form->parse($xTemplateSection.".row.admin_edit");
@@ -360,8 +360,12 @@ class Team extends SugarBean
 				$manager->reports_to_id = $focus->reports_to_id;
 				while(!empty($manager->reports_to_id))
 				{
-					$manager->retrieve($manager->reports_to_id);
-                    $managers_membership = new TeamMembership();
+					if($manager->retrieve($manager->reports_to_id)==null) 
+					{
+						return;
+					}					
+					
+					$managers_membership = new TeamMembership();
 					$result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->id);
 
 					if($result)
@@ -437,7 +441,11 @@ class Team extends SugarBean
 		while(!empty($manager->reports_to_id))
 		{
 
-			if($manager->retrieve($manager->reports_to_id)==null) return;
+			if($manager->retrieve($manager->reports_to_id)==null) 
+			{
+				return;
+			}
+			
 			$result = $membership->retrieve_by_user_and_team($manager->id, $this->id);
 
 			if($result)

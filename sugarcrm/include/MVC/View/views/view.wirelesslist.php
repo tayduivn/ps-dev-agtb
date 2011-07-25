@@ -138,20 +138,25 @@ class ViewWirelesslist extends SugarWirelessListView{
  	 */
  	protected function wl_subpanel_list_view_display(){
  		// instantiate a child seed object
- 		$obj = new $GLOBALS['beanList'][$_REQUEST['subpanel']]();
- 		$table = $obj->table_name;
-
-		// retrieve the bean data
- 		$this->bean->retrieve($_REQUEST['parent_id']);
-		$subpanel_data = $this->wl_get_subpanel_data($obj, $table);
-
-        $this->ss->assign('BEAN', $this->bean);
-		$this->ss->assign('SUBPANEL_MODULE', $_REQUEST['subpanel']);
-		$this->ss->assign('SUBPANEL_LIST_VIEW', true);
-
-		// DATA holds the subpanel list view data
-		$this->ss->assign('DATA', $subpanel_data['list']);
- 	}
+ 	    	
+        $layout_defs = $this->getSubpanelDefs();
+        $subpanel = isset($_REQUEST['subpanel']) ? $_REQUEST['subpanel'] : "";
+        if (!empty($layout_defs['subpanel_setup'][$subpanel]))
+        {
+            $this->bean->retrieve($_REQUEST['parent_id']);
+            $def = $layout_defs['subpanel_setup'][$subpanel];
+            $link = !empty($def['get_subpanel_data']) ? $def['get_subpanel_data'] :  $subpanel;
+            if ($this->bean->load_relationship($link))
+            {
+                $beans = $this->bean->$link->getbeans();
+                $module = $this->bean->$link->getRelatedModuleName();
+                $this->ss->assign('BEAN', $this->bean);
+                $this->ss->assign('SUBPANEL_MODULE', $module);
+                $this->ss->assign('SUBPANEL_LIST_VIEW', true);
+                $this->ss->assign('DATA', $beans);
+            }
+        }
+     }
 
  	/**
  	 * Public function that handles the display of the wireless list view.

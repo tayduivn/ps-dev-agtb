@@ -31,7 +31,7 @@
 <script type="text/javascript">
 	{literal}
 	SUGAR.util.doWhen(
-		"SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts",
+		"(SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts) || SUGAR.loadChart",
 		function(){
 			{/literal}
 			var css = new Array();
@@ -45,7 +45,7 @@
 			{if $height > 480}
 				chartConfig["scroll"] = true;
 			{/if}
-			loadSugarChart('{$chartId}','{$filename}',css,chartConfig);
+			loadSugarChart('{$chartId}','{$filename}',css,chartConfig,1);
 			{literal}
 		}
 	);

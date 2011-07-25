@@ -48,7 +48,7 @@ abstract class SugarRelationship
      * @param  $link Link Object to get query for.
      * @return void
      */
-    public abstract function getQuery($link);
+    public abstract function getQuery($link, $params = array());
 
     public abstract function getJoin($link);
 
@@ -124,7 +124,7 @@ abstract class SugarRelationship
         $values = implode(',', $values);
         if (!empty($values))
         {
-            $query = "INSERT INTO {$this->getRelationshipTable()} VALUES ($values);";
+            $query = "INSERT INTO {$this->getRelationshipTable()} VALUES ($values)";
             DBManagerFactory::getInstance()->query($query);
         }
     }

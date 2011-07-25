@@ -37,8 +37,16 @@ class ImportView extends SugarView
 
     public function __construct($bean = null, $view_object_map = array())
     {
+        global $mod_strings;
+
         parent::__construct($bean, $view_object_map);
-        $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+
+        if (isset($_REQUEST['button']) && trim($_REQUEST['button']) == htmlentities($mod_strings['LBL_BACK'])) {
+            // if the request comes from the "Back" button, decrease the step count
+            $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] - 1) : 1;
+        } else {
+            $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
+        }
         $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
     }
 

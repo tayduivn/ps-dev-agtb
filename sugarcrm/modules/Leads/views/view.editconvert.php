@@ -40,8 +40,7 @@ class ViewEditConvert extends SugarView {
     {
 	    parent::SugarView();
         global $current_user;
-        $access = get_admin_modules_for_user($current_user);
-        if(!is_admin($current_user) && !is_admin_for_module($current_user, "Leads"))
+        if(!$current_user->isDeveloperForModule("Leads"))
         {
             die("Unauthorized Acccess to Administration");
         }
@@ -131,6 +130,8 @@ class ViewEditConvert extends SugarView {
     
 
     protected function getModulesFromDefs(){
+        global $app_list_strings;
+
         $modules = array();
         if (!isset($this->defs))
         {
@@ -141,7 +142,7 @@ class ViewEditConvert extends SugarView {
             foreach($views as $view => $def)
             {
                 $modules[] = array(
-                    "module" => $module,    
+                    "module" => $app_list_strings['moduleList'][$module],
                     "required" => isset($def['required']) ? $def['required'] : false,
                     "select"   => isset($def['select'])   ? $def['select']   : false,
                     "copyData" => isset($def['copyData']) ? $def['copyData'] : false,

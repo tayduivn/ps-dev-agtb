@@ -85,9 +85,9 @@ $dictionary['OAuthToken'] = array('table' => 'oauth_tokens',
 	    'type' => 'bool',
 	    'default' => '0',
 	    'reportable'=>false,
-	    'comment' => 'Record deletion indicator',
 	    'required' => true,
-	    'isnull' => false,
+	  	'isnull' => false,
+	    'comment' => 'Record deletion indicator'
 	  ),
       'consumer_link' =>
       array (

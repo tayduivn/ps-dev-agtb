@@ -27,9 +27,8 @@
 
 // $Id: customSugarCharts.js 2010-12-01 23:11:36Z lhuynh $
 
-function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
-
-				var labelType, useGradients, nativeTextSupport, animate;
+function loadSugarChart (chartId,jsonFilename,css,chartConfig,pageCols) {
+				var labelType, useGradients, nativeTextSupport, animate;		    	
 				(function() {
 				  var ua = navigator.userAgent,
 					  typeOfCanvas = typeof HTMLCanvasElement,
@@ -42,7 +41,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				  animate = false;
 				})();
 				
-			
+			var delay = (SUGAR.isIE) ? 500 : 0;
 			switch(chartConfig["chartType"]) {
 			case "barChart":
 				var handleFailure = function(o){
@@ -150,6 +149,8 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				});
 				//load JSON data.
 				barChart.loadJSON(json);
+				
+
 				//end
 				
 				/*
@@ -200,7 +201,27 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 				//save canvas to image for pdf consumption
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+		    	
+		    	var firstLoad = (SUGAR.isIE) ? true: false,
+		    	orgWindowWidth = document.body.offsetWidth,
+		    	orgContainerDivWidth = document.getElementById(chartId).offsetWidth;
+		    	
+				var refreshGraph = function() {
+					var newWindowWidth = document.body.offsetWidth;
+					var diff = Math.abs(newWindowWidth - orgWindowWidth);		
+					if(diff>20 && !firstLoad){
+						barChart.resizeGraph(json,orgWindowWidth,orgContainerDivWidth,pageCols);
+					}
+					firstLoad = false;	
+				}
 				
+				//refresh graph on window resize
+    
+				var doRefresh = function() {
+					setTimeout(function() {refreshGraph()}, delay);	
+				}
+				
+				YAHOO.util.Event.addListener(window, 'resize', function() {doRefresh()});
 				
 					}
 				}
@@ -369,7 +390,27 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 				
 				//save canvas to image for pdf consumption
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+
+		    	var firstLoad = (SUGAR.isIE) ? true: false,
+		    	orgWindowWidth = document.body.offsetWidth,
+		    	orgContainerDivWidth = document.getElementById(chartId).offsetWidth;
+		    	
+				var refreshGraph = function() {
+					var newWindowWidth = document.body.offsetWidth;
+					var diff = Math.abs(newWindowWidth - orgWindowWidth);		
+					if(diff>20 && !firstLoad){
+						lineChart.resizeGraph(json,orgWindowWidth,orgContainerDivWidth,pageCols);
+					}
+					firstLoad = false;	
+				}
 				
+				//refresh graph on window resize
+    
+				var doRefresh = function() {
+					setTimeout(function() {refreshGraph()}, delay);	
+				}
+				
+				YAHOO.util.Event.addListener(window, 'resize', function() {doRefresh()});
 				
 					}
 				}
@@ -509,6 +550,29 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 								
 				//save canvas to image for pdf consumption
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+			
+		    	var firstLoad = (SUGAR.isIE) ? true: false,
+		    	orgWindowWidth = document.body.offsetWidth,
+		    	orgContainerDivWidth = document.getElementById(chartId).offsetWidth;
+		    	
+				var refreshGraph = function() {
+					var newWindowWidth = document.body.offsetWidth;
+					var diff = Math.abs(newWindowWidth - orgWindowWidth);		
+					if(diff>20 && !firstLoad){
+						pieChart.resizeGraph(json,orgWindowWidth,orgContainerDivWidth,pageCols);
+					}
+					firstLoad = false;	
+				}
+				
+				//refresh graph on window resize
+    
+				var doRefresh = function() {
+					setTimeout(function() {refreshGraph()}, delay);	
+				}
+				
+				YAHOO.util.Event.addListener(window, 'resize', function() {doRefresh()});
+				
+				
 				}
 			}
 								
@@ -667,6 +731,29 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 								
 				//save canvas to image for pdf consumption
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				
+		    	var firstLoad = (SUGAR.isIE) ? true: false,
+		    	orgWindowWidth = document.body.offsetWidth,
+		    	orgContainerDivWidth = document.getElementById(chartId).offsetWidth;
+		    	
+				var refreshGraph = function() {
+					var newWindowWidth = document.body.offsetWidth;
+					var diff = Math.abs(newWindowWidth - orgWindowWidth);		
+					if(diff>20 && !firstLoad){
+						funnelChart.resizeGraph(json,orgWindowWidth,orgContainerDivWidth,pageCols);
+					}
+					firstLoad = false;	
+				}
+				
+				//refresh graph on window resize
+    
+				var doRefresh = function() {
+					setTimeout(function() {refreshGraph()}, delay);	
+				}
+				
+				YAHOO.util.Event.addListener(window, 'resize', function() {doRefresh()});
+				
+				
 				}
 			}
 						
@@ -805,6 +892,29 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 								
 				//save canvas to image for pdf consumption
 				$jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"]);
+				
+		    	var firstLoad = (SUGAR.isIE) ? true: false,
+		    	orgWindowWidth = document.body.offsetWidth,
+		    	orgContainerDivWidth = document.getElementById(chartId).offsetWidth;
+		    	
+				var refreshGraph = function() {
+					var newWindowWidth = document.body.offsetWidth;
+					var diff = Math.abs(newWindowWidth - orgWindowWidth);		
+					if(diff>20 && !firstLoad){
+						gaugeChart.resizeGraph(json,orgWindowWidth,orgContainerDivWidth,pageCols);
+					}
+						firstLoad = false;	
+				}
+				
+				//refresh graph on window resize
+    
+				var doRefresh = function() {
+					setTimeout(function() {refreshGraph()}, delay);	
+				}
+				
+				YAHOO.util.Event.addListener(window, 'resize', function() {doRefresh()});
+				
+				
 				}
 			}
 								

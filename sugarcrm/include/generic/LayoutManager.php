@@ -214,25 +214,28 @@ class LayoutManager
 				$widget_def['widget_class'] = 'Fieldbool';
 		}
 
-		if($use_default) {
-			switch($widget_def['name']) {
-				case 'assigned_user_id':
-					$widget_def['widget_class'] = 'Fielduser_name';
-					break;
-				//BEGIN SUGARCRM flav=pro ONLY
-				case 'team_id':
-					$widget_def['widget_class'] = 'Fieldteam_name';
-					break;
-				//END SUGARCRM flav=pro ONLY
-				default:
-				    if ( isset($widget_def['type']) ) {
-				        $widget_def['widget_class'] = 'Field' . $widget_def['type'];
-				    }
-				    else {
-				        $widget_def['widget_class'] = 'Field' . $this->DBHelper->getFieldType($widget_def);
-				    }
+        if($use_default) {
+            switch($widget_def['name']) {
+                case 'assigned_user_id':
+                //bug 39170 - begin
+                case 'created_by':
+                case 'modified_user_id':
+                //bug 39170 - end
+                    $widget_def['widget_class'] = 'Fielduser_name';
+                break;
+                //BEGIN SUGARCRM flav=pro ONLY
+                case 'team_id':
+                    $widget_def['widget_class'] = 'Fieldteam_name';
+                break;
+                //END SUGARCRM flav=pro ONLY
+                default:
+                    if ( isset($widget_def['type']) ) {
+                        $widget_def['widget_class'] = 'Field' . $widget_def['type'];
+                    } else {
+                        $widget_def['widget_class'] = 'Field' . $this->DBHelper->getFieldType($widget_def);
+                    }
             }
-		}
+        }
 
 		if(!empty($widget_def['name']) && $widget_def['name'] == 'team_set_id'){
 			$widget_def['widget_class'] = 'Fieldteam_set_id';

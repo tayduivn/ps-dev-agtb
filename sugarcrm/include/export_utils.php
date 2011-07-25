@@ -262,7 +262,7 @@ function export($type, $records = null, $members = false, $sample=false) {
                     $value = $timedate->to_display_date($value, false);
                 }
                 // Bug 32463 - Properly have multienum field translated into something useful for the client
-                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'multienum'){
+                if(isset($focus->field_name_map[$fields_array[$key]]['type']) && ( $focus->field_name_map[$fields_array[$key]]['type'] == 'multienum' ||  $focus->field_name_map[$fields_array[$key]]['type'] == 'enum')){
                     $value = str_replace("^","",$value);
                     if ( isset($focus->field_name_map[$fields_array[$key]]['options'])
                             && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) ) {
@@ -587,7 +587,30 @@ function generateSearchWhere($module, $query) {//this function is similar with f
                      break;
 
                 case "enum":
-                     //enum?
+                    //get the associated enum if available
+                    global $app_list_strings;
+
+                    if(isset($focus->field_name_map[$field_name]['type']) && !empty($focus->field_name_map[$field_name]['options'])){
+                        if ( !empty($app_list_strings[$focus->field_name_map[$field_name]['options']]) ) {
+
+                            //get the values into an array
+                            $dd_values = $app_list_strings[$focus->field_name_map[$field_name]['options']];
+                            $dd_values = array_values($dd_values);
+
+                            //grab the count
+                            $count = count($dd_values) - 1;
+
+                            //choose one at random
+                            $returnContent .= '"'.$dd_values[mt_rand(0,$count)].'",';
+                            } else{
+                                //name of enum options array was found but is empty, return blank
+                                $returnContent .= '"",';
+                            }
+                    }else{
+                        //name of enum options array was not found on field, return blank
+                        $returnContent .= '"",';
+                    }
+                     break;
                 default:
                     //type is not matched, fill in with empty string and continue;
                     $returnContent .= '"",';
@@ -696,7 +719,6 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
             }else{
                 $newReorder[$rk]=$rv;
             }
-
         }
 
         //if module is not defined, lets default the order to another module of the same type
