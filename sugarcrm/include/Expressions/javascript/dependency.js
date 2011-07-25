@@ -123,9 +123,9 @@ SUGAR.forms.AssignmentHandler.registerFields = function(flds) {
  * @STATIC
  * Register all the fields in a form
  */
-SUGAR.forms.AssignmentHandler.registerForm = function(f) {
+SUGAR.forms.AssignmentHandler.registerForm = function(f, formEl) {
 	var AH = SUGAR.forms.AssignmentHandler;
-	var form = document.forms[f];
+	var form = formEl || document.forms[f];
 	if (typeof(AH.VARIABLE_MAP[f]) == "undefined")
 		AH.VARIABLE_MAP[f] = {};
 	if ( typeof(form) == 'undefined' ) return;
@@ -147,7 +147,12 @@ SUGAR.forms.AssignmentHandler.registerView = function(view, startEl) {
 	if (Dom.get(view) != null && Dom.get(view).tagName == "FORM") {
 		return AH.registerForm(view);
 	}
-	var nodes = YAHOO.util.Selector.query("span.sugar_field", startEl);
+	var form = Dom.get("form");
+    if (form && form.name == view)
+    {
+        AH.registerForm(view, form);
+    }
+    var nodes = YAHOO.util.Selector.query("span.sugar_field", startEl);
 	for (var i in nodes) {
 		if (nodes[i].id != "")
 			AH.VARIABLE_MAP[view][nodes[i].id] = nodes[i];
