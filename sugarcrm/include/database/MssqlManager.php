@@ -1994,4 +1994,17 @@ EOQ;
     {
         return function_exists("mssql_connect");
     }
+
+    /**
+     * Check if this DB name is valid
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function isDatabaseNameValid($name)
+    {
+        // No funny chars, does not begin with number
+        return preg_match('/^[0-9#@]+|[\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/', $name)==0;
+    }
+
 }

@@ -175,7 +175,7 @@ class IBMDB2Manager  extends DBManager
         if (is_resource($stmt)){ // Being more strict than just checking for boolean false
             // NOTE that if we get a statement here, it's because the operation was successful
             // Hence we are only checking for additional information, no errors.
-            
+
             $info = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
             if($info) {
                 $logmsg = "IBM_DB2 statement SQLSTATE after successful execution ".$info.": ".db2_stmt_errormsg($stmt);
@@ -276,7 +276,7 @@ class IBMDB2Manager  extends DBManager
      */
     protected function bindPreparedSqlParams($sql, $suppress, $stmt, &$sp_msg)
     {
-        
+
         if (preg_match('/^CALL.+,\s*\?/i', $sql)) {
             // 20110519 Frank Steegmans: Note at the time of this implementation we are not using stored procedures
             // anywhere except for creating full text indexes in add_drop_contraint. Furthermore
@@ -1660,5 +1660,17 @@ EOQ;
     }
 
     /// END REORG QUEUE FUNCTIONALITY
+
+    /**
+     * Check if this DB name is valid
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function isDatabaseNameValid($name)
+    {
+        // No funny chars
+        return preg_match('/[\#\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/', $name)==0;
+    }
 
 }

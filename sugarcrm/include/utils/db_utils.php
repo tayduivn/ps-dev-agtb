@@ -137,23 +137,9 @@ function from_html($string, $encode=true) {
  * @param string $ensureUnique
  * @return string Valid column name trimmed to right length and with invalid characters removed
  */
- function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
+function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
 {
-    // first strip any invalid characters - all but alphanumerics and -
-    $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
-    $len = strlen ( $name ) ;
-    $result = $name;
-    if ($ensureUnique)
-    {
-        $md5str = md5($name);
-        $tail = substr ( $name, -11) ;
-        $temp = substr($md5str , strlen($md5str)-4 );
-        $result = substr ( $name, 0, 10) . $temp . $tail ;
-    }else if ($len > ($maxLen - 5))
-    {
-        $result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen + 5);
-    }
-    return strtolower ( $result ) ;
+    return DBManagerFactory::getInstance()->getValidDBName($name, $ensureUnique);
 }
 
 /**
@@ -163,24 +149,8 @@ function from_html($string, $encode=true) {
  * @param string $dbType Type of database server
  * @return bool true or false based on the validity of the DB name
  */
-function isValidDBName($name, $dbType) {
-    switch ($dbType){
-        case 'mssql':
-            $pattern = '/^[0-9#@]+|[\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/i';
-            break;
-        case 'oci8':
-            $pattern = '/[\#\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/i';
-            break;
-        case 'mysql':
-            $pattern = '/[\/\.\\\\]/i';
-            break;
-        default:
-            $pattern = '/[\/\.\\\\]/i';
-            break;
-    }
-    return preg_match($pattern, $name)==0?true:false;
+function isValidDBName($name, $dbType)
+{
+    $db = DBManagerFactory::getTypeInstance($dbType);
+    return $db->isDatabaseNameValid($name);
 }
-
-
-
-?>

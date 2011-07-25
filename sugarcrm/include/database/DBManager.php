@@ -3102,6 +3102,18 @@ abstract class DBManager
     }
 
     /**
+     * Check if this DB name is valid
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function isDatabaseNameValid($name)
+    {
+        // Generic case - no slashes, no dots
+        return preg_match('#[/.\\\\]#', $name)==0;
+    }
+
+    /**
      * Quote string in DB-specific manner
      * @param string $string
      * @return string

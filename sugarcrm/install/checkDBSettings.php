@@ -29,12 +29,15 @@ function checkDBSettings($silent=false) {
     $errors = array();
     copyInputsIntoSession();
 
+    $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
+    installLog("testing with {$db->dbType}:{$db->variant}");
+
         if( trim($_SESSION['setup_db_database_name']) == '' ){
             $errors['ERR_DB_NAME'] = $mod_strings['ERR_DB_NAME'];
             installLog("ERROR::  {$errors['ERR_DB_NAME']}");
         }
 
-        if (!isValidDBName($_SESSION['setup_db_database_name'], $_SESSION['setup_db_type'])) {
+        if (!$db->isDatabaseNameValid($_SESSION['setup_db_database_name'])) {
             $errIdx = 'ERR_DB_' . strtoupper($_SESSION['setup_db_type']) . '_DB_NAME_INVALID';
             $errors[$errIdx] = $mod_strings[$errIdx];
             installLog("ERROR::  {$errors[$errIdx]}");
@@ -87,8 +90,6 @@ function checkDBSettings($silent=false) {
             installLog("ERROR::  {$errors['ERR_DB_MSSQL_DB_NAME']}");
         }
 
-        $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
-        installLog("testing with {$db->dbType}:{$db->variant}");
 
         // test the account that will talk to the db if we're not creating it
         if( $_SESSION['setup_db_sugarsales_user'] != '' && !$_SESSION['setup_db_create_sugarsales_user'] ){

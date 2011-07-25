@@ -34,6 +34,12 @@ class DBManagerFactory
 {
     static $instances = array();
 
+    /**
+	 * Returns a reference to the DB object of specific type
+     *
+     * @param  string $type DB type
+     * @return object DBManager instance
+     */
     public static function getTypeInstance($type, $config = array(), $global_config = array())
     {
         global $sugar_config;
@@ -91,7 +97,7 @@ class DBManagerFactory
         if(!isset(self::$instances[$instanceName])){
             $config = $sugar_config['dbconfig'];
             $count++;
-            //BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=ent ONLY
             if(!empty($instanceName)){
                 $config = $sugar_config['db'][$instanceName];
                 //trace the parent dbs until we get a real db
@@ -117,17 +123,14 @@ class DBManagerFactory
                 self::$instances[$parentInstanceName]->children[] = $instanceName;
             }
             else{
-                //END SUGARCRM flav=ent ONLY
-                require_once("include/database/{$my_db_manager}.php");
-                $dbinstances[$instanceName] = new $my_db_manager();
-                $dbinstances[$instanceName]->getHelper();
-                $dbinstances[$instanceName]->connect($config, true);
-                $dbinstances[$instanceName]->count_id = $count;
-                $dbinstances[$instanceName]->references = 0;
-                $dbinstances[$instanceName]->getHelper()->db = $dbinstances[$instanceName];
-                //BEGIN SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=ent ONLY
+                self::$instances[$instanceName] = self::getTypeInstance($config['db_type'], $config);
+                self::$instances[$instanceName]->connect($config, true);
+                self::$instances[$instanceName]->count_id = $count;
+                self::$instances[$instanceName]->references = 0;
+//BEGIN SUGARCRM flav=ent ONLY
             }
-            //END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=ent ONLY
         } else {
             $old_count++;
             self::$instances[$instanceName]->references = $old_count;
@@ -135,6 +138,9 @@ class DBManagerFactory
         return self::$instances[$instanceName];
     }
 
+    /**
+     * Disconnect all DB connections in the system
+     */
     public static function disconnectAll()
     {
         foreach(self::$instances as $instance) {
@@ -143,6 +149,10 @@ class DBManagerFactory
         self::$instances = array();
     }
 
+    /**
+     * Get list of all available DB drivers
+     * @return array List of Db drivers, key - variant (mysql, mysqli), value - driver type (mysql, mssql)
+     */
     public static function getDbDrivers()
     {
         $drivers = array();
