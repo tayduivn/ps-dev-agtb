@@ -1162,6 +1162,7 @@ class Email extends SugarBean {
 
 	function cleanEmails($emails)
 	{
+	    if(empty($emails)) return '';
 		$emails = str_replace(array(",",";"), "::", from_html($emails));
 		$addrs = explode("::", $emails);
 		$res = array();
@@ -1176,13 +1177,13 @@ class Email extends SugarBean {
                 $res[] .= $parts["email"];
             }
 		}
-        return join(", ", $res);
+		return join(", ", $res);
 	}
 
 	protected function saveEmailText()
 	{
         $text = SugarModule::get("EmailText")->loadBean();
-        foreach($this->email_to_text as $mailfield => $textfield) {
+        foreach($this->email_to_text as $textfield=>$mailfield) {
             $text->$textfield = $this->$mailfield;
         }
         $text->email_id = $this->id;
