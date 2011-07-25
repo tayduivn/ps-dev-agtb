@@ -375,6 +375,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
     'dbType' => 'varchar',
     'len' => 255,
     'comment' => 'URL of website for the company',
+    'merge_filter' => 'enabled',
   ),
 
   'tasks' =>

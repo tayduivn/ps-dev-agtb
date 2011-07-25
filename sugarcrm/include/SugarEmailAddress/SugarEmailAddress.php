@@ -27,7 +27,7 @@ class SugarEmailAddress extends SugarBean {
     // Changes : 1) Removed character "'", since it appears twice
     //           2) Added "?:" after every open parenthesis, since we don't need to catch groups
     //           3) Removed the "*" just before "@", since it double the work of the previous "+", slowing down the evaluation
-    var $regex = "/^(?:['\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)@(?:(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+(?:[\.-]?\w+)*(?:\.[\w-]{2,})+)\$/";
+    var $regex = "/^(?:['\.\-\+&#!\$\*=\?\^_`\{\}~\/\w]+)@(?:(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|\w+(?:[\.-]*\w+)*(?:\.[\w-]{2,})+)\$/";
     var $disable_custom_fields = true;
     var $db;
     var $smarty;

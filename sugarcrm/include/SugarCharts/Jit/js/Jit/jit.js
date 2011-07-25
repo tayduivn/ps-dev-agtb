@@ -575,7 +575,7 @@ $.getPos = function(elem) {
     while (elem && !isBody(elem)) {
       position.x += elem.offsetLeft;
       position.y += elem.offsetTop;
-      elem = elem.offsetParent;
+      try{elem=elem.offsetParent;}catch(e){elem=document.body;}
     }
     return position;
   }
@@ -12906,7 +12906,7 @@ $jit.BarChart = new Class({
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
     	var val = values[i];
       	var valArray = $.splat(val.values);
-      	groupTotalValue += parseInt(valArray.sum());
+      	groupTotalValue += parseFloat(valArray.sum());
     }
 
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
@@ -13816,7 +13816,7 @@ $jit.FunnelChart = new Class({
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
     	var val = values[i];
       	var valArray = $.splat(val.values);
-      	totalValue += parseInt(valArray.sum());
+      	totalValue += parseFloat(valArray.sum());
     }
     
     
@@ -15696,7 +15696,7 @@ $jit.PieChart = new Class({
     for(var i=0, values=json.values, l=values.length; i<l; i++) {
     	var val = values[i];
       	var valArray = $.splat(val.values);
-      	totalValue += parseInt(valArray.sum());
+      	totalValue += parseFloat(valArray.sum());
     }
 
     for(var i=0, values=json.values, l=values.length; i<l; i++) {

@@ -30,7 +30,7 @@ class ext_rest_insideview extends ext_rest {
     protected $orgId;
     protected $orgName;
     protected $userId;
-    protected static $allowedModuleList;
+    public static $allowedModuleList;
     
     public function __construct() {
         

@@ -1885,7 +1885,7 @@ class SugarBean
             if($sendEmail && !$notify_mail->Send()) {
                 $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
             } else {
-                $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
+                $GLOBALS['log']->info("Notifications: e-mail successfully sent");
             }
 
         }

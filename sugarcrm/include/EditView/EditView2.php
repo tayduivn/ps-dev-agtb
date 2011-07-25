@@ -713,9 +713,20 @@ class EditView
            return $d;
         }
 
-        return $request[$name];
+        if(empty($request[$name]) || !isset($this->fieldDefs[$name]))
+        {
+           return $request[$name];
+        }
+        
+        //if it's a bean field - unformat it
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $sfh = new SugarFieldHandler();
+        $type = !empty($this->fieldDefs[$name]['custom_type']) ? $this->fieldDefs[$name]['custom_type'] : $this->fieldDefs[$name]['type'];
+        $sf = $sfh->getSugarField($type);
+        return $sf ? $sf->unformatField($request[$name], $this->fieldDefs[$name]) : $request[$name];
     }
 
+    
 	/**
 	 * Allow Subviews to overwrite this method to show custom titles.
 	 * Examples: Projects & Project Templates.

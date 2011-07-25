@@ -110,6 +110,7 @@ function isSupportedIE() {
 }
 
 SUGAR.isIE = isSupportedIE();
+SUGAR.isIE7 = (navigator.userAgent.toLowerCase().indexOf('msie 7')!=-1);
 var isSafari = (navigator.userAgent.toLowerCase().indexOf('safari')!=-1);
 
 // escapes regular expression characters
@@ -325,14 +326,14 @@ function isValidPrecision(value, precision){
 	    return true;
 	//#27021
 	if( (precision == "0") ){
-		if (value.indexOf(".")== -1){
+		if (value.indexOf(dec_sep)== -1){
 			return true;
 		}else{
 			return false;
 		}
 	}
 	//#27021   end
-	var actualPrecision = value.substr(value.indexOf(".")+1, value.length).length;
+	var actualPrecision = value.substr(value.indexOf(dec_sep)+1, value.length).length;
 	return actualPrecision == precision;
 }
 function toDecimal(original, precision) {
@@ -1869,8 +1870,15 @@ sugarListView.prototype.use_external_mail_client_callback = function(o)
 }
 
 sugarListView.prototype.send_form_for_emails = function(select, currentModule, action, no_record_txt,action_module,totalCount, totalCountError) {
-	if (document.MassUpdate.select_entire_list.value == 1) {
-		if (totalCount > 10) {
+	if ( typeof(SUGAR.config.email_sugarclient_listviewmaxselect) != 'undefined' ) {
+	    maxCount = 10;
+	}
+	else {
+	    maxCount = SUGAR.config.email_sugarclient_listviewmaxselect;
+	}
+    
+    if (document.MassUpdate.select_entire_list.value == 1) {
+		if (totalCount > maxCount) {
 			alert(totalCountError);
 			return;
 		} // if
@@ -1912,7 +1920,7 @@ sugarListView.prototype.send_form_for_emails = function(select, currentModule, a
 	}
 
 	var selectedArray = uidTa.value.split(",");
-	if(selectedArray.length > 10) {
+	if(selectedArray.length > maxCount) {
 		alert(totalCountError);
 		return;
 	} // if

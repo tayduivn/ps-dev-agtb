@@ -158,6 +158,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'importable' => 'required',
     'required' => true,
     'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
   ),
 
   'date_end' =>
@@ -168,6 +169,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'massupdate'=>false,
     'comment' => 'Date meeting ends',
     'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
   ),
   'parent_type' =>
   array (

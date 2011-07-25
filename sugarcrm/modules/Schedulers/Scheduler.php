@@ -67,19 +67,38 @@ class Scheduler extends SugarBean {
 	var $order_by;
 
 
-	function Scheduler($init=true) {
-		parent::SugarBean();
-
-		if($init) {
-
-			$user = new User();
-			$user->retrieve('1'); // Scheduler jobs run as Admin
-			$this->user = $user;
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->disable_row_level_security = true;
-		//END SUGARCRM flav=pro ONLY
-	}
+    function Scheduler($init=true) {
+        parent::SugarBean();
+        if($init) {
+            $user = new User();
+            //check is default admin exists
+            $adminId = $this->db->getOne(
+                'SELECT id FROM users WHERE id=1 AND is_admin=1 AND deleted=0 AND status="Active"', 
+                true, 
+                'Error retrieving Admin account info'
+            );
+            if (false === $adminId) {//retrive another admin
+                $adminId = $this->db->getOne(
+                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status="Active"', 
+                    true, 
+                    'Error retrieving Admin account info'
+                );
+                if ($adminId) {
+                    $user->retrieve($adminId);
+                } else {
+                    $GLOBALS['log']->fatal('No Admin account found!');
+                    return false;
+                }
+                
+            } else {
+                $user->retrieve('1'); // Scheduler jobs run as default Admin
+            }
+            $this->user = $user;
+        }
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->disable_row_level_security = true;
+        //END SUGARCRM flav=pro ONLY
+    }
 
 
 	///////////////////////////////////////////////////////////////////////////

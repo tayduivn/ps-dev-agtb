@@ -455,6 +455,14 @@ $dictionary['Note'] = array(
     'source'=>'non-db',
     'vname'=>'LBL_CALLS',
   ),
+  'tasks' =>
+  array (
+    'name' => 'tasks',
+    'type' => 'link',
+    'relationship' => 'tasks_notes',
+    'source'=>'non-db',
+    'vname'=>'LBL_TASKS',
+  ),
   'description' =>
       array (
         'name' => 'description',
