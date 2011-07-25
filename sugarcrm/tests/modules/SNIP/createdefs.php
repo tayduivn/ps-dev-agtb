@@ -1,5 +1,7 @@
 <?php
 
+//this file is temporarily moved during a unit test to test the behaviour of createdefs.php handling.
+
 $createdef['contacts@testsugar.info']['Contacts'] = array(
         'fields' => array(
             'last_name' => '{from_name}',

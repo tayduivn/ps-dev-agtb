@@ -26,6 +26,10 @@ require_once('modules/Contacts/Contact.php');
 require_once('modules/SNIP/SugarSNIP.php');
 require_once('include/TimeDate.php');
 
+/*
+ * Tests SNIP's object creation feature by setting up a createdefs.php file and importing emails.
+ */
+
 class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 	private $snip;
 	private $orig_file = '';
@@ -167,7 +171,9 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		// delete our test createdefs and restore original file
 		unlink ('custom/modules/SNIP/createdefs.php');
-		rename ($this->orig_file, 'custom/modules/SNIP/createdefs.php');
+		if(!empty($this->orig_file)) {
+			rename ($this->orig_file, 'custom/modules/SNIP/createdefs.php');
+		}
 
 		unset ($this->snip);
 	}

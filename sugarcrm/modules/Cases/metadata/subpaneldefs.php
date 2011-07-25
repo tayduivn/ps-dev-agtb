@@ -206,7 +206,7 @@ $layout_defs['Cases'] = array(
             'generate_select'=>true,
 		    'get_distinct_data' => true,
             'top_buttons' => array(),
-		);
+		),
 	),
 );
 ?>
