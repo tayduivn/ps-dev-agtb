@@ -593,7 +593,7 @@ AjaxObject.composeLayout = {
 	 */
     saveDraftCleanup : function(o) {
         var ret;
-        hideOverlay();
+        SUGAR.hideMessageBox();
 
         try {
             ret = YAHOO.lang.JSON.parse(o.responseText);
