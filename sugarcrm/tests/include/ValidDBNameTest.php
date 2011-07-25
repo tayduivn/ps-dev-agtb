@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once("include/utils.php");
 
 class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
@@ -71,6 +71,7 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isValidDBName('sugar.crm', 'mysql'));
     }
 
+//BEGIN SUGARCRM flav=ent ONLY
     public function testValidOracleNameReturnsTrue()
     {
         $this->assertTrue(isValidDBName('sugarCRM', 'oci8'));
@@ -84,6 +85,7 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isValidDBName('sugar crm', 'oci8'));
         $this->assertFalse(isValidDBName('sugarCRM_ver#63', 'oci8'));
     }
+//END SUGARCRM flav=ent ONLY
 
     public function testValidMSSQLNameReturnsTrue()
     {
