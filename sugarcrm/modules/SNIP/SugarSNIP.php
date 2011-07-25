@@ -293,8 +293,7 @@ class SugarSNIP
         if (!isset($this->last_result->status) || empty($this->last_result->status))
             return array('status'=>'purchased_error','message'=>'');
         else
-            return array('status'=>'purchased_error','message'=>$this->last_result->status);
-            
+            return array('status'=>'purchased_error','message'=>$this->last_result->status); 
     }
 
     /**
