@@ -916,9 +916,9 @@ class MysqlManager extends DBManager
         case 'alternate_key':
         case 'clustered':
             if ($drop)
-                $sql = "DROP INDEX {$name} ";
+                $sql = "ALTER TABLE {$table} DROP INDEX {$name} ";
             else
-                $sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD INDEX {$name} ({$fields})";
             break;
         // constraints as indices
         case 'unique':

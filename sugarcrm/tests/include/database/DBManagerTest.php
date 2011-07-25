@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/database/DBManagerFactory.php';
 require_once 'modules/Contacts/Contact.php';
 require_once 'tests/include/database/TestBean.php';
@@ -32,6 +32,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      * @var DBManager
      */
     private $_db;
+    protected $created = array();
 
     protected $backupGlobals = FALSE;
 
@@ -53,6 +54,25 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         if(empty($this->_db)){
             $this->_db = DBManagerFactory::getInstance();
         }
+    }
+
+    public function tearDown()
+    {
+        foreach($this->created as $table => $dummy) {
+            $this->_db->dropTableName($table);
+        }
+    }
+
+    protected function createTableParams($tablename, $fieldDefs, $indices)
+    {
+        $this->created[$tablename] = true;
+        return $this->_db->createTableParams($tablename, $fieldDefs, $indices);
+    }
+
+    protected function dropTableName($tablename)
+    {
+        unset($this->created[$tablename]);
+        return $this->_db->dropTableName($tablename);
     }
 
     private function _createRecords(
@@ -96,7 +116,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_db->disconnect();
         $this->assertTrue($this->_db->checkError());
-        $this->_db = &DBManagerFactory::getInstance();
+        $this->_db = DBManagerFactory::getInstance();
     }
 
     public function testGetQueryTime()
@@ -196,7 +216,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCreateTableParams()
     {
         $tablename = 'test' . mt_rand();
-        $this->_db->createTableParams($tablename,
+        $this->createTableParams($tablename,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -214,7 +234,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             );
         $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
 
-        $this->_db->dropTableName($tablename);
+        $this->dropTableName($tablename);
     }
 
     public function testRepairTable()
@@ -222,15 +242,125 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         // TODO: Write this test
     }
 
-    public function testRepairTableParams()
+    public function testRepairTableParamsAddData()
     {
-        // TODO: Write this test
+        $tableName = 'test1_' . mt_rand();
+        $params =  array(
+                'foo' => array (
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+        );
+
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+		$this->createTableParams($tableName, $params, array());
+
+		$params['bar'] =  array (
+                    'name' => 'bar',
+                    'type' => 'int',
+                    );
+        $cols = $this->_db->get_columns($tableName);
+        $this->assertArrayNotHasKey('bar', $cols);
+
+        $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
+        $this->assertRegExp('#MISSING IN DATABASE.*bar#i', $repair);
+        $repair = $this->_db->repairTableParams($tableName, $params, array(), true);
+        $cols = $this->_db->get_columns($tableName);
+        $this->assertArrayHasKey('bar', $cols);
+        $this->assertEquals('bar', $cols['bar']['name']);
+        $this->assertEquals('int', $cols['bar']['type']);
+
+        $this->dropTableName($tableName);
+    }
+
+    public function testRepairTableParamsAddIndex()
+    {
+        $tableName = 'test1_' . mt_rand();
+        $params =  array(
+                'foo' => array (
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                'bar' => array (
+                    'name' => 'bar',
+                    'type' => 'int',
+                    ),
+        );
+        $index = array(
+			'name'			=> 'test_index',
+			'type'			=> 'index',
+			'fields'		=> array('foo', 'bar', 'bazz'),
+		);
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+		$this->createTableParams($tableName, $params, array());
+		$params['bazz'] =  array (
+                    'name' => 'bazz',
+                    'type' => 'int',
+        );
+
+        $repair = $this->_db->repairTableParams($tableName, $params, array($index), false);
+        $this->assertRegExp('#MISSING IN DATABASE.*bazz#i', $repair);
+        $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
+        $repair = $this->_db->repairTableParams($tableName, $params, array($index), true);
+
+        $idx = $this->_db->get_indices($tableName);
+        $this->assertArrayHasKey('test_index', $idx);
+        $this->assertContains('foo', $idx['test_index']['fields']);
+        $this->assertContains('bazz', $idx['test_index']['fields']);
+
+        $cols = $this->_db->get_columns($tableName);
+        $this->assertArrayHasKey('bazz', $cols);
+        $this->assertEquals('bazz', $cols['bazz']['name']);
+        $this->assertEquals('int', $cols['bazz']['type']);
+
+        $this->dropTableName($tableName);
+    }
+
+    public function testRepairTableParamsAddIndexAndData()
+    {
+        $tableName = 'test1_' . mt_rand();
+        $params =  array(
+                'foo' => array (
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ),
+                'bar' => array (
+                    'name' => 'bar',
+                    'type' => 'int',
+                    ),
+        );
+        $index = array(
+			'name'			=> 'test_index',
+			'type'			=> 'index',
+			'fields'		=> array('foo', 'bar'),
+		);
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+		$this->createTableParams($tableName, $params, array());
+
+        $repair = $this->_db->repairTableParams($tableName, $params, array($index), false);
+        $this->assertRegExp('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
+        $repair = $this->_db->repairTableParams($tableName, $params, array($index), true);
+        $idx = $this->_db->get_indices($tableName);
+        $this->assertArrayHasKey('test_index', $idx);
+        $this->assertContains('foo', $idx['test_index']['fields']);
+        $this->assertContains('bar', $idx['test_index']['fields']);
+
+        $this->dropTableName($tableName);
     }
 
     public function testCompareFieldInTables()
     {
         $tablename1 = 'test1_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -241,7 +371,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array()
             );
         $tablename2 = 'test2_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -257,14 +387,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($res['msg'],'match');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function testCompareFieldInTablesNotInTable1()
     {
         $tablename1 = 'test3_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foobar' => array (
                     'name' => 'foobar',
@@ -275,7 +405,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array()
             );
         $tablename2 = 'test4_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -290,14 +420,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             'foo', $tablename1, $tablename2);
         $this->assertEquals($res['msg'],'not_exists_table1');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function testCompareFieldInTablesNotInTable2()
     {
         $tablename1 = 'test5_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -308,7 +438,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array()
             );
         $tablename2 = 'test6_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foobar' => array (
                     'name' => 'foobar',
@@ -324,14 +454,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($res['msg'],'not_exists_table2');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function testCompareFieldInTablesFieldsDoNotMatch()
     {
         $tablename1 = 'test7_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -342,7 +472,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array()
             );
         $tablename2 = 'test8_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -357,8 +487,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($res['msg'],'no_match');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
 //    public function testCompareIndexInTables()
@@ -557,7 +687,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
               'TODO Reimplement test not using compareIndexInTables.'
             );
         $tablename1 = 'test17_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -574,7 +704,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
         $tablename2 = 'test18_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -614,8 +744,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($res['msg'],'match');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function testDropIndexes()
@@ -626,7 +756,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             );
 
         $tablename1 = 'test19_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -643,7 +773,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
         $tablename2 = 'test20_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -696,8 +826,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('not_exists_table2', $res['msg']);
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function testModifyIndexes()
@@ -707,7 +837,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
               'TODO Reimplement test not using compareIndexInTables.'
             );
         $tablename1 = 'test21_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -729,7 +859,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                 )
             );
         $tablename2 = 'test22_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -784,14 +914,14 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($res['msg'],'match');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function testAddColumn()
     {
         $tablename1 = 'test23_' . mt_rand();
-        $this->_db->createTableParams($tablename1,
+        $this->createTableParams($tablename1,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -807,7 +937,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             array()
             );
         $tablename2 = 'test24_' . mt_rand();
-        $this->_db->createTableParams($tablename2,
+        $this->createTableParams($tablename2,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -839,8 +969,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($res['msg'],'match');
 
-        $this->_db->dropTableName($tablename1);
-        $this->_db->dropTableName($tablename2);
+        $this->dropTableName($tablename1);
+        $this->dropTableName($tablename2);
     }
 
     public function alterColumnDataProvider()
@@ -896,10 +1026,10 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $t1 = $tablebase . $i .'A';
         $t2 = $tablebase . $i .'B';
-        $this->_db->createTableParams(  $t1,
+        $this->createTableParams(  $t1,
                                         array('foo' => $foo_col, 'foobar' => $target),
                                         array());
-        $this->_db->createTableParams(  $t2,
+        $this->createTableParams(  $t2,
                                         array('foo' => $foo_col, 'foobar' => $temp),
                                         array());
 
@@ -917,8 +1047,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
                             "testAlterColumn table columns don't match while they should for table $t1 and $t2: "
                             . print_r($res,true) );
 
-        $this->_db->dropTableName($t1);
-        $this->_db->dropTableName($t2);
+        $this->dropTableName($t1);
+        $this->dropTableName($t2);
     }
 
     public function testDropTable()
@@ -929,7 +1059,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testDropTableName()
     {
         $tablename = 'test' . mt_rand();
-        $this->_db->createTableParams($tablename,
+        $this->createTableParams($tablename,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -941,7 +1071,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             );
         $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
 
-        $this->_db->dropTableName($tablename);
+        $this->dropTableName($tablename);
 
         $this->assertFalse(in_array($tablename,$this->_db->getTablesArray()));
     }
@@ -953,9 +1083,9 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDisconnectAll()
     {
-        $this->_db->disconnectAll();
+        DBManagerFactory::disconnectAll();
         $this->assertTrue($this->_db->checkError());
-        $this->_db = &DBManagerFactory::getInstance();
+        $this->_db = DBManagerFactory::getInstance();
     }
 
     public function testQuery()
@@ -1070,13 +1200,13 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->_db->disconnect();
         $this->assertTrue($this->_db->checkError());
-        $this->_db = &DBManagerFactory::getInstance();
+        $this->_db = DBManagerFactory::getInstance();
     }
 
     public function testGetTablesArray()
     {
         $tablename = 'test' . mt_rand();
-        $this->_db->createTableParams($tablename,
+        $this->createTableParams($tablename,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -1089,7 +1219,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->_db->tableExists($tablename));
 
-        $this->_db->dropTableName($tablename);
+        $this->dropTableName($tablename);
     }
 
     public function testVersion()
@@ -1102,7 +1232,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testTableExists()
     {
         $tablename = 'test' . mt_rand();
-        $this->_db->createTableParams($tablename,
+        $this->createTableParams($tablename,
             array(
                 'foo' => array (
                     'name' => 'foo',
@@ -1115,7 +1245,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
 
-        $this->_db->dropTableName($tablename);
+        $this->dropTableName($tablename);
     }
 
     public function providerCompareVardefs()
@@ -1219,7 +1349,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 //            $emptydate = "1970-01-01";
 //        }
         $GLOBALS['log']->info('DBManagerTest.vardefProvider: _db = ' . print_r($this->_db));
-        $this->setUp(); // Just in case the DB driver is not created yet. 
+        $this->setUp(); // Just in case the DB driver is not created yet.
         $emptydate = $this->_db->emptyValue("date");
         $emptytime = $this->_db->emptyValue("time");
         $emptydatetime = $this->_db->emptyValue("datetime");
