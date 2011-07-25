@@ -69,7 +69,7 @@ $dictionary['folders'] = array(
 			'name'			=> 'team_set_id',
 			'type'			=> 'id',
 			'required'		=> false,
-		),		
+		),
 		//END SUGARCRM flav=pro ONLY
 
 		array(
@@ -153,7 +153,7 @@ $dictionary['folders_rel'] = array(
 			'type'			=> 'varchar',
 			'len'			=> 25,
 			'required'		=> true,
-		),		
+		),
 		array(
 			'name'			=> 'polymorphic_id',
 			'type'			=> 'id',
@@ -177,9 +177,9 @@ $dictionary['folders_rel'] = array(
 			'fields'		=> array('polymorphic_module', 'polymorphic_id'),
 		),
 		array(
-			'name'			=> 'idx_folders_rel_folder_id',
-			'type'			=> 'index',
-			'fields'		=> array('folder_id'),
+		    'name'			=> 'idx_fr_id_deleted_poly',
+		    'type'			=> 'index',
+		    'fields'		=> array('folder_id','deleted','polymorphic_id'),
 		),
 	),
 );
