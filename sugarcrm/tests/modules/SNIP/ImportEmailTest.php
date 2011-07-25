@@ -35,6 +35,10 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 	private $snip;
 	private $date_time_format;
 
+	// store ids of generated objects so we can delete them in tearDown
+	private $email_id = '';
+	private $meeting_id = '';
+
 	public function testNewEmailWithEvent () {
 		// import email through snip
 		$file_path = 'tests/modules/SNIP/SampleEvent.ics';
@@ -55,7 +59,8 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// get the email object if it imported correctly
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertEquals((isset($e->id) && !empty($e->id)), true);
+		$this->assertTrue(isset($e->id) && !empty($e->id));
+		$this->email_id = $e->id;
 
 		// populate the whole bean
 		if (isset ($e->id) && !empty ($e->id))
@@ -65,19 +70,16 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$meeting = new Meeting();
 		$meeting->retrieve_by_string_fields(array('assigned_user_id' => $e->assigned_user_id, 'team_set_id' => $e->team_set_id, 
 											'team_id' => $e->team_id, 'parent_id' => $e->id, 'parent_type' => $e->module_dir));
-		$this->assertEquals((isset($meeting->id) && !empty($meeting->id)), true);
+		$this->assertTrue(isset($meeting->id) && !empty($meeting->id));
+		$this->meeting_id = $meeting->id;
 
 		// check if the values match with the iCal event
-		$this->assertEquals($meeting->name, 'Coffee with Jason');
-		$this->assertEquals($meeting->location, 'Conference Room - F123, Bldg. 002');
-		$this->assertEquals($meeting->status, 'Planned');
-		$this->assertEquals($meeting->date_start, '2002-10-28 22:00:00');
-		$this->assertEquals($meeting->parent_type, 'Emails');
-		$this->assertEquals($meeting->parent_name, $email['message']['subject']);
-
-		// delete
-		$e->delete($e->id);
-		$meeting->mark_deleted($meeting->id);
+		$this->assertEquals('Coffee with Jason', $meeting->name);
+		$this->assertEquals('Conference Room - F123, Bldg. 002', $meeting->location);
+		$this->assertEquals('Planned', $meeting->status);
+		$this->assertEquals('2002-10-28 22:00:00', $meeting->date_start);
+		$this->assertEquals('Emails', $meeting->parent_type);
+		$this->assertEquals($email['message']['subject'], $meeting->parent_name);
 	}
 
 	public function testNewEmail () {
@@ -99,25 +101,23 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// get the email object if it imported correctly
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertEquals((isset($e->id) && !empty($e->id)), true);
+		$this->assertTrue(isset($e->id) && !empty($e->id));
+		$this->email_id = $e->id;
 
 		// populate the whole bean
 		if (isset ($e->id) && !empty ($e->id))
 			$e->retrieve($e->id);
 
         // validate if everything was saved correctly
-		$this->assertEquals($e->message_id,	$email['message']['message_id']);
-		$this->assertEquals($e->from_addr_name, $email['message']['from_name']);
-		$this->assertEquals($e->description, $email['message']['description']);
-		$this->assertEquals($e->description_html, $email['message']['description_html']);
-		$this->assertEquals($e->to_addrs, $email['message']['to_addrs']);
-		$this->assertEquals($e->cc_addrs, $email['message']['cc_addrs']);
-		$this->assertEquals($e->bcc_addrs, $email['message']['bcc_addrs']);		
-		$this->assertEquals($e->name, $email['message']['subject']);
-		$this->assertEquals($e->date_sent, gmdate($this->date_time_format,strtotime($email['message']['date_sent'])));
-
-		// delete
-		$e->delete($e->id);
+		$this->assertEquals($email['message']['message_id'], $e->message_id);
+		$this->assertEquals($email['message']['from_name'], $e->from_addr_name);
+		$this->assertEquals($email['message']['description'], $e->description);
+		$this->assertEquals($email['message']['description_html'], $e->description_html);
+		$this->assertEquals($email['message']['to_addrs'], $e->to_addrs);
+		$this->assertEquals($email['message']['cc_addrs'], $e->cc_addrs);
+		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);		
+		$this->assertEquals($email['message']['subject'], $e->name);
+		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
 	public function testExistingEmail () {
@@ -150,25 +150,23 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// now, get the email with the mesage id '2002'
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertEquals((isset($e->id) && !empty($e->id)), true);
+		$this->assertTrue(isset($e->id) && !empty($e->id));
+		$this->email_id = $e->id;
 
 		// populate the whole bean
 		if (isset ($e->id) && !empty ($e->id))
 			$e->retrieve($e->id);
 			
         // everything should match the content of the first email because the second email should've been rejected
-		$this->assertEquals($e->message_id,	$email['message']['message_id']);
-		$this->assertEquals($e->from_addr_name, $email['message']['from_name']);
-		$this->assertEquals($e->description, $email['message']['description']);
-		$this->assertEquals($e->description_html, $email['message']['description_html']);
-		$this->assertEquals($e->to_addrs, $email['message']['to_addrs']);
-		$this->assertEquals($e->cc_addrs, $email['message']['cc_addrs']);
-		$this->assertEquals($e->bcc_addrs, $email['message']['bcc_addrs']);		
-		$this->assertEquals($e->name, $email['message']['subject']);
-		$this->assertEquals($e->date_sent, gmdate($this->date_time_format,strtotime($email['message']['date_sent'])));
-
-		// delete
-		$e->delete($e->id);		
+		$this->assertEquals($email['message']['message_id'], $e->message_id);
+		$this->assertEquals($email['message']['from_name'], $e->from_addr_name);
+		$this->assertEquals($email['message']['description'], $e->description);
+		$this->assertEquals($email['message']['description_html'], $e->description_html);
+		$this->assertEquals($email['message']['to_addrs'], $e->to_addrs);
+		$this->assertEquals($email['message']['cc_addrs'], $e->cc_addrs);
+		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);		
+		$this->assertEquals($email['message']['subject'], $e->name);
+		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
 
 	public function setUp () {
@@ -185,10 +183,23 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 	}
 
 	public function tearDown () {
+		// delete emails that were imported
+    	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");    	
+    	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");    	
+
+    	// delete other beans
+    	if (!empty ($this->meeting_id)) {
+	    	$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");    	
+	    	$GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting_id}'");    	
+	    	$GLOBALS['db']->query("DELETE FROM meetings_contacts WHERE meeting_id = '{$this->meeting_id}'");
+    	}
+
 		// remove test user
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		unset($GLOBALS['current_user']);
-		unset ($this->snip);
+		unset($this->snip);
+		unset($this->email_id);
+		unset($this->meeting_id);
 	}
 }
 ?>
