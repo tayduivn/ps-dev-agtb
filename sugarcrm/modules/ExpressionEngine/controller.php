@@ -24,7 +24,7 @@ require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 class ExpressionEngineController extends SugarController
 {
 	var $action_remap = array ( ) ;
-    var $non_admin_actions = array("functionDetail", "execFunction");
+    var $non_admin_actions = array("functionDetail", "execFunction", "getRelatedField");
 	
 	function process(){
     	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;
@@ -117,6 +117,10 @@ class ExpressionEngineController extends SugarController
 
     function action_validateRelatedField(){
         $this->view = 'validateRelatedField';
+    }
+
+    function action_getRelatedValue() {
+        $this->view ='getRelatedField';
     }
 }
 ?>

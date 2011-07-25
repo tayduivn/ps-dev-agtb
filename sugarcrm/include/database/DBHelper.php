@@ -610,9 +610,14 @@ abstract class DBHelper
 
         $required = 'NULL';  // MySQL defaults to NULL, SQL Server defaults to NOT NULL -- must specify
         //Starting in 6.0, only ID and auto_increment fields will be NOT NULL in the DB.
-        if ((empty($fieldDef['isnull'])  || strtolower($fieldDef['isnull']) == 'false') &&
-		(!empty($auto_increment) || $name == 'id' || ($fieldDef['type'] == 'id' && isset($fieldDef['required']) && $fieldDef['required'])))
-		{
+        if ((empty($fieldDef['isnull']) || strtolower($fieldDef['isnull']) == 'false') &&
+		    (!empty($auto_increment) || $name == 'id' || ($fieldDef['type'] == 'id' && !empty($fieldDef['required'])))) {
+            $required =  "NOT NULL";
+        }
+        // If the field is marked both required & isnull=>false - alwqys make it not null
+        // Use this to ensure primary key fields never defined as null
+        if(isset($fieldDef['isnull']) && (strtolower($fieldDef['isnull']) == 'false' || $fieldDef['isnull'] === false)
+            && !empty($fieldDef['required'])) {
             $required =  "NOT NULL";
         }
 		if ($ignoreRequired)

@@ -36,7 +36,6 @@ $viewdefs['DocumentRevisions']['EditView'] = array(
                                 ),
                             'javascript' => '<script type="text/javascript" src="include/javascript/popup_parent_helper.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>
 <script type="text/javascript" src="include/javascript/sugar_grp_jsolait.js"></script>
-<script type="text/javascript" src="include/JSON.js?s={$SUGAR_VERSION}"></script>
 <script type="text/javascript" src="modules/Documents/documents.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>',
         ),
     'panels' =>array (

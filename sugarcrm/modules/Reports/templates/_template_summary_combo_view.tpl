@@ -289,7 +289,7 @@ var totalDivCounter = {$divCounter};
 var groupCountObject = new Object();
 {literal}
 if (totalGroupCountArrayString != '') {
-	groupCountObject = JSON.parse(totalGroupCountArrayString);
+	groupCountObject = YAHOO.lang.JSON.parse(totalGroupCountArrayString);
 } // if
 
 function displayGroupCount() {

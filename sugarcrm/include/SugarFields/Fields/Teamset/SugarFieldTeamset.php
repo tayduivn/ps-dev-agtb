@@ -156,6 +156,14 @@ class SugarFieldTeamset extends SugarFieldBase {
 		$arrow_value = $current_user->getPreference('team_arrow_value');
 		$this->view->displayParams['arrow'] = isset($arrow_value) ? $arrow_value : 'hide';	
 		*/
+        $keys = $this->getAccessKey($vardef,'TEAMSET',$vardef['module']);
+        $this->view->displayParams['accessKeySelect'] = $keys['accessKeySelect'];
+        $this->view->displayParams['accessKeySelectLabel'] = $keys['accessKeySelectLabel'];
+        $this->view->displayParams['accessKeySelectTitle'] = $keys['accessKeySelectTitle'];
+        $this->view->displayParams['accessKeyClear'] = $keys['accessKeyClear'];
+        $this->view->displayParams['accessKeyClearLabel'] = $keys['accessKeyClearLabel'];
+        $this->view->displayParams['accessKeyClearTitle'] = $keys['accessKeyClearTitle'];        
+
 		$this->view->displayParams['arrow'] = 'hide';
 		
 		$this->process();

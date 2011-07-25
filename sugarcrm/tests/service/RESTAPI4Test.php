@@ -75,10 +75,10 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
 	{
 	    //BEGIN SUGARCRM flav=pro ONLY
-	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
+	    $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id IN ( SELECT id FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' ) )");
 	    //END SUGARCRM flav=pro ONLY
-	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}' )");
-	    $GLOBALS['db']->query("DELETE FROM acl_user_roles WHERE user_id = '{$GLOBALS['current_user']->id}'");
+	    $GLOBALS['db']->query("DELETE FROM acl_roles WHERE id IN ( SELECT role_id FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}' )");
+	    $GLOBALS['db']->query("DELETE FROM acl_roles_users WHERE user_id = '{$GLOBALS['current_user']->id}'");
 	    
 	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
 	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);

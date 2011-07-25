@@ -42,6 +42,9 @@
     var importModuleVAR = '{$IMPORT_MODULE}';
     var sourceVAR = '{$SOURCE}';
     var showCancelVAR = '{$SHOWCANCEL}';
+    {if !empty($CANCELLABEL)}
+        cancelLBL = '{$CANCELLABEL}';
+    {/if}
 
 {literal}
     //function called when 'start over' button is pressed

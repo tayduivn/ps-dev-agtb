@@ -53,12 +53,31 @@ class SubpanelQuickEdit{
 			}
 		}
 
+
 		$this->ev = new EditView();
 		$this->ev->view = $view;
 		$this->ev->ss = new Sugar_Smarty();
 		//$_REQUEST['return_action'] = 'SubPanelViewer';
-		$this->ev->setup($module, null, $source);
-		
+
+
+
+        //retrieve bean if id or record is passed in
+        if (isset($_REQUEST['record']) || isset($_REQUEST['id'])){
+            global $beanList;
+            $bean = $beanList[$module];
+            $this->ev->focus = new $bean();
+
+            if (isset($_REQUEST['record']) && empty($_REQUEST['id'])){
+                $_REQUEST['id'] = $_REQUEST['record'];
+            }
+            $this->ev->focus->retrieve($_REQUEST['record']);
+            //call setup with focus passed in
+		    $this->ev->setup($module, $this->ev->focus, $source);
+        }else{
+            //no id, call setup on new bean
+		    $this->ev->setup($module, null, $source);
+        }
+
 	    $this->ev->defs['templateMeta']['form']['headerTpl'] = 'include/EditView/header.tpl';
 		$this->ev->defs['templateMeta']['form']['footerTpl'] = 'include/EditView/footer.tpl';
 		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');

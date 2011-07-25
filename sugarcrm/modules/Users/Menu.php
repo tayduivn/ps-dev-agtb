@@ -31,7 +31,7 @@ global $mod_strings, $app_strings;
 global $current_user, $sugar_config;
 
 $module_menu=Array();
-if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users')
+if($GLOBALS['current_user']->isAdminForModule('Users')
 		//BEGIN SUGARCRM flav=sales ONLY
 		|| $current_user->user_type == 'UserAdministrator'
 		//END SUGARCRM flav=sales ONLY
