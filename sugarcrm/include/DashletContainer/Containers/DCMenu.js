@@ -19,13 +19,16 @@
  ********************************************************************************/
 
 //Use loader to grab the modules needed
-var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('dd', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
+var DCMenu = {};
+
+YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('dd', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
     //Make this an Event Target so we can bubble to it
     var requests = {};
     var overlays = [];
     var overlayDepth = 0;
     var menuFunctions = {};
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
+    
     function getOverlay(depth){
     		if(!depth)depth = 0;
     		if(typeof overlays[depth] == 'undefined'){
@@ -71,13 +74,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         lastLoadedMenu = module;
 
     	if(typeof menuFunctions[module] == 'undefined'){
-    		loadView(module, 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,null,null,title); 	
+    		this.loadView(module, 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,null,null,title);
     	}	
     }
     
     
     DCMenu.displayModuleMenu = function(obj, module){
-    	loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module); 	
+    	this.loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module);
     	
     }
     
@@ -107,18 +110,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                             }
                         }
     					overlays[i].hide();
+                        overlays[i].destroy();
+                        overlays.splice(i, 1);
     				}
     			}
 				i++;
     		}
     }
+
     DCMenu.minimizeOverlay = function(){
- 		//isIE7 = ua.indexOf('msie 7')!=-1;
-		//box_style = isIE7 ? 'position:fixed; width:750px;' : 'none';
-		
      	Y.one('#dcboxbody').setStyle('display','none');
      	Y.one('#dcboxbody').setStyle('width', '950px;');
     }
+    
     function setBody(data, depth, parentid,type,title,extraButton){
 			if(typeof(data.html) == 'undefined')data = {html:data};
 			//Check for the login page, meaning we have been logged out.
@@ -128,7 +132,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		var overlay = getOverlay(depth);
     		
     		ua = navigator.userAgent.toLowerCase();
-    		isIE7 = ua.indexOf('msie 7')!=-1;
 
             //set the title if it was passed in the data array
             if((typeof(title) == 'undefined' || title =='')&&(typeof(data.title)!='undefined')){
@@ -176,9 +179,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.showView = function(data, parent_id){
 		setBody(data, 0, parent_id);
 	}
+
 	DCMenu.iFrame = function(url, width, height){
 		setBody("<iframe style='border:0px;height:" + height + ";width:" + width + "'src='" + url + "'></iframe>");
 	}
+    
 	//BEGIN SUGARCRM flav=pro ONLY
     DCMenu.addToFavorites = function(item, module, record){
 		Y.one(item).replaceClass('off', 'on');
@@ -349,9 +354,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         window.open(DCMenu.hostMeetingUrl, 'hostmeeting');
     }
 
-
-
-
     DCMenu.loadView = function(type,url, depth, parentid, title, extraButton){
         if ( extraButton == undefined ) { extraButton = null; }
         var id = Y.io(url, {
@@ -401,8 +403,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
          });
         requests[id.id] = {type:type, url:url, parentid:parentid, depth:depth, extraButton:extraButton};
     }
-
-    var loadView = Y.loadView;
+    
     DCMenu.notificationsList = function(q){
 		quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quicklist', notificationsListDisplay );
 	}
