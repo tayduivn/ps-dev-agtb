@@ -284,6 +284,8 @@ class IBMDB2Manager  extends DBManager
             // changes this code needs to be revisited.
             try {
                 $sp_msg = '';
+                $this->commit(); // XXX TODO: DIRTY HACK to work around auto-commit off problem. I.e. TS index creation will hang if tables hasn't been committed yet.
+                // HENCE THIS COMMIT IS ONLY INTENDED FOR THE CREATION OF TS INDEXES. This should be moved into its execution objects in phase 3
                 $proceed = ($suppress) ? @db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT) :
                         db2_bind_param($stmt, 1, "sp_msg", DB2_PARAM_OUT);
                 return $proceed;
