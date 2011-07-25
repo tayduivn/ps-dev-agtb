@@ -120,6 +120,9 @@ class Meeting extends SugarBean {
 		}
 		//END SUGARCRM flav=pro ONLY
 //		$this->fill_in_additional_detail_fields();
+        if(!empty($GLOBALS['app_list_strings']['duration_intervals'])) {
+            $this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
+        }
 	}
 
 	/**
