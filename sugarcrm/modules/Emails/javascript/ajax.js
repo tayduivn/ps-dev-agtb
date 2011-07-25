@@ -1537,17 +1537,14 @@ var callbackReplyForward = {
         try {
 			var html = t.getContent();
 
-            if (a.type != 'draft') {
-    			if(SUGAR.email2.userPrefs.signatures.signature_prepend == 'true') {
-    				html += "&nbsp;<div><hr></div>" + a.description;
-    			} else {
-    				html =  "&nbsp;<div><hr></div>" + a.description + html;
-    			}
-            }else {
-                html = a.description;
-            }
+            html = "&nbsp;<div><hr></div>" + a.description;
 
 			t.setContent(html);//
+
+            if (a.type != 'draft') {
+                // Next step, attach signature
+                SUGAR.email2.composeLayout.resizeEditorSetSignature(idx,true);
+            }
 
 		} catch(e) {
 			//BEGIN SUGARCRM flav=int ONLY
