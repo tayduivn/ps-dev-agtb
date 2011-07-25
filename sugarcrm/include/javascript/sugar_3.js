@@ -359,12 +359,11 @@ function isInteger(s) {
 
 
 function isDecimal(s) {
-	if(!/^-*[0-9]+\.?[0-9]*$/.test(s)) {
-		return false
+	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	{
+		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
 	}
-	else {
-		return true;
-	}
+	return (/^-*[0-9]+\.?[0-9]*$/.test(s) );
 }
 
 function isNumeric(s) {
