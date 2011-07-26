@@ -477,9 +477,9 @@ class CalendarActivity
 		$end_ts_obj = $timedate->tzUser($end_ts_obj);
 		switch ($view) {
 			case 'month':
-				$start = $start_ts_obj->get_day_begin(1);
-				$end = $end_ts_obj->get("first day of next month")->get_day_begin();
-				break;
+				$start = $start_ts_obj->get("first day of month")->get("-6 days")->get_day_begin();
+				$end = $end_ts_obj->get("first day of next month")->get("+6 days")->get_day_begin();
+			break;
             case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
                 $start = $start_ts_obj;
                 $end = $end_ts_obj;
