@@ -354,7 +354,7 @@ class ModuleInstaller{
 				if(isset($item["name"])) {
 				    $target = $item["name"];
 				} else if (!empty($from)){
-                    $target = basename($from);
+                    $target = basename($from, ".php");
                 } else {
 				    $target = $this->id_name;
 				}
@@ -393,7 +393,7 @@ class ModuleInstaller{
 				if(isset($item["name"])) {
 				    $target = $item["name"];
 				} else if (!empty($from)){
-                    $target = basename($from);
+                    $target = basename($from, ".php");
                 } else {
 				    $target = $this->id_name;
 				}
@@ -449,7 +449,7 @@ class ModuleInstaller{
 				if(isset($item["name"])) {
 				    $target = $item["name"];
 				} else if (!empty($from)){
-                    $target = basename($from);
+                    $target = basename($from, ".php");
                 }else {
 				    $target = $this->id_name;
 				}
@@ -493,7 +493,7 @@ class ModuleInstaller{
 				if(isset($item["name"])) {
 				    $target = $item["name"];
 				} else if (!empty($from)){
-                    $target = basename($from);
+                    $target = basename($from, ".php");
                 } else {
 				    $target = $this->id_name;
 				}
