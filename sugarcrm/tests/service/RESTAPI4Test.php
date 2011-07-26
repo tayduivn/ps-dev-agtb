@@ -56,6 +56,8 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_admin_user->status = 'Active';
         $this->_admin_user->is_admin = 1;
         $this->_admin_user->save();
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
         $GLOBALS['current_user'] = $this->_user;
 
         self::$helperObject = new APIv3Helper();
@@ -64,11 +66,16 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->aclRole = new ACLRole();
         $this->aclRole->name = "Unit Test";
         $this->aclRole->save();
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
+
         $this->aclRole->set_relationship('acl_roles_users', array('role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id), false);
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         //BEGIN SUGARCRM flav=pro ONLY
         $this->aclField = new ACLField();
         $this->aclField->setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         $this->aclField->loadUserFields('Accounts', 'Account', $this->_user->id, true );
+        $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         //END SUGARCRM flav=pro ONLY
     }
 

@@ -148,13 +148,13 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
      * Retrieve the md5 hash of the vardef entries for a particular module.
      *
      * @param String $session -- Session ID returned by a previous call to login.
-     * @param String $module_name -- The name of the module to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
+     * @param String|array $module_name -- The name of the module to return records from.  This name should be the name the module was developed under (changing a tab name is studio does not affect the name that should be passed into this method)..
      * @return String The md5 hash of the vardef definition.
      * @exception 'SoapFault' -- The SOAP error, if any
      */
     function get_module_fields_md5($session, $module_name){
         
-        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields_md5');
+        $GLOBALS['log']->info('Begin: SugarWebServiceImpl->get_module_fields_md5(v3) for module: '. print_r($module_name, true));
         
         $results = array();
         if( is_array($module_name) )
@@ -165,9 +165,9 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
         else 
             $results[$module_name] = md5(serialize(self::get_module_fields($session, $module_name)));
         
+        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields_md5 (v3) for module: ' . print_r($module_name, true));
+
         return $results;
-        
-        $GLOBALS['log']->info('End: SugarWebServiceImpl->get_module_fields_md5');
     }
     
     /**

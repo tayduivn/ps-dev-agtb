@@ -27,7 +27,7 @@ class SoapHelperWebServices {
 
 	function get_field_list($value, $fields, $translate=true)
 	{
-		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list');
+		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_field_list('.print_r($value, true).', '.print_r($fields, true).", $translate");
 		$module_fields = array();
 		$link_fields = array();
 		if(!empty($value->field_defs)){
@@ -125,8 +125,9 @@ class SoapHelperWebServices {
 			$module_fields['created_by_name']['name'] = 'created_by_name';
 		}
 
-		$GLOBALS['log']->info('End: SoapHelperWebServices->get_field_list');
-		return array('module_fields' => $module_fields, 'link_fields' => $link_fields);
+        $return = array('module_fields' => $module_fields, 'link_fields' => $link_fields);
+        $GLOBALS['log']->info('End: SoapHelperWebServices->get_field_list ->> '.print_r($return, true));
+		return $return;
 	} // fn
 
 	function setFaultObject($errorObject) {
@@ -255,41 +256,41 @@ function validate_user($user_name, $password){
 	}
 
 	function checkSessionAndModuleAccess($session, $login_error_key, $module_name, $access_level, $module_access_level_error_key, $errorObject) {
-		$GLOBALS['log']->info('Begin: SoapHelperWebServices->checkSessionAndModuleAccess');
+		$GLOBALS['log']->info('Begin: SoapHelperWebServices->checkSessionAndModuleAccess - ' . $module_name);
 		if(!$this->validate_authenticated($session)){
-			$GLOBALS['log']->info('SoapHelperWebServices->checkSessionAndModuleAccess - validate_authenticated failed');
+			$GLOBALS['log']->error('SoapHelperWebServices->checkSessionAndModuleAccess - validate_authenticated failed - ' . $module_name);
 			$errorObject->set_error('invalid_session');
 			$this->setFaultObject($errorObject);
-			$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess');
+			$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess -' . $module_name);
 			return false;
 		} // if
 
 		global  $beanList, $beanFiles;
 		if (!empty($module_name)) {
 			if(empty($beanList[$module_name])){
-				$GLOBALS['log']->info('SoapHelperWebServices->checkSessionAndModuleAccess - module does not exists - ' . $module_name);
+				$GLOBALS['log']->error('SoapHelperWebServices->checkSessionAndModuleAccess - module does not exists - ' . $module_name);
 				$errorObject->set_error('no_module');
 				$this->setFaultObject($errorObject);
-				$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess');
+				$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess -' . $module_name);
 				return false;
 			} // if
 			global $current_user;
 			if(!$this->check_modules_access($current_user, $module_name, $access_level)){
-				$GLOBALS['log']->info('SoapHelperWebServices->checkSessionAndModuleAccess - no module access - ' . $module_name);
+				$GLOBALS['log']->error('SoapHelperWebServices->checkSessionAndModuleAccess - no module access - ' . $module_name);
 				$errorObject->set_error('no_access');
 				$this->setFaultObject($errorObject);
-				$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess');
+				$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess - ' . $module_name);
 				return false;
 			}
 		} // if
-		$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess');
+		$GLOBALS['log']->info('End: SoapHelperWebServices->checkSessionAndModuleAccess - ' . $module_name);
 		return true;
 	} // fn
 
 	function checkACLAccess($bean, $viewType, $errorObject, $error_key) {
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->checkACLAccess');
 		if(!$bean->ACLAccess($viewType)) {
-			$GLOBALS['log']->info('SoapHelperWebServices->checkACLAccess - no ACLAccess');
+			$GLOBALS['log']->error('SoapHelperWebServices->checkACLAccess - no ACLAccess');
 			$errorObject->set_error($error_key);
 			$this->setFaultObject($errorObject);
 			$GLOBALS['log']->info('End: SoapHelperWebServices->checkACLAccess');
@@ -332,27 +333,28 @@ function validate_user($user_name, $password){
 
 	}
 
-	function check_modules_access($user, $module_name, $action='write'){
-		$GLOBALS['log']->info('Begin: SoapHelperWebServices->check_modules_access');
-		if(!isset($_SESSION['avail_modules'])){
-			$_SESSION['avail_modules'] = $this->get_user_module_list($user);
-		}
-		if(isset($_SESSION['avail_modules'][$module_name])){
-			if($action == 'write' && $_SESSION['avail_modules'][$module_name] == 'read_only'){
-				if(is_admin($user)) {
-					$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access');
-					return true;
-				} // if
-				$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access');
-				return false;
-			}
-			$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access');
-			return true;
-		}
-		$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access');
-		return false;
+    function check_modules_access($user, $module_name, $action='write'){
+        $GLOBALS['log']->info('Begin: SoapHelperWebServices->check_modules_access');
+        if(!isset($_SESSION['avail_modules'])){
+            $_SESSION['avail_modules'] = $this->get_user_module_list($user);
+        }
+        if(isset($_SESSION['avail_modules'][$module_name])){
+            if($action == 'write' && $_SESSION['avail_modules'][$module_name] == 'read_only'){
+                if(is_admin($user)) {
+                    $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - SUCCESS: Admin can even write to read_only module');
+                    return true;
+                } // if
+                $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - FAILED: write action on read_only module only available to admins');
+                return false;
+            }
+            $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - SUCCESS');
+            return true;
+        }
+        $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - FAILED: Module info not available in $_SESSION');
+        return false;
 
-	}
+    }
+
 
 	function get_name_value_list($value){
 		$GLOBALS['log']->info('Begin: SoapHelperWebServices->get_name_value_list');
