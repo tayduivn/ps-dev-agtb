@@ -50,6 +50,14 @@
 			    <td colspan="2">
 			        <table>
                     <tr>
+                        <td scope = "row" nowrap="nowrap">
+                            {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}: </td>
+                        </td>
+                        <td>
+                            <a href="{$url}" target="_blank">{$url}</a>
+                        </td>
+                    </tr>
+                    <tr>
                         <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_LIST_ENTRIES'}: </td>
                         <td>
                             <input type='text' size='4' id="max_list" name='wl_list_max_entries_per_page' value='{$config.wl_list_max_entries_per_page}'>

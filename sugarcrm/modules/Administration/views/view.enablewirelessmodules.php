@@ -56,6 +56,7 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         global $mod_strings;
         global $app_list_strings;
         global $app_strings;
+        global $license;
         global $current_user;
         global $theme;
         global $currentModule;
@@ -102,6 +103,10 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         {
             $json_disabled[] = array("module" => $mod, 'label' => $label);
         }
+
+        // We need to grab the license key
+        $key = $license->settings["license_key"];
+        $this->ss->assign('url', $this->getMobileEdgeUrl($key));
         
         $this->ss->assign('enabled_modules', json_encode($json_enabled));
         $this->ss->assign('disabled_modules', json_encode($json_disabled));
@@ -118,5 +123,36 @@ class AdministrationViewEnablewirelessmodules extends SugarView
                 false
                 );
         echo $this->ss->fetch('modules/Administration/templates/enableWirelessModules.tpl');
+    }
+
+    /**
+     * Grab the mobile edge server link by polling the licensing server.
+     * @returns string url
+     */
+    protected function getMobileEdgeUrl($license) {
+        global $sugar_config;
+
+        // To override url, override sugar_config['license_server_url'];
+        $endpoint = (isset($sugar_config["license_server_url"])) ? $sugar_config["license_server_url"] : "http://authenticate.sugarcrm.com/rest/fetch/mobileserver";
+        $curl = curl_init($endpoint);
+        // to find one via subscription key
+        $post_params = array(
+            'data' => json_encode(array('key' => $license))
+        );
+        // set soem curl options
+        curl_setopt($curl, CURLOPT_POST, true);
+        // Tell curl not to return headers, but do return the response
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post_params);
+        // run the request
+        $return = json_decode(curl_exec($curl));
+
+        // Check if url exists for the provided key.
+        if (isset($return->mobileserver->server->url)) {
+            return $return->mobileserver->server->url;
+        } else {
+            return '';
+        }
     }
 }
