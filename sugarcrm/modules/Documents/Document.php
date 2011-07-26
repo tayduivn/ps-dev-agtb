@@ -211,7 +211,7 @@ class Document extends SugarBean {
 		$mod_strings = return_module_language($current_language, 'Documents');
 
         if (!empty($this->document_revision_id)) {
-            $query = "SELECT documents.document_name as name,users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date, document_revisions.filename AS filename, document_revisions.revision AS revision, document_revisions.file_ext AS file_ext FROM users, document_revisions,documents WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id' AND document_revisions.document_id=documents.id";
+            $query = "SELECT documents.document_name as name,users.first_name AS first_name, users.last_name AS last_name,document_revisions.date_entered AS rev_date, document_revisions.filename AS filename, document_revisions.revision AS revision, document_revisions.file_ext AS file_ext FROM users, document_revisions,documents WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id' AND document_revisions.document_id=documents.id";
 
             $result = $this->db->query($query);
             $row = $this->db->fetchByAssoc($result);
