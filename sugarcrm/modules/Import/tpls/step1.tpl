@@ -71,18 +71,23 @@
                                     <td align="left" scope="row">&nbsp;</td>
                                 </tr>
                             {/if}
+                            {* //BEGIN SUGARCRM flav=com ONLY *}
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="source" value="csv" />
+                                </td>
+                            </tr>
+                            {* //END SUGARCRM flav=pro ONLY *}
                             {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr>
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
                             </tr>
-                            {* //END SUGARCRM flav=pro ONLY *}
                             <tr>
                                 <td colspan="3" scope="row">
                                     <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
                                 </td>
                             </tr>
-                            {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr id="ext_source_tr">
                                 <td colspan="3" scope="row"><span><input class="radio" type="radio" name="source" value="external" id="ext_source" />
                   &nbsp;{$MOD.LBL_EXTERNAL_SOURCE}&nbsp;</span>{sugar_help text=$MOD.LBL_EXTERNAL_SOURCE_HELP}
