@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <files xmlns="http://apstandard.com/ns/1" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#">
     <file sha256="3c8fbe73641e5589d3d18052e23f66adc07680c4f1fd3737c430f0fe7e414122" size="11970" name="APP-META.xml"/>
     <file sha256="c76e7a6ced21b9f8e26473c39917fec28cf9f61adf0a1afc0c96e6692b754d3a" size="2294" name="htdocs/HandleAjaxCall.php"/>
@@ -182,7 +183,6 @@
     <file sha256="793f761c08f1157af1555f18b75d8f3650285a2529d56c5448202e17e9e11cfd" size="5293" name="htdocs/include/HTTP_WebDAV_Server/Tools/_parse_proppatch.php"/>
     <file sha256="2be96ef50eb05abe0d70f8dc68a2ae5406b9cdfc4651e6afeb8acc2e05cb395c" size="8191" name="htdocs/include/HTTP_WebDAV_Server/dav.txt"/>
     <file sha256="be9019f00e94668a1c287b1697cd77523748903cfc2cc0b7bcdaacd78a3c5c7b" size="3208" name="htdocs/include/HTTP_WebDAV_Server/license.txt"/>
-    <file sha256="5ba030ceef04e899d7700fbf4d7a67f3541802dd5a118c1349f15e2f2835b946" size="3540" name="htdocs/include/JSON.js"/>
     <file sha256="93832248325a9ddf51d827fd45dc44816e7762bd119ad5da812b65f20522812c" size="37948" name="htdocs/include/JSON.php"/>
     <file sha256="0875ce7742e53cce6ed996c7678307f822a3ee2a0662646115c59d71a1fea727" size="73319" name="htdocs/include/ListView/ListView.php"/>
     <file sha256="b837ee2ea23ffb1e8da6ad14355ec0c58e3a4265863a83ed5b684c94f4eab1a1" size="26158" name="htdocs/include/ListView/ListViewData.php"/>
@@ -2233,7 +2233,6 @@
     <file sha256="2162ff271094a7bfd426d8baef9e1645d05de817b1d52a7899f7098ae7049a52" size="16025" name="htdocs/jssource/src_files/include/Expressions/javascript/dependency.js"/>
     <file sha256="ced9097de5b39b6f8bce67f7d78710e30e6d7c80ed3d4bf137218a880c84838f" size="21356" name="htdocs/jssource/src_files/include/Expressions/javascript/expressions.js"/>
     <file sha256="207442f6147469247679f9e776db73856775f43bdecf6c59115874cfc90c8737" size="17647" name="htdocs/jssource/src_files/include/Expressions/javascript/formvalidation.js"/>
-    <file sha256="19e8972985efb08fee5f50786d34e6464dc6a9743f714d97061c7ee613adb453" size="7767" name="htdocs/jssource/src_files/include/JSON.js"/>
     <file sha256="9339a2f5a9cc63c0e5764e5d826c26506fa6c3fdd4c7752a682f6a88f0185345" size="48121" name="htdocs/jssource/src_files/include/MySugar/javascript/MySugar.js"/>
     <file sha256="ed369fa2c3e5972a68fbde724a34905f78a14fe1d89123a655d794818dceb125" size="26874" name="htdocs/jssource/src_files/include/SubPanel/SubPanelTiles.js"/>
     <file sha256="07c83d39f22bc48e15a9bf84afe5c854f0b356dbf41178e672009ac764c41f45" size="9295" name="htdocs/jssource/src_files/include/SugarDependentDropdown/javascript/SugarDependentDropdown.js"/>

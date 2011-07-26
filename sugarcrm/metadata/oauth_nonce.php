@@ -10,12 +10,14 @@ $dictionary['oauth_nonce'] = array(
 			'type'		=> 'varchar',
 			'len'		=> 32,
 			'required'	=> true,
+			'isnull' => false,
 		),
 		'nonce' => array(
 			'name'		=> 'nonce',
 			'type'		=> 'varchar',
 			'len'		=> 32,
 			'required'	=> true,
+			'isnull' => false,
 		),
 		'nonce_ts' => array(
 			'name'		=> 'nonce_ts',

@@ -23,7 +23,6 @@
  ********************************************************************************/
 -->
 
-<script type="text/javascript" src="{sugar_getjspath file="include/JSON.js"}"></script>
 <script type="text/javascript" src="{sugar_getjspath file="include/javascript/popup_helper.js"}"></script>
 <script type="text/javascript">
 <!--

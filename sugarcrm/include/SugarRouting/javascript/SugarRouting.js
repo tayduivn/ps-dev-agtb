@@ -176,7 +176,7 @@ SUGAR.routing.xhr = {
 	 * Sets this lib's strings
 	 */
 	fillStrings : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.routing.strings = ret.strings;
 		SUGAR.routing.matchDom = ret.matchDom;
 		SUGAR.routing.matchTypeDom = ret.matchTypeDom;
@@ -187,7 +187,7 @@ SUGAR.routing.xhr = {
 	 * Displays a fetched rule, applying user's saved values overlayed on a series of dependent dropdowns
 	 */
 	displayFetchedRule : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		
 		SUGAR.routing.ui.displayRule(ret);
 	},
@@ -196,7 +196,7 @@ SUGAR.routing.xhr = {
 	 * Lazy-loader for dependent dropdown key/value pairs
 	 */
 	fillDependentDropdowns : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		SUGAR.dependentDropdown.dropdowns = ret;
 	},
 
@@ -229,7 +229,7 @@ SUGAR.routing.xhr = {
 	 * takes response and fills in local variables for email templates
 	 */
 	fillComposeCache : function(o) {
-		var ret = JSON.parse(o.responseText);
+		var ret = YAHOO.lang.JSON.parse(o.responseText);
 		
 		SUGAR.email2.composeLayout.emailTemplates = ret.emailTemplates;
 		SUGAR.email2.composeLayout.signatures = ret.signatures;

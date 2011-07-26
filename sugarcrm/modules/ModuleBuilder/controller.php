@@ -75,15 +75,15 @@ class ModuleBuilderController extends SugarController
     function process(){
     	$GLOBALS [ 'log' ]->info ( get_class($this).":" ) ;
         global $current_user;
-        $access = get_admin_modules_for_user($current_user);
+        $access = $current_user->getDeveloperModules();
 		//BEGIN SUGARCRM flav=sales ONLY
 		if(!empty($_REQUEST['type']) && $_REQUEST['type'] == 'mb'){
 			$this->hasAccess = false;
 		}else
 		//END SUGARCRM flav=sales ONLY
-		if(is_admin($current_user) || (is_admin_for_any_module($current_user) && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package'))||
+            if($current_user->isAdmin() || ($current_user->isDeveloperForAnyModule() && !isset($_REQUEST['view_module']) && (isset($_REQUEST['action']) && $_REQUEST['action'] != 'package'))||
           (isset($_REQUEST['view_module']) && (in_array($_REQUEST['view_module'], $access)|| empty($_REQUEST['view_module']))) ||
-          (isset($_REQUEST['type']) && (($_REQUEST['type']=='dropdowns' && is_admin_for_any_module($current_user))||
+               (isset($_REQUEST['type']) && (($_REQUEST['type']=='dropdowns' && $current_user->isDeveloperForAnyModule())||
           ($_REQUEST['type']=='studio' && displayStudioForCurrentUser() == true))))
         {
             $this->hasAccess = true;
@@ -222,21 +222,38 @@ class ModuleBuilderController extends SugarController
             $_REQUEST [ 'install_file' ] = $cachedir. $info [ 'name' ] . '.zip' ;
             $GLOBALS [ 'mi_remove_tables' ] = false ;
             $pm->performUninstall ( $load ) ;
-			 //#23177 , js cache clear
-			 clearAllJsAndJsLangFilesWithoutOutput();
-    		//#30747, clear the cache in memory
-    		$cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
-    		sugar_cache_clear($cache_key );
-    		sugar_cache_reset();
-    		//clear end
-            $pm->performInstall ( $_REQUEST [ 'install_file' ] , true) ;
+            //#23177 , js cache clear
+            clearAllJsAndJsLangFilesWithoutOutput();
+            //#30747, clear the cache in memory
+            $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
+            sugar_cache_clear($cache_key );
+            sugar_cache_reset();
+            //clear end
+            $pm->performInstall ( $_REQUEST [ 'install_file' ] , true);
 
             //clear the unified_search_module.php file
             require_once('modules/Home/UnifiedSearchAdvanced.php');
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
-        }
-        echo 'complete' ;
 
+            //bug 44269 - start
+            global $current_user;
+            //clear workflow admin modules cache
+            if (isset($_SESSION['get_workflow_admin_modules_for_user'])) unset($_SESSION['get_workflow_admin_modules_for_user']);
+
+            //clear "is_admin_for_module" cache
+            $sessionVar = 'MLA_'.$current_user->user_name;
+            foreach ($mb->packages as $package) {
+                foreach ($package->modules as $module) {
+                    $_SESSION[$sessionVar][$package->name . '_' . $module->name] = true;
+                }
+            }
+
+            //recreate acl cache
+            $actions = ACLAction::getUserActions($current_user->id, true);
+            //bug 44269 - end
+        }
+
+        echo 'complete' ;
     }
 
     function action_ExportPackage ()
@@ -670,7 +687,7 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->writeWorkingFile () ;
-        
+
     	if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
@@ -699,7 +716,7 @@ class ModuleBuilderController extends SugarController
         }
         //END SUGARCRM flav=ent ONLY
         $parser->handleSave () ;
-        
+
         if(!empty($_REQUEST [ 'sync_detail_and_edit' ]) && $_REQUEST['sync_detail_and_edit'] != false && $_REQUEST['sync_detail_and_edit'] != "false"){
 	        if(strtolower ($parser->_view) == MB_EDITVIEW){
 	        	$parser2 = ParserFactory::getParser ( MB_DETAILVIEW, $_REQUEST [ 'view_module' ], isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
@@ -821,7 +838,7 @@ class ModuleBuilderController extends SugarController
     {
         $this->view = 'history' ;
     }
-    
+
     function resetmodule()
     {
     	$this->view = 'resetmodule';

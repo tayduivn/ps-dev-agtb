@@ -287,7 +287,6 @@ $form3 =<<<eoq2
 	</table>
 </td></tr>
 </table>
-{$json}
 <script>
  function fileBrowseLoaded(){
  	//alert(document.the_form.upgrade_zip.value.length);
@@ -312,7 +311,36 @@ $form3 =<<<eoq2
    } else{
        document.getElementById("upload_button").disabled='';
    }
- }
+   else{
+	//AJAX call for checking the file size and comparing with php.ini settings.
+	var callback = {
+		 success:function(r) {
+		     var file_size = r.responseText;
+		     //alert(file_size.length);
+		     if(file_size.length >0){
+		       var msg = SUGAR.language.get('UpgradeWizard','LBL_UW_FILE_SIZE');
+		       msg1 =SUGAR.language.get('UpgradeWizard','LBL_UW_FILE_BIGGER_MSG');
+		       msg2 = SUGAR.language.get('UpgradeWizard','LBL_BYTES_WEBSERVER_MSG');
+		       if(msg  == 'undefined') msg = 'The file size, ';
+		       if(msg1 == 'undefined') msg1 = ' Bytes, is greater than what is allowed by the upload_max_filesize and/or the post_max_size settings in php.ini. Change the settings so that they are greater than ';
+		       if(msg2 == 'undefined') msg2 = ' Bytes and restart the webserver.';
+		       msg = msg+file_size+msg1;
+		       msg = msg+file_size+msg2;
+		       alert(msg);
+		       document.getElementById("upload_button").disabled='disabled';
+		     }
+		     else{
+		       document.getElementById("upload_button").disabled='';
+		     }
+		 }
+	}
+
+    //var file_name = document.getElementById('upgrade_zip').value;
+	var file_name = document.the_form.upgrade_zip.value;
+	postData = 'file_name=' + YAHOO.lang.JSON.stringify(file_name) + '&module=UpgradeWizard&action=UploadFileCheck&to_pdf=1';
+	YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
+   }
+}
 </script>
 eoq2;
 $form5 =<<<eoq5

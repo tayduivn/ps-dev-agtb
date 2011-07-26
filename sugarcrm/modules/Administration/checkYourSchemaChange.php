@@ -69,7 +69,7 @@ $colsDropDown = '';
 $relDropDown = '';
 
 
-echo getVersionedScript('include/JSON.js').getVersionedScript('modules/Administration/javascript/dbSchema.js');
+echo getVersionedScript('modules/Administration/javascript/dbSchema.js');
 echo "<form name='checkSchema'>
 	    <link rel='stylesheet' type='text/css' href='include/javascript/yui-old/assets/container.css' />
 	   <div  id='checkingDiv' style='display:none''>

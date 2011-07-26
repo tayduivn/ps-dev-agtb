@@ -2,10 +2,10 @@
 
 function enableButtonSlider(divId){
 	YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use("node", "anim", function(Y) {
-	    var module = Y.get('#'+divId);
+	    var module = Y.one('#'+divId);
 	    if(module){
 		     // add fx plugin to module body
-		    var content = module.query('.yui-bd').plug(Y.Plugin.NodeFX, {
+		    var content = module.one('.yui-bd').plug(Y.Plugin.NodeFX, {
 		        from: { 
 		            width: function(node) { // dynamic in case of change
 		                return node.get('scrollWidth'); // get expanded height (offsetHeight may be zero)

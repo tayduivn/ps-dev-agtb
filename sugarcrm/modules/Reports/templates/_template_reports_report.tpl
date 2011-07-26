@@ -184,7 +184,6 @@ var hidden_summary_ref = 'hidden';
 var users_array = new Array();
 
 </script>
-<script type="text/javascript" src="{sugar_getjspath file='include/JSON.js'}"></script>
 <script language="javascript">
 var image_path = "{$args_image_path}";
 var lbl_and = "{$mod_strings.LBL_AND}";

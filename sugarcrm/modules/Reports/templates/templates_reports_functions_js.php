@@ -35,8 +35,6 @@ function template_reports_functions_js(&$args)
 {
 global $mod_strings;
 global $sugar_config, $sugar_version;
-
-echo getVersionedScript('include/JSON.js');
 ?>
 <script language="javascript">
 var image_path = "<?php echo $args['IMAGE_PATH']; ?>";

@@ -150,7 +150,7 @@ SUGAR.mySugar = function() {
             {
                 ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING_PAGE_TITLE'));
 
-                url = 'index.php?DynamicAction=savePageTitle&action=DynamicAction&module='+module+'&to_pdf=1&newPageTitle='+JSON.stringify(newTitleValue)+'&pageId='+pageNum;
+                url = 'index.php?DynamicAction=savePageTitle&action=DynamicAction&module='+module+'&to_pdf=1&newPageTitle='+YAHOO.lang.JSON.stringify(newTitleValue)+'&pageId='+pageNum;
 
                 var setPageTitle = function(data)
                 {
@@ -226,7 +226,7 @@ SUGAR.mySugar = function() {
                 //-------------------start new registration for drag drop--------------------
                 var counter = SUGAR.mySugar.homepage_dd.length;
 
-                if(YAHOO.util.DDM.mode == 1) {
+                if(YAHOO.util.DDM.mode == 1 && typeof(scriptResponse) != 'undefined') {
                     for(i in scriptResponse['newDashletsToReg']) {
                         SUGAR.mySugar.homepage_dd[counter] = new ygDDList('dashlet_' + scriptResponse['newDashletsToReg'][i]);
                         SUGAR.mySugar.homepage_dd[counter].setHandleElId('dashlet_header_' + scriptResponse['newDashletsToReg'][i]);
@@ -312,7 +312,7 @@ SUGAR.mySugar = function() {
 			var tabListElemWidth = tabListElem.offsetWidth;
 			var maxWidth = contentElemWidth-(dashletCtrlsElemWidth+addPageElemWidth+2);
 
-			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+JSON.stringify(newPageName);
+			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+YAHOO.lang.JSON.stringify(newPageName);
 
 			var addBlankPage = function(data) {
 				//check to see if a user preference error occurred

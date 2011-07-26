@@ -28,7 +28,6 @@
 *}
 <script src="{sugar_getjspath file='modules/Administration/javascript/Administration.js'}"></script>
 <script src="{sugar_getjspath file='modules/Administration/javascript/Async.js'}"></script>
-<script src="{sugar_getjspath file='include/JSON.js'}"></script>
 
 <div>
 	{$mod.LBL_REPAIRXSS_INSTRUCTIONS}

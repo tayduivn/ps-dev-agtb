@@ -236,9 +236,10 @@ if(true) {
 	///////////////////////////////////////
 	////	MACRO VARS
 	$xtpl->assign("INSERT_VARIABLE_ONCLICK", "insert_variable(document.EditView.variable_text.value)");
-	if(!$inboundEmail){
-		$xtpl->parse("main.NoInbound.variable_button");
-	}
+
+    // bug 37255, included without condition
+    $xtpl->parse("main.NoInbound.variable_button");
+
 	///////////////////////////////////////
 	////	CAMPAIGNS
 	if($has_campaign || $inboundEmail) {
@@ -331,14 +332,14 @@ if(true) {
 
 //Add Custom Fields
 require_once('modules/DynamicFields/templates/Files/EditView.php');
+$xtpl->parse("main.NoInbound");
 if(!$inboundEmail){
-    $xtpl->parse("main.NoInbound");
     $xtpl->parse("main.NoInbound1");
     $xtpl->parse("main.NoInbound2");
     $xtpl->parse("main.NoInbound3");
-    $xtpl->parse("main.NoInbound4");
-    $xtpl->parse("main.NoInbound5");
 }
+$xtpl->parse("main.NoInbound4");
+$xtpl->parse("main.NoInbound5");
 $xtpl->parse("main");
 
 $xtpl->out("main");

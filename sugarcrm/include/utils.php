@@ -665,7 +665,7 @@ function get_team_array($add_blank = FALSE) {
 
 	$db = DBManagerFactory::getInstance();
 
-	if(is_admin($current_user)||(!is_admin($current_user) && is_admin_for_module($current_user,'Users')))
+	if($current_user->isAdminForModule('Users'))
 	{
 		$query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1 where t1.deleted = 0 ORDER BY t1.private,t1.name ASC';
 	}
@@ -828,12 +828,11 @@ function showFullName() {
 	static $showFullName = null;
 
 	if (is_null($showFullName)) {
-		$sysPref = (isset($sugar_config['use_real_names']) && $sugar_config['use_real_names'] == true) ? true : false;
+		$sysPref = !empty($sugar_config['use_real_names']);
 		$userPref = (is_object($current_user)) ? $current_user->getPreference('use_real_names') : null;
 
 		if($userPref != null) {
-			$bool = ($userPref == 'on') ? true : false;
-			$showFullName = $bool;
+			$showFullName = ($userPref == 'on');
 		} else {
 			$showFullName = $sysPref;
 		}
@@ -1423,15 +1422,15 @@ function microtime_diff($a, $b) {
 // check if Studio is displayed.
 function displayStudioForCurrentUser()
 {
-    if ( is_admin($GLOBALS['current_user']) ) {
+    global $current_user;
+    if ( $current_user->isAdmin() ) {
         return true;
     }
     //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
     }
-    global $current_user;
-    $access = get_admin_modules_for_user($current_user);
+    $access = $current_user->getDeveloperModules();
     foreach ($access as $key=>$mod) {
 		if(file_exists('modules/'. $mod . '/metadata/studio.php')) {
 		    $_SESSION['display_studio_for_user'] = true;
@@ -1491,33 +1490,15 @@ function displayWorkflowForCurrentUser()
 
 // return an array with all modules where the user is an admin.
 function get_admin_modules_for_user($user) {
-    global $beanList;
-    $admin_modules = array();
-    //BEGIN SUGARCRM flav=pro ONLY
-    if(empty($user)) {
-            return $admin_modules;
+    $GLOBALS['log']->deprecated("get_admin_modules_for_user() is deprecated as of 6.2.2 and may disappear in the future, use Users->getDeveloperModules() instead");
+
+    if(!isset($user)){
+        $modules = array();
+        return $modules;
     }
 
-    if (isset($_SESSION['get_admin_modules_for_user'])) {
-        return $_SESSION['get_admin_modules_for_user'];
-    }
-    $actions = ACLAction::getUserActions($user->id);
-
-    //check for ForecastSchedule because it doesn't exist in $beanList
-/*    if ($actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV) {
-        $admin_modules[] = 'Forecasts';
-    }*/
-	foreach ($beanList as $key=>$val) {
-	    if(!in_array($key, $admin_modules) && ($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'
-	        && $key!='Calendar' && $key!='Activities' && $key!='Reports') &&
-	        (is_admin_for_module($user,$key))) {
-	            $admin_modules[] = $key;
-	    }
-	}
-    $_SESSION['get_admin_modules_for_user'] = $admin_modules;
-    //END SUGARCRM flav=pro ONLY
-
-    return ($admin_modules);
+    return($user->getDeveloperModules());
+    
 }
 
  function get_workflow_admin_modules_for_user($user){
@@ -1556,7 +1537,7 @@ function get_admin_modules_for_user($user) {
     foreach ($workflow_mod_list as $key=>$val) {
         if(!in_array($val, $workflow_admin_modules) && ($val!='iFrames' && $val!='Feeds' && $val!='Home' && $val!='Dashboard'
             && $val!='Calendar' && $val!='Activities' && $val!='Reports') &&
-            (is_admin_for_module($user,$key))) {
+           ($user->isDeveloperForModule($key))) {
                 $workflow_admin_modules[$key] = $val;
         }
     }
@@ -1566,22 +1547,15 @@ function get_admin_modules_for_user($user) {
 
 // Check if user is admin for at least one module.
 function is_admin_for_any_module($user) {
+    if (!isset($user)){
+        return false;
+    }
+    if($user->isAdmin()) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
-    global $beanList;
-    if (isset($_SESSION['is_admin_for_module'])) {
-        return $_SESSION['is_admin_for_module'];
-    }
-    $actions = ACLAction::getUserActions($user->id);
-	foreach ($beanList as $key=>$val) {
-        if(($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'&& $key!='Calendar' && $key!='Activities') &&
-            (isset($actions[$key]['module']['admin']['aclaccess']) && ($actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV))) {
-                $_SESSION['is_admin_for_module'] = true;
-                return true;
-        }
-	}
-    if(!empty($_REQUEST['module']) && $_REQUEST['module']!= 'Users') {
-        $_SESSION['is_admin_for_module'] = false;
-    }
+    $GLOBALS['log']->deprecated("is_admin_for_any_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForAnyModule() instead");
+    return $user->isDeveloperForAnyModule();
     //END SUGARCRM flav=pro ONLY
     return false;
 }
@@ -1589,29 +1563,15 @@ function is_admin_for_any_module($user) {
 
 // Check if user is admin for a specific module.
 function is_admin_for_module($user,$module) {
+    if (!isset($user)) {
+        return false;
+    }
+    if ($user->isAdmin()) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
-    $sessionVar = 'MLA_'.$user->user_name;
-    if (isset($_SESSION[$sessionVar][$module])) {
-        return $_SESSION[$sessionVar][$module];
-    }
-    if($module=='ContractTypes')$module='Contracts';
-    //BEGIN SUGARCRM flav=pro ONLY
-    if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
-    //END SUGARCRM flav=pro ONLY
-    $actions = ACLAction::getUserActions($user->id);
-    $focus = SugarModule::get($module)->loadBean();
-    if ( $focus instanceOf SugarBean ) {
-        $key = $focus->acltype;
-    }
-    else {
-        $key = 'module';
-    }
-    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key])) ||
-    	(isset($actions[$module][$key]['admin']['aclaccess']) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
-        $_SESSION[$sessionVar][$module]=true;
-    	return true;
-    }
-    $_SESSION[$sessionVar][$module]=false;
+    $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");    
+    return $user->isDeveloperForModule($module);
     //END SUGARCRM flav=pro ONLY
     return false;
 }
@@ -1624,11 +1584,11 @@ function is_admin_for_module($user,$module) {
  * Contributor(s): ______________________________________..
  */
 function is_admin($user) {
-	if(!empty($user) && ($user->is_admin == '1' || $user->is_admin === 'on')){
-		return true;
-	}
-
-	return false;
+    if(empty($user)) {
+        return false;
+    }
+    
+	return $user->isAdmin();
 }
 
 /**
@@ -3133,7 +3093,12 @@ function check_logic_hook_file($module_name, $event, $action_array){
 		} else {
 			$add_logic = true;
 
-			$logic_count = count($hook_array[$event]);
+            $logic_count = 0;
+            if(!empty($hook_array[$event]))
+            {
+			    $logic_count = count($hook_array[$event]);
+            }
+            
 			if($action_array[0]==""){
 				$action_array[0] = $logic_count  + 1;
 			}

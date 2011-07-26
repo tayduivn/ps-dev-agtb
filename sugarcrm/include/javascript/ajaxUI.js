@@ -16,6 +16,7 @@ SUGAR.ajaxUI = {
         var cont;
         if (typeof window.onbeforeunload == "function")
             window.onbeforeunload = null;
+        scroll(0,0);
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
@@ -62,6 +63,9 @@ SUGAR.ajaxUI = {
         }
         
         var bannedModules = SUGAR.config.stockAjaxBannedModules;
+        //If banned modules isn't there, we are probably on a page that isn't ajaxUI compatible
+        if (typeof(bannedModules) == 'undefined')
+            return false;
         // Mechanism to allow for overriding or adding to this list
         if(typeof(SUGAR.config.addAjaxBannedModules) != 'undefined'){
             bannedModules.concat(SUGAR.config.addAjaxBannedModules);

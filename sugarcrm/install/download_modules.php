@@ -249,7 +249,6 @@ $form =<<<EOQ1
                         </tr>
                     </table>
                     </form>
-<script type="text/javascript" language="Javascript" src="include/JSON.js"></script>
 <script>
  function uploadCheck(){
    var len = escape(document.the_form.language_pack.value).length;

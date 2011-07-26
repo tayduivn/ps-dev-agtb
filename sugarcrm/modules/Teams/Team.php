@@ -121,7 +121,7 @@ class Team extends SugarBean
 
 		if (($_REQUEST['module'] == "Users") && ($_REQUEST['action'] == "DetailView")) 
 		{
-			if (is_admin($current_user)|| is_admin_for_module($current_user,'Users')) 
+			if ($current_user->isAdminForModule('Users')) 
 			{
 			    $list_form->parse($xTemplateSection.".row.admin_team");
 			    $list_form->parse($xTemplateSection.".row.admin_edit");
@@ -328,13 +328,16 @@ class Team extends SugarBean
 		// Find items that are on teams but the people they are assigned to cannot see them.
 	}
 
-	/**
-	 * Add the specified user to this team.
-	 */
-	function add_user_to_team($user_id, $user_override=null) {
-
+    /**
+     * Add the specified user to this team.
+     * @param	int	$user_id
+     * @param	User	$user_override
+     */
+    public function add_user_to_team($user_id, User $user_override = null)
+    {
 		$membership = new TeamMembership();
 		$result = $membership->retrieve_by_user_and_team($user_id, $this->id);
+        $membershipExists = false;
 
 		if($result)
 		{
@@ -342,11 +345,11 @@ class Team extends SugarBean
 			if($membership->explicit_assign)
 			{
 				// we are done.
-				return;
+                $membershipExists = true;
 			}
 			if($membership->implicit_assign)
-			{	
-							
+			{
+
 				if(isset($user_override))
 				{
 					$focus=$user_override;
@@ -356,70 +359,29 @@ class Team extends SugarBean
 					$focus = new User();
 					$focus->retrieve($user_id);
 				}
-				$manager = new User();
-				$manager->reports_to_id = $focus->reports_to_id;
-				while(!empty($manager->reports_to_id))
-				{
-					$manager->retrieve($manager->reports_to_id);
-                    $managers_membership = new TeamMembership();
-					$result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->id);
-					
-					if($result)
-					{
-						if($managers_membership->implicit_assign)
-						{
-							// We already have an implicit assignment.  It must have come from another person that reports to the focus.  Stop.
-							$GLOBALS['log']->debug("Found existing implicit assignment $manager->id is a member of $this->id");
-                            $membership->explicit_assign = true;
-                            $membership->save();   	
-                            return;
-						}
-						if($managers_membership->explicit_assign)
-						{
-							// This is an explicit only assignment.  Add implicit and stop.
-							$GLOBALS['log']->debug("Found existing explicit assignment $manager->id is a member of $this->id");
-							$managers_membership->implicit_assign = true;
-							$managers_membership->save();
-
-                            $membership->explicit_assign = true;
-                            $membership->save();                        
-                        	return;
-						}
-
-						// This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
-						$GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
-					}
-					else 
-					{
-						// This user does not have an implict assign already, add it.
-						$managers_membership = new TeamMembership();
-						$managers_membership->user_id = $manager->id;
-						$managers_membership->implicit_assign = true;
-						$managers_membership->team_id = $this->id;
-						$managers_membership->save();
-						$GLOBALS['log']->debug("Creating new team memberhsip $manager->id is a member of $this->id");
-					}
-				}
+                if (!empty($focus->reports_to_id))
+                    $this->addManagerToTeam($focus->reports_to_id);
 
 				$membership->explicit_assign = true;
 				$membership->save();
-				return;
+				$membershipExists = true;
 			}
 
 			// This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
 			$GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
 		}
 
-		$membership = new TeamMembership();
-		$membership->user_id = $user_id;
-		$membership->team_id = $this->id;
-		$membership->explicit_assign = 1;
-		$membership->save();
-		$GLOBALS['log']->debug("Creating new explicit team memberhsip $user_id is a member of $this->id");
-
+        if (!$membershipExists)
+        {
+            $membership = new TeamMembership();
+            $membership->user_id = $user_id;
+            $membership->team_id = $this->id;
+            $membership->explicit_assign = 1;
+            $membership->save();
+            $GLOBALS['log']->debug("Creating new explicit team memberhsip $user_id is a member of $this->id");
+        }
 
 		// Now it is time to update the management hierarchy to give them implicit access to this team.
-		
 		if(isset($user_override))
 		{
 			$focus=$user_override;
@@ -429,61 +391,71 @@ class Team extends SugarBean
 			$focus = new User();
 			$focus->retrieve($user_id);
 		}
-
-		$membership = new TeamMembership();
-		$manager = new User();
-		$manager->reports_to_id = $focus->reports_to_id;
-		// As long as there is a manager, keep going.
-		while(!empty($manager->reports_to_id))
-		{
-
-			if($manager->retrieve($manager->reports_to_id)==null) return;
-			$result = $membership->retrieve_by_user_and_team($manager->id, $this->id);
-
-			if($result)
-			{
-				if($membership->implicit_assign)
-				{
-					// We already have an implicit assignment.  It must have come from another person that reports to the focus.  Stop.
-					$GLOBALS['log']->debug("Found existing implicit assignment $manager->id is a member of $this->id");
-					return;
-				}
-				if($membership->explicit_assign)
-				{
-					// This is an explicit only assignment.  Add implicit and stop.
-					$GLOBALS['log']->debug("Found existing explicit assignment $manager->id is a member of $this->id");
-					$membership->implicit_assign = true;
-					$membership->save();
-					return;
-				}
-
-				// This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
-				$GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
-			}
-
-			// This user does not have an implict assign already.  Add it and move up the chain.
-			$membership = new TeamMembership();
-			$membership->user_id = $manager->id;
-			$membership->implicit_assign = true;
-			$membership->team_id = $this->id;
-			$membership->save();
-			$GLOBALS['log']->debug("Creating new team memberhsip $manager->id is a member of $this->id");
-			
-			// Since we added implicit membership we need to update the focuses global membership to indicate
-			// it has implicit membership.
-			$result = $membership->retrieve_by_user_and_team($manager->id, 1);
-			if($result)
-			{
-				if(!$membership->implicit_assign)
-				{
-					$GLOBALS['log']->debug("Found existing membership for $manager->id is a member of 1, add implicit");
-					$membership->implicit_assign = true;
-					$membership->save();
-				}
-			}
-		}
-
+        if (!empty($focus->reports_to_id))
+            $this->addManagerToTeam($focus->reports_to_id);
 	}
+
+    /**
+     * Recursively add managers to the team
+     * @param int $manager_id	Manager user id
+     */
+    private function addManagerToTeam($manager_id)
+    {
+        $manager = new User();
+        $manager->retrieve($manager_id);
+        $managers_membership = new TeamMembership();
+        $result = $managers_membership->retrieve_by_user_and_team($manager->id, $this->id);
+
+        if($result)
+        {
+            if($managers_membership->implicit_assign)
+            {
+                // We already have an implicit assignment.  It must have come from another person that reports to the focus.  Stop.
+                $GLOBALS['log']->debug("Found existing implicit assignment $manager->id is a member of $this->id");
+                $managers_membership->explicit_assign = true;
+                $managers_membership->save();
+                return;
+            }
+            if($managers_membership->explicit_assign)
+            {
+                // This is an explicit only assignment.  Add implicit and stop.
+                $GLOBALS['log']->debug("Found existing explicit assignment $manager->id is a member of $this->id");
+                $managers_membership->implicit_assign = true;
+                $managers_membership->save();
+                return;
+            }
+
+            // This is an error.  There should not be a memberhsip row that does not have implicit or explicit asisgnments.
+            $GLOBALS['log']->error("Membership record found (id $membership->id) that does not have a implicit or explicit assignment");
+        }
+        else
+        {
+            // This user does not have an implict assign already, add it.
+            $managers_membership = new TeamMembership();
+            $managers_membership->user_id = $manager->id;
+            $managers_membership->implicit_assign = true;
+            $managers_membership->team_id = $this->id;
+            $managers_membership->save();
+            $GLOBALS['log']->debug("Creating new team memberhsip $manager->id is a member of $this->id");
+        }
+
+        // Since we added implicit membership we need to update the focuses global membership to indicate
+        // it has implicit membership.
+        $result = $managers_membership->retrieve_by_user_and_team($manager->id, 1);
+        if($result)
+        {
+            if(!$managers_membership->implicit_assign)
+            {
+                $GLOBALS['log']->debug("Found existing membership for $manager->id is a member of 1, add implicit");
+                $managers_membership->implicit_assign = true;
+                $managers_membership->save();
+            }
+        }
+
+        //go up to next manager
+        if (!empty($manager->reports_to_id))
+            $this->addManagerToTeam($manager->reports_to_id);
+    }
 
 
 	/**

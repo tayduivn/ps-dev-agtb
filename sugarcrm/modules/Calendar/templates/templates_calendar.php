@@ -410,7 +410,7 @@ function template_cal_tabs($args) {
 
 				$team = new Team();
 				$team->retrieve($team_id);
-				$users = $team->get_team_members();
+                $users = $team->get_team_members(true);
 				$user_ids = array();
 				foreach($users as $user) {
 					$user_ids[$user->id] = $user->user_name;

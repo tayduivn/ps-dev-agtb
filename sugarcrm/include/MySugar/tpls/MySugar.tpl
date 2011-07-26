@@ -60,7 +60,6 @@ height: 10px;
 
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 {sugar_getscript file='include/javascript/dashlets.js'}
-{sugar_getscript file='include/JSON.js'}
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 {$chartResources}
 {$mySugarChartResources}
@@ -70,6 +69,7 @@ height: 10px;
 var numPages = {$numPages};
 var loadedPages = new Array();
 loadedPages[0] = '{$loadedPage}';
+var numCols = {$numCols};
 //END SUGARCRM flav=pro ONLY
 var activePage = {$activePage};
 var theme = '{$theme}';

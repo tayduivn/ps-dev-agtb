@@ -63,8 +63,7 @@ array (
           'field' => '30',
         ),
       ),
-      'javascript' => '{sugar_getscript file="include/JSON.js"}
-<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
+      'javascript' => '<script type="text/javascript">{$JSON_CONFIG_JAVASCRIPT}</script>
 {sugar_getscript file="cache/include/javascript/sugar_grp_jsolait.js"}
 <script>toggle_portal_flag();function toggle_portal_flag()  {literal} { {/literal} {$TOGGLE_JS} {literal} } {/literal} </script>',
       'useTabs' => false,

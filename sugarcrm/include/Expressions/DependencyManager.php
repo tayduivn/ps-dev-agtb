@@ -43,7 +43,7 @@ class DependencyManager {
         $formulaFields = array();
 		foreach($fields as $field => $def) {
 			if (isset($def['calculated']) && $def['calculated'] && !empty($def['formula'])) {
-		    	$triggerFields = Parser::getFieldsFromExpression($def['formula']);
+		    	$triggerFields = Parser::getFieldsFromExpression($def['formula'], $fields);
                 $formulaFields[$field] = $triggerFields;
 		    	$dep = new Dependency($field);
 		    	$dep->setTrigger(new Trigger('true', $triggerFields));
@@ -127,7 +127,7 @@ class DependencyManager {
     			// normalize the dependency definition
     			if ( ! is_array ( $def [ 'dependency' ] ) )
     			{
-    				$triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ] ) ;
+    				$triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ], $fields) ;
     				$def [ 'dependency' ] = array ( array ( 'trigger' => $triggerFields , 'action' => $def [ 'dependency' ] ) ) ;
     			}
 				foreach ( $def [ 'dependency' ]  as $depdef)
@@ -136,7 +136,7 @@ class DependencyManager {
     				if (is_array($depdef [ 'trigger' ])) {
     					$triggerFields = $depdef [ 'trigger' ];
     				} else {
-    					$triggerFields = Parser::getFieldsFromExpression ( $depdef [ 'trigger' ] ) ;
+    					$triggerFields = Parser::getFieldsFromExpression ( $depdef [ 'trigger' ], $fields ) ;
     				}
     				$dep->setTrigger ( new Trigger ( 'true' , $triggerFields ) ) ;
     				$dep->addAction ( ActionFactory::getNewAction('SetVisibility',
@@ -161,11 +161,11 @@ class DependencyManager {
     			// normalize the dependency definition
     			if (is_array ( $def [ 'dependency' ] ) )
     			{
-    				$triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ]['action'] ) ;
+    				$triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ]['action'], $fieldDefs ) ;
 				}
                 else
                 {
-                    $triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ] ) ;
+                    $triggerFields = Parser::getFieldsFromExpression ( $def [ 'dependency' ] , $fieldDefs) ;
                 }
                 foreach($triggerFields as $name)
                 {
@@ -381,7 +381,19 @@ class DependencyManager {
         {
             if ($def['type'] == 'link' && self::validLinkField($def))
             {
-                $links[$name] = $def['relationship'];
+                $links[$name] = array('relationship'=>$def['relationship']);
+                if(!empty($def['module']))
+                    $links[$name]['module'] = $def['module'];
+            }
+        }
+        //Now attempt to map the relate field to the link
+        foreach($fields as $name => $def)
+        {
+            if ($def['type'] == 'relate' && !empty($def['link']) && isset($links[$def['link']]) && !empty($def['id_name']))
+            {
+                $links[$def['link']]['id_name'] = $def['id_name'];
+                if (empty($links[$def['link']]['module']) && !empty($def['module']))
+                    $links[$def['link']]['module'] = $def['module'];
             }
         }
         return "SUGAR.forms.AssignmentHandler.LINKS['$view'] = " . json_encode($links) . "\n";

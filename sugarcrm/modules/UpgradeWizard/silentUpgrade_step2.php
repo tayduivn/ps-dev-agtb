@@ -296,6 +296,7 @@ $errors = array();
 
 $unzip_dir = sugar_cached("upgrades/temp");
 $install_file = "upload://upgrades/patch/".basename($argv[1]);
+UploadStream::ensureDir("upload://upgrades/patch/");
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -385,7 +386,11 @@ require_once("modules/Administration/QuickRepairAndRebuild.php");
 $rac = new RepairAndClear();
 $rac->clearVardefs();
 $rac->rebuildExtensions();
-$rac->clearExternalAPICache();
+//bug: 44431 - defensive check to ensure the method exists since upgrades to 6.2.0 may not have this method define yet.
+if(method_exists($rac, 'clearExternalAPICache'))
+{
+    $rac->clearExternalAPICache();
+}
 
 $repairedTables = array();
 foreach ($beanFiles as $bean => $file) {
@@ -440,7 +445,7 @@ logThis('Start rebuild relationships.', $path);
 logThis('End rebuild relationships.', $path);
 
 include("$unzip_dir/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt')  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
     global $silent_upgrade_vars_loaded;
@@ -514,6 +519,14 @@ if($origVersion < '610' && function_exists('upgrade_connectors'))
 {
    upgrade_connectors($path);
 }
+
+// Enable the InsideView connector by default
+if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
+    logThis("Looks like we need to enable the InsideView connector\n",$path);
+    upgradeEnableInsideViewConnector($path);
+}
+
+
 
 //bug: 36845 - ability to provide global search support for custom modules
 if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){

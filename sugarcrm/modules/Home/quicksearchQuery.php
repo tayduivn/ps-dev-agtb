@@ -126,9 +126,10 @@ class quicksearchQuery {
         
         foreach($args['modules'] as $module) {
             require_once($beanFiles[$beanList[$module]]);
-            $focus = new $beanList[$module];
+			
+			$focus = new $beanList[$module];        
             
-            $query_orderby = '';
+			$query_orderby = '';
             if (!empty($args['order'])) {
                 $query_orderby = $args['order'];
                 if ($focus instanceof Person && $args['order'] == 'name') {
@@ -161,6 +162,13 @@ class quicksearchQuery {
         for($i = 0; $i < count($list_return); $i++) {
             $list_arr['fields'][$i]= array();
             $list_arr['fields'][$i]['module']= $list_return[$i]->object_name;
+            
+            //C.L.: Bug 43395 - For Quicksearch, do not return values with salutation and title formatting
+            if($list_return[$i] instanceof Person)
+            {
+               $list_return[$i]->createLocaleFormattedName = false;
+            }
+            
             $listData = $list_return[$i]->get_list_view_data();
                 
             foreach($args['field_list'] as $field) {
@@ -274,6 +282,7 @@ class quicksearchQuery {
         $str = $json->encodeReal($list_arr); 
         return $str;    
     }
+
     
     /**
      * Returns the list of users, faster than using query method for Users module
@@ -337,7 +346,8 @@ class quicksearchQuery {
         }
 
         $list_arr = array();
-        if($focus->ACLAccess('ListView', true)) {
+        if($focus->ACLAccess('ListView', true)) 
+        {
          	$curlist = $focus->get_list($query_orderby, $query_where, 0, $query_limit, -1, 0);
             $list_return = array_merge($list_return,$curlist['list']);
         }

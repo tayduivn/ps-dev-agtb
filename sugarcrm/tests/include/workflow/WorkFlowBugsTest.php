@@ -22,7 +22,9 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
+require_once('include/utils/LogicHook.php');
+
 class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $has_workflow_directory;
@@ -61,6 +63,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         }
         copy('tests/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
+        LogicHook::refreshHooks();
 
         $sql = "DELETE FROM workflow where id in ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', '43406320-49b6-6503-0074-4c73532a4325')";
         $GLOBALS['db']->query($sql);

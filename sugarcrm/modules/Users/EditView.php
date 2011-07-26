@@ -47,7 +47,7 @@ $is_current_admin=is_admin($current_user)
 //BEGIN SUGARCRM flav=sales ONLY
                 ||$current_user->user_type = 'UserAdministrator'
 //END SUGARCRM flav=sales ONLY
-                ||is_admin_for_module($GLOBALS['current_user'],'Users');
+                ||$GLOBALS['current_user']->isAdminForModule('Users');
 $is_super_admin = is_admin($current_user);
 
 if(isset($_REQUEST['record'])) {
@@ -55,7 +55,7 @@ if(isset($_REQUEST['record'])) {
     $focus->retrieve($_REQUEST['record']);
 }
 
-if(!$is_super_admin && is_admin_for_module($GLOBALS['current_user'],'Users') && $focus->is_admin == 1) sugar_die("Unauthorized access to administrator.");
+if(!$is_super_admin && $GLOBALS['current_user']->isAdminForModule('Users') && $focus->is_admin == 1) sugar_die("Unauthorized access to administrator.");
 
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 	$focus->id = "";
@@ -291,7 +291,7 @@ $confirmReassignJs = "
 //END SUGARCRM flav=pro ONLY
 
 // check if the user has access to the User Management
-$sugar_smarty->assign('USER_ADMIN',is_admin_for_module($current_user,'Users')&& !is_admin($current_user));
+$sugar_smarty->assign('USER_ADMIN',$current_user->isAdminForModule('Users')&& !is_admin($current_user));
 
 //BEGIN SUGARCRM flav=sales ONLY
 if($current_user->user_type == "UserAdministrator" && !is_admin($current_user)){
@@ -585,7 +585,7 @@ if(!empty($focus->is_admin) && $focus->is_admin){
 //BEGIN SUGARCRM flav=pro ONLY
 if(!empty($focus->id)) {
 	//If you're an administrator editing the user or if you're a module level admin, then allow the widget to display all Teams
-	if($usertype == 'ADMIN' || is_admin_for_module($GLOBALS['current_user'], 'Users')) {
+	if($usertype == 'ADMIN' || $GLOBALS['current_user']->isAdminForModule( 'Users')) {
 		require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
 		$teamsWidget = new EmailSugarFieldTeamsetCollection($focus, $focus->field_defs, '', 'EditView');
 		$sugar_smarty->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());

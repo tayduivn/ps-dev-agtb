@@ -46,8 +46,7 @@ class Tree {
 							'include/ytree/TreeView/TextNode.js',
 							'include/ytree/TreeView/RootNode.js',
 							'include/ytree/TreeView/MenuNode.js',							
-							'include/ytree/treeutil.js',
-							'include/JSON.js',																					
+							'include/ytree/treeutil.js'																	
 					 );
 					 
   var $_debug_window=false;

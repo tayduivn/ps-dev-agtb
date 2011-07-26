@@ -71,9 +71,11 @@
                                     <td align="left" scope="row">&nbsp;</td>
                                 </tr>
                             {/if}
+                            {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr>
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
                             </tr>
+                            {* //END SUGARCRM flav=pro ONLY *}
                             <tr>
                                 <td colspan="3" scope="row">
                                     <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />

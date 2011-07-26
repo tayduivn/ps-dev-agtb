@@ -1005,9 +1005,10 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        $this->load_relationship($field_name);
-
-        return $this->$field_name->getBeans();
+        if($this->load_relationship($field_name))
+            return array_values($this->$field_name->getBeans());
+        else
+            return array();
     }
 
     /**
@@ -2094,7 +2095,7 @@ function save_relationship_changes($is_update, $exclude=array())
                     {
                         $idName = $def['id_name'];
 
-                        if (!empty($this->rel_fields_before_value[$idName]))
+                        if (!empty($this->rel_fields_before_value[$idName]) && empty($this->$idName))
                         {
                             //if before value is not empty then attempt to delete relationship
                             $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
@@ -4637,8 +4638,19 @@ function save_relationship_changes($is_update, $exclude=array())
                     $this->modified_user_id = 1;
                 }
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$this->modified_user_id' where id='$id'";
-            } else
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
+                }
+                //END SUGARCRM flav=pro ONLY
+            } else {
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
+                }
+                //END SUGARCRM flav=pro ONLY
+            }
             $this->db->query($query, true,"Error marking record deleted: ");
             $this->deleted = 1;
 
@@ -5153,7 +5165,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $table_alias = $this->table_name;
         }
 
-        if ( ( (!is_admin($current_user) && !is_admin_for_module($current_user,$this->module_dir)) || $force_admin ) &&
+        if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
@@ -5488,7 +5500,9 @@ function save_relationship_changes($is_update, $exclude=array())
     function ACLAccess($view,$is_owner='not_set')
     {
         global $current_user;
-        if(is_admin($current_user)||is_admin_for_module($current_user,$this->getACLCategory()))return true;
+        if($current_user->isAdminForModule($this->getACLCategory())) {
+            return true;
+        }
         $not_set = false;
         if($is_owner == 'not_set')
         {
@@ -5814,8 +5828,9 @@ function save_relationship_changes($is_update, $exclude=array())
     * Send assignment notifications and invites for meetings and calls
     */
     private function _sendNotifications($check_notify){
-        if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true)){ // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
-
+        if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true) // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
+           && !$this->isOwner($this->created_by) )  // cn: bug 42727 no need to send email to owner (within workflow)
+        {
             $admin = new Administration();
             $admin->retrieveSettings();
             $sendNotifications = false;

@@ -117,7 +117,6 @@ EOQ;
 		// TODO: Come back and make a SugarFields grouping file for all of these
 		$html .= getVersionedScript('include/SugarFields/Fields/Collection/SugarFieldCollection.js');
 		$html .= getVersionedScript('include/SugarFields/Fields/Teamset/Teamset.js');
-		$html .= getVersionedScript('include/JSON.js');
 		$html .= getVersionedScript('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js');
 		$html .= <<<EOQ
 		<script>

@@ -219,11 +219,10 @@ if(isset($_POST['clear_loaded'])){
     //print out the needed script tags for tree
     echo'<script> var site_url= {"site_url":"'.$sugar_config['site_url'].'"};</script>';
 
-    echo "<link rel='stylesheet' href='".getVersionedPath('include/ytree/TreeView/css/folders/tree.css')."'>";
-    echo getVersionedScript('include/ytree/TreeView/TreeView.js');
-    echo getVersionedScript('include/ytree/TreeView/TaskNode.js');
-    echo getVersionedScript('include/ytree/TreeView/treeutil.js');
-    echo getVersionedScript('include/ytree/TreeView/JSON.js');
+    echo"        <link rel='stylesheet' href='include/ytree/TreeView/css/folders/tree.css'>
+    <script language='JavaScript' src='include/ytree/TreeView/TreeView.js'></script>
+    <script language='JavaScript' src='include/ytree/TreeView/TaskNode.js'></script>
+    <script language='JavaScript' src='include/ytree/treeutil.js'></script>";
 
     $ss->assign('BROWSETAB', return_browse_tab());
 

@@ -36,7 +36,7 @@ class EmployeesViewList extends ViewList
  		$this->lv = new ListViewSmarty();
  		$this->lv->delete = false;
  		$this->lv->email = false;
- 		if (!is_admin($GLOBALS['current_user'])&& !is_admin_for_module($GLOBALS['current_user'],'Users')){
+ 		if (!$GLOBALS['current_user']->isAdminForModule('Users')){
             $this->lv->multiSelect = false;
         }
  	}
@@ -52,7 +52,7 @@ class EmployeesViewList extends ViewList
 			$this->lv->ss->assign("SEARCH",true);
 			
 			$tplFile = 'include/ListView/ListViewGeneric.tpl';
-			if (!is_admin($GLOBALS['current_user'])&& !is_admin_for_module($GLOBALS['current_user'],'Users')){
+			if (!$GLOBALS['current_user']->isAdminForModule('Users')){
 				$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
 			}
 			//BEGIN SUGARCRM flav=sales ONLY

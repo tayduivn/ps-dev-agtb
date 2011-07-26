@@ -453,7 +453,7 @@ include_once('include/workflow/expression_utils.php');
 				}
 
 
-			//end if type assigned_user_id
+			//end if type team_list
 			}
 
 
@@ -562,7 +562,20 @@ include_once('include/workflow/expression_utils.php');
 	}
 
 
-
+function get_username_by_id($userid)
+{
+    if(empty($userid)) return false;
+    $user = SugarModule::get('Users')->loadBean();
+    $user->retrieve($userid);
+    if($userid != $user->id) {
+        return false;
+    }
+	if(showFullName()){
+        return $user->full_name;
+	} else {
+        return $user->user_name;
+    }
+}
 
 function get_display_text($temp_module, $field, $field_value, $adv_type=null, $ext1=null, $context=null){
 	global $app_list_strings, $current_user;
@@ -572,16 +585,7 @@ function get_display_text($temp_module, $field, $field_value, $adv_type=null, $e
         //bug 23502, assigned user should be displayed as username here. But I don't know if created user, modified user or even other module should display names instead of ids.
         if($temp_module->field_defs[$field]['name'] == 'assigned_user_id' && !empty($field_value) && !empty($context['for_action_display'])) {
             if($adv_type != 'exist_user') {
-	            $assigned_user = loadBean('Users');
-    	        $assigned_user->retrieve($field_value);
-        	    if (empty($assigned_user->id)) {
-            	    return false;
-        	    }
-	            if($current_user->getPreference('use_real_names') == 'on'){
-    	            return $assigned_user->full_name;
-	            } else {
-                    return $assigned_user->user_name;
-                }
+                return get_username_by_id($field_value);
 	        } else {
                 $target_type = "assigned_user_name";
             }
@@ -775,7 +779,7 @@ function find_start_position(& $target_array, $target_key){
 function check_special_fields($field_name, $source_object, $use_past_array=false, $context = null){
 	global $locale;
 
-	//Only special case we check for right now is full_name
+	// FIXME: Special cases for known non-db but allowed fields
 	if($field_name == 'full_name'){
 		if($use_past_array==false){
 			//use the future value
@@ -784,9 +788,11 @@ function check_special_fields($field_name, $source_object, $use_past_array=false
 			//use the past value
 			return $locale->getLocaleFormattedName($source_object->fetched_row['first_name'], $source_object->fetched_row['last_name']);
 		}
-	}
-    elseif($field_name == 'modified_by_name' && $use_past_array) {
+	} elseif($field_name == 'modified_by_name' && $use_past_array) {
         return $source_object->old_modified_by_name;
+    } elseif($field_name == 'assigned_user_name' && $use_past_array) {
+	    // We have to load the user here since fetched_row only has the ID, not the name
+        return get_username_by_id($source_object->fetched_row['assigned_user_id']);
     }
     elseif ($field_name == 'team_name')
     {

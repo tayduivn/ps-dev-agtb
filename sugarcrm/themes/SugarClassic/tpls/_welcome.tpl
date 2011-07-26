@@ -28,6 +28,6 @@
 *}
 {if $AUTHENTICATED}
 <div id="welcome">
-    {$APP.NTC_WELCOME}, <strong>{$CURRENT_USER}</strong> <a href='{$LOGOUT_LINK}' class='utilsLink'>[ {$LOGOUT_LABEL} ]</a> 
+    {$APP.NTC_WELCOME}, <strong>{$CURRENT_USER}</strong> <a id="logout_link" href='{$LOGOUT_LINK}' class='utilsLink'>[ {$LOGOUT_LABEL} ]</a> 
 </div>
 {/if}

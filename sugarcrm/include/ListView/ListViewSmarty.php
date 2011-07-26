@@ -130,7 +130,7 @@ class ListViewSmarty extends ListViewDisplay{
 		//{ 
 		//	$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
 		//} else {
-			$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['total']));
+			$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
 		//}
 		
 		$this->ss->assign('multiSelectData', $this->getMultiSelectData());
@@ -148,8 +148,8 @@ class ListViewSmarty extends ListViewDisplay{
 		$this->ss->assign('rowColor', array('oddListRow', 'evenListRow'));
 		$this->ss->assign('bgColor', array($odd_bg, $even_bg));
         $this->ss->assign('contextMenus', $this->contextMenus);
-        $this->ss->assign('is_admin_for_user', is_admin_for_module($GLOBALS['current_user'],'Users'));
-        $this->ss->assign('is_admin', is_admin($GLOBALS['current_user']));
+        $this->ss->assign('is_admin_for_user', $GLOBALS['current_user']->isAdminForModule('Users'));
+        $this->ss->assign('is_admin', $GLOBALS['current_user']->isAdmin());
 
 
         if($this->contextMenus && !empty($contextMenuObjectsTypes)) {

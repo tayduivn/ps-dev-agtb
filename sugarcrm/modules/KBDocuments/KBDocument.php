@@ -372,7 +372,6 @@ class KBDocument extends SugarBean {
 			$row=$db->fetchByAssoc($result);
 			if (!empty($row)) {
 				$body = $row['kbdocument_body'];
-				$body .="<onmouseover=\"alert('aa');\"";
 				return $body;
 			}
 		}
@@ -405,7 +404,6 @@ class KBDocument extends SugarBean {
             $row=$db->fetchByAssoc($result);
             if (!empty($row)) {
                 $body = $row['kbdocument_body'];
-                $body .="<onmouseover=\"alert('aa');\"";
                 return $body;
             }
         }

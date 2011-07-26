@@ -31,10 +31,6 @@ $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS
 //BEGIN SUGARCRM flav!=sales ONLY
 $admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
 //END SUGARCRM flav!=sales ONLY
-require_once 'include/SugarOAuthServer.php';
-if(SugarOAuthServer::enabled()) {
-    $admin_option_defs['Administration']['oauth']= array('Password','LBL_OAUTH_TITLE','LBL_OAUTH','./index.php?module=OAuthKeys&action=index');
-}
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
 
 //BEGIN SUGARCRM flav=dce ONLY
@@ -173,6 +169,10 @@ $admin_option_defs['Administration']['connector_settings']=array('icon_Connector
 
 $admin_option_defs['Administration']['languages']= array('Currencies','LBL_MANAGE_LANGUAGES','LBL_LANGUAGES','./index.php?module=Administration&action=Languages&view=default');
 $admin_option_defs['Administration']['global_search']=array('icon_SearchForm','LBL_GLOBAL_SEARCH_SETTINGS','LBL_GLOBAL_SEARCH_SETTINGS_DESC','./index.php?module=Administration&action=GlobalSearchSettings');
+require_once 'include/SugarOAuthServer.php';
+if(SugarOAuthServer::enabled()) {
+    $admin_option_defs['Administration']['oauth']= array('Password','LBL_OAUTH_TITLE','LBL_OAUTH','./index.php?module=OAuthKeys&action=index');
+}
 
 
 
@@ -272,7 +272,7 @@ if(file_exists('custom/modules/Administration/Ext/Administration/administration.
 
 //For users with MLA access we need to find which entries need to be shown.
 //lets process the $admin_group_header and apply all the access control rules.
-$access = get_admin_modules_for_user($current_user);
+$access = $current_user->getDeveloperModules();
 foreach ($admin_group_header as $key=>$values) {
 	$module_index = array_keys($values[3]);  //get the actual links..
 	foreach ($module_index as $mod_key=>$mod_val) {

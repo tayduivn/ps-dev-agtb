@@ -81,7 +81,7 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' nowrap>
 				{if $pageData.access.edit && $pageData.bean.moduleDir != "Employees"}
-					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}'><img border="0" src="{sugar_getimagepath file="edit_inline.gif"}"></a>
+					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$pageData.bean.moduleDir}'><img border="0" src="{sugar_getimagepath file="edit_inline.gif"}"></a>
 				{/if}
 			</td>
 			{/if}
@@ -117,7 +117,7 @@
 </table>
 <script type='text/javascript'>
 {literal}function lvg_nav(m,id,act,offset,t){if(t.href.search(/#/) < 0){return;}else{if(act=='pte'){act='ProjectTemplatesEditView';}else if(act=='d'){ act='DetailView';}else if( act =='ReportsWizard'){act = 'ReportsWizard';}else{ act='EditView';}{/literal}url = 'index.php?module='+m+'&offset=' + offset + '&stamp={$pageData.stamp}&return_module='+m+'&action='+act+'&record='+id;t.href=url;{literal}}}{/literal}
-{literal}function lvg_dtails(id){{/literal}return SUGAR.util.getAdditionalDetails( '{$params.module|default:$pageData.bean.moduleDir}',id, 'adspan_'+id);{literal}}{/literal}
+{literal}function lvg_dtails(id){{/literal}return SUGAR.util.getAdditionalDetails( '{$pageData.bean.moduleDir}',id, 'adspan_'+id);{literal}}{/literal}
 {if $contextMenus}
 	{$contextMenuScript}
 {/if}

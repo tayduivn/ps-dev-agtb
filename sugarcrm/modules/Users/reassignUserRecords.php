@@ -30,8 +30,7 @@ global $mod_strings;
 $mod_strings_users = $mod_strings;
 
 global $current_user;
-if(!is_admin($current_user)
-    && !is_admin_for_module($GLOBALS['current_user'],'Users')
+if(!$GLOBALS['current_user']->isAdminForModule('Users')
     //BEGIN SUGARCRM flav=sales ONLY
     && $GLOBALS['current_user']->user_type != 'UserAdministrator'
     //END SUGARCRM flav=sales ONLY

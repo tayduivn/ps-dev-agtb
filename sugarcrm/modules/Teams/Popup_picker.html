@@ -29,7 +29,6 @@
 <!-- $Id: Popup_picker.html 48692 2009-06-17 15:19:46Z clee $ -->
 <!-- BEGIN: main -->
 <!-- BEGIN: SearchHeader -->
-<script type="text/javascript" src="include/JSON.js?v={VERSION_MARK}"></script>
 <script type="text/javascript" src="include/javascript/popup_helper.js?v={VERSION_MARK}"></script>
 
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="edit view">
@@ -52,8 +51,8 @@
 <input type="hidden" name="user_id" value="{USER_ID}" />
 <input type="hidden" name="record_id" value="" />
 <br>
-<input type="submit" name="button" class="button" title="{APP.LBL_SEARCH_BUTTON_TITLE}" accessKey="{APP.LBL_SEARCH_BUTTON_KEY}" value="{APP.LBL_SEARCH_BUTTON_LABEL}" />
- <input type="reset" onclick="SUGAR.searchForm.clear_form(this.form); return false;" class="button" title="{APP.LBL_CLEAR_BUTTON_TITLE}" accesskey="{APP.LBL_CLEAR_BUTTON_KEY}" value="{APP.LBL_CLEAR_BUTTON_LABEL}">
+<input type="submit" name="button" class="button" title="{APP.LBL_SEARCH_BUTTON_TITLE}" accessKey="{APP.LBL_SEARCH_BUTTON_KEY}" value="{APP.LBL_SEARCH_BUTTON_LABEL}" id="search_form_submit"/>
+ <input type="reset" onclick="SUGAR.searchForm.clear_form(this.form); return false;" class="button" title="{APP.LBL_CLEAR_BUTTON_TITLE}" accesskey="{APP.LBL_CLEAR_BUTTON_KEY}" value="{APP.LBL_CLEAR_BUTTON_LABEL}" id="search_form_clear">
 <input type="hidden" name="mode" value="{MULTI_SELECT}" />
 </td>
 </tr>
@@ -62,17 +61,6 @@
 </td>
 </tr>
 </table>
-
-<script type="text/javascript">
-<!--
-/* initialize the popup request from the parent */
-
-if(window.document.forms['popup_query_form'].request_data.value == "")
-{
-	window.document.forms['popup_query_form'].request_data.value = YAHOO.lang.JSON.stringify(window.opener.get_popup_request_data());
-}
--->
-</script>
 
 <!-- END: SearchHeader -->
 <table cellpadding="0" cellspacing="0" width="100%" border="0" class="list view">
