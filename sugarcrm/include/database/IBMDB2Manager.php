@@ -1221,7 +1221,10 @@ EOQ;
      */
 	public function dropTableNameSQL($name)
     {
-        return parent::dropTableNameSQL(strtoupper($name));
+
+        $return = parent::dropTableNameSQL(strtoupper($name));
+        $this->reorgQueueRemoveTable($name);
+        return $return;
 	}
 
     /**+
@@ -1634,16 +1637,45 @@ EOQ;
 
     /// START REORG QUEUE FUNCTIONALITY
 
+    /**
+     * Protected variable that keeps lists of database objects that require reorganization
+     * @var array
+     */
     protected $reorgQueues = array(
         'table' => array(),
         //'index' => array(), // We currently don't need to reorg indexes, this is for future changes
     );
 
+    /**
+     * Adds the specified table to the queue for reorganization
+     * @param $name
+     * @return void
+     */
     protected function reorgQueueAddTable($name)
     {
-        $this->reorgQueues['table'] []= $name;
+        $this->reorgQueues['table'] []= strtoupper($name);
     }
 
+    /**
+     * Removes the specified table from the reorganization queue if it was already added.
+     * @param $name
+     * @return void
+     */
+    protected function reorgQueueRemoveTable($name)
+    {
+        $name = strtoupper($name);
+        $this->reorgQueues['table'] = array_filter($this->reorgQueues['table'],
+                                                        function ($element) use ($name)
+                                                        {
+                                                            return ($element != $name);
+                                                        }
+                                                    );
+    }
+
+    /**
+     * Performs the REORG for any database objects (pending reorganization) in the reorg queue
+     * @return void
+     */
     protected function executeReorgs()
     {
         $tables = array_unique($this->reorgQueues['table']);
