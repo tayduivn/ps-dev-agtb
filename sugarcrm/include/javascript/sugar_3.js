@@ -333,6 +333,12 @@ function isValidPrecision(value, precision){
 		}
 	}
 	//#27021   end
+	if(value.charAt(value.length-precision-1) == num_grp_sep){
+		if(value.substr(value.indexOf(dec_sep), 1)==dec_sep){
+			return false;
+		}
+		return 	true;
+	}
 	var actualPrecision = value.substr(value.indexOf(dec_sep)+1, value.length).length;
 	return actualPrecision == precision;
 }
