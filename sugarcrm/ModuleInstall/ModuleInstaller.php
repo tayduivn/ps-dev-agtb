@@ -353,7 +353,9 @@ class ModuleInstaller{
 				}
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from);
+                } else {
 				    $target = $this->id_name;
 				}
 				if(!empty($from)) {
@@ -390,7 +392,9 @@ class ModuleInstaller{
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from);
+                } else {
 				    $target = $this->id_name;
 				}
 				$disabled_path = $path.'/'.DISABLED_PATH;
@@ -444,7 +448,9 @@ class ModuleInstaller{
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from);
+                }else {
 				    $target = $this->id_name;
 				}
 				$disabled_path = $path.'/'.DISABLED_PATH;
@@ -486,7 +492,9 @@ class ModuleInstaller{
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from);
+                } else {
 				    $target = $this->id_name;
 				}
 				if(!file_exists($path)) {
