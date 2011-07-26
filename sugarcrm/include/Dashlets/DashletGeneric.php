@@ -233,6 +233,7 @@ class DashletGeneric extends Dashlet {
         $this->configureSS->assign('showMyItemsOnly', $this->showMyItemsOnly);
         $this->configureSS->assign('myItemsOnly', $this->myItemsOnly);
         $this->configureSS->assign('searchFields', $this->currentSearchFields);
+        $this->configureSS->assign('showClearButton', $this->isConfigPanelClearShown);
         // title
         $this->configureSS->assign('dashletTitle', $this->title);
 
