@@ -4,7 +4,10 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setup()
     {
-    	$this->useOutputBuffering = false;
+	    require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;	
+	    //$this->useOutputBuffering = false;
     }
     
     public function testGetRelateJoin()
@@ -34,17 +37,18 @@ class Bug40658Test extends Sugar_PHPUnit_Framework_TestCase
 		    'len' => 255,
 		    'size' => 20,
 		    'id_name' => 'def_m1_id_c',
-		    'ext2' => 'def_M1',
-		    'module' => 'def_M1',
+		    'ext2' => 'Accounts',
+		    'module' => 'Accounts',
 		    'rname' => 'name',
 		    'quicksearch' => 'enabled',
 		    'studio' => 'visible',
 		    'id' => 'def_M1m1_related_c',
-		    'custom_module' => 'def_M1',
+		    'custom_module' => 'Accounts',
 	    );
 		
 	    $joinTableAlias = 'jt1';
 	    $relatedJoinInfo = $dynamicField->getRelateJoin($field_def, $joinTableAlias);
+	    //echo var_export($relatedJoinInfo, true);
 	    $this->assertEquals(', accounts_cstm.def_m1_id_c, jt1.name m1_related_c ', $relatedJoinInfo['select']);
     }
     
@@ -71,7 +75,12 @@ require_once('modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php');
 
 class SubpanelMetaDataParserMock extends SubpanelMetaDataParser
 {
-	
+	//Override constructor... don't do anything
+	function __construct ($subpanelName , $moduleName , $packageName = '')
+	{
+		
+	}
+		
 	public function makeRelateFieldsAsLink($defs)
 	{
 		$this->_moduleName = 'def_M1';

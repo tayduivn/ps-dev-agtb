@@ -92,7 +92,7 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
       
       
       <div style="font-size: 14px;">
-      	<a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>InsideView:</strong></a> <strong>Real-time Sales Intelligence.</strong>
+      	<a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; font-size: 14px;'><strong style='color: #d71e00;'>{$connector_language.LBL_TAGLINK}</strong></a> <strong>{$connector_language.LBL_TAGLINE}</strong>
       </div>
       
    
@@ -102,18 +102,18 @@ YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Connectors&action=CallC
       
 
 
-        Get relevant company information, contacts, news, and social media insights.<br> InsideView is a <strong>FREE</strong> service that automatically displays key sales intelligence<br/> directly in your Sugar Leads, Accounts, Contacts and Opportunities.
+        {$connector_language.iv_description0}<br>{$connector_language.iv_description1}<strong>{$connector_language.iv_description2}</strong>{$connector_language.iv_description3}<br/>{$connector_language.iv_description4}
 
        
       </div>
       
       
-         <div style="float: right; padding-bottom: 10px; width: 190px;"><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none;'><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/></a><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>InsideView in<br>30 seconds.</a></div>
+         <div style="float: right; padding-bottom: 10px; width: 190px;"><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none;'><img style="margin-right: 10px; border-radius: 6px 6px 6px 6px; -moz-border-radius: 6px 6px 6px 6px; -webkit-border-radius: 6px 6px 6px 6px;" src="{$video}" align="left"/></a><a href='http://www.insideview.com/SUGARCRM/' target='_blank' style='text-decoration: none; position: relative; top: 15px;'>{$connector_language.LBL_VID0}<br>{$connector_language.LBL_VID1}</a></div>
       
                <hr style="width: 775px; border-color: #eee; background-color: #eee;">
      <form>
-     <input type="checkbox" class="checkbox" name="insideview_accept_box" id="insideview_accept_box" onClick='toggleGettingStartedButton();'/>&nbsp;I agree to InsideView's  <a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>terms of use</a> and <a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>privacy policy</a>.
-         <button name="insideview_accept_button" id="insideview_accept_button" onclick="allowInsideView(); return false;" class='button primary' style='height: 25px; float: right; border: 1px solid #821200; background-color: #eeeeee; background-image: none; text-shadow: 1px 1px #FFFFFF; color: #222; margin-bottom: 0px; background-image: -moz-linear-gradient(center top , #F9F9F9 0%, #F2F2F2 50%, #F1F1F1 50%, #DDDDDD 100%); background-image: -webkit-gradient( linear,left top,left bottom,color-stop(0, #f9f9f9),color-stop(.5, #F2F2F2),color-stop(.5, #F1F1F1),color-stop(1, #DDDDDD)); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f9f9f9", endColorstr="#DDDDDD");'>Get Started!</button>
+     <input type="checkbox" class="checkbox" name="insideview_accept_box" id="insideview_accept_box" onClick='toggleGettingStartedButton();'/>&nbsp;{$connector_language.LBL_TOS0}<a href='http://www.insideview.com/cat-terms-use.html' target='_blank' style='text-decoration: none;'>{$connector_language.LBL_TOS1}</a>{$connector_language.LBL_TOS2}<a href='http://www.insideview.com/cat-privacy.html' target='_blank' style='text-decoration: none;'>{$connector_language.LBL_TOS3}</a>.
+         <button name="insideview_accept_button" id="insideview_accept_button" onclick="allowInsideView(); return false;" class='button primary' style='height: 25px; float: right; border: 1px solid #821200; background-color: #eeeeee; background-image: none; text-shadow: 1px 1px #FFFFFF; color: #222; margin-bottom: 0px; background-image: -moz-linear-gradient(center top , #F9F9F9 0%, #F2F2F2 50%, #F1F1F1 50%, #DDDDDD 100%); background-image: -webkit-gradient( linear,left top,left bottom,color-stop(0, #f9f9f9),color-stop(.5, #F2F2F2),color-stop(.5, #F1F1F1),color-stop(1, #DDDDDD)); filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#f9f9f9", endColorstr="#DDDDDD");'>{$connector_language.LBL_GET_STARTED}</button>
           
      </form>
       <div class="clear"></div>

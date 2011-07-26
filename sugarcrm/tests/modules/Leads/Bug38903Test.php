@@ -7,6 +7,13 @@ require_once 'modules/Expressions/Expression.php';
  */
 class Bug38903Test extends Sugar_PHPUnit_Framework_TestCase
 {
+	public function setUp()
+	{
+	    require('include/modules.php');
+	    $GLOBALS['beanList'] = $beanList;
+	    $GLOBALS['beanFiles'] = $beanFiles;		
+	}	
+	
     public function testAccountNameExists()
     {
         $bean = new Expression();

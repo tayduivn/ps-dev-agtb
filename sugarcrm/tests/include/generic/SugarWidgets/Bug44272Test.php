@@ -12,11 +12,14 @@ var $account;
 public function setUp()
 {
 	$this->account = SugarTestAccountUtilities::createAccount();
+	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	$GLOBALS['current_user']->is_admin = true;
 }	
 
 public function tearDown()
 {
 	SugarTestAccountUtilities::removeAllCreatedAccounts();
+	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 }
 	
 public function testSugarWidgetSubpanelTopButtonQuickCreate()
