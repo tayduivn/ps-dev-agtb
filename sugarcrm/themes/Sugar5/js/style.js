@@ -213,7 +213,7 @@ YAHOO.util.Event.onDOMReady(function()
 /**
  * For the module list menu
  */
-SUGAR.themes = SUGAR.namespace("themes");
+SUGAR.namespace("themes");
 
 SUGAR.append(SUGAR.themes, {
     allMenuBars: {},
@@ -269,6 +269,9 @@ SUGAR.append(SUGAR.themes, {
                 oMenuBar = currMenuBar;
             }
         }
+
+        // Attach hover listeners
+        IKEADEBUG();
     }
 });
 
