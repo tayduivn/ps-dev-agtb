@@ -1690,10 +1690,10 @@ function initEditView(theForm) {
     if (theForm.id == 'popup_query_form') {
     	return;
     }
-	if ( typeof editViewSnapshots == 'undefined' ) {
+	if ( typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
         editViewSnapshots = new Object();
     }
-    if ( typeof SUGAR.loadedForms == 'undefined' ) {
+    if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
     	SUGAR.loadedForms = new Object();
     }
 
