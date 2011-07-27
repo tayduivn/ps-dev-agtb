@@ -91,6 +91,26 @@ class OneToManyRelationship extends AbstractRelationship
         );
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    function buildWirelessSubpanelDefinitions ()
+    {
+        if ($this->relationship_only)
+            return array () ;
+
+        $source = "";
+        if ($this->rhs_module == $this->lhs_module)
+        {
+        	$source = $this->getJoinKeyLHS();
+        }
+
+        return array(
+        	$this->lhs_module => $this->getWirelessSubpanelDefinition (
+        		$this->relationship_name, $this->rhs_module, $this->rhs_subpanel , $this->getRightModuleSystemLabel() , $source
+        	)
+        );
+    }
+    //END SUGARCRM flav=pro ONLY
+
     /*
      * @return array    An array of field definitions, ready for the vardefs, keyed by module
      */

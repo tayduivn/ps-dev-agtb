@@ -251,8 +251,8 @@ class SugarWirelessView extends SugarView
             else if (file_exists('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
                 require_once('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
             }
-            if (! $original_only && file_exists ( 'custom/modules/' . $this->module . '/Ext/Layoutdefs/wireless.subpaneldefs.ext.php' ))
-				require ('custom/modules/' . $this->module . '/Ext/Layoutdefs/wireless.subpaneldefs.ext.php') ;
+            if (! $original_only && file_exists ( 'custom/modules/' . $this->module . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php' ))
+				require ('custom/modules/' . $this->module . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php') ;
 
 			if (! empty ( $layout_def_key ))
 				$this->subpanel_layout_defs = $layout_defs [ $layout_def_key ] ;
