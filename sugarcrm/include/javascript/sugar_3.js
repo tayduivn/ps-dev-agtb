@@ -348,22 +348,23 @@ function toDecimal(original, precision) {
 }
 
 function isInteger(s) {
-	if (typeof s == "string" && s == "")
-        return true;
-    if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
 	}
-	return parseFloat(s) == parseInt(s) && !isNaN(s);
+	return /^[+-]?[0-9]*$/.test(s) ;
+}
+
+function isDecimal(s) {
+	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	{
+		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
+	}
+	return  /^[+-]?[0-9]+\.?[0-9]*$/.test(s) ;
 }
 
 function isNumeric(s) {
-  if(!/^-*[0-9\.]+$/.test(s)) {
-   		return false
-   }
-   else {
-		return true;
-   }
+	return isDecimal(s);
 }
 
 var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
@@ -830,6 +831,12 @@ function validate_form(formname, startsWith){
 						  break;	
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
+								isError = true;
+								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
+							}
+							break;
+						case 'decimal':
+							if(!isDecimal(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
 								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
 							}
