@@ -3890,6 +3890,7 @@ border-left: 1px solid #ccc;
 #moduleList .dashletPanelMenu .yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel:link, .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel:link, li.current .dashletPanelMenu  a.yuimenuitemlabel:visited { 
 background: none;
 background-color: transparent;
+filter: none;
 cursor:pointer;
 border: none;
 color:#666;
