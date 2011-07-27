@@ -19,22 +19,19 @@
  ********************************************************************************/
 
 //Use loader to grab the modules needed
-var DCMenu = {};
-
-YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
+var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
     //Make this an Event Target so we can bubble to it
     var requests = {};
     var overlays = [];
     var overlayDepth = 0;
     var menuFunctions = {};
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
-    
     function getOverlay(depth){
     		if(!depth)depth = 0;
     		if(typeof overlays[depth] == 'undefined'){
     			 overlays[depth] = new Y.Overlay({
             			bodyContent: "",
-           			    zIndex:10 + depth,
+           			    zIndex:21 + depth,
             			shim:false,
             			visibility:false
         		});
@@ -74,13 +71,13 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
         lastLoadedMenu = module;
 
     	if(typeof menuFunctions[module] == 'undefined'){
-    		this.loadView(module, 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,null,null,title);
+    		loadView(module, 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,null,null,title); 	
     	}	
     }
     
     
     DCMenu.displayModuleMenu = function(obj, module){
-    	this.loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module);
+    	loadView(module, 'index.php?module=' + module + '&action=ajaxmenu', 0, 'moduleTabLI_' + module); 	
     	
     }
     
@@ -110,19 +107,18 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
                             }
                         }
     					overlays[i].hide();
-                        overlays[i].destroy();
-                        overlays.splice(i, 1);
     				}
     			}
 				i++;
     		}
     }
-
     DCMenu.minimizeOverlay = function(){
+ 		//isIE7 = ua.indexOf('msie 7')!=-1;
+		//box_style = isIE7 ? 'position:fixed; width:750px;' : 'none';
+		
      	Y.one('#dcboxbody').setStyle('display','none');
      	Y.one('#dcboxbody').setStyle('width', '950px;');
     }
-    
     function setBody(data, depth, parentid,type,title,extraButton){
 			if(typeof(data.html) == 'undefined')data = {html:data};
 			//Check for the login page, meaning we have been logged out.
@@ -132,6 +128,7 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
     		var overlay = getOverlay(depth);
     		
     		ua = navigator.userAgent.toLowerCase();
+    		isIE7 = ua.indexOf('msie 7')!=-1;
 
             //set the title if it was passed in the data array
             if((typeof(title) == 'undefined' || title =='')&&(typeof(data.title)!='undefined')){
@@ -153,7 +150,7 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
 	    		
 	    		 content += '<div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
     		}
-    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd"><div class="tl"></div><div class="hd-center">';
+    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd">';
 			if ( title !== undefined )
 			    content +=	'<span>' + title + '</span>';
 			else
@@ -164,7 +161,7 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
             if ( extraButton != null ) {
                 content += extraButton
             }
-            content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent">' + data.html + '</div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div>';
+            content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
     		overlay.set('bodyContent', content);
 
             //eval the contents if the eval parameter is passed in.  This will ensure that quick search, validation,
@@ -179,11 +176,9 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
 	DCMenu.showView = function(data, parent_id){
 		setBody(data, 0, parent_id);
 	}
-
 	DCMenu.iFrame = function(url, width, height){
 		setBody("<iframe style='border:0px;height:" + height + ";width:" + width + "'src='" + url + "'></iframe>");
 	}
-    
 	//BEGIN SUGARCRM flav=pro ONLY
     DCMenu.addToFavorites = function(item, module, record){
 		Y.one(item).replaceClass('off', 'on');
@@ -354,6 +349,9 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
         window.open(DCMenu.hostMeetingUrl, 'hostmeeting');
     }
 
+
+
+
     DCMenu.loadView = function(type,url, depth, parentid, title, extraButton){
         if ( extraButton == undefined ) { extraButton = null; }
         var id = Y.io(url, {
@@ -403,7 +401,8 @@ YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", combo
          });
         requests[id.id] = {type:type, url:url, parentid:parentid, depth:depth, extraButton:extraButton};
     }
-    
+
+    var loadView = Y.loadView;
     DCMenu.notificationsList = function(q){
 		quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=quicklist', notificationsListDisplay );
 	}
