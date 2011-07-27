@@ -28,7 +28,7 @@
 <!-- END: error -->
 
 
-			<form enctype="multipart/form-data" name="MailMerge" method="POST" action="index.php">
+			<form enctype="multipart/form-data" name="MailMerge" method="POST" action="index.php" onsubmit='return false'>
 			<input type="hidden" name="module" value="MailMerge">
 			<input type="hidden" name="step" id="step" value="{STEP}">
 			<input type="hidden" name="action" value="index">
@@ -46,8 +46,8 @@
 	</tr>
 	<tr><td><slot>&nbsp;</slot></td></tr>
 	<tr>
-	<td><input type='text' id="searchText" name="searchText"></td>
-	<td><input type="button" id="searchSubmit" value="Search" onClick="search();" class='button'></td>
+	<td><input type='text' id="searchText" name="searchText" ONKEYDOWN="javascript:return displayKeyCode(event)"></td>
+	<td><input type="submit" id="searchSubmit" value="Search" accessKey="" onClick="search();" class='button'></td>
 	</tr>
 	<tr><td>{MAIL_MERGE_CAMPAIGN_PROSPECT_SELECTOR}</td></tr>
 	</table>
@@ -117,6 +117,12 @@ var mOffset = 0;
 var max = 20;
 var mWhere = "{MAILMERGE_WHERE}";
 var orderBy = '';
+
+function submit_form()
+{
+	document.MailMerge.action='index.php';
+	document.MailMerge.submit();
+}
 
 function ResponseObj()
 {
@@ -350,6 +356,8 @@ function validateForm()
 	
 	if(selObjs.options.length > 0)
 	{
+		document.MailMerge.action='index.php';
+		document.MailMerge.submit();
 		return true;
 	}
 	else
