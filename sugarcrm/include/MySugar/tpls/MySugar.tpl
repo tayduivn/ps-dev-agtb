@@ -97,10 +97,10 @@ document.body.setAttribute("class", "yui-skin-sam");
                 fc = this.innerElement.firstChild;
 
                 if (fc) {
-                    if (fc.className != "container-close") {
-                        this.innerElement.insertBefore(oClose, fc);
-                    } else {
+                    if (fc.className == "container-close") {
                         this.innerElement.replaceChild(oClose, fc);
+                    } else {
+                        this.innerElement.insertBefore(oClose, fc);
                     }
                 } else {
                     this.innerElement.appendChild(oClose);
