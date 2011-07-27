@@ -57,74 +57,76 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
     
 
     function & displayList($layout_def)
-    {
-        static $currencies;
-        // If it's not grouped, or if it's grouped around a system currency column, look up the currency symbol so we can display it next to the amount
-        if ( empty($layout_def['group_function']) || $this->isSystemCurrency($layout_def) ) {
-            if ( isset($layout_def['varname']) ) {
-                $key = $layout_def['varname'];
-            } else {
-                $key = $this->_get_column_alias($layout_def);
-            }
-            $key = strtoupper($key);
-
-            if ( $this->isSystemCurrency($layout_def) ) {
-                $currency_id = '-99';
-            } else {
-                if (isset($layout_def['fields'][$key.'_CURRENCY']))
-                    $currency_id = $layout_def['fields'][$key.'_CURRENCY'];
-                else
-                    $currency_id = $layout_def['fields'][$this->getTruncatedColumnAlias($this->_get_column_alias($layout_def)."_currency")];
-            }
-            if ( empty($currency_id) ) {
-                $currency_id = '-99';
-            }
-
-            if ( !isset($currencies[$currency_id]) ) {
-                $currencies[$currency_id] = new Currency();
-                $currencies[$currency_id]->retrieve($currency_id);
-            }
-            if(!empty($currencies[$currency_id]->symbol)){
-                $symbol = $currencies[$currency_id]->symbol.' ';
+        {
+            static $currencies;
+            // If it's not grouped, or if it's grouped around a system currency column, look up the currency symbol so we can display it next to the amount
+            if ( empty($layout_def['group_function']) || $this->isSystemCurrency($layout_def) ) {
+                if ( isset($layout_def['varname']) ) {
+                    $key = $layout_def['varname'];
+                } else {
+                    $key = $this->_get_column_alias($layout_def);
+                }
+                $key = strtoupper($key);
+                
+                if ( $this->isSystemCurrency($layout_def) ) {
+                    $currency_id = '-99';
+                } else {
+                    if (isset($layout_def['fields'][$key.'_CURRENCY']))
+                        $currency_id = $layout_def['fields'][$key.'_CURRENCY'];
+                    else     
+                        $currency_id = $layout_def['fields'][$this->getTruncatedColumnAlias($this->_get_column_alias($layout_def)."_currency")];
+                }
+                if ( empty($currency_id) ) {
+                    $currency_id = '-99';
+                }
+                
+                if ( !isset($currencies[$currency_id]) ) {
+                    $currencies[$currency_id] = new Currency();
+                    $currencies[$currency_id]->retrieve($currency_id);
+                }
+                if(!empty($currencies[$currency_id]->symbol)){
+                    $symbol = $currencies[$currency_id]->symbol.' ';
+                } else {
+                    $symbol = '';
+                }
             } else {
                 $symbol = '';
             }
-        } else {
-            $symbol = '';
-        }
 //                $global_currency_obj = get_currency();
 //                  $display = format_number($this->displayListPlain($layout_def), 2, 2, array('convert' => true, 'currency_symbol' => true));
 //                $display =  $global_currency_obj->symbol. round($global_currency_obj->convertFromDollar($this->displayListPlain($layout_def)),2);
-        $value = $this->displayListPlain($layout_def);
-        $display = $symbol.$value;
+            $value = $this->displayListPlain($layout_def);
+            $display = $symbol.$value;
             
-        if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit']) {
-            if(!empty($layout_def['column_key'])){
-                $field_def = $this->reporter->all_fields[$layout_def['column_key']];
-            }else if(!empty($layout_def['fields'])){
-                $field_def = $layout_def['fields'];
-            }
-            $record = '';
-
-            if ($layout_def['table_key'] == 'self' && !empty($layout_def['fields']['PRIMARYID']))
-                $record = $layout_def['fields']['PRIMARYID'];
-            else if (isset($layout_def['fields'][strtoupper($layout_def['table_alias']."_id")])){
-                $record = $layout_def['fields'][strtoupper($layout_def['table_alias']."_id")];
-            }
-            if (!empty($record)) {
-                $field_name = $layout_def['name'];
-                $field_type = $field_def['type'];
-                $module = $field_def['module'];
-
-                $div_id = $module ."&$record&$field_name";
-                $str = "<div id='$div_id'>".$display;
-                global $sugar_config;
-                    $str .= "&nbsp;" .SugarThemeRegistry::current()->getImage("edit_inline","border='0' alt='Edit Layout' align='bottom' onClick='SUGAR.reportsInlineEdit.inlineEdit(\"$div_id\",\"$value\",\"$module\",\"$record\",\"$field_name\",\"$field_type\",\"$currency_id\",\"$symbol\");'");
-                $str .= "</div>";
-                return $str;
-            }
+            
+            
+        if(!empty($layout_def['column_key'])){
+            $field_def = $this->reporter->all_fields[$layout_def['column_key']];    
+        }else if(!empty($layout_def['fields'])){
+            $field_def = $layout_def['fields'];
         }
-        return $display;
+        $record = '';
+        if ($layout_def['table_key'] == 'self' && isset($layout_def['fields']['PRIMARYID']))
+            $record = $layout_def['fields']['PRIMARYID'];
+        else if (isset($layout_def['fields'][strtoupper($layout_def['table_alias']."_id")])){ 
+            $record = $layout_def['fields'][strtoupper($layout_def['table_alias']."_id")];
+        }
+        if (!empty($record)) {
+	        $field_name = $layout_def['name'];
+	        $field_type = $field_def['type'];
+	        $module = $field_def['module'];
+	
+	        $div_id = $module ."&$record&$field_name";
+	        $str = "<div id='$div_id'>".$display;
+            global $sugar_config;
+            if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit']) {
+                $str .= "&nbsp;" .SugarThemeRegistry::current()->getImage("edit_inline","border='0' alt='Edit Layout' align='bottom' onClick='SUGAR.reportsInlineEdit.inlineEdit(\"$div_id\",\"$value\",\"$module\",\"$record\",\"$field_name\",\"$field_type\",\"$currency_id\",\"$symbol\");'");
+            }
+	        $str .= "</div>";
+	        return $str;
+        }
+        else
+            return $display;
     }
                              
     function displayListPlain($layout_def) {
