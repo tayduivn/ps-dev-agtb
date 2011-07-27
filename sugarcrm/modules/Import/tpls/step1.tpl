@@ -77,7 +77,7 @@
                                     <input type="hidden" name="source" value="csv" />
                                 </td>
                             </tr>
-                            {* //END SUGARCRM flav=pro ONLY *}
+                            {* //END SUGARCRM flav=com ONLY *}
                             {* //BEGIN SUGARCRM flav=pro ONLY *}
                             <tr>
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
