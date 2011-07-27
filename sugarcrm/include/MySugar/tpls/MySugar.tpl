@@ -75,6 +75,55 @@ document.body.setAttribute("class", "yui-skin-sam");
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/dashlets.js'}"></script>
 <script type='text/javascript' src='{sugar_getjspath file='include/MySugar/javascript/MySugar.js'}'></script>
+<script type="text/javascript">
+    //{literal}
+    YAHOO.widget.Panel.prototype.configClose = function (type, args, obj) {
+        var val = args[0],
+            oClose = this.close,
+            strings = this.cfg.getProperty("strings"),
+            fc;
+
+        if (val) {
+            if (!oClose) {
+
+                if (!this.m_oCloseIconTemplate) {
+                    this.m_oCloseIconTemplate = document.createElement("a");
+                    this.m_oCloseIconTemplate.className = "container-close";
+                    this.m_oCloseIconTemplate.href = "#";
+                }
+
+                oClose = this.m_oCloseIconTemplate.cloneNode(true);
+
+                fc = this.innerElement.firstChild;
+
+                if (fc) {
+                    if (fc.className == "container-close") {
+                        this.innerElement.replaceChild(oClose, fc);
+                    } else {
+                        this.innerElement.insertBefore(oClose, fc);
+                    }
+                } else {
+                    this.innerElement.appendChild(oClose);
+                }
+
+                oClose.innerHTML = (strings && strings.close) ? strings.close : "&#160;";
+
+                YAHOO.util.Event.on(oClose, "click", this._doClose, this, true);
+
+                this.close = oClose;
+
+            } else {
+                oClose.style.display = "block";
+            }
+
+        } else {
+            if (oClose) {
+                oClose.style.display = "none";
+            }
+        }
+    }
+    //{/literal}
+</script>
 <link rel='stylesheet' href='{sugar_getjspath file='include/ytree/TreeView/css/folders/tree.css'}'>
 
 
