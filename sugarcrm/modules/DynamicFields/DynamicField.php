@@ -498,7 +498,7 @@ class DynamicField {
         $fmd = new FieldsMetaData();
         $id =  $fmd->retrieve($object_name.$db_name,true, false);
         $is_update = false;
-        $label = $field->label;
+        $label = strtoupper( $field->label );
         if(!empty($id)){
             $is_update = true;
         }else{
