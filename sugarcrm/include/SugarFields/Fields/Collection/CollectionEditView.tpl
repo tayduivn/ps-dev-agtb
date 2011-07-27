@@ -30,7 +30,10 @@
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Collection/SugarFieldCollection.js"}'></script>
 <script type="text/javascript">
     var collection = (typeof collection == 'undefined') ? new Array() : collection;
-    collection['{$displayParams.formName}_{$vardef.name}'] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
+    SUGAR.util.doWhen("SUGAR.collection != null", function() {ldelim}
+        collection['{$displayParams.formName}_{$vardef.name}'] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
+    {rdelim});
+
 </script>
 <input type="hidden" id="update_fields_{$displayParams.formName}_{$vardef.name}_collection" name="update_fields_{$displayParams.formName}_{$vardef.name}_collection" value="">
 <input type="hidden" id="{$displayParams.formName}_{$vardef.name}_new_on_update" name="{$displayParams.formName}_{$vardef.name}_new_on_update" value="{$displayParams.new_on_update}">
