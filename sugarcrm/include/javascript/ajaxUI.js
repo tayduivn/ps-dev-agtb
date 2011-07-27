@@ -1,5 +1,5 @@
 /**
- * 
+ *
  * Find more about the scrolling function at
  * http://cubiq.org/iscroll
  *
@@ -163,6 +163,7 @@ SUGAR.ajaxUI = {
     cleanGlobals : function()
     {
         sqs_objects = {};
+        QSProcessedFieldsArray = {};
         collection = {};
         //Reset the EmailAddressWidget before loading a new page
         if (SUGAR.EmailAddressWidget){
