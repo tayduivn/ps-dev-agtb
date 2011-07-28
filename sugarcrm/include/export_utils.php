@@ -757,16 +757,18 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
         //lets iterate through and create a reordered temporary array using
         //the  newly formatted copy of passed in array
         $temp_result_arr = array();
-        foreach($field_order_array[strtolower($name)] as $fk=> $fv){
-
-            //if the value exists as a key in the passed in array, add to temp array and remove from reorder array.
-            //Do not force into the temp array as we don't want to violate acl's
-            if(array_key_exists($fk,$newReorder)){
-                $temp_result_arr[$fk] = $newReorder[$fk];
-                unset($newReorder[$fk]);
-            }
+        $lname = strtolower($name);
+        if(!empty($field_order_array[$lname])) {
+	        foreach($field_order_array[$lname] as $fk=> $fv){
+	
+	            //if the value exists as a key in the passed in array, add to temp array and remove from reorder array.
+	            //Do not force into the temp array as we don't want to violate acl's
+	            if(array_key_exists($fk,$newReorder)){
+	                $temp_result_arr[$fk] = $newReorder[$fk];
+	                unset($newReorder[$fk]);
+	            }
+	        }
         }
-
         //add in all the left over values that were not in our ordered list
         //array_splice($temp_result_arr, count($temp_result_arr), 0, $newReorder);
         foreach($newReorder as $nrk=>$nrv){
@@ -776,8 +778,8 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
 
         if($exclude){
             //Some arrays have values we wish to exclude
-            if (isset($fields_to_exclude[strtolower($name)])){
-                foreach($fields_to_exclude[strtolower($name)] as $exclude_field){
+            if (isset($fields_to_exclude[$lname])){
+                foreach($fields_to_exclude[$lname] as $exclude_field){
                     unset($temp_result_arr[$exclude_field]);
                 }
             }
