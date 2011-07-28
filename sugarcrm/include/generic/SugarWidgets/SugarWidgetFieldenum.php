@@ -115,7 +115,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField {
         $cell = $this->displayListPlain($layout_def);
         $str = $cell;
         global $sugar_config;
-        if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit'] && !empty($record) ) {
+        if (isset ($sugar_config['enable_inline_reports_edit']) && $sugar_config['enable_inline_reports_edit']) {
             $module = $this->reporter->all_fields[$layout_def['column_key']]['module'];
             $name = $layout_def['name'];
             $layout_def['name'] = 'id';
