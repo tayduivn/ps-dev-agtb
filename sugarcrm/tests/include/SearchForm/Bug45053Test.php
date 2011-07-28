@@ -74,13 +74,12 @@ class Bug45053Test extends Sugar_PHPUnit_Framework_TestCase
     	
     	require 'modules/Opportunities/vardefs.php';
     	require 'modules/Opportunities/metadata/SearchFields.php';
-    	require 'modules/Opportunities/metadata/Searchdefs.php';
+    	require 'modules/Opportunities/metadata/searchdefs.php';
         $this->searchForm->searchFields = $searchFields[$this->searchForm->module]; 
         $this->searchForm->searchdefs = $searchdefs[$this->searchForm->module]; 
         $this->searchForm->fieldDefs = $this->opportunity->getFieldDefinitions();                        
     	$this->searchForm->populateFromArray($this->requestArray,'advanced_search',false);
     	$test_sales_stage = $this->searchForm->fieldDefs['sales_stage_advanced']['value'];
-    	echo $test_sales_stage;
     	$this->assertEquals($this->requestArray['sales_stage'], $test_sales_stage);
 
     }
