@@ -165,7 +165,7 @@ SugarVCalClient.prototype.parseResults = function(textResult, adjusted) {
 }
 
 SugarVCalClient.parseResults = SugarVCalClient.prototype.parseResults;
-
+}
 //////////////////////////////////////////////////
 // class: SugarRPCClient
 // wrapper around async JSON-RPC client class
