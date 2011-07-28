@@ -669,52 +669,6 @@ class IBMDB2Manager  extends DBManager
         return true;
     }
 
-    /**
-     * @see DBManager::repairTableParams()
-     *
-     * For MySQL, we can write the ALTER TABLE statement all in one line, which speeds things
-     * up quite a bit. So here, we'll parse the returned SQL into a single ALTER TABLE command.
-     */
-    public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
-    {
-        $sql = parent::repairTableParams($tablename,$fielddefs,$indices,false,$engine);
-
-        if ( $sql == '' )
-            return '';
-
-        if ( stristr($sql,'create table') )
-        {
-            if ($execute) {
-                $msg = "Error creating table: ".$tablename. ":";
-                $this->query($sql,true,$msg);
-	        }
-            return $sql;
-        }
-
-        // first, parse out all the comments
-        $match = array();
-        preg_match_all('!/\*.*?\*/!is', $sql, $match);
-        $commentBlocks = $match[0];
-        $sql = preg_replace('!/\*.*?\*/!is','', $sql);
-
-        // now, we should only have alter table statements
-        // let's replace the 'alter table name' part with a comma
-        $sql = preg_replace("!alter table $tablename!is",', ', $sql);
-
-        // re-add it at the beginning
-        $sql = substr_replace($sql,'',strpos($sql,','),1);
-        $sql = str_replace(";","",$sql);
-        $sql = str_replace("\n","",$sql);
-        $sql = "ALTER TABLE $tablename $sql";
-
-        if ( $execute )
-            $this->query($sql,'Error with MySQL repair table');
-
-        // and re-add the comments at the beginning
-        $sql = implode("\n",$commentBlocks) . "\n". $sql . "\n";
-
-        return $sql;
-    }
 
     /**~
     * @see DBManager::convert()
