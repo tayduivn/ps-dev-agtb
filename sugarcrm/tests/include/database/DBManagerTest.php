@@ -271,7 +271,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $cols = $this->_db->get_columns($tableName);
         $this->assertArrayHasKey('bar', $cols);
         $this->assertEquals('bar', $cols['bar']['name']);
-        $this->assertEquals('int', $cols['bar']['type']);
+        $this->assertEquals($this->_db->getColumnType('int'), $cols['bar']['type']);
 
         $this->dropTableName($tableName);
     }
@@ -317,7 +317,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         $cols = $this->_db->get_columns($tableName);
         $this->assertArrayHasKey('bazz', $cols);
         $this->assertEquals('bazz', $cols['bazz']['name']);
-        $this->assertEquals('int', $cols['bazz']['type']);
+        $this->assertEquals($this->_db->getColumnType('int'), $cols['bazz']['type']);
 
         $this->dropTableName($tableName);
     }
