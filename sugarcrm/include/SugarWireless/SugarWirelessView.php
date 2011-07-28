@@ -251,8 +251,8 @@ class SugarWirelessView extends SugarView
             else if (file_exists('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php')){
                 require_once('modules/'.$this->module.'/metadata/wireless.subpaneldefs.php');
             }
-            if (! $original_only && file_exists ( 'custom/modules/' . $this->module . '/Ext/Layoutdefs/wireless.subpaneldefs.ext.php' ))
-				require ('custom/modules/' . $this->module . '/Ext/Layoutdefs/wireless.subpaneldefs.ext.php') ;
+            if (! $original_only && file_exists ( 'custom/modules/' . $this->module . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php' ))
+				require ('custom/modules/' . $this->module . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php') ;
 
 			if (! empty ( $layout_def_key ))
 				$this->subpanel_layout_defs = $layout_defs [ $layout_def_key ] ;
@@ -390,7 +390,7 @@ class SugarWirelessView extends SugarView
         // retrieve the field, id, and value, pass it as an array for Smarty
         return array(
 				'id' => $this->bean->id,
-                'label' => $GLOBALS['mod_strings'][$this->bean->field_name_map[$field]['vname']],
+                'label' => translate($this->bean->field_name_map[$field]['vname']),
                 'displayParams' => $displayParams,
                 'field' => $field,
                 'type' => $type,
@@ -435,7 +435,7 @@ class SugarWirelessView extends SugarView
 				'required' => $required,
 				'detail_only' => $detail_only,
 				'displayParams' => $displayParams,
-                'label' => $GLOBALS['mod_strings'][$this->bean->field_name_map[$field]['vname']],
+                'label' => translate($this->bean->field_name_map[$field]['vname']),
                 'value' => isset($this->bean->$field) ? $this->bean->$field : '',
                 'vardef' => $this->bean->field_name_map[$field],
                 'type'  => $this->bean->field_name_map[$field]['type'],
@@ -630,7 +630,7 @@ class SugarWirelessView extends SugarView
 			if(!empty($this->bean->field_name_map[$fieldname])){
 				$wl_search_defs [ $fieldname ] = array(
 												'field' => $fieldname,
-												'label' => $GLOBALS['mod_strings'][$this->bean->field_name_map[$fieldname]['vname']],
+												'label' => translate($this->bean->field_name_map[$fieldname]['vname']),
 												);
 			}
 		}

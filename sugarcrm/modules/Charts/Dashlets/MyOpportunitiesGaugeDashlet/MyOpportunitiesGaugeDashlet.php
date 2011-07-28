@@ -39,6 +39,11 @@ class MyOpportunitiesGaugeDashlet extends DashletGenericChart
     protected $_seedName = 'Opportunities';
     
     /**
+     * @see Dashlet::$isConfigPanelClearShown
+     */
+    public $isConfigPanelClearShown = false;
+    
+    /**
      * @see DashletGenericChart::__construct()
      */
     public function __construct(

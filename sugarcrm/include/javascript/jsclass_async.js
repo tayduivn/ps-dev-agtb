@@ -42,7 +42,7 @@
  */
 function method_callback (o) {
     var resp = YAHOO.lang.JSON.parse(o.responseText),
-        request_id = resp.id,
+        request_id = o.tId,
         result = resp.result;
 
 	if(result == null) {

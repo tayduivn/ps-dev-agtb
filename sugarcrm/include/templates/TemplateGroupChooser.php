@@ -105,7 +105,7 @@ EOQ;
         if ($this->display_hide_tabs == true) {
             $str .= '<td valign="top" style="padding-right: 2px; padding-left: 2px;" align="center">';
             if(!isset($this->args['disable'])) { 
-                $str .= "<a id='chooser_{$this->args['left_name']}_left_arrow' onclick=\"return SUGAR.tabChooser.right_to_left('{$this->args['left_name']}','{$this->args['right_name']}', '{$left_size}', '{$right_size}', '{$max_left}');\">" . SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;" alt="'.$alt_tip.'"') . "</a><a id='chooser_{$this->args['right_name']}_right_arrow onclick=\"return SUGAR.tabChooser.left_to_right('{$this->args['left_name']}','{$this->args['right_name']}', '{$left_size}', '{$right_size}');\">" . SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;" alt="'.$alt_tip.'"') . "</a>";
+                $str .= "<a id='chooser_{$this->args['left_name']}_left_arrow' onclick=\"return SUGAR.tabChooser.right_to_left('{$this->args['left_name']}','{$this->args['right_name']}', '{$left_size}', '{$right_size}', '{$max_left}');\">" . SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;" alt="'.$alt_tip.'"') . "</a><a id='chooser_{$this->args['right_name']}_right_arrow' onclick=\"return SUGAR.tabChooser.left_to_right('{$this->args['left_name']}','{$this->args['right_name']}', '{$left_size}', '{$right_size}');\">" . SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;" alt="'.$alt_tip.'"') . "</a>";
             }
             $str .= "</td>
                 <td id=\"{$this->args['right_name']}_td\" align=\"center\">

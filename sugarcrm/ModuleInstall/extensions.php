@@ -20,7 +20,10 @@
         "userpage" =>        array("section" => "user_page",      "extdir" => "UserPage",       "file" => 'userpage.ext.php', "module" => "Users"),
         "utils" =>           array("section" => "utils",          "extdir" => "Utils",          "file" => 'custom_utils.ext.php', "module" => "application"),
     	"vardefs" =>         array("section" => "vardefs",	      "extdir" => "Vardefs",    	"file" => 'vardefs.ext.php'),
+        //BEGIN SUGARCRM flav=pro ONLY
         "wireless_modules" => array("section" => "wireless_modules","extdir" => "WirelessModuleRegistry", "file" => 'wireless_module_registry.ext.php'),
+        "wireless_subpanels" => array("section" => "wireless_subpanels", "extdir" => "WirelessLayoutdefs",     "file" => 'wireless.subpaneldefs.ext.php'),
+        //END SUGARCRM flav=pro ONLY
 );
 if(file_exists("custom/application/Ext/Extensions/extensions.ext.php")) {
     include("custom/application/Ext/Extensions/extensions.ext.php");

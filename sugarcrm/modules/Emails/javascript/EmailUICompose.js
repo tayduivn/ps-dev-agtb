@@ -910,7 +910,7 @@ SE.composeLayout = {
      		SE.composeLayout[idx].getUnitByPosition("right").collapse();
      		//Initialize tinyMCE
      		if (!SUGAR.util.isTouchScreen())
-     		    SE.composeLayout._1_tiny();
+     		    SE.composeLayout._1_tiny(false);
      		//Init templates and address book
      		SE.composeLayout._2_final();
 
@@ -1103,7 +1103,7 @@ SE.composeLayout = {
     /**
      * Prepare TinyMCE
      */
-    _1_tiny : function() {
+    _1_tiny : function(isReplyForward) {
         var idx = SE.composeLayout.currentInstanceId;
         var elId = SE.tinyInstances.currentHtmleditor = 'htmleditor' + idx;
         SE.tinyInstances[elId] = { };
@@ -1113,10 +1113,25 @@ SE.composeLayout = {
         if(typeof(t) == 'undefined')  {
             tinyMCE.execCommand('mceAddControl', false, elId);
             YAHOO.util.Event.onAvailable(elId + "_parent", function() {
-            	SE.composeLayout.resizeEditor(idx);
-                setTimeout("SUGAR.email2.composeLayout.setSignature('" + idx + "')", 1000);
+                SE.composeLayout.resizeEditorSetSignature(idx,!isReplyForward);
             }, this);
         }
+    },
+
+    resizeEditorSetSignature : function(idx,setSignature)
+    {
+    	var instance = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
+
+        if(typeof(instance) == 'undefined' || (typeof(SE.composeLayout.loadedTinyInstances[idx]) != 'undefined' && SE.composeLayout.loadedTinyInstances[idx] == false)) {
+            setTimeout("SE.composeLayout.resizeEditorSetSignature(" + idx + ",'"+isReplyForward+"');",500);
+		    return;
+		}
+
+        SE.composeLayout.resizeEditor(idx);
+        if(setSignature) {
+            setTimeout("SUGAR.email2.composeLayout.setSignature("+idx+");",250);
+        }
+
     },
 
     resizeEditor : function(idx)
@@ -1124,14 +1139,19 @@ SE.composeLayout = {
     	var cof = Dom.get('composeOverFrame' + idx);
         var head = Dom.get('composeHeaderTable' + idx);
         var targetHeight = cof.clientHeight - head.clientHeight;
-    	var instance =  tinyMCE.get(SE.tinyInstances.currentHtmleditor);
+    	var instance = SE.util.getTiny('htmleditor' + idx);
 
+        try {
     	var parentEl = Dom.get(instance.editorId + '_parent');
     	var toolbar = Dom.getElementsByClassName("mceFirst", "tr", parentEl)[0];
     	var contentEl  = instance.contentAreaContainer;
         var iFrame = contentEl.firstChild;
         var tinMceToolbarOffset = 18;
         iFrame.style.height = (targetHeight - toolbar.offsetHeight - tinMceToolbarOffset)  + "px";
+
+        } catch(e) {
+            setTimeout("SE.composeLayout.resizeEditor("+idx+");",1000);
+        }
     },
 
     /**
@@ -1179,7 +1199,7 @@ SE.composeLayout = {
         if (typeof(tinyMCE) == 'undefined' || typeof(tinyMCE.settings) == 'undefined'){
             setTimeout("SE.composeLayout.c1_composeEmail(" + isReplyForward + ", true);", 500);
         } else {
-	        this._1_tiny();
+	        this._1_tiny(isReplyForward);
 	        this._2_final();
 
 	        if(isReplyForward) {
@@ -1205,7 +1225,7 @@ SE.composeLayout = {
         SE.tinyInstances[SE.tinyInstances.currentHtmleditor].ready = false;
 
         SE.composeLayout._0_yui();
-        SE.composeLayout._1_tiny();
+        SE.composeLayout._1_tiny(true);
 
         // final touches
         SE.composeLayout._2_final();
@@ -1371,9 +1391,9 @@ SE.composeLayout = {
         var start = htmllow.indexOf(openTag);
 		if (start > -1) {
 	        tinyHTML = tinyHTML.substr(start);
-	        tiny.setContent(tinyHTML);
-		} else {
-        	tiny.setContent('');
+            tiny.setContent(tinyHTML);
+		} else { 
+       	    tiny.setContent('');
 		}
     },
 
@@ -1453,7 +1473,7 @@ SE.composeLayout = {
 
         var openTag = '<div><span><span>';
         var closeTag = '</span></span></div>';
-        var t = SE.util.getTiny('htmleditor' + idx);
+        var t = tinyMCE.getInstanceById('htmleditor' + idx);
         //IE 6 Hack
         if(typeof(t) != 'undefined')
         {
@@ -1461,7 +1481,9 @@ SE.composeLayout = {
             var html = t.getContent();
         }
         else
+        {
             var html = '';
+        }
 
         var htmllow = html.toLowerCase();
         var start = htmllow.indexOf(openTag);
@@ -2278,7 +2300,7 @@ SE.composeLayout = {
 			   && ( this['ccHidden'+idx]  == false && this['bccHidden'+idx] == false) )
 			Dom.addClass("add_addr_options_tr"+idx, "yui-hidden");
 
-		SE.composeLayout.resizeEditor(idx);
+		// SE.composeLayout.resizeEditor(idx);
     },
     /**
     *  Hide the cc and bcc fields if they were shown.
