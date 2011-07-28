@@ -59,6 +59,7 @@ class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->testAccount->team_set_id = $this->teamSet->id;
 		$this->testAccount->assigned_user_id = $this->testUser->id;
 		$this->testAccount->save();
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown() 
@@ -91,6 +92,7 @@ class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
         
         $time = mt_rand();
         $oldName = $this->testAccount->name;
+        $GLOBALS['db']->commit();
         $result = $this->_login();
         $result = $this->_soapClient->call('set_entry',array('session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>array(array('name'=>'id' , 'value'=>$this->testAccount->id),array('name'=>'name' , 'value'=>"$time Account SINGLE"))));
         $this->assertEquals(-1, $result['id'], "Should not have updated the Account.");
