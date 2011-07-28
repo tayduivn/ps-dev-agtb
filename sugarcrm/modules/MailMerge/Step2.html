@@ -307,6 +307,15 @@ for(i=0; i < selObjs.options.length ;i++)
 
 }
 
+function displayKeyCode(evt)
+ {
+	 var charCode = (evt.which) ? evt.which : event.keyCode;
+	 if(charCode=='13')
+	 {
+		 search();
+	 }
+ }
+
 function search(searchText)
 {
 	var searchInput = document.getElementById("searchText");
