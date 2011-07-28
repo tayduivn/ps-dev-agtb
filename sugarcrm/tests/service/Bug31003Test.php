@@ -40,6 +40,7 @@ class Bug31003Test extends SOAPTestCase
         $this->prospect = new Prospect();
         $this->prospect->email1 = $this->contact->email1;
         $this->prospect->save();
+        $GLOBALS['db']->commit();
     }
 
     public function testContactByEmail()
@@ -52,7 +53,7 @@ class Bug31003Test extends SOAPTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $GLOBALS['db']->query(sprintf('DELETE FROM prospects WHERE id = %d', $this->contact->id));
+        $GLOBALS['db']->query("DELETE FROM prospects WHERE id = '{$this->contact->id}'");
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
