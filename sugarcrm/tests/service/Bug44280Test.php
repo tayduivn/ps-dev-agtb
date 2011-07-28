@@ -49,11 +49,8 @@ class Bug44280Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->status = 'Active';
         $this->_user->is_admin = 1;
         $this->_user->save();
+        $GLOBALS['db']->commit();
         $GLOBALS['current_user'] = $this->_user;
-
-       
-        
-		 
     }
 
     /**
@@ -89,7 +86,7 @@ class Bug44280Test extends Sugar_PHPUnit_Framework_TestCase
         $account->new_with_id = true;
         $account->disable_custom_fields = true;
         $account->save();
-
+        $GLOBALS['db']->commit();
         return $account;
     }
 
@@ -102,7 +99,7 @@ class Bug44280Test extends Sugar_PHPUnit_Framework_TestCase
         $contact->new_with_id = true;
         $contact->disable_custom_fields = true;
         $contact->save();
-
+        $GLOBALS['db']->commit();
         return $contact;
     }
     
