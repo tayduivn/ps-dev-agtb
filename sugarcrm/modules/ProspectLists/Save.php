@@ -49,6 +49,23 @@ $focus = populateFromPost('', $focus);
 $focus->save($check_notify);
 $return_id = $focus->id;
 
+
+//Bug 33675 Duplicate target list
+if( !empty($_REQUEST['duplicateId']) ){
+	$copyFromProspectList = new ProspectList();
+	$copyFromProspectList->retrieve($_REQUEST['duplicateId']);
+	$relations = $copyFromProspectList->retrieve_relationships('prospect_lists_prospects',array('prospect_list_id'=>$_REQUEST['duplicateId']),'related_id, related_type');
+	if(count($relations)>0){
+		foreach ($relations as $rel){
+			$rel['prospect_list_id']=$return_id;
+			$focus->set_relationship('prospect_lists_prospects', $rel, true);
+		}
+	}
+	$focus->save();
+}
+
+
+
 if(isset($_POST['return_module']) && $_POST['return_module'] != "") $return_module = $_POST['return_module'];
 else $return_module = "ProspectLists";
 if(isset($_POST['return_action']) && $_POST['return_action'] != "") $return_action = $_POST['return_action'];
