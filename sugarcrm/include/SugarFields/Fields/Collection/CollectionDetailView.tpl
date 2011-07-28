@@ -46,7 +46,9 @@
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Collection/SugarFieldCollection.js"}'></script>
 <script type="text/javascript">
     var collection = (typeof collection == 'undefined') ? new Array() : collection;
-    collection['{$vardef.name}'] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
+    SUGAR.util.doWhen("SUGAR.collection != null", function() {ldelim}
+        collection['{$vardef.name}'] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
+    {rdelim});
 </script>
 {/if}
 {/if}
