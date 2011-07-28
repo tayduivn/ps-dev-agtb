@@ -139,8 +139,8 @@ class Popup_Picker
                                         form['category_name_' + searchType].value = node.label;
                                     }
                                     else if(typeof window.opener.document.ReportsWizardForm != 'undefined') { // reports
-                                        window.opener.document.ReportsWizardForm['ProductCategories:name:id'].value = node.data.id;
-                                        window.opener.document.ReportsWizardForm['ProductCategories:name'].value = node.data.label;
+                                        window.opener.document.ReportsWizardForm['ProductCategories:name:id:1'].value = node.data.id;
+                                        window.opener.document.ReportsWizardForm['ProductCategories:name:name:1'].value = node.label;
                                     }
                                     else if(typeof window.opener.document.EditView != 'undefined'){
                                         window.opener.document.EditView.category_id.value = node.data.id;\n";
