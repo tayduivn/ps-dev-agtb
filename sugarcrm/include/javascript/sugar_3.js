@@ -127,17 +127,6 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
-//rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
-if (typeof new Array().indexOf == "undefined") {
-  Array.prototype.indexOf = function (obj, start) {
-    for (var i = (start || 0); i < this.length; i++) {
-      if (this[i] == obj) {
-        return i;
-      }
-    }
-    return -1;
-  }
-}
 
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
@@ -3400,7 +3389,9 @@ SUGAR.searchForm = function() {
                     continue;
                 }
                 
-                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
+                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined'
+                        && SUGAR.util.arrayIndexOf(skipElementNames, elem.name) != -1 )
+                {
                     continue;
                 }
 

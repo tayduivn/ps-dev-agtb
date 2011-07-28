@@ -67,7 +67,7 @@
 				<ul class="sec">
 				{foreach from=$DATA.list item=NAME key=ID name="recordlist"}
 				<li class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
-                    {assign var="module_image" value=$SUBPANEL}
+                    {assign var="module_image" value=$DATA.module}
                     {assign var="dotgif" value=".gif"}
                     <a href="index.php?module={$DATA.module}&record={$ID}&action=wirelessdetail">
                         <img border=0 src="{sugar_getimagepath file=$module_image$dotgif}">&nbsp;

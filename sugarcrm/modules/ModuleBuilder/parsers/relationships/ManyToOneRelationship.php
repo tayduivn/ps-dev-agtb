@@ -80,6 +80,13 @@ class ManyToOneRelationship extends AbstractRelationship
         return $this->one_to_many->buildSubpanelDefinitions();
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    function buildWirelessSubpanelDefinitions ()
+    {
+        return $this->one_to_many->buildWirelessSubpanelDefinitions();
+    }
+    //END SUGARCRM flav=pro ONLY
+
     /*
      * @return array    An array of field definitions, ready for the vardefs, keyed by module
      */

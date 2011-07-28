@@ -185,22 +185,45 @@ box-shadow: #666666 0px 2px 10px;
 	border-color: #ccc;	
 }
 
+
+.dashletPanel.dc {
+border: 1px solid #ef0044;
+}
+
+
 .dashletPanel.dc .hd {
 height:36px;
+
+	background-image: -moz-linear-gradient(center top, 
+		rgba(244,152,178,.9) 0%,
+		rgba(241,87,131,1) 50%,
+		rgba(239,60,111,1) 50%,  
+		rgba(239,22,83,.8) 100%
+		);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, rgba(244,152,178,.9)),
+	    color-stop(.50, rgba(241,87,131,1)),
+	    color-stop(.50, rgba(239,60,111,1)),
+	    color-stop(1, rgba(239,22,83,.8))
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f498b2', endColorstr='#ff1653');
+    
+    
+    
 }
 
 .dashletPanel.dc .hd .tl {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-tl-dc.png");
 height: 36px;
 }
 
 .dashletPanel.dc .hd .hd-center {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-hd-dc.png");
 height: 36px;
 }
 
 .dashletPanel.dc .hd .tr {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-tr-dc.png");
 height: 36px;
 }
 
@@ -208,29 +231,10 @@ height: 36px;
 margin-top:5px;
 }
 
-.dashletPanel.dc .bd .ml {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ml-dc.png");
+.dashletPanel.dc .bd {
+	background-color: rgba(239,0,68,.3);
 }
 
-.dashletPanel.dc .bd .bd-center {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd-dc.png");
-}
-
-.dashletPanel.dc .bd .mr {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-mr-dc.png");
-}
-
-.dashletPanel.dc .ft .bl {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bl-dc.png");
-}
-
-.dashletPanel.dc .ft .ft-center {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-ft-dc.png");
-}
-
-.dashletPanel.dc .ft .br {
-background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-br-dc.png");
-}
 #dcmenuContainer
 {
 height: 44px;
