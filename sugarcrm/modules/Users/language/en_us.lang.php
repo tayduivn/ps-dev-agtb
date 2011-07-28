@@ -599,8 +599,8 @@ $mod_strings = array (
     'LBL_WIZARD_FINISH_TAB' => 'Finish',
     'LBL_WIZARD_FINISH_TITLE' => 'You are ready to use Sugar!',
 
-    'LBL_WIZARD_FINISH1' => 'What would you like to do next?:',
-    'LBL_WIZARD_FINISH2' => 'Start using Sugar',
+    'LBL_WIZARD_FINISH1' => 'What would you like to do next?',
+    'LBL_WIZARD_FINISH2' => 'Start Using Sugar',
     'LBL_WIZARD_FINISH3' => 'Import Data ',
     'LBL_WIZARD_FINISH4' => 'Import data from external sources into the application.',
     'LBL_WIZARD_FINISH5' => 'Create Users',
@@ -609,8 +609,8 @@ $mod_strings = array (
     'LBL_WIZARD_FINISH8' => 'Manage advanced settings, including application default settings.',
     'LBL_WIZARD_FINISH9' => 'Configure the Application ',
     'LBL_WIZARD_FINISH10' => 'Use Studio to create and manage application fields and layouts.',
-    'LBL_WIZARD_FINISH11' => 'Sugar University ',
-    'LBL_WIZARD_FINISH12' => 'For helpful information to get started as a system administrator or end user of the application, visit:',
+    'LBL_WIZARD_FINISH11' => 'Visit Sugar University ',
+    'LBL_WIZARD_FINISH12' => 'Find training materials and classes that will help you get started as a system administrator or end user of the application.',
 
     'LBL_WIZARD_PERSONALINFO' => 'Your Information',
     'LBL_WIZARD_LOCALE' => 'Your Locale',
