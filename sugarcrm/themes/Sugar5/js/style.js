@@ -60,66 +60,6 @@ YAHOO.util.Event.onAvailable('sitemapLinkSpan',function()
     }
 });
 
-/**
- * Handles changing the sub menu items when using grouptabs
- */
-YAHOO.util.Event.onAvailable('subModuleList',IKEADEBUG);
-function IKEADEBUG()
-{
-    var moduleLinks = document.getElementById('moduleList').getElementsByTagName("a");
-    moduleLinkMouseOver = function() 
-        {
-            var matches      = /grouptab_([0-9]+)/i.exec(this.id);
-            var tabNum       = matches[1];
-            var moduleGroups = document.getElementById('subModuleList').getElementsByTagName("span"); 
-            for (var i = 0; i < moduleGroups.length; i++) { 
-                if ( i == tabNum ) {
-                    moduleGroups[i].className = 'selected';
-                }
-                else {
-                    moduleGroups[i].className = '';
-                }
-            }
-            
-            var groupList = document.getElementById('moduleList').getElementsByTagName("li");
-			var currentGroupItem = tabNum;
-            for (var i = 0; i < groupList.length; i++) {
-                var aElem = groupList[i].getElementsByTagName("a")[0];
-                if ( aElem == null ) {
-                    // This is the blank <li> tag at the start of some themes, skip it
-                    continue;
-                }
-                // notCurrentTabLeft, notCurrentTabRight, notCurrentTab
-                var classStarter = 'notC';
-                if ( aElem.id == "grouptab_"+tabNum ) {
-                    // currentTabLeft, currentTabRight, currentTab
-                    classStarter = 'c';
-					currentGroupItem = i;
-                }
-                var spanTags = groupList[i].getElementsByTagName("span");
-                for (var ii = 0 ; ii < spanTags.length; ii++ ) {
-                    if ( spanTags[ii].className == null ) { continue; }
-                    var oldClass = spanTags[ii].className.match(/urrentTab.*/);
-                    spanTags[ii].className = classStarter + oldClass;
-                }
-            }
-            ////////////////////////////////////////////////////////////////////////////////////////
-			////update submenu position
-			//get sub menu dom node
-			var menuHandle = moduleGroups[tabNum];
-			
-			//get group tab dom node
-			var parentMenu = groupList[currentGroupItem];
-
-			if(menuHandle && parentMenu){
-				updateSubmenuPosition(menuHandle , parentMenu);
-			}
-			////////////////////////////////////////////////////////////////////////////////////////
-        };
-    for (var i = 0; i < moduleLinks.length; i++) {
-        moduleLinks[i].onmouseover = moduleLinkMouseOver;
-    }
-};
 
 function updateSubmenuPosition(menuHandle , parentMenu){	
 	var left='';
@@ -213,7 +153,7 @@ YAHOO.util.Event.onDOMReady(function()
 /**
  * For the module list menu
  */
-SUGAR.themes = SUGAR.namespace("themes");
+SUGAR.namespace("themes");
 
 SUGAR.append(SUGAR.themes, {
     allMenuBars: {},
@@ -246,7 +186,9 @@ SUGAR.append(SUGAR.themes, {
     
     loadModuleList: function() {
         var nodes = YAHOO.util.Selector.query('#moduleList>div'),
-            currMenuBar;
+            currMenuBar,
+            moduleLinks;
+
         this.allMenuBars = {};
 
         for (var i = 0 ; i < nodes.length ; i++) {
@@ -268,6 +210,73 @@ SUGAR.append(SUGAR.themes, {
                 // This is the currently displayed menu bar
                 oMenuBar = currMenuBar;
             }
+        }
+
+        // Attach hover listeners
+        moduleLinks = document.getElementById('moduleList').getElementsByTagName("a");
+
+        for (var i = 0; i < moduleLinks.length; i++) {
+            moduleLinks[i].onmouseover = this.moduleLinkMouseOver;
+        }
+    },
+
+    /**
+     * Handles changing the sub menu items when using grouptabs
+     */
+    moduleLinkMouseOver: function() {
+        var matches = /grouptab_([0-9]+)/i.exec(this.id),
+            tabNum = matches[1],
+
+            // Node lists
+            moduleGroups = document.getElementById('subModuleList').getElementsByTagName("span"),
+            groupList = document.getElementById('moduleList').getElementsByTagName("li"),
+            currentGroupItem = tabNum,
+
+            aElem,
+            spanTags,
+            classStarter;
+
+        for (var i = 0; i < moduleGroups.length; i++) {
+            if (i == tabNum) {
+                moduleGroups[i].className = 'selected';
+            } else {
+                moduleGroups[i].className = '';
+            }
+        }
+        
+        for (var i = 0; i < groupList.length; i++) {
+            aElem = groupList[i].getElementsByTagName("a")[0];
+            if (aElem == null) {
+                // This is the blank <li> tag at the start of some themes, skip it
+                continue;
+            }
+            
+            // notCurrentTabLeft, notCurrentTabRight, notCurrentTab
+            classStarter = 'notC';
+            if (aElem.id == "grouptab_" + tabNum) {
+                // currentTabLeft, currentTabRight, currentTab
+                classStarter = 'c';
+                currentGroupItem = i;
+            }
+            spanTags = groupList[i].getElementsByTagName("span");
+            for (var ii = 0; ii < spanTags.length; ii++) {
+                if (spanTags[ii].className == null) {
+                    continue;
+                }
+                var oldClass = spanTags[ii].className.match(/urrentTab.*/);
+                spanTags[ii].className = classStarter + oldClass;
+            }
+        }
+        
+        //update submenu position
+        //get sub menu dom node
+        var menuHandle = moduleGroups[tabNum];
+
+        //get group tab dom node
+        var parentMenu = groupList[currentGroupItem];
+
+        if (menuHandle && parentMenu) {
+            updateSubmenuPosition(menuHandle, parentMenu);
         }
     }
 });
