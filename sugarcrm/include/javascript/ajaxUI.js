@@ -63,14 +63,25 @@ SUGAR.ajaxUI = {
                 }
             }
         } catch (e){
-            if(YAHOO.lang.trim(o.responseText) == "" && o.responseText.charAt(0) != '{') {
-                document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
-                SUGAR.util.evalScript(document.body.innerHTML);
-            } else if (typeof(console) != "undefined" && typeof(console.log) == "function")
-            {
-                console.log("invalid JSON response:");
-                console.log(o.responseText);
+            if (!SUGAR.ajaxUI.errorPanel) {
+                SUGAR.ajaxUI.errorPanel = new YAHOO.widget.Panel("ajaxUIErrorPanel", {
+                    modal: false,
+                    visible: true,
+                    constraintoviewport: true,
+                    width	: "800px",
+                    height : "600px",
+                    close: true
+                });
             }
+            var panel = SUGAR.ajaxUI.errorPanel;
+            panel.setHeader( SUGAR.language.get('app_strings','ERROR_EXAMINE_MSG')) ;
+            panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none"></iframe>');
+            panel.render(document.body);
+            document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+            panel.show();
+            panel.center();
+
+            throw "AjaxUI error parsing response";
         }
     },
 
