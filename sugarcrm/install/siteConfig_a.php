@@ -106,7 +106,7 @@ $out =<<<EOQ
    <script type="text/javascript" src="install/installCommon.js"></script>
    <script type="text/javascript" src="install/siteConfig.js"></script>
 </head>
-<body onload="javascript:document.getElementById('button_Next').focus();">
+<body onload="javascript:document.getElementById('defaultFocus').focus();">
 <form action="install.php" method="post" name="setConfig" id="form">
 <input type="hidden" name="current_step" value="{$next_step}">
 <table cellspacing="0" cellpadding="0" border="0" align="center" class="shell">
@@ -139,7 +139,7 @@ $out .=<<<EOQ
    </td></tr>
    <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_SITECFG_URL']}</td>
-       <td align="left"><input type="text" name="setup_site_url" id="button_Next" value="{$_SESSION['setup_site_url']}" size="40" /></td></tr>
+       <td align="left"><input type="text" name="setup_site_url" id="defaultFocus" value="{$_SESSION['setup_site_url']}" size="40" /></td></tr>
     <tr><td colspan="3" align="left"> <br>{$mod_strings['LBL_SITECFG_SYS_NAME_MSG']}</td></tr>
     <tr><td><span class="required">*</span></td>
        <td><b>{$mod_strings['LBL_SYSTEM_NAME']}</b></td>
@@ -174,10 +174,10 @@ $out .= <<<EOQ
    <table cellspacing="0" cellpadding="0" border="0" class="stdTable">
    <tr>
     <td>
-        <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" id="button_back_siteConfig_a" onclick="document.getElementById('form').submit();" />
+        <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" onclick="document.getElementById('form').submit();" />
         <input type="hidden" name="goto" value="{$mod_strings['LBL_BACK']}" />
     </td>
-   <td><input class="button" type="submit" name="goto" id="button_Next" value="{$mod_strings['LBL_NEXT']}" /></td>
+   <td><input class="button" type="submit" name="goto" id="defaultFocus" value="{$mod_strings['LBL_NEXT']}" /></td>
    </tr>
    </table>
 </td>

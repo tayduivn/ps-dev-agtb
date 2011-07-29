@@ -101,7 +101,7 @@ $out =<<<EOQ
 
 </head>
 EOQ;
-$out .= '<body onload="document.getElementById(\'button_Next\').focus();">';
+$out .= '<body onload="document.getElementById(\'defaultFocus\').focus();">';
 
 $out2 =<<<EOQ2
 <form action="install.php" method="post" name="setConfig" id="form">
@@ -255,10 +255,10 @@ $out4 =<<<EOQ4
      <table cellspacing="0" cellpadding="0" border="0" class="stdTable">
         <tr>
             <td>
-                <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" id="button_back_dbConfig" onclick="document.getElementById('form').submit();" />
+                <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" onclick="document.getElementById('form').submit();" />
             </td>
             <td>
-                <input class="button" type="button" name="goto" id="button_Next" value="{$mod_strings['LBL_NEXT']}" onClick="callDBCheck();"/>
+                <input class="button" type="button" name="goto" id="defaultFocus" value="{$mod_strings['LBL_NEXT']}" onClick="callDBCheck();"/>
             </td>
         </tr>
      </table>
@@ -424,7 +424,7 @@ function confirm_drop_tables(yes_no){
                </td></tr>
                <tr><td align='center'>
                     <input id='accept_btn' type='button' class='button' onclick='confirm_drop_tables(true)' value="{$mod_strings['LBL_ACCEPT']}">
-                    <input type='button' class='button' onclick='confirm_drop_tables(false)' id="button_cancel_dbConfig" value="{$mod_strings['LBL_CANCEL']}">
+                    <input type='button' class='button' onclick='confirm_drop_tables(false)' value="{$mod_strings['LBL_CANCEL']}">
                 </td></tr>
             </table>
                 

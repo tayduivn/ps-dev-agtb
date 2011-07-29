@@ -73,7 +73,7 @@ $out =<<<EOQ
 	<script type="text/javascript" src="include/javascript/sugar_3.js"></script>
    <script type="text/javascript" src="install/installCommon.js"></script>
 </head>
-<body onload="javascript:document.getElementById('button_Next').focus();">
+<body onload="javascript:document.getElementById('defaultFocus').focus();">
 <form action="install.php" method="post" name="setLicense" id="form" onSubmit="return check_form('setLicense');">
 <input type="hidden" name="current_step" value="{$next_step}">
 <table cellspacing="0" cellpadding="0" border="0" align="center" class="shell">
@@ -96,7 +96,7 @@ $out =<<<EOQ
    <tr><th colspan="3" align="left">{$mod_strings['LBL_LICENSE_TITLE']}</td></tr>
    <tr><td></td>
        <td><b>{$mod_strings['LBL_LICENSE_USERS']}</td>
-       <td align="left"><input type="text" name="setup_license_key_users" id="button_Next"
+       <td align="left"><input type="text" name="setup_license_key_users" id="defaultFocus"
 			value="{$_SESSION['setup_license_key_users']}" size="6" /></td></tr>
    <tr><td></td>
        <td><b>{$mod_strings['LBL_LICENSE_EXPIRY']} (yyyy-mm-dd)</td>
@@ -121,7 +121,7 @@ $out =<<<EOQ
    <tr>
    <td><input class="button" type="button" onclick="window.open('http://www.sugarcrm.com/forums/');" value="{$mod_strings['LBL_HELP']}" /></td>
    <td>
-       <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" id="button_back_licenseKey" onclick="document.getElementById('form').submit();" />
+       <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" onclick="document.getElementById('form').submit();" />
 		<input type="hidden" name="goto" value="{$mod_strings['LBL_BACK']}" />
 
    </td>
