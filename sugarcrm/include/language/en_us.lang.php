@@ -136,7 +136,8 @@ $app_list_strings = array (
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
     'OAuthKeys' => 'OAuth Consumer Keys',
-        ),
+    'OAuthTokens' => 'OAuth Tokens',
+  ),
   'moduleListSingular' =>
   array (
     'Home' => 'Home',
@@ -2633,7 +2634,7 @@ $app_strings = array (
     'LBL_ACCESSKEY_CLEAR_FILE_TITLE' => 'Clear File',
     'LBL_ACCESSKEY_CLEAR_FILE_LABEL' => 'Clear File',
 
-    
+
     'LBL_ACCESSKEY_SELECT_USERS_KEY' => 'U',
     'LBL_ACCESSKEY_SELECT_USERS_TITLE' => 'Select User [Alt+U]',
     'LBL_ACCESSKEY_SELECT_USERS_LABEL' => 'Select User',
@@ -2998,7 +2999,7 @@ $app_strings = array (
     'LBL_PLUGIN_LOTUS_NAME' => 'Sugar Plug-in For Lotus Notes',
     'LBL_PLUGIN_LOTUS_DESC' => 'Integrate Sugar with Lotus Notes.',
      //END SUGARCRM flav=ent ONLY
-    
+
     //BEGIN SUGARCRM flav=dce ONLY
     //DCE
     'LBL_DCEDEPLOY_LABEL' => 'Deploy',

@@ -106,7 +106,7 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
             $field_def = $layout_def['fields'];
         }
         $record = '';
-        if ($layout_def['table_key'] == 'self')
+        if ($layout_def['table_key'] == 'self' && isset($layout_def['fields']['PRIMARYID']))
             $record = $layout_def['fields']['PRIMARYID'];
         else if (isset($layout_def['fields'][strtoupper($layout_def['table_alias']."_id")])){ 
             $record = $layout_def['fields'][strtoupper($layout_def['table_alias']."_id")];

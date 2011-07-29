@@ -54,7 +54,10 @@ class ViewWirelessdetail extends SugarWirelessView{
  	    if (isset($layout_defs) && !empty($layout_defs['subpanel_setup'])){
  	    	$available_subpanel_data = false;
 	 	    foreach($layout_defs['subpanel_setup'] as $subpanel=>$subpaneldefs){
-	 	    	$data = $this->getDataForSubpanel($this->bean, $subpanel, $subpaneldefs);
+	 	    	//Dont display subpanels for modules that are not wireless enabled
+                if (!isset($this->view_object_map['wireless_module_registry'][$subpaneldefs['module']]))
+                     continue;
+                $data = $this->getDataForSubpanel($this->bean, $subpanel, $subpaneldefs);
                 $bean_subpanel_data[$subpanel] = $data;
                 if (!empty($data)) {
                     $available_subpanel_data = true;

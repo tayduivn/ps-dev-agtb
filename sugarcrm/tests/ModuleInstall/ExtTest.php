@@ -9,6 +9,7 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = "1";
         $GLOBALS['current_language'] = "en_us";
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Administration');
@@ -77,16 +78,18 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
             array("from" => '<basepath>/test.ext.php', 'to_module' => $module)
         );
         $prefix = '';
+        $srcFileName = "test.ext.php";
         if($extname == 'languages') {
             $this->module_installer->installdefs[$section][0]['language'] = 'en_us';
             $prefix = 'en_us.';
             $file = 'lang.ext.php';
+            $srcFileName = "ExtFrameworkTest.php";
         }
 	    if($module == 'application') {
-            $srcfile = "custom/Extension/application/Ext/$extdir/{$prefix}ExtFrameworkTest.php";
+            $srcfile = "custom/Extension/application/Ext/$extdir/{$prefix}{$srcFileName}";
             $dstfile = "custom/application/Ext/$extdir/{$prefix}$file";
         } else {
-            $srcfile = "custom/Extension/modules/$module/Ext/$extdir/{$prefix}ExtFrameworkTest.php";
+            $srcfile = "custom/Extension/modules/$module/Ext/$extdir/{$prefix}{$srcFileName}";
             $dstfile = "custom/modules/$module/Ext/$extdir/{$prefix}$file";
         }
         $this->module_installer->install_extensions();
@@ -116,12 +119,13 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
     public function testExtModules()
     {
         $this->module_installer->installdefs['beans'] = array(
-            array("from" => '<basepath>/test.ext.php', 'to_module' => $module)
+            array(
+                'module' => 'ExtFrameworkTest',
+                'class' =>  'ExtFrameworkTest',
+                'path' =>  'ExtFrameworkTest',
+                'tab' => true
+            )
         );
-        $prefix = '';
-        $this->module_installer->installdefs['beans'][0]['module'] = 'ExtFrameworkTest';
-        $this->module_installer->installdefs['beans'][0]['class'] = 'ExtFrameworkTest';
-        $this->module_installer->installdefs['beans'][0]['path'] = 'ExtFrameworkTest';
         $srcfile = "custom/Extension/application/Ext/Include/ExtFrameworkTest.php";
         $dstfile = "custom/application/Ext/Include/modules.ext.php";
         $this->module_installer->install_extensions();

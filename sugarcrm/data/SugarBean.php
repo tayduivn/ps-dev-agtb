@@ -1680,10 +1680,23 @@ class SugarBean
             $n->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-            if($sendEmail && !$notify_mail->Send()) {
-                $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
-            } else {
-                $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
+
+            $oe = new OutboundEmail();
+            $oe = $oe->getUserMailerSettings($current_user);
+            //only send if smtp server is defined
+            if($sendEmail){
+                if(empty($oe->mail_smtpserver)){
+                    $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
+                    //break out
+                    return;
+                }
+
+                if(!$notify_mail->Send()) {
+                    $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
+                }else{
+                    $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
+                }
+
             }
 
         }

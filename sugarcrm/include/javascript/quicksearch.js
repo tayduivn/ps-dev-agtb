@@ -49,7 +49,7 @@ function enableQS(noReload){
         var qsFields = Dom.getElementsByClassName('sqsEnabled');
         
         //Now loop through all these fields and process them
-        for(qsField in qsFields){
+        for(var qsField in qsFields){
         	
         	//Safety checks to skip processing of invalid entries
         	if(typeof qsFields[qsField] == 'function' || typeof qsFields[qsField].id == 'undefined') {
@@ -57,14 +57,14 @@ function enableQS(noReload){
         	}
         	
         	//Create the index we are using to search for the sqs_objects Array
-        	form_id = qsFields[qsField].form.getAttribute('id');
+        	var form_id = qsFields[qsField].form.getAttribute('id');
         	
         	//This is a special case where there is an element with id attribute value of "id"
         	//In this case, we get the real_id attribute (occurs in modules/Import/tpls/step3.tpl only).
         	if(typeof form_id == 'object' && qsFields[qsField].form.getAttribute('real_id')) {
         		form_id = qsFields[qsField].form.getAttribute('real_id');
         	}
-        	qs_index_id = form_id + '_' + qsFields[qsField].name;
+        	var qs_index_id = form_id + '_' + qsFields[qsField].name;
 
         	//Another safety check, if the sqs_objects entry is not defined, we can't do anything useful
         	if(typeof sqs_objects[qs_index_id] == 'undefined') {
@@ -89,7 +89,7 @@ function enableQS(noReload){
         	}
             //Skip quicksearch fields that are readOnly or that are disabled since you can't search on them anyway
             if (!document.forms[qs_obj.form].elements[qsFields[qsField].id].readOnly && qs_obj['disable'] != true) {
-            	combo_id = qs_obj.form + '_' + qsFields[qsField].id;
+            	var combo_id = qs_obj.form + '_' + qsFields[qsField].id;
             	if (Dom.get(combo_id + "_results")) {
             		loaded = true
             	}

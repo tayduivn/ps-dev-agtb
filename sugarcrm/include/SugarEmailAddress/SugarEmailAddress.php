@@ -751,8 +751,14 @@ class SugarEmailAddress extends SugarBean {
         $this->smarty->assign('addDefaultAddress', (isset($_REQUEST['module']) && $_REQUEST['module'] == 'Emails') ? 'false' : 'true');
         $form = $this->view;
 
-        if ($this->view == "QuickCreate")
-        $form = 'form_'.$this->view .'_'.$module;
+        //determine if this should be a quickcreate form, or a quick create form under subpanels
+        if ($this->view == "QuickCreate"){
+            $form = 'form_'.$this->view .'_'.$module;
+            if(isset($_REQUEST['action']) && $_REQUEST['action']=='SubpanelCreates'){
+                $form = 'form_Subpanel'.$this->view .'_'.$module;
+            }
+        }
+
         $this->smarty->assign('emailView', $form);
 
         if($module == 'Users') {

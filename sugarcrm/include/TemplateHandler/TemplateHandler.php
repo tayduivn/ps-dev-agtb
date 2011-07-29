@@ -313,8 +313,9 @@ class TemplateHandler {
             foreach($defs as $f) {
                 $field = $f;
                 $name = $qsd->form_name . '_' . $field['name'];
+
                 if($field['type'] == 'relate' && isset($field['module']) && preg_match('/_name$|_c$/si',$name)) {
-                    if(preg_match('/^(Campaigns|Teams|Users|Accounts)$/si', $field['module'], $matches)) {
+                    if(preg_match('/^(Campaigns|Teams|Users|Contacts|Accounts)$/si', $field['module'], $matches)) {
 
                         if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSCampaigns();
@@ -351,6 +352,8 @@ class TemplateHandler {
                             $shippingKey = isset($f['displayParams']['shippingKey']) ? $f['displayParams']['shippingKey'] : null;
                             $additionalFields = isset($f['displayParams']['additionalFields']) ? $f['displayParams']['additionalFields'] : null;
                             $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSAccount($nameKey, $idKey, $billingKey, $shippingKey, $additionalFields);
+                        } else if($matches[0] == 'Contacts'){
+                            $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSContact($field['name'], $field['id_name']);
                         }
                     } else {
                          $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSParent($field['module']);
@@ -383,11 +386,11 @@ class TemplateHandler {
 					   $field['id_name'] = $field['name'] . "_" . $field['id_name'];
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
-
+				
 
 
                 if($field['type'] == 'relate' && isset($field['module']) && (preg_match('/_name$|_c$/si',$name) || !empty($field['quicksearch']))) {
-                    if(!preg_match('/_c$/si',$name) && preg_match('/^(Campaigns|Teams|Users|Accounts)$/si', $field['module'], $matches)) {
+                    if(!preg_match('/_c$/si',$name) && preg_match('/^(Campaigns|Teams|Users|Contacts|Accounts)$/si', $field['module'], $matches)) {
 
                         if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->getQSCampaigns();
@@ -396,17 +399,14 @@ class TemplateHandler {
                             $sqs_objects[$name] = $qsd->getQSTeam();
                             //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
-                            if($field['name'] == 'reports_to_name') {
+                            if($field['name'] == 'reports_to_name')
                                 $sqs_objects[$name] = $qsd->getQSUser('reports_to_name','reports_to_id');
-                            }
-                            // Bug 34643 - Default what the options should be for the assigned_user_name field
-                            //             and then pass thru the fields to be used in the fielddefs.
-                            elseif($field['name'] == 'assigned_user_name') {
-                                $sqs_objects[$name] = $qsd->getQSUser('assigned_user_name','assigned_user_id');
-                            }
                             else {
-                                $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
-                            }
+                                if ($view == "ConvertLead")
+								    $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
+								else 
+								    $sqs_objects[$name] = $qsd->getQSUser();
+							}
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
                             $sqs_objects[$name] = $qsd->getQSCampaigns();
@@ -428,9 +428,15 @@ class TemplateHandler {
                             $shippingKey = SugarArray::staticGet($f, 'displayParams.shippingKey');
                             $additionalFields = SugarArray::staticGet($f, 'displayParams.additionalFields');
                             $sqs_objects[$name] = $qsd->getQSAccount($nameKey, $idKey, $billingKey, $shippingKey, $additionalFields);
+                        } else if($matches[0] == 'Contacts'){
+                            $sqs_objects[$name] = $qsd->getQSContact($field['name'], $field['id_name']);
+                            if(preg_match('/_c$/si',$name) || !empty($field['quicksearch'])){
+                                $sqs_objects[$name]['field_list'] = array('salutation', 'first_name', 'last_name', 'id');
+                            }
                         }
                     } else {
                         $sqs_objects[$name] = $qsd->getQSParent($field['module']);
+                        _pp($field);
                         if(!isset($field['field_list']) && !isset($field['populate_list'])) {
                             $sqs_objects[$name]['populate_list'] = array($field['name'], $field['id_name']);
                             // now handle quicksearches where the column to match is not 'name' but rather specified in 'rname'
@@ -447,10 +453,12 @@ class TemplateHandler {
                             $sqs_objects[$name]['field_list'] = $field['populate_list'];
                         }
                     }
+                } else if($field['type'] == 'parent') {
+                    $sqs_objects[$name] = $qsd->getQSParent();
                 } //if-else
             } //foreach
         }
-
+        
        //Implement QuickSearch for the field
        if(!empty($sqs_objects) && count($sqs_objects) > 0) {
            $quicksearch_js = '<script language="javascript">';

@@ -237,7 +237,7 @@ SUGAR.util.doWhen("window.document.forms['popup_query_form'] != null", function(
     if(typeof(window.document.forms['popup_query_form'].request_data) != 'undefined'
             && window.document.forms['popup_query_form'].request_data.value == "")
     {
-    	window.document.forms['popup_query_form'].request_data.value
-    		= YAHOO.lang.JSON.stringify(window.opener.get_popup_request_data());
+    	request_data = window.opener.get_popup_request_data();
+        window.document.forms['popup_query_form'].request_data.value = YAHOO.lang.JSON.stringify(request_data);
     }
 });

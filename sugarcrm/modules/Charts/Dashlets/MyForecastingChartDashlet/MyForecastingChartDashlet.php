@@ -45,6 +45,11 @@ class MyForecastingChartDashlet extends DashletGenericChart
      */
     protected $_seedName = 'Forecasts';
     
+    /**
+     * @see Dashlet::$isConfigPanelClearShown
+     */
+    public $isConfigPanelClearShown = false;
+    
     
     /**
      * @see DashletGenericChart::display()

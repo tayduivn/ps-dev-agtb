@@ -102,7 +102,7 @@ div.resultsTable {
                             <input type="text" id="pageNum_0_name_input" value="Testing" size="10"/>
                             </span>
                             <span id="pageNum_0_link_span" class="tabText">
-                            <span id="pageNum_0_title_text">Results</span>
+                            <span id="pageNum_0_title_text">{$MOD.LBL_CREATED_TAB}</span>
                             </span>
                             </a>
                         </li>
@@ -113,7 +113,7 @@ div.resultsTable {
                             <input type="text" id="pageNum_1_name_input" value="Testing" size="10"/>
                             </span>
                             <span id="pageNum_1_link_span" class="tabText">
-                            <span id="pageNum_1_title_text">Duplicates</span>
+                            <span id="pageNum_1_title_text">{$MOD.LBL_DUPLICATE_TAB}</span>
                             </span>
                             </a>
                         </li>
@@ -124,7 +124,7 @@ div.resultsTable {
                             <input type="text" id="pageNum_2_name_input" value="Testing" size="10" />
                             </span>
                             <span id="pageNum_2_link_span" class="tabText">
-                            <span id="pageNum_2_title_text">Errors</span>
+                            <span id="pageNum_2_title_text">{$MOD.LBL_ERROR_TAB}</span>
                             </span>
                             </a>
                         </li>
