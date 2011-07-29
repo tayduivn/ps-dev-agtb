@@ -50,7 +50,7 @@ YAHOO.widget.Panel.prototype.configClose = function (type, args, obj) {
             fc = this.innerElement.firstChild;
 
             if (fc) {
-                if (fc.className == "container-close") {
+                if (fc.className == this.m_oCloseIconTemplate.className) {
                     this.innerElement.replaceChild(oClose, fc);
                 } else {
                     this.innerElement.insertBefore(oClose, fc);
