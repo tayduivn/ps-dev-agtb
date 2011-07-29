@@ -17,6 +17,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        SugarCache::$isCacheReset = false;
     }
 
 
@@ -26,7 +27,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($rm->getRenamedModules()) );
     }
 
-    
+
     public function testRenameContactsModule()
     {
         $module = 'Accounts';
@@ -101,7 +102,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $app_list_string = return_app_list_strings_language('en_us');
         $this->assertNotEquals($newSingular, $app_list_string['moduleListSingular'][$module] );
         $this->assertNotEquals($newPlural, $app_list_string['moduleList'][$module] );
-         
+
     }
 
 
