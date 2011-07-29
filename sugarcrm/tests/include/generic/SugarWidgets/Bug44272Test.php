@@ -11,9 +11,9 @@ var $account;
 	
 public function setUp()
 {
-	$this->account = SugarTestAccountUtilities::createAccount();
 	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	$GLOBALS['current_user']->is_admin = true;
+	$this->account = SugarTestAccountUtilities::createAccount();
 }	
 
 public function tearDown()
