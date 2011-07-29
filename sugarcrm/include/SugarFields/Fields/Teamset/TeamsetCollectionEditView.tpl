@@ -38,12 +38,10 @@
 <script type="text/javascript">
     var collection = (typeof collection == 'undefined') ? new Array() : collection;
     if(typeof collection["{$displayParams.formName}_{$idname}"] == 'undefined') {ldelim}
-        SUGAR.util.doWhen("SUGAR.collection != null", function() {ldelim}
-            collection["{$displayParams.formName}_{$idname}"] = new SUGAR.collection('{$displayParams.formName}', '{$idname}', '{$module}', '{$displayParams.popupData}');
-        {if $hideShowHideButton}
-            collection["{$displayParams.formName}_{$idname}"].show_more_image = false;
-        {/if}
-        {rdelim});
+       collection["{$displayParams.formName}_{$idname}"] = new SUGAR.collection('{$displayParams.formName}', '{$idname}', '{$module}', '{$displayParams.popupData}');
+	   {if $hideShowHideButton}
+		 collection["{$displayParams.formName}_{$idname}"].show_more_image = false;
+	   {/if}
 	{rdelim}
 </script>
 <input type="hidden" id="update_fields_{$idname}_collection" name="update_fields_{$idname}_collection" value="">

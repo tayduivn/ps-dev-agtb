@@ -31,12 +31,10 @@
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Teamset/Teamset.js"}'></script>
 <script type="text/javascript">
     var collection = (typeof collection == 'undefined') ? new Array() : collection;
-    SUGAR.util.doWhen("SUGAR.collection != null", function() {ldelim}
-        collection["{$displayParams.formName}_{$vardef.name}"] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
-        {if $hideShowHideButton}
-            collection["{$displayParams.formName}_{$vardef.name}"].show_more_image = false;
-        {/if}
-    {rdelim});
+    collection["{$displayParams.formName}_{$vardef.name}"] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
+	{if $hideShowHideButton}
+		collection["{$displayParams.formName}_{$vardef.name}"].show_more_image = false;
+	{/if}
 </script>
 <input type="hidden" id="update_fields_{$vardef.name}_collection" name="update_fields_{$vardef.name}_collection" value="">
 <input type="hidden" id="{$vardef.name}_new_on_update" name="{$vardef.name}_new_on_update" value="{$displayParams.new_on_update}">
