@@ -101,7 +101,7 @@ $out =<<<EOQ
 
 </head>
 EOQ;
-$out .= '<body onload="document.getElementById(\'button_Next\').focus();">';
+$out .= '<body onload="document.getElementById(\'button_next2\').focus();">';
 
 $out2 =<<<EOQ2
 <form action="install.php" method="post" name="setConfig" id="form">
@@ -258,7 +258,7 @@ $out4 =<<<EOQ4
                 <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" id="button_back_dbConfig" onclick="document.getElementById('form').submit();" />
             </td>
             <td>
-                <input class="button" type="button" name="goto" id="button_Next" value="{$mod_strings['LBL_NEXT']}" onClick="callDBCheck();"/>
+                <input class="button" type="button" name="goto" id="button_next2" value="{$mod_strings['LBL_NEXT']}" onClick="callDBCheck();"/>
             </td>
         </tr>
      </table>

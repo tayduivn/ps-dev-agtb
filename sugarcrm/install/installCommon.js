@@ -27,6 +27,6 @@ function showHelp(step)
 }
 
 function setFocus() {
-	focus = document.getElementById('button_Next');
+	focus = document.getElementById('button_next2');
 	focus.focus();
 }

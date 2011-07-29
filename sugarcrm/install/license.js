@@ -34,7 +34,7 @@ function toggleLicenseAccept(){
 
 function toggleNextButton(){
     var theForm     = document.forms[0];
-    var nextButton  = document.getElementById( "button_Next" );
+    var nextButton  = document.getElementById( "button_next" );
 
     if( theForm.setup_license_accept.checked ){
         nextButton.disabled = '';

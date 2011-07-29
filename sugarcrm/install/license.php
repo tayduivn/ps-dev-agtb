@@ -56,7 +56,7 @@ $out =<<<EOQ
    <script type="text/javascript" src="install/license.js"></script>
 </head>
 
-<body onload="javascript:toggleNextButton();document.getElementById('button_Next').focus();">
+<body onload="javascript:toggleNextButton();document.getElementById('button_next2').focus();">
 <div id='licenseDiv'>
 <form action="install.php" method="post" name="setConfig" id="form">
 <form action="welcome.php" method="post" name="setLang" id="langForm">
@@ -80,7 +80,7 @@ $out =<<<EOQ
 
     <tr>
       <td align=left>
-        <input type="checkbox" class="checkbox" name="setup_license_accept" id="button_Next" onClick='toggleNextButton();' {$checked} />
+        <input type="checkbox" class="checkbox" name="setup_license_accept" id="button_next2" onClick='toggleNextButton();' {$checked} />
         <a href='javascript:void(0)' onClick='toggleLicenseAccept();toggleNextButton();'>{$mod_strings['LBL_LICENSE_I_ACCEPT']}</a>
       </td>
       <td align=right>
