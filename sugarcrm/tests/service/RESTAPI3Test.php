@@ -714,6 +714,9 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($results[$module][$type][$view]), "Unable to get subpanel defs");
     }
      //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @depends testSetEntriesForAccount
+     */
      public function testGetLastViewed()
      {
 

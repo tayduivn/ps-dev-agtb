@@ -165,6 +165,9 @@ class SOAPAPI3Test extends SOAPTestCase
          $this->_removeUpcomingActivities();
     }
     //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @depends testSetEntriesForAccount
+     */
     public function testGetLastViewed()
     {
          $testModule = 'Accounts';
