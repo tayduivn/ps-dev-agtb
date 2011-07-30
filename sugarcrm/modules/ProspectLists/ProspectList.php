@@ -212,7 +212,7 @@ FROM prospect_lists_prospects plp
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
 				WHERE plp.prospect_list_id = $record_id AND plp.deleted=0 
 				AND c.deleted=0
-				AND (ear.deleted=0 OR ear.deleted IS NULL)";
+				AND ear.deleted=0";
 
 		$prospects_query = "SELECT p.id AS id, 'Prospects' AS related_type, '' AS \"name\", p.first_name AS first_name, p.last_name AS last_name,p.title AS title,
 				p.primary_address_street AS primary_address_street,p.primary_address_city AS primary_address_city, p.primary_address_state AS primary_address_state,  p.primary_address_postalcode AS primary_address_postalcode, p.primary_address_country AS primary_address_country,
@@ -225,7 +225,7 @@ FROM prospect_lists_prospects plp
 				LEFT JOIN email_addresses ea ON ear.email_address_id=ea.id
 				WHERE plp.prospect_list_id = $record_id  AND plp.deleted=0 
 				AND p.deleted=0
-				AND ear.deleted=0";	
+				AND ear.deleted=0";
 
 		$accounts_query = "SELECT a.id AS id, 'Accounts' AS related_type, a.name AS \"name\", '' AS first_name, '' AS last_name,'' AS title,
 				a.billing_address_street AS primary_address_street,a.billing_address_city AS primary_address_city, a.billing_address_state AS primary_address_state, a.billing_address_postalcode AS primary_address_postalcode, a.billing_address_country AS primary_address_country,
