@@ -151,12 +151,15 @@ class MssqlManager extends DBManager
         ini_set('mssql.textsize','2147483647');
         ini_set('mssql.charset','UTF-8');
 
+        if(!empty($configOptions['db_host_instance'])) {
+            $configOptions['db_host_instance'] = trim($configOptions['db_host_instance']);
+        }
         //set the connections parameters
-        $configOptions['db_host_instance'] = trim($configOptions['db_host_instance']);
-        if (empty($configOptions['db_host_instance']))
+        if (empty($configOptions['db_host_instance'])) {
             $connect_param = $configOptions['db_host_name'];
-        else
+        } else {
             $connect_param = $configOptions['db_host_name']."\\".$configOptions['db_host_instance'];
+        }
 
         //create persistent connection
         if ($sugar_config['dbconfigoption']['persistent'] == true) {
@@ -216,7 +219,11 @@ class MssqlManager extends DBManager
 			if(!$connected){
 			    $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}");
                 if($dieOnError) {
-                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                    if(isset($GLOBALS['app_strings']['ERR_NO_DB'])) {
+                        sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                    } else {
+                        sugar_die("Could not connect to the database. Please refer to sugarcrm.log for details.");
+                    }
                 } else {
                     return false;
                 }

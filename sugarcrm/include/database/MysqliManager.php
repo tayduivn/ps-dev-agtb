@@ -299,7 +299,11 @@ class MysqliManager extends MysqlManager
         	if(empty($this->database)) {
         	    $GLOBALS['log']->fatal("Could not connect to DB server ".$dbhost." as ".$configOptions['db_user_name'].". port " .$dbport . ": " . mysqli_connect_error());
                 if($dieOnError) {
-                    sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                    if(isset($GLOBALS['app_strings']['ERR_NO_DB'])) {
+                        sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                    } else {
+                        sugar_die("Could not connect to the database. Please refer to sugarcrm.log for details.");
+                    }
                 } else {
                     return false;
                 }
@@ -308,7 +312,11 @@ class MysqliManager extends MysqlManager
         if(!empty($configOptions['db_name']) && !@mysqli_select_db($this->database,$configOptions['db_name'])) {
             $GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysqli_connect_error());
             if($dieOnError) {
-                sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                    if(isset($GLOBALS['app_strings']['ERR_NO_DB'])) {
+                        sugar_die($GLOBALS['app_strings']['ERR_NO_DB']);
+                    } else {
+                        sugar_die("Could not connect to the database. Please refer to sugarcrm.log for details.");
+                    }
             } else {
                 return false;
             }

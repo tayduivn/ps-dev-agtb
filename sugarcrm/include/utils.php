@@ -258,8 +258,6 @@ function get_sugar_config_defaults() {
 	'persistent' => true,
 	'autofree' => false,
 	'debug' => 0,
-	'seqname_format' => '%s_seq',
-	'portability' => 0,
 	'ssl' => false ),
 	'default_action' => 'index',
 	'default_charset' => return_session_value_or_default('default_charset',
@@ -1498,7 +1496,7 @@ function get_admin_modules_for_user($user) {
     }
 
     return($user->getDeveloperModules());
-    
+
 }
 
  function get_workflow_admin_modules_for_user($user){
@@ -1570,7 +1568,7 @@ function is_admin_for_module($user,$module) {
         return true;
     }
     //BEGIN SUGARCRM flav=pro ONLY
-    $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");    
+    $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");
     return $user->isDeveloperForModule($module);
     //END SUGARCRM flav=pro ONLY
     return false;
@@ -1587,7 +1585,7 @@ function is_admin($user) {
     if(empty($user)) {
         return false;
     }
-    
+
 	return $user->isAdmin();
 }
 
@@ -3066,7 +3064,7 @@ function check_logic_hook_file($module_name, $event, $action_array){
             {
 			    $logic_count = count($hook_array[$event]);
             }
-            
+
 			if($action_array[0]==""){
 				$action_array[0] = $logic_count  + 1;
 			}
@@ -4704,7 +4702,7 @@ function verify_image_file($path, $jpeg = false)
                 return true;
     	    }
         } else {
-        	return false;	
+        	return false;
         }
 	} else {
 	    // check image manually
