@@ -3972,6 +3972,12 @@ if (!class_exists('TCPDF', false)) {
 			}
 			// remove carriage returns
 			$s = str_replace("\r", '', $txt);
+			
+			//Bug-45077-replacing single quote entities
+            $s=str_replace("&#039;","'",$s);
+            //Bug-45077-replacing double quote entities
+            $s=str_replace("&quot;",'"',$s);
+
 			// check if string contains arabic text
 			if (preg_match(K_RE_PATTERN_ARABIC, $s)) {
 				$arabic = true;
