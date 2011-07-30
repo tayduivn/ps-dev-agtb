@@ -103,7 +103,38 @@ if(!empty($_POST['is_duplicate']) && $_POST['is_duplicate'] == "true"){
 	
 	foreach($actions_list as $action)
 	{
-		$action->copy($focus->id);
+		$newActionId = $action->copy($focus->id);
+	
+		// BUG 44500 Duplicating workflow does not duplicate invitees for created activites
+		$query = "SELECT id FROM workflow WHERE parent_id = '{$action->id}' ";
+		$result1 = $focus->db->query($query);
+		while (($row=$focus->db->fetchByAssoc($result1)) != null) {
+			$copyWorkflow = new WorkFlow();
+			$copyWorkflow->retrieve($row['id']);
+			$copyWorkflow->id = '';
+			$copyWorkflow->parent_id = $newActionId;
+			$copyWorkflowId = $copyWorkflow->save();
+
+			$query = "SELECT id FROM workflow_alertshells WHERE parent_id = '{$row[id]}' ";
+			$result2 = $focus->db->query($query);
+			while (($alertshell=$focus->db->fetchByAssoc($result2)) != null) {
+				$copyAlertshell = new WorkFlowAlertShell();
+				$copyAlertshell->retrieve($alertshell['id']);
+				$copyAlertshell->id = '';
+				$copyAlertshell->parent_id = $copyWorkflowId;
+				$copyAlertshellId = $copyAlertshell->save();
+				
+				$query = "SELECT id FROM workflow_alerts WHERE parent_id = '{$alertshell[id]}' ";
+				$result3 = $focus->db->query($query);
+				while (($alert=$focus->db->fetchByAssoc($result3)) != null) {
+					$copyAlert = new WorkFlowAlert();
+					$copyAlert->retrieve($alert['id']);
+					$copyAlert->id = '';
+					$copyAlert->parent_id = $copyAlertshellId;
+					$copyAlertId = $copyAlert->save();
+				}
+			}
+		}
 	}
 	
 	foreach($triggers_list as $trigger)
