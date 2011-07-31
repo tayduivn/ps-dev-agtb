@@ -74,7 +74,7 @@ class SugarWidgetSubPanelRemoveButtonProjects extends SugarWidgetField
 		
 		$focus->retrieve($return_id);
 		
-		if ($current_user->id == $focus->assigned_user_id){
+		if ($current_user->id == $focus->assigned_user_id || is_admin($current_user)){
 			$is_owner = true;
 		}
 		else{
