@@ -30,6 +30,7 @@ class OrExpression extends BooleanExpression {
 	 * Returns itself when evaluating.
 	 */
 	function evaluate() {
+
 		$params = $this->getParameters();
 		
 		if (!is_array($params))

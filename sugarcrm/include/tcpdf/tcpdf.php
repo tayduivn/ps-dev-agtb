@@ -3972,6 +3972,7 @@ if (!class_exists('TCPDF', false)) {
 			}
 			// remove carriage returns
 			$s = str_replace("\r", '', $txt);
+			
 			// check if string contains arabic text
 			if (preg_match(K_RE_PATTERN_ARABIC, $s)) {
 				$arabic = true;
