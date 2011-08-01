@@ -172,25 +172,26 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
         }
+        $rel_table = $this->getRelationshipTable();
 
-        if ($this->self_referencing)
+        if (!$this->self_referencing)
         {
-            $where = "$knownKey = '{$link->getFocus()->id}'";
+            $where = "$rel_table.$knownKey = '{$link->getFocus()->id}'";
         }
         else
         {
-            $where = "({$this->def['join_key_rhs']} = '{$link->getFocus()->id}' OR {$this->def['join_key_lhs']} = '{$link->getFocus()->id}')";
+            $where = "($rel_table.{$this->def['join_key_rhs']} = '{$link->getFocus()->id}' OR $rel_table.{$this->def['join_key_lhs']} = '{$link->getFocus()->id}')";
         }
 
         if (empty($params['return_as_array'])) {
-            return "SELECT $targetKey FROM {$this->getRelationshipTable()} WHERE $where AND deleted=0";
+            return "SELECT $targetKey FROM $rel_table WHERE $where AND deleted=0";
         }
         else
         {
             return array(
                 'select' => "SELECT $targetKey id",
-                'from' => "FROM {$this->getRelationshipTable()}",
-                'where' => "WHERE $where AND {$this->getRelationshipTable()}.deleted=0",
+                'from' => "FROM $rel_table",
+                'where' => "WHERE $where AND $rel_table.deleted=0",
             );
         }
     }
