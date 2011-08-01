@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /* example data creation config, copy to createdefs.php */
 $createdef['example@example.com']['Contacts'] = array(
         'fields' => array(
