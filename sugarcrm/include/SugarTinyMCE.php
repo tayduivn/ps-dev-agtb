@@ -95,10 +95,6 @@ class SugarTinyMCE {
 		$config['theme_advanced_buttons2'] = $this->buttonConfigs['default']['buttonConfig2']; 
 		$config['theme_advanced_buttons3'] = $this->buttonConfigs['default']['buttonConfig3'];
 
-		if(isset($this->pluginsConfig[$type]))
-		{
-            $config['plugins'] = $this->pluginsConfig[$type];
-		}
 		$jsConfig = $json->encode($config);
 		
 		$instantiateCall = '';
