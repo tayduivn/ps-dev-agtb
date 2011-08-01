@@ -1993,6 +1993,13 @@ function save_relationship_changes($is_update, $exclude=array())
     {
         $new_rel_id = false;
         $new_rel_link = false;
+
+        //Bug # 44930 - if the account_id is set, then prefer that for the relationship
+        // instead of the current account
+        if (!empty($_REQUEST['account_id'])) {
+           $_REQUEST['relate_id'] = $_REQUEST['account_id'];
+        }
+
         //this allows us to dynamically relate modules without adding it to the relationship_fields array
         if(!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id){
             $new_rel_id = $_REQUEST['relate_id'];
