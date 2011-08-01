@@ -165,7 +165,7 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 
 	    // create necessary folders before we copy our test createdefs.php file
 	    if (!is_dir ('custom/modules/SNIP'))
-	    	mkdir ('custom/modules/SNIP', true);
+	    	mkdir ('custom/modules/SNIP', 0755, true);
 
 	    // copy our test data file
 	    copy ('tests/modules/SNIP/createdefs.php', 'custom/modules/SNIP/createdefs.php');
