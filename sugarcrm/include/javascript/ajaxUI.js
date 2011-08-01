@@ -74,7 +74,7 @@ SUGAR.ajaxUI = {
                 });
             }
             var panel = SUGAR.ajaxUI.errorPanel;
-            panel.setHeader( SUGAR.language.get('app_strings','ERROR_EXAMINE_MSG')) ;
+            panel.setHeader( SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
             panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none"></iframe>');
             panel.render(document.body);
             document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;

@@ -2285,6 +2285,7 @@ $app_strings = array (
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
 
+    'ERR_AJAX_LOAD'     => 'An error has occured:',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
     'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\\n\\n  Please change the values.",

@@ -1669,8 +1669,10 @@ class SugarBean
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($GLOBALS['resavingRelatedBeans']))
+        if (empty($GLOBALS['resavingRelatedBeans'])){
+            $this->updateRelatedCalcFields();
             SugarRelationship::resaveRelatedBeans();
+        }
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
