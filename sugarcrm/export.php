@@ -53,6 +53,9 @@ if(!empty($app_list_strings['moduleList'][$_REQUEST['module']])){
     $filename = $app_list_strings['moduleList'][$_REQUEST['module']];
 }
 
+//strip away any blank spaces
+$filename = str_replace(' ','',$filename);
+
 
 if($_REQUEST['members'] == true)
 	$filename .= '_'.'members';

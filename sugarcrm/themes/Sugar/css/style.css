@@ -2923,18 +2923,12 @@ embed
 	    linear,
 	    left top,
 	    left bottom,
-	    color-stop(0, rgba(255,255,255,0)),
-	    color-stop(.12, rgba(255,255,255,0)),
-	    color-stop(.13, rgba(0,0,0,.9)),
-	    color-stop(.14, rgba(218,218,218,.9)),
-	    color-stop(.15, rgba(237,237,237,.9)),
-	    color-stop(.45, rgba(225,225,225,.9)),
-	    color-stop(.45, rgba(213,213,213,.9)),
-	    color-stop(.82, rgba(204,204,204,.9)),
-	    color-stop(.84, rgba(154,154,154,.9)),
-	    color-stop(.84, rgba(0,0,0,.2)),
-	    color-stop(1, rgba(0,0,0,0))
+	    color-stop(0, rgba(111,137,161,.9)),
+	    color-stop(.50, rgba(71,105,135,1)),
+	    color-stop(.50, rgba(48,86,120,1)),
+	    color-stop(1, rgba(48,86,120,.8))
     );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6f89a1', endColorstr='#305678');
 	}
 
 	.dashletPanel.dc .hd .hd-center {

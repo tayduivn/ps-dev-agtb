@@ -27,6 +27,8 @@ class M2MRelationship extends SugarRelationship
             $rhsModule, BeanFactory::getBeanName($rhsModule), $this->name
         );
         $this->rhsLink = $this->rhsLinkDef['name'];
+
+        $this->self_referencing = $lhsModule == $rhsModule;
     }
 
     /**
@@ -171,16 +173,24 @@ class M2MRelationship extends SugarRelationship
             $targetKey = $this->def['join_key_lhs'];
         }
 
+        if ($this->self_referencing)
+        {
+            $where = "$knownKey = '{$link->getFocus()->id}'";
+        }
+        else
+        {
+            $where = "({$this->def['join_key_rhs']} = '{$link->getFocus()->id}' OR {$this->def['join_key_lhs']} = '{$link->getFocus()->id}')";
+        }
+
         if (empty($params['return_as_array'])) {
-            return "SELECT $targetKey FROM {$this->getRelationshipTable()} WHERE $knownKey = '{$link->getFocus()->id}' AND deleted=0";
+            return "SELECT $targetKey FROM {$this->getRelationshipTable()} WHERE $where AND deleted=0";
         }
         else
         {
             return array(
                 'select' => "SELECT $targetKey id",
                 'from' => "FROM {$this->getRelationshipTable()}",
-                'where' => "WHERE $knownKey = '{$link->getFocus()->id}'"
-                         . " AND {$this->getRelationshipTable()}.deleted=0",
+                'where' => "WHERE $where AND {$this->getRelationshipTable()}.deleted=0",
             );
         }
     }
@@ -213,12 +223,27 @@ class M2MRelationship extends SugarRelationship
             $targetTable = $params['join_table_alias'];
         }
 
+        if (!$this->self_referencing)
+        {
+            $join1 = "$startingTable.$startingKey=$joinTable.$startingJoinKey";
+            $join2 = "$targetTable.$targetKey=$joinTable.$joinKey";
+            $where = "";
+        }
+        else
+        {
+            $join1 = "($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} OR $startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']})";
+            $join2 = "($targetTable.$targetKey=$joinTable.{$this->def['join_key_rhs']} OR $targetTable.$targetKey=$joinTable.{$this->def['join_key_rhs']})";
+            $where = "($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} AND $joinTable.{$this->def['join_key_lhs']}='{$link->getFocus()->$targetKey}') OR "
+                   . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}')";
+        }
+
+
         //First join the relationship table
-        $join .= "$join_type $joinTableWithAlias ON $startingTable.$startingKey=$joinTable.$startingJoinKey AND $joinTable.deleted=0\n"
+        $join .= "$join_type $joinTableWithAlias ON $join1 AND $joinTable.deleted=0\n"
         //Next add any role filters
                . $this->getRoleFilterForJoin() . "\n"
         //Then finally join the related module's table
-               . "$join_type $targetTableWithAlias ON $targetTable.$targetKey=$joinTable.$joinKey AND $targetTable.deleted=0\n";
+               . "$join_type $targetTableWithAlias ON $join2 AND $targetTable.deleted=0\n";
 
 		if($return_array){
 			return array(
@@ -226,11 +251,11 @@ class M2MRelationship extends SugarRelationship
                 'type' => $this->type,
                 'rel_key' => $joinKey,
                 'join_tables' => array($joinTable, $targetTable),
-                'where' => "",
+                'where' => $where,
                 'select' => "$targetTable.id",
             );
 		}
-		return $join;
+		return $join . $where;
     }
 
     /**
@@ -262,12 +287,21 @@ class M2MRelationship extends SugarRelationship
             $joinTable = $params['join_table_link_alias'];
         }
 
+        if (!$this->self_referencing)
+        {
+            $where = "$startingTable.$startingKey=$joinTable.$startingJoinKey AND $joinTable.$joinKey='{$link->getFocus()->$targetKey}'";
+        }
+        else
+        {
+            $where = "($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} AND $joinTable.{$this->def['join_key_lhs']}='{$link->getFocus()->$targetKey}') OR "
+                   . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}')";
+        }
+
         //First join the relationship table
-        $query .= "$join_type $joinTableWithAlias ON $startingTable.$startingKey=$joinTable.$startingJoinKey "
-                . "AND $joinTable.$joinKey='{$link->getFocus()->$targetKey}' AND $joinTable.deleted=0\n"
+        $query .= "$join_type $joinTableWithAlias ON $where AND $joinTable.deleted=0\n"
         //Next add any role filters
                . $this->getRoleFilterForJoin() . "\n";
-
+        
 		if (!empty($params['return_as_array'])) {
             $return_array = true;
         }

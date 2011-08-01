@@ -26,6 +26,7 @@ abstract class SugarRelationship
     protected $lhsLink;
     protected $rhsLink;
     protected $ignore_role_filter = false;
+    protected $self_referencing = false; //A relationship is self referencing when LHS module = RHS Module
 
     protected static $beansToResave = array();
 
