@@ -272,4 +272,4 @@ SUGAR.append(SUGAR.themes, {
     }
 });
 
-YAHOO.util.Event.onContentReady("moduleList", SUGAR.themes.loadModuleList);
+YAHOO.util.Event.onDOMReady(SUGAR.themes.loadModuleList, SUGAR.themes, true);
