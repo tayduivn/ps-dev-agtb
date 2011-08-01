@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /**
  * Get the query that produces emails related to certain object via link to certain other object
  * E.g. having Account fetch Contacts related to it and then get all emails that have some address as one of these contacts

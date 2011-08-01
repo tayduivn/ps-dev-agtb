@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /**
  * Stub class for the future of SugarEvents
  */

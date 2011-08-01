@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -68,7 +70,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		// get the meeting
 		$meeting = new Meeting();
-		$meeting->retrieve_by_string_fields(array('assigned_user_id' => $e->assigned_user_id, 'team_set_id' => $e->team_set_id, 
+		$meeting->retrieve_by_string_fields(array('assigned_user_id' => $e->assigned_user_id, 'team_set_id' => $e->team_set_id,
 											'team_id' => $e->team_id, 'parent_id' => $e->id, 'parent_type' => $e->module_dir));
 		$this->assertTrue(isset($meeting->id) && !empty($meeting->id));
 		$this->meeting_id = $meeting->id;
@@ -115,7 +117,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($email['message']['description_html'], $e->description_html);
 		$this->assertEquals($email['message']['to_addrs'], $e->to_addrs);
 		$this->assertEquals($email['message']['cc_addrs'], $e->cc_addrs);
-		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);		
+		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);
 		$this->assertEquals($email['message']['subject'], $e->name);
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
@@ -156,7 +158,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// populate the whole bean
 		if (isset ($e->id) && !empty ($e->id))
 			$e->retrieve($e->id);
-			
+
         // everything should match the content of the first email because the second email should've been rejected
 		$this->assertEquals($email['message']['message_id'], $e->message_id);
 		$this->assertEquals($email['message']['from_name'], $e->from_addr_name);
@@ -164,7 +166,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($email['message']['description_html'], $e->description_html);
 		$this->assertEquals($email['message']['to_addrs'], $e->to_addrs);
 		$this->assertEquals($email['message']['cc_addrs'], $e->cc_addrs);
-		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);		
+		$this->assertEquals($email['message']['bcc_addrs'], $e->bcc_addrs);
 		$this->assertEquals($email['message']['subject'], $e->name);
 		$this->assertEquals(gmdate($this->date_time_format,strtotime($email['message']['date_sent'])), $e->date_sent);
 	}
@@ -184,13 +186,13 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
 	public function tearDown () {
 		// delete emails that were imported
-    	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");    	
-    	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");    	
+    	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");
+    	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");
 
     	// delete other beans
     	if (!empty ($this->meeting_id)) {
-	    	$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");    	
-	    	$GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting_id}'");    	
+	    	$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
+	    	$GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting_id}'");
 	    	$GLOBALS['db']->query("DELETE FROM meetings_contacts WHERE meeting_id = '{$this->meeting_id}'");
     	}
 

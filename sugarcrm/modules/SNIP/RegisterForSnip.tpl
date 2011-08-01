@@ -1,4 +1,5 @@
 {$TITLE}
+{* //FILE SUGARCRM flav=pro ONLY *}
 	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
 		<tr>
 		<td>

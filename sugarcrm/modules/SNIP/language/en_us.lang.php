@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 $mod_strings = array(
 	'LBL_REGISTER_SNIP_FAIL' => 'Failed to contact SNIP service: %s!<br>',
 	'LBL_CONFIGURE_SNIP' => 'Configure SNIP',

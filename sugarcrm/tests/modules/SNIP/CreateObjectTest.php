@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -38,7 +40,7 @@ require_once('include/TimeDate.php');
 class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 	private $snip;
 	private $orig_file = '';
-	
+
 	// store ids of generated objects so we can delete them in tearDown
 	private $email_id = '';
 	private $contact_id = '';
@@ -174,15 +176,15 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 
 	public function tearDown () {
 		// delete emails that were imported
-    	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");    	
-    	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");    	
+    	$GLOBALS['db']->query("DELETE FROM emails WHERE id = '{$this->email_id}'");
+    	$GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id = '{$this->email_id}'");
 
     	// delete other objects that were created
-    	if (!empty($this->contact_id)) $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact_id}'");    	
-    	if (!empty($this->case_id)) $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");    	
+    	if (!empty($this->contact_id)) $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact_id}'");
+    	if (!empty($this->case_id)) $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");
     	if (!empty($this->opportunity_id)) {
-	    	$GLOBALS['db']->query("DELETE FROM opportunities WHERE id = '{$this->opportunity_id}'");    	
-    		$GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id = '{$this->opportunity_id}'");    	
+	    	$GLOBALS['db']->query("DELETE FROM opportunities WHERE id = '{$this->opportunity_id}'");
+    		$GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id = '{$this->opportunity_id}'");
     	}
 
 		// remove anonymous user

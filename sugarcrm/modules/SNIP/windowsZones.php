@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 // List of Windows TZ names and their CLDR counterparts
 // Source: http://unicode.org/repos/cldr/trunk/common/supplemental/windowsZones.xml
 $windowsZones = array (

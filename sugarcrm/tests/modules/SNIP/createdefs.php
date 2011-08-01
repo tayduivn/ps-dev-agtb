@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 
 //this file is temporarily moved during a unit test to test the behaviour of createdefs.php handling.
 
@@ -15,7 +16,7 @@ $createdef['contacts@testsugar.info']['Contacts'] = array(
 $createdef['cases@testsugar.info']['Cases'] = array(
         'fields' => array(
 	        'name' => '{from_name}',
-            'resolution' => '{email_id}',	        
+            'resolution' => '{email_id}',
 	        'date_entered' => '{date}',
 	        'description' => '{description} {email_id} {message_id} {subject} {from}',
         ),
@@ -24,7 +25,7 @@ $createdef['cases@testsugar.info']['Cases'] = array(
 $createdef['opp@testsugar.info']['Opportunities'] = array(
         'fields' => array(
             'name' => '{from_name}',
-            'sales_stage' => '{email_id}',	        
+            'sales_stage' => '{email_id}',
             'date_entered' => '{date}',
             'description' => '{description} {email_id} {message_id} {subject} {from}',
         ),
