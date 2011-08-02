@@ -50,6 +50,8 @@
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
+               // Include any Sugar overrides done to YUI libs for bugfixes
+                'include/javascript/sugar_yui_overrides.js'   => 'include/javascript/sugar_grp1.js',
             ),
 
             $sugar_grp1_yui = array(
