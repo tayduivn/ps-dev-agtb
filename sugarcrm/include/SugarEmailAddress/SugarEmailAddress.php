@@ -754,8 +754,8 @@ class SugarEmailAddress extends SugarBean {
 
         //determine if this should be a quickcreate form, or a quick create form under subpanels
         if ($this->view == "QuickCreate"){
-            $form = 'form_'.$this->view .'_'.$module;
-            if(isset($_REQUEST['action']) && $_REQUEST['action']=='SubpanelCreates'){
+            $form = 'form_DC'.$this->view .'_'.$module;
+            if(isset($_REQUEST['action']) && $_REQUEST['action']=='SubpanelCreates' ||  $_REQUEST['action']=='SubpanelEdits'){
                 $form = 'form_Subpanel'.$this->view .'_'.$module;
             }
         }
