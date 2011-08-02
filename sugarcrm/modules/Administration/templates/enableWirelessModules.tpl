@@ -49,14 +49,17 @@
 			<tr>
 			    <td colspan="2">
 			        <table>
+                    {if $url}
                     <tr>
-                        <td scope = "row" nowrap="nowrap">
-                            {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}: </td>
+                        <td scope="row" nowrap="nowrap">
+                            {sugar_translate module='Configurator' label='LBL_WIRELESS_SERVER_URL'}:
+                        </td>
                         </td>
                         <td>
                             <a href="{$url}" target="_blank">{$url}</a>
                         </td>
                     </tr>
+                    {/if}
                     <tr>
                         <td scope="row" nowrap="nowrap">{sugar_translate module='Configurator' label='LBL_WIRELESS_LIST_ENTRIES'}: </td>
                         <td>

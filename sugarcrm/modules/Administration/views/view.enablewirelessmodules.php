@@ -22,6 +22,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/SugarLicensing/SugarLicensing.php');
+
 class AdministrationViewEnablewirelessmodules extends SugarView 
 {	
  	/**
@@ -130,27 +132,12 @@ class AdministrationViewEnablewirelessmodules extends SugarView
      * @returns string url
      */
     protected function getMobileEdgeUrl($license) {
-        global $sugar_config;
-
-        // To override url, override sugar_config['license_server_url'];
-        $endpoint = (isset($sugar_config["license_server_url"])) ? $sugar_config["license_server_url"] : "http://authenticate.sugarcrm.com/rest/fetch/mobileserver";
-        $curl = curl_init($endpoint);
-        // to find one via subscription key
-        $post_params = array(
-            'data' => json_encode(array('key' => $license))
-        );
-        // set soem curl options
-        curl_setopt($curl, CURLOPT_POST, true);
-        // Tell curl not to return headers, but do return the response
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $post_params);
-        // run the request
-        $return = json_decode(curl_exec($curl));
-
+        $licensing = new SugarLicensing();
+        $result = $licensing->request("/rest/fetch/mobileserver", array('key' => $license));
+        
         // Check if url exists for the provided key.
-        if (isset($return->mobileserver->server->url)) {
-            return $return->mobileserver->server->url;
+        if (isset($result["mobileserver"]["server"]["url"])) {
+            return $result["mobileserver"]["server"]["url"];
         } else {
             return '';
         }
