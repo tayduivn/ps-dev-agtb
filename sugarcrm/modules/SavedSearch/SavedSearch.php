@@ -90,9 +90,8 @@ class SavedSearch extends SugarBean {
 		
 		$savedSearchArray['_none'] = $app_strings['LBL_NONE'];
 	    while ($row = $db->fetchByAssoc($result)) {
-	        $savedSearchArray[$row['id']] = $row['name'];
+	        $savedSearchArray[$row['id']] = htmlspecialchars($row['name'], ENT_QUOTES);
 	    }
-
 		$sugarSmarty = new Sugar_Smarty();
 		$sugarSmarty->assign('SEARCH_MODULE', $module);
 		$sugarSmarty->assign('MOD', $saved_search_mod_strings);
@@ -180,7 +179,7 @@ class SavedSearch extends SugarBean {
         
         $savedSearchArray['_none'] = $app_strings['LBL_NONE'];
         while ($row = $db->fetchByAssoc($result)) {
-            $savedSearchArray[$row['id']] = $row['name'];
+            $savedSearchArray[$row['id']] = htmlspecialchars($row['name']);
         }
 
         $sugarSmarty = new Sugar_Smarty();
@@ -272,7 +271,7 @@ class SavedSearch extends SugarBean {
 			if(!empty($value) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $input, $match))
 			{
 			   $field = $match[2];
-			   if(isset($searchModuleBean->field_defs[$field]['type']))
+			   if(isset($searchModuleBean->field_defs[$field]['type']) && empty($searchModuleBean->field_defs[$field]['disable_num_format']))
 			   {
 			   	  $type = $searchModuleBean->field_defs[$field]['type'];
 			   	  
@@ -370,7 +369,7 @@ class SavedSearch extends SugarBean {
             	if(isset($searchModuleBean) && !empty($val) && preg_match('/^(start_range_|end_range_|range_)?(.*?)(_advanced|_basic)$/', $key, $match))
             	{
             	   $field = $match[2];
-				   if(isset($searchModuleBean->field_defs[$field]['type']))
+				   if(isset($searchModuleBean->field_defs[$field]['type'])  && empty($searchModuleBean->field_defs[$field]['disable_num_format']))
 				   {
 				   	  $type = $searchModuleBean->field_defs[$field]['type'];
 				   	  

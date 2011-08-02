@@ -32,43 +32,77 @@
 /**
  * Namespace for Sugar Objects
  */
-if ( typeof(SUGAR) == "undefined" )	SUGAR = {};
-if ( typeof(SUGAR.themes) == "undefined" )	SUGAR.themes = {};
+if (typeof(SUGAR) == "undefined") {
+    SUGAR = {
 
+        /**
+         * Creates a namespace if it doesn't exist and then returns it.
+         *
+         * Note: this implementation only creates a top-level namespace. Extend this function if
+         * multi-level namespaces are needed.
+         * @param ns
+         */
+        namespace: function(ns) {
+            SUGAR[ns] = SUGAR[ns] || {};
 
-    	/**
-    	 * Namespace for Homepage
-    	 */
-    	 SUGAR.sugarHome= {};
-    	/**
-    	 * Namespace for Subpanel Utils
-    	 */
-    	SUGAR.subpanelUtils= {};
-    	/**
-    	 * AJAX status class
-    	 */
-    	SUGAR.ajaxStatusClass= {};
-    	/**
-    	 * Tab selector utils
-    	 */
-    	SUGAR.tabChooser= {};
-    	/**
-    	 * General namespace for Sugar utils
-    	 */
-    	SUGAR.util= {};
-    	SUGAR.savedViews= {};
-    	/**
-    	 * Dashlet utils
-    	 */
-    	SUGAR.dashlets= {};
-    	SUGAR.unifiedSearchAdvanced= {};
+            return ((typeof SUGAR[ns] === "object") && (SUGAR[ns] !== null)) ? SUGAR[ns] : false;
+        },
 
-    	SUGAR.searchForm= {};
-    	SUGAR.language= {};
-    	SUGAR.Studio= {};
-    	SUGAR.contextMenu= {};
+        /**
+         * Add properties of an object to target object.
+         * @param target
+         * @param obj
+         */
+        append: function(target, obj) {
+            for (var prop in obj) {
+                if (obj[prop] !== void 0) target[prop] = obj[prop];
+            }
 
-    	SUGAR.config= {};
+            return target;
+        }
+    };
+}
+
+// Namespaces
+SUGAR.namespace("themes");
+
+/**
+ * Namespace for Homepage
+ */
+ SUGAR.namespace("sugarHome");
+
+/**
+ * Namespace for Subpanel Utils
+ */
+SUGAR.namespace("subpanelUtils");
+
+/**
+ * AJAX status class
+ */
+SUGAR.namespace("ajaxStatusClass");
+
+/**
+ * Tab selector utils
+ */
+SUGAR.namespace("tabChooser");
+
+/**
+ * General namespace for Sugar utils
+ */
+SUGAR.namespace("utils");
+SUGAR.namespace("savedViews");
+
+/**
+ * Dashlet utils
+ */
+SUGAR.namespace("dashlets");
+SUGAR.namespace("unifiedSearchAdvanced");
+
+SUGAR.namespace("searchForm");
+SUGAR.namespace("language");
+SUGAR.namespace("Studio");
+SUGAR.namespace("contextMenu");
+SUGAR.namespace("config");
 
 var nameIndex = 0;
 var typeIndex = 1;
@@ -639,7 +673,7 @@ function add_error_style(formname, input, txt, flash) {
 	            }
 	        }
 		}
-		window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
+		window.setTimeout("if (inputsWithErrors[" + (inputsWithErrors.length - 1) + "]) inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
     }
 
   } catch ( e ) {
@@ -1645,10 +1679,10 @@ function initEditView(theForm) {
     if (theForm.id == 'popup_query_form') {
     	return;
     }
-	if ( typeof editViewSnapshots == 'undefined' ) {
+	if ( typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
         editViewSnapshots = new Object();
     }
-    if ( typeof SUGAR.loadedForms == 'undefined' ) {
+    if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
     	SUGAR.loadedForms = new Object();
     }
 
@@ -3344,7 +3378,7 @@ SUGAR.searchForm = function() {
 			}
 		},
         // This function is here to clear the form, instead of "resubmitting it
-		clear_form: function(form) {
+		clear_form: function(form, skipElementNames) {
             var elemList = form.elements;
             var elem;
             var elemType;
@@ -3352,6 +3386,12 @@ SUGAR.searchForm = function() {
             for( var i = 0; i < elemList.length ; i++ ) {
                 elem = elemList[i];
                 if ( typeof(elem.type) == 'undefined' ) {
+                    continue;
+                }
+                
+                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined'
+                        && SUGAR.util.arrayIndexOf(skipElementNames, elem.name) != -1 )
+                {
                     continue;
                 }
 
@@ -3998,11 +4038,13 @@ function set_return_basic(popup_reply_data,filter)
 					for(var i = 0; i < selectField.options.length; i++) {
 						if(selectField.options[i].text == displayValue) {
 							selectField.options[i].selected = true;
+                            SUGAR.util.callOnChangeListers(selectField);
 							break;
 						}
 					}
 				} else {
 					window.document.forms[form_name].elements[the_key].value = displayValue;
+                    SUGAR.util.callOnChangeListers(window.document.forms[form_name].elements[the_key]);
 				}
 			}
 			// end andopes change: support for enum fields (SELECT)
@@ -4224,23 +4266,22 @@ SUGAR.image = {
     }
 }
 
-SUGAR.util.isTouchScreen = function()
-{
-    // first check if we have forced use of the touch enhanced interface
-    if ( Get_Cookie("touchscreen") == '1' ) {
-        return true;
-    }
+SUGAR.append(SUGAR.util, {
+    isTouchScreen: function() {
+        // first check if we have forced use of the touch enhanced interface
+        if (Get_Cookie("touchscreen") == '1') {
+            return true;
+        }
 
-    // next check if we should use the touch interface with our device
-    if ( (navigator.userAgent.match(/iPad/i) != null) ) {
-        return true;
-    }
+        // next check if we should use the touch interface with our device
+        if ((navigator.userAgent.match(/iPad/i) != null)) {
+            return true;
+        }
 
-    return false;
-}
+        return false;
+    },
 
-SUGAR.util.isLoginPage = function(content)
-{
+    isLoginPage: function(content) {
 	//skip if this is packageManager screen
 	if(SUGAR.util.isPackageManager()) {return false;}
 	var loginPageStart = "<!DOCTYPE";
@@ -4248,19 +4289,19 @@ SUGAR.util.isLoginPage = function(content)
 		window.location.href = window.location.protocol + window.location.pathname;
 		return true;
 	}
-}
+    },
 
-SUGAR.util.isPackageManager=function(){
+isPackageManager: function(){
 	if(typeof(document.the_form) !='undefined' && typeof(document.the_form.language_pack_escaped) !='undefined'){
 		return true;
 	}else{return false;}
-}
+},
 
-SUGAR.util.ajaxCallInProgress = function(){
+ajaxCallInProgress: function(){
 	return SUGAR_callsInProgress != 0;
-}
+},
 
-SUGAR.util.callOnChangeListers = function(field){
+callOnChangeListers: function(field){
 	var listeners = YAHOO.util.Event.getListeners(field, 'change');
 	if (listeners != null) {
 		for (var i = 0; i < listeners.length; i++) {
@@ -4268,9 +4309,9 @@ SUGAR.util.callOnChangeListers = function(field){
 			l.fn.call(l.scope ? l.scope : this, l.obj);
 		}
 	}
-}
+},
 
-SUGAR.util.closeActivityPanel = {
+closeActivityPanel: {
     show:function(module,id,new_status,viewType,parentContainerId){
         if (SUGAR.util.closeActivityPanel.panel)
 			SUGAR.util.closeActivityPanel.panel.destroy();
@@ -4330,9 +4371,9 @@ SUGAR.util.closeActivityPanel = {
         SUGAR.util.closeActivityPanel.panel.render(document.body);
         SUGAR.util.closeActivityPanel.panel.show();
     }
-}
+},
 
-SUGAR.util.setEmailPasswordDisplay = function(id, exists) {
+setEmailPasswordDisplay: function(id, exists) {
 	link = document.getElementById(id+'_link');
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
@@ -4343,13 +4384,55 @@ SUGAR.util.setEmailPasswordDisplay = function(id, exists) {
     	pwd.style.display = '';
     	link.style.display = 'none';
 	}
-}
+},
 
-SUGAR.util.setEmailPasswordEdit = function(id) {
+setEmailPasswordEdit: function(id) {
 	link = document.getElementById(id+'_link');
 	pwd = document.getElementById(id);
 	if(!pwd || !link) return;
 	pwd.style.display = '';
 	link.style.display = 'none';
-}
+},
 
+    /**
+     * Compares a filename with a supplied array of allowed file extensions.
+     * @param fileName string
+     * @param allowedTypes array of allowed file extensions
+     * @return bool
+     */
+    validateFileExt: function(fileName, allowedTypes) {
+        var ext = fileName.split('.').pop();
+
+        for (var i = allowedTypes.length; i > 0; i--) {
+            if (ext === allowedTypes[i]) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+
+    arrayIndexOf: function(arr, val, start) {
+        if (typeof arr.indexOf == "function")
+            return arr.indexOf(val, start);
+        for (var i = (start || 0), j = arr.length; i < j; i++) {
+            if (arr[i] === val) {
+                return i;
+            }
+        }
+        return -1;
+    }
+});
+
+SUGAR.clearRelateField = function(form, name, id)
+{
+    if (typeof form[name] == "object"){
+        form[name].value = '';
+        SUGAR.util.callOnChangeListers(form[name]);
+    }
+
+    if (typeof form[id] == "object"){
+        form[id].value = '';
+        SUGAR.util.callOnChangeListers(form[id]);
+    }
+};

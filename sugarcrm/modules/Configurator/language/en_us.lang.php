@@ -212,7 +212,7 @@ $mod_strings = array (
 	'LBL_LOGGER_FILENAME_SUFFIX' =>'Append after filename',
 	'LBL_VCAL_PERIOD' => 'vCal Updates Time Period:',
     'LBL_IMPORT_MAX_RECORDS' => 'Import - Maximum Number of Rows:',
-    'LBL_IMPORT_MAX_RECORDS_HELP' => 'Specify how many rows are allowed within import files. If the number of rows in an import file exceeds this number, the user will be alerted. If no number is entered, an unlimited number of rows are allowed.',
+    'LBL_IMPORT_MAX_RECORDS_HELP' => 'Specify how many rows are allowed within import files. If the number of rows <br>in an import file exceeds this number, the user will be alerted. If no number<br> is entered, an unlimited number of rows are allowed.',
 	'vCAL_HELP' => 'Use this setting to determine the number of months in advance of the current date that Free/Busy information for calls and meetings is published.<BR>To turn Free/Busy publishing off, enter "0".  The minimum is 1 month; the maximum is 12 months.',
 //BEGIN SUGARCRM flav=dce ONLY
     'DCE_TEMPLATES_DIR'=>'Templates directory in DCE',
@@ -248,7 +248,7 @@ $mod_strings = array (
     'PDF_HEADER_LOGO_INFO' => 'This image appears in the default Header in Quotes PDF Documents.',
 
     'PDF_NEW_HEADER_LOGO' => 'Select New Image for Quotes',
-    'PDF_NEW_HEADER_LOGO_INFO' => 'The file format can be either .jpg or .png. (Only .jpg for EZPDF)<BR>The recommended size is 867x74 px.',
+    'PDF_NEW_HEADER_LOGO_INFO' => 'The file format can be either .jpg or .png. (Only .jpg for EZPDF)<BR>The recommended size is 867x60 px.',
 
     'PDF_HEADER_LOGO_WIDTH' => 'Quotes Image Width',
     'PDF_HEADER_LOGO_WIDTH_INFO' => 'Change the scale of the uploaded image that appears in Quotes PDF Documents. (TCPDF only)',

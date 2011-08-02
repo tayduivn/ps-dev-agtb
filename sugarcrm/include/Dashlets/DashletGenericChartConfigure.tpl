@@ -79,8 +79,10 @@
     <tr>
 	    <td colspan='4' align='right'>
 	        <input type='submit' class='button' value='{$save}'>
-	        <input type='submit' class='button' value='{$clear}' onclick='SUGAR.searchForm.clear_form(this.form);return false;'>
-	    </td>    
+	        {if $showClearButton}
+	        <input type='submit' class='button' value='{$clear}' onclick='SUGAR.searchForm.clear_form(this.form,["dashletTitle","autoRefresh"]);return false;'>
+	        {/if}
+        </td>    
 	</tr>
 </table>
 </form>

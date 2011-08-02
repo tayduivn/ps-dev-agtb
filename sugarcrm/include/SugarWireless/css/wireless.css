@@ -30,9 +30,12 @@ html, body, select {
 	margin:0pt;
 	padding:0pt;
 }
+body {
+    margin: 3px;
+}
 div, ul {
 	margin:0px;
-	padding:3px;
+	padding:3px 0px;
 }
 li{
 	list-style: none;

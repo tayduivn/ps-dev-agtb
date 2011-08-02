@@ -156,7 +156,7 @@ var timeOutWindow = 60
 			//alert(tableAndRelation);
 
             msgPanel.show;
-			postData = 'tableAndRelation=' + JSON.stringify(tableAndRelation)+'&module=Administration&action=checkTableRelationships&to_pdf=1';
+			postData = 'tableAndRelation=' + YAHOO.lang.JSON.stringify(tableAndRelation)+'&module=Administration&action=checkTableRelationships&to_pdf=1';
 			YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, postData);
 		 }
 

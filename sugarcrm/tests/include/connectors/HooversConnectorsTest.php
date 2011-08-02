@@ -23,25 +23,28 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/connectors/ConnectorsTestCase.php');
+require_once('tests/include/connectors/HooversHelper.php');
 
 class HooversConnectorsTest extends Sugar_Connectors_TestCase
 {
 	var $qual_module;
 	var $listArgs;
 	var $company_id;
+	protected static $mock;
 
-    function setUp() {
+	function setUp()
+	{
         parent::setUp();
     	ConnectorFactory::$source_map = array();
 		//Skip if we do not have an internet connection
-		require('modules/Connectors/connectors/sources/ext/soap/hoovers/config.php');
-		$url = $config['properties']['hoovers_wsdl'];
-		$contents = @file_get_contents($url);
-		if(empty($contents)) {
-		   $this->markTestSkipped("Unable to retrieve Hoovers wsdl.  Skipping.");
-		}
+
+    	if(empty(self::$mock)) {
+    		self::$mock = $this->getMockFromWsdl(
+          		dirname(__FILE__).'/hooversAPI.wsdl', 'HooversAPIMock'
+        	);
+    	}
 
     	//Enable the Hoovers Connector
     	$_REQUEST['module'] = 'Connectors';
@@ -66,6 +69,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$this->qual_module = 'Accounts';
     	$this->company_id = '2205698';
     	$this->listArgs = array('name' => 'Gannett');
+    	$this->mock = new HooversConnectorsMockClient(self::$mock);
     }
 
     function tearDown() {
@@ -73,19 +77,44 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
         ConnectorFactory::$source_map = array();
     }
 
+    private function getResultData($filename)
+    {
+    	$result = '';
+    	require(dirname(__FILE__)."/$filename");
+    	return $result;
+    }
+
     function test_hoovers_fillBean() {
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
+//BEGIN SUGARCRM flav!=int ONLY
+    	$source_instance->getSource()->setClient($this->mock);
+    	$this->mock->expects($this->once())
+    		->method('GetCompanyDetail')
+    		->will($this->returnValue($this->getResultData('gannett.php')));
+//END SUGARCRM flav!=int ONLY
     	$account = new Account();
     	$account = $source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);
-    	$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that account name is like Gannett");
-    }
+    	$this->assertRegExp('/^Gannett/i', $account->name, "Assert that account name is like Gannett");
+}
 
     function test_hoovers_fillBeans() {
     	$source_instance = ConnectorFactory::getInstance('ext_soap_hoovers');
+//BEGIN SUGARCRM flav!=int ONLY
+    	$source_instance->getSource()->setClient($this->mock);
+    	$this->mock->expects($this->once())
+    		->method('AdvancedCompanySearch')
+    		->will($this->returnValue($this->getResultData('gannett_search.php')));
+//END SUGARCRM flav!=int ONLY
     	$accounts = array();
     	$accounts = $source_instance->fillBeans($this->listArgs, $this->qual_module, $accounts);
+    	if(empty($accounts))
+    	{
+    	   $this->markTestSkipped('No accounts returned.  API Service may be down.  Skip test');
+    	   return;
+    	}
+    	
         foreach($accounts as $count=>$account) {
-    		$this->assertEquals(preg_match('/^Gannett/i', $account->name), 1, "Assert that a bean has been filled with account name like Gannett");
+    		$this->assertRegExp('/Gannett/i', $account->name, "Assert that account name is like Gannett");
     		break;
     	}
     }

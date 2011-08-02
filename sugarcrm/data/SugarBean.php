@@ -936,10 +936,11 @@ class SugarBean
             //initialize a variable of type Link
             require_once('data/Link2.php');
             $class = load_link_class($fieldDefs[$rel_name]);
-            if (isset($this->$rel_name) && $this->$rel_name instanceof $class)
-                return true;
+            if (isset($this->$rel_name) && $this->$rel_name instanceof $class) {
+                    return true;
+            }
             //if rel_name is provided, search the fieldef array keys by name.
-            if (array_search('link',$fieldDefs[$rel_name]) === 'type')
+            if (isset($fieldDefs[$rel_name]['type']) && $fieldDefs[$rel_name]['type'] == 'link')
             {
                 if ($class == "Link2")
                     $this->$rel_name = new $class($rel_name, $this);
@@ -947,7 +948,6 @@ class SugarBean
                     $this->$rel_name = new $class($fieldDefs[$rel_name]['relationship'], $this, $fieldDefs[$rel_name]);
 
                 if (empty($this->$rel_name) ||
-                        (isset($this->$rel_name->_relationship) && empty($this->$rel_name->_relationship->id)) ||
                         (method_exists($this->$rel_name, "loadedSuccesfully") && !$this->$rel_name->loadedSuccesfully()))
                 {
                     unset($this->$rel_name);
@@ -1005,9 +1005,10 @@ class SugarBean
     function get_linked_beans($field_name,$bean_name, $sort_array = array(), $begin_index = 0, $end_index = -1,
                               $deleted=0, $optional_where="")
     {
-        $this->load_relationship($field_name);
-
-        return $this->$field_name->getBeans();
+        if($this->load_relationship($field_name))
+            return array_values($this->$field_name->getBeans());
+        else
+            return array();
     }
 
     /**
@@ -1382,7 +1383,7 @@ class SugarBean
         require_once("data/BeanFactory.php");
         BeanFactory::registerBean($this->module_name, $this);
 
-        if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']))
+        if (empty($GLOBALS['updating_relationships']) && empty($GLOBALS['saving_relationships']) && empty ($GLOBALS['resavingRelatedBeans']))
         {
             $GLOBALS['saving_relationships'] = true;
         // let subclasses save related field changes
@@ -1668,8 +1669,10 @@ class SugarBean
         }
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($GLOBALS['resavingRelatedBeans']))
+        if (empty($GLOBALS['resavingRelatedBeans'])){
+            $this->updateRelatedCalcFields();
             SugarRelationship::resaveRelatedBeans();
+        }
         //rrs - bug 7908
         $this->process_workflow_alerts();
         //rrs
@@ -1754,9 +1757,9 @@ class SugarBean
             $links = $dictionary[$this->object_name]['related_calc_fields'];
             foreach($links as $lname)
             {
-                if (empty($this->$lname))
+                if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2))
                 {
-                    $this->load_relationship($lname);
+                    continue;
                 }
                 $beans = $this->$lname->getBeans();
                 //Resave any related beans
@@ -1910,10 +1913,23 @@ class SugarBean
             $n->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-            if($sendEmail && !$notify_mail->Send()) {
-                $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
-            } else {
-                $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
+
+            $oe = new OutboundEmail();
+            $oe = $oe->getUserMailerSettings($current_user);
+            //only send if smtp server is defined
+            if($sendEmail){
+                if(empty($oe->mail_smtpserver)){
+                    $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
+                    //break out
+                    return;
+                }
+
+                if(!$notify_mail->Send()) {
+                    $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
+                }else{
+                    $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
+                }
+
             }
 
         }
@@ -2021,6 +2037,13 @@ function save_relationship_changes($is_update, $exclude=array())
     {
         $new_rel_id = false;
         $new_rel_link = false;
+
+        //Bug # 44930 - if the account_id is set, then prefer that for the relationship
+        // instead of the current account
+        if (!empty($_REQUEST['account_id'])) {
+           $_REQUEST['relate_id'] = $_REQUEST['account_id'];
+        }
+
         //this allows us to dynamically relate modules without adding it to the relationship_fields array
         if(!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id){
             $new_rel_id = $_REQUEST['relate_id'];
@@ -2080,33 +2103,38 @@ function save_relationship_changes($is_update, $exclude=array())
 
         foreach ( $this->field_defs as $def )
         {
-           if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset ( $def[ 'save' ]) )
-        {
-            if (  in_array( $def['id_name'], $exclude) || in_array( $def['id_name'], $this->relationship_fields ) )
-                continue ; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
-
-            if (isset( $this->field_defs[ $def [ 'link' ] ] ))
+            if ($def [ 'type' ] == 'relate' && isset ( $def [ 'id_name'] ) && isset ( $def [ 'link'] ) && isset ( $def[ 'save' ]) )
             {
+                if (  in_array( $def['id_name'], $exclude) || in_array( $def['id_name'], $this->relationship_fields ) )
+                    continue ; // continue to honor the exclude array and exclude any relationships that will be handled by the relationship_fields mechanism
 
-                    $linkfield = $this->field_defs[$def [ 'link' ]] ;
+                $linkField = $def [ 'link' ] ;
+                if (isset( $this->field_defs[$linkField ] ))
+                {
+                    $linkfield = $this->field_defs[$linkField] ;
 
-                    if ($this->load_relationship ( $def [ 'link' ])){
-                        if (!empty($this->rel_fields_before_value[$def [ 'id_name' ]]))
+                    if ($this->load_relationship ( $linkField))
+                    {
+                        $idName = $def['id_name'];
+
+                        if (!empty($this->rel_fields_before_value[$idName]) && empty($this->$idName))
                         {
                             //if before value is not empty then attempt to delete relationship
                             $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to remove the relationship record: {$def [ 'link' ]} = {$this->rel_fields_before_value[$def [ 'id_name' ]]}");
                             $this->$def ['link' ]->delete($this->id, $this->rel_fields_before_value[$def [ 'id_name' ]] );
                         }
-                        if (!empty($this->$def['id_name']) && is_string($this->$def['id_name']))
+
+                        if (!empty($this->$idName) && is_string($this->$idName))
                         {
                             $GLOBALS['log']->debug("save_relationship_changes(): From field_defs - attempting to add a relationship record - {$def [ 'link' ]} = {$this->$def [ 'id_name' ]}" );
-                            $this->$def ['link' ]->add($this->$def['id_name']);
+
+                            $this->$linkField->add($this->$idName);
                         }
                     } else {
-                        $GLOBALS['log']->fatal("Failed to load relationship {$def [ 'link' ]} while saving {$this->module_dir}");
+                        $GLOBALS['log']->fatal("Failed to load relationship {$linkField} while saving {$this->module_dir}");
                     }
                 }
-        }
+            }
         }
 
         // Finally, we update a field listed in the _REQUEST['*/relate_id']/_REQUEST['relate_to'] mechanism (if it hasn't already been updated above)
@@ -2144,7 +2172,6 @@ function save_relationship_changes($is_update, $exclude=array())
             }
 
         }
-
     }
 
     /**
@@ -2979,7 +3006,7 @@ function save_relationship_changes($is_update, $exclude=array())
      *
      * It constructs union queries for activities subpanel.
      *
-     * @param Object $parentbean constructing queries for link attributes in this bean
+     * @param SugarBean $parentbean constructing queries for link attributes in this bean
      * @param string $order_by Optional, order by clause
      * @param string $sort_order Optional, sort order
      * @param string $where Optional, additional where clause
@@ -4258,6 +4285,7 @@ function save_relationship_changes($is_update, $exclude=array())
             if(!empty($sugar_config['disable_count_query']) && !empty($limit))
             {
                 $rows_found = $row_offset + count($list);
+                
                 if(count($list) >= $limit)
                 {
                     array_pop($list);
@@ -4537,9 +4565,12 @@ function save_relationship_changes($is_update, $exclude=array())
     * Fill in fields where type = relate
     */
     function fill_in_relationship_fields(){
-        if(!empty($this->relDepth)) {
-            if($this->relDepth > 1)return;
-        }else $this->relDepth = 0;
+        global $fill_in_rel_depth;
+        if(empty($fill_in_rel_depth) || $fill_in_rel_depth < 0)
+            $fill_in_rel_depth = 0;
+        if($fill_in_rel_depth > 1)
+            return;
+        $fill_in_rel_depth++;
 
         foreach($this->field_defs as $field)
         {
@@ -4561,7 +4592,6 @@ function save_relationship_changes($is_update, $exclude=array())
                             if(!empty($this->$id_name) && file_exists($GLOBALS['beanFiles'][$class]) && isset($this->$name)){
                                 require_once($GLOBALS['beanFiles'][$class]);
                                 $mod = new $class();
-                                $mod->relDepth = $this->relDepth + 1;
                                 $mod->retrieve($this->$id_name);
                                 if (!empty($field['rname'])) {
                                     $this->$name = $mod->$field['rname'];
@@ -4588,6 +4618,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
             }
         }
+        $fill_in_rel_depth--;
     }
 
     /**
@@ -4626,8 +4657,19 @@ function save_relationship_changes($is_update, $exclude=array())
                     $this->modified_user_id = 1;
                 }
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$this->modified_user_id' where id='$id'";
-            } else
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
+                }
+                //END SUGARCRM flav=pro ONLY
+            } else {
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
+                }
+                //END SUGARCRM flav=pro ONLY
+            }
             $this->db->query($query, true,"Error marking record deleted: ");
             $this->deleted = 1;
 
@@ -5142,7 +5184,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $table_alias = $this->table_name;
         }
 
-        if ( ( (!is_admin($current_user) && !is_admin_for_module($current_user,$this->module_dir)) || $force_admin ) &&
+        if ( ( (!$current_user->isAdminForModule($this->module_dir)) || $force_admin ) &&
         !$this->disable_row_level_security	&& ($this->module_dir != 'WorkFlow')){
 
             $query .= $join_type . " JOIN (select tst.team_set_id from team_sets_teams tst ";
@@ -5390,7 +5432,7 @@ function save_relationship_changes($is_update, $exclude=array())
             $logicHook->call_custom_logic($this->module_dir, $event, $arguments);
             //BEGIN SUGARCRM flav=pro ONLY
             //Fire dependency manager dependencies here for some custom logic types.
-            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || "before_delete")
+            if ($event == "after_relationship_add" || $event == "after_relationship_delete" || $event == "before_delete")
             {
                 $this->updateRelatedCalcFields(isset($arguments['link']) ? $arguments['link'] : "");
             }
@@ -5477,7 +5519,9 @@ function save_relationship_changes($is_update, $exclude=array())
     function ACLAccess($view,$is_owner='not_set')
     {
         global $current_user;
-        if(is_admin($current_user)||is_admin_for_module($current_user,$this->getACLCategory()))return true;
+        if($current_user->isAdminForModule($this->getACLCategory())) {
+            return true;
+        }
         $not_set = false;
         if($is_owner == 'not_set')
         {
@@ -5803,8 +5847,9 @@ function save_relationship_changes($is_update, $exclude=array())
     * Send assignment notifications and invites for meetings and calls
     */
     private function _sendNotifications($check_notify){
-        if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true)){ // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
-
+        if($check_notify || (isset($this->notify_inworkflow) && $this->notify_inworkflow == true) // cn: bug 5795 - no invites sent to Contacts, and also bug 25995, in workflow, it will set the notify_on_save=true.
+           && !$this->isOwner($this->created_by) )  // cn: bug 42727 no need to send email to owner (within workflow)
+        {
             $admin = new Administration();
             $admin->retrieveSettings();
             $sendNotifications = false;

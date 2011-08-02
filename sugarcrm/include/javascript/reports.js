@@ -28,6 +28,7 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
+
 function set_offset(offset) {
 	document.ReportsWizardForm['report_offset'].value=offset;
 	SUGAR.reports.previewReport();
@@ -130,6 +131,7 @@ SUGAR.reports = function() {
 
 
 	return {
+        overrideRecord: true,
 		checkEnterKey: function() {
 			if (grid && grid.store.data.items.length == 1) {
 				grid.selModel.last = 0;
@@ -1714,11 +1716,11 @@ SUGAR.reports = function() {
 			} // else
 			
 			report_def.full_table_list = full_table_list;
-			report_def_str = JSON.stringifyNoSecurity(report_def);
+			report_def_str = YAHOO.lang.JSON.stringify(report_def);
 			document.ReportsWizardForm.report_def.value = report_def_str;
-			filters_defs_str = JSON.stringifyNoSecurity(filters_defs);
+			filters_defs_str = YAHOO.lang.JSON.stringify(filters_defs);
 			document.ReportsWizardForm.filters_defs.value = filters_defs_str;
-			panels_def_str = JSON.stringifyNoSecurity(panels);
+			panels_def_str = YAHOO.lang.JSON.stringify(panels);
 			document.ReportsWizardForm.panels_def.value = panels_def_str;
 			return true;
 		},
@@ -3829,7 +3831,8 @@ SUGAR.reports = function() {
 	        myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 	        myDataSource.responseSchema = { 
 	            fields: ["field_label", "module_name","parents", "field_name", "link_name", "parent_module", "parents_link"]
-	        }; 
+	        };
+
 			var title = "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_AVAILABLE_FIELDS') + " : " + comboLabel + "</span>" +  "<span id='fields_panel_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
 			
 			var toolTip = new YAHOO.widget.Tooltip("tt6", {context:"fields_panel_help",  

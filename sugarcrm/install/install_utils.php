@@ -820,7 +820,7 @@ function handleDbCreateDatabase() {
                 }else{
                     $link   = @mysqli_connect($host_name[0], $setup_db_admin_user_name, $setup_db_admin_password,null,$host_name[1]);
                 }
-                $drop = 'DROP DATABASE IF EXISTS '.$setup_db_database_name;
+                $drop = 'DROP DATABASE IF EXISTS `'.$setup_db_database_name."`";
                 @mysqli_query($link, $drop);
 
                 $query = 'CREATE DATABASE `' . $setup_db_database_name . '` CHARACTER SET utf8 COLLATE utf8_general_ci';
@@ -829,7 +829,7 @@ function handleDbCreateDatabase() {
 
             }else{
                 $link = @mysql_connect($setup_db_host_name, $setup_db_admin_user_name, $setup_db_admin_password);
-                $drop = 'DROP DATABASE IF EXISTS '.$setup_db_database_name;
+                $drop = 'DROP DATABASE IF EXISTS `'.$setup_db_database_name."`";
                 @mysql_query($drop, $link);
 
                 $query = 'CREATE DATABASE `' . $setup_db_database_name . '` CHARACTER SET utf8 COLLATE utf8_general_ci';
@@ -2415,4 +2415,24 @@ function enableSugarFeeds()
         SugarFeed::activateModuleFeed($module);
 
     check_logic_hook_file('Users','after_login', array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php', 'SugarFeedFlush', 'flushStaleEntries'));
+}
+
+/**
+ * Enable the InsideView connector for the four default modules.
+ */
+function enableInsideViewConnector()
+{
+    // Load up the existing mapping and hand it to the InsideView connector to have it setup the correct logic hooks
+    $mapFile = 'modules/Connectors/connectors/sources/ext/rest/insideview/mapping.php';
+    if ( file_exists('custom/'.$mapFile) ) {
+        require('custom/'.$mapFile);
+    } else {
+        require($mapFile);
+    }
+ 
+    require_once('modules/Connectors/connectors/sources/ext/rest/insideview/insideview.php');
+    $source = new ext_rest_insideview();
+
+    // $mapping is brought in from the mapping.php file above
+    $source->saveMappingHook($mapping);
 }

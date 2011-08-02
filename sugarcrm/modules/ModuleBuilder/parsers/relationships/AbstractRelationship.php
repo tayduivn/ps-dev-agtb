@@ -272,7 +272,27 @@ class AbstractRelationship
 		);
         
         return array ( $subpanelDefinition );
-    }   
+    }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    protected function getWirelessSubpanelDefinition ($relationshipName , $sourceModule , $subpanelName, $titleKeyName = '', $source = "")
+    {
+        if (empty($source))
+        	$source = $this->getValidDBName($relationshipName);
+    	$subpanelDefinition = array ( ) ;
+        $subpanelDefinition [ 'order' ] = 100 ;
+        $subpanelDefinition [ 'module' ] = $sourceModule ;
+        $subpanelDefinition [ 'subpanel_name' ] = $subpanelName ;
+        if(!empty($titleKeyName)){
+			$subpanelDefinition [ 'title_key' ] = 'LBL_' . strtoupper ( $relationshipName . '_FROM_' . $titleKeyName ) . '_TITLE' ;
+		}else{
+			$subpanelDefinition [ 'title_key' ] = 'LBL_' . strtoupper ( $relationshipName . '_FROM_' . $sourceModule ) . '_TITLE' ;
+		}
+        $subpanelDefinition [ 'get_subpanel_data' ] = $source ;
+
+        return array ( $subpanelDefinition );
+    }
+    //END SUGARCRM flav=pro ONLY
     
 
     /*

@@ -216,8 +216,7 @@ if(isset($_POST['clear_loaded'])){
     echo"        <link rel='stylesheet' href='include/ytree/TreeView/css/folders/tree.css'>
     <script language='JavaScript' src='include/ytree/TreeView/TreeView.js'></script>
     <script language='JavaScript' src='include/ytree/TreeView/TaskNode.js'></script>
-    <script language='JavaScript' src='include/ytree/treeutil.js'></script>
-    <script language='JavaScript' src='include/JSON.js'></script>";
+    <script language='JavaScript' src='include/ytree/treeutil.js'></script>";
     
     $ss->assign('BROWSETAB', return_browse_tab());
 

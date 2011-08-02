@@ -29,7 +29,6 @@
 <link rel="stylesheet" type="text/css" href="include/javascript/yui/build/container/assets/container.css" />
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Collection/SugarFieldCollection.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Teamset/Teamset.js"}'></script>
-<script type="text/javascript" src='{sugar_getjspath file="include/JSON.js"}'></script>
 <script type="text/javascript">
     var collection = (typeof collection == 'undefined') ? new Array() : collection;
     collection["{$displayParams.formName}_{$vardef.name}"] = new SUGAR.collection('{$displayParams.formName}', '{$vardef.name}', '{$module}', '{$displayParams.popupData}');
@@ -47,7 +46,7 @@
 <table name='{$displayParams.formName}_{$vardef.name}_table' id='{$displayParams.formName}_{$vardef.name}_table' style="border-spacing: 0pt;">
     <tr>
     	<td colspan="2" NOWRAP>
-            {if empty($displayParams.clearOnly) }<button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}" {literal},"field_name":"team_name_advanced","field_to_name_array":{"id":"team_id","name":"team_name_advanced"}}{/literal}, "MULTISELECT", true);' name="teamSelect"><img src="{sugar_getimagepath file="id-ff-select.png"}"></button>{/if}<button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();" name="teamAdd"><img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
+            {if empty($displayParams.clearOnly) }<button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}" {literal},"field_name":"team_name_advanced","field_to_name_array":{"id":"team_id","name":"team_name_advanced"}}{/literal}, "MULTISELECT", true);' name="teamSelect" id="teamSelect"><img src="{sugar_getimagepath file="id-ff-select.png"}"></button>{/if}<button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();" name="teamAdd"><img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
 			</span>
         </td>
         <td id="lineLabel_{$vardef.name}_primary">

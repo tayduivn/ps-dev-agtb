@@ -409,7 +409,7 @@ if(typeof(SUGAR.collection) == "undefined") {
             this.more_status = true;
             var clone_id = this.form + '_' + this.field + '_collection_0';
 
-            if (typeof sqs_objects[clone_id] != 'undefined') {
+            if (typeof sqs_objects != 'undefined' && typeof sqs_objects[clone_id] != 'undefined') {
                 var clone = YAHOO.lang.JSON.stringify(sqs_objects[clone_id]);
                 eval('this.sqs_clone=' + clone);
             }
@@ -489,7 +489,7 @@ if(typeof(SUGAR.collection) == "undefined") {
 
                 qs_id = this.form + '_' + qs_id;
 
-                if(typeof sqs_objects[qs_id] != 'undefined' && sqs_objects[qs_id]['primary_field_list']){
+                if(typeof sqs_objects != 'undefined' && typeof sqs_objects[qs_id] != 'undefined' && sqs_objects[qs_id]['primary_field_list']){
                     for (var ii = 0; ii < sqs_objects[qs_id]['primary_field_list'].length; ii++) {
                         if (radios[k].checked && qs_id != old_primary) {
                             sqs_objects[qs_id]['field_list'].push(sqs_objects[qs_id]['primary_field_list'][ii]);
@@ -597,6 +597,15 @@ if(typeof(SUGAR.collection) == "undefined") {
 		if (!newNode) return false;
 		
 		var properties = ['class', 'style', 'name', 'type', 'valign', 'border', 'width', 'height', 'top', 'bottom', 'left', 'right', 'scope', 'row', 'columns', 'src', 'href', 'className', 'align', 'nowrap'];
+
+        //clee. - Bug: 44976 - IE7 just does not calculate height properties correctly for input elements
+		if(SUGAR.isIE7 && e.tagName.toLowerCase() == 'input')
+		{
+			var properties = ['class', 'style', 'name', 'type', 'valign', 'border', 'width', 'top', 'bottom', 'left', 'right', 'scope', 'row', 'columns', 'src', 'href', 'className', 'align', 'nowrap'];
+		} else {
+			var properties = ['class', 'style', 'name', 'type', 'valign', 'border', 'width', 'height', 'top', 'bottom', 'left', 'right', 'scope', 'row', 'columns', 'src', 'href', 'className', 'align', 'nowrap'];
+		}
+		
 		for (var i in properties)
 		{
 			if (e[properties[i]])

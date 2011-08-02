@@ -185,7 +185,14 @@ EOQ;
 		 
 		$request_data = empty($_REQUEST['request_data']) ? '' : $_REQUEST['request_data'];
 		$hide_clear_button = empty($_REQUEST['hide_clear_button']) && empty($this->_hide_clear_button) ? false : true;
-		$button = '<script>eval("var request_data = " + window.document.forms[\'popup_query_form\'].request_data.value);</script>';
+        $button = "
+        <script>
+            YAHOO.util.Event.onDOMReady(function() {
+              var data = window.document.forms.popup_query_form.request_data.value;
+              if (data != '')
+                  request_data = YAHOO.lang.JSON.parse(data);
+            });
+        </script>";
 
 		if(isset($_REQUEST['mass'])) {
 			foreach(array_unique($_REQUEST['mass']) as $record) {
@@ -201,7 +208,7 @@ EOQ;
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back_teams('$currentModule',document.MassUpdate,'mass[]','" .$app_strings['ERR_NOTHING_SELECTED']."', request_data);\" title='"
 				.$app_strings['LBL_SELECT_BUTTON_TITLE']."' accesskey='"
 				.$app_strings['LBL_SELECT_BUTTON_KEY']."' value='  "
-				.$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' />\n";
+				.$app_strings['LBL_SELECT_BUTTON_LABEL']."  ' id='search_form_select' />\n";
 		}
 
 		//END:FOR MULTI-SELECT
@@ -210,12 +217,12 @@ EOQ;
 			$button .= "<input type='button' name='button' class='button' onclick=\"send_back('','');\" title='"
 				.$app_strings['LBL_CLEAR_BUTTON_TITLE']."' accesskey='"
 				.$app_strings['LBL_CLEAR_BUTTON_KEY']."' value='  "
-				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' />\n";
+				.$app_strings['LBL_CLEAR_BUTTON_LABEL']."  ' id='search_form_clear' />\n";
 		}
 		$button .= "<input type='submit' name='button' class='button' onclick=\"window.close();\" title='"
 			.$app_strings['LBL_CANCEL_BUTTON_TITLE']."' accesskey='"
 			.$app_strings['LBL_CANCEL_BUTTON_KEY']."' value='  "
-			.$app_strings['LBL_CANCEL_BUTTON_LABEL']."  ' />\n";
+			.$app_strings['LBL_CANCEL_BUTTON_LABEL']."  ' id='search_form_cancel' />\n";
 
 		if(isset($this->_popupMeta['templateForm'])) { 
 			$form = new XTemplate($this->_popupMeta['templateForm']);

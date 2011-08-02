@@ -180,7 +180,7 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testAddTeamSecurityWhereClauseForAdminForModule()
 	{
-	    $_SESSION['MLA_'.$GLOBALS['current_user']->user_name]['Foo'] = true;
+	    $_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user'] = array('Foo');
 	    
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
@@ -194,6 +194,6 @@ class AddTeamSecurityWhereClauseTest extends Sugar_PHPUnit_Framework_TestCase
             $query
             );
         
-        unset($_SESSION['MLA_'.$GLOBALS['current_user']->user_name]);
+        unset($_SESSION[$GLOBALS['current_user']->user_name.'_get_admin_modules_for_user']);
     }
 }

@@ -104,6 +104,11 @@ if ($bean_name == "User" && $linked_field == 'eapm') {
     $eapm = new EAPM();
     $eapm->mark_deleted($linked_id);
 }
+//BEGIN SUGARCRM flav=pro ONLY
+require_once("data/Relationships/SugarRelationship.php");
+SugarRelationship::resaveRelatedBeans();
+//END SUGARCRM flav=pro ONLY
+
 if(!empty($_REQUEST['return_url'])){
 	$_REQUEST['return_url'] =urldecode($_REQUEST['return_url']);
 }

@@ -144,14 +144,14 @@ $mod_strings = array (
 //END SUGARCRM flav!=sales ONLY
   'LABEL_PANEL_ASSIGNMENT' => 'Assignment',
 	'LNK_IMPORT_OPPORTUNITIES' => 'Import Opportunities',
-
   //For export labels
-    'LBL_CAMPAIGN_ID' => 'Campaign ID',
+    'LBL_EXPORT_CAMPAIGN_ID' => 'Campaign ID',
     'LBL_OPPORTUNITY_TYPE' => 'Opportunity Type',
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
     'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
     'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+    'LBL_EXPORT_NAME'=>'Name',
 
   // SNIP
   'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',

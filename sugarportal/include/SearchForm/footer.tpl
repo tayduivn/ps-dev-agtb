@@ -32,8 +32,8 @@
 	<input type='hidden' name='module' value='{$module}' />
 	<input type='hidden' name='action' value='index' />
 	<input type='hidden' name='clear' value='false' />
-	<input title='{$app.LBL_SEARCH_BUTTON_TITLE}' accessKey='{$app.LBL_SEARCH_BUTTON_KEY}' class='button' type='submit' name='button' value='{$app.LBL_SEARCH_BUTTON_LABEL}'/>
-	<input title='{$app.LBL_CLEAR_BUTTON_TITLE}' accessKey='{$app.LBL_CLEAR_BUTTON_KEY}' onclick='SUGAR.util.clear_form(this.form); return false;' class='button' type='submit' value=' {$app.LBL_CLEAR_BUTTON_LABEL} '/>
+	<input title='{$app.LBL_SEARCH_BUTTON_TITLE}' accessKey='{$app.LBL_SEARCH_BUTTON_KEY}' class='button' type='submit' name='button' value='{$app.LBL_SEARCH_BUTTON_LABEL}' id="search_form_submit"/>
+	<input title='{$app.LBL_CLEAR_BUTTON_TITLE}' accessKey='{$app.LBL_CLEAR_BUTTON_KEY}' onclick='SUGAR.util.clear_form(this.form); return false;' class='button' type='submit' value=' {$app.LBL_CLEAR_BUTTON_LABEL} ' id="search_form_clear"/>
 </td></tr>
 </table>
 </form>

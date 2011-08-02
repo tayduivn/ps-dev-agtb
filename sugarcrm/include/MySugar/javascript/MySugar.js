@@ -35,6 +35,8 @@ SUGAR.mySugar = function() {
 	var leftColObj = null;
 	var maxCount;
 	var warningLang;
+
+    var closeDashletsDialogTimer = null;
 	
 	//BEGIN SUGARCRM flav=pro ONLY
 	var num_pages = numPages;
@@ -150,7 +152,7 @@ SUGAR.mySugar = function() {
             {
                 ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING_PAGE_TITLE'));
 
-                url = 'index.php?DynamicAction=savePageTitle&action=DynamicAction&module='+module+'&to_pdf=1&newPageTitle='+JSON.stringify(newTitleValue)+'&pageId='+pageNum;
+                url = 'index.php?DynamicAction=savePageTitle&action=DynamicAction&module='+module+'&to_pdf=1&newPageTitle='+YAHOO.lang.JSON.stringify(newTitleValue)+'&pageId='+pageNum;
 
                 var setPageTitle = function(data)
                 {
@@ -226,7 +228,7 @@ SUGAR.mySugar = function() {
                 //-------------------start new registration for drag drop--------------------
                 var counter = SUGAR.mySugar.homepage_dd.length;
 
-                if(YAHOO.util.DDM.mode == 1) {
+                if(YAHOO.util.DDM.mode == 1 && typeof(scriptResponse) != 'undefined') {
                     for(i in scriptResponse['newDashletsToReg']) {
                         SUGAR.mySugar.homepage_dd[counter] = new ygDDList('dashlet_' + scriptResponse['newDashletsToReg'][i]);
                         SUGAR.mySugar.homepage_dd[counter].setHandleElId('dashlet_header_' + scriptResponse['newDashletsToReg'][i]);
@@ -312,7 +314,7 @@ SUGAR.mySugar = function() {
 			var tabListElemWidth = tabListElem.offsetWidth;
 			var maxWidth = contentElemWidth-(dashletCtrlsElemWidth+addPageElemWidth+2);
 
-			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+JSON.stringify(newPageName);
+			url = 'index.php?DynamicAction=addPage&action=DynamicAction&module='+module+'&to_pdf=1&numCols='+numCols+'&pageName='+YAHOO.lang.JSON.stringify(newPageName);
 
 			var addBlankPage = function(data) {
 				//check to see if a user preference error occurred
@@ -776,7 +778,11 @@ SUGAR.mySugar = function() {
 		
 		showDashletsDialog: function() {                                             
 			columns = SUGAR.mySugar.getLayout();
-			
+
+            if (this.closeDashletsDialogTimer != null) {
+                window.clearTimeout(this.closeDashletsDialogTimer);
+            }
+
 			var num_dashlets = 0;
             var i = 0;
             for ( i = 0 ; i < 3; i++ ) {
@@ -797,7 +803,7 @@ SUGAR.mySugar = function() {
 				dashletsListDiv.innerHTML = response['html'];
 				
 				document.getElementById('dashletsDialog_c').style.display = '';
-				SUGAR.mySugar.dashletsDialog.show();
+                SUGAR.mySugar.dashletsDialog.show();
 
 				eval(response['script']);
 				ajaxStatus.hideStatus();
@@ -809,7 +815,10 @@ SUGAR.mySugar = function() {
 		
 		closeDashletsDialog: function(){
 			SUGAR.mySugar.dashletsDialog.hide();
-			window.setTimeout("document.getElementById('dashletsDialog_c').style.display = 'none';", 2000);
+			if (this.closeDashletsDialogTimer != null) {
+                window.clearTimeout(this.closeDashletsDialogTimer);
+            }
+            this.closeDashletsDialogTimer = window.setTimeout("document.getElementById('dashletsDialog_c').style.display = 'none';", 2000);
 			//BEGIN SUGARCRM flav=pro ONLY
 			populatedReportCharts = false;
 			//END SUGARCRM flav=pro ONLY

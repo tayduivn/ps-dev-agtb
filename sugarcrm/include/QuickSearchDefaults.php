@@ -129,8 +129,8 @@ class QuickSearchDefaults {
                            'limit'=>'30',
                            'no_match_text'=> $app_strings['ERR_SQS_NO_MATCH']);
         return $qsContact;
-    }
-
+    }    
+    
     function getQSUser($p_name = 'assigned_user_name', $p_id ='assigned_user_id') {
         global $app_strings;
 
@@ -186,8 +186,7 @@ class QuickSearchDefaults {
     // BEGIN QuickSearch functions for 4.5.x backwards compatibility support
     function getQSScripts() {
 		global $sugar_version, $sugar_config, $theme;
-		$qsScripts = '<script type="text/javascript" src="' . getJSPath('include/JSON.js') .'"></script>
-		<script type="text/javascript">sqsWaitGif = "' . SugarThemeRegistry::current()->getImageURL('sqsWait.gif') . '";</script>
+		$qsScripts = '<script type="text/javascript">sqsWaitGif = "' . SugarThemeRegistry::current()->getImageURL('sqsWait.gif') . '";</script>
 		<script type="text/javascript" src="'. getJSPath('include/javascript/quicksearch.js') . '"></script>';
 		return $qsScripts;
 	}

@@ -63,19 +63,17 @@
 		<div class="sectitle">{sugar_translate label='LBL_RELATED_INFORMATION' module=''}</div>	
 		{foreach from=$SUBPANEL_DATA key=SUBPANEL item=DATA}
 			{if $DATA.count > 0}
-				<div class="subpanel_sec">{$MODULELIST[$SUBPANEL]}</div>
+				<div class="subpanel_sec">{$MODULELIST[$DATA.module]}</div>
 				<ul class="sec">
-				{foreach from=$DATA item=NAME key=ID name="recordlist"}
-				{if $ID != 'count'}
+				{foreach from=$DATA.list item=NAME key=ID name="recordlist"}
 				<li class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
-                    {assign var="module_image" value=$SUBPANEL}
+                    {assign var="module_image" value=$DATA.module}
                     {assign var="dotgif" value=".gif"}
-                    <a href="index.php?module={$SUBPANEL}&record={$ID}&action=wirelessdetail">
+                    <a href="index.php?module={$DATA.module}&record={$ID}&action=wirelessdetail">
                         <img border=0 src="{sugar_getimagepath file=$module_image$dotgif}">&nbsp;
                         {$NAME}
                     </a><br />
 				</li>
-				{/if}
 				{/foreach}
 				</ul>
 				{if $DATA.count > $MAX_SUBPANEL_DATA}<a class="nav" href="index.php?module={$MODULE}&parent_id={$DETAIL.id}&action=wirelesslist&subpanel={$SUBPANEL}">({sugar_translate label='LBL_SEE_ALL' module=''} {$DATA.count} {sugar_translate label='LBL_LINK_RECORDS' module=''})</a><br />{/if}
@@ -89,7 +87,7 @@
 	<form method="POST" action="index.php">
 	<select name="module">
 		{foreach from=$SUBPANEL_DATA key=SUBPANEL item=DATA}
-		<option value="{$SUBPANEL}">{$MODULELIST[$SUBPANEL]}</option>
+		<option value="{$DATA.module}">{$MODULELIST[$DATA.module]}</option>
 		{/foreach}
 	</select>
     <input type="hidden" name="from_subpanel" value="1" />

@@ -136,7 +136,8 @@ $app_list_strings = array (
     'DCEReports'=>'DCE Reports',
 //END SUGARCRM flav=dce ONLY
     'OAuthKeys' => 'OAuth Consumer Keys',
-        ),
+    'OAuthTokens' => 'OAuth Tokens',
+  ),
   'moduleListSingular' =>
   array (
     'Home' => 'Home',
@@ -1735,6 +1736,13 @@ $app_list_strings = array (
         '1' => 'SSL',
         '2' => 'TLS',
     ),
+    'import_enclosure_options' =>
+    array (
+        '\'' => 'Single Quote (\')',
+        '"' => 'Double Quote (")',
+        '' => 'None',
+        'other' => 'Other:',
+    ),
     'link_target_dom' =>
     array (
         '_blank' => 'New Window',
@@ -2261,6 +2269,7 @@ $app_strings = array (
     'LBL_TEAMS' =>'Teams',
     'LBL_TEAM_ID'=>'Team ID:',
     'LBL_TEAM_SET_ID' => 'Team Set ID',
+    'LBL_EXPORT_TEAM_SET_ID' => 'Teams',
     'LBL_TEAM_SET'=>'Team Set',
     'ERR_NO_PRIMARY_TEAM_SPECIFIED' => 'No Primary Team specified',
     'LBL_REMOVE_PRIMARY_TEAM_ERROR' => 'Error attempting to remove primary team id [{0}] for [{1}] module with id [{2}]',
@@ -2276,6 +2285,7 @@ $app_strings = array (
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
 
+    'ERR_AJAX_LOAD'     => 'An error has occured:',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
     'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\\n\\n  Please change the values.",
@@ -2579,9 +2589,9 @@ $app_strings = array (
     'LBL_SAVE_AS_BUTTON_KEY' => 'A',
     'LBL_SAVE_AS_BUTTON_LABEL' => 'Save As',
     'LBL_SAVE_AS_BUTTON_TITLE' => 'Save As [Alt+A]',
-    'LBL_FULL_FORM_BUTTON_KEY' => 'F',
+    'LBL_FULL_FORM_BUTTON_KEY' => 'L',
     'LBL_FULL_FORM_BUTTON_LABEL' => 'Full Form',
-    'LBL_FULL_FORM_BUTTON_TITLE' => 'Full Form [Alt+F]',
+    'LBL_FULL_FORM_BUTTON_TITLE' => 'Full Form [Alt+L]',
     'LBL_SAVE_NEW_BUTTON_KEY' => 'V',
     'LBL_SAVE_NEW_BUTTON_LABEL' => 'Save & Create New',
     'LBL_SAVE_NEW_BUTTON_TITLE' => 'Save & Create New [Alt+V]',
@@ -2611,6 +2621,51 @@ $app_strings = array (
     'LBL_SELECT_USER_BUTTON_KEY' => 'U',
     'LBL_SELECT_USER_BUTTON_LABEL' => 'Select User',
     'LBL_SELECT_USER_BUTTON_TITLE' => 'Select User [Alt+U]',
+    // Clear buttons take up too many keys, lets default the relate and collection ones to be empty
+    'LBL_ACCESSKEY_CLEAR_RELATE_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_RELATE_TITLE' => 'Clear Selection',
+    'LBL_ACCESSKEY_CLEAR_RELATE_LABEL' => 'Clear Selection',
+    'LBL_ACCESSKEY_CLEAR_COLLECTION_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_COLLECTION_TITLE' => 'Clear Selection',
+    'LBL_ACCESSKEY_CLEAR_COLLECTION_LABEL' => 'Clear Selection',
+    'LBL_ACCESSKEY_SELECT_FILE_KEY' => 'F',
+    'LBL_ACCESSKEY_SELECT_FILE_TITLE' => 'Select File [Alt+F]',
+    'LBL_ACCESSKEY_SELECT_FILE_LABEL' => 'Select File',
+    'LBL_ACCESSKEY_CLEAR_FILE_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_FILE_TITLE' => 'Clear File',
+    'LBL_ACCESSKEY_CLEAR_FILE_LABEL' => 'Clear File',
+
+
+    'LBL_ACCESSKEY_SELECT_USERS_KEY' => 'U',
+    'LBL_ACCESSKEY_SELECT_USERS_TITLE' => 'Select User [Alt+U]',
+    'LBL_ACCESSKEY_SELECT_USERS_LABEL' => 'Select User',
+    'LBL_ACCESSKEY_CLEAR_USERS_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_USERS_TITLE' => 'Clear User',
+    'LBL_ACCESSKEY_CLEAR_USERS_LABEL' => 'Clear User',
+    'LBL_ACCESSKEY_SELECT_ACCOUNTS_KEY' => 'A',
+    'LBL_ACCESSKEY_SELECT_ACCOUNTS_TITLE' => 'Select Account [Alt+A]',
+    'LBL_ACCESSKEY_SELECT_ACCOUNTS_LABEL' => 'Select Account',
+    'LBL_ACCESSKEY_CLEAR_ACCOUNTS_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_ACCOUNTS_TITLE' => 'Clear Account',
+    'LBL_ACCESSKEY_CLEAR_ACCOUNTS_LABEL' => 'Clear Account',
+    'LBL_ACCESSKEY_SELECT_CAMPAIGNS_KEY' => 'M',
+    'LBL_ACCESSKEY_SELECT_CAMPAIGNS_TITLE' => 'Select Campaign [Alt+M]',
+    'LBL_ACCESSKEY_SELECT_CAMPAIGNS_LABEL' => 'Select Campaign',
+    'LBL_ACCESSKEY_CLEAR_CAMPAIGNS_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_CAMPAIGNS_TITLE' => 'Clear Campaign',
+    'LBL_ACCESSKEY_CLEAR_CAMPAIGNS_LABEL' => 'Clear Campaign',
+    'LBL_ACCESSKEY_SELECT_CONTACTS_KEY' => 'C',
+    'LBL_ACCESSKEY_SELECT_CONTACTS_TITLE' => 'Select Contact [Alt+C]',
+    'LBL_ACCESSKEY_SELECT_CONTACTS_LABEL' => 'Select Contact',
+    'LBL_ACCESSKEY_CLEAR_CONTACTS_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_CONTACTS_TITLE' => 'Clear Contact',
+    'LBL_ACCESSKEY_CLEAR_CONTACTS_LABEL' => 'Clear Contact',
+    'LBL_ACCESSKEY_SELECT_TEAMSET_KEY' => 'Z',
+    'LBL_ACCESSKEY_SELECT_TEAMSET_TITLE' => 'Select Team [Alt+Z]',
+    'LBL_ACCESSKEY_SELECT_TEAMSET_LABEL' => 'Select Team',
+    'LBL_ACCESSKEY_CLEAR_TEAMS_KEY' => ' ',
+    'LBL_ACCESSKEY_CLEAR_TEAMS_TITLE' => 'Clear Team',
+    'LBL_ACCESSKEY_CLEAR_TEAMS_LABEL' => 'Clear Team',
     'LBL_SERVER_RESPONSE_RESOURCES' => 'Resources used to construct this page (queries, files)',
     'LBL_SERVER_RESPONSE_TIME_SECONDS' => 'seconds.',
     'LBL_SERVER_RESPONSE_TIME' => 'Server response time:',
@@ -2940,6 +2995,12 @@ $app_strings = array (
     'LBL_PLUGINS_DESC' => 'Read about the plug-in features within the <a href="https://www.sugarcrm.com/crm/support/documentation/SugarPlugIns">Plug-Ins Documentation</a>.',
     //END SUGARCRM flav!=com ONLY
 
+     //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_PLUGINS_LOTUS_TITLE' => 'Sugar Plug-ins for Lotus Notes<sup>TM</sup>',
+    'LBL_PLUGIN_LOTUS_NAME' => 'Sugar Plug-in For Lotus Notes',
+    'LBL_PLUGIN_LOTUS_DESC' => 'Integrate Sugar with Lotus Notes.',
+     //END SUGARCRM flav=ent ONLY
+
     //BEGIN SUGARCRM flav=dce ONLY
     //DCE
     'LBL_DCEDEPLOY_LABEL' => 'Deploy',
@@ -3076,7 +3137,37 @@ $app_strings = array (
     'ERR_RSS_INVALID_RESPONSE' => 'RSS is not a valid response_type for this method',
 
     //External API Error Messages
-    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.'
+    'ERR_GOOGLE_API_415' => 'Google Docs does not support the file format you provided.',
+
+    //IMPORT SAMPLE TEXT
+    'LBL_IMPORT_SAMPLE_FILE_TEXT' => '
+"This is a sample import file which provides an example of the expected contents of a file that is ready for import."
+"The file is a comma-delimited .csv file, using double-quotes as the field qualifier."
+
+"The header row is the top-most row in the file and contains the field labels as you would see them in the application."
+"These labels are used for mapping the data in the file to the fields in the application."
+
+"Notes: The database names could also be used in the header row. This is useful when you are using phpMyAdmin or another database tool to provide an exported list of data to import."
+"The column order is not critical as the import process matches the data to the appropriate fields based on the header row."
+
+
+"To use this file as a template, do the following:"
+"1. Remove the sample rows of data"
+"2. Remove the help text that you are reading right now"
+"3. Input your own data into the appropriate rows and columns"
+"4. Save the file to a known location on your system"
+"5. Click on the Import option from the Actions menu in the application and choose the file to upload"
+   ',
+    //define labels to be used for overriding local values during import/export
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned To',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User',
+    'LBL_EXPORT_REPORTS_TO_ID' => 'Reports To',
+    'LBL_EXPORT_FULL_NAME' => 'Full Name',
+    'LBL_EXPORT_TEAM_ID' => 'Team ID',
+    'LBL_EXPORT_TEAM_NAME' => 'Teams',
+    'LBL_EXPORT_TEAM_SET_ID' => 'Team Set ID',
+
+    'LBL_QUICKEDIT_NODEFS_NAVIGATION'=> 'Navigating... ',
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
@@ -3816,10 +3907,16 @@ $app_list_strings['kbdocument_status_dom'] = array (
   	'WebEx'=>'WebEx',
   	'GoToMeeting'=>'GoToMeeting',
   	'LotusLive'=>'LotusLive',
-  	'Google' => 'Google Docs',
+  	'Google' => 'Google',
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',
     'Twitter'=>'Twitter',
+  );
+  $app_list_strings['eapm_list_import']= array(
+  	'Google' => 'Google Contacts',
+  );
+$app_list_strings['eapm_list_documents']= array(
+  	'Google' => 'Google Docs',
   );
   $app_list_strings['LBL_API_TYPE_ENUM'] = array(
     'password' => 'Username/Password',
