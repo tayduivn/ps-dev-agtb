@@ -373,7 +373,7 @@ class SugarView
                         );
                    if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
                        $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
-                       $gcls[$key]["URL"] = "#";
+                       $gcls[$key]["URL"] = "javascript:void(0)";
                    }
                 }
                 // and now the sublinks
@@ -385,7 +385,7 @@ class SugarView
                         );
                        if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
                            $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
-                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "#";
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "javascript:void(0)";
                        }
                 }
             }
