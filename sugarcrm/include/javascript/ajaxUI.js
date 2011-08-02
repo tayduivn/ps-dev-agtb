@@ -123,12 +123,18 @@ SUGAR.ajaxUI = {
         }
     },
 
-    go : function(url, params)
+    go : function(url, params, a, b, c)
     {
-        
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
+            if (ui.lastURL == url)
+                return;
+            if (typeof (window.onbeforeunload) == "function" && !confirm(window.onbeforeunload()))
+            {
+                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                return;
+            }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
             }
@@ -139,6 +145,7 @@ SUGAR.ajaxUI = {
                 window.location = url;
                 return;
             }
+            ui.lastURL = url;
             ui.cleanGlobals();
             var loadLanguageJS = '';
             if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
