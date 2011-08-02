@@ -442,7 +442,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    'relationship_type'=>'one-to-many'),
    //BEGIN SUGARCRM flav!=sales ONLY
 'opportunities_campaign' =>
-   array('lhs_module'=> 'campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
+   array('lhs_module'=> 'Campaigns', 'lhs_table'=> 'campaigns', 'lhs_key' => 'id',
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'campaign_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav!=sales ONLY

@@ -124,6 +124,25 @@ class VardefManager{
 		}
 		
 	}
+
+    /**
+     * Remove invalid field definitions
+     * @static
+     * @param Array $fieldDefs
+     * @return  Array
+     */
+    static function cleanVardefs($fieldDefs)
+	{
+		foreach($fieldDefs as $field => $defs)
+		{
+			if (empty($def['name']) || empty($def['type']))
+			{
+				unset($fieldDefs[$field]);
+			}
+		}
+
+		return $fieldDefs;
+	}
 	
 	/**
 	 * Save the dictionary object to the cache
@@ -140,7 +159,8 @@ class VardefManager{
 		
 		// put the item in the sugar cache.
 		$key = "VardefManager.$module.$object";
-		$data = $GLOBALS['dictionary'][$object];
+        //Sometimes bad definitions can get in from left over extensions or file system lag(caching). We need to clean those.
+		$data = self::cleanVardefs($GLOBALS['dictionary'][$object]);
 		sugar_cache_put($key,$data);
 	}
 	
