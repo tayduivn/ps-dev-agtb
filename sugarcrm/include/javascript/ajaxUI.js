@@ -123,7 +123,7 @@ SUGAR.ajaxUI = {
         }
     },
 
-    go : function(url, params, a, b, c)
+    go : function(url)
     {
         if(YAHOO.lang.trim(url) != "")
         {
