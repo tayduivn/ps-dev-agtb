@@ -1,202 +1,290 @@
-/*  Copyright Mihai Bazon, 2002, 2003  |  http://dynarch.com/mishoo/
- * ---------------------------------------------------------------------------
- *
- * The DHTML Calendar
- *
- * Details and latest version at:
- * http://dynarch.com/mishoo/calendar.epl
- *
- * This script is distributed under the GNU Lesser General Public License.
- * Read the entire license text here: http://www.gnu.org/licenses/lgpl.html
- *
- * This file defines helper functions for setting up the calendar.  They are
- * intended to help non-programmers get a working calendar on their site
- * quickly.  This script should not be seen as part of the calendar.  It just
- * shows you what one can do with the calendar, while in the same time
- * providing a quick and simple method for setting it up.  If you need
- * exhaustive customization of the calendar creation process feel free to
- * modify this code to suit your needs (this is recommended and much better
- * than modifying calendar.js itself).
- */
-
-// $Id: calendar-setup_3.js,v 1.2 2005/09/22 03:36:57 roger Exp $
-
 /**
- *  This function "patches" an input field (or other element) to use a calendar
- *  widget for date selection.
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
  *
- *  The "params" is a single object that can have the following properties:
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
  *
- *    prop. name   | description
- *  -------------------------------------------------------------------------------------------------
- *   inputField    | the ID of an input field to store the date
- *   displayArea   | the ID of a DIV or other element to show the date
- *   button        | ID of a button or other element that will trigger the calendar
- *   eventName     | event that will trigger the calendar, without the "on" prefix (default: "click")
- *   ifFormat      | date format that will be stored in the input field
- *   daFormat      | the date format that will be used to display the date in displayArea
- *   singleClick   | (true/false) wether the calendar is in single click mode or not (default: true)
- *   firstDay      | numeric: 0 to 6.  "0" means display Sunday first, "1" means display Monday first, etc.
- *   align         | alignment (default: "Br"); if you don't know what's this see the calendar documentation
- *   range         | array with 2 elements.  Default: [1900, 2999] -- the range of years available
- *   weekNumbers   | (true/false) if it's true (default) the calendar will display week numbers
- *   flat          | null or element ID; if not null the calendar will be a flat calendar having the parent with the given ID
- *   flatCallback  | function that receives a JS Date object and returns an URL to point the browser to (for flat calendar)
- *   disableFunc   | function that receives a JS Date object and should return true if that date has to be disabled in the calendar
- *   onSelect      | function that gets called when a date is selected.  You don't _have_ to supply this (the default is generally okay)
- *   onClose       | function that gets called when the calendar is closed.  [default]
- *   onUpdate      | function that gets called after the date is updated in the input field.  Receives a reference to the calendar.
- *   date          | the date that the calendar will be initially displayed to
- *   showsTime     | default: false; if true the calendar will include a time selector
- *   timeFormat    | the time format; can be "12" or "24", default is "12"
- *   electric      | if true (default) then given fields/date areas are updated for each move; otherwise they're updated only on close
- *   step          | configures the step of the years in drop-down boxes; default: 2
- *   position      | configures the calendar absolute position; default: null
- *   cache         | if "true" (but default: "false") it will reuse the same calendar object, where possible
- *   showOthers    | if "true" (but default: "false") it will show days from other months too
- *
- *  None of them is required, they all have default values.  However, if you
- *  pass none of "inputField", "displayArea" or "button" you'll get a warning
- *  saying "nothing to setup".
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
+
+Calendar = function() {};
+
+Calendar.getHighestZIndex = function (containerEl)
+{
+   var highestIndex = 0;
+   var currentIndex = 0;
+   var els = Array();
+   
+   els = containerEl ? containerEl.getElementsByTagName('*') : document.getElementsByTagName('*');
+   
+   for(var i=0; i < els.length; i++)
+   {
+      currentIndex = YAHOO.util.Dom.getStyle(els[i], "zIndex");
+      if(!isNaN(currentIndex) && currentIndex > highestIndex)
+      { 
+      	 highestIndex = parseInt(currentIndex); 
+      }
+   }
+   
+   return (highestIndex == Number.MAX_VALUE) ? Number.MAX_VALUE : highestIndex+1;
+};
 
 Calendar.setup = function (params) {
-	function param_default(pname, def) { if (typeof params[pname] == "undefined") { params[pname] = def; } };
 
-	// ADDED: RMR
-	param_default("inputFieldObj",     null);
-	param_default("displayAreaObj",    null);
-	param_default("buttonObj",         null);
-	// END
-	param_default("inputField",     null);
-	param_default("displayArea",    null);
-	param_default("button",         null);
-	param_default("eventName",      "click");
-	param_default("ifFormat",       "%Y/%m/%d");
-	param_default("daFormat",       "%Y/%m/%d");
-	param_default("singleClick",    true);
-	param_default("disableFunc",    null);
-	param_default("dateStatusFunc", params["disableFunc"]);	// takes precedence if both are defined
-	param_default("firstDay",       0); // defaults to "Sunday" first
-	param_default("align",          "Br");
-	param_default("range",          [1900, 2999]);
-	param_default("weekNumbers",    true);
-	param_default("flat",           null);
-	param_default("flatCallback",   null);
-	param_default("onSelect",       null);
-	param_default("onClose",        null);
-	param_default("onOpen",        null);
-	param_default("onUpdate",       null);
-	param_default("date",           null);
-	param_default("showsTime",      false);
-	param_default("timeFormat",     "24");
-	param_default("electric",       true);
-	param_default("step",           2);
-	param_default("position",       null);
-	param_default("cache",          false);
-	param_default("showOthers",     false);
-	
-	var tmp = ["inputField", "displayArea", "button"];
-	for (var i in tmp) 
-	{
-		// ADDED: RMR
-		if ( params[tmp[i]+'Obj'] == null 
-			&& typeof params[tmp[i]] == "string")
-		{
-			params[tmp[i]] = document.getElementById(params[tmp[i]]);
-		}
-		else 
-		{
-			params[tmp[i]] = params[tmp[i]+'Obj'];
-		}
-		// END
-	}
-	if (!(params.flat || params.inputField || params.displayArea || params.button)) {
-//		alert("Calendar.setup:\n  Nothing to setup (no fields found).  Please check your code");
-		return false;
-	}
+    YAHOO.util.Event.onDOMReady(function(){
+    	
+        var Event = YAHOO.util.Event;
+        var Dom = YAHOO.util.Dom;
+        var dialog;
+        var calendar;
+        var showButton = params.button ? params.button : params.buttonObj;
+        var userDateFormat = params.ifFormat ? params.ifFormat : (params.daFormat ? params.daFormat : "m/d/Y");
+        var inputField = params.inputField ? params.inputField : params.inputFieldObj;
+        var dateFormat = userDateFormat.substr(0,10);
+        var date_field_delimiter = /([-.\\/])/.exec(dateFormat)[0];
+        dateFormat = dateFormat.replace(/[^a-zA-Z]/g,'');
+        
+        var monthPos = dateFormat.search(/m/);
+        var dayPos = dateFormat.search(/d/);
+        var yearPos = dateFormat.search(/Y/);         
+        
+        Event.on(Dom.get(showButton), "click", function() {
 
-	function onSelect(cal) {
+            if (!dialog) {
+                                  
+                dialog = new YAHOO.widget.SimpleDialog("container_" + showButton, {
+                    visible:false,
+                    context:[showButton, "tl", "bl"],
+                    buttons:[],
+                    draggable:false,
+                    close:true,
+                    zIndex: Calendar.getHighestZIndex(document.body)
+                });
+                
+                dialog.setHeader(Calendar._TT["SEL_DATE"]);
+                var dialogBody = '<p class="callnav_today"><a href="#"  id="callnav_today">' + Calendar._TT["TODAY"] + '</a></p><div id="' + showButton + '_div"></div>';
+                dialog.setBody(dialogBody);
+                dialog.render(document.body);
 
-		var p = cal.params;
-		var update = (cal.dateClicked || p.electric);
-		if (update && p.flat) {
-			if (typeof p.flatCallback == "function")
-				p.flatCallback(cal);
-			else
-				alert("No flatCallback given -- doing nothing.");
-			return false;
-		}
-		if (update && p.inputField) {
-			p.inputField.value = cal.date.print(p.ifFormat);
-			if (typeof p.inputField.onchange == "function")
-				p.inputField.onchange();
-		}
-		if (update && p.displayArea)
-			p.displayArea.innerHTML = cal.date.print(p.daFormat);
-		if (update && p.singleClick && cal.dateClicked)
-			cal.callCloseHandler();
-		if (update && typeof p.onUpdate == "function")
-			p.onUpdate(cal);
-	};
-	if (params.flat != null) {
+                //Since the cal div name is dynamic we need to add a custom class to override some default yui css styles
+                Dom.addClass("container_" + showButton, "cal_panel");
+                
+                //Clear the date selection if the user clicks on today.
+                Event.addListener("callnav_today", "click", function(){ 
+                    calendar.clear();
+                    var now = new Date();
+                    //Reset the input field value
+                    Dom.get(inputField).value = formatSelectedDate(now);
+                    //Highlight the cell
+                    var cellIndex = calendar.getCellIndex(now);
+                    if(cellIndex > -1 )
+                    {
+                        var cell = calendar.cells[cellIndex];
+                        Dom.addClass(cell, calendar.Style.CSS_CELL_SELECTED);
+                    }
+                });
+                
+                dialog.showEvent.subscribe(function() {
+                    if (YAHOO.env.ua.ie) {
+                        // Since we're hiding the table using yui-overlay-hidden, we 
+                        // want to let the dialog know that the content size has changed, when
+                        // shown
+                        dialog.fireEvent("changeContent");
+                    }
+                });
+                
+                // Hide Calendar if we click anywhere in the document other than the calendar
+                Event.on(document, "click", function(e) {
+                	
+                    if(!dialog)
+                    {
+                       return;	
+                    }                	
+                	
+                    var el = Event.getTarget(e);                   
+                    var dialogEl = dialog.element;
+                    if (el != dialogEl && !Dom.isAncestor(dialogEl, el) && el != Dom.get(showButton) && !Dom.isAncestor(Dom.get(showButton), el)) {
+                        dialog.hide();
+                    }
+                });                
+            }
 
-		if (typeof params.flat == "string")
-			params.flat = document.getElementById(params.flat);
-		if (!params.flat) {
-			alert("Calendar.setup:\n  Flat specified but can't find parent.");
-			return false;
-		}
-		var cal = new Calendar(params.firstDay, params.date, params.onSelect || onSelect);
-		cal.showsTime = params.showsTime;
-		cal.time24 = (params.timeFormat == "24");
-		cal.params = params;
-		cal.weekNumbers = params.weekNumbers;
-		cal.setRange(params.range[0], params.range[1]);
-		cal.setDateStatusHandler(params.dateStatusFunc);
-		cal.create(params.flat);
-		cal.show();
-		return false;
-	}
+            // Lazy Calendar Creation - Wait to create the Calendar until the first time the button is clicked.
+            if (!calendar) {
+                var navConfig = {
+                    strings : {
+                        month: Calendar._TT["LBL_CHOOSE_MONTH"],
+                        year: Calendar._TT["LBL_ENTER_YEAR"],
+                        submit: Calendar._TT["LBL_OK_BUTTON"],
+                        cancel: Calendar._TT["LBL_CANCEL_BUTTON"],
+                        invalidYear: Calendar._TT["LBL_ENTER_VALID_YEAR"]
+                    },
+                    monthFormat: YAHOO.widget.Calendar.SHORT,
+                    initialFocus: "year"
+                };               	
+            	
+                calendar = new YAHOO.widget.Calendar(showButton + '_div', {
+                    iframe:false,
+                    hide_blank_weeks:true,
+                    navigator:navConfig
+                });
+                
+                calendar.cfg.setProperty('DATE_FIELD_DELIMITER', date_field_delimiter);
+                calendar.cfg.setProperty('MDY_DAY_POSITION', dayPos+1);
+                calendar.cfg.setProperty('MDY_MONTH_POSITION', monthPos+1);
+                calendar.cfg.setProperty('MDY_YEAR_POSITION', yearPos+1);
 
-	var triggerEl = params.button || params.displayArea || params.inputField;
-	triggerEl["on" + params.eventName] = function() {
-		if(params.onOpen){
-			params.onOpen();
-		}
-		var dateEl = params.inputField || params.displayArea;
-		var dateFmt = params.inputField ? params.ifFormat : params.daFormat;
-		var mustCreate = false;
-		var cal = window.calendar;
-		if (!(cal && params.cache)) {
-			window.calendar = cal = new Calendar(params.firstDay,
-							     params.date,
-							     params.onSelect || onSelect,
-							     params.onClose || function(cal) { cal.hide(); }, 
-							     params.inputField);
-			cal.showsTime = params.showsTime;
-			cal.time24 = (params.timeFormat == "24");
-			cal.weekNumbers = params.weekNumbers;
-			mustCreate = true;
-		} else {
-			if (params.date)
-				cal.setDate(params.date);
-			cal.hide();
-		}
-		cal.showsOtherMonths = params.showOthers;
-		cal.yearStep = params.step;
-		cal.setRange(params.range[0], params.range[1]);
-		cal.params = params;
-		cal.setDateStatusHandler(params.dateStatusFunc);
-		cal.setDateFormat(dateFmt);
-		if (mustCreate)
-			cal.create();
-		cal.parseDate(dateEl.value || dateEl.innerHTML);
-		cal.refresh();
-		if (!params.position)
-			cal.showAtElement(params.button || params.displayArea || params.inputField, params.align);
-		else
-			cal.showAt(params.position[0], params.position[1]);
-		return false;
-	};
+/*                
+                //Configure the month and days label with localization support where defined
+                if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined' && SUGAR.language.languages['app_list_strings']['dom_cal_month_long'] != 'undefined')
+                {
+                	if(SUGAR.language.languages['app_list_strings']['dom_cal_month_long'].length == 13)
+                	{
+                	   SUGAR.language.languages['app_list_strings']['dom_cal_month_long'].shift();
+                	}
+                	calendar.cfg.setProperty('MONTHS_LONG', SUGAR.language.languages['app_list_strings']['dom_cal_month_long']);
+                }
+                
+                if(typeof SUGAR.language.languages['app_list_strings'] != 'undefined'  && typeof SUGAR.language.languages['app_list_strings']['dom_cal_day_short'] != 'undefined')
+                {
+                	if(SUGAR.language.languages['app_list_strings']['dom_cal_day_short'].length == 8)
+                	{
+                	   SUGAR.language.languages['app_list_strings']['dom_cal_day_short'].shift();
+                	}                	
+                	calendar.cfg.setProperty('WEEKDAYS_SHORT', SUGAR.language.languages['app_list_strings']['dom_cal_day_short']);
+                }
+*/
+                var formatSelectedDate = function(selDate)
+                {
+                    var monthVal = selDate.getMonth() + 1; //Add one for month value
+                    if(monthVal < 10)
+                    {
+                        monthVal = '0' + monthVal;
+                    }
+
+                    var dateVal = selDate.getDate();
+
+                    if(dateVal < 10)
+                    {
+                        dateVal = '0' + dateVal;
+                    }
+
+                    var yearVal = selDate.getFullYear();
+
+                    selDate = '';
+                    if(monthPos == 0)
+                    {
+                        selDate = monthVal;
+                    }
+                    else if(dayPos == 0)
+                    {
+                        selDate = dateVal;
+                    }
+                    else
+                    {
+                        selDate = yearVal;
+                    }
+
+                    if(monthPos == 1)
+                    {
+                        selDate += date_field_delimiter + monthVal;
+                    }
+                    else if(dayPos == 1)
+                    {
+                        selDate += date_field_delimiter + dateVal;
+                    }
+                    else
+                    {
+                        selDate += date_field_delimiter + yearVal;
+                    }
+
+                    if(monthPos == 2)
+                    {
+                        selDate += date_field_delimiter + monthVal;
+                    }
+                    else if(dayPos == 2)
+                    {
+                        selDate += date_field_delimiter + dateVal;
+                    }
+                    else
+                    {
+                        selDate += date_field_delimiter + yearVal;
+                    }
+
+                    return selDate;
+                };
+                
+                calendar.selectEvent.subscribe(function() {
+                    var input = Dom.get(inputField);
+					if (calendar.getSelectedDates().length > 0) {
+
+                        input.value = formatSelectedDate(calendar.getSelectedDates()[0]);
+                        
+                        if(params.comboObject)
+                        {
+                           params.comboObject.update();
+                        }
+                    } else {
+                        input.value = "";
+                    }
+					
+					//bug 44147 fix
+                    //does not trigger onchange event
+                    if(input.onchange)
+                    	input.onchange();
+                    //end bugfix
+                    
+
+                    dialog.hide();
+					//Fire any on-change events for this input field
+					SUGAR.util.callOnChangeListers(input);
+                });
+
+                calendar.renderEvent.subscribe(function() {
+                    // Tell Dialog it's contents have changed, which allows 
+                    // container to redraw the underlay (for IE6/Safari2)
+                    dialog.fireEvent("changeContent");
+                });
+               
+            }
+            
+            var seldate = calendar.getSelectedDates();
+            if (Dom.get(inputField).value.length > 0) {
+            	val = new Date(Dom.get(inputField).value);
+            	if(!isNaN(val.getTime()))
+            	{
+	            	calendar.cfg.setProperty("selected", Dom.get(inputField).value);
+	                seldate = Dom.get(inputField).value.split(date_field_delimiter);       	
+	            	calendar.cfg.setProperty("pagedate", seldate[monthPos] + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + seldate[yearPos]);
+	            }
+            } else if (seldate.length > 0) {
+                // Set the pagedate to show the selected date if it exists
+                calendar.cfg.setProperty("selected", seldate[0]);
+                var month = seldate[0].getMonth() + 1;
+                var year = seldate[0].getFullYear();
+                calendar.cfg.setProperty("pagedate", month + calendar.cfg.getProperty("DATE_FIELD_DELIMITER") + year);         	
+            }      
+
+            calendar.render();
+            dialog.show();
+        });
+    });	
 };
