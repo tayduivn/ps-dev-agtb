@@ -364,7 +364,6 @@ SUGAR.subpanelUtils = function() {
 	var subpanelContents = {};
 	var subpanelLocked = {};
 
-
 	return {
 		// get the current subpanel layout
 		getLayout: function(asString, ignoreHidden) {
@@ -415,10 +414,16 @@ SUGAR.subpanelUtils = function() {
 			var cObj = YAHOO.util.Connect.asyncRequest('GET', url, {success: success, failure: success});
 		},
 
-		// call when an inline create is saved
-		// buttonName is the id of the originating 'save' button - we determine the associated subpanel name by climbing the DOM from this point
-		// We require the subpanel name to refresh the subpanel contents and to close the subpanel after the save. However, the code the generates the button
-		// doesn't have access to the subpanel name, only the module name. Hence this rather long-winded mechanism.
+        /**
+         * Call when an inline create is saved.
+         * Note: We require the subpanel name to refresh the subpanel contents and
+         * to close the subpanel after the save. However, the code the generates the
+         * button doesn't have access to the subpanel name, only the module name.
+         * Hence this rather long-winded mechanism.
+         * @param theForm
+         * @param buttonName id of the originating 'save' button - we determine the
+         *          associated subpanel name by climbing the DOM from this point
+         */
 		inlineSave: function(theForm, buttonName) {
 			ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
 			var success = function(data) {
@@ -430,7 +435,6 @@ SUGAR.subpanelUtils = function() {
 				if (element.className == 'quickcreate') {
 					var subpanel = element.id.slice(9,-7) ; // retrieve the subpanel name from the div id - the name is encoded as 'subpanel_<subpanelname>_newdiv'
 
-
 					var module = get_module_name();
 					var id = get_record_id();
 					var layout_def_key = get_layout_def_key();
@@ -440,7 +444,7 @@ SUGAR.subpanelUtils = function() {
 
 					}
 
-					if (typeof(result) != 'undefined' && result != null && typeof(result['status']) != 'undefined' && result['status'] !=null && result['status'] == 'dupe') {
+					if (typeof(result) != 'undefined' && result != null && result['status'] == 'dupe') {
 						document.location.href = "index.php?" + result['get'].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"').replace(/\r\n/gi,'\n');
 						return;
 					} else {
@@ -465,54 +469,64 @@ SUGAR.subpanelUtils = function() {
 			return false;
 		},
 
+        /**
+         * Retrieves the subpanel form.
+         * Note: We only allow one subpanel form to be open at any given time
+         * because some of the form widgets interfere with each other.
+         * @param theForm
+         * @param theDiv
+         * @param loadingStr
+         */
 		sendAndRetrieve: function(theForm, theDiv, loadingStr) {
 			function success(data) {
-				theDivObj = document.getElementById(theDiv);
-				subpanelContents[theDiv] = new Array();
+				var theDivObj = document.getElementById(theDiv),
+                    dataToDOMAvail = false,
+                    divName = 'subPanelFormDiv',
+                    form_el = document.getElementById(divName);
+
+                // Check if preview subpanel form exists, remove if it does.
+                if (form_el != null) {
+                    form_el.parentNode.removeChild(form_el);
+                    SUGAR.ajaxUI.cleanGlobals();
+                }
+
+				subpanelContents[theDiv] = {};
 				subpanelContents[theDiv]['list'] = theDivObj;
-
 				subpanelContents[theDiv]['newDiv'] = document.createElement('div');
-				dataToDOMAvail = false;
-				subpanelContents[theDiv]['newDiv'].innerHTML = '<script type="text/javascript">dataToDOMAvail=true;</script>' + data.responseText; // fill the div
-				subpanelContents[theDiv]['newDiv'].id = theDiv + '_newDiv';
-				subpanelContents[theDiv]['newDiv'].className = 'quickcreate' ;
-
-				form_el = YAHOO.util.Selector.query('form', subpanelContents[theDiv]['newDiv'], true);
-				YAHOO.util.Dom.setStyle(subpanelContents[theDiv]['newDiv'], 'height', '0');
-				YAHOO.util.Dom.setStyle(subpanelContents[theDiv]['newDiv'], 'overflow', 'hidden');
+				subpanelContents[theDiv]['newDiv'].innerHTML = '<script type="text/javascript">dataToDOMAvail=true;</script>' + data.responseText;
+				subpanelContents[theDiv]['newDiv'].id = divName;
+				subpanelContents[theDiv]['newDiv'].className = 'quickcreate';
 
 				// Grab the buttons from the subpanel and hide them
-				button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
+				var button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
 				YAHOO.util.Dom.setStyle(button_elements, 'display', 'none');
 
+                // Add the form object to the DOM
 				theDivObj.parentNode.insertBefore(subpanelContents[theDiv]['newDiv'], theDivObj);
-				if (!dataToDOMAvail) {
+
+                if (!dataToDOMAvail) {
 					SUGAR.util.evalScript(data.responseText);
 				}
-				// Grab the height of our form element
-				form_el = YAHOO.util.Selector.query('form', theDiv + '_newDiv', true);
-				YAHOO.util.Dom.setStyle(form_el, 'padding-bottom', '10px')
-				form_el = document.getElementById(form_el.getAttribute('id'));
-				form_height = form_el.offsetHeight;
 
-				var slideDown = new YAHOO.util.Anim(theDiv + '_newDiv', {
-					height: { from: 0, to: form_height }
-				}, .5, YAHOO.util.Easing.easeOut);
-				slideDown.animate();
-
-				subpanelLocked[theDiv] = false;
+				form_el = YAHOO.util.Selector.query('form', divName, true);
+                YAHOO.util.Dom.setStyle(form_el, 'padding-bottom', '10px');
+                
+                subpanelLocked[theDiv] = false;
                 setTimeout("enableQS(false)",500);
 				ajaxStatus.hideStatus();
-
 			}
 
-			if(typeof subpanelLocked[theDiv] != 'undefined' && subpanelLocked[theDiv]) return false;
+			if (subpanelLocked[theDiv] === true) {
+                return false;
+            }
+            
 			subpanelLocked[theDiv] = true;
 
-			if(typeof loadingStr == 'undefined') loadingStr = SUGAR.language.get('app_strings', 'LBL_LOADING');
+			loadingStr = loadingStr || SUGAR.language.get('app_strings', 'LBL_LOADING');
 			ajaxStatus.showStatus(loadingStr);
 			YAHOO.util.Connect.setForm(theForm);
-			var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+			YAHOO.util.Connect.asyncRequest('POST', 'index.php', {success: success, failure: success});
+
 			return false;
 		},
 
