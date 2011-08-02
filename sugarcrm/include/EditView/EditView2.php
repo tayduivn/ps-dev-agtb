@@ -374,6 +374,10 @@ class EditView
 		        }
 
 	            if(isset($this->fieldDefs[$name]['options']) && isset($app_list_strings[$this->fieldDefs[$name]['options']])) {
+	                if(!isset($GLOBALS['sugar_config']['disable_autocomplete']) || $GLOBALS['sugar_config']['disable_autocomplete'] == false){
+						$this->fieldDefs[$name]['autocomplete'] = true;
+	                	$this->fieldDefs[$name]['autocomplete_options'] = $this->fieldDefs[$name]['options']; // we need the name for autocomplete
+					}
 	                $this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']]; // fill in enums
 	            } //if
 
