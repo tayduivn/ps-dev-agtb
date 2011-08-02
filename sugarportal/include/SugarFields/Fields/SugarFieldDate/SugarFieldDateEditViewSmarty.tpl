@@ -26,10 +26,22 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
+
+{capture name=idname assign=idname}{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='name'}{/capture}
 {$displayParams.preCode}
-<input name='{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='name'}' onblur="parseDate(this, '');" id='jscal_field{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='name'}' type='text'  size='11' maxlength='10' value='{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='value'}' >
-<img src='themes/{$theme}/images/jscalendar.gif' alt='Enter Date'  id='jscal_trigger{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='name'}' align='absmiddle'> <span class='dateFormat'>yyyy-mm-dd</span>
-<script>
-Calendar.setup ({literal}{ldelim}{/literal}inputField : 'jscal_field{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='name'}', ifFormat : '{$CAL_DATE_FORMAT}', showsTime : false, button : 'jscal_trigger{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='name'}', singleClick : true, step : 1{literal}{rdelim}{/literal});
+<input name="{$idname}" id="{$idname}" type='text'  size='10' maxlength='10' value='{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='value'}' >
+<img src="themes/{$theme}/images/jscalendar.gif" alt='Enter Date'  id="{$idname}_trigger" align='absmiddle'> <span class='dateFormat'>{$CAL_DATE_FORMAT}</span>
+<script type="text/javascript">
+Calendar.setup ({ldelim}ldelim{rdelim}
+inputField : "{$idname}",
+ifFormat : "{$CAL_DATE_FORMAT}",
+daFormat : "{$CAL_DATE_FORMAT}",
+button : "{$idname}_trigger",
+singleClick : true,
+dateStr : "{sugar_variable_constructor objectName=$parentFieldArray memberName=$vardef.name key='value'}",
+step : 1,
+weekNumbers:false
+{ldelim}rdelim{rdelim}
+);
 </script>
 {$displayParams.postCode}

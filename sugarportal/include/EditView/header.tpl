@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
+<script type="text/javascript" src="include/javascript/yui/build/container/container-min.js"></script>
+<script type="text/javascript" src="include/javascript/yui/build/calendar/calendar.js"></script>
 <form id="{$formId}" name="{$formName}" {if $multipart} enctype='multipart/form-data' {/if} method="POST" action="index.php" onsubmit='return check_form("{$formName}");'>
 <input type="hidden" name="module" value="{$module}">
 <input type="hidden" name="id" value="{$data.id}">
