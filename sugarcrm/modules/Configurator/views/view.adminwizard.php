@@ -59,17 +59,33 @@ class ViewAdminwizard extends SugarView
         $sugarConfig = SugarConfig::getInstance();
         $focus = new Administration();
         $focus->retrieveSettings();
-        
+        $snip_purchased = false;
+        $snip_purchase_url = '';
+
         $ut = $GLOBALS['current_user']->getPreference('ut');
         if(empty($ut))
             $this->ss->assign('SKIP_URL','index.php?module=Users&action=Wizard&skipwelcome=1');
         else
             $this->ss->assign('SKIP_URL','index.php?module=Home&action=index');
         
+     	// SNIP status
+        $snip = SugarSNIP::getInstance();
+        $status=$snip->getStatus();
+		if ($status['status']=='notpurchased'){
+		    $snip_purchased = false;
+		    $snip_purchase_url = $snip->createPurchaseURL($snip->getSnipUser());
+		} else
+			$snip_purchased = true;
+        
         // Always mark that we have got past this point
         $focus->saveSetting('system','adminwizard',1);
         $css = $themeObject->getCSS();
         $favicon = $themeObject->getImageURL('sugar_icon.ico',false);
+
+        if ($snip_purchased) 
+        	$this->ss->assign('SNIP_PURCHASED_URL', $snip_purchase_url);
+        $this->ss->assign('SNIP_PURCHASED', $snip_purchased);
+
         $this->ss->assign('FAVICON_URL',getJSPath($favicon));
         $this->ss->assign('SUGAR_CSS', $css);
         $this->ss->assign('MOD_USERS',return_module_language($GLOBALS['current_language'], 'Users'));

@@ -85,9 +85,51 @@ function disableReturnSubmission(e) {
     </tr>
     </table>
     <div class="nav-buttons">
+        {if $SNIP_PURCHASED}
+            <input title="{$MOD.LBL_WIZARD_SKIP_BUTTON}"  
+                onclick="document.location.href='{$SKIP_URL}';" class="button"  
+                type="button" name="cancel" value="  {$MOD.LBL_WIZARD_SKIP_BUTTON}  " />&nbsp;
+            <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
+                class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
+                onclick="SugarWizard.changeScreen('system',false);" />
+        {else}
+            <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
+                class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
+                onclick="SugarWizard.changeScreen('snip',false);" />
+        {/if}
+    </div>
+</div>
+
+<div id="snip" class="screen">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td>
+            <div class="edit view">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <th align="left" scope="row" colspan="4"><h2>SNIP</h2></th>
+            </tr>
+            <tr>
+                <td scope="row">
+              <p>Welcome to SNIP</p>
+                <div class="userWizWelcome">SNIP is awesome. You should buy it</div>
+                {if $SNIP_PURCHASED_URL != ''}
+                    URL: {$SNIP_PURCHASED_URL}
+                {/if}
+                </td>
+            </tr>
+            </table>
+            </div>
+        </td>
+    </tr>
+    </table>
+    <div class="nav-buttons">
         <input title="{$MOD.LBL_WIZARD_SKIP_BUTTON}"  
             onclick="document.location.href='{$SKIP_URL}';" class="button"  
             type="button" name="cancel" value="  {$MOD.LBL_WIZARD_SKIP_BUTTON}  " />&nbsp;
+        <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
+            class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
+            onclick="SugarWizard.changeScreen('welcome',true);" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
             class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
             onclick="SugarWizard.changeScreen('system',false);" />
@@ -132,12 +174,19 @@ function disableReturnSubmission(e) {
     </tr>
     </table>
     <div class="nav-buttons">
+        {if $SNIP_PURCHASED}
             <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
                 class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
                 onclick="SugarWizard.changeScreen('welcome',true);" />&nbsp;
-            <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
-                class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
-                onclick="SugarWizard.changeScreen('locale',false);" />
+        {else}
+            <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
+                class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
+                onclick="SugarWizard.changeScreen('snip',true);" />&nbsp;
+        {/if}
+
+        <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
+            class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
+            onclick="SugarWizard.changeScreen('locale',false);" />
     </div>
 </div>
 
