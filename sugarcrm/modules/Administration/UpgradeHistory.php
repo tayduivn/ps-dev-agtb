@@ -59,7 +59,7 @@ class UpgradeHistory extends SugarBean
 
     function delete()
     {
-        $this->dbManager->query( "delete from " . $this->table_name . " where id = '" . $this->id . "'" );
+        $this->db->query( "delete from " . $this->table_name . " where id = " . $this->db->quoted($this->id));
     }
 
     function UpgradeHistory()

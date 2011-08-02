@@ -278,8 +278,8 @@ class Project extends SugarBean {
 //BEGIN SUGARCRM flav=pro ONLY
 	function getProjectHolidays()
 	{
-	    $firstName = $this->db->covert($this->db->convert('users.first_name', "IFNULL", 'contacts.first_name'), "IFNULL", "''");
-	    $lastName = array("' '", $this->db->covert($this->db->convert('users.last_name', "IFNULL", 'contacts.last_name'), "IFNULL", "''"));
+	    $firstName = $this->db->convert($this->db->convert('users.first_name', "IFNULL", 'contacts.first_name'), "IFNULL", "''");
+	    $lastName = array("' '", $this->db->convert($this->db->convert('users.last_name', "IFNULL", 'contacts.last_name'), "IFNULL", "''"));
 	    $resource_select = $this->db->convert($firstName, "CONCAT", $lastName);
 
 	    $query = "SELECT holidays.id, holidays.holiday_date, holidays.description as description, "
