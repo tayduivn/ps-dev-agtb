@@ -360,9 +360,12 @@ function local_open_popup(name, width, height,arg1, arg2, arg3, params)
 }
 
 SUGAR.subpanelUtils = function() {
-	var originalLayout = null;
-	var subpanelContents = {};
-	var subpanelLocked = {};
+	var originalLayout = null,
+        subpanelContents = {},
+        subpanelLocked = {},
+
+        // Keeps track of the current subpanel id
+        currentPanelDiv;
 
 	return {
 		// get the current subpanel layout
@@ -481,14 +484,11 @@ SUGAR.subpanelUtils = function() {
 			function success(data) {
 				var theDivObj = document.getElementById(theDiv),
                     dataToDOMAvail = false,
-                    divName = 'subPanelFormDiv',
-                    form_el = document.getElementById(divName);
+                    divName = theDiv + '_newDiv',
+                    form_el;
 
                 // Check if preview subpanel form exists, remove if it does.
-                if (form_el != null) {
-                    form_el.parentNode.removeChild(form_el);
-                    SUGAR.ajaxUI.cleanGlobals();
-                }
+                SUGAR.subpanelUtils.removeSubPanel();
 
 				subpanelContents[theDiv] = {};
 				subpanelContents[theDiv]['list'] = theDivObj;
@@ -503,6 +503,7 @@ SUGAR.subpanelUtils = function() {
 
                 // Add the form object to the DOM
 				theDivObj.parentNode.insertBefore(subpanelContents[theDiv]['newDiv'], theDivObj);
+                currentPanelDiv = divName;
 
                 if (!dataToDOMAvail) {
 					SUGAR.util.evalScript(data.responseText);
@@ -531,10 +532,9 @@ SUGAR.subpanelUtils = function() {
 		},
 
 		cancelCreate: function(buttonName) {
-			var element = document.getElementById(buttonName);
-
-            var theForm = element.form;
-            var confirmMsg = onUnloadEditView(theForm);
+			var element = document.getElementById(buttonName),
+                theForm = element.form,
+                confirmMsg = onUnloadEditView(theForm);
 
 			do {
 				element = element.parentNode;
@@ -553,21 +553,10 @@ SUGAR.subpanelUtils = function() {
                 }
             }
 
-			form_el = YAHOO.util.Selector.query('form', theDiv + '_newDiv', true);
-			form_el = document.getElementById(form_el.getAttribute('id'));
-			form_height = form_el.offsetHeight;
-
-			var slideUp = new YAHOO.util.Anim(theDiv + '_newDiv', {
-				height: { to: 0 }
-			}, .5, YAHOO.util.Easing.easeOut);
-			slideUp.animate();
-
-			slideUp.onComplete.subscribe(function() {
-				subpanelContents[theDiv]['newDiv'].parentNode.removeChild(subpanelContents[theDiv]['newDiv']);
-				button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
-				YAHOO.util.Dom.setStyle(button_elements, 'display', '');
-			});
-
+            SUGAR.subpanelUtils.removeSubPanel();
+            var button_elements = YAHOO.util.Selector.query('td.buttons', theDiv, false);
+            YAHOO.util.Dom.setStyle(button_elements, 'display', '');
+            
 			return false;
 		},
 
@@ -591,6 +580,19 @@ SUGAR.subpanelUtils = function() {
 
 			SUGAR.subpanelUtils.subpanelMoreTab = group;
 		},
+
+        /**
+         * Removes the current subpanel if it exists.
+         */
+        removeSubPanel: function() {
+            var currentPanelEl = document.getElementById(currentPanelDiv);
+
+            if (currentPanelEl != null) {
+                currentPanelEl.parentNode.removeChild(currentPanelEl);
+                SUGAR.ajaxUI.cleanGlobals();
+                currentPanelDiv = null;
+            }
+        },
 
 		/* loadSubpanels:
 		/* construct set of needed subpanels */
