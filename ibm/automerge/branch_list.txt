@@ -9,3 +9,4 @@ ibmc_sugaralerts
 ibmc_wildcardsrch
 ibmc_unittestfixes
 ibmc_defect3054
+ibmc_defect2497
