@@ -2001,7 +2001,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
 
         //this allows us to dynamically relate modules without adding it to the relationship_fields array
-        if(!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id){
+        if(!empty($_REQUEST['relate_id']) && !empty($_REQUEST['relate_to']) && !in_array($_REQUEST['relate_to'], $exclude) && $_REQUEST['relate_id'] != $this->id){
             $new_rel_id = $_REQUEST['relate_id'];
             $new_rel_relname = $_REQUEST['relate_to'];
             if(!empty($this->in_workflow) && !empty($this->not_use_rel_in_req)) {
