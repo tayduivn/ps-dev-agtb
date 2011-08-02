@@ -50,11 +50,13 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
             $logo = K_PATH_CUSTOM_IMAGES.$headerdata['logo'];
             $imsize = @getimagesize($logo);
 
-            // Print of the logo
-            // The way that the 3rd and 4th parameters work in Image() is weird. I have added a case to check if
-            // w and h are set as well as resize = true so that we can get what fitbox was supposed to do.
-            // w and h are used as boundary sizes in this case.
-            $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), MAX_WIDTH, MAX_HEIGHT, '', '', '', true, DPI);
+            if ( $imsize ) {
+                // Print of the logo
+                // The way that the 3rd and 4th parameters work in Image() is weird. I have added a case to check if
+                // w and h are set as well as resize = true so that we can get what fitbox was supposed to do.
+                // w and h are used as boundary sizes in this case.
+                $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), MAX_WIDTH, MAX_HEIGHT, '', '', '', true, DPI);
+            }
         }
         // This table split the header in 3 parts of equal width. The last part (on the right) contain the header text.
         $table[0]["logo"]="";
