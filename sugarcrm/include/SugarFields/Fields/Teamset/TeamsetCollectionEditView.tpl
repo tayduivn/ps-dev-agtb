@@ -132,8 +132,10 @@ and push it outside the screen.
 </script>
 
 <script type="text/javascript">
- 	document.getElementById("id_{$idname}_collection_0").value = "{$values.primary.id}"; 	
- 	document.getElementById("{$idname}_collection_0").value = "{$values.primary.name}";
+ 	var inputsArray = document.getElementById("{$displayParams.formName}_{$idname}_table").getElementsByTagName("*");
+	inputsArray["id_{$idname}_collection_0"].value = "{$values.primary.id}";
+	inputsArray["{$idname}_collection_0"].value = "{$values.primary.name}";
+
     {if isset($displayParams.arrow) && $displayParams.arrow == 'show'}
         setTimeout('call_js_more(collection_field)',1000);
     {else}
