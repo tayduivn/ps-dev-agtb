@@ -160,8 +160,13 @@ class IBMDB2Manager  extends DBManager
 
     /**~
      * @see DBManager::checkError()
+     *
+     * Added $connOnly parameter to skip the statement error check
+     * as there is a statics bug in the DB2 driver which persists failures
+     * http://pecl.php.net/bugs/bug.php?id=22854
+     * TODO take this skip out when the DB2 bug is fixed
      */
-    public function checkError($msg = '', $dieOnError = false, $stmt = null)
+    public function checkError($msg = '', $dieOnError = false, $stmt = null, $connOnly = false)
     {
         if (parent::checkError($msg, $dieOnError))
             return true;
@@ -172,21 +177,24 @@ class IBMDB2Manager  extends DBManager
             $msg = $this->handleError($msg, $dieOnError, $logmsg);
             $result = true;
         }
-        if (is_resource($stmt)){ // Being more strict than just checking for boolean false
-            // NOTE that if we get a statement here, it's because the operation was successful
-            // Hence we are only checking for additional information, no errors.
+        if(!$connOnly)
+        {
+            if (is_resource($stmt)){ // Being more strict than just checking for boolean false
+                // NOTE that if we get a statement here, it's because the operation was successful
+                // Hence we are only checking for additional information, no errors.
 
-            $info = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
-            if($info) {
-                $logmsg = "IBM_DB2 statement SQLSTATE after successful execution ".$info.": ".db2_stmt_errormsg($stmt);
-                $this->log->debug($logmsg);
-            }
-        } else {
-            $error = db2_stmt_error(); // Using local variable because a successive call will return no problem!
-            if($error) {
-                $logmsg = "IBM_DB2 statement error ".$error.": ".db2_stmt_errormsg();
-                $this->handleError($msg, $dieOnError, $logmsg);
-                $result = true;
+                $info = db2_stmt_error($stmt); // Using local variable because a successive call will return no problem!
+                if($info) {
+                    $logmsg = "IBM_DB2 statement SQLSTATE after successful execution ".$info.": ".db2_stmt_errormsg($stmt);
+                    $this->log->debug($logmsg);
+                }
+            } else {
+                $error = db2_stmt_error(); // Using local variable because a successive call will return no problem!
+                if($error) {
+                    $logmsg = "IBM_DB2 statement error ".$error.": ".db2_stmt_errormsg();
+                    $this->handleError($msg, $dieOnError, $logmsg);
+                    $result = true;
+                }
             }
         }
         return $result;
@@ -653,9 +661,10 @@ class IBMDB2Manager  extends DBManager
             }
         }
 
-//        if($this->checkError('Could Not Connect:', $dieOnError))
-//            $this->log->info("connected to db");
-        if(!$this->checkError('Could Not Connect:', $dieOnError))
+        // Skipping check for statement errors as there is a bug in the DB2 driver
+        // http://pecl.php.net/bugs/bug.php?id=22854
+        // TODO take this skip out when the DB2 bug is fixed
+        if(!$this->checkError('Could Not Connect:', $dieOnError, null, true))
         {
             $this->log->info("connected to db");
 
