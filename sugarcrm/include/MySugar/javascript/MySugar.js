@@ -35,6 +35,8 @@ SUGAR.mySugar = function() {
 	var leftColObj = null;
 	var maxCount;
 	var warningLang;
+
+    var closeDashletsDialogTimer = null;
 	
 	//BEGIN SUGARCRM flav=pro ONLY
 	var num_pages = numPages;
@@ -776,7 +778,11 @@ SUGAR.mySugar = function() {
 		
 		showDashletsDialog: function() {                                             
 			columns = SUGAR.mySugar.getLayout();
-			
+
+            if (this.closeDashletsDialogTimer != null) {
+                window.clearTimeout(this.closeDashletsDialogTimer);
+            }
+
 			var num_dashlets = 0;
             var i = 0;
             for ( i = 0 ; i < 3; i++ ) {
@@ -797,7 +803,7 @@ SUGAR.mySugar = function() {
 				dashletsListDiv.innerHTML = response['html'];
 				
 				document.getElementById('dashletsDialog_c').style.display = '';
-				SUGAR.mySugar.dashletsDialog.show();
+                SUGAR.mySugar.dashletsDialog.show();
 
 				eval(response['script']);
 				ajaxStatus.hideStatus();
@@ -809,7 +815,10 @@ SUGAR.mySugar = function() {
 		
 		closeDashletsDialog: function(){
 			SUGAR.mySugar.dashletsDialog.hide();
-			window.setTimeout("document.getElementById('dashletsDialog_c').style.display = 'none';", 2000);
+			if (this.closeDashletsDialogTimer != null) {
+                window.clearTimeout(this.closeDashletsDialogTimer);
+            }
+            this.closeDashletsDialogTimer = window.setTimeout("document.getElementById('dashletsDialog_c').style.display = 'none';", 2000);
 			//BEGIN SUGARCRM flav=pro ONLY
 			populatedReportCharts = false;
 			//END SUGARCRM flav=pro ONLY

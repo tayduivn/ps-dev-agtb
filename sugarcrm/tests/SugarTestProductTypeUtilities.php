@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 require_once 'modules/ProductTypes/ProductType.php';
 
 class SugarTestProductTypesUtilities
