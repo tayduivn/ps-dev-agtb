@@ -30,6 +30,7 @@ require_once('include/MVC/View/SugarView.php');
 require_once('modules/Configurator/Forms.php');
 require_once('modules/Administration/Forms.php');
 require_once('modules/Configurator/Configurator.php');
+require_once('modules/SNIP/SugarSNIP.php');
 
 class ViewAdminwizard extends SugarView
 {
@@ -76,7 +77,7 @@ class ViewAdminwizard extends SugarView
 		    $snip_purchase_url = $snip->createPurchaseURL($snip->getSnipUser());
 		} else
 			$snip_purchased = true;
-        
+
         // Always mark that we have got past this point
         $focus->saveSetting('system','adminwizard',1);
         $css = $themeObject->getCSS();
