@@ -11,9 +11,6 @@ var $account;
 	
 public function setUp()
 {
-	require('include/modules.php');
-	$GLOBALS['beanList'] = $beanList;
-	$GLOBALS['beanFiles'] = $beanFiles;		
 	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	$GLOBALS['current_user']->is_admin = true;
 	$this->account = SugarTestAccountUtilities::createAccount();

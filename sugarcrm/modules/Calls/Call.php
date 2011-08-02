@@ -121,13 +121,10 @@ class Call extends SugarBean
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
-			$this->team_set_id = $current_user->team_set_id; //bug 41334 : team_set_id needs to be updated with current_user's team_set_id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
 		//END SUGARCRM flav=pro ONLY
-		
-		
 
          if(!empty($GLOBALS['app_list_strings']['duration_intervals']))
         	$this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
