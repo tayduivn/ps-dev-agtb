@@ -191,7 +191,7 @@ class TemplateHandler {
             $contents .= $javascript->getScript();
             $contents .= $this->createQuickSearchCode($defs, $defs2, $view, $module);
 			//BEGIN SUGARCRM flav=pro ONLY
-			$contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view);
+			$contents .= $this->createDependencyJavascript($defs, $metaDataDefs, $view, $module);
 			//END SUGARCRM flav=pro ONLY
             $contents .= "{/literal}\n";
         }else if(preg_match('/^SearchForm_.+/', $view)){
@@ -481,7 +481,7 @@ class TemplateHandler {
      * @param array $viewDefs the viewdefs for the current view.
      * @param string $view the current view type.
      */
-    function createDependencyJavascript($fieldDefs, $viewDefs, $view) {
+    function createDependencyJavascript($fieldDefs, $viewDefs, $view, $module = null) {
         $js = "<script type=text/javascript>\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
@@ -489,7 +489,7 @@ class TemplateHandler {
 
         $dependencies = array_merge(
            DependencyManager::getDependenciesForFields($fieldDefs, $view),
-           DependencyManager::getDependenciesForView($viewDefs, $view)
+           DependencyManager::getDependenciesForView($viewDefs, $view, $module)
         );
 
         

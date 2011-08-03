@@ -107,6 +107,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                             }
                         }
     					overlays[i].hide();
+                        overlays[i].set('bodyContent', "");
     				}
     			}
 				i++;
