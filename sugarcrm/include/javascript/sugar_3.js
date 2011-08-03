@@ -604,9 +604,9 @@ function add_error_style(formname, input, txt, flash) {
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
 	
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
-        errorTextNode = document.createElement('span');
+        errorTextNode = document.createElement('div');
         errorTextNode.className = 'required';
-        errorTextNode.innerHTML = '<br />' + txt;
+        errorTextNode.innerHTML = txt;
         if ( inputHandle.parentNode.className.indexOf('x-form-field-wrap') != -1 ) {
             inputHandle.parentNode.parentNode.appendChild(errorTextNode);
         }
