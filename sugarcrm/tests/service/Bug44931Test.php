@@ -31,7 +31,9 @@ require_once('include/nusoap/nusoap.php');
  */
 class Bug44931Test extends SOAPTestCase
 {
-	public $_soapClient = null;
+	var $_soapClient = null;
+	var $kbDocId = null;
+	var $docRevisionId = null;
 	
 	public function setUp() 
     {
@@ -45,14 +47,68 @@ class Bug44931Test extends SOAPTestCase
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
         
-        VardefManager::clearVardef();
-        VardefManager::refreshVardefs('KBDocumentKBTags', 'KBDocumentKBTag');        
+        global $app_list_strings;
+        global $timedate;
+         
+        $app_list_strings = return_app_list_strings_language('en_us');
+        
+		$kbdoc = new KBDocument();
+		$kbdoc->kbdocument_name = "Bug44931";
+		$kbdoc->status_id = array_rand($app_list_strings['kbdocument_status_dom']);
+		$kbdoc->team_id = $GLOBALS['current_user']->team_id;
+		$kbdoc->assigned_user_id = $GLOBALS['current_user']->id;
+		$kbdoc->active_date = $timedate->nowDb();
+		$kbdoc->save();
+		$this->kbDocId = $kbdoc->id;
+	
+		$kbdocRevision = new KBDocumentRevision;
+		$kbdocRevision->revision = '1';
+		$kbdocRevision->kbdocument_id = $kbdoc->id;
+		$kbdocRevision->latest = true;
+		$kbdocRevision->save();
+	
+		$docRevision = new DocumentRevision();
+		$docRevision->filename = $kbdoc->kbdocument_name;
+		$docRevision->save();
+		$this->docRevisionId = $docRevision->id;
+	
+	    $kbdocContent = new KBContent();
+	    $kbdocContent->document_revision_id = $docRevision->id;
+	    $kbdocContent->team_id = $kbdoc->team_id;
+		$kbdocContent->kbdocument_body = 'TEST!';
+		$kbdocContent->save();
+	
+		$kbdocRevision->kbcontent_id = $kbdocContent->id;
+	    $kbdocRevision->document_revision_id = $docRevision->id;
+	    $kbdocRevision->save();
+	
+	    $kbdoc->kbdocument_revision_id = $kbdocRevision->id;
+		$kbdoc->save();   
+
+	    $kbtag = new KBTag;
+	    $kbtag->tag_name = 'Bug44931';
+	    $id = $kbtag->save();
+			
+		$kbdocKBTag = new KBDocumentKBTag();
+		$kbdocKBTag->kbtag_id = $kbtag->id;
+		$kbdocKBTag->kbdocument_id = $kbdoc->id;
+		$kbdocKBTag->team_id = $kbdoc->team_id;
+		$kbdocKBTag->save();	
+		
+		$this->useOutputBuffering = false;
     }
 
     public function tearDown() 
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        
+        $GLOBALS['db']->query("DELETE FROM document_revisions WHERE id = '{$this->docRevisionId}'");
+        $GLOBALS['db']->query("DELETE FROM kbcontents WHERE document_revision_id = '{$this->docRevisionId}'");
+        $GLOBALS['db']->query("DELETE FROM kbdocument_revisions WHERE kbdocument_id = '{$this->kbDocId}'");
+        $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id = '{$this->kbDocId}'");
+        $GLOBALS['db']->query("DELETE FROM kbdocuments_kbtags WHERE kbdocument_id = '{$this->kbDocId}'");
+        $GLOBALS['db']->query("DELETE FROM kbtags WHERE tag_name = 'Bug44931'");
     }	
     
     public function testGetEntryListForKBDocumentKBTagModule() 
@@ -63,17 +119,18 @@ class Bug44931Test extends SOAPTestCase
         $parameters = array(
             'session' => $this->_sessionId,
             'module_name' => 'KBDocumentKBTags',
-            'query' => "kbdocuments_kbtags.deleted=0",
+            'query' => "kbdocuments_kbtags.deleted=0 and kbdocuments_kbtags.kbdocument_id = '{$this->kbDocId}'",
             'order_by' => '',
             'offset' => 0,
-            'select_fields' => array('id', 'name'),
+            'select_fields' => array('id', 'kbdocument_id'),
             'max_results' => 250,
             'deleted' => 0,
             );
             
         $result = $this->_soapClient->call('get_entry_list',$parameters);
-
-        $this->assertNotEmpty($result['field_list'][0]['name']);
+        
+        $this->assertNotEmpty($result['field_list']);
+        $this->assertEquals($this->kbDocId, $result['entry_list'][0]['name_value_list'][1]['value'], 'Assert we correctly queried by kbdocument_id');
        
     }
     
@@ -95,6 +152,7 @@ class Bug44931Test extends SOAPTestCase
                     'version' => '.01'), 
                 'application_name' => 'SoapTest')
             );
+                
         $this->_sessionId = $result['id'];
 		
         return $result;
