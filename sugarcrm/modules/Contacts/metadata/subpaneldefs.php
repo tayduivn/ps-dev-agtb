@@ -135,7 +135,23 @@ $layout_defs['Contacts'] = array(
 	    		),
 			)
 		),
-        'documents' => array(
+        //BEGIN SUGARCRM flav=pro ONLY
+		// SNIP
+        'contact_history' => array (
+			'order' => 21,
+			'sort_order' => 'desc',
+			'sort_by' => 'date_entered',
+			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
+			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
+			'module' => 'Emails',
+            'subpanel_name' => 'ForUnlinkedEmailHistory',
+	        'get_subpanel_data' => 'function:get_unlinked_email_query',
+	        'generate_select'=>true,
+	        'function_parameters' => array('return_as_array'=>'true'),
+		    'top_buttons' => array(),
+		),
+        //END SUGARCRM flav=pro ONLY
+		'documents' => array(
             'order' => 25,
             'module' => 'Documents',
             'subpanel_name' => 'default',
@@ -143,13 +159,13 @@ $layout_defs['Contacts'] = array(
             'sort_by' => 'id',
             'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'get_subpanel_data' => 'documents',
-            'top_buttons' => 
+            'top_buttons' =>
             array (
-                0 => 
+                0 =>
                 array (
                     'widget_class' => 'SubPanelTopButtonQuickCreate',
                     ),
-                1 => 
+                1 =>
                 array (
                     'widget_class' => 'SubPanelTopSelectButton',
                     'mode' => 'MultiSelect',

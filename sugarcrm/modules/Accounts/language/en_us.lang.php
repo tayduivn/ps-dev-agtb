@@ -72,7 +72,7 @@ $mod_strings = array (
 	'LBL_BILLING_ADDRESS' => 'Billing Address:',
 	'LBL_BUG_FORM_TITLE' => 'Accounts',
 	'LBL_BUGS_SUBPANEL_TITLE' => 'Bugs',
-	'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',	
+	'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
 	//BEGIN SUGARCRM flav!=sales ONLY
 	'LBL_CAMPAIGN_ID' => 'Campaign ID',
 	//END SUGARCRM flav!=sales ONLY
@@ -185,7 +185,6 @@ $mod_strings = array (
     'LBL_PHONE_ALTERNATE' => 'Phone Alternate',
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
     'LBL_EXPORT_PARENT_ID' => 'Member of',
-
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History'
 );
