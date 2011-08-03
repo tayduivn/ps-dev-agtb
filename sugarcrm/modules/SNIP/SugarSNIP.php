@@ -224,7 +224,6 @@ class SugarSNIP
         $user->external_auth_only = 1;
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->portal_only = 1;
         $user->user_hash = strtolower(md5(time().mt_rand()));
         //$user->default_team = '1'; // TODO: which team should we set?
         $user->save();
