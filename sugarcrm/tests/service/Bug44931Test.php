@@ -23,21 +23,19 @@
  * All Rights Reserved.
  ********************************************************************************/
  
+require_once 'tests/service/SOAPTestCase.php'; 
 require_once('include/nusoap/nusoap.php');
 
 /**
  * @group bug44931
  */
-class Bug44931Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44931Test extends SOAPTestCase
 {
 	public $_soapClient = null;
 	
 	public function setUp() 
     {
         $this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,600,600);
-        
-        $beanList = array();
-        $beanFiles = array();
         require('include/modules.php');
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
@@ -46,15 +44,15 @@ class Bug44931Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->status = 'Active';
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
+        
+        VardefManager::clearVardef();
+        VardefManager::refreshVardefs('KBDocumentKBTags', 'KBDocumentKBTag');        
     }
 
     public function tearDown() 
     {
-        
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
     }	
     
     public function testGetEntryListForKBDocumentKBTagModule() 
@@ -68,7 +66,7 @@ class Bug44931Test extends Sugar_PHPUnit_Framework_TestCase
             'query' => "kbdocuments_kbtags.deleted=0",
             'order_by' => '',
             'offset' => 0,
-            'select_fields' => array('id'),
+            'select_fields' => array('id', 'name'),
             'max_results' => 250,
             'deleted' => 0,
             );
