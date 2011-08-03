@@ -109,9 +109,6 @@ class SugarWidgetSubPanelDetailViewLink extends SugarWidgetField
         $action = 'DetailView';
         $title = $value = $layout_def['fields'][$key];
 
-        if (strlen($value) > 60) {
-            $value = substr($value, 0, 60) . ' ...';
-        }
 
         global $current_user;
         if (!empty($record) &&
