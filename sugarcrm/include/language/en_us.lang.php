@@ -2544,6 +2544,9 @@ $app_strings = array (
     'LBL_PRIMARY_ADDRESS_STREET_3' => 'Primary Address Street 3:',
     'LBL_PRIMARY_ADDRESS_STREET' => 'Primary Address Street:',
     'LBL_PRIMARY_ADDRESS' => 'Primary Address:',
+	
+	'LBL_BILLING_STREET'=> 'Street:',
+	'LBL_SHIPPING_STREET'=> 'Street:',
 
     //BEGIN SUGARCRM flav=pro || flav!=sales ONLY
     'LBL_PRODUCT_BUNDLES'=>'Product Bundles',
