@@ -117,6 +117,7 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
 	'required' => true,
 	'importable' => 'required',
     'default' => 'Planned',
+	'studio' => array('detailview'=>false)
   ),
   'direction' =>
   array (
