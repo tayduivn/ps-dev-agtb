@@ -130,7 +130,9 @@ SUGAR.ajaxUI = {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
             if (ui.lastURL == url)
                 return;
-            if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            var inAjaxUI = /action=ajaxui/.exec(window.location);
+            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
+                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
             {
                 YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
                 return;
@@ -152,7 +154,7 @@ SUGAR.ajaxUI = {
                 loadLanguageJS = '&loadLanguageJS=1';
             }
 
-            if (!/action=ajaxui/.exec(window.location))
+            if (!inAjaxUI)
                 //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
             else {

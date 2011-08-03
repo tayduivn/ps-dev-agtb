@@ -131,7 +131,7 @@ th, td
 
 /* layout the header elements */
 #header {
-min-width: 1050px;
+min-width: 950px;
 }
 
 .headerLarge {
@@ -3247,7 +3247,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 #moduleList
 {
     height: 45px;
-	min-width: 1030px;
+	min-width: 950px;
 }
 
 #subModuleList
@@ -5488,7 +5488,7 @@ width:100%;
 .dcmenu{
 color:blue;
 height:55px;
-min-width: 1050px;
+min-width: 950px;
 	background-color: #0d3a62;
 	height: 55px;	
 	background: -moz-linear-gradient(center top,
