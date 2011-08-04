@@ -170,15 +170,8 @@ class SugarSNIP
     *  - purchased_error (instance has snip license, server is not down, but server detects something is wrong).
     * Iff 'status' is 'purchased_error', 'message' will be the error returned by the server. Otherwise $message will be NULL.
     */
-    public function getStatus(){
-        /**
-            BEGIN FOR-TEST-ONLY
-        **/
-        return array('status'=>'notpurchased','message'=>NULL);
-        /**
-            END   FOR-TEST-ONLY
-        **/
-
+    public function getStatus()
+    {
         //if inactive,
         if(!$this->isActive()) {
             return array('status'=>'notpurchased','message'=>null);
