@@ -151,7 +151,7 @@ class CsvAutoDetect {
                     $len = strlen($data);
                     // check if it begins and ends with single quotes
                     // if it does, then it double quotes may not be the enclosure
-                    if ($data[0] == "'" && $data[$len-1] == "'") {
+                    if ($len>=2 && $data[0] == "'" && $data[$len-1] == "'") {
                         $beginEndWithSingle = true;
                         break;
                     }
@@ -182,7 +182,7 @@ class CsvAutoDetect {
                         $len = strlen($data);
                         // check if it begins and ends with double quotes
                         // if it does, then it single quotes may not be the enclosure
-                        if ($data[0] == "\"" && $data[$len-1] == "\"") {
+                        if ($len>=2 && $data[0] == "\"" && $data[$len-1] == "\"") {
                             $beginEndWithDouble = true;
                             break;
                         }
