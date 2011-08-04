@@ -130,8 +130,8 @@ else
 	$opp->date_closed = $_REQUEST["valid_until"];
 	$opp->name = $_REQUEST["opportunity_subject"];
 	$opp->assigned_user_name = $_REQUEST["user_name"];
-	$opp->lead_source = isset($app_list_strings['lead_source_dom']['Self Generated']) ? $app_list_strings['lead_source_dom']['Self Generated']: null;//'Self Generated';
-	$opp->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? $app_list_strings['sales_stage_dom']['Proposal/Price Quote']: null;//'Proposal/Price Quote';
+	$opp->lead_source = isset($app_list_strings['lead_source_dom']['Self Generated']) ? 'Self Generated': null;//'Self Generated';
+	$opp->sales_stage = isset($app_list_strings['sales_stage_dom']['Proposal/Price Quote']) ? 'Proposal/Price Quote': null;//'Proposal/Price Quote';
 	$opp->probability = isset($app_list_strings['sales_probability_dom']['Proposal/Price Quote']) ? $app_list_strings['sales_probability_dom']['Proposal/Price Quote']: null;//'Proposal/Price Quote';
 	$opp->opportunity_type = isset($app_list_strings['opportunity_type_dom']['New Business']) ? $app_list_strings['opportunity_type_dom']['New Business']: null;//'New Business';
 	//BEGIN SUGARCRM flav=pro ONLY
