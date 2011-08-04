@@ -296,16 +296,15 @@ $projectId = $app->controller->record;
 $focus = new Project();
 $focus->retrieve($projectId);
 if (isset($focus) && $focus->object_name == 'Project'){
+	
 	// make this security check ONLY in the Project detail view
-	//if ($current_user->id == $focus->assigned_user_id) {
-	    $layout_defs['Project']['subpanel_setup']['holidays']['top_buttons'] =
-	    array(array('widget_class' => 'SubPanelTopCreateButton'));
-//	    array(array('widget_class' => 'SubPanelTopButtonQuickCreate'));
+    $layout_defs['Project']['subpanel_setup']['holidays']['top_buttons'] =
+    array(array('widget_class' => 'SubPanelTopCreateButton'),array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect' ));
 
-	    $layout_defs['Project']['subpanel_setup']['projectresources']['top_buttons'] =
-	    array(array('widget_class' => 'SubPanelTopSelectUsersButton', 'mode'=>'MultiSelect' ),
-	                array('widget_class' => 'SubPanelTopSelectContactsButton', 'mode'=>'MultiSelect' ));
-	//}
+	$layout_defs['Project']['subpanel_setup']['projectresources']['top_buttons'] =
+	array(array('widget_class' => 'SubPanelTopSelectUsersButton', 'mode'=>'MultiSelect' ),
+	array('widget_class' => 'SubPanelTopSelectContactsButton', 'mode'=>'MultiSelect' ));
+	
 }
 }
 //END SUGARCRM flav=pro ONLY
