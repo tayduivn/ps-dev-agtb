@@ -214,11 +214,6 @@ class SugarSNIP
     */
     public function getStatus()
     {
-        /**
-        testing
-        **/
-            return array('status'=>'notpurchased','message'=>null);
-
         //if inactive,
         if(!$this->isActive()) {
             return array('status'=>'notpurchased','message'=>null);
