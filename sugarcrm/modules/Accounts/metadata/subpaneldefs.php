@@ -327,7 +327,7 @@ $layout_defs['Accounts'] = array(
 			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
             'top_buttons' => array(),
         	'module' => 'Emails',
-            'subpanel_name' => 'ForUnlinkedEmailHistory',
+            'subpanel_name' => 'ForContactHistory',
             'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
           	'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
             'generate_select'=>true,
