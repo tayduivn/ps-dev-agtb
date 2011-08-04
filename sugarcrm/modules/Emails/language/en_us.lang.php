@@ -274,7 +274,7 @@ $mod_strings = array (
 	'LBL_LIST_TITLE_MY_INBOX'	=> 'My Inbox',
 	'LBL_LIST_TITLE_MY_SENT'	=> 'My Sent Email',
 	'LBL_LIST_TITLE_MY_ARCHIVES'=> 'My Archived Emails',
-    'LBL_ACTIVITIES_REPORTS' 	=> 'Activities Report',    
+    'LBL_ACTIVITIES_REPORTS' 	=> 'Activities Report',
 
 	'LNK_CHECK_MY_INBOX'		=> 'Check My Mail',
 	'LNK_DATE_SENT'				=> 'Date Sent',
@@ -301,7 +301,7 @@ $mod_strings = array (
 	'LBL_EMAILTEMPLATE_MESSAGE_WARNING_TITLE' => 'Warning',
 	'LBL_EMAILTEMPLATE_MESSAGE_MULTIPLE_RECIPIENTS' => 'Using an email template containing contact variables, such as the contact name, to send emails to multiple recipients may have unexpected results. It is recommended that you use an email campaign for mass mailings.',
 	'LBL_CHECK_ATTACHMENTS'=>'Please Check Attachments!',
-	'LBL_HAS_ATTACHMENTS' => 'This email already has attachment(s). Would you like to keep the attachment(s)?',	
+	'LBL_HAS_ATTACHMENTS' => 'This email already has attachment(s). Would you like to keep the attachment(s)?',
 	'ERR_MISSING_REQUIRED_FIELDS' => 'Missing required field',
     'ERR_INVALID_REQUIRED_FIELDS' => 'Invalid required field',
 	'LBL_FILTER_BY_RELATED_BEAN' => 'Only show recipients related to',
@@ -337,7 +337,7 @@ $mod_strings = array (
     'LBL_CHECKING_ACCOUNT'	=> 'Checking Account',
     'LBL_OF'	=> 'of',
     'LBL_TEST_EMAIL_BODY' => 'This email was sent in order to test the outgoing mail server information provided in the Sugar application.  A successful receipt of this email indicates that the outgoing mail server information provided is valid.',
-    
+
     // for outbound email dialog
     'LBL_MAIL_SMTPUSER'	=> 'Username',
 	'LBL_MAIL_SMTPPASS'	=> 'Password',
@@ -364,5 +364,6 @@ $mod_strings = array (
 	// SNIP
 	'LBL_CONTACTS_SUBPANEL_TITLE_SNIP' => 'Email Contacts',
 	'LBL_EMAILS_MEETINGS_REL' => 'Emails:Meetings',
-
+	'LBL_DATE_CREATED' => 'Date Created',
+	'LBL_DATE_MODIFIED' => 'Date Modified',
 );

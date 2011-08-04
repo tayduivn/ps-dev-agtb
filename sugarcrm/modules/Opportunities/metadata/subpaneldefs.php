@@ -120,13 +120,13 @@ $layout_defs['Opportunities'] = array(
             'sort_by' => 'id',
             'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'get_subpanel_data' => 'documents',
-            'top_buttons' => 
+            'top_buttons' =>
             array (
-                0 => 
+                0 =>
                 array (
                     'widget_class' => 'SubPanelTopButtonQuickCreate',
                     ),
-                1 => 
+                1 =>
                 array (
                     'widget_class' => 'SubPanelTopSelectButton',
                     'mode' => 'MultiSelect',
@@ -223,7 +223,8 @@ $layout_defs['Opportunities'] = array(
 		),
         //END SUGARCRM flav=pro ONLY
 
-        // SNIP
+        //BEGIN SUGARCRM flav=pro ONLY
+		// SNIP
         'contact_history' => array(
 			'order' => 20,
         	'sort_order' => 'desc',
@@ -237,6 +238,7 @@ $layout_defs['Opportunities'] = array(
 		    'get_distinct_data' => true,
             'top_buttons' => array(),
 		),
+        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>
