@@ -70,7 +70,15 @@
 		name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
 		size="30"
 		value="{$field_val|lookup:$field_options}"
-		type="text" style="vertical-align: top;"> <img src="{sugar_getimagepath file="down_arrow.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image">
+		type="text" style="vertical-align: top;">
+
+		
+	<span class="id-ff multiple">
+	    <button type="button"><img src="{sugar_getimagepath file="id-ff-down.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image"></button><button type="button"
+	        id="btn-clear-{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
+	        title="Clear"
+	        onclick="SUGAR.clearRelateField(this.form, '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input', '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}');sync_{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}()"><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
+	</span>
 
 	{literal}
 	<script>
@@ -93,13 +101,11 @@
 					select_defaults[selectElem.id].text = selectElem.options[i].innerHTML;
 			}
 
-
-
 			//SUGAR.AutoComplete.{$ac_key}.ds = 
 			//get options array from vardefs
 			var options = SUGAR.AutoComplete.getOptionsArray("{{$vardef.autocomplete_options}}");
 
-			YUI().use('datasource', 'datasource-jsonschema', 'skin-sam-widget',function (Y) {
+			YUI().use('datasource', 'datasource-jsonschema',function (Y) {
 				SUGAR.AutoComplete.{/literal}{$ac_key}{literal}.ds = new Y.DataSource.Function({
 				    source: function (request) {
 				    	var ret = [];
@@ -115,7 +121,7 @@
 	{{else}}
 		{literal}
 		// Create a new YUI instance and populate it with the required modules.
-		YUI().use('datasource', 'datasource-jsonschema', 'skin-sam-widget',function (Y) {
+		YUI().use('datasource', 'datasource-jsonschema',function (Y) {
 			// DataSource is available and ready for use.
 			SUGAR.AutoComplete.{/literal}{$ac_key}{literal}.ds = new Y.DataSource.Get({
 				source: 'index.php?module=Accounts&action=ajaxautocomplete&to_pdf=1'
@@ -160,6 +166,10 @@
 					SUGAR.AutoComplete.{/literal}{$ac_key}{literal}.inputHidden.simulate('change');
 			}
 
+			//global variable 
+			sync_{/literal}{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}{literal} = function(){
+				SyncToHidden();
+			}
 			function syncFromHiddenToWidget(){
 				var selectElem = document.getElementById("{/literal}{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}{literal}");
 
