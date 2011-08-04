@@ -34,9 +34,8 @@ if (!is_admin($current_user)) {
 }
 global $sugar_config;
 
-/**
-    use SugarSNIP instead of SugarSNIP_offlinetest for production
-**/
+$enable_snip = '';
+$disable_snip = '';
 
 $snip = SugarSNIP::getInstance();
 $title = getClassicModuleTitle('Administration', array(
@@ -60,9 +59,27 @@ if ($status=='purchased_error'){
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 }
 
+if ($_POST && isset($_POST['action'])) {
+	if ($_POST['action']=='enable_snip') {
+		$enable_snip = $snip->registerSnip();
+	} else if ($_POST['action']=='disable_snip') {
+		$disable_snip = $snip->unregisterSnip();
+	}
+}
+
 $sugar_smarty->assign('TITLE',$title);
 $sugar_smarty->assign('SNIP_STATUS',$status);
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
+
+if (!empty($enable_snip)) {
+	$sugar_smarty->assign('SNIP_ENABLE_RESULT', $enable_snip['result']);
+	$sugar_smarty->assign('SNIP_ENABLE_MESSAGE', $enable_snip['message']);
+	$sugar_smarty->assign('SNIP_ENABLE_EMAIL', (isset($enable_snip['email']) ? $enable_snip['email'] : ''));
+}
+
+if (!empty($disable_snip)) {
+	$sugar_smarty->assign('SNIP_DISABLE_RESULT', $disable_snip['result']);
+}
 
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
