@@ -133,18 +133,88 @@ class CsvAutoDetect {
         // try parsing the file to find possible delimiter and enclosure
         $this->_parser->heading = false;
 
-        $enclosures = array("\"", "'");
-
         $found_setting = false;
 
-        foreach ($enclosures as $enc) {
-            $delimiter = $this->_parser->auto($this->_csv_file, true, null, null, $enc);
+        $singleQuoteParsedOK = $doubleQuoteParsedOK = false;
+        $beginEndWithSingle = $beginEndWithDouble = false;
 
-            if (strlen($delimiter) == 1) {
-                // possible delimiter and enclosure found
-                $enclosure = $enc;
+        // check double quotes first
+        $depth = 1;
+        $enclosure = "\"";
+        $delimiter1 = $this->_parser->auto($this->_csv_file, true, null, null, $enclosure);
+        if (strlen($delimiter1) == 1) { // this means parsing ok
+            $doubleQuoteParsedOK = true;
+            // sometimes it parses ok with either single quote or double quote as enclosure
+            // so we need to make sure the data do not begin and end with the other enclosure
+            foreach ($this->_parser->data as &$row) {
+                foreach ($row as &$data) {
+                    $len = strlen($data);
+                    // check if it begins and ends with single quotes
+                    // if it does, then it double quotes may not be the enclosure
+                    if ($data[0] == "'" && $data[$len-1] == "'") {
+                        $beginEndWithSingle = true;
+                        break;
+                    }
+                }
+                if ($beginEndWithSingle) {
+                    break;
+                }
+                $depth++;
+                if ($depth > $this->_max_depth) {
+                    break;
+                }
+            }
+            if (!$beginEndWithSingle) {
+                $delimiter = $delimiter1;
                 $found_setting = true;
-                break;
+            }
+        }
+
+        // check single quotes
+        if (!$found_setting) {
+            $depth = 1;
+            $enclosure = "'";
+            $delimiter2 = $this->_parser->auto($this->_csv_file, true, null, null, $enclosure);
+            if (strlen($delimiter2) == 1) { // this means parsing ok
+                $singleQuoteParsedOK = true;
+                foreach ($this->_parser->data as &$row) {
+                    foreach ($row as &$data) {
+                        $len = strlen($data);
+                        // check if it begins and ends with double quotes
+                        // if it does, then it single quotes may not be the enclosure
+                        if ($data[0] == "\"" && $data[$len-1] == "\"") {
+                            $beginEndWithDouble = true;
+                            break;
+                        }
+                    }
+                    if ($beginEndWithDouble) {
+                        break;
+                    }
+                    $depth++;
+                    if ($depth > $this->_max_depth) {
+                        break;
+                    }
+                }
+                if (!$beginEndWithDouble) {
+                    $delimiter = $delimiter2;
+                    $found_setting = true;
+                }
+            }
+        }
+
+        if (!$found_setting) {
+            // we don't seem to have a perfect enclosure candidate
+            // let's pick one of the possible candidates
+            if ($doubleQuoteParsedOK) {
+                // if double quotes parsed ok, let's take that
+                $delimiter = $delimiter1;
+                $enclosure = "\"";
+                $found_setting = true;
+            } else if ($singleQuoteParsedOK) {
+                // otherwise, if single quote parsed ok, let's use it
+                $delimiter = $delimiter2;
+                $enclosure = "'";
+                $found_setting = true;
             }
         }
 

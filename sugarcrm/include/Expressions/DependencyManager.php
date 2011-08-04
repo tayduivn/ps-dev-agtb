@@ -258,18 +258,18 @@ class DependencyManager {
                 $deps[] = self::getPanelDependency(strtoupper($id), $expr);
             }
         }
-        if ($view == "EditView")
+        if ($view == "EditView" || strpos($view, "QuickCreate") !== false)
         {
-            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit'));
+            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'edit', $view));
         }
         else
         {
-            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'view'));
+            $deps = array_merge($deps, self::getModuleDependenciesForAction($module, 'view', $view));
         }
         return $deps;
     }
 
-    public static function getModuleDependenciesForAction($module, $action)
+    public static function getModuleDependenciesForAction($module, $action, $form = "EditView")
     {
         $meta = self::getModuleDependencyMetadata($module);
         $deps = array();
@@ -286,7 +286,7 @@ class DependencyManager {
                         $def['triggerFields'];
                 $actions = empty($def['actions']) || !is_array($def['actions']) ? array() : $def['actions'];
                 $notActions = empty($def['notActions']) || !is_array($def['notActions']) ? array() : $def['notActions'];
-                $dep = new Dependency("{$module}_{$key}");
+                $dep = new Dependency("{$module}{$form}_{$key}");
                 $dep->setTrigger(new Trigger($triggerExp, $triggerFields));
                 foreach($actions as $aDef)
                 {

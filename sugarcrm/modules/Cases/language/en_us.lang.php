@@ -95,7 +95,7 @@ $mod_strings = array (
     'LBL_DCEINSTANCES_SUBPANEL_TITLE'=>'Instances',
     //END SUGARCRM flav=dce ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
-    'LBL_CASE_INFORMATION' => 'Case Overview',
+    'LBL_CASE_INFORMATION' => 'Overview',
 
     //For export labels
     'LBL_MODIFIED_BY_NAME_OWNER' => 'Modified By Name Owner',

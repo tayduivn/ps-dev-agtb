@@ -101,7 +101,7 @@ $mod_strings = array (
     'LBL_MODIFIED_USER' => 'Modified User',
     'LBL_DOCUMENTS' => 'Documents',
     'LBL_CONTRACT_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
-    'LBL_CONTRACT_INFORMATION' => 'Contract Overview',
+    'LBL_CONTRACT_INFORMATION' => 'Overview',
 );
 
 ?>

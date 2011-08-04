@@ -130,7 +130,7 @@ SUGAR.ajaxUI = {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
             if (ui.lastURL == url)
                 return;
-            if (typeof (window.onbeforeunload) == "function" && !confirm(window.onbeforeunload()))
+            if (typeof (window.onbeforeunload) == "function" && window.onbeforeunload() && !confirm(window.onbeforeunload()))
             {
                 YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
                 return;

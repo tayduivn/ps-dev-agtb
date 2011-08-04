@@ -170,15 +170,8 @@ class SugarSNIP
     *  - purchased_error (instance has snip license, server is not down, but server detects something is wrong).
     * Iff 'status' is 'purchased_error', 'message' will be the error returned by the server. Otherwise $message will be NULL.
     */
-    public function getStatus(){
-        /**
-            BEGIN FOR-TEST-ONLY
-        **/
-        return array('status'=>'notpurchased','message'=>NULL);
-        /**
-            END   FOR-TEST-ONLY
-        **/ 
-
+    public function getStatus()
+    {
         //if inactive,
         if(!$this->isActive()) {
             return array('status'=>'notpurchased','message'=>null);
@@ -313,7 +306,7 @@ class SugarSNIP
         $e->from_name = $from["name"];
         $e->name = $e->subject;
         $e->date_sent = gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($e->date_sent));
-        $e->type = 'archived';
+        $e->type = 'inbound';
         $e->status = 'unread';
         $e->to_addrs_names = $e->to_addrs;
         $e->cc_addrs_names = $e->cc_addrs;

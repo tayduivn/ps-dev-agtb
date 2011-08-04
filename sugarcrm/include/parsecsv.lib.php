@@ -269,6 +269,7 @@ class parseCSV {
 		if ( $file === null ) $file = $this->file;
 		if ( empty($search_depth) ) $search_depth = $this->auto_depth;
 		if ( $enclosure === null ) $enclosure = $this->enclosure;
+                else $this->enclosure = $enclosure;
 		
 		if ( $preferred === null ) $preferred = $this->auto_preferred;
 		
