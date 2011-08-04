@@ -151,7 +151,7 @@ class CsvAutoDetect {
                     $len = strlen($data);
                     // check if it begins and ends with single quotes
                     // if it does, then it double quotes may not be the enclosure
-                    if ($data[0] == "'" && $data[$len-1] == "'") {
+                    if ($len>=2 && $data[0] == "'" && $data[$len-1] == "'") {
                         $beginEndWithSingle = true;
                         break;
                     }
@@ -182,7 +182,7 @@ class CsvAutoDetect {
                         $len = strlen($data);
                         // check if it begins and ends with double quotes
                         // if it does, then it single quotes may not be the enclosure
-                        if ($data[0] == "\"" && $data[$len-1] == "\"") {
+                        if ($len>=2 && $data[0] == "\"" && $data[$len-1] == "\"") {
                             $beginEndWithDouble = true;
                             break;
                         }
@@ -263,15 +263,15 @@ class CsvAutoDetect {
                     $match_count++;
                     break;
                 }
-                // check if the CSV item is part of the label
+                // check if the CSV item is part of the label or vice versa
                 else if (isset($defs['vname']) && isset($mod_strings[$defs['vname']])) {
-                    if (stripos($mod_strings[$defs['vname']], $val) !== false) {
+                    if (stripos(trim($mod_strings[$defs['vname']],':'), $val) !== false || stripos($val, trim($mod_strings[$defs['vname']],':')) !== false) {
                         $match_count++;
                         break;
                     }
                 }
                 else if (isset($defs['vname']) && isset($GLOBALS['app_strings'][$defs['vname']])) {
-                    if (stripos($GLOBALS['app_strings'][$defs['vname']], $val) !== false) {
+                    if (stripos(trim($GLOBALS['app_strings'][$defs['vname']],':'), $val) !== false || stripos($val, trim($GLOBALS['app_strings'][$defs['vname']],':')) !== false) {
                         $match_count++;
                         break;
                     }
