@@ -325,7 +325,6 @@ $layout_defs['Accounts'] = array(
 			'sort_by' => 'date_entered',
 			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
 			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
-        	'type' => 'collection',
             'top_buttons' => array(),
         	'module' => 'Emails',
             'subpanel_name' => 'ForUnlinkedEmailHistory',
