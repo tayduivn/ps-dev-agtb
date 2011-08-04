@@ -85,6 +85,7 @@ class SugarSNIP
         }
 
         $response = $this->client->callRest($url, $postArgs);
+
         if(!empty($response)) {
             $result = json_decode($response);
         } else {
@@ -95,6 +96,47 @@ class SugarSNIP
         $this->last_result = $result;
         $GLOBALS['log']->debug(var_export($result, true));
         return is_object($result) && $result->result == 'ok';
+    }
+
+    public function registerSnip () {
+        global $sugar_config;
+
+        $connectionfailed = false;
+        $admin_settings = new Administration();
+        $admin_settings = $admin_settings->retrieveSettings('license');
+        $license = $admin_settings->settings['license_key'];
+        $snipuser = $this->getSnipUser();
+
+        $request = array ('sugarkey' => $sugar_config['unique_key'],
+                        'user' => $snipuser->user_name, 
+                        'password' => $snipuser->user_hash, 
+                        'client_api_url' => $this->getURL(), 
+                        'license' => $license);
+
+        $response = $this->callRest('register', $request, true, $connectionfailed);
+
+        if ($connectionfailed || !$response)
+            return false;
+        else
+            return $this->last_result;
+    }
+
+    public function unregisterSnip () {
+        global $sugar_config;
+
+        $connectionfailed = false;
+        $snipuser = $this->getSnipUser();
+
+        $request = array ('sugarkey' => $sugar_config['unique_key'],
+                        'user' => $snipuser->user_name, 
+                        'password' => $snipuser->user_hash); 
+
+        $response = $this->callRest('unregister', $request, true, $connectionfailed);
+
+        if ($connectionfailed || !$response)
+            return false;
+        else
+            return $this->last_result;
     }
 
     /**
@@ -172,6 +214,11 @@ class SugarSNIP
     */
     public function getStatus()
     {
+        /**
+        testing
+        **/
+            return array('status'=>'notpurchased','message'=>null);
+
         //if inactive,
         if(!$this->isActive()) {
             return array('status'=>'notpurchased','message'=>null);
