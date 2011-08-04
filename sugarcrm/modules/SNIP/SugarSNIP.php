@@ -105,6 +105,7 @@ class SugarSNIP
         $admin_settings = new Administration();
         $admin_settings = $admin_settings->retrieveSettings('license');
         $license = $admin_settings->settings['license_key'];
+
         $snipuser = $this->getSnipUser();
 
         $request = array ('sugarkey' => $sugar_config['unique_key'],
@@ -115,7 +116,7 @@ class SugarSNIP
 
         $response = $this->callRest('register', $request, true, $connectionfailed);
 
-        if ($connectionfailed || !$response)
+        if ($connectionfailed)
             return false;
         else
             return $this->last_result;
@@ -126,14 +127,13 @@ class SugarSNIP
 
         $connectionfailed = false;
         $snipuser = $this->getSnipUser();
-
         $request = array ('sugarkey' => $sugar_config['unique_key'],
                         'user' => $snipuser->user_name, 
                         'password' => $snipuser->user_hash); 
 
         $response = $this->callRest('unregister', $request, true, $connectionfailed);
 
-        if ($connectionfailed || !$response)
+        if ($connectionfailed)
             return false;
         else
             return $this->last_result;
@@ -214,11 +214,6 @@ class SugarSNIP
     */
     public function getStatus()
     {
-        /**
-        testing
-        **/
-            return array('status'=>'notpurchased','message'=>null);
-
         //if inactive,
         if(!$this->isActive()) {
             return array('status'=>'notpurchased','message'=>null);
