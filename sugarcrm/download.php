@@ -50,8 +50,11 @@ else {
 	    if(!file_exists('modules/' . $module . '/' . $bean_name . '.php')) {
 	         die($app_strings['ERROR_TYPE_NOT_VALID']);
 	    }
+
 	    $focus = BeanFactory::newBean($module);
-        if(!empty($focus) && !$focus->ACLAccess('view')){
+
+        if(!$focus->ACLAccess('view')){
+            Bug 45723: Link2.php will no longer attempt to add relationships to beans with no id.
             die($mod_strings['LBL_NO_ACCESS']);
 	    } // if
         $focus->retrieve($_REQUEST['id']);
