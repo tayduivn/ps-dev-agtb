@@ -27,39 +27,13 @@ $subpanel_layout = array(
 			 'usage'				=> 'query_only',
              'force_exists'			=> true,
 		),
-//		'contact_name'=>array(
-//             'widget_class'         => 'SubPanelDetailViewLink',
-//             'target_record_key'    => 'contact_id',
-//             'target_module'        => 'Contacts',
-//             'module'               => 'Contacts',
-//             'vname'                => 'LBL_LIST_CONTACT',
-//             'width'                => '11%',
-//             'sortable'             => false,
-//             'force_exists'			=> true,
-//        ),
-//        'contact_id'=>array(
-//            'usage'=>'query_only',
-//    		'force_exists'=>true
-//        ),
-//        'contact_name_owner'=>array(
-//            'usage'=>'query_only',
-//            'force_exists'=>true
-//        ),
-//        'contact_name_mod'=>array(
-//            'usage'=>'query_only',
-//            'force_exists'=>true
-//        ),
-//		'parent_id'=>array(
-//            'usage'=>'query_only',
-//			'force_exists'=>true
-//        ),
-//		'parent_type'=>array(
-//            'usage'=>'query_only',
-//			'force_exists'=>true
-//        ),
+		'date_entered' => array(
+			'width'					=> '10%',
+		    'vname'					=> 'LBL_DATE_CREATED',
+		),
 		'date_modified' => array(
 			'width'					=> '10%',
-            'vname'	=> 'LBL_DATE_MODIFIED',
+		    'vname'					=> 'LBL_DATE_MODIFIED',
 		),
 		'assigned_user_name' => array (
 			'name' => 'assigned_user_name',
