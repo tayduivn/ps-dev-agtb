@@ -57,11 +57,8 @@ else {
         // Pull up the document revision, if it's of type Document
         if ( isset($focus->object_name) && $focus->object_name == 'Document' ) {
             // It's a document, get the revision that really stores this file
-            echo "<p>Grabbing the document revision</p>";
             $focusRevision = new DocumentRevision();
             $focusRevision->retrieve($_REQUEST['id']);
-
-            echo "<p>Got revision $focusRevision->id</p>";
 
             if ( empty($focusRevision->id) ) {
                 // This wasn't a document revision id, it's probably actually a document id,
@@ -139,8 +136,7 @@ else {
 		}
 
 		if($doQuery && isset($query)) {
-            echo "<pre>$query</pre>";
-			$rs = $GLOBALS['db']->query($query);
+            $rs = $GLOBALS['db']->query($query);
 			$row = $GLOBALS['db']->fetchByAssoc($rs);
 
 			if(empty($row)){
@@ -148,7 +144,6 @@ else {
 			}
 			$name = $row['name'];
 			$download_location = $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
-            echo "<p>File is located at $download_location</p>";
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;
