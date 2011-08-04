@@ -1,14 +1,19 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
 $mod_strings = array(
-	'LBL_REGISTER_SNIP_FAIL' => 'Failed to contact SNIP service: %s!<br>',
-	'LBL_CONFIGURE_SNIP' => 'Configure SNIP',
+    'LBL_SNIP_SUMMARY' => "SNIP is an automatic email importing service that allows users to import emails into Sugar by cc'ing or forwarding emails from any email client or service to a Sugar-provided email address.  Email records are created in Sugar for each email that is imported and are automatically related to contacts and other records in Sugar based on matching email addresses.",
+    'LBL_SNIP_MORE' => 'More...',
+    'LBL_SNIP_AGREEMENT' => '<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p><br><p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p><br><p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p><br><p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra. Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis. Praesent dapibus, neque id cursus faucibus, tortor neque egestas augue, eu vulputate magna eros eu erat. Aliquam erat volutpat. Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>',
+
+
+    'LBL_REGISTER_SNIP_FAIL' => 'Failed to contact SNIP service: %s!<br>',
+    'LBL_CONFIGURE_SNIP' => 'Configure SNIP',
     'LBL_DISABLE_SNIP' => 'Disable SNIP',
     'LBL_SNIP_APPLICATION_UNIQUE_KEY' => 'Application Unique Key',
     'LBL_SNIP_USER' => 'SNIP User',
     'LBL_SNIP_PWD' => 'SNIP Password',
     'LBL_SNIP_SUGAR_URL' => 'This SugarCRM instance URL',
-	'LBL_SNIP_CALLBACK_URL' => 'SNIP service URL',
+    'LBL_SNIP_CALLBACK_URL' => 'SNIP service URL',
     'LBL_SNIP_USER_DESC' => 'SNIP archiving user',
     'LBL_SNIP_STATUS_OK' => 'Enabled (Service Online)',
     'LBL_SNIP_STATUS_OK_SUMMARY' => 'This instance has a SNIP license, and the service is running',
@@ -16,8 +21,8 @@ $mod_strings = array(
     'LBL_SNIP_STATUS_ERROR_SUMMARY' => 'This instance has a valid SNIP license, but the SNIP server returned the following error message:',
     'LBL_SNIP_STATUS_FAIL' => 'Cannot connect to SNIP server',
     'LBL_SNIP_STATUS_FAIL_SUMMARY' => 'Sorry, the SNIP service is currently unavailable (either the service is down or the connection failed on your end)',
-	'LBL_SNIP_STATUS_RESET' => 'Not run yet',
-	'LBL_SNIP_STATUS_PROBLEM' => 'Problem: %s',
+    'LBL_SNIP_STATUS_RESET' => 'Not run yet',
+    'LBL_SNIP_STATUS_PROBLEM' => 'Problem: %s',
     'LBL_SNIP_NEVER' => "Never",
     'LBL_SNIP_STATUS_SUMMARY' => "SNIP archiving status:",
     'LBL_SNIP_ACCOUNT' => "Account",
@@ -27,4 +32,10 @@ $mod_strings = array(
     "LBL_SNIP_DESCRIPTION_SUMMARY" => "It allows you to see emails that were sent to or from your contacts inside SugarCRM, without you having to manually import and link the emails",
     "LBL_SNIP_PURCHASE_SUMMARY" => "In order to use SNIP, you must purchase a license for your SugarCRM instance",
     "LBL_SNIP_PURCHASE" => "Click here to purchase",
+    'LBL_SNIP_EMAIL' => 'SNIP Email',
+    'LBL_SNIP_AGREE' => "I agree to the above terms and the <a href='javascript:alert(\"ENTER PRIVACY AGREEMENT\")'>privacy agreement",
+
+    'LBL_SNIP_BUTTON_ENABLE' => 'Enable SNIP',
+    'LBL_SNIP_BUTTON_DISABLE' => 'Disable SNIP',
+    'LBL_SNIP_BUTTON_RETRY' => 'Try Connecting Again',
 );
