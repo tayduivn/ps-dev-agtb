@@ -26,6 +26,7 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 	die("Not a Valid Entry Point");
 }
 else {
+    require_once("data/BeanFactory.php");
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in hearder may be incorrect.
     // cn: bug 8753: current_user's preferred export charset not being honored
     $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
@@ -48,25 +49,24 @@ else {
 	    if(!file_exists('modules/' . $module . '/' . $bean_name . '.php')) {
 	         die($app_strings['ERROR_TYPE_NOT_VALID']);
 	    }
-	    require_once('modules/' . $module . '/' . $bean_name . '.php');
-	    $focus = new $bean_name();
-	    $focus->retrieve($_REQUEST['id']);
-	    if(!$focus->ACLAccess('view')){
-	        die($mod_strings['LBL_NO_ACCESS']);
+	    $focus = BeanFactory::getBean($module, $_REQUEST['id']);
+        if(!$focus->ACLAccess('view')){
+            die($mod_strings['LBL_NO_ACCESS']);
 	    } // if
 
         // Pull up the document revision, if it's of type Document
         if ( isset($focus->object_name) && $focus->object_name == 'Document' ) {
             // It's a document, get the revision that really stores this file
+            echo "<p>Grabbing the document revision</p>";
             $focusRevision = new DocumentRevision();
             $focusRevision->retrieve($_REQUEST['id']);
 
-            if ( empty($focusRevision->id) ) {
-                // This wasn't a document revision id, it's probably actually a document id, we need to grab that, get the latest revision and use that
-                $focusDocument = new Document();
-                $focusDocument->retrieve($_REQUEST['id']);
+            echo "<p>Got revision $focusRevision->id</p>";
 
-                $focusRevision->retrieve($focusDocument->document_revision_id);
+            if ( empty($focusRevision->id) ) {
+                // This wasn't a document revision id, it's probably actually a document id,
+                // we need to grab the latest revision and use that
+                $focusRevision->retrieve($focus->document_revision_id);
 
                 if ( !empty($focusRevision->id) ) {
                     $_REQUEST['id'] = $focusRevision->id;
@@ -139,6 +139,7 @@ else {
 		}
 
 		if($doQuery && isset($query)) {
+            echo "<pre>$query</pre>";
 			$rs = $GLOBALS['db']->query($query);
 			$row = $GLOBALS['db']->fetchByAssoc($rs);
 
@@ -147,6 +148,7 @@ else {
 			}
 			$name = $row['name'];
 			$download_location = $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
+            echo "<p>File is located at $download_location</p>";
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;
