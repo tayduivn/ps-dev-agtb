@@ -7,7 +7,7 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 	public function setUp()
 	{
 		 $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		 $this->useOutputBuffering = true;
+		 //$this->useOutputBuffering = true;
 	}	
 	
 	public function tearDown()
@@ -21,11 +21,15 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 		$output = $this->getEmployeeListViewOutput();
 		$output = $this->getEmployeeListViewOutput();
 		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for admin user');		
+		$output = $this->getEmployeeListViewOutput();
+		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');
 	}
 	
 	public function testViewAsNonAdminUser()
 	{
 		$output = $this->getEmployeeListViewOutput();
+		$this->assertNotRegExp('/utilsLink/', $output, 'Assert that the links are not shown for normal user');
+		$output = $this->getEmployeeDetailViewOutput();
 		$this->assertNotRegExp('/utilsLink/', $output, 'Assert that the links are not shown for normal user');
 	}
 	
@@ -34,6 +38,8 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['current_user'] = new Bug45714UserMock();
 		$output = $this->getEmployeeListViewOutput();
 		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');
+		$output = $this->getEmployeeDetailViewOutput();
+		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');	
 	}
 	
 	private function getEmployeeListViewOutput()
@@ -43,6 +49,14 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 		$employeeViewList->module = 'Employees';
 		return $employeeViewList->getModuleTitle(true);
 	}
+	
+	private function getEmployeeDetailViewOutput()
+	{
+		require_once('modules/Employees/views/view.detail.php');
+		$employeeViewDetail = new EmployeesViewDetail();
+		$employeeViewDetail->module = 'Employees';
+		return $employeeViewDetail->getModuleTitle(true);
+	}	
 }
 
 class Bug45714UserMock extends User
