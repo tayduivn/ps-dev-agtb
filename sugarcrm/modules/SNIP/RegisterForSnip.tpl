@@ -72,6 +72,17 @@ div.snipTitle{
 	margin-bottom:10px;
 	margin-top:-2px
 }
+
+div.snipError{
+	position:relative;
+	margin:2px 8px 0px 8px; 
+	background-color:#ffaa99;
+	padding:2px;
+	padding-left:4px;
+	line-height:16px;
+	
+}
+
 </style>
 {/literal}
 {$TITLE}
@@ -94,6 +105,11 @@ div.snipTitle{
 
 					<a href='#' onclick='divExpand()' id='snipMoreLink'>{$MOD.LBL_SNIP_MORE}</a>
 				</div>
+				{if $EXTRA_ERROR != ''}
+					<div class='snipError'>
+						{$EXTRA_ERROR}
+					</div>
+				{/if}
 
 				<br>
 					
@@ -107,7 +123,10 @@ div.snipTitle{
 							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck'class='snipCheckbox'><label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE}</a>.</label>
 						</div>
 						<div class='snipButtonWrapper'>
-						<input type='button' class='snipEnableButton' disabled value='{$MOD.LBL_SNIP_BUTTON_ENABLE}' id='enableSnipButton'>
+						<form method="post">
+							<input type='submit' class='snipEnableButton' disabled value='{$MOD.LBL_SNIP_BUTTON_ENABLE}' id='enableSnipButton'>
+							<input type='hidden' name='snipaction' value='enable_snip'>
+						</form>
 						</div>
 					</div>
 
@@ -146,7 +165,7 @@ div.snipTitle{
 						{$MOD.LBL_SNIP_EMAIL}
 					</td>
 					<td>
-						foo2145@ondemand.sugarcrm.com
+						
 					</td>
 				</tr>
 				<tr>
@@ -157,10 +176,10 @@ div.snipTitle{
 						{$SUGAR_URL}
 					</td>
 				</tr>
-				
 			</table><br>
 				{if $SNIP_STATUS =='purchased'}
-					<div class='snipCenterButtonWrapper'><input type='button' class='snipEnableButton'  value='{$MOD.LBL_SNIP_BUTTON_DISABLE}' id='enableSnipButton'></div>
+					<div class='snipCenterButtonWrapper'>
+					<form method="post"><input type='submit' class='snipEnableButton'  value='{$MOD.LBL_SNIP_BUTTON_DISABLE}' id='enableSnipButton'><input type='hidden' value='disable_snip' name='snipaction'></div>
 				{else}
 					<div class='snipCenterButtonWrapper'><input type='button' class='snipEnableButton' onclick='window.location.reload()' value='{$MOD.LBL_SNIP_BUTTON_RETRY}' id='tryAgainButton'></div>
 				{/if}

@@ -45,6 +45,30 @@ $sugar_smarty = new Sugar_Smarty();
 
 $sugar_smarty->assign('APP', $GLOBALS['app_strings']);
 $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
+
+$extra_error='';
+
+
+
+if ($_POST && isset($_POST['snipaction'])) {
+	if ($_POST['snipaction']=='enable_snip') {
+		$enable_snip = $snip->registerSnip();
+		if (!$enable_snip || $enable_snip->result!='ok' && $enable_snip->message==''){
+			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_ENABLING'].'</b>. '.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		}else if ($enable_snip->result!='ok'){
+			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_ENABLING'].'</b>: '.$enable_snip->message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		}
+	} else if ($_POST['snipaction']=='disable_snip') {
+		$disable_snip = $snip->unregisterSnip();
+		if (!$disable_snip || $disable_snip->result!='ok' && $disable_snip->message==''){
+			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>. '.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		}else if ($disable_snip->result!='ok'){
+			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>: '.$disable_snip->message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		}
+
+	}
+}
+
 $status=$snip->getStatus();
 
 $message=$status['message'];
@@ -59,27 +83,13 @@ if ($status=='purchased_error'){
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 }
 
-if ($_POST && isset($_POST['action'])) {
-	if ($_POST['action']=='enable_snip') {
-		$enable_snip = $snip->registerSnip();
-	} else if ($_POST['action']=='disable_snip') {
-		$disable_snip = $snip->unregisterSnip();
-	}
-}
+
 
 $sugar_smarty->assign('TITLE',$title);
 $sugar_smarty->assign('SNIP_STATUS',$status);
+$sugar_smarty->assign('EXTRA_ERROR',$extra_error);
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
 
-if (!empty($enable_snip)) {
-	$sugar_smarty->assign('SNIP_ENABLE_RESULT', $enable_snip['result']);
-	$sugar_smarty->assign('SNIP_ENABLE_MESSAGE', $enable_snip['message']);
-	$sugar_smarty->assign('SNIP_ENABLE_EMAIL', (isset($enable_snip['email']) ? $enable_snip['email'] : ''));
-}
-
-if (!empty($disable_snip)) {
-	$sugar_smarty->assign('SNIP_DISABLE_RESULT', $disable_snip['result']);
-}
 
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');

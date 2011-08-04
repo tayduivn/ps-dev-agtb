@@ -38,4 +38,7 @@ $mod_strings = array(
     'LBL_SNIP_BUTTON_ENABLE' => 'Enable SNIP',
     'LBL_SNIP_BUTTON_DISABLE' => 'Disable SNIP',
     'LBL_SNIP_BUTTON_RETRY' => 'Try Connecting Again',
+    'LBL_SNIP_ERROR_DISABLING' => 'Error disabling SNIP',
+    'LBL_SNIP_ERROR_ENABLING' => 'Error enabling SNIP',
+    'LBL_CONTACT_SUPPORT' => 'Please try again or contact customer support.',
 );
