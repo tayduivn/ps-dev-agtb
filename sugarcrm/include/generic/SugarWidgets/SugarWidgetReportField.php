@@ -62,6 +62,12 @@ class SugarWidgetReportField extends SugarWidgetField
  function display($layout_def)
  {
         $obj = $this->getSubClass($layout_def);
+		
+	   //Bug40995
+	   $precision=$obj->layout_manager->defs['reporter']->focus->field_name_map[$layout_def['name']]['precision'];
+	   $layout_def['precision']=$precision;
+	   //Bug40995
+
 
         $context = $this->layout_manager->getAttribute('context');//_ppd($context);
         $func_name = 'display'.$context;
