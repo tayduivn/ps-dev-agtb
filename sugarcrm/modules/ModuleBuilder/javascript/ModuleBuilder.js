@@ -1078,7 +1078,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 embed: true,
                 targetModule:ModuleBuilder.module,
                 package:ModuleBuilder.MBpackage,
-                formula:YAHOO.lang.JSON.stringify(formula)
+                formula:encodeURIComponent(YAHOO.lang.JSON.stringify(formula))
             };
 			win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
 			{
