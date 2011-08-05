@@ -72,11 +72,8 @@ for ($i = 1; $i <= $_REQUEST['numRowsToSave']; $i++) {
         }
         else if (isset($_REQUEST["resource_" . $i])) {
             $projectTask->resource_id = $_REQUEST["resource_" . $i]; 
-            // If the resource is a Contact, assign the task to the project owner.        
             if ($_REQUEST["resource_type_" . $i] == "User")
                 $projectTask->assigned_user_id = $_REQUEST["resource_" . $i];
-            else         
-                $projectTask->assigned_user_id = $_REQUEST["project_owner"];
         }
     
         $projectTask->team_id = $_REQUEST["team_id"];        

@@ -31,9 +31,18 @@ class OrExpression extends BooleanExpression {
 	 */
 	function evaluate() {
 		$params = $this->getParameters();		
-		foreach ( $params as $param ) {
+		
+		if (!is_array($params))
+		{
+			$params = array($params);	
+		}
+		
+		foreach ( $params as $param ) 
+		{
 			if ( $param->evaluate() == AbstractExpression::$TRUE )
+			{
 				return AbstractExpression::$TRUE;
+			}
 		}
 		return AbstractExpression::$FALSE;
 	}

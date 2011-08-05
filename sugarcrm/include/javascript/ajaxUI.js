@@ -1,15 +1,34 @@
 /**
- * 
- * Find more about the scrolling function at
- * http://cubiq.org/iscroll
+ * Javascript file for Sugar
  *
- * Copyright (c) 2010 Matteo Spinelli, http://cubiq.org/
- * Released under MIT license
- * http://cubiq.org/dropbox/mit-license.txt
- * 
- * Version 3.7.1 - Last updated: 2010.10.08
- * 
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
+
+// $Id: ajaxUI.js 57264 2010-07-02 18:45:27Z kjing $
+
 SUGAR.ajaxUI = {
     callback : function(o)
     {
@@ -44,14 +63,25 @@ SUGAR.ajaxUI = {
                 }
             }
         } catch (e){
-            if(YAHOO.lang.trim(o.responseText) == "" && o.responseText.charAt(0) != '{') {
-                document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
-                SUGAR.util.evalScript(document.body.innerHTML);
-            } else if (typeof(console) != "undefined" && typeof(console.log) == "function")
-            {
-                console.log("invalid JSON response:");
-                console.log(o.responseText);
+            if (!SUGAR.ajaxUI.errorPanel) {
+                SUGAR.ajaxUI.errorPanel = new YAHOO.widget.Panel("ajaxUIErrorPanel", {
+                    modal: false,
+                    visible: true,
+                    constraintoviewport: true,
+                    width	: "800px",
+                    height : "600px",
+                    close: true
+                });
             }
+            var panel = SUGAR.ajaxUI.errorPanel;
+            panel.setHeader( SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
+            panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none"></iframe>');
+            panel.render(document.body);
+            document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+            panel.show();
+            panel.center();
+
+            throw "AjaxUI error parsing response";
         }
     },
 
@@ -93,12 +123,20 @@ SUGAR.ajaxUI = {
         }
     },
 
-    go : function(url, params)
+    go : function(url)
     {
-        
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
+            if (ui.lastURL == url)
+                return;
+            var inAjaxUI = /action=ajaxui/.exec(window.location);
+            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
+                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            {
+                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                return;
+            }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
             }
@@ -109,13 +147,14 @@ SUGAR.ajaxUI = {
                 window.location = url;
                 return;
             }
+            ui.lastURL = url;
             ui.cleanGlobals();
             var loadLanguageJS = '';
             if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
                 loadLanguageJS = '&loadLanguageJS=1';
             }
 
-            if (!/action=ajaxui/.exec(window.location))
+            if (!inAjaxUI)
                 //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
             else {
@@ -163,6 +202,7 @@ SUGAR.ajaxUI = {
     cleanGlobals : function()
     {
         sqs_objects = {};
+        QSProcessedFieldsArray = {};
         collection = {};
         //Reset the EmailAddressWidget before loading a new page
         if (SUGAR.EmailAddressWidget){

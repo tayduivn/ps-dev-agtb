@@ -1968,7 +1968,7 @@ function clean_xss($str, $cleanImg=true) {
 	$jsEvents .= "onmouseup|onmouseover|onmousedown|onmouseenter|onmouseleave|onmousemove|onload|onchange|";
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror|ondragdrop";
 
-	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
+	$attribute_regex	= "#<.+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?https?://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
@@ -2502,7 +2502,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
+		$query = "SELECT {$focus->table_name}.id, {$display_columns} as display from {$focus->table_name} ";
 		//BEGIN SUGARCRM flav=pro ONLY
 		// Bug 36162 - We need to confirm that the user is a member of the team of the item.
 		$focus->add_team_security_where_clause($query);
@@ -2512,12 +2512,12 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 		{
 			$query .= $where." AND ";
 		}
-
-		$query .=  " deleted=0";
+		
+		$query .=  " {$focus->table_name}.deleted=0";
 
 		if ( $order_by != '')
 		{
-			$query .= ' order by '.$order_by;
+			$query .= " order by {$focus->table_name}.{$order_by}";
 		}
 
 		$GLOBALS['log']->debug("get_user_array query: $query");
@@ -2781,7 +2781,6 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-	//BEGIN SUGARCRM flav=int ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2791,7 +2790,6 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
-	//END SUGARCRM flav=int ONLY
 }
 
 /**

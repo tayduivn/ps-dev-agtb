@@ -127,17 +127,6 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
-//rrs: this is for IE 7 which only supports javascript 1.6 and does not have indexOf support.
-if (typeof new Array().indexOf == "undefined") {
-  Array.prototype.indexOf = function (obj, start) {
-    for (var i = (start || 0); i < this.length; i++) {
-      if (this[i] == obj) {
-        return i;
-      }
-    }
-    return -1;
-  }
-}
 
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
@@ -1690,10 +1679,10 @@ function initEditView(theForm) {
     if (theForm.id == 'popup_query_form') {
     	return;
     }
-	if ( typeof editViewSnapshots == 'undefined' ) {
+	if ( typeof editViewSnapshots == 'undefined' || editViewSnapshots == null ) {
         editViewSnapshots = new Object();
     }
-    if ( typeof SUGAR.loadedForms == 'undefined' ) {
+    if ( typeof SUGAR.loadedForms == 'undefined' || SUGAR.loadedForms == null) {
     	SUGAR.loadedForms = new Object();
     }
 
@@ -3400,7 +3389,9 @@ SUGAR.searchForm = function() {
                     continue;
                 }
                 
-                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined' && skipElementNames.indexOf(elem.name) != -1 ) {
+                if ( typeof(elem.type) != 'undefined' && typeof(skipElementNames) != 'undefined'
+                        && SUGAR.util.arrayIndexOf(skipElementNames, elem.name) != -1 )
+                {
                     continue;
                 }
 
@@ -4445,3 +4436,63 @@ SUGAR.clearRelateField = function(form, name, id)
         SUGAR.util.callOnChangeListers(form[id]);
     }
 };
+if(typeof(SUGAR.AutoComplete) == 'undefined') SUGAR.AutoComplete = {};
+
+SUGAR.AutoComplete.getOptionsArray = function(options_index){
+    var return_arr = [];
+
+    var opts = SUGAR.language.get('app_list_strings', options_index);
+    if(typeof(opts) != 'undefined'){
+        for(key in opts){
+            // Since we are using auto complete, we excluse blank dropdown entries since they can just leave it blank
+            if(key != '' && opts[key] != ''){
+                var item = [];
+                item['key'] = key;
+                item['text'] = opts[key];
+                return_arr.push(item);
+            }
+        }
+    }
+    return return_arr;
+}
+
+if(typeof(SUGAR.MultiEnumAutoComplete) == 'undefined') SUGAR.MultiEnumAutoComplete = {};
+
+SUGAR.MultiEnumAutoComplete.getMultiSelectKeysFromValues = function(options_index, val_string){
+    var opts = SUGAR.language.get('app_list_strings', options_index);
+    var selected_values = val_string.split(", ");
+    // YUI AutoComplete adds a blank. We remove it automatically here
+    if(selected_values.length > 0 && selected_values.indexOf('') == selected_values.length - 1){
+        selected_values.pop();
+    }
+    var final_arr = new Array();
+    for(idx in selected_values){
+        for(o_idx in opts){
+            if(selected_values[idx] == opts[o_idx]){
+                final_arr.push(o_idx);
+            }
+        }
+    }
+    return final_arr;
+}
+
+SUGAR.MultiEnumAutoComplete.getMultiSelectValuesFromKeys = function(options_index, val_string){
+    var opts = SUGAR.language.get('app_list_strings', options_index);
+    val_string=val_string.replace(/^\^/,'').replace(/\^$/,'') //fixes bug where string starts or ends with ^
+    var selected_values = val_string.split("^,^");
+
+    // YUI AutoComplete adds a blank. We remove it automatically here
+    if(selected_values.length > 0 && selected_values.indexOf('') == selected_values.length - 1){
+        selected_values.pop();
+    }
+
+    var final_arr = new Array();
+    for(idx in selected_values){
+        for(o_idx in opts){
+            if(selected_values[idx] == o_idx){
+                final_arr.push(opts[o_idx]);
+            }
+        }
+    }
+    return final_arr;
+}

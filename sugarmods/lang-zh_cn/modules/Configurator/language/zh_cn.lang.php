@@ -222,7 +222,7 @@ $mod_strings = array (
     'PDF_HEADER_LOGO_INFO' => '文件头使用的大图标。(应用于报价单)',
 
     'PDF_NEW_HEADER_LOGO' => '上传新的大图标',
-    'PDF_NEW_HEADER_LOGO_INFO' => '图片格式可以为 .png 或 .jpg. (EZPDF 只能使用 .jpg)<BR>推荐尺寸为 867x74 px.',
+    'PDF_NEW_HEADER_LOGO_INFO' => '图片格式可以为 .png 或 .jpg. (EZPDF 只能使用 .jpg)<BR>推荐尺寸为 867x60 px.',
 
     'PDF_HEADER_LOGO_WIDTH' => '大图标的宽度',
     'PDF_HEADER_LOGO_WIDTH_INFO' => '大图标图像宽度。 (只针对 TCPDF)',

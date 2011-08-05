@@ -598,16 +598,20 @@ $mod_strings = array (
     'LBL_WIZARD_FINISH_BUTTON' => 'Finish',
     'LBL_WIZARD_FINISH_TAB' => 'Finish',
     'LBL_WIZARD_FINISH_TITLE' => 'You are ready to use Sugar!',
-    'LBL_WIZARD_FINISH' => 'Click <b>Finish</b> below to save your settings and to begin using Sugar. For more information on using Sugar:<br /><br />
-<table cellpadding=0 cellspacing=0>
-<tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b>Sugar University</b></a><br>End-user and System Administrator Training and Resources</td></tr>
-<tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/docs.png style="margin-right: 5px;"></td><td><a href="http://docs.sugarcrm.com/" target="_blank"><b>Documentation</b></a><br>Product Guides and Release Notes</td></tr>
-<tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a href="http://kb.sugarcrm.com/" target="_blank"><b>Knowledge Base</b></a><br>Tips from SugarCRM Support for performing common tasks and processes in Sugar</td></tr>
-<tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-<tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b>Forums</b></a><br>Forums dedicated to the Sugar Community to discuss topics of interest with each other and with SugarCRM Developers</td></tr>
-</table>',
+
+    'LBL_WIZARD_FINISH1' => 'What would you like to do next?',
+    'LBL_WIZARD_FINISH2' => 'Start Using Sugar',
+    'LBL_WIZARD_FINISH3' => 'Import Data ',
+    'LBL_WIZARD_FINISH4' => 'Import data from external sources into the application.',
+    'LBL_WIZARD_FINISH5' => 'Create Users',
+    'LBL_WIZARD_FINISH6' => 'Create new user accounts (usernames and passwords) for people to use to acccess the application.',
+    'LBL_WIZARD_FINISH7' => 'View and Manage Application Settings',
+    'LBL_WIZARD_FINISH8' => 'Manage advanced settings, including application default settings.',
+    'LBL_WIZARD_FINISH9' => 'Configure the Application ',
+    'LBL_WIZARD_FINISH10' => 'Use Studio to create and manage application fields and layouts.',
+    'LBL_WIZARD_FINISH11' => 'Visit Sugar University ',
+    'LBL_WIZARD_FINISH12' => 'Find training materials and classes that will help you get started as a system administrator or end user of the application.',
+
     'LBL_WIZARD_PERSONALINFO' => 'Your Information',
     'LBL_WIZARD_LOCALE' => 'Your Locale',
     'LBL_WIZARD_SMTP' => 'Your Email Account',

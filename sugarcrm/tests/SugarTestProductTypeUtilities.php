@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 require_once 'modules/ProductTypes/ProductType.php';
 
 class SugarTestProductTypesUtilities
@@ -24,7 +26,7 @@ class SugarTestProductTypesUtilities
     public static function removeAllCreatedtypes() 
     {
         $type_ids = self::getCreatedTypeIds();
-        $GLOBALS['db']->query('DELETE FROM types WHERE id IN (\'' . implode("', '", $type_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM product_types WHERE id IN (\'' . implode("', '", $type_ids) . '\')');
     }
         
     public static function getCreatedTypeIds() 

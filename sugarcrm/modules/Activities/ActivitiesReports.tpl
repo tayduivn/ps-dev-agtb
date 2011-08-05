@@ -47,7 +47,7 @@
 	</tr>
 	<tr>
 		<td width="10%">{$MOD.LBL_SELECT_MODULE}:<span class="required">*</span></td>
-		<td><select id='parent_type' name='parent_type' onChange='parent_typechangeQS();clearFields(false);'>
+		<td><select id='parent_type' name='parent_type' onChange='changeParentQS(this);clearFields(false);'>
 			{foreach from=$PARENT_TYPES key="KEY" item="PARENT"}
 				{if $PARENT_TYPE == $KEY}
 					<option value="{$KEY}" selected>{$PARENT}</option>
@@ -145,13 +145,34 @@ function clearFields(skipDate) {ldelim}
 
 {rdelim}
 
-function parent_typechangeQS() {ldelim}
-	new_module = document.EditView.parent_type.value;
-	sqs_objects['parent_name']['disable'] = false;
-	document.getElementById('parent_name').readOnly = false;
-	sqs_objects['parent_name']['modules'] = new Array(new_module);
+{literal}
+if (typeof(changeParentQS) == 'undefined'){
+function changeParentQS(field) {
+	field = YAHOO.util.Dom.get(field);
+    var form = field.form;
+    var sqsId = form.id + "_" + field.id;
+    var typeField =  form.elements.parent_type;
+    var new_module = typeField.value;
+    if(typeof(disabledModules[new_module]) != 'undefined') {
+		sqs_objects[sqsId]["disable"] = true;
+		field.readOnly = true;
+	} else {
+		sqs_objects[sqsId]["disable"] = false;
+		field.readOnly = false;
+    }
+	//Update the SQS globals to reflect the new module choice
+    sqs_objects[sqsId]["modules"] = new Array(new_module);
+    if (typeof(QSFieldsArray[sqsId]) != 'undefined')
+    {
+        QSFieldsArray[sqsId].sqs.modules = new Array(new_module);
+    }
+	if(typeof QSProcessedFieldsArray != 'undefined')
+    {
+	   QSProcessedFieldsArray[sqsId] = false;
+    }
     enableQS(false);
-{rdelim}
+}}
+{/literal}
 
 function set_return(popup_reply_data) {ldelim}
 	var form_name = popup_reply_data.form_name;

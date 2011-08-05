@@ -390,7 +390,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  		try {
  			$result = $this->_client->call($function, array($function.'Request'=>$args[0]), $namespace='http://applications.dnb.com/webservice/schema/');
-			$GLOBALS['log']->fatal("SOAP: ".var_export($result, true));
  			if(!is_array($result) && !preg_match('/^HTTP\/\d\.?\d?\s+200\s+OK/', $this->_client->response)) {
 
 	 		   $errorCode = 'Unknown';

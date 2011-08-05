@@ -82,7 +82,7 @@ class SubpanelMetaDataParser extends ListLayoutMetaDataParser
 		        }
 		        require_once 'modules/ModuleBuilder/parsers/parser.label.php' ;
             	$labelParser = new ParserLabel ( $_REQUEST['view_module'] , isset ( $_REQUEST [ 'view_package' ] ) ? $_REQUEST [ 'view_package' ] : null ) ;
-            	$labelParser->addLabels($selected_lang, array($_REQUEST['subpanel_title_key'] =>  $_REQUEST['subpanel_title']), $_REQUEST['view_module']);
+            	$labelParser->addLabels($selected_lang, array($_REQUEST['subpanel_title_key'] =>  remove_xss(from_html($_REQUEST['subpanel_title']))), $_REQUEST['view_module']);
             }
         }
 

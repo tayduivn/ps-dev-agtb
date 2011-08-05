@@ -244,7 +244,8 @@ abstract class DashletGenericChart extends Dashlet
         $this->getConfigureSmartyInstance()->assign('dashletTitle', $this->title);
         $this->getConfigureSmartyInstance()->assign('dashletType', 'predefined_chart');
         $this->getConfigureSmartyInstance()->assign('module', $_REQUEST['module']);
-
+        $this->getConfigureSmartyInstance()->assign('showClearButton', $this->isConfigPanelClearShown);
+        
         if($this->isAutoRefreshable()) {
        		$this->getConfigureSmartyInstance()->assign('isRefreshable', true);
 			$this->getConfigureSmartyInstance()->assign('autoRefresh', $GLOBALS['app_strings']['LBL_DASHLET_CONFIGURE_AUTOREFRESH']);

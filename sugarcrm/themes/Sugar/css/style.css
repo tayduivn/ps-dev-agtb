@@ -131,7 +131,7 @@ th, td
 
 /* layout the header elements */
 #header {
-min-width: 1050px;
+min-width: 950px;
 }
 
 .headerLarge {
@@ -2898,17 +2898,37 @@ embed
 	}
 	
 	.dashletPanel.dc {
-	box-shadow: none;
-	-moz-box-shadow: none;
-	-webkit-box-shadow: none;
-	-moz-border-radius: 0px;
-	-webkit-border-radius: 0px;
-	border-radius: 0px;
+	box-shadow: 0 2px 10px #999999;
+	-moz-box-shadow: 0 2px 10px #999999;
+	-webkit-box-shadow: 0 2px 10px #999999;
+	border-radius: 0px 0px 6px 6px;
+	-moz-border-radius: 0px 0px 6px 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -webkit-border-bottom-top-radius: 6px;
+	margin-bottom: 0px;
+	border: 1px solid #305678;
 	}
 	
 	.dashletPanel.dc .hd {
 		height: 38px;
-		padding: 0 22px;
+		padding: 0 15px;
+		
+	background-image: -moz-linear-gradient(center top, 
+		rgba(111,137,161,.9) 0%,
+		rgba(71,105,135,1) 50%,
+		rgba(48,86,120,1) 50%,  
+		rgba(48,86,120,.8) 100%
+		);
+	background-image: -webkit-gradient(
+	    linear,
+	    left top,
+	    left bottom,
+	    color-stop(0, rgba(111,137,161,.9)),
+	    color-stop(.50, rgba(71,105,135,1)),
+	    color-stop(.50, rgba(48,86,120,1)),
+	    color-stop(1, rgba(48,86,120,.8))
+    );
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6f89a1', endColorstr='#305678');
 	}
 
 	.dashletPanel.dc .hd .hd-center {
@@ -2918,7 +2938,7 @@ embed
 		border-top: 0px none;
 	}
 	
-	.dashletPanel.dc .hd .hd-center span {
+	.dashletPanel.dc .hd span {
 		color: #fff;
 		font-size: 16px;
 		font-weight: bold;
@@ -2944,12 +2964,13 @@ embed
 	}	
 	
 	.dashletPanel.dc .bd {
-		background: none; 
-		border-left: 0px;
-		border-right: 0px;
-		padding: 0px 22px;
-		position: relative;
-		top: 0px;
+		padding: 15px;
+	background-color: rgba(13,58,98,.3);
+		border-radius: 0px 0px 6px 6px;
+	-moz-border-radius: 0px 0px 6px 6px;
+  -webkit-border-bottom-right-radius: 6px;
+  -webkit-border-bottom-top-radius: 6px;
+  position: inherit;
 	}
 	
 	.dashletPanel.dc .bd .bd-center {
@@ -3226,7 +3247,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 #moduleList
 {
     height: 45px;
-	min-width: 1030px;
+	min-width: 950px;
 }
 
 #subModuleList
@@ -3890,6 +3911,7 @@ border-left: 1px solid #ccc;
 #moduleList .dashletPanelMenu .yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel, .dashletPanelMenu a.yuimenuitemlabel:link, .dashletPanelMenu a.yuimenuitemlabel:visited, #moduleList.yuimenubar li.current .dashletPanelMenu  .yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel, li.current .dashletPanelMenu  a.yuimenuitemlabel:link, li.current .dashletPanelMenu  a.yuimenuitemlabel:visited { 
 background: none;
 background-color: transparent;
+filter: none;
 cursor:pointer;
 border: none;
 color:#666;
@@ -5466,7 +5488,7 @@ width:100%;
 .dcmenu{
 color:blue;
 height:55px;
-min-width: 1050px;
+min-width: 950px;
 	background-color: #0d3a62;
 	height: 55px;	
 	background: -moz-linear-gradient(center top,

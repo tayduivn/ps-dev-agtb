@@ -166,7 +166,6 @@ class ImportViewLast extends ImportView
                                 AND users_last_import.bean_type = '{$beanname}'
                                 AND users_last_import.deleted = 0 )";
 
-        $lbl_last_imported = $mod_strings['LBL_LAST_IMPORTED'];
         $lvf->lv->mergeduplicates = false;
         $lvf->lv->showMassupdateFields = false;
         if ( $lvf->type == 2 )
@@ -174,7 +173,8 @@ class ImportViewLast extends ImportView
 
         $module_mod_strings = return_module_language($current_language, $this->bean->module_dir);
         $lvf->setup('', $where, $params, $module_mod_strings, 0, -1, '', strtoupper($beanname), array(), 'id');
-        return $lvf->display($lbl_last_imported.": ".$module_mod_strings['LBL_MODULE_NAME'], 'main', TRUE);
+        global $app_list_strings;
+        return $lvf->display($app_list_strings['moduleList'][$this->bean->module_dir], 'main', TRUE);
 
     }
 

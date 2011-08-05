@@ -113,15 +113,19 @@ class ViewQuickedit extends ViewAjax
             global $app_strings;
 
             //write out jscript that will get evaluated and redirect the browser window.
-            $no_defs_js = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id .'";</script>';
+            $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=EditView&record=' . $this->bean->id.'")</script>';
 
-            //if there are no edit view files then go to detail view
-            if(!file_exists('custom/' . $base . 'editviewdefs.php') && !file_exists($base . 'editviewdefs.php')
+            //reports is a special case as it does not have an edit view so navigate to wizard view
+            if(strtolower($module) == 'reports'){
+                $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=ReportsWizard&record=' . $this->bean->id.'")</script>';
+            }
+            //if this is not reports and there are no edit view files then go to detail view
+            elseif(!file_exists('custom/' . $base . 'editviewdefs.php') && !file_exists($base . 'editviewdefs.php')
             && !file_exists('custom/modules/' . $module .'/EditView.php') && !file_exists('modules/' . $module .'/EditView.php')
             ){
-                $no_defs_js = '<script>location.href="index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id .'";</script>';
+                $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?return_module='.$this->bean->module_dir.'&module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id.'")</script>';
             }
-            
+
             echo json_encode(array('scriptOnly'=> $no_defs_js));
 
           return;

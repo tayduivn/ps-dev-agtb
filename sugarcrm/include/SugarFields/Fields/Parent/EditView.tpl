@@ -27,7 +27,7 @@
  ********************************************************************************/
 *}
 <select name='parent_type' tabindex="{{$tabindex}}" id='parent_type' title='{{$vardef.help}}' 
-onchange='document.{$form_name}.{{sugarvar key='name'}}.value="";document.{$form_name}.parent_id.value=""; {{sugarvar key='name'}}changeQS(); checkParentType(document.{$form_name}.parent_type.value, document.{$form_name}.btn_{{sugarvar key='name'}});'>
+onchange='document.{$form_name}.{{sugarvar key='name'}}.value="";document.{$form_name}.parent_id.value=""; changeParentQS("{{sugarvar key='name'}}"); checkParentType(document.{$form_name}.parent_type.value, document.{$form_name}.btn_{{sugarvar key='name'}});'>
 {html_options options={{sugarvar key='options' string=true}} selected=$fields.parent_type.value sortoptions=true}
 </select>
 
@@ -49,40 +49,35 @@ onclick='open_popup(document.{$form_name}.parent_type.value, 600, 400, "", true,
 </span>
 {{/if}}
 
+{literal}
 <script type="text/javascript">
-function {{sugarvar key='name'}}changeQS() {literal}{
-{/literal}
-	new_module = document.forms["{$form_name}"].elements["parent_type"].value;
-{literal}
-	if(typeof(disabledModules[new_module]) != 'undefined') {
-{/literal}
-		sqs_objects["{$form_name}_parent_name"]["disable"] = true;
-		document.forms["{$form_name}"].elements["parent_name"].readOnly = true;
-{literal}
+if (typeof(changeParentQS) == 'undefined'){
+function changeParentQS(field) {
+	field = YAHOO.util.Dom.get(field);
+    var form = field.form;
+    var sqsId = form.id + "_" + field.id;
+    var typeField =  form.elements.parent_type;
+    var new_module = typeField.value;
+    if(typeof(disabledModules[new_module]) != 'undefined') {
+		sqs_objects[sqsId]["disable"] = true;
+		field.readOnly = true;
 	} else {
-{/literal}
-		sqs_objects["{$form_name}_parent_name"]["disable"] = false;
-		document.forms["{$form_name}"].elements["parent_name"].readOnly = false;
-{literal}
-	}
-{/literal}
-	sqs_objects["{$form_name}_parent_name"]["modules"] = new Array(new_module);
-	if(typeof QSProcessedFieldsArray != 'undefined')
-{literal}
+		sqs_objects[sqsId]["disable"] = false;
+		field.readOnly = false;
+    }
+	//Update the SQS globals to reflect the new module choice
+    sqs_objects[sqsId]["modules"] = new Array(new_module);
+    if (typeof(QSFieldsArray[sqsId]) != 'undefined')
     {
-{/literal}
-	   QSProcessedFieldsArray["{$form_name}_parent_name"] = false;
-{literal}
-	}	
-{/literal}    
+        QSFieldsArray[sqsId].sqs.modules = new Array(new_module);
+    }
+	if(typeof QSProcessedFieldsArray != 'undefined')
+    {
+	   QSProcessedFieldsArray[sqsId] = false;
+    }
     enableQS(false);
-{literal}
-}
-{/literal}
+}}
 </script>
-{literal}
 {{$displayParams.disabled_parent_types}}
-{/literal}
-{literal}
 {{$quickSearchCode}}
 {/literal}

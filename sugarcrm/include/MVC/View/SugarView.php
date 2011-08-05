@@ -373,7 +373,7 @@ class SugarView
                         );
                    if(substr($gcls[$key]["URL"], 0, 11) == "javascript:") {
                        $gcls[$key]["ONCLICK"] = substr($gcls[$key]["URL"],11);
-                       $gcls[$key]["URL"] = "#";
+                       $gcls[$key]["URL"] = "javascript:void(0)";
                    }
                 }
                 // and now the sublinks
@@ -385,7 +385,7 @@ class SugarView
                         );
                        if(substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"], 0, 11) == "javascript:") {
                            $gcls[$key]['SUBMENU'][$submenulinkkey]["ONCLICK"] = substr($gcls[$key]['SUBMENU'][$submenulinkkey]["URL"],11);
-                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "#";
+                           $gcls[$key]['SUBMENU'][$submenulinkkey]["URL"] = "javascript:void(0)";
                        }
                 }
             }
@@ -1215,16 +1215,16 @@ EOHTML;
             }
         }
         $theTitle .= "</h2>\n";
-
         if ($show_help) {
             $theTitle .= "<span class='utils'>";
 
             $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+            $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
             $theTitle .= <<<EOHTML
 &nbsp;
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<a href="{$url}" class="utilsLink">
 <img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<a href="{$url}" class="utilsLink">
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;

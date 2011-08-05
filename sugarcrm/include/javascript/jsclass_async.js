@@ -42,7 +42,7 @@
  */
 function method_callback (o) {
     var resp = YAHOO.lang.JSON.parse(o.responseText),
-        request_id = resp.id,
+        request_id = o.tId,
         result = resp.result;
 
 	if(result == null) {
@@ -55,8 +55,8 @@ function method_callback (o) {
 	   	//END SUGARCRM flav=int ONLY
 	    return;
 	}
-    
-	if(typeof (global_request_registry[request_id]) != 'undefined') {
+    reqid = global_request_registry[request_id];
+	if(typeof (reqid)  != 'undefined') {
 	    widget = global_request_registry[request_id][0];
 	    method_name = global_request_registry[request_id][1];
 	    widget[method_name](result);
