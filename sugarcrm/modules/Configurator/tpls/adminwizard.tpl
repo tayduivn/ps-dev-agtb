@@ -59,6 +59,90 @@ function disableReturnSubmission(e) {
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_emails.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>
 
+{literal}
+<style>
+#snip_title {
+    float:left;
+    margin-bottom:5px;
+    font-size:15px;
+    display:inline;
+}
+#snip_title_error {
+    color:red;
+    font-weight:bold;
+}
+#snip_summary {
+    float:left;
+    margin-bottom:10px;
+}
+#snip_summary_error {
+    width:100%;
+    background-color:#ffaa99;
+    margin-top:3px;
+    padding:2px;
+    font-weight:bold;
+    height:13px;
+}
+
+div.snipTitle{
+    font-size:28px;
+    color:#333333;
+    letter-spacing:3px
+}
+.snipDesc{
+    width:auto;
+    border:1px solid #999999;
+    background-color:#F5F5F5;
+    padding:5px;
+    font-size:15px;
+    margin:-10px 6px 6px 6px
+}
+.snipLicenseWrapper{
+    margin:auto;
+    width:600px;
+}
+.snipLicense{
+    width:600px;
+    padding:5px;
+    overflow:auto;
+    height:210px;
+}
+.snipUiWrapper{
+    float:left;
+    padding:5px;
+    width:600px;
+}
+.snipCheckboxWrapper{
+    float:left;
+    width:375px;
+    margin-top:10px
+}
+.snipCheckbox{
+    margin-left:5px
+}
+.snipButtonWrapper{
+    float:right
+}
+.snipEnableButton{
+    height:40px;width:200px
+}
+.snipCenterButtonWrapper{
+    margin:auto;
+    height:40px;
+    width:200px;
+    margin-bottom:10px;
+    margin-top:-2px
+}
+div.snipError{
+    position:relative;
+    margin:2px 8px 0px 8px; 
+    background-color:#ffaa99;
+    padding:2px;
+    padding-left:4px;
+    line-height:16px;   
+}
+</style>
+{/literal}
 <div class="dashletPanelMenu">
 <div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
 <div class="bd">
@@ -106,18 +190,108 @@ function disableReturnSubmission(e) {
         <td>
             <div class="edit view">
             <table width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <th align="left" scope="row" colspan="4"><h2>SNIP</h2></th>
-            </tr>
-            <tr>
-                <td scope="row">
-              <p>Welcome to SNIP</p>
-                <div class="userWizWelcome">SNIP is awesome. You should buy it</div>
-                {if $SNIP_PURCHASED_URL != ''}
-                    URL: {$SNIP_PURCHASED_URL}
-                {/if}
-                </td>
-            </tr>
+                <tr>
+                    <th align="left" scope="row" colspan="4"><h2>SNIP</h2></th>
+                </tr>
+                <tr>
+                    <td>
+                        <div class='snipDesc'>{$SNIP_MOD.LBL_SNIP_SUMMARY}
+                            <a href='#' onclick='divExpand()' id='snipMoreLink'>{$SNIP_MOD.LBL_SNIP_MORE}</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0">                        
+                            <tr>
+                                <td>
+                                    <div style='display:none' id='overlay_contents'>
+                                        {$SNIP_EXTRA_ERROR}
+                                    </div>
+                                    {if $SNIP_EXTRA_ERROR != ''}
+                                        <script>
+                                            {literal}
+                                            YAHOO.util.Event.onDOMReady(function(){
+                                                overlay('SNIP Error',document.getElementById('overlay_contents').innerHTML);
+                                            });
+                                            {/literal}
+                                        </script>
+                                    {/if}
+                                </td>
+                            </tr>
+
+                            {if $SNIP_STATUS=='notpurchased'}
+                            <tr>
+                                <td style='width:0px'>
+                                    <div class='snipLicenseWrapper'>
+                                        <div class='snipLicense'>{$SNIP_MOD.LBL_SNIP_AGREEMENT}</div>
+                                        <div class='snipUiWrapper'>
+                                        <hr>
+                                            <div class='snipCheckboxWrapper'>
+                                                <input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'><label for='agreementCheck' class='snipCheckbox'>{$SNIP_MOD.LBL_SNIP_AGREE} <a href="javascript: alert('privacy agreement');">{$SNIP_MOD.LBL_SNIP_PRIVACY}</a>.</label>
+                                            </div>
+                                            <div class='snipButtonWrapper'>
+                                                <form method="post">
+                                                    <input type='submit' class='snipEnableButton' disabled value='{$SNIP_MOD.LBL_SNIP_BUTTON_ENABLE}' id='enableSnipButton'>
+                                                    <input type='hidden' name='snipaction' value='enable_snip'>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {else}
+                            <tr>
+                                <td scope="row" style='width:0'>
+                                    {$SNIP_MOD.LBL_SNIP_STATUS}
+
+                                </td>
+                                <td align="left">
+                                    {if $SNIP_STATUS == 'purchased'}
+                                        <div id='snip_title'><span style='color:green;font-weight:bold'>{$SNIP_MOD.LBL_SNIP_STATUS_OK}</span></div>
+                                        <div style='clear:both'></div>
+                                        <div id='snip_summary'>{$SNIP_MOD.LBL_SNIP_STATUS_OK_SUMMARY}</div>
+                                    {elseif $SNIP_STATUS == 'down'}
+                                        <div id='snip_title'><span style='color:red;font-weight:bold'>{$SNIP_MOD.LBL_SNIP_STATUS_FAIL}</span></div>
+                                        <div style='clear:both'></div>
+                                        <div id='snip_summary'>{$SNIP_MOD.LBL_SNIP_STATUS_FAIL_SUMMARY}</div>
+                                    {elseif $SNIP_STATUS == 'purchased_error'}
+                                        <div id='snip_title'><span style='color:red;font-weight:bold'>{$SNIP_MOD.LBL_SNIP_STATUS_ERROR}</span></div>
+                                        <div style='clear:both'></div>
+                                        <div id='snip_summary'>{$SNIP_MOD.LBL_SNIP_STATUS_ERROR_SUMMARY}<br>
+                                        <div id='snip_summary_error'>{$SNIP_ERROR_MESSAGE}</div></div>
+                                    {/if}
+                                    <br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td scope="row">
+                                    {$SNIP_MOD.LBL_SNIP_EMAIL}
+                                </td>
+                                <td>
+                                    {$SNIP_EMAIL}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="20%" scope="row">
+                                    {$SNIP_MOD.LBL_SNIP_CALLBACK_URL}
+                                </td>
+                                <td width="80%">
+                                    {$SNIP_URL}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="20%" scope="row">
+                                    {$SNIP_MOD.LBL_SNIP_SUGAR_URL}
+                                </td>
+                                <td width="80%">
+                                    {$SUGAR_URL}
+                                </td>
+                                </tr>                            
+                            {/if}
+                        </table>
+                    </td>
+                </tr>
             </table>
             </div>
         </td>
@@ -175,10 +349,15 @@ function disableReturnSubmission(e) {
             <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
                 class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
                 onclick="SugarWizard.changeScreen('welcome',true);" id="previous_tab_welcome" />&nbsp;
+        {else}
+            <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
+                class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
+                onclick="SugarWizard.changeScreen('snip',true);" id="previous_tab_welcome" />&nbsp;
+        {/if}
+
             <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
                 class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
                 onclick="SugarWizard.changeScreen('locale',false);" id="next_tab_locale" />
-        {/if}
     </div>
 </div>
 

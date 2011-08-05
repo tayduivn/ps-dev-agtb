@@ -118,8 +118,22 @@ class SugarSNIP
 
         if ($connectionfailed)
             return false;
-        else
+        else {
+            if ($this->last_result->result == 'ok') {
+                $admin = new Administration();
+                $admin->saveSetting('snip', 'email', $this->last_result->email);
+            }
+
             return $this->last_result;
+        }
+    }
+
+    public function getSnipEmail () {
+        $admin = new Administration();
+        $snip = $admin->retrieveSettings('snip');
+        if (isset($snip->settings['snip_email']))
+            return $snip->settings['snip_email'];
+        return '';
     }
 
     public function unregisterSnip () {
@@ -135,8 +149,14 @@ class SugarSNIP
 
         if ($connectionfailed)
             return false;
-        else
+        else {
+            if ($this->last_result->result == 'ok') {
+                $admin = new Administration();
+                $admin->saveSetting('snip', 'email', '');
+            }
+            
             return $this->last_result;
+        }
     }
 
     /**

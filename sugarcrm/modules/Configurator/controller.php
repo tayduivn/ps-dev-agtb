@@ -128,30 +128,36 @@ class ConfiguratorController extends SugarController
     function action_saveadminwizard()
     {
     	global $current_user;
-        if(!is_admin($current_user)){
-            sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+        
+        if ($_POST && isset($_POST['snipaction'])) {
+            $_SESSION['snipaction'] = $_POST['snipaction'];
+            SugarApplication::redirect('index.php?module=Configurator&action=AdminWizard&page=snip');
+        } else {
+            if(!is_admin($current_user)){
+                sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
+            }
+            $focus = new Administration();
+            $focus->retrieveSettings();
+            $focus->saveConfig();
+            
+            $configurator = new Configurator();
+            $configurator->populateFromPost();
+            $configurator->handleOverride();
+    	    $configurator->parseLoggerSettings();
+            $configurator->saveConfig();
+            
+            // Bug 37310 - Delete any existing currency that matches the one we've just set the default to during the admin wizard
+            $currency = new Currency;
+            $currency->retrieve($currency->retrieve_id_by_name($_REQUEST['default_currency_name']));
+            if ( !empty($currency->id) 
+                    && $currency->symbol == $_REQUEST['default_currency_symbol']
+                    && $currency->iso4217 == $_REQUEST['default_currency_iso4217'] ) {
+                $currency->deleted = 1;
+                $currency->save();
+            }
+            
+            SugarApplication::redirect('index.php?module=Users&action=Wizard&skipwelcome=1');
         }
-        $focus = new Administration();
-        $focus->retrieveSettings();
-        $focus->saveConfig();
-        
-        $configurator = new Configurator();
-        $configurator->populateFromPost();
-        $configurator->handleOverride();
-	    $configurator->parseLoggerSettings();
-        $configurator->saveConfig();
-        
-        // Bug 37310 - Delete any existing currency that matches the one we've just set the default to during the admin wizard
-        $currency = new Currency;
-        $currency->retrieve($currency->retrieve_id_by_name($_REQUEST['default_currency_name']));
-        if ( !empty($currency->id) 
-                && $currency->symbol == $_REQUEST['default_currency_symbol']
-                && $currency->iso4217 == $_REQUEST['default_currency_iso4217'] ) {
-            $currency->deleted = 1;
-            $currency->save();
-        }
-        
-        SugarApplication::redirect('index.php?module=Users&action=Wizard&skipwelcome=1');
     }
     
     function action_saveconfig()
