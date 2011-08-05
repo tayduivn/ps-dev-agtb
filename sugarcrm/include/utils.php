@@ -2440,7 +2440,7 @@ function get_unlinked_email_query($type, $bean) {
     $return_array['select']='SELECT emails.id ';
     $return_array['from']='FROM emails ';
     $return_array['where']="";
-	$return_array['join'] = " JOIN (select distinct email_id from emails_email_addr_rel eear
+	$return_array['join'] = " JOIN (select DISTINCT email_id from emails_email_addr_rel eear
 
 	join email_addr_bean_rel eabr on eabr.bean_id ='$bean->id' and eabr.bean_module = '$bean->module_dir' and
 	eabr.email_address_id = eear.email_address_id and eabr.deleted=0
@@ -2453,7 +2453,7 @@ function get_unlinked_email_query($type, $bean) {
 		return $return_array;
 	}
 
-	return $return_array['select'] . $return_array['from'] . $return_array['where'];
+	return $return_array['select'] . $return_array['from'] . $return_array['where'] . $return_array['join'] ;
 } // fn
 
 /**

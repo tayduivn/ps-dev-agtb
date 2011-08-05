@@ -67,7 +67,7 @@ div.nav-buttons
 
 div.screen div.edit.view
 {
-    height: 440px;
+    min-height: 485px;
     width: auto;
     margin-top: 0;
     margin-bottom: 0;

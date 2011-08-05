@@ -60,7 +60,7 @@
 	    id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
 	    name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
 	    size="60"
-	    type="text" style="vertical-align: top;"> <img src="{sugar_getimagepath file="down_arrow.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image">
+	    type="text" style="vertical-align: top;">
 	{{else}}
 		<input type="hidden"
 		    id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"
@@ -71,8 +71,18 @@
 		    id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
 		    name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
 		    size="60"
-		    type="text" style="vertical-align: top;"> <img src="{sugar_getimagepath file="down_arrow.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image">
+		    type="text" style="vertical-align: top;">
 	{{/if}}
+
+	<span class="id-ff multiple">
+	    <button type="button">
+	    	<img src="{sugar_getimagepath file="id-ff-down.png"}" id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-image">
+	    	</button>
+	    	<button type="button"
+	        id="btn-clear-{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input"
+	        title="Clear"
+	        onclick="SUGAR.clearRelateField(this.form, '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}-input', '{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}};');SUGAR.AutoComplete.{$ac_key}.inputNode.updateHidden()"><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
+	</span>
 
 	{literal}
 	<script>
@@ -300,7 +310,11 @@
 						}
 					}
 				}
-				ret_string = ret_array.concat(sorted_array).join(', ')+', ';
+				ret_string = ret_array.concat(sorted_array).join(', ');
+				if (ret_string.match(/^\s*$/))
+					ret_string='';
+				else
+					ret_string+=', ';
 				
 				//update the input widget
 				SUGAR.AutoComplete.{/literal}{$ac_key}{literal}.inputNode.ac.set('value', ret_string);
