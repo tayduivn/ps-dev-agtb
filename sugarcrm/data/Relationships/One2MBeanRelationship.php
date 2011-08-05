@@ -150,15 +150,25 @@ class One2MBeanRelationship extends One2MRelationship
         else
         {
             $lhsKey = $this->def['lhs_key'];
+            $rhsTable = $this->def['rhs_table'];
+            $rhsTableKey = "{$rhsTable}.{$this->def['rhs_key']}";
+            $where = "WHERE $rhsTableKey = '{$link->getFocus()->$lhsKey}' AND {$rhsTable}.deleted=0";
+            //Check for role column
+            if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
+            {
+                $roleField = $this->def["relationship_role_column"];
+                $roleValue = $this->def["relationship_role_column_value"];
+                $where .= " AND $rhsTable.$roleField = '$roleValue'";
+            }
             if (!$return_as_array) {
-                return "SELECT id FROM {$this->def['rhs_table']} WHERE {$this->def['rhs_key']} = '{$link->getFocus()->$lhsKey}' AND deleted=0";
+                return "SELECT id FROM {$this->def['rhs_table']} $where";
             }
             else
             {
                 return array(
                     'select' => "SELECT {$this->def['rhs_table']}.id",
                     'from' => "FROM {$this->def['rhs_table']}",
-                    'where' => "WHERE {$this->def['rhs_table']}.{$this->def['rhs_key']} = '{$link->getFocus()->$lhsKey}' AND {$this->def['rhs_table']}.deleted=0",
+                    'where' => $where,
                 );
             }
         }

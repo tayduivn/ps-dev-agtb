@@ -738,7 +738,7 @@ function reportResults(&$reporter, &$args) {
 	$searchArray = array("'", "\r\n", "\n");
 	$replaceArray = array("\\'", "", "");
 	$filterStringForUI = str_replace($searchArray, $replaceArray, $reporter->createFilterStringForUI());
-	echo "<script>var filterString='" . $filterStringForUI . "';</script>";
+	echo "<script>var filterString='" . htmlspecialchars($filterStringForUI) . "';</script>";
 	if ($reporter->report_def['chart_type']== 'none') {
 		$do_chart = false;
 	}

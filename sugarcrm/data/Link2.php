@@ -291,6 +291,9 @@ class Link2 {
                 }
             }
 
+            if(empty($key->id) || empty($this->focus->id))
+                return false;
+
             if ($this->getSide() == REL_LHS) {
                 $this->relationship->add($this->focus, $key, $additional_values);
             }

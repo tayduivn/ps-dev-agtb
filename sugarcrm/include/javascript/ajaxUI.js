@@ -74,7 +74,7 @@ SUGAR.ajaxUI = {
                 });
             }
             var panel = SUGAR.ajaxUI.errorPanel;
-            panel.setHeader( SUGAR.language.get('app_strings','ERROR_EXAMINE_MSG')) ;
+            panel.setHeader( SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
             panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none"></iframe>');
             panel.render(document.body);
             document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
@@ -123,12 +123,20 @@ SUGAR.ajaxUI = {
         }
     },
 
-    go : function(url, params)
+    go : function(url)
     {
-        
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
+            if (ui.lastURL == url)
+                return;
+            var inAjaxUI = /action=ajaxui/.exec(window.location);
+            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
+                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            {
+                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                return;
+            }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
             }
@@ -139,13 +147,14 @@ SUGAR.ajaxUI = {
                 window.location = url;
                 return;
             }
+            ui.lastURL = url;
             ui.cleanGlobals();
             var loadLanguageJS = '';
             if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
                 loadLanguageJS = '&loadLanguageJS=1';
             }
 
-            if (!/action=ajaxui/.exec(window.location))
+            if (!inAjaxUI)
                 //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
             else {
