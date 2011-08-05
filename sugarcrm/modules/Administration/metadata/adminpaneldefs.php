@@ -183,6 +183,7 @@ $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_opt
 //BEGIN SUGARCRM flav!=sales ONLY
 //email manager.
 $admin_option_defs=array();
+$admin_option_defs['Emails']['register_snip']=array('icon_AdminThemes','LBL_CONFIGURE_SNIP','LBL_CONFIGURE_SNIP_DESC','./index.php?module=SNIP&action=RegisterForSnip');
 $admin_option_defs['Emails']['mass_Email_config']= array('EmailMan','LBL_MASS_EMAIL_CONFIG_TITLE','LBL_MASS_EMAIL_CONFIG_DESC','./index.php?module=EmailMan&action=config');
 //BEGIN SUGARCRM flav!=dce && flav!=sales ONLY
 $admin_option_defs['Campaigns']['campaignconfig']= array('Campaigns','LBL_CAMPAIGN_CONFIG_TITLE','LBL_CAMPAIGN_CONFIG_DESC','./index.php?module=EmailMan&action=campaignconfig');
@@ -192,6 +193,7 @@ $admin_option_defs['Emails']['mailboxes']= array('InboundEmail','LBL_MANAGE_MAIL
 $admin_option_defs['Campaigns']['mass_Email']= array('EmailMan','LBL_MASS_EMAIL_MANAGER_TITLE','LBL_MASS_EMAIL_MANAGER_DESC','./index.php?module=EmailMan&action=index');
 //END SUGARCRM flav!=dce && flav!=sales ONLY
 $admin_group_header[]= array('LBL_EMAIL_TITLE','',false,$admin_option_defs, 'LBL_EMAIL_DESC');
+
 //END SUGARCRM flav!=sales ONLY
 
 //BEGIN SUGARCRM flav!=dce ONLY
@@ -267,10 +269,6 @@ $admin_group_header[]= array('LBL_CONTRACT_TITLE','',false,$admin_option_defs, '
 
 //END SUGARCRM flav!=dce ONLY
 
-// SNIP
-$admin_option_defs = array();
-$admin_option_defs['Administration']['register_snip']=array('icon_AdminThemes','LBL_CONFIGURE_SNIP','LBL_CONFIGURE_SNIP_DESC','./index.php?module=SNIP&action=RegisterForSnip');
-$admin_group_header[]= array('LBL_SNIP_TITLE','',false,$admin_option_defs, 'LBL_SNIP_DESC');
 
 if(file_exists('custom/modules/Administration/Ext/Administration/administration.ext.php')){
 	include('custom/modules/Administration/Ext/Administration/administration.ext.php');

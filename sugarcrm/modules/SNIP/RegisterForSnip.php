@@ -48,8 +48,6 @@ $sugar_smarty->assign('MOD', $GLOBALS['mod_strings']);
 
 $extra_error='';
 
-
-
 if ($_POST && isset($_POST['snipaction'])) {
 	if ($_POST['snipaction']=='enable_snip') {
 		$enable_snip = $snip->registerSnip();
@@ -83,13 +81,11 @@ if ($status=='purchased_error'){
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 }
 
-
-
 $sugar_smarty->assign('TITLE',$title);
 $sugar_smarty->assign('SNIP_STATUS',$status);
 $sugar_smarty->assign('EXTRA_ERROR',$extra_error);
+$sugar_smarty->assign('SNIP_EMAIL',$snip->getSnipEmail());
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
-
 
 echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');

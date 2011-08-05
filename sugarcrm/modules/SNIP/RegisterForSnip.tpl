@@ -82,7 +82,6 @@ div.snipError{
 	line-height:16px;
 	
 }
-
 </style>
 {/literal}
 {$TITLE}
@@ -119,8 +118,8 @@ div.snipError{
 					<div class='snipUiWrapper'>
 					<hr>
 						<div class='snipCheckboxWrapper'>
-							
-							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck'class='snipCheckbox'><label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE}</a>.</label>
+							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'>
+							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE} <a href="javascript: alert('privacy agreement');">{$MOD.LBL_SNIP_PRIVACY}</a>.</label>
 						</div>
 						<div class='snipButtonWrapper'>
 						<form method="post">
@@ -165,7 +164,15 @@ div.snipError{
 						{$MOD.LBL_SNIP_EMAIL}
 					</td>
 					<td>
-						
+						{$SNIP_EMAIL}
+					</td>
+				</tr>
+				<tr>
+					<td width="20%" scope="row">
+						{$MOD.LBL_SNIP_CALLBACK_URL}
+					</td>
+					<td width="80%">
+						{$SNIP_URL}
 					</td>
 				</tr>
 				<tr>
