@@ -1270,7 +1270,7 @@ EOQ;
             if ( !empty($row['data_default']) ) {
                 $matches = array();
                 $row['data_default'] = html_entity_decode($row['data_default'],ENT_QUOTES);
-                if ( preg_match("/'(.*)'/i",$row['data_default'],$matches) )
+                if ( preg_match("/^'(.*)'$/i",$row['data_default'],$matches) )
                     $columns[$name]['default'] = $matches[1];
             }
 
