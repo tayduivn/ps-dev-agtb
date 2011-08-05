@@ -63,7 +63,10 @@ class ext_rest_insideview extends ext_rest {
 
     public function saveMappingHook($mapping) {
 
-        $removeList = $this->allowedModuleList;
+        $removeList = array();
+        foreach ($this->allowedModuleList as $module_name=>$display_name) {
+            $removeList[$module_name] = $module_name;
+        }
 
         if ( is_array($mapping['beans']) ) {
             foreach($mapping['beans'] as $module => $ignore) {
