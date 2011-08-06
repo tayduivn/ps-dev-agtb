@@ -883,7 +883,7 @@ class DynamicField {
     }
 
    function populateXTPL(&$xtpl, $view) {
-   	    display_stack_trace();
+
         if($this->bean->hasCustomFields()){
             $results = $this->getAllFieldsView($view, 'xtpl');
             foreach($results as $name=>$value){
