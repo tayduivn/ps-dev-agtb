@@ -2475,6 +2475,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 	{
 
 		$db = DBManagerFactory::getInstance();
+
 		$temp_result = Array();
 		$query = "SELECT {$focus->table_name}.id, {$display_columns} as display from {$focus->table_name} ";
 		//BEGIN SUGARCRM flav=pro ONLY
@@ -2486,7 +2487,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 		{
 			$query .= $where." AND ";
 		}
-		
+
 		$query .=  " {$focus->table_name}.deleted=0";
 
 		if ( $order_by != '')

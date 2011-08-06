@@ -23,20 +23,20 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/database/MysqliManager.php');
 
 /**
  * Bug44507Test
  * This test simulates the query that is run when a non-admin user makes a call to the get_bean_select_array method
- * in include/utils.php.  Bug 44507 is due to the problem 
+ * in include/utils.php.  Bug 44507 is due to the problem
  *
  */
 class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
-{    
+{
 	var $disableCountQuery;
 	var $skipped = false;
-	
+
     public function setUp()
     {
     	if($GLOBALS['db']->dbType != 'mysql')
@@ -45,78 +45,78 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     		$this->skipped = true;
     		return;
     	}
-    	
+
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     	$GLOBALS['current_user']->is_admin = false;
-    	
+
     	$randomTeam = SugarTestTeamUtilities::createAnonymousTeam();
         $randomTeam->add_user_to_team($GLOBALS['current_user']->id);
-        
+
 	    $this->useOutputBuffering = false;
-	    
+
 	    global $sugar_config;
 	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
 	    $sugar_config['disable_count_query'] = true;
     }
-    
+
     public function tearDown()
     {
     	if($this->skipped)
     	{
     		return;
     	}
-    	
+        DBManagerFactory::disconnectAll();
+        unset($GLOBALS['sugar_config']['dbconfig']['db_manager_class']);
+        $GLOBALS['db'] = DBManagerFactory::getInstance();
     	global $sugar_config;
     	$sugar_config['disable_count_query'] = $this->disableCountQuery;
-    	
+
 		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 		SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
     }
-    
+
     public function testGetBeanSelectArray()
     {
     	if($this->skipped)
     	{
     		return;
     	}
-    	
+
     	//From EmailMarketing/DetailView this covers most of the cases where EmailTemplate module is queries against
-		$localDb = new Bug44507SqlManager();
-		
-		global $dbinstances;
-		$tempDbInstances = $dbinstances;
-		$dbinstances[''] = $localDb;
-		
+    	DBManagerFactory::disconnectAll();
+    	$GLOBALS['sugar_config']['dbconfig']['db_manager_class'] = 'Bug44507SqlManager';
+		$localDb = DBManagerFactory::getInstance();
+
+		$this->assertInstanceOf("Bug44507SqlManager", $localDb);
+
     	get_bean_select_array('true', 'EmailTemplate', 'name');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
     	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
-    	
+
 		//From Emailmarketing/EditView
 		get_bean_select_array(true, 'EmailTemplate','name','','name');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
-    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");	
+    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
 
     	//From Expressions/Expressions.php
     	get_bean_select_array(true, 'ACLRole','name');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/acl_roles\.id/', $sql, 'Assert that acl_roles.id is not ambiguous');
     	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
-    	
+
     	//From Contracts/Contract.php
     	get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/contract_types\.id/', $sql, 'Assert that contract_types.id is not ambiguous');
-    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");  
-
-    	$dbinstances = $tempDbInstances;
+    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
     }
 }
 
-class Bug44507SqlManager extends MysqliManager 
-{	
+class Bug44507SqlManager extends MysqliManager
+{
 	var $expectedSql;
 
     protected function addDistinctClause(&$sql)
@@ -124,12 +124,12 @@ class Bug44507SqlManager extends MysqliManager
     	parent::addDistinctClause($sql);
     	$this->expectedSql = $sql;
     }
-    
+
     public function getExpectedSql()
     {
     	return $this->expectedSql;
     }
-	
+
     /**
      * @see DBManager::checkError()
      */
@@ -142,14 +142,14 @@ class Bug44507SqlManager extends MysqliManager
         {
             return true;
         }
-            
+
         if (mysqli_errno($this->getDatabase()))
         {
             return true;
         }
-        
+
         return false;
-    }    
+    }
 }
 
 ?>

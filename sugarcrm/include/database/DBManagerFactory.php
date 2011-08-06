@@ -70,7 +70,12 @@ class DBManagerFactory
         }
         $GLOBALS['log']->info("using $my_db_manager DBManager backend");
 
-        require_once("include/database/{$my_db_manager}.php");
+        if(!empty($config['db_manager_class'])){
+            $my_db_manager = $config['db_manager_class'];
+        } else {
+            require_once("include/database/{$my_db_manager}.php");
+        }
+
         if(class_exists($my_db_manager)) {
             return new $my_db_manager();
         } else {
