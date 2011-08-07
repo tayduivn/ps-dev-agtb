@@ -1635,8 +1635,12 @@ function initEditView(theForm) {
     	window.setTimeout(function(){initEditView(theForm);}, 100);
     	return;
     }
+    if ( theForm == null || theForm.id == null ) {
+        // Not much we can do here.
+        return;
+    }    
     // we don't need to check if the data is changed in the search popup
-    if (theForm.id == 'popup_query_form') {
+    if (theForm.id == 'popup_query_form' || theForm.id == 'MassUpdate') {
     	return;
     }
 	if ( typeof editViewSnapshots == 'undefined' ) {
@@ -1645,15 +1649,8 @@ function initEditView(theForm) {
     if ( typeof SUGAR.loadedForms == 'undefined' ) {
     	SUGAR.loadedForms = new Object();
     }
-
-    // console.log('DEBUG: Adding checks for '+theForm.id);
-    if ( theForm == null || theForm.id == null ) {
-        // Not much we can do here.
-        return;
-    }
     editViewSnapshots[theForm.id] = snapshotForm(theForm);
     SUGAR.loadedForms[theForm.id] = true;
-
 }
 
 function onUnloadEditView(theForm) {
