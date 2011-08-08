@@ -242,6 +242,232 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         // TODO: Write this test
     }
 
+    public function testRepairTableNoChanges()
+    {
+        $tableName = 'testRTNC_' . mt_rand();
+        $params =  array(
+                /* VARDEF - id -  ROW[name] => 'id'  [vname] => 'LBL_ID'  [required] => 'true'  [type] => 'char'  [reportable] => ''  [comment] => 'Unique identifier'  [dbType] => 'id'  [len] => '36'  */
+            'id' =>
+                array (
+                'name' => 'id',
+                'vname' => 'LBL_ID',
+                'required'=>true,
+                'type' => 'id',
+                'reportable'=>false,
+                'comment' => 'Unique identifier'
+                ),
+            'date_entered' =>
+                array (
+                'name' => 'date_entered',
+                'vname' => 'LBL_DATE_ENTERED',
+                'type' => 'datetime',
+                'required'=>true,
+                'comment' => 'Date record created'
+                ),
+            'date_modified' =>
+                array (
+                  'name' => 'date_modified',
+                  'vname' => 'LBL_DATE_MODIFIED',
+                  'type' => 'datetime',
+                  'required'=>true,
+                  'comment' => 'Date record last modified'
+                ),
+            'modified_user_id' =>
+                array (
+                  'name' => 'modified_user_id',
+                  'rname' => 'user_name',
+                  'id_name' => 'modified_user_id',
+                  'vname' => 'LBL_MODIFIED',
+                  'type' => 'assigned_user_name',
+                  'table' => 'modified_user_id_users',
+                  'isnull' => 'false',
+                  'dbType' => 'id',
+                  'required'=> false,
+                  'len' => 36,
+                  'reportable'=>true,
+                  'comment' => 'User who last modified record'
+                ),
+            'created_by' =>
+                array (
+                  'name' => 'created_by',
+                  'rname' => 'user_name',
+                  'id_name' => 'created_by',
+                  'vname' => 'LBL_CREATED',
+                  'type' => 'assigned_user_name',
+                  'table' => 'created_by_users',
+                  'isnull' => 'false',
+                  'dbType' => 'id',
+                  'len' => 36,
+                  'comment' => 'User ID who created record'
+                ),
+            'name' =>
+                array (
+                  'name' => 'name',
+                  'type' => 'varchar',
+                  'vname' => 'LBL_NAME',
+                  'len' => 150,
+                  'comment' => 'Name of the allowable action (view, list, delete, edit)'
+                ),
+            'category' =>
+                array (
+                  'name' => 'category',
+                  'vname' => 'LBL_CATEGORY',
+                  'type' => 'varchar',
+                  'len' =>100,
+                  'reportable'=>true,
+                  'comment' => 'Category of the allowable action (usually the name of a module)'
+                ),
+            'acltype' =>
+                array (
+                  'name' => 'acltype',
+                  'vname' => 'LBL_TYPE',
+                  'type' => 'varchar',
+                  'len' =>100,
+                  'reportable'=>true,
+                  'comment' => 'Specifier for Category, usually "module"'
+                ),
+            'aclaccess' =>
+                array (
+                  'name' => 'aclaccess',
+                  'vname' => 'LBL_ACCESS',
+                  'type' => 'int',
+                  'len'=>3,
+                  'reportable'=>true,
+                  'comment' => 'Number specifying access priority; highest access "wins"'
+                ),
+            'deleted' =>
+                array (
+                  'name' => 'deleted',
+                  'vname' => 'LBL_DELETED',
+                  'type' => 'bool',
+                  'reportable'=>false,
+                  'comment' => 'Record deletion indicator'
+                ),
+            'roles' =>
+                array (
+                    'name' => 'roles',
+                    'type' => 'link',
+                    'relationship' => 'acl_roles_actions',
+                    'source'=>'non-db',
+                    'vname'=>'LBL_USERS',
+                ),
+  			'reverse' =>
+                array (
+                    'name' => 'reverse',
+                    'vname' => 'LBL_REVERSE',
+                    'type' => 'bool',
+                    'default' => 0
+                ),
+  		 	'deleted2' =>
+                array (
+                    'name' => 'deleted2',
+                    'vname' => 'LBL_DELETED2',
+                    'type' => 'bool',
+                    'reportable'=>false,
+                    'default' => '0'
+                ),
+            'primary_address_country' =>
+                array (
+                   'name' => 'primary_address_country',
+                   'vname' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
+                   'type' => 'varchar',
+                   'group'=>'primary_address',
+                   'comment' => 'Country for primary address',
+                   'merge_filter' => 'enabled',
+                ),
+            'refer_url' => array (
+                'name' => 'refer_url',
+                'vname' => 'LBL_REFER_URL',
+                'type' => 'varchar',
+                'len' => '255',
+                'default' => 'http://',
+                'comment' => 'The URL referenced in the tracker URL; no longer used as of 4.2 (see campaign_trkrs)'
+                ),
+            'budget' => array (
+                'name' => 'budget',
+                'vname' => 'LBL_CAMPAIGN_BUDGET',
+                'type' => 'currency',
+                'dbType' => 'double',
+                'comment' => 'Budgeted amount for the campaign'
+                ),
+            'time_from' => array (
+                'name' => 'time_from',
+                'vname' => 'LBL_TIME_FROM',
+                'type' => 'time',
+                'required' => false,
+                'reportable' => false,
+                ),
+            'description' =>
+                array (
+                'name' => 'description',
+                'vname' => 'LBL_DESCRIPTION',
+                'type' => 'text',
+                'comment' => 'Full text of the note',
+                'rows' => 6,
+                'cols' => 80,
+                ),
+            'cur_plain' => array (
+                'name' => 'cur_plain',
+                'vname' => 'LBL_curPlain',
+                'type' => 'currency',
+            ),
+            'cur_len_prec' => array (
+                'name' => 'cur_len_prec',
+                'vname' => 'LBL_curLenPrec',
+                'dbType' => 'decimal',
+                'type' => 'currency',
+                'len' => '26,6',
+            ),
+            'cur_len' => array (
+                'name' => 'cur_len',
+                'vname' => 'LBL_curLen',
+                'dbType' => 'decimal',
+                'type' => 'currency',
+                'len' => '26',
+            ),
+            'cur_len_prec2' => array (
+                'name' => 'cur_len_prec2',
+                'vname' => 'LBL_curLenPrec',
+                'dbType' => 'decimal',
+                'type' => 'currency',
+                'len' => '26',
+                'precision' => '6',
+            ),
+            'token_ts' =>
+            array (
+                'name' => 'token_ts',
+                'type' => 'long',
+                'required' => true,
+                'comment' => 'Token timestamp',
+                'function' => array('name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true)
+            ),
+            'conskey' => array(
+                'name'		=> 'conskey',
+                'type'		=> 'varchar',
+                'len'		=> 32,
+                'required'	=> true,
+                'isnull'	=> false,
+            ),
+        );
+
+        if($this->_db->tableExists($tableName)) {
+            $this->_db->dropTableName($tableName);
+        }
+		$this->createTableParams($tableName, $params, array());
+
+        $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
+        var_dump($repair);
+        $this->assertEmpty($repair, "Unexpected repairs");
+//        $this->assertRegExp('#MISSING IN DATABASE.*bar#i', $repair);
+//        $repair = $this->_db->repairTableParams($tableName, $params, array(), true);
+//        $cols = $this->_db->get_columns($tableName);
+//        $this->assertArrayHasKey('bar', $cols);
+//        $this->assertEquals('bar', $cols['bar']['name']);
+//        $this->assertEquals($this->_db->getColumnType('int'), $cols['bar']['type']);
+
+        $this->dropTableName($tableName);
+    }
+
     public function testRepairTableParamsAddData()
     {
         $tableName = 'test1_' . mt_rand();

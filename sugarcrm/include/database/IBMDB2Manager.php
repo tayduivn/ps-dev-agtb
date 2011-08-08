@@ -135,6 +135,14 @@ class IBMDB2Manager  extends DBManager
         "limit_subquery" => true,
     );
 
+    /**
+     * Schema in which all the DB2 objects live.
+     * Is only used for management operations for now and set to the DB2 user id.
+     * Could potentially become a configuration option when creating the database.
+     * @var string
+     */
+    public  $schema = '';
+
 
     /**+
      * Handles logging the error message
@@ -430,7 +438,7 @@ class IBMDB2Manager  extends DBManager
     public function get_columns($tablename)
     {
         $result = $this->query(
-            "SELECT * FROM SYSCAT.COLUMNS WHERE TABNAME = '".strtoupper($tablename)."'");
+            "SELECT * FROM SYSCAT.COLUMNS WHERE TABSCHEMA = '".$this->schema."' AND TABNAME = '".strtoupper($tablename)."'");
 
         $columns = array();
         while (($row=$this->fetchByAssoc($result)) !=null) {
@@ -439,6 +447,7 @@ class IBMDB2Manager  extends DBManager
             $columns[$name]['type']=strtolower($row['typename']);
 
             switch($columns[$name]['type']) {
+                case 'timestamp':
                 case 'date':
                 case 'xml':
                 case 'blob':
@@ -446,19 +455,22 @@ class IBMDB2Manager  extends DBManager
                 case 'dbclob': break;
                 case 'decimal': $columns[$name]['len'] = $row['length'].','.$row['scale'];
                                 break;
+                case 'character': $columns[$name]['type'] = 'char';
                 default: $columns[$name]['len'] = $row['length'];
             }
             if ( !empty($row['default']) ) {
-                //$matches = array();
-                //$row['default'] = html_entity_decode($row['default'],ENT_QUOTES); // Not sure if this is required for DB2
-                //if ( preg_match("/'(.*)'/i",$row['default'],$matches) ) // NOT sure if DB2 ever puts () around a default
-                //$columns[$name]['default'] = $matches[1];
-                $columns[$name]['default'] = $row['default'];
+                $matches = array();
+                $row['default'] = html_entity_decode($row['default'],ENT_QUOTES);
+                if ( preg_match("/^'(.*)'$/i",$row['default'],$matches) )
+                    $columns[$name]['default'] = $matches[1];
             }
             // TODO add logic to make this generated when there is a sequence being used
             if($row['generated'] == 'A' || $row['generated'] == 'D')
                 $columns[$name]['auto_increment'] = '1';
-            $columns[$name]['required'] = ( $row['nulls'] == 'N' )?'true':'';
+            if($row['nulls'] == 'N')
+                $columns[$name]['required'] = 'true';
+            if($columns[$name]['required'] == '')
+                unset($columns[$name]['required']);
         }
         return $columns;
     }
@@ -629,6 +641,7 @@ class IBMDB2Manager  extends DBManager
         // Creating the connection string dynamically so that we can accommodate all scenarios
         // Starting with user and password as we always need these.
         $dsn = "UID=".$configOptions['db_user_name'].";PWD=".$configOptions['db_password'].";";
+        $this->schema = strtoupper($configOptions['db_user_name']); // Converting to upper since DB2 expects it that way
 
         if(isset($configOptions['db_name']) && $configOptions['db_name']!='')
             $dsn = $dsn."DATABASE=".$configOptions['db_name'].";";
@@ -807,6 +820,35 @@ class IBMDB2Manager  extends DBManager
 		}
         //May need to add primary key and sequence stuff here
 		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
+
+        $matches = array();
+        if(!empty($fieldDef['len']) &&
+            preg_match('/^decimal(\((?P<len>\d*),*(?P<prec>\d*)\))?$/i', $ref['colType'], $matches)) {
+            // Overriding len and precision for decimals as the current DBManager class doesn't handle decimal as both regular type and dbtype well
+//            if(strpos($fieldDef['len'], ',') === false)
+//            {
+//                $numspec = array($fieldDef['len']); // We are ignoring the length if it existed since we have one that comes from the vardefs
+//                $numspec []= !empty($fieldDef['precision']) ? $fieldDef['precision'] : $matches['prec']; // Use the vardef precision if it exists otherwise use the one that was already present
+//                $ref['colType'] = 'decimal('.implode(',',$numspec).')'; // Reconstuct type based on new values
+//            } else {
+                $numspec = array($fieldDef['len']); // We are ignoring the length if it existed since we have one that comes from the vardefs
+                if(!empty($fieldDef['precision']) && !strpos($fieldDef['len'], ','))
+                    $numspec []=  $fieldDef['precision']; // Use the vardef precision if it exists and wasn't specified in the length
+                $ref['colType'] = 'decimal('.implode(',', $numspec).')';
+//            }
+        }
+
+        if(!empty($ref['default'])){
+            $type = $this->getFieldType($fieldDef);
+            $colType = $this->getColumnType($type); // not using $ref['colType'] as it includes lengths
+
+            if(in_array($colType, array('integer', 'smallint', 'bigint', 'double'))
+                || strpos($colType, 'decimal') !== false)
+            {
+                $ref['default'] = str_replace(array("'", "\""), "", $ref['default']); // Stripping quotes
+            }
+        }
+
         if ( $return_as_array )
             return $ref;
         else{
@@ -1049,7 +1091,7 @@ class IBMDB2Manager  extends DBManager
                 SELECT i.INDNAME, UNIQUERULE, COLNAME, COLSEQ FROM SYSCAT."INDEXES" i
                 	INNER JOIN SYSCAT."INDEXCOLUSE" c
 		                ON i.INDNAME = c.INDNAME
-                WHERE TABNAME = '$tablename'
+                WHERE TABSCHEMA = '$this->schema' AND TABNAME = '$tablename'
                 ORDER BY i.INDNAME, COLSEQ
 EOQ;
 
@@ -1136,8 +1178,9 @@ EOQ;
     }
 
 
-	/**+
+	/**-
      * @see DBManager::full_text_indexing_installed()
+     * TODO FIX THIS!!!!
      */
     public function full_text_indexing_installed()
     {
@@ -1154,26 +1197,85 @@ EOQ;
     {
         parent::massageFieldDef($fieldDef,$tablename);
 
-        if ( isset($fieldDef['default']) &&
-            ($fieldDef['dbType'] == 'text'
-                || $fieldDef['dbType'] == 'blob'
-                || $fieldDef['dbType'] == 'longtext'
-                || $fieldDef['dbType'] == 'longblob' ))
-            unset($fieldDef['default']);
-        if ($fieldDef['dbType'] == 'uint')
-            $fieldDef['len'] = '10';
-        if ($fieldDef['dbType'] == 'ulong')
-            $fieldDef['len'] = '20';
-        if ($fieldDef['dbType'] == 'bool')
-            $fieldDef['type'] = 'tinyint';
-        if ($fieldDef['dbType'] == 'bool' && empty($fieldDef['default']) )
-            $fieldDef['default'] = '0';
-        if (($fieldDef['dbType'] == 'varchar' || $fieldDef['dbType'] == 'enum') && empty($fieldDef['len']) )
-            $fieldDef['len'] = '255';
-        if ($fieldDef['dbType'] == 'uint')
-            $fieldDef['len'] = '10';
-        if ($fieldDef['dbType'] == 'int' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '11';
+        switch($fieldDef['type']){
+            case 'integer'  :   $fieldDef['len'] = '4'; break;
+            case 'smallint' :   $fieldDef['len'] = '2'; break;
+            case 'bigint'   :   $fieldDef['len'] = '8'; break;
+            case 'double'   :   $fieldDef['len'] = '8'; break;
+            case 'time'     :   $fieldDef['len'] = '3'; break;
+            case 'varchar'  :   if(empty($fieldDef['len']))
+                                    $fieldDef['len'] = '255';
+                                break;
+            case 'decimal'  :   if(empty($fieldDef['precision'])
+                                   && !strpos($fieldDef['len'], ','))
+                                    $fieldDef['len'] .= ',0'; // Adding 0 precision if it is not specified
+                                break;
+        }
+
+        if(!$fieldDef['isnull']) $fieldDef['isnull'] = 'false';
+//
+//        if ($fieldDef['type'] == 'int')
+//            $fieldDef['len'] = '4';
+//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '1';
+//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '1';
+//        if ($fieldDef['type'] == 'float' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '8';
+//        if ($fieldDef['type'] == 'varchar' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '255';
+//		if ($fieldDef['type'] == 'nvarchar' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '255';
+//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['default']) )
+//            $fieldDef['default'] = '0';
+//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['default']) )
+//            $fieldDef['default'] = '0';
+//        if ($fieldDef['type'] == 'image' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '2147483647';
+//        if ($fieldDef['type'] == 'ntext' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '2147483646';
+//        if ($fieldDef['type'] == 'smallint' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '2';
+//		if (isset($fieldDef['required']) && $fieldDef['required'] && !isset($fieldDef['default']) )
+//			$fieldDef['default'] = '';
+
+//        if ( isset($fieldDef['default']) &&
+//            ($fieldDef['dbType'] == 'text'
+//                || $fieldDef['dbType'] == 'blob'
+//                || $fieldDef['dbType'] == 'longtext'
+//                || $fieldDef['dbType'] == 'longblob' ))
+//            unset($fieldDef['default']);
+//        if ($fieldDef['dbType'] == 'uint')
+//            $fieldDef['len'] = '10';
+//        if ($fieldDef['dbType'] == 'ulong')
+//            $fieldDef['len'] = '20';
+//        if ($fieldDef['dbType'] == 'bool')
+//            $fieldDef['type'] = 'tinyint';
+//        if ($fieldDef['dbType'] == 'bool' && empty($fieldDef['default']) )
+//            $fieldDef['default'] = '0';
+//        if (($fieldDef['dbType'] == 'varchar' || $fieldDef['dbType'] == 'enum') && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '255';
+//        if ($fieldDef['dbType'] == 'uint')
+//            $fieldDef['len'] = '10';
+//        if ($fieldDef['dbType'] == 'int' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '11';
+    }
+
+
+    /**
+    * Can this field be null?
+    *
+    * Fields that are part of indexes cannot be null in DB2 and this are marked as 'required' and not 'isnull'
+    * @param array $vardef
+    * @see parent::isNullable($vardef)
+    */
+    protected function isNullable($vardef)
+    {
+        if(!empty($vardef['required']) && ($vardef['required'] || $vardef['required'] == 'true')
+            && !empty($vardef['isnull']) && (!$vardef['isnull'] || $vardef['isnull'] == 'false')) {
+            return false;
+        }
+		return parent::isNullable($vardef);
     }
 
     /**+
@@ -1324,6 +1426,7 @@ EOQ;
      */
     public function getDbInfo()
     {
+        $this->getDatabase();
         return array(
           	"IBM DB2 Client Info" => @db2_client_info($this->database),
       		"IBM DB2 Server Info" => @db2_server_info($this->database),
