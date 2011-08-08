@@ -48,11 +48,21 @@ Pushed code for help popups into smarty function sugar_help and the code for inc
  */
 function smarty_function_overlib_includes($params, &$smarty)
 {
-    $path = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
+
+    global $INCLUDE_OVERLIB_INCLUDED;
+
+    //only include the overlib files once
+    if(empty($INCLUDE_OVERLIB_INCLUDED)){
+        $INCLUDE_OVERLIB_INCLUDED = true;
+
+		$path = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
 	return <<<EOHTML
 <!-- begin includes for overlib -->
-<script type="text/javascript" src="$path"></script>
+<script src="$path"></script>
+
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000; max-width: 400px;"></div>
 <!-- end includes for overlib -->
 EOHTML;
+
+    }
 }
