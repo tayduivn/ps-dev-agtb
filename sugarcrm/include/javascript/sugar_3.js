@@ -4171,8 +4171,15 @@ SUGAR.util.closeActivityPanel = {
                         //var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
-                            {	//refresh window to show updated changes
-								window.location.reload(true);
+                            {
+                                // Bug 45792: Firefox seems to believe reloading a page after an ajax request means you are re-submitting a form and gives you the warning for it.
+                                // So instead, if we know it's a listview type we'll just go ahead and redirect
+//                                if (viewType == 'listview') {
+//                                    document.location = 'index.php?module=' + module + '&action=index';
+//                                } else {
+                                    //refresh window to show updated changes
+								    window.setTimeout("window.location.reload(true);",0);
+//                                }
 								/*
                                 if(viewType == 'dashlet')
                                 {
@@ -4185,9 +4192,6 @@ SUGAR.util.closeActivityPanel = {
 										showSubPanel('history',null,true);
 									}
 									ajaxStatus.hideStatus();
-
-                                }else if(viewType == 'listview'){
-                                    document.location = 'index.php?module=' + module +'&action=index';
 									}
 								*/
                             },
