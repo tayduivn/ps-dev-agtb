@@ -33,6 +33,7 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertNotRegExp('/utilsLink/', $output, 'Assert that the links are not shown for normal user');
 	}
 	
+	//BEGIN SUGARCRM flav=pro ONLY
 	public function testViewAsModuleAdmin()
 	{
 		$GLOBALS['current_user'] = new Bug45714UserMock();
@@ -41,6 +42,7 @@ class Bug45714Test extends Sugar_PHPUnit_Framework_TestCase
 		$output = $this->getEmployeeDetailViewOutput();
 		$this->assertRegExp('/utilsLink/', $output, 'Assert that the links are shown for module admin user');	
 	}
+	//END SUGARCRM flav=pro ONLY
 	
 	private function getEmployeeListViewOutput()
 	{
