@@ -974,7 +974,6 @@ SE.composeLayout = {
 	                	SE.composeLayout.composeTemplate.exec({
 	                        'app_strings':app_strings,
 	                        'mod_strings':mod_strings,
-	                        'theme': theme,
 	                        'linkbeans_options' : linkBeans,
 	                        'idx' : SE.composeLayout.currentInstanceId
 	                	})

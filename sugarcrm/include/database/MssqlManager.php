@@ -452,7 +452,8 @@ class MssqlManager extends DBManager
             $GLOBALS['log']->debug(print_r(func_get_args(),true));
             $this->lastsql = $sql;
             $matches = array();
-            if(preg_match('/^(.*SELECT )(.*?FROM.*?)(WHERE(.*))?$/isU',$sql, $matches)) {
+            preg_match('/^(.*SELECT )(.*?FROM.*WHERE)(.*)$/isU',$sql, $matches);
+            if (!empty($matches[3])) {
                 if ($start == 0) {
                     $match_two = strtolower($matches[2]);
                     if (!strpos($match_two, "distinct")> 0 && strpos($match_two, "distinct") !==0) {
