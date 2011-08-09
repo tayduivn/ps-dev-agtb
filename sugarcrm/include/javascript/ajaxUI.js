@@ -182,16 +182,18 @@ SUGAR.ajaxUI = {
             && /action=ajaxui/.exec(window.location))
         {
             var string = con.setForm(form);
+            var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
+            SA.lastURL = baseUrl;
             //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
             if(string.length > 200)
             {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
                     success: SA.callback
                 });
-                window.location="index.php?action=ajaxui#ajaxUILoc=";
+                window.location=baseUrl;
             } else {
                 con.resetFormState();
-                window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent("index.php?" + string);
+                window.location = baseUrl + encodeURIComponent("index.php?" + string);
             }
             return true;
         } else {
