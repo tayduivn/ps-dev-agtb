@@ -3094,6 +3094,9 @@ embed
 		-webkit-border-top-left-radius: 0px;
 		height: 687px;
 		overflow: auto;
+		width: auto;
+		display: block;
+		background-color: #fff;
 	}
 	
 	.dashletPanelMenu.wizard.import .bd #submitDiv {
