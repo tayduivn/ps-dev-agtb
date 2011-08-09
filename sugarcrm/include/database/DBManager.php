@@ -771,7 +771,7 @@ abstract class DBManager
 			    }
                 $altersql = $this->alterColumnSQL($tablename, $value,$ignorerequired);
                 if(is_array($altersql)) {
-                    $altersql = join('\n', $altersql);
+                    $altersql = join("\n", $altersql);
                 }
                 $sql .= $altersql .  "\n";
                 if($execute){
