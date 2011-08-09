@@ -518,6 +518,7 @@ class EditView
         global $sugar_version;
         $this->th->ss->assign('SUGAR_VERSION', $sugar_version);
         $this->th->ss->assign('JS_CUSTOM_VERSION', $js_custom_version);
+        $this->th->ss->assign('VERSION_MARK', getVersionedPath(''));
 
         //this is used for multiple forms on one page
         if ( !empty($this->formName) ) {

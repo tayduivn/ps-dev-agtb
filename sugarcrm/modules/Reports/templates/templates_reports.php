@@ -261,7 +261,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 
 	$smarty->assign('reportDetailsButtonTitle', $reportDetailsButtonTitle);
 	$smarty->assign('reportDetailsTableStyle', $reportDetailsTableStyle);
-    $smarty->assign('cache_path', $GLOBALS['sugar_config']['cache_dir']);
+    $smarty->assign('cache_path', sugar_cached(''));
 	template_reports_request_vars_js($smarty, $reporter,$args);
 	//custom chart code
     require_once('include/SugarCharts/SugarChartFactory.php');
@@ -652,7 +652,7 @@ function template_reports_report(&$reporter,&$args) {
 	$smarty->assign('md5_current_user_id', md5($current_user->id));
 	$smarty->assign('args_image_path', $args['IMAGE_PATH']);
 	template_reports_request_vars_js($smarty, $reporter,$args);
-	$smarty->assign('cache_path', $GLOBALS['sugar_config']['cache_dir']);
+	$smarty->assign('cache_path', sugar_cached(''));
 	echo $smarty->fetch("modules/Reports/templates/_template_reports_report.tpl");
 
 ob_start();
@@ -1090,7 +1090,7 @@ style="display: none"
 // template_module_defs_js($args);
 ?>
 <script type="text/javascript" src="cache/modules/modules_def_<?php echo $current_language; ?>_<?php echo md5($current_user->id) ?>.js"></script>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/include/javascript/sugar_grp_overlib.js"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 

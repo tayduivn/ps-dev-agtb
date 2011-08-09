@@ -45,7 +45,7 @@ $trackerManager = TrackerManager::getInstance();
 $trackerManager->pause();
 
 
-$cache_dir                          = 'cache/';
+$cache_dir                          = sugar_cached("");
 $line_entry_format                  = "&nbsp&nbsp&nbsp&nbsp&nbsp<b>";
 $line_exit_format                   = "... &nbsp&nbsp</b>";
 $rel_dictionary                 = $dictionary; // sourced by modules/TableDictionary.php
@@ -460,8 +460,8 @@ enableInsideViewConnector();
     require_once('modules/Versions/InstallDefaultVersions.php');
 
 //BEGIN SUGARCRM flav=int ONLY
-    if(is_file('cache/dashlets/dashlets.php')){
-        unlink('cache/dashlets/dashlets.php');
+    if(is_file(sugar_cached('dashlets/dashlets.php'))){
+        unlink(sugar_cached('dashlets/dashlets.php'));
     }
 	require_once('include/Dashlets/DashletCacheBuilder.php');
     $dc = new DashletCacheBuilder();

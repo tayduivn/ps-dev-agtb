@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<script src="./modules/Administration/javascript/Administration.js"></script>
-<script src="./modules/Administration/javascript/Async.js"></script>
+<script src="{sugar_getjspath file='modules/Administration/javascript/Administration.js'}"></script>
+<script src="{sugar_getjspath file='modules/Administration/javascript/Async.js'}"></script>
 
 <div>
 	{$mod.LBL_REPAIRXSS_INSTRUCTIONS}

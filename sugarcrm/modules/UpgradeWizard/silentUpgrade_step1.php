@@ -43,8 +43,8 @@ function prepSystemForUpgradeSilent() {
 
 	// make sure dirs exist
 	foreach($subdirs as $subdir) {
-		if(!is_dir(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"))) {
-	    	mkdir_recursive(clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/{$subdir}"));
+		if(!is_dir("upload://upgrades/{$subdir}")) {
+	    	mkdir_recursive("upload://upgrades/{$subdir}");
 		}
 	}
 }
@@ -609,8 +609,8 @@ prepSystemForUpgradeSilent();
 //repair tabledictionary.ext.php file if needed
 repairTableDictionaryExtFile();
 
-$unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp");
-$install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
+$unzip_dir = sugar_cached("upgrades/temp");
+$install_file = "upload://upgrades/patch/".basename($argv[1]);
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -639,12 +639,12 @@ copy($argv[1], $install_file);
 ///////////////////////////////////////////////////////////////////////////////
 ////	UPGRADE UPGRADEWIZARD
 
-$zipBasePath = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/{$zip_from_dir}");
-$uwFiles = findAllFiles(clean_path("{$zipBasePath}/modules/UpgradeWizard"), array());
+$zipBasePath = "$unzip_dir/{$zip_from_dir}";
+$uwFiles = findAllFiles("{$zipBasePath}/modules/UpgradeWizard", array());
 $destFiles = array();
 
 foreach($uwFiles as $uwFile) {
-	$destFile = clean_path(str_replace($zipBasePath, $cwd, $uwFile));
+	$destFile = str_replace($zipBasePath."/", '', $uwFile);
 	copy($uwFile, $destFile);
 }
 require_once('modules/UpgradeWizard/uw_utils.php'); // must upgrade UW first
@@ -669,14 +669,14 @@ if($configOptions['db_type'] == 'mysql'){
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	MAKE SURE PATCH IS COMPATIBLE
-if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php")) {
+if(is_file("$unzip_dir/manifest.php")) {
 	// provides $manifest array
-	include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
+	include("$unzip_dir/manifest.php");
 	if(!isset($manifest)) {
 		fwrite(STDERR,"\nThe patch did not contain a proper manifest.php file.  Cannot continue.\n\n");
 	    exit(1);
 	} else {
-		copy("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php", "{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/{$zip_from_dir}-manifest.php");
+		copy("$unzip_dir/manifest.php", "upload://upgrades/patch/{$zip_from_dir}-manifest.php");
 
 		$error = validate_manifest($manifest);
 		if(!empty($error)) {
@@ -807,9 +807,10 @@ if(!didThisStepRunBefore('commit')){
 	}
 
 	//Clean smarty from cache
-	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'smarty')){
+	$cachedir = sugar_cached('smarty');
+	if(is_dir($cachedir)){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'smarty',$allModFiles);
+		$allModFiles = findAllFiles($cachedir,$allModFiles);
 	   foreach($allModFiles as $file){
 	       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 	       	if(file_exists($file)){
@@ -998,9 +999,10 @@ if(!didThisStepRunBefore('commit')){
 	  }
 
 	//Clean modules from cache
-		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'smarty')){
+	    $cachedir = sugar_cached('smarty');
+		if(is_dir($cachedir)){
 			$allModFiles = array();
-			$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'smarty',$allModFiles);
+			$allModFiles = findAllFiles($cachedir,$allModFiles);
 		   foreach($allModFiles as $file){
 		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 		       	if(file_exists($file)){
@@ -1010,9 +1012,10 @@ if(!didThisStepRunBefore('commit')){
 		}
    //delete cache/modules before rebuilding the relations
    	//Clean modules from cache
-		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
+   	    $cachedir = sugar_cached('modules');
+		if(is_dir($cachedir)){
 			$allModFiles = array();
-			$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
+			$allModFiles = findAllFiles($cachedir,$allModFiles);
 		   foreach($allModFiles as $file){
 		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 		       	if(file_exists($file)){
@@ -1022,9 +1025,10 @@ if(!didThisStepRunBefore('commit')){
 		}
 
 		//delete cache/themes
-		if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
+		$cachedir = sugar_cached('themes');
+		if(is_dir($cachedir)){
 			$allModFiles = array();
-			$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'themes',$allModFiles);
+			$allModFiles = findAllFiles($cachedir,$allModFiles);
 		   foreach($allModFiles as $file){
 		       	//$file_md5_ref = str_replace(clean_path(getcwd()),'',$file);
 		       	if(file_exists($file)){
@@ -1192,18 +1196,18 @@ echo "RUNNING DCE UPGRADE\n";
 
 /**
  * repairTableDictionaryExtFile
- * 
- * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file 
+ *
+ * There were some scenarios in 6.0.x whereby the files loaded in the extension tabledictionary.ext.php file
  * did not exist.  This would cause warnings to appear during the upgrade.  As a result, this
  * function scans the contents of tabledictionary.ext.php and then remove entries where the file does exist.
  */
 function repairTableDictionaryExtFile()
 {
 	$tableDictionaryExtDirs = array('custom/Extension/application/Ext/TableDictionary', 'custom/application/Ext/TableDictionary');
-	
+
 	foreach($tableDictionaryExtDirs as $tableDictionaryExt)
 	{
-	
+
 		if(is_dir($tableDictionaryExt) && is_writable($tableDictionaryExt)){
 			$dir = dir($tableDictionaryExt);
 			while(($entry = $dir->read()) !== false)
@@ -1211,20 +1215,20 @@ function repairTableDictionaryExtFile()
 				$entry = $tableDictionaryExt . '/' . $entry;
 				if(is_file($entry) && preg_match('/\.php$/i', $entry) && is_writeable($entry))
 				{
-			
+
 						if(function_exists('sugar_fopen'))
 						{
 							$fp = @sugar_fopen($entry, 'r');
 						} else {
 							$fp = fopen($entry, 'r');
-						}			
-						
-						
+						}
+
+
 					    if($fp)
 				        {
 				             $altered = false;
 				             $contents = '';
-						     
+
 				             while($line = fgets($fp))
 						     {
 						    	if(preg_match('/\s*include\s*\(\s*[\'|\"](.*?)[\"|\']\s*\)\s*;/', $line, $match))
@@ -1239,11 +1243,11 @@ function repairTableDictionaryExtFile()
 						    	   $contents .= $line;
 						    	}
 						     }
-						     
-						     fclose($fp); 
+
+						     fclose($fp);
 				        }
-				        
-				        
+
+
 					    if($altered)
 					    {
 							if(function_exists('sugar_fopen'))
@@ -1251,13 +1255,13 @@ function repairTableDictionaryExtFile()
 								$fp = @sugar_fopen($entry, 'w');
 							} else {
 								$fp = fopen($entry, 'w');
-							}		    	
-				            
+							}
+
 							if($fp && fwrite($fp, $contents))
 							{
 								fclose($fp);
 							}
-					    }					
+					    }
 				} //if
 			} //while
 		} //if

@@ -40,8 +40,8 @@ class MySugar{
 
     function checkDashletDisplay () {
 
-		if((!in_array($this->type, $GLOBALS['moduleList']) 
-				&& !in_array($this->type, $GLOBALS['modInvisList'])) 
+		if((!in_array($this->type, $GLOBALS['moduleList'])
+				&& !in_array($this->type, $GLOBALS['modInvisList']))
 				&& (!in_array('Activities', $GLOBALS['moduleList']))){
 			$displayDashlet = false;
 		}
@@ -60,13 +60,13 @@ class MySugar{
     }
 
 	function addDashlet(){
-		if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
+		if(!is_file(sugar_cached('dashlets/dashlets.php'))) {
             require_once('include/Dashlets/DashletCacheBuilder.php');
 
             $dc = new DashletCacheBuilder();
             $dc->buildCache();
 		}
-		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+		require_once sugar_cached('dashlets/dashlets.php');
 
 		global $current_user;
 
@@ -152,7 +152,7 @@ class MySugar{
 		        $dashlets[$id]['sort_options'] = array('sortOrder' => $sortOrder, 'orderBy' => $orderBy);
 		        $current_user->setPreference('dashlets', $dashlets, 0, $this->type);
 		    }
-		    
+
 		    require_once($dashlets[$id]['fileLocation']);
 		    $dashlet = new $dashlets[$id]['className']($id, (isset($dashlets[$id]['options']) ? $dashlets[$id]['options'] : array()));
 		    if(!empty($_REQUEST['configure']) && $_REQUEST['configure']) { // save settings
@@ -588,13 +588,12 @@ EOJS;
 		// javascript hack for single quotes -- escape the backspaces
 		$newPageName = str_replace("\'", "'", $newPageName);
 
-		$newPage['pageTitle'] = remove_xss(from_html($newPageName['jsonObject']));
-
+		$newPage['pageTitle'] = $newPageName['jsonObject'];
 		$newPage['numColumns'] = $_REQUEST['numCols'];
 
 		array_push($pages,$newPage);
 
-		//store preference and echo guid		
+		//store preference and echo guid
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
 		$newPagesPref = $current_user->getPreference('pages', $this->type);
@@ -662,13 +661,13 @@ EOJS;
 		global $app_strings, $theme;
 
 		// build dashlet cache file if not found
-		if(!is_file($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php')) {
+		if(!is_file(sugar_cached('dashlets/dashlets.php'))) {
 		    require_once('include/Dashlets/DashletCacheBuilder.php');
 
 		    $dc = new DashletCacheBuilder();
 		    $dc->buildCache();
 		}
-		require_once($GLOBALS['sugar_config']['cache_dir'].'dashlets/dashlets.php');
+		require_once(sugar_cached('dashlets/dashlets.php'));
 
 		$pages = $current_user->getPreference('pages', $this->type);
 		$dashlets = $current_user->getPreference('dashlets', $this->type);
@@ -698,11 +697,11 @@ EOJS;
 	    $chartColorsXML = SugarThemeRegistry::current()->getImageURL('sugarColors.xml');
 
 	    $chartStringsXML = $sugar_config['tmp_dir'].'chart_strings.' . $current_language .'.lang.xml';
-	    
+
 	    require_once('include/SugarCharts/SugarChartFactory.php');
 		$sugarChart = SugarChartFactory::getInstance();
-			
-			
+
+
         if (!file_exists($chartStringsXML)) {
             $sugarChart->generateChartStrings($chartStringsXML);
 		}
@@ -829,7 +828,7 @@ EOJS;
 
 		$scriptOutput = 'var scriptResponse = '.$json->encode($scriptResponse);
 
-		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
+		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput), false, true);
 	}
 	//END SUGARCRM flav=pro ONLY
 

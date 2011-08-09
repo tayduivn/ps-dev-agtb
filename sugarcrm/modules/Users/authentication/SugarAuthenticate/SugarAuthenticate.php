@@ -216,14 +216,12 @@ class SugarAuthenticate{
 		$GLOBALS['log']->debug("authenticated_user_language is $authenticated_user_language");
 
 		// Clear all uploaded import files for this user if it exists
-
-		$tmp_file_name = $sugar_config['import_dir']."IMPORT_".$GLOBALS['current_user']->id;
+        require_once('modules/Import/ImportCacheFiles.php');
+        $tmp_file_name = ImportCacheFiles::getImportDir()."/IMPORT_" . $focus->id;
 
 		if (file_exists($tmp_file_name)) {
 			unlink($tmp_file_name);
 		}
-
-
 
 		return true;
 	}

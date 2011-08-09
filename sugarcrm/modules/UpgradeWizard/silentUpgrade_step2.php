@@ -294,17 +294,9 @@ $errors = array();
 
 /////retrieve admin user
 
-
-
-
-$unzip_dir = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp");
-$install_file = clean_path("{$cwd}/{$sugar_config['upload_dir']}upgrades/patch/".basename($argv[1]));
-
-if(!file_exists("{$sugar_config['upload_dir']}upgrades/patch"))
-{
-	logThis("Create directory " . dirname($install_file), $path);
-	mkdir_recursive("{$sugar_config['upload_dir']}upgrades/patch");
-}
+$unzip_dir = sugar_cached("upgrades/temp");
+$install_file = "upload://upgrades/patch/".basename($argv[1]);
+UploadStream::ensureDir("upload://upgrades/patch/");
 
 $_SESSION['unzip_dir'] = $unzip_dir;
 $_SESSION['install_file'] = $install_file;
@@ -362,7 +354,7 @@ if(is_dir($GLOBALS['sugar_config']['cache_dir'].'themes')){
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
 require_once('jssource/minify.php');
-	
+
 //Add the cache cleaning here.
 if(function_exists('deleteCache'))
 {
@@ -437,8 +429,8 @@ logThis('Start rebuild relationships.', $path);
 @rebuildRelations();
 logThis('End rebuild relationships.', $path);
 
-include("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+include("$unzip_dir/manifest.php");
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt')  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
     global $silent_upgrade_vars_loaded;

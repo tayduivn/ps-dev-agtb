@@ -42,25 +42,23 @@ require_once('include/ListView/ListViewFacade.php');
 class ImportViewLast extends ImportView
 {
     protected $pageTitleKey = 'LBL_STEP_5_TITLE';
-    
- 	/** 
+
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $current_language;
-        
-        
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
         // lookup this module's $mod_strings to get the correct module name
-        $module_mod_strings = 
+        $module_mod_strings =
             return_module_language($current_language, $_REQUEST['import_module']);
         $this->ss->assign("MODULENAME",$module_mod_strings['LBL_MODULE_NAME']);
-        
+
         // read status file to get totals for records imported, errors, and duplicates
         $count        = 0;
         $errorCount   = 0;
@@ -96,10 +94,10 @@ class ImportViewLast extends ImportView
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
         $this->ss->assign("updatedCount",$updatedCount);
-        $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
-        $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsWithoutErrorFileName());
-        $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
-        
+        $this->ss->assign("errorFile",$this->getDownloadURL(ImportCacheFiles::getErrorFileName()));
+        $this->ss->assign("errorrecordsFile",$this->getDownloadURL(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
+        $this->ss->assign("dupeFile",$this->getDownloadURL(ImportCacheFiles::getDuplicateFileName()));
+
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
         {
@@ -146,6 +144,12 @@ class ImportViewLast extends ImportView
 	    $submitContent .= "</td></tr></table>";
         $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+    }
+
+    protected function getDownloadURL($filename)
+    {
+    	$name = basename(UploadFile::relativeName($filename));
+    	return "index.php?entryPoint=download&type=import&isTempFile=1&tempName={$name}&id={$name}";
     }
 
     protected function getListViewResults()
@@ -320,10 +324,10 @@ EOJAVASCRIPT;
      *
      * @return string html code to display button
      */
-    private function _addToProspectListButton() 
+    private function _addToProspectListButton()
     {
         global $app_strings, $sugar_version, $sugar_config, $current_user;
-        
+
         $query = "SELECT distinct prospects.id, prospects.assigned_user_id, prospects.first_name, prospects.last_name, prospects.phone_work, prospects.title,
 				email_addresses.email_address email1, users.user_name as assigned_user_name
 				FROM users_last_import,prospects
@@ -332,7 +336,7 @@ EOJAVASCRIPT;
 				LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id
 				WHERE users_last_import.assigned_user_id = '{$current_user->id}' AND users_last_import.bean_type='Prospect' AND users_last_import.bean_id=prospects.id
 				AND users_last_import.deleted=0 AND prospects.deleted=0";
-        
+
         $popup_request_data = array(
             'call_back_function' => 'set_return_and_save_background',
             'form_name' => 'DetailView',
@@ -351,23 +355,23 @@ EOJAVASCRIPT;
                 'child_id'=>'id',
                 'link_attribute'=>'prospects',
                 'link_type'=>'default',	 //polymorphic or default
-            )				
+            )
         );
-    
+
         $popup_request_data['passthru_data']['query'] = urlencode($query);
-    
+
         $json = getJSONobj();
-        $encoded_popup_request_data = $json->encode($popup_request_data);	
-    
+        $encoded_popup_request_data = $json->encode($popup_request_data);
+        $script = getVersionedScript('include/SubPanel/SubPanelTiles.js');
         return <<<EOHTML
-<script type="text/javascript" src="include/SubPanel/SubPanelTiles.js?s={$sugar_version}&c={$sugar_config['js_custom_version']}"></script>
+$script
 <input align=right" type="button" name="select_button" id="select_button" class="button"
      title="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      accesskey="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY']}"
      value="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      onclick='open_popup("ProspectLists",600,400,"",true,true,$encoded_popup_request_data,"Single","true");' />
 EOHTML;
-    
+
     }
     //END SUGARCRM flav!=sales ONLY
 }

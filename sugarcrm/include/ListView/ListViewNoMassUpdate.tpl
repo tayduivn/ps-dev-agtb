@@ -32,8 +32,8 @@
 *}
 
 {if $overlib}
-	<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
-	<script type='text/javascript' src='include/javascript/overlibmws_iframe.js'></script>
+	<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws.js'}"></script>
+	<script type='text/javascript' src="{sugar_getjspath file='include/javascript/overlibmws_iframe.js'}"></script>
 	<div id='overDiv' style='position:absolute; visibility:hidden; z-index:1000;'></div>
 {/if}
 

@@ -609,7 +609,7 @@ class SugarView
 			require_once('include/DashletContainer/DCFactory.php');
 			$dcm = DCFactory::getContainer(null, 'DCMenu');
 			$data = $dcm->getLayout();
-			$dcjs = "<script src='".getJSPath('include/DashletContainer/Containers/DCMenu.js')."'></script>";
+			$dcjs = getVersionedScript('include/DashletContainer/Containers/DCMenu.js');
 			$ss->assign('SUGAR_DCJS', $dcjs);
 			$ss->assign('SUGAR_DCMENU', $data['html']);
 		}
@@ -672,24 +672,24 @@ class SugarView
             echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
         }
         echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-        if (!is_file("include/javascript/sugar_grp1.js")) {
+        if (!is_file(sugar_cached("include/javascript/sugar_grp1.js"))) {
             $_REQUEST['root_directory'] = ".";
             require_once("jssource/minify_utils.php");
             ConcatenateFiles(".");
         }
-        echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
-        echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
+        echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
+        echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!is_file("cache/Expressions/functions_cache.js")) {
+        if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
             $GLOBALS['updateSilent'] = true;
             include("include/Expressions/updatecache.php");
         }
         if(inDeveloperMode())
-            echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache_debug.js') . '"></script>';
+            echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
         else
-            echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache.js') . '"></script>';
+            echo getVersionedScript('cache/Expressions/functions_cache.js');
         //END SUGARCRM flav=pro ONLY
-        echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
+        echo getVersionedScript('include/javascript/calendar.js');
         echo <<<EOQ
         <script>
             if ( typeof(SUGAR) == 'undefined' ) {SUGAR = {}};
@@ -697,7 +697,7 @@ class SugarView
         </script>
 EOQ;
         if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
-            echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
+            echo getVersionedScript('modules/Sync/headersync.js');
     }
 
     /**
@@ -757,25 +757,25 @@ EOQ;
 <html>
 <head>
 EOHTML;
-
-            echo "<script>var sugar_cache_dir = '{$GLOBALS['sugar_config']['cache_dir']}';</script>";
-            echo "<script>var sugar_upload_dir = '{$GLOBALS['sugar_config']['upload_dir']}';</script>";
+            $js_vars = array(
+                "sugar_cache_dir" => "cache/",
+                );
 
             if(isset($this->bean->module_dir)){
-                echo "<script>var module_sugar_grp1 = '{$this->bean->module_dir}';</script>";
+                $js_vars['module_sugar_grp1'] = $this->bean->module_dir;
             }
             if(isset($_REQUEST['action'])){
-                echo "<script>var action_sugar_grp1 = '{$_REQUEST['action']}';</script>";
+                $js_vars['action_sugar_grp1'] = $_REQUEST['action'];
             }
             echo '<script>jscal_today = 1000*' . $timedate->asUserTs($timedate->getNow()) . '; if(typeof app_strings == "undefined") app_strings = new Array();</script>';
-            if (!is_file("include/javascript/sugar_grp1.js") || !is_file("include/javascript/sugar_grp1_yui.js")) {
+            if (!is_file(sugar_cached("include/javascript/sugar_grp1.js")) || !is_file(sugar_cached("include/javascript/sugar_grp1_yui.js"))) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
-            echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1_yui.js') . '"></script>';
-            echo '<script type="text/javascript" src="' . getJSPath('include/javascript/sugar_grp1.js') . '"></script>';
-            echo '<script type="text/javascript" src="' . getJSPath('include/javascript/calendar.js') . '"></script>';
+            echo getVersionedScript('cache/include/javascript/sugar_grp1_yui.js');
+            echo getVersionedScript('cache/include/javascript/sugar_grp1.js');
+            echo getVersionedScript('include/javascript/calendar.js');
 
             // output necessary config js in the top of the page
             $config_js = $this->getSugarConfigJS();
@@ -787,26 +787,26 @@ EOHTML;
             echo '<script type="text/javascript">SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
             echo self::getJavascriptValidation();
-            if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
+            if (!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
                 require_once ('include/language/jsLanguage.php');
                 jsLanguage::createAppStringsCache($GLOBALS['current_language']);
             }
-            echo '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+            echo getVersionedScript('cache/jsLanguage/'. $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
 
 			echo $this->_getModLanguageJS();
 
             if(isset( $sugar_config['disc_client']) && $sugar_config['disc_client'])
-                echo '<script type="text/javascript" src="' . getJSPath('modules/Sync/headersync.js') . '"></script>';
+                echo getVersionedScript('modules/Sync/headersync.js');
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if (!is_file("cache/Expressions/functions_cache.js")) {
+            if (!is_file(sugar_cached("Expressions/functions_cache.js"))) {
                 $GLOBALS['updateSilent'] = true;
                 include("include/Expressions/updatecache.php");
             }
             if(inDeveloperMode())
-                echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache_debug.js') . '"></script>';
+                echo getVersionedScript('cache/Expressions/functions_cache_debug.js');
             else
-                echo '<script type="text/javascript" src="' . getJSPath('cache/Expressions/functions_cache.js') . '"></script>';
+                echo getVersionedScript('cache/Expressions/functions_cache.js');
 
             require_once("include/Expressions/DependencyManager.php");
             echo "\n" . '<script type="text/javascript">' . DependencyManager::getJSUserVariables($GLOBALS['current_user']) . "</script>\n";
@@ -815,11 +815,11 @@ EOHTML;
     }
 
 	protected function _getModLanguageJS(){
-		if (!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
+		if (!is_file(sugar_cached('jsLanguage/') . $this->module . '/' . $GLOBALS['current_language'] . '.js')) {
 			require_once ('include/language/jsLanguage.php');
 			jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language']);
 		}
-		return '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $this->module . '/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['js_version_key'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+		return getVersionedScript("cache/jsLanguage/{$this->module}/". $GLOBALS['current_language'] . '.js', $GLOBALS['sugar_config']['js_lang_version']);
 	}
 
     /**

@@ -327,7 +327,7 @@ FRA;
      * Display the collection field after retrieving the cached row.
      */
     function display(){
-        $cacheRowFile = $GLOBALS['sugar_config']['cache_dir'] . 'modules/'. $this->module_dir .  '/collections/'. $this->name . '.tpl';
+        $cacheRowFile = sugar_cached('modules/') . $this->module_dir .  '/collections/'. $this->name . '.tpl';
         if(!$this->checkTemplate($cacheRowFile)){
             $dir = dirname($cacheRowFile);
             if(!file_exists($dir)) {

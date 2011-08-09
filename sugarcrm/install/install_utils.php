@@ -205,14 +205,14 @@ function commitPatch($unlink = false, $type = 'patch'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(getcwd()."/cache/upload/upgrades")) {
-            $files = findAllFiles(getcwd()."/cache/upload/upgrades/$type", $files);
+    if(is_dir($base_upgrade_dir)) {
+            $files = findAllFiles("$base_upgrade_dir/$type", $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
 
             foreach($files as $file) {
-                if(!preg_match("#.*\.zip\$#", $file)) {
+                if(!preg_match('#.*\.zip\$#', $file)) {
                     continue;
                 }
                 // handle manifest.php
@@ -274,14 +274,14 @@ function commitModules($unlink = false, $type = 'module'){
     $current_user = new User();
     $current_user->is_admin = '1';
     $old_mod_strings = $mod_strings;
-    if(is_dir(getcwd()."/cache/upload/upgrades")) {
-            $files = findAllFiles(getcwd()."/cache/upload/upgrades/$type", $files);
+    if(is_dir(sugar_cached("upload/upgrades"))) {
+            $files = findAllFiles(sugar_cached("upload/upgrades/$type"), $files);
             $mi = new ModuleInstaller();
             $mi->silent = true;
             $mod_strings = return_module_language('en', "Administration");
 
             foreach($files as $file) {
-                if(!preg_match("#.*\.zip\$#", $file)) {
+                if(!preg_match('#.*\.zip\$', $file)) {
                     continue;
                 }
                 $lic_name = 'accept_lic_'.str_replace('.', '_', urlencode(basename($file)));
@@ -459,7 +459,7 @@ function getInstalledLangPacks($showButtons=true) {
                 <td width='15%' ></td>
             </tr>\n";
     $files = array();
-    $files = findAllFiles(getcwd()."/cache/upload/upgrades", $files);
+    $files = findAllFiles(sugar_cached("upload/upgrades"), $files);
 
     if(isset($_SESSION['INSTALLED_LANG_PACKS']) && !empty($_SESSION['INSTALLED_LANG_PACKS'])){
         if(count($_SESSION['INSTALLED_LANG_PACKS'] > 0)) {
@@ -717,7 +717,6 @@ function handleSugarConfig() {
     $sugar_config['default_email_client']           = 'sugar';
     $sugar_config['default_email_editor']           = 'html';
     $sugar_config['host_name']                      = $setup_site_host_name;
-    $sugar_config['import_dir']                 = $cache_dir.'import/';
     $sugar_config['js_custom_version']              = '';
     $sugar_config['use_real_names']                 = true;
     $sugar_config['log_dir']                        = $setup_site_log_dir;
@@ -739,7 +738,7 @@ function handleSugarConfig() {
     $sugar_config['site_url']                       = $setup_site_url;
     $sugar_config['sugar_version']                  = $setup_sugar_version;
     $sugar_config['tmp_dir']                        = $cache_dir.'xml/';
-    $sugar_config['upload_dir']                 = $cache_dir.'upload/';
+    $sugar_config['upload_dir']                 = 'upload/';
 //    $sugar_config['use_php_code_json']              = returnPhpJsonStatus(); // true on error
 //BEGIN SUGARCRM flav=com ONLY
     if( isset($_SESSION['setup_site_sugarbeet_anonymous_stats']) ){
@@ -812,7 +811,7 @@ function handleSugarConfig() {
 function handleHtaccess(){
 global $mod_strings;
 $ignoreCase = (substr_count(strtolower($_SERVER['SERVER_SOFTWARE']), 'apache/2') > 0)?'(?i)':'';
-$htaccess_file   = getcwd() . "/.htaccess";
+$htaccess_file   = ".htaccess";
 $contents = '';
 $restrict_str = <<<EOQ
 
@@ -821,7 +820,8 @@ RedirectMatch 403 {$ignoreCase}.*\.log$
 RedirectMatch 403 {$ignoreCase}/+not_imported_.*\.txt
 RedirectMatch 403 {$ignoreCase}/+(soap|cache|xtemplate|data|examples|include|log4php|metadata|modules)/+.*\.(php|tpl)
 RedirectMatch 403 {$ignoreCase}/+emailmandelivery\.php
-RedirectMatch 403 {$ignoreCase}/+cache/+upload
+RedirectMatch 403 {$ignoreCase}/+upload
+RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
 # END SUGARCRM RESTRICTIONS
@@ -1154,7 +1154,7 @@ function make_writable($file)
             // add user writable permission
             $new_fileperms = $original_fileperms | 0x0080;
             @sugar_chmod($file, $new_fileperms);
-
+            clearstatcache();
             if(is_writable($file))
             {
                 $ret_val = true;
@@ -1164,7 +1164,7 @@ function make_writable($file)
                 // add group writable permission
                 $new_fileperms = $original_fileperms | 0x0010;
                 @chmod($file, $new_fileperms);
-
+                clearstatcache();
                 if(is_writable($file))
                 {
                     $ret_val = true;
@@ -1174,7 +1174,7 @@ function make_writable($file)
                     // add world writable permission
                     $new_fileperms = $original_fileperms | 0x0002;
                     @chmod($file, $new_fileperms);
-
+                    clearstatcache();
                     if(is_writable($file))
                     {
                         $ret_val = true;
@@ -1461,7 +1461,7 @@ function pullSilentInstallVarsIntoSession() {
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
-                     'export_delimiter');
+                     'export_delimiter', 'cache_dir');
     copyFromArray($sugar_config_si, $needles, $derived);
     $all_config_vars = array_merge( $config_subset, $sugar_config_si, $derived );
 
@@ -1611,15 +1611,15 @@ function getLangPacks($display_commit = true, $types = array('langpack'), $notic
     $files = array();
 
     // duh, new installs won't have the upgrade folders
-   if(!is_dir(getcwd()."/cache/upload/upgrades")) {
-	    mkdir_recursive( "$base_upgrade_dir");
+   if(!is_dir($base_upgrade_dir)) {
+	    mkdir_recursive( $base_upgrade_dir);
 	}
 	$subdirs = array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 	foreach( $subdirs as $subdir ){
 		mkdir_recursive( "$base_upgrade_dir/$subdir" );
 	}
 
-    $files = findAllFiles(getcwd()."/cache/upload/upgrades", $files);
+    $files = findAllFiles($base_upgrade_dir, $files);
     $hidden_input = '';
     unset($_SESSION['hidden_input']);
 
@@ -1731,71 +1731,59 @@ function unlinkTempFiles($manifest, $zipFile) {
     if(!empty($zipFile)) {
         //@unlink($zipFile);
         $tmpZipFile = substr($zipFile, strpos($zipFile, 'langpack/') + 9, strlen($zipFile));
-        @unlink(getcwd()."/".$sugar_config['upload_dir'].$tmpZipFile);
+        @unlink($sugar_config['upload_dir'].$tmpZipFile);
     }
 
-    rmdir_recursive(getcwd()."/".$sugar_config['upload_dir']."upgrades/temp");
-    sugar_mkdir(getcwd()."/".$sugar_config['upload_dir']."upgrades/temp");
+    rmdir_recursive($sugar_config['upload_dir']."upgrades/temp");
+    sugar_mkdir($sugar_config['upload_dir']."upgrades/temp");
 }
 }
 
-function langPackUnpack($unpack_type = 'langpack', $full_file = '') {
+function langPackUnpack($unpack_type, $full_file)
+{
     global $sugar_config;
     global $base_upgrade_dir;
     global $base_tmp_upgrade_dir;
 
     $manifest = array();
     if(!empty($full_file)){
-        $tempFile = $full_file;
-        $base_filename = urldecode($tempFile);
-        $base_filename = preg_replace( "#\\\\#", "/", $base_filename );
-        $base_filename = basename( $base_filename );
-    }else{
-        $tempFile = getcwd().'/'.$sugar_config['upload_dir'].$_FILES['language_pack']['name'];
-        $base_filename = $_FILES['language_pack']['name'];
+        $base_filename = pathinfo(urldecode($full_file), PATHINFO_FILENAME );
+    } else {
+        return "Empty filename supplied";
     }
-    $manifest_file = extractManifest($tempFile, $base_tmp_upgrade_dir);
+    $manifest_file = extractManifest($full_file, $base_tmp_upgrade_dir);
     if($unpack_type == 'module')
-        $license_file = extractFile($tempFile, 'LICENSE.txt', $base_tmp_upgrade_dir);
+        $license_file = extractFile($full_file, 'LICENSE.txt', $base_tmp_upgrade_dir);
 
     if(is_file($manifest_file)) {
 
         if($unpack_type == 'module' && is_file($license_file)){
-            copy($license_file, getcwd().'/'.$sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-license.txt");
+            copy($license_file, $base_upgrade_dir.'/'.$unpack_type.'/'.$base_filename."-license.txt");
         }
-        copy($manifest_file, getcwd().'/'.$sugar_config['upload_dir'].'upgrades/'.$unpack_type.'/'.remove_file_extension($base_filename)."-manifest.php");
+        copy($manifest_file, $base_upgrade_dir.'/'.$unpack_type.'/'.$base_filename."-manifest.php");
 
         require_once( $manifest_file );
         validate_manifest( $manifest );
         $upgrade_zip_type = $manifest['type'];
 
-        // exclude the bad permutations
-        /*if($upgrade_zip_type != "langpack") {
-            unlinkTempFiles($manifest_file, $tempFile);
-            die( "You can only upload module packs, theme packs, and language packs on this page." );
-        }*/
-
-        //$base_filename = urldecode( $_REQUEST['language_pack_escaped'] );
-        $base_filename = preg_replace( "#\\\\#", "/", $base_filename );
-        $base_filename = basename( $base_filename );
-
         mkdir_recursive( "$base_upgrade_dir/$upgrade_zip_type" );
-        $target_path = getcwd()."/$base_upgrade_dir/$upgrade_zip_type/$base_filename";
-        $target_manifest = remove_file_extension( $target_path ) . "-manifest.php";
+        $target_path = "$base_upgrade_dir/$upgrade_zip_type/$base_filename";
+        $target_manifest = $target_path . "-manifest.php";
 
         if( isset($manifest['icon']) && $manifest['icon'] != "" ) {
-            $icon_location = extractFile( $tempFile, $manifest['icon'], $base_tmp_upgrade_dir );
+            $icon_location = extractFile( $full_file, $manifest['icon'], $base_tmp_upgrade_dir );
             $path_parts = pathinfo( $icon_location );
-            copy( $icon_location, remove_file_extension( $target_path ) . "-icon." . $path_parts['extension'] );
+            copy( $icon_location, $target_path . "-icon." . $path_parts['extension'] );
         }
 
-        // move file from cache/upload to cache/upload/langpack
-        if( copy( $tempFile , $target_path ) ){
+        // move file from uploads to cache
+        // FIXME: where should it be?
+        if( copy( $full_file , $target_path.".zip" ) ){
             copy( $manifest_file, $target_manifest );
-            unlink($tempFile); // remove tempFile
+            unlink($full_file); // remove tempFile
             return "The file $base_filename has been uploaded.<br>\n";
         } else {
-            unlinkTempFiles($manifest_file, $tempFile);
+            unlinkTempFiles($manifest_file, $full_file);
             return "There was an error uploading the file, please try again!<br>\n";
         }
     } else {
@@ -2041,7 +2029,7 @@ function post_install_modules(){
         foreach($modules_to_install as $module_to_install){
             if(is_file($module_to_install)){
                 $pm->performSetup($module_to_install, 'module', false);
-                $file_to_install = 'cache/upload/upgrades/module/'.basename($module_to_install);
+                $file_to_install = sugar_cached('upload/upgrades/module/').basename($module_to_install);
                 $_REQUEST['install_file'] = $file_to_install;
                 $pm->performInstall($file_to_install);
             }
@@ -2117,6 +2105,16 @@ function enableSugarFeeds()
         SugarFeed::activateModuleFeed($module);
 
     check_logic_hook_file('Users','after_login', array(1, 'SugarFeed old feed entry remover', 'modules/SugarFeed/SugarFeedFlush.php', 'SugarFeedFlush', 'flushStaleEntries'));
+}
+
+function create_writable_dir($dirname)
+{
+    if ((is_dir($dirname)) || @sugar_mkdir($dirname,0555)) {
+        $ok = make_writable($dirname);
+    }
+    if(empty($ok)) {
+        installLog("ERROR: Cannot create writable dir $dirname");
+    }
 }
 
 /**

@@ -27,9 +27,9 @@
  ********************************************************************************/
 *}
 {php}
-global $emailInstances; 
+global $emailInstances;
 if (empty($emailInstances))
-	$emailInstances = array(); 
+	$emailInstances = array();
 if (!isset($emailInstances[$this->_tpl_vars['module']]))
 	$emailInstances[$this->_tpl_vars['module']] = 0;
 $this->_tpl_vars['index'] = $emailInstances[$this->_tpl_vars['module']];
@@ -38,7 +38,7 @@ $emailInstances['module']++;
 <script type="text/javascript" language="javascript">
 var emailAddressWidgetLoaded = false;
 </script>
-<script type="text/javascript" src="include/SugarEmailAddress/SugarEmailAddress.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file="include/SugarEmailAddress/SugarEmailAddress.js"}"></script>
 <script type="text/javascript">
 	var module = '{$module}';
 </script>
@@ -53,7 +53,7 @@ var emailAddressWidgetLoaded = false;
 						<input type=hidden id='emailAddressWidget' name='emailAddressWidget' value='1'>
 						<span class="id-ff multiple ownline">
 						<button class='button' type='button'
-onClick="javascript:SUGAR.EmailAddressWidget.instances.{$module}{$index}.addEmailAddress('{$module}emailAddressesTable{$index}','','');" 
+onClick="javascript:SUGAR.EmailAddressWidget.instances.{$module}{$index}.addEmailAddress('{$module}emailAddressesTable{$index}','','');"
 value='{$app_strings.LBL_ADD_BUTTON}'><img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
 						</span>
 					</td>

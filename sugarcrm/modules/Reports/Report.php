@@ -1374,7 +1374,7 @@ function _check_user_permissions()
 
                         $this->full_bean_list[$table_def['parent']]->load_relationships();
                         $params['primary_table_name'] = $this->full_table_list[$table_def['parent']]['params']['join_table_alias'];
-                                    
+
                         if (isset($this->full_bean_list[$table_def['parent']]->$link_name))
                         {
                             if (!$this->full_bean_list[$table_def['parent']]->$link_name->loadedSuccesfully())
@@ -1488,7 +1488,7 @@ function _check_user_permissions()
 
         $query = "SELECT ";
         $field_list_name_array = $this->$field_list_name;
-        foreach($field_list_name_array as $field) {
+            foreach($field_list_name_array as $field) {
             $field = trim($field);
             if(strstr($field, ',')) {
                 $fields = explode(',', $field);
@@ -1516,47 +1516,43 @@ function _check_user_permissions()
 
         // End ACL check
 
-        if(! empty($this->where))
-                        $query .= " WHERE ($this->where) \nAND ".$where_auto;
-        else
-                        $query .= " WHERE ".$where_auto;
+        if(! empty($this->where)) {
+            $query .= " WHERE ($this->where) \nAND ".$where_auto;
+        } else {
+            $query .= " WHERE ".$where_auto;
+        }
 
-
-        if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query'  )
-    {
-            foreach ( $this->group_order_by_arr as $group_order_by )
-  {
+        if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name != 'summary_query') {
+            foreach ( $this->group_order_by_arr as $group_order_by ) {
                 array_unshift($this->order_by_arr, $group_order_by);
             }
-        }
-        else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) && $query_name == 'summary_query'  && empty($this->summary_order_by_arr))
-    {
-            foreach ( $this->group_order_by_arr as $group_order_by )
-  {
+        } else if (! empty($this->group_order_by_arr) && is_array($this->group_order_by_arr) &&
+            $query_name == 'summary_query'  && empty($this->summary_order_by_arr)) {
+            foreach ( $this->group_order_by_arr as $group_order_by ) {
                 array_unshift($this->summary_order_by_arr, $group_order_by);
             }
-    }
+        }
 
         // if we are doing the details part of a summary query.. we need the details
-    // to be sorted by the group by
+        // to be sorted by the group by
+        if(!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query') {
+            $groups = array();
+            // FIXME: see if we need to handle NULLs on GROUP BY
+            //        foreach ( $this->group_by_arr as $group_by ) {
+            //            $groups[] = $this->db->convert($group_by, "IFNULL", array("''"));
+            //        }
+            $query .= " GROUP BY ".join(",", $this->group_by_arr);
+        }
 
-    if(!empty($this->group_by_arr) && is_array($this->group_by_arr) && $query_name != 'total_query') {
-        $groups = array();
-// FIXME: see if we need to handle NULLs on GROUP BY
-//        foreach ( $this->group_by_arr as $group_by ) {
-//            $groups[] = $this->db->convert($group_by, "IFNULL", array("''"));
-//        }
-        $query .= " GROUP BY ".join(",", $this->group_by_arr);
-    }
-    if ( $query_name == 'summary_query') {
-      if(!empty($this->summary_order_by_arr)) {
-         $query .= " ORDER BY ". implode( ',', $this->summary_order_by_arr);
-       }
-    } else if ( $query_name == 'query')  {
-      if(!empty($this->order_by_arr))  {
-          $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
-      }
-    }
+        if ( $query_name == 'summary_query') {
+          if(!empty($this->summary_order_by_arr)) {
+             $query .= " ORDER BY ". implode( ',', $this->summary_order_by_arr);
+           }
+        } else if ( $query_name == 'query')  {
+          if(!empty($this->order_by_arr))  {
+              $query .= " ORDER BY ". implode( ',', $this->order_by_arr);
+          }
+        }
 
         $this->$query_name = $query;
 
@@ -1834,7 +1830,7 @@ function _check_user_permissions()
             $fields[strtoupper($key)] = $value;
         }
 
-		// here we want to make copies, so use foreach
+        // here we want to make copies, so use foreach
 
         foreach($this->report_def[$column_field_name] as $display_column) {
             $display_column['table_alias'] = $this->getTableFromField($display_column);
@@ -1863,47 +1859,46 @@ function _check_user_permissions()
                 $this->layout_manager->setAttribute('context', 'List');
             }
 
-			if ($display_column['type'] !='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) {
-				$pos = $display_column['table_key'];
-				$module_name = '';
-				if($pos) {
-					$module_name = substr($pos ,strrpos($pos,':')+1);
-				}
+            if ($display_column['type']!='currency' || (substr_count($display_column['name'],'_usdoll') == 0 && $display_column['group_function'] != 'weighted_amount' && $display_column['group_function'] != 'weighted_sum')) {
+                $pos = $display_column['table_key'];
+                $module_name = '';
+                if($pos) {
+                    $module_name = substr($pos ,strrpos($pos,':')+1);
+                }
 
-				if (isset($display_column['group_function'])) {
-            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
-
+                if (isset($display_column['group_function'])) {
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
                 }
 
-                if (!isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
-                	$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
+                if ( !isset($field_name) || !isset($display_column['fields'][$field_name]) ) {
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['name']));
                 }
 
-				if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
-					 switch($display_column['name']) {
-				        case 'iso4217':
-				            $display = $this->currency_obj->getDefaultISO4217();
-				            break;
-				        case 'symbol':
-				            $display = $this->currency_obj->getDefaultCurrencySymbol();
-				            break;
-				        case 'name':
-				            $display = $this->currency_obj->getDefaultCurrencyName();
-				            break;
-				        default:
-				        	$display = $this->layout_manager->widgetDisplay($display_column);
-				     }
-				     $display_column['fields'][$field_name] = $display;
-				}else {
-            	   $display = $this->layout_manager->widgetDisplay($display_column);
-				}
+                if($module_name == 'currencies' && empty($display_column['fields'][$field_name])) {
+                     switch($display_column['name']) {
+                        case 'iso4217':
+                            $display = $this->currency_obj->getDefaultISO4217();
+                            break;
+                        case 'symbol':
+                            $display = $this->currency_obj->getDefaultCurrencySymbol();
+                            break;
+                        case 'name':
+                            $display = $this->currency_obj->getDefaultCurrencyName();
+                            break;
+                        default:
+                            $display = $this->layout_manager->widgetDisplay($display_column);
+                     }
+                     $display_column['fields'][$field_name] = $display;
+                }else {
+                   $display = $this->layout_manager->widgetDisplay($display_column);
+                }
 
-			} else {
-				if (isset($display_column['group_function'])) {
-            		$field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
+            } else {
 
+                if (isset($display_column['group_function'])) {
+                    $field_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias'])."_".strtoupper($display_column['group_function'])."_".strtoupper($display_column['name']));
                 } else {
                     unset($field_name);
                 }
@@ -2046,7 +2041,7 @@ function _check_user_permissions()
             0,
             $saved_report->team_id,
             $chart_type);
-        $this->saved_report = &$saved_report;
+        $this->saved_report = $saved_report;
 
         if(!empty($this->saved_report)) {
             $_REQUEST['record'] = $this->saved_report->id;
@@ -2057,19 +2052,17 @@ function _check_user_permissions()
     function cache_modules_def_js()
     {
         global $current_language, $current_user;
-        if (!isset($_SESSION['reports_cache']) || !file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js'))
+        $cache = sugar_cached('modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js');
+        if (!isset($_SESSION['reports_cache']) || !file_exists($cache))
         {
             require_once('modules/Reports/templates/templates_modules_def_js.php');
             ob_start();
             template_module_defs_js($args);
 
             $contents = ob_get_clean();
-            $filename = $GLOBALS['sugar_config']['cache_dir'].'modules/modules_def_'.$current_language.'_'.md5($current_user->id).'.js';
-            if (is_writable($GLOBALS['sugar_config']['cache_dir'].'modules/'))
+            if (is_writable(sugar_cached('modules/')))
             {
-                $fp =sugar_fopen($filename,'w+');
-                fwrite($fp,$contents);
-                fclose($fp);
+                file_put_contents($cache, $contents);
             }
             // Only set this if we're not being called from the home page.
             // Charts on the home page go through this code as well and
@@ -2175,7 +2168,7 @@ function _check_user_permissions()
 
 		if (isset($extModule->field_defs['name']['db_concat_fields']))
         {
-           $select_piece = $this->db->concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']);
+           $select_piece = db_concat($secondaryTableAlias , $extModule->field_defs['name']['db_concat_fields']);
         } else {
            $select_piece = $secondaryTableAlias.'.name'; //. $secondaryTableAlias.'_name';
 		}
@@ -2185,7 +2178,4 @@ function _check_user_permissions()
 		return $select_piece;
   }
 
-
 }
-
-?>

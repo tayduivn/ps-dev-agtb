@@ -75,7 +75,7 @@ foreach ($focus_tasks_list as $task) {
 		if ($task->date_due == '0000-00-00') $date_due = '';
 		else {
 			$date_due = $task->date_due;
-					
+
 		}
 		$open_activity_list[] = Array('name' => $task->name,
 									 'id' => $task->id,
@@ -194,7 +194,7 @@ foreach ($focus_notes_list as $note) {
 		$count = count($history_list);
 		$count--;
 		$history_list[$count]['filename'] = $note->filename;
-		$history_list[$count]['fileurl'] = UploadFile::get_url($note->filename,$note->id);
+		$history_list[$count]['fileurl'] = UploadFile::get_upload_url($note);
 	}
 
 }
@@ -343,7 +343,7 @@ $popup_request_data = array(
 		'form_name' => 'EditView',
 		'field_to_name_array' => array(),
 		);
-	
+
 $json = getJSONobj();
 $encoded_popup_request_data = $json->encode($popup_request_data);
 

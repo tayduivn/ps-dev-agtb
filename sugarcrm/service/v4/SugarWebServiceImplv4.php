@@ -419,11 +419,11 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
     	require_once('modules/Home/UnifiedSearchAdvanced.php');
     	require_once 'include/utils.php';
     	$usa = new UnifiedSearchAdvanced();
-        if(!file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php')) {
+        if(!file_exists($cachefile = sugar_cached('modules/unified_search_modules.php'))) {
             $usa->buildCache();
         }
 
-    	include($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php');
+    	include $cachefile;
     	$modules_to_search = array();
     	$unified_search_modules['Users'] =   array('fields' => array());
 

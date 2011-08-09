@@ -37,7 +37,6 @@
 .link {
     text-decoration:underline
 }
-
 </style>
 {/literal}
 

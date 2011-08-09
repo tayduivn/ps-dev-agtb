@@ -161,11 +161,11 @@ $xtpl->assign("CANCEL_SCRIPT", $cancel_script);
 $xtpl->assign("PRINT_URL", "index.php?".$GLOBALS['request_string']);
 $xtpl->assign("JAVASCRIPT", get_set_focus_js() . $quicksearch_js);
 
-if(!is_file($GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js')) {
+if(!is_file(sugar_cached('jsLanguage/') . $GLOBALS['current_language'] . '.js')) {
     require_once('include/language/jsLanguage.php');
     jsLanguage::createAppStringsCache($GLOBALS['current_language']);
 }
-$jsLang = '<script type="text/javascript" src="' . $GLOBALS['sugar_config']['cache_dir'] . 'jsLanguage/' . $GLOBALS['current_language'] . '.js?s=' . $GLOBALS['sugar_version'] . '&c=' . $GLOBALS['sugar_config']['js_custom_version'] . '&j=' . $GLOBALS['sugar_config']['js_lang_version'] . '"></script>';
+$jsLang = getVersionedScript("cache/jsLanguage/{$GLOBALS['current_language']}.js",  $GLOBALS['sugar_config']['js_lang_version']);
 $xtpl->assign("JSLANG", $jsLang);
 
 $xtpl->assign("ID", $focus->id);
@@ -318,7 +318,6 @@ if(true) {
 	    }
 	}
 	$attJs  = '<script type="text/javascript">';
-	$attJs .= 'var file_path = "'.$sugar_config['site_url'].'/'.$sugar_config['upload_dir'].'";';
 	$attJs .= 'var lnk_remove = "'.$app_strings['LNK_REMOVE'].'";';
 	$attJs .= '</script>';
 	$xtpl->assign('ATTACHMENTS', $attachments);

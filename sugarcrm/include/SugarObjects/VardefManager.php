@@ -198,7 +198,7 @@ class VardefManager{
 			}
 			//END SUGARCRM flav!=sales ONLY
 
-			$file = $GLOBALS['sugar_config']['cache_dir'].'modules/'.$module_dir.'/' . $object_name . 'vardefs.php';
+			$file = sugar_cached('modules/').$module_dir.'/' . $object_name . 'vardefs.php';
 			if(file_exists($file)){
 				unlink($file);
 				$key = "VardefManager.$module_dir.$object_name";
@@ -475,23 +475,23 @@ class VardefManager{
 				return;
 			}
 		}
-		        
+
 		// Some of the vardefs do not correctly define dictionary as global.  Declare it first.
 		global $dictionary;
 		if(empty($GLOBALS['dictionary'][$object]) || $refresh){
 			//if the consumer has demanded a refresh or the cache/modules... file
 			//does not exist, then we should do out and try to reload things
-			if($refresh || !file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/' . $object . 'vardefs.php')){
+			$cachedfile = sugar_cached('modules/'). $module . '/' . $object . 'vardefs.php';
+			if($refresh || !file_exists($cachedfile)){
 				VardefManager::refreshVardefs($module, $object);
 			}
 
 			//at this point we should have the cache/modules/... file
 			//which was created from the refreshVardefs so let's try to load it.
-			if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php'))
+			if(file_exists($cachedfile))
 			{
-			    if ( is_readable($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php') )
-                {
-			        include_once($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module .  '/' . $object . 'vardefs.php');
+			    if ( is_readable($cachedfile) ) {
+			        include_once $cachedfile;
 				}
 				// now that we hae loaded the data from disk, put it in the cache.
 				if(!empty($GLOBALS['dictionary'][$object]))

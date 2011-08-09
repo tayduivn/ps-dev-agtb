@@ -526,8 +526,8 @@ if(!empty($quicksearch_js)){
 	echo $quicksearch_js;
 }
 //END SUGARCRM flav=pro ONLY
+echo getVersionedScript("cache/include/javascript/sugar_grp_overlib.js");
 ?>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
 <script type="text/javascript">
 
 function clearCurrentRecords()

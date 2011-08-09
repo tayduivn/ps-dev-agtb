@@ -55,7 +55,7 @@ function smarty_function_overlib_includes($params, &$smarty)
     if(empty($INCLUDE_OVERLIB_INCLUDED)){
         $INCLUDE_OVERLIB_INCLUDED = true;
 
-		$path = getJSPath('include/javascript/sugar_grp_overlib.js');
+		$path = getJSPath('cache/include/javascript/sugar_grp_overlib.js');
 	return <<<EOHTML
 <!-- begin includes for overlib -->
 <script id="sugar_grp_overlib" src="$path"></script>

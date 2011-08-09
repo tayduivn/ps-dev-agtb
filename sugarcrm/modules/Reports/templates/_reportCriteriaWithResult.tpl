@@ -39,7 +39,7 @@
 {$chartResources}
 
 
-<script type='text/javascript' src='include/javascript/sugar_grp_overlib.js'></script>
+{sugar_getscript file="cache/include/javascript/sugar_grp_overlib.js"}
 <form action="index.php#main" method="post" name="EditView" id="EditView" onSubmit="return fill_form();">
 <input type="hidden" name='report_offset' value ="{$report_offset}">
 <input type="hidden" name='sort_by' value ="{$sort_by}">
@@ -304,8 +304,8 @@ ACLAllowedModules = {$ACLAllowedModules};
 </table>
 </form>
 </p>
-<script type="text/javascript" src="{$cache_path}modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
-<script type="text/javascript" src="include/javascript/sugar_grp_overlib.js"></script>
+<script type="text/javascript" src="cache/modules/modules_def_{$current_language}_{$md5_current_user_id}.js"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_overlib.js'}"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
 <script>
 
@@ -346,8 +346,8 @@ var lbl_alert_cant_add = "{$mod_strings.LBL_ALERT_CANT_ADD}";
 var lbl_related_table_blank = "{$mod_strings.LBL_RELATED_TABLE_BLANK}";
 var lbl_optional_help = "{$mod_strings.LBL_OPTIONAL_HELP}";
 </script>
-<script type="text/javascript" src="include/javascript/reportCriteria.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
-<script type="text/javascript" src="include/javascript/reportsInlineEdit.js?s='{$sugar_version}'&c={$sugar_config.js_custom_version}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/reportCriteria.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/reportsInlineEdit.js'}"></script>
 <script language="javascript">
 visible_modules = {$allowed_modules_js};
 report_def = {$reporter_report_def_str1};

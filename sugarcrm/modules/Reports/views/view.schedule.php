@@ -74,7 +74,6 @@ class ViewSchedule extends SugarView
         }
 
 
-        $smarty->assign('CACHE_DIR', $GLOBALS['sugar_config']['cache_dir']);
         $smarty->assign('CURRENT_LANGUAGE', $GLOBALS['current_language']);
         $smarty->assign('JS_VERSION',  $GLOBALS['js_version_key']);
         $smarty->assign('JS_CUSTOM_VERSION', $GLOBALS['sugar_config']['js_custom_version']);

@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  *
  * $Id: Sugar_Smarty.php 51719 2009-10-22 17:18:00Z mitani $
- * Description: Handles Widgets 
+ * Description: Handles Widgets
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
@@ -30,19 +30,19 @@ require_once('include/Smarty/Smarty.class.php');
 
 if(!defined('SUGAR_SMARTY_DIR'))
 {
-	define('SUGAR_SMARTY_DIR', $GLOBALS['sugar_config']['cache_dir'].'smarty/');
+	define('SUGAR_SMARTY_DIR', sugar_cached('smarty/'));
 }
 
 class Sugar_Smarty extends Smarty
 {
-	
+
 	function Sugar_Smarty()
 	{
 		if(!file_exists(SUGAR_SMARTY_DIR))mkdir_recursive(SUGAR_SMARTY_DIR, true);
 		if(!file_exists(SUGAR_SMARTY_DIR . 'templates_c'))mkdir_recursive(SUGAR_SMARTY_DIR . 'templates_c', true);
 		if(!file_exists(SUGAR_SMARTY_DIR . 'configs'))mkdir_recursive(SUGAR_SMARTY_DIR . 'configs', true);
 		if(!file_exists(SUGAR_SMARTY_DIR . 'cache'))mkdir_recursive(SUGAR_SMARTY_DIR . 'cache', true);
-		
+
 		$this->template_dir = '.';
 		$this->compile_dir = SUGAR_SMARTY_DIR . 'templates_c';
 		$this->config_dir = SUGAR_SMARTY_DIR . 'configs';
@@ -57,8 +57,9 @@ class Sugar_Smarty extends Smarty
 		//BEGIN SUGARCRM flav=int ONLY
 		$this->clear_all_cache(); // removes pre-compiled template files for debugging
 		//END SUGARCRM flav=int ONLY
+		$this->assign("VERSION_MARK", getVersionedPath(''));
 	}
-	
+
 }
 
 ?>

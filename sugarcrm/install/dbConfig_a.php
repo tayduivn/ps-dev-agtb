@@ -108,7 +108,7 @@ $out =<<<EOQ
     <script type="text/javascript" src="install/installCommon.js"></script>
     <script type="text/javascript" src="install/dbConfig.js"></script>
     <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
-    <script src="include/javascript/sugar_grp1_yui.js?s={$sugar_version}&c={$js_custom_version}"></script>
+    <script src="cache/include/javascript/sugar_grp1_yui.js?s={$sugar_version}&c={$js_custom_version}"></script>
     <script type="text/javascript">
     <!--
     if ( YAHOO.env.ua )

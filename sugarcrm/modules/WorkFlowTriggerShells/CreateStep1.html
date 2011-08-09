@@ -31,8 +31,8 @@
  ********************************************************************************/
 -->
 <!-- BEGIN: embeded -->
-<script type="text/javascript" src="include/javascript/sugar_grp1.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
-<script type="text/javascript" src="include/workflow/jutils.js?s={SUGAR_VERSION}&c={JS_CUSTOM_VERSION}"></script>
+<script type="text/javascript" src="cache/include/javascript/sugar_grp1.js?v={VERSION_MARK}"></script>
+<script type="text/javascript" src="include/workflow/jutils.js?v={VERSION_MARK}"></script>
 {JAVASCRIPT_LANGUAGE_FILES}
 <script>
 
@@ -44,7 +44,7 @@ function togglelanguage(run_clear){
 		clear_field('field');
 		reset_text('EditView');
 	}
-	
+
 	var target_value = setup_radio_selection(radio_object);
 
 	if(target_value){
@@ -53,28 +53,28 @@ function togglelanguage(run_clear){
 		target_value =='compare_any_time' ||
 		target_value == 'trigger_record_change'){
 		//make save button visible, next button invisible
-			
+
 			this.document.getElementById('next_div').style.display= 'none';
 			this.document.getElementById('save_div').style.display= '';
-		
-		} 
+
+		}
 		if(
 			target_value == 'compare_specific' ||
-			target_value == 'filter_field' || 
+			target_value == 'filter_field' ||
 			target_value == 'filter_rel_field'
 		){
 		//make next button visible, save button invisible
 			this.document.getElementById('next_div').style.display= '';
 			this.document.getElementById('save_div').style.display= 'none';
-		}			
+		}
 		//BEGIN WFLOW PLUGIN
 		{PLUGIN_JAVASCRIPT1}
 		//END WFLOW PLUGIN
-		
+
 	} else {
 		this.document.getElementById('save_div').style.display= 'none';
-	}		
-	
+	}
+
 //end function togglelanguage
 }
 
@@ -91,14 +91,14 @@ function get_single_selector(trigger_type, type){
 	var radio_object = document.EditView.type;
 	var checked_value = getCheckedValue(radio_object);
 	//type, value, dom_name, opener_id, href_object
-	
+
 	var link_location = "index.php?module=Expressions&action=SingleSelector&sugar_body_only=true";
 	link_location += '&type=' + type + '&value=' + value + '&opener_id=' + opener_id + '&href_object=' + href_object;
 	link_location += '&meta_filter_name=' + meta_filter_name + '&dom_name=' + dom_name + '&trigger_type=' + checked_value;
 
-	window.open(link_location, "Test","width=400,height=100,resizable=1,scrollbars=1");	
-//end function get_selector	
-}	
+	window.open(link_location, "Test","width=400,height=100,resizable=1,scrollbars=1");
+//end function get_selector
+}
 function get_single_selector2(href_block, target_field, type, meta_filter_name){
 
 	var value = get_value(target_field);
@@ -107,15 +107,15 @@ function get_single_selector2(href_block, target_field, type, meta_filter_name){
 	var dom_name = get_value('base_module');
 	var meta_filter_name = meta_filter_name;
 	var type = type;
-	
+
 	//type, value, dom_name, opener_id, href_object
-	
+
 	var link_location = "index.php?module=Expressions&action=SingleSelector&sugar_body_only=true";
 	link_location += '&type=' + type + '&value=' + value + '&opener_id=' + opener_id + '&href_object=' + href_object;
 	link_location += '&meta_filter_name=' + meta_filter_name + '&dom_name=' + dom_name;
-	
-	window.open(link_location, "Test","width=400,height=100,resizable=1,scrollbars=1");	
-//end function get_selector	
+
+	window.open(link_location, "Test","width=400,height=100,resizable=1,scrollbars=1");
+//end function get_selector
 }
 
 
@@ -127,54 +127,54 @@ function confirm_safety(type){
 	var select_target_mod = SUGAR.language.get('WorkFlowTriggerShells', 'LBL_SELECT_TARGET_MOD');
 
 	if(checked_value!=""){
-				
+
 		if(type=='next'){
-		
+
 			if(checked_value=="compare_specific"){
 				this.document.getElementById('action').value = "CreateStepSpecific";
 				return confirm_value_present('field', select_target_field);
 			}
 			if(checked_value=="compare_count"){
 				this.document.getElementById('action').value = "CreateStepCount";
-				return true;	
+				return true;
 			}
 			if(checked_value=="filter_field"){
 				this.document.getElementById('action').value = "CreateStepFilter";
-				return true;	
+				return true;
 			}
 			if(checked_value=="filter_rel_field"){
 				this.document.getElementById('action').value = "CreateStepFilter";
 				return confirm_value_present('rel_module', select_target_mod);
-			}							
+			}
 			//BEGIN WFLOW PLUGIN
 			{PLUGIN_JAVASCRIPT2}
 			//END WFLOW PLUGIN
-				
+
 		//end if next
 		}
-		
+
 		if(type=='save'){
 			//alert(get_value('field'));
 			if(checked_value!=""){
 				if(checked_value=="trigger_record_change"){
 					return true;//this.document.getElementById('action').value = "CreateStepRecordChange";
-				}	
+				}
 			}
 			return confirm_value_present('field', select_target_field);
-		
+
 			//end if save
 		}
-	
+
 	} else {
 			alert(select_option);
-			return false;	
+			return false;
 	//end if else no radio option selected
 	}
-	
-//end function confirm_safety
-}	
 
-	
+//end function confirm_safety
+}
+
+
 </script>
 <!-- END: embeded -->
 <!-- BEGIN: main -->
@@ -207,9 +207,9 @@ function confirm_safety(type){
 </table>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 
-	
+
 	{TOP_BLOCK}
-	
+
 
 
 		<tr>
@@ -223,8 +223,8 @@ function confirm_safety(type){
 
 		<tr>
 		<td>&nbsp;</td>
-		</tr>	
-		</table>		
+		</tr>
+		</table>
 		</td>
 		</tr>
 		<tr>
@@ -241,7 +241,7 @@ function confirm_safety(type){
 	<input type='submit' class='button' value='{APP.LBL_SAVE_BUTTON_LABEL}' id='save' name='save' title='{APP.LBL_SAVE_BUTTON_LABEL}' onclick="this.form.action.value='Save'; return confirm_safety('save');">
 	 <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="window.close();" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  ">
 	</td>
-	</tr>	
+	</tr>
 
 		</form>
 </table>
