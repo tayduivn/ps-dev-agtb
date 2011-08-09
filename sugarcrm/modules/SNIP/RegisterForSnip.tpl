@@ -34,22 +34,26 @@ div.snipTitle{
 	background-color:#F5F5F5;
 	padding:5px;
 	font-size:15px;
-	margin:6px
+	margin:6px;
+	margin-bottom:0;
 }
 .snipLicenseWrapper{
-	margin:auto;
-	width:600px;
+	margin:0;
+	width:auto;
 }
 .snipLicense{
-	width:600px;
+	width:auto;
+	margin-right:4px;
 	padding:5px;
 	overflow:auto;
 	height:300px
 }
 .snipUiWrapper{
-	float:left;
+
+	margin:auto;
 	padding:5px;
 	width:600px;
+	height:40px;
 }
 .snipCheckboxWrapper{
 	float:left;
@@ -73,6 +77,11 @@ div.snipTitle{
 	margin-top:-2px
 }
 
+.snipHrWrapper{
+	width:auto;
+	margin-bottom:-10px;
+}
+
 div.snipError{
 	position:relative;
 	margin:2px 8px 0px 8px; 
@@ -86,40 +95,33 @@ div.snipError{
 {/literal}
 {$TITLE}
 {* //FILE SUGARCRM flav=pro ONLY *}
-{literal}
-<script>
-	function divExpand(){
-		console.log("div expanded");
-		return false;	
-	}
-</script>
-{/literal}
 
 	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
 		<tr>
 		<td>
-			<center><div class='snipTitle'>SNIP</div></center>
-				<div class='snipDesc'>
-					{$MOD.LBL_SNIP_SUMMARY}
-
-					<a href='#' onclick='divExpand()' id='snipMoreLink'>{$MOD.LBL_SNIP_MORE}</a>
-				</div>
-				{if $EXTRA_ERROR != ''}
-					<div class='snipError'>
-						{$EXTRA_ERROR}
-					</div>
-				{/if}
-
-				<br>
+				
 					
 			{if $SNIP_STATUS=='notpurchased'}
+				{if $EXTRA_ERROR != ''}
+					<span style='color:red;font-weight:bold;margin-left:10px'>
+						{$EXTRA_ERROR}
+					</span>
+				{/if}
+
+				<div class='snipDesc'>
+					{$MOD.LBL_SNIP_SUMMARY}
+				</div>
+
+				<br>
 				<div class='snipLicenseWrapper'>
 					<div class='snipLicense'>{$MOD.LBL_SNIP_AGREEMENT}</div>
+					<div class='snipHrWrapper'>
+						<hr />
+					</div>
 					<div class='snipUiWrapper'>
-					<hr>
 						<div class='snipCheckboxWrapper'>
 							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'>
-							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE} <a href="javascript: alert('privacy agreement');">{$MOD.LBL_SNIP_PRIVACY}</a>.</label>
+							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE} <a href="http://www.sugarcrm.com/crm/TRUSTe/privacy.html" target="_blank">{$MOD.LBL_SNIP_PRIVACY}</a>.</label>
 						</div>
 						<div class='snipButtonWrapper'>
 						<form method="post">
@@ -132,7 +134,13 @@ div.snipError{
 					</div>
 				
 			{else}
+			{if $EXTRA_ERROR != ''}
+				<div class='snipError'>
+					{$EXTRA_ERROR}
+				</div>
+			{/if}
 
+			<br>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<td scope="row">
@@ -156,8 +164,8 @@ div.snipError{
 						{elseif $SNIP_STATUS == 'purchased_error'}
 							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_ERROR}</span></div>
 							<div style='clear:both'></div>
-							<div id='snip_summary'>{$MOD.LBL_SNIP_STATUS_ERROR_SUMMARY}<br>
-							<div id='snip_summary_error'>{$SNIP_ERROR_MESSAGE}</div></div>
+							<div id='snip_summary'>{$SNIP_ERROR_MESSAGE}<br>
+							</div>
 						{/if}
 						</form>
 						<br>
@@ -187,7 +195,11 @@ div.snipError{
 						{$SUGAR_URL}
 					</td>
 				</tr>
-			</table><br>
+			</table>
+
+			<div style='margin-left:4px;margin-top:4px'> <a href='http://www.sugarcrm.com/crm/case-tracker/submit.html?lsd=supportportal&tmpl=' target='_blank'>{$MOD.LBL_SNIP_SUPPORT}</a></div>
+			
+			<br>
 				{if $SNIP_STATUS =='purchased'}
 					<div class='snipCenterButtonWrapper'>
 					<form method="post"><input type='submit' class='snipEnableButton'  value='{$MOD.LBL_SNIP_BUTTON_DISABLE}' id='enableSnipButton'><input type='hidden' value='disable_snip' name='snipaction'></div>
