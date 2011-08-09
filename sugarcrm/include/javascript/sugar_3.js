@@ -4171,25 +4171,10 @@ SUGAR.util.closeActivityPanel = {
                         //var args = "action=save&id=" + id + "&status=" + new_status + "&module=" + module;
                         var callback = {
                             success:function(o)
-                            {	//refresh window to show updated changes
-								window.location.reload(true);
-								/*
-                                if(viewType == 'dashlet')
-                                {
-                                    SUGAR.mySugar.retrieveDashlet(o.argument['parentContainerId']);
-                                    ajaxStatus.hideStatus();
-                                }
-                                else if(viewType == 'subpanel'){
-                                    showSubPanel(o.argument['parentContainerId'],null,true);
-									if(o.argument['parentContainerId'] == 'activities'){
-										showSubPanel('history',null,true);
-									}
-									ajaxStatus.hideStatus();
-
-                                }else if(viewType == 'listview'){
-                                    document.location = 'index.php?module=' + module +'&action=index';
-									}
-								*/
+                            {
+                                // Bug 45792: Firefox seems to believe reloading a page after an ajax request means you are re-submitting a form and gives you the warning for it.
+                                // So instead, we reload from a timeout
+								window.setTimeout("window.location.reload(true);",0);
                             },
                             argument:{'parentContainerId':parentContainerId}
                         };
