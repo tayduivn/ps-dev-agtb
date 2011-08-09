@@ -1000,6 +1000,16 @@ class MysqlManager extends DBManager
             $fieldDef['len'] = '10';
         if ($fieldDef['dbType'] == 'int' && empty($fieldDef['len']) )
             $fieldDef['len'] = '11';
+
+        if($fieldDef['dbType'] == 'decimal') {
+            if(isset($fieldDef['len'])) {
+                if(strstr($fieldDef['len'], ",") === false) {
+                    $fieldDef['len'] .= ",0";
+                }
+            } else {
+                $fieldDef['len']  = '10,0';
+            }
+        }
     }
 
     /**

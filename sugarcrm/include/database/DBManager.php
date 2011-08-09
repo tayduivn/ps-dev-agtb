@@ -667,6 +667,12 @@ abstract class DBManager
      */
     protected function isNullable($vardef)
     {
+
+        if(isset($vardef['isnull']) && (strtolower($vardef['isnull']) == 'false' || $vardef['isnull'] === false)
+            && !empty($vardef['required'])) {
+                /* required + is_null=false => not null */
+            return false;
+        }
         if(empty($vardef['auto_increment']) && (empty($vardef['type']) || $vardef['type'] != 'id')
                     && (empty($vardef['dbType']) || $vardef['dbType'] != 'id')
 					&& (empty($vardef['name']) || ($vardef['name'] != 'id' && $vardef['name'] != 'deleted'))
@@ -727,7 +733,7 @@ abstract class DBManager
             if ($this->isNullable($value)) {
 			    $value['required'] = false;
 			}
-			//Should match the conditions in DBHelper::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
+			//Should match the conditions in DBManager::oneColumnSQLRep for DB required fields, type='id' fields will sometimes
 			//come into this function as 'type' = 'char', 'dbType' = 'id' without required set in $value. Assume they are correct and leave them alone.
 			else if (($name == 'id' || $value['type'] == 'id' || (isset($value['dbType']) && $value['dbType'] == 'id'))
                 && (!isset($value['required']) && isset($compareFieldDefs[$name]['required'])))
