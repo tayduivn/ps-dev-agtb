@@ -49,7 +49,7 @@ function disableReturnSubmission(e) {
 <div id="main">
     <div id="content">
         <table style="width:auto;height:600px;" align="center"><tr><td align="center">
-
+        
 <form name="AdminWizard" id="AdminWizard" enctype='multipart/form-data' method="POST" action="index.php" onkeypress="return disableReturnSubmission(event);">
 <input type='hidden' name='action' value='SaveAdminWizard'/>
 <input type='hidden' name='module' value='Configurator'/>
@@ -59,95 +59,11 @@ function disableReturnSubmission(e) {
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_emails.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>
 
-{literal}
-<style>
-#snip_title {
-    float:left;
-    margin-bottom:5px;
-    font-size:15px;
-    display:inline;
-}
-#snip_title_error {
-    color:red;
-    font-weight:bold;
-}
-#snip_summary {
-    float:left;
-    margin-bottom:10px;
-}
-#snip_summary_error {
-    width:100%;
-    background-color:#ffaa99;
-    margin-top:3px;
-    padding:2px;
-    font-weight:bold;
-    height:13px;
-}
-
-div.snipTitle{
-    font-size:28px;
-    color:#333333;
-    letter-spacing:3px
-}
-.snipDesc{
-    width:auto;
-    border:1px solid #999999;
-    background-color:#F5F5F5;
-    padding:5px;
-    font-size:15px;
-    margin:-10px 6px 6px 6px
-}
-.snipLicenseWrapper{
-    margin:auto;
-    width:600px;
-}
-.snipLicense{
-    width:600px;
-    padding:5px;
-    overflow:auto;
-    height:210px;
-}
-.snipUiWrapper{
-    float:left;
-    padding:5px;
-    width:600px;
-}
-.snipCheckboxWrapper{
-    float:left;
-    width:375px;
-    margin-top:10px
-}
-.snipCheckbox{
-    margin-left:5px
-}
-.snipButtonWrapper{
-    float:right
-}
-.snipEnableButton{
-    height:40px;width:200px
-}
-.snipCenterButtonWrapper{
-    margin:auto;
-    height:40px;
-    width:200px;
-    margin-bottom:10px;
-    margin-top:-2px
-}
-div.snipError{
-    position:relative;
-    margin:2px 8px 0px 8px; 
-    background-color:#ffaa99;
-    padding:2px;
-    padding-left:4px;
-    line-height:16px;   
-}
-</style>
-{/literal}
 <div class="dashletPanelMenu">
 <div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
 <div class="bd">
-		<div class="ml"></div>
-		<div class="bd-center">
+        <div class="ml"></div>
+        <div class="bd-center">
 <div id="welcome" class="screen">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
@@ -160,7 +76,7 @@ div.snipError{
             <tr>
                 <td scope="row">
               <p>{$MOD.LBL_WIZARD_WELCOME}</p>
-				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' width='765px' height='325px'></div>
+                <div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' width='765px' height='325px'></div>
                 </td>
             </tr>
             </table>
@@ -169,139 +85,9 @@ div.snipError{
     </tr>
     </table>
     <div class="nav-buttons">
-        
-            <input title="{$MOD.LBL_WIZARD_SKIP_BUTTON}"
-                onclick="document.location.href='{$SKIP_URL}';" class="button"
-                type="button" name="cancel" value="  {$MOD.LBL_WIZARD_SKIP_BUTTON}  " />&nbsp;
-        {if $SNIP_PURCHASED}   
-            <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
-                class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
-                onclick="SugarWizard.changeScreen('system',false);" />
-        {else}
-            <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
-                class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
-                onclick="SugarWizard.changeScreen('snip',false);" />
-        {/if}
-    </div>
-</div>
-
-<div id="snip" class="screen">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-        <td>
-            <div class="edit view">
-            <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                    <th align="left" scope="row" colspan="4"><h2>SNIP</h2></th>
-                </tr>
-                <tr>
-                    <td>
-                        <div class='snipDesc'>{$SNIP_MOD.LBL_SNIP_SUMMARY}
-                            <a href='#' onclick='divExpand()' id='snipMoreLink'>{$SNIP_MOD.LBL_SNIP_MORE}</a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table width="100%" cellspacing="0" cellpadding="0" border="0">                        
-                            <tr>
-                                <td>
-                                    <div style='display:none' id='overlay_contents'>
-                                        {$SNIP_EXTRA_ERROR}
-                                    </div>
-                                    {if $SNIP_EXTRA_ERROR != ''}
-                                        <script>
-                                            {literal}
-                                            YAHOO.util.Event.onDOMReady(function(){
-                                                overlay('SNIP Error',document.getElementById('overlay_contents').innerHTML);
-                                            });
-                                            {/literal}
-                                        </script>
-                                    {/if}
-                                </td>
-                            </tr>
-
-                            {if $SNIP_STATUS=='notpurchased'}
-                            <tr>
-                                <td style='width:0px'>
-                                    <div class='snipLicenseWrapper'>
-                                        <div class='snipLicense'>{$SNIP_MOD.LBL_SNIP_AGREEMENT}</div>
-                                        <div class='snipUiWrapper'>
-                                        <hr>
-                                            <div class='snipCheckboxWrapper'>
-                                                <input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'><label for='agreementCheck' class='snipCheckbox'>{$SNIP_MOD.LBL_SNIP_AGREE} <a href="javascript: alert('privacy agreement');">{$SNIP_MOD.LBL_SNIP_PRIVACY}</a>.</label>
-                                            </div>
-                                            <div class='snipButtonWrapper'>
-                                                <form method="post">
-                                                    <input type='submit' class='snipEnableButton' disabled value='{$SNIP_MOD.LBL_SNIP_BUTTON_ENABLE}' id='enableSnipButton'>
-                                                    <input type='hidden' name='snipaction' value='enable_snip'>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            {else}
-                            <tr>
-                                <td scope="row" style='width:0'>
-                                    {$SNIP_MOD.LBL_SNIP_STATUS}
-
-                                </td>
-                                <td align="left">
-                                    {if $SNIP_STATUS == 'purchased'}
-                                        <div id='snip_title'><span style='color:green;font-weight:bold'>{$SNIP_MOD.LBL_SNIP_STATUS_OK}</span></div>
-                                        <div style='clear:both'></div>
-                                        <div id='snip_summary'>{$SNIP_MOD.LBL_SNIP_STATUS_OK_SUMMARY}</div>
-                                    {elseif $SNIP_STATUS == 'down'}
-                                        <div id='snip_title'><span style='color:red;font-weight:bold'>{$SNIP_MOD.LBL_SNIP_STATUS_FAIL}</span></div>
-                                        <div style='clear:both'></div>
-                                        <div id='snip_summary'>{$SNIP_MOD.LBL_SNIP_STATUS_FAIL_SUMMARY}</div>
-                                    {elseif $SNIP_STATUS == 'purchased_error'}
-                                        <div id='snip_title'><span style='color:red;font-weight:bold'>{$SNIP_MOD.LBL_SNIP_STATUS_ERROR}</span></div>
-                                        <div style='clear:both'></div>
-                                        <div id='snip_summary'>{$SNIP_MOD.LBL_SNIP_STATUS_ERROR_SUMMARY}<br>
-                                        <div id='snip_summary_error'>{$SNIP_ERROR_MESSAGE}</div></div>
-                                    {/if}
-                                    <br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td scope="row">
-                                    {$SNIP_MOD.LBL_SNIP_EMAIL}
-                                </td>
-                                <td>
-                                    {$SNIP_EMAIL}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="20%" scope="row">
-                                    {$SNIP_MOD.LBL_SNIP_CALLBACK_URL}
-                                </td>
-                                <td width="80%">
-                                    {$SNIP_URL}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td width="20%" scope="row">
-                                    {$SNIP_MOD.LBL_SNIP_SUGAR_URL}
-                                </td>
-                                <td width="80%">
-                                    {$SUGAR_URL}
-                                </td>
-                                </tr>                            
-                            {/if}
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            </div>
-        </td>
-    </tr>
-    </table>
-    <div class="nav-buttons">
-    <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
-                class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
-                onclick="SugarWizard.changeScreen('welcome',true);" id="previous_tab_welcome" />&nbsp;
+        <input title="{$MOD.LBL_WIZARD_SKIP_BUTTON}"  
+            onclick="document.location.href='{$SKIP_URL}';" class="button"  
+            type="button" name="cancel" value="  {$MOD.LBL_WIZARD_SKIP_BUTTON}  " id="skip_tab" />&nbsp;
         <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
             class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
             onclick="SugarWizard.changeScreen('system',false);" id="next_tab_system" />
@@ -346,16 +132,9 @@ div.snipError{
     </tr>
     </table>
     <div class="nav-buttons">
-        {if $SNIP_PURCHASED}
             <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
                 class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
                 onclick="SugarWizard.changeScreen('welcome',true);" id="previous_tab_welcome" />&nbsp;
-        {else}
-            <input title="{$MOD.LBL_WIZARD_BACK_BUTTON}"
-                class="button" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_BACK_BUTTON}  "
-                onclick="SugarWizard.changeScreen('snip',true);" id="previous_tab_welcome" />&nbsp;
-        {/if}
-
             <input title="{$MOD.LBL_WIZARD_NEXT_BUTTON}"
                 class="button primary" type="button" name="next_tab1" value="  {$MOD.LBL_WIZARD_NEXT_BUTTON}  "
                 onclick="SugarWizard.changeScreen('locale',false);" id="next_tab_locale" />
@@ -545,30 +324,30 @@ div.snipError{
                                 <td scope="row">&nbsp;</td>
                                 <td >&nbsp;</td>
                             </tr>
-				            {* //BEGIN SUGARCRM flav!=sales ONLY *}
-				            <tr>
-					 		    <td width="20%" scope="row">
-					 		    	<span id="notify_allow_default_outbound_label">
-					 		    	{$MOD.LBL_ALLOW_DEFAULT_SELECTION}&nbsp;
-									<img border="0" onmouseout="return nd();" onmouseover="return overlib('{$MOD.LBL_ALLOW_DEFAULT_SELECTION_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
-									</span>
-								</td>
-					 		    <td width="30%">
-					 		    	 <slot>
-								     <input type='hidden' name='notify_allow_default_outbound' value='0'>
-								     <input id='notify_allow_default_outbound' name='notify_allow_default_outbound' value="2" tabindex='1' class="checkbox" type="checkbox" {$notify_allow_default_outbound_on}>
-									 </slot>
-								</td>
-				                <td scope="row">&nbsp;</td>
-				                <td >&nbsp;</td>
-				            </tr>
-				            {* //END SUGARCRM flav!=sales ONLY *}
+                            {* //BEGIN SUGARCRM flav!=sales ONLY *}
+                            <tr>
+                                <td width="20%" scope="row">
+                                    <span id="notify_allow_default_outbound_label">
+                                    {$MOD.LBL_ALLOW_DEFAULT_SELECTION}&nbsp;
+                                    <img border="0" onmouseout="return nd();" onmouseover="return overlib('{$MOD.LBL_ALLOW_DEFAULT_SELECTION_HELP}', FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass', WIDTH, -1, NOFOLLOW, 'ol_nofollow')" src="index.php?entryPoint=getImage&themeName={$THEME}&imageName=helpInline.gif">
+                                    </span>
+                                </td>
+                                <td width="30%">
+                                     <slot>
+                                     <input type='hidden' name='notify_allow_default_outbound' value='0'>
+                                     <input id='notify_allow_default_outbound' name='notify_allow_default_outbound' value="2" tabindex='1' class="checkbox" type="checkbox" {$notify_allow_default_outbound_on}>
+                                     </slot>
+                                </td>                
+                                <td scope="row">&nbsp;</td>
+                                <td >&nbsp;</td>
+                            </tr>                            
+                            {* //END SUGARCRM flav!=sales ONLY *}
                             <tr>
                                 <td width="50%" cellspan="2" scope="row" nowrap>
-							        <input title="{$APP.LBL_CLEAR_BUTTON_TITLE}"
-							            class="button" type="button" name="btn_clear" accesskey="{$APP.LBL_CLEAR_BUTTON_KEY}" value="{$APP.LBL_CLEAR_BUTTON_LABEL}"
-							            onclick="clearEmailFields();" />&nbsp;
-                                    <input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}"
+                                    <input title="{$APP.LBL_CLEAR_BUTTON_TITLE}"
+                                        class="button" type="button" name="btn_clear" accesskey="{$APP.LBL_CLEAR_BUTTON_KEY}" value="{$APP.LBL_CLEAR_BUTTON_LABEL}"
+                                        onclick="clearEmailFields();" />&nbsp;                                    
+                                    <input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" 
                                         onclick="testOutboundSettingsDialog();">&nbsp;
                                 </td>
                                 <td scope="row">&nbsp;</td>
@@ -577,7 +356,7 @@ div.snipError{
                         </table>
                      </div>
                 </td>
-            </tr>
+            </tr>       
         </table>
         </div>
     </td>
@@ -590,8 +369,8 @@ div.snipError{
             onclick="if(adjustEmailSettings())this.form.submit();" type="button" name="continue" value="{$MOD.LBL_WIZARD_CONTINUE_BUTTON}" id="next_tab_continue" />&nbsp;
     </div>
 </div>
-			</div>
-			<div class="mr"></div>
+            </div>
+            <div class="mr"></div>
 </div>
 <div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>
 </div>
@@ -611,26 +390,26 @@ addToValidate('ConfigureSettings', 'system_name', 'varchar', true,'System Name' 
 <div id="testOutboundDialog" class="yui-hidden">
     <div id="testOutbound">
         <form>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
-			<tr>
-				<td scope="row">
-					{$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR}
-					<span class="required">
-					</span>
-				</td>
-				<td>
-					<input type="text" id="outboundtest_from_address" name="outboundtest_from_address" size="35" maxlength="64" value="">
-				</td>
-			</tr>
-			<tr>
-				<td scope="row" colspan="2">
-					<input type="button" class="button" value="   {$APP.LBL_EMAIL_SEND}   " onclick="javascript:sendTestEmail();">&nbsp;
-					<input type="button" class="button" value="   {$APP.LBL_CANCEL_BUTTON_LABEL}   " onclick="javascript:EmailMan.testOutboundDialog.hide();">&nbsp;
-				</td>
-			</tr>
-		</table>
-		</form>
-	</div>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="edit view">
+            <tr>
+                <td scope="row">
+                    {$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR} 
+                    <span class="required">
+                    </span>
+                </td>
+                <td>
+                    <input type="text" id="outboundtest_from_address" name="outboundtest_from_address" size="35" maxlength="64" value="">
+                </td>
+            </tr>
+            <tr>
+                <td scope="row" colspan="2">
+                    <input type="button" class="button" value="   {$APP.LBL_EMAIL_SEND}   " onclick="javascript:sendTestEmail();">&nbsp;
+                    <input type="button" class="button" value="   {$APP.LBL_CANCEL_BUTTON_LABEL}   " onclick="javascript:EmailMan.testOutboundDialog.hide();">&nbsp;
+                </td>
+            </tr>
+        </table>
+        </form>
+    </div>
 </div>
 
 {literal}
@@ -639,7 +418,7 @@ addToValidate('ConfigureSettings', 'system_name', 'varchar', true,'System Name' 
 var SugarWizard = new function()
 {
     this.currentScreen = 'welcome';
-
+    
     this.handleKeyStroke = function(e)
     {
         // get the key pressed
@@ -650,7 +429,7 @@ var SugarWizard = new function()
         else if(e.which) {
             key = e.which
         }
-
+        
         switch(key) {
         case 13:
             primaryButton = YAHOO.util.Selector.query('input.primary',SugarWizard.currentScreen,true);
@@ -658,45 +437,45 @@ var SugarWizard = new function()
             break;
         }
     }
-
+    
     this.changeScreen = function(screen,skipCheck)
     {
         if ( !skipCheck ) {
             clear_all_errors();
             var form = document.getElementById('AdminWizard');
             var isError = false;
-
+            
             switch(this.currentScreen) {
             case 'smtp':
                 smtp_type = document.getElementById('AdminWizard').mail_smtptype.value;
                 smtp_server_required = smtp_type == 'exchange' || smtp_type == 'other' ? true : false;
-
+            
                 if(document.getElementById('mail_smtpuser').value != '' ||
                    document.getElementById('mail_smtppass').value != '' ||
                    //BEGIN SUGARCRM flav!=sales ONLY
                    document.getElementById('notify_allow_default_outbound').checked ||
                    //END SUGARCRM flav!=sales ONLY
-                   (smtp_server_required &&  document.getElementById('mail_smtpserver').value != '')
+                   (smtp_server_required &&  document.getElementById('mail_smtpserver').value != '') 
                    ) {
-
-		                if ( document.getElementById('mail_smtpserver').value == '' ) {
-		                    add_error_style('AdminWizard',form.mail_smtpserver.name,
-		                        '{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS} {$MOD.LBL_MAIL_SMTPSERVER}{literal}' );
-		                    isError = true;
-		                }
-		                if ( document.getElementById('mail_smtpauth_req').checked
-		                        && document.getElementById('mail_smtpuser').value == '' ) {
-		                    add_error_style('AdminWizard',form.mail_smtpuser.name,
-		                        '{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS} {$MOD.LBL_MAIL_SMTPUSER}{literal}' );
-		                    isError = true;
-		                }
-
-		                if ( document.getElementById('mail_smtpauth_req').checked
-		                        && document.getElementById('mail_smtppass').value == '' ) {
-		                    add_error_style('AdminWizard',form.mail_smtppass.name,
-		                        '{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS} {$MOD.LBL_MAIL_SMTPPASS}{literal}' );
-		                    isError = true;
-		                }
+                       
+                        if ( document.getElementById('mail_smtpserver').value == '' ) {
+                            add_error_style('AdminWizard',form.mail_smtpserver.name,
+                                '{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS} {$MOD.LBL_MAIL_SMTPSERVER}{literal}' );
+                            isError = true;
+                        }
+                        if ( document.getElementById('mail_smtpauth_req').checked 
+                                && document.getElementById('mail_smtpuser').value == '' ) {
+                            add_error_style('AdminWizard',form.mail_smtpuser.name,
+                                '{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS} {$MOD.LBL_MAIL_SMTPUSER}{literal}' );
+                            isError = true;
+                        }
+                        
+                        if ( document.getElementById('mail_smtpauth_req').checked 
+                                && document.getElementById('mail_smtppass').value == '' ) {
+                            add_error_style('AdminWizard',form.mail_smtppass.name,
+                                '{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS} {$MOD.LBL_MAIL_SMTPPASS}{literal}' );
+                            isError = true;
+                        }                       
                 }
                 break;
             default:
@@ -705,12 +484,12 @@ var SugarWizard = new function()
             if (isError == true)
                 return false;
         }
-
+        
         document.getElementById(this.currentScreen).style.display = 'none';
         document.getElementById(screen).style.display = 'block';
-
+        
         this.currentScreen = screen;
-
+        
         switch(screen) {
         case 'system':
             document.getElementById('upload_panel').style.display="inline";
@@ -735,46 +514,46 @@ var SugarWizard = new function()
             document.getElementById('upload_panel').style.display="none";
         }
     }
-}
+} 
 SugarWizard.changeScreen('{/literal}{$START_PAGE}{literal}');
 document.onkeypress = SugarWizard.handleKeyStroke;
 
 function adjustEmailSettings(){
     var server = document.getElementById('mail_smtpserver'),
-	    user = document.getElementById('mail_smtpuser'),
-		pass = document.getElementById('mail_smtppass'),
-		port = document.getElementById('mail_smtpport');
-	if( !server.value || !user.value || !pass.value || !port.value)
-	{
-			server.value = "";
-			user.value = "";
-			pass.value = "";
-			port.value = "";
-			return true;
+        user = document.getElementById('mail_smtpuser'),
+        pass = document.getElementById('mail_smtppass'),
+        port = document.getElementById('mail_smtpport');
+    if( !server.value || !user.value || !pass.value || !port.value)
+    {
+            server.value = ""; 
+            user.value = ""; 
+            pass.value = ""; 
+            port.value = "";
+            return true;
     } else {
-		if (validate['AdminWizard'])
-		{
-			removeFromValidate('AdminWizard', 'mail_smtpserver');
-			removeFromValidate('AdminWizard', 'mail_smtpuser');
-			removeFromValidate('AdminWizard', 'mail_smtppass');
-			removeFromValidate('AdminWizard', 'mail_smtpport');
-		}
-		if (server.value == "smtp.gmail.com" && !isValidEmail(user.value)) {
-		    addToValidate("AdminWizard", 'mail_smtpuser', 'email', false,
-			  SUGAR.language.get('Configurator','LBL_GMAIL_SMTPUSER'));
-	    }
-		else if (server.value == "plus.smtp.mail.yahoo.com" && !isValidEmail(user.value)) {
-            addToValidate("AdminWizard", 'mail_smtpuser', 'email', false,
+        if (validate['AdminWizard'])
+        {
+            removeFromValidate('AdminWizard', 'mail_smtpserver');
+            removeFromValidate('AdminWizard', 'mail_smtpuser');
+            removeFromValidate('AdminWizard', 'mail_smtppass');
+            removeFromValidate('AdminWizard', 'mail_smtpport');
+        }
+        if (server.value == "smtp.gmail.com" && !isValidEmail(user.value)) {
+            addToValidate("AdminWizard", 'mail_smtpuser', 'email', false, 
+              SUGAR.language.get('Configurator','LBL_GMAIL_SMTPUSER'));
+        }
+        else if (server.value == "plus.smtp.mail.yahoo.com" && !isValidEmail(user.value)) {
+            addToValidate("AdminWizard", 'mail_smtpuser', 'email', false, 
               SUGAR.language.get('Configurator','LBL_YAHOOMAIL_SMTPUSER'));
         }
-		addToValidateMoreThan("AdminWizard", 'mail_smtpport', 'int', false,
+        addToValidateMoreThan("AdminWizard", 'mail_smtpport', 'int', false, 
               document.getElementById("mail_smtpport_label").innerHTML, 1);
-		return check_form("AdminWizard");
-	}
+        return check_form("AdminWizard");
+    }
 }
 
-function clearEmailFields() {
- 	document.getElementById('AdminWizard').mail_smtpuser.value = '';
+function clearEmailFields() { 
+    document.getElementById('AdminWizard').mail_smtpuser.value = '';
     document.getElementById('AdminWizard').mail_smtppass.value = '';
     //BEGIN SUGARCRM flav!=sales ONLY
     document.getElementById('notify_allow_default_outbound').checked = false;
@@ -793,7 +572,7 @@ function changeEmailScreenDisplay(smtptype)
     document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_MAIL_SMTPPORT}{literal}';
     document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_MAIL_SMTPSERVER}{literal}';
     document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_MAIL_SMTPUSER}{literal}';
-
+    
     switch (smtptype) {
     case "yahoomail":
         document.getElementById("mail_smtpserver").value = 'plus.smtp.mail.yahoo.com';
@@ -899,9 +678,9 @@ UA = YAHOO.env.ua;
 EmailMan = {};
 
 function testOutboundSettings() {
-	var errorMessage = '';
-	var isError = false;
-	var fromAddress = document.getElementById("outboundtest_from_address").value;
+    var errorMessage = '';
+    var isError = false;
+    var fromAddress = document.getElementById("outboundtest_from_address").value;
     var errorMessage = '';
     var isError = false;
     var smtpServer = document.getElementById('mail_smtpserver').value;
@@ -924,22 +703,22 @@ function testOutboundSettings() {
         if(trim(document.getElementById('mail_smtppass').value) == '') {
             isError = true;
             errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPASS}{literal}" + "<br/>";
-        }
+        }                
     }
     if(isError) {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", errorMessage, 'alert');
-        return false;
-    }
-
+        return false;    
+    } 
+    
     testOutboundSettingsDialog();
-
+        
 }
 
 function sendTestEmail()
 {
     var fromAddress = document.getElementById("outboundtest_from_address").value;
-
-    if (trim(fromAddress) == "")
+    
+    if (trim(fromAddress) == "") 
     {
         overlay("{/literal}{$APP.ERR_MISSING_REQUIRED_FIELDS}{literal}", "{/literal}{$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR}{literal}", 'alert');
         return;
@@ -948,40 +727,40 @@ function sendTestEmail()
         overlay("{/literal}{$APP.ERR_INVALID_REQUIRED_FIELDS}{literal}", "{/literal}{$APP.LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR}{literal}", 'alert');
         return;
     }
-
+    
     //Hide the email address window and show a message notifying the user that the test email is being sent.
     EmailMan.testOutboundDialog.hide();
     overlay("{/literal}{$APP.LBL_EMAIL_PERFORMING_TASK}{literal}", "{/literal}{$APP.LBL_EMAIL_ONE_MOMENT}{literal}", 'alert');
-
+    
     var callbackOutboundTest = {
-    	success	: function(o) {
-    		hideOverlay();
-    		overlay("{/literal}{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}{literal}", "{/literal}{$APP.LBL_EMAIL_TEST_NOTIFICATION_SENT}{literal}", 'alert');
-    	}
-    };
+        success : function(o) {
+            hideOverlay();
+            overlay("{/literal}{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}{literal}", "{/literal}{$APP.LBL_EMAIL_TEST_NOTIFICATION_SENT}{literal}", 'alert');
+        }
+    };    
     var smtpServer = document.getElementById('mail_smtpserver').value;
     var smtpPort = document.getElementById('mail_smtpport').value;
     var smtpssl  = document.getElementById('mail_smtpssl').value;
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
-    var mail_sendtype = 'SMTP';
-	var postDataString = 'mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl + "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
-	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=EmailUIAjax&module=Emails&emailUIAction=testOutbound&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
+    var mail_sendtype = 'SMTP'; 
+    var postDataString = 'mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl + "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress;
+    YAHOO.util.Connect.asyncRequest("POST", "index.php?action=EmailUIAjax&module=Emails&emailUIAction=testOutbound&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
 function testOutboundSettingsDialog() {
         // lazy load dialogue
         if(!EmailMan.testOutboundDialog) {
-        	EmailMan.testOutboundDialog = new YAHOO.widget.Dialog("testOutboundDialog", {
+            EmailMan.testOutboundDialog = new YAHOO.widget.Dialog("testOutboundDialog", {
                 modal:true,
-				visible:true,
-            	fixedcenter:true,
-            	constraintoviewport: true,
-                width	: 600,
-                shadow	: false
+                visible:true,
+                fixedcenter:true,
+                constraintoviewport: true,
+                width   : 600,
+                shadow  : false
             });
             EmailMan.testOutboundDialog.setHeader("{/literal}{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}{literal}");
             YAHOO.util.Dom.removeClass("testOutboundDialog", "yui-hidden");
         } // end lazy load
-
+        
         EmailMan.testOutboundDialog.render();
         EmailMan.testOutboundDialog.show();
 } // fn
@@ -995,29 +774,29 @@ function overlay(reqtitle, body, type) {
 }
 
 function hideOverlay() {
-	YAHOO.SUGAR.MessageBox.hide();
+    YAHOO.SUGAR.MessageBox.hide();
 }
 
 function notify_setrequired() {
-	document.getElementById("smtp_auth1").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
-	document.getElementById("smtp_auth1").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
-	document.getElementById("smtp_auth2").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
-	document.getElementById("smtp_auth2").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
-	return true;
+    document.getElementById("smtp_auth1").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
+    document.getElementById("smtp_auth1").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
+    document.getElementById("smtp_auth2").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
+    document.getElementById("smtp_auth2").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
+    return true;
 }
 notify_setrequired();
 
-function setDefaultSMTPPort()
+function setDefaultSMTPPort() 
 {
     useSSLPort = !document.getElementById("mail_smtpssl").options[0].selected;
-
+    
     if ( useSSLPort && document.getElementById("mail_smtpport").value == '25' ) {
         document.getElementById("mail_smtpport").value = '465';
     }
     if ( !useSSLPort && document.getElementById("mail_smtpport").value == '465' ) {
         document.getElementById("mail_smtpport").value = '25';
     }
-
+        
 }
 {/literal}
 {$getNameJs}
