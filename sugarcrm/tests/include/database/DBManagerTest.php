@@ -456,14 +456,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->createTableParams($tableName, $params, array());
 
         $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
-        var_dump($repair);
+
         $this->assertEmpty($repair, "Unexpected repairs");
-//        $this->assertRegExp('#MISSING IN DATABASE.*bar#i', $repair);
-//        $repair = $this->_db->repairTableParams($tableName, $params, array(), true);
-//        $cols = $this->_db->get_columns($tableName);
-//        $this->assertArrayHasKey('bar', $cols);
-//        $this->assertEquals('bar', $cols['bar']['name']);
-//        $this->assertEquals($this->_db->getColumnType('int'), $cols['bar']['type']);
 
         $this->dropTableName($tableName);
     }
