@@ -585,10 +585,11 @@ EOJS;
 		$json = getJSONobj();
 		$newPageName = $json->decode(html_entity_decode($_REQUEST['pageName']));
 
-		// javascript hack for single quotes -- escape the backspaces
-		$newPageName = str_replace("\'", "'", $newPageName);
 
-		$newPage['pageTitle'] = remove_xss(from_html($newPageName['jsonObject']));
+        $newPageName = remove_xss(from_html($newPageName));
+
+		// hack for single quotes -- escape the backspaces
+        $newPage['pageTitle'] =  str_replace("\'", "'", $newPageName);
 
 		$newPage['numColumns'] = $_REQUEST['numCols'];
 
