@@ -78,6 +78,7 @@ $mod_strings = array (
 	'LBL_NAME' => 'Name',
 	'LBL_NEW_FORM_TITLE' => 'Create Appointment',
 	'LBL_OUTLOOK_ID' => 'Outlook ID',
+	'LBL_SEQUENCE' => 'Meeting update sequence',
 	'LBL_PHONE' => 'Phone Office:',
 	'LBL_REMINDER_TIME'=>'Reminder Time',
 	'LBL_REMINDER' => 'Reminder:',

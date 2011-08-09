@@ -9,6 +9,7 @@ class Event{
 	public $date_start;
 	public $date_end;
 	public $name;
+	public $status;
 	public $description;
 	public $type = 'Event';
 	public $date_created;
@@ -143,12 +144,12 @@ VEVENT;
 		$this->properties['DTSTART'] = $this->toVCalDate($this->event->date_start);
 		$this->properties['DTEND'] = $this->toVCalDate($this->event->date_end);
 		$this->properties['SUMMARY'] = $this->event->name;
+		$this->properties['STATUS'] = $this->event->status;
 		$this->properties['UID'] = $this->event->uid;
 		$this->properties['DESCRIPTION'] = $this->event->description;
 		$this->properties['URL'] = $this->event->url;
 		$this->properties['SEQUENCE'] = $this->event->sequence;
 		$this->properties['LOCATION'] = $this->event->location;
-
 	}
 
 	/**
@@ -186,6 +187,9 @@ VEVENT;
 				break;
 			case 'SUMMARY':
 				$this->event->name = $value;
+				break;
+			case 'STATUS':
+				$this->event->status = $value;
 				break;
 			case 'URL':
 				$this->event->url = $value;
@@ -481,54 +485,74 @@ class iCalendar {
 				if(!$val instanceof vEvent) {
 					continue;
 				}
-				$meeting = new Meeting();
-				if($parent) {
-					$meeting->assigned_user_id = $parent->assigned_user_id;
-					$meeting->team_set_id = $parent->team_set_id;
-					$meeting->team_id = $parent->team_id;
-					$meeting->parent_id = $parent->id;
-					$meeting->parent_type = $parent->module_dir;
-				}
-				$meeting->date_start = $val->event->date_start;
-				$meeting->date_end = $val->event->date_end;
-				$meeting->name = $val->event->name;
-				$meeting->date_entered = $val->event->date_created;
-				$meeting->date_modified = $val->event->date_modified;
-				$meeting->location = $val->event->location;
-				$dateDiff = strtotime($val->event->date_end) - strtotime($val->event->date_start);
-				$diffHours = floor(($dateDiff)/(60*60));
-				$diffMinutes = ((($dateDiff)%(60*60))/(60*60)) * 60;
-				$meeting->duration_hours = $diffHours;
-				$meeting->duration_minutes = $diffMinutes;
-				$meeting_id = $meeting->save();
 
-				// invite people
-				$emails = array();
-				foreach($val->event->attendees as $attendee) {
-			        if(!empty($attendee['email'])) {
-			            $emails[] = "ea.email_address_caps='".$meeting->db->quoteForEmail($this->cleanEmail($attendee['email']))."'";
-			        }
+				$meeting = new Meeting();
+				$prev_seq = 0;
+				$prev_exists = false;
+				$prev_meeting = $meeting->retrieve_by_string_fields(array("outlook_id" => $val->event->uid));
+				if (isset ($prev_meeting) && !empty ($prev_meeting->id)) {
+					$prev_seq = (int) $prev_meeting->sequence;
+					$prev_exists = true;
 				}
-				if(!empty($val->event->organizer) && !empty($val->event->organizer['email'])) {
-				    $emails[] = "ea.email_address_caps='".$meeting->db->quoteForEmail($this->cleanEmail($val->event->organizer['email']))."'";
-				}
-				if(!empty($emails)) {
-				    $query = join(" OR ", $emails);
-				    $invitees = $meeting->db->query("SELECT eabr.bean_id, eabr.bean_module FROM email_addr_bean_rel eabr
-				    JOIN email_addresses ea ON eabr.email_address_id=ea.id
-				    WHERE eabr.deleted=0 AND ea.deleted=0 AND eabr.bean_module IN ('Users','Contacts','Leads') AND ($query)
-				    ");
-				    $ids = array_flip($meeting->relationship_fields);
-				    while($inv = $meeting->db->fetchByAssoc($invitees)) {
-				        $module = strtolower($inv['bean_module']);
-				        $relname = "rel_{$module}_table";
-				        if(!isset($meeting->$relname) || !isset($ids[$module])) {
-				            $GLOBALS['log']->info("createSugarEvents: Unknown module $module encountered for id {$inv["bean_id"]}");
-				            continue;
+
+				if (!$prev_exists || ($prev_exists && $val->event->sequence > $prev_seq)) {
+					// insert if doesn't exist, otherwise overwrite it with newer data if current meeting's sequence is greater than prev. sequence
+
+					if($parent) {
+						$meeting->assigned_user_id = $parent->assigned_user_id;
+						$meeting->team_set_id = $parent->team_set_id;
+						$meeting->team_id = $parent->team_id;
+						$meeting->parent_id = $parent->id;
+						$meeting->parent_type = $parent->module_dir;
+					}
+
+					$meeting->date_start = $val->event->date_start;
+					$meeting->date_end = $val->event->date_end;
+					$meeting->name = $val->event->name;
+					$meeting->date_entered = $val->event->date_created;
+					$meeting->date_modified = $val->event->date_modified;
+					$meeting->location = $val->event->location;
+					$dateDiff = strtotime($val->event->date_end) - strtotime($val->event->date_start);
+					$diffHours = floor(($dateDiff)/(60*60));
+					$diffMinutes = ((($dateDiff)%(60*60))/(60*60)) * 60;
+					$meeting->duration_hours = $diffHours;
+					$meeting->duration_minutes = $diffMinutes;
+					$meeting->outlook_id = $val->event->uid;
+					$meeting->sequence = $val->event->sequence;
+
+					if ($prev_exists && $val->event->status == 'CANCELLED')
+						$meeting->deleted = 1;
+
+					$meeting_id = $meeting->save();
+
+					// invite people
+					$emails = array();
+					foreach($val->event->attendees as $attendee) {
+				        if(!empty($attendee['email'])) {
+				            $emails[] = "ea.email_address_caps='".$meeting->db->quoteForEmail($this->cleanEmail($attendee['email']))."'";
 				        }
-				        $relate_values = array($ids[$module]=>$inv["bean_id"],'meeting_id'=>$meeting_id);
-            			$meeting->set_relationship($meeting->$relname, $relate_values, false);
-				    }
+					}
+					if(!empty($val->event->organizer) && !empty($val->event->organizer['email'])) {
+					    $emails[] = "ea.email_address_caps='".$meeting->db->quoteForEmail($this->cleanEmail($val->event->organizer['email']))."'";
+					}
+					if(!empty($emails)) {
+					    $query = join(" OR ", $emails);
+					    $invitees = $meeting->db->query("SELECT eabr.bean_id, eabr.bean_module FROM email_addr_bean_rel eabr
+					    JOIN email_addresses ea ON eabr.email_address_id=ea.id
+					    WHERE eabr.deleted=0 AND ea.deleted=0 AND eabr.bean_module IN ('Users','Contacts','Leads') AND ($query)
+					    ");
+					    $ids = array_flip($meeting->relationship_fields);
+					    while($inv = $meeting->db->fetchByAssoc($invitees)) {
+					        $module = strtolower($inv['bean_module']);
+					        $relname = "rel_{$module}_table";
+					        if(!isset($meeting->$relname) || !isset($ids[$module])) {
+					            $GLOBALS['log']->info("createSugarEvents: Unknown module $module encountered for id {$inv["bean_id"]}");
+					            continue;
+					        }
+					        $relate_values = array($ids[$module]=>$inv["bean_id"],'meeting_id'=>$meeting_id);
+	            			$meeting->set_relationship($meeting->$relname, $relate_values, false);
+					    }
+					}
 				}
 			}
 		}
