@@ -15,7 +15,6 @@ SUGAR.importWizard = function() {
 					var importWizardDialogDiv = document.createElement("div");
 					importWizardDialogDiv.id = "importWizardDialog";
 					importWizardDialogDiv.style.display = "none";
-					importWizardDialogDiv.class = "dashletPanelMenu wizard import";
 					importWizardDialogDiv.className = "dashletPanelMenu wizard import";
 					importWizardDialogDiv.innerHTML = '<div class="hd"><a href="javascript:void(0)" onClick="javascript:SUGAR.importWizard.closeDialog();"><div class="container-close">&nbsp;</div></a><div class="title" id="importWizardDialogTitle"></div></div><div class="bd"><div class="screen" id="importWizardDialogDiv"></div><div id="submitDiv"></div></div>';
 					oBody.appendChild(importWizardDialogDiv);
@@ -67,8 +66,8 @@ SUGAR.importWizard = function() {
 				var success = function(data) {		
 					eval(data.responseText);
 					importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
-					submitDiv = document.getElementById('submitDiv');
-					importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+					var submitDiv = document.getElementById('submitDiv');
+					var importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 					importWizardDialogDiv.innerHTML = response['html'];
 					importWizardDialogTitle.innerHTML = response['title'];
 					submitDiv.innerHTML = response['submitContent'];
@@ -91,8 +90,8 @@ SUGAR.importWizard = function() {
 		closeDialog: function() {
 			
 				SUGAR.importWizard.dialog.hide();
-				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
-				submitDiv = document.getElementById('submitDiv');
+				var importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+				var submitDiv = document.getElementById('submitDiv');
 				importWizardDialogDiv.innerHTML = "";
 				submitDiv.innerHTML = "";
 				SUGAR.importWizard.dialog.destroy();
