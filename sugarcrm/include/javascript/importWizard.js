@@ -26,7 +26,7 @@ SUGAR.importWizard = function() {
 			{
 				SUGAR.importWizard.dialog = new YAHOO.widget.Dialog("importWizardDialog", 
 				{ width : "1100px",
-				  height: "700px",
+				  height: "600px",
 				  fixedcenter : true,
 				  draggable:false,
 				  visible : false, 
