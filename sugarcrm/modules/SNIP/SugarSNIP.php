@@ -109,9 +109,9 @@ class SugarSNIP
         $snipuser = $this->getSnipUser();
 
         $request = array ('sugarkey' => $sugar_config['unique_key'],
-                        'user' => $snipuser->user_name, 
-                        'password' => $snipuser->user_hash, 
-                        'client_api_url' => $this->getURL(), 
+                        'user' => $snipuser->user_name,
+                        'password' => $snipuser->user_hash,
+                        'client_api_url' => $this->getURL(),
                         'license' => $license);
 
         $response = $this->callRest('register', $request, true, $connectionfailed);
@@ -142,8 +142,8 @@ class SugarSNIP
         $connectionfailed = false;
         $snipuser = $this->getSnipUser();
         $request = array ('sugarkey' => $sugar_config['unique_key'],
-                        'user' => $snipuser->user_name, 
-                        'password' => $snipuser->user_hash); 
+                        'user' => $snipuser->user_name,
+                        'password' => $snipuser->user_hash);
 
         $response = $this->callRest('unregister', $request, true, $connectionfailed);
 
@@ -154,7 +154,7 @@ class SugarSNIP
                 $admin = new Administration();
                 $admin->saveSetting('snip', 'email', '');
             }
-            
+
             return $this->last_result;
         }
     }
@@ -275,12 +275,12 @@ class SugarSNIP
         $user->description = $user->title;
         $user->first_name = "";
         $user->last_name = $user->title;
-        $user->status='Active';
-        $user->external_auth_only = 1;
+        $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
         $user->user_hash = strtolower(md5(time().mt_rand()));
-        //$user->default_team = '1'; // TODO: which team should we set?
+        $user->default_team = '1';
+        $user->created_by = '1';
         $user->save();
         return $user;
     }
@@ -315,11 +315,13 @@ class SugarSNIP
 	        	$iusr = $user->retrieve_by_email_address($addr);
 				if(!empty($iusr) && !empty($user->id)) {
 					$email->assigned_user_id = $user->id;
-					break;
+					return;
 				}
 	        }
         }
 
+    /*
+     	Disabled by PM request - do not assign by default to any user.
         if(empty($email->assigned_user_id) && !empty($username)) {
             $email->assigned_user_id = $user->retrieve_user_id($username);
         }
@@ -327,6 +329,7 @@ class SugarSNIP
         if(empty($email->assigned_user_id) && !empty($GLOBALS['current_user'])) {
             $email->assigned_user_id = $GLOBALS['current_user']->id;
         }
+     */
     }
 
     /**
