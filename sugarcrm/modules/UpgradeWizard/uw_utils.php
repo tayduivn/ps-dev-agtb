@@ -595,11 +595,7 @@ function deleteCache(){
 		foreach($allModFiles as $file)
 		{
             if(file_exists($file)) {
-	       		if(is_dir($file)) {
-				  rmdir_recursive($file);
-	       		} else {
 	       		  unlink($file);
-	       		}
                }
 	    }
 	}
