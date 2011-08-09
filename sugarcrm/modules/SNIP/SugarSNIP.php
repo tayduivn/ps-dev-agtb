@@ -235,17 +235,19 @@ class SugarSNIP
     public function getStatus()
     {
         //if inactive,
-        if(!$this->isActive()) {
+        if(!$this->isActive())
             return array('status'=>'notpurchased','message'=>null);
-        }
 
         $connectionfailed=false;
         $this->callRest('status',false,$json=false,$connectionfailed);
 
         //check if server is down
-        if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found'){
+        if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found')
             return array('status'=>'down','message'=>null);
-        }
+
+        //server is up but unable to ping back
+        if ($this->last_result->result == 'ping failed')
+            return array('status'=>'pingfailed','message'=>null);
 
         //server is up but snip is not purchased
         if ($this->last_result->result == 'instance not found')
@@ -260,7 +262,6 @@ class SugarSNIP
             return array('status'=>'purchased_error','message'=>'');
         else
             return array('status'=>'purchased_error','message'=>$this->last_result->status);
-
     }
 
     /**

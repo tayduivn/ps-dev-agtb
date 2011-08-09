@@ -41,4 +41,8 @@ $mod_strings = array(
     'LBL_SNIP_ERROR_DISABLING' => 'Error disabling SNIP',
     'LBL_SNIP_ERROR_ENABLING' => 'Error enabling SNIP',
     'LBL_CONTACT_SUPPORT' => 'Please try again or contact customer support.',
+
+    'LBL_SNIP_STATUS_PINGBACK_FAIL' => 'Pingback failed',
+    'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server unable to contact your Sugar instance.',
+
 );

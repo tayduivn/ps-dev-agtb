@@ -149,6 +149,10 @@ div.snipError{
 							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_FAIL}</span></div>
 							<div style='clear:both'></div>
 							<div id='snip_summary'>{$MOD.LBL_SNIP_STATUS_FAIL_SUMMARY}</div>
+						{elseif $SNIP_STATUS == 'pingfailed'}
+							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_PINGBACK_FAIL}</span></div>
+							<div style='clear:both'></div>
+							<div id='snip_summary'>{$MOD.LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY}</div>
 						{elseif $SNIP_STATUS == 'purchased_error'}
 							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_ERROR}</span></div>
 							<div style='clear:both'></div>
