@@ -1436,6 +1436,7 @@ function pullSilentInstallVarsIntoSession() {
         'setup_db_sugarsales_password'  => isset($sugar_config['dbconfig']['db_password']) ? $sugar_config['dbconfig']['db_password'] : '',
         'setup_db_database_name'        => isset($sugar_config['dbconfig']['db_name']) ? $sugar_config['dbconfig']['db_name'] : '',
         'setup_db_type'                 => isset($sugar_config['dbconfig']['db_type']) ? $sugar_config['dbconfig']['db_type'] : '',
+        'setup_db_port_num'             => isset($sugar_config['dbconfig']['db_port_num']) ? $sugar_config['dbconfig']['db_port_num'] : '',
     );
     // third array of values derived from above values
     $derived = array (
@@ -2129,7 +2130,7 @@ function enableInsideViewConnector()
     } else {
         require($mapFile);
     }
- 
+
     require_once('modules/Connectors/connectors/sources/ext/rest/insideview/insideview.php');
     $source = new ext_rest_insideview();
 
