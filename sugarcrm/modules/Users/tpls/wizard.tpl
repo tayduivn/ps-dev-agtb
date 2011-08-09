@@ -334,10 +334,10 @@ function disableReturnSubmission(e) {
                 </tr>
                 <tr>
                     <td scope="row">
-                        {$MOD.LBL_WIZARD_FINISH1}
-                                                <br />
+                        <h3>{$MOD.LBL_WIZARD_FINISH1}</h3>
+                         
                         <table cellpadding=0 cellspacing=0><input id='whatnext' name='whatnext' type="hidden" value='finish' />
-                        <tr><td><img src=include/images/start.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a></td></tr>
+                        <tr><td><img src=include/images/start.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a><br> {$MOD.LBL_WIZARD_FINISH2DESC}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         <tr><td><img src=include/images/import.png style="margin-right: 5px;"></td><td><a onclick='return SUGAR.importWizard.renderDialog("Administration","step1","");' href="#" ><b> {$MOD.LBL_WIZARD_FINISH3} </b></a><br> {$MOD.LBL_WIZARD_FINISH4}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
