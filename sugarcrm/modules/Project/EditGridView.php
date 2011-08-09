@@ -312,7 +312,26 @@ $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);
 $sugar_smarty->assign("CANEDIT",$current_user->id == $focus->assigned_user_id || $current_user->is_admin);
 //BEGIN SUGARCRM flav=pro ONLY
-$sugar_smarty->assign("CANEDIT",in_array($focus->team_id,array_keys($current_user->get_my_teams()))  || $current_user->id == $focus->assigned_user_id || $current_user->is_admin);
+
+// Bug #43092
+// Based on teamset ID, get a list of teams, and use that to check if this user
+// can edit the gantt chart
+$GLOBALS['log']->debug('EditGridView.php: Getting list of teams to determine access for editing gantt chart');
+require_once("modules/Teams/TeamSet.php");
+
+$list_of_teams = array();
+
+if (isset($focus->team_set_id)) {
+    $teamSet        = new TeamSet();
+    $list_of_teams  = $teamSet->getTeamIds($focus->team_set_id);
+} else { // since no team_set_id exists, we can just use the current team id
+    $list_of_teams[] = $focus->team_id;
+}
+
+// this checks to see if any teams in the project's teamset matches any teams
+// in the project's list of teams.
+$sugar_smarty->assign("CANEDIT",(bool)array_intersect(array_values($list_of_teams),array_keys($current_user->get_my_teams()))  || $current_user->id == $focus->assigned_user_id || $current_user->is_admin);
+
 //END SUGARCRM flav=pro ONLY
 
 require_once('include/Sugarpdf/sugarpdf_config.php');

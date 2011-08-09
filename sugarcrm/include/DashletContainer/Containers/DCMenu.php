@@ -38,9 +38,9 @@ class DCMenu extends DashletContainer
         else
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 
-		$url = "javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');";
-		$image = SugarThemeRegistry::current()->getLink($url, $createRecordTitle, '', $imageName, 'class="icon"');
-	    return "<li>$image</li>";
+	    return <<<EOQ
+		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}' id="dcMenu_{$module}_quick_create_icon" ></a></li>
+EOQ;
 	}
 	
 	protected function getDynamicMenuItem($def)
@@ -122,7 +122,6 @@ EOQ;
 		// TODO: Come back and make a SugarFields grouping file for all of these
 		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Collection/SugarFieldCollection.js')."'></script>";
 		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Teamset/Teamset.js')."'></script>";
-		$html .= "<script src='".getJSPath('include/JSON.js')."'></script>";
 		$html .= "<script src='".getJSPath('include/SugarFields/Fields/Datetimecombo/Datetimecombo.js')."'></script>";
 		$html .= <<<EOQ
 		<script>

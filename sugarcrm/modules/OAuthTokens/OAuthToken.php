@@ -1,4 +1,5 @@
 <?php
+require_once 'Zend/Oauth/Provider.php';
 require_once 'modules/OAuthKeys/OAuthKey.php';
 
 class OAuthToken extends SugarBean
@@ -60,7 +61,7 @@ class OAuthToken extends SugarBean
 	 */
 	protected static function randomValue()
 	{
-	    return bin2hex(OAuthProvider::generateToken(6));
+	    return bin2hex(Zend_Oauth_Provider::generateToken(6));
 	}
 
 	/**

@@ -49,6 +49,7 @@ global $admin_group_header;  ///variable defined in the file above.
 $tab = array();
 $header_image = array();
 $url = array();
+$onclick = array();
 $label_tab = array();
 $description = array();
 $group = array();
@@ -129,6 +130,9 @@ foreach ($admin_group_header as $key=>$values) {
                 $colnum+=1;
                 $header_image[$j][$i]= SugarThemeRegistry::current()->getImage($admin_option[0],'border="0" align="absmiddle"',null,null,'.gif',translate($admin_option[1],'Administration'));
                 $url[$j][$i] = $admin_option[3];
+                if(!empty($admin_option[5])) {
+                	$onclick[$j][$i] = $admin_option[5];
+                }
                 $label = translate($admin_option[1],'Administration');
                 if(!empty($admin_option['additional_label']))$label.= ' '. $admin_option['additional_label'];
                 if(!empty($admin_option[4])){
@@ -163,6 +167,7 @@ $sugar_smarty->assign("ADMIN_GROUP_HEADER", $admin_group_header_tab);
 $sugar_smarty->assign("GROUP_HEADER", $group);
 $sugar_smarty->assign("ITEM_HEADER_IMAGE", $header_image);
 $sugar_smarty->assign("ITEM_URL", $url);
+$sugar_smarty->assign("ITEM_ONCLICK", $onclick);
 $sugar_smarty->assign("ITEM_HEADER_LABEL",$label_tab);
 $sugar_smarty->assign("ITEM_DESCRIPTION", $description);
 $sugar_smarty->assign("COLNUM", $tab);

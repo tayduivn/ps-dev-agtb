@@ -64,6 +64,20 @@ class ManyToManyRelationship extends AbstractRelationship
         return $subpanelDefinitions ;
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    function buildWirelessSubpanelDefinitions ()
+    {
+
+        $subpanelDefinitions = array ( ) ;
+        if (!$this->relationship_only)
+        {
+            $subpanelDefinitions [ $this->rhs_module ] = $this->getWirelessSubpanelDefinition($this->relationship_name, $this->lhs_module, $this->lhs_subpanel, $this->getLeftModuleSystemLabel() ) ;
+            $subpanelDefinitions [ $this->lhs_module ] = $this->getWirelessSubpanelDefinition($this->relationship_name, $this->rhs_module, $this->rhs_subpanel, $this->getRightModuleSystemLabel() ) ;
+        }
+        return $subpanelDefinitions ;
+    }
+    //END SUGARCRM flav=pro ONLY
+
     /*
      * @return array    An array of field definitions, ready for the vardefs, keyed by module
      */

@@ -310,7 +310,7 @@
 {/literal}				
 				
 
-	    <div id='dialog1' style="display: none"> 
+	    <div id='dialog1' style="display: none">
 	    	<div class="bd">   
 	    		<div id="jsonresults"></div>                
 				 <div id="tagsCreate" style="display:none" >	                                     					       

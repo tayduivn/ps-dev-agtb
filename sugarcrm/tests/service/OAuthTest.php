@@ -32,8 +32,10 @@ class OAuthTest extends Sugar_PHPUnit_Framework_TestCase
 
         self::$helperObject = new APIv3Helper();
         // create our own customer key
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
+	    $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
         self::$_consumer = new OAuthKey();
-        self::$_consumer->c_key = "TESTCUSTOMER";
+	    self::$_consumer->c_key = "TESTCUSTOMER";
         self::$_consumer->c_secret = "TESTSECRET";
         self::$_consumer->save();
     }
@@ -54,7 +56,7 @@ class OAuthTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-	    if(!SugarOAuthServer::enabled()) {
+	    if(!SugarOAuthServer::enabled() || !extension_loaded('oauth')) {
             $this->markTestSkipped("No OAuth support");
         }
         $this->oauth = new OAuth('TESTCUSTOMER','TESTSECRET',OAUTH_SIG_METHOD_HMACSHA1,OAUTH_AUTH_TYPE_URI);

@@ -324,7 +324,7 @@ if(document.DetailView != null &&
 EOQ;
             $display_spd = '';
             if($div_display != 'none'){
-            	echo "<script>markSubPanelLoaded('$tab');</script>";
+            	echo "<script>SUGAR.util.doWhen(\"typeof(markSubPanelLoaded) != 'undefined'\", function() {markSubPanelLoaded('$tab');});</script>";
             	$old_contents = ob_get_contents();
             	@ob_end_clean();
 

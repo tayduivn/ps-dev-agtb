@@ -31,7 +31,7 @@ global $mod_strings, $app_strings;
 global $current_user, $sugar_config;
 
 $module_menu=Array();
-if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users')
+if($GLOBALS['current_user']->isAdminForModule('Users')
 		//BEGIN SUGARCRM flav=sales ONLY
 		|| $current_user->user_type == 'UserAdministrator'
 		//END SUGARCRM flav=sales ONLY
@@ -61,7 +61,7 @@ if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users'
 
 //END SUGARCRM flav=pro ONLY
 
-    $module_menu[] = Array("index.php?module=Import&action=Step1&import_module=Users&return_module=Users&return_action=index", $mod_strings['LNK_IMPORT_USERS'],"Import", 'Contacts');
+    $module_menu[] = Array("javascript:void(SUGAR.importWizard.renderDialog('Users','step1',''));", $mod_strings['LNK_IMPORT_USERS'],"Import", 'Contacts');
 }
 /*
 	array_push($module_menu, Array("index.php?module=Users&action=EditTabs&return_module=Users&return_action=DetailView", $mod_strings['LNK_EDIT_TABS'],"Users"))

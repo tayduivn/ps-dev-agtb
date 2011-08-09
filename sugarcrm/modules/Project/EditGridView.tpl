@@ -106,6 +106,7 @@ var resources = new Array();
 <div id="projectButtonsDiv">
 	<span id = "grid_buttons_span">
 	{if $SELECTED_VIEW <= 1 && $CANEDIT}
+<<<<<<< HEAD
 			<a valign="bottom" title="{$MOD.LBL_INSERT_BUTTON}">{sugar_getimage name="ProjectInsertRows" ext=".gif" alt=$mod_strings.LBL_INSERTROWS other_attributes='onclick="javascript:SUGAR.grid.insertRow()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_INDENT_BUTTON}">{sugar_getimage name="ProjectIndent" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.indentSelectedRows()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_OUTDENT_BUTTON}">{sugar_getimage name="ProjectOutdent" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.addToOutdent()" '}</img></a>
@@ -115,6 +116,17 @@ var resources = new Array();
 			<a valign="bottom" title="{$MOD.LBL_DELETE_BUTTON}">{sugar_getimage name="ProjectDelete" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.deleteRows()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_EXPAND_ALL_BUTTON}">{sugar_getimage name="ProjectExpandAll" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.expandAll()" '}</img></a>
 			<a valign="bottom" title="{$MOD.LBL_COLLAPSE_ALL_BUTTON}">{sugar_getimage name="ProjectCollapseAll" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.collapseAll()" '}</img></a>
+=======
+			<a valign="bottom" title="{$MOD.LBL_INSERT_BUTTON}" id="gantt_button_insert_row"><img src='{sugar_getimagepath file='ProjectInsertRows.gif'}' onClick="javascript:SUGAR.grid.insertRow()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_INDENT_BUTTON}"><img src='{sugar_getimagepath file='ProjectIndent.gif'}' onClick="javascript:SUGAR.grid.indentSelectedRows()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_OUTDENT_BUTTON}"><img src='{sugar_getimagepath file='ProjectOutdent.gif'}' onClick="javascript:SUGAR.grid.addToOutdent()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_COPY_BUTTON}"><img src='{sugar_getimagepath file='ProjectCopy.gif'}' onClick="javascript:SUGAR.grid.copyRow()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_CUT_BUTTON}"><img src='{sugar_getimagepath file='ProjectCut.gif'}' onClick="javascript:SUGAR.grid.cutRow()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_PASTE_BUTTON}"><img src='{sugar_getimagepath file='ProjectPaste.gif'}' onClick="javascript:SUGAR.grid.pasteRow()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_DELETE_BUTTON}"><img src='{sugar_getimagepath file='ProjectDelete.gif'}' onClick="javascript:SUGAR.grid.deleteRows()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_EXPAND_ALL_BUTTON}"><img src='{sugar_getimagepath file='ProjectExpandAll.gif'}' onClick="javascript:SUGAR.grid.expandAll()"></img></a>
+			<a valign="bottom" title="{$MOD.LBL_COLLAPSE_ALL_BUTTON}"><img src='{sugar_getimagepath file='ProjectCollapseAll.gif'}' onClick="javascript:SUGAR.grid.collapseAll()"></img></a>
+>>>>>>> cottoncandy
 	{/if}
 		<a id="saveGridLink" title="{$MOD.LBL_SAVE_BUTTON}">{sugar_getimage name="ProjectSave" ext=".gif" other_attributes='onclick="javascript:SUGAR.grid.save()" '}</img></a>
 	</span>	

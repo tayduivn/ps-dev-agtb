@@ -36,11 +36,40 @@ class One2MBeanRelationship extends One2MRelationship
             {
                 $this->remove($oldLHS, $rhs, false);
             }
-        } else
-        {
-            echo ("Unable to load RHS module {$rhs->module_name} link $rhsLinkName\n");
         }
 
+        //Make sure we load the current relationship state to the LHS link
+        if ((isset($lhs->$lhsLinkName) && is_a($lhs->$lhsLinkName, "Link2")) || $lhs->load_relationship($lhsLinkName)) {
+            $lhs->$lhsLinkName->getBeans();
+        }
+
+        $this->updateFields($lhs, $rhs, $additionalFields);
+
+
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            //Need to call save to update the bean as the relationship is saved on the main table
+            //We don't want to create a save loop though, so make sure we aren't already in the middle of saving this bean
+            SugarRelationship::addToResaveList($rhs);
+
+            $this->updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName);
+
+            $this->callAfterAdd($lhs, $rhs);
+            $this->callAfterAdd($rhs, $lhs);
+        }
+    }
+
+    protected function updateLinks($lhs, $lhsLinkName, $rhs, $rhsLinkName)
+    {
+        if (isset($lhs->$lhsLinkName))
+            $lhs->$lhsLinkName->addBean($rhs);
+        //RHS only has one bean ever, so we don't need to preload the relationship
+        if (isset($rhs->$rhsLinkName))
+            $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
+    }
+
+    protected function updateFields($lhs, $rhs, $additionalFields)
+    {
         //Now update the RHS bean's ID field
         $rhsID = $this->def['rhs_key'];
         $rhs->$rhsID = $lhs->id;
@@ -48,15 +77,13 @@ class One2MBeanRelationship extends One2MRelationship
         {
             $rhs->$field = $val;
         }
-        $rhs->save();
-
-        $lhs->$lhsLinkName->beans[$rhs->id] = $rhs;
-        $rhs->$rhsLinkName->beans = array($lhs->id => $lhs);
-
-        $this->callAfterAdd($lhs, $rhs);
-        $this->callAfterAdd($rhs, $lhs);
+        //Update role fields
+        if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
+        {
+            $roleField = $this->def["relationship_role_column"];
+            $rhs->$roleField = $this->def["relationship_role_column_value"];
+        }
     }
-
 
     public function remove($lhs, $rhs, $save = true)
     {
@@ -66,8 +93,14 @@ class One2MBeanRelationship extends One2MRelationship
         if ($save)
             $rhs->save();
 
-        $this->callAfterDelete($lhs, $rhs);
-        $this->callAfterDelete($rhs, $lhs);
+        $rhsID = $this->def['rhs_key'];
+        $rhs->$rhsID = '';
+
+        if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
+        {
+            $this->callAfterDelete($lhs, $rhs);
+            $this->callAfterDelete($rhs, $lhs);
+        }
     }
 
     /**
@@ -77,8 +110,6 @@ class One2MBeanRelationship extends One2MRelationship
     public function load($link)
     {
         $relatedModule = $link->getSide() == REL_LHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
-        $rhsLinkName = $this->rhsLink;
-        $beans = array();
         $rows = array();
         //The related bean ID is stored on the RHS table.
         //If the link is RHS, just grab it from the focus.
@@ -88,7 +119,7 @@ class One2MBeanRelationship extends One2MRelationship
             $id = $link->getFocus()->$rhsID;
             if (!empty($id))
             {
-                $beans[$id] = BeanFactory::getBean($relatedModule, $id);
+                $rows[$id] = array('id' => $id);
             }
         }
         else //If the link is LHS, we need to query to get the full list and load all the beans.
@@ -103,12 +134,11 @@ class One2MBeanRelationship extends One2MRelationship
             while ($row = $db->fetchByAssoc($result))
             {
                 $id = $row['id'];
-                $beans[$id] = BeanFactory::getBean($relatedModule, $id);
                 $rows[$id] = $row;
             }
         }
 
-        return array("beans" => $beans, "rows" => $rows);
+        return array("rows" => $rows);
     }
 
     public function getQuery($link, $return_as_array = false)
@@ -120,15 +150,25 @@ class One2MBeanRelationship extends One2MRelationship
         else
         {
             $lhsKey = $this->def['lhs_key'];
+            $rhsTable = $this->def['rhs_table'];
+            $rhsTableKey = "{$rhsTable}.{$this->def['rhs_key']}";
+            $where = "WHERE $rhsTableKey = '{$link->getFocus()->$lhsKey}' AND {$rhsTable}.deleted=0";
+            //Check for role column
+            if(!empty($this->def["relationship_role_column"]) && !empty($this->def["relationship_role_column_value"]))
+            {
+                $roleField = $this->def["relationship_role_column"];
+                $roleValue = $this->def["relationship_role_column_value"];
+                $where .= " AND $rhsTable.$roleField = '$roleValue'";
+            }
             if (!$return_as_array) {
-                return "SELECT id FROM {$this->def['rhs_table']} WHERE {$this->def['rhs_key']} = '{$link->getFocus()->$lhsKey}' AND deleted=0";
+                return "SELECT id FROM {$this->def['rhs_table']} $where";
             }
             else
             {
                 return array(
                     'select' => "SELECT id",
                     'from' => "FROM {$this->def['rhs_table']}",
-                    'where' => "WHERE {$this->def['rhs_key']} = '{$link->getFocus()->$lhsKey}' AND deleted=0",
+                    'where' => $where,
                 );
             }
         }

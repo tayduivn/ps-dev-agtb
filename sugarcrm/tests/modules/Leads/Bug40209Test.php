@@ -1,6 +1,28 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
 
-class Bug40209Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug40209Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     var $user;
     var $account;
@@ -24,7 +46,7 @@ class Bug40209Test extends Sugar_PHPUnit_Framework_TestCase
         $this->lead = SugarTestLeadUtilities::createLead();
 
     }
-    
+
     public function tearDown()
     {
         //delete records created from db
@@ -39,13 +61,13 @@ class Bug40209Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->account);
         unset($this->contact);
     }
-    
+
 
 
     //run test to make sure accounts related to leads record are copied over to contact recor during conversion (bug 40209)
-    public function testConvertAccountCopied(){
-        //there will be output from display function, so call ob_start to trap it
-        ob_start();
+    public function testConvertAccountCopied()
+    {
+        $_POST = array();
 
         //set the request parameters and convert the lead
         $_REQUEST['module'] = 'Leads';
@@ -66,14 +88,10 @@ class Bug40209Test extends Sugar_PHPUnit_Framework_TestCase
         $contact_id = $this->lead->contact_id;
 
         //throw error if contact id was not retrieved and exit test
-        $this->assertTrue(!empty($contact_id), "contact id was not created during conversion process.  An error has ocurred, aborting rest of test.");
-        if (empty($contact_id)){
-            return;
-        }
+        $this->assertNotEmpty($contact_id, "contact id was not created during conversion process.  An error has ocurred, aborting rest of test.");
 
         //make sure the new contact has the account related and that it matches the lead account
         $this->contact->retrieve($contact_id);
-        $this->assertTrue($this->contact->account_id == $this->lead->account_id, "Account id from converted lead does not match the new contact account id, there was an error during conversion.");
-        $output = ob_get_clean();
+        $this->assertEquals($this->lead->account_id, $this->contact->account_id, "Account id from converted lead does not match the new contact account id, there was an error during conversion.");
     }
 }

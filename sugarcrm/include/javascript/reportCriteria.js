@@ -1297,9 +1297,13 @@ function getModuleInFilter(filter) {
 	return selected_module;
 }
 //builds the html for a select 
-function buildSelectHTML(info, showHidden) {
+function buildSelectHTML(info, showHidden, id,onBlur) {
 	var text;
 	text = "<select";
+	if (onBlur)
+		text +=	" onBlur="+onBlur;
+	if (id)
+		text += " id="+id;
 	if (showHidden != null && showHidden) {
 		text = text + " style='display:none'";
 		//text = text + " disabled";
@@ -1549,8 +1553,8 @@ function fill_form(type) {
 	}
 
 	// create a copy of the report filter object;
-	var filter_def = JSON.stringifyNoSecurity(report_def.filters_def);
-	filter_def = JSON.parse(filter_def);
+	var filter_def = YAHOO.lang.JSON.stringify(report_def.filters_def);
+	filter_def = YAHOO.lang.JSON.parse(filter_def);
 	var returnObject = new Object();
 	returnObject['got_error'] = got_error;
 	returnObject['error_msgs'] = error_msgs;
@@ -1560,7 +1564,7 @@ function fill_form(type) {
 		return false;
 	} // if
 	report_def_1.filters_def = filter_def;
-	report_def_str = JSON.stringifyNoSecurity(report_def_1);
+	report_def_str = YAHOO.lang.JSON.stringify(report_def_1);
 	form_obj.report_def.value = report_def_str;
 
 	return true;
@@ -1644,7 +1648,7 @@ function fill_form(type) {
 	
 	//return false;
 
-	report_def_str = JSON.stringifyNoSecurity(report_def);
+	report_def_str = YAHOO.lang.JSON.stringify(report_def);
 	form_obj.report_def.value = report_def_str;
 
 	return true;

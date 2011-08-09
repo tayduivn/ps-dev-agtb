@@ -44,7 +44,7 @@
 {include file='include/ListView/ListViewPagination.tpl'}
 <tr height='20'>
 		{if $prerow}
-			<th scope='col' nowrap="nowrap" width='1%' class="selectCol">
+			<th scope='col' width='1%' class="selectCol">
 				<div>
 				<input type='checkbox' class='checkbox' name='massall' id='massall' value='' onclick='sListView.check_all(document.MassUpdate, "mass[]", this.checked);' />
 				{$selectLink}
@@ -63,8 +63,8 @@
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}
 		{foreach from=$displayColumns key=colHeader item=params}
-			<th scope='col' width='{$params.width}%' nowrap="nowrap">
-				<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+			<th scope='col' width='{$params.width}%'>
+				<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
                 {if $params.sortable|default:true}
                     {if $params.url_sort}
                         <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1'>
@@ -130,7 +130,7 @@
             {capture assign=action}{if $act}{$act}{else}EditView{/if}{/capture}
 			<td width='2%' nowrap>
                 {if $pageData.rowAccess[$id].edit}
-                <a title='{$editLinkString}'
+                <a title='{$editLinkString}' id="edit-{$rowData.ID}"
 href="index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$rowData.ID}"
 {* //BEGIN SUGARCRM flav=pro ONLY *}
 data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$pageData.bean.moduleDir}{/if}'
@@ -151,7 +151,8 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
 {capture assign=linkModule}{if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}{/capture}
 {capture assign=action}{if $act}{$act}{else}DetailView{/if}{/capture}
 {capture assign=record}{$rowData[$params.id]|default:$rowData.ID}{/capture}
-                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="javascript:SUGAR.ajaxUI.loadContent('index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}')">
+{capture assign=url}index.php?module={$linkModule}&offset={$offset}&stamp={$pageData.stamp}&return_module={$linkModule}&action={$action}&record={$record}{/capture}
+                        <{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href="{sugar_ajax_url url=$url}">
 					{/if}
 					{if $params.customCode} 
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}

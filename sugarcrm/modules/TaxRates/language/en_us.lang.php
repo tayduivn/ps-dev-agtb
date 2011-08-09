@@ -53,8 +53,12 @@ $mod_strings = array (
   array (
     'Active' => 'Active',
     'Inactive' => 'Inactive',
-),
-	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  ),
+  'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,  
+  //For export labels
+  'LBL_EXPORT_MODIFIED_USER_ID'=> 'Modified User ID',
+  'LBL_EXPORT_CREATED_BY'=> 'Created By ID',
+
 );
 
 

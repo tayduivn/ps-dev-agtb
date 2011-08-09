@@ -6211,6 +6211,10 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     padding: 10px 0 0;
 }
 
+.cal_panel {
+    width: 190px;
+}
+
 .cal_panel.yui-panel .ft, .cal_panel.yui-panel .bd {
     background-color:#f2f2f2;
 }
@@ -6236,9 +6240,9 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     border: 1px solid #bbb;
     padding: 2px;
     float: left;
-    margin-left: 32%;
-    margin-right: 32%;
-    width: 33%;
+    margin-left: 54px;
+    margin-right: 54px;
+    width: 55px;
     -moz-border-radius: 3px;
 	border-radius: 3px;
 	-webkit-border-radius: 3px;

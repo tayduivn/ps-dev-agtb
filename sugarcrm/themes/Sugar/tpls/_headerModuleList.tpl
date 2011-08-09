@@ -69,9 +69,9 @@
 										<ul class="shortCutsUl">
 										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
 										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
-										
+										{php}
 											<li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
-										
+										{/php}
 										{/foreach}
 										</ul>
 										{if $groupTabId}
@@ -86,9 +86,6 @@
 				</div>      
 			{/if}
 			</li>
-			{if $name == $MODULE_TAB}
-			<li class="yuimenubaritem currentTabRight">{sugar_link id="moduleTab_$groupTabId$name_right" module=$name data=$module class="yuimenuitemlabel"}</li>
-			{/if}
 		{/foreach}
 			{if count($tabGroup.extra) > 0}
 			<li class="yuimenubaritem moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">

@@ -50,7 +50,7 @@ $mod_strings = array (
 
 	'ACCOUNT_REMOVE_PROJECT_CONFIRM' => 'Are you sure you want to remove this account from the project?',
 	'ERR_DELETE_RECORD' => 'You must specify a record number in order to delete the account.',
-	'LBL_ACCOUNT_INFORMATION' => 'Account Overview',
+	'LBL_ACCOUNT_INFORMATION' => 'Overview',
 	'LBL_ACCOUNT_NAME' => 'Account Name:',
 	'LBL_ACCOUNT' => 'Account:',
 	'LBL_ACTIVITIES_SUBPANEL_TITLE'=>'Activities',
@@ -98,7 +98,7 @@ $mod_strings = array (
 	'LBL_INVALID_EMAIL'=>'Invalid Email:',
 	'LBL_INVITEE' => 'Contacts',
 	'LBL_LEADS_SUBPANEL_TITLE' => 'Leads',
-	'LBL_LIST_ACCOUNT_NAME' => 'Account Name',
+	'LBL_LIST_ACCOUNT_NAME' => 'Name',
 	'LBL_LIST_CITY' => 'City',
 	'LBL_LIST_CONTACT_NAME' => 'Contact Name',
 	'LBL_LIST_EMAIL_ADDRESS' => 'Email Address',
@@ -178,7 +178,13 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
-
 	'LBL_COPY' => 'Copy' /*for 508 compliance fix*/,
+    //For export labels
+    'LBL_ACCOUNT_TYPE' => 'Account Type',
+    'LBL_CAMPAIGN_ID' => 'Campaign ID',
+    'LBL_PARENT_ID' => 'Parent ID',
+    'LBL_PHONE_ALTERNATE' => 'Phone Alternate',
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_PARENT_ID' => 'Member of',
 );
 ?>

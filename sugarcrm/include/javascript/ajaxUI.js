@@ -1,21 +1,41 @@
 /**
- * 
- * Find more about the scrolling function at
- * http://cubiq.org/iscroll
+ * Javascript file for Sugar
  *
- * Copyright (c) 2010 Matteo Spinelli, http://cubiq.org/
- * Released under MIT license
- * http://cubiq.org/dropbox/mit-license.txt
- * 
- * Version 3.7.1 - Last updated: 2010.10.08
- * 
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
+
+// $Id: ajaxUI.js 57264 2010-07-02 18:45:27Z kjing $
+
 SUGAR.ajaxUI = {
     callback : function(o)
     {
         var cont;
         if (typeof window.onbeforeunload == "function")
             window.onbeforeunload = null;
+        scroll(0,0);
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
@@ -26,6 +46,10 @@ SUGAR.ajaxUI = {
             if (r.title)
             {
                 document.title = r.title.replace(/&raquo;/g, '>').replace(/&nbsp;/g, ' ');
+            }
+            if (r.action)
+            {
+                action_sugar_grp1 = r.action;
             }
             //SUGAR.themes.setCurrentTab(r.menu);
             var c = document.getElementById("content");
@@ -39,14 +63,25 @@ SUGAR.ajaxUI = {
                 }
             }
         } catch (e){
-            if(YAHOO.lang.trim(o.responseText) == "" && o.responseText.charAt(0) != '{') {
-                document.body.innerHTML = "An error has occured:<br/>" + o.responseText;
-                SUGAR.util.evalScript(document.body.innerHTML);
-            } else if (typeof(console) != "undefined" && typeof(console.log) == "function")
-            {
-                console.log("invalid JSON response:");
-                console.log(o.responseText);
+            if (!SUGAR.ajaxUI.errorPanel) {
+                SUGAR.ajaxUI.errorPanel = new YAHOO.widget.Panel("ajaxUIErrorPanel", {
+                    modal: false,
+                    visible: true,
+                    constraintoviewport: true,
+                    width	: "800px",
+                    height : "600px",
+                    close: true
+                });
             }
+            var panel = SUGAR.ajaxUI.errorPanel;
+            panel.setHeader( SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
+            panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none"></iframe>');
+            panel.render(document.body);
+            document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+            panel.show();
+            panel.center();
+
+            throw "AjaxUI error parsing response";
         }
     },
 
@@ -58,6 +93,9 @@ SUGAR.ajaxUI = {
         }
         
         var bannedModules = SUGAR.config.stockAjaxBannedModules;
+        //If banned modules isn't there, we are probably on a page that isn't ajaxUI compatible
+        if (typeof(bannedModules) == 'undefined')
+            return false;
         // Mechanism to allow for overriding or adding to this list
         if(typeof(SUGAR.config.addAjaxBannedModules) != 'undefined'){
             bannedModules.concat(SUGAR.config.addAjaxBannedModules);
@@ -65,7 +103,8 @@ SUGAR.ajaxUI = {
         if(typeof(SUGAR.config.overrideAjaxBannedModules) != 'undefined'){
             bannedModules = SUGAR.config.overrideAjaxBannedModules;
         }
-        return bannedModules.indexOf(module) == -1;
+        
+        return SUGAR.util.arrayIndexOf(bannedModules, module) == -1;
     },
 
     loadContent : function(url, params)
@@ -73,7 +112,8 @@ SUGAR.ajaxUI = {
         if(YAHOO.lang.trim(url) != "")
         {
             //Don't ajax load certain modules
-            var module = /module=(\w+)/.exec(url)[1];
+            var mRegex = /module=([^&]*)/.exec(url);
+            var module = mRegex ? mRegex[1] : false;
             if (module && SUGAR.ajaxUI.canAjaxLoadModule(module))
             {
                 YAHOO.util.History.navigate('ajaxUILoc',  url);
@@ -83,28 +123,39 @@ SUGAR.ajaxUI = {
         }
     },
 
-    go : function(url, params)
+    go : function(url)
     {
-        
         if(YAHOO.lang.trim(url) != "")
         {
             var con = YAHOO.util.Connect, ui = SUGAR.ajaxUI;
+            if (ui.lastURL == url)
+                return;
+            var inAjaxUI = /action=ajaxui/.exec(window.location);
+            if (inAjaxUI && typeof (window.onbeforeunload) == "function"
+                    && window.onbeforeunload() && !confirm(window.onbeforeunload()))
+            {
+                YAHOO.util.History.navigate('ajaxUILoc',  ui.lastURL);
+                return;
+            }
             if (ui.lastCall && con.isCallInProgress(ui.lastCall)) {
                 con.abort(ui.lastCall);
             }
-            var module = /module=([^&]*)/.exec(url)[1];
+            var mRegex = /module=([^&]*)/.exec(url);
+            var module = mRegex ? mRegex[1] : false;
             //If we can't ajax load the module (blacklisted), set the URL directly.
             if (!ui.canAjaxLoadModule(module)) {
                 window.location = url;
                 return;
             }
+            ui.lastURL = url;
             ui.cleanGlobals();
             var loadLanguageJS = '';
             if(module && typeof(SUGAR.language.languages[module]) == 'undefined'){
                 loadLanguageJS = '&loadLanguageJS=1';
             }
 
-            if (!/action=ajaxui/.exec(window.location))
+            if (!inAjaxUI)
+                //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
             else {
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
@@ -124,16 +175,28 @@ SUGAR.ajaxUI = {
         SA.cleanGlobals();
         //Don't ajax load certain modules
         var form = YAHOO.util.Dom.get(formname) || document.forms[formname];
-        if (SA.canAjaxLoadModule(form.module.value))
+        if (SA.canAjaxLoadModule(form.module.value)
+            //Do not try to submit a form that contains a file input via ajax.
+            && typeof(YAHOO.util.Selector.query("input[type=file]", form)[0]) == "undefined"
+            //Do not try to ajax submit a form if the ajaxUI is not initialized
+            && /action=ajaxui/.exec(window.location))
         {
-            YAHOO.util.Connect.setForm(form);
-            YAHOO.util.Connect.asyncRequest('POST', 'index.php?ajax_load=1', {
-                success: SA.callback
-            });
-            window.location="index.php?action=ajaxui#ajaxUILoc=";
+            var string = con.setForm(form);
+            var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
+            SA.lastURL = baseUrl;
+            //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
+            if(string.length > 200)
+            {
+                con.asyncRequest('POST', 'index.php?ajax_load=1', {
+                    success: SA.callback
+                });
+                window.location=baseUrl;
+            } else {
+                con.resetFormState();
+                window.location = baseUrl + encodeURIComponent("index.php?" + string);
+            }
             return true;
         } else {
-            // window.location = url;
             form.submit();
             return false;
         }
@@ -141,24 +204,35 @@ SUGAR.ajaxUI = {
     cleanGlobals : function()
     {
         sqs_objects = {};
+        QSProcessedFieldsArray = {};
         collection = {};
         //Reset the EmailAddressWidget before loading a new page
         if (SUGAR.EmailAddressWidget){
             SUGAR.EmailAddressWidget.instances = {};
             SUGAR.EmailAddressWidget.count = {};
         }
+        YAHOO.util.Event.removeListener(window, 'resize');
 
     },
     firstLoad : function()
     {
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
-        url = url ? url : 'index.php?module=Home&action=index';
-
-        YAHOO.util.History.register('ajaxUILoc', url, SUGAR.ajaxUI.go);
-        YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
-        SUGAR.ajaxUI.hist_loaded = true;
-        SUGAR.ajaxUI.go(url);
+        var aRegex = /action=([^&]*)/.exec(window.location);
+        var action = aRegex ? aRegex[1] : false;
+        var mRegex = /module=([^&]*)/.exec(window.location);
+        var module = mRegex ? mRegex[1] : false;
+        if (module != "ModuleBuilder")
+        {
+            var go = url != null || action == "ajaxui";
+            url = url ? url : 'index.php?module=Home&action=index';
+            YAHOO.util.History.register('ajaxUILoc', url, SUGAR.ajaxUI.go);
+            YAHOO.util.History.initialize("ajaxUI-history-field", "ajaxUI-history-iframe");
+            SUGAR.ajaxUI.hist_loaded = true;
+            if (go)
+                SUGAR.ajaxUI.go(url);
+        }
+        SUGAR_callsInProgress--;
     },
     print: function()
     {

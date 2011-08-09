@@ -27,7 +27,7 @@
  ********************************************************************************/
 $module_name = '<module_name>';
 $viewdefs[$module_name]['DetailView'] = array(
-'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE',
+'templateMeta' => array('form' => array('buttons'=>array('EDIT', 'DUPLICATE', 'DELETE', 'FIND_DUPLICATES',
                                                          )),
                         'maxColumns' => '2',
                         'widths' => array(

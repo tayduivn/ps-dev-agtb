@@ -115,7 +115,7 @@ $out3 =<<<EOQ2
    <tr>
    <td><input class="button" type="button" onclick="window.open('http://www.sugarcrm.com/forums/');" value="{$mod_strings['LBL_HELP']}" /></td>
     <td>
-        <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" onclick="document.getElementById('form').submit();" />
+        <input class="button" type="button" name="goto" value="{$mod_strings['LBL_BACK']}" id="button_back_oc_install" onclick="document.getElementById('form').submit();" />
         <input type="hidden" name="goto" value="Back" />
     </td>
    <td><input class="button" type="submit" name="goto" value="{$mod_strings['LBL_NEXT']}" /></td>

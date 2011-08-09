@@ -48,6 +48,7 @@ class Parser {
         //Related field shorthand
         if (preg_match('/^\$[a-zA-Z0-9_\-]+\.[a-zA-Z0-9_\-]+$/', $expr))
         {
+            require_once( "include/Expressions/Expression/Generic/SugarFieldExpression.php");
             require_once( "include/Expressions/Expression/Generic/RelatedFieldExpression.php");
             $link = substr($expr, 1, strpos($expr, ".") - 1);
             $related = substr($expr, strpos($expr, ".") + 1);
@@ -336,11 +337,28 @@ class Parser {
 		
 		return $val;
 	}
-	
-    static function getFieldsFromExpression($expr) {
+
+    /**
+     * @static
+     * @param $expr
+     * @param SugarBean $context
+     * @return array
+     */
+    static function getFieldsFromExpression($expr, $fieldDefs = false) {
     	$matches = array();
     	preg_match_all('/\$(\w+)/', $expr, $matches);
-    	return array_values($matches[1]);
+    	$fields = array_values($matches[1]);
+        if ($fieldDefs){
+            //Now attempt to map the relate field to the link
+            foreach($fieldDefs as $name => $def)
+            {
+                if (isset($def['type']) && $def['type'] == 'relate' && !empty($def['link']) && in_array($def['link'], $fields) && !empty($def['id_name']))
+                {
+                    $fields[] = $def['id_name'];
+                }
+            }
+        }
+        return $fields;
     }
 }
 ?>

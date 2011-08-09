@@ -588,7 +588,8 @@ EOJS;
 		// javascript hack for single quotes -- escape the backspaces
 		$newPageName = str_replace("\'", "'", $newPageName);
 
-		$newPage['pageTitle'] = $newPageName['jsonObject'];
+		$newPage['pageTitle'] = remove_xss(from_html($newPageName['jsonObject']));
+
 		$newPage['numColumns'] = $_REQUEST['numCols'];
 
 		array_push($pages,$newPage);
@@ -828,7 +829,7 @@ EOJS;
 
 		$scriptOutput = 'var scriptResponse = '.$json->encode($scriptResponse);
 
-		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput), false, true);
+		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
 	}
 	//END SUGARCRM flav=pro ONLY
 

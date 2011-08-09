@@ -115,11 +115,15 @@ class Meeting extends SugarBean {
 		global $current_user;
 		if(!empty($current_user)) {
 			$this->team_id = $current_user->default_team;	//default_team is a team id
+			$this->team_set_id = $current_user->team_set_id; //bug 41334 : team_set_id needs to be updated with current_user's team_set_id
 		} else {
 			$this->team_id = 1; // make the item globally accessible
 		}
 		//END SUGARCRM flav=pro ONLY
 //		$this->fill_in_additional_detail_fields();
+        if(!empty($GLOBALS['app_list_strings']['duration_intervals'])) {
+            $this->minutes_values = $GLOBALS['app_list_strings']['duration_intervals'];
+        }
 	}
 
 	/**
@@ -253,7 +257,7 @@ class Meeting extends SugarBean {
 		$contact_required = stristr($where, "contacts");
 
 		if($contact_required) {
-			$query = "SELECT meetings.*, contacts.first_name, contacts.last_name, contacts.assigned_user_id contact_name_owner ";
+			$query = "SELECT meetings.*, contacts.first_name, contacts.last_name, contacts.assigned_user_id contact_name_owner, users.user_name as assigned_user_name   ";
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
@@ -263,7 +267,7 @@ class Meeting extends SugarBean {
 			$query .= " FROM contacts, meetings, meetings_contacts ";
 			$where_auto = " meetings_contacts.contact_id = contacts.id AND meetings_contacts.meeting_id = meetings.id AND meetings.deleted=0 AND contacts.deleted=0";
 		} else {
-			$query = 'SELECT meetings.*';
+			$query = 'SELECT meetings.*, users.user_name as assigned_user_name  ';
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
@@ -278,6 +282,7 @@ class Meeting extends SugarBean {
 		$this->add_team_security_where_clause($query);
 		$query .= getTeamSetNameJoin('meetings');
 		//END SUGARCRM flav=pro ONLY
+		$query .= "  LEFT JOIN users ON meetings.assigned_user_id=users.id ";
 
 		if($custom_join) {
 			$query .= $custom_join['join'];

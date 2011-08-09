@@ -109,6 +109,20 @@ function checkLoggerSettings(){
 	 }
 }
 
+function checkLeadConversionSettings() {
+    if (file_exists(getcwd().'/config.php')) {
+         require(getcwd().'/config.php');
+    }
+    global $sugar_config;
+    if (!isset($sugar_config['lead_conv_activity_opt'])) {
+        $sugar_config['lead_conv_activity_opt'] = 'copy';
+        ksort($sugar_config);
+        if (is_writable('config.php') && write_array_to_file("sugar_config", $sugar_config,'config.php')) {
+            //writing to the file
+        }
+    }
+}
+
 function checkResourceSettings(){
 	if(file_exists(getcwd().'/config.php')){
          require(getcwd().'/config.php');
@@ -681,7 +695,7 @@ if(is_file("{$cwd}/{$sugar_config['upload_dir']}upgrades/temp/manifest.php")) {
 	exit(1);
 }
 
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt');
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt' || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $_SESSION['upgrade_from_flavor'] = $manifest['name'];
 
 global $sugar_config;
@@ -714,8 +728,10 @@ foreach($parserFiles as $file) {
     else{
     $targetFile = str_replace(clean_path($zipBasePath), $cwd, $srcFile);
 
-	if(!is_dir(dirname($targetFile))) {
-		mkdir_recursive(dirname($targetFile)); // make sure the directory exists
+    if(!file_exists(dirname($targetFile))) 
+    {
+		logThis("Create directory " . dirname($targetFile), $path);
+    	mkdir_recursive(str_replace($argv[3], '', dirname($targetFile))); // make sure the directory exists
 	}
 
 	if(!file_exists($targetFile))
@@ -895,6 +911,10 @@ if(!didThisStepRunBefore('commit')){
 	    logThis('begin check logger settings .', $path);
 	    	checkLoggerSettings();
 	    logThis('begin check logger settings .', $path);
+
+            logThis('begin check lead conversion settings .', $path);
+            checkLeadConversionSettings();
+	    logThis('end check lead conversion settings .', $path);
 
 	    logThis('begin check resource settings .', $path);
 			checkResourceSettings();

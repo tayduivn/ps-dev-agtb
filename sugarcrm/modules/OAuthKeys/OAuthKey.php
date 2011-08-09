@@ -1,4 +1,6 @@
 <?php
+require_once 'Zend/Oauth/Provider.php';
+
 class OAuthKey extends Basic
 {
 	public $module_dir = 'OAuthKeys';
@@ -6,6 +8,7 @@ class OAuthKey extends Basic
 	public $table_name = 'oauth_consumer';
 	public $c_key;
 	public $c_secret;
+	public $name;
 	public $disable_row_level_security = true;
 
 	static public $keys_cache = array();

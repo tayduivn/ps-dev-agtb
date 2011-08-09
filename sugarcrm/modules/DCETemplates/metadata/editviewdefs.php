@@ -1,7 +1,6 @@
 <?php
 $module_name = 'DCETemplates';
 $overlibJS=getJSPath('include/javascript/overlibmws.js');
-$jsonJS=getJSPath('include/JSON.js');
 $editviewJS=getJSPath('modules/DCETemplates/EditView.js');
 $viewdefs = array (
 $module_name =>

@@ -44,6 +44,11 @@ class MyTeamModulesUsedChartDashlet extends DashletGenericChart
     protected $_seedName = 'Trackers';
     
     /**
+     * @see Dashlet::$isConfigPanelClearShown
+     */
+    public $isConfigPanelClearShown = false;
+    
+    /**
      * @see DashletGenericChart::display()
      */
     public function display() 

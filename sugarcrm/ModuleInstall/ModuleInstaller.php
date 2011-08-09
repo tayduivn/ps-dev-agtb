@@ -310,6 +310,18 @@ class ModuleInstaller{
 
 	}
 
+	/**
+	 * Get directory where module's extensions go
+	 * @param string $module Module name
+	 */
+    public function getExtDir($module)
+    {
+	    if($module == 'application') {
+            return "custom/Extension/application/Ext";
+        } else {
+			return "custom/Extension/modules/$module/Ext";
+        }
+    }
 
 	/**
 	 * Install file(s) into Ext/ part
@@ -322,7 +334,11 @@ class ModuleInstaller{
         if(isset($this->installdefs[$section])){
 			$this->log(sprintf(translate("LBL_MI_IN_EXT"), $section));
 			foreach($this->installdefs[$section] as $item){
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
 				if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
@@ -337,10 +353,14 @@ class ModuleInstaller{
 				}
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from, ".php");
+                } else {
 				    $target = $this->id_name;
 				}
-				copy_recursive($from , "$path/$target.php");
+				if(!empty($from)) {
+				    copy_recursive($from , "$path/$target.php");
+				}
 			}
 		}
 	}
@@ -356,8 +376,12 @@ class ModuleInstaller{
         if(isset($this->installdefs[$section])){
 			$this->log(sprintf(translate("LBL_MI_UN_EXT"), $section));
 			foreach($this->installdefs[$section] as $item){
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
-				if(!empty($module)) {
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
+			    if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
 				$GLOBALS['log']->debug("Uninstalling section $section from $from for " .$item['to_module'] );
@@ -368,7 +392,9 @@ class ModuleInstaller{
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from, ".php");
+                } else {
 				    $target = $this->id_name;
 				}
 				$disabled_path = $path.'/'.DISABLED_PATH;
@@ -376,9 +402,9 @@ class ModuleInstaller{
 				    rmdir_recursive("$path/$target.php");
                 } else if (file_exists("$disabled_path/$target.php")) {
                     rmdir_recursive("$disabled_path/$target.php");
-				} else if (file_exists($path . '/'. basename($from))) {
+				} else if (!empty($from) && file_exists($path . '/'. basename($from))) {
 				    rmdir_recursive( $path . '/'. basename($from));
-                } else if (file_exists($disabled_path . '/'. basename($from))) {
+                } else if (!empty($from) && file_exists($disabled_path . '/'. basename($from))) {
 					rmdir_recursive( $disabled_path . '/'. basename($from));
 				}
 		    }
@@ -406,7 +432,11 @@ class ModuleInstaller{
 	{
 		if(isset($this->installdefs[$section])) {
 			foreach($this->installdefs[$section] as $item) {
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
 				if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
@@ -418,14 +448,16 @@ class ModuleInstaller{
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from, ".php");
+                }else {
 				    $target = $this->id_name;
 				}
 				$disabled_path = $path.'/'.DISABLED_PATH;
                 if (file_exists("$path/$target.php")) {
 					mkdir_recursive($disabled_path, true);
 					rename("$path/$target.php", "$disabled_path/$target.php");
-				} else if (file_exists($path . '/'. basename($from))) {
+				} else if (!empty($from) && file_exists($path . '/'. basename($from))) {
 					mkdir_recursive($disabled_path, true);
 				    rename( $path . '/'. basename($from), $disabled_path.'/'. basename($from));
 				}
@@ -443,10 +475,15 @@ class ModuleInstaller{
 	{
 		if(isset($this->installdefs[$section])) {
 			foreach($this->installdefs[$section] as $item) {
-				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
-				if(!empty($module)) {
+			    if(isset($item['from'])) {
+				    $from = str_replace('<basepath>', $this->base_dir, $item['from']);
+			    } else {
+			        $from = '';
+			    }
+			    if(!empty($module)) {
 				    $item['to_module'] = $module;
 				}
+				$GLOBALS['log']->debug("Enabling $extname ... from $from for " .$item['to_module']);
 
                 if($item['to_module'] == 'application') {
                     $path = "custom/Extension/application/Ext/$extname";
@@ -455,7 +492,9 @@ class ModuleInstaller{
                 }
 				if(isset($item["name"])) {
 				    $target = $item["name"];
-				} else {
+				} else if (!empty($from)){
+                    $target = basename($from, ".php");
+                } else {
 				    $target = $this->id_name;
 				}
 				if(!file_exists($path)) {
@@ -465,7 +504,7 @@ class ModuleInstaller{
 				if (file_exists("$disabled_path/$target.php")) {
 					rename("$disabled_path/$target.php",  "$path/$target.php");
 				}
-				if (file_exists($disabled_path . '/'. basename($from))) {
+				if (!empty($from) && file_exists($disabled_path . '/'. basename($from))) {
 					rename($disabled_path.'/'. basename($from),  $path . '/'. basename($from));
 				}
 			}
@@ -752,6 +791,81 @@ class ModuleInstaller{
 				}
 	}
 
+    // Non-standard, needs special rebuild
+	public function disable_languages()
+	{
+		if(isset($this->installdefs['language'])) {
+		    $languages = $modules = array();
+			foreach($this->installdefs['language'] as $item) {
+				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
+				$GLOBALS['log']->debug("Disabling Language {$item['language']}... from $from for " .$item['to_module']);
+				$modules[]=$item['to_module'];
+				$languages[$item['language']] = $item['language'];
+				if($item['to_module'] == 'application') {
+                    $path = "custom/Extension/application/Ext/Language";
+                } else {
+				    $path = "custom/Extension/modules/{$item['to_module']}/Ext/Language";
+                }
+				if(isset($item["name"])) {
+				    $target = $item["name"];
+				} else {
+				    $target = $this->id_name;
+				}
+				$target = "{$item['language']}.$target";
+
+				$disabled_path = $path.'/'.DISABLED_PATH;
+                if (file_exists("$path/$target.php")) {
+					mkdir_recursive($disabled_path, true);
+					rename("$path/$target.php", "$disabled_path/$target.php");
+				} else if (file_exists($path . '/'. basename($from))) {
+					mkdir_recursive($disabled_path, true);
+				    rename( $path . '/'. basename($from), $disabled_path.'/'. basename($from));
+				}
+			}
+			$this->rebuild_languages($languages, $modules);
+		}
+	}
+
+    // Non-standard, needs special rebuild
+	public function enable_languages()
+	{
+		if(isset($this->installdefs['language'])) {
+			foreach($this->installdefs['language'] as $item) {
+				$from = str_replace('<basepath>', $this->base_dir, $item['from']);
+				$GLOBALS['log']->debug("Enabling Language {$item['language']}... from $from for " .$item['to_module']);
+				$modules[]=$item['to_module'];
+				$languages[$item['language']] = $item['language'];
+				if(!empty($module)) {
+				    $item['to_module'] = $module;
+				}
+
+                if($item['to_module'] == 'application') {
+                    $path = "custom/Extension/application/Ext/Language";
+                } else {
+				    $path = "custom/Extension/modules/{$item['to_module']}/Ext/Language";
+                }
+				if(isset($item["name"])) {
+				    $target = $item["name"];
+				} else {
+				    $target = $this->id_name;
+				}
+				$target = "{$item['language']}.$target";
+
+				if(!file_exists($path)) {
+				    mkdir_recursive($path, true);
+				}
+                $disabled_path = $path.'/'.DISABLED_PATH;
+				if (file_exists("$disabled_path/$target.php")) {
+					rename("$disabled_path/$target.php",  "$path/$target.php");
+				}
+				if (file_exists($disabled_path . '/'. basename($from))) {
+					rename($disabled_path.'/'. basename($from),  $path . '/'. basename($from));
+				}
+			}
+			$this->rebuild_languages($languages, $modules);
+		}
+    }
+
     // Functions for adding and removing logic hooks from uploaded files
     // Since one class/file can be used by multiple logic hooks, I'm not going to touch the file labeled in the logic_hook entry
     /* The module hook definition should look like this:
@@ -922,13 +1036,16 @@ class ModuleInstaller{
 
 
 
+
+            Relationship::delete_cache();
             $this->rebuild_vardefs () ;
             $this->rebuild_layoutdefs () ;
             if ($save_table_dictionary)
             {
                 $this->rebuild_tabledictionary () ;
             }
-
+            require_once("data/Relationships/RelationshipFactory.php");
+            SugarRelationshipFactory::deleteCache();
         }
     }
 
@@ -1374,9 +1491,9 @@ class ModuleInstaller{
 				$extension .= "\n?>";
 
 				if($shouldSave){
-					if(!file_exists("custom/$extpath")){
-					mkdir_recursive("custom/$extpath", true);
-				}
+					if(!file_exists("custom/$extpath")) {
+					    mkdir_recursive("custom/$extpath", true);
+				    }
 					$out = sugar_fopen("custom/$extpath/$name", 'w');
 					fwrite($out,$extension);
 					fclose($out);
@@ -1427,9 +1544,9 @@ class ModuleInstaller{
     {
 	    $this->installed_modules = array();
 		$this->tab_modules = array();
-        if(isset($installdefs['beans'])){
+        if(isset($this->installdefs['beans'])){
 			$str = "<?php \n //WARNING: The contents of this file are auto-generated\n";
-			foreach($installdefs['beans'] as $bean){
+			foreach($this->installdefs['beans'] as $bean){
 				if(!empty($bean['module']) && !empty($bean['class']) && !empty($bean['path'])){
 					$module = $bean['module'];
 					$class = $bean['class'];
@@ -1445,17 +1562,17 @@ class ModuleInstaller{
 						$str .= "\$modules_exempt_from_availability_check['$module'] = '$module';\n";
 						$str .= "\$modInvisList[] = '$module';\n";
 					}
-					    $this->installed_modules[] = $module;
-					}else{
+				    $this->installed_modules[] = $module;
+				}else{
 						$errors[] = 'Bean array not well defined.';
 						$this->abort($errors);
-					}
 				}
-				$str.= "\n?>";
-				if(!file_exists("custom/Extension/application/Ext/Include")){
-					mkdir_recursive("custom/Extension/application/Ext/Include", true);
-				}
-				file_put_contents("custom/Extension/application/Ext/Include/{$this->id_name}.php", $str);
+			}
+			$str.= "\n?>";
+			if(!file_exists("custom/Extension/application/Ext/Include")){
+				mkdir_recursive("custom/Extension/application/Ext/Include", true);
+			}
+			file_put_contents("custom/Extension/application/Ext/Include/{$this->id_name}.php", $str);
         }
     }
 
@@ -1926,26 +2043,6 @@ private function dir_file_count($path){
 			$this->rebuild_tabledictionary();
 			$this->rebuild_vardefs();
 			$this->rebuild_layoutdefs();
-		}
-	}
-
-	function enable_actionviewmap($to_module){
-		$GLOBALS['log']->debug("Enabling Action View Map ..." .$to_module);
-		if(isset($this->installdefs['actionviewmap'])){
-			foreach($this->installdefs['actionviewmap'] as $actionviewmap){
-				$path = 'custom/Extension/modules/' . $to_module. '/Ext/ActionViewMap';
-				if($to_module == 'application'){
-					$path ='custom/Extension/' . $to_module. '/Ext/ActionViewMap';
-				}
-				if (file_exists($path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php'))
-				{
-					rename($path . '/'.DISABLED_PATH.'/'. $this->id_name . '.php',  $path . '/'. $this->id_name . '.php');
-				}
-				if (file_exists($path . '/'.DISABLED_PATH.'/'. basename($actionviewmap['from'])))
-				{
-					rename($path . '/'.DISABLED_PATH.'/'. basename($actionviewmap['from']),  $path . '/'. basename($actionviewmap['from']));
-				}
-			}
 		}
 	}
 

@@ -31,11 +31,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/DetailView/DetailView.php');
 require_once('include/export_utils.php');
 require_once('include/SugarOAuthServer.php');
+require_once('include/SubPanel/SubPanelTiles.php');
+
 global $current_user;
 global $theme;
 global $app_strings;
 global $mod_strings;
-if (!is_admin($current_user) && !is_admin_for_module($GLOBALS['current_user'],'Users')
+if (!is_admin($current_user) && !$GLOBALS['current_user']->isAdminForModule('Users')
 //BEGIN SUGARCRM flav=sales ONLY
       && $current_user->user_type != 'UserAdministrator'
 //END SUGARCRM flav=sales ONLY
@@ -45,8 +47,8 @@ $is_current_admin=is_admin($current_user)
 //BEGIN SUGARCRM flav=sales ONLY
                 ||$current_user->user_type = 'UserAdministrator'
 //END SUGARCRM flav=sales ONLY
-                ||is_admin_for_module($GLOBALS['current_user'],'Users');
-
+                ||$GLOBALS['current_user']->isAdminForModule('Users');
+                
 $focus = new User();
 
 $detailView = new DetailView();
@@ -160,7 +162,7 @@ if($reminder_time != -1){
 $user_type_label=$mod_strings['LBL_REGULAR_USER'];
 $usertype='RegularUser';
 
-if((is_admin($current_user) || $_REQUEST['record'] == $current_user->id || is_admin_for_module($current_user,'Users')) && $focus->is_admin == '1'){
+if((is_admin($current_user) || $_REQUEST['record'] == $current_user->id || $current_user->isAdminForModule('Users')) && $focus->is_admin == '1'){
 	$user_type_label=$mod_strings['LBL_ADMIN_USER'];
 	$usertype='Administrator';
 }
@@ -192,7 +194,7 @@ $sugar_smarty->assign("USER_TYPE_LABEL", $user_type_label);
 
 
 //BEGIN SUGARCRM flav=sales ONLY
-if(is_admin($GLOBALS['current_user']) || is_admin_for_module($GLOBALS['current_user'],'Users')){
+if(is_admin($GLOBALS['current_user']) || $GLOBALS['current_user']->isAdminForModule('Users')){
 	$sugar_smarty->assign("SYS_ADMIN", true);
 }
 //END SUGARCRM flav=sales ONLY
@@ -235,13 +237,13 @@ if ((is_admin($current_user) || $_REQUEST['record'] == $current_user->id
 		&& $sugar_config['lock_default_user_name']) {
 	$buttons .= "<input id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' class='button primary' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='$focus->id'; this.form.action.value='EditView'\" type='submit' name='Edit' value='".$app_strings['LBL_EDIT_BUTTON_LABEL']."'>  ";
 }
-elseif (is_admin($current_user)|| (is_admin_for_module($GLOBALS['current_user'],'Users')&& !$focus->is_admin)
+elseif (is_admin($current_user)|| ($GLOBALS['current_user']->isAdminForModule('Users')&& !$focus->is_admin)
      //BEGIN SUGARCRM flav=sales ONLY
      || ($current_user->user_type == 'UserAdministrator' && !$focus->is_admin)
      //END SUGARCRM flav=sales ONLY
      || $_REQUEST['record'] == $current_user->id) {
 	$buttons .= "<input id='edit_button' title='".$app_strings['LBL_EDIT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_EDIT_BUTTON_KEY']."' class='button primary' onclick=\"this.form.return_module.value='Users'; this.form.return_action.value='DetailView'; this.form.return_id.value='$focus->id'; this.form.action.value='EditView'\" type='submit' name='Edit' value='".$app_strings['LBL_EDIT_BUTTON_LABEL']."'>  ";
-	if ((is_admin($current_user)|| is_admin_for_module($GLOBALS['current_user'],'Users')
+	if ((is_admin($current_user)|| $GLOBALS['current_user']->isAdminForModule('Users')
          //BEGIN SUGARCRM flav=sales ONLY
          || ($current_user->user_type == 'UserAdministrator' && !is_admin($focus))
          //END SUGARCRM flav=sales ONLY
@@ -291,7 +293,7 @@ $chooser = new TemplateGroupChooser();
 $controller = new TabController();
 
 //if(is_admin($current_user) || $controller->get_users_can_edit())
-if(is_admin($current_user)||is_admin_for_module($GLOBALS['current_user'],'Users'))
+if(is_admin($current_user)||$GLOBALS['current_user']->isAdminForModule('Users'))
 {
 	$chooser->display_third_tabs = true;
 	$chooser->args['third_name'] = 'remove_tabs';
@@ -566,7 +568,6 @@ $GLOBALS['sugar_config']['lock_subpanels'] = true;
 //BEGIN SUGARCRM flav=pro ONLY
 // User Holidays subpanels should not be displayed for group and portal users
 if($show_roles){
-    require_once('include/SubPanel/SubPanelTiles.php');
     $subpanel = new SubPanelTiles($focus, 'UsersHolidays');
 
     $sugar_smarty->assign('USER_HOLIDAYS_SUBPANEL',$subpanel->display(true,true));
@@ -576,10 +577,6 @@ $GLOBALS['sugar_config']['lock_subpanels'] = $locked;
 
 $sugar_smarty->display('modules/Users/DetailView.tpl');
 
-if(SugarOAuthServer::enabled()) {
-    $subpanel = new SubPanelTiles($focus, 'UserOAuth');
-    $oauth_tokens = $subpanel->display(true,true);
-}
 // Roles Grid and Roles subpanel should not be displayed for group and portal users
 if($show_roles){
     echo "<div>";

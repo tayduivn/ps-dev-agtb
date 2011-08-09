@@ -31,12 +31,12 @@
     {{assign var=idname value=$displayParams.idName}}
 {{/if}}
 <input type="text" name="{{$idname}}" class={{if empty($displayParams.class) }}"sqsEnabled"{{else}} "{{$displayParams.class}}" {{/if}} tabindex="{{$tabindex}}" id="{{$idname}}" size="{{$displayParams.size}}" value="{{sugarvar key='value'}}" title='{{$vardef.help}}' autocomplete="off" {{$displayParams.readOnly}} {{$displayParams.field}}>
-<input type="hidden" name="{{if !empty($displayParams.idName)}}{{$idname}}_{{/if}}{{sugarvar key='id_name'}}" 
-	id="{{if !empty($displayParams.idName)}}{{$idname}}_{{/if}}{{sugarvar key='id_name'}}" 
+<input type="hidden" name="{{if !empty($displayParams.idNameHidden)}}{{$displayParams.idNameHidden}}{{/if}}{{sugarvar key='id_name'}}" 
+	id="{{if !empty($displayParams.idNameHidden)}}{{$displayParams.idNameHidden}}{{/if}}{{sugarvar key='id_name'}}" 
 	{{if !empty($vardef.id_name)}}value="{{sugarvar memberName='vardef.id_name' key='value'}}"{{/if}}>
 {{if empty($displayParams.hideButtons) }}
 <span class="id-ff multiple">
-<button type="button" name="btn_{{$idname}}" id="btn_{{$idname}}" tabindex="{{$tabindex}}" title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" class="button firstChild" value="{$APP.LBL_SELECT_BUTTON_LABEL}" 
+<button type="button" name="btn_{{$idname}}" id="btn_{{$idname}}" tabindex="{{$tabindex}}" title="{sugar_translate label="{{$displayParams.accessKeySelectTitle}}"}" accessKey="{sugar_translate label="{{$displayParams.accessKeySelect}}"}" class="button firstChild" value="{sugar_translate label="{{$displayParams.accessKeySelectLabel}}"}" 
 onclick='open_popup(
     "{{sugarvar key='module'}}", 
 	600, 
@@ -47,9 +47,14 @@ onclick='open_popup(
 	{{$displayParams.popupData}}, 
 	"single", 
 	true
+<<<<<<< HEAD
 );' {{if isset($displayParams.javascript.btn)}}{{$displayParams.javascript.btn}}{{/if}}>{sugar_getimage alt=$app_strings.LBL_ID_FF_SELECT name="id-ff-select" ext=".png" other_attributes=''}</button>{{if empty($displayParams.selectOnly) }}<button type="button" name="btn_clr_{{$idname}}" id="btn_clr_{{$idname}}" tabindex="{{$tabindex}}" title="{$APP.LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" class="button lastChild" 
 onclick="document.forms['{$form_name}'].{{$idname}}.value = ''; document.forms['{$form_name}'].{{if !empty($displayParams.idName)}}{{$displayParams.idName}}_{{/if}}{{sugarvar key='id_name'}}.value = ''; var tempEvent = document.createEvent('HTMLEvents'); tempEvent.initEvent('change', true, true); document.forms['{$form_name}'].{{$idname}}.dispatchEvent(tempEvent); var tempEvent = document.createEvent('HTMLEvents'); tempEvent.initEvent('change', true, true); document.forms['{$form_name}'].{{if !empty($displayParams.idName)}}{{$displayParams.idName}}_{{/if}}{{sugarvar key='id_name'}}.dispatchEvent(tempEvent);"
 value="{$APP.LBL_CLEAR_BUTTON_LABEL}" {{if isset($displayParams.javascript.btn_clear)}}{{$displayParams.javascript.btn_clear}}{{/if}}><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
+=======
+);' {{if isset($displayParams.javascript.btn)}}{{$displayParams.javascript.btn}}{{/if}}><img src="{sugar_getimagepath file="id-ff-select.png"}"></button>{{if empty($displayParams.selectOnly) }}<button type="button" name="btn_clr_{{$idname}}" id="btn_clr_{{$idname}}" tabindex="{{$tabindex}}" title="{sugar_translate label="{{$displayParams.accessKeyClearTitle}}"}" accessKey="{sugar_translate label="{{$displayParams.accessKeyClear}}"}" class="button lastChild" 
+onclick="SUGAR.clearRelateField(this.form, '{{$idname}}', '{{if !empty($displayParams.idName)}}{{$displayParams.idName}}_{{/if}}{{sugarvar key='id_name'}}');"  value="{sugar_translate label="{{$displayParams.accessKeyClearLabel}}"}" {{if isset($displayParams.javascript.btn_clear)}}{{$displayParams.javascript.btn_clear}}{{/if}}><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
+>>>>>>> cottoncandy
 {{/if}}
 </span>
 {{/if}}

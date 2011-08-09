@@ -50,8 +50,9 @@ $mod_strings = array (
   'NTC_LIST_ORDER' => 'Set the order in which this type will appear in the Product Type dropdown lists',
   'LNK_IMPORT_PRODUCT_TYPES'=>'Import Product Types',
   'LBL_CREATED_BY'=>'Created By',
-	'LBL_EDITLAYOUT' => '' /*for 508 compliance fix*/,
+  'LBL_EDITLAYOUT' => '' /*for 508 compliance fix*/,
+  //For export labels
+  'LBL_EXPORT_MODIFIED_USER_ID'=> 'Assigned To ID',
+  'LBL_EXPORT_CREATED_BY'=>'Created By ID',
 );
-
-
 ?>

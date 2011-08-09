@@ -138,6 +138,7 @@ function make_sugar_config(&$sugar_config)
 	'host_name' => empty($host_name) ? 'localhost' : $host_name,
 	'import_dir' => $import_dir,  // this must be set!!
 	'import_max_records_per_file' => 100,
+    'import_max_records_total_limit' => '',
 	'languages' => empty($languages) ? array('en_us' => 'English (US)') : $languages,
 	'list_max_entries_per_page' => empty($list_max_entries_per_page) ? 20 : $list_max_entries_per_page,
 	'list_max_entries_per_subpanel' => empty($list_max_entries_per_subpanel) ? 10 : $list_max_entries_per_subpanel,
@@ -304,6 +305,7 @@ function get_sugar_config_defaults() {
 	'history_max_viewed' => 50,
 	'installer_locked' => true,
 	'import_max_records_per_file' => 100,
+    'import_max_records_total_limit' => '',
 	'languages' => array('en_us' => 'English (US)'),
 	'large_scale_test' => false,
 	'list_max_entries_per_page' => 20,
@@ -331,8 +333,8 @@ function get_sugar_config_defaults() {
     'sugarbeet' => true,
 //END SUGARCRM flav=com ONLY
     'time_formats' => array (
-	'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM',
-	'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM' ),
+        'H:i'=>'23:00', 'h:ia'=>'11:00pm', 'h:iA'=>'11:00PM', 'h:i a'=>'11:00 pm', 'h:i A'=>'11:00 PM',
+        'H.i'=>'23.00', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM', 'h.i a'=>'11.00 pm', 'h.i A'=>'11.00 PM' ),
 //BEGIN SUGARCRM flav=com ONLY
     'tracker_max_display_length' => 15,
 //END SUGARCRM flav=com ONLY
@@ -350,6 +352,7 @@ function get_sugar_config_defaults() {
 	'verify_client_ip' => true,
 	'js_custom_version' => '',
 	'js_lang_version' => 1,
+        'lead_conv_activity_opt' => 'move',
 	'default_number_grouping_seperator' => ',',
 	'default_decimal_seperator' => '.',
 	'lock_homepage' => false,
@@ -663,7 +666,7 @@ function get_team_array($add_blank = FALSE) {
 
 	$db = DBManagerFactory::getInstance();
 
-	if(is_admin($current_user)||(!is_admin($current_user) && is_admin_for_module($current_user,'Users')))
+	if($current_user->isAdminForModule('Users'))
 	{
 		$query = 'SELECT t1.id, t1.name, t1.name_2 FROM teams t1 where t1.deleted = 0 ORDER BY t1.private,t1.name ASC';
 	}
@@ -826,12 +829,11 @@ function showFullName() {
 	static $showFullName = null;
 
 	if (is_null($showFullName)) {
-		$sysPref = (isset($sugar_config['use_real_names']) && $sugar_config['use_real_names'] == true) ? true : false;
+		$sysPref = !empty($sugar_config['use_real_names']);
 		$userPref = (is_object($current_user)) ? $current_user->getPreference('use_real_names') : null;
 
 		if($userPref != null) {
-			$bool = ($userPref == 'on') ? true : false;
-			$showFullName = $bool;
+			$showFullName = ($userPref == 'on');
 		} else {
 			$showFullName = $sysPref;
 		}
@@ -1158,6 +1160,7 @@ function return_module_language($language, $module, $refresh=false)
 	else
 		$mod_strings = $temp_mod_strings;
 
+    $cache_key = LanguageManager::getLanguageCacheKey($module, $language);
     sugar_cache_put($cache_key, $return_value);
 	return $return_value;
 }
@@ -1420,15 +1423,15 @@ function microtime_diff($a, $b) {
 // check if Studio is displayed.
 function displayStudioForCurrentUser()
 {
-    if ( is_admin($GLOBALS['current_user']) ) {
+    global $current_user;
+    if ( $current_user->isAdmin() ) {
         return true;
     }
     //BEGIN SUGARCRM flav=pro ONLY
     if (isset($_SESSION['display_studio_for_user'])) {
         return $_SESSION['display_studio_for_user'];
     }
-    global $current_user;
-    $access = get_admin_modules_for_user($current_user);
+    $access = $current_user->getDeveloperModules();
     foreach ($access as $key=>$mod) {
 		if(file_exists('modules/'. $mod . '/metadata/studio.php')) {
 		    $_SESSION['display_studio_for_user'] = true;
@@ -1488,33 +1491,15 @@ function displayWorkflowForCurrentUser()
 
 // return an array with all modules where the user is an admin.
 function get_admin_modules_for_user($user) {
-    global $beanList;
-    $admin_modules = array();
-    //BEGIN SUGARCRM flav=pro ONLY
-    if(empty($user)) {
-            return $admin_modules;
+    $GLOBALS['log']->deprecated("get_admin_modules_for_user() is deprecated as of 6.2.2 and may disappear in the future, use Users->getDeveloperModules() instead");
+
+    if(!isset($user)){
+        $modules = array();
+        return $modules;
     }
 
-    if (isset($_SESSION['get_admin_modules_for_user'])) {
-        return $_SESSION['get_admin_modules_for_user'];
-    }
-    $actions = ACLAction::getUserActions($user->id);
-
-    //check for ForecastSchedule because it doesn't exist in $beanList
-/*    if ($actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions['ForecastSchedule']['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV) {
-        $admin_modules[] = 'Forecasts';
-    }*/
-	foreach ($beanList as $key=>$val) {
-	    if(!in_array($key, $admin_modules) && ($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'
-	        && $key!='Calendar' && $key!='Activities' && $key!='Reports') &&
-	        (is_admin_for_module($user,$key))) {
-	            $admin_modules[] = $key;
-	    }
-	}
-    $_SESSION['get_admin_modules_for_user'] = $admin_modules;
-    //END SUGARCRM flav=pro ONLY
-
-    return ($admin_modules);
+    return($user->getDeveloperModules());
+    
 }
 
  function get_workflow_admin_modules_for_user($user){
@@ -1553,7 +1538,7 @@ function get_admin_modules_for_user($user) {
     foreach ($workflow_mod_list as $key=>$val) {
         if(!in_array($val, $workflow_admin_modules) && ($val!='iFrames' && $val!='Feeds' && $val!='Home' && $val!='Dashboard'
             && $val!='Calendar' && $val!='Activities' && $val!='Reports') &&
-            (is_admin_for_module($user,$key))) {
+           ($user->isDeveloperForModule($key))) {
                 $workflow_admin_modules[$key] = $val;
         }
     }
@@ -1563,22 +1548,15 @@ function get_admin_modules_for_user($user) {
 
 // Check if user is admin for at least one module.
 function is_admin_for_any_module($user) {
+    if (!isset($user)){
+        return false;
+    }
+    if($user->isAdmin()) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
-    global $beanList;
-    if (isset($_SESSION['is_admin_for_module'])) {
-        return $_SESSION['is_admin_for_module'];
-    }
-    $actions = ACLAction::getUserActions($user->id);
-	foreach ($beanList as $key=>$val) {
-        if(($key!='iFrames' && $key!='Feeds' && $key!='Home' && $key!='Dashboard'&& $key!='Calendar' && $key!='Activities') &&
-            (isset($actions[$key]['module']['admin']['aclaccess']) && ($actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$key]['module']['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV))) {
-                $_SESSION['is_admin_for_module'] = true;
-                return true;
-        }
-	}
-    if(!empty($_REQUEST['module']) && $_REQUEST['module']!= 'Users') {
-        $_SESSION['is_admin_for_module'] = false;
-    }
+    $GLOBALS['log']->deprecated("is_admin_for_any_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForAnyModule() instead");
+    return $user->isDeveloperForAnyModule();
     //END SUGARCRM flav=pro ONLY
     return false;
 }
@@ -1586,29 +1564,15 @@ function is_admin_for_any_module($user) {
 
 // Check if user is admin for a specific module.
 function is_admin_for_module($user,$module) {
+    if (!isset($user)) {
+        return false;
+    }
+    if ($user->isAdmin()) {
+        return true;
+    }
     //BEGIN SUGARCRM flav=pro ONLY
-    $sessionVar = 'MLA_'.$user->user_name;
-    if (isset($_SESSION[$sessionVar][$module])) {
-        return $_SESSION[$sessionVar][$module];
-    }
-    if($module=='ContractTypes')$module='Contracts';
-    //BEGIN SUGARCRM flav=pro ONLY
-    if(preg_match("/Product[a-zA-Z]*/",$module))$module='Products';
-    //END SUGARCRM flav=pro ONLY
-    $actions = ACLAction::getUserActions($user->id);
-    $focus = SugarModule::get($module)->loadBean();
-    if ( $focus instanceOf SugarBean ) {
-        $key = $focus->acltype;
-    }
-    else {
-        $key = 'module';
-    }
-    if(!empty($user) && ((($user->is_admin == '1' || $user->is_admin === 'on') && isset($actions[$module][$key])) ||
-    	(isset($actions[$module][$key]['admin']['aclaccess']) && ($actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_DEV || $actions[$module][$key]['admin']['aclaccess']==ACL_ALLOW_ADMIN_DEV)))){
-        $_SESSION[$sessionVar][$module]=true;
-    	return true;
-    }
-    $_SESSION[$sessionVar][$module]=false;
+    $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");    
+    return $user->isDeveloperForModule($module);
     //END SUGARCRM flav=pro ONLY
     return false;
 }
@@ -1621,11 +1585,11 @@ function is_admin_for_module($user,$module) {
  * Contributor(s): ______________________________________..
  */
 function is_admin($user) {
-	if(!empty($user) && ($user->is_admin == '1' || $user->is_admin === 'on')){
-		return true;
-	}
-
-	return false;
+    if(empty($user)) {
+        return false;
+    }
+    
+	return $user->isAdmin();
 }
 
 /**
@@ -2005,7 +1969,7 @@ function clean_xss($str, $cleanImg=true) {
 	$jsEvents .= "onmouseup|onmouseover|onmousedown|onmouseenter|onmouseleave|onmousemove|onload|onchange|";
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror|ondragdrop";
 
-	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
+	$attribute_regex	= "#<.+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
@@ -2511,7 +2475,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
-		$query = "SELECT id, {$display_columns} as display from {$focus->table_name} ";
+		$query = "SELECT {$focus->table_name}.id, {$display_columns} as display from {$focus->table_name} ";
 		//BEGIN SUGARCRM flav=pro ONLY
 		// Bug 36162 - We need to confirm that the user is a member of the team of the item.
 		$focus->add_team_security_where_clause($query);
@@ -2521,12 +2485,12 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 		{
 			$query .= $where." AND ";
 		}
-
-		$query .=  " deleted=0";
+		
+		$query .=  " {$focus->table_name}.deleted=0";
 
 		if ( $order_by != '')
 		{
-			$query .= ' order by '.$order_by;
+			$query .= " order by {$focus->table_name}.{$order_by}";
 		}
 
 		$GLOBALS['log']->debug("get_user_array query: $query");
@@ -2790,7 +2754,6 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-	//BEGIN SUGARCRM flav=int ONLY
 	echo "\n<pre>\n";
 	print_r($mixed);
 
@@ -2800,7 +2763,6 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
-	//END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3102,7 +3064,12 @@ function check_logic_hook_file($module_name, $event, $action_array){
 		} else {
 			$add_logic = true;
 
-			$logic_count = count($hook_array[$event]);
+            $logic_count = 0;
+            if(!empty($hook_array[$event]))
+            {
+			    $logic_count = count($hook_array[$event]);
+            }
+            
 			if($action_array[0]==""){
 				$action_array[0] = $logic_count  + 1;
 			}
@@ -3437,6 +3404,40 @@ function get_singular_bean_name($bean_name){
 	else{
 		return $bean_name;
 	}
+}
+
+/*
+ * Given the potential module name (singular name, renamed module name)
+ * Return the real internal module name.
+ */
+function get_module_from_singular($singular) {
+
+    // find the internal module name for a singular name
+    if (isset($GLOBALS['app_list_strings']['moduleListSingular'])) {
+
+        $singular_modules = $GLOBALS['app_list_strings']['moduleListSingular'];
+
+        foreach ($singular_modules as $mod_name=>$sin_name) {
+            if ($singular == $sin_name and $mod_name != $sin_name) {
+                return $mod_name;
+            }
+        }
+    }
+
+    // find the internal module name for a renamed module
+    if (isset($GLOBALS['app_list_strings']['moduleList'])) {
+
+        $moduleList = $GLOBALS['app_list_strings']['moduleList'];
+
+        foreach ($moduleList as $mod_name=>$name) {
+            if ($singular == $name and $mod_name != $name) {
+                return $mod_name;
+            }
+        }
+    }
+
+    // if it's not a singular name, nor a renamed name, return the original value
+    return $singular;
 }
 
 function get_label($label_tag, $temp_module_strings){
@@ -4707,7 +4708,7 @@ function getUrls($string)
 /**
  * Sanitize image file from hostile content
  * @param string $path Image file
- * @param bool $jpeg Recode as JPEG (false - recode as PNG)
+ * @param bool $jpeg  Accept only JPEGs?
  */
 function verify_image_file($path, $jpeg = false)
 {
@@ -4716,16 +4717,21 @@ function verify_image_file($path, $jpeg = false)
     	if(!$img) {
     	    return false;
     	}
-        if($jpeg) {
+    	$img_size = getimagesize($path);
+		$filetype = $img_size['mime'];
+		//if filetype is jpeg or if we are only allowing jpegs, create jpg image
+        if($filetype == "image/jpeg" || $jpeg) {
             if(imagejpeg($img, $path)) {
                 return true;
             }
-        } else {
+        } elseif ($filetype == "image/png") { // else if the filetype is png, create png
         	imagealphablending($img, true);
         	imagesavealpha($img, true);
     	    if(imagepng($img, $path)) {
                 return true;
     	    }
+        } else {
+        	return false;	
         }
 	} else {
 	    // check image manually

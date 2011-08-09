@@ -186,8 +186,18 @@ class PopupSmarty extends ListViewSmarty{
 		
 		
 		$associated_row_data = array();
-		foreach($this->data['data'] as $val){
+		
+		//C.L. - Bug 44324 - Override the NAME entry to not display salutation so that the data returned from the popup can be searched on correctly
+		$searchNameOverride = !empty($this->seed) && $this->seed instanceof Person && (isset($this->data['data'][0]['FIRST_NAME']) && isset($this->data['data'][0]['LAST_NAME'])) ? true : false;
+		
+		global $locale;
+		foreach($this->data['data'] as $val)
+		{
 			$associated_row_data[$val['ID']] = $val;
+			if($searchNameOverride)
+			{
+			   $associated_row_data[$val['ID']]['NAME'] = $locale->getLocaleFormattedName($val['FIRST_NAME'], $val['LAST_NAME']);
+			}
 		}
 		$is_show_fullname = showFullName() ? 1 : 0;
 		$json = getJSONobj();
@@ -219,6 +229,14 @@ class PopupSmarty extends ListViewSmarty{
 		}
 		$this->th->ss->assign('LIST_HEADER', get_form_header($GLOBALS['mod_strings']['LBL_LIST_FORM_TITLE'], '', false));
 		$this->th->ss->assign('SEARCH_FORM_HEADER', get_form_header($GLOBALS['mod_strings']['LBL_SEARCH_FORM_TITLE'], '', false));
+
+		//Bug-45288
+		//Set the order_by_name and request_order_by_name variables
+		$order_by_name = $this->seed->module_dir.'2_'.strtoupper($this->seed->object_name).'_ORDER_BY' ;
+		$request_order_by_name = isset($_REQUEST[$order_by_name]) ? $_REQUEST[$order_by_name] : "";
+		$this->th->ss->assign('order_by_name', $order_by_name);
+		$this->th->ss->assign('request_order_by_name', $request_order_by_name);	
+		
 		$str = $this->th->displayTemplate($this->seed->module_dir, $this->view, $this->tpl);
 		return $str;
 	}

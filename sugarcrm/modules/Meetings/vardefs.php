@@ -382,6 +382,7 @@ $dictionary['Meeting'] = array('table' => 'meetings',
        array('name' =>'idx_mtg_name', 'type'=>'index', 'fields'=>array('name')),
        array('name' =>'idx_meet_par_del', 'type'=>'index', 'fields'=>array('parent_id','parent_type','deleted')),
        array('name' => 'idx_meet_stat_del', 'type' => 'index', 'fields'=> array('assigned_user_id', 'status', 'deleted')),
+       array('name' => 'idx_meet_date_start', 'type' => 'index', 'fields'=> array('date_start')),
 
                                                    )
 //This enables optimistic locking for Saves From EditView

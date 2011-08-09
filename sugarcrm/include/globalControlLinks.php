@@ -44,7 +44,7 @@ $global_control_links['employees'] = array(
 if (
         is_admin($current_user)
 		//BEGIN SUGARCRM flav=pro ONLY
-		|| is_admin_for_any_module($current_user)
+		|| $current_user->isDeveloperForAnyModule()
 		//END SUGARCRM flav=pro ONLY
 
         ) $global_control_links['admin'] = array(
@@ -61,7 +61,7 @@ $global_control_links['admin'] = array(
 //END SUGARCRM flav=sales ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 $global_control_links['training'] = array(
-'linkinfo' => array($app_strings['LBL_TRAINING'] => ' javascript:void window.open(\'http://support.sugarcrm.com\')'),
+'linkinfo' => array($app_strings['LBL_TRAINING'] => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'),
 'submenu' => ''
  );
 //END SUGARCRM flav!=sales ONLY

@@ -67,6 +67,7 @@ class KBDocument extends SugarBean {
 	//additional fields.
 	var $revision;
 	var $kbdocument_revision_number;
+    var $kbdocument_revision_id;
 	var $last_rev_create_date;
 	var $last_rev_created_by;
 	var $last_rev_created_name;
@@ -377,7 +378,6 @@ class KBDocument extends SugarBean {
 			$row=$db->fetchByAssoc($result);
 			if (!empty($row)) {
 				$body = $row['kbdocument_body'];
-				$body .="<onmouseover=\"alert('aa');\"";
 				return $body;
 			}
 		}
@@ -410,7 +410,6 @@ class KBDocument extends SugarBean {
             $row=$db->fetchByAssoc($result);
             if (!empty($row)) {
                 $body = $row['kbdocument_body'];
-                $body .="<onmouseover=\"alert('aa');\"";
                 return $body;
             }
         }

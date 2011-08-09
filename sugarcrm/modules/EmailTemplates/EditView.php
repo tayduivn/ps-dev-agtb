@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 /*********************************************************************************
  * $Header$
@@ -32,7 +32,7 @@ require_once('modules/Campaigns/utils.php');
 
 //if campaign_id is passed then we assume this is being invoked from the campaign module and in a popup.
 $has_campaign=true;
-$inboundEmail=true;  
+$inboundEmail=true;
 if (!isset($_REQUEST['campaign_id']) || empty($_REQUEST['campaign_id'])) {
 //END SUGARCRM flav!=sales ONLY
 	$has_campaign=false;
@@ -129,7 +129,7 @@ if ($has_campaign || $inboundEmail ) {
     $cancel_script="this.form.action.value='{$returnAction}'; this.form.module.value='{$_REQUEST['return_module']}';
     this.form.record.value=";
     if(empty($_REQUEST['return_id'])) {
-        $cancel_script="this.form.action.value='index'; this.form.module.value='{$_REQUEST['return_module']}';this.form.name.value='';this.form.description.value=''"; 
+        $cancel_script="this.form.action.value='index'; this.form.module.value='{$_REQUEST['return_module']}';this.form.name.value='';this.form.description.value=''";
     } else {
         $cancel_script.="'{$_REQUEST['return_id']}'";
     }
@@ -190,19 +190,21 @@ if(isset($focus->text_only) && $focus->text_only){
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 $teamSetField = new SugarFieldTeamset('Teamset');
 $code = $teamSetField->getClassicView($focus->field_defs);
-$xtpl->assign("TEAM", $code);   
+$xtpl->assign("TEAM", $code);
 //END SUGARCRM flav=pro ONLY
 
 $xtpl->assign("FIELD_DEFS_JS", $focus->generateFieldDefsJS());
 $xtpl->assign("LBL_CONTACT",$app_list_strings['moduleList']['Contacts']);
 
 global $current_user;
-if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])) { 
+if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])) {
     $record = '';
     if(!empty($_REQUEST['record'])) {
         $record =   $_REQUEST['record'];
     }
+
     $xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=" . $_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>");
+
 }
 if(isset($focus->parent_type) && $focus->parent_type != "") {
     $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'
@@ -235,13 +237,14 @@ if(true) {
 	///////////////////////////////////////
 	////	MACRO VARS
 	$xtpl->assign("INSERT_VARIABLE_ONCLICK", "insert_variable(document.EditView.variable_text.value)");
-	if(!$inboundEmail){
-		$xtpl->parse("main.NoInbound.variable_button");
-	}
+
+    // bug 37255, included without condition
+    $xtpl->parse("main.NoInbound.variable_button");
+
 	///////////////////////////////////////
 	////	CAMPAIGNS
 	if($has_campaign || $inboundEmail) {
-		$xtpl->assign("INPOPUPWINDOW",'true');	
+		$xtpl->assign("INPOPUPWINDOW",'true');
 		$xtpl->assign("INSERT_URL_ONCLICK", "insert_variable_html_link(document.EditView.tracker_url.value)");
 		//BEGIN SUGARCRM flav!=sales ONLY
 		if($has_campaign){
@@ -249,7 +252,7 @@ if(true) {
 		}
 		//END SUGARCRM flav!=sales ONLY
 		if(!empty($campaign_urls)) {
-			$xtpl->assign("DEFAULT_URL_TEXT",key($campaign_urls)); 
+			$xtpl->assign("DEFAULT_URL_TEXT",key($campaign_urls));
 	  	}
 	  	//BEGIN SUGARCRM flav!=sales ONLY
 	    if($has_campaign){
@@ -258,17 +261,17 @@ if(true) {
 	    }
 	    //END SUGARCRM flav!=sales ONLY
 	}
-	
+
 	// The insert variable drodown should be conditionally displayed.
 	//BEGIN SUGARCRM flav!=sales ONLY
-	// If it's campaign then hide the Account. 
+	// If it's campaign then hide the Account.
 	if($has_campaign) {
 	    $dropdown="<option value='Contacts'>
 						".$mod_strings['LBL_CONTACT_AND_OTHERS']."
 			       </option>";
 	     $xtpl->assign("DROPDOWN",$dropdown);
 	     $xtpl->assign("DEFAULT_MODULE",'Contacts');
-         //$xtpl->assign("CAMPAIGN_POPUP_JS", '<script type="text/javascript" src="include/javascript/sugar_3.js"></script>');                  	 
+         //$xtpl->assign("CAMPAIGN_POPUP_JS", '<script type="text/javascript" src="include/javascript/sugar_3.js"></script>');
 	} else {
     //END SUGARCRM flav!=sales ONLY
 	     $dropdown="<option value='Accounts'>
@@ -280,7 +283,7 @@ if(true) {
 			       <option value='Users'>
 						".$mod_strings['LBL_USERS']."
 			       </option>";
-		$xtpl->assign("DROPDOWN",$dropdown);      
+		$xtpl->assign("DROPDOWN",$dropdown);
 		$xtpl->assign("DEFAULT_MODULE",'Accounts');
     //BEGIN SUGARCRM flav!=sales ONLY
 	}
@@ -301,7 +304,7 @@ if(true) {
 	    $note = new Note();
 	    $where = "notes.parent_id='{$etid}' AND notes.filename IS NOT NULL";
 	    $notes_list = $note->get_full_list("", $where,true);
-	
+
 	    if(!isset($notes_list)) {
 	        $notes_list = array();
 	    }
@@ -324,21 +327,21 @@ if(true) {
 
 	////    END ATTACHMENTS
 	///////////////////////////////////////
-	
+
 	// done and parse
 	$xtpl->parse("main.textarea");
 }
 
 //Add Custom Fields
 require_once('modules/DynamicFields/templates/Files/EditView.php');
+$xtpl->parse("main.NoInbound");
 if(!$inboundEmail){
-    $xtpl->parse("main.NoInbound");
     $xtpl->parse("main.NoInbound1");
     $xtpl->parse("main.NoInbound2");
     $xtpl->parse("main.NoInbound3");
-    $xtpl->parse("main.NoInbound4");
-    $xtpl->parse("main.NoInbound5");
 }
+$xtpl->parse("main.NoInbound4");
+$xtpl->parse("main.NoInbound5");
 $xtpl->parse("main");
 
 $xtpl->out("main");

@@ -1,4 +1,27 @@
 <?php
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You may
+ * not use this file except in compliance with the License. Under the terms of the
+ * license, You shall not, among other things: 1) sublicense, resell, rent, lease,
+ * redistribute, assign or otherwise transfer Your rights to the Software, and 2)
+ * use the Software for timesharing or service bureau purposes such as hosting the
+ * Software for commercial gain and/or for the benefit of a third party.  Use of
+ * the Software may be subject to applicable fees and any use of the Software
+ * without first paying applicable fees is strictly prohibited.  You do not have
+ * the right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.  Your Warranty, Limitations of liability and Indemnity are
+ * expressly stated in the License.  Please refer to the License for the specific
+ * language governing these rights and limitations under the License.
+ * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * All Rights Reserved.
+ ********************************************************************************/
+ 
 require_once 'include/MVC/SugarApplication.php';
 
 class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
@@ -16,6 +39,12 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_app = new SugarApplicationMock();
         if ( isset($_SESSION['authenticated_user_theme']) )
             unset($_SESSION['authenticated_user_theme']);
+
+        if ( isset($GLOBALS['sugar_config']['http_referer']) ) {
+            $this->prevRefererList = $GLOBALS['sugar_config']['http_referer'];
+        }
+
+        $GLOBALS['sugar_config']['http_referer'] = array('list' => array(), 'actions' => array());
     }
 
     private function _loadUser()
@@ -29,6 +58,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
+
 
     public function tearDown()
     {
@@ -48,6 +78,12 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['sugar_version']);
         unset($GLOBALS['sugar_flavor']);
         $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
+
+        if ( isset($this->prevRefererList)) {
+            $GLOBALS['sugar_config']['http_referer'] = $this->prevRefererList;
+        } else {
+            unset ($GLOBALS['sugar_config']['http_referer']);
+        }
     }
 
     public function testSetupPrint()
@@ -223,16 +259,9 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'index';
         
-        if ( !empty($GLOBALS['sugar_config']['http_referer']['list']) ) {
-            $prevRefererList = $GLOBALS['sugar_config']['http_referer']['list'];
-        }
-        $GLOBALS['sugar_config']['http_referer']['list'][] = 'http://dog';
-        
+        $GLOBALS['sugar_config']['http_referer']['list'][] = 'dog';
+
         $this->assertTrue($this->_app->checkHTTPReferer());
-        
-        if ( isset($prevRefererList) ) {
-            $GLOBALS['sugar_config']['http_referer']['list'] = $prevRefererList;
-        }
     }
     
     public function testCheckHTTPRefererReturnsFalseIfRefererIsNotInWhitelist()
@@ -240,7 +269,9 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'poo';
-        
+
+        $GLOBALS['sugar_config']['http_referer']['list'] = array();
+
         $this->assertFalse($this->_app->checkHTTPReferer());
     }
     
@@ -249,7 +280,7 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'index';
-        
+
         $this->assertTrue($this->_app->checkHTTPReferer());
     }
     
@@ -259,16 +290,9 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'poo';
         
-        if ( !empty($GLOBALS['sugar_config']['http_referer']['actions']) ) {
-            $prevRefererList = $GLOBALS['sugar_config']['http_referer']['actions'];
-        }
         $GLOBALS['sugar_config']['http_referer']['actions'][] = 'poo';
         
         $this->assertTrue($this->_app->checkHTTPReferer());
-        
-        if ( isset($prevRefererList) ) {
-            $GLOBALS['sugar_config']['http_referer']['actions'] = $prevRefererList;
-        }
     }
 }
 

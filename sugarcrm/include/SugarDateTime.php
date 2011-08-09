@@ -76,13 +76,13 @@ class SugarDateTime extends DateTime
 	 *
 	 * Needed to return right type of the object
 	 *
-	 * @param string $format
-	 * @param string $time
+	 * @param string $format Format like in date()
+	 * @param string $time Time to parse
 	 * @param DateTimeZone $timezone
 	 * @return SugarDateTime
 	 * @see DateTime::createFromFormat
 	 */
-	public static function createFromFormat($format, $time, DateTimeZone $timezone = null)
+	public static function createFromFormat($format, $time, $timezone = null)
 	{
 	    if(empty($time) || empty($format)) {
 	        return false;
@@ -106,6 +106,13 @@ class SugarDateTime extends DateTime
 		return $sd;
 	}
 
+	/**
+	 * Internal _createFromFormat implementation for 5.2
+	 * @param string $format Format like in date()
+	 * @param string $time Time string to parse
+	 * @param DateTimeZone $timezone TZ
+	 * @see DateTime::createFromFormat
+	 */
 	protected static function _createFromFormat($format, $time, DateTimeZone $timezone = null)
 	{
 		$res = new self();
@@ -396,6 +403,7 @@ class SugarDateTime extends DateTime
         $newdate->setTime(0,0);
         return $newdate;
 	}
+
 	/*
 	 * Print datetime in standard DB format
 	 *
@@ -413,6 +421,25 @@ class SugarDateTime extends DateTime
             $this->setTimezone(self::$_gmt);
         }
         return $this->format(TimeDate::DB_DATETIME_FORMAT);
+	}
+
+	/*
+	 * Print date in standard DB format
+	 *
+	 * Set $tz parameter to false if you are sure if the date is in UTC.
+	 *
+	 * @param bool $tz do conversion to UTC
+	 * @return string
+	 */
+	function asDbDate($tz = true)
+	{
+        if($tz) {
+            if(empty(self::$_gmt)) {
+                self::$_gmt = new DateTimeZone("UTC");
+            }
+            $this->setTimezone(self::$_gmt);
+        }
+        return $this->format(TimeDate::DB_DATE_FORMAT);
 	}
 
 	/**
@@ -572,9 +599,10 @@ class SugarDateTime extends DateTime
     /**
      * (non-PHPdoc)
      * @see DateTime::setTimezone()
+     * @param DateTimeZone $timezone
      * @return SugarDateTime
      */
-    public function setTimezone (DateTimeZone $timezone)
+    public function setTimezone ($timezone)
     {
         parent::setTimezone($timezone);
         return $this;

@@ -38,26 +38,30 @@
             <table border='0' cellpadding='0' cellspacing='0' width='100%'>
                 <tr>
                     <td align='left'>&nbsp;</td>
-                    <td align='right' nowrap='nowrap'>                    
+                    <td align='right' nowrap='nowrap'>
                         {if $pageData.urls.startPage}
                             <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")' >{sugar_getimage name="start" ext=".png" width="14" height="13" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
 							<button title='{$navStrings.start}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")'>
 								{sugar_getimage name="start.png" attr='align="absmiddle" border="0" '}
 							</button>
-                            
+
                         {else}
                             <!--{sugar_getimage name="start_off" ext=".png" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}&nbsp;&nbsp;-->
 							<button title='{$navStrings.start}' class='button' disabled>
 								{sugar_getimage name="start_off.png" attr='align="absmiddle" border="0" '}
 							</button>
-                            
+
                         {/if}
                         {if $pageData.urls.prevPage}
                             <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")' >{sugar_getimage name="previous" ext=".png" width="8" height="13" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
 							<button title='{$navStrings.previous}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")'>
+<<<<<<< HEAD
 								{sugar_getimage name="previous.png" attr='align="absmiddle" border="0" '}							
+=======
+								<img src='{sugar_getimagepath file='previous.png'}' alt='{$navStrings.previous}' align='absmiddle' border='0'>
+>>>>>>> cottoncandy
 							</button>
-                            
+
                         {else}
                             <!--{sugar_getimage name="previous_off" ext=".png" width="8" height="13" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}&nbsp;-->
 							<button class='button' disabled title='{$navStrings.previous}'>
@@ -70,7 +74,7 @@
 							<button title='{$navStrings.next}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.nextPage}")'>
 								{sugar_getimage name="next.png" attr='align="absmiddle" border="0" '}
 							</button>
-                            
+
                         {else}
                            <!-- &nbsp;{$navStrings.next}&nbsp;{sugar_getimage name="next_off" ext=".png" width="8" height="13" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}-->
 							<button class='button' title='{$navStrings.next}' disabled>
@@ -81,15 +85,19 @@
 						{if $pageData.urls.endPage  && $pageData.offsets.total != $pageData.offsets.lastOffsetOnPage}
                             <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")' >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" width="14" height="13" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}</a></td>-->
 							<button title='{$navStrings.end}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")'>
+<<<<<<< HEAD
 								{sugar_getimage name="end.png" attr='align="absmiddle" border="0" '}							
+=======
+								<img src='{sugar_getimagepath file='end.png'}' alt='{$navStrings.end}' align='absmiddle' border='0'>
+>>>>>>> cottoncandy
 							</button>
-                            
+
 						{elseif !$pageData.offsets.totalCounted || $pageData.offsets.total == $pageData.offsets.lastOffsetOnPage}
                             <!--&nbsp;{$navStrings.end}&nbsp;{sugar_getimage name="end_off" ext=".png" width="14" height="13" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}-->
 							<button class='button' disabled title='{$navStrings.end}'>
 							 	{sugar_getimage name="end_off.png" attr='align="absmiddle" border="0" '}
 							</button>
-                            
+
                         {/if}
                     </td>
                 </tr>
@@ -98,8 +106,8 @@
     </tr>
     <tr height='20'>
         {foreach from=$displayColumns key=colHeader item=params}
-	        <th scope='col' width='{$params.width}%' nowrap="nowrap">
-				<div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+	        <th scope='col' width='{$params.width}%'>
+				<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
                 {if $params.sortable|default:true} 
 	                <a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}&sugar_body_only=1&id={$dashletId}")' class='listViewThLinkS1' title="{$arrowAlt}">{sugar_translate label=$params.label module=$pageData.bean.moduleDir}</a>&nbsp;&nbsp;
 	                {if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
@@ -115,7 +123,7 @@
 	                    {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" '}
 	                {/if}
 	           {else}
-                    {if !isset($params.noHeader) || $params.noHeader == false} 
+                    {if !isset($params.noHeader) || $params.noHeader == false}
 	           		  {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
                     {/if}
 	           {/if}
@@ -144,12 +152,12 @@
 			    {strip}
 				<td scope='row' align='{$params.align|default:'left'}' valign="top" {if ($params.type == 'teamset')}class="nowrap"{/if}>
 					{if $col == 'NAME' || $params.bold}<b>{/if}
-				    {if $params.link && !$params.customCode}				
+				    {if $params.link && !$params.customCode}
 						<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='index.php?action={$params.action|default:'DetailView'}&module={if $params.dynamic_module}{$rowData[$params.dynamic_module]}{else}{$params.module|default:$pageData.bean.moduleDir}{/if}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}'>
 					{/if}
-					{if $params.customCode} 
+					{if $params.customCode}
 						{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
-					{else}	
+					{else}
                        {sugar_field parentFieldArray=$rowData vardef=$params displayType=ListView field=$col}
 					{/if}
 					{if empty($rowData.$col) && empty($params.customCode)}&nbsp;{/if}
@@ -172,7 +180,11 @@
 
 				{/if}
 				{if $pageData.access.view}
+<<<<<<< HEAD
 					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index' title="{sugar_translate label="LBL_VIEW_INLINE"}>{sugar_getimage name="view_inline.png" attr='border="0" '}</a>
+=======
+					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="view_inline.png"}"></a>
+>>>>>>> cottoncandy
 				{/if}
 			</td>
 			{/if}
@@ -185,4 +197,3 @@
 	</tr>
 	{/foreach}
 </table>
-

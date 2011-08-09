@@ -122,12 +122,11 @@ function set_return(popup_reply_data)
 		else
 		{
 			var displayValue=name_to_value_array[the_key].replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');;
-			if(window.document.forms[form_name] && window.document.forms[form_name].elements[the_key]){
+			if(window.document.forms[form_name] && window.document.forms[form_name].elements[the_key])
+            {
 				window.document.forms[form_name].elements[the_key].value = displayValue;
-				var tempEvent = document.createEvent('HTMLEvents');
-				tempEvent.initEvent('change', true, true);
-				window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
-			}
+                SUGAR.util.callOnChangeListers(window.document.forms[form_name].elements[the_key]);
+            }
 		}
 	}
 }
@@ -146,9 +145,7 @@ function set_return_and_save(popup_reply_data)
 		else
 		{
 			window.document.forms[form_name].elements[the_key].value = name_to_value_array[the_key];
-			var tempEvent = document.createEvent('HTMLEvents');
-			tempEvent.initEvent('change', true, true);
-			window.document.forms[form_name].elements[the_key].dispatchEvent(tempEvent);
+            SUGAR.util.callOnChangeListers(window.document.forms[form_name].elements[the_key]);
 		}
 	}
 	
@@ -189,9 +186,7 @@ function set_return_and_save_targetlist(popup_reply_data)
 				}
 			}
 			window.document.forms[form_index].elements[get_element_index(form_index,the_key)].value = name_to_value_array[the_key];
-			var tempEvent = document.createEvent('HTMLEvents');
-			tempEvent.initEvent('change', true, true);
-			window.document.forms[form_index].elements[get_element_index(form_index,the_key)].dispatchEvent(tempEvent);
+            SUGAR.util.callOnChangeListers(window.document.forms[form_index].elements[get_element_index(form_index,the_key)]);
 		}
 	}
 	window.document.forms[form_index].elements[get_element_index(form_index,"return_module")].value = window.document.forms[form_index].elements[get_element_index(form_index,"module")].value;

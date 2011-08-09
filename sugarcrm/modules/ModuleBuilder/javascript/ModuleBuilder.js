@@ -1079,7 +1079,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 embed: true,
                 targetModule:ModuleBuilder.module,
                 package:ModuleBuilder.MBpackage,
-                formula:YAHOO.lang.JSON.stringify(formula)
+                formula: formula ? YAHOO.lang.JSON.stringify(formula) : ""
             };
 			win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
 			{
@@ -1138,7 +1138,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				Dom.get("defaultDate_date").disabled = disable;
 				Dom.get("defaultTime_hours").disabled = disable;
 				Dom.get("defaultTime_minutes").disabled = disable;
-				Dom.get("defaultTime_meridiem").disabled = disable;
+                if (Dom.get("defaultTime_meridiem"))
+			    {
+				    Dom.get("defaultTime_meridiem").disabled = disable;
+                }
 			}
 		},
         toggleDF: function(enable) {

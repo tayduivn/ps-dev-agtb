@@ -43,8 +43,8 @@
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}
 		{foreach from=$displayColumns key=colHeader item=params}
-			<td scope='col' width='{$params.width}%'  nowrap>
-				<span sugar="sugar{$colCounter}"><div style='white-space: nowrap;'width='100%' align='{$params.align|default:'left'}'>
+			<td scope='col' width='{$params.width}%' >
+				<span sugar="sugar{$colCounter}"><div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
                 {if !$params.ajaxSort|default:false}
 	                {* normal sort is specified, so set the proper urls*}
 	                {if $params.sortable|default:true}
@@ -91,7 +91,7 @@
 		<td scope='col'  nowrap width='1%'>&nbsp;</td>
 		{/if}
 	</tr>
-		
+
 	{foreach name=rowIteration from=$data key=id item=rowData}
 		{if $smarty.foreach.rowIteration.iteration is odd}
 			{assign var='_bgColor' value=$bgColor[0]}
@@ -115,8 +115,8 @@
 							<span id='obj_{$rowData[$params.id]|default:$rowData.ID}'>
 						{/if}
 
-							<span id='adspan_{$rowData[$params.id]|default:$rowData.ID}' onmouseout="return document_clearAdditionalDetailsCall('{$rowData[$params.id]|default:$rowData.ID}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}', '{$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}')" 
-							onmouseover="return getDocumentDetails('KBDocuments', '{$rowData[$params.id]|default:$rowData.ID}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}', '{$rowData[$params.id]|default:$rowData.KBDOCUMENT_NAME_js}', 'panel_{$rowData[$params.id]|default:$rowData.ID}','{$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}')" onclick="updateKBViewsCount('{$rowData[$params.id]|default:$rowData.ID}')">							
+							<span id='adspan_{$rowData[$params.id]|default:$rowData.ID}' onmouseout="return document_clearAdditionalDetailsCall('{$rowData[$params.id]|default:$rowData.ID}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}', '{$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}')"
+							onmouseover="return getDocumentDetails('KBDocuments', '{$rowData[$params.id]|default:$rowData.ID}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}', '{$rowData[$params.id]|default:$rowData.KBDOCUMENT_NAME_js}', 'panel_{$rowData[$params.id]|default:$rowData.ID}','{$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}')" onclick="updateKBViewsCount('{$rowData[$params.id]|default:$rowData.ID}')">
 								<{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN} href='#'>
 								{$rowData.$col}
 								</{$pageData.tag.$id[$params.ACLTag]|default:$pageData.tag.$id.MAIN}>
@@ -129,13 +129,13 @@
 							SUGAR.contextMenu.registerObject('{$params.contextMenu.objectType}', 'adspan_{$rowData[$params.id]|default:$rowData.ID}'{if $params.contextMenu.metaData},	{sugar_evalcolumn var=$params.contextMenu.metaData rowData=$rowData toJSON=true}{/if}, false);
 							</script>
 						{/if}
-   				  	{elseif $params.customCode} 
+   				  	{elseif $params.customCode}
 						{sugar_evalcolumn var=$params.customCode rowData=$rowData}1
 					{elseif $params.currency_format}
-						{sugar_currency_format 
-							var=$rowData.$col 
-							round=$params.currency_format.round 
-							decimals=$params.currency_format.decimals 
+						{sugar_currency_format
+							var=$rowData.$col
+							round=$params.currency_format.round
+							decimals=$params.currency_format.decimals
 							symbol=$params.currency_format.symbol
 						}
 					{elseif $params.type == 'bool'}
@@ -144,7 +144,7 @@
 								checked=checked
 							{/if}
 							/>
-					{else}	
+					{else}
 						{$rowData.$col}
 					{/if}
                     {if empty($rowData.$col)}&nbsp;{/if}
@@ -154,12 +154,16 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' nowrap='nowrap'>
 				{if $pageData.access.edit}
+<<<<<<< HEAD
 					<a title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}'>{sugar_getimage alt=$mod_strings.LBL_EDIT_INLINE name="edit_inline" ext=".gif" other_attributes='border="0" '}</a>
+=======
+					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$pageData.bean.moduleDir}'><img border="0" src="{sugar_getimagepath file="edit_inline.gif"}"></a>
+>>>>>>> cottoncandy
 				{/if}
 			</td>
 	    	</tr>
 			{/if}
-	 	
+
 	{/foreach}
 	{include file='modules/KBDocuments/tpls/ListViewPagination.tpl'}
 </table>

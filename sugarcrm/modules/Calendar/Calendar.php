@@ -483,15 +483,15 @@ class CalendarActivity
 			default:
 				// Date for the past 5 days as that is the maximum duration of a single activity
 				$start = $start_ts_obj->get("-5 days")->get_day_begin();
-				$end =  $start_ts_obj->get("+5 days")->get_day_begin();
+				$end =  $start_ts_obj->get("+5 days")->get_day_end();
 				break;
 		}
 
-		$field_date = $GLOBALS['db']->convert($table_name.'.'.$field_name,'datetime');
-        $start_day = $start->asDb();
-        $end_day = $end->asDb();
+		$field_date = $table_name.'.'.$field_name;
+        $start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
+        $end_day = $GLOBALS['db']->convert("'{$end->asDb()}'",'datetime');
 
-		$where = "($field_date >= '{$start_day}' AND $field_date < '{$end_day}'";
+		$where = "($field_date >= $start_day AND $field_date < $end_day";
         if($rel_table != '') {
             $where .= " AND $rel_table.accept_status != 'decline'";
         }

@@ -38,7 +38,13 @@ abstract class source{
 	protected $_has_testing_enabled = false;
 	protected $_required_config_fields = array();
 	protected $_required_config_fields_for_button = array();	
-	
+
+    /**
+     * The ExternalAPI Base that instantiated this connector.
+     * @var _eapm
+     */
+    protected $_eapm = null;
+
 	public function __construct(){
 		$this->loadConfig();
 		$this->loadMapping();
@@ -57,7 +63,12 @@ abstract class source{
 			require("modules/Connectors/connectors/sources/{$dir}/mapping.php");
 		}
 	    $this->_mapping = $mapping;	
- 	} 	
+ 	}
+    
+    public function saveMappingHook($mapping) {
+        // Most classes don't care that the mapping has changed, but this is here if they do.
+        return;
+    }
  	
  	public function loadVardefs() {
 		$class = get_class($this);
@@ -150,7 +161,13 @@ abstract class source{
 		   }
 		}
  	}
- 	
+
+    // Helper function for the settings panels
+    public function filterAllowedModules( $moduleList ) {
+        // Most modules can connect to everything, no further filtering necessary
+        return $moduleList;
+    }
+    
  	////////////// GETTERS and SETTERS ////////////////////
 	public function getMapping(){
  		return $this->_mapping;
@@ -182,7 +199,14 @@ abstract class source{
  	public function setConfig($config){
  		$this->_config = $config;
  	}
- 	
+
+    public function setEAPM(ExternalAPIBase $eapm){
+        $this->_eapm = $eapm;
+    }
+
+    public function getEAPM(){
+        return $this->_eapm;
+    }
  	public function setProperties($properties=array()) {
  	 	if(!empty($this->_config) && isset($this->_config['properties'])) {
  		   $this->_config['properties'] = $properties;

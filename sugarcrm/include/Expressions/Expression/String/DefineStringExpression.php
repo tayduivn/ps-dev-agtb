@@ -29,7 +29,13 @@ class DefineStringExpression extends StringExpression {
 	 * Returns itself when evaluating.
 	 */
 	function evaluate() {
-		return $this->getParameters()->evaluate() . "";
+        try {
+            $retstr = $this->getParameters()->evaluate() . "";
+        } catch (Exception $e) {
+            $GLOBALS['log']->warn('DefineStringExpression::evaluate() returned empty string due to received exception: '.$e->getMessage());
+            $retstr = "";
+        }
+		return $retstr;
 	}
 
 	/**

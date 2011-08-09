@@ -127,6 +127,8 @@ $mod_strings = array (
 	//END SUGARCRM flav=pro ONLY
 	'LNK_IMPORT_PRODUCTS' => 'Import Products',
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+    //For export labels
+    'LBL_EXPORT_CURRENCY_ID' => 'Currency ID',
 );
 
 ?>

@@ -182,7 +182,7 @@ class TeamSet extends SugarBean{
     * @param array $team_ids
     * @return array
     */
-    private function _getStatistics($team_ids){
+    protected function _getStatistics($team_ids){
         $team_md5 = '';
         sort($team_ids, SORT_STRING);
         $primary_team_id = '';
@@ -197,13 +197,16 @@ class TeamSet extends SugarBean{
             $primary_team_id = $team_ids[0];
             }
         } else {
-            foreach($team_ids as $team_id){
-                if(!in_array($team_id, $teams)){
+            for($i=0; $i<$team_count; $i++) {
+
+                $team_id = $team_ids[$i];
+
+                if(!array_key_exists("$team_id", $teams)){
                     $team_md5 .= $team_id;
                     if(empty($this->primary_team_id)){
                         $primary_team_id = $team_id;
                     }
-                    $teams[] = $team_id;
+                    $teams["$team_id"] = $team_id;
                 }
             }
             $team_md5 = md5($team_md5);
@@ -270,16 +273,17 @@ class TeamSet extends SugarBean{
         // determine whether the user is already on the team
         $sql = '';
         if(!empty($team_set_id)){
-            $sql = "SELECT id FROM team_memberships INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id WHERE user_id='$user_id' AND team_sets_teams.team_set_id='$team_set_id' AND team_memberships.deleted = 0";
+            $sql = "SELECT team_memberships.id FROM team_memberships INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id WHERE user_id='$user_id' AND team_sets_teams.team_set_id='$team_set_id' AND team_memberships.deleted = 0";
         }elseif(!empty($team_ids)){
             $team_id_str = "'" . implode("','", $team_ids) . "'";
-            $sql = "SELECT id FROM team_memberships WHERE user_id='$user_id' AND team_id IN ($team_id_str) AND team_memberships.deleted = 0";
+            $sql = "SELECT team_memberships.id FROM team_memberships WHERE user_id='$user_id' AND team_id IN ($team_id_str) AND team_memberships.deleted = 0";
         }else{
             return false;
         }
 
         $result = $this->db->query($sql, TRUE, "Error finding team memberships: ");
         $row = $this->db->fetchByAssoc($result);
+
         if ($row != null) {
             return true;
         }

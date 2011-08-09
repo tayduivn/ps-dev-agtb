@@ -325,9 +325,108 @@ function getPrintLink()
 
 function ajaxBannedModules(){
     $bannedModules = array(
-        "Emails",
+        'Calendar',
+        //BEGIN SUGARCRM flav=pro || flav=sales ONLY
+        'Reports',
+        //END SUGARCRM flav=pro || flav=sales ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
+        'Emails',
+        'Campaigns',
+        'Documents',
+        'DocumentRevisions',
+        'Project',
+        'ProjectTask',
+        'EmailMarketing',
+        'CampaignLog',
+        'CampaignTrackers',
+        'Releases',
+        'Groups',
+        'EmailMan',
+        //END SUGARCRM flav!=sales ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        'ACLFields',
+        'ACLRoles',
+        'ACLActions',
+        'TrackerSessions',
+        'TrackerPerfs',
+        'TrackerQueries',
+        'Teams',
+        'TeamMemberships',
+        'TeamSets',
+        'TeamSetModules',
+        'Quotes',
+        'Products',
+        'ProductBundles',
+        'ProductBundleNotes',
+        'ProductTemplates',
+        'ProductTypes',
+        'ProductCategories',
+        'Manufacturers',
+        'Shippers',
+        'TaxRates',
+        'TeamNotices',
+        'TimePeriods',
+        'Forecasts',
+        'ForecastSchedule',
+        'Worksheet',
+        'ForecastOpportunities',
+        'Quotas',
+        'WorkFlow',
+        'WorkFlowTriggerShells',
+        'WorkFlowAlertShells',
+        'WorkFlowAlerts',
+        'WorkFlowActionShells',
+        'WorkFlowActions',
+        'Expressions',
+        'Contracts',
+        'KBDocuments',
+        'KBDocumentRevisions',
+        'KBTags',
+        'KBDocumentKBTags',
+        'KBContents',
+        'ContractTypes',
+        'Holidays',
+        'ProjectResources',
+        //END SUGARCRM flav=pro ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        'CustomQueries',
+        'DataSets',
+        'ReportMaker',
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav=dce ONLY
+        'DCEInstances',
+        'DCEClusters',
+        'DCEDataBases',
+        'DCETemplates',
+        'DCEActions',
+        'DCEReports',
+        //END SUGARCRM flav=dce ONLY
         "Administration",
         "ModuleBuilder",
+        'Schedulers',
+        'SchedulersJobs',
+        'DynamicFields',
+        'EditCustomFields',
+        'EmailTemplates',
+        'Users',
+        'Currencies',
+        'Trackers',
+        'Connectors',
+        'Import_1',
+        'Import_2',
+        'Versions',
+        'vCals',
+        'CustomFields',
+        'Roles',
+        'Audit',
+        'InboundEmail',
+        'SavedSearch',
+        'UserPreferences',
+        'MergeRecords',
+        'EmailAddresses',
+        'Relationships',
+        'Employees',
+        'Import'
     );
 
     if(!empty($GLOBALS['sugar_config']['addAjaxBannedModules'])){
@@ -343,15 +442,22 @@ function ajaxBannedModules(){
 function ajaxLink($url)
 {
     $match = array();
+    $javascriptMatch = array();
+    
     preg_match('/module=([^&]*)/i', $url, $match);
+    preg_match('/^javascript/i', $url, $javascriptMatch);
 
-    if(isset($GLOBALS['sugar_config']['disableAjaxUI']) && $GLOBALS['sugar_config']['disableAjaxUI'] == true){
+    if(!empty($sugar_config['disableAjaxUI'])){
         return $url;
     }
     else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
         return $url;
+    } 
+    else if (isset($javascriptMatch[0])) {
+    	return $url;
     }
-    else{
+    else
+    {
         return "#ajaxUILoc=" . urlencode($url);
     }
 }

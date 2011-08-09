@@ -124,6 +124,7 @@ $mod_strings = array (
 
 //BUTTONS
 'LBL_BTN_SAVE'=>'Save',
+'LBL_BTN_CANCEL'=>'Cancel',
 'LBL_BTN_SAVEPUBLISH'=>'Save & Deploy',
 'LBL_BTN_HISTORY'=>'History',
 'LBL_BTN_NEXT'=>'Next',
@@ -192,6 +193,7 @@ $mod_strings = array (
 'LBL_LANGUAGE_TOOLTIP' => 'Select the language to edit.',
 'LBL_SINGULAR' => 'Singular Label',
 'LBL_PLURAL' => 'Plural Label',
+'LBL_RENAME_MOD_SAVE_HELP' => 'Click <b>Save</b> to apply the changes.'
 
 );
 ?>

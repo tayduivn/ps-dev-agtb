@@ -27,7 +27,72 @@ class ext_eapm_google extends source {
 	protected $_enable_in_wizard = false;
 	protected $_enable_in_hover = false;
 	protected $_has_testing_enabled = false;
+    protected $_gdClient = null;
 
-	public function getItem($args=array(), $module=null){}
-	public function getList($args=array(), $module=null) {}
+    private function loadGdClient()
+    {
+        if($this->_gdClient == null)
+        {
+            $this->_eapm->getClient("contacts");
+            $this->_gdClient = $this->_eapm->gdClient;
+            $maxResults = $GLOBALS['sugar_config']['list_max_entries_per_page'];
+            $this->_gdClient->setMaxResults($maxResults);
+        }
+    }
+
+	public function getItem($args=array(), $module=null)
+    {
+        if( !isset($args['id']) )
+            throw new Exception("Unable to return google contact entry with missing id.");
+        
+        $this->loadGdClient();
+
+        $entry = FALSE;
+        try
+        {
+            $entry = $this->_gdClient->getContactEntry( $args['id'] );
+        }
+        catch(Zend_Gdata_App_HttpException $e)
+        {
+            $GLOBALS['log']->fatal("Received exception while trying to retrieve google contact item:" .  $e->getResponse());
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to retrieve single item " . var_export($e, TRUE));
+        }
+
+        return $entry;
+
+    }
+	public function getList($args=array(), $module=null)
+    {
+        $feed = FALSE;
+        $this->loadGdClient();
+
+        if( !empty($args['maxResults']) )
+        {
+            $this->_gdClient->setMaxResults($args['maxResults']);
+        }
+
+        if( !empty($args['startIndex']) )
+        {
+            $this->_gdClient->setStartIndex($args['startIndex']);
+        }
+
+
+        try
+        {
+            $feed = $this->_gdClient->getContactListFeed($args);
+        }
+        catch(Zend_Gdata_App_HttpException $e)
+        {
+            $GLOBALS['log']->fatal("Received exception while trying to retrieve google contact list:" .  $e->getResponse());
+        }
+        catch(Exception $e)
+        {
+            $GLOBALS['log']->fatal("Unable to retrieve item list for google contact connector.");
+        }
+
+        return $feed;
+    }
 }

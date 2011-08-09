@@ -63,6 +63,7 @@ class One2MRelationship extends M2MRelationship
         }
         $this->lhsLink = $this->lhsLinkDef['name'];
         $this->rhsLink = $this->rhsLinkDef['name'];
+        $this->self_referencing = $lhsModule == $rhsModule;
     }
 
     /**

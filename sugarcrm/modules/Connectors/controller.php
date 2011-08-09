@@ -222,6 +222,29 @@ class ConnectorsController extends SugarController {
 
 	//END SUGARCRM flav=pro || flav=sales ONLY
 
+    function action_CallConnectorFunc() {
+        $this->view = 'ajax';
+        $json = getJSONobj();
+
+        if(!empty($_REQUEST['source_id']))
+        {
+            $source_id = $_REQUEST['source_id'];
+            require_once('include/connectors/sources/SourceFactory.php');
+            $source = SourceFactory::getSource($source_id);
+
+            $method = 'ext_'.$_REQUEST['source_func'];
+            if ( method_exists($source,$method) ) {
+                echo $json->encode($source->$method($_REQUEST));
+            } else {
+                echo $json->encode(array('error'=>true,'errorMessage'=>'Could Not Find Function: '.$method.' in class: '.get_class($source)));
+            }
+        }
+        else
+        {
+            echo $json->encode(array('error'=>true,'errorMessage'=>'Source Id is not specified.'));
+        }
+    }
+
 	function action_CallRest() {
 		$this->view = 'ajax';
 
@@ -363,7 +386,8 @@ class ConnectorsController extends SugarController {
 				$display_values = explode(',', $_REQUEST['display_values']);
 			    foreach($display_values as $value) {
 			    	    $entry = explode(':', $value);
-			      	    $new_modules_sources[$entry[1]][$entry[0]] = $entry[0];
+                                    $mod = get_module_from_singular($entry[1]); // get the internal module name
+                                    $new_modules_sources[$mod][$entry[0]] = $entry[0];
 			    }
 			}
 
@@ -468,9 +492,12 @@ class ConnectorsController extends SugarController {
 			       		   mkdir_recursive("{$dir}");
 			    		}
 
-					    if(!write_array_to_file('mapping', array('beans'=>array()), "{$dir}/mapping.php")) {
+                        $fakeMapping = array('beans'=>array());
+					    if(!write_array_to_file('mapping', $fakeMapping, "{$dir}/mapping.php")) {
 					       $GLOBALS['log']->fatal("Cannot write file {$dir}/mapping.php");
 					    }
+                        $s = SourceFactory::getSource($id);
+                        $s->saveMappingHook($fakeMapping);
 		    	    } //if
 		    } //foreach
 
@@ -518,6 +545,7 @@ class ConnectorsController extends SugarController {
 				    if(!write_array_to_file('mapping', $mapping, "{$dir}/mapping.php")) {
 				       $GLOBALS['log']->fatal("Cannot write file {$dir}/mapping.php");
 				    }
+                    $source->saveMappingHook($mapping);
 
 		    } //foreach
 
@@ -663,6 +691,7 @@ class ConnectorsController extends SugarController {
 			    if(!write_array_to_file('mapping', $mapping, "{$dir}/mapping.php")) {
 			       $GLOBALS['log']->fatal("Cannot write file {$dir}/mapping.php");
 			    }
+                $source->saveMappingHook($mapping);
 		}
 
 		//Rewrite the metadata files

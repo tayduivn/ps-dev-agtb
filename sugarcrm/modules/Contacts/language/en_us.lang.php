@@ -70,7 +70,7 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_CAMPAIGN_ID' => 'Campaign ID',
     //END SUGARCRM flav!=sales ONLY
-    'LBL_CONTACT_INFORMATION' => 'Contact Overview',
+    'LBL_CONTACT_INFORMATION' => 'Overview',
     'LBL_CONTACT_NAME' => 'Contact Name:',
     'LBL_CONTACT_OPP_FORM_TITLE' => 'Contact-Opportunity:',
     'LBL_CONTACT_ROLE' => 'Role:',
@@ -236,5 +236,19 @@ $mod_strings = array (
     'LBL_CAMPAIGNS_SUBPANEL_TITLE' => 'Campaigns',
     //END SUGARCRM flav!=sales ONLY
     'LNK_IMPORT_CONTACTS' => 'Import Contacts',
+
+    //For export labels
+    'LBL_PHONE_HOME' => 'Phone Home',
+    'LBL_PHONE_MOBILE' => 'Phone Mobile',
+    'LBL_PHONE_WORK' => 'Phone Work',
+    'LBL_PHONE_OTHER' => 'Phone Other',
+    'LBL_PHONE_FAX' => 'Phone Fax',
+    'LBL_CAMPAIGN_ID' => 'Campaign ID',
+
+    'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
+    'LBL_EXPORT_ASSIGNED_USER_ID' => 'Assigned User ID',
+    'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified By ID',
+    'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+
 )
 ?>

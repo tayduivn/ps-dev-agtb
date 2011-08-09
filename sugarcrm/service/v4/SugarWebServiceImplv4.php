@@ -96,21 +96,35 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
             self::$helperObject->setFaultObject($error);
             return;
         }
-        else if( $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser"
-                 && (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN' ) )
-        {
-            $error->set_error('ldap_error');
-            LogicHook::initialize();
-            $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
-            self::$helperObject->setFaultObject($error);
-            return;
-        }
-        else if(function_exists('mcrypt_cbc'))
+		else if(function_exists('mcrypt_cbc') && $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser"
+        		&& (empty($user_auth['encryption']) || $user_auth['encryption'] !== 'PLAIN' ) )
         {
             $password = self::$helperObject->decrypt_string($user_auth['password']);
+            $authController->loggedIn = false; // reset login attempt to try again with decrypted password
             if($authController->login($user_auth['user_name'], $password) && isset($_SESSION['authenticated_user_id']))
                 $success = true;
         }
+        else if( $authController->authController->userAuthenticateClass == "LDAPAuthenticateUser"
+                 && (empty($user_auth['encryption']) || $user_auth['encryption'] == 'PLAIN' ) )
+        {
+
+        	$authController->loggedIn = false; // reset login attempt to try again with md5 password
+        	if($authController->login($user_auth['user_name'], md5($user_auth['password']), array('passwordEncrypted' => true))
+        		&& isset($_SESSION['authenticated_user_id']))
+        	{
+        		$success = true;
+        	}
+        	else
+        	{
+
+	            $error->set_error('ldap_error');
+	            LogicHook::initialize();
+	            $GLOBALS['logic_hook']->call_custom_logic('Users', 'login_failed');
+	            self::$helperObject->setFaultObject($error);
+	            return;
+        	}
+        }
+
 
         if($success)
         {
@@ -611,7 +625,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         global  $beanList, $beanFiles;
         global $sugar_config,$current_language;
         $GLOBALS['mod_strings'] = return_module_language($current_language, 'Quotes');
-        
+
         $error = new SoapError();
         $output_list = array();
         if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', '', '', '', $error))

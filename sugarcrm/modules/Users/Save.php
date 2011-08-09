@@ -45,7 +45,7 @@ parse_str($remove_tabs_def,$REMOVE_ARR);
 if (isset($_POST['id']))
 	sugar_die("Unauthorized access to administration.");
 if (isset($_POST['record']) && !is_admin($current_user)
-     && !is_admin_for_module($GLOBALS['current_user'],'Users')
+     && !$GLOBALS['current_user']->isAdminForModule('Users')
      //BEGIN SUGARCRM flav=sales ONLY
      && $GLOBALS['current_user']->user_type != 'UserAdministrator'
      //END SUGARCRM flav=sales ONLY
@@ -55,7 +55,7 @@ elseif (!isset($_POST['record']) && !is_admin($current_user)
      //BEGIN SUGARCRM flav=sales ONLY
      && $GLOBALS['current_user']->user_type != 'UserAdministrator'
      //END SUGARCRM flav=sales ONLY
-     && !is_admin_for_module($GLOBALS['current_user'],'Users'))
+     && !$GLOBALS['current_user']->isAdminForModule('Users'))
 sugar_die ("Unauthorized access to user administration.");
 $focus = new User();
 $focus->retrieve($_POST['record']);
@@ -66,7 +66,7 @@ if(empty($focus->user_name)) $newUser = true;
 else $newUser = false;
 	
 
-if(!$current_user->is_admin && !is_admin_for_module($GLOBALS['current_user'],'Users')
+if(!$current_user->is_admin && !$GLOBALS['current_user']->isAdminForModule('Users')
     //BEGIN SUGARCRM flav=sales only
     && $current_user->user_type != 'UserAdministrator'
     //END SUGARCRM flav=sales only
@@ -75,7 +75,7 @@ if(!$current_user->is_admin && !is_admin_for_module($GLOBALS['current_user'],'Us
 	header("Location: index.php?module=Users&action=Logout");
 	exit;
 }
-if(!$current_user->is_admin  && !is_admin_for_module($GLOBALS['current_user'],'Users')
+if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Users')
     //BEGIN SUGARCRM flav=sales only
     && $current_user->user_type != 'UserAdministrator'
     //END SUGARCRM flav=sales only
@@ -434,6 +434,27 @@ if(!$current_user->is_admin  && !is_admin_for_module($GLOBALS['current_user'],'U
 		}
 //END SUGARCRM flav=pro ONLY
 	}
+
+
+    //handle navigation from user wizard
+    if(isset($_REQUEST['whatnext'])){
+        if($_REQUEST['whatnext']== 'import'){
+            header("Location:index.php?module=Import&action=step1&import_module=Administration");
+            return;
+        }elseif($_REQUEST['whatnext']== 'users'){
+            header("Location:index.php?module=Users&action=index");
+            return;
+        }elseif($_REQUEST['whatnext']== 'settings'){
+            header("Location:index.php?module=Configurator&action=EditView");
+            return;
+        }elseif($_REQUEST['whatnext']== 'studio'){
+            header("Location:index.php?module=ModuleBuilder&action=index&type=studio");
+            return;
+        }else{
+            //do nothing, let the navigation continue as normal using code below
+        }
+
+    }
 
 if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "") $return_module = $_REQUEST['return_module'];
 else $return_module = "Users";

@@ -25,6 +25,7 @@ require_once("include/upload_file.php");
 class ViewConvertLead extends SugarView
 {
     protected $fileName = "modules/Leads/metadata/convertdefs.php";
+    protected $new_contact = false;
 
     public function __construct(
         $bean = null,
@@ -104,9 +105,14 @@ class ViewConvertLead extends SugarView
         $smarty->assign("view", "convertlead");
         $smarty->assign("bean", $this->focus);
 		$smarty->assign("record_id", $this->focus->id);
+        global $mod_strings;
+        $smarty->assign('MOD', $mod_strings);
         $smarty->display("modules/Leads/tpls/ConvertLeadHeader.tpl");
 
         echo "<div class='edit view' style='width:auto;'>";
+
+        global $sugar_config;
+        $smarty->assign('lead_conv_activity_opt', $sugar_config['lead_conv_activity_opt']);
 
         foreach($this->defs as $module => $vdef)
         {
@@ -303,6 +309,7 @@ class ViewConvertLead extends SugarView
                 echo $contactForm->buildTableForm($duplicateContacts,  'Contacts');
                 return;
             }
+            $this->new_contact = true;
         }
         if ( !empty($_REQUEST['selectedAccount']) ) {
             $_REQUEST['account_id'] = $_REQUEST['selectedAccount'];
@@ -383,14 +390,9 @@ class ViewConvertLead extends SugarView
 				{
 
 					$bean->load_relationship ($leadsRel) ;
-					$relObject = $bean->$leadsRel->getRelationshipObject();
-					if ($relObject->relationship_type == "one-to-many" && $bean->$leadsRel->_get_bean_position())
-					{
-						$id_field = $relObject->rhs_key;
-						$lead->$id_field = $bean->id;
-					} else {
-						$bean->$leadsRel->add($lead);
-					}
+                                        if (!$bean->$leadsRel->isParentRelationship()) {
+                                            $bean->$leadsRel->add($lead);
+                                        }
 				}
 			}
 			//Special case code for opportunities->Accounts
@@ -429,7 +431,7 @@ class ViewConvertLead extends SugarView
         foreach($beans as $bean)
         {
             $beanName = $bean->object_name;
-            if ( $beanName == 'Contact' && !$bean->new_with_id ) {
+            if ( $beanName == 'Contact' && !$this->new_contact ) {
                 echo "<li>" . translate("LBL_EXISTING_CONTACT") . " -
                     <a href='index.php?module={$bean->module_dir}&action=DetailView&record={$bean->id}'>
                        {$bean->get_summary_text()}
@@ -461,6 +463,7 @@ class ViewConvertLead extends SugarView
         )
     {
     	global $app_list_strings;
+        global $sugar_config;
     	$parent_types = $app_list_strings['record_type_display'];
 
     	$activities = $this->getActivitiesFromLead($lead);
@@ -476,10 +479,72 @@ class ViewConvertLead extends SugarView
                 }
                 foreach($activities as $activity)
 		    	{
-		    		$this->copyActivityAndRelateToBean($activity, $bean);
+                            if (!isset($sugar_config['lead_conv_activity_opt']) || $sugar_config['lead_conv_activity_opt'] == 'copy') {
+                                if (isset($_POST['lead_conv_ac_op_sel'])) {
+                                    //if the copy to module(s) are defined, copy only to those module(s)
+                                    if (is_array($_POST['lead_conv_ac_op_sel'])) {
+                                        foreach ($_POST['lead_conv_ac_op_sel'] as $mod) {
+                                            if ($mod == $module) {
+                                                $this->copyActivityAndRelateToBean($activity, $bean);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else if ($sugar_config['lead_conv_activity_opt'] == 'move') {
+                                // if to move activities, should be only one module selected
+                                if ($_POST['lead_conv_ac_op_sel'] == $module) {
+                                    $this->moveActivity($activity, $bean);
+                                }
+                            }
 		    	}
 	    	}
     	}
+    }
+
+    /**
+     * Change the parent id and parent type of an activity
+     * @param $activity Activity to be modified
+     * @param $bean New parent bean of the activity
+     */
+    protected function moveActivity($activity, $bean) {
+        global $beanList;
+
+        $lead = null;
+        if (!empty($_REQUEST['record']))
+        {
+            $lead = new Lead();
+            $lead->retrieve($_REQUEST['record']);
+        }
+
+        // delete the old relationship to the old parent (lead)
+        if ($rel = $this->findRelationship($activity, $lead)) {
+            $activity->load_relationship ($rel) ;
+
+            if ($activity->parent_id && $activity->id) {
+                $activity->$rel->delete($activity->id, $activity->parent_id);
+            }
+        }
+
+        // add the new relationship to the new parent (contact, account, etc)
+        if ($rel = $this->findRelationship($activity, $bean)) {
+            $activity->load_relationship ($rel) ;
+
+            $relObj = $activity->$rel->getRelationshipObject();
+            if ( $relObj->relationship_type=='one-to-one' || $relObj->relationship_type == 'one-to-many' )
+            {
+                $key = $relObj->rhs_key;
+                $activity->$key = $bean->id;
+            }
+            $activity->$rel->add($bean);
+        }
+
+        // set the new parent id and type
+        $activity->parent_id = $bean->id;
+        $activity->parent_type = $bean->module_dir;
+
+        $activity->save();
     }
 
     /**

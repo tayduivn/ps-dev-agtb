@@ -80,7 +80,7 @@ EOQ;
         }
         
         $str .= '<td>&nbsp;</td></tr><tr><td valign="top" style="padding-right: 2px; padding-left: 2px;" align="center">';
-        if(!isset($this->args['disable'])) { 
+        if(!isset($this->args['disable'])) {
             $str .= "<a onclick=\"return SUGAR.tabChooser.up('{$this->args['left_name']}','{$this->args['left_name']}','{$this->args['right_name']}');\">" .  SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;"',null,null,'.gif',$alt_tip) . "</a><br>
                      <a onclick=\"return SUGAR.tabChooser.down('{$this->args['left_name']}','{$this->args['left_name']}','{$this->args['right_name']}');\">" . SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;"',null,null,'.gif',$alt_tip) . "</a>";
         }
@@ -138,7 +138,7 @@ EOQ;
          $str .= "<script>
                 object_refs['{$this->args['left_name']}'] = document.getElementById('{$this->args['left_name']}');
                 </script></tr>
-            </table>";
+            </table></div>";
 
                 
         return $str;

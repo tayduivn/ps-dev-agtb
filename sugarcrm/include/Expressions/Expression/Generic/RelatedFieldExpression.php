@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=een ONLY
 /************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -65,16 +64,36 @@ class RelatedFieldExpression extends GenericExpression
                 //Try and get the current module and record ID
                 var module = SUGAR.forms.AssignmentHandler.getValue("module");
                 var record = SUGAR.forms.AssignmentHandler.getValue("record");
-                if (!module || !record)
+                var linkDef = SUGAR.forms.AssignmentHandler.getLink(linkField);
+                var linkId = false, url = "index.php?";
+                
+                if (linkDef && linkDef.id_name && linkDef.module) {
+                    linkId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name);
+                    module = linkDef.module;
+                }
+                if (!module || (!record && !linkId))
                     return "";
-                var url = "index.php?" + SUGAR.util.paramsToUrl({
-                    module:"ExpressionEngine",
-                    action:"execFunction",
-                    id: record,
-                    tmodule:module,
-                    "function":"related",
-                    params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
-                });
+
+                if (linkId && linkId != "")
+                {
+                    url += SUGAR.util.paramsToUrl({
+                        module:"ExpressionEngine",
+                        action:"getRelatedValue",
+                        record_id: linkId,
+                        field: relField,
+                        tmodule:module
+                    });
+                } else {
+                    url += SUGAR.util.paramsToUrl({
+                        module:"ExpressionEngine",
+                        action:"execFunction",
+                        id: record,
+                        rel_id : linkId,
+                        tmodule:module,
+                        "function":"related",
+                        params: YAHOO.lang.JSON.stringify(['\$' + linkField, '"' + relField + '"'])
+                    });
+                }
                 //The response should the be the JSON encoded value of the related field
                 return YAHOO.lang.JSON.parse(http_fetch_sync(url).responseText);
 			} else if (typeof(rel) == "object") {

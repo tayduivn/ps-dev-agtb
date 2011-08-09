@@ -116,19 +116,36 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 }
 
 
+function add_hidden_elements($key, $value) {
+
+    $elements = '';
+
+    // if it's an array, we need to loop into the array and use square brackets []
+    if (is_array($value)) {
+        foreach ($value as $k=>$v) {
+            $elements .= "<input type='hidden' name='$key"."[$k]' value='$v'>\n";
+        }
+    } else {
+        $elements = "<input type='hidden' name='$key' value='$value'>\n";
+    }
+
+    return $elements;
+}
+
+
 function getPostToForm($ignore='', $isRegularExpression=false)
 {
 	$fields = '';
 	if(!empty($ignore) && $isRegularExpression) {
 		foreach ($_POST as $key=>$value){
 			if(!preg_match($ignore, $key)) {
-				$fields.= "<input type='hidden' name='$key' value='$value'>\n";
+                                $fields .= add_hidden_elements($key, $value);
 			}
 		}	
 	} else {
 		foreach ($_POST as $key=>$value){
 			if($key != $ignore) {
-			   $fields.= "<input type='hidden' name='$key' value='$value'>\n";
+                                $fields .= add_hidden_elements($key, $value);
 			}
 		}
 	}
@@ -157,7 +174,7 @@ function getAnyToForm($ignore='', $usePostAsAuthority = false)
 
 }
 
-function handleRedirect($return_id='', $return_module='')
+function handleRedirect($return_id='', $return_module='', $additionalFlags = false)
 {
 	if(isset($_REQUEST['return_url']) && $_REQUEST['return_url'] != "")
 	{
@@ -190,7 +207,7 @@ function handleRedirect($return_id='', $return_module='')
             // END Meeting Integration
         } 
 		// if we create a new record "Save", we want to redirect to the DetailView
-		else if($_REQUEST['action'] == "Save" 
+		else if(isset($_REQUEST['action']) && $_REQUEST['action'] == "Save" 
 			&& $_REQUEST['return_module'] != 'Activities'
 //BEGIN SUGARCRM flav=pro ONLY
 			&& $_REQUEST['return_module'] != 'WorkFlow'  
@@ -227,44 +244,50 @@ function handleRedirect($return_id='', $return_module='')
 	{
 		$return_id = $_REQUEST['return_id'];
 	}
+
+    $add = "";
+    if(isset($additionalFlags) && !empty($additionalFlags)) {
+        foreach($additionalFlags as $k => $v) {
+            $add .= "&{$k}={$v}";
+        }
+    }
     
     if (!isset($isDuplicate) || !$isDuplicate)
     {
-        $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action";
-        $ajax_ret = array(
-             'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-             'menu' => array(
-                 'module' => $return_module,
-                 'label' => translate($return_module),
-             ),
-        );
-        $json = getJSONobj();
-        echo $json->encode($ajax_ret);
+        $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action{$add}";
+        if(!empty($_REQUEST['ajax_load']))
+        {
+            $ajax_ret = array(
+                'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
+                'menu' => array(
+                    'module' => $return_module,
+                    'label' => translate($return_module),
+                ),
+            );
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        } else {
+            header("Location: $url");
+            exit;
+        }
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
-   		$add = '';
-
-    	if(isset($additionalFlags) && !empty($additionalFlags)) {
-    		foreach($additionalFlags as $k => $v) {
-    			if(!empty($add)) {
-    				$add .= "&";
-    			}
-    			$add .= "{$k}={$v}";
-    		}
-    	}
-    	if(!empty($add)) {
-    		$add = "&" . $add;
-    	}
         $url="index.php?{$standard}{$add}";
-        $ajax_ret = array(
-             'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
-             'menu' => array(
-                 'module' => $return_module,
-                 'label' => translate($return_module),
-             ),
-        );
-        $json = getJSONobj();
-        echo $json->encode($ajax_ret);
+        if(!empty($_REQUEST['ajax_load']))
+        {
+            $ajax_ret = array(
+                 'content' => "<script>SUGAR.ajaxUI.loadContent('$url');</script>\n",
+                 'menu' => array(
+                     'module' => $return_module,
+                     'label' => translate($return_module),
+                 ),
+            );
+            $json = getJSONobj();
+            echo $json->encode($ajax_ret);
+        } else {
+            header("Location: $url");
+            exit;
+        }
     }
 	exit;
 }

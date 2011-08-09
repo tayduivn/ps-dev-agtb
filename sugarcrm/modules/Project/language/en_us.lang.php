@@ -260,5 +260,7 @@ $mod_strings = array (
 	'LBL_PROJECT_INFORMATION' => 'Project Overview',
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 	'LBL_INSERTROWS' => 'Insert Rows' /*for 508 compliance fix*/,
+	'LBL_PROJECT_INFORMATION' => 'Overview',
+
 );
 ?>

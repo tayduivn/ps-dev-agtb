@@ -31,7 +31,7 @@
         </td>
 		<td style="padding-left: 10px !important;">
             <input tabindex='2' title='{APP.LBL_SEARCH_BUTTON_TITLE}' accessKey='{APP.LBL_SEARCH_BUTTON_KEY}' onclick='SUGAR.savedViews.setChooser()' class='button' type='submit' name='button' value='{APP.LBL_SEARCH_BUTTON_LABEL}' id='search_form_submit'/>&nbsp;
-            <input tabindex='2' title='{APP.LBL_CLEAR_BUTTON_TITLE}' accessKey='{APP.LBL_CLEAR_BUTTON_KEY}' onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='clear' value=' {APP.LBL_CLEAR_BUTTON_LABEL} '/>
+            <input tabindex='2' title='{APP.LBL_CLEAR_BUTTON_TITLE}' accessKey='{APP.LBL_CLEAR_BUTTON_KEY}' onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='clear' value=' {APP.LBL_CLEAR_BUTTON_LABEL} ' id='search_form_clear'/>
             <!--//BEGIN SUGARCRM flav!=sales ONLY -->
             &nbsp;&nbsp;<a onclick="SUGAR.searchForm.searchFormSelect('Reports|advanced_search','Reports|basic_search')" href="#">{APP.LNK_ADVANCED_SEARCH}</a>
             <!--//END SUGARCRM flav!=sales ONLY -->
@@ -95,7 +95,7 @@
 <tr>
     <td colspan='5'>
         <input tabindex='2' title='{APP.LBL_SEARCH_BUTTON_TITLE}' accessKey='{APP.LBL_SEARCH_BUTTON_KEY}' onclick='SUGAR.savedViews.setChooser()' class='button' type='submit' name='button' value='{APP.LBL_SEARCH_BUTTON_LABEL}' id='search_form_submit'/>&nbsp;
-        <input tabindex='2' title='{APP.LBL_CLEAR_BUTTON_TITLE}' accessKey='{APP.LBL_CLEAR_BUTTON_KEY}' onclick='SUGAR.searchForm.clear_form(this.form);' class='button' type='button' name='clear' value=' {APP.LBL_CLEAR_BUTTON_LABEL} '/>
+        <input tabindex='2' title='{APP.LBL_CLEAR_BUTTON_TITLE}' accessKey='{APP.LBL_CLEAR_BUTTON_KEY}' onclick='SUGAR.searchForm.clear_form(this.form);' class='button' type='button' name='clear' value=' {APP.LBL_CLEAR_BUTTON_LABEL} ' id='search_form_clear'/>
         <a onclick="SUGAR.searchForm.searchFormSelect('Reports|basic_search','Reports|advanced_search')" href="#">{APP.LNK_BASIC_SEARCH}</a>
         {ADVANCED_BUTTONS}
     </td>

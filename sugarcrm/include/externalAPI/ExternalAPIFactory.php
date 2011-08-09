@@ -139,7 +139,7 @@ class ExternalAPIFactory
         rename('cache/include/externalAPI.cache-tmp.js','cache/include/externalAPI.cache.js');
 
 
-        if (is_array($GLOBALS['app_list_strings']['extapi_meeting_password']) && count(array_diff($meetingPasswordList,$GLOBALS['app_list_strings']['extapi_meeting_password'])) != 0 ) {
+        if (!isset($GLOBALS['app_list_strings']['extapi_meeting_password']) || (is_array($GLOBALS['app_list_strings']['extapi_meeting_password']) && count(array_diff($meetingPasswordList,$GLOBALS['app_list_strings']['extapi_meeting_password'])) != 0 )) {
             // Our meeting password list is different... we need to do something about this.
             require_once('modules/Administration/Common.php');
             $languages = get_languages();
@@ -262,10 +262,14 @@ class ExternalAPIFactory
         }
 
         foreach ( $apiList as $apiName => $ignore ) {
-
-            if ( !empty($app_list_strings['eapm_list'][$apiName]) ) {
+            $appStringTranslKey = 'eapm_list_' .strtolower($moduleName);
+            if ( isset($app_list_strings[$appStringTranslKey]) && !empty($app_list_strings[$appStringTranslKey][$apiName]) ) {
+                $apiDropdown[$apiName] = $app_list_strings[$appStringTranslKey][$apiName];
+            }
+            else if ( !empty($app_list_strings['eapm_list'][$apiName]) ) {
                 $apiDropdown[$apiName] = $app_list_strings['eapm_list'][$apiName];
-            } else {
+            }
+            else {
                 $apiDropdown[$apiName] = $apiName;
             }
         }

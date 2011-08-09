@@ -20,10 +20,10 @@
  ********************************************************************************/
 require_once('include/Expressions/Expression/Numeric/NumericExpression.php');
 /**
- * <b>rollup(Relate <i>link</i>, String <i>field</i>)</b><br>
- * Returns the sum of the values of <i>field</i> in records related by <i>link</i><br/>
- * ex: <i>rollup($opportunities, "amount")</i> in Accounts would return the <br/>
- * sum of all the Opportunities related to this Account.
+ * <b>rollupMax(Relate <i>link</i>, String <i>field</i>)</b><br>
+ * Returns the highest value of <i>field</i> in records related by <i>link</i><br/>
+ * ex: <i>rollupMax($opportunities, "amount")</i> in Accounts would return the <br/>
+ * highest amount of any Opportunity related to this Account.
  */
 class MaxRelatedExpression extends NumericExpression
 {

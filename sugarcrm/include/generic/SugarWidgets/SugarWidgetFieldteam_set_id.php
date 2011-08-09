@@ -36,13 +36,24 @@ function & displayListPlain($layout_def){
 			if(!empty($teams)){
 				if(!empty($teams[0]['display_name'])){
 					$result = $teams[0]['display_name'];
-					if(count($teams) > 1){
-						$body = '';
-						foreach($teams as $row){
-							$body .= $row['display_name'].'<br/>';
-						}
-						$result .= "&nbsp;<a href=\"#\" style='text-decoration:none;' id='more_feather' onmouseout=\"return nd();\" onmouseover=\"return overlib('".$body."', CAPTION, '', STICKY, MOUSEOFF, 1000, WIDTH, 100, CLOSETEXT, ('<!--not_in_theme!--><img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif>'), CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\">+</a>";
-					}
+
+	            	if((! empty($_REQUEST['to_csv']))|| (! empty($_REQUEST['to_pdf']) )) {
+                            // if for csv export, we don't generate html
+                            $result = '';
+                            foreach($teams as $row) {
+                                $result .= $row['display_name'].",";
+                            }
+                            //get rid of the trailing comma
+                            $result = substr($result, 0, -1);
+                    } else {
+                            $body = '';
+                            foreach($teams as $row){
+                                $body .= $row['display_name'].'<br/>';
+                            }
+
+                            $result .= "&nbsp;<a href=\"#\" style='text-decoration:none;' id='more_feather' onmouseout=\"return nd();\" onmouseover=\"return overlib('".$body."', CAPTION, '', STICKY, MOUSEOFF, 1000, WIDTH, 100, CLOSETEXT, ('<img border=0 style=\'margin-left:2px; margin-right: 2px;\' src=index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=close.gif>'), CLOSETITLE, SUGAR.language.get('app_strings','LBL_ADDITIONAL_DETAILS_CLOSE_TITLE'), CLOSECLICK, FGCLASS, 'olFgClass', CGCLASS, 'olCgClass', BGCLASS, 'olBgClass', TEXTFONTCLASS, 'olFontClass', CAPTIONFONTCLASS, 'olCapFontClass', CLOSEFONTCLASS, 'olCloseFontClass');\">+</a>";
+                    }
+
 					return $result;
 				}else{
 					return '';
