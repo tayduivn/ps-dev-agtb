@@ -33,8 +33,6 @@
 
 {$CSS}
 
-
-{$MODULE_TITLE}
 {$INSTRUCTION}
 
 

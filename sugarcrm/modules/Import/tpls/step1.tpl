@@ -37,7 +37,6 @@
 }
 {/literal}
 </style>
-{$MODULE_TITLE}
 {if $ERROR != ''}
 <span class="error">{$ERROR}</span>
 {/if}

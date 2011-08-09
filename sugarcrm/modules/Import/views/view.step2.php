@@ -52,7 +52,7 @@ class ImportViewStep2 extends ImportView
         $this->instruction = 'LBL_SELECT_UPLOAD_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
+        $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
@@ -140,9 +140,10 @@ class ImportViewStep2 extends ImportView
         $content = $this->ss->fetch('modules/Import/tpls/step2.tpl');
         
         $this->ss->assign("CONTENT",json_encode($content));
-        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-top: 10px;\"><tr><td align=\"right\">";
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
         if ($displayBackBttn) {
-            $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">&nbsp;";
+            $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
         }
 	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
         $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
@@ -169,8 +170,10 @@ if( document.getElementById('goback') )
        	var success = function(data) {		
 			eval(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
 			importWizardDialogDiv.innerHTML = response['html'];
+			importWizardDialogTitle.innerHTML = response['title'];
 			submitDiv.innerHTML = response['submitContent'];
 			eval(response['script']);
 		} 
@@ -205,10 +208,11 @@ document.getElementById('gonext').onclick = function(){
 	  	    upload: function(data) {		
 				eval(data.responseText);
 				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+				importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 				submitDiv = document.getElementById('submitDiv');
-				//alert(response['html']);
 				if(response['html'] != "") {
 					importWizardDialogDiv.innerHTML = response['html'];
+					importWizardDialogTitle.innerHTML = response['title'];
 					submitDiv.innerHTML = response['submitContent'];
 				}
 				

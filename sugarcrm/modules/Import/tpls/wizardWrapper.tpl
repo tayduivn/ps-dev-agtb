@@ -1,1 +1,1 @@
-response = {ldelim}"html":{$CONTENT},"submitContent":{$SUBMITCONTENT},"script":{$JS}{rdelim}
+response = {ldelim}"html":{$CONTENT},"submitContent":{$SUBMITCONTENT},"title":{$MODULE_TITLE},"script":{$JS}{rdelim}
