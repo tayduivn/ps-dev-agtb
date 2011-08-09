@@ -588,7 +588,7 @@ EOJS;
 		// javascript hack for single quotes -- escape the backspaces
 		$newPageName = str_replace("\'", "'", $newPageName);
 
-		$newPage['pageTitle'] = remove_xss(from_html($newPageName['jsonObject']));
+		$newPage['pageTitle'] = remove_xss(from_html($newPageName));
 
 		$newPage['numColumns'] = $_REQUEST['numCols'];
 
