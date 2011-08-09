@@ -5201,17 +5201,17 @@ padding: 2px 10px;
 }
 .yui-module .hd, .yui-panel .hd {
 	background-image: -moz-linear-gradient(center top, 
-	#eee 0%,
-	#ccc 100%
+	#eeeeee 0%,
+	#cccccc 100%
 	);
 	background-image: -webkit-gradient(
 	    linear,
 	    left top,
 	    left bottom,
-	    color-stop(0, #eee),
-	    color-stop(1, #ccc)
+	    color-stop(0, #eeeeee),
+	    color-stop(1, #cccccc)
     );	
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eee', endColorstr='#ccc');	
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc');	
 	border-bottom: 1px solid #999999;
 	border-top: 1px solid #ffffff;
 	-moz-border-radius: 6px 6px 0px 0px;
