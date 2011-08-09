@@ -50,6 +50,8 @@ class ImportViewLast extends ImportView
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $current_language;
         
+        
+        
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
@@ -76,10 +78,10 @@ class ImportViewLast extends ImportView
         }
         fclose($fp);
     
-        $this->ss->assign("showUndoButton",FALSE);
+        $showUndoButton = false;
         if($createdCount > 0)
         {
-        	$this->ss->assign("showUndoButton",TRUE);
+        	$showUndoButton = true;
         }
 
         if ($errorCount > 0 &&  ($createdCount <= 0 && $updatedCount <= 0))
@@ -89,7 +91,7 @@ class ImportViewLast extends ImportView
         else
             $activeTab = 0;
         
-        $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
+        $this->ss->assign("JS", json_encode($this->_getJS($activeTab)));
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
@@ -101,10 +103,10 @@ class ImportViewLast extends ImportView
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
         {
-            $this->ss->assign("PROSPECTLISTBUTTON", $this->_addToProspectListButton());
+        	$prospectlistbutton = $this->_addToProspectListButton();
         }
         else {
-            $this->ss->assign("PROSPECTLISTBUTTON","");
+            $prospectlistbutton = "";
         }
         //END SUGARCRM flav!=sales ONLY
 
@@ -127,8 +129,19 @@ class ImportViewLast extends ImportView
         $this->ss->assign("ERROR_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getErrorRecordsFileName(), 'errors') );
         $this->ss->assign("DUP_TABLE", $this->getListViewTableFromFile(ImportCacheFiles::getDuplicateFileDisplayName(), 'dup'));
 
+        
         $content = $this->ss->fetch('modules/Import/tpls/last.tpl');
-        $this->ss->assign("CONTENT",$content);
+        $this->ss->assign("CONTENT",json_encode($content));
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-top: 10px;\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_UNDO_LAST_IMPORT']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"undo\" value=\"  ".$mod_strings['LBL_UNDO_LAST_IMPORT']."  \" id=\"undo\">&nbsp;";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_MORE']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"importmore\" value=\"  ".$mod_strings['LBL_IMPORT_MORE']."  \" id=\"importmore\">&nbsp;";
+	    $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
+	    //BEGIN SUGARCRM flav!=sales ONLY
+	    $submitContent .= "&nbsp;".$prospectlistbutton;
+	    //END SUGARCRM flav!=sales ONLY
+	    
+	    $submitContent .= "</td></tr></table>";
+        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
@@ -187,17 +200,46 @@ class ImportViewLast extends ImportView
     private function _getJS($activeTab)
     {
         return <<<EOJAVASCRIPT
-<script type="text/javascript">
-<!--
+
+document.getElementById('undo').onclick = function(){
+    
+       	var success = function(data) {		
+			eval(data.responseText);
+			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			submitDiv = document.getElementById('submitDiv');
+			importWizardDialogDiv.innerHTML = response['html'];
+			submitDiv.innerHTML = response['submitContent'];
+			eval(response['script']);
+		} 
+        var formObject = document.getElementById('importlast');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
+		
+}
+
+
 document.getElementById('importmore').onclick = function(){
     document.getElementById('importlast').action.value = 'Step1';
-    return true;
+    
+       	var success = function(data) {		
+			eval(data.responseText);
+			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			submitDiv = document.getElementById('submitDiv');
+			importWizardDialogDiv.innerHTML = response['html'];
+			submitDiv.innerHTML = response['submitContent'];
+			eval(response['script']);
+		} 
+        var formObject = document.getElementById('importlast');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
+		
 }
 
 document.getElementById('finished').onclick = function(){
     document.getElementById('importlast').module.value = document.getElementById('importlast').import_module.value;
     document.getElementById('importlast').action.value = 'index';
-    return true;
+	SUGAR.importWizard.closeDialog();
+		
 }
 
 if ( typeof(SUGAR) == 'undefined' )
@@ -261,8 +303,7 @@ SUGAR.IV = {
 }
 
 SUGAR.IV.togglePages('$activeTab');
--->
-</script>
+
 
 EOJAVASCRIPT;
     }

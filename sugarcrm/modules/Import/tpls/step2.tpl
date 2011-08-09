@@ -32,7 +32,6 @@
 *}
 {literal}
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <style>
 
 .link {
@@ -43,11 +42,10 @@
 {/literal}
 
 
-{overlib_includes}
 {$MODULE_TITLE}
 {$INSTRUCTION}
 
-
+<div class="hr"></div>
 
 <form enctype="multipart/form-data" name="importstep2" method="POST" action="index.php" id="importstep2">
 <input type="hidden" name="module" value="Import">
@@ -59,7 +57,6 @@
 <input type="hidden" name="current_step" value="{$CURRENT_STEP}">
 <input type="hidden" name="import_module" value="{$IMPORT_MODULE}">
 <input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
-<br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td>
@@ -71,16 +68,10 @@
             <td scope="row" colspan="4">&nbsp;</td>
         </tr>
         <tr>
-            <td scope="row" colspan="4">&nbsp;</td>
+            <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="20" name="userfile" type="file"/> &nbsp;{sugar_help text=$MOD.LBL_FILE_UPLOAD_WIDGET_HELP}</td>
         </tr>
         <tr>
-            <td align="left" scope="row" colspan="3">{$MOD.LBL_SELECT_FILE} <input type="hidden" /><input size="60" name="userfile" type="file"/> &nbsp;{sugar_help text=$MOD.LBL_FILE_UPLOAD_WIDGET_HELP}</td>
-        </tr>
-        <tr>
-            <td scope="row" colspan="4">&nbsp;</td>
-        </tr>
-        <tr>
-            <td scope="row" colspan="4">&nbsp;</td>
+            <td scope="row" colspan="4"><div class="hr"></div></td>
         </tr>
         <tr>
             <td scope="row" colspan="3">
@@ -112,10 +103,17 @@
           {if !empty($custom_imports) || !empty($published_imports)}
           <tr>
             <td scope="row" colspan="3">
-                <h3>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$savedMappingHelpText}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a></h3></td>
+                <h3>{$MOD.LBL_PUBLISHED_SOURCES}&nbsp;{sugar_help text=$savedMappingHelpText}</h3></td>
+          </tr>
+          
+          <tr id="custom_import_{$smarty.foreach.saved.index}">
+            <td scope="row" colspan="4">
+                <input class="radio" type="radio" name="source" value=""/>
+                &nbsp;{$MOD.LBL_NONE}
+            </td>
+
           </tr>
           {/if}
-
           {foreach from=$custom_imports key=key item=item name=saved}
           <tr id="custom_import_{$smarty.foreach.saved.index}">
             <td scope="row" colspan="2">
@@ -153,18 +151,3 @@
 </td>
 </tr>
 </table>
-
-<br>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-	<td align="left">
-        {if $displayBackBttn}
-            <input title="{$MOD.LBL_BACK}" accessKey="" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  " id="goback">&nbsp;
-        {/if}
-	    <input title="{$MOD.LBL_NEXT}" accessKey="" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  " id="gonext">
-    </td>
-</tr>
-</table>
-
-</form>
-{$JAVASCRIPT}

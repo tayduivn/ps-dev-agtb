@@ -57,7 +57,7 @@ class ImportViewStep1 extends ImportView
     {
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
-
+		
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
@@ -90,9 +90,16 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
         $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
         $this->ss->assign("selectExternalSource", $selectExternal);
-
+        
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
-        $this->ss->assign("CONTENT",$content);
+        
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-top: 10px;\"><tr><td align=\"right\"><input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
+        $this->ss->assign("CONTENT",json_encode($content));
+        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
+		        
+
+
+        $this->ss->assign("JS",json_encode($this->_getJS()));
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
@@ -150,10 +157,23 @@ class ImportViewStep1 extends ImportView
     private function _getJS()
     {
         global $mod_strings;
+        $EXTERNAL_AUTHENTICATED_SOURCES = json_encode($this->getAuthenticatedImportableExternalEAPMs());
+        $selectExternalSource = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
+        
+        $showModuleSelection = ($this->importModule == 'Administration');
+        $importableModulesOptions = array();
+        $importablePersonModules = array();
+        //If we are coming from the admin link, get the module list.
+        if($showModuleSelection)
+        {
+		 $importablePersonModules = $this->getImportablePersonModulesJS();
+        }
+
+
+        $PERSON_MODULE_LIST = json_encode($importablePersonModules);
         
         return <<<EOJAVASCRIPT
-<script type="text/javascript">
-<!--
+
 
 document.getElementById('gonext').onclick = function()
 {
@@ -162,7 +182,6 @@ document.getElementById('gonext').onclick = function()
     if( isCsvSource )
     {
         document.getElementById('importstep1').action.value = 'Step2';
-        return true;
     }
     else
     {
@@ -174,12 +193,32 @@ document.getElementById('gonext').onclick = function()
 
         document.getElementById('importstep1').action.value = 'ExtStep1';
         document.getElementById('importstep1').external_source.value = selectedExternalSource;
-        return true;
+        
     }
+    
+    
+    		var success = function(data) {		
+				eval(data.responseText);
+				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+				submitDiv = document.getElementById('submitDiv');
+				importWizardDialogDiv.innerHTML = response['html'];
+				SUGAR.util.evalScript(response['html']);
+				submitDiv.innerHTML = response['submitContent'];
+				eval(response['script']);
+
+			}
+    
+    
+    
+    
+        var formObject = document.getElementById('importstep1');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
+		
 }
 
 
-YAHOO.util.Event.onDOMReady(function(){
+YAHOO.util.Event.onContentReady("importstep1", function() {
 
     var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
 
@@ -301,8 +340,13 @@ YAHOO.util.Event.onDOMReady(function(){
 
     setImportModule();
 });
--->
-</script>
+
+
+var auth_sources = {$EXTERNAL_AUTHENTICATED_SOURCES}
+var selectedExternalSource = '{$selectExternalSource}';
+var personModules = {$PERSON_MODULE_LIST};
+
+
 
 EOJAVASCRIPT;
     }

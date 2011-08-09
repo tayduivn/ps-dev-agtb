@@ -48,7 +48,7 @@
 <input type="hidden" name="has_header" value="off">
 <input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
 
-
+extstep1
 <p>
     {$MOD.LBL_EXTERNAL_MAP_HELP}
     <br/>
@@ -113,7 +113,7 @@
 <tr>
     <td align="left">
         <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
-        <input title="{$MOD.LBL_IMPORT_NOW}" accessKey="" id="importnow" class="button" type="button" name="button" value="  {$MOD.LBL_IMPORT_NOW}  ">
+        <input title="{$MOD.LBL_IMPORT_NOW}" accessKey="" id="importnow" class="button" type="button" name="button" value="  {$MOD.LBL_IMPORT_NOW}  ">sfdsf
     </td>
 </tr>
 </table>

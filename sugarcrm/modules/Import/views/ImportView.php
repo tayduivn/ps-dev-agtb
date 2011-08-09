@@ -48,6 +48,10 @@ class ImportView extends SugarView
             $this->currentStep = isset($_REQUEST['current_step']) ? ($_REQUEST['current_step'] + 1) : 1;
         }
         $this->importModule = isset($_REQUEST['import_module']) ? $_REQUEST['import_module'] : '';
+        
+        $this->options['show_header'] = false;
+        $this->options['show_footer'] = false;
+        $this->options['show_javascript'] = false;
     }
 
     /**
@@ -132,6 +136,17 @@ class ImportView extends SugarView
     protected function _showImportError($message,$module,$action = 'Step1')
     {
         $ss = new Sugar_Smarty();
+        
+        global $mod_strings;
+
+		$themeObject = SugarThemeRegistry::current();
+		$css = $themeObject->getCSS();
+        $favicon = $themeObject->getImageURL('sugar_icon.ico',false);
+        $ss->assign('FAVICON_URL',getJSPath($favicon));
+        $ss->assign('SUGAR_CSS', $css);
+        $ss->assign('PAGETITLE', $mod_strings[$this->pageTitleKey]);
+        
+        
 
         $ss->assign("MESSAGE",$message);
         $ss->assign("ACTION",$action);
@@ -141,6 +156,16 @@ class ImportView extends SugarView
         if ( isset($_REQUEST['source']) )
             $ss->assign("SOURCE", $_REQUEST['source']);
 
-        echo $ss->fetch('modules/Import/tpls/error.tpl');
+        $content = $this->ss->fetch('modules/Import/tpls/error.tpl');
+        $this->ss->assign("CONTENT",$content);
+        
+        ob_start();
+        $this->options['show_javascript'] = true;
+        $this->renderJavascript();
+        $this->options['show_javascript'] = false;
+        $ss->assign("SUGAR_JS",ob_get_contents().$themeObject->getJS());
+        ob_end_clean();
+        
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 }
