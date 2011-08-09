@@ -45,4 +45,6 @@ $mod_strings = array(
     'LBL_SNIP_STATUS_PINGBACK_FAIL' => 'Pingback failed',
     'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server unable to contact your Sugar instance.',
 
+    'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
+
 );

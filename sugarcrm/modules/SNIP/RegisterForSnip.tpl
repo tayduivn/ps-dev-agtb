@@ -86,14 +86,28 @@ div.snipError{
 {/literal}
 {$TITLE}
 {* //FILE SUGARCRM flav=pro ONLY *}
-{literal}
-<script>
-	function divExpand(){
-		console.log("div expanded");
-		return false;	
-	}
-</script>
-{/literal}
+
+{if $SNIP_STATUS!='notpurchased'}
+<table class="actionsContainer" border="0" cellpadding="0" cellspacing="1" width="100%">
+<tbody>
+	<tr>
+		<td>
+			<form method="post">
+
+			{if $SNIP_STATUS =='purchased'}
+				<input title="" class="button" name="disable" value="  {$MOD.LBL_SNIP_BUTTON_DISABLE}  " type="submit">
+				<input type='hidden' value='disable_snip' name='snipaction'>
+			{else}
+				<input title="" class="button primary" name="tryagain" value="  {$MOD.LBL_SNIP_BUTTON_RETRY}  " onclick='window.location.reload()' type="button">
+			{/if}
+
+			&nbsp;<input title="" onclick="document.location.href='index.php?module=Administration&amp;action=index'" class="button" name="cancel" value="  {$MOD.LBL_CANCEL_BUTTON_TITLE}  " type="button">
+
+			</form>
+		</td>
+	</tr>
+</tbody></table>
+{/if}
 
 	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
 		<tr>
@@ -188,12 +202,6 @@ div.snipError{
 					</td>
 				</tr>
 			</table><br>
-				{if $SNIP_STATUS =='purchased'}
-					<div class='snipCenterButtonWrapper'>
-					<form method="post"><input type='submit' class='snipEnableButton'  value='{$MOD.LBL_SNIP_BUTTON_DISABLE}' id='enableSnipButton'><input type='hidden' value='disable_snip' name='snipaction'></div>
-				{else}
-					<div class='snipCenterButtonWrapper'><input type='button' class='snipEnableButton' onclick='window.location.reload()' value='{$MOD.LBL_SNIP_BUTTON_RETRY}' id='tryAgainButton'></div>
-				{/if}
 			{/if}
 
 		</td>
