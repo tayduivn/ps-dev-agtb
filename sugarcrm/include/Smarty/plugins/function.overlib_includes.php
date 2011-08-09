@@ -58,8 +58,7 @@ function smarty_function_overlib_includes($params, &$smarty)
 		$path = getJSPath('include/javascript/sugar_grp_overlib.js');
 	return <<<EOHTML
 <!-- begin includes for overlib -->
-<script src="$path"></script>
-
+<script id="sugar_grp_overlib" src="$path"></script>
 <div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000; max-width: 400px;"></div>
 <!-- end includes for overlib -->
 EOHTML;

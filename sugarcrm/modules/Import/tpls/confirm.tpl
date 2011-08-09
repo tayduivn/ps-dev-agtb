@@ -31,40 +31,16 @@
 
 *}
 {literal}
-<style>
-<!--
-textarea { width: 20em }
+<style >
 
-.impSample {
-    word-wrap: break-word;
-}
 
-div.confirmTable {
-    overflow: auto;
-    width: 80%;
-    padding-top: 20px;
-    position: relative;
-}
-
-div.leftPadded {
-    padding-left: 15px;
-}
-div.errorMessage {
-    padding-left: 15px;
-    padding-top: 20px;
-    padding-bottom: 0px;
-}
-
-table.noBorder {
-    border: none;
-}
--->
 </style>
 {/literal}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
-{overlib_includes}
-{$MODULE_TITLE}
+
 {$INSTRUCTION}
+
+<div class="hr"></div>
+
 <form enctype="multipart/form-data" real_id="importconfirm" id="importconfirm" name="importconfirm" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="type" value="{$TYPE}">
@@ -83,13 +59,13 @@ table.noBorder {
     </div>
 {/if}
 
-<div id="confirm_table" class="confirmTable leftPadded">
+<div id="confirm_table" class="confirmTable">
 {include file='modules/Import/tpls/confirm_table.tpl'}
 </div>
 
-<br>
-<div class="leftPadded">
-    <table>
+
+
+    <table cellpadding="0" cellspacing="0" width="100%">
         <tr>
             <td align="left" colspan="4" style="background: transparent;">
                 <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleImportOptions" class="button" type="button"
@@ -101,6 +77,7 @@ table.noBorder {
         </tr>
         <tr>
             <td>
+            <div style="overflow: auto; width: 1056px;">
                 <table border=0 class="edit view noBorder" style="display: none;" id="importOptions">
                     <tr>
                         <td scope="row">
@@ -182,10 +159,18 @@ table.noBorder {
                         <td  valign="top"><input tabindex='4' id="nameTarget" name="no_value" id=":q" value="" style="border: none;" disabled size="50"></td>
                     </tr>
                 </table>
+            </div>
+                
             </td>
         </tr>
         <tr>
-            <td colspan="2"><h4>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}&nbsp;<a id="deselect" href="javascript:void(0);">{$MOD.LBL_DESELECT}</a></h4></td>
+            <td colspan="2"><div class="hr" style="margin-top: 0px;"></div></td>
+        </tr>
+        <tr>
+            <td colspan="2"><h3>{$MOD.LBL_THIRD_PARTY_CSV_SOURCES}&nbsp;{sugar_help text=$MOD.LBL_THIRD_PARTY_CSV_SOURCES_HELP}</h3></td>
+        </tr>
+        <tr>
+            <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="" id='none'/>&nbsp;{$MOD.LBL_NONE}</td>
         </tr>
         <tr>
             <td colspan="2" scope="row"><input class="radio" type="radio" name="external_source" value="salesforce" id='sf_map'/>&nbsp;{$MOD.LBL_SALESFORCE}</td>
@@ -197,27 +182,3 @@ table.noBorder {
             <td colspan="2">&nbsp;</td>
         </tr>
     </table>
-</div>
-    
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
-<tr>
-    <td align="left">
-        <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
-        <input title="{$MOD.LBL_NEXT}" accessKey="" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  " id="gonext">
-    </td>
-</tr>
-</table>
-
-</form>
-
-{$JAVASCRIPT}
-
-{literal}
-<script type="text/javascript" language="Javascript">
-{/literal}{$currencySymbolJs}{literal}
-{/literal}{$getNumberJs}{literal}
-{/literal}{$getNameJs}{literal}
-setSigDigits();
-setSymbolValue(document.getElementById('currency_select').selectedIndex);
-</script>
-{/literal}

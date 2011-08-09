@@ -409,6 +409,7 @@ function generateSearchWhere($module, $query) {//this function is similar with f
         $person_bean = true;
     }
 
+     global $timedate;
      $returnContent = '';
      $counter = 0;
      $new_arr = array();
@@ -535,7 +536,6 @@ function generateSearchWhere($module, $query) {//this function is similar with f
 
                  case "datetime":
                  case "datetimecombo":
-                    global $timedate;
                      //return formatted date time
                      $timeStamp = strtotime('now');
                      //Start with db date

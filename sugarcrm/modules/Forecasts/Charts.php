@@ -166,7 +166,7 @@ class forecast_charts extends SugarView {
 		
 		$width = ($is_dashlet) ? '100%' : '720px';
 		
-		$return = '';
+		$return = '<script>SUGAR.loadChart = true;</script>';
 		if (!$is_dashlet){
 			$return .= '<br />';
 			$return .= SugarView::renderJavascript();
