@@ -1406,7 +1406,7 @@ function call_json_method(module,action,vars,variable_name,callback) {
 				json_objects[variable_name] = JSON.parse(global_xmlhttp.responseText);
 
 				// cn: bug 12274 - safe from CSRF, render response as expected
-				var respText = JSON.parseNoSecurity(global_xmlhttp.responseText);
+				var respText = YAHOO.lang.JSON.stringify(global_xmlhttp.responseText);
 				var args = {responseText:respText, responseXML:global_xmlhttp.responseXML};
 				callback.call(document, args);
 			}
