@@ -33,10 +33,11 @@
 
 {$CSS}
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
-{overlib_includes}
+
 {$MODULE_TITLE}
 {$INSTRUCTION}
+
+
 <form enctype="multipart/form-data" real_id="importstep3" id="importstep3" name="importstep3" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="previous_action" value="Confirm">
@@ -66,8 +67,9 @@
     
 <br>
 {if $NOTETEXT != ''}
-    <p style="padding-left:10px">
-        <a id="toggleNotes" href="javascript:void(0);">{$MOD.LBL_SHOW_NOTES}</a>
+    <p>
+        <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleNotes" class="button" type="button"
+                       name="button" value="  {$MOD.LBL_SHOW_NOTES}  ">
         <div id="importNotes" style="display: none;">
             <ul>
                 {$NOTETEXT}
@@ -76,9 +78,10 @@
     </p>
 {/if}
 
+<div class="hr"></div>
 
-<br />
-<table border="0" cellpadding="0" width="100%" id="importTable" class="detail view">
+
+<table border="0" cellspacing="0" cellpadding="0" width="100%" id="importTable" class="detail view">
 {foreach from=$rows key=key item=item name=rows}
 {if $smarty.foreach.rows.first}
 <tr>
@@ -126,7 +129,7 @@
     {if $HAS_HEADER != 'on'}
     <td id="row_{$smarty.foreach.rows.index}_col_1" scope="row">{$item.cell1}</td>
     {/if}
-    <td id="row_{$smarty.foreach.rows.index}_col_2" scope="row">{$item.cell2}</td>
+    <td id="row_{$smarty.foreach.rows.index}_col_2" scope="row" colspan="2">{$item.cell2}</td>
     {/if}
     <td id="defaultvaluepicker_{$smarty.foreach.rows.index}" nowrap="nowrap">
         {$item.default_field}
@@ -134,30 +137,11 @@
 </tr>
 {/foreach}
 <tr>
-    <td align="left" colspan="4" style="background: transparent;">
+    <td align="left" colspan="4">
         <input title="{$MOD.LBL_ADD_ROW}" accessKey="" id="addrow" class="button" type="button"
             name="button" value="  {$MOD.LBL_ADD_ROW}  "> {sugar_help text=$MOD.LBL_ADD_FIELD_HELP}
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     </td>
 </tr>
 </table>
-{$JAVASCRIPT_CHOOSER}
 
-<br />
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
-<tr>
-    <td align="left">
-        <input title="{$MOD.LBL_BACK}" accessKey="" id="goback" class="button" type="submit" name="button" value="  {$MOD.LBL_BACK}  ">&nbsp;
-        <input title="{$MOD.LBL_NEXT}" accessKey="" id="gonext" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  ">
-    </td>
-</tr>
-</table>
-
-</form>
-{$JAVASCRIPT}
-{literal}
-<script type="text/javascript" language="Javascript">
-enableQS(false);
-{/literal}{$confirmReassignJs}{literal}
-</script>
-{/literal}

@@ -271,7 +271,7 @@ class QuotesViewEdit extends ViewEdit
 				$ordered_bundle_list = array();
                 foreach ($product_bundle_list as $id => $bean)
                 {
-                    $index = $bean->get_index($this->bean->id);
+                    $index = $bean->get_index($original_quote->id);
                     $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
                 } //for
                 ksort($ordered_bundle_list);

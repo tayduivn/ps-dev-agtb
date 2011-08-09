@@ -232,13 +232,17 @@ class javascript{
 		}
 	}
 
-	function getScript($showScriptTag = true){
+	function getScript($showScriptTag = true, $clearValidateFields = true){
 		$tempScript = $this->script;
 		$this->script = "";
 		if($showScriptTag){
 			$this->script = "<script type=\"text/javascript\">\n";
 		}
 
+        if($clearValidateFields){
+            $this->script .= "addForm('{$this->formname}');";
+        }
+  
 		$this->script .= $tempScript;
 
 		if($showScriptTag){

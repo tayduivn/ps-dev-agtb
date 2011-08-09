@@ -47,13 +47,14 @@ class ImportViewStep3 extends ImportView
     protected $currentFormID = 'importstep3';
     protected $previousAction = 'Confirm';
     protected $nextAction = 'dupcheck';
+    
  	/**
      * @see SugarView::display()
      */
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $app_list_strings, $locale;
-
+        
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $has_header = ( isset( $_REQUEST['has_header']) ? 1 : 0 );
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
@@ -369,13 +370,23 @@ class ImportViewStep3 extends ImportView
         // include anything needed for quicksearch to work
         require_once("include/TemplateHandler/TemplateHandler.php");
         $quicksearch_js = TemplateHandler::createQuickSearchCode($fields,$fields,'importstep3');
-        $this->ss->assign("JAVASCRIPT", $quicksearch_js . "\n" . $this->_getJS($required));
+        $this->ss->assign("JS", json_encode($this->_getJS($required)));
 
         $this->ss->assign('required_fields',implode(', ',$required));
         $this->ss->assign('CSS', $this->_getCSS());
 
         $content = $this->ss->fetch('modules/Import/tpls/step3.tpl');
-        $this->ss->assign("CONTENT",$content);
+        $this->ss->assign("CONTENT",json_encode($content));
+        
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-top: 10px;\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">&nbsp;";
+	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
+		$submitContent .= $quicksearch_js;
+        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
+        
+        
+
+        
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
 
     }
@@ -385,19 +396,31 @@ class ImportViewStep3 extends ImportView
         return <<<EOCSS
             <style>
                 textarea { width: 20em }
-
+				.detail tr td[scope="row"] {
+					text-align:left	
+				}
                 span.collapse{
                     background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat 0 -90px;
                     padding-left: 10px;
+                    cursor: pointer;
                 }
 
                 span.expand{
                     background: transparent url('index.php?entryPoint=getImage&themeName=Sugar&themeName=Sugar&imageName=sugar-yui-sprites.png') no-repeat -0 -110px;
                     padding-left: 10px;
+                     cursor: pointer;
                 }
                 .removeButton{
                     border: none !important;
                     background-image: none !important;
+                    background-color: transparent;
+                    padding: 0px;
+                }
+                
+                #importNotes ul{
+                	margin: 0px;
+                	margin-top: 10px;	
+                	padding-left: 20px;
                 }
 
             </style>
@@ -421,11 +444,23 @@ EOCSS;
         $sqsWaitImage = SugarThemeRegistry::current()->getImageURL('sqsWait.gif');
 
         return <<<EOJAVASCRIPT
-<script type="text/javascript">
-<!--
+
+
 document.getElementById('goback').onclick = function(){
     document.getElementById('{$this->currentFormID}').action.value = '{$this->previousAction}';
-    return true;
+        var success = function(data) {		
+			eval(data.responseText);
+			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			submitDiv = document.getElementById('submitDiv');
+			importWizardDialogDiv.innerHTML = response['html'];
+			submitDiv.innerHTML = response['submitContent'];
+			eval(response['script']);
+
+		}
+    
+        var formObject = document.getElementById('importstep3');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
 }
 
 
@@ -487,7 +522,19 @@ if( document.getElementById('gonext') )
         {
             // Move on to next step
             document.getElementById('{$this->currentFormID}').action.value = '{$this->nextAction}';
-            return true;
+         var success = function(data) {		
+			eval(data.responseText);
+			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			submitDiv = document.getElementById('submitDiv');
+			importWizardDialogDiv.innerHTML = response['html'];
+			submitDiv.innerHTML = response['submitContent'];
+			eval(response['script']);
+
+		}
+    
+        var formObject = document.getElementById('importstep3');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
         }
         else
             return false;
@@ -537,12 +584,14 @@ document.getElementById('addrow').onclick = function(){
     var imgButton = document.createElement("img");
     imgButton.src = "index.php?entryPoint=getImage&themeName=Sugar&imageName=id-ff-remove.png";
     removeButton.appendChild(imgButton);
-    column0.appendChild(removeButton);
+    
 
     if ( document.getElementById('row_0_header') ) {
         column1 = document.getElementById('row_0_header').cloneNode(true);
         column1.innerHTML = '&nbsp;';
+        column1.style.textAlign = "right";
         newrow.appendChild(column1);
+        column1.appendChild(removeButton);
     }
 
     newrow.appendChild(column0);
@@ -585,23 +634,29 @@ function toggleDefaultColumnVisibility(hide)
     if(currentStyle == 'none')
     {
         var newStyle = '';
+        var bgColor = '#eeeeee';
         YAHOO.util.Dom.addClass('hide_default_link', 'collapse');
         YAHOO.util.Dom.removeClass('hide_default_link', 'expand');
+        var col2Rowspan = "1";
     }
     else
     {
         var newStyle = 'none';
+        var bgColor = '#dddddd';
         YAHOO.util.Dom.addClass('hide_default_link', 'expand');
         YAHOO.util.Dom.removeClass('hide_default_link', 'collapse');
+        var col2Rowspan = "2";
     }
 
     YAHOO.util.Dom.setStyle('default_column_header_span', 'display', newStyle);
+    YAHOO.util.Dom.setStyle('default_column_header', 'backgroundColor', bgColor);
 
     //Toggle all rows.
     var columnCount = document.getElementById('{$this->currentFormID}').columncount.value;
     for(i=0;i<columnCount;i++)
     {
         YAHOO.util.Dom.setStyle('defaultvaluepicker_' + i, 'display', newStyle);
+        YAHOO.util.Dom.setAttribute('row_'+i+'_col_2', 'colspan', col2Rowspan);
     }
 }
 
@@ -611,11 +666,11 @@ if(notesEl)
     notesEl.onclick = function() {
         if (document.getElementById('importNotes').style.display == 'none'){
             document.getElementById('importNotes').style.display = '';
-            document.getElementById('toggleNotes').innerHTML='{$mod_strings['LBL_HIDE_NOTES']}';
+            document.getElementById('toggleNotes').value='{$mod_strings['LBL_HIDE_NOTES']}';
         }
         else {
             document.getElementById('importNotes').style.display = 'none';
-            document.getElementById('toggleNotes').innerHTML='{$mod_strings['LBL_SHOW_NOTES']}';
+            document.getElementById('toggleNotes').value='{$mod_strings['LBL_SHOW_NOTES']}';
         }
     }
 }
@@ -663,8 +718,8 @@ YAHOO.util.Event.onDOMReady(function(){
     }
 });
 
--->
-</script>
+enableQS(false);
+
 
 EOJAVASCRIPT;
     }

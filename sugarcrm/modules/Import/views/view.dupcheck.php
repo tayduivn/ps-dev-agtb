@@ -53,7 +53,7 @@ class ImportViewDupcheck extends ImportView
         global $sugar_config;
 
         $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
-
+        
         $this->instruction = 'LBL_SELECT_DUPLICATE_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
@@ -62,9 +62,52 @@ class ImportViewDupcheck extends ImportView
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
-        $this->ss->assign("JAVASCRIPT", $this->_getJS());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
+        $this->ss->assign("JS", json_encode($this->_getJS()));
 
+
+        $content = $this->ss->fetch('modules/Import/tpls/dupcheck.tpl');
+        $this->ss->assign("CONTENT",json_encode($content));
+        
+        
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-top: 10px;\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">&nbsp;";
+	    $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_NOW']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_IMPORT_NOW']."  \" id=\"importnow\"></td></tr></table>";
+        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
+       
+        
+        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+    }
+
+    private function getImportMap()
+    {
+        if( !empty($_REQUEST['source_id']) )
+        {
+            $import_map_seed = new ImportMap();
+            $import_map_seed->retrieve($_REQUEST['source_id'], false);
+
+            return $import_map_seed->getMapping();
+        }
+        else
+        {
+            return array();
+        }
+    }
+
+    /**
+     * Returns JS used in this view
+     */
+    private function _getJS()
+    {
+        global $mod_strings, $sugar_config;
+        
+        $has_header = $_REQUEST['has_header'] == 'on' ? TRUE : FALSE;
+        $uploadFileName = $_REQUEST['tmp_file'];
+        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
+        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
+        $count = $splitter->getFileCount()-1;
+        $recCount = $splitter->getRecordCount();
+        
         //BEGIN DRAG DROP WIDGET
         $idc = new ImportDuplicateCheck($this->bean);
         $dupe_indexes = $idc->getDuplicateCheckIndexes();
@@ -106,55 +149,226 @@ class ImportViewDupcheck extends ImportView
                 $dupe_disabled[] =  array("dupeVal" => $ik, "label" => $iv);
             }
         }
+        
+        $enabled_dupes = json_encode($dupe_enabled);
+        $disabled_dupes = json_encode($dupe_disabled);
 
-        //set dragdrop value
-        $this->ss->assign('enabled_dupes', json_encode($dupe_enabled));
-        $this->ss->assign('disabled_dupes', json_encode($dupe_disabled));
-        //END DRAG DROP WIDGET
-
-        // split file into parts
-        $uploadFileName = $_REQUEST['tmp_file'];
-        $splitter = new ImportFileSplitter($uploadFileName, $sugar_config['import_max_records_per_file']);
-        $splitter->splitSourceFile( $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), $has_header);
-
-        $this->ss->assign("FILECOUNT", $splitter->getFileCount() );
-        $this->ss->assign("RECORDCOUNT", $splitter->getRecordCount() );
-        $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
-
-        $content = $this->ss->fetch('modules/Import/tpls/dupcheck.tpl');
-        $this->ss->assign("CONTENT",$content);
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
-    }
-
-    private function getImportMap()
-    {
-        if( !empty($_REQUEST['source_id']) )
-        {
-            $import_map_seed = new ImportMap();
-            $import_map_seed->retrieve($_REQUEST['source_id'], false);
-
-            return $import_map_seed->getMapping();
-        }
-        else
-        {
-            return array();
-        }
-    }
-
-    /**
-     * Returns JS used in this view
-     */
-    private function _getJS()
-    {
-        global $mod_strings;
-
+        $stepTitle4 = strip_tags(str_replace("\n","",getClassicModuleTitle(
+                $mod_strings['LBL_MODULE_NAME'],
+                array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_STEP_4_TITLE']),
+                false
+                )));
+                
+        $dateTimeFormat = $GLOBALS['timedate']->get_cal_date_time_format();
+        $type = (isset($_REQUEST['type'])) ? $_REQUEST['type'] : '';
+        $lblUsed = str_replace(":","",$mod_strings['LBL_INDEX_USED']);
+        $lblNotUsed = str_replace(":","",$mod_strings['LBL_INDEX_NOT_USED']);
         return <<<EOJAVASCRIPT
-<script type="text/javascript">
+
+
+
+
+/**
+ * Singleton to handle processing the import
+ */
+ProcessImport = new function()
+{
+    /*
+     * number of file to process processed
+     */
+    this.fileCount         = 0;
+
+    /*
+     * total files to processs
+     */
+    this.fileTotal         = {$count};
+
+    /*
+     * total records to process
+     */
+    this.recordCount       = {$recCount};
+
+    /*
+     * maximum number of records per file
+     */
+    this.recordThreshold   = {$sugar_config['import_max_records_per_file']};
+
+    /*
+     * submits the form
+     */
+    this.submit = function()
+    {
+        document.getElementById("importstepdup").tmp_file.value =
+            document.getElementById("importstepdup").tmp_file_base.value + '-' + this.fileCount;
+        YAHOO.util.Connect.setForm(document.getElementById("importstepdup"));
+        YAHOO.util.Connect.asyncRequest('POST', 'index.php',
+            {
+                success: function(o) {
+                    if (o.responseText.replace(/^\s+|\s+$/g, '') != '') {
+                    	alert('fa');
+                        this.failure(o);
+                    }
+                    else {
+                        var locationStr = "index.php?module=Import"
+                            + "&action=Last"
+                            + "&current_step=" + document.getElementById("importstepdup").current_step.value
+                            + "&type={$type}"
+                            + "&import_module={$_REQUEST['import_module']}"
+                            + "&has_header=" +  document.getElementById("importstepdup").has_header.value ;
+                        if ( ProcessImport.fileCount >= ProcessImport.fileTotal ) {
+                        	YAHOO.SUGAR.MessageBox.updateProgress(1,'{$mod_strings['LBL_IMPORT_COMPLETED']}');
+                        	//SUGAR.util.hrefURL(locationStr);
+                        	var handleSuccess = {
+	                        	success : function(data) {		
+									eval(data.responseText);
+									importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+									submitDiv = document.getElementById('submitDiv');
+									importWizardDialogDiv.innerHTML = response['html'];
+									submitDiv.innerHTML = response['submitContent'];
+									SUGAR.util.evalScript(response['html']);
+									eval(response['script']);
+					
+								}
+                        	};
+							
+							var cObj = YAHOO.util.Connect.asyncRequest('GET', locationStr, handleSuccess);
+							YAHOO.SUGAR.MessageBox.hide();
+							return false;
+                        }
+                        else {
+                            document.getElementById("importstepdup").save_map_as.value = '';
+                            ProcessImport.fileCount++;
+                            ProcessImport.submit();
+                        }
+                    }
+                },
+                failure: function(o) {
+                	YAHOO.SUGAR.MessageBox.minWidth = 500;
+                	YAHOO.SUGAR.MessageBox.show({
+                    	type:  "alert",
+                    	title: '{$mod_strings['LBL_IMPORT_ERROR']}',
+                    	msg:   o.responseText,
+                        fn: function() { window.location.reload(true); }
+                    });
+                }
+            }
+        );
+        var move = 0;
+        if ( this.fileTotal > 0 ) {
+            move = this.fileCount/this.fileTotal;
+        }
+        YAHOO.SUGAR.MessageBox.updateProgress( move,
+            "{$mod_strings['LBL_IMPORT_RECORDS']} " + ((this.fileCount * this.recordThreshold) + 1)
+                        + " {$mod_strings['LBL_IMPORT_RECORDS_TO']} " + Math.min(((this.fileCount+1) * this.recordThreshold),this.recordCount)
+                        + " {$mod_strings['LBL_IMPORT_RECORDS_OF']} " + this.recordCount );
+    }
+
+    /*
+     * begins the form submission process
+     */
+    this.begin = function()
+    {
+        datestarted = '{$mod_strings['LBL_IMPORT_STARTED']} ' +
+                YAHOO.util.Date.format('{$dateTimeFormat}');
+        YAHOO.SUGAR.MessageBox.show({
+            title: '{$stepTitle4}',
+            msg: datestarted,
+            width: 500,
+            type: "progress",
+            closable:false,
+            animEl: 'importnow'
+        });
+        SUGAR.saveConfigureDupes();
+        this.submit();
+    }
+}
+
+//begin dragdrop code
+	var enabled_dupes = {$enabled_dupes};
+	var disabled_dupes = {$disabled_dupes};
+	var lblEnabled = '{$lblUsed}';
+	var lblDisabled = '{$lblNotUsed}';
+	
+
+	SUGAR.enabledDupesTable = new YAHOO.SUGAR.DragDropTable(
+		"enabled_div",
+		[{key:"label",  label: lblEnabled, width: 225, sortable: false},
+		 {key:"module", label: lblEnabled, hidden:true}],
+		new YAHOO.util.LocalDataSource(enabled_dupes, {
+			responseSchema: {
+			   resultsList : "dupeVal",
+			   fields : [{key : "dupeVal"}, {key : "label"}]
+			}
+		}),
+		{
+			height: "300px",
+			group: ["enabled_div", "disabled_div"]
+		}
+	);
+	SUGAR.disabledDupesTable = new YAHOO.SUGAR.DragDropTable(
+		"disabled_div",
+		[{key:"label",  label: lblDisabled, width: 225, sortable: false},
+		 {key:"module", label: lblDisabled, hidden:true}],
+		new YAHOO.util.LocalDataSource(disabled_dupes, {
+			responseSchema: {
+			   resultsList : "dupeVal",
+			   fields : [{key : "dupeVal"}, {key : "label"}]
+			}
+		}),
+		{
+			height: "300px",
+		 	group: ["enabled_div", "disabled_div"]
+		 }
+	);
+	SUGAR.enabledDupesTable.disableEmptyRows = true;
+    SUGAR.disabledDupesTable.disableEmptyRows = true;
+    SUGAR.enabledDupesTable.addRow({module: "", label: ""});
+    SUGAR.disabledDupesTable.addRow({module: "", label: ""});
+	SUGAR.enabledDupesTable.render();
+	SUGAR.disabledDupesTable.render();
+
+
+	SUGAR.saveConfigureDupes = function()
+	{
+		var enabledTable = SUGAR.enabledDupesTable;
+		var dupeVal = [];
+		for(var i=0; i < enabledTable.getRecordSet().getLength(); i++){
+			var data = enabledTable.getRecord(i).getData();
+			if (data.dupeVal && data.dupeVal != '')
+			    dupeVal[i] = data.dupeVal;
+		}
+		    YAHOO.util.Dom.get('enabled_dupes').value = YAHOO.lang.JSON.stringify(dupeVal);
+
+        var disabledTable = SUGAR.disabledDupesTable;
+		var dupeVal = [];
+		for(var i=0; i < disabledTable.getRecordSet().getLength(); i++){
+			var data = disabledTable.getRecord(i).getData();
+			if (data.dupeVal && data.dupeVal != '')
+			    dupeVal[i] = data.dupeVal;
+		}
+			YAHOO.util.Dom.get('disabled_dupes').value = YAHOO.lang.JSON.stringify(dupeVal);
+	}
+
+
+
 
 document.getElementById('goback').onclick = function(){
     document.getElementById('importstepdup').action.value = 'step3';
     document.getElementById('importstepdup').to_pdf.value = '0';
-    return true;
+        var success = function(data) {		
+			eval(data.responseText);
+			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			submitDiv = document.getElementById('submitDiv');
+			importWizardDialogDiv.innerHTML = response['html'];
+			SUGAR.util.evalScript(response['html']);
+			submitDiv.innerHTML = response['submitContent'];
+			eval(response['script']);
+
+		}
+    
+        var formObject = document.getElementById('importstepdup');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
 }
 
 document.getElementById('importnow').onclick = function(){
@@ -167,8 +381,7 @@ document.getElementById('importnow').onclick = function(){
 }
 
 
-
-</script>
+enableQS(false);
 
 EOJAVASCRIPT;
     }

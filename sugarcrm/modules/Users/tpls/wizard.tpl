@@ -59,11 +59,11 @@ function disableReturnSubmission(e) {
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_emails.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>
 
-<div class="dashletPanelMenu">
-<div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
+<div class="dashletPanelMenu wizard">
+
 <div class="bd">
-		<div class="ml"></div>
-		<div class="bd-center">
+		
+		
 <div id="welcome" class="screen">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
@@ -370,11 +370,11 @@ function disableReturnSubmission(e) {
     </div>
 </div>
 
-			</div>
-			<div class="mr"></div>
+			
+		
 
 </div>
-<div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>
+
 </div>
 
 {literal}
