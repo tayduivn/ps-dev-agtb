@@ -238,8 +238,7 @@ SUGAR.util.doWhen("window.document.forms['popup_query_form'] != null "
         /* initialize the popup request from the parent */
         if(window.document.forms['popup_query_form'].request_data.value == "")
         {
-            request_data = window.opener.get_popup_request_data();
-            window.document.forms['popup_query_form'].request_data.value = YAHOO.lang.JSON.stringify(request_data);
+            window.document.forms['popup_query_form'].request_data.value = window.opener.get_popup_request_data();
         }
     }
 );

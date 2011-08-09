@@ -34,7 +34,7 @@ var close_popup;
 
 function get_popup_request_data()
 {
-	return window.document.popup_request_data;
+	return YAHOO.lang.JSON.stringify(window.document.popup_request_data);
 }
 
 function get_close_popup()
