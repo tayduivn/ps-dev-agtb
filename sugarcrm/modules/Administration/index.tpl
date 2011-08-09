@@ -82,17 +82,4 @@
 
 </div>
 
-
-	<div id="importWizardDialog" style="display:none;" class="dashletPanelMenu wizard import">
-		<div class="hd"><a href="javascript:void(0)" onClick="javascript:SUGAR.importWizard.closeDialog();">
-			<div class="container-close">&nbsp;</div></a><div class="title">Import Wizard</div>
-		</div>	
-		<div class="bd">
-			<div class="screen" id="importWizardDialogDiv">
-
-			</div>
-			<div id="submitDiv"></div>
-		</div>
-		
-	</div>
 	

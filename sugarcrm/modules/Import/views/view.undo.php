@@ -57,9 +57,11 @@ class ImportViewUndo extends ImportView
         $last_import = new UsersLastImport();
         $this->ss->assign('UNDO_SUCCESS',$last_import->undo($_REQUEST['import_module']));
         $this->ss->assign("JS", json_encode($this->_getJS()));
-        $submitContent = "<table width='100%' cellpadding='0' cellspacing='0' border='0' style='margin-top: 10px;'><tr><td align='right'>";
-        $submitContent .= "<input title=\"".$mod_strings['LBL_MODULE_NAME']."&nbsp;".$module_mod_strings['LBL_MODULE_NAME']."\" accessKey='' class='button' type='submit' name='button' id='importmore' name='importmore' value=\"".$mod_strings['LBL_MODULE_NAME']."&nbsp;".$module_mod_strings['LBL_MODULE_NAME']."\">";
-        $submitContent .= "&nbsp;<input title=\"".$mod_strings['LBL_FINISHED'].$module_mod_strings['LBL_MODULE_NAME']."\" accessKey='' class='button primary' type='submit' name='finished' id='finished' value=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\">";
+        $this->ss->assign("MODULE_TITLE", json_encode($mod_strings['LBL_UNDO_LAST_IMPORT']));
+        $submitContent = "<table width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td align='right'>";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_FINISHED'].$module_mod_strings['LBL_MODULE_NAME']."\" accessKey='' class='button' type='submit' name='finished' id='finished' value=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_MODULE_NAME']."&nbsp;".$module_mod_strings['LBL_MODULE_NAME']."\" accessKey='' class='button primary' type='submit' name='button' id='importmore' name='importmore' value=\"".$mod_strings['LBL_MODULE_NAME']."&nbsp;".$module_mod_strings['LBL_MODULE_NAME']."\">";
+
     	$submitContent .= "</td></tr></table>";
 
         $content = $this->ss->fetch('modules/Import/tpls/undo.tpl');
@@ -89,8 +91,10 @@ document.getElementById('importmore').onclick = function(){
        	var success = function(data) {		
 			eval(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
 			importWizardDialogDiv.innerHTML = response['html'];
+			importWizardDialogTitle.innerHTML = response['title'];
 			submitDiv.innerHTML = response['submitContent'];
 			eval(response['script']);
 		} 

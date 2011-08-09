@@ -46,7 +46,6 @@
 </style>
 {/literal}
 
-{$MODULE_TITLE}
 {$INSTRUCTION}
 <form enctype="multipart/form-data" real_id="importstepdup" id="importstepdup" name="importstepdup" method="POST" action="index.php">
 

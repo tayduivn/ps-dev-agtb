@@ -39,7 +39,6 @@ div.resultsTable {
 </style>
 {/literal}
 
-{$MODULE_TITLE}
 <h2>
 	<p>{$MOD.LBL_SUMMARY}</p>
 </h2>

@@ -98,15 +98,9 @@ class ImportView extends SugarView
 	{
 	    global $mod_strings, $app_list_strings;
 
-	    $iconPath = $this->getModuleTitleIconPath($this->module);
 	    $returnArray = array();
-	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
-    	}
-    	else {
-    	    $returnArray[] = $app_list_strings['moduleList'][$this->importModule];
-    	}
-	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$this->importModule}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
+    	$returnArray[] = $app_list_strings['moduleList'][$this->importModule];
+	    $returnArray[] = $mod_strings['LBL_MODULE_NAME'];
 	    $returnArray[] = string_format($mod_strings[$this->pageTitleKey], array($this->currentStep));
 
 	    return $returnArray;

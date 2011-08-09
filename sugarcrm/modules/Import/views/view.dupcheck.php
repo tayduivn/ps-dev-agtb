@@ -57,7 +57,7 @@ class ImportViewDupcheck extends ImportView
         $this->instruction = 'LBL_SELECT_DUPLICATE_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
+        $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
@@ -70,8 +70,9 @@ class ImportViewDupcheck extends ImportView
         $this->ss->assign("CONTENT",json_encode($content));
         
         
-        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"margin-top: 10px;\"><tr><td align=\"right\">";
-        $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">&nbsp;";
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
 	    $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_NOW']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_IMPORT_NOW']."  \" id=\"importnow\"></td></tr></table>";
         $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
        
@@ -222,8 +223,10 @@ ProcessImport = new function()
 	                        	success : function(data) {		
 									eval(data.responseText);
 									importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+									importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 									submitDiv = document.getElementById('submitDiv');
 									importWizardDialogDiv.innerHTML = response['html'];
+									importWizardDialogTitle.innerHTML = response['title'];
 									submitDiv.innerHTML = response['submitContent'];
 									SUGAR.util.evalScript(response['html']);
 									eval(response['script']);
@@ -358,8 +361,10 @@ document.getElementById('goback').onclick = function(){
         var success = function(data) {		
 			eval(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
 			importWizardDialogDiv.innerHTML = response['html'];
+			importWizardDialogTitle.innerHTML = response['title'];
 			SUGAR.util.evalScript(response['html']);
 			submitDiv.innerHTML = response['submitContent'];
 			eval(response['script']);

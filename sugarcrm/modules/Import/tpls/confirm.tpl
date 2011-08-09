@@ -36,7 +36,7 @@
 
 </style>
 {/literal}
-{$MODULE_TITLE}
+
 {$INSTRUCTION}
 
 <div class="hr"></div>
@@ -77,7 +77,7 @@
         </tr>
         <tr>
             <td>
-            <div style="overflow: auto; width: 820px;">
+            <div style="overflow: auto; width: 1056px;">
                 <table border=0 class="edit view noBorder" style="display: none;" id="importOptions">
                     <tr>
                         <td scope="row">
