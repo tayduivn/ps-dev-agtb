@@ -180,17 +180,15 @@ class Project extends SugarBean {
             }
             $new_rel_link = $new_rel_relname;
             //Try to find the link in this bean based on the relationship
-                foreach ( $this->field_defs as $key => $def ) {
-                    if (isset($def['type']) && $def['type'] == 'link'
-                    && isset($def['relationship']) && $def['relationship'] == $new_rel_relname) {
-                        $new_rel_link = $key;
-                    }
+            foreach ( $this->field_defs as $key => $def ) {
+                if (isset($def['type']) && $def['type'] == 'link'
+                && isset($def['relationship']) && $def['relationship'] == $new_rel_relname) {
+                    $new_rel_link = $key;
                 }
+            }
             if ($new_rel_link == 'contacts') {
-                $accountRes = $this->db->query('SELECT account_id FROM accounts_contacts WHERE contact_id="' . $new_rel_id .'"');
-                if ($accountRes) {
-                    $accountRow = $this->db->fetchByAssoc($accountRes, 1);
-                    $accountId = $accountRow['account_id'];
+                $accountId = $this->db->getOne('SELECT account_id FROM accounts_contacts WHERE contact_id="' . $new_rel_id .'"');
+                if ($accountId !== false) {
                     if($this->load_relationship('accounts')){
                         $this->accounts->add($accountId);
                     }
