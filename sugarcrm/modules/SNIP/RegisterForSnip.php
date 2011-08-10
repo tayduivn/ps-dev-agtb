@@ -32,7 +32,7 @@ require_once 'modules/SNIP/SugarSNIP.php';
 if (!is_admin($current_user)) {
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']);
 }
-global $sugar_config;
+global $sugar_config, $mod_strings;
 
 $enable_snip = '';
 $disable_snip = '';
@@ -76,7 +76,7 @@ if ($status=='pingfailed'){
 	$extra_error=$mod_strings['LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY'];
 }
 
-if ($message=='')
+if ($message=='' && $status != 'notpurchased')
 	$message = $mod_strings['LBL_SNIP_GENERIC_ERROR'];
 
 if ($status=='notpurchased'){
