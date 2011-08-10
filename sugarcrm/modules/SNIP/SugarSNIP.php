@@ -151,8 +151,14 @@ class SugarSNIP
             return false;
         else {
             if ($this->last_result->result == 'ok') {
+                // snip disabled successfully
                 $admin = new Administration();
                 $admin->saveSetting('snip', 'email', '');
+
+                // reset snip user's password
+                $user = $this->getSnipUser();
+                $user->user_hash = strtolower(md5(time().mt_rand()));
+                $user->save();
             }
 
             return $this->last_result;
@@ -244,7 +250,7 @@ class SugarSNIP
         if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found'){
             //check to see if we haven't enabled snip (in which case show the welcome screen)
             $email = $this->getSnipEmail();
-            if ( empty($email)){
+            if (empty($email)){
                 return array('status'=>'notpurchased','message'=>null);
             }
 
@@ -300,6 +306,7 @@ class SugarSNIP
     public function getSnipUser()
     {
         $id = User::retrieve_user_id(self::SNIP_USER);
+
         if(!$id) {
             return $this->createSnipUser();
         }
