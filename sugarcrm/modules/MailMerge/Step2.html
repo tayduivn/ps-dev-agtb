@@ -132,32 +132,41 @@ ResponseObj.prototype.response = function (result)
 	var nextItems= document.getElementById("nextItems");
 	var dispCount = max;
 	var dispMin = mOffset;
+console.log("IKEA: dispCount = "+dispCount);
+console.log("IKEA: result.result_count = "+result.result_count);
+console.log("IKEA: max = "+max);
+console.log("IKEA: dispMin = "+dispMin);
+console.log("IKEA: mOffset = "+mOffset);
 	if(result.result_count < max)
 	{
 		dispCount = result.result_count;
-		nextItems.disabled = true;
+		nextItems_disabled = true;
 	}
-	if(result.result_count - max == mOffset)
+	if(result.result_count < (mOffset + max))
 	{
-		nextItems.disabled = true;
+		nextItems_disabled = true;
 	}
 	else
 	{
-		nextItems.disabled = false;
+		nextItems_disabled = false;
 	}
 	if(mOffset == 0)
 	{
-		prevItems.disabled = true;
+		prevItems_disabled = true;
 	}
 	else
 	{
-		prevItems.disabled = false;
+		prevItems_disabled = false;
 	}
 	if(result.result_count > 0)
 	{
 		dispMin = mOffset + 1;
 	}
-	var spanText = "("+(dispMin) + " - " +(mOffset+dispCount) + " of " + result.result_count+")";
+    var spanMax = 0 + parseInt(mOffset,10) + parseInt(dispCount,10);
+    if ( spanMax > parseInt(result.result_count,10) ) {
+        spanMax = parseInt(result.result_count);
+    }
+	var spanText = "("+(dispMin) + " - " + spanMax + " of " + result.result_count+")";
 	document.getElementById("result_count").innerHTML = spanText;
 	var displayObjs = document.getElementById("display_objs");
 	displayObjs.options.length = 0;
@@ -192,12 +201,18 @@ ResponseObj.prototype.response = function (result)
 }
 function increaseOffset()
 {
-	mOffset += 20;
+    if(!nextItems_disabled) {
+        mOffset += 20;
+        getObjects();
+    }
 }
 
 function decreaseOffset()
 {
-	mOffset -= 20;
+    if(!prevItems_disabled) {
+	    mOffset -= 20;
+        getObjects();
+    }
 }
 
 function getObjects()
@@ -327,6 +342,7 @@ function search(searchText)
 		}
 	}
 	mWhere = where.toLowerCase();
+    mOffset = 0;
 	getObjects();
 }
 
