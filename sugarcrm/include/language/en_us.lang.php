@@ -3918,10 +3918,6 @@ $app_list_strings['kbdocument_status_dom'] = array (
 $app_list_strings['eapm_list_documents']= array(
   	'Google' => 'Google Docs',
   );
-  $app_list_strings['LBL_API_TYPE_ENUM'] = array(
-    'password' => 'Username/Password',
-    'oauth' => 'OAuth',
-    );
 	$app_list_strings['token_status'] = array(
         1 => 'Request',
         2 => 'Access',

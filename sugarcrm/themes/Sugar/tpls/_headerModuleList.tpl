@@ -69,9 +69,7 @@
 										<ul class="shortCutsUl">
 										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
 										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
-										
 											<li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
-										
 										{/foreach}
 										</ul>
 										{if $groupTabId}

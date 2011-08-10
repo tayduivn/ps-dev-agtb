@@ -75,9 +75,16 @@ SUGAR.ajaxUI = {
             }
             var panel = SUGAR.ajaxUI.errorPanel;
             panel.setHeader( SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
-            panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none"></iframe>');
+            panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none;marginheight="0" marginwidth="0" frameborder="0""></iframe>');
             panel.render(document.body);
-            document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+            SUGAR.util.doWhen(
+				function(){
+					var f = document.getElementById("ajaxErrorFrame");
+					return f != null && f.contentWindow != null && f.contentWindow.document != null;
+				}, function(){
+					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+					window.setTimeout('throw "AjaxUI error parsing response"', 300);
+			});
             panel.show();
             panel.center();
 
@@ -182,16 +189,18 @@ SUGAR.ajaxUI = {
             && /action=ajaxui/.exec(window.location))
         {
             var string = con.setForm(form);
+            var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
+            SA.lastURL = "";
             //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
             if(string.length > 200)
             {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
                     success: SA.callback
                 });
-                window.location="index.php?action=ajaxui#ajaxUILoc=";
+                window.location=baseUrl;
             } else {
                 con.resetFormState();
-                window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent("index.php?" + string);
+                window.location = baseUrl + encodeURIComponent("index.php?" + string);
             }
             return true;
         } else {

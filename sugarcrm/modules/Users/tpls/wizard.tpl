@@ -59,11 +59,11 @@ function disableReturnSubmission(e) {
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_emails.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>
 
-<div class="dashletPanelMenu">
-<div class="hd"><div class="tl"></div><div class="hd-center"></div><div class="tr"></div></div>
+<div class="dashletPanelMenu wizard">
+
 <div class="bd">
-		<div class="ml"></div>
-		<div class="bd-center">
+		
+		
 <div id="welcome" class="screen">
     <table width="100%" border="0" cellspacing="0" cellpadding="0">
     <tr>
@@ -334,18 +334,18 @@ function disableReturnSubmission(e) {
                 </tr>
                 <tr>
                     <td scope="row">
-                        {$MOD.LBL_WIZARD_FINISH1}
-                                                <br />
+                        <h3>{$MOD.LBL_WIZARD_FINISH1}</h3>
+                         
                         <table cellpadding=0 cellspacing=0><input id='whatnext' name='whatnext' type="hidden" value='finish' />
-                        <tr><td><img src=include/images/docs.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a></td></tr>
+                        <tr><td><img src=include/images/start.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a><br> {$MOD.LBL_WIZARD_FINISH2DESC}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-                        <tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="import";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH3} </b></a><br> {$MOD.LBL_WIZARD_FINISH4}</td></tr>
+                        <tr><td><img src=include/images/import.png style="margin-right: 5px;"></td><td><a onclick='return SUGAR.importWizard.renderDialog("Administration","step1","");' href="#" ><b> {$MOD.LBL_WIZARD_FINISH3} </b></a><br> {$MOD.LBL_WIZARD_FINISH4}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-                        <tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="users";document.UserWizard.submit()' href="#"  ><b> {$MOD.LBL_WIZARD_FINISH5} </b></a><br>{$MOD.LBL_WIZARD_FINISH6}</td></tr>
+                        <tr><td><img src=include/images/create_users.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="users";document.UserWizard.submit()' href="#"  ><b> {$MOD.LBL_WIZARD_FINISH5} </b></a><br>{$MOD.LBL_WIZARD_FINISH6}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-                        <tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a  onclick='document.UserWizard.whatnext.value="settings";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH7} </b></a><br>{$MOD.LBL_WIZARD_FINISH8}</td></tr>
+                        <tr><td><img src=include/images/settings.png style="margin-right: 5px;"></td><td><a  onclick='document.UserWizard.whatnext.value="settings";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH7} </b></a><br>{$MOD.LBL_WIZARD_FINISH8}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
-                        <tr><td><img src=include/images/docs.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="studio";document.UserWizard.submit()' href="#"  ><b> {$MOD.LBL_WIZARD_FINISH9} </b></a><br>{$MOD.LBL_WIZARD_FINISH10}</td></tr>
+                        <tr><td><img src=include/images/configure.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="studio";document.UserWizard.submit()' href="#"  ><b> {$MOD.LBL_WIZARD_FINISH9} </b></a><br>{$MOD.LBL_WIZARD_FINISH10}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         <tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH11} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH12}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
@@ -370,11 +370,11 @@ function disableReturnSubmission(e) {
     </div>
 </div>
 
-			</div>
-			<div class="mr"></div>
+			
+		
 
 </div>
-<div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div>
+
 </div>
 
 {literal}
