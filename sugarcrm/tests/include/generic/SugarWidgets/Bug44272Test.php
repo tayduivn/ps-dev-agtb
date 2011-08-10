@@ -8,7 +8,7 @@ class Bug44272Test extends PHPUnit_Framework_TestCase
 {
 
 var $account;
-	
+
 public function setUp()
 {
     $beanList = array();
@@ -16,15 +16,15 @@ public function setUp()
     require('include/modules.php');
     $GLOBALS['beanList'] = $beanList;
     $GLOBALS['beanFiles'] = $beanFiles;
-    
+    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	$this->account = SugarTestAccountUtilities::createAccount();
-}	
+}
 
 public function tearDown()
 {
 	SugarTestAccountUtilities::removeAllCreatedAccounts();
 }
-	
+
 public function testSugarWidgetSubpanelTopButtonQuickCreate()
 {
 	$defines = array();
@@ -37,10 +37,10 @@ public function testSugarWidgetSubpanelTopButtonQuickCreate()
 
 	$subpanel = new SubPanel('Accounts', $this->account->id, 'contacts', $contactSubpanelDef, 'Accounts');
 	$defines['subpanel_definition'] = $subpanel->subpanel_defs;
-	
+
 	$button = new SugarWidgetSubPanelTopButtonQuickCreate();
 	$code = $button->_get_form($defines);
 	$this->assertRegExp('/\<input[^\>]*?name=\"return_name\"/', $code, "Assert that the hidden input field return_name was created");
 }
-	
+
 }
