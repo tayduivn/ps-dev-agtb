@@ -1033,7 +1033,7 @@ function check_for_duplicate_contacts($seed){
 			}
 			return null;
 		}
-	}else{
+	}/*else{
 	    $query = "contacts.last_name = '".$seed->db->quote($trimmed_last,false)."'";
         $query .= " AND contacts.first_name = '".$seed->db->quote($trimmed_first,false)."'";
         $contacts = $seed->get_list('', $query);
@@ -1047,7 +1047,7 @@ function check_for_duplicate_contacts($seed){
             }
             return null;
         }
-	}
+	}*/
 }
 
 /*
