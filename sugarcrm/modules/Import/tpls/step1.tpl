@@ -28,7 +28,6 @@
  */
 *}
 
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {literal}
 <style>
 #smtpButtonGroup .yui-radio-button-checked button, .yui-checkbox-button-checked button {
@@ -38,7 +37,6 @@
 }
 {/literal}
 </style>
-{$MODULE_TITLE}
 {if $ERROR != ''}
 <span class="error">{$ERROR}</span>
 {/if}
@@ -58,8 +56,8 @@
             <td>
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                     <tr>
-                        <td valign="top" width='50%' scope="row">
-                            <table border="0" cellpadding="0" cellspacing="5">
+                        <td valign="top" width='100%' scope="row">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
                             {if $showModuleSelection}
                                 <tr>
                                     <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_STEP_MODULE}&nbsp;</h3></td>
@@ -68,7 +66,7 @@
                                     <td><select tabindex='4' name='admin_import_module' id='admin_import_module'>{$IMPORTABLE_MODULES_OPTIONS}</select></td>
                                 </tr>
                                 <tr>
-                                    <td align="left" scope="row">&nbsp;</td>
+                                    <td align="left" scope="row" colspan="3"><div class="hr"></div></td>
                                 </tr>
                             {/if}
                             {* //BEGIN SUGARCRM flav=com ONLY *}
@@ -94,8 +92,7 @@
                                 </td>
                             </tr>
                             <tr scope="row" id="external_sources_tr" style="display:none;" >
-                                <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <td>
+                                <td colspan="2" width="25%" style="padding-top: 10px;">
                                     <div id="smtpButtonGroup" class="yui-buttongroup">
                                     {foreach from=$EXTERNAL_SOURCES key=k item=v}
                                         <span id="{$k}" class="yui-button yui-radio-button{if $selectExternalSource == $k} yui-button-checked{/if}">
@@ -106,10 +103,11 @@
                                             </span>
                                         </span>
                                     {/foreach}
+
                                     </div>
                                 </td>
-                                <td>
-                                    <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
+                                <td  style="padding-top: 10px;">
+                                    <span id="ext_source_sign_in_bttn"><i>{$MOD.LBL_SIGN_IN_HELP}</i></span>
                                 </td>
                             </tr>
                             {* //END SUGARCRM flav=pro ONLY *}
@@ -121,27 +119,4 @@
         </tr>
     </table>
 </p>
-
-<br>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-	<td align="left"><input title="{$MOD.LBL_NEXT}" accessKey="" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  "  id="gonext"></td>
-</tr>
-</table>
-
 </form>
-{$JAVASCRIPT}
-
-{literal}
-<script>
-{/literal}
-var auth_sources = {$EXTERNAL_AUTHENTICATED_SOURCES}
-var selectedExternalSource = '{$selectExternalSource}';
-var personModules = {$PERSON_MODULE_LIST};
-{literal}
-
-
-
-
-</script>
-{/literal}

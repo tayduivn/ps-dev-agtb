@@ -31,7 +31,7 @@
 <script type="text/javascript">
 	{literal}
 	SUGAR.util.doWhen(
-		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts) || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChart) != undefined",
+		"((SUGAR && SUGAR.mySugar && SUGAR.mySugar.sugarCharts)   || SUGAR.loadChart  || document.getElementById('showHideChartButton') != null) && typeof(loadSugarChart) != undefined",
 		function(){
 			{/literal}
 			var css = new Array();

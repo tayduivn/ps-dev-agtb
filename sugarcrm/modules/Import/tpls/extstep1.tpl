@@ -32,7 +32,6 @@
 
 <script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
-{$MODULE_TITLE}
 <form enctype="multipart/form-data" real_id="extstep1" id="extstep1" name="extstep1" method="POST" action="index.php">
 <input type="hidden" name="module" value="Import">
 <input type="hidden" name="import_type" value="{$TYPE}">
@@ -47,7 +46,6 @@
 <input type="hidden" name="to_pdf" value="1">
 <input type="hidden" name="has_header" value="off">
 <input type="hidden" name="from_admin_wizard" value="{$smarty.request.from_admin_wizard}">
-
 
 <p>
     {$MOD.LBL_EXTERNAL_MAP_HELP}
@@ -184,7 +182,23 @@ ProcessESImport = new function()
                     if ( resp['done'] || (ProcessESImport.recordsPerImport * (ProcessESImport.offsetStart + 1) >= ProcessESImport.totalRecordCount) )
                     {
                         YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETED}{literal}');
-                        SUGAR.util.hrefURL(locationStr);
+                        var handleSuccess = {
+	                        	success : function(data) {
+									eval(data.responseText);
+									importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+									importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+									submitDiv = document.getElementById('submitDiv');
+									importWizardDialogDiv.innerHTML = response['html'];
+									importWizardDialogTitle.innerHTML = response['title'];
+									submitDiv.innerHTML = response['submitContent'];
+									SUGAR.util.evalScript(response['html']);
+									eval(response['script']);
+
+								}
+                        	};
+							var cObj = YAHOO.util.Connect.asyncRequest('GET', locationStr, handleSuccess);
+							YAHOO.SUGAR.MessageBox.hide();
+							return false;
                     }
                     else
                     {

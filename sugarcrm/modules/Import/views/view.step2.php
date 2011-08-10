@@ -40,18 +40,19 @@ class ImportViewStep2 extends ImportView
 {
  	protected $pageTitleKey = 'LBL_STEP_2_TITLE';
     
+
  	/** 
      * @see SugarView::display()
      */
  	public function display()
     {
         global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
-        global $import_mod_strings;
-
+        global $import_mod_strings;        
+        
         $this->instruction = 'LBL_SELECT_UPLOAD_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
+        $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
         $this->ss->assign("IMP", $import_mod_strings);
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
@@ -64,8 +65,8 @@ class ImportViewStep2 extends ImportView
         
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
-        $this->ss->assign("JAVASCRIPT", $this->_getJS());
-        $this->ss->assign("SAMPLE_URL", "<a class='link' onclick=\"window.location.href='index.php?entryPoint=export&module=".$_REQUEST['import_module']."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>");
+        $this->ss->assign("JS", json_encode($this->_getJS()));
+        $this->ss->assign("SAMPLE_URL", "<a href=\"javascript: void(0);\" onclick=\"window.location.href='index.php?entryPoint=export&module=".$_REQUEST['import_module']."&action=index&all=true&sample=true'\" >".$mod_strings['LBL_EXAMPLE_FILE']."</a>");
 
         $displayBackBttn = isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != 'index'? TRUE : FALSE;
         $this->ss->assign("displayBackBttn", $displayBackBttn);
@@ -137,7 +138,18 @@ class ImportViewStep2 extends ImportView
         $this->ss->assign("instructions",$instructions);
 
         $content = $this->ss->fetch('modules/Import/tpls/step2.tpl');
-        $this->ss->assign("CONTENT",$content);
+        
+        $this->ss->assign("CONTENT",json_encode($content));
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
+        if ($displayBackBttn) {
+            $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
+        }
+	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
+        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
+        
+       
+        
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
     
@@ -149,13 +161,27 @@ class ImportViewStep2 extends ImportView
         global $mod_strings;
     
         return <<<EOJAVASCRIPT
-<script type="text/javascript">
-<!--
+
 if( document.getElementById('goback') )
 {
     document.getElementById('goback').onclick = function(){
         document.getElementById('importstep2').action.value = 'Step1';
-        return true;
+        
+       	var success = function(data) {		
+			eval(data.responseText);
+			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+			submitDiv = document.getElementById('submitDiv');
+			importWizardDialogDiv.innerHTML = response['html'];
+			importWizardDialogTitle.innerHTML = response['title'];
+			submitDiv.innerHTML = response['submitContent'];
+			eval(response['script']);
+		} 
+        var formObject = document.getElementById('importstep2');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
+			
+			
     }
 }
 
@@ -175,7 +201,31 @@ document.getElementById('gonext').onclick = function(){
         add_error_style(document.getElementById('importstep2').name,'userfile',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['ERR_SELECT_FILE']}");
         isError = true;
     }
-    return !isError;
+    
+
+    if (!isError) {
+	var uploadHandler = {
+	  	    upload: function(data) {		
+				eval(data.responseText);
+				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+				importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+				submitDiv = document.getElementById('submitDiv');
+				if(response['html'] != "") {
+					importWizardDialogDiv.innerHTML = response['html'];
+					importWizardDialogTitle.innerHTML = response['title'];
+					submitDiv.innerHTML = response['submitContent'];
+				}
+				
+				eval(response['script']);
+			} 
+	};
+	        var formObject = document.getElementById('importstep2');
+			YAHOO.util.Connect.setForm(formObject,true);
+			var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", uploadHandler);
+		
+    	} else {
+			return false;
+		}
 }
 
 function publishMapping(elem, publish, mappingId)
@@ -239,8 +289,6 @@ if(deselectEl)
         }
     }
 }
--->
-</script>
 
 EOJAVASCRIPT;
     }

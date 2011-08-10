@@ -34,7 +34,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
 require_once('include/externalAPI/ExternalAPIFactory.php');
-        
+require_once ('include/language/jsLanguage.php');
+
 class ImportViewStep1 extends ImportView
 {
 
@@ -57,13 +58,12 @@ class ImportViewStep1 extends ImportView
     {
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config;
-
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
+		
+        $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
         $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('publish_inline','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
         $this->ss->assign("UNPUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('unpublish_inline','align="absmiddle" alt="'.$mod_strings['LBL_UNPUBLISH'].'" border="0"'));
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
-        $this->ss->assign("JAVASCRIPT", $this->_getJS());
 
         $showModuleSelection = ($this->importModule == 'Administration');
         $importableModulesOptions = array();
@@ -92,7 +92,15 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("selectExternalSource", $selectExternal);
 
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
-        $this->ss->assign("CONTENT",$content);
+        
+        $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
+        $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
+        $this->ss->assign("CONTENT",json_encode($content));
+        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
+
+        $jsLang = jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language'], true);
+        $this->ss->assign("JS",json_encode($jsLang . $this->_getJS()));
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
@@ -150,19 +158,32 @@ class ImportViewStep1 extends ImportView
     private function _getJS()
     {
         global $mod_strings;
+        $EXTERNAL_AUTHENTICATED_SOURCES = json_encode($this->getAuthenticatedImportableExternalEAPMs());
+        $selectExternalSource = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
+        
+        $showModuleSelection = ($this->importModule == 'Administration');
+        $importableModulesOptions = array();
+        $importablePersonModules = array();
+        //If we are coming from the admin link, get the module list.
+        if($showModuleSelection)
+        {
+		 $importablePersonModules = $this->getImportablePersonModulesJS();
+        }
+
+
+        $PERSON_MODULE_LIST = json_encode($importablePersonModules);
         
         return <<<EOJAVASCRIPT
-<script type="text/javascript">
-<!--
+
 
 document.getElementById('gonext').onclick = function()
 {
     clear_all_errors();
-    var isCsvSource = document.getElementById('csv_source').checked;
+    var csvSourceEl = document.getElementById('csv_source');
+    var isCsvSource = csvSourceEl ? csvSourceEl.checked : true;
     if( isCsvSource )
     {
         document.getElementById('importstep1').action.value = 'Step2';
-        return true;
     }
     else
     {
@@ -174,12 +195,28 @@ document.getElementById('gonext').onclick = function()
 
         document.getElementById('importstep1').action.value = 'ExtStep1';
         document.getElementById('importstep1').external_source.value = selectedExternalSource;
-        return true;
+        
     }
+
+    var success = function(data) {
+        eval(data.responseText);
+        importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+        submitDiv = document.getElementById('submitDiv');
+        importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+        importWizardDialogDiv.innerHTML = response['html'];
+        importWizardDialogTitle.innerHTML = response['title'];
+        SUGAR.util.evalScript(response['html']);
+        submitDiv.innerHTML = response['submitContent'];
+        eval(response['script']);
+        }
+
+        var formObject = document.getElementById('importstep1');
+		YAHOO.util.Connect.setForm(formObject);
+		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
 }
 
 
-YAHOO.util.Event.onDOMReady(function(){
+YAHOO.util.Event.onContentReady("importstep1", function() {
 
     var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
 
@@ -215,7 +252,7 @@ YAHOO.util.Event.onDOMReady(function(){
             }
         }
     }
-    
+
     YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
 
     function isExtSourceAuthenticated(source)
@@ -225,7 +262,7 @@ YAHOO.util.Event.onDOMReady(function(){
         else
             return false;
     }
-    
+
     function isExtSourceValid(v)
     {
         if(v == '')
@@ -277,22 +314,23 @@ YAHOO.util.Event.onDOMReady(function(){
         }
         //END SUGARCRM flav=pro ONLY
     }
-    YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+    //YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 
-
+    //BEGIN SUGARCRM flav=pro ONLY
     oButtonGroup.subscribe('checkedButtonChange', function(e)
     {
         selectedExternalSource = e.newValue.get('value');
         isExtSourceValid(selectedExternalSource);
     });
-
+    //END SUGARCRM flav=pro ONLY
+    
     function initExtSourceSelection()
     {
         var el1 = YAHOO.util.Dom.get('ext_source');
         if(selectedExternalSource == '')
             return;
-            
+
         el1.checked = true;
         toggleExternalSource();
         isExtSourceValid(selectedExternalSource);
@@ -301,8 +339,13 @@ YAHOO.util.Event.onDOMReady(function(){
 
     setImportModule();
 });
--->
-</script>
+
+
+var auth_sources = {$EXTERNAL_AUTHENTICATED_SOURCES}
+var selectedExternalSource = '{$selectExternalSource}';
+var personModules = {$PERSON_MODULE_LIST};
+
+
 
 EOJAVASCRIPT;
     }

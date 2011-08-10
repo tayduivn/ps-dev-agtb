@@ -442,15 +442,22 @@ function ajaxBannedModules(){
 function ajaxLink($url)
 {
     $match = array();
+    $javascriptMatch = array();
+    
     preg_match('/module=([^&]*)/i', $url, $match);
+    preg_match('/^javascript/i', $url, $javascriptMatch);
 
     if(!empty($sugar_config['disableAjaxUI'])){
         return $url;
     }
     else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
         return $url;
+    } 
+    else if (isset($javascriptMatch[0])) {
+    	return $url;
     }
-    else{
+    else
+    {
         return "#ajaxUILoc=" . urlencode($url);
     }
 }
