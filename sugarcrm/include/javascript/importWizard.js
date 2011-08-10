@@ -142,8 +142,6 @@ SUGAR.importWizard = function() {
 			SUGAR.importWizard.loading.render(document.body);		
 			if (document.getElementById('loading_c'))
                 document.getElementById('loading_c').style.display = 'none';
-		},
-		
-			
-			};
+		}
+    };
 }();
