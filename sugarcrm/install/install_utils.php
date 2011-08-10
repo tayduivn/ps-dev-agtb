@@ -995,9 +995,6 @@ function handleSugarConfig() {
     $sugar_config['log_dir']                        = $setup_site_log_dir;
     $sugar_config['log_file']                       = $setup_site_log_file;
 
-    //default snip service url:
-    $sugar_config['snip_url']='http://localhost:20000/';
-
 	/*nsingh(bug 22402): Consolidate logger settings under $config['logger'] as liked by the new logger! If log4pphp exists,
 		these settings will be overwritten by those in log4php.properties when the user access admin->system settings.*/
     $sugar_config['logger']	=

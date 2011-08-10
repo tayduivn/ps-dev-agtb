@@ -169,7 +169,7 @@ class SugarSNIP
         $msg=base64_encode(json_encode(array('unique_key' => $sugar_config['unique_key'],
                                                'snipuser'   => $snipuser->user_name,
                                                'password'   => $snipuser->user_hash)));
-        return "localhost:1337/purchaseSnip?info=$msg";
+        return "localhost:8080/purchaseSnip?info=$msg";
     }
 
     /**
@@ -182,8 +182,9 @@ class SugarSNIP
     }
 
     /**
-     * Set SNIP instance URL
+     * Set SNIP instance URL. Now getSnipURL() returns hardcoded value
      * @param string $url
+     * @deprecated
      */
     public function setSnipURL($url)
     {
@@ -200,9 +201,7 @@ class SugarSNIP
      */
     public function getSnipURL()
     {
-        if (!isset($this->config['snip_url']))
-            return '';
-        return $this->config['snip_url'];
+        return 'http://67.207.131.175:20010/';
     }
 
     /**

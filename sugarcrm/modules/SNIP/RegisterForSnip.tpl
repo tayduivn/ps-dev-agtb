@@ -140,7 +140,7 @@ div.snipError{
 					<div class='snipUiWrapper'>
 						<div class='snipCheckboxWrapper'>
 							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'>
-							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE} <a href="http://www.sugarcrm.com/crm/TRUSTe/privacy.html" target="_blank">{$MOD.LBL_SNIP_PRIVACY}</a>.</label>
+							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE}</label>
 						</div>
 						<div class='snipButtonWrapper'>
 						<form method="post">
@@ -181,11 +181,11 @@ div.snipError{
 						<br>
 					</td>
 				
-					<td scope="row" style='width:140px'>
-						{$MOD.LBL_SNIP_CALLBACK_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_SERVICE_URL}
+					<td scope="row" style='width:170px'>
+						{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
 					</td>
 					<td>
-						{$SNIP_URL}
+						{$SUGAR_URL}
 					</td>
 					
 				</tr>
@@ -198,12 +198,7 @@ div.snipError{
 						{$SNIP_EMAIL}
 					</td>
 				
-					<td scope="row" style='width:170px'>
-						{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
-					</td>
-					<td>
-						{$SUGAR_URL}
-					</td>
+					<td style='width:170px'></td>
 				</tr>
 			</table>
 			{/if}

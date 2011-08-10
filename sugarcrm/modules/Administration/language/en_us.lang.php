@@ -1160,6 +1160,6 @@ $mod_strings = array (
     // SNIP
     'LBL_SNIP_TITLE' => 'SNIP',
     'LBL_SNIP_DESC' => 'Configure offline archiving (SNIP)',
-    'LBL_CONFIGURE_SNIP' => 'Configure SNIP',
+    'LBL_CONFIGURE_SNIP' => 'SNIP',
     'LBL_CONFIGURE_SNIP_DESC' => 'Configure settings for the SNIP service'
 	);

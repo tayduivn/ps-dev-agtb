@@ -36,11 +36,11 @@ $mod_strings = array(
     "LBL_SNIP_PURCHASE_SUMMARY" => "In order to use SNIP, you must purchase a license for your SugarCRM instance",
     "LBL_SNIP_PURCHASE" => "Click here to purchase",
     'LBL_SNIP_EMAIL' => 'SNIP Email',
-    'LBL_SNIP_AGREE' => "I agree to the above terms and the ",
+    'LBL_SNIP_AGREE' => "Accept the terms below and click Enable to start using the service.",
     'LBL_SNIP_PRIVACY' => 'privacy agreement',
 
     'LBL_SNIP_STATUS_PINGBACK_FAIL' => 'Pingback failed',
-    'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server is unable to establish a connection with your Sugar instance. Please try again or contact customer support.',
+    'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server is unable to establish a connection with your Sugar instance. Please try again or <a href="http://www.sugarcrm.com/crm/case-tracker/submit.html?lsd=supportportal&tmpl=" target="_blank">contact customer support</a>.',
 
     'LBL_SNIP_BUTTON_ENABLE' => 'Enable SNIP',
     'LBL_SNIP_BUTTON_DISABLE' => 'Disable SNIP',
