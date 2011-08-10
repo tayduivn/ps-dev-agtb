@@ -49,9 +49,9 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$email['message']['from_name'] = 'Test Emailer <temailer@sugarcrm.com>';
 		$email['message']['description'] = 'Email with event attachment';
 		$email['message']['description_html'] = 'Email with <b>event</b> attachment';
-		$email['message']['to_addrs'] = 'kid.dev.info@example.de';
-		$email['message']['cc_addrs'] = 'sugar.section.dev@example.net';
-		$email['message']['bcc_addrs'] = 'qa.sugar@example.net';
+		$email['message']['to_addrs'] = 'sarah@example.com';
+		$email['message']['cc_addrs'] = 'bob@example.com';
+		$email['message']['bcc_addrs'] = 'jim@example.com';
 		$email['message']['date_sent'] = '2010-01-01 12:30:00';
 		$email['message']['subject'] = 'PHPUnit Test Email with iCal';
 		$email['message']['attachments'][] = array('filename' => $file_path, 'content' => base64_encode(file_get_contents($file_path)));
@@ -61,7 +61,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		// get the email object if it imported correctly
 		$e = new Email();
 		$e->retrieve_by_string_fields(array("message_id" => $email['message']['message_id']));
-		$this->assertTrue(isset($e->id) && !empty($e->id));
+		$this->assertTrue(isset($e->id) && !empty($e->id), 'Unable to retrieve email object');
 		$this->email_id = $e->id;
 
 		// populate the whole bean
@@ -70,9 +70,8 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 
 		// get the meeting
 		$meeting = new Meeting();
-		$meeting->retrieve_by_string_fields(array('assigned_user_id' => $e->assigned_user_id, 'team_set_id' => $e->team_set_id,
-											'team_id' => $e->team_id, 'parent_id' => $e->id, 'parent_type' => $e->module_dir));
-		$this->assertTrue(isset($meeting->id) && !empty($meeting->id));
+		$meeting->retrieve_by_string_fields(array('parent_id' => $e->id, 'parent_type' => $e->module_dir));
+		$this->assertTrue(isset($meeting->id) && !empty($meeting->id), 'Unable to retrieve meeting object');
 		$this->meeting_id = $meeting->id;
 
 		// check if the values match with the iCal event
