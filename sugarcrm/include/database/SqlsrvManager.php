@@ -141,17 +141,17 @@ class SqlsrvManager extends MssqlManager
          * Don't try to specifically use a persistent connection
          * since the driver will handle that for us
          */
-        $this->database = sqlsrv_connect(
-                $connect_param ,
-                array(
+        $options = array(
                     "UID" => $configOptions['db_user_name'],
                     "PWD" => $configOptions['db_password'],
-                    "Database" => $configOptions['db_name'],
                     "CharacterSet" => "UTF-8",
                     "ReturnDatesAsStrings" => true,
                     "MultipleActiveResultSets" => true,
-                    )
-                );
+                    );
+        if(!empty($configOptions['db_name'])) {
+            $options["Database"] = $configOptions['db_name'];
+        }
+        $this->database = sqlsrv_connect($connect_param, $options);
         if(empty($this->database)) {
             $GLOBALS['log']->fatal("Could not connect to server ".$configOptions['db_host_name']." as ".$configOptions['db_user_name'].".");
             if($dieOnError) {
