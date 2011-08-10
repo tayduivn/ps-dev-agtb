@@ -382,7 +382,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @to_path root directory where processing should take place, this gets filled in dynamically
      */
     function BackUpAndCompressScriptFiles($from_path,$to_path = '', $backup = true){
-            $GLOBALS['log']->debug("Backup And Compress: $from_path => $to_path");
             //check to see if provided paths are legit
             if (!file_exists($from_path))
             {
