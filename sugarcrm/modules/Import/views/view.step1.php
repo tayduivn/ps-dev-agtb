@@ -196,28 +196,22 @@ document.getElementById('gonext').onclick = function()
         document.getElementById('importstep1').external_source.value = selectedExternalSource;
         
     }
-    
-    
-    		var success = function(data) {		
-				eval(data.responseText);
-				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
-				submitDiv = document.getElementById('submitDiv');
-				importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
-				importWizardDialogDiv.innerHTML = response['html'];
-				importWizardDialogTitle.innerHTML = response['title'];
-				SUGAR.util.evalScript(response['html']);
-				submitDiv.innerHTML = response['submitContent'];
-				eval(response['script']);
 
-			}
-    
-    
-    
-    
+    var success = function(data) {
+        eval(data.responseText);
+        importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+        submitDiv = document.getElementById('submitDiv');
+        importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+        importWizardDialogDiv.innerHTML = response['html'];
+        importWizardDialogTitle.innerHTML = response['title'];
+        SUGAR.util.evalScript(response['html']);
+        submitDiv.innerHTML = response['submitContent'];
+        eval(response['script']);
+        }
+
         var formObject = document.getElementById('importstep1');
 		YAHOO.util.Connect.setForm(formObject);
 		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
-		
 }
 
 
@@ -321,8 +315,7 @@ YAHOO.util.Event.onContentReady("importstep1", function() {
     }
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
-
-
+    
     oButtonGroup.subscribe('checkedButtonChange', function(e)
     {
         selectedExternalSource = e.newValue.get('value');
