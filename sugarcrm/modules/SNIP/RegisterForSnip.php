@@ -71,6 +71,11 @@ $status=$snip->getStatus();
 $message=$status['message'];
 $status=$status['status'];
 
+if ($status=='pingfailed'){
+	$status='notpurchased';
+	$extra_error=$mod_strings['LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY'];
+}
+
 if ($message=='')
 	$message = $mod_strings['LBL_SNIP_GENERIC_ERROR'];
 

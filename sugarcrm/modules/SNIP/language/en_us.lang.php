@@ -21,7 +21,7 @@ $mod_strings = array(
     'LBL_SNIP_STATUS_ERROR' => 'Error',
     'LBL_SNIP_STATUS_ERROR_SUMMARY' => 'This instance has a valid SNIP license, but the SNIP server returned the following error message:',
     'LBL_SNIP_STATUS_FAIL' => 'Cannot connect to SNIP server',
-    'LBL_SNIP_STATUS_FAIL_SUMMARY' => 'Sorry, the SNIP service is currently unavailable (either the service is down or the connection failed on your end)',
+    'LBL_SNIP_STATUS_FAIL_SUMMARY' => 'Sorry, the SNIP service is currently unavailable (either the service is down or the connection failed on your end).',
     'LBL_SNIP_GENERIC_ERROR' => 'The SNIP service is currently unavailable.  Either the service is down or the connection to this Sugar instance failed.',
 
 	'LBL_SNIP_STATUS_RESET' => 'Not run yet',
@@ -38,6 +38,9 @@ $mod_strings = array(
     'LBL_SNIP_EMAIL' => 'SNIP Email',
     'LBL_SNIP_AGREE' => "I agree to the above terms and the ",
     'LBL_SNIP_PRIVACY' => 'privacy agreement',
+
+    'LBL_SNIP_STATUS_PINGBACK_FAIL' => 'Pingback failed',
+    'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server unable to establish a connection with your Sugar instance. Please try again or contact customer support.',
 
     'LBL_SNIP_BUTTON_ENABLE' => 'Enable SNIP',
     'LBL_SNIP_BUTTON_DISABLE' => 'Disable SNIP',

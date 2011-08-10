@@ -234,6 +234,9 @@ class SugarSNIP
     */
     public function getStatus()
     {
+        
+        //return array('status'=>'purchased_error','message'=>'');
+
         //if inactive,
         if(!$this->isActive())
             return array('status'=>'notpurchased','message'=>null);
@@ -244,9 +247,8 @@ class SugarSNIP
         //check if server is down
         if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found'){
             //check to see if we haven't enabled snip (in which case show the welcome screen)
-            $admin_settings = new Administration();
-            $admin_settings = $admin_settings->retrieveSettings('snip');
-            if ( empty($admin_settings->settings['email'])){
+            $email = $this->getSnipEmail();
+            if ( empty($email)){
                 return array('status'=>'notpurchased','message'=>null);
             }
 
