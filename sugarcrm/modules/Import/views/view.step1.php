@@ -179,7 +179,8 @@ class ImportViewStep1 extends ImportView
 document.getElementById('gonext').onclick = function()
 {
     clear_all_errors();
-    var isCsvSource = document.getElementById('csv_source').checked;
+    var csvSourceEl = document.getElementById('csv_source');
+    var isCsvSource = csvSourceEl ? csvSourceEl.checked : true;
     if( isCsvSource )
     {
         document.getElementById('importstep1').action.value = 'Step2';
@@ -196,28 +197,22 @@ document.getElementById('gonext').onclick = function()
         document.getElementById('importstep1').external_source.value = selectedExternalSource;
         
     }
-    
-    
-    		var success = function(data) {		
-				eval(data.responseText);
-				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
-				submitDiv = document.getElementById('submitDiv');
-				importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
-				importWizardDialogDiv.innerHTML = response['html'];
-				importWizardDialogTitle.innerHTML = response['title'];
-				SUGAR.util.evalScript(response['html']);
-				submitDiv.innerHTML = response['submitContent'];
-				eval(response['script']);
 
-			}
-    
-    
-    
-    
+    var success = function(data) {
+        eval(data.responseText);
+        importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
+        submitDiv = document.getElementById('submitDiv');
+        importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
+        importWizardDialogDiv.innerHTML = response['html'];
+        importWizardDialogTitle.innerHTML = response['title'];
+        SUGAR.util.evalScript(response['html']);
+        submitDiv.innerHTML = response['submitContent'];
+        eval(response['script']);
+        }
+
         var formObject = document.getElementById('importstep1');
 		YAHOO.util.Connect.setForm(formObject);
 		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
-		
 }
 
 
@@ -257,7 +252,7 @@ YAHOO.util.Event.onContentReady("importstep1", function() {
             }
         }
     }
-    
+
     YAHOO.util.Event.addListener(['ext_source','csv_source'], "click", toggleExternalSource);
 
     function isExtSourceAuthenticated(source)
@@ -267,7 +262,7 @@ YAHOO.util.Event.onContentReady("importstep1", function() {
         else
             return false;
     }
-    
+
     function isExtSourceValid(v)
     {
         if(v == '')
@@ -319,22 +314,23 @@ YAHOO.util.Event.onContentReady("importstep1", function() {
         }
         //END SUGARCRM flav=pro ONLY
     }
-    YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+    //YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 
-
+    //BEGIN SUGARCRM flav=pro ONLY
     oButtonGroup.subscribe('checkedButtonChange', function(e)
     {
         selectedExternalSource = e.newValue.get('value');
         isExtSourceValid(selectedExternalSource);
     });
-
+    //END SUGARCRM flav=pro ONLY
+    
     function initExtSourceSelection()
     {
         var el1 = YAHOO.util.Dom.get('ext_source');
         if(selectedExternalSource == '')
             return;
-            
+
         el1.checked = true;
         toggleExternalSource();
         isExtSourceValid(selectedExternalSource);

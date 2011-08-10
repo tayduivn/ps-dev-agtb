@@ -206,7 +206,6 @@ ProcessImport = new function()
             {
                 success: function(o) {
                     if (o.responseText.replace(/^\s+|\s+$/g, '') != '') {
-                    	alert('fa');
                         this.failure(o);
                     }
                     else {

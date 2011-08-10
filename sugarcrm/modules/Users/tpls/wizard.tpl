@@ -339,6 +339,7 @@ function disableReturnSubmission(e) {
                         <table cellpadding=0 cellspacing=0><input id='whatnext' name='whatnext' type="hidden" value='finish' />
                         <tr><td><img src=include/images/start.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a><br> {$MOD.LBL_WIZARD_FINISH2DESC}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                        {if $IS_ADMIN}
                         <tr><td><img src=include/images/import.png style="margin-right: 5px;"></td><td><a onclick='return SUGAR.importWizard.renderDialog("Administration","step1","");' href="#" ><b> {$MOD.LBL_WIZARD_FINISH3} </b></a><br> {$MOD.LBL_WIZARD_FINISH4}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         <tr><td><img src=include/images/create_users.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="users";document.UserWizard.submit()' href="#"  ><b> {$MOD.LBL_WIZARD_FINISH5} </b></a><br>{$MOD.LBL_WIZARD_FINISH6}</td></tr>
@@ -347,6 +348,7 @@ function disableReturnSubmission(e) {
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         <tr><td><img src=include/images/configure.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="studio";document.UserWizard.submit()' href="#"  ><b> {$MOD.LBL_WIZARD_FINISH9} </b></a><br>{$MOD.LBL_WIZARD_FINISH10}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                        {/if}
                         <tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH11} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH12}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         </table>
