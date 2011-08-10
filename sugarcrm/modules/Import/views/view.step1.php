@@ -313,7 +313,7 @@ YAHOO.util.Event.onContentReady("importstep1", function() {
         }
         //END SUGARCRM flav=pro ONLY
     }
-    YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
+    //YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
     
     oButtonGroup.subscribe('checkedButtonChange', function(e)
