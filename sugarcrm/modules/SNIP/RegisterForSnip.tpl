@@ -31,31 +31,36 @@ div.snipTitle{
 }
 .snipDesc{
 	width:auto;
-	border:1px solid #999999;
-	background-color:#F5F5F5;
-	padding:5px;
-	font-size:15px;
 	margin:6px;
-	margin-bottom:0;
+	margin-bottom:8px;
 }
 .snipLicenseWrapper{
 	margin:0;
 	width:auto;
 }
+
+.snipLicenseSubWrapper{
+	border: 1px solid black;
+	padding: 4px 0 4px 4px;
+	width:80%;
+	margin:auto;
+	margin-top:4px;
+}
+
 .snipLicense{
 	width:auto;
-	margin-right:4px;
-	padding:5px;
+	color:#7A7A7A;
 	overflow:auto;
 	height:300px
 }
 .snipUiWrapper{
-
 	margin:auto;
-	padding:5px;
 	width:600px;
-	height:40px;
+	height:47px;
+	margin-top:7px;
 }
+
+
 .snipCheckboxWrapper{
 	float:left;
 	width:375px;
@@ -134,9 +139,8 @@ div.snipError{
 
 				
 				<div class='snipLicenseWrapper'>
-					<div class='snipLicense'>{$MOD.LBL_SNIP_AGREEMENT}</div>
-					<div class='snipHrWrapper'>
-						<hr />
+					<div class = 'snipLicenseSubWrapper'>
+						<div class='snipLicense'>{$MOD.LBL_SNIP_AGREEMENT}</div>
 					</div>
 					<div class='snipUiWrapper'>
 						<div class='snipCheckboxWrapper'>
@@ -157,7 +161,7 @@ div.snipError{
 
 			
 			<table border="0" cellpadding="0" cellspacing="1" width="100%">
-				<tr>
+				<tr width="50%">
 					<td scope="row">
 						{$MOD.LBL_SNIP_STATUS}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_STATUS}
 					</td>
@@ -182,22 +186,24 @@ div.snipError{
 						<br>
 					</td>
 				
-					<td scope="row">
-						{$MOD.LBL_SNIP_EMAIL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_EMAIL}
-					</td>
-					<td>
-						{$SNIP_EMAIL}
-					</td>
-				</tr>
-				<tr>
-					<td scope="row">
+					<td scope="row" style='width:140px'>
 						{$MOD.LBL_SNIP_CALLBACK_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_SERVICE_URL}
 					</td>
 					<td>
 						{$SNIP_URL}
 					</td>
+					
+				</tr>
+				<tr>
+					
+					<td scope="row" style='width:100px'>
+						{$MOD.LBL_SNIP_EMAIL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_EMAIL}
+					</td>
+					<td>
+						{$SNIP_EMAIL}
+					</td>
 				
-					<td scope="row">
+					<td scope="row" style='width:170px'>
 						{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
 					</td>
 					<td>

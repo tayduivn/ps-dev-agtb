@@ -40,7 +40,7 @@ $mod_strings = array(
     'LBL_SNIP_PRIVACY' => 'privacy agreement',
 
     'LBL_SNIP_STATUS_PINGBACK_FAIL' => 'Pingback failed',
-    'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server unable to establish a connection with your Sugar instance. Please try again or contact customer support.',
+    'LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY' => 'The SNIP server is unable to establish a connection with your Sugar instance. Please try again or contact customer support.',
 
     'LBL_SNIP_BUTTON_ENABLE' => 'Enable SNIP',
     'LBL_SNIP_BUTTON_DISABLE' => 'Disable SNIP',
@@ -52,8 +52,8 @@ $mod_strings = array(
     
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
 
-    'LBL_SNIP_MOUSEOVER_STATUS' => 'This is the status of SNIP service operating on your instance', 
-    'LBL_SNIP_MOUSEOVER_EMAIL' => 'Displays your SNIP email address', 
-    'LBL_SNIP_MOUSEOVER_SERVICE_URL' => 'This is the URL of the SNIP server. All requests such as enabling and disabling SNIP will be relayed through this URL.', 
+    'LBL_SNIP_MOUSEOVER_STATUS' => 'This is the status of the SNIP service on your instance. The status reflects whether the connection between the SNIP server and your Sugar instance is successful.', 
+    'LBL_SNIP_MOUSEOVER_EMAIL' => 'This is the SNIP email address to send to in order to import emails into Sugar.', 
+    'LBL_SNIP_MOUSEOVER_SERVICE_URL' => 'This is the URL of the SNIP server. All requests, such as enabling and disabling the SNIP service, will be relayed through this URL.', 
     'LBL_SNIP_MOUSEOVER_INSTANCE_URL' => 'This is webservices URL of your Sugar instance. The SNIP server will connect to your server through this URL.',
 );
