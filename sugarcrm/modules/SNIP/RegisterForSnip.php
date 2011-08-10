@@ -79,9 +79,6 @@ if ($status=='pingfailed'){
 if ($message=='' && $status != 'notpurchased')
 	$message = $GLOBALS['mod_strings']['LBL_SNIP_GENERIC_ERROR'];
 
-if ($status=='notpurchased')
-    $snipuser = $snip->getSnipUser();
-
 if ($status=='purchased_error')
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 
