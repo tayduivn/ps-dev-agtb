@@ -119,7 +119,7 @@ class SugarSNIP
         if ($connectionfailed)
             return false;
         else {
-            if ($this->last_result->result == 'ok') {
+            if (is_object($this->last_result)  && $this->last_result->result == 'ok' && property_exists($this->last_result,'email')) {
                 $admin = new Administration();
                 $admin->saveSetting('snip', 'email', $this->last_result->email);
             }
@@ -234,6 +234,9 @@ class SugarSNIP
     */
     public function getStatus()
     {
+        
+        return array('status'=>'down','message'=>null);
+
         //if inactive,
         if(!$this->isActive())
             return array('status'=>'notpurchased','message'=>null);
@@ -242,8 +245,16 @@ class SugarSNIP
         $this->callRest('status',false,$json=false,$connectionfailed);
 
         //check if server is down
-        if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found')
+        if ($connectionfailed || !is_object($this->last_result) || $this->last_result->result!='ok' && $this->last_result->result!='instance not found'){
+            //check to see if we haven't enabled snip (in which case show the welcome screen)
+            $email = $this->getSnipEmail();
+            if ( empty($email)){
+                return array('status'=>'notpurchased','message'=>null);
+            }
+
+            //we have enabled snip - show the error screen
             return array('status'=>'down','message'=>null);
+        }
 
         //server is up but unable to ping back
         if ($this->last_result->result == 'ping failed')

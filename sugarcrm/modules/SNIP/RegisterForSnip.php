@@ -63,7 +63,6 @@ if ($_POST && isset($_POST['snipaction'])) {
 		}else if ($disable_snip->result!='ok'){
 			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>: '.$disable_snip->message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
 		}
-
 	}
 }
 
@@ -71,6 +70,14 @@ $status=$snip->getStatus();
 
 $message=$status['message'];
 $status=$status['status'];
+
+if ($status=='pingfailed'){
+	$status='notpurchased';
+	$extra_error=$mod_strings['LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY'];
+}
+
+if ($message=='')
+	$message = $mod_strings['LBL_SNIP_GENERIC_ERROR'];
 
 if ($status=='notpurchased'){
     $snipuser = $snip->getSnipUser();

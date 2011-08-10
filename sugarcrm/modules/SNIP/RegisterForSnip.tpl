@@ -1,4 +1,5 @@
 {literal}
+<script type='text/javascript' src='include/javascript/overlibmws.js'></script>
 <style>
 #snip_title {
 	float:left;
@@ -30,27 +31,36 @@ div.snipTitle{
 }
 .snipDesc{
 	width:auto;
-	border:1px solid #999999;
-	background-color:#F5F5F5;
-	padding:5px;
-	font-size:15px;
-	margin:6px
+	margin:6px;
+	margin-bottom:8px;
 }
 .snipLicenseWrapper{
-	margin:auto;
-	width:600px;
+	margin:0;
+	width:auto;
 }
+
+.snipLicenseSubWrapper{
+	border: 1px solid black;
+	padding: 4px 0 4px 4px;
+	width:80%;
+	margin:auto;
+	margin-top:4px;
+}
+
 .snipLicense{
-	width:600px;
-	padding:5px;
+	width:auto;
+	color:#7A7A7A;
 	overflow:auto;
 	height:300px
 }
 .snipUiWrapper{
-	float:left;
-	padding:5px;
+	margin:auto;
 	width:600px;
+	height:47px;
+	margin-top:7px;
 }
+
+
 .snipCheckboxWrapper{
 	float:left;
 	width:375px;
@@ -86,54 +96,51 @@ div.snipError{
 {/literal}
 {$TITLE}
 {* //FILE SUGARCRM flav=pro ONLY *}
+	{if $SNIP_STATUS!='notpurchased'}
+	<table class="actionsContainer" border="0" cellpadding="0" cellspacing="1" width="100%">
+	<tbody>
+	    <tr>
+	        <td>
+	            <form method="post">
 
-{if $SNIP_STATUS!='notpurchased'}
-<table class="actionsContainer" border="0" cellpadding="0" cellspacing="1" width="100%">
-<tbody>
-	<tr>
-		<td>
-			<form method="post">
+	            {if $SNIP_STATUS =='purchased'}
+	                <input title="" class="button" name="disable" value="  {$MOD.LBL_SNIP_BUTTON_DISABLE}  " type="submit">
+	                <input type='hidden' value='disable_snip' name='snipaction'>
+	            {else}
+	                <input title="" class="button primary" name="tryagain" value="  {$MOD.LBL_SNIP_BUTTON_RETRY}  " onclick='window.location.reload()' type="button">
+	            {/if}
 
-			{if $SNIP_STATUS =='purchased'}
-				<input title="" class="button" name="disable" value="  {$MOD.LBL_SNIP_BUTTON_DISABLE}  " type="submit">
-				<input type='hidden' value='disable_snip' name='snipaction'>
-			{else}
-				<input title="" class="button primary" name="tryagain" value="  {$MOD.LBL_SNIP_BUTTON_RETRY}  " onclick='window.location.reload()' type="button">
-			{/if}
+	            &nbsp;<input title="" onclick="document.location.href='index.php?module=Administration&amp;action=index'" class="button" name="cancel" value="  {$MOD.LBL_CANCEL_BUTTON_TITLE}  " type="button">
 
-			&nbsp;<input title="" onclick="document.location.href='index.php?module=Administration&amp;action=index'" class="button" name="cancel" value="  {$MOD.LBL_CANCEL_BUTTON_TITLE}  " type="button">
-
-			</form>
-		</td>
-	</tr>
-</tbody></table>
+	            </form>
+	        </td>
+	    </tr>
+	</tbody></table>
 {/if}
 
 	<table width="100%" cellspacing="0" cellpadding="0" border="0" class="edit view">
 		<tr>
 		<td>
-			<center><div class='snipTitle'>SNIP</div></center>
-				<div class='snipDesc'>
-					{$MOD.LBL_SNIP_SUMMARY}
-
-					<a href='#' onclick='divExpand()' id='snipMoreLink'>{$MOD.LBL_SNIP_MORE}</a>
+			{if $EXTRA_ERROR != ''}
+				<div style='color:red;font-weight:bold;margin-left:10px;'>
+					{$EXTRA_ERROR}
 				</div>
-				{if $EXTRA_ERROR != ''}
-					<div class='snipError'>
-						{$EXTRA_ERROR}
-					</div>
-				{/if}
-
-				<br>
+			{/if}
 					
 			{if $SNIP_STATUS=='notpurchased'}
+				<div class='snipDesc'>
+					{$MOD.LBL_SNIP_SUMMARY}
+				</div>
+
+				
 				<div class='snipLicenseWrapper'>
-					<div class='snipLicense'>{$MOD.LBL_SNIP_AGREEMENT}</div>
+					<div class = 'snipLicenseSubWrapper'>
+						<div class='snipLicense'>{$MOD.LBL_SNIP_AGREEMENT}</div>
+					</div>
 					<div class='snipUiWrapper'>
-					<hr>
 						<div class='snipCheckboxWrapper'>
 							<input type='checkbox' onchange="document.getElementById('enableSnipButton').disabled = !document.getElementById('agreementCheck').checked;" id='agreementCheck' class='snipCheckbox'>
-							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE} <a href="javascript: alert('privacy agreement');">{$MOD.LBL_SNIP_PRIVACY}</a>.</label>
+							<label for='agreementCheck' class='snipCheckbox'>{$MOD.LBL_SNIP_AGREE} <a href="http://www.sugarcrm.com/crm/TRUSTe/privacy.html" target="_blank">{$MOD.LBL_SNIP_PRIVACY}</a>.</label>
 						</div>
 						<div class='snipButtonWrapper'>
 						<form method="post">
@@ -147,10 +154,11 @@ div.snipError{
 				
 			{else}
 
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-				<tr>
+			
+			<table border="0" cellpadding="0" cellspacing="1" width="100%">
+				<tr width="50%">
 					<td scope="row">
-						{$MOD.LBL_SNIP_STATUS}
+						{$MOD.LBL_SNIP_STATUS}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_STATUS}
 					</td>
 					<td>
 						<form name='ToggleSnipStatus' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
@@ -163,45 +171,45 @@ div.snipError{
 							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_FAIL}</span></div>
 							<div style='clear:both'></div>
 							<div id='snip_summary'>{$MOD.LBL_SNIP_STATUS_FAIL_SUMMARY}</div>
-						{elseif $SNIP_STATUS == 'pingfailed'}
-							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_PINGBACK_FAIL}</span></div>
-							<div style='clear:both'></div>
-							<div id='snip_summary'>{$MOD.LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY}</div>
 						{elseif $SNIP_STATUS == 'purchased_error'}
 							<div id='snip_title'><span style='color:red;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_ERROR}</span></div>
 							<div style='clear:both'></div>
-							<div id='snip_summary'>{$MOD.LBL_SNIP_STATUS_ERROR_SUMMARY}<br>
-							<div id='snip_summary_error'>{$SNIP_ERROR_MESSAGE}</div></div>
+							<div id='snip_summary'>{$SNIP_ERROR_MESSAGE}<br>
+							</div>
 						{/if}
 						</form>
 						<br>
 					</td>
+				
+					<td scope="row" style='width:140px'>
+						{$MOD.LBL_SNIP_CALLBACK_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_SERVICE_URL}
+					</td>
+					<td>
+						{$SNIP_URL}
+					</td>
+					
 				</tr>
 				<tr>
-					<td scope="row">
-						{$MOD.LBL_SNIP_EMAIL}
+					
+					<td scope="row" style='width:100px'>
+						{$MOD.LBL_SNIP_EMAIL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_EMAIL}
 					</td>
 					<td>
 						{$SNIP_EMAIL}
 					</td>
-				</tr>
-				<tr>
-					<td width="20%" scope="row">
-						{$MOD.LBL_SNIP_CALLBACK_URL}
+				
+					<td scope="row" style='width:170px'>
+						{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
 					</td>
-					<td width="80%">
-						{$SNIP_URL}
-					</td>
-				</tr>
-				<tr>
-					<td width="20%" scope="row">
-						{$MOD.LBL_SNIP_SUGAR_URL}
-					</td>
-					<td width="80%">
+					<td>
 						{$SUGAR_URL}
 					</td>
 				</tr>
-			</table><br>
+			</table>
+			{/if}
+
+			{if $SNIP_STATUS == 'purchased_error' || $SNIP_STATUS == 'down'}
+			<div style='margin-left:4px;margin-top:4px;margin-bottom:7px'> <a href='http://www.sugarcrm.com/crm/case-tracker/submit.html?lsd=supportportal&tmpl=' target='_blank'>{$MOD.LBL_SNIP_SUPPORT}</a></div>
 			{/if}
 
 		</td>

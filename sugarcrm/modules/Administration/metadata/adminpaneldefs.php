@@ -177,6 +177,7 @@ if(SugarOAuthServer::enabled()) {
 
 
 
+
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
 
@@ -192,6 +193,8 @@ $admin_option_defs['Campaigns']['campaignconfig']= array('Campaigns','LBL_CAMPAI
 $admin_option_defs['Emails']['mailboxes']= array('InboundEmail','LBL_MANAGE_MAILBOX','LBL_MAILBOX_DESC','./index.php?module=InboundEmail&action=index');
 //BEGIN SUGARCRM flav!=dce && flav!=sales ONLY
 $admin_option_defs['Campaigns']['mass_Email']= array('EmailMan','LBL_MASS_EMAIL_MANAGER_TITLE','LBL_MASS_EMAIL_MANAGER_DESC','./index.php?module=EmailMan&action=index');
+$admin_option_defs['Campaigns']['register_snip']=array('icon_AdminThemes','LBL_CONFIGURE_SNIP','LBL_CONFIGURE_SNIP_DESC','./index.php?module=SNIP&action=RegisterForSnip');
+
 //END SUGARCRM flav!=dce && flav!=sales ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
