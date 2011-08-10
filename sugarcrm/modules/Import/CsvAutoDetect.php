@@ -108,7 +108,7 @@ class CsvAutoDetect {
      * @param string $csv_filename
      * @param int $max_depth
      */
-    public function __construct($csv_filename, $max_depth = 10) {
+    public function __construct($csv_filename, $max_depth = 4) {
         $this->_csv_file = $csv_filename;
 
         $this->_parser = new parseCSV();

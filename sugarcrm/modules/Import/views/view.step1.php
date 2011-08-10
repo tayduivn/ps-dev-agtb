@@ -34,7 +34,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('modules/Import/views/ImportView.php');
 require_once('include/externalAPI/ExternalAPIFactory.php');
-        
+require_once ('include/language/jsLanguage.php');
+
 class ImportViewStep1 extends ImportView
 {
 
@@ -89,7 +90,7 @@ class ImportViewStep1 extends ImportView
         $this->ss->assign("EXTERNAL_AUTHENTICATED_SOURCES", json_encode($this->getAuthenticatedImportableExternalEAPMs()) );
         $selectExternal = !empty($_REQUEST['application']) ? $_REQUEST['application'] : '';
         $this->ss->assign("selectExternalSource", $selectExternal);
-        
+
         $content = $this->ss->fetch('modules/Import/tpls/step1.tpl');
         
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
@@ -97,10 +98,9 @@ class ImportViewStep1 extends ImportView
         $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
         $this->ss->assign("CONTENT",json_encode($content));
         $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
-		        
 
-
-        $this->ss->assign("JS",json_encode($this->_getJS()));
+        $jsLang = jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language'], true);
+        $this->ss->assign("JS",json_encode($jsLang . $this->_getJS()));
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 

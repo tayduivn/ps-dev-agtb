@@ -60,7 +60,7 @@ class ImportViewConfirm extends ImportView
         $this->instruction = 'LBL_SELECT_PROPERTY_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
-        $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
+        $this->ss->assign("MODULE_TITLE", json_encode(htmlentities($this->getModuleTitle(false), ENT_NOQUOTES)));
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
         $sugar_config['import_max_records_per_file'] = ( empty($sugar_config['import_max_records_per_file']) ? 1000 : $sugar_config['import_max_records_per_file'] );
         $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
@@ -197,17 +197,18 @@ class ImportViewConfirm extends ImportView
         $importMappingJS = $this->getImportMappingJS();
 
         $this->ss->assign("SAMPLE_ROWS",$rows);
-        $this->ss->assign("JS", json_encode($this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS, $importFileMap )));
+        $JS = json_encode(htmlentities($this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS, $importFileMap ),ENT_NOQUOTES));
+        $this->ss->assign("JS", $JS);
 
         $content = $this->ss->fetch('modules/Import/tpls/confirm.tpl');
-        $this->ss->assign("CONTENT",json_encode($content));
-        
+        $this->ss->assign("CONTENT",json_encode(htmlentities($content, ENT_NOQUOTES)));
+
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
 	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
-        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
-        
+        $this->ss->assign("SUBMITCONTENT",json_encode(htmlentities($submitContent, ENT_NOQUOTES)));
+
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
 
