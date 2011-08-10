@@ -83,11 +83,6 @@ div.snipTitle{
 	margin-top:-2px
 }
 
-.snipHrWrapper{
-	width:auto;
-	margin-bottom:-10px;
-}
-
 div.snipError{
 	position:relative;
 	margin:2px 8px 0px 8px; 
