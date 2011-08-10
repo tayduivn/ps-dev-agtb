@@ -120,12 +120,16 @@ class SugarSNIP
             return false;
         else {
             if (is_object($this->last_result)  && $this->last_result->result == 'ok' && property_exists($this->last_result,'email')) {
-                $admin = new Administration();
-                $admin->saveSetting('snip', 'email', $this->last_result->email);
+                $this->setSnipEmail($this->last_result->email);
             }
 
             return $this->last_result;
         }
+    }
+
+    public function setSnipEmail($email){
+        $admin = new Administration();
+        $admin->saveSetting('snip', 'email', $email);
     }
 
     public function getSnipEmail () {
@@ -151,11 +155,9 @@ class SugarSNIP
             return false;
         else {
             if ($this->last_result->result == 'ok') {
-                // snip disabled successfully
-                $admin = new Administration();
-                $admin->saveSetting('snip', 'email', '');
+                $this->setSnipEmail('');
 
-                // reset snip user's password
+                // change snip user's password for security purposes
                 $user = $this->getSnipUser();
                 $user->user_hash = strtolower(md5(time().mt_rand()));
                 $user->save();
@@ -305,6 +307,7 @@ class SugarSNIP
      */
     public function getSnipUser()
     {
+
         $id = User::retrieve_user_id(self::SNIP_USER);
 
         if(!$id) {

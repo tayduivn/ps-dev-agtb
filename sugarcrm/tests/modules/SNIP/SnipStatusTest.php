@@ -44,18 +44,28 @@ class SnipStatusTest extends Sugar_PHPUnit_Framework_TestCase
     public function testStatusDown4() { $this->statusTest('','down'); }
     public function testStatusDown5() { $this->statusTest(NULL,'down'); }
 
+    public function testStatusDownShowEnableScreen() { $this->statusTest(json_encode(array('result'=>'asdofi7aso8fdus','status'=>'dafso8dfuds')),'notpurchased',null,false); }
+
     public function testStatusPurchasedError1() { $this->statusTest(json_encode(array('result'=>'ok')),'purchased_error',null); }
     public function testStatusPurchasedError2() { $this->statusTest(json_encode(array('result'=>'ok', 'status'=>'this is a test error status')),'purchased_error','this is a test error status'); }
 
 
 
-    protected function statusTest($serverResponse,$expectedStatus,$expectedMessage=null)
+    protected function statusTest($serverResponse,$expectedStatus,$expectedMessage=null,$snipEmailExists=true)
     {
     	//give snip our mock client
     	$this->snip->setClient(new MockClient($this->snip,$this,$serverResponse));
+        $oldemail = $this->snip->getSnipEmail();
+        if ($snipEmailExists){
+            $this->snip->setSnipEmail("snip-test-182391820@sugarcrm.com");
+        }else{
+            $this->snip->setSnipEmail("");
+        }
 
     	//call getStatus on snip
     	$status = $this->snip->getStatus();
+
+        $this->snip->setSnipEmail($oldemail);
 
     	//check to make sure the status is an array with the correct values
     	$this->assertTrue(is_array($status),"getStatus() should always return an associative array of the form array('status'=>string,'message'=>string|null). But it did not return an array.");
