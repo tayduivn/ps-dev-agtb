@@ -132,11 +132,6 @@ ResponseObj.prototype.response = function (result)
 	var nextItems= document.getElementById("nextItems");
 	var dispCount = max;
 	var dispMin = mOffset;
-console.log("IKEA: dispCount = "+dispCount);
-console.log("IKEA: result.result_count = "+result.result_count);
-console.log("IKEA: max = "+max);
-console.log("IKEA: dispMin = "+dispMin);
-console.log("IKEA: mOffset = "+mOffset);
 	if(result.result_count < max)
 	{
 		dispCount = result.result_count;
