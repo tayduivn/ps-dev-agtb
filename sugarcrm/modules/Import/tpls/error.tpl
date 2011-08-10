@@ -55,7 +55,7 @@
     };
     var chooseToCancel = function() {
         //do nothing, just hide the modal
-        SUGAR.importWizard.closeDialog();
+        ImportErrorBox.destroy();
     };
 
     //define the buttons to be used in modal popup

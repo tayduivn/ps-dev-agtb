@@ -54,7 +54,7 @@ SUGAR.importWizard = function() {
 			YAHOO.util.Event.onContentReady("importWizardDialog", function() 
 			{
 				SUGAR.importWizard.dialog = new YAHOO.widget.Dialog("importWizardDialog", 
-				{ width : "1100px",
+				{ width : "950px",
 				  height: "600px",
 				  fixedcenter : true,
 				  draggable:false,
@@ -93,7 +93,7 @@ SUGAR.importWizard = function() {
 				
 				
 				var success = function(data) {		
-					eval(data.responseText);
+					var response = YAHOO.lang.JSON.parse(data.responseText);
 					importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 					var submitDiv = document.getElementById('submitDiv');
 					var importWizardDialogTitle = document.getElementById('importWizardDialogTitle');

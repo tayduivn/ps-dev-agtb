@@ -89,7 +89,7 @@ document.getElementById('importmore').onclick = function(){
     document.getElementById('importundo').action.value = 'Step1';
     
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');

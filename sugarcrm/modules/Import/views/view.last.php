@@ -207,7 +207,7 @@ class ImportViewLast extends ImportView
 document.getElementById('undo').onclick = function(){
     
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -227,7 +227,7 @@ document.getElementById('importmore').onclick = function(){
     document.getElementById('importlast').action.value = 'Step1';
     
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');

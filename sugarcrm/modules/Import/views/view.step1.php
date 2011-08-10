@@ -96,12 +96,14 @@ class ImportViewStep1 extends ImportView
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \"  id=\"gonext\"></td></tr></table>";
-        $this->ss->assign("CONTENT",json_encode($content));
-        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
 
         $jsLang = jsLanguage::createModuleStringsCache($this->module, $GLOBALS['current_language'], true);
-        $this->ss->assign("JS",json_encode($jsLang . $this->_getJS()));
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        echo json_encode(array(
+            'html'          => $content,
+            'submitContent' => $submitContent,
+            'title'         => $this->getModuleTitle(false),
+            'script'        => $jsLang . $this->_getJS(),
+         ));
     }
 
     private function getImportableModules()
@@ -199,7 +201,7 @@ document.getElementById('gonext').onclick = function()
     }
 
     var success = function(data) {
-        eval(data.responseText);
+        var response = YAHOO.lang.JSON.parse(data.responseText);
         importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
         submitDiv = document.getElementById('submitDiv');
         importWizardDialogTitle = document.getElementById('importWizardDialogTitle');

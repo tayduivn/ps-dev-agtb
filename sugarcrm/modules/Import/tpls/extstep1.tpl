@@ -184,7 +184,7 @@ ProcessESImport = new function()
                         YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETED}{literal}');
                         var handleSuccess = {
 	                        	success : function(data) {
-									eval(data.responseText);
+									var response = YAHOO.lang.JSON.parse(data.responseText);
 									importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 									importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 									submitDiv = document.getElementById('submitDiv');

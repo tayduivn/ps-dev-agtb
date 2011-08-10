@@ -139,18 +139,20 @@ class ImportViewStep2 extends ImportView
 
         $content = $this->ss->fetch('modules/Import/tpls/step2.tpl');
         
-        $this->ss->assign("CONTENT",json_encode($content));
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
         if ($displayBackBttn) {
             $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
         }
 	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
-        $this->ss->assign("SUBMITCONTENT",json_encode($submitContent));
-        
-       
-        
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+
+
+        echo json_encode(array(
+            'html'          => $content,
+            'submitContent' => $submitContent,
+            'title'         => $this->getModuleTitle(false),
+            'script'        => $this->_getJS(),
+         ));
     }
     
     /**
@@ -168,7 +170,7 @@ if( document.getElementById('goback') )
         document.getElementById('importstep2').action.value = 'Step1';
         
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -205,12 +207,14 @@ document.getElementById('gonext').onclick = function(){
 
     if (!isError) {
 	var uploadHandler = {
-	  	    upload: function(data) {		
-				eval(data.responseText);
+	  	    upload: function(data) {
+				if (typeof(console) != "undefined" && typeof(console.log) == "function")
+				    console.log(data.responseText);
+				var response = YAHOO.lang.JSON.parse(data.responseText);
 				importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 				importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 				submitDiv = document.getElementById('submitDiv');
-				if(response['html'] != "") {
+				if(response['html'] && response['html'] != "") {
 					importWizardDialogDiv.innerHTML = response['html'];
 					importWizardDialogTitle.innerHTML = response['title'];
 					submitDiv.innerHTML = response['submitContent'];
