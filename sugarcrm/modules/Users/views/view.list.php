@@ -45,26 +45,27 @@ class UsersViewList extends ViewList
  	    $this->lv->email = false;
  	}
 
-//BEGIN SUGARCRM flav=sales ONLY
  	public function listViewProcess()
  	{
  		$this->processSearchForm();
 		$this->lv->searchColumns = $this->searchForm->searchColumns;
-		
+
 		if(!$this->headers)
 			return;
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
 			$this->lv->ss->assign("SEARCH",true);
-			if(!is_admin($GLOBALS['current_user'])){
-				if(!empty($this->where)){
-					$this->where .= "AND";
-				}
-				$this->where = " users.is_admin = '0'";
+			if(!empty($this->where)){
+					$this->where .= " AND";
 			}
+			$this->where .= " users.status !='Reserved'";
+//BEGIN SUGARCRM flav=sales ONLY
+			if(!is_admin($GLOBALS['current_user'])){
+				$this->where = " AND users.is_admin = '0'";
+			}
+//END SUGARCRM flav=sales ONLY
 			$this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
 			$savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
 			echo $this->lv->display();
 		}
  	}
-//END SUGARCRM flav=sales ONLY
 }

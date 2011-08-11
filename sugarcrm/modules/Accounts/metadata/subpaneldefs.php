@@ -27,12 +27,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
-
  */
 // $Id: layout_defs.php 14538 2006-07-12 00:27:59Z awu $
 
 $layout_defs['Accounts'] = array(
-	// list of what Subpanels to show in the DetailView 
+	// list of what Subpanels to show in the DetailView
 	'subpanel_setup' => array(
 
 		'activities' => array(
@@ -46,7 +45,7 @@ $layout_defs['Accounts'] = array(
 			'header_definition_from_subpanel'=> 'meetings',
 //END SUGARCRM flav!=dce ONLY
 			'module'=>'Activities',
-			
+
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateTaskButton'),
 //BEGIN SUGARCRM flav!=dce ONLY
@@ -54,9 +53,9 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopScheduleCallButton'),
 //END SUGARCRM flav!=dce ONLY
 				array('widget_class' => 'SubPanelTopComposeEmailButton'),
-			),	
-					
-			'collection_list' => array(	
+			),
+
+			'collection_list' => array(
 				'tasks' => array(
 					'module' => 'Tasks',
 					'subpanel_name' => 'ForActivities',
@@ -74,7 +73,7 @@ $layout_defs['Accounts'] = array(
 					'get_subpanel_data' => 'calls',
 				),
 //END SUGARCRM flav!=dce ONLY
-			)			
+			)
 		),
 		'history' => array(
 			'order' => 20,
@@ -87,14 +86,14 @@ $layout_defs['Accounts'] = array(
 			'header_definition_from_subpanel'=> 'meetings',
 //END SUGARCRM flav!=dce ONLY
 			'module'=>'History',
-			
+
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateNoteButton'),
 				array('widget_class' => 'SubPanelTopArchiveEmailButton'),
             	array('widget_class' => 'SubPanelTopSummaryButton'),
-			),	
-					
-			'collection_list' => array(	
+			),
+
+			'collection_list' => array(
 				'tasks' => array(
 					'module' => 'Tasks',
 					'subpanel_name' => 'ForHistory',
@@ -116,20 +115,20 @@ $layout_defs['Accounts'] = array(
 					'module' => 'Notes',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'notes',
-				),	
+				),
 				'emails' => array(
 					'module' => 'Emails',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'emails',
-				),	
+				),
 				'linkedemails' => array(
 	                'module' => 'Emails',
 	                'subpanel_name' => 'ForUnlinkedEmailHistory',
 	                'get_subpanel_data' => 'function:get_unlinked_email_query',
 	                'generate_select'=>true,
 	                'function_parameters' => array('return_as_array'=>'true'),
-	    		),          
-			)			
+	    		),
+			)
 		),
         'documents' => array(
             'order' => 25,
@@ -139,13 +138,13 @@ $layout_defs['Accounts'] = array(
             'sort_by' => 'id',
             'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'get_subpanel_data' => 'documents',
-            'top_buttons' => 
+            'top_buttons' =>
             array (
-                0 => 
+                0 =>
                 array (
                     'widget_class' => 'SubPanelTopButtonQuickCreate',
                     ),
-                1 => 
+                1 =>
                 array (
                     'widget_class' => 'SubPanelTopSelectButton',
                     'mode' => 'MultiSelect',
@@ -166,7 +165,7 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 
-		),		
+		),
 //BEGIN SUGARCRM flav!=dce ONLY
 		'opportunities' => array(
 			'order' => 40,
@@ -195,10 +194,10 @@ $layout_defs['Accounts'] = array(
 				array('widget_class' => 'SubPanelTopCreateLeadNameButton'),
 				array('widget_class' => 'SubPanelTopSelectButton',
 					'popup_module' => 'Opportunities',
-					'mode' => 'MultiSelect', 
+					'mode' => 'MultiSelect',
 				),
 			),
-			
+
 		),
 //END SUGARCRM flav!=sales ONLY
 //END SUGARCRM flav!=dce ONLY
@@ -232,7 +231,7 @@ $layout_defs['Accounts'] = array(
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
 			),
-			
+
 		),
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=pro ONLY
@@ -302,8 +301,8 @@ $layout_defs['Accounts'] = array(
 			'sort_by' => 'activity_date',
 			'get_subpanel_data'=>'campaigns',
 			'subpanel_name' => 'ForTargets',
-			'title_key' => 'LBL_CAMPAIGNS',	
-		),		
+			'title_key' => 'LBL_CAMPAIGNS',
+		),
         //BEGIN SUGARCRM flav=pro ONLY
 		'contracts' => array(
 			'order' => 70,
@@ -316,7 +315,23 @@ $layout_defs['Accounts'] = array(
 			'title_key' => 'LBL_CONTRACTS_SUBPANEL_TITLE',
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
-			),			
+			),
+		),
+
+        // SNIP
+        'contact_history' => array (
+			'order' => 21,
+			'sort_order' => 'desc',
+			'sort_by' => 'date_entered',
+			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
+			'subpanel_name' => 'contact_history',   //this values is not associated with a physical file.
+            'top_buttons' => array(),
+        	'module' => 'Emails',
+            'subpanel_name' => 'ForContactHistory',
+            'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
+          	'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
+            'generate_select'=>true,
+            'get_distinct_data' => true,
 		),
         //END SUGARCRM flav=pro ONLY
 //END SUGARCRM flav!=dce && flav!=sales ONLY

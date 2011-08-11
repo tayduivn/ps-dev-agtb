@@ -48,7 +48,7 @@ $layout_defs['Cases'] = array(
 				array(
 					'widget_class' => 'SubPanelTopSelectButton',
 					'popup_module' => 'Cases',
-					'mode' => 'MultiSelect', 
+					'mode' => 'MultiSelect',
 					'initial_filter_fields' => array('account_id' => 'account_id', 'account_name' => 'account_name'),
 				),
 			),
@@ -69,7 +69,7 @@ $layout_defs['Cases'] = array(
 				array('widget_class' => 'SubPanelTopComposeEmailButton'),
 			),
 
-			'collection_list' => array(	
+			'collection_list' => array(
 				'meetings' => array(
 					'module' => 'Meetings',
 					'subpanel_name' => 'ForActivities',
@@ -84,8 +84,8 @@ $layout_defs['Cases'] = array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'calls',
-				),	
-			)			
+				),
+			)
 		),
 		'history' => array(
 			'order' => 20,
@@ -102,7 +102,7 @@ $layout_defs['Cases'] = array(
             array('widget_class' => 'SubPanelTopSummaryButton'),
 			),
 
-			'collection_list' => array(	
+			'collection_list' => array(
 				'meetings' => array(
 					'module' => 'Meetings',
 					'subpanel_name' => 'ForHistory',
@@ -117,18 +117,18 @@ $layout_defs['Cases'] = array(
 					'module' => 'Calls',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'calls',
-				),	
+				),
 				'notes' => array(
 					'module' => 'Notes',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'notes',
-				),	
+				),
 				'emails' => array(
 					'module' => 'Emails',
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'emails',
-				),	
-			)			
+				),
+			)
 		),
         'documents' => array(
             'order' => 25,
@@ -138,13 +138,13 @@ $layout_defs['Cases'] = array(
             'sort_by' => 'id',
             'title_key' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'get_subpanel_data' => 'documents',
-            'top_buttons' => 
+            'top_buttons' =>
             array (
-                0 => 
+                0 =>
                 array (
                     'widget_class' => 'SubPanelTopButtonQuickCreate',
                     ),
-                1 => 
+                1 =>
                 array (
                     'widget_class' => 'SubPanelTopSelectButton',
                     'mode' => 'MultiSelect',
@@ -165,10 +165,10 @@ $layout_defs['Cases'] = array(
 				array(
 					'widget_class' => 'SubPanelTopSelectButton',
 					'popup_module' => 'Bugs',
-					'mode' => 'MultiSelect', 
-				),                
-            ),			
-		),	
+					'mode' => 'MultiSelect',
+				),
+            ),
+		),
 		'project' => array(
 			'order' => 110,
 			'sort_order' => 'asc',
@@ -181,7 +181,7 @@ $layout_defs['Cases'] = array(
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopButtonQuickCreate'),
                 array('widget_class' => 'SubPanelTopSelectButton'),
-			),		
+			),
 		),
 //BEGIN SUGARCRM flav=dce ONLY
 		'dceinstances' => array(
@@ -194,6 +194,21 @@ $layout_defs['Cases'] = array(
             'title_key' => 'LBL_DCEINSTANCES_SUBPANEL_TITLE',
         ),
 //END SUGARCRM flav=dce ONLY
+        //BEGIN SUGARCRM flav=pro ONLY
+        'contact_history' =>  array(
+			'order' => 21,
+        	'sort_order' => 'desc',
+			'sort_by' => 'date_entered',
+			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
+			'module' => 'Emails',
+            'subpanel_name' => 'ForContactHistory',
+            'get_subpanel_data' => 'function:get_unlinked_email_query_via_link',
+		    'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'link' => 'contacts'),
+            'generate_select'=>true,
+		    'get_distinct_data' => true,
+            'top_buttons' => array(),
+		),
+        //END SUGARCRM flav=pro ONLY
 	),
 );
 ?>
