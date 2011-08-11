@@ -250,7 +250,7 @@ class WorkFlowGlue {
 		$eval_string = "";
 
 		$op = $this->operator_array[$type_object->operator];
-		if($op == '==' || $op = "!=") {
+		if($op == '==' || $op == "!=") {
 		    $op .= '='; // Bug 42923: use exact conditions for booleans
 		}
 
@@ -292,7 +292,12 @@ class WorkFlowGlue {
 		//compensates if the user changes the field sometime later
 		if($include_same_compare==true){
 			$eval_string .= "\n && ".build_source_array("past", $type_object->lhs_field);
-			$eval_string .= "!= ".build_source_array($parent_type, $type_object->lhs_field)." \n";
+
+            // Bug # 45219 && Bug # 45125 - workflow breaks on future date fields
+            if (strcmp($parent_type,"future")==0)
+                $eval_string .= "!= \$focus->{$type_object->lhs_field}";
+            else    // parent type = past
+                $eval_string .= "!= ".build_source_array($parent_type, $type_object->lhs_field)." \n";
 		}
 
 		$eval_string .= ")  \n";
