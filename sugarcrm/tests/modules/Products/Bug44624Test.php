@@ -43,7 +43,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_product->disable_row_level_security = true;
         //Clear out the products_audit table
         $GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
-        $this->useOutputBuffering = false;
+        //$this->useOutputBuffering = false;
 	}
 
 	public function tearDown()
@@ -77,7 +77,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
             $list_of_changes[] = $row["field_name"];
         }
 
-        echo var_export($list_of_changes, true);
+        //echo var_export($list_of_changes, true);
         // list of audited changes should be empty
         $this->assertEmpty($list_of_changes);
     }
@@ -107,7 +107,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
             $list_of_changes[] = $row["field_name"];
         }
 
-        echo var_export($list_of_changes, true);
+        //echo var_export($list_of_changes, true);
         
         // list of audited changes should be empty
         $this->assertEmpty($list_of_changes);
