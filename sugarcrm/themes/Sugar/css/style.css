@@ -131,7 +131,7 @@ th, td
 
 /* layout the header elements */
 #header {
-min-width: 1050px;
+min-width: 950px;
 }
 
 .headerLarge {
@@ -3073,7 +3073,7 @@ embed
 	}
 
 	.dashletPanelMenu.wizard.import, .dashletPanelMenu.wizard.import.yui-module.yui-overlay.yui-panel {
-		padding: 5px;	
+		padding: 0px;
 	}
 	
 	
@@ -3094,7 +3094,7 @@ embed
 		-moz-border-radius: 0px;
 		-webkit-border-top-right-radius: 0px;
 		-webkit-border-top-left-radius: 0px;
-		height: 487px;
+		height: 460px;
 		overflow: auto;
 		width: auto;
 		display: block;
@@ -3119,7 +3119,7 @@ embed
 		-webkit-border-bottom-right-radius: 6px;
 		-webkit-border-bottom-left-radius: 6px;
 		margin-top: 1px;
-		padding: 10px;
+		padding: 5px;
 	}
 	
 	
@@ -3398,7 +3398,7 @@ ul.subTabs li a:link, ul.subTabs li a:visited
 #moduleList
 {
     height: 45px;
-	min-width: 1030px;
+	min-width: 930px;
 }
 
 #subModuleList
@@ -5655,7 +5655,7 @@ width:100%;
 .dcmenu{
 color:blue;
 height:55px;
-min-width: 1050px;
+min-width: 950px;
 	background-color: #0d3a62;
 	height: 55px;	
 	background: -moz-linear-gradient(center top,
@@ -5689,7 +5689,7 @@ padding:0px 10px 0px;
 height:110%;
 font-size:6px !important;
 min-width: 950px\9; /* ie hack, width must be defined or else it goes off the screen */
-*width: 1050px;
+*width: 950px;
 }
 
 #dcboxbody.sugar_spot_search{
