@@ -19,10 +19,10 @@ class Latin{
          }
         chdir(realpath($this->cwd ."/". $this->translationPath));
 
-		if(preg_match("/6\.1\.\d/", $this->ver)){
-			passthru("git branch --track 6_1 origin/6_1");
-			passthru("git checkout 6_1");
-			passthru("git pull origin 6_1");
+		if(preg_match("/6\.2\.\d/", $this->ver)){
+			passthru("git branch --track 6_2 origin/6_2");
+			passthru("git checkout 6_2");
+			passthru("git pull origin 6_2");
 		}else{
 			passthru("git checkout master");
 		    passthru("git pull origin master");
