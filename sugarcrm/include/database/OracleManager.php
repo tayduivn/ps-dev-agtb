@@ -109,7 +109,7 @@ class OracleManager extends DBManager
     {
         //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them
         foreach ($indices as $key => $value) {
-            $indices[$key]['name'] = OracleHelper::getValidDBName($value['name'], true, 'index');
+            $indices[$key]['name'] = $this->getHelper()->getValidDBName($value['name'], true, 'index');
         }
 
         return parent::repairTableParams($tablename,$fielddefs,$indices,$execute,$engine);

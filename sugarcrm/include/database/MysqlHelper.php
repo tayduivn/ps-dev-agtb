@@ -38,7 +38,7 @@ class MysqlHelper extends DBHelper
     /**
      * Maximum length of identifiers
      */
-    protected static $maxNameLengths = array(
+    protected $maxNameLengths = array(
         'table' => 64,
         'column' => 64,
         'index' => 64,
