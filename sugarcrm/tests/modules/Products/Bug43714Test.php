@@ -30,6 +30,7 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->_product = new Product();
 		$this->_product->disable_row_level_security = true;
 
+		$GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
 
 		$_REQUEST = array(
 		    "return_action" => "", 
@@ -99,6 +100,7 @@ class Bug43714Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
+		$GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
 		SugarTestProductUtilitiesWithTypes::removeAllCreatedProducts();
 		SugarTestProductTypesUtilities::removeAllCreatedtypes();
 	}

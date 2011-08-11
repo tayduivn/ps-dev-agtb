@@ -48,7 +48,9 @@ require_once('modules/ModuleBuilder/parsers/ModuleBuilderParser.php');
 		// we rely here on PHP to preserve the order of the received name=>value pairs - associative arrays in PHP are ordered
 		foreach ( $temp as $item )
 		{
-			$dropdown[ $item [0] ] = html_entity_decode($item [ 1 ]);
+			//Bug 38391 uses the html_entity_encode
+			//Bug xss fixes use the remove_xss method
+			$dropdown[ $item [0] ] = html_entity_decode(remove_xss(from_html($item [ 1 ]))) ;
 		}
 
 		if(array_key_exists($emptyMarker, $dropdown)){

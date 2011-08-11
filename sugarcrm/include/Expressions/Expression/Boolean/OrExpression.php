@@ -37,7 +37,7 @@ class OrExpression extends BooleanExpression {
 		{
 			$params = array($params);	
 		}
-				
+
 		foreach ( $params as $param ) 
 		{
 			if ( $param->evaluate() == AbstractExpression::$TRUE )

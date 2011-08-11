@@ -31,8 +31,8 @@ class SugarFieldDate extends SugarFieldBase {
 
     function getEditViewSmarty($parentFieldArray, $vardef, $displayParams) {
         $this->setup($parentFieldArray, $vardef, $displayParams);
-        $this->ss->assign('CAL_DATE_FORMAT', $GLOBALS['timedate']->get_cal_date_format());
-
+        global $sugar_config;
+        $this->ss->assign('CAL_DATE_FORMAT', 'Y-m-d');
         return $this->ss->fetch('include/SugarFields/Fields/SugarFieldDate/SugarFieldDateEditViewSmarty.tpl');
     }
 

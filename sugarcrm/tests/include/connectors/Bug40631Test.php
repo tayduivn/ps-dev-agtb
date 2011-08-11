@@ -678,6 +678,7 @@ EOQ;
         $account = new Account();
         $accounts = array();
         $accounts = $source_instance->fillBeans(array('name' => 'Gannett'), 'Accounts', $accounts);
+
         foreach($accounts as $count=>$account) 
         {
         	    if(!empty($account) && is_string($account->name)) 

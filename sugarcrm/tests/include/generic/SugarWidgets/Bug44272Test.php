@@ -11,16 +11,18 @@ var $account;
 	
 public function setUp()
 {
-    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	$this->account = SugarTestAccountUtilities::createAccount();
 	require('include/modules.php');
 	$GLOBALS['beanList'] = $beanList;
-	$GLOBALS['beanFiles'] = $beanFiles;	
+	$GLOBALS['beanFiles'] = $beanFiles;		
+	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	$GLOBALS['current_user']->is_admin = true;
+	$this->account = SugarTestAccountUtilities::createAccount();
 }	
 
 public function tearDown()
 {
 	SugarTestAccountUtilities::removeAllCreatedAccounts();
+	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 }
 	
 public function testSugarWidgetSubpanelTopButtonQuickCreate()

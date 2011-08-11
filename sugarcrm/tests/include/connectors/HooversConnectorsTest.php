@@ -80,10 +80,9 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	$account = $source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);
         if(empty($account) || !is_string($account->name))
     	{
-    	   $this->markTestSkipped('No account returned.  API Service may be down.  Skip test');
-    	   return;
+    	   $this->assertRegExp('/Gannett/i', $account->name, "Assert that account name is like Gannett");  
     	}    	
-    	$this->assertRegExp('/Gannett/i', $account->name, "Assert that account name is like Gannett");    	
+    	  	
     }
 
     function test_hoovers_fillBeans() {
@@ -95,7 +94,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	   $this->markTestSkipped('No accounts returned.  API Service may be down.  Skip test');
     	   return;
     	}
-    	
+
         foreach($accounts as $count=>$account) {
         	if(empty($account)  && is_string($account->name))
         	{

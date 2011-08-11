@@ -215,14 +215,16 @@ class Document extends SugarBean {
             $result = $this->db->query($query);
             $row = $this->db->fetchByAssoc($result);
 
-            //popuplate name
-			if(isset($this->document_name))$this->name = $this->document_name;
-			//popuplate filename
+            //populate name
+            if(isset($this->document_name))
+            {
+            	$this->name = $this->document_name;
+            }
+
             if(isset($row['filename']))$this->filename = $row['filename'];
             //$this->latest_revision = $row['revision'];
             if(isset($row['revision']))$this->revision = $row['revision'];
 			
-        
             //populate the file url. 
             //image is selected based on the extension name <ext>_icon_inline, extension is stored in document_revisions.
             //if file is not found then default image file will be used.

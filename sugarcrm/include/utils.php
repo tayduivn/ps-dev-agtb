@@ -1962,7 +1962,7 @@ function clean_xss($str, $cleanImg=true) {
 	$jsEvents .= "onmouseup|onmouseover|onmousedown|onmouseenter|onmouseleave|onmousemove|onload|onchange|";
 	$jsEvents .= "onreset|onselect|onsubmit|onkeydown|onkeypress|onkeyup|onabort|onerror|ondragdrop";
 
-	$attribute_regex	= "#<[^/>][^>]+({$jsEvents})[^=>]*=[^>]*>#sim";
+	$attribute_regex	= "#<.+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
 	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
@@ -2771,7 +2771,7 @@ function _ppf($bean, $die=false) {
 function _pp($mixed)
 {
 	//BEGIN SUGARCRM flav=int ONLY
-	echo "\n<pre>\n";
+        echo "\n<pre>\n";
 	print_r($mixed);
 
 	echo "";
@@ -2780,7 +2780,7 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
-	//END SUGARCRM flav=int ONLY
+        //END SUGARCRM flav=int ONLY
 }
 
 /**

@@ -208,25 +208,31 @@ function isNumeric(s) {
    }
 }
 
-var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
-var date_reg_format = '([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})'
 function isDate(dtStr) {
 
+	var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
+	var date_reg_format = /(\d{4})\-(\d{1,2})\-(\d{1,2})/g;
+
 	if(dtStr.length== 0) {
-		return true;
+	   return true;
 	}
 
     // Check that we have numbers
-	myregexp = new RegExp(date_reg_format)
+	myregexp = new RegExp(date_reg_format);
+	
 	if(!myregexp.test(dtStr))
-		return false
-
+	{
+		return false;
+	}
+	
     m = '';
     d = '';
     y = '';
 
     var dateParts = dtStr.match(date_reg_format);
-    for(key in date_reg_positions) {
+    
+    for(key in date_reg_positions) 
+    {
         index = date_reg_positions[key];
         if(key == 'm') {
            m = dateParts[index];

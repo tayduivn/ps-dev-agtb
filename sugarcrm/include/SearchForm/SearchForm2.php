@@ -457,7 +457,12 @@ require_once('include/EditView/EditView2.php');
                         if(empty($this->fieldDefs[$long_name]['value'])) {
                         	$this->fieldDefs[$long_name]['value'] = $array[$long_name];
                         }
-					}
+                    }else if(!empty($array[$name]) && !$fromMergeRecords && !$this->isEmptyDropdownField($name, $array[$name])) { //basic        	
+                    	$this->searchFields[$name]['value'] = $array[$name];
+                        if(empty($this->fieldDefs[$long_name]['value'])) {
+                        	$this->fieldDefs[$long_name]['value'] = $array[$name];
+                        }
+                    }
                     
                     if(!empty($params['enable_range_search']) && isset($this->searchFields[$name]['value']))
 					{

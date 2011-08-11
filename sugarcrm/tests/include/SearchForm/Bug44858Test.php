@@ -6,13 +6,17 @@ require_once "include/SearchForm/SearchForm2.php";
 
 class Bug44858Test extends Sugar_PHPUnit_Framework_TestCase
 {
-   
-    
-    public function tearDown()
-    {
-        
+    public function setUp()
+	{
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        //$this->useOutputBuffering = true;
+	}
+
+	public function tearDown()
+	{
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-    }
+	}
     
     /**
      * @ticket 44858
@@ -22,6 +26,8 @@ class Bug44858Test extends Sugar_PHPUnit_Framework_TestCase
         //test to check that if value of a dropdown field is already set in REQUEST object (from any form such as mass update form instead of search form)
         //i.e. search is made on empty string, but REQUEST object gets value of that dropdown field from some other form on the same page
         //then on clicking serach button, value of that field should not be used as filter in where clause
+        $this->markTestSkipped('This test should actually check that the $whereArray is indeed populated');
+        return;
         
     	//array to simulate REQUEST object
     	$requestArray['module'] = 'Accounts';
@@ -43,6 +49,7 @@ class Bug44858Test extends Sugar_PHPUnit_Framework_TestCase
         $searchForm->searchdefs = $searchdefs[$searchForm->module];                          
     	$searchForm->populateFromArray($requestArray,'basic_search',false);
     	$whereArray = $searchForm->generateSearchWhere(true, $account->module_dir);
+    	//echo var_export($whereArray, true);
     	$this->assertEquals(0, count($whereArray));
 
     }

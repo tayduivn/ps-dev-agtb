@@ -47,6 +47,7 @@ class Bug7566Test extends Sugar_PHPUnit_Framework_TestCase
 	
     public function setUp()
     {
+    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		require_once("modules/Administration/QuickRepairAndRebuild.php");
 		$this->_rac = new RepairAndClear();
 		$this->_bean =  SugarTestAccountUtilities::createAccount();

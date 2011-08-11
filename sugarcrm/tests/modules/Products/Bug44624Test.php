@@ -29,40 +29,43 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 
 	private $_product;
 
-
 	public function setUp() 
 	{
-
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->is_admin = 1;
+		global $current_user;
+	    $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->is_admin = 1;
+        $current_user->setPreference('dec_sep', '.', 0, 'global');
+        $current_user->setPreference('num_grp_sep', ',', 0, 'global');
+        
 	    $GLOBALS['module'] = "Products";
 		SugarTestProductTypesUtilities::createType(false, '1');
 		$this->_product = SugarTestProductUtilitiesWithTypes2::createProduct("1");
         $this->_product->disable_row_level_security = true;
-
-
+        //Clear out the products_audit table
+        $GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
+        $this->useOutputBuffering = false;
 	}
 
 	public function tearDown()
 	{
+		$GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
 		SugarTestProductUtilitiesWithTypes2::removeAllCreatedProducts();
 		SugarTestProductTypesUtilities::removeAllCreatedtypes();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
-        unset($this->_product);
 	}
 
     public function testProductListPriceChanges() {
-
-
         $this->_product->list_price = 0;
-        $this->_product->save();$this->_product->retrieve();
+        $this->_product->save();
+        $this->_product->retrieve();
 
         $this->_product->list_price = 0.00;
-        $this->_product->save(); $this->_product->retrieve();
+        $this->_product->save(); 
+        $this->_product->retrieve();
 
         $this->_product->list_price = "";
-        $this->_product->save(); $this->_product->retrieve();
+        $this->_product->save(); 
+        $this->_product->retrieve();
 
         $id = $this->_product->id;
         $query = "SELECT * from products_audit where parent_id='$id'";
@@ -72,27 +75,27 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $list_of_changes[] = $row["field_name"];
-           
         }
 
+        echo var_export($list_of_changes, true);
         // list of audited changes should be empty
-         $this->assertEmpty($list_of_changes);
-
-
+        $this->assertEmpty($list_of_changes);
     }
 
 
     public function testProductCostPriceChanges() {
 
- 
         $this->_product->cost_price = 1;    // original cost price is 1
-        $this->_product->save();$this->_product->retrieve();
+        $this->_product->save();
+        $this->_product->retrieve();
 
         $this->_product->cost_price = 1.00;
-        $this->_product->save(); $this->_product->retrieve();
+        $this->_product->save(); 
+        $this->_product->retrieve();
 
         $this->_product->cost_price = "1";
-        $this->_product->save(); $this->_product->retrieve();
+        $this->_product->save(); 
+        $this->_product->retrieve();
 
         $id = $this->_product->id;
         $query = "SELECT * from products_audit where parent_id='$id'";
@@ -102,13 +105,12 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $list_of_changes[] = $row["field_name"];
-
         }
 
+        echo var_export($list_of_changes, true);
+        
         // list of audited changes should be empty
-         $this->assertEmpty($list_of_changes);
-
-
+        $this->assertEmpty($list_of_changes);
     }
 
     public function testProductDiscountPriceChanges() {
@@ -116,10 +118,12 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
  
 
           $this->_product->discount_price = 3.33;    // original cost price is 3.33
-          $this->_product->save();$this->_product->retrieve();
+          $this->_product->save();
+          $this->_product->retrieve();
 
           $this->_product->discount_price = "3.33";
-          $this->_product->save(); $this->_product->retrieve();
+          $this->_product->save();
+          $this->_product->retrieve();
 
           $id = $this->_product->id;
           $query = "SELECT * from products_audit where parent_id='$id'";

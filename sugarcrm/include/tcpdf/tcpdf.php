@@ -4477,6 +4477,7 @@ if (!class_exists('TCPDF', false)) {
 			// calculate new minimum dimensions in pixels
 			$neww = round($w * $this->k * $dpi / $this->dpi);
 			$newh = round($h * $this->k * $dpi / $this->dpi);
+
 			// check if resize is necessary (resize is used only to reduce the image)
 
             // - commmented out by pete d.
