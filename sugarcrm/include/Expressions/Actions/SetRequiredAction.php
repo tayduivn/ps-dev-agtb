@@ -75,13 +75,13 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
                     node.innerHTML = \"<font color='red'>*</font>\";
                     node.className = \"req\";
                     this._el_lbl.appendChild(node);
-                    addToValidate('EditView', this.variable, 'text', true, this.variable);
+                    addToValidate(this.context.formName, this.variable, 'text', true, this.variable);
                 }
             } else {
                 if ( p != null  && reqSpan != false) {
                     p.removeChild(reqSpan);
                 }
-                removeFromValidate('EditView', this.variable);
+                removeFromValidate(this.context.formName, this.variable);
             }
         }
     } 

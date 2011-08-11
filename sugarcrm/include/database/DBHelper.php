@@ -51,7 +51,7 @@ abstract class DBHelper
     /**
      * Maximum length of identifiers
      */
-    protected static $maxNameLengths;
+    protected $maxNameLengths;
 
     /**
 	 * Generates sql for create table statement for a bean.
@@ -990,14 +990,14 @@ abstract class DBHelper
      * @param string $ensureUnique
      * @return string Valid column name trimmed to right length and with invalid characters removed
      */
-     public static function getValidDBName ($name, $ensureUnique = false, $type = 'column')
+     public function getValidDBName ($name, $ensureUnique = false, $type = 'column')
     {
         if(is_array($name))
         {
             $result = array();
             foreach($name as $field)
             {
-                $result[] = self::getValidDBName($field, $ensureUnique, $type);
+                $result[] = $this->getValidDBName($field, $ensureUnique, $type);
             }
         }else
         {
@@ -1005,7 +1005,7 @@ abstract class DBHelper
             $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
             $len = strlen ( $name ) ;
             $result = $name;
-            $maxLen = empty(self::$maxNameLengths[$type]) ? self::$maxNameLengths[$type]['column'] : self::$maxNameLengths[$type];
+            $maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
             if ($len <= $maxLen)
             {
                 return strtolower($name);

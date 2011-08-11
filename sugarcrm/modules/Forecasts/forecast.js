@@ -103,6 +103,9 @@ function get_chart(theform) {
 					subwindow.document.write(o.responseText);
 					subwindow.document.close();
 					subwindow.focus();
+                    if (isSupportedIE()) {
+                        subwindow.location.reload();
+                    }
 			  },
 			  failure: function(o) {/*failure handler code*/}
 		};

@@ -75,3 +75,25 @@ YAHOO.widget.Panel.prototype.configClose = function (type, args, obj) {
         }
     }
 }
+
+// Override for bug45669
+// The fix is moving the code into this file 'as is'
+YAHOO.widget.Overlay.prototype.center = function() {
+	var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+	var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+
+	var viewPortWidth = YAHOO.util.Dom.getClientWidth();
+	var viewPortHeight = YAHOO.util.Dom.getClientHeight();
+
+	var elementWidth = this.element.offsetWidth;
+	var elementHeight = this.element.offsetHeight;
+
+	var x = (viewPortWidth / 2) - (elementWidth / 2) + scrollX;
+	var y = (viewPortHeight / 2) - (elementHeight / 2) + scrollY;
+
+	this.element.style.left = parseInt(x, 10) + "px";
+	this.element.style.top = parseInt(y, 10) + "px";
+	this.syncPosition();
+
+	this.cfg.refireEvent("iframe");
+};
