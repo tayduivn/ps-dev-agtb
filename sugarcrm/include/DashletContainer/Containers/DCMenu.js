@@ -149,14 +149,14 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
 	    		
-	    		 content += '<div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
+	    		 content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
     		}
-    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd">';
+    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
 			if ( title !== undefined )
-			    content +=	'<span>' + title + '</span>';
+			    content +=	'<div id="dctitle">' + title + '</div>';
 			else
 			    if(typeof type  !=  'undefined')
-			        content +=	'<span>' + type + '</span>';
+			        content +=	'<div id="dctitle">' + type + '</div>';
 
 		    content += '<div class="close">';
             if ( extraButton != null ) {
@@ -381,7 +381,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-
+						if(SUGAR.isIE) {
+							var dchead = Y.one('#dchead');
+				    		var dcheadwidth = dchead.get('offsetWidth');
+				    		Y.one('#dctitle').setStyle("width",dcheadwidth+"px");	
+						}
 						if(isRTL) {
 							overlay.set('x',dcmenuSugarCubeX - dcboxbodyWidth);
 						}

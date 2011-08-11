@@ -2942,6 +2942,7 @@ embed
 	    color-stop(1, rgba(48,86,120,.8))
     );
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#6f89a1', endColorstr='#305678');
+    cursor: move;
 	}
 
 	.dashletPanel.dc .hd .hd-center {
@@ -2951,7 +2952,7 @@ embed
 		border-top: 0px none;
 	}
 	
-	.dashletPanel.dc .hd span {
+	.dashletPanel.dc .hd #dctitle {
 		color: #fff;
 		font-size: 16px;
 		font-weight: bold;
@@ -2978,6 +2979,7 @@ embed
 	
 	.dashletPanel.dc .bd {
 		padding: 15px;
+	background-color: #fafdff;
 	background-color: rgba(13,58,98,.3);
 		border-radius: 0px 0px 6px 6px;
 	-moz-border-radius: 0px 0px 6px 6px;
@@ -5699,12 +5701,15 @@ width: 320px\9; /* ie hack, width must be defined or else it goes off the screen
 #dcboxbody div.buttons {
 
 }
-#dcboxbody  .hd span {
+#dcboxbody .hd #dctitle {
 float: left;
+height: 38px
 }
 
-#dcboxbody  .hd .close {
-float: right;
+#dcboxbody .hd .close {
+position: absolute;
+right: 10px;
+top:0px;
 }
 
 
