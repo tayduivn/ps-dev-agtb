@@ -542,6 +542,20 @@ abstract class DBHelper
         return null;
     }
 
+    protected function getDefault($fieldDef, $type) {
+        if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0) {
+            $default = " DEFAULT '".$fieldDef['default']."'";
+        }
+        elseif (!isset($default) && $type == 'bool') {
+            $default = " DEFAULT 0 ";
+        }
+        else {
+            $default = '';
+        }
+
+        return $default;
+    }
+
     /**
      * Returns the defintion for a single column
      *
@@ -597,12 +611,7 @@ abstract class DBHelper
        }
 
 
-        if (isset($fieldDef['default']) && strlen($fieldDef['default']) > 0)
-            $default = " DEFAULT '".$fieldDef['default']."'";
-        elseif (!isset($default) && $type == 'bool')
-            $default = " DEFAULT 0 ";
-        elseif (!isset($default))
-            $default = '';
+       $default = $this->getDefault($fieldDef, $type);
 
         $auto_increment = '';
         if(!empty($fieldDef['auto_increment']) && $fieldDef['auto_increment'])
