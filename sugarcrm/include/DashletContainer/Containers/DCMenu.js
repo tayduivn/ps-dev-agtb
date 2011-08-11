@@ -286,6 +286,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         }else{
             setBody(r, 0);
             Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+            if(SUGAR.isIE) {
+				var dchead = Y.one('#dchead');
+				var dcheadwidth = dchead.get('offsetWidth');
+				Y.one('#dctitle').setStyle("width",dcheadwidth+"px");	
+			}
         }
 	}
 
