@@ -406,7 +406,6 @@ class SugarFieldBase {
      	return !empty($vardef['enable_range_search']) && !empty($_REQUEST['action']) && $_REQUEST['action']!='Popup';
     }
 
-
     /**
      * setupFieldArray
      * This method takes the $parentFieldArray mixed variable which may be an Array or object and attempts
@@ -439,5 +438,6 @@ class SugarFieldBase {
         }
         return $parentFieldArray;
     }
+
 }
 ?>

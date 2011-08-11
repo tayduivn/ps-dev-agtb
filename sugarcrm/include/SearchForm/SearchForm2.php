@@ -973,8 +973,8 @@ require_once('include/EditView/EditView2.php');
                                 		$UnifiedSearch = true;
                                 	}
 
-                                	//check to see if this is a universal search, AND the field name is "last_name"
-									if($UnifiedSearch && strpos($db_field, 'last_name') !== false){
+                                	//check to see if this is a universal search OR the field has db_concat_fields set in vardefs, AND the field name is "last_name"
+									if(($UnifiedSearch || !empty($this->seed->field_name_map[$field]['db_concat_fields'])) && strpos($db_field, 'last_name') !== false){
 										//split the string value, and the db field name
 										$string = explode(' ', $field_value);
 										$column_name =  explode('.', $db_field);
@@ -988,7 +988,8 @@ require_once('include/EditView/EditView2.php');
 											$where .=  $db_field . " like '".$field_value.$like_char."'";
 										}
 
-									}else {
+									}
+									else {
 
 										//Check if this is a first_name, last_name search
 										if(isset($this->seed->field_name_map) && isset($this->seed->field_name_map[$db_field]))

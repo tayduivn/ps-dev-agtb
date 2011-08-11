@@ -1128,7 +1128,8 @@ abstract class DBHelper
 					//if the type and values match, do nothing.
 					if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
 						if (trim($before_value) !== trim($after_value)) {
-							if (!($this->_isTypeNumber($field_type) && (trim($before_value)+0) == (trim($after_value)+0))) {
+                            // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
+							if (!($this->_isTypeNumber($field_type) && abs((trim($before_value)+0)-(trim($after_value)+0))<0.001)) {
 								if (!($this->_isTypeBoolean($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
                                    $changed_values[$field]=array('field_name'=>$field,
 										'data_type'=>$field_type,
@@ -1318,6 +1319,7 @@ abstract class DBHelper
         case 'ulong':
         case 'long':
         case 'short':
+        case 'currency':
             return true;
         }
         return false;
