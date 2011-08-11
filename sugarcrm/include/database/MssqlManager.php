@@ -133,6 +133,8 @@ class MssqlManager extends DBManager
 	        'decimal_tpl' => 'decimal(%d, %d)',
             );
 
+    protected $connectOptions = null;
+
     /**
      * @see DBManager::connect()
      */
@@ -232,6 +234,8 @@ class MssqlManager extends DBManager
 
         if(!$this->checkError('Could Not Connect', $dieOnError))
             $GLOBALS['log']->info("connected to db");
+
+        $this->connectOptions = $configOptions;
 
         $GLOBALS['log']->info("Connect:".$this->database);
         return true;
@@ -1069,12 +1073,10 @@ class MssqlManager extends DBManager
         $GLOBALS['log']->info("tableExists: $tableName");
 
         $this->checkConnection();
-        $result = $this->query(
-            "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='".$tableName."'");
+        $result = $this->getOne(
+            "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME=".$this->quoted($tableName));
 
-        $rowCount = $this->getRowCount($result);
-        $this->freeResult($result);
-        return ($rowCount == 0) ? false : true;
+        return !empty($result);
     }
 
     /**
@@ -1446,10 +1448,10 @@ SELECT LEFT(so.[name], 30) TableName,
     WHERE so.[name] = '$tablename'
     ORDER BY Key_name, Sequence, Column_name
 EOSQL;
-        $result = $this->db->query($query);
+        $result = $this->query($query);
 
         $indices = array();
-        while (($row=$this->db->fetchByAssoc($result)) != null) {
+        while (($row=$this->fetchByAssoc($result)) != null) {
             $index_type = 'index';
             if ($row['Key_name'] == 'PRIMARY')
                 $index_type = 'primary';
@@ -1469,10 +1471,10 @@ EOSQL;
     public function get_columns($tablename)
     {
         //find all unique indexes and primary keys.
-        $result = $this->db->query("sp_columns $tablename");
+        $result = $this->query("sp_columns $tablename");
 
         $columns = array();
-        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+        while (($row=$this->fetchByAssoc($result)) !=null) {
             $column_name = strtolower($row['COLUMN_NAME']);
             $columns[$column_name]['name']=$column_name;
             $columns[$column_name]['type']=strtolower($row['TYPE_NAME']);
@@ -1494,7 +1496,7 @@ EOSQL;
 
             $column_def = 0;
             if ( strtolower($tablename) == 'relationships' ) {
-                $column_def = $this->db->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
+                $column_def = $this->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
             }
             if ( $column_def != 0 ) {
                 $matches = array();
@@ -1508,6 +1510,18 @@ EOSQL;
             }
         }
         return $columns;
+    }
+
+
+    /**
+     * Get FTS catalog name for current DB
+     */
+    protected function ftsCatalogName()
+    {
+        if(isset($this->connectOptions['db_name'])) {
+            return $this->connectOptions['db_name']."_fts_catalog";
+        }
+        return 'sugar_fts_catalog';
     }
 
     /**
@@ -1558,7 +1572,7 @@ EOSQL;
             if ($this->full_text_indexing_enabled() && $drop) {
                 $sql = "DROP FULLTEXT INDEX ON {$table}";
             } elseif ($this->full_text_indexing_enabled()) {
-                $catalog_name="sugar_fts_catalog";
+                $catalog_name=$this->ftsCatalogName();
                 if ( isset($definition['catalog_name']) && $definition['catalog_name'] != 'default')
                     $catalog_name = $definition['catalog_name'];
 
@@ -1600,8 +1614,7 @@ EOSQL;
             $_SESSION['IsFulltextInstalled'] = $this->full_text_indexing_installed();
 
         // check to see if FTS Indexing service is installed
-        if(empty($_SESSION['IsFulltextInstalled'])
-                || $_SESSION['IsFulltextInstalled'] === false)
+        if(empty($_SESSION['IsFulltextInstalled']))
             return false;
 
         // grab the dbname if it was not passed through
@@ -1621,19 +1634,20 @@ EOSQL;
 	protected function create_default_full_text_catalog()
     {
 		if ($this->full_text_indexing_enabled()) {
-            $GLOBALS['log']->debug('Creating the default catalog for full-text indexing, sugar_fts_catalog');
+		    $catalog = $this->ftsCatalogName();
+            $GLOBALS['log']->debug("Creating the default catalog for full-text indexing, $catalog");
 
             //drop catalog if exists.
-			$ret = $this->db->query("
+			$ret = $this->query("
                 if not exists(
                     select *
                         from sys.fulltext_catalogs
-                        where name ='sugar_fts_catalog'
+                        where name ='$catalog'
                         )
-                CREATE FULLTEXT CATALOG sugar_fts_catalog");
+                CREATE FULLTEXT CATALOG $catalog");
 
 			if (empty($ret)) {
-				$GLOBALS['log']->error('Error creating default full-text catalog, sugar_fts_catalog');
+				$GLOBALS['log']->error("Error creating default full-text catalog, $catalog");
 			}
 		}
 	}
@@ -1666,15 +1680,15 @@ select s.name, o.name, c.name dtrt, d.name ctrt
 EOQ;
         if ( !empty($column) )
             $query .= " and c.name = '$column'";
-        $res = $this->db->query($query);
+        $res = $this->query($query);
         if ( !empty($column) ) {
-            $row = $this->db->fetchByAssoc($res);
+            $row = $this->fetchByAssoc($res);
             if (!empty($row))
                 return $row['ctrt'];
         }
         else {
             $returnResult = array();
-            while ( $row = $this->db->fetchByAssoc($res) )
+            while ( $row = $this->fetchByAssoc($res) )
                 $returnResult[$row['dtrt']] = $row['ctrt'];
             $results[$table] = $returnResult;
             return $returnResult;

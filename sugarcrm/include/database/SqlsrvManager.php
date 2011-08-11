@@ -170,6 +170,8 @@ class SqlsrvManager extends MssqlManager
 
         sqlsrv_query($this->database, 'SET DATEFORMAT mdy');
 
+        $this->connectOptions = $configOptions;
+
         $GLOBALS['log']->info("Connect:".$this->database);
         return true;
     }
@@ -429,10 +431,10 @@ class SqlsrvManager extends MssqlManager
     public function get_columns($tablename)
     {
         //find all unique indexes and primary keys.
-        $result = $this->db->query("sp_columns_90 $tablename");
+        $result = $this->query("sp_columns_90 $tablename");
 
         $columns = array();
-        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+        while (($row=$this->fetchByAssoc($result)) !=null) {
             $column_name = strtolower($row['COLUMN_NAME']);
             $columns[$column_name]['name']=$column_name;
             $columns[$column_name]['type']=strtolower($row['TYPE_NAME']);
@@ -459,7 +461,7 @@ class SqlsrvManager extends MssqlManager
 
             $column_def = 0;
             if ( strtolower($tablename) == 'relationships' ) {
-                $column_def = $this->db->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
+                $column_def = $this->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
             }
             if ( $column_def != 0 ) {
                 $matches = array();
@@ -492,10 +494,10 @@ SELECT sys.tables.object_id, sys.tables.name as table_name, sys.columns.name as 
             AND sys.index_columns.column_id = sys.columns.column_id)
         AND sys.tables.name = '$tableName'
 EOSQL;
-        $result = $this->db->query($query);
+        $result = $this->query($query);
 
         $indices = array();
-        while (($row=$this->db->fetchByAssoc($result)) != null) {
+        while (($row=$this->fetchByAssoc($result)) != null) {
             $index_type = 'index';
             if ($row['is_primary_key'] == '1')
                 $index_type = 'primary';
@@ -525,7 +527,7 @@ SELECT IST.TABLE_NAME
         AND IST.TABLE_NAME = '{$tableName}'
 EOSQL;
 
-        $result = $this->db->getOne($query);
+        $result = $this->getOne($query);
         if ( !$result ) {
             return false;
         }
@@ -548,7 +550,7 @@ SELECT 1
     WHERE o.name = '{$tableName}'
 EOSQL;
 
-        $result = $this->db->getOne($query);
+        $result = $this->getOne($query);
         if ( !$result ) {
             return false;
         }

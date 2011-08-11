@@ -148,7 +148,6 @@ if($setup_db_create_database) {
 if($setup_db_create_sugarsales_user)
     handleDbCreateSugarUser();
 
-
 foreach( $beanFiles as $bean => $file ){
     require_once( $file );
 }
@@ -172,6 +171,14 @@ $new_report     = 1;
 $nonStandardModules = array (
     //'Tracker',
 );
+
+//BEGIN SUGARCRM flav=pro ONLY
+//If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
+if($db->supports('fulltext') && $db->full_text_indexing_installed()){
+    installLog("Enabling fulltext indexing");
+    $db->full_text_indexing_setup();
+}
+//END SUGARCRM flav=pro ONLY
 
 /**
  * loop through all the Beans and create their tables
@@ -472,13 +479,6 @@ enableInsideViewConnector();
 //BEGIN SUGARCRM flav=pro || flav=sales || flav=com ONLY
     require_once('modules/Connectors/InstallDefaultConnectors.php');
 //END SUGARCRM flav=pro || flav=sales || flav=com ONLY
-
-//BEGIN SUGARCRM flav=pro ONLY
-//If this is MIcrosoft install and FTS is enabled, then fire index wake up method to prime the indexing service.
-    if($db->supports('fulltext') && isset($_SESSION['IsFulltextInstalled']) && $_SESSION['IsFulltextInstalled']){
-    	$db->full_text_indexing_setup();
-    }
-//END SUGARCRM flav=pro ONLY
 
 	///////////////////////////////////////////////////////////////////////////////
 	////    INSTALL PASSWORD TEMPLATES

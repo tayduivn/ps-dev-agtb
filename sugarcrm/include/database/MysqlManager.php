@@ -123,25 +123,6 @@ class MysqlManager extends DBManager
 
      );
 
-    protected $type_class = array(
-            'int'      => 'int',
-            'double'   => 'float',
-            'float'    => 'float',
-            'uint'     => 'int',
-            'ulong'    => 'int',
-            'long'     => 'int',
-            'short'    => 'int',
-            'date'     => 'date',
-            'datetime' => 'date',
-            'datetimecombo' => 'date',
-            'time'     => 'time',
-            'bool'     => 'bool',
-            'tinyint'  => 'int',
-            'currency' => 'float',
-            'decimal'  => 'float',
-            'decimal2' => 'float',
-     );
-
     protected $capabilities = array(
         "affected_rows" => true,
         "select_rows" => true,

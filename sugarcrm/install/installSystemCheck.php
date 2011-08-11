@@ -259,8 +259,6 @@ if(!make_writable('./data') || !make_writable('./data/upload')) {
     $cache_files[] = 'images';
     $cache_files[] = 'layout';
     $cache_files[] = 'pdf';
-    $cache_files[] = 'upload';
-    $cache_files[] = 'upload/import';
     $cache_files[] = 'xml';
     $cache_files[] = 'include/javascript';
     $filelist = '';
