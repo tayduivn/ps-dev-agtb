@@ -296,8 +296,13 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	}
 	
 	// animate
-	if ( AH.ANIMATE && flash)
-		SUGAR.forms.FlashField(field);
+	if ( AH.ANIMATE && flash){
+        try{
+            //This can throw an error if the page is in the middle of rendering
+            SUGAR.forms.FlashField(field);
+        }catch(e){}
+    }
+
 
 	// lock this variable
 	AH.LOCKS[variable] = true;
