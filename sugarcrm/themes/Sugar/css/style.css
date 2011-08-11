@@ -3875,8 +3875,8 @@ span.id-ff.multiple button.button.lastChild{
 /* for the main screen navigation tabs */
 #moduleList 
 {
-	background-image : url(../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png)\9;
-    background-repeat: repeat-x\9;
+	background-image : url(../../../../index.php?entryPoint=getImage&imageName=tabRowBg.png);
+    background-repeat: repeat-x;
 
 	background-image: -moz-linear-gradient(center top, 
 		rgba(255,255,255,0) 0%,

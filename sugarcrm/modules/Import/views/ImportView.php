@@ -157,9 +157,15 @@ class ImportView extends SugarView
         $this->options['show_javascript'] = true;
         $this->renderJavascript();
         $this->options['show_javascript'] = false;
-        $ss->assign("SUGAR_JS",ob_get_contents().$themeObject->getJS());
+        $script = ob_get_contents().$themeObject->getJS();
+        $ss->assign("SUGAR_JS",$script);
         ob_end_clean();
-        
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+
+        echo json_encode(array(
+            'html'          => $content,
+            'submitContent' => "",
+            'title'         => $mod_strings[$this->pageTitleKey],
+            'script'        => $script,
+         ));
     }
 }

@@ -334,10 +334,11 @@ function disableReturnSubmission(e) {
                 </tr>
                 <tr>
                     <td scope="row">
-                        {$MOD.LBL_WIZARD_FINISH1}
-                                                <br />
+                        <h3>{$MOD.LBL_WIZARD_FINISH1}</h3>
+                         
                         <table cellpadding=0 cellspacing=0><input id='whatnext' name='whatnext' type="hidden" value='finish' />
-                        <tr><td><img src=include/images/start.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a></td></tr>
+                        {if $IS_ADMIN}
+                        <tr><td><img src=include/images/start.png style="margin-right: 5px;"></td><td><a onclick='document.UserWizard.whatnext.value="finish";document.UserWizard.submit()' href="#" ><b> {$MOD.LBL_WIZARD_FINISH2}  </b></a><br> {$MOD.LBL_WIZARD_FINISH2DESC}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         <tr><td><img src=include/images/import.png style="margin-right: 5px;"></td><td><a onclick='return SUGAR.importWizard.renderDialog("Administration","step1","");' href="#" ><b> {$MOD.LBL_WIZARD_FINISH3} </b></a><br> {$MOD.LBL_WIZARD_FINISH4}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
@@ -349,6 +350,16 @@ function disableReturnSubmission(e) {
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
                         <tr><td><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH11} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH12}</td></tr>
                         <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                        {else}
+                            <tr><td><img src=include/images/university2.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH11} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH12}</td></tr>
+                            <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                            <tr><td><img src=include/images/docs.png style="margin-right: 5px;"></td><td><a href="http://docs.sugarcrm.com/" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH14} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH15}</td></tr>
+                            <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                            <tr><td><img src=include/images/kb.png style="margin-right: 5px;"></td><td><a href="http://kb.sugarcrm.com/" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH16} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH17}</td></tr>
+                            <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                            <tr><td><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b> {$MOD.LBL_WIZARD_FINISH18} </b></a></b><br>{$MOD.LBL_WIZARD_FINISH19}</td></tr>
+                            <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
+                        {/if}
                         </table>
                     </td>
                 </tr>

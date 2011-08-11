@@ -30,12 +30,6 @@
 // $Id: step3.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-{literal}
-<style >
-
-
-</style>
-{/literal}
 
 {$INSTRUCTION}
 

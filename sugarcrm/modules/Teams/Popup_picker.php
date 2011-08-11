@@ -187,10 +187,8 @@ EOQ;
 		$hide_clear_button = empty($_REQUEST['hide_clear_button']) && empty($this->_hide_clear_button) ? false : true;
         $button = "
         <script>
-            YAHOO.util.Event.onDOMReady(function() {
-              var data = window.document.forms.popup_query_form.request_data.value;
-              if (data != '')
-                  request_data = YAHOO.lang.JSON.parse(data);
+            SUGAR.util.doWhen('document.getElementById(\"popup_query_form\") && window.document.forms.popup_query_form.request_data.value != \"\"', function(){
+                  request_data = YAHOO.lang.JSON.parse(window.document.forms.popup_query_form.request_data.value);
             });
         </script>";
 
