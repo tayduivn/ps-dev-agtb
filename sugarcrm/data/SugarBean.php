@@ -1354,7 +1354,7 @@ class SugarBean
             }
         }
 
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         // if the module has a team_id field and no team_id is specified, set team_id as the current_user's default team
         // currently, the default_team is only enforced in the presentation layer-- this enforces it at the data layer as well
@@ -2479,7 +2479,6 @@ function save_relationship_changes($is_update, $exclude=array())
 
     /**
     * Prefixes column names with this bean's table name.
-    * This call can be ignored for  mysql since it does a better job than Oracle in resolving ambiguity.
     *
     * @param string $order_by  Order by clause to be processed
     * @param string $submodule name of the module this order by clause is for
@@ -3870,7 +3869,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 while($row)
                 {
                     $function_fields = array();
-                    // FIXME: /* or ($db->dbType != 'mysql') */
                     if(($index < $row_offset + $max_per_page || $max_per_page == -99))
                     {
                         if ($processing_collection)
@@ -4034,7 +4032,7 @@ function save_relationship_changes($is_update, $exclude=array())
             if(!empty($sugar_config['disable_count_query']) && !empty($limit))
             {
                 $rows_found = $row_offset + count($list);
-                
+
                 if(count($list) >= $limit)
                 {
                     array_pop($list);

@@ -154,7 +154,7 @@ function create_export_query(&$order_by, &$where)
                         $query .= "where ".$where_auto;
 
                 if(!empty($order_by))
-                        $query .= " ORDER BY $order_by";		
+                        $query .= " ORDER BY $order_by";
 
                 return $query;
         }
@@ -167,7 +167,7 @@ function create_export_query(&$order_by, &$where)
 	function fill_in_additional_detail_fields() {
 
 	    parent::fill_in_additional_detail_fields();
-	    
+
         //find parent name if  parentid is there.
         if (!empty($this->parent_id) and $this->parent_id!= '') {
              $query="select name from product_categories where id='$this->parent_id'";
@@ -178,7 +178,7 @@ function create_export_query(&$order_by, &$where)
                     $this->parent_name=$row['name'];
                 }
              }
-        }		
+        }
 
 	}
 
@@ -216,15 +216,15 @@ function create_export_query(&$order_by, &$where)
 	var $show_products = "true";				//show products when selecting a parent category
 	var $tpl_file = "TREE_TPL";					//You can use a custom tpl file if you want to change images
 	var $root_id ="";							//Used for mutli tree per tree table
-	
-	
+
+
 //SQL Table Information
 	var $tree_table = "category_tree";
 	var $branch_array = array(
 						"name"=>"category", "table"=>"product_categories", "id"=>"id",
 						"display_name" => "name", "parent_field" => "parent_id"
 						);
-	
+
 	//Leaf Map
 	var $leaf_array = 	array(
 						"name"=>"product", "table"=>"product_templates", "id"=>"id",
@@ -234,17 +234,17 @@ function create_export_query(&$order_by, &$where)
 //Tree Image Information
 
 	//Declared in the TPL file
-	
+
 
 //Tree Definitions
 
 	var $branch_type = "Category";
 	var $leaf_type = "Product";
 
-	
+
 //Javascript Helper Maps
 //The name tells us which screen the call is coming from
-							
+
 	var $branch_jscript_map =	array(
 										"CatCat" => array("disable" => "Y", "tree_title" => "Product Categories", "function" => 'javascript: set_return(\'$node_id\', \'$name\', \'$self_id\');')
 										,"ProdCat" => array("disable" => "N", "tree_title" => "Product Categories", "function" => 'javascript: set_return(\'$node_id\', \'$name\', \'$self_id\');')
@@ -252,14 +252,14 @@ function create_export_query(&$order_by, &$where)
 										,"QuoteProd" => array("disable" => "N", "tree_title" => "Product Catalog", "function" => 'javascript: set_return_category(\'$name\');')
 										,"ProductsProd" => array("disable" => "N", "tree_title" => "Product Catalog", "function" => 'javascript: set_return_category(\'$name\');')
 								);
-	
+
 	var $leaf_jscript_map =		array(
 										"CatCat" => array("disable" => "Y", "name" => "CatCat", "function" => '')
 										,"ProdCat" => array("disable" => "N", "function" => '')
 										,"ProductsCat" => array("disable" => "N", "function" => '')
 										,"QuoteProd" =>array("disable" => "N", "function" => 'javascript: set_return_product(\'$name\');')
 										,"ProductsProd" => array("disable" => "N", "function" => 'javascript: set_return_product(\'$name\');')
-								);	
+								);
 
 
 //TreeView Get Query
@@ -271,9 +271,9 @@ if (empty($parent_node_id)) $parent_node_id=0;
 	//include categories and products
 	$query = "
 
-	
+
 	SELECT category_tree.*,
-		CASE 
+		CASE
 			WHEN category_tree.type = 'Category'
 			THEN product_categories.name
 			ELSE product_templates.name
@@ -285,7 +285,7 @@ if (empty($parent_node_id)) $parent_node_id=0;
 	$this->tree_table.parent_node_id='$parent_node_id'
 	ORDER BY $this->tree_table.type, name
 		";
-	
+
 	} else {
 	//only show categories
 		$query = "
@@ -295,76 +295,76 @@ if (empty($parent_node_id)) $parent_node_id=0;
 			AND product_categories.deleted='0' AND category_tree.parent_node_id='$parent_node_id'
 		";
 	}
-	
+
 	return $query;
-	
+
 	//end function get_query
 	}
-	
+
 	function get_disable_alert(){
-		
+
 		global $mod_strings;
 		global $current_language;
-		
+
 				if(!isset($mod_strings)){
 				$mod_strings = return_module_language($current_language, $this->module_dir);
 		}
-		
+
 		//This is if you are in a different module and the Product Category Mod strings are not available.
 		if(!isset($mod_strings['LBL_DISABLE_ALERT']) && empty($mod_strings['LBL_DISABLE_ALERT'])) $mod_strings['LBL_DISABLE_ALERT'] = "";
-		
-		
+
+
 		return "javascript:alert('".$mod_strings['LBL_DISABLE_ALERT']."');";
-		
+
 	//end function get_disable_alert
 	}
-								
 
-	
-//////////////////////////Jason////////////////////////////Start Tree Module Area/////////////////////////////////////////////	
-	
+
+
+//////////////////////////Jason////////////////////////////Start Tree Module Area/////////////////////////////////////////////
+
 	function get_name($id){
-		
+
 		$query = "SELECT * from $this->table_name WHERE id = '$id'";
 		$result =$this->db->query($query,true, "Error running query ProductCategories - get_name");
 		$row = $this->db->fetchByAssoc($result);
 		return $row['name'];
-	
+
 	//end function get_name
 	}
-	
+
 	//used for category listview
 	function get_node_id($id){
-		
+
 		$query = "SELECT * from $this->category_tree_table where self_id = '$id'";
 		$result =$this->db->query($query,true, "Error running query ProductCategories - get_node_id");
 		$row = $this->db->fetchByAssoc($result);
 		return $row['node_id'];
-	
+
 	//end function get_node_id
 	}
-	
+
 
 	//used to get the parent category id for saving purposes
-	
+
 	//used for retrieving based on a node id
 	function get_branch_id(){
-	
-		if($this->parent_node_id!="0"){	
+
+		if($this->parent_node_id!="0"){
 			$query = "SELECT $this->category_tree_table.self_id AS self_id, $this->table_name.name AS name
 			FROM product_categories LEFT JOIN $this->category_tree_table ON $this->category_tree_table.self_id = $this->table_name.id
 			WHERE $this->category_tree_table.node_id = '$this->parent_node_id'";
-			
+
 			$result =$this->db->query($query,true, "Error running query");
 			$row = $this->db->fetchByAssoc($result);
-		
+
 			if (isset($row['self_id'])) $this->parent_id = $row['self_id'];
 			if (isset($row['name']) && $row['name'] != '') $this->parent_name = stripslashes($row['name']);
 		}
-	
+
 	//end function get_branch_id
 	}
-	
+
 	//used for retrieving based on a normal id
 	function get_category_tree_info()
 	{
@@ -380,24 +380,24 @@ if (empty($parent_node_id)) $parent_node_id=0;
 			{
 				if ($row['parent_node_id'] != '') $this->parent_node_id = stripslashes($row['parent_node_id']);
 				if ($row['node_id'] != '' ) $this->node_id = stripslashes($row['node_id']);
-				if ($row['type'] != '' ) $this->type = stripslashes($row['type']);			
+				if ($row['type'] != '' ) $this->type = stripslashes($row['type']);
 			}
-		
+
 		$this->get_branch_id();
-	
+
 	//end function get_category_tree_info
 	}
-	
-	
+
+
 	function save_category_branch($is_update=""){
 	$this->default_tree_type = "Category";
-	
+
 		if($is_update=="Update"){
 		//only update parent_node_id
 		$query = "update $this->category_tree_table set parent_node_id='$this->parent_node_id' where self_id='$this->id'";
-		
+
 		$this->db->query($query,true,"Error updating a category tree branch: ");
-		
+
 		//end if
 		} else {
 		//create new row
@@ -405,141 +405,103 @@ if (empty($parent_node_id)) $parent_node_id=0;
             $query = "insert into $this->category_tree_table set self_id='$this->id', parent_node_id=NULL, type='$this->default_tree_type'";
         else
             $query = "insert into $this->category_tree_table set self_id='$this->id', parent_node_id='$this->parent_node_id', type='$this->default_tree_type'";
-        
-		
+
+
 		$this->db->query($query,true,"Error creating a category tree branch: ");
-		
-		
+
+
 		//end else
 		}
 
 	//end function save_category_branch
 	}
-	
+
 
 
 
 /////////////////////////////////////////////////////Tree mods delete functions/////////////////////////////////////////////
 
-	
+
 	//This function is for when you only delete a category and not its sub categories and products
 	function graft($id, $parent_id, $parent_node_id){
 	if($parent_node_id=="") $parent_node_id = "0";
-	
+
 	$select_query =  "SELECT * FROM $this->table_name WHERE deleted='0' AND parent_id='$id'";
 	$result =$this->db->query($select_query,true, "Selecting Sub-Categories");
-		//if($this->db->getRowCount($result) > 0)
-		//{
 			// We have some branches (Categories)
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
-				
-				//multiple update query structure only works with mysql 4.0 and above
-				//$update_query = "UPDATE $this->table_name, $this->category_tree_table
-				//SET $this->table_name.parent_id='$parent_id',
-				//$this->category_tree_table.parent_node_id='$parent_node_id'
-				//WHERE $this->table_name.id='$row[id]'
-				//AND $this->category_tree_table.self_id='$row[id]'
-				//";
-				//$result2 =$this->db->query($update_query,true, "Updating Categories");
-				
 				$update_query = "UPDATE $this->table_name SET parent_id='$parent_id' WHERE id='$row[id]' ";
 				$result2 =$this->db->query($update_query,true, "Updating Categories");
-				
+
 				$update_query = "UPDATE $this->category_tree_table SET parent_node_id='$parent_node_id' WHERE self_id='$row[id]' ";
-				$result2 =$this->db->query($update_query,true, "Updating Category Tree");	
-			
+				$result2 =$this->db->query($update_query,true, "Updating Category Tree");
+
 			//end while
 			}
 		//end if results exist
-		//}	
-	
+
 	$select_query =  "SELECT * FROM $this->products_table WHERE deleted='0' AND category_id='$id'";
 	$result =$this->db->query($select_query,true, "Selecting Sub-Products");
-		//if($this->db->getRowCount($result) > 0)
-		//{
 			// We have some branches (Categories)
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
-				
-				//multiple update query structure only works with mysql 4.0 and above
-				//$update_query = "UPDATE $this->products_name, $this->category_tree_table
-				//SET $this->products_name.category_id='$parent_id',
-				//$this->category_tree_table.arent_node_id='$parent_node_id'
-				//WHERE $this->products_name.id='$row[id]
-				//AND $this->category_tree_table.self_id='$row[id]'
-				//";
-				//$result2 =$this->db->query($update_query,true, "Updating Products");
-				
 				$update_query = "UPDATE $this->products_table SET category_id='$parent_id' WHERE id='$row[id]' ";
 				$result2 =$this->db->query($update_query,true, "Updating Products");
 
 				$update_query = "UPDATE $this->category_tree_table SET parent_node_id='$parent_node_id' WHERE self_id='$row[id]' ";
-				$result2 =$this->db->query($update_query,true, "Updating Category Tree");	
-			
+				$result2 =$this->db->query($update_query,true, "Updating Category Tree");
+
 			//end while
 			}
 		//end if results exist
-		//}	
-	
-	
+
+
 	//end function graft
 	}
-	
+
 	//This function is for when you delete a category and all its sub categories and products
 	function prune($id){
-			
+
 		$select_query =  "SELECT * FROM $this->table_name WHERE deleted='0' AND parent_id='$id'";
 		$result =$this->db->query($select_query,true, "Selecting Sub-Products");
-		//if($this->db->getRowCount($result) > 0)
-		//{
 			// We have some branches (Categories)
 			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
 				$this->mark_deleted($row['id']);
-				//$this->clear_branch($row['id']);
-				$this->prune($row['id']);			
-			//end while
-			}
-		//end if results exist
-		//}
-		
-		$select_query =  "SELECT * FROM $this->products_table WHERE deleted='0' AND category_id='$id'";
-		$result =$this->db->query($select_query,true, "Selecting Sub-Products");
-		//if($this->db->getRowCount($result) > 0)
-		//{
-			// We have some leafs to prune (Leafs)
-			while (($row = $this->db->fetchByAssoc($result)) != null) {
-			//while ($row = $this->db->fetchByAssoc($result)) {
-				$this->mark_products_deleted($row['id']);
-				//$this->clear_branch($row['id']);
 				$this->prune($row['id']);
 			//end while
 			}
 		//end if results exist
-		//}
-	
-	
+
+		$select_query =  "SELECT * FROM $this->products_table WHERE deleted='0' AND category_id='$id'";
+		$result =$this->db->query($select_query,true, "Selecting Sub-Products");
+			// We have some leafs to prune (Leafs)
+			while (($row = $this->db->fetchByAssoc($result)) != null) {
+				$this->mark_products_deleted($row['id']);
+				$this->prune($row['id']);
+			//end while
+			}
+		//end if results exist
+
+
 	//end function prune
 	}
-	
-	
+
+
 	function clear_branch($id){
 		$query = "delete from $this->category_tree_table where self_id='$id'";
 		$this->db->query($query,true,"error removing branch: ");
 	//end function clear_branch
 	}
-	
+
 	function mark_products_deleted($id){
 		$query = "UPDATE $this->products_table SET deleted='1' WHERE id='$id'";
 		$this->db->query($query,true,"error removing branch: ");
 	//end function mark_products_deleted
 	}
-	
-	
-	
-	
-////////////////////////////////end tree mods delete functions////////////////////////////////////////////////////	
+
+
+
+
+////////////////////////////////end tree mods delete functions////////////////////////////////////////////////////
 
 	//remove quotes so the javascript tree works properly
 	function remove_quotes(){

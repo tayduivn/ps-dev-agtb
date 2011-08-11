@@ -167,8 +167,8 @@ class Calendar
 			for($i=0;$i < 42;$i++)
 			{
 				$slice = new Slice('day',$this->date_time->get_day_by_index_this_month($i-$num_of_prev_days));
-				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->get_mysql_date());
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) ] = $slice;
+				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 
 		}
@@ -179,8 +179,8 @@ class Calendar
 			for($i=0;$i<$days_in_week;$i++)
 			{
 				$slice = new Slice('day',$this->date_time->get_day_by_index_this_week($i));
-				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->get_mysql_date());
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
+				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 		}
 		else if ( $this->view == 'day')
@@ -190,8 +190,8 @@ class Calendar
 			for($i=0;$i<$hours_in_day;$i++)
 			{
 				$slice = new Slice('hour',$this->date_time->get_datetime_by_index_today($i));
-				$this->slice_hash[$slice->start_time->get_mysql_date().":".$slice->start_time->hour ] = $slice;
-				$this->slices_arr[] =  $slice->start_time->get_mysql_date().":".$slice->start_time->hour;
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour ] = $slice;
+				$this->slices_arr[] =  $slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour;
 			}
 		}
 		else if ( $this->view == 'year')
@@ -200,8 +200,8 @@ class Calendar
 			for($i=0;$i<12;$i++)
 			{
 				$slice = new Slice('month',$this->date_time->get_day_by_index_this_year($i));
-				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->get_mysql_date());
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
+				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 		}
 		else
@@ -495,7 +495,7 @@ class CalendarActivity
         if($rel_table != '') {
             $where .= " AND $rel_table.accept_status != 'decline'";
         }
-		
+
 		$where .= ")";
 		return $where;
 	}

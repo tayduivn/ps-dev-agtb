@@ -248,8 +248,7 @@ global  $timedate;
 			//Now do the db queries
 			//query for opportunity data that matches $datay and $user
 
-			$result = $opp->db->query($query)
-			or sugar_die("Error selecting sugarbean: ".mysql_error());
+			$result = $opp->db->query($query, true);
 			//build pipeline by sales stage data
 			$total = 0;
 			$div = 1;

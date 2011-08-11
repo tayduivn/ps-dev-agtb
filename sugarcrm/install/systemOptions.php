@@ -89,6 +89,7 @@ $out=<<<EOQ
     <td>&nbsp;</td>
     <td align="left">
 EOQ;
+// TODO: make this DB-transparent
 if(in_array("mysql", array_values($drivers))){
 $out.=<<<EOQ
         <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mysql" {$checked['mysql']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MYSQL']}

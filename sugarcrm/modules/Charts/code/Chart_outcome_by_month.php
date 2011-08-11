@@ -248,8 +248,7 @@ echo get_validate_chart_js();
 			//query for opportunity data that matches $datay and $user
 			//_pp($query);
 
-			$result = $opp->db->query($query)
-			or sugar_die("Error selecting sugarbean: ".mysql_error());
+			$result = $opp->db->query($query, true);
 			//build pipeline by sales stage data
 			$total = 0;
 			$div = 1;

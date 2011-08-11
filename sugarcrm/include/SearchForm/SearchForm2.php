@@ -667,7 +667,7 @@ require_once('include/EditView/EditView2.php');
                     // always construct the where clause for multiselects using the 'like' form to handle combinations of multiple $vals and multiple $parms
                      if(!empty($this->seed->field_name_map[$field]['isMultiSelect']) && $this->seed->field_name_map[$field]['isMultiSelect']) {
                         // construct the query for multenums
-                        // use the 'like' query for all mssql and oracle examples as both custom and OOB multienums are implemented with types that cannot be used with an 'in'
+                        // use the 'like' query as both custom and OOB multienums are implemented with types that cannot be used with an 'in'
                         $operator = 'custom_enum';
                         $table_name = $this->seed->table_name ;
                         if ($customField)

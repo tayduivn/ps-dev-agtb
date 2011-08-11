@@ -84,6 +84,6 @@ class FreeTDSManager extends MssqlManager
      */
     public function valid()
     {
-        return function_exists("mssql_connect") && is_freetds();
+        return function_exists("mssql_connect") && DBManagerFactory::isFreeTDS();
     }
 }

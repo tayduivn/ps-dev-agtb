@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/database/DBManagerFactory.php';
 
 class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
@@ -68,11 +68,11 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['db_mssql_force_driver'] = '';
 
-        $db = &DBManagerFactory::getInstance();
+        $db = DBManagerFactory::getInstance();
 
         if ( function_exists('sqlsrv_connect') )
             $this->assertTrue($db instanceOf SqlsrvManager,"Should return a SqlsrvManager object");
-        elseif ( is_freetds() )
+        elseif ( DBManagerFactory::isFreeTDS() )
             $this->assertTrue($db instanceOf FreeTDSManager,"Should return a FreeTDSManager object");
         else
             $this->assertTrue($db instanceOf MssqlManager,"Should return a MssqlManager object");
@@ -83,12 +83,12 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetInstanceMssqlForceFreetdsSelection()
     {
-        if ( $GLOBALS['db']->dbType != 'mssql' || !is_freetds() )
+        if ( $GLOBALS['db']->dbType != 'mssql' || !DBManagerFactory::isFreeTDS() )
             $this->markTestSkipped('Only applies to SQL Server FreeTDS');
 
         $GLOBALS['sugar_config']['db_mssql_force_driver'] = 'freetds';
 
-        $db = &DBManagerFactory::getInstance();
+        $db = DBManagerFactory::getInstance();
 
         $this->assertTrue($db instanceOf FreeTDSManager,"Should return a FreeTDSManager object");
     }
@@ -103,9 +103,9 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['db_mssql_force_driver'] = 'mssql';
 
-        $db = &DBManagerFactory::getInstance();
+        $db = DBManagerFactory::getInstance();
 
-        if ( is_freetds() )
+        if ( DBManagerFactory::isFreeTDS() )
             $this->assertTrue($db instanceOf MssqlManager,"Should return a MssqlManager object");
         elseif ( function_exists('mssql_connect') )
         $this->assertTrue($db instanceOf MssqlManager,"Should return a MssqlManager object");
@@ -123,9 +123,9 @@ class DBManagerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['sugar_config']['db_mssql_force_driver'] = 'sqlsrv';
 
-        $db = &DBManagerFactory::getInstance();
+        $db = DBManagerFactory::getInstance();
 
-        if ( is_freetds() && !function_exists('sqlsrv_connect') )
+        if ( DBManagerFactory::isFreeTDS() && !function_exists('sqlsrv_connect') )
             $this->assertTrue($db instanceOf FreeTDSManager,"Should return a FreeTDSManager object");
         elseif ( function_exists('mssql_connect') && !function_exists('sqlsrv_connect') )
             $this->assertTrue($db instanceOf MssqlManager,"Should return a MssqlManager object");

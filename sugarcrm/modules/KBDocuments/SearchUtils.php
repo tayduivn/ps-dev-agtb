@@ -576,7 +576,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
     /**
      * create_portal_most_recent_query()
      * This method builds and returns query for most recent documents for portal
-     * @param DBManager $db db to build this query for, ie oci8, mysql, mssql
+     * @param DBManager $db DB Manager
      * @param int $n the number of articles to return.  Default is 10
      * @param string $where clause to use in where portion of query, if needed.
      */
@@ -705,7 +705,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      *
      * This method takes in parameters in order to construct the where clause used by our list form api's to construct the list form.
      * The parameters that can be used are as follow:
-     * @param $db DBManager The db this search is for ('oci8', 'mssql', 'mysql')
+     * @param $db DBManager DB Manager
      * @param $spec_SearchVars Array of parameters used to build special handling into query
      * @param $searchVars Array of parameters used to add bean fields into query
      * @param $fullQuery bool Return string query or array?
@@ -959,7 +959,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
      * @param $filter name of filter type used to return filter
      * @param $filter_date if needed, date to be used in filter
      * @param $filter_date2 if needed, 2nd date to be used in 'between_dates' filter
-     * @param DBManager $db database for example 'mssql', 'mysql', or 'oci8'
+     * @param DBManager $db database
      */
 function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2=''){
     global $timedate;
@@ -1046,7 +1046,7 @@ function return_date_filter($db, $field, $filter, $filter_date='', $filter_date2
      *
      * This method creates and returns canned query filters
      *
-     * @param DBManage $db database type, for example 'mssql', 'mysql', or 'oci8'
+     * @param DBManage $db database
      * @param $canned_search_opt key value of type of canned search to process
      */
     function return_canned_query($db, $canned_search_opt){

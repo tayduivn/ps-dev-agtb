@@ -336,7 +336,7 @@ function addColumnSelectGroup(cell,group) {
 	var got_selected = 0;
 	for(var index in field_defs_arr) {
 	    var field = field_defs_arr[index];
-		if ( field.type == 'text' || ( /* current_db_type == 'oci8' && */field.type == 'name' && typeof (field.fields) != 'undefined' )) {
+		if ( field.type == 'text' || ( field.type == 'name' && typeof (field.fields) != 'undefined' )) {
 			continue;
 		}
 
@@ -1672,7 +1672,7 @@ function fill_form(type) {
 
 	global_report_def = report_def;
   	report_def.assigned_user_id = document.EditView.assigned_user_id.value;
-  
+
 	report_def_str = YAHOO.lang.JSON.stringify(report_def);
 	form_obj.report_def.value = report_def_str;
 
@@ -2591,7 +2591,7 @@ function reload_columns( reload_type) {
             continue;
 		}
 
-		if ( /* current_db_type !='mysql' && */ (typeof(valid_groups[key]) == 'undefined' && ( typeof( all_fields[key].field_def.summary_type)  == 'undefined'
+		if ( (typeof(valid_groups[key]) == 'undefined' && ( typeof( all_fields[key].field_def.summary_type)  == 'undefined'
              || all_fields[key].field_def.summary_type != 'group'))) {
 			continue;
 		}
@@ -2659,7 +2659,7 @@ function reload_columns( reload_type) {
 
 	for( var index in summary_field_defs) {
 		var field = summary_field_defs[index];
-		if ( field.summary_type != 'group' /*&& current_db_type !='mysql'*/) {
+		if ( field.summary_type != 'group') {
 			continue;
 		}
 
@@ -2677,17 +2677,6 @@ function reload_columns( reload_type) {
 			hidden_summary_ref.options[hidden_summary_ref.options.length] = new Option(field['vname'],key);
 		}
 	}
-
-//	if ( current_db_type == 'mysql') {
-//        for(var index in field_defs_arr) {
-//	        var field = field_defs_arr[index];
-//	        var key = current_prefix +":"+field['name'];
-//
-//            if (seen_visible_summary[key] != 1) {
-//				hidden_summary_ref.options[hidden_summary_ref.options.length] = new Option(field['vname'],key);
-//			}
-//        }
-//	}
 
 	refresh_chart_tab();
 	var selected_chart_index = 1;

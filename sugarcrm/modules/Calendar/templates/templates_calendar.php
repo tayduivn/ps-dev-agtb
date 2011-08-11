@@ -100,7 +100,7 @@ function template_cal_tabs($args) {
 					if(!empty($act->sugar_bean->$field['name']))
 						$fields[strtoupper($field['name'])] = $act->sugar_bean->$field['name'];
 			}
-			
+
 			$extra = "id=\"adspan_{$act->sugar_bean->id}\" "
 					. "onmouseover=\"return SUGAR.util.getAdditionalDetails( '{$act->sugar_bean->module_dir}','{$act->sugar_bean->id}', 'adspan_{$act->sugar_bean->id}');\" "
 					. "onmouseout=\"return SUGAR.util.clearAdditionalDetailsCall()\" onmouseout=\"return nd(1000);\" ";
@@ -595,7 +595,7 @@ function template_cal_vertical_slice($args) {
 
 	require_once('modules/Calls/CallFormBase.php');
 	$callForm = new CallFormBase();
-	echo $callForm->getFormBody('', 'Calls', 'inlineCal'.template_echo_daily_view_24_hour($args).'CallSave', $timedate->to_display_date($args['calendar']->date_time->get_mysql_date(), false), $timedate->to_display_time(template_echo_daily_view_24_hour($args).':00:00', true, false))."<br>";
+	echo $callForm->getFormBody('', 'Calls', 'inlineCal'.template_echo_daily_view_24_hour($args).'CallSave', $timedate->asUserDate($args['calendar']->date_time, false), $timedate->to_display_time(template_echo_daily_view_24_hour($args).':00:00', true, false))."<br>";
 ?></div>
 
 <?php template_echo_slice_activities($args); ?>
@@ -733,7 +733,7 @@ function template_calendar_month($args) {
 function get_current_day($args) {
 	global $timedate;
 	$slice = $args['slice'];
-	if($slice->start_time->get_mysql_date() == $timedate->nowDbDate()) {
+	if($slice->start_time->format(TimeDate::DB_DATE_FORMAT) == $timedate->nowDbDate()) {
 		return true;
 	}
 	return false;

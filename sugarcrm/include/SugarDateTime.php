@@ -313,15 +313,6 @@ class SugarDateTime extends DateTime
 	}
 
 	/**
-	 * Display as DB date
-	 * @return string
-	 */
-	function get_mysql_date()
-	{
-		return $this->format(TimeDate::DB_DATE_FORMAT);
-	}
-
-	/**
 	 * Create from ISO 8601 datetime
 	 * @param string $str
 	 * @return SugarDateTime
@@ -357,10 +348,10 @@ class SugarDateTime extends DateTime
 
         while ($new_time->ts < $end) {
             if ($view == 'day') {
-                $hash_list[] = $new_time->get_mysql_date() . ":" . $new_time->hour;
+                $hash_list[] = $new_time->format(TimeDate::DB_DATE_FORMAT) . ":" . $new_time->hour;
                 $new_time->modify("next hour");
             } else {
-                $hash_list[] = $new_time->get_mysql_date();
+                $hash_list[] = $new_time->format(TimeDate::DB_DATE_FORMAT);
                 $new_time->modify("next day");
             }
         }

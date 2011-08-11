@@ -289,8 +289,7 @@ echo get_validate_chart_js();
 			$query .= "WHERE " .$where;
 			$query .= " GROUP BY opportunities.sales_stage,users.user_name,opportunities.assigned_user_id";
 
-			$result = $opp->db->query($query)
-			or sugar_die("Error selecting sugarbean: ".mysql_error());
+			$result = $opp->db->query($query, true);
 			//build pipeline by sales stage data
 			$total = 0;
 			$div = 1;

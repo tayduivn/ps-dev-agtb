@@ -150,7 +150,6 @@ $result = checkSystemCompliance();
 $checks = array(
 	'phpVersion'				=> $mod_strings['LBL_UW_COMPLIANCE_PHP_VERSION'],
 	'mysqlVersion'				=> $mod_strings['LBL_UW_COMPLIANCE_MYSQL'],
-	'mssqlStatus'				=> $mod_strings['LBL_UW_COMPLIANCE_MSSQL_MAGIC_QUOTES'],
 	'xmlStatus'					=> $mod_strings['LBL_UW_COMPLIANCE_XML'],
 	'curlStatus'				=> $mod_strings['LBL_UW_COMPLIANCE_CURL'],
 	'imapStatus'				=> $mod_strings['LBL_UW_COMPLIANCE_IMAP'],

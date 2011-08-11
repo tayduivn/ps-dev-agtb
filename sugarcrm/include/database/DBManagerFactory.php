@@ -58,7 +58,7 @@ class DBManagerFactory
           	if ( function_exists('sqlsrv_connect')
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' )) {
                 $my_db_manager = 'SqlsrvManager';
-            } elseif (is_freetds()
+            } elseif (self::isFreeTDS()
                         && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' )) {
                 $my_db_manager = 'FreeTDSManager';
             } else {
@@ -175,4 +175,25 @@ class DBManagerFactory
         }
         return $drivers;
     }
+
+    /**
+     * Check if we have freeTDS driver installed
+     * Invoked when connected to mssql. checks if we have freetds version of mssql library.
+	 * the response is put into a global variable.
+	 */
+    public static function isFreeTDS()
+    {
+        static $is_freetds = null;
+
+        if($is_freetds === null) {
+    		ob_start();
+    		phpinfo(INFO_MODULES);
+    		$info=ob_get_contents();
+    		ob_end_clean();
+
+    		$is_freetds = (strpos($info,'FreeTDS') !== false);
+        }
+
+        return $is_freetds;
+     }
 }

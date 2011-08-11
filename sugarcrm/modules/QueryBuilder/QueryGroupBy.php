@@ -126,48 +126,48 @@ class QueryGroupBy extends QueryBuilder
         $temp_groupby_count = 1;
         // First, get the list of columns currently in query
         $query = "SELECT $this->table_name.*, query_columns.id as 'column_record' from $this->table_name
-					LEFT JOIN query_columns ON query_columns.id = $this->table_name.parent_id 
+					LEFT JOIN query_columns ON query_columns.id = $this->table_name.parent_id
 					where $this->table_name.parent_id='$this->parent_id'
 					 AND $this->table_name.deleted=0
 					 ORDER BY $this->table_name.list_order_x, $this->table_name.list_order_y
 					 ";
         $result = $this->db->query($query, true, " Error retrieving display group by fields: ");
-        if ($this->db->getRowCount($result) > 0) 
+        if ($this->db->getRowCount($result) > 0)
         {
             // Print out the columns
-            while ($row = $this->db->fetchByAssoc($result)) 
+            while ($row = $this->db->fetchByAssoc($result))
             {
                 //$groupby_table = $this->get_module_info($row['groupby_module']);
                 $groupby_bean = $this->get_module_info($row['groupby_module']);
                 //run query2 more than once if you have additional group by fields
-                for ($i = 0; $i < $temp_groupby_count; $i ++) 
+                for ($i = 0; $i < $temp_groupby_count; $i ++)
                 {
-                    if (! empty($row['groupby_type']) && $row['groupby_type'] == "Time") 
+                    if (! empty($row['groupby_type']) && $row['groupby_type'] == "Time")
                     {
                         $time_count = $this->get_time_info($row, $xtemplate_object, $main_block_name, $block_name, $temp_groupby_count);
-                    } 
-                    else 
+                    }
+                    else
                     {
                         /*
-				//THIS IS MOVED- CAN REMOVE THIS AREA - MAYBE Move the below logic into the QueryBuilder module, because this can be used for other stuff as well.									
+				//THIS IS MOVED- CAN REMOVE THIS AREA - MAYBE Move the below logic into the QueryBuilder module, because this can be used for other stuff as well.
 				//Check to see if the groupby_field is a custom field or not
 				global $dictionary;
 				if(!empty($dictionary[$groupby_bean->object_name]['fields'][$row['groupby_field']]['custom_type'])){
-				//field is present in the module's custom table.  Retrieve this table and use as query	
-					$custom_join = $groupby_bean->custom_fields->getJOIN();	
+				//field is present in the module's custom table.  Retrieve this table and use as query
+					$custom_join = $groupby_bean->custom_fields->getJOIN();
 					$field_select = $groupby_bean->table_name."_cstm.".$row['groupby_field'];
-		
-				} 
-                else 
+
+				}
+                else
                 {
-				//field is not custom and present in module table		
+				//field is not custom and present in module table
 					$field_select = $groupby_bean->table_name.".".$row['groupby_field'];
 				}
 				*/
                         $field_select = $this->get_field_table($row['groupby_module'], $row['groupby_field']);
                         $query2 = "	SELECT $field_select
 									from $groupby_bean->table_name";
-                        if (isset($custom_join)) 
+                        if (isset($custom_join))
                         {
                             $query2 .= $custom_join['join'];
                         }
@@ -175,7 +175,7 @@ class QueryGroupBy extends QueryBuilder
 					 				GROUP BY $field_select;
 					 			";
                         $result2 = $this->db->query($query2, true, " Error retrieving display group by fields: ");
-                        if ($this->db->getRowCount($result2) > 0) 
+                        if ($this->db->getRowCount($result2) > 0)
                         {
                             $height_count = $this->db->getRowCount($result2) * $temp_groupby_count;
                             $row_height = 100 / $height_count;
@@ -186,7 +186,7 @@ class QueryGroupBy extends QueryBuilder
                             $xtemplate_object->assign("GROUPBY_RECORD", $row['id']);
                             $xtemplate_object->assign("COLUMN_RECORD", $row['column_record']);
                             // Print out the columns
-                            while ($row2 = $this->db->fetchByAssoc($result2)) 
+                            while ($row2 = $this->db->fetchByAssoc($result2))
                             {
                                 $groupby_field = $row2[$row['groupby_field']];
                                 if (empty($groupby_field))
@@ -200,15 +200,15 @@ class QueryGroupBy extends QueryBuilder
                         }
                         //end if this is not a groupby time and this is standard group by
                     }
-                    //end the for loop		
+                    //end the for loop
                 }
-                if (! empty($time_count)) 
+                if (! empty($time_count))
                 {
                     $new_count = $time_count;
                     //echo "THERE";
                     $time_count = null;
-                } 
-                else 
+                }
+                else
                 {
                     //echo "HERE";
                     $new_count = $this->db->getRowCount($result2);
@@ -227,13 +227,13 @@ class QueryGroupBy extends QueryBuilder
     function check_groupby_type ()
     {
         //this function checks the groupby_type and clears out the appropriate fields
-        if ($this->groupby_axis == "Rows") 
+        if ($this->groupby_axis == "Rows")
         {
             $this->groupby_calc_type = "";
             $this->groupby_calc_field = "";
             $this->groupby_calc_module = "";
         }
-        if ($this->groupby_type != "Time") 
+        if ($this->groupby_type != "Time")
         {
             $this->groupby_qualifier = "";
             $this->groupby_qualifier_start = "";
@@ -249,7 +249,7 @@ class QueryGroupBy extends QueryBuilder
         //$this->groupby_qualifier_start;
         $height_count = $groupby_array['groupby_qualifier_qty'] * $height_count;
         $row_height = 100 / $height_count;
-        for ($i = 0; $i < $groupby_array['groupby_qualifier_qty']; $i ++) 
+        for ($i = 0; $i < $groupby_array['groupby_qualifier_qty']; $i ++)
         {
             $groupby_field = $groupby_array['groupby_qualifier'] . "-" . $i;
             $xtemplate_object->assign("GROUPBY_HEIGHT", $row_height);
@@ -268,22 +268,18 @@ class QueryGroupBy extends QueryBuilder
         global $db;
         if (! empty($this->groupby_type) && $this->groupby_type == "Time")
         {
-            //Calculate out time interval parts	
+            //Calculate out time interval parts
             //default mulitplier value
             $interval_multiplier = 1;
             $qualifier = $this->groupby_qualifier;
-            if ($this->groupby_qualifier == "Week") 
+            if ($this->groupby_qualifier == "Week")
             {
                 //there is no week extractor in mysql, so you have to convert
                 $interval_multiplier = 7;
                 $qualifier = "DAY";
             }
-            if ($this->groupby_qualifier == "Quarter") 
-            {
-                //Still need to calculate this ---
-            }
             //This is to calculate the date interval correctly.  When you have week, you have to convert to day
-            //and say that you have a interval multiplier of 7 for example	
+            //and say that you have a interval multiplier of 7 for example
             $start_interval = $this->groupby_qualifier_start * $interval_multiplier;
             $next_interval = $start_interval + $interval_multiplier;
             //get the field table data for the time interval calculation field
@@ -291,18 +287,17 @@ class QueryGroupBy extends QueryBuilder
             $calc_field_table = $this->get_field_table($this->groupby_calc_module, $this->groupby_calc_field);
             //Deal with the groupby type, like SUM ,AVG, min, max etc.
             //If the group_by_cal_type is COUNT, then still do SUM, but have the calc_field_table evaluate to 1
-            if (! empty($this->groupby_calc_type) && $this->groupby_calc_type == "COUNT") 
+            if (! empty($this->groupby_calc_type) && $this->groupby_calc_type == "COUNT")
             {
                 $calc_field_table = 1;
                 $groupby_calc_type = "SUM";
-            } 
-            else 
+            }
+            else
             {
                 $groupby_calc_type = $this->groupby_calc_type;
             }
-            for ($i = 0; $i < $this->groupby_qualifier_qty; $i ++) 
+            for ($i = 0; $i < $this->groupby_qualifier_qty; $i ++)
             {
-                //DATEADD(m, 5, GETDATE())
                 $dateexpr = "$field_table >= ".$db->convert($db->convert('', "today"), "add_date", array($start_interval, $qualifier)).
                         " AND $field_table < ".$db->convert($db->convert('', "today"), "add_date", array($next_interval, $qualifier));
                 $select_part = $groupby_calc_type . "(IF($dateexpr, $calc_field_table, 0)) as ".$db->quoted($this->groupby_qualifier);

@@ -3767,11 +3767,6 @@ function setPhpIniSettings() {
 	if(!empty($backtrack_limit)) {
 		ini_set('pcre.backtrack_limit', '-1');
 	}
-
-	// mssql only
-	if(ini_get("mssql.charset")) {
-		ini_set('mssql.charset', "UTF-8");
-	}
 }
 
 /**
@@ -4213,34 +4208,11 @@ if (version_compare(phpversion(), '5.0.0', '<')) {
 }
 
 /*
- * FIXME: move this function to DB layer
- * Invoked when connected to mssql. checks if we have freetds version of mssql library.
- * the response is put into a global variable.
+ * @deprecated use DBManagerFactory::isFreeTDS
  */
-function is_freetds() {
-
-	$ret=false;
-	if (isset($GLOBALS['mssql_library_version'])) {
-		if ($GLOBALS['mssql_library_version']=='freetds') {
-			$ret=true;
-		} else {
-			$ret=false;
-		}
-	} else {
-		ob_start();
-		phpinfo();
-		$info=ob_get_contents();
-		ob_end_clean();
-
-		if (strpos($info,'FreeTDS') !== false) {
-			$GLOBALS['mssql_library_version']='freetds';
-			$ret=true;
-		} else {
-			$GLOBALS['mssql_library_version']='regular';
-			$ret=false;
-		}
-	}
-	return $ret;
+function is_freetds()
+{
+    return DBManagerFactory::isFreeTDS();
 }
 
 /**

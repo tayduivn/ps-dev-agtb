@@ -261,8 +261,7 @@ global $timedate;
 			$subtitle = $current_module_strings['LBL_OPP_SIZE'].' '.$symbol.'1'.$current_module_strings['LBL_OPP_THOUSANDS'];
 			$fileContents = '';
 			$fileContents .= '     <pie defaultAltText="'.$current_module_strings['LBL_ROLLOVER_WEDGE_DETAILS'].'" legendStatus="on">'."\n";
-			$result = $opp->db->query($query)
-			or sugar_die("Error selecting sugarbean: ".mysql_error());
+			$result = $opp->db->query($query, true);
 			$leadSourceArr =  array();
 			while($row = $opp->db->fetchByAssoc($result, -1, false))
 			{

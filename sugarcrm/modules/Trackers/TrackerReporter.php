@@ -30,38 +30,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class TrackerReporter{
 
 	private $queries = array(
-                       'mysql' => array(
+	                    'all' => array(
 							"ShowLastModifiedRecords" => "", //See function below
                        		"ShowActiveUsers" => "SELECT distinct u.user_name as user_name, u.first_name, u.last_name, ts.date_end as last_action from users u, tracker_sessions ts where u.id = ts.user_id and ts.active = 1 and ts.date_end > {0} order by ts.date_end desc",
-							"ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
+                    	"ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
 							"ShowTopUser" => "", //See function below
 							"ShowMyWeeklyActivities" => "", //See function below
 							"ShowMyModuleUsage" => "select module_name, count(module_name) as total_count from tracker where user_id = '{0}' and module_name != 'UserPreferences' group by module_name order by total_count desc",
 							"ShowTop3ModulesUsed" => "", //See function below
                             "ShowMyCumulativeLoggedInTime" => "select sum(seconds) as total_login_time from tracker_sessions where user_id = '{0}' and date_start > {1}",
-                            "ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"),
-                       'mssql' =>  array(
-							"ShowLastModifiedRecords" => "", //See function below
-                      		"ShowActiveUsers" => "SELECT distinct u.user_name as user_name, u.first_name, u.last_name, ts.date_end as last_action from users u, tracker_sessions ts where u.id = ts.user_id and ts.active = 1 and ts.date_end > {0} order by ts.date_end desc",
-							"ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
-							"ShowTopUser" => "", //See function below
-							"ShowMyWeeklyActivities" => "", //See function below
-							"ShowMyModuleUsage" => "select module_name, count(module_name) as total_count from tracker where user_id = '{0}' and module_name != 'UserPreferences' group by module_name order by total_count desc",
-							"ShowTop3ModulesUsed" => "", //See function below
-                            "ShowMyCumulativeLoggedInTime" => "select sum(seconds) as total_login_time from tracker_sessions where user_id = '{0}' and date_start > {1}",
-                            "ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"),
-                       'oci8' =>  array(
-							"ShowLastModifiedRecords" => "", //See function below
-                            "ShowActiveUsers" => "SELECT distinct u.user_name as user_name, u.first_name, u.last_name, ts.date_end as last_action from users u, tracker_sessions ts where u.id = ts.user_id and ts.active = 1 and date_end > {0} order by date_end desc",
-							"ShowLoggedInUserCount" => "select count(distinct user_id) as active_users from tracker_sessions where active = 1 and date_end > {0}",
-							"ShowTopUser" => "", //See function below
-							"ShowMyWeeklyActivities" => "", //See function below
-							"ShowMyModuleUsage" => "select module_name, count(module_name) as total_count from tracker where user_id = '{0}' and module_name != 'UserPreferences' group by module_name order by total_count desc",
-							"ShowTop3ModulesUsed" => "", //See function below
-                            "ShowMyCumulativeLoggedInTime" => "select sum(seconds) as total_login_time from tracker_sessions where user_id = '{0}' and date_start > {1}",
-                            "ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"),
-		                );
-
+							"ShowUsersCumulativeLoggedInTime" => "select u.user_name as user_name, sum(t.seconds) as total_login_time from tracker_sessions t, users u where t.user_id = u.id and t.date_start > {0} group by u.user_name"
+	                    ),
+    );
 
     //Customize sort types for non-string values.  Strings are used by default
     public $sort_types = array(
@@ -86,7 +66,7 @@ class TrackerReporter{
 		if(file_exists('custom/modules/Trackers/tracker_reporter.php')){
 			require_once('custom/modules/Trackers/tracker_reporter.php');
 			//merge queries from custom file
-			$this->queries = array_merge($this->queries[$GLOBALS['db']->dbType], $queries[$GLOBALS['db']->dbType]);
+			$this->queries = array_merge($this->queries('all'), $this->queries[$GLOBALS['db']->dbType], $queries['all'], $queries[$GLOBALS['db']->dbType]);
 			//merge functions from custom file as well.
 			$this->included_methods = $this->getFileMethods('custom/modules/Trackers/tracker_reporter.php');
 		}
