@@ -81,8 +81,6 @@ $moduleList[] = 'Cases';
 $moduleList[] = 'Reports';
 //END SUGARCRM flav=dce ONLY
 
-
-
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
 $beanList = array();
@@ -419,7 +417,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     'DocumentRevisions',
     //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-    'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays',
+    'ContractTypes', 'ForecastSchedule', 'Worksheet','ACLFields', 'ProjectResources', 'Holidays', 'SNIP',
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=dce ONLY
     'DCEDataBases',

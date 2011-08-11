@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 // $Id: ForEmails.php 13782 2006-06-06 17:58:55Z majed $
+
 $subpanel_layout = array(
 	'top_buttons' => array(
 		array('widget_class' => 'SubPanelTopCreateButton'),
@@ -38,7 +39,6 @@ $subpanel_layout = array(
 
 	'where' => '',
 	
-
 	'list_fields' => array(
 		'name' => array(
  		 	'vname' => 'LBL_LIST_ACCOUNT_NAME',
