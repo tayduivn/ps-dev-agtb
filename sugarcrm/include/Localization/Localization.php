@@ -156,7 +156,14 @@ class Localization {
 			return array();
 		}
 
-        $load = sugar_cache_retrieve('currency_list');
+        // load default from config.php
+		$this->currencies['-99'] = array(
+			'name'		=> $sugar_config['default_currency_name'],
+			'symbol'	=> $sugar_config['default_currency_symbol'],
+			'conversion_rate' => 1
+			);
+
+		$load = sugar_cache_retrieve('currency_list');
         if ( !is_array($load) ) {
             $q = "SELECT id, name, symbol, conversion_rate FROM currencies WHERE status = 'Active' and deleted = 0";
             $r = $db->query($q);
@@ -174,13 +181,7 @@ class Localization {
             $this->currencies = $load;
         }
 
-		// load default from config.php
-		$this->currencies['-99'] = array(
-			'name'		=> $sugar_config['default_currency_name'],
-			'symbol'	=> $sugar_config['default_currency_symbol'],
-			'conversion_rate' => 1
-			);
-
+		
 	}
 
 	/**
