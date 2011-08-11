@@ -70,8 +70,6 @@ SUGAR.grid = function() {
 
     var isLoaded = false;
 
-    var columnModel = [{}, {maxLength: 10}, {maxLength: 50}, {}, {}, {}, {}, {}, {}, {}];
-
 	return {
 		clickedRow: function(taskId, event) {
 			if (!event)
@@ -596,8 +594,6 @@ SUGAR.grid = function() {
 
 			SUGAR.gantt.addGanttRow(rowNum);
 			SUGAR.grid.indentInsertedRow(numRows);
-
-            SUGAR.grid.onAfterInsertRow();
 		},
 
 		/**
@@ -2726,10 +2722,10 @@ SUGAR.grid = function() {
 
 		exportToPDF: function() {
 			document.getElementById("numRowsToSave").value = totalRowsInGrid;
-			if(document.getElementById("pdfclass").value == "EZPDF"){
-			    document.getElementById('EditView').action.value='Layouts';
-			}else{
+			if(document.getElementById("pdfclass").value == "TCPDF"){
 				document.getElementById('EditView').action.value='sugarpdf';
+			}else{
+				document.getElementById('EditView').action.value='Layouts';
 			}
 			document.getElementById('EditView').submit();
 
@@ -2810,11 +2806,9 @@ SUGAR.grid = function() {
 		},
 		gridLoaded: function() {
 			SUGAR.grid.isLoaded = true;
-		},
-        onAfterInsertRow: function() {}
-
+		}
 
 };
 }();
 
-if(typeof YAHOO != 'undefined') YAHOO.util.Event.addListener(window, 'load', SUGAR.grid.setUpContextMenu);
+//if(typeof YAHOO != 'undefined') YAHOO.util.Event.addListener(window, 'load', SUGAR.grid.setUpContextMenu);
