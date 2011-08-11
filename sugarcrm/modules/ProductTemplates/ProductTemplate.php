@@ -509,13 +509,13 @@ class ProductTemplate extends SugarBean {
 		$currency->retrieve($this->currency_id);
 		
 		//US DOLLAR
-		if(isset($this->discount_price) && !empty($this->discount_price)){
+		if(isset($this->discount_price)){
 			$this->discount_usdollar = $currency->convertToDollar($this->discount_price);
 		}
-		if(isset($this->list_price) && !empty($this->list_price)){
+		if(isset($this->list_price)){
 			$this->list_usdollar = $currency->convertToDollar($this->list_price);
 		}
-		if(isset($this->cost_price) && !empty($this->cost_price)){
+		if(isset($this->cost_price)){
 			$this->cost_usdollar = $currency->convertToDollar($this->cost_price);
 		}		
 		parent::save($check_notify);	
