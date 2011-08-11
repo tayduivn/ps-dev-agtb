@@ -256,6 +256,9 @@ class RenameModules
      */
     private function getSubpanelDefs($bean )
 	{
+        if(empty($bean->module_dir)) {
+            return array();
+        }
 
 		$layout_defs = array();
 

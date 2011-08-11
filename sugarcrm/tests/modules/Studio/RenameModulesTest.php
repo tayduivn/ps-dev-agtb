@@ -100,8 +100,12 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Ensure none of the app list strings were modified.
         $app_list_string = return_app_list_strings_language('en_us');
-        $this->assertNotEquals($newSingular, $app_list_string['moduleListSingular'][$module] );
-        $this->assertNotEquals($newPlural, $app_list_string['moduleList'][$module] );
+        if(isset( $app_list_string['moduleListSingular'][$module])) {
+            $this->assertNotEquals($newSingular, $app_list_string['moduleListSingular'][$module] );
+        }
+        if(isset($app_list_string['moduleList'][$module])) {
+            $this->assertNotEquals($newPlural, $app_list_string['moduleList'][$module] );
+        }
 
     }
 

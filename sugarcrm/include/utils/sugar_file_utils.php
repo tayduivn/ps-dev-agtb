@@ -316,7 +316,7 @@ function sugar_is_file($path, $mode='r'){
 function sugar_cached($file)
 {
     static $cdir = null;
-    if(empty($cdir)) {
+    if(empty($cdir) && !empty($GLOBALS['sugar_config']['cache_dir'])) {
         $cdir = rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\');
     }
     if(empty($cdir)) {

@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 if(!defined('sugarEntry')) define('sugarEntry', true);
 
 set_include_path(
@@ -154,6 +154,8 @@ class Sugar_PHPUnit_Framework_TestCase extends PHPUnit_Framework_TestCase
         if(isset($GLOBALS['log'])) {
             $GLOBALS['log']->info("DONE TEST: {$this->getName(false)}");
         }
+        // reset error handler in case somebody set it
+        restore_error_handler();
     }
 
     public static function tearDownAfterClass()
