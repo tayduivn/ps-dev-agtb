@@ -2215,6 +2215,9 @@ function get_register_value($category,$name){
     return sugar_cache_retrieve("{$category}:{$name}");
 }
 
+function clear_register_value($category,$name){
+    return sugar_cache_clear("{$category}:{$name}");
+}
 // this function cleans id's when being imported
 function convert_id($string)
 {
@@ -2472,7 +2475,9 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 	require_once($beanFiles[$bean_name]);
 	$focus = new $bean_name();
 	$user_array = array();
-	$user_array = get_register_value('select_array',$bean_name. $display_columns. $where . $order_by);
+
+    $key = ($bean_name == 'EmailTemplate') ?  $bean_name : $bean_name . $display_columns. $where . $order_by;
+	$user_array = get_register_value('select_array', $key );
 	if(!$user_array)
 	{
 
@@ -2516,7 +2521,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 		}
 
 		$user_array = $temp_result;
-		set_register_value('select_array',$bean_name. $display_columns. $where . $order_by,$temp_result);
+		set_register_value('select_array', $key ,$temp_result);
 	}
 
 	return $user_array;
