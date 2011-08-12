@@ -2819,7 +2819,7 @@ abstract class DBManager
      */
     public function emptyValue($type)
     {
-        if(isset($this->type_classes[$type]) && ($this->type_classes[$type] == 'bool' || $this->type_classes[$type] == 'int' || $this->type_classes[$type] == 'float')) {
+        if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'bool' || $this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
             return 0;
         }
 

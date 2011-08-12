@@ -100,26 +100,6 @@ class OracleManager extends DBManager
             'file'     => 'varchar2(255)',
 	    	'decimal_tpl' => 'number(%d, %d)',
             );
-
-        protected $type_classes = array(
-            'int'      => 'int',
-            'double'   => 'float',
-            'float'    => 'float',
-            'uint'     => 'int',
-            'ulong'    => 'int',
-            'long'     => 'int',
-            'short'    => 'int',
-            'date'     => 'date',
-            'datetime' => 'date',
-            'datetimecombo' => 'date',
-            'time'     => 'date',
-            'bool'     => 'int',
-            'tinyint'  => 'int',
-            'currency' => 'float',
-            'decimal'  => 'float',
-            'decimal2' => 'float',
-            );
-
 	/**
      * List of known sequences
      * @var array
