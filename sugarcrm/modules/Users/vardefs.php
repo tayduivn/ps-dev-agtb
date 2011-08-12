@@ -508,7 +508,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_MEETINGS'
         ) ,
         'contacts_sync' => array(
-            'name' => 'contacts',
+            'name' => 'contacts_sync',
             'type' => 'link',
             'relationship' => 'contacts_users',
             'source' => 'non-db',

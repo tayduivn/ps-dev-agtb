@@ -391,7 +391,7 @@ array (
 	),
 		'user_sync'=>
 		array (
-			'name' => 'users',
+			'name' => 'user_sync',
 			'type' => 'link',
 			'relationship' => 'contacts_users',
 			'source' => 'non-db',
