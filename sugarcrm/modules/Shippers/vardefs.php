@@ -103,10 +103,23 @@ $dictionary['Shipper'] = array('table' => 'shippers'
     'len' => 100,
     'importable' => 'required',
   ),
+  'quotes' =>
+	array (
+  		'name' => 'quotes',
+    	'type' => 'link',
+    	'relationship' => 'shipper_quotes',
+    	'vname' => 'LBL_QUOTES',
+    	'source'=>'non-db',
+  ),
 )
                                                       , 'indices' => array (
        array('name' =>'shipperspk', 'type' =>'primary', 'fields'=>array('id')),
        array('name' =>'idx_shippers', 'type'=>'index', 'fields'=>array('name','deleted')),
                                                       )
+  ,'relationships' => array (
+        'shipper_quotes' => array ('lhs_module'=> 'Shippers', 'lhs_table'=> 'shippers', 'lhs_key' => 'id',
+							  'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'shipper_id',
+							  'relationship_type'=>'one-to-many')
+  )
                             );
 ?>
