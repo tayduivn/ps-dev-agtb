@@ -209,7 +209,7 @@ class SugarSNIP
      */
     public function getSnipURL()
     {
-        return 'http://67.207.131.175:20010/';
+        return 'https://67.207.131.175:20010/';
     }
 
     /**
@@ -614,6 +614,8 @@ class SugarSNIPClient
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $postArgs);
         curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
         $GLOBALS['log']->debug("SNIP call: $url -> $postArgs");
         $response = curl_exec($curl);
         if($response === false) {
