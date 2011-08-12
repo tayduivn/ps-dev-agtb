@@ -456,7 +456,7 @@ class UploadStream
 
     public function register()
     {
-        stream_register_wrapper(self::STREAM_NAME, __CLASS__, 0);
+        stream_register_wrapper(self::STREAM_NAME, __CLASS__);
     }
 
     public static function path($path)
