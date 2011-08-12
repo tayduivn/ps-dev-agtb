@@ -990,7 +990,7 @@ abstract class DBHelper
      * @param string $ensureUnique
      * @return string Valid column name trimmed to right length and with invalid characters removed
      */
-     public function getValidDBName ($name, $ensureUnique = false, $type = 'column')
+     public function getValidDBName ($name, $ensureUnique = false, $type = 'column', $force = false)
     {
         if(is_array($name))
         {
@@ -1006,7 +1006,7 @@ abstract class DBHelper
             $len = strlen ( $name ) ;
             $result = $name;
             $maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
-            if ($len <= $maxLen)
+            if ($len <= $maxLen && !$force)
             {
                 return strtolower($name);
             }
