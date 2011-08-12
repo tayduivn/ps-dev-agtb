@@ -2,7 +2,7 @@
 
 require_once('modules/Import/Importer.php');
 
-class Bug39756Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45963Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
     /**
