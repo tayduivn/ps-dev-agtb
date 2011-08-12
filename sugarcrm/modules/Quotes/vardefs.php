@@ -30,6 +30,31 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'do_report'=>false,
     'reportable'=>false,
   ),
+  'shipper_name' =>
+  array (
+    'name' => 'shipper_name',
+    'rname' => 'name',
+    'id_name' => 'shipper_id',
+    'join_name' => 'shippers',
+    'type' => 'relate',
+    'link' => 'shippers',
+    'table' => 'shippers',
+    'isnull' => 'true',
+    'module' => 'Shippers',
+    'dbType' => 'varchar',
+    'len' => '255',
+    'vname' => 'LBL_SHIPPING_PROVIDER',
+    'source'=>'non-db',
+    'comment' => 'Shipper Name'
+  ),
+  'shippers' => 
+  array (
+      'name' => 'shippers',
+      'type' => 'link',
+      'relationship' => 'shipper_quotes',
+      'vname' => 'LBL_SHIPPING_PROVIDER',
+      'source'=>'non-db',
+  ),
   'currency_id' =>
   array (
     'name' => 'currency_id',
