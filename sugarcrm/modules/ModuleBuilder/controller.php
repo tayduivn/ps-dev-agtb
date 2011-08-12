@@ -553,15 +553,6 @@ class ModuleBuilderController extends SugarController
             }
             $relationships->delete ( $_REQUEST [ 'relationship_name' ] ) ;
 
-			//====42170====
-			$mb = new ModuleBuilder () ;
-			$module = $mb->getPackageModule ( $_REQUEST [ 'view_package' ], $_REQUEST [ 'view_module' ] ) ;
-			$appStrings = $module->getAppListStrings () ;
-		    unset($appStrings);
-			$module->setAppListStrings ( 'en_us', $appStrings ) ;
-            $module->save () ;
-			//====42170======
-
             $relationships->save () ;
         }
         $this->view = 'relationships' ;
