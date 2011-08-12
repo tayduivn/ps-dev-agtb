@@ -226,6 +226,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
+		'snip_url' => 'https://67.207.131.175:20010/',
 		//END SUGARCRM flav=pro ONLY
 	);
 }
