@@ -76,8 +76,10 @@ if ($status=='pingfailed'){
 	$extra_error=$GLOBALS['mod_strings']['LBL_SNIP_STATUS_PINGBACK_FAIL_SUMMARY'];
 }
 
-if ($message=='' && $status != 'notpurchased')
-	$message = $GLOBALS['mod_strings']['LBL_SNIP_GENERIC_ERROR'];
+if ($message=='' && $status != 'notpurchased') {
+	if (isset ($GLOBALS['mod_strings']['LBL_SNIP_GENERIC_ERROR']))
+		$message = $GLOBALS['mod_strings']['LBL_SNIP_GENERIC_ERROR'];
+}
 
 if ($status=='purchased_error')
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
@@ -89,4 +91,4 @@ $sugar_smarty->assign('SNIP_EMAIL',$snip->getSnipEmail());
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
 
-echo $sugar_smarty->fetch('modules/SNIP/RegisterForSnip.tpl');
+echo $sugar_smarty->fetch('modules/SNIP/ConfigureSnip.tpl');

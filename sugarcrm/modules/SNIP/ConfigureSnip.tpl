@@ -55,12 +55,10 @@ div.snipTitle{
 }
 .snipUiWrapper{
 	margin:auto;
-	width:600px;
+	width:580px;
 	height:47px;
 	margin-top:7px;
 }
-
-
 .snipCheckboxWrapper{
 	float:left;
 	width:375px;
@@ -161,7 +159,7 @@ div.snipError{
 						{$MOD.LBL_SNIP_STATUS}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_STATUS}
 					</td>
 					<td>
-						<form name='ToggleSnipStatus' method="POST" action="index.php?module=SNIP&action=RegisterForSnip">
+						<form name='ToggleSnipStatus' method="POST" action="index.php?module=SNIP&action=ConfigureSnip">
 						<input type='hidden' id='save_config' name='save_config' value='0'/>
 						{if $SNIP_STATUS == 'purchased'}
 							<div id='snip_title'><span style='color:green;font-weight:bold'>{$MOD.LBL_SNIP_STATUS_OK}</span></div>
@@ -181,8 +179,10 @@ div.snipError{
 						<br>
 					</td>
 				
-					<td scope="row" style='width:170px'>
-						{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
+					<td scope="row" style='width:180px;background-color:white'>
+						<div style='width:auto;margin-top:-5px;height:20px;padding:5px 5px 7px 5px;background-color:#EEEEEE'>
+							{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
+						</div>
 					</td>
 					<td>
 						{$SUGAR_URL}
