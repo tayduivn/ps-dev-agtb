@@ -81,6 +81,8 @@ class MysqliManager extends MysqlManager
      */
     public $dbType = 'mysql';
     public $variant = 'mysqli';
+    public $priority = 10;
+    public $label = 'LBL_MYSQLI';
 
     /**
      * @see DBManager::$backendFunctions
@@ -329,6 +331,7 @@ class MysqliManager extends MysqlManager
         if($this->checkError('Could Not Connect', $dieOnError))
             $GLOBALS['log']->info("connected to db");
 
+        $this->connectOptions = $configOptions;
         return true;
     }
 
@@ -372,6 +375,6 @@ class MysqliManager extends MysqlManager
      */
     public function valid()
     {
-        return function_exists("mysqli_connect");
+        return function_exists("mysqli_connect") && empty($GLOBALS['sugar_config']['mysqli_disabled']);
     }
 }

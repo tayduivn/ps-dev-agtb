@@ -46,6 +46,7 @@ class OracleManager extends DBManager
     public $dbType = 'oci8';
     public $dbName = 'Oracle';
     public $variant = 'oci8';
+    public $label = 'LBL_ORACLE';
 
 	/**
      * contains the last result set returned from query()
@@ -1709,5 +1710,32 @@ EOQ;
     {
         // No funny chars
         return preg_match('/[\#\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/', $name)==0;
+    }
+
+    /**
+     * Check DB version
+     * @see DBManager::canInstall()
+     */
+    public function canInstall()
+    {
+        $version = $this->version();
+        if(empty($version)) {
+            return array('ERR_DB_VERSION_FAILURE');
+        }
+        if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $version)) {
+            return array('ERR_DB_OCI8_VERSION', $version);
+        }
+        return true;
+    }
+
+    public function installConfig()
+    {
+        return array(
+        	'LBL_DBCONFIG_ORACLE' =>  array(
+                "setup_db_database_name" => array("label" => 'LBL_DBCONF_DB_NAME', "required" => true),
+                "setup_db_host_name" => false,
+                'setup_db_create_sugarsales_user' => false,
+            ),
+        );
     }
 }

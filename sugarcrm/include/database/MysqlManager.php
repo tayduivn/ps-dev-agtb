@@ -80,6 +80,7 @@ class MysqlManager extends DBManager
     public $dbType = 'mysql';
     public $variant = 'mysql';
     public $dbName = 'MySQL';
+    public $label = 'LBL_MYSQL';
 
     protected $maxNameLengths = array(
         'table' => 64,
@@ -127,6 +128,8 @@ class MysqlManager extends DBManager
         "affected_rows" => true,
         "select_rows" => true,
         "inline_keys" => true,
+        "create_user" => true,
+        "fulltext" => true,
     );
 
     /**
@@ -512,6 +515,7 @@ class MysqlManager extends DBManager
 
         if(!$this->checkError('Could Not Connect:', $dieOnError))
             $GLOBALS['log']->info("connected to db");
+        $this->connectOptions = $configOptions;
 
         $GLOBALS['log']->info("Connect:".$this->database);
         return true;
@@ -1346,7 +1350,14 @@ class MysqlManager extends DBManager
      */
     public function createDatabase($dbname)
     {
-        return $this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci", true);
+        $this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci", true);
+    }
+
+    public function preInstall()
+    {
+         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
+         $db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
+
     }
 
     /**
@@ -1365,5 +1376,38 @@ class MysqlManager extends DBManager
     public function valid()
     {
         return function_exists("mysql_connect");
+    }
+
+    /**
+     * Check DB version
+     * @see DBManager::canInstall()
+     */
+    public function canInstall()
+    {
+        $db_version = $this->version();
+        if(empty($db_version)) {
+            return array('ERR_DB_VERSION_FAILURE');
+        }
+        if(version_compare($db_version, '4.1.2') < 0) {
+            return array('ERR_DB_MYSQL_VERSION', $db_version);
+        }
+        return true;
+    }
+
+    public function installConfig()
+    {
+        return array(
+        	'LBL_DBCONFIG_MSG3' =>  array(
+                "setup_db_database_name" => array("label" => 'LBL_DBCONF_DB_NAME', "required" => true),
+            ),
+            'LBL_DBCONFIG_MSG2' =>  array(
+                "setup_db_host_name" => array("label" => 'LBL_DBCONF_HOST_NAME', "required" => true),
+            ),
+            'LBL_DBCONF_TITLE_USER_INFO' => array(),
+            'LBL_DBCONFIG_B_MSG1' => array(
+                "setup_db_admin_user_name" => array("label" => 'LBL_DBCONF_DB_ADMIN_USER', "required" => true),
+                "setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
+            )
+        );
     }
 }

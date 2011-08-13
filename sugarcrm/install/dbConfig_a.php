@@ -34,7 +34,6 @@ if( !isset( $install_script ) || !$install_script ){
 
 
 // DB split
-$oci8sid = '';
 $createDbCheckbox = '';
 $createDb = (!empty($_SESSION['setup_db_create_database'])) ? 'checked="checked"' : '';
 $dropCreate = (!empty($_SESSION['setup_db_drop_tables'])) ? 'checked="checked"' : '';
@@ -48,50 +47,7 @@ if (isset($_SESSION['setup_db_port_num']) && !empty($_SESSION['setup_db_port_num
 	$setupDbPortNum = $_SESSION['setup_db_port_num'];
 }
 
-
-if($_SESSION['setup_db_type'] == 'oci8'){ //} || $_SESSION['setup_db_type'] == 'ibm_db2') {
-//BEGIN SUGARCRM flav=ent ONLY
-	$dbSplit1 = '<input type="hidden" name="setup_db_host_name" value="'.$_SESSION['setup_db_host_name'].'" /></td>';
-    $dbSplit1 .= '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG1'].'</td></tr>';
-    $oci8sid = "(SID from tnsnames.ora)";
-	$dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="0" />';
-//END SUGARCRM flav=ent ONLY
-}else {
-
-    $host_lbl = $mod_strings['LBL_DBCONF_HOST_NAME'];
-    if($_SESSION['setup_db_type'] == 'mssql') {
-        $host_lbl = $mod_strings['LBL_DBCONF_HOST_NAME_MSSQL'];
-    }
-
-	$dbSplit1 = '<tr><td colspan="3" align="left">'.$mod_strings['LBL_DBCONFIG_MSG2'].' </td></tr>
-        <tr>
-		 <td><span class="required">*</span></td>
-		 <td nowrap><b>'.$host_lbl.'</b></td>
-		 <td align="left">
-			<input type="text" name="setup_db_host_name" id="setup_db_host_name" value="'.$_SESSION['setup_db_host_name'].'" />';
-
-			if (isset($_SESSION['setup_db_type']) && $_SESSION['setup_db_type'] =='mssql'){
-				$dbSplit1 .= '&nbsp;\&nbsp;<input type="text" name="setup_db_host_instance" id="setup_db_host_instance" value="'.$instanceName.'" />';
-			}
-		$dbSplit1 .= '</td>
-	</tr>';
-
-//BEGIN SUGARCRM flav=ent ONLY
-    if($_SESSION['setup_db_type'] == 'ibm_db2') {
-        $dbSplit1 .= '<tr>
-		 <td></td>
-		 <td nowrap><b>'.$mod_strings['LBL_DBCONF_HOST_PORT'].'</b></td>
-		 <td align="left">
-			<input type="text" name="setup_db_port_num" id="setup_db_port_num" value="'.$setupDbPortNum.'" />';
-
-        $dbUser = '<input type=hidden name="setup_db_create_sugarsales_user" value="0" />';
-    }
-//END SUGARCRM flav=ent ONLY
-
-}
-
-
-
+$db = getInstallDbInstance();
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	BEGIN PAGE OUTPUT
@@ -146,37 +102,46 @@ $out2 =<<<EOQ2
 <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
 <tr><th colspan="3" align="left" >{$mod_strings['LBL_DBCONF_TITLE_NAME']} </td></tr>
 
-<tr><td colspan="3" align="left">&nbsp;{$mod_strings['LBL_DBCONFIG_MSG3']}</td></tr>
-<tr><td width='1%'><span class="required">*</span></td>
-    <td width='60%' nowrap><b>{$mod_strings['LBL_DBCONF_DB_NAME']} {$oci8sid}</b></td>
-    <td width='35%' nowrap align="left">
-         <input type="text" name="setup_db_database_name"  value="{$_SESSION['setup_db_database_name']}"><br>&nbsp;
-    </td>
-</tr>
-
-
-{$dbSplit1}
-
-
-<tr><th colspan="3" align="left">{$mod_strings['LBL_DBCONF_TITLE_USER_INFO']} </td></tr>
-<tr><td colspan="3" align="left">{$mod_strings['LBL_DBCONFIG_B_MSG1']}</td></tr>
-<tr>
-    <td><span class="required">*</span></td>
-    <td nowrap><b>{$mod_strings['LBL_DBCONF_DB_ADMIN_USER']}</b></td>
-    <td nowrap align="left">
-         <input type="text" name="setup_db_admin_user_name" maxlength="30" value="{$_SESSION['setup_db_admin_user_name']}" autocomplete="off"/>
-    </td>
-</tr>
-<tr>
-    <td></td>
-    <td nowrap><b>{$mod_strings['LBL_DBCONF_DB_ADMIN_PASSWORD']}</b></td>
-    <td nowrap align="left"><input type="password" name="setup_db_admin_password" value="{$_SESSION['setup_db_admin_password']}" autocomplete="off" /></td></tr>
-    </table>
 EOQ2;
 
-//if we are installing in custom mode, include the following html
-if($_SESSION['setup_db_type'] != 'oci8' && $_SESSION['setup_db_type'] != 'ibm_db2'){
+$config_params = $db->installConfig();
+$form = '';
+foreach($config_params as $group => $gdata) {
+    $form .= "<tr><td colspan=\"3\" align=\"left\">{$mod_strings[$group]}</td></tr>\n";
+    foreach($gdata as $name => $value) {
+        if(!empty($value)) {
+            $form .= "<tr>";
+            if(!empty($value['required'])) {
+               $form .= "<td><span class=\"required\">*</span></td>\n";
+            } else {
+                $form .= "<td>&nbsp;</td>\n";
+            }
+            if(!empty($_SESSION[$name])) {
+                $sessval = $_SESSION[$name];
+            } else {
+                $sessval = '';
+            }
+            if(!empty($value["type"])) {
+                $type = $value["type"];
+            } else {
+                $type = '';
+            }
+            $form .= <<<FORM
+            <td nowrap><b>{$mod_strings[$value["label"]]}</b></td>
+            <td align="left">
+			<input type="$type" name="$name" id="$name" value="$sessval">
+			</td></tr>
+FORM;
+        } else {
+            $form .= "<input name=\"$name\" id=\"$name\" value=\"\" type=\"hidden\">\n";
+        }
+    }
+}
 
+$out2 .= $form;
+
+//if we are installing in custom mode, include the following html
+if($db->supports("create_user")){
 // create / set db user dropdown
 $auto_select = '';$provide_select ='';$create_select = '';$same_select = '';
 if(isset($_SESSION['dbUSRData'])){
@@ -457,7 +422,8 @@ EOQ5;
 
 
 
-echo $out.$out2;
+echo $out;
+echo $out2;
 //BEGIN SUGARCRM flav=pro ONLY
 if(!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false){
 //END SUGARCRM flav=pro ONLY

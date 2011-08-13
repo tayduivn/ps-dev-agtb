@@ -520,6 +520,11 @@ function getSugarConfigLanguageArray($langZip) {
 ///////////////////////////////////////////////////////////////////////////////
 ////    FROM performSetup.php
 
+function getInstallDbInstance()
+{
+    return DBManagerFactory::getTypeInstance($_SESSION['setup_db_type'], array("db_manager" => $_SESSION['setup_db_manager']));
+}
+
 function getDbConnection()
 {
     global $setup_db_host_name;
@@ -541,7 +546,7 @@ function getDbConnection()
             $dbconfig["db_name"] = $setup_db_database_name;
     }
 
-    $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
+    $db = getInstallDbInstance();
     $db->connect($dbconfig, true);
     return $db;
 }
@@ -703,14 +708,20 @@ function handleSugarConfig() {
     $sugar_config['installer_locked'] = true;
     // we're setting these since the user was given a fair chance to change them
     $sugar_config['dbconfig']['db_host_name']       = $setup_db_host_name;
-    if($_SESSION['setup_db_type'] == 'mssql') {
+    if(!empty($setup_db_host_instance)) {
         $sugar_config['dbconfig']['db_host_instance']   = $setup_db_host_instance;
+    } else {
+        $sugar_config['dbconfig']['db_host_instance'] = '';
+    }
+    if(!isset($_SESSION['setup_db_manager'])) {
+        $_SESSION['setup_db_manager'] = DBManagerFactory::getManagerByType($_SESSION['setup_db_type']);
     }
     $sugar_config['dbconfig']['db_user_name']       = $setup_db_sugarsales_user;
     $sugar_config['dbconfig']['db_password']        = $setup_db_sugarsales_password;
     $sugar_config['dbconfig']['db_name']            = $setup_db_database_name;
     $sugar_config['dbconfig']['db_type']            = $_SESSION['setup_db_type'];
     $sugar_config['dbconfig']['db_port']            = $setup_db_port_num;
+    $sugar_config['dbconfig']['db_manager']         = $_SESSION['setup_db_manager'];
 
     $sugar_config['cache_dir']                      = $cache_dir;
     $sugar_config['default_charset']                = $mod_strings['DEFAULT_CHARSET'];
@@ -1341,6 +1352,8 @@ function validate_systemOptions() {
     $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
     if(empty($db)) {
        $errors[] = "<span class='error'>".$mod_strings['ERR_DB_INVALID']."</span>";
+    } else {
+        $_SESSION['setup_db_manager'] = get_class($db);
     }
     return $errors;
 }
@@ -1436,7 +1449,7 @@ function pullSilentInstallVarsIntoSession() {
         'setup_db_sugarsales_password'  => isset($sugar_config['dbconfig']['db_password']) ? $sugar_config['dbconfig']['db_password'] : '',
         'setup_db_database_name'        => isset($sugar_config['dbconfig']['db_name']) ? $sugar_config['dbconfig']['db_name'] : '',
         'setup_db_type'                 => isset($sugar_config['dbconfig']['db_type']) ? $sugar_config['dbconfig']['db_type'] : '',
-        'setup_db_port_num'             => isset($sugar_config['dbconfig']['db_port_num']) ? $sugar_config['dbconfig']['db_port_num'] : '',
+        'setup_db_port_num'             => isset($sugar_config['dbconfig']['db_port']) ? $sugar_config['dbconfig']['db_port'] : '',
     );
     // third array of values derived from above values
     $derived = array (

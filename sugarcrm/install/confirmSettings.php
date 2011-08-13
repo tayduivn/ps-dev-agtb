@@ -27,8 +27,8 @@ if( !isset( $install_script ) || !$install_script ){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
 
-
-  //BEGIN SUGARCRM lic=sub ONLY
+$db = getDbConnection();
+//BEGIN SUGARCRM lic=sub ONLY
 
 if(isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted']) && isset($_SESSION['setup_db_type'])){
 
@@ -47,19 +47,6 @@ if(isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted'
                 }
 }
   //END SUGARCRM lic=sub ONLY
-
-
-
-$dbType = '';
-$oci8 = '';
-//BEGIN SUGARCRM flav=ent ONLY
-$dbType = "<tr><td></td><td><b>{$mod_strings['LBL_CONFIRM_DB_TYPE']}</b></td><td>{$_SESSION['setup_db_type']}</td></tr>";
-
-if($_SESSION['setup_db_type'] == 'oci8') {
-	$oci8 = "<tr><td></td><td><b>{$mod_strings['LBL_DBCONF_HOST_NAME']}</b></td><td>{$_SESSION['setup_db_host_name']}</td></tr>";
-}
-//END SUGARCRM flav=ent ONLY
-
 
 $dbCreate = "({$mod_strings['LBL_CONFIRM_WILL']} ";
 if(!$_SESSION['setup_db_create_database']){
@@ -124,8 +111,8 @@ $out =<<<EOQ
 
         <table width="100%" cellpadding="0" cellpadding="0" border="0" class="StyleDottedHr">
             <tr><th colspan="3" align="left">{$mod_strings['LBL_DBCONF_TITLE']}</th></tr>
-            {$dbType}
-            {$oci8}
+            <tr><td></td><td><b>{$mod_strings['LBL_CONFIRM_DB_TYPE']}</b></td><td>{$_SESSION['setup_db_type']}</td></tr>
+            <tr><td></td><td><b>{$mod_strings['LBL_DBCONF_HOST_NAME']}</b></td><td>{$_SESSION['setup_db_host_name']}</td></tr>
             <tr>
                 <td></td>
                 <td><b>{$mod_strings['LBL_DBCONF_DB_NAME']}</b></td>
@@ -160,16 +147,16 @@ EOQ;
 }
 
 //BEGIN SUGARCRM flav=pro ONLY
-if ($_SESSION['setup_db_type'] == 'mssql'){
-    if (isset($_SESSION['IsFulltextInstalled']) && $_SESSION['IsFulltextInstalled']){
-        $FTSData = $mod_strings['LBL_MSSQL_FTS_INSTALLED'];
+if ($db->supports('fulltext')) {
+    if($db->full_text_indexing_installed()){
+        $FTSData = $mod_strings['LBL_FTS_INSTALLED'];
     }else{
-        $FTSData = "<span class='stop'><b>{$mod_strings['LBL_MSSQL_FTS_INSTALLED_ERR1']}</b>  <br>{$mod_strings['LBL_MSSQL_FTS_INSTALLED_ERR2']}</span>";
+        $FTSData = "<span class='stop'><b>{$mod_strings['LBL_FTS_INSTALLED_ERR1']}</b>  <br>{$mod_strings['LBL_FTS_INSTALLED_ERR2']}</span>";
     }
 $out .=<<<EOQ
             <tr>
                 <td></td>
-                <td><b>{$mod_strings['LBL_MSSQL_FTS']} </b></td>
+                <td><b>{$mod_strings['LBL_FTS']} </b></td>
                 <td>{$FTSData}</td>
             </tr>
 EOQ;
@@ -218,45 +205,6 @@ $out .=<<<EOQ
             </tr>
 EOQ;
 }
-/*
-if(isset($_SESSION['licenseKey_submitted']) && ($_SESSION['licenseKey_submitted'])
-            && (isset($GLOBALS['db']) && !empty($GLOBALS['db']))){
-$out .=<<<EOQ
-
-<!--
-            //BEGIN SUGARCRM flav=pro ONLY
--->
-	   <tr><td colspan="3" align="left"></td></tr>
-            <tr>
-            	<th colspan="3" align="left">{$mod_strings['LBL_LICENSE_TITLE']}</th>
-            </tr>
-            <tr>
-                <td></td>
-                <td><b>{$mod_strings['LBL_LICENSE_USERS']}</b></td>
-                <td>{$_SESSION['setup_license_key_users']}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><b>{$mod_strings['LBL_LICENSE_EXPIRY']}</b></td>
-                <td>{$_SESSION['setup_license_key_expire_date']}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><b>{$mod_strings['LBL_LICENSE_DOWNLOAD_KEY']}</b></td>
-                <td>{$_SESSION['setup_license_key']}</td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><b>{$mod_strings['LBL_LICENSE_OC']}</b></td>
-                <td>{$_SESSION['setup_num_lic_oc']}</td>
-            </tr>
-<!--
-            //END SUGARCRM flav=pro ONLY
--->
-EOQ;
-}
-*/
-
 
 $out .=<<<EOQ
 

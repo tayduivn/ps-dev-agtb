@@ -157,6 +157,20 @@ abstract class DBManager
     );
 
     /**
+     * DB driver priority
+     * Higher priority drivers override lower priority ones
+     * @var int
+     */
+    public $priority = 0;
+
+    /**
+     * Driver name label, for install
+     * @absrtact
+     * @var string
+     */
+    public $label = '';
+
+    /**
      * Type names map
      * @abstract
      * @var array
@@ -202,6 +216,7 @@ abstract class DBManager
      * inline_keys		Supports defining keys together with the table
      * auto_increment_sequence Autoincrement support implemented as sequence
      * limit_subquery   Supports LIMIT clauses in subqueries
+     * create_user		Can create users for Sugar
      *
      * @abstract
      * Special cases:
@@ -3137,6 +3152,32 @@ abstract class DBManager
     }
 
     /**
+     * Check special requirements for DB installation.
+     *
+     * If everything is OK, return true.
+     * If something's wrong, return array of error code and parameters
+     * @return mixed
+     */
+    public function canInstall()
+    {
+        return true;
+    }
+
+    /**
+     * Code run on new database before installing
+     */
+    public function preInstall()
+    {
+    }
+
+    /**
+     * Code run on new database after installing
+     */
+    public function postInstall()
+    {
+    }
+
+    /**
      * Quote string in DB-specific manner
      * @param string $string
      * @return string
@@ -3445,4 +3486,10 @@ abstract class DBManager
      * @param array $exclude_terms Search terms that have to be not in the result
      */
     abstract public function getFulltextQuery($field, $terms, $must_terms = array(), $exclude_terms = array());
+
+    /**
+     * Get install configuration for this DB
+     * @return array
+     */
+    abstract public function installConfig();
 }

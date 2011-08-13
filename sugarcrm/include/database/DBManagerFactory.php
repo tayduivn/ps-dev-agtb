@@ -40,40 +40,55 @@ class DBManagerFactory
      * @param  string $type DB type
      * @return object DBManager instance
      */
-    public static function getTypeInstance($type, $config = array(), $global_config = array())
+    public static function getTypeInstance($type, $config = array())
     {
         global $sugar_config;
-        $my_db_manager = 'MysqlManager';
-        if( $type == "mysql" ) {
-            if (empty($sugar_config['mysqli_disabled']) && function_exists('mysqli_connect')) {
-                $my_db_manager = 'MysqliManager';
+
+        if(!isset($config['db_manager'])) {
+            // standard types
+            switch($type) {
+                case "mysql":
+                    if (empty($sugar_config['mysqli_disabled']) && function_exists('mysqli_connect')) {
+                        $my_db_manager = 'MysqliManager';
+                    } else {
+                        $my_db_manager = "MysqlManager";
+                    }
+                    break;
+                case "mssql":
+                  	if ( function_exists('sqlsrv_connect')
+                                && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' )) {
+                        $my_db_manager = 'SqlsrvManager';
+                    } elseif (self::isFreeTDS()
+                                && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' )) {
+                        $my_db_manager = 'FreeTDSManager';
+                    } else {
+                        $my_db_manager = 'MssqlManager';
+                    }
+                    break;
+                default:
+                    $my_db_manager = self::getManagerByType($type);
+                    if(empty($my_db_manager)) {
+                        $GLOBALS['log']->fatal("unable to load DB manager for: $type");
+                        sugar_die("Cannot load DB manager");
+                    }
             }
-        //BEGIN SUGARCRM flav=ent ONLY
-        } elseif($type == "oci8" ) {
-                $my_db_manager = 'OracleManager';
-        } elseif($type == "ibm_db2" ) {
-                $my_db_manager = 'IBMDB2Manager';
-        //END SUGARCRM flav=ent ONLY
-        } elseif( $type == "mssql" ){
-          	if ( function_exists('sqlsrv_connect')
-                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'sqlsrv' )) {
-                $my_db_manager = 'SqlsrvManager';
-            } elseif (self::isFreeTDS()
-                        && (empty($config['db_mssql_force_driver']) || $config['db_mssql_force_driver'] == 'freetds' )) {
-                $my_db_manager = 'FreeTDSManager';
-            } else {
-                $my_db_manager = 'MssqlManager';
-            }
-        }
-        if(!empty($config['db_manager'])){
+        } else {
             $my_db_manager = $config['db_manager'];
         }
+
+        // sanitize the name
+        $my_db_manager = preg_replace("/[^A-Za-z0-9_-]/", "", $my_db_manager);
+
         $GLOBALS['log']->info("using $my_db_manager DBManager backend");
 
         if(!empty($config['db_manager_class'])){
             $my_db_manager = $config['db_manager_class'];
         } else {
-            require_once("include/database/{$my_db_manager}.php");
+            if(file_exists("custom/include/database/{$my_db_manager}.php")) {
+                require_once("custom/include/database/{$my_db_manager}.php");
+            } else {
+                require_once("include/database/{$my_db_manager}.php");
+            }
         }
 
         if(class_exists($my_db_manager)) {
@@ -154,6 +169,55 @@ class DBManagerFactory
         self::$instances = array();
     }
 
+
+    /**
+     * Get DB manager class name by type name
+     *
+     * For use in install
+     * @param string $type
+     * @return string
+     */
+    public static function getManagerByType($type)
+    {
+        $drivers = self::getDbDrivers();
+        if(!empty($drivers[$type])) {
+            return get_class($drivers[$type]);
+        }
+        return false;
+    }
+
+    /**
+     * Scan directory for valid DB drivers
+     * @param string $dir
+     * @param array $drivers
+     */
+    protected static function scanDriverDir($dir, &$drivers)
+    {
+        if(!is_dir($dir)) return;
+        $scandir = opendir($dir);
+        if($scandir === false) return;
+        while(($name = readdir($scandir)) !== false) {
+            if(substr($name, -11) != "Manager.php") continue;
+            if($name == "DBManager.php") continue;
+            require_once("$dir/$name");
+            $classname = substr($name, 0, -4);
+            if(!class_exists($classname)) continue;
+            $driver = new $classname;
+            if($driver->valid()) {
+                if(empty($drivers[$driver->dbType])) {
+                    $drivers[$driver->dbType]  = array();
+                }
+                $drivers[$driver->dbType][] = $driver;
+            }
+        }
+
+    }
+
+    public static function _compareDrivers($a, $b)
+    {
+        return $a->priority - $b->priority;
+    }
+
     /**
      * Get list of all available DB drivers
      * @return array List of Db drivers, key - variant (mysql, mysqli), value - driver type (mysql, mssql)
@@ -161,19 +225,19 @@ class DBManagerFactory
     public static function getDbDrivers()
     {
         $drivers = array();
-        $dir = opendir("include/database");
-        while(($name = readdir($dir)) !== false) {
-            if(substr($name, -11) != "Manager.php") continue;
-            if($name == "DBManager.php") continue;
-            require_once("include/database/$name");
-            $classname = substr($name, 0, -4);
-            if(!class_exists($classname)) continue;
-            $driver = new $classname;
-            if($driver->valid()) {
-                $drivers[$driver->variant] = $driver->dbType;
+        self::scanDriverDir("include/database", $drivers);
+        self::scanDriverDir("custom/include/database", $drivers);
+
+        $result = array();
+        foreach($drivers as $type => $tdrivers) {
+            if(empty($tdrivers)) continue;
+            if(count($tdrivers) > 1) {
+                uasort($tdrivers, array(__CLASS__, "_compareDrivers"));
             }
+            $result[$type] = $tdrivers[0];
         }
-        return $drivers;
+
+        return $result;
     }
 
     /**

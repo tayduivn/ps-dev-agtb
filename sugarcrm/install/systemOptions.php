@@ -45,7 +45,7 @@ if(isset($validation_errors)) {
 }
 
 $drivers = DBManagerFactory::getDbDrivers();
-foreach(array_values($drivers) as $dname) {
+foreach(array_keys($drivers) as $dname) {
     $checked[$dname] = '';
 }
 $checked[$setup_db_type] = 'checked="checked"';
@@ -89,45 +89,12 @@ $out=<<<EOQ
     <td>&nbsp;</td>
     <td align="left">
 EOQ;
-// TODO: make this DB-transparent
-if(in_array("mysql", array_values($drivers))){
-$out.=<<<EOQ
-        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mysql" {$checked['mysql']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MYSQL']}
-EOQ;
-//check to see if mysqli is enabled
-if(isset($drivers['mysqli'])){
-    $out.=' &nbsp;(MySQLi detected)<br>';
-}else{
-     $out.= '<br>';
-}
-}
-if(in_array("mssql", array_values($drivers))){
+foreach($drivers as $type => $driver) {
+    $oci = ($type == "oci8")?"":'none'; // hack for special oracle message
     $out.=<<<EOQ
-		<input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="mssql" {$checked['mssql']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_MSSQL']}
+        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="$type" {$checked[$type]} onclick="document.getElementById('ociMsg').style.display='$oci'"/>{$mod_strings[$driver->label]}
 EOQ;
 }
-//check to see if sqlsrv is enabled
-if(isset($drivers['sqlsrv'])){
-    $out.=' &nbsp;(Microsoft SQL Server Driver for PHP detected)<br>';
-}else{
-     $out.= '<br>';
-}
-
-
-//BEGIN SUGARCRM flav=ent ONLY
-if(in_array("oci8", array_values($drivers))){
-    $out.=<<<EOQ
-        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="oci8" {$checked['oci8']} onclick="document.getElementById('ociMsg').style.display=''"/>{$mod_strings['LBL_ORACLE']}<BR>
-EOQ;
-}
-
-if(in_array("ibm_db2", array_values($drivers))){
-    $out.=<<<EOQ
-        <input type="radio" class="checkbox" name="setup_db_type" id="setup_db_type" value="ibm_db2" {$checked['ibm_db2']} onclick="document.getElementById('ociMsg').style.display='none'"/>{$mod_strings['LBL_IBM_DB2']}<BR>
-EOQ;
-}
-//END SUGARCRM flav=ent ONLY
-
 
 $out.=<<<EOQ
     </td>

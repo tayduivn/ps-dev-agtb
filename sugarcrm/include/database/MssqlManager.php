@@ -80,6 +80,7 @@ class MssqlManager extends DBManager
     public $dbType = 'mssql';
     public $dbName = 'MsSQL';
     public $variant = 'mssql';
+    public $label = 'LBL_MSSQL';
 
     protected $capabilities = array(
         "affected_rows" => true,
@@ -87,6 +88,7 @@ class MssqlManager extends DBManager
         'fulltext' => true,
         'limit_subquery' => true,
         "fix:expandDatabase" => true, // Support expandDatabase fix
+        "create_user" => true,
     );
 
     /**
@@ -2029,4 +2031,21 @@ EOQ;
         return preg_match('/^[0-9#@]+|[\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/', $name)==0;
     }
 
+    public function installConfig()
+    {
+        return array(
+        	'LBL_DBCONFIG_MSG3' =>  array(
+                "setup_db_database_name" => array("label" => 'LBL_DBCONF_DB_NAME', "required" => true),
+            ),
+            'LBL_DBCONFIG_MSG2' =>  array(
+                "setup_db_host_name" => array("label" => 'LBL_DBCONF_HOST_NAME', "required" => true),
+                "setup_db_host_instance" => array("label" => 'LBL_DBCONF_HOST_INSTANCE'),
+            ),
+            'LBL_DBCONF_TITLE_USER_INFO' => array(),
+            'LBL_DBCONFIG_B_MSG1' => array(
+                "setup_db_admin_user_name" => array("label" => 'LBL_DBCONF_DB_ADMIN_USER', "required" => true),
+                "setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
+            )
+        );
+    }
 }

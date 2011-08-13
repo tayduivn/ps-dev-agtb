@@ -48,6 +48,7 @@ class IBMDB2Manager  extends DBManager
     public $dbType = 'ibm_db2';
     public $variant = 'ibm_db2';
     public $dbName = 'IBM_DB2';
+    public $label = 'LBL_IBM_DB2';
 
     /**+
      * @var array
@@ -1771,4 +1772,23 @@ EOQ;
         return preg_match('/[\#\"\'\*\/\\?\:\\<\>\-\ \&\!\(\)\[\]\{\}\;\,\.\`\~\|\\\\]+/', $name)==0;
     }
 
+    public function installConfig()
+    {
+        return array(
+        	'LBL_DBCONFIG_MSG3' =>  array(
+                "setup_db_database_name" => array("label" => 'LBL_DBCONF_DB_NAME', "required" => true),
+            ),
+            'LBL_DBCONFIG_MSG2' =>  array(
+                "setup_db_host_name" => array("label" => 'LBL_DBCONF_HOST_NAME', "required" => true),
+                "setup_db_port_num" => array("label" => 'LBL_DBCONF_HOST_PORT'),
+    			'setup_db_create_sugarsales_user' => false,
+
+            ),
+            'LBL_DBCONF_TITLE_USER_INFO' => array(),
+            'LBL_DBCONFIG_B_MSG1' => array(
+                "setup_db_admin_user_name" => array("label" => 'LBL_DBCONF_DB_ADMIN_USER', "required" => true),
+                "setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
+            )
+        );
+    }
 }

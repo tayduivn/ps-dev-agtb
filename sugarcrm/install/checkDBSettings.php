@@ -29,7 +29,8 @@ function checkDBSettings($silent=false) {
     $errors = array();
     copyInputsIntoSession();
 
-    $db = DBManagerFactory::getTypeInstance($_SESSION['setup_db_type']);
+    $db = getInstallDbInstance();
+
     installLog("testing with {$db->dbType}:{$db->variant}");
 
         if( trim($_SESSION['setup_db_database_name']) == '' ){
@@ -74,8 +75,10 @@ function checkDBSettings($silent=false) {
                 "db_host_instance" => $_SESSION['setup_db_host_instance'],
         );
 
-        if(isset($_SESSION['setup_db_port_num']) && $_SESSION['setup_db_port_num'] != '') {
+        if(!empty($_SESSION['setup_db_port_num'])) {
             $dbconfig["db_port"] = $_SESSION['setup_db_port_num'];
+        } else {
+            $_SESSION['setup_db_port_num'] = '';
         }
 
         // Needed for database implementation that do not allow connections to the server directly
@@ -155,44 +158,14 @@ function checkDBSettings($silent=false) {
                 }
 
                 // DB SPECIFIC
-                if( $_SESSION['setup_db_type'] == 'mysql') {
-                    // check mysql minimum version requirement
-                    $db_version = $db->version();
-                    if(version_compare($db_version, '4.1.2') < 0) {
-                        $errors['ERR_DB_MYSQL_VERSION1'] = $mod_strings['ERR_DB_MYSQL_VERSION1'].$db_version.$mod_strings['ERR_DB_MYSQL_VERSION2'];
-                        installLog("ERROR:: {$errors['ERR_DB_MYSQL_VERSION1']}");
-                    }else{
-                        installLog("Passed DB Version check, version is {$db_version}");
-                    }
-                } elseif($_SESSION['setup_db_type'] == 'mssql') {
-                    // check SQL Server fulltext index
-                    $ftsChckQry = $db->getOne("SELECT FULLTEXTSERVICEPROPERTY('IsFulltextInstalled')");
-                    if(!empty($ftsChckQry)) {
-                        $_SESSION['IsFulltextInstalled'] = 1;
-                        installLog("Full text Indexing has been detected");
-                    } else {
-                        $_SESSION['IsFulltextInstalled'] = 0;
-                        installLog("WARNING:: Full text Indexing is not installed");
-                    }
-                } elseif($_SESSION['setup_db_type'] == 'oci8') {
-                    // check Oracle version
-                    $version = $db->version();
-                    if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $version)) {
-                        $errors['ERR_DB_OCI8_VERSION'] = $mod_strings['ERR_DB_OCI8_VERSION'];
-                        installLog("ERROR:: {$errors['ERR_DB_OCI8_VERSION']}");
-                    } else {
-                        installLog("Passed OCI minimum Version check");
-                    }
-                } elseif($_SESSION['setup_db_type'] == 'ibm_db2') {
-                    // check DB2 version
-                    $version = $db->version();
-                    //TODO implement version checking
-                    if(!preg_match("/.*/i", $version)) {
-                        $errors['ERR_DB_IBM_DB2_VERSION'] = $mod_strings['ERR_DB_IBM_DB2_VERSION'];
-                        installLog("ERROR:: {$errors['ERR_DB_IBM_DB2_VERSION']}");
-                    } else {
-                        installLog("Passed IBM DB2 Version check");
-                    }
+                $check = $db->canInstall();
+                if($check !== true) {
+                    $error = array_shift($check);
+                    array_unshift($check, $mod_strings[$error]);
+                    $errors[$error] = call_user_func_array('sprintf', $check);
+                    installLog("ERROR:: {$errors[$error]}");
+                } else {
+                    installLog("Passed DB install check");
                 }
 
                 $db->disconnect();
@@ -250,6 +223,10 @@ function copyInputsIntoSession(){
             if(isset($_REQUEST['setup_db_database_name'])){$_SESSION['setup_db_database_name']      = $_REQUEST['setup_db_database_name'];}
             if(isset($_REQUEST['setup_db_host_name'])){$_SESSION['setup_db_host_name']              = $_REQUEST['setup_db_host_name'];}
 
+            if(isset($_SESSION['setup_db_type']) && (!isset($_SESSION['setup_db_manager']) || isset($_REQUEST['setup_db_type']))) {
+                $_SESSION['setup_db_manager'] = DBManagerFactory::getManagerByType($_SESSION['setup_db_type']);
+            }
+
             if(isset($_REQUEST['setup_db_host_instance'])){
                 $_SESSION['setup_db_host_instance'] = $_REQUEST['setup_db_host_instance'];
             }
@@ -274,8 +251,9 @@ function copyInputsIntoSession(){
 
             //make sure we are creating or using provided user for app db connections
             $_SESSION['setup_db_create_sugarsales_user']  = true;//get_boolean_from_request('setup_db_create_sugarsales_user');
-            if( $_SESSION['setup_db_type'] == 'oci8' || $_SESSION['setup_db_type'] == 'ibm_db2' ){
-             //if we are in Oracle or DB2 Mode, make the admin user/password same as connecting user/password
+            $db = getInstallDbInstance();
+            if( !$db->supports("create_user") ){
+             //if the DB doesn't support creating users, make the admin user/password same as connecting user/password
               $_SESSION['setup_db_sugarsales_user']             = $_SESSION['setup_db_admin_user_name'];
               $_SESSION['setup_db_sugarsales_password']         = $_SESSION['setup_db_admin_password'];
               $_SESSION['setup_db_sugarsales_password_retype']  = $_SESSION['setup_db_sugarsales_password'];

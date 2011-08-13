@@ -78,6 +78,8 @@ class SqlsrvManager extends MssqlManager
 {
     public $dbName = 'SQL Server';
     public $variant = 'sqlsrv';
+    public $priority = 10;
+    public $label = 'LBL_MSSQL_SQLSRV';
 
     protected $capabilities = array(
         "affected_rows" => true,

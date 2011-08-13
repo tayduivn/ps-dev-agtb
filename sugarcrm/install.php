@@ -162,11 +162,6 @@ if(isset($_REQUEST['page']) && $_REQUEST['page'] == 'licensePrint')
     exit ();
 }
 
-//check to see if mysqli is enabled
-if(function_exists('mysqli_connect')){
-    $_SESSION['mysql_type'] = 'mysqli';
-}
-
 //if this is a system check, then just run the check and return,
 //this is an ajax call and there is no need for further processing
 if(isset($_REQUEST['checkInstallSystem']) && ($_REQUEST['checkInstallSystem'])){
@@ -245,6 +240,7 @@ if (!isset($_SESSION['oc_install']) || $_SESSION['oc_install'] == false) {
         unset($_SESSION['setup_db_admin_password']);
         unset($_SESSION['setup_db_name']);
         unset($_SESSION['setup_db_type']);
+        unset($_SESSION['setup_db_manager']);
         //END SUGARCRM flav=int ONLY
     }
 }

@@ -130,30 +130,9 @@ if(ini_get("zend.ze1_compatibility_mode")) {
 if (!empty($_REQUEST['setup_db_type']))
     $_SESSION['setup_db_type'] = $_REQUEST['setup_db_type'];
 
-$mssqlStatus = '';
-$dbVersion = '';
-// Removed php_sqlsrv install support until the driver support is out of beta status
-$supported_dbs = array("mysql_connect",
-                       "mysqli_connect",
-                       "mssql_connect",
+$drivers = DBManagerFactory::getDbDrivers();
 
-                       "sqlsrv_connect",
-//BEGIN SUGARCRM flav=ent ONLY
-
-                       "OCILogon"
-//END SUGARCRM flav=ent ONLY
-                      );
-$db_support_exists = false;
-
-foreach ($supported_dbs as $dbfunct){
-
-    if( function_exists( $dbfunct) ){
-        $db_support_exists = true;
-        installLog("Found at least one supported DB Type");
-        break;
-    }
-}
-if( !$db_support_exists ){
+if( empty($drivers) ){
     $db_name = $mod_strings['LBL_DB_UNAVAILABLE'];
     installLog("ERROR:: {$mod_strings['LBL_CHECKSYS_DB_SUPPORT_NOT_AVAILABLE']}");
     $dbStatus = "<b><span class=stop>{$mod_strings['LBL_CHECKSYS_DB_SUPPORT_NOT_AVAILABLE']}</span></b>";

@@ -26,6 +26,7 @@ class FreeTDSManager extends MssqlManager
 {
     public $dbName = 'FreeTDS SQL Server';
     public $variant = 'freetds';
+    public $label = 'LBL_MSSQL2';
 
     protected $capabilities = array(
         "affected_rows" => true,
