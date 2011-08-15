@@ -1173,7 +1173,7 @@ print "<BR>";
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
 
-            if(!$this->select_already_defined($select_piece,$field_list_name)) {
+            if(!$this->select_already_defined($select_piece,$field_list_name) && $display_column["type"] != "html") {
                 array_push($this->$field_list_name,$select_piece);
             }
             if (!empty($display_column['column_key']) && !empty($this->all_fields[$display_column['column_key']])) {
