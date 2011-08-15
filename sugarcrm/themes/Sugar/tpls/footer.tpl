@@ -101,7 +101,6 @@ function qe_init(){
 {/literal}
 
 </script>
-
 </body>
 </html>
 

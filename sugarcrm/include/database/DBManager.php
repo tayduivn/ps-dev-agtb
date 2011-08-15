@@ -795,6 +795,11 @@ abstract class DBManager
             if (isset($value['source']) && $value['source'] != 'db')
                 continue;
 
+
+            $validDBName = $this->helper->getValidDBName($name, true, 'index', true);
+            if (isset($compareIndices[$validDBName])) {
+                   $value['name'] = $validDBName;
+            }
             $name = $value['name'];
 
 			//Don't attempt to fix the same index twice in one pass;
@@ -813,9 +818,27 @@ abstract class DBManager
                 $value['type'] = 'index';
 
             if ( !isset($compareIndices[$name]) ) {
-                // ok we need this field lets create it
-                $sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
-                $sql .= $this->addIndexes($tablename,array($value), $execute) .  "\n";
+                //First check if an index exists that doens't match our name, if so, try to rename it
+                $found = false;
+                foreach ($compareIndices as $ex_name => $ex_value)
+                {
+                    if($this->compareVarDefs($ex_value, $value, true))
+                    {
+                        $found = $ex_name;
+                        break;
+                    }
+                }
+                if ($found)
+                {
+                    $sql .=	 "/*MISSNAMED INDEX IN DATABASE - $name - $ex_name */\n";
+                    $sql .= $this->renameIndex($tablename, $ex_name, $name, $execute) .  "\n";
+
+                } else
+                {
+                    // ok we need this field lets create it
+                    $sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
+                    $sql .= $this->addIndexes($tablename,array($value), $execute) .  "\n";
+                }
                 $take_action = true;
 				$correctedIndexs[$name] = true;
             }
@@ -859,11 +882,12 @@ abstract class DBManager
      */
     public function compareVarDefs(
         $fielddef1,
-        $fielddef2
+        $fielddef2,
+        $ignoreName = false
         )
     {
         foreach ( $fielddef1 as $key => $value ) {
-            if ( $key == 'name' && ( strtolower($fielddef1[$key]) == strtolower($fielddef2[$key]) ) )
+            if ( $key == 'name' && ( strtolower($fielddef1[$key]) == strtolower($fielddef2[$key]) || $ignoreName) )
                 continue;
             if ( isset($fielddef2[$key]) && $fielddef1[$key] == $fielddef2[$key] )
                 continue;
@@ -1019,6 +1043,11 @@ abstract class DBManager
         if ($execute)
             $this->query($sql);
         return $sql;
+    }
+
+    public function renameIndex($tablename, $oldName, $newName, $execute = true)
+    {
+        return "";
     }
 
     /**

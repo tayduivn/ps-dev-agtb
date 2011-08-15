@@ -205,7 +205,14 @@ SUGAR.ajaxUI = {
             return true;
         } else {
             form.submit();
-            return false;
+
+            if(typeof(allowreturn)!='undefined' && allowreturn != null && allowreturn){
+                //there is some unfinished business to process (like closing overlays from dcmenu), so return and let process continue
+                return;
+            }else{
+                //show is over, return false
+                return false;
+            }
         }
     },
     cleanGlobals : function()

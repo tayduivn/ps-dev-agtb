@@ -606,6 +606,14 @@ class OracleManager extends DBManager
         return $sql;
     }
 
+    public function renameIndex($tablename, $oldName, $newName, $execute = true)
+    {
+        $sql = "ALTER index $oldName rename to $newName;";
+        if ($execute)
+                $this->query($sql);
+        return $sql;
+    }
+
     /**
      * @see DBManager::dropIndexes()
      */
