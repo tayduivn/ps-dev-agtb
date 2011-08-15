@@ -145,6 +145,19 @@ class ViewConvertLead extends SugarView
 	                	//Special case where company and person have the same field with a different name
 	                	$focus->phone_office = $this->focus->phone_work;
 	                }
+					else if (strpos($field, "billing_address") !== false && $focus->field_defs[$field]["type"] == "varchar") /* Bug 42219 fix */         
+					{
+						$tmp_field = str_replace("billing_", "primary_", $field);
+						$focus->field_defs[$field]["type"] = "text";
+						$focus->$field = $this->focus->$tmp_field;
+					 }
+
+					else if (strpos($field, "shipping_address") !== false && $focus->field_defs[$field]["type"] == "varchar") /* Bug 42219 fix */
+					{
+						$tmp_field = str_replace("shipping_", "primary_", $field);
+						$focus->$field = $this->focus->$tmp_field;
+						$focus->field_defs[$field]["type"] = "text";
+					}    					
                     else if (isset($this->focus->$field))
                     {
                         $focus->$field = $this->focus->$field;
