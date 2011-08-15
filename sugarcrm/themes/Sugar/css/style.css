@@ -3064,7 +3064,8 @@ embed
 	color: #666;
 	text-shadow: 0 1px #FFFFFF;
 	padding: 3px 8px;
-	height: 22px;	
+	height: 22px;
+	cursor: move;	
 	}
 
 

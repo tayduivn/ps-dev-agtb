@@ -323,6 +323,9 @@ var DCMenu = YUI({ combine: true, timeout: 10000, base:"include/javascript/yui3/
 			setTimeout(function(){
 				var dcboxHeight = Y.one('#dcboxbody').get('offsetHeight');
 				var dcboxWidth = Y.one('#dcboxbody').get('offsetWidth');
+				if(isSafari) {
+					Y.one('#dcboxbody').setStyle('width',dcboxWidth+'px');
+				}
 				overlays[0].get('boundingBox').setStyle('height',dcboxHeight+'px');
 				overlays[0].get('boundingBox').setStyle('width',dcboxWidth+'px');
 				overlays[0].set('centered',true);
@@ -430,6 +433,9 @@ var DCMenu = YUI({ combine: true, timeout: 10000, base:"include/javascript/yui3/
 			    		overlay.set('xy', [20,dcmenuContainerHeight]);
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
+						if(isSafari) {
+							dcboxbody.setStyle("width",dcboxbodyWidth+"px");
+						}
 						if(SUGAR.isIE) {
 							var dchead = Y.one('#dchead');
 				    		var dcheadwidth = dchead.get('offsetWidth');
