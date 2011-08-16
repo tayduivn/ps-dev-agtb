@@ -1,7 +1,7 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
 $mod_strings = array(
-    'LBL_SNIP_SUMMARY' => "SNIP is an automatic email importing service that allows users to import emails into Sugar by sending them from any mail client or service to a Sugar-provided email address. Each Sugar instance has it's own unique SNIP mailbox.
+    'LBL_SNIP_SUMMARY' => "SNIP is an automatic email importing service that allows users to import emails into Sugar by sending them from any mail client or service to a Sugar-provided email address. Each Sugar instance has its own unique SNIP mailbox.
     <br><br/>To import emails, a user sends to the SNIP email address using the TO, CC, BCC fields. The SNIP service will import the email into the Sugar instance. The service imports the email, along with any attachments, images and Calendar events, and creates records within the application that are associated with existing records based on matching email addresses.
     <br><br>Example: As a user, when I view an Account, I will be able to see all the emails that are  associated with the Account based on the email address in the Account record.  I will also be able to see emails that are associated with Contacts related to the Account.",
 
