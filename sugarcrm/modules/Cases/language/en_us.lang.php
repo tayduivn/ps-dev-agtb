@@ -122,7 +122,7 @@ $mod_strings = array (
     'LBL_EXPORT_TEAM_COUNT' => 'Team Count',
 
     // SNIP
-	'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',
+	'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
 );
 
 ?>
