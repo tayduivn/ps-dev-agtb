@@ -11,6 +11,7 @@ class SugarSNIP
 {
     // Username for SNIP system user
     const SNIP_USER = 'SNIPuser';
+    const DEFAULT_URL = 'https://67.207.131.175:20010/';
 
     /**
      * Singleton instance
@@ -98,7 +99,12 @@ class SugarSNIP
         return is_object($result) && $result->result == 'ok';
     }
 
-    public function registerSnip () {
+    /**
+     * Register this instance with SNIP server
+     * @return mixed server response
+     */
+    public function registerSnip ()
+    {
         global $sugar_config;
 
         $connectionfailed = false;
@@ -127,12 +133,23 @@ class SugarSNIP
         }
     }
 
-    public function setSnipEmail($email){
+    /**
+     * Set SNIP email address
+     * @param string $email
+     */
+    public function setSnipEmail($email)
+    {
         $admin = new Administration();
         $admin->saveSetting('snip', 'email', $email);
+        return $this;
     }
 
-    public function getSnipEmail () {
+    /**
+     * Get SNIP email address
+     * @return string
+     */
+    public function getSnipEmail()
+    {
         $admin = new Administration();
         $snip = $admin->retrieveSettings('snip');
         if (isset($snip->settings['snip_email']))
@@ -140,7 +157,12 @@ class SugarSNIP
         return '';
     }
 
-    public function unregisterSnip () {
+    /**
+     * Unregister SNIP from server
+     * @return mixed server response
+     */
+    public function unregisterSnip ()
+    {
         global $sugar_config;
 
         $connectionfailed = false;
@@ -190,9 +212,8 @@ class SugarSNIP
     }
 
     /**
-     * Set SNIP instance URL. Now getSnipURL() returns hardcoded value
+     * Set SNIP instance URL.
      * @param string $url
-     * @deprecated
      */
     public function setSnipURL($url)
     {
@@ -209,7 +230,10 @@ class SugarSNIP
      */
     public function getSnipURL()
     {
-        return 'https://67.207.131.175:20010/';
+        if(!isset($this->config['snip_url'])) {
+            return self::DEFAULT_URL;
+        }
+        return $this->config['snip_url'];
     }
 
     /**
