@@ -147,9 +147,11 @@ class ImportViewConfirm extends ImportView
         $enclosure = $importFile->getFieldEnclosure();
         $hasHeader = $importFile->hasHeaderRow();
 
+        $encodeOutput = TRUE;
         //Handle users navigating back through the wizard.
         if( !empty($_REQUEST['previous_action']) && $_REQUEST['previous_action'] == 'Confirm')
         {
+            $encodeOutput = FALSE;
             $importFileMap = $this->overloadImportFileMapFromRequest($importFileMap);
             $delimeter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : $delimeter;
             $enclosure = isset($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : $enclosure;
@@ -206,12 +208,7 @@ class ImportViewConfirm extends ImportView
         $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
 	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
 
-        echo json_encode(array(
-            'html'          => htmlspecialchars($content, ENT_NOQUOTES),
-            'submitContent' => htmlspecialchars($submitContent, ENT_NOQUOTES),
-            'title'         => htmlspecialchars($this->getModuleTitle(false), ENT_NOQUOTES),
-            'script'        => htmlspecialchars($JS ,ENT_NOQUOTES) . $this->errorScript,
-         ));
+        $this->sendJsonOutput($content, $submitContent,$JS, $encodeOutput);
     }
 
     private function getEnclosureOptions($enclosure)
