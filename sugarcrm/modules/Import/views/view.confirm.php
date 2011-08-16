@@ -98,7 +98,8 @@ class ImportViewConfirm extends ImportView
         $mimeTypeOk = true;
 
         //check to see if the file mime type is not a form of text or application octed streramand fire error if not
-        if(isset($_FILES['userfile']['type']) && strpos($_FILES['userfile']['type'],'octet-stream') === false && strpos($_FILES['userfile']['type'],'text') === false){
+        if(isset($_FILES['userfile']['type']) && strpos($_FILES['userfile']['type'],'octet-stream') === false && strpos($_FILES['userfile']['type'],'text') === false
+            && strpos($_FILES['userfile']['type'],'application/vnd.ms-excel') === false) {
             //this file does not have a known text or application type of mime type, issue the warning
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_1'];
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_2'];

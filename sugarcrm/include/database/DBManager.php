@@ -727,7 +727,8 @@ abstract class DBManager
             $ignorerequired=false;
 
 			//Do not track requiredness in the DB, auto_increment, ID, and deleted fields are always required in the DB, so don't force those
-            if (empty($value['auto_increment']) && (empty($value['type']) || $value['type'] != 'id')
+            if (empty($value['auto_increment']) && !isset($value['isnull'])
+                    && (empty($value['type']) || $value['type'] != 'id')
                     && (empty($value['dbType']) || $value['dbType'] != 'id')
 					&& (empty($value['name']) || ($value['name'] != 'id' && $value['name'] != 'deleted'))
 					//BEGIN SUGARCRM flav=ent ONLY
@@ -891,6 +892,9 @@ abstract class DBManager
                 continue;
             if ( isset($fielddef2[$key]) && $fielddef1[$key] == $fielddef2[$key] )
                 continue;
+            //Ignore len if its not set in the vardef
+			if ($key == 'len' && empty($fielddef2[$key]))
+				continue;
             return false;
         }
         
