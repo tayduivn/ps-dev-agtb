@@ -197,12 +197,6 @@ var DCMenu = YUI({ combine: true, timeout: 10000, base:"include/javascript/yui3/
             
             content += '</div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
     		overlay.set('bodyContent', content);
-
-            //eval the contents if the eval parameter is passed in.  This will ensure that quick search, validation,
-            // and other relevant js is run in the spawned modal
-            if(typeof(data.eval) != 'undefined' && data.eval){
-                SUGAR.util.evalScript(content);
-            }
     		overlay.show();
     		return overlay;
     }
@@ -424,8 +418,8 @@ var DCMenu = YUI({ combine: true, timeout: 10000, base:"include/javascript/yui3/
                      	SUGAR.util.evalScript(jData.html);
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
-
-            			overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+                        DCMenu.jsEvalled = false;
+                        overlay = setBody({html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" +data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
 						var dcmenuContainer = Y.one('#dcmenuContainer');
@@ -445,8 +439,11 @@ var DCMenu = YUI({ combine: true, timeout: 10000, base:"include/javascript/yui3/
 							overlay.set('x',dcmenuSugarCubeX - dcboxbodyWidth);
 						}
 
-            		 	SUGAR.util.evalScript(data.responseText);
-            		 	setTimeout("enableQS();", 1000);
+                        //only run eval once
+                         if (!DCMenu.jsEvalled)
+            		 	    SUGAR.util.evalScript(data.responseText);
+
+                        setTimeout("enableQS();", 1000);
 
             		 }
 
