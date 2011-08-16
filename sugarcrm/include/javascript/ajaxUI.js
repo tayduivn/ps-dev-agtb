@@ -45,7 +45,7 @@ SUGAR.ajaxUI = {
             }
             if (r.title)
             {
-                document.title = r.title.replace(/&raquo;/g, '>').replace(/&nbsp;/g, ' ');
+                document.title = html_entity_decode(r.title);
             }
             if (r.action)
             {
