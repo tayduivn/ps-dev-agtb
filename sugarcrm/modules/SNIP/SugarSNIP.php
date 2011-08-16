@@ -29,7 +29,8 @@ class SugarSNIP
 {
     // Username for SNIP system user
     const SNIP_USER = 'SNIPuser';
-    const DEFAULT_URL = 'https://67.207.131.175:20010/';
+    // FIXME: this should be real server
+    const DEFAULT_URL = 'http://sniptest.sjc.sugarcrm.pvt:20010/';
 
     /**
      * Singleton instance

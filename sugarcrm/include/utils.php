@@ -197,7 +197,8 @@ function make_sugar_config(&$sugar_config)
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
 	 //BEGIN SUGARCRM flav=pro ONLY
-	'passwordsetting' => empty($passwordsetting) ? array (
+		'snip_url' => 'https://sniptest.sjc.sugarcrm.pvt:20010/',
+		'passwordsetting' => empty($passwordsetting) ? array (
 	    'minpwdlength' => '',
 	    'maxpwdlength' => '',
 	    'oneupper' => '',
@@ -226,7 +227,6 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
-		'snip_url' => 'https://67.207.131.175:20010/',
 		//END SUGARCRM flav=pro ONLY
 	);
 }
