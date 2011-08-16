@@ -712,6 +712,14 @@ $dictionary['User'] = array(
         'source'=>'non-db',
         'side' => 'left',
       ),
+        'project_resource'=>
+		array (
+			'name' => 'project_resource',
+			'type' => 'link',
+			'relationship' => 'projects_users_resources',
+			'source' => 'non-db',
+			'vname' => 'LBL_PROJECTS',
+		),
     ) ,
     'indices' => array(
         array(

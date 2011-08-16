@@ -2548,7 +2548,7 @@ SUGAR.ajaxStatusClass.prototype.shown = false; // state of the status window
 
 // reposition the status div, top and centered
 SUGAR.ajaxStatusClass.prototype.positionStatus = function() {
-	this.statusDiv.style.top = document.body.scrollTop + 8 + 'px';
+	//this.statusDiv.style.top = document.body.scrollTop + 8 + 'px';
 	statusDivRegion = YAHOO.util.Dom.getRegion(this.statusDiv);
 	statusDivWidth = statusDivRegion.right - statusDivRegion.left;
 	this.statusDiv.style.left = YAHOO.util.Dom.getViewportWidth() / 2 - statusDivWidth / 2 + 'px';
@@ -2558,11 +2558,6 @@ SUGAR.ajaxStatusClass.prototype.positionStatus = function() {
 SUGAR.ajaxStatusClass.prototype.createStatus = function(text) {
 	statusDiv = document.createElement('div');
 	statusDiv.className = 'dataLabel';
-	statusDiv.style.background = '#ffffff';
-	statusDiv.style.color = '#c60c30';
-	statusDiv.style.position = 'absolute';
-	statusDiv.style.opacity = .8;
-	statusDiv.style.filter = 'alpha(opacity=80)';
 	statusDiv.id = 'ajaxStatusDiv';
 	document.body.appendChild(statusDiv);
 	this.statusDiv = document.getElementById('ajaxStatusDiv');
@@ -2576,7 +2571,6 @@ SUGAR.ajaxStatusClass.prototype.showStatus = function(text) {
 	else {
 		this.statusDiv.style.display = '';
 	}
-	this.statusDiv.style.zIndex = 20;
 	this.statusDiv.innerHTML = '&nbsp;<b>' + text + '</b>&nbsp;';
 	this.positionStatus();
 	if(!this.shown) {

@@ -1157,9 +1157,9 @@ $mod_strings = array (
     'LBL_OAUTH' => "OAuth key management",
     'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-    // SNIP
-    'LBL_SNIP_TITLE' => 'SNIP',
-    'LBL_SNIP_DESC' => 'Configure offline archiving (SNIP)',
-    'LBL_CONFIGURE_SNIP' => 'SNIP',
-    'LBL_CONFIGURE_SNIP_DESC' => 'Configure settings for the SNIP service'
+    // Sugar EASe
+    'LBL_SNIP_TITLE' => 'Sugar EASe',
+    'LBL_SNIP_DESC' => 'Configure offline archiving (Sugar EASe)',
+    'LBL_CONFIGURE_SNIP' => 'Sugar EASe',
+    'LBL_CONFIGURE_SNIP_DESC' => 'Configure settings for the Sugar EASe service'
 	);

@@ -96,4 +96,25 @@ YAHOO.widget.Overlay.prototype.center = function() {
 	this.syncPosition();
 
 	this.cfg.refireEvent("iframe");
-};
+}
+
+// Override for bug45837
+YAHOO.SUGAR.DragDropTable.prototype._deleteTrEl = function(row) {
+    var rowIndex;
+
+    // Get page row index for the element
+    if(!YAHOO.lang.isNumber(row)) {
+        rowIndex = Dom.get(row).sectionRowIndex;
+    }
+    else {
+        rowIndex = row;
+    }
+    if(YAHOO.lang.isNumber(rowIndex) && (rowIndex > -1) && (rowIndex < this._elTbody.rows.length)) {
+        // Cannot use tbody.deleteRow due to IE6 instability
+        //return this._elTbody.deleteRow(rowIndex);
+        return this._elTbody.removeChild(this._elTbody.rows[row]);
+    }
+    else {
+        return null;
+    }
+}

@@ -86,18 +86,7 @@ value='{$app_strings.LBL_ADD_BUTTON}'><img src="{sugar_getimagepath file="id-ff-
 <input type="hidden" name="useEmailWidget" value="true">
 <script type="text/javascript" language="javascript">
 SUGAR_callsInProgress++;
-var SUGAR_{$module}Email{$index}_initted = false;//keep track of whether widget has already been initted
-
 function init{$module}Email{$index}(){ldelim}
-
-    //do not double init the widget
-    if(SUGAR_{$module}Email{$index}_initted){ldelim}
-        return false;
-    {rdelim}
-
-    //set the value to true, we should not be initting this widget again
-    SUGAR_{$module}Email{$index}_initted = true;
-
 	if(emailAddressWidgetLoaded || SUGAR.EmailAddressWidget){ldelim}
 		var table = YAHOO.util.Dom.get("{$module}emailAddressesTable{$index}");
 	    var eaw = SUGAR.EmailAddressWidget.instances.{$module}{$index} = new SUGAR.EmailAddressWidget("{$module}");
@@ -120,7 +109,6 @@ function init{$module}Email{$index}(){ldelim}
 		setTimeout("init{$module}Email{$index}();", 500);
 	{rdelim}
 {rdelim}
-    //there are multiple calls being made on dom load, use doWhen so calls are in order
-    SUGAR.util.doWhen('SUGAR',init{$module}Email{$index});
 
+YAHOO.util.Event.onDOMReady(init{$module}Email{$index});
 </script>

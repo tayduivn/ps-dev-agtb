@@ -83,12 +83,12 @@ div.snipTitle{
 
 div.snipError{
 	position:relative;
-	margin:2px 8px 0px 8px; 
+	margin:2px 8px 0px 8px;
 	background-color:#ffaa99;
 	padding:2px;
 	padding-left:4px;
 	line-height:16px;
-	
+
 }
 </style>
 {/literal}
@@ -124,16 +124,16 @@ div.snipError{
 					{$EXTRA_ERROR}
 				</div>
 			{/if}
-					
+
 			{if $SNIP_STATUS=='notpurchased'}
 				<div class='snipDesc'>
 					{$MOD.LBL_SNIP_SUMMARY}
 				</div>
 
-				
+
 				<div class='snipLicenseWrapper'>
 					<div class = 'snipLicenseSubWrapper'>
-						<div class='snipLicense'>{$MOD.LBL_SNIP_AGREEMENT}</div>
+						<div class='snipLicense'>{$LICENSE}</div>
 					</div>
 					<div class='snipUiWrapper'>
 						<div class='snipCheckboxWrapper'>
@@ -149,10 +149,10 @@ div.snipError{
 					</div>
 
 					</div>
-				
+
 			{else}
 
-			
+
 			<table border="0" cellpadding="0" cellspacing="1" width="100%">
 				<tr width="50%">
 					<td scope="row">
@@ -178,7 +178,7 @@ div.snipError{
 						</form>
 						<br>
 					</td>
-				
+
 					<td scope="row" style='width:180px;background-color:white'>
 						<div style='width:auto;margin-top:-5px;height:20px;padding:5px 5px 7px 5px;background-color:#EEEEEE'>
 							{$MOD.LBL_SNIP_SUGAR_URL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_INSTANCE_URL}
@@ -187,17 +187,17 @@ div.snipError{
 					<td>
 						{$SUGAR_URL}
 					</td>
-					
+
 				</tr>
 				<tr>
-					
+
 					<td scope="row" style='width:100px'>
 						{$MOD.LBL_SNIP_EMAIL}:&nbsp;{sugar_help text=$MOD.LBL_SNIP_MOUSEOVER_EMAIL}
 					</td>
 					<td>
 						{$SNIP_EMAIL}
 					</td>
-				
+
 					<td style='width:170px'></td>
 				</tr>
 			</table>
