@@ -27,10 +27,12 @@ function get_unlinked_email_query_via_link($params)
     $return_array['from']='FROM emails ';
 	$return_array['join'] = " JOIN emails_email_addr_rel eear ON eear.email_id = emails.id AND eear.deleted=0
 		    	JOIN email_addr_bean_rel eabr ON eabr.email_address_id=eear.email_address_id AND eabr.bean_module = '$rel_module' AND eabr.deleted=0
-				JOIN (select '{$bean->id}' as id) {$bean->table_name}
 				$rel_join AND link_bean.id = eabr.bean_id
 				LEFT JOIN emails_beans direct_link ON direct_link.bean_id = '{$bean->id}' AND direct_link.email_id = emails.id
 ";
+// 				JOIN (select '{$bean->id}' as id) {$bean->table_name}
+
+    $return_array['join'] = str_replace($bean->table_name.".id", "'{$bean->id}'", $return_array['join']);
     // exclude directly linked emails
     $return_array['where']="WHERE direct_link.bean_id IS NULL";
 	// Special case for Case - match only proper case number
