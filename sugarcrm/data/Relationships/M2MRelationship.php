@@ -79,8 +79,6 @@ class M2MRelationship extends SugarRelationship
         $dataToInsert = $this->getRowToInsert($lhs, $rhs);
         $dataToInsert = array_merge($dataToInsert, $additionalFields);
 
-        print_r($dataToInsert);
-
         $this->addRow($dataToInsert);
 
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
