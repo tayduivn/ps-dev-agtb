@@ -84,11 +84,14 @@ if ($message=='' && $status != 'notpurchased') {
 if ($status=='purchased_error')
 	$sugar_smarty->assign('SNIP_ERROR_MESSAGE',$message);
 
+require_once("install/install_utils.php");
+
 $sugar_smarty->assign('TITLE',$title);
 $sugar_smarty->assign('SNIP_STATUS',$status);
 $sugar_smarty->assign('EXTRA_ERROR',$extra_error);
 $sugar_smarty->assign('SNIP_EMAIL',$snip->getSnipEmail());
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
+$sugar_smarty->assign('LICENSE',getLicenseContents("LICENSE.txt"));
 
 echo $sugar_smarty->fetch('modules/SNIP/ConfigureSnip.tpl');

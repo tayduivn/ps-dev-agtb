@@ -45,7 +45,7 @@ SUGAR.ajaxUI = {
             }
             if (r.title)
             {
-                document.title = r.title.replace(/&raquo;/g, '>').replace(/&nbsp;/g, ' ');
+                document.title = html_entity_decode(r.title);
             }
             if (r.action)
             {
@@ -205,14 +205,7 @@ SUGAR.ajaxUI = {
             return true;
         } else {
             form.submit();
-
-            if(typeof(allowreturn)!='undefined' && allowreturn != null && allowreturn){
-                //there is some unfinished business to process (like closing overlays from dcmenu), so return and let process continue
-                return;
-            }else{
-                //show is over, return false
-                return false;
-            }
+            return false;
         }
     },
     cleanGlobals : function()

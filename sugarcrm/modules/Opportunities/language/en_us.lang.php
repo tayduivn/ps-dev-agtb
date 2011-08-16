@@ -154,7 +154,7 @@ $mod_strings = array (
     'LBL_EXPORT_NAME'=>'Name',
 
   // SNIP
-  'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Contact History',
+  'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
 );
 
 ?>
