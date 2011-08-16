@@ -6095,3 +6095,18 @@ margin-left: 5px;
 .acceptMeeting {
 white-space: nowrap;
 }
+
+#ajaxStatusDiv {
+    background : #ffffff;
+	color : #c60c30;
+	position : fixed;
+	opacity : .8;
+	filter : alpha(opacity=80);
+    z-index: 20;
+    top: 43px;
+    border: 1px solid #aaa;
+	padding: 5px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-border-radius: 6px;
+}
