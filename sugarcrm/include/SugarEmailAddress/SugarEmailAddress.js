@@ -381,14 +381,14 @@
 		    newContent.onkeydown = function(e){this.eaw.handleKeyDown(e)};
 		    
 		    // Add validation to field
-		    //addToValidate(this.emailView, this.id + 'emailAddress' + this.numberEmailAddresses, 'email', this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));
-            this.delayAddValidateEmailAddress(this.emailView, this.id+ 'emailAddress' + this.numberEmailAddresses,this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));
+            this.EmailAddressValidation(this.emailView, this.id+ 'emailAddress' + this.numberEmailAddresses,this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));
 		    this.numberEmailAddresses++;
 			this.addInProgress = false;
 		}, //addEmailAddress
 
-        delayAddValidateEmailAddress : function(ev,fn,r,stR) {
-            setTimeout("addToValidate('"+ev+"', '"+fn+"', 'email', '"+r+"', '"+stR+"');",2000);
+        EmailAddressValidation : function(ev,fn,r,stR) {
+            YAHOO.util.Event.onContentReady(fn,
+    function () { addToValidate(ev, fn, 'email', r, stR);});
         },
 
 		removeEmailAddress : function(index) {
