@@ -19,21 +19,31 @@
  ********************************************************************************/
 
 //Use loader to grab the modules needed
-var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('event', 'dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", function(Y) {
+var DCMenu = YUI({ combine: true, timeout: 10000, base:"include/javascript/yui3/build/", comboBase:"index.php?entryPoint=getYUIComboFile&"}).use('event', 'dd-plugin', 'anim', 'cookie', 'json', 'node-menunav', 'io-base','io-form', 'io-upload-iframe', "overlay", "gallery-overlay-extras", function(Y) {
     //Make this an Event Target so we can bubble to it
     var requests = {};
     var overlays = [];
     var overlayDepth = 0;
     var menuFunctions = {};
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
-    function getOverlay(depth){
+    function getOverlay(depth,type){
     		if(!depth)depth = 0;
+    		var center = (type == "undefined") ? true : false;
     		if(typeof overlays[depth] == 'undefined'){
     			 overlays[depth] = new Y.Overlay({
             			bodyContent: "",
+            			height: (center) ? "400px": "",
+            			width: (center) ? "1000px": "",
+            			constrain: true,
            			    zIndex:21 + depth,
             			shim:false,
-            			visibility:false
+            			visibility:false,
+            			plugins     : [
+ 
+							{ fn: Y.Plugin.OverlayModal }
+ 
+          				]
+            			
         		});
         		overlays[depth].after('render', function(e) {
                     //Get the bounding box node and plug
@@ -42,23 +52,29 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                         handles: ['.hd']
                     });
                 });
-        		overlays[depth].show = function(){
-        			this.visible = true;
+        		//overlays[depth].show = function(){
+        			//this.visible = true;
                     //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
-					this.get('boundingBox').setStyle('position' , 'absolute');
-    				this.get('boundingBox').setStyle('visibility','visible');
-    				if(Y.one('#dcboxbody')) {
-    					Y.one('#dcboxbody').setStyle('display','');
-    				}
-    			}
-    			overlays[depth].hide = function(){
-    				this.visible = false;
-    				this.get('boundingBox').setStyle('visibility','hidden');
-    			}
+					//this.get('boundingBox').setStyle('position' , 'absolute');
+    				//this.get('boundingBox').setStyle('visibility','visible');
+    				//if(Y.one('#dcboxbody')) {
+    					//Y.one('#dcboxbody').setStyle('display','');
+    				//}
+    			//}
+    			//overlays[depth].hide = function(){
+    				//this.visible = false;
+    				//this.get('boundingBox').setStyle('visibility','hidden');
+    			//}
     		}
-			var dcmenuContainer = Y.one('#dcmenuContainer');
-			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
-    		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
+
+		if(type == "undefined" || type == undefined) {
+			overlays[depth].set("height", "400px");
+			overlays[depth].set("width", "1000px");
+			overlays[depth].set("centered", true);
+		} else {
+			overlays[depth].set("height", "");
+			overlays[depth].set("width", "");
+		}
    	  	overlays[depth].render();
     		return overlays[depth]
     }
@@ -126,7 +142,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			if (SUGAR.util.isLoginPage(data.html))
 				return false;
     		DCMenu.closeOverlay(depth);
-    		var overlay = getOverlay(depth);
+    		var overlay = getOverlay(depth,type);
     		
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
@@ -148,10 +164,21 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    		if(typeof data.title  !=  'undefined'){
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
-	    		
-	    		 content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
+	    		if(type == "undefined" || type == undefined) {
+	    			content += '<div class="container-close" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();">&nbsp;</div>';	
+	    		} else {
+	    			content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
+	    		}
     		}
-    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
+    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'">';
+    		
+    		if(type == "undefined" || type == undefined) {
+    			content += '<div class="dashletPanel qe">';
+    		} else {
+    			content += '<div class="dashletPanel dc">';	
+    		}
+    		
+    		content += '<div class="hd" id="dchead">';
 			if ( title !== undefined )
 			    content +=	'<div id="dctitle">' + title + '</div>';
 			else
@@ -162,7 +189,13 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             if ( extraButton != null ) {
                 content += extraButton
             }
-            content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
+            if(type == "undefined" || type == undefined) {
+            	content += '<div class="container-close" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();">&nbsp;</div>';
+            } else {
+            	content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a>';
+            }
+            
+            content += '</div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
     		overlay.set('bodyContent', content);
 
             //eval the contents if the eval parameter is passed in.  This will ensure that quick search, validation,
@@ -285,7 +318,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             SUGAR.util.evalScript(r.scriptOnly);
         }else{
             setBody(r, 0);
-            Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+            //Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+            
+			setTimeout(function(){
+				var dcboxHeight = Y.one('#dcboxbody').get('offsetHeight');
+				var dcboxWidth = Y.one('#dcboxbody').get('offsetWidth');
+				if(isSafari) {
+					Y.one('#dcboxbody').setStyle('width',dcboxWidth+'px');
+				}
+				overlays[0].get('boundingBox').setStyle('height',dcboxHeight+'px');
+				overlays[0].get('boundingBox').setStyle('width',dcboxWidth+'px');
+				overlays[0].set('centered',true);
+			},2000);
+            
             if(SUGAR.isIE) {
 				var dchead = Y.one('#dchead');
 				var dcheadwidth = dchead.get('offsetWidth');
@@ -383,9 +428,14 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             			overlay = setBody({html:data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
-
+						var dcmenuContainer = Y.one('#dcmenuContainer');
+						var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
+			    		overlay.set('xy', [20,dcmenuContainerHeight]);
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
+						if(isSafari) {
+							dcboxbody.setStyle("width",dcboxbodyWidth+"px");
+						}
 						if(SUGAR.isIE) {
 							var dchead = Y.one('#dchead');
 				    		var dcheadwidth = dchead.get('offsetWidth');
