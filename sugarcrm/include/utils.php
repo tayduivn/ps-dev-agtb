@@ -1964,7 +1964,7 @@ function clean_xss($str, $cleanImg=true) {
 
 	$attribute_regex	= "#<.+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
-	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http://[^>]*)>#sim';
+	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http(s)?://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
 
 
@@ -1978,9 +1978,9 @@ function clean_xss($str, $cleanImg=true) {
 
     $jsMatches = xss_check_pattern($attribute_regex, $str);
     if(!empty($jsMatches)){
-        preg_match_all($attribute_regex, $str, $matches, PREG_PATTERN_ORDER);
-        if(!empty($matches[0][0])){
-            $matches2 = array_merge(xss_check_pattern("#({$jsEvents})#sim", $matches[0][0]));
+        preg_match_all($attribute_regex, $str, $newMatches, PREG_PATTERN_ORDER);
+        if(!empty($newMatches[0][0])){
+            $matches2 = array_merge(xss_check_pattern("#({$jsEvents})#sim", $newMatches[0][0]));
             $matches = array_merge($matches, $matches2);
         }
     }
