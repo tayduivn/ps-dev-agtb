@@ -1161,5 +1161,5 @@ $mod_strings = array (
     'LBL_SNIP_TITLE' => 'Sugar EASe',
     'LBL_SNIP_DESC' => 'Configure offline archiving (Sugar EASe)',
     'LBL_CONFIGURE_SNIP' => 'Sugar EASe',
-    'LBL_CONFIGURE_SNIP_DESC' => 'Configure settings for the Sugar EASe service'
+    'LBL_CONFIGURE_SNIP_DESC' => 'Enable/disable the Sugar Email Archiving Service',
 	);

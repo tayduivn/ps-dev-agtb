@@ -197,7 +197,6 @@ function make_sugar_config(&$sugar_config)
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
 	 //BEGIN SUGARCRM flav=pro ONLY
-		'snip_url' => 'https://sniptest.sjc.sugarcrm.pvt:20010/',
 		'passwordsetting' => empty($passwordsetting) ? array (
 	    'minpwdlength' => '',
 	    'maxpwdlength' => '',
@@ -385,6 +384,7 @@ function get_sugar_config_defaults() {
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav=pro ONLY
+	'snip_url' => 'http://ease.sugarcrm.com:20010/',
 	'passwordsetting' => array (
 	    'minpwdlength' => '',
 	    'maxpwdlength' => '',
