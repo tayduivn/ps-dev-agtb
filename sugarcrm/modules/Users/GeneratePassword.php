@@ -105,8 +105,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	    $password="";
 		//BEGIN SUGARCRM flav=pro ONLY
 
-	    // seed the random number generator
-	    srand((double)microtime()*1000000);
 	    // Count the number of requirements
 	    if($res['onenumber']=='1')
 	        $condition+=1;
