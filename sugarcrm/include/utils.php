@@ -4747,3 +4747,15 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	}
     return verify_image_file($path, $jpeg_only);
 }
+
+/**
+ * @param $input - the input string to sanitize
+ * @param int $quotes - use quotes
+ * @param string $charset - the default charset
+ * @param bool $remove - strip tags or not
+ * @return string - the sanitized string
+ */
+function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = false)
+{
+    return htmlentities($input, $quotes, $charset);
+}
