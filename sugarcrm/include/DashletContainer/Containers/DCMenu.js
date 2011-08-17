@@ -26,16 +26,12 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     var overlayDepth = 0;
     var menuFunctions = {};
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
-    function getOverlay(depth,type){
+    function getOverlay(depth){
     		if(!depth)depth = 0;
-    		var center = (type == "undefined") ? true : false;
     		if(typeof overlays[depth] == 'undefined'){
     			 overlays[depth] = new Y.Overlay({
             			bodyContent: "",
-            			height: (center) ? "400px": "",
-            			width: (center) ? "1000px": "",
-            			constrain: true,
-           			    zIndex:22 + depth,
+           			    zIndex:21 + depth,
             			shim:false,
             			visibility:false
         		});
@@ -54,39 +50,16 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     				if(Y.one('#dcboxbody')) {
     					Y.one('#dcboxbody').setStyle('display','');
     				}
-    				//we need to fake a modal since yui3 overlay doesnt support modals without using gallery which causes conflicts
-					if(!document.getElementById('dcModal_mask')){
-						dcModal = new YAHOO.widget.Panel("dcModal",
-						{ width:"0px",															  
-						  modal:true,
-						  visible:false
-						});
-						dcModal.setBody('');
-						dcModal.render(document.body);
-						dcModal.show();
-						Y.one('#dcModal').setStyle('visibility','hidden');
-						Y.one('#dcModal_mask').setStyle('zIndex','21');
-					}
-    			
-    			
     			}
     			overlays[depth].hide = function(){
     				this.visible = false;
     				this.get('boundingBox').setStyle('visibility','hidden');
-    				document.body.removeChild(document.getElementById('dcModal_mask'));
-    				document.body.removeChild(document.getElementById('dcModal_c'));
     			}
     		}
-
-		if(type == "undefined" || type == undefined) {
-			overlays[depth].set("height", "400px");
-			overlays[depth].set("width", "1000px");
-			overlays[depth].set("centered", true);
-		} else {
-			overlays[depth].set("height", "");
-			overlays[depth].set("width", "");
-		}
-   	  		overlays[depth].render();
+			var dcmenuContainer = Y.one('#dcmenuContainer');
+			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
+    		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
+   	  	overlays[depth].render();
     		return overlays[depth]
     }
     
@@ -153,7 +126,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			if (SUGAR.util.isLoginPage(data.html))
 				return false;
     		DCMenu.closeOverlay(depth);
-    		var overlay = getOverlay(depth,type);
+    		var overlay = getOverlay(depth);
     		
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
@@ -175,21 +148,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    		if(typeof data.title  !=  'undefined'){
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
-	    		if(type == "undefined" || type == undefined) {
-	    			content += '<div class="container-close" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();">&nbsp;</div>';	
-	    		} else {
-	    			content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
-	    		}
+	    		
+	    		 content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
     		}
-    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'">';
-    		
-    		if(type == "undefined" || type == undefined) {
-    			content += '<div class="dashletPanel qe">';
-    		} else {
-    			content += '<div class="dashletPanel dc">';	
-    		}
-    		
-    		content += '<div class="hd" id="dchead">';
+    		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
 			if ( title !== undefined )
 			    content +=	'<div id="dctitle">' + title + '</div>';
 			else
@@ -200,13 +162,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             if ( extraButton != null ) {
                 content += extraButton
             }
-            if(type == "undefined" || type == undefined) {
-            	content += '<div class="container-close" onclick="lastLoadedMenu=undefined;DCMenu.closeOverlay();">&nbsp;</div>';
-            } else {
-            	content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a>';
-            }
-            
-            content += '</div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
+            content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
     		overlay.set('bodyContent', content);
     		overlay.show();
     		return overlay;
@@ -324,17 +280,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         }else{
             setBody(r, 0);
 
-			setTimeout(function(){
-				var dcboxHeight = Y.one('#dcboxbody').get('offsetHeight');
-				var dcboxWidth = Y.one('#dcboxbody').get('offsetWidth');
-				if(isSafari) {
-					Y.one('#dcboxbody').setStyle('width',dcboxWidth+'px');
-				}
-				overlays[0].get('boundingBox').setStyle('height',dcboxHeight+'px');
-				overlays[0].get('boundingBox').setStyle('width',dcboxWidth+'px');
-				overlays[0].set('centered',true);
-			},2000);
-            
+            Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
+
             if(SUGAR.isIE) {
 				var dchead = Y.one('#dchead');
 				var dcheadwidth = dchead.get('offsetWidth');
@@ -432,9 +379,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                         overlay = setBody({html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" +data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
-						var dcmenuContainer = Y.one('#dcmenuContainer');
-						var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
-			    		overlay.set('xy', [20,dcmenuContainerHeight]);
+
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
 						if(isSafari) {
