@@ -3192,7 +3192,7 @@ function save_relationship_changes($is_update, $exclude=array())
      * @param boolean $singleSelect Optional, default false.
      * @return String select query string, optionally an array value will be returned if $return_array= true.
      */
-    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
+	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
     {
         //BEGIN SUGARCRM flav=pro ONLY
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
@@ -3647,6 +3647,14 @@ function save_relationship_changes($is_update, $exclude=array())
             //END SUGARCRM flav=pro ONLY
 
         }
+		
+	if ($ifListForExport) {
+		if(isset($this->field_defs['email1'])) {
+			$ret_array['select'].= " ,email_addresses.email_address email1";
+			$ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$this->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$this->module_dir}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ";
+		}
+	}
+		
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($favorites)){
             $ret_array['select'] .= " , sfav.id is_favorite ";
@@ -5952,6 +5960,6 @@ function save_relationship_changes($is_update, $exclude=array())
      */
 	public function create_export_query($order_by, $where)
 	{
-		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
+		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}
 }
