@@ -1972,9 +1972,18 @@ function clean_xss($str, $cleanImg=true) {
 
 	$matches = array_merge(
 	xss_check_pattern($tag_regex, $str),
-	xss_check_pattern($javascript_regex, $str),
-	xss_check_pattern($attribute_regex, $str)
+	xss_check_pattern($javascript_regex, $str)
 	);
+
+
+    $jsMatches = xss_check_pattern($attribute_regex, $str);
+    if(!empty($jsMatches)){
+        preg_match_all($attribute_regex, $str, $matches, PREG_PATTERN_ORDER);
+        if(!empty($matches[0][0])){
+            $matches2 = array_merge(xss_check_pattern("#({$jsEvents})#sim", $matches[0][0]));
+            $matches = array_merge($matches, $matches2);
+        }
+    }
 
 	if($cleanImg) {
 		$matches = array_merge($matches,
