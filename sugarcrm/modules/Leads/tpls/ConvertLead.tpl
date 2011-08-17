@@ -39,7 +39,7 @@
 {{/foreach}}
 {{/if}}
 {if !$def.required || !empty($def.select)}
-<input class="checkbox" type="checkbox" name="new{{$module}}" id="new{{$module}}" onclick="toggleDisplay('create{{$module}}');addRemoveDropdownElement('{{$module}}');{{if !empty($def.select)}}toggle{{$module}}Select();{{/if}}">
+<input class="checkbox" type="checkbox" name="new{{$module}}" id="new{{$module}}" onclick="toggleDisplay('create{{$module}}');if (typeof(addRemoveDropdownElement) == 'function') addRemoveDropdownElement('{{$module}}');{{if !empty($def.select)}}toggle{{$module}}Select();{{/if}}">
 <script type="text/javascript">
  {{if !empty($def.select)}}
  toggle{{$module}}Select = function(){ldelim} 
@@ -57,7 +57,8 @@
      {/if}
 		toggleDisplay('create{{$module}}');
 		document.getElementById('new{{$module}}').checked = true;
-                addRemoveDropdownElement('{{$module}}');
+                if (typeof(addRemoveDropdownElement) == 'function')
+                    addRemoveDropdownElement('{{$module}}');
 		{{if !empty($def.select)}}
 		toggle{{$module}}Select();
 		{{/if}}
