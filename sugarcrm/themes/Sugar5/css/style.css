@@ -3658,3 +3658,14 @@ li div.star {float:none;}
 .star div.off {background-position:0px -18px}
 .star div:hover {cursor:pointer;background-position:0px 0px;}
 
+#ajaxStatusDiv {
+    background : #ffffff;
+	color : #c60c30;
+	position : fixed;
+	opacity : .8;
+	filter : alpha(opacity=80);
+    z-index: 20;
+    top: 7px;
+    border: 1px solid #aaa;
+	padding: 5px;
+}

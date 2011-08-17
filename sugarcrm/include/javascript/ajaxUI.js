@@ -30,12 +30,14 @@
 // $Id: ajaxUI.js 57264 2010-07-02 18:45:27Z kjing $
 
 SUGAR.ajaxUI = {
+    loadingWindow : false,
     callback : function(o)
     {
         var cont;
         if (typeof window.onbeforeunload == "function")
             window.onbeforeunload = null;
         scroll(0,0);
+        ajaxStatus.hideStatus();
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
@@ -165,6 +167,7 @@ SUGAR.ajaxUI = {
                 //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
                 window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
             else {
+                ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
                     success: SUGAR.ajaxUI.callback
                 });
@@ -192,6 +195,7 @@ SUGAR.ajaxUI = {
             var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
             SA.lastURL = "";
             //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
+            ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
             if(string.length > 200)
             {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
@@ -208,6 +212,7 @@ SUGAR.ajaxUI = {
             return false;
         }
     },
+
     cleanGlobals : function()
     {
         sqs_objects = {};
