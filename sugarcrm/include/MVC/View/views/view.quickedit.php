@@ -149,8 +149,13 @@ class ViewQuickedit extends ViewAjax
         $this->ev->defs['templateMeta']['form']['hideAudit']=true;
 
         //use module level view if available
-        if(file_exists('modules/'.$module.'/views/view.edit.php')) {
-           include('modules/'.$module.'/views/view.edit.php');
+        $editFileName = 'modules/'.$module.'/views/view.edit.php';
+        if(file_exists('custom/modules/'.$module.'/views/view.edit.php')) {
+            $editFileName = 'custom/modules/'.$module.'/views/view.edit.php';
+        }
+
+        if(file_exists($editFileName)) {
+           include($editFileName);
            $c = $module . 'ViewEdit';
 
            if(class_exists($c)) {
