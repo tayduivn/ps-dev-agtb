@@ -622,6 +622,7 @@ class SugarEmailAddress extends SugarBean {
                 WHERE ear.bean_module = '{$parent_type}'
                 AND ear.bean_id = '{$parent_id}'
                 AND ear.deleted = 0
+                AND ea.invalid_email = 0
                 ORDER BY ear.primary_address DESC";
         $r = $this->db->limitQuery($q, 0, 1);
         $a = $this->db->fetchByAssoc($r);
@@ -638,6 +639,7 @@ class SugarEmailAddress extends SugarBean {
                 WHERE ear.bean_module = '{$focus->module_dir}'
                 AND ear.bean_id = '{$focus->id}'
                 AND ear.deleted = 0
+                AND ea.invalid_email = 0
                 ORDER BY ear.reply_to_address DESC";
         $r = $this->db->query($q);
         $a = $this->db->fetchByAssoc($r);
