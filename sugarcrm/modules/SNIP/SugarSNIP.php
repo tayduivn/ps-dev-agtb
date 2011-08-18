@@ -102,19 +102,32 @@ class SugarSNIP
         } else {
             $postArgs = http_build_query($params);
         }
-
+        $this->last_error = '';
         $response = $this->client->callRest($url, $postArgs);
 
         if(!empty($response)) {
             $result = json_decode($response);
         } else {
             $GLOBALS['log']->debug("SNIP: REST request failed");
+            $this->last_error = translate($this->client->getLastError(), 'SNIP');
             $connectionfailed=true;
             return false;
         }
         $this->last_result = $result;
+        if(empty($result)) {
+            $this->last_error = translate('ERROR_BAD_RESULT', 'SNIP');
+        }
         $GLOBALS['log']->debug(var_export($result, true));
         return is_object($result) && $result->result == 'ok';
+    }
+
+    /**
+     * Returns last error that happened to SNIP
+     * @return string
+     */
+    public function getLastError()
+    {
+        return $this->last_error;
     }
 
     /**
@@ -639,6 +652,7 @@ class SugarSNIP
  */
 class SugarSNIPClient
 {
+    protected $last_error = '';
     /**
      * sends POST request to REST service via CURL
      * @param string $url URL to call
@@ -647,6 +661,7 @@ class SugarSNIPClient
     public function callRest($url, $postArgs)
     {
         if(!function_exists("curl_init")) {
+            $this->last_error = 'ERROR_NO_CURL';
             $GLOBALS['log']->fatal("SNIP call failed - no cURL!");
             return false;
         }
@@ -661,11 +676,21 @@ class SugarSNIPClient
         $GLOBALS['log']->debug("SNIP call: $url -> $postArgs");
         $response = curl_exec($curl);
         if($response === false) {
+            $this->last_error = 'ERROR_REQUEST_FAILED';
             $GLOBALS['log']->debug("SNIP: cURL call failed");
             return false;
         }
         $GLOBALS['log']->debug("SNIP response: $response");
         curl_close($curl);
         return $response;
+    }
+
+    /**
+     * Returns code of last error that happened to the client
+     * @return string
+     */
+    public function getLastError()
+    {
+        return $this->last_error;
     }
 }

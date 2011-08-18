@@ -754,6 +754,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         return $result;
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Import emails from the SNIP service.
      *
@@ -808,6 +809,7 @@ class SugarWebServiceImplv4 extends SugarWebServiceImplv3_1 {
         }
         return array('results' => $emails, 'count' => count($emails), 'message' => '');
     }
+    //END SUGARCRM flav=pro ONLY
 }
 
 SugarWebServiceImplv4::$helperObject = new SugarWebServiceUtilv4();

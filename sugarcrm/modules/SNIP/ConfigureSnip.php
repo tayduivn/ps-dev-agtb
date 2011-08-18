@@ -51,17 +51,31 @@ $extra_error='';
 if ($_POST && isset($_POST['snipaction'])) {
 	if ($_POST['snipaction']=='enable_snip') {
 		$enable_snip = $snip->registerSnip();
-		if (!$enable_snip || $enable_snip->result!='ok' && $enable_snip->message==''){
-			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_ENABLING'].'</b>. '.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
-		}else if ($enable_snip->result!='ok'){
-			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_ENABLING'].'</b>: '.$enable_snip->message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		if (!$enable_snip || $enable_snip->result!='ok') {
+		    if(!empty($enable_snip->message)) {
+		        $message = $enable_snip->message;
+		    } else {
+		        $message = $snip->getLastError();
+		    }
+		    if(empty($message)) {
+	    		$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_ENABLING'].'</b>. '.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		    } else {
+			    $extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_ENABLING'].'</b>: '.$message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		    }
 		}
 	} else if ($_POST['snipaction']=='disable_snip') {
 		$disable_snip = $snip->unregisterSnip();
-		if (!$disable_snip || $disable_snip->result!='ok' && $disable_snip->message==''){
-			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>. '.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
-		}else if ($disable_snip->result!='ok'){
-			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>: '.$disable_snip->message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		if (!$disable_snip || $disable_snip->result!='ok') {
+		    if(!empty($disable_snip->message)) {
+		        $message = $disable_snip->message;
+		    } else {
+		        $message = $snip->getLastError();
+		    }
+		    if(empty($message)) {
+    			$extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>. '.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+	    	} else {
+			    $extra_error = '<b>'.$GLOBALS['mod_strings']['LBL_SNIP_ERROR_DISABLING'].'</b>: '.$message.'. <br>'.$GLOBALS['mod_strings']['LBL_CONTACT_SUPPORT'];
+		    }
 		}
 	}
 }
@@ -92,6 +106,6 @@ $sugar_smarty->assign('EXTRA_ERROR',$extra_error);
 $sugar_smarty->assign('SNIP_EMAIL',$snip->getSnipEmail());
 $sugar_smarty->assign('SNIP_URL',$snip->getSnipURL());
 $sugar_smarty->assign('SUGAR_URL',$snip->getURL());
-$sugar_smarty->assign('LICENSE',nl2br(getLicenseContents("LICENSE.txt")));
+$sugar_smarty->assign('LICENSE',nl2br(trim(getLicenseContents("LICENSE.txt"))));
 
 echo $sugar_smarty->fetch('modules/SNIP/ConfigureSnip.tpl');
