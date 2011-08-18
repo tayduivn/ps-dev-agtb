@@ -100,8 +100,6 @@ function qe_init(){
 </script>
 {/literal}
 
-</script>
-
 </body>
 </html>
 
