@@ -143,6 +143,8 @@ else if (isset($_REQUEST['record'])){
     if (!isset($args['reporter'])) {
             $args['reporter'] = new Report($saved_report_seed->content);
     }
+
+    $args['reporter']->is_saved_report = true;
     $args['reporter']->saved_report = &$saved_report_seed;
     $args['reporter']->saved_report_id = $saved_report_seed->id;
 	
