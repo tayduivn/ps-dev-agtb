@@ -71,10 +71,13 @@ $mod_strings = array(
     'LBL_SNIP_BUTTON_ENABLE' => 'Enable Sugar EASe',
     'LBL_SNIP_BUTTON_DISABLE' => 'Disable Sugar EASe',
     'LBL_SNIP_BUTTON_RETRY' => 'Try Connecting Again',
-    'LBL_SNIP_ERROR_DISABLING' => 'Error - the Sugar EASe Server could not be contacted, so the service was not disabled',
-    'LBL_SNIP_ERROR_ENABLING' => 'Error - the Sugar EASe Server could not be contacted, so the service was not enabled',
+    'LBL_SNIP_ERROR_DISABLING' => 'Error occured while communicating with Sugar EASe Server, so the service was not disabled',
+    'LBL_SNIP_ERROR_ENABLING' => 'Error occured while communicating with Sugar EASe Server, so the service was not enabled',
     'LBL_CONTACT_SUPPORT' => 'Please try again or contact customer support.',
     'LBL_SNIP_SUPPORT' => 'Contact Support for assistance.',
+    'ERROR_BAD_RESULT' => 'Bad result returned from the service',
+	'ERROR_NO_CURL' => 'cURL extension is required',
+	'ERROR_REQUEST_FAILED' => 'Could not contact the server',
 
     'LBL_CANCEL_BUTTON_TITLE' => 'Cancel',
 
