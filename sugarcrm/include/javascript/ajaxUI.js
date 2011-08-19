@@ -201,6 +201,11 @@ SUGAR.ajaxUI = {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
                     success: SA.callback
                 });
+                //Populate the location so a hard refresh will still take the user to the correct view
+                var action = form.action ? form.action.value : "";
+                if(action == 'EditView'){
+                    baseUrl += encodeURIComponent("index.php?module=" + form.module.value + "&action=" + action);
+                }
                 window.location=baseUrl;
             } else {
                 con.resetFormState();
