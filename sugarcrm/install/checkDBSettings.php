@@ -109,7 +109,7 @@ installLog("Begin DB Check Process *************");
                         $error = mysql_error();
                     }
 
-                    $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE_MYSQL']." $errno: $error).";
+                    $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE_MYSQL'];
                     installLog("ERROR::  {$errors['ERR_DB_LOGIN_FAILURE']}");
                 }
                 else{
@@ -170,7 +170,7 @@ installLog("Begin DB Check Process *************");
                 }
                 else {
                     $err = OCIError();
-                    $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE_OCI8'] . $err['code'] . " " . $err['message'] . ").";
+                    $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE_OCI8'];
                     installLog("ERROR::  {$errors['ERR_DB_LOGIN_FAILURE']}");
                 }
                 //END SUGARCRM flav=ent ONLY
