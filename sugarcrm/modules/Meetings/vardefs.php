@@ -259,6 +259,16 @@ $dictionary['Meeting'] = array('table' => 'meetings',
     'reportable' => false,
     'comment' => 'When the Sugar Plug-in for Microsoft Outlook syncs an Outlook appointment, this is the Outlook appointment item ID'
   ),
+   'sequence' =>
+  array (
+    'name' => 'sequence',
+    'vname' => 'LBL_SEQUENCE',
+    'type' => 'int',
+    'len' => '11',
+    'reportable' => false,
+    'default'=>0,
+    'comment' => 'Meeting update sequence for meetings as per iCalendar standards'
+  ),
 
   'contact_name' =>
   array (

@@ -92,6 +92,30 @@ class ImportView extends SugarView
  	}
 
     /**
+     * Send our output to the importer controller.
+     * 
+     * @param string $html
+     * @param string $submitContent
+     * @param string $script
+     * @param bool $encode
+     * @return void
+     */
+    protected function sendJsonOutput($html = "", $submitContent = "", $script = "", $encode = FALSE)
+    {
+        $title = $this->getModuleTitle(false);
+        $out = array(
+            'html'          => $html,
+            'submitContent' => $submitContent,
+            'title'         => $title,
+            'script'        => $script);
+
+        if($encode){
+            array_walk($out, create_function('&$val', '$val = htmlspecialchars($val,ENT_NOQUOTES);'));
+        }
+        echo json_encode($out);
+    }
+
+    /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
 	protected function _getModuleTitleParams($browserTitle = false)
@@ -157,9 +181,15 @@ class ImportView extends SugarView
         $this->options['show_javascript'] = true;
         $this->renderJavascript();
         $this->options['show_javascript'] = false;
-        $ss->assign("SUGAR_JS",ob_get_contents().$themeObject->getJS());
+        $script = ob_get_contents().$themeObject->getJS();
+        $ss->assign("SUGAR_JS",$script);
         ob_end_clean();
-        
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+
+        echo json_encode(array(
+            'html'          => $content,
+            'submitContent' => "",
+            'title'         => $mod_strings[$this->pageTitleKey],
+            'script'        => $script,
+         ));
     }
 }

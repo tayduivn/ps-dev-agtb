@@ -266,7 +266,7 @@ class ImportViewLast extends SugarView
 document.getElementById('undo').onclick = function(){
     
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -286,7 +286,7 @@ document.getElementById('importmore').onclick = function(){
     document.getElementById('importlast').action.value = 'Step1';
     
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -331,23 +331,23 @@ SUGAR.IV = {
     togglePages : function(activePage)
     {
         var num_tabs = 3;
-        var pageId = 'pageNum_' + activePage;
+        var pageId = 'pageNumIW_' + activePage;
         activeDashboardPage = activePage;
         activeTab = activePage;
 
         //hide all pages first for display purposes
         for(var i=0; i < num_tabs; i++)
         {
-            var pageDivId = 'pageNum_'+i+'_div';
+            var pageDivId = 'pageNumIW_'+i+'_div';
             var pageDivElem = document.getElementById(pageDivId);
             pageDivElem.style.display = 'none';
         }
 
         for(var i=0; i < num_tabs; i++)
         {
-            var tabId = 'pageNum_'+i;
-            var anchorId = 'pageNum_'+i+'_anchor';
-            var pageDivId = 'pageNum_'+i+'_div';
+            var tabId = 'pageNumIW_'+i;
+            var anchorId = 'pageNumIW_'+i+'_anchor';
+            var pageDivId = 'pageNumIW_'+i+'_div';
 
             var tabElem = document.getElementById(tabId);
             var anchorElem = document.getElementById(anchorId);

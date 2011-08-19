@@ -197,7 +197,7 @@ function make_sugar_config(&$sugar_config)
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
 	 //BEGIN SUGARCRM flav=pro ONLY
-	'passwordsetting' => empty($passwordsetting) ? array (
+		'passwordsetting' => empty($passwordsetting) ? array (
 	    'minpwdlength' => '',
 	    'maxpwdlength' => '',
 	    'oneupper' => '',
@@ -385,6 +385,7 @@ function get_sugar_config_defaults() {
 		) : $passwordsetting,
 		//END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav=pro ONLY
+	'snip_url' => 'http://ease.sugarcrm.com:20010/',
 	'passwordsetting' => array (
 	    'minpwdlength' => '',
 	    'maxpwdlength' => '',
@@ -1499,7 +1500,7 @@ function get_admin_modules_for_user($user) {
     }
 
     return($user->getDeveloperModules());
-    
+
 }
 
  function get_workflow_admin_modules_for_user($user){
@@ -1571,7 +1572,7 @@ function is_admin_for_module($user,$module) {
         return true;
     }
     //BEGIN SUGARCRM flav=pro ONLY
-    $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");    
+    $GLOBALS['log']->deprecated("is_admin_for_module() is deprecated as of 6.2.2 and may disappear in the future, use Users->isDeveloperForModule() instead");
     return $user->isDeveloperForModule($module);
     //END SUGARCRM flav=pro ONLY
     return false;
@@ -1588,7 +1589,7 @@ function is_admin($user) {
     if(empty($user)) {
         return false;
     }
-    
+
 	return $user->isAdmin();
 }
 
@@ -2216,6 +2217,9 @@ function get_register_value($category,$name){
     return sugar_cache_retrieve("{$category}:{$name}");
 }
 
+function clear_register_value($category,$name){
+    return sugar_cache_clear("{$category}:{$name}");
+}
 // this function cleans id's when being imported
 function convert_id($string)
 {
@@ -2437,7 +2441,7 @@ function get_unlinked_email_query($type, $bean) {
     $return_array['select']='SELECT emails.id ';
     $return_array['from']='FROM emails ';
     $return_array['where']="";
-	$return_array['join'] = " JOIN (select distinct email_id from emails_email_addr_rel eear
+	$return_array['join'] = " JOIN (select DISTINCT email_id from emails_email_addr_rel eear
 
 	join email_addr_bean_rel eabr on eabr.bean_id ='$bean->id' and eabr.bean_module = '$bean->module_dir' and
 	eabr.email_address_id = eear.email_address_id and eabr.deleted=0
@@ -2446,11 +2450,11 @@ function get_unlinked_email_query($type, $bean) {
 	) derivedemails on derivedemails.email_id = emails.id";
     $return_array['join_tables'][0] = '';
 
-	if (isset($type) and isset($type['return_as_array']) and $type['return_as_array']==true) {
+	if (isset($type) and !empty($type['return_as_array'])) {
 		return $return_array;
 	}
 
-	return $return_array['select'] . $return_array['from'] . $return_array['where'];
+	return $return_array['select'] . $return_array['from'] . $return_array['where'] . $return_array['join'] ;
 } // fn
 
 /**
@@ -2469,7 +2473,9 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 	require_once($beanFiles[$bean_name]);
 	$focus = new $bean_name();
 	$user_array = array();
-	$user_array = get_register_value('select_array',$bean_name. $display_columns. $where . $order_by);
+
+    $key = ($bean_name == 'EmailTemplate') ?  $bean_name : $bean_name . $display_columns. $where . $order_by;
+	$user_array = get_register_value('select_array', $key );
 	if(!$user_array)
 	{
 
@@ -2485,7 +2491,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 		{
 			$query .= $where." AND ";
 		}
-		
+
 		$query .=  " {$focus->table_name}.deleted=0";
 
 		if ( $order_by != '')
@@ -2513,7 +2519,7 @@ function get_bean_select_array($add_blank=true, $bean_name, $display_columns, $w
 		}
 
 		$user_array = $temp_result;
-		set_register_value('select_array',$bean_name. $display_columns. $where . $order_by,$temp_result);
+		set_register_value('select_array', $key ,$temp_result);
 	}
 
 	return $user_array;
@@ -2754,7 +2760,8 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-	echo "\n<pre>\n";
+	//BEGIN SUGARCRM flav=int ONLY
+        echo "\n<pre>\n";
 	print_r($mixed);
 
 	echo "";
@@ -2763,6 +2770,7 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
+        //END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3069,7 +3077,7 @@ function check_logic_hook_file($module_name, $event, $action_array){
             {
 			    $logic_count = count($hook_array[$event]);
             }
-            
+
 			if($action_array[0]==""){
 				$action_array[0] = $logic_count  + 1;
 			}
@@ -4731,7 +4739,7 @@ function verify_image_file($path, $jpeg = false)
                 return true;
     	    }
         } else {
-        	return false;	
+        	return false;
         }
 	} else {
 	    // check image manually

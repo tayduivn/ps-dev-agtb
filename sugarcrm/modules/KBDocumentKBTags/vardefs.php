@@ -119,7 +119,7 @@ $dictionary['KBDocumentKBTag'] = array('table' => 'kbdocuments_kbtags'
 ),
 'relationships'=>array(
    'kbrevisions_created_by' => array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
- 	  		'rhs_module'=> 'DocumentRevisions', 'rhs_table'=> 'document_revisions', 'rhs_key' => 'created_by',
+ 	  		'rhs_module'=> 'KBDocumentKBTags', 'rhs_table'=> 'kbdocuments_kbtags', 'rhs_key' => 'created_by',
    			'relationship_type'=>'one-to-many'),
 
 ),

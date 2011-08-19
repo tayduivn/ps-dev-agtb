@@ -1143,9 +1143,9 @@ function getUserVariable($localVarName, $varName) {
                 }
                 </script>";
 
-            if($this->show_select_menu) {
+            if($this->show_select_menu) 
+            {
                 $select_link = "<a id='select_link' onclick='return select_overlib();' href=\"javascript:void(0)\">".$this->local_app_strings['LBL_LINK_SELECT']."&nbsp;".SugarThemeRegistry::current()->getImage('MoreDetail', 'border=0', 11, 7, '.png', $app_strings['LBL_MOREDETAIL'])."</a>";
-
             } else {
                 $select_link = "&nbsp;";
             }

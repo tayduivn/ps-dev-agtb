@@ -76,19 +76,21 @@ class ImportViewExtStep1 extends ImportViewStep3
         }
 
         $mappedRows = $this->getMappingRows($importModule, $extSourceToSugarFieldMapping);
-        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
+        $this->ss->assign("MODULE_TITLE", json_encode($this->getModuleTitle(false)));
         $this->ss->assign("rows", $mappedRows);
         $this->ss->assign("COLUMNCOUNT", count($mappedRows));
         $this->ss->assign("IMPORT_MODULE", $importModule);
-        $this->ss->assign("JAVASCRIPT", $this->_getJS($required));
+        $this->ss->assign("JS", json_encode($this->_getJS($required)));
         $this->ss->assign('CSS', $this->_getCSS());
         $this->ss->assign("CURRENT_STEP", $this->currentStep);
+        $this->ss->assign("SUBMITCONTENT", json_encode(""));
 
         $this->ss->assign("RECORDTHRESHOLD", $sugar_config['import_max_records_per_file']);
         $this->ss->assign("ENABLED_DUP_FIELDS", htmlentities(json_encode($this->getFieldsForDuplicateCheck()), ENT_QUOTES));
         $content = $this->ss->fetch('modules/Import/tpls/extstep1.tpl');
-        $this->ss->assign("CONTENT",$content);
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        $this->ss->assign("CONTENT",json_encode($content));
+        $out = $this->ss->fetch('modules/Import/tpls/wizardWrapper.tpl');
+        echo $out;
     }
 
     private function getFieldsForDuplicateCheck()

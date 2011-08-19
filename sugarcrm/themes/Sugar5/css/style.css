@@ -2263,6 +2263,23 @@ embed
 	padding-right: 0px;
 }
 
+.dashletPanelMenu.wizard.import .bd .screen {
+    padding: 20px;
+    border: 0px none;
+    border-radius: 0px;
+    height: 487px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: auto;
+    display: block;
+    background-color: #fff;
+}
+.dashletPanelMenu.wizard.import div.confirmTable {
+	    overflow: auto;
+	    width: 1056px;
+	    position: relative;
+	    margin-bottom: 20px;
+	}
 /* Bug 19728 - Email Templates detail view is different with edit view */
 #html_div p 
 {
@@ -3641,3 +3658,14 @@ li div.star {float:none;}
 .star div.off {background-position:0px -18px}
 .star div:hover {cursor:pointer;background-position:0px 0px;}
 
+#ajaxStatusDiv {
+    background : #ffffff;
+	color : #c60c30;
+	position : fixed;
+	opacity : .8;
+	filter : alpha(opacity=80);
+    z-index: 20;
+    top: 7px;
+    border: 1px solid #aaa;
+	padding: 5px;
+}

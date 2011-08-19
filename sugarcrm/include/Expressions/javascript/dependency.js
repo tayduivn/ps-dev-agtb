@@ -172,11 +172,11 @@ SUGAR.forms.AssignmentHandler.registerField = function(formname, field) {
  * @STATIC
  * Retrieve the value of a variable.
  */
-SUGAR.forms.AssignmentHandler.getValue = function(variable, view) {
+SUGAR.forms.AssignmentHandler.getValue = function(variable, view, ignoreLinks) {
 	if (!view) view = SUGAR.forms.AssignmentHandler.lastView;
 
 	//Relate fields are only string on the client side, so return the variable name back.
-	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable])
+	if(SUGAR.forms.AssignmentHandler.LINKS[view][variable] && !ignoreLinks)
 		return variable;
 
 	var field = SUGAR.forms.AssignmentHandler.getElement(variable, view);
@@ -296,8 +296,13 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 	}
 	
 	// animate
-	if ( AH.ANIMATE && flash)
-		SUGAR.forms.FlashField(field);
+	if ( AH.ANIMATE && flash){
+        try{
+            //This can throw an error if the page is in the middle of rendering
+            SUGAR.forms.FlashField(field);
+        }catch(e){}
+    }
+
 
 	// lock this variable
 	AH.LOCKS[variable] = true;

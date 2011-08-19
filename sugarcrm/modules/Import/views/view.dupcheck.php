@@ -206,7 +206,6 @@ ProcessImport = new function()
             {
                 success: function(o) {
                     if (o.responseText.replace(/^\s+|\s+$/g, '') != '') {
-                    	alert('fa');
                         this.failure(o);
                     }
                     else {
@@ -221,7 +220,7 @@ ProcessImport = new function()
                         	//SUGAR.util.hrefURL(locationStr);
                         	var handleSuccess = {
 	                        	success : function(data) {		
-									eval(data.responseText);
+									var response = YAHOO.lang.JSON.parse(data.responseText);
 									importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 									importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 									submitDiv = document.getElementById('submitDiv');
@@ -359,7 +358,7 @@ document.getElementById('goback').onclick = function(){
     document.getElementById('importstepdup').action.value = 'step3';
     document.getElementById('importstepdup').to_pdf.value = '0';
         var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');

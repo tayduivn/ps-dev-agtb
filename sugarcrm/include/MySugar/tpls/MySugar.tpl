@@ -102,23 +102,22 @@ var mySugarLoader = new YAHOO.util.YUILoader({
 		var dashletIds = {$dashletIds};
 
 		{if !$lock_homepage}
-		<!--//BEGIN SUGARCRM flav=pro ONLY -->
-		SUGAR.mySugar.attachDashletCtrlEvent();
-		<!--//END SUGARCRM flav=pro ONLY -->
-		{literal}
-		for(i in dashletIds) {
-			SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
-			SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
-			SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
-			SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
-			j++;
-		}
-		for(var wp = 0; wp <= {/literal}{$hiddenCounter}{literal}; wp++) {
-			SUGAR.mySugar.homepage_dd[j++] = new ygDDListBoundary('page_'+activePage+'_hidden' + wp);
-		}
-
-		YAHOO.util.DDM.mode = 1;
-		{/literal}
+			<!--//BEGIN SUGARCRM flav=pro ONLY -->
+			SUGAR.mySugar.attachDashletCtrlEvent();
+			<!--//END SUGARCRM flav=pro ONLY -->
+			for(i in dashletIds) {ldelim}
+				SUGAR.mySugar.homepage_dd[j] = new ygDDList('dashlet_' + dashletIds[i]);
+				SUGAR.mySugar.homepage_dd[j].setHandleElId('dashlet_header_' + dashletIds[i]);
+				SUGAR.mySugar.homepage_dd[j].onMouseDown = SUGAR.mySugar.onDrag;
+				SUGAR.mySugar.homepage_dd[j].afterEndDrag = SUGAR.mySugar.onDrop;
+				j++;
+			{rdelim}
+			{if $hiddenCounter > 0}
+			for(var wp = 0; wp <= {$hiddenCounter}; wp++) {ldelim}
+				SUGAR.mySugar.homepage_dd[j++] = new ygDDListBoundary('page_'+activePage+'_hidden' + wp);
+			{rdelim}
+			{/if}
+			YAHOO.util.DDM.mode = 1;
 		{/if}
 		{literal}
 		SUGAR.mySugar.renderDashletsDialog();
@@ -202,7 +201,6 @@ mySugarLoader.insert();
 {if !$lock_homepage}
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
-<<<<<<< HEAD
 			{capture assign=attr}id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class="utilsLink"{/capture}
 			{capture assign=img_attr}align="absmiddle" border="0"{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
@@ -212,17 +210,6 @@ mySugarLoader.insert();
 			{capture assign=img_attr}align="absmiddle" border="0"{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
-=======
-			<a href="javascript:void(0)" id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class='utilsLink'>
-			<img src='{sugar_getimagepath file="info-add.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
-				{$mod.LBL_ADD_DASHLETS}
-			</a>
-			<!--//BEGIN SUGARCRM flav=pro ONLY -->
-			<a href="javascript:void(0)" id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class='utilsLink'>
-			<img src='{sugar_getimagepath file="info-layout.png"}' alt='{$lblLnkHelp}' border='0' align='absmiddle'>
-				{$app.LBL_CHANGE_LAYOUT}
-			</a>
->>>>>>> cottoncandy
 			<!--//END SUGARCRM flav=pro ONLY -->
 	</div>
 </td>
@@ -308,7 +295,6 @@ mySugarLoader.insert();
 				<label>{$lblNumberOfColumns}:</label>
 				<table align="center" cellpadding="8">
 					<tr>
-<<<<<<< HEAD
 						<td align="center">{sugar_getimage alt=$app.LBL_ICON_COLUMN_1 name="icon_Column_1.gif" attr='border="0"'}<br />
 							<input type="radio" name="numColumns" value="1" /></td>
 						<td align="center">{sugar_getimage alt=$app.LBL_ICON_COLUMN_2 name="icon_Column_2.gif" attr='border="0"'}<br />
@@ -316,12 +302,6 @@ mySugarLoader.insert();
 						<td align="center">{sugar_getimage alt=$app.LBL_ICON_COLUMN_3 name="icon_Column_3.gif" attr='border="0"'}<br />
 							<input type="radio" name="numColumns" value="3" /></td>
                     </tr>
-=======
-						<td align="center"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="1" /></td>
-						<td align="center"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="2" checked="yes" /></td>
-						<td align="center"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/><br /><input type="radio" name="numColumns" value="3" /></td>
-					</tr>
->>>>>>> cottoncandy
 				</table>
 			</form>
 		</div>
@@ -336,25 +316,21 @@ mySugarLoader.insert();
 			<br /><br />
 			<table align="center" cellpadding="15">
 				<tr>
-<<<<<<< HEAD
 					<td align="center">
-						{capture assign=img_attr}border="0"{/capture}
+						{capture assign=img_attr}border="0" id="change_layout_1_column"{/capture}
 						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(1);" 
 							title=$app.LBL_ICON_COLUMN_1 img_name="icon_Column_1.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
+					    {capture assign=img_attr}border="0" id="change_layout_2_column"{/capture}
 						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(2);"
 							title=$app.LBL_ICON_COLUMN_2 img_name="icon_Column_2.gif" img_attr=$img_attr}
 					</td>
 					<td align="center">
+					    {capture assign=img_attr}border="0" id="change_layout_3_column"{/capture}
 						{sugar_getlink url="javascript:SUGAR.mySugar.changePageLayout(3);" 
 							title=$app.LBL_ICON_COLUMN_3 img_name="icon_Column_3.gif" img_attr=$img_attr}
 					</td>
-=======
-					<td align="center"><a id="change_layout_1_column" href="javascript:SUGAR.mySugar.changePageLayout(1);"><img src="{sugar_getimagepath file='icon_Column_1.gif'}" border="0"/></a></td>
-					<td align="center"><a id="change_layout_2_column" href="javascript:SUGAR.mySugar.changePageLayout(2);"><img src="{sugar_getimagepath file='icon_Column_2.gif'}" border="0"/></a></td>
-					<td align="center"><a id="change_layout_3_column" href="javascript:SUGAR.mySugar.changePageLayout(3);"><img src="{sugar_getimagepath file='icon_Column_3.gif'}" border="0"/></a></td>
->>>>>>> cottoncandy
 				</tr>
 			</table>
 		</div>

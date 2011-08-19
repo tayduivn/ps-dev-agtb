@@ -42,8 +42,8 @@ class ReportsSugarpdfSummary_combo extends ReportsSugarpdfReports
 		    if(file_exists($imageFile)) {
 		    	$this->AddPage();
 		    	list($width, $height) = getimagesize($imageFile); 
-		    	$imageHeight = ($height >= $width) ? $this->getPageHeight()*.7 : "";
-		    	$imageWidth = ($width >= $width) ? $this->getPageWidth()*.9 : "";
+		    	$imageHeight = ($height >= $width) ? $this->getPageHeight()*.5 : "";
+		    	$imageWidth = ($width >= $width) ? $this->getPageWidth()*.7 : "";
 		    	$this->Image($imageFile,$this->GetX(),$this->GetY(),$imageWidth,$imageHeight,"","","N",false,300,"", false,false,0,true);
 		    	
 		    	if($sugarChart->print_html_legend_pdf) {

@@ -9,11 +9,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
- 
+
 // $Id: layout_defs.php 19775 2007-02-02 02:04:25Z chris $
 
 $layout_defs['Emails'] = array(
-	// list of what Subpanels to show in the DetailView 
+	// list of what Subpanels to show in the DetailView
 	'subpanel_setup' => array(
 		'notes' => array(
 			'order' => 5,
@@ -24,7 +24,7 @@ $layout_defs['Emails'] = array(
 			'title_key' => 'LBL_NOTES_SUBPANEL_TITLE',
 			'module' => 'Notes',
 			'top_buttons' => array(),
-		),		
+		),
         'accounts' => array(
 			'order' => 10,
 			'module' => 'Accounts',
@@ -94,7 +94,7 @@ $layout_defs['Emails'] = array(
 				array('widget_class' => 'SubPanelTopCreateButton'),
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
-		),		
+		),
         'users' => array(
 			'order' => 50,
 			'module' => 'Users',
@@ -140,6 +140,20 @@ $layout_defs['Emails'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
+		// SNIP
+		'contacts_snip' => array(
+            'order' => 20,
+            'sort_order' => 'asc',
+            'sort_by' => 'last_name, first_name',
+            'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE_SNIP',
+            'set_subpanel_data' => 'contacts',
+            'module' => 'Contacts',
+            'subpanel_name' => 'ForEmailsByAddr',
+            'get_subpanel_data' => 'function:get_beans_by_email_addr',
+            'generate_select'=>true,
+			'function_parameters' => array('import_function_file' => 'modules/SNIP/utils.php', 'module'=>'Contacts'),
+		    'top_buttons' => array(),
+		),
 //END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav!=sales ONLY
 
@@ -158,6 +172,17 @@ $layout_defs['Emails'] = array(
 			),
 		),
 //END SUGARCRM flav!=sales ONLY
+
+		'meetings' => array(
+            'order' => 1,
+            'sort_order' => 'desc',
+            'sort_by' => 'date_start',
+            'title_key' => 'LBL_ACTIVITIES_SUBPANEL_TITLE',
+            'module' => 'Meetings',
+            'subpanel_name' => 'ForActivities',
+            'get_subpanel_data' => 'meetings',
+			'top_buttons' => array(),
+		),
 
 	),
 );

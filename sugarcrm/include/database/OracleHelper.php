@@ -40,7 +40,7 @@ class OracleHelper extends DBHelper
     /**
      * Maximum length of identifiers
      */
-    protected static $maxNameLengths = array(
+    protected  $maxNameLengths = array(
         'table' => 30,
         'column' => 30,
         'index' => 30,
@@ -396,7 +396,7 @@ class OracleHelper extends DBHelper
                  * to add the same indices with the same names to the repair table and will generate an
                  * error. so we append an r to the eend of the index name for these cases.
                  */
-                $name = $this->fixIndexName(self::getValidDBName($index['name'], true, 'index'));
+                $name = $this->fixIndexName($this->getValidDBName($index['name'], true, 'index'));
                 $name = ((strtolower($table) == 'repair_table')
 
                     ? $this->repair_index_name($name) : $name);
@@ -619,7 +619,7 @@ class OracleHelper extends DBHelper
         )
     {
 		$tablename = strtoupper($tablename);
-		$indexname = strtoupper(self::getValidDBName($indexname, true, 'index'));
+		$indexname = strtoupper($this->getValidDBName($indexname, true, 'index'));
 
         //find all unique indexes and primary keys.
 		$query = <<<EOQ
@@ -737,7 +737,7 @@ where table_name='$tablename_up'");
     {
         $type         = $definition['type'];
         $fields       = implode(',',$definition['fields']);
-        $name         = self::getValidDBName($definition['name'], true, 'index');
+        $name         = $this->getValidDBName($definition['name'], true, 'index');
         $foreignTable = isset($definition['foreignTable']) ? $definition['foreignTable'] : array();
         $sql          = '';
 
@@ -782,8 +782,8 @@ where table_name='$tablename_up'");
         $table_name
         )
     {
-        $old_definition = self::getValidDBName($old_definition, true, 'index');
-        $new_definition = self::getValidDBName($new_definition, true, 'index');
+        $old_definition = $this->getValidDBName($old_definition, true, 'index');
+        $new_definition = $this->getValidDBName($new_definition, true, 'index');
         return "ALTER INDEX {$old_definition['name']} RENAME TO {$new_definition['name']}";
     }
 
@@ -880,7 +880,7 @@ where table_name='$tablename_up'");
         $upper_case = true
         )
     {
-        $sequence_name = self::getValidDBName($table. '_' .$field_name . '_seq', true, 'index');
+        $sequence_name = $this->getValidDBName($table. '_' .$field_name . '_seq', true, 'index');
         if($upper_case)
             $sequence_name = strtoupper($sequence_name);
         return $sequence_name;
