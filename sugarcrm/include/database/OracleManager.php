@@ -881,7 +881,7 @@ class OracleManager extends DBManager
     }
 
     /**
-	 * @see DBHelper::massageValue()
+	 * @see DBManager::massageValue()
 	 */
 	public function massageValue($val, $fieldDef)
     {
@@ -912,7 +912,7 @@ class OracleManager extends DBManager
     }
 
 	/**
-     * @see DBHelper::oneColumnSQLRep()
+     * @see DBManager::oneColumnSQLRep()
      */
     protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
@@ -1009,7 +1009,7 @@ class OracleManager extends DBManager
     }
 
 	/**
-     * @see DBHelper::dropTableNameSQL()
+     * @see DBManager::dropTableNameSQL()
      */
     public function dropTableNameSQL($name)
     {
@@ -1074,7 +1074,7 @@ class OracleManager extends DBManager
 	}
 
     /**
-     * @see DBHelper::getAutoIncrement()
+     * @see DBManager::getAutoIncrement()
      */
     public function getAutoIncrement($table, $field_name)
     {
@@ -1086,7 +1086,7 @@ class OracleManager extends DBManager
     }
 
 	/**
-     * @see DBHelper::getAutoIncrementSQL()
+     * @see DBManager::getAutoIncrementSQL()
      */
     public function getAutoIncrementSQL($table, $field_name)
     {
@@ -1094,7 +1094,7 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBHelper::setAutoIncrement()
+     * @see DBManager::setAutoIncrement()
      */
     protected function setAutoIncrement($table, $field_name)
     {
@@ -1130,7 +1130,7 @@ class OracleManager extends DBManager
     }
 
 	/**
-     * @see DBHelper::deleteAutoIncrement()
+     * @see DBManager::deleteAutoIncrement()
      */
     public function deleteAutoIncrement($table, $field_name)
     {
@@ -1141,7 +1141,7 @@ class OracleManager extends DBManager
     }
 
     /**
-     * @see DBHelper::updateSQL()
+     * @see DBManager::updateSQL()
      */
     public function updateSQL(SugarBean $bean, array $where = array())
     {
@@ -1180,7 +1180,7 @@ class OracleManager extends DBManager
 	}
 
     /**
-     * @see DBHelper::get_indices()
+     * @see DBManager::get_indices()
      */
     public function get_indices($tablename,$indexname = null)
     {
@@ -1284,7 +1284,7 @@ EOQ;
     }
 
 	/**
-     * @see DBHelper::add_drop_constraint()
+     * @see DBManager::add_drop_constraint()
      */
     public function add_drop_constraint($table, $definition, $drop = false)
     {
@@ -1347,9 +1347,9 @@ EOQ;
 	}
 
     /**
-     * @see DBHelper::rename_index()
+     * @see DBManager::renameIndexDefs()
      */
-    public function rename_index($old_definition, $new_definition, $table_name)
+    public function renameIndexDefs($old_definition, $new_definition, $table_name)
     {
         $old_definition = $this->getValidDBName($old_definition, true, 'index');
         $new_definition = $this->getValidDBName($new_definition, true, 'index');
@@ -1357,7 +1357,7 @@ EOQ;
     }
 
     /**
-     * @see DBHelper::massageFieldDef()
+     * @see DBManager::massageFieldDef()
      */
     public function massageFieldDef($fieldDef, $tablename)
     {

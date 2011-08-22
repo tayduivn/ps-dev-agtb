@@ -851,21 +851,21 @@ abstract class DBManager
             if ( !isset($compareIndices[$name]) ) {
                 //First check if an index exists that doens't match our name, if so, try to rename it
                 $found = false;
-                foreach ($compareIndices as $ex_name => $ex_value)
-                {
-                    if($this->compareVarDefs($ex_value, $value, true))
-                    {
+                foreach ($compareIndices as $ex_name => $ex_value) {
+                    if($this->compareVarDefs($ex_value, $value, true)) {
                         $found = $ex_name;
                         break;
                     }
                 }
-                if ($found)
-                {
+                if ($found) {
                     $sql .=	 "/*MISSNAMED INDEX IN DATABASE - $name - $ex_name */\n";
-                    $sql .= $this->renameIndex($tablename, $ex_name, $name, $execute) .  "\n";
+                    $rename = $this->renameIndexDefs($ex_value, $value, $tablename);
+                    if($execute) {
+                        $this->query($rename, true, "Cannot rename index");
+                    }
+                    $sql .= join("\n", $rename). "\n";
 
-                } else
-                {
+                } else {
                     // ok we need this field lets create it
                     $sql .=	 "/*MISSING INDEX IN DATABASE - $name -{$value['type']}  ROW */\n";
                     $sql .= $this->addIndexes($tablename,array($value), $execute) .  "\n";
@@ -1087,11 +1087,6 @@ abstract class DBManager
             $sql = '';
         }
         return $sql;
-    }
-
-    public function renameIndex($tablename, $oldName, $newName, $execute = true)
-    {
-        return "";
     }
 
     /**
@@ -2530,7 +2525,7 @@ abstract class DBManager
      * @param string $ensureUnique
      * @return string|array Valid column name trimmed to right length and with invalid characters removed
      */
-    public function getValidDBName ($name, $ensureUnique = false, $type = 'column')
+    public function getValidDBName ($name, $ensureUnique = false, $type = 'column', $force = false)
     {
         if(is_array($name)) {
             $result = array();
@@ -2543,7 +2538,7 @@ abstract class DBManager
             $name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
             $len = strlen( $name ) ;
             $maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
-            if ($len <= $maxLen) {
+            if ($len <= $maxLen && !$force) {
                 return strtolower($name);
             }
             if ($ensureUnique) {
@@ -2727,14 +2722,14 @@ abstract class DBManager
     }
 
     /**
-     * Renames an index definition
+     * Renames an index using fields definition
      *
      * @param  array  $old_definition
      * @param  array  $new_definition
      * @param  string $tablename
      * @return string SQL statement
      */
-    public function rename_index($old_definition, $new_definition, $table_name)
+    public function renameIndexDefs($old_definition, $new_definition, $table_name)
     {
         return array($this->add_drop_constraint($table_name,$old_definition,true),
                 $this->add_drop_constraint($table_name,$new_definition), false);

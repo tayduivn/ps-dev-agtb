@@ -29,6 +29,7 @@ class Bug34547Test extends Sugar_PHPUnit_Framework_TestCase
 
     private $_has_mysqli_disabled;
     private $_db;
+    private $_db_manager;
 
     public function setUp()
     {
@@ -38,7 +39,8 @@ class Bug34547Test extends Sugar_PHPUnit_Framework_TestCase
         }
 
         unset($GLOBALS['dbinstances']);
-
+        $this->_db_manager = $GLOBALS['sugar_config']['dbconfig']['db_manager'];
+        unset($GLOBALS['sugar_config']['dbconfig']['db_manager']);
         $this->_has_mysqli_disabled = (!empty($GLOBALS['sugar_config']['mysqli_disabled']) && $GLOBALS['sugar_config']['mysqli_disabled'] === TRUE);
         if(!$this->_has_mysqli_disabled) {
             $GLOBALS['sugar_config']['mysqli_disabled'] = TRUE;
@@ -51,6 +53,7 @@ class Bug34547Test extends Sugar_PHPUnit_Framework_TestCase
         if(!$this->_has_mysqli_disabled) {
            unset($GLOBALS['sugar_config']['mysqli_disabled']);
         }
+        $GLOBALS['sugar_config']['dbconfig']['db_manager'] = $this->_db_manager;
         unset($GLOBALS['dbinstances']);
         DBManagerFactory::disconnectAll();
     }

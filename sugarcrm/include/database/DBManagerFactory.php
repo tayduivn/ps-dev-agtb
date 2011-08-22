@@ -44,7 +44,7 @@ class DBManagerFactory
     {
         global $sugar_config;
 
-        if(!isset($config['db_manager'])) {
+        if(empty($config['db_manager'])) {
             // standard types
             switch($type) {
                 case "mysql":
@@ -66,7 +66,7 @@ class DBManagerFactory
                     }
                     break;
                 default:
-                    $my_db_manager = self::getManagerByType($type);
+                    $my_db_manager = self::getManagerByType($type, false);
                     if(empty($my_db_manager)) {
                         $GLOBALS['log']->fatal("unable to load DB manager for: $type");
                         sugar_die("Cannot load DB manager");
@@ -175,11 +175,12 @@ class DBManagerFactory
      *
      * For use in install
      * @param string $type
+     * @param bool $validate Return only valid drivers or any?
      * @return string
      */
-    public static function getManagerByType($type)
+    public static function getManagerByType($type, $validate = true)
     {
-        $drivers = self::getDbDrivers();
+        $drivers = self::getDbDrivers($validate);
         if(!empty($drivers[$type])) {
             return get_class($drivers[$type]);
         }
@@ -190,8 +191,9 @@ class DBManagerFactory
      * Scan directory for valid DB drivers
      * @param string $dir
      * @param array $drivers
+     * @param bool $validate Return only valid drivers or all of them?
      */
-    protected static function scanDriverDir($dir, &$drivers)
+    protected static function scanDriverDir($dir, &$drivers, $validate = true)
     {
         if(!is_dir($dir)) return;
         $scandir = opendir($dir);
@@ -203,7 +205,7 @@ class DBManagerFactory
             $classname = substr($name, 0, -4);
             if(!class_exists($classname)) continue;
             $driver = new $classname;
-            if($driver->valid()) {
+            if(!$validate || $driver->valid()) {
                 if(empty($drivers[$driver->dbType])) {
                     $drivers[$driver->dbType]  = array();
                 }
@@ -220,13 +222,14 @@ class DBManagerFactory
 
     /**
      * Get list of all available DB drivers
+     * @param bool $validate Return only valid drivers or all of them?
      * @return array List of Db drivers, key - variant (mysql, mysqli), value - driver type (mysql, mssql)
      */
-    public static function getDbDrivers()
+    public static function getDbDrivers($validate = true)
     {
         $drivers = array();
-        self::scanDriverDir("include/database", $drivers);
-        self::scanDriverDir("custom/include/database", $drivers);
+        self::scanDriverDir("include/database", $drivers, $validate);
+        self::scanDriverDir("custom/include/database", $drivers, $validate);
 
         $result = array();
         foreach($drivers as $type => $tdrivers) {

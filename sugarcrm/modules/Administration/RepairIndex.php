@@ -66,7 +66,7 @@ function compare($table_name, $db_indexes, $var_indexes) {
 		//it should not occur for indexes of type primary or unique.
 		if( $var_i_def['type'] != 'primary' and $var_i_def['type'] != 'unique' and $var_i_def['name'] != $sel_db_index['name']) {
 			//rename index.
-			$rename=$GLOBALS['db']->rename_index($sel_db_index,$var_i_def,$table_name);
+			$rename=$GLOBALS['db']->renameIndexDefs($sel_db_index,$var_i_def,$table_name);
 			if(is_array($rename)) {
 				$change_index=array_merge($change_index,$rename);
 			} else {
