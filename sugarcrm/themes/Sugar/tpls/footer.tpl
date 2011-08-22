@@ -96,7 +96,8 @@ function qe_init(){
 
 	SUGAR_callsInProgress++;
 	SUGAR._ajax_hist_loaded = true;
-	YAHOO.util.Event.onContentReady('ajaxUI-history-field', SUGAR.ajaxUI.firstLoad);
+    if(SUGAR.ajaxUI)
+	    YAHOO.util.Event.onContentReady('ajaxUI-history-field', SUGAR.ajaxUI.firstLoad);
 </script>
 {/literal}
 
