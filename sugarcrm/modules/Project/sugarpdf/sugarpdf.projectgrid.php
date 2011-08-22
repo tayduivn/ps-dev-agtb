@@ -202,4 +202,10 @@ class ProjectSugarpdfProjectgrid extends Sugarpdf{
         $filename = preg_replace("#[^A-Z0-9\-_\.]#i", "_", 'Project');
         $this->fileName = "{$filename}.pdf";
     }
+
+    public function Output()
+    {
+        // the "D" will ensure forced download instead of displayed in browser
+        return parent::Output($this->fileName,"D");
+    }
 }

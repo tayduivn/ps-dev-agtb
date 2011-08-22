@@ -450,7 +450,7 @@ EOCSS;
 document.getElementById('goback').onclick = function(){
     document.getElementById('{$this->currentFormID}').action.value = '{$this->previousAction}';
         var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -526,7 +526,7 @@ if( document.getElementById('gonext') )
             // Move on to next step
             document.getElementById('{$this->currentFormID}').action.value = '{$this->nextAction}';
          var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');

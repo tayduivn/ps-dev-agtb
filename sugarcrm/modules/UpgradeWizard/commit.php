@@ -652,9 +652,19 @@ $stepRecheck = $_REQUEST['step'];
 $_SESSION['step'][$steps['files'][$_REQUEST['step']]] =($stop) ? 'failed' : 'success';
 
 // clear out the theme cache
-// clear out the theme cache
 if(!class_exists('SugarThemeRegistry')){
     require_once('include/SugarTheme/SugarTheme.php');
+}
+
+$themeObject = SugarThemeRegistry::current();
+
+$styleJSFilePath = sugar_cahced($themeObject->getJSPath() . DIRECTORY_SEPARATOR .  'style-min.js');
+if( file_exists($styleJSFilePath) )
+{
+    logThis("Rebuilding style js file: $styleJSFilePath");
+    unlink($styleJSFilePath);
+    SugarThemeRegistry::current()->clearJSCache();
+    SugarThemeRegistry::current()->getJS();
 }
 SugarThemeRegistry::buildRegistry();
 SugarThemeRegistry::clearAllCaches();

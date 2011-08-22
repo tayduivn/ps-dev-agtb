@@ -33,6 +33,8 @@
 
 <title>{$APP.LBL_BROWSER_TITLE}</title>
 <style type="text/css">@import url("themes/{$THEME}/style.css?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"); </style>
+<style type="text/css">@import url("themes/{$THEME}/yui.css?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"); </style>
+<style type="text/css">@import url("themes/{$THEME}/calendar.css?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"); </style>
 <style type="text/css">@import url("custom/style.css?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"); </style>
 <link href="themes/{$THEME}/navigation.css?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}" rel="stylesheet" type="text/css" />
 <script language="javascript" src="themes/{$THEME}/menu.js?s={$SUGAR_VERSION}&c={$JS_CUSTOM_VERSION}"></script>

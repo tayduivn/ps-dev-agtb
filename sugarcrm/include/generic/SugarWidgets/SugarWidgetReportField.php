@@ -189,32 +189,23 @@ class SugarWidgetReportField extends SugarWidgetField
 
 
                 $sort_by ='';
-                if ( ! empty($layout_def['table_key']) && ! empty($layout_def['name']) )
-                {
-                  if (! empty($layout_def['group_function']) && $layout_def['group_function'] == 'count')
-                  {
-                    $sort_by = 'count';
-                  } else {
-                        	$sort_by = $layout_def['table_key'].":".$layout_def['name'];
-                          if ( ! empty($layout_def['column_function']))
-                          {
-                            $sort_by .= ':'.$layout_def['column_function'];
-                          } else if ( ! empty($layout_def['group_function']) )
-                        	{
-                             $sort_by .= ':'.$layout_def['group_function'];
-                        	}
-                  }
-                }
-                else
-                {
-                        return $this->displayHeaderCellPlain($layout_def);
+                if ( ! empty($layout_def['table_key']) && ! empty($layout_def['name']) ) {
+                	if (! empty($layout_def['group_function']) && $layout_def['group_function'] == 'count') {
+                    	$sort_by = 'count';
+                	} else {
+                    	$sort_by = $layout_def['table_key'].":".$layout_def['name'];
+                        if ( ! empty($layout_def['column_function'])) {
+                        	$sort_by .= ':'.$layout_def['column_function'];
+                		} else if ( ! empty($layout_def['group_function']) ) {
+                        	$sort_by .= ':'.$layout_def['group_function'];
+                		}
+                	}
+                } else {
+                	return $this->displayHeaderCellPlain($layout_def);
                 }
 
-                $start = $start_link_wrapper;
-                $end = $end_link_wrapper;
-
-                $start = empty($start) ? '': $start;
-                $end = empty($end) ? '': $end;
+                $start = empty($start_link_wrapper) ? '': $start_link_wrapper;
+				$end = empty($end_link_wrapper) ? '': $end_link_wrapper;
 
                 // unable to retrieve the vardef here, exclude columns of type clob/text from being sortable
 
@@ -222,7 +213,7 @@ class SugarWidgetReportField extends SugarWidgetField
                     $header_cell = "<a class=\"listViewThLinkS1\" href=\"".$start.$sort_by.$end."\">";
                     $header_cell .= $this->displayHeaderCellPlain($layout_def);
                     $header_cell .= ListView::getArrowUpDownStart(isset($layout_def['sort']) ? $layout_def['sort'] : '');
-                    $header_cell .= ListView::getArrowEnd();
+                    $header_cell .= ListView::getArrowUpDownEnd(isset($layout_def['sort']) ? $layout_def['sort'] : '');
 		            $header_cell .= "</a>";
 					return $header_cell;
 				}

@@ -92,7 +92,7 @@
                                 </td>
                             </tr>
                             <tr scope="row" id="external_sources_tr" style="display:none;" >
-                                <td colspan="2" width="35%" style="padding-top: 10px;">
+                                <td colspan="2" width="25%" style="padding-top: 10px;">
                                     <div id="smtpButtonGroup" class="yui-buttongroup">
                                     {foreach from=$EXTERNAL_SOURCES key=k item=v}
                                         <span id="{$k}" class="yui-button yui-radio-button{if $selectExternalSource == $k} yui-button-checked{/if}">
@@ -103,10 +103,11 @@
                                             </span>
                                         </span>
                                     {/foreach}
+
                                     </div>
                                 </td>
                                 <td  style="padding-top: 10px;">
-                                    <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
+                                    <span id="ext_source_sign_in_bttn"><i>{$MOD.LBL_SIGN_IN_HELP}</i></span>
                                 </td>
                             </tr>
                             {* //END SUGARCRM flav=pro ONLY *}

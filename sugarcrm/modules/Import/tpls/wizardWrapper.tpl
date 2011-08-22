@@ -26,4 +26,4 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
-var response = {ldelim}"html":{$CONTENT},"submitContent":{$SUBMITCONTENT},"title":{$MODULE_TITLE},"script":{$JS}{rdelim};
+{ldelim}"html":{$CONTENT},"submitContent":{$SUBMITCONTENT},"title":{$MODULE_TITLE},"script":{$JS}{rdelim}

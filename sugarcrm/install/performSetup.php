@@ -412,6 +412,11 @@ SubPanelDefinitions::set_hidden_subpanels($disabledTabsKeyArray);
 installLog("Enable SugarFeeds");
 enableSugarFeeds();
 
+//BEGIN SUGARCRM flav=pro ONLY
+// Create the user that will be used by Snip
+require_once ('install/createSnipUser.php');
+//END SUGARCRM flav=pro ONLY
+
 // Enable the InsideView connector and add all modules
 installLog("Enable InsideView Connector");
 enableInsideViewConnector();

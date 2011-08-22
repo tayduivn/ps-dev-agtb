@@ -25,7 +25,7 @@ require_once("data/Relationships/SugarRelationship.php");
 /**
  * Represents a many to many relationship that is table based.
  */
-class M2MRelationship extends SugarRelationship
+class M2MRelationship extends SugarRelationship 
 {
     var $type = "many-to-many";
 
@@ -107,11 +107,14 @@ class M2MRelationship extends SugarRelationship
             $row[$this->relationship_role_column] = $this->relationship_role_column_value;
         }
 
-        foreach($this->def['fields'] as $fieldDef)
+        if (!empty($this->def['fields']))
         {
-            if (!empty($fieldDef['name']) && !isset($row[$fieldDef['name']]) && !empty($fieldDef['default']))
+            foreach($this->def['fields'] as $fieldDef)
             {
-                $row[$fieldDef['name']] = $fieldDef['default'];
+                if (!empty($fieldDef['name']) && !isset($row[$fieldDef['name']]) && !empty($fieldDef['default']))
+                {
+                    $row[$fieldDef['name']] = $fieldDef['default'];
+                }
             }
         }
 
@@ -410,4 +413,26 @@ class M2MRelationship extends SugarRelationship
 
         return false;
     }
+
+    public function getFields()
+    {
+        if (!empty($this->def['fields']))
+            return $this->def['fields'];
+        $fields = array(
+            "id" => array('name' => 'id'),
+            'date_modified' => array('name' => 'date_modified'),
+            'modified_user_id' => array('name' => 'modified_user_id'),
+            'created_by' => array('name' => 'created_by'),
+            $this->def['join_key_lhs'] => array('name' => $this->def['join_key_lhs']),
+            $this->def['join_key_rhs'] => array('name' => $this->def['join_key_rhs'])
+        );
+        if (!empty($this->def['relationship_role_column']))
+        {
+            $fields[$this->def['relationship_role_column']] = array("name" => $this->def['relationship_role_column']);
+        }
+        $fields['deleted'] = array('name' => 'deleted');
+
+        return $fields;
+    }
+
 }

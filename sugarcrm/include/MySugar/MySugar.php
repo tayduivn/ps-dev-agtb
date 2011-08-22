@@ -28,9 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 // $Id$
-
-
-
 class MySugar{
 	var $type;
 
@@ -585,10 +582,12 @@ EOJS;
 		$json = getJSONobj();
 		$newPageName = $json->decode(html_entity_decode($_REQUEST['pageName']));
 
-		// javascript hack for single quotes -- escape the backspaces
-		$newPageName = str_replace("\'", "'", $newPageName);
 
-		$newPage['pageTitle'] = $newPageName['jsonObject'];
+        $newPageName = remove_xss(from_html($newPageName));
+
+		// hack for single quotes -- escape the backspaces
+        $newPage['pageTitle'] =  str_replace("\'", "'", $newPageName);
+
 		$newPage['numColumns'] = $_REQUEST['numCols'];
 
 		array_push($pages,$newPage);
@@ -667,7 +666,7 @@ EOJS;
 		    $dc = new DashletCacheBuilder();
 		    $dc->buildCache();
 		}
-		require_once(sugar_cached('dashlets/dashlets.php'));
+		require_once sugar_cached('dashlets/dashlets.php');
 
 		$pages = $current_user->getPreference('pages', $this->type);
 		$dashlets = $current_user->getPreference('dashlets', $this->type);
@@ -828,7 +827,7 @@ EOJS;
 
 		$scriptOutput = 'var scriptResponse = '.$json->encode($scriptResponse);
 
-		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput), false, true);
+		return $json->encode(array('html' => $htmlOutput, 'script' => $scriptOutput));
 	}
 	//END SUGARCRM flav=pro ONLY
 

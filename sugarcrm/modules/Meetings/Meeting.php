@@ -75,6 +75,7 @@ class Meeting extends SugarBean {
 	var $case_id;
 	var $assigned_user_name;
 	var $outlook_id;
+	var $sequence;
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	var $team_name;

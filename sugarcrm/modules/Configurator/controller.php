@@ -35,7 +35,7 @@ class ConfiguratorController extends SugarController
      * Go to the font manager view
      */
     function action_FontManager(){
-    	global $current_user;
+        global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
@@ -63,17 +63,17 @@ class ConfiguratorController extends SugarController
     }
 
     function action_listview(){
-    	global $current_user;
+        global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
-    	$this->view = 'edit';
+        $this->view = 'edit';
     }
     /**
      * Show the addFont view
      */
     function action_addFontView(){
-    	global $current_user;
+        global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
@@ -127,7 +127,7 @@ class ConfiguratorController extends SugarController
     //END SUGARCRM flav!=sales ONLY
     function action_saveadminwizard()
     {
-    	global $current_user;
+        global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
@@ -138,7 +138,7 @@ class ConfiguratorController extends SugarController
         $configurator = new Configurator();
         $configurator->populateFromPost();
         $configurator->handleOverride();
-	    $configurator->parseLoggerSettings();
+        $configurator->parseLoggerSettings();
         $configurator->saveConfig();
 
         // Bug 37310 - Delete any existing currency that matches the one we've just set the default to during the admin wizard
@@ -156,7 +156,7 @@ class ConfiguratorController extends SugarController
 
     function action_saveconfig()
     {
-    	global $current_user;
+        global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }
@@ -171,11 +171,11 @@ class ConfiguratorController extends SugarController
            unlink($cachedfile);
 
         SugarApplication::redirect('index.php?module=Administration&action=index');
-	}
+    }
 
-	function action_detail()
+    function action_detail()
     {
-    	global $current_user;
+        global $current_user;
         if(!is_admin($current_user)){
             sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
         }

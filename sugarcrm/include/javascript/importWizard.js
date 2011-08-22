@@ -54,8 +54,8 @@ SUGAR.importWizard = function() {
 			YAHOO.util.Event.onContentReady("importWizardDialog", function() 
 			{
 				SUGAR.importWizard.dialog = new YAHOO.widget.Dialog("importWizardDialog", 
-				{ width : "1100px",
-				  height: "600px",
+				{ width : "950px",
+				  height: "565px",
 				  fixedcenter : true,
 				  draggable:false,
 				  visible : false, 
@@ -93,7 +93,7 @@ SUGAR.importWizard = function() {
 				
 				
 				var success = function(data) {		
-					eval(data.responseText);
+					var response = YAHOO.lang.JSON.parse(data.responseText);
 					importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 					var submitDiv = document.getElementById('submitDiv');
 					var importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
@@ -142,8 +142,6 @@ SUGAR.importWizard = function() {
 			SUGAR.importWizard.loading.render(document.body);		
 			if (document.getElementById('loading_c'))
                 document.getElementById('loading_c').style.display = 'none';
-		},
-		
-			
-			};
+		}
+    };
 }();

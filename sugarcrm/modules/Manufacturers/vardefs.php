@@ -65,7 +65,6 @@ $dictionary['Manufacturer'] = array('table' => 'manufacturers', 'comment' => 'Ma
     'table' => 'users',
     'isnull' => 'false',
     'dbType' => 'id',
-    'required'=>true,
     'reportable'=>true,
     'comment' => 'User who last modified record'
   ),

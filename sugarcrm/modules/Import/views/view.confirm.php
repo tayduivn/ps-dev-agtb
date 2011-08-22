@@ -43,6 +43,7 @@ class ImportViewConfirm extends ImportView
 {
     const SAMPLE_ROW_SIZE = 3;
  	protected $pageTitleKey = 'LBL_CONFIRM_TITLE';
+    protected $errorScript = "";
     
  	/**
      * @see SugarView::display()
@@ -83,21 +84,22 @@ class ImportViewConfirm extends ImportView
         }
         else
         {
-            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_IMPORT_MODULE_ERROR_NO_UPLOAD'],$_REQUEST['import_module'],'Step2', true, null, true);
             return;
         }
 
         //check the file size, we dont want to process an empty file
         if(isset($_FILES['userfile']['size']) && $_FILES['userfile']['size'] == 0){
             //this file is empty, throw error message
-            $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_NO_LINES'],$_REQUEST['import_module'],'Step2', false, null, true);
             return;
         }
 
         $mimeTypeOk = true;
 
         //check to see if the file mime type is not a form of text or application octed streramand fire error if not
-        if(isset($_FILES['userfile']['type']) && strpos($_FILES['userfile']['type'],'octet-stream') === false && strpos($_FILES['userfile']['type'],'text') === false){
+        if(isset($_FILES['userfile']['type']) && strpos($_FILES['userfile']['type'],'octet-stream') === false && strpos($_FILES['userfile']['type'],'text') === false
+            && strpos($_FILES['userfile']['type'],'application/vnd.ms-excel') === false) {
             //this file does not have a known text or application type of mime type, issue the warning
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_1'];
             $error_msgs[] = $mod_strings['LBL_MIME_TYPE_ERROR_2'];
@@ -146,9 +148,11 @@ class ImportViewConfirm extends ImportView
         $enclosure = $importFile->getFieldEnclosure();
         $hasHeader = $importFile->hasHeaderRow();
 
+        $encodeOutput = TRUE;
         //Handle users navigating back through the wizard.
         if( !empty($_REQUEST['previous_action']) && $_REQUEST['previous_action'] == 'Confirm')
         {
+            $encodeOutput = FALSE;
             $importFileMap = $this->overloadImportFileMapFromRequest($importFileMap);
             $delimeter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : $delimeter;
             $enclosure = isset($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : $enclosure;
@@ -168,7 +172,7 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("HAS_HEADER_CHECKED", $hasHeaderFlag);
 
         if ( !$importFile->fileExists() ) {
-            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
+            $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2', false, null, true);
             return;
         }
 
@@ -197,19 +201,15 @@ class ImportViewConfirm extends ImportView
         $importMappingJS = $this->getImportMappingJS();
 
         $this->ss->assign("SAMPLE_ROWS",$rows);
-        $JS = json_encode(htmlentities($this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS, $importFileMap ),ENT_NOQUOTES));
-        $this->ss->assign("JS", $JS);
-
+        $JS = $this->_getJS($maxRecordsExceeded, $maxRecordsWarningMessg, $importMappingJS, $importFileMap );
         $content = $this->ss->fetch('modules/Import/tpls/confirm.tpl');
-        $this->ss->assign("CONTENT",json_encode(htmlentities($content, ENT_NOQUOTES)));
 
         $submitContent = "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td align=\"right\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\" onclick=\"SUGAR.importWizard.closeDialog();\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"finished\" value=\"  ".$mod_strings['LBL_IMPORT_COMPLETE']."  \" id=\"finished\">";
         $submitContent .= "<input title=\"".$mod_strings['LBL_BACK']."\" accessKey=\"\" class=\"button\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_BACK']."  \" id=\"goback\">";
 	    $submitContent .= "<input title=\"".$mod_strings['LBL_NEXT']."\" accessKey=\"\" class=\"button primary\" type=\"submit\" name=\"button\" value=\"  ".$mod_strings['LBL_NEXT']."  \" id=\"gonext\"></td></tr></table></form>";
-        $this->ss->assign("SUBMITCONTENT",json_encode(htmlentities($submitContent, ENT_NOQUOTES)));
 
-        $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        $this->sendJsonOutput($content, $submitContent,$JS, $encodeOutput);
     }
 
     private function getEnclosureOptions($enclosure)
@@ -452,7 +452,7 @@ var import_mapping_js = $importMappingJS;
 document.getElementById('goback').onclick = function(){
     document.getElementById('importconfirm').action.value = 'Step2';
        	var success = function(data) {		
-			eval(data.responseText);
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -469,8 +469,8 @@ document.getElementById('goback').onclick = function(){
 document.getElementById('gonext').onclick = function(){
     document.getElementById('importconfirm').action.value = 'Step3';
     
-       	var success = function(data) {		
-			eval(data.responseText);
+       	var success = function(data) {
+			var response = YAHOO.lang.JSON.parse(data.responseText);
 			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
 			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
 			submitDiv = document.getElementById('submitDiv');
@@ -612,7 +612,7 @@ EOJAVASCRIPT;
      * @param string $module what module we were importing into
      * @param string $action what page we should go back to
      */
-    protected function _showImportError($message,$module,$action = 'Step1',$showCancel = false, $cancelLabel = null)
+    protected function _showImportError($message,$module,$action = 'Step1',$showCancel = false, $cancelLabel = null, $display = false)
     {
         if(!is_array($message)){
             $message = array($message);
@@ -642,11 +642,18 @@ EOJAVASCRIPT;
         $ss->assign("CONTENT",json_encode($nothing));
         $ss->assign("SUBMITCONTENT",json_encode($nothing));
         $ss->assign("JS",json_encode($content));
-        
 
-        
-        
-        $ss->display('modules/Import/tpls/wizardWrapper.tpl');
+        $this->errorScript .= htmlspecialchars($content, ENT_NOQUOTES);
+
+
+        if ($display){
+            echo json_encode(array(
+                'html'          => $nothing,
+                'submitContent' => $nothing,
+                'title'         => $this->getModuleTitle(false),
+                'script'        => $this->errorScript,
+            ));
+        }
     }
 }
 

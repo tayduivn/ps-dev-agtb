@@ -361,6 +361,11 @@ class SugarTheme
 
     }
 
+    public function clearJSCache()
+    {
+        $this->_jsCache = array();
+    }
+
     /**
      * Clears out the caches used for this themes
      */
