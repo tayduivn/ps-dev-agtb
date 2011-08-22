@@ -44,10 +44,17 @@ class SugarAuthenticate{
 	 *
 	 * @return SugarAuthenticate
 	 */
-	function SugarAuthenticate(){
-		require_once('modules/Users/authentication/'. $this->authenticationDir . '/'. $this->userAuthenticateClass . '.php');
-		$this->userAuthenticate = new $this->userAuthenticateClass();
-
+	function SugarAuthenticate()
+	{
+	    // check in custom dir first, in case someone want's to override an auth controller
+		if (file_exists('custom/modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php')) {
+            require_once('custom/modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');
+        }
+        elseif (file_exists('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php')) {
+            require_once('modules/Users/authentication/'.$this->authenticationDir.'/' . $this->userAuthenticateClass . '.php');
+        }
+		
+        $this->userAuthenticate = new $this->userAuthenticateClass();
 	}
 	/**
 	 * Authenticates a user based on the username and password
