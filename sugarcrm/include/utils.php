@@ -963,14 +963,23 @@ function return_app_list_strings_language($language)
 function _mergeCustomAppListStrings($file , $app_list_strings){
 	$app_list_strings_original = $app_list_strings;
 	unset($app_list_strings);
+        // FG - bug 45525 - $exemptDropdown array is defined (once) here, not inside the foreach
+        //                  This way, language file can add items to save specific standard codelist from being overwritten
+        $exemptDropdowns = array();
 	include($file);
 	if(!isset($app_list_strings) || !is_array($app_list_strings)){
 		return $app_list_strings_original;
 	}
 	//Bug 25347: We should not merge custom dropdown fields unless they relate to parent fields or the module list.
+
+        // FG - bug 45525 - Specific codelists must NOT be overwritten
+	$exemptDropdowns[] = "moduleList";
+        $exemptDropdowns[] = "parent_type_display";
+        $exemptDropdowns[] = "record_type_display";
+        $exemptDropdowns[] = "record_type_display_notes";
+   
 	foreach($app_list_strings as $key=>$value)
 	{
-		$exemptDropdowns = array("moduleList", "parent_type_display", "record_type_display", "record_type_display_notes");
 		if (!in_array($key, $exemptDropdowns) && array_key_exists($key, $app_list_strings_original))
 		{
 	   		unset($app_list_strings_original["$key"]);
