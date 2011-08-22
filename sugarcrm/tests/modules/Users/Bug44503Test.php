@@ -27,19 +27,20 @@ class Bug44503Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	protected $authclassname = null;
 
-	public function setUp() 
+	public function setUp()
     {
     	$this->authclassname = 'TestAuthClass'.mt_rand();
-    	
+
     	sugar_mkdir("custom/modules/Users/authentication/{$this->authclassname}/",null,true);
-        
+
         sugar_file_put_contents(
             "custom/modules/Users/authentication/{$this->authclassname}/{$this->authclassname}.php",
             "<?php
-class {$this->authclassname} extends SugarAuthenticate { 
-    public \$userAuthenticateClass = '{$this->authclassname}User'; 
-    public \$authenticationDir = '{$this->authclassname}'; 
-            
+require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticate.php';
+class {$this->authclassname} extends SugarAuthenticate {
+    public \$userAuthenticateClass = '{$this->authclassname}User';
+    public \$authenticationDir = '{$this->authclassname}';
+
     public function _construct(){
 	    parent::SugarAuthenticate();
 	}
@@ -48,22 +49,23 @@ class {$this->authclassname} extends SugarAuthenticate {
         sugar_file_put_contents(
             "custom/modules/Users/authentication/{$this->authclassname}/{$this->authclassname}User.php",
             "<?php
+require_once 'modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php';
 class {$this->authclassname}User extends SugarAuthenticateUser {
 }"
             );
-        
+
 	}
-	
+
 	public function tearDown()
 	{
 	    if ( !is_null($this->authclassname) && is_dir("custom/modules/Users/authentication/{$this->authclassname}/") )
 	        rmdir_recursive("custom/modules/Users/authentication/{$this->authclassname}/");
 	}
-	
+
 	public function testLoadingCustomAuthClassFromAuthenicationController()
 	{
 	    $authController = new AuthenticationController($this->authclassname);
-	    
+
 	    $this->assertInstanceOf($this->authclassname,$authController->authController);
 	    $this->assertInstanceOf($this->authclassname.'User',$authController->authController->userAuthenticate);
 	}
