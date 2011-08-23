@@ -125,7 +125,7 @@ CL: Bug fix for 9291 and 9427 - parent_id should be parent_type, not the module 
 <script type="text/javascript">
 {literal}
 Calendar.setup ({
-	inputField : "jscal_field", daFormat : "{/literal}{$CALENDAR_FORMAT}{literal}", onClose: function(cal) { cal.hide(); }, showsTime : false, button : "jscal_trigger", singleClick : true, step : 1, weekNumbers:false
+	inputField : "jscal_field", daFormat : "{/literal}{$CALENDAR_FORMAT}{literal}", onClose: function(cal) { cal.hide(); }, showsTime : false, button : "jscal_trigger", singleClick : true, step : 1, startWeekday: {/literal}{$CALENDAR_FDOW|default:'0'}{literal}, weekNumbers:false
 });
 {/literal}
 	{$additionalScripts}
