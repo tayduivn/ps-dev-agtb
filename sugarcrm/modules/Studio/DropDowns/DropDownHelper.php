@@ -29,6 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: DropDownHelper.php 19013 2007-01-04 02:15:22Z majed $
 require_once('modules/Administration/Common.php');
+require_once('modules/Administration/QuickRepairAndRebuild.php');
 class DropDownHelper{
     var $modules = array();
     function getDropDownModules(){
@@ -153,6 +154,12 @@ class DropDownHelper{
             save_custom_app_list_strings_contents($contents, $selected_lang);
             sugar_cache_reset();
         }
+	// Bug38011
+        $repairAndClear = new RepairAndClear();
+        $repairAndClear->module_list = array(translate('LBL_ALL_MODULES'));
+        $repairAndClear->show_output = false;
+        $repairAndClear->clearJsLangFiles();
+        // ~~~~~~~~
     }
     
 
