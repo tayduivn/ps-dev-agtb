@@ -1731,12 +1731,7 @@ EOQ;
     protected function reorgQueueRemoveTable($name)
     {
         $name = strtoupper($name);
-        $this->reorgQueues['table'] = array_filter($this->reorgQueues['table'],
-                                                        function ($element) use ($name)
-                                                        {
-                                                            return ($element != $name);
-                                                        }
-                                                    );
+        $this->reorgQueues['table'] = array_diff($this->reorgQueues['table'], array($name));
     }
 
     /**
