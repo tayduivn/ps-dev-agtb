@@ -549,11 +549,11 @@ class iCalendar {
 					$emails = array();
 					foreach($val->event->attendees as $attendee) {
 				        if(!empty($attendee['email'])) {
-				            $emails[] = "ea.email_address_caps='".$meeting->db->quoteForEmail($this->cleanEmail($attendee['email']))."'";
+				            $emails[] = "ea.email_address_caps=".$meeting->db->quoted($this->cleanEmail($attendee['email']));
 				        }
 					}
 					if(!empty($val->event->organizer) && !empty($val->event->organizer['email'])) {
-					    $emails[] = "ea.email_address_caps='".$meeting->db->quoteForEmail($this->cleanEmail($val->event->organizer['email']))."'";
+					    $emails[] = "ea.email_address_caps=".$meeting->db->quoted($this->cleanEmail($val->event->organizer['email']));
 					}
 					if(!empty($emails)) {
 					    $query = join(" OR ", $emails);
