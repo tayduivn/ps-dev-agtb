@@ -222,7 +222,7 @@ class M2MRelationship extends SugarRelationship
     public function getJoin($link, $params = array(), $return_array = false)
     {
         $linkIsLHS = $link->getSide() == REL_LHS;
-        $startingTable = $link->getFocus()->table_name;
+        $startingTable = (empty($params['left_join_table_alias']) ? $this->def['lhs_table'] : $params['left_join_table_alias']);
         $startingKey = $linkIsLHS ? $this->def['lhs_key'] : $this->def['rhs_key'];
         $startingJoinKey = $linkIsLHS ? $this->def['join_key_lhs'] : $this->def['join_key_rhs'];
         $joinTable = $this->getRelationshipTable();
