@@ -34,6 +34,7 @@
  * "Powered by SugarCRM".
  ********************************************************************************/
 
+require_once 'include/connectors/formatters/FormatterFactory.php';
 class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function testCustomCodeRenderField()
@@ -86,7 +87,10 @@ class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
         );
 
     	require_once('include/Sugar_Smarty.php');
+    	$li = FormatterFactory::getInstance("ext_rest_linkedin");
     	$ss = new Sugar_Smarty();
+    	$li->setSmarty($ss);
+    	$li->getDetailViewFormat(); // needs to set up smarty vars
 		require_once 'include/Smarty/plugins/function.sugar_evalcolumn.php';
 		$output = smarty_function_sugar_evalcolumn($params, $ss);
 
