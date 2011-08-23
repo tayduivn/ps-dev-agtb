@@ -90,7 +90,9 @@ class Bug28321Test extends Sugar_PHPUnit_Framework_TestCase
     	$ss = new Sugar_Smarty();
     	include('modules/Connectors/connectors/sources/ext/rest/linkedin/config.php');
     	$ss->assign('config', $config);
-		require_once 'include/Smarty/plugins/function.sugar_evalcolumn.php';
+    	$ss->left_delimiter = '{{';
+    	$ss->right_delimiter = '}}';
+    	require_once 'include/Smarty/plugins/function.sugar_evalcolumn.php';
 		$output = smarty_function_sugar_evalcolumn($params, $ss);
 
 		//Doing this the hack way...customCode is 65 chars long.
