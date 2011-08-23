@@ -236,7 +236,7 @@ class Link2 {
         return $this->relationship->getJoin($this, $params, $return_array);
 	}
 
-	function getQuery($params)
+	function getQuery($params = array())
     {
     	return $this->relationship->getQuery($this, $params);
 	}
