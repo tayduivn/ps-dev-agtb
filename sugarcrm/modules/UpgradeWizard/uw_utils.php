@@ -591,7 +591,7 @@ function deleteCache(){
 	//Clean modules from cache
 	if(is_dir($GLOBALS['sugar_config']['cache_dir'].'modules')){
 		$allModFiles = array();
-		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles,true);
+		$allModFiles = findAllFiles($GLOBALS['sugar_config']['cache_dir'].'modules',$allModFiles);
 		foreach($allModFiles as $file)
 		{
             if(file_exists($file)) {
