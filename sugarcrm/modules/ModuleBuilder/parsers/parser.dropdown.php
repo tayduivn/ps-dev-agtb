@@ -50,7 +50,7 @@ require_once('modules/ModuleBuilder/parsers/ModuleBuilderParser.php');
         {
             foreach ( $temp as $item )
             {
-                $dropdown[ $item [0] ] = remove_xss(from_html($item [ 1 ])) ;
+                $dropdown[ remove_xss(from_html($item [ 0 ])) ] = remove_xss(from_html($item [ 1 ])) ;
             }
         }
 
