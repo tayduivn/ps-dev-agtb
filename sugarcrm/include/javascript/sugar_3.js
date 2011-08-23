@@ -641,7 +641,7 @@ function add_error_style(formname, input, txt, flash) {
 	            }
 	        }
 		}
-		window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
+		window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = '';", 2000);
     }
 
   } catch ( e ) {
