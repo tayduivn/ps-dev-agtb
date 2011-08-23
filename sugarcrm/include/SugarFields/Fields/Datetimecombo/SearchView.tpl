@@ -91,6 +91,7 @@ update_{{sugarvar key='name'}}_available.prototype.handleOnAvailable = function(
 	button : "{{sugarvar key='name'}}_trigger",
 	singleClick : true,
 	step : 1,
+        startWeekday: {$CALENDAR_FDOW|default:'0'},
 	weekNumbers:false
 	{rdelim});
 

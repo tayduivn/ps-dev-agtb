@@ -99,6 +99,7 @@ YAHOO.util.Event.onDOMReady(function()
 	singleClick : true,
 	step : 1,
 	weekNumbers: false,
+        startWeekday: {$CALENDAR_FDOW|default:'0'},
 	comboObject: combo_{{$idname}}
 	{rdelim});
 
