@@ -131,7 +131,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         //END SUGARCRM flav!=sales ONLY
         if (!self::$helperObject->checkSessionAndModuleAccess($session, 'invalid_session', $module_name, 'read', 'no_access', $error))
         {
-            $GLOBALS['log']->info('End: SugarWebServiceImpl->get_entries');
+            $GLOBALS['log']->info('No Access: SugarWebServiceImpl->get_entries');
             return;
         } // if
 
@@ -168,7 +168,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
                 $linkoutput_list[] = self::$helperObject->get_return_value_for_link_fields($seed, $module_name, $link_name_to_fields_array);
             }
 
-            $GLOBALS['log']->info('Should we track view: ' . $trackView);
+            $GLOBALS['log']->info('Should we track view: ' . $track_view);
             if($track_view)
             {
                 self::$helperObject->trackView($seed, 'detailview');
@@ -567,7 +567,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
         $GLOBALS['log']->info('End: SugarWebServiceImpl->get_report_pdf');
     }
     //END SUGARCRM flav=pro ONLY
-    
+
     /**
      * Retrieve the layout metadata for a given module given a specific type and view.
      *

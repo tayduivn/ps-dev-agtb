@@ -25,7 +25,7 @@
 
 class APIv3Helper
 {
-    
+
     function populateSeedDataForSearchTest($user_id)
     {
         $results = array();
@@ -37,7 +37,7 @@ class APIv3Helper
         $a1->assigned_user_id = $user_id;
         $a1->save();
         $results[] = array('id' => $a1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a1_id");
-        
+
         $a2_id = create_guid();
         $a2 = new Account();
         $a2->new_with_id = TRUE;
@@ -46,7 +46,7 @@ class APIv3Helper
         $a2->assigned_user_id = 'unittest';
         $a2->save();
         $results[] = array('id' => $a2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a2_id");
-        
+
         $c1_id = create_guid();
         $c1 = new Contact();
         $c1->id = $c1_id;
@@ -56,7 +56,7 @@ class APIv3Helper
         $c1->assigned_user_id = $user_id;
         $c1->save();
         $results[] = array('id' => $c1_id, 'fieldName' => 'name', 'fieldValue' => $c1->first_name .' ' . $c1->last_name);
-        
+
         $op1_id = create_guid();
         $op1 = new Opportunity();
         $op1->new_with_id = TRUE;
@@ -65,7 +65,7 @@ class APIv3Helper
         $op1->assigned_user_id = $user_id;
         $op1->save();
         $results[] = array('id' => $op1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op1_id");
-        
+
         $op2_id = create_guid();
         $op2 = new Opportunity();
         $op2->new_with_id = TRUE;
@@ -74,10 +74,10 @@ class APIv3Helper
         $op2->assigned_user_id = 'unittest';
         $op2->save();
         $results[] = array('id' => $op2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op2_id");
-        
+        $GLOBALS['db']->commit();
         return $results;
-    }    
-    
+    }
+
     /**
      * Linear search function used to find a bean id in an entry list array.
      *
@@ -101,10 +101,10 @@ class APIv3Helper
                 }
             }
         }
-        
+
         return $found;
     }
-    
+
     /**
      * Linear search function used to find a particular field in an entry list array.
      *
@@ -127,10 +127,10 @@ class APIv3Helper
                 }
             }
         }
-        
+
         return $found;
     }
-    
+
     function _retrieveFieldValueByFieldName($entry, $fieldName, $beanId)
     {
         $found = FALSE;
@@ -139,14 +139,14 @@ class APIv3Helper
         {
             if($fieldEntry['name'] == 'id' && $fieldEntry['value'] == $beanId )
                 $found = TRUE;
-                
+
             if($fieldEntry['name'] == $fieldName )
                 $fieldValue = $fieldEntry['value'];
         }
-        
+
         if($found)
             return $fieldValue;
-        else 
+        else
             return FALSE;
     }
 }

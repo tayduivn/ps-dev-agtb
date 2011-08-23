@@ -22,32 +22,26 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once('include/nusoap/nusoap.php');
+
+require_once 'tests/service/SOAPTestCase.php';
 
 /**
  * @group bug44680
  */
-class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44680Test extends SOAPTestCase
 {
-	public $_soapClient = null;
     var $testUser;
 	var $testAccount;
 	var $teamSet;
     var $testTeam;
-	
-	public function setUp() 
+
+	public function setUp()
     {
-        $beanList = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-
-        $this->_soapClient = new nusoapclient($GLOBALS['sugar_config']['site_url'].'/soap.php',false,false,false,false,false,600,600);
-        
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+		parent::setUp();
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->testUser;
-
-        $this->testAccount = SugarTestAccountUtilities::createAccount();
+		$GLOBALS['current_user'] = $this->testUser;
+		$this->testAccount = SugarTestAccountUtilities::createAccount();
 
         $this->testTeam = SugarTestTeamUtilities::createAnonymousTeam();
 
@@ -62,10 +56,12 @@ class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->commit();
     }
 
-    public function tearDown() 
+    public function  tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+        parent::tearDown();
     }
 
     public function testSetEntryHasAccess()
@@ -73,12 +69,12 @@ class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
         $time = mt_rand();
         $oldName = $this->testAccount->name;
         $result = $this->_login();
-        
+
         $result = $this->_soapClient->call('set_entry',array('session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>array(array('name'=>'id' , 'value'=>$this->testAccount->id),array('name'=>'name' , 'value'=>"$time Account SINGLE"))));
-   
+
         $this->assertEquals($this->testAccount->id, $result['id'], "Did not update the Account as expected.");
     }
-    
+
     public function testSetEntryNoAccess()
     {
         $teamSet = new TeamSet();
@@ -89,35 +85,11 @@ class Bug44680Test extends Sugar_PHPUnit_Framework_TestCase
 		$this->testAccount->save();
 
         $this->testTeam->remove_user_from_team($this->testUser->id);
-        
+
         $time = mt_rand();
         $oldName = $this->testAccount->name;
-        $GLOBALS['db']->commit();
-        $result = $this->_login();
+        $this->_login();
         $result = $this->_soapClient->call('set_entry',array('session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>array(array('name'=>'id' , 'value'=>$this->testAccount->id),array('name'=>'name' , 'value'=>"$time Account SINGLE"))));
         $this->assertEquals(-1, $result['id'], "Should not have updated the Account.");
-    }
-    
-    /**
-     * Attempt to login to the soap server
-     *
-     * @return $set_entry_result - this should contain an id and error.  The id corresponds
-     * to the session_id.
-     */
-    public function _login()
-    {
-		global $current_user;  	
-    	
-		$result = $this->_soapClient->call(
-		    'login',
-            array('user_auth' => 
-                array('user_name' => $GLOBALS['current_user']->user_name,
-                    'password' => $GLOBALS['current_user']->user_hash,
-                    'version' => '.01'), 
-                'application_name' => 'SoapTest')
-            );
-        $this->_sessionId = $result['id'];
-		
-        return $result;
     }
 }

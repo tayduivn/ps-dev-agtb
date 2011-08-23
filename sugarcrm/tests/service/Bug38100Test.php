@@ -40,12 +40,6 @@ class Bug38100Test extends SOAPTestCase
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
 
-		$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-
 		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
 		parent::setUp();
@@ -53,9 +47,8 @@ class Bug38100Test extends SOAPTestCase
 
     public function tearDown()
     {
-		unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
 		unset($GLOBALS['app_list_strings']);
+		parent::tearDown();
     }
 
     public function testGetReportEntries()

@@ -22,24 +22,22 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/nusoap/nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 
 
 class Bug25964v2Test extends SOAPTestCase
 {
-	public $_soapClient = null;
-    var $_sessionId;
     var $_resultId;
     var $c = null;
     var $c2 = null;
-	
-	public function setUp() 
+
+	public function setUp()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        
+        parent::setUp();
+
 		$unid = uniqid();
 		$time = date('Y-m-d H:i:s');
 
@@ -52,12 +50,12 @@ class Bug25964v2Test extends SOAPTestCase
         $contact->new_with_id = true;
         $contact->disable_custom_fields = true;
         $contact->save();
-		$this->c = $contact;
+        $this->c = $contact;
+        $this->_login();
 
-        parent::setUp();
     }
 
-    public function tearDown() 
+    public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_resultId}'");
@@ -67,11 +65,10 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testFindSameContact()
     {
-        $this->_login();
 
         $contacts_list=array( 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
 				   'name_value_lists' => array(
-                                        array(array('name'=>'assigned_user_id' , 'value'=>$this->_user->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'one_other@example.com'))
+                                        array(array('name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'one_other@example.com'))
                                         ));
 
         $result = $this->_soapClient->call('set_entries',$contacts_list);
@@ -81,11 +78,10 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testDoNotFindSameContact()
     {
-        $this->_login();
 
         $contacts_list=array( 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
 				   'name_value_lists' => array(
-                                        array(array('name'=>'assigned_user_id' , 'value'=>$this->_user->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'mytest1@example.com'))
+                                        array(array('name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'mytest1@example.com'))
                                         ));
 
         $result = $this->_soapClient->call('set_entries',$contacts_list);

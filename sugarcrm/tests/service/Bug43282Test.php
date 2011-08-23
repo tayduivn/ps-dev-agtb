@@ -22,7 +22,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once 'tests/service/SOAPTestCase.php'; 
+require_once 'tests/service/SOAPTestCase.php';
 require_once('include/nusoap/nusoap.php');
 
 /**
@@ -31,19 +31,13 @@ require_once('include/nusoap/nusoap.php');
 class Bug43282Test extends SoapTestCase
 {
 	public $_soapURL = null;
-    public $_soapClient = null;
-    public $_sessionId = null;
     private $_tsk = null;
 
 	public function setUp()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
-        $this->_soapClient = new nusoapclient($this->_soapURL,false,false,false,false,false,600,600);
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->status = 'Active';
-        $GLOBALS['current_user']->is_admin = true;
-        $GLOBALS['current_user']->save();
-        
+        parent::setUp();
+
         $this->_tsk = new Task();
         $this->_tsk->name = "Unit Test";
         $this->_tsk->save();
@@ -52,9 +46,7 @@ class Bug43282Test extends SoapTestCase
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->_tsk->id}'");
-
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        parent::tearDown();
 
     }
 

@@ -22,23 +22,20 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/nusoap/nusoap.php');
 
 /**
  * @group bug43696
  */
-class Bug43696Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug43696Test extends SOAPTestCase
 {
-	public $_soapURL = null;
-    public $_soapClient = null;
     private $_tsk = null;
 
 	public function setUp()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
-        $this->_soapClient = new nusoapclient($this->_soapURL,false,false,false,false,false,600,600);
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        parent::setUp();
         $this->_tsk = new Task();
         $this->_tsk->name = "Unit Test";
         $this->_tsk->assigned_user_id = $GLOBALS['current_user']->id;
@@ -48,10 +45,7 @@ class Bug43696Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->_tsk->id}'");
-
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-
+        parent::tearDown();
     }
 
     /**
@@ -62,8 +56,8 @@ class Bug43696Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSyncMyTasks()
     {
         $timedate = TimeDate::getInstance();
-
         $this->_login();
+
         $result = $this->_soapClient->call('sync_get_modified_relationships',
             array(
                 'session' => $this->_sessionId,
@@ -124,29 +118,5 @@ class Bug43696Test extends Sugar_PHPUnit_Framework_TestCase
         );
         $this->assertNotContains($this->_tsk->id, base64_decode($result['entry_list']), 'The Result should not contain the Task Id');
 
-    }
-
-    /**
-     * Attempt to login to the soap server
-     *
-     * @return $set_entry_result - this should contain an id and error.  The id corresponds
-     * to the session_id.
-     */
-    public function _login()
-    {
-		global $current_user;
-
-        $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
-		$result = $this->_soapClient->call(
-		    'login',
-            array('user_auth' =>
-                array('user_name' => $current_user->user_name,
-                    'password' => $current_user->user_hash,
-                    'version' => '.01'),
-                'application_name' => 'SoapTest')
-            );
-        $this->_sessionId = $result['id'];
-
-        return $result;
     }
 }

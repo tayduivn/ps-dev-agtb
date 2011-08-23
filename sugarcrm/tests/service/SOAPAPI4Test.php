@@ -22,7 +22,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/nusoap/nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 require_once('tests/service/APIv3Helper.php');
@@ -31,6 +31,7 @@ require_once('tests/service/APIv3Helper.php');
 class SOAPAPI4Test extends SOAPTestCase
 {
     private static $helperObject;
+    private $cleanup;
 
     /**
      * Create test user
@@ -39,23 +40,26 @@ class SOAPAPI4Test extends SOAPTestCase
 	public function setUp()
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v4/soap.php';
-
 		parent::setUp();
 		self::$helperObject = new APIv3Helper();
+        $this->_login();
+        $this->cleanup = false;
     }
 
     public function tearDown()
     {
-    	SugarTestContactUtilities::removeAllCreatedContacts();
-
-		parent::tearDown();
+        if(!empty($this->cleanup)) {
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
+            $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
+        }
+        parent::tearDown();
     }
 
     public function testGetEntryList()
     {
         $contact = SugarTestContactUtilities::createContact();
 
-        $this->_login();
         $result = $this->_soapClient->call(
             'get_entry_list',
             array(
@@ -86,8 +90,8 @@ class SOAPAPI4Test extends SOAPTestCase
         $sf->module = 'Contacts';
         $sf->record_id = $contact->id;
         $sf->save(FALSE);
+        $GLOBALS['db']->commit();
 
-        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
         $result = $this->_soapClient->call(
             'get_entry_list',
             array(
@@ -114,15 +118,13 @@ class SOAPAPI4Test extends SOAPTestCase
     public function testSearchByModule()
     {
 
-        $seedData = self::$helperObject->populateSeedDataForSearchTest($this->_user->id);
-
+        $seedData = self::$helperObject->populateSeedDataForSearchTest($GLOBALS['current_user']->id);
+        $this->cleanup = true;
         $returnFields = array('name','id','deleted');
         $searchModules = array('Accounts','Contacts','Opportunities');
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
-
-        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
         $results = $this->_soapClient->call('search_by_module',
                         array(
@@ -131,7 +133,7 @@ class SOAPAPI4Test extends SOAPTestCase
                             'modules' => $searchModules,
                             'offset'  => $offSet,
                             'max'     => $maxResults,
-                            'user'    => $this->_user->id,
+                            'user'    => $GLOBALS['current_user']->id,
                             'fields'  => $returnFields,
                             'unified_only' => TRUE,
                             'favorites' => FALSE)
@@ -141,17 +143,13 @@ class SOAPAPI4Test extends SOAPTestCase
         $this->assertEquals($seedData[2]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[2]['id'],'Contacts', $seedData[2]['fieldName']));
         $this->assertEquals($seedData[3]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[3]['id'],'Opportunities', $seedData[3]['fieldName']));
         $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[4]['id'],'Opportunities', $seedData[4]['fieldName']));
-
-        $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
-        $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
     }
 
     public function testSearchByModuleWithFavorites()
     {
 
-        $seedData = self::$helperObject->populateSeedDataForSearchTest($this->_user->id);
-
+        $seedData = self::$helperObject->populateSeedDataForSearchTest($GLOBALS['current_user']->id);
+        $this->cleanup = true;
         $sf = new SugarFavorites();
         $sf->module = 'Accounts';
         $sf->record_id = $seedData[0]['id'];
@@ -168,8 +166,6 @@ class SOAPAPI4Test extends SOAPTestCase
         $offSet = 0;
         $maxResults = 10;
 
-        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
-
         $results = $this->_soapClient->call('search_by_module',
                         array(
                             'session' => $this->_sessionId,
@@ -177,7 +173,7 @@ class SOAPAPI4Test extends SOAPTestCase
                             'modules' => $searchModules,
                             'offset'  => $offSet,
                             'max'     => $maxResults,
-                            'user'    => $this->_user->id,
+                            'user'    => $GLOBALS['current_user']->id,
                             'fields'  => $returnFields,
                             'unified_only' => TRUE,
                             'favorites' => TRUE)
@@ -187,10 +183,6 @@ class SOAPAPI4Test extends SOAPTestCase
         $this->assertEquals($seedData[2]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[2]['id'],'Contacts', $seedData[2]['fieldName']));
         $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[3]['id'],'Opportunities', $seedData[3]['fieldName']));
         $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[4]['id'],'Opportunities', $seedData[4]['fieldName']));
-
-        $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'UNIT TEST%' ");
-        $GLOBALS['db']->query("DELETE FROM opportunities WHERE name like 'UNIT TEST%' ");
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name like 'UNIT TEST%' ");
     }
 
 
@@ -222,7 +214,6 @@ class SOAPAPI4Test extends SOAPTestCase
      */
     function testGetAllAvailableModules()
     {
-        $this->_login();
         $soap_data = array('session' => $this->_sessionId);
 
         $result = $this->_soapClient->call('get_available_modules', $soap_data);
@@ -249,7 +240,6 @@ class SOAPAPI4Test extends SOAPTestCase
     function testGetAvailableModules()
     {
         global $beanList, $beanFiles;
-        $this->_login();
         $soap_data = array('session' => $this->_sessionId,'filter' => 'mobile');
         $result = $this->_soapClient->call('get_available_modules', $soap_data);
 
