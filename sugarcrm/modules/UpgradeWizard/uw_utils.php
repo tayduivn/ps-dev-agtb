@@ -3214,7 +3214,9 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
 		}
 	}
 
+    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir 
 	$d = dir($dir);
+    if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
 	    if($f == "." || $f == "..") { // skip *nix self/parent
