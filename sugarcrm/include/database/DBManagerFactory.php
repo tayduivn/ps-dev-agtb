@@ -217,7 +217,7 @@ class DBManagerFactory
 
     public static function _compareDrivers($a, $b)
     {
-        return $a->priority - $b->priority;
+        return $b->priority - $a->priority;
     }
 
     /**
@@ -235,11 +235,10 @@ class DBManagerFactory
         foreach($drivers as $type => $tdrivers) {
             if(empty($tdrivers)) continue;
             if(count($tdrivers) > 1) {
-                uasort($tdrivers, array(__CLASS__, "_compareDrivers"));
+                usort($tdrivers, array(__CLASS__, "_compareDrivers"));
             }
             $result[$type] = $tdrivers[0];
         }
-
         return $result;
     }
 
