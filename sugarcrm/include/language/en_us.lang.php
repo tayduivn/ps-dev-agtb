@@ -112,6 +112,7 @@ $app_list_strings = array (
     'Queues' => 'Queues',
     'EmailMarketing' => 'Email Marketing',
     'EmailTemplates' => 'Email Templates',
+    'SNIP' => "Sugar Ease",
 //BEGIN SUGARCRM flav!=sales ONLY
     'ProspectLists' => 'Target Lists',
 //END SUGARCRM flav!=sales ONLY

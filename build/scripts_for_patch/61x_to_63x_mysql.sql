@@ -10,4 +10,4 @@ ALTER TABLE folders_rel ADD INDEX idx_fr_id_deleted_poly (folder_id, deleted, po
 
 ALTER TABLE bugs ADD INDEX idx_bugs_assigned_user (assigned_user_id);
 
-ALTER TABLE campaign_log ADD INDEX idx_target_deleted (target_id, deleted);
+ALTER TABLE campaign_log ADD INDEX idx_target_id_deleted (target_id, deleted);
