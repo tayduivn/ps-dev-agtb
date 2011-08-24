@@ -221,6 +221,8 @@ class Link2 {
                 return REL_RHS;
             }
         }
+
+        $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
 	}
 
 	protected function is_self_relationship() {
