@@ -95,8 +95,9 @@ class SugarView
         $this->display();
         if ( !empty($this->module) ) {
             $GLOBALS['logic_hook']->call_custom_logic($this->module, 'after_ui_frame');
+        } else {
+            $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         }
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         if ($this->_getOption('show_subpanels')) $this->_displaySubPanels();
         if ($this->action === 'Login') {
             //this is needed for a faster loading login page ie won't render unless the tables are closed
