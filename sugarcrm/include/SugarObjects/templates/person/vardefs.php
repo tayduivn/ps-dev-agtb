@@ -63,7 +63,7 @@ $vardefs =array(
 	'name' =>
 		array (
 			'name' => 'name',
-			'rname' => 'link',
+			'rname' => 'name',
 			'vname' => 'LBL_NAME',
 			'type' => 'name',
 			'link' => true, // bug 39288 
