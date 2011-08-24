@@ -25,7 +25,7 @@ $vardefs= array (
   array (
     'name' => 'name',
     'type' => 'name',
-  //	'link' => true, // bug 39288 
+  	'link' => true, // bug 39288 
     'dbType' => 'varchar',
     'vname' => 'LBL_NAME',
     'len' => 150,
