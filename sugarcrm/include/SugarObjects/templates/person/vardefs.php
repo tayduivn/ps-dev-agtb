@@ -63,9 +63,10 @@ $vardefs =array(
 	'name' =>
 		array (
 			'name' => 'name',
-			'rname' => 'name',
+			'rname' => 'link',
 			'vname' => 'LBL_NAME',
 			'type' => 'name',
+			'link' => true, // bug 39288 
 			'fields' => array('first_name', 'last_name'),
 			'sort_on' => 'last_name',
 			'source' => 'non-db',
