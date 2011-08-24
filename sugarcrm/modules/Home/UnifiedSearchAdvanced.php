@@ -422,6 +422,17 @@ class UnifiedSearchAdvanced {
 					}
 				}
 
+                foreach ($searchFields[$moduleName] as $field => $def)
+                {
+                    if (
+                        isset($def['force_unifiedsearch'])
+                        and $def['force_unifiedsearch']
+                    )
+                    {
+                        $fields[$field] = $def;
+                    }
+                }
+
 				if(count($fields) > 0) {
 					$supported_modules [$moduleName] ['fields'] = $fields;
 					if (isset($dictionary[$beanName]['unified_search_default_enabled']) && $dictionary[$beanName]['unified_search_default_enabled'] === TRUE) 
