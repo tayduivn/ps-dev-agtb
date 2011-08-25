@@ -105,8 +105,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	    $password="";
 		//BEGIN SUGARCRM flav=pro ONLY
 
-	    // seed the random number generator
-	    srand((double)microtime()*1000000);
 	    // Count the number of requirements
 	    if($res['onenumber']=='1')
 	        $condition+=1;
@@ -285,7 +283,6 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
 	        $now=TimeDate::getInstance()->nowDb();
 	        $query = "UPDATE $usr->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$usr->id'";
 	        $usr->db->query($query, true, "Error setting new password for $usr->user_name: ");
-        	echo $password;
         }
     }else{
     	$new_pwd='4';
