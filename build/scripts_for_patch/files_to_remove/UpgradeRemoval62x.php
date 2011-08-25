@@ -1,8 +1,17 @@
 <?php
+require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
-function get_62x_files_to_remove($original_ver, $target_ver)
+class UpgradeRemoval62x extends UpgradeRemoval
 {
-
+	
+	
+/**
+ * getFilesToRemove
+ * Return an array of files/directories to remove for 62x upgrades
+ * @param unknown_type $version
+ */	
+public function getFilesToRemove($version)
+{
 $files = array();
 
 // In 6.2.2 we did the following
@@ -12,7 +21,7 @@ $files = array();
 // 4) Upgraded TinyMCE from 2.x to 3.x version
 // We will additionally clean up the legacy include/utils/external_cache direcotry
 
-if($original_ver < '622')
+if($version < '622')
 {
 	$files[] = 'include/utils/external_cache';
 	$files[] = 'include/jsolait';
@@ -47,12 +56,15 @@ if($original_ver < '622')
 	$files[] = 'include/javascript/yui/build/swfdetect/swfdetect-debug.js';
 	$files[] = 'include/javascript/yui/build/swfstore/swf.js';
 	$files[] = 'include/javascript/yui/build/swfstore/swfstore-debug.js';
-	$files[] = 'jssource/src_files/include/javascript/jsolait';
+	$files[] = 'jssource/src_files/include/jsolait';
 	$files[] = 'modules/Activities/OpenListView.html';
 	$files[] = 'modules/Activities/OpenListView.php';
 }
 
-return $files;
-
+return $files;	
 }
+	
+		
+}
+
 ?>

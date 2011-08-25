@@ -444,7 +444,7 @@ class Product extends SugarBean {
         $temp_array['LIST_PRICE'] = $this->list_price;
         $temp_array['DISCOUNT_PRICE'] = $this->discount_price;
         $temp_array['COST_PRICE'] = $this->cost_price;
-        if ($this->discount_select) {
+        if (isset($this->discount_select) && $this->discount_select) {
              $temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount . "%";
         } else {
         	$temp_array['DISCOUNT_AMOUNT'] = $this->discount_amount;
@@ -556,7 +556,7 @@ class Product extends SugarBean {
 					    $product->retrieve();
 					    $subtotal_usdollar += $product->discount_usdollar * $product->quantity;
 
-					    if($product->discount_select){
+					     if (isset($this->discount_select) && $this->discount_select){
 					       $deal_tot_usdollar += ($product->discount_amount / 100) * $product->discount_usdollar * $product->quantity;
 					    }
 					    else{

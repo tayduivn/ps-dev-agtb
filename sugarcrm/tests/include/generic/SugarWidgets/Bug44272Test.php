@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 require_once('include/generic/SugarWidgets/SugarWidgetSubPanelTopButtonQuickCreate.php');
 require_once('include/SubPanel/SubPanel.php');
 require_once('include/SubPanel/SubPanelDefinitions.php');
