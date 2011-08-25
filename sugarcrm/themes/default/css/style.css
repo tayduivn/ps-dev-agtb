@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Sales Subscription
  * Agreement ("License") which can be viewed at
@@ -33,6 +34,11 @@
     opacity: 0.8;
     -moz-opacity:0.8;
     filter: alpha(opacity=80);
+}
+
+
+.search_form .view .yui-ac-highlight {
+    text-shadow: none;
 }
 
 /* hack for webkit browsers ( namely Chrome and Safari ) */

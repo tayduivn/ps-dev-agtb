@@ -77,6 +77,7 @@ $dictionary['EmailTemplate'] = array(
 			'len' => '255',
 			'comment' => 'Email template name',
 			'importable' => 'required',
+            'required' => true
 		),
 		'description' => array(
 			'name' => 'description',
