@@ -268,7 +268,7 @@ class SqlsrvManager extends MssqlManager
         $this->checkError($msg.' Query Failed:' . $sql . '::', $dieOnError);
 
         //suppress non error messages
-        sqlsrv_configure('WarningsReturnAsErrors',true);
+        sqlsrv_configure('WarningsReturnAsErrors',false);
 
         return $result;
     }
