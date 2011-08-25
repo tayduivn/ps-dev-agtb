@@ -1496,11 +1496,11 @@ EOSQL;
             if (!empty($row['IS_NULLABLE']) && $row['IS_NULLABLE'] == 'NO' && (empty($row['KEY']) || !stristr($row['KEY'],'PRI')))
                 $columns[strtolower($row['COLUMN_NAME'])]['required'] = 'true';
 
-            $column_def = 0;
+            $column_def = 1;
             if ( strtolower($tablename) == 'relationships' ) {
                 $column_def = $this->getOne("select cdefault from syscolumns where id = object_id('relationships') and name = '$column_name'");
             }
-            if ( $column_def != 0 ) {
+            if ( $column_def != 0 && ($row['COLUMN_DEF'] != null)) {	// NOTE Not using !empty as an empty string may be a viable default value.
                 $matches = array();
                 $row['COLUMN_DEF'] = html_entity_decode($row['COLUMN_DEF'],ENT_QUOTES);
                 if ( preg_match('/\([\(|\'](.*)[\)|\']\)/i',$row['COLUMN_DEF'],$matches) )
