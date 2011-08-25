@@ -3210,7 +3210,9 @@ function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), 
 	    return $theArray;
 	}
 
+    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir 
 	$d = dir($dir);
+    if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
 	                                // bug 40793 Skip Directories array in upgradeWizard does not function correctly
@@ -4369,7 +4371,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		    }
 		    // END 'Sales Page'
 
-			// BEGIN 'Marketing & Support Page'
+			// BEGIN 'Marketing Page'
 			$marketingDashlets = array();
 		    foreach ($defaultMarketingChartDashlets as $marketingChartDashlet=>$module){
 				$savedReport = new SavedReport();
@@ -4424,7 +4426,62 @@ function upgradeDashletsForSalesAndMarketing() {
 		        else array_push($marketingColumns[2]['dashlets'], $guid);
 		        $count++;
 		    }
-			// END 'Marketing & Support Page'
+			// END 'Marketing Page'
+			
+		    // BEGIN 'Support Page'- bug46195
+			$supportDashlets = array();
+		    foreach ($defaultSupportChartDashlets as $supportChartDashlet=>$module){
+				$savedReport = new SavedReport();
+				$reportId = $savedReport->retrieveReportIdByName($supportChartDashlet);
+				$myDashlet = new MySugar($module);
+				$displayDashlet = $myDashlet->checkDashletDisplay();
+
+				if(isset($reportId) && $displayDashlet) {
+		    		$supportDashlets[create_guid()] = array('className' => 'ChartsDashlet',
+													 		'module'=>$module,
+		    												'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
+		    												'reportId' => $reportId, );
+			    }
+		    }
+
+		    foreach($defaultSupportDashlets as $supportDashletName=>$module){
+				
+				$myDashlet = new MySugar($module);
+				$displayDashlet = $myDashlet->checkDashletDisplay();
+
+		    	if (isset($dashletsFiles[$supportDashletName]) && $displayDashlet){
+			        $options = array();
+	            $prefsforthisdashlet = array_keys($prefstomove,$supportDashletName);
+	            foreach ( $prefsforthisdashlet as $pref ) {
+	               $options[$pref] = $current_user->getPreference($pref);
+	            } //foreach
+	            $supportDashlets[create_guid()] = array('className' => $supportDashletName,
+										 		 'module'=>$module,
+		                                         'fileLocation' => $dashletsFiles[$supportDashletName]['file'],
+	                                             'options' => $options);
+	    		}
+		    }
+
+		    $count = 0;
+		    $supportColumns = array();
+		    $supportColumns[0] = array();
+		    $supportColumns[0]['width'] = '30%';
+		    $supportColumns[0]['dashlets'] = array();
+		    $supportColumns[1] = array();
+		    $supportColumns[1]['width'] = '30%';
+		    $supportColumns[1]['dashlets'] = array();
+		    $supportColumns[2] = array();
+		    $supportColumns[2]['width'] = '40%';
+		    $supportColumns[2]['dashlets'] = array();
+
+		    foreach($supportDashlets as $guid=>$dashlet){
+		        if($count % 3 == 0) array_push($supportColumns[0]['dashlets'], $guid);
+		        else if($count % 3 == 1) array_push($supportColumns[1]['dashlets'], $guid);
+		        else array_push($supportColumns[2]['dashlets'], $guid);
+		        $count++;
+		    }
+			// END ' Support Page' - bug 46195
+		    
 
 		   	//Set the dashlets pages to user preferences table
 		   	$pageIndex = count($pages);
@@ -4435,9 +4492,14 @@ function upgradeDashletsForSalesAndMarketing() {
 
 			$pages[$pageIndex]['columns'] = $marketingColumns;
 			$pages[$pageIndex]['numColumns'] = '3';
-			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_3_NAME'];	// "Marketing & Support Page"
+			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_6_NAME'];	// "Marketing Page"
+			$pageIndex++;
 
-		    $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets);
+			$pages[$pageIndex]['columns'] = $supportColumns;
+			$pages[$pageIndex]['numColumns'] = '4';
+			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_3_NAME'];	// " Support Page" - bug 46195
+
+		    $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets, $supportDashlets);
 		    $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
 		    $current_user->setPreference('pages', $pages, 0, 'Home');
 		} //while
@@ -5818,6 +5880,9 @@ function upgradeSugarCache($file)
 	}
 
 	$allFiles = array();
+	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/database"))) {
+		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/database"), $allFiles);
+	}	
 	if(file_exists(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"))) {
 		$allFiles = findAllFiles(clean_path("{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}/include/SugarCache"), $allFiles);
 	}
