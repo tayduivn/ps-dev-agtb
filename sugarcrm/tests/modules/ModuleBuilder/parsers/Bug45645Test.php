@@ -42,7 +42,7 @@ class Bug45645Test extends Sugar_PHPUnit_Framework_TestCase
         $new_label = 'test ' . $old_label;
 
         // save the new label to the language file
-        ParserLabel::addLabels($lang, array($test_label=>$new_label), $test_module, "custom/modules/$test_module/language", false);
+        ParserLabel::addLabels($lang, array($test_label=>$new_label), $test_module);
 
         // read the language file to get the new value
         include("custom/modules/$test_module/language/en_us.lang.php");
