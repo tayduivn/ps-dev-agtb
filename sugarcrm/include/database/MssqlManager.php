@@ -1708,28 +1708,59 @@ EOQ;
 
         if ($fieldDef['type'] == 'int')
             $fieldDef['len'] = '4';
-        if ($fieldDef['type'] == 'bit' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '1';
-		if ($fieldDef['type'] == 'bool' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '1';
-        if ($fieldDef['type'] == 'float' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '8';
-        if ($fieldDef['type'] == 'varchar' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '255';
-		if ($fieldDef['type'] == 'nvarchar' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '255';
-        if ($fieldDef['type'] == 'bit' && empty($fieldDef['default']) )
+
+        if(empty($fieldDef['len']))
+        {
+            switch($fieldDef['type']) {
+                case 'bit'      :
+                case 'bool'     : $fieldDef['len'] = '1'; break;
+                case 'smallint' : $fieldDef['len'] = '2'; break;
+                case 'float'    : $fieldDef['len'] = '8'; break;
+                case 'varchar'  :
+                case 'nvarchar' : if(!in_array($fieldDef['dbType'],array('text','ntext')))
+                                      $fieldDef['len'] = '255';
+                                  else
+                                      $fieldDef['len'] = 'max'; // text or ntext
+                                  break;
+                case 'image'    : $fieldDef['len'] = '2147483647'; break;
+                case 'ntext'    : $fieldDef['len'] = '2147483646'; break;   // Note: this is from legacy code, don't know if this is correct
+            }
+        }
+        if($fieldDef['type'] == 'decimal'
+           && empty($fieldDef['precision'])
+           && !strpos($fieldDef['len'], ','))
+        {
+             $fieldDef['len'] .= ',0'; // Adding 0 precision if it is not specified
+        }
+
+        if(empty($fieldDef['default'])
+            && in_array($fieldDef['type'],array('bit','bool')))
+        {
             $fieldDef['default'] = '0';
-		if ($fieldDef['type'] == 'bool' && empty($fieldDef['default']) )
-            $fieldDef['default'] = '0';
-        if ($fieldDef['type'] == 'image' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '2147483647';
-        if ($fieldDef['type'] == 'ntext' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '2147483646';
-        if ($fieldDef['type'] == 'smallint' && empty($fieldDef['len']) )
-            $fieldDef['len'] = '2';
+        }
 		if (isset($fieldDef['required']) && $fieldDef['required'] && !isset($fieldDef['default']) )
 			$fieldDef['default'] = '';
+//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '1';
+//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '1';
+//        if ($fieldDef['type'] == 'float' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '8';
+//        if ($fieldDef['type'] == 'varchar' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '255';
+//		if ($fieldDef['type'] == 'nvarchar' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '255';
+//        if ($fieldDef['type'] == 'image' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '2147483647';
+//        if ($fieldDef['type'] == 'ntext' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '2147483646';
+//        if ($fieldDef['type'] == 'smallint' && empty($fieldDef['len']) )
+//            $fieldDef['len'] = '2';
+//        if ($fieldDef['type'] == 'bit' && empty($fieldDef['default']) )
+//            $fieldDef['default'] = '0';
+//		if ($fieldDef['type'] == 'bool' && empty($fieldDef['default']) )
+//            $fieldDef['default'] = '0';
+
     }
 
     /**
