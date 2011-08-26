@@ -131,7 +131,7 @@ class TemplateMultiEnum extends TemplateEnum{
 			else
 			{
 				// we have a packed representation containing one or both of default and dependency
-                                if ( isset ( $unpacked [ 'default' ] ) && !isset($this->no_default)) {
+                                if ( isset ( $unpacked [ 'default' ] ) && !isset($this->no_default))
 					$def [ 'default' ] = $unpacked [ 'default' ] ;
 				if ( isset ( $unpacked [ 'dependency' ] ) )
 					$def [ 'dependency' ] = $unpacked [ 'dependency' ] ;
