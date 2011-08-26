@@ -958,8 +958,9 @@ Studio2 = {
                     YAHOO.util.DragDropMgr.refreshCache();
                     return;
                 }
+                }
             }
-        }, 50);
+        }, 25);
     },
 
     clearScrollObj: function() {
