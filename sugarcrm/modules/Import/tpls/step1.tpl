@@ -107,7 +107,7 @@
                                     </div>
                                 </td>
                                 <td  style="padding-top: 10px;">
-                                    <span id="ext_source_sign_in_bttn"><i>{$MOD.LBL_SIGN_IN_HELP}</i></span>
+                                    <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
                                 </td>
                             </tr>
                             {* //END SUGARCRM flav=pro ONLY *}
@@ -119,4 +119,10 @@
         </tr>
     </table>
 </p>
+<br>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="left"><input title="{$MOD.LBL_NEXT}" accessKey="" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  "  id="gonext"></td>
+    </tr>
+</table>    
 </form>

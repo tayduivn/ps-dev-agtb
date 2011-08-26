@@ -35,6 +35,6 @@ $module_menu [] =		Array("index.php?module=Bugs&action=index&return_module=Bugs&
 //BEGIN SUGARCRM flav=pro ONLY
 if(ACLController::checkAccess('Bugs', 'list', true))$module_menu[] =Array("index.php?module=Reports&action=index&view=bugs", $mod_strings['LNK_BUG_REPORTS'],"BugReports", 'Bugs');
 //END SUGARCRM flav=pro ONLY
-if(ACLController::checkAccess('Bugs', 'import', true))$module_menu[] =Array("javascript:void(SUGAR.importWizard.renderDialog('Bugs','step1',''));", $mod_strings['LNK_IMPORT_BUGS'],"Import", 'Bugs');
+if(ACLController::checkAccess('Bugs', 'import', true))$module_menu[] =Array("index.php?module=Import&action=Step1&import_module=Bugs&return_module=Bugs&return_action=index", $mod_strings['LNK_IMPORT_BUGS'],"Import", 'Bugs');
 
 ?>
