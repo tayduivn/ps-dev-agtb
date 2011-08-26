@@ -131,7 +131,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
 	'source'=>'non-db',    
   ),
   //represent's a value commited by forecast user.
@@ -139,7 +139,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'source'=>'non-db',
   ), 
   //represent's a value commited by forecast user.  
@@ -147,7 +147,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'source'=>'non-db',
   ),    
 
@@ -212,7 +212,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
 	'source'=>'non-db',    
   ),
   //represent's a value commited by forecast user.
@@ -220,7 +220,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'source'=>'non-db',
   ), 
   //represent's a value commited by forecast user.  
@@ -228,7 +228,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'source'=>'non-db',
   ),    
   //used to store worksheet values.
@@ -344,7 +344,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   array (
     'name' => 'best_case',
     'vname' => 'LBL_FORECAST_OPP_BEST_CASE',
-    'type' => 'int',
+    'type' => 'bigint',
     'comment' => 'Best case forecast amount',
   ),
   //renamed commit_value to likely_case
@@ -352,14 +352,14 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   array (
     'name' => 'likely_case',
     'vname' => 'LBL_FORECAST_OPP_COMMIT',
-    'type' => 'int',
+    'type' => 'bigint',
     'comment' => 'Likely case forecast amount',
   ),
   'worst_case' => 
   array (
     'name' => 'worst_case',
     'vname' => 'LBL_FORECAST_OPP_WORST',
-    'type' => 'int',
+    'type' => 'bigint',
     'comment' => 'Worst case likely amount',
   ),  
 'user_id' => 
@@ -545,21 +545,21 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'comment' => 'Best case worksheet amount',
   ),
   'likely_case' => 
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'comment' => 'Likely case worksheet amount',
   ),   
   'worst_case' => 
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
-    'type' => 'int',
+    'type' => 'bigint',
     'comment' => 'Worst case worksheet amount',
   ),  
   'date_modified' => 
