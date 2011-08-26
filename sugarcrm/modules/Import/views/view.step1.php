@@ -269,11 +269,15 @@ YAHOO.util.Event.onDOMReady(function(){
         if( personModules[selectedModule] )
         {
             document.getElementById('ext_source_tr').style.display = '';
+            document.getElementById('ext_source_help').style.display = '';
+            document.getElementById('ext_source_csv').style.display = '';
         }
         else
         {
             document.getElementById('ext_source_tr').style.display = 'none';
             document.getElementById('external_sources_tr').style.display = 'none';
+            document.getElementById('ext_source_help').style.display = 'none';
+            document.getElementById('ext_source_csv').style.display = 'none';
             document.getElementById('csv_source').checked = true;
         }
         //END SUGARCRM flav=pro ONLY

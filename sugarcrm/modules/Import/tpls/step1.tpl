@@ -77,10 +77,10 @@
                             </tr>
                             {* //END SUGARCRM flav=com ONLY *}
                             {* //BEGIN SUGARCRM flav=pro ONLY *}
-                            <tr>
+                            <tr id="ext_source_help">
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
                             </tr>
-                            <tr>
+                            <tr id="ext_source_csv">
                                 <td colspan="3" scope="row">
                                     <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
