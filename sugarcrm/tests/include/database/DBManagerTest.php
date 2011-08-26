@@ -457,7 +457,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
 
-        $this->assertEmpty($repair, "Unexpected repairs");
+        $this->assertEmpty($repair, "Unexpected repairs: " . $repair);
 
         $this->dropTableName($tableName);
     }
