@@ -144,12 +144,8 @@ class ImportViewDupcheck extends ImportView
         $enabled_dupes = json_encode($dupe_enabled);
         $disabled_dupes = json_encode($dupe_disabled);
 
-        $stepTitle4 = strip_tags(str_replace("\n","",getClassicModuleTitle(
-                $mod_strings['LBL_MODULE_NAME'],
-                array($mod_strings['LBL_MODULE_NAME'],$mod_strings['LBL_STEP_4_TITLE']),
-                false
-                )));
-                
+        $stepTitle4 = $mod_strings['LBL_IMPORT_RECORDS'];
+
         $dateTimeFormat = $GLOBALS['timedate']->get_cal_date_time_format();
         $type = (isset($_REQUEST['type'])) ? $_REQUEST['type'] : '';
         $lblUsed = str_replace(":","",$mod_strings['LBL_INDEX_USED']);
