@@ -54,29 +54,33 @@ class ViewModulefields extends SugarView
 
         $module_name = $_REQUEST['view_module'];
 
+        global $current_language;
+        $module_strings = return_module_language($current_language, $module_name);
+
         if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             //$this->loadPackageHelp($module_name);
             $studioClass = new stdClass;
             $studioClass->name = $module_name;
-            
+
             global $beanList;
             $objectName = $beanList[$module_name];
-            
+
             //BEGIN SUGARCRM flav!=sales ONLY
             if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
                 $objectName = 'Case';
             //END SUGARCRM flav!=sales ONLY
-                
+
             VardefManager::loadVardef($module_name, $objectName, true);
             global $dictionary;
             $f = array($mod_strings['LBL_HCUSTOM']=>array(), $mod_strings['LBL_HDEFAULT']=>array());
 
             // TODO: replace this section to select fields to list with the algorithm in AbstractMetaDataImplmentation::validField()
             $def = $this->cullFields($dictionary[$objectName]['fields']);
-            
+
             foreach($dictionary[$objectName]['fields'] as $def) {
                 if ($this->isValidStudioField($def))
                 {
+                    $def['label'] = isset($module_strings[$def['vname']]) ? $module_strings[$def['vname']] : $def['vname'];
 					//Custom relate fields will have a non-db source, but custom_module set
                 	if(isset($def['source']) && $def['source'] == 'custom_fields' || isset($def['custom_module'])) {
                        $f[$mod_strings['LBL_HCUSTOM']][$def['name']] = $def;
@@ -113,24 +117,28 @@ class ViewModulefields extends SugarView
             $loadedFields = array();
             foreach($this->mbModule->mbvardefs->vardefs['fields'] as $k=>$v){
                 if($k != $module_name)
+                {
                     $titleLBL[$k]=translate("LBL_".strtoupper($k),'ModuleBuilder');
-                else{
+                }else{
                     $titleLBL[$k]=$k;
                 }
                 foreach($v as $field => $def)
                 {
                 	if (isset($loadedFields[$field]))
+                    {
                 		unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
-                	else
+                    } else {
+                       $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($mod_strings[$def['vname']]) ? $mod_strings[$def['vname']] : $field;
                 	   $loadedFields[$field] = true;
+                    }
                 }
             }
             $this->mbModule->mbvardefs->vardefs['fields'][$module_name] = $this->cullFields($this->mbModule->mbvardefs->vardefs['fields'][$module_name]);
-            if(file_exists($this->mbModule->path. '/language/'.$GLOBALS['current_language'].'.lang.php')){
+            if(file_exists($this->mbModule->path. '/language/'.$GLOBALS['current_language'].'.lang.php'))
+            {
                 include($this->mbModule->path .'/language/'. $GLOBALS['current_language'].'.lang.php');
                 $this->mbModule->setModStrings($GLOBALS['current_language'],$mod_strings);
-            }
-            elseif(file_exists($this->mbModule->path. '/language/en_us.lang.php')){
+            }elseif(file_exists($this->mbModule->path. '/language/en_us.lang.php')){
                 include($this->mbModule->path .'/language/en_us.lang.php');
                 $this->mbModule->setModStrings('en_us',$mod_strings);
             }
