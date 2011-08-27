@@ -174,7 +174,7 @@ eoq;
                     $this->checkClearField($post, $value);
                 }
 			    if($this->sugarbean->field_defs[$post]['type'] == 'date' && !empty($_POST[$post])){
-			        $_POST[$post] = $timedate->to_db_date($_POST[$post]);
+			        $_POST[$post] = $timedate->to_db_date($_POST[$post], false);
 			    }
                 if($this->sugarbean->field_defs[$post]['type'] == 'datetime' && !empty($_POST[$post])){
 			        $_POST[$post] = $timedate->to_db($this->date_to_dateTime($post, $value));
