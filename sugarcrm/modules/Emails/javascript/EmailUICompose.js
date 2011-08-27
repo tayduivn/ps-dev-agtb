@@ -909,8 +909,16 @@ SE.composeLayout = {
      		SE.composeLayout._initComposeOptionTabs(idx);
      		SE.composeLayout[idx].getUnitByPosition("right").collapse();
      		//Initialize tinyMCE
-     		if (!SUGAR.util.isTouchScreen())
+     		if (!SUGAR.util.isTouchScreen()) {
      		    SE.composeLayout._1_tiny(false);
+            } else {
+                 var elId = SE.tinyInstances.currentHtmleditor = "htmlEditor" + idx;
+                 SE.tinyInstances[elId] = {};
+                 SE.tinyInstances[elId].ready = false;
+                 YAHOO.util.Event.onAvailable(elId + "_parent", function() {
+                    SE.composeLayout.resizeEditorSetSignature(idx,!isReplyForward);
+                 }, this);
+             }
      		//Init templates and address book
      		SE.composeLayout._2_final();
 
@@ -1795,9 +1803,16 @@ SE.composeLayout = {
         	return false;
         } // if
         //END SUGARCRM flav=pro ONLY
+
+        
         var t = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
-        var html = t.getContent();
-        var subj = document.getElementById('emailSubject' + idx).value;
+        if (t != null || typeof(t) != "undefined") {
+            var html = t.getContent();
+        } else {
+            var html = "<p>" + document.getElementById('htmleditor' + idx).value + "</p>";
+        }
+
+ 	    var subj = document.getElementById('emailSubject' + idx).value;
         var to = trim(document.getElementById('addressTO' + idx).value);
         var cc = trim(document.getElementById('addressCC' + idx).value);
         var bcc = trim(document.getElementById('addressBCC' + idx).value);
