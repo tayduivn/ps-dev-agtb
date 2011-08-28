@@ -25,6 +25,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     var overlays = [];
     var overlayDepth = 0;
     var menuFunctions = {};
+    var lastIconChange = null;
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
     function getOverlay(depth){
     		if(!depth)depth = 0;
@@ -86,6 +87,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     }
     
     DCMenu.closeOverlay = function(depth){
+        DCMenu.closeQView();
     	var i=0;
     		while(i < overlays.length){
     			if(!depth || i >= depth){
@@ -238,6 +240,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=modulelistmenu', spotResults);
 	}
 	Y.spot = function(q){
+        DCMenu.closeQView();
 	    ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_LOADING'));
 		quickRequest('spot', 'index.php?to_pdf=1&module=' + this.module + '&action=spot&record=' + this.record + '&q=' + encodeURIComponent(q), spotResults);
 	}
@@ -452,6 +455,151 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	DCMenu.checkForNewNotifications = function(){
 	    quickRequest('notifications', 'index.php?to_pdf=1&module=Notifications&action=checkNewNotifications', updateNotificationNumber );
 	}
+	DCMenu.showQuickViewIcon = function(e) {
 
+	    var now = new Date();
+	    var nowSc = now.getTime() / 1000; //grab and store seconds.
+	    if(lastIconChange == null)
+	    {
+	        lastIconChange = nowSc;
+	    }
+	    else
+	    {
+	       var timeDiff = nowSc - lastIconChange;
+            if( timeDiff < .3)
+            {
+                return;
+            }
+            else
+            {
+                lastIconChange = nowSc;
+            }
+	    }
 
+	    var liNode = Y.one(e.parentNode);
+	    var liChildren = liNode.get('children');
+
+	    if(liChildren.size() > 1)
+	       return;
+
+        var moduleMatches = e.href.match(/module=([\w]*)/);
+        var recordMatches = e.href.match(/record=([\w-]*)/);
+        if( typeof(moduleMatches[1]) == 'undefined' ||  typeof(recordMatches[1]) == 'undefined' ) //Todo: catch error better.
+            return;
+        var module = moduleMatches[1];
+        var recordID = recordMatches[1];
+
+        DCMenu.hideQuickViewIcon();
+
+        var elem=document.createElement('IMG');
+        elem.id = 'DCMenuQuickViewIcon'
+        elem.src = 'themes/default/images/Search.gif';
+        elem.onclick = function() { DCMenu.showQuickView(module,recordID); };
+        elem.height = 12;
+        elem.style.cursor = "pointer";
+
+        e.parentNode.insertBefore(elem,e);
+        var aNode = Y.one(e);
+        //Remove the padding from a href link
+        aNode.setStyle("padding", "8px");
+    }
+
+    DCMenu.hideQuickViewIcon = function() {
+        var imgIcon = document.getElementById('DCMenuQuickViewIcon');
+        if( imgIcon )
+        {
+            var parent = imgIcon.parentNode;
+            parent.removeChild(imgIcon);
+            //Set the padding back on the href link
+            var pNode = Y.one(parent);
+            pNode.get('children').setStyle("padding", "20px");
+        }
+    }
+
+    DCMenu.closeQView = function()
+    {
+        if(typeof(overlays['sqv']) == 'undefined')
+            return;
+
+        var o = overlays['sqv'];
+        var animX = Y.one('#dcboxbody').getX();
+        var animY = o.get("y");
+        var animDCcont = new Y.Anim({ node: o.get("boundingBox"), to: { xy:[animX,animY] } });
+        animDCcont.on('end', function() {
+            o.visible = false;
+            o.get('boundingBox').setStyle('visibility','hidden');
+        });
+
+        animDCcont.set('duration', .5);
+        animDCcont.set('easing', Y.Easing.easeOut);
+        animDCcont.run();
+
+    }
+
+    DCMenu.showQuickView = function(module, recordID)
+    {
+        var q = document.getElementById('sugar_spot_search').value;
+        quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data){
+            var dcgscontent = Y.one('#dcgscontent');
+            dcgscontent.set('innerHTML', data.responseText);
+            var animDCcont = new Y.Anim({ node: dcgscontent, to: { height:500 } });
+            animDCcont.run();
+        });
+
+        //Slide down dccontent if the height isn't full so things align nicely.
+        var animDCcont = new Y.Anim({ node: '#dccontent', to: { height: 500 } });
+        animDCcont.set('duration', 0.5);
+        animDCcont.set('easing', Y.Easing.easeOut);
+        animDCcont.run();
+
+        var qvDepth = 'sqv';
+
+        if(typeof(overlays[qvDepth]) == 'undefined')
+        {
+            overlays[qvDepth] = new Y.Overlay({
+                bodyContent:'',
+                zIndex:5,
+                height:500,
+                width:320,
+                shim:false,
+                visibility:true
+            });
+        }
+        else
+        {
+            var dcgscontent = Y.one('#dcgscontent');
+            dcgscontent.set('innerHTML', '<div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/></div>');
+            if(! overlays[qvDepth].visible )
+            {
+                overlays[qvDepth].show();
+            }
+            return;
+        }
+
+        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div class="tl"></div><div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
+
+        overlays[qvDepth].set("bodyContent", content);
+        overlays[qvDepth].set("align", {node:"#dcboxbody",
+                      points:[Y.WidgetPositionExt.TR, Y.WidgetPositionExt.TR]});
+
+        overlays[qvDepth].visible = true;
+
+        overlays[qvDepth].show = function()
+        {
+            this.visible = true;
+            //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
+            //this.get('boundingBox').setStyle('position' , 'absolute');
+            this.get('boundingBox').setStyle('visibility','visible');
+            //Animate a slide out
+            var shim = 10; //TODO: grab padding from parent element.
+            var animX = this.get("x") - this.get("width") - shim;
+            var animY = this.get("y");
+        	var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY],height:500 } });
+            animDCcont.set('duration', .5);
+            animDCcont.set('easing', Y.Easing.easeOut);
+            animDCcont.run();
+    	}
+    	overlays[qvDepth].after('render', function(e) { this.show(); });
+        overlays[qvDepth].render();
+    }
 });

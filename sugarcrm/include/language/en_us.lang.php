@@ -2459,6 +2459,7 @@ $app_strings = array (
     'LBL_EXPORT' => 'Export',
     'LBL_FAVORITES_FILTER' => 'My Favorites:',
     'LBL_GO_BUTTON_LABEL' => 'Go',
+    'LBL_GS_HELP' => 'The fields in this module used in this search appear above.  The highlighted text matches your search criteria.',
     'LBL_HIDE'=>'Hide',
     'LBL_ID'=>'ID',
     'LBL_IMPORT' => 'Import',
