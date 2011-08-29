@@ -93,25 +93,25 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
     	get_bean_select_array('true', 'EmailTemplate', 'name');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
-    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
+    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
 		//From Emailmarketing/EditView
 		get_bean_select_array(true, 'EmailTemplate','name','','name');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/email_templates\.id/', $sql, 'Assert that email_templates.id is not ambiguous');
-    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
+    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
     	//From Expressions/Expressions.php
     	get_bean_select_array(true, 'ACLRole','name');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/acl_roles\.id/', $sql, 'Assert that acl_roles.id is not ambiguous');
-    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
+    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
     	//From Contracts/Contract.php
     	get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
     	$sql = $localDb->getExpectedSql();
 		$this->assertRegExp('/contract_types\.id/', $sql, 'Assert that contract_types.id is not ambiguous');
-    	$this->assertFalse($localDb->checkError(), "Assert we could run SQL:{$sql}");
+    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
     }
 }
 
@@ -128,27 +128,6 @@ class Bug44507SqlManager extends MysqliManager
     public function getExpectedSql()
     {
     	return $this->expectedSql;
-    }
-
-    /**
-     * @see DBManager::checkError()
-     */
-    public function checkError(
-        $msg = '',
-        $dieOnError = false
-        )
-    {
-        if (DBManager::checkError($msg, $dieOnError))
-        {
-            return true;
-        }
-
-        if (mysqli_errno($this->getDatabase()))
-        {
-            return true;
-        }
-
-        return false;
     }
 }
 

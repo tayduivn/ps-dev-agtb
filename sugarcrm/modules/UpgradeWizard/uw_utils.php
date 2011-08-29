@@ -3824,20 +3824,21 @@ function upgradeModulesForTeam() {
 
     /**
      * convertImageToText
+     * @deprecated
      * This method attempts to convert date type image to text on Microsoft SQL Server.
      * This method could NOT be used in any other type of datebases.
      */
 	function convertImageToText($table_name,$column_name){
 		$set_lang = "SET LANGUAGE us_english";
 		$GLOBALS['db']->query($set_lang);
-	    if($GLOBALS['db']->checkError()){
+	    if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$set_lang);
         }
        $q="SELECT data_type
         FROM INFORMATION_SCHEMA.Tables T JOIN INFORMATION_SCHEMA.Columns C
         ON T.TABLE_NAME = C.TABLE_NAME where T.TABLE_NAME = '$table_name' and C.COLUMN_NAME = '$column_name'";
        $res= $GLOBALS['db']->query($q);
-       if($GLOBALS['db']->checkError()){
+       if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$q);
         }
        $row= $GLOBALS['db']->fetchByAssoc($res);
@@ -3845,7 +3846,7 @@ function upgradeModulesForTeam() {
      if(trim(strtolower($row['data_type'])) == 'image'){
         $addContent_temp = "alter table {$table_name} add {$column_name}_temp text null";
         $GLOBALS['db']->query($addContent_temp);
-        if($GLOBALS['db']->checkError()){
+        if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$addContent_temp);
         }
         $qN = "select count=datalength({$column_name}), id, {$column_name} from {$table_name}";
@@ -3859,7 +3860,7 @@ function upgradeModulesForTeam() {
                 while($contentLength >0){
                     $stepsQuery = "select cont=convert(varchar(max), convert(varbinary(8000), substring({$column_name},{$start},{$next}))) from {$table_name} where id= '{$row['id']}'";
                     $steContQ = $GLOBALS['db']->query($stepsQuery);
-                    if($GLOBALS['db']->checkError()){
+                    if($GLOBALS['db']->lastError()){
                         logThis('An error occurred when performing this query-->'.$stepsQuery);
                     }
                     $stepCont = $GLOBALS['db']->fetchByAssoc($steContQ);
@@ -3871,7 +3872,7 @@ function upgradeModulesForTeam() {
                 }
                 $addContentDataText="update {$table_name} set {$column_name}_temp = '{$convertedContent}' where id= '{$row['id']}'";
                 $GLOBALS['db']->query($addContentDataText);
-                if($GLOBALS['db']->checkError()){
+                if($GLOBALS['db']->lastError()){
                     logThis('An error occurred when performing this query-->'.$addContentDataText);
                 }
            }
@@ -3879,7 +3880,7 @@ function upgradeModulesForTeam() {
                 $addContentDataText="update {$table_name} set {$column_name}_temp =
                 convert(varchar(max), convert(varbinary(8000), {$column_name})) where id= '{$row['id']}'";
                 $GLOBALS['db']->query($addContentDataText);
-                if($GLOBALS['db']->checkError()){
+                if($GLOBALS['db']->lastError()){
                     logThis('An error occurred when performing this query-->'.$addContentDataText);
                 }
            }
@@ -3887,12 +3888,12 @@ function upgradeModulesForTeam() {
         //drop the contents now and change contents_temp to contents
         $dropColumn = "alter table {$table_name} drop column {$column_name}";
         $GLOBALS['db']->query($dropColumn);
-        if($GLOBALS['db']->checkError()){
+        if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$dropColumn);
         }
         $changeColumnName = "EXEC sp_rename '{$table_name}.[{$column_name}_temp]','{$column_name}','COLUMN'";
         $GLOBALS['db']->query($changeColumnName);
-        if($GLOBALS['db']->checkError()){
+        if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$changeColumnName);
         }
      }
@@ -4523,22 +4524,22 @@ function unlinkUpgradeFiles($version)
 		}
 
 		logThis('end upgrade for DocumentRevisions classic files');
-	}	
+	}
 
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
-    
+
     if(file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
        $files_to_remove = glob($_SESSION['unzip_dir'].'/scripts/files_to_remove/*.php');
-      
+
        foreach($files_to_remove as $script)
        {
        		if(preg_match('/UpgradeRemoval(\d+)x\.php/', $script, $matches))
        		{
        	   	   $checkVersion = $matches[1] + 1; //Increment by one to check everything equal or below the target version
        	   	   $upgradeClass = 'UpgradeRemoval' . $matches[1] . 'x';
-       	   	   require_once($_SESSION['unzip_dir'].'/scripts/files_to_remove/' . $upgradeClass . '.php');    	   	   
+       	   	   require_once($_SESSION['unzip_dir'].'/scripts/files_to_remove/' . $upgradeClass . '.php');
 
        	   	   //Check to make sure we should load and run this UpgradeRemoval instance
        	   	   if($checkVersion <= $version && class_exists($upgradeClass))
@@ -4558,21 +4559,21 @@ function unlinkUpgradeFiles($version)
        	   	   }
        	    }
        }
-    }  	
-    
+    }
+
     //Check if we have a custom directory
     if(file_exists('custom/scripts/files_to_remove'))
     {
        //Now find
        $files_to_remove = glob('custom/scripts/files_to_remove/*.php');
-       
+
        foreach($files_to_remove as $script)
        {
        	   if(preg_match('/\/files_to_remove\/(.*?)\.php$/', $script, $matches))
        	   {
        	   	   require_once($script);
        	   	   $upgradeClass  = $matches[1];
-       	   	          	   	   
+
        	   	   if(!class_exists($upgradeClass))
        	   	   {
        	   	   	  continue;
@@ -4588,11 +4589,11 @@ function unlinkUpgradeFiles($version)
 	       	   	   	  	 logThis($file);
 	       	   	   	  }
 	       	   	   	  $upgradeInstance->processFilesToRemove($files);
-       	   	   }     	   	
+       	   	   }
        	   }
        }
-    } 	
-	
+    }
+
 }
 
 if (!function_exists("getValidDBName"))
@@ -4622,7 +4623,7 @@ if (!function_exists("getValidDBName"))
         }
         return strtolower ( $result ) ;
     }
-    
+
 
 }
 

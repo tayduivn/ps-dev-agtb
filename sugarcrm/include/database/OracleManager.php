@@ -149,16 +149,10 @@ class OracleManager extends DBManager
         if (parent::checkError($msg, $dieOnError))
             return true;
 
-        $err = oci_error($this->getDatabase());
+        $err = oci_error($this->database);
         if ($err){
             $error = $err['code']."-".$err['message'];
-            if($this->dieOnError || $dieOnError){
-                $GLOBALS['log']->fatal("Oracle error: $error");
-                sugar_die($GLOBALS['app_strings']['ERR_DB_FAIL']);
-            }else{
-                $this->last_error = $msg."Oracle error: $error";
-                $GLOBALS['log']->error("Oracle error: $error");
-            }
+            $this->registerError($msg, $error, $dieOnError);
             return true;
         }
         return false;
@@ -1435,16 +1429,16 @@ EOQ;
     }
 
     /**
-     * Get last error message
-     * @return string
+     * (non-PHPdoc)
+     * @see DBManager::lastDbError()
      */
-    public function lastError()
+    public function lastDbError()
     {
         $err = oci_error($this->database);
         if(is_array($err)) {
-            $err = sprintf("ERROR %d: %s in %d of [%s]", $err['code'], $err['message'], $err['offset'], $err['sqltext']);
+            return sprintf("Oracle ERROR %d: %s in %d of [%s]", $err['code'], $err['message'], $err['offset'], $err['sqltext']);
         }
-        return $err;
+        return false;
     }
 
     protected $oracle_privs = array(
