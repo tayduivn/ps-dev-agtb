@@ -116,7 +116,6 @@
 </tr>
 </table>
 </form>
-{$JAVASCRIPT}
 {literal}
 <script type="text/javascript">
 /**
@@ -182,23 +181,7 @@ ProcessESImport = new function()
                     if ( resp['done'] || (ProcessESImport.recordsPerImport * (ProcessESImport.offsetStart + 1) >= ProcessESImport.totalRecordCount) )
                     {
                         YAHOO.SUGAR.MessageBox.updateProgress(1,'{/literal}{$MOD.LBL_IMPORT_COMPLETED}{literal}');
-                        var handleSuccess = {
-	                        	success : function(data) {
-									var response = YAHOO.lang.JSON.parse(data.responseText);
-									importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
-									importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
-									submitDiv = document.getElementById('submitDiv');
-									importWizardDialogDiv.innerHTML = response['html'];
-									importWizardDialogTitle.innerHTML = response['title'];
-									submitDiv.innerHTML = response['submitContent'];
-									SUGAR.util.evalScript(response['html']);
-									eval(response['script']);
-
-								}
-                        	};
-							var cObj = YAHOO.util.Connect.asyncRequest('GET', locationStr, handleSuccess);
-							YAHOO.SUGAR.MessageBox.hide();
-							return false;
+                        SUGAR.util.hrefURL(locationStr);
                     }
                     else
                     {

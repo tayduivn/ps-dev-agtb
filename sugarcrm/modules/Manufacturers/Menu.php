@@ -31,7 +31,7 @@ $module_menu = Array(
 	Array("index.php?module=Manufacturers&action=EditView&return_module=Manufacturers&return_action=DetailView", $mod_strings['LNK_NEW_MANUFACTURER'],"Manufacturers"),
 	Array("index.php?module=ProductCategories&action=EditView&return_module=ProductCategories&return_action=DetailView", $mod_strings['LNK_NEW_PRODUCT_CATEGORY'],"Product_Categories"),
 	Array("index.php?module=ProductTypes&action=EditView&return_module=ProductTypes&return_action=DetailView", $mod_strings['LNK_NEW_PRODUCT_TYPE'],"Product_Types"),
-        Array("javascript:void(SUGAR.importWizard.renderDialog('Manufacturers','step1',''));", $mod_strings['LNK_IMPORT_MANUFACTURERS'],"Import"),
+    Array("index.php?module=Import&action=Step1&import_module=Manufacturers&return_module=Manufacturers&return_action=index", $mod_strings['LNK_IMPORT_MANUFACTURERS'],"Import"),
 );
 
 ?>

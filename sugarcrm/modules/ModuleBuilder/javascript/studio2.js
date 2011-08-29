@@ -51,6 +51,7 @@ Studio2 = {
 		Studio2.panelNumber = parseInt(document.getElementById('nextPanelId').value);
 		Studio2.isIE = SUGAR.isIE;
 		Studio2.expandableFields = [];
+        Studio2.scrollZones = {};
 
 		//	Activate the layout panels
 		var panels = document.getElementById('panels');
@@ -153,6 +154,11 @@ Studio2 = {
 		}
 		
 		Studio2.resizeDivs();
+
+        Studio2.scrollZones = {
+            panels: Studio2.getScrollZones('panels'),
+            toolbox: Studio2.getScrollZones('toolbox')
+        }
 
 		ModuleBuilder.helpRegisterByID('layoutEditor','div');
 		ModuleBuilder.helpRegisterByID('layoutEditorButtons','input');
@@ -907,9 +913,76 @@ Studio2 = {
 	    }
 	    return true;
 		
-	}
+	},
 
+    getScrollZones: function(parent){
+        var Dom = YAHOO.util.Dom, TL, TR, BL, BR;
+        //Height of the scroll zones
+        var h = 20, el = Dom.get(parent);
+        //Calculate the top area
+        TL = Dom.getXY(el);
+        BR = [TL[0] + el.clientWidth, TL[1] + h];
+        var scrollUpBox = [TL, BR];
+        //Calculate the bottom area.
+        BR = [BR[0], TL[1] + el.clientHeight];
+        TL = [TL[0], BR[1] - h];
 
+        var scrollDownBox = [TL, BR];
+        return  {
+            up: scrollUpBox,
+            down: scrollDownBox
+        }
+    },
+
+    isWithinBox: function(xy, box)
+    {
+        return xy[0] > box[0][0] && xy[0] < box[1][0] && xy[1] > box[0][1] && xy[1] < box[1][1];
+    },
+
+    setScrollObj: function(o){
+        Studio2.scrollObj = o;
+        Studio2.scrollCheck = setInterval(function(){
+            var o = Studio2.scrollObj;
+            for(var i in Studio2.scrollZones)
+            {
+                var zone = Studio2.scrollZones[i];
+                if (o.goingUp && Studio2.isWithinBox([o.lastX, o.lastY], zone.up))
+                {
+                    document.getElementById(i).scrollTop -= 5;
+                    YAHOO.util.DragDropMgr.refreshCache();
+                    return;
+                }
+                else if (!o.goingUp && Studio2.isWithinBox([o.lastX, o.lastY], zone.down))
+                {
+                    document.getElementById(i).scrollTop += 5;
+                    YAHOO.util.DragDropMgr.refreshCache();
+                    return;
+                }
+                }
+            }
+        }, 25);
+    },
+
+    clearScrollObj: function() {
+        Studio2.scrollObj = false;
+        if (Studio2.scrollCheck)
+            clearInterval(Studio2.scrollCheck);
+        Studio2.scrollCheck = false;
+    },
+
+    onDrag: function(e) {
+       // Keep track of the direction of the drag for use during onDragOver
+        var y = e.pageY;
+
+        if (y < this.lastY) {
+            this.goingUp = true;
+        } else if (y > this.lastY) {
+            this.goingUp = false;
+        }
+
+        this.lastY = y;
+        this.lastX = e.pageX;
+    }
 };
 
 

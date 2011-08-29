@@ -60,10 +60,7 @@ YAHOO.util.Event.onAvailable('sitemapLinkSpan',function()
     }
 });
 
-/**
- * Handles changing the sub menu items when using grouptabs
- */
-YAHOO.util.Event.onAvailable('subModuleList',IKEADEBUG);
+
 function IKEADEBUG()
 {
     var moduleLinks = document.getElementById('moduleList').getElementsByTagName("a");
@@ -269,6 +266,10 @@ SUGAR.append(SUGAR.themes, {
                 oMenuBar = currMenuBar;
             }
         }
+        /**
+         * Handles changing the sub menu items when using grouptabs
+         */
+        YAHOO.util.Event.onAvailable('subModuleList',IKEADEBUG);
     }
 });
 

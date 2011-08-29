@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,32 +26,30 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-//this file is temporarily moved during a unit test to test the behaviour of createdefs.php handling.
+require_once('modules/ModuleBuilder/parsers/parser.label.php');
 
-$createdef['contacts@testsugar.info']['Contacts'] = array(
-        'fields' => array(
-            'last_name' => '{from_name}',
-            'department' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-            'lead_source' => 'Email',
-        ),
-);
+class Bug45645Test extends Sugar_PHPUnit_Framework_TestCase
+{
 
-$createdef['cases@testsugar.info']['Cases'] = array(
-        'fields' => array(
-	        'name' => '{from_name}',
-            'resolution' => '{email_id}',
-	        'date_entered' => '{date}',
-	        'description' => '{description} {email_id} {message_id} {subject} {from}',
-        ),
-);
+    public function testLabelSaving()
+    {
+        $lang = 'en_us';
+        $test_module = 'Opportunities';
+        $test_label = 'LBL_ACCOUNT_NAME';
 
-$createdef['opp@testsugar.info']['Opportunities'] = array(
-        'fields' => array(
-            'name' => '{from_name}',
-            'sales_stage' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-        ),
-);
+        $mod_strings = return_module_language($lang, $test_module);
+        $old_label = $mod_strings[$test_label];
+        $new_label = 'test ' . $old_label;
+
+        // save the new label to the language file
+        ParserLabel::addLabels($lang, array($test_label=>$new_label), $test_module);
+
+        // read the language file to get the new value
+        include("custom/modules/$test_module/language/en_us.lang.php");
+
+        $this->assertEquals($new_label, $mod_strings[$test_label], 'Label not changed.');
+    }
+}
+
+
+?>

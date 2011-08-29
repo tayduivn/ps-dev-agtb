@@ -77,10 +77,10 @@
                             </tr>
                             {* //END SUGARCRM flav=com ONLY *}
                             {* //BEGIN SUGARCRM flav=pro ONLY *}
-                            <tr>
+                            <tr id="ext_source_help">
                                 <td align="left" scope="row" colspan="3"><h3>{$MOD.LBL_WHAT_IS}&nbsp;</h3></td>
                             </tr>
-                            <tr>
+                            <tr id="ext_source_csv">
                                 <td colspan="3" scope="row">
                                     <span><input class="radio" type="radio" name="source" value="csv" checked="checked" id="csv_source" />
                                   &nbsp;{$MOD.LBL_CSV}&nbsp;</span>{sugar_help text=$MOD.LBL_DELIMITER_COMMA_HELP}
@@ -107,7 +107,7 @@
                                     </div>
                                 </td>
                                 <td  style="padding-top: 10px;">
-                                    <span id="ext_source_sign_in_bttn"><i>{$MOD.LBL_SIGN_IN_HELP}</i></span>
+                                    <input id="ext_source_sign_in_bttn" type="button" value="{$MOD.LBL_EXT_SOURCE_SIGN_IN}" style="display:none;vertical-align:top; !important">
                                 </td>
                             </tr>
                             {* //END SUGARCRM flav=pro ONLY *}
@@ -119,4 +119,10 @@
         </tr>
     </table>
 </p>
+<br>
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+    <tr>
+      <td align="left"><input title="{$MOD.LBL_NEXT}" accessKey="" class="button" type="submit" name="button" value="  {$MOD.LBL_NEXT}  "  id="gonext"></td>
+    </tr>
+</table>    
 </form>

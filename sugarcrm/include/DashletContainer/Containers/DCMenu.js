@@ -329,16 +329,17 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     catch (e) {
                         ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'), 2000);
                     }
+
+                    //if DCMenu.qe_refresh is set to a string, then eval it as it is a js reload command (either reloads dashlet or list view)
+                    if(typeof(DCMenu.qe_refresh) =='string'){
+                        eval(DCMenu.qe_refresh);
+                    }
 				}
 			}
 
 		});
 		lastLoadedMenu=undefined;
 		DCMenu.closeOverlay();
-        //if DCMenu.qe_refresh is set to a string, then eval it as it is a js reload command (either reloads dashlet or list view)
-        if(typeof(DCMenu.qe_refresh) =='string'){
-            eval(DCMenu.qe_refresh);
-        }
 		return false;
 	}
 
