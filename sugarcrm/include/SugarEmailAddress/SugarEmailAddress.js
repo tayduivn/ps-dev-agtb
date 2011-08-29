@@ -121,7 +121,8 @@
                         // Also, since this function is called on blur of the email widget, we can't rely on a third object as a flag (a var or hidden form input)
                         // since this function will fire off before the click event from a button is executed, which means the 3rd object will not get updated prior to this function running.
                         if(/save|full|cancel|change/.test(elm.value.toLowerCase())){
-                           //this is coming from either a save, full form, cancel, or view change log button, we should s                           savePressed = true;
+                           //this is coming from either a save, full form, cancel, or view change log button, we should set savePressed = true;
+                            savePressed = true;
                         }
                    }
 		        }

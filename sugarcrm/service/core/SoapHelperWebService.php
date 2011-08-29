@@ -333,25 +333,28 @@ function validate_user($user_name, $password){
 
 	}
 
-    function check_modules_access($user, $module_name, $action='write'){
-        $GLOBALS['log']->info('Begin: SoapHelperWebServices->check_modules_access');
-        if(!isset($_SESSION['avail_modules'])){
-            $_SESSION['avail_modules'] = $this->get_user_module_list($user);
-        }
-        if(isset($_SESSION['avail_modules'][$module_name])){
-            if($action == 'write' && $_SESSION['avail_modules'][$module_name] == 'read_only'){
-                if(is_admin($user)) {
-                    $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - SUCCESS: Admin can even write to read_only module');
-                    return true;
-                } // if
-                $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - FAILED: write action on read_only module only available to admins');
+	function check_modules_access($user, $module_name, $action='write'){
+		$GLOBALS['log']->info('Begin: SoapHelperWebServices->check_modules_access');
+		if(!isset($_SESSION['avail_modules'])){
+			$_SESSION['avail_modules'] = $this->get_user_module_list($user);
+		}
+		if(isset($_SESSION['avail_modules'][$module_name])){
+			if($action == 'write' && $_SESSION['avail_modules'][$module_name] == 'read_only'){
+				if(is_admin($user)) {
+					$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - SUCCESS: Admin can even write to read_only module');
+					return true;
+				} // if
+				$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - FAILED: write action on read_only module only available to admins');
+				return false;
+			}elseif($action == 'write' && strcmp(strtolower($module_name), 'users') == 0 && !$user->isAdminForModule($module_name)){
+                 //rrs bug: 46000 - If the client is trying to write to the Users module and is not an admin then we need to stop them
                 return false;
             }
-            $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - SUCCESS');
-            return true;
-        }
-        $GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - FAILED: Module info not available in $_SESSION');
-        return false;
+			$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - SUCCESS');
+			return true;
+		}
+		$GLOBALS['log']->info('End: SoapHelperWebServices->check_modules_access - FAILED: Module info not available in $_SESSION');
+		return false;
 
     }
 

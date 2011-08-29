@@ -35,7 +35,7 @@ $module_menu [] = Array("index.php?module=Cases&action=index&return_module=Cases
 //BEGIN SUGARCRM flav=pro ONLY
 if(ACLController::checkAccess('Cases', 'list', true))$module_menu[] =Array("index.php?module=Reports&action=index&view=cases", $mod_strings['LNK_CASE_REPORTS'],"CaseReports", 'Cases');
 //END SUGARCRM flav=pro ONLY
-if(ACLController::checkAccess('Cases', 'import', true))$module_menu[] =Array("javascript:void(SUGAR.importWizard.renderDialog('Cases','step1',''));", $mod_strings['LNK_IMPORT_CASES'],"Import", 'Contacts');
+if(ACLController::checkAccess('Cases', 'import', true))$module_menu[] =Array("index.php?module=Import&action=Step1&import_module=Cases&return_module=Cases&return_action=index", $mod_strings['LNK_IMPORT_CASES'],"Import", 'Cases');
 
 
 ?>

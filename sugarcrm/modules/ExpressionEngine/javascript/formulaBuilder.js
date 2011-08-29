@@ -426,7 +426,7 @@ SUGAR.expressions.GridToolTip = {
 		context: "functionsGrid",
 		text: "",
 		showDelay: 300,
-		zindex: 25
+		zindex: 26
 	});
 	
 	funcTip.table = fg;

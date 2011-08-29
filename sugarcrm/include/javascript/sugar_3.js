@@ -134,7 +134,7 @@ function isSupportedIE() {
 	// IE Check supports ActiveX controls
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
-		if(version >= 5.5 && version < 9) {
+		if(version >= 5.5 && version < 10) {
 			return true;
 		} else {
 			return false;
@@ -673,7 +673,7 @@ function add_error_style(formname, input, txt, flash) {
 	            }
 	        }
 		}
-		window.setTimeout("if (inputsWithErrors[" + (inputsWithErrors.length - 1) + "]) inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = null;", 2000);
+		window.setTimeout("inputsWithErrors[" + (inputsWithErrors.length - 1) + "].style.backgroundColor = '';", 2000);
     }
 
   } catch ( e ) {
