@@ -1870,9 +1870,13 @@ SUGAR.kb = function() {
             };
         },
         copyTinyVal:function() {
-            var tiny = tinyMCE.getInstanceById('body_html');
-            var currValTiny = tiny.getContent();
-            document.getElementById('tiny_vals').value = currValTiny;
+             var tiny = tinyMCE.getInstanceById('body_html');
+             if ( (null != tiny) || ("undefined" != typeof(tiny)) ) {
+             var currValTiny = tiny.getContent();
+             document.getElementById('tiny_vals').value = currValTiny;
+             } else {
+                document.getElementById('tiny_vals').value = document.getElementById('body_html').value;
+             }
         },
         addUploadFileAttachments:function(form_name) {
             var chForm = document.getElementById('upload_div');
