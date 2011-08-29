@@ -958,7 +958,6 @@ Studio2 = {
                     YAHOO.util.DragDropMgr.refreshCache();
                     return;
                 }
-                }
             }
         }, 25);
     },
