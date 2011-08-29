@@ -22,7 +22,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/nusoap/nusoap.php');
 require_once 'tests/service/SOAPTestCase.php';
 
@@ -33,23 +33,23 @@ class Bug46000Test extends SOAPTestCase
     var $_sessionId;
     var $c = null;
     var $c2 = null;
-	
-	public function setUp() 
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        self::$_user->is_admin = 0;
+        self::$_user->save();
+    }
+
+    public function setUp()
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
-        $this->_user->is_admin = 0;
-        $this->_user->save();
-    }
-
-    public function tearDown() 
-    {
-        parent::tearDown();
+        $this->_login();
     }
 
     public function testCreateUser()
     {
-        $this->_login();
         $nv = array(
                      array('name' => 'user_name', 'value' => 'test@test.com'),
                      array('name' => 'user_hash', 'value' => '12345'),
@@ -64,9 +64,8 @@ class Bug46000Test extends SOAPTestCase
 
     public function testMakeUserAdmin()
     {
-        $this->_login();
         $nv = array(
-                    array('name' => 'id', 'value' => $this->_user->id),
+                    array('name' => 'id', 'value' => self::$_user->id),
                     array('name' => 'is_admin' , 'value' =>  '1'),
                 );
         $result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'name_value_list' => $nv));
@@ -76,10 +75,9 @@ class Bug46000Test extends SOAPTestCase
 
     public function testGetEntry()
     {
-        $this->_login();
-        $result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'id' => $this->_user->id, 'select_fields' => array('first_name')));
+        $result = $this->_soapClient->call('get_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'id' => self::$_user->id, 'select_fields' => array('first_name')));
         $this->assertArrayHasKey('entry_list', $result);
-        $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['value'], $this->_user->first_name);
+        $this->assertEquals($result['entry_list'][0]['name_value_list'][0]['value'], self::$_user->first_name);
     }
 
 }
