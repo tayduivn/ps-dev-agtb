@@ -78,3 +78,8 @@ abstract class AbstractAction {
 	abstract static function getActionName();
 	
 }
+
+function handleExpressionError($errno, $errstr, $errfile, $errline, array $errcontext)
+{
+    $GLOBALS['log']->fatal("Error evaluating expression: {$errstr}\nLine {$errline} of file {$errfile}");
+}
