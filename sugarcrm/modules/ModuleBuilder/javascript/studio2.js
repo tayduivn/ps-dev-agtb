@@ -959,7 +959,7 @@ Studio2 = {
                     return;
                 }
             }
-        }, 50);
+        }, 25);
     },
 
     clearScrollObj: function() {
