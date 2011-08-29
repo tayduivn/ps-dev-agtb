@@ -476,6 +476,36 @@ $modInvisList[] = 'SavedSearch';
 $modInvisList[] = 'Studio';
 $modInvisList[] = 'Connectors';
 
+$report_include_modules = array();
+//BEGIN SUGARCRM flav!=dce ONLY
+$report_include_modules['Currencies']='Currency';
+//add prospects
+$report_include_modules['Prospects']='Prospect';
+$report_include_modules['DocumentRevisions'] = 'DocumentRevision';
+$report_include_modules['ProductCategories'] = 'ProductCategory';
+$report_include_modules['ProductTypes'] = 'ProductType';
+//BEGIN SUGARCRM flav=pro ONLY
+$report_include_modules['Contracts']='Contract';
+//END SUGARCRM flav=pro ONLY
+//END SUGARCRM flav!=dce ONLY
+//add Tracker modules
+
+//BEGIN SUGARCRM flav!=sales ONLY
+$report_include_modules['Trackers']         = 'Tracker';
+
+//END SUGARCRM flav!=sales ONLY
+
+//BEGIN SUGARCRM flav=pro ONLY
+
+$report_include_modules['TrackerPerfs']     = 'TrackerPerf';
+$report_include_modules['TrackerSessions']  = 'TrackerSession';
+$report_include_modules['TrackerQueries']   = 'TrackerQuery';
+//END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=dce ONLY
+$report_include_modules['DCEReports']   = 'DCEReport';
+$report_include_modules['DCEDataBases']   = 'DCEDataBase';
+//END SUGARCRM flav=dce ONLY
+
 $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
 $modInvisList[] = 'SugarFeed';
