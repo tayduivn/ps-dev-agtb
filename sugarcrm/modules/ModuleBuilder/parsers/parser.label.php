@@ -140,7 +140,7 @@ class ParserLabel extends ModuleBuilderParser
 	                // if we have a cache to worry about, then clear it now
                 if ($deployedModule)
 	                {
-                            SugarCache::cleanOpcodes();
+                            sugar_cache_reset_full();
 	                    $GLOBALS [ 'log' ]->debug ( "PaserLabel->addLabels: clearing language cache" ) ;
 	                    $cache_key = "module_language." . $language . $moduleName ;
 	                    sugar_cache_clear ( $cache_key ) ;
