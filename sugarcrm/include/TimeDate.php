@@ -1495,8 +1495,8 @@ class TimeDate
     protected function parseFromTemplate($template, $daystart, User $user = null)
 	{
         $now = $this->tzUser($this->getNow(), $user);
-        if(!empty($template[0])) {
-            $now->modify($template[0]);
+        if(!empty($template)) {
+            $now->modify($template);
         }
         if($daystart) {
             return $now->get_day_begin();
