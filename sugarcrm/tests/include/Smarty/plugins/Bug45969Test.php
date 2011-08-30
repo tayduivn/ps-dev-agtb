@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+//FILE SUGARCRM flav=pro ONLY
 
 require_once 'include/Smarty/plugins/function.sugarvar_teamset.php';
 require_once 'include/Sugar_Smarty.php';
