@@ -220,6 +220,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					SUGAR.themes.tempHideLeftCol();
 					}
 			}
+            //We need to add ID's to the collapse buttons for automated testing
+            Dom.getElementsByClassName("collapse", "div", mp.getUnitByPosition('left').header)[0].id = "collapse_tree";
+            Dom.getElementsByClassName("collapse", "div", mp.getUnitByPosition('right').header)[0].id = "collapse_help";
 
 		},
 		//Empty layout manager
