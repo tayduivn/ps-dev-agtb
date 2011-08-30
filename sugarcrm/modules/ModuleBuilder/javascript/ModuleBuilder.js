@@ -150,6 +150,10 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				var w = (this.body.offsetWidth - 7) + "px";
 				this.body.style.width = w;
 				this.header.style.width = w;
+                if (typeof Studio2 != "undefined")
+                    Studio2.resizeDivs();
+                if (typeof resizeDDLists == "function")
+                    resizeDDLists();
 			};
 			mp.getUnitByPosition('right').on("resize", correctW); 
 			mp.getUnitByPosition('right').on("collapse", function(){
