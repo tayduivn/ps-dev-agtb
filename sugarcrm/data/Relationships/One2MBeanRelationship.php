@@ -111,8 +111,10 @@ class One2MBeanRelationship extends One2MRelationship
         $rhs->$rhsID = '';
 
         if ($save)
+        {
+            $rhs->in_relationship_update = TRUE;
             $rhs->save();
-
+        }
         $rhsID = $this->def['rhs_key'];
         $rhs->$rhsID = '';
 
