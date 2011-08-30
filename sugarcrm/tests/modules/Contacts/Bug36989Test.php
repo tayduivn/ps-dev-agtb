@@ -34,7 +34,7 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
     {
           $searchFields = array ();
           $this->searchFieldsBackup = file_get_contents('modules/Contacts/metadata/SearchFields.php');
-          file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = "test";');
+          file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = array(\'test\' => array());');
      }
 
     public function tearDown()
@@ -46,8 +46,7 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
           $list = new ViewList();
           $list->module = "Contacts";
           $list->prepareSearchForm();
-          print_r($list->searchForm->searchFields); 
-          $this->assertEquals('test', $list->searchForm->searchFields);     
+          $this->assertTrue(isset($list->searchForm->searchFields['test']));
     }
 }
 ?>
