@@ -45,6 +45,7 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
      function testOverrideSearchFields() {
           $list = new ViewList();
           $list->module = "Contacts";
+          $list->seed = new Contact();
           $list->prepareSearchForm();
           $this->assertTrue(isset($list->searchForm->searchFields['test']));
     }
