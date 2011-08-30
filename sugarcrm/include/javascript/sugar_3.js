@@ -93,7 +93,17 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
-
+/**
+ * @deprecated
+ *
+ * As of Sugar version 6.2.3 (MSIE Version 9) this function is deprecated.  The preferred method is to use the
+ * user agent check supplied by YUI to check for IE:
+ *
+ * for checking if a browser is IE in general :  if(YAHOO.env.ua.ie) {...}
+ *
+ * or for checking specific versions:  if (YAHOO.env.ua.ie >= 5.5 && YAHOO.env.ua.ie < 9) {...}
+ *
+ */
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
 
@@ -101,7 +111,7 @@ function isSupportedIE() {
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
 
-		if(version >= 5.5 && version < 10) {
+		if(version >= 5.5 && version < 9) {
 			return true;
 		} else {
 			return false;
