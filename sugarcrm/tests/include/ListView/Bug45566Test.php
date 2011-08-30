@@ -33,6 +33,17 @@ require_once 'include/ListView/ListViewSmarty.php';
  */
 class Bug45566Test extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = 1;
+    }
+
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+
 
     public function testListViewDisplayMultiSelect()
     {
