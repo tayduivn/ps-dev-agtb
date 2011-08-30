@@ -101,6 +101,6 @@ class ext_eapm_google extends source {
             $GLOBALS['log']->fatal("Unable to retrieve item list for google contact connector.");
         }
 
-        return $feed;
+        return $results;
     }
 }
