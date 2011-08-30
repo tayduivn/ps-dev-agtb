@@ -78,11 +78,11 @@ $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 
 $resources = array();
-for ($i = 0; $i < count($users); $i++) {
-    $resources[$users[$i]->full_name] = $users[$i];
+foreach ($users as $key => $user) {
+    $resources[$user->full_name] = $user;
 }
-for ($i = 0; $i < count($contacts); $i++) {
-    $resources[$contacts[$i]->full_name] = $contacts[$i];
+foreach ($contacts as $key => $contact) {
+    $resources[$contact->full_name] = $contact;
 }
 ksort($resources);
 $sugar_smarty->assign("RESOURCES", $resources);
@@ -94,18 +94,27 @@ $holidays = array();
 
 if (count($resources) > 0){
 	$query = "select * from holidays where (";
-        for ($i = 0; $i < count($users); $i++) {
-            $query .= "person_id like '". $users[$i]->id ."'";
-            if ($i < (count($users) - 1))
+        $i = 0;
+        $count = count($users);
+        foreach ($users as $key => $user) {
+            $query .= "person_id like '". $user->id . "'";
+            if ($i < ($count - 1)) {
                 $query .= " or ";
+            }
+            $i++;
         }
+
 	if (count($users) > 0 && count($contacts) > 0)
 	    $query .= " or ";
 
-        for ($i = 0; $i < count($contacts); $i++) {
-            $query .= "person_id like '". $contacts[$i]->id ."'";
-            if ($i < (count($contacts) - 1))
+        $i = 0;
+        $count = count($contacts);
+        foreach ($contacts as $key => $contact) {
+            $query .= "person_id like '". $contact->id . "'";
+            if ($i < ($count - 1)) {
                 $query .= " or ";
+            }
+            $i++;
         }
 	$query .= " ) and deleted=0 and holiday_date between '". $timedate->to_db_date($focus->estimated_start_date, false) ."' and '". $timedate->to_db_date($focus->estimated_end_date, false) ."'";
 	$result = $holidayBean->db->query($query, true, "");   
