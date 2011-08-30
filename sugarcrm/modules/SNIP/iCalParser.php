@@ -515,6 +515,11 @@ class iCalendar {
 					$prev_exists = true;
 				}
 
+				if($val->event->status == 'CANCELLED' && !$prev_exists) {
+				    // can't cancel non-existing event, skip
+				    continue;
+				}
+
 				if (!$prev_exists || ($prev_exists && $val->event->sequence > $prev_seq)) {
 					// insert if doesn't exist, otherwise overwrite it with newer data if current meeting's sequence is greater than prev. sequence
 
@@ -540,8 +545,11 @@ class iCalendar {
 					$meeting->outlook_id = $val->event->uid;
 					$meeting->sequence = $val->event->sequence;
 
-					if ($prev_exists && $val->event->status == 'CANCELLED')
+					if ($prev_exists && $val->event->status == 'CANCELLED') {
 						$meeting->deleted = 1;
+						$meeting->mark_deleted($meeting->id);
+						continue;
+					}
 
 					$meeting_id = $meeting->save();
 
@@ -570,7 +578,7 @@ class iCalendar {
 					            continue;
 					        }
 					        $relate_values = array($ids[$module]=>$inv["bean_id"],'meeting_id'=>$meeting_id);
-	            			$meeting->set_relationship($meeting->$relname, $relate_values, false);
+	            			$meeting->set_relationship($meeting->$relname, $relate_values, true);
 					    }
 					}
 				}

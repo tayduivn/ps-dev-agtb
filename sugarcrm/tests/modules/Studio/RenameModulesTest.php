@@ -88,7 +88,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         //Test subpanel renames
         $campaignStrings = return_module_language('en_us','Campaigns', TRUE);
         $this->assertEquals('Companies', $campaignStrings['LBL_CAMPAIGN_ACCOUNTS_SUBPANEL_TITLE'], "Renaming subpanels failed for module.");
-
+        // bug 45554: ensure labels are changed
+        $this->assertEquals('Companies', $campaignStrings['LBL_ACCOUNTS'], 'Renaming labels failed for module.');
+    
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
         $this->assertTrue( count($renamedModules) > 0 );
