@@ -55,6 +55,7 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
          file_put_contents('modules/Contacts/metadata/SearchFields.php', $this->searchFieldsBackup);
 
          if(!empty($this->customSearchdefs))
+         {
              file_put_contents('custom/modules/Contacts/metadata/searchdefs.php', $this->customSearchdefs);
          }
 
