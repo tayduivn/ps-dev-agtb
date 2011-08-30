@@ -570,7 +570,7 @@ class iCalendar {
 					            continue;
 					        }
 					        $relate_values = array($ids[$module]=>$inv["bean_id"],'meeting_id'=>$meeting_id);
-	            			$meeting->set_relationship($meeting->$relname, $relate_values, false);
+	            			$meeting->set_relationship($meeting->$relname, $relate_values, true);
 					    }
 					}
 				}
