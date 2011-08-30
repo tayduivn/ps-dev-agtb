@@ -272,6 +272,7 @@ if($focus->is_external_article == 1){
 
 $xtpl->parse("main.ent_a");
 $xtpl->parse("main.ent_b");
+$xtpl->parse("main.ext_source");
 //END SUGARCRM flav=ent ONLY
 
 $xtpl->assign("THEME", $theme);
