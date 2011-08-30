@@ -31,6 +31,9 @@ class Bug36845Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp() 
     {
+        require('include/modules.php');
+        global $beanFiles, $beanList;
+
         if(file_exists('cache/modules/unified_search_modules.php'))
         {
             $this->has_custom_unified_search_modules = true;
@@ -124,8 +127,6 @@ EOQ;
         fwrite( $fp, $the_string );
         fclose( $fp );
 
-        require('include/modules.php');
-        global $beanFiles, $beanList;
         $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
         $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';
 
