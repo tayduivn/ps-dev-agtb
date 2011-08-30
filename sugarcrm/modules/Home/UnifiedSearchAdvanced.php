@@ -392,7 +392,13 @@ class UnifiedSearchAdvanced {
 			{
 				require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
 			}				
-			
+
+            //If there are $searchFields are empty, just continue, there are no search fields defined for the module
+            if(empty($searchFields))
+            {
+                continue;
+            }
+
 			$isCustomModule = preg_match('/^([a-z0-9]{1,5})_([a-z0-9_]+)$/i' , $moduleName);
 			
 			//If the bean supports unified search or if it's a custom module bean and unified search is not defined
