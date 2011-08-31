@@ -34,35 +34,52 @@
 <input type='button' name='addfieldbtn' value='{$mod_strings.LBL_BTN_EDLABELS}' class='button' onclick='ModuleBuilder.moduleLoadLabels("studio");'>
 {/if}
 
-<table width="100%">
+<div id="field_table"></div>
 
-    <tr>
-    <td>Name</td>
-    <td>ID</td>
-    <td>Type</td>
-    <td nowrap>Custom</td>
-    <td nowrap>Required</td>
-    <td nowrap>Global Search</td>
-    </tr>
-
-{foreach from=$module->mbvardefs->vardefs.fields key='group' item='fields'}
-    {counter name='items' assign='items' start=0}
-    {foreach from=$fields key='name' item='def'}
-            <tr>
-            <td><a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField("{$name}")'>{$def.label}</a></td>
-            <td>{$name}</td>
-            <td>{$def.type}</td>
-            <td><input type="checkbox" DISABLED {if $group == 'CUSTOM'}CHECKED{/if}></td>
-            <td><input type="checkbox" DISABLED {if $def.required}CHECKED{/if}></td>
-            <td><input type="checkbox" DISABLED {if $def.unified_search}CHECKED{/if}></td>
-            {counter name='items'}
-            </tr>
-    {/foreach}
-{/foreach}
-</table>
-
+</div>
 
 <script>
+{literal}
+var myConfigs = {
+
+};
+
+var disabledCheckboxFormatter = function(elCell, oRecord, oColumn, oData)
+{
+   elCell.innerHTML = "<center><input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : "></center>");
+};
+
+var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
+{
+   elCell.innerHTML = "<a class='crumbLink' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
+};
+
+var labelFormatter = function(elCell, oRecord, oColumn, oData)
+{
+   elCell.innerHTML = oData.replace(/\:$/, '');
+};
+
+var myColumnDefs = [
+    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
+    {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
+    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125},
+    {key:"custom", label:SUGAR.language.get("ModuleBuilder", "LBL_HCUSTOM"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
+    {key:"required", label:SUGAR.language.get("ModuleBuilder", "LBL_REQUIRED"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
+    {key:"unified_search", label:SUGAR.language.get("ModuleBuilder", "LBL_SEARCH"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75}
+];
+{/literal}
+
+var myDataSource = new YAHOO.util.DataSource({$fieldsData});
+myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+{literal}
+myDataSource.responseSchema = {fields: ["label","name","type","custom", "required", "unified_search"]};
+{/literal}
+
+YAHOO.widget.DataTable.Formatter.disabledCheckboxFormatter = disabledCheckboxFormatter;
+YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
+YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
+var myDataTable = new YAHOO.widget.DataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+
 ModuleBuilder.module = '{$module->name}';
 ModuleBuilder.MBpackage = '{$package->name}';
 ModuleBuilder.helpRegisterByID('studiofields', 'input');

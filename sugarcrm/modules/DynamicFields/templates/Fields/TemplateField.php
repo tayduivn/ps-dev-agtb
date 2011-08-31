@@ -90,6 +90,7 @@ class TemplateField{
 	//'disable_num_format'=>'ext3',
 	    'ext3'=>'ext3',
 		'label_value'=>'label_value',
+		'unified_search'=>'unified_search',
 	//BEGIN SUGARCRM flav=pro ONLY
 		'calculated' => 'calculated',
         'formula' => 'formula',
@@ -333,6 +334,7 @@ class TemplateField{
 			'duplicate_merge_dom_value'=> isset($this->duplicate_merge_dom_value) ? $this->duplicate_merge_dom_value : $this->duplicate_merge,
 			'audited'=>$this->convertBooleanValue($this->audited),
 			'reportable'=>$this->convertBooleanValue($this->reportable),
+            'unified_search'=>$this->convertBooleanValue($this->unified_search)
 		);
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($this->calculated) && !empty($this->formula) && is_string($this->formula)) {

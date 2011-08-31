@@ -227,7 +227,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		quickRequest('following', 'index.php?module=SugarFollowing&action=delete&following_id=' + record + '&following_module=' + module);
 	}
 	//END SUGARCRM flav=following ONLY
-	function quickRequest(type,url, success){
+
+    function quickRequest(type, url, success){
      	if(!success)success=function(id, data) {}
         var id = Y.io(url, {
              method: 'POST',
@@ -239,7 +240,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      //alert('Feed failed to load..' + id + ' :: ' + data);
                  }
  		    }
-         });
+        });
     }
 
     DCMenu.pluginList = function(){
@@ -480,7 +481,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    }
 	    else
 	    {
-	       var timeDiff = nowSc - lastIconChange;
+	        var timeDiff = nowSc - lastIconChange;
             if( timeDiff < .3)
             {
                 return;
@@ -495,12 +496,16 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	    var liChildren = liNode.get('children');
 
 	    if(liChildren.size() > 1)
+        {
 	       return;
+        }
 
         var moduleMatches = e.href.match(/module=([\w]*)/);
         var recordMatches = e.href.match(/record=([\w-]*)/);
-        if( typeof(moduleMatches[1]) == 'undefined' ||  typeof(recordMatches[1]) == 'undefined' ) //Todo: catch error better.
+        if( typeof(moduleMatches[1]) == 'undefined' ||  typeof(recordMatches[1]) == 'undefined' )
+        {
             return;
+        }
         var module = moduleMatches[1];
         var recordID = recordMatches[1];
 
@@ -509,9 +514,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         var elem=document.createElement('IMG');
         elem.id = 'DCMenuQuickViewIcon'
         elem.src = 'themes/default/images/Search.gif';
-        elem.onclick = function() { DCMenu.showQuickView(module,recordID); };
         elem.height = 12;
         elem.style.cursor = "pointer";
+        elem.onclick = function() { DCMenu.showQuickView(module,recordID); };
 
         e.parentNode.insertBefore(elem,e);
         var aNode = Y.one(e);
@@ -554,9 +559,14 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     DCMenu.showQuickView = function(module, recordID)
     {
         var q = document.getElementById('sugar_spot_search').value;
-        quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data){
-            var dcgscontent = Y.one('#dcgscontent');
-            dcgscontent.set('innerHTML', data.responseText);
+        url = 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q);
+        quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data)
+        {
+            debugger;
+            //var dcgscontent = Y.one('#dcgscontent');
+            //dcgscontent.set('innerHTML', data.responseText);
+            var dcgscontent = document.getElementById('dcgscontent');
+            dcgscontent.innerHTML = data.responseText;
             var animDCcont = new Y.Anim({ node: dcgscontent, to: { height:500 } });
             animDCcont.run();
         });

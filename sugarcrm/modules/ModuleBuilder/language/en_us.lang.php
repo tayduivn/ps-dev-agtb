@@ -748,7 +748,7 @@ $mod_strings = array(
         . "but will not follow the formula in the native applications, such as Sugar Mobile for iPhone. <br/>"
         . "They will not follow the formula in the Sugar Self-Service Portal.",
 //END SUGARCRM flav=pro ONLY
-
+'LBL_POPHELP_GLOBAL_SEARCH'=>'Select to use this field when searching for records using the Global Search on this module.',
 //Revert Module labels
 'LBL_RESET' => 'Reset',
 'LBL_RESET_MODULE' => 'Reset Module',

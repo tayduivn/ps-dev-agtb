@@ -57,6 +57,8 @@ class ViewModulefields extends SugarView
         global $current_language;
         $module_strings = return_module_language($current_language, $module_name);
 
+        $fieldsData = array();
+
         if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             //$this->loadPackageHelp($module_name);
             $studioClass = new stdClass;
@@ -84,9 +86,13 @@ class ViewModulefields extends SugarView
 					//Custom relate fields will have a non-db source, but custom_module set
                 	if(isset($def['source']) && $def['source'] == 'custom_fields' || isset($def['custom_module'])) {
                        $f[$mod_strings['LBL_HCUSTOM']][$def['name']] = $def;
+                       $def['custom'] = true;
                     } else {
                        $f[$mod_strings['LBL_HDEFAULT']][$def['name']] = $def;
+                       $def['custom'] = false;
                     }
+
+                    $fieldsData[] = $def;
                 }
             }
             $studioClass->mbvardefs->vardefs['fields'] = $f;
@@ -95,6 +101,8 @@ class ViewModulefields extends SugarView
             $package = new stdClass;
             $package->name = '';
             $smarty->assign('package', $package);
+            $json = getJSONobj();
+            $smarty->assign('fieldsData', $json->encode($fieldsData));
             $ajax = new AjaxCompose();
             $ajax->addCrumb($mod_strings['LBL_STUDIO'], 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
             $ajax->addCrumb(translate($module_name), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module='.$module_name.'")');
@@ -126,10 +134,10 @@ class ViewModulefields extends SugarView
                 {
                 	if (isset($loadedFields[$field]))
                     {
-                		unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
+                	   unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
                     } else {
                        $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($mod_strings[$def['vname']]) ? $mod_strings[$def['vname']] : $field;
-                	   $loadedFields[$field] = true;
+                       $loadedFields[$field] = true;
                     }
                 }
             }
