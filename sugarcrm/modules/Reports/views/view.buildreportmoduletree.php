@@ -78,7 +78,21 @@ class ReportsViewBuildreportmoduletree extends SugarView
             if (!isset($ACLAllowedModules[$link_module])) {
                 continue;
             }
-            if(! empty($linked_field['vname']))
+			
+			$custom_label = 'LBL_' . strtoupper ( $relationship->relationship_name . '_FROM_' . $relationship->lhs_module  ) . '_TITLE';
+			$custom_subpanel_label  = 'LBL_' . strtoupper ( $link_module) . '_SUBPANEL_TITLE';
+
+			// Bug 37308 - Check if the label was changed in studio
+            if (translate($custom_label, $_REQUEST['report_module']) != $custom_label) 
+			{
+				$linked_field['label'] = translate($custom_label, $_REQUEST['report_module']);
+            }
+			// Bug 37308 - Check if the label was changed in studio
+            elseif (translate($custom_subpanel_label, $_REQUEST['report_module']) != $custom_subpanel_label && $link_module != $_REQUEST['report_module']) 
+			{
+				$linked_field['label'] = translate($custom_subpanel_label, $_REQUEST['report_module']);
+            }			
+            elseif (! empty($linked_field['vname']))
             {
                 $linked_field['label'] = translate($linked_field['vname'], $_REQUEST['report_module']);
             } else {
