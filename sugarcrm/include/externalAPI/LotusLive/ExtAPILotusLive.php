@@ -300,7 +300,10 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         }
 
         $client = $this->getClient();
-        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/folderc/snx:files!{$this->api_data['subscriberId']}";
+        $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/folderc/snx:files";
+        if ( $this->getVersion() == 1 ) {
+            $url .= "!{$this->api_data['subscriberId']}";
+        }
         $GLOBALS['log']->debug("LOTUS REQUEST: $url");
         $rawResponse = $client->setUri($url)
             ->setRawData(file_get_contents($fileToUpload), $mimeType)
@@ -381,8 +384,12 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
                 return $docCache['results'];
             }
         }
-        
-        $reply = $this->makeRequest('/files/basic/cmis/repository/p!'.$this->api_data['subscriberId'].'/folderc/snx:files!'.$this->api_data['subscriberId'].'?maxItems=50','GET',false);
+        $requestUrl = '/files/basic/cmis/repository/p!'.$this->api_data['subscriberId'].'/folderc/snx:files';
+        if ( $this->getVersion() == 1 ) { 
+            $requestUrl .= '!'.$this->api_data['subscriberId'];
+        }
+        $requestUrl .= '?maxItems=50';
+        $reply = $this->makeRequest($requestUrl,'GET',false);
 
         $xml = new DOMDocument();
         $xml->preserveWhiteSpace = false;
@@ -481,5 +488,53 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
 
         return $reply;
     }
+
+    /**
+     * Check the API version
+     */
+    protected function getVersion()
+    {
+
+        $defaultVersion = 2;
+
+        $reply = $this->makeRequest('/files/basic/cmis/my/servicedoc','GET',false);
+        if ( !$reply['success'] ) {
+            // Return the default version, not much else we can do except not cache this
+            return $defaultVersion;            
+        }
+        
+        $xml = new DOMDocument();
+        $xml->preserveWhiteSpace = false;
+        $xml->strictErrorChecking = false;
+        $xml->loadXML($reply['rawResponse']);
+        if ( !is_object($xml) ) {
+            // Return the default version, not much else we can do except not cache this
+            return $defaultVersion;
+        }
+
+        $xp = new DOMXPath($xml);
+
+        $results = array();
+
+        $versionNodes = $xp->query('//cmisra:repositoryInfo/cmis:productName');
+
+        $versionLabel = $versionNodes->item(0)->textContent;
+
+        switch ( $versionLabel ) {
+            case 'LotusLive Files':
+                $version = 1;
+                break;
+            case 'IBM Connections - Files':
+                $version = 2;
+                break;
+            default:
+                $GLOBALS['log']->error('Lotus Live API version could not be detected, the version label returned was: '.$versionLabel);
+                $version = 2;
+                break;
+        }
+
+        return $version;
+    }
+
 
 }
