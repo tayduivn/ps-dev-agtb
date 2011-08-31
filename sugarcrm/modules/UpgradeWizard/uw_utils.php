@@ -2086,7 +2086,9 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
 		}
 	}
 
+    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir 
 	$d = dir($dir);
+    if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
 	    if($f == "." || $f == "..") { // skip *nix self/parent
@@ -2955,7 +2957,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		    }
 		    // END 'Sales Page'
 
-			// BEGIN 'Marketing & Support Page'
+			// BEGIN 'Marketing Page'
 			$marketingDashlets = array();
 		    foreach ($defaultMarketingChartDashlets as $marketingChartDashlet=>$module){
 				$savedReport = new SavedReport();
@@ -3010,7 +3012,62 @@ function upgradeDashletsForSalesAndMarketing() {
 		        else array_push($marketingColumns[2]['dashlets'], $guid);
 		        $count++;
 		    }
-			// END 'Marketing & Support Page'
+			// END 'Marketing Page'
+			
+		    // BEGIN 'Support Page'- bug46195
+			$supportDashlets = array();
+		    foreach ($defaultSupportChartDashlets as $supportChartDashlet=>$module){
+				$savedReport = new SavedReport();
+				$reportId = $savedReport->retrieveReportIdByName($supportChartDashlet);
+				$myDashlet = new MySugar($module);
+				$displayDashlet = $myDashlet->checkDashletDisplay();
+
+				if(isset($reportId) && $displayDashlet) {
+		    		$supportDashlets[create_guid()] = array('className' => 'ChartsDashlet',
+													 		'module'=>$module,
+		    												'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
+		    												'reportId' => $reportId, );
+			    }
+		    }
+
+		    foreach($defaultSupportDashlets as $supportDashletName=>$module){
+				
+				$myDashlet = new MySugar($module);
+				$displayDashlet = $myDashlet->checkDashletDisplay();
+
+		    	if (isset($dashletsFiles[$supportDashletName]) && $displayDashlet){
+			        $options = array();
+	            $prefsforthisdashlet = array_keys($prefstomove,$supportDashletName);
+	            foreach ( $prefsforthisdashlet as $pref ) {
+	               $options[$pref] = $current_user->getPreference($pref);
+	            } //foreach
+	            $supportDashlets[create_guid()] = array('className' => $supportDashletName,
+										 		 'module'=>$module,
+		                                         'fileLocation' => $dashletsFiles[$supportDashletName]['file'],
+	                                             'options' => $options);
+	    		}
+		    }
+
+		    $count = 0;
+		    $supportColumns = array();
+		    $supportColumns[0] = array();
+		    $supportColumns[0]['width'] = '30%';
+		    $supportColumns[0]['dashlets'] = array();
+		    $supportColumns[1] = array();
+		    $supportColumns[1]['width'] = '30%';
+		    $supportColumns[1]['dashlets'] = array();
+		    $supportColumns[2] = array();
+		    $supportColumns[2]['width'] = '40%';
+		    $supportColumns[2]['dashlets'] = array();
+
+		    foreach($supportDashlets as $guid=>$dashlet){
+		        if($count % 3 == 0) array_push($supportColumns[0]['dashlets'], $guid);
+		        else if($count % 3 == 1) array_push($supportColumns[1]['dashlets'], $guid);
+		        else array_push($supportColumns[2]['dashlets'], $guid);
+		        $count++;
+		    }
+			// END ' Support Page' - bug 46195
+		    
 
 		   	//Set the dashlets pages to user preferences table
 		   	$pageIndex = count($pages);
@@ -3021,9 +3078,14 @@ function upgradeDashletsForSalesAndMarketing() {
 
 			$pages[$pageIndex]['columns'] = $marketingColumns;
 			$pages[$pageIndex]['numColumns'] = '3';
-			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_3_NAME'];	// "Marketing & Support Page"
+			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_6_NAME'];	// "Marketing Page"
+			$pageIndex++;
 
-		    $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets);
+			$pages[$pageIndex]['columns'] = $supportColumns;
+			$pages[$pageIndex]['numColumns'] = '4';
+			$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_3_NAME'];	// " Support Page" - bug 46195
+
+		    $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets, $supportDashlets);
 		    $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
 		    $current_user->setPreference('pages', $pages, 0, 'Home');
 		} //while
@@ -3824,20 +3886,21 @@ function upgradeModulesForTeam() {
 
     /**
      * convertImageToText
+     * @deprecated
      * This method attempts to convert date type image to text on Microsoft SQL Server.
      * This method could NOT be used in any other type of datebases.
      */
 	function convertImageToText($table_name,$column_name){
 		$set_lang = "SET LANGUAGE us_english";
 		$GLOBALS['db']->query($set_lang);
-	    if($GLOBALS['db']->checkError()){
+	    if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$set_lang);
         }
        $q="SELECT data_type
         FROM INFORMATION_SCHEMA.Tables T JOIN INFORMATION_SCHEMA.Columns C
         ON T.TABLE_NAME = C.TABLE_NAME where T.TABLE_NAME = '$table_name' and C.COLUMN_NAME = '$column_name'";
        $res= $GLOBALS['db']->query($q);
-       if($GLOBALS['db']->checkError()){
+       if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$q);
         }
        $row= $GLOBALS['db']->fetchByAssoc($res);
@@ -3845,7 +3908,7 @@ function upgradeModulesForTeam() {
      if(trim(strtolower($row['data_type'])) == 'image'){
         $addContent_temp = "alter table {$table_name} add {$column_name}_temp text null";
         $GLOBALS['db']->query($addContent_temp);
-        if($GLOBALS['db']->checkError()){
+        if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$addContent_temp);
         }
         $qN = "select count=datalength({$column_name}), id, {$column_name} from {$table_name}";
@@ -3859,7 +3922,7 @@ function upgradeModulesForTeam() {
                 while($contentLength >0){
                     $stepsQuery = "select cont=convert(varchar(max), convert(varbinary(8000), substring({$column_name},{$start},{$next}))) from {$table_name} where id= '{$row['id']}'";
                     $steContQ = $GLOBALS['db']->query($stepsQuery);
-                    if($GLOBALS['db']->checkError()){
+                    if($GLOBALS['db']->lastError()){
                         logThis('An error occurred when performing this query-->'.$stepsQuery);
                     }
                     $stepCont = $GLOBALS['db']->fetchByAssoc($steContQ);
@@ -3871,7 +3934,7 @@ function upgradeModulesForTeam() {
                 }
                 $addContentDataText="update {$table_name} set {$column_name}_temp = '{$convertedContent}' where id= '{$row['id']}'";
                 $GLOBALS['db']->query($addContentDataText);
-                if($GLOBALS['db']->checkError()){
+                if($GLOBALS['db']->lastError()){
                     logThis('An error occurred when performing this query-->'.$addContentDataText);
                 }
            }
@@ -3879,7 +3942,7 @@ function upgradeModulesForTeam() {
                 $addContentDataText="update {$table_name} set {$column_name}_temp =
                 convert(varchar(max), convert(varbinary(8000), {$column_name})) where id= '{$row['id']}'";
                 $GLOBALS['db']->query($addContentDataText);
-                if($GLOBALS['db']->checkError()){
+                if($GLOBALS['db']->lastError()){
                     logThis('An error occurred when performing this query-->'.$addContentDataText);
                 }
            }
@@ -3887,12 +3950,12 @@ function upgradeModulesForTeam() {
         //drop the contents now and change contents_temp to contents
         $dropColumn = "alter table {$table_name} drop column {$column_name}";
         $GLOBALS['db']->query($dropColumn);
-        if($GLOBALS['db']->checkError()){
+        if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$dropColumn);
         }
         $changeColumnName = "EXEC sp_rename '{$table_name}.[{$column_name}_temp]','{$column_name}','COLUMN'";
         $GLOBALS['db']->query($changeColumnName);
-        if($GLOBALS['db']->checkError()){
+        if($GLOBALS['db']->lastError()){
             logThis('An error occurred when performing this query-->'.$changeColumnName);
         }
      }
@@ -4391,6 +4454,9 @@ function upgradeSugarCache($file)
 	if(file_exists("$from_dir/include/SugarCache")) {
 		$allFiles = findAllFiles("$from_dir/include/SugarCache", $allFiles);
 	}
+	if(file_exists("$from_dir/include/database")) {
+		$allFiles = findAllFiles("$from_dir/include/database", $allFiles);
+	}
 	if(file_exists("$from_dir/include/utils/external_cache.php")) {
 		$allFiles[] = "$from_dir/include/utils/external_cache.php";
 	}
@@ -4523,22 +4589,22 @@ function unlinkUpgradeFiles($version)
 		}
 
 		logThis('end upgrade for DocumentRevisions classic files');
-	}	
+	}
 
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
-    
+
     if(file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
        $files_to_remove = glob($_SESSION['unzip_dir'].'/scripts/files_to_remove/*.php');
-      
+
        foreach($files_to_remove as $script)
        {
        		if(preg_match('/UpgradeRemoval(\d+)x\.php/', $script, $matches))
        		{
        	   	   $checkVersion = $matches[1] + 1; //Increment by one to check everything equal or below the target version
        	   	   $upgradeClass = 'UpgradeRemoval' . $matches[1] . 'x';
-       	   	   require_once($_SESSION['unzip_dir'].'/scripts/files_to_remove/' . $upgradeClass . '.php');    	   	   
+       	   	   require_once($_SESSION['unzip_dir'].'/scripts/files_to_remove/' . $upgradeClass . '.php');
 
        	   	   //Check to make sure we should load and run this UpgradeRemoval instance
        	   	   if($checkVersion <= $version && class_exists($upgradeClass))
@@ -4558,21 +4624,21 @@ function unlinkUpgradeFiles($version)
        	   	   }
        	    }
        }
-    }  	
-    
+    }
+
     //Check if we have a custom directory
     if(file_exists('custom/scripts/files_to_remove'))
     {
        //Now find
        $files_to_remove = glob('custom/scripts/files_to_remove/*.php');
-       
+
        foreach($files_to_remove as $script)
        {
        	   if(preg_match('/\/files_to_remove\/(.*?)\.php$/', $script, $matches))
        	   {
        	   	   require_once($script);
        	   	   $upgradeClass  = $matches[1];
-       	   	          	   	   
+
        	   	   if(!class_exists($upgradeClass))
        	   	   {
        	   	   	  continue;
@@ -4588,11 +4654,11 @@ function unlinkUpgradeFiles($version)
 	       	   	   	  	 logThis($file);
 	       	   	   	  }
 	       	   	   	  $upgradeInstance->processFilesToRemove($files);
-       	   	   }     	   	
+       	   	   }
        	   }
        }
-    } 	
-	
+    }
+
 }
 
 if (!function_exists("getValidDBName"))
@@ -4622,7 +4688,7 @@ if (!function_exists("getValidDBName"))
         }
         return strtolower ( $result ) ;
     }
-    
+
 
 }
 

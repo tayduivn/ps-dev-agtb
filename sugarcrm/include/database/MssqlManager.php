@@ -1847,11 +1847,55 @@ EOQ;
 		return 0;
 	}
 
-    public function lastError()
+	/**
+	 * (non-PHPdoc)
+	 * @see DBManager::lastDbError()
+	 */
+    public function lastDbError()
     {
-        return mssql_get_last_message();
+        $sqlmsg = mssql_get_last_message();
+        if(empty($sqlmsg)) return false;
+        global $app_strings;
+        if (empty($app_strings)
+		    or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])
+			or !isset($app_strings['ERR_MSSQL_WARNING']) ) {
+        //ignore the message from sql-server if $app_strings array is empty. This will happen
+        //only if connection if made before languge is set.
+		    return false;
+        }
+
+        $sqlpos = strpos($sqlmsg, 'Changed database context to');
+        $sqlpos2 = strpos($sqlmsg, 'Warning:');
+        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false ) {
+            return false;
+        } else {
+        	global $app_strings;
+            //ERR_MSSQL_DB_CONTEXT: localized version of 'Changed database context to' message
+            if (empty($app_strings) or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])) {
+                //ignore the message from sql-server if $app_strings array is empty. This will happen
+                //only if connection if made before languge is set.
+                $GLOBALS['log']->debug("Ignoring this database message: " . $sqlmsg);
+                return false;
+            }
+            else {
+                $sqlpos = strpos($sqlmsg, $app_strings['ERR_MSSQL_DB_CONTEXT']);
+                if ( $sqlpos !== false )
+                    return false;
+            }
+        }
+
+        if ( strlen($sqlmsg) > 2 ) {
+        	return "SQL Server error: " . $sqlmsg;
+        }
+
+        return false;
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::getDbInfo()
+     */
     public function getDbInfo()
     {
         return array("version" => $this->version());

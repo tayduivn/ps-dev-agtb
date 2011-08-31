@@ -230,7 +230,7 @@ class QuotesViewEdit extends ViewEdit
 				foreach ($ordered_bundle_list as $product_bundle) {
 					$product_list = $product_bundle->get_products();
 					$bundle_list = $product_bundle->get_product_bundle_line_items();
-					$add_row .= "addTable('$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."' );\n";
+					$add_row .= "quotesManager.addTable('$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)."' );\n";
 
 					if (is_array($bundle_list)) {
 						while (list($key, $line_item) = each ($bundle_list)) {
@@ -241,7 +241,7 @@ class QuotesViewEdit extends ViewEdit
 								$encoded_name = js_escape(br2nl($line_item->name));
 
 
-								$add_row .= "addRow('$line_item->id','" . format_number($line_item->quantity, 0, 0) . "','$line_item->product_template_id','$encoded_name'"
+								$add_row .= "quotesManager.addRow('$line_item->id','" . format_number($line_item->quantity, 0, 0) . "','$line_item->product_template_id','$encoded_name'"
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
@@ -255,7 +255,7 @@ class QuotesViewEdit extends ViewEdit
 							else if ($line_item->object_name == "ProductBundleNote") {
 								$encoded_description = js_escape(br2nl($line_item->description));
 								//$encoded_description = html_entity_decode($encoded_description);
-								$add_row .= "addCommentRow('$line_item->id', '$product_bundle->id', '$encoded_description');\n";
+								$add_row .= "quotesManager.addCommentRow('$line_item->id', '$product_bundle->id', '$encoded_description');\n";
 							}
 						} //while
 					} //if
@@ -283,7 +283,7 @@ class QuotesViewEdit extends ViewEdit
 						foreach ($product_list as $line_item) {
 		                    $tax_class_name = isset($line_item->tax_class) ? $tax_class_name = $app_list_strings['tax_class_dom'][$line_item->tax_class] : "";
 
-							$add_row .= "addRow('','$line_item->quantity','$line_item->product_template_id','$line_item->name'"
+							$add_row .= "quotesManager.addRow('','$line_item->quantity','$line_item->product_template_id','$line_item->name'"
 											. ", '".format_number($line_item->cost_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'"
 											. ", '".format_number($line_item->list_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) ."'"
 											. ", '".format_number($line_item->discount_usdollar, $significantDigits, $significantDigits, array('convert' => true, 'currency_id' => $curid)) . "'";
@@ -296,7 +296,7 @@ class QuotesViewEdit extends ViewEdit
 
 						} //foreach
 						if(empty($product_list)){
-								$add_row .= "addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
+								$add_row .= "quotesManager.addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
 						} //if
 					} //if
 				}
@@ -310,12 +310,12 @@ class QuotesViewEdit extends ViewEdit
 		$setup_script = '';
 		$taxclass = translate('tax_class_dom');
 		foreach($taxclass as $value=>$name){
-			$setup_script .= "add_tax_class('$name', '$value');\n";
+			$setup_script .= "quotesManager.add_tax_class('$name', '$value');\n";
 		}
 		$this->ss->assign("SETUP_SCRIPT", $setup_script);
 
 		$this->ss->assign('TAXRATE_JAVASCRIPT', $taxrate->get_taxrate_js());
-		$this->ss->assign('CALCULATE_FUNCTION', '<script type="text/javascript">YAHOO.util.Event.onDOMReady(function(){calculate(document);});</script>');
+		$this->ss->assign('CALCULATE_FUNCTION', '<script type="text/javascript">YAHOO.util.Event.onDOMReady(function(){quotesManager.calculate(document);});</script>');
 
 		$this->ss->assign('NO_MATCH_VARIABLE', '<script type="text/javascript">sqs_no_match_text = "' . $app_strings['ERR_SQS_NO_MATCH'] . '";</script>');
 

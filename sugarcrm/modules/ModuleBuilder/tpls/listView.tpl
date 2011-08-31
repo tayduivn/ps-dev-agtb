@@ -180,6 +180,10 @@ resizeDDLists = function() {
         if (targetHeight > 0 )
         	Dom.setStyle("ul" + msi, "height", targetHeight + "px");
     }
+	Studio2.scrollZones = {}
+	for (var i = 0; Dom.get("ul" + i); i++){
+		Studio2.scrollZones["ul" + i] = Studio2.getScrollZones("ul" + i);
+	}
 };
 
 function countListFields() {

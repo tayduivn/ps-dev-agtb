@@ -165,11 +165,25 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 content += extraButton
             }
             content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
-    		overlay.set('bodyContent', content);
+
+            //set eval happened var
+            content ='<script> var evalHappened = true;</script>'+content;
+            overlay.set('bodyContent', content);
+
+            // eval the contents if the eval parameter is passed in.  Cross check with evalHappened parameter which would not
+            // be set unless the eval has already happened, in which case we dont want to double eval.
+            // This will ensure that quick search, validation, and other relevant js is run in the modal
+            if(typeof(data.eval) != 'undefined' && data.eval  && (typeof(evalHappened) =='undefined'|| evalHappened ==false)){
+                SUGAR.util.evalScript(content);
+                //evalHappened should be set now, set to false for reuse
+                if (typeof(evalHappened) !='undefined'){
+                    evalHappened = false;
+                }
+            }
+
     		overlay.show();
     		return overlay;
     }
-
 	DCMenu.showView = function(data, parent_id){
 		setBody(data, 0, parent_id);
 	}
@@ -318,16 +332,17 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                     catch (e) {
                         ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_SAVED'), 2000);
                     }
+
+                    //if DCMenu.qe_refresh is set to a string, then eval it as it is a js reload command (either reloads dashlet or list view)
+                    if(typeof(DCMenu.qe_refresh) =='string'){
+                        eval(DCMenu.qe_refresh);
+                    }
 				}
 			}
 
 		});
 		lastLoadedMenu=undefined;
 		DCMenu.closeOverlay();
-        //if DCMenu.qe_refresh is set to a string, then eval it as it is a js reload command (either reloads dashlet or list view)
-        if(typeof(DCMenu.qe_refresh) =='string'){
-            eval(DCMenu.qe_refresh);
-        }
 		return false;
 	}
 

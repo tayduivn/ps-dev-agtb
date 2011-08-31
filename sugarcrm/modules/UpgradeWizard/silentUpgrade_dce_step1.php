@@ -155,33 +155,21 @@ function createMissingRels(){
 		$result= $GLOBALS['db']->query($query, true);
 		$a = null;
 		$a = $GLOBALS['db']->fetchByAssoc($result);
-		if($GLOBALS['db']->checkError()){
-			//log this
-		}
 		if(!isset($a['id']) && empty($a['id']) ){
 			$qRel = "INSERT INTO relationships (id,relationship_name, lhs_module, lhs_table, lhs_key, rhs_module, rhs_table, rhs_key, join_table, join_key_lhs, join_key_rhs, relationship_type, relationship_role_column, relationship_role_column_value, reverse, deleted)
 						VALUES ('{$guid}', '{$relObjName}_assigned_user','Users','users','id','{$relModName}','{$relObjName}','assigned_user_id',NULL,NULL,NULL,'one-to-many',NULL,NULL,'0','0')";
 			$GLOBALS['db']->query($qRel);
-			if($GLOBALS['db']->checkError()){
-				//log this
-			}
 		}
 		//modified_user
 		$guid = create_guid();
 		$query = "SELECT id FROM relationships WHERE relationship_name = '{$relObjName}_modified_user'";
 		$result= $GLOBALS['db']->query($query, true);
-		if($GLOBALS['db']->checkError()){
-			//log this
-		}
 		$a = null;
 		$a = $GLOBALS['db']->fetchByAssoc($result);
 		if(!isset($a['id']) && empty($a['id']) ){
 			$qRel = "INSERT INTO relationships (id,relationship_name, lhs_module, lhs_table, lhs_key, rhs_module, rhs_table, rhs_key, join_table, join_key_lhs, join_key_rhs, relationship_type, relationship_role_column, relationship_role_column_value, reverse, deleted)
 						VALUES ('{$guid}', '{$relObjName}_modified_user','Users','users','id','{$relModName}','{$relObjName}','modified_user_id',NULL,NULL,NULL,'one-to-many',NULL,NULL,'0','0')";
 			$GLOBALS['db']->query($qRel);
-			if($GLOBALS['db']->checkError()){
-				//log this
-			}
 		}
 		//created_by
 		$guid = create_guid();
@@ -193,9 +181,6 @@ function createMissingRels(){
 			$qRel = "INSERT INTO relationships (id,relationship_name, lhs_module, lhs_table, lhs_key, rhs_module, rhs_table, rhs_key, join_table, join_key_lhs, join_key_rhs, relationship_type, relationship_role_column, relationship_role_column_value, reverse, deleted)
 						VALUES ('{$guid}', '{$relObjName}_created_by','Users','users','id','{$relModName}','{$relObjName}','created_by',NULL,NULL,NULL,'one-to-many',NULL,NULL,'0','0')";
 			$GLOBALS['db']->query($qRel);
-			if($GLOBALS['db']->checkError()){
-				//log this
-			}
     	}
 		//BEGIN SUGARCRM flav=pro ONLY
 		$guid = create_guid();
@@ -207,10 +192,6 @@ function createMissingRels(){
 			$qRel = "INSERT INTO relationships (id,relationship_name, lhs_module, lhs_table, lhs_key, rhs_module, rhs_table, rhs_key, join_table, join_key_lhs, join_key_rhs, relationship_type, relationship_role_column, relationship_role_column_value, reverse, deleted)
 							VALUES ('{$guid}', '{$relObjName}_team','Teams','teams','id','{$relModName}','{$relObjName}','team_id',NULL,NULL,NULL,'one-to-many',NULL,NULL,'0','0')";
 			$GLOBALS['db']->query($qRel);
-			if($GLOBALS['db']->checkError()){
-				//log this
-			}
-
 		}
 		//END SUGARCRM flav=pro ONLY
 	}
@@ -219,21 +200,12 @@ function createMissingRels(){
 	$guid = create_guid();
 	$query = "SELECT id FROM relationships WHERE relationship_name = 'tracker_monitor_id'";
 	$result= $GLOBALS['db']->query($query, true);
-	if($GLOBALS['db']->checkError()){
-		//log this
-	}
 	$a = null;
 	$a = $GLOBALS['db']->fetchByAssoc($result);
-	if($GLOBALS['db']->checkError()){
-		//log this
-	}
 	if(!isset($a['id']) && empty($a['id']) ){
 		$qRel = "INSERT INTO relationships (id,relationship_name, lhs_module, lhs_table, lhs_key, rhs_module, rhs_table, rhs_key, join_table, join_key_lhs, join_key_rhs, relationship_type, relationship_role_column, relationship_role_column_value, reverse, deleted)
 					VALUES ('{$guid}', 'tracker_monitor_id','TrackerPerfs','tracker_perf','monitor_id','Trackers','tracker','monitor_id',NULL,NULL,NULL,'one-to-many',NULL,NULL,'0','0')";
 		$GLOBALS['db']->query($qRel);
-		if($GLOBALS['db']->checkError()){
-			//log this
-		}
 	}
 	//END SUGARCRM flav=pro ONLY
 }
@@ -326,9 +298,6 @@ function addDefaultModuleRoles($defaultRoles = array()) {
 	                	$currdate = gmdate($GLOBALS['timedate']->get_db_date_time_format());
 	                	$query= "INSERT INTO acl_actions (id,date_entered,date_modified,modified_user_id,name,category,acltype,aclaccess,deleted ) VALUES ('$guid','$currdate','$currdate','1','$name','$category','$roleName','$access_override','0')";
 						$GLOBALS['db']->query($query);
-						if($GLOBALS['db']->checkError()){
-							//log this
-						}
 	                }
             }
         }

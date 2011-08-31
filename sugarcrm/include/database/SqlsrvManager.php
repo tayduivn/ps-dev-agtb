@@ -179,47 +179,6 @@ class SqlsrvManager extends MssqlManager
     }
 
 	/**
-     * @see DBManager::checkError()
-     */
-    public function checkError($msg = '', $dieOnError = false)
-    {
-        if (DBManager::checkError($msg, $dieOnError))
-            return true;
-
-        $sqlmsg = $this->_getLastErrorMessages();
-        $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        $sqlpos2 = strpos($sqlmsg, 'Warning:');
-        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false )
-            $sqlmsg = '';  // empty out sqlmsg if its something we will ignor
-        else {
-            global $app_strings;
-            //ERR_MSSQL_DB_CONTEXT: localized version of 'Changed database context to' message
-            if (empty($app_strings)
-					or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])
-					or !isset($app_strings['ERR_MSSQL_WARNING']) ) {
-                //ignore the message from sql-server if $app_strings array is empty. This will happen
-                //only if connection if made before languge is set.
-                $GLOBALS['log']->debug("Ignoring this database message: " . $sqlmsg);
-                $sqlmsg = '';
-            }
-            else {
-                $sqlpos = strpos($sqlmsg, $app_strings['ERR_MSSQL_DB_CONTEXT']);
-                $sqlpos2 = strpos($sqlmsg, $app_strings['ERR_MSSQL_WARNING']);
-				if ( $sqlpos !== false || $sqlpos2 !== false)
-                    $sqlmsg = '';
-            }
-        }
-
-        if ( strlen($sqlmsg) > 2 ) {
-            $GLOBALS['log']->fatal("SQL Server error: " . $sqlmsg);
-            return true;
-        }
-
-        return false;
-	}
-
-	/**
      * @see DBManager::query()
 	 */
 	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
@@ -235,26 +194,6 @@ class SqlsrvManager extends MssqlManager
         $this->query_time = microtime(true);
 
         $result = $suppress?@sqlsrv_query($this->database, $sql):sqlsrv_query($this->database, $sql);
-
-        if (!$result) {
-            // awu Bug 10657: ignoring mssql error message 'Changed database context to' - an intermittent
-            // 				  and difficult to reproduce error. The message is only a warning, and does
-            //				  not affect the functionality of the query
-
-            $sqlmsg = $this->_getLastErrorMessages();
-            $sqlpos = strpos($sqlmsg, 'Changed database context to');
-			$sqlpos2 = strpos($sqlmsg, 'Warning:');
-			$sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-			if ($sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false)		// if sqlmsg has 'Changed database context to', just log it
-				$GLOBALS['log']->debug($sqlmsg . ": " . $sql );
-			else {
-				$GLOBALS['log']->fatal($sqlmsg . ": " . $sql );
-				if($dieOnError)
-					sugar_die('SQL Error : ' . $sqlmsg);
-				else
-					echo 'SQL Error : ' . $sqlmsg;
-			}
-        }
 
         $this->query_time = microtime(true) - $this->query_time;
         $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
@@ -331,23 +270,6 @@ class SqlsrvManager extends MssqlManager
 
         return $row;
 	}
-
-    /**
-     * Emulates old mssql_get_last_message() behavior, giving us any error messages from the previous
-     * function call
-     *
-     * @return string error message(s)
-     */
-    private function _getLastErrorMessages()
-    {
-        $message = '';
-
-        if ( ($errors = sqlsrv_errors()) != null)
-            foreach ( $errors as $error )
-                $message .= $error['message'] . '. ';
-
-        return $message;
-    }
 
     /**
      * @see DBManager::convert()
@@ -592,9 +514,43 @@ EOSQL;
 		return 0;
 	}
 
-    public function lastError()
+	/**
+	 * (non-PHPdoc)
+	 * @see DBManager::lastDbError()
+	 */
+    public function lastDbError()
     {
-        return join("\n",sqlsrv_errors(SQLSRV_ERR_ERRORS));
+        $errors = sqlsrv_errors(SQLSRV_ERR_ERRORS);
+        if(empty($errors)) return false;
+        global $app_strings;
+        if (empty($app_strings)
+		    or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])
+			or !isset($app_strings['ERR_MSSQL_WARNING']) ) {
+        //ignore the message from sql-server if $app_strings array is empty. This will happen
+        //only if connection if made before languge is set.
+		    return false;
+        }
+        $messages = array();
+        foreach($errors as $error) {
+            $sqlmsg = $error['message'];
+            $sqlpos = strpos($sqlmsg, 'Changed database context to');
+            $sqlpos2 = strpos($sqlmsg, 'Warning:');
+            $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
+            if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false ) {
+                continue;
+            }
+            $sqlpos = strpos($sqlmsg, $app_strings['ERR_MSSQL_DB_CONTEXT']);
+            $sqlpos2 = strpos($sqlmsg, $app_strings['ERR_MSSQL_WARNING']);
+    		if ( $sqlpos !== false || $sqlpos2 !== false) {
+                    continue;
+            }
+            $messages[] = $sqlmsg;
+        }
+
+        if(!empty($messages)) {
+            return join("\n", $messages);
+        }
+        return false;
     }
 
     public function getDbInfo()
