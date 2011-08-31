@@ -534,9 +534,13 @@ function sendTestEmail()
     var smtpssl  = document.getElementById('mail_smtpssl').value;
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
     var mail_sendtype = document.getElementById('mail_sendtype').value;
+
+    var from_name = document.getElementById('notify_fromname').value;
+
 	var postDataString = 'mail_name=system&mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl +
 	                      "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) +
-	                      "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_to_address=" + encodeURIComponent(toAddress) + "&outboundtest_from_address=" + fromAddress;
+	                      "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_to_address=" + encodeURIComponent(toAddress) +
+                          "&outboundtest_from_address=" + fromAddress + "&mail_from_name=" + from_name;
 
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
