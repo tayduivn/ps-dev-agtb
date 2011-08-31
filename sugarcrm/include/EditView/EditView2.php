@@ -542,6 +542,7 @@ class EditView
         }
         if(isset($this->defs['templateMeta']['form']['enctype'])) {
 
+
           $this->th->ss->assign('enctype', 'enctype="'.$this->defs['templateMeta']['form']['enctype'].'"');
         }
         //for SugarFieldImage, we must set form enctype to "multipart/form-data"
@@ -592,7 +593,7 @@ class EditView
           $this->th->ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M" . $pm);
         }
 
-        $this->th->ss->assign('CALENDAR_FDOW', $timedate->get_first_day_of_week());
+        $this->th->ss->assign('CALENDAR_FDOW', $current_user->get_first_day_of_week());
 
         $this->th->ss->assign('TIME_SEPARATOR', $time_separator);
 

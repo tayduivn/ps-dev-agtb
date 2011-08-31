@@ -64,7 +64,7 @@ class QuickCreate extends EditView {
           $this->ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M" . $pm);
         }
 
-        $this->ss->assign('CALENDAR_FDOW', $timedate->get_first_day_of_week());
+        $this->ss->assign('CALENDAR_FDOW', $current_user->get_first_day_of_week());
 
     }
 }

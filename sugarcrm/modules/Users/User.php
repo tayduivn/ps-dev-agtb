@@ -1600,4 +1600,24 @@ EOQ;
 
    }
 
+
+    /**
+     * Get user first day of week.
+     *
+     * @param [User] $user user object, current user if not specified
+     * @return int : 0 = Sunday, 1 = Monday, etc...
+     */
+    public function get_first_day_of_week()
+    {
+        $fdow = $this->getPreference('fdow');
+        if (empty($fdow)) 
+        {
+            $fdow = 0;
+        }
+
+        return $fdow;
+    }
+
+
+
 }
