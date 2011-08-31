@@ -21,7 +21,6 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
 require_once 'include/EditView/EditView2.php';
 
 class Bug46365Test extends Sugar_PHPUnit_Framework_TestCase
@@ -105,6 +104,7 @@ class Bug46365Test extends Sugar_PHPUnit_Framework_TestCase
     {
         return (boolean) count(intval($defs['panels']['panel1'][0]) - intval((int) $this->_o->defs['panels']['panel1'][0]));
     }
+
 }
 
 ?>
