@@ -103,7 +103,7 @@ function checkDBSettings($silent=false) {
             // try connecting to the DB
             if(!$db->connect($dbconfig, false)) {
                 $error = $db->lastError();
-                $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE'].": $error).";
+                $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE'];
                 installLog("ERROR::  {$errors['ERR_DB_LOGIN_FAILURE']}");
             } else {
                 installLog("Connection made using  host: {$_SESSION['setup_db_host_name']}, usr: {$_SESSION['setup_db_sugarsales_user']}");
@@ -121,7 +121,7 @@ function checkDBSettings($silent=false) {
             $dbconfig["db_password"] = $_SESSION['setup_db_admin_password'];
             if(!$db->connect($dbconfig, false)) {
                 $error = $db->lastError();
-                $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE'].": $error).";
+                $errors['ERR_DB_LOGIN_FAILURE'] = $mod_strings['ERR_DB_LOGIN_FAILURE'];
                 installLog("ERROR::  {$errors['ERR_DB_LOGIN_FAILURE']}");
             } else {
                 installLog("Connection made using  host: {$_SESSION['setup_db_host_name']}, usr: {$_SESSION['setup_db_sugarsales_user']}");

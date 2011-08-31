@@ -37,10 +37,10 @@
     <table border='0' width="100%" cellspacing='2' cellpadding='0'>
     <tr>
 		<td width='10%' scope="row">{$MOD.LBL_CURRENCY}</td>
-		<td width='10%' ><select tabindex='5' name='currency_id' id='currency_id' onchange='ConvertItems(this.options[selectedIndex].value);'>{$CURRENCY}</select></td>
+				<td width='10%' ><select tabindex='5' name='currency_id' id='currency_id' onchange='quotesManager.ConvertItems(this.options[selectedIndex].value);'>{$CURRENCY}</select></td>
 		<td width='10%' scope="row">{$MOD.LBL_TAXRATE}</td>
 		<td width='13%' >
-		<select tabindex='5' name='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);calculate(document)">{$TAXRATE_OPTIONS}</select>
+		<select tabindex='5' name='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);quotesManager.calculate(document)">{$TAXRATE_OPTIONS}</select>
 		<input type="hidden" name="taxrate_value" value="{$TAXRATE_VALUE}">
 		</td>
 		<td width='13%' scope="row">{$MOD.LBL_SHIPPING_PROVIDER}</td>
@@ -59,7 +59,7 @@
 	&nbsp; <input type='text' tabindex='5' size='20' name='name_name' id='name_id' value=''>
 	</td><td scope="row">{$MOD.LBL_BUNDLE_STAGE}</td>
 	<td >&nbsp;
-	<select name='select_name' tabindex='5' id='select_id' onchange='calculate(document);'>
+	<select name='select_name' tabindex='5' id='select_id' onchange='quotesManager.calculate(document);'>
 	{$QUOTE_STAGE_OPTIONS}
 	</select>
 	</td></tr></table>
@@ -100,7 +100,7 @@
 	</div>
 	
 	<br>
-	<input type='button' id='add_group' name='add_group' class='button' value='{$MOD.LBL_ADD_GROUP}' onclick='addTable("", "","","0.00")'>
+	<input type='button' id='add_group' name='add_group' class='button' value='{$MOD.LBL_ADD_GROUP}' onclick='quotesManager.addTable("", "","","0.00")'>
 	</td>
 </tr></table>
 </td>
@@ -139,45 +139,48 @@ Calendar.setup ({literal} { {/literal}
 <script type="text/javascript" src="{sugar_getjspath file='modules/Quotes/EditView.js'}"></script>
 <script type="text/javascript">
 {literal}
+quotesManager = new QuotesEditManager(YUI().use('node', function(Y){
+    return Y;
+}));
 if(!document.getElementById('calc_grand_total').checked){
 	document.getElementById('grand_tally').style.display = 'none';
 }
 {/literal}
 
-var precision = "{$PRECISION}";
-var default_product_status = "{$DEFAULT_PRODUCT_STATUS}";
-var invalidAmount = "{$APP.ERR_INVALID_AMOUNT}";
-var selectButtonTitle = "{$APP.LBL_SELECT_BUTTON_TITLE}";
-var selectButtonKey = "{$APP.LBL_SELECT_BUTTON_KEY}";
-var selectButtonValue = "{$APP.LBL_SELECT_BUTTON_LABEL}";
-var deleteButtonName = "{$MOD.LBL_REMOVE_ROW}";
-var deleteButtonConfirm = "{$MOD.NTC_REMOVE_PRODUCT_CONFIRMATION}";
-var deleteGroupConfirm = "{$MOD.NTC_REMOVE_GROUP_CONFIRMATION}";
-var deleteButtonValue = "{$MOD.LBL_REMOVE_ROW}";
-var addRowName = "{$MOD.LBL_ADD_ROW}";
-var addRowValue = "{$MOD.LBL_ADD_ROW}";
-var deleteTableName = "{$MOD.LBL_DELETE_GROUP}";
-var deleteTableValue = "{$MOD.LBL_DELETE_GROUP}";
-var subtotal_string = "{$MOD.LBL_SUBTOTAL}";
-var shipping_string = "{$MOD.LBL_SHIPPING}";
-var deal_tot_string = "{$MOD.LBL_DISCOUNT_TOTAL}";
-var new_sub_string = "{$MOD.LBL_NEW_SUB}";
-var total_string = "{$MOD.LBL_TOTAL}";
-var tax_string = "{$MOD.LBL_TAX}";
-var list_quantity_string = "{$MOD.LBL_LIST_QUANTITY}"
-var list_product_name_string = "{$MOD.LBL_LIST_PRODUCT_NAME}"
-var list_mf_part_num_string = "{$MOD.LBL_LIST_MANUFACTURER_PART_NUM}"
-var list_taxclass_string = "{$MOD.LBL_LIST_TAXCLASS}"
-var list_cost_string = "{$MOD.LBL_LIST_COST_PRICE}"
-var list_list_string = "{$MOD.LBL_LIST_LIST_PRICE}"
-var list_discount_string = "{$MOD.LBL_LIST_DISCOUNT_PRICE}"
-var list_deal_tot = "{$MOD.LBL_LIST_DEAL_TOT}"
-var check_data = "{$MOD.LBL_CHECK_DATA}"
-var addCommentName = "{$MOD.LBL_ADD_COMMENT}";
-var addCommentValue = "{$MOD.LBL_ADD_COMMENT}";
-var deleteCommentName = "{$MOD.LBL_REMOVE_COMMENT}";
-var deleteCommentValue = "{$MOD.LBL_REMOVE_COMMENT}";
-var deleteCommentConfirm = "{$MOD.NTC_REMOVE_COMMENT_CONFIRMATION}";
+precision = "{$PRECISION}";
+quotesManager.default_product_status = "{$DEFAULT_PRODUCT_STATUS}";
+quotesManager.invalidAmount = "{$APP.ERR_INVALID_AMOUNT}";
+quotesManager.selectButtonTitle = "{$APP.LBL_SELECT_BUTTON_TITLE}";
+quotesManager.selectButtonKey = "{$APP.LBL_SELECT_BUTTON_KEY}";
+quotesManager.selectButtonValue = "{$APP.LBL_SELECT_BUTTON_LABEL}";
+quotesManager.deleteButtonName = "{$MOD.LBL_REMOVE_ROW}";
+quotesManager.deleteButtonConfirm = "{$MOD.NTC_REMOVE_PRODUCT_CONFIRMATION}";
+quotesManager.deleteGroupConfirm = "{$MOD.NTC_REMOVE_GROUP_CONFIRMATION}";
+quotesManager.deleteButtonValue = "{$MOD.LBL_REMOVE_ROW}";
+quotesManager.addRowName = "{$MOD.LBL_ADD_ROW}";
+quotesManager.addRowValue = "{$MOD.LBL_ADD_ROW}";
+quotesManager.deleteTableName = "{$MOD.LBL_DELETE_GROUP}";
+quotesManager.deleteTableValue = "{$MOD.LBL_DELETE_GROUP}";
+quotesManager.subtotal_string = "{$MOD.LBL_SUBTOTAL}";
+quotesManager.shipping_string = "{$MOD.LBL_SHIPPING}";
+quotesManager.deal_tot_string = "{$MOD.LBL_DISCOUNT_TOTAL}";
+quotesManager.new_sub_string = "{$MOD.LBL_NEW_SUB}";
+quotesManager.total_string = "{$MOD.LBL_TOTAL}";
+quotesManager.tax_string = "{$MOD.LBL_TAX}";
+quotesManager.list_quantity_string = "{$MOD.LBL_LIST_QUANTITY}"
+quotesManager.list_product_name_string = "{$MOD.LBL_LIST_PRODUCT_NAME}"
+quotesManager.list_mf_part_num_string = "{$MOD.LBL_LIST_MANUFACTURER_PART_NUM}"
+quotesManager.list_taxclass_string = "{$MOD.LBL_LIST_TAXCLASS}"
+quotesManager.list_cost_string = "{$MOD.LBL_LIST_COST_PRICE}"
+quotesManager.list_list_string = "{$MOD.LBL_LIST_LIST_PRICE}"
+quotesManager.list_discount_string = "{$MOD.LBL_LIST_DISCOUNT_PRICE}"
+quotesManager.list_deal_tot = "{$MOD.LBL_LIST_DEAL_TOT}"
+quotesManager.check_data = "{$MOD.LBL_CHECK_DATA}"
+quotesManager.addCommentName = "{$MOD.LBL_ADD_COMMENT}";
+quotesManager.addCommentValue = "{$MOD.LBL_ADD_COMMENT}";
+quotesManager.deleteCommentName = "{$MOD.LBL_REMOVE_COMMENT}";
+quotesManager.deleteCommentValue = "{$MOD.LBL_REMOVE_COMMENT}";
+quotesManager.deleteCommentConfirm = "{$MOD.NTC_REMOVE_COMMENT_CONFIRMATION}";
 
 {$ADD_ROWS}
 </script>

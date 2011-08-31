@@ -518,7 +518,11 @@ SUGAR.forms.evalVariableExpression = function(expression, varmap, view)
 		
 		var regex = new RegExp("\\$" + v, "g");
 
-		if (typeof(value) == "string")
+		if (value === null)
+        {
+            value = "";
+        }
+        if (typeof(value) == "string")
 		{
 			value = value.replace(/\n/g, "");
 			if ((/^(\s*)$/).exec(value) != null || value === "")

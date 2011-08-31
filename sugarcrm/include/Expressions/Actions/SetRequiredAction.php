@@ -75,16 +75,33 @@ SUGAR.util.extend(SUGAR.forms.SetRequiredAction, SUGAR.forms.AbstractAction, {
                     node.innerHTML = \"<font color='red'>*</font>\";
                     node.className = \"req\";
                     this._el_lbl.appendChild(node);
-                    addToValidate(this.context.formName, this.variable, 'text', true, this.variable);
+                    var i = this.findInValidate(this.context.formName, this.variable)
+                    if (i > -1)
+                        validate[this.context.formName][i][2] = true;
+                    else
+                        addToValidate(this.context.formName, this.variable, 'text', true, this.variable);
                 }
             } else {
                 if ( p != null  && reqSpan != false) {
                     p.removeChild(reqSpan);
                 }
-                removeFromValidate(this.context.formName, this.variable);
+                var i = this.findInValidate(this.context.formName, this.variable)
+                if (i > -1)
+                    validate[this.context.formName][i][2] = false;
             }
         }
-    } 
+    },
+
+     findInValidate : function(form, field)
+     {
+         if (validate && validate[form]){
+             for (var i in validate[form]){
+                if (typeof(validate[form][i]) == 'object' && validate[form][i][0] == field)
+                    return i;
+             }
+         }
+         return -1;
+     }
 });";
 	}
 

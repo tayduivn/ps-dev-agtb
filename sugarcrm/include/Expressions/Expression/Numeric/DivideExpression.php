@@ -45,6 +45,8 @@ class DivideExpression extends NumericExpression {
 			var params = this.getParameters();
 			var numerator   = params[0].evaluate();
 			var denominator = params[1].evaluate();
+			if (denominator == 0)
+			    throw "Devision by 0 error";
 			return numerator/denominator;
 EOQ;
 	}

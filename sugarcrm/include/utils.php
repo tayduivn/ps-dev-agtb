@@ -1969,7 +1969,7 @@ function clean_xss($str, $cleanImg=true) {
 
 	$attribute_regex	= "#<.+({$jsEvents})[^=>]*=[^>]*>#sim";
 	$javascript_regex	= '@<[^/>][^>]+(expression\(|j\W*a\W*v\W*a|v\W*b\W*s\W*c\W*r|&#|/\*|\*/)[^>]*>@sim';
-	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?https?://[^>]*)>#sim';
+	$imgsrc_regex		= '#<[^>]+src[^=]*=([^>]*?http(s)?://[^>]*)>#sim';
 	$css_url			= '#url\(.*\.\w+\)#';
 
 
@@ -1977,9 +1977,18 @@ function clean_xss($str, $cleanImg=true) {
 
 	$matches = array_merge(
 	xss_check_pattern($tag_regex, $str),
-	xss_check_pattern($javascript_regex, $str),
-	xss_check_pattern($attribute_regex, $str)
+	xss_check_pattern($javascript_regex, $str)
 	);
+
+
+    $jsMatches = xss_check_pattern($attribute_regex, $str);
+    if(!empty($jsMatches)){
+        preg_match_all($attribute_regex, $str, $newMatches, PREG_PATTERN_ORDER);
+        if(!empty($newMatches[0][0])){
+            $matches2 = array_merge(xss_check_pattern("#({$jsEvents})#sim", $newMatches[0][0]));
+            $matches = array_merge($matches, $matches2);
+        }
+    }
 
 	if($cleanImg) {
 		$matches = array_merge($matches,
@@ -4794,4 +4803,15 @@ if(file_exists('custom/include/custom_utils.php')){
 //check to see if custom utils exists in Extension framework
 if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
     include_once('custom/application/Ext/Utils/custom_utils.ext.php');
+}
+/**
+ * @param $input - the input string to sanitize
+ * @param int $quotes - use quotes
+ * @param string $charset - the default charset
+ * @param bool $remove - strip tags or not
+ * @return string - the sanitized string
+ */
+function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = false)
+{
+    return htmlentities($input, $quotes, $charset);
 }
