@@ -3524,7 +3524,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 	}
 
 	// special case for unlisted parent-type relationships
-	if($focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
+	if( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
 		$temp_bean = get_module_info($tar_rel_module);
 		$temp_bean->retrieve($focus->parent_id);
 		if($temp_bean->id!=""){
