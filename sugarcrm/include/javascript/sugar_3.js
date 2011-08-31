@@ -706,6 +706,7 @@ function clear_all_errors() {
             if ( tabView.get ) {
                 var tabs = tabView.get("tabs");
                 for (var i in tabs) {
+                    if (typeof tabs[i] == "object")
                     tabs[i].get("labelEl").style.color = "";
                 }
             }
