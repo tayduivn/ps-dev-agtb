@@ -87,6 +87,10 @@ class ReportsViewBuildreportmoduletree extends SugarView
             $linked_field['label'] = preg_replace('/:$/','',$linked_field['label']);
             $linked_field['label'] = addslashes($linked_field['label']);
             
+	if (isset($app_list_strings['moduleList'][$linked_field['label']])) {
+		$linked_field['label'] = $app_list_strings['moduleList'][$linked_field['label']];
+	}
+			
             $module_array[] = $this->_populateNodeItem($bean_name,$link_module,$linked_field);
         }	
         
