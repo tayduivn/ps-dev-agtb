@@ -79,7 +79,7 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($e->id, $contact->department);
 		$this->assertEquals($email['message']['description'].' '.$e->id.' '.$email['message']['message_id'].' '.$email['message']['subject'].' '.htmlentities($email['message']['from_name']), $contact->description);
 		$this->assertEquals('Email', $contact->lead_source);
-		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $contact->date_entered);
+		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $GLOBALS['db']->fromConvert($contact->date_entered, 'datetime'));
 	}
 
 	// create a Cases object
@@ -113,7 +113,7 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals('Corey Cases', $case->name);
 		$this->assertEquals($e->id, $case->resolution);
 		$this->assertEquals($email['message']['description'].' '.$e->id.' '.$email['message']['message_id'].' '.$email['message']['subject'].' '.htmlentities($email['message']['from_name']), $case->description);
-		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $case->date_entered);
+		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $GLOBALS['db']->fromConvert($case->date_entered, 'datetime'));
 	}
 
 	// create an Opportunity object
@@ -147,7 +147,7 @@ class CreateObjectTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals('Oscar Opportunities', $opp->name);
 		$this->assertEquals($e->id, $opp->sales_stage);
 		$this->assertEquals($email['message']['description'].' '.$e->id.' '.$email['message']['message_id'].' '.$email['message']['subject'].' '.htmlentities($email['message']['from_name']), $opp->description);
-		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $opp->date_entered);
+		$this->assertEquals(gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime($email['message']['date_sent'])), $GLOBALS['db']->fromConvert($opp->date_entered, 'datetime'));
 	}
 
 	public function setUp () {

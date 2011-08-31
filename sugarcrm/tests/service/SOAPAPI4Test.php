@@ -160,6 +160,8 @@ class SOAPAPI4Test extends SOAPTestCase
         $sf->record_id = $seedData[2]['id'];
         $sf->save(FALSE);
 
+        $GLOBALS['db']->commit();
+
         $returnFields = array('name','id','deleted');
         $searchModules = array('Accounts','Contacts','Opportunities');
         $searchString = "UNIT TEST";
