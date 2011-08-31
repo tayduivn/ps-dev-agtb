@@ -65,13 +65,13 @@ function process_action_update($focus, $action_array){
 				$relBean->retrieve($new_value);
 				if (empty($relBean->id))
 				{
-					$GLOBALS['log']->fatal("workflow attempting to set relate field $field to invalid id: $new_value");
+					$GLOBALS['log']->info("workflow attempting to set relate field $field to invalid id: $new_value");
 					continue;
 				}
 			}
             if (!empty($focus->field_defs[$field]['calculated']))
             {
-                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                $GLOBALS['log']->info("workflow attempting to update calculated field $field.");
                 continue;
             }
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
@@ -89,7 +89,7 @@ function process_action_update($focus, $action_array){
 	foreach($action_array['basic_ext'] as $field => $new_value){
         if (!empty($focus->field_defs[$field]['calculated']))
         {
-            $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+            $GLOBALS['log']->info("workflow attempting to update calculated field $field.");
             continue;
         }
 		//Only here if there is a datetime.
@@ -110,7 +110,7 @@ function process_action_update($focus, $action_array){
 	foreach($action_array['advanced'] as $field => $meta_array){
         if (!empty($focus->field_defs[$field]['calculated']))
             {
-                $GLOBALS['log']->fatal("workflow attempting to update calculated field $field.");
+                $GLOBALS['log']->info("workflow attempting to update calculated field $field.");
                 continue;
             }
 		$new_value = process_advanced_actions($focus, $field, $meta_array, $focus);
@@ -121,9 +121,9 @@ function process_action_update($focus, $action_array){
 //end function process_action_update
 }
 
-function process_action_update_rel(& $focus, $action_array){
+function process_action_update_rel($focus, $action_array){
 
-		$rel_handler = & $focus->call_relationship_handler("module_dir", true);
+		$rel_handler = $focus->call_relationship_handler("module_dir", true);
 		$rel_handler->set_rel_vardef_fields($action_array['rel_module']);
 		$rel_handler->build_info(false);
 
@@ -176,7 +176,7 @@ function process_action_update_rel(& $focus, $action_array){
 //end function process_action_update_rel
 }
 
-function process_action_new(& $focus, $action_array){
+function process_action_new($focus, $action_array){
 
 	//find out if the action_module is related to this module or not.  If so make sure to connect
 	$seed_object = new WorkFlow();
@@ -245,10 +245,10 @@ function process_action_new(& $focus, $action_array){
 
 
 
-function process_action_new_rel(& $focus, $action_array){
+function process_action_new_rel($focus, $action_array){
 
 	///Build the relationship information using the Relationship handler
-	$rel_handler = & $focus->call_relationship_handler("module_dir", true);
+	$rel_handler = $focus->call_relationship_handler("module_dir", true);
 	$rel_handler->set_rel_vardef_fields($action_array['rel_module'], $action_array['action_module']);
 	//$rel_handler->base_bean = & $focus;
 	$rel_handler->build_info(true);
@@ -416,6 +416,15 @@ function clean_save_data($target_module, $action_array){
 //end function clean_save_data
 }
 
+/**
+ * Parse date from certain type and add interval to it
+ *
+ * @param string $stamp_type  Type (date, time, datetime)
+ * @param int $time_interval Interval, seconds
+ * @param bool $user_format Date is in user format?
+ * @param bool $is_update Is it update for existing field?
+ * @param string $value Date value (if update)
+ */
 function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_update = false, $value=null)
 {
 	/* This function needs to be combined with the one in WorkFlowSchedule.php
@@ -423,14 +432,20 @@ function get_expiry_date($stamp_type, $time_interval, $user_format = false, $is_
 	global $timedate;
 
 	if($is_update){
-	    if($user_format) {
-	        $date = $timedate->fromUserType($value, $stamp_type);
-	    } else {
-		    $date = $timedate->fromDbType($value, $stamp_type);
+	    if(!empty($value)) {
+    	    if($user_format) {
+    	        $date = $timedate->fromUserType($value, $stamp_type);
+    	    } else {
+    		    $date = $timedate->fromDbType($value, $stamp_type);
+    	    }
 	    }
 	} else {
 	    $date = $timedate->getNow();
 
+	}
+	if(empty($date)) {
+	    $GLOBALS['log']->fatal("Invalid date [$value] for type $stamp_type");
+	    return '';
 	}
 	$date->modify("+$time_interval seconds");
     return $timedate->asDbType($date, $stamp_type);
