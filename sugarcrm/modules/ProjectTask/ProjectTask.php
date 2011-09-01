@@ -64,6 +64,7 @@ class ProjectTask extends SugarBean {
     var $predecessors;
     //BEGIN SUGARCRM flav=pro ONLY
     var $resource_id;
+    var $resource_name;
     //END SUGARCRM flav=pro ONLY
     var $priority;
 
@@ -143,6 +144,7 @@ class ProjectTask extends SugarBean {
       $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_name = get_assigned_team_name($this->team_id);
+        $this->resource_name = $this->getResourceName();
 		//END SUGARCRM flav=pro ONLY
       $this->project_name = $this->_get_project_name($this->project_id);
 		/*
@@ -164,6 +166,9 @@ class ProjectTask extends SugarBean {
 	 */
    function fill_in_additional_list_fields()
    {
+      //BEGIN SUGARCRM flav=pro ONLY
+      $this->resource_name = $this->getResourceName();
+      //END SUGARCRM flav=pro ONLY
       $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
       //$this->parent_name = $this->_get_parent_name($this->parent_id);
       $this->project_name = $this->_get_project_name($this->project_id);
@@ -373,41 +378,50 @@ class ProjectTask extends SugarBean {
 	        }           
         }
         return $query;
-    }	
+    }
+
 
 	//BEGIN SUGARCRM flav=pro ONLY
+    function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false)
+    {
+        if(isset($filter['resource_name']) && $filter['resource_name'] === true) {
+            $filter['resource_id'] = true;
+        }
+        return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
+    }
+
     function getResourceName(){
-    	
+
     	$query = "SELECT DISTINCT resource_type FROM project_resources WHERE resource_id = '" . $this->resource_id . "'";
-    	
+
     	$result = $this->db->query($query, true, "Unable to retrieve project resource type");
 		$row = $this->db->fetchByAssoc($result);
-		
+
 		if ($row != null){
 	    	$resource_table = strtolower($row['resource_type']);
-	    	
+
 	    	if (empty($resource_table)){
 	    		return '&nbsp;';
 	    	}
-	    	
+
 	    	if ($this->db->dbType=='mssql'){
 				$resource = db_convert($resource_table.".first_name,''","IFNULL")." + ' ' + ".db_convert($resource_table.".last_name,''","IFNULL");
-	
+
 			}
 			else if ($this->db->dbType=='mysql'){
 				$resource = "CONCAT(".db_convert($resource_table.".first_name,''","IFNULL").", ' ',".db_convert($resource_table.".last_name,''","IFNULL").")";
-			}				
+			}
 			else if ($this->db->dbType=='oci8'){
 				$resource = "CONCAT(CONCAT(".db_convert($resource_table.".first_name,''","IFNULL").",' '), ".db_convert($resource_table.".last_name,''","IFNULL").")";
-			}		
-			
+			}
+
 			$resource_name_qry = "SELECT " . $resource . " as resource_name " .
 								 "FROM " . $resource_table . " ".
 								 "WHERE id = '" . $this->resource_id ."'";
-	
+
 			$result = $this->db->query($resource_name_qry, true, "Unable to retrieve project resource name");
 			$row = $this->db->fetchByAssoc($result);
-			
+
 			return $row['resource_name'];
 		}
 		else{

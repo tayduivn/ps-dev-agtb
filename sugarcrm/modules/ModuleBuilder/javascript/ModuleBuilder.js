@@ -1045,6 +1045,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				select[count] = new Option(ajaxResponse[key], key);
 				count++;
 			}
+			ajaxStatus.flashStatus(SUGAR.language.get('app_strings', 'LBL_REQUEST_PROCESSED'), 2000);
 		},
 		setSelectedOption : function (sel, option)
 		{
@@ -1088,7 +1089,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
                 embed: true,
                 targetModule:ModuleBuilder.module,
                 package:ModuleBuilder.MBpackage,
-                formula: formula ? YAHOO.lang.JSON.stringify(formula) : ""
+                formula:encodeURIComponent(YAHOO.lang.JSON.stringify(formula))
             };
 			win.load(ModuleBuilder.paramsToUrl(win.params), null, function()
 			{

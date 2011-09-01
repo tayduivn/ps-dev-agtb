@@ -182,7 +182,15 @@ function handleRedirect($return_id='', $return_module='', $additionalFlags = fal
 		exit;
 	}
 
-	if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "")
+	$url = buildRedirectURL($return_id, $return_module);
+	header($url);
+	exit;	
+}
+
+//eggsurplus: abstract to simplify unit testing
+function buildRedirectURL($return_id='', $return_module='') 
+{
+    if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "")
 	{
 		$return_module = $_REQUEST['return_module'];
 	}
@@ -289,7 +297,6 @@ function handleRedirect($return_id='', $return_module='', $additionalFlags = fal
             exit;
         }
     }
-	exit;
 }
 
 function getLikeForEachWord($fieldname, $value, $minsize=4)

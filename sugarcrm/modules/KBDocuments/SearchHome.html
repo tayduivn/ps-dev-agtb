@@ -70,7 +70,7 @@
 				</table>	
 	        	<div style='padding: 2'>
 		        	<input type='submit' class='button' name='fts_search' id='fts_search' value='{$MOD.LBL_SEARCH}' >
-	 				<input type='submit' class='button' name='clearForm' id='clearForm' value='{$MOD.LBL_CLEAR}' onClick="document.getElementById('mode_b').value='clear';">
+	 				<input type='submit' class='button' name='clearForm' id='clearForm' value='{$MOD.LBL_CLEAR}' onClick="SUGAR.searchForm.clear_form(this.form); return false;">
  				</div>
 			</form>	
 			</div>	

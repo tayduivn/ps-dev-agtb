@@ -273,10 +273,10 @@ class TeamSet extends SugarBean{
         // determine whether the user is already on the team
         $sql = '';
         if(!empty($team_set_id)){
-            $sql = "SELECT team_memberships.id FROM team_memberships INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id WHERE user_id='$user_id' AND team_sets_teams.team_set_id='$team_set_id' AND team_memberships.deleted = 0";
+            $sql = "SELECT id FROM team_memberships INNER JOIN team_sets_teams ON team_sets_teams.team_id = team_memberships.team_id WHERE user_id='$user_id' AND team_sets_teams.team_set_id='$team_set_id' AND team_memberships.deleted = 0";
         }elseif(!empty($team_ids)){
             $team_id_str = "'" . implode("','", $team_ids) . "'";
-            $sql = "SELECT team_memberships.id FROM team_memberships WHERE user_id='$user_id' AND team_id IN ($team_id_str) AND team_memberships.deleted = 0";
+            $sql = "SELECT id FROM team_memberships WHERE user_id='$user_id' AND team_id IN ($team_id_str) AND team_memberships.deleted = 0";
         }else{
             return false;
         }

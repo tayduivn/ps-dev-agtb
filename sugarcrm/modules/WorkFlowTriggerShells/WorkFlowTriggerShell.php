@@ -392,6 +392,15 @@ class WorkFlowTriggerShell extends SugarBean {
             if (isset($new_expression->created_by))  $new_expression->created_by=null;            
   			$new_expression->save();
 		}
+		$expression_list = $this->get_linked_beans('past_triggers','Expression');
+		foreach($expression_list as $expression){
+			$new_expression =& $expression;
+			$new_expression->id = "";
+			$new_expression->parent_id = $new_id;
+			if (isset($new_expression->date_entered))  $new_expression->date_entered=null;
+			if (isset($new_expression->created_by))  $new_expression->created_by=null;
+			$new_expression->save();
+		}
 		$expression_list = $this->get_linked_beans('expressions','Expression');
 		foreach($expression_list as $expression){
 			$new_expression =& $expression;

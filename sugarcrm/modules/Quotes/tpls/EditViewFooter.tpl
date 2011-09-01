@@ -43,8 +43,6 @@
 		<select tabindex='5' name='taxrate_id' onchange="this.form.taxrate_value.value=get_taxrate(this.form.taxrate_id.options[selectedIndex].value);calculate(document)">{$TAXRATE_OPTIONS}</select>
 		<input type="hidden" name="taxrate_value" value="{$TAXRATE_VALUE}">
 		</td>
-		<td width='13%' scope="row">{$MOD.LBL_SHIPPING_PROVIDER}</td>
-		<td width='13%' ><select tabindex='5' name='shipper_id'>{$SHIPPER_OPTIONS}</select></td>
 		<td width='13%' scope="row">{$MOD.LBL_CALC_GRAND}</td>
 		<td width='13%' ><input tabindex='5' type='checkbox' class='checkbox' name='calc_grand_total' id='calc_grand_total' onClick='toggleDisplay("grand_tally");' {$CALC_GRAND_TOTAL_CHECKED}></td>
 	    <td width='13%' scope="row">{$MOD.LBL_SHOW_LINE_NUMS}</td>

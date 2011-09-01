@@ -414,6 +414,7 @@ class OutboundEmail {
 					$values .= ", ";
 				}
 				$cols .= $def;
+				$pattern = '\\';
 				if ($def == 'mail_smtppass' && !empty($this->$def)) {
 					$this->$def = blowfishEncode(blowfishGetKey('OutBoundEmail'), $this->$def);
 				} // if
@@ -422,9 +423,15 @@ class OutboundEmail {
 						$this->$def = 0;
 					}
 					$values .= $this->$def;
+				}elseif($def == 'mail_smtpuser' && strpos($this->$def, '\\' )){ //bug 41766: taking care of '\' in username
+					$temp = explode('\\', $this->$def);
+					$this->$def = $temp[0] . '\\\\' .$temp[1];
+					$values .= "{$def} = '{$this->$def}'";
 				}else{
 					$values .= "'{$this->$def}'";
 				}
+			
+				
 			}
 
 			$q  = "INSERT INTO outbound_email ($cols) VALUES ({$values})";
@@ -444,16 +451,24 @@ class OutboundEmail {
 			    if(!empty($values)) {
 					$values .= ", ";
 				}
-
+				$pattern = "\\";
 				if($def == 'mail_smtpauth_req' || $def == 'mail_smtpssl'){
 					if(empty($this->$def)){
 						$this->$def = 0;
 					}
 					$values .= "{$def} = {$this->$def}";
+				}elseif($def == 'mail_smtpuser' && strpos($this->$def, '\\' )){ //bug 41766: taking care of '\' in username
+					$temp = explode('\\', $this->$def);
+					$this->$def = $temp[0] . '\\\\' .$temp[1];
+					$values .= "{$def} = '{$this->$def}'";
 				}else{
 					$values .= "{$def} = '{$this->$def}'";
 				}
+				
+			
+				
 			}
+		
 
 			$q = "UPDATE outbound_email SET {$values} WHERE id = '{$this->id}'";
 		}

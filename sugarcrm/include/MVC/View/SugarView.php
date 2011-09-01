@@ -103,9 +103,10 @@ class SugarView
         $this->display();
         if ( !empty($this->module) ) {
             $GLOBALS['logic_hook']->call_custom_logic($this->module, 'after_ui_frame');
+        } else {
+            $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         }
         $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-
 
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
 
@@ -781,6 +782,10 @@ EOHTML;
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
                 echo "<script>\n".implode("\n", $config_js)."</script>\n";
+            }
+
+            if ( isset($sugar_config['email_sugarclient_listviewmaxselect']) ) {
+                echo "<script>SUGAR.config.email_sugarclient_listviewmaxselect = {$GLOBALS['sugar_config']['email_sugarclient_listviewmaxselect']};</script>";
             }
 
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';

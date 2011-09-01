@@ -38,12 +38,13 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
     {
         global $current_user, $currentModule ;
 		$this->_user = SugarTestUserUtilities::createAnonymousUser();
+		$current_user = $this->_user;
 	}
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        //unset($GLOBALS['current_user']);
         
         if ($this->ob != null)
             $GLOBALS['db']->query("DELETE FROM outbound_email WHERE id= '{$this->ob->id}'");
@@ -58,7 +59,7 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         
         $newSystemPort = 864;
         $newSystemServer = "system.imap.com";
-        $newSystemUsername = "sytem_user_name";
+        $newSystemUsername = "system_user_name";
         $newSystemPassword = "SYSTEM_PASSWORD";
         
         $userID = create_guid();
@@ -87,10 +88,10 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $obRetrieved = new OutboundEmail();
         $obRetrieved->retrieve($userID);
         
-        $this->assertEquals($newSystemPort, $obRetrieved->mail_smtpport, "Could not update users sytem-override accounts after system save.");
-        $this->assertEquals($newSystemServer, $obRetrieved->mail_smtpserver, "Could not update users sytem-override accounts after system save.");
-        $this->assertEquals($newSystemUsername, $obRetrieved->mail_smtpuser, "Could not update users sytem-override accounts after system save.");
-        $this->assertEquals($newSystemPassword, $obRetrieved->mail_smtppass, "Could not update users sytem-override accounts after system save.");
+        $this->assertEquals($newSystemPort, $obRetrieved->mail_smtpport, "Could not update users system-override accounts after system save.");
+        $this->assertEquals($newSystemServer, $obRetrieved->mail_smtpserver, "Could not update users system-override accounts after system save.");
+        $this->assertEquals($newSystemUsername, $obRetrieved->mail_smtpuser, "Could not update users system-override accounts after system save.");
+        $this->assertEquals($newSystemPassword, $obRetrieved->mail_smtppass, "Could not update users system-override accounts after system save.");
         
     }
     
@@ -126,10 +127,10 @@ class Bug23140Test extends Sugar_PHPUnit_Framework_TestCase
         $obRetrieved = new OutboundEmail();
         $obRetrieved->retrieve($userID);
         
-        $this->assertEquals($newSystemPort, $obRetrieved->mail_smtpport, "Could not update users sytem-override accounts after system save.");
-        $this->assertEquals($newSystemServer, $obRetrieved->mail_smtpserver, "Could not update users sytem-override accounts after system save.");
-        $this->assertEquals("Test User", $obRetrieved->mail_smtpuser, "Could not update users sytem-override accounts after system save.");
-        $this->assertEquals("User Pass", $obRetrieved->mail_smtppass, "Could not update users sytem-override accounts after system save.");
+        $this->assertEquals($newSystemPort, $obRetrieved->mail_smtpport, "Could not update users system-override accounts after system save.");
+        $this->assertEquals($newSystemServer, $obRetrieved->mail_smtpserver, "Could not update users system-override accounts after system save.");
+        $this->assertEquals("Test User", $obRetrieved->mail_smtpuser, "Could not update users system-override accounts after system save.");
+        $this->assertEquals("User Pass", $obRetrieved->mail_smtppass, "Could not update users system-override accounts after system save.");
     }
     
     
