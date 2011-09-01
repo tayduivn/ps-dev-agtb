@@ -43,6 +43,15 @@ class ViewExecFunction extends ViewAjax
 
         $params = implode(",", json_decode(html_entity_decode($this->params)));
         $result = Parser::evaluate("{$this->function}($params)", $focus)->evaluate();
+        //If the target field isn't a date, convert it to a user formated string
+        if ($result instanceof DateTime)
+        {
+            global $timedate;
+            if (isset($result->isDate) && $result->isDate)
+                $result = $timedate->asUserDate($result);
+            else
+                $result = $timedate->asUser($result);
+        }
         echo json_encode($result);
     }
 }

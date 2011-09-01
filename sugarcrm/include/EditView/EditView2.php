@@ -440,6 +440,12 @@ class EditView
                 if (isset($this->fieldDefs[$name]['options']) && isset($app_list_strings[$this->fieldDefs[$name]['options']]))
                 {
                     $this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']];
+                    if(isset($GLOBALS['sugar_config']['enable_autocomplete']) && $GLOBALS['sugar_config']['enable_autocomplete'] == true){
+						$this->fieldDefs[$name]['autocomplete'] = true;
+	                	$this->fieldDefs[$name]['autocomplete_options'] = $this->fieldDefs[$name]['options']; // we need the name for autocomplete
+					} else {
+                        $this->fieldDefs[$name]['autocomplete'] = false;
+                   }
                 }
 
                 if (isset($this->fieldDefs[$name]['function']))
@@ -464,16 +470,6 @@ class EditView
                         $this->fieldDefs[$name]['options'] = $function($this->focus, $name, $value, $this->view);
                     }
                 }
-
-	            if(isset($this->fieldDefs[$name]['options']) && isset($app_list_strings[$this->fieldDefs[$name]['options']])) {
-                    if(isset($GLOBALS['sugar_config']['enable_autocomplete']) && $GLOBALS['sugar_config']['enable_autocomplete'] == true){
-						$this->fieldDefs[$name]['autocomplete'] = true;
-	                	$this->fieldDefs[$name]['autocomplete_options'] = $this->fieldDefs[$name]['options']; // we need the name for autocomplete
-					} else {
-                        $this->fieldDefs[$name]['autocomplete'] = false;
-                   }
-	                $this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']]; // fill in enums
-	            } //if
 
 	       	 	if(isset($this->fieldDefs[$name]['function'])) {
 	       	 		$function = $this->fieldDefs[$name]['function'];
