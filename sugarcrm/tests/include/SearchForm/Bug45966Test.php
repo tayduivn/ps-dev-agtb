@@ -23,7 +23,7 @@
  ********************************************************************************/
 
 
-require_once "modules/Notes/Note.php";
+require_once 'modules/Notes/Note.php';
 require_once 'include/SearchForm/SearchForm2.php';
 
 
@@ -62,8 +62,13 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
     public function tearDown() {
         unset($this->array);
+        unset($this->seed);
+        unset($this->form);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         unset($GLOBALS['current_user']);
+        unset($listViewDefs);
+        unset($searchFields);
+        unset($searchdefs);
     }
 
     public function testSearchDateEqualsAdjustsForTimeZone() {
@@ -107,7 +112,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
     public function testSearchAfterDateAdjustsForTimeZone() {
         global $timedate;
         $user = $GLOBALS['current_user'];
-        
+
         $testDate = '12/31/2011';
 
         $this->array['date_entered_advanced_range_choice'] = 'greater_than';
@@ -132,7 +137,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['range_date_entered_advanced'] = $testDate;
 
         $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
-        $expected = array(strtolower($this->module).".date_entered > '".$adjDate['start']."'");
+        $expected = array(strtolower($this->module).".date_entered < '".$adjDate['start']."'");
 
         $this->form->populateFromArray(&$this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
@@ -271,7 +276,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $adjNextMonthFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, date("m")+1, 01,   date("Y"))), $user);
         $adjNextMonthLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, -1, date("m")+2, 01,   date("Y"))), $user);
-        
+
         $expected = array(strtolower($this->module).".date_entered >= '".$adjNextMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjNextMonthLastDay['end']."'");
 
         $this->form->populateFromArray(&$this->array);
