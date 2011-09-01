@@ -158,6 +158,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			mp.getUnitByPosition('right').on("resize", correctW); 
 			mp.getUnitByPosition('right').on("collapse", function(){
 				Ck.setSub("ModuleBuilder", "helpHidden", "true");
+                mp.get("element").querySelector(".yui-layout-clip-right .collapse").id = "expand_help";
 			});
 			mp.getUnitByPosition('right').on("expand", function(){
 				Ck.setSub("ModuleBuilder", "helpHidden", "false");
@@ -165,6 +166,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			mp.getUnitByPosition('left').on("resize", correctW);
 			mp.getUnitByPosition('left').on("collapse", function(){
 				Ck.setSub("ModuleBuilder", "treeHidden", "true");
+                mp.get("element").querySelector(".yui-layout-clip-left .collapse").id = "expand_tree";
 			});
 			mp.getUnitByPosition('left').on("expand", function(){
 				Ck.setSub("ModuleBuilder", "treeHidden", "false");
