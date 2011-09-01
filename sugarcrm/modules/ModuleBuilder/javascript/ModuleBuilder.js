@@ -63,7 +63,13 @@ function addChildNodes(parentNode, parentData) {
 if (typeof(ModuleBuilder) == 'undefined') {
 	ModuleBuilder = {
 	    init: function(){
-			
+            //Check if we shoudln't be in studio and need to load the normal ajaxUI
+            var aRegex = /#.*ajaxUILoc=([^&]*)/.exec(window.location);
+            var ajaxLoc = aRegex ? aRegex[1] : false;
+            if (ajaxLoc) {
+                window.location = "index.php?action=ajaxui#ajaxUILoc=" + ajaxLoc;
+                return;
+            }
 			//Setup the basic ajax request settings
 			Connect.extraParams = {
 				to_pdf: true
@@ -211,7 +217,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			}
 
 			YAHOO.util.History.register('mbContent', mbContent, ModuleBuilder.navigate);
-			YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
+            YAHOO.util.History.initialize("yui-history-field", "yui-history-iframe");
 			ModuleBuilder.getContent(mbContent);
 			
 			if (SUGAR.themes.tempHideLeftCol) SUGAR.themes.tempHideLeftCol();
