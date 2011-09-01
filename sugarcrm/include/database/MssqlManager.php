@@ -251,45 +251,6 @@ class MssqlManager extends DBManager
         return $this->getOne("SELECT @@VERSION as version");
 	}
 
-    /**
-     * @see DBManager::checkError()
-     */
-    public function checkError($msg = '', $dieOnError = false)
-    {
-    	if (parent::checkError($msg, $dieOnError))
-            return true;
-
-        $sqlmsg = mssql_get_last_message();
-
-        $sqlpos = strpos($sqlmsg, 'Changed database context to');
-        $sqlpos2 = strpos($sqlmsg, 'Warning:');
-        $sqlpos3 = strpos($sqlmsg, 'Checking identity information:');
-        if ( $sqlpos !== false || $sqlpos2 !== false || $sqlpos3 !== false )
-            $sqlmsg = '';  // empty out sqlmsg if its either of the two error messages described above
-        else {
-        	global $app_strings;
-            //ERR_MSSQL_DB_CONTEXT: localized version of 'Changed database context to' message
-            if (empty($app_strings) or !isset($app_strings['ERR_MSSQL_DB_CONTEXT'])) {
-                //ignore the message from sql-server if $app_strings array is empty. This will happen
-                //only if connection if made before languge is set.
-                $GLOBALS['log']->debug("Ignoring this database message: " . $sqlmsg);
-                $sqlmsg = '';
-            }
-            else {
-                $sqlpos = strpos($sqlmsg, $app_strings['ERR_MSSQL_DB_CONTEXT']);
-                if ( $sqlpos !== false )
-                    $sqlmsg = '';
-            }
-        }
-
-        if ( strlen($sqlmsg) > 2 ) {
-        	$GLOBALS['log']->fatal("$msg: SQL Server error: " . $sqlmsg);
-            return true;
-        }
-
-        return false;
-	}
-
 	/**
      * @see DBManager::query()
 	 */
