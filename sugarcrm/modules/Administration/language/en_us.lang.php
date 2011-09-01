@@ -1151,9 +1151,15 @@ $mod_strings = array (
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
+	'LBL_LANGUAGE_PACKS' => 'Language Packs' /*for 508 compliance fix*/,
+	'LBL_PATCH_UPGRADES' => 'Patch Upgrades' /*for 508 compliance fix*/,
+	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
+	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
+	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
+
    'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
    'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
-// OAuth
+	// OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",
     'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
@@ -1164,3 +1170,4 @@ $mod_strings = array (
     'LBL_CONFIGURE_SNIP' => 'Sugar Ease',
     'LBL_CONFIGURE_SNIP_DESC' => 'Enable/disable the Sugar Email Archiving Service',
 	);
+

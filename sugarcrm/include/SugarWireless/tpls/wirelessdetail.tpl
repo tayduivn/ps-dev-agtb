@@ -1,4 +1,3 @@
-
 {*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
@@ -68,11 +67,11 @@
 				{foreach from=$DATA.list item=NAME key=ID name="recordlist"}
 				<li class="{if $smarty.foreach.recordlist.index % 2 == 0}odd{else}even{/if}">
                     {assign var="module_image" value=$DATA.module}
-                    {assign var="dotgif" value=".gif"}
-                    <a href="index.php?module={$DATA.module}&record={$ID}&action=wirelessdetail">
-                        <img border=0 src="{sugar_getimagepath file=$module_image$dotgif}">&nbsp;
+                    {assign var="dotgif" value=".gif"}  
+                    <a href="index.php?module={$SUBPANEL}&record={$ID}&action=wirelessdetail">
+                        {sugar_getimage name=$module_image$dotgif alt=$module_image other_attributes='border="0" '}&nbsp;
                         {$NAME}
-                    </a><br />
+                    </a><br />                    
 				</li>
 				{/foreach}
 				</ul>

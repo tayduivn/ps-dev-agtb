@@ -388,7 +388,7 @@ function confirm_drop_tables(yes_no){
            <div id="checkingDiv" style="display:none">
            <table cellspacing="0" cellpadding="0" border="0">
                <tr><td>
-                    <p><img src='install/processing.gif'> <br>{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}</p>
+                    <p><img alt="{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}" src='install/processing.gif'> <br>{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}</p>
                 </td></tr>
             </table>
             </div>

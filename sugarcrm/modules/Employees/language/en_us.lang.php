@@ -121,7 +121,8 @@ $mod_strings = array (
   'LBL_PHOTO'	=> 'Photo',
   'LBL_DELETE_USER_CONFIRM'           => 'This Employee is also a User. Deleting the Employee record will also delete the User record, and the User will no longer be able to access the application. Do you want to proceed with deleting this record?',
   'LBL_DELETE_EMPLOYEE_CONFIRM'       => 'Are you sure you want to delete this employee?',
-  
+	'LBL_SELECT' => 'Select' /*for 508 compliance fix*/,
+	'LBL_FF_CLEAR' => 'Clear' /*for 508 compliance fix*/,
 );
 
 

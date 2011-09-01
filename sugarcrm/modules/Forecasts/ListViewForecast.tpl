@@ -132,14 +132,14 @@
 						{if $params.orderBy|default:$default_order|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-                                <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+                                {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 							{else}
                                 {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-                                <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+                                {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 							{/if}
 						{else}
 							{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
 						{/if}
 						</a>
 					{else}

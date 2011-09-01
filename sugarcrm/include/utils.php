@@ -227,6 +227,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
+		'use_sprites' => true,
 	);
 }
 
@@ -412,7 +413,7 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-
+	'use_sprites' => true,
 
 	//END SUGARCRM flav=pro ONLY
 	'use_real_names' => true,
@@ -2241,13 +2242,9 @@ function convert_id($string)
 /**
  * @deprecated use SugarTheme::getImage()
  */
-function get_image($image,$other_attributes,$width="",$height="")
+function get_image($image,$other_attributes,$width="",$height="",$ext='.gif',$alt)
 {
-    return SugarThemeRegistry::current()->getImage(basename($image),
-        $other_attributes,
-        empty($width) ? null : $width,
-        empty($height) ? null : $height
-        );
+    return SugarThemeRegistry::current()->getImage(basename($image), $other_attributes, empty($width) ? null : $width, empty($height) ? null : $height, $ext, $alt );
 }
 /**
  * @deprecated use SugarTheme::getImageURL()
@@ -3539,7 +3536,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 	}
 
 	// special case for unlisted parent-type relationships
-	if($focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
+	if( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
 		$temp_bean = get_module_info($tar_rel_module);
 		$temp_bean->retrieve($focus->parent_id);
 		if($temp_bean->id!=""){
@@ -4114,16 +4111,24 @@ function createGroupUser($name) {
 
 function _getIcon($iconFileName)
 {
-    $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
-    //First try un-ucfirst-ing the icon name
-    if ( empty($iconPath) )
-        $iconPath = SugarThemeRegistry::current()->getImageURL(
-            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
-    //Next try removing the icon prefix
-    if ( empty($iconPath) )
-        $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 
-  	return $iconPath;
+	$iconName = "icon_{$iconFileName}.gif";
+    $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconFound) )
+		$iconName = "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif";
+        $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+    
+	//Next try removing the icon prefix
+    if ( empty($iconFound) )
+		$iconName = "{$iconFileName}.gif";
+		$iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+
+	if ( empty($iconFound) )
+		$iconName = '';
+
+  	return $iconName;
 }
 /**
  * Function to grab the correct icon image for Studio
@@ -4132,22 +4137,23 @@ function _getIcon($iconFileName)
  * @param string $width Width of image
  * @param string $height Height of image
  * @param string $align Alignment of image
+ * @param string $alt Alt tag of image
  * @return string $string <img> tag with corresponding image
  */
 
-function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline' )
+function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline', $alt='' )
 {
 	global $app_strings, $theme;
 
-    $iconPath = _getIcon($iconFileName);
- 	if(empty($iconPath)){
- 	    $iconPath = _getIcon($altFileName);
- 	    if (empty($iconPath))
+    $iconName = _getIcon($iconFileName);
+ 	if(empty($iconName)){
+ 	    $iconName = _getIcon($altFileName);
+ 	    if (empty($iconName))
  	    {
             return $app_strings['LBL_NO_IMAGE'];
  	    }
  	}
-	return '<img border="0" src="'.$iconPath.'" width="'.$width.'" height="'.$height.'" align="'.$align.'">';
+	return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
 /**
@@ -4157,23 +4163,21 @@ function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='
  * @param string $width Width of image
  * @param string $height Height of image
  * @param string $align Alignment of image
+ * @param string $alt Alt tag of image
  * @return string $string <img> tag with corresponding image
  */
 
-function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle'){
+function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle',$alt=''){
 	global $app_strings, $theme;
- 	$icon_path = _getIcon($module . "_32");
- 	if (empty($icon_path))
+ 	$iconName = _getIcon($module . "_32");
+ 	if (empty($iconName))
  	{
- 		$icon_path = _getIcon($module);
+ 		$iconName = _getIcon($module);
  	}
- 	if(empty($icon_path)){
- 		$icon = $app_strings['LBL_NO_IMAGE'];
+ 	if(empty($iconName)){
+ 		return $app_strings['LBL_NO_IMAGE'];
  	}
-	else{
-		$icon = '<img border="0" src="'.$icon_path.'" width="'.$width.'" height="'.$height.'" align="'.$align.'">';
-	}
-	return $icon;
+	return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
 // works nicely to change UTF8 strings that are html entities - good for PDF conversions

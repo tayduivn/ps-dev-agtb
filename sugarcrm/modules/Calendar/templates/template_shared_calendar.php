@@ -151,11 +151,11 @@ foreach($args['users'] as $curr_user)
 <table width="100%" cellspacing="2" cellpadding="0" border="0">
 <tr height="15">
 	<td width="100%"></td>
-    <td class="listViewCalCurrentApptLgnd"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('blank.gif'); ?>" alt="<?php echo $mod_strings['LBL_SCHEDULED']; ?>" width="15" height="15">&nbsp;</td>
+    <td class="listViewCalCurrentApptLgnd"><?php echo SugarThemeRegistry::current()->getImage('blank', '', 15, 15, ".gif", $mod_strings['LBL_SCHEDULED']); ?>&nbsp;</td>
     <td>&nbsp;<?php echo $mod_strings['LBL_SCHEDULED']; ?>&nbsp;</td>
-    <td class="listViewCalOtherApptLgnd"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('blank.gif'); ?>" alt="<?php echo $mod_strings['LBL_BUSY']; ?>" width="15" height="15">&nbsp;</td>
+    <td class="listViewCalOtherApptLgnd"><?php echo SugarThemeRegistry::current()->getImage('blank', '', 15, 15, ".gif", $mod_strings['LBL_BUSY']); ?>&nbsp;</td>
     <td>&nbsp;<?php echo $mod_strings['LBL_BUSY']; ?>&nbsp;</td>
-    <td class="listViewCalConflictApptLgnd"><img src="<?php echo SugarThemeRegistry::current()->getImageURL('blank.gif'); ?>" alt="<?php echo $mod_strings['LBL_CONFLICT']; ?>" width="15" height="15">&nbsp;</td>
+    <td class="listViewCalConflictApptLgnd"><?php echo SugarThemeRegistry::current()->getImage('blank', '', 15, 15, ".gif", $mod_strings['LBL_CONFLICT']); ?>&nbsp;</td>
     <td>&nbsp;<?php echo $mod_strings['LBL_CONFLICT']; ?></td>
 </tr>
 </table>

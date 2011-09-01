@@ -74,14 +74,14 @@
 		<td>
 
 		<input name='date_start' id='date_start' tabindex='2' size='11' maxlength='10' type="text" value="{$DATE_START}">
-		<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$USER_DATEFORMAT}" id="date_start_trigger" align="absmiddle" onclick="parseDate(document.getElementById('date_start'), '{$CALENDAR_DATEFORMAT}');">&nbsp;</td>
+		{sugar_getimage name="jscalendar" ext=".gif" alt=$USER_DATEFORMAT other_attributes='align="absmiddle" id="date_start_trigger" onclick="parseDate(document.getElementById(\'date_start\'), \'{$CALENDAR_DATEFORMAT}\');" '}&nbsp;</td>
 		 
 		</td>
 	</tr>
 	<tr>
 		<td>{$MOD.LBL_FILTER_DATE_RANGE_FINISH}: </td>
 		<td><input name="date_finish" id="date_finish" type="input" tabindex='2' size='11' maxlength='10' value='{$DATE_FINISH}' />
-		<img src="{sugar_getimagepath file='jscalendar.gif'}" alt="{$USER_DATEFORMAT}" id="date_finish_trigger" align="absmiddle" onclick="parseDate(document.getElementById('date_finish'), '{$CALENDAR_DATEFORMAT}');">&nbsp;</td>
+		{sugar_getimage name="jscalendar" ext=".gif" alt=$USER_DATEFORMAT other_attributes='align="absmiddle" id="date_finish_trigger" onclick="parseDate(document.getElementById(\'date_finish\'), \'{$CALENDAR_DATEFORMAT}\');" '}&nbsp;</td>
 		 
 		</td>
 	</tr>
@@ -184,4 +184,3 @@ function set_return(popup_reply_data) {ldelim}
 	 	document.getElementById('parent_name').value = name_to_value_array['parent_name'];
 {rdelim}
 </script>
-

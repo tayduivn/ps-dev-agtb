@@ -47,8 +47,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		$this->bean = new $beanList[$layout_def['module']]();
 //END SUGARCRM flav=pro ONLY
 
-		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline',
-			'align="absmiddle" alt="' . $app_strings['LNK_EDIT'] . '" border="0"');
+		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']);
 
         $onclick ='';
 //BEGIN SUGARCRM flav=pro ONLY
@@ -76,6 +75,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		}
 		else{
 		}
+
 			return '';
 		}
 	//}

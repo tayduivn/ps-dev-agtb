@@ -134,6 +134,7 @@ function isSupportedIE() {
 	// IE Check supports ActiveX controls
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
+
 		if(version >= 5.5 && version < 10) {
 			return true;
 		} else {
@@ -706,6 +707,7 @@ function clear_all_errors() {
             if ( tabView.get ) {
                 var tabs = tabView.get("tabs");
                 for (var i in tabs) {
+                    if (typeof tabs[i] == "object")
                     tabs[i].get("labelEl").style.color = "";
                 }
             }

@@ -93,8 +93,7 @@ class SugarWidgetSubPanelRemoveButton extends SugarWidgetField
 		$return_url = "index.php?module=$return_module&action=$return_action&subpanel=$subpanel&record=$return_id&sugar_body_only=1&inline=1";
 
 		$icon_remove_text = $app_strings['LNK_REMOVE'];
-		$icon_remove_html = SugarThemeRegistry::current()->getImage( 'delete_inline',
-			'align="absmiddle" alt="' . $icon_remove_text . '" border="0"');
+		$icon_remove_html = SugarThemeRegistry::current()->getImage( 'delete_inline','align="absmiddle" border="0"',null,null,'.gif',$icon_remove_text);
 		//BEGIN SUGARCRM flav!=sales ONLY
 		if($linked_field == 'get_products_query')
 			$linked_field = 'products';

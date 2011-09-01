@@ -36,17 +36,29 @@ function unzip( $zip_archive, $zip_dir)
 
 function unzip_file( $zip_archive, $archive_file, $zip_dir)
 {
-    if( !is_dir( $zip_dir ) ){
-        if (!defined('SUGAR_PHPUNIT_RUNNER'))
+    if( !is_dir( $zip_dir ) ) {
+        if (defined('SUGAR_PHPUNIT_RUNNER') || defined('SUGARCRM_INSTALL'))
+        {
+        	$GLOBALS['log']->fatal("Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist.");
+        	return false;
+        } else {
             die( "Specified directory '$zip_dir' for zip file '$zip_archive' extraction does not exist." );
-        return false;
+        }
     }
+    
     $zip = new ZipArchive;
+
     $res = $zip->open(UploadFile::realpath($zip_archive)); // we need realpath here for PHP streams support
-    if($res !== true) {
-        if (!defined('SUGAR_PHPUNIT_RUNNER'))
-            die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
-        return false;
+
+    if($res !== TRUE) {
+        if (defined('SUGAR_PHPUNIT_RUNNER') || defined('SUGARCRM_INSTALL'))
+        {
+        	$GLOBALS['log']->fatal(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $zip_archive, $zip_dir));
+            return false;
+        } else {
+        	die(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $zip_archive, $zip_dir));
+        }
+
     }
 
     if($archive_file !== null) {
@@ -54,10 +66,15 @@ function unzip_file( $zip_archive, $archive_file, $zip_dir)
     } else {
         $res = $zip->extractTo(UploadFile::realpath($zip_dir));
     }
-    if($res !== true) {
-        if (!defined('SUGAR_PHPUNIT_RUNNER'))
-            die(sprintf("ZIP Error(%d): %s", $res, $zip->status));
-        return false;
+    
+    if($res !== TRUE) {
+        if (defined('SUGAR_PHPUNIT_RUNNER') || defined('SUGARCRM_INSTALL'))
+        {
+        	$GLOBALS['log']->fatal(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $zip_archive, $zip_dir));
+            return false;
+        } else {
+        	die(sprintf("ZIP Error(%d): Status(%s): Arhive(%s): Directory(%s)", $res, $zip->status, $zip_archive, $zip_dir));
+        }
     }
     return true;
 }

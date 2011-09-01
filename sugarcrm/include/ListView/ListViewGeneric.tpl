@@ -80,14 +80,14 @@
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{sugar_getimage name=$imageName attr='align="absmiddle" border="0" '}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+							{sugar_getimage name=$imageName attr='align="absmiddle" border="0" '}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						<img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+						{sugar_getimage name=$imageName attr='align="absmiddle" border="0" '}
 					{/if}
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
@@ -137,9 +137,10 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
  data-list = 'true' class="quickEdit"
 {* //END SUGARCRM flav=pro ONLY *}
                 >
-                <img border=0 src='{sugar_getimagepath file='edit_inline.gif'}'></a>
+                {sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>
                 {/if}
             </td>
+
 			{/if}
 			{counter start=0 name="colCounter" print=false assign="colCounter"}
 			{foreach from=$displayColumns key=col item=params}

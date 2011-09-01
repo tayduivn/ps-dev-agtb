@@ -68,9 +68,9 @@
 	</tr>
 	<tr>
 	<td valign="top" class="dataLabel" width="15%"><slot>{$MOD.LBL_DATE_START} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
-	<td width="35%"><slot><input name='estimated_start_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" id='jscal_field_start' type="text" tabindex='2' size='11' maxlength='10' value="{$START_DATE}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="jscal_trigger_start" align="absmiddle"></slot></td>
+	<td width="35%"><slot><input name='estimated_start_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" id='jscal_field_start' type="text" tabindex='2' size='11' maxlength='10' value="{$START_DATE}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="jscal_trigger_start" align="absmiddle"></slot></td>
 	<td valign="top" class="dataLabel" width="15%"><slot>{$MOD.LBL_DATE_END} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
-	<td width="35%"><slot><input name='estimated_end_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" id='jscal_field_end' type="text" tabindex='2' size='11' maxlength='10' value="{$END_DATE}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="jscal_trigger_end" align="absmiddle"></slot></td>
+	<td width="35%"><slot><input name='estimated_end_date' onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" id='jscal_field_end' type="text" tabindex='2' size='11' maxlength='10' value="{$END_DATE}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="jscal_trigger_end" align="absmiddle"></slot></td>
 	</tr>	
 	<tr>
 	<td valign="top" class="dataLabel"><slot>{$MOD.LBL_DESCRIPTION}</slot></td>

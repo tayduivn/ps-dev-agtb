@@ -59,9 +59,10 @@ require_once("modules/MySettings/TabController.php");
 $controller = new TabController();
 $tabs = $controller->get_user_tabs($current_user, $type='display');
 //$ACLAllowedModulesAdded = array();
-$help_img = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_OPTIONAL_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"');
-$chart_data_help = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_CHART_DATA_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"');
-$do_round_help = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_DO_ROUND_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"');
+$help_img = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_OPTIONAL_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"',null,null,'.gif',$mod_strings['LBL_HELP']);
+$chart_data_help = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_CHART_DATA_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"',null,null,'.gif',$mod_strings['LBL_HELP']);
+$do_round_help = SugarThemeRegistry::current()->getImage('helpInline','border="0" onmouseout="return nd();" onmouseover="return overlib(\''.$mod_strings['LBL_DO_ROUND_HELP'].'\', FGCLASS, \'olFgClass\', CGCLASS, \'olCgClass\', BGCLASS, \'olBgClass\', TEXTFONTCLASS, \'olFontClass\', CAPTIONFONTCLASS, \'olCapFontClass\', CLOSEFONTCLASS, \'olCloseFontClass\');"'
+,null,null,'.gif',$mod_strings['LBL_HELP']);
 
 // Add the modules in the order of the user-defined tabs.
 /*
@@ -80,16 +81,15 @@ foreach ($tabs as $tabModuleKey=>$tabModuleKeyValue)
 foreach ($ACLAllowedModules as $module=>$singular) {
 	//if (!isset($ACLAllowedModulesAdded[$module])) {
 	    if($module == 'Currencies') continue;
-		$icon_path = _getIcon($module."_32");
-		if (empty ($icon_path)){
-			$icon_path = _getIcon($module);
+		$icon_name = _getIcon($module."_32");
+		if (empty ($icon_name)){
+			$icon_name = _getIcon($module);
 		}
-		if (empty ($icon_path)){
-			array_push($buttons, array('name'=>$app_list_strings['moduleList'][$module], 'img'=> SugarThemeRegistry::current()->getImageURL("icon_A1_newmod.gif"),'alt'=> $mod_strings['LBL_NO_IMAGE'], 'key'=>$module));
-		} else {
-			array_push($buttons, array('name'=>$app_list_strings['moduleList'][$module], 'img'=> $icon_path, 'key'=>$module));
+		if (empty ($icon_name)){
+			$icon_name = "icon_A1_newmod.gif";
+		}
+		array_push($buttons, array('name'=>$app_list_strings['moduleList'][$module], 'img'=> $icon_name, 'key'=>$module));
 
-		}
 	//}
 }
 

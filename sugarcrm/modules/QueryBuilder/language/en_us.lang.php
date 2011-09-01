@@ -137,8 +137,13 @@ $mod_strings = array (
 	'LBL_RIGHT_GROUP' => 'Right-Hand Group:',
 	'LBL_RIGHT_VALUE' => 'Right-Hand Value:',
 	'LBL_PARENT_GROUP' => 'Parent Group:',
-	
-  
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+	'LBL_ORDER' => 'Order' /*for 508 compliance fix*/,
+	'LBL_LEFT' => 'Left' /*for 508 compliance fix*/,
+	'LBL_RIGHT' => 'Right' /*for 508 compliance fix*/,
+	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
+	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
+	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
 );
 
 

@@ -259,11 +259,13 @@ class ProjectTask extends SugarBean {
 		//$date_due = $timedate->to_db_date($task_fields['DATE_DUE'],false);
         if (isset($this->parent_type))
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
-		/*
-        if ($this->status != "Completed" && $this->status != "Deferred" ) {
-			$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline","alt='Close' border='0'")."</a>";
-		}
 
+		
+        //if ($this->status != "Completed" && $this->status != "Deferred" ) {
+		//	$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline"," border='0'",null,null,'.gif',$mod_strings['LBL_LIST_CLOSE'])."</a>";
+		//}
+        
+        /*
 		if( $date_due	< $today){
 			$task_fields['DATE_DUE']= "<font class='overdueTask'>".$task_fields['DATE_DUE']."</font>";
 		}else if( $date_due	== $today ){

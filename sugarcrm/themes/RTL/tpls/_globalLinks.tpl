@@ -46,6 +46,6 @@
     {/foreach}
 </div>
 {* //BEGIN SUGARCRM flav=pro || flav=sales ONLY *}
-<img src="{sugar_getimagepath file="globalLinksLeft.png"}" id="globalLinksLeft"/>
+{sugar_getimage name="globalLinksLeft" ext=".png" other_attributes='id="globalLinksLeft" '}
 {* //END SUGARCRM flav=pro || flav=sales ONLY *}
 </div>

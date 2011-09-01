@@ -102,12 +102,12 @@
 							</select>
 							<span id='active_date_field_span' style="display:{$A_DATE1_STYLE}">
 								<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date' id='active_date_field' type="text" size='11' maxlength='10' value="{$active_date}"/> 
-								<img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="active_date_trigger" align="absmiddle"/> 
+								<img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="active_date_trigger" align="absmiddle"/> 
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	
 								<span id='active_date_field2_span' style="display:{$A_DATE2_STYLE}">&nbsp;{$MOD.LBL_AND}&nbsp;
 									<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date2' id='active_date_field2' type="text" size='11' value="{$active_date2}"/> 
-									<img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="active_date_trigger2" align="absmiddle"/> 
+									<img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="active_date_trigger2" align="absmiddle"/> 
 									<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 								</span>
 							</span>
@@ -121,12 +121,12 @@
 							</select>
 							<span id='exp_date_field_span' style="display:{$X_DATE1_STYLE}">
 								<input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date' id='exp_date_field' type="text" size='11' maxlength='10' value="{$exp_date}"> 
-								<img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="exp_date_trigger" align="absmiddle"> 
+								<img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="exp_date_trigger" align="absmiddle"> 
 								<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 	
 								<span id='exp_date_field2_span' style="display:{$X_DATE2_STYLE}">&nbsp;{$MOD.LBL_AND}&nbsp;
 									<input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date2' id='exp_date_field2' type="text" size='11' value="{$exp_date2}"/> 
-									<img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="exp_date_trigger2" align="absmiddle"/> 
+									<img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="exp_date_trigger2" align="absmiddle"/> 
 									<span class="dateFormat">{$USER_DATE_FORMAT}</span>
 								</span>
 							</span>

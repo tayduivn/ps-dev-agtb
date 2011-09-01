@@ -37,7 +37,7 @@
 <meta name="apple-touch-fullscreen" content="yes" />
 </head>
 <body>
-<img id="companylogo" width="212" height="40" border="0" alt="Company Logo" src="{sugar_getimagepath file='company_logo.png'}"/>
+{sugar_getimage name="company_logo" ext=".png" width="212" height="40" alt=$app_strings.LBL_COMPANY_LOGO other_attributes='border="0" id="companylogo" '}
 <hr />
 {if $WELCOME}
 <div class="sec welcome" align="right">

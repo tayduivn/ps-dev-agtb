@@ -46,7 +46,7 @@
 <tr>
 	<td colspan='2'>
 		<a class='tabFormAdvLink' onhover href='javascript:toggleInlineSearch()'>
-		<img src='{sugar_getimagepath file="advanced_search.gif"}' id='up_down_img' border=0>&nbsp;{$APP.LNK_SAVED_VIEWS}
+		{sugar_getimage alt=$app_strings.LBL_ADVANCED_SEARCH name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}&nbsp;{$APP.LNK_SAVED_VIEWS}
 		</a><br>
 		<input type='hidden' id='showSSDIV' name='showSSDIV' value='{$SHOWSSDIV}'><p>
 	</td>

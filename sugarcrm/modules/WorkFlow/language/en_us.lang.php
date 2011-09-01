@@ -102,6 +102,9 @@ $mod_strings = array (
   'LBL_ALERT_ERRORS'=>'Notice: One or more alerts below contains errors.',
   'LBL_TRIGGER_ERROR'=>'Notice: This trigger contains invalid values and will not fire.',
   'LBL_TRIGGER_ERRORS'=>'Notice: One or more triggers below contains errors.',
+	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
+	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
+	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 

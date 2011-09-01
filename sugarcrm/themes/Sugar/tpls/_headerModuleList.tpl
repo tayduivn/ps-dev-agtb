@@ -46,7 +46,7 @@
         </script>
         {* Tab group selection *}
         <li class="yuimenubaritem moduleTabGroupMenu">
-        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">{$tabGroupName}<img src="{sugar_getimagepath file="grouped-menu-arrow.png"}" class="arrow"></a>
+        <a href="#" class="yuimenuitemlabel more group" title="{$tabGroupName}">{$tabGroupName}{sugar_getimage name="grouped-menu-arrow" ext=".png" other_attributes='class="arrow" '}</a>
         <div id="TabGroupMenu_{$tabGroupName}" class="yuimenu dashletPanelMenu"><div class="bd">
 			<ul>
           {foreach from=$groupTabs item=module key=group name=groupList}

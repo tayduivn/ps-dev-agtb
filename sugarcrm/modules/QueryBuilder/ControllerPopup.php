@@ -135,10 +135,10 @@ $form->assign("FORM", $_REQUEST['form']);
 $form->assign("GRIDLINE", $gridline);
 $form->assign("SET_RETURN_JS", $the_javascript);
 
-$form->assign('LEFT_INLINE', SugarThemeRegistry::current()->getImage('leftarrow','align="absmiddle" alt="Left" border="0"'));
-$form->assign('RIGHT_INLINE', SugarThemeRegistry::current()->getImage('rightarrow','align="absmiddle" alt="Right" border="0"'));
-$form->assign('UP_INLINE', SugarThemeRegistry::current()->getImage('uparrow_inline','align="absmiddle" alt="Up" border="0"'));
-$form->assign('DOWN_INLINE', SugarThemeRegistry::current()->getImage('downarrow_inline','align="absmiddle" alt="Down" border="0"'));
+$form->assign('LEFT_INLINE', SugarThemeRegistry::current()->getImage('leftarrow','align="absmiddle"  border="0"',null,null,'.gif',$mod_strings['LBL_LEFT']));
+$form->assign('RIGHT_INLINE', SugarThemeRegistry::current()->getImage('rightarrow','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_RIGHT']));
+$form->assign('UP_INLINE', SugarThemeRegistry::current()->getImage('uparrow_inline','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_UP']));
+$form->assign('DOWN_INLINE', SugarThemeRegistry::current()->getImage('downarrow_inline','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_DOWN']));
 
 insert_popup_header($theme);
 

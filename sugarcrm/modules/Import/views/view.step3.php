@@ -42,11 +42,70 @@ require_once('include/upload_file.php');
 
 class ImportViewStep3 extends ImportView
 {
-
     protected $pageTitleKey = 'LBL_STEP_3_TITLE';
     protected $currentFormID = 'importstep3';
     protected $previousAction = 'Confirm';
     protected $nextAction = 'dupcheck';
+    
+    /**
+     * @see SugarView::getMenu()
+     */
+    public function getMenu(
+        $module = null
+        )
+    {
+        global $mod_strings, $current_language;
+
+        if ( empty($module) )
+            $module = $_REQUEST['import_module'];
+
+        $old_mod_strings = $mod_strings;
+        $mod_strings = return_module_language($current_language, $module);
+        $returnMenu = parent::getMenu($module);
+        $mod_strings = $old_mod_strings;
+
+        return $returnMenu;
+    }
+
+ 	/**
+     * @see SugarView::_getModuleTab()
+     */
+ 	protected function _getModuleTab()
+    {
+        global $app_list_strings, $moduleTabMap;
+
+ 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
+        if ( !empty($_REQUEST['module_tab']) )
+            return $_REQUEST['module_tab'];
+        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
+            return $moduleTabMap[$_REQUEST['import_module']];
+        // Default anonymous pages to be under Home
+        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
+            return 'Home';
+        else
+            return $_REQUEST['import_module'];
+ 	}
+
+ 	/**
+	 * @see SugarView::_getModuleTitleParams()
+	 */
+	protected function _getModuleTitleParams($browserTitle = false)
+	{
+	    global $mod_strings, $app_list_strings;
+	    
+	    $iconPath = $this->getModuleTitleIconPath($this->module);
+	    $returnArray = array();
+	    if (!empty($iconPath) && !$browserTitle) {
+	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><!--not_in_theme!--><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
+    	}
+    	else {
+    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
+    	}
+	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
+	    $returnArray[] = $mod_strings['LBL_STEP_3_TITLE'];
+    	
+	    return $returnArray;
+    }
     
  	/**
      * @see SugarView::display()
@@ -158,13 +217,12 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("TMP_FILE", UploadFile::relativeName($uploadFileName) );
         $this->ss->assign("SOURCE", $_REQUEST['source'] );
         $this->ss->assign("TYPE", $_REQUEST['type'] );
-        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"'));
-        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
-
+        $this->ss->assign("DELETE_INLINE_PNG",  SugarThemeRegistry::current()->getImage('basic_search','align="absmiddle" border="0"', null,null,'.gif',$app_strings['LNK_DELETE']));
+        $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" border="0"',null,null,'.gif',$mod_strings['LBL_PUBLISH']));
         $this->instruction = 'LBL_SELECT_MAPPING_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
-
         $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false));
+
         $this->ss->assign("STEP4_TITLE",
             strip_tags(str_replace("\n","",getClassicModuleTitle(
                 $mod_strings['LBL_MODULE_NAME'],
@@ -528,7 +586,7 @@ document.getElementById('addrow').onclick = function(){
                     document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '';
                     return;
                 }
-                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<img src="{$sqsWaitImage}" />'
+                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<!--not_in_theme!--><img src="{$sqsWaitImage}" />'
                 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action=GetControl&import_module='+module+'&field_name='+fieldname,
                     {
                         success: function(o)
@@ -660,7 +718,7 @@ YAHOO.util.Event.onDOMReady(function(){
                     return;
                 }
 
-                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<img src="{$sqsWaitImage}" />'
+                document.getElementById('defaultvaluepicker_'+fieldnum).innerHTML = '<!--not_in_theme!--><img src="{$sqsWaitImage}" />'
                 YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=Import&action=GetControl&import_module='+module+'&field_name='+fieldname,
                     {
                         success: function(o)

@@ -44,7 +44,7 @@
 
 {if empty($picture_value)}
 {else}
-<img 
+<img
 	id="img_picture" 
 	name="img_picture" 	
 	src='index.php?entryPoint=download&id={$picture_value}&type=SugarFieldImage&isTempFile=1'
@@ -67,10 +67,10 @@
 		'	
 
 >
-<img 
+<img
 	id="bt_remove_picture" 
 	name="bt_remvoe_picture" 
-	alt="{$APP.LBL_REMOVE}"
+	alt=$APP.LBL_REMOVE
 	title="{$APP.LBL_REMOVE}"
 	src="{sugar_getimagepath file='delete_inline.gif'}"
 	onclick="remove_upload_imagefile('picture');" 	

@@ -46,9 +46,10 @@
 						<input type=hidden name='emailAddressWidget' value=1>
 						<span class="id-ff multiple ownline">
 						<button class='button' type='button'
-onClick="javascript:SUGAR.EmailAddressWidget.instances.{$module}{$index}.addEmailAddress('{$module}emailAddressesTable{$index}','','');"
-value='{$app_strings.LBL_ADD_BUTTON}'><img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
-						</span>
+onClick="javascript:SUGAR.EmailAddressWidget.instances.{$module}{$index}.addEmailAddress('{$module}emailAddressesTable{$index}','','');" 
+value='{$app_strings.LBL_ADD_BUTTON}'>{sugar_getimage name="id-ff-add" alt=$app_strings.LBL_ID_FF_ADD ext=".png" other_attributes=''}</button>
+						</span>					
+
 					</td>
 					<td scope="row" NOWRAP>
 					    &nbsp;

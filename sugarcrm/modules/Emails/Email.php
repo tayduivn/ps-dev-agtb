@@ -2033,10 +2033,90 @@ class Email extends SugarBean {
 		$mail->AltBody = $plainText;
 		$this->description = $plainText;
 
-		$mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
+		$fileBasePath = "{$sugar_config['cache_dir']}images/";
+		$filePatternSearch = "{$sugar_config['cache_dir']}";
+		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		$filePatternSearch = $filePatternSearch . "images\/";
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
+		{  //cache/images
+			$matches = array();
+			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
+			foreach($matches[0] as $match) {
+				$filename = str_replace($fileBasePath, '', $match);
+				$filename = urldecode(substr($filename, 0, -1));
+				$cid = $filename;
+				$file_location = clean_path(getcwd()."/{$sugar_config['cache_dir']}images/{$filename}");
+				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+
+				if(file_exists($file_location)) {
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+				}
+			}
+
+			//replace references to cache with cid tag
+			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
+			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
+			// remove bad img line from outbound email
+			$regex = '#img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim'; /*SKIP_IMAGE_TAG*/
+			$mail->Body = preg_replace($regex, '', $mail->Body);
+		}
+		$fileBasePath = "{$sugar_config['upload_dir']}";
+		$filePatternSearch = "{$sugar_config['upload_dir']}";
+		$filePatternSearch = str_replace("/", "\/", $filePatternSearch);
+		if(strpos($mail->Body, "\"{$fileBasePath}") !== FALSE)
+		{
+			$matches = array();
+			preg_match_all("/{$filePatternSearch}.+?\"/i", $mail->Body, $matches);
+			foreach($matches[0] as $match) {
+				$filename = str_replace($fileBasePath, '', $match);
+				$filename = urldecode(substr($filename, 0, -1));
+				$cid = $filename;
+				$file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$filename}");
+				$mime_type = "image/".strtolower(substr($filename, strrpos($filename, ".")+1, strlen($filename)));
+
+				if(file_exists($file_location)) {
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+				}
+			}
+
+			//replace references to cache with cid tag
+			$mail->Body = str_replace("/" . $fileBasePath,'cid:',$mail->Body);
+			$mail->Body = str_replace($fileBasePath,'cid:',$mail->Body);
+
+			// remove bad img line from outbound email
+			$regex = '#img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim'; /*SKIP_IMAGE_TAG*/
+			$mail->Body = preg_replace($regex, '', $mail->Body);
+		}
 
 		//Replace any embeded images using the secure entryPoint for src url.
-		$mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
+		$noteImgRegex = "/<img[^>]*[\s]+src[^=]*=\"index.php\?entryPoint=download\&amp;id=([^\&]*)[^>]*>/im"; /*SKIP_IMAGE_TAG*/
+        $embededImageMatches = array();
+        preg_match_all($noteImgRegex, $mail->Body, $embededImageMatches,PREG_SET_ORDER);
+
+        foreach ($embededImageMatches as $singleMatch )
+        {
+            $fullMatch = $singleMatch[0];
+            $noteId = $singleMatch[1];
+            $cid = $noteId;
+            $filename = $noteId;
+
+            //Retrieve note for mimetype
+            $tmpNote = new Note();
+            $tmpNote->retrieve($noteId);
+            //Replace the src part of img tag with new cid tag
+            $cidRegex = "/src=\"([^\"]*)\"/im";
+            $replaceMatch = preg_replace($cidRegex, "src=\"cid:$noteId\"", $fullMatch);
+
+            //Replace the body, old tag for new tag
+            $mail->Body = str_replace($fullMatch, $replaceMatch, $mail->Body);
+
+            //Attach the file
+            $file_location = clean_path(getcwd()."/{$sugar_config['upload_dir']}{$noteId}");
+
+            if(file_exists($file_location))
+					$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $tmpNote->file_mime_type);
+        }
+        //End Replace
 
 		$mail->Body = from_html($mail->Body);
 	}
@@ -2299,9 +2379,9 @@ class Email extends SugarBean {
 		$row = $this->db->fetchByAssoc($result);
 
 		if ($row !=null) {
-			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","");
+			$this->attachment_image = SugarThemeRegistry::current()->getImage('attachment',"","","",'.gif',$mod_strings['LBL_ATTACHMENT']);
 		} else {
-			$this->attachment_image = SugarThemeRegistry::current()->getImage('blank',"","","");
+			$this->attachment_image = SugarThemeRegistry::current()->getImage('blank',"","","",'.gif'," ");
 		}
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->assigned_name = get_assigned_team_name($this->team_id);
@@ -2464,25 +2544,25 @@ class Email extends SugarBean {
 		} else {
 			switch($this->intent) {
 				case 'support':
-					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Cases&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateCases.gif').'">'.$mod_strings['LBL_CREATE_CASE'].'</a>';
+					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Cases&action=EditView&inbound_email_id='.$this->id.'" >' . SugarThemeRegistry::current()->getImage('CreateCases', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_CASES']).$mod_strings['LBL_CREATE_CASE'].'</a>';
 				break;
 
 				case 'sales':
-					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Leads&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateLeads.gif').'">'.$mod_strings['LBL_CREATE_LEAD'].'</a>';
+					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Leads&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateLeads', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_LEADS']).$mod_strings['LBL_CREATE_LEAD'].'</a>';
 				break;
 
 				case 'contact':
-					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Contacts&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateContacts.gif').'">'.$mod_strings['LBL_CREATE_CONTACT'].'</a>';
+					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Contacts&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateContacts', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_CONTACTS']).$mod_strings['LBL_CREATE_CONTACT'].'</a>';
 				break;
 
 				//BEGIN SUGARCRM flav!=sales ONLY
 				case 'bug':
-					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Bugs&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateBugs.gif').'">'.$mod_strings['LBL_CREATE_BUG'].'</a>';
+					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Bugs&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateBugs', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_BUGS']).$mod_strings['LBL_CREATE_BUG'].'</a>';
 				break;
                 //END SUGARCRM flav!=sales ONLY
 
 				case 'task':
-					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Tasks&action=EditView&inbound_email_id='.$this->id.'" ><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('CreateTasks.gif').'">'.$mod_strings['LBL_CREATE_TASK'].'</a>';
+					$email_fields['CREATE_RELATED'] = '<a href="index.php?module=Tasks&action=EditView&inbound_email_id='.$this->id.'" >'.SugarThemeRegistry::current()->getImage('CreateTasks', 'border="0"', null, null, ".gif", $mod_strings['LBL_CREATE_TASKS']).$mod_strings['LBL_CREATE_TASK'].'</a>';
 				break;
 
 				case 'bounce':
@@ -2519,7 +2599,7 @@ class Email extends SugarBean {
         // Coming from the home page via Dashlets
         if($currentModule != 'Email')
         	$mod_strings = return_module_language($current_language, 'Emails');
-        return $mod_strings['LBL_QUICK_CREATE']."&nbsp;<a id='$this->id' onclick='return quick_create_overlib(\"{$this->id}\", \"".SugarThemeRegistry::current()->__toString()."\");' href=\"#\" >".SugarThemeRegistry::current()->getImage("advanced_search","alt='".$mod_strings['LBL_QUICK_CREATE']."'  border='0' align='absmiddle'")."</a>";
+        return $mod_strings['LBL_QUICK_CREATE']."&nbsp;<a id='$this->id' onclick='return quick_create_overlib(\"{$this->id}\", \"".SugarThemeRegistry::current()->__toString()."\");' href=\"#\" >".SugarThemeRegistry::current()->getImage("advanced_search","border='0' align='absmiddle'", null,null,'.gif',$mod_strings['LBL_QUICK_CREATE'])."</a>";
     }
 
     /**
@@ -3040,9 +3120,9 @@ eoq;
 				</script>
 			<span id="showUsersDiv" style="position:relative;">
 				<a href="#" id="showUsers" onClick="javascript:showUserSelect();">
-					<img border="0" src="'.SugarThemeRegistry::current()->getImageURL('Users.gif').'"></a>&nbsp;
+					'.SugarThemeRegistry::current()->getImage('Users', '', null, null, ".gif", $mod_strings['LBL_USERS']).'</a>&nbsp;
 				<a href="#" id="showUsers" onClick="javascript:showUserSelect();">
-					<span style="display:none;" id="checkMark"><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('check_inline.gif').'"></span>
+					<span style="display:none;" id="checkMark">'.SugarThemeRegistry::current()->getImage('check_inline', 'border="0"', null, null, ".gif", $mod_strings['LBL_CHECK_INLINE']).'</span>
 				</a>
 
 
@@ -3050,7 +3130,7 @@ eoq;
 				<table cellpadding="0" cellspacing="0" border="0" class="list view">
 					<tr height="20">
 						<td  colspan="'.$colspan.'" id="hiddenhead" onClick="hideUserSelect();" onMouseOver="this.style.border = \'outset red 1px\';" onMouseOut="this.style.border = \'inset white 0px\';this.style.borderBottom = \'inset red 1px\';">
-							<a href="#" onClick="javascript:hideUserSelect();"><img border="0" src="'.SugarThemeRegistry::current()->getImageURL('close.gif').'"></a>
+							<a href="#" onClick="javascript:hideUserSelect();">'.SugarThemeRegistry::current()->getImage('close', 'border="0"', null, null, ".gif", $mod_strings['LBL_CLOSE']).'</a>
 							'.$mod_strings['LBL_USER_SELECT'].'
 						</td>
 					</tr>

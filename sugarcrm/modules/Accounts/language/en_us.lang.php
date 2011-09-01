@@ -178,6 +178,7 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
+	'LBL_COPY' => 'Copy' /*for 508 compliance fix*/,
     //For export labels
     'LBL_ACCOUNT_TYPE' => 'Account Type',
     'LBL_CAMPAIGN_ID' => 'Campaign ID',
