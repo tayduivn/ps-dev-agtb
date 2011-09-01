@@ -30,8 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/MVC/View/views/view.edit.php');
-
 class ProjectTaskViewEdit extends ViewEdit 
 {
     /**

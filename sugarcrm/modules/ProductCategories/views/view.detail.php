@@ -20,16 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php 
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the ProductCategories module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-require_once('include/MVC/View/views/view.edit.php');
+if(file_exists('custom/include/MVC/View/views/view.edit.php'))
+{
+    require_once('custom/include/MVC/View/views/view.edit.php');
+} else if(file_exists('include/MVC/View/views/view.edit.php')) {
+    require_once('include/MVC/View/views/view.edit.php');
+}
 
 class ProductCategoriesViewDetail extends ViewEdit 
 {

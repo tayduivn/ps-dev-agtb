@@ -29,10 +29,13 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  */
 
 // $Id: EditView.php 18703 2006-12-15 09:42:43Z majed $
-
-
-require_once ('include/MVC/View/views/view.edit.php') ;
-
+        //Load the parent view class if it exists.  Check for custom file first
+if(file_exists('custom/include/MVC/View/views/view.edit.php'))
+{
+    require_once('custom/include/MVC/View/views/view.edit.php');
+} else if(file_exists('include/MVC/View/views/view.edit.php')) {
+    require_once('include/MVC/View/views/view.edit.php');
+}
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 require_once ('include/SubPanel/SubPanel.php') ;
 
