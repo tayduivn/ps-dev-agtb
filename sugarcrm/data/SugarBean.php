@@ -5455,6 +5455,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		    // fromConvert other fields
 		    $row[$name] = $this->db->fromConvert($row[$name], $fieldDef['type']);
 		}
+		return $row;
     }
 
     /**
