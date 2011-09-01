@@ -1495,8 +1495,8 @@ class TimeDate
     protected function parseFromTemplate($template, $daystart, User $user = null)
 	{
         $now = $this->tzUser($this->getNow(), $user);
-        if(!empty($template[0])) {
-            $now->modify($template[0]);
+        if(!empty($template)) {
+            $now->modify($template);
         }
         if($daystart) {
             return $now->get_day_begin();
@@ -1508,7 +1508,7 @@ class TimeDate
 	/**
 	 * Get month-long range mdiff months from now
 	 */
-	protected function diffMon($mdiff, User $user)
+	protected function diffMon($mdiff, User $user = null)
 	{
         $now = $this->tzUser($this->getNow(), $user);
 	    $now->setDate($now->year, $now->month+$mdiff, 1);
@@ -1520,7 +1520,7 @@ class TimeDate
 	/**
 	 * Get year-long range ydiff years from now
 	 */
-	protected function diffYear($ydiff, User $user)
+	protected function diffYear($ydiff, User $user = null)
 	{
         $now = $this->tzUser($this->getNow(), $user);
 	    $now->setDate($now->year+$ydiff, 1, 1);

@@ -421,13 +421,16 @@ SUGAR.expressions.GridToolTip = {
 		if(e.newValue)
 		    SUGAR.expressions.functionsGrid.sortedColumn = e.newValue;
 	});
-	
-	var funcTip = new YAHOO.widget.Tooltip("functionsTooltip", {
-		context: "functionsGrid",
-		text: "",
-		showDelay: 300,
-		zindex: 25
-	});
+
+    if(SUGAR.expressions.tooltip){
+	    SUGAR.expressions.tooltip.destroy();
+    }
+    var funcTip = SUGAR.expressions.tooltip = new YAHOO.widget.Tooltip("functionsTooltip", {
+        context: "functionsGrid",
+        text: "",
+        showDelay: 300,
+        zindex: ModuleBuilder.formulaEditorWindow ? ModuleBuilder.formulaEditorWindow.cfg.getProperty("zindex") + 2 : 27
+    });
 	
 	funcTip.table = fg;
 	

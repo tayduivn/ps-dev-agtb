@@ -123,6 +123,10 @@ and push it outside the screen.
     SUGAR_callsInProgress++;
     var field_id = '{$displayParams.formName}_{$vardef.name}';
     YAHOO.util.Event.onContentReady(field_id + "_table", function(){ldelim}
+
+        //reset the secondary fields array for this form before populating
+         collection[field_id].secondaries_values = new Array();
+
         if(collection[field_id] && collection[field_id].secondaries_values.length == 0) {ldelim}
             {if !empty($values.secondaries)}
                 {foreach from=$values.secondaries item=secondary_field}

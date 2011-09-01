@@ -78,11 +78,11 @@ $focus->load_relationship("contact_resources");
 $contacts = $focus->contact_resources->getBeans($contactBean);
 
 $resources = array();
-for ($i = 0; $i < count($users); $i++) {
-    $resources[$users[$i]->full_name] = $users[$i];
+foreach ($users as $key => $user) {
+    $resources[$user->full_name] = $user;
 }
-for ($i = 0; $i < count($contacts); $i++) {
-    $resources[$contacts[$i]->full_name] = $contacts[$i];    
+foreach ($contacts as $key => $contact) {
+    $resources[$contact->full_name] = $contact;
 }
 ksort($resources);
 $sugar_smarty->assign("RESOURCES", $resources);
@@ -94,20 +94,28 @@ $holidays = array();
 
 if (count($resources) > 0){
 	$query = "select * from holidays where (";
-	for ($i = 0; $i < count($users); $i++) {
-	    $query .= "person_id like '". $users[$i]->id ."'";    
-	    if ($i < (count($users) - 1))
-	        $query .= " or ";
-	}
-	
+        $i = 0;
+        $count = count($users);
+        foreach ($users as $key => $user) {
+            $query .= "person_id like '". $user->id . "'";
+            if ($i < ($count - 1)) {
+                $query .= " or ";
+            }
+            $i++;
+        }
+
 	if (count($users) > 0 && count($contacts) > 0)
 	    $query .= " or ";
-	    
-	for ($i = 0; $i < count($contacts); $i++) {
-	    $query .= "person_id like '". $contacts[$i]->id ."'";    
-	    if ($i < (count($contacts) - 1))
-	        $query .= " or ";
-	}
+
+        $i = 0;
+        $count = count($contacts);
+        foreach ($contacts as $key => $contact) {
+            $query .= "person_id like '". $contact->id . "'";
+            if ($i < ($count - 1)) {
+                $query .= " or ";
+            }
+            $i++;
+        }
 	$query .= " ) and deleted=0 and holiday_date between '". $timedate->to_db_date($focus->estimated_start_date, false) ."' and '". $timedate->to_db_date($focus->estimated_end_date, false) ."'";
 	$result = $holidayBean->db->query($query, true, "");   
 	$row = $holidayBean->db->fetchByAssoc($result);
@@ -304,9 +312,7 @@ if(is_admin($current_user)
 	$sugar_smarty->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action="
 		.$_REQUEST['action'] ."&from_module=".$_REQUEST['module']
 		."&record=".$record. "'>"
-		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'"
-,null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");	
-
+		.SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");		
 }
 $sugar_smarty->assign("DATE_FORMAT", $current_user->getPreference('datef'));
 $sugar_smarty->assign("CURRENT_USER", $current_user->id);

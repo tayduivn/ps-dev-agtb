@@ -155,11 +155,6 @@ Studio2 = {
 		
 		Studio2.resizeDivs();
 
-        Studio2.scrollZones = {
-            panels: Studio2.getScrollZones('panels'),
-            toolbox: Studio2.getScrollZones('toolbox')
-        }
-
 		ModuleBuilder.helpRegisterByID('layoutEditor','div');
 		ModuleBuilder.helpRegisterByID('layoutEditorButtons','input');
 		ModuleBuilder.helpSetup('layoutEditor','default');
@@ -168,12 +163,18 @@ Studio2 = {
 	
 	resizeDivs : function () {
 		var Dom = YAHOO.util.Dom;
-		var body = document.getElementById('mbtabs');
-		var targetHeight =  body.clientHeight - (Dom.getY('panels') - Dom.getY(body)) - 30;
+		if (!Dom.get('panels'))
+            return;
+        var body = document.getElementById('mbtabs');
+        var targetHeight =  body.clientHeight - (Dom.getY('panels') - Dom.getY(body)) - 32;
 		if (Studio2.isIE) targetHeight -= 10;
 		Dom.setStyle('panels', "height", targetHeight + "px");
 		Dom.setStyle('panels', "width" , ((Studio2.fieldwidth * 2) + 112) + "px");
 		Dom.setStyle('toolbox', "height", targetHeight + "px");
+        Studio2.scrollZones = {
+            panels: Studio2.getScrollZones('panels'),
+            toolbox: Studio2.getScrollZones('toolbox')
+        }
 	},
 
 	/**
@@ -946,18 +947,17 @@ Studio2 = {
             for(var i in Studio2.scrollZones)
             {
                 var zone = Studio2.scrollZones[i];
-                if (o.goingUp && Studio2.isWithinBox([o.lastX, o.lastY], zone.up))
+                if (Studio2.isWithinBox([o.lastX, o.lastY], zone.up))
                 {
                     document.getElementById(i).scrollTop -= 5;
                     YAHOO.util.DragDropMgr.refreshCache();
                     return;
                 }
-                else if (!o.goingUp && Studio2.isWithinBox([o.lastX, o.lastY], zone.down))
+                else if (Studio2.isWithinBox([o.lastX, o.lastY], zone.down))
                 {
                     document.getElementById(i).scrollTop += 5;
                     YAHOO.util.DragDropMgr.refreshCache();
                     return;
-                }
                 }
             }
         }, 25);
@@ -980,8 +980,8 @@ Studio2 = {
             this.goingUp = false;
         }
 
-        this.lastY = y;
-        this.lastX = e.pageX;
+        this.lastY = e.pageY || e.clientY;
+        this.lastX = e.pageX || e.clientX;
     }
 };
 

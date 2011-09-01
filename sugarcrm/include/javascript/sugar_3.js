@@ -707,6 +707,7 @@ function clear_all_errors() {
             if ( tabView.get ) {
                 var tabs = tabView.get("tabs");
                 for (var i in tabs) {
+                    if (typeof tabs[i] == "object")
                     tabs[i].get("labelEl").style.color = "";
                 }
             }
@@ -4292,7 +4293,29 @@ isPackageManager: function(){
 },
 
 ajaxCallInProgress: function(){
-	return SUGAR_callsInProgress != 0;
+    //If the page content is blank, it means we are probably still waiting on something
+    var c = document.getElementById("content");
+    if (!c) return true;
+    var t = YAHOO.lang.trim(SUGAR.util.innerText(c));
+    return SUGAR_callsInProgress != 0 || t == "";
+},
+//Firefox doesn't support innerText (textContent includes script content)
+innerText : function(el) {
+    if (el.tagName == "SCRIPT")
+        return "";
+    if(typeof(el.innerText) == "string")
+        return el.innerText;
+    var t = "";
+    for (var i in el.childNodes){
+        var c = el.childNodes[i];
+        if (typeof(c) != "object")
+            continue;
+        if (typeof(c.nodeName) == "string" && c.nodeName == "#text")
+            t += c.nodeValue;
+        else
+            t += SUGAR.util.innerText(c);
+    }
+    return t;
 },
 
 callOnChangeListers: function(field){

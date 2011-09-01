@@ -150,10 +150,15 @@ if (typeof(ModuleBuilder) == 'undefined') {
 				var w = (this.body.offsetWidth - 7) + "px";
 				this.body.style.width = w;
 				this.header.style.width = w;
+                if (typeof Studio2 != "undefined")
+                    Studio2.resizeDivs();
+                if (typeof resizeDDLists == "function")
+                    resizeDDLists();
 			};
 			mp.getUnitByPosition('right').on("resize", correctW); 
 			mp.getUnitByPosition('right').on("collapse", function(){
 				Ck.setSub("ModuleBuilder", "helpHidden", "true");
+                mp.get("element").querySelector(".yui-layout-clip-right .collapse").id = "expand_help";
 			});
 			mp.getUnitByPosition('right').on("expand", function(){
 				Ck.setSub("ModuleBuilder", "helpHidden", "false");
@@ -161,6 +166,7 @@ if (typeof(ModuleBuilder) == 'undefined') {
 			mp.getUnitByPosition('left').on("resize", correctW);
 			mp.getUnitByPosition('left').on("collapse", function(){
 				Ck.setSub("ModuleBuilder", "treeHidden", "true");
+                mp.get("element").querySelector(".yui-layout-clip-left .collapse").id = "expand_tree";
 			});
 			mp.getUnitByPosition('left').on("expand", function(){
 				Ck.setSub("ModuleBuilder", "treeHidden", "false");
@@ -220,6 +226,9 @@ if (typeof(ModuleBuilder) == 'undefined') {
 					SUGAR.themes.tempHideLeftCol();
 					}
 			}
+            //We need to add ID's to the collapse buttons for automated testing
+            Dom.getElementsByClassName("collapse", "div", mp.getUnitByPosition('left').header)[0].id = "collapse_tree";
+            Dom.getElementsByClassName("collapse", "div", mp.getUnitByPosition('right').header)[0].id = "collapse_help";
 
 		},
 		//Empty layout manager

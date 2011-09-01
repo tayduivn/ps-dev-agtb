@@ -1122,7 +1122,7 @@ SE.composeLayout = {
     	var instance = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
 
         if(typeof(instance) == 'undefined' || (typeof(SE.composeLayout.loadedTinyInstances[idx]) != 'undefined' && SE.composeLayout.loadedTinyInstances[idx] == false)) {
-            setTimeout("SE.composeLayout.resizeEditorSetSignature(" + idx + ",'"+isReplyForward+"');",500);
+            setTimeout("SE.composeLayout.resizeEditorSetSignature(" + idx + ",'"+setSignature+"');",500);
 		    return;
 		}
 

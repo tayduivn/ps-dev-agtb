@@ -56,7 +56,7 @@ function getAllowedReportModules(&$local_modListHeader) {
 		return array();
 	}
 	
-	global $report_map,$beanList;
+	global $report_map, $beanList, $report_include_modules;
 	
 	if(empty($beanList)) {
 		require('include/modules.php');
@@ -75,6 +75,11 @@ function getAllowedReportModules(&$local_modListHeader) {
 		if(isset($all_modules[$key])) {
 			$report_modules[$key] = $value;
 		}
+
+        //need to include subpanel only modules
+        if (!empty($report_include_modules[$key])){
+            $report_modules[$key] = $value;
+        }
 
 		if(in_array($key, $subModuleCheckArray) &&
 			(array_key_exists("Calendar", $all_modules) || array_key_exists("Activities", $all_modules))) {
@@ -101,40 +106,12 @@ function getAllowedReportModules(&$local_modListHeader) {
 //END SUGARCRM flav!=dce || flav!=sales ONLY
 
 	}
-//BEGIN SUGARCRM flav!=dce ONLY
-    $report_modules['Currencies']='Currency';
-	//add prospects
-	$report_modules['Prospects']='Prospect';
-    $report_modules['DocumentRevisions'] = 'DocumentRevision';
-    $report_modules['ProductCategories'] = 'ProductCategory';
-    $report_modules['ProductTypes'] = 'ProductType';
-	//BEGIN SUGARCRM flav=pro ONLY
-	$report_modules['Contracts']='Contract';
-	//END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=dce ONLY
-    //add Tracker modules
-
-//BEGIN SUGARCRM flav!=sales ONLY
-    $report_modules['Trackers']         = 'Tracker';
-
-//END SUGARCRM flav!=sales ONLY
-    
-//BEGIN SUGARCRM flav=pro ONLY
-
-	$report_modules['TrackerPerfs']     = 'TrackerPerf';
-	$report_modules['TrackerSessions']  = 'TrackerSession';
-	$report_modules['TrackerQueries']   = 'TrackerQuery';
-//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-	$report_modules['DCEReports']   = 'DCEReport';
-	$report_modules['DCEDataBases']   = 'DCEDataBase';
-//END SUGARCRM flav=dce ONLY
 
 	global $beanFiles;
 	
     $exemptModules = array('ProspectLists','Reports');
-    
-	foreach($report_modules as $module=>$class_name) {
+
+    foreach($report_modules as $module=>$class_name) {
 		if(!isset($beanFiles[$class_name]) || in_array($module, $exemptModules)) {
 			unset($report_modules[$module]);
 			continue;
