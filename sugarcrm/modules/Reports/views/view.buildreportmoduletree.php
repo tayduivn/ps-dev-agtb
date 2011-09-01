@@ -35,7 +35,7 @@ class ReportsViewBuildreportmoduletree extends SugarView
      */
     public function display()
     {
-        global $beanFiles, $beanList;
+        global $beanFiles, $beanList, $app_list_strings;
         if(empty($beanFiles)) {
             include('include/modules.php');
         }
