@@ -408,14 +408,16 @@ document_additionalDetailsCalls = new Array();
 	
 	function update_select_count_to_value(val) 
 	{
-		  els = document.getElementsByName('selectCount[]');
-		  for(x in els)
-		  {
-			  if(typeof els[x].value != 'undefined')
-			  {
-		      	 els[x].value = val;
-			  }
-		  }	
+            var arr = new Array();
+            arr = document.getElementsByName('selectCount[]');
+            for(var i = 0; i < arr.length; i++)
+            {
+                var obj = arr[i];
+                if (typeof obj.value != 'undefined')
+                {
+                    obj.value = val;
+                }
+            }
 	}
 	
 	function update_sel_count(c){
