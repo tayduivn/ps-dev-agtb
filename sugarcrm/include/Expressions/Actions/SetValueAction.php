@@ -95,9 +95,23 @@ class SetValueAction extends AbstractAction{
             $def  = $target->field_defs[$field];
         if ($result instanceof DateTime)
         {
-            $td = TimeDate::getInstance();
-            $result = DateExpression::roundTime($result);
-            $target->$field = $td->asDb($result);
+            global $timedate;
+            if (isset($def['type']) && $def['type'] == "datetime")
+            {
+                $result = DateExpression::roundTime($result);
+                $target->$field = $timedate->asDb($result);
+            }
+            else if (isset($def['type']) && $def['type'] == "date")
+            {
+                $result = DateExpression::roundTime($result);
+                $target->$field = $timedate->asDbDate($result);
+            } else {
+                //If the target field isn't a date, convert it to a user formated string
+                if (isset($result->isDate) && $result->isDate)
+                    $target->$field = $timedate->asUserDate($result);
+                else
+                    $target->$field = $timedate->asUser($result);
+            }
         }
         else if (isset($def['type']) && $def['type'] == "bool")
         {
