@@ -717,7 +717,7 @@ $sugar_smarty->assign('lbl3Column', $GLOBALS['app_strings']['LBL_3_COLUMN']);
 $sugar_smarty->assign('form_header', getClassicModuleTitle("Home",array(), false));
 //END SUGARCRM flav=pro ONLY
 
-$sugar_smarty->assign('mod', return_module_language($sugar_config['default_language'], 'Home'));
+$sugar_smarty->assign('mod', return_module_language($GLOBALS['current_language'], 'Home'));
 $sugar_smarty->assign('app', $GLOBALS['app_strings']);
 $sugar_smarty->assign('module', 'Home');
 //custom chart code

@@ -1035,5 +1035,3 @@ function getEmailAddressWidget($focus, $field, $value, $view, $tabindex='') {
     //END SUGARCRM flav=pro ONLY
     return $sea->getEmailAddressWidgetDetailView($focus);
 }
-
-?>

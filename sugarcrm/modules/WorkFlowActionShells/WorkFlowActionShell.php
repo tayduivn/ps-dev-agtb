@@ -403,6 +403,7 @@ function copy($parent_id){
         if (isset($new_action->created_by))  $new_action->created_by=null;                    
 		$new_action->save();
 	}
+	return $new_id;
 }
 
 	

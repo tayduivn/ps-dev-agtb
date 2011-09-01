@@ -301,7 +301,12 @@ class WorkFlowGlue {
 		}
 
 		$eval_string .= ")  \n";
-
+        if ($type_object->exp_type=='date' || $type_object->ext_type == 'datetime') {
+            $eval_string .= ' && ' . sprintf('strtotime(%sfocus->%s)', '$',  $type_object->lhs_field);                     
+            $eval_string .= " ".$this->operator_array[$type_object->operator]." ";
+            $sign = $this->operator_array[$type_object->operator]=='<'? '+' : '-';
+            $eval_string .= sprintf('(time() %s %s)', $sign, $type_object->ext1);
+        }
 		return $eval_string;
 
 	//end function glue_date
