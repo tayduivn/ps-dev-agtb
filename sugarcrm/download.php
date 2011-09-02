@@ -26,6 +26,7 @@ if(empty($_REQUEST['id']) || empty($_REQUEST['type']) || !isset($_SESSION['authe
 	die("Not a Valid Entry Point");
 }
 else {
+    $file_type=''; // bug 45896
     ini_set('zlib.output_compression','Off');//bug 27089, if use gzip here, the Content-Length in hearder may be incorrect.
     // cn: bug 8753: current_user's preferred export charset not being honored
     $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
@@ -87,8 +88,15 @@ else {
 
     } // if
 
-	$local_location = (isset($_REQUEST['isTempFile'])) ? "{$GLOBALS['sugar_config']['cache_dir']}/modules/Emails/{$_REQUEST['ieId']}/attachments/{$_REQUEST['id']}"
-		 : $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
+    $local_location = $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
+    if (isset($_REQUEST['isTempFile']))
+    {
+        $local_location = $GLOBALS['sugar_config']['cache_dir'].'/modules/Emails/';
+        if (isset($_REQUEST['ieId'])) {
+            $local_location .= $_REQUEST['ieId'].'/';
+        }
+        $local_location .= 'attachments/'.$_REQUEST['id'];
+    }
 
 	if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 	    $local_location =  $GLOBALS['sugar_config']['upload_dir']."/".$_REQUEST['id'];
@@ -154,7 +162,11 @@ else {
 		}
 		else if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 			$download_location = $local_location;
-			$name = $_REQUEST['tempName'];
+            $name = '';
+            if (isset($_REQUEST['tempName']))
+            {
+                $name = $_REQUEST['tempName'];
+            }
 		}
 
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT']))
