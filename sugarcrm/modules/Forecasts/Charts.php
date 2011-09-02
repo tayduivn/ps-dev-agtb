@@ -54,7 +54,7 @@ class forecast_charts extends SugarView {
         //find timeperiods.
         $query="select * from timeperiods t";
         $query.=" where exists (select * from forecast_schedule s where t.id=s.timeperiod_id and forecast_start_date <= '$timeperiod_date')";
-        $query.=" and is_fiscal_year=0 ";
+        $query.=" and (is_fiscal_year=0 or is_fiscal_year is null) ";
         $query.=" and deleted=0 ";
         $query.=" order by t.end_date desc";
 

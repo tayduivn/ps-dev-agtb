@@ -76,4 +76,5 @@ $action_view_map['downloadplugin'] = 'downloadplugin';
 $action_view_map['metadata'] = 'metadata';
 
 $action_view_map['cubes'] = 'cubes';
+$action_view_map['debug'] = 'debug';
 ?>

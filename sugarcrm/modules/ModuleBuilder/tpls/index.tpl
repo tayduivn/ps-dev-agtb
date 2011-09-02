@@ -90,6 +90,14 @@ MBLoader.insert();
     {* //END SUGARCRM flav=ent ONLY*}
     {/if}
     <input type="button" class="button" value="{$mod.LBL_DROPDOWNEDITOR}" onclick="ModuleBuilder.main('dropdowns');">
-    </td></tr></table>
+    </td><td align="left">
+    {* //BEGIN SUGARCRM flav=pro ONLY*}
+    <a href="http://www.sugarcrm.com" target="_blank">
+    {* //END SUGARCRM flav=pro ONLY*}
+        <img height="18" width="83" class="img" src="include/images/poweredby_sugarcrm.png" border="0" align="absmiddle"/>
+     {* //BEGIN SUGARCRM flav=pro ONLY*}
+    </a>
+     {* //END SUGARCRM flav=pro ONLY*}
+     </td></tr></table>
 </div>
 {include file='modules/ModuleBuilder/tpls/assistantJavascript.tpl'}

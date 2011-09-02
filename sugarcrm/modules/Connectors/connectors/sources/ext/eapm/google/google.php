@@ -79,10 +79,18 @@ class ext_eapm_google extends source {
             $this->_gdClient->setStartIndex($args['startIndex']);
         }
 
-
+        $results = array('totalResults' => 0, 'records' => array());
         try
         {
             $feed = $this->_gdClient->getContactListFeed($args);
+            $results['totalResults'] = $feed->totalResults->getText();
+
+            $rows = array();
+            foreach ($feed->entries as $entry)
+            {
+                $rows[] = $entry->toArray();
+            }
+            $results['records'] = $rows;
         }
         catch(Zend_Gdata_App_HttpException $e)
         {
@@ -93,6 +101,6 @@ class ext_eapm_google extends source {
             $GLOBALS['log']->fatal("Unable to retrieve item list for google contact connector.");
         }
 
-        return $feed;
+        return $results;
     }
 }

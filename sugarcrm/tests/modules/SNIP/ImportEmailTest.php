@@ -78,7 +78,7 @@ class ImportEmailTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals('Coffee with Jason', $meeting->name);
 		$this->assertEquals('Conference Room - F123, Bldg. 002', $meeting->location);
 		$this->assertEquals('Planned', $meeting->status);
-		$this->assertEquals('2002-10-28 22:00:00', $meeting->date_start);
+		$this->assertEquals('2002-10-28 22:00:00', $GLOBALS['db']->fromConvert($meeting->date_start, 'datetime'));
 		$this->assertEquals('Emails', $meeting->parent_type);
 		$this->assertEquals($email['message']['subject'], $meeting->parent_name);
 	}

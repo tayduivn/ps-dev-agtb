@@ -1824,7 +1824,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
             }
         }
-    
+
 
         // First we handle the preset fields listed in the fixed relationship_fields array hardcoded into the OOB beans
         // TODO: remove this mechanism and replace with mechanism exclusively based on the vardefs
@@ -1983,8 +1983,6 @@ function save_relationship_changes($is_update, $exclude=array())
 
 					if($type == 'date')
 					{
-						$this->$field = $this->db->fromConvert($this->$field, 'date');
-
 						if($this->$field == '0000-00-00')
 						{
 							$this->$field = '';
@@ -1994,7 +1992,6 @@ function save_relationship_changes($is_update, $exclude=array())
 
 							if(!empty($this->$rel_field))
 							{
-								$this->$rel_field=$this->db->fromConvert($this->$rel_field, 'time');
 								if(empty($disable_date_format)) {
 									$mergetime = $timedate->merge_date_time($this->$field,$this->$rel_field);
 									$this->$field = $timedate->to_display_date($mergetime);
@@ -2016,7 +2013,6 @@ function save_relationship_changes($is_update, $exclude=array())
 						}
 						else
 						{
-							$this->$field = $this->db->fromConvert($this->$field, 'datetime');
 							if(empty($disable_date_format)) {
 								$this->$field = $timedate->to_display_date_time($this->$field, true, true);
 							}
@@ -2257,6 +2253,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
 
         //make copy of the fetched row for construction of audit record and for business logic/workflow
+        $row = $this->convertRow($row);
         $this->fetched_row=$row;
         $this->populateFromRow($row);
 
@@ -4812,6 +4809,7 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             return null;
         }
+        $row = $this->convertRow($row);
         $this->fetched_row = $row;
         $this->fromArray($row);
         $this->fill_in_additional_detail_fields();
@@ -5442,6 +5440,25 @@ function save_relationship_changes($is_update, $exclude=array())
     }
 
     /**
+     * Convert row data from DB format to internal format
+     * Mostly useful for dates/times
+     * @param array $row
+     * @return array $row
+     */
+    public function convertRow($row)
+    {
+        foreach($this->field_defs as $name => $fieldDef)
+		{
+		    // skip empty fields and non-db fields
+		    if(empty($row[$name])) continue;
+		    if(isset($fieldDef['source']) && $fieldDef['source'] != 'db') continue;
+		    // fromConvert other fields
+		    $row[$name] = $this->db->fromConvert($row[$name], $fieldDef['type']);
+		}
+		return $row;
+    }
+
+    /**
      * Loads a row of data into instance of a bean. The data is passed as an array to this function
      *
      * @param array $arr row of data fetched from the database.
@@ -5461,7 +5478,8 @@ function save_relationship_changes($is_update, $exclude=array())
         $this->call_custom_logic("process_record");
     }
 
-    function hasCustomFields(){
+    function hasCustomFields()
+    {
         return !empty($GLOBALS['dictionary'][$this->object_name]['custom_fields']);
     }
 

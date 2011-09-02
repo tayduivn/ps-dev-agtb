@@ -170,6 +170,8 @@ function dragDropInit(){
 
 resizeDDLists = function() {
 	var Dom = YAHOO.util.Dom;
+	if (!Dom.get('ul0'))
+            return;
     var body = document.getElementById('mbtabs');
     for(var msi = 0; msi < studiotabs.slotCount ; msi++){
         var targetHeight =  body.offsetHeight - (Dom.getY("ul" + msi) - Dom.getY(body)) - 20;

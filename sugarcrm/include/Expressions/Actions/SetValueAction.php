@@ -81,7 +81,14 @@ class SetValueAction extends AbstractAction{
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
-        $result = Parser::evaluate($this->expression, $target)->evaluate();
+        set_error_handler('handleExpressionError');
+        try {
+            $result = Parser::evaluate($this->expression, $target)->evaluate();
+        } catch(Exception $e){
+            $GLOBALS['log']->fatal("Exception evaluating expression {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}");
+            $result = "";
+        }
+        restore_error_handler();
         $field = $this->targetField;
         $def = array();
         if (!empty($target->field_defs[$field]))
