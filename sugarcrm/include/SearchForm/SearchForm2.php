@@ -136,7 +136,7 @@ require_once('include/EditView/EditView2.php');
     }
 
     function display($header = true){
-        global $theme, $timedate;
+        global $theme, $timedate, $current_user;
         $header_txt = '';
         $footer_txt = '';
         $return_txt = '';
@@ -174,7 +174,7 @@ require_once('include/EditView/EditView2.php');
           $this->th->ss->assign('CALENDAR_FORMAT', $date_format . ' ' . $t23 . $time_separator . "%M" . $pm);
         }
         $this->th->ss->assign('TIME_SEPARATOR', $time_separator);
-        $this->th->ss->assign('CALENDAR_FDOW', $timedate->get_first_day_of_week());
+        $this->th->ss->assign('CALENDAR_FDOW', $current_user->get_first_day_of_week());
 
         //Show and hide the good tab form
         foreach($this->tabs as $tabkey=>$viewtab){

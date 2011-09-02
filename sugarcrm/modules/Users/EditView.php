@@ -397,7 +397,8 @@ foreach ($app_list_strings['dom_cal_day_long'] as $d)
     $fdowDays[] = $d;
 }
 $sugar_smarty->assign("FDOWOPTIONS", $fdowDays);
-$currentFDOW = $focus->getPreference('fdow');
+$currentFDOW = $focus->get_first_day_of_week();
+
 if (!isset($currentFDOW))
   $currentFDOW = 0;
 $sugar_smarty->assign("FDOWCURRENT", $currentFDOW);
