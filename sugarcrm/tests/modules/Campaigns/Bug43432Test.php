@@ -20,8 +20,6 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
 class Bug43432Test extends Sugar_PHPUnit_Framework_OutputTestCase {
 
      var $campaign = null;
