@@ -5693,8 +5693,8 @@ padding:0px 10px 0px;
 #dcboxbody{
 height:110%;
 font-size:6px !important;
-min-width: 950px\9; /* ie hack, width must be defined or else it goes off the screen */
-*width: 950px;
+min-width: 750px\9; /* ie hack, width must be defined or else it goes off the screen */
+*width: 750px;
 }
 
 #dcboxbody.sugar_spot_search{
