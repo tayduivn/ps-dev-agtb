@@ -26,7 +26,9 @@
 require_once 'modules/Notes/Note.php';
 require_once 'include/SearchForm/SearchForm2.php';
 
-
+/**
+ * @group Bug45966
+ */
 class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
     var $module = 'Notes';
@@ -36,6 +38,8 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
     var $array;
 
     public function setUp() {
+        global $beanList;
+
         require "modules/".$this->module."/metadata/searchdefs.php";
         require "modules/".$this->module."/metadata/SearchFields.php";
         require "modules/".$this->module."/metadata/listviewdefs.php";
@@ -43,8 +47,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->setPreference('timezone', 'EDT');
 
-        $classname = substr($this->module, 0, -1);
-        $this->seed = new $classname();
+        $this->seed = new $beanList[$this->module];
         $this->form = new SearchForm($this->seed, $this->module, $this->action);
         $this->form->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', "advanced_search", $listViewDefs);
 
