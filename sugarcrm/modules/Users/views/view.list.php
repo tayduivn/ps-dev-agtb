@@ -57,7 +57,7 @@ class UsersViewList extends ViewList
 			if(!empty($this->where)){
 					$this->where .= " AND";
 			}
-			$this->where .= " users.status !='Reserved'";
+                        $this->where .= " (users.status !='Reserved' or users.status is null) ";
 //BEGIN SUGARCRM flav=sales ONLY
 			if(!is_admin($GLOBALS['current_user'])){
 				$this->where = " AND users.is_admin = '0'";
