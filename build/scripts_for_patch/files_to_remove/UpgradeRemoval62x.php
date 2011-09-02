@@ -26,14 +26,11 @@ if($version < '622')
 	$files[] = 'include/utils/external_cache';
 	$files[] = 'include/jsolait';
 	$files[] = 'include/JSON.js';
-	$files[] = 'include/javascript/tiny_mce/plugins/compat2x/editor_plugin.js';
+        $files[] = 'include/javascript/tiny_mce/plugins/compat2x/editor_plugin.js';
 	$files[] = 'include/javascript/tiny_mce/plugins/compat2x/editor_plugin_src.js';
-	$files[] = 'include/javascript/tiny_mce/plugins/media/css/content.css';
+        $files[] = 'include/javascript/tiny_mce/plugins/media/css/content.css';
 	$files[] = 'include/javascript/tiny_mce/plugins/media/img';
-	$files[] = 'include/javascript/tiny_mce/plugins/pagebreak';
-	$files[] = 'include/javascript/tiny_mce/plugins/paste';
-	$files[] = 'include/javascript/tiny_mce/plugins/safari';
-	$files[] = 'include/javascript/yui3/build/cssgrids/grids-context-min.css';
+        $files[] = 'include/javascript/yui3/build/cssgrids/grids-context-min.css';
 	$files[] = 'include/javascript/yui3/build/cssgrids/grids-context.css';
 	$files[] = 'include/javascript/yui3/build/get/get-min.js';
 	$files[] = 'include/javascript/yui3/build/get/get.js';

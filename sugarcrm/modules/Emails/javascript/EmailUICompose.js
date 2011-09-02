@@ -1200,7 +1200,7 @@ SE.composeLayout = {
         if (!retry) {
             this._0_yui();
         }
-        if (typeof(tinyMCE) == 'undefined' || typeof(tinyMCE.settings) == 'undefined'){
+        if  (!SUGAR.util.isTouchScreen() && (typeof(tinyMCE) == 'undefined' || typeof(tinyMCE.settings) == 'undefined')){
             setTimeout("SE.composeLayout.c1_composeEmail(" + isReplyForward + ", true);", 500);
         } else {
 	        this._1_tiny(isReplyForward);

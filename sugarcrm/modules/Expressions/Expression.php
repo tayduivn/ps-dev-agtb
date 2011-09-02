@@ -427,12 +427,12 @@ class Expression extends SugarBean {
 			}	
 			
 			if($this->exp_type == "bool"){
-	
+	            global $app_list_strings;
 				if($rhs_value=="bool_true"){
-					return "Yes";
+					return isset($app_list_strings['bselect_type_dom']['bool_true']) ? $app_list_strings['bselect_type_dom']['bool_true'] : 'Yes';
 				}
 				if($rhs_value=="bool_false"){
-					return "No";
+					return isset($app_list_strings['bselect_type_dom']['bool_false']) ? $app_list_strings['bselect_type_dom']['bool_false'] : 'No';
 				}
 				return "";
 			//end if target_type is bool	

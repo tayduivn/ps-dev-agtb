@@ -327,7 +327,7 @@ class Email extends SugarBean {
 	}
 
 
-	function sendEmailTest($mailserver_url, $port, $ssltls, $smtp_auth_req, $smtp_username, $smtppassword, $fromaddress, $toaddress, $mail_sendtype = 'smtp') {
+	function sendEmailTest($mailserver_url, $port, $ssltls, $smtp_auth_req, $smtp_username, $smtppassword, $fromaddress, $toaddress, $mail_sendtype = 'smtp', $fromname = '') {
 		global $current_user,$app_strings;
 		$mod_strings = return_module_language($GLOBALS['current_language'], 'Emails'); //Called from EmailMan as well.
 	    $mail = new SugarPHPMailer();
@@ -358,8 +358,14 @@ class Email extends SugarBean {
 
 		$mail->Subject = from_html($mod_strings['LBL_TEST_EMAIL_SUBJECT']);
 		$mail->From = $fromaddress;
-		$mail->FromName = $current_user->name;
-		$mail->Sender = $mail->From;
+
+        if ($fromname != '') {
+            $mail->FromName = html_entity_decode($fromname,ENT_QUOTES);
+        } else {
+            $mail->FromName = $current_user->name;
+        }
+
+        $mail->Sender = $mail->From;
 		$mail->AddAddress($toaddress);
 		$mail->Body = $mod_strings['LBL_TEST_EMAIL_BODY'];
 
