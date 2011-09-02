@@ -80,12 +80,11 @@ function smarty_function_sugar_translate($params, &$smarty)
         $value = addslashes($value);
         $value = str_replace(array('&#039;', '&#39;'), "\'", $value);
     }
-	if(!empty($params['trimColon']) && !$params['trimColon']) {
+    if(array_key_exists('trimColon'], $params) && !$params['trimColon']) {
         return $value;
-    }
-    elseif($params['label'] == '0')
-   		return translate("DEFAULT", $module);
-    else {
+    } elseif($params['label'] == '0') {
+   		  return translate("DEFAULT", $module);
+    } else {
         return preg_replace("/([:]|\xEF\xBC\x9A)[\\s]*$/", "", $value);
     }
 }
