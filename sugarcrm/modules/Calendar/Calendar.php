@@ -161,7 +161,11 @@ class Calendar
 			$days_in_month = $this->date_time->days_in_month;
 
 			$first_day_of_month = $this->date_time->get_day_by_index_this_month(0);
+<<<<<<< HEAD
                         $num_of_prev_days = $first_day_of_month->day_of_week - $timedate->get_first_day_of_week();
+=======
+                        $num_of_prev_days = $first_day_of_month->day_of_week - $current_user->get_first_day_of_week();
+>>>>>>> b011f2c5032c054e8cbb7994bf40ea882246e0aa
                         if ($num_of_prev_days < 0)
                             $num_of_prev_days += 7;
 
@@ -178,7 +182,11 @@ class Calendar
 		else if ( $this->view == 'week' || $this->view == 'shared')
 		{
 			$days_in_week = 7;
+<<<<<<< HEAD
                         $d = $timedate->get_first_day_of_week();
+=======
+                        $d = $current_user->get_first_day_of_week();
+>>>>>>> b011f2c5032c054e8cbb7994bf40ea882246e0aa
 			for($i=$d;$i<($d+$days_in_week);$i++)
 			{
 				$slice = new Slice('day',$this->date_time->get_day_by_index_this_week($i));
