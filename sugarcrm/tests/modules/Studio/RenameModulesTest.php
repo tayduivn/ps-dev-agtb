@@ -37,6 +37,8 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        $this->removeCustomAppStrings();
+        $this->removeModuleStrings(array('Accounts'));
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         SugarCache::$isCacheReset = false;
@@ -90,7 +92,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Companies', $campaignStrings['LBL_CAMPAIGN_ACCOUNTS_SUBPANEL_TITLE'], "Renaming subpanels failed for module.");
         // bug 45554: ensure labels are changed
         $this->assertEquals('Companies', $campaignStrings['LBL_ACCOUNTS'], 'Renaming labels failed for module.');
-    
+
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
         $this->assertTrue( count($renamedModules) > 0 );

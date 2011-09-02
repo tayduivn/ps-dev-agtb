@@ -399,7 +399,7 @@ class RenameModules
             foreach($this->changedModules as $changedModuleName => $renameFields)
             {
                 if( !( isset($subpanelMetaData['type']) &&  $subpanelMetaData['type'] == 'collection') //Dont bother with collections
-                    && $subpanelMetaData['module'] == $changedModuleName && isset($subpanelMetaData['title_key']) )
+                    && isset($subpanelMetaData['module']) && $subpanelMetaData['module'] == $changedModuleName && isset($subpanelMetaData['title_key']) )
                 {
                     $replaceKey = $subpanelMetaData['title_key'];
                     if( !isset($mod_strings[$replaceKey]) )
