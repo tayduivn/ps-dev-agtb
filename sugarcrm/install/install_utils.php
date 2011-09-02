@@ -1736,7 +1736,7 @@ function extractManifest( $zip_file,$base_tmp_upgrade_dir ) {
 }
 
 if ( !function_exists('unlinkTempFiles') ) {
-function unlinkTempFiles($manifest, $zipFile) {
+function unlinkTempFiles($manifest='', $zipFile='') {
     global $sugar_config;
 
     @unlink($_FILES['language_pack']['tmp_name']);

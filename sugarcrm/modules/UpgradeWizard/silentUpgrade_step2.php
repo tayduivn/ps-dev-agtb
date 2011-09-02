@@ -426,7 +426,7 @@ logThis('Start rebuild relationships.', $path);
 logThis('End rebuild relationships.', $path);
 
 include("$unzip_dir/manifest.php");
-$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt')  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
+$ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt'  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
 $origVersion = getSilentUpgradeVar('origVersion');
 if(!$origVersion){
     global $silent_upgrade_vars_loaded;

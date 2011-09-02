@@ -196,13 +196,10 @@ if(!empty($is_edit) && $is_edit==true){
 	//set query_id and column_id
 	$ListView->xTemplateAssign("QUERY_ID", $seed_object->id);
 	$ListView->xTemplateAssign("COLUMN_ID", $focus->id);
-<<<<<<< HEAD
 
 	$del_image_link = SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" alt="'.$app_strings['LNK_DELETE'].'" border="0"');
-=======
-	 
 	$del_image_link = SugarThemeRegistry::current()->getImage('delete_inline','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_DELETE']);
->>>>>>> cottoncandy_overload
+
 	$ListView->xTemplateAssign("DELETE_INLINE_PNG", $del_image_link);
 
 	$ListView->setQuery($where, "", "list_order", "SUB_CALC");

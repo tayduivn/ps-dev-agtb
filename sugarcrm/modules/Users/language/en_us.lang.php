@@ -600,7 +600,7 @@ $mod_strings = array (
     'LBL_WIZARD_FINISH_BUTTON' => 'Finish',
     'LBL_WIZARD_FINISH_TAB' => 'Finish',
     'LBL_WIZARD_FINISH_TITLE' => 'You are ready to use Sugar!',
-<<<<<<< HEAD
+
     'LBL_WIZARD_FINISH' => 'Click <b>Finish</b> below to save your settings and to begin using Sugar. For more information on using Sugar:<br /><br />
 <table cellpadding=0 cellspacing=0>
 <tr><td><!--not_in_theme!--><img src=include/images/university.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/university" target="_blank"><b>Sugar University</b></a><br>End-user and System Administrator Training and Resources</td></tr>
@@ -611,7 +611,6 @@ $mod_strings = array (
 <tr><td colspan=2><hr style="margin: 5px 0px;"></td></tr>
 <tr><td><!--not_in_theme!--><img src=include/images/forums.png style="margin-right: 5px;"></td><td><a href="http://www.sugarcrm.com/forums" target="_blank"><b>Forums</b></a><br>Forums dedicated to the Sugar Community to discuss topics of interest with each other and with SugarCRM Developers</td></tr>
 </table>',
-=======
 
     'LBL_WIZARD_FINISH1' => 'What would you like to do next?',
     'LBL_WIZARD_FINISH2' => 'Start Using Sugar',
