@@ -379,6 +379,15 @@
 		    newContent.eaw = this;
 		    newContent.onblur = function(e){this.eaw.retrieveEmailAddress(e)};
 		    newContent.onkeydown = function(e){this.eaw.handleKeyDown(e)};
+            if ( SUGAR.isIE ) {
+                // IE is some sort of jive turkey and doesn't bubble up "change" events through the DOM. So we need to find events that are looking at our parent and manually push them down to here
+                var emailcontainer = Dom.getAncestorByTagName(insertInto,'span');
+                var listeners = YAHOO.util.Event.getListeners(emailcontainer);
+                for (var i=0; i<listeners.length; ++i) {
+                    var listener = listeners[i];
+                    YAHOO.util.Event.addListener(newContent, listener.type, listener.fn, listener.obj, listener.adjust);
+                }
+            }
 		    
 		    // Add validation to field
 		    addToValidate(this.emailView, this.id + 'emailAddress' + this.numberEmailAddresses, 'email', this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));  
