@@ -228,10 +228,16 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
 	//END SUGARCRM flav=following ONLY
 
-    function quickRequest(type, url, success){
-     	if(!success)success=function(id, data) {}
+    function quickRequest(type, url, success)
+    {
+
+     	if(typeof success == 'undefined' || typeof success != 'function')
+        {
+           success=function(id, data) {}
+        }
+
         var id = Y.io(url, {
-             method: 'POST',
+            method: 'POST',
              //XDR Listeners
  		    on: {
  			    success: success,
@@ -558,27 +564,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
     DCMenu.showQuickView = function(module, recordID)
     {
-        var q = document.getElementById('sugar_spot_search').value;
-        url = 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q);
-        quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data)
-        {
-            debugger;
-            //var dcgscontent = Y.one('#dcgscontent');
-            //dcgscontent.set('innerHTML', data.responseText);
-            var dcgscontent = document.getElementById('dcgscontent');
-            dcgscontent.innerHTML = data.responseText;
-            var animDCcont = new Y.Anim({ node: dcgscontent, to: { height:500 } });
-            animDCcont.run();
-        });
-
-        //Slide down dccontent if the height isn't full so things align nicely.
-        var animDCcont = new Y.Anim({ node: '#dccontent', to: { height: 500 } });
-        animDCcont.set('duration', 0.5);
-        animDCcont.set('easing', Y.Easing.easeOut);
-        animDCcont.run();
-
         var qvDepth = 'sqv';
-
         if(typeof(overlays[qvDepth]) == 'undefined')
         {
             overlays[qvDepth] = new Y.Overlay({
@@ -601,30 +587,58 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             return;
         }
 
-        content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div class="tl"></div><div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent" id="dcgscontent"><br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
 
-        overlays[qvDepth].set("bodyContent", content);
-        overlays[qvDepth].set("align", {node:"#dcboxbody",
-                      points:[Y.WidgetPositionExt.TR, Y.WidgetPositionExt.TR]});
-
-        overlays[qvDepth].visible = true;
-
-        overlays[qvDepth].show = function()
+        var q = document.getElementById('sugar_spot_search').value;
+        url = 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q);
+        quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data)
         {
-            this.visible = true;
-            //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
-            //this.get('boundingBox').setStyle('position' , 'absolute');
-            this.get('boundingBox').setStyle('visibility','visible');
-            //Animate a slide out
-            var shim = 10; //TODO: grab padding from parent element.
-            var animX = this.get("x") - this.get("width") - shim;
-            var animY = this.get("y");
-        	var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY],height:500 } });
-            animDCcont.set('duration', .5);
-            animDCcont.set('easing', Y.Easing.easeOut);
-            animDCcont.run();
-    	}
-    	overlays[qvDepth].after('render', function(e) { this.show(); });
-        overlays[qvDepth].render();
+
+            content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div class="tl"></div><div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent" id="dcgscontent">' +  data.responseText  + '<br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
+      
+            overlays[qvDepth].set("bodyContent", content);
+            overlays[qvDepth].set("align", {node:"#dcboxbody", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
+            //points:[Y.WidgetPositionExt.TR, Y.WidgetPositionExt.TR]});
+
+            overlays[qvDepth].visible = true;
+            overlays[qvDepth].show = function()
+            {
+                this.visible = true;
+                
+                //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
+                //this.get('boundingBox').setStyle('position' , 'absolute');
+                this.get('boundingBox').setStyle('visibility','visible');
+                //Animate a slide out
+                var shim = 10;  //TODO: grab padding from parent element.  Set to 10 for now.
+                var animX = this.get("x") - this.get("width") - shim;
+                var animY = this.get("y");
+                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY],height:500 } });
+                animDCcont.set('duration', .5);
+                animDCcont.set('easing', Y.Easing.easeOut);
+                animDCcont.run();
+            }
+
+            //var dcgscontent = Y.one('#dcgscontent');
+            //dcgscontent.set('innerHTML', data.responseText);
+            
+            overlays[qvDepth].after('render', function(e) { this.show(); });
+            overlays[qvDepth].render();
+
+
+            //var animDCcont = new Y.Anim({ node: dcgscontent, to: { height:500 } });
+            //animDCcont.run();
+        });
+
+        //Slide down dccontent if the height isn't full so things align nicely.
+        /*
+        var animDCcont = new Y.Anim({ node: '#dccontent', to: { height: 500 } });
+        animDCcont.set('duration', 0.5);
+        animDCcont.set('easing', Y.Easing.easeOut);
+        animDCcont.run();
+        */
+
+
+
+
+
     }
 });
