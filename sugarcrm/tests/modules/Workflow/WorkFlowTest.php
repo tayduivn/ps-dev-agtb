@@ -33,11 +33,46 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 	protected $testWFName = "WFUnitTest";
 	protected $testValue = "Workflow triggred!";
 	protected $testAccName = "WF Test Account";
+    private static $has_workflow_directory;
+    private static $has_logic_hooks_file;
+    private static $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
+
+    public static function setUpBeforeClass()
+    {
+        if(file_exists('custom/modules/Accounts/workflow'))
+        {
+           self::$has_workflow_directory = true;
+        } else {
+           mkdir_recursive('custom/modules/Accounts/workflow');
+        }
+
+        foreach(self::$wf_files as $file) {
+             $target_file = 'custom/modules/Accounts/workflow/' . $file;
+             if(file_exists($target_file))
+             {
+             		copy($target_file, $target_file . '.bak');
+             }
+
+             $test_file = 'tests/include/workflow/testfiles/workflow/' . $file;
+             if(file_exists($test_file))
+             {
+           		copy($test_file, $target_file);
+             }
+        }
+
+        if(file_exists('custom/modules/Accounts/logic_hooks.php'))
+        {
+        	self::$has_logic_hooks_file = true;
+        	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
+        }
+        copy('tests/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
+        LogicHook::refreshHooks();
+    }
 
 	public function setUp()
     {
-    	$this->testWFName = "WFUnitTest" . mt_rand(); 
-    	$this->testAccName = "WFTestAccount" . mt_rand(); 
+    	$this->testWFName = "WFUnitTest" . mt_rand();
+    	$this->testAccName = "WFTestAccount" . mt_rand();
     	$this->wf = new WorkFlow();
     	$this->wf->name = $this->testWFName;
     	$this->wf->base_module = "Accounts";
@@ -54,6 +89,34 @@ class WorkFlowTest extends Sugar_PHPUnit_Framework_TestCase
 	    $sql = "DELETE FROM workflow WHERE id='{$this->wf->id}'";
         $GLOBALS['db']->query($sql);
 	}
+
+	public static function tearDownAfterClass()
+    {
+        if(self::$has_workflow_directory)
+        {
+           foreach(self::$wf_files as $file) {
+
+           	   $target_file = 'custom/modules/Accounts/workflow/' . $file;
+          	   if(file_exists($target_file . '.bak'))
+          	   {
+          	   		copy($target_file . '.bak', $target_file);
+          	   		unlink($target_file . '.bak');
+          	   } else {
+          	       unlink($target_file);
+          	   }
+           }
+        } else {
+           rmdir_recursive('custom/modules/Accounts/workflow');
+        }
+
+        if(self::$has_logic_hooks_file)
+        {
+        	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
+        	unlink('custom/modules/Accounts/logic_hooks.php.bak');
+        } else {
+            unlink('custom/modules/Accounts/logic_hooks.php');
+        }
+    }
 
 	public function testCreate_new_list_query()
     {

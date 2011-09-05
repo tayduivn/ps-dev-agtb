@@ -77,6 +77,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($row,array('name','city'));
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('tester1','wuhan'));
+        unset($importFile); // Making sure the file is closed as the unlink will cause an error on Windows otherwise
         unlink($sample_file);
     }
 
@@ -117,6 +118,8 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $importFile = new ImportFile($emptyFile,',','',false);
 
         $this->assertFalse($importFile->getNextRow());
+
+        unset($importFile); // Making sure the file is closed as the unlink will cause an error on Windows otherwise
 
         @unlink($emptyFile);
     }

@@ -515,7 +515,7 @@ class iCalendar {
 					$prev_exists = true;
 				}
 
-				if($val->event->status == 'CANCELLED' && !$prev_exists) {
+				if(isset($val->event->status) && $val->event->status == 'CANCELLED' && !$prev_exists) {
 				    // can't cancel non-existing event, skip
 				    continue;
 				}

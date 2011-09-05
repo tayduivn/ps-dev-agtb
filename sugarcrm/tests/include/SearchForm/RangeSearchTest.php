@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/DynamicFields/templates/Fields/TemplateInt.php';
 require_once 'modules/DynamicFields/templates/Fields/TemplateDate.php';
 require_once 'include/SearchForm/SearchForm2.php';
@@ -118,15 +118,24 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    public function testRangeSearchMysql()
+    protected $rangeTemplate = array(
+        "mysql" => "(opportunities.date_closed >= '%s' AND opportunities.date_closed <= '%s')",
+        "mssql" => "(opportunities.date_closed >= CONVERT(datetime,'%s',120) AND opportunities.date_closed <= CONVERT(datetime,'%s',120))",
+        "oci8" => "(opportunities.date_closed >= to_date('%s', 'YYYY-MM-DD HH24:MI:SS') AND opportunities.date_closed <= to_date('%s', 'YYYY-MM-DD HH24:MI:SS'))"
+    );
+
+    public function testRangeSearch()
     {
-		if(!($GLOBALS['db'] instanceof MysqlManager)) $this->markTestSkipped("Mysql only");
-	    $year = date("Y");
+        if(!isset($this->rangeTemplate[$GLOBALS['db']->dbType])) {
+            $this->markTestSkipped("No template for db type {$GLOBALS['db']->dbType}");
+        }
+        $year = date("Y");
 	    $timedate = TimeDate::getInstance();
 	    $start = $timedate->fromString("$year-01-01 00:00:00")->asDb();
 	    $end = $timedate->fromString("$year-12-31 23:59:59")->asDb();
 		$where_clauses = $this->searchForm->generateSearchWhere();
-	    $this->assertEquals("(opportunities.date_closed >= '$start' AND opportunities.date_closed <= '$end')", $where_clauses[0]);
+		$expect = sprintf($this->rangeTemplate[$GLOBALS['db']->dbType], $start, $end);
+	    $this->assertEquals($expect, $where_clauses[0]);
 
 		$this->searchForm->searchFields['range_date_closed'] = array (
 	            'query_type' => 'default',
@@ -141,7 +150,8 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
 
 		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals("(opportunities.date_closed >= '$start' AND opportunities.date_closed <= '$end')", $where_clauses[0]);
+		$expect = sprintf($this->rangeTemplate[$GLOBALS['db']->dbType], $start, $end);
+	    $this->assertEquals($expect, $where_clauses[0]);
     }
 
     public function testRangeNumberSearches()
@@ -209,45 +219,6 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($where_clauses[0], "(opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01')");
 
     }
-
-    public function testRangeSearchMssql()
-    {
-        if(!($GLOBALS['db'] instanceof MssqlManager)) $this->markTestSkipped("Mssql only");
-        $where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], 'DATEPART(yy,opportunities.date_closed) = DATEPART(yy, GETDATE())');
-
-		$this->searchForm->searchFields['range_date_closed'] = array (
-	            'query_type' => 'default',
-	            'enable_range_search' => 1,
-	            'is_date_field' => 1,
-	            'value' => '[next_year]',
-	            'operator' => 'next_year',
-	    );
-
-		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], 'DATEPART(yy,opportunities.date_closed) = DATEPART(yy,( dateadd(yy, 1,GETDATE())))');
-
-    }
-    //BEGIN SUGARCRM flav=ent ONLY
-    public function testRangeSearchOracle()
-    {
-        if(!($GLOBALS['db'] instanceof OracleManager)) $this->markTestSkipped("Oracle only");
-        $where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], 'TRUNC(opportunities.date_closed,\'YEAR\') = TRUNC( sysdate,\'YEAR\')');
-
-		$this->searchForm->searchFields['range_date_closed'] = array (
-	            'query_type' => 'default',
-	            'enable_range_search' => 1,
-	            'is_date_field' => 1,
-	            'value' => '[next_year]',
-	            'operator' => 'next_year',
-	    );
-
-		$where_clauses = $this->searchForm->generateSearchWhere();
-		$this->assertEquals($where_clauses[0], 'TRUNC(opportunities.date_closed,\'YEAR\') = TRUNC(add_months(sysdate,+12),\'YEAR\')');
-
-    }
-    //END SUGARCRM flav=ent ONLY
 
     /**
      * testRangeSearchWithSavedReportValues
@@ -321,13 +292,13 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
     	$_REQUEST['date_closed_advanced'] = '07-03-2009';
 
 		$output = $ss->fetch($this->smartyTestFile);
-        $this->assertRegExp("/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-03\-2009\'/", $output);
+        $this->assertRegExp('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-03\-2009\'/', $output);
 
     	//Simulate the request with range search value
     	$_REQUEST['range_date_closed_advanced'] = '07-04-2009';
 
 		$output = $ss->fetch($this->smartyTestFile);
-        $this->assertRegExp("/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-04\-2009\'/", $output);
+        $this->assertRegExp('/range_date_closed_advanced\"\s+?value\s*?\=s*?\'07\-04\-2009\'/', $output);
     }
 
 }

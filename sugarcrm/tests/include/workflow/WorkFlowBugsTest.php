@@ -27,23 +27,23 @@ require_once('include/utils/LogicHook.php');
 
 class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $has_workflow_directory;
-    private $has_logic_hooks_file;
-    private $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
+    private static $has_workflow_directory;
+    private static $has_logic_hooks_file;
+    private static $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
     private $test_account;
     private $test_team1;
     private $test_team2;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         if(file_exists('custom/modules/Accounts/workflow'))
         {
-           $this->has_workflow_directory = true;
+           self::$has_workflow_directory = true;
         } else {
            mkdir_recursive('custom/modules/Accounts/workflow');
         }
 
-        foreach($this->wf_files as $file) {
+        foreach(self::$wf_files as $file) {
              $target_file = 'custom/modules/Accounts/workflow/' . $file;
              if(file_exists($target_file))
              {
@@ -59,7 +59,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 
         if(file_exists('custom/modules/Accounts/logic_hooks.php'))
         {
-        	$this->has_logic_hooks_file = true;
+        	self::$has_logic_hooks_file = true;
         	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         }
         copy('tests/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
@@ -110,10 +110,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $sql = "INSERT INTO workflow_triggershells(id, deleted, date_entered, date_modified, modified_user_id, created_by, field, type, frame_type, eval, parent_id, show_past, rel_module_type)
         VALUES ('88809b43-e3fb-17fc-c311-4c735359cebe', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'name', 'compare_specific', 'Primary', '( !(\$focus->fetched_row[''name''] ==  ''Sugar'' )) && (isset(\$focus->name) && \$focus->name ==  ''Sugar'')', '43406320-49b6-6503-0074-4c73532a4325', 0, 'any')";
-        $GLOBALS['db']->query($sql);           
-        
-    	$this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->test_team2 = SugarTestTeamUtilities::createAnonymousTeam();
+        $GLOBALS['db']->query($sql);
 
     	$beanList = array();
     	$beanFiles = array();
@@ -124,19 +121,26 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
 		require_once('modules/Accounts/Account.php');
-    	$this->test_account = new Account();
+    	unset($GLOBALS['triggeredWorkflows']);
+    }
+
+    public function setUp()
+    {
+    	$this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
+        $this->test_team2 = SugarTestTeamUtilities::createAnonymousTeam();
+
+        $this->test_account = new Account();
     	$this->test_account->name = 'bug_32738_test';
     	$this->test_account->team_id = $this->test_team1->id;
     	$this->test_account->team_set_id = $this->test_team1->id;
     	$this->test_account->save();
-    	unset($GLOBALS['triggeredWorkflows']);
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
-        if($this->has_workflow_directory)
+        if(self::$has_workflow_directory)
         {
-           foreach($this->wf_files as $file) {
+           foreach(self::$wf_files as $file) {
 
            	   $target_file = 'custom/modules/Accounts/workflow/' . $file;
           	   if(file_exists($target_file . '.bak'))
@@ -151,7 +155,7 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
            rmdir_recursive('custom/modules/Accounts/workflow');
         }
 
-        if($this->has_logic_hooks_file)
+        if(self::$has_logic_hooks_file)
         {
         	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
         	unlink('custom/modules/Accounts/logic_hooks.php.bak');
@@ -174,14 +178,16 @@ class WorkFlowBugsTest extends Sugar_PHPUnit_Framework_TestCase
         $sql = "DELETE FROM workflow_triggershells where id in ('153c738b-3674-3db7-314e-4c72d7ea4eb9', '88809b43-e3fb-17fc-c311-4c735359cebe')";
         $GLOBALS['db']->query($sql);
 
-        $sql = "DELETE FROM accounts WHERE id = '{$this->test_account->id}'";
-        $GLOBALS['db']->query($sql);
-
-        SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['beanList']);
-
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+    }
+
+    public function tearDown()
+    {
+        $sql = "DELETE FROM accounts WHERE id = '{$this->test_account->id}'";
+        $GLOBALS['db']->query($sql);
+        SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }
 
     /**

@@ -373,6 +373,7 @@ class TimeDate
         return $this->merge_date_time($this->get_date_format($user), $this->get_time_format($user));
     }
 
+
     /**
      * Get user first day of week.
      *
