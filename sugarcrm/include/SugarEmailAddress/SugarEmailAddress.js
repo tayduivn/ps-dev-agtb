@@ -191,7 +191,7 @@
 		    var newContent = document.createElement("input");
 		    var nav = new String(navigator.appVersion);
 		    var newContentPrimaryFlag;
-		    if(SUGAR.isIE){
+		    if(YAHOO.env.ua.ie){
 		       newContentPrimaryFlag = document.createElement("<input name='emailAddressPrimaryFlag' />");
 		    }else{
 		       newContentPrimaryFlag = document.createElement("input");
@@ -379,8 +379,8 @@
 		    newContent.eaw = this;
 		    newContent.onblur = function(e){this.eaw.retrieveEmailAddress(e)};
 		    newContent.onkeydown = function(e){this.eaw.handleKeyDown(e)};
-            if ( SUGAR.isIE ) {
-                // IE is some sort of jive turkey and doesn't bubble up "change" events through the DOM. So we need to find events that are looking at our parent and manually push them down to here
+            if (YAHOO.env.ua.ie) {
+                // IE doesn't bubble up "change" events through the DOM. So we need to find events that are looking at our parent and manually push them down to here
                 var emailcontainer = Dom.getAncestorByTagName(insertInto,'span');
                 var listeners = YAHOO.util.Event.getListeners(emailcontainer);
                 for (var i=0; i<listeners.length; ++i) {
@@ -457,7 +457,7 @@
                 form = document.forms['editContactForm'];
             }
             
-            if(SUGAR.isIE) {
+            if(YAHOO.env.ua.ie) {
                 for(i=0; i<form.elements.length; i++) {
                    var id = new String(form.elements[i].id);
                     if(id.match(/emailAddressInvalidFlag/gim) && form.elements[i].type == 'checkbox' && id != el.id) {
