@@ -81,7 +81,8 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = 'Contacts';
         $sugarViewMock->process();
-        $expectedHookCount = $this->hasCustomContactLogicHookFile ? 2 : 1;
+        $hooks = $GLOBALS['logic_hook']->getHooks('Contacts');
+        $expectedHookCount = isset($hooks['after_ui_frame']) ? count($hooks['after_ui_frame']) : 0;
         $this->assertEquals($expectedHookCount, $GLOBALS['logic_hook']->hookRunCount, 'Assert that two logic hook files were run');
     }
 
@@ -89,10 +90,12 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarViewProcessLogicHookWithoutModule()
     {
         $GLOBALS['logic_hook'] = new LogicHookMock();
+        $hooks = $GLOBALS['logic_hook']->getHooks('');
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = '';
         $sugarViewMock->process();
-        $this->assertEquals(1, $GLOBALS['logic_hook']->hookRunCount, 'Assert that one logic hook file was run');
+        $expectedHookCount = isset($hooks['after_ui_frame']) ? count($hooks['after_ui_frame']) : 0;
+        $this->assertEquals($expectedHookCount, $GLOBALS['logic_hook']->hookRunCount, 'Assert that one logic hook file was run');
     }
 }
 
@@ -111,11 +114,6 @@ class SugarViewMock extends SugarView
 class LogicHookMock extends LogicHook
 {
     var $hookRunCount = 0;
-
-    function call_custom_logic($module_dir, $event, $arguments = null)
-    {
-        $this->process_hooks(array(), $event, $arguments);
-    }
     
     function process_hooks($hook_array, $event, $arguments)
     {
