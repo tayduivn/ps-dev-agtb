@@ -263,6 +263,9 @@ function buildRedirectURL($return_id='', $return_module='')
     if (!isset($isDuplicate) || !$isDuplicate)
     {
         $url="index.php?action=$return_action&module=$return_module&record=$return_id&return_module=$return_module&return_action=$return_action{$add}";
+        if(isset($_REQUEST['offset']) && empty($_REQUEST['duplicateSave'])) {
+            $url .= "&offset=".$_REQUEST['offset'];
+        }
         if(!empty($_REQUEST['ajax_load']))
         {
             $ajax_ret = array(
@@ -275,8 +278,7 @@ function buildRedirectURL($return_id='', $return_module='')
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
         } else {
-            header("Location: $url");
-            exit;
+            return "Location: $url";
         }
     } else {
     	$standard = "action=$return_action&module=$return_module&record=$return_id&isDuplicate=true&return_module=$return_module&return_action=$return_action&status=$status";
@@ -293,8 +295,7 @@ function buildRedirectURL($return_id='', $return_module='')
             $json = getJSONobj();
             echo $json->encode($ajax_ret);
         } else {
-            header("Location: $url");
-            exit;
+            return "Location: $url";
         }
     }
 }
