@@ -465,9 +465,38 @@ class TemplateField{
 		$df->deleteField($this);
 	}
 
+    /**
+     * get_field_name
+     *
+     * @param String $module The name of the module
+     * @param String $name The field name
+     */
+    protected function get_field_name($module, $name)
+    {
+       $bean = loadBean($module);
+       if(empty($bean) || is_null($bean))
+       {
+       	  return $name;
+       }
+
+       $field_defs = $bean->field_defs;
+       $field_name = isset($field_defs[$name]) ? $name : $name . '_c';
+       return $field_name;
+    }
+
 	function save($df){
 		//	    $GLOBALS['log']->debug('saving field: '.print_r($this,true));
 		$df->addFieldObject($this);
+
+        require_once('modules/ModuleBuilder/parsers/parser.searchfields.php');
+        $searchFieldParser = new ParserSearchFields( $df->getModuleName() , $df->getPackageName() ) ;
+	    //If unified_search is enabled for this field, then create the SearchFields entry
+	    $fieldName = $this->get_field_name($df->getModuleName(), $this->name);
+        if($this->unified_search && !isset($searchFieldParser->searchFields[$df->getModuleName()][$fieldName]))
+        {
+           $searchFieldParser->addSearchField($fieldName, array('query_type'=>'default'));
+           $searchFieldParser->saveSearchFields($searchFieldParser->searchFields);
+        }            
 	}
 
 }

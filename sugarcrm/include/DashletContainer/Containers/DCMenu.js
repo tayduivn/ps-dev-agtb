@@ -517,13 +517,12 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
         DCMenu.hideQuickViewIcon();
 
-        var elem=document.createElement('IMG');
+        var elem = document.createElement('IMG');
         elem.id = 'DCMenuQuickViewIcon'
         elem.src = 'themes/default/images/Search.gif';
         elem.height = 12;
-        elem.style.cursor = "pointer";
+        elem.style.cursor = 'pointer';
         elem.onclick = function() { DCMenu.showQuickView(module,recordID); };
-
         e.parentNode.insertBefore(elem,e);
         var aNode = Y.one(e);
         //Remove the padding from a href link
@@ -562,6 +561,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
     }
 
+
     DCMenu.showQuickView = function(module, recordID)
     {
         var qvDepth = 'sqv';
@@ -576,24 +576,21 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 visibility:true
             });
         }
-        else
-        {
-            var dcgscontent = Y.one('#dcgscontent');
-            dcgscontent.set('innerHTML', '<div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/></div>');
-            if(! overlays[qvDepth].visible )
-            {
-                overlays[qvDepth].show();
-            }
-            return;
-        }
-
 
         var q = document.getElementById('sugar_spot_search').value;
         url = 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q);
         quickRequest('showGAView', 'index.php?module=' + module + '&action=gs&record=' + recordID + '&q=' +  encodeURIComponent(q), function(id,data)
         {
 
-            content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;"><div class="dashletPanel dc"><div class="hd"><div class="tl"></div><div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="tr"></div><div class="bd"><div class="ml"></div><div class="bd-center"><div class="dccontent" id="dcgscontent">' +  data.responseText  + '<br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div></div></div><div class="mr"></div></div><div class="ft"><div class="bl"></div><div class="ft-center"></div><div class="br"></div></div></div></div></div></div></div></div></div>';
+            content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;">';
+            content += '<div class="dashletPanel dc"><div class="hd"><div></div>';
+            content += '<div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
+            content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+            content += '</a></div></div><div class="tr"></div><div class="bd"><div></div>';
+            content += '<div><div class="dccontent" id="dcgscontent">' +  data.responseText;
+            //content += '<br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div>';
+            content += '</div></div><div class="mr"></div></div>';
+            content += '<div class="br"></div></div></div></div></div></div></div></div></div>';
       
             overlays[qvDepth].set("bodyContent", content);
             overlays[qvDepth].set("align", {node:"#dcboxbody", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
@@ -603,7 +600,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             overlays[qvDepth].show = function()
             {
                 this.visible = true;
-                
                 //Hack until the YUI 3 overlay classes no longer conflicts with the YUI 2 overlay css
                 //this.get('boundingBox').setStyle('position' , 'absolute');
                 this.get('boundingBox').setStyle('visibility','visible');
@@ -611,7 +607,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 var shim = 10;  //TODO: grab padding from parent element.  Set to 10 for now.
                 var animX = this.get("x") - this.get("width") - shim;
                 var animY = this.get("y");
-                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY],height:500 } });
+                var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY] } });
                 animDCcont.set('duration', .5);
                 animDCcont.set('easing', Y.Easing.easeOut);
                 animDCcont.run();
@@ -635,10 +631,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         animDCcont.set('easing', Y.Easing.easeOut);
         animDCcont.run();
         */
-
-
-
-
 
     }
 });

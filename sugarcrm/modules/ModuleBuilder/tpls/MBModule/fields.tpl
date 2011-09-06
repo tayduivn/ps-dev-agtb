@@ -33,10 +33,11 @@
 {else}
 <input type='button' name='addfieldbtn' value='{$mod_strings.LBL_BTN_EDLABELS}' class='button' onclick='ModuleBuilder.moduleLoadLabels("studio");'>
 {/if}
+</div>
+
+<br>
 
 <div id="field_table"></div>
-
-</div>
 
 <script>
 {literal}
