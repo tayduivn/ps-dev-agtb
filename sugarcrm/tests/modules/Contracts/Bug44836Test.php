@@ -1,4 +1,5 @@
 <?php 
+//FILE SUGARCRM flav=pro ONLY
 require_once('include/EditView/SubpanelQuickCreate.php');
 
 class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
