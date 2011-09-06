@@ -809,7 +809,8 @@ abstract class DBManager
             if (isset($compareIndices[$validDBName])) {
                    $value['name'] = $validDBName;
             }
-            $name = $value['name'];
+
+            $name = strtolower($value['name']);
 
 			//Don't attempt to fix the same index twice in one pass;
 			if (isset($correctedIndexs[$name]))
