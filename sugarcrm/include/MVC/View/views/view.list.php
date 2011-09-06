@@ -98,8 +98,6 @@ class ViewList extends SugarView{
             $this->storeQuery->populateRequest();
         }else{
             $this->storeQuery->saveFromRequest($this->module);
-            if (empty($_REQUEST['ajax_load']))
-                header("Location: index.php?module={$this->module}&action=index");
         }
 
         $this->seed = $this->bean;
