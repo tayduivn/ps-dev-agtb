@@ -2086,7 +2086,7 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
 		}
 	}
 
-    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir 
+    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir
 	$d = dir($dir);
     if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
 
@@ -3013,7 +3013,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		        $count++;
 		    }
 			// END 'Marketing Page'
-			
+
 		    // BEGIN 'Support Page'- bug46195
 			$supportDashlets = array();
 		    foreach ($defaultSupportChartDashlets as $supportChartDashlet=>$module){
@@ -3031,7 +3031,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		    }
 
 		    foreach($defaultSupportDashlets as $supportDashletName=>$module){
-				
+
 				$myDashlet = new MySugar($module);
 				$displayDashlet = $myDashlet->checkDashletDisplay();
 
@@ -3067,7 +3067,7 @@ function upgradeDashletsForSalesAndMarketing() {
 		        $count++;
 		    }
 			// END ' Support Page' - bug 46195
-		    
+
 
 		   	//Set the dashlets pages to user preferences table
 		   	$pageIndex = count($pages);
@@ -4594,7 +4594,7 @@ function unlinkUpgradeFiles($version)
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
-    if(file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
+    if(isset($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
        $files_to_remove = glob($_SESSION['unzip_dir'].'/scripts/files_to_remove/*.php');
 
