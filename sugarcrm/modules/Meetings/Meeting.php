@@ -775,16 +775,58 @@ class Meeting extends SugarBean {
 } // end class def
 
 // External API integration, for the dropdown list of what external API's are available
-function getMeetingsExternalApiDropDown($focus = null, $name = null, $value = null, $view = null) {
-    require_once('include/externalAPI/ExternalAPIFactory.php');
+//TODO: do we really need focus, name and view params for this function
+function getMeetingsExternalApiDropDown($focus = null, $name = null, $value = null, $view = null)
+{
+	global $dictionary, $app_list_strings;
+	
+	$cacheKeyName = 'meetings_type_drop_down';
+    
+    $apiList = sugar_cache_retrieve($cacheKeyName);
+    if ($apiList === null)
+    {
+        require_once('include/externalAPI/ExternalAPIFactory.php');
 
-    $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
-    $apiList = array_merge(array('Sugar'=>$GLOBALS['app_list_strings']['eapm_list']['Sugar']),$apiList);
-    if(!empty($value) && empty($apiList[$value])){
-        $apiList[$value] = $value;
+        $apiList = ExternalAPIFactory::getModuleDropDown('Meetings');
+        $apiList = array_merge(array('Sugar'=>$GLOBALS['app_list_strings']['eapm_list']['Sugar']), $apiList); 
+        sugar_cache_put($cacheKeyName, $apiList);
     }
-    return $apiList;
-
+    
+	if(!empty($value) && empty($apiList[$value]))
+	{
+		$apiList[$value] = $value;
+    }
+	//bug 46294: adding list of options to dropdown list
+    $apiList = array_merge(getMeetingTypeOptions($dictionary, $app_list_strings), $apiList);    
+	
+	return $apiList;
 }
 
-?>
+/**
+ * Meeting Type Options Array for dropdown list 
+ * @param array $dictionary - getting type name
+ * @param array $app_list_strings - getting type options
+ * @return array Meeting Type Options Array for dropdown list 
+ */
+function getMeetingTypeOptions($dictionary, $app_list_strings) 
+{
+	$result = array();
+        
+    // getting name of meeting type to fill dropdown list by its values
+    if (isset($dictionary['Meeting']['fields']['type']['options']))
+	{
+    	$typeName = $dictionary['Meeting']['fields']['type']['options'];
+        
+        if (!empty($app_list_strings[$typeName]))
+		{
+        	$typeList = $app_list_strings[$typeName];
+        
+            foreach ($typeList as $key => $value)
+			{
+				$result[$value] = $value;              
+            }
+        }
+    }
+    
+    return $result;
+}
