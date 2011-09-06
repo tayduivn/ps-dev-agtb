@@ -85,7 +85,7 @@ class SetValueAction extends AbstractAction{
         try {
             $result = Parser::evaluate($this->expression, $target)->evaluate();
         } catch(Exception $e){
-            $GLOBALS['log']->fatal("Exception evaluating expression {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}");
+            $GLOBALS['log']->fatal("Exception evaluating expression in SetValueAction, {$this->expression} : {$e->getMessage()}\n{$e->getTraceAsString()}");
             $result = "";
         }
         restore_error_handler();
