@@ -172,8 +172,6 @@ SUGAR.ajaxUI = {
                     window.location.hash = "#";
                     window.location.assign("index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url));
                 }
-
-                  // window.setTimeout('window.location.replace("index.php?action=ajaxui#ajaxUILoc=' + encodeURIComponent(url) + '")', 1000);
             }
             else {
                 ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
