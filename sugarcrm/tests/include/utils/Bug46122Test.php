@@ -81,7 +81,8 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = 'Contacts';
         $sugarViewMock->process();
-        $this->assertEquals(2, $GLOBALS['logic_hook']->hookRunCount, 'Assert that two logic hook files were run');
+        $expectedHookCount = $this->hasCustomContactLogicHookFile ? 2 : 1;
+        $this->assertEquals($expectedHookCount, $GLOBALS['logic_hook']->hookRunCount, 'Assert that two logic hook files were run');
     }
 
 
@@ -111,6 +112,11 @@ class LogicHookMock extends LogicHook
 {
     var $hookRunCount = 0;
 
+    function call_custom_logic($module_dir, $event, $arguments = null)
+    {
+        $this->process_hooks(array(), $event, $arguments);
+    }
+    
     function process_hooks($hook_array, $event, $arguments)
     {
         if($event == 'after_ui_frame')
