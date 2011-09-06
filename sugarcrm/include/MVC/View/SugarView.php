@@ -106,7 +106,6 @@ class SugarView
         } else {
             $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         }
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
 
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
 
