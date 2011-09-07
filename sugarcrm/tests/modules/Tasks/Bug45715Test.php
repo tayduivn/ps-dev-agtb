@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,35 +22,29 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 require_once "modules/Tasks/Task.php";
+require_once('modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php');
 
-class Bug41893Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug45715Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $created_anonymous_user = false;
-
-    public function setUp()
-    {
-       if(!isset($GLOBALS['current_user'])) {
-       	  $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-       	  $this->created_anonymous_user = true;
-       }
-    }
-
-    public function tearDown()
-    {
-       if($this->created_anonymous_user) {
-       	  SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-          unset($GLOBALS['current_user']);
-       }
-    }
-
 
     public function testFieldsVisibilityToStudioListView()
     {
         $task = new Task();
-        $this->assertEquals('hidden', $task->field_defs['contact_email']['studio'], 'Assert contact_email is hidden in studio');
-        $this->assertTrue($task->field_defs['contact_phone']['studio']['listview'], 'Assert contact_phone is visible in studio for listview');
+        $parser = new ListLayoutMetaDataParserMock('listview', $task->module_dir);
+        $this->assertFalse($parser->isValidField('contact_email',$task->field_defs['contact_email']), 'Assert isValidField for contact_email returns false');
+        $this->assertTrue($parser->isValidField('contact_phone',$task->field_defs['contact_phone']) , 'Assert isValidField for contact_phone returns true');
+        $this->assertFalse($parser->isValidField('date_due_flag',$task->field_defs['date_due_flag']), 'Assert isValidField for date_due_flag returns false');
+        $this->assertTrue($parser->isValidField('date_start',$task->field_defs['date_start']) , 'Assert isValidField for date_start returns true');
+
     }
 
+}
+
+class ListLayoutMetaDataParserMock extends ListLayoutMetaDataParser
+{
+    function __construct ($view , $moduleName , $packageName = '')
+    {
+        $this->view = $view;
+    }
 }
