@@ -93,7 +93,17 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
-
+/**
+ * @deprecated
+ *
+ * As of Sugar version 6.2.3 (MSIE Version 9) this function is deprecated.  The preferred method is to use the
+ * user agent check supplied by YUI to check for IE:
+ *
+ * for checking if a browser is IE in general :  if(YAHOO.env.ua.ie) {...}
+ *
+ * or for checking specific versions:  if (YAHOO.env.ua.ie >= 5.5 && YAHOO.env.ua.ie < 9) {...}
+ *
+ */
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
 
@@ -101,7 +111,7 @@ function isSupportedIE() {
 	if (userAgent.indexOf("msie") != -1 && userAgent.indexOf("mac") == -1 && userAgent.indexOf("opera") == -1) {
 		var version = navigator.appVersion.match(/MSIE (.\..)/)[1] ;
 
-		if(version >= 5.5 && version < 10) {
+		if(version >= 5.5 && version < 9) {
 			return true;
 		} else {
 			return false;
@@ -362,6 +372,8 @@ function isInteger(s) {
 }
 
 function isDecimal(s) {
+    if (typeof s == "string" && s == "")    // bug# 46530, this is required in order to
+        return true;                        // not check empty decimal fields 
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
@@ -609,7 +621,7 @@ function add_error_style(formname, input, txt, flash) {
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
-	
+
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('div');
         errorTextNode.className = 'required';
