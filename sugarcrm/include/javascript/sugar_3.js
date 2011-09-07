@@ -372,6 +372,8 @@ function isInteger(s) {
 }
 
 function isDecimal(s) {
+    if (typeof s == "string" && s == "")    // bug# 46530, this is required in order to
+        return true;                        // not check empty decimal fields 
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
@@ -619,7 +621,7 @@ function add_error_style(formname, input, txt, flash) {
     invalidTxt = SUGAR.language.get('app_strings', 'ERR_INVALID_VALUE');
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
-	
+
 	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
         errorTextNode = document.createElement('div');
         errorTextNode.className = 'required';
