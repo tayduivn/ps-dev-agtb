@@ -20,8 +20,6 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
- require_once('include/MVC/View/views/view.edit.php');
-
 class ProjectViewEdit extends ViewEdit {
 
  	function ProjectViewEdit(){
