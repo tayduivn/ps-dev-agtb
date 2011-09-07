@@ -507,6 +507,8 @@ class iCalendar {
 				}
 
 				$meeting = new Meeting();
+				// Hack - we don't care about this bean's permissions
+				$meeting->disable_row_level_security = true;
 				$prev_seq = 0;
 				$prev_exists = false;
 				$prev_meeting = $meeting->retrieve_by_string_fields(array("outlook_id" => $val->event->uid));
@@ -572,13 +574,26 @@ class iCalendar {
 					    $ids = array_flip($meeting->relationship_fields);
 					    while($inv = $meeting->db->fetchByAssoc($invitees)) {
 					        $module = strtolower($inv['bean_module']);
-					        $relname = "rel_{$module}_table";
-					        if(!isset($meeting->$relname) || !isset($ids[$module])) {
-					            $GLOBALS['log']->info("createSugarEvents: Unknown module $module encountered for id {$inv["bean_id"]}");
-					            continue;
-					        }
-					        $relate_values = array($ids[$module]=>$inv["bean_id"],'meeting_id'=>$meeting_id);
-	            			$meeting->set_relationship($meeting->$relname, $relate_values, true);
+					        $relname = "meetings_$module";
+                            $linkfields = VardefManager::getLinkFieldForRelationship("Meetings", "Meeting", $relname);
+
+                            $bean = BeanFactory::getBean($inv['bean_module']);
+                            if(empty($bean)) {
+                                $GLOBALS['log']->info("createSugarEvents: Don't know how to create bean {$inv['bean_module']}");
+                                continue;
+                            }
+                            // Hack - we don't care about this bean's permissions
+                            $bean->disable_row_level_security = true;
+                            $bean->retrieve($inv["bean_id"]);
+
+                            $linkname = $linkfields['name'];
+                            $meeting->load_relationship($linkname);
+                            if(empty($meeting->$linkname)) {
+                                $GLOBALS['log']->info("createSugarEvents: Unknown module $module with link $linkname encountered for id {$inv["bean_id"]}");
+                                continue;
+                            }
+                            $GLOBALS['log']->info("Adding link for {$inv["bean_id"]} module $module relname $relname linkname $linkname");
+                            $meeting->$linkname->add($bean);
 					    }
 					}
 				}
