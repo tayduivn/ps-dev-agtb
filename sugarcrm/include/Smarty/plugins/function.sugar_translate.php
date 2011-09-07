@@ -80,7 +80,7 @@ function smarty_function_sugar_translate($params, &$smarty)
         $value = addslashes($value);
         $value = str_replace(array('&#039;', '&#39;'), "\'", $value);
     }
-    if(array_key_exists('trimColon', $params) && !$params['trimColon']) {
+    if(isset($params['trimColon']) && !$params['trimColon']) {
         return $value;
     } elseif($params['label'] == '0') {
         return translate("DEFAULT", $module);
