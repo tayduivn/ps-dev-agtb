@@ -58,9 +58,10 @@
       {/if}
 
 		{foreach from=$tabGroup.modules item=module key=name name=moduleList}
-			{if $name == $MODULE_TAB}
+{*			{if $name == $MODULE_TAB}
 			<li class="yuimenubaritem currentTabRight">{sugar_link id="moduleTab_$groupTabId$name_right" module=$name data=$module class="yuimenuitemlabel"}</li>
 			{/if}
+*}
 			{if $name == $MODULE_TAB}
 			<li class="yuimenubaritem {if $smarty.foreach.moduleList.index == 0}first-of-type{/if} current">{sugar_link id="moduleTab_$groupTabId$name" module=$name data=$module class="yuimenuitemlabel"}
 			{else}
@@ -72,9 +73,11 @@
 										<ul class="shortCutsUl">
 										<li class="yuimenuitem">{$APP.LBL_LINK_ACTIONS}</li>
 										{foreach from=$shortcutTopMenu.$name item=shortcut_item}
-										
-											<li class="yuimenuitem"><a href="{$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
-										
+										  {if $shortcut_item.URL == "-"}
+                                            <hr style="margin-top: 2px; margin-bottom: 2px" />
+										  {else}
+                                             <li class="yuimenuitem"><a href="{sugar_ajax_url url=$shortcut_item.URL}" class="yuimenuitemlabel">{$shortcut_item.LABEL}</a></li>
+										  {/if}
 										{/foreach}
 										</ul>
 										{if $groupTabId}
@@ -89,7 +92,6 @@
 				</div>      
 			{/if}
 			</li>
-
 		{/foreach}
 			{if count($tabGroup.extra) > 0}
 			<li class="yuimenubaritem moduleTabExtraMenu more" id="moduleTabExtraMenu{$tabGroupName}">
@@ -98,7 +100,7 @@
 				<ul>
 					{foreach from=$tabGroup.extra item=name key=module name=moduleList}
                   
-					<li>{sugar_link id="moduleTab_$groupTabId$name" class="yuimenuitemlabel" module="$module" data="$name"}
+					<li>{sugar_link id="moduleTab_$groupTabId$module" class="yuimenuitemlabel" module="$module" data="$name"}
 					{/foreach}
 				</ul>
 				</div>
