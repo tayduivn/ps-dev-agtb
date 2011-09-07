@@ -56,12 +56,7 @@ class SubpanelQuickCreate{
 		$this->ev->defs['templateMeta']['form']['buttons'] = array('SUBPANELSAVE', 'SUBPANELCANCEL', 'SUBPANELFULLFORM');
 		
         //Load the parent view class if it exists.  Check for custom file first
-        if(file_exists('custom/include/MVC/View/views/view.edit.php'))
-        {
-            require_once('custom/include/MVC/View/views/view.edit.php');
-        } else if(file_exists('include/MVC/View/views/view.edit.php')) {
-            require_once('include/MVC/View/views/view.edit.php');
-        }
+        loadParentView('edit');
 		
 		$viewEditSource = 'modules/'.$module.'/views/view.edit.php';
 		if (file_exists('custom/'. $viewEditSource)) {

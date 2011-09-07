@@ -23,12 +23,8 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  ********************************************************************************/
 
 //Load the parent view class if it exists.  Check for custom file first
-if(file_exists('custom/include/MVC/View/views/view.edit.php'))
-{
-    require_once('custom/include/MVC/View/views/view.edit.php');
-} else if(file_exists('include/MVC/View/views/view.edit.php')) {
-    require_once('include/MVC/View/views/view.edit.php');
-}
+loadParentView('edit');
+
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;

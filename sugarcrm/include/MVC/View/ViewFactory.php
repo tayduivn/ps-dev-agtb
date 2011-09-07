@@ -22,14 +22,9 @@ class ViewFactory{
 		//first let's check if the module handles this view
 
 		$view = null;
-		
-        //Load the parent view class if it exists.  Check for custom file first
-        if(file_exists('custom/include/MVC/View/views/view.'.$type.'.php'))
-        {
-            require_once('custom/include/MVC/View/views/view.'.$type.'.php');
-        } else if(file_exists('include/MVC/View/views/view.'.$type.'.php')) {
-            require_once('include/MVC/View/views/view.'.$type.'.php');
-        }
+
+        //Check to see if we should load a custom parent view instance
+        loadParentView($type);
         
 		if(!empty($target_module)) {
 			if(file_exists('custom/modules/'.$target_module.'/views/view.'.$type.'.php')){
