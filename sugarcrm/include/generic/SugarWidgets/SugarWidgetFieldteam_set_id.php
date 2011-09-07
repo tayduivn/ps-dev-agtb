@@ -41,10 +41,10 @@ function & displayListPlain($layout_def){
                             // if for csv export, we don't generate html
                             $result = '';
                             foreach($teams as $row) {
-                                $result .= $row['display_name'].",";
+                                $result .= $row['display_name'].", ";
                             }
                             //get rid of the trailing comma
-                            $result = substr($result, 0, -1);
+                            $result = substr($result, 0, -2);
                         } else {
                             $body = '';
                             foreach($teams as $row){
