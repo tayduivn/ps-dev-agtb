@@ -494,6 +494,12 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
      */
     protected function getVersion()
     {
+        static $cacheVersion;
+
+        if ( isset($cacheVersion) ) {
+            return $cacheVersion;
+        }
+
 
         $defaultVersion = 2;
 
@@ -533,6 +539,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
                 break;
         }
 
+        $cacheVersion = $version;
         return $version;
     }
 
