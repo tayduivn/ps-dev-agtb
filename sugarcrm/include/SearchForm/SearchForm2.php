@@ -1117,7 +1117,7 @@ require_once('include/EditView/EditView2.php');
                                 break;
                             case 'date_not_equal':
                                 $field_value = explode('<>', $field_value);
-                                $where .= $db_field . " < '".$field_value[0] . "' AND " .$db_field . " > '".$field_value[1]."'";
+                                $where .= $db_field . " < '".$field_value[0] . "' OR " .$db_field . " > '".$field_value[1]."'";
                                 break;
                             case 'innerjoin':
                                 $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";

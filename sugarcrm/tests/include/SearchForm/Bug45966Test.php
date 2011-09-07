@@ -104,7 +104,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
 
-        $expected = array(strtolower($this->module).".date_entered < '".$adjDate['start']."' AND ". strtolower($this->module).".date_entered > '".$adjDate['end']."'");
+        $expected = array(strtolower($this->module).".date_entered < '".$adjDate['start']."' OR ". strtolower($this->module).".date_entered > '".$adjDate['end']."'");
 
         $this->form->populateFromArray(&$this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
