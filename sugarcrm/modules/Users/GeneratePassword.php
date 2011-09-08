@@ -99,7 +99,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	    $LOWERCASE = "abcdefghijklmnpqrstuvwxyz";
 	    $NUMBER = "0123456789";
 	    $UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	    $SPECIAL = '~!@#$%^&*()_+=-{}|'; 
+	    $SPECIAL = '~!@#$%^&*()_+=-{}|';
 	    $condition = 0;
 	    $charBKT.=$UPPERCASE.$LOWERCASE.$NUMBER;
 	    $password="";
@@ -198,7 +198,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
     // Bug 36833 - Add replacing of special value $instance_url
     $htmlBody = str_replace('$config_site_url',$sugar_config['site_url'], $htmlBody);
     $body = str_replace('$config_site_url',$sugar_config['site_url'], $body);
-    
+
     $htmlBody = str_replace('$contact_user_user_name', $usr->user_name, $htmlBody);
     $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
     $body = str_replace('$contact_user_user_name', $usr->user_name, $body);
@@ -274,7 +274,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
         $retId = $emailObj->save();
         echo '1';
         if (!isset($_POST['link'])){
-	        $user_hash = strtolower(md5($password));
+	        $user_hash = User::getPasswordHash($password);
 	        $usr->setPreference('loginexpiration','0');
 	        $usr->setPreference('lockout','');
 		$usr->setPreference('loginfailed','0');
