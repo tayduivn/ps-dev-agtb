@@ -147,7 +147,7 @@ class SugarSNIP
 
         $request = array ('sugarkey' => $sugar_config['unique_key'],
                         'user' => $snipuser->user_name,
-                        'password' => $snipuser->user_hash,
+                        'password' => $snipuser->authenicate_id,
                         'client_api_url' => $this->getURL(),
                         'license' => $license);
 
@@ -349,7 +349,9 @@ class SugarSNIP
         $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->user_hash = User::getPasswordHash(time().mt_rand());
+        $random = time().mt_rand();
+        $user->authenicate_id = md5($random);
+        $user->user_hash = User::getPasswordHash($random);
         $user->default_team = '1';
         $user->created_by = '1';
         $user->save();
