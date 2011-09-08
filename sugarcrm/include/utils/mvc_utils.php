@@ -441,6 +441,7 @@ function ajaxBannedModules(){
 
 function ajaxLink($url)
 {
+    global $sugar_config;
     $match = array();
     $javascriptMatch = array();
     
@@ -452,7 +453,8 @@ function ajaxLink($url)
     }
     else if(isset($match[1]) && in_array($match[1], ajaxBannedModules())){
         return $url;
-    } 
+    }
+    //Don't modify javascript calls.
     else if (isset($javascriptMatch[0])) {
     	return $url;
     }
