@@ -406,7 +406,7 @@ function isInteger(s) {
 function isDecimal(s) {
     if (typeof s == "string" && s == "")    // bug# 46530, this is required in order to
         return true;                        // not check empty decimal fields
-    
+
 	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();

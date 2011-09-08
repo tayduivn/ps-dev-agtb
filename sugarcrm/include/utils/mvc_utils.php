@@ -37,6 +37,17 @@ class MVCLogger{
 
 }
 
+
+function loadParentView($type)
+{
+    if(file_exists('custom/include/MVC/View/views/view.'.$type.'.php'))
+    {
+        require_once('custom/include/MVC/View/views/view.'.$type.'.php');
+    } else if(file_exists('include/MVC/View/views/view.'.$type.'.php')) {
+        require_once('include/MVC/View/views/view.'.$type.'.php');
+    }
+}
+
 //BEGIN ENCODE
 if(!class_exists('Tracker')){
 	class Tracker extends SugarBean
