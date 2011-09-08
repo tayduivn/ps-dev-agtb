@@ -75,7 +75,7 @@ function disableReturnSubmission(e) {
             <tr>
                 <td scope="row">
               <p>{$MOD.LBL_WIZARD_WELCOME}</p>
-				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' alt=$mod_strings.LBL_WELCOME border='0' width='765px' height='325px'></div>
+				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' alt='{$MOD.LBL_WELCOME}' border='0' width='765px' height='325px'></div>
                 </td>
             </tr>
             </table>
@@ -122,7 +122,7 @@ function disableReturnSubmission(e) {
             <tr>
                 <td scope="row" width='12%' nowrap>{$MOD.CURRENT_LOGO}&nbsp;{sugar_help text=$MOD.CURRENT_LOGO_HELP}</td>
                 <td width='35%' >
-                    <img id="company_logo_image" alt=$mod_strings.LBL_LOGO src='{$company_logo}' height="40" width="212" />
+                    <img id="company_logo_image" alt='{$MOD.LBL_LOGO}' src='{$company_logo}' height="40" width="212" />
                 </td>
             </tr>
             </table>
