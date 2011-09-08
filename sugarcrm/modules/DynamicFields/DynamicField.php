@@ -84,7 +84,7 @@ class DynamicField {
     */
     function buildCache($module = false) {
         //We can't build the cache while installing as the required database tables may not exist.
-        if (!empty($GLOBALS['installing']) && $GLOBALS['installing'] == true|| !$GLOBALS['db'])
+        if (!empty($GLOBALS['installing']) && $GLOBALS['installing'] == true|| empty($GLOBALS['db']))
             return false;
         if($module == '../data')return false;
 
