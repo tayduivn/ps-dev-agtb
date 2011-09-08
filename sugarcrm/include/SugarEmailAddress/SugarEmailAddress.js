@@ -208,7 +208,7 @@
 		    var newContent = document.createElement("input");
 		    var nav = new String(navigator.appVersion);
 		    var newContentPrimaryFlag;
-		    if(SUGAR.isIE){
+		    if(YAHOO.env.ua.ie){
 		       newContentPrimaryFlag = document.createElement("<input name='emailAddressPrimaryFlag' />");
 		    }else{
 		       newContentPrimaryFlag = document.createElement("input");
@@ -396,6 +396,15 @@
 		    newContent.eaw = this;
 		    newContent.onblur = function(e){this.eaw.retrieveEmailAddress(e)};
 		    newContent.onkeydown = function(e){this.eaw.handleKeyDown(e)};
+            if (YAHOO.env.ua.ie) {
+                // IE doesn't bubble up "change" events through the DOM. So we need to find events that are looking at our parent and manually push them down to here
+                var emailcontainer = Dom.getAncestorByTagName(insertInto,'span');
+                var listeners = YAHOO.util.Event.getListeners(emailcontainer);
+                for (var i=0; i<listeners.length; ++i) {
+                    var listener = listeners[i];
+                    YAHOO.util.Event.addListener(newContent, listener.type, listener.fn, listener.obj, listener.adjust);
+                }
+            }
 		    
 		    // Add validation to field
             this.EmailAddressValidation(this.emailView, this.id+ 'emailAddress' + this.numberEmailAddresses,this.emailIsRequired, SUGAR.language.get('app_strings', 'LBL_EMAIL_ADDRESS_BOOK_EMAIL_ADDR'));
@@ -470,7 +479,7 @@
                 form = document.forms['editContactForm'];
             }
             
-            if(SUGAR.isIE) {
+            if(YAHOO.env.ua.ie) {
                 for(i=0; i<form.elements.length; i++) {
                    var id = new String(form.elements[i].id);
                     if(id.match(/emailAddressInvalidFlag/gim) && form.elements[i].type == 'checkbox' && id != el.id) {

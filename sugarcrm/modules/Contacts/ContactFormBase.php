@@ -41,7 +41,10 @@ function checkForDuplicates($prefix){
 	}else{
 		$query = $baseQuery ."  last_name = '". $_POST[$prefix.'last_name'] ."'";
 	}
-
+	if(!empty($_POST[$prefix.'record'])) {
+		$query .= " AND  id != '". $_POST[$prefix.'record'] ."'";
+	}
+	
     $rows = array();
     global $db;
 	$result = $db->query($query);
@@ -602,7 +605,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 	}
 
     
-	if (empty($_POST['record']) && empty($_POST['dup_checked'])) {
+	if (empty($_POST['dup_checked'])) {
 
 		$duplicateContacts = $this->checkForDuplicates($prefix);
 		if(isset($duplicateContacts)){

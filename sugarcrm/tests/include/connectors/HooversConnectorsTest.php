@@ -94,9 +94,8 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     		->will($this->returnValue($this->getResultData('gannett.php')));
 //END SUGARCRM flav!=int ONLY
     	$account = new Account();
-
     	$account = $source_instance->fillBean(array('id'=>$this->company_id), $this->qual_module, $account);
-        if(empty($account) || !is_string($account->name))
+        if(!empty($account) && is_string($account->name))
     	{
     	   $this->assertRegExp('/Gannett/i', $account->name, "Assert that account name is like Gannett");  
     	}    	
@@ -120,7 +119,7 @@ class HooversConnectorsTest extends Sugar_Connectors_TestCase
     	}
 
         foreach($accounts as $count=>$account) {
-        	if(empty($account)  && is_string($account->name))
+        	if(!empty($account)  && is_string($account->name))
         	{
 	    		$this->assertRegExp('/Gannett/i', $account->name, "Assert that a bean has been filled with account name like Gannett");
 	    		break;
