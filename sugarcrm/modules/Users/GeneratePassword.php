@@ -154,7 +154,7 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
     // Bug 36833 - Add replacing of special value $instance_url
     $htmlBody = str_replace('$config_site_url',$sugar_config['site_url'], $htmlBody);
     $body = str_replace('$config_site_url',$sugar_config['site_url'], $body);
-    
+
     $htmlBody = str_replace('$contact_user_user_name', $usr->user_name, $htmlBody);
     $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
     $body = str_replace('$contact_user_user_name', $usr->user_name, $body);
@@ -180,7 +180,18 @@ if (isset($_POST['link']) && $_POST['link'] == '1'){
     if ($result['status'] == true)
     {
         echo '1';
-    } else {
+        if (!isset($_POST['link'])){
+	        $user_hash = User::getPasswordHash($password);
+	        $usr->setPreference('loginexpiration','0');
+	        $usr->setPreference('lockout','');
+		$usr->setPreference('loginfailed','0');
+		$usr->savePreferencesToDB();
+	        //set new password
+	        $now=TimeDate::getInstance()->nowDb();
+	        $query = "UPDATE $usr->table_name SET user_hash='$user_hash', system_generated_password='1', pwd_last_changed='$now' where id='$usr->id'";
+	        $usr->db->query($query, true, "Error setting new password for $usr->user_name: ");
+        }
+    }else{
     	$new_pwd='4';
     	if ($current_user->is_admin){
     		$email_errors=$mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
