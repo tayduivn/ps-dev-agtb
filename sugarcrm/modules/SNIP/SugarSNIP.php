@@ -349,7 +349,7 @@ class SugarSNIP
         $user->status='Reserved';
         $user->receive_notifications = 0;
         $user->is_admin = 0;
-        $user->user_hash = strtolower(md5(time().mt_rand()));
+        $user->user_hash = User::getPasswordHash(time().mt_rand());
         $user->default_team = '1';
         $user->created_by = '1';
         $user->save();

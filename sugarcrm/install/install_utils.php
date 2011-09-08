@@ -995,7 +995,7 @@ function create_default_users(){
     $user->status = 'Active';
     $user->is_admin = true;
 	$user->employee_status = 'Active';
-    $user->user_hash = $user->getPasswordHash($setup_site_admin_password);
+    $user->user_hash = User::getPasswordHash($setup_site_admin_password);
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
@@ -1010,7 +1010,7 @@ function create_default_users(){
         if( isset($sugar_config['default_user_is_admin']) && $sugar_config['default_user_is_admin'] ){
             $default_user->is_admin = true;
         }
-        $default_user->user_hash = $user->getPasswordHash($sugar_config['default_password']);
+        $default_user->user_hash = User::getPasswordHash($sugar_config['default_password']);
         $default_user->save();
     }
 }
@@ -1018,8 +1018,7 @@ function create_default_users(){
 function set_admin_password( $password ) {
     global $db;
 
-    $user = new User();
-    $user_hash = $user->getPasswordHash($password);
+    $user_hash = User::getPasswordHash($password);
 
     $query = "update users set user_hash='$user_hash' where id='1'";
 
