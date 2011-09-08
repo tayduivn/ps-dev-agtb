@@ -28,6 +28,7 @@ function get_node_data($params,$get_array=false) {
     $click_level=$params['TREE']['depth'];
     $parent_id=$params['NODES'][$click_level]['id'];
 
+    $ret = array();
 	$nodes=get_product_categories($parent_id);
 	foreach ($nodes as $node) {
 		$ret['nodes'][]=$node->get_definition();

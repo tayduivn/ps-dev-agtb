@@ -127,7 +127,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 				return false;
     		DCMenu.closeOverlay(depth);
     		var overlay = getOverlay(depth);
-    		
+
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
 
@@ -143,12 +143,12 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		}
     		var content = '';
     		if(false && depth == 0){
-	    		content += '<div id="dcboxtitle">' 
-	    		
+	    		content += '<div id="dcboxtitle">'
+
 	    		if(typeof data.title  !=  'undefined'){
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
-	    		
+
 	    		 content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
     		}
     		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
@@ -164,8 +164,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             }
             content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
 
+
+            //"resetEvalBool" will only be set to true if an eval() has completed succesfully from a previous request.  It will not get reset again within a request.
+            //Resetting the switches means this is the first time the eval is attempted in this request, so we are starting over.  This is mostly to handle
+            //the use case where Sugar.util.evalScript() executes a script after this function ends leaving the 'evalHappened' flag in a bad state.
+            //"evalHappened" var tracks whether an eval() has or is occurring within this request.  It will be reset to false at the end of the function for reuse;
+            //It's main purpose is to prevent multiple eval's being executed on the same form.
+            if(typeof(resetEvalBool) !='undefined' && resetEvalBool == true){
+                resetEvalBool = false;
+                evalHappened = false;
+            }
+
             //set eval happened var
-            content ='<script> var evalHappened = true;</script>'+content;
+            content ='<script> var evalHappened = true; var resetEvalBool=true; </script>'+content;
             overlay.set('bodyContent', content);
 
             // eval the contents if the eval parameter is passed in.  Cross check with evalHappened parameter which would not
@@ -173,11 +184,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             // This will ensure that quick search, validation, and other relevant js is run in the modal
             if(typeof(data.eval) != 'undefined' && data.eval  && (typeof(evalHappened) =='undefined'|| evalHappened ==false)){
                 SUGAR.util.evalScript(content);
-                //evalHappened should be set now, set to false for reuse
-                if (typeof(evalHappened) !='undefined'){
-                    evalHappened = false;
-                }
             }
+        
+            //set back to false for reuse
+            evalHappened = false;
 
     		overlay.show();
     		return overlay;

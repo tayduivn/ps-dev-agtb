@@ -510,8 +510,9 @@ class EditView
                     : 4;
                 //END SUGARCRM flav=pro ONLY
 
-                //This code is used for QuickCreates that go to Full Form view
-                if ($this->populateBean && empty($this->focus->id)
+                //This code is used for QuickCreates that go to Full Form view.  We want to overwrite the values from the bean
+                //with values from the request if they are set
+                if ($this->populateBean && isset($_REQUEST['full_form'])
                     && (isset($this->fieldDefs[$name]['function']['returns'])
                         ? $this->fieldDefs[$name]['function']['returns'] != 'html'
                         : true)
