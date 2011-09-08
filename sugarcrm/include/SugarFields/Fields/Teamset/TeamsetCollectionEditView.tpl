@@ -151,3 +151,10 @@ and push it outside the screen.
 	{/literal}
 </script>
 {$quickSearchCode}
+<script type="text/javascript">
+<!--
+if(typeof QSProcessedFieldsArray != 'undefined')
+	QSProcessedFieldsArray["{$displayParams.formName}_{$idname}_collection_0"] = false;
+enableQS(false);
+-->
+</script>
