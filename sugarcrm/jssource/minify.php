@@ -3,9 +3,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 //assumes jsmin.php is in same directory
     if(isset($_REQUEST['root_directory'])){
-        require_once('include/utils/sugar_file_utils.php');
+        require_once('jssource/minify_utils.php');
     }else{
-        require_once('../include/utils/sugar_file_utils.php');
         require_once('minify_utils.php');
     }
 
