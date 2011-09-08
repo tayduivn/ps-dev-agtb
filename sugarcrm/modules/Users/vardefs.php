@@ -40,7 +40,7 @@ $dictionary['User'] = array(
             'name' => 'user_hash',
             'vname' => 'LBL_USER_HASH',
             'type' => 'varchar',
-            'len' => '32',
+            'len' => '64',
             'reportable' => false,
             'importable' => 'false',
         ) ,

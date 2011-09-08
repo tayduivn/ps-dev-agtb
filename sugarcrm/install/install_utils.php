@@ -1259,8 +1259,7 @@ function create_default_users(){
     $user->status = 'Active';
     $user->is_admin = true;
 	$user->employee_status = 'Active';
-    //$user->user_password = $user->encrypt_password($setup_site_admin_password);
-    $user->user_hash = strtolower(md5($setup_site_admin_password));
+    $user->user_hash = User::getPasswordHash($setup_site_admin_password);
     $user->email = '';
     $user->picture = UserDemoData::_copy_user_image($user->id);
     $user->save();
@@ -1284,8 +1283,7 @@ function create_default_users(){
         if( isset($sugar_config['default_user_is_admin']) && $sugar_config['default_user_is_admin'] ){
             $default_user->is_admin = true;
         }
-        //$default_user->user_password = $default_user->encrypt_password($sugar_config['default_password']);
-        $default_user->user_hash = strtolower(md5($sugar_config['default_password']));
+        $default_user->user_hash = User::getPasswordHash($sugar_config['default_password']);
         $default_user->save();
         //$feed->createRSSHomePage($user->id);
     }
@@ -1294,8 +1292,7 @@ function create_default_users(){
 function set_admin_password( $password ) {
     global $db;
 
-    $user = new User();
-    $user_hash = $user->getPasswordHash($password);
+    $user_hash = User::getPasswordHash($password);
 
     $query = "update users set user_hash='$user_hash' where id='1'";
 
@@ -2424,7 +2421,7 @@ function enableInsideViewConnector()
     } else {
         require($mapFile);
     }
- 
+
     require_once('modules/Connectors/connectors/sources/ext/rest/insideview/insideview.php');
     $source = new ext_rest_insideview();
 
