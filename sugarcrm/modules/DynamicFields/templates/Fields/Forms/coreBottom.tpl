@@ -52,9 +52,12 @@
 {* //END SUGARCRM flav=pro ONLY*}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_AUDIT"}:</td><td><input type="checkbox" name="audited" value="1" {if !empty($vardef.audited) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="audited" value="{$vardef.audited}">{/if}</td></tr>
 
-{if $vardef.type=='enum' || $vardef.type=='url' || $vardef.type=='address' || $vardef.type=='phone' || $vardef.type=='varchar' || $vardef.type=='int'}
-<tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_GLOBAL_SEARCH"}:</td><td><input type="checkbox" name="unified_search" value="1" {if !empty($vardef.unified_search) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="unified_search" value="{$vardef.unified_search}">{/if}
- <img id="globalSearchTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
+{if $globalSearchEnabled == true}
+<tr>
+    <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_GLOBAL_SEARCH"}:</td>
+    <td><input type="checkbox" name="unified_search" value="1" {if !empty($vardef.unified_search) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+    {if $hideLevel > 5}<input type="hidden" name="unified_search" value="{$vardef.unified_search}">{/if}
+    <img id="globalSearchTipIcon" src="{sugar_getimagepath file="helpInline.gif"}" />
 <script>
 	if (!ModuleBuilder.globalSearchToolTip)
 		ModuleBuilder.globalSearchToolTip = new YAHOO.widget.Tooltip("globalSearchTipPopup", {ldelim}
@@ -63,7 +66,8 @@
 	else
 		ModuleBuilder.globalSearchToolTip.cfg.setProperty("context", "globalSearchTipIcon");
 </script>
-</td></tr>
+</td>
+</tr>
 {/if}
 
 {if !$hideImportable}

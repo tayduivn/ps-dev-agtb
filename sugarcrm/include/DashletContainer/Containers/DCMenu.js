@@ -479,6 +479,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	}
 	DCMenu.showQuickViewIcon = function(e) {
 
+
 	    var now = new Date();
 	    var nowSc = now.getTime() / 1000; //grab and store seconds.
 	    if(lastIconChange == null)
@@ -498,6 +499,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             }
 	    }
 
+
 	    var liNode = Y.one(e.parentNode);
 	    var liChildren = liNode.get('children');
 
@@ -508,14 +510,17 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
         var moduleMatches = e.href.match(/module=([\w]*)/);
         var recordMatches = e.href.match(/record=([\w-]*)/);
+
         if( typeof(moduleMatches[1]) == 'undefined' ||  typeof(recordMatches[1]) == 'undefined' )
         {
             return;
         }
+        
         var module = moduleMatches[1];
         var recordID = recordMatches[1];
 
         DCMenu.hideQuickViewIcon();
+
 
         var elem = document.createElement('IMG');
         elem.id = 'DCMenuQuickViewIcon'
@@ -527,6 +532,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         var aNode = Y.one(e);
         //Remove the padding from a href link
         aNode.setStyle("padding", "8px");
+        
     }
 
     DCMenu.hideQuickViewIcon = function() {

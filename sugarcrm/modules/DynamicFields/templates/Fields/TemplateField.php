@@ -60,7 +60,7 @@ class TemplateField{
 	var $label_value = '';
 	var $help = '';
 	var $formula = '';
-
+    var $unified_search = false;
 	var $vardef_map = array(
 		'name'=>'name',
 		'label'=>'vname',
@@ -355,6 +355,7 @@ class TemplateField{
 			$array['size'] = $this->size;
 		}
 		$this->get_dup_merge_def($array);
+
 		return $array;
 	}
 
@@ -496,7 +497,7 @@ class TemplateField{
         {
            $searchFieldParser->addSearchField($fieldName, array('query_type'=>'default'));
            $searchFieldParser->saveSearchFields($searchFieldParser->searchFields);
-        }            
+        }
 	}
 
 }

@@ -39,12 +39,20 @@
 
 <div id="field_table"></div>
 
-<script>
+<script type="text/javascript">
 {literal}
-var myConfigs = {
+var myConfigs = {};
+{/literal}
 
-};
+{if !empty($sortPreferences)}
+pref = {$sortPreferences};
+{literal}
+sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
+myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
+{/literal}
+{/if}
 
+{literal}
 var disabledCheckboxFormatter = function(elCell, oRecord, oColumn, oData)
 {
    elCell.innerHTML = "<center><input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : "></center>");
@@ -74,12 +82,27 @@ var myDataSource = new YAHOO.util.DataSource({$fieldsData});
 myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 {literal}
 myDataSource.responseSchema = {fields: ["label","name","type","custom", "required", "unified_search"]};
-{/literal}
-
 YAHOO.widget.DataTable.Formatter.disabledCheckboxFormatter = disabledCheckboxFormatter;
 YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
 YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
+
 var myDataTable = new YAHOO.widget.DataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+myDataTable.doBeforeSortColumn = function(column, sortDirection)
+{
+    var url = 'index.php?module=ModuleBuilder&action=savetablesort&column=' + column.getKey() + '&direction=' + sortDirection;
+    YUI().use('io', function (Y) {
+        Y.io(url, {
+            method: 'POST',
+            on: {
+                success: function(id, data) {},
+                failure: function(id, data) {}
+            }
+        });
+    });
+    return true;
+};
+
+{/literal}
 
 ModuleBuilder.module = '{$module->name}';
 ModuleBuilder.MBpackage = '{$package->name}';

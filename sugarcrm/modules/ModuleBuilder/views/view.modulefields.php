@@ -101,8 +101,10 @@ class ViewModulefields extends SugarView
             $package = new stdClass;
             $package->name = '';
             $smarty->assign('package', $package);
-            $json = getJSONobj();
-            $smarty->assign('fieldsData', $json->encode($fieldsData));
+            global $current_user;
+            $sortPreferences = $current_user->getPreference('fieldsTableColumn', 'ModuleBuilder');
+            $smarty->assign('sortPreferences', $sortPreferences);
+            $smarty->assign('fieldsData', getJSONobj()->encode($fieldsData));
             $ajax = new AjaxCompose();
             $ajax->addCrumb($mod_strings['LBL_STUDIO'], 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
             $ajax->addCrumb(translate($module_name), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module='.$module_name.'")');
@@ -123,6 +125,16 @@ class ViewModulefields extends SugarView
             $this->mbModule->getVardefs(true);
             $this->mbModule->mbvardefs->vardefs['fields'] = array_reverse($this->mbModule->mbvardefs->vardefs['fields'], true);
             $loadedFields = array();
+
+            if(file_exists($this->mbModule->path. '/language/'.$current_language.'.lang.php'))
+            {
+                include($this->mbModule->path .'/language/'.$current_language.'.lang.php');
+                $this->mbModule->setModStrings($current_language,$mod_strings);
+            }elseif(file_exists($this->mbModule->path. '/language/en_us.lang.php')){
+                include($this->mbModule->path .'/language/en_us.lang.php');
+                $this->mbModule->setModStrings('en_us',$mod_strings);
+            }
+
             foreach($this->mbModule->mbvardefs->vardefs['fields'] as $k=>$v){
                 if($k != $module_name)
                 {
@@ -136,20 +148,19 @@ class ViewModulefields extends SugarView
                     {
                 	   unset($this->mbModule->mbvardefs->vardefs['fields'][$k][$field]);
                     } else {
-                       $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($mod_strings[$def['vname']]) ? $mod_strings[$def['vname']] : $field;
+                       $this->mbModule->mbvardefs->vardefs['fields'][$k][$field]['label'] = isset($def['vname']) && isset($this->mbModule->mblanguage->strings[$current_language][$def['vname']]) ? $this->mbModule->mblanguage->strings[$current_language][$def['vname']] : $field;
                        $loadedFields[$field] = true;
+                       $fieldsData[] = $this->mbModule->mbvardefs->vardefs['fields'][$k][$field];
                     }
                 }
             }
+
             $this->mbModule->mbvardefs->vardefs['fields'][$module_name] = $this->cullFields($this->mbModule->mbvardefs->vardefs['fields'][$module_name]);
-            if(file_exists($this->mbModule->path. '/language/'.$GLOBALS['current_language'].'.lang.php'))
-            {
-                include($this->mbModule->path .'/language/'. $GLOBALS['current_language'].'.lang.php');
-                $this->mbModule->setModStrings($GLOBALS['current_language'],$mod_strings);
-            }elseif(file_exists($this->mbModule->path. '/language/en_us.lang.php')){
-                include($this->mbModule->path .'/language/en_us.lang.php');
-                $this->mbModule->setModStrings('en_us',$mod_strings);
-            }
+
+            $smarty->assign('fieldsData', getJSONobj()->encode($fieldsData));
+            global $current_user;
+            $sortPreferences = $current_user->getPreference('fieldsTableColumn', 'ModuleBuilder');
+            $smarty->assign('sortPreferences', $sortPreferences);
             $smarty->assign('title', $titleLBL);
             $smarty->assign('package', $package);
             $smarty->assign('module', $this->mbModule);
