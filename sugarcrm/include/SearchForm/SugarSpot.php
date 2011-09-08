@@ -102,8 +102,10 @@ EOHTML;
 				else
 				//END SUGARCRM flav=spotactions ONLY
 				    $str .= <<<EOHTML
-<li><a href="index.php?module={$data['pageData']['bean']['moduleDir']}&action=DetailView&record={$row['ID']}">$name</a></li>
+<li><a href="index.php?module={$data['pageData']['bean']['moduleDir']}&action=DetailView&record={$row['ID']}" onmouseover="DCMenu.showQuickViewIcon(this)" style="padding-left:15px" >$name</a></li>
 EOHTML;
+                
+
 			}
 			$str.= '</ul>';
 		}

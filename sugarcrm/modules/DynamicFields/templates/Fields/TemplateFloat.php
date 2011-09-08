@@ -35,7 +35,7 @@ class TemplateFloat extends TemplateRange
 	var $default_value = null;
 	var $len = '18';
 	var $precision = '8';
-	
+
 	function TemplateFloat(){
 		parent::__construct();
 		$this->vardef_map['precision']='ext1';

@@ -35,6 +35,7 @@ class TemplateEnum extends TemplateText{
     var $ext1 = '';
     var $default_value = '';
     var $dependency ; // any dependency information
+    var $supports_unified_search = true;
 
     function __construct ()
     {

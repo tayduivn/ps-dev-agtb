@@ -31,21 +31,9 @@ class ViewSpot extends ViewAjax
      */
     public function display()
     {
-        if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php'))) {
-            $usa = new UnifiedSearchAdvanced();
-            $usa->buildCache();
-        }      
-        
-        //Filter out the modules that are not allowed to be searched upon
-        if(!file_exists('custom/modules/unified_search_modules_display.php'))
-        {
-        	if(!isset($usa))
-        	{
-            	$usa = new UnifiedSearchAdvanced();
-        	}
-            $usa->createUnifiedSearchModulesDisplay();
-        }
-        include('custom/modules/unified_search_modules_display.php');		
+        $usa = new UnifiedSearchAdvanced();
+        $unified_search_modules = $usa->getUnifiedSearchModules();
+        $unified_search_modules_display = $usa->getUnifiedSearchModulesDisplay();
 		
         // load the list of unified search enabled modules
         $modules = array();
