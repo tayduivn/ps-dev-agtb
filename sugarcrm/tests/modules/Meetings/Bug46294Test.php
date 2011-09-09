@@ -28,7 +28,7 @@
 
 require_once 'modules/Meetings/Meeting.php';
 
-class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase 
+class Bug46294Test extends Sugar_PHPUnit_Framework_TestCase 
 {
     var $dictionaryOptionsNotSet = array('Meeting' => array(
                                     'fields' => array(
