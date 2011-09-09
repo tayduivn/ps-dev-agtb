@@ -39,8 +39,7 @@ color: #C60C30;
 	float: none;
 }
 
-.dashletPanelMenu .bd .bd-center .screen {
-
+.dashletPanelMenu .bd .screen {
 	border: 0px none;
 	background-color: transparent;
     display: none;
