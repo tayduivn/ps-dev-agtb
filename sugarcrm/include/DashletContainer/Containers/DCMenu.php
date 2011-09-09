@@ -146,7 +146,7 @@ EOQ;
 
 
 			}
-	    	Y.on("domready", init);
+	    	YAHOO.util.Event.onDOMReady(init);
 
 		});
 		</script>

@@ -36,7 +36,8 @@
 <tr valign="middle">
 <td nowrap>
 <input autocomplete="off" type="text" id="{{$idname}}_date" value="{$fields[{{sugarvar key='name' stringFormat=true}}].value}" size="11" maxlength="10" title='{{$vardef.help}}' tabindex="{{$tabindex}}" onblur="combo_{{$idname}}.update(); {{if isset($displayParams.updateCallback)}}{{$displayParams.updateCallback}}{{/if}}" onchange="combo_{{$idname}}.update(); {{if isset($displayParams.updateCallback)}}{{$displayParams.updateCallback}}{{/if}}">
-{sugar_getimage name="jscalendar" ext=".gif" alt=$APP.LBL_ENTER_DATE other_attributes='align="absmiddle" border="0" id="{{$idname}}_trigger" '}&nbsp;
+{capture assign="other_attributes"}align="absmiddle" border="0" id="{{$idname}}_trigger"{/capture}
+{sugar_getimage name="jscalendar" ext=".gif" alt="$APP.LBL_ENTER_DATE other_attributes=$other_attributes"}&nbsp;
 {{if empty($displayParams.splitDateTime)}}
 </td>
 <td nowrap>
