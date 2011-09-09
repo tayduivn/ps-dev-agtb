@@ -101,7 +101,7 @@ class ProjectTask extends SugarBean {
 		if ($init) {
 			// default value for a clean instantiation
 			$this->utilization = 100;
-	
+
 			global $current_user;
 			if(empty($current_user))
 			{
@@ -115,23 +115,23 @@ class ProjectTask extends SugarBean {
 				$this->assigned_user_id = $current_user->id;
 				$this->assigned_user_name = $current_user->user_name;
 			}
-			
+
 			//BEGIN SUGARCRM flav=pro ONLY
-			global $current_user;	
+			global $current_user;
 			if(!empty($current_user)) {
 				$this->team_id = $current_user->default_team;	//default_team is a team id
 			} else {
 				$this->team_id = 1; // make the item globally accessible
-			}		
+			}
 			//END SUGARCRM flav=pro ONLY
 		}
 	}
-	
+
 	function save($check_notify = FALSE){
 		$id = parent::save($check_notify);
         return $id;
 	}
-	
+
 	/**
 	 * overriding the base class function to do a join with users table
 	 */
@@ -262,13 +262,13 @@ class ProjectTask extends SugarBean {
 		$today = $timedate->handle_offset(date($GLOBALS['timedate']->get_db_date_time_format(), time()), $timedate->dbDayFormat, true);
 		$task_fields =$this->get_list_view_array();
 		//$date_due = $timedate->to_db_date($task_fields['DATE_DUE'],false);
-        if (isset($this->parent_type)) 
+        if (isset($this->parent_type))
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
 		/*
         if ($this->status != "Completed" && $this->status != "Deferred" ) {
 			$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline","alt='Close' border='0'")."</a>";
 		}
-        
+
 		if( $date_due	< $today){
 			$task_fields['DATE_DUE']= "<font class='overdueTask'>".$task_fields['DATE_DUE']."</font>";
 		}else if( $date_due	== $today ){
@@ -290,7 +290,7 @@ class ProjectTask extends SugarBean {
 
 		return $task_fields;
 	}
-	
+
 	function bean_implements($interface){
 		switch($interface){
 			case 'ACL':return true;
@@ -301,7 +301,7 @@ class ProjectTask extends SugarBean {
 		$array_assign = parent::listviewACLHelper();
 		$is_owner = false;
 		if(!empty($this->parent_name)){
-			
+
 			if(!empty($this->parent_name_owner)){
 				global $current_user;
 				$is_owner = $current_user->id == $this->parent_name_owner;
@@ -314,7 +314,7 @@ class ProjectTask extends SugarBean {
 			}
 		$is_owner = false;
 		if(!empty($this->depends_on_name)){
-			
+
 			if(!empty($this->depends_on_name_owner)){
 				global $current_user;
 				$is_owner = $current_user->id == $this->depends_on_name_owner;
@@ -325,10 +325,10 @@ class ProjectTask extends SugarBean {
 			}else{
 				$array_assign['PARENT_TASK'] = 'span';
 			}
-		
+
 		return $array_assign;
 	}
-	
+
     function create_export_query(&$order_by, &$where, $relate_link_join='')
     {
         $custom_join = $this->custom_fields->getJOIN(true, true,$where);
@@ -343,8 +343,8 @@ class ProjectTask extends SugarBean {
         if($custom_join){
 			$query .=  $custom_join['select'];
 		}
-        $query .= " FROM project_task ";
-        
+        $query .= " FROM project_task LEFT JOIN project ON project_task.project_id=project.id AND project.deleted=0 ";
+
 		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
 		$this->add_team_security_where_clause($query);
@@ -370,12 +370,12 @@ class ProjectTask extends SugarBean {
            	$table_defined_already = strpos($order_by, ".");
 
 	        if($table_defined_already === false){
-	        	//table not defined yet, define accounts to avoid "ambigous column" SQL error 
+	        	//table not defined yet, define accounts to avoid "ambigous column" SQL error
 	        	$query .= " ORDER BY $order_by";
 	        }else{
 	        	//table already defined, just add it to end of query
-	            $query .= " ORDER BY $order_by";	
-	        }           
+	            $query .= " ORDER BY $order_by";
+	        }
         }
         return $query;
     }
@@ -429,11 +429,11 @@ class ProjectTask extends SugarBean {
 		}
     }
     //END SUGARCRM flav=pro ONLY
-	
+
 }
 
 function getUtilizationDropdown($focus, $field, $value, $view) {
-	global $app_list_strings;	
+	global $app_list_strings;
 
 	if($view == 'EditView') {
 		global $app_list_strings;
@@ -442,7 +442,7 @@ function getUtilizationDropdown($focus, $field, $value, $view) {
         $html .= '</select>';
         return $html;
     }
-       
-    return translate('project_task_utilization_options', '', $focus->$field);    
-}	
+
+    return translate('project_task_utilization_options', '', $focus->$field);
+}
 ?>
