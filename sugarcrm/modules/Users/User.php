@@ -979,7 +979,7 @@ EOQ;
 
 	function get_list_view_data() {
 
-		global $current_user;
+		global $current_user, $mod_strings;
 
 		$user_fields = $this->get_list_view_array();
 		if ($this->is_admin)

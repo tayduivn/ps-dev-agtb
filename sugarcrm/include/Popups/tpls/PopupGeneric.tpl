@@ -108,17 +108,15 @@
 					<div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
 	                {if $params.sortable|default:true}
 		                <a href='#' onclick='location.href="{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}"; return sListView.save_checks(0, "{$moduleString}");' class='listViewThLinkS1'>{sugar_translate label=$params.label module=$pageData.bean.moduleDir}&nbsp;&nbsp;
+						{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
-								{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-								{sugar_getimage name="{$imageName}" width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+								{sugar_getimage name="$imageName" ext='gif' width="$arrowWidth" height="$arrowHeight" alt="$arrowAlt" other_attributes='align="absmiddle" border="0"'}
 							{else}
-								{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-								{sugar_getimage name="{$imageName}" width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+								{sugar_getimage name="$imageName" ext='gif'  width="$arrowWidth" height="$arrowHeight" alt="$arrowAlt" other_attributes='align="absmiddle" border="0"'}
 							{/if}
 						{else}
-							{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-							{sugar_getimage name="{$imageName}" width="{$arrowWidth}" height="{$arrowHeight}" alt="{$arrowAlt}" other_attributes='align="absmiddle" border="0" '}
+							{sugar_getimage name="$imageName" ext='gif' width="$arrowWidth" height="$arrowHeight" alt="$arrowAlt" other_attributes='align="absmiddle" border="0"'}
 						{/if}
 						</a>
 					{else}
