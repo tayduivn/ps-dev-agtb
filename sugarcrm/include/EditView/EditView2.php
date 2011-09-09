@@ -505,17 +505,17 @@ class EditView
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
-                $this->fieldDefs[$name]['acl'] = $this->focus->bean_implements('ACL')
-                    ? ACLField::hasAccess($name, $this->focus->module_dir,$GLOBALS['current_user']->id, $is_owner)
-                    : 4;
+                if ($this->focus->bean_implements('ACL'))
+                    $this->fieldDefs[$name]['acl'] =  ACLField::hasAccess($name, $this->focus->module_dir,$GLOBALS['current_user']->id, $is_owner);
+                else
+                    $this->fieldDefs[$name]['acl'] = 4;
                 //END SUGARCRM flav=pro ONLY
 
                 //This code is used for QuickCreates that go to Full Form view.  We want to overwrite the values from the bean
                 //with values from the request if they are set
-                if ($this->populateBean && isset($_REQUEST['full_form'])
-                    && (isset($this->fieldDefs[$name]['function']['returns'])
-                        ? $this->fieldDefs[$name]['function']['returns'] != 'html'
-                        : true)
+                if ($this->populateBean
+                    && (isset($_REQUEST['full_form']) || ($_REQUEST['action'] == "SubpanelCreates" && empty($this->focus->id)))
+                    && (!isset($this->fieldDefs[$name]['function']['returns']) || $this->fieldDefs[$name]['function']['returns'] != 'html')
                     && isset($_REQUEST[$name]))
                 {
                     $this->fieldDefs[$name]['value'] = $this->getValueFromRequest($_REQUEST, $name);
