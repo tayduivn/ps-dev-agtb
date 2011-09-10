@@ -87,7 +87,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjDate['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -106,7 +106,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered < '".$adjDate['start']."' OR ". strtolower($this->module).".date_entered > '".$adjDate['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -124,7 +124,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
         $expected = array(strtolower($this->module).".date_entered > '".$adjDate['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -142,7 +142,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
         $expected = array(strtolower($this->module).".date_entered < '".$adjDate['start']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -162,7 +162,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjStartDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjToday['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -182,7 +182,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjToday['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjEndDate['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -202,7 +202,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjStartDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjToday['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -222,7 +222,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjToday['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjEndDate['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -242,7 +242,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjLastMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjLastMonthLastDay['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -262,7 +262,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjThisMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjThisMonthLastDay['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -282,7 +282,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjNextMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjNextMonthLastDay['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -302,7 +302,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjLastYearFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjLastYearLastDay['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -322,7 +322,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjThisYearFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjThisYearLastDay['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -342,7 +342,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjNextYearFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjNextYearLastDay['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
@@ -364,7 +364,7 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $expected = array(strtolower($this->module).".date_entered >= '".$adjStartDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjEndDate['end']."'");
 
-        $this->form->populateFromArray(&$this->array);
+        $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
         $this->assertSame($expected, $query);
