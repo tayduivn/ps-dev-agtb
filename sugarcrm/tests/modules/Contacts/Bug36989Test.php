@@ -45,11 +45,6 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
               unlink('custom/modules/Contacts/metadata/SearchFields.php');
           }
 
-          if(file_exists('custom/modules/Contacts/metadata/searchdefs.php'))
-          {
-              $this->customSearchdefs = file_get_contents('custom/modules/Contacts/metadata/searchdefs.php');
-              unlink('custom/modules/Contacts/metadata/searchdefs.php');
-          }
           $this->searchFieldsBackup = file_get_contents('modules/Contacts/metadata/SearchFields.php');
           file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = array(\'test\' => array());');
 
@@ -58,11 +53,6 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
          file_put_contents('modules/Contacts/metadata/SearchFields.php', $this->searchFieldsBackup);
-
-         if(!empty($this->customSearchdefs))
-         {
-             file_put_contents('custom/modules/Contacts/metadata/searchdefs.php', $this->customSearchdefs);
-         }
 
          if(!empty($this->customSearchFields))
          {
