@@ -56,10 +56,10 @@ class Bug46000Test extends SOAPTestCase
                      array('name' => 'first_name', 'value' => 'TestFirst'),
                      array('name' => 'last_name', 'value' => 'Test Last'),
                      array('name' => 'title', 'value' => 'Test Admin'),
-                    array('name' => 'is_admin' , 'value' =>  '1'),
+                     array('name' => 'is_admin' , 'value' =>  '1')
                 );
         $result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'name_value_list' => $nv));
-        $this->assertEquals($result['error']['number'], '40');
+        $this->assertEquals('40', $result['error']['number']);
     }
 
     public function testMakeUserAdmin()
@@ -70,7 +70,7 @@ class Bug46000Test extends SOAPTestCase
                     array('name' => 'is_admin' , 'value' =>  '1'),
                 );
         $result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'name_value_list' => $nv));
-        $this->assertEquals($result['error']['number'], '40');
+        $this->assertEquals('40', $result['error']['number']);
 
     }
 

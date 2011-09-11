@@ -34,6 +34,11 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
 
      public function setUp()
     {
+          $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+		  require('include/modules.php');
+		  $GLOBALS['beanList'] = $beanList;
+		  $GLOBALS['beanFiles'] = $beanFiles;
+
           if(file_exists('custom/modules/Contacts/metadata/SearchFields.php'))
           {
               $this->customSearchFields = file_get_contents('custom/modules/Contacts/metadata/SearchFields.php');
@@ -64,7 +69,7 @@ class Bug36989Test extends Sugar_PHPUnit_Framework_TestCase
              file_put_contents('custom/modules/Contacts/metadata/SearchFields.php', $this->customSearchFields);
          }
 
-
+         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
     
      function testOverrideSearchFields() {

@@ -24,7 +24,7 @@
 
 class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
-    
+
     public function setUp() 
     {
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -104,13 +104,16 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
     	 $_REQUEST = array();
     	 $_REQUEST['q'] = 'Bug43653Test';
     	 
-    	 ob_flush();
+    	 //ob_flush();
 		 require_once('include/MVC/View/views/view.spot.php');
 		 $spotView = new ViewSpot();
 		 ob_start();
 		 $spotView->display();
+
+         //$this->expectOutputRegex('/Bug43653Task_Task/i', 'Assert that <a> link for Bug43653Test_Task was found');
+
     	 $results = ob_get_contents();
-	     
+
     	 $matcher = array(
 	        'tag'        => 'a',
 	        'content' => 'Bug43653Test_Task'
@@ -121,7 +124,8 @@ class Bug43653Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	        'tag'        => 'a',
 	        'content' => 'Bug43653Test_Account'
 	     );
-	     $this->assertTag($matcher, $results, 'Assert that <a> link for Bug43653Test_Account was found');	     
+	     $this->assertTag($matcher, $results, 'Assert that <a> link for Bug43653Test_Account was found');
+
 	}	
     //END SUGARCRM flav=pro ONLY
 }

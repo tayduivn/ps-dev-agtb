@@ -25,6 +25,15 @@ class Bug43432Test extends Sugar_PHPUnit_Framework_OutputTestCase {
      var $campaign = null;
 
      public function setUp() {
+
+          global $current_user;
+          $this->_user = SugarTestUserUtilities::createAnonymousUser();
+          $GLOBALS['current_user'] = $this->_user;
+
+		  require('include/modules.php');
+		  $GLOBALS['beanList'] = $beanList;
+		  $GLOBALS['beanFiles'] = $beanFiles;
+
           global $_SERVER;
           $_SERVER['REMOTE_ADDR'] = "127.0.0.1";
           $count = 0;
@@ -51,6 +60,7 @@ class Bug43432Test extends Sugar_PHPUnit_Framework_OutputTestCase {
      }
 
      public function tearDown() {
+          SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
           SugarTestCampaignUtilities::removeAllCreatedCampaigns();
           unset($_POST);
      }

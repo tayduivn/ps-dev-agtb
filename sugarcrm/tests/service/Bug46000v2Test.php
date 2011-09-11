@@ -59,7 +59,7 @@ class Bug46000v2Test extends SOAPTestCase
                     'is_admin' => '1',
                 );
         $result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'name_value_list' => $nv));
-        $this->assertEquals($result['faultcode'], '40');
+        $this->assertEquals('40', $result['faultcode']);
 
     }
 
@@ -71,7 +71,7 @@ class Bug46000v2Test extends SOAPTestCase
                     'is_admin' =>  '1',
                 );
         $result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Users', 'name_value_list' => $nv));
-        $this->assertEquals($result['faultcode'], '40');
+        $this->assertEquals('40', $result['faultcode']);
 
     }
 
