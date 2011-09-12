@@ -981,7 +981,7 @@ EOJS;
 		$json = getJSONobj();
 		$newPageName = $json->decode(html_entity_decode($_REQUEST['newPageTitle']));
 
-		$pages[$_REQUEST['pageId']]['pageTitle'] = $newPageName['jsonObject'];
+		$pages[$_REQUEST['pageId']]['pageTitle'] = $newPageName;
 		$current_user->setPreference('pages', $pages, 0, $this->type);
 
 		return $pages[$_REQUEST['pageId']]['pageTitle'];
