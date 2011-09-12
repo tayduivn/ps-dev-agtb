@@ -366,7 +366,7 @@ $sugar_config['installer_locked'] = false;
 //END SUGARCRM flav=int ONLY
 
 
-$exclude_files = array('register.php');
+$exclude_files = array('register.php','download_modules.php');
 
 if(isset($next_step) && isset($workflow[$next_step]) && !in_array($workflow[$next_step],$exclude_files) && isset($sugar_config['installer_locked']) && $sugar_config['installer_locked'] == true) {
     $the_file = 'installDisabled.php';
