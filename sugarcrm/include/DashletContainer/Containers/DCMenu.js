@@ -118,7 +118,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		//box_style = isIE7 ? 'position:fixed; width:750px;' : 'none';
 		
      	Y.one('#dcboxbody').setStyle('display','none');
-     	Y.one('#dcboxbody').setStyle('width', '950px;');
+     	Y.one('#dcboxbody').setStyle('width', '750px;');
     }
     function setBody(data, depth, parentid,type,title,extraButton){
 			if(typeof(data.html) == 'undefined')data = {html:data};
@@ -407,7 +407,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-						if(isSafari) {
+
+                        //set margins on modal so it is visible on all browsers
+                        Y.one('#dcboxbody').setStyle('margin', '0 5% 0 0');
+
+                         if(isSafari) {
 							dcboxbody.setStyle("width",dcboxbodyWidth+"px");
 						}
 						if(SUGAR.isIE) {
