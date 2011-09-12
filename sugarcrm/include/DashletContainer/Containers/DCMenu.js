@@ -26,7 +26,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     var overlayDepth = 0;
     var menuFunctions = {};
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
-    function getOverlay(depth){
+    function getOverlay(depth, modal){
     		if(!depth)depth = 0;
     		if(typeof overlays[depth] == 'undefined'){
     			 overlays[depth] = new Y.Overlay({
@@ -54,16 +54,47 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     			overlays[depth].hide = function(){
     				this.visible = false;
     				this.get('boundingBox').setStyle('visibility','hidden');
+                    if (this.get("modal"))
+                        this.toggleModal();
     			}
+                overlays[depth].toggleModal = function(){
+                    var mask = Y.one("#dcmask")
+                    if (this.get("modal"))
+                    {
+                        //Hide the mask if it has been rendered
+                        if (mask){
+                            mask.setStyle("display", "none");
+                        }
+                        this.set("modal", false);
+                    }
+                    else {
+                        if (mask){
+                            mask.setStyle("display", "block");
+                        }
+                        else {
+                            mask = document.createElement("div");
+                            mask.className = "mask";
+                            mask.id = "dcmask";
+                            mask.style.width = mask.style.height = "100%";
+                            mask.style.position = "fixed";
+                            mask.style.display = "block";
+                            mask.style.zIndex = 19;
+                            document.body.appendChild(mask);
+                        }
+                        this.set("modal", true);
+                    }
+                }
     		}
 			var dcmenuContainer = Y.one('#dcmenuContainer');
 			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
     		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
-   	  	overlays[depth].render();
+   	  	    overlays[depth].render();
+            if(modal)
+                overlays[depth].toggleModal();
     		return overlays[depth]
     }
     
-    DCMenu.menu = function(module,title){
+    DCMenu.menu = function(module,title,modal){
         if ( typeof(lastLoadedMenu) != 'undefined' && lastLoadedMenu == module ) {
             return;
         }
@@ -71,7 +102,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         lastLoadedMenu = module;
 
     	if(typeof menuFunctions[module] == 'undefined'){
-    		loadView(module, 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,null,null,title); 	
+    		loadView(
+                module,
+                'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,
+                null,null,title,{modal : modal ? true : false}
+            );
     	}	
     }
     
@@ -121,12 +156,20 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
      	Y.one('#dcboxbody').setStyle('width', '750px;');
     }
     function setBody(data, depth, parentid,type,title,extraButton){
-			if(typeof(data.html) == 'undefined')data = {html:data};
+			//extraButton can be either a string to append to the content or a set of additional parameters;
+            var params = {};
+            if (typeof(extraButton) == "object")
+            {
+                params = extraButton;
+                extraButton = params.extraButton ? params.extraButton : false;
+            }
+
+            if(typeof(data.html) == 'undefined')data = {html:data};
 			//Check for the login page, meaning we have been logged out.
 			if (SUGAR.util.isLoginPage(data.html))
 				return false;
     		DCMenu.closeOverlay(depth);
-    		var overlay = getOverlay(depth);
+    		var overlay = getOverlay(depth, params.modal);
 
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
@@ -159,7 +202,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			        content +=	'<div id="dctitle">' + type + '</div>';
 
 		    content += '<div class="close">';
-            if ( extraButton != null ) {
+            if ( typeof(extraButton) == "string" ) {
                 content += extraButton
             }
             content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
@@ -401,7 +444,9 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
                         DCMenu.jsEvalled = false;
-                        overlay = setBody({html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" +data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+                        overlay = setBody({
+                            html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + data.responseText
+                        }, requests[id].depth, requests[id].parentid,requests[id].type,title, extraButton);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
 
