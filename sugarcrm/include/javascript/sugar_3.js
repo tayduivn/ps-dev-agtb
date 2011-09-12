@@ -4325,10 +4325,14 @@ isPackageManager: function(){
 },
 
 ajaxCallInProgress: function(){
-    //If the page content is blank, it means we are probably still waiting on something
-    var c = document.getElementById("content");
-    if (!c) return true;
-    var t = YAHOO.lang.trim(SUGAR.util.innerText(c));
+    var t = true;
+    //First check if we are in a popup.
+    if (typeof (send_back) != "function"){
+        //If the page content is blank, it means we are probably still waiting on something
+        var c = document.getElementById("content");
+        if (!c) return true;
+        t = YAHOO.lang.trim(SUGAR.util.innerText(c));
+    }
     return SUGAR_callsInProgress != 0 || t == "";
 },
 //Firefox doesn't support innerText (textContent includes script content)
