@@ -142,6 +142,7 @@ function getValidDBName ($name, $ensureUnique = false, $maxLen = 30)
     return DBManagerFactory::getInstance()->getValidDBName($name, $ensureUnique);
 }
 
+
 /**
  * Utility to perform the check during install to ensure a database name entered by the user
  * is valid based on the type of database server
@@ -154,3 +155,5 @@ function isValidDBName($name, $dbType)
     $db = DBManagerFactory::getTypeInstance($dbType);
     return $db->isDatabaseNameValid($name);
 }
+
+?>

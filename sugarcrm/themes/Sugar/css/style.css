@@ -1805,8 +1805,8 @@ table.reportlistView{
     padding: 4px 5px 4px 5px;
     border-left: none;
     border-right: none;
-    border-top: 1px solid Blackccc;
-    border-bottom: 1px solid Blackccc;
+    border-top: 1px solid Black;
+    border-bottom: 1px solid Black;
     background:Gainsboro;
 }
 
@@ -3173,6 +3173,11 @@ embed
 
 #html_div p:first-child {
 	margin: 0px 0px 12px 0px;
+}
+
+/* Bug 43177 Predefined HTML Background Colors Do Not Display in the Detailview, but do in the Editview */
+div#html_div td {
+	background-color: inherit;
 }
 
 /* for smtp button on the email settings page */
@@ -5688,8 +5693,8 @@ padding:0px 10px 0px;
 #dcboxbody{
 height:110%;
 font-size:6px !important;
-min-width: 950px\9; /* ie hack, width must be defined or else it goes off the screen */
-*width: 950px;
+min-width: 750px\9; /* ie hack, width must be defined or else it goes off the screen */
+*width: 750px;
 }
 
 #dcboxbody.sugar_spot_search{

@@ -1001,6 +1001,7 @@ function getUserVariable($localVarName, $varName) {
         global $sugar_config;
         global $current_user;
         global $currentModule;
+        global $app_strings;
 
         $start_record = $current_offset + 1;
 
@@ -1632,10 +1633,12 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
     }
 
     function getArrowUpDownStart($upDown) {
+        $ext = ( SugarThemeRegistry::current()->pngSupport ? "png" : "gif" );
+
         if (!isset($upDown) || empty($upDown)) {
             $upDown = "";
         }
-        return "&nbsp;<!--not_in_theme!--><img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
+        return "&nbsp;<img border='0' src='".SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.{$ext}")."' ";
     }
 
 	function getArrowEnd() {

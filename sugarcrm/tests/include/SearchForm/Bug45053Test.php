@@ -34,7 +34,7 @@ class Bug45053Test extends Sugar_PHPUnit_Framework_TestCase
 	var $searchForm = null;
    
     public function setUp()
-    {
+    {    	
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();	
     	$this->account = SugarTestAccountUtilities::createAccount();
     	$this->opportunity = new Opportunity();
@@ -44,6 +44,7 @@ class Bug45053Test extends Sugar_PHPUnit_Framework_TestCase
     	$tomorrow = mktime(0,0,0,date("m"),date("d")+1,date("Y"));
     	$this->opportunity->date_closed = date("Y-m-d", $tomorrow);
     	$this->opportunity->sales_stage = "Prospecting";
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);    	
     }
     
     public function tearDown()

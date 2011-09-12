@@ -206,7 +206,7 @@ var resources = new Array();
 					</td>
 					<td nowrap ondblclick="SUGAR.grid.toggle('description_{$TASK->project_task_id}_div', 'description_{$TASK->project_task_id}', 'description_{$TASK->project_task_id}_divlink');">
 						<div id='description_{$TASK->project_task_id}_div' style="display:none;">
-							<input {if !$CANEDIT}readonly="readonly"{/if} name=description_{$TASK->project_task_id} type=text maxlength=50 style="border:0"  size=40 id=description_{$TASK->project_task_id} value="{$TASK->name}" 
+							<input {if !$CANEDIT}readonly="readonly"{/if} name=description_{$TASK->project_task_id} type=text maxlength="{ $NAME_LENGTH }" style="border:0"  size=40 id=description_{$TASK->project_task_id} value="{$TASK->name}"
 								onblur="SUGAR.grid.blurEvent({$TASK->project_task_id}, 'description_{$TASK->project_task_id}_div','description_{$TASK->project_task_id}', 'description_{$TASK->project_task_id}_divlink');">
 							<input type="hidden" name="description_divlink_input_{$TASK->project_task_id}" id="description_divlink_input_{$TASK->project_task_id}" value="{$TASK->name}">
 
@@ -351,10 +351,16 @@ SUGAR.grid.buildPredecessorsAndDependents();
 SUGAR.grid.gridLoaded();
 SUGAR.gantt.createTable('biweek', document.getElementById('calendar_start').value, "{$BG_COLOR}");
 
+    SUGAR.grid.onAfterInsertRow = function(num) {ldelim}
+        YAHOO.util.Dom.setAttribute(YAHOO.util.Selector.query('input[size="40"]'), 'maxlength', { $NAME_LENGTH });
+    {rdelim}
+
 {if $TASKCOUNT == 0}
 for (i = 0; i < 2; i++)
 	SUGAR.grid.insertRow();
 {/if}
+
+
 
 </script>
 {$JAVASCRIPT}

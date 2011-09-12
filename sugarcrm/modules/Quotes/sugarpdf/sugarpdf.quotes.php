@@ -64,6 +64,7 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
                 // w and h are used as boundary sizes in this case.
                 $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), self::MAX_WIDTH, self::MAX_HEIGHT, '', '', '', true, self::DPI);
             }
+
         }
         // This table split the header in 3 parts of equal width. The last part (on the right) contain the header text.
         $table[0]["logo"]="";

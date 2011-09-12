@@ -24,6 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 function checkDBSettings($silent=false) {
+
     installLog("Begin DB Check Process *************");
     global $mod_strings;
     $errors = array();
@@ -32,6 +33,7 @@ function checkDBSettings($silent=false) {
     $db = getInstallDbInstance();
 
     installLog("testing with {$db->dbType}:{$db->variant}");
+
 
         if( trim($_SESSION['setup_db_database_name']) == '' ){
             $errors['ERR_DB_NAME'] = $mod_strings['ERR_DB_NAME'];

@@ -123,6 +123,7 @@ class ext_rest_zoominfocompany extends ext_rest {
 		xml_set_character_data_handler($this->xml_parser, "characterData");
 		$GLOBALS['log']->info("Zoominfo Company getItem url = [$url]");
 		$fp = @fopen($url, "r");
+
 		if(!empty($fp)) {
 			while ($data = fread($fp, 4096)) {
 			   xml_parse($this->xml_parser, $data, feof($fp))
@@ -175,12 +176,6 @@ class ext_rest_zoominfocompany extends ext_rest {
 		}
 	}
 
-	public function setProperties($properties=array())
-	{
-	    $this->properties = $properties;
-	    parent::setProperties($properties);
-	}
-
 	public function test() {
 		try {
     		$listArgs = array('CompanyID'=>'18579882');
@@ -191,9 +186,6 @@ class ext_rest_zoominfocompany extends ext_rest {
 		}
 	}
 
- 	public function __destruct(){
-		parent::__destruct();
-	}
  }
 
 //BEGIN ENCODE

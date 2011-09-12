@@ -500,7 +500,9 @@ function setup_mail_object(& $mail_object, & $admin){
 			$mail_object->Password = $admin->settings['mail_smtppass'];
 		}
 	//end if sendtype is SMTP
-	}
+	} else {
+        $mail_object->Mailer = 'sendmail';                
+    }
 
 	$mail_object->From = $admin->settings['notify_fromaddress'];
 	$mail_object->FromName = (empty($admin->settings['notify_fromname'])) ? "" : $admin->settings['notify_fromname'];

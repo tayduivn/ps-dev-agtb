@@ -74,6 +74,10 @@ function process_action_update($focus, $action_array){
                 $GLOBALS['log']->info("workflow attempting to update calculated field $field.");
                 continue;
             }
+            if (in_array($focus->field_defs[$field]['type'], array('double', 'decimal','currency', 'float')))
+            {
+                $new_value = (float)unformat_number($new_value);
+            }
 			$focus->$field = convert_bool($new_value, $focus->field_defs[$field]['type']);
 			execute_special_logic($field, $focus);
 		}

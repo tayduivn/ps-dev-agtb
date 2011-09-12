@@ -52,11 +52,6 @@ class ext_rest_twitter extends ext_rest {
      * override this abstract method
      */
     public function getList($args=array(), $module=null){}
-
-
-    public function __destruct(){
-        parent::__destruct();
-    }
 }
 
 ?>

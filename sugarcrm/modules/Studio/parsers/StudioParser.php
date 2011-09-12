@@ -161,7 +161,7 @@ EOQ;
 
 	function generateButtons(){
 
-
+        global $mod_strings;
 		$imageSave = SugarThemeRegistry::current()->getImage( 'studio_save', '',null,null,'.gif',$mod_strings['LBL_SAVE']);
 		$imagePublish = SugarThemeRegistry::current()->getImage( 'studio_publish', '',null,null,'.gif',$mod_strings['LBL_PUBLISH']);
 		$imageHistory = SugarThemeRegistry::current()->getImage( 'studio_history', '',null,null,'.gif',$mod_strings['LBL_HISTORY']);
@@ -368,7 +368,7 @@ EOQ;
 	}
 
 	function enableLabelEditor($str) {
-
+        global $mod_strings;
 		$image = SugarThemeRegistry::current()->getImage( 'edit_inline', "onclick='studiojs.handleLabelClick(\"$2\", 1);' onmouseover='this.style.cursor=\"default\"'",null,null,'.gif',$mod_strings['LBL_EDIT']);
 		$match = array ("'>[^<]*\{(MOD.)([^\}]*)\}'si" => "$image<span id='label$2' onclick='studiojs.handleLabelClick(\"$2\", 2);' >{".'$1$2' . "}</span><span id='span$2' style='display:none'><input type='text' id='$2' name='$2' msi='label' value='{".'$1$2' . "}' onblur='studiojs.endLabelEdit(\"$2\")'></span>");
 		$keys = array_keys($match);
@@ -512,8 +512,7 @@ EOQ;
 	</script>
 
 	<!-- Drag and Drop source file -->
-	<script src="include/javascript/yui/dragdrop.js?v=$v" ></script>
-
+	<script type="text/javascript" src="include/javascript/yui/build/dragdrop/dragdrop.js?v=$v" ></script>
 	<script type="text/javascript" src="modules/Studio/studiodd.js?v=$v" ></script>
 	<script type="text/javascript" src="modules/Studio/studio.js?v=$v" ></script>
 	<script>

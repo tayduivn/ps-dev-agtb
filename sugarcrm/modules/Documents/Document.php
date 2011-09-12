@@ -213,11 +213,13 @@ class Document extends SugarBean {
 		$mod_strings = return_module_language($current_language, 'Documents');
 
         if (!empty($this->document_revision_id)) {
+
             $query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date,
             	 document_revisions.filename AS filename, document_revisions.revision AS revision,
             	 document_revisions.file_ext AS file_ext, document_revisions.file_mime_type AS file_mime_type
             	 FROM users, document_revisions
             	 WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";
+
             $result = $this->db->query($query);
             $row = $this->db->fetchByAssoc($result);
 
@@ -226,12 +228,11 @@ class Document extends SugarBean {
             {
             	$this->name = $this->document_name;
             }
-            //popuplate filename
+
             if(isset($row['filename']))$this->filename = $row['filename'];
             //$this->latest_revision = $row['revision'];
             if(isset($row['revision']))$this->revision = $row['revision'];
 
-            //populate the file url.
             //image is selected based on the extension name <ext>_icon_inline, extension is stored in document_revisions.
             //if file is not found then default image file will be used.
             global $img_name;

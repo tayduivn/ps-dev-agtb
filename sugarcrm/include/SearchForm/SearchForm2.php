@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
@@ -476,7 +477,8 @@ require_once('include/EditView/EditView2.php');
                     if(!empty($params['is_date_field']) && isset($this->searchFields[$name]['value']))
                     {
                         global $timedate;
-                        $date_value = $timedate->to_db_date($this->searchFields[$name]['value']);
+                        // FG - bug 45287 - to db conversion is ok, but don't adjust timezone (not now), otherwise you'll jump to the day before (if at GMT-xx)
+						$date_value = $timedate->to_db_date($this->searchFields[$name]['value'], false);
                         $this->searchFields[$name]['value'] = $date_value == '' ? $this->searchFields[$name]['value'] : $date_value;
                     }
                 }
@@ -495,8 +497,12 @@ require_once('include/EditView/EditView2.php');
                                 if (!empty($params['type']) && $params['type'] == 'parent'
                                     && !empty($params['type_name']) && !empty($this->searchFields[$key]['value']))
                                 {
+                                	    require_once('include/SugarFields/SugarFieldHandler.php');
+										$sfh = new SugarFieldHandler();
+                   						$sf = $sfh->getSugarField('Parent');
+
                                         $this->searchFields[$params['type_name']] = array('query_type' => 'default',
-                                                                                          'value'      => $array[$params['type_name']]);
+                                                                                          'value'      => $sf->getSearchInput($params['type_name'], $array));
                                 }
 
                                 if(empty($this->fieldDefs[$long_name]['value'])) {
@@ -599,6 +605,13 @@ require_once('include/EditView/EditView2.php');
                         $this->searchFields[$real_field]['operator'] = 'between';
                         $parms['value'] = $this->searchFields[$real_field]['value'];
                         $parms['operator'] = 'between';
+
+					    $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';
+					    if($field_type == 'datetimecombo' || $field_type == 'datetime')
+					    {
+					   	    $type = $field_type;
+					    }
+                        
                         $field = $real_field;
                         unset($this->searchFields[$end_field]['value']);
                     }
@@ -806,8 +819,24 @@ require_once('include/EditView/EditView2.php');
 
                         if($type == 'datetime' || $type == 'datetimecombo') {
                         	try {
-	                            $dates = $timedate->getDayStartEndGMT($field_value);
-	                            $field_value = array($dates["start"], $dates["end"]);
+                                // FG - bug45287 - If User asked for a range, takes edges from it.
+                                $placeholderPos = strpos($field_value, "<>");
+                                if ($placeholderPos !== FALSE && $placeholderPos > 0)
+                                {
+                                    $datesLimit = explode("<>", $field_value);
+                                    $dateStart = $timedate->getDayStartEndGMT($datesLimit[0]);
+                                    $dateEnd = $timedate->getDayStartEndGMT($datesLimit[1]);
+                                    $dates = $dateStart;
+                                    $dates['end'] = $dateEnd['end'];
+                                    $dates['enddate'] = $dateEnd['enddate'];
+                                    $dates['endtime'] = $dateEnd['endtime'];
+                                }
+                                else
+                                {
+                                    $dates = $timedate->getDayStartEndGMT($field_value);
+                                }
+                                // FG - bug45287 - Note "start" and "end" are the correct interval at GMT timezone
+                                $field_value = $dates["start"] . "<>" . $dates["end"];
 	                            $operator = 'between';
                         	} catch(Exception $timeException) {
                         		//In the event that a date value is given that cannot be correctly processed by getDayStartEndGMT method,
@@ -913,7 +942,8 @@ require_once('include/EditView/EditView2.php');
 
                             case 'like':
                                 if($type == 'bool' && $field_value == 0) {
-                                    $where .=  $db_field . " = '0' OR " . $db_field . " IS NULL";
+                                    // Bug 43452 - FG - Added parenthesis surrounding the OR (without them the WHERE clause would be broken)
+                                    $where .=  "( " . $db_field . " = '0' OR " . $db_field . " IS NULL )";
                                 }
                                 else {
                                     //check to see if this is coming from unified search or not

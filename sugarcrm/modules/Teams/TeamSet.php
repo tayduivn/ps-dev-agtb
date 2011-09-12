@@ -1,6 +1,5 @@
 <?php
-require_once('include/ytree/Tree.php');
-require_once('include/ytree/Node.php');
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -20,13 +19,7 @@ require_once('include/ytree/Node.php');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: AddUserToTeam.php 13782 2006-06-06 17:58:55Z majed $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+
 /**
  * TeamSet represents a unique combination of Teams in the system. The goal here is to reduce the amount of duplicated
  * data.
@@ -37,7 +30,10 @@ require_once('include/ytree/Node.php');
  * So records that have these combinbations of teams will have the same team_set_id.
  *
  */
+require_once('include/ytree/Tree.php');
+require_once('include/ytree/Node.php');
 require_once('modules/Teams/TeamSetManager.php');
+
 class TeamSet extends SugarBean{
     /*
     * char(36) GUID
@@ -334,10 +330,10 @@ class TeamSet extends SugarBean{
 
 			$cachedfile = sugar_cached('modules/Teams/TeamSetsUsersCache.php');
             if (!$foundInCache && file_exists($cachedfile) ) {
-            require_once($cachedfile);
-            if(!empty($teamSetsUsers[$user_id])){
-                    $foundInCache = true;
-            }
+                require_once($cachedfile);
+                if(!empty($teamSetsUsers[$user_id])){
+                        $foundInCache = true;
+                }
             }
 
             $result = $this->db->query($selectQuery, TRUE, "Error finding team memberships: ");

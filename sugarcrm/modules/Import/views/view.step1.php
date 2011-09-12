@@ -74,7 +74,6 @@ class ImportViewStep1 extends ImportView
 	    return $returnArray;
     }
 
-
  	/** 
      * @see SugarView::display()
      */
@@ -157,7 +156,7 @@ class ImportViewStep1 extends ImportView
     /**
      * Returns JS used in this view
      */
-    private function _getJS()
+    private function _getJS($sourceType = false)
     {
         global $mod_strings;
         $EXTERNAL_AUTHENTICATED_SOURCES = json_encode($this->getAuthenticatedImportableExternalEAPMs());
@@ -305,6 +304,7 @@ YAHOO.util.Event.onDOMReady(function(){
         }
         //END SUGARCRM flav=pro ONLY
     }
+
     YAHOO.util.Event.addListener('ext_source_sign_in_bttn', "click", openExtAuthWindow);
     YAHOO.util.Event.addListener('admin_import_module', "change", setImportModule);
 

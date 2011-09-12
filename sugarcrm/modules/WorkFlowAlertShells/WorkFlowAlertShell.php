@@ -188,7 +188,7 @@ class WorkFlowAlertShell extends SugarBean {
 	            $alert_prev_text = '<span class="error">' . translate('LBL_ALERT_ERROR') . '</span>';
 			}
 			$table_html .= "<tr><td>";
-			$table_html .= "<li>$alert_prev_text</li>".
+			$table_html .= "<li>$alert_prev_text</li>";
 			$table_html .= "</td></tr>";
 		    
 		}

@@ -141,7 +141,6 @@ if($_SESSION['MAILMERGE_MODULE'] == 'CampaignProspects'){
         
 }
 
-
 if(!empty($_POST['document_id']))
 {
 	$_SESSION['MAILMERGE_DOCUMENT_ID'] = $_POST['document_id'];

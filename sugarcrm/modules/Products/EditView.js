@@ -28,9 +28,9 @@
 // $Id: EditView.js 42645 2008-12-18 21:41:08Z awu $
 
 
-function get_popup_product()
+function get_popup_product(formName)
 {
-    open_popup('ProductTemplates', '600', '400', '&form=EditView&tree=ProductsProd', 'true', 'false',{"call_back_function":"set_product_type_return","form_name":this.form_id,"field_to_name_array":{"id":"product_template_id","name":"name"}});
+    open_popup('ProductTemplates', '600', '400', '&form=EditView&tree=ProductsProd', 'true', 'false',{"call_back_function":"set_product_type_return","form_name":formName,"field_to_name_array":{"id":"product_template_id","name":"name"}});
 }
 
 

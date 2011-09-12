@@ -22,24 +22,30 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class SugarWidgetFieldEnum extends SugarWidgetReportField
 {
-
-    function SugarWidgetFieldEnum($layout_manager) {
+    public function SugarWidgetFieldEnum($layout_manager) {
         parent::SugarWidgetReportField($layout_manager);
     }
 
-	function queryFilterEmpty($layout_def)
+	public function queryFilterEmpty($layout_def)
 	{
 	    $column = $this->_get_column_select($layout_def);
 	    return "($column IS NULL OR $column LIKE '' OR $column = '^^')";
 	}
 
-	 function queryFilterNot_Empty($layout_def)
-	 {
-	     $column = $this->_get_column_select($layout_def);
-	     return "($column IS NOT NULL AND $column <> '' AND $column <> '^^')";
-	 }
+    public function queryFilterNot_Empty($layout_def)
+	{
+	    $reporter = $this->layout_manager->getAttribute("reporter");
+        if( $this->reporter->db->dbType == 'mysql') {
+			return '( '.$this->_get_column_select($layout_def).' IS NOT NULL'.
+				' AND '.$this->_get_column_select($layout_def)." <> ''".
+				' AND '.$this->_get_column_select($layout_def)." != '^^' )\n";
+        } else {
+			return '( '.$this->_get_column_select($layout_def).' IS NOT NULL'.
+				' AND '.$this->_get_column_select($layout_def)." != '^^' )\n";
+        }
+	}
 
-	function queryFilteris($layout_def) {
+	public function queryFilteris($layout_def) {
 		$input_name0 = $layout_def['input_name0'];
 		if (is_array($layout_def['input_name0'])) {
 			$input_name0 = $layout_def['input_name0'][0];
@@ -47,7 +53,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		return $this->_get_column_select($layout_def)." = ".$this->reporter->db->quoted($input_name0)."\n";
 	}
 
-	function queryFilteris_not($layout_def) {
+	public function queryFilteris_not($layout_def) {
 		$input_name0 = $layout_def['input_name0'];
 		if (is_array($layout_def['input_name0'])) {
 			$input_name0 = $layout_def['input_name0'][0];
@@ -55,7 +61,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		return $this->_get_column_select($layout_def)." <> ".$this->reporter->db->quoted($input_name0)."\n";
 	}
 
-	function queryFilterone_of($layout_def) {
+	public function queryFilterone_of($layout_def) {
 		$arr = array ();
 		foreach ($layout_def['input_name0'] as $value) {
 			$arr[] = $this->reporter->db->quoted($value);
@@ -64,7 +70,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		return $this->_get_column_select($layout_def)." IN (".$str.")\n";
 	}
 
-	function queryFilternot_one_of($layout_def) {
+	public function queryFilternot_one_of($layout_def) {
 		$arr = array ();
 		foreach ($layout_def['input_name0'] as $value) {
 			$arr[] = $this->reporter->db->quoted($value);
@@ -151,9 +157,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		return $cell;
 	}
 
-
-	function queryOrderBy($layout_def)
-	{
+	public function queryOrderBy($layout_def) {
 		$field_def = $this->reporter->all_fields[$layout_def['column_key']];
 		if (!empty ($field_def['sort_on'])) {
 			$order_by = $layout_def['table_alias'].".".$field_def['sort_on'];
@@ -180,7 +184,7 @@ class SugarWidgetFieldEnum extends SugarWidgetReportField
 		return $this->reporter->db->orderByEnum($order_by, $list, $order_dir);
     }
 
-    function displayInput($layout_def) {
+    public function displayInput($layout_def) {
         global $app_list_strings;
 
         if(!empty($layout_def['remove_blank']) && $layout_def['remove_blank']) {

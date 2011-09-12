@@ -116,6 +116,7 @@ function template_cal_tabs($args) {
 			    else {
 			        $callStatus = '';
 			    }
+
 				echo '<td>' . SugarThemeRegistry::current()->getImage('Calls','', null,null,'.gif',$app_list_strings['call_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Calls&action=DetailView&record=' .
 						$act->sugar_bean->id . '">' . $callStatus . ': ' . $act->sugar_bean->name . '</a></td>';
@@ -126,7 +127,9 @@ function template_cal_tabs($args) {
 			    else {
 			        $meetingStatus = '';
 			    }
+
 				$out = '<td>' . SugarThemeRegistry::current()->getImage('Meetings','', null,null,'.gif',$app_list_strings['meeting_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
+
 						<td width="100%"><a ' . $extra . ' href="index.php?module=Meetings&action=DetailView&record=' .
 						$act->sugar_bean->id . '">' . $meetingStatus . ': ' . $act->sugar_bean->name .'</a>';
 
@@ -143,8 +146,17 @@ function template_cal_tabs($args) {
 				echo $out;
 
 			} else if($act->sugar_bean->object_name == 'Task') {
-				echo '<td>' .  SugarThemeRegistry::current()->getImage('Tasks','', null,null,'.gif',$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
-						<td width="100%"><a ' . $extra . ' href="index.php?module=Tasks&action=DetailView&record=' . $act->sugar_bean->id . '">'.$app_list_strings['task_status_dom'][$fields['STATUS']].': ' . $act->sugar_bean->name . '</a></td>';
+
+                if ( isset($app_list_strings['task_status_dom'][$act->sugar_bean->status]) )
+                {
+			        $taskStatus = $app_list_strings['task_status_dom'][$act->sugar_bean->status];
+			    } else {
+			        $taskStatus = '';
+			    }
+
+                echo '<td>' .  SugarThemeRegistry::current()->getImage('Tasks','', null,null,'.gif',$app_list_strings['task_status_dom'][$act->sugar_bean->status].': '.$act->sugar_bean->name) . '</td>
+			    <td width="100%"><a ' . $extra . ' href="index.php?module=Tasks&action=DetailView&record=' . $act->sugar_bean->id . '">'.$taskStatus.': ' . $act->sugar_bean->name . '</a></td>';
+
 			}
 			echo '</tr></table><div>';
 		}

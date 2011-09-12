@@ -37,10 +37,10 @@ color: #C60C30;
 	height: auto;
 	padding: 0;
 	float: none;
+	border: 0px none;
 }
 
 .dashletPanelMenu .bd .screen {
-	border: 0px none;
 	background-color: transparent;
     display: none;
     width: 820px;
@@ -66,7 +66,7 @@ div.nav-buttons
 
 div.screen div.edit.view
 {
-    min-height: 485px;
+    height: 440px;
     width: auto;
     margin-top: 0;
     margin-bottom: 0;
@@ -152,4 +152,5 @@ div.screen .view td a
     font-size: 14px;
 }
 .userWizWelcome {margin: 10px -30px 0pt 0pt; width: 770px;}
+
 #userWizFrame {width: 770px; height: 325px; border: none;}

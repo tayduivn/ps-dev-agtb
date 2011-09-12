@@ -161,7 +161,7 @@ class ViewEditConvert extends SugarView {
     	{
     		foreach($bean_rels as $field => $fDef)
     		{
-    			if (!empty($fDef['link']) && !empty($fDef['module']) && $fDef['module'] == $mDef['module'])
+    			if (!empty($fDef['link']) && !empty($fDef['module']) && ($fDef['module'] == $mDef['module'] || $fDef['module'] == "Contacts"))
     			{
     				$ret[$mDef['module']][] = $fDef['name'];
     			}

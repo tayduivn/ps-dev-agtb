@@ -1,3 +1,4 @@
+
 {*
 
 /**
@@ -145,10 +146,11 @@
 			<script>
 			var jstransaction = new JSTransaction();
 			</script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/yui/dragdrop.js'}" ></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studiodd.js'}" ></script>
-<script type="text/javascript" src="{sugar_getjspath file='modules/Studio/studio.js'}" ></script>
+
 {literal}
+            <script src = "include/javascript/yui/build/dragdrop/dragdrop.js" ></script>
+			<script type="text/javascript" src="modules/Studio/studiodd.js" ></script>	
+			<script type="text/javascript" src="modules/Studio/studio.js" ></script>
 			<script>
 			var lastField = '';
 			var lastRowCount = -1;

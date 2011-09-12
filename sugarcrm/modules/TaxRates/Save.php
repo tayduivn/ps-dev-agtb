@@ -53,6 +53,8 @@ foreach($focus->additional_column_fields as $field)
 	}
 }
 
+$focus->value = strtr($focus->value,',','.');
+$focus->value = strtr($focus->value,$sugar_config['default_decimal_seperator'],'.');
 
 $focus->save();
 $return_id = $focus->id;

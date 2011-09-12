@@ -295,6 +295,7 @@ $sugar_smarty->assign("BG_COLOR", $hilite_bg);
 $sugar_smarty->assign("CALENDAR_DATEFORMAT", $timedate->get_cal_date_format());
 $sugar_smarty->assign("TEAM", $focus->team_id);
 $sugar_smarty->assign("OWNER", $focus->assigned_user_id);
+$sugar_smarty->assign('NAME_LENGTH', $projectTaskBean->field_defs['name']['len']);
 
 //todo: also add the owner's managers 
 

@@ -591,6 +591,7 @@ function deleteCache(){
                }
 	       	}
 	    }
+
 	}
 
 	//Clean jsLanguage from cache
@@ -2078,12 +2079,11 @@ function unlinkUWTempFiles() {
  * @param bool include_dir True if we want to include directories in the
  * returned collection
  */
-function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(), $echo=false) {
+function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), $echo=false) {
 	// check skips
-	foreach($skip_dirs as $skipMe) {
-		if(strpos(clean_path($dir), $skipMe) !== false) {
-			return $the_array;
-		}
+    if (whetherNeedToSkipDir($dir, $skipDirs))
+	{
+	    return $theArray;
 	}
 
     if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir 
@@ -2091,7 +2091,8 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
     if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
-	    if($f == "." || $f == "..") { // skip *nix self/parent
+	                                // bug 40793 Skip Directories array in upgradeWizard does not function correctly
+	    if($f == "." || $f == ".." || whetherNeedToSkipDir("$dir/$f", $skipDirs)) { // skip *nix self/parent
 	        continue;
 	    }
 
@@ -2102,20 +2103,20 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
     	}
 
 	    if(is_dir("$dir/$f")) {
-			if($include_dirs) { // add the directory if flagged
-				$the_array[] = clean_path("$dir/$f");
+			if($includeDirs) { // add the directory if flagged
+				$theArray[] = clean_path("$dir/$f");
 			}
 
 			// recurse in
-	        $the_array = uwFindAllFiles("$dir/$f/", $the_array, $include_dirs, $skip_dirs, $echo);
+	        $theArray = uwFindAllFiles("$dir/$f/", $theArray, $includeDirs, $skipDirs, $echo);
 	    } else {
-	        $the_array[] = clean_path("$dir/$f");
+	        $theArray[] = clean_path("$dir/$f");
 	    }
 
 
 	}
-	rsort($the_array);
-	return $the_array;
+	rsort($theArray);
+	return $theArray;
 }
 
 
@@ -2265,6 +2266,7 @@ function testThis() {
 
 
 function testThis2($dir, $id=0, $hide=false) {
+    global $mod_strings;
 	$path = $dir;
 	$dh = opendir($dir);
 	rewinddir($dh);
@@ -4708,5 +4710,21 @@ function getUWDirs()
         }
         return array("upload://upgrades", sugar_cached("upgrades/temp"));
     }
+}
+
+/**
+ * Whether directory exists within list of directories to skip
+ * @param string $dir dir to be checked
+ * @param array $skipDirs list with skipped dirs
+ * @return boolean
+ */
+function whetherNeedToSkipDir($dir, $skipDirs) 
+{
+    foreach($skipDirs as $skipMe) {
+		if(strpos( clean_path($dir), $skipMe ) !== false) {
+			return true;
+		}
+	}
+    return false;
 }
 

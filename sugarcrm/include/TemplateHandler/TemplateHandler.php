@@ -318,10 +318,10 @@ class TemplateHandler {
                     if(preg_match('/^(Campaigns|Teams|Users|Contacts|Accounts)$/si', $field['module'], $matches)) {
 
                         if($matches[0] == 'Campaigns') {
-                            $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSCampaigns();
+                            $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
                         //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
-                            $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSTeam();
+                            $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
                         //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
 
@@ -333,11 +333,11 @@ class TemplateHandler {
                             }
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
-                            $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSCampaigns();
+                            $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
                         //END SUGARCRM flav!=sales ONLY
                         //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
-                            $sqs_objects[$name.'_'.$parsedView] = $qsd->getQSTeam();
+                            $sqs_objects[$name.'_'.$parsedView] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
                         //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Accounts') {
                             $nameKey = $name;
@@ -393,10 +393,10 @@ class TemplateHandler {
                     if(!preg_match('/_c$/si',$name) && preg_match('/^(Campaigns|Teams|Users|Contacts|Accounts)$/si', $field['module'], $matches)) {
 
                         if($matches[0] == 'Campaigns') {
-                            $sqs_objects[$name] = $qsd->getQSCampaigns();
+                            $sqs_objects[$name] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
                             //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
-                            $sqs_objects[$name] = $qsd->getQSTeam();
+                            $sqs_objects[$name] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
                             //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
                             if($field['name'] == 'reports_to_name')
@@ -409,11 +409,11 @@ class TemplateHandler {
 							}
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
-                            $sqs_objects[$name] = $qsd->getQSCampaigns();
+                            $sqs_objects[$name] = $qsd->loadQSObject('Campaigns', 'Campaign', $field['name'], $field['id_name'], $field['id_name']);
                         //END SUGARCRM flav!=sales ONLY
                         //BEGIN SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Teams') {
-                            $sqs_objects[$name] = $qsd->getQSTeam();
+                            $sqs_objects[$name] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
                         //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Accounts') {
                             $nameKey = $name;

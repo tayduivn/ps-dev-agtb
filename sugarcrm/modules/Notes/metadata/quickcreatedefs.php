@@ -94,6 +94,16 @@ array (
             ),
           ),
         ),
+	//BEGIN SUGARCRM flav=pro ONLY
+		array (
+			array (
+				'name' => 'portal_flag',
+				'comment' => 'Portal flag indicator determines if note created via portal',
+				'label' => 'LBL_PORTAL_FLAG',
+				'displayParams'=>array('required'=>false),
+			),
+		),
+	//END SUGARCRM flav=pro ONLY
          array (
            
           //BEGIN SUGARCRM flav=pro ONLY

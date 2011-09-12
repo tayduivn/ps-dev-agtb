@@ -75,10 +75,10 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
                     $GLOBALS['log']->error('Have an INVALID session from facebook:'.print_r($fbSession,true));
                     return array('success'=>false,'errorMessage'=>'No authentication.');
                 }
-            } else {     	
-                $callback_url = $GLOBALS['sugar_config']['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;   
+            } else {
+                $callback_url = $GLOBALS['sugar_config']['site_url'].'/index.php?module=EAPM&action=oauth&record='.$this->eapmBean->id;
 	            $callback_url = $this->formatCallbackURL($callback_url);
-	            
+
                 $loginUrl = $this->fb->getLoginUrl(array('next'=>$callback_url,'cancel'=>$callback_url, 'req_perms' => 'read_stream'));
                 $GLOBALS['log']->debug('IKEA: Shipping the user to here: '.$loginUrl);
                 SugarApplication::redirect($loginUrl);
@@ -159,7 +159,7 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
         } catch ( Exception $e ) { return false; }
 
         if(empty($this->oauthParams['consumerKey']) || empty($this->oauthParams['consumerSecret'])){
-            $this->loadConnectorProperties();
+           $this->setupOauthKeys();
         }
         $this->fb = new FacebookLib(array(
                                         'appId' => $this->oauthParams['consumerKey'],
@@ -172,19 +172,5 @@ class ExtAPIFacebook extends ExternalAPIBase implements WebFeed {
             }
         } catch ( Exception $e ) {}
         return true;
-    }
-
-    protected function loadConnectorProperties(){
-        $connector = $this->getConnector();
-        if(!empty($connector)) {
-            $cons_key = $connector->getProperty('oauth_consumer_key');
-            if(!empty($cons_key)) {
-                $this->oauthParams['consumerKey'] = $cons_key;
-            }
-            $cons_secret = $connector->getProperty('oauth_consumer_secret');
-            if(!empty($cons_secret)) {
-                $this->oauthParams['consumerSecret'] = $cons_secret;
-            }
-        }
     }
 }

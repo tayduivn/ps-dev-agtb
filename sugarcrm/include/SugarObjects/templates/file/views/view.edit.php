@@ -26,9 +26,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
- 
- require_once('include/MVC/View/views/view.edit.php');
- class <module_name>ViewEdit extends ViewEdit{
+
+class <module_name>ViewEdit extends ViewEdit{
  	function <module_name>ViewEdit(){
  		parent::ViewEdit();
  	}
@@ -43,6 +42,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		}
 		parent::display();
  	}
- }
+}
 
 ?>

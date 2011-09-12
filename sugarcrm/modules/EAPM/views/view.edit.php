@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
@@ -21,20 +20,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Bugs module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-require_once('include/MVC/View/views/view.edit.php');
 
 class EAPMViewEdit extends ViewEdit {
 
     private $_returnId;
+
+    public function __construct()
+    {
+        $this->setReturnId();
+        parent::__construct();
+    }
+
+    protected function setReturnId()
+    {
+        $returnId = $GLOBALS['current_user']->id;
+        if(!empty($_REQUEST['user_id']) && !empty($_REQUEST['return_module']) && 'Users' == $_REQUEST['return_module']){
+            $returnId = $_REQUEST['user_id'];
+        }
+        $this->_returnId = $returnId;
+    }
 
     protected function _getModuleTab()
     {
@@ -92,6 +96,13 @@ class EAPMViewEdit extends ViewEdit {
 
  	function display() {
         $this->ss->assign('return_id', $this->_returnId);
+
+        $cancelUrl = "index.php?action=EditView&module=Users&record={$this->_returnId}#tab5";
+
+        if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] == 'Import') {
+            $cancelUrl = "index.php?module=Import&action=Step1&import_module=". $_REQUEST['return_action'] . "&application=" . $_REQUEST['application'];
+        }
+         $this->ss->assign('cancelUrl', $cancelUrl);
 
         if($GLOBALS['current_user']->is_admin || empty($this->bean) || empty($this->bean->id) || $this->bean->isOwner($GLOBALS['current_user']->id)){
             if(!empty($this->bean) && empty($this->bean->id) && $this->_returnId != $GLOBALS['current_user']->id){
