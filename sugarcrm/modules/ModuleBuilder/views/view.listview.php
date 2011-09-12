@@ -172,6 +172,7 @@ class ViewListView extends ViewEdit
 
     function constructSmarty ($parser)
     {
+        global $mod_strings;
         $smarty = new Sugar_Smarty ( ) ;
         $smarty->assign ( 'translate', true ) ;
         $smarty->assign ( 'language', $parser->getLanguage () ) ;
@@ -223,7 +224,7 @@ class ViewListView extends ViewEdit
         $smarty->assign ( 'groups', $groups ) ;
         $smarty->assign('from_mb', $this->fromModuleBuilder);
 
-        global $image_path ;
+        global $image_path;
         $imageSave = SugarThemeRegistry::current()->getImage('studio_save','',null,null,'.gif',$mod_strings['LBL_BTN_SAVE']) ;
 
 //        $imageHelp = SugarThemeRegistry::current()->getImage('help') ;

@@ -162,7 +162,7 @@ class ViewPopupview extends ViewListView
 
         $smarty->assign ( 'groups', $groups ) ;
 
-        global $image_path ;
+        global $image_path, $mod_strings;
         $imageSave = SugarThemeRegistry::current()->getImage('studio_save','',null,null,'.gif',$mod_strings['LBL_BTN_SAVE']) ;
 
 

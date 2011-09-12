@@ -163,7 +163,7 @@ class ViewDashlet extends ViewListView
 
         $smarty->assign ( 'groups', $groups ) ;
 
-        global $image_path ;
+        global $image_path, $mod_strings;
         $imageSave = SugarThemeRegistry::current()->getImage('studio_save','',null,null,'.gif',$mod_strings['LBL_BTN_SAVE']) ;
 
 //        $imageHelp = SugarThemeRegistry::current()->getImage('help','',null,null,'.gif',$mod_strings['LBL_SECTION_HELP']) ;
@@ -183,7 +183,7 @@ class ViewDashlet extends ViewListView
         }
         $buttons [] = array ( 'name' => 'historyBtn' , 'text' => translate ( 'LBL_HISTORY' ) , 'actionScript' => "onclick='$histaction'" ) ;
         $smarty->assign ( 'buttons', $this->_buildImageButtons ( $buttons ) ) ;
-        $editImage = SugarThemeRegistry::current()->getImage('edit_inline','',null,null,'.gif',$mod_strings['LBL_Edit']) ;
+        $editImage = SugarThemeRegistry::current()->getImage('edit_inline','',null,null,'.gif',$mod_strings['LBL_EDIT']) ;
 
         $smarty->assign ( 'editImage', $editImage ) ;
         $deleteImage = SugarThemeRegistry::current()->getImage('delete_inline','',null,null,'.gif',$mod_strings['LBL_MB_DELETE']) ;

@@ -315,7 +315,7 @@ var resources = new Array();
 <div id="task_detail_area_div" name="task_detail_area_div" width="100%" style="display:none;border:1px">
 {sugar_getimage name="img_loading" ext=".gif" other_attributes='border="0" '}
 </div>
-<iframe id="task_detail_area_iframe" name="task_detail_area_iframe" width="100%" style="display:none;border:0px">
+<iframe id="task_detail_area_iframe" name="task_detail_area_iframe" title="task_detail_area_iframe" width="100%" style="display:none;border:0px">
 </iframe>
 <script type="text/javascript">
 {foreach from=$RESOURCES item="RESOURCE"}

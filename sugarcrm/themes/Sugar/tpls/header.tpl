@@ -52,7 +52,7 @@
     <div class="clear"></div>
 
 {literal}
-<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png' style='display:none'></iframe>
+<iframe id='ajaxUI-history-iframe' src='index.php?entryPoint=getImage&imageName=blank.png' title='index.php?entryPoint=getImage&imageName=blank.png' style='display:none'></iframe>
 <input id='ajaxUI-history-field' type='hidden'>
 <script type='text/javascript'>
 if (SUGAR.ajaxUI && !SUGAR.ajaxUI.hist_loaded)

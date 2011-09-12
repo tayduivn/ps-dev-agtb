@@ -95,7 +95,7 @@ function updatedroplist(name, field_name, field_value){
 			<td  colspan="3"><slot><select id='groupby_calc_module' name='groupby_calc_module' onchange="updatedroplist('calc_field_frame', 'groupby_calc_module','');" tabindex='2' >{GROUPBY_CALC_MODULE}</select></slot></td>
 			</tr><tr>
 			<td scope="row"><slot>{MOD.LBL_GROUPBY_CALC_FIELD}</slot></td>
-			<td scope="row" colspan="3"><iframe id='calc_field_frame' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe></td>
+			<td scope="row" colspan="3"><iframe id='calc_field_frame' title='calc_field_frame' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe></td>
 			</tr>
 		</tr>
 		</table>
@@ -119,7 +119,7 @@ function updatedroplist(name, field_name, field_value){
 			<td  colspan="3"><slot><select id='groupby_module' name='groupby_module' onchange="updatedroplist('field_frame', 'groupby_module','');" tabindex='2' >{GROUPBY_MODULE}</select></slot></td>
 			</tr><tr>
 			<td scope="row"><slot>{MOD.LBL_GROUPBY_FIELD}</slot></td>
-			<td scope="row" colspan="3"><iframe id='field_frame' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe></td>
+			<td scope="row" colspan="3"><iframe id='field_frame' title='field_frame' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe></td>
 			</tr>
 		
 			<tr>
