@@ -1113,7 +1113,7 @@ require_once('include/EditView/EditView2.php');
                             	break;
                             case 'between':
                                 $field_value = explode('<>', $field_value);
-                                if ($field_type == 'int') {
+                                if (isset($field_type) && $field_type == 'int') {
                                     // mssql does not like to compare an int column with quoted decimal like '0.1'
                                     $where .= $db_field . " >= ".$field_value[0] . " AND " .$db_field . " <= ".$field_value[1];
                                 } else {
