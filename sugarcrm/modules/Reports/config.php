@@ -42,9 +42,9 @@ $default_report_type = 'Quotes';
 /**
  * Helper function for this file.
  */
-function getAllowedReportModules(&$local_modListHeader) {
+function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
 	static $reports_mod = null;
-	if(isset($reports_mod)) {
+	if(isset($reports_mod) && !$skipCache) {
 		return $reports_mod;
 	}
 	
@@ -109,33 +109,38 @@ function getAllowedReportModules(&$local_modListHeader) {
 
 	global $beanFiles;
 	
-    $exemptModules = array('ProspectLists','Reports');
+	// Bug 38864 - Parse the reportmoduledefs.php file for a list of modules we should include or disclude from this list
+	//             Provides contents of $exemptModules and $additionalModules arrays
+	$exemptModules     = array();
+	$additionalModules = array();
+	
+	include('modules/Reports/metadata/reportmodulesdefs.php');
+    if (file_exists('custom/modules/Reports/metadata/reportmodulesdefs.php')) {
+        include('custom/modules/Reports/metadata/reportmodulesdefs.php');
+    }
 
-    foreach($report_modules as $module=>$class_name) {
-		if(!isset($beanFiles[$class_name]) || in_array($module, $exemptModules)) {
+    foreach ( $report_modules as $module => $class_name ) {
+		if ( !isset($beanFiles[$class_name]) || in_array($module, $exemptModules) ) {
 			unset($report_modules[$module]);
-			continue;
-		}
-		
+		}	
 	}
+	
+	foreach ( $additionalModules as $module ) {
+        if ( isset($beanList[$module]) ) {
+            $report_modules[$module] = $beanList[$module];
+        }
+    }
+	
+	if ( should_hide_iframes() && isset($report_modules['iFrames']) ) {
+	    unset($report_modules['iFrames']);
+	}
+	
 	return $report_modules;
 }
 
 include('include/modules.php');
 $GLOBALS['report_modules'] = getAllowedReportModules($modListHeader);
 global $report_modules;
-
-if(is_array($report_modules)) {
-	if(should_hide_iframes() && isset($report_modules['iFrames'])) {
-	   unset($report_modules['iFrames']);
-	}
-	
-	foreach($report_modules as $module_name=>$bean_name) {
-		if(isset($beanFiles[$bean_name])) {
-			require_once($beanFiles[$bean_name]);
-		}
-	}
-}
 
 $module_map = array(
 	'accounts'		=> 'Accounts',
