@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link rel="stylesheet" type="text/css" href="include/javascript/yui/assets/menu.css" />
+<link rel="stylesheet" type="text/css" href="include/javascript/yui/build/menu/assets/skins/sam/menu.css" />
 <link rel="stylesheet" type="text/css" href="modules/Emails/EmailUI.css" />
 {include file="modules/Emails/templates/_baseJsVars.tpl"}
 <script type="text/javascript" src='{sugar_getjspath file='include/javascript/tiny_mce/tiny_mce.js'}'></script>

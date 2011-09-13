@@ -59,7 +59,7 @@ var MBLoader = new YAHOO.util.YUILoader({
 	//BEGIN SUGARCRM flav=int ONLY
 	filter: 'debug',
 	//END SUGARCRM flav=int ONLY
-    skin: { base: 'blank', defaultSkin: '' },
+    skin: { base: 'assets/skins/', defaultSkin: 'blank' },
 	onSuccess: ModuleBuilder.init,
     allowRollup: true,
     base: "include/javascript/yui/build/"

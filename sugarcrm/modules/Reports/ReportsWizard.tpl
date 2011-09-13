@@ -440,7 +440,7 @@ var reportLoader = new YAHOO.util.YUILoader({
 	//BEGIN SUGARCRM flav=int ONLY 
 	filter : "DEBUG",
 	//END SUGARCRM flav=int ONLY			    
-	skin: { base: 'blank', defaultSkin: '' },
+	skin: { base: 'assets/skins/', defaultSkin: 'blank' },
 	onSuccess : onLoadDoInit,
 	base : "include/javascript/yui/build/"
 });
