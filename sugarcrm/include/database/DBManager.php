@@ -253,8 +253,9 @@ abstract class DBManager
 
 	/**
 	 * Returns this instance's DBHelper
+	 * Actually now returns $this
 	 * @deprecated
-	 * @return object DBHelper instance
+	 * @return DBManager
 	 */
 	public function getHelper()
 	{
@@ -2689,7 +2690,6 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * @param object $bean    Sugarbean instance
 	 * @param array  $changes changes
-	 * @see DBHelper::getDataChanges()
 	 */
 	public function save_audit_records(SugarBean $bean, $changes)
 	{
@@ -2766,6 +2766,19 @@ protected function checkQuery($sql, $object_name = false)
 	 * @return string
 	 */
 	public function escape_quote($string)
+	{
+		return $this->quote($string);
+	}
+
+	/**
+	 * Quotes a string for storing in the database
+	 * @deprecated
+	 * Return value will be not surrounded by quotes
+	 *
+	 * @param  string $string
+	 * @return string
+	 */
+	public function quoteFormEmail($string)
 	{
 		return $this->quote($string);
 	}
@@ -3036,7 +3049,7 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
-	 * Parse fulltext serahc query with mysql syntax:
+	 * Parse fulltext search query with mysql syntax:
 	 *  terms quoted by ""
 	 *  + means the term must be included
 	 *  - means the term must be excluded

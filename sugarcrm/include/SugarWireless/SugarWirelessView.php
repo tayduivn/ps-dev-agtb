@@ -362,7 +362,7 @@ class SugarWirelessView extends SugarView
         return $bean_details;
  	}
 
-	private function setup_detail_field(
+	protected function setup_detail_field(
 	    $field
 	    )
 	{

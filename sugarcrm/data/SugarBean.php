@@ -3796,7 +3796,7 @@ function save_relationship_changes($is_update, $exclude=array())
         $use_count_query=false;
         $processing_collection=$subpanel_def->isCollection();
 
-        $GLOBALS['log']->debug("process_list_query: ".$query);
+        $GLOBALS['log']->debug("process_union_list_query: ".$query);
         if($max_per_page == -1)
         {
             $max_per_page 	= $sugar_config['list_max_entries_per_subpanel'];
@@ -4092,7 +4092,7 @@ function save_relationship_changes($is_update, $exclude=array())
     function process_detail_query($query, $row_offset, $limit= -1, $max_per_page = -1, $where = '', $offset = 0)
     {
         global $sugar_config;
-        $GLOBALS['log']->debug("process_list_query: ".$query);
+        $GLOBALS['log']->debug("process_detail_query: ".$query);
         if($max_per_page == -1)
         {
             $max_per_page 	= $sugar_config['list_max_entries_per_page'];
@@ -4387,7 +4387,7 @@ function save_relationship_changes($is_update, $exclude=array())
     */
     function create_index($query)
     {
-        $GLOBALS['log']->info($query);
+        $GLOBALS['log']->info("create_index: $query");
 
         $result = $this->db->query($query, true, "Error creating index:");
     }

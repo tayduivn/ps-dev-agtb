@@ -213,11 +213,10 @@ class CustomQuery extends SugarBean {
 		}
 		//This checks for either a bad query or checks for a wrong type of query.  Will only pass if
 		//it is a select statement.
-        if(!$this->db_slave->validateQuery($this->custom_query, true)) {
-			$result = false;
-        }
+		$decoded_query = html_entity_decode($this->custom_query, ENT_QUOTES);
+        $result = $this->db_slave->validateQuery($decoded_query);
 
-		if(!$result){
+        if(!$result){
 
 			$valid['result'] = "Error";
 			$valid['result_msg'] = $temp_mod_strings['ERROR_RESULT_MSG'];
@@ -230,9 +229,7 @@ class CustomQuery extends SugarBean {
 				if($check_valid==true){
 					$blankdup_check = false;
 
-					$query = html_entity_decode($this->custom_query, ENT_QUOTES);
-
-					$result =$this->db_slave->query($query, false);
+					$result =$this->db_slave->query($decoded_query, false);
 					$GLOBALS['log']->debug("get_custom_queries: result is ".print_r($result,true));
 
 						if(!empty($result)) {
@@ -270,9 +267,7 @@ class CustomQuery extends SugarBean {
 				$valid['result'] = "Valid";
 				return $valid;
 			}
-			$query = html_entity_decode($this->custom_query, ENT_QUOTES);
-		//echo $query;
-			$result =$this->db_slave->query($query, false);
+			$result =$this->db_slave->query($decoded_query, false);
 			$GLOBALS['log']->debug("get_custom_queries: result is ".print_r($result,true));
 
 			//if(($row = $this->db->fetchByAssoc($result)) != null) {

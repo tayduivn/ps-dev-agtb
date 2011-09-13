@@ -33,33 +33,77 @@
 {else}
 <input type='button' name='addfieldbtn' value='{$mod_strings.LBL_BTN_EDLABELS}' class='button' onclick='ModuleBuilder.moduleLoadLabels("studio");'>
 {/if}
-{foreach from=$module->mbvardefs->vardefs.fields key='group' item='fields'}
-<hr>
-<h2>{$title[$group]}</h2>
-    <table width='100%'>
-    <colgroup span='3' width='33%'>
-    <tr>
-    {counter name='items' assign='items' start=0}
-    {foreach from=$fields key='name' item='def'}
-            {if $items % 3 == 0 && $items != 0}
-                        </tr><tr>
-            {/if}
-            <td>
-            <a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField("{$name}")'>{$name}</a>
-            </td>
-            {counter name='items'}
-    {/foreach}
-    {if $items == 0}
-        <td class='mbLBLL'>{$mod_strings.LBL_NONE}</td>
-    {elseif $items % 3 == 1}
-        <td>&nbsp;</td><td>&nbsp;</td>
-    {elseif $items % 3 == 2}
-        <td>&nbsp;</td>
-    {/if}
-    </tr>
-    </table>
-{/foreach}
-<script>
+</div>
+
+<br>
+
+<div id="field_table"></div>
+
+<script type="text/javascript">
+{literal}
+var myConfigs = {};
+{/literal}
+
+{if !empty($sortPreferences)}
+pref = {$sortPreferences};
+{literal}
+sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
+myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
+{/literal}
+{/if}
+
+{literal}
+var disabledCheckboxFormatter = function(elCell, oRecord, oColumn, oData)
+{
+   elCell.innerHTML = "<center><input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : "></center>");
+};
+
+var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
+{
+   elCell.innerHTML = "<a class='crumbLink' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
+};
+
+var labelFormatter = function(elCell, oRecord, oColumn, oData)
+{
+   elCell.innerHTML = oData.replace(/\:$/, '');
+};
+
+var myColumnDefs = [
+    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
+    {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
+    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125},
+    {key:"custom", label:SUGAR.language.get("ModuleBuilder", "LBL_HCUSTOM"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
+    {key:"required", label:SUGAR.language.get("ModuleBuilder", "LBL_REQUIRED"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
+    {key:"unified_search", label:SUGAR.language.get("ModuleBuilder", "LBL_SEARCH"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75}
+];
+{/literal}
+
+var myDataSource = new YAHOO.util.DataSource({$fieldsData});
+myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
+{literal}
+myDataSource.responseSchema = {fields: ["label","name","type","custom", "required", "unified_search"]};
+YAHOO.widget.DataTable.Formatter.disabledCheckboxFormatter = disabledCheckboxFormatter;
+YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
+YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
+
+var myDataTable = new YAHOO.widget.DataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+myDataTable.doBeforeSortColumn = function(column, sortDirection)
+{
+    var url = 'index.php?module=ModuleBuilder&action=savetablesort&column=' + column.getKey() + '&direction=' + sortDirection;
+    YUI().use('io', function (Y) {
+        Y.io(url, {
+            method: 'POST',
+            on: {
+                success: function(id, data) {},
+                failure: function(id, data) {}
+            }
+        });
+    });
+    return true;
+};
+
+{/literal}
+
 ModuleBuilder.module = '{$module->name}';
 ModuleBuilder.MBpackage = '{$package->name}';
 ModuleBuilder.helpRegisterByID('studiofields', 'input');

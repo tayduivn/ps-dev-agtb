@@ -59,12 +59,7 @@ class UnifiedSearchAdvanced {
 			$this->buildCache();
 		}
 
-		if(!file_exists('custom/modules/unified_search_modules_display.php'))
-		{
-		   $this->createUnifiedSearchModulesDisplay();
-		}
-
-		include('custom/modules/unified_search_modules_display.php');
+		$unified_search_modules_display = $this->getUnifiedSearchModulesDisplay();
 
 		global $mod_strings, $modListHeader, $app_list_strings, $current_user, $app_strings, $beanList;
 		$users_modules = $current_user->getPreference('globalSearch', 'search');
@@ -146,17 +141,9 @@ class UnifiedSearchAdvanced {
 
 
 	function search() {
-		if(!file_exists($this->cache_search))
-		{
-			$this->buildCache();
-		}
-		include $this->cache_search;
 
-		if(!file_exists('custom/modules/unified_search_modules_display.php'))
-		{
-		   $this->createUnifiedSearchModulesDisplay();
-		}
-		include('custom/modules/unified_search_modules_display.php');
+        $unified_search_modules = $this->getUnifiedSearchModules();
+		$unified_search_modules_display = $this->getUnifiedSearchModulesDisplay();
 
 
 		require_once 'include/ListView/ListViewSmarty.php';
@@ -448,12 +435,7 @@ class UnifiedSearchAdvanced {
 	{
 		global $mod_strings, $app_strings, $app_list_strings;
 
-		if(!file_exists('custom/modules/unified_search_modules_display.php'))
-		{
-			$this->createUnifiedSearchModulesDisplay();
-		}
-
-		include('custom/modules/unified_search_modules_display.php');
+        $unified_search_modules_display = $this->getUnifiedSearchModulesDisplay();
 
 		$sugar_smarty = new Sugar_Smarty();
 		$sugar_smarty->assign('APP', $app_strings);
@@ -517,15 +499,10 @@ class UnifiedSearchAdvanced {
 	 */
 	function saveGlobalSearchSettings()
 	{
-		if(!file_exists('custom/modules/unified_search_modules_display.php'))
-		{
-			$this->createUnifiedSearchModulesDisplay();
-		}
-
-		include('custom/modules/unified_search_modules_display.php');
-
 		if(isset($_REQUEST['enabled_modules']))
 		{
+            $unified_search_modules_display = $this->getUnifiedSearchModulesDisplay();
+
 			$new_unified_search_modules_display = array();
 
             foreach(explode (',', $_REQUEST['enabled_modules'] ) as $module)
@@ -555,41 +532,67 @@ class UnifiedSearchAdvanced {
     		unlink($cache_search);
     	}
 	}
+    
 
-	/**
-	 * createUnifiedSearchModulesDisplay
-	 * method to create the unified_search_modules_display.php file
-	 *
-	 */
-	public function createUnifiedSearchModulesDisplay()
-	{
+    /**
+     * getUnifiedSearchModules
+     *
+     * Returns the value of the $unified_search_modules variable based on the module's vardefs.php file
+     * and which fields are marked with the unified_search attribute.
+     *
+     * @return $unified_search_modules Array of metadata module definitions along with their fields
+     */
+    public function getUnifiedSearchModules()
+    {
 		//Make directory if it doesn't exist
-		if(!file_exists($cachedir = sugar_cached('modules')))
+        $cachedir = sugar_cached('modules');
+		if(!file_exists($cachedir))
 		{
 		   mkdir_recursive($cachedir);
 		}
 
 		//Load unified_search_modules.php file
-		if(!file_exists($cachedfile = sugar_cached('modules/unified_search_modules.php')))
+        $cachedFile = sugar_cached('modules/unified_search_modules.php');
+		if(!file_exists($cachedFile))
 		{
 			$this->buildCache();
 		}
 
-		include $cachedfile;
+		include $cachedFile;
+        return $unified_search_modules;
+    }
 
-		$unified_search_modules_display = array();
 
-		if(!empty($unified_search_modules))
+    /**
+     * getUnifiedSearchModulesDisplay
+     *
+     * Returns the value of the $unified_search_modules_display variable which is based on the $unified_search_modules
+     * entries that have been selected to be allowed for searching.
+     *
+     * @return $unified_search_modules_display Array value of modules that have enabled for searching
+     */
+    public function getUnifiedSearchModulesDisplay()
+    {
+		if(!file_exists('custom/modules/unified_search_modules_display.php'))
 		{
-			foreach($unified_search_modules as $module=>$data)
-			{
-				$unified_search_modules_display[$module]['visible'] = (isset($data['default']) && $data['default']) ? true : false;
-			}
+            $unified_search_modules = $this->getUnifiedSearchModules();
+
+            $unified_search_modules_display = array();
+
+            if(!empty($unified_search_modules))
+            {
+                foreach($unified_search_modules as $module=>$data)
+                {
+                    $unified_search_modules_display[$module]['visible'] = (isset($data['default']) && $data['default']) ? true : false;
+                }
+            }
+
+            $this->writeUnifiedSearchModulesDisplayFile($unified_search_modules_display);
 		}
 
-		$this->writeUnifiedSearchModulesDisplayFile($unified_search_modules_display);
-	}
-
+		include('custom/modules/unified_search_modules_display.php');
+        return $unified_search_modules_display;
+    }
 
 	/*
 	 * writeUnifiedSearchModulesDisplayFile

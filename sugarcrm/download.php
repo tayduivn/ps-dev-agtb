@@ -150,11 +150,10 @@ else {
 		} else if(isset(  $_REQUEST['tempName'] ) && isset($_REQUEST['isTempFile']) ){
 			// downloading a temp file (email 2.0)
 			$download_location = $local_location;
-			$name = $_REQUEST['tempName'];
-		}
-		else if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
+			$name = isset($_REQUEST['tempName'])?$_REQUEST['tempName']:'';
+		} else if(isset($_REQUEST['isTempFile']) && ($_REQUEST['type']=="SugarFieldImage")) {
 			$download_location = $local_location;
-			$name = $_REQUEST['tempName'];
+			$name = isset($_REQUEST['tempName'])?$_REQUEST['tempName']:'';
 		}
 
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT']))
