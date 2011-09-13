@@ -122,31 +122,32 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     
     DCMenu.closeOverlay = function(depth){
     	var i=0;
-    		while(i < overlays.length){
-    			if(!depth || i >= depth){
-    				if(i == depth && !overlays[i].visible){
-    					overlays[i].show();	
-    				}else{
-                        // See if we are hiding a form, and if so if it has changed we need to alert and confirm.
-                        if ( typeof(overlays[i].bodyNode) != 'undefined'
-                             && typeof(overlays[i].bodyNode._node) != 'undefined' 
-                             && typeof(overlays[i].bodyNode._node.getElementsByTagName('form')[0]) != 'undefined' ) {
-                            var warnMsg = onUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
-                            if ( warnMsg != null ) {
-                                if ( confirm(warnMsg) ) {
-                                    disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
-                                } else {
-                                    i++;
-                                    continue;
-                                }
+        while(i < overlays.length){
+            if(!depth || i >= depth){
+                if(i == depth && !overlays[i].visible){
+                    overlays[i].show();
+                }else{
+                    // See if we are hiding a form, and if so if it has changed we need to alert and confirm.
+                    if ( typeof(overlays[i].bodyNode) != 'undefined'
+                         && typeof(overlays[i].bodyNode._node) != 'undefined'
+                         && typeof(overlays[i].bodyNode._node.getElementsByTagName('form')[0]) != 'undefined' ) {
+                        var warnMsg = onUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                        if ( warnMsg != null ) {
+                            if ( confirm(warnMsg) ) {
+                                disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                            } else {
+                                i++;
+                                continue;
                             }
                         }
-    					overlays[i].hide();
-                        overlays[i].set('bodyContent', "");
-    				}
-    			}
-				i++;
-    		}
+                    }
+                    overlays[i].hide();
+                    overlays[i].set('bodyContent', "");
+                }
+            }
+            i++;
+        }
+        DCMenu.hideQEPanel();
     }
     DCMenu.minimizeOverlay = function(){
  		//isIE7 = ua.indexOf('msie 7')!=-1;
@@ -322,11 +323,39 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		}
 	}
 
-	DCMenu.miniDetailView = function(module, id){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=quick&record=' + id , miniDetailViewResults);
+    DCMenu.showQELoadingPanel = function(){
+        if (!DCMenu.qePanel)
+        {
+            DCMenu.qePanel = new YAHOO.widget.Panel('quickEditWindow', {
+                width: "990px",
+                draggable: true,
+                close: true,
+                constraintoviewport: true,
+                fixedcenter: false,
+                script: true,
+                modal: true
+            });
+        }
+        var p = DCMenu.qePanel;
+        p.setHeader(SUGAR.language.get('app_strings','LBL_EMAIL_PERFORMING_TASK'));
+		p.setBody(SUGAR.language.get('app_strings','LBL_EMAIL_ONE_MOMENT'));
+        p.render(document.body);
+        p.show();
+        p.center();
+    }
+
+    DCMenu.miniDetailView = function(module, id){
+        DCMenu.showQELoadingPanel();
+        YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=1&module=' + module + '&action=quick&record=' + id, {
+            success: DCMenu.miniDetailViewResults
+        });
 	}
     //this form is used by quickEdits to provide a modal edit form
 	DCMenu.miniEditView = function(module, id, refreshListID, refreshDashletID){
+        DCMenu.showQELoadingPanel();
+        YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id, {
+            success: DCMenu.miniDetailViewResults
+        });
         //use pased in values to determine if this is being fired from a dashlet or list
         //populate the qe_refresh variable with the correct refresh string to execute on DCMenu.save
         if(typeof(refreshListID) !='undefined' && refreshListID !=''){
@@ -338,24 +367,28 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             //this is a dashlet, use the passed in id to refresh the dashlet
             DCMenu.qe_refresh = 'SUGAR.mySugar.retrieveDashlet("'+refreshDashletID+'");';
         }
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id , miniDetailViewResults);
 	}
-	miniDetailViewResults = function(id, data){
-        r = Y.JSON.parse(data.responseText);
+	DCMenu.miniDetailViewResults = function(o){
+        var p = DCMenu.qePanel;
+        var r = Y.JSON.parse(o.responseText);
         if(typeof(r.scriptOnly) != 'undefined' && typeof(r.scriptOnly)=='string' && r.scriptOnly.length >0){
             SUGAR.util.evalScript(r.scriptOnly);
         }else{
-            setBody(r, 0);
-
-            Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
-
-            if(SUGAR.isIE) {
-				var dchead = Y.one('#dchead');
-				var dcheadwidth = dchead.get('offsetWidth');
-				Y.one('#dctitle').setStyle("width",dcheadwidth+"px");	
-			}
+            DCMenu.jsEvalled = false;
+            p.setHeader(r.title);
+            p.setBody("<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + r.html);
+            if (!DCMenu.jsEvalled)
+                SUGAR.util.evalScript(r.html);
+            DCMenu.qePanel.center();
         }
 	}
+    DCMenu.hideQEPanel = function(){
+        if (DCMenu.qePanel)
+        {
+            DCMenu.qePanel.setBody("");
+            DCMenu.qePanel.hide();
+        }
+    }
 
 	DCMenu.save = function(id){
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
