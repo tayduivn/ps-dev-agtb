@@ -1113,7 +1113,12 @@ require_once('include/EditView/EditView2.php');
                             	break;
                             case 'between':
                                 $field_value = explode('<>', $field_value);
-                                $where .= $db_field . " >= '".$field_value[0] . "' AND " .$db_field . " <= '".$field_value[1]."'";
+                                if ($field_type == 'int') {
+                                    // mssql does not like to compare an int column with quoted decimal like '0.1'
+                                    $where .= $db_field . " >= ".$field_value[0] . " AND " .$db_field . " <= ".$field_value[1];
+                                } else {
+                                    $where .= $db_field . " >= '".$field_value[0] . "' AND " .$db_field . " <= '".$field_value[1]."'";
+                                }
                                 break;
                             case 'date_not_equal':
                                 $field_value = explode('<>', $field_value);
