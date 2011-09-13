@@ -1304,7 +1304,7 @@ class MssqlManager extends DBManager
     }
 
     /**
-     * @see DBHelper::changeColumnSQL()
+     * @see DBManager::changeColumnSQL()
      *
      * MSSQL uses a different syntax than MySQL for table altering that is
      * not quite as simplistic to implement...
@@ -1365,7 +1365,7 @@ class MssqlManager extends DBManager
 	}
 
     /**
-     * @see DBHelper::setAutoIncrementStart()
+     * @see DBManager::setAutoIncrementStart()
      */
     public function setAutoIncrementStart($table, $field_name, $start_value)
     {
@@ -1376,7 +1376,7 @@ class MssqlManager extends DBManager
     }
 
 	/**
-     * @see DBHelper::getAutoIncrement()
+     * @see DBManager::getAutoIncrement()
      */
     public function getAutoIncrement($table, $field_name)
     {
@@ -1385,7 +1385,7 @@ class MssqlManager extends DBManager
     }
 
    	/**
-     * @see DBHelper::get_indices()
+     * @see DBManager::get_indices()
      */
     public function get_indices($tablename)
     {
@@ -1429,7 +1429,7 @@ EOSQL;
     }
 
     /**
-     * @see DBHelper::get_columns()
+     * @see DBManager::get_columns()
      */
     public function get_columns($tablename)
     {
@@ -1488,7 +1488,7 @@ EOSQL;
     }
 
     /**
-     * @see DBHelper::add_drop_constraint()
+     * @see DBManager::add_drop_constraint()
      */
     public function add_drop_constraint($table, $definition, $drop = false)
     {
@@ -1568,7 +1568,7 @@ EOSQL;
     }
 
     /**
-     * @see DBHelper::full_text_indexing_enabled()
+     * @see DBManager::full_text_indexing_enabled()
      */
     protected function full_text_indexing_enabled($dbname = null)
     {
@@ -1661,7 +1661,7 @@ EOQ;
 	}
 
     /**
-     * @see DBHelper::massageFieldDef()
+     * @see DBManager::massageFieldDef()
      */
     public function massageFieldDef(&$fieldDef, $tablename)
     {
@@ -1725,7 +1725,7 @@ EOQ;
     }
 
     /**
-     * @see DBHelper::oneColumnSQLRep()
+     * @see DBManager::oneColumnSQLRep()
      */
     protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
     {
@@ -1759,7 +1759,6 @@ EOQ;
      *
      * @param object $bean    Sugarbean instance
      * @param array  $changes changes
-     * @see DBHelper::getDataChanges()
      */
     public function save_audit_records(SugarBean $bean, $changes)
 	{

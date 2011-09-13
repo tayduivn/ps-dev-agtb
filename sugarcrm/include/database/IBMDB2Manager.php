@@ -736,7 +736,7 @@ public function convert($string, $type, array $additional_parameters = array())
 
 
 	/**~
-	 * @see DBHelper::oneColumnSQLRep()
+	 * @see DBManager::oneColumnSQLRep()
 	 */
 	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
 	{
@@ -949,7 +949,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	}
 
 	/**+
-	 * @see DBHelper::setAutoIncrement()
+	 * @see DBManager::setAutoIncrement()
 	 */
 	protected function setAutoIncrement($table, $field_name)
 	{
@@ -977,7 +977,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	}
 
 	/**+
-	 * @see DBHelper::deleteAutoIncrement()
+	 * @see DBManager::deleteAutoIncrement()
 	 */
 	public function deleteAutoIncrement($table, $field_name)
 	{
@@ -1039,7 +1039,7 @@ EOQ;
 
 
 	/**~
-	 * @see DBHelper::add_drop_constraint()
+	 * @see DBManager::add_drop_constraint()
 	 * Note: Tested all constructs pending feedback from IBM on text search index creation from code
 	 */
 	public function add_drop_constraint($table, $definition, $drop = false)

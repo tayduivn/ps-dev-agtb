@@ -354,7 +354,7 @@ class SqlsrvManager extends MssqlManager
     }
 
     /**
-     * @see DBHelper::get_columns()
+     * @see DBManager::get_columns()
      */
     public function get_columns($tablename)
     {
@@ -406,7 +406,7 @@ class SqlsrvManager extends MssqlManager
     }
 
     /**
-     * @see DBHelper::get_indices()
+     * @see DBManager::get_indices()
      */
     public function get_indices($tableName)
     {
@@ -489,7 +489,7 @@ EOSQL;
     /**
      * Override method to add support for detecting and dropping fulltext indices.
      *
-     * @see DBHelper::changeColumnSQL()
+     * @see DBManager::changeColumnSQL()
      * @see MssqlHelper::changeColumnSQL()
      */
     protected function changeColumnSQL($tablename,$fieldDefs, $action, $ignoreRequired = false)
