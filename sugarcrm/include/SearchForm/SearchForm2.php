@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
