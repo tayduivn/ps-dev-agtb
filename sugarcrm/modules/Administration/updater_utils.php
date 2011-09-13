@@ -663,7 +663,7 @@ function checkSystemLicenseStatus(){
 
 
 
-function isAboutToExpire($expire_date, $days_before_warning = 30){
+function isAboutToExpire($expire_date, $days_before_warning = 7){
 	$seconds_before_warning = $days_before_warning * 24 * 60 * 60;
 	$seconds_to_expire = 0;
 	if(!empty($expire_date))
