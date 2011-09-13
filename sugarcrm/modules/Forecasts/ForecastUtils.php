@@ -471,4 +471,3 @@ function buildExportLink($forecast_type) {
 }
 
 ?>
-

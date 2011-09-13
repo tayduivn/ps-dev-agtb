@@ -139,4 +139,3 @@ $sugar_smarty->assign('SITEURL', $site_data);
 
 echo $sugar_smarty->fetch('modules/Forecasts/DetailView.tpl');
 ?>
-

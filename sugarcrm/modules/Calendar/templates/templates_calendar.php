@@ -911,4 +911,3 @@ function template_get_previous_calendar($args) {
 
 }
 ?>
-
