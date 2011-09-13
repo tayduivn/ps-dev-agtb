@@ -164,7 +164,7 @@ foreach ($admin_group_header as $key=>$values) {
 }
 
 //BEGIN SUGARCRM flav=com ONLY
-$sugar_smarty->assign('MY_FRAME',"<iframe class='teamNoticeBox' src='http://www.sugarcrm.com/crm/product/gopro/admin' width='100%' height='315px'></iframe>");
+$sugar_smarty->assign('MY_FRAME',"<iframe class='teamNoticeBox' title='http://www.sugarcrm.com/crm/product/gopro/admin' src='http://www.sugarcrm.com/crm/product/gopro/admin' width='100%' height='315px'></iframe>");
 //END SUGARCRM flav=com ONLY
 $sugar_smarty->assign("VALUES_3_TAB", $values_3_tab);
 $sugar_smarty->assign("ADMIN_GROUP_HEADER", $admin_group_header_tab);
