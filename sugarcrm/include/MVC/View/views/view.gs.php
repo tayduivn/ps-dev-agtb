@@ -35,9 +35,10 @@ class ViewGS extends SugarWirelessView
 {
     private $searchFields;
     private $searchString;
-    private $searchRregex;
+    private $searchRegex;
     private $matchHitStart = "<span class='searchHighlight'>";
     private $matchHitEnd = "</span>";
+
     public function ViewGS()
     {
         $this->searchString = empty($_REQUEST['q']) ? null : $_REQUEST['q'];
@@ -108,7 +109,7 @@ class ViewGS extends SugarWirelessView
         if($this->searchString == null)
             return $fields;
             
-        foreach ($fields as &$field) 
+        foreach ($fields as &$field)
         {
             //Check if we have a search match and set the highlight flag
             $matchReplace = $this->matchHitStart . '${0}' . $this->matchHitEnd;
@@ -121,9 +122,11 @@ class ViewGS extends SugarWirelessView
                 $aReplacedValue = preg_replace($this->searchRegex, $matchReplace, $aValue);
                 $newLink = preg_replace("/\<a(.*?)\>(.*?)\<\/a\>/i", "<a\${1}>{$aReplacedValue}<a>", $field['value']);
                 $field['value'] = $newLink;
-            }
-            else 
-            {
+            } else if(isset($field['type']) && $field['type'] == 'phone') {
+                //Do a string replacement for phone fields since it may contain special characters
+                $matchReplace = $this->matchHitStart . $this->searchString . $this->matchHitEnd;
+                $field['value'] = str_replace($this->searchString, $matchReplace, $field['value']);
+            } else {
                 if (isset($field['type']) && $field['type'] == 'enum') //TODO: Handle enums since we are destroying the key.
                     continue;
                     

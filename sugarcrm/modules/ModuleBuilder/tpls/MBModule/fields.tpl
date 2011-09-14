@@ -48,14 +48,15 @@ var myConfigs = {};
 pref = {$sortPreferences};
 {literal}
 sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
-myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
+var myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
+console.log(myConfigs);
 {/literal}
 {/if}
 
 {literal}
 var disabledCheckboxFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = "<center><input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : "></center>");
+   elCell.innerHTML = "<input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : ">");
 };
 
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
@@ -72,9 +73,9 @@ var myColumnDefs = [
     {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
     {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
     {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125},
-    {key:"custom", label:SUGAR.language.get("ModuleBuilder", "LBL_HCUSTOM"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
     {key:"required", label:SUGAR.language.get("ModuleBuilder", "LBL_REQUIRED"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
-    {key:"unified_search", label:SUGAR.language.get("ModuleBuilder", "LBL_SEARCH"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75}
+    {key:"unified_search", label:SUGAR.language.get("ModuleBuilder", "LBL_SEARCH"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
+    {key:"custom", label:SUGAR.language.get("ModuleBuilder", "LBL_CUSTOM"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75}
 ];
 {/literal}
 
@@ -86,7 +87,7 @@ YAHOO.widget.DataTable.Formatter.disabledCheckboxFormatter = disabledCheckboxFor
 YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
 YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
 
-var myDataTable = new YAHOO.widget.DataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+var myDataTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource, myConfigs);
 myDataTable.doBeforeSortColumn = function(column, sortDirection)
 {
     var url = 'index.php?module=ModuleBuilder&action=savetablesort&column=' + column.getKey() + '&direction=' + sortDirection;
@@ -101,6 +102,8 @@ myDataTable.doBeforeSortColumn = function(column, sortDirection)
     });
     return true;
 };
+
+myDataTable.render("#field_table");
 
 {/literal}
 

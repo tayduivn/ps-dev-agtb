@@ -368,6 +368,7 @@ $mod_strings = array(
 'LBL_BASIC_SEARCH'=>'Basic Search',
 'LBL_CURRENT_LAYOUT'=>'Layout',
 'LBL_CURRENCY' => 'Currency',
+'LBL_CUSTOM' => 'Custom',
 'LBL_DASHLET'=>'Sugar Dashlet',
 'LBL_DASHLETLISTVIEW'=>'Sugar Dashlet ListView',
 'LBL_DASHLETSEARCH'=>'Sugar Dashlet Search',

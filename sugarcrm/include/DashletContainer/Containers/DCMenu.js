@@ -373,7 +373,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			},
 			on:{
 				complete: function(id, data){
-                    alert('hello');
+
 				}
 			}
 
@@ -600,9 +600,16 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
             content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;">';
             content += '<div class="dashletPanel dc"><div class="hd"><div></div>';
-            content += '<div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-            content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
-            content += '</a></div></div><div class="tr"></div><div class="bd"><div></div>';
+            if(SUGAR.themes.theme_name == 'RTL')
+            {
+                content += '<div class="hd-center"><div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
+                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '</a></div></div></div><div class="tr"></div><div class="bd"><div></div>';
+            } else {
+                content += '<div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
+                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '</a></div></div><div class="tr"></div><div class="bd"><div></div>';
+            }
             content += '<div><div class="dccontent" id="dcgscontent">' +  data.responseText;
             //content += '<br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div>';
             content += '</div></div><div class="mr"></div></div>';
@@ -610,7 +617,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
       
             overlays[qvDepth].set("bodyContent", content);
             overlays[qvDepth].set("align", {node:"#dcboxbody", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
-            //points:[Y.WidgetPositionExt.TR, Y.WidgetPositionExt.TR]});
 
             overlays[qvDepth].visible = true;
             overlays[qvDepth].show = function()
@@ -620,8 +626,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 //this.get('boundingBox').setStyle('position' , 'absolute');
                 this.get('boundingBox').setStyle('visibility','visible');
                 //Animate a slide out
-                var shim = 10;  //TODO: grab padding from parent element.  Set to 10 for now.
-                var animX = this.get("x") - this.get("width") - shim;
+                var shim = 15;  //The padding of the dashletPanel border
+                var animX = (SUGAR.themes.theme_name == 'RTL') ? this.get("x") + this.get("width") - shim : this.get("x") - this.get("width") - shim;
                 var animY = this.get("y");
                 var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY] } });
                 animDCcont.set('duration', .5);

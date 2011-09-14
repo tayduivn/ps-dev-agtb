@@ -920,10 +920,13 @@ class ModuleBuilderController extends SugarController
     {
         $this->view = 'ajax';
         global $current_user;
+
         if(!empty($current_user) && isset($_REQUEST['column']) && isset($_REQUEST['direction']))
         {
             $direction = ($_REQUEST['direction'] == 'yui-dt-asc') ? 'ASC' : 'DESC';
-            $val = array('key'=>$_REQUEST['column'], 'direction'=>$direction);
+            $valid_columns = array('name', 'label', 'type', 'required', 'unified_search', 'custom');
+            $key = in_array($_REQUEST['column'], $valid_columns) ? $_REQUEST['column'] : 'name';
+            $val = array('key'=>$key, 'direction'=>$direction);
             $current_user->setPreference('fieldsTableColumn', getJSONobj()->encode($val), 0, 'ModuleBuilder');
         }
     }
