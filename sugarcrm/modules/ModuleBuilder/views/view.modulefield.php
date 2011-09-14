@@ -207,13 +207,15 @@ class ViewModulefield extends SugarView
         {
             require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');
             $mb = new ModuleBuilder();
-            $module =& $mb->getPackageModule($_REQUEST['view_package'], $_REQUEST['view_module']);
+            $moduleName = $_REQUEST['view_module'];
+            $module =& $mb->getPackageModule($_REQUEST['view_package'], $moduleName);
             $package =& $mb->packages[$_REQUEST['view_package']];
             $module->getVardefs();
             if(!$ac){
                 $ac = new AjaxCompose();
             }
             $vardef = (!empty($module->mbvardefs->vardefs['fields'][$field_name]))? $module->mbvardefs->vardefs['fields'][$field_name]: array();
+
             if($isClone){
                 unset($vardef['name']);
             }
@@ -309,13 +311,29 @@ class ViewModulefield extends SugarView
 		}
 		//END SUGARCRM flav=pro ONLY
 		// end
+
+        //Determine whether or not to show the Global Search option
+        require_once('modules/Home/UnifiedSearchAdvanced.php');
+        $usa = new UnifiedSearchAdvanced();
+        $unified_search_modules_display = $usa->getUnifiedSearchModulesDisplay();
+        $globalSearchEnabled = true;
+
+        if(isset($unified_search_modules_display[$moduleName]['visible']))
+        {
+            $globalSearchEnabled = $unified_search_modules_display[$moduleName]['visible'];
+        }
+        
+        $fv->ss->assign('globalSearchEnabled', $tf->supports_unified_search && $globalSearchEnabled);
+
         $layout = $fv->getLayout($vardef);
 
         $fv->ss->assign('fieldLayout', $layout);
         if(empty($vardef['type']))
+        {
             $vardef['type'] = 'varchar';
-        $fv->ss->assign('vardef', $vardef);
+        }
 
+        $fv->ss->assign('vardef', $vardef);
 
         if(empty($_REQUEST['field'])){
             $edit_or_add = 'addField';

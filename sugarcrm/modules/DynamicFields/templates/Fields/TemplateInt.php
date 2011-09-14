@@ -31,6 +31,7 @@ require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
 class TemplateInt extends TemplateRange
 {
 	var $type = 'int';
+    var $supports_unified_search = true;
 
 	function __construct(){
 		parent::__construct();

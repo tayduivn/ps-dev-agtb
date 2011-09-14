@@ -196,26 +196,7 @@ class TemplateRange extends TemplateText
 		return $vardef;
     }
 
-    /**
-     * get_field_name
-     * This function gets the correct name for the field name being submitted from studio
-     *
-     * @param String $module The name of the module
-     * @param String $name The field name
-     */
-    private function get_field_name($module, $name)
-    {
-       $bean = loadBean($module);
-       if(empty($bean) || is_null($bean))
-       {
-       	  return $name;
-       }
 
-       $field_defs = $bean->field_defs;
-       $field_name = isset($field_defs[$_REQUEST['name']]) ? $_REQUEST['name'] : $_REQUEST['name'] . '_c';
-       return $field_name;
-    }
-    
     public static function repairCustomSearchFields($vardefs, $module, $package='')
     {
 

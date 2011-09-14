@@ -25,8 +25,10 @@ if(isset($_REQUEST['root_directory'])){
              $js_groupings = array();
             if(isset($_REQUEST['root_directory'])){
                 require('jssource/JSGroupings.php');
+                require_once('jssource/minify_utils.php');
             }else{
                 require('JSGroupings.php');
+                require_once('minify_utils.php');
             }
 
             //iterate through array of grouped files

@@ -910,6 +910,23 @@ class ModuleBuilderController extends SugarController
     }
     //END SUGARCRM flav=ent ONLY
 
+    /**
+     * savetablesort
+     * This method handles saving the current user's tabling sorting preferences.  It is called when
+     * the user clicks on a column to sort from the fields layout table.
+     *
+     */
+    function action_savetablesort ()
+    {
+        $this->view = 'ajax';
+        global $current_user;
+        if(!empty($current_user) && isset($_REQUEST['column']) && isset($_REQUEST['direction']))
+        {
+            $direction = ($_REQUEST['direction'] == 'yui-dt-asc') ? 'ASC' : 'DESC';
+            $val = array('key'=>$_REQUEST['column'], 'direction'=>$direction);
+            $current_user->setPreference('fieldsTableColumn', getJSONobj()->encode($val), 0, 'ModuleBuilder');
+        }
+    }
 
 }
 ?>
