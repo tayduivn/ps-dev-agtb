@@ -208,6 +208,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
   	}elseif (empty($focus->id) ){
 	  	//this is not from long form so add assigned and current user automatically as there is no invitee list UI.
 	  	//This call could be through an ajax call from subpanels or shortcut bar
+        if(!isset($_POST['user_invitees']))
+        {
+           $_POST['user_invitees'] = '';
+        }
+
 	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
 
 	  	//add current user if the assigned to user is different than current user.
