@@ -43,14 +43,6 @@ class ProspectLink extends Link
 {
 
     /**
-     * @see Link::Link method
-     */
-    public function __construct($_rel_name, &$_bean, $fieldDef, $_table_name = '', $_key_name = '')
-    {
-        return parent::Link($_rel_name, $_bean, $fieldDef, $_table_name, $_key_name);
-    }
-
-    /**
      * This method changes join of any item to campaign through target list
      * if you want to use this join method you should add code below to your vardef.php
      * 'link_class' => 'ProspectLink',
