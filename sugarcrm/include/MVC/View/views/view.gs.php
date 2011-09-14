@@ -128,7 +128,9 @@ class ViewGS extends SugarWirelessView
                 $field['value'] = str_replace($this->searchString, $matchReplace, $field['value']);
             } else {
                 if (isset($field['type']) && $field['type'] == 'enum') //TODO: Handle enums since we are destroying the key.
+                {
                     continue;
+                }
                     
                 $field['value'] = preg_replace($this->searchRegex, $matchReplace, $field['value']);
             }
