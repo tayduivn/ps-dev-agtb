@@ -205,3 +205,207 @@ function setDefaultSigId(id) {
 		default_sig.value = "";
 	}
 }
+
+function setSymbolValue(id) {
+    document.getElementById('symbol').value = currencies[id];
+}
+
+function user_status_display(field){
+		switch (field.value){
+		case 'Administrator':
+		    document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users',"LBL_ADMIN_DESC");
+		document.getElementById('is_admin').value='1';
+		break;
+		case 'RegularUser':
+			document.getElementById('is_admin').value='0';
+			document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users',"LBL_REGULAR_DESC");
+		break;
+		case 'UserAdministrator':
+			document.getElementById('is_admin').value='0';
+			document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users',"LBL_USER_ADMIN_DESC");
+		break;
+	}
+}
+
+
+function startOutBoundEmailSettingsTest()
+{
+    var loader = new YAHOO.util.YUILoader({
+    require : ["element","sugarwidgets"],
+    loadOptional: true,
+    //BEGIN SUGARCRM flav=int ONLY
+	filter: 'debug',
+	//END SUGARCRM flav=int ONLY
+    skin: { base: 'blank', defaultSkin: '' },
+    onSuccess: testOutboundSettings,
+    allowRollup: true,
+    base: "include/javascript/yui/build/"
+    });
+    loader.addModule({
+        name :"sugarwidgets",
+        type : "js",
+        fullpath: "include/javascript/sugarwidgets/SugarYUIWidgets.js",
+        varName: "YAHOO.SUGAR",
+        requires: ["datatable", "dragdrop", "treeview", "tabview"]
+    });
+    loader.insert();
+
+}
+
+function testOutboundSettings()
+{
+	var errorMessage = '';
+	var isError = false;
+	var fromAddress = document.getElementById("outboundtest_from_address").value;
+    var errorMessage = '';
+    var isError = false;
+    var smtpServer = document.getElementById('mail_smtpserver').value;
+
+    var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
+    if(trim(smtpServer) == '' || trim(mail_smtpport) == '')
+    {
+        isError = true;
+        errorMessage += SUGAR.language.get('Users',"LBL_MISSING_DEFAULT_OUTBOUND_SMTP_SETTINGS") + "<br/>";
+        overlay(SUGAR.language.get('app_strings',"ERR_MISSING_REQUIRED_FIELDS"), errorMessage, 'alert');
+        return false;
+    }
+
+
+    if(document.getElementById('mail_smtpuser') && trim(document.getElementById('mail_smtpuser').value) == '')
+    {
+        isError = true;
+        errorMessage += SUGAR.language.get('app_strings',"LBL_EMAIL_ACCOUNTS_SMTPUSER") + "<br/>";
+    }
+
+
+    if(isError) {
+        overlay(SUGAR.language.get('app_strings',"ERR_MISSING_REQUIRED_FIELDS"), errorMessage, 'alert');
+        return false;
+    }
+
+    testOutboundSettingsDialog();
+}
+
+function sendTestEmail()
+{
+    var toAddress = document.getElementById("outboundtest_from_address").value;
+    var fromAddress = document.getElementById("outboundtest_from_address").value;
+
+    if (trim(fromAddress) == "")
+    {
+        overlay(SUGAR.language.get('app_strings',"ERR_MISSING_REQUIRED_FIELDS"), SUGAR.language.get('app_strings',"LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR"), 'alert');
+        return;
+    }
+    else if (!isValidEmail(fromAddress)) {
+        overlay(SUGAR.language.get('app_strings',"ERR_INVALID_REQUIRED_FIELDS"), SUGAR.language.get('app_strings',"LBL_EMAIL_SETTINGS_FROM_TO_EMAIL_ADDR"), 'alert');
+        return;
+    }
+
+    //Hide the email address window and show a message notifying the user that the test email is being sent.
+    EmailMan.testOutboundDialog.hide();
+    overlay(SUGAR.language.get('app_strings',"LBL_EMAIL_PERFORMING_TASK"), SUGAR.language.get('app_strings',"LBL_EMAIL_ONE_MOMENT"), 'alert');
+
+    var callbackOutboundTest = {
+    	success	: function(o) {
+    		hideOverlay();
+    		overlay(SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_OUTBOUND_SETTINGS"), SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_NOTIFICATION_SENT"), 'alert');
+    	}
+    };
+    var smtpServer = document.getElementById('mail_smtpserver').value;
+
+    if(document.getElementById('mail_smtpuser') && document.getElementById('mail_smtppass')){
+    var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&mail_smtpauth_req=true&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) + "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
+    }
+    else{
+	var postDataString = 'mail_sendtype=SMTP&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + mail_smtpport + "&mail_smtpssl=" + mail_smtpssl + "&outboundtest_from_address=" + fromAddress + "&outboundtest_to_address=" + toAddress;
+    }
+	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&mail_name=system&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
+}
+function testOutboundSettingsDialog() {
+        // lazy load dialogue
+        if(!EmailMan.testOutboundDialog) {
+        	EmailMan.testOutboundDialog = new YAHOO.widget.Dialog("testOutboundDialog", {
+                modal:true,
+				visible:true,
+            	fixedcenter:true,
+            	constraintoviewport: true,
+                width	: 600,
+                shadow	: false
+            });
+            EmailMan.testOutboundDialog.setHeader(SUGAR.language.get('app_strings',"LBL_EMAIL_TEST_OUTBOUND_SETTINGS"));
+            YAHOO.util.Dom.removeClass("testOutboundDialog", "yui-hidden");
+        } // end lazy load
+
+        EmailMan.testOutboundDialog.render();
+        EmailMan.testOutboundDialog.show();
+} // fn
+
+function overlay(reqtitle, body, type) {
+    var config = { };
+    config.type = type;
+    config.title = reqtitle;
+    config.msg = body;
+    YAHOO.SUGAR.MessageBox.show(config);
+}
+
+function hideOverlay() {
+	YAHOO.SUGAR.MessageBox.hide();
+}
+
+
+<!--//BEGIN SUGARCRM flav=pro ONLY -->
+function confirmReassignRecords() {
+    var status = document.getElementsByName('status');
+    if(verify_data(document.EditView)) {
+        if(status[0] && status[0].value == 'Inactive'){
+            var handleYes = function() {
+                document.EditView.return_action.value = 'reassignUserRecords';
+                document.EditView.return_module.value = 'Users';
+                document.EditView.submit();
+            };
+            
+            var handleNo = function() {
+                document.EditView.submit();
+            };
+            YAHOO.namespace('example.container');
+            YAHOO.example.container.simpledialog1 =
+                new YAHOO.widget.SimpleDialog('simpledialog1',
+                                              { width: '300px',
+                                                fixedcenter: true,
+                                                visible: true,
+                                                draggable: false,
+                                                close: true,
+                                                text: SUGAR.language.get('Users','LBL_REASS_CONFIRM_REASSIGN'),
+                                                constraintoviewport: true,
+                                                buttons: [ { text:'Yes', handler:handleYes, isDefault:true },
+                                                           { text:'No',  handler:handleNo } ]
+                                              } );
+            YAHOO.example.container.simpledialog1.setHeader('Re-Assign');
+            YAHOO.example.container.simpledialog1.render('popup_window');
+            YAHOO.util.Event.addListener('Save', 'click', YAHOO.example.container.simpledialog1.show, YAHOO.example.container.simpledialog1, true);
+        }
+        else{
+            document.EditView.submit();
+        }
+    }
+    else{
+        return false;
+    }
+}
+<!--//END SUGARCRM flav=pro ONLY -->
+
+<!-- Autoruns -->
+YAHOO.util.Event.onContentReady('user_theme_picker',function()
+{
+    document.getElementById('user_theme_picker').onchange = function()
+    {
+        document.getElementById('themePreview').src =
+            "index.php?entryPoint=getImage&themeName=" + document.getElementById('user_theme_picker').value + "&imageName=themePreview.png";
+        if (typeof themeGroupList[document.getElementById('user_theme_picker').value] != 'undefined' &&
+            themeGroupList[document.getElementById('user_theme_picker').value] ) {
+            document.getElementById('use_group_tabs_row').style.display = '';
+        } else {
+            document.getElementById('use_group_tabs_row').style.display = 'none';
+        }
+    }
+});

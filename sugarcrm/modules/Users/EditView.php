@@ -43,12 +43,6 @@ $admin = new Administration();
 $admin->retrieveSettings();
 
 $focus = new User();
-$is_current_admin=is_admin($current_user)
-//BEGIN SUGARCRM flav=sales ONLY
-                ||$current_user->user_type = 'UserAdministrator'
-//END SUGARCRM flav=sales ONLY
-                ||$GLOBALS['current_user']->isAdminForModule('Users');
-$is_super_admin = is_admin($current_user);
 
 if(isset($_REQUEST['record'])) {
     if(!$is_current_admin && $_REQUEST['record'] != $current_user->id) sugar_die("Unauthorized access to administration.");
@@ -65,47 +59,6 @@ if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
         define('SUGARPDF_USE_DEFAULT_SETTINGS', true);
     }
 }
-	//BEGIN SUGARCRM lic=sub ONLY
-	global $sugar_flavor;
-	if((isset($sugar_flavor) && $sugar_flavor != null) &&
-		($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
-		if ($focus->id == "") {
-		    $admin = new Administration();
-		    $admin->retrieveSettings();
-		    $license_users = $admin->settings['license_users'];
-		    if ($license_users != ''){
-
-	//END SUGARCRM lic=sub ONLY
-		//BEGIN SUGARCRM dep=od ONLY
-
-	        $license_seats_needed = count( get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'", false) ) - $license_users;
-		//END SUGARCRM dep=od ONLY
-
-
-		//BEGIN SUGARCRM flav=pro  && dep=os ONLY
-
-		    $license_seats_needed = count( get_user_array(false, "Active", "", false, null, " AND deleted=0 AND is_group=0 AND portal_only=0 ", false) ) - $license_users;
-
-		//END SUGARCRM flav=pro  && dep=os ONLY
-
-
-
-
-	//BEGIN SUGARCRM lic=sub ONLY
-
-		    }
-		    else
-		    	$license_seats_needed = -1;
-		    if( $license_seats_needed >= 0 ){
-		        displayAdminError( translate('WARN_LICENSE_SEATS_USER_CREATE', 'Administration') . translate('WARN_LICENSE_SEATS2', 'Administration')  );
-				if( isset($_SESSION['license_seats_needed']))
-			        unset($_SESSION['license_seats_needed']);
-					//die();
-				}
-		}
-	}
-
-	//END SUGARCRM lic=sub ONLY
 
 
 $the_query_string = 'module=Users&action=DetailView';
@@ -142,9 +95,6 @@ echo getClassicModuleTitle("Users", $params, true,$index_url);
 $GLOBALS['log']->info('User edit view');
 $sugar_smarty->assign('MOD', $mod_strings);
 $sugar_smarty->assign('APP', $app_strings);
-
-if(isset($_REQUEST['error_string'])) $sugar_smarty->assign('ERROR_STRING', '<span class="error">Error: '.$_REQUEST['error_string'].'</span>');
-if(isset($_REQUEST['error_password'])) $sugar_smarty->assign('ERROR_PASSWORD', '<span id="error_pwd" class="error">Error: '.$_REQUEST['error_password'].'</span>');
 
 if(isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true') {
 
@@ -197,7 +147,6 @@ $sugar_smarty->assign('ADDRESS_STATE', $focus->address_state);
 $sugar_smarty->assign('ADDRESS_POSTALCODE', $focus->address_postalcode);
 $sugar_smarty->assign('ADDRESS_COUNTRY', $focus->address_country);
 $sugar_smarty->assign('DESCRIPTION', $focus->description);
-$sugar_smarty->assign('EXPORT_DELIMITER', $focus->getPreference('export_delimiter'));
 $sugar_smarty->assign('PWDSETTINGS', isset($GLOBALS['sugar_config']['passwordsetting']) ? $GLOBALS['sugar_config']['passwordsetting'] : array());
 //BEGIN SUGARCRM flav=pro ONLY
 if ( isset($GLOBALS['sugar_config']['passwordsetting']) && isset($GLOBALS['sugar_config']['passwordsetting']['customregex']) ) {
@@ -216,79 +165,12 @@ if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
 	}
 }
 if(!empty($focus->external_auth_only))$sugar_smarty->assign('EXTERNAL_AUTH_ONLY_CHECKED', 'CHECKED');
-if ($is_current_admin)
-	$sugar_smarty->assign('IS_ADMIN','1');
-else
-	$sugar_smarty->assign('IS_ADMIN', '0');
-
-if ($is_super_admin)
-    $sugar_smarty->assign('IS_SUPER_ADMIN','1');
-else
-    $sugar_smarty->assign('IS_SUPER_ADMIN', '0');
-
-
-//jc:12293 - modifying to use the accessor method which will translate the
-//available character sets using the translation files
-$sugar_smarty->assign('EXPORT_CHARSET', get_select_options_with_id($locale->getCharsetSelect(), $locale->getExportCharset('', $focus)));
-//end:12293
-
-if( $focus->getPreference('use_real_names') == 'on' || ( empty($focus->id) && isset($GLOBALS['sugar_config']['use_real_names'])
-       && $GLOBALS['sugar_config']['use_real_names'] && $focus->getPreference('use_real_names') != 'off') )
-{
-
-	$sugar_smarty->assign('USE_REAL_NAMES', 'CHECKED');
-}
-if($focus->getPreference('no_opps') == 'on') {
-    $sugar_smarty->assign('NO_OPPS', 'CHECKED');
-}
 
 
 
 
-//BEGIN SUGARCRM flav=pro ONLY
-// REASSIGNMENT SCRIPT CODE
-$confirmReassignJs = "
-	function confirmReassignRecords() {
-		var status = document.getElementsByName('status');
-		if(verify_data(document.EditView)) {
-			if(status[0] && status[0].value == 'Inactive'){
-				var handleYes = function() {
-		    		document.EditView.return_action.value = 'reassignUserRecords';
-		    		document.EditView.return_module.value = 'Users';
-		    		document.EditView.submit();
-					};
 
-				var handleNo = function() {
-		   			 document.EditView.submit();
-					};
-						YAHOO.namespace(\"example.container\");
-						YAHOO.example.container.simpledialog1 =
-		    			new YAHOO.widget.SimpleDialog(\"simpledialog1\",
-		             { width: \"300px\",
-		               fixedcenter: true,
-		               visible: true,
-		               draggable: false,
-		               close: true,
-		               text: \"{$mod_strings['LBL_REASS_CONFIRM_REASSIGN']}\",
-		               constraintoviewport: true,
-		               buttons: [ { text:\"Yes\", handler:handleYes, isDefault:true },
-		                          { text:\"No\",  handler:handleNo } ]
-		             } );
-		             YAHOO.example.container.simpledialog1.setHeader(\"Re-Assign\");
-		             YAHOO.example.container.simpledialog1.render(\"popup_window\");
-					 YAHOO.util.Event.addListener(\"Save\", \"click\", YAHOO.example.container.simpledialog1.show, YAHOO.example.container.simpledialog1, true);
-			}
-			else{
-				document.EditView.submit();
-			}
-		}
-		else{
-			return false;
-		}
-	}
-";
 
-//END SUGARCRM flav=pro ONLY
 
 // check if the user has access to the User Management
 $sugar_smarty->assign('USER_ADMIN',$current_user->isAdminForModule('Users')&& !is_admin($current_user));
@@ -368,179 +250,13 @@ $sugar_smarty->assign('PDF_FONT_SIZE_DATA',PDF_FONT_SIZE_DATA);
 ///////// END PDF SETTINGS
 ////////////////////////////////////////////////////////////////////////////////
 //END SUGARCRM flav=pro ONLY
-//// Timezone
-if(empty($focus->id)) { // remove default timezone for new users(set later)
-    $focus->user_preferences['timezone'] = '';
-}
-
-$userTZ = $focus->getPreference('timezone');
-
-if(empty($userTZ) && !$focus->is_group && !$focus->portal_only) {
-	$userTZ = TimeDate::guessTimezone();
-	$focus->setPreference('timezone', $userTZ);
-}
-
-if(!$focus->getPreference('ut')) {
-	$sugar_smarty->assign('PROMPTTZ', ' checked');
-	//BEGIN SUGARCRM flav=sales ONLY
-	$sugar_smarty->assign('ut_hidden', "<input type='hidden' name='ut' id='ut' value='true'>");
-	//END SUGARCRM flav=sales ONLY
-}
-$sugar_smarty->assign('TIMEZONE_CURRENT', $userTZ);
-$sugar_smarty->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
-
-// FG - Bug 4236 - Managed First Day of Week
-$fdowDays = array();
-foreach ($app_list_strings['dom_cal_day_long'] as $d)
-{
-  if ($d != "")
-    $fdowDays[] = $d;
-}
-$sugar_smarty->assign("FDOWOPTIONS", $fdowDays);
-$currentFDOW = $focus->get_first_day_of_week();
-
-if (!isset($currentFDOW))
-  $currentFDOW = 0;
-$sugar_smarty->assign("FDOWCURRENT", $currentFDOW);
-
-//// Numbers and Currency display
-require_once('modules/Currencies/ListCurrency.php');
-$currency = new ListCurrency();
-
-// 10/13/2006 Collin - Changed to use Localization.getConfigPreference
-// This was the problem- Previously, the "-99" currency id always assumed
-// to be defaulted to US Dollars.  However, if someone set their install to use
-// Euro or other type of currency then this setting would not apply as the
-// default because it was being overridden by US Dollars.
-$cur_id = $locale->getPrecedentPreference('currency', $focus);
-if($cur_id) {
-	$selectCurrency = $currency->getSelectOptions($cur_id);
-	$sugar_smarty->assign("CURRENCY", $selectCurrency);
-} else {
-	$selectCurrency = $currency->getSelectOptions();
-	$sugar_smarty->assign("CURRENCY", $selectCurrency);
-}
-
-$currenciesVars = "";
-foreach($locale->currencies as $id => $arrVal) {
-	$currenciesVars .= "currencies['{$id}'] = '{$arrVal['symbol']}';\n";
-}
-$currencySymbolsJs = <<<eoq
-var currencies = new Object;
-{$currenciesVars}
-function setSymbolValue(id) {
-	document.getElementById('symbol').value = currencies[id];
-}
-eoq;
-$sugar_smarty->assign('currencySymbolJs', $currencySymbolsJs);
-
-
-// fill significant digits dropdown
-$significantDigits = $locale->getPrecedentPreference('default_currency_significant_digits', $focus);
-$sigDigits = '';
-for($i=0; $i<=6; $i++) {
-	if($significantDigits == $i) {
-	   $sigDigits .= "<option value=\"$i\" selected=\"true\">$i</option>";
-	} else {
-	   $sigDigits .= "<option value=\"$i\">{$i}</option>";
-	}
-}
-
-$sugar_smarty->assign('sigDigits', $sigDigits);
-
-$num_grp_sep = $focus->getPreference('num_grp_sep');
-$dec_sep = $focus->getPreference('dec_sep');
-$sugar_smarty->assign("NUM_GRP_SEP",(empty($num_grp_sep) ? $sugar_config['default_number_grouping_seperator'] : $num_grp_sep));
-$sugar_smarty->assign("DEC_SEP",(empty($dec_sep) ? $sugar_config['default_decimal_seperator'] : $dec_sep));
-$sugar_smarty->assign('getNumberJs', $locale->getNumberJs());
-
-//// Name display format
-$sugar_smarty->assign('default_locale_name_format', $locale->getLocaleFormatMacro($focus));
-$sugar_smarty->assign('getNameJs', $locale->getNameJs());
-////	END LOCALE SETTINGS
-///////////////////////////////////////////////////////////////////////////////
 
 //require_once($theme_path.'config.php');
 
 
-// Grouped tabs?
-$useGroupTabs = $focus->getPreference('navigation_paradigm');
-if ( ! isset($useGroupTabs) ) {
-    if ( ! isset($GLOBALS['sugar_config']['default_navigation_paradigm']) ) {
-        $GLOBALS['sugar_config']['default_navigation_paradigm'] = 'gm';
-    }
-    $useGroupTabs = $GLOBALS['sugar_config']['default_navigation_paradigm'];
-}
-$sugar_smarty->assign("USE_GROUP_TABS",($useGroupTabs=='gm')?'checked':'');
 
-$user_max_tabs = $focus->getPreference('max_tabs');
-if(isset($user_max_tabs) && $user_max_tabs > 0) {
-	$sugar_smarty->assign("MAX_TAB", $user_max_tabs);
-} elseif(SugarThemeRegistry::current()->maxTabs > 0) {
-    $sugar_smarty->assign("MAX_TAB", SugarThemeRegistry::current()->maxTabs);
-} else {
-    $sugar_smarty->assign("MAX_TAB", $GLOBALS['sugar_config']['default_max_tabs']);
-}
-$sugar_smarty->assign("MAX_TAB_OPTIONS", range(1, ((!empty($GLOBALS['sugar_config']['default_max_tabs']) && $GLOBALS['sugar_config']['default_max_tabs'] > 10 ) ? $GLOBALS['sugar_config']['default_max_tabs'] : 10)));
-
-//BEGIN SUGARCRM flav!=sales ONLY
-$user_subpanel_tabs = $focus->getPreference('subpanel_tabs');
-if(isset($user_subpanel_tabs)) {
-    $sugar_smarty->assign("SUBPANEL_TABS", $user_subpanel_tabs?'checked':'');
-} else {
-    $sugar_smarty->assign("SUBPANEL_TABS", $GLOBALS['sugar_config']['default_subpanel_tabs']?'checked':'');
-}
-//END SUGARCRM flav!=sales ONLY
-
-$user_theme = $focus->getPreference('user_theme');
-if(isset($user_theme)) {
-    $sugar_smarty->assign("THEMES", get_select_options_with_id(SugarThemeRegistry::availableThemes(), $user_theme));
-} else {
-    $sugar_smarty->assign("THEMES", get_select_options_with_id(SugarThemeRegistry::availableThemes(), $GLOBALS['sugar_config']['default_theme']));
-}
-$sugar_smarty->assign("SHOW_THEMES",count(SugarThemeRegistry::availableThemes()) > 1);
-$sugar_smarty->assign("USER_THEME_COLOR", $focus->getPreference('user_theme_color'));
-$sugar_smarty->assign("USER_THEME_FONT", $focus->getPreference('user_theme_font'));
-$sugar_smarty->assign("USER_THEME", $user_theme);
-
-// Build a list of themes that support group modules
-$sugar_smarty->assign("DISPLAY_GROUP_TAB", 'none');
-
-$selectedTheme = $user_theme;
-if(!isset($user_theme)) {
-    $selectedTheme = $GLOBALS['sugar_config']['default_theme'];
-}
-
-$themeList = SugarThemeRegistry::availableThemes();
-$themeGroupList = array();
-
-foreach ( $themeList as $themeId => $themeName ) {
-    $currThemeObj = SugarThemeRegistry::get($themeId);
-    if ( isset($currThemeObj->group_tabs) && $currThemeObj->group_tabs == 1 ) {
-        $themeGroupList[$themeId] = true;
-        if ( $themeId == $selectedTheme ) {
-            $sugar_smarty->assign("DISPLAY_GROUP_TAB", '');
-        }
-    } else {
-        $themeGroupList[$themeId] = false;
-    }
-}
-$sugar_smarty->assign("themeGroupListJSON",json_encode($themeGroupList));
 
 $sugar_smarty->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $focus->getPreference('mail_sendtype')));
-$reminder_time = $focus->getPreference('reminder_time');
-if(empty($reminder_time)){
-	$reminder_time = -1;
-}
-//BEGIN SUGARCRM flav!=sales ONLY
-$sugar_smarty->assign("REMINDER_TIME_OPTIONS", get_select_options_with_id($app_list_strings['reminder_time_options'],$reminder_time));
-if($reminder_time > -1){
-	$sugar_smarty->assign("REMINDER_TIME_DISPLAY", 'inline');
-	$sugar_smarty->assign("REMINDER_CHECKED", 'checked');
-}else{
-	$sugar_smarty->assign("REMINDER_TIME_DISPLAY", 'none');
-}
-//END SUGARCRM flav!=sales ONLY
 //Add Custom Fields
 $xtpl = $sugar_smarty;
 require_once('modules/DynamicFields/templates/Files/EditView.php');
@@ -583,17 +299,6 @@ if(!empty($sugar_config['default_user_name']) &&
 	$sugar_smarty->assign('IS_ADMIN_DISABLED', 'disabled="disabled"');
 	$sugar_smarty->assign('IS_PORTAL_ONLY_DISABLED', 'disabled="disabled"');
 	$sugar_smarty->assign('IS_GROUP_DISABLED', 'disabled="disabled"');
-}
-
-if($focus->receive_notifications ||(!isset($focus->id) && $admin->settings['notify_send_by_default'])) $sugar_smarty->assign("RECEIVE_NOTIFICATIONS", "checked");
-//BEGIN SUGARCRM flav!=sales ONLY
-if($focus->getPreference('mailmerge_on') == 'on') {
-	$sugar_smarty->assign('MAILMERGE_ON', 'checked');
-}
-//END SUGARCRM flav!=sales ONLY
-$usertype='REGULAR';
-if(!empty($focus->is_admin) && $focus->is_admin){
-   $usertype='ADMIN';
 }
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -640,44 +345,6 @@ $sugar_smarty->assign("USER_TYPE_DESC", $mod_strings['LBL_'.$usertype.'_DESC']);
 $sugar_smarty->assign("USER_TYPE_LABEL", $mod_strings['LBL_'.$usertype.'_USER']);
 $sugar_smarty->assign('USER_TYPE',$usertype);
 
-$enable_syst_generate_pwd=false;
-if(isset($sugar_config['passwordsetting']) && isset($sugar_config['passwordsetting']['SystemGeneratedPasswordON'])){
-	$enable_syst_generate_pwd=$sugar_config['passwordsetting']['SystemGeneratedPasswordON'];
-}
-
-// If new regular user without system generated password or new portal user
-if(((isset($enable_syst_generate_pwd) && !$enable_syst_generate_pwd && $usertype!='GROUP') || $usertype =='PORTAL_ONLY') && empty($focus->id))
-	$sugar_smarty->assign('REQUIRED_PASSWORD','1');
-else
-    $sugar_smarty->assign('REQUIRED_PASSWORD','0');
-
-// If my account page or portal only user or regular user without system generated password or a duplicate user
-if((($current_user->id == $focus->id) || $usertype=='PORTAL_ONLY' || (($usertype=='REGULAR' || $usertype == 'ADMIN' || (isset($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] == 'true' && $usertype!='GROUP')) && !$enable_syst_generate_pwd)) && !$focus->external_auth_only )
-   $sugar_smarty->assign('CHANGE_PWD', '1');
-else
-   $sugar_smarty->assign('CHANGE_PWD', '0');
-
-// Make sure group users don't get a password change prompt
-if ( $usertype == 'GROUP' ) {
-    $sugar_smarty->assign('CHANGE_PWD', '0');
-}
-
-$configurator = new Configurator();
-if ( isset($configurator->config['passwordsetting']) && ($configurator->config['passwordsetting']['SystemGeneratedPasswordON'] || $configurator->config['passwordsetting']['forgotpasswordON'])
-        && $usertype != 'GROUP' && $usertype != 'PORTAL_ONLY' )
-	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','1');
-else
-	$sugar_smarty->assign('REQUIRED_EMAIL_ADDRESS','0');
-if($usertype=='GROUP' || $usertype=='PORTAL_ONLY'){
-	$sugar_smarty->assign('HIDE_FOR_GROUP_AND_PORTAL', 'none');
-	$sugar_smarty->assign('HIDE_CHANGE_USERTYPE','none');}
-else{
-	$sugar_smarty->assign('HIDE_FOR_NORMAL_AND_ADMIN','none');
-	if (!$is_current_admin)
-		$sugar_smarty->assign('HIDE_CHANGE_USERTYPE','none');
-	else
-		$sugar_smarty->assign('HIDE_STATIC_USERTYPE','none');
-	}
 
 $sugar_smarty->assign('IS_FOCUS_ADMIN', is_admin($focus));
 
@@ -689,15 +356,6 @@ if($admin_edit_self) {
 }
 
 
-if (isset($sugar_config['show_download_tab']))
-{
-	$enable_download_tab = $sugar_config['show_download_tab'];
-}else{
-
-	$enable_download_tab = true;
-}
-
-$sugar_smarty->assign('SHOW_DOWNLOADS_TAB', $enable_download_tab);
 
 
 
@@ -869,13 +527,6 @@ $messenger_type .= '</select>';
 $sugar_smarty->assign('MESSENGER_TYPE_OPTIONS', $messenger_type);
 $sugar_smarty->assign('MESSENGER_ID', $focus->messenger_id);
 
-//BEGIN SUGARCRM flav!=sales ONLY
-$sugar_smarty->assign('CALENDAR_PUBLISH_KEY', $focus->getPreference('calendar_publish_key' ));
-//BEGIN SUGARCRM flav!=dce ONLY
-//$sugar_smarty->parse('main.freebusy');
-
-//END SUGARCRM flav!=dce ONLY
-//END SUGARCRM flav!=sales ONLY
 
 $sugar_smarty->display('modules/Users/EditView.tpl');
 $json = getJSONobj();

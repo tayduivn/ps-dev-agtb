@@ -564,7 +564,17 @@ $dictionary['User'] = array(
             'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
             'duplicate_merge' => 'disabled',
             'required' => true,
-        ) ,
+        ),
+        /* Virtual email fields so they will display on the main user page */
+        'email_link_type' => array(
+            'name' => 'email_link_type',
+            'vname' => 'LBL_EMAIL_LINK_TYPE',
+            'type' => 'enum',
+            'options' => 'dom_email_link_type',
+            'importable' => false,
+            'reportable' => false,
+        ),
+        
         'aclroles' => array(
             'name' => 'aclroles',
             'type' => 'link',

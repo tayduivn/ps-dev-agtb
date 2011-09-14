@@ -88,6 +88,12 @@ class DynamicField {
             return false;
         if($module == '../data')return false;
 
+        // Employees is a fake module that actually loads it's fields from the 
+        // Users module
+        if ($module == 'Employee') {
+            $module = 'User';
+        }
+
         static $results = array ( ) ;
 
         $where = '';
@@ -165,6 +171,17 @@ class DynamicField {
     * @param array $result
     */
     function saveToVardef($module,$result) {
+        // Everything works off of vardefs, so let's have it save the users vardefs
+        // to the employees module, because they both use the same table behind
+        // the scenes
+        if ( $module == 'User' ) {
+            $this->saveToVardef('User',$result);
+        }
+        if ( $module == 'Employee' ) {
+            // Don't save any Employee vardefs directly
+            return;
+        }
+
 
         global $beanList;
         if (! empty ( $beanList [$module] )) {
