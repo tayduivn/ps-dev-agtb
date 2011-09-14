@@ -38,6 +38,7 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
         LogicHookTest::$called = false;
         unset($GLOBALS['logic_hook']);
         $GLOBALS['logic_hook'] = LogicHook::initialize();
+        LogicHook::refreshHooks();
     }
 
     public function tearDown()
@@ -49,6 +50,7 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
             unlink($file);
         }
         unset($GLOBALS['logic_hook']);
+        LogicHook::refreshHooks();
     }
 
     protected function saveHook($file)

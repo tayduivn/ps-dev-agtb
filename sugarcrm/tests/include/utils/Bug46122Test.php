@@ -52,6 +52,7 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $this->useOutputBuffering = false;
+        LogicHook::refreshHooks();
     }
 
     public function tearDown()
@@ -78,7 +79,7 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarViewProcessLogicHookWithModule()
     {
         $GLOBALS['logic_hook'] = new LogicHookMock();
-        $hooks = $GLOBALS['logic_hook']->getHooks('Contacts', true);
+        $hooks = $GLOBALS['logic_hook']->getHooks('Contacts');
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = 'Contacts';
         $sugarViewMock->process();
@@ -90,7 +91,7 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarViewProcessLogicHookWithoutModule()
     {
         $GLOBALS['logic_hook'] = new LogicHookMock();
-        $hooks = $GLOBALS['logic_hook']->getHooks('', true);
+        $hooks = $GLOBALS['logic_hook']->getHooks('');
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = '';
         $sugarViewMock->process();
