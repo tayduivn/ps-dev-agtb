@@ -46,7 +46,8 @@ color:#ef3067;
 .dcmenu {
 min-width: 1050px;
 background-color: #0d3a62;
-background: -moz-linear-gradient(center top,	rgba(240,120,156,.9) 0%,
+background: -moz-linear-gradient(center top,
+	rgba(240,120,156,.9) 0%,
 	rgba(236,72,121,.9) 78%, 
 	rgba(0,0,0,.3) 78%, 
 	rgba(0,0,0,0) 100%); 
@@ -76,7 +77,8 @@ margin-top:8px;
 #moduleList  {
 background: -moz-linear-gradient(center top,
 		transparent 0%,
-		transparent 12%,		rgba(255,255,255,.9) 13%,  
+		transparent 12%,
+		rgba(255,255,255,.9) 13%,  
 		rgba(255,255,255,.8) 45%,
 		rgba(255,255,255,.6) 45%, 
 		rgba(255,255,255,.6) 76%,
@@ -107,7 +109,9 @@ margin-right: -1px;
 
 #moduleList.yuimenubar li.current .yuimenuitemlabel, li.current a.yuimenuitemlabel, li.current a.yuimenuitemlabel:link, li.current a.yuimenuitemlabel:visited {
 	background-image: -moz-linear-gradient(center top, 
-	#f9d3dd 0%,	#f5b4c7 2%,	#f26b91 52%,
+	#f9d3dd 0%,
+	#f5b4c7 2%,
+	#f26b91 52%,
 	#ef4475 52%,
 	#e586a1 100%
 	);
@@ -149,7 +153,8 @@ border-right:1px solid #F0B9D3;
 
 #moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
 	background-image: -moz-linear-gradient(center top, 
-	#ffffff 0%,	rgba(255,255,255,.6) 100%
+	#ffffff 0%,
+	rgba(255,255,255,.6) 100%
 	);
 	background-image: -webkit-gradient(
     linear,
@@ -192,7 +197,7 @@ border: 1px solid #ef0044;
 
 
 .dashletPanel.dc .hd {
-height:36px;
+height:38px;
 
 	background-image: -moz-linear-gradient(center top, 
 		rgba(244,152,178,.9) 0%,
@@ -216,15 +221,15 @@ height:36px;
 }
 
 .dashletPanel.dc .hd .tl {
-height: 36px;
+height: 38px;
 }
 
 .dashletPanel.dc .hd .hd-center {
-height: 36px;
+height: 38px;
 }
 
 .dashletPanel.dc .hd .tr {
-height: 36px;
+height: 38px;
 }
 
 .dashletPanel.dc .hd img {
@@ -282,7 +287,8 @@ border:1px solid #F079B1;
 
 .dashletPanel .hd .hd-center, .dashletPanel .hd .tl, .dashletPanel .hd .tr{
 	background-image: -moz-linear-gradient(center top, 
-	rgba(254,249,251,.9) 0%,	rgba(248,224,235,.9) 100%
+	rgba(254,249,251,.9) 0%,
+	rgba(248,224,235,.9) 100%
 	);
 	background-image: -webkit-gradient(
     linear,
@@ -384,7 +390,8 @@ border-bottom:2px solid #FFFFFF;
  
 #tabListContainer ul.subpanelTablist li a.current,#tabListContainer ul.subpanelTablist li a:hover  {
 background-image: -moz-linear-gradient(center top, 
-	#f1cfdf 0%,	#faedf3 50%,
+	#f1cfdf 0%,
+	#faedf3 50%,
 	#f9e9f0 50%,
 	#fdfafb 100%
 	);
@@ -424,7 +431,8 @@ color:#ef3067;
 .search_form .view, .search_form .view.advanced {
 	background-color: #efb9d2;
 background-image: -moz-linear-gradient(center top, 
-	rgba(254,249,251,.9) 0%,	rgba(248,224,235,.9) 100%
+	rgba(254,249,251,.9) 0%,
+	rgba(248,224,235,.9) 100%
 	);
 background-image: -webkit-gradient(
     linear,
@@ -443,7 +451,8 @@ color:#ef3067;
 button, input[type="submit"], input[type="reset"], input[type="button"], .button, .buttons .button, .yui-button button {
 
 background-image: -moz-linear-gradient(center top, 
-	#fdfdfd 0%,	#f8f8f8 50%,
+	#fdfdfd 0%,
+	#f8f8f8 50%,
 	#f1f1f1 50%,
 	#e6e6e6 100%
 	);
@@ -467,7 +476,8 @@ border:1px solid #DC79A8;
 background-color:#ef3066;
 
 background-image: -moz-linear-gradient(center top, 
-	#f9c8d7 0%,	#f15380 50%,
+	#f9c8d7 0%,
+	#f15380 50%,
 	#ef3167 50%,
 	#f57398 100%
 	);
@@ -492,7 +502,8 @@ button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=butt
 button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
 {
 background-image: -moz-linear-gradient(center top, 
-	#fdfdfd 0%,	#f8f8f8 50%,
+	#fdfdfd 0%,
+	#f8f8f8 50%,
 	#f1f1f1 50%,
 	#e6e6e6 100%
 	);
@@ -514,7 +525,8 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endC
 	background-color: #ef3067;
 	text-shadow: -1px -1px #ef3067;
 background-image: -moz-linear-gradient(center top, 
-	#f9c8d7 0%,	#f15380 50%,
+	#f9c8d7 0%,
+	#f15380 50%,
 	#ef3167 50%,
 	#f57398 100%
 	);
@@ -559,7 +571,8 @@ height:32px;
 .monthHeader,.monthFooter td  {
 background-color: transparent;
 background-image: -moz-linear-gradient(center top, 
-	rgba(254,249,251,.9) 0%,	rgba(248,224,235,.9) 100%
+	rgba(254,249,251,.9) 0%,
+	rgba(248,224,235,.9) 100%
 	);
 background-image: -webkit-gradient(
     linear,
