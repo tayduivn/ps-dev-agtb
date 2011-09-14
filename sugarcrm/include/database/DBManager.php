@@ -2603,7 +2603,7 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function getColumnType($type)
 	{
-		return isset($this->type_map[$type])?$this->type_map[$type]:null;
+		return isset($this->type_map[$type])?$this->type_map[$type]:$type;
 	}
 
 	/**
