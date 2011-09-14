@@ -72,7 +72,7 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
         } else if(file_exists($this->contactsHookFile)) {
             unlink($this->contactsHookFile);
         }
-
+        unset($GLOBALS['logic_hook']);
     }
 
     public function testSugarViewProcessLogicHookWithModule()
@@ -114,7 +114,7 @@ class SugarViewMock extends SugarView
 class LogicHookMock extends LogicHook
 {
     var $hookRunCount = 0;
-    
+
     function process_hooks($hook_array, $event, $arguments)
     {
         if($event == 'after_ui_frame')

@@ -36,6 +36,7 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         LogicHookTest::$called = false;
+        unset($GLOBALS['logic_hook']);
         $GLOBALS['logic_hook'] = LogicHook::initialize();
     }
 
