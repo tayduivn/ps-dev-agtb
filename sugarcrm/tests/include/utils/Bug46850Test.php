@@ -74,10 +74,11 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHooksDirect($module)
     {
-        $file = rtrim("custom/modules/$module", "/")."/logic_hooks.php";
+        $dir = rtrim("custom/modules/$module", "/");
+        $file = "$dir/logic_hooks.php";
         $this->saveHook($file);
-        if(!is_dir(dirname($file))) {
-            mkdir(dirname($file));
+        if(!is_dir($dir)) {
+            mkdir($dir, 0755, true);
         }
         write_array_to_file('hook_array', $this->hook, $file);
         $GLOBALS['logic_hook']->getHooks($module, true); // manually refresh
@@ -91,14 +92,15 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
     public function testHooksExtDirect($module)
     {
         if(empty($module)) {
-            $file = "custom/application/Ext/LogicHooks/logic_hooks.ext.php";
+            $dir = "custom/application/Ext/LogicHooks";
         } else {
-            $file = "custom/modules/$module/Ext/LogicHooks/logic_hooks.ext.php";
+            $dir = "custom/modules/$module/Ext/LogicHooks";
         }
+        if(!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        $file = "$dir/logichooks.ext.php";
         $this->saveHook($file);
-        if(!is_dir(dirname($file))) {
-            mkdir(dirname($file));
-        }
         write_array_to_file('hook_array', $this->hook, $file);
         $GLOBALS['logic_hook']->getHooks($module, true); // manually refresh
         $GLOBALS['logic_hook']->call_custom_logic($module, 'test_logic_hook');
@@ -110,7 +112,11 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHooksUtils($module)
     {
-        $file = rtrim("custom/modules/$module", "/")."/logic_hooks.php";
+        $dir = rtrim("custom/modules/$module", "/");
+        $file = "$dir/logic_hooks.php";
+        if(!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
         $this->saveHook($file);
         check_logic_hook_file($module, 'test_logic_hook', $this->hook['test_logic_hook'][0]);
         $GLOBALS['logic_hook']->getHooks($module, true); // manually refresh
@@ -124,7 +130,11 @@ class Bu46850Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGeHookArray($module)
     {
-        $file = rtrim("custom/modules/$module", "/")."/logic_hooks.php";
+        $dir = rtrim("custom/modules/$module", "/");
+        $file = "$dir/logic_hooks.php";
+        if(!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
         $this->saveHook($file);
         check_logic_hook_file($module, 'test_logic_hook', $this->hook['test_logic_hook'][0]);
         $array = get_hook_array($module);
