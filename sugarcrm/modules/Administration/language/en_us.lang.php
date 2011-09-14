@@ -1157,9 +1157,9 @@ $mod_strings = array (
     'LBL_OAUTH' => "OAuth key management",
     'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-    // Sugar Ease
-    'LBL_SNIP_TITLE' => 'Sugar Ease',
-    'LBL_SNIP_DESC' => 'Configure offline archiving (Sugar Ease)',
-    'LBL_CONFIGURE_SNIP' => 'Sugar Ease',
+    // SNIP / Sugar Ease / Email Archiving
+    'LBL_SNIP_TITLE' => 'Email Archiving',
+    'LBL_SNIP_DESC' => 'Configure offline archiving (Email Archiving)',
+    'LBL_CONFIGURE_SNIP' => 'Email Archiving',
     'LBL_CONFIGURE_SNIP_DESC' => 'Enable/disable the Sugar Email Archiving Service',
 	);
