@@ -54,11 +54,6 @@ console.log(myConfigs);
 {/if}
 
 {literal}
-var disabledCheckboxFormatter = function(elCell, oRecord, oColumn, oData)
-{
-   elCell.innerHTML = "<input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : ">");
-};
-
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 {
    elCell.innerHTML = "<a class='crumbLink' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
@@ -70,25 +65,21 @@ var labelFormatter = function(elCell, oRecord, oColumn, oData)
 };
 
 var myColumnDefs = [
-    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
+    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"labelFormatter", width:150},
     {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
-    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125},
-    {key:"required", label:SUGAR.language.get("ModuleBuilder", "LBL_REQUIRED"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
-    {key:"unified_search", label:SUGAR.language.get("ModuleBuilder", "LBL_SEARCH"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
-    {key:"custom", label:SUGAR.language.get("ModuleBuilder", "LBL_CUSTOM"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75}
+    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
 ];
 {/literal}
 
 var myDataSource = new YAHOO.util.DataSource({$fieldsData});
 myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 {literal}
-myDataSource.responseSchema = {fields: ["label","name","type","custom", "required", "unified_search"]};
-YAHOO.widget.DataTable.Formatter.disabledCheckboxFormatter = disabledCheckboxFormatter;
+myDataSource.responseSchema = {fields: ["label","name","type"]};
 YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
 YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
 
-var myDataTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource, myConfigs);
-myDataTable.doBeforeSortColumn = function(column, sortDirection)
+var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+fieldsTable.doBeforeSortColumn = function(column, sortDirection)
 {
     var url = 'index.php?module=ModuleBuilder&action=savetablesort&column=' + column.getKey() + '&direction=' + sortDirection;
     YUI().use('io', function (Y) {
@@ -103,7 +94,15 @@ myDataTable.doBeforeSortColumn = function(column, sortDirection)
     return true;
 };
 
-myDataTable.render("#field_table");
+
+fieldsTable.subscribe("rowMouseoverEvent", fieldsTable.onEventHighlightRow);
+fieldsTable.subscribe("rowMouseoutEvent", fieldsTable.onEventUnhighlightRow);
+fieldsTable.subscribe("rowClickEvent", function(args) {
+    var field = this.getRecord(args.target).getData();
+    ModuleBuilder.moduleLoadField(field.name);
+});
+
+fieldsTable.render("#field_table");
 
 {/literal}
 
