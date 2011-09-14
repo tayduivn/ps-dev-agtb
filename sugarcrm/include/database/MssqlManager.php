@@ -1213,6 +1213,7 @@ class MssqlManager extends DBManager
     public function fromConvert($string, $type)
     {
         switch($type) {
+            case 'datetimecombo':
             case 'datetime': return substr($string, 0,19);
             case 'date': return substr($string, 0, 10);
             case 'time': return substr($string, 11);
