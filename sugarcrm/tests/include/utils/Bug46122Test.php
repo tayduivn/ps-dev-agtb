@@ -81,7 +81,7 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = 'Contacts';
         $sugarViewMock->process();
-        $hooks = $GLOBALS['logic_hook']->getHooks('Contacts');
+        $hooks = $GLOBALS['logic_hook']->getHooks('Contacts', true);
         $expectedHookCount = isset($hooks['after_ui_frame']) ? count($hooks['after_ui_frame']) : 0;
         $this->assertEquals($expectedHookCount, $GLOBALS['logic_hook']->hookRunCount, 'Assert that two logic hook files were run');
     }
@@ -90,7 +90,7 @@ class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
     public function testSugarViewProcessLogicHookWithoutModule()
     {
         $GLOBALS['logic_hook'] = new LogicHookMock();
-        $hooks = $GLOBALS['logic_hook']->getHooks('');
+        $hooks = $GLOBALS['logic_hook']->getHooks('', true);
         $sugarViewMock = new SugarViewMock();
         $sugarViewMock->module = '';
         $sugarViewMock->process();
