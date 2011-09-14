@@ -109,11 +109,7 @@ class EmailMan extends SugarBean{
 					LEFT JOIN campaigns ON campaigns.id = $this->table_name.campaign_id
 					LEFT JOIN email_marketing ON email_marketing.id = $this->table_name.marketing_id ";
 
-                if ($this->db->dbType == 'mssql') {
-                    $where_auto = " ($this->table_name.deleted=0 OR $this->table_name.deleted is null)";
-                } else {
-                    $where_auto = " $this->table_name.deleted=0";
-                }
+                $where_auto = " $this->table_name.deleted=0";
 
         if($where != "")
 			$query['where'] = "WHERE $where AND ".$where_auto;
@@ -190,11 +186,7 @@ class EmailMan extends SugarBean{
 			           on {$this->table_name}.id = secondary.id	";
 		}
 
-                if ($this->db->dbType == 'mssql') {
-                    $where_auto = " ($this->table_name.deleted=0 OR $this->table_name.deleted is null)";
-                } else {
-                    $where_auto = " $this->table_name.deleted=0";
-                }
+                $where_auto = " $this->table_name.deleted=0";
 
         if($where != "")
 			$query .= "WHERE $where AND ".$where_auto;
@@ -252,11 +244,7 @@ class EmailMan extends SugarBean{
 					LEFT JOIN campaigns ON campaigns.id = $this->table_name.campaign_id
 					LEFT JOIN email_marketing ON email_marketing.id = $this->table_name.marketing_id ";
 
-                if ($this->db->dbType == 'mssql') {
-                    $where_auto = " ($this->table_name.deleted=0 OR $this->table_name.deleted is null)";
-                } else {
-                    $where_auto = " $this->table_name.deleted=0";
-                }
+                $where_auto = " $this->table_name.deleted=0";
 
         if($where != "")
 			$query .= "where $where AND ".$where_auto;
