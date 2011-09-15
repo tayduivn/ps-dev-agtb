@@ -250,6 +250,7 @@ class SugarView
         $ss->assign("THEME", $theme);
         $ss->assign("THEME_IE6COMPAT", $themeObject->ie6compat ? 'true':'false');
         $ss->assign("MODULE_NAME", $this->module);
+        $ss->assign("langHeader", get_language_header());
 
         // get browser title
         $ss->assign("SYSTEM_NAME", $this->getBrowserTitle());
@@ -751,12 +752,16 @@ EOQ;
         require_once ('jssource/minify.php');
         //END SUGARCRM flav=int ONLY
         if ($this->_getOption('show_javascript')) {
-            if (!$this->_getOption('show_header'))
+            if (!$this->_getOption('show_header')) {
+                $langHeader = get_language_header();
+
                 echo <<<EOHTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<html {$langHeader}>
 <head>
 EOHTML;
+            }
+
             $js_vars = array(
                 "sugar_cache_dir" => "cache/",
                 );

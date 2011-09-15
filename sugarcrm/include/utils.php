@@ -4838,3 +4838,17 @@ function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = fa
 {
     return htmlentities($input, $quotes, $charset);
 }
+
+
+/**
+ * get_language_header
+ * 
+ * This is a utility function for 508 Compliance.  It returns the lang=[Current Language] text string used
+ * inside the <html> tag.  If no current language is specified, it defaults to lang='en'.
+ *
+ * @return String The lang=[Current Language] markup to insert into the <html> tag
+ */
+function get_language_header()
+{
+    return isset($GLOBALS['current_language']) ? "lang='{$GLOBALS['current_language']}'" : "lang='en'";
+}

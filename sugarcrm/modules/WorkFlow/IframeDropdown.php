@@ -119,8 +119,9 @@ require_once('include/workflow/workflow_utils.php');
 	}		
 	
 
+    $langHeader = get_language_header();
 ////////////HTML DISPLAY AREA////////////////////	
-	echo "<html><head>";
+	echo "<html {$langHeader}><head>";
 	echo SugarThemeRegistry::current()->getCSS();
 	echo "<style type='text/css'> body {background-color: transparent}</style></head><body>";
 	echo "<form name=\"EditView\">";

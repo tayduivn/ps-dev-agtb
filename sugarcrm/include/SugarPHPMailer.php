@@ -230,9 +230,12 @@ class SugarPHPMailer extends PHPMailer {
 			// HTML email RFC compliance
 			if($this->ContentType == "text/html") {
 				if(strpos($this->Body, '<html') === false) {
+
+                    $langHeader = get_language_header();
+
 					$head=<<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset={$OBCharset}" />
 <title>{$subject}</title>

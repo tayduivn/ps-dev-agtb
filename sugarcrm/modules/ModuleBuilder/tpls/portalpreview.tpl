@@ -29,8 +29,8 @@
 *}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 Transitional//EN">
-<html>
-<head >
+<html {$langHeader}>
+<head>
 <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
 
 <title>SugarCRM - Commercial Open Source CRM</title>
