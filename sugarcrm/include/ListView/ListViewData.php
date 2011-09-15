@@ -552,6 +552,7 @@ class ListViewData {
     function getAdditionalDetails($fields, $adFunction, $editAccess)
     {
         global $app_strings;
+        global $mod_strings;
 
         $results = $adFunction($fields);
         $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
