@@ -556,13 +556,13 @@ class DynamicField {
 	                $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
 	                if(!empty($query)){
 	                	$GLOBALS['db']->query($query);
-	            	}                   
+	            	}
                 }
             }else{
                 $query = $field->get_db_modify_alter_table($this->bean->table_name . '_cstm');
                 if(!empty($query)){
                 	$GLOBALS['db']->query($query);
-            	}                
+            	}
             }
             $this->saveExtendedAttributes($field, array_keys($fmd->field_defs));
         }
@@ -945,17 +945,17 @@ class DynamicField {
     }
 
     function getAllFieldsView($view, $type){
-        $results = array();
+         require_once ('modules/DynamicFields/FieldCases.php');
+         $results = array();
          foreach($this->bean->field_defs as $name=>$data){
             if(empty($data['source']) || $data['source'] != 'custom_fields')
             {
             	continue;
             }
-            require_once ('modules/DynamicFields/FieldCases.php');
             $field = get_widget ( $data ['type'] );
             $field->populateFromRow($data);
             $field->view = $view;
-            $field->bean =& $this->bean;
+            $field->bean = $this->bean;
             switch(strtolower($type))
             {
                 case 'xtpl':
