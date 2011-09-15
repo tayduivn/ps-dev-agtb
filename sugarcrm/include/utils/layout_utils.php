@@ -216,27 +216,15 @@ EOHTML;
 /**
  * Handles displaying the header for classic view modules
  *
- * @param  $module      string  to next to the title.  Typically used for form buttons.
- * @param array $params optional, params to display in the breadcrumb, overriding SugarView::_getModuleTitleParams()
- * These should be in the form of array('label' => '<THE LABEL>', 'link' => '<HREF TO LINK TO>');
- * the first breadcrumb should be index at 0, and built from there e.g.
- * <code>
- * array(
- *    '<a href="index.php?module=Contacts&action=index">Contacts</a>',
- *    '<a href="index.php?module=Contacts&action=DetailView&record=123">John Smith</a>',
- *    'Edit',
- *    );
- * </code>
- * would display as:
- * <a href='index.php?module=Contacts&action=index'>Contacts</a> >> <a href='index.php?module=Contacts&action=DetailView&record=123'>John Smith</a> >> Edit   
- * @param  $show_help    boolean which determines if the print and help links are shown.
- * @return string HTML
+ * @param $module String value of the module to create the title section for
+ * @param $params Array of arguments used to create the title label.  Typically this is just the current language string label for the section
+ * @param $show_create boolean flag indicating whether or not to display the create link (defaults to false)
+ * @param $index_url_override String value of url to override for module index link (defaults to module's index action if none supplied)
+ * @param $create_url_override String value of url to override for module create link (defaults to EditView action if none supplied)
+ *
+ * @return String HTML content for a classic module title section
  */
-function getClassicModuleTitle(
-    $module, 
-    $params, 
-    $show_create,
-    $index_url_override="")
+function getClassicModuleTitle($module, $params, $show_create=false, $index_url_override='', $create_url_override='')
 {
 	global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
     global $app_strings;
@@ -245,13 +233,10 @@ function getClassicModuleTitle(
 	$count = count($params);
 	$index = 0;
 
-
-
     $module = preg_replace("/ /","",$module);
     $iconPath = "";
     $the_title = "<div class='moduleTitle'>\n<h2>";
-    
-    
+
     if(is_file(SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png',false)))
     {
     	$iconPath = SugarThemeRegistry::current()->getImageURL('icon_'.$module.'_32.png');
@@ -271,27 +256,29 @@ function getClassicModuleTitle(
 	    $new_params[$i] = $value;
 	    $i++;
 	  }
-	} 
-
+	}
 
 	if(SugarThemeRegistry::current()->directionality == "rtl") {
 		$new_params = array_reverse($new_params);
 	}
 	
 	$module_title = join(SugarView::getBreadCrumbSymbol(),$new_params);
-	
-	
-	
+
     $the_title .= $module_title."</h2>\n";
     
     if ($show_create) {
         $the_title .= "<span class='utils'>";
-        $createRecordURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+        $createRecordImage = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+        if(empty($create_url_override))
+        {
+            $create_url_override = "index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView";
+        }
+
         $the_title .= <<<EOHTML
 &nbsp;
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
-<img src='{$createRecordURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<a href="{$create_url_override}" class="utilsLink">
+<img src='{$createRecordImage}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<a href="{$create_url_override}" class="utilsLink">
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;

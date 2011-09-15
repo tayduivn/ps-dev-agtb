@@ -46,11 +46,11 @@ $module_menu = Array(
 //BEGIN SUGARCRM flav!=sales ONLY
 
     Array("index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report", $mod_strings['LBL_CREATE_REPORT'],"CreateReport", 'Reports'),
-    Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'),
+    //Array("index.php?module=Reports&favorite=1&action=index", $mod_strings['LBL_FAVORITE_REPORTS'], "FavoriteReports", 'Reports'),
 //END SUGARCRM flav!=sales ONLY
     Array("index.php?module=Reports&action=index", $mod_strings['LBL_ALL_REPORTS'],"Reports", 'Reports'),
-//	Array("index.php?module=Reports&action=ActivitiesReports", $mod_strings['LBL_ACTIVITIES_REPORTS'],"Reports", 'Reports'),
-	/*
+    /*
+    Array("index.php?module=Reports&action=ActivitiesReports", $mod_strings['LBL_ACTIVITIES_REPORTS'],"Reports", 'Reports'),
 	Array("index.php?module=Reports&action=index&report_module=Accounts&query=true", $mod_strings['LBL_ACCOUNT_REPORTS'],"AccountReports", 'Accounts'),
 	Array("index.php?module=Reports&action=index&report_module=Contacts&query=true", $mod_strings['LBL_CONTACT_REPORTS'],"ContactReports", 'Contacts'),
 	Array("index.php?module=Reports&action=index&report_module=Leads&query=true", $mod_strings['LBL_LEAD_REPORTS'],"LeadReports", 'Leads'),
@@ -67,7 +67,7 @@ $module_menu = Array(
 	Array("index.php?module=Reports&action=index&report_module=Prospects&query=true", $mod_strings['LBL_PROSPECT_REPORTS'],"TaskReports", 'Prospects'),
 	Array("index.php?module=Reports&action=index&report_module=Contracts&query=true", $mod_strings['LBL_CONTRACT_REPORTS'],"ContractReports", 'Contracts'),
 	*/
-		
+
 //BEGIN SUGARCRM flav=ent ONLY
 	Array("index.php?module=ReportMaker&action=index&return_module=ReportMaker&return_action=index", $ent_mod_strings['LNK_ADVANCED_REPORTING'],"ReportMaker"),
 //END SUGARCRM flav=ent ONLY

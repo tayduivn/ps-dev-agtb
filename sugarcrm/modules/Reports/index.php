@@ -146,11 +146,15 @@ else
 //END SUGARCRM flav!=sales ONLY                      
 if ( empty($_REQUEST['search_form_only']) ) {
     $params = array();
-    if(!empty($_REQUEST['favorite']))
+    if(!empty($_REQUEST['favorite'])) {
         $params[] = $mod_strings['LBL_FAVORITES_TITLE'];
-    else
+    } else {
         $params[] = $app_strings['LBL_SEARCH'];
-    echo getClassicModuleTitle("Reports", $params, false);
+    }
+
+    //Override the create url
+    $createURL = 'index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report';
+    echo getClassicModuleTitle("Reports", $params, true, '', $createURL);
 }
 
 include("modules/Reports/ListView.php");
