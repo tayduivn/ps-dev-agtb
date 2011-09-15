@@ -56,7 +56,7 @@ EOQ;
 	/**
 	 * Any generic type will suffice.
 	 */
-	function getParameterTypes() {
+	static function getParameterTypes() {
 		return array("number", "number");
 	}
 

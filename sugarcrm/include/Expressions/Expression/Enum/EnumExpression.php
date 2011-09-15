@@ -78,7 +78,7 @@ abstract class EnumExpression extends AbstractExpression
 	/**
 	 * All parameters have to be a string.
 	 */
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return array(AbstractExpression::$ENUM_TYPE, AbstractExpression::$STRING_TYPE, AbstractExpression::$BOOLEAN_TYPE,
 					 AbstractExpression::$DATE_TYPE, AbstractExpression::$NUMERIC_TYPE);
 	}

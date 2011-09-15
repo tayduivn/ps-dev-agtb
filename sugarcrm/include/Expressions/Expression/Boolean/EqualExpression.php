@@ -55,7 +55,7 @@ EOQ;
 	/**
 	 * Any generic type will suffice.
 	 */
-	function getParameterTypes() {
+	static function getParameterTypes() {
 		return array(AbstractExpression::$GENERIC_TYPE, AbstractExpression::$GENERIC_TYPE);
 	}
 

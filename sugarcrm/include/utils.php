@@ -2727,7 +2727,6 @@ function _ppd($mixed)
  * @param $displayStackTrace also show stack trace
  */
 function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal") {
-	//BEGIN SUGARCRM flav=int ONLY
 	if(!isset($GLOBALS['log']) || empty($GLOBALS['log'])) {
 
 		$GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
@@ -2751,7 +2750,6 @@ function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal") {
 	if($die) {
 		die();
 	}
-	//END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3053,7 +3051,7 @@ function sugar_cleanup($exit = false) {
 	        $GLOBALS['current_user']->savePreferencesToDB();
 	}
 
-	//check to see if this is not an ajax call AND the user preference error flag is set
+	//check to see if this is not an `ajax call AND the user preference error flag is set
 	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
 		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')

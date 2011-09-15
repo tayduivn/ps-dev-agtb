@@ -963,6 +963,8 @@ class SugarBean
     /**
      * Loads all attributes of type link.
      *
+     * DO NOT CALL THIS FUNCTION IF YOU CAN AVOID IT. Please use load_relationship directly instead.
+     *
      * Method searches the implmenting module's vardef file for attributes of type link, and for each attribute
      * create a similary named variable and load the relationship definition.
      *
@@ -972,16 +974,11 @@ class SugarBean
      */
     function load_relationships()
     {
-
         $GLOBALS['log']->debug("SugarBean.load_relationships, Loading all relationships of type link.");
-
         $linked_fields=$this->get_linked_fields();
-        require_once("data/Link2.php");
         foreach($linked_fields as $name=>$properties)
         {
-            $class = load_link_class($properties);
-
-            $this->$name=new $class($properties['relationship'], $this, $properties);
+            $this->load_relationship($name);
         }
     }
 
@@ -1757,10 +1754,27 @@ class SugarBean
             $links = $dictionary[$this->object_name]['related_calc_fields'];
             foreach($links as $lname)
             {
+
                 if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2))
                 {
                     continue;
                 }
+
+                //If this module has a parent field that changed, resave the old parent
+                //Check that the fields are set in the request and that they don't match the current values.
+                if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
+                    && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
+                    && isset($this->parent_type) && isset($this->parent_id) && isset($this->fetched_row['parent_id'])
+                    && $this->parent_id != $this->fetched_row['parent_id'])
+                {
+                    if (!empty($this->field_defs[$lname]['module']) && $this->field_defs[$lname]['module'] == $this->fetched_row['parent_type'])
+                    {
+                        SugarRelationship::addToResaveList(
+                            BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
+                        );
+                    }
+                }
+                
                 $beans = $this->$lname->getBeans();
                 //Resave any related beans
                 if(!empty($beans))
@@ -2163,7 +2177,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
 
             }
-
         }
     }
 
