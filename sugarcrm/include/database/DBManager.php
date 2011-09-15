@@ -2723,8 +2723,8 @@ protected function checkQuery($sql, $object_name = false)
 					//if the type and values match, do nothing.
 					if (!($this->_emptyValue($before_value,$field_type) && $this->_emptyValue($after_value,$field_type))) {
 						if (trim($before_value) !== trim($after_value)) {
-							if (!($this->_isTypeNumber($field_type) && (trim($before_value)+0) == (trim($after_value)+0))) {
-								if (!($this->_isTypeBoolean($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
+							if (!($this->isNumericType($field_type) && (trim($before_value)+0) == (trim($after_value)+0))) {
+								if (!($this->isBooleanType($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
 									$changed_values[$field]=array('field_name'=>$field,
 										'data_type'=>$field_type,
 										'before'=>$before_value,
@@ -2792,7 +2792,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Check if type is boolean
 	 * @param string $type
 	 */
-	protected function _isTypeBoolean($type)
+	public function isBooleanType($type)
 	{
 		return 'bool' == $type;
 	}
@@ -2815,20 +2815,11 @@ protected function checkQuery($sql, $object_name = false)
 	 * Check if type is a number
 	 * @param string $type
 	 */
-	protected function _isTypeNumber($type)
+	public function isNumericType($type)
 	{
-		switch ($type) {
-			case 'decimal':
-			case 'decimal2':
-			case 'int':
-			case 'double':
-			case 'float':
-			case 'uint':
-			case 'ulong':
-			case 'long':
-			case 'short':
-				return true;
-		}
+	    if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
+	        return true;
+	    }
 		return false;
 	}
 
