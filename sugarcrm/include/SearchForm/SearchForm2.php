@@ -1018,7 +1018,7 @@ require_once('include/EditView/EditView2.php');
                                 if($type == "datetime" || $type == "datetimecombo") {
                                     $field_value[0] = $db->convert($db->quoted($field_value[0]), "datetime");
                                     $field_value[1] = $db->convert($db->quoted($field_value[1]), "datetime");
-                                } else if($db->isTypeNumber($type)) {
+                                } else if($db->isNumericType($type)) {
                                     $field_value[0] = $field_value[0];
                                     $field_value[1] = $field_value[1];
                                 } else {
