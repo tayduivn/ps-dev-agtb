@@ -185,6 +185,8 @@ class SOAPAPI3Test extends SOAPTestCase
      private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
      {
         $trackerManager = TrackerManager::getInstance();
+        $trackerManager->unPause();
+
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
         //BEGIN SUGARCRM flav=pro ONLY

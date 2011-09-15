@@ -715,7 +715,8 @@ public function convert($string, $type, array $additional_parameters = array())
 			case 'date': return substr($string, 0, 10);
 			case 'time': return substr($string, 11,8);
 			case 'timestamp':
-			case 'datetime': return substr($string, 0,19);
+			case 'datetimecombo':
+		    case 'datetime': return substr($string, 0,19);
 		}
 		return $string;
 	}

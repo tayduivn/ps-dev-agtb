@@ -5464,7 +5464,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		    if(empty($row[$name])) continue;
 		    if(isset($fieldDef['source']) && $fieldDef['source'] != 'db') continue;
 		    // fromConvert other fields
-		    $row[$name] = $this->db->fromConvert($row[$name], $fieldDef['type']);
+		    $row[$name] = $this->db->fromConvert($row[$name], $this->db->getFieldType($fieldDef));
 		}
 		return $row;
     }
