@@ -23,34 +23,42 @@
  ********************************************************************************/
 
 
-//FILE SUGARCRM flav=pro ONLY
-require_once('include/EditView/SubpanelQuickCreate.php');
-
-class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
+class Bug37953Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function setUp()
-	{
-		include('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user']->is_admin = 1;
-	    $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
-	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");	    		
-	}
-	
-	public function tearDown()
-	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
-	
-	public function testContractsSubpanelQuickCreate()
-	{
-		 $subpanelQuickCreate = new SubpanelQuickCreate('Contracts', 'QuickCreate');
-		 $this->expectOutputRegex('/check_form\s*?\(\s*?\'form_SubpanelQuickCreate_Contracts\'\s*?\)/');
-	}
-	
-}
+    var $call;
 
-?>
+    public function setUp()
+    {
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->call = SugarTestCallUtilities::createCall();
+        $this->useOutputBuffering = false;
+	}
+
+    public function tearDown()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestCallUtilities::removeAllCreatedCalls();
+    }
+
+    public function testCallAppearsWithinMonthView()
+    {
+        global $timedate,$sugar_config,$DO_USER_TIME_OFFSET , $current_user;
+
+        $DO_USER_TIME_OFFSET = true;
+        $timedate = TimeDate::getInstance();
+        $format = $current_user->getUserDateTimePreferences();
+        $name = 'Bug37953Test' . $timedate->nowDb();
+        $this->call->name = $name;
+        $this->call->date_start = $timedate->swap_formats("2011-09-29 11:00pm" , 'Y-m-d h:ia', $format['date'].' '.$format['time']);
+        $this->call->time_start = "";
+        $this->call->object_name = "Call";
+        $this->call->duration_hours = 99;
+        
+        $ca = new CalendarActivity($this->call);
+        $where = $ca->get_occurs_within_where_clause($this->call->table_name, $this->call->rel_users_table, $ca->start_time, $ca->end_time, 'date_start', 'month');
+
+        $this->assertRegExp('/2011\-09\-23 00:00:00/', $where, 'Assert that we go back 6 days from the date_start value');
+        $this->assertRegExp('/2011\-11\-01 00:00:00/', $where, 'Assert that we go to the end of next month');
+    }
+}

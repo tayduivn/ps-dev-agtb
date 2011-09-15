@@ -827,9 +827,9 @@ class RenameModules
         while(isset($params['slot_' . $count]))
         {
             $index = $params['slot_' . $count];
-            $key = (isset($params['key_' . $index]))?remove_xss(from_html($params['key_' . $index])): 'BLANK';
-            $value = (isset($params['value_' . $index]))?remove_xss(from_html($params['value_' . $index])): '';
-            $svalue = (isset($params['svalue_' . $index]))?remove_xss(from_html($params['svalue_' . $index])): $value;
+            $key = (isset($params['key_' . $index]))?to_html(remove_xss(from_html($params['key_' . $index]))): 'BLANK';
+            $value = (isset($params['value_' . $index]))?to_html(remove_xss(from_html($params['value_' . $index]))): '';
+            $svalue = (isset($params['svalue_' . $index]))?to_html(remove_xss(from_html($params['svalue_' . $index]))): $value;
             if($key == 'BLANK')
                $key = '';
 

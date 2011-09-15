@@ -39,7 +39,7 @@ class DCMenu extends DashletContainer
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 
 	    return <<<EOQ
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle');"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}' id="dcMenu_{$module}_quick_create_icon" ></a></li>
+		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle', true);"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}' id="dcMenu_{$module}_quick_create_icon" ></a></li>
 EOQ;
 	}
 
@@ -52,7 +52,8 @@ EOQ;
 
 	    $module = !empty($def['module']) ? $def['module'] : "";
 	    $label = isset($def['label']) ? translate($def['label'], $module) : "";
-	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label');";
+        $modal = isset($def['modal']) ? $def['modal'] : true;
+	    $action = isset($def['action']) ? $def['action'] : "DCMenu.menu('$module','$label', $modal);";
 	    $script = isset($def['script_url']) ? '<script type="text/javascript" src="' . $def['script_url'] . '"></script>' : "";
 
 

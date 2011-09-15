@@ -58,7 +58,7 @@ abstract class NumericExpression extends AbstractExpression
 	/**
 	 * All parameters have to be a number.
 	 */
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return AbstractExpression::$NUMERIC_TYPE;
 	}
 }

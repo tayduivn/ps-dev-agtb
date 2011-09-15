@@ -70,8 +70,7 @@ EOQ;
 	static function getOperationName() {
 		return "addDays";
 	}
-
-    function getParameterTypes() {
+    static function getParameterTypes() {
 		return array("date", "number");
 	}
 

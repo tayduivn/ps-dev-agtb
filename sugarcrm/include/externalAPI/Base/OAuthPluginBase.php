@@ -36,7 +36,7 @@ class OAuthPluginBase extends ExternalAPIBase implements ExternalOAuthAPIPlugin 
      */
     public function setupOauthKeys()
     {
-        if($this->$oauth_keys_initialized) return;
+        if($this->oauth_keys_initialized) return;
 
         $connector = $this->getConnector();
         if(!empty($connector)) {

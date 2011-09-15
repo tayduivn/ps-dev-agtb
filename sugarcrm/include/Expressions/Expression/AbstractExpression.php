@@ -98,7 +98,7 @@ abstract class AbstractExpression
 	/**
 	 * Defines the required types of each of the individual parameters.
 	 */
-	abstract function getParameterTypes();
+	abstract static function getParameterTypes();
 
 	/**
 	 * Validates the parameters and throws an Exception if invalid.

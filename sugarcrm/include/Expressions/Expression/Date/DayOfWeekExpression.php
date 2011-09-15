@@ -67,7 +67,7 @@ EOQ;
     /**
 	 * All parameters have to be a date.
 	 */
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return array(AbstractExpression::$DATE_TYPE);
 	}
 

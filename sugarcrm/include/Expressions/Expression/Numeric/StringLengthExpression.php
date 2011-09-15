@@ -61,7 +61,7 @@ EOQ;
 	/**
 	 * All parameters have to be a string.
 	 */
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return AbstractExpression::$STRING_TYPE;
 	}
 }

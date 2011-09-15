@@ -81,7 +81,7 @@ abstract class TimeExpression extends AbstractExpression
 	/**
 	 * All parameters have to be a string.
 	 */
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return AbstractExpression::$TIME_TYPE;
 	}
 }

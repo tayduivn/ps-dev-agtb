@@ -1018,11 +1018,18 @@ require_once('include/EditView/EditView2.php');
                                 if($type == "datetime" || $type == "datetimecombo") {
                                     $field_value[0] = $db->convert($db->quoted($field_value[0]), "datetime");
                                     $field_value[1] = $db->convert($db->quoted($field_value[1]), "datetime");
+                                } else if($db->isTypeNumber($type)) {
+                                    $field_value[0] = $field_value[0];
+                                    $field_value[1] = $field_value[1];
                                 } else {
                                     $field_value[0] = $db->quoted($field_value[0]);
                                     $field_value[1] = $db->quoted($field_value[1]);
                                 }
                                 $where .= "($db_field >= {$field_value[0]} AND $db_field <= {$field_value[1]})";
+                                break;
+                            case 'date_not_equal':
+                                $field_value = explode('<>', $field_value);
+                                $where .= $db_field . " < '".$field_value[0] . "' OR " .$db_field . " > '".$field_value[1]."'";
                                 break;
                             case 'innerjoin':
                                 $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";

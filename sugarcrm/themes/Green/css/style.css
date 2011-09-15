@@ -46,7 +46,8 @@ color:#689800;
 .dcmenu {
 min-width: 1050px;
 background-color: #0d3a62;
-background: -moz-linear-gradient(center top,	rgba(154,189,56,.9) 0%,
+background: -moz-linear-gradient(center top,
+	rgba(154,189,56,.9) 0%,
 	rgba(134,162,56,.9) 78%, 
 	rgba(0,0,0,.2) 78%, 
 	rgba(0,0,0,0) 100%); 
@@ -75,7 +76,8 @@ margin-top:8px;
 #moduleList  {
 background: -moz-linear-gradient(center top,
 		transparent 0%,
-		transparent 12%,		rgba(255,255,255,.9) 13%,  
+		transparent 12%,
+		rgba(255,255,255,.9) 13%,  
 		rgba(255,255,255,.8) 45%,
 		rgba(255,255,255,.6) 45%, 
 		rgba(255,255,255,.6) 76%,
@@ -106,7 +108,9 @@ margin-right: -1px;
 
 #moduleList.yuimenubar li.current .yuimenuitemlabel, li.current a.yuimenuitemlabel, li.current a.yuimenuitemlabel:link, li.current a.yuimenuitemlabel:visited {
 	background-image: -moz-linear-gradient(center top, 
-	#cee3a2 0%,	#adcf64 2%,	#87ad35 52%,
+	#cee3a2 0%,
+	#adcf64 2%,
+	#87ad35 52%,
 	#689800 52%,
 	#7ab200 100%
 	);
@@ -148,7 +152,8 @@ border-right:1px solid #cbdc2b;
 
 #moduleList.yuimenubarnav .yuimenubaritemlabel-selected {
 	background-image: -moz-linear-gradient(center top, 
-	#ffffff 0%,	rgba(255,255,255,.6) 100%
+	#ffffff 0%,
+	rgba(255,255,255,.6) 100%
 	);
 	background-image: -webkit-gradient(
     linear,
@@ -165,7 +170,8 @@ border-color: #CBDC2B;
 	border-color: #edf0d2;
 height:21px;
 background-image: -moz-linear-gradient(center top, 
-	#eef3bf 0%,	#dfe793 50%,
+	#eef3bf 0%,
+	#dfe793 50%,
 	#d1dd63 50%,
 	#cad661 100%
 	);
@@ -199,7 +205,7 @@ border: 1px solid #0a6315;
 
 
 .dashletPanel.dc .hd {
-height:36px;
+height:38px;
 
 	background-image: -moz-linear-gradient(center top, 
 		rgba(140,168,86,.9) 0%,
@@ -223,11 +229,11 @@ height:36px;
 }
 
 .dashletPanel.dc .hd .tl {
-height: 36px;
+height: 38px;
 }
 
 .dashletPanel.dc .hd .hd-center {
-height: 36px;
+height: 38px;
 }
 
 .dashletPanel.dc .hd .hd-center span {
@@ -235,7 +241,7 @@ text-shadow: 0 -1px #48591a;
 }
 
 .dashletPanel.dc .hd .tr {
-height: 36px;
+height: 38px;
 }
 
 .dashletPanel.dc .hd img {
@@ -293,7 +299,8 @@ border:1px solid #17e531;
 
 .dashletPanel .hd .hd-center, .dashletPanel .hd .tl, .dashletPanel .hd .tr{
 	background-image: -moz-linear-gradient(center top, 
-	rgba(255,255,255,.9) 0%,	rgba(233,244,148,.9) 100%
+	rgba(255,255,255,.9) 0%,
+	rgba(233,244,148,.9) 100%
 	);
 	background-image: -webkit-gradient(
     linear,
@@ -394,7 +401,8 @@ border-bottom:2px solid #FFFFFF;
 
 #tabListContainer ul.subpanelTablist li a.current,#tabListContainer ul.subpanelTablist li a:hover  {
 background-image: -moz-linear-gradient(center top, 
-	#d6df7d 0%,	#f0f3cf 50%,
+	#d6df7d 0%,
+	#f0f3cf 50%,
 	#ecf0c2 50%,
 	#ffffff 100%
 	);
@@ -433,7 +441,8 @@ color:#689800;
 
 .search_form .view {
 	background-image: -moz-linear-gradient(center top, 
-	rgba(255,255,255,.9) 0%,	rgba(233,244,148,.9) 100%
+	rgba(255,255,255,.9) 0%,
+	rgba(233,244,148,.9) 100%
 	);
 	background-image: -webkit-gradient(
     linear,
@@ -453,7 +462,8 @@ color:#689800;
 }
 button, input[type="submit"], input[type="reset"], input[type="button"], .button, .buttons .button, .yui-button button {
 background-image: -moz-linear-gradient(center top, 
-	#fdfdfd 0%,	#f8f8f8 50%,
+	#fdfdfd 0%,
+	#f8f8f8 50%,
 	#f1f1f1 50%,
 	#e6e6e6 100%
 	);
@@ -474,7 +484,8 @@ border:1px solid #cbdc2b;
 
 .button.primary, .yui-dialog .ft span.default button {
 background-image: -moz-linear-gradient(center top, 
-	#d1dfb3 0%,	#81a92b 50%,
+	#d1dfb3 0%,
+	#81a92b 50%,
 	#6a9904 50%,
 	#a1bf62 100%
 	);
@@ -498,7 +509,8 @@ button:focus, input[type=submit]:focus, input[type=reset]:focus, input[type=butt
 button[selected], input[type=submit][selected], input[type=reset][selected], input[type=button][selected]
 {
 background-image: -moz-linear-gradient(center top, 
-	#fdfdfd 0%,	#f8f8f8 50%,
+	#fdfdfd 0%,
+	#f8f8f8 50%,
 	#f1f1f1 50%,
 	#e6e6e6 100%
 	);
@@ -520,7 +532,8 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfdfd', endC
 	background-color: #689800;
 	text-shadow: -1px -1px #095E14;
 	background-image: -moz-linear-gradient(center top, 
-	#d1dfb3 0%,	#81a92b 50%,
+	#d1dfb3 0%,
+	#81a92b 50%,
 	#6a9904 50%,
 	#a1bf62 100%
 	);
@@ -564,7 +577,8 @@ height:32px;
 
 .monthHeader,.monthFooter td  {
 	background-image: -moz-linear-gradient(center top, 
-	rgba(255,255,255,.9) 0%,	rgba(233,244,148,.9) 100%
+	rgba(255,255,255,.9) 0%,
+	rgba(233,244,148,.9) 100%
 	);
 	background-image: -webkit-gradient(
     linear,
