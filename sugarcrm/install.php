@@ -325,9 +325,12 @@ if(!empty($_REQUEST['goto'])) {
 }
 // Add check here to see if a silent install config file exists; if so then launch silent installer
 elseif ( is_file('config_si.php') && empty($sugar_config['installer_locked'])) {
+
+$langHeader = get_language_header();
+
     echo <<<EOHTML
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html {$langHeader}>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <meta http-equiv="Content-Style-Type" content="text/css">

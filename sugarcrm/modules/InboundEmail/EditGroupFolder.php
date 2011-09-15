@@ -124,6 +124,7 @@ $code = $teamSetField->getClassicView();
 */
 $smarty->assign('JAVASCRIPT', $quicksearch_js);
 $smarty->assign("TEAM_SET_FIELD", $code);
+$smarty->assign("langHeader", get_language_header());
 //END SUGARCRM flav=pro ONLY
 
 $smarty->assign('CSS',SugarThemeRegistry::current()->getCSS());

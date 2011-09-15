@@ -309,10 +309,12 @@ function insert_popup_header(
         ? $app_strings['LBL_CHARSET'] : $sugar_config['default_charset'];
     
     $themeCSS = SugarThemeRegistry::current()->getCSS();
-    
+
+    $langHeader = get_language_header();
+
     echo <<<EOHTML
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html {$langHeader}>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset="{$charset}">
 <title>{$app_strings['LBL_BROWSER_TITLE']}</title>

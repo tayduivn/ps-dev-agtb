@@ -31,7 +31,7 @@
 -->
 
 <!-- BEGIN: main -->
-<html>
+<html {$langHeader}>
 <head>
 <script type="text/javascript" src="modules/InboundEmail/InboundEmail.js?v={VERSION_MARK}"></script>
 <script type="text/javascript" src="include/javascript/sugar_3.js?v={VERSION_MARK}"></script>

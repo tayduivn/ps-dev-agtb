@@ -32,7 +32,7 @@
 
 
 {if $helpFileExists}
-<html>
+<html {$langHeader}>
 <head>
 <title>{$title}</title>
 {$styleSheet}

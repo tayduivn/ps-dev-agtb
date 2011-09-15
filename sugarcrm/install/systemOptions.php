@@ -49,10 +49,10 @@ foreach(array_keys($drivers) as $dname) {
     $checked[$dname] = '';
 }
 $checked[$setup_db_type] = 'checked="checked"';
-
+$langHeader = get_language_header();
 $out=<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html {$langHeader}>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <meta http-equiv="Content-Script-Type" content="text/javascript">
