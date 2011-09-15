@@ -69,6 +69,7 @@ class ViewDropdown extends SugarView
 		$selected_lang = (!empty($_REQUEST['dropdown_lang'])?$_REQUEST['dropdown_lang']:$_SESSION['authenticated_user_language']);
 		$vardef = array();
 		$package_name = 'studio';
+        $module_name = $_REQUEST['view_module'];
 		$package_strings = array();
 		$new =false;
 		$my_list_strings = return_app_list_strings_language( $selected_lang ) ;
@@ -139,7 +140,7 @@ class ViewDropdown extends SugarView
 			$smarty->assign('prepopulated_name', $use_name);
 		}
 
-		$smarty->assign('module', $this->module);
+		$smarty->assign('module', $module_name);
 		$smarty->assign('APP', $GLOBALS['app_strings']);
 		$smarty->assign('MOD', $GLOBALS['mod_strings']);
 		$smarty->assign('selected_lang', $selected_lang);
