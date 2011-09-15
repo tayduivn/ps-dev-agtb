@@ -106,8 +106,8 @@ if(isset($_REQUEST['team_name']) && !empty($_REQUEST['team_name'])){
  $Web_To_Lead_Form_html = '';
  $Web_To_Lead_Form_html .='<link rel="stylesheet" type="text/css" media="all" href="' . getJSPath(SugarThemeRegistry::current()->getCSSURL('calendar-win2k-cold-1.css')) . '">';
 
- $Web_To_Lead_Form_html .= "<script type=\"text/javascript\" src='" . getJSPath($site_url.'/include/javascript/sugar_grp1.js') . "'></script>";
- $Web_To_Lead_Form_html .= '<script type="text/javascript" src="' . getJSPath($site_url.'/include/javascript/calendar.js') . '"></script>';
+ $Web_To_Lead_Form_html .= "<script type=\"text/javascript\" src='" . getJSPath($site_url.'/cache/include/javascript/sugar_grp1.js') . "'></script>";
+ $Web_To_Lead_Form_html .= '<script type="text/javascript" src="' . getJSPath($site_url.'/cache/include/javascript/calendar.js') . '"></script>';
 
  $Web_To_Lead_Form_html .="<form action='$web_post_url' name='WebToLeadForm' method='POST' id='WebToLeadForm'>";
  $Web_To_Lead_Form_html .= "<table width='100%' style='border-top: 1px solid;

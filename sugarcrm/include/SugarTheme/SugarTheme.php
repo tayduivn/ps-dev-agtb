@@ -72,7 +72,7 @@ class SugarTheme
      *
      * @var string
      */
-    protected $directionality = 'ltr';
+    public $directionality = 'ltr';
     /**
      * Theme directory name
      *
@@ -181,7 +181,7 @@ class SugarTheme
      *
      * @var bool
      */
-    protected $group_tabs;
+    public $group_tabs;
 
 
     /**

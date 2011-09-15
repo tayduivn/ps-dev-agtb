@@ -86,7 +86,7 @@ class SugarView
         //For the ajaxUI, we need to use output buffering to return the page in an ajax friendly format
         if ($this->_getOption('json_output')){
 			ob_start();
-			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])) {
 				echo $this->_getModLanguageJS();
 			}
 		}

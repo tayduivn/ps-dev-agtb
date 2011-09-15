@@ -64,11 +64,11 @@
         <td>
         &nbsp;
         </td>
-        <td align='center' id="lineLabel_{$idname}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap: normal;'>
+        <td align='center' id="lineLabel_{$idname}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap:normal;'>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
         </td>
 <!-- BEGIN Add and collapse -->
-        <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap: none;' valign='top'>
+        <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;' valign='top'>
             &nbsp;
             {if !$hideShowHideButton}
             <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if} title="{sugar_translate label="LBL_HIDE_SHOW"}">
@@ -94,7 +94,7 @@
         </td>
 <!-- BEGIN Remove and Radio -->
         <td valign='top' align='left' nowrap>
-			{capture assign="attr"}class="id-ff-remove" id="remove_{$idname}_collection_0" onclick="collection[\'{$displayParams.formName}_{$idname}\'].remove(0);"{/capture}
+			{capture assign="attr"}class="id-ff-remove" id="remove_{$idname}_collection_0" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0);"{/capture}
 			{capture assign="alt"}{sugar_translate label="LBL_ID_FF_REMOVE"}{/capture}
             {sugar_getimage name="id-ff-remove.png" attr=$attr alt=$alt}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
         </td>

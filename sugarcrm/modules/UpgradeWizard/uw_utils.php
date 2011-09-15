@@ -4427,7 +4427,7 @@ function getSilentUpgradeVar($var){
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-	if(file_exists($cachefile = sugar_cached('cache/modules/unified_search_modules.php')))
+	if(file_exists($cachefile = sugar_cached('modules/unified_search_modules.php')))
 	{
 	   unlink($cachefile);
 	}
