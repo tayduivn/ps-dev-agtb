@@ -181,7 +181,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	    );    
 
 		$where_clauses = $this->searchForm->generateSearchWhere();		
-		$this->assertEquals($where_clauses[0], "opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01'"); 		
+		$this->assertEquals($where_clauses[0], "(opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01')");
 		
     }
     
