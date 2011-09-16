@@ -411,7 +411,10 @@ class RenameModules
                     //At this point we don't know if we should replace the string with the plural or singular version of the new
                     //strings so we'll try both but with the plural version first since it should be longer than the singular.
                     $replacedString = str_replace($renameFields['prev_plural'], $renameFields['plural'], $oldStringValue);
-                    $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    if ($replacedString == $oldStringValue) {
+                        // continue to replace singular only if nothing been replaced yet
+                        $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    }
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
