@@ -69,7 +69,17 @@ class SugarWidgetFieldName extends SugarWidgetFieldVarchar
 		$str .= $this->displayListPlain($layout_def);
 		$str .= "</a>";
         //BEGIN SUGARCRM flav=pro ONLY
-		$str .= " <a href=\"#\" data-record=$record data-module=$module class=\"quickEdit\"' ><img border=\"0\" src=\"themes/Sugar/images/edit_inline.png\"></a>";
+       global $beanList;
+       $tempBean = new $beanList[$module]();
+        //only present edit link if user has save access
+       if($tempBean->ACLAccess('Save')){
+            //if the module is employee or users, make an additional check to make sure current user is an admin
+            if(!(($module == 'Users' || $module == 'Employees') && !is_admin($current_user))){
+               $str .= " <a href=\"#\" data-record=$record data-module=$module class=\"quickEdit\"' ><img border=\"0\" src=\"themes/Sugar/images/edit_inline.png\"></a>";
+
+             }
+       }
+
         //END SUGARCRM flav=pro ONLY
 
 
