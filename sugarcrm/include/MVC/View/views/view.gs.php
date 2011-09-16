@@ -115,13 +115,13 @@ class ViewGS extends SugarWirelessView
             $matchReplace = $this->matchHitStart . '${0}' . $this->matchHitEnd;
             if($field['name'] == 'email1' || $field['name'] == 'email2')
             {
-                $matches = array();
-                preg_match_all("/\<a.*?\>(.*?)\<\/a\>/is", $field['value'], $matches );
-                $aValue = $matches[1][0];
-                
-                $aReplacedValue = preg_replace($this->searchRegex, $matchReplace, $aValue);
-                $newLink = preg_replace("/\<a(.*?)\>(.*?)\<\/a\>/i", "<a\${1}>{$aReplacedValue}<a>", $field['value']);
-                $field['value'] = $newLink;
+                if(preg_match_all("/\<a.*?\>(.*?)\<\/a\>/is", $field['value'], $matches))
+                {
+                    $aValue = $matches[1][0];
+                    $aReplacedValue = preg_replace($this->searchRegex, $matchReplace, $aValue);
+                    $newLink = preg_replace("/\<a(.*?)\>(.*?)\<\/a\>/i", "<a\${1}>{$aReplacedValue}<a>", $field['value']);
+                    $field['value'] = $newLink;
+                }
             } else if(isset($field['type']) && $field['type'] == 'phone') {
                 //Do a string replacement for phone fields since it may contain special characters
                 $matchReplace = $this->matchHitStart . $this->searchString . $this->matchHitEnd;
