@@ -92,6 +92,7 @@ $dictionary['TaxRate'] = array('table' => 'taxrates'
     'dbType'=>'decimal2',
     'len' => '7,5',
     'importable' => 'required',
+    'required' => true,
   ),
   'list_order' =>
   array (
@@ -100,6 +101,7 @@ $dictionary['TaxRate'] = array('table' => 'taxrates'
     'type' => 'int',
     'len' => '4',
     'importable' => 'required',
+    'required' => true,
   ),
   'status' =>
   array (
@@ -110,6 +112,7 @@ $dictionary['TaxRate'] = array('table' => 'taxrates'
     'len' => 100,
     'options' => 'taxrate_status_dom',
     'importable' => 'required',
+    'required' => true,
   ),
 )
                                                       , 'indices' => array (
