@@ -110,7 +110,7 @@ class ImportViewExtimport extends ImportView
         }
         else
         {
-            return new ExternalSourceEAPMAdapter();
+            return new ExternalSourceEAPMAdapter($this->externalSource);
         }
     }
 

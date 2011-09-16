@@ -76,8 +76,7 @@ class ext_rest_linkedin extends ext_rest {
 
     private function formatListResponse($resp)
     {
-
-        $results = array('people' => array(), 'meta' => array());
+        $records = array();
         $xmlResp = simplexml_load_string($resp);
         if ($xmlResp === FALSE)
             throw new Exception('Unable to parse list response');
@@ -86,15 +85,13 @@ class ext_rest_linkedin extends ext_rest {
         {
             $tmp = array();
             $this->convertPersonListResponeToArray($person, $tmp);
-            $results['people'][] = $tmp;
+            $records[] = $tmp;
 
         }
 
-        $results['meta']['totalResults'] = (int)$xmlResp->attributes()->total;
-        $results['meta']['startIndex'] = (int)$xmlResp->attributes()->start;
-
-        return $results;
-
+        return array('totalResults' => (int)$xmlResp->attributes()->total,
+                     'startIndex' => (int)$xmlResp->attributes()->start,
+                     'records' => $records);
     }
 
 
