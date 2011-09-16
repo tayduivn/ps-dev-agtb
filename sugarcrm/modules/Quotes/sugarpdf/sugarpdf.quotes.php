@@ -26,9 +26,9 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
     var $aclAction = "detail";
 
     // Defines the boundaries of the header image
-    const MAX_WIDTH = 867;
+    const MAX_WIDTH = 348;
     const MAX_HEIGHT = 60;
-    const DPI = 72;
+    const DPI = 500;
 
     /**
      * Override
@@ -55,6 +55,7 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
                 $imsize = @getimagesize($logo);
                 if ($imsize === FALSE) {
                     $logo = K_PATH_IMAGES.$headerdata['logo'];
+                    $imsize = @getimagesize($logo);
                 }
             }
             if ( $imsize ) {

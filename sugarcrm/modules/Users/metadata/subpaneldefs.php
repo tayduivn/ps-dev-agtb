@@ -156,11 +156,10 @@ $layout_defs['UserEAPM'] = array(
 
     ),
 );
-
+//BEGIN SUGARCRM flav=pro ONLY
 $layout_defs['UsersHolidays']['subpanel_setup']['holidays'] = $layout_defs['Users']['subpanel_setup']['holidays'];
 $layout_defs['UserOAuth']['subpanel_setup']['tokens'] = $layout_defs['Users']['subpanel_setup']['tokens'];
 
-//BEGIN SUGARCRM flav=pro ONLY
 //remove the administrator create button holiday for the user admin only
 if ( !empty($_REQUEST['record']) ) {
     $result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='{$_REQUEST['record']}'");
