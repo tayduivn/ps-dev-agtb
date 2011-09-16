@@ -951,8 +951,10 @@ require_once('include/EditView/EditView2.php');
                                         $UnifiedSearch = true;
                                     }
 
-                                    //check to see if this is a universal search, AND the field name is "last_name"
-                                    if($UnifiedSearch && strpos($db_field, 'last_name') !== false){
+                                	//check to see if this is a universal search OR the field has db_concat_fields set in vardefs, AND the field name is "last_name"
+                                    //BUG 45709: Tasks Advanced Search: Contact Name field does not return matches on full names
+                                    //Frank: Adding Surabhi's fix back which seem to have gone missing in CottonCandy merge
+									if(($UnifiedSearch || !empty($this->seed->field_name_map[$field]['db_concat_fields'])) && strpos($db_field, 'last_name') !== false){
                                         //split the string value, and the db field name
                                         $string = explode(' ', $field_value);
                                         $column_name =  explode('.', $db_field);
