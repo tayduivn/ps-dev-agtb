@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+
+
 <div id='studiofields'>
 <input type='button' name='addfieldbtn' value='{$mod_strings.LBL_BTN_ADDFIELD}' class='button' onclick='ModuleBuilder.moduleLoadField("");'>&nbsp;
 {if $editLabelsMb=='1'}
@@ -56,16 +58,16 @@ console.log(myConfigs);
 {literal}
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = "<a class='crumbLink' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
+   elCell.innerHTML = "<a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
 };
 
 var labelFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = oData.replace(/\:$/, '');
+   elCell.innerHTML = oData.replace(/\:\s*?$/, '');
 };
 
 var myColumnDefs = [
-    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"labelFormatter", width:150},
+    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
     {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
     {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
 ];
@@ -115,3 +117,17 @@ ModuleBuilder.helpSetup('fieldsEditor','mbDefault');
 ModuleBuilder.helpSetup('fieldsEditor','default');
 {/if}
 </script>
+
+<style>
+{literal}
+a.mbLBLL {
+	text-decoration:none;
+	font-weight:normal;
+	color:black;
+}
+
+#field_table {
+    text-align:left;
+}
+{/literal}
+</style>
