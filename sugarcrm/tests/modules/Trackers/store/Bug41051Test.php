@@ -73,7 +73,7 @@ public function testTrackerSessionDatabaseStore()
 		$seconds = $GLOBALS['db']->getOne("SELECT seconds FROM tracker_sessions WHERE session_id = 'Bug41051Test'");
 		$this->assertEquals('10', $seconds, 'Assert that new database entry is created');
 		
-		$seconds = $GLOBALS['db']->getOne("UPDATE tracker_sessions SET seconds='10' WHERE session_id = 'Bug41051Test'");
+		$seconds = $GLOBALS['db']->query("UPDATE tracker_sessions SET seconds='10' WHERE session_id = 'Bug41051Test'");
 		if($monitor = $trackerManager->getMonitor('tracker_sessions'))
 		{
 			$monitor->setValue('session_id', 'Bug41051Test');
@@ -85,7 +85,7 @@ public function testTrackerSessionDatabaseStore()
 			$this->assertEquals('0', $seconds, 'Assert that new database entry is modified as expected');
 		}
 		
-		$seconds = $GLOBALS['db']->getOne("UPDATE tracker_sessions SET seconds='10' WHERE session_id = 'Bug41051Test'");
+		$seconds = $GLOBALS['db']->query("UPDATE tracker_sessions SET seconds='10' WHERE session_id = 'Bug41051Test'");
 		if($monitor = $trackerManager->getMonitor('tracker_sessions'))
 		{
 			$monitor->setValue('session_id', 'Bug41051Test');

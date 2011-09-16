@@ -864,6 +864,8 @@ protected function checkQuery($sql, $object_name = false)
 		$sql .=	"/* INDEXES */\n";
 		$correctedIndexs = array();
 
+        $compareIndices_case_insensitive = array();
+
 		// do indicies comparisons case-insensitive
 		foreach($compareIndices as $k => $value){
 			$value['name'] = strtolower($value['name']);
