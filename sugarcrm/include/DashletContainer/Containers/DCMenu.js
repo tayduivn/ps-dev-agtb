@@ -327,7 +327,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         if (!DCMenu.qePanel)
         {
             DCMenu.qePanel = new YAHOO.widget.Panel('quickEditWindow', {
-                width: "990px",
+                width: "1050px",
                 draggable: true,
                 close: true,
                 constraintoviewport: true,
