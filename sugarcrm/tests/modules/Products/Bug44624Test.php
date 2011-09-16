@@ -36,7 +36,11 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
         $current_user->is_admin = 1;
         $current_user->setPreference('dec_sep', '.', 0, 'global');
         $current_user->setPreference('num_grp_sep', ',', 0, 'global');
-        
+
+		require('include/modules.php');
+		$GLOBALS['beanList'] = $beanList;
+		$GLOBALS['beanFiles'] = $beanFiles;
+
 	    $GLOBALS['module'] = "Products";
 		SugarTestProductTypesUtilities::createType(false, '1');
 		$this->_product = SugarTestProductUtilitiesWithTypes2::createProduct("1");
@@ -44,6 +48,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
         //Clear out the products_audit table
         $GLOBALS['db']->query("DELETE FROM products_audit WHERE parent_id = '{$this->_product->id}'");
         //$this->useOutputBuffering = false;
+
 	}
 
 	public function tearDown()
@@ -52,6 +57,7 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 		SugarTestProductUtilitiesWithTypes2::removeAllCreatedProducts();
 		SugarTestProductTypesUtilities::removeAllCreatedtypes();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($this->_product);
 	}
 
     public function testProductListPriceChanges() {
@@ -68,14 +74,15 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
         $this->_product->retrieve();
 
         $id = $this->_product->id;
-        $query = "SELECT * from products_audit where parent_id='$id'";
+        $query = "SELECT * from products_audit where parent_id='{$id}'";
         $result = $GLOBALS['db']->query($query);
 
         $list_of_changes = array();
 
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $list_of_changes[] = $row["field_name"];
-        }
+          while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+              $list_of_changes[] = 'a' . $row['created_by'] . ' = ' . $row["field_name"] . ',' . $row['before_value_string'] . ',' . $row['after_value_string'];
+
+          }
 
         //echo var_export($list_of_changes, true);
         // list of audited changes should be empty
@@ -103,9 +110,10 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
 
         $list_of_changes = array();
 
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $list_of_changes[] = $row["field_name"];
-        }
+          while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+              $list_of_changes[] = 'b' . $row['created_by'] . ' = ' . $row["field_name"] . ',' . $row['before_value_string'] . ',' . $row['after_value_string'];
+
+          }
 
         //echo var_export($list_of_changes, true);
         
@@ -132,12 +140,13 @@ class Bug44624Test extends Sugar_PHPUnit_Framework_TestCase
           $list_of_changes = array();
 
           while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-              $list_of_changes[] = $row["field_name"];
+              $list_of_changes[] = 'c' . $row['created_by'] . ' = ' . $row["field_name"] . ',' . $row['before_value_string'] . ',' . $row['after_value_string'];
 
           }
 
-          // list of audited changes should be empty
-           $this->assertEmpty($list_of_changes);
+          //echo var_export($list_of_changes, true);
+          //list of audited changes should be empty
+          $this->assertEmpty($list_of_changes);
 
 
       }
@@ -183,9 +192,9 @@ class SugarTestProductUtilitiesWithTypes2 extends SugarTestProductUtilities
 		$product = new Product();
 		$product->name = $name . $time;
 		$product->tax_class = 'Taxable';
-		$product->cost_price = '1';
-		$product->list_price = '0';
-		$product->discount_price = '3.33';
+		$product->cost_price = 1;
+		$product->list_price = 0;
+		$product->discount_price = 3.33;
 		$product->quantity = '100';
         $product->status = 'Ship';
 		$product->type_id = self::getTypeId($typeName);
