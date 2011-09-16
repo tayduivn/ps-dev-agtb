@@ -140,7 +140,7 @@ class Bug45287_2Test extends Sugar_PHPUnit_Framework_TestCase
         // Current User is on GMT-7.
         // Asking for meeting of 14 July 2011, I expect to search (GMT) from 14 July at 07:00 until 15 July at 07:00 (excluded)
         $expectedWhere = "meetings.date_start >= '" . $GMTDates['start'] . "' AND meetings.date_start <= '" . $GMTDates['end'] . "'";
-        $this->assertEquals($w[0], $expectedWhere);
+        $this->assertGreaterThan(0, strpos($w[0], $expectedWhere));
     }
 	
 
@@ -176,7 +176,7 @@ class Bug45287_2Test extends Sugar_PHPUnit_Framework_TestCase
         // Current User is on GMT-7.
         // Asking for meeting between 13 and 14 July 2011, I expect to search from 13 July at 07:00 until 15 July at 07:00 (excluded)
         $expectedWhere = "meetings.date_start >= '" . $GMTDatesStart['start'] . "' AND meetings.date_start <= '" . $GMTDatesEnd['end'] . "'";
-        $this->assertEquals($w[0], $expectedWhere);
+        $this->assertGreaterThan(0, strpos($w[0], $expectedWhere));
    }
 	
 

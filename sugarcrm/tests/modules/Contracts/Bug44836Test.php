@@ -47,6 +47,7 @@ class Bug44836Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	
 	public function testContractsSubpanelQuickCreate()
 	{
+         $_REQUEST['action'] = 'QuickCreate';
 		 $subpanelQuickCreate = new SubpanelQuickCreate('Contracts', 'QuickCreate');
 		 $this->expectOutputRegex('/check_form\s*?\(\s*?\'form_SubpanelQuickCreate_Contracts\'\s*?\)/');
 	}
