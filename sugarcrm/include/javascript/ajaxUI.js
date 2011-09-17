@@ -266,7 +266,7 @@ SUGAR.ajaxUI = {
     {
         if (!SUGAR.ajaxUI.loadingPanel)
         {
-            SUGAR.ajaxUI.loadingPanel = new YAHOO.widget.Panel("loading",
+            SUGAR.ajaxUI.loadingPanel = new YAHOO.widget.Panel("ajaxloading",
             {
                 width:"240px",
                 fixedcenter:true,
@@ -280,8 +280,8 @@ SUGAR.ajaxUI = {
             SUGAR.ajaxUI.loadingPanel.render(document.body);
         }
 
-        if (document.getElementById('loading_c'))
-            document.getElementById('loading_c').style.display = '';
+        if (document.getElementById('ajaxloading_c'))
+            document.getElementById('ajaxloading_c').style.display = '';
         
         SUGAR.ajaxUI.loadingPanel.show();
 
@@ -290,7 +290,7 @@ SUGAR.ajaxUI = {
     {
         SUGAR.ajaxUI.loadingPanel.hide();
         
-        if (document.getElementById('loading_c'))
-            document.getElementById('loading_c').style.display = 'none';
+        if (document.getElementById('ajaxloading_c'))
+            document.getElementById('ajaxloading_c').style.display = 'none';
     }
 };
