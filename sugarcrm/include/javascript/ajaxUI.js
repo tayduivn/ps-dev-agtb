@@ -202,7 +202,7 @@ SUGAR.ajaxUI = {
             var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
             SA.lastURL = "";
             //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
-            ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
+            SUGAR.ajaxUI.showLoadingPanel();
             if(string.length > 200)
             {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
