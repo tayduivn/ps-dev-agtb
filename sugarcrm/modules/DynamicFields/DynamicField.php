@@ -794,7 +794,7 @@ class DynamicField {
         //We aren't checking for data types, just that the column exists.
         $db = $GLOBALS['db'];
         $tablename = $this->bean->table_name."_cstm";
-        $compareFieldDefs = $db->getHelper()->get_columns($tablename);
+        $compareFieldDefs = $db->get_columns($tablename);
         foreach($this->bean->field_defs as $name=>$data){
             if(empty($data['source']) || $data['source'] != 'custom_fields')
                 continue;
