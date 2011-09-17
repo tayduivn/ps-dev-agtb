@@ -30,11 +30,16 @@
 
 {literal}
 <style>
+#smtpButtonGroup .yui-button {
+    padding-top: 10px;
+}
 #smtpButtonGroup .yui-radio-button-checked button, .yui-checkbox-button-checked button {
     background-color: #CCCCCC;
     color: #FFFFFF;
     text-shadow: none;
 }
+
+
 {/literal}
 </style>
 {if $ERROR != ''}
@@ -92,7 +97,7 @@
                                 </td>
                             </tr>
                             <tr scope="row" id="external_sources_tr" style="display:none;" >
-                                <td colspan="2" width="25%" style="padding-top: 10px;">
+                                <td colspan="2" width="35%" style="padding-top: 10px;">
                                     <div id="smtpButtonGroup" class="yui-buttongroup">
                                     {foreach from=$EXTERNAL_SOURCES key=k item=v}
                                         <span id="{$k}" class="yui-button yui-radio-button{if $selectExternalSource == $k} yui-button-checked{/if}">
