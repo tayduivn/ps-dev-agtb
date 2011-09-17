@@ -55,28 +55,66 @@ class Person extends Basic
 	function _create_proper_name_field() 
 	{
 		global $locale, $app_list_strings;
-		//BEGIN SUGARCRM flav=pro ONLY
-		if(isset($GLOBALS['current_user']->id) && $this->bean_implements('ACL') && !ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))){
-			$full_name = $this->last_name;
 
-		} else {
-		//END SUGARCRM flav=pro ONLY
-			if($this->createLocaleFormattedName)
-			{
-			    // Bug 38648 - If the given saluation doesn't exist in the dropdown, don't display it as part of the full name
-				$salutation = '';
-			    if(isset($this->field_defs['salutation']['options']) 
-			            && isset($app_list_strings[$this->field_defs['salutation']['options']])
-			            && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
+        // Bug# 46125 - make first name, last name, salutation and title of Contacts respect field level ACLs
+        $first_name = ""; $last_name = ""; $salutation = ""; $title = "";
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ((ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        //END SUGARCRM flav=pro ONLY
+                // first name has at least read access
+           $first_name = $this->first_name;
+        //BEGIN SUGARCRM flav=pro ONLY
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ((ACLField::hasAccess('last_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        //END SUGARCRM flav=pro ONLY
+                // last name has at least read access
+            $last_name = $this->last_name;
+        //BEGIN SUGARCRM flav=pro ONLY
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ((ACLField::hasAccess('salutation', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        //END SUGARCRM flav=pro ONLY
+
+                // salutation has at least read access
+            if(isset($this->field_defs['salutation']['options'])
+			  && isset($app_list_strings[$this->field_defs['salutation']['options']])
+			  && isset($app_list_strings[$this->field_defs['salutation']['options']][$this->salutation]) ) {
+
 			        $salutation = $app_list_strings[$this->field_defs['salutation']['options']][$this->salutation];
-			    }
-				$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name, $salutation, $this->title);
+			    }   // if
+        //BEGIN SUGARCRM flav=pro ONLY
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ((ACLField::hasAccess('title', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        //END SUGARCRM flav=pro ONLY
+                // last name has at least read access
+            $title = $this->title;
+        //BEGIN SUGARCRM flav=pro ONLY
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        // Corner Case:
+        // Both first name and last name cannot be empty, at least one must be shown
+        // In that case, we can ignore field level ACL and just display last name...
+        // In the ACL field level access settings, last_name cannot be set to "none"
+        if (empty($first_name) && empty($last_name)) {
+            $full_name = $locale->getLocaleFormattedName("", $last_name, $salutation, $title);
+        } else {
+			if($this->createLocaleFormattedName) {
+				$full_name = $locale->getLocaleFormattedName($first_name, $last_name, $salutation, $title);
 			} else {
-				$full_name = $locale->getLocaleFormattedName($this->first_name, $this->last_name);
+				$full_name = $locale->getLocaleFormattedName($first_name, $last_name);
 			}
-		//BEGIN SUGARCRM flav=pro ONLY
-		} 
-		//END SUGARCRM flav=pro ONLY
+		}
+
 		$this->name = $full_name;
 		$this->full_name = $full_name; //used by campaigns
 	}
