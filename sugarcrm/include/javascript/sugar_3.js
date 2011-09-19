@@ -605,6 +605,7 @@ function check_form(formname) {
 }
 
 function add_error_style(formname, input, txt, flash) {
+    var raiseFlag = false;
 	if (typeof flash == "undefined")
 		flash = true;
 	try {
@@ -622,9 +623,17 @@ function add_error_style(formname, input, txt, flash) {
     nomatchTxt = SUGAR.language.get('app_strings', 'ERR_SQS_NO_MATCH_FIELD');
     matchTxt = txt.replace(requiredTxt,'').replace(invalidTxt,'').replace(nomatchTxt,'');
 
-	if(inputHandle.parentNode.innerHTML.search(matchTxt) == -1) {
+    YUI().use('node', function (Y) {
+        Y.one(inputHandle).get('parentNode').get('children').each(function(node, index, nodeList){
+            if(node.hasClass('validation-message') && node.get('text').search(matchTxt)){
+                raiseFlag = true;
+            }
+        });
+    });
+
+    if(!raiseFlag) {
         errorTextNode = document.createElement('div');
-        errorTextNode.className = 'required';
+        errorTextNode.className = 'required validation-message';
         errorTextNode.innerHTML = txt;
         if ( inputHandle.parentNode.className.indexOf('x-form-field-wrap') != -1 ) {
             inputHandle.parentNode.parentNode.appendChild(errorTextNode);
@@ -667,6 +676,7 @@ function add_error_style(formname, input, txt, flash) {
       // Catch errors here so we don't allow an incomplete record through the javascript validation
   }
 }
+
 
 /**
  * removes all error messages for the current form
