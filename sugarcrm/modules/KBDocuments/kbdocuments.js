@@ -1799,7 +1799,7 @@ SUGAR.kb = function() {
                         while (currValTiny.indexOf(unescape(filename)) != -1) {
                             //check where the space is and keep replacing with $#32
                             currValTiny = currValTiny.replace(unescape(filename), 'QW%%^%%WQ');
-                            currValTiny = currValTiny.replace(/<img[^<]*QW%%\^%%WQ[^>]*>?/, '&#32');
+                            currValTiny = currValTiny.replace(/<img[^<]*QW%%\^%%WQ[^>]*>?/, '');
                         }
                         tiny.setContent(currValTiny);
                     }
