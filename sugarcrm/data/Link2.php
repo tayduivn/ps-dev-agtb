@@ -36,8 +36,8 @@ require_once("data/Relationships/RelationshipFactory.php");
 
 class Link2 {
 
-	protected $relationship; //relationship object this link is tied to.
-	protected $focus;  //SugarBean this link uses as the context for its calls.
+    protected $relationship; //relationship object this link is tied to.
+    protected $focus;  //SugarBean this link uses as the context for its calls.
     protected $def;  //Field def for this link
     protected $name;  //Field name for this link
     protected $beans;  //beans on the other side of the link
@@ -45,14 +45,14 @@ class Link2 {
     protected $loaded; //true if this link has been loaded from the database
     protected $relationship_fields = array();
 
-	/**
+    /**
      * @param  $linkName String name of a link field in the module's vardefs
      * @param  $bean SugarBean focus bean for this link (one half of a relationship)
      * @param  $linkDef Array Optional vardef for the link in case it can't be found in the passed in bean for the global dictionary
      * @return void
      *
      */
-	function __construct($linkName, $bean, $linkDef = false){
+    function __construct($linkName, $bean, $linkDef = false){
         $this->focus = $bean;
         //Try to load the link vardef from the beans field defs. Otherwise start searching
         if (empty($bean->field_defs) || empty($bean->field_defs[$linkName]) || empty($bean->field_defs[$linkName]['relationship']))
@@ -112,7 +112,7 @@ class Link2 {
                 }
             }
         }
-	}
+    }
 
     /**
      * Returns false if no relationship was found for this link
@@ -136,7 +136,7 @@ class Link2 {
         $this->loaded = true;
     }
 
-	/**
+    /**
      * @return array ids of records related through this link
      */
     public function get($role = false) {
@@ -151,22 +151,22 @@ class Link2 {
      *
      * @return string name of table for the relationship of this link
      */
-	public function getRelatedTableName() {
+    public function getRelatedTableName() {
         return BeanFactory::getBean($this->getRelatedModuleName())->table_name;
-	}
+    }
 
-	/**
+    /**
      * @return string the name of the module on the other side of this link
      */
     public function getRelatedModuleName() {
-		if (!$this->relationship) return false;
+        if (!$this->relationship) return false;
 
         if ($this->getSide() == REL_LHS) {
             return $this->relationship->getRHSModule();
-		} else {
+        } else {
             return $this->relationship->getLHSModule();
-		}
-	}
+        }
+    }
 
     /**
      *
@@ -199,33 +199,33 @@ class Link2 {
      * @deprecated
      * @return list of fields that exist only on the relationship
      */
-	public function getRelatedFields(){
-		return $this->relationship_fields;
-	}
+    public function getRelatedFields(){
+        return $this->relationship_fields;
+    }
 
     /**
      * @param $name
      * @return The value for the relationship field $name
      */
-	public function getRelatedField($name){
+    public function getRelatedField($name){
         if (!empty($this->relationship_fields) && !empty($this->relationship_fields[$name]))
             return $this->relationship_fields[$name];
         else
             return null; //For now return null. Later try the relationship object directly.
-	}
+    }
 
     /**
      * @return SugarRelationship the relationship object this link references
      */
-	public function getRelationshipObject() {
-	   return $this->relationship;
-	}
+    public function getRelationshipObject() {
+       return $this->relationship;
+    }
 
-	/**
+    /**
      * @return string "LHS" or "RHS" depending on the side of the relationship this link represents
      */
     public function getSide() {
-		//First try the relationship
+        //First try the relationship
         if ($this->relationship->getLHSLink() == $this->name &&
             ($this->relationship->getLHSModule() == $this->focus->module_name)
         ){
@@ -253,14 +253,14 @@ class Link2 {
         }
 
         $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
-	}
+    }
 
-	/**
+    /**
      * @return bool true if LHSModule == RHSModule
      */
     protected function is_self_relationship() {
-		return $this->relationship->isSelfReferencing();
-	}
+        return $this->relationship->isSelfReferencing();
+    }
 
     /**
      * @return bool true if this link represents a relationship where the parent could be one of multiple modules. (ex. Activities parent)
@@ -269,7 +269,7 @@ class Link2 {
         return $this->relationship->isParentRelationship();
     }
 
-	/**
+    /**
      * @param $params array of parameters. Possible parameters include:
      * 'join_table_link_alias': alias the relationship join table in the query (for M2M relationships),
      * 'join_table_alias': alias for the final table to be joined against (usually a module main table)
@@ -278,19 +278,19 @@ class Link2 {
      * @return string/array join query for this link
      */
     function getJoin($params, $return_array =false)
-	{
+    {
         return $this->relationship->getJoin($this, $params, $return_array);
-	}
+    }
 
     /**
      * @param array $params optional parameters. Possible Values;
      * 'return_as_array': returns the query broken into 
      * @return String/Array query to grab just ids for this relationship
      */
-	function getQuery($params = array())
+    function getQuery($params = array())
     {
-    	return $this->relationship->getQuery($this, $params);
-	}
+        return $this->relationship->getQuery($this, $params);
+    }
 
     /**
      * This function is similair getJoin except for M2m relationships it won't join agaist the final table.
@@ -305,7 +305,7 @@ class Link2 {
         return $this->relationship->getSubpanelQuery($this, $params, $return_array);
     }
 
-	/**
+    /**
      * @return array of SugarBeans related through this link. Use with caution.
      */
     function getBeans() {
@@ -323,14 +323,14 @@ class Link2 {
         }
 
         return $this->beans;
-	}
+    }
 
-	/**
+    /**
      * use this function to create link between 2 objects
-	 * 1:1 will be treated like 1 to many.
-	 *
+     * 1:1 will be treated like 1 to many.
+     *
      * the function also allows for setting of values for additional field in the table being
-	 * updated to save the relationship, in case of many-to-many relationships this would be the join table.
+     * updated to save the relationship, in case of many-to-many relationships this would be the join table.
      *
      * @param array $rel_keys array of ids or SugarBean objects. If you have the bean in memory, pass it in.
      * @param array $additional_values the values should be passed as key value pairs with column name as the key name and column value as key value.
@@ -362,11 +362,11 @@ class Link2 {
                 $this->relationship->add($key, $this->focus, $additional_values);
             }
         }
-	}
+    }
 
 
 
-	/**
+    /**
      * Marks the relationship delted for this given record pair.
      * @param $id id of the Parent/Focus SugarBean
      * @param string $related_id id or SugarBean to unrelate. Pass a SugarBean if you have it.
@@ -391,7 +391,7 @@ class Link2 {
         {
             $this->relationship->removeAll($this);
         }
-	}
+    }
 
     /**
      * Returns a SugarBean with the given ID from the related module.
@@ -461,71 +461,71 @@ class Link2 {
      */
     public function relationship_exists($table_name, $join_key_values) {
 
-		//find the key values for the table.
-		$dup_keys=$this->_get_alternate_key_fields($table_name);
-		if (empty($dup_keys)) {
-			$GLOBALS['log']->debug("No alternate key define, skipping duplicate check..");
-			return false;
-		}
+        //find the key values for the table.
+        $dup_keys=$this->_get_alternate_key_fields($table_name);
+        if (empty($dup_keys)) {
+            $GLOBALS['log']->debug("No alternate key define, skipping duplicate check..");
+            return false;
+        }
 
-		$delimiter='';
-		$this->_duplicate_where=' WHERE ';
-		foreach ($dup_keys as $field) {
-			//look for key in  $join_key_values, if found add to filter criteria else abort duplicate checking.
-			if (isset($join_key_values[$field])) {
+        $delimiter='';
+        $this->_duplicate_where=' WHERE ';
+        foreach ($dup_keys as $field) {
+            //look for key in  $join_key_values, if found add to filter criteria else abort duplicate checking.
+            if (isset($join_key_values[$field])) {
 
-				$this->_duplicate_where .= $delimiter.' '.$field."='".$join_key_values[$field]."'";
-				$delimiter='AND';
-			} else {
-				$GLOBALS['log']->error('Duplicate checking aborted, Please supply a value for this column '.$field);
-				return false;
-			}
-		}
-		//add deleted check.
-		$this->_duplicate_where .= $delimiter.' deleted=0';
+                $this->_duplicate_where .= $delimiter.' '.$field."='".$join_key_values[$field]."'";
+                $delimiter='AND';
+            } else {
+                $GLOBALS['log']->error('Duplicate checking aborted, Please supply a value for this column '.$field);
+                return false;
+            }
+        }
+        //add deleted check.
+        $this->_duplicate_where .= $delimiter.' deleted=0';
 
-		$query='SELECT id FROM '.$table_name.$this->_duplicate_where;
+        $query='SELECT id FROM '.$table_name.$this->_duplicate_where;
 
-		$GLOBALS['log']->debug("relationship_exists query(".$query.')');
+        $GLOBALS['log']->debug("relationship_exists query(".$query.')');
 
-		$result=$this->_db->query($query, true);
-		$row = $this->_db->fetchByAssoc($result);
+        $result=$this->_db->query($query, true);
+        $row = $this->_db->fetchByAssoc($result);
 
-		if ($row == null) {
-			return false;
-		}
-		else {
-			$this->_duplicate_key=$row['id'];
-			return true;
-		}
-	}
+        if ($row == null) {
+            return false;
+        }
+        else {
+            $this->_duplicate_key=$row['id'];
+            return true;
+        }
+    }
 
     //Below are functions not used directly and exist for backwards compatiblity with customizations, will be removed in a later version
 
-	/* returns array of keys for duplicate checking, first check for an index of type alternate_key, if not found searches for
-	 * primary key.
-	 *
-	 */
-	public function _get_alternate_key_fields($table_name) {
-		$indices=Link::_get_link_table_definition($table_name,'indices');
-		if (!empty($indices)) {
-			foreach ($indices as $index) {
+    /* returns array of keys for duplicate checking, first check for an index of type alternate_key, if not found searches for
+     * primary key.
+     *
+     */
+    public function _get_alternate_key_fields($table_name) {
+        $indices=Link::_get_link_table_definition($table_name,'indices');
+        if (!empty($indices)) {
+            foreach ($indices as $index) {
                 if ( isset($index['type']) && $index['type'] == 'alternate_key' ) {
                     return $index['fields'];
                 }
-			}
-		}
+            }
+        }
         //bug 32623, when the relationship is built in old version, there is no alternate_key. we have to use join_key_lhs and join_key_lhs.
         $relDef = $this->relationship->def;
         if (!empty($relDef['join_key_lhs']) && !empty($relDef['join_key_rhs']))
-		    return array($relDef['join_key_lhs'], $relDef['join_key_rhs']);
-	}
+            return array($relDef['join_key_lhs'], $relDef['join_key_rhs']);
+    }
 
-	/**
-	 * @depricated
-	 * Gets the vardef for the relationship of this link.
-	 */
-	public function _get_link_table_definition($table_name, $def_name) {
+    /**
+     * @depricated
+     * Gets the vardef for the relationship of this link.
+     */
+    public function _get_link_table_definition($table_name, $def_name) {
 
         if (isset($this->relationship->def[$def_name]))
             return $this->relationship->def[$def_name];
