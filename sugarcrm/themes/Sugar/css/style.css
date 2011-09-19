@@ -6120,3 +6120,8 @@ li.active a img.deletePageImg {
    display: inline !important;
    margin-bottom: 2px;
 }
+
+#ajaxUIErrorPanel .ft {
+    font-weight: bold;
+    font-size: 1.2em;
+}
