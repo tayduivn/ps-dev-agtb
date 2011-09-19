@@ -38,77 +38,19 @@ require_once('modules/Import/sources/ImportFile.php');
 require_once('modules/Import/views/ImportListView.php');
 require_once('include/ListView/ListViewFacade.php');
 
-                
-class ImportViewLast extends SugarView 
-{	
-	protected $pageTitleKey = 'LBL_STEP_5_TITLE';
-	
-    /**
-     * @see SugarView::getMenu()
-     */
-    public function getMenu(
-        $module = null
-        )
-    {
-        global $mod_strings, $current_language;
-        
-        if ( empty($module) )
-            $module = $_REQUEST['import_module'];
-        
-        $old_mod_strings = $mod_strings;
-        $mod_strings = return_module_language($current_language, $module);
-        $returnMenu = parent::getMenu($module);
-        $mod_strings = $old_mod_strings;
-        
-        return $returnMenu;
-    }
-    
+
+class ImportViewLast extends ImportView
+{
+    protected $pageTitleKey = 'LBL_STEP_5_TITLE';
+
  	/**
-     * @see SugarView::_getModuleTab()
-     */
- 	protected function _getModuleTab()
-    {
-        global $app_list_strings, $moduleTabMap;
-        
- 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
-        if ( !empty($_REQUEST['module_tab']) )
-            return $_REQUEST['module_tab'];
-        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
-            return $moduleTabMap[$_REQUEST['import_module']];
-        // Default anonymous pages to be under Home
-        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
-            return 'Home';
-        else
-            return $_REQUEST['import_module'];
- 	}
- 	
- 	/**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams($browserTitle = false)
-	{
-	    global $mod_strings, $app_list_strings;
-	    
-	    $iconPath = $this->getModuleTitleIconPath($this->module);
-	    $returnArray = array();
-	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><!--not_in_theme!--><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
-    	}
-    	else {
-    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
-    	}
-	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-	    $returnArray[] = $mod_strings['LBL_RESULTS'];
-    	
-	    return $returnArray;
-    }
-    
- 	/** 
      * @see SugarView::display()
      */
  	public function display()
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $current_language;
+
+
 
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
@@ -135,7 +77,7 @@ class ImportViewLast extends SugarView
             $updatedCount  += (int) $row[4];
         }
         fclose($fp);
-    
+
         $this->ss->assign("showUndoButton",FALSE);
         if($createdCount > 0)
         {
@@ -148,15 +90,15 @@ class ImportViewLast extends SugarView
             $activeTab = 1;
         else
             $activeTab = 0;
-        
+
         $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
         $this->ss->assign("updatedCount",$updatedCount);
-        $this->ss->assign("errorFile",$this->getDownloadURL(ImportCacheFiles::getErrorFileName()));
-        $this->ss->assign("errorrecordsFile",$this->getDownloadURL(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
-        $this->ss->assign("dupeFile",$this->getDownloadURL(ImportCacheFiles::getDuplicateFileName()));
+        $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
+        $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsWithoutErrorFileName());
+        $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
 
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
@@ -189,12 +131,6 @@ class ImportViewLast extends SugarView
         $content = $this->ss->fetch('modules/Import/tpls/last.tpl');
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
-    }
-
-    protected function getDownloadURL($filename)
-    {
-    	$name = basename(UploadFile::relativeName($filename));
-    	return "index.php?entryPoint=download&type=import&isTempFile=1&tempName={$name}&id={$name}";
     }
 
     protected function getListViewResults()
@@ -262,7 +198,7 @@ document.getElementById('finished').onclick = function(){
     document.getElementById('importlast').module.value = document.getElementById('importlast').import_module.value;
     document.getElementById('importlast').action.value = 'index';
 	return true;
-		
+
 }
 
 if ( typeof(SUGAR) == 'undefined' )
@@ -374,9 +310,9 @@ EOJAVASCRIPT;
 
         $json = getJSONobj();
         $encoded_popup_request_data = $json->encode($popup_request_data);
-        $script = getVersionedScript('include/SubPanel/SubPanelTiles.js');
+
         return <<<EOHTML
-$script
+<script type="text/javascript" src="include/SubPanel/SubPanelTiles.js?s={$sugar_version}&c={$sugar_config['js_custom_version']}"></script>
 <input align=right" type="button" name="select_button" id="select_button" class="button"
      title="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      accesskey="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY']}"
