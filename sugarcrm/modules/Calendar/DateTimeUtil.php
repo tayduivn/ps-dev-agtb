@@ -1,26 +1,46 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
- * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ * SugarCRM Community Edition is a customer relationship management program developed by
+ * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ * 
+ * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
+ * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
+ * 
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * SugarCRM" logo. If the display of the logo is not reasonably feasible for
+ * technical reasons, the Appropriate Legal Notices must display the words
+ * "Powered by SugarCRM".
  ********************************************************************************/
+
+
+
+
+
 /*********************************************************************************
- * $Id: DateTimeUtil.php 15853 2006-08-12 01:29:14 +0000 (Sat, 12 Aug 2006) jenny $
+
  ********************************************************************************/
 
 /**
@@ -166,31 +186,27 @@ class DateTimeUtil
 		return $this->hour.":".$this->min;
 	}
 
-  function parse_utc_date_time($str)
-  {
-    preg_match('/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/',$str,$matches);
+	function parse_utc_date_time($str){
+		preg_match('/(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z/',$str,$matches);
 
-    $date_arr = array(
-      'year'=>$matches[1],
-      'month'=>$matches[2],
-      'day'=>$matches[3],
-      'hour'=>$matches[4],
-      'min'=>$matches[5]);
+		$date_arr = array(
+		'year'=>$matches[1],
+		'month'=>$matches[2],
+		'day'=>$matches[3],
+		'hour'=>$matches[4],
+		'min'=>$matches[5]);
 
-      $date_time = new DateTimeUtil($date_arr,true);
+		$date_time = new DateTimeUtil($date_arr,true);
+		$date_arr = array('ts'=>$date_time->ts + $date_time->tz_offset);
 
-      $date_arr = array('ts'=>$date_time->ts + $date_time->tz_offset);
+		return new DateTimeUtil($date_arr,true);
+	}
 
-      return new DateTimeUtil($date_arr,true);
-  }
-
-	function get_utc_date_time()
-	{
+	function get_utc_date_time(){
 		return gmdate('Ymd\THi', $this->ts)."00Z";
 	}
 
-	function get_first_day_of_last_year()
-	{
+	function get_first_day_of_last_year(){
 			$date_arr = array('day'=>1,
 			'month'=>1,
 			'year'=>($this->year - 1));
@@ -198,8 +214,7 @@ class DateTimeUtil
 		return new DateTimeUtil($date_arr,true);
 
 	}
-	function get_first_day_of_next_year()
-	{
+	function get_first_day_of_next_year(){
 			$date_arr = array('day'=>1,
 			'month'=>1,
 			'year'=>($this->year + 1));
@@ -209,9 +224,14 @@ class DateTimeUtil
 	}
 
 	function get_first_day_of_next_week()
-	{
-		$first_day = $this->get_day_by_index_this_week(0);
-			$date_arr = array('day'=>($first_day->day + 7),
+	{	
+		global $week_start_day;
+		$ni = 0;
+		if($week_start_day == "Monday")
+			$ni++;			
+			
+		$first_day = $this->get_day_by_index_this_week($ni);
+			$date_arr = array('day'=>($first_day->day + 7),		
 			'month'=>$first_day->month,
 			'year'=>$first_day->year);
 
@@ -220,8 +240,14 @@ class DateTimeUtil
 	}
 	function get_first_day_of_last_week()
 	{
-		$first_day = $this->get_day_by_index_this_week(0);
-			$date_arr = array('day'=>($first_day->day - 7),
+		
+		global $week_start_day;
+		$ni = 0;
+		if($week_start_day == "Monday")
+			$ni++;
+	
+		$first_day = $this->get_day_by_index_this_week($ni);
+			$date_arr = array('day'=>($first_day->day - 7),		
 			'month'=>$first_day->month,
 			'year'=>$first_day->year);
 
@@ -529,16 +555,22 @@ class DateTimeUtil
 		return new DateTimeUtil($arr,true);
 	}
 
-	function get_day_by_index_this_week($day_index)
-	{
+	function get_day_by_index_this_week($day_index){
 		$arr = array();
 
-		if ( $day_index < 0 || $day_index > 6  )
+		global $week_start_day;
+		$ifrom = 0;
+		$ito = 6;
+		if($week_start_day == "Monday"){
+			$ifrom++; $ito++;
+		}
+
+		if ( $day_index < $ifrom || $day_index > $ito  )
 		{
 			sugar_die("day is outside of week range");
 		}
 
-		$arr['day'] = $this->day +
+		$arr['day'] = $this->day + 
 			($day_index - $this->day_of_week);
 
 		$arr['month'] = $this->month;

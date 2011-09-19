@@ -1,31 +1,40 @@
-/**
- * LICENSE: The contents of this file are subject to the SugarCRM Professional
- * End User License Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
- * unconditionally agreed to the terms and conditions of the License, and You
- * may not use this file except in compliance with the License.  Under the
- * terms of the license, You shall not, among other things: 1) sublicense,
- * resell, rent, lease, redistribute, assign or otherwise transfer Your
- * rights to the Software, and 2) use the Software for timesharing or service
- * bureau purposes such as hosting the Software for commercial gain and/or for
- * the benefit of a third party.  Use of the Software may be subject to
- * applicable fees and any use of the Software without first paying applicable
- * fees is strictly prohibited.  You do not have the right to remove SugarCRM
- * copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
- */
+/*********************************************************************************
+ * SugarCRM Community Edition is a customer relationship management program developed by
+ * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ * 
+ * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
+ * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
+ * 
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ * 
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * SugarCRM" logo. If the display of the logo is not reasonably feasible for
+ * technical reasons, the Appropriate Legal Notices must display the words
+ * "Powered by SugarCRM".
+ ********************************************************************************/
 
-// $Id: jsclass_scheduler.js 56853 2010-06-08 02:36:54Z clee $
+
+
 //////////////////////////////////////////////////
 // class: SugarWidgetListView
 // widget to display a list view
@@ -234,11 +243,15 @@ SugarWidgetScheduler.fill_invitees = function(form) {
 
 SugarWidgetScheduler.update_time = function() {
 
-    //For quick creates do nothing.
-    if( typeof(document.EditView) == 'undefined')
-        return;
+	var form_name;
+	if(typeof document.EditView != 'undefined')
+		form_name = "EditView";
+	else if(typeof document.CalendarEditView != 'undefined')
+		form_name = "CalendarEditView";
+	else
+		return;
 
-	var date_start = document.EditView.date_start.value;
+	var date_start = document.forms[form_name].date_start.value;
 	if(date_start.length < 16) {
 		return;
 	}	
@@ -257,8 +270,8 @@ SugarWidgetScheduler.update_time = function() {
 		GLOBAL_REGISTRY.focus.fields.time_start = hour_start + time_separator + minute_start;
 	}
 
-	GLOBAL_REGISTRY.focus.fields.duration_hours = document.EditView.duration_hours.value;
-	GLOBAL_REGISTRY.focus.fields.duration_minutes = document.EditView.duration_minutes.value;
+	GLOBAL_REGISTRY.focus.fields.duration_hours = document.forms[form_name].duration_hours.value;
+	GLOBAL_REGISTRY.focus.fields.duration_minutes = document.forms[form_name].duration_minutes.value;
 	GLOBAL_REGISTRY.focus.fields.datetime_start = SugarDateTime.mysql2jsDateTime(GLOBAL_REGISTRY.focus.fields.date_start,GLOBAL_REGISTRY.focus.fields.time_start);
 
 	GLOBAL_REGISTRY.scheduler_attendees_obj.init();
@@ -289,9 +302,18 @@ function SugarWidgetSchedulerAttendees() {
 }
 
 SugarWidgetSchedulerAttendees.prototype.init = function() {
+
+	var form_name;
+	if(typeof document.EditView != 'undefined')
+		form_name = "EditView";
+	else if(typeof document.CalendarEditView != 'undefined')
+		form_name = "CalendarEditView";
+	else
+		return;
+		
 	// this.datetime = new SugarDateTime();
 	GLOBAL_REGISTRY.scheduler_attendees_obj = this;
-	var date_start = document.EditView.date_start.value;
+	var date_start = document.forms[form_name].date_start.value;
 	var hour_start = parseInt(date_start.substring(11,13), 10);
 	var minute_start = parseInt(date_start.substring(14,16), 10);
 	var has_meridiem = /am|pm/i.test(date_start);
@@ -303,12 +325,12 @@ SugarWidgetSchedulerAttendees.prototype.init = function() {
 		GLOBAL_REGISTRY.focus.fields.time_start = hour_start + time_separator + minute_start + meridiem;
 	} else {
 		GLOBAL_REGISTRY.focus.fields.time_start = hour_start+time_separator+minute_start;
-		//GLOBAL_REGISTRY.focus.fields.time_start = document.EditView.time_hour_start.value+time_separator+minute_start;
+		//GLOBAL_REGISTRY.focus.fields.time_start = document.forms[form_name].time_hour_start.value+time_separator+minute_start;
 	}
 
-	GLOBAL_REGISTRY.focus.fields.date_start = document.EditView.date_start.value;
-	GLOBAL_REGISTRY.focus.fields.duration_hours = document.EditView.duration_hours.value;
-	GLOBAL_REGISTRY.focus.fields.duration_minutes = document.EditView.duration_minutes.value;
+	GLOBAL_REGISTRY.focus.fields.date_start = document.forms[form_name].date_start.value;
+	GLOBAL_REGISTRY.focus.fields.duration_hours = document.forms[form_name].duration_hours.value;
+	GLOBAL_REGISTRY.focus.fields.duration_minutes = document.forms[form_name].duration_minutes.value;
 	GLOBAL_REGISTRY.focus.fields.datetime_start = SugarDateTime.mysql2jsDateTime(GLOBAL_REGISTRY.focus.fields.date_start,GLOBAL_REGISTRY.focus.fields.time_start);
 
 	this.timeslots = new Array();
@@ -353,6 +375,15 @@ SugarWidgetSchedulerAttendees.prototype.load = function (parentNode) {
 }
 
 SugarWidgetSchedulerAttendees.prototype.display = function() {
+
+	var form_name;
+	if(typeof document.EditView != 'undefined')
+		form_name = "EditView";
+	else if(typeof document.CalendarEditView != 'undefined')
+		form_name = "CalendarEditView";
+	else
+		return;				
+
 	var dtstart = GLOBAL_REGISTRY.focus.fields.datetime_start;
 	var top_date = SugarDateTime.getFormattedDate(dtstart);
 	var html = '<h3>'+GLOBAL_REGISTRY['meeting_strings']['LBL_SCHEDULING_FORM_TITLE']+'</h3><table id ="schedulerTable">';
@@ -410,7 +441,7 @@ SugarWidgetSchedulerAttendees.prototype.display = function() {
 	//set the current user (as event-coordinator) so that they can be added to invitee list 
 	//only IF the first removed flag has not been set AND this is a new record
 	if((typeof (GLOBAL_REGISTRY.focus.users_arr) == 'undefined' || GLOBAL_REGISTRY.focus.users_arr.length == 0)
-      && document.EditView.record.value =='' && typeof(GLOBAL_REGISTRY.FIRST_REMOVE)=='undefined') {
+      && document.forms[form_name].record.value =='' && typeof(GLOBAL_REGISTRY.FIRST_REMOVE)=='undefined') {
 		GLOBAL_REGISTRY.focus.users_arr = [ GLOBAL_REGISTRY.current_user ];
 	}
 	
