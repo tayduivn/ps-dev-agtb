@@ -35,79 +35,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/Import/views/ImportView.php');
 
+
 class ImportViewStep2 extends ImportView
 {
  	protected $pageTitleKey = 'LBL_STEP_2_TITLE';
 
- 	/**
-     * @see SugarView::getMenu()
-     */
-    public function getMenu(
-        $module = null
-        )
-    {
-        global $mod_strings, $current_language;
-        
-        if ( empty($module) )
-            $module = $_REQUEST['import_module'];
-        
-        $old_mod_strings = $mod_strings;
-        $mod_strings = return_module_language($current_language, $module);
-        $returnMenu = parent::getMenu($module);
-        $mod_strings = $old_mod_strings;
-        
-        return $returnMenu;
-    }
-    
- 	/**
-     * @see SugarView::_getModuleTab()
-     */
- 	protected function _getModuleTab()
-    {
-        global $app_list_strings, $moduleTabMap;
-        
- 		// Need to figure out what tab this module belongs to, most modules have their own tabs, but there are exceptions.
-        if ( !empty($_REQUEST['module_tab']) )
-            return $_REQUEST['module_tab'];
-        elseif ( isset($moduleTabMap[$_REQUEST['import_module']]) )
-            return $moduleTabMap[$_REQUEST['import_module']];
-        // Default anonymous pages to be under Home
-        elseif ( !isset($app_list_strings['moduleList'][$_REQUEST['import_module']]) )
-            return 'Home';
-        else
-            return $_REQUEST['import_module'];
- 	}
- 	
- 	/**
-	 * @see SugarView::_getModuleTitleParams()
-	 */
-	protected function _getModuleTitleParams()
-	{
-	    global $mod_strings, $app_list_strings;
-	    
-	    $iconPath = $this->getModuleTitleIconPath($this->module);
-	    $returnArray = array();
-	    if (!empty($iconPath) && !$browserTitle) {
-	        $returnArray[] = "<a href='index.php?module={$_REQUEST['import_module']}&action=index'><!--not_in_theme!--><img src='{$iconPath}' alt='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' title='{$app_list_strings['moduleList'][$_REQUEST['import_module']]}' align='absmiddle'></a>";
-    	}
-    	else {
-    	    $returnArray[] = $app_list_strings['moduleList'][$_REQUEST['import_module']];
-    	}
-	    $returnArray[] = "<a href='index.php?module=Import&action=Step1&import_module={$_REQUEST['import_module']}'>".$mod_strings['LBL_MODULE_NAME']."</a>";
-	    $returnArray[] = $mod_strings['LBL_STEP_2_TITLE'];
-    	
-	    return $returnArray;
-    }
 
-
- 	/** 
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
     {
         global $mod_strings, $app_list_strings, $app_strings, $current_user, $import_bean_map;
-        global $import_mod_strings;        
-        
+        global $import_mod_strings;
+
         $this->instruction = 'LBL_SELECT_UPLOAD_INSTRUCTION';
         $this->ss->assign('INSTRUCTION', $this->getInstruction());
 
@@ -117,11 +58,11 @@ class ImportViewStep2 extends ImportView
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
         $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
         $this->ss->assign("CUSTOM_ENCLOSURE",htmlentities(
-            ( !empty($_REQUEST['custom_enclosure']) && $_REQUEST['custom_enclosure'] != 'other' 
-                ? $_REQUEST['custom_enclosure'] : 
-                ( !empty($_REQUEST['custom_enclosure_other']) 
+            ( !empty($_REQUEST['custom_enclosure']) && $_REQUEST['custom_enclosure'] != 'other'
+                ? $_REQUEST['custom_enclosure'] :
+                ( !empty($_REQUEST['custom_enclosure_other'])
                     ? $_REQUEST['custom_enclosure_other'] : "" ) )));
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
         $this->ss->assign("JAVASCRIPT", $this->_getJS());
@@ -129,7 +70,7 @@ class ImportViewStep2 extends ImportView
 
         $displayBackBttn = isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != 'index'? TRUE : FALSE;
         $this->ss->assign("displayBackBttn", $displayBackBttn);
-        
+
         $importSource = isset($_REQUEST['source']) ? $_REQUEST['source'] : 'csv' ;
         //Start custom mapping
         // show any custom mappings
@@ -168,7 +109,7 @@ class ImportViewStep2 extends ImportView
             }
             $this->ss->assign('custom_imports',$custom);
         }
-        
+
         // get globally defined import maps
         $published_imports_arr = $import_map_seed->retrieve_all_by_string_fields(array('is_published' => 'yes', 'module' => $_REQUEST['import_module'],) );
         if ( count($published_imports_arr) )
@@ -200,14 +141,14 @@ class ImportViewStep2 extends ImportView
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
-    
+
     /**
      * Returns JS used in this view
      */
     private function _getJS()
     {
         global $mod_strings;
-    
+
         return <<<EOJAVASCRIPT
 
 if( document.getElementById('goback') )
@@ -235,7 +176,7 @@ document.getElementById('gonext').onclick = function(){
         add_error_style(document.getElementById('importstep2').name,'userfile',"{$mod_strings['ERR_MISSING_REQUIRED_FIELDS']} {$mod_strings['ERR_SELECT_FILE']}");
         isError = true;
     }
-    
+
     return !isError;
 
 }
@@ -244,7 +185,7 @@ function publishMapping(elem, publish, mappingId)
 {
     if( typeof(elem.publish) != 'undefined' )
         publish = elem.publish;
-        
+
     var url = 'index.php?action=mapping&module=Import&publish=' + publish + '&import_map_id=' + mappingId;
     var callback = {
                         success: function(o)
@@ -267,7 +208,7 @@ function publishMapping(elem, publish, mappingId)
         var newTitle = SUGAR.language.get('Import','LBL_PUBLISH');
         var newPublish = 'yes';
     }
-        
+
     elem.value = newTitle;
     elem.publish = newPublish;
 
@@ -305,3 +246,5 @@ if(deselectEl)
 EOJAVASCRIPT;
     }
 }
+
+

@@ -91,9 +91,9 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
                         <a href='{$pageData.urls.orderBy}{$params.orderBy|default:$colHeader|lower}' class='listViewThLinkS1' title="{$arrowAlt}">
                     {else}
                         {if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
-                            <a href='javascript:sListView.order_checks("{$pageData.ordering.sortOrder|default:ASCerror}", "{$params.orderBy|default:$colHeader|lower}" , "{$pageData.bean.moduleDir}{"2_"}{$pageData.bean.objectName|upper}{"_ORDER_BY"}")' class='listViewThLinkS1' title="{$arrowAlt}">
+                            <a href='javascript:sListView.order_checks("{$pageData.ordering.sortOrder|default:ASCerror}", "{$params.orderBy|default:$colHeader|lower}" , "{$pageData.bean.moduleDir}2_{$pageData.bean.objectName|upper}_ORDER_BY");' class='listViewThLinkS1' title="{$arrowAlt}">
                         {else}
-                            <a href='javascript:sListView.order_checks("ASC", "{$params.orderBy|default:$colHeader|lower}" , "{$pageData.bean.moduleDir}{"2_"}{$pageData.bean.objectName|upper}{"_ORDER_BY"}")' class='listViewThLinkS1' title="{$arrowAlt}">
+                            <a href='javascript:sListView.order_checks("ASC", "{$params.orderBy|default:$colHeader|lower}" , "{$pageData.bean.moduleDir}2_{$pageData.bean.objectName|upper}_ORDER_BY");' class='listViewThLinkS1' title="{$arrowAlt}">
                         {/if}
                     {/if}
                     {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
