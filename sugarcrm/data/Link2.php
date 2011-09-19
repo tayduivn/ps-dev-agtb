@@ -48,11 +48,13 @@ class Link2 {
 	/**
      * @param  $linkName String name of a link field in the module's vardefs
      * @param  $bean SugarBean focus bean for this link (one half of a relationship)
+     * @param  $linkDef Array Optional vardef for the link in case it can't be found in the passed in bean for the global dictionary
      * @return void
      *
      */
 	function __construct($linkName, $bean, $linkDef = false){
         $this->focus = $bean;
+        //Try to load the link vardef from the beans field defs. Otherwise start searching
         if (empty($bean->field_defs) || empty($bean->field_defs[$linkName]) || empty($bean->field_defs[$linkName]['relationship']))
         {
             if (empty($linkDef))
@@ -63,14 +65,16 @@ class Link2 {
             else {
                 $this->def = $linkDef;
             }
+            //Check if multiple links were found for a given relationship
             if (is_array($this->def) && !isset($this->def['name']))
             {
                 //More than one link found, we need to figure out if we are currently on the LHS or RHS
-                //assume lhs for now
+                //default to lhs for now
                 if (isset($this->def[0]['side']) && $this->def[0]['side'] == 'left')
                 {
                     $this->def = $this->def[0];
-                }else if (isset($this->def[1]['side']) && $this->def[1]['side'] == 'left')
+                }
+                else if (isset($this->def[1]['side']) && $this->def[1]['side'] == 'left')
                 {
                     $this->def = $this->def[1];
                 }
@@ -85,32 +89,45 @@ class Link2 {
             }
 
             $this->name = $this->def['name'];
-        } else {
+        }
+        else {
+            //Linkdef was found in the bean (this is the normal expectation)
             $this->def = $bean->field_defs[$linkName];
             $this->name = $linkName;
         }
+        //Instantiate the relationship for this link.
         $this->relationship = SugarRelationshipFactory::getInstance()->getRelationship($this->def['relationship']);
 
-       if (!$this->loadedSuccesfully()) {
-           $GLOBALS['log']->fatal("{$this->name} for {$this->def['relationship']} failed to load\n");
-       }
+        if (!$this->loadedSuccesfully())
+        {
+            $GLOBALS['log']->fatal("{$this->name} for {$this->def['relationship']} failed to load\n");
+        }
         //Following behavior is tied to a property(ignore_role) value in the vardef. It alters the values of 2 properties, ignore_role_filter and add_distinct.
-		//the property values can be altered again before any requests are made.
-		if (!empty($this->def) && is_array($this->def)) {
-			if (array_key_exists('ignore_role', $this->def)) {
-				if ($this->def['ignore_role']) {
-					$this->ignore_role_filter=true;
-					$this->add_distinct=true;
-				}
-			}
-		}
+        //the property values can be altered again before any requests are made.
+        if (!empty($this->def) && is_array($this->def)) {
+            if (array_key_exists('ignore_role', $this->def)) {
+                if ($this->def['ignore_role']) {
+                    $this->ignore_role_filter=true;
+                    $this->add_distinct=true;
+                }
+            }
+        }
 	}
 
+    /**
+     * Returns false if no relationship was found for this link
+     * @return bool
+     */
     public function loadedSuccesfully()
     {
         return !empty($this->relationship);
     }
 
+    /**
+     *  Forces the link to load the relationship rows.
+     * Will be called internally when the $rows property is accessed or get() is called
+     * @return void
+     */
     public function load()
     {
         $data = $this->relationship->load($this);
@@ -119,15 +136,9 @@ class Link2 {
         $this->loaded = true;
     }
 
-	/* This method will return the following based on cardinality of the relationship.
-	 *  # one-to-many, many-to-many: empty array if not data is found else array of keys.
-	 *  # if many-to-many and $role set to true : empty array if not data is found else
-	 *  array of array which contain id+other fields.
-	 *  # many-to-one, one-to-one: null if no linked data is found, else key value.
-	 *
-	 * For a self referencing relationship the function will behave as if the user is trying
-	 * to access the child records. To get to the parent records use the getParent() method.
-	 */
+	/**
+     * @return array ids of records related through this link
+     */
     public function get($role = false) {
         if (!$this->loaded)
             $this->load();
@@ -138,13 +149,16 @@ class Link2 {
     /**
      * @deprecated
      *
-     * @return null
+     * @return string name of table for the relationship of this link
      */
 	public function getRelatedTableName() {
         return BeanFactory::getBean($this->getRelatedModuleName())->table_name;
 	}
 
-	public function getRelatedModuleName() {
+	/**
+     * @return string the name of the module on the other side of this link
+     */
+    public function getRelatedModuleName() {
 		if (!$this->relationship) return false;
 
         if ($this->getSide() == REL_LHS) {
@@ -154,6 +168,11 @@ class Link2 {
 		}
 	}
 
+    /**
+     *
+     * @return string "many" if multiple records can be related through this link
+     * or "one" if at most, one record can be related.
+     */
     public function getType()
     {
         switch ($this->relationship->type)
@@ -168,21 +187,26 @@ class Link2 {
         return "many";
     }
 
+    /**
+     * @return SugarBean The parent Bean this link references
+     */
     public function getFocus()
     {
         return $this->focus;
     }
 
-
-
     /**
      * @deprecated
-     * @return
+     * @return list of fields that exist only on the relationship
      */
 	public function getRelatedFields(){
 		return $this->relationship_fields;
 	}
 
+    /**
+     * @param $name
+     * @return The value for the relationship field $name
+     */
 	public function getRelatedField($name){
         if (!empty($this->relationship_fields) && !empty($this->relationship_fields[$name]))
             return $this->relationship_fields[$name];
@@ -190,11 +214,17 @@ class Link2 {
             return null; //For now return null. Later try the relationship object directly.
 	}
 
+    /**
+     * @return SugarRelationship the relationship object this link references
+     */
 	public function getRelationshipObject() {
 	   return $this->relationship;
 	}
 
-	public function getSide() {
+	/**
+     * @return string "LHS" or "RHS" depending on the side of the relationship this link represents
+     */
+    public function getSide() {
 		//First try the relationship
         if ($this->relationship->getLHSLink() == $this->name &&
             ($this->relationship->getLHSModule() == $this->focus->module_name)
@@ -225,30 +255,60 @@ class Link2 {
         $GLOBALS['log']->error("Unable to get proper side for link {$this->name}");
 	}
 
-	protected function is_self_relationship() {
+	/**
+     * @return bool true if LHSModule == RHSModule
+     */
+    protected function is_self_relationship() {
 		return $this->relationship->isSelfReferencing();
 	}
 
+    /**
+     * @return bool true if this link represents a relationship where the parent could be one of multiple modules. (ex. Activities parent)
+     */
     public function isParentRelationship(){
         return $this->relationship->isParentRelationship();
     }
 
-	function getJoin($params, $return_array =false)
+	/**
+     * @param $params array of parameters. Possible parameters include:
+     * 'join_table_link_alias': alias the relationship join table in the query (for M2M relationships),
+     * 'join_table_alias': alias for the final table to be joined against (usually a module main table)
+     * @param bool $return_array if true the query is returned as a array broken up into
+     * select, join, where, type, rel_key, and joined_tables
+     * @return string/array join query for this link
+     */
+    function getJoin($params, $return_array =false)
 	{
         return $this->relationship->getJoin($this, $params, $return_array);
 	}
 
+    /**
+     * @param array $params optional parameters. Possible Values;
+     * 'return_as_array': returns the query broken into 
+     * @return String/Array query to grab just ids for this relationship
+     */
 	function getQuery($params = array())
     {
     	return $this->relationship->getQuery($this, $params);
 	}
 
+    /**
+     * This function is similair getJoin except for M2m relationships it won't join agaist the final table.
+     * Its used to retrieve the ID of the related beans only
+     * @param $params array of parameters. Possible parameters include:
+     * 'return_as_array': returns the query broken into
+     * @param bool $return_array same as passing 'return_as_array' into parameters
+     * @return string/array query to use when joining for subpanels
+     */
     public function getSubpanelQuery($params = array(), $return_array = false)
     {
         return $this->relationship->getSubpanelQuery($this, $params, $return_array);
     }
 
-	function getBeans() {
+	/**
+     * @return array of SugarBeans related through this link. Use with caution.
+     */
+    function getBeans() {
         if (!$this->loaded) {
             $this->load();
         }
@@ -269,12 +329,10 @@ class Link2 {
      * use this function to create link between 2 objects
 	 * 1:1 will be treated like 1 to many.
 	 *
-     * todo handle self referencing relationships
-	 *
      * the function also allows for setting of values for additional field in the table being
 	 * updated to save the relationship, in case of many-to-many relationships this would be the join table.
      *
-     * @param array $rel_keys array of ids or SugarBean objects
+     * @param array $rel_keys array of ids or SugarBean objects. If you have the bean in memory, pass it in.
      * @param array $additional_values the values should be passed as key value pairs with column name as the key name and column value as key value.
      *
      * @return void
@@ -285,6 +343,7 @@ class Link2 {
 
         foreach($rel_keys as $key)
         {
+            //We must use beans for LogicHooks and other buisiness logic to fire correctly
             if (!($key instanceof SugarBean)) {
                 $key = $this->getRelatedBean($key);
                 if (!($key instanceof SugarBean)) {
@@ -307,16 +366,13 @@ class Link2 {
 
 
 
-	/* this method operates on all related record, takes action based on cardinality of the relationship.
-	 * one-to-one, one-to-many: update the rhs table's parent id with null
-	 * many-to-one: update the lhs table's parent-id with null.
-	 * many-to-many: delete rows from the link table. related table must have delted and date_modified column.
-	 * if related_is is null, the methods assumes that the parent bean (whose id is passed) is being deleted.
-	 * if both id and related_id are passed the metod unlinks a single relationship.
-	 * parameters: id of the bean being deleted.
-	 *
-	 */
-	function delete($id, $related_id='') {
+	/**
+     * Marks the relationship delted for this given record pair.
+     * @param $id id of the Parent/Focus SugarBean
+     * @param string $related_id id or SugarBean to unrelate. Pass a SugarBean if you have it.
+     * @return void
+     */
+    function delete($id, $related_id='') {
         if (empty($this->focus->id))
             $this->focus = BeanFactory::getBean($this->focus->module_name, $id);
         if (!empty($related_id))
@@ -337,12 +393,73 @@ class Link2 {
         }
 	}
 
+    /**
+     * Returns a SugarBean with the given ID from the related module.
+     * @param bool $id id of related record to retrieve
+     * @return SugarBean
+     */
     protected function getRelatedBean($id = false)
     {
         return BeanFactory::getBean($this->getRelatedModuleName(), $id);
     }
 
-	function relationship_exists($table_name, $join_key_values) {
+    public function &__get($name)
+    {
+        switch($name)
+        {
+            case "relationship_type":
+                return $this->relationship->type;
+            case "_relationship":
+                return $this->relationship;
+            case "beans":
+                if (!is_array($this->beans))
+                    $this->getBeans();
+                return $this->beans;
+            case "rows":
+                if (!is_array($this->rows))
+                    $this->load();
+                return $this->rows;
+        }
+        return $this->$name;
+    }
+
+    public function __set($name, $val)
+    {
+        if($name == "beans")
+            $this->beans = $val;
+
+    }
+
+    /**
+     * @param SugarBean $bean
+     * @return void
+     */
+    public function addBean($bean)
+    {
+        if (!is_array($this->beans))
+            $this->getBeans();
+        $this->beans[$bean->id] = $bean;
+    }
+
+    /**
+     * @param SugarBean $bean
+     * @return void
+     */
+    public function removeBean($bean)
+    {
+        if (!is_array($this->beans))
+            $this->getBeans();
+        unset($this->beans[$bean->id]);
+        unset($this->rows[$bean->id]);
+    }
+
+
+    /**
+     * @param $table_name string relationship table
+     * @param $join_key_values array of key=>values to identify this relationship by
+     * @return bool true if the given join key set exists in the relationship table
+     */
+    public function relationship_exists($table_name, $join_key_values) {
 
 		//find the key values for the table.
 		$dup_keys=$this->_get_alternate_key_fields($table_name);
@@ -383,11 +500,13 @@ class Link2 {
 		}
 	}
 
+    //Below are functions not used directly and exist for backwards compatiblity with customizations, will be removed in a later version
+
 	/* returns array of keys for duplicate checking, first check for an index of type alternate_key, if not found searches for
 	 * primary key.
 	 *
 	 */
-	protected function _get_alternate_key_fields($table_name) {
+	public function _get_alternate_key_fields($table_name) {
 		$indices=Link::_get_link_table_definition($table_name,'indices');
 		if (!empty($indices)) {
 			foreach ($indices as $index) {
@@ -402,21 +521,26 @@ class Link2 {
 		    return array($relDef['join_key_lhs'], $relDef['join_key_rhs']);
 	}
 
-	/*
+	/**
+	 * @depricated
+	 * Gets the vardef for the relationship of this link.
 	 */
-	protected function _get_link_table_definition($table_name, $def_name) {
-	    global $dictionary;
+	public function _get_link_table_definition($table_name, $def_name) {
 
         if (isset($this->relationship->def[$def_name]))
             return $this->relationship->def[$def_name];
 
         return null;
     }
-    /*
+
+    /**
+     * @depricated
      * Return the name of the role field for the passed many to many table.
      * if there is no role filed : return false
+     * @param $table_name name of relationship table to inspect
+     * @return bool|string
      */
-    protected function _get_link_table_role_field($table_name) {
+    public function _get_link_table_role_field($table_name) {
         $varDefs = $this->_get_link_table_definition($table_name, 'fields');
         $role_field = false;
         if(!empty($varDefs)){
@@ -438,53 +562,6 @@ class Link2 {
     public function _get_bean_position()
     {
         return $this->getSide() == REL_LHS;
-    }
-
-
-    public function &__get($name)
-    {
-        switch($name)
-        {
-            case "relationship_type":
-                return $this->relationship->type;
-            case "_relationship":
-                return $this->relationship;
-            case "beans":
-                if (!is_array($this->beans))
-                    $this->getBeans();
-                return $this->beans;
-        }
-        return $this->$name;
-    }
-
-    public function __set($name, $val)
-    {
-        if($name == "beans")
-            $this->beans = $val;
-
-    }
-
-    /**
-     * @param SugarBean $bean
-     * @return void
-     */
-    public function addBean($bean)
-    {
-        if (!is_array($this->beans))
-            $this->getBeans();
-        $this->beans[$bean->id] = $bean;
-    }
-
-    /**
-     * @param SugarBean $bean
-     * @return void
-     */
-    public function removeBean($bean)
-    {
-        if (!is_array($this->beans))
-            $this->getBeans();
-        unset($this->beans[$bean->id]);
-        unset($this->rows[$bean->id]);
     }
 }
 ?>
