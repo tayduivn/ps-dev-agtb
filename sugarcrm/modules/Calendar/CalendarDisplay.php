@@ -312,7 +312,7 @@ class CalendarDisplay {
 		}
 			$str .= $cal_strings["LBL_NEXT_".$this->args['cal']->get_view_name($this->args['cal']->view)]; 
 
-		$str .= "&nbsp;&nbsp;".get_image($image_path.'calendar_next','alt="'. $cal_strings["LBL_NEXT_".$this->args['cal']->get_view_name($this->args['cal']->view)].'" align="absmiddle" border="0"') . "</a>"; 
+		$str .= "&nbsp;&nbsp;".SugarThemeRegistry::current()->getImage("calendar_next", 'align="absmiddle" border="0"' ,null,null,'.gif', $cal_strings["LBL_NEXT_".$this->args['cal']->get_view_name($this->args['cal']->view)]) . "</a>";
 		return $str;
 	}
 
@@ -324,7 +324,7 @@ class CalendarDisplay {
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_previous_date_str()."&id=".$this->args['dashlet_id']."\")'>";
 		}
-		$str .= get_image($image_path.'calendar_previous','alt="'. $cal_strings["LBL_PREVIOUS_".$this->args['cal']->get_view_name($this->args['cal']->view)].'" align="absmiddle" border="0"'); 
+		$str .= SugarThemeRegistry::current()->getImage('calendar_previous','align="absmiddle" border="0"', null, null, '.gif', $cal_strings["LBL_PREVIOUS_".$this->args['cal']->get_view_name($this->args['cal']->view)]);
 		$str .= "&nbsp;&nbsp;".$cal_strings["LBL_PREVIOUS_".$this->args['cal']->get_view_name($this->args['cal']->view)] . "</a>";
 		return $str;
 	}
@@ -386,7 +386,7 @@ class CalendarDisplay {
 	
 	function display_shared_html(){
 			global $app_strings,$action;
-			$tools = '<div align="right"><a href="index.php?module=Calendar&action='.$action.'&view=shared" class="tabFormAdvLink">&nbsp;<a href="javascript: CAL.toggleDisplay(\'shared_cal_edit\');" class="tabFormAdvLink">'.get_image('edit', 'alt="'.$GLOBALS['cal_strings']['LBL_EDIT_USERLIST'].'"  border="0"  align="absmiddle"').'&nbsp;'.$GLOBALS['cal_strings']['LBL_EDIT_USERLIST'].'</a></div>';
+			$tools = '<div align="right"><a href="index.php?module=Calendar&action='.$action.'&view=shared" class="tabFormAdvLink">&nbsp;<a href="javascript: CAL.toggleDisplay(\'shared_cal_edit\');" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('edit', 'border="0"  align="absmiddle"', null, null, '.gif', $GLOBALS['cal_strings']['LBL_EDIT_USERLIST']).'&nbsp;'.$GLOBALS['cal_strings']['LBL_EDIT_USERLIST'].'</a></div>';
 			echo get_form_header($GLOBALS['cal_strings']['LBL_SHARED_CAL_TITLE'], $tools, false);
 			if(empty($_SESSION['shared_ids']))
 				$_SESSION['shared_ids'] = "";
@@ -464,8 +464,8 @@ class CalendarDisplay {
 				<td valign='top' id=\"shared_ids_td\"><select id=\"shared_ids\" name=\"shared_ids[]\" multiple size='8'>";
 				echo get_select_options_with_id(get_user_array(false), $this->args['cal']->shared_ids);
 			echo "	</select></td>
-				<td><a onclick=\"up('shared_ids');\">".get_image('uparrow_big', 'border="0" style="margin-bottom: 1px;" alt="'.$app_strings['LBL_SORT'].'"')."</a><br>
-				<a onclick=\"down('shared_ids');\">".get_image('downarrow_big', 'border="0" style="margin-top: 1px;"  alt="'.$app_strings['LBL_SORT'].'"')."</a></td>
+				<td><a onclick=\"up('shared_ids');\">".SugarThemeRegistry::current()->getImage('uparrow_big', 'border="0" style="margin-bottom: 1px;"', null, null, '.gif', $app_strings['LBL_SORT'])."</a><br>
+				<a onclick=\"down('shared_ids');\">".SugarThemeRegistry::current()->getImage('downarrow_big', 'border="0" style="margin-top: 1px;"', null, null, '.gif', $app_strings['LBL_SORT'])."</a></td>
 			</tr>
 			<tr>";
 			echo "<td align=\"right\" colspan=\"2\"><input class=\"button\" type=\"submit\" title=\"".$app_strings['LBL_SELECT_BUTTON_TITLE']."\" accessKey=\"".$app_strings['LBL_SELECT_BUTTON_KEY']."\" value=\"".$app_strings['LBL_SELECT_BUTTON_LABEL']."\" /> <input class=\"button\" onClick=\"javascript: CAL.toggleDisplay('shared_cal_edit');\" type=\"button\" title=\"".$app_strings['LBL_CANCEL_BUTTON_TITLE']."\" accessKey=\"".$app_strings['LBL_CANCEL_BUTTON_KEY']."\" value=\"".$app_strings['LBL_CANCEL_BUTTON_LABEL']."\"/></td>
