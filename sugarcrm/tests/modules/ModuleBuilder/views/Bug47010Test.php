@@ -24,7 +24,7 @@
 
 require_once("modules/ModuleBuilder/views/view.dropdown.php");
 
-class Bug47010Test extends Sugar_PHPUnit_Framework_OutputTestCase {
+class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
 
     public function setUp() {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -39,7 +39,7 @@ class Bug47010Test extends Sugar_PHPUnit_Framework_OutputTestCase {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testModuleNameDoesNotGetOverwrittenOnDisplay() {
+    public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty() {
 
         $view = new ViewDropdown();
         try {
