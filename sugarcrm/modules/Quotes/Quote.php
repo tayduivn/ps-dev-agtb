@@ -136,7 +136,7 @@ class Quote extends SugarBean {
 											'task_id', 'note_id', 'meeting_id', 'call_id', 'email_id',
 											'opportunity_name', 'opportunity_id',
 											'shipping_contact_id', 'shipping_account_id',
-											'billing_contact_id', 'billing_account_id');
+											'billing_contact_id', 'billing_account_id', 'shipper_id', 'shipper_name');
 
 	var $relationship_fields = array('shipping_account_id'=>'shipping_accounts','billing_account_id'=>'billing_accounts',
 									 'shipping_contact_id'=>'shipping_contacts','billing_contact_id'=>'billing_contacts',

@@ -278,7 +278,7 @@ class WorkFlowActionShell extends SugarBean {
             $this->action_module == "meetings" ||
 			$this->action_module == "calls"){
 			
-			$recipient_icon =  SugarThemeRegistry::current()->getImage('Users','align="absmiddle" alt="'.$app_strings['LNK_REMOVE'].'" border="0"');
+			$recipient_icon =  SugarThemeRegistry::current()->getImage('Users','align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_REMOVE']);
 			
 			$bridge_list = $this->get_linked_beans("action_bridge","WorkFlow");
 			
@@ -403,6 +403,7 @@ function copy($parent_id){
         if (isset($new_action->created_by))  $new_action->created_by=null;                    
 		$new_action->save();
 	}
+	return $new_id;
 }
 
 	

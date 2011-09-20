@@ -266,25 +266,36 @@ function log_campaign_activity($identifier, $activity, $update=true, $clicked_ur
     }
 
 
+ /**
+     * 
+     * This method is deprecated 
+     * @deprecated 62_Joneses - June 24, 2011
+     * @see campaign_log_lead_or_contact_entry()
+     */
 function campaign_log_lead_entry($campaign_id, $parent_bean,$child_bean,$activity_type){
-        global $timedate;
-
-
-                    //create campaign tracker id and retrieve related bio bean
-                     $tracker_id = create_guid();
-                    //create new campaign log record.
-                    $campaign_log = new CampaignLog();
-                    $campaign_log->campaign_id = $campaign_id;
-                    $campaign_log->target_tracker_key = $tracker_id;
-                    $campaign_log->related_id = $parent_bean->id;
-                    $campaign_log->related_type = $parent_bean->module_dir;
-                    $campaign_log->target_id = $child_bean->id;
-                    $campaign_log->target_type = $child_bean->module_dir;
-                    $campaign_log->activity_date = $timedate->now();
-                    $campaign_log->activity_type = $activity_type;
-                    //save the campaign log entry
-                    $campaign_log->save();
+    campaign_log_lead_or_contact_entry($campaign_id, $parent_bean,$child_bean,$activity_type);
 }
+
+
+function campaign_log_lead_or_contact_entry($campaign_id, $parent_bean,$child_bean,$activity_type){
+    global $timedate;
+
+    //create campaign tracker id and retrieve related bio bean
+     $tracker_id = create_guid();
+    //create new campaign log record.
+    $campaign_log = new CampaignLog();
+    $campaign_log->campaign_id = $campaign_id;
+    $campaign_log->target_tracker_key = $tracker_id;
+    $campaign_log->related_id = $parent_bean->id;
+    $campaign_log->related_type = $parent_bean->module_dir;
+    $campaign_log->target_id = $child_bean->id;
+    $campaign_log->target_type = $child_bean->module_dir;
+    $campaign_log->activity_date = $timedate->now();
+    $campaign_log->activity_type = $activity_type;
+    //save the campaign log entry
+    $campaign_log->save();
+}
+    
 
 function get_campaign_urls($campaign_id) {
     $return_array=array();

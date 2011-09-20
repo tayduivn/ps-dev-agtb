@@ -45,7 +45,7 @@
 <tr>
 <td colspan='2'>
     {if strcmp($options, 'https://') != 0 || strcmp($options, 'http://') != 0 && $options != 'https://'}
-		<iframe style='border:0' id='portal_iframe' height='250' scrolling='auto'></iframe>
+		<iframe title='{$options}' style='border:0' id='portal_iframe' height='250' scrolling='auto'></iframe>
 	{/if}
 </td>
 </tr>

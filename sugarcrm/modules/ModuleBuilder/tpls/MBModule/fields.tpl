@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+
+
 <div id='studiofields'>
 <input type='button' name='addfieldbtn' value='{$mod_strings.LBL_BTN_ADDFIELD}' class='button' onclick='ModuleBuilder.moduleLoadField("");'>&nbsp;
 {if $editLabelsMb=='1'}
@@ -48,46 +50,38 @@ var myConfigs = {};
 pref = {$sortPreferences};
 {literal}
 sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
-myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
+var myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
+console.log(myConfigs);
 {/literal}
 {/if}
 
 {literal}
-var disabledCheckboxFormatter = function(elCell, oRecord, oColumn, oData)
-{
-   elCell.innerHTML = "<center><input type='checkbox' disabled='true'" + (oData ? " CHECKED='true'>" : "></center>");
-};
-
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = "<a class='crumbLink' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
+   elCell.innerHTML = "<a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
 };
 
 var labelFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = oData.replace(/\:$/, '');
+   elCell.innerHTML = oData.replace(/\:\s*?$/, '');
 };
 
 var myColumnDefs = [
     {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
     {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
-    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125},
-    {key:"custom", label:SUGAR.language.get("ModuleBuilder", "LBL_HCUSTOM"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
-    {key:"required", label:SUGAR.language.get("ModuleBuilder", "LBL_REQUIRED"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75},
-    {key:"unified_search", label:SUGAR.language.get("ModuleBuilder", "LBL_SEARCH"),sortable:true, resizeable:false, formatter:"disabledCheckboxFormatter", width:75}
+    {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
 ];
 {/literal}
 
 var myDataSource = new YAHOO.util.DataSource({$fieldsData});
 myDataSource.responseType = YAHOO.util.DataSource.TYPE_JSARRAY;
 {literal}
-myDataSource.responseSchema = {fields: ["label","name","type","custom", "required", "unified_search"]};
-YAHOO.widget.DataTable.Formatter.disabledCheckboxFormatter = disabledCheckboxFormatter;
+myDataSource.responseSchema = {fields: ["label","name","type"]};
 YAHOO.widget.DataTable.Formatter.editFieldFormatter = editFieldFormatter;
 YAHOO.widget.DataTable.Formatter.labelFormatter = labelFormatter;
 
-var myDataTable = new YAHOO.widget.DataTable("field_table", myColumnDefs, myDataSource, myConfigs);
-myDataTable.doBeforeSortColumn = function(column, sortDirection)
+var fieldsTable = new YAHOO.widget.ScrollingDataTable("field_table", myColumnDefs, myDataSource, myConfigs);
+fieldsTable.doBeforeSortColumn = function(column, sortDirection)
 {
     var url = 'index.php?module=ModuleBuilder&action=savetablesort&column=' + column.getKey() + '&direction=' + sortDirection;
     YUI().use('io', function (Y) {
@@ -102,6 +96,16 @@ myDataTable.doBeforeSortColumn = function(column, sortDirection)
     return true;
 };
 
+
+fieldsTable.subscribe("rowMouseoverEvent", fieldsTable.onEventHighlightRow);
+fieldsTable.subscribe("rowMouseoutEvent", fieldsTable.onEventUnhighlightRow);
+fieldsTable.subscribe("rowClickEvent", function(args) {
+    var field = this.getRecord(args.target).getData();
+    ModuleBuilder.moduleLoadField(field.name);
+});
+
+fieldsTable.render("#field_table");
+
 {/literal}
 
 ModuleBuilder.module = '{$module->name}';
@@ -113,3 +117,17 @@ ModuleBuilder.helpSetup('fieldsEditor','mbDefault');
 ModuleBuilder.helpSetup('fieldsEditor','default');
 {/if}
 </script>
+
+<style>
+{literal}
+a.mbLBLL {
+	text-decoration:none;
+	font-weight:normal;
+	color:black;
+}
+
+#field_table {
+    text-align:left;
+}
+{/literal}
+</style>

@@ -33,7 +33,7 @@
         <input type="hidden" name="module" value="Home">
         <input type="hidden" name="search_form" value="false">
         <input type="hidden" name="advanced" value="false">
-        <img id="unified_search_advanced_img" src="{sugar_getimagepath file='searchMore.gif'}" border="0" alt="{$APP.LBL_SEARCH}">&nbsp;
+        <img id="unified_search_advanced_img" src="{sugar_getimagepath file='searchMore.gif'}" border="0" alt=$APP.LBL_SEARCH>&nbsp;
         <input type="text" name="query_string" id="query_string" size="20" value="{$SEARCH}">&nbsp;
         <input type="submit" class="button" value="{$APP.LBL_SEARCH}">
     </form><br />

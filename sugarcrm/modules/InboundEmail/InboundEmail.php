@@ -3196,7 +3196,7 @@ class InboundEmail extends SugarBean {
 		else
 		{
             $safedMsgPart = $this->cleanContent($msgPart);
-	   	    return str_replace("<img />", '', $safedMsgPart);
+	   	    return str_replace("<img />", '', $safedMsgPart); /*SKIP_IMAGE_TAG*/
 		}
 	}
 
@@ -5862,9 +5862,11 @@ eoq;
 				$meta['is_sugarEmail'] = true;
 			}
 		} else {
-			// mark SugarEmail read
-			$q = "UPDATE emails SET status = 'read' WHERE id = '{$uid}'";
-			$r = $this->db->query($q);
+			if( $this->email->status != 'sent' ){
+				// mark SugarEmail read
+				$q = "UPDATE emails SET status = 'read' WHERE id = '{$uid}'";
+				$r = $this->db->query($q);
+			}
 		}
 
 		$return = array();

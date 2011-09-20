@@ -63,7 +63,7 @@ class MBLanguage{
 			}
 		}
 		
-	function loadAppListStrings($file){
+	    function loadAppListStrings($file){
             if(!file_exists($file))return;
 			//we may not need this when loading in the app strings, but there is no harm
 			//in setting it.
@@ -143,7 +143,7 @@ class MBLanguage{
 			mkdir_recursive($save_path);
 			foreach($this->strings as $lang=>$values){
 				//Check if the module Label has changed.
-				$renameLang = $rename || empty($values) || $this->label != $values['LBL_MODULE_NAME'];
+				$renameLang = $rename || empty($values) || (isset($values['LBL_MODULE_NAME']) && $this->label != $values['LBL_MODULE_NAME']);
 				$mod_strings = return_module_language(str_replace('.lang.php','',$lang), 'ModuleBuilder');
                 $required = array(
                 'LBL_LIST_FORM_TITLE'=>$this->label . " " . $mod_strings['LBL_LIST'],
@@ -172,10 +172,23 @@ class MBLanguage{
 			$key_changed = ($this->key_name != $key_name);
 			
 			foreach($this->appListStrings as $lang=>$values){
+				// Load previously created modules data
+				$app_list_strings = array ();
+				$neededFile = $app_save_path . '/'. $lang;
+				if (file_exists($neededFile)) {
+					include $neededFile;
+				}
+
+				
 				if(!$duplicate){
 					unset($values['moduleList'][$this->key_name]);
 				}
+				
+
+				$values = sugarArrayMerge($values, $app_list_strings);
 				$values['moduleList'][$key_name]= $this->label;
+				
+				
 				$appFile = $header. "\n";
 				require_once('include/utils/array_utils.php');
 				$this->getGlobalAppListStringsForMB($values);
@@ -206,7 +219,7 @@ class MBLanguage{
 		**/
 		function getGlobalAppListStringsForMB(&$values){
 			//Ensure it comes from MB
-			if(!empty($_REQUEST['view_package']) && !empty($_REQUEST['type']) && $_REQUEST['type']='enum'  && !empty($_REQUEST['options'])){
+			if(!empty($_REQUEST['view_package']) && !empty($_REQUEST['type']) && $_REQUEST['type'] == 'enum'  && !empty($_REQUEST['options'])){
 				if(!isset($values[$_REQUEST['options']])){
 					global $app_list_strings;
 					if(!empty($app_list_strings[$_REQUEST['options']])){

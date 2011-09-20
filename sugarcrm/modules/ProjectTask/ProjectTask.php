@@ -64,6 +64,7 @@ class ProjectTask extends SugarBean {
     var $predecessors;
     //BEGIN SUGARCRM flav=pro ONLY
     var $resource_id;
+    var $resource_name;
     //END SUGARCRM flav=pro ONLY
     var $priority;
 
@@ -143,6 +144,7 @@ class ProjectTask extends SugarBean {
       $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_name = get_assigned_team_name($this->team_id);
+        $this->resource_name = $this->getResourceName();
 		//END SUGARCRM flav=pro ONLY
       $this->project_name = $this->_get_project_name($this->project_id);
 		/*
@@ -164,6 +166,9 @@ class ProjectTask extends SugarBean {
 	 */
    function fill_in_additional_list_fields()
    {
+      //BEGIN SUGARCRM flav=pro ONLY
+      $this->resource_name = $this->getResourceName();
+      //END SUGARCRM flav=pro ONLY
       $this->assigned_user_name = get_assigned_user_name($this->assigned_user_id);
       //$this->parent_name = $this->_get_parent_name($this->parent_id);
       $this->project_name = $this->_get_project_name($this->project_id);
@@ -259,6 +264,7 @@ class ProjectTask extends SugarBean {
 		//$date_due = $timedate->to_db_date($task_fields['DATE_DUE'],false);
         if (isset($this->parent_type))
 			$task_fields['PARENT_MODULE'] = $this->parent_type;
+
 		/*
         if ($this->status != "Completed" && $this->status != "Deferred" ) {
 			$task_fields['SET_COMPLETE'] = "<a href='index.php?return_module=$currentModule&return_action=$action&return_id=" . ((!empty($focus->id)) ? $focus->id : "") . "&module=ProjectTask&action=EditView&record={$this->id}&status=Completed'>".SugarThemeRegistry::current()->getImage("close_inline","alt='Close' border='0'")."</a>";
@@ -338,7 +344,8 @@ class ProjectTask extends SugarBean {
         if($custom_join){
 			$query .=  $custom_join['select'];
 		}
-        $query .= " FROM project_task ";
+
+        $query .= " FROM project_task LEFT JOIN project ON project_task.project_id=project.id AND project.deleted=0 ";
 
 		//BEGIN SUGARCRM flav=pro ONLY
 		// We need to confirm that the user is a member of the team of the item.
@@ -376,6 +383,14 @@ class ProjectTask extends SugarBean {
     }
 
 	//BEGIN SUGARCRM flav=pro ONLY
+    function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false)
+    {
+        if(isset($filter['resource_name']) && $filter['resource_name'] === true) {
+            $filter['resource_id'] = true;
+        }
+        return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect);
+    }
+
     function getResourceName(){
 
     	$query = "SELECT DISTINCT resource_type FROM project_resources WHERE resource_id = '" . $this->resource_id . "'";

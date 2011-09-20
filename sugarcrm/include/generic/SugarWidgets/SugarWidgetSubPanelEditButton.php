@@ -47,8 +47,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		$this->bean = new $beanList[$layout_def['module']]();
 //END SUGARCRM flav=pro ONLY
 
-		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline',
-			'align="absmiddle" alt="' . $app_strings['LNK_EDIT'] . '" border="0"');
+		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']);
 
         $onclick ='';
 //BEGIN SUGARCRM flav=pro ONLY
@@ -76,6 +75,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		}
 		else{
 		}
+
 			return '';
 		}
 	//}
@@ -165,8 +165,9 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         }
 
         //load the bean relationships for the next check
-        $this->bean->load_relationships();
         $link = $layout_def['linked_field'];
+        if (empty($this->bean->$link))
+            $this->bean->load_relationship($link);
 
         //if this is not part of a subpanel collection, see if the link field name and relationship is defined on the subpanel bean
         if(isset($this->bean->$link) && !empty($this->bean->field_name_map[$link]) && !empty($this->bean->field_name_map[$link]['relationship'])){

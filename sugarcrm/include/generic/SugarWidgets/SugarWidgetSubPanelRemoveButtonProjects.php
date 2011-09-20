@@ -74,7 +74,7 @@ class SugarWidgetSubPanelRemoveButtonProjects extends SugarWidgetField
 		
 		$focus->retrieve($return_id);
 		
-		if ($current_user->id == $focus->assigned_user_id){
+		if ($current_user->id == $focus->assigned_user_id || is_admin($current_user)){
 			$is_owner = true;
 		}
 		else{
@@ -93,8 +93,7 @@ class SugarWidgetSubPanelRemoveButtonProjects extends SugarWidgetField
 		$return_url = "index.php?module=$return_module&action=$return_action&subpanel=$subpanel&record=$return_id&sugar_body_only=1&inline=1";
 
 		$icon_remove_text = $app_strings['LNK_REMOVE'];
-		$icon_remove_html = SugarThemeRegistry::current()->getImage( 'delete_inline',
-			'align="absmiddle" alt="' . $icon_remove_text . '" border="0"');
+		$icon_remove_html = SugarThemeRegistry::current()->getImage( 'delete_inline', 'align="absmiddle" border="0"',null,null,'.gif',$icon_remove_text);
 		$remove_url = $layout_def['start_link_wrapper']
 			. "index.php?module=$parent_module"
 			. "&action=$action"

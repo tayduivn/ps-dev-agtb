@@ -127,7 +127,17 @@ var lastSubmitTime = 0;
 var alertList = new Array();
 var oldStartsWith = '';
 
-
+/**
+ * @deprecated
+ *
+ * As of Sugar version 6.2.3 (MSIE Version 9) this function is deprecated.  The preferred method is to use the
+ * user agent check supplied by YUI to check for IE:
+ *
+ * for checking if a browser is IE in general :  if(YAHOO.env.ua.ie) {...}
+ *
+ * or for checking specific versions:  if (YAHOO.env.ua.ie >= 5.5 && YAHOO.env.ua.ie < 9) {...}
+ *
+ */
 function isSupportedIE() {
 	var userAgent = navigator.userAgent.toLowerCase() ;
 
@@ -358,14 +368,20 @@ function isValidPrecision(value, precision){
 	    return true;
 	//#27021
 	if( (precision == "0") ){
-		if (value.indexOf(".")== -1){
+		if (value.indexOf(dec_sep)== -1){
 			return true;
 		}else{
 			return false;
 		}
 	}
 	//#27021   end
-	var actualPrecision = value.substr(value.indexOf(".")+1, value.length).length;
+	if(value.charAt(value.length-precision-1) == num_grp_sep){
+		if(value.substr(value.indexOf(dec_sep), 1)==dec_sep){
+			return false;
+		}
+		return 	true;
+	}
+	var actualPrecision = value.substr(value.indexOf(dec_sep)+1, value.length).length;
 	return actualPrecision == precision;
 }
 function toDecimal(original, precision) {
@@ -380,22 +396,26 @@ function toDecimal(original, precision) {
 }
 
 function isInteger(s) {
-	if (typeof s == "string" && s == "")
-        return true;
-    if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
 	{
 		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
 	}
-	return parseFloat(s) == parseInt(s) && !isNaN(s);
+	return /^[+-]?[0-9]*$/.test(s) ;
+}
+
+function isDecimal(s) {
+    if (typeof s == "string" && s == "")    // bug# 46530, this is required in order to
+        return true;                        // not check empty decimal fields
+
+	if(typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
+	{
+		s = unformatNumberNoParse(s, num_grp_sep, dec_sep).toString();
+	}
+	return  /^[+-]?[0-9]+\.?[0-9]*$/.test(s) ;
 }
 
 function isNumeric(s) {
-  if(!/^-*[0-9\.]+$/.test(s)) {
-   		return false
-   }
-   else {
-		return true;
-   }
+	return isDecimal(s);
 }
 
 var date_reg_positions = {'Y': 1,'m': 2,'d': 3};
@@ -706,6 +726,7 @@ function clear_all_errors() {
             if ( tabView.get ) {
                 var tabs = tabView.get("tabs");
                 for (var i in tabs) {
+                    if (typeof tabs[i] == "object")
                     tabs[i].get("labelEl").style.color = "";
                 }
             }
@@ -863,6 +884,12 @@ function validate_form(formname, startsWith){
 						  break;
 						case 'int':
 							if(!isInteger(trim(form[validate[formname][i][nameIndex]].value))){
+								isError = true;
+								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
+							}
+							break;
+						case 'decimal':
+							if(!isDecimal(trim(form[validate[formname][i][nameIndex]].value))){
 								isError = true;
 								add_error_style(formname, validate[formname][i][nameIndex], invalidTxt + " " +	validate[formname][i][msgIndex]);
 							}
@@ -1904,8 +1931,15 @@ sugarListView.prototype.use_external_mail_client_callback = function(o)
 }
 
 sugarListView.prototype.send_form_for_emails = function(select, currentModule, action, no_record_txt,action_module,totalCount, totalCountError) {
-	if (document.MassUpdate.select_entire_list.value == 1) {
-		if (totalCount > 10) {
+	if ( typeof(SUGAR.config.email_sugarclient_listviewmaxselect) != 'undefined' ) {
+	    maxCount = 10;
+	}
+	else {
+	    maxCount = SUGAR.config.email_sugarclient_listviewmaxselect;
+	}
+    
+    if (document.MassUpdate.select_entire_list.value == 1) {
+		if (totalCount > maxCount) {
 			alert(totalCountError);
 			return;
 		} // if
@@ -1947,7 +1981,7 @@ sugarListView.prototype.send_form_for_emails = function(select, currentModule, a
 	}
 
 	var selectedArray = uidTa.value.split(",");
-	if(selectedArray.length > 10) {
+	if(selectedArray.length > maxCount) {
 		alert(totalCountError);
 		return;
 	} // if
@@ -4291,10 +4325,14 @@ isPackageManager: function(){
 },
 
 ajaxCallInProgress: function(){
-    //If the page content is blank, it means we are probably still waiting on something
-    var c = document.getElementById("content");
-    if (!c) return true;
-    var t = YAHOO.lang.trim(SUGAR.util.innerText(c));
+    var t = true;
+    //First check if we are in a popup.
+    if (typeof (send_back) != "function"){
+        //If the page content is blank, it means we are probably still waiting on something
+        var c = document.getElementById("content");
+        if (!c) return true;
+        t = YAHOO.lang.trim(SUGAR.util.innerText(c));
+    }
     return SUGAR_callsInProgress != 0 || t == "";
 },
 //Firefox doesn't support innerText (textContent includes script content)
@@ -4401,7 +4439,7 @@ setEmailPasswordEdit: function(id) {
      * @return bool
      */
     validateFileExt: function(fileName, allowedTypes) {
-        var ext = fileName.split('.').pop();
+        var ext = fileName.split('.').pop().toLowerCase();
 
         for (var i = allowedTypes.length; i > 0; i--) {
             if (ext === allowedTypes[i]) {

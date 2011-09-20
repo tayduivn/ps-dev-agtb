@@ -909,8 +909,8 @@ SE.composeLayout = {
      		SE.composeLayout._initComposeOptionTabs(idx);
      		SE.composeLayout[idx].getUnitByPosition("right").collapse();
      		//Initialize tinyMCE
-     		if (!SUGAR.util.isTouchScreen())
-     		    SE.composeLayout._1_tiny(false);
+            SE.composeLayout._1_tiny(false);
+            
      		//Init templates and address book
      		SE.composeLayout._2_final();
 
@@ -1107,13 +1107,17 @@ SE.composeLayout = {
         var elId = SE.tinyInstances.currentHtmleditor = 'htmleditor' + idx;
         SE.tinyInstances[elId] = { };
         SE.tinyInstances[elId].ready = false;
-        var t = tinyMCE.getInstanceById(elId);
 
+        if (!SUGAR.util.isTouchScreen()) {
+            var t = tinyMCE.getInstanceById(elId);
+        }
         if(typeof(t) == 'undefined')  {
-            tinyMCE.execCommand('mceAddControl', false, elId);
+            if (!SUGAR.util.isTouchScreen()) {
+                tinyMCE.execCommand('mceAddControl', false, elId);
+            }
             YAHOO.util.Event.onAvailable(elId + "_parent", function() {
                 SE.composeLayout.resizeEditorSetSignature(idx,!isReplyForward);
-            }, this);
+                }, this);
         }
     },
 
@@ -1122,7 +1126,7 @@ SE.composeLayout = {
     	var instance = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
 
         if(typeof(instance) == 'undefined' || (typeof(SE.composeLayout.loadedTinyInstances[idx]) != 'undefined' && SE.composeLayout.loadedTinyInstances[idx] == false)) {
-            setTimeout("SE.composeLayout.resizeEditorSetSignature(" + idx + ",'"+isReplyForward+"');",500);
+            setTimeout("SE.composeLayout.resizeEditorSetSignature(" + idx + ",'"+setSignature+"');",500);
 		    return;
 		}
 
@@ -1195,7 +1199,7 @@ SE.composeLayout = {
         if (!retry) {
             this._0_yui();
         }
-        if (typeof(tinyMCE) == 'undefined' || typeof(tinyMCE.settings) == 'undefined'){
+        if  (!SUGAR.util.isTouchScreen() && (typeof(tinyMCE) == 'undefined' || typeof(tinyMCE.settings) == 'undefined')){
             setTimeout("SE.composeLayout.c1_composeEmail(" + isReplyForward + ", true);", 500);
         } else {
 	        this._1_tiny(isReplyForward);
@@ -1794,9 +1798,16 @@ SE.composeLayout = {
         	return false;
         } // if
         //END SUGARCRM flav=pro ONLY
+
+        
         var t = SE.util.getTiny(SE.tinyInstances.currentHtmleditor);
-        var html = t.getContent();
-        var subj = document.getElementById('emailSubject' + idx).value;
+        if (t != null || typeof(t) != "undefined") {
+            var html = t.getContent();
+        } else {
+            var html = "<p>" + document.getElementById('htmleditor' + idx).value + "</p>";
+        }
+
+ 	    var subj = document.getElementById('emailSubject' + idx).value;
         var to = trim(document.getElementById('addressTO' + idx).value);
         var cc = trim(document.getElementById('addressCC' + idx).value);
         var bcc = trim(document.getElementById('addressBCC' + idx).value);

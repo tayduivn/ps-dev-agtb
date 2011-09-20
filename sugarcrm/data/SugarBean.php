@@ -32,6 +32,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/DynamicFields/DynamicField.php');
 require_once("data/Relationships/RelationshipFactory.php");
 
+
+
+
+
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
  * the primary functionality needed for manipulating business objects: create,
@@ -954,6 +958,8 @@ class SugarBean
     /**
      * Loads all attributes of type link.
      *
+     * DO NOT CALL THIS FUNCTION IF YOU CAN AVOID IT. Please use load_relationship directly instead.
+     *
      * Method searches the implmenting module's vardef file for attributes of type link, and for each attribute
      * create a similary named variable and load the relationship definition.
      *
@@ -963,16 +969,11 @@ class SugarBean
      */
     function load_relationships()
     {
-
         $GLOBALS['log']->debug("SugarBean.load_relationships, Loading all relationships of type link.");
-
         $linked_fields=$this->get_linked_fields();
-        require_once("data/Link2.php");
         foreach($linked_fields as $name=>$properties)
         {
-            $class = load_link_class($properties);
-
-            $this->$name=new $class($properties['relationship'], $this, $properties);
+            $this->load_relationship($name);
         }
     }
 
@@ -1529,10 +1530,27 @@ class SugarBean
             $links = $dictionary[$this->object_name]['related_calc_fields'];
             foreach($links as $lname)
             {
+
                 if ((empty($this->$lname) && !$this->load_relationship($lname)) || !($this->$lname instanceof Link2))
                 {
                     continue;
                 }
+
+                //If this module has a parent field that changed, resave the old parent
+                //Check that the fields are set in the request and that they don't match the current values.
+                if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
+                    && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
+                    && isset($this->parent_type) && isset($this->parent_id) && isset($this->fetched_row['parent_id'])
+                    && $this->parent_id != $this->fetched_row['parent_id'])
+                {
+                    if (!empty($this->field_defs[$lname]['module']) && $this->field_defs[$lname]['module'] == $this->fetched_row['parent_type'])
+                    {
+                        SugarRelationship::addToResaveList(
+                            BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
+                        );
+                    }
+                }
+                
                 $beans = $this->$lname->getBeans();
                 //Resave any related beans
                 if(!empty($beans))
@@ -1682,7 +1700,6 @@ class SugarBean
             $n->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-
             $oe = new OutboundEmail();
             $oe = $oe->getUserMailerSettings($current_user);
             //only send if smtp server is defined
@@ -1698,7 +1715,6 @@ class SugarBean
                 }else{
                     $GLOBALS['log']->fatal("Notifications: e-mail successfully sent");
                 }
-
             }
 
         }
@@ -1812,8 +1828,8 @@ function save_relationship_changes($is_update, $exclude=array())
             $new_rel_id = $_REQUEST['relate_id'];
             $new_rel_relname = $_REQUEST['relate_to'];
             if(!empty($this->in_workflow) && !empty($this->not_use_rel_in_req)) {
-                $new_rel_id = $this->new_rel_id;
-                $new_rel_relname = $this->new_rel_relname;
+                $new_rel_id = !empty($this->new_rel_id) ? $this->new_rel_id : '';
+                $new_rel_relname = !empty($this->new_rel_relname) ? $this->new_rel_relname : '';
             }
             $new_rel_link = $new_rel_relname;
             //Try to find the link in this bean based on the relationship
@@ -1934,7 +1950,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
 
             }
-
         }
     }
 
@@ -2712,6 +2727,17 @@ function save_relationship_changes($is_update, $exclude=array())
                     }
                     //END SUGARCRM flav=pro ONLY
                 }
+                
+		        //BEGIN SUGARCRM flav=pro ONLY
+		        //Retrieve team_set.team_count column as well
+		        if(!empty($list_fields['team_name']) && empty($list_fields['team_count'])){
+		            $list_fields['team_count'] = true;
+		
+		            //Add the team_id entry so that we can retrieve the team_id to display primary team
+		            $list_fields['team_id'] = true;
+		        }
+		        //END SUGARCRM flav=pro ONLY                
+                
                 if(!$subpanel_def->isCollection() && isset($list_fields[$order_by]) && isset($submodule->field_defs[$order_by])&& (!isset($submodule->field_defs[$order_by]['source']) || $submodule->field_defs[$order_by]['source'] == 'db'))
                 {
                     $order_by = $submodule->table_name .'.'. $order_by;
@@ -2724,7 +2750,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 $params['joined_tables'] = $query_array['join_tables'];
                 $params['include_custom_fields'] = !$subpanel_def->isCollection();
                 $params['collection_list'] = $subpanel_def->get_inst_prop_value('collection_list');
-
+                
                 $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean);
 
                 $subquery['select'] = $subquery['select']." , '$panel_name' panel_name ";
@@ -2973,7 +2999,7 @@ function save_relationship_changes($is_update, $exclude=array())
      * @param boolean $singleSelect Optional, default false.
      * @return String select query string, optionally an array value will be returned if $return_array= true.
      */
-    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
+	function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false, $ifListForExport = false)
     {
         //BEGIN SUGARCRM flav=pro ONLY
         $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
@@ -3425,6 +3451,14 @@ function save_relationship_changes($is_update, $exclude=array())
             //END SUGARCRM flav=pro ONLY
 
         }
+		
+	if ($ifListForExport) {
+		if(isset($this->field_defs['email1'])) {
+			$ret_array['select'].= " ,email_addresses.email_address email1";
+			$ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$this->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$this->module_dir}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id ";
+		}
+	}
+		
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($favorites)){
             $ret_array['select'] .= " , sfav.id is_favorite ";
@@ -4023,7 +4057,8 @@ function save_relationship_changes($is_update, $exclude=array())
             }
             if(!empty($sugar_config['disable_count_query']) && !empty($limit))
             {
-                $rows_found = $row_offset + count($list);
+            	//C.L. Bug 43535 - Use the $index value to set the $rows_found value here
+                $rows_found = isset($index) ? $index : $row_offset + count($list);
 
                 if(count($list) >= $limit)
                 {
@@ -4396,19 +4431,8 @@ function save_relationship_changes($is_update, $exclude=array())
                     $this->modified_user_id = 1;
                 }
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$this->modified_user_id' where id='$id'";
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ($this->isFavoritesEnabled()) {
-                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
-                }
-                //END SUGARCRM flav=pro ONLY
-            } else {
+            } else
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
-                //BEGIN SUGARCRM flav=pro ONLY
-                if ($this->isFavoritesEnabled()) {
-                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
-                }
-                //END SUGARCRM flav=pro ONLY
-            }
             $this->db->query($query, true,"Error marking record deleted: ");
             $this->deleted = 1;
 
@@ -5453,7 +5477,7 @@ function save_relationship_changes($is_update, $exclude=array())
 		    if(empty($row[$name])) continue;
 		    if(isset($fieldDef['source']) && $fieldDef['source'] != 'db') continue;
 		    // fromConvert other fields
-		    $row[$name] = $this->db->fromConvert($row[$name], $fieldDef['type']);
+		    $row[$name] = $this->db->fromConvert($row[$name], $this->db->getFieldType($fieldDef));
 		}
 		return $row;
     }
@@ -5764,6 +5788,6 @@ function save_relationship_changes($is_update, $exclude=array())
      */
 	public function create_export_query($order_by, $where)
 	{
-		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true);
+		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}
 }

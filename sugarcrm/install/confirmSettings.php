@@ -80,10 +80,11 @@ $defaultLanguages = "";
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	START OUTPUT
+$langHeader = get_language_header();
 
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html {$langHeader}>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -484,7 +485,7 @@ if (!isset($_SERVER['Path'])) {
 if(is_windows()) {
 if(isset($_SERVER['Path']) && !empty($_SERVER['Path'])) { // IIS IUSR_xxx may not have access to Path or it is not set
     if(!strpos($_SERVER['Path'], 'php')) {
-        $error = '<em>'.$mod_strings_scheduler['LBL_NO_PHP_CLI'].'</em>';
+//        $error = '<em>'.$mod_strings_scheduler['LBL_NO_PHP_CLI'].'</em>';
     }
 }
 $cronString = '
@@ -502,7 +503,7 @@ $cronString = '
 } else {
 if(isset($_SERVER['Path']) && !empty($_SERVER['Path'])) { // some Linux servers do not make this available
     if(!strpos($_SERVER['PATH'], 'php')) {
-        $error = '<em>'.$mod_strings_scheduler['LBL_NO_PHP_CLI'].'</em>';
+//        $error = '<em>'.$mod_strings_scheduler['LBL_NO_PHP_CLI'].'</em>';
     }
 }
 $cronString = '

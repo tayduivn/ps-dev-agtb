@@ -827,7 +827,7 @@ class MssqlManager extends DBManager
             $alias_beg_pos = 0;
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
-
+               
             // Bug # 44923 - This breaks the query and does not properly filter isnull
             // as there are other functions such as ltrim and rtrim.
             /* else if (strncasecmp($psql, 'isnull', 6) != 0)
@@ -1213,6 +1213,7 @@ class MssqlManager extends DBManager
     public function fromConvert($string, $type)
     {
         switch($type) {
+            case 'datetimecombo':
             case 'datetime': return substr($string, 0,19);
             case 'date': return substr($string, 0, 10);
             case 'time': return substr($string, 11);

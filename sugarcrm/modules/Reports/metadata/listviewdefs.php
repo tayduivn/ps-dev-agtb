@@ -36,7 +36,7 @@ $listViewDefs['Reports'] = array(
         'customCode' => '<span id="obj_{$ID}"><a  href="index.php?action=ReportCriteriaResults&module=Reports&page=report&id={$ID}">{$NAME}</a></span>',
         'default' => true), 
     'MODULE' => array(
-        'width' => '20',
+        'width' => '15',
         'label' => 'LBL_MODULE',
         'default' => true),
     'REPORT_TYPE_TRANS' => array(
@@ -65,7 +65,7 @@ $listViewDefs['Reports'] = array(
         
      //BEGIN SUGARCRM flav!=sales ONLY
      'IS_SCHEDULED' => array(
-        'width' => '2',
+        'width' => '10',
         'label' => 'LBL_SCHEDULE_REPORT',
         'default' => true,
         'related_fields' => array('active', 'schedule_id'),
@@ -80,7 +80,7 @@ $listViewDefs['Reports'] = array(
         'related_fields' => array('active', 'report_cache.date_modified'),
     ),
     'DATE_ENTERED' => array(
-        'width' => '5',
+        'width' => '14',
         'orderBy' => 'saved_reports.date_entered',
         'sortOrder' => 'desc',
         'label' => 'LBL_DATE_ENTERED',

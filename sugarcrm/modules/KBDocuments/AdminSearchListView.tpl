@@ -52,14 +52,14 @@
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
                             {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-                            <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+                            {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
                         {else}
                             {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-                            <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+                            {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
                         {/if}
                     {else}
                         {capture assign="imageName"}arrow.{$arrowExt}{/capture}
-                        <img border='0' src='{sugar_getimagepath file=$imageName}' width='{$arrowWidth}' height='{$arrowHeight}' align='absmiddle' alt='{$arrowAlt}'>
+                        {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
                     {/if}
 					</a>
 				{else}
@@ -131,7 +131,7 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' nowrap='nowrap'>
 				{if $pageData.access.edit}
-					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$pageData.bean.moduleDir}&return_id={$rowData.ID}&return_action=KBAdminView'><img border="0" src="{sugar_getimagepath file="edit_inline.gif"}"></a>
+					<a title='{$editLinkString}' id="edit-{$rowData.ID}" href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module={$params.module|default:$pageData.bean.moduleDir}&return_id={$rowData[$params.id]|default:$rowData.ID}&return_action=KBAdminView'>{sugar_getimage alt=$mod_strings.LBL_EDIT_INLINE name="edit_inline" ext=".gif" other_attributes='border="0" '}</a>
 				{/if}
 			</td>
 	    	</tr>

@@ -1621,7 +1621,7 @@ function get_mailmerge_document($session, $file_name, $fields)
             }
         }
 
-        $html = '<html><body><table border = 1><tr>';
+        $html = '<html ' . get_language_header() .'><body><table border = 1><tr>';
 
         foreach($master_fields as $master_field){
             $html .= '<td>'.$class1.'_'.$master_field.'</td>';
@@ -1746,7 +1746,7 @@ function get_mailmerge_document2($session, $file_name, $fields)
             }
         }
 
-        $html = '<html><body><table border = 1><tr>';
+        $html = '<html ' . get_language_header() . '><body><table border = 1><tr>';
 
         foreach($master_fields as $master_field){
             $html .= '<td>'.$class1.'_'.$master_field.'</td>';

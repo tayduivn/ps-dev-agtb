@@ -49,7 +49,7 @@
             </td>
             <td >
 				<input autocomplete="off" type="text" name="startDate_date" id="startDate_date" value="{$DEFAULT_START_DATE}" size="11" maxlength="10" tabindex="1">
-				<img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="" id="startDate_trigger" align="absmiddle" />
+				{sugar_getimage name="jscalendar" ext=".gif" alt=$mod_strings.LBL_JS_CALENDAR other_attributes='align="absmiddle" border="0" id="startDate_trigger" '}
 				&nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
 				<script type="text/javascript" language="javascript">
 					Calendar.setup ({ldelim}
@@ -71,7 +71,7 @@
             </td>
 	            <td >
 	            <input autocomplete="off" type="text" name="endDate_date" id="endDate_date" value="{$DEFAULT_END_DATE}" size="11" maxlength="10" tabindex="1">
-	            <img border="0" src="{sugar_getimagepath file='jscalendar.gif'}" alt="" id="endDate_trigger" align="absmiddle" />
+	            {sugar_getimage name="jscalendar" ext=".gif" alt=$mod_strings.LBL_JS_CALENDAR other_attributes='align="absmiddle" border="0" id="endDate_trigger" '}
 	            &nbsp;(<span class="dateFormat">{$USER_DATEFORMAT}</span>)
 	            <script type="text/javascript" language="javascript">
 		            Calendar.setup ({ldelim}
@@ -106,7 +106,7 @@
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
     <td align="left">
-        <input title="{$MOD.LBL_RUN}" accessKey="" class="button" type="button" name="button" value="  {$MOD.LBL_RUN}  " id="btnrun"><img id="loading_img" width="17" height="17" alt="loading..." src="themes/default/ext/resources/images/default/shared/large-loading.gif" style="display:none">
+        <input title="{$MOD.LBL_RUN}" accessKey="" class="button" type="button" name="button" value="  {$MOD.LBL_RUN}  " id="btnrun"><img id="loading_img" alt=$mod_strings.LBL_LOADING width="17" height="17" src="themes/default/ext/resources/images/default/shared/large-loading.gif" style="display:none">
     </td>
 </tr>
 </table>

@@ -143,6 +143,8 @@ else if (isset($_REQUEST['record'])){
     if (!isset($args['reporter'])) {
             $args['reporter'] = new Report($saved_report_seed->content);
     }
+
+    $args['reporter']->is_saved_report = true;
     $args['reporter']->saved_report = &$saved_report_seed;
     $args['reporter']->saved_report_id = $saved_report_seed->id;
 	
@@ -219,8 +221,10 @@ if(!empty($args['reporter']->saved_report->id)){
 }
 //END SUGARCRM flav=pro ONLY
 $params[] = "{$args['reporter']->name}&nbsp;{$star}";
-    
-echo getClassicModuleTitle("Reports", $params, false);
+
+//Override the create url
+$createURL = 'index.php?module=Reports&report_module=&action=index&page=report&Create+Custom+Report=Create+Custom+Report';
+echo getClassicModuleTitle("Reports", $params, true, '', $createURL);
 
 // show report interface
 if (isset($_REQUEST['page'] ) && $_REQUEST['page'] == 'report') {

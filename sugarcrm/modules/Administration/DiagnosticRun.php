@@ -634,7 +634,7 @@ function executevardefs()
       include_once( $vardefFileName );
     }
 
-    echo "<html>";
+    echo "<html lang='en'>";
     echo "<BODY>";
     echo "<H1>Schema listing based on vardefs</H1>";
     echo "<P>Sugar version:  ".$sugar_version." / Sugar DB version:  ".$sugar_db_version." / Sugar flavor:  ".$sugar_flavor;

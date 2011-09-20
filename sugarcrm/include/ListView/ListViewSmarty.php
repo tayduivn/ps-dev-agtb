@@ -114,6 +114,7 @@ class ListViewSmarty extends ListViewDisplay{
         if ( $this->data['pageData']['offsets']['next'] < 0 ) {
             $pageTotal = $this->data['pageData']['offsets']['total'] - $this->data['pageData']['offsets']['current'];
         }
+
 		if($this->select)$this->ss->assign('selectLink', $this->buildSelectLink('select_link', $this->data['pageData']['offsets']['total'], $pageTotal));
 		
 		if($this->show_action_dropdown)
@@ -124,17 +125,13 @@ class ListViewSmarty extends ListViewDisplay{
 		$this->ss->assign('quickViewLinks', $this->quickViewLinks);
 
 		// handle save checks and stuff
-		if($this->multiSelect) {
-		
-		//if($this->data['pageData']['bean']['moduleDir']== 'KBDocuments')
-		//{ 
-		//	$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
-		//} else {
+		if($this->multiSelect)
+        {
 			$this->ss->assign('selectedObjectsSpan', $this->buildSelectedObjectsSpan(true, $this->data['pageData']['offsets']['current']));
-		//}
-		
-		$this->ss->assign('multiSelectData', $this->getMultiSelectData());
-		}
+		    $this->ss->assign('multiSelectData', $this->getMultiSelectData());
+		} else {
+            $this->ss->assign('multiSelectData', '<textarea style="display: none" name="uid"></textarea>');
+        }
 		//BEGIN SUGARCRM flav!=sales ONLY
 		// include button for Adding to Target List if in one of four applicable modules
 		if ( isset ( $_REQUEST['module']) && in_array ( $_REQUEST['module'] , array ( 'Contacts','Prospects','Leads','Accounts' ))

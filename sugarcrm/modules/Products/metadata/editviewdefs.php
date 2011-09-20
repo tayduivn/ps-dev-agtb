@@ -44,7 +44,7 @@ $viewdefs['Products']['EditView'] = array(
             'displayParams'=>array('required'=>true),
             'customCode'=>'<input name="name" id="name" type="text" value="{$fields.name.value}">'.
                           '<input name="product_template_id" id="product_template_id" type="hidden" value="{$fields.product_template_id.value}">'.
-                          '&nbsp;<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" class="button" value="{$APP.LBL_SELECT_BUTTON_LABEL}" onclick=\'return get_popup_product();\'>' .
+                          '&nbsp;<input title="{$APP.LBL_SELECT_BUTTON_TITLE}" accessKey="{$APP.LBL_SELECT_BUTTON_KEY}" type="button" class="button" value="{$APP.LBL_SELECT_BUTTON_LABEL}" onclick=\'return get_popup_product("{$form_name}");\'>' .
             		      '&nbsp;<input tabindex="1" title="{$LBL_CLEAR_BUTTON_TITLE}" accessKey="{$APP.LBL_CLEAR_BUTTON_KEY}" class="button" onclick="this.form.product_template_id.value = \'\'; this.form.name.value = \'\';" type="button" value="{$APP.LBL_CLEAR_BUTTON_LABEL}">',
       ),
       'status'

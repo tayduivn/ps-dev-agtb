@@ -129,7 +129,7 @@ global $currentModule;
     
             
     /********** FINAL END OF PAGE UI Stuff ********/
-    $ss->display('modules/Campaigns/WizardHome.html');
+    $ss->display(file_exists('custom/modules/Campaigns/WizardHome.html') ? 'custom/modules/Campaigns/WizardHome.html' : 'modules/Campaigns/WizardHome.html');
     
 }else{
     //there is no record to retrieve, so ask which type of campaign wizard to launch
@@ -150,7 +150,7 @@ global $currentModule;
     $ss = new Sugar_Smarty();
     $ss->assign("MOD", $mod_strings);
     $ss->assign("APP", $app_strings);
-    $ss->display('modules/Campaigns/tpls/WizardHomeStart.tpl');
+    $ss->display(file_exists('custom/modules/Campaigns/tpls/WizardHomeStart.tpl') ? 'custom/modules/Campaigns/tpls/WizardHomeStart.tpl' : 'modules/Campaigns/tpls/WizardHomeStart.tpl');
        
 }
 
@@ -380,9 +380,13 @@ function create_target_summary  ($focus){
                 $pl_tbl  .= "<td scope='row' width='30%'>$type</td>";
                 $pl_tbl  .= "<td scope='row' width='15%'>".$pl_focus->get_entry_count()."</td>";
                 $pl_tbl  .= "<td scope='row' width='5%' align='right'><a href='index.php?action=EditView&module=ProspectLists&return_module=Campaigns&return_action=WizardHome&return_id=" .$focus->id. "&record=".$pl_focus->id."'>";
-                $pl_tbl  .= "<img src='".SugarThemeRegistry::current()->getImageURL("edit_inline.gif")."' border=0></a>&nbsp;";
+                $pl_tbl  .= SugarThemeRegistry::current()->getImage('edit_inline', 'border=0', null, null, ".gif", $mod_strings['LBL_EDIT_INLINE']) . "</a>&nbsp;";
+
+
                 $pl_tbl  .= "<a href='index.php?action=DetailView&module=ProspectLists&return_module=Campaigns&return_action=WizardHome&return_id=" .$focus->id. "&record=".$pl_focus->id."'>";
-                $pl_tbl  .= "<img src='".SugarThemeRegistry::current()->getImageURL("view_inline.gif")."' border=0></a></td>";                  
+                $pl_tbl  .= SugarThemeRegistry::current()->getImage('view_inline', 'border=0', null, null, ".gif", $mod_strings['LBL_VIEW_INLINE'])."</a></td>";
+
+
               }
             }        
     }else{
@@ -440,13 +444,13 @@ function create_tracker_summary  ($focus){
 function create_wiz_menu_items($type,$mrkt_string,$camp_url,$summ_url){
     global $mod_strings;
     
-    $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN1']]          = 'modules/Campaigns/tpls/WizardCampaignHeader.tpl';
-    $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN2']]          = 'modules/Campaigns/tpls/WizardCampaignBudget.tpl';
-    $steps[$mod_strings['LBL_NAVIGATION_MENU_TRACKERS']]      = 'modules/Campaigns/tpls/WizardCampaignTracker.tpl';
+    $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN1']]          = file_exists('custom/modules/Campaigns/tpls/WizardCampaignHeader.tpl') ? 'custom/modules/Campaigns/tpls/WizardCampaignHeader.tpl' : 'modules/Campaigns/tpls/WizardCampaignHeader.tpl';
+    $steps[$mod_strings['LBL_NAVIGATION_MENU_GEN2']]          = file_exists('custom/modules/Campaigns/tpls/WizardCampaignBudget.tpl') ? 'custom/modules/Campaigns/tpls/WizardCampaignBudget.tpl' : 'modules/Campaigns/tpls/WizardCampaignBudget.tpl';
+    $steps[$mod_strings['LBL_NAVIGATION_MENU_TRACKERS']]      = file_exists('custom/modules/Campaigns/tpls/WizardCampaignTracker.tpl') ? 'custom/modules/Campaigns/tpls/WizardCampaignTracker.tpl' : 'modules/Campaigns/tpls/WizardCampaignTracker.tpl';
     if($type == 'newsletter'){
-        $steps[$mod_strings['LBL_NAVIGATION_MENU_SUBSCRIPTIONS']] = 'modules/Campaigns/tpls/WizardCampaignTargetList.tpl';
+        $steps[$mod_strings['LBL_NAVIGATION_MENU_SUBSCRIPTIONS']] = file_exists('custom/modules/Campaigns/tpls/WizardCampaignTargetList.tpl') ? 'custom/modules/Campaigns/tpls/WizardCampaignTargetList.tpl' : 'modules/Campaigns/tpls/WizardCampaignTargetList.tpl';
     }else{
-        $steps[$mod_strings['LBL_TARGET_LISTS']]                  = 'modules/Campaigns/tpls/WizardCampaignTargetListForNonNewsLetter.tpl';
+        $steps[$mod_strings['LBL_TARGET_LISTS']]                  = file_exists('custom/modules/Campaigns/tpls/WizardCampaignTargetListForNonNewsLetter.tpl') ? 'custom/modules/Campaigns/tpls/WizardCampaignTargetListForNonNewsLetter.tpl' : 'modules/Campaigns/tpls/WizardCampaignTargetListForNonNewsLetter.tpl';
     }    
 
     $nav_html = '<table border="0" cellspacing="0" cellpadding="0" width="100%" >';

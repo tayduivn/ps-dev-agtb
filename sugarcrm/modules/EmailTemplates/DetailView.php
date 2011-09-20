@@ -110,11 +110,11 @@ $xtpl->assign("DATE_ENTERED", $focus->date_entered);
 $xtpl->assign("ASSIGNED_USER_NAME", $focus->assigned_user_name);
 
 
-if(ACLController::checkAccess('EmailTemplates', 'edit', true)) {
+if($focus->ACLAccess('EditView')) {
 	$xtpl->parse("main.edit");
 	//$xtpl->out("EDIT");
-		
-} 
+
+}
 //BEGIN SUGARCRM flav=pro ONLY
 
 require_once('modules/Teams/TeamSetManager.php');
@@ -154,7 +154,7 @@ $xtpl->assign("ATTACHMENTS", $attachments);
 global $current_user;
 if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])) {
 
-	$xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$_REQUEST['record']. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>");
+	$xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$_REQUEST['record']. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>");
 }
 
 $xtpl->assign("DESCRIPTION", $focus->description);

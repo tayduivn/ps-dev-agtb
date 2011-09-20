@@ -100,29 +100,6 @@ class IBMDB2Manager  extends DBManager
 
 	);
 
-	/**~
-	 * @var array
-	 */
-	// TODO: Note sure if the $type_class is required, just keeping it for consistency with the MySQL and Oracle implementations
-	protected $type_class = array(
-			'int'      => 'int',
-			'double'   => 'float',
-			'float'    => 'float',
-			'uint'     => 'int',
-			'ulong'    => 'int',
-			'long'     => 'int',
-			'short'    => 'int',
-			'date'     => 'date',
-			'datetime' => 'date',
-			'datetimecombo' => 'date',
-			'time'     => 'time',
-			'bool'     => 'bool',
-			'tinyint'  => 'int',
-			'currency' => 'float',
-			'decimal'  => 'float',
-			'decimal2' => 'float',
-	);
-
 	/**+
 	 * @var array
 	 */
@@ -715,7 +692,8 @@ public function convert($string, $type, array $additional_parameters = array())
 			case 'date': return substr($string, 0, 10);
 			case 'time': return substr($string, 11,8);
 			case 'timestamp':
-			case 'datetime': return substr($string, 0,19);
+			case 'datetimecombo':
+		    case 'datetime': return substr($string, 0,19);
 		}
 		return $string;
 	}

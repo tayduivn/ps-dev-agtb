@@ -236,7 +236,7 @@ $dictionary['Note'] = array(
  'contact_name'=>
  	array(
 		'name'=>'contact_name',
-		'rname'=>'last_name',
+		'rname'=>'name',
 		'id_name'=>'contact_id',
 		'vname'=>'LBL_CONTACT_NAME',
         'table'=>'contacts',
@@ -453,6 +453,14 @@ $dictionary['Note'] = array(
     'relationship' => 'calls_notes',
     'source'=>'non-db',
     'vname'=>'LBL_CALLS',
+  ),
+  'tasks' =>
+  array (
+    'name' => 'tasks',
+    'type' => 'link',
+    'relationship' => 'tasks_notes',
+    'source'=>'non-db',
+    'vname'=>'LBL_TASKS',
   ),
   'description' =>
       array (

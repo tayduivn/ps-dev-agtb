@@ -979,14 +979,14 @@ EOQ;
 
 	function get_list_view_data() {
 
-		global $current_user;
+		global $current_user, $mod_strings;
 
 		$user_fields = $this->get_list_view_array();
 		if ($this->is_admin)
-			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '');
+			$user_fields['IS_ADMIN_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
 		elseif (!$this->is_admin) $user_fields['IS_ADMIN'] = '';
 		if ($this->is_group)
-			$user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '');
+			$user_fields['IS_GROUP_IMAGE'] = SugarThemeRegistry::current()->getImage('check_inline', '',null,null,'.gif',$mod_strings['LBL_CHECKMARK']);
 		else
 			$user_fields['IS_GROUP_IMAGE'] = '';
 		$user_fields['NAME'] = empty ($this->name) ? '' : $this->name;
@@ -1573,12 +1573,7 @@ EOQ;
                 continue;
             }
 
-            $focus = SugarModule::get($module)->loadBean();
-            if ( $focus instanceOf SugarBean ) {
-                $key = $focus->acltype;
-            } else {
-                $key = 'module';
-            }
+            $key = 'module';
             
             if (($this->isAdmin() && isset($actions[$module][$key]))
             //BEGIN SUGARCRM flav=pro ONLY

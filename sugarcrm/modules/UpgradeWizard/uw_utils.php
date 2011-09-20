@@ -591,6 +591,7 @@ function deleteCache(){
                }
 	       	}
 	    }
+
 	}
 
 	//Clean jsLanguage from cache
@@ -809,7 +810,7 @@ function getValidPatchName($returnFull = true) {
 				$icon = getImageForType( $manifest['type'] );
 			} else {
 				$path_parts = pathinfo( $manifest['icon'] );
-				$icon = "<img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
+				$icon = "<!--not_in_theme!--><img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\">";
 			}
 	    }
 	}
@@ -1904,19 +1905,19 @@ function getImageForType($type) {
     $icon = "";
     switch($type) {
         case "full":
-            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "");
+            $icon = SugarThemeRegistry::current()->getImage("Upgrade", "",null,null,'.gif',$mod_strings['LBL_UPGRADE']);
             break;
         case "langpack":
-            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "");
+            $icon = SugarThemeRegistry::current()->getImage("LanguagePacks", "",null,null,'.gif',$mod_strings['LBL_LANGPACKS']);
             break;
         case "module":
-            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "");
+            $icon = SugarThemeRegistry::current()->getImage("ModuleLoader", "",null,null,'.gif',$mod_strings['LBL_MODULELOADER']);
             break;
         case "patch":
-            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "");
+            $icon = SugarThemeRegistry::current()->getImage("PatchUpgrades", "",null,null,'.gif',$mod_strings['LBL_PATCHUPGRADES']);
             break;
         case "theme":
-            $icon = SugarThemeRegistry::current()->getImage("Themes", "");
+            $icon = SugarThemeRegistry::current()->getImage("Themes", "",null,null,'.gif',$mod_strings['LBL_THEMES']);
             break;
         default:
             break;
@@ -2078,12 +2079,11 @@ function unlinkUWTempFiles() {
  * @param bool include_dir True if we want to include directories in the
  * returned collection
  */
-function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(), $echo=false) {
+function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), $echo=false) {
 	// check skips
-	foreach($skip_dirs as $skipMe) {
-		if(strpos(clean_path($dir), $skipMe) !== false) {
-			return $the_array;
-		}
+    if (whetherNeedToSkipDir($dir, $skipDirs))
+	{
+	    return $theArray;
 	}
 
     if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir
@@ -2091,7 +2091,8 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
     if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
-	    if($f == "." || $f == "..") { // skip *nix self/parent
+	                                // bug 40793 Skip Directories array in upgradeWizard does not function correctly
+	    if($f == "." || $f == ".." || whetherNeedToSkipDir("$dir/$f", $skipDirs)) { // skip *nix self/parent
 	        continue;
 	    }
 
@@ -2102,20 +2103,20 @@ function uwFindAllFiles($dir, $the_array, $include_dirs=false, $skip_dirs=array(
     	}
 
 	    if(is_dir("$dir/$f")) {
-			if($include_dirs) { // add the directory if flagged
-				$the_array[] = clean_path("$dir/$f");
+			if($includeDirs) { // add the directory if flagged
+				$theArray[] = clean_path("$dir/$f");
 			}
 
 			// recurse in
-	        $the_array = uwFindAllFiles("$dir/$f/", $the_array, $include_dirs, $skip_dirs, $echo);
+	        $theArray = uwFindAllFiles("$dir/$f/", $theArray, $includeDirs, $skipDirs, $echo);
 	    } else {
-	        $the_array[] = clean_path("$dir/$f");
+	        $theArray[] = clean_path("$dir/$f");
 	    }
 
 
 	}
-	rsort($the_array);
-	return $the_array;
+	rsort($theArray);
+	return $theArray;
 }
 
 
@@ -2265,6 +2266,7 @@ function testThis() {
 
 
 function testThis2($dir, $id=0, $hide=false) {
+    global $mod_strings;
 	$path = $dir;
 	$dh = opendir($dir);
 	rewinddir($dh);
@@ -2280,7 +2282,7 @@ function testThis2($dir, $id=0, $hide=false) {
 		if(is_dir($path.'/'.$file)) {
 			$file = $path.'/'.$file;
 			$newI = create_guid();
-			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'><img border='0' src='".SugarThemeRegistry::current()->getImageURL('Workflow.gif')."'></a></td>\n";
+			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'>".SugarThemeRegistry::current()->getImage("Workflow", "", null, null, ".gif", $mod_strings['LBL_WORKFLOW'])."</a></td>\n";
 			$out .= "<td valign='top'><b><a href='javascript:toggleNwFiles(\"{$newI}\");'>".basename($file)."</a></b></td></tr>";
 			$out .= "<tr><td></td><td valign='top'>".testThis2($file, $newI, true)."</td></tr>";
 		} else {
@@ -2321,7 +2323,7 @@ function testThis3(&$files, $id, $hide, $previousPath = '') {
 			$out .= "<td valign='top' align='left'>{$fileName}</td></tr>";
 		} else { // new directory
 			$newI = $k;
-			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'><img border='0' src='".SugarThemeRegistry::current()->getImageURL('Workflow.gif')."></a></td>\n";
+			$out .= "<tr><td valign='top'><a href='javascript:toggleNwFiles(\"{$newI}\");'>".SugarThemeRegistry::current()->getImage("Workflow", "", null, null, ".gif", $mod_strings['LBL_WORKFLOW'])."</a></td>\n";
 			$out .= "<td valign='top'><b><a href='javascript:toggleNwFiles(\"{$newI}\");'>".$fileName."</a></b></td></tr>";
 			$recurse = testThis3($files, $newI, true, $previousPath);
 			$out .= "<tr><td></td><td valign='top'>".$recurse."</td></tr>";
@@ -4425,7 +4427,7 @@ function getSilentUpgradeVar($var){
  */
 function add_unified_search_to_custom_modules_vardefs()
 {
-	if(file_exists($cachefile = sugar_cached('cache/modules/unified_search_modules.php')))
+	if(file_exists($cachefile = sugar_cached('modules/unified_search_modules.php')))
 	{
 	   unlink($cachefile);
 	}
@@ -4708,5 +4710,21 @@ function getUWDirs()
         }
         return array("upload://upgrades", sugar_cached("upgrades/temp"));
     }
+}
+
+/**
+ * Whether directory exists within list of directories to skip
+ * @param string $dir dir to be checked
+ * @param array $skipDirs list with skipped dirs
+ * @return boolean
+ */
+function whetherNeedToSkipDir($dir, $skipDirs) 
+{
+    foreach($skipDirs as $skipMe) {
+		if(strpos( clean_path($dir), $skipMe ) !== false) {
+			return true;
+		}
+	}
+    return false;
 }
 

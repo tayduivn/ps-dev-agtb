@@ -20,16 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Quotes module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-require_once('include/MVC/View/views/view.edit.php');
 
 class QuotesViewEdit extends ViewEdit
 {
@@ -141,7 +131,8 @@ class QuotesViewEdit extends ViewEdit
 			if(!empty($_REQUEST['record'])){
 				$record = $_REQUEST['record'];
 			}
-			$this->ss->assign('ADMIN_EDIT',"<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>");
+			$this->ss->assign('ADMIN_EDIT',"<a href='index.php?action=index&module=DynamicLayout&from_action=".$_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>");
+
 		}
 		$this->ss->assign('QUOTE_STAGE_OPTIONS', get_select_options_with_id($app_list_strings['quote_stage_dom'], $this->bean->quote_stage));
 		$this->ss->assign('DEFAULT_PRODUCT_STATUS', $app_list_strings['product_status_quote_key']);
@@ -221,11 +212,10 @@ class QuotesViewEdit extends ViewEdit
 			if(is_array($product_bundle_list)){
 
 				$ordered_bundle_list = array();
-                foreach ($product_bundle_list as $id => $bean)
-                {
-                    $index = $bean->get_index($this->bean->id);
-                    $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
-                } //for
+				for ($cnt = 0; $cnt < count($product_bundle_list); $cnt++) {
+					$index = $product_bundle_list[$cnt]->get_index($this->bean->id);
+					$ordered_bundle_list[(int)$index[0]['bundle_index']] = $product_bundle_list[$cnt];
+				}
                 ksort($ordered_bundle_list);
 				foreach ($ordered_bundle_list as $product_bundle) {
 					$product_list = $product_bundle->get_products();
@@ -269,11 +259,13 @@ class QuotesViewEdit extends ViewEdit
 			if(is_array($product_bundle_list)){
 
 				$ordered_bundle_list = array();
+
                 foreach ($product_bundle_list as $id => $bean)
                 {
                     $index = $bean->get_index($original_quote->id);
                     $ordered_bundle_list[(int)$index[0]['bundle_index']] = $bean;
                 } //for
+
                 ksort($ordered_bundle_list);
 
 				foreach ($ordered_bundle_list as $product_bundle) {

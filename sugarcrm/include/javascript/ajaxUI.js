@@ -37,7 +37,7 @@ SUGAR.ajaxUI = {
         if (typeof window.onbeforeunload == "function")
             window.onbeforeunload = null;
         scroll(0,0);
-        ajaxStatus.hideStatus();
+        SUGAR.ajaxUI.hideLoadingPanel();
         try{
             var r = YAHOO.lang.JSON.parse(o.responseText);
             cont = r.content;
@@ -53,7 +53,7 @@ SUGAR.ajaxUI = {
             {
                 action_sugar_grp1 = r.action;
             }
-            //SUGAR.themes.setCurrentTab(r.menu);
+            
             var c = document.getElementById("content");
             c.innerHTML = cont;
             SUGAR.util.evalScript(cont);
@@ -163,11 +163,18 @@ SUGAR.ajaxUI = {
                 loadLanguageJS = '&loadLanguageJS=1';
             }
 
-            if (!inAjaxUI)
+            if (!inAjaxUI) {
                 //If we aren't in the ajaxUI yet, we need to reload the page to get setup properly
-                window.location = "index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url);
+                if (!SUGAR.isIE)
+                    window.location.replace("index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url));
+                else {
+                    //if we use replace under IE, it will cache the page as the replaced version and thus no longer load the previous page.
+                    window.location.hash = "#";
+                    window.location.assign("index.php?action=ajaxui#ajaxUILoc=" + encodeURIComponent(url));
+                }
+            }
             else {
-                ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
+                SUGAR.ajaxUI.showLoadingPanel();
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
                     success: SUGAR.ajaxUI.callback
                 });
@@ -195,7 +202,7 @@ SUGAR.ajaxUI = {
             var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
             SA.lastURL = "";
             //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
-            ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
+            SUGAR.ajaxUI.showLoadingPanel();
             if(string.length > 200)
             {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
@@ -230,9 +237,9 @@ SUGAR.ajaxUI = {
     {
         //Setup Browser History
         var url = YAHOO.util.History.getBookmarkedState('ajaxUILoc');
-        var aRegex = /action=([^&]*)/.exec(window.location);
+        var aRegex = /action=([^&#]*)/.exec(window.location);
         var action = aRegex ? aRegex[1] : false;
-        var mRegex = /module=([^&]*)/.exec(window.location);
+        var mRegex = /module=([^&#]*)/.exec(window.location);
         var module = mRegex ? mRegex[1] : false;
         if (module != "ModuleBuilder")
         {
@@ -254,5 +261,36 @@ SUGAR.ajaxUI = {
             'printwin',
             'menubar=1,status=0,resizable=1,scrollbars=1,toolbar=0,location=1'
         );
+    },
+    showLoadingPanel: function()
+    {
+        if (!SUGAR.ajaxUI.loadingPanel)
+        {
+            SUGAR.ajaxUI.loadingPanel = new YAHOO.widget.Panel("ajaxloading",
+            {
+                width:"240px",
+                fixedcenter:true,
+                close:false,
+                draggable:false,
+                constraintoviewport:false,
+                modal:true,
+                visible:false
+            });
+            SUGAR.ajaxUI.loadingPanel.setBody('<div id="loadingPage" align="center" style="vertical-align:middle;"><img src="' + SUGAR.themes.image_server + 'index.php?entryPoint=getImage&themeName='+SUGAR.themes.theme_name+'&imageName=img_loading.gif" align="absmiddle" /> <b>' + SUGAR.language.get('app_strings', 'LBL_LOADING_PAGE') +'</b></div>');
+            SUGAR.ajaxUI.loadingPanel.render(document.body);
+        }
+
+        if (document.getElementById('ajaxloading_c'))
+            document.getElementById('ajaxloading_c').style.display = '';
+        
+        SUGAR.ajaxUI.loadingPanel.show();
+
+    },
+    hideLoadingPanel: function()
+    {
+        SUGAR.ajaxUI.loadingPanel.hide();
+        
+        if (document.getElementById('ajaxloading_c'))
+            document.getElementById('ajaxloading_c').style.display = 'none';
     }
 };

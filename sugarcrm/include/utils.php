@@ -227,6 +227,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
+		'use_sprites' => true,
 	);
 }
 
@@ -412,7 +413,7 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-
+	'use_sprites' => true,
 
 	//END SUGARCRM flav=pro ONLY
 	'use_real_names' => true,
@@ -2033,9 +2034,25 @@ function xss_check_pattern($pattern, $str) {
 	return $matches[1];
 }
 
-// Designed to take a string passed in the URL as a parameter and clean all "bad" data from it
-// The second argument is a string, "filter," which corresponds to a regular expression
-function clean_string($str, $filter = "STANDARD") {
+/**
+ * Designed to take a string passed in the URL as a parameter and clean all "bad" data from it
+ *
+ * @param string $str
+ * @param string $filter which corresponds to a regular expression to use; choices are:
+ * 		"STANDARD" ( default )
+ * 		"STANDARDSPACE"
+ * 		"FILE"
+ * 		"NUMBER"
+ * 		"SQL_COLUMN_LIST"
+ * 		"PATH_NO_URL"
+ * 		"SAFED_GET"
+ * 		"UNIFIED_SEARCH"
+ * 		"AUTO_INCREMENT"
+ * 		"ALPHANUM"
+ * @param boolean $dieOnBadData true (default) if you want to die if bad data if found, false if not
+ */
+function clean_string($str, $filter = "STANDARD", $dieOnBadData = true) 
+{
 	global  $sugar_config;
 
 	$filters = Array(
@@ -2043,7 +2060,7 @@ function clean_string($str, $filter = "STANDARD") {
 	"STANDARDSPACE"   => '#[^A-Z0-9\-_\.\@\ ]#i',
 	"FILE"            => '#[^A-Z0-9\-_\.]#i',
 	"NUMBER"          => '#[^0-9\-]#i',
-	"SQL_COLUMN_LIST" => '#[^A-Z0-9,_\.]#i',
+	"SQL_COLUMN_LIST" => '#[^A-Z0-9\(\),_\.]#i',
 	"PATH_NO_URL"     => '#://#i',
 	"SAFED_GET"		  => '#[^A-Z0-9\@\=\&\?\.\/\-_~+]#i', /* range of allowed characters in a GET string */
 	"UNIFIED_SEARCH"	=> "#[\\x00]#", /* cn: bug 3356 & 9236 - MBCS search strings */
@@ -2055,7 +2072,10 @@ function clean_string($str, $filter = "STANDARD") {
 		if (isset($GLOBALS['log']) && is_object($GLOBALS['log'])) {
 			$GLOBALS['log']->fatal("SECURITY: bad data passed in; string: {$str}");
 		}
-		die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
+		if ( $dieOnBadData ) {
+			die("Bad data passed in; <a href=\"{$sugar_config['site_url']}\">Return to Home</a>");
+		}
+		return false;
 	}
 	else {
 		return $str;
@@ -2241,13 +2261,9 @@ function convert_id($string)
 /**
  * @deprecated use SugarTheme::getImage()
  */
-function get_image($image,$other_attributes,$width="",$height="")
+function get_image($image,$other_attributes,$width="",$height="",$ext='.gif',$alt)
 {
-    return SugarThemeRegistry::current()->getImage(basename($image),
-        $other_attributes,
-        empty($width) ? null : $width,
-        empty($height) ? null : $height
-        );
+    return SugarThemeRegistry::current()->getImage(basename($image), $other_attributes, empty($width) ? null : $width, empty($height) ? null : $height, $ext, $alt );
 }
 /**
  * @deprecated use SugarTheme::getImageURL()
@@ -2731,7 +2747,6 @@ function _ppd($mixed)
  * @param $displayStackTrace also show stack trace
  */
 function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal") {
-	//BEGIN SUGARCRM flav=int ONLY
 	if(!isset($GLOBALS['log']) || empty($GLOBALS['log'])) {
 
 		$GLOBALS['log'] = LoggerManager :: getLogger('SugarCRM');
@@ -2755,7 +2770,6 @@ function _ppl($mixed, $die=false, $displayStackTrace=false, $loglevel="fatal") {
 	if($die) {
 		die();
 	}
-	//END SUGARCRM flav=int ONLY
 }
 
 /**
@@ -3049,7 +3063,7 @@ function sugar_cleanup($exit = false) {
 	        $GLOBALS['current_user']->savePreferencesToDB();
 	}
 
-	//check to see if this is not an ajax call AND the user preference error flag is set
+	//check to see if this is not an `ajax call AND the user preference error flag is set
 	if(
 		(isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
 		&& ($_REQUEST['action']!='modulelistmenu' && $_REQUEST['action']!='DynamicAction')
@@ -3539,7 +3553,7 @@ function search_filter_rel_info(& $focus, $tar_rel_module, $relationship_name){
 	}
 
 	// special case for unlisted parent-type relationships
-	if($focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
+	if( !empty($focus->parent_type) && $focus->parent_type == $tar_rel_module && !empty($focus->parent_id)) {
 		$temp_bean = get_module_info($tar_rel_module);
 		$temp_bean->retrieve($focus->parent_id);
 		if($temp_bean->id!=""){
@@ -4114,16 +4128,24 @@ function createGroupUser($name) {
 
 function _getIcon($iconFileName)
 {
-    $iconPath = SugarThemeRegistry::current()->getImageURL("icon_{$iconFileName}.gif");
-    //First try un-ucfirst-ing the icon name
-    if ( empty($iconPath) )
-        $iconPath = SugarThemeRegistry::current()->getImageURL(
-            "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif");
-    //Next try removing the icon prefix
-    if ( empty($iconPath) )
-        $iconPath = SugarThemeRegistry::current()->getImageURL("{$iconFileName}.gif");
 
-  	return $iconPath;
+	$iconName = "icon_{$iconFileName}.gif";
+    $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+
+    //First try un-ucfirst-ing the icon name
+    if ( empty($iconFound) )
+		$iconName = "icon_" . strtolower(substr($iconFileName,0,1)).substr($iconFileName,1) . ".gif";
+        $iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+    
+	//Next try removing the icon prefix
+    if ( empty($iconFound) )
+		$iconName = "{$iconFileName}.gif";
+		$iconFound = SugarThemeRegistry::current()->getImageURL($iconName,false);
+
+	if ( empty($iconFound) )
+		$iconName = '';
+
+  	return $iconName;
 }
 /**
  * Function to grab the correct icon image for Studio
@@ -4132,22 +4154,23 @@ function _getIcon($iconFileName)
  * @param string $width Width of image
  * @param string $height Height of image
  * @param string $align Alignment of image
+ * @param string $alt Alt tag of image
  * @return string $string <img> tag with corresponding image
  */
 
-function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline' )
+function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='48', $align='baseline', $alt='' )
 {
 	global $app_strings, $theme;
 
-    $iconPath = _getIcon($iconFileName);
- 	if(empty($iconPath)){
- 	    $iconPath = _getIcon($altFileName);
- 	    if (empty($iconPath))
+    $iconName = _getIcon($iconFileName);
+ 	if(empty($iconName)){
+ 	    $iconName = _getIcon($altFileName);
+ 	    if (empty($iconName))
  	    {
             return $app_strings['LBL_NO_IMAGE'];
  	    }
  	}
-	return '<img border="0" src="'.$iconPath.'" width="'.$width.'" height="'.$height.'" align="'.$align.'">';
+	return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
 /**
@@ -4157,23 +4180,21 @@ function getStudioIcon($iconFileName='', $altFileName='', $width='48', $height='
  * @param string $width Width of image
  * @param string $height Height of image
  * @param string $align Alignment of image
+ * @param string $alt Alt tag of image
  * @return string $string <img> tag with corresponding image
  */
 
-function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle'){
+function get_dashlets_dialog_icon($module='', $width='32', $height='32', $align='absmiddle',$alt=''){
 	global $app_strings, $theme;
- 	$icon_path = _getIcon($module . "_32");
- 	if (empty($icon_path))
+ 	$iconName = _getIcon($module . "_32");
+ 	if (empty($iconName))
  	{
- 		$icon_path = _getIcon($module);
+ 		$iconName = _getIcon($module);
  	}
- 	if(empty($icon_path)){
- 		$icon = $app_strings['LBL_NO_IMAGE'];
+ 	if(empty($iconName)){
+ 		return $app_strings['LBL_NO_IMAGE'];
  	}
-	else{
-		$icon = '<img border="0" src="'.$icon_path.'" width="'.$width.'" height="'.$height.'" align="'.$align.'">';
-	}
-	return $icon;
+	return SugarThemeRegistry::current()->getImage($iconName, "align=\"$align\" border=\"0\"", $width, $height);
 }
 
 // works nicely to change UTF8 strings that are html entities - good for PDF conversions
@@ -4814,4 +4835,18 @@ if(file_exists('custom/application/Ext/Utils/custom_utils.ext.php')) {
 function sanitize($input, $quotes = ENT_QUOTES, $charset = 'UTF-8', $remove = false)
 {
     return htmlentities($input, $quotes, $charset);
+}
+
+
+/**
+ * get_language_header
+ * 
+ * This is a utility function for 508 Compliance.  It returns the lang=[Current Language] text string used
+ * inside the <html> tag.  If no current language is specified, it defaults to lang='en'.
+ *
+ * @return String The lang=[Current Language] markup to insert into the <html> tag
+ */
+function get_language_header()
+{
+    return isset($GLOBALS['current_language']) ? "lang='{$GLOBALS['current_language']}'" : "lang='en'";
 }

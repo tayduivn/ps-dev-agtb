@@ -86,7 +86,7 @@ class SugarView
         //For the ajaxUI, we need to use output buffering to return the page in an ajax friendly format
         if ($this->_getOption('json_output')){
 			ob_start();
-			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])){
+			if(!empty($_REQUEST['ajax_load']) && !empty($_REQUEST['loadLanguageJS'])) {
 				echo $this->_getModLanguageJS();
 			}
 		}
@@ -103,9 +103,9 @@ class SugarView
         $this->display();
         if ( !empty($this->module) ) {
             $GLOBALS['logic_hook']->call_custom_logic($this->module, 'after_ui_frame');
+        } else {
+            $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
         }
-        $GLOBALS['logic_hook']->call_custom_logic('', 'after_ui_frame');
-
 
         if ($this->_getOption('show_subpanels') && !empty($_REQUEST['record'])) $this->_displaySubPanels();
 
@@ -250,6 +250,7 @@ class SugarView
         $ss->assign("THEME", $theme);
         $ss->assign("THEME_IE6COMPAT", $themeObject->ie6compat ? 'true':'false');
         $ss->assign("MODULE_NAME", $this->module);
+        $ss->assign("langHeader", get_language_header());
 
         // get browser title
         $ss->assign("SYSTEM_NAME", $this->getBrowserTitle());
@@ -294,7 +295,7 @@ class SugarView
                 "LABEL"       => $menu_item[1],
                 "MODULE_NAME" => $menu_item[2],
                 "IMAGE"       => $themeObject
-                    ->getImage($menu_item[2],"alt='".$menu_item[1]."'  border='0' align='absmiddle'"),
+                    ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
                 );
         $ss->assign("SHORTCUT_MENU",$shortcut_menu);
 
@@ -412,7 +413,7 @@ class SugarView
             foreach ( $history as $key => $row ) {
                 $history[$key]['item_summary_short'] = getTrackerSubstring($row['item_summary']);
                 $history[$key]['image'] = SugarThemeRegistry::current()
-                    ->getImage($row['module_name'],'border="0" align="absmiddle" alt="'.$row['item_summary'].'"');
+                    ->getImage($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',$row['item_summary']);
             }
             $ss->assign("recentRecords",$history);
         }
@@ -587,7 +588,7 @@ class SugarView
                         "LABEL"       => $menu_item[1],
                         "MODULE_NAME" => $menu_item[2],
                         "IMAGE"       => $themeObject
-                        ->getImage($menu_item[2],"alt='".$menu_item[1]."'  border='0' align='absmiddle'"),
+                        ->getImage($menu_item[2],"border='0' align='absmiddle'",null,null,'.gif',$menu_item[1]),
                         );
                 }
             }
@@ -751,12 +752,16 @@ EOQ;
         require_once ('jssource/minify.php');
         //END SUGARCRM flav=int ONLY
         if ($this->_getOption('show_javascript')) {
-            if (!$this->_getOption('show_header'))
+            if (!$this->_getOption('show_header')) {
+                $langHeader = get_language_header();
+
                 echo <<<EOHTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<html {$langHeader}>
 <head>
 EOHTML;
+            }
+
             $js_vars = array(
                 "sugar_cache_dir" => "cache/",
                 );
@@ -781,6 +786,10 @@ EOHTML;
             $config_js = $this->getSugarConfigJS();
             if(!empty($config_js)){
                 echo "<script>\n".implode("\n", $config_js)."</script>\n";
+            }
+
+            if ( isset($sugar_config['email_sugarclient_listviewmaxselect']) ) {
+                echo "<script>SUGAR.config.email_sugarclient_listviewmaxselect = {$GLOBALS['sugar_config']['email_sugarclient_listviewmaxselect']};</script>";
             }
 
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
@@ -832,6 +841,7 @@ EOHTML;
         }
         global $sugar_config;
         global $app_strings;
+        global $mod_strings;
 
         //decide whether or not to show themepicker, default is to show
         $showThemePicker = true;
@@ -867,10 +877,8 @@ EOHTML;
                 $imageURL = SugarThemeRegistry::current()->getImageURL($key.'.gif');
 				$bottomLinksStr .= "<a href=\"{$href}\"";
 				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
-				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'></a>";
-				$bottomLinksStr .= " <a href=\"{$href}\" class=\"bottomLink\"";
-				$bottomLinksStr .= (isset($onclick)) ? $onclick : "";
-				$bottomLinksStr .= ">".$text."</a>";
+				$bottomLinksStr .= "><img src='{$imageURL}' alt='{$text}'>";
+				$bottomLinksStr .= " ".$text."</a>";
 			}
 		}
 		$ss->assign("BOTTOMLINKS",$bottomLinksStr);
@@ -1110,7 +1118,7 @@ EOHTML;
         $module = null
         )
     {
-        global $current_language, $current_user, $mod_strings, $app_strings;
+        global $current_language, $current_user, $mod_strings, $app_strings, $module_menu;
 
         if ( empty($module) )
             $module = $this->module;
@@ -1119,44 +1127,38 @@ EOHTML;
         $curr_mod_strings = $mod_strings;
         $mod_strings = return_module_language ( $current_language, $module ) ;
 
-
-        $final_module_menu = array();
+        $module_menu = array();
 
         if (file_exists('modules/' . $module . '/Menu.php')) {
-            $GLOBALS['module_menu'] = $module_menu = array();
             require('modules/' . $module . '/Menu.php');
-            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
         if (file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')) {
-            $GLOBALS['module_menu'] = $module_menu = array();
             require('custom/modules/' . $module . '/Ext/Menus/menu.ext.php');
-            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
         if (!file_exists('modules/' . $module . '/Menu.php')
                 && !file_exists('custom/modules/' . $module . '/Ext/Menus/menu.ext.php')
                 && !empty($GLOBALS['mod_strings']['LNK_NEW_RECORD'])) {
-            $final_module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
+            $module_menu[] = array("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView",
                 $GLOBALS['mod_strings']['LNK_NEW_RECORD'],"{$GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL']}$module" ,$module );
-            $final_module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
+            $module_menu[] = array("index.php?module=$module&action=index", $GLOBALS['mod_strings']['LNK_LIST'],
                 $module, $module);
             if ( ($this->bean instanceOf SugarBean) && !empty($this->bean->importable) )
                 if ( !empty($mod_strings['LNK_IMPORT_'.strtoupper($module)]) )
-                    $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
+                    $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
                         $mod_strings['LNK_IMPORT_'.strtoupper($module)], "Import", $module);
                 else
-                    $final_module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
+                    $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
                         $app_strings['LBL_IMPORT'], "Import", $module);
         }
         if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
-            $GLOBALS['module_menu'] = $module_menu = array();
             require('custom/application/Ext/Menus/menu.ext.php');
-            $final_module_menu = array_merge($final_module_menu,$GLOBALS['module_menu'],$module_menu);
         }
-        $module_menu = $final_module_menu;
 
         $mod_strings = $curr_mod_strings;
+        $builtModuleMenu = $module_menu;
+        unset($module_menu);
 
-        return $module_menu;
+        return $builtModuleMenu;
     }
 
     /**
@@ -1222,8 +1224,7 @@ EOHTML;
             $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
             $theTitle .= <<<EOHTML
 &nbsp;
-<a href="{$url}" class="utilsLink">
-<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
+<img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'>
 <a href="{$url}" class="utilsLink">
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>

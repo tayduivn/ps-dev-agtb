@@ -161,10 +161,12 @@ if(		$focus->user_type=="rel_user_custom"){
 
     $form->assign("FIELD_VALUE",$focus->field_value);
     $form->assign("REL_EMAIL_VALUE",$focus->rel_email_value);
-    $form->assign("RELATE_TYPE","Self");
-	$form->assign("ARRAY_TYPE","future");
 
 	if($focus->id !=""){
+
+    $form->assign("ADDRESS_TYPE",$focus->address_type);
+    $form->assign("RELATE_TYPE","Self");		
+	$form->assign("ARRAY_TYPE","future");	
 
 		$target_email_field_lbl = $target_module->field_defs[$focus->rel_email_value]['vname'];
 		$target_name_field_lbl = $target_module->field_defs[$focus->field_value]['vname'];
@@ -359,9 +361,9 @@ if(		$focus->user_type=="rel_user_custom"){
 
 	$adv_related_array = $ProcessView->get_adv_related("AlertsCreateStep1", $focus->user_type, "alert");
 
-		$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','alt="'.$app_strings['LNK_ADVANCED_SEARCH'].'"  border="0"'));
-		$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','alt="'.$app_strings['LNK_BASIC_SEARCH'].'"  border="0"'));
-
+		$form->assign("ADVANCED_SEARCH_PNG", SugarThemeRegistry::current()->getImage('advanced_search','  border="0"',null,null,'.gif',$app_strings['LNK_ADVANCED_SEARCH']));
+		$form->assign("BASIC_SEARCH_PNG", SugarThemeRegistry::current()->getImage('basic_search','  border="0"',null,null,'.gif',$app_strings['LNK_BASIC_SEARCH']));
+		
 	if($adv_related_array!=""){
 		$form->assign("ADV_RELATED_BLOCK", $adv_related_array['block']);
 		if(

@@ -1,5 +1,4 @@
-
-	        	{*
+{*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -50,10 +49,10 @@
     <tr id="lineLabel_{$vardef.name}" name="lineLabel_{$vardef.name}">
         <td colspan='2' nowrap>
 			<span class="id-ff multiple ownline">
-            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup_for_email_teams("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$vardef.name}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "{$CUSTOM_METHOD}", "{$USER_ID}", "MULTISELECT", true); if(collection["{$displayParams.formName}_{$vardef.name}"].more_status)collection["{$displayParams.formName}_{$vardef.name}"].js_more();'>
-            <img src="{sugar_getimagepath file="id-ff-select.png"}">
-            </button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add(); if(collection['{$displayParams.formName}_{$vardef.name}'].more_status)collection['{$displayParams.formName}_{$vardef.name}'].js_more();">
-            <img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
+            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup_for_email_teams("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$vardef.name}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "{$CUSTOM_METHOD}", "{$USER_ID}", "MULTISELECT", true); if(collection["{$displayParams.formName}_{$vardef.name}"].more_status)collection["{$displayParams.formName}_{$vardef.name}"].js_more();' title="{sugar_translate label="LBL_ID_FF_SELECT"}">
+            {sugar_getimage name="id-ff-select.png"}
+            </button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add(); if(collection['{$displayParams.formName}_{$vardef.name}'].more_status)collection['{$displayParams.formName}_{$vardef.name}'].js_more();" title="{sugar_translate label="LBL_ID_FF_ADD"}">
+            {sugar_getimage name="id-ff-add.png"}</button>
 			</span>
         </td>        
         <td align='center' id="lineLabel_{$vardef.name}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap: normal;'>
@@ -63,9 +62,10 @@
         <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;'>
             &nbsp;
             {if !$hideShowHideButton}
-            <span onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if}>
+            <span onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].js_more();" id='more_{$displayParams.formName}_{$vardef.name}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if} title="{sugar_translate label="LBL_HIDE_SHOW"}">
             <input id="arrow_{$vardef.name}" name="arrow_{$vardef.name}" type="hidden" value="show">
-            <img id='more_img_{$displayParams.formName}_{$vardef.name}' height="8" border="0" width="8" absmiddle="" alt="Hide/Show" src="{sugar_getimagepath file='advanced_search.gif'}"/>
+			{capture assign="attr"}border="0" id="more_img_{$displayParams.formName}_{$vardef.name}"{/capture}
+            {sugar_getimage name="advanced_search.gif" attr=$attr}
             <span id="more_div_{$displayParams.formName}_{$vardef.name}" {if empty($values.secondaries)}style="display:none"{/if}>{sugar_translate label='LBL_SHOW'}</span>
         	</span>
         	{/if}
@@ -86,7 +86,9 @@
 <!-- BEGIN Remove and Radio -->
         <td valign='top' align='left' nowrap>
             &nbsp;
-            <img id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" src="{sugar_getimagepath file='id-ff-remove.png'}" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove(0);"/>
+			{capture assign="attr"}id="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove(0);"{/capture}
+			{capture assign="alt"}{sugar_translate label="LBL_ID_FF_REMOVE"}{/capture}
+            {sugar_getimage alt=$alt name="id-ff-remove.png" attr=$attr}
             {if !empty($displayParams.allowNewValue) }
             <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
             {/if}

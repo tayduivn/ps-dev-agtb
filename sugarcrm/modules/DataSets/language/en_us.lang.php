@@ -112,6 +112,7 @@ $mod_strings = array (
   'CONFIRM_LAYOUT_DISABLE' => 'Disabling the custom layout will remove all existing custom layout properties',
   'LBL_LEFT' => 'Left',
   'LBL_RIGHT' => 'Right',
+	'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
 );
 
 

@@ -21,16 +21,10 @@ if (! defined ( 'sugarEntry' ) || ! sugarEntry)
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Calls module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
-require_once ('include/MVC/View/views/view.edit.php') ;
+//Load the parent view class if it exists.  Check for custom file first
+loadParentView('edit');
+
 require_once ('modules/ModuleBuilder/parsers/ParserFactory.php') ;
 require_once ('modules/ModuleBuilder/MB/AjaxCompose.php') ;
 require_once 'modules/ModuleBuilder/parsers/constants.php' ;
@@ -95,7 +89,7 @@ class ViewLayoutView extends ViewEdit
         $images = array ( 'icon_save' => 'studio_save' , 'icon_publish' => 'studio_publish' , 'icon_address' => 'icon_Address' , 'icon_emailaddress' => 'icon_EmailAddress' , 'icon_phone' => 'icon_Phone' ) ;
         foreach ( $images as $image => $file )
         {
-            $smarty->assign ( $image, SugarThemeRegistry::current()->getImage($file) ) ;
+            $smarty->assign ( $image, SugarThemeRegistry::current()->getImage($file,'',null,null,'.gif',$file) ) ;
         }
 
         $requiredFields = implode($parser->getRequiredFields () , ',');

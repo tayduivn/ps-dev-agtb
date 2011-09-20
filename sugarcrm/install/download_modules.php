@@ -25,7 +25,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 global $sugar_version, $js_custom_version;
 $lang_curr = $_SESSION['language'];
 require_once('ModuleInstall/PackageManager/PackageManagerDisplay.php');
-if( !isset( $install_script ) || !$install_script ){
+
+if(!isset( $install_script ) || !$install_script || empty($_SESSION['setup_db_admin_user_name'])){
     die($mod_strings['ERR_NO_DIRECT_SCRIPT']);
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -161,9 +162,10 @@ if(isset($validation_errors)) {
 ////    BEING PAGE OUTPUT
 $disabled = "";
 $result = "";
+$langHeader = get_language_header();
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html {$langHeader}>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <meta http-equiv="Content-Script-Type" content="text/javascript">

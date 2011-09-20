@@ -985,5 +985,4 @@ EOJS;
 	}
 	//END SUGARCRM flav=pro ONLY
 }
-
 ?>

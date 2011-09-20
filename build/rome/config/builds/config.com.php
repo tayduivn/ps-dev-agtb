@@ -80,6 +80,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/externalAPI/WebEx'=>1,
 'sugarcrm/include/workflow'=>1,
 'sugarcrm/include/SugarFields/Fields/Teamset'=>1,
+'sugarcrm/include/SugarFields/Fields/Encrypt'=>1,
 'sugarcrm/modules/Charts/Dashlets/MyOpportunitiesGaugeDashlet'=>1,
 'sugarcrm/modules/Charts/Dashlets/MyForecastingChartDashlet'=>1,
 'sugarcrm/modules/Sync'=>1,

@@ -88,7 +88,7 @@ EOQ;
 	/**
 	 * The first parameter is a number and the second is the list.
 	 */
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return array(AbstractExpression::$RELATE_TYPE);
 	}
 

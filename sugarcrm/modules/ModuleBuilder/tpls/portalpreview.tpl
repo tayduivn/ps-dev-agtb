@@ -29,8 +29,8 @@
 *}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD html 4.01 Transitional//EN">
-<html>
-<head >
+<html {$langHeader}>
+<head>
 <link REL="SHORTCUT ICON" HREF="include/images/sugar_icon.ico">
 
 <title>SugarCRM - Commercial Open Source CRM</title>
@@ -144,7 +144,7 @@ requiredTxt = 'Missing required field:';
 invalidTxt = 'Invalid Value:';
 </script><!-- crmprint --><div id='footer'><!--end body panes-->
 
-	<table cellpadding='0' cellspacing='0' width='100%' border='0' class='underFooter'><tr><td align='center' class='copyRight'>{$app.LBL_SUGAR_COPYRIGHT}<br /><A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0' width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt='Powered By SugarCRM'></a>
+	<table cellpadding='0' cellspacing='0' width='100%' border='0' class='underFooter'><tr><td align='center' class='copyRight'>{$app.LBL_SUGAR_COPYRIGHT}<br /><A href='http://www.sugarcrm.com' target='_blank'><img style='margin-top: 2px' border='0'  width='106' height='23' src='include/images/poweredby_sugarcrm.png' alt=$mod_strings.LBL_POWERED_BY_SUGAR></a>
 
 </td></tr></table></div>
 </body></html>

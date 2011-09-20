@@ -38,6 +38,8 @@ require_once('modules/Import/views/ImportView.php');
 class ImportViewUndo extends ImportView 
 {	
 
+    protected $pageTitleKey = 'LBL_UNDO_LAST_IMPORT';
+    
  	/** 
      * @see SugarView::display()
      */
@@ -51,24 +53,15 @@ class ImportViewUndo extends ImportView
         $module_mod_strings = 
             return_module_language($current_language, $_REQUEST['import_module']);
         $this->ss->assign("MODULENAME",$module_mod_strings['LBL_MODULE_NAME']);
+        $this->ss->assign("MODULE_TITLE", $this->getModuleTitle(false), ENT_NOQUOTES);
         // reset old ones afterwards
         $mod_strings = $old_mod_strings;
         
         $last_import = new UsersLastImport();
         $this->ss->assign('UNDO_SUCCESS',$last_import->undo($_REQUEST['import_module']));
-        $this->ss->assign("JS", json_encode($this->_getJS()));
-        $this->ss->assign("MODULE_TITLE", json_encode($mod_strings['LBL_UNDO_LAST_IMPORT']));
-        $submitContent = "<table width='100%' cellpadding='0' cellspacing='0' border='0'><tr><td align='right'>";
-        $submitContent .= "<input title=\"".$mod_strings['LBL_FINISHED'].$module_mod_strings['LBL_MODULE_NAME']."\" accessKey='' class='button' type='submit' name='finished' id='finished' value=\"".$mod_strings['LBL_IMPORT_COMPLETE']."\">";
-        $submitContent .= "<input title=\"".$mod_strings['LBL_MODULE_NAME']."&nbsp;".$module_mod_strings['LBL_MODULE_NAME']."\" accessKey='' class='button primary' type='submit' name='button' id='importmore' name='importmore' value=\"".$mod_strings['LBL_MODULE_NAME']."&nbsp;".$module_mod_strings['LBL_MODULE_NAME']."\">";
-
-    	$submitContent .= "</td></tr></table>";
-
+        $this->ss->assign("JAVASCRIPT", $this->_getJS());
         $content = $this->ss->fetch('modules/Import/tpls/undo.tpl');
-        $this->ss->assign("CONTENT", json_encode($content));
-        $this->ss->assign("SUBMITCONTENT", json_encode($submitContent));
-        
-        
+        $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
     }
     
@@ -82,28 +75,7 @@ class ImportViewUndo extends ImportView
 document.getElementById('finished').onclick = function(){
     document.getElementById('importundo').module.value = document.getElementById('importundo').import_module.value;
     document.getElementById('importundo').action.value = 'index';
-    SUGAR.importWizard.closeDialog();
 }
-
-document.getElementById('importmore').onclick = function(){
-    document.getElementById('importundo').action.value = 'Step1';
-    
-       	var success = function(data) {		
-			var response = YAHOO.lang.JSON.parse(data.responseText);
-			importWizardDialogDiv = document.getElementById('importWizardDialogDiv');
-			importWizardDialogTitle = document.getElementById('importWizardDialogTitle');
-			submitDiv = document.getElementById('submitDiv');
-			importWizardDialogDiv.innerHTML = response['html'];
-			importWizardDialogTitle.innerHTML = response['title'];
-			submitDiv.innerHTML = response['submitContent'];
-			eval(response['script']);
-		} 
-        var formObject = document.getElementById('importundo');
-		YAHOO.util.Connect.setForm(formObject);
-		var cObj = YAHOO.util.Connect.asyncRequest('POST', "index.php", {success: success, failure: success});
-		
-}
-
 EOJAVASCRIPT;
     }
 }

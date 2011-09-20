@@ -50,6 +50,8 @@ class ImportViewLast extends ImportView
     {
         global $mod_strings, $app_strings, $current_user, $sugar_config, $current_language;
 
+
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE", $_REQUEST['type']);
         $this->ss->assign("HEADER", $app_strings['LBL_IMPORT']." ". $mod_strings['LBL_MODULE_NAME']);
@@ -75,7 +77,7 @@ class ImportViewLast extends ImportView
             $updatedCount  += (int) $row[4];
         }
         fclose($fp);
-    
+
         $this->ss->assign("showUndoButton",FALSE);
         if($createdCount > 0)
         {
@@ -88,15 +90,15 @@ class ImportViewLast extends ImportView
             $activeTab = 1;
         else
             $activeTab = 0;
-        
+
         $this->ss->assign("JAVASCRIPT", $this->_getJS($activeTab));
         $this->ss->assign("errorCount",$errorCount);
         $this->ss->assign("dupeCount",$dupeCount);
         $this->ss->assign("createdCount",$createdCount);
         $this->ss->assign("updatedCount",$updatedCount);
-        $this->ss->assign("errorFile",$this->getDownloadURL(ImportCacheFiles::getErrorFileName()));
-        $this->ss->assign("errorrecordsFile",$this->getDownloadURL(ImportCacheFiles::getErrorRecordsWithoutErrorFileName()));
-        $this->ss->assign("dupeFile",$this->getDownloadURL(ImportCacheFiles::getDuplicateFileName()));
+        $this->ss->assign("errorFile",ImportCacheFiles::getErrorFileName());
+        $this->ss->assign("errorrecordsFile",ImportCacheFiles::getErrorRecordsWithoutErrorFileName());
+        $this->ss->assign("dupeFile",ImportCacheFiles::getDuplicateFileName());
 
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->bean->object_name == "Prospect" )
@@ -129,12 +131,6 @@ class ImportViewLast extends ImportView
         $content = $this->ss->fetch('modules/Import/tpls/last.tpl');
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
-    }
-
-    protected function getDownloadURL($filename)
-    {
-    	$name = basename(UploadFile::relativeName($filename));
-    	return "index.php?entryPoint=download&type=import&isTempFile=1&tempName={$name}&id={$name}";
     }
 
     protected function getListViewResults()
@@ -202,7 +198,7 @@ document.getElementById('finished').onclick = function(){
     document.getElementById('importlast').module.value = document.getElementById('importlast').import_module.value;
     document.getElementById('importlast').action.value = 'index';
 	return true;
-		
+
 }
 
 if ( typeof(SUGAR) == 'undefined' )
@@ -314,9 +310,9 @@ EOJAVASCRIPT;
 
         $json = getJSONobj();
         $encoded_popup_request_data = $json->encode($popup_request_data);
-        $script = getVersionedScript('include/SubPanel/SubPanelTiles.js');
+
         return <<<EOHTML
-$script
+<script type="text/javascript" src="include/SubPanel/SubPanelTiles.js?s={$sugar_version}&c={$sugar_config['js_custom_version']}"></script>
 <input align=right" type="button" name="select_button" id="select_button" class="button"
      title="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL']}"
      accesskey="{$app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY']}"

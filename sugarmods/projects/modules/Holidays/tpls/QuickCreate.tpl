@@ -63,7 +63,7 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	<td valign="top" class="dataLabel"><slot>{$MOD.LBL_NAME} <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
-	<td><slot><input type='text' id='holiday_date' name='holiday_date' cols="50" tabindex='2' rows="1" value='{$NAME}' /><img src="themes/{$THEME}/images/jscalendar.gif" alt="{$CALENDAR_DATEFORMAT}"  id="jscal_trigger" align="absmiddle"></slot></td>
+	<td><slot><input type='text' id='holiday_date' name='holiday_date' cols="50" tabindex='2' rows="1" value='{$NAME}' /><img src="themes/{$THEME}/images/jscalendar.gif" alt=$CALENDAR_DATEFORMAT  id="jscal_trigger" align="absmiddle"></slot></td>
 	</tr>
 	<tr>
 	<td valign="top" class="dataLabel"><slot>{$MOD.LBL_DESCRIPTION}</slot></td>

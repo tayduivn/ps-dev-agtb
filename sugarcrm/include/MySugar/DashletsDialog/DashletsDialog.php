@@ -90,7 +90,7 @@ class DashletsDialog {
                     $imageName = SugarThemeRegistry::current()->getImageURL(basename($dashletMeta[$files['class']]['icon']), false);
                     if ( !empty($imageName) ) {
                         if (sugar_is_file($imageName))
-                            $icon = '<img src="' . $imageName .'" border="0" align="absmiddle" />';
+                            $icon = '<img src="' . $imageName .'" alt="'.$imageName.'" border="0" align="absmiddle" />';
                         else
                             $icon = '';
                     }
@@ -154,8 +154,7 @@ class DashletsDialog {
 					$cell = array( 'title' => $title,
 								   'description' => $description,
 								   'onclick' => 'return SUGAR.mySugar.addDashlet(\'' . $className . '\', \'' . $type . '\', \''.(!empty($dashletMeta[$files['class']]['module']) ? $dashletMeta[$files['class']]['module'] : '' ) .'\');',
-								   'icon' => $icon,
-                                   'id' => $files['class'] . "_select");
+								   'icon' => $icon, );
 
 	                if (!empty($category) && $dashletMeta[$files['class']]['category'] == $categories[$category]){
 	                	array_push($dashletsList[$categories[$category]], $cell);

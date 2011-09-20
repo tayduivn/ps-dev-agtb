@@ -88,7 +88,10 @@ $mod_strings = array (
   'LBL_CONTACT_PHONE' => 'Contact Phone:',
   'LBL_PARENT_NAME' => 'Parent Type:',
   'LBL_ACTIVITIES_REPORTS' => 'Activities Report',
+  'LBL_TASK_INFORMATION' => 'Task Overview',
+  'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
   'LBL_TASK_INFORMATION' => 'Overview',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Notes',
   //For export labels
   'LBL_DATE_DUE' => 'Date Due',
   'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
@@ -97,6 +100,7 @@ $mod_strings = array (
   'LBL_EXPORT_CREATED_BY' => 'Created By ID',
   'LBL_EXPORT_PARENT_TYPE' => 'Related To Module',
   'LBL_EXPORT_PARENT_ID' => 'Related To ID',
+
 );
 
 

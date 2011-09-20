@@ -134,7 +134,6 @@ class RenameModules
             array('name' => 'LBL_CONTRACT_NAME', 'type' => 'plural'),
         ),
         'Leads' => array(
-            array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LNK_SELECT_###MODULE_PLURAL###', 'type' => 'singular'),
             array('name' => 'LNK_SELECT_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LBL_ACCOUNT_DESCRIPTION', 'type' => 'singular'),
@@ -411,7 +410,10 @@ class RenameModules
                     //At this point we don't know if we should replace the string with the plural or singular version of the new
                     //strings so we'll try both but with the plural version first since it should be longer than the singular.
                     $replacedString = str_replace($renameFields['prev_plural'], $renameFields['plural'], $oldStringValue);
-                    $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    if ($replacedString == $oldStringValue) {
+                        // continue to replace singular only if nothing been replaced yet
+                        $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    }
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
@@ -514,7 +516,9 @@ class RenameModules
                     //At this point we don't know if we should replace the string with the plural or singular version of the new
                     //strings so we'll try both but with the plural version first since it should be longer than the singular.
                     $replacedString = str_replace($renameFields['prev_plural'], $renameFields['plural'], $oldStringValue);
-                    $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    if ($replacedString == $oldStringValue) {
+                        $replacedString = str_replace($renameFields['prev_singular'], $renameFields['singular'], $replacedString);
+                    }
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
@@ -588,7 +592,9 @@ class RenameModules
                 if($modStringKey !== FALSE)
                 {
                     $replacedString = str_replace($replacementLabels['prev_plural'], $replacementLabels['plural'], $dashletTitle);
-                    $replacedString = str_replace($replacementLabels['prev_singular'], $replacementLabels['singular'], $replacedString);
+                    if ($replacedString == $dashletTitle) {
+                        $replacedString = str_replace($replacementLabels['prev_singular'], $replacementLabels['singular'], $replacedString);
+                    }
                     $replacementStrings[$modStringKey] = $replacedString;
                 }
             }
@@ -693,7 +699,6 @@ class RenameModules
             array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'plural'),
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
             array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
-            array('name' => 'LBL_HOMEPAGE_TITLE', 'type' => 'plural'),
         );
 
         $replacedLabels = array();
@@ -760,6 +765,24 @@ class RenameModules
         $newParams['dropdown_lang'] = isset($_REQUEST['dropdown_lang']) ? $_REQUEST['dropdown_lang'] : '';
         $newParams['use_push'] = true;
         DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, $this->changedModules));
+
+        //Save changes to the parent_type_display app_list_strings entry
+        global $app_list_strings;
+        $cur_app_list_strings = $app_list_strings;
+        foreach ($this->changedModules as $moduleName => $package) {
+            $found = false;
+            // only change if it exists
+            foreach ($cur_app_list_strings['parent_type_display'] as $moduleName2 => $parentDispName) {
+                if ($moduleName == $moduleName2) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ($found) {
+                $newParams['dropdown_name'] = 'parent_type_display';
+                DropDownHelper::saveDropDown($this->createModuleListSingularPackage($newParams, array($moduleName => $this->changedModules[$moduleName])));
+            }
+        }
         return $this;
     }
 
@@ -809,9 +832,9 @@ class RenameModules
         while(isset($params['slot_' . $count]))
         {
             $index = $params['slot_' . $count];
-            $key = (isset($params['key_' . $index]))?remove_xss(from_html($params['key_' . $index])): 'BLANK';
-            $value = (isset($params['value_' . $index]))?remove_xss(from_html($params['value_' . $index])): '';
-            $svalue = (isset($params['svalue_' . $index]))?remove_xss(from_html($params['svalue_' . $index])): $value;
+            $key = (isset($params['key_' . $index]))?to_html(remove_xss(from_html($params['key_' . $index]))): 'BLANK';
+            $value = (isset($params['value_' . $index]))?to_html(remove_xss(from_html($params['value_' . $index]))): '';
+            $svalue = (isset($params['svalue_' . $index]))?to_html(remove_xss(from_html($params['svalue_' . $index]))): $value;
             if($key == 'BLANK')
                $key = '';
 

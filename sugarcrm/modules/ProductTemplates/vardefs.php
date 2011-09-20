@@ -120,7 +120,8 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'source'=>'non-db',
 		'module' => 'Manufacturers',
 	    'dbType' => 'varchar',
-	    'len' => '255'
+	    'len' => '255',
+		'studio' => 'false'
 	    
 	),
 	'category_id' =>

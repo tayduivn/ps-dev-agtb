@@ -715,7 +715,7 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     }
      //BEGIN SUGARCRM flav=pro ONLY
     /**
-     * @depends testSetEntriesForAccount
+     * @depends SOAPAPI3Test::testSetEntriesForAccount
      */
      public function testGetLastViewed()
      {
@@ -752,6 +752,8 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
      private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
      {
         $trackerManager = TrackerManager::getInstance();
+        $trackerManager->unPause();
+
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
 

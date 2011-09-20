@@ -118,42 +118,6 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-    protected $rangeTemplate = array(
-        "mysql" => "(opportunities.date_closed >= '%s' AND opportunities.date_closed <= '%s')",
-        "mssql" => "(opportunities.date_closed >= CONVERT(datetime,'%s',120) AND opportunities.date_closed <= CONVERT(datetime,'%s',120))",
-        "oci8" => "(opportunities.date_closed >= to_date('%s', 'YYYY-MM-DD HH24:MI:SS') AND opportunities.date_closed <= to_date('%s', 'YYYY-MM-DD HH24:MI:SS'))"
-    );
-
-    public function testRangeSearch()
-    {
-        if(!isset($this->rangeTemplate[$GLOBALS['db']->dbType])) {
-            $this->markTestSkipped("No template for db type {$GLOBALS['db']->dbType}");
-        }
-        $year = date("Y");
-	    $timedate = TimeDate::getInstance();
-	    $start = $timedate->fromString("$year-01-01 00:00:00")->asDb();
-	    $end = $timedate->fromString("$year-12-31 23:59:59")->asDb();
-		$where_clauses = $this->searchForm->generateSearchWhere();
-		$expect = sprintf($this->rangeTemplate[$GLOBALS['db']->dbType], $start, $end);
-	    $this->assertEquals($expect, $where_clauses[0]);
-
-		$this->searchForm->searchFields['range_date_closed'] = array (
-	            'query_type' => 'default',
-	            'enable_range_search' => 1,
-	            'is_date_field' => 1,
-	            'value' => '[next_year]',
-	            'operator' => 'next_year',
-	    );
-	    $year = date("Y")+1;
-	    $start = $timedate->fromString("$year-01-01 00:00:00")->asDb();
-	    $end = $timedate->fromString("$year-12-31 23:59:59")->asDb();
-
-
-		$where_clauses = $this->searchForm->generateSearchWhere();
-		$expect = sprintf($this->rangeTemplate[$GLOBALS['db']->dbType], $start, $end);
-	    $this->assertEquals($expect, $where_clauses[0]);
-    }
-
     public function testRangeNumberSearches()
     {
     	$GLOBALS['db']->dbType = 'mysql';
@@ -213,13 +177,14 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	            'enable_range_search' => 1,
 	            'value' => '10000',
 	            'operator' => '=',
-	    );
 
-		$where_clauses = $this->searchForm->generateSearchWhere();
+	    );    
+
+		$where_clauses = $this->searchForm->generateSearchWhere();		
 		$this->assertEquals($where_clauses[0], "(opportunities.amount >= '9999.99' AND opportunities.amount <= '10000.01')");
-
+		
     }
-
+    
     /**
      * testRangeSearchWithSavedReportValues
      * This test attempts to simulate testing what would happen should a saved report be invoked against

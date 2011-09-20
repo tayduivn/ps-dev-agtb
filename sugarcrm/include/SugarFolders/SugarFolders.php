@@ -281,7 +281,7 @@ class SugarFolder {
 	function addTeamSecurityClause() {
 		global $current_user;
 		if(!is_admin($current_user)) {
-			return " INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id  = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 group by tst.team_set_id) folder_tf on folder_tf.team_set_id = emails.team_set_id ";
+			return " INNER JOIN	team_sets_teams tst	ON tst.team_set_id = emails.team_set_id	INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$current_user->id}' AND team_memberships.deleted=0 ";
 		}
 	}
 	//END SUGARCRM flav=pro ONLY

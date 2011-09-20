@@ -58,22 +58,23 @@
     <tr id="lineLabel_{$idname}" name="lineLabel_{$idname}">
         <td nowrap>
 			<span class="id-ff multiple ownline">
-            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();' name="teamSelect" id="teamSelect"><img src="{sugar_getimagepath file="id-ff-select.png"}"></button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$idname}'].add(); if(collection['{$displayParams.formName}_{$idname}'].more_status)collection['{$displayParams.formName}_{$idname}'].js_more();" name="teamAdd" id="teamAdd"><img src="{sugar_getimagepath file="id-ff-add.png"}"></button>
+            <button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$idname}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$idname}"].more_status)collection["{$displayParams.formName}_{$idname}"].js_more();' name="teamSelect" id="teamSelect" title="{sugar_translate label="LBL_ID_FF_SELECT"}">{sugar_getimage name="id-ff-select.png"}</button><button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$idname}'].add(); if(collection['{$displayParams.formName}_{$idname}'].more_status)collection['{$displayParams.formName}_{$idname}'].js_more();" name="teamAdd" id="teamAdd" title="{sugar_translate label="LBL_ID_FF_ADD"}">{sugar_getimage name="id-ff-add.png"}</button>
 			</span>
         </td>
         <td>
         &nbsp;
         </td>
-        <td align='center' id="lineLabel_{$idname}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap: normal;'>
+        <td align='center' id="lineLabel_{$idname}_primary" rowspan='1' scope='row' style='white-space: nowrap; word-wrap:normal;'>
             {sugar_translate label='LBL_COLLECTION_PRIMARY'}
         </td>
 <!-- BEGIN Add and collapse -->
-        <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap: none;' valign='top'>
+        <td rowspan='1' scope='row' style='white-space:nowrap; word-wrap:normal;' valign='top'>
             &nbsp;
             {if !$hideShowHideButton}
-            <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if}>
+            <span onclick="collection['{$displayParams.formName}_{$idname}'].js_more();" id='more_{$displayParams.formName}_{$idname}' {if empty($values.secondaries)}style="display:none; text-decoration:none;"{else}style="text-decoration:none;"{/if} title="{sugar_translate label="LBL_HIDE_SHOW"}">
             <input id="arrow_{$idname}" name="arrow_{$idname}" type="hidden" value="show">
-            <img id='more_img_{$displayParams.formName}_{$idname}' height="8" border="0" width="8" absmiddle="" alt="Hide/Show" src="{sugar_getimagepath file='advanced_search.gif'}"/>
+			{capture assign="attr"}border="0" id="more_img_{$displayParams.formName}_{$idname}"{/capture}
+            {sugar_getimage name="advanced_search.gif" width="8" height="8" attr=$attr}
             <span id="more_div_{$displayParams.formName}_{$idname}" {if empty($values.secondaries)}style="display:none"{/if}>{sugar_translate label='LBL_SHOW'}</span>
             </span>
             {/if}
@@ -93,7 +94,9 @@
         </td>
 <!-- BEGIN Remove and Radio -->
         <td valign='top' align='left' nowrap>
-            <img id="remove_{$idname}_collection_0" name="remove_{$idname}_collection_0" src="{sugar_getimagepath file='id-ff-remove.png'}" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0);" class="id-ff-remove"/>{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+			{capture assign="attr"}class="id-ff-remove" id="remove_{$idname}_collection_0" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0);"{/capture}
+			{capture assign="alt"}{sugar_translate label="LBL_ID_FF_REMOVE"}{/capture}
+            {sugar_getimage name="id-ff-remove.png" attr=$attr alt=$alt}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
         </td>
         <td valign='top' align='center'>
             <span id='{$displayParams.formName}_{$idname}_radio_div_0'>
@@ -120,6 +123,10 @@ and push it outside the screen.
     SUGAR_callsInProgress++;
     var field_id = '{$displayParams.formName}_{$vardef.name}';
     YAHOO.util.Event.onContentReady(field_id + "_table", function(){ldelim}
+
+        //reset the secondary fields array for this form before populating
+         collection[field_id].secondaries_values = new Array();
+
         if(collection[field_id] && collection[field_id].secondaries_values.length == 0) {ldelim}
             {if !empty($values.secondaries)}
                 {foreach from=$values.secondaries item=secondary_field}

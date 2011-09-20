@@ -242,7 +242,100 @@ eoq;
 
 $hidden_fields = "<input type=hidden name=\"run\" value=\"upload\" />";
 $hidden_fields .= "<input type=hidden name=\"mode\"/>";
-echo PackageManagerDisplay::buildPackageDisplay($form, $hidden_fields, $form_action, array('module'));
+
+$form2 = PackageManagerDisplay::buildPackageDisplay($form, $hidden_fields, $form_action, array('module'));
+$form3 =<<<eoq3
+
+
+eoq3;
+
+echo $form2.$form3;
+
+// scan for new files (that are not installed)
+/*print( "$descItemsQueued<br>\n");
+print( "<ul>\n" );
+$upgrade_contents = findAllFiles( "$base_upgrade_dir", array() );
+$upgrades_available = 0;
+
+print( "<table>\n" );
+print( "<tr><th></th><th align=left>{$mod_strings['LBL_ML_NAME']}</th><th>{$mod_strings['LBL_ML_TYPE']}</th><th>{$mod_strings['LBL_ML_VERSION']}</th><th>{$mod_strings['LBL_ML_PUBLISHED']}</th><th>{$mod_strings['LBL_ML_UNINSTALLABLE']}</th><th>{$mod_strings['LBL_ML_DESCRIPTION']}</th></tr>\n" );
+foreach($upgrade_contents as $upgrade_content)
+{
+	if(!preg_match("#.*\.zip\$#", $upgrade_content))
+	{
+		continue;
+	}
+
+	$upgrade_content = clean_path($upgrade_content);
+	$the_base = basename($upgrade_content);
+	$the_md5 = md5_file($upgrade_content);
+	$md5_matches = $uh->findByMd5($the_md5);
+
+	if(0 == sizeof($md5_matches))
+	{
+		$target_manifest = remove_file_extension( $upgrade_content ) . '-manifest.php';
+		require_once($target_manifest);
+
+		$name = empty($manifest['name']) ? $upgrade_content : $manifest['name'];
+		$version = empty($manifest['version']) ? '' : $manifest['version'];
+		$published_date = empty($manifest['published_date']) ? '' : $manifest['published_date'];
+		$icon = '';
+		$description = empty($manifest['description']) ? 'None' : $manifest['description'];
+		$uninstallable = empty($manifest['is_uninstallable']) ? 'No' : 'Yes';
+		$type = getUITextForType( $manifest['type'] );
+		$manifest_type = $manifest['type'];
+
+		if($view == 'default' && $manifest_type != 'patch')
+		{
+			continue;
+		}
+
+		if($view == 'module'
+			&& $manifest_type != 'module' && $manifest_type != 'theme' && $manifest_type != 'langpack')
+		{
+			continue;
+		}
+
+		if(empty($manifest['icon']))
+		{
+			$icon = getImageForType( $manifest['type'] );
+		}
+		else
+		{
+			$path_parts = pathinfo( $manifest['icon'] );
+			$icon = "<!--not_in_theme!--><img src=\"" . remove_file_extension( $upgrade_content ) . "-icon." . $path_parts['extension'] . "\" alt =''>";
+		}
+
+		$upgrades_available++;
+		print( "<tr><td>$icon</td><td>$name</td><td>$type</td><td>$version</td><td>$published_date</td><td>$uninstallable</td><td>$description</td>\n" );
+
+		$upgrade_content = urlencode($upgrade_content);
+
+		$form2 =<<<eoq
+            <form action="{$form_action}_prepare" method="post">
+            <td><input type=submit name="btn_mode" onclick="this.form.mode.value='Install';this.form.submit();" value="{$mod_strings['LBL_UW_BTN_INSTALL']}" /></td>
+            <input type=hidden name="install_file" value="{$upgrade_content}" />
+			<input type=hidden name="mode"/>
+            </form>
+
+            <form action="{$form_action}" method="post">
+            <td><input type=submit name="run" value="{$mod_strings['LBL_UW_BTN_DELETE_PACKAGE']}" /></td>
+            <input type=hidden name="install_file" value="{$upgrade_content}" />
+            </form>
+            </tr>
+eoq;
+		echo $form2;
+    }
+}
+print( "</table>\n" );
+
+if( $upgrades_available == 0 ){
+    print($mod_strings['LBL_UW_NONE']);
+}
+print( "</ul>\n" );
+
+?>
+*/
 
 $GLOBALS['log']->info( "Upgrade Wizard view");
 ?>

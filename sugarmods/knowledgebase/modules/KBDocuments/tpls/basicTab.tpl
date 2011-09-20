@@ -70,17 +70,17 @@
 					</tr>
 				   	<tr>
 						<td class="dataLabel"><span sugar='slot11'>{$MOD.LBL_PUBLISHED_AFTER}&nbsp;</span sugar='slot'></td>
-						<td class="dataLabel"><span sugar='slot11b'><input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date_after' id='active_date_field_after' type="text" size='11' value="{$active_date_after}"/> <img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="active_date_trigger_after" align="absmiddle"/> <span class="dateFormat">{$USER_DATE_FORMAT}</span></td>
+						<td class="dataLabel"><span sugar='slot11b'><input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date_after' id='active_date_field_after' type="text" size='11' value="{$active_date_after}"/> <img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="active_date_trigger_after" align="absmiddle"/> <span class="dateFormat">{$USER_DATE_FORMAT}</span></td>
 		
 						<td class="dataLabel"><span sugar='slot12'>{$MOD.LBL_EXPIRES_AFTER}</span sugar='slot'></td>
-						<td class="dataField"><span sugar='slot12b'><input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date_after' id='exp_date_field_after' type="text" size='11' maxlength='10' value="{$exp_date_field_after}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="exp_date_trigger_after" align="absmiddle"> <span class="dateFormat">{$USER_DATE_FORMAT}</span></span sugar='slot'></td>
+						<td class="dataField"><span sugar='slot12b'><input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date_after' id='exp_date_field_after' type="text" size='11' maxlength='10' value="{$exp_date_field_after}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="exp_date_trigger_after" align="absmiddle"> <span class="dateFormat">{$USER_DATE_FORMAT}</span></span sugar='slot'></td>
 					</tr>
 				   	<tr>
 						<td class="dataLabel"><span sugar='slot13'>{$MOD.LBL_PUBLISHED_BEFORE}&nbsp;</span sugar='slot'></td>
-						<td class="dataLabel"><span sugar='slot13b'><input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date_before' id='active_date_field_before' type="text" size='11' value="{$active_date_before}" id='active_date_field_before'/> <img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="active_date_trigger_before" align="absmiddle"/> <span class="dateFormat">{$USER_DATE_FORMAT}</span></td>
+						<td class="dataLabel"><span sugar='slot13b'><input onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='active_date_before' id='active_date_field_before' type="text" size='11' value="{$active_date_before}" id='active_date_field_before'/> <img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="active_date_trigger_before" align="absmiddle"/> <span class="dateFormat">{$USER_DATE_FORMAT}</span></td>
 		
 						<td class="dataLabel"><span sugar='slot14'>{$MOD.LBL_EXPIRES_AFTER}</span sugar='slot'></td>
-						<td class="dataField"><span sugar='slot14b'><input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date_before' id='exp_date_field_before' type="text" size='11' maxlength='10' value="{$exp_date_field_before}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt="{$APP.LBL_ENTER_DATE}"  id="exp_date_trigger_before" align="absmiddle"> <span class="dateFormat">{$USER_DATE_FORMAT}</span></span sugar='slot'></td>
+						<td class="dataField"><span sugar='slot14b'><input  onblur="parseDate(this, '{$CALENDAR_DATEFORMAT}');" name='exp_date_before' id='exp_date_field_before' type="text" size='11' maxlength='10' value="{$exp_date_field_before}"> <img src="themes/{$THEME}/images/jscalendar.gif" alt=$APP.LBL_ENTER_DATE  id="exp_date_trigger_before" align="absmiddle"> <span class="dateFormat">{$USER_DATE_FORMAT}</span></span sugar='slot'></td>
 					</tr>
 				</table>
 				</form>

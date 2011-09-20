@@ -218,13 +218,13 @@ class M2MRelationship extends SugarRelationship
         $db = DBManagerFactory::getInstance();
         $query = $this->getQuery($link);
         $result = $db->query($query);
-        $beans = Array();
         $rows = Array();
-        $relatedModule = $link->getSide() == REL_LHS ? $this->def['rhs_module'] : $this->def['lhs_module'];
         $idField = $link->getSide() == REL_LHS ? $this->def['join_key_rhs'] : $this->def['join_key_lhs'];
         while ($row = $db->fetchByAssoc($result))
         {
-            $id = $row[$idField];
+            if (empty($row['id']) && empty($row[$idField]))
+                continue;
+            $id = empty($row['id']) ? $row[$idField] : $row['id'];
             $rows[$id] = $row;
         }
         return array("rows" => $rows);
@@ -253,7 +253,7 @@ class M2MRelationship extends SugarRelationship
         }
 
         if (empty($params['return_as_array'])) {
-            return "SELECT $targetKey FROM $rel_table WHERE $where AND deleted=0";
+            return "SELECT $targetKey id FROM $rel_table WHERE $where AND deleted=0";
         }
         else
         {
@@ -308,8 +308,8 @@ class M2MRelationship extends SugarRelationship
         {
             $join1 = "($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} OR $startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']})";
             $join2 = "($targetTable.$targetKey=$joinTable.{$this->def['join_key_rhs']} OR $targetTable.$targetKey=$joinTable.{$this->def['join_key_rhs']})";
-            $where = "($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} AND $joinTable.{$this->def['join_key_lhs']}='{$link->getFocus()->$targetKey}') OR "
-                   . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}')";
+            $where = "(($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} AND $joinTable.{$this->def['join_key_lhs']}='{$link->getFocus()->$targetKey}') OR "
+                   . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}'))";
         }
 
 
@@ -368,8 +368,8 @@ class M2MRelationship extends SugarRelationship
         }
         else
         {
-            $where = "($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} AND $joinTable.{$this->def['join_key_lhs']}='{$link->getFocus()->$targetKey}') OR "
-                   . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}')";
+            $where = "(($startingTable.$startingKey=$joinTable.{$this->def['join_key_rhs']} AND $joinTable.{$this->def['join_key_lhs']}='{$link->getFocus()->$targetKey}') OR "
+                   . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}'))";
         }
 
         //First join the relationship table

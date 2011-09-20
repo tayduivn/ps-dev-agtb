@@ -136,7 +136,7 @@ function check_type(type_field, module_field, frame_field, value_field){
 			<select id='left_type' name='left_type' tabindex='2' onchange="check_type('left_type', 'left_module', 'leftiframe', 'left_value');">{LEFT_TYPE}</select>
 			<input id='left_value' name='left_value' tabindex='1' size='20' maxlength='20' type="text" value="{LEFT_VALUE}">
 			<select id='left_module' name='left_module' onchange="updatedroplist('leftiframe', 'left_module', '');" tabindex='2' >{LEFT_MODULE}</select>
-			<iframe id='leftiframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe>
+			<iframe id='leftiframe' title='leftiframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe>
 			</slot></td>
 			
 		</tr>
@@ -164,7 +164,7 @@ function check_type(type_field, module_field, frame_field, value_field){
 			<select id='right_type' name='right_type' tabindex='2' onchange="check_type('right_type', 'right_module', 'rightiframe', 'right_value');">{RIGHT_TYPE}</select>
 			<input id='right_value' name='right_value' tabindex='1' size='20' maxlength='20' type="text" value="{RIGHT_VALUE}">
 			<select id='right_module' name='right_module' onchange="updatedroplist('rightiframe', 'right_module', '');" tabindex='2' >{RIGHT_MODULE}</select>
-						<iframe id='rightiframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe>
+						<iframe id='rightiframe' title='rightiframe' frameborder="0" marginwidth="0" marginheight="0" width='100%' height='30'></iframe>
 			</slot></td>			
 		</tr>
 		<tr>

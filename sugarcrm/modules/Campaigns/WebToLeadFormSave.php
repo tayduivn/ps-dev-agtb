@@ -81,7 +81,8 @@ if(!empty($_REQUEST['body_html'])){
 
   if (stripos($html, "<html") === false)
   {
-  	$html = "<html><body>" . $html . "</body></html>";
+    $langHeader = get_language_header();
+  	$html = "<html {$langHeader}><body>" . $html . "</body></html>";
   }
   $file = $dir_path.$form_name;
   $fp = sugar_fopen($file,'wb');

@@ -94,18 +94,18 @@ $mod_strings = array (
     'ERR_UW_UPLOAD_ERROR'                       => "There was an error uploading the file, please try again!<br>\n",
     'ERROR_FLAVOR_INCOMPATIBLE' => 'The uploaded file is not compatible with this flavor (Community Edition, Professional, or Enterprise) of Sugar: ',
     'ERROR_LICENSE_EXPIRED'=> "Error: Your license expired ",
-    'ERROR_LICENSE_EXPIRED2' => " day(s) ago.   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen to enter your new license key.  If you do not enter a new license key within 30 days of your license key expiration, you will no longer be able to log into this application.",
+    'ERROR_LICENSE_EXPIRED2' => " day(s) ago.   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen to enter your new license key.  If you do not enter a new license key within 7 days of your license key expiration, you will no longer be able to log into this application.",
     'ERROR_MANIFEST_TYPE' => 'Manifest file must specify the package type.',
     'ERROR_PACKAGE_TYPE' => 'Manifest file specifies an unrecognized package type',
     'ERROR_VALIDATION_EXPIRED'=> "Error: Your validation key expired ",
-    'ERROR_VALIDATION_EXPIRED2' => " day(s) ago.   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a> in the Admin screen to enter your new validation key.  If you do not enter a new validation key within 30 days of your validation key expiration, you will no longer be able to log into this application.",
+    'ERROR_VALIDATION_EXPIRED2' => " day(s) ago.   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a> in the Admin screen to enter your new validation key.  If you do not enter a new validation key within 7 days of your validation key expiration, you will no longer be able to log into this application.",
     'ERROR_VERSION_INCOMPATIBLE' => 'The uploaded file is not compatible with this version of Sugar: ',
 
     'FATAL_LICENSE_ALTERED' => "Your license has been altered since the last time you validated it. <br> Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen.",
-    'FATAL_LICENSE_EXPIRED'=> "Fatal: Your license expired more than 30 days ago",
+    'FATAL_LICENSE_EXPIRED'=> "Fatal: Your license expired more than 7 days ago",
     'FATAL_LICENSE_EXPIRED2'=> "Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  on the Admin page to update your license information and restore full functionality.",
     'FATAL_LICENSE_REQUIRED' => "Fatal: Your license key information is required .<br>   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen to update your license information and restore full functionality.",
-    'FATAL_VALIDATION_EXPIRED'=> "Fatal: Your validation key expired more than 30 days ago",
+    'FATAL_VALIDATION_EXPIRED'=> "Fatal: Your validation key expired more than 7 days ago",
     'FATAL_VALIDATION_EXPIRED2'=> "Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen to update your license information and restore full functionality.",
     'FATAL_VALIDATION_REQUIRED' => "Fatal: Your validation key information is required .<br>   Please go to the <a href='index.php?action=LicenseSettings&module=Administration'>'\"License Management\"</a>  in the Admin screen to update your license information and restore full functionality.<br>Either re-save your license information to have it authenticated or export the key and import the validation key. " ,
     'HDR_LOGIN_PANEL'          => 'Please enter your sugarcrm.com credentials.',
@@ -1151,16 +1151,23 @@ $mod_strings = array (
    'LBL_SELECT_MODULES_TITLE' => 'Drag and drop to select modules and to change the display order. Perform a search to apply the changes.',
    'LBL_EAPM_SETTINGS' => 'External Accounts',
    'LBL_EAPM_SETTINGS_DESC' => 'Select external applications for which users can provide their account information in order to access from within Sugar.',
+	'LBL_LANGUAGE_PACKS' => 'Language Packs' /*for 508 compliance fix*/,
+	'LBL_PATCH_UPGRADES' => 'Patch Upgrades' /*for 508 compliance fix*/,
+	'LBL_ADVANCED_SEARCH' => 'Advanced Search' /*for 508 compliance fix*/,
+	'LBL_BASIC_SEARCH' => 'Basic Search' /*for 508 compliance fix*/,
+	'LBL_PROCESSING' => 'Processing' /*for 508 compliance fix*/,
+
    'LBL_MI_IN_ACTIONVIEWMAP' => 'Installing Action View Map',
    'LBL_MI_UN_ACTIONVIEWMAP' => 'Unninstalling Action View Map',
-// OAuth
+	// OAuth
     'LBL_OAUTH_TITLE' => "OAuth Keys",
     'LBL_OAUTH' => "OAuth key management",
     'LBL_SAML_LOGIN_URL_DESC' => 'Enter Login URL',
 
-    // Sugar Ease
-    'LBL_SNIP_TITLE' => 'Sugar Ease',
-    'LBL_SNIP_DESC' => 'Configure offline archiving (Sugar Ease)',
-    'LBL_CONFIGURE_SNIP' => 'Sugar Ease',
+    // SNIP / Sugar Ease / Email Archiving
+    'LBL_SNIP_TITLE' => 'Email Archiving',
+    'LBL_SNIP_DESC' => 'Configure offline archiving (Email Archiving)',
+    'LBL_CONFIGURE_SNIP' => 'Email Archiving',
     'LBL_CONFIGURE_SNIP_DESC' => 'Enable/disable the Sugar Email Archiving Service',
 	);
+

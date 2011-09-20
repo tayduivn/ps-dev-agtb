@@ -54,7 +54,7 @@
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="gmail">
                                     {* //BEGIN SUGARCRM flav=int ONLY *}
-                                    <img src="{sugar_getimagepath file='gmail_logo.png'}" >
+                                    {sugar_getimage alt=$mod_strings.LBL_GMAIL_LOGO name="gmail_logo" ext=".png" other_attributes=''}
                                     {* //END SUGARCRM flav=int ONLY *}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{$app_strings.LBL_SMTPTYPE_GMAIL}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
@@ -64,7 +64,7 @@
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="yahoomail">
                                     {* //BEGIN SUGARCRM flav=int ONLY *}
-                                    <img src="{sugar_getimagepath file='yahoomail_logo.png'}" >
+                                    {sugar_getimage alt=$mod_strings.LBL_YAHOO_MAIL name="yahoomail_logo" ext=".png" other_attributes=''}
                                     {* //END SUGARCRM flav=int ONLY *}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{$app_strings.LBL_SMTPTYPE_YAHOO}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>
@@ -74,7 +74,7 @@
                             <span class="first-child">
                                 <button type="button" name="mail_smtptype" value="exchange">
                                     {* //BEGIN SUGARCRM flav=int ONLY *}
-                                    <img src="{sugar_getimagepath file='exchange_logo.png'}" >
+                                    {sugar_getimage alt=$mod_strings.LBL_EXCHANGE_LOGO name="exchange_logo" ext=".png" other_attributes=''}
                                     {* //END SUGARCRM flav=int ONLY *}
                                     &nbsp;&nbsp;&nbsp;&nbsp;{$app_strings.LBL_SMTPTYPE_EXCHANGE}&nbsp;&nbsp;&nbsp;&nbsp;
                                 </button>

@@ -41,7 +41,7 @@
 			<input type="hidden" name="return_action" value="{RETURN_ACTION}">
 			<input type="hidden" name="old_record_id" value="{OLD_ID}">
 			<input type="hidden" name="is_duplicate" value="{IS_DUPLICATE}">
-		<td><input title="{APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save'; return check_form('EditView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " > <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  "></td>
+		<td><input title="{APP.LBL_SAVE_BUTTON_TITLE}" id = "save_workflow" accessKey="{APP.LBL_SAVE_BUTTON_KEY}" class="button" onclick="this.form.action.value='Save'; return check_form('EditView');" type="submit" name="button" value="  {APP.LBL_SAVE_BUTTON_LABEL}  " > <input title="{APP.LBL_CANCEL_BUTTON_TITLE}" id="cancel_workflow" accessKey="{APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{RETURN_ACTION}'; this.form.module.value='{RETURN_MODULE}'; this.form.record.value='{RETURN_ID}'" type="submit" name="button" value="  {APP.LBL_CANCEL_BUTTON_LABEL}  "></td>
 	<td align="right" nowrap><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
 	<td align='right'>{ADMIN_EDIT}</td>
 	</tr>
@@ -54,7 +54,7 @@
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>
 	<td width="25%" scope="row"><slot>{MOD.LBL_NAME} <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></slot></td>
-	<td width="25%" ><slot><input name='name' tabindex='1' size='40' maxlength='50' type="text" value="{NAME}"></slot></td>
+	<td width="25%" ><slot><input name='name' id='name' tabindex='1' size='40' maxlength='50' type="text" value="{NAME}"></slot></td>
 	<td width="25%" scope="row"><slot>&nbsp;</slot></td>
 	<td width="25%" ><slot>&nbsp;</slot></td>
 	</tr>

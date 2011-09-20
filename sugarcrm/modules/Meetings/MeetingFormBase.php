@@ -79,7 +79,7 @@ $jsCalendarImage = SugarThemeRegistry::current()->getImageURL('jscalendar.gif');
 					<p>$lbl_subject<span class="required">$lbl_required_symbol</span><br>
 					<input name='${prefix}name' size='25' maxlength='255' type="text"><br>
 					$lbl_date&nbsp;<span class="required">$lbl_required_symbol</span>&nbsp;<span class="dateFormat">$ntc_date_format</span><br>
-					<input name='${prefix}date_start' id='jscal_field' onblur="parseDate(this, '$cal_dateformat');" type="text" maxlength="10" value="${default_date_start}"> <img src="{$jscalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="jscal_trigger" align="absmiddle"><br>
+					<input name='${prefix}date_start' id='jscal_field' onblur="parseDate(this, '$cal_dateformat');" type="text" maxlength="10" value="${default_date_start}"> <!--not_in_theme!--><img src="{$jscalendarImage}" alt="{$app_strings['LBL_ENTER_DATE']}"  id="jscal_trigger" align="absmiddle"><br>
 					$lbl_time&nbsp;<span class="required">$lbl_required_symbol</span>&nbsp;<span class="dateFormat">$ntc_time_format</span><br>
 					<input name='${prefix}time_start' type="text" maxlength='5' value="${default_time_start}">{$time_ampm}</p>
 					<script type="text/javascript">
@@ -208,6 +208,11 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
   	}elseif (empty($focus->id) ){
 	  	//this is not from long form so add assigned and current user automatically as there is no invitee list UI.
 	  	//This call could be through an ajax call from subpanels or shortcut bar
+        if(!isset($_POST['user_invitees']))
+        {
+           $_POST['user_invitees'] = '';
+        }
+
 	  	$_POST['user_invitees'] .= ','.$_POST['assigned_user_id'].', ';
 
 	  	//add current user if the assigned to user is different than current user.
@@ -364,7 +369,9 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	    	if(!empty($_POST['existing_invitees'])) {
 	    	   $existing_users =  explode(",", trim($_POST['existing_invitees'], ','));
 	    	}
-
+			
+	    	$focus->load_relationship('users'); //bug 43960 fix
+	    	
 	    	foreach($focus->users_arr as $user_id) {
 	    	    if(empty($user_id) || isset($existing_users[$user_id]) || isset($deleteUsers[$user_id])) {
 	    			continue;
@@ -386,7 +393,9 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	    	if(!empty($_POST['existing_contact_invitees'])) {
 	    	   $existing_contacts =  explode(",", trim($_POST['existing_contact_invitees'], ','));
 	    	}
-
+			
+	    	$focus->load_relationship('contacts');
+	    	
 	    	foreach($focus->contacts_arr as $contact_id) {
 	    		if(empty($contact_id) || isset($existing_contacts[$contact_id]) || isset($deleteContacts[$contact_id])) {
 	    			continue;
@@ -409,6 +418,8 @@ function handleSave($prefix,$redirect=true, $useRequired=false) {
 	    	   $existing_leads =  explode(",", trim($_POST['existing_lead_invitees'], ','));
 	    	}
 
+	    	$focus->load_relationship('leads');
+	    	
 	    	foreach($focus->leads_arr as $lead_id) {
 	    		if(empty($lead_id) || isset($existing_leads[$lead_id]) || isset($deleteLeads[$lead_id])) {
 	    			continue;

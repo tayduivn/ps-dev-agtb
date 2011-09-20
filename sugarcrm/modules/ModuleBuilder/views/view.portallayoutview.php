@@ -20,14 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Calls module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 //FILE SUGARCRM flav=ent ONLY
 
@@ -78,20 +70,21 @@ class ViewPortalLayoutView extends ViewLayoutView
 		// assign buttons
 		$images = array('icon_save' => 'studio_save', 'icon_publish' => 'studio_publish', 'icon_address' => 'icon_Address', 'icon_emailaddress' => 'icon_EmailAddress', 'icon_phone' => 'icon_Phone');
 		foreach($images as $image=>$file) {
-			$smarty->assign($image,SugarThemeRegistry::current()->getImage($file, ''));
+			$smarty->assign($image,SugarThemeRegistry::current()->getImage($file, ''
+,null,null,'.gif',$file));
 		}
-		$smarty->assign('icon_delete',SugarThemeRegistry::current()->getImage('icon_Delete','',48,48 ));
+		$smarty->assign('icon_delete',SugarThemeRegistry::current()->getImage('icon_Delete','',48,48,'.gif',$mod_strings['LBL_MB_DELETE'] ));
 
 		$buttons = array();
 		$buttons[] = array(
 		  'id'=>'saveBtn',
-		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_save'],''),
+		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_save'],'',null,null,'.gif',$mod_strings['LBL_BTN_SAVE']),
 		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVE'],
 		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handleSave();'"
 		);
 		$buttons[] = array(
 		  'id'=>'publishBtn',
-		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_publish'],''),
+		  'image'=>SugarThemeRegistry::current()->getImage($images['icon_publish'],'',null,null,'.gif',$mod_strings['LBL_BTN_PUBLISH']),
 		  'text'=>$GLOBALS['mod_strings']['LBL_BTN_SAVEPUBLISH'],
 		  'actionScript'=>"onclick='if(Studio2.checkCalcFields(\"{$_REQUEST['view']}\", \"ERROR_CALCULATED_PORTAL_FIELDS\"))Studio2.handlePublish();'"
 		);

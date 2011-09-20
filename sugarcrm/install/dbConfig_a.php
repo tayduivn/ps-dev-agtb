@@ -52,9 +52,11 @@ $db = getInstallDbInstance();
 ///////////////////////////////////////////////////////////////////////////////
 ////	BEGIN PAGE OUTPUT
 
+$langHeader = get_language_header();
+
 $out =<<<EOQ
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html {$langHeader}>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -388,7 +390,7 @@ function confirm_drop_tables(yes_no){
            <div id="checkingDiv" style="display:none">
            <table cellspacing="0" cellpadding="0" border="0">
                <tr><td>
-                    <p><img src='install/processing.gif'> <br>{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}</p>
+                    <p><img alt="{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}" src='install/processing.gif'> <br>{$mod_strings['LBL_LICENSE_CHKDB_HEADER']}</p>
                 </td></tr>
             </table>
             </div>

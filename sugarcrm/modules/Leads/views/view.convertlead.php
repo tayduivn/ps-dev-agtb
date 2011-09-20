@@ -111,8 +111,9 @@ class ViewConvertLead extends SugarView
 
         echo "<div class='edit view' style='width:auto;'>";
 
-        global $sugar_config;
+        global $sugar_config, $app_list_strings;
         $smarty->assign('lead_conv_activity_opt', $sugar_config['lead_conv_activity_opt']);
+        $smarty->assign('convertModuleListOptions', get_select_options_with_id(array('Contacts' => $app_list_strings["moduleListSingular"]['Contacts']), ''));
 
         foreach($this->defs as $module => $vdef)
         {
@@ -274,6 +275,7 @@ class ViewConvertLead extends SugarView
      */
     protected function handleSave()
     {
+    	require_once('modules/Campaigns/utils.php');
         require_once("include/formbase.php");
     	$lead = false;
 		if (!empty($_REQUEST['record']))
@@ -410,6 +412,10 @@ class ViewConvertLead extends SugarView
        	 	$this->copyAddressFields($bean, $beans['Contacts']);
 
 			$bean->save();
+		//if campaign id exists then there should be an entry in campaign_log table for the newly created contact: bug 44522	
+        if(isset($lead->campaign_id) && $lead->campaign_id != null && $bean->object_name == "Contact"){
+                campaign_log_lead_or_contact_entry($lead->campaign_id,$lead, $beans['Contacts'],'contact');
+            }
         }
         if (!empty($lead))
 		{	//Mark the original Lead converted

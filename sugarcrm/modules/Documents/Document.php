@@ -213,11 +213,13 @@ class Document extends SugarBean {
 		$mod_strings = return_module_language($current_language, 'Documents');
 
         if (!empty($this->document_revision_id)) {
+
             $query = "SELECT users.first_name AS first_name, users.last_name AS last_name, document_revisions.date_entered AS rev_date,
             	 document_revisions.filename AS filename, document_revisions.revision AS revision,
             	 document_revisions.file_ext AS file_ext, document_revisions.file_mime_type AS file_mime_type
             	 FROM users, document_revisions
             	 WHERE users.id = document_revisions.created_by AND document_revisions.id = '$this->document_revision_id'";
+
             $result = $this->db->query($query);
             $row = $this->db->fetchByAssoc($result);
 
@@ -226,12 +228,11 @@ class Document extends SugarBean {
             {
             	$this->name = $this->document_name;
             }
-            //popuplate filename
+
             if(isset($row['filename']))$this->filename = $row['filename'];
             //$this->latest_revision = $row['revision'];
             if(isset($row['revision']))$this->revision = $row['revision'];
 
-            //populate the file url.
             //image is selected based on the extension name <ext>_icon_inline, extension is stored in document_revisions.
             //if file is not found then default image file will be used.
             global $img_name;
@@ -249,10 +250,12 @@ class Document extends SugarBean {
 			$img_name = "def_image_inline"; //todo change the default image.
 		}
 		if($this->ACLAccess('DetailView')){
-		    $file_url = "<a href='index.php?entryPoint=download&id={$this->document_revision_id}&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"')."</a>";
+
+			$file_url = "<a href='index.php?entryPoint=download&id=".basename(UploadFile :: get_url($this->filename, $this->document_revision_id))."&type=Documents' target='_blank'>".SugarThemeRegistry::current()->getImage($img_name, 'border="0"', null,null,'.gif',$mod_strings['LBL_LIST_VIEW_DOCUMENT'])."</a>";
 
 			if(!empty($this->doc_type) && $this->doc_type != 'Sugar' && !empty($this->doc_url))
-                $file_url= "<a href='".$this->doc_url."' target='_blank'>".SugarThemeRegistry::current()->getImage($this->doc_type.'_image_inline', 'alt="'.$mod_strings['LBL_LIST_VIEW_DOCUMENT'].'"  border="0"',null,null,'.png')."</a>";
+                $file_url= "<a href='".$this->doc_url."' target='_blank'>".SugarThemeRegistry::current()->getImage($this->doc_type.'_image_inline', 'border="0"',null,null,'.png',$mod_strings['LBL_LIST_VIEW_DOCUMENT'])."</a>";
+
     		$this->file_url = $file_url;
     		$this->file_url_noimage = "index.php?entryPoint=download&type=Documents&&id={$this->document_revision_id}";
 		}else{

@@ -285,6 +285,9 @@ function process_team_access($process_global_teams=false, $process_private_teams
     //process global team access if requested.
     if ($process_global_teams) {
         clear_global_team_access($global_team_id);
+        if (no_global_team()) {//we should create a Global team
+            Team::create_team("Global", $mod_strings['LBL_GLOBAL_TEAM_DESC'], $global_team_id);
+        }
         $do_nothing=false;    
     }
     //process private teams.
@@ -408,19 +411,22 @@ function process_all_team_access($user,$add_to_global_team=false,$private_team=f
     //create private teams for the user if one does not exist.
     if($private_team) {
         $GLOBALS['log']->debug("RepairTeams:Processing Private team membership for $user->user_name");
-
         $team_id = $user->getPrivateTeamID();
         //create a private team
         if(empty($team_id) && !empty($user->user_name) ) {
             $GLOBALS['log']->debug("RepairTeams:No private team found creating new for $user->user_name");
+            $name = '';
+            $name2 = '';
             if ( !empty($user->first_name) ) {
                 $name = $user->first_name;
+                $name2 = $user->last_name;
             }
-            else {
-                $name = "({$user->user_name})";
+            if ( empty($user->first_name) && !empty($user->last_name) ) {
+                $name = $user->last_name;
+                $name2 = '';
             }
             $description = "{$mod_strings['LBL_PRIVATE_TEAM_FOR']} {$user->user_name}";
-            $team_id = Team::create_team($name, $description, create_guid(), 1, '', $user->id);
+            $team_id = Team::create_team($name, $description, create_guid(), 1, $name2, $user->id);
         }
         $GLOBALS['log']->debug("RepairTeams:User $user->user_name private team id is $team_id");        
         

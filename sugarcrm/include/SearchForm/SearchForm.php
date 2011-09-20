@@ -122,7 +122,7 @@ class SearchForm {
     function populateFromArray(&$array, $switchVar = null, $addAllBeanFields = true) {
 
        //CL Bug:33176
-       if(empty($array['searchFormTab']) && empty($switchvar)) {
+       if(empty($array['searchFormTab']) && empty($switchVar)) {
        	  $array['searchFormTab'] = 'advanced_search';
        }
 
@@ -510,7 +510,7 @@ class SearchForm {
         $GLOBALS['log']->debug('SearchForm.php->displayHeader()');
         $header_text = '';
         if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
-            $header_text = "<a href='index.php?action=index&module=DynamicLayout&from_action=SearchForm&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>";
+            $header_text = "<a href='index.php?action=index&module=DynamicLayout&from_action=SearchForm&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif','Edit Layout')."</a>";
         }
 
         echo $header_text . $this->displayTabs($this->module . '|' . $view);

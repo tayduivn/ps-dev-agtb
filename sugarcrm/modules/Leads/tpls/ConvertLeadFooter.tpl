@@ -81,7 +81,7 @@
     </td>
     <td>
         <select id="lead_conv_ac_op_sel" name="lead_conv_ac_op_sel">
-            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}"><script>document.write(SUGAR.language.get('app_list_strings', "moduleListSingular")['Contacts']);</script></option>
+            {$convertModuleListOptions}
         </select>
     </td>
 </tr>
@@ -94,7 +94,7 @@
     </td>
     <td>
         <select id="lead_conv_ac_op_sel" name="lead_conv_ac_op_sel[]" size="5" multiple="">
-            <option selected="selected" value="Contacts" label="{sugar_translate label='LBL_CONTACT' module='Contacts'}"><script>document.write(SUGAR.language.get('app_list_strings', "moduleListSingular")['Contacts']);</script></option>
+            {$convertModuleListOptions}
         </select>
     </td>
 </tr>

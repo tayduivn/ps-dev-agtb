@@ -26,9 +26,9 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
     var $aclAction = "detail";
 
     // Defines the boundaries of the header image
-    const MAX_WIDTH = 867;
+    const MAX_WIDTH = 348;
     const MAX_HEIGHT = 60;
-    const DPI = 72;
+    const DPI = 500;
 
     /**
      * Override
@@ -55,6 +55,7 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
                 $imsize = @getimagesize($logo);
                 if ($imsize === FALSE) {
                     $logo = K_PATH_IMAGES.$headerdata['logo'];
+                    $imsize = @getimagesize($logo);
                 }
             }
             if ( $imsize ) {
@@ -64,6 +65,7 @@ class QuotesSugarpdfQuotes extends Sugarpdf{
                 // w and h are used as boundary sizes in this case.
                 $this->Image($logo, $this->GetX(), $this->getHeaderMargin(), self::MAX_WIDTH, self::MAX_HEIGHT, '', '', '', true, self::DPI);
             }
+
         }
         // This table split the header in 3 parts of equal width. The last part (on the right) contain the header text.
         $table[0]["logo"]="";

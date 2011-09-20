@@ -88,7 +88,6 @@ YAHOO.util.Event.onContentReady("globalLinksModule", function()
         var control = Y.Node.create(
         '<a title="show/hide content" class="yui-toggle"><em>toggle</em></a>'
         );
-        
         module.one('#globalLinksCtrl').appendChild(control);
         control.on('click', onClick);
     });

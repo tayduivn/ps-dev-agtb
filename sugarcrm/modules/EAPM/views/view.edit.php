@@ -20,16 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Bugs module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-require_once('include/MVC/View/views/view.edit.php');
 
 class EAPMViewEdit extends ViewEdit {
 
@@ -84,7 +74,8 @@ class EAPMViewEdit extends ViewEdit {
         $iconPath = $this->getModuleTitleIconPath($this->module);
         $params = array();
         if (!empty($iconPath) && !$browserTitle) {
-            $params[] = "<a href='index.php?module=Users&action=index'><img src='{$iconPath}' alt='".translate('LBL_MODULE_NAME','Users')."' title='".translate('LBL_MODULE_NAME','Users')."' align='absmiddle'></a>";
+            $params[] = "<a href='index.php?module=Users&action=index'><!--not_in_theme!--><img src='{$iconPath}' alt='".translate('LBL_MODULE_NAME','Users')."' title='".translate('LBL_MODULE_NAME','Users')."' align='absmiddle'></a>";
+
         }
         else {
             $params[] = translate('LBL_MODULE_NAME','Users');
@@ -124,4 +115,5 @@ class EAPMViewEdit extends ViewEdit {
         }
  	}
 }
+
 ?>

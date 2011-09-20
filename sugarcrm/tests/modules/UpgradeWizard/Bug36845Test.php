@@ -123,6 +123,8 @@ EOQ;
         fwrite( $fp, $the_string );
         fclose( $fp );
 
+
+        require('include/modules.php');
         global $beanFiles, $beanList;
         $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
         $beanList['clabc_Bug36845Test'] = 'clabc_Bug36845Test';

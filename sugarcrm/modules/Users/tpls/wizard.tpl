@@ -27,7 +27,7 @@
  ********************************************************************************/
 *}
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html {$langHeader}>
 <head>
 <link rel="SHORTCUT ICON" href="{$FAVICON_URL}">
 <meta http-equiv="Content-Type" content="text/html; charset={$APP.LBL_CHARSET}">
@@ -54,9 +54,9 @@ function disableReturnSubmission(e) {
 <input type='hidden' name='module' value='Users'/>
 <span class='error'>{$error.main}</span>
 {overlib_includes}
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Emails/javascript/vars.js'}"></script>
-<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_emails.js'}"></script>
+<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_emails.js'}"></script>
 <script type="text/javascript" src="{sugar_getjspath file='modules/Users/User.js'}"></script>
 
 <div class="dashletPanelMenu wizard">
@@ -82,7 +82,7 @@ function disableReturnSubmission(e) {
                <p> {$MOD.LBL_WIZARD_WELCOME_NOSMTP}</p>
                 {/if}
 
-				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' width='765px' height='325px'></div>
+				<div class="userWizWelcome"><img src='include/images/sugar_wizard_welcome.jpg' border='0' alt='{$MOD.LBL_WIZARD_WELCOME_TAB}' width='765px' height='325px'></div>
                 </td>
             </tr>
             </table>
@@ -119,13 +119,13 @@ function disableReturnSubmission(e) {
                         <td scope="row" width="17%">
                         {$MOD.LBL_EMAIL}: {if $REQUIRED_EMAIL_ADDRESS}<span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span>{/if}
                         </td>
-                        <td width="33%"><slot><input name='email1' tabindex='11' size='30' maxlength='100' value='{$EMAIL1}' id='email1' /></slot></td>
+                        <td width="33%"><slot><input name='email1' tabindex='3' size='30' maxlength='100' value='{$EMAIL1}' id='email1' /></slot></td>
                         <td scope="row" nowrap="nowrap"><slot>&nbsp;</slot></td>
                         <td><slot>&nbsp;</slot></td>
                     </tr>
                     <tr>
                         <td width="17%" scope="row" nowrap="nowrap"><slot>{$MOD.LBL_OFFICE_PHONE}:</slot></td>
-                        <td width="33%" ><slot><input name='phone_work' type="text" tabindex='6' size='20' maxlength='25' value='{$PHONE_WORK}'></slot></td>
+                        <td width="33%" ><slot><input name='phone_work' type="text" tabindex='4' size='20' maxlength='25' value='{$PHONE_WORK}'></slot></td>
                         <td scope="row" nowrap="nowrap"><slot>{$MOD.LBL_MESSENGER_TYPE}:</slot></td>
                         <td  ><slot>{$MESSENGER_TYPE_OPTIONS}</slot></td>
                     </tr>

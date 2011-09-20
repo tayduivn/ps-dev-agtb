@@ -62,7 +62,7 @@ function change_state(radiobutton) {
 	<tr>
 
 		<td>
-			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="this.form.action.value='Save';return verify_data(this);" type="submit" name="button" value=" {$APP.LBL_SAVE_BUTTON_LABEL} ">
+			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="this.form.action.value='Save';return verify_data(this);" type="submit" name="button" id="btn_save" value=" {$APP.LBL_SAVE_BUTTON_LABEL} ">
 			<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}';" type="submit" name="button" value=" {$APP.LBL_CANCEL_BUTTON_LABEL} ">
 		</td>
 		<td align="right" nowrap>
@@ -105,7 +105,7 @@ function change_state(radiobutton) {
                         <span class="first-child">
                             <button type="button" name="mail_smtptype" value="gmail">
                                 {* //BEGIN SUGARCRM flav=int ONLY *}
-                                <img src="{sugar_getimagepath file='gmail_logo.png'}" >
+                                {sugar_getimage alt=$mod_strings.LBL_GMAIL_LOGO name="gmail_logo" ext=".png" other_attributes=''}
                                 {* //END SUGARCRM flav=int ONLY *}
                                 &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_GMAIL}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
@@ -115,7 +115,7 @@ function change_state(radiobutton) {
                         <span class="first-child">
                             <button type="button" name="mail_smtptype" value="yahoomail">
                                 {* //BEGIN SUGARCRM flav=int ONLY *}
-                                <img src="{sugar_getimagepath file='yahoomail_logo.png'}" >
+                                {sugar_getimage alt=$mod_strings.LBL_YAHOO_MAIL_LOGO name="yahoomail_logo" ext=".png" other_attributes=''}
                                 {* //END SUGARCRM flav=int ONLY *}
                                 &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_YAHOO}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
@@ -125,7 +125,7 @@ function change_state(radiobutton) {
                         <span class="first-child">
                             <button type="button" name="mail_smtptype" value="exchange">
                                 {* //BEGIN SUGARCRM flav=int ONLY *}
-                                <img src="{sugar_getimagepath file='exchange_logo.png'}" >
+                                {sugar_getimage alt=$mod_strings.LBL_EXCHANGE_LOGO name="exchange_logo" ext=".png" other_attributes=''}
                                 {* //END SUGARCRM flav=int ONLY *}
                                 &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_EXCHANGE}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
@@ -535,9 +535,11 @@ function sendTestEmail()
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
     var mail_sendtype = document.getElementById('mail_sendtype').value;
 
+    var from_namƒvare = document.getElementById('notify_fromname').value;
 	var postDataString = 'mail_name=system&mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl +
 	                      "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) +
-	                      "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_to_address=" + encodeURIComponent(toAddress) + "&outboundtest_from_address=" + fromAddress;
+	                      "&mail_smtppass=" + trim(document.getElementById('mail_smtppass').value) + "&outboundtest_to_address=" + encodeURIComponent(toAddress) +
+                          "&outboundtest_from_address=" + fromAddress + "&mail_from_name=" + from_name;
 
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }

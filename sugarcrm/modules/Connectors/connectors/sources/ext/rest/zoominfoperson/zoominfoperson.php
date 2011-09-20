@@ -86,6 +86,7 @@ class ext_rest_zoominfoperson extends ext_rest {
 
 		xml_set_element_handler($this->xml_parser, "startReadListData", "endReadListData");
 		xml_set_character_data_handler($this->xml_parser, "characterData");
+
 		$fp = @fopen($url, "r");
 		if(!empty($fp)) {
 			while ($data = fread($fp, 4096)) {
@@ -234,13 +235,7 @@ class ext_rest_zoominfoperson extends ext_rest {
 		}
 	}
 
-	public function setProperties($properties=array())
-	{
-	    $this->properties = $properties;
-	    parent::setProperties($properties);
-	}
-
-	    public function test() {
+	public function test() {
 		try {
 	    	$listArgs = array('firstName'=>'John');
 	    	$results = $this->getList($listArgs, 'Leads');

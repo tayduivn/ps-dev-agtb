@@ -38,6 +38,7 @@ class Bug40631Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+    	$this->useOutputBuffering = true;
         if(is_dir('custom/modules/Connectors/connectors/sources/ext/soap/hoovers'))
         {
            $this->has_original_hoovers_custom_directory = true;
@@ -688,7 +689,8 @@ EOQ;
 //END SUGARCRM flav!=int ONLY
         $account = new Account();
         $account = $source_instance->fillBean(array('id'=>'2205698'), 'Accounts', $account);
-        if(!empty($account->name))
+        
+        if(!empty($account) && is_string($account->name))
         {
         	$this->assertRegExp('/Gannett/i', $account->name, "Assert that account name is like Gannett");
         }
@@ -696,10 +698,12 @@ EOQ;
         //$account = new Account();
         $accounts = array();
         $accounts = $source_instance->fillBeans(array('name' => 'Gannett'), 'Accounts', $accounts);
-        foreach($accounts as $count=>$account) {
-        	    if(!empty($account->name))
+
+        foreach($accounts as $count=>$account) 
+        {
+        	    if(!empty($account) && is_string($account->name)) 
         	    {
-	                $this->assertRegExp('/^Gannett/i', $account->name, "Assert that a bean has been filled with account name like Gannett");
+	                $this->assertRegExp('/Gannett/i', $account->name, "Assert that a bean has been filled with account name like Gannett");
 	                break;
         	    }
         }

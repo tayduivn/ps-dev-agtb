@@ -38,10 +38,12 @@ function template_groups_chooser(&$args) {
   	if (!empty($args['display'])) {
   		$table_style = "display: ".$args['display']."\"";
   	}
-	$uparraow_big = SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;" alt="Sort"');
-	$downarrow_big = SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;"  alt="Sort"');
-	$leftarrow_big = SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;" alt="Sort"');
-	$rightarrow_big = SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;" alt="Sort"');
+	$uparraow_big = SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;"'
+,null,null,'.gif',$mod_strings['LBL_SORT']);
+	$downarrow_big = SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;" ',null,null,'.gif',$mod_strings['LBL_SORT']);
+	$leftarrow_big = SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;"'
+,null,null,'.gif',$mod_strings['LBL_SORT']);
+	$rightarrow_big = SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;"',null,null,'.gif',$mod_strings['LBL_SORT']);
 
 	
 	$smarty = new Sugar_Smarty();
@@ -107,8 +109,9 @@ global $mod_strings,$js_loaded;
 </tr>
 <tr>
 	<td valign="top" style="padding-right: 2px; padding-left: 2px;">
-<a onclick="javascript:up('<?php echo $args['left_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;" alt="Sort"');?></a><br>
-<a onclick="javascript:down('<?php echo $args['left_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;"  alt="Sort"');?></a>
+
+<a onclick="javascript:up('<?php echo $args['left_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;",null,null,'.gif',$mod_strings['LBL_SORT']);?></a><br>
+<a onclick="javascript:down('<?php echo $args['left_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;" ',null,null,'.gif',$mod_strings['LBL_SORT']);?></a>
 			</td>
 	<td>
 		<table border="0" cellspacing=0 cellpadding="0">
@@ -119,13 +122,13 @@ global $mod_strings,$js_loaded;
 		</tr>
 		</table>
 	</td>
-	<td valign="top" style="padding-right: 2px; padding-left: 2px;"><a onclick="javascript:right_to_left('<?php echo $args['left_name'];?>','<?php echo $args['right_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;" alt="Sort"');?></a><a onclick="javascript:left_to_right('<?php echo $args['left_name'];?>','<?php echo $args['right_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;" alt="Sort"');?></a></td>
+	<td valign="top" style="padding-right: 2px; padding-left: 2px;"><a onclick="javascript:right_to_left('<?php echo $args['left_name'];?>','<?php echo $args['right_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('leftarrow_big','border="0" style="margin-right: 1px;" alt="Sort"');?></a><a onclick="javascript:left_to_right('<?php echo $args['left_name'];?>','<?php echo $args['right_name'];?>','<?php echo $args['id']; ?>');"><?php echo SugarThemeRegistry::current()->getImage('rightarrow_big','border="0" style="margin-left: 1px;"',null,null,'.gif',$mod_strings['LBL_SORT']);?></a></td>
 	<td id="<?php echo $args['right_name']; ?>_td">
 <select id="<?php echo $args['right_name']; ?>" name="<?php echo $args['right_name']; ?>[]" size="10" multiple="multiple"/>
 	<td valign="top" style="padding-right: 2px; padding-left: 2px;">
 <!--
-<a onclick="javascript:up('<?php echo $args['right_name'];?>');"><?php echo SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;" alt="Sort"');?></a><br>
-<a onclick="javascript:down('<?php echo $args['right_name'];?>');"><?php echo SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;"  alt="Sort"');?></a>
+<a onclick="javascript:up('<?php echo $args['right_name'];?>');"><?php echo SugarThemeRegistry::current()->getImage('uparrow_big','border="0" style="margin-bottom: 1px;"',null,null,'.gif',$mod_strings['LBL_SORT']);?></a><br>
+<a onclick="javascript:down('<?php echo $args['right_name'];?>');"><?php echo SugarThemeRegistry::current()->getImage('downarrow_big','border="0" style="margin-top: 1px;"',null,null,'.gif',$mod_strings['LBL_SORT']);?></a>
 -->
 
 			</td>

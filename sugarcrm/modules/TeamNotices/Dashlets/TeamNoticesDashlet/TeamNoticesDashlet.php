@@ -30,7 +30,7 @@ require_once('include/Dashlets/Dashlet.php');
 
 class TeamNoticesDashlet extends Dashlet
 {
-    public $isRefreshable = false;
+    public $isRefreshable = true;
     public $hasScript     = true;
 
     public function __construct($id)

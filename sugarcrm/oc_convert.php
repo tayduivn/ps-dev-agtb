@@ -62,11 +62,13 @@ if(!isset($_SESSION['oc_server_url']) || $_SESSION['oc_server_url'] == 'http://'
   ){
 }
 $errors = "";
+
+$langHeader = get_language_header();
 ///////////////////////////////////////////////////////////////////////////////
 ////    START OUTPUT
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html <?php echo $langHeader?>>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
    <meta http-equiv="Content-Script-Type" content="text/javascript">

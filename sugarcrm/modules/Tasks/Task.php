@@ -289,28 +289,56 @@ class Task extends SugarBean {
 			$override_date_for_subpanel = true;
 		}
 
+		$today = $timedate->nowDb();
 		$task_fields = $this->get_list_view_array();
 		$dbtime = $timedate->to_db($task_fields['DATE_DUE']);
 		if($override_date_for_subpanel){
 			$dbtime = $timedate->to_db($task_fields['DATE_START']);
 		}
 
+        $task_fields['TIME_DUE'] = $timedate->to_display_time($dbtime);
+        $task_fields['DATE_DUE'] = $timedate->to_display_date($dbtime);
+
         $this->formatStartAndDueDates($task_fields, $dbtime, $override_date_for_subpanel);
 
-        if (!empty($this->priority))
-            $task_fields['PRIORITY'] = $app_list_strings['task_priority_dom'][$this->priority];
-        if (isset($this->parent_type))
-            $task_fields['PARENT_MODULE'] = $this->parent_type;
-        if ($this->status != "Completed" && $this->status != "Deferred" )
+		if (!empty($this->priority))
+			$task_fields['PRIORITY'] = $app_list_strings['task_priority_dom'][$this->priority];
+		if (isset($this->parent_type))
+			$task_fields['PARENT_MODULE'] = $this->parent_type;
+		if ($this->status != "Completed" && $this->status != "Deferred" )
+		{
+			$setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
+		    $task_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'",null,null,'.gif',translate('LBL_LIST_CLOSE','Tasks'))."</a>";
+		}
+
+
+        if(!empty($task_fields['DATE_DUE']))
         {
-            $setCompleteUrl = "<a onclick='SUGAR.util.closeActivityPanel.show(\"{$this->module_dir}\",\"{$this->id}\",\"Completed\",\"listview\",\"1\");'>";
-            $task_fields['SET_COMPLETE'] = $setCompleteUrl . SugarThemeRegistry::current()->getImage("close_inline","title=".translate('LBL_LIST_CLOSE','Tasks')." border='0'")."</a>";
+            $date_due = $task_fields['DATE_DUE'];
+            $dd = $timedate->to_db_date_time($this->date_due, $this->time_due);
+
+            if ($dd < $today){
+                $task_fields['DATE_DUE']= "<font class='overdueTask'>".$date_due."</font>";
+                if($override_date_for_subpanel){
+                    $task_fields['DATE_START']= "<font class='overdueTask'>".$date_due."</font>";
+                }
+            }else if( $dd == $today ){
+                $task_fields['DATE_DUE'] = "<font class='todaysTask'>".$date_due."</font>";
+                if($override_date_for_subpanel){
+                    $task_fields['DATE_START'] = "<font class='todaysTask'>".$date_due."</font>";
+                }
+            }else{
+                $task_fields['DATE_DUE'] = "<font class='futureTask'>".$date_due."</font>";
+                if($override_date_for_subpanel){
+                    $task_fields['DATE_START'] = "<font class='futureTask'>".$date_due."</font>";
+                }
+            }
         }
 
 		//make sure we grab the localized version of the contact name, if a contact is provided
 		if (!empty($this->contact_id)) {
 			global $locale;
-			$query  = "SELECT first_name, last_name, salutation, title FROM contacts ";
+			$query  = "SELECT first_name, last_name, salutation, title,phone_work FROM contacts ";
 			$query .= "WHERE id='$this->contact_id' AND deleted=0";
 			$result = $this->db->limitQuery($query,0,1,true," Error filling in contact name fields: ");
 
@@ -320,10 +348,12 @@ class Task extends SugarBean {
 			if($row != null)
 			{
 				$this->contact_name = $locale->getLocaleFormattedName($row['first_name'], $row['last_name'], $row['salutation'], $row['title']);
+				$this->contact_phone=$row['phone_work'];
 			}
 		}
 
 		$task_fields['CONTACT_NAME']= $this->contact_name;
+		$task_fields['CONTACT_PHONE']= $this->contact_phone;
 		$task_fields['TITLE'] = '';
 		if (!empty($task_fields['CONTACT_NAME'])) {
 			$task_fields['TITLE'] .= $current_module_strings['LBL_LIST_CONTACT'].": ".$task_fields['CONTACT_NAME'];
@@ -345,7 +375,8 @@ class Task extends SugarBean {
 		$xtpl->assign("TASK_SUBJECT", $task->name);
 		//MFH #13507
 		$xtpl->assign("TASK_PRIORITY", (isset($task->priority)?$app_list_strings['task_priority_dom'][$task->priority]:""));
-		$xtpl->assign("TASK_DUEDATE", $timedate->to_display_date_time($task->date_due . " " . $task->time_due,true,true,$notifyUser)." ".$prefDate['userGmt']);
+        $userGMT = !empty($prefDate['userGmt']) ? $prefDate['userGmt'] : '';
+		$xtpl->assign("TASK_DUEDATE", $timedate->to_display_date_time($task->date_due . " " . $task->time_due,true,true,$notifyUser)." ".$userGMT);
 		$xtpl->assign("TASK_STATUS", (isset($task->status)?$app_list_strings['task_status_dom'][$task->status]:""));
 		$xtpl->assign("TASK_DESCRIPTION", $task->description);
 

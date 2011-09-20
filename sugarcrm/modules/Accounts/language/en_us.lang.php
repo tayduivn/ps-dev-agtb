@@ -89,7 +89,7 @@ $mod_strings = array (
 	'LBL_DUPLICATE' => 'Possible Duplicate Account',
 	'LBL_EMAIL' => 'Email Address:',
 	'LBL_EMAIL_OPT_OUT' => 'Email Opt Out:',
-	//'LBL_EMAIL_ADDRESSES' => 'Email Addresses',
+	'LBL_EMAIL_ADDRESSES' => 'Email Addresses',
 	'LBL_EMPLOYEES' => 'Employees:',
 	'LBL_FAX' => 'Fax:',
 	'LBL_HISTORY_SUBPANEL_TITLE'=>'History',
@@ -178,6 +178,7 @@ $mod_strings = array (
     //BEGIN SUGARCRM flav!=sales ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //END SUGARCRM flav!=sales ONLY
+	'LBL_COPY' => 'Copy' /*for 508 compliance fix*/,
     //For export labels
     'LBL_ACCOUNT_TYPE' => 'Account Type',
     'LBL_CAMPAIGN_ID' => 'Campaign ID',

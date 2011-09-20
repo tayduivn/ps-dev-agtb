@@ -27,7 +27,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     var menuFunctions = {};
     var lastIconChange = null;
     var isRTL = (typeof(rtl) != "undefined") ? true : false;
-    function getOverlay(depth){
+    function getOverlay(depth, modal){
     		if(!depth)depth = 0;
     		if(typeof overlays[depth] == 'undefined'){
     			 overlays[depth] = new Y.Overlay({
@@ -55,16 +55,47 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     			overlays[depth].hide = function(){
     				this.visible = false;
     				this.get('boundingBox').setStyle('visibility','hidden');
+                    if (this.get("modal"))
+                        this.toggleModal();
     			}
+                overlays[depth].toggleModal = function(){
+                    var mask = Y.one("#dcmask")
+                    if (this.get("modal"))
+                    {
+                        //Hide the mask if it has been rendered
+                        if (mask){
+                            mask.setStyle("display", "none");
+                        }
+                        this.set("modal", false);
+                    }
+                    else {
+                        if (mask){
+                            mask.setStyle("display", "block");
+                        }
+                        else {
+                            mask = document.createElement("div");
+                            mask.className = "mask";
+                            mask.id = "dcmask";
+                            mask.style.width = mask.style.height = "100%";
+                            mask.style.position = "fixed";
+                            mask.style.display = "block";
+                            mask.style.zIndex = 19;
+                            document.body.appendChild(mask);
+                        }
+                        this.set("modal", true);
+                    }
+                }
     		}
 			var dcmenuContainer = Y.one('#dcmenuContainer');
 			var dcmenuContainerHeight = dcmenuContainer.get('offsetHeight');
     		overlays[depth].set('xy', [20,dcmenuContainerHeight]);
-   	  	overlays[depth].render();
+   	  	    overlays[depth].render();
+            if(modal)
+                overlays[depth].toggleModal();
     		return overlays[depth]
     }
     
-    DCMenu.menu = function(module,title){
+    DCMenu.menu = function(module,title,modal){
         if ( typeof(lastLoadedMenu) != 'undefined' && lastLoadedMenu == module ) {
             return;
         }
@@ -72,7 +103,11 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
         lastLoadedMenu = module;
 
     	if(typeof menuFunctions[module] == 'undefined'){
-    		loadView(module, 'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,null,null,title); 	
+    		loadView(
+                module,
+                'index.php?source_module=' + this.module + '&record=' + this.record + '&action=Quickcreate&module=' + module,
+                null,null,title,{modal : modal ? true : false}
+            );
     	}	
     }
     
@@ -89,47 +124,56 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     DCMenu.closeOverlay = function(depth){
         DCMenu.closeQView();
     	var i=0;
-    		while(i < overlays.length){
-    			if(!depth || i >= depth){
-    				if(i == depth && !overlays[i].visible){
-    					overlays[i].show();	
-    				}else{
-                        // See if we are hiding a form, and if so if it has changed we need to alert and confirm.
-                        if ( typeof(overlays[i].bodyNode) != 'undefined'
-                             && typeof(overlays[i].bodyNode._node) != 'undefined' 
-                             && typeof(overlays[i].bodyNode._node.getElementsByTagName('form')[0]) != 'undefined' ) {
-                            var warnMsg = onUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
-                            if ( warnMsg != null ) {
-                                if ( confirm(warnMsg) ) {
-                                    disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
-                                } else {
-                                    i++;
-                                    continue;
-                                }
+        while(i < overlays.length){
+            if(!depth || i >= depth){
+                if(i == depth && !overlays[i].visible){
+                    overlays[i].show();
+                }else{
+                    // See if we are hiding a form, and if so if it has changed we need to alert and confirm.
+                    if ( typeof(overlays[i].bodyNode) != 'undefined'
+                         && typeof(overlays[i].bodyNode._node) != 'undefined'
+                         && typeof(overlays[i].bodyNode._node.getElementsByTagName('form')[0]) != 'undefined' ) {
+                        var warnMsg = onUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                        if ( warnMsg != null ) {
+                            if ( confirm(warnMsg) ) {
+                                disableOnUnloadEditView(overlays[i].bodyNode._node.getElementsByTagName('form')[0]);
+                            } else {
+                                i++;
+                                continue;
                             }
                         }
-    					overlays[i].hide();
-                        overlays[i].set('bodyContent', "");
-    				}
-    			}
-				i++;
-    		}
+                    }
+                    overlays[i].hide();
+                    overlays[i].set('bodyContent', "");
+                }
+            }
+            i++;
+        }
+        DCMenu.hideQEPanel();
     }
     DCMenu.minimizeOverlay = function(){
  		//isIE7 = ua.indexOf('msie 7')!=-1;
 		//box_style = isIE7 ? 'position:fixed; width:750px;' : 'none';
 		
      	Y.one('#dcboxbody').setStyle('display','none');
-     	Y.one('#dcboxbody').setStyle('width', '950px;');
+     	Y.one('#dcboxbody').setStyle('width', '750px;');
     }
     function setBody(data, depth, parentid,type,title,extraButton){
-			if(typeof(data.html) == 'undefined')data = {html:data};
+			//extraButton can be either a string to append to the content or a set of additional parameters;
+            var params = {};
+            if (typeof(extraButton) == "object")
+            {
+                params = extraButton;
+                extraButton = params.extraButton ? params.extraButton : false;
+            }
+
+            if(typeof(data.html) == 'undefined')data = {html:data};
 			//Check for the login page, meaning we have been logged out.
 			if (SUGAR.util.isLoginPage(data.html))
 				return false;
     		DCMenu.closeOverlay(depth);
-    		var overlay = getOverlay(depth);
-    		
+    		var overlay = getOverlay(depth, params.modal);
+
     		ua = navigator.userAgent.toLowerCase();
     		isIE7 = ua.indexOf('msie 7')!=-1;
 
@@ -145,12 +189,12 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     		}
     		var content = '';
     		if(false && depth == 0){
-	    		content += '<div id="dcboxtitle">' 
-	    		
+	    		content += '<div id="dcboxtitle">'
+
 	    		if(typeof data.title  !=  'undefined'){
 	    			content += '<div style="float:left"><a href="' +data.url + '">' + data.title + '</a></div>';
 	    		}
-	    		
+
 	    		 content += '<div class="close"><a id="dcmenu_close_link" href="javascript:DCMenu.closeOverlay()">[x]</a><a href="javascript:void(0)" onclick="DCMenu.minimizeOverlay()">[-]</a></div></div>';
     		}
     		content += '<div style="' + style + '"><div id="dcboxbody"  class="'+ parentid +'"><div class="dashletPanel dc"><div class="hd" id="dchead">';
@@ -161,13 +205,24 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			        content +=	'<div id="dctitle">' + type + '</div>';
 
 		    content += '<div class="close">';
-            if ( extraButton != null ) {
+            if ( typeof(extraButton) == "string" ) {
                 content += extraButton
             }
             content += '<a id="dcmenu_close_link" href="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay()"><img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png"></a></div></div><div class="bd"><div class="dccontent">' + data.html + '</div></div></div>';
 
+
+            //"resetEvalBool" will only be set to true if an eval() has completed succesfully from a previous request.  It will not get reset again within a request.
+            //Resetting the switches means this is the first time the eval is attempted in this request, so we are starting over.  This is mostly to handle
+            //the use case where Sugar.util.evalScript() executes a script after this function ends leaving the 'evalHappened' flag in a bad state.
+            //"evalHappened" var tracks whether an eval() has or is occurring within this request.  It will be reset to false at the end of the function for reuse;
+            //It's main purpose is to prevent multiple eval's being executed on the same form.
+            if(typeof(resetEvalBool) !='undefined' && resetEvalBool == true){
+                resetEvalBool = false;
+                evalHappened = false;
+            }
+
             //set eval happened var
-            content ='<script> var evalHappened = true;</script>'+content;
+            content ='<script> var evalHappened = true; var resetEvalBool=true; </script>'+content;
             overlay.set('bodyContent', content);
 
             // eval the contents if the eval parameter is passed in.  Cross check with evalHappened parameter which would not
@@ -175,11 +230,10 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             // This will ensure that quick search, validation, and other relevant js is run in the modal
             if(typeof(data.eval) != 'undefined' && data.eval  && (typeof(evalHappened) =='undefined'|| evalHappened ==false)){
                 SUGAR.util.evalScript(content);
-                //evalHappened should be set now, set to false for reuse
-                if (typeof(evalHappened) !='undefined'){
-                    evalHappened = false;
-                }
             }
+        
+            //set back to false for reuse
+            evalHappened = false;
 
     		overlay.show();
     		return overlay;
@@ -279,11 +333,39 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 		}
 	}
 
-	DCMenu.miniDetailView = function(module, id){
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=quick&record=' + id , miniDetailViewResults);
+    DCMenu.showQELoadingPanel = function(){
+        if (!DCMenu.qePanel)
+        {
+            DCMenu.qePanel = new YAHOO.widget.Panel('quickEditWindow', {
+                width: "1050px",
+                draggable: true,
+                close: true,
+                constraintoviewport: true,
+                fixedcenter: false,
+                script: true,
+                modal: true
+            });
+        }
+        var p = DCMenu.qePanel;
+        p.setHeader(SUGAR.language.get('app_strings','LBL_EMAIL_PERFORMING_TASK'));
+		p.setBody(SUGAR.language.get('app_strings','LBL_EMAIL_ONE_MOMENT'));
+        p.render(document.body);
+        p.show();
+        p.center();
+    }
+
+    DCMenu.miniDetailView = function(module, id){
+        DCMenu.showQELoadingPanel();
+        YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=1&module=' + module + '&action=quick&record=' + id, {
+            success: DCMenu.miniDetailViewResults
+        });
 	}
     //this form is used by quickEdits to provide a modal edit form
 	DCMenu.miniEditView = function(module, id, refreshListID, refreshDashletID){
+        DCMenu.showQELoadingPanel();
+        YAHOO.util.Connect.asyncRequest('GET', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id, {
+            success: DCMenu.miniDetailViewResults
+        });
         //use pased in values to determine if this is being fired from a dashlet or list
         //populate the qe_refresh variable with the correct refresh string to execute on DCMenu.save
         if(typeof(refreshListID) !='undefined' && refreshListID !=''){
@@ -295,24 +377,28 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             //this is a dashlet, use the passed in id to refresh the dashlet
             DCMenu.qe_refresh = 'SUGAR.mySugar.retrieveDashlet("'+refreshDashletID+'");';
         }
-		quickRequest('spot', 'index.php?to_pdf=1&module=' + module + '&action=Quickedit&record=' + id , miniDetailViewResults);
 	}
-	miniDetailViewResults = function(id, data){
-        r = Y.JSON.parse(data.responseText);
+	DCMenu.miniDetailViewResults = function(o){
+        var p = DCMenu.qePanel;
+        var r = Y.JSON.parse(o.responseText);
         if(typeof(r.scriptOnly) != 'undefined' && typeof(r.scriptOnly)=='string' && r.scriptOnly.length >0){
             SUGAR.util.evalScript(r.scriptOnly);
         }else{
-            setBody(r, 0);
-
-            Y.one('#dcboxbody').setStyle('margin', '10% 0 0 20% ');
-
-            if(SUGAR.isIE) {
-				var dchead = Y.one('#dchead');
-				var dcheadwidth = dchead.get('offsetWidth');
-				Y.one('#dctitle').setStyle("width",dcheadwidth+"px");	
-			}
+            DCMenu.jsEvalled = false;
+            p.setHeader(r.title);
+            p.setBody("<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + r.html);
+            if (!DCMenu.jsEvalled)
+                SUGAR.util.evalScript(r.html);
+            DCMenu.qePanel.center();
         }
 	}
+    DCMenu.hideQEPanel = function(){
+        if (DCMenu.qePanel)
+        {
+            DCMenu.qePanel.setBody("");
+            DCMenu.qePanel.hide();
+        }
+    }
 
 	DCMenu.save = function(id){
 		ajaxStatus.showStatus(SUGAR.language.get('app_strings', 'LBL_SAVING'));
@@ -363,7 +449,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 			},
 			on:{
 				complete: function(id, data){
-                    alert('hello');
+
 				}
 			}
 
@@ -401,13 +487,19 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                      	setTimeout("enableQS();", 1000);
             		 }catch(err){
                         DCMenu.jsEvalled = false;
-                        overlay = setBody({html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" +data.responseText}, requests[id].depth, requests[id].parentid,requests[id].type,title);
+                        overlay = setBody({
+                            html:"<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + data.responseText
+                        }, requests[id].depth, requests[id].parentid,requests[id].type,title, extraButton);
             			var dcmenuSugarCube = Y.one('#dcmenuSugarCube');
 			    		var dcboxbody = Y.one('#dcboxbody');
 
 						var dcmenuSugarCubeX = dcmenuSugarCube.get('offsetLeft');
 						var dcboxbodyWidth = dcboxbody.get('offsetWidth');
-						if(isSafari) {
+
+                        //set margins on modal so it is visible on all browsers
+                        Y.one('#dcboxbody').setStyle('margin', '0 5% 0 0');
+
+                         if(isSafari) {
 							dcboxbody.setStyle("width",dcboxbodyWidth+"px");
 						}
 						if(SUGAR.isIE) {
@@ -590,9 +682,16 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
             content = '<div id="dcboxbodyqv" class="sugar_spot_search" style="position: fixed;">';
             content += '<div class="dashletPanel dc"><div class="hd"><div></div>';
-            content += '<div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
-            content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
-            content += '</a></div></div><div class="tr"></div><div class="bd"><div></div>';
+            if(SUGAR.themes.theme_name == 'RTL')
+            {
+                content += '<div class="hd-center"><div style="float:right"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
+                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '</a></div></div></div><div class="tr"></div><div class="bd"><div></div>';
+            } else {
+                content += '<div class="hd-center"><a id="dcmenu_close_link" href="javascript:DCMenu.closeQView()">';
+                content += '<img src="index.php?entryPoint=getImage&themeName=' + SUGAR.themes.theme_name + '&imageName=close_button_24.png">';
+                content += '</a></div></div><div class="tr"></div><div class="bd"><div></div>';
+            }
             content += '<div><div class="dccontent" id="dcgscontent">' +  data.responseText;
             //content += '<br><div style="height:400px;width:300px;"><img src="themes/default/images/img_loading.gif"/><br></div>';
             content += '</div></div><div class="mr"></div></div>';
@@ -600,7 +699,6 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
       
             overlays[qvDepth].set("bodyContent", content);
             overlays[qvDepth].set("align", {node:"#dcboxbody", points:[Y.WidgetPositionAlign.TR, Y.WidgetPositionAlign.TR]});
-            //points:[Y.WidgetPositionExt.TR, Y.WidgetPositionExt.TR]});
 
             overlays[qvDepth].visible = true;
             overlays[qvDepth].show = function()
@@ -610,8 +708,8 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
                 //this.get('boundingBox').setStyle('position' , 'absolute');
                 this.get('boundingBox').setStyle('visibility','visible');
                 //Animate a slide out
-                var shim = 10;  //TODO: grab padding from parent element.  Set to 10 for now.
-                var animX = this.get("x") - this.get("width") - shim;
+                var shim = 15;  //The padding of the dashletPanel border
+                var animX = (SUGAR.themes.theme_name == 'RTL') ? this.get("x") + this.get("width") - shim : this.get("x") - this.get("width") - shim;
                 var animY = this.get("y");
                 var animDCcont = new Y.Anim({ node: this.get("boundingBox"), to: { xy:[animX,animY] } });
                 animDCcont.set('duration', .5);

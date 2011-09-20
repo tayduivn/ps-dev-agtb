@@ -98,6 +98,11 @@ if(empty($focus->id)){
 
 echo getClassicModuleTitle($focus->module_dir, $params, true);
 
+if (!$focus->ACLAccess('EditView')) {
+    ACLController::displayNoAccess(true);
+    sugar_cleanup(true);
+}
+
 $GLOBALS['log']->info("EmailTemplate detail view");
 
 if($has_campaign || $inboundEmail) {
@@ -149,8 +154,8 @@ $xtpl->assign('encoded_assigned_users_popup_request_data', $json->encode($popup_
 if(!empty($focus->assigned_user_name))
     $xtpl->assign("ASSIGNED_USER_NAME", $focus->assigned_user_name);
 
-$xtpl->assign("assign_user_select", SugarThemeRegistry::current()->getImage('id-ff-select'));
-$xtpl->assign("assign_user_clear", SugarThemeRegistry::current()->getImage('id-ff-clear'));
+$xtpl->assign("assign_user_select", SugarThemeRegistry::current()->getImage('id-ff-select','',null,null,'.png',$mod_strings['LBL_SELECT']));
+$xtpl->assign("assign_user_clear", SugarThemeRegistry::current()->getImage('id-ff-clear','',null,null,'.gif',$mod_strings['LBL_ID_FF_CLEAR']));
 //Assign qsd script
 require_once('include/QuickSearchDefaults.php');
 $qsd = new QuickSearchDefaults();
@@ -202,8 +207,9 @@ if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($
     if(!empty($_REQUEST['record'])) {
         $record =   $_REQUEST['record'];
     }
-    $xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=" . $_REQUEST['action']
-	."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' alt='Edit Layout' align='bottom'")."</a>");
+
+    $xtpl->assign("ADMIN_EDIT","<a href='index.php?action=index&module=DynamicLayout&from_action=" . $_REQUEST['action'] ."&from_module=".$_REQUEST['module'] ."&record=".$record. "'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDIT_LAYOUT'])."</a>");
+
 }
 if(isset($focus->parent_type) && $focus->parent_type != "") {
     $change_parent_button = "<input title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'

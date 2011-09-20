@@ -54,12 +54,15 @@ class ViewDropdown extends SugarView
 			$ajax->addSection('west', $mbt->getName(), $mbt->fetchNodes());
 			$smarty->assign('refreshTree',true);
 		}
-        
- 		$smarty->assign('deleteImage', SugarThemeRegistry::current()->getImage( 'delete_inline', ''));
-		$smarty->assign('editImage', SugarThemeRegistry::current()->getImage( 'edit_inline', ''));
+
+        global $mod_strings;
+
+ 		$smarty->assign('deleteImage', SugarThemeRegistry::current()->getImage( 'delete_inline', '',null,null,'.gif',$mod_strings['LBL_MB_DELETE']));
+		$smarty->assign('editImage', SugarThemeRegistry::current()->getImage( 'edit_inline', ''
+,null,null,'.gif',$mod_strings['LBL_EDIT']));
 		$smarty->assign('action', 'savedropdown');
 		$body = $smarty->fetch('modules/ModuleBuilder/tpls/MBModule/dropdown.tpl');
-		$ajax->addSection('east2', $GLOBALS['mod_strings']['LBL_SECTION_DROPDOWNED'], $body );
+		$ajax->addSection('east2', $mod_strings['LBL_SECTION_DROPDOWNED'], $body );
  		echo $ajax->getJavascript();
  	}
  	
@@ -91,6 +94,9 @@ class ViewDropdown extends SugarView
 			$module->mblanguage->generateAppStrings(false) ;
             $my_list_strings = array_merge( $my_list_strings, $module->mblanguage->appListStrings[$selected_lang.'.lang.php'] );
 		}
+
+        $module_name = !empty($module->name) ?  $module->name : '';
+        $module_name = (empty($module_name) && !empty($_REQUEST['view_module'])) ?  $_REQUEST['view_module'] : $module_name;
 
 		foreach($my_list_strings as $key=>$value){
 			if(!is_array($value)){
@@ -138,8 +144,7 @@ class ViewDropdown extends SugarView
 			}
 			$smarty->assign('prepopulated_name', $use_name);
 		}
-
-		$smarty->assign('module', $this->module);
+		$smarty->assign('module_name', $module_name);
 		$smarty->assign('APP', $GLOBALS['app_strings']);
 		$smarty->assign('MOD', $GLOBALS['mod_strings']);
 		$smarty->assign('selected_lang', $selected_lang);

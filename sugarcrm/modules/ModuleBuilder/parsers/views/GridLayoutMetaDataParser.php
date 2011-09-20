@@ -183,7 +183,8 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                     $availableFields [ $key ] = array ( 'name' => $key , 'label' => $this->_originalViewDef[$key]['label']) ; 
                 }else{
                     $availableFields [ $key ] = array ( 'name' => $key , 'label' => isset($def [ 'label' ]) ? $def [ 'label' ] : $def['vname'] ) ; // layouts use 'label' not 'vname' for the label entry
-            }
+                }
+                $availableFields[$key]['translatedLabel'] = translate( isset($def [ 'label' ]) ? $def [ 'label' ] : $def['vname'], $this->_moduleName);
             }
 			
         }
@@ -203,6 +204,14 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
                 }
             }
         }
+        
+        //eggsurplus: Bug 10329 - sort on intuitive display labels
+        //sort by translatedLabel
+        function cmpLabel($a, $b) 
+        {
+            return strcmp($a["translatedLabel"], $b["translatedLabel"]);
+        }
+        usort($availableFields , 'cmpLabel');
 
         return $availableFields ;
     }

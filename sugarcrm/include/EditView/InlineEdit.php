@@ -86,7 +86,7 @@ require_once('include/SugarFields/Parsers/MetaParser.php');
         InlineEditor.markListAsEditable($json_fields);
      }
      Y.on("domready", init);
-		});
+	});
 
 </script>
 EOQ;

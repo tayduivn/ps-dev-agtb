@@ -20,14 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
-/*********************************************************************************
- * $Id: view.edit.php 
- * Description: This file is used to override the default Meta-data EditView behavior
- * to provide customization specific to the Calls module.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+
 require_once('include/Sugar_Smarty.php');
 require_once('include/externalAPI/ExternalAPIFactory.php');
 
@@ -48,10 +41,14 @@ class DocumentsViewExtdoc extends SugarView
             $file_search = '';
         }
         
-        // $apiName = 'LotusLiveDirect';
         if ( !isset($_REQUEST['apiName']) ) {
             $apiName = 'LotusLive';
         } else {
+            $tmpApi = ExternalAPIFactory::loadAPI($_REQUEST['apiName'],true);
+            if ( $tmpApi === false ) {
+                $GLOBALS['log']->error('The user attempted to access an invalid external API ('.$_REQUEST['apiName'].')');
+                return;
+            }
             $apiName = $_REQUEST['apiName'];
         }
 
@@ -66,7 +63,7 @@ class DocumentsViewExtdoc extends SugarView
         
         if ( !$eapmBean = EAPM::getLoginInfo($apiName,true) ) {
             $smarty = new Sugar_Smarty();
-            echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
+            echo $smarty->fetch('include/externalAPI/'.$apiName.'/'.$apiName.'Signup.'.$GLOBALS['current_language'].'.tpl');
             return;
         }
 
@@ -76,7 +73,7 @@ class DocumentsViewExtdoc extends SugarView
 
         $quickCheck = $api->quickCheckLogin();
         if ( ! $quickCheck['success'] ) {
-            $errorMessage = string_format(translate('LBL_ERR_FAILED_QUICKCHECK','EAPM'), array('LotusLive'));
+            $errorMessage = string_format(translate('LBL_ERR_FAILED_QUICKCHECK','EAPM'), array($apiName));
             $errorMessage .= '<form method="POST" target="_EAPM_CHECK" action="index.php">';
             $errorMessage .= '<input type="hidden" name="module" value="EAPM">';
             $errorMessage .= '<input type="hidden" name="action" value="Save">';

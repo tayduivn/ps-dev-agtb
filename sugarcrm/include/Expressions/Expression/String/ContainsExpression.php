@@ -74,8 +74,7 @@ EOQ;
 	 */
 	function toString() {
 	}
-	
-	function getParameterTypes() {
+    static function getParameterTypes() {
 		return AbstractExpression::$STRING_TYPE;
 	}
 }

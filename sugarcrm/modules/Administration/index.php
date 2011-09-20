@@ -51,6 +51,7 @@ $header_image = array();
 $url = array();
 $onclick = array();
 $label_tab = array();
+$id_tab = array();
 $description = array();
 $group = array();
 $sugar_smarty = new Sugar_Smarty();
@@ -128,7 +129,7 @@ foreach ($admin_group_header as $key=>$values) {
                     continue;
                 }
                 $colnum+=1;
-                $header_image[$j][$i]= SugarThemeRegistry::current()->getImage($admin_option[0],'alt="' .  translate($admin_option[1],'Administration') .'" border="0" align="absmiddle"');
+                $header_image[$j][$i]= SugarThemeRegistry::current()->getImage($admin_option[0],'border="0" align="absmiddle"',null,null,'.gif',translate($admin_option[1],'Administration'));
                 $url[$j][$i] = $admin_option[3];
                 if(!empty($admin_option[5])) {
                 	$onclick[$j][$i] = $admin_option[5];
@@ -140,12 +141,15 @@ foreach ($admin_group_header as $key=>$values) {
                 }
 
                 $label_tab[$j][$i]= $label;
+                $id_tab[$j][$i] = $link_idx;
+                
                 $description[$j][$i]= translate($admin_option[2],'Administration');
+
                 if (($colnum % 2) == 0) {
                     $tab[$j][$i]= ($colnum % 2);
                 }
                 else {
-                $tab[$j][$i]= 10;
+                    $tab[$j][$i]= 10;
                 }
                 $i+=1;
             }
@@ -160,7 +164,7 @@ foreach ($admin_group_header as $key=>$values) {
 }
 
 //BEGIN SUGARCRM flav=com ONLY
-$sugar_smarty->assign('MY_FRAME',"<iframe class='teamNoticeBox' src='http://www.sugarcrm.com/crm/product/gopro/admin' width='100%' height='315px'></iframe>");
+$sugar_smarty->assign('MY_FRAME',"<iframe class='teamNoticeBox' title='http://www.sugarcrm.com/crm/product/gopro/admin' src='http://www.sugarcrm.com/crm/product/gopro/admin' width='100%' height='315px'></iframe>");
 //END SUGARCRM flav=com ONLY
 $sugar_smarty->assign("VALUES_3_TAB", $values_3_tab);
 $sugar_smarty->assign("ADMIN_GROUP_HEADER", $admin_group_header_tab);
@@ -171,6 +175,7 @@ $sugar_smarty->assign("ITEM_ONCLICK", $onclick);
 $sugar_smarty->assign("ITEM_HEADER_LABEL",$label_tab);
 $sugar_smarty->assign("ITEM_DESCRIPTION", $description);
 $sugar_smarty->assign("COLNUM", $tab);
+$sugar_smarty->assign('ID_TAB', $id_tab);
 
 echo $sugar_smarty->fetch('modules/Administration/index.tpl');
 ?>

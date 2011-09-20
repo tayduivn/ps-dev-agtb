@@ -150,10 +150,12 @@ eoq;
 				}
 			}elseif(strlen($value) == 0){
 				if( isset($this->sugarbean->field_defs[$post]) && $this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) ){
-					$_POST[$post] = '';
+				  $_POST[$post] = '';
 				}else{
-				unset($_POST[$post]);
-			}
+				  unset($_POST[$post]);
+			        }
+                        }elseif ( $value == '--null--'){  //Bug36693 MassUpdate for ENUM with Option '0'
+				$_POST[$post] = '';	
 			}
 			if(is_string($value) && isset($this->sugarbean->field_defs[$post])) {
 		        if(($this->sugarbean->field_defs[$post]['type'] == 'bool'
@@ -172,7 +174,7 @@ eoq;
                     $this->checkClearField($post, $value);
                 }
 			    if($this->sugarbean->field_defs[$post]['type'] == 'date' && !empty($_POST[$post])){
-			        $_POST[$post] = $timedate->to_db_date($_POST[$post]);
+			        $_POST[$post] = $timedate->to_db_date($_POST[$post], false);
 			    }
                 if($this->sugarbean->field_defs[$post]['type'] == 'datetime' && !empty($_POST[$post])){
 			        $_POST[$post] = $timedate->to_db($this->date_to_dateTime($post, $value));
@@ -376,6 +378,7 @@ eoq;
 		if($this->sugarbean->bean_implements('ACL') && ( !ACLController::checkAccess($this->sugarbean->module_dir, 'edit', true) || !ACLController::checkAccess($this->sugarbean->module_dir, 'massupdate', true) ) ){
 			return '';
 		}
+		
 		$lang_delete = translate('LBL_DELETE');
 		$lang_update = translate('LBL_UPDATE');
 		$lang_confirm= translate('NTC_DELETE_CONFIRMATION_MULTIPLE');
@@ -385,73 +388,80 @@ eoq;
 		$lang_archive = translate('LBL_ARCHIVE');
 		$lang_optout_primaryemail = $app_strings['LBL_OPT_OUT_FLAG_PRIMARY'];
 
-
-
-//		if(!isset($this->sugarbean->field_defs) || count($this->sugarbean->field_defs) == 0) {
-//			$html = "<table cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td>";
-//
-//			if($this->sugarbean->ACLAccess('Delete', true) ){
-//				$html .= "<input type='submit' name='Delete' value='{$lang_delete}' onclick=\"return confirm('{$lang_confirm}')\" class='button'>";
-//			}
-//			$html .= "</td></tr></table>";
-//			return $html;
-//		}
-
-
-		$should_use = false;
-		$html = "<div id='massupdate_form' style='display:none;'><table width='100%' cellpadding='0' cellspacing='0' border='0' class='formHeader h3Row'><tr><td nowrap><h3>" . $app_strings['LBL_MASS_UPDATE']."</h3></td></tr></table>";
+		$field_count = 0;
+		
+		$html = "<div id='massupdate_form' style='display:none;'><table width='100%' cellpadding='0' cellspacing='0' border='0' class='formHeader h3Row'><tr><td nowrap><h3><span>" . $app_strings['LBL_MASS_UPDATE']."</h3></td></tr></table>";
 		$html .= "<div id='mass_update_div'><table cellpadding='0' cellspacing='1' border='0' width='100%' class='edit view' id='mass_update_table'>";
 
 		$even = true;
-		if($this->sugarbean->object_name == 'Contact'){
+		
+		if($this->sugarbean->object_name == 'Contact')
+		{
 			$html .= "<tr><td width='15%' scope='row'>$lang_sync</td><td width='35%' class='dataField'><select name='Sync'><option value=''>{$GLOBALS['app_strings']['LBL_NONE']}</option><option value='false'>{$GLOBALS['app_list_strings']['checkbox_dom']['2']}</option><option value='true'>{$GLOBALS['app_list_strings']['checkbox_dom']['1']}</option></select></td>";
 			$even = false;
-		}
-
-		if($this->sugarbean->object_name == 'Employee'){
+		} else if($this->sugarbean->object_name == 'Employee') {
 			$this->sugarbean->field_defs['employee_status']['type'] = 'enum';
 			$this->sugarbean->field_defs['employee_status']['massupdate'] = true;
 			$this->sugarbean->field_defs['employee_status']['options'] = 'employee_status_dom';
-		}
-		if($this->sugarbean->object_name == 'InboundEmail'){
+		} else if($this->sugarbean->object_name == 'InboundEmail'){
 			$this->sugarbean->field_defs['status']['type'] = 'enum';
 			$this->sugarbean->field_defs['status']['options'] = 'user_status_dom';
 		}
 
+		//These fields should never appear on mass update form
 		static $banned = array('date_modified'=>1, 'date_entered'=>1, 'created_by'=>1, 'modified_user_id'=>1, 'deleted'=>1,'modified_by_name'=>1,);
-		foreach($this->sugarbean->field_defs as $field){
-
+		
+		foreach($this->sugarbean->field_defs as $field)
+		{
 			//BEGIN SUGARCRM flav=pro ONLY
-			   if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)continue;
+			   if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)
+			   {
+			   	  continue;
+			   }
 			//END SUGARCRM flav=pro ONLY
-			 if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate']))){
+			 if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate'])))
+			 {
 				$newhtml = '';
-				if($even){
+				
+				if($even)
+				{
 					$newhtml .= "<tr>";
 				}
-				if(isset($field['vname'])){
+				
+				if(isset($field['vname']))
+				{
 					$displayname = translate($field['vname']);
 				}else{
 					$displayname = '';
-
 				}
+				
 				if(isset($field['type']) && $field['type'] == 'relate' && isset($field['id_name']) && $field['id_name'] == 'assigned_user_id')
+				{
 					$field['type'] = 'assigned_user_name';
-				if(isset($field['custom_type']))$field['type'] = $field['custom_type'];
+				}
+				
+				if(isset($field['custom_type']))
+				{
+					$field['type'] = $field['custom_type'];
+				}
+				
 				if(isset($field['type']))
 				{
-					switch($field["type"]){
+					switch($field["type"])
+					{
 						case "relate":
     						    // bug 14691: avoid laying out an empty cell in the <table>
     							$handleRelationship = $this->handleRelationship($displayname, $field);
-    							if ($handleRelationship != '') {
+    							if ($handleRelationship != '') 
+    							{
     								$even = !$even;
     								$newhtml .= $handleRelationship;
     							}
 							break;
 						case "parent":$even = !$even; $newhtml .=$this->addParent($displayname, $field); break;
 						case "int":
-							if(!empty($field['massupdate']) && empty($field['auto_increment'])){
+							if(!empty($field['massupdate']) && empty($field['auto_increment']))
+							{
 								$even = !$even; $newhtml .=$this->addInputType($displayname, $field);
 							}
 							 break;
@@ -462,7 +472,8 @@ eoq;
 						case "bool": $even = !$even; $newhtml .= $this->addBool($displayname,  $field["name"]); break;
 						case "enum":
 						case "multienum":
-							if(!empty($field['isMultiSelect'])){
+							if(!empty($field['isMultiSelect']))
+							{
 								$even = !$even; $newhtml .= $this->addStatusMulti($displayname,  $field["name"], translate($field["options"])); break;
 							}else if(!empty($field['options'])) {
 								$even = !$even; $newhtml .= $this->addStatus($displayname,  $field["name"], translate($field["options"])); break;
@@ -482,11 +493,14 @@ eoq;
 						//END SUGARCRM flav=pro ONLY
 					}
 				}
-				if($even){
+				
+				if($even)
+				{
 					$newhtml .="</tr>";
-				}else{
-					$should_use = true;
 				}
+					
+				$field_count++;
+				
 				if(!in_array($newhtml, array('<tr>', '</tr>', '<tr></tr>', '<tr><td></td></tr>'))){
 					$html.=$newhtml;
 				}
@@ -494,15 +508,19 @@ eoq;
 		}
 
 		//BEGIN SUGARCRM flav=pro ONLY
-		if(isset($teamhtml)) {
-			if(!$even){
-					$teamhtml .="</tr>";
-			}else{
-					$should_use = true;
+		if(isset($teamhtml)) 
+		{
+			if(!$even)
+			{
+				$teamhtml .="</tr>";
 			}
-		    if(!in_array($teamhtml, array('<tr>', '</tr>', '<tr></tr>', '<tr><td></td></tr>'))){
-					$html.=$teamhtml;
+			
+		    if(!in_array($teamhtml, array('<tr>', '</tr>', '<tr></tr>', '<tr><td></td></tr>')))
+		    {
+		       $html.=$teamhtml;
 		    }
+		    
+		    $field_count++;
 		}
 		//END SUGARCRM flav=pro ONLY
 
@@ -543,14 +561,19 @@ function toggleMassUpdateForm(){
 }
 </script>
 EOJS;
-		if($should_use){
+
+		if($field_count > 0)
+		{
 			return $html;
 		}else{
+			//If no fields are found, render either a form that still permits Mass Update deletes or just display a message that no fields are available
+			$html = "<div id='massupdate_form' style='display:none;'><table width='100%' cellpadding='0' cellspacing='0' border='0' class='formHeader h3Row'><tr><td nowrap><h3><span>" . $app_strings['LBL_MASS_UPDATE']."</h3></td></tr></table>";
 			if($this->sugarbean->ACLAccess('Delete', true) && !$hideDeleteIfNoFieldsAvailable){
-				return "<table cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td><input type='submit' name='Delete' value='$lang_delete' onclick=\"return confirm('{$lang_confirm}')\" class='button'></td></tr></table>";
+				$html .= "<table cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td><input type='submit' name='Delete' value='$lang_delete' onclick=\"return confirm('{$lang_confirm}')\" class='button'></td></tr></table></div>";
 			}else{
-				return '';
+				$html .= $app_strings['LBL_NO_MASS_UPDATE_FIELDS_AVAILABLE'] . "</div>";
 			}
+			return $html;
 		}
 	}
 
@@ -657,7 +680,9 @@ EOJS;
 			///////////////////////////////////////
 
 			$change_parent_button = "<span class='id-ff'><button title='".$app_strings['LBL_SELECT_BUTTON_TITLE']."' accessKey='".$app_strings['LBL_SELECT_BUTTON_KEY']."'  type='button' class='button' value='".$app_strings['LBL_SELECT_BUTTON_LABEL']
-			."' name='button_parent_name' onclick='open_popup(document.MassUpdate.{$field['type_name']}.value, 600, 400, \"\", true, false, {$encoded_popup_request_data});'><img src='".SugarThemeRegistry::current()->getImageURL('id-ff-select.png')."'></button></span>";
+			."' name='button_parent_name' onclick='open_popup(document.MassUpdate.{$field['type_name']}.value, 600, 400, \"\", true, false, {$encoded_popup_request_data});'>
+			".SugarThemeRegistry::current()->getImage("id-ff-select", '', null, null, ".png", $app_strings['LBL_ID_FF_SELECT'])." 
+			</button></span>";
 			$parent_type = $field['parent_type'];
             $parent_types = $app_list_strings[$parent_type];
             $disabled_parent_types = ACLController::disabledModuleList($parent_types,false, 'list');
@@ -862,7 +887,7 @@ EOHTML;
         accessKey='{$app_strings['LBL_SELECT_BUTTON_KEY']}'
         type='button' class='button' value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name='button'
         onclick='open_popup("$mod_type", 600, 400, "", true, false, {$encoded_popup_request_data});'
-        /><img src="$img"></button></span>
+        /><img alt="$img" src="$img"></button></span>
 </td>
 <script type="text/javascript">
 <!--
@@ -927,7 +952,7 @@ EOHTML;
 							. $id_name . '" value="" />&nbsp;<span class="id-ff multiple"><button type="button" name="btn1" class="button" title="'
 							. $app_strings['LBL_SELECT_BUTTON_LABEL'] . '" accesskey="'
 							. $app_strings['LBL_SELECT_BUTTON_KEY'] . '" value="' . $app_strings['LBL_SELECT_BUTTON_LABEL'] . '" onclick='
-							. "'open_popup(\"Accounts\",600,400,\"\",true,false,{$encoded_popup_request_data});' /><img src=\"$img\"></button></span></td>\n";
+							. "'open_popup(\"Accounts\",600,400,\"\",true,false,{$encoded_popup_request_data});' /><img alt=\"$img\" src=\"$img\"></button></span></td>\n";
 							$html .= '<script type="text/javascript" language="javascript">if(typeof sqs_objects == \'undefined\'){var sqs_objects = new Array;}sqs_objects[\'MassUpdate_' . $varname . '\'] = ' .
 							$json->encode($qsParent) . '; registerSingleSmartInputListener(document.getElementById(\'mass_' . $varname . '\'));
 					addToValidateBinaryDependency(\'MassUpdate\', \''.$varname.'\', \'alpha\', false, \'' . $app_strings['ERR_SQS_NO_MATCH_FIELD'] . $app_strings['LBL_ACCOUNT'] . '\',\''.$id_name.'\');
@@ -985,7 +1010,7 @@ EOHTML;
 		<td width="15%" scope="row">$displayname</td>
 		<td ><input class="sqsEnabled" autocomplete="off" id="mass_assigned_user_name" name='assigned_user_name' type="text" value=""><input id='mass_assigned_user_id' name='assigned_user_id' type="hidden" value="" />
 		<span class="id-ff multiple"><button title="{$app_strings['LBL_SELECT_BUTTON_TITLE']}" accessKey="{$app_strings['LBL_SELECT_BUTTON_KEY']}" type="button" class="button" value='{$app_strings['LBL_SELECT_BUTTON_LABEL']}' name=btn1
-				onclick='open_popup("Users", 600, 400, "", true, false, $encoded_popup_request_data);' /><img src="$img"></button></span>
+				onclick='open_popup("Users", 600, 400, "", true, false, $encoded_popup_request_data);' /><img alt="$img" src="$img"></button></span>
 		</td>
 EOQ;
 						$html .= '<script type="text/javascript" language="javascript">if(typeof sqs_objects == \'undefined\'){var sqs_objects = new Array;}sqs_objects[\'MassUpdate_assigned_user_name\'] = ' .
@@ -1014,6 +1039,13 @@ EOQ;
 			   	   $new_options[$key] = $value;
 			   }
 			   $options = $new_options;
+			}else{  #Bug36693 MassUpdate for ENUM with Option '0'
+				$new_options[''] = '';
+				$new_options['--null--'] = isset($options['']) ? $options[''] : $options['0'];
+				foreach($options as $key=>$value) {
+			   	   $new_options[$key] = $value;
+			    }
+			    $options = $new_options;
 			}
 			$options = get_select_options_with_id_separate_key($options, $options, '', true);;
 			$html .= '<select id="mass_'.$varname.'" name="'.$varname.'">'.$options.'</select>';
@@ -1198,6 +1230,12 @@ EOQ;
         	$oldTime = $oldTime[1];
         } else {
         	$oldTime = $timedate->now();
+        }
+        $oldTime = explode(" ", $oldTime);
+        if (isset($oldTime[1])) {
+        	$oldTime = $oldTime[1];
+        } else {
+        	$oldTime = $oldTime[0];
         }
         $value = explode(" ", $value);
         $value = $value[0];
