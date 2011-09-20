@@ -183,6 +183,13 @@ class ImportViewStep3 extends ImportView
         $columns = array();
         $mappedFields = array();
 
+        // this should be populated if the request comes from a 'Back' button click
+        $importColumns = $this->getImportColumns();
+        $column_sel_from_req = false;
+        if (!empty($importColumns)) {
+            $column_sel_from_req = true;
+        }
+
         for($field_count = 0; $field_count < $ret_field_count; $field_count++) {
             // See if we have any field map matches
             $defaultValue = "";
@@ -220,17 +227,25 @@ class ImportViewStep3 extends ImportView
                 }
                 // see if we have a match
                 $selected = '';
-                if ( !empty($defaultValue) && !in_array($fieldname,$mappedFields)
-						&& !in_array($fieldname,$ignored_fields) )
-                {
-                    if ( strtolower($fieldname) == strtolower($defaultValue)
-                        || strtolower($fieldname) == str_replace(" ","_",strtolower($defaultValue))
-                        || strtolower($displayname) == strtolower($defaultValue)
-                        || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) )
-                    {
+                if ($column_sel_from_req && isset($importColumns[$field_count])) {
+                    if ($fieldname == $importColumns[$field_count]) {
                         $selected = ' selected="selected" ';
                         $defaultField = $fieldname;
                         $mappedFields[] = $fieldname;
+                    }
+                } else {
+                    if ( !empty($defaultValue) && !in_array($fieldname,$mappedFields)
+                                                    && !in_array($fieldname,$ignored_fields) )
+                    {
+                        if ( strtolower($fieldname) == strtolower($defaultValue)
+                            || strtolower($fieldname) == str_replace(" ","_",strtolower($defaultValue))
+                            || strtolower($displayname) == strtolower($defaultValue)
+                            || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) )
+                        {
+                            $selected = ' selected="selected" ';
+                            $defaultField = $fieldname;
+                            $mappedFields[] = $fieldname;
+                        }
                     }
                 }
                 // get field type information
@@ -390,6 +405,25 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
 
+    }
+
+    protected function getImportColumns()
+    {
+        $importColumns = array();
+        foreach ($_REQUEST as $name => $value)
+        {
+            // only look for var names that start with "fieldNum"
+            if (strncasecmp($name, "colnum_", 7) != 0)
+                continue;
+
+            // pull out the column position for this field name
+            $pos = substr($name, 7);
+
+                // now mark that we've seen this field
+            $importColumns[$pos] = $value;
+        }
+
+        return $importColumns;
     }
 
     protected function _getCSS()
