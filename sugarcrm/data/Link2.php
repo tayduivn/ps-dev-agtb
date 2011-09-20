@@ -326,6 +326,13 @@ class Link2 {
     }
 
     /**
+     * @return bool true if this link has initialized its related beans.
+     */
+    public function beansAreLoaded() {
+        return is_array($this->beans);
+    }
+
+    /**
      * use this function to create link between 2 objects
      * 1:1 will be treated like 1 to many.
      *
