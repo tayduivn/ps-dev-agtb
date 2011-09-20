@@ -135,21 +135,6 @@ $layout_defs['Contacts'] = array(
 	    		),
 			)
 		),
-        //BEGIN SUGARCRM flav=pro ONLY
-		// SNIP
-		'contact_history' => array(
-			'order' => 21,
-			'module' => 'Emails',
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'subpanel_name' => 'ForContactHistory',
-			'get_subpanel_data' => 'function:get_unlinked_email_query',
-			'title_key' => 'LBL_CONTACT_HISTORY_SUBPANEL_TITLE',
-	                'generate_select'=>true,
-	                'function_parameters' => array('return_as_array'=>'true'),
-			'top_buttons' => array(),
-		),
-        //END SUGARCRM flav=pro ONLY
 		'documents' => array(
             'order' => 25,
             'module' => 'Documents',
