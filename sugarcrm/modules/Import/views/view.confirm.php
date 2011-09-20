@@ -430,8 +430,10 @@ eoq;
         $encoding = $importFile->autoDetectCharacterSet();
         if (!empty($encoding) && $encoding != 'UTF-8') {
             foreach ($rows as &$row) {
-                foreach ($row as &$val) {
-                    $val = $locale->translateCharset($val, $encoding);
+                if (is_array($row)) {
+                    foreach ($row as &$val) {
+                        $val = $locale->translateCharset($val, $encoding);
+                    }
                 }
             }
         }
