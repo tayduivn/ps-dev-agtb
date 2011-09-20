@@ -86,6 +86,16 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 }
 
 
+    // Populate the custom fields
+    foreach ($focus->field_defs as $fieldName => $field ) {
+        if ( isset($field['source']) && $field['source'] == 'custom_fields' ) {
+            if ( isset($_POST[$fieldName]) ) {
+                $focus->$field = $_POST[$fieldName];
+            }
+        }
+    }
+    
+
 	//BEGIN SUGARCRM flav=pro ONLY
 	require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 	$teamSetField = new SugarFieldTeamset('Teamset');	
@@ -122,10 +132,10 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 
 	//BEGIN SUGARCRM flav=sales ONLY
 	// The user type is Regular User if it's not set
-	$_POST['user_type'] = !empty($_POST['UserType']) ? $_POST['UserType'] : 'RegularUser';
-	// The exception is below. If we have a user that isn't new and the post value for UserType
+	$_POST['user_type'] = !empty($_POST['user_type']) ? $_POST['user_type'] : 'RegularUser';
+	// The exception is below. If we have a user that isn't new and the post value for user_type
 	//   isn't set, we need to keep it as it was.
-	if(!$newUser && empty($_POST['UserType'])){
+	if(!$newUser && empty($_POST['user_type'])){
 		unset($_POST['user_type']);
 	}
 	//END SUGARCRM flav=sales ONLY

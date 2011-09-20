@@ -83,8 +83,15 @@ function populateFromRow(&$focus,$row){
 
 	//only employee specific field values need to be copied.
 	$e_fields=array('first_name','last_name','reports_to_id','description','phone_home','phone_mobile','phone_work','phone_other','phone_fax','address_street','address_city','address_state','address_country','address_country', 'address_postalcode', 'messenger_id','messenger_type');
-	if ( is_admin($GLOBALS['current_user']) )
+	if ( is_admin($GLOBALS['current_user']) ) {
         $e_fields = array_merge($e_fields,array('title','department','employee_status'));
+    }
+    // Also add custom fields
+    foreach ($focus->field_defs as $fieldName => $field ) {
+        if ( isset($field['source']) && $field['source'] == 'custom_fields' ) {
+            $e_fields[] = $fieldName;
+        }
+    }
     $nullvalue='';
 	foreach($e_fields as $field)
 	{

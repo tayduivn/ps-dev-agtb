@@ -90,8 +90,8 @@ class DynamicField {
 
         // Employees is a fake module that actually loads it's fields from the 
         // Users module
-        if ($module == 'Employee') {
-            $module = 'User';
+        if ($module == 'Employees') {
+            $module = 'Users';
         }
 
         static $results = array ( ) ;
@@ -142,6 +142,7 @@ class DynamicField {
                 $this->saveToVardef ( $module, false );
             }
         }
+
         return true;
 
     }
@@ -171,16 +172,6 @@ class DynamicField {
     * @param array $result
     */
     function saveToVardef($module,$result) {
-        // Everything works off of vardefs, so let's have it save the users vardefs
-        // to the employees module, because they both use the same table behind
-        // the scenes
-        if ( $module == 'User' ) {
-            $this->saveToVardef('User',$result);
-        }
-        if ( $module == 'Employee' ) {
-            // Don't save any Employee vardefs directly
-            return;
-        }
 
 
         global $beanList;
@@ -229,6 +220,15 @@ class DynamicField {
             }
             $manager = new VardefManager ( );
             $manager->saveCache ( $this->module, $object );
+            // Everything works off of vardefs, so let's have it save the users vardefs
+            // to the employees module, because they both use the same table behind
+            // the scenes
+            if ( $module == 'Users' ) {
+                $GLOBALS['dictionary']['Employee'] = $GLOBALS['dictionary']['User'];
+                $manager->saveCache('Employee',$object);
+                return;
+            }
+
         }
     }
 
@@ -428,15 +428,17 @@ class DynamicField {
             }
 
             $queryInsert .= " ) VALUES $values )";
+
             if(!$first){
                 if(!$isUpdate){
                     $GLOBALS['db']->query($queryInsert);
                 }else{
                     $checkquery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                    if ( $GLOBALS['db']->getOne($checkquery) )
+                    if ( $GLOBALS['db']->getOne($checkquery) ) {
                         $result = $GLOBALS['db']->query($query);
-                    else
+                    } else {
                         $GLOBALS['db']->query($queryInsert);
+                    }
                 }
             }
         }

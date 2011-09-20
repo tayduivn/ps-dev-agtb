@@ -419,26 +419,6 @@
     {/if}
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="actionContainer">
-	<input	id="Save" title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="if (!set_password(form,newrules('{$PWDSETTINGS.minpwdlength}','{$PWDSETTINGS.maxpwdlength}','{$REGEX}'))) return false;Admin_check(); this.form.action.value='Save'; {$CHOOSER_SCRIPT} {$REASSIGN_JS} if(verify_data(EditView)) this.form.submit();"
-			type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}" />
-	<input	title="{$APP.LBL_CANCEL_BUTTON_TITLE}" class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}'; this.form.record.value='{$RETURN_ID}'; this.form.submit();"
-			type="button" name="button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" />
-    {$BUTTONS}
-</div>
 <script type="text/javascript">
 <!--
 var mail_smtpport = '{$MAIL_SMTPPORT}';
@@ -523,3 +503,5 @@ setSigDigits();
 		</form>
 	</div>
 </div>
+
+{{include file="include/EditView/footer.tpl"}}

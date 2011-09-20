@@ -376,6 +376,9 @@ class ModuleBuilderController extends SugarController
             if (! empty ( $_REQUEST [ 'view_module' ] ))
             {
                 $module = $_REQUEST [ 'view_module' ] ;
+                if ( $module == 'Employees' ) {
+                    $module = 'Users';
+                }
 
                 $bean = loadBean($module);
                 if(!empty($bean))
@@ -401,6 +404,10 @@ class ModuleBuilderController extends SugarController
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
                 $repair = new RepairAndClear();
 		        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+                if ( $module == 'Users' ) {
+                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
+                    
+                }
 		        //#28707 ,clear all the js files in cache
 		        $repair->module_list = array();
 		        $repair->clearJsFiles();
@@ -430,6 +437,12 @@ class ModuleBuilderController extends SugarController
         $field->populateFromPost () ;
         require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
         $module = $_REQUEST [ 'view_module' ] ;
+        
+        // Need to map Employees -> Users
+        if ( $module=='Employees') {
+            $module = 'Users';
+        }
+        
         $df = new StandardField ( $module ) ;
         $class_name = $GLOBALS [ 'beanList' ] [ $module ] ;
         require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
@@ -457,6 +470,9 @@ class ModuleBuilderController extends SugarController
         // now clear the cache so that the results are immediately visible
         include_once ('include/TemplateHandler/TemplateHandler.php') ;
         TemplateHandler::clearCache ( $module ) ;
+        if ( $module == 'Users' ) {
+            TemplateHandler::clearCache('Employees');
+        }
 
         $GLOBALS [ 'mod_strings' ] = $MBmodStrings;
     }
