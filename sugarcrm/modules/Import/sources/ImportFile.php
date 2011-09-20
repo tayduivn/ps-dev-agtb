@@ -239,7 +239,16 @@ class ImportFile extends ImportDataSource
         $this->_delimiter  = ",";
         $this->_enclosure  = '"';
 
-        $this->_detector = new CsvAutoDetect($this->_sourcename);
+        //create a smaller csv file for autodetect
+        $this->createSubsetFileForAutoDetect();
+
+        //if new small file is readable, then use to autodetect
+        if (is_readable($this->_sourcename.'_AD')){
+           $this->_detector = new CsvAutoDetect($this->_sourcename.'_AD');
+        }else{
+            $this->_detector = new CsvAutoDetect($this->_sourcename);            
+        }
+
 
         $delimiter = $enclosure = false;
 
@@ -431,6 +440,36 @@ class ImportFile extends ImportDataSource
             return $this->_currentRow;
         else
             return FALSE;
+    }
+
+    public function createSubsetFileForAutoDetect(){
+        //read the file in first
+         $fileForRead = fopen($this->_sourcename,'r');
+         $AD_FileUsed = false;
+
+         //continue if file handler is found
+         if ($fileForRead){
+	         $fileContents = '';
+	         $count=0;
+   		      //loop through contents and grab 3 rows
+   	   		   while (!feof($fileForRead) && $count < 3) {
+       		        //grab the the row, trim it, and check the length
+            	    $tmp = fgets($fileForRead);
+                    $tmp = trim($tmp);
+                    //add to new file contents if row is not empty
+                     if(!empty($tmp)){
+                        $fileContents .= $tmp."\r\n";
+                        $count++;
+                     }
+         		}
+	         //close the file
+   		      fclose($fileForRead);
+
+             //now open the new file for writing
+             $fileForWrite = fopen($this->_sourcename.'_AD', "w+");
+             fwrite($fileForWrite, $fileContents);
+             fclose($fileForWrite);
+         }
     }
 
 }
