@@ -2287,6 +2287,7 @@ $app_strings = array (
     //END SUGARCRM flav=ent ONLY
 
     'ERR_AJAX_LOAD'     => 'An error has occured:',
+    'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
     'ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'  => "The decimal separator cannot use the same character as the thousands separator.\\n\\n  Please change the values.",

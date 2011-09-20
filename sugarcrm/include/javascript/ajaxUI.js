@@ -76,8 +76,9 @@ SUGAR.ajaxUI = {
                 });
             }
             var panel = SUGAR.ajaxUI.errorPanel;
-            panel.setHeader( SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
+            panel.setHeader(SUGAR.language.get('app_strings','ERR_AJAX_LOAD')) ;
             panel.setBody('<iframe id="ajaxErrorFrame" style="width:780px;height:550px;border:none;marginheight="0" marginwidth="0" frameborder="0""></iframe>');
+            panel.setFooter(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FOOTER')) ;
             panel.render(document.body);
             SUGAR.util.doWhen(
 				function(){
@@ -202,7 +203,7 @@ SUGAR.ajaxUI = {
             var baseUrl = "index.php?action=ajaxui#ajaxUILoc=";
             SA.lastURL = "";
             //Use POST for long forms and GET for short forms (GET allow resubmit via reload)
-            ajaxStatus.showStatus( SUGAR.language.get('app_strings','LBL_LOADING')) ;
+            SUGAR.ajaxUI.showLoadingPanel();
             if(string.length > 200)
             {
                 con.asyncRequest('POST', 'index.php?ajax_load=1', {
@@ -266,7 +267,7 @@ SUGAR.ajaxUI = {
     {
         if (!SUGAR.ajaxUI.loadingPanel)
         {
-            SUGAR.ajaxUI.loadingPanel = new YAHOO.widget.Panel("loading",
+            SUGAR.ajaxUI.loadingPanel = new YAHOO.widget.Panel("ajaxloading",
             {
                 width:"240px",
                 fixedcenter:true,
@@ -280,8 +281,8 @@ SUGAR.ajaxUI = {
             SUGAR.ajaxUI.loadingPanel.render(document.body);
         }
 
-        if (document.getElementById('loading_c'))
-            document.getElementById('loading_c').style.display = '';
+        if (document.getElementById('ajaxloading_c'))
+            document.getElementById('ajaxloading_c').style.display = '';
         
         SUGAR.ajaxUI.loadingPanel.show();
 
@@ -290,7 +291,7 @@ SUGAR.ajaxUI = {
     {
         SUGAR.ajaxUI.loadingPanel.hide();
         
-        if (document.getElementById('loading_c'))
-            document.getElementById('loading_c').style.display = 'none';
+        if (document.getElementById('ajaxloading_c'))
+            document.getElementById('ajaxloading_c').style.display = 'none';
     }
 };
