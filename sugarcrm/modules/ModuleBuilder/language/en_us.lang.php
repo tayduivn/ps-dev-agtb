@@ -513,7 +513,7 @@ $mod_strings = array(
 'LBL_HCUSTOM'=>'CUSTOM',
 'LBL_HDEFAULT'=>'DEFAULT',
 'LBL_LANGUAGE'=>'Language:',
-
+'LBL_CUSTOM_FIELDS' => '* field created in Studio',
 
 //SECTION
 'LBL_SECTION_EDLABELS' => 'Edit Labels',

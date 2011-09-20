@@ -59,7 +59,7 @@ class ViewModulefields extends SugarView
 
         $fieldsData = array();
 
-        if(! isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
+        if(!isset($_REQUEST['view_package']) || $_REQUEST['view_package'] == 'studio') {
             //$this->loadPackageHelp($module_name);
             $studioClass = new stdClass;
             $studioClass->name = $module_name;
@@ -105,6 +105,7 @@ class ViewModulefields extends SugarView
             $sortPreferences = $current_user->getPreference('fieldsTableColumn', 'ModuleBuilder');
             $smarty->assign('sortPreferences', $sortPreferences);
             $smarty->assign('fieldsData', getJSONobj()->encode($fieldsData));
+            $smarty->assign('studio', true);
             $ajax = new AjaxCompose();
             $ajax->addCrumb($mod_strings['LBL_STUDIO'], 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard")');
             $ajax->addCrumb(translate($module_name), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&view_module='.$module_name.'")');
@@ -164,8 +165,8 @@ class ViewModulefields extends SugarView
             $smarty->assign('title', $titleLBL);
             $smarty->assign('package', $package);
             $smarty->assign('module', $this->mbModule);
-            $smarty->assign('editLabelsMb','1'); //need to merge MB labels and studio labels. quick fix for now.
-
+            $smarty->assign('editLabelsMb','1');
+            $smarty->assign('studio', false);
 
             $ajax = new AjaxCompose();
             $ajax->addCrumb($bak_mod_strings['LBL_MODULEBUILDER'], 'ModuleBuilder.main("mb")');
