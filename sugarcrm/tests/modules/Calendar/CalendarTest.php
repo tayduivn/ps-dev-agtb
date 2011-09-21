@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
 /*********************************************************************************
  * SugarCRM Community Edition is a customer relationship management program developed by
  * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
@@ -35,31 +34,40 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * "Powered by SugarCRM".
  ********************************************************************************/
 
+require_once "modules/Calendar/utils.php"; 
+require_once "modules/Calendar/Calendar.php";
+
+class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
+	public static function setUpBeforeClass(){
+		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+	}
+
+	public static function tearDownAfterClass(){
+		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        	unset($GLOBALS['current_user']);
+    	}
+
+	public function setUp(){
+		$_REQUEST['module'] = 'Calendar';
+		$_REQUEST['year'] = '2012';
+		$_REQUEST['month'] = '01';
+		$_REQUEST['day'] = '02';
+	}
+
+	public function tearDown(){
+		unset($_REQUEST['module']);
+		unset($_REQUEST['year']);
+		unset($_REQUEST['month']);
+		unset($_REQUEST['day']);		
+	}
 
 
+	public function testCalendarDate(){
+		$cal = new Calendar('week');
+	
+		$this->assertEquals('2012',$cal->date_time->year);
 
-/*********************************************************************************
-
- * Description:  TODO To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+	}
 
 
-global $mod_strings;
-
-global $mod_strings;
-if(ACLController::checkAccess('Calls', 'edit', true))$module_menu[]=Array("index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView", $mod_strings['LNK_NEW_CALL'],"CreateCalls");
-if(ACLController::checkAccess('Meetings', 'edit', true))$module_menu[]=Array("index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView", $mod_strings['LNK_NEW_MEETING'],"CreateMeetings");
-if(ACLController::checkAccess('Tasks', 'edit', true))$module_menu[]=Array("index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView", $mod_strings['LNK_NEW_TASK'],"CreateTasks");
-if(ACLController::checkAccess('Calls', 'list', true))$module_menu[]=Array("index.php?module=Calls&action=index&return_module=Calls&return_action=DetailView", $mod_strings['LNK_CALL_LIST'],"Calls");
-if(ACLController::checkAccess('Meetings', 'list', true))$module_menu[]=Array("index.php?module=Meetings&action=index&return_module=Meetings&return_action=DetailView", $mod_strings['LNK_MEETING_LIST'],"Meetings");
-if(ACLController::checkAccess('Tasks', 'list', true))$module_menu[]=Array("index.php?module=Tasks&action=index&return_module=Tasks&return_action=DetailView", $mod_strings['LNK_TASK_LIST'],"Tasks");
-
-if(ACLController::checkAccess('Calendar', 'list', true))$module_menu[]=Array("index.php?module=Calendar&action=index&view=day", $mod_strings['LNK_VIEW_CALENDAR'],"Calendar");
-
-
-
-
-?>
+}
