@@ -1138,17 +1138,17 @@ class SugarBean
     function delete_linked($id)
     {
         $linked_fields=$this->get_linked_fields();
-
         foreach ($linked_fields as $name => $value)
         {
             if ($this->load_relationship($name))
             {
-                $GLOBALS['log']->debug("relationship $name loaded");
+                $GLOBALS['log']->fatal("deleting relationship $name where id is $id");
+                $GLOBALS['log']->fatal(get_class($this->$name->getRelationshipObject()));
                 $this->$name->delete($id);
             }
             else
             {
-                $GLOBALS['log']->error("error loading relationship $name");
+                $GLOBALS['log']->fatal("error loading relationship $name");
             }
         }
     }
@@ -4676,6 +4676,7 @@ function save_relationship_changes($is_update, $exclude=array())
 			// call the custom business logic
 			$custom_logic_arguments['id'] = $id;
 			$this->call_custom_logic("before_delete", $custom_logic_arguments);
+            $this->deleted = 1;
             $this->mark_relationships_deleted($id);
             if ( isset($this->field_defs['modified_user_id']) ) {
                 if (!empty($current_user)) {
@@ -4687,8 +4688,7 @@ function save_relationship_changes($is_update, $exclude=array())
             } else
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
             $this->db->query($query, true,"Error marking record deleted: ");
-            $this->deleted = 1;
-
+            
             SugarRelationship::resaveRelatedBeans();
 
             // Take the item off the recently viewed lists
