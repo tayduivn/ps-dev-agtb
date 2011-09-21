@@ -358,17 +358,13 @@ class VardefManager{
             if (!empty($def['module']))
                 $relMod = $def['module'];
             else {
+                include_once("modules/TableDictionary.php");
                 if (!empty($dictionary[$relName]['relationships'][$relName]))
                     $relDef = $dictionary[$relName]['relationships'][$relName];//[$relName];
                 else if (!empty($dictionary[$object][$relName]))
                     $relDef = $dictionary[$object][$relName];
                 else {
-                    $relObj = SugarRelationshipFactory::getInstance()->getRelationship($relName);
-                    if ($relObj)
-                        $relDef = $relObj->def;
-                    else {
-                        continue;
-                    }
+                    continue;
                 }
 
                 if(empty($relDef['lhs_module']))
