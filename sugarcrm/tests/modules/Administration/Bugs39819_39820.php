@@ -56,7 +56,7 @@ class Bugs39819_39820 extends Sugar_PHPUnit_Framework_TestCase
         require "modules/Administration/SupportPortal.php";
 
         $tStr = ob_get_contents();
-        ob_clean();
+        ob_end_clean();
         
         unlink("modules/Accounts/language/en_us.help.DetailView.html");
         
@@ -82,7 +82,7 @@ class Bugs39819_39820 extends Sugar_PHPUnit_Framework_TestCase
         require "modules/Administration/SupportPortal.php";
 
         $tStr = ob_get_contents();
-        ob_clean();
+        ob_end_clean();
 
         unlink("custom/modules/Accounts/language/it_it.help.DetailView.html");
         
