@@ -118,19 +118,7 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
         $this->oauthAuth = $this->baseURL.'manage/oauth/authorizeToken';
         $this->oauthAccess = $this->baseURL.'manage/oauth/getAccessToken';
 
-        $connector = $this->getConnector();
-        if(!empty($connector)) {
-            $cons_key = $connector->getProperty('oauth_consumer_key');
-            if(!empty($cons_key)) {
-                $this->oauthParams['consumerKey'] = $cons_key;
-            }
-            $cons_secret = $connector->getProperty('oauth_consumer_secret');
-            if(!empty($cons_secret)) {
-                $this->oauthParams['consumerSecret'] = $cons_secret;
-            }
-        }
-
-//        parent::__construct();
+        parent::__construct();
 /*
         if ( empty($this->oauthParams['consumerKey']) ) {
             // Pull the defaults from this function
@@ -385,7 +373,7 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
 
     // Internal functions
     protected function makeRequest($requestMethod, $data = '', $urlParams = array() ) {
-
+        $this->setupOauthKeys();
         $urlParams['ciUser'] = 'admin@LL_SugarCRM';
         $urlParams['ciPassword'] = 'changeIt!';
         $urlParams['csKey'] = $this->oauthParams['consumerKey'];
@@ -411,7 +399,7 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
             );
 
         $rawResponse = $this->postData($url, $data, $headers);
-        
+
         $reply = array();
         $reply['responseRAW'] = $rawResponse;
         $reply['responseJSON'] = null;
