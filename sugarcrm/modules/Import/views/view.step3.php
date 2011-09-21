@@ -108,7 +108,10 @@ class ImportViewStep3 extends ImportView
             }
         }
 
-        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
+        $delimiter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : ",";
+        $delimeter = $delimiter == "other" ? $_REQUEST['custom_delimiter_other'] : $delimiter;
+        
+        $this->ss->assign("CUSTOM_DELIMITER", $delimeter);
         $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
@@ -116,7 +119,7 @@ class ImportViewStep3 extends ImportView
         $uploadFileName = $_REQUEST['file_name'];
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
+        $importFile = new ImportFile( $uploadFileName, $delimeter, html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
