@@ -1,6 +1,33 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Professional End User
+ * License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/products/sugar-professional-eula.html
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
 
+require_once('modules/Calendar/utils.php');
 require_once('modules/Calendar/DateTimeUtil.php');
 require_once('include/utils/activity_utils.php');
 require_once('modules/Calendar/CalendarActivity.php');
@@ -14,10 +41,8 @@ class Calendar {
 	
 	var $slices_arr = array();
 	var $activity_focus;
-	var $slice_hash = array();
-	
-	
-		
+	var $slice_hash = array();	
+
 	var $week_start_day; 
 	var $show_tasks = true;
 	var $show_calls = true;	
@@ -39,13 +64,14 @@ class Calendar {
 	var $d_start_minutes; // working day start minutes 
 	var $d_end_minutes; // working day end minutes
 	
-	function Calendar($view = 'day'){
-		global $current_user;
-	
+	function __construct($view = "day",$time_arr=array()){
+		global $current_user, $timedate;	
 		
-		$this->view = $view;
+		$this->view = $view;		
+		$this->init();	
 		
-		$this->init();		
+		if(empty($time_arr))
+			$time_arr = $this->date_arr;	
 
 		if($current_user->getPreference('time')){
 			$time = $current_user->getPreference('time');
@@ -53,39 +79,26 @@ class Calendar {
 			$time = $GLOBALS['sugar_config']['default_time_format'];
 		}	
 
-		if(isset($this->date_arr['activity_focus'])){
-			$this->activity_focus = new CalendarActivity($this->date_arr['activity_focus']);
-			$this->date_time = $this->activity_focus->start_time;
+		if(isset($time_arr['activity_focus'])){
+			$this->activity_focus =  new CalendarActivity($time_arr['activity_focus']);
+			$this->date_time =  $this->activity_focus->start_time;
 		}else{
-			$this->date_time = new DateTimeUtil($this->date_arr,true);
+		 	if(!empty($time_arr)){
+		        	// FIXME: what format?
+				$this->date_time = $timedate->fromTimeArray($time_arr);
+			}else{
+		        	$this->date_time = $timedate->getNow();
+			}
 		}
 
-		if(empty($this->date_time->year)){
-			sugar_die ("all views: year was not set");
-		}else if($this->view == 'month' && empty($this->date_time->month)){
-			sugar_die ("month view: month was not set");
-		}else if($this->view == 'week' && empty($this->date_time->week)){
-			sugar_die ("week view: week was not set");
-		}else if($this->view == 'shared' && empty($this->date_time->week)){
-			sugar_die ("shared view: shared was not set");
-		}else if($this->view == 'day' &&  empty($this->date_time->day) && empty($this->date_time->month)){
-			sugar_die ("day view: day and month was not set");
-		}
-		
-		// monday start fix
-		//echo $this->day_of_week;
-		if(($this->view == 'week' || $this->view == 'shared') && $this->week_start_day == "Monday" && $this->date_time->day_of_week == 0){
-			$this->date_time = $this->date_time->get_yesterday();
-			header("Location: index.php?action=index&module=Calendar&view=".$this->view."&".$this->date_time->get_date_str());
-		}
-		// end monday start fix
-
+		$timedate->tzUser($this->date_time, $current_user);
+        	$GLOBALS['log']->debug("CALENDATE: ".$this->date_time->format('r'));
 		$this->create_slices();
 	}
 	
 	
 	function init(){
-		global $current_user,$timedate,$week_start_day;
+		global $current_user,$timedate;
 		
 		if(!in_array($this->view,array('day','week','month','year','shared')))
 			$this->view = 'week';
@@ -121,7 +134,7 @@ class Calendar {
 		if(empty($_REQUEST['year']))
 			$_REQUEST['year'] = "";
 
-		if(empty($date_arr)){	
+		if( empty($date_arr) || !(isset($date_arr['year']) && isset($date_arr['month']) && isset($date_arr['day'])) ){	
 			$this->gmt_today = $timedate->get_gmt_db_datetime();
 			$user_today = $timedate->handle_offset($this->gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
 			preg_match('/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/',$user_today,$matches);
@@ -132,15 +145,13 @@ class Calendar {
 			      'hour' => $matches[4],
 			      'min' => $matches[5]
 			);
-		}else{
+		}else{		
 			$this->gmt_today = $date_arr['year'] . "-" . add_zero($date_arr['month']) . "-" . add_zero($date_arr['day']);
 		}		
 		
 		$this->date_arr = $date_arr;
+		$this->week_start_day = $current_user->get_first_day_of_week();
 		
-		$this->week_start_day = $current_user->getPreference('week_start_day');
-		if(is_null($this->week_start_day))
-			$this->week_start_day = SugarConfig::getInstance()->get('calendar.default_week_start_day','Sunday');
 		$this->show_tasks = $current_user->getPreference('show_tasks');
 		if(is_null($this->show_tasks))
 			$this->show_tasks = SugarConfig::getInstance()->get('calendar.show_tasks_by_default',true);		
@@ -154,10 +165,6 @@ class Calendar {
 		$this->day_end_time = $current_user->getPreference('day_end_time');
 		if(is_null($this->day_end_time))
 			$this->day_end_time = SugarConfig::getInstance()->get('calendar.default_day_end',"19:00");
-
-		//$this->rec_enabled = $current_user->getPreference('rec_enabled');		
-		//if(SugarConfig::getInstance()->get('calendar.disable_recurrence',false))
-		//	$this->rec_enabled = false;
 			
 		if($this->view == "day"){
 			$this->time_step = SugarConfig::getInstance()->get('calendar.day_timestep',15);
@@ -166,13 +173,10 @@ class Calendar {
 		}else if($this->view == "month"){
 			$this->time_step = SugarConfig::getInstance()->get('calendar.month_timestep',60);
 		}else
-			$this->time_step = 60;
-			
+			$this->time_step = 60;			
 
 		$this->today_unix = to_timestamp($this->gmt_today);		
 		$this->calculate_day_range();
-		
-		$week_start_day = $this->week_start_day;
 	}
 		
 	function load_activities(){
@@ -196,10 +200,10 @@ class Calendar {
 					$bean = new $act->sugar_bean->object_name();
 					$bean->retrieve($newAct['id']);
 					
-					$newAct['rec_id_c'] = "";		
+					/*$newAct['rec_id_c'] = "";		
 					$jn = $newAct['type'] . "_id_c";
 					if(!empty($bean->$jn))
-						$newAct['rec_id_c'] = $bean->$jn;
+						$newAct['rec_id_c'] = $bean->$jn;*/
 					
 					$newAct['detailview'] = 0;
 					$newAct['editview'] = 0;
@@ -207,8 +211,7 @@ class Calendar {
 					if($act->sugar_bean->ACLAccess('DetailView'))
 						$newAct['detailview'] = 1;						
 					if($act->sugar_bean->ACLAccess('Save'))
-						$newAct['editview'] = 1;
-					
+						$newAct['editview'] = 1;					
 						
 					if(empty($bean->id)){
 						$newAct['detailview'] = 0;
@@ -236,8 +239,7 @@ class Calendar {
 					$date_unix = to_timestamp_from_uf($act->sugar_bean->date_start);
 				
 					if($newAct['type'] == 'task'){
-					 	$newAct['date_start'] = $act->sugar_bean->date_due;
-					 	//$newAct['date_start'] = $timedate->swap_formats($newAct['date_start'],'Y-m-d H:i:s',$timedate->get_date_time_format());
+					 	$newAct['date_start'] = $act->sugar_bean->date_due;					 	
 						$date_unix = to_timestamp_from_uf($newAct['date_start']);	
 					}
 								
@@ -271,7 +273,6 @@ class Calendar {
 						"start" : "'.$act["start"].'",
 						"time_start" : "'.$act["time_start"].'",
 						"record_name": "'.$act["name"].'",'.
-						//'"rec_id_c": "'.$act["rec_id_c"].'",'.'
 					'';
 					foreach($field_list[$act['module_name']] as $field){
 						if(!isset($act[$field]))
@@ -352,179 +353,246 @@ class Calendar {
 		return $this->view == 'day';
 	}
 
+	function create_slices()
+	{
+		global $current_user, $timedate;
 
-	function create_slices(){
-
-		global $current_user;
-
-		if($this->view == 'month'){
+		if ( $this->view == 'month')
+		{
 			$days_in_month = $this->date_time->days_in_month;
-			
+
 			$first_day_of_month = $this->date_time->get_day_by_index_this_month(0);
-			$num_of_prev_days = $first_day_of_month->day_of_week;
+            		$num_of_prev_days = $first_day_of_month->day_of_week - $current_user->get_first_day_of_week();
+
+                        if ($num_of_prev_days < 0)
+                            $num_of_prev_days += 7;
+
 			// do 42 slices (6x7 grid)
-			
-			$ifrom = 0;
-			$ito = 42;
-			if($this->week_start_day == "Monday"){
-				if ($num_of_prev_days == 0) 
-					$num_of_prev_days = 7; 
-				$ifrom++; $ito++;	
-			}
-			
-			for($i=$ito;$i < $ito;$i++){
-				$slice = new Slice2('day',$this->date_time->get_day_by_index_this_month($i-$num_of_prev_days));
-				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->get_mysql_date());
+
+			for($i=0;$i < 42;$i++)
+			{
+				$slice = new Slice('day',$this->date_time->get_day_by_index_this_month($i-$num_of_prev_days));
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) ] = $slice;
+				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 
-		}else if ( $this->view == 'week' || $this->view == 'shared'){
+		}
+		else if ( $this->view == 'week' || $this->view == 'shared')
+		{
 			$days_in_week = 7;
-			
-			$ioffset = 0;
-			if($this->week_start_day == "Monday")
-				$ioffset = 1;			
 
-			for($i=0;$i<$days_in_week;$i++){
-				$slice = new Slice2('day',$this->date_time->get_day_by_index_this_week($i + $ioffset));
-				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->get_mysql_date());
+            		$d = $current_user->get_first_day_of_week();
+
+			for($i=$d;$i<($d+$days_in_week);$i++)
+			{
+				$slice = new Slice('day',$this->date_time->get_day_by_index_this_week($i));
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
+				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
-		}else if ( $this->view == 'day'){
+		}
+		else if ( $this->view == 'day')
+		{
 			$hours_in_day = 24;
 
-			for($i=0;$i<$hours_in_day;$i++){
-				$slice = new Slice2('hour',$this->date_time->get_datetime_by_index_today($i));
-				$this->slice_hash[$slice->start_time->get_mysql_date().":".$slice->start_time->hour ] = $slice;
-				$this->slices_arr[] =  $slice->start_time->get_mysql_date().":".$slice->start_time->hour;
+			for($i=0;$i<$hours_in_day;$i++)
+			{
+				$slice = new Slice('hour',$this->date_time->get_datetime_by_index_today($i));
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour ] = $slice;
+				$this->slices_arr[] =  $slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour;
 			}
-		}else if ( $this->view == 'year'){
+		}
+		else if ( $this->view == 'year')
+		{
 
 			for($i=0;$i<12;$i++)
 			{
-				$slice = new Slice2('month',$this->date_time->get_day_by_index_this_year($i));
-				$this->slice_hash[$slice->start_time->get_mysql_date()] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->get_mysql_date());
+				$slice = new Slice('month',$this->date_time->get_day_by_index_this_year($i));
+				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
+				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 		}
-		else{
+		else
+		{
 			sugar_die("not a valid view:".$this->view);
 		}
 
 	}
 
+	
 	function add_activities($user,$type='sugar') {
-		if($this->view == 'week' || $this->view == 'shared') {
-			$start_date_time = $this->date_time->get_first_day_of_last_week();
-			$end_date_time = $this->date_time->get_first_day_of_next_week();
+		global $timedate;
+		if ( $this->view == 'week' || $this->view == 'shared') {
+			$end_date_time = $this->date_time->get("+7 days");
 		} else {
-			$start_date_time = $this->date_time;
 			$end_date_time = $this->date_time;
 		}
 		
-		if($this->view == 'month'){
-			$start_date_time = $this->date_time->get_first_day_of_last_month();
-			$end_date_time = $this->date_time->get_first_day_of_next_month();	
-		}
-
-		$acts_arr = array();
-		if ( $type == 'vfb') {
-			$acts_arr = CalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
-		} else {
-			$GLOBALS['log']->debug("in Calendar.php user->object_name=".$user->object_name);
-
-			
-			$params = array(
+		$params = array(
 				'show_calls' => $this->show_calls,
 				'show_tasks' => $this->show_tasks,
-			);
-			
-			if ( $user->object_name == 'User' )
-			{ 
-				$acts_arr = CalendarActivity::get_activities($user->id, $params, $start_date_time, $end_date_time, $this->view);
-			} else {
-	//END			
-				$acts_arr = CalendarActivity::get_res_activities($user->id, $params, $start_date_time, $end_date_time, 'week');
-			}
-    		}
-	    $GLOBALS['log']->debug("in add_activities count(act_arr)=".count($acts_arr));
-	    // loop thru each activity for this user
-		for ($i = 0;$i < count($acts_arr);$i++) {
-				$act = $acts_arr[$i];
-	      // get "hashed" time slots for the current activity we are looping through
-				$hash_list =DateTimeUtil::getHashList($this->view,$act->start_time,$act->end_time);
+		);
 
-				for($j=0;$j < count($hash_list); $j++) {
-					if ( !isset($this->slice_hash[$hash_list[$j]]) || !isset($this->slice_hash[$hash_list[$j]]->acts_arr[$user->id])) {
-						$this->slice_hash[$hash_list[$j]]->acts_arr[$user->id] = array();
-					}
-					$this->slice_hash[$hash_list[$j]]->acts_arr[$user->id][] = $act;
+		$acts_arr = array();
+	    	if($type == 'vfb') {
+				$acts_arr = CalendarActivity::get_freebusy_activities($user, $this->date_time, $end_date_time);
+	    	} else {
+				$acts_arr = CalendarActivity::get_activities($user->id, $params, $this->date_time, $end_date_time, $this->view);
+	    	}
+
+		// loop thru each activity for this user
+		foreach ($acts_arr as $act) {			
+			// get "hashed" time slots for the current activity we are looping through
+			$start = $timedate->tzUser($act->start_time);
+			$end = $timedate->tzUser($act->end_time);
+			$hash_list = SugarDateTime::getHashList($this->view, $start, $end);
+
+			for($j=0;$j < count($hash_list); $j++) {
+				if(!isset($this->slice_hash[$hash_list[$j]]) || !isset($this->slice_hash[$hash_list[$j]]->acts_arr[$user->id])) {
+					$this->slice_hash[$hash_list[$j]]->acts_arr[$user->id] = array();
 				}
-			
-
+				$this->slice_hash[$hash_list[$j]]->acts_arr[$user->id][] = $act;
+				
 				$this->acts_arr[$user->id][] = $act;
-			
+			}
 		}
 	}
 
 
-	function get_previous_date_str(){
-		if ($this->view == 'month'){
-			$day = $this->date_time->get_first_day_of_last_month();
-		}else if ($this->view == 'week' || $this->view == 'shared'){
-			$day = $this->date_time->get_first_day_of_last_week();
-		}else if ($this->view == 'day'){
-			$day = $this->date_time->get_yesterday();
-		}else if ($this->view == 'year'){
-			$day = $this->date_time->get_first_day_of_last_year();
-		}else{
+	function get_previous_date_str()
+	{
+		if ($this->view == 'month')
+		{
+		    $day = $this->date_time->get("-1 month")->get_day_begin(1);
+		}
+		else if ($this->view == 'week' || $this->view == 'shared')
+		{
+		    // first day last week
+			$day = $this->date_time->get("-7 days")->get_day_by_index_this_week(0)->get_day_begin();
+		}
+		else if ($this->view == 'day')
+		{
+			$day = $this->date_time->get("yesterday")->get_day_begin();
+		}
+		else if ($this->view == 'year')
+		{
+            $day = $this->date_time->get("-1 year")->get_day_begin();
+		}
+		else
+		{
 			return "get_previous_date_str: notdefined for this view";
 		}
 		return $day->get_date_str();
 	}
 
-	function get_next_date_str(){
-		if ($this->view == 'month') {
-			$day = $this->date_time->get_first_day_of_next_month();
+	function get_next_date_str()
+	{
+		if ($this->view == 'month')
+		{
+			$day = $this->date_time->get("+1 month")->get_day_begin(1);
 		}
-		else if ($this->view == 'week' || $this->view == 'shared' ){
-			$day = $this->date_time->get_first_day_of_next_week();
+		else
+		if ($this->view == 'week' || $this->view == 'shared' )
+		{
+			$day = $this->date_time->get("+7 days")->get_day_by_index_this_week(0)->get_day_begin();
 		}
-		else if ($this->view == 'day'){
-			$day = $this->date_time->get_tomorrow();
+		else
+		if ($this->view == 'day')
+		{
+			$day = $this->date_time->get("tomorrow")->get_day_begin();
 		}
-		else if ($this->view == 'year'){
-			$day = $this->date_time->get_first_day_of_next_year();
-		}else{
+		else
+		if ($this->view == 'year')
+		{
+			$day = $this->date_time->get("+1 year")->get_day_begin();
+		}
+		else
+		{
 			sugar_die("get_next_date_str: not defined for view");
 		}
 		return $day->get_date_str();
 	}
 
+	function get_start_slice_idx()
+	{
+
+		if ($this->isDayView())
+		{
+			$start_at = 8;
+
+			for($i=0;$i < 8; $i++)
+			{
+				if (count($this->slice_hash[$this->slices_arr[$i]]->acts_arr) > 0)
+				{
+					$start_at = $i;
+					break;
+				}
+			}
+			return $start_at;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	function get_end_slice_idx()
+	{
+		if ( $this->view == 'month')
+		{
+			return $this->date_time->days_in_month - 1;
+		}
+		else if ( $this->view == 'week' || $this->view == 'shared')
+		{
+			return 6;
+		}
+		else if ($this->isDayView())
+		{
+			$end_at = 18;
+
+			for($i=$end_at;$i < 23; $i++)
+			{
+				if (count($this->slice_hash[$this->slices_arr[$i+1]]->acts_arr) > 0)
+				{
+					$end_at = $i + 1;
+				}
+			}
+			return $end_at;
+
+		}
+		else
+		{
+			return 1;
+		}
+	}
+
 
 }
 
-class Slice2 {
+class Slice
+{
 	var $view = 'day';
 	var $start_time;
 	var $end_time;
 	var $acts_arr = array();
 
-	function Slice2($view,$time){
+	function Slice($view,$time)
+	{
 		$this->view = $view;
 		$this->start_time = $time;
 
-		if ( $view == 'day'){
+		if ( $view == 'day')
+		{
 			$this->end_time = $this->start_time->get_day_end_time();
 		}
-		if ( $view == 'hour'){
+		if ( $view == 'hour')
+		{
 			$this->end_time = $this->start_time->get_hour_end_time();
 		}
 
 	}
-	function get_view(){
+	function get_view()
+	{
 		return $this->view;
 	}
-}
 
+}
 ?>

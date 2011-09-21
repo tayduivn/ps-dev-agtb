@@ -97,7 +97,6 @@ $mod_strings = array (
 
 //settings box
 'LBL_SETTINGS_TITLE'=>'Settings',
-'LBL_SETTINGS_WEEK_STARTS'=>'First day of week:', 
 'LBL_SETTINGS_TIME_STARTS'=>'Start time:', 
 'LBL_SETTINGS_TIME_ENDS'=>'End time:', 
 'LBL_SETTINGS_CALLS_SHOW'=>'Show Calls:',

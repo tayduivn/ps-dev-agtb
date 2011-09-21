@@ -200,26 +200,18 @@ class CalendarDisplay {
 		$ss->assign('TIME_START_MINUTES_OPTIONS2',$TIME_START_MINUTES_OPTIONS2);
 		$ss->assign('TIME_MERIDIEM2',$TIME_MERIDIEM2);
 		$ss->assign('show_calls',$this->args['cal']->show_calls);
-		$ss->assign('show_tasks',$this->args['cal']->show_tasks);
-		
-		$ss->assign('startday',$this->args['cal']->week_start_day);		
+		$ss->assign('show_tasks',$this->args['cal']->show_tasks);		
+	
 	}
 	
-	function echo_slice_date_nolink() {
-		global $cal_strings;
-		$slice = $this->args['slice'];
-		echo $slice->start_time->get_day_of_week_short();
-		echo "&nbsp;";
-		echo $slice->start_time->get_day();
-	}
-
+	
 	function get_date_info($view, $date_time) {
-		global $current_user;
-		$dateFormat = $current_user->getUserDateTimePreferences();		
-		
 		$str = "";
+	
+		global $current_user;
+		$dateFormat = $current_user->getUserDateTimePreferences();
+
 		if($view == 'month'){
-		
 			for($i=0; $i<strlen($dateFormat['date']); $i++) {
 				switch($dateFormat['date']{$i}) {
 					case "Y":
@@ -231,18 +223,12 @@ class CalendarDisplay {
 				}
 			}
 		}else
-			if($view == 'week' || $view == 'shared'){		
-	
-				$ifrom = 0;
-				$ito = 6;
-				if($this->args['cal']->week_start_day == "Monday"){
-					$ifrom++; $ito++;
-				}		
-				$first_day = $date_time->get_day_by_index_this_week($ifrom);
-				$last_day = $date_time->get_day_by_index_this_week($ito);
+			if($view == 'week' || $view == 'shared') {
+				$first_day = $date_time->get_day_by_index_this_week(0);
+				$last_day = $date_time->get_day_by_index_this_week(6);
 
 				for($i=0; $i<strlen($dateFormat['date']); $i++) {
-					switch($dateFormat['date']{$i}) {
+					switch($dateFormat['date']{$i}){
 						case "Y":
 							$str .= " ".$first_day->year;
 							break;
@@ -254,7 +240,6 @@ class CalendarDisplay {
 							break;
 					}
 				}
-	
 				$str .= " - ";
 				for($i=0; $i<strlen($dateFormat['date']); $i++) {
 					switch($dateFormat['date']{$i}) {
@@ -269,18 +254,12 @@ class CalendarDisplay {
 							break;
 					}
 				}
-			}else
-				if($view == 'day') {			
-				
-					if(!isset($GLOBALS['app_strings']['LBL_NOTATION_DAY']) && empty($GLOBALS['app_strings']['LBL_NOTATION_DAY']))
-						$d_format = "l F j Y";
-					else
-						$d_format = $GLOBALS['app_strings']['LBL_NOTATION_DAY'];				
-				
+			} else
+				if($view == 'day') {
 					$str .= $date_time->get_day_of_week()." ";
 
-					for($i=0; $i<strlen($dateFormat['date']); $i++){
-						switch($dateFormat['date']{$i}){
+					for($i=0; $i<strlen($dateFormat['date']); $i++) {
+						switch($dateFormat['date']{$i}) {
 							case "Y":
 								$str .= " ".$date_time->year;
 								break;
@@ -291,16 +270,16 @@ class CalendarDisplay {
 								$str .= " ".$date_time->get_day();
 								break;
 						}
-					}				
-				}else
-					if($view == 'year'){
+					}
+				} else
+					if($view == 'year') {
 						$str .= $date_time->year;
-					}else{
+					} else {
 						sugar_die("echo_date_info: date not supported");
 					}
 		return $str;
 	}
-
+	
 	function get_next_calendar(){	
 		global $cal_strings,$image_path;
 		$str = "";

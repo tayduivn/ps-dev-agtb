@@ -36,6 +36,7 @@ function to_timestamp($db_d){
 }
 
 function add_zero($t){
+	$t = intval($t);
 	if($t < 10)
 		return "0" . $t;
 	else

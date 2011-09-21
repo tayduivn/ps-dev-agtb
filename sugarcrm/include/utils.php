@@ -378,7 +378,6 @@ function get_sugar_config_defaults() {
 	  'month_timestep' => 60,	
 	  'default_day_start' => '08:00',
 	  'default_day_end' => '19:00',
-	  'default_week_start_day' => 'Sunday', 
 	  'items_draggable' => true, 
 	  'mouseover_expand' => true, 
 	  'item_text' => 'name',	

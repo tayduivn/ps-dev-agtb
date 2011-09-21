@@ -6,7 +6,6 @@ require_once('include/EditView/EditView2.php');
 
 class CalendarViewAjaxLoadForm extends SugarView {
 
-	//var $_isDCForm = false;
 	var $ev;
 	var $editable;
 	
