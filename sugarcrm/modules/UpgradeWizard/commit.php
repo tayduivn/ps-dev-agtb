@@ -693,6 +693,11 @@ if( file_exists($styleJSFilePath) )
 SugarThemeRegistry::buildRegistry();
 SugarThemeRegistry::clearAllCaches();
 
+//Clean out the language files
+logThis("Rebuilding language cache");
+sugar_cache_reset_full();
+LanguageManager::clearLanguageCache();
+
 // re-minify the JS source files
 $_REQUEST['root_directory'] = getcwd();
 $_REQUEST['js_rebuild_concat'] = 'rebuild';
