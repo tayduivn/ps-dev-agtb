@@ -108,9 +108,6 @@ class ImportViewConfirm extends ImportView
 
         $this->ss->assign("FILE_NAME", $uploadFileName);
 
-        //Lets strip the file of any empty rows for easier processing;
-        $this->removeEmptyLines($uploadFileName);
-
         // Now parse the file and look for errors
         $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
 
@@ -625,50 +622,6 @@ EOJAVASCRIPT;
 
         echo $ss->fetch('modules/Import/tpls/error.tpl');
     }
-
-    //reviews uploaded csv file for empty lines and removes them for easier processing
-    protected function removeEmptyLines($fileName)
-     {
-     //return if no file name is found or file is not writeable
-         if(empty($fileName)|| !is_writable($fileName)){
-             return;
-         }
-
-         //read the file in first
-         $fileForRead = fopen($fileName,'r');
-
-         //return if file handler is not found
-         if (!$fileForRead) return;
-
-         $fileContents = '';
-         $emptyFound = false;
-         //loop through contents one row at a time
-         while (!feof($fileForRead)) {
-             //grab the the row, trim it, and check the length
-             $tmp = fgets($fileForRead);
-             $tmp = trim($tmp);
-             if (strlen($tmp)>0){
-                 //if string is not empty, then add to new file contents
-                 $fileContents .= $tmp."\r\n";
-             }else{
-                 //empty string was found! exclude the line and set the emptyFound flag
-                 $emptyFound = true;
-             }
-         }
-         //close the file
-         fclose($fileForRead);
-
-         //if new file contents are empty, or no empty strings were found, then do not rewrite, just exit
-         if(empty($fileContents) || !$emptyFound ){
-            return;
-         }
-
-         //now open the file for writing
-         $fileForWrite = fopen($fileName, "w+");
-         fwrite($fileForWrite, $fileContents);
-         fclose($fileForWrite);
-     }
-
 
 }
 

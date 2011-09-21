@@ -21,6 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+//FILE SUGARCRM flav=pro ONLY
 class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
