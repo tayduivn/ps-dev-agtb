@@ -46,6 +46,15 @@ $viewdefs['Users']['EditView'] = array(
         'LBL_EMPLOYEE_INFORMATION' => array(
             array('employee_status',''),
             array('title','phone_work'),
+            array('department','phone_mobile'),
+            array('reports_to_name','phone_other'),
+            array('','phone_fax'),
+            array('','phone_home'),
+            array('messenger_type','messenger_id'),
+            array('address_street','address_city'),
+            array('address_state','address_postalcode'),
+            array('address_country'),
+            array('description'),
         ),
         'LBL_MAIL_OPTIONS_TITLE' => array(
             array('email1'),

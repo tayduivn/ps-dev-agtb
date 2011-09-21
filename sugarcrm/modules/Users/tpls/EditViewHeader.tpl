@@ -43,6 +43,7 @@ var ERR_ENTER_CONFIRMATION_PASSWORD = '{$MOD.ERR_ENTER_CONFIRMATION_PASSWORD}';
 var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 </script>
 <script type='text/javascript' src='{sugar_getjspath file='modules/Users/User.js'}'></script>
+<script type='text/javascript' src='{sugar_getjspath file='modules/Users/UserEditView.js'}'></script>
 <script type='text/javascript' src='{sugar_getjspath file='modules/Users/PasswordRequirementBox.js'}'></script>
 {$ERROR_STRING}
 <!-- This is here for the external API forms -->

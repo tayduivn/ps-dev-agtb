@@ -470,9 +470,7 @@ if(window.addEventListener){
 currencies = {$currencySymbolJSON};
 themeGroupList = {$themeGroupListJSON};
 
-setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
-setSigDigits();
-
+onUserEditView();
 </script>
 
 </form>

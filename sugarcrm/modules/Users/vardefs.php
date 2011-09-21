@@ -35,6 +35,7 @@ $dictionary['User'] = array(
             'dbType' => 'varchar',
             'len' => '60',
             'importable' => 'required',
+            'required' => true,
         ) ,
         'user_hash' => array(
             'name' => 'user_hash',
@@ -284,6 +285,7 @@ $dictionary['User'] = array(
             'len' => 100,
             'options' => 'user_status_dom',
             'importable' => 'required',
+            'required' => true,
         ) ,
         'address_street' => array(
             'name' => 'address_street',
@@ -485,12 +487,8 @@ $dictionary['User'] = array(
         'messenger_type' => array(
             'name' => 'messenger_type',
             'vname' => 'LBL_MESSENGER_TYPE',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getMessengerTypeOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'messenger_type_dom',
             'len' => 100,
         ) ,
         'calls' => array(
