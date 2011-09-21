@@ -41,7 +41,7 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 		global $focus;
 		global $sugar_config;
 		global $locale;
-		
+
 		if(isset($layout_def['varname'])) {
 			$key = strtoupper($layout_def['varname']);
 		} else {
@@ -49,8 +49,8 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 			$key = strtoupper($key);
 		}
 		$value = $layout_def['fields'][$key];
-		
-		
+
+
 
 			if(isset($_REQUEST['action'])) $action = $_REQUEST['action'];
 			else $action = '';
@@ -71,7 +71,7 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 					$name = '*';
 				}
 			}
-							
+
 			$userPref = $current_user->getPreference('email_link_type');
 			$defaultPref = $sugar_config['email_default_client'];
 			if($userPref != '') {
@@ -79,21 +79,27 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 			} else {
 				$client = $defaultPref;
 			}
-			
-			if($client == 'sugar')
-			{				
-			    $fullComposeUrl = 'load_id='.$layout_def['fields']['ID']
-                                . '&load_module='. $this->layout_manager->defs['module_name']
-                                . '&parent_type='.$this->layout_manager->defs['module_name']
-                                . '&parent_id='.$layout_def['fields']['ID'];
 
+			if($client == 'sugar')
+			{
+			    $composeData = array(
+			        'load_id' => $layout_def['fields']['ID'],
+                    'load_module' => $this->layout_manager->defs['module_name'],
+                    'parent_type' => $this->layout_manager->defs['module_name'],
+                    'parent_id' => $layout_def['fields']['ID'],
+			        'return_module' => $module,
+			        'return_action' => $action,
+			        'return_id' => $record
+			    );
                 if(isset($layout_def['fields']['FULL_NAME'])){
-                   $fullComposeUrl .= '&parent_name='.urlencode($layout_def['fields']['FULL_NAME']);
+                    $composeData['parent_name'] = $layout_def['fields']['FULL_NAME'];
+                    $composeData['to_email_addrs'] = sprintf("%s <%s>", $layout_def['fields']['FULL_NAME'], $layout_def['fields']['EMAIL1']);
+                } else {
+                    $composeData['to_email_addrs'] = $layout_def['fields']['EMAIL1'];
                 }
-                $fullComposeUrl .= '&return_module='.$module.'&return_action='.$action.'&return_id='.$record;
                 require_once('modules/Emails/EmailUI.php');
                 $eUi = new EmailUI();
-                $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreateFromComposeUrl($fullComposeUrl);
+                $j_quickComposeOptions = $eUi->generateComposePackageForQuickCreate($composeData, http_build_query($composeData), true);
 
                 $link = "<a href='javascript:void(0);' onclick='SUGAR.quickCompose.init($j_quickComposeOptions);'>";
 			} else {
@@ -101,27 +107,6 @@ class SugarWidgetSubPanelEmailLink extends SugarWidgetField {
 			}
 
 			return $link.$value.'</a>';
-		
+
 	}
 } // end class def
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

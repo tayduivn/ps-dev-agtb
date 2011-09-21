@@ -353,15 +353,16 @@ eoq;
      * @param Array $composeData Associative array read and processed by generateComposeDataPackage.
      * @param String $fullLinkUrl A link that contains all pertinant information so the user can be
      *                              directed to the full compose screen if needed
+     * @param SugarBean $bean Optional - the parent object bean with data
      * @return JSON Object containg composePackage and fullLinkUrl
      */
-    function generateComposePackageForQuickCreate($composeData,$fullLinkUrl, $lazyLoad=false)
+    function generateComposePackageForQuickCreate($composeData,$fullLinkUrl, $lazyLoad=false, $bean = null)
     {
         $_REQUEST['forQuickCreate'] = true;
 
         if(!$lazyLoad){
     	    require_once('modules/Emails/Compose.php');
-    	    $composePackage = generateComposeDataPackage($composeData,FALSE);
+    	    $composePackage = generateComposeDataPackage($composeData,FALSE, $bean);
         }else{
             $composePackage = $composeData;
         }
