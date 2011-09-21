@@ -108,8 +108,7 @@ class ImportViewStep3 extends ImportView
             }
         }
 
-        $delimiter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : ",";
-        $delimeter = $delimiter == "other" ? $_REQUEST['custom_delimiter_other'] : $delimiter;
+        $delimeter = $this->getRequestDelimiter();
         
         $this->ss->assign("CUSTOM_DELIMITER", $delimeter);
         $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
@@ -408,6 +407,22 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
 
+    }
+
+    protected function getRequestDelimiter()
+    {
+        $delimiter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : ",";
+
+        switch ($delimiter)
+        {
+            case "other":
+                $delimiter = $_REQUEST['custom_delimiter_other'];
+                break;
+            case '\t':
+                $delimiter = "\t";
+                break;
+        }       
+        return $delimiter;
     }
 
     protected function getImportColumns()
