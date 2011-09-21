@@ -108,7 +108,10 @@ class ImportViewStep3 extends ImportView
             }
         }
 
-        $this->ss->assign("CUSTOM_DELIMITER", ( !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : "," ));
+        $delimiter = !empty($_REQUEST['custom_delimiter']) ? $_REQUEST['custom_delimiter'] : ",";
+        $delimeter = $delimiter == "other" ? $_REQUEST['custom_delimiter_other'] : $delimiter;
+        
+        $this->ss->assign("CUSTOM_DELIMITER", $delimeter);
         $this->ss->assign("CUSTOM_ENCLOSURE", ( !empty($_REQUEST['custom_enclosure']) ? $_REQUEST['custom_enclosure'] : "" ));
 
        //populate import locale  values from import mapping if available, these values will be used througout the rest of the code path
@@ -116,7 +119,7 @@ class ImportViewStep3 extends ImportView
         $uploadFileName = $_REQUEST['file_name'];
 
         // Now parse the file and look for errors
-        $importFile = new ImportFile( $uploadFileName, $_REQUEST['custom_delimiter'], html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
+        $importFile = new ImportFile( $uploadFileName, $delimeter, html_entity_decode($_REQUEST['custom_enclosure'],ENT_QUOTES), FALSE);
 
         if ( !$importFile->fileExists() ) {
             $this->_showImportError($mod_strings['LBL_CANNOT_OPEN'],$_REQUEST['import_module'],'Step2');
@@ -183,6 +186,13 @@ class ImportViewStep3 extends ImportView
         $columns = array();
         $mappedFields = array();
 
+        // this should be populated if the request comes from a 'Back' button click
+        $importColumns = $this->getImportColumns();
+        $column_sel_from_req = false;
+        if (!empty($importColumns)) {
+            $column_sel_from_req = true;
+        }
+
         for($field_count = 0; $field_count < $ret_field_count; $field_count++) {
             // See if we have any field map matches
             $defaultValue = "";
@@ -220,17 +230,25 @@ class ImportViewStep3 extends ImportView
                 }
                 // see if we have a match
                 $selected = '';
-                if ( !empty($defaultValue) && !in_array($fieldname,$mappedFields)
-						&& !in_array($fieldname,$ignored_fields) )
-                {
-                    if ( strtolower($fieldname) == strtolower($defaultValue)
-                        || strtolower($fieldname) == str_replace(" ","_",strtolower($defaultValue))
-                        || strtolower($displayname) == strtolower($defaultValue)
-                        || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) )
-                    {
+                if ($column_sel_from_req && isset($importColumns[$field_count])) {
+                    if ($fieldname == $importColumns[$field_count]) {
                         $selected = ' selected="selected" ';
                         $defaultField = $fieldname;
                         $mappedFields[] = $fieldname;
+                    }
+                } else {
+                    if ( !empty($defaultValue) && !in_array($fieldname,$mappedFields)
+                                                    && !in_array($fieldname,$ignored_fields) )
+                    {
+                        if ( strtolower($fieldname) == strtolower($defaultValue)
+                            || strtolower($fieldname) == str_replace(" ","_",strtolower($defaultValue))
+                            || strtolower($displayname) == strtolower($defaultValue)
+                            || strtolower($displayname) == str_replace(" ","_",strtolower($defaultValue)) )
+                        {
+                            $selected = ' selected="selected" ';
+                            $defaultField = $fieldname;
+                            $mappedFields[] = $fieldname;
+                        }
                     }
                 }
                 // get field type information
@@ -390,6 +408,25 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
 
+    }
+
+    protected function getImportColumns()
+    {
+        $importColumns = array();
+        foreach ($_REQUEST as $name => $value)
+        {
+            // only look for var names that start with "fieldNum"
+            if (strncasecmp($name, "colnum_", 7) != 0)
+                continue;
+
+            // pull out the column position for this field name
+            $pos = substr($name, 7);
+
+                // now mark that we've seen this field
+            $importColumns[$pos] = $value;
+        }
+
+        return $importColumns;
     }
 
     protected function _getCSS()

@@ -205,7 +205,7 @@ SUGAR.append(SUGAR.themes, {
 				//update shadow height to accomodate new items
 
 				oVR = oShadow.previousSibling;
-				oVR.style.height = (oShadow.offsetHeight - 35)+"px";
+				oVR.style.height = (oShadow.offsetHeight - 15)+"px";
 
 
 
@@ -252,7 +252,7 @@ SUGAR.append(SUGAR.themes, {
 		oElement.style.left = newLeft + "px";
 		oBd = oElement.firstChild;
 		oShadow = oElement.lastChild;
-		oElement.style.top = oElement.offsetTop + 1 + "px";
+		oElement.style.top = oElement.offsetTop + "px";
 		if(oElement.id.substr(0,4) != "More" && oElement.id.substring(0,8) != "TabGroup") {
 			if(oShadow.previousSibling.className != "vr") {
 

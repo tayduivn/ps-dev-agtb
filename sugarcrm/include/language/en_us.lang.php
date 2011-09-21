@@ -1744,6 +1744,16 @@ $app_list_strings = array (
         '' => 'None',
         'other' => 'Other:',
     ),
+    'import_delimeter_options' =>
+    array (
+        ',' => ',',
+        ';' => ';',
+        '\t' => '\t',
+        '.' => '.',
+        ':' => ':',
+        '|' => '|',
+        'other' => 'Other:',
+    ),
     'link_target_dom' =>
     array (
         '_blank' => 'New Window',
