@@ -438,7 +438,6 @@ class OutboundEmail {
 		} else {
 			$values = array();
 			foreach($this->field_defs as $def) {
-				$skip = false;
 				switch($def) {
 					case 'mail_smtpport':
 					case 'mail_smtpauth_req':
@@ -446,6 +445,7 @@ class OutboundEmail {
 						if(empty($this->$def)){
 							$this->$def = 0;
 						}
+                        $values []= "{$def} = {$this->$def}";
 						break;
 					case 'mail_smtppass':
 						if(!empty($this->mail_smtppass)) {
@@ -453,9 +453,10 @@ class OutboundEmail {
 						} else {
 							// ignore empty password unless username is empty too
 							if(!empty($this->mail_smtpuser)) {
-								$skip = true;
+                                continue;
 							}
 						}
+                        $values []= "{$def} = '{$this->$def}'";
 						break;
 					case 'mail_smtpuser':
 						if(strpos($this->$def, '\\' )){ //bug 41766: taking care of '\' in username
@@ -463,13 +464,10 @@ class OutboundEmail {
 							$this->$def = $temp[0] . '\\\\' .$temp[1];
 						}
 					default:
-						$this->$def = "'{$this->$def}'";
-				}
-				if(!$skip) {
-					$values []= "{$def} = {$this->$def}";
+                        $values []= "{$def} = '{$this->$def}'";
 				}
 			}
-			$q = "UPDATE outbound_email SET ".implode(', ', $values)." WHERE id = {$this->id}";
+			$q = "UPDATE outbound_email SET ".implode(', ', $values)." WHERE id = '{$this->id}'";
 		}
 
 		$this->db->query($q, true);
