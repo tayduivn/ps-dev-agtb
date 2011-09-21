@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
@@ -20,29 +20,34 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
 /*********************************************************************************
- * $Id: Menu.php 52621 2009-11-20 00:55:07Z ajay $
- * Description:  TODO To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
+ * $Id: SubPanelSharedCalendar.php 13782 2006-06-06 17:58:55Z majed $
  ********************************************************************************/
+
+/// START SHARED CALENDAR
+include('modules/Calendar/templates/template_shared_calendar.php');
+
+
+function SubPanelSharedCalendar(&$focus)
+{
+
 global $mod_strings;
-//BEGIN SUGARCRM flav!=sales ONLY
+global $current_language;
+global $currentModule;
 
+$currentModule = $_REQUEST['module'];
+$temp_module = $currentModule;
+$mod_strings = return_module_language($current_language,'Calendar');
+$currentModule = 'Calendar';
 
+$args = array(
+"activity_focus"=>$focus,
+"users"=>$focus->get_users());
 
-if(ACLController::checkAccess('Calls', 'edit', true))$module_menu[]=Array("index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView", $mod_strings['LNK_NEW_CALL'],"CreateCalls");
-if(ACLController::checkAccess('Meetings', 'edit', true))$module_menu[]=Array("index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView", $mod_strings['LNK_NEW_MEETING'],"CreateMeetings");
-if(ACLController::checkAccess('Tasks', 'edit', true))$module_menu[]=Array("index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView", $mod_strings['LNK_NEW_TASK'],"CreateTasks");
-if(ACLController::checkAccess('Calendar', 'list', true))$module_menu[]=Array("index.php?module=Calendar&action=index&return_module=Calendar&return_action=index", $mod_strings['LNK_VIEW_CALENDAR'],"Calendar");
-//END SUGARCRM flav!= sales ONLY
-//BEGIN SUGARCRM flav= sales ONLY
-$mod_strings = return_module_language($GLOBALS['current_language'], 'Activities');
-require_once('modules/Activities/Menu.php');
-$mod_strings = return_module_language($GLOBALS['current_language'], $_REQUEST['module']);
-//END SUGARCRM flav= sales ONLY
+template_shared_calendar($args);
 
-
-
+$mod_strings = return_module_language($current_language,$temp_module);
+$currentModule = $_REQUEST['module'];
+/// END SHARED CALENDAR
+}
 
 ?>
