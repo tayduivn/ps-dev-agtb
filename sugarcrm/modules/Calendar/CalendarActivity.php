@@ -99,23 +99,21 @@ class CalendarActivity {
 	}
 
 	function get_freebusy_activities($user_focus, $start_date_time, $end_date_time){
-		  $act_list = array();
-	      $vcal_focus = new vCal();
-	      $vcal_str = $vcal_focus->get_vcal_freebusy($user_focus);
+		$act_list = array();
+		$vcal_focus = new vCal();
+		$vcal_str = $vcal_focus->get_vcal_freebusy($user_focus);
 
-	      $lines = explode("\n",$vcal_str);
-	      $utc = new DateTimeZone("UTC");
-	      foreach ($lines as $line)
-	      {
-		if ( preg_match('/^FREEBUSY.*?:([^\/]+)\/([^\/]+)/i',$line,$matches))
-		{
-		  $dates_arr = array(SugarDateTime::createFromFormat(vCal::UTC_FORMAT, $matches[1], $utc),
-		                      SugarDateTime::createFromFormat(vCal::UTC_FORMAT, $matches[2], $utc));
-		  $act_list[] = new CalendarActivity($dates_arr);
+		$lines = explode("\n",$vcal_str);
+		$utc = new DateTimeZone("UTC");
+	 	foreach ($lines as $line){
+			if ( preg_match('/^FREEBUSY.*?:([^\/]+)\/([^\/]+)/i',$line,$matches)){
+			  $dates_arr = array(SugarDateTime::createFromFormat(vCal::UTC_FORMAT, $matches[1], $utc),
+				              SugarDateTime::createFromFormat(vCal::UTC_FORMAT, $matches[2], $utc));
+			  $act_list[] = new CalendarActivity($dates_arr);
+			}
 		}
-	      }
-			  usort($act_list,'sort_func_by_act_date');
-	      return $act_list;
+		usort($act_list,'sort_func_by_act_date');
+		return $act_list;
 	}
 
 

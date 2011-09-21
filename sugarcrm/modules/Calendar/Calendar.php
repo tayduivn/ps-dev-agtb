@@ -145,6 +145,8 @@ class Calendar {
 			      'hour' => $matches[4],
 			      'min' => $matches[5]
 			);
+			
+	
 		}else{		
 			$this->gmt_today = $date_arr['year'] . "-" . add_zero($date_arr['month']) . "-" . add_zero($date_arr['day']);
 		}		
@@ -357,8 +359,7 @@ class Calendar {
 	{
 		global $current_user, $timedate;
 
-		if ( $this->view == 'month')
-		{
+		if ( $this->view == 'month'){
 			$days_in_month = $this->date_time->days_in_month;
 
 			$first_day_of_month = $this->date_time->get_day_by_index_this_month(0);
@@ -369,16 +370,14 @@ class Calendar {
 
 			// do 42 slices (6x7 grid)
 
-			for($i=0;$i < 42;$i++)
-			{
+			for($i=0;$i < 42;$i++){
 				$slice = new Slice('day',$this->date_time->get_day_by_index_this_month($i-$num_of_prev_days));
 				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) ] = $slice;
 				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 
 		}
-		else if ( $this->view == 'week' || $this->view == 'shared')
-		{
+		else if ( $this->view == 'week' || $this->view == 'shared'){
 			$days_in_week = 7;
 
             		$d = $current_user->get_first_day_of_week();
@@ -390,29 +389,23 @@ class Calendar {
 				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
 		}
-		else if ( $this->view == 'day')
-		{
+		else if ( $this->view == 'day'){
 			$hours_in_day = 24;
 
-			for($i=0;$i<$hours_in_day;$i++)
-			{
+			for($i=0;$i<$hours_in_day;$i++){
 				$slice = new Slice('hour',$this->date_time->get_datetime_by_index_today($i));
 				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour ] = $slice;
 				$this->slices_arr[] =  $slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour;
 			}
 		}
-		else if ( $this->view == 'year')
-		{
-
+		else if ( $this->view == 'year'){
 			for($i=0;$i<12;$i++)
 			{
 				$slice = new Slice('month',$this->date_time->get_day_by_index_this_year($i));
 				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
 				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
 			}
-		}
-		else
-		{
+		}else{
 			sugar_die("not a valid view:".$this->view);
 		}
 
@@ -421,9 +414,14 @@ class Calendar {
 	
 	function add_activities($user,$type='sugar') {
 		global $timedate;
-		if ( $this->view == 'week' || $this->view == 'shared') {
+		$start_date_time = $this->date_time;
+		if($this->view == 'week' || $this->view == 'shared') {
 			$end_date_time = $this->date_time->get("+7 days");
-		} else {
+		}else if($this->view == 'month'){
+			$start_date_time = $this->date_time->get('first day of last month');
+			$end_date_time = $this->date_time->get('first day of next month');
+			$end_date_time = $end_date_time->get("+7 days");
+		}else{
 			$end_date_time = $this->date_time;
 		}
 		
@@ -434,9 +432,9 @@ class Calendar {
 
 		$acts_arr = array();
 	    	if($type == 'vfb') {
-				$acts_arr = CalendarActivity::get_freebusy_activities($user, $this->date_time, $end_date_time);
-	    	} else {
-				$acts_arr = CalendarActivity::get_activities($user->id, $params, $this->date_time, $end_date_time, $this->view);
+				$acts_arr = CalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
+	    	}else{
+				$acts_arr = CalendarActivity::get_activities($user->id, $params, $start_date_time, $end_date_time, $this->view);
 	    	}
 
 		// loop thru each activity for this user
