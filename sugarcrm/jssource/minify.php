@@ -81,7 +81,8 @@ if(isset($_REQUEST['root_directory'])){
      return;
     }
 
-//    require_once($argv[1].'/include/utils/sugar_file_utils.php');
+    require_once($argv[1].'/include/utils.php');
+    require_once($argv[1].'/include/utils/sugar_file_utils.php');
 
     if($argv[1] == '-?'){
         $argv[2] = '-?';
