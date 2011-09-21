@@ -165,6 +165,7 @@ class ImportViewConfirm extends ImportView
         }
 
         $this->ss->assign("IMPORT_ENCLOSURE_OPTIONS",  $this->getEnclosureOptions($enclosure));
+        $this->ss->assign("IMPORT_DELIMETER_OPTIONS",  $this->getDelimeterOptions($delimeter));
         $this->ss->assign("CUSTOM_DELIMITER",  $delimeter);
         $this->ss->assign("CUSTOM_ENCLOSURE",  htmlentities($enclosure, ENT_QUOTES));
         $hasHeaderFlag = $hasHeader ? " CHECKED" : "";
@@ -206,6 +207,12 @@ class ImportViewConfirm extends ImportView
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
         
+    }
+
+    private function getDelimeterOptions($selctedDelim)
+    {
+        $selctedDelim = $selctedDelim == "\t" ? '\t' : $selctedDelim;
+        return get_select_options_with_id($GLOBALS['app_list_strings']['import_delimeter_options'], $selctedDelim);
     }
 
     private function getEnclosureOptions($enclosure)
@@ -475,6 +482,11 @@ document.getElementById('custom_enclosure').onchange = function()
     document.getElementById('importconfirm').custom_enclosure_other.style.display = ( this.value == 'other' ? '' : 'none' );
 }
 
+document.getElementById('custom_delimiter').onchange = function()
+{
+    document.getElementById('importconfirm').custom_delimiter_other.style.display = ( this.value == 'other' ? '' : 'none' );
+}
+
 document.getElementById('toggleImportOptions').onclick = function() {
     if (document.getElementById('importOptions').style.display == 'none'){
         document.getElementById('importOptions').style.display = '';
@@ -512,6 +524,9 @@ YAHOO.util.Event.onDOMReady(function(){
 
         var importFile = document.getElementById('importconfirm').file_name.value;
         var fieldDelimeter = document.getElementById('custom_delimiter').value;
+        if(fieldDelimeter == 'other')
+            fieldDelimeter  = document.getElementById('custom_delimiter_other').value;
+
         var fieldQualifier = document.getElementById('custom_enclosure').value;
         var hasHeader = document.getElementById('importconfirm').has_header.checked ? 'true' : '';
 
@@ -529,7 +544,7 @@ YAHOO.util.Event.onDOMReady(function(){
 
         YAHOO.util.Connect.asyncRequest('GET', url, callback);
     }
-    var subscribers = ["custom_delimiter", "custom_enclosure", "custom_enclosure_other", "has_header", "importlocale_charset"];
+    var subscribers = ["custom_delimiter", "custom_enclosure", "custom_enclosure_other", "has_header", "importlocale_charset", "custom_delimiter_other"];
     YAHOO.util.Event.addListener(subscribers, "change", refreshDataTable);
 
     function setMappingProperties(el)
