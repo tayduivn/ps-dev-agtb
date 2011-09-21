@@ -34,7 +34,7 @@ class AuthenticationController
 	public $authenticated = false;
 	public $loginSuccess = false;// if a user has successfully logged in
 	
-	private $authcontrollerinstance = null;
+	protected static $authcontrollerinstance = null;
 
 	/**
 	 * Creates an instance of the authentication controller and loads it
