@@ -3210,9 +3210,9 @@ function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), 
 	    return $theArray;
 	}
 
-    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir 
+    if (!is_dir($dir)) { return $theArray; }   // Bug # 46035, just checking for valid dir
 	$d = dir($dir);
-    if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
+    if ($d === false)  { return $theArray; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
 	                                // bug 40793 Skip Directories array in upgradeWizard does not function correctly
@@ -4543,26 +4543,49 @@ function upgradeUserPreferences() {
 									 )
 							   );
 
-	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
+    $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Home');
+
+    $ce_to_pro_or_ent = (isset($_SESSION['upgrade_from_flavor']) && ($_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarPro' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarEnt' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarCorp' || $_SESSION['upgrade_from_flavor'] == 'SugarCE to SugarUlt'));
 
    	$db = &DBManagerFactory::getInstance();
     $result = $db->query("SELECT id FROM users where deleted = '0'");
-   	while($row = $db->fetchByAssoc($result)){
+   	while($row = $db->fetchByAssoc($result))
+    {
+          $changed = false;
 	      $current_user = new User();
 	      $current_user->retrieve($row['id']);
 
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
-	      $current_user->setPreference('user_theme', 'Sugar', 0, 'global');
+	      $userTheme = $current_user->getPreference('user_theme', 'global');
+
+	      if(empty($userTheme) || $ce_to_pro_or_ent)
+	      {
+            $changed = true;
+	      	$current_user->setPreference('user_theme', 'Sugar', 0, 'global');
+	      }
 
 	      //Set the number of tabs by default to 7
-	      $current_user->setPreference('max_tabs', '7', 0, 'global');
+	      $maxTabs = $current_user->getPreference('max_tabs', 'global');
+	      if(empty($maxTabs))
+	      {
+            $changed = true;
+	      	$current_user->setPreference('max_tabs', '7', 0, 'global');
+	      }
+
+          //If preferences have changed, save before proceeding
+          if($changed)
+          {
+             $current_user->savePreferencesToDB();
+          }
 
 		  $pages = $current_user->getPreference('pages', 'Home');
 
-		  if(empty($pages)) {
-                continue;
+		  if(empty($pages))
+          {
+             continue;
 		  }
 
+          $changed = false;
 		  $empty_dashlets = array();
 		  $dashlets = $current_user->getPreference('dashlets', 'Home');
 		  $dashlets = !empty($dashlets) ? $dashlets : $empty_dashlets;
@@ -4606,10 +4629,14 @@ function upgradeUserPreferences() {
 				$pages[$pageIndex]['numColumns'] = '1';
 				$pages[$pageIndex]['pageTitle'] = $GLOBALS['mod_strings']['LBL_HOME_PAGE_4_NAME'];
 				$current_user->setPreference('pages', $pages, 0, 'Home');
+                $changed = true;
 		  } //if
 
 		  // we need to force save the changes to disk, otherwise we lose them.
-		  $current_user->savePreferencesToDB();
+          if($changed)
+          {
+		    $current_user->savePreferencesToDB();
+          }
 	} //while
 
     /*
@@ -5392,7 +5419,7 @@ function upgradeModulesForTeam() {
 		foreach( $allHelpFiles as $the_file ){
 	        if( is_file( $the_file ) ){
 	            unlink( $the_file );
-	            logThis("Deleted file: $the_file", $path);
+	            logThis("Deleted file: $the_file");
 	        }
 	    }
 	}
