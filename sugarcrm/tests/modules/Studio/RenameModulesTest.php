@@ -33,6 +33,12 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->language = 'en_us';
+
+        $beanList = array();
+        $beanFiles = array();
+        require('include/modules.php');
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
     }
 
     public function tearDown()
@@ -41,6 +47,8 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $this->removeModuleStrings(array('Accounts'));
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
         SugarCache::$isCacheReset = false;
     }
 
