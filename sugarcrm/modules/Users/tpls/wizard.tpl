@@ -445,7 +445,7 @@ function startOutBoundEmailSettingsTest()
     //BEGIN SUGARCRM flav=int ONLY
 	filter: 'debug',
 	//END SUGARCRM flav=int ONLY
-    skin: { base: 'blank', defaultSkin: '' },
+    skin: { base: 'assets/skins/', defaultSkin: 'blank' },
     onSuccess: testOutboundSettings,
     allowRollup: true,
     base: "include/javascript/yui/build/"
