@@ -40,6 +40,7 @@
 <br>
 
 <div id="field_table"></div>
+{if $studio}{sugar_translate label='LBL_CUSTOM_FIELDS' module='ModuleBuilder'}</h3>{/if}
 
 <script type="text/javascript">
 {literal}
@@ -51,14 +52,14 @@ pref = {$sortPreferences};
 {literal}
 sortDirection = (pref.direction == 'ASC') ? YAHOO.widget.DataTable.CLASS_ASC : YAHOO.widget.DataTable.CLASS_DESC;
 var myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
-console.log(myConfigs);
 {/literal}
 {/if}
 
 {literal}
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 {
-   elCell.innerHTML = "<a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + oData + "</a>";
+  var label = /_c$/.test(oData) ? '*' + oData : oData;
+  elCell.innerHTML = "<a class='mbLBLL' href='javascript:void(0)' onclick='ModuleBuilder.moduleLoadField(\"" + oData + "\");'>" + label + "</a>";
 };
 
 var labelFormatter = function(elCell, oRecord, oColumn, oData)
