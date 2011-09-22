@@ -64,7 +64,7 @@ var FBLoader = new YAHOO.util.YUILoader({
     //BEGIN SUGARCRM flav=int ONLY
     filter: 'debug',
     //END SUGARCRM flav=int ONLY
-    skin: { base: 'assets/skins/', defaultSkin: 'blank' },
+    skin: { base: 'blank', defaultSkin: '' },
     onSuccess: function(){SUGAR.expressions.initFormulaBuilder()},
     allowRollup: true,
     base: "include/javascript/yui/build/"

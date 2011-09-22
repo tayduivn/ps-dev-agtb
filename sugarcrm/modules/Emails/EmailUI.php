@@ -255,7 +255,7 @@ class EmailUI {
 				    //BEGIN SUGARCRM flav=int ONLY
 					filter: 'debug',
 					//END SUGARCRM flav=int ONLY
-				    skin: { base: 'assets/skins/', defaultSkin: 'blank' },
+				    skin: { base: 'blank', defaultSkin: '' },
 				    onSuccess: email2init,
 				    allowRollup: true,
 				    base: "include/javascript/yui/build/"

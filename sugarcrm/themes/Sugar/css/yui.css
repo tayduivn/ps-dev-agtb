@@ -157,11 +157,11 @@
 }
 
  .yui-menu-button button {
-    /*background-image: url(menu-button-arrow.png);*/
+    background-image: url(menu-button-arrow.png);
 }
 
  .yui-split-button button {
-    /*background-image: url(split-button-arrow.png);*/
+    background-image: url(split-button-arrow.png);
 }
 
  .yui-button-focus {
@@ -179,7 +179,7 @@
 }
 
  .yui-split-button-focus button {
-    /*background-image: url(split-button-arrow-focus.png);*/
+    background-image: url(split-button-arrow-focus.png);
 }
 
  .yui-button-hover {
@@ -197,7 +197,7 @@
 }
 
  .yui-split-button-hover button {
-    /*background-image: url(split-button-arrow-hover.png);*/
+    background-image: url(split-button-arrow-hover.png);
 }
 
  .yui-button-active {
@@ -224,7 +224,7 @@
 }
 
  .yui-split-button-activeoption button {
-    /*background-image: url(split-button-arrow-active.png);*/
+    background-image: url(split-button-arrow-active.png);
 }
 
  .yui-radio-button-checked, .yui-checkbox-button-checked
@@ -265,11 +265,11 @@
 }
 
  .yui-menu-button-disabled button {
-    /*background-image: url(menu-button-arrow-disabled.png);*/
+    background-image: url(menu-button-arrow-disabled.png);
 }
 
  .yui-split-button-disabled button {
-    /*background-image: url(split-button-arrow-disabled.png);*/
+    background-image: url(split-button-arrow-disabled.png);
 }
 
 .yui-calcontainer {
@@ -931,7 +931,7 @@ p#clear {
     left: 200px;
     height: 183px;
     width: 14px;
-    /*background: url(hue_bg.png) no-repeat;*/
+    background: url(hue_bg.png) no-repeat;
     top: 4px;
 }
 
@@ -944,7 +944,7 @@ p#clear {
     height: 182px;
     width: 182px;
     background-color: #F00;
-    /*background-image: url(picker_mask.png);*/
+    background-image: url(picker_mask.png);
 }
 
 * html .yui-picker-bg {
@@ -2516,12 +2516,12 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     height: 18px;
     width: 18px;
     overflow: hidden;
-    /*background: url(editor-sprite.gif) no-repeat 30px 30px;*/
+    background: url(editor-sprite.gif) no-repeat 30px 30px;
 }
 
  .yui-toolbar-container .yui-button-selected span.yui-toolbar-icon, .yui-toolbar-container .yui-button-hover span.yui-toolbar-icon
     {
-    /*background-image: url(editor-sprite-active.gif);*/
+    background-image: url(editor-sprite-active.gif);
 }
 
  .yui-toolbar-container .visible .yuimenuitemlabel {
@@ -2728,7 +2728,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
  .yui-toolbar-container .yui-toolbar-spinbutton a.up, .yui-toolbar-container .yui-toolbar-spinbutton a.down
     {
     right: 2px;
-    /*background: url(editor-sprite.gif) no-repeat 0 -1222px;*/
+    background: url(editor-sprite.gif) no-repeat 0 -1222px;
     overflow: hidden;
     height: 6px;
     width: 7px;
@@ -2759,7 +2759,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 
  .yui-toolbar-container .yui-toolbar-select span.yui-toolbar-icon
     {
-    /*background: url( editor-sprite.gif ) no-repeat 0 -1144px;*/
+    background: url( editor-sprite.gif ) no-repeat 0 -1144px;
     overflow: hidden;
     right: -2px;
     top: 0px;
@@ -2956,7 +2956,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
  .yui-editor-panel .ft span.tip span.icon {
-    /*background: url( editor-sprite.gif ) no-repeat 0 -1260px;*/
+    background: url( editor-sprite.gif ) no-repeat 0 -1260px;
     display: block;
     height: 20px;
     left: 2px;
@@ -2981,7 +2981,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     left: 25px;
     text-indent: 9999px;
     overflow: hidden;
-    /*background: url( editor-knob.gif ) no-repeat 0 0;*/
+    background: url( editor-knob.gif ) no-repeat 0 0;
 }
 
  .yui-editor-panel .yui-toolbar-container {
@@ -2996,7 +2996,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
 .yui-editor-blankimage {
-    /*background-image: url( blankimage.png );*/
+    background-image: url( blankimage.png );
 }
 
  .yui-editor-container .yui-resize-handle-br {
@@ -3402,7 +3402,7 @@ body.yui-layout {
     width: 6px;
     top: 45%;
     left: 0px;
-    /*background: transparent url(layout_sprite.png) no-repeat 0 -5px;*/
+    background: transparent url(layout_sprite.png) no-repeat 0 -5px;
 }
 
  .yui-layout-unit .yui-resize-handle-t .yui-layout-resize-knob, .yui-layout-unit .yui-resize-handle-b .yui-layout-resize-knob
@@ -3411,7 +3411,7 @@ body.yui-layout {
     height: 6px;
     width: 16px;
     left: 45%;
-    /*background: transparent url(layout_sprite.png) no-repeat -20px 0;*/
+    background: transparent url(layout_sprite.png) no-repeat -20px 0;
 }
 
  .yui-log {
@@ -3665,7 +3665,7 @@ body.yui-layout {
 }
 
  .yuimenubarnav .yuimenubaritemlabel-hassubmenu-disabled {
-    /*background-image: url(menubaritem_submenuindicator_disabled.png);*/
+    background-image: url(menubaritem_submenuindicator_disabled.png);
 }
 
  .yuimenu {
@@ -3782,7 +3782,7 @@ a.yuimenuitemlabel:hover {
 }
 
  .yuimenuitem-checked {
-    /*background-image: url(menuitem_checkbox.png);*/
+    background-image: url(menuitem_checkbox.png);
     background-position: left center;
     background-repeat: no-repeat;
 }
@@ -3804,11 +3804,11 @@ a.yuimenuitemlabel:hover {
 }
 
  .yuimenuitem-hassubmenu-disabled {
-    /*background-image: url(menuitem_submenuindicator_disabled.png);*/
+    background-image: url(menuitem_submenuindicator_disabled.png);
 }
 
  .yuimenuitem-checked-disabled {
-    /*background-image: url(menuitem_checkbox_disabled.png);*/
+    background-image: url(menuitem_checkbox_disabled.png);
 }
 
  .yui-pg-container {
@@ -3889,7 +3889,7 @@ a.yuimenuitemlabel:hover {
 }
 
  .yui-pv .hd {
-    /*background: url(header_background.png) repeat-x;*/
+    background: url(header_background.png) repeat-x;
     min-height: 30px;
     overflow: hidden;
     zoom: 1;
@@ -3922,7 +3922,7 @@ a.yuimenuitemlabel:hover {
  .yui-pv .hd span.yui-pv-busy {
     height: 18px;
     width: 18px;
-    /*background: url(wait.gif) no-repeat;*/
+    background: url(wait.gif) no-repeat;
     overflow: hidden;
     display: block;
     float: right;
@@ -3979,11 +3979,11 @@ a.yuimenuitemlabel:hover {
 }
 
  .yui-pv th.yui-dt-asc .yui-dt-liner {
-    /*background: transparent url(asc.gif) no-repeat scroll right center;*/
+    background: transparent url(asc.gif) no-repeat scroll right center;
 }
 
  .yui-pv th.yui-dt-desc .yui-dt-liner {
-    /*background: transparent url(desc.gif) no-repeat scroll right center;*/
+    background: transparent url(desc.gif) no-repeat scroll right center;
 }
 
  .yui-pv .yui-pv-table .yui-dt-hd th a {
@@ -4283,7 +4283,7 @@ a.yuimenuitemlabel:hover {
 
  .yui-resize .yui-resize-handle-inner-r, .yui-resize .yui-resize-handle-inner-l
     {
-    /*background: transparent url( layout_sprite.png) no-repeat 0 -5px;*/
+    background: transparent url( layout_sprite.png) no-repeat 0 -5px;
     height: 16px;
     width: 5px;
     position: absolute;
@@ -4292,7 +4292,7 @@ a.yuimenuitemlabel:hover {
 
  .yui-resize .yui-resize-handle-inner-t, .yui-resize .yui-resize-handle-inner-b
     {
-    /*background: transparent url(layout_sprite.png) no-repeat -20px 0;*/
+    background: transparent url(layout_sprite.png) no-repeat -20px 0;
     height: 5px;
     width: 16px;
     position: absolute;
@@ -4300,25 +4300,25 @@ a.yuimenuitemlabel:hover {
 }
 
  .yui-resize .yui-resize-handle-br {
-    /*background-image: url( layout_sprite.png );*/
+    background-image: url( layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -62px;
 }
 
  .yui-resize .yui-resize-handle-tr {
-    /*background-image: url( layout_sprite.png );*/
+    background-image: url( layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -42px;
 }
 
  .yui-resize .yui-resize-handle-tl {
-    /*background-image: url( layout_sprite.png );*/
+    background-image: url( layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -82px;
 }
 
  .yui-resize .yui-resize-handle-bl {
-    /*background-image: url( layout_sprite.png );*/
+    background-image: url( layout_sprite.png );
     background-repeat: no-repeat;
     background-position: -22px -23px;
 }
@@ -5128,12 +5128,12 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     height: 18px;
     width: 18px;
     overflow: hidden;
-    /*background: url(editor-sprite.gif) no-repeat 30px 30px;*/
+    background: url(editor-sprite.gif) no-repeat 30px 30px;
 }
 
  .yui-toolbar-container .yui-button-selected span.yui-toolbar-icon, .yui-toolbar-container .yui-button-hover span.yui-toolbar-icon
     {
-    /*background-image: url(editor-sprite-active.gif);*/
+    background-image: url(editor-sprite-active.gif);
 }
 
  .yui-toolbar-container .visible .yuimenuitemlabel {
@@ -5340,7 +5340,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
  .yui-toolbar-container .yui-toolbar-spinbutton a.up, .yui-toolbar-container .yui-toolbar-spinbutton a.down
     {
     right: 2px;
-    /*background: url(editor-sprite.gif) no-repeat 0 -1222px;*/
+    background: url(editor-sprite.gif) no-repeat 0 -1222px;
     overflow: hidden;
     height: 6px;
     width: 7px;
@@ -5371,7 +5371,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 
  .yui-toolbar-container .yui-toolbar-select span.yui-toolbar-icon
     {
-    /*background: url( editor-sprite.gif ) no-repeat 0 -1144px;*/
+    background: url( editor-sprite.gif ) no-repeat 0 -1144px;
     overflow: hidden;
     right: -2px;
     top: 0px;
@@ -5568,7 +5568,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
  .yui-editor-panel .ft span.tip span.icon {
-    /*background: url( editor-sprite.gif ) no-repeat 0 -1260px;*/
+    background: url( editor-sprite.gif ) no-repeat 0 -1260px;
     display: block;
     height: 20px;
     left: 2px;
@@ -5593,7 +5593,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
     left: 25px;
     text-indent: 9999px;
     overflow: hidden;
-    /*background: url( editor-knob.gif ) no-repeat 0 0;*/
+    background: url( editor-knob.gif ) no-repeat 0 0;
 }
 
  .yui-editor-panel .yui-toolbar-container {
@@ -5608,7 +5608,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 }
 
 .yui-editor-blankimage {
-    /*background-image: url( blankimage.png );*/
+    background-image: url( blankimage.png );
 }
 
  .yui-editor-container .yui-resize-handle-br {
@@ -6030,7 +6030,7 @@ h2.yui-editor-skipheader,h3.yui-editor-skipheader {
 .ygtvloading {
     width: 18px;
     height: 22px;
-    /*background: url(treeview-loading.gif) 0 0 no-repeat;*/
+    background: url(treeview-loading.gif) 0 0 no-repeat;
 }
 
 .ygtvdepthcell {

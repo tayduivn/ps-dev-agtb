@@ -445,7 +445,7 @@ function change_state(radiobutton) {
 var loader = new YAHOO.util.YUILoader({
     require : ["element","sugarwidgets"],
     loadOptional: true,
-    skin: { base: 'assets/skins/', defaultSkin: 'blank' },
+    skin: { base: 'blank', defaultSkin: '' },
     allowRollup: true,
     base: "include/javascript/yui/build/"
 });

@@ -241,7 +241,7 @@ function toggleMore(spanId, img_id, module, action, params){
 
 YAHOO.util.Event.onDOMReady(function() {
     /* initialize the popup request from the parent */
-    if(window.document.forms['popup_query_form'] && window.document.forms['popup_query_form'].request_data.value == "") {
+    if(window.document.forms['popup_query_form'].request_data.value == "") {
     	window.document.forms['popup_query_form'].request_data.value
     		= YAHOO.lang.JSON.stringify(window.opener.get_popup_request_data());
     }
