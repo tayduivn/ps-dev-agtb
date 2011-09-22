@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 require_once "include/export_utils.php";
 
 class Bug41569Test extends Sugar_PHPUnit_Framework_TestCase

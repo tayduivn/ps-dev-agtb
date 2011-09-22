@@ -400,7 +400,7 @@
                 // IE doesn't bubble up "change" events through the DOM. So we need to find events that are looking at our parent and manually push them down to here
                 var emailcontainer = Dom.getAncestorByTagName(insertInto,'span');
                 var listeners = YAHOO.util.Event.getListeners(emailcontainer);
-                if (listeners) {
+                if (typeof listeners != 'undefined' && listeners instanceof Array) {
                     for (var i=0; i<listeners.length; ++i) {
                         var listener = listeners[i];
                         YAHOO.util.Event.addListener(newContent, listener.type, listener.fn, listener.obj, listener.adjust);

@@ -190,7 +190,6 @@ $vardefs= array (
     'dbType' => 'varchar',
     'len' => 255,
     'comment' => 'URL of website for the company',
-     'merge_filter' => 'enabled',
   ),
    'ownership' => 
   array (

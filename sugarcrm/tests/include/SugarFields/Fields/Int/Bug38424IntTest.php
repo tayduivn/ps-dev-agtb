@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 require_once('include/SugarFields/Fields/Int/SugarFieldInt.php');
 
 class Bug38424IntTest extends Sugar_PHPUnit_Framework_TestCase

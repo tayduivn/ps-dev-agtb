@@ -39,8 +39,8 @@ $tagsMode = trim(html_entity_decode($_REQUEST['tagsMode']), "\"");
 
 if (!empty($_REQUEST['searchTagName'])) {
     $search_tag_name = $json->decode(html_entity_decode($_REQUEST['searchTagName']));
-    if (isset($search_tag_name['jsonObject']) && $search_tag_name['jsonObject'] != null) {
-        $search_tag_name = $search_tag_name['jsonObject'];
+    if (isset($search_tag_name) && $search_tag_name != null) {
+        $search_tag_name = $search_tag_name;
         $tagsMode = 'Search Tags';
     }
 }
