@@ -137,6 +137,8 @@ class SugarRelationshipFactory {
         $buildingRelCache = true;
         include_once("modules/TableDictionary.php");
 
+        if (empty($beanList))
+            include("include/modules.php");
         //Reload ALL the module vardefs....
         foreach($beanList as $moduleName => $beanName)
         {
