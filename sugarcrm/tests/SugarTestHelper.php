@@ -115,6 +115,7 @@ require_once 'SugarTestQuoteUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
+require_once 'SugarTestProductBundleNoteUtilities.php';
 //END SUGARCRM flav=pro ONLY
 
 // define our testcase subclass
