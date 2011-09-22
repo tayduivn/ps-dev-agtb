@@ -32,6 +32,15 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->sm = new SessionManager();
         $this->defaultPortalUsersCount = $this->sm->getNumPortalUsers();
+
+        $admin = new Administration();
+        $admin->retrieveSettings('system');
+        if(!isset($admin->settings['system_session_timeout']))
+        {
+           $session_timeout = abs(ini_get('session.gc_maxlifetime'));
+           $admin->saveSetting('system', 'session_timeout', $session_timeout);
+        }
+        sugar_cache_clear('admin_settings_cache');
     }
 
     function tearDown()

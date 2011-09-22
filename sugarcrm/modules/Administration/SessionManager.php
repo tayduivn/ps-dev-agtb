@@ -99,7 +99,7 @@ class SessionManager extends SugarBean {
             $num = $num_users;
 
             if(file_exists('modules/Administration/ncc_config.php')){
-                require_once('modules/Administration/ncc_config.php');
+                require('modules/Administration/ncc_config.php');
                 $num = $ncc_config['value'];
             }
 
@@ -175,6 +175,7 @@ class SessionManager extends SugarBean {
     function getTimeDiff(){
         $admin = new Administration();
         $admin->retrieveSettings('system');
+
         $session_timeout = abs($admin->settings['system_session_timeout']);
         if(!isset($session_timeout)){
             $session_timeout = abs(ini_get('session.gc_maxlifetime'));
