@@ -42,24 +42,15 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user']->is_admin = '1';
 
 
-        global $sugar_config;
+        require("config.php");
         if(isset($sugar_config['email_xss']))
         {
-              $this->_original_email_xss = $sugar_config['email_xss'];
+           $this->_original_email_xss = $sugar_config['email_xss'];
+           $this->cfg = new Configurator();
+           $this->cfg->config['email_xss'] = getDefaultXssTags();
+           $this->cfg->handleOverride();
         }
 
-        /*
-        if(file_exists('config_override.php') && isset($this->original_email_xss))
-        {
-              require("config_override.php");
-              $this->cfg = new Configurator();
-              if(isset($this->cfg->config['email_xss']))
-              {
-                  $this->cfg->config['email_xss'] = $this->original_email_xss;
-                  $this->cfg->handleOverride();
-              }
-        }
-        */
         // email_xss settings to be saved using config_override
         $this->email_xss = array(
             //'applet' => 'applet',
@@ -72,14 +63,12 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function tearDown()
 	{
-
         if(isset($this->original_email_xss))
         {
            $this->cfg = new Configurator();
            $this->cfg->config['email_xss'] = $this->original_email_xss;
            $this->cfg->handleOverride();
         }
-        
 		unset($this->cfg);
         unset($this->emailMan);
         unset($this->email_xss);
@@ -97,7 +86,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
       global $sugar_config;
       $conn = new EmailManController();
 
-        // populate the REQUEST array because configurator will read that to write config_override 
+      // populate the REQUEST array because configurator will read that to write config_override
       foreach ($this->email_xss as $key=>$val) {
            $_REQUEST["$key"] = $val;
       }
@@ -105,12 +94,10 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
       $new_security_settings = base64_encode(serialize($this->email_xss));
 
       // make sure that settings from config.php are untouched
-      require("config.php");
-      $original_security_settings = $sugar_config['email_xss'];
-      $this->assertNotEquals($original_security_settings, $new_security_settings,
-                            "ensure that original email_xss is not touched");
+      $original_security_settings = getDefaultXssTags();
+      $this->assertNotEquals($original_security_settings, $new_security_settings, "ensure that original email_xss is not touched");
 
-       $conn->action_Save();   // testing the save,
+      $conn->action_Save();   // testing the save,
                               // it should use the above request vars
                               // to create a new config_override.php 
 
