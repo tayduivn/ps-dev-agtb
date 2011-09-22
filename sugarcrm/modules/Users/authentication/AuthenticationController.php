@@ -34,7 +34,7 @@ class AuthenticationController
 	public $authenticated = false;
 	public $loginSuccess = false;// if a user has successfully logged in
 	
-	private $authcontrollerinstance = null;
+	protected static $authcontrollerinstance = null;
 
 	/**
 	 * Creates an instance of the authentication controller and loads it
@@ -70,7 +70,7 @@ class AuthenticationController
 	 * @param string $type this is the type of authetnication you want to use default is SugarAuthenticate
 	 * @return an instance of the authetnciation controller
 	 */
-	public static function &getInstance($type = 'SugarAuthenticate')
+	public static function getInstance($type = 'SugarAuthenticate')
 	{
 		if (empty(self::$authcontrollerinstance)) {
 			self::$authcontrollerinstance = new AuthenticationController($type);
