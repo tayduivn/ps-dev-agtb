@@ -216,7 +216,12 @@ class ImportViewStep3 extends ImportView
             $defaultField = '';
             foreach ( $fields as $fieldname => $properties ) {
                 // get field name
-                if (!empty ($properties['vname']))
+                if($fieldname == 'assigned_user_name'|| $fieldname == 'assigned_user_id'){
+//                    _pp($properties);
+//                    _pp($displayname);
+                    $displayname = $app_strings['LBL_EXPORT_'.strtoupper($fieldname)];
+
+                }else if (!empty ($properties['vname']))
 					$displayname = str_replace(":","",translate($properties['vname'] ,$this->bean->module_dir));
                 else
 					$displayname = str_replace(":","",translate($properties['name'] ,$this->bean->module_dir));
