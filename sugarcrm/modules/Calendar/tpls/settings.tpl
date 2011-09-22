@@ -10,16 +10,6 @@
 		<table class='edit view tabForm'>
 				<tr>
 					<td scope="row" valign="top">
-						{$MOD.LBL_SETTINGS_WEEK_STARTS}
-					</td>
-					<td>
-						<input type='radio' name='start_day' value='Sunday' {if $startday != 'Monday'}checked{/if} tabindex="102"> {$APPLIST.dom_cal_day_long[1]}
-						<br>
-						<input type='radio' name='start_day' value='Monday' {if $startday == 'Monday'}checked{/if} tabindex="102"> {$APPLIST.dom_cal_day_long[2]}
-					</td>					
-				</tr>
-				<tr>
-					<td scope="row" valign="top">
 						{$MOD.LBL_SETTINGS_TIME_STARTS}
 					</td>
 					<td>

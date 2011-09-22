@@ -1,71 +1,30 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- * 
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- * 
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- * 
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo. If the display of the logo is not reasonably feasible for
- * technical reasons, the Appropriate Legal Notices must display the words
- * "Powered by SugarCRM".
- ********************************************************************************/
 
 
-
-
-/////////////////////////////////
-// template
-/////////////////////////////////
 global $timedate;
 
 class CalendarGrid {
 	var $args;
 	var $real_today_unix;
 	var $weekday_names;
+	var $startday;
 	
 	function CalendarGrid(&$args){
+		global $current_user;
 		$this->args = &$args;		
 		$this->real_today_unix = to_timestamp($GLOBALS['timedate']->get_gmt_db_date());
 		
 		$weekday_names = array();
-		$of = 0;
-		$startday = $this->args['cal']->week_start_day;
-		if($startday != "Monday")
-			$of = 1;
-		foreach($GLOBALS['app_list_strings']['dom_cal_day_short'] as $k => $v){	
-			if($k > 1){
-				$weekday_names[$k-2] = $GLOBALS['app_list_strings']['dom_cal_day_short'][$k - $of];
-			}
-		}	
-		if($startday == "Monday")
-			$weekday_names[6] = $GLOBALS['app_list_strings']['dom_cal_day_short'][1];
-		else
-			$weekday_names[6] = $GLOBALS['app_list_strings']['dom_cal_day_short'][7];
+		
+		$this->startday = $current_user->get_first_day_of_week();
+		
+		for($i = 0; $i < 7; $i++){
+			$j = $i + $this->startday;
+			if($j >= 7)
+				$j = $j - 7;
+			$weekday_names[$i] = $GLOBALS['app_list_strings']['dom_cal_day_short'][$j+1];
+		}		
 			
 		$this->weekday_names = $weekday_names;		
 	}
@@ -79,7 +38,6 @@ class CalendarGrid {
 	function display_week(){
 		
 		$today_unix = $this->args['cal']->today_unix;
-		$startday = $this->args['cal']->week_start_day;
 		$t_step = $this->args['cal']->time_step;		
 		
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
@@ -92,13 +50,11 @@ class CalendarGrid {
 		$timezone = $GLOBALS['timedate']->getUserTimeZone();
 
 		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);		
-				
-		if($startday == "Monday")
-			$week_start_unix = $week_start_unix + 60*60*24;
+
+		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
 		$week_start = date("m/d/Y H:i:s",$week_start_unix);
 		$week_end_unix = $week_start_unix + 60*60*24*7;
-		if($startday == "Monday")
-			$week_end_unix = $week_end_unix + 60*60*24;
+		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;
 		$week_end = date("m/d/Y H:i:s",$week_end_unix);
 		
 		$str = "";
@@ -146,7 +102,6 @@ class CalendarGrid {
 	function display_day(){
 	
 		$today_unix = $this->args['cal']->today_unix;
-		$startday = $this->args['cal']->week_start_day;
 		$t_step = $this->args['cal']->time_step;	
 	
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
@@ -200,7 +155,6 @@ class CalendarGrid {
 	function display_month(){
 	
 		$today_unix = $this->args['cal']->today_unix;
-		$startday = $this->args['cal']->week_start_day;
 		$t_step = $this->args['cal']->time_step;	
 	
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
@@ -218,21 +172,19 @@ class CalendarGrid {
 		$month_end_unix = $month_start_unix + 60*60*24*($Tt);
 
 		$Tw = date("w",$month_start_unix - date('Z',$month_start_unix));
-		$week_start_unix = $month_start_unix - 60*60*24*($Tw);
-
-		if($startday == "Monday"){
-			$week_start_unix = $week_start_unix + 60*60*24;	
-	
-			if(date("j",$week_start_unix - date('Z',$week_start_unix)) == 1)
-				$week_start_unix = $week_start_unix - 7*60*60*24;
-		}
+		$week_start_unix = $month_start_unix - 60*60*24*($Tw);		
+		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
+		
+		$day_num = date("j",$week_start_unix - date('Z',$week_start_unix));
+		if($day_num <= 7 && $day_num > 1)
+			$week_start_unix = $week_start_unix - 7*60*60*24;
+		
 		$week_end_unix = $week_start_unix + 60*60*24*7;
-		if($startday == "Monday"){
-			$week_end_unix = $week_end_unix + 60*60*24;	
-		}
+		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;	
+		
 
 
-		if($startday != "Monday")
+		if($this->startday == 0)
 			$wf = 1;
 		else
 			$wf = 0;
@@ -287,7 +239,6 @@ class CalendarGrid {
 	function display_shared(){
 	
 		$today_unix = $this->args['cal']->today_unix;
-		$startday = $this->args['cal']->week_start_day;
 		$t_step = $this->args['cal']->time_step;	
 	
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
@@ -300,13 +251,10 @@ class CalendarGrid {
 		$timezone = $GLOBALS['timedate']->getUserTimeZone();
 
 		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);
-
-		if($startday == "Monday")
-			$week_start_unix = $week_start_unix + 60*60*24;
+		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
 		$week_start = date("m/d/Y H:i:s",$week_start_unix);
 		$week_end_unix = $week_start_unix + 60*60*24*7;
-		if($startday == "Monday")
-			$week_end_unix = $week_end_unix + 60*60*24;
+		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;
 		$week_end = date("m/d/Y H:i:s",$week_end_unix);
 
 
@@ -368,20 +316,15 @@ class CalendarGrid {
 	function display_year(){	
 
 		$today_unix = $this->args['cal']->today_unix;
-		$startday = $this->args['cal']->week_start_day;
 		$t_step = $this->args['cal']->time_step;	
 
-		$weekday_names = $GLOBALS['app_list_strings']['dom_cal_day_short'];
-		$weekEnd1 = 0;
-		$weekEnd2 = 6;
 
-		if($startday == "Monday"){	
-			for($d = 1; $d < 7; $d++)
-				$weekday_names[$d] = $weekday_names[$d + 1];
-			$weekday_names[7] = $GLOBALS['app_list_strings']['dom_cal_day_short'][1];
-			$weekEnd1 = 5;
-			$weekEnd2 = 6;	
-		}
+		$weekEnd1 = 0 - $this->startday; 
+		$weekEnd2 = -1 - $this->startday; 
+		if($weekEnd1 < 0)
+			$weekEnd1 += 7;		
+		if($weekEnd2 < 0)
+			$weekEnd2 += 7;	
 
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
 		$Ti = date("i",$today_unix - date('Z',$today_unix));
@@ -402,20 +345,16 @@ class CalendarGrid {
 
 		$Tz = 0;
 		$month_start_unix = 0;
-		$year_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tz);// -  $timezone['gmtOffset']*60;
+		$year_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tz);
 		$year_end_unix = $month_start_unix + 60*60*24*($diy);		
 
 		$Tw = date("w",$year_start_unix - date('Z',$year_start_unix));
 
 		$week_start_unix = $year_start_unix - 60*60*24*($Tw);
-
-		if($startday == "Monday"){
-			$week_start_unix = $week_start_unix + 60*60*24;	
-		}
+		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;		
 		$week_end_unix = $week_start_unix + 60*60*24*7;
-		if($startday == "Monday"){
-			$week_end_unix = $week_end_unix + 60*60*24;	
-		}
+		$week_end_unix = $week_end_unix + $this->startday * 60*60*24;	
+		
 
 		$str = "";
 		$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';
@@ -442,12 +381,11 @@ class CalendarGrid {
 			$month_end_unix = $month_start_unix + 60*60*24*($Tt);
 			$Tw = date("w",$month_start_unix - date('Z',$month_start_unix));	
 			$week_start_unix = $month_start_unix - 60*60*24*($Tw);
-
-			if($startday == "Monday"){
-				$week_start_unix = $week_start_unix + 60*60*24;	
-				if(date("j",$week_start_unix - date('Z',$week_start_unix)) == 1)
-					$week_start_unix = $week_start_unix - 7*60*60*24;
-			}			
+			$week_start_unix = $week_start_unix + $this->startday * 60*60*24;			
+			$day_num = date("j",$week_start_unix - date('Z',$week_start_unix));
+			if($day_num <= 7 && $day_num > 1)
+				$week_start_unix = $week_start_unix - 7*60*60*24;
+						
 						
 			if($m % 3 == 0)
 				$str .= "<tr>";		
@@ -456,7 +394,7 @@ class CalendarGrid {
 						$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';	
 							$str .= '<tr class="monthCalBodyTH">';
 								for($d = 0; $d < 7; $d++)
-									$str .= '<th width="14%">'.$weekday_names[$d+1].'</th>';			
+									$str .= '<th width="14%">'.$this->weekday_names[$d].'</th>';			
 							$str .= '</tr>';				
 							$curr_time_g = $week_start_unix;
 							$w = 0;
