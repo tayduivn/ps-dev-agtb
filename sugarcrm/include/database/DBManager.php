@@ -72,6 +72,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
+/**
+ * Base database driver implementation
+ */
 abstract class DBManager
 {
 	/**
@@ -282,6 +285,7 @@ abstract class DBManager
 	    	return false;
 		}
 		$this->registerError($msg, $dberror, $dieOnError);
+        return true;
 	}
 
 	/**
@@ -511,11 +515,13 @@ protected function checkQuery($sql, $object_name = false)
 		$this->dieOnError = $value;
 	}
 
-	/**
-	 * Implements a generic insert for any bean.
-	 *
-	 * @param object $bean SugarBean instance
-	 */
+    /**
+     * Implements a generic insert for any bean.
+     *
+     * @param SugarBean $bean SugarBean instance
+     * @return bool query result
+     *
+     */
 	public function insert(SugarBean $bean)
 	{
 		$sql = $this->insertSQL($bean);
@@ -529,7 +535,8 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param string $table
 	 * @param array $field_defs Definitions in vardef-like format
 	 * @param array $data Key/value to insert
-	 */
+     * @return bool query result
+     */
 	public function insertParams($table, $field_defs, $data)
 	{
 		$values = array();
@@ -567,14 +574,16 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->query($query);
 	}
 
-	/**
-	 * Implements a generic update for any bean
-	 *
-	 * @param object $bean  Sugarbean instance
-	 * @param array  $where values with the keys as names of fields.
-	 * If we want to pass multiple values for a name, pass it as an array
-	 * If where is not passed, it defaults to id of table
-	 */
+    /**
+     * Implements a generic update for any bean
+     *
+     * @param SugarBean $bean Sugarbean instance
+     * @param array $where values with the keys as names of fields.
+     * If we want to pass multiple values for a name, pass it as an array
+     * If where is not passed, it defaults to id of table
+     * @return bool query result
+     *
+     */
 	public function update(SugarBean $bean, array $where = array())
 	{
 		$sql = $this->updateSQL($bean, $where);
@@ -583,14 +592,15 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->query($sql,true,$msg);
 	}
 
-	/**
-	 * Implements a generic delete for any bean identified by id
-	 *
-	 * @param object $bean  Sugarbean instance
-	 * @param array  $where values with the keys as names of fields.
-	 * If we want to pass multiple values for a name, pass it as an array
-	 * If where is not passed, it defaults to id of table
-	 */
+    /**
+     * Implements a generic delete for any bean identified by id
+     *
+     * @param SugarBean $bean Sugarbean instance
+     * @param array  $where values with the keys as names of fields.
+     * If we want to pass multiple values for a name, pass it as an array
+     * If where is not passed, it defaults to id of table
+     * @return bool query result
+     */
 	public function delete(SugarBean $bean, array $where = array())
 	{
 		$sql = $this->deleteSQL($bean, $where);
@@ -605,7 +615,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * If we want to pass multiple values for a name, pass it as an array
 	 * If where is not passed, it defaults to id of table
 	 *
-	 * @param  object   $bean  Sugarbean instance
+	 * @param  SugarBean   $bean  Sugarbean instance
 	 * @param  array    $where values with the keys as names of fields.
 	 * @return resource result from the query
 	 */
@@ -645,7 +655,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Implements creation of a db table for a bean.
 	 *
 	 * NOTE: does not handle out-of-table constraints, use createConstraintSQL for that
-	 * @param object $bean  Sugarbean instance
+	 * @param SugarBean $bean  Sugarbean instance
 	 */
 	public function createTable(SugarBean $bean)
 	{
@@ -665,7 +675,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * returns SQL to create constraints or indices
 	 *
-	 * @param  object $bean SugarBean instance
+	 * @param  SugarBean $bean SugarBean instance
 	 * @return array list of SQL statements
 	 */
 	protected function createConstraintSql(SugarBean $bean)
@@ -677,14 +687,16 @@ protected function checkQuery($sql, $object_name = false)
 	 * Implements creation of a db table
 	 *
 	 * @param string $tablename
-	 * @param array  $fieldDefs
-	 * @param array  $indices
-	 * @param string $engine    MySQL engine to use
-	 */
+	 * @param array  $fieldDefs  Field definitions, in vardef format
+	 * @param array  $indices    Index definitions, in vardef format
+	 * @param string $engine    Engine parameter, used for MySQL engine so far
+     * @todo: refactor engine param to be more generic
+     * @return bool success value
+     */
 	public function createTableParams($tablename, $fieldDefs, $indices, $engine = null)
 	{
 		if (!empty($fieldDefs)) {
-			$sql = $this->createTableSQLParams($tablename, $fieldDefs, $indices,$engine);
+			$sql = $this->createTableSQLParams($tablename, $fieldDefs, $indices, $engine);
 			$res = true;
 			if ($sql) {
 				$msg = "Error creating table: $tablename";
@@ -705,7 +717,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Implements repair of a db table for a bean.
 	 *
-	 * @param  object $bean    SugarBean instance
+	 * @param  SugarBean $bean    SugarBean instance
 	 * @param  bool   $execute true if we want the action to take place, false if we just want the sql returned
 	 * @return string SQL statement or empty string, depending upon $execute
 	 */
@@ -737,7 +749,8 @@ protected function checkQuery($sql, $object_name = false)
 	 * Can this field be null?
 	 * Auto-increment and ID fields can not be null
 	 * @param array $vardef
-	 */
+     * @return bool
+     */
 	protected function isNullable($vardef)
 	{
 
@@ -759,11 +772,13 @@ protected function checkQuery($sql, $object_name = false)
 	 * Builds the SQL commands that repair a table structure
 	 *
 	 * @param  string $tablename
-	 * @param  array  $fielddefs
-	 * @param  array  $indices
+	 * @param  array  $fielddefs Field definitions, in vardef format
+	 * @param  array  $indices   Index definitions, in vardef format
 	 * @param  bool   $execute   optional, true if we want the queries executed instead of returned
 	 * @param  string $engine    optional, MySQL engine
-	 */
+     * @todo: refactor engine param to be more generic
+     * @return string
+     */
 	public function repairTableParams($tablename, $fielddefs,  $indices, $execute = true, $engine = null)
 	{
 		//jc: had a bug when running the repair if the tablename is blank the repair will
@@ -879,7 +894,7 @@ protected function checkQuery($sql, $object_name = false)
 				continue;
 
 
-			$validDBName = $this->helper->getValidDBName($name, true, 'index', true);
+			$validDBName = $this->helper->getValidDBName($value['name'], true, 'index', true);
 			if (isset($compareIndices[$validDBName])) {
 				$value['name'] = $validDBName;
 			}
@@ -955,13 +970,14 @@ protected function checkQuery($sql, $object_name = false)
 		return ($take_action === true) ? $sql : '';
 	}
 
-	/**
-	 * Compares two vardefs
-	 *
-	 * @param  array  $fielddef1 This is from the database
-	 * @param  array  $fielddef2 This is from the vardef
-	 * @return bool   true if they match, false if they don't
-	 */
+    /**
+     * Compares two vardefs
+     *
+     * @param  array  $fielddef1 This is from the database
+     * @param  array  $fielddef2 This is from the vardef
+     * @param bool $ignoreName Ignore name-only differences?
+     * @return bool   true if they match, false if they don't
+     */
 	public function compareVarDefs($fielddef1, $fielddef2, $ignoreName = false)
 	{
 		foreach ( $fielddef1 as $key => $value ) {
@@ -1075,11 +1091,12 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Creates an index identified by name on the given fields.
 	 *
-	 * @param object $bean      SugarBean instance
-	 * @param array  $fieldDefs
+	 * @param SugarBean $bean      SugarBean instance
+	 * @param array  $fieldDefs Field definitions, in vardef format
 	 * @param string $name      index name
 	 * @param bool   $unique    optional, true if we want to create an unique index
-	 */
+     * @return bool query result
+     */
 	public function createIndex(SugarBean $bean, $fieldDefs, $name, $unique = true)
 	{
 		$sql = $this->createIndexSQL($bean, $fieldDefs, $name, $unique);
@@ -1188,7 +1205,8 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * @param string $tablename
 	 * @param array  $fieldDefs
-	 */
+     * @return bool query result
+     */
 	public function addColumn($tablename, $fieldDefs)
 	{
 		$sql = $this->addColumnSQL($tablename, $fieldDefs);
@@ -1211,7 +1229,8 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param string $tablename
 	 * @param array  $newFieldDef
 	 * @param bool   $ignoreRequired optional, true if we are ignoring this being a required field
-	 */
+     * @return bool query result
+     */
 	public function alterColumn($tablename, $newFieldDef, $ignoreRequired = false)
 	{
 		$sql = $this->alterColumnSQL($tablename, $newFieldDef,$ignoreRequired);
@@ -1237,7 +1256,8 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Drops the table associated with a bean
 	 *
-	 * @param object $bean SugarBean instance
+	 * @param SugarBean $bean SugarBean instance
+     * @return bool query result
 	 */
 	public function dropTable(SugarBean $bean)
 	{
@@ -1247,7 +1267,8 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Drops the table by name
 	 *
-	 * @param string $name SugarBean instance
+	 * @param string $name Table name
+     * @return bool query result
 	 */
 	public function dropTableName($name)
 	{
@@ -1255,12 +1276,13 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->query($sql,true,"Error dropping table $name:");
 	}
 
-	/**
-	 * Deletes a column identified by fieldDef.
-	 *
-	 * @param string $name      SugarBean instance
-	 * @param array  $fieldDefs
-	 */
+    /**
+     * Deletes a column identified by fieldDef.
+     *
+     * @param SugarBean $bean   SugarBean containing the field
+     * @param array  $fieldDefs Vardef definition of the field
+     * @return bool query result
+     */
 	public function deleteColumn(SugarBean $bean, $fieldDefs)
 	{
 		$tablename = $bean->getTableName();
@@ -1269,18 +1291,19 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->query($sql,true,$msg);
 	}
 
-	/**
-	 * Generate a set of Insert statements based on the bean given
-	 *
-	 * @deprecated
-	 *
-	 * @param  object $bean         the bean from which table we will generate insert stmts
-	 * @param  string $select_query the query which will give us the set of objects we want to place into our insert statement
-	 * @param  int    $start        the first row to query
-	 * @param  int    $count        the number of rows to query
-	 * @param  string $table        the table to query from
-	 * @return string SQL insert statement
-	 */
+    /**
+     * Generate a set of Insert statements based on the bean given
+     *
+     * @deprecated
+     *
+     * @param  SugarBean $bean         the bean from which table we will generate insert stmts
+     * @param  string $select_query the query which will give us the set of objects we want to place into our insert statement
+     * @param  int    $start        the first row to query
+     * @param  int    $count        the number of rows to query
+     * @param  string $table        the table to query from
+     * @param bool $is_related_query
+     * @return string SQL insert statement
+     */
 	public function generateInsertSQL(SugarBean $bean, $select_query, $start, $count = -1, $table, $is_related_query = false)
 	{
 		$this->log->info('call to DBManager::generateInsertSQL() is deprecated');
@@ -1471,24 +1494,23 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * This function increments the global $sql_queries variable
-	 *
-	 * @param $sql The SQL statement being counted
 	 */
 	public function countQuery()
 	{
 		if (self::$queryLimit != 0 && ++self::$queryCount > self::$queryLimit
 			&&(empty($GLOBALS['current_user']) || !is_admin($GLOBALS['current_user']))) {
-		require_once('include/resource/ResourceManager.php');
-		$resourceManager = ResourceManager::getInstance();
-		$resourceManager->notifyObservers('ERR_QUERY_LIMIT');
+            require_once('include/resource/ResourceManager.php');
+            $resourceManager = ResourceManager::getInstance();
+            $resourceManager->notifyObservers('ERR_QUERY_LIMIT');
 		}
 	}
 
 	/**
 	 * Pre-process string for quoting
-	 *
+	 * @internal
 	 * @param string $string
-	 */
+     * @return string
+     */
 	protected function quoteInternal($string)
 	{
 		return from_html($string);
@@ -1504,14 +1526,14 @@ protected function checkQuery($sql, $object_name = false)
 		return "'".$this->quote($string)."'";
 	}
 
-	/**
-	 * Quote the strings of the passed in array
-	 *
-	 * The array must only contain strings
-	 *
-	 * @param array $array
-	 * @param bool  $isLike
-	 */
+    /**
+     * Quote the strings of the passed in array
+     *
+     * The array must only contain strings
+     *
+     * @param array $array
+     * @return array Quoted strings
+     */
 	public function arrayQuote(array &$array)
 	{
 		foreach($array as &$val) {
@@ -1519,11 +1541,12 @@ protected function checkQuery($sql, $object_name = false)
 		}
 		return $array;
 	}
-	/**
-	 * Frees out previous results
-	 *
-	 * @param resource $result optional, pass if you want to free a single result instead of all results
-	 */
+
+    /**
+     * Frees out previous results
+     *
+     * @param resource|bool $result optional, pass if you want to free a single result instead of all results
+     */
 	protected function freeResult($result = false)
 	{
 		if($result) {
@@ -1584,7 +1607,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Returns the number of rows returned by the result
 	 * @abstract
-	 * @param  resource $result
+	 * @param  resource $result query result resource
 	 * @return int
 	 */
 	public function getRowCount($result)
@@ -1592,20 +1615,24 @@ protected function checkQuery($sql, $object_name = false)
 		return 0;
 	}
 
-	/**
-	 * Returns the number of rows affected by the last query
-	 * @abstract
-	 * @return int
-	 */
+    /**
+     * Returns the number of rows affected by the last query
+     * @abstract
+     * @param resource $result query result resource
+     * @return int
+     */
 	public function getAffectedRowCount($result)
 	{
 		return 0;
 	}
 
-	/**
-	 * Get table description
-	 * @param string $tablename
-	 */
+    /**
+     * Get table description
+     * @param string $tablename
+     * @param bool $reload true means load from DB, false allows using cache
+     * @return array Vardef-format table description
+     *
+     */
 	public function getTableDescription($tablename, $reload = false)
 	{
 		if($reload || empty(self::$table_descriptions[$tablename])) {
@@ -1657,13 +1684,14 @@ protected function checkQuery($sql, $object_name = false)
 		return array();
 	}
 
-	/**
-	 * Truncates a string to a given length
-	 *
-	 * @param string $string
-	 * @param int    $len    length to trim to
-	 * @param string
-	 */
+    /**
+     * Truncates a string to a given length
+     *
+     * @param string $string
+     * @param int    $len    length to trim to
+     * @return string
+     *
+     */
 	public function truncate($string, $len)
 	{
 		if ( is_numeric($len) && $len > 0)
@@ -1673,13 +1701,14 @@ protected function checkQuery($sql, $object_name = false)
 		return $string;
 	}
 
-	/**
-	 * Returns the database string needed for concatinating multiple database strings together
-	 *
-	 * @param string $table table name of the database fields to concat
-	 * @param array $fields fields in the table to concat together
-	 * @return string
-	 */
+    /**
+     * Returns the database string needed for concatinating multiple database strings together
+     *
+     * @param string $table table name of the database fields to concat
+     * @param array $fields fields in the table to concat together
+     * @param string $space Separator between strings, default is single space
+     * @return string
+     */
 	public function concat($table, array $fields, $space = ' ')
 	{
 		if(empty($fields)) return '';
@@ -1797,13 +1826,13 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 /********************** SQL FUNCTIONS ****************************/
-	/**
-	 * Generates sql for create table statement for a bean.
-	 *
-	 * NOTE: does not handle out-of-table constraints, use createConstraintSQL for that
-	 * @param  object $bean SugarBean instance
-	 * @return string SQL Create Table statement
-	 */
+    /**
+     * Generates sql for create table statement for a bean.
+     *
+     * NOTE: does not handle out-of-table constraints, use createConstraintSQL for that
+     * @param SugarBean $bean SugarBean instance
+     * @return string SQL Create Table statement
+     */
 	public function createTableSQL(SugarBean $bean)
 	{
 		$tablename = $bean->getTableName();
@@ -1815,7 +1844,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Generates SQL for insert statement.
 	 *
-	 * @param  object $bean SugarBean instance
+	 * @param  SugarBean $bean SugarBean instance
 	 * @return string SQL Create Table statement
 	 */
 	public function insertSQL(SugarBean $bean)
@@ -1867,7 +1896,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Generates SQL for update statement.
 	 *
-	 * @param  object $bean SugarBean instance
+	 * @param  SugarBean $bean SugarBean instance
 	 * @param  array  $where Optional, where conditions in an array
 	 * @return string SQL Create Table statement
 	 */
@@ -1930,7 +1959,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * This method returns a where array so that it has id entry if
 	 * where is not an array or is empty
 	 *
-	 * @param  object $bean SugarBean instance
+	 * @param  SugarBean $bean SugarBean instance
 	 * @param  array  $where Optional, where conditions in an array
 	 * @return array
 	 */
@@ -1989,7 +2018,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * This method returns a complete where clause built from the
 	 * where values specified.
 	 *
-	 * @param  string $table table name
+	 * @param  SugarBean $bean SugarBean that describes the table
 	 * @param  array  $whereArray Optional, where conditions in an array
 	 * @return string
 	 */
@@ -2134,8 +2163,9 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * returns the field name used in a select
-	 * @param String $string
-	 */
+	 * @param string $string SELECT query
+     * @return string
+     */
 	protected function getFieldNameFromSelect($string)
 	{
 		if(strncasecmp($string, "DISTINCT ", 9) == 0) {
@@ -2158,7 +2188,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Generates SQL for delete statement identified by id.
 	 *
-	 * @param  object $bean SugarBean instance
+	 * @param  SugarBean $bean SugarBean instance
 	 * @param  array  $where where conditions in an array
 	 * @return string SQL Update Statement
 	 */
@@ -2168,36 +2198,37 @@ protected function checkQuery($sql, $object_name = false)
 		return "UPDATE ".$bean->getTableName()." SET deleted=1 $where";
 	}
 
-	/**
-	 * Generates SQL for select statement for any bean identified by id.
-	 *
-	 * @param  object $bean SugarBean instance
-	 * @param  array  $where where conditions in an array
-	 * @return string SQL Select Statement
-	 */
+    /**
+     * Generates SQL for select statement for any bean identified by id.
+     *
+     * @param  SugarBean $bean SugarBean instance
+     * @param  array  $where where conditions in an array
+     * @return string SQL Select Statement
+     */
 	public function retrieveSQL(SugarBean $bean, array $where)
 	{
 		$where = $this->getWhereClause($bean, $this->updateWhereArray($bean, $where));
 		return "SELECT * FROM ".$bean->getTableName()." $where AND deleted=0";
 	}
 
-	/**
-	 * This method implements a generic sql for a collection of beans.
-	 *
-	 * Currently, this function does not support outer joins.
-	 *
-	 * @param  array $bean value returned by get_class method as the keys and a bean as
-	 *      the value for that key. These beans will be joined in the sql by the key
-	 *      attribute of field defs.
-	 * @param  array $cols Optional, columns to be returned with the keys as names of bean
-	 *      as identified by get_class of bean. Values of this array is the array of fieldDefs
-	 *      to be returned for a bean. If an empty array is passed, all columns are selected.
-	 * @param  array $whereClause Optional, values with the keys as names of bean as identified
-	 *      by get_class of bean. Each value at the first level is an array of values for that
-	 *      bean identified by name of fields. If we want to pass multiple values for a name,
-	 *      pass it as an array. If where is not passed, all the rows will be returned.
-	 * @return string SQL Select Statement
-	 */
+    /**
+     * This method implements a generic sql for a collection of beans.
+     *
+     * Currently, this function does not support outer joins.
+     *
+     * @param array $beans Array of values returned by get_class method as the keys and a bean as
+     *      the value for that key. These beans will be joined in the sql by the key
+     *      attribute of field defs.
+     * @param  array $cols Optional, columns to be returned with the keys as names of bean
+     *      as identified by get_class of bean. Values of this array is the array of fieldDefs
+     *      to be returned for a bean. If an empty array is passed, all columns are selected.
+     * @param  array $whereClause Optional, values with the keys as names of bean as identified
+     *      by get_class of bean. Each value at the first level is an array of values for that
+     *      bean identified by name of fields. If we want to pass multiple values for a name,
+     *      pass it as an array. If where is not passed, all the rows will be returned.
+     *
+     * @return string SQL Select Statement
+     */
 	public function retrieveViewSQL(array $beans, array $cols = array(), array $whereClause = array())
 	{
 		$relations = array(); // stores relations between tables as they are discovered
@@ -2272,7 +2303,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Generates SQL for create index statement for a bean.
 	 *
-	 * @param  object $bean SugarBean instance
+	 * @param  SugarBean $bean SugarBean instance
 	 * @param  array  $fields fields used in the index
 	 * @param  string $name index name
 	 * @param  bool   $unique Optional, set to true if this is an unique index
@@ -2298,7 +2329,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Returns the type of the variable in the field
 	 *
-	 * @param  array $fieldDef
+	 * @param  array $fieldDef Vardef-format field def
 	 * @return string
 	 */
 	public function getFieldType($fieldDef)
@@ -2325,7 +2356,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Returns the defintion for a single column
 	 *
-	 * @param  array  $fieldDef
+	 * @param  array  $fieldDef Vardef-format field def
 	 * @param  bool   $ignoreRequired  Optional, true if we should ignore this being a required field
 	 * @param  string $table           Optional, table name
 	 * @param  bool   $return_as_array Optional, true if we should return the result as an array instead of sql
@@ -2404,7 +2435,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Returns SQL defintions for all columns in a table
 	 *
-	 * @param  array  $fieldDefs
+	 * @param  array  $fieldDefs  Vardef-format field def
 	 * @param  bool   $ignoreRequired Optional, true if we should ignor this being a required field
 	 * @param  string $tablename      Optional, table name
 	 * @return string SQL column definitions
@@ -2430,9 +2461,9 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Returns the next value for an auto increment
-	 *
-	 * @param  string $table tablename
-	 * @param  string $field_name
+	 * @abstract
+	 * @param  string $table Table name
+	 * @param  string $field_name Field name
 	 * @return string
 	 */
 	public function getAutoIncrement($table, $field_name)
@@ -2442,9 +2473,9 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Returns the sql for the next value in a sequence
-	 *
-	 * @param  string $table tablename
-	 * @param  string $field_name
+	 * @abstract
+	 * @param  string $table  Table name
+	 * @param  string $field_name  Field name
 	 * @return string
 	 */
 	public function getAutoIncrementSQL($table, $field_name)
@@ -2455,9 +2486,9 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Either creates an auto increment through queries or returns sql for auto increment
 	 * that can be appended to the end of column defination (mysql)
-	 *
-	 * @param  string $table tablename
-	 * @param  string $field_name
+	 * @abstract
+	 * @param  string $table Table name
+	 * @param  string $field_name Field name
 	 * @return string
 	 */
 	protected function setAutoIncrement($table, $field_name)
@@ -2466,20 +2497,23 @@ protected function checkQuery($sql, $object_name = false)
 		return "";
 	}
 
-	/**
-	 * Sets the next auto-increment value of a column to a specific value.
-	 *
-	 * @param  string $table tablename
-	 * @param  string $field_name
-	 */
+    /**
+     * Sets the next auto-increment value of a column to a specific value.
+     * @abstract
+     * @param  string $table Table name
+     * @param  string $field_name Field name
+     * @param $start_value  Starting autoincrement value
+     * @return string
+     *
+     */
 	public function setAutoIncrementStart($table, $field_name, $start_value)
 	{
 		return "";
 	}
 
 	/**
-	 * Deletes an auto increment (for oracle not mysql)
-	 *
+	 * Deletes an auto increment
+	 * @abstract
 	 * @param string $table tablename
 	 * @param string $field_name
 	 */
@@ -2497,7 +2531,7 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	public function addColumnSQL($tablename, $fieldDefs)
 	{
-	return $this->changeColumnSQL($tablename, $fieldDefs, 'add');
+	    return $this->changeColumnSQL($tablename, $fieldDefs, 'add');
 	}
 
 	/**
@@ -2505,7 +2539,7 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * @param  string $tablename
 	 * @param  array  $newFieldDefs
-	 * @param  bool   $ignoreRequired Optional, true if we should ignor this being a required field
+	 * @param  bool  $ignorerequired Optional, true if we should ignor this being a required field
 	 * @return string|array SQL statement(s)
 	 */
 	public function alterColumnSQL($tablename, $newFieldDefs, $ignorerequired = false)
@@ -2516,7 +2550,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Generates SQL for dropping a table.
 	 *
-	 * @param  object $bean Sugarbean instance
+	 * @param  SugarBean $bean Sugarbean instance
 	 * @return string SQL statement
 	 */
 	public function dropTableSQL(SugarBean $bean)
@@ -2548,7 +2582,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * This method generates sql that deletes a column identified by fieldDef.
 	 *
-	 * @param  object $bean      Sugarbean instance
+	 * @param  SugarBean $bean      Sugarbean instance
 	 * @param  array  $fieldDefs
 	 * @return string SQL statement
 	 */
@@ -2654,9 +2688,10 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Generate query for audit table
-	 * @param SugarBean $bean
-	 * @param array $changes
-	 */
+	 * @param SugarBean $bean SugarBean that was changed
+	 * @param array $changes List of changes, contains 'before' and 'after'
+     * @return string  Audit table INSERT query
+     */
 	protected function auditSQL(SugarBean $bean, $changes)
 	{
 		global $current_user;
@@ -2687,24 +2722,27 @@ protected function checkQuery($sql, $object_name = false)
 		return $sql;
 	}
 
-	/**
-	 * Saves changes to module's audit table
-	 *
-	 * @param object $bean    Sugarbean instance
-	 * @param array  $changes changes
-	 */
+    /**
+     * Saves changes to module's audit table
+     *
+     * @param SugarBean $bean Sugarbean instance that was changed
+     * @param array $changes List of changes, contains 'before' and 'after'
+     * @return bool query result
+     *
+     */
 	public function save_audit_records(SugarBean $bean, $changes)
 	{
 		return $this->query($this->auditSQL($bean, $changes));
 	}
 
-	/**
-	 * Uses the audit enabled fields array to find fields whose value has changed.
-	 * The before and after values are stored in the bean.
-	 *
-	 * @param object $bean Sugarbean instance
-	 * @return array
-	 */
+    /**
+     * Uses the audit enabled fields array to find fields whose value has changed.
+     * The before and after values are stored in the bean.
+     * Uses $bean->fetched_row to compare
+     *
+     * @param SugarBean $bean Sugarbean instance that was changed
+     * @return array
+     */
 	public function getDataChanges(SugarBean &$bean)
 	{
 		$changed_values=array();
@@ -2785,14 +2823,14 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->quote($string);
 	}
 
-	/**
-	 * Renames an index using fields definition
-	 *
-	 * @param  array  $old_definition
-	 * @param  array  $new_definition
-	 * @param  string $tablename
-	 * @return string SQL statement
-	 */
+    /**
+     * Renames an index using fields definition
+     *
+     * @param  array  $old_definition
+     * @param  array  $new_definition
+     * @param  string $table_name
+     * @return string SQL statement
+     */
 	public function renameIndexDefs($old_definition, $new_definition, $table_name)
 	{
 		return array($this->add_drop_constraint($table_name,$old_definition,true),
@@ -2802,7 +2840,8 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Check if type is boolean
 	 * @param string $type
-	 */
+     * @return bool
+     */
 	public function isBooleanType($type)
 	{
 		return 'bool' == $type;
@@ -2812,6 +2851,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Get truth value for boolean type
 	 * Allows 'off' to mean false, along with all 'empty' values
 	 * @param mixed $val
+     * @return bool
 	 */
 	protected function _getBooleanValue($val)
 	{
@@ -2825,6 +2865,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Check if type is a number
 	 * @param string $type
+     * @return bool
 	 */
 	public function isNumericType($type)
 	{
@@ -2834,9 +2875,12 @@ protected function checkQuery($sql, $object_name = false)
 		return false;
 	}
 
-	/**
-	 * return true if the value if empty
-	 */
+    /**
+     * Check if the value is empty value for this type
+     * @param mixed $val Value
+     * @param string $type Type (one of vardef types)
+     * @return bool true if the value if empty
+     */
 	protected function _emptyValue($val, $type)
 	{
 		if (empty($val))
@@ -2868,8 +2912,10 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
+     * @abstract
 	 * Does this type represent text (i.e., non-varchar) value?
 	 * @param string $type
+     * @return bool
 	 */
 	public function isTextType($type)
 	{
@@ -2880,6 +2926,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Check if this DB supports certain capability
 	 * See $this->capabilities for the list
 	 * @param string $cap
+     * @return bool
 	 */
 	public function supports($cap)
 	{
@@ -2891,10 +2938,10 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param string $order_by Field name
 	 * @param array $values Possible enum value
 	 * @param string $order_dir Order direction, ASC or DESC
-	 */
+     * @return string
+     */
 	public function orderByEnum($order_by, $values, $order_dir)
 	{
-		$order_by_arr = array();
 		$i = 0;
 		$order_by_arr = array();
 		foreach ($values as $key => $value) {
@@ -2912,7 +2959,8 @@ protected function checkQuery($sql, $object_name = false)
 	 * Return representation of an empty value depending on type
 	 * The value is fully quoted, converted, etc.
 	 * @param string $type
-	 */
+     * @return mixed Empty value
+     */
 	public function emptyValue($type)
 	{
 		if(isset($this->type_class[$type]) && ($this->type_class[$type] == 'bool' || $this->type_class[$type] == 'int' || $this->type_class[$type] == 'float')) {
@@ -2924,6 +2972,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * List of available collation settings
+     * @abstract
 	 * @return string
 	 */
 	public function getDefaultCollation()
@@ -2933,6 +2982,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * List of available collation settings
+     * @abstract
 	 * @return array
 	 */
 	public function getCollationList()
@@ -2959,7 +3009,8 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param int $count
 	 * @param bool $dieOnError
 	 * @param string $msg
-	 * @see DBManager::limitQuery()
+     * @return resource|bool query result
+     * @see DBManager::limitQuery()
 	 */
 	public function limitQuerySql($sql, $start, $count, $dieOnError=false, $msg='')
 	{
@@ -2978,7 +3029,8 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Check if connecting user has certain privilege
 	 * @param string $privilege
-	 */
+     * @return bool Privilege allowed?
+     */
 	public function checkPrivilege($privilege)
 	{
 		switch($privilege) {
@@ -3027,7 +3079,8 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Check if the query is a select query
 	 * @param string $query
-	 */
+     * @return bool  Is query SELECT?
+     */
 	protected function isSelect($query)
 	{
 		$query = trim($query);
@@ -3081,6 +3134,7 @@ protected function checkQuery($sql, $object_name = false)
 		return array($terms, $must_terms, $not_terms);
 	}
 
+    // Methods to check respective queries
 	protected $standardQueries = array(
 		'ALTER TABLE' => 'verifyAlterTable',
 		'DROP TABLE' => 'verifyDropTable',
@@ -3091,24 +3145,30 @@ protected function checkQuery($sql, $object_name = false)
 	);
 
 
+    /**
+     * Extract table name from a query
+     * @param string $query SQL query
+     * @return string
+     */
 	protected function extractTableName($query)
 	{
-	$query = preg_replace('/[^A-Za-z0-9_\s]/', "", $query);
-	$query = trim(str_replace(array_keys($this->standardQueries), '', $query));
+        $query = preg_replace('/[^A-Za-z0-9_\s]/', "", $query);
+        $query = trim(str_replace(array_keys($this->standardQueries), '', $query));
 
-	$firstSpc = strpos($query, " ");
-	$end = ($firstSpc > 0) ? $firstSpc : strlen($query);
-	$table = substr($query, 0, $end);
+        $firstSpc = strpos($query, " ");
+        $end = ($firstSpc > 0) ? $firstSpc : strlen($query);
+        $table = substr($query, 0, $end);
 
-	return $table;
+        return $table;
 	}
 
-	/**
-	 * Verify SQl statement using per-DB verification function
-	 * provided the function exists
-	 * @param  $query string
-	 * @return string
-	 */
+    /**
+     * Verify SQl statement using per-DB verification function
+     * provided the function exists
+     * @param  $query string
+     * @param array $skipTables List of blacklisted tables that aren't checked
+     * @return string
+     */
 	public function verifySQLStatement($query, $skipTables)
 	{
 		$query = trim($query);
@@ -3132,8 +3192,8 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Tests an CREATE TABLE query
-	 * @param string table The table name to get DDL
-	 * @param string query The query to test.
+	 * @param string $table The table name to get DDL
+	 * @param string $query The query to test.
 	 * @return string Non-empty if error found
 	 */
 	protected function verifyCreateTable($table, $query)
@@ -3198,7 +3258,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Commits pending changes to the database when the driver is setup to support transactions.
 	 * Note that the default implementation is applicable for transaction-less or auto commit scenarios.
-	 *
+	 * @abstract
 	 * @return bool true if commit succeeded, false if it failed
 	 */
 	public function commit()
@@ -3211,7 +3271,7 @@ protected function checkQuery($sql, $object_name = false)
 	 * Rollsback pending changes to the database when the driver is setup to support transactions.
 	 * Note that the default implementation is applicable for transaction-less or auto commit scenarios.
 	 * Since rollbacks cannot be done, this implementation always returns false.
-	 *
+	 * @abstract
 	 * @return bool true if rollback succeeded, false if it failed
 	 */
 	public function rollback()
@@ -3234,7 +3294,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Check special requirements for DB installation.
-	 *
+	 * @abstract
 	 * If everything is OK, return true.
 	 * If something's wrong, return array of error code and parameters
 	 * @return mixed
@@ -3245,13 +3305,15 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
-	 * Code run on new database before installing
+	 * @abstract
+     * Code run on new database before installing
 	 */
 	public function preInstall()
 	{
 	}
 
 	/**
+     * @abstract
 	 * Code run on new database after installing
 	 */
 	public function postInstall()
@@ -3272,13 +3334,18 @@ protected function checkQuery($sql, $object_name = false)
 	 *      today		return current date
 	 *      left		Take substring from the left
 	 *      date_format	Format date as string, supports %Y-%m-%d, %Y-%m, %Y
-	 *      datetime	Format date as standard-format datetime string
+     *      time_format Format time as string
+     *      date        Convert date string to datetime value
+     *      time        Convert time string to datetime value
+	 *      datetime	Convert datetime string to datetime value
 	 *      ifnull		If var is null, use default value
 	 *      concat		Concatenate strings
 	 *      quarter		Quarter number of the date
 	 *      length		Length of string
 	 *      month		Month number of the date
 	 *      add_date	Add specified interval to a date
+     *      add_time    Add time interval to a date
+     *      text2char   Convert text field to varchar
 	 *
 	 * @param string $string database string to convert
 	 * @param string $type type of conversion to do
@@ -3294,6 +3361,8 @@ protected function checkQuery($sql, $object_name = false)
 	 * - date
 	 * - time
 	 * - datetime
+     * - datetimecombo
+     * - timestamp
 	 *
 	 * @param string $string database string to convert
 	 * @param string $type type of conversion to do
@@ -3301,27 +3370,29 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	abstract public function fromConvert($string, $type);
 
-	/**
-	 * Parses and runs queries
-	 *
-	 * @param  string   $sql        SQL Statement to execute
-	 * @param  bool     $dieOnError True if we want to call die if the query returns errors
-	 * @param  string   $msg        Message to log if error occurs
-	 * @param  bool     $suppress   Flag to suppress all error output unless in debug logging mode.
-	 * @return resource|bool result set or success/failure bool
-	 */
+    /**
+     * Parses and runs queries
+     *
+     * @param  string   $sql        SQL Statement to execute
+     * @param  bool     $dieOnError True if we want to call die if the query returns errors
+     * @param  string   $msg        Message to log if error occurs
+     * @param  bool     $suppress   Flag to suppress all error output unless in debug logging mode.
+     * @param  bool     $keepResult Keep query result in the object?
+     * @return resource|bool result set or success/failure bool
+     */
 	abstract public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false);
 
-	/**
-	 * Runs a limit query: one where we specify where to start getting records and how many to get
-	 *
-	 * @param  string   $sql
-	 * @param  int      $start
-	 * @param  int      $count
-	 * @param  boolean  $dieOnError
-	 * @param  string   $msg
-	 * @return resource query result
-	 */
+    /**
+     * Runs a limit query: one where we specify where to start getting records and how many to get
+     *
+     * @param  string   $sql     SELECT query
+     * @param  int      $start   Starting row
+     * @param  int      $count   How many rows
+     * @param  boolean  $dieOnError  True if we want to call die if the query returns errors
+     * @param  string   $msg     Message to log if error occurs
+     * @param  bool     $execute Execute or return SQL?
+     * @return resource query result
+     */
 	abstract function limitQuery($sql, $start, $count, $dieOnError = false, $msg = '', $execute = true);
 
 
@@ -3390,9 +3461,9 @@ protected function checkQuery($sql, $object_name = false)
 	 *
 	 * Supports both adding and droping a constraint.
 	 *
-	 * @param  string $table     tablename
-	 * @param  array  $defintion field definition
-	 * @param  bool   $drop      true if we are dropping the constraint, false if we are adding it
+	 * @param  string $table      tablename
+	 * @param  array  $definition field definition
+	 * @param  bool   $drop       true if we are dropping the constraint, false if we are adding it
 	 * @return string SQL statement
 	 */
 	abstract public function add_drop_constraint($table, $definition, $drop = false);
@@ -3409,8 +3480,7 @@ protected function checkQuery($sql, $object_name = false)
 	/**
 	 * Returns an array of tables for this database
 	 *
-	 * @return	$tables		an array of with table names
-	 * @return	false		if no tables found
+	 * @return	array|false 	an array of with table names, false if no tables found
 	 */
 	abstract public function getTablesArray();
 
@@ -3463,7 +3533,6 @@ protected function checkQuery($sql, $object_name = false)
 	 * @param  string $tablename
 	 * @param  array  $fieldDefs
 	 * @param  array  $indices
-	 * @param  string $engine
 	 * @return string SQL Create Table statement
 	 */
 	abstract public function createTableSQLParams($tablename, $fieldDefs, $indices);
@@ -3494,11 +3563,12 @@ protected function checkQuery($sql, $object_name = false)
 	 */
 	abstract public function lastDbError();
 
-	/**
-	 * Check if this query is valid
-	 * Validates only SELECT queries
-	 * @return bool
-	 */
+    /**
+     * Check if this query is valid
+     * Validates only SELECT queries
+     * @param $query
+     * @return bool
+     */
 	abstract public function validateQuery($query);
 
 	/**
@@ -3563,7 +3633,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Generate fulltext query from set of terms
-	 * @param string $fields Field to search against
+	 * @param string $field Field to search against
 	 * @param array $terms Search terms that may be or not be in the result
 	 * @param array $must_terms Search terms that have to be in the result
 	 * @param array $exclude_terms Search terms that have to be not in the result

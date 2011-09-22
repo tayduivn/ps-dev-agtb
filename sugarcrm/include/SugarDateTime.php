@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * Sugar DateTime container
+ * Extends regular PHP DateTime with useful services
+ */
 class SugarDateTime extends DateTime
 {
     // Recognized properties and their formats
@@ -110,10 +114,12 @@ class SugarDateTime extends DateTime
 
 	/**
 	 * Internal _createFromFormat implementation for 5.2
+     * @internal
 	 * @param string $format Format like in date()
 	 * @param string $time Time string to parse
 	 * @param DateTimeZone $timezone TZ
-	 * @see DateTime::createFromFormat
+     * @return SugarDateTime
+     * @see DateTime::createFromFormat
 	 */
 	protected static function _createFromFormat($format, $time, DateTimeZone $timezone = null)
 	{
@@ -163,6 +169,7 @@ class SugarDateTime extends DateTime
 
 	/**
 	 * Load language Calendar strings
+     * @internal
 	 * @param string $name string section to return
 	 * @return array
 	 */
@@ -521,7 +528,7 @@ class SugarDateTime extends DateTime
      *
      * Since some OSes and PHP versions (please upgrade to 5.3!) do not support built-in parsing functions,
      * we have to restort to this ugliness.
-     *
+     * @internal
      * @param string $format
      * @param string $time
      * @return array Parsed parts

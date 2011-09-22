@@ -34,6 +34,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 include_once('include/database/DBHelper.php');
 
+/**
+* @deprecated
+* @internal
+*/
 class MssqlHelper extends DBHelper
 {
     /**

@@ -35,6 +35,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav=ent ONLY
 require_once('include/database/DBHelper.php');
 
+/**
+* @deprecated
+* @internal
+*/
 class OracleHelper extends DBHelper
 {
     /**

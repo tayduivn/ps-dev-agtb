@@ -32,6 +32,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
+/**
+ * @deprecated
+ * @internal
+ */
 abstract class DBHelper
 {
     /**

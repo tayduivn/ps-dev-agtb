@@ -33,6 +33,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 ********************************************************************************/
 require_once('include/database/DBHelper.php');
 
+/**
+* @deprecated
+* @internal
+*/
 class MysqlHelper extends DBHelper
 {
     /**
