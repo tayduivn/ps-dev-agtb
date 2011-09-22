@@ -70,7 +70,7 @@ class AuthenticationController
 	 * @param string $type this is the type of authetnication you want to use default is SugarAuthenticate
 	 * @return an instance of the authetnciation controller
 	 */
-	public static function &getInstance($type = 'SugarAuthenticate')
+	public static function getInstance($type = 'SugarAuthenticate')
 	{
 		if (empty(self::$authcontrollerinstance)) {
 			self::$authcontrollerinstance = new AuthenticationController($type);
