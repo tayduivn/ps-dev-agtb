@@ -107,6 +107,17 @@ class SugarRelationshipFactory {
         return false;
     }
 
+    public function getRelationshipDef($relationshipName)
+    {
+        if (empty($this->relationships[$relationshipName])) {
+            $GLOBALS['log']->fatal("Unable to find relationship $relationshipName");
+            return false;
+        }
+
+        return $this->relationships[$relationshipName];
+    }
+
+
     protected function loadRelationships()
     {
         if(sugar_is_file($this->getCacheFile()))
@@ -120,9 +131,14 @@ class SugarRelationshipFactory {
 
     protected function buildRelationshipCache()
     {
-        global $beanList, $dictionary;
+        global $beanList, $dictionary, $buildingRelCache;
+        if ($buildingRelCache)
+            return;
+        $buildingRelCache = true;
         include_once("modules/TableDictionary.php");
 
+        if (empty($beanList))
+            include("include/modules.php");
         //Reload ALL the module vardefs....
         foreach($beanList as $moduleName => $beanName)
         {
@@ -156,6 +172,7 @@ class SugarRelationshipFactory {
         sugar_file_put_contents($this->getCacheFile(), $out);
 
         $this->relationships = $relationships;
+        $buildingRelCache = false;
     }
 
 	protected function getCacheFile() {

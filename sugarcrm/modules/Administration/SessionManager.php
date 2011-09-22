@@ -98,8 +98,8 @@ class SessionManager extends SugarBean {
 
             $num = $num_users;
 
-            if(file_exists('modules\Administration\ncc_config.php')){
-                require_once('modules\Administration\ncc_config.php');
+            if(file_exists('modules/Administration/ncc_config.php')){
+                require_once('modules/Administration/ncc_config.php');
                 $num = $ncc_config['value'];
             }
 
