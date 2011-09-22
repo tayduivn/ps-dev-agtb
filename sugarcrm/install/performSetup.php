@@ -577,6 +577,7 @@ enableInsideViewConnector();
         print( $render_table_close );
         print( $render_table_open );
 
+        global $current_user;
         $current_user = new User();
         $current_user->retrieve(1);
         include("install/populateSeedData.php");
