@@ -33,8 +33,8 @@
 
 {$STYLESHEET}
 
-<script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_3.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_grp1_yui.js"}'></script>
+<script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_3.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/calendar.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/javascript/sugar_grp1.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Datetimecombo/Datetimecombo.js"}'></script>
