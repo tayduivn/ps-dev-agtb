@@ -120,6 +120,21 @@ class aSubPanel
 
 	}
 
+    /**
+     * is the sub panel default hidden?
+     *
+     * @return bool
+     */
+    public function isDefaultHidden()
+    {
+        if(isset($this->_instance_properties['default_hidden']) && $this->_instance_properties['default_hidden'] == true) {
+            return true;
+        }
+
+        return false;
+    }
+
+
 	function distinct_query ()
 	{
 		if (isset ( $this->_instance_properties [ 'get_distinct_data' ] ))
