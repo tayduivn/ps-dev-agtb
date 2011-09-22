@@ -169,6 +169,19 @@ class Link2 {
     }
 
     /**
+     * @return string the name of the link field used on the other side of the rel
+     */
+    public function getRelatedModuleLinkName() {
+        if (!$this->relationship) return false;
+
+        if ($this->getSide() == REL_LHS) {
+            return $this->relationship->getRHSLink();
+        } else {
+            return $this->relationship->getLHSLink();
+        }
+    }
+
+    /**
      *
      * @return string "many" if multiple records can be related through this link
      * or "one" if at most, one record can be related.

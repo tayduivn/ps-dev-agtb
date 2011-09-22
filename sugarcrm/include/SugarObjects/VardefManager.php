@@ -215,7 +215,7 @@ class VardefManager{
      * @param string $object the given object we wish to load the vardefs for
      * @param array $additional_search_paths an array which allows a consumer to pass in additional vardef locations to search
      */
-    static function refreshVardefs($module, $object, $additional_search_paths = null, $cacheCustom = true){
+    static function refreshVardefs($module, $object, $additional_search_paths = null, $cacheCustom = true, $params = array()){
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
         $vardef_paths = array(
@@ -253,7 +253,8 @@ class VardefManager{
             $df->buildCache($module);
         }
         //BEGIN SUGARCRM flav=pro ONLY
-        self::updateRelCFModules($module, $object);
+        if (empty($params['ignore_rel_calc_fields']))
+            self::updateRelCFModules($module, $object);
         //END SUGARCRM flav=pro ONLY
         
         //great! now that we have loaded all of our vardefs.
@@ -278,7 +279,7 @@ class VardefManager{
         }
         //END SUGARCRM flav!=sales ONLY
         if (empty($dictionary[$object])) {
-            self::loadVardef($module, $object);
+            self::loadVardef($module, $object, false, array('ignore_rel_calc_fields' => true));
         }
         if (empty($dictionary[$object]))
         {
@@ -358,13 +359,14 @@ class VardefManager{
             if (!empty($def['module']))
                 $relMod = $def['module'];
             else {
-                include_once("modules/TableDictionary.php");
                 if (!empty($dictionary[$relName]['relationships'][$relName]))
                     $relDef = $dictionary[$relName]['relationships'][$relName];//[$relName];
                 else if (!empty($dictionary[$object][$relName]))
                     $relDef = $dictionary[$object][$relName];
                 else {
-                    continue;
+                    $relDef = SugarRelationshipFactory::getInstance()->getRelationshipDef($relName);
+                    if (!$relDef)
+                        continue;
                 }
 
                 if(empty($relDef['lhs_module']))
@@ -484,7 +486,7 @@ class VardefManager{
      * @param string $object the given object we wish to load the vardefs for
      * @param bool   $refresh whether or not we wish to refresh the cache file.
      */
-    static function loadVardef($module, $object, $refresh=false){
+    static function loadVardef($module, $object, $refresh=false, $params = array()){
         //here check if the cache file exists, if it does then load it, if it doesn't
         //then call refreshVardef
         //if either our session or the system is set to developerMode then refresh is set to true
@@ -494,6 +496,10 @@ class VardefManager{
         // Retrieve the vardefs from cache.
         $key = "VardefManager.$module.$object";
         
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (empty($params['ignore_rel_calc_fields']) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+            $refresh = true;
+        //END SUGARCRM flav=pro ONLY
         if(!$refresh)
         {
             $return_result = sugar_cache_retrieve($key);
@@ -512,7 +518,7 @@ class VardefManager{
             //if the consumer has demanded a refresh or the cache/modules... file
             //does not exist, then we should do out and try to reload things
             if($refresh || !file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/' . $object . 'vardefs.php')){
-                VardefManager::refreshVardefs($module, $object);
+                VardefManager::refreshVardefs($module, $object, null, null, $params);
             }
             
             //at this point we should have the cache/modules/... file

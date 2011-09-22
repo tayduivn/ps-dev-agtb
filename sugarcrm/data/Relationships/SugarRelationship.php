@@ -144,7 +144,7 @@ abstract class SugarRelationship
     }
 
     /**
-     * @return Link2 left link in relationship.
+     * @return String left link in relationship.
      */
     public function getLHSLink()
     {
@@ -152,7 +152,7 @@ abstract class SugarRelationship
     }
 
     /**
-     * @return Link2 right link in relationship.
+     * @return String right link in relationship.
      */
     public function getRHSLink()
     {
