@@ -72,23 +72,26 @@ function initFullCompose($ret)
  * @param Array $data
  * @param Bool $forFullCompose If full compose is set to TRUE, then continue execution and include the full Emails UI.  Otherwise
  *             the data generated is returned.
+ * @param SugarBean $bean Optional - parent object with data
  */
-function generateComposeDataPackage($data,$forFullCompose = TRUE)
+function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 {
 	// we will need the following:
 	if( isset($data['parent_type']) && !empty($data['parent_type']) &&
 	isset($data['parent_id']) && !empty($data['parent_id']) &&
 	!isset($data['ListView']) && !isset($data['replyForward'])) {
-		global $beanList;
-		global $beanFiles;
-		global $mod_strings;
+	    if(empty($bean)) {
+    		global $beanList;
+    		global $beanFiles;
+    		global $mod_strings;
 
-		$parentName = '';
-		$class = $beanList[$data['parent_type']];
-		require_once($beanFiles[$class]);
+    		$parentName = '';
+    		$class = $beanList[$data['parent_type']];
+    		require_once($beanFiles[$class]);
 
-		$bean = new $class();
-		$bean->retrieve($data['parent_id']);
+    		$bean = new $class();
+    		$bean->retrieve($data['parent_id']);
+	    }
 		if (isset($bean->full_name)) {
 			$parentName = $bean->full_name;
 		} elseif(isset($bean->name)) {
@@ -114,7 +117,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE)
 		$email_id = "";
 		$attachments = array();
 		if ($bean->module_dir == 'Cases') {
-			$subject = str_replace('%1', $bean->case_number, $bean->getEmailSubjectMacro() . " ". from_html($bean->name)) ;//bug 41928 
+			$subject = str_replace('%1', $bean->case_number, $bean->getEmailSubjectMacro() . " ". from_html($bean->name)) ;//bug 41928
 			$bean->load_relationship("contacts");
 			$contact_ids = $bean->contacts->get();
 			$contact = new Contact();

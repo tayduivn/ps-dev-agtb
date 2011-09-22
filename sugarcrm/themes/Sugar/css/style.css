@@ -4109,8 +4109,8 @@ color: #fff;
 }
 
 #moduleList .dashletPanelMenu  {
-padding: 10px;
-padding: 10px\9; /*ie hack */
+padding: 0px;
+padding: 0px\9; /*ie hack */
 background-color: rgba(0,0,0,.2);
 background-color: #cccccc\9;  /*ie hack */
 -moz-border-radius: 0px 0px 6px 6px;
@@ -4137,9 +4137,10 @@ position: relative;
 width: 435px;
 
 background-color: #ffffff;
--moz-border-radius: 6px;
-border-radius: 6px;
--webkit-border-radius: 6px;
+-moz-border-radius: 0px 0px 6px 6px;
+border-radius:  0px 0px 6px 6px;
+-webkit-border-bottom-left-radius: 6px;
+-webkit-border-bottom-right-radius: 6px;
 border: 1px solid #999999;
 }
 
@@ -6119,4 +6120,9 @@ white-space: nowrap;
 li.active a img.deletePageImg {
    display: inline !important;
    margin-bottom: 2px;
+}
+
+#ajaxUIErrorPanel .ft {
+    font-weight: bold;
+    font-size: 1.2em;
 }

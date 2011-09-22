@@ -35,19 +35,21 @@ require_once('include/generic/SugarWidgets/SugarWidgetField.php');
 //TODO Rename this to edit link
 class SugarWidgetSubPanelEditButton extends SugarWidgetField
 {
-	function displayHeaderCell(&$layout_def)
+    protected static $defs = array();
+    protected static $edit_icon_html;
+
+	function displayHeaderCell($layout_def)
 	{
 		return '&nbsp;';
 	}
 
-	function displayList(&$layout_def)
+	function displayList($layout_def)
 	{
-		global $app_strings, $beanList;
-//BEGIN SUGARCRM flav=pro ONLY
-		$this->bean = new $beanList[$layout_def['module']]();
-//END SUGARCRM flav=pro ONLY
+		global $app_strings;
 
-		$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']);
+		if(empty(self::$edit_icon_html)) {
+		    self::$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']);
+		}
 
         $onclick ='';
 //BEGIN SUGARCRM flav=pro ONLY
@@ -63,35 +65,44 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
 		if($layout_def['EditView'] && $this->isQuickCreateValid($layout_def['module'],$layout_def['subpanel_id'])){
 			return '<a href="#" class="listViewTdToolsS1" onclick="' . $onclick . '">' .
-                    $edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
+                    self::$edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
 		}else
 //END SUGARCRM flav=pro ONLY
-            if($layout_def['EditView']) {
+        if($layout_def['EditView']) {
 			return "<a href='#' onMouseOver=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
 			. " onFocus=\"javascript:subp_nav('".$layout_def['module']."', '".$layout_def['fields']['ID']."', 'e', this"
 			. (empty($layout_def['linked_field']) ? "" : ", '{$layout_def['linked_field']}'") . ");\""
-			. ' class="listViewTdToolsS1">' . $edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
-		}
-		else{
+			. ' class="listViewTdToolsS1">' . self::$edit_icon_html . '&nbsp;' . $app_strings['LNK_EDIT'] .'</a>&nbsp;';
 		}
 
-			return '';
-		}
-	//}
+        return '';
+    }
 
 //BEGIN SUGARCRM flav=pro ONLY
 
-    function isQuickCreateValid($module,$panel_id) {
+    protected function getSubpanelDefs($module_dir)
+    {
+        if(!isset(self::$defs[$module_dir])) {
+            if (file_exists ( "modules/$module_dir/metadata/subpaneldefs.php" ))
+                require "modules/$module_dir/metadata/subpaneldefs.php";
+
+            if (file_exists ( "custom/modules/$module_dir/Ext/Layoutdefs/layoutdefs.ext.php" ))
+                require "custom/modules/$module_dir/Ext/Layoutdefs/layoutdefs.ext.php";
+
+            self::$defs[$module_dir] = $layout_defs;
+        }
+
+        return self::$defs[$module_dir];
+
+    }
+
+    function isQuickCreateValid($module,$panel_id)
+    {
         //try to retrieve the subpanel defs
         global $beanList;
         $isValid = false;
-        $parentBean = new $beanList[$_REQUEST['module']]();
-        if (file_exists ( 'custom/modules/' . $parentBean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php' )){
-            require ('custom/modules/' . $parentBean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php') ;
-        }elseif (file_exists ( 'modules/' . $parentBean->module_dir . '/metadata/subpaneldefs.php' )){
-            require ('modules/' . $parentBean->module_dir . '/metadata/subpaneldefs.php') ;
-        }
+        $layout_defs = $this->getSubpanelDefs($_REQUEST['module']);
 
         //lets check to see if the subpanel buttons are defined, and if they extend quick create
         //If no buttons are defined, then the default ones are used which do NOT use quick create
@@ -136,23 +147,14 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         return false;
     }
 
-
-
-	function getFormName(&$layout_def) {
-        global $beanList;
-	    $parentBean = new $beanList[$_REQUEST['module']]();
-        $relFound = false;
-        $module_name = strtolower($_REQUEST['module']);
+	function getFormName($layout_def)
+	{
         $formname = "formform";
 
         //we need to retrieve the relationship name as the form name
 
         //if this is a collection, just return the module name, start by loading the subpanel definitions
-        if (file_exists ( 'modules/' . $parentBean->module_dir . '/metadata/subpaneldefs.php' ))
-            require ('modules/' . $parentBean->module_dir . '/metadata/subpaneldefs.php') ;
-
-        if (file_exists ( 'custom/modules/' . $parentBean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php' ))
-            require ('custom/modules/' . $parentBean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php') ;
+        $layout_defs = $this->getSubpanelDefs($_REQUEST['module']);
 
         //check to make sure the proper arrays were loaded
         if (!empty($layout_defs) && is_array($layout_defs) && !empty($layout_defs[$_REQUEST['module']]) && !empty($layout_defs[$_REQUEST['module']]['subpanel_setup'][$layout_def['subpanel_id']] )){
@@ -163,6 +165,11 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
                 return $formname;
             }
         }
+
+        global $beanList;
+		if(empty($this->bean)) {
+            $this->bean = new $beanList[$layout_def['module']]();
+		}
 
         //load the bean relationships for the next check
         $link = $layout_def['linked_field'];
@@ -176,6 +183,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 
         }else{
             //if the relationship was not found on the subpanel bean, then see if the relationship is defined on the parent bean
+	        $parentBean = new $beanList[$_REQUEST['module']]();
             $subpanelMod = strtolower($layout_def['module']);
             if(!empty($parentBean->field_name_map[$subpanelMod]) && !empty($parentBean->field_name_map[$subpanelMod]['relationship'])){
                 //return relationship name

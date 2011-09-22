@@ -380,7 +380,7 @@ class ModuleBuilderController extends SugarController
                     $module = 'Users';
                 }
 
-                $bean = loadBean($module);
+                $bean = BeanFactory::getBean($module);
                 if(!empty($bean))
                 {
 	                $field_defs = $bean->field_defs;
@@ -408,7 +408,20 @@ class ModuleBuilderController extends SugarController
                     $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
                     
                 }
-		        //#28707 ,clear all the js files in cache
+                //BEGIN SUGARCRM flav=pro ONLY
+                //Make sure to clear the vardef for related modules as well
+                $relatedMods = array();
+                if (!empty($field->dependency))
+                    $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->dependency));
+                if (!empty($field->formula))
+                    $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
+                foreach($relatedMods as $mName => $oName)
+                {
+                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($oName), true, false);
+                    VardefManager::clearVardef($mName, $oName);
+                }
+                //END SUGARCRM flav=pro ONLY
+                //#28707 ,clear all the js files in cache
 		        $repair->module_list = array();
 		        $repair->clearJsFiles();
             }
@@ -444,9 +457,8 @@ class ModuleBuilderController extends SugarController
         }
         
         $df = new StandardField ( $module ) ;
+        $mod = BeanFactory::getBean($module);
         $class_name = $GLOBALS [ 'beanList' ] [ $module ] ;
-        require_once ($GLOBALS [ 'beanFiles' ] [ $class_name ]) ;
-        $mod = new $class_name ( ) ;
         $df->setup ( $mod ) ;
 
         $field->module = $mod;
@@ -465,7 +477,19 @@ class ModuleBuilderController extends SugarController
         //#28707 ,clear all the js files in cache
         $repair->module_list = array();
         $repair->clearJsFiles();
-
+        //BEGIN SUGARCRM flav=pro ONLY
+        //Make sure to clear the vardef for related modules as well
+        $relatedMods = array();
+        if (!empty($field->dependency))
+            $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->dependency));
+        if (!empty($field->formula))
+            $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->formula));
+        foreach($relatedMods as $mName => $oName)
+        {
+            $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($oName), true, false);
+            VardefManager::clearVardef($mName, $oName);
+        }
+        //END SUGARCRM flav=pro ONLY
 
         // now clear the cache so that the results are immediately visible
         include_once ('include/TemplateHandler/TemplateHandler.php') ;

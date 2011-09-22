@@ -42,7 +42,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
 
           // email_xss settings to be saved using config_override
         $this->email_xss = array(
-            'applet' => 'applet',
+            //'applet' => 'applet',
             'form' => 'form',
             'iframe' => 'iframe',
             'script' => 'script'

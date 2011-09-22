@@ -821,7 +821,7 @@ class DynamicField {
              * @bug 43471
              * @issue 43471
              * @itr 23441
-             * 
+             *
              * force the name to be lower as it needs to be lower since that is how it's put into the key
              * in the get_columns() call above.
              */
@@ -939,7 +939,7 @@ class DynamicField {
 
     }
 
-   function populateXTPL(&$xtpl, $view) {
+   function populateXTPL($xtpl, $view) {
 
         if($this->bean->hasCustomFields()){
             $results = $this->getAllFieldsView($view, 'xtpl');
@@ -958,7 +958,7 @@ class DynamicField {
 
     }
 
-    function populateAllXTPL(&$xtpl, $view){
+    function populateAllXTPL($xtpl, $view){
         $this->populateXTPL($xtpl, $view);
 
     }
