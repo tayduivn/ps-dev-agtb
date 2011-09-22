@@ -286,6 +286,15 @@ class QuotesViewEdit extends ViewEdit
 						if(empty($product_list)){
 								$add_row .= "addTable('group_$product_bundle->id','$product_bundle->bundle_stage', '$product_bundle->name' , ' ".format_money($product_bundle->shipping,FALSE)."');\n";
 						} //if
+						$bundle_list = $product_bundle->get_product_bundle_line_items();
+						if (is_array($bundle_list)) {
+    						while (list($key, $line_item) = each ($bundle_list)) {
+    						    if ($line_item->object_name == "ProductBundleNote") {
+    						        $encoded_description = js_escape(br2nl($line_item->description));
+    								$add_row .= "addCommentRow('$line_item->id', 'group_$product_bundle->id', '$encoded_description');\n";
+    							}
+    						}
+					  }            
 					} //if
 				}
 			}
