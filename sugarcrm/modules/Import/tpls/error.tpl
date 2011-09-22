@@ -30,7 +30,8 @@
 // $Id: error.tpl 25541 2007-01-11 21:57:54Z jmertic $
 
 *}
-
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
+<script>
 
     //set the variables
     var modalBod = "{$MESSAGE}";
@@ -49,9 +50,9 @@
     //function called when 'start over' button is pressed
     var chooseToStartOver = function() {
         //hide the modal and redirect window to previous step
-        SUGAR.importWizard.closeDialog();
-        //document.location.href='index.php?module=Import&action='+actionVAR+'&import_module='+importModuleVAR+'&source='+sourceVAR;
-        SUGAR.importWizard.renderDialog(importModuleVAR,actionVAR,sourceVAR);
+        ImportErrorBox.destroy();
+        document.location.href='index.php?module=Import&action='+actionVAR+'&import_module='+importModuleVAR+'&source='+sourceVAR;
+        //SUGAR.importWizard.renderDialog(importModuleVAR,actionVAR,sourceVAR);
     };
     var chooseToCancel = function() {
         //do nothing, just hide the modal
@@ -86,3 +87,4 @@
     ImportErrorBox.render(document.body);
     ImportErrorBox.show();
 
+</script>

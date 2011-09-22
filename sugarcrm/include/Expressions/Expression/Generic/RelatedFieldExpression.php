@@ -88,8 +88,12 @@ class RelatedFieldExpression extends GenericExpression
                 var linkId = false, url = "index.php?";
                 
                 if (linkDef && linkDef.id_name && linkDef.module) {
-                    linkId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
-                    module = linkDef.module;
+                    var idField = document.getElementById(linkDef.id_name);
+                    if (idField && idField.tagName == "INPUT")
+                    {
+                        linkId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
+                        module = linkDef.module;
+                    }
                 }
                 if (!module || (!record && !linkId))
                     return "";
