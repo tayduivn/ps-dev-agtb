@@ -109,14 +109,14 @@ class Calendar {
 		if(!empty($_REQUEST['month']))
 			$_REQUEST['month'] = intval($_REQUEST['month']);
 
-		if (isset($_REQUEST['day']))
+		if (!empty($_REQUEST['day']))
 			$date_arr['day'] = $_REQUEST['day'];
-		if (isset($_REQUEST['month']))
+		if (!empty($_REQUEST['month']))
 			$date_arr['month'] = $_REQUEST['month'];
-		if (isset($_REQUEST['week']))
+		if (!empty($_REQUEST['week']))
 			$date_arr['week'] = $_REQUEST['week'];
 
-		if (isset($_REQUEST['year'])){
+		if (!empty($_REQUEST['year'])){
 			if ($_REQUEST['year'] > 2037 || $_REQUEST['year'] < 1970){
 				print("Sorry, calendar cannot handle the year you requested");
 				print("<br>Year must be between 1970 and 2037");
