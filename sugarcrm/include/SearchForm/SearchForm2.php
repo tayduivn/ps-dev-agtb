@@ -876,12 +876,12 @@ require_once('include/EditView/EditView2.php');
                             } elseif (preg_match('/^\[[(this|last|next)_][_a-z0-9]*\]$/', $field_value)) {
                                 switch($operator) {
                                     case 'last_7_days':
-                                        $startDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() - (7 * 24 * 60 * 60)));
+                                        $startDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() - (7 * TimeDate::SECONDS_IN_A_DAY)));
                                         $endDate = $timedate->getDayStartEndGMT(date('m/d/Y'));
                                         break;
                                     case 'next_7_days':
                                         $startDate = $timedate->getDayStartEndGMT(date('m/d/Y'));
-                                        $endDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() + (7 * 24 * 60 * 60)));
+                                        $endDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() + (7 * TimeDate::SECONDS_IN_A_DAY)));
                                         break;
                                     case 'next_month':
                                         $startDate = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, date("m")+1, 01,   date("Y"))));
@@ -896,12 +896,12 @@ require_once('include/EditView/EditView2.php');
                                         $endDate = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, -1, date("m")+1, 01,   date("Y"))));
                                         break;
                                     case 'last_30_days':
-                                        $startDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() - (30 * 24 * 60 * 60)));
+                                        $startDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() - (30 * TimeDate::SECONDS_IN_A_DAY)));
                                         $endDate = $timedate->getDayStartEndGMT(date('m/d/Y'));
                                         break;
                                     case 'next_30_days':
                                         $startDate = $timedate->getDayStartEndGMT(date('m/d/Y'));
-                                        $endDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() + (30 * 24 * 60 * 60)));
+                                        $endDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() + (30 * TimeDate::SECONDS_IN_A_DAY)));
                                         break;
                                     case 'this_year':
                                         $startDate = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 01, 01,   date("Y"))));
