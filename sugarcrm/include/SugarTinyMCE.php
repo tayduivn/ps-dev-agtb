@@ -54,11 +54,10 @@ class SugarTinyMCE {
 		'strict_loading_mode'	=> true,
 		'mode'	=> 'exact',
 		'language' => 'en',
-	    'plugins' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality',
+	    'plugins' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality,fullpage',
 		'elements'	=> '',
         'extended_valid_elements' => 'style,hr[class|width|size|noshade],@[class|style]',
-        'content_css' => 'include/javascript/tiny_mce/themes/advanced/skins/default/content.css',
-
+        'content_css' => 'include/javascript/tiny_mce/themes/advanced/skins/default/content.css'
 	);
 	
 	
@@ -129,16 +128,18 @@ $ret .=<<<eoq
 </script>
 
 eoq;
+
 		return $ret;
 	}
 	
     function getConfig($type = 'default') {
+
         global $json;
         
         if(empty($json)) {
             $json = getJSONobj();
         }
-        
+
         $config = $this->defaultConfig;
         //include tinymce lang file
         $lang = substr($GLOBALS['current_language'], 0, 2);
