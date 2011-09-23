@@ -4575,7 +4575,6 @@ function create_export_query_relate_link_patch($module, $searchFields, $where){
 		return $ret_array;
 	}
 	$seed = loadBean($module);
-    $join = array('join'=>'');
     foreach($seed->field_defs as $name=>$field)
 	{
 
