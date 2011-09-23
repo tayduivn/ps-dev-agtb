@@ -45,7 +45,7 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_user->setPreference('test_pref', 'dog');
 
         $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
-        $this->assertFalse(isset($_SESSION[$this->_user->user_name . '_PREFERENCES']['general']['test_pref']));
+        $this->assertFalse(isset($_SESSION[$this->_user->user_name . '_PREFERENCES']['global']['test_pref']));
     }
 
     public function testSettingAUserPreferenceInSession()
