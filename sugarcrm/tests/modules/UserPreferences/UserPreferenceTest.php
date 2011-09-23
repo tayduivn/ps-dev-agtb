@@ -35,8 +35,9 @@ class UserTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        unset($_SESSION[$GLOBALS['current_user']->user_name . '_PREFERENCES']);
         unset($GLOBALS['current_user']);
-        unset($_SESSION);
+        unset($_SESSION[$this->_user->user_name . '_PREFERENCES']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
