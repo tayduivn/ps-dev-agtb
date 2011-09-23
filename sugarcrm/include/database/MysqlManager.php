@@ -72,6 +72,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
+/**
+ * MySQL manager implementation for mysql extension
+ */
 class MysqlManager extends DBManager
 {
 	/**
@@ -170,11 +173,11 @@ class MysqlManager extends DBManager
 		return $result;
 	}
 
-	/**
-	 * Returns the number of rows affected by the last query
-	 *
-	 * @return int
-	 */
+    /**
+     * Returns the number of rows affected by the last query
+     * @param $result
+     * @return int
+     */
 	public function getAffectedRowCount($result)
 	{
 		return mysql_affected_rows($this->getDatabase());

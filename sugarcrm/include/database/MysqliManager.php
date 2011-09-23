@@ -74,6 +74,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/database/MysqlManager.php');
 
+/**
+ * MySQL manager implementation for mysqli extension
+ */
 class MysqliManager extends MysqlManager
 {
 	/**

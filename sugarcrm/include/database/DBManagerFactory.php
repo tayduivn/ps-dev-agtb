@@ -30,14 +30,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/database/DBManager.php');
 
+/**
+ * Database driver factory
+ * Instantiates and configures appropriate DB drivers
+ */
 class DBManagerFactory
 {
     static $instances = array();
 
     /**
-	 * Returns a reference to the DB object of specific type
+     * Returns a reference to the DB object of specific type
      *
      * @param  string $type DB type
+     * @param array $config DB configuration
      * @return object DBManager instance
      */
     public static function getTypeInstance($type, $config = array())
@@ -215,6 +220,13 @@ class DBManagerFactory
 
     }
 
+    /**
+     * Compares two drivers by priority
+     * @internal
+     * @param $a
+     * @param $b
+     * @return int
+     */
     public static function _compareDrivers($a, $b)
     {
         return $b->priority - $a->priority;
@@ -246,7 +258,8 @@ class DBManagerFactory
      * Check if we have freeTDS driver installed
      * Invoked when connected to mssql. checks if we have freetds version of mssql library.
 	 * the response is put into a global variable.
-	 */
+     * @return bool
+     */
     public static function isFreeTDS()
     {
         static $is_freetds = null;

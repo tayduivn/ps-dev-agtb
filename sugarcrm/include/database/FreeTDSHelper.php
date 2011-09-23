@@ -22,7 +22,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 include_once('include/database/MssqlHelper.php');
 
-class FreeTDSHelper extends MssqlHelper 
+/**
+* @deprecated
+* @internal
+*/
+class FreeTDSHelper extends MssqlHelper
 {
     /**
 	 * @see DBHelper::massageValue()

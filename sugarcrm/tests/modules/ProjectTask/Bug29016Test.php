@@ -50,8 +50,10 @@ class Bug29016Test extends Sugar_PHPUnit_Framework_TestCase
         $this->task = new ProjectTask();
         $this->task->resource_id = $this->user->id;
         $this->rid = create_guid();
-        $GLOBALS['db']->query(sprintf("insert into project_resources (id, date_modified, modified_user_id, created_by, resource_id, resource_type) values ('%s', NOW(), '%s', '%s', '%s', 'Users')",
-                                      $this->rid, $this->user->id, $this->user->id, $this->user->id));
+        $now = $GLOBALS['db']->now();
+        $GLOBALS['db']->query("insert into project_resources (id, date_modified, modified_user_id, created_by, resource_id, resource_type)"
+                               ." values ('{$this->rid}', $now, '{$this->user->id}', '{$this->user->id}', '{$this->user->id}', 'Users')"
+                              );
     }
 
     public function tearDown()
@@ -59,8 +61,8 @@ class Bug29016Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 
-        $GLOBALS['db']->query(sprintf("delete from project_task where id='%s'", $this->task->id));
-        $GLOBALS['db']->query(sprintf("delete from project_resource where id='%s'", $this->rid));
+        $GLOBALS['db']->query("delete from project_task where id='{$this->task->id}'");
+        $GLOBALS['db']->query("delete from project_resources where id='{$this->rid}'");
     }
 
 

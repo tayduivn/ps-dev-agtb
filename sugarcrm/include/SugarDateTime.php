@@ -20,6 +20,10 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * Sugar DateTime container
+ * Extends regular PHP DateTime with useful services
+ */
 class SugarDateTime extends DateTime
 {
     // Recognized properties and their formats
@@ -110,10 +114,12 @@ class SugarDateTime extends DateTime
 
 	/**
 	 * Internal _createFromFormat implementation for 5.2
+     * @internal
 	 * @param string $format Format like in date()
 	 * @param string $time Time string to parse
 	 * @param DateTimeZone $timezone TZ
-	 * @see DateTime::createFromFormat
+     * @return SugarDateTime
+     * @see DateTime::createFromFormat
 	 */
 	protected static function _createFromFormat($format, $time, DateTimeZone $timezone = null)
 	{
@@ -163,6 +169,7 @@ class SugarDateTime extends DateTime
 
 	/**
 	 * Load language Calendar strings
+     * @internal
 	 * @param string $name string section to return
 	 * @return array
 	 */
@@ -216,7 +223,8 @@ class SugarDateTime extends DateTime
 	 *
 	 * @param string $name
 	 * @param array $args
-	 */
+     * @return mixed
+     */
 	public function __call($name, $args)
 	{
 		// fill in 5.2.x gaps
@@ -356,7 +364,8 @@ class SugarDateTime extends DateTime
 	 * @param string $view Which view we are using - day, week, month
 	 * @param SugarDateTime $start_time Start time
 	 * @param SugarDateTime $end_time End time
-	 */
+     * @return array
+     */
 	static function getHashList($view, $start_time, $end_time)
 	{
 		$hash_list = array();
@@ -392,7 +401,8 @@ class SugarDateTime extends DateTime
 	 * @param int $day  Day, starting with 1, default is current
 	 * @param int $month Month, starting with 1, default is current
 	 * @param int $year Year, default is current
-	 */
+     * @return SugarDateTime
+     */
 	function get_day_begin($day = null, $month = null, $year = null)
 	{
 	    $newdate = clone $this;
@@ -484,7 +494,8 @@ class SugarDateTime extends DateTime
 
 	/**
 	 * Convert date to string - 'r' format, like: Thu, 21 Dec 2000 16:01:07 +0200
-	 */
+     * @return string
+     */
 	function __toString()
 	{
 	    return $this->format('r');
@@ -517,7 +528,7 @@ class SugarDateTime extends DateTime
      *
      * Since some OSes and PHP versions (please upgrade to 5.3!) do not support built-in parsing functions,
      * we have to restort to this ugliness.
-     *
+     * @internal
      * @param string $format
      * @param string $time
      * @return array Parsed parts
@@ -599,6 +610,9 @@ class SugarDateTime extends DateTime
     /**
      * (non-PHPdoc)
      * @see DateTime::setDate()
+     * @param $year
+     * @param $month
+     * @param $day
      * @return SugarDateTime
      */
     public function setDate ($year, $month, $day)
@@ -610,6 +624,9 @@ class SugarDateTime extends DateTime
     /**
      * (non-PHPdoc)
      * @see DateTime::setTime()
+     * @param $hour
+     * @param $minute
+     * @param int $sec
      * @return SugarDateTime
      */
     public function setTime($hour, $minute, $sec = 0)
@@ -621,6 +638,7 @@ class SugarDateTime extends DateTime
     /**
      * (non-PHPdoc)
      * @see DateTime::modify()
+     * @param $modify
      * @return SugarDateTime
      */
     public function modify($modify)
