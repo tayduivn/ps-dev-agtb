@@ -25,36 +25,36 @@ require_once 'modules/Users/User.php';
 
 class UserTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	protected $_user = null;
+    protected $_user = null;
 
-	public function setUp() 
+    public function setUp()
     {
-    	$this->_user = SugarTestUserUtilities::createAnonymousUser();
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
-	
-	public function tearDown()
-	{
-	    unset($GLOBALS['current_user']);
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
+
+    public function tearDown()
+    {
+        unset($GLOBALS['current_user']);
         unset($_SESSION);
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
 
     public function testSettingAUserPreferenceNotSetInSession()
     {
-        $this->_user->setPreference('test_pref','dog');
+        $this->_user->setPreference('test_pref', 'dog');
 
-        $this->assertEquals('dog',$this->_user->getPreference('test_pref'));
-        $this->assertFalse(isset($_SESSION[$this->_user->user_name.'_PREFERENCES']['general']['test_pref']));
+        $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
+        $this->assertFalse(isset($_SESSION[$this->_user->user_name . '_PREFERENCES']['general']['test_pref']));
     }
 
     public function testSettingAUserPreferenceInSession()
     {
         $GLOBALS['current_user'] = $this->_user;
-        $this->_user->setPreference('test_pref','dog');
+        $this->_user->setPreference('test_pref', 'dog');
 
-        $this->assertEquals('dog',$this->_user->getPreference('test_pref'));
-        $this->assertEquals('dog', $_SESSION[$this->_user->user_name.'_PREFERENCES']['global']['test_pref']);
+        $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
+        $this->assertEquals('dog', $_SESSION[$this->_user->user_name . '_PREFERENCES']['global']['test_pref']);
     }
 }
 
