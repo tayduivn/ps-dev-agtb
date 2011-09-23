@@ -1764,17 +1764,18 @@ class SugarBean
                 //Check that the fields are set in the request and that they don't match the current values.
                 if (!empty($this->field_defs['parent_type']) && $this->field_defs['parent_type']['type'] == 'parent_type'
                     && !empty($this->field_defs['parent_id']) && $this->field_defs['parent_id']['type'] == 'id'
-                    && isset($this->parent_type) && isset($this->parent_id) && isset($this->fetched_row['parent_id'])
-                    && $this->parent_id != $this->fetched_row['parent_id'])
+                    && !empty($this->fetched_row['parent_type']) && !empty($this->fetched_row['parent_id'])
+                    && (!isset($this->parent_id) || $this->parent_id != $this->fetched_row['parent_id']))
                 {
-                    if (!empty($this->field_defs[$lname]['module']) && $this->field_defs[$lname]['module'] == $this->fetched_row['parent_type'])
+                    if (!empty($this->field_defs[$lname]['module'])
+                        && $this->field_defs[$lname]['module'] == $this->fetched_row['parent_type'])
                     {
                         SugarRelationship::addToResaveList(
                             BeanFactory::getBean($this->fetched_row['parent_type'], $this->fetched_row['parent_id'])
                         );
                     }
                 }
-                
+
                 $beans = $this->$lname->getBeans();
                 //Resave any related beans
                 if(!empty($beans))
