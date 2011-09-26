@@ -70,7 +70,7 @@ user_detailview_tabs.on('contentReady', function(e){
     <input type="hidden" name="return_id">
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 
-    <tr><td colspan='2' width="100%" nowrap>{$BUTTONS}</td></tr>
+    <tr><td colspan='2' width="100%" nowrap>{$EDITBUTTONS}{$BUTTONS}</td></tr>
 </table>
 </form>
 

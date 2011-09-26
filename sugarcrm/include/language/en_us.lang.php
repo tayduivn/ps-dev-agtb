@@ -463,14 +463,14 @@ $app_list_strings = array (
     'P3' => 'Low',
   ),
   //END SUGARCRM flav!=sales ONLY
-  //BEGIN SUGARCRM flav=sales ONLY
   'user_type_dom' =>
   array (
     'RegularUser' => 'Regular User',
+  //BEGIN SUGARCRM flav=sales ONLY
     'UserAdministrator' => 'User Administrator',
+  //END SUGARCRM flav=sales ONLY
     'Administrator' => 'Administrator',
   ),
-  //END SUGARCRM flav=sales ONLY
   'user_status_dom' =>
   array (
     'Active' => 'Active',

@@ -39,14 +39,19 @@ $viewdefs['Users']['DetailView'] = array(
     'panels' => array (
         'LBL_USER_INFORMATION' => array (
             array('full_name','user_name'),
-            array('status','UserType'),
+            array('status',
+                  array(
+                      'name'=>'UserType',
+                      'customCode'=>'{$USER_TYPE_READONLY}',
+                  ),
+            ),
             array('picture'),
         ),
         'LBL_EMPLOYEE_INFORMATION' => array(
             array('employee_status',''),
             array('title','phone_work'),
             array('department','phone_mobile'),
-            array('reports_to_name','phone_other'),
+            array('reports_to','phone_other'),
             array('','phone_fax'),
             array('','phone_home'),
             array('messenger_type','messenger_id'),
