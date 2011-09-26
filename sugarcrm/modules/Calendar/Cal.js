@@ -14,7 +14,8 @@
 	CAL.shared_users_count = 0;
 	CAL.script_evaled = false;
 	CAL.recordDialog = false;
-	CAL.settingsDialog = false;
+	CAL.settingsDialog = false;	
+	CAL.scroll_slot = 0;
 	
 	CAL.dom = YAHOO.util.Dom;
 	CAL.get = YAHOO.util.Dom.get;
@@ -812,19 +813,7 @@
 		CAL.load_create_form(CAL.current_params);				
 	}
 
-	CAL.fill_status_select = function (mod_name){
-		var e;
-		if(e = CAL.get("status")){
-			e.innerHTML = "";
-			CAL.each(CAL.status_options[mod_name],function (i,v){
-				var o = document.createElement("option");
-				o.value = i;
-				o.innerHTML = i;
-				e.appendChild(o);
-			});
-		}		
-	}	
-	
+
 	
 	CAL.load_create_form = function (params){
 	
@@ -969,8 +958,8 @@
 									if(res.success == 'yes'){										
 										var e;
 										CAL.get("record").value = res.record;	
-										SugarWidgetScheduler.update_time();
-										CAL.GR_update_focus(CAL.get("current_module").value,res.record);
+										//SugarWidgetScheduler.update_time();
+										//CAL.GR_update_focus(CAL.get("current_module").value,res.record);
 										CAL.AddRecords(res);
 										CAL.update_vcal();											 											 				
 										CAL.get("title-record_dialog").innerHTML = CAL.lbl_edit;
@@ -1185,6 +1174,21 @@
 												
 										var url = "vcal_server.php?type=vfb&source=outlook&user_id="+v;									
 										YAHOO.util.Connect.asyncRequest('GET',url,callback,false);
+	}
+	
+	CAL.fit_grid = function(){
+		var day_width;
+		var cal_width = document.getElementById("cal-grid").parentNode.offsetWidth;
+		if(CAL.pview == "day")
+			day_width = parseInt((cal_width - 80));
+		else							
+			day_width = parseInt((cal_width - 80) / 7 );
+		var nodes = CAL.query("#cal-grid div.day_col");
+		CAL.each(nodes, function(i,v){		
+			nodes[i].style.width = day_width + "px";
+		});	
+		
+		document.getElementById("cal-grid").style.visibility = "";
 	}
 	
 	

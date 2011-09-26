@@ -11,7 +11,7 @@
 <div style="float:left; text-align: right; width: 50%; font-size: 12px;">
 	{if $pview != 'year'}
 	<span class="dateTime">
-					<input type="button" class='button' id="goto_date_trigger" value="{$MOD.LBL_GOTO_DATE}">					
+					<img border="0" src="{$cal_img}" alt="Enter Date" id="goto_date_trigger" align="absmiddle">					
 					<input type="hidden" id="goto_date" name="goto_date" value="{$current_date}">		
 					<script type="text/javascript">
 					Calendar.setup ({literal}{{/literal}
@@ -23,6 +23,7 @@
 						dateStr : "{$current_date}",
 						step : 1,
 						onUpdate: goto_date_call,
+						startWeekday: {$start_weekday},
 						weekNumbers:false
 					{literal}}{/literal});	
 					{literal}	
@@ -35,8 +36,6 @@
 					{/literal}
 					</script>
 	</span>
-	<input type="button" id="whole_day_button" onclick="CAL.toggle_whole_day();" value="{$MOD.LBL_WHOLE_DAY}">
-	<input type="hidden" id="whole_day" name="whole_day" value="">
 	{/if}
 	<input type="button" class="button" onclick="CAL.toggle_settings()" value="{$MOD.LBL_SETTINGS}">
 			
