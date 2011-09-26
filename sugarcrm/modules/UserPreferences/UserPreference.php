@@ -80,8 +80,6 @@ class UserPreference extends SugarBean
 
         $user = $this->_userFocus;
 
-        if($name == "timezone")
-
         // if the unique key in session doesn't match the app or prefereces are empty
         if(!isset($user->user_preferences[$category]) || (!empty($_SESSION['unique_key']) && $_SESSION['unique_key'] != $sugar_config['unique_key'])) {
             $this->loadPreferences($category);
