@@ -74,6 +74,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * Base database driver implementation
+ * @api
  */
 abstract class DBManager
 {

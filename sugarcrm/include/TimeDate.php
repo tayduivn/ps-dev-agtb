@@ -144,6 +144,13 @@ class TimeDate
      */
     protected static $timedate;
 
+    /**
+     * Allow returning cached now() value
+     * If false, new system time is checked each time now() is required
+     * If true, same value is returned for whole request.
+     * Also, current user's timezone is cached.
+     * @var bool
+     */
     public $allow_cache = true;
 
     public function __construct(User $user = null)
