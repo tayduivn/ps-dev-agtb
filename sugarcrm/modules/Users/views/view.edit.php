@@ -30,7 +30,7 @@ class UsersViewEdit extends ViewEdit {
  	}
     
     function display() {
-        global $current_user;
+        global $current_user, $app_list_strings;
 
         // There is a lot of extra stuff that needs to go in here to properly render
         $this->is_current_admin=is_admin($current_user)
@@ -202,16 +202,86 @@ class UsersViewEdit extends ViewEdit {
         
 
 
-        // Fill in fake fields in the bean from user preferences
         if (isset($this->bean->id)) {
             $this->ss->assign('ID',$this->bean->id);
         }
+
+        // Build viewable versions of a few fields for non-admins
+        $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]);
+        $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
+        $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
         
+        $this->setupUserTypeDropdown();
+        $this->setupEmailSettings();
         $this->setupPasswordTab();
         $this->setupThemeTab();
         $this->setupAdvancedTab();
 
         parent::display();
+    }
+
+    protected function setupUserTypeDropdown() {
+        global $current_user;
+        
+
+        if ( !isset($this->bean->user_type) ) {
+            $this->bean->user_type = 'RegularUser';
+        }
+
+        $availableUserTypes = array();
+        $userTypes = array(
+            'RegularUser' => array(
+                'label' => translate('LBL_REGULAR_USER','Users'),
+                'description' => translate('LBL_REGULAR_DESC','Users'),
+                ),
+//BEGIN SUGARCRM flav=sales ONLY
+            'UserAdministrator' => array(
+                'label' => translate('LBL_USER_ADMINISTRATOR','Users'),
+                'description' => translate('LBL_USER_ADMIN_DESC','Users'),
+                ),
+//END SUGARCRM flav=sales ONLY
+            'Administrator' => array(
+                'label' => translate('LBL_ADMIN_USER','Users'),
+                'description' => translate('LBL_ADMIN_DESC','Users'),
+                ),
+        );
+
+        if ( $this->ss->get_template_vars('USER_ADMIN') ) {
+            $availableUserTypes = array('RegularUser');
+        } elseif($this->ss->get_template_vars('ADMIN_EDIT_SELF')) {
+            $availableUserTypes = array('Administrator');
+        } elseif($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
+            $availableUserTypes = array(
+                'RegularUser',
+                //BEGIN SUGARCRM flav=sales ONLY
+                'UserAdministrator',
+                //END SUGARCRM flav=sales ONLY
+                'Administrator',
+            );
+        } else {
+            $availableUserTypes = array($this->bean->user_type);
+        }
+        
+        $userTypeDropdown = '<select id="UserType" name="UserType" onchange="user_status_display(this);" ';
+        if ( count($availableUserTypes) == 1 ) {
+            $userTypeDropdown .= ' disabled ';
+        }
+        $userTypeDropdown .= '>';
+     
+        $userTypeDescription = '';
+   
+        foreach ( $availableUserTypes as $currType ) {
+            $selected = '';
+            if ( $currType == $this->bean->user_type ) {
+                $selected = 'SELECTED';
+            }
+            $userTypeDropdown .= '<option value="'.$currType.'" '.$selected.'>'.$userTypes[$currType]['label'].'</option>';
+        }
+        $userTypeDropdown .= '</select><div id="UserTypeDesc">&nbsp;</div>';
+        
+        $this->ss->assign('USER_TYPE_DROPDOWN',$userTypeDropdown);
+        $this->ss->assign('USER_TYPE_READONLY',$userTypes[$this->bean->user_type]['label']);
+        
     }
 
     protected function setupPasswordTab() {
@@ -312,6 +382,14 @@ class UsersViewEdit extends ViewEdit {
     }
     
     protected function setupAdvancedTab() {
+        $this->setupAdvancedTabUserSettings();
+        $this->setupAdvancedTabTeamSettings();
+        $this->setupAdvancedTabNavSettings();
+        $this->setupAdvancedTabLocaleSettings();
+        $this->setupAdvancedTabPdfSettings();
+    }
+
+    protected function setupAdvancedTabUserSettings() {
         global $current_user, $locale, $app_list_strings;
         // This is for the "Advanced" tab, it's not controlled by the metadata UI so we have to do more for it.
 
@@ -357,10 +435,6 @@ class UsersViewEdit extends ViewEdit {
         $this->ss->assign('CALENDAR_PUBLISH_KEY', $this->bean->getPreference('calendar_publish_key' ));
         //END SUGARCRM flav!=sales ONLY
 
-        $this->setupAdvancedTabTeamSettings();
-        $this->setupAdvancedTabNavSettings();
-        $this->setupAdvancedTabLocaleSettings();
-        $this->setupAdvancedTabPdfSettings();
     }
 
     protected function setupAdvancedTabTeamSettings() {
@@ -614,6 +688,78 @@ class UsersViewEdit extends ViewEdit {
         ///////// END PDF SETTINGS
         ////////////////////////////////////////////////////////////////////////////////
         //END SUGARCRM flav=pro ONLY
+    }
+    
+    protected function setupEmailSettings() {
+        global $current_user, $app_list_strings;
+
+        $this->ss->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $this->bean->getPreference('mail_sendtype')));
+
+        ///////////////////////////////////////////////////////////////////////////////
+        ////	EMAIL OPTIONS
+        // We need to turn off the requiredness of emails if it is a group or portal user
+        if ($this->usertype == 'GROUP' || $this->usertype == 'PORTAL_ONLY' ) {
+            global $dictionary;
+            $dictionary['User']['fields']['email1']['required'] = false;
+        }
+        // hack to disable email field being required if it shouldn't be required
+        if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' )
+            $GLOBALS['dictionary']['User']['fields']['email1']['required'] = false;
+        $this->ss->assign("NEW_EMAIL", getEmailAddressWidget($this->bean, "email1", $this->bean->email1, "EditView"));
+        // hack to undo that previous hack
+        if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' )
+            $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;
+        $this->ss->assign('EMAIL_LINK_TYPE', get_select_options_with_id($app_list_strings['dom_email_link_type'], $this->bean->getPreference('email_link_type')));
+        /////	END EMAIL OPTIONS
+        ///////////////////////////////////////////////////////////////////////////////
+        
+
+        /////////////////////////////////////////////
+        /// Handle email account selections for users
+        /////////////////////////////////////////////
+        $hide_if_can_use_default = true;
+        if( !($this->usertype=='GROUP' || $this->usertype=='PORTAL_ONLY') ) {
+            // email smtp
+            $systemOutboundEmail = new OutboundEmail();
+            $systemOutboundEmail = $systemOutboundEmail->getSystemMailerSettings();
+            $mail_smtpserver = $systemOutboundEmail->mail_smtpserver;
+            $mail_smtptype = $systemOutboundEmail->mail_smtptype;
+            $mail_smtpport = $systemOutboundEmail->mail_smtpport;
+            $mail_smtpssl = $systemOutboundEmail->mail_smtpssl;
+            $mail_smtpuser = "";
+            $mail_smtppass = "";
+            $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
+            $hide_if_can_use_default = true;
+            $mail_smtpauth_req=true;
+            
+            if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() ) {
+                $mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
+                $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
+                if($userOverrideOE != null) {
+                    $mail_smtpuser = $userOverrideOE->mail_smtpuser;
+                    $mail_smtppass = $userOverrideOE->mail_smtppass;
+                }
+                
+                
+                if(!$mail_smtpauth_req &&
+                   ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
+                     || empty($systemOutboundEmail->mail_smtppass))) {
+                    $hide_if_can_use_default = true;
+                } else{
+                    $hide_if_can_use_default = false;
+                }
+            }
+            
+            $this->ss->assign("mail_smtpdisplay", $mail_smtpdisplay);
+            $this->ss->assign("mail_smtpserver", $mail_smtpserver);
+            $this->ss->assign("mail_smtpuser", $mail_smtpuser);
+            $this->ss->assign("mail_smtppass", "");
+            $this->ss->assign("mail_haspass", empty($systemOutboundEmail->mail_smtppass)?0:1);
+            $this->ss->assign("mail_smtpauth_req", $mail_smtpauth_req);
+            $this->ss->assign('MAIL_SMTPPORT',$mail_smtpport);
+            $this->ss->assign('MAIL_SMTPSSL',$mail_smtpssl);
+        }
+        $this->ss->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default );
         
     }
 }

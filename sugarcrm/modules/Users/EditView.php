@@ -55,7 +55,8 @@ else if(!isset($_REQUEST['record'])){
 }
 
 
-
+/*
+// RKA I think this is handled by the new code
 echo "\n<p>\n";
 $params = array();
 if(empty($focus->id)){
@@ -123,7 +124,7 @@ $sugar_smarty->assign('ADDRESS_STATE', $focus->address_state);
 $sugar_smarty->assign('ADDRESS_POSTALCODE', $focus->address_postalcode);
 $sugar_smarty->assign('ADDRESS_COUNTRY', $focus->address_country);
 $sugar_smarty->assign('DESCRIPTION', $focus->description);
-
+*/
 /// IKEA: I am here
 
 
@@ -142,7 +143,6 @@ $sugar_smarty->assign('DESCRIPTION', $focus->description);
 
 
 
-$sugar_smarty->assign("MAIL_SENDTYPE", get_select_options_with_id($app_list_strings['notifymail_sendtype'], $focus->getPreference('mail_sendtype')));
 //Add Custom Fields
 $xtpl = $sugar_smarty;
 require_once('modules/DynamicFields/templates/Files/EditView.php');
@@ -200,59 +200,6 @@ $sugar_smarty->assign('USER_TYPE',$usertype);
 
 
 
-/////////////////////////////////////////////
-/// Handle email account selections for users
-/////////////////////////////////////////////
- $hide_if_can_use_default = true;
-if( !($usertype=='GROUP' || $usertype=='PORTAL_ONLY') )
-{
-    // email smtp
-    $systemOutboundEmail = new OutboundEmail();
-    $systemOutboundEmail = $systemOutboundEmail->getSystemMailerSettings();
-    $mail_smtpserver = $systemOutboundEmail->mail_smtpserver;
-    $mail_smtptype = $systemOutboundEmail->mail_smtptype;
-    $mail_smtpport = $systemOutboundEmail->mail_smtpport;
-    $mail_smtpssl = $systemOutboundEmail->mail_smtpssl;
-    $mail_smtpuser = "";
-    $mail_smtppass = "";
-    $mail_smtpdisplay = $systemOutboundEmail->mail_smtpdisplay;
-    $hide_if_can_use_default = true;
-    $mail_smtpauth_req=true;
-
-    if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() )
-    {
-
-    	$mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
-        $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
-        if($userOverrideOE != null) {
-
-            $mail_smtpuser = $userOverrideOE->mail_smtpuser;
-            $mail_smtppass = $userOverrideOE->mail_smtppass;
-
-        }
-
-
-        if(!$mail_smtpauth_req &&
-            ( empty($systemOutboundEmail->mail_smtpserver) || empty($systemOutboundEmail->mail_smtpuser)
-            || empty($systemOutboundEmail->mail_smtppass)))
-        {
-            $hide_if_can_use_default = true;
-        }
-        else{
-            $hide_if_can_use_default = false;
-        }
-    }
-
-    $sugar_smarty->assign("mail_smtpdisplay", $mail_smtpdisplay);
-    $sugar_smarty->assign("mail_smtpserver", $mail_smtpserver);
-    $sugar_smarty->assign("mail_smtpuser", $mail_smtpuser);
-    $sugar_smarty->assign("mail_smtppass", "");
-    $sugar_smarty->assign("mail_haspass", empty($systemOutboundEmail->mail_smtppass)?0:1);
-    $sugar_smarty->assign("mail_smtpauth_req", $mail_smtpauth_req);
-    $sugar_smarty->assign('MAIL_SMTPPORT',$mail_smtpport);
-    $sugar_smarty->assign('MAIL_SMTPSSL',$mail_smtpssl);
-}
-$sugar_smarty->assign('HIDE_IF_CAN_USE_DEFAULT_OUTBOUND',$hide_if_can_use_default );
 
 $reports_to_change_button_html = '';
 
@@ -295,23 +242,6 @@ $sugar_smarty->assign('OC_STATUS', get_select_options_with_id($app_list_strings[
 //END SUGARCRM flav!=dce ONLY
 $sugar_smarty->assign('REPORTS_TO_CHANGE_BUTTON', $reports_to_change_button_html);
 
-///////////////////////////////////////////////////////////////////////////////
-////	EMAIL OPTIONS
-// We need to turn off the requiredness of emails if it is a group or portal user
-if ($usertype == 'GROUP' || $usertype == 'PORTAL_ONLY' ) {
-    global $dictionary;
-    $dictionary['User']['fields']['email1']['required'] = false;
-}
-// hack to disable email field being required if it shouldn't be required
-if ( $sugar_smarty->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' )
-    $GLOBALS['dictionary']['User']['fields']['email1']['required'] = false;
-$sugar_smarty->assign("NEW_EMAIL", getEmailAddressWidget($focus, "email1", $focus->email1, "EditView"));
-// hack to undo that previous hack
-if ( $sugar_smarty->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' )
-    $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;
-$sugar_smarty->assign('EMAIL_LINK_TYPE', get_select_options_with_id($app_list_strings['dom_email_link_type'], $focus->getPreference('email_link_type')));
-/////	END EMAIL OPTIONS
-///////////////////////////////////////////////////////////////////////////////
 
 
 if ($is_current_admin) {

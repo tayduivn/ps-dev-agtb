@@ -39,15 +39,31 @@ $viewdefs['Users']['EditView'] = array(
     'panels' => array (
         'LBL_USER_INFORMATION' => array (
             array('user_name','first_name'),
-            array('status','last_name'),
-            array('user_type'),
+            array(array(
+                      'name' => 'status',
+                      'customCode' => '{if $IS_ADMIN}@@FIELD@@{else}{$STATUS_READONLY}{/if}',
+                  ),
+                  'last_name'),
+            array(array(
+                      'name'=>'UserType',
+                      'customCode'=>'{if $IS_ADMIN}{$USER_TYPE_DROPDOWN}{else}{$USER_TYPE_READONLY}{/if}',
+                      ),
+                ),
             array('picture'),
         ),
         'LBL_EMPLOYEE_INFORMATION' => array(
-            array('employee_status',''),
+            array(array(
+                      'name'=>'employee_status',
+                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$EMPLOYEE_STATUS_READONLY}{/if}',
+                  ),
+                  ''),
             array('title','phone_work'),
             array('department','phone_mobile'),
-            array('reports_to_name','phone_other'),
+            array(array(
+                      'name'=>'reports_to_name',
+                      'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$REPORTS_TO_READONLY}{/if}',
+                  ),
+                  'phone_other'),
             array('','phone_fax'),
             array('','phone_home'),
             array('messenger_type','messenger_id'),
@@ -55,13 +71,6 @@ $viewdefs['Users']['EditView'] = array(
             array('address_state','address_postalcode'),
             array('address_country'),
             array('description'),
-        ),
-        'LBL_MAIL_OPTIONS_TITLE' => array(
-            array('email1'),
-            array('email_link_type'),
-            array('mail_smtpserver'),
-            array('mail_smtpuser'),
-            array('mail_smtppass'),
         ),
     ),
 );

@@ -317,6 +317,17 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '20',
         ) ,
+        // This is a fake field for the edit view
+        'UserType' => array(
+            'name' => 'UserType',
+            'vname' => 'LBL_USER_TYPE',
+            'type' => 'enum',
+            'len' => 50,
+            'options' => 'user_type_dom',
+            'source' => 'non-db',
+            'import' => false,
+            'reportable' => false,
+        ),
         //BEGIN SUGARCRM flav=sales ONLY
         'user_type' => array(
             'name' => 'user_type',

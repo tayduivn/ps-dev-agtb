@@ -32,7 +32,7 @@ function user_status_display(field){
 		switch (field.value){
 		case 'Administrator':
 		    document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users',"LBL_ADMIN_DESC");
-		document.getElementById('is_admin').value='1';
+		    document.getElementById('is_admin').value='1';
 		break;
 		case 'RegularUser':
 			document.getElementById('is_admin').value='0';
@@ -338,4 +338,5 @@ function onUserEditView() {
 
     setSymbolValue(document.getElementById('currency_select').options[document.getElementById('currency_select').selectedIndex].value);
     setSigDigits();
+    user_status_display(document.getElementById('UserType'));
 }
