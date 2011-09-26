@@ -29,7 +29,7 @@ class Bug42643Test extends Sugar_PHPUnit_Framework_TestCase
 	var $has_notification_studio_file = false;
 	var $studio_file = 'modules/Help/Forms.php';
 	var $backup_file;
-	
+	/*
 	public function setUp() 
 	{
 		
@@ -58,9 +58,11 @@ class Bug42643Test extends Sugar_PHPUnit_Framework_TestCase
 		   }
 		}
 	}
-
+    */
 	public function testUnlinkUpgradeFilesPre614()
 	{
+        $this->markTestSkipped('No upgrade path from 610->640');
+        return;
 		$this->assertTrue(file_exists($this->studio_file), 'Assert the ' . $this->studio_file . ' exists');
 		unlinkUpgradeFiles('610');
 		$this->assertFalse(file_exists($this->studio_file), 'Assert the ' . $this->studio_file . ' no longer exists');
