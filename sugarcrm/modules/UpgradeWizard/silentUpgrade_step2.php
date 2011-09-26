@@ -437,12 +437,16 @@ if(!$origVersion){
 // If going from pre 610 to 610+, migrate the report favorites
 // At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
 // so that we can check against that in 6.1.1.
+/*
+//BEGIN SUGARCRM flav=int ONLY
 if($origVersion < '610'){
     logThis("Since origVersion is {$origVersion}, which is before 6.1.0, we migrate reports favorites", $path);
     logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
     migrate_sugar_favorite_reports();
     logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
 }
+//END SUGARCRM flav=int ONLY
+*/
 
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
@@ -480,13 +484,16 @@ if($ce_to_pro_ent) {
 }
 
 
+/*
+//BEGIN SUGARCRM flav=int ONLY
 if($origVersion < '620'){
 	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 	upgradeDateTimeFields($path);
-
 	//upgrade the documents and meetings for lotus support
 	upgradeDocumentTypeFields($path);
 }
+//END SUGARCRM flav=int ONLY
+*/
 
 //bug: 37214 - merge config_si.php settings if available
 logThis('Begin merge_config_si_settings', $path);
@@ -494,10 +501,14 @@ merge_config_si_settings(true, '', '', $path);
 logThis('End merge_config_si_settings', $path);
 
 //Upgrade connectors
+/*
+//BEGIN SUGARCRM flav=int ONLY
 if($origVersion < '610' && function_exists('upgrade_connectors'))
 {
    upgrade_connectors($path);
 }
+//END SUGARCRM flav=int ONLY
+*/
 
 // Enable the InsideView connector by default
 if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
@@ -506,13 +517,16 @@ if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) 
 }
 
 
-
 //bug: 36845 - ability to provide global search support for custom modules
+/*
+//BEGIN SUGARCRM flav=int ONLY
 if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
    logThis('Add global search for custom modules finished .', $path);
 }
+//END SUGARCRM flav=int ONLY
+*/
 
 //Upgrade system displayed tabs and subpanels
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
@@ -524,6 +538,11 @@ if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 if(function_exists('unlinkUpgradeFiles'))
 {
 	unlinkUpgradeFiles($origVersion);
+}
+
+if(function_exists('rebuildSprites'))
+{
+    rebuildSprites(true);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

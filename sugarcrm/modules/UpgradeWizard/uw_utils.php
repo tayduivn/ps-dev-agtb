@@ -4528,71 +4528,6 @@ function unlinkUpgradeFiles($version)
 	   return;
 	}
 
-	logThis('start unlinking files from previous upgrade');
-	if($version < '620')
-	{
-	   //list of files to remove
-	   $files_to_remove = array('modules/Notifications/metadata/studio.php', 'modules/Help/Forms.php','themes/Sugar5/images/sugarColors.xml');
-
-	   foreach($files_to_remove as $f)
-	   {
-		   if(file_exists($f))
-		   {
-		   	  logThis('removing file: ' . $f);
-		   	  unlink($f);
-		   }
-	   }
-	}
-	logThis('end unlinking files from previous upgrade');
-
-	if($version < '620')
-	{
-		logThis('start upgrade for DocumentRevisions classic files (EditView.html, EditView.php, DetailView.html, DetailView.php, Save.php)');
-
-		//Use a md5 comparison check to see if we can just remove the file where an exact match is found
-		if($version < '610')
-		{
-			$dr_files = array(
-	         'modules/DocumentRevisions/DetailView.html' => '17ad4d308ce66643fdeb6fdb3b0172d3',
-			 'modules/DocumentRevisions/DetailView.php' => 'd8606cdcd0281ae9443b2580a43eb5b3',
-	         'modules/DocumentRevisions/EditView.php' => 'c7a1c3ef2bb30e3f5a11d122b3c55ff1',
-	         'modules/DocumentRevisions/EditView.html' => '7d360ca703863c957f40b3719babe8c8',
-			 'modules/DocumentRevisions/Save.php' => 'd7e39293a5fb4d605ca2046e7d1fcf28',
-	        );
-		} else {
-			$dr_files = array(
-	         'modules/DocumentRevisions/DetailView.html' => 'a8356ff20cd995daffe6cb7f7b8b2340',
-			 'modules/DocumentRevisions/DetailView.php' => '20edf45dd785469c484fbddff1a3f8f2',
-	         'modules/DocumentRevisions/EditView.php' => 'fb31958496f04031b2851dcb4ce87d50',
-	         'modules/DocumentRevisions/EditView.html' => 'b8cada4fa6fada2b4e4928226d8b81ee',
-			 'modules/DocumentRevisions/Save.php' => '7fb62e4ebff879bafc07a08da62902aa',
-	        );
-		}
-
-		foreach($dr_files as $rev_file=>$hash)
-		{
-			if(file_exists($rev_file))
-			{
-				//It's a match here so let's just remove the file
-				if (md5(file_get_contents($rev_file)) == $hash)
-				{
-					logThis('removing file ' . $rev_file);
-					unlink($rev_file);
-				} else {
-					if(!copy($rev_file, $rev_file . '.suback.bak'))
-					{
-					  logThis('error making backup for file ' . $rev_file);
-					} else {
-					  logThis('copied file ' . $rev_file . ' to ' . $rev_file . '.suback.bak');
-					  unlink($rev_file);
-					}
-				}
-			}
-		}
-
-		logThis('end upgrade for DocumentRevisions classic files');
-	}
-
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
@@ -4728,3 +4663,37 @@ function whetherNeedToSkipDir($dir, $skipDirs)
     return false;
 }
 
+
+/*
+ * rebuildSprites
+ * @param silentUpgrade boolean flag indicating whether or not we should treat running the SugarSpriteBuilder as an upgrade operation
+ *
+ */
+function rebuildSprites($fromUpgrade=true)
+{
+    require_once('modules/Administration/SugarSpriteBuilder.php');
+    $sb = new SugarSpriteBuilder();
+    $sb->fromSilentUpgrade = $fromUpgrade;
+    $sb->silentRun = $fromUpgrade;
+
+    // add common image directories
+    $sb->addDirectory('default', 'include/images');
+    $sb->addDirectory('default', 'themes/default/images');
+    $sb->addDirectory('default', 'themes/default/images/SugarLogic');
+
+    // add all theme image directories
+    if($dh = opendir('themes'))
+    {
+        while (($dir = readdir($dh)) !== false)
+        {
+            if ($dir != "." && $dir != ".." && $dir != 'default' && is_dir('themes/'.$dir)) {
+                $sb->addDirectory($dir, "themes/{$dir}/images");
+            }
+        }
+        closedir($dh);
+    }
+
+    // generate the sprite goodies
+    // everything is saved into cache/sprites
+    $sb->createSprites();
+}

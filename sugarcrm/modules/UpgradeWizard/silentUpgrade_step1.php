@@ -354,30 +354,6 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
     return $upgradeType;
 }
 
-function upgradeDCEFiles($argv,$instanceUpgradePath){
-	//copy and update following files from upgrade package
-	$upgradeTheseFiles = array('cron.php','download.php','index.php','install.php','soap.php','sugar_version.php','vcal_server.php');
-	foreach($upgradeTheseFiles as $file){
-		$srcFile = clean_path("{$instanceUpgradePath}/$file");
-		$destFile = clean_path("{$argv[3]}/$file");
-		if(file_exists($srcFile)){
-			if(!is_dir(dirname($destFile))) {
-				mkdir_recursive(dirname($destFile)); // make sure the directory exists
-			}
-			copy_recursive($srcFile,$destFile);
-			$_GET['TEMPLATE_PATH'] = $destFile;
-			$_GET['CONVERT_FILE_ONLY'] = true;
-			if(!class_exists('TemplateConverter')){
-				include($argv[7].'templateConverter.php');
-			}else{
-				TemplateConverter::convertFile($_GET['TEMPLATE_PATH']);
-			}
-
-
-		}
-	}
-}
-
 
 
 function threeWayMerge(){
@@ -395,30 +371,6 @@ if(isset($_SERVER['HTTP_USER_AGENT'])) {
 }
 //Clean_string cleans out any file  passed in as a parameter
 $_SERVER['PHP_SELF'] = 'silentUpgrade.php';
-
-
-///////////////////////////////////////////////////////////////////////////////
-////	USAGE
-$usage_dce =<<<eoq1
-Usage: php.exe -f silentUpgrade.php [upgradeZipFile] [logFile] [pathToSugarInstance]
-
-On Command Prompt Change directory to where silentUpgrade.php resides. Then type path to
-php.exe followed by -f silentUpgrade.php and the arguments.
-
-Example:
-    [path-to-PHP/]php.exe -f silentUpgrade.php [path-to-upgrade-package/]SugarEnt-Upgrade-4.5.1-to-5.0.0b.zip [path-to-log-file/]silentupgrade.log  [path-to-sugar-instance/]Sugar451e
-                             [Old Template path] [skipdbupgrade] [exitOrContinue]
-
-Arguments:
-    New Template Path or Upgrade Package : Upgrade package name. Template2 (upgrade to)location.
-    silentupgrade.log                    : Silent Upgarde log file.
-    Sugar451e/DCE                        : Sugar or DCE Instance instance being upgraded.
-    Old Template path                    : Template1 (upgrade from) Instance is being upgraded.
-    skipDBupgrade                        : If set to Yes then silentupgrade will only upgrade files. Default is No.
-    exitOnConflicts                      : If set to No and conflicts are found then Upgrade continues. Default Yes.
-    pathToDCEClient                      : This is path to to DCEClient directory
-
-eoq1;
 
 $usage_regular =<<<eoq2
 Usage: php.exe -f silentUpgrade.php [upgradeZipFile] [logFile] [pathToSugarInstance] [admin-user]
@@ -464,18 +416,7 @@ $upgradeType = verifyArguments($argv,$usage_dce,$usage_regular);
 ///////////////////////////////////////////////////////////////////////////////
 //////  Verify that all the arguments are appropriately placed////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-////	PREP LOCALLY USED PASSED-IN VARS & CONSTANTS
-//$GLOBALS['log']	= LoggerManager::getLogger('SugarCRM');
-//require_once('/var/www/html/eddy/sugarnode/SugarTemplateUtilities.php');
-
 $path			= $argv[2]; // custom log file, if blank will use ./upgradeWizard.log
-//$db				= &DBManagerFactory::getInstance();  //<---------
-
-
-//$UWstrings		= return_module_language('en_us', 'UpgradeWizard');
-//$adminStrings	= return_module_language('en_us', 'Administration');
-//$mod_strings	= array_merge($adminStrings, $UWstrings);
 $subdirs		= array('full', 'langpack', 'module', 'patch', 'theme', 'temp');
 
 //$_REQUEST['zip_from_dir'] = $zip_from_dir;
@@ -1161,11 +1102,7 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 	}
 
 
-} else {
-//ELSE if DCE_INSTANCE
-echo "RUNNING DCE UPGRADE\n";
-
-} //END of big if-else block for DCE_INSTANCE
+}
 
 
 /**
