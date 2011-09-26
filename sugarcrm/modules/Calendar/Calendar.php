@@ -116,7 +116,7 @@ class Calendar {
 		if (isset($_REQUEST['week']))
 			$date_arr['week'] = $_REQUEST['week'];
 
-		if (isset($_REQUEST['year'])){
+		if (isset($_REQUEST['year']) && !empty($_REQUEST['year'])){
 			if ($_REQUEST['year'] > 2037 || $_REQUEST['year'] < 1970){
 				print("Sorry, calendar cannot handle the year you requested");
 				print("<br>Year must be between 1970 and 2037");

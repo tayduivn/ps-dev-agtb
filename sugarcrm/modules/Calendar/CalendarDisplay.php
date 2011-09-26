@@ -44,8 +44,9 @@ class CalendarDisplay {
 		$ss->assign('celcount',$args['cal']->celcount);
 		$ss->assign('img_edit_inline',SugarThemeRegistry::current()->getImageURL('edit_inline.gif',false));
 		$ss->assign('img_view_inline',SugarThemeRegistry::current()->getImageURL('view_inline.gif',false));
-		$ss->assign('img_close',SugarThemeRegistry::current()->getImageURL('close.gif',false));
-		$ss->assign('dashlet',$args['cal']->dashlet);	
+		$ss->assign('img_close',SugarThemeRegistry::current()->getImageURL('close.gif',false));		
+		$ss->assign('dashlet',$args['cal']->dashlet);
+			
 		
 		if(count($args['cal']->shared_ids)){
 			$ss->assign('shared_ids',$args['cal']->shared_ids);
@@ -55,9 +56,15 @@ class CalendarDisplay {
 		$d_param = 0;
 		if($args['cal']->time_step == 60){
 			$d_param = 0;
-		}else{
-			$d_param = strval(intval(60 / $args['cal']->time_step)) . "n+1";
+		}else{			
+			$d_param = strval(intval(60 / $args['cal']->time_step)) . "n";
+			
+			if($args['cal']->view != "week")
+				$d_param .= "+1";	
 		}
+		
+		$ss->assign('scroll_slot',intval(60 / $args['cal']->time_step) * 5);	
+		
 		$ss->assign('d_param',$d_param);	
 		$ss->assign('editview_width',SugarConfig::getInstance()->get('calendar.editview_width',800));
 		$ss->assign('editview_height',SugarConfig::getInstance()->get('calendar.editview_height',600));	
@@ -328,7 +335,9 @@ class CalendarDisplay {
 			$ss->assign('controls',$controls);
 			$ss->assign('tabs',$tabs);
 			$ss->assign('tabs_params',$tabs_params);
-			$ss->assign('current_date',$current_date);		
+			$ss->assign('current_date',$current_date);
+			$ss->assign('start_weekday',$GLOBALS['current_user']->get_first_day_of_week());
+			$ss->assign('cal_img',SugarThemeRegistry::current()->getImageURL("jscalendar.gif",false));		
 		}
 	
 		$ss->assign('previous',$this->get_previous_calendar());

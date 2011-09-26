@@ -14,8 +14,7 @@
 		CAL.celcount = {$celcount};	
 		CAL.cells_per_day = {$cells_per_day};	
 		CAL.current_params = {literal}{}{/literal};
-		CAL.dashlet = "{$dashlet}";
-		
+		CAL.dashlet = "{$dashlet}";		
 
 		CAL.lbl_create_new = "{$MOD.LBL_CREATE_NEW_RECORD}";
 		CAL.lbl_edit = "{$MOD.LBL_EDIT_RECORD}";
@@ -32,25 +31,24 @@
 		CAL.lbl_duration = "{$MOD.LBL_I_DURATION}";
 		CAL.lbl_name = "{$MOD.LBL_I_NAME}";
 		CAL.lbl_title = "{$MOD.LBL_I_TITLE}";
-		CAL.lbl_related = "{$MOD.LBL_I_RELATED_TO}";
-					
+		CAL.lbl_related = "{$MOD.LBL_I_RELATED_TO}";					
 	
 		CAL.img_edit_inline = "{$img_edit_inline}";
 		CAL.img_view_inline = "{$img_view_inline}";
-		CAL.img_close = "{$img_close}";
+		CAL.img_close = "{$img_close}";		
+		CAL.scroll_slot = {$scroll_slot};
+
+		CAL.fit_grid();
 		
 		{literal}
-		CAL.status_options = {};
-		CAL.status_options['Meetings'] = {};
-		CAL.status_options['Calls'] = {};
+		var scrollable = CAL.get("cal-scrollable");
+		if(scrollable){
+			scrollable.scrollTop = 15 * CAL.scroll_slot;
+		}
 		{/literal}
-
-		{foreach name=domvalues from=$APPLIST.meeting_status_dom key=k item=v}
-			CAL.status_options['Meetings']['{$k}'] = '{$v}';
-		{/foreach}
-		{foreach name=domvalues from=$APPLIST.call_status_dom key=k item=v}
-			CAL.status_options['Calls']['{$k}'] = '{$v}';
-		{/foreach}		
+					
+		
+				
 		
 		{if $pview == "shared"}
 			{counter name="un" start=0 print=false assign="un"}
@@ -94,7 +92,9 @@
 					target_slots[i] = new YAHOO.util.DDTarget(slots[i].id,"cal"); 
 				}
 			);			
-		}		
+		}
+		
+			
 		
 		var nodes = CAL.query("#cal-grid div.slot");
 		CAL.each(nodes, function(i,v){
@@ -121,6 +121,10 @@
 					height: "{/literal}{$editview_height}{literal}"
 				}
 		);
+		
+		YAHOO.util.Event.on(window, 'resize', function(){
+			CAL.fit_grid();
+		});		
 				
 		YAHOO.util.Event.on("btn_save","click",function(){																		
 			if(!(check_form('CalendarEditView') && cal_isValidDuration()))
@@ -164,8 +168,7 @@
 		});
 		
 		{/literal}
-
-		//CAL.repeat_type_selected();		
+				
 
 		var ActRecords = [
 			{$a_str}		

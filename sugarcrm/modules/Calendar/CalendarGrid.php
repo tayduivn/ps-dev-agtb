@@ -58,17 +58,42 @@ class CalendarGrid {
 		$week_end = date("m/d/Y H:i:s",$week_end_unix);
 		
 		$str = "";
-
-		$str .= "<div id='cal-grid'>";	
-			$str .= "<div class='left_time_col'>";
-				$str .= "<div class='day_head'>&nbsp;</div>";		
+		
+		
+		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
+				
+		$str .= "<div style='overflow-y: hidden;'>";
+						
+		$str .= "<div class='left_time_col'>";
+			$str .= "<div class='day_head'>&nbsp;</div>";		
+		$str .= "</div>";
+		$str .= "<div class='week_block'>";
+		for($d = 0; $d < 7; $d++){
+			$curr_time = $week_start_unix + $d*86400;
+			$str .= "<div class='day_col'>";
+			if($this->real_today_unix == $curr_time)
+					$headstyle = " today";
+				else
+					$headstyle = "";
+				$str .= "<div class='day_head".$headstyle."'><a href='".cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".timestamp_to_user_formated2($curr_time,'j')."&month=".timestamp_to_user_formated2($curr_time,'n')."&year=".timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".timestamp_to_user_formated2($curr_time,'d')."</a></div>";	
+			$str .= "</div>";			
+		}
+		$str .= "</div>";
+		
+		$str .= "</div>";
+		
+		
+		
+		$str .= "<div id='cal-scrollable' style='overflow-y: scroll; clear: both; height: 479px;'>";	
+			
+			$str .= "<div class='left_time_col'>";	
 				for($i = 0; $i < 24; $i++){
 					for($j = 0; $j < 60; $j += $t_step){
 						if($j == 0) 
 							$innerText = timestamp_to_user_formated2($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
 						else
 							$innerText = "&nbsp;"; 
-						$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
+						$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
 						$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
 					}
 				}	
@@ -77,14 +102,9 @@ class CalendarGrid {
 			for($d = 0; $d < 7; $d++){
 				$curr_time = $week_start_unix + $d*86400;
 				$str .= "<div class='day_col'>";
-					if($this->real_today_unix == $curr_time)
-						$headstyle = " today";
-					else
-						$headstyle = "";
-					$str .= "<div class='day_head".$headstyle."'><a href='".cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".timestamp_to_user_formated2($curr_time,'j')."&month=".timestamp_to_user_formated2($curr_time,'n')."&year=".timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".timestamp_to_user_formated2($curr_time,'d')."</a></div>";		
 					for($i = 0; $i < 24; $i++){
 						for($j = 0; $j < 60; $j += $t_step){
-							$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);						
+							$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);						
 							$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
 							$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
 							$curr_time += $t_step*60;
@@ -92,8 +112,12 @@ class CalendarGrid {
 					}
 				$str .= "</div>";
 			}	
-			$str .= "</div>";	
+			$str .= "</div>";
+		
 		$str .= "</div>";
+				
+		$str .= "</div>";
+		
 		
 		return $str;
 	}
@@ -117,7 +141,10 @@ class CalendarGrid {
 		$day_start = date("m/d/Y H:i:s",$day_start_unix);
 
 		$str = "";
-		$str .= "<div id='cal-grid' style=' min-width: 300px;'>";
+		$str .= "<div id='cal-grid' style=' min-width: 300px; visibility: hidden;'>";		
+		
+		$str .= "<div id='cal-scrollable' style='overflow-y: scroll; height: 479px;'>";
+			
 			$str .= "<div class='left_time_col'>";
 				$str .= "<div class='day_head' style='display:none;'>&nbsp;</div>";		
 				for($i = 0; $i < 24; $i++){
@@ -126,7 +153,7 @@ class CalendarGrid {
 							$innerText = timestamp_to_user_formated2($day_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
 						else
 							$innerText = "&nbsp;"; 
-						$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
+						$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
 						$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
 					}
 				}	
@@ -138,7 +165,7 @@ class CalendarGrid {
 						$str .= "<div class='day_head' style='display:none;'>&nbsp;</div>";		
 						for($i = 0; $i < 24; $i++){
 							for($j = 0; $j < 60; $j += $t_step){
-								$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);					
+								$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);					
 								$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
 								$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
 								$curr_time += $t_step*60;
@@ -146,6 +173,8 @@ class CalendarGrid {
 						}
 					$str .= "</div>";
 				$str .= "</div>";
+		$str .= "</div>";
+		
 		$str .= "</div>";
 		
 		return $str;	
@@ -190,7 +219,7 @@ class CalendarGrid {
 			$wf = 0;
 	
 		$str = "";
-		$str .= "<div id='cal-grid'>";
+		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
 			$curr_time_g = $week_start_unix;
 			$w = 0;
 			while($curr_time_g < $month_end_unix){		
@@ -203,7 +232,8 @@ class CalendarGrid {
 							else
 								$innerText = "&nbsp;"; 
 							$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
-							$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
+							if(!$hc)								
+								$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
 						}
 					}	
 				$str .= "</div>";
@@ -219,8 +249,10 @@ class CalendarGrid {
 						for($i = 0; $i < 24; $i++){
 							for($j = 0; $j < 60; $j += $t_step){
 								$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);						
+																	
 								$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
-								$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
+								if(!$hc)
+									$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
 								$curr_time += $t_step*60;
 							}
 						}
@@ -259,7 +291,7 @@ class CalendarGrid {
 
 
 		$str = "";
-		$str .= "<div id='cal-grid'>";
+		$str .= "<div id='cal-grid' style='visibility: hidden;'>";
 		$un = 0;
 		
 		$shared_user = new User();
@@ -280,7 +312,8 @@ class CalendarGrid {
 						else
 							$innerText = "&nbsp;"; 
 						$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
-						$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
+						if(!$hc)
+							$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
 					}
 				}	
 			$str .= "</div>";
@@ -297,7 +330,8 @@ class CalendarGrid {
 							for($j = 0; $j < 60; $j += $t_step){
 								$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);					
 								$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
-								$str .= "<div id='t_".$curr_time.$un_str."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
+								if(!$hc)
+									$str .= "<div id='t_".$curr_time.$un_str."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
 								$curr_time += $t_step*60;
 							}
 						}
