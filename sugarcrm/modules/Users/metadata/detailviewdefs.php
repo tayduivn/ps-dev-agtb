@@ -51,7 +51,7 @@ $viewdefs['Users']['DetailView'] = array(
             array('employee_status',''),
             array('title','phone_work'),
             array('department','phone_mobile'),
-            array('reports_to','phone_other'),
+            array('reports_to_name','phone_other'),
             array('','phone_fax'),
             array('','phone_home'),
             array('messenger_type','messenger_id'),
