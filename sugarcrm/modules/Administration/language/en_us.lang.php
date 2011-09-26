@@ -637,6 +637,8 @@ $mod_strings = array (
     'LBL_REBUILD_SCHEDULERS_DESC_SUCCESS' => 'Scheduler Job rebuild complete.',
     'LBL_REBUILD_SCHEDULERS_DESC' => 'Rebuilding your Scheduler Jobs will delete all existing job entries and their respective logs.  All out-of-the-box Scheduler jobs will be rebuilt with their default settings, including the Active/Inactive flag.',
     'LBL_REBUILD_SCHEDULERS_TITLE' => 'Rebuild Schedulers',
+    'LBL_REBUILD_SPRITES_TITLE' => 'Rebuild Sprites',
+    'LBL_REBUILD_SPRITES_DESC_SHORT' => 'Rebuilds the sprite images and configuration files',
     //BEGIN SUGARCRM flav=pro ONLY
     'LBL_REBUILD_WORKFLOW_DESC' => 'Rebuilds the workflow cache & compile plugins after you re-install, drop tables or install a new workflow plugin',
     'LBL_REBUILD_WORKFLOW' => 'Rebuild WorkFlow',
@@ -1172,5 +1174,12 @@ $mod_strings = array (
     'LBL_SNIP_DESC' => 'Configure offline archiving (Email Archiving)',
     'LBL_CONFIGURE_SNIP' => 'Email Archiving',
     'LBL_CONFIGURE_SNIP_DESC' => 'Enable/disable the Sugar Email Archiving Service',
+
+    //Sprites Support
+    'LBL_SPRITES_NOT_SUPPORTED' => 'Error: Unable to create sprites because the imagecreatetruecolor function cannot be loaded',
+    'LBL_SPRITES_CREATING_NAMESPACE' => 'Creating sprite namespace {0}',
+    'LBL_SPRITES_PROCESSING_DIR' => 'Processing directory {0}',
+    'LBL_SPRITES_ADDED' => 'Added sprite {0}',
+    'LBL_SPRITES_EXCLUDING_FILE' => 'Excluding file: {0}',
 	);
 

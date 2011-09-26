@@ -252,28 +252,34 @@ if(!$ce_to_pro_ent) {
 //END SUGARCRM flav=pro ONLY
 
 //Upgrade connectors
+/*
 if($_SESSION['current_db_version'] < '610' && function_exists('upgrade_connectors'))
 {
    upgrade_connectors($path);
 }
+*/
 
 // Enable the InsideView connector by default
 if($_SESSION['current_db_version'] < '621' && function_exists('upgradeEnableInsideViewConnector')) {
     upgradeEnableInsideViewConnector();
 }
 
+/*
 if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
 {
     repair_long_relationship_names($path);
 }
+*/
 
 //Global search support
+/*
 if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
 {
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
    logThis('Add global search for custom modules finished .', $path);
 }
+*/
 
 //Upgrade system displayed tabs and subpanels
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
@@ -288,15 +294,23 @@ if(function_exists('unlinkUpgradeFiles'))
 	unlinkUpgradeFiles($_SESSION['current_db_version']);
 }
 
+if(function_exists('rebuildSprites'))
+{
+    rebuildSprites(true);
+}
+
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
+
+/*
 if($_SESSION['current_db_version'] < '620')
 {
 	upgradeDateTimeFields($path);
 	upgradeDocumentTypeFields($path);
 }
+*/
 
 //Update the license
 logThis('Start Updating the license ', $path);

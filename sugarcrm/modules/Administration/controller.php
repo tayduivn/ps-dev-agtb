@@ -160,4 +160,24 @@ class AdministrationController extends SugarController
         $cfg->handleOverride();
         $this->view = "configureajaxui";
     }
+
+
+    /*
+     * action_callRebuildSprites
+     *
+     * This method is responsible for actually running the SugarSpriteBuilder class to rebuild the sprites.
+     * It is called from the ajax request issued by RebuildSprites.php.
+     */
+    public function action_callRebuildSprites()
+    {
+        global $current_user;
+        if(is_admin($current_user))
+        {
+            $this->view = 'ajax';
+            $GLOBALS['log']->debug('Running action_callRebuildSprites');
+            require_once('modules/UpgradeWizard/uw_utils.php');
+            rebuildSprites(false);
+            $GLOBALS['log']->debug('Finished running action_callRebuildSprites');
+        }
+    }
 }
