@@ -375,7 +375,7 @@ class UserPreference extends SugarBean
         else {
         	if(!empty($_COOKIE['sugar_user_theme']) && !headers_sent()){
                 setcookie('sugar_user_theme', '', time() - 3600); // expire the sugar_user_theme cookie
-            }        	
+            }
             unset($_SESSION[$user->user_name."_PREFERENCES"]);
             if($user->id == $GLOBALS['current_user']->id) {
                 session_destroy();
@@ -494,7 +494,7 @@ class UserPreference extends SugarBean
     protected function isCurrentUser()
     {
         global $current_user;
-        
-        return ($this->_userFocus instanceof SugarBean && $this->_userFocus->id == $current_user->id);
+
+        return ($this->_userFocus instanceof SugarBean && !empty($current_user) && $this->_userFocus->id == $current_user->id);
     }
 }
