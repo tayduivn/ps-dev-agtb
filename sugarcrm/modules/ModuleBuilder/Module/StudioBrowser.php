@@ -51,6 +51,7 @@ class StudioBrowser{
     function loadRelatableModules(){
         $d = dir('modules');
         while($e = $d->read()){
+        	//if(($_REQUEST['view_module'] == 'Project') && ($e=='ProjectTask') && $_REQUEST['id']=='relEditor') continue; //46141 - disabling creating custom relationship between Projects and ProjectTasks in studio
             if(substr($e, 0, 1) == '.' || !is_dir('modules/' . $e))continue;
             if(file_exists('modules/' . $e . '/metadata/studio.php') && isset($GLOBALS [ 'beanList' ][$e])) // installed modules must also exist in the beanList
             {
