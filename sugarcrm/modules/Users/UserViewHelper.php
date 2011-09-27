@@ -19,7 +19,7 @@ class UserViewHelper {
      */
     protected $bean;
     /**
-     * What type of view we are looking at, valid values are 'edit' and 'detail'
+     * What type of view we are looking at, valid values are 'EditView' and 'DetailView'
      * @var string
      */
     protected $viewType;
@@ -44,7 +44,7 @@ class UserViewHelper {
     /**
      * Constructor, pass in the smarty template, the bean and the viewtype
      */
-    public function __construct(Sugar_Smarty &$smarty, SugarBean &$bean, $viewType = 'edit' ) {
+    public function __construct(Sugar_Smarty &$smarty, SugarBean &$bean, $viewType = 'EditView' ) {
         $this->ss = $smarty;
         $this->bean = $bean;
         $this->viewType = $viewType;
@@ -155,7 +155,7 @@ class UserViewHelper {
             $the_query_string .= '&record='.$_REQUEST['record'];
         }
         $buttons = "";
-        if (!$current_user->is_group){
+        if (!$this->bean->is_group){
             if ($this->bean->id == $current_user->id) {
                 $reset_pref_warning = translate('LBL_RESET_PREFERENCES_WARNING','Users');
                 $reset_home_warning = translate('LBL_RESET_HOMEPAGE_WARNING','Users');
@@ -346,7 +346,7 @@ class UserViewHelper {
     }
 
     protected function setupAdvancedTabUserSettings() {
-        global $current_user, $locale, $app_list_strings;
+        global $current_user, $locale, $app_strings, $app_list_strings, $sugar_config;
         // This is for the "Advanced" tab, it's not controlled by the metadata UI so we have to do more for it.
 
         $this->ss->assign('EXPORT_DELIMITER', $this->bean->getPreference('export_delimiter'));
@@ -355,7 +355,10 @@ class UserViewHelper {
 
         //jc:12293 - modifying to use the accessor method which will translate the
         //available character sets using the translation files
-        $this->ss->assign('EXPORT_CHARSET', get_select_options_with_id($locale->getCharsetSelect(), $locale->getExportCharset('', $this->bean)));
+        $export_charset = $locale->getExportCharset('', $this->bean);
+        $export_charset_options = $locale->getCharsetSelect();
+        $this->ss->assign('EXPORT_CHARSET', get_select_options_with_id($export_charset_options, $export_charset));
+        $this->ss->assign('EXPORT_CHARSET_DISPLAY', $export_charset);
         //end:12293
 
         if( $this->bean->getPreference('use_real_names') == 'on' 
@@ -385,43 +388,89 @@ class UserViewHelper {
         if($reminder_time > -1){
             $this->ss->assign("REMINDER_TIME_DISPLAY", 'inline');
             $this->ss->assign("REMINDER_CHECKED", 'checked');
+            $this->ss->assign("REMINDER_TIME", $app_list_strings['reminder_time_options'][$reminder_time]);
         }else{
             $this->ss->assign("REMINDER_TIME_DISPLAY", 'none');
         }
         $this->ss->assign('CALENDAR_PUBLISH_KEY', $this->bean->getPreference('calendar_publish_key' ));
+
+        $publish_url = $sugar_config['site_url'].'/vcal_server.php';
+        $token = "/";
+        //determine if the web server is running IIS
+        //if so then change the publish url
+        if(isset($_SERVER) && !empty($_SERVER['SERVER_SOFTWARE'])){
+            $position = strpos(strtolower($_SERVER['SERVER_SOFTWARE']), 'iis');
+            if($position !== false){
+                $token = '?parms=';
+            }
+        }
+        
+        $publish_url .= $token.'type=vfb&source=outlook&key='.$this->bean->getPreference('calendar_publish_key' );
+        if (! empty($this->bean->email1)) {
+            $publish_url .= '&email='.$this->bean->email1;
+        } else {
+            $publish_url .= '&user_name='.$this->bean->user_name;
+        }
+        $this->ss->assign("CALENDAR_PUBLISH_URL", $publish_url);
+        $this->ss->assign("CALENDAR_SEARCH_URL", $sugar_config['site_url'].'/vcal_server.php/type=vfb&email=%NAME%@%SERVER%');
+        
         //END SUGARCRM flav!=sales ONLY
+        //BEGIN SUGARCRM flav!=dce ONLY
+        //BEGIN SUGARCRM flav=ent ONLY
+        $oc_status = $this->bean->getPreference('OfflineClientStatus');
+        $this->ss->assign('OC_STATUS', get_select_options_with_id($app_list_strings['oc_status_dom'], $oc_status));
+        if(!empty($oc_status)) {
+            $this->ss->assign('OC_STATUS_DISPLAY', $app_list_strings['oc_status_dom'][$oc_status]);
+        } else {
+            $this->ss->assign("OC_STATUS_DISPLAY", $app_strings['LBL_OC_DEFAULT_STATUS']);
+        }
+        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav!=dce ONLY
+
+        $this->ss->assign("SETTINGS_URL", $sugar_config['site_url']);
 
     }
 
     protected function setupAdvancedTabTeamSettings() {
         global $sugar_config;
 
-        if(!empty($GLOBALS['sugar_config']['authenticationClass'])){
-            $this->ss->assign('EXTERNAL_AUTH_CLASS_1', $GLOBALS['sugar_config']['authenticationClass']);
-            $this->ss->assign('EXTERNAL_AUTH_CLASS', $GLOBALS['sugar_config']['authenticationClass']);
+        $authclass = '';
+        if(!empty($sugar_config['authenticationClass'])){
+            $this->ss->assign('EXTERNAL_AUTH_CLASS_1', $sugar_config['authenticationClass']);
+            $this->ss->assign('EXTERNAL_AUTH_CLASS', $sugar_config['authenticationClass']);
+            $authclass = $sugar_config['authenticationClass'];
         }else{
             if(!empty($GLOBALS['system_config']->settings['system_ldap_enabled'])){
                 $this->ss->assign('EXTERNAL_AUTH_CLASS_1', translate('LBL_LDAP','Users'));
                 $this->ss->assign('EXTERNAL_AUTH_CLASS', translate('LBL_LDAP_AUTHENTICATION','Users'));
+                $authclass = 'LDAPAuthenticate';
             }
         }
         if(!empty($this->bean->external_auth_only)) {
             $this->ss->assign('EXTERNAL_AUTH_ONLY_CHECKED', 'CHECKED');
         }
-
+        
+        if($this->is_super_admin && !empty($authclass)) {
+            $this->ss->assign('DISPLAY_EXTERNAL_AUTH',true);
+        }
+        
         //BEGIN SUGARCRM flav=pro ONLY
         if(!empty($this->bean->id)) {
+            require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
+
             //If you're an administrator editing the user or if you're a module level admin, then allow the widget to display all Teams
             if($this->usertype == 'ADMIN' || $GLOBALS['current_user']->isAdminForModule( 'Users')) {
-                require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
-                $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, '', 'EditView');
+                $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, '', $this->viewType);
             } else {
-                require_once('include/SugarFields/Fields/Teamset/EmailSugarFieldTeamsetCollection.php');
-                $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, 'get_non_private_teams_array', 'EditView');
+                $teamsWidget = new EmailSugarFieldTeamsetCollection($this->bean, $this->bean->field_defs, 'get_non_private_teams_array', $this->viewType);
                 $teamsWidget->user_id = $this->bean->id;
             }
 
             $this->ss->assign('DEFAULT_TEAM_OPTIONS', $teamsWidget->get_code());
+
+            require_once('modules/Teams/TeamSetManager.php');
+            $default_teams = TeamSetManager::getCommaDelimitedTeams($this->bean->team_set_id, $this->bean->team_id, true);
+            $this->ss->assign("DEFAULT_TEAM_LIST", $default_teams);
         }
         
         $this->ss->assign('SHOW_TEAM_SELECTION', !empty($this->bean->id));
@@ -510,7 +559,7 @@ class UserViewHelper {
     }
 
     protected function setupAdvancedTabLocaleSettings() {
-        global $locale,$sugar_config;
+        global $locale, $sugar_config, $app_list_strings;
 
         ///////////////////////////////////////////////////////////////////////////////
         ////	LOCALE SETTINGS
@@ -521,6 +570,8 @@ class UserViewHelper {
         $dateOptions = get_select_options_with_id($sugar_config['date_formats'], $dformat);
         $this->ss->assign('TIMEOPTIONS', $timeOptions);
         $this->ss->assign('DATEOPTIONS', $dateOptions);
+        $this->ss->assign('DATEFORMAT', $sugar_config['date_formats'][$dformat]);
+        $this->ss->assign('TIMEFORMAT', $sugar_config['time_formats'][$tformat]);
         
 
         //// Timezone
@@ -543,19 +594,22 @@ class UserViewHelper {
         }
         $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
         $this->ss->assign('TIMEZONEOPTIONS', TimeDate::getTimezoneList());
+        $this->ss->assign("TIMEZONE", TimeDate::tzName($userTZ));
+
         
         // FG - Bug 4236 - Managed First Day of Week
         $fdowDays = array();
-        foreach ($GLOBALS['app_list_strings']['dom_cal_day_long'] as $d) {
+        foreach ($app_list_strings['dom_cal_day_long'] as $d) {
             if ($d != "") {
                 $fdowDays[] = $d;
             }
         }
         $this->ss->assign("FDOWOPTIONS", $fdowDays);
         $currentFDOW = $this->bean->get_first_day_of_week();
-        
+
         if (!isset($currentFDOW)) {$currentFDOW = 0;}
         $this->ss->assign("FDOWCURRENT", $currentFDOW);
+        $this->ss->assign("FDOWDISPLAY", $app_list_strings['dom_cal_day_long'][$currentFDOW]);
 
         //// Numbers and Currency display
         require_once('modules/Currencies/ListCurrency.php');
@@ -582,6 +636,13 @@ class UserViewHelper {
         $currencySymbolJSON = json_encode($currencyList);
         $this->ss->assign('currencySymbolJSON', $currencySymbolJSON);
         
+        $currencyDisplay = new Currency();
+        if(isset($cur_id) ) {
+            $currencyDisplay->retrieve($cur_id);
+            $this->ss->assign('CURRENCY_DISPLAY', $currencyDisplay->iso4217 .' '.$currencyDisplay->symbol );
+        } else {
+            $this->ss->assign("CURRENCY_DISPLAY", $currencyDisplay->getDefaultISO4217() .' '.$currencyDisplay->getDefaultCurrencySymbol() );
+        }
         
         // fill significant digits dropdown
         $significantDigits = $locale->getPrecedentPreference('default_currency_significant_digits', $this->bean);
@@ -595,6 +656,7 @@ class UserViewHelper {
         }
         
         $this->ss->assign('sigDigits', $sigDigits);
+        $this->ss->assign('CURRENCY_SIG_DIGITS', $significantDigits);
         
         $num_grp_sep = $this->bean->getPreference('num_grp_sep');
         $dec_sep = $this->bean->getPreference('dec_sep');
@@ -605,6 +667,7 @@ class UserViewHelper {
         //// Name display format
         $this->ss->assign('default_locale_name_format', $locale->getLocaleFormatMacro($this->bean));
         $this->ss->assign('getNameJs', $locale->getNameJs());
+        $this->ss->assign('NAME_FORMAT', $this->bean->getLocaleFormatDesc());
         ////	END LOCALE SETTINGS
     }
 
@@ -623,26 +686,31 @@ class UserViewHelper {
             define('SUGARPDF_USE_FOCUS', true);
         }
         include_once('include/Sugarpdf/sugarpdf_config.php');
-        $this->ss->assign('PDF_CLASS',PDF_CLASS);
-        $this->ss->assign('PDF_UNIT',PDF_UNIT);
-        $this->ss->assign('PDF_PAGE_FORMAT_LIST',get_select_options_with_id(array_combine(explode(",",PDF_PAGE_FORMAT_LIST), explode(",",PDF_PAGE_FORMAT_LIST)), PDF_PAGE_FORMAT));
-        $this->ss->assign('PDF_PAGE_ORIENTATION_LIST',get_select_options_with_id(array("P"=>translate("LBL_PDF_PAGE_ORIENTATION_P",'Users'),"L"=>translate("LBL_PDF_PAGE_ORIENTATION_L",'Users')),PDF_PAGE_ORIENTATION));
-        $this->ss->assign('PDF_MARGIN_HEADER',PDF_MARGIN_HEADER);
-        $this->ss->assign('PDF_MARGIN_FOOTER',PDF_MARGIN_FOOTER);
-        $this->ss->assign('PDF_MARGIN_TOP',PDF_MARGIN_TOP);
-        $this->ss->assign('PDF_MARGIN_BOTTOM',PDF_MARGIN_BOTTOM);
-        $this->ss->assign('PDF_MARGIN_LEFT',PDF_MARGIN_LEFT);
-        $this->ss->assign('PDF_MARGIN_RIGHT',PDF_MARGIN_RIGHT);
+        if ( PDF_CLASS == 'TCPDF' ) {
+            $this->ss->assign('SHOW_PDF_OPTIONS',true);
+            $this->ss->assign('PDF_CLASS',PDF_CLASS);
+            $this->ss->assign('PDF_UNIT',PDF_UNIT);
+            $this->ss->assign('PDF_PAGE_FORMAT_LIST',get_select_options_with_id(array_combine(explode(",",PDF_PAGE_FORMAT_LIST), explode(",",PDF_PAGE_FORMAT_LIST)), PDF_PAGE_FORMAT));
+            $this->ss->assign('PDF_PAGE_ORIENTATION_LIST',get_select_options_with_id(array("P"=>translate("LBL_PDF_PAGE_ORIENTATION_P",'Users'),"L"=>translate("LBL_PDF_PAGE_ORIENTATION_L",'Users')),PDF_PAGE_ORIENTATION));
+            $this->ss->assign('PDF_MARGIN_HEADER',PDF_MARGIN_HEADER);
+            $this->ss->assign('PDF_MARGIN_FOOTER',PDF_MARGIN_FOOTER);
+            $this->ss->assign('PDF_MARGIN_TOP',PDF_MARGIN_TOP);
+            $this->ss->assign('PDF_MARGIN_BOTTOM',PDF_MARGIN_BOTTOM);
+            $this->ss->assign('PDF_MARGIN_LEFT',PDF_MARGIN_LEFT);
+            $this->ss->assign('PDF_MARGIN_RIGHT',PDF_MARGIN_RIGHT);
         
-        require_once('include/Sugarpdf/FontManager.php');
-        $fontManager = new FontManager();
-        $fontlist = $fontManager->getSelectFontList();
-        $this->ss->assign('PDF_FONT_NAME_MAIN',get_select_options_with_id($fontlist, PDF_FONT_NAME_MAIN));
-        $this->ss->assign('PDF_FONT_SIZE_MAIN',PDF_FONT_SIZE_MAIN);
-        $this->ss->assign('PDF_FONT_NAME_DATA',get_select_options_with_id($fontlist, PDF_FONT_NAME_DATA));
-        $this->ss->assign('PDF_FONT_SIZE_DATA',PDF_FONT_SIZE_DATA);
-        ///////// END PDF SETTINGS
-        ////////////////////////////////////////////////////////////////////////////////
+            require_once('include/Sugarpdf/FontManager.php');
+            $fontManager = new FontManager();
+            $fontlist = $fontManager->getSelectFontList();
+            $this->ss->assign('PDF_FONT_NAME_MAIN',get_select_options_with_id($fontlist, PDF_FONT_NAME_MAIN));
+            $this->ss->assign('PDF_FONT_NAME_MAIN_DISPLAY',$fontlist[PDF_FONT_NAME_MAIN]);
+            $this->ss->assign('PDF_FONT_SIZE_MAIN',PDF_FONT_SIZE_MAIN);
+            $this->ss->assign('PDF_FONT_NAME_DATA',get_select_options_with_id($fontlist, PDF_FONT_NAME_DATA));
+            $this->ss->assign('PDF_FONT_NAME_DATA_DISPLAY',$fontlist[PDF_FONT_NAME_DATA]);
+            $this->ss->assign('PDF_FONT_SIZE_DATA',PDF_FONT_SIZE_DATA);
+            ///////// END PDF SETTINGS
+            ////////////////////////////////////////////////////////////////////////////////
+        }
         //END SUGARCRM flav=pro ONLY
     }
     
@@ -659,13 +727,21 @@ class UserViewHelper {
             $dictionary['User']['fields']['email1']['required'] = false;
         }
         // hack to disable email field being required if it shouldn't be required
-        if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' )
+        if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = false;
-        $this->ss->assign("NEW_EMAIL", getEmailAddressWidget($this->bean, "email1", $this->bean->email1, "EditView"));
+        }
+        $this->ss->assign("NEW_EMAIL", getEmailAddressWidget($this->bean, "email1", $this->bean->email1, $this->viewType));
         // hack to undo that previous hack
-        if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' )
+        if ( $this->ss->get_template_vars("REQUIRED_EMAIL_ADDRESS") == '0' ) {
             $GLOBALS['dictionary']['User']['fields']['email1']['required'] = true;
-        $this->ss->assign('EMAIL_LINK_TYPE', get_select_options_with_id($app_list_strings['dom_email_link_type'], $this->bean->getPreference('email_link_type')));
+        }
+        $raw_email_link_type = $this->bean->getPreference('email_link_type');
+        if ( $this->viewType == 'EditView' ) {
+            $this->ss->assign('EMAIL_LINK_TYPE', get_select_options_with_id($app_list_strings['dom_email_link_type'], $raw_email_link_type));
+        } else {
+            $this->ss->assign('EMAIL_LINK_TYPE', $app_list_strings['dom_email_link_type'][$raw_email_link_type]);
+        }
+        
         /////	END EMAIL OPTIONS
         ///////////////////////////////////////////////////////////////////////////////
         
@@ -690,7 +766,7 @@ class UserViewHelper {
             
             if( !$systemOutboundEmail->isAllowUserAccessToSystemDefaultOutbound() ) {
                 $mail_smtpauth_req = $systemOutboundEmail->mail_smtpauth_req;
-                $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($current_user->id);
+                $userOverrideOE = $systemOutboundEmail->getUsersMailerForSystemOverride($this->bean->id);
                 if($userOverrideOE != null) {
                     $mail_smtpuser = $userOverrideOE->mail_smtpuser;
                     $mail_smtppass = $userOverrideOE->mail_smtppass;

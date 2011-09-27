@@ -427,7 +427,7 @@
 
         <!--//BEGIN SUGARCRM flav=pro ONLY -->
         <div id="pdf_settings" style="display:{$HIDE_FOR_GROUP_AND_PORTAL}">
-        {if $PDF_CLASS == "TCPDF"}
+        {if $SHOW_PDF_OPTIONS}
         <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
                         <tr>
                             <th width="100%" align="left"  colspan="4">

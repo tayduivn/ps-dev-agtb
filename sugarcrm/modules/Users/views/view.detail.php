@@ -40,7 +40,7 @@ class UsersViewDetail extends ViewDetail {
 
         parent::preDisplay();
         
-        $viewHelper = new UserViewHelper($this->ss, $this->bean, 'detail');
+        $viewHelper = new UserViewHelper($this->ss, $this->bean, 'DetailView');
         $viewHelper->setupAdditionalFields();
 
         $errors = "";
@@ -104,5 +104,31 @@ class UsersViewDetail extends ViewDetail {
         }
         
         $this->ss->assign('EDITBUTTONS',$buttons);
+
+        //BEGIN SUGARCRM flav!=sales ONLY
+        $show_roles = (!($this->bean->is_group=='1' || $this->bean->portal_only=='1'));
+        //END SUGARCRM flav!=sales ONLY
+        //BEGIN SUGARCRM flav=sales ONLY
+        $show_roles = false;
+        //END SUGARCRM flav=sales ONLY
+        $show_roles = true;
+        $this->ss->assign('SHOW_ROLES', $show_roles);
+
+        if ( $show_roles ) {
+            ob_start();
+            echo "<div>";
+            require_once('modules/ACLRoles/DetailUserRole.php');
+            echo "</div></div>";
+            
+            //BEGIN SUGARCRM flav=pro ONLY
+            if(file_exists('custom/modules/Users/Ext/UserPage/userpage.ext.php')) {
+                include_once('custom/modules/Users/Ext/UserPage/userpage.ext.php');
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            $role_html = ob_get_contents();
+            ob_end_clean();
+            $this->ss->assign('ROLE_HTML',$role_html);
+        }
     }
 }

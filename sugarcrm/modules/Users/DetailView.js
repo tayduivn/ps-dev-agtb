@@ -138,3 +138,44 @@ function user_status_display(field){
 	    break;
 	}
 }
+
+function confirmDelete() {
+    var handleYes = function() {
+        window.location="?module=Users&action=delete&record="+document.forms.DetailView.record.value;
+    };
+
+    var handleNo = function() {
+        confirmDeletePopup.hide();
+        return false;
+     };
+    var user_portal_group = '{$usertype}';
+    var confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_USER_CONFIRM');
+    if(user_portal_group == 'GroupUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_GROUP_CONFIRM');
+    }
+    //BEGIN SUGARCRM flav=pro ONLY
+    else if(user_portal_group == 'PortalUser'){
+        confirm_text = SUGAR.language.get('Users', 'LBL_DELETE_PORTAL_CONFIRM');
+    }
+    //END SUGARCRM flav=pro ONLY
+
+    var confirmDeletePopup = new YAHOO.widget.SimpleDialog("Confirm ", {
+                width: "400px",
+                draggable: true,
+                constraintoviewport: true,
+                modal: true,
+                fixedcenter: true,
+                text: confirm_text,
+                bodyStyle: "padding:5px",
+                buttons: [{
+                        text: SUGAR.language.get('Users', 'LBL_OK'),
+                        handler: handleYes,
+                        isDefault:true
+                }, {
+                        text: SUGAR.language.get('Users', 'LBL_CANCEL'),
+                        handler: handleNo
+                }]
+     });
+    confirmDeletePopup.setHeader(SUGAR.language.get('Users', 'LBL_DELETE_USER'));
+    confirmDeletePopup.render(document.body);
+}

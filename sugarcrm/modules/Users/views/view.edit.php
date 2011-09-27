@@ -110,7 +110,7 @@ class UsersViewEdit extends ViewEdit {
         $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
         $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
         
-        $fieldHelper = new UserViewHelper($this->ss, $this->bean, 'edit');
+        $fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
         $fieldHelper->setupAdditionalFields();
 
         parent::display();

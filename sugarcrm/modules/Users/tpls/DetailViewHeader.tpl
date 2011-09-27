@@ -62,6 +62,7 @@ user_detailview_tabs.on('contentReady', function(e){
     <input type="hidden" name="isDuplicate" value=false>
     <input type="hidden" name="action">
     <input type="hidden" name="user_name" value="{$USER_NAME}">
+    <input type="hidden" id="user_type" name="user_type" value="{$UserType}">
     <input type="hidden" name="password_generate">
     <input type="hidden" name="old_password">
     <input type="hidden" name="new_password">
