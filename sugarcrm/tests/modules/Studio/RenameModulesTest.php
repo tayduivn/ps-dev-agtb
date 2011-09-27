@@ -221,9 +221,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $rm->save(FALSE);
 
-        //Test subpanel renames
+        //Test label renames
         $callStrings = return_module_language('en_us','Calls', TRUE);
-        $this->assertEquals('My Calls2', $callStrings['LBL_LIST_MY_CALLS'], "Renaming subpanels failed for module.");
+        $this->assertEquals('My Calls2', $callStrings['LBL_LIST_MY_CALLS'], "Renaming labels failed for module.");
 
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
