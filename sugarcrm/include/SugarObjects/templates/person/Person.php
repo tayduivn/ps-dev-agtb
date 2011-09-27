@@ -60,7 +60,7 @@ class Person extends Basic
         $first_name = ""; $last_name = ""; $salutation = ""; $title = "";
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ((ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if (isset($GLOBALS['current_user']) && (ACLField::hasAccess('first_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
                 // first name has at least read access
            $first_name = $this->first_name;
@@ -69,7 +69,7 @@ class Person extends Basic
         //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ((ACLField::hasAccess('last_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if (isset($GLOBALS['current_user']) && (ACLField::hasAccess('last_name', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
                 // last name has at least read access
             $last_name = $this->last_name;
@@ -78,7 +78,7 @@ class Person extends Basic
         //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ((ACLField::hasAccess('salutation', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if (isset($GLOBALS['current_user']) && (ACLField::hasAccess('salutation', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
 
                 // salutation has at least read access
@@ -93,7 +93,7 @@ class Person extends Basic
         //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav=pro ONLY
-        if ((ACLField::hasAccess('title', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
+        if (isset($GLOBALS['current_user']) && (ACLField::hasAccess('title', $this->module_dir, $GLOBALS['current_user']->id, $this->isOwner($GLOBALS['current_user']->id))) > 0) {
         //END SUGARCRM flav=pro ONLY
                 // last name has at least read access
             $title = $this->title;
