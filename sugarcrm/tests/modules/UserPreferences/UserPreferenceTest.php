@@ -23,7 +23,7 @@
  ********************************************************************************/
 require_once 'modules/Users/User.php';
 
-class UserTest extends Sugar_PHPUnit_Framework_TestCase
+class UserPreferenceTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_user = null;
 
