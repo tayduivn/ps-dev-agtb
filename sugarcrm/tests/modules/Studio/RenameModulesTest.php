@@ -159,9 +159,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group bug46880
-     * maksing sure subpanel is not renamed twice by both plural name and singular name
+     * making sure subpanel is not renamed twice by both plural name and singular name
      */
-    public function testLabelRenaming()
+    public function testSubpanelRenaming()
     {
         $module = 'Accounts';
         $newSingular = 'Account1';
@@ -184,8 +184,46 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $rm->save(FALSE);
 
         //Test subpanel renames
-        $campaignStrings = return_module_language('en_us','Bugs', TRUE);
-        $this->assertEquals('Accounts2', $campaignStrings['LBL_ACCOUNTS_SUBPANEL_TITLE'], "Renaming subpanels failed for module.");
+        $bugStrings = return_module_language('en_us','Bugs', TRUE);
+        $this->assertEquals('Accounts2', $bugStrings['LBL_ACCOUNTS_SUBPANEL_TITLE'], "Renaming subpanels failed for module.");
+
+        //Ensure we recorded which modules were modified.
+        $renamedModules = $rm->getRenamedModules();
+        $this->assertTrue( count($renamedModules) > 0 );
+
+        //cleanup
+        $this->removeCustomAppStrings();
+        $this->removeModuleStrings( $renamedModules );
+    }
+
+    /**
+     * @group bug45804
+     */
+    public function testLabelRenaming()
+    {
+        $module = 'Calls';
+        $newSingular = 'Call1';
+        $newPlural = 'Calls2';
+
+        $rm = new RenameModules();
+
+        $_REQUEST['slot_0'] = 0;
+        $_REQUEST['key_0'] = $module;
+        $_REQUEST['svalue_0'] = $newSingular;
+        $_REQUEST['value_0'] = $newPlural;
+        $_REQUEST['delete_0'] = '';
+        $_REQUEST['dropdown_lang'] = $this->language;
+        $_REQUEST['dropdown_name'] = 'moduleList';
+
+        global $app_list_strings;
+        if (!isset($app_list_strings['parent_type_display'][$module])) {
+            $app_list_strings['parent_type_display'][$module] = 'Call';
+        }
+        $rm->save(FALSE);
+
+        //Test subpanel renames
+        $callStrings = return_module_language('en_us','Calls', TRUE);
+        $this->assertEquals('My Calls2', $callStrings['LBL_LIST_MY_CALLS'], "Renaming subpanels failed for module.");
 
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
