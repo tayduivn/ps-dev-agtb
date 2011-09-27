@@ -341,7 +341,7 @@ class SugarSpriteBuilder
 					$hash_id = md5($id);
 
 					// header
-					$head .= "span.spr_$hash_id,\n";
+					$head .= "span.spr_{$hash_id},\n";
 
 					// image size
 					$w = $info['x'];
@@ -364,7 +364,7 @@ background-position: -{$offset_x}px -{$offset_y}px;
 
 				// common css header
 				//$head .= "span.spr_bogus {background: url('{$GLOBALS['sugar_config']['site_url']}/index.php?entryPoint=getImage&imageName={$spriteFileName}&spriteNamespace={$nameSpace}') no-repeat;display: inline-block";
-				$head .= "span.spr_bogus {background: url('../../../index.php?entryPoint=getImage&imageName={$spriteFileName}&spriteNamespace={$nameSpace}'); no-repeat;display:inline-block;";
+				$head .= "span.spr_bogus {background: url('../../../index.php?entryPoint=getImage&imageName={$spriteFileName}&spriteNamespace={$nameSpace}'); no-repeat;display:inline-block;\n";
 
 				// append mode for repeatable sprites
                 $fileMode = $isRepeat ? 'a' : 'w';
@@ -380,7 +380,7 @@ background-position: -{$offset_x}px -{$offset_y}px;
 				fclose($fh);
 
 				/* save metadata */
-				(file_exists("$outputDir/$metaFileName") && $isRepeat) ? $add_php_tag = false : $add_php_tag = true;
+				$add_php_tag = (file_exists("$outputDir/$metaFileName") && $isRepeat) ? false : true;
 				$fh = fopen("$outputDir/$metaFileName", $fileMode);
 				if($add_php_tag)
                 {
@@ -395,7 +395,7 @@ background-position: -{$offset_x}px -{$offset_y}px;
 
 				if(!$this->silentRun)
                 {
-                    $msg = string_format($GLOBALS['LBL_SPRITES_ADDED'], array($name));
+                    $msg = string_format($mod_strings['LBL_SPRITES_ADDED'], array($name));
                     $GLOBALS['log']->debug($msg);
                     $this->logMessage($msg);
                 }
