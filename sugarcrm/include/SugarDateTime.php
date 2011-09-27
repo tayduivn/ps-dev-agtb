@@ -23,6 +23,7 @@
 /**
  * Sugar DateTime container
  * Extends regular PHP DateTime with useful services
+ * @api
  */
 class SugarDateTime extends DateTime
 {
@@ -529,8 +530,8 @@ class SugarDateTime extends DateTime
      * Since some OSes and PHP versions (please upgrade to 5.3!) do not support built-in parsing functions,
      * we have to restort to this ugliness.
      * @internal
-     * @param string $format
-     * @param string $time
+     * @param string $time  Time formatted string
+     * @param string $format Format, as accepted by strptime()
      * @return array Parsed parts
      */
     protected function _strptime($time, $format)

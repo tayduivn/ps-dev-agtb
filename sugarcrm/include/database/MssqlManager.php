@@ -72,6 +72,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 * Contributor(s): ______________________________________..
 ********************************************************************************/
 
+/**
+ * SQL Server (mssql) manager
+ */
 class MssqlManager extends DBManager
 {
     /**

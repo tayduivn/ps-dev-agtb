@@ -38,6 +38,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=ent ONLY
 
+/**
+ * Oracle driver
+ */
 class OracleManager extends DBManager
 {
     /**

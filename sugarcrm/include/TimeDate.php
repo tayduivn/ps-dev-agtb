@@ -24,6 +24,7 @@ require_once 'include/SugarDateTime.php';
 /**
   *
   * New Time & Date handling class
+ * @api
   * Migration notes:
   * - to_db_time() requires either full datetime or time, won't work with just date
   * 	The reason is that it's not possible to know if short string has only date or only time,
@@ -153,6 +154,10 @@ class TimeDate
      */
     public $allow_cache = true;
 
+    /**
+     * Create TimeDate handler
+     * @param User $user User to work with, default if current user
+     */
     public function __construct(User $user = null)
     {
         if (self::$gmtTimezone == null) {
@@ -962,8 +967,8 @@ class TimeDate
      * No TZ conversion is performed!
      *
      * @param string $date
-     * @param $from Source format
-     * @param $to Destination format
+     * @param string $from Source format
+     * @param string $to Destination format
      * @return string Converted date
      */
     function to_display($date, $from, $to)
@@ -1379,8 +1384,8 @@ class TimeDate
     /**
      * Timezone sorting helper
      * Sorts by name
-     * @param $a
-     * @param $b
+     * @param array $a
+     * @param array $b
      * @internal
      * @return int
      */
@@ -1584,7 +1589,7 @@ class TimeDate
     /**
      * Get month-long range mdiff months from now
      * @internal
-     * @param $mdiff
+     * @param int $mdiff
      * @param User $user
      * @return array
      */
@@ -1600,7 +1605,7 @@ class TimeDate
     /**
      * Get year-long range ydiff years from now
      * @internal
-     * @param $ydiff
+     * @param int $ydiff
      * @param User $user
      * @return array
      */

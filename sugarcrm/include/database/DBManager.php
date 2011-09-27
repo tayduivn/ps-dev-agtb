@@ -229,6 +229,9 @@ abstract class DBManager
 	 */
 	protected $capabilities = array();
 
+    /**
+     * Create DB Driver
+     */
 	public function __construct()
 	{
 		$this->timedate = TimeDate::getInstance();
@@ -236,9 +239,11 @@ abstract class DBManager
 		$this->helper = $this; // compatibility
 	}
 
-	/**
-	 * Wrapper for those trying to access the private and protected class members directly
-	 */
+    /**
+     * Wrapper for those trying to access the private and protected class members directly
+     * @param string $p var name
+     * @return mixed
+     */
 	public function __get($p)
 	{
 		$this->log->info('Call to DBManager::$'.$p.' is deprecated');
@@ -360,13 +365,13 @@ abstract class DBManager
 	/**
 	 * Tracks slow queries in the tracker database table
 	 *
-	 * @param $query string value of query to track
+	 * @param string $query  value of query to track
 	 */
 	protected function track_slow_queries($query)
 	{
 		$trackerManager = TrackerManager::getInstance();
 		if($trackerManager->isPaused()) {
-		return;
+		    return;
 		}
 
 		if($monitor = $trackerManager->getMonitor('tracker_queries')){
@@ -385,7 +390,7 @@ abstract class DBManager
 	 * before altering it.  The alteration modifies the way the team security queries are made by
 	 * changing it from a subselect to a distinct clause; hence the name of the method.
 	 *
-	 * @param $sql String value of SQL statement to alter
+	 * @param string $sql value of SQL statement to alter
 	 */
 	protected function addDistinctClause(&$sql)
 	{
@@ -2503,7 +2508,7 @@ protected function checkQuery($sql, $object_name = false)
      * @abstract
      * @param  string $table Table name
      * @param  string $field_name Field name
-     * @param $start_value  Starting autoincrement value
+     * @param  int $start_value  Starting autoincrement value
      * @return string
      *
      */
@@ -2571,8 +2576,8 @@ protected function checkQuery($sql, $object_name = false)
 	}
 
 	/**
-	 * Truncate table
-	 * @param  $name
+	 * Generates SQL for truncating a table.
+	 * @param  string $name  table name
 	 * @return string
 	 */
 	public function truncateTableSQL($name)
@@ -2605,14 +2610,16 @@ protected function checkQuery($sql, $object_name = false)
 		return $this->changeColumnSQL($tablename, $fieldDefs, 'drop');
 	}
 
-	/*
-	 * Return a version of $proposed that can be used as a column name in any of our supported databases
-	 * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
-	 * @param string|array $name Proposed name for the column
-	 * @param string $ensureUnique
-	 * @return string|array Valid column name trimmed to right length and with invalid characters removed
-	 */
-	public function getValidDBName ($name, $ensureUnique = false, $type = 'column', $force = false)
+    /**
+     * Return a version of $proposed that can be used as a column name in any of our supported databases
+     * Practically this means no longer than 25 characters as the smallest identifier length for our supported DBs is 30 chars for Oracle plus we add on at least four characters in some places (for indicies for example)
+     * @param string|array $name Proposed name for the column
+     * @param bool|string $ensureUnique Ensure the name is unique
+     * @param string $type Name type (table, column)
+     * @param bool $force Force new name
+     * @return string|array Valid column name trimmed to right length and with invalid characters removed
+     */
+	public function getValidDBName($name, $ensureUnique = false, $type = 'column', $force = false)
 	{
 		if(is_array($name)) {
 			$result = array();
@@ -2622,7 +2629,7 @@ protected function checkQuery($sql, $object_name = false)
 			return $result;
 		} else {
 			// first strip any invalid characters - all but alphanumerics and -
-			$name = preg_replace ( '/[^\w-]+/i', '', $name ) ;
+			$name = preg_replace( '/[^\w-]+/i', '', $name ) ;
 			$len = strlen( $name ) ;
 			$maxLen = empty($this->maxNameLengths[$type]) ? $this->maxNameLengths[$type]['column'] : $this->maxNameLengths[$type];
 			if ($len <= $maxLen && !$force) {
@@ -2632,12 +2639,12 @@ protected function checkQuery($sql, $object_name = false)
 				$md5str = md5($name);
 				$tail = substr ( $name, -11) ;
 				$temp = substr($md5str , strlen($md5str)-4 );
-				$result = substr ( $name, 0, 10) . $temp . $tail ;
+				$result = substr( $name, 0, 10) . $temp . $tail ;
 			} else {
-				$result = substr ( $name, 0, 11) . substr ( $name, 11 - $maxLen);
+				$result = substr( $name, 0, 11) . substr( $name, 11 - $maxLen);
 			}
 
-			return strtolower ( $result ) ;
+			return strtolower( $result ) ;
 		}
 	}
 
@@ -3166,7 +3173,7 @@ protected function checkQuery($sql, $object_name = false)
     /**
      * Verify SQl statement using per-DB verification function
      * provided the function exists
-     * @param  $query string
+     * @param string $query Query to verify
      * @param array $skipTables List of blacklisted tables that aren't checked
      * @return string
      */
@@ -3567,7 +3574,7 @@ protected function checkQuery($sql, $object_name = false)
     /**
      * Check if this query is valid
      * Validates only SELECT queries
-     * @param $query
+     * @param string $query
      * @return bool
      */
 	abstract public function validateQuery($query);
@@ -3586,7 +3593,7 @@ protected function checkQuery($sql, $object_name = false)
 
 	/**
 	 * Get tables like expression
-	 * @param $like string Expression describing tables
+	 * @param string $like Expression describing tables
 	 * @return array
 	 */
 	abstract public function tablesLike($like);
