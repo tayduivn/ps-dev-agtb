@@ -524,6 +524,11 @@ function setDisplayHeaderAndFooter($bool) {
 function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     $sortBy = $this->getSessionVariable($varName, "ORDER_BY") ;
 
+    $orderByDirection = $this->getSessionVariableName($varName, "order_by_direction");
+    $orderByColumn = $this->getSessionVariableName($varName, "ORDER_BY");
+    $lastEqualsSortBy = false;
+    $defaultOrder = false; //ascending
+    
     if(empty($sortBy)) {
         $this->setUserVariable($varName, "ORDER_BY", $defaultOrderBy);
         $sortBy = $defaultOrderBy;
@@ -539,29 +544,67 @@ function getOrderBy($varName, $defaultOrderBy='', $force_sortorder='') {
     
     $desc = $this->getSessionVariable($varName, $sortBy."S");
 
-    if(empty($desc))
-        $desc = false;
-    if(isset($_REQUEST[$this->getSessionVariableName($varName,  "ORDER_BY")]))
-        $last = $this->getSessionVariable($varName, "OBL");
-        if(!empty($last) && $last == $sortBy) {
-            $desc = !$desc;
-        }else {
+    if (empty($desc))
+        {
+            $desc = $defaultOrder;
+        }
+        $defaultOrder = $desc ? 'desc' : 'asc';
+        $orderByValue = $defaultOrder;
+        if (isset($_REQUEST[$orderByDirection]))
+        {
+            $possibleRequestOrderBy = $_REQUEST[$orderByDirection];
+            if ($possibleRequestOrderBy == 'asc' || $possibleRequestOrderBy == 'desc')
+            {
+                $orderByValue = $possibleRequestOrderBy;
+            }
+        }
+
+        if (isset($_REQUEST[$orderByColumn]))
+        {
+            $last = $this->getSessionVariable($varName, "OBL");
+        }
+        if (!empty($last) && $last == $sortBy)
+        {
+            $lastEqualsSortBy = true;
+        } else
+        {
+            $orderByValue = $defaultOrder;
             $this->setSessionVariable($varName, "OBL", $sortBy);
         }
-    $this->setSessionVariable($varName, $sortBy."S", $desc);
-    if(!empty($sortBy)) {
-        if(empty($force_sortorder)) {
-            if(substr_count(strtolower($sortBy), ' desc') == 0 && substr_count(strtolower($sortBy), ' asc') == 0) {
-                if($desc) {
-                    $this->query_orderby = $sortBy.' desc';
-                } else {
-                    $this->query_orderby = $sortBy.' asc';
+        $desc = $orderByValue == 'desc';
+        $orderByDirectionValue = false;
+        $this->setSessionVariable($varName, $sortBy . "S", $desc);
+        if (!empty($sortBy))
+        {
+            if (empty($force_sortorder))
+            {
+                if (substr_count(strtolower($sortBy), ' desc') == 0 && substr_count(strtolower($sortBy), ' asc') == 0)
+                {
+                    if ($sortBy)
+                    {
+                        $orderByDirectionValue = $desc ? 'asc' : 'desc';
+                    }
+                    $this->query_orderby = $sortBy . ' ' . $orderByValue;
                 }
+            } else
+            {
+                $this->query_orderby = $sortBy . ' ' . $force_sortorder;
             }
-
-        } else {
-            $this->query_orderby = $sortBy . ' ' . $force_sortorder;
-        }
+            if (!isset($this->appendToBaseUrl))
+            {
+                $this->appendToBaseUrl = array();
+            }
+            if ($orderByDirectionValue)
+            {
+                $this->appendToBaseUrl[$orderByDirection] = $orderByDirectionValue;
+            }
+            $offsetVar = $this->getSessionVariableName($varName, "offset");
+            if (isset($_REQUEST[$offsetVar]))
+            {
+                $this->appendToBaseUrl[$offsetVar] = $_REQUEST[$offsetVar];
+            }
+            //Just clear from url...
+            $this->appendToBaseUrl[$orderByColumn] = false;
     }else {
         $this->query_orderby = "";
     }
@@ -1291,6 +1334,35 @@ function getUserVariable($localVarName, $varName) {
             $this->base_URL.='&to_pdf=true&action=SubPanelViewer&subpanel=' . $this->source_module;
         }
 
+        //bug43465 start
+        if (isset($this->appendToBaseUrl) && is_array($this->appendToBaseUrl))
+        {
+            foreach ($this->appendToBaseUrl as $key => $value)
+            {
+                $fullRequestString = $key . '=' . $value;
+
+                if ($this->base_URL == "/index.php")
+                {
+                    $this->base_URL .= "?";
+                } else
+                {
+                    if ($fullRequestString == substr($this->baseURL, '-' . strlen($fullRequestString)))
+                    {
+                        $this->base_URL = preg_replace("/&" . $key . "\=.*/", "", $this->base_URL);
+                    } else
+                    {
+                        $this->base_URL = preg_replace("/&" . $key . "\=.*?&/", "&", $this->base_URL);
+                    }
+                    $this->base_URL .= "&";
+                }
+                if (!empty($value))
+                {
+                    $this->base_URL .= "{$key}={$value}";
+                }
+            }
+        }
+        //bug43465 end
+        
         $sort_URL_base = $this->base_URL. "&".$this->getSessionVariableName($html_varName,"ORDER_BY")."=";
 
         if($sort_URL_base !== "")
