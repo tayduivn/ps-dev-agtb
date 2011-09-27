@@ -148,22 +148,25 @@ class UserPreference extends SugarBean
         if ( empty($user->user_name) )
             return;
 
+        // save the current user check results so we don't have to keep checking
+        $currentUser = $this->isCurrentUser();
+
         if(!isset($_SESSION[$user->user_name.'_PREFERENCES'][$category])) {
             if(!$user->loadPreferences($category)) {
-                if($this->isCurrentUser()) $_SESSION[$user->user_name.'_PREFERENCES'][$category] = array();
+                if($currentUser) $_SESSION[$user->user_name.'_PREFERENCES'][$category] = array();
                 $user->user_preferences[$category] = array();
             }
         }
 
         // preferences changed or a new preference, save it to DB
-        if($this->isCurrentUser() && !isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name])
+        if($currentUser && !isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name])
             || (isset($_SESSION[$user->user_name.'_PREFERENCES'][$category][$name]) && $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] != $value)) {
                 $GLOBALS['savePreferencesToDB'] = true;
                 if(!isset($GLOBALS['savePreferencesToDBCats'])) $GLOBALS['savePreferencesToDBCats'] = array();
                 $GLOBALS['savePreferencesToDBCats'][$category] = true;
         }
 
-        if($this->isCurrentUser()) $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
+        if($currentUser) $_SESSION[$user->user_name.'_PREFERENCES'][$category][$name] = $value;
         $user->user_preferences[$category][$name] = $value;
     }
 
@@ -491,7 +494,7 @@ class UserPreference extends SugarBean
     protected function isCurrentUser()
     {
         global $current_user;
-
-        return ($this->_userFocus->id == $current_user->id);
+        
+        return ($this->_userFocus instanceof SugarBean && $this->_userFocus->id == $current_user->id);
     }
 }
