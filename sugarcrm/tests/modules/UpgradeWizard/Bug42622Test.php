@@ -65,6 +65,8 @@ class Bug42622Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testUnlinkUpgradeFilesPre620()
 	{
+        $this->markTestSkipped('No upgrade path from 613->640');
+        return;
 		$this->assertTrue(file_exists($this->studio_file), 'Assert the ' . $this->studio_file . ' exists');
 		unlinkUpgradeFiles('613');
 		$this->assertFalse(file_exists($this->studio_file), 'Assert the ' . $this->studio_file . ' no longer exists');

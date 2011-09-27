@@ -22,6 +22,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 include_once('include/database/MssqlManager.php');
 
+/**
+ * SQL Server driver for FreeTDS
+ */
 class FreeTDSManager extends MssqlManager
 {
     public $dbName = 'FreeTDS SQL Server';

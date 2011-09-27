@@ -407,11 +407,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetImageDetectingImageHeightAndWidth()
     {
         $size = getimagesize($this->_themeObject->getImageURL('Contacts.gif',false));
-
-        $this->assertEquals(
-            $this->_themeObject->getImage('Contacts','',null,null,'.gif',"Contacts"),
-            "<img src=\"". $this->_themeObject->getImageURL('Contacts.gif') ."\"     alt=\"Contacts\" />"
-            );
+        $this->assertRegExp('/<span\s+?class[^>]+?><\/span>/', $this->_themeObject->getImage('Contacts','',null,null,'.gif',"Contacts"));
     }
 
     public function testGetImageWithInvalidImage()
