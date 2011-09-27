@@ -169,7 +169,7 @@ class Project extends SugarBean {
                 }
             }
             if ($new_rel_link == 'contacts') {
-                $accountId = $this->db->getOne('SELECT account_id FROM accounts_contacts WHERE contact_id="' . $new_rel_id .'"');
+                $accountId = $this->db->getOne("SELECT account_id FROM accounts_contacts WHERE contact_id='{$new_rel_id}'");
                 if ($accountId !== false) {
                     if($this->load_relationship('accounts')){
                         $this->accounts->add($accountId);
