@@ -29,7 +29,7 @@ class Bug44414Test extends Sugar_PHPUnit_Framework_TestCase
 	var $has_save_file = false;
 	var $save_file = 'modules/DocumentRevisions/Save.php';
 	var $backup_file;
-	
+	/*
 	public function setUp() 
 	{
 		
@@ -67,9 +67,12 @@ class Bug44414Test extends Sugar_PHPUnit_Framework_TestCase
 			unlink($this->save_file . '.suback.bak');
 		}
 	}
+	*/
 
 	public function testUnlinkUpgradeFiles600()
 	{
+        $this->markTestSkipped('No upgrade path from 600->640');
+        return;
 		$this->assertTrue(file_exists($this->save_file), 'Assert the ' . $this->save_file . ' exists');
 		unlinkUpgradeFiles('600');
 		$this->assertFalse(file_exists($this->save_file), 'Assert the ' . $this->save_file . ' no longer exists');
@@ -78,6 +81,8 @@ class Bug44414Test extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function testUnlinkUpgradeFiles610()
 	{
+        $this->markTestSkipped('No upgrade path from 610->640');
+        return;
 		$this->assertTrue(file_exists($this->save_file), 'Assert the ' . $this->save_file . ' exists');
 		unlinkUpgradeFiles('610');
 		$this->assertFalse(file_exists($this->save_file), 'Assert the ' . $this->save_file . ' no longer exists');

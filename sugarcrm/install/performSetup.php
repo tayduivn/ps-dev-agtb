@@ -612,6 +612,11 @@ FP;
     $tabs->set_system_tabs($enabled_tabs);
 
 post_install_modules();
+
+//Call rebuildSprites
+require_once('modules/UpgradeWizard/uw_utils.php');
+rebuildSprites(true);
+
 if( count( $bottle ) > 0 ){
     foreach( $bottle as $bottle_message ){
         $bottleMsg .= "{$bottle_message}\n";
