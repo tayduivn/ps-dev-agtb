@@ -495,6 +495,6 @@ class UserPreference extends SugarBean
     {
         global $current_user;
         
-        return ($this->_userFocus instanceof SugarBean && $this->_userFocus->id == $current_user->id);
+        return ($this->_userFocus instanceof SugarBean && $current_user instanceof SugarBean && $this->_userFocus->id == $current_user->id);
     }
 }
