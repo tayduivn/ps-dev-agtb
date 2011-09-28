@@ -126,9 +126,9 @@ class SessionManager extends SugarBean {
      * Retrieves the number of currently active sessions
      */
     function getNumActiveSessions(){
-       $result = $this->db->query("SELECT count(*) from $this->table_name");
+       $result = $this->db->query("SELECT count(*) as count from $this->table_name");
        $row = $this->db->fetchByAssoc($result);
-       return $row['count(*)'];
+       return $row['count'];
     }
 
     /*
