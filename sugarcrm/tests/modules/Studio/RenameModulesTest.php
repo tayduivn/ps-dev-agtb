@@ -201,9 +201,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLabelRenaming()
     {
-        $module = 'Calls';
-        $newSingular = 'Call1';
-        $newPlural = 'Calls2';
+        $module = 'Accounts';
+        $newSingular = 'Account1';
+        $newPlural = 'Accounts2';
 
         $rm = new RenameModules();
 
@@ -217,13 +217,13 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
         global $app_list_strings;
         if (!isset($app_list_strings['parent_type_display'][$module])) {
-            $app_list_strings['parent_type_display'][$module] = 'Call';
+            $app_list_strings['parent_type_display'][$module] = 'Account';
         }
         $rm->save(FALSE);
 
         //Test label renames
-        $callStrings = return_module_language('en_us','Calls', TRUE);
-        $this->assertEquals('My Calls2', $callStrings['LBL_LIST_MY_CALLS'], "Renaming labels failed for module.");
+        $callStrings = return_module_language('en_us','Accounts', TRUE);
+        $this->assertEquals('My Accounts2', $callStrings['LBL_HOMEPAGE_TITLE'], "Renaming labels failed for module.");
 
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
