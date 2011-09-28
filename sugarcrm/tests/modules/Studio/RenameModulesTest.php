@@ -221,8 +221,13 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         }
         $rm->save(FALSE);
 
+        // remove cache
+        if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/language/'.$this->language.'.lang.php')) {
+            unlink($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/language/'.$this->language.'.lang.php');
+        }
+
         //Test label renames
-        $callStrings = return_module_language('en_us','Accounts', TRUE);
+        $callStrings = return_module_language('en_us', 'Accounts', TRUE);
         $this->assertEquals('My Accounts2', $callStrings['LBL_HOMEPAGE_TITLE'], "Renaming labels failed for module.");
 
         //Ensure we recorded which modules were modified.
