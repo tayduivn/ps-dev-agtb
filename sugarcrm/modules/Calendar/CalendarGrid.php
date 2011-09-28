@@ -47,7 +47,6 @@ class CalendarGrid {
 		$Td = date("d",$today_unix - date('Z',$today_unix));
 		$Tm = date("m",$today_unix - date('Z',$today_unix));
 		$Ty = date("Y",$today_unix - date('Z',$today_unix));
-		$timezone = $GLOBALS['timedate']->getUserTimeZone();
 
 		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);		
 
@@ -135,7 +134,6 @@ class CalendarGrid {
 		$Td = date("d",$today_unix - date('Z',$today_unix));
 		$Tm = date("m",$today_unix - date('Z',$today_unix));
 		$Ty = date("Y",$today_unix - date('Z',$today_unix));
-		$timezone = $GLOBALS['timedate']->getUserTimeZone();
 
 		$day_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th;
 		$day_start = date("m/d/Y H:i:s",$day_start_unix);
@@ -194,8 +192,6 @@ class CalendarGrid {
 		$Tm = date("m",$today_unix - date('Z',$today_unix));
 		$Ty = date("Y",$today_unix - date('Z',$today_unix));
 		$Tt = date("t",$today_unix - date('Z',$today_unix));
-		$timezone = $GLOBALS['timedate']->getUserTimeZone();
-
 
 		$month_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Td - 1);
 		$month_end_unix = $month_start_unix + 60*60*24*($Tt);
@@ -280,7 +276,6 @@ class CalendarGrid {
 		$Td = date("d",$today_unix - date('Z',$today_unix));
 		$Tm = date("m",$today_unix - date('Z',$today_unix));
 		$Ty = date("Y",$today_unix - date('Z',$today_unix));
-		$timezone = $GLOBALS['timedate']->getUserTimeZone();
 
 		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);
 		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
@@ -371,8 +366,6 @@ class CalendarGrid {
 		$Tt = date("z",$today_unix - date('Z',$today_unix));
 		$TL = date("L",$today_unix - date('Z',$today_unix));
 
-		$timezone = $GLOBALS['timedate']->getUserTimeZone();
-
 		$diy = 365;
 		if($TL == 1)
 			$diy++;	
@@ -409,7 +402,6 @@ class CalendarGrid {
 			$Tt = date("t",$g_unix - date('Z',$g_unix));
 			$Tz = date("z",$g_unix - date('Z',$g_unix));
 			$TL = date("L",$g_unix - date('Z',$g_unix));
-			$timezone = $GLOBALS['timedate']->getUserTimeZone();	
 
 			$month_start_unix = $g_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Td - 1);
 			$month_end_unix = $month_start_unix + 60*60*24*($Tt);

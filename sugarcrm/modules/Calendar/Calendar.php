@@ -27,37 +27,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2005 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 require_once('modules/Calendar/utils.php');
-require_once('modules/Calendar/DateTimeUtil.php');
 require_once('include/utils/activity_utils.php');
 require_once('modules/Calendar/CalendarActivity.php');
 
 
 class Calendar {
 	
-	var $view = 'week';
-	var $dashlet = false;		
+	var $view = 'week'; // current view
+	var $dashlet = false; // whether is displayed in dashlet	
 	var $date_time;
 	
-	var $slices_arr = array();
-	var $activity_focus;
-	var $slice_hash = array();	
-
-	var $week_start_day; 
 	var $show_tasks = true;
 	var $show_calls = true;	
 	var $day_start_time; // working day start time in format '12:00'
 	var $day_end_time; // working day end time in format '12:00'
-	var $rec_enabled = false;
 	
 	var $gmt_today;	// GMT of today
 	var $today_unix; // timestamp of today
-	var $time_step = 60;
+	var $time_step = 60; // time step of each slot in minutes
 		
-	var $acts_arr = array(); 	
-	var $ActRecords = array(); // Array of activity data to be displayed	
-	var $date_arr = array();
-	var $shared_ids = array();
+	var $acts_arr = array(); // Array of activities objects	
+	var $ActRecords = array(); // Array of activities data to be displayed	
+	var $date_arr = array(); // ('year','month','day')
+	var $shared_ids = array(); // ids of users for shared view
 	
 	var $celcount; // working day count of slots 
 	var $cells_per_day; // entire 24h day count of slots 
@@ -77,26 +71,22 @@ class Calendar {
 			$time = $current_user->getPreference('time');
 		}else{
 			$time = $GLOBALS['sugar_config']['default_time_format'];
-		}	
-
-		if(isset($time_arr['activity_focus'])){
-			$this->activity_focus =  new CalendarActivity($time_arr['activity_focus']);
-			$this->date_time =  $this->activity_focus->start_time;
-		}else{
-		 	if(!empty($time_arr)){
-		        	// FIXME: what format?
-				$this->date_time = $timedate->fromTimeArray($time_arr);
-			}else{
-		        	$this->date_time = $timedate->getNow();
-			}
 		}
+
+		if(!empty($time_arr)){
+			$this->date_time = $timedate->fromTimeArray($time_arr);
+		}else{
+		        $this->date_time = $timedate->getNow();
+		}
+		
 
 		$timedate->tzUser($this->date_time, $current_user);
         	$GLOBALS['log']->debug("CALENDATE: ".$this->date_time->format('r'));
-		$this->create_slices();
 	}
 	
-	
+	/**
+	 * initialize
+	 */
 	function init(){
 		global $current_user,$timedate;
 		
@@ -134,7 +124,7 @@ class Calendar {
 		if(empty($_REQUEST['year']))
 			$_REQUEST['year'] = "";
 
-		if( empty($date_arr) || !(isset($date_arr['year']) && isset($date_arr['month']) && isset($date_arr['day'])) ){	
+		if( empty($date_arr) || !isset($date_arr['year']) || !isset($date_arr['month']) || !isset($date_arr['day']) ){	
 			$this->gmt_today = $timedate->get_gmt_db_datetime();
 			$user_today = $timedate->handle_offset($this->gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
 			preg_match('/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/',$user_today,$matches);
@@ -142,17 +132,12 @@ class Calendar {
 			      'year' => $matches[1],
 			      'month' => $matches[2],
 			      'day' => $matches[3],
-			      'hour' => $matches[4],
-			      'min' => $matches[5]
 			);
-			
-	
 		}else{		
 			$this->gmt_today = $date_arr['year'] . "-" . add_zero($date_arr['month']) . "-" . add_zero($date_arr['day']);
 		}		
 		
 		$this->date_arr = $date_arr;
-		$this->week_start_day = $current_user->get_first_day_of_week();
 		
 		$this->show_tasks = $current_user->getPreference('show_tasks');
 		if(is_null($this->show_tasks))
@@ -180,7 +165,10 @@ class Calendar {
 		$this->today_unix = to_timestamp($this->gmt_today);		
 		$this->calculate_day_range();
 	}
-		
+	
+	/**
+	 * loads activities data to array
+	 */		
 	function load_activities(){
 		$field_list = get_fields();
 		foreach($this->acts_arr as $user_id => $acts){
@@ -258,7 +246,10 @@ class Calendar {
 		}
 	}
 	
-	
+	/*
+	 * returns javascript object of activities to be displayed on calendar
+	 * @return string
+	 */
 	function get_activities_js(){	
 				$field_list = get_fields();
 				$a_str = "";				
@@ -292,8 +283,9 @@ class Calendar {
 				return $a_str;
 	}	
 	
-	
-	
+	/**
+	 * initialize ids of shared users
+	 */	
 	function init_shared(){
 		global $current_user;
 		$user_ids = $current_user->getPreference('shared_ids');
@@ -307,6 +299,9 @@ class Calendar {
 		}
 	}
 	
+	/**
+	 * calculates count of timeslots per visible day, calculates day start and day end in minutes 
+	 */	
 	function calculate_day_range(){	
 		$tarr = explode(":",$this->day_start_time);
 		$d_start_hour = $tarr[0];
@@ -324,95 +319,22 @@ class Calendar {
 		$this->d_end_minutes = $hour_end * 60 + $minute_end;		
 
 		$this->celcount = 0;
-		for($i = 0; $i < $hour_end; $i++){
+		for($i = $hour_start; $i < $hour_end; $i++){
 				for($j = 0; $j < 60; $j += $this->time_step){
 					if($i*60+$j >= $hour_end*60 + $minute_end)
 						break;
 					$this->celcount++;
 				}
 		}
-		
 		$this->cells_per_day = 24 * (60 / $this->time_step);
 	}
-
-	function get_view_name($view){
-		if ($view == 'month'){
-			return "MONTH";
-		}else if ($view == 'week'){
-			return "WEEK";
-		}else if ($view == 'day'){
-			return "DAY";
-		}else if ($view == 'year'){
-			return "YEAR";
-		}else if ($view == 'shared'){
-			return "SHARED";
-		}else{
-			sugar_die ("get_view_name: view ".$this->view." not supported");
-		}
-	}
-
-	function isDayView(){
-		return $this->view == 'day';
-	}
-
-	function create_slices()
-	{
-		global $current_user, $timedate;
-
-		if ( $this->view == 'month'){
-			$days_in_month = $this->date_time->days_in_month;
-
-			$first_day_of_month = $this->date_time->get_day_by_index_this_month(0);
-            		$num_of_prev_days = $first_day_of_month->day_of_week - $current_user->get_first_day_of_week();
-
-                        if ($num_of_prev_days < 0)
-                            $num_of_prev_days += 7;
-
-			// do 42 slices (6x7 grid)
-
-			for($i=0;$i < 42;$i++){
-				$slice = new Slice('day',$this->date_time->get_day_by_index_this_month($i-$num_of_prev_days));
-				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) ] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
-			}
-
-		}
-		else if ( $this->view == 'week' || $this->view == 'shared'){
-			$days_in_week = 7;
-
-            		$d = $current_user->get_first_day_of_week();
-
-			for($i=$d;$i<($d+$days_in_week);$i++)
-			{
-				$slice = new Slice('day',$this->date_time->get_day_by_index_this_week($i));
-				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
-			}
-		}
-		else if ( $this->view == 'day'){
-			$hours_in_day = 24;
-
-			for($i=0;$i<$hours_in_day;$i++){
-				$slice = new Slice('hour',$this->date_time->get_datetime_by_index_today($i));
-				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour ] = $slice;
-				$this->slices_arr[] =  $slice->start_time->format(TimeDate::DB_DATE_FORMAT) .":".$slice->start_time->hour;
-			}
-		}
-		else if ( $this->view == 'year'){
-			for($i=0;$i<12;$i++)
-			{
-				$slice = new Slice('month',$this->date_time->get_day_by_index_this_year($i));
-				$this->slice_hash[$slice->start_time->format(TimeDate::DB_DATE_FORMAT)] = $slice;
-				array_push($this->slices_arr,  $slice->start_time->format(TimeDate::DB_DATE_FORMAT));
-			}
-		}else{
-			sugar_die("not a valid view:".$this->view);
-		}
-
-	}
-
 	
-	function add_activities($user,$type='sugar') {
+	/**
+	 * loads array of objects
+	 * @param User $user user object
+	 * @param string $type
+	 */	
+	function add_activities($user,$type='sugar'){
 		global $timedate;
 		$start_date_time = $this->date_time;
 		if($this->view == 'week' || $this->view == 'shared') {
@@ -431,28 +353,13 @@ class Calendar {
 		);
 
 		$acts_arr = array();
-	    	if($type == 'vfb') {
+	    	if($type == 'vfb'){
 				$acts_arr = CalendarActivity::get_freebusy_activities($user, $start_date_time, $end_date_time);
 	    	}else{
 				$acts_arr = CalendarActivity::get_activities($user->id, $params, $start_date_time, $end_date_time, $this->view);
 	    	}
-
-		// loop thru each activity for this user
-		foreach ($acts_arr as $act) {			
-			// get "hashed" time slots for the current activity we are looping through
-			$start = $timedate->tzUser($act->start_time);
-			$end = $timedate->tzUser($act->end_time);
-			$hash_list = SugarDateTime::getHashList($this->view, $start, $end);
-
-			for($j=0;$j < count($hash_list); $j++) {
-				if(!isset($this->slice_hash[$hash_list[$j]]) || !isset($this->slice_hash[$hash_list[$j]]->acts_arr[$user->id])) {
-					$this->slice_hash[$hash_list[$j]]->acts_arr[$user->id] = array();
-				}
-				$this->slice_hash[$hash_list[$j]]->acts_arr[$user->id][] = $act;
-				
-				$this->acts_arr[$user->id][] = $act;
-			}
-		}
+	    	
+	    	$this->acts_arr[$user->id] = $acts_arr;
 	}
 
 
@@ -508,58 +415,6 @@ class Calendar {
 			sugar_die("get_next_date_str: not defined for view");
 		}
 		return $day->get_date_str();
-	}
-
-	function get_start_slice_idx()
-	{
-
-		if ($this->isDayView())
-		{
-			$start_at = 8;
-
-			for($i=0;$i < 8; $i++)
-			{
-				if (count($this->slice_hash[$this->slices_arr[$i]]->acts_arr) > 0)
-				{
-					$start_at = $i;
-					break;
-				}
-			}
-			return $start_at;
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	function get_end_slice_idx()
-	{
-		if ( $this->view == 'month')
-		{
-			return $this->date_time->days_in_month - 1;
-		}
-		else if ( $this->view == 'week' || $this->view == 'shared')
-		{
-			return 6;
-		}
-		else if ($this->isDayView())
-		{
-			$end_at = 18;
-
-			for($i=$end_at;$i < 23; $i++)
-			{
-				if (count($this->slice_hash[$this->slices_arr[$i+1]]->acts_arr) > 0)
-				{
-					$end_at = $i + 1;
-				}
-			}
-			return $end_at;
-
-		}
-		else
-		{
-			return 1;
-		}
 	}
 
 
