@@ -235,7 +235,17 @@ class ext_rest_zoominfoperson extends ext_rest {
 		}
 	}
 
-	public function test() {
+	/**
+	 * (non-PHPdoc)
+	 * @see source::setProperties()
+	 */
+    public function setProperties($properties=array())
+    {
+        parent::setProperties($properties);
+        $this->properties = $this->getProperties();
+ 	}
+
+ 	public function test() {
 		try {
 	    	$listArgs = array('firstName'=>'John');
 	    	$results = $this->getList($listArgs, 'Leads');

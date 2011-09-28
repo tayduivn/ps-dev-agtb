@@ -186,6 +186,16 @@ class ext_rest_zoominfocompany extends ext_rest {
 		}
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see source::setProperties()
+	 */
+    public function setProperties($properties=array())
+    {
+        parent::setProperties($properties);
+        $this->properties = $this->getProperties();
+ 	}
+
  }
 
 //BEGIN ENCODE
