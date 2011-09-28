@@ -1532,6 +1532,33 @@ protected function checkQuery($sql, $object_name = false)
 		return "'".$this->quote($string)."'";
 	}
 
+	/**
+     * Quote value according to type
+     * Numerics aren't quoted
+     * Dates are converted and quoted
+     * Rest is just quoted
+     * @param string $type
+     * @param string $value
+     * @return string Quoted value
+     */
+    public function quoteType($type, $value)
+	{
+	    if($type == 'date') {
+	        return $this->convert($this->quoted($value), "date");
+	    }
+	    if($type == 'time') {
+	        return $this->convert($this->quoted($value), "time");
+	    }
+        if(isset($this->type_class[$type]) &&  $this->type_class[$type] == "date") {
+            return $this->convert($this->quoted($value), "datetime");
+        }
+        if($this->isNumericType($type)) {
+            return $value;
+        }
+
+        return $this->quoted($value);
+	}
+
     /**
      * Quote the strings of the passed in array
      *
