@@ -34,6 +34,10 @@
 <style>
 <!--
 
+#DupeCheck{
+    border: none;
+    box-shadow:none;
+}
 
 #selected_indices
 {
