@@ -588,7 +588,6 @@ visibility:visible;
 /* import instruction */
 div.import_instruction
 {
-    padding-left: 5px;
     margin-bottom: 5px;
 }
 
@@ -3144,7 +3143,7 @@ embed
 	    word-wrap: break-word;
 	}
 
-	.dashletPanelMenu.wizard.import div.confirmTable {
+	div.confirmTable {
 	    overflow: auto;
 	    width: 1056px;
 	    position: relative;
