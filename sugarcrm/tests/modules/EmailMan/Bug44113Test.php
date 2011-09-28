@@ -40,8 +40,6 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
 	{
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
-
-
         require("config.php");
         if(isset($sugar_config['email_xss']))
         {

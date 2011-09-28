@@ -367,6 +367,21 @@ function get_sugar_config_defaults() {
   	'use_common_ml_dir'	=> false,
   	'common_ml_dir' => '',
 	'vcal_time' => '2',
+	'calendar' => array(
+	  'default_view' => 'week', 
+	  'show_calls_by_default' => true,
+	  'show_tasks_by_default' => true,
+	  'editview_width' => 960,
+	  'editview_height' => 480,	
+	  'day_timestep' => 15,
+	  'week_timestep' => 30,
+	  'month_timestep' => 60,	
+	  'default_day_start' => '08:00',
+	  'default_day_end' => '19:00',
+	  'items_draggable' => true, 
+	  'mouseover_expand' => true, 
+	  'item_text' => 'name',	
+	),
 	 //BEGIN SUGARCRM flav=com ONLY
 	'passwordsetting' => empty($passwordsetting) ? array (
 	    'SystemGeneratedPasswordON' => '',
