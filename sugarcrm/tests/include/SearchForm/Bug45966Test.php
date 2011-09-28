@@ -244,8 +244,10 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("first day of last month"));
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("last day of last month"));
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, $now->month-1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 
         $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
         	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
@@ -265,8 +267,9 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("first day of this month"));
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("last day of this month"));
+        $month = $timedate->getNow(true)->get_day_begin(1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 
         $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
         	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
@@ -286,8 +289,10 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("first day of next month"));
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("last day of next month"));
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, $now->month+1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 
         $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
         	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
@@ -307,8 +312,10 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("first day of January last year"));
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("last day of December last year"));
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, 1, $now->year-1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin(31, 12));
 
         $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
         	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
@@ -328,8 +335,9 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("first day of January this year"));
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("last day of December this year"));
+        $month = $timedate->getNow(true)->get_day_begin(1, 1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin(31, 12));
 
         $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
         	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
@@ -349,8 +357,10 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("first day of January next year"));
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("last day of December next year"));
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, 1, $now->year+1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin(31, 12));
 
         $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
         	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
