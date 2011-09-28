@@ -65,8 +65,8 @@ class Bug37123Test extends Sugar_PHPUnit_Framework_TestCase
         $project = new Project();
         $project->id = 'p_' . $unid;
         $project->name = 'test project ' . $unid;
-        $project->estimated_start_date = date('Y-m-d H:i:s');
-        $project->estimated_end_date = date('Y-m-d H:i:s', (time() + 24*3600*7));
+        $project->estimated_start_date = TimeDate::getInstance()->nowDate();
+        $project->estimated_end_date = TimeDate::getInstance()->asUserDate(date_create()->modify("+7 days"));
         $project->new_with_id = true;
         $project->disable_custom_fields = true;
         $newProjectId = $project->save();
