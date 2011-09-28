@@ -303,10 +303,11 @@
 			var duration_coef = el.getAttribute("duration_coef");
 			var real_celcount = CAL.celcount;
 			
-			var wd = CAL.get("whole_day");			
-			if(wd && wd.value)
-				real_celcount = CAL.cells_per_day;
-				
+			//var wd = CAL.get("whole_day");			
+			//if(wd && wd.value)
+			if(CAL.pview == 'day' || CAL.pview == 'week')
+				real_celcount = CAL.cells_per_day;	
+			
 			var celpos = 0;			
 			var s = el.parentNode;
 			while(s.previousSibling){
@@ -314,8 +315,11 @@
 				s = s.previousSibling;
 			}
 			
-			if (real_celcount - celpos - duration_coef < 0)
-				duration_coef = real_celcount - celpos  + 1;			
+			if(CAL.pview == 'week')
+				celpos = celpos + 1;
+			
+			if(real_celcount - celpos - duration_coef < 0)
+				duration_coef = real_celcount - celpos + 1;							
 			el.style.height = parseInt(15 * duration_coef - 1) + "px";
 			
 	}

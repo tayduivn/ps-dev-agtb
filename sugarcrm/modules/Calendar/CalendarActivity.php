@@ -2,9 +2,6 @@
 
 require_once('include/utils/activity_utils.php');
 
-
-$DO_USER_TIME_OFFSET = false;
-
 class CalendarActivity {
 	var $sugar_bean;
 	var $start_time;
@@ -13,7 +10,6 @@ class CalendarActivity {
 	function CalendarActivity($args){
     // if we've passed in an array, then this is a free/busy slot
     // and does not have a sugarbean associated to it
-		global $DO_USER_TIME_OFFSET;
 		global $timedate;
 
 		if ( is_array ( $args )){

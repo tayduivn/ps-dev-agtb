@@ -17,10 +17,13 @@ class CalendarDisplay {
 		),
 	);
 
-	function CalendarDisplay(&$args){
+	function __construct(&$args){
 		$this->args = &$args;
 	}	
-
+	
+	/**
+	 * displays Calendar
+	 */
 	function display(){
 	
 		global $timedate;
@@ -68,10 +71,8 @@ class CalendarDisplay {
 		$ss->assign('d_param',$d_param);	
 		$ss->assign('editview_width',SugarConfig::getInstance()->get('calendar.editview_width',800));
 		$ss->assign('editview_height',SugarConfig::getInstance()->get('calendar.editview_height',600));	
-		$ss->assign('rec_enabled',$args['cal']->rec_enabled);
 		$ss->assign('a_str',$args['cal']->get_activities_js());
 
-		$ss->assign('rec_enabled',$args['cal']->rec_enabled);
 		$ss->assign('sugar_body_only',(isset($_REQUEST['to_pdf']) && $_REQUEST['to_pdf'] || isset($_REQUEST['sugar_body_only']) && $_REQUEST['sugar_body_only']));
 		require_once('include/json_config.php');
 		global $json;
@@ -112,7 +113,9 @@ class CalendarDisplay {
 		// end grid	
 	}
 	
-	
+	/**
+	 * load settings tpl
+	 */	
 	function load_settings(&$ss){
 	
 		$tarr = explode(":",$this->args['cal']->day_start_time);
@@ -296,9 +299,9 @@ class CalendarDisplay {
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_next_date_str()."&id=".$this->args['dashlet_id']."\")'>";
 		}
-			$str .= $cal_strings["LBL_NEXT_".$this->args['cal']->get_view_name($this->args['cal']->view)]; 
+			$str .= $cal_strings["LBL_NEXT_".strtoupper($this->args['cal']->view)]; 
 
-		$str .= "&nbsp;&nbsp;".SugarThemeRegistry::current()->getImage("calendar_next", 'align="absmiddle" border="0"' ,null,null,'.gif', $cal_strings["LBL_NEXT_".$this->args['cal']->get_view_name($this->args['cal']->view)]) . "</a>";
+		$str .= "&nbsp;&nbsp;".SugarThemeRegistry::current()->getImage("calendar_next", 'align="absmiddle" border="0"' ,null,null,'.gif', $cal_strings["LBL_NEXT_".strtoupper($this->args['cal']->view)]) . "</a>";
 		return $str;
 	}
 
@@ -310,12 +313,14 @@ class CalendarDisplay {
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_previous_date_str()."&id=".$this->args['dashlet_id']."\")'>";
 		}
-		$str .= SugarThemeRegistry::current()->getImage('calendar_previous','align="absmiddle" border="0"', null, null, '.gif', $cal_strings["LBL_PREVIOUS_".$this->args['cal']->get_view_name($this->args['cal']->view)]);
-		$str .= "&nbsp;&nbsp;".$cal_strings["LBL_PREVIOUS_".$this->args['cal']->get_view_name($this->args['cal']->view)] . "</a>";
+		$str .= SugarThemeRegistry::current()->getImage('calendar_previous','align="absmiddle" border="0"', null, null, '.gif', $cal_strings["LBL_PREVIOUS_".strtoupper($this->args['cal']->view)]);
+		$str .= "&nbsp;&nbsp;".$cal_strings["LBL_PREVIOUS_".strtoupper($this->args['cal']->view)] . "</a>";
 		return $str;
 	}
 
-
+	/**
+	 * displays header
+	 */
 	function display_calendar_header($controls = true){
 		global $cal_strings;
 		
@@ -329,7 +334,7 @@ class CalendarDisplay {
 			$tabs = array('day', 'week', 'month', 'year', 'shared');
 			$tabs_params = array();		
 			foreach($tabs as $tab){ 
-				$tabs_params[$tab]['title'] = $cal_strings["LBL_".$this->args['cal']->get_view_name($tab)];
+				$tabs_params[$tab]['title'] = $cal_strings["LBL_".strtoupper($tab)];
 				$tabs_params[$tab]['link'] = "window.location.href='".cal_handle_link("index.php?module=Calendar&action=index&view=". $tab . $this->args['cal']->date_time->get_date_str())."'";
 			}		
 			$ss->assign('controls',$controls);
@@ -351,6 +356,9 @@ class CalendarDisplay {
 	
 	}
 
+	/**
+	 * displays footer
+	 */
 	function display_calendar_footer(){
 		global $cal_strings;
 		
@@ -367,11 +375,17 @@ class CalendarDisplay {
 		echo $ss->fetch($footer);
 	}
 
+	/**
+	 * displays title
+	 */
 	function display_title(){
 		global $mod_strings;		
 		echo get_module_title("Calendar","<span class='pointer'>&raquo;</span>".$mod_strings['LBL_MODULE_TITLE'], false);
 	}
 	
+	/**
+	 * displays html used in shared view
+	 */
 	function display_shared_html(){
 			global $app_strings,$action;
 			$tools = '<div align="right"><a href="index.php?module=Calendar&action='.$action.'&view=shared" class="tabFormAdvLink">&nbsp;<a href="javascript: CAL.toggleDisplay(\'shared_cal_edit\');" class="tabFormAdvLink">'.SugarThemeRegistry::current()->getImage('edit', 'border="0"  align="absmiddle"', null, null, '.gif', $GLOBALS['cal_strings']['LBL_EDIT_USERLIST']).'&nbsp;'.$GLOBALS['cal_strings']['LBL_EDIT_USERLIST'].'</a></div>';
