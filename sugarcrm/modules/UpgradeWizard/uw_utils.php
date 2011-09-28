@@ -2086,9 +2086,9 @@ function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), 
 	    return $theArray;
 	}
 
-    if (!is_dir($dir)) { return $the_array; }   // Bug # 46035, just checking for valid dir
+    if (!is_dir($dir)) { return $theArray; }   // Bug # 46035, just checking for valid dir
 	$d = dir($dir);
-    if ($d === false)  { return $the_array; }   // Bug # 46035, more checking
+    if ($d === false)  { return $theArray; }   // Bug # 46035, more checking
 
 	while($f = $d->read()) {
 	                                // bug 40793 Skip Directories array in upgradeWizard does not function correctly
@@ -2116,6 +2116,7 @@ function uwFindAllFiles($dir, $theArray, $includeDirs=false, $skipDirs=array(), 
 
 	}
 	rsort($theArray);
+	$d->close();
 	return $theArray;
 }
 
@@ -4653,7 +4654,7 @@ function getUWDirs()
  * @param array $skipDirs list with skipped dirs
  * @return boolean
  */
-function whetherNeedToSkipDir($dir, $skipDirs) 
+function whetherNeedToSkipDir($dir, $skipDirs)
 {
     foreach($skipDirs as $skipMe) {
 		if(strpos( clean_path($dir), $skipMe ) !== false) {
