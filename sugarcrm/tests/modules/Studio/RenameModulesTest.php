@@ -187,48 +187,9 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         $bugStrings = return_module_language('en_us','Bugs', TRUE);
         $this->assertEquals('Accounts2', $bugStrings['LBL_ACCOUNTS_SUBPANEL_TITLE'], "Renaming subpanels failed for module.");
 
-        //Ensure we recorded which modules were modified.
-        $renamedModules = $rm->getRenamedModules();
-        $this->assertTrue( count($renamedModules) > 0 );
-
-        //cleanup
-        $this->removeCustomAppStrings();
-        $this->removeModuleStrings( $renamedModules );
-    }
-
-    /**
-     * @group bug45804
-     */
-    public function testLabelRenaming()
-    {
-        $module = 'Accounts';
-        $newSingular = 'Account1';
-        $newPlural = 'Accounts2';
-
-        $rm = new RenameModules();
-
-        $_REQUEST['slot_0'] = 0;
-        $_REQUEST['key_0'] = $module;
-        $_REQUEST['svalue_0'] = $newSingular;
-        $_REQUEST['value_0'] = $newPlural;
-        $_REQUEST['delete_0'] = '';
-        $_REQUEST['dropdown_lang'] = $this->language;
-        $_REQUEST['dropdown_name'] = 'moduleList';
-
-        global $app_list_strings;
-        if (!isset($app_list_strings['parent_type_display'][$module])) {
-            $app_list_strings['parent_type_display'][$module] = 'Account';
-        }
-        $rm->save(FALSE);
-
-        // remove cache
-        if(file_exists($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/language/'.$this->language.'.lang.php')) {
-            unlink($GLOBALS['sugar_config']['cache_dir'].'modules/'. $module . '/language/'.$this->language.'.lang.php');
-        }
-
-        //Test label renames
+        //bug45804 Test dashlets renames
         $callStrings = return_module_language('en_us', 'Accounts', TRUE);
-        $this->assertEquals('My Accounts2', $callStrings['LBL_HOMEPAGE_TITLE'], "Renaming labels failed for module.");
+        $this->assertEquals('My Accounts2', $callStrings['LBL_HOMEPAGE_TITLE'], "Renaming dashlets failed for module.");
 
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
