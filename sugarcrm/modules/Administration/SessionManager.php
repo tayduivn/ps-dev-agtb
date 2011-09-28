@@ -204,7 +204,7 @@ class SessionManager extends SugarBean {
     function getEnforcePortalUserLimit() {
         $admin = new Administration();
         $admin->retrieveSettings('license');
-        return $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;
+        return isset($admin->settings['license_enforce_portal_user_limit']) && $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;
     }
 
     /*
