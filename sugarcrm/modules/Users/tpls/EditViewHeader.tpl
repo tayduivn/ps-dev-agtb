@@ -68,7 +68,7 @@ var ERR_REENTER_PASSWORDS = '{$MOD.ERR_REENTER_PASSWORDS}';
 	<input type="hidden" name="return_action" value="{$RETURN_ACTION}">
 	<input type="hidden" name="password_change" id="password_change" value="false">
     <input type="hidden" name="required_password" id="required_password" value='{$REQUIRED_PASSWORD}' >
-	<input type="hidden" name="user_name" value="{$USER_NAME}">
+	<input type="hidden" name="old_user_name" value="{$USER_NAME}">
 	<input type="hidden" name="type" value="{$REDIRECT_EMAILS_TYPE}">
 	<input type="hidden" id="is_group" name="is_group" value='{$IS_GROUP}' {$IS_GROUP_DISABLED}>
 	<input type="hidden" id='portal_only' name='portal_only' value='{$IS_PORTALONLY}' {$IS_PORTAL_ONLY_DISABLED}>

@@ -69,7 +69,7 @@ class UsersViewEdit extends ViewEdit {
         global $sugar_flavor;
         if((isset($sugar_flavor) && $sugar_flavor != null) &&
            ($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
-            if ($this->bean->id == "") {
+            if (empty($this->bean->id)) {
                 $admin = new Administration();
                 $admin->retrieveSettings();
                 $license_users = $admin->settings['license_users'];
@@ -106,9 +106,11 @@ class UsersViewEdit extends ViewEdit {
 
 
         // Build viewable versions of a few fields for non-admins
-        $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]);
-        $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
-        $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
+        if(!empty($this->bean->id)) {
+            $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]);
+            $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
+            $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
+        }
         
         $fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
         $fieldHelper->setupAdditionalFields();

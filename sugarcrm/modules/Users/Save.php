@@ -106,8 +106,8 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	// track the current reports to id to be able to use it if it has changed
 	$old_reports_to_id = $focus->reports_to_id;
 	//END SUGARCRM flav=pro ONLY
-	$portal=array("sugar_user_name","last_name","status","portal_only");
-	$group=array("sugar_user_name","last_name","status","is_group");
+	$portal=array("user_name","last_name","status","portal_only");
+	$group=array("user_name","last_name","status","is_group");
 	if(isset($_POST['portal_only']) && ($_POST['portal_only']=='1' || $focus->portal_only)){
 		foreach($portal as $field){
 			if(isset($_POST[$field]))
@@ -132,7 +132,7 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 
 	//BEGIN SUGARCRM flav=sales ONLY
 	// The user type is Regular User if it's not set
-	$_POST['user_type'] = !empty($_POST['user_type']) ? $_POST['user_type'] : 'RegularUser';
+	$_POST['user_type'] = !empty($_POST['UserType']) ? $_POST['UserType'] : 'RegularUser';
 	// The exception is below. If we have a user that isn't new and the post value for user_type
 	//   isn't set, we need to keep it as it was.
 	if(!$newUser && empty($_POST['user_type'])){
@@ -141,9 +141,9 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 	//END SUGARCRM flav=sales ONLY
 	
 	// copy the group or portal user name over.  We renamed the field in order to ensure auto-complete would not change the value
-	if(isset($_POST['sugar_user_name']))
+	if(isset($_POST['user_name']))
 	{
-		$focus->user_name = $_POST['sugar_user_name'];
+		$focus->user_name = $_POST['user_name'];
 	}
 	
 	// if the user saved is a Regular User
@@ -169,9 +169,9 @@ if(!$current_user->is_admin  && !$GLOBALS['current_user']->isAdminForModule('Use
 		$focus->is_group=0;
 		$focus->portal_only=0;
 		
-			if(isset($_POST['sugar_user_name']))
+			if(isset($_POST['user_name']))
 		{
-			$focus->user_name = $_POST['sugar_user_name'];
+			$focus->user_name = $_POST['user_name'];
 		}	
 		if(isset($_POST['is_admin']) && ($_POST['is_admin'] == 'on' || $_POST['is_admin'] == '1')) $focus->is_admin = 1;
 		elseif(empty($_POST['is_admin'])) $focus->is_admin = 0;
