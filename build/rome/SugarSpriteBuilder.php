@@ -2,6 +2,7 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once("include/SugarTheme/cssmin.php");
+require_once("include/utils/file_utils.php");
 
 class SugarSpriteBuilder {
 
@@ -233,14 +234,15 @@ class SugarSpriteBuilder {
 				}
 	
 				// dir & filenames 
-				if($isRepeat) {
-					$outputDir = "cache/sprites/Repeatable";
+				if($isRepeat)
+                {
+					$outputDir = sugar_cached("sprites/Repeatable");
 					$spriteFileName = "{$name}.png";
 					$cssFileName = "{$this->fileName}.css";
 					$metaFileName = "{$this->fileName}.meta.php";
 					$nameSpace = "Repeatable";
-				} else { 
-					$outputDir = "cache/sprites/$name";
+				} else {
+					$outputDir = sugar_cached("sprites/$name");
 					$spriteFileName = "{$this->fileName}.png";
 					$cssFileName = "{$this->fileName}.css";
 					$metaFileName = "{$this->fileName}.meta.php";
@@ -248,8 +250,10 @@ class SugarSpriteBuilder {
 				}
 
 				// directory structure
-				if(!is_dir("cache/sprites/$nameSpace"))
-					mkdir("cache/sprites/$nameSpace", 0750, true);
+				if(!is_dir(sugar_cached("sprites/$nameSpace")))
+                {
+                    create_cache_directory("sprites/{$nameSpace}");
+                }
 
 				// save sprite image
 				imagepng($this->spriteImg, "$outputDir/$spriteFileName", $this->pngCompression, $this->pngFilter);
