@@ -77,8 +77,7 @@ class Calendar {
 			$this->date_time = $timedate->fromTimeArray($time_arr);
 		}else{
 		        $this->date_time = $timedate->getNow();
-		}
-		
+		}		
 
 		$timedate->tzUser($this->date_time, $current_user);
         	$GLOBALS['log']->debug("CALENDATE: ".$this->date_time->format('r'));
@@ -124,7 +123,8 @@ class Calendar {
 		if(empty($_REQUEST['year']))
 			$_REQUEST['year'] = "";
 
-		if( empty($date_arr) || !isset($date_arr['year']) || !isset($date_arr['month']) || !isset($date_arr['day']) ){	
+		// if date is not set in request set current date
+		if(empty($date_arr) || !isset($date_arr['year']) || !isset($date_arr['month']) || !isset($date_arr['day']) ){	
 			$this->gmt_today = $timedate->get_gmt_db_datetime();
 			$user_today = $timedate->handle_offset($this->gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
 			preg_match('/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/',$user_today,$matches);
@@ -159,8 +159,9 @@ class Calendar {
 			$this->time_step = SugarConfig::getInstance()->get('calendar.week_timestep',30);
 		}else if($this->view == "month"){
 			$this->time_step = SugarConfig::getInstance()->get('calendar.month_timestep',60);
-		}else
-			$this->time_step = 60;			
+		}else{
+			$this->time_step = 60;
+		}			
 
 		$this->today_unix = to_timestamp($this->gmt_today);		
 		$this->calculate_day_range();
@@ -189,12 +190,7 @@ class Calendar {
 				
 					$bean = new $act->sugar_bean->object_name();
 					$bean->retrieve($newAct['id']);
-					
-					/*$newAct['rec_id_c'] = "";		
-					$jn = $newAct['type'] . "_id_c";
-					if(!empty($bean->$jn))
-						$newAct['rec_id_c'] = $bean->$jn;*/
-					
+					 			
 					$newAct['detailview'] = 0;
 					$newAct['editview'] = 0;
 					
@@ -247,7 +243,7 @@ class Calendar {
 	}
 	
 	/*
-	 * returns javascript object of activities to be displayed on calendar
+	 * returns javascript objects of activities to be displayed on calendar
 	 * @return string
 	 */
 	function get_activities_js(){	
@@ -303,17 +299,9 @@ class Calendar {
 	 * calculates count of timeslots per visible day, calculates day start and day end in minutes 
 	 */	
 	function calculate_day_range(){	
-		$tarr = explode(":",$this->day_start_time);
-		$d_start_hour = $tarr[0];
-		$d_start_min = $tarr[1];
-		$tarr = explode(":",$this->day_end_time);
-		$d_end_hour = $tarr[0];
-		$d_end_min = $tarr[1];
-
-		$hour_start = $d_start_hour;
-		$minute_start = $d_start_min;
-		$hour_end = $d_end_hour;
-		$minute_end = $d_end_min;
+		
+		list($hour_start,$minute_start) =  explode(":",$this->day_start_time);		
+		list($hour_end,$minute_end) =  explode(":",$this->day_end_time);		
 
 		$this->d_start_minutes = $hour_start * 60 + $minute_start;
 		$this->d_end_minutes = $hour_end * 60 + $minute_end;		
@@ -363,55 +351,32 @@ class Calendar {
 	}
 
 
-	function get_previous_date_str()
-	{
-		if ($this->view == 'month')
-		{
+	function get_previous_date_str(){
+		if ($this->view == 'month'){
 		    $day = $this->date_time->get("-1 month")->get_day_begin(1);
-		}
-		else if ($this->view == 'week' || $this->view == 'shared')
-		{
-		    // first day last week
+		}else if ($this->view == 'week' || $this->view == 'shared'){
+			// first day last week
 			$day = $this->date_time->get("-7 days")->get_day_by_index_this_week(0)->get_day_begin();
-		}
-		else if ($this->view == 'day')
-		{
+		}else if ($this->view == 'day'){
 			$day = $this->date_time->get("yesterday")->get_day_begin();
-		}
-		else if ($this->view == 'year')
-		{
-            $day = $this->date_time->get("-1 year")->get_day_begin();
-		}
-		else
-		{
+		}else if ($this->view == 'year'){
+            		$day = $this->date_time->get("-1 year")->get_day_begin();
+		}else{
 			return "get_previous_date_str: notdefined for this view";
 		}
 		return $day->get_date_str();
 	}
 
-	function get_next_date_str()
-	{
-		if ($this->view == 'month')
-		{
+	function get_next_date_str(){
+		if ($this->view == 'month'){
 			$day = $this->date_time->get("+1 month")->get_day_begin(1);
-		}
-		else
-		if ($this->view == 'week' || $this->view == 'shared' )
-		{
+		}else if ($this->view == 'week' || $this->view == 'shared' ){
 			$day = $this->date_time->get("+7 days")->get_day_by_index_this_week(0)->get_day_begin();
-		}
-		else
-		if ($this->view == 'day')
-		{
+		}else if ($this->view == 'day'){
 			$day = $this->date_time->get("tomorrow")->get_day_begin();
-		}
-		else
-		if ($this->view == 'year')
-		{
+		}else if ($this->view == 'year'){
 			$day = $this->date_time->get("+1 year")->get_day_begin();
-		}
-		else
-		{
+		}else{
 			sugar_die("get_next_date_str: not defined for view");
 		}
 		return $day->get_date_str();
@@ -420,32 +385,4 @@ class Calendar {
 
 }
 
-class Slice
-{
-	var $view = 'day';
-	var $start_time;
-	var $end_time;
-	var $acts_arr = array();
-
-	function Slice($view,$time)
-	{
-		$this->view = $view;
-		$this->start_time = $time;
-
-		if ( $view == 'day')
-		{
-			$this->end_time = $this->start_time->get_day_end_time();
-		}
-		if ( $view == 'hour')
-		{
-			$this->end_time = $this->start_time->get_hour_end_time();
-		}
-
-	}
-	function get_view()
-	{
-		return $this->view;
-	}
-
-}
 ?>
