@@ -306,13 +306,13 @@ class SugarSpriteBuilder
 				// dir & filenames 
 				if($isRepeat)
                 {
-					$outputDir = "cache/sprites/Repeatable";
+					$outputDir = sugar_cached("sprites/Repeatable");
 					$spriteFileName = "{$name}.png";
 					$cssFileName = "{$this->fileName}.css";
 					$metaFileName = "{$this->fileName}.meta.php";
 					$nameSpace = "Repeatable";
 				} else { 
-					$outputDir = "cache/sprites/$name";
+					$outputDir = sugar_cached("sprites/$name");
 					$spriteFileName = "{$this->fileName}.png";
 					$cssFileName = "{$this->fileName}.css";
 					$metaFileName = "{$this->fileName}.meta.php";
@@ -320,9 +320,9 @@ class SugarSpriteBuilder
 				}
 
 				// directory structure
-				if(!is_dir("cache/sprites/$nameSpace"))
+				if(!is_dir(sugar_cached("sprites/$nameSpace")))
                 {
-					mkdir("cache/sprites/$nameSpace", 0750, true);
+					sugar_mkdir(sugar_cached("sprites/$nameSpace"), 0775, true);
                 }
 
 				// save sprite image

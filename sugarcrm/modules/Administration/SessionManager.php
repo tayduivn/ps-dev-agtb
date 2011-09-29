@@ -126,9 +126,9 @@ class SessionManager extends SugarBean {
      * Retrieves the number of currently active sessions
      */
     function getNumActiveSessions(){
-       $result = $this->db->query("SELECT count(*) from $this->table_name");
+       $result = $this->db->query("SELECT count(*) as count from $this->table_name");
        $row = $this->db->fetchByAssoc($result);
-       return $row['count(*)'];
+       return $row['count'];
     }
 
     /*
@@ -204,7 +204,7 @@ class SessionManager extends SugarBean {
     function getEnforcePortalUserLimit() {
         $admin = new Administration();
         $admin->retrieveSettings('license');
-        return $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;
+        return isset($admin->settings['license_enforce_portal_user_limit']) && $admin->settings['license_enforce_portal_user_limit'] == '1' ? true : false;
     }
 
     /*

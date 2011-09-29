@@ -74,6 +74,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 include_once('include/database/MssqlManager.php');
 
+/**
+ * SQL Server (sqlsrv) manager
+ */
 class SqlsrvManager extends MssqlManager
 {
     public $dbName = 'SQL Server';
@@ -85,6 +88,7 @@ class SqlsrvManager extends MssqlManager
         "affected_rows" => true,
         'fulltext' => true,
         'limit_subquery' => true,
+        'create_user' => true,
     );
 
     protected $type_map = array(
@@ -554,6 +558,11 @@ EOSQL;
         return false;
     }
 
+    /**
+     * (non-PHPdoc)
+     * @see DBManager::getDbInfo()
+     * @return array
+     */
     public function getDbInfo()
     {
         $info = array_merge(sqlsrv_client_info(), sqlsrv_server_info());

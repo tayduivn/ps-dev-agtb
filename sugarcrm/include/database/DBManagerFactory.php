@@ -32,6 +32,7 @@ require_once('include/database/DBManager.php');
 
 /**
  * Database driver factory
+ * @api
  * Instantiates and configures appropriate DB drivers
  */
 class DBManagerFactory
@@ -223,8 +224,8 @@ class DBManagerFactory
     /**
      * Compares two drivers by priority
      * @internal
-     * @param $a
-     * @param $b
+     * @param object $a
+     * @param object $b
      * @return int
      */
     public static function _compareDrivers($a, $b)

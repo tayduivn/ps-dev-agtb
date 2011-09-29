@@ -33,7 +33,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
     var $meetingsArr;
     var $searchDefs;
     var $searchFields;
-    
+
     public function setup()
     {
         global $current_user, $timedate;
@@ -69,7 +69,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
                                                                                                                       "default" => true,
                                                                                                                       "width" => "10%",
                                                                                                                       "type" => "datetimecombo",
-                                                                                                                     ), 
+                                                                                                                     ),
                                                                                                ),
                                                                        ),
                                                      ),
@@ -92,7 +92,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
                                                        ),
                                    );
     }
-    
+
     public function tearDown()
     {
 
@@ -108,8 +108,8 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
-	
-    
+
+
     public function testRetrieveByExactDate()
     {
         global $current_user, $timedate;
@@ -125,7 +125,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
                                    "date_start_basic_range_choice" => "=",
                                    "range_date_start_basic" => "14/07/2011",
                                    "start_range_date_start_basic" => "",
-                                   "end_range_date_start_basic" => "", 
+                                   "end_range_date_start_basic" => "",
                                    "button" => "Search",
                                   );
 
@@ -139,10 +139,11 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
 
         // Current User is on GMT+2.
         // Asking for meeting of 14 July 2011, I expect to search (GMT) from 13 July at 22:00 until 14 July at 22:00 (excluded)
-        $expectedWhere = "meetings.date_start >= '" . $GMTDates['start'] . "' AND meetings.date_start <= '" . $GMTDates['end'] . "'";
-        $this->assertGreaterThan(0, strpos($w[0], $expectedWhere));
+        $expectedWhere = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['start']), 'datetime') .
+        	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['end']), 'datetime');
+        $this->assertContains($expectedWhere, $w[0]);
     }
-	
+
 
     public function testRetrieveByDaterange()
     {
@@ -159,7 +160,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
                                    "date_start_basic_range_choice" => "between",
                                    "range_date_start_basic" => "",
                                    "start_range_date_start_basic" => "13/07/2011",
-                                   "end_range_date_start_basic" => "14/07/2011", 
+                                   "end_range_date_start_basic" => "14/07/2011",
                                    "button" => "Search",
                                   );
 
@@ -175,9 +176,10 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
 
         // Current User is on GMT+2.
         // Asking for meeting between 13 and 14 July 2011, I expect to search (GMT) from 12 July at 22:00 until 14 July at 22:00 (excluded)
-        $expectedWhere = "meetings.date_start >= '" . $GMTDatesStart['start'] . "' AND meetings.date_start <= '" . $GMTDatesEnd['end'] . "'";
-        $this->assertGreaterThan(0, strpos($w[0], $expectedWhere));
+        $expectedWhere = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesStart['start']), 'datetime') .
+        	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesEnd['end']), 'datetime');
+        $this->assertContains($expectedWhere, $w[0]);
    }
-	
+
 
 }

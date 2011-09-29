@@ -527,23 +527,15 @@ function getInstallDbInstance()
 
 function getDbConnection()
 {
-    global $setup_db_host_name;
-    global $setup_db_admin_user_name;
-    global $setup_db_admin_password;
-    global $setup_db_host_instance;
-    global $setup_db_port_num;
-    global $setup_db_database_name;
-    global $setup_db_create_database;
-
     $dbconfig = array(
-                "db_host_name" => $setup_db_host_name,
-                "db_user_name" => $setup_db_admin_user_name,
-                "db_password" => $setup_db_admin_password,
-                "db_host_instance" => $setup_db_host_instance,
-                "db_port" => $setup_db_port_num,
+                "db_host_name" => $_SESSION['setup_db_host_name'],
+                "db_user_name" => $_SESSION['setup_db_admin_user_name'],
+                "db_password" => $_SESSION['setup_db_admin_password'],
+                "db_host_instance" => $_SESSION['setup_db_host_instance'],
+                "db_port" => $_SESSION['setup_db_port_num'],
     );
-    if(empty($setup_db_create_database)) {
-            $dbconfig["db_name"] = $setup_db_database_name;
+    if(empty($_SESSION['setup_db_create_database'])) {
+            $dbconfig["db_name"] = $_SESSION['setup_db_database_name'];
     }
 
     $db = getInstallDbInstance();

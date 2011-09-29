@@ -29,17 +29,17 @@ class Bug43471Test extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_tablename;
     private $_old_installing;
-    
+
     public function setUp()
     {
         $this->accountMockBean = $this->getMock('TestBean');
         $this->_tablename = 'test' . date("YmdHis");
     }
-    
+
     public function tearDown()
     {
     }
-    
+
     public function testDynamicFieldsRepairCustomFields()
     {
         $bean = $this->accountMockBean;
@@ -99,7 +99,7 @@ class Bug43471Test extends Sugar_PHPUnit_Framework_TestCase
                 ->method('createCustomTable')
                 ->will($this->returnValue(null));
 
-        $helper = $this->getMock('MysqliManager');
+        $helper = $this->getMock('MysqliManager', array('get_columns'));
         $helper->expects($this->any())
                 ->method('get_columns')
                 ->will($this->returnValue(array(

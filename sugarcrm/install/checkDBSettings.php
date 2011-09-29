@@ -55,8 +55,7 @@ function checkDBSettings($silent=false) {
         }
 
         //check to see that password and retype are same, if needed
-        if((isset($_SESSION['dbUSRData'])  && !empty($_SESSION['dbUSRData'])) &&
-        ($_SESSION['dbUSRData']=='create' || $_SESSION['dbUSRData']=='provide'))
+        if(!empty($_SESSION['dbUSRData']) && ($_SESSION['dbUSRData']=='create' || $_SESSION['dbUSRData']=='provide'))
         {
             if( $_SESSION['setup_db_sugarsales_password'] != $_SESSION['setup_db_sugarsales_password_retype'] ){
                 $errors['ERR_DBCONF_PASSWORD_MISMATCH'] = $mod_strings['ERR_DBCONF_PASSWORD_MISMATCH'];

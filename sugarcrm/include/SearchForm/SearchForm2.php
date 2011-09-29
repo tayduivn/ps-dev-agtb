@@ -563,7 +563,13 @@ require_once('include/EditView/EditView2.php');
         return "($db_field >= $start AND $db_field <= $end)";
     }
 
-    function generateSearchWhere($add_custom_fields = false, $module='') {
+    /**
+     * Create WHERE clause for search query
+     * @param bool $add_custom_fields Custom fields should be added?
+     * @param string $module Module to search
+     * @return string WHERE clause
+     */
+    public function generateSearchWhere($add_custom_fields = false, $module='') {
         global $timedate;
 
         $db = $this->seed->db;
@@ -610,7 +616,7 @@ require_once('include/EditView/EditView2.php');
 					    {
 					   	    $type = $field_type;
 					    }
-                        
+
                         $field = $real_field;
                         unset($this->searchFields[$end_field]['value']);
                     }
@@ -618,7 +624,7 @@ require_once('include/EditView/EditView2.php');
                     $real_field = $match[1];
 
                     //Special case for datetime and datetimecombo fields.  By setting the type here we allow an actual between search
-                    if($parms['operator'] == '=')
+                    if(in_array($parms['operator'], array('=', 'between', "not_equal", 'less_than', 'greater_than', 'less_than_equals', 'greater_than_equals')))
                     {
                        $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';
                        if($field_type == 'datetimecombo' || $field_type == 'datetime')
@@ -818,25 +824,43 @@ require_once('include/EditView/EditView2.php');
 
                         if($type == 'datetime' || $type == 'datetimecombo') {
                         	try {
-                                // FG - bug45287 - If User asked for a range, takes edges from it.
-                                $placeholderPos = strpos($field_value, "<>");
-                                if ($placeholderPos !== FALSE && $placeholderPos > 0)
-                                {
-                                    $datesLimit = explode("<>", $field_value);
-                                    $dateStart = $timedate->getDayStartEndGMT($datesLimit[0]);
-                                    $dateEnd = $timedate->getDayStartEndGMT($datesLimit[1]);
-                                    $dates = $dateStart;
-                                    $dates['end'] = $dateEnd['end'];
-                                    $dates['enddate'] = $dateEnd['enddate'];
-                                    $dates['endtime'] = $dateEnd['endtime'];
+                                if($operator == '=' || $operator == 'between') {
+                            	    // FG - bug45287 - If User asked for a range, takes edges from it.
+                                    $placeholderPos = strpos($field_value, "<>");
+                                    if ($placeholderPos !== FALSE && $placeholderPos > 0)
+                                    {
+                                        $datesLimit = explode("<>", $field_value);
+                                        $dateStart = $timedate->getDayStartEndGMT($datesLimit[0]);
+                                        $dateEnd = $timedate->getDayStartEndGMT($datesLimit[1]);
+                                        $dates = $dateStart;
+                                        $dates['end'] = $dateEnd['end'];
+                                        $dates['enddate'] = $dateEnd['enddate'];
+                                        $dates['endtime'] = $dateEnd['endtime'];
+                                    }
+                                    else
+                                    {
+                                        $dates = $timedate->getDayStartEndGMT($field_value);
+                                    }
+                                    // FG - bug45287 - Note "start" and "end" are the correct interval at GMT timezone
+                                    $field_value = array($dates["start"], $dates["end"]);
+    	                            $operator = 'between';
+                                } else if($operator == 'not_equal') {
+                                   $dates = $timedate->getDayStartEndGMT($field_value);
+                                   $field_value = array($dates["start"], $dates["end"]);
+    	                           $operator = 'date_not_equal';
+                                } else if($operator == 'greater_than') {
+                                   $dates = $timedate->getDayStartEndGMT($field_value);
+                                   $field_value = $dates["end"];
+                                } else if($operator == 'less_than') {
+                                   $dates = $timedate->getDayStartEndGMT($field_value);
+                                   $field_value = $dates["start"];
+                                } else if($operator == 'greater_than_equals') {
+                                   $dates = $timedate->getDayStartEndGMT($field_value);
+                                   $field_value = $dates["start"];
+                                } else if($operator == 'less_than_equals') {
+                                   $dates = $timedate->getDayStartEndGMT($field_value);
+                                   $field_value = $dates["end"];
                                 }
-                                else
-                                {
-                                    $dates = $timedate->getDayStartEndGMT($field_value);
-                                }
-                                // FG - bug45287 - Note "start" and "end" are the correct interval at GMT timezone
-                                $field_value = $dates["start"] . "<>" . $dates["end"];
-	                            $operator = 'between';
                         	} catch(Exception $timeException) {
                         		//In the event that a date value is given that cannot be correctly processed by getDayStartEndGMT method,
                         		//just skip searching on this field and continue.  This may occur if user switches locale date formats
@@ -1017,39 +1041,40 @@ require_once('include/EditView/EditView2.php');
                                 if(!is_array($field_value)) {
                                     $field_value = explode('<>', $field_value);
                                 }
-                                if($type == "datetime" || $type == "datetimecombo") {
-                                    $field_value[0] = $db->convert($db->quoted($field_value[0]), "datetime");
-                                    $field_value[1] = $db->convert($db->quoted($field_value[1]), "datetime");
-                                } else if($db->isNumericType($type)) {
-                                    $field_value[0] = $field_value[0];
-                                    $field_value[1] = $field_value[1];
-                                } else {
-                                    $field_value[0] = $db->quoted($field_value[0]);
-                                    $field_value[1] = $db->quoted($field_value[1]);
-                                }
+                                $field_value[0] = $db->quoteType($type, $field_value[0]);
+                                $field_value[1] = $db->quoteType($type, $field_value[1]);
                                 $where .= "($db_field >= {$field_value[0]} AND $db_field <= {$field_value[1]})";
                                 break;
                             case 'date_not_equal':
-                                $field_value = explode('<>', $field_value);
-                                $where .= $db_field . " < '".$field_value[0] . "' OR " .$db_field . " > '".$field_value[1]."'";
+                                if(!is_array($field_value)) {
+                                    $field_value = explode('<>', $field_value);
+                                }
+                                $field_value[0] = $db->quoteType($type, $field_value[0]);
+                                $field_value[1] = $db->quoteType($type, $field_value[1]);
+                                $where .= "($db_field IS NULL OR $db_field < {$field_value[0]} OR $db_field > {$field_value[1]})";
                                 break;
                             case 'innerjoin':
                                 $this->seed->listview_inner_join[] = $parms['innerjoin'] . " '" . $parms['value'] . "%')";
                                 break;
 							case 'not_equal':
-								$where .= "($db_field IS NULL OR $db_field != '". $field_value . "')";
+                                $field_value = $db->quoteType($type, $field_value);
+								$where .= "($db_field IS NULL OR $db_field != $field_value)";
 								break;
 							case 'greater_than':
-								$where .= $db_field . " > '". $field_value . "'";
+							    $field_value = $db->quoteType($type, $field_value);
+								$where .= "$db_field > $field_value";
 								break;
 							case 'greater_than_equals':
-								$where .= $db_field . " >= '". $field_value . "'";
+							    $field_value = $db->quoteType($type, $field_value);
+								$where .= "$db_field >= $field_value";
 								break;
 							case 'less_than':
-								$where .= $db_field . " < '". $field_value . "'";
+							    $field_value = $db->quoteType($type, $field_value);
+								$where .= "$db_field < $field_value";
 								break;
 							case 'less_than_equals':
-								$where .= $db_field . " <= '". $field_value . "'";
+							    $field_value = $db->quoteType($type, $field_value);
+								$where .= "$db_field <= $field_value";
 								break;
                             case 'next_7_days':
 							case 'last_7_days':
