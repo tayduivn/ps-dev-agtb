@@ -329,15 +329,16 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     public function providerRowCountData()
     {
         return array(
-            array('TestCharset.csv', 2),
-            array('TestCharset2.csv', 12),
+            array('TestCharset.csv', 2, false),
+            array('TestCharset2.csv', 11, true),
+            array('TestCharset2.csv', 12, false),
             );
     }
 
     /**
      * @dataProvider providerRowCountData
      */
-    public function testRowCount($file, $count) {
+    public function testRowCount($file, $count, $hasHeader) {
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
@@ -345,6 +346,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // auto detec charset
         $importFile = new ImportFile($sample_file, ",", '', false, false);
         $this->assertTrue($importFile->fileExists());
+        $importFile->setHeaderRow($hasHeader);
         $c = $importFile->getTotalRecordCount();
         $this->assertEquals($count, $c, 'incorrect row count.');
 
