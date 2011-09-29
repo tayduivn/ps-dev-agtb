@@ -57,5 +57,28 @@ class UserPreferenceTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
         $this->assertEquals('dog', $_SESSION[$this->_user->user_name . '_PREFERENCES']['global']['test_pref']);
     }
+
+    public function testisCurrentUserReturnsFalseWhenCurrentUserIsNotSet()
+    {
+        unset($GLOBALS['current_user']);
+        $obj = new TestUserPreference($this->_user);
+
+        $this->assertFalse($obj->isCurrentUser());
+    }
+
+    public function testisCurrentUserReturnsFalseWhenUserIsNotSet()
+    {
+        $obj = new TestUserPreference(null);
+
+        $this->assertFalse($obj->isCurrentUser());
+    }
 }
 
+
+class TestUserPreference extends UserPreference
+{
+    public function isCurrentUser()
+    {
+        return parent::isCurrentUser();
+    }
+}
