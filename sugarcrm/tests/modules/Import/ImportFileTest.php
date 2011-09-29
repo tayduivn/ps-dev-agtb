@@ -299,4 +299,30 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
                             AND deleted=0";
         $GLOBALS['db']->query($query);
     }
+
+    public function providerEncodingData()
+    {
+        return array(
+            array('TestCharset.csv', 'UTF-8'),
+            array('TestCharset2.csv', 'ISO-8859-1'),
+            );
+    }
+
+    /**
+     * @dataProvider providerEncodingData
+     */
+    public function testCharsetDetection($file, $encoding) {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
+        copy('tests/modules/Import/'.$file, $sample_file);
+
+        // auto detec charset
+        $importFile = new ImportFile($sample_file, ",", '', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $charset = $importFile->autoDetectCharacterSet();
+        $this->assertEquals($encoding, $charset, 'detected char encoding is incorrect.');
+
+        // cleanup
+        unlink($sample_file);
+    }
 }
