@@ -414,10 +414,11 @@ eoq;
 		foreach($this->sugarbean->field_defs as $field)
 		{
 			//BEGIN SUGARCRM flav=pro ONLY
-			   if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)
-			   {
-			   	  continue;
-			   }
+            // Bug #46952 Fields with rights as "Owner read/write" have to be displayed
+            if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, true)  < 2)
+            {
+                continue;
+            }
 			//END SUGARCRM flav=pro ONLY
 			 if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate'])))
 			 {
