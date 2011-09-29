@@ -675,7 +675,7 @@ require_once('include/EditView/EditView2.php');
 
             if(isset($parms['value']) && $parms['value'] != "") {
 
-                $operator = 'like';
+                $operator = $db->isNumericType($type)?'=':'like';
                 if(!empty($parms['operator'])) {
                     $operator = strtolower($parms['operator']);
                 }
@@ -712,7 +712,7 @@ require_once('include/EditView/EditView2.php');
 	                            if (!empty($field_value)) {
 	                                $field_value .= ',';
 	                            }
-	                            $field_value .= $db->quoted($val);
+	                            $field_value .= $db->quoteType($type, $val);
 	                        }
                                 // Bug 41209: adding a new operator "isnull" here
                                 // to handle the case when blank is selected from dropdown.
@@ -726,7 +726,7 @@ require_once('include/EditView/EditView2.php');
                     }
 
                 } else {
-                    $field_value = $db->quote($parms['value']);
+                    $field_value = $params['value'];
                 }
 
                 //set db_fields array.
@@ -741,7 +741,7 @@ require_once('include/EditView/EditView2.php');
 					} else {
 						//my items is checked.
 						global $current_user;
-	                    $field_value = $GLOBALS['db']->quote($current_user->id);
+	                    $field_value = $db->quote($current_user->id);
 						$operator = '=' ;
 					}
                 } else if(!empty($parms['closed_values']) && is_array($parms['closed_values'])) {
@@ -751,7 +751,7 @@ require_once('include/EditView/EditView2.php');
 						$field_value = '';
 						foreach($parms['closed_values'] as $closed_value)
 						{
-							$field_value .= "," . $GLOBALS['db']->quoted($closed_value);
+							$field_value .= "," . $db->quoted($closed_value);
 						}
 	                    $field_value = substr($field_value, 1);
 					}
@@ -1027,10 +1027,10 @@ require_once('include/EditView/EditView2.php');
                                 break;
                             case '=':
                                 if($type == 'bool' && $field_value == 0) {
-                                    $where .=  $db_field . " = '0' OR " . $db_field . " IS NULL";
+                                    $where .=  "($db_field = 0 OR $db_field IS NULL)";
                                 }
                                 else {
-                                    $where .=  $db_field . " = ".$db->quoted($field_value);
+                                    $where .=  $db_field . " = ".$db->quoteType($type, $field_value);
                                 }
                                 break;
                             // tyoung bug 15971 - need to add these special cases into the $where query
