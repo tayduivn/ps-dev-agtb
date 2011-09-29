@@ -28,7 +28,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once("include/SugarTheme/cssmin.php");
-require_once("include/utils/file_utils.php");
 
 class SugarSpriteBuilder
 {
@@ -323,7 +322,7 @@ class SugarSpriteBuilder
 				// directory structure
 				if(!is_dir(sugar_cached("sprites/$nameSpace")))
                 {
-                    create_cache_directory("sprites/{$nameSpace}");
+					sugar_mkdir(sugar_cached("sprites/$nameSpace"), 0775, true);
                 }
 
 				// save sprite image

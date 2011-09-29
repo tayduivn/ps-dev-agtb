@@ -1,5 +1,6 @@
-<!--
-/*********************************************************************************
+<?php
+
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -18,28 +19,11 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * {APP.LBL_CURRENCY_SYM}Header: /cvsroot/sugarcrm/sugarcrm/modules/Tasks/ListView.html,v 1.8 2004/06/18 07:35:41 sugarclint Exp {APP.LBL_CURRENCY_SYM}
- ********************************************************************************/
--->
-<!-- BEGIN: main -->
-<table cellpadding="0" cellspacing="0" width="100%" border="0" class="list view">
-<!-- BEGIN: list_nav_row -->
-{PAGINATION}
-<!-- END: list_nav_row -->
-	<tr height="20">
-		<th scope="col" width="5%"  align="center" NOWRAP><slot><a href="{ORDER_BY}status" class="listViewThLinkS1">{MOD.LBL_LIST_STATUS}{arrow_start}{status_arrow}{arrow_end}</a></slot></th>
-		<th scope="col" width="60%"  align="left" NOWRAP><slot><a href="{ORDER_BY}name" class="listViewThLinkS1">{MOD.LBL_LIST_SUBJECT}{arrow_start}{name_arrow}{arrow_end}</a></slot></th>
-		<th scope="col" width="35%"  NOWRAP><slot><a href="{ORDER_BY}date_due" class="listViewThLinkS1">{MOD.LBL_LIST_DUE_DATE}{arrow_start}{date_due_arrow}{arrow_end}</a></slot></th>
-	  </tr>
-
-<!-- BEGIN: row -->
-<tr height="20"  class="{ROW_COLOR}S1">
-			<td  nowrap align=LEFT valign=TOP><slot>{TASK.STATUS}</slot></td>
-    			<td scope='row' valign=TOP><slot><a href="{URL_PREFIX}index.php?action=DetailView&module=Tasks&record={TASK.ID}" >{TASK.NAME}</a></slot></td>
-    			<td nowrap valign=TOP><slot>{TASK.DATE_DUE}</slot></td>
-</tr>
-
-<!-- END: row -->
-</table>
-<!-- END: main -->
+$action_view_map['ajaxsave'] = 'ajaxsave';
+$action_view_map['ajaxload'] = 'ajaxload';
+$action_view_map['ajaxreschedule'] = 'ajaxreschedule';
+$action_view_map['ajaxremove'] = 'ajaxremove';
+$action_view_map['ajaxgetgr'] = 'ajaxgetgr';
+$action_view_map['ajaxgetgrusers'] = 'ajaxgetgrusers';
+$action_view_map['ajaxloadform'] = 'ajaxloadform';
+$action_view_map['savesettings'] = 'savesettings';

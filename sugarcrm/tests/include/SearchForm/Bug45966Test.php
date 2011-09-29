@@ -86,12 +86,13 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjDate['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjDate['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ". $user->db->convert($user->db->quoted($adjDate['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchNotOnDateAdjustsForTimeZone() {
@@ -103,12 +104,15 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = 'not_equal';
         $this->array['range_date_entered_advanced'] = $testDate;
 
-        $expected = "notes.date_entered IS NULL OR notes.date_entered != '2011-12-31'";
+        $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
+
+        $expected = "notes.date_entered IS NULL OR notes.date_entered < ". $user->db->convert($user->db->quoted($adjDate['start']), 'datetime').
+            " OR ". strtolower($this->module).".date_entered > ". $user->db->convert($user->db->quoted($adjDate['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchAfterDateAdjustsForTimeZone() {
@@ -119,13 +123,14 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->array['date_entered_advanced_range_choice'] = 'greater_than';
         $this->array['range_date_entered_advanced'] = $testDate;
+        $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
 
-        $expected = "notes.date_entered > '2011-12-31'";
+        $expected = "notes.date_entered > ".$user->db->convert($user->db->quoted($adjDate['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertEquals($expected, $query[0]);
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchBeforeDateAdjustsForTimeZone() {
@@ -136,13 +141,14 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
 
         $this->array['date_entered_advanced_range_choice'] = 'less_than';
         $this->array['range_date_entered_advanced'] = $testDate;
+        $adjDate = $timedate->getDayStartEndGMT($testDate, $user);
 
-        $expected = "notes.date_entered < '2011-01-01'";
+        $expected = "notes.date_entered < ".$user->db->convert($user->db->quoted($adjDate['start']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertEquals($expected, $query[0]);
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchLastSevenDaysAdjustsForTimeZone() {
@@ -154,15 +160,16 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjToday = $timedate->getDayStartEndGMT(date('m/d/Y'), $user);
-        $adjStartDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() - (6 * 24 * 60 * 60)), $user);
+        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true));
+        $adjStartDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("-6 days"));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjStartDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjToday['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjStartDate['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjToday['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchNextSevenDaysAdjustsForTimeZone() {
@@ -174,15 +181,16 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjToday = $timedate->getDayStartEndGMT(date('m/d/Y'), $user);
-        $adjEndDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() + (6 * 24 * 60 * 60)), $user);
+        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true));
+        $adjEndDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("+6 days"));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjToday['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjEndDate['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjToday['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjEndDate['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchLastThirtyDaysAdjustsForTimeZone() {
@@ -194,15 +202,16 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjToday = $timedate->getDayStartEndGMT(date('m/d/Y'), $user);
-        $adjStartDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() - (29 * 24 * 60 * 60)), $user);
+        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true));
+        $adjStartDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("-29 days"));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjStartDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjToday['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjStartDate['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjToday['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchNextThirtyDaysAdjustsForTimeZone() {
@@ -214,15 +223,16 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjToday = $timedate->getDayStartEndGMT(date('m/d/Y'), $user);
-        $adjEndDate = $timedate->getDayStartEndGMT(date('m/d/Y', time() + (29 * 24 * 60 * 60)), $user);
+        $adjToday = $timedate->getDayStartEndGMT($timedate->getNow(true));
+        $adjEndDate = $timedate->getDayStartEndGMT($timedate->getNow(true)->get("+29 days"));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjToday['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjEndDate['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjToday['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjEndDate['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchLastMonthAdjustsForTimeZone() {
@@ -234,15 +244,18 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjLastMonthFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, date("m")-1, 01,   date("Y"))), $user);
-        $adjLastMonthLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, -1, date("m"), 01,   date("Y"))), $user);
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, $now->month-1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjLastMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjLastMonthLastDay['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchThisMonthAdjustsForTimeZone() {
@@ -254,15 +267,17 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, date("m"), 01,   date("Y"))), $user);
-        $adjThisMonthLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, -1, date("m")+1, 01,   date("Y"))), $user);
+        $month = $timedate->getNow(true)->get_day_begin(1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjThisMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjThisMonthLastDay['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchNextMonthAdjustsForTimeZone() {
@@ -274,15 +289,18 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjNextMonthFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, date("m")+1, 01,   date("Y"))), $user);
-        $adjNextMonthLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, -1, date("m")+2, 01,   date("Y"))), $user);
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, $now->month+1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin($month->days_in_month));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjNextMonthFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjNextMonthLastDay['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchLastYearAdjustsForTimeZone() {
@@ -294,15 +312,18 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjLastYearFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 01, 01,   date("Y")-1)), $user);
-        $adjLastYearLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 12, 31,   date("Y")-1)), $user);
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, 1, $now->year-1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin(31, 12));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjLastYearFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjLastYearLastDay['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchThisYearAdjustsForTimeZone() {
@@ -314,15 +335,17 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjThisYearFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 01, 01,   date("Y"))), $user);
-        $adjThisYearLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 12, 31,   date("Y"))), $user);
+        $month = $timedate->getNow(true)->get_day_begin(1, 1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin(31, 12));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjThisYearFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjThisYearLastDay['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchNextYearAdjustsForTimeZone() {
@@ -334,15 +357,18 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $this->array['date_entered_advanced_range_choice'] = $testDate;
         $this->array['range_date_entered_advanced'] = "[$testDate]";
 
-        $adjNextYearFirstDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 01, 01,   date("Y")+1)), $user);
-        $adjNextYearLastDay = $timedate->getDayStartEndGMT(date('m/d/Y', mktime(0, 0, 0, 12, 31,   date("Y")+1)), $user);
+        $now = $timedate->getNow(true);
+        $month = $now->get_day_begin(1, 1, $now->year+1);
+        $adjThisMonthFirstDay = $timedate->getDayStartEndGMT($month);
+        $adjThisMonthLastDay = $timedate->getDayStartEndGMT($month->get_day_begin(31, 12));
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjNextYearFirstDay['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjNextYearLastDay['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjThisMonthFirstDay['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjThisMonthLastDay['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
     public function testSearchDateIsBetweenAdjustsForTimeZone() {
@@ -359,12 +385,13 @@ class Bug45966 extends Sugar_PHPUnit_Framework_TestCase {
         $adjStartDate = $timedate->getDayStartEndGMT($testStartDate, $user);
         $adjEndDate = $timedate->getDayStartEndGMT($testEndDate, $user);
 
-        $expected = array(strtolower($this->module).".date_entered >= '".$adjStartDate['start']."' AND ". strtolower($this->module).".date_entered <= '".$adjEndDate['end']."'");
+        $expected = strtolower($this->module).".date_entered >= ".$user->db->convert($user->db->quoted($adjStartDate['start']), 'datetime').
+        	" AND ". strtolower($this->module).".date_entered <= ".$user->db->convert($user->db->quoted($adjEndDate['end']), 'datetime');
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);
 
-        $this->assertGreaterThan(0, strpos($query[0], $expected[0]));
+        $this->assertContains($expected, $query[0]);
     }
 
 }

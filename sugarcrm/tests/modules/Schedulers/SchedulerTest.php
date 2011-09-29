@@ -25,9 +25,11 @@ require_once 'modules/Schedulers/Scheduler.php';
 
 class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
 {
+	static protected $old_timedate;
 
 	public static function setUpBeforeClass()
 	{
+		self::$old_timedate = $GLOBALS['timedate'];
 	    unset($GLOBALS['disable_date_format']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
@@ -39,12 +41,14 @@ class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
 	{
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
+		$GLOBALS['timedate'] = self::$old_timedate;
 	}
 
 	public function setUp()
     {
         $this->scheduler = new TestScheduler(false);
-        $this->timedate = TimeDate::getInstance();
+        $GLOBALS['timedate'] = $this->timedate = TimeDate::getInstance();
+        $this->timedate->allow_cache = true;
         $this->now = $this->timedate->getNow();
     }
 
