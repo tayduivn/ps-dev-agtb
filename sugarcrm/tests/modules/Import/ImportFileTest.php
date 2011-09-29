@@ -325,4 +325,83 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // cleanup
         unlink($sample_file);
     }
+
+    public function providerRowCountData()
+    {
+        return array(
+            array('TestCharset.csv', 2),
+            array('TestCharset2.csv', 12),
+            );
+    }
+
+    /**
+     * @dataProvider providerRowCountData
+     */
+    public function testRowCount($file, $count) {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
+        copy('tests/modules/Import/'.$file, $sample_file);
+
+        // auto detec charset
+        $importFile = new ImportFile($sample_file, ",", '', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $c = $importFile->getTotalRecordCount();
+        $this->assertEquals($count, $c, 'incorrect row count.');
+
+        // cleanup
+        unlink($sample_file);
+    }
+
+    public function providerFieldCountData()
+    {
+        return array(
+            array('TestCharset.csv', 2),
+            array('TestCharset2.csv', 5),
+            );
+    }
+
+    /**
+     * @dataProvider providerFieldCountData
+     */
+    public function testFieldCount($file, $count) {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
+        copy('tests/modules/Import/'.$file, $sample_file);
+
+        // auto detec charset
+        $importFile = new ImportFile($sample_file, ",", '"', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $c = $importFile->getNextRow();
+        $c = $importFile->getFieldCount();
+        $this->assertEquals($count, $c, 'incorrect row count.');
+
+        // cleanup
+        unlink($sample_file);
+    }
+
+    public function providerLineCountData()
+    {
+        return array(
+            array('TestCharset.csv', 2),
+            array('TestCharset2.csv', 12),
+            );
+    }
+
+    /**
+     * @dataProvider providerLineCountData
+     */
+    public function testLineCount($file, $count) {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
+        copy('tests/modules/Import/'.$file, $sample_file);
+
+        // auto detec charset
+        $importFile = new ImportFile($sample_file, ",", '"', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $c = $importFile->getNumberOfLinesInfile();
+        $this->assertEquals($count, $c, 'incorrect row count.');
+
+        // cleanup
+        unlink($sample_file);
+    }
 }
