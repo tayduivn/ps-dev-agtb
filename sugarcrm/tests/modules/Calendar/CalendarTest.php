@@ -34,10 +34,16 @@
  * "Powered by SugarCRM".
  ********************************************************************************/
 
-require_once "modules/Calendar/utils.php"; 
+require_once "modules/Calendar/CalendarUtils.php";
 require_once "modules/Calendar/Calendar.php";
 
 class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
+
+    /**
+	 * @var TimeDate
+	 */
+	protected $time_date;
+    
 	public static function setUpBeforeClass(){
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 	}
@@ -48,6 +54,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
     	}
 
 	public function setUp(){
+        $this->time_date = new TimeDate();
 		$_REQUEST['module'] = 'Calendar';
 		$_REQUEST['year'] = '2012';
 		$_REQUEST['month'] = '01';
@@ -68,6 +75,21 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals('2012',$cal->date_time->year);
 
 	}
+
+    public function testHandleOffset(){
+        $gmt_today =  $this->time_date->nowDb();
+        $date1 = $this->time_date->handle_offset($gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
+        $date2 = $this->time_date->nowDb();
+        $this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
+    }
+
+    public function testUserDateFormat(){
+        $gmt_default_date_start = $this->time_date->get_gmt_db_datetime();
+        $date1 = $this->time_date->handle_offset($gmt_default_date_start, $GLOBALS['timedate']->get_date_time_format());
+
+        $date2 = $this->time_date->asUser($this->time_date->getNow());
+		$this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
+    }
 
 
 }

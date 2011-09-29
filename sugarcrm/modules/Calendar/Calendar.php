@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('modules/Calendar/utils.php');
+require_once('modules/Calendar/CalendarUtils.php');
 require_once('include/utils/activity_utils.php');
 require_once('modules/Calendar/CalendarActivity.php');
 
@@ -125,8 +125,7 @@ class Calendar {
 
 		// if date is not set in request set current date
 		if(empty($date_arr) || !isset($date_arr['year']) || !isset($date_arr['month']) || !isset($date_arr['day']) ){	
-			$this->gmt_today = $timedate->get_gmt_db_datetime();
-			$user_today = $timedate->handle_offset($this->gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
+			$user_today = $timedate->nowDb();
 			preg_match('/(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/',$user_today,$matches);
 			$date_arr = array(
 			      'year' => $matches[1],
@@ -134,7 +133,7 @@ class Calendar {
 			      'day' => $matches[3],
 			);
 		}else{		
-			$this->gmt_today = $date_arr['year'] . "-" . add_zero($date_arr['month']) . "-" . add_zero($date_arr['day']);
+			$this->gmt_today = $date_arr['year'] . "-" . CalendarUtils::add_zero($date_arr['month']) . "-" . CalendarUtils::add_zero($date_arr['day']);
 		}		
 		
 		$this->date_arr = $date_arr;
@@ -163,7 +162,7 @@ class Calendar {
 			$this->time_step = 60;
 		}			
 
-		$this->today_unix = to_timestamp($this->gmt_today);		
+		$this->today_unix = CalendarUtils::to_timestamp($this->gmt_today);
 		$this->calculate_day_range();
 	}
 	
@@ -171,7 +170,7 @@ class Calendar {
 	 * loads activities data to array
 	 */		
 	function load_activities(){
-		$field_list = get_fields();
+		$field_list = CalendarUtils::get_fields();
 		foreach($this->acts_arr as $user_id => $acts){
 			foreach($acts as $act){				
 					$newAct = array();
@@ -222,15 +221,15 @@ class Calendar {
 					}								
 
 					$newAct['date_start'] = $act->sugar_bean->date_start;	
-					$date_unix = to_timestamp_from_uf($act->sugar_bean->date_start);
+					$date_unix = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->date_start);
 				
 					if($newAct['type'] == 'task'){
 					 	$newAct['date_start'] = $act->sugar_bean->date_due;					 	
-						$date_unix = to_timestamp_from_uf($newAct['date_start']);	
+						$date_unix = CalendarUtils::to_timestamp_from_uf($newAct['date_start']);
 					}
 								
 					$newAct['start'] = $date_unix;
-					$newAct['time_start'] = timestamp_to_user_formated2($newAct['start'],$GLOBALS['timedate']->get_time_format());				
+					$newAct['time_start'] = CalendarUtils::timestamp_to_user_formated2($newAct['start'],$GLOBALS['timedate']->get_time_format());
 
 					if(!isset($newAct['duration_hours']) || empty($newAct['duration_hours']))
 						$newAct['duration_hours'] = 0;
@@ -247,7 +246,7 @@ class Calendar {
 	 * @return string
 	 */
 	function get_activities_js(){	
-				$field_list = get_fields();
+				$field_list = CalendarUtils::get_fields();
 				$a_str = "";				
 				$ft = true;
 				foreach($this->ActRecords as $act){

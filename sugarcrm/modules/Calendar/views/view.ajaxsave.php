@@ -12,9 +12,9 @@ class CalendarViewAjaxSave extends SugarView {
 	}
 	
 	function display(){
-		require_once("modules/Calendar/utils.php");
+		require_once("modules/Calendar/CalendarUtils.php");
 		
-		$field_list = get_fields();
+		$field_list = CalendarUtils::get_fields();
 
 		global $beanFiles,$beanList;
 		$module = $_REQUEST['current_module'];
@@ -85,7 +85,7 @@ class CalendarViewAjaxSave extends SugarView {
 	
 
 			global $timedate;
-			$start = to_timestamp_from_uf($bean->date_start);
+			$start = CalendarUtils::to_timestamp_from_uf($bean->date_start);
 			
 			if($_REQUEST['current_module'] == 'Calls')
 				$users = $bean->get_call_users();
@@ -113,7 +113,7 @@ class CalendarViewAjaxSave extends SugarView {
 				'type' => $type,
 				'module_name' => $bean->module_dir,
 				'start' => $start,
-				'time_start' => timestamp_to_user_formated2($start,$GLOBALS['timedate']->get_time_format()),		
+				'time_start' => CalendarUtils::timestamp_to_user_formated2($start,$GLOBALS['timedate']->get_time_format()),
 				//'rec_id_c' => $bean->$jn,
 				'detailview' => 1,	
 				'editview' => 1,		
@@ -156,8 +156,8 @@ class CalendarViewAjaxSave extends SugarView {
 		$timezone = $GLOBALS['timedate']->getUserTimeZone();
 		global $timedate;
 
-		$start_unix = to_timestamp_from_uf($_REQUEST['date_start']);
-		$end_unix = to_timestamp($GLOBALS['timedate']->swap_formats($_REQUEST['repeat_end_date_c'],$GLOBALS['timedate']->get_date_format(),'Y-m-d H:i:s'));
+		$start_unix = CalendarUtils::to_timestamp_from_uf($_REQUEST['date_start']);
+		$end_unix = CalendarUtils::to_timestamp($GLOBALS['timedate']->swap_formats($_REQUEST['repeat_end_date_c'],$GLOBALS['timedate']->get_date_format(),'Y-m-d H:i:s'));
 		$end_unix = $end_unix + 60*60*24 - 1;
 		$start_day = date("w",$start_unix - date('Z',$start_unix)) + 1;
 		$start_dayM = date("j",$start_unix - date('Z',$start_unix));
@@ -253,12 +253,12 @@ class CalendarViewAjaxSave extends SugarView {
 	
 	
 	function clone_activity($bean,$cur_date,$jn){
-		require_once("modules/Calendar/utils.php");
+		require_once("modules/Calendar/CalendarUtils.php");
 			
 		$obj = clone $bean;
 		$obj->id = "";				
-		$obj->date_start = timestamp_to_user_formated2($cur_date);
-		$obj->date_end = timestamp_to_user_formated2($cur_date);	
+		$obj->date_start = CalendarUtils::timestamp_to_user_formated2($cur_date);
+		$obj->date_end = CalendarUtils::timestamp_to_user_formated2($cur_date);
 		$obj->$jn = $bean->id;
 					
 		$this->save_activity($obj,false);

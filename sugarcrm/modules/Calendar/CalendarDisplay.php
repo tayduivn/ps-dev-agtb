@@ -82,8 +82,7 @@ class CalendarDisplay {
 		$ss->assign('hide_whole_day',$args['cal']->celcount == $args['cal']->cells_per_day);
 	
 		// details
-		$gmt_default_date_start = $timedate->get_gmt_db_datetime();
-		$user_default_date_start  = $timedate->handle_offset($gmt_default_date_start, $GLOBALS['timedate']->get_date_time_format());
+		$user_default_date_start  = $timedate->asUser($timedate->getNow());
 		$ss->assign('user_default_date_start',$user_default_date_start);
 		// end details	
 		
@@ -129,8 +128,7 @@ class CalendarDisplay {
 		global $app_strings,$app_list_strings,$beanList;
 		global $timedate;
 		
-		$gmt_default_date_start = $timedate->get_gmt_db_datetime();
-		$user_default_date_start  = $timedate->handle_offset($gmt_default_date_start, $GLOBALS['timedate']->get_date_time_format());
+		$user_default_date_start  = $timedate->asUser($timedate->getNow());
 		if(!isset($time_separator))
 			$time_separator = ":";	
 		$date_format = $timedate->get_cal_date_format();
@@ -294,7 +292,7 @@ class CalendarDisplay {
 		global $cal_strings,$image_path;
 		$str = "";
 		if($_REQUEST['module'] == "Calendar"){
-			$str .= "<a href='".cal_handle_link("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_next_date_str())."'>";
+			$str .= "<a href='".CalendarUtils::cal_handle_link("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_next_date_str())."'>";
 
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_next_date_str()."&id=".$this->args['dashlet_id']."\")'>";
@@ -309,7 +307,7 @@ class CalendarDisplay {
 		global $cal_strings,$image_path;
 		$str = "";
 		if($_REQUEST['module'] == "Calendar"){
-			$str .= "<a href='".cal_handle_link("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_previous_date_str()."")."'>";
+			$str .= "<a href='".CalendarUtils::cal_handle_link("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_previous_date_str()."")."'>";
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_previous_date_str()."&id=".$this->args['dashlet_id']."\")'>";
 		}
@@ -335,7 +333,7 @@ class CalendarDisplay {
 			$tabs_params = array();		
 			foreach($tabs as $tab){ 
 				$tabs_params[$tab]['title'] = $cal_strings["LBL_".strtoupper($tab)];
-				$tabs_params[$tab]['link'] = "window.location.href='".cal_handle_link("index.php?module=Calendar&action=index&view=". $tab . $this->args['cal']->date_time->get_date_str())."'";
+				$tabs_params[$tab]['link'] = "window.location.href='".CalendarUtils::cal_handle_link("index.php?module=Calendar&action=index&view=". $tab . $this->args['cal']->date_time->get_date_str())."'";
 			}		
 			$ss->assign('controls',$controls);
 			$ss->assign('tabs',$tabs);

@@ -13,7 +13,7 @@ class CalendarGrid {
 	function CalendarGrid(&$args){
 		global $current_user;
 		$this->args = &$args;		
-		$this->real_today_unix = to_timestamp($GLOBALS['timedate']->get_gmt_db_date());
+		$this->real_today_unix = CalendarUtils::to_timestamp($GLOBALS['timedate']->get_gmt_db_date());
 		
 		$weekday_names = array();
 		
@@ -74,7 +74,7 @@ class CalendarGrid {
 					$headstyle = " today";
 				else
 					$headstyle = "";
-				$str .= "<div class='day_head".$headstyle."'><a href='".cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".timestamp_to_user_formated2($curr_time,'j')."&month=".timestamp_to_user_formated2($curr_time,'n')."&year=".timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".timestamp_to_user_formated2($curr_time,'d')."</a></div>";	
+				$str .= "<div class='day_head".$headstyle."'><a href='".CalendarUtils::cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".CalendarUtils::timestamp_to_user_formated2($curr_time,'j')."&month=".CalendarUtils::timestamp_to_user_formated2($curr_time,'n')."&year=".CalendarUtils::timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".CalendarUtils::timestamp_to_user_formated2($curr_time,'d')."</a></div>";
 			$str .= "</div>";			
 		}
 		$str .= "</div>";
@@ -89,7 +89,7 @@ class CalendarGrid {
 				for($i = 0; $i < 24; $i++){
 					for($j = 0; $j < 60; $j += $t_step){
 						if($j == 0) 
-							$innerText = timestamp_to_user_formated2($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
+							$innerText = CalendarUtils::timestamp_to_user_formated2($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
 						else
 							$innerText = "&nbsp;"; 
 						$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
@@ -104,8 +104,8 @@ class CalendarGrid {
 					for($i = 0; $i < 24; $i++){
 						for($j = 0; $j < 60; $j += $t_step){
 							$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);						
-							$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
-							$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
+							$timestr = CalendarUtils::timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());
+							$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_user_formated2($curr_time)."'></div>";
 							$curr_time += $t_step*60;
 						}
 					}
@@ -148,7 +148,7 @@ class CalendarGrid {
 				for($i = 0; $i < 24; $i++){
 					for($j = 0; $j < 60; $j += $t_step){
 						if($j == 0) 
-							$innerText = timestamp_to_user_formated2($day_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
+							$innerText = CalendarUtils::timestamp_to_user_formated2($day_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
 						else
 							$innerText = "&nbsp;"; 
 						$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
@@ -164,8 +164,8 @@ class CalendarGrid {
 						for($i = 0; $i < 24; $i++){
 							for($j = 0; $j < 60; $j += $t_step){
 								$hc = "";//check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);					
-								$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
-								$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
+								$timestr = CalendarUtils::timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());
+								$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_user_formated2($curr_time)."'></div>";
 								$curr_time += $t_step*60;
 							}
 						}
@@ -220,14 +220,14 @@ class CalendarGrid {
 			$w = 0;
 			while($curr_time_g < $month_end_unix){		
 				$str .= "<div class='left_time_col'>";
-					$str .= "<div class='day_head'><a href='".cal_handle_link("index.php?module=Calendar&action=index&view=week&hour=0&day=".timestamp_to_user_formated2($curr_time_g,'j')."&month=".timestamp_to_user_formated2($curr_time_g,'n')."&year=".timestamp_to_user_formated2($curr_time_g,'Y'))."'>".timestamp_to_user_formated2($curr_time_g + $wf*3600*24,'W')."</a></div>";		
+					$str .= "<div class='day_head'><a href='".CalendarUtils::cal_handle_link("index.php?module=Calendar&action=index&view=week&hour=0&day=".CalendarUtils::timestamp_to_user_formated2($curr_time_g,'j')."&month=".CalendarUtils::timestamp_to_user_formated2($curr_time_g,'n')."&year=".CalendarUtils::timestamp_to_user_formated2($curr_time_g,'Y'))."'>".CalendarUtils::timestamp_to_user_formated2($curr_time_g + $wf*3600*24,'W')."</a></div>";
 					for($i = 0; $i < 24; $i++){
 						for($j = 0; $j < 60; $j += $t_step){
 							if($j == 0) 
-								$innerText = timestamp_to_user_formated2($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
+								$innerText = CalendarUtils::timestamp_to_user_formated2($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
 							else
 								$innerText = "&nbsp;"; 
-							$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
+							$hc = CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
 							if(!$hc)								
 								$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
 						}
@@ -241,14 +241,14 @@ class CalendarGrid {
 							$headstyle = " today";
 						else
 							$headstyle = "";
-						$str .= "<div class='day_head".$headstyle."'><a href='".cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".timestamp_to_user_formated2($curr_time,'j')."&month=".timestamp_to_user_formated2($curr_time,'n')."&year=".timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".timestamp_to_user_formated2($curr_time,'d')."</a></div>";		
+						$str .= "<div class='day_head".$headstyle."'><a href='".CalendarUtils::cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".CalendarUtils::timestamp_to_user_formated2($curr_time,'j')."&month=".CalendarUtils::timestamp_to_user_formated2($curr_time,'n')."&year=".CalendarUtils::timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".CalendarUtils::timestamp_to_user_formated2($curr_time,'d')."</a></div>";
 						for($i = 0; $i < 24; $i++){
 							for($j = 0; $j < 60; $j += $t_step){
-								$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);						
+								$hc = CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
 																	
-								$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
+								$timestr = CalendarUtils::timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());
 								if(!$hc)
-									$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
+									$str .= "<div id='t_".$curr_time."' class='slot ".$hc."' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_user_formated2($curr_time)."'></div>";
 								$curr_time += $t_step*60;
 							}
 						}
@@ -306,7 +306,7 @@ class CalendarGrid {
 							$innerText = timestamp_to_user_formated2($week_start_unix + $i * 3600 ,$GLOBALS['timedate']->get_time_format());
 						else
 							$innerText = "&nbsp;"; 
-						$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
+						$hc = CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
 						if(!$hc)
 							$str .= "<div class='left_cell ".$hc."'>".$innerText."</div>";
 					}
@@ -320,13 +320,13 @@ class CalendarGrid {
 							$headstyle = " today";
 						else
 							$headstyle = "";
-						$str .= "<div class='day_head".$headstyle."'><a href='".cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".timestamp_to_user_formated2($curr_time,'j')."&month=".timestamp_to_user_formated2($curr_time,'n')."&year=".timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".timestamp_to_user_formated2($curr_time,'d')."</a></div>";		
+						$str .= "<div class='day_head".$headstyle."'><a href='".CalendarUtils::cal_handle_link("index.php?module=Calendar&action=index&view=day&hour=0&day=".CalendarUtils::timestamp_to_user_formated2($curr_time,'j')."&month=".CalendarUtils::timestamp_to_user_formated2($curr_time,'n')."&year=".CalendarUtils::timestamp_to_user_formated2($curr_time,'Y'))."'>".$this->weekday_names[$d]." ".CalendarUtils::timestamp_to_user_formated2($curr_time,'d')."</a></div>";
 						for($i = 0; $i < 24; $i++){
 							for($j = 0; $j < 60; $j += $t_step){
-								$hc = check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);					
-								$timestr = timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());							
+								$hc = CalendarUtils::check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes);
+								$timestr = CalendarUtils::timestamp_to_user_formated2($curr_time,$GLOBALS['timedate']->get_time_format());
 								if(!$hc)
-									$str .= "<div id='t_".$curr_time.$un_str."' class='slot ".$hc."' dur='".$timestr."' datetime='".timestamp_to_user_formated2($curr_time)."'></div>";
+									$str .= "<div id='t_".$curr_time.$un_str."' class='slot ".$hc."' dur='".$timestr."' datetime='".CalendarUtils::timestamp_to_user_formated2($curr_time)."'></div>";
 								$curr_time += $t_step*60;
 							}
 						}
@@ -389,7 +389,7 @@ class CalendarGrid {
 
 		for($m = 0; $m < 12; $m++){
 	
-			$gmt_g =  timestamp_to_user_formated2($this->args['cal']->today_unix,'Y'). "-" . add_zero($m + 1) . "-" . "01";
+			$gmt_g =  CalendarUtils::timestamp_to_user_formated2($this->args['cal']->today_unix,'Y'). "-" . CalendarUtils::add_zero($m + 1) . "-" . "01";
 			$g_parsed = date_parse($gmt_g);
 			$g_unix = gmmktime($g_parsed['hour'],$g_parsed['minute'],$g_parsed['second'],$g_parsed['month'],$g_parsed['day'],$g_parsed['year']);
 			$Tw = date("w",$g_unix - date('Z',$g_unix));
@@ -416,7 +416,7 @@ class CalendarGrid {
 			if($m % 3 == 0)
 				$str .= "<tr>";		
 					$str .= '<td class="yearCalBodyMonth" align="center" valign="top" scope="row">';
-						$str .= '<a class="yearCalBodyMonthLink" href="'.cal_handle_link('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.timestamp_to_user_formated2($month_start_unix,'Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
+						$str .= '<a class="yearCalBodyMonthLink" href="'.CalendarUtils::cal_handle_link('index.php?module=Calendar&action=index&view=month&&hour=0&day=1&month='.($m+1).'&year='.CalendarUtils::timestamp_to_user_formated2($month_start_unix,'Y')).'">'.$GLOBALS['app_list_strings']['dom_cal_month_long'][$m+1].'</a>';
 						$str .= '<table id="daily_cal_table" cellspacing="1" cellpadding="0" border="0" width="100%">';	
 							$str .= '<tr class="monthCalBodyTH">';
 								for($d = 0; $d < 7; $d++)
@@ -432,7 +432,7 @@ class CalendarGrid {
 										if($curr_time < $month_start_unix || $curr_time >= $month_end_unix)
 											$monC = "";
 										else
-											$monC = '<a href="'.cal_handle_link('index.php?module=Calendar&action=index&view=day&hour=0&day='.timestamp_to_user_formated2($curr_time,'j').'&month='.timestamp_to_user_formated2($curr_time,'n').'&year='.timestamp_to_user_formated2($curr_time,'Y')) .'">'.timestamp_to_user_formated2($curr_time,'j').'</a>';
+											$monC = '<a href="'.CalendarUtils::cal_handle_link('index.php?module=Calendar&action=index&view=day&hour=0&day='.CalendarUtils::timestamp_to_user_formated2($curr_time,'j').'&month='.CalendarUtils::timestamp_to_user_formated2($curr_time,'n').'&year='.CalendarUtils::timestamp_to_user_formated2($curr_time,'Y')) .'">'.CalendarUtils::timestamp_to_user_formated2($curr_time,'j').'</a>';
 								
 									
 										if($d == $weekEnd1 || $d == $weekEnd2)	

@@ -14,7 +14,7 @@ class CalendarViewAjaxRemove extends SugarView {
 	function display(){
 		require_once("modules/Calls/Call.php");
 		require_once("modules/Meetings/Meeting.php");
-		require_once("modules/Calendar/utils.php");
+		require_once("modules/Calendar/CalendarUtils.php");
 
 		global $beanFiles,$beanList;
 		$module = $_REQUEST['current_module'];
