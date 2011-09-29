@@ -78,6 +78,21 @@ function getAllFieldsMapped(module) {
 			summary_fields_str+='|'+"self:"+module_defs[module].summary_field_defs[k].name;
 	}
 
+    // Bug #44880 Grouped fields have to be in module_defs too
+    for(var k in module_defs[module].group_by_field_defs)
+    {
+        if (typeof module_defs[module].group_by_field_defs[k].field_def_name == 'undefined')
+        {
+            continue;
+        }
+        var parentName = module_defs[module].group_by_field_defs[k].field_def_name;
+        all_fields["self:"+module_defs[module].group_by_field_defs[k].name] = {
+            "field_def": module_defs[module].group_by_field_defs[k],
+            "linked_field_name":"self",
+            "label_prefix":module_defs[module].label
+        };
+    }
+
 	all_fields["count"] = all_fields["self:count"];
 
 	var link_defs = getSelectedLinkDefs(module);
