@@ -1553,7 +1553,7 @@ protected function checkQuery($sql, $object_name = false)
             return $this->convert($this->quoted($value), "datetime");
         }
         if($this->isNumericType($type)) {
-            return $value;
+            return 0+$value; // ensure it's numeric
         }
 
         return $this->quoted($value);
