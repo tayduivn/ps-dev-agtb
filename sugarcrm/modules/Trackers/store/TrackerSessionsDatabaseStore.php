@@ -32,24 +32,18 @@ class TrackerSessionsDatabaseStore implements Store {
     public function flush($monitor) {
         global $db;
        $metrics = $monitor->getMetrics();
-       
+
        if(isset($monitor->client_ip) && strlen($monitor->client_ip) > 20)
        {
-          $monitor->client_ip = substr($monitor->client_ip, 0, 20);	  
+          $monitor->client_ip = substr($monitor->client_ip, 0, 20);
        }
-       
+
        $columns = array();
        $values = array();
        foreach($metrics as $name=>$metric) {
        	  if(!empty($monitor->$name)) {
        	  	 $columns[] = $name;
-       	  	 if($metrics[$name]->_type == 'int' || $metrics[$name]->_type == 'double') {
-                $values[] = $monitor->$name+0; // convert to number
-             } else if ($metrics[$name]->_type == 'datetime') {
-             	$values[] = $db->convert($db->quoted($monitor->$name), 'datetime');
-       	  	 } else {
-                $values[] = $db->quoted($monitor->$name);
-             }
+       	  	 $values[] = $db->quoteType($metrics[$name]->_type, $monitor->$name);
        	  }
        } //foreach
 
@@ -71,7 +65,8 @@ class TrackerSessionsDatabaseStore implements Store {
 		  $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
 		  $db->query($query);
        } else {
-       	  $query = "UPDATE $monitor->table_name SET date_end = $monitor->date_end , seconds = $monitor->seconds, active = $monitor->active, round_trips = $monitor->round_trips WHERE session_id = '{$monitor->session_id}'";
+           $date_end = $db->quoteType('datetime', $monitor->date_end);
+       	  $query = "UPDATE $monitor->table_name SET date_end = $date_end , seconds = $monitor->seconds, active = $monitor->active, round_trips = $monitor->round_trips WHERE session_id = '{$monitor->session_id}'";
        	  $GLOBALS['db']->query($query);
        }
     }
