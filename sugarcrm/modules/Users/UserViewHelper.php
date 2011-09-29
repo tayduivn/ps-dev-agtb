@@ -189,35 +189,47 @@ class UserViewHelper {
             'RegularUser' => array(
                 'label' => translate('LBL_REGULAR_USER','Users'),
                 'description' => translate('LBL_REGULAR_DESC','Users'),
-                ),
+            ),
 //BEGIN SUGARCRM flav=sales ONLY
             'UserAdministrator' => array(
                 'label' => translate('LBL_USER_ADMINISTRATOR','Users'),
                 'description' => translate('LBL_USER_ADMIN_DESC','Users'),
-                ),
+            ),
 //END SUGARCRM flav=sales ONLY
+            'GROUP' => array(
+                'label' => translate('LBL_GROUP_USER','Users'),
+                'description' => translate('LBL_GROUP_DESC','Users'),
+            ),
+            'PORTAL_ONLY' => array(
+                'label' => translate('LBL_USER_PORTAL_ONLY_USER','Users'),
+                'description' => translate('LBL_USER_PORTAL_ONLY_DESC','Users'),
+            ),
             'Administrator' => array(
                 'label' => translate('LBL_ADMIN_USER','Users'),
                 'description' => translate('LBL_ADMIN_DESC','Users'),
-                ),
+            ),
         );
 
-        if ( $this->ss->get_template_vars('USER_ADMIN') ) {
-            $availableUserTypes = array('RegularUser');
-        } elseif($this->ss->get_template_vars('ADMIN_EDIT_SELF')) {
-            $availableUserTypes = array('Administrator');
-        } elseif($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
-            $availableUserTypes = array(
-                'RegularUser',
-                //BEGIN SUGARCRM flav=sales ONLY
-                'UserAdministrator',
-                //END SUGARCRM flav=sales ONLY
-                'Administrator',
-            );
+        if ( $this->usertype == 'GROUP' || $this->usertype == 'PORTAL_ONLY' ) {
+            $availableUserTypes = array($this->usertype);
         } else {
-            $availableUserTypes = array($this->bean->user_type);
+            if ( $this->ss->get_template_vars('USER_ADMIN') ) {
+                $availableUserTypes = array('RegularUser');
+            } elseif($this->ss->get_template_vars('ADMIN_EDIT_SELF')) {
+                $availableUserTypes = array('Administrator');
+            } elseif($this->ss->get_template_vars('IS_SUPER_ADMIN')) {
+                $availableUserTypes = array(
+                    'RegularUser',
+                    //BEGIN SUGARCRM flav=sales ONLY
+                    'UserAdministrator',
+                    //END SUGARCRM flav=sales ONLY
+                    'Administrator',
+                    );
+            } else {
+                $availableUserTypes = array($this->bean->user_type);
+            }
         }
-        
+
         $userTypeDropdown = '<select id="UserType" name="UserType" onchange="user_status_display(this);" ';
         if ( count($availableUserTypes) == 1 ) {
             $userTypeDropdown .= ' disabled ';

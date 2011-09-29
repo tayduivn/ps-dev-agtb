@@ -475,7 +475,7 @@
         <!--//END SUGARCRM flav!=sales ONLY -->
     </div>
     {if $ID}
-    <div id="eapm_area">
+    <div id="eapm_area" style='display:{$HIDE_FOR_GROUP_AND_PORTAL};'>
         <div style="text-align:center; width: 100%">{sugar_image name="loading"}</div>
     </div>
     {/if}
@@ -497,20 +497,6 @@ function Admin_check(){
 		return true;
 }
 {/literal}
-<!--//BEGIN SUGARCRM flav!=sales ONLY -->
-{if !$HIDE_IF_CAN_USE_DEFAULT_OUTBOUND}
-{literal}
-document.getElementById('email_link_type').onchange = function()
-{
-//IKEA    document.getElementById('mail_smtpserver_tr').style.display = (this.value == 'mailto' ? 'none' : '' );
-//IKEA    document.getElementById('mail_smtpuser_tr').style.display = (this.value == 'mailto' ? 'none' : '' );
-//IKEA    document.getElementById('mail_smtppass_tr').style.display = (this.value == 'mailto' ? 'none' : '' );
-//IKEA    document.getElementById('test_outbound_settings_tr').style.display = (this.value == 'mailto' ? 'none' : '' );
-}
-document.getElementById('email_link_type').onchange();
-{/literal}
-{/if}
-<!--//END SUGARCRM flav!=sales ONLY -->
 -->
 </script>
 {$JAVASCRIPT}
@@ -518,15 +504,6 @@ document.getElementById('email_link_type').onchange();
 {literal}
 <script type="text/javascript" language="Javascript">
 {/literal}
-{if !$IS_GROUP && !$IS_PORTALONLY}
-{literal}
-if(window.addEventListener){
-//IKEA    window.addEventListener("load", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); }, false);
-}else{
-//IKEA    window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
-}
-{/literal}
-{/if}
 {$getNameJs}
 {$getNumberJs}
 currencies = {$currencySymbolJSON};

@@ -140,11 +140,11 @@ EditView_tabs.on('contentReady', function(e){
         <li class="selected"><a id="tab1" href="#tab1"><em>{$MOD.LBL_USER_INFORMATION}</em></a></li>
         <li {if $CHANGE_PWD == 0}style='display:none'{/if}><a id="tab2" href="#tab2"><em>{$MOD.LBL_CHANGE_PASSWORD_TITLE}</em></a></li>
         {if $SHOW_THEMES}
-        <li><a id="tab3" href="#tab3"><em>{$MOD.LBL_THEME}</em></a></li>
+        <li><a id="tab3" href="#tab3" style='display:{$HIDE_FOR_GROUP_AND_PORTAL};'><em>{$MOD.LBL_THEME}</em></a></li>
         {/if}
         <li><a id="tab4" href="#tab4" style='display:{$HIDE_FOR_GROUP_AND_PORTAL};'><em>{$MOD.LBL_ADVANCED}</em></a></li>
         {if $ID}
-        <li><a id="tab5" href="#tab5"><em>{$MOD.LBL_EAPM_SUBPANEL_TITLE}</em></a></li>
+        <li><a id="tab5" href="#tab5" style='display:{$HIDE_FOR_GROUP_AND_PORTAL};'><em>{$MOD.LBL_EAPM_SUBPANEL_TITLE}</em></a></li>
         {/if}
     </ul>
     <div class="yui-content">
