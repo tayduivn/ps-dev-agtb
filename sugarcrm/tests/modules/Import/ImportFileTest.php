@@ -316,7 +316,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
 
-        // auto detec charset
+        // auto detect charset
         $importFile = new ImportFile($sample_file, ",", '', false, false);
         $this->assertTrue($importFile->fileExists());
         $charset = $importFile->autoDetectCharacterSet();
@@ -343,7 +343,6 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
 
-        // auto detec charset
         $importFile = new ImportFile($sample_file, ",", '', false, false);
         $this->assertTrue($importFile->fileExists());
         $importFile->setHeaderRow($hasHeader);
@@ -370,7 +369,6 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
 
-        // auto detec charset
         $importFile = new ImportFile($sample_file, ",", '"', false, false);
         $this->assertTrue($importFile->fileExists());
         $c = $importFile->getNextRow();
@@ -397,11 +395,64 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
 
-        // auto detec charset
         $importFile = new ImportFile($sample_file, ",", '"', false, false);
         $this->assertTrue($importFile->fileExists());
         $c = $importFile->getNumberOfLinesInfile();
         $this->assertEquals($count, $c, 'incorrect row count.');
+
+        // cleanup
+        unlink($sample_file);
+    }
+
+    public function providerDateFormatData()
+    {
+        return array(
+            array('TestCharset.csv', 'd/m/Y'),
+            array('TestCharset2.csv', 'm/d/Y'),
+            );
+    }
+
+    /**
+     * @dataProvider providerDateFormatData
+     */
+    public function testDateFormat($file, $format) {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
+        copy('tests/modules/Import/'.$file, $sample_file);
+
+        $importFile = new ImportFile($sample_file, ",", '"', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $ret = $importFile->autoDetectCSVProperties();
+        $this->assertTrue($ret, 'Failed to auto detect properties.');
+        $c = $importFile->getDateFormat();
+        $this->assertEquals($format, $c, 'incorrect date format.');
+
+        // cleanup
+        unlink($sample_file);
+    }
+
+    public function providerTimeFormatData()
+    {
+        return array(
+            array('TestCharset.csv', 'h:ia'),
+            array('TestCharset2.csv', 'H:i'),
+            );
+    }
+
+    /**
+     * @dataProvider providerTimeFormatData
+     */
+    public function testTimeFormat($file, $format) {
+        // create the test file
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
+        copy('tests/modules/Import/'.$file, $sample_file);
+
+        $importFile = new ImportFile($sample_file, ",", '"', false, false);
+        $this->assertTrue($importFile->fileExists());
+        $ret = $importFile->autoDetectCSVProperties();
+        $this->assertTrue($ret, 'Failed to auto detect properties.');
+        $c = $importFile->getTimeFormat();
+        $this->assertEquals($format, $c, 'incorrect time format.');
 
         // cleanup
         unlink($sample_file);
