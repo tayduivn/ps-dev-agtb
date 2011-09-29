@@ -1163,9 +1163,9 @@ EOHTML;
             $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
             $theTitle .= <<<EOHTML
 &nbsp;
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<a id='create_img' href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
 <img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
-<a href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
+<a id='create_link' href="index.php?module={$module}&action=EditView&return_module={$module}&return_action=DetailView" class="utilsLink">
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;
