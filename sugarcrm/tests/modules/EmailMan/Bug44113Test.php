@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -58,7 +58,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
             );
 
 	}
-	
+
 	public function tearDown()
 	{
         if(isset($this->original_email_xss))
@@ -97,7 +97,7 @@ class Bug44113Test extends Sugar_PHPUnit_Framework_TestCase
 
       $conn->action_Save();   // testing the save,
                               // it should use the above request vars
-                              // to create a new config_override.php 
+                              // to create a new config_override.php
 
       // now check to make sure that config_override received the updated settings
       require("config_override.php");

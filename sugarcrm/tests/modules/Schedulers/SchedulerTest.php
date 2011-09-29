@@ -45,6 +45,7 @@ class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->scheduler = new TestScheduler(false);
         $this->timedate = TimeDate::getInstance();
+        $this->timedate->allow_cache = true;
         $this->now = $this->timedate->getNow();
     }
 
