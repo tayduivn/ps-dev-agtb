@@ -1769,7 +1769,23 @@ print "<BR>";
                                 if(strpos($oba,'=')){
                                     foreach($order_by as $ob){
                                         if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                        if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
+                                        if (empty($groupby))
+                                        {
+                                            // Bug #46805 substr is not correct parser for table.field alias. preg_match is used instead of it. Regexp tries to detect [table].[field]=, table.field=, [field]=, field=
+                                            preg_match('/((?:\[[^\]]+\]\s*\.\s*)?\[[^\]]+\])\s*=/sim', $ob, $groupby);
+                                            if (count($groupby) != 2 || $groupby[1] == '')
+                                            {
+                                                preg_match('/\b((?:[\d\w_]+\s*\.\s*)?[\d\w_]+)\s*=/sim', $ob, $groupby);
+                                            }
+                                            if (count($groupby) == 2 and $groupby[1] != '')
+                                            {
+                                                $groupby = $groupby[1];
+                                            }
+                                            else
+                                            {
+                                                $groupby = substr($ob,0,strrpos($ob,"="));
+                                            }
+                                        }
                                         $ob = trim($ob);
                                         $beg_sing_pos = strpos($ob,"'");
                                         if($beg_sing_pos>0){
