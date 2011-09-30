@@ -103,7 +103,7 @@ $dictionary['Task'] = array('table' => 'tasks',
   	 'group'=>'parent_name',
   	'required'=>false,
 	'len'=>'255',
-    'comment' => 'The Sugar object to which the call is related'
+    'comment' => 'The Sugar object to which the call is related',
     'options' => 'parent_type_display',
 ),
 
