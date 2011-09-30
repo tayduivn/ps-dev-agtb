@@ -103,7 +103,14 @@ class ReportsViewBuildreportmoduletree extends SugarView
     protected function _populateNodeItem($bean_name,$link_module,$linked_field)
     {
         $node = array();
-        
+
+        foreach ($GLOBALS['app_list_strings']['moduleList'] as $mod_name=>$name) {
+            if ($mod_name==$linked_field['label']) {
+                $linked_field['label'] = $name;
+                break;
+            }
+        }
+
         $node['text'] = $linked_field['label'];
         $node['href'] = "javascript:SUGAR.reports.populateFieldGrid('". $link_module . "','".$linked_field['relationship']."','".$bean_name."','".str_replace(array('&#039;', '&#39;'), "\'", $linked_field['label'])."');";
         $node['leaf'] = false;
