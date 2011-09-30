@@ -56,7 +56,6 @@ class TrackerSessionsDatabaseStore implements Store {
           $columns[] = 'id';
        }
 
-       if ( empty($monitor->date_end) ) $monitor->date_end = 'NULL';
        if ( empty($monitor->round_trips) ) $monitor->round_trips = 0;
        if ( empty($monitor->active) ) $monitor->active = 1;
        if ( empty($monitor->seconds) ) $monitor->seconds = 0;
@@ -65,7 +64,11 @@ class TrackerSessionsDatabaseStore implements Store {
 		  $query = "INSERT INTO $monitor->table_name (" .implode("," , $columns). " ) VALUES ( ". implode("," , $values). ')';
 		  $db->query($query);
        } else {
-           $date_end = $db->quoteType('datetime', $monitor->date_end);
+           if(!empty($monitor->date_end)) {
+               $date_end = $db->quoteType('datetime', $monitor->date_end);
+           } else {
+               $date_end = 'NULL';
+           }
        	  $query = "UPDATE $monitor->table_name SET date_end = $date_end , seconds = $monitor->seconds, active = $monitor->active, round_trips = $monitor->round_trips WHERE session_id = '{$monitor->session_id}'";
        	  $GLOBALS['db']->query($query);
        }
