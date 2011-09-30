@@ -213,6 +213,8 @@ SUGAR.ajaxUI = {
             } else {
                 con.resetFormState();
                 window.location = baseUrl + encodeURIComponent("index.php?" + string);
+                //Request may be cached so hide the loading panel.
+                SUGAR.ajaxUI.hideLoadingPanel();
             }
             return true;
         } else {
