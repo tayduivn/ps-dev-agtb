@@ -726,7 +726,7 @@ require_once('include/EditView/EditView2.php');
                     }
 
                 } else {
-                    $field_value = $params['value'];
+                    $field_value = $parms['value'];
                 }
 
                 //set db_fields array.
