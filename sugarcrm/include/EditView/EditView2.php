@@ -362,7 +362,7 @@ class EditView
         }
 
         return $panel;
-    }    
+    }
 
     function process($checkFormName = false, $formName = '')
     {
@@ -611,6 +611,7 @@ class EditView
         $this->th->ss->assign('bean', $this->focus);
         $this->th->ss->assign('isAuditEnabled', $this->focus->is_AuditEnabled());
         $this->th->ss->assign('gridline',$current_user->getPreference('gridline') == 'on' ? '1' : '0');
+        $this->th->ss->assign('tabDefs', isset($this->defs['templateMeta']['tabDefs']) ? $this->defs['templateMeta']['tabDefs'] : false);
 
         global $js_custom_version;
         global $sugar_version;
