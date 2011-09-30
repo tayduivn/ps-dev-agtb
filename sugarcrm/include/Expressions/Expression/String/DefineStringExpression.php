@@ -35,6 +35,15 @@ class DefineStringExpression extends StringExpression {
             $GLOBALS['log']->warn('DefineStringExpression::evaluate() returned empty string due to received exception: '.$e->getMessage());
             $retstr = "";
         }
+        //begin bug 45259 
+        $fieldName = $this->params->varName; //getting the name of the date field
+        $def = $this->context->field_defs[$fieldName]; // getting its definition from vardef
+        if($def['type'] == 'date'){
+        	$temp = explode(" ", $retstr);
+        	$temp_array = array($temp[0], $temp[1], $temp[2], $temp[3]);
+        	$retstr = implode(" ", $temp_array);
+        	
+        } // end bug 45259 
 		return $retstr;
 	}
 
