@@ -29,6 +29,9 @@ class Bug37307Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testRelationshipWithApostropheInLabelOutputsCorrectly()
 	{
+            if (empty($GLOBALS['app_list_strings'])) {
+                $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
+            }
 		$bean_name = 'Foo';
 		$link_module = 'Bar';
 		$linked_field = array(
