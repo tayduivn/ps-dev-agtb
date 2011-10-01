@@ -166,9 +166,9 @@
 				{if $pageData.access.edit}
 					<a
                         {* //BEGIN SUGARCRM flav=pro ONLY *}
-                        class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData[$params.parent_id]|default:$rowData.ID}' data-module='{$params.module|default:$pageData.bean.moduleDir}'
+                        class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData.ID}' data-module='{$pageData.bean.moduleDir}'
                         {* //END SUGARCRM flav=pro ONLY *}
-                        title='{$editLinkString}' href='index.php?action=EditView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="edit_inline.png"}"></a>
+                        title='{$editLinkString}' href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="edit_inline.png"}"></a>
 				{/if}
 				{if $pageData.access.view}
 					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'><img border="0" src="{sugar_getimagepath file="view_inline.png"}"></a>
