@@ -550,6 +550,12 @@ if(function_exists('unlinkUpgradeFiles'))
 	unlinkUpgradeFiles($origVersion);
 }
 
+//Run RepairSearchFields.php file
+if($origVersion < '620' && function_exists('repairSearchFields'))
+{
+    repairSearchFields($path);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 ////	TAKE OUT TRASH
 if(empty($errors)) {

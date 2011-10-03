@@ -283,6 +283,12 @@ if(function_exists('unlinkUpgradeFiles'))
 	unlinkUpgradeFiles($_SESSION['current_db_version']);
 }
 
+//Run RepairSearchFields.php file
+if($_SESSION['current_db_version'] < '620' && function_exists('repairSearchFields'))
+{
+    repairSearchFields($path);
+}
+
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 

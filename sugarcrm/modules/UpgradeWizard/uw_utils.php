@@ -6178,3 +6178,52 @@ function whetherNeedToSkipDir($dir, $skipDirs)
 	}
     return false;
 }
+
+
+/**
+ * repairSearchFields
+ *
+ * This method goes through the list of SearchFields files based and calls TemplateRange::repairCustomSearchFields
+ * method on the files in an attempt to ensure the range search attributes are properly set in SearchFields.php.
+ *
+ * @param $globString String value used for glob search defaults to searching for all SearchFields.php files in modules directory
+ * @param $path String value used to point to log file should logging be required.  Defaults to empty.
+ *
+ */
+function repairSearchFields($globString='modules/*/metadata/SearchFields.php', $path='')
+{
+	if(!empty($path))
+	{
+		logThis('Begin repairSearchFields', $path);
+	}
+
+	require_once('include/dir_inc.php');
+	require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
+	require('include/modules.php');
+
+	global $beanList;
+	$searchFieldsFiles = glob($globString);
+
+	foreach($searchFieldsFiles as $file)
+	{
+		if(preg_match('/modules\/(.*?)\/metadata\/SearchFields\.php/', $file, $matches) && isset($beanList[$matches[1]]))
+		{
+			$module = $matches[1];
+			$beanName = $beanList[$module];
+			VardefManager::loadVardef($module, $beanName);
+			if(isset($GLOBALS['dictionary'][$beanName]['fields']))
+			{
+				if(!empty($path))
+				{
+					logThis('Calling TemplateRange::repairCustomSearchFields for module ' . $module, $path);
+				}
+				TemplateRange::repairCustomSearchFields($GLOBALS['dictionary'][$beanName]['fields'], $module);
+			}
+		}
+	}
+
+	if(!empty($path))
+	{
+		logThis('End repairSearchFields', $path);
+	}
+}
