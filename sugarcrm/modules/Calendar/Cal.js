@@ -98,7 +98,6 @@
 			el.className = "act_item" + " " + ActRecord.type+"_item";
 			el.setAttribute("id",elm_id);
 			el.setAttribute("module_name",ActRecord.module_name);
-			//el.setAttribute("rec_id_c",ActRecord.rec_id_c);
 			el.setAttribute("record",ActRecord.record);
 			el.setAttribute("dur",duration_text);
 			el.setAttribute("subj",ActRecord.record_name);
@@ -303,8 +302,6 @@
 			var duration_coef = el.getAttribute("duration_coef");
 			var real_celcount = CAL.celcount;
 			
-			//var wd = CAL.get("whole_day");			
-			//if(wd && wd.value)
 			if(CAL.pview == 'day' || CAL.pview == 'week')
 				real_celcount = CAL.cells_per_day;	
 			
@@ -562,23 +559,7 @@
 		);	
 	}	
 				
-	/*CAL.fill_recurrence = function (){
-		var rt;
-		if(rt = CAL.get("repeat_type")){
-			CAL.get("repeat_type_c").value = CAL.get("repeat_type").value;
-			CAL.get("repeat_interval_c").value = CAL.get("repeat_interval").value;
-			CAL.get("repeat_end_date_c").value = CAL.get("repeat_end_date").value;
-			CAL.get("repeat_days_c").value = "";			
-
-			if(rt.value == 'Weekly'){
-				var nodes = CAL.query(".weeks_checks:checked");
-				CAL.each(nodes,function (i,v){
-						CAL.get("repeat_days_c").value = CAL.get("repeat_days_c").value + nodes[i].value;				
-				});
-			}
-		}	
-	}*/
-		
+	
 	CAL.repeat_type_selected = function (){
 		var rt;
 		if(rt = CAL.get("repeat_type")){
@@ -698,15 +679,7 @@
 		CAL.records_openable = true;								
 	}
 		
-	/*CAL.edit_all_recurrences = function (){
-		var record = CAL.get("rec_id_c").value;
-		var module = CAL.get("current_module").value;
-		if(record == "")
-			record = CAL.get("record").value
-		CAL.clearFields();	
-		CAL.FormLoad(module,record,true);		
-	}*/
-		
+	
 	CAL.removeSharedById = function (record_id){
 			var e;
 			var cell_id;
@@ -727,37 +700,11 @@
 			CAL.align_divs(cell_id);				
 	}
 			
-	CAL.AddRecords = function (res){	
-						
-			/*ids = new Array();
-			var nodes = CAL.query("div[rec_id_c='" + res.record + "']");			
-			CAL.each(
-				nodes,
-				function (i,v){
-					ids[i] = nodes[i].parentNode.id; 
-					nodes[i].parentNode.removeChild(nodes[i]);			
-				}
-			);
-			CAL.each(
-				ids,
-				function (i,v){
-					CAL.align_divs(ids[i]);		
-				}				
-			);*/			
+	CAL.AddRecords = function (res){
 				
 			if(CAL.pview != 'shared'){
-				CAL.AddRecordToPage(res);
-								
-				/*var record_id = res.record;				
-				CAL.each(
-					res.arr_rec,
-					function (j,r){
-						res.record = r.record;
-						res.start = r.start;
-						res.rec_id_c = record_id;
-						CAL.AddRecordToPage(res);
-					}				
-				);*/
+				CAL.AddRecordToPage(res);								
+
 			}else{
 				CAL.removeSharedById(res.record);
 				record_id = res.record;
@@ -987,15 +934,8 @@
 	
 	CAL.dialog_remove = function(){
 									CAL.deleted_id = CAL.get("record").value;
-									CAL.deleted_module = CAL.get("current_module").value;
-									
-									var delete_recurring = false;
-									
-									var e;
-									/*if(e = CAL.get("rec_id_c"))
-										if(e.value == '')
-											delete_recurring = true;*/
-											
+									CAL.deleted_module = CAL.get("current_module").value;									
+									var delete_recurring = false;								
 											
 									var callback = {
 											success: function(o){
@@ -1010,20 +950,8 @@
 												if(e = CAL.get(CAL.deleted_id))
 													e.parentNode.removeChild(e);									
 												
-												CAL.align_divs(cell_id);	
-												
-												/*if(delete_recurring){												
-													ids = new Array();
-													var nodes = CAL.query("div[rec_id_c='" + CAL.deleted_id + "']");			
-													CAL.each(nodes,function (i,v){
-														ids[i] = nodes[i].parentNode.id; 
-														nodes[i].parentNode.removeChild(nodes[i]);				
-													});			
-																
-													CAL.each(ids,function (i,v){
-														CAL.align_divs(ids[i]);		
-													});												
-												}*/										
+												CAL.align_divs(cell_id);
+								
 																										
 											},
 											failure: function(){
