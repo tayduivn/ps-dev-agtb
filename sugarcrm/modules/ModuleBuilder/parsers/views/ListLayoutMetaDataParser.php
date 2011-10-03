@@ -192,7 +192,7 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
             		return false;
             	} //end bug 42902
            
-            	if (isset($def['studio'][$view]) && ($def['studio'][$view] !== false && (string)$def['studio'][$view] != 'false' && (string)$def['studio'][$view] != 'hidden'))
+            	if (!empty($view) && isset($def['studio'][$view]) && ($def['studio'][$view] !== false && (string)$def['studio'][$view] != 'false' && (string)$def['studio'][$view] != 'hidden'))
                 {
 					return true;
                 }
