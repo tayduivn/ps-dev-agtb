@@ -159,7 +159,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
 	//END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-
+    'Contracts'=>'Contract',
     'Quotes' => 'Quote',
     'Products' => 'Product',
     'Reports' => 'Report',
@@ -174,7 +174,7 @@ $app_list_strings = array (
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
-    'Project'=>'Projects',
+    'Project'=>'Project',
     'ProjectTask'=>'Project Task',
     'Campaigns'=>'Campaign',
     'Documents'=>'Document',
