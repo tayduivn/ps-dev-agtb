@@ -101,7 +101,7 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($header, $hasHeader, 'Incorrect header');
 
         // remove temp file
-        unlink($GLOBALS['sugar_config']['tmp_dir'].'test.csv'); //jchen
+        unlink($GLOBALS['sugar_config']['tmp_dir'].'test.csv');
     }
 
 }
