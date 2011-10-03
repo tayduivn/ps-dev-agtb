@@ -1,35 +1,7 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/*********************************************************************************
- * The contents of this file are subject to the SugarCRM Master Subscription
- * Agreement ("License") which can be viewed at
- * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
- * By installing or using this file, You have unconditionally agreed to the
- * terms and conditions of the License, and You may not use this file except in
- * compliance with the License.  Under the terms of the license, You shall not,
- * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
- * or otherwise transfer Your rights to the Software, and 2) use the Software
- * for timesharing or service bureau purposes such as hosting the Software for
- * commercial gain and/or for the benefit of a third party.  Use of the Software
- * may be subject to applicable fees and any use of the Software without first
- * paying applicable fees is strictly prohibited.  You do not have the right to
- * remove SugarCRM copyrights from the source code or user interface.
- *
- * All copies of the Covered Code must include on each user interface screen:
- *  (i) the "Powered by SugarCRM" logo and
- *  (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for
- * requirements.
- *
- * Your Warranty, Limitations of liability and Indemnity are expressly stated
- * in the License.  Please refer to the License for the specific language
- * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
- ********************************************************************************/
 
 class CalendarDisplay {	
 
-	// colors of items on calendar
 	var $activity_colors = array(
 		'Meetings' => array(
 			'border' => '#1C5FBD',
@@ -50,7 +22,7 @@ class CalendarDisplay {
 	}	
 	
 	/**
-	 * main display function of Calendar
+	 * displays Calendar
 	 */
 	function display(){
 	
@@ -141,12 +113,16 @@ class CalendarDisplay {
 	}
 	
 	/**
-	 * load settings popup template
+	 * load settings tpl
 	 */	
-	function load_settings(&$ss){	
-		
-		list($d_start_hour,$d_start_min) =  explode(":",$this->args['cal']->day_start_time);		
-		list($d_end_hour,$d_end_min) =  explode(":",$this->args['cal']->day_end_time);	
+	function load_settings(&$ss){
+	
+		$tarr = explode(":",$this->args['cal']->day_start_time);
+		$d_start_hour = $tarr[0];
+		$d_start_min = $tarr[1];
+		$tarr = explode(":",$this->args['cal']->day_end_time);
+		$d_end_hour = $tarr[0];
+		$d_end_min = $tarr[1];		
 
 		require_once("include/utils.php");
 		global $app_strings,$app_list_strings,$beanList;
@@ -236,16 +212,16 @@ class CalendarDisplay {
 	
 	}
 	
-	// returns date info string (legacy of old calendar)
-	function get_date_info($view, $date_time){
+	
+	function get_date_info($view, $date_time) {
 		$str = "";
 	
 		global $current_user;
 		$dateFormat = $current_user->getUserDateTimePreferences();
 
 		if($view == 'month'){
-			for($i=0; $i<strlen($dateFormat['date']); $i++){
-				switch($dateFormat['date']{$i}){
+			for($i=0; $i<strlen($dateFormat['date']); $i++) {
+				switch($dateFormat['date']{$i}) {
 					case "Y":
 						$str .= " ".$date_time->year;
 						break;
@@ -286,11 +262,12 @@ class CalendarDisplay {
 							break;
 					}
 				}
-			}else if($view == 'day'){
+			} else
+				if($view == 'day') {
 					$str .= $date_time->get_day_of_week()." ";
 
-					for($i=0; $i<strlen($dateFormat['date']); $i++){
-						switch($dateFormat['date']{$i}){
+					for($i=0; $i<strlen($dateFormat['date']); $i++) {
+						switch($dateFormat['date']{$i}) {
 							case "Y":
 								$str .= " ".$date_time->year;
 								break;
@@ -302,20 +279,20 @@ class CalendarDisplay {
 								break;
 						}
 					}
-			}else if($view == 'year') {
-				$str .= $date_time->year;
-			}else{
-				sugar_die("echo_date_info: date not supported");
-			}
+				} else
+					if($view == 'year') {
+						$str .= $date_time->year;
+					} else {
+						sugar_die("echo_date_info: date not supported");
+					}
 		return $str;
 	}
 	
-	// returns link to next date range
 	function get_next_calendar(){	
 		global $cal_strings,$image_path;
 		$str = "";
 		if($_REQUEST['module'] == "Calendar"){
-			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_next_date_str())."'>";
+			$str .= "<a href='".CalendarUtils::cal_handle_link("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_next_date_str())."'>";
 
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_next_date_str()."&id=".$this->args['dashlet_id']."\")'>";
@@ -325,13 +302,12 @@ class CalendarDisplay {
 		$str .= "&nbsp;&nbsp;".SugarThemeRegistry::current()->getImage("calendar_next", 'align="absmiddle" border="0"' ,null,null,'.gif', $cal_strings["LBL_NEXT_".strtoupper($this->args['cal']->view)]) . "</a>";
 		return $str;
 	}
-	
-	// returns link to previous date range
-	function get_previous_calendar(){
+
+	function get_previous_calendar() {
 		global $cal_strings,$image_path;
 		$str = "";
 		if($_REQUEST['module'] == "Calendar"){
-			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_previous_date_str()."")."'>";
+			$str .= "<a href='".CalendarUtils::cal_handle_link("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_previous_date_str()."")."'>";
 		}else{
 			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_previous_date_str()."&id=".$this->args['dashlet_id']."\")'>";
 		}
@@ -342,7 +318,6 @@ class CalendarDisplay {
 
 	/**
 	 * displays header
-	 * @params boolean $controls display ui contol itmes 
 	 */
 	function display_calendar_header($controls = true){
 		global $cal_strings;
@@ -358,7 +333,7 @@ class CalendarDisplay {
 			$tabs_params = array();		
 			foreach($tabs as $tab){ 
 				$tabs_params[$tab]['title'] = $cal_strings["LBL_".strtoupper($tab)];
-				$tabs_params[$tab]['link'] = "window.location.href='".ajaxLink("index.php?module=Calendar&action=index&view=". $tab . $this->args['cal']->date_time->get_date_str())."'";
+				$tabs_params[$tab]['link'] = "window.location.href='".CalendarUtils::cal_handle_link("index.php?module=Calendar&action=index&view=". $tab . $this->args['cal']->date_time->get_date_str())."'";
 			}		
 			$ss->assign('controls',$controls);
 			$ss->assign('tabs',$tabs);
@@ -407,7 +382,7 @@ class CalendarDisplay {
 	}
 	
 	/**
-	 * displays html used in shared view (legacy code of old calendar)
+	 * displays html used in shared view
 	 */
 	function display_shared_html(){
 			global $app_strings,$action;
