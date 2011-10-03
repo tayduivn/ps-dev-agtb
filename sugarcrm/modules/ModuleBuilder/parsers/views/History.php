@@ -56,7 +56,7 @@ class History implements HistoryInterface
             // Reconstruct the history from the saved files
  	        foreach (glob($this->getFileByTimestamp('*')) as $filename)
             {
-                 if(preg_match('(\d+)$', $filename, $match)) {
+                 if(preg_match('/(\d+)$/', $filename, $match)) {
  	                $this->_list [] = $match[1];
                  }
             }
