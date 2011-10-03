@@ -38,6 +38,7 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
         3 => "\"3/26/2011 10:02am\",\"some text\"\n\"4/26/2011 11:20am\",\"some more jim's text\"",
         4 => "\"date_entered\",\"description\"\n\"2010/03/26 10:2am\",\"test description\"",
         5 => "'date_entered','description'\n'26/3/2011 15:02','test description'",
+        6 => "\"date_entered\"|\"description\"\n\"3/26/2011 10:02am\"|\"test description\"",
     );
 
     public function setUp()
@@ -62,6 +63,7 @@ class CsvAutoDetectTest extends Sugar_PHPUnit_Framework_TestCase
             array(3, ',', '"', 'm/d/Y', 'h:ia', false),
             array(4, ',', '"', 'Y/m/d', 'h:ia', true),
             array(5, ',', "'", 'd/m/Y', 'H:i', true),
+            array(6, '|', '"', 'm/d/Y', 'h:ia', true),
             );
     }
 
