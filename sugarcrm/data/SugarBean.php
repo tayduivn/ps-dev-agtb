@@ -2551,9 +2551,6 @@ function save_relationship_changes($is_update, $exclude=array())
         $custom_logic_arguments['encode'] = $encode;
         $this->call_custom_logic("after_retrieve", $custom_logic_arguments);
         unset($custom_logic_arguments);
-
-        require_once("data/BeanFactory.php");
-        BeanFactory::registerBean($this->module_dir, $this);
         return $this;
     }
 
