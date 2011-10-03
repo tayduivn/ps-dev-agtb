@@ -1,4 +1,3 @@
-
 {*
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise Subscription
@@ -47,13 +46,16 @@
 div.sec .odd a, div.sec .even a {
     font-size: 12px;
 }
-
+#gsdetail_div {
+    overflow-x:auto;
+}
 {/literal}
 </style>
 <!-- Global Search Detail View -->
-<div class="sectitle"><h2>{$MODULE_NAME}: {$BEAN_NAME}</h2></div>
+<div id="gsdetail_div">
+<div><h3>{$BEAN_NAME}</h3></div>
 <br>
-<div class="sec" style="height:400px;width:300px" >
+<div style="height:325px;width:300px" >
 <table>
 	{foreach from=$DETAILS item=DETAIL name="recordlist"}
 	{if !$fields[$DETAIL.field].hidden}
@@ -78,5 +80,5 @@ div.sec .odd a, div.sec .even a {
 </table>
 </div>
 <div style="padding-right:200px">
-
+</div>
 </div>
