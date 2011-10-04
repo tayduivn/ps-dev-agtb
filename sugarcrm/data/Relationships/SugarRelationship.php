@@ -255,8 +255,15 @@ abstract class SugarRelationship
 
         $leftID = $row[$leftIDName];
         $rightID = $row[$rightIDName];
-        $query = "SELECT * FROM {$this->getRelationshipTable()} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' AND deleted=0";
+        //Check the relationship role as well
+        $roleCheck = "";
+        if (!empty($this->def['relationship_role_column']) && !empty($this->def['relationship_role_column_value']) && !$this->ignore_role_filter )
+        {
+            $roleCheck = "AND {$this->relationship_role_column} = '{$this->relationship_role_column_value}'";
+        }
 
+        $query = "SELECT * FROM {$this->getRelationshipTable()} WHERE $leftIDName='$leftID' AND $rightIDName='$rightID' $roleCheck AND deleted=0";
+        
         $db = DBManagerFactory::getInstance();
         $result = $db->query($query);
         $row = $db->fetchByAssoc($result);
