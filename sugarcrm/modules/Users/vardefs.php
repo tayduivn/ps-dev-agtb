@@ -35,6 +35,7 @@ $dictionary['User'] = array(
             'dbType' => 'varchar',
             'len' => '60',
             'importable' => 'required',
+            'required' => true,
         ) ,
         'user_hash' => array(
             'name' => 'user_hash',
@@ -284,6 +285,7 @@ $dictionary['User'] = array(
             'len' => 100,
             'options' => 'user_status_dom',
             'importable' => 'required',
+            'required' => true,
         ) ,
         'address_street' => array(
             'name' => 'address_street',
@@ -315,6 +317,17 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '20',
         ) ,
+        // This is a fake field for the edit view
+        'UserType' => array(
+            'name' => 'UserType',
+            'vname' => 'LBL_USER_TYPE',
+            'type' => 'enum',
+            'len' => 50,
+            'options' => 'user_type_dom',
+            'source' => 'non-db',
+            'import' => false,
+            'reportable' => false,
+        ),
         //BEGIN SUGARCRM flav=sales ONLY
         'user_type' => array(
             'name' => 'user_type',
@@ -485,12 +498,8 @@ $dictionary['User'] = array(
         'messenger_type' => array(
             'name' => 'messenger_type',
             'vname' => 'LBL_MESSENGER_TYPE',
-            'type' => 'varchar',
-            'function' => array(
-                'name' => 'getMessengerTypeOptions',
-                'returns' => 'html',
-                'include' => 'modules/Employees/EmployeeStatus.php'
-            ) ,
+            'type' => 'enum',
+            'options' => 'messenger_type_dom',
             'len' => 100,
         ) ,
         'calls' => array(
@@ -566,7 +575,17 @@ $dictionary['User'] = array(
             'vname' => 'LBL_EMAIL_ADDRESS_PRIMARY',
             'duplicate_merge' => 'disabled',
             'required' => true,
-        ) ,
+        ),
+        /* Virtual email fields so they will display on the main user page */
+        'email_link_type' => array(
+            'name' => 'email_link_type',
+            'vname' => 'LBL_EMAIL_LINK_TYPE',
+            'type' => 'enum',
+            'options' => 'dom_email_link_type',
+            'importable' => false,
+            'reportable' => false,
+        ),
+        
         'aclroles' => array(
             'name' => 'aclroles',
             'type' => 'link',
