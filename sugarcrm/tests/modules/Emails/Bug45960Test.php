@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,20 +26,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/*********************************************************************************
+ 
+require_once('modules/Emails/Email.php');
 
- * Description:  TODO To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-global $mod_strings;
-if(ACLController::checkAccess('Calls', 'edit', true))$module_menu[]=Array("index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView", $mod_strings['LNK_NEW_CALL'],"CreateCalls");
-if(ACLController::checkAccess('Meetings', 'edit', true))$module_menu[]=Array("index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView", $mod_strings['LNK_NEW_MEETING'],"CreateMeetings");
-if(ACLController::checkAccess('Tasks', 'edit', true))$module_menu[]=Array("index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView", $mod_strings['LNK_NEW_TASK'],"CreateTasks");
-if(ACLController::checkAccess('Calendar', 'list', true))$module_menu[]=Array("index.php?module=Calendar&action=index&return_module=Calendar&return_action=index", $mod_strings['LNK_VIEW_CALENDAR'],"Calendar");
+class Bug45960 extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function setUp()
+    {
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->_user;
+        $this->_account = SugarTestAccountUtilities::createAccount();
+    }
+    
+    public function tearDown()
+    {
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
+
+    public function testSaveNewEmailWithParent()
+    {
+        $email = new Email();
+        $email->type = 'out';
+        $email->status = 'sent';
+        $email->from_addr_name = $email->cleanEmails("sender@domain.eu");
+        $email->to_addrs_names = $email->cleanEmails("to@domain.eu");
+        $email->cc_addrs_names = $email->cleanEmails("cc@domain.eu");
+
+        // set a few parent info to test the scenario
+        $email->parent_type = 'Accounts';
+        $email->parent_id = $this->_account->id;
+        $email->fetched_row['parent_type'] = 'Accounts';
+        $email->fetched_row['parent_id'] = $this->_account->id;
+
+        $email->save();
+
+        // ensure record is inserted into emails_beans table
+        $query = "select count(*) as CNT from emails_beans eb WHERE eb.bean_id = '{$this->_account->id}' AND eb.bean_module = 'Accounts' AND eb.email_id = '{$email->id}' AND eb.deleted=0";
+        $result = $GLOBALS['db']->query($query);
+        $count = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertEquals(1, $count['CNT'], 'Incorrect emails_beans count');
+    }
+    
+}
 
 
-
-
-?>

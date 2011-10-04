@@ -63,6 +63,8 @@ class ReportsController extends SugarController
 			if ($_REQUEST['action'] == 'DetailView') {
 				$_REQUEST['id'] = $this->record;
 				unset($_REQUEST['record']);
+			}else{
+				$GLOBALS['action'] = 'detailview'; //bug 41860 
 			}
 			$_REQUEST['page'] = 'report';
 			$this->view_object_map['action'] =  'ReportCriteriaResults';

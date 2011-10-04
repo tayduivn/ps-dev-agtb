@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 require_once('modules/Configurator/Configurator.php');
 require_once('modules/EmailMan/EmailMan.php');
 
