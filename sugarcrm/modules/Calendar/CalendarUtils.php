@@ -38,7 +38,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class CalendarUtils {
 
 	/**
-	 * Returns true if out of working days
+	 * Returns true if out of working day
 	 * @param integer $i hours
 	 * @param integer $j minutes
 	 * @param integer $r_start start of working day in minutes

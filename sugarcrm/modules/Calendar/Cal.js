@@ -190,6 +190,11 @@
 					dd.endDrag  = function(x,y){		
 						this.el = document.getElementById(this.id);
 						this.el.style.zIndex = "";
+						
+						var nodes = CAL.query("#cal-grid .slot");
+						CAL.each(nodes,function(i,v){
+							YAHOO.util.Dom.removeClass(nodes[i],"slot_active");
+						});						
 					}
 					
 					dd.onDragDrop = function(e,id){ 

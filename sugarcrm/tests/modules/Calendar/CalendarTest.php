@@ -1,48 +1,43 @@
 <?php
 /*********************************************************************************
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2011 SugarCRM Inc.
- * 
- * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
- * 
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
- * details.
- * 
- * You should have received a copy of the GNU Affero General Public License along with
- * this program; if not, see http://www.gnu.org/licenses or write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- * 
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- * 
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- * 
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo. If the display of the logo is not reasonably feasible for
- * technical reasons, the Appropriate Legal Notices must display the words
- * "Powered by SugarCRM".
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/en/msa/master_subscription_agreement_11_April_2011.pdf
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Calendar/CalendarUtils.php";
 require_once "modules/Calendar/Calendar.php";
+require_once "modules/Calendar/CalendarUtils.php";
+require_once('modules/Meetings/Meeting.php');
 
 class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 
-    /**
+   	/**
 	 * @var TimeDate
 	 */
 	protected $time_date;
+	
+	protected $meeting_id = null;
     
 	public static function setUpBeforeClass(){
 		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -65,31 +60,50 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		unset($_REQUEST['module']);
 		unset($_REQUEST['year']);
 		unset($_REQUEST['month']);
-		unset($_REQUEST['day']);		
+		unset($_REQUEST['day']);
+		
+		if(isset($this->meeting_id)){
+			$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
+			$GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting_id}'");
+			unset($this->meeting_id);
+		}		
 	}
 
 
 	public function testCalendarDate(){
-		$cal = new Calendar('week');
-	
+		$cal = new Calendar('week');	
 		$this->assertEquals('2012',$cal->date_time->year);
-
+	}
+	
+	public function testCalendarAddActivity(){
+		$cal = new Calendar('week');
+		$cal->add_activities($GLOBALS['current_user']);
+		$count1 = count($cal->acts_arr[$GLOBALS['current_user']->id]);		
+		$cal->acts_arr = array();
+				
+		$this->meeting_id = uniqid();
+		$GLOBALS['db']->query("INSERT INTO meetings (id,date_start,assigned_user_id) VALUES('".$this->meeting_id."','2012-01-02 00:00:00','".$GLOBALS['current_user']->id."')");
+		$GLOBALS['db']->query("INSERT meetings_users (id,meeting_id,user_id) VALUES ('".uniqid()."','".$this->meeting_id."','".$GLOBALS['current_user']->id."')");
+		$cal->add_activities($GLOBALS['current_user']);	
+		$count2 = count($cal->acts_arr[$GLOBALS['current_user']->id]);
+		
+		$this->assertTrue($count1 == $count2 - 1, "Count of records should be one more after meeting added.");		
 	}
 
-    public function testHandleOffset(){
-        $gmt_today =  $this->time_date->nowDb();
-        $date1 = $this->time_date->handle_offset($gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
-        $date2 = $this->time_date->nowDb();
-        $this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
-    }
-
-    public function testUserDateFormat(){
-        $gmt_default_date_start = $this->time_date->get_gmt_db_datetime();
-        $date1 = $this->time_date->handle_offset($gmt_default_date_start, $GLOBALS['timedate']->get_date_time_format());
-
-        $date2 = $this->time_date->asUser($this->time_date->getNow());
+	public function testHandleOffset(){
+		$gmt_today =  $this->time_date->nowDb();
+		$date1 = $this->time_date->handle_offset($gmt_today, $GLOBALS['timedate']->get_db_date_time_format());
+		$date2 = $this->time_date->nowDb();
 		$this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
-    }
+	}
+
+	public function testUserDateFormat(){
+		$gmt_default_date_start = $this->time_date->get_gmt_db_datetime();
+		$date1 = $this->time_date->handle_offset($gmt_default_date_start, $GLOBALS['timedate']->get_date_time_format());
+		$date2 = $this->time_date->asUser($this->time_date->getNow());
+		$this->assertEquals($date1, $date2, "HandleOffset should be equaivalent to nowDb");
+	}	
+	
 
 
 }

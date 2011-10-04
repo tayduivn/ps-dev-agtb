@@ -69,12 +69,9 @@ class CalendarGrid {
 		
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
 		$Ti = date("i",$today_unix - date('Z',$today_unix));
-		$Ts = date("s",$today_unix - date('Z',$today_unix));
+		$Ts = date("s",$today_unix - date('Z',$today_unix));		
 		$Th = date("H",$today_unix - date('Z',$today_unix));
-		$Td = date("d",$today_unix - date('Z',$today_unix));
-		$Tm = date("m",$today_unix - date('Z',$today_unix));
-		$Ty = date("Y",$today_unix - date('Z',$today_unix));
-
+		
 		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);		
 
 		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
@@ -156,9 +153,6 @@ class CalendarGrid {
 		$Ti = date("i",$today_unix - date('Z',$today_unix));
 		$Ts = date("s",$today_unix - date('Z',$today_unix));
 		$Th = date("H",$today_unix - date('Z',$today_unix));
-		$Td = date("d",$today_unix - date('Z',$today_unix));
-		$Tm = date("m",$today_unix - date('Z',$today_unix));
-		$Ty = date("Y",$today_unix - date('Z',$today_unix));
 
 		$day_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th;
 		$day_start = date("m/d/Y H:i:s",$day_start_unix);
@@ -210,10 +204,8 @@ class CalendarGrid {
 		$Tw = date("w",$today_unix - date('Z',$today_unix));
 		$Ti = date("i",$today_unix - date('Z',$today_unix));
 		$Ts = date("s",$today_unix - date('Z',$today_unix));
-		$Th = date("H",$today_unix - date('Z',$today_unix));
+		$Th = date("H",$today_unix - date('Z',$today_unix));		
 		$Td = date("d",$today_unix - date('Z',$today_unix));
-		$Tm = date("m",$today_unix - date('Z',$today_unix));
-		$Ty = date("Y",$today_unix - date('Z',$today_unix));
 		$Tt = date("t",$today_unix - date('Z',$today_unix));
 
 		$month_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Td - 1);
@@ -293,9 +285,6 @@ class CalendarGrid {
 		$Ti = date("i",$today_unix - date('Z',$today_unix));
 		$Ts = date("s",$today_unix - date('Z',$today_unix));
 		$Th = date("H",$today_unix - date('Z',$today_unix));
-		$Td = date("d",$today_unix - date('Z',$today_unix));
-		$Tm = date("m",$today_unix - date('Z',$today_unix));
-		$Ty = date("Y",$today_unix - date('Z',$today_unix));
 
 		$week_start_unix = $today_unix - $Ts - 60*$Ti - 60*60*$Th - 60*60*24*($Tw);
 		$week_start_unix = $week_start_unix + $this->startday * 60*60*24;
