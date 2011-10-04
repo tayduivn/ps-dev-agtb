@@ -218,14 +218,6 @@ class Quote extends SugarBean {
         return $query;
     }
 
-	/**
-	 * saves changes to relationships
-	 */
-	function save_relationship_changes($is_update) {
-		$this->calculate_total();
-		parent::save_relationship_changes($is_update);
-    }
-
 	function fill_in_additional_list_fields() {
 		$this->fill_in_additional_detail_fields();
 	}
@@ -331,7 +323,7 @@ class Quote extends SugarBean {
 	}
 
 	function calculate_total() {
-		$this->total = $this->subtotal + $this->shipping + $this->tax;
+		$this->total = $this->subtotal + $this->shipping + $this->tax - $this->deal_tot;
 	}
 
 	function set_taxrate_info() {

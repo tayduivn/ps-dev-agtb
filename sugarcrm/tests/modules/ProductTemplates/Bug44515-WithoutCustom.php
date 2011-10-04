@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 class Bug44515 extends Sugar_PHPUnit_Framework_TestCase
 {
    

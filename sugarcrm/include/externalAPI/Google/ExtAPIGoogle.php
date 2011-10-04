@@ -87,7 +87,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
         try {
             $this->getClient();
 		    // test documents access
-		    $docs = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full?title=TestTestTest');
+		    $docs = $this->gdClient->getDocumentListFeed('https://docs.google.com/feeds/default/private/full?title=TestTestTest');
         } catch (Exception $e) {
             $reply['success'] = FALSE;
             $reply['errorMessage'] = $e->getMessage();
@@ -177,8 +177,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
             $cut = substr($fileid, 63);
             // Find the URL of the HTML view of this document.
             $alternateLink = $newDocumentEntry->getAlternateLink()->getHref();
-//        'http://docs.google.com/document/edit?id=1ZXFfD5DMa6tcgv_9rDK34ZtPUIu5flXtdWMoy-0Ymu0&hl=en'
-            $bean->doc_id = $cut;//$this->getIdFromUrl($alternateLink);
+            $bean->doc_id = $cut;
             $bean->doc_url = $alternateLink;
             $result['success'] = TRUE;
 		}
@@ -212,7 +211,6 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
     		$sessionToken = $this->httpClient->getClientLoginToken();
     		$GLOBALS['log']->debug('Session Token: '.$sessionToken);
     		$url = $document->content->getSrc();
-	    	//$url = 'http://docs.google.com/feeds/download/documents/Export?docID='.$documentId;
     		$opts = array(
     		    'http' => array(
     		    'method' => 'GET',
@@ -246,7 +244,7 @@ class ExtAPIGoogle extends ExternalAPIBase implements WebDocument {
 
         if ( empty($keywords) ) 
         {
-            $feed = $this->gdClient->getDocumentListFeed('http://docs.google.com/feeds/default/private/full');
+            $feed = $this->gdClient->getDocumentListFeed('https://docs.google.com/feeds/default/private/full');
         } else {
             $docsQuery = new Zend_Gdata_Docs_Query();
             // This does a full-text search, which is awesome

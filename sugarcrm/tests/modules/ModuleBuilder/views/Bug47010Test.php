@@ -22,23 +22,35 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarFields/Fields/Currency/SugarFieldCurrency.php');
+require_once("modules/ModuleBuilder/views/view.dropdown.php");
 
-class Bug38424CurrencyTest extends Sugar_PHPUnit_Framework_TestCase
-{
-    private $_fieldOutput;
+class Bug47010Test extends Sugar_PHPUnit_Framework_TestCase {
 
-    public function setUp()
-    {
-        $sfr = new SugarFieldCurrency('currency');
-        $vardef = array(
-            'len' => '10',
-        );
-        $this->_fieldOutput = $sfr->getEditViewSmarty(array(), $vardef, array(), 1);
+    public function setUp() {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $_SESSION['authenticated_user_language'] = 'en_us';
+
+        $_REQUEST['dropdown_name'] = 'testDD';
     }
-    
-    public function testMaxLength()
-    {
-        $this->assertContains('maxlength=\'10\'', $this->_fieldOutput);
+
+    public function tearDown() {
+        unset($_REQUEST['dropdown_name']);
+        unset($_SESSION['authenticated_user_language']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+
+    public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty() {
+
+        $view = new ViewDropdown();
+        try {
+            $smarty = $view->generateSmarty();
+        } catch (Exception $e) {
+            $this->fail('An exception has been raised: ' . $e->getMessage());
+        }
+        $this->assertEmpty($smarty->get_template_vars('module_name'));
+        
     }
 }
+ 
+?>
+ 
