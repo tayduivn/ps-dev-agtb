@@ -121,7 +121,7 @@ function email_layout ($layout) {
 	$note->filename = $file_name;
 	$note->team_id = "";
 	$note->file_mime_type = "application/pdf";
-	$lbl_email_attachment = iconv($locale->getExportCharset(),'utf-8',$mod_strings['LBL_EMAIL_ATTACHMENT']);
+	$lbl_email_attachment = $locale->translateCharset($mod_strings['LBL_EMAIL_ATTACHMENT'],$locale->getExportCharset(),'utf-8');
 	$note->name = $lbl_email_attachment.$file_name;
 
 	//save the pdf attachment note
