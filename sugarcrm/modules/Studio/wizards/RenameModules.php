@@ -695,6 +695,8 @@ class RenameModules
             array('name' => 'LNK_###MODULE_SINGULAR###_REPORTS', 'type' => 'singular'),
             array('name' => 'LNK_IMPORT_VCARD', 'type' => 'singular'),
             array('name' => 'LNK_IMPORT_###MODULE_PLURAL###', 'type' => 'plural'),
+            array('name' => 'MSG_SHOW_DUPLICATES', 'type' => 'singular', 'case' => 'both'),
+            array('name' => 'LBL_SAVE_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LBL_LIST_FORM_TITLE', 'type' => 'singular'), //Popup title
             array('name' => 'LBL_SEARCH_FORM_TITLE', 'type' => 'singular'), //Popup title
         );
@@ -709,6 +711,10 @@ class RenameModules
             {
                 $oldStringValue = $currentModuleStrings[$formattedLanguageKey];
                 $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($oldStringValue, $replacementLabels, $entry);
+                if( isset($entry['case']) && $entry['case'] == 'both')
+                {
+                    $replacedLabels[$formattedLanguageKey] = $this->replaceSingleLabel($replacedLabels[$formattedLanguageKey], $replacementLabels, $entry, 'strtolower');
+                }
             }
         }
 
@@ -739,10 +745,18 @@ class RenameModules
      * @param  array $replacementMetaData
      * @return string
      */
-    private function replaceSingleLabel($oldStringValue, $replacementLabels, $replacementMetaData)
+    private function replaceSingleLabel($oldStringValue, $replacementLabels, $replacementMetaData, $modifier = '')
     {
         $replaceKey = 'prev_' . $replacementMetaData['type'];
-        return str_replace(html_entity_decode_utf8($replacementLabels[$replaceKey], ENT_QUOTES) , $replacementLabels[$replacementMetaData['type']], $oldStringValue);
+        $search = html_entity_decode_utf8($replacementLabels[$replaceKey], ENT_QUOTES);
+        $replace = $replacementLabels[$replacementMetaData['type']];
+        if( !empty($modifier) )
+        {
+            $search = call_user_func($modifier, $search);
+            $replace = call_user_func($modifier, $replace);
+        }
+        
+        return str_replace($search, $replace, $oldStringValue);
     }
 
 
