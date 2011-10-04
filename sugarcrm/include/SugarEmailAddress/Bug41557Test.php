@@ -1,6 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); 
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,20 +26,54 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/*********************************************************************************
-
- * Description:  TODO To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-global $mod_strings;
-if(ACLController::checkAccess('Calls', 'edit', true))$module_menu[]=Array("index.php?module=Calls&action=EditView&return_module=Calls&return_action=DetailView", $mod_strings['LNK_NEW_CALL'],"CreateCalls");
-if(ACLController::checkAccess('Meetings', 'edit', true))$module_menu[]=Array("index.php?module=Meetings&action=EditView&return_module=Meetings&return_action=DetailView", $mod_strings['LNK_NEW_MEETING'],"CreateMeetings");
-if(ACLController::checkAccess('Tasks', 'edit', true))$module_menu[]=Array("index.php?module=Tasks&action=EditView&return_module=Tasks&return_action=DetailView", $mod_strings['LNK_NEW_TASK'],"CreateTasks");
-if(ACLController::checkAccess('Calendar', 'list', true))$module_menu[]=Array("index.php?module=Calendar&action=index&return_module=Calendar&return_action=index", $mod_strings['LNK_VIEW_CALENDAR'],"Calendar");
 
 
+/**
+ * @ticket 41557
+ */
+class Bug41557Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function providerGetPrimaryAddress()
+        {
+            return array(
+                array('old1@test.com', 'new1@test.com', false, 2),
+                array('old2@test.com', 'new2@test.com', true, 1),
+            );
+        }
 
+    /**
+     * @group bug41557
+     * @dataProvider providerGetPrimaryAddress
+     */
+    public function testGetPrimaryAddress($oldemail, $newemail, $conversion, $primary_count)
+    {
+        if ($conversion) {
+            $_REQUEST['action'] = 'ConvertLead';
+        }
 
-?>
+        $user = SugarTestUserUtilities::createAnonymousUser();
+
+        // primary email address
+        $user->emailAddress->addAddress($oldemail, true, false);
+        $user->emailAddress->save($user->id, $user->module_dir);
+
+        $this->assertEquals($oldemail, $user->emailAddress->getPrimaryAddress($user), 'Primary email should be '.$oldemail);
+
+        // second email
+        $user->emailAddress->addAddress($newemail, true, false);
+
+        // simulate lead conversion mode
+        if ($conversion) {
+            $_REQUEST['action'] = 'ConvertLead';
+        }
+        $user->emailAddress->save($user->id, $user->module_dir);
+
+        $query = "select count(*) as CNT from email_addr_bean_rel eabr WHERE eabr.bean_id = '{$user->id}' AND eabr.bean_module = 'Users' and primary_address = 1 and eabr.deleted=0";
+        $result = $GLOBALS['db']->query($query);
+        $count = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertEquals($primary_count, $count['CNT'], 'Incorrect primary email count');
+
+        // cleanup
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+}

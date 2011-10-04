@@ -1,6 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-/********************************************************************************
+/*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -20,23 +19,40 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarFields/Fields/Base/SugarFieldBase.php');
+/**
+ * UpgradeRemoval64x.php
+ * @author Collin Lee
+ * This file contains the code to assit with removal of files during a 64x upgrade
+ *
+ */
+require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
-    class SugarFieldEncrypt extends SugarFieldBase {
+class UpgradeRemoval64x extends UpgradeRemoval
+{
+	
+	
+/**
+ * getFilesToRemove
+ * Return an array of files/directories to remove for 64x upgrades
+ * @param unknown_type $version
+ */	
+public function getFilesToRemove($version)
+{
+$files = array();
 
-    /**
-     * Decrypt encrypt fields values before inserting them into the emails
-     * 
-     * @param string $inputField
-     * @param mixed $vardef
-     * @param mixed $displayParams
-     * @param int $tabindex
-     * @return string 
-     */
-	public function getEmailTemplateValue($inputField, $vardef, $displayParams = array(), $tabindex = 0){
-        // Uncrypt the value
-        $account = new Account();
-        return $account->decrypt_after_retrieve($inputField);
-    }
+// In 6.4.0 we did the following
+// 1) Removed from include/javascript/yui3/assets dpSyntaxHighlighter.css and dpSyntaxHighlighter.js files
+
+if($version < '640')
+{
+	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.css';
+	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.js';
 }
+
+return $files;	
+}
+	
+		
+}
+
 ?>
