@@ -41,6 +41,17 @@ class EmployeesViewList extends ViewList
         }
  	}
 
+    /**
+     * Overridden from ViewList prepareSearchForm so we can tack on some additional where clauses
+     *
+     */
+    function prepareSearchForm() {
+        parent::prepareSearchForm();
+        require_once('modules/Employees/EmployeesSearchForm.php');
+        $newForm = new EmployeeSearchForm($this->searchForm);
+        $this->searchForm = $newForm;
+    }
+
    /**
     * Return the "breadcrumbs" to display at the top of the page
     *
