@@ -44,11 +44,14 @@ function user_status_display(field){
 		break;
         case 'GROUP':
             document.getElementById('is_admin').value='0';
+            document.getElementById('is_group').value='1';
 			document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users',"LBL_GROUP_DESC");
         break;
         case 'PORTAL_ONLY':
             document.getElementById('is_admin').value='0';
-            document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users','LBL_USER_PORTAL_ONLY_DESC');
+            document.getElementById('is_group').value='0';
+            document.getElementById('is_portal').value='0';
+            document.getElementById('UserTypeDesc').innerHTML=SUGAR.language.get('Users','LBL_PORTAL_ONLY_DESC');
         break;
 	}
 }

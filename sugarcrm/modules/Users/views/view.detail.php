@@ -111,7 +111,6 @@ class UsersViewDetail extends ViewDetail {
         //BEGIN SUGARCRM flav=sales ONLY
         $show_roles = false;
         //END SUGARCRM flav=sales ONLY
-        $show_roles = true;
         $this->ss->assign('SHOW_ROLES', $show_roles);
 
         if ( $show_roles ) {
@@ -130,5 +129,39 @@ class UsersViewDetail extends ViewDetail {
             ob_end_clean();
             $this->ss->assign('ROLE_HTML',$role_html);
         }
+
+    }
+
+    public function getMetaDataFile() {
+        $userType = 'Regular';
+        //BEGIN SUGARCRM flav=ent ONLY
+        if($this->bean->portal_only == 1){
+            $userType = 'Portal';
+        }
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if($this->bean->is_group == 1){
+            $userType = 'Group';
+        }
+        //END SUGARCRM flav!=sales ONLY
+
+        if ( $userType != 'Regular' ) {
+            $oldType = $this->type;
+            $this->type = $oldType.'group';
+        }
+        $metadataFile = parent::getMetaDataFile();
+        if ( $userType != 'Regular' ) {
+            $this->type = $oldType;
+        }
+        return $metadataFile;
+    }
+
+    function display() {
+        if ($this->bean->portal_only == 1 || $this->bean->is_group == 1 ) {
+            $this->options['show_subpanels'] = false;
+            $this->dv->formName = 'DetailViewGroup';
+        }
+
+        return parent::display();
     }
 }

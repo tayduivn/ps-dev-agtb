@@ -30,6 +30,37 @@ class UsersViewEdit extends ViewEdit {
  		parent::ViewEdit();
  	}
     
+    function preDisplay() {
+        $this->fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
+        $this->fieldHelper->setupAdditionalFields();
+        
+        parent::preDisplay();
+    }
+
+    public function getMetaDataFile() {
+        $userType = 'Regular';
+        //BEGIN SUGARCRM flav=ent ONLY
+        if($this->fieldHelper->usertype == 'PORTAL_ONLY'){
+            $userType = 'Portal';
+        }
+        //END SUGARCRM flav=ent ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if($this->fieldHelper->usertype == 'GROUP'){
+            $userType = 'Group';
+        }
+        //END SUGARCRM flav!=sales ONLY
+
+        if ( $userType != 'Regular' ) {
+            $oldType = $this->type;
+            $this->type = $oldType.'group';
+        }
+        $metadataFile = parent::getMetaDataFile();
+        if ( $userType != 'Regular' ) {
+            $this->type = $oldType;
+        }
+        return $metadataFile;
+    }
+    
     function display() {
         global $current_user, $app_list_strings;
 
@@ -112,10 +143,17 @@ class UsersViewEdit extends ViewEdit {
             $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
         }
         
-        $fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
-        $fieldHelper->setupAdditionalFields();
-
-        parent::display();
+        //BEGIN SUGARCRM flav!=sales ONLY
+        if ( $this->fieldHelper->usertype == 'GROUP' 
+             //BEGIN SUGARCRM flav=ent ONLY
+             || $this->fieldHelper->usertype == 'PORTAL_ONLY'
+             //END SUGARCRM flav=ent ONLY
+            ) {
+            $this->ev->formName = 'EditViewGroup';
+            
+        }
+        //END SUGARCRM flav!=sales ONLY
+        return parent::display();
     }
 
 }

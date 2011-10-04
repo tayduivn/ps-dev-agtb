@@ -38,7 +38,7 @@ class UserViewHelper {
      * One of: REGULAR ADMIN GROUP PORTAL_ONLY
      * @var string
      */
-    protected $usertype;
+    public $usertype;
 
 
     /**
@@ -183,6 +183,11 @@ class UserViewHelper {
         if ( !isset($this->bean->user_type) ) {
             $this->bean->user_type = 'RegularUser';
         }
+        $userType = $this->bean->user_type;
+        if ( $this->usertype == 'GROUP' || $this->usertype == 'PORTAL_ONLY' ) {
+            $userType = $this->usertype;
+        }
+
 
         $availableUserTypes = array();
         $userTypes = array(
@@ -200,17 +205,19 @@ class UserViewHelper {
                 'label' => translate('LBL_GROUP_USER','Users'),
                 'description' => translate('LBL_GROUP_DESC','Users'),
             ),
+            //BEGIN SUGARCRM flav=ent ONLY
             'PORTAL_ONLY' => array(
-                'label' => translate('LBL_USER_PORTAL_ONLY_USER','Users'),
-                'description' => translate('LBL_USER_PORTAL_ONLY_DESC','Users'),
+                'label' => translate('LBL_PORTAL_ONLY_USER','Users'),
+                'description' => translate('LBL_PORTAL_ONLY_DESC','Users'),
             ),
+            //END SUGARCRM flav=ent ONLY
             'Administrator' => array(
                 'label' => translate('LBL_ADMIN_USER','Users'),
                 'description' => translate('LBL_ADMIN_DESC','Users'),
             ),
         );
 
-        if ( $this->usertype == 'GROUP' || $this->usertype == 'PORTAL_ONLY' ) {
+        if ( $userType == 'GROUP' || $userType == 'PORTAL_ONLY' ) {
             $availableUserTypes = array($this->usertype);
         } else {
             if ( $this->ss->get_template_vars('USER_ADMIN') ) {
@@ -226,7 +233,7 @@ class UserViewHelper {
                     'Administrator',
                     );
             } else {
-                $availableUserTypes = array($this->bean->user_type);
+                $availableUserTypes = array($userType);
             }
         }
 
@@ -240,7 +247,7 @@ class UserViewHelper {
    
         foreach ( $availableUserTypes as $currType ) {
             $selected = '';
-            if ( $currType == $this->bean->user_type ) {
+            if ( $currType == $userType ) {
                 $selected = 'SELECTED';
             }
             $userTypeDropdown .= '<option value="'.$currType.'" '.$selected.'>'.$userTypes[$currType]['label'].'</option>';
@@ -248,7 +255,7 @@ class UserViewHelper {
         $userTypeDropdown .= '</select><div id="UserTypeDesc">&nbsp;</div>';
         
         $this->ss->assign('USER_TYPE_DROPDOWN',$userTypeDropdown);
-        $this->ss->assign('USER_TYPE_READONLY',$userTypes[$this->bean->user_type]['label']);
+        $this->ss->assign('USER_TYPE_READONLY',$userTypes[$userType]['label']);
         
     }
 
