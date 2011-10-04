@@ -51,9 +51,6 @@ abstract class DateExpression extends AbstractExpression
                 // just date, no time
                 $resdate = $timedate->fromUserDate($date);
             }
-            /*if(!$resdate) {
-                $resdate = $timedate->fromString($date);
-            }*/
             if(!$resdate) {
                 throw new Exception("attempt to convert invalid value to date: $date");
             }
@@ -63,6 +60,11 @@ abstract class DateExpression extends AbstractExpression
         return false;
     }
 
+    /**
+     * @static  
+     * @param DateTime $date
+     * @return DateTime $date rounded to the nearest 15 minute interval.
+     */
     public static function roundTime($date)
     {
         if (!($date instanceof DateTime))

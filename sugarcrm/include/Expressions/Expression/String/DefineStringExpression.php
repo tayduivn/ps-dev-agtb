@@ -30,7 +30,26 @@ class DefineStringExpression extends StringExpression {
 	 */
 	function evaluate() {
         try {
-            $retstr = $this->getParameters()->evaluate() . "";
+            $val = $this->getParameters()->evaluate();
+            //Dates should be formated before being cast to a string
+            if(($val instanceof SugarDateTime) && !empty($val->def))
+            {
+                global $timedate;
+                require_once("include/Expressions/Expression/Date/DateExpression.php");
+                $date = DateExpression::roundTime($val);
+                if ($val->def['type'] == "date")
+                {
+                    //Date
+                    $retstr = $timedate->asUserDate($date);
+                } else
+                {
+                    //Datetime
+                    $retstr = $timedate->asUser($date);
+                }
+            }
+            else {
+                $retstr = $val . "";
+            }
         } catch (Exception $e) {
             $GLOBALS['log']->warn('DefineStringExpression::evaluate() returned empty string due to received exception: '.$e->getMessage());
             $retstr = "";

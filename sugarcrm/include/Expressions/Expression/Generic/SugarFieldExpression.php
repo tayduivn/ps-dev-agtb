@@ -59,6 +59,7 @@ class SugarFieldExpression extends GenericExpression
                      throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
                 $timedate->tzUser($date);
+                $date->def = $def;
                 return $date;
             case 'date':
                 if(empty($this->context->$fieldName)) {
@@ -69,6 +70,7 @@ class SugarFieldExpression extends GenericExpression
                     throw new Exception("attempt to convert invalid value to date: {$this->context->$fieldName}");
                 }
                 $timedate->tzUser($date);
+                $date->def = $def;
                 return $date;
             case 'time':
                 if(empty($this->context->$fieldName)) {
@@ -89,19 +91,8 @@ class SugarFieldExpression extends GenericExpression
         {
             $module = $_REQUEST['module'];
             $id = $_REQUEST['record'];
-            $focus = $this->getBean($module);
-            $focus->retrieve($id);
-            $this->context = $focus;
+            $this->context = BeanFactory::getBean($module, $id);
         }
-    }
-
-    protected function getBean($module)
-    {
-       global $beanList;
-       if (empty($beanList[$module]))
-           throw new Exception("No bean for module $module");
-       $bean = $beanList[$module];
-       return new $bean();
     }
 
     protected function getLinkField($fieldName)
