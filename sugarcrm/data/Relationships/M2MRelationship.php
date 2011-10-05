@@ -378,11 +378,14 @@ class M2MRelationship extends SugarRelationship
                    . "($startingTable.$startingKey=$joinTable.{$this->def['join_key_lhs']} AND $joinTable.{$this->def['join_key_rhs']}='{$link->getFocus()->$targetKey}'))";
         }
 
+        //Check if we should ignore the role fileter;
+        $ignoreRole = !empty($params['ignore_role']);
+
         //First join the relationship table
         $query .= "$join_type $joinTableWithAlias ON $where AND $joinTable.deleted=0\n"
         //Next add any role filters
-               . $this->getRoleWhere() . "\n";
-        
+               . $this->getRoleWhere($joinTable, $ignoreRole) . "\n";
+
         if (!empty($params['return_as_array'])) {
             $return_array = true;
         }

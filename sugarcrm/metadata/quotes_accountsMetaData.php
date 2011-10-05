@@ -38,7 +38,7 @@ $dictionary['quotes_accounts'] = array('table' => 'quotes_accounts'
 ,'relationships' => array (
         'quotes_billto_accounts' => array(
             'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'id',
-		    'lhs_module'=> 'Accounts', 'lhs_table'=> 'accounts', ';hs_key' => 'id',
+		    'lhs_module'=> 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key' => 'id',
 		    'relationship_type'=>'many-to-many', 'true_relationship_type' => 'one-to-many',
 		    'join_table'=> 'quotes_accounts', 'join_key_rhs'=>'quote_id', 'join_key_lhs'=>'account_id',
 		    'relationship_role_column'=>'account_role', 'relationship_role_column_value'=>'Bill To'),

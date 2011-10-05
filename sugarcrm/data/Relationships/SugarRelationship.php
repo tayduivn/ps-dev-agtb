@@ -276,12 +276,13 @@ abstract class SugarRelationship
      * @param string $table
      * @return string
      */
-    protected function getRoleWhere($table = "")
+    protected function getRoleWhere($table = "", $ignore_role_filter = false)
     {
+        $ignore_role_filter = $ignore_role_filter || $this->ignore_role_filter;
         $roleCheck = "";
         if (empty ($table))
             $table = $this->getRelationshipTable();
-        if (!empty($this->def['relationship_role_column']) && !$this->ignore_role_filter )
+        if (!empty($this->def['relationship_role_column']) && !$ignore_role_filter )
         {
             $roleCheck = " AND $table.{$this->relationship_role_column}";
             //role column value.
