@@ -867,22 +867,29 @@ class SugarBean
                     }
                     else
                     {
-                        //	add Id to the insert statement.
-                        $column_list='id';
-                        $value_list="'".create_guid()."'";
-
-                        //add relationship name to the insert statement.
-                        $column_list .= $delimiter.'relationship_name';
-                        $value_list .= $delimiter."'".$rel_name."'";
-
-                        //todo check whether $rel_def is an array or not.
-                        //for now make that assumption.
-                        //todo specify defaults if meta not defined.
-                        foreach ($rel_def as $def_key=>$value)
+                        $seed = BeanFactory::getBean("Relationships");
+                        $keys = array_keys($seed->field_defs);
+                        $toInsert = array();
+                        foreach($keys as $key)
                         {
-                            $column_list.= $delimiter.$def_key;
-                            $value_list.= $delimiter."'".$value."'";
+                            if ($key == "id")
+                            {
+                                $toInsert[$key] = create_guid();
+                            }
+                            else if ($key == "relationship_name")
+                            {
+                                $toInsert[$key] = $rel_name;
+                            }
+                            else if (isset($rel_def[$key]))
+                            {
+                                $toInsert[$key] = $rel_def[$key];
+                            }
+                            //todo specify defaults if meta not defined.
                         }
+
+
+                        $column_list = implode(",", array_keys($toInsert));
+                        $value_list = "'" . implode("','", array_values($toInsert)) . "'";
 
                         //create the record. todo add error check.
                         $insert_string = "INSERT into relationships (" .$column_list. ") values (".$value_list.")";
