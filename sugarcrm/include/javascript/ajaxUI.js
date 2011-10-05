@@ -206,6 +206,7 @@ SUGAR.ajaxUI = {
             if(string.length > 200)
             {
                 SUGAR.ajaxUI.showLoadingPanel();
+                form.onsubmit = function(){ return true; };
                 form.submit();
             } else {
                 con.resetFormState();
