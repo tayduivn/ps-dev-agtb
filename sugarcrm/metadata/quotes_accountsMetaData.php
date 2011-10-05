@@ -35,21 +35,22 @@ $dictionary['quotes_accounts'] = array('table' => 'quotes_accounts'
       , array('name' =>'idx_acc_qte_opp', 'type' =>'index', 'fields'=>array('quote_id'))
       , array('name' => 'idx_quote_account_role', 'type'=>'alternate_key', 'fields'=>array('quote_id','account_role'))
                                                       )
-,'relationships' => 
-	array ('quotes_billto_accounts' => 
-		array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 'lhs_key' => 'id',
-		'rhs_module'=> 'Accounts', 'rhs_table'=> 'accounts', 'rhs_key' => 'id',
-		'relationship_type'=>'many-to-many',
-		'join_table'=> 'quotes_accounts', 'join_key_lhs'=>'quote_id', 'join_key_rhs'=>'account_id',
-		'relationship_role_column'=>'account_role', 'relationship_role_column_value'=>'Bill To'),
+,'relationships' => array (
+        'quotes_billto_accounts' => array(
+            'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'id',
+		    'lhs_module'=> 'Accounts', 'lhs_table'=> 'accounts', ';hs_key' => 'id',
+		    'relationship_type'=>'many-to-many', 'true_relationship_type' => 'one-to-many',
+		    'join_table'=> 'quotes_accounts', 'join_key_rhs'=>'quote_id', 'join_key_lhs'=>'account_id',
+		    'relationship_role_column'=>'account_role', 'relationship_role_column_value'=>'Bill To'),
 							  
-		'quotes_shipto_accounts' => 
-		array('lhs_module'=> 'Quotes', 'lhs_table'=> 'quotes', 'lhs_key' => 'id',
-		'rhs_module'=> 'Accounts', 'rhs_table'=> 'accounts', 'rhs_key' => 'id',
-		'relationship_type'=>'many-to-many',
-		'join_table'=> 'quotes_accounts', 'join_key_lhs'=>'quote_id', 'join_key_rhs'=>'account_id',
-		'relationship_role_column'=>'account_role', 'relationship_role_column_value'=>'Ship To'),							  
-		)
+		'quotes_shipto_accounts' => array(
+            'rhs_module'=> 'Quotes', 'rhs_table'=> 'quotes', 'rhs_key' => 'id',
+		    'lhs_module'=> 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key' => 'id',
+		    'relationship_type'=>'many-to-many', 'true_relationship_type' => 'one-to-many',
+		    'join_table'=> 'quotes_accounts', 'join_key_rhs'=>'quote_id', 'join_key_lhs'=>'account_id',
+		    'relationship_role_column'=>'account_role', 'relationship_role_column_value'=>'Ship To'
+        ),
+    )
 
 );
 ?>
