@@ -2810,7 +2810,10 @@ protected function checkQuery($sql, $object_name = false)
                             // Bug #42475: Don't directly compare numeric values, instead do the subtract and see if the comparison comes out to be "close enough", it is necessary for floating point numbers.
                             // Manual merge of fix 95727f2eed44852f1b6bce9a9eccbe065fe6249f from DBHelper
                             // This fix also fixes Bug #44624 in a more generic way and therefore eliminates the need for fix 0a55125b281c4bee87eb347709af462715f33d2d in DBHelper
-							if (!($this->isNumericType($field_type) && abs((trim($before_value)+0)-(trim($after_value)+0))<0.001)) {
+							if (!($this->isNumericType($field_type) &&
+                                  abs(
+                                      2*((trim($before_value)+0)-(trim($after_value)+0))/((trim($before_value)+0)+(trim($after_value)+0)) // Using relative difference so that it also works for other numerical types besides currencies
+                                  )<0.0000000001)) {    // Smaller than 10E-10
 								if (!($this->isBooleanType($field_type) && ($this->_getBooleanValue($before_value)== $this->_getBooleanValue($after_value)))) {
 									$changed_values[$field]=array('field_name'=>$field,
 										'data_type'=>$field_type,
