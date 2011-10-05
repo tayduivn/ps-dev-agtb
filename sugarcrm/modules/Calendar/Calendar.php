@@ -28,8 +28,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-require_once('modules/Calendar/CalendarUtils.php');
 require_once('include/utils/activity_utils.php');
+require_once('modules/Calendar/CalendarUtils.php');
 require_once('modules/Calendar/CalendarActivity.php');
 
 
@@ -41,8 +41,8 @@ class Calendar {
 	
 	var $show_tasks = true;
 	var $show_calls = true;	
-	var $day_start_time; // working day start time in format '12:00'
-	var $day_end_time; // working day end time in format '12:00'
+	var $day_start_time; // working day start time in format '11:00'
+	var $day_end_time; // working day end time in format '11:00'
 	
 	var $gmt_today;	// GMT of today
 	var $today_unix; // timestamp of today
@@ -169,8 +169,9 @@ class Calendar {
 	 */		
 	function load_activities(){
 		$field_list = CalendarUtils::get_fields();
-		foreach($this->acts_arr as $user_id => $acts){
-			foreach($acts as $act){				
+		
+		foreach($this->acts_arr as $user_id => $acts){	
+			foreach($acts as $act){										
 					$newAct = array();
 					$newAct['module_name'] = $act->sugar_bean->module_dir;
 					$newAct['type'] = strtolower($act->sugar_bean->object_name);				
@@ -183,10 +184,7 @@ class Calendar {
 					if(isset($act->sugar_bean->duration_hours)){
 						$newAct['duration_hours'] = $act->sugar_bean->duration_hours;
 						$newAct['duration_minutes'] = $act->sugar_bean->duration_minutes;
-					}
-				
-					$bean = new $act->sugar_bean->object_name();
-					$bean->retrieve($newAct['id']);
+					}				
 					 			
 					$newAct['detailview'] = 0;
 					$newAct['editview'] = 0;
@@ -196,7 +194,7 @@ class Calendar {
 					if($act->sugar_bean->ACLAccess('Save'))
 						$newAct['editview'] = 1;					
 						
-					if(empty($bean->id)){
+					if(empty($act->sugar_bean->id)){
 						$newAct['detailview'] = 0;
 						$newAct['editview'] = 0;
 					}					
@@ -205,7 +203,7 @@ class Calendar {
 						if(isset($field_list[$newAct['module_name']])){
 							foreach($field_list[$newAct['module_name']] as $field){
 								if(!isset($newAct[$field])){
-									$newAct[$field] = $bean->$field;									
+									$newAct[$field] = $act->sugar_bean->$field;									
 									if($act->sugar_bean->field_defs[$field]['type'] == 'text'){
 										$t = $newAct[$field];				
 										$t = str_replace("\r\n","<br>",$t);
@@ -219,15 +217,15 @@ class Calendar {
 					}								
 
 					$newAct['date_start'] = $act->sugar_bean->date_start;	
-					$date_unix = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->date_start);
+					$timestamp = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->date_start);
 				
 					if($newAct['type'] == 'task'){
 					 	$newAct['date_start'] = $act->sugar_bean->date_due;					 	
-						$date_unix = CalendarUtils::to_timestamp_from_uf($newAct['date_start']);
+						$timestamp = CalendarUtils::to_timestamp_from_uf($newAct['date_start']);
 					}
 								
-					$newAct['start'] = $date_unix;
-					$newAct['time_start'] = CalendarUtils::timestamp_to_string($newAct['start'],$GLOBALS['timedate']->get_time_format());
+					$newAct['timestamp'] = $timestamp;
+					$newAct['time_start'] = CalendarUtils::timestamp_to_string($newAct['timestamp'],$GLOBALS['timedate']->get_time_format());
 
 					if(!isset($newAct['duration_hours']) || empty($newAct['duration_hours']))
 						$newAct['duration_hours'] = 0;
@@ -256,7 +254,7 @@ class Calendar {
 						"module_name" : "'.$act["module_name"].'",  
 						"record" : "'.$act["id"].'",
 						"user_id" : "'.$act["user_id"].'",
-						"start" : "'.$act["start"].'",
+						"timestamp" : "'.$act["timestamp"].'",
 						"time_start" : "'.$act["time_start"].'",
 						"record_name": "'.$act["name"].'",'.
 					'';
@@ -284,7 +282,7 @@ class Calendar {
 		$user_ids = $current_user->getPreference('shared_ids');
 		if(!empty($user_ids) && count($user_ids) != 0 && !isset($_REQUEST['shared_ids'])) {
 			$this->shared_ids = $user_ids;
-		}elseif(isset($_REQUEST['shared_ids']) && count($_REQUEST['shared_ids']) > 0){
+		}else if(isset($_REQUEST['shared_ids']) && count($_REQUEST['shared_ids']) > 0){
 			$this->shared_ids = $_REQUEST['shared_ids'];
 			$current_user->setPreference('shared_ids', $_REQUEST['shared_ids']);
 		}else{
@@ -333,8 +331,8 @@ class Calendar {
 		}
 		
 		$params = array(
-				'show_calls' => $this->show_calls,
-				'show_tasks' => $this->show_tasks,
+			'show_calls' => $this->show_calls,
+			'show_tasks' => $this->show_tasks,
 		);
 
 		$acts_arr = array();

@@ -28,6 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+
 global $timedate;
 
 class CalendarGrid {
@@ -36,7 +37,7 @@ class CalendarGrid {
 	var $weekday_names;
 	var $startday;
 	
-	function CalendarGrid(&$args){
+	function __construct(&$args){
 		global $current_user;
 		$this->args = &$args;		
 		$this->real_today_unix = CalendarUtils::to_timestamp($GLOBALS['timedate']->get_gmt_db_date());

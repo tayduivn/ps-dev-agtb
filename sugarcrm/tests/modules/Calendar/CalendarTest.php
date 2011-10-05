@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 require_once "modules/Calendar/Calendar.php";
 require_once "modules/Calendar/CalendarUtils.php";
 require_once('modules/Meetings/Meeting.php');
@@ -69,7 +70,6 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		}		
 	}
 
-
 	public function testCalendarDate(){
 		$cal = new Calendar('week');	
 		$this->assertEquals('2012',$cal->date_time->year);
@@ -87,7 +87,23 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$cal->add_activities($GLOBALS['current_user']);	
 		$count2 = count($cal->acts_arr[$GLOBALS['current_user']->id]);
 		
-		$this->assertTrue($count1 == $count2 - 1, "Count of records should be one more after meeting added.");		
+		$this->assertTrue($count1 == $count2 - 1, "Count of records should be one more after meeting added");		
+	}
+	
+	public function testCalendarLoadActivities(){
+		$cal = new Calendar('month');
+		$cal->add_activities($GLOBALS['current_user']);
+		$format = $GLOBALS['current_user']->getUserDateTimePreferences();
+		$meeting = new Meeting();
+		$meeting->meeting_id = uniqid();
+		$meeting->date_start = $this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['date'].' '.$format['time']);
+		$meeting->name = "test";
+		$cal->acts_arr = array();		
+		$cal->acts_arr[$GLOBALS['current_user']->id] = array();
+		$cal->acts_arr[$GLOBALS['current_user']->id][] = new CalendarActivity($meeting);	
+		$cal->load_activities();
+			
+		$this->assertEquals($cal->ActRecords[0]['time_start'],$this->time_date->swap_formats("2012-01-01 11:00pm" , 'Y-m-d h:ia', $format['time']),"Time should remain the same after load_activities");		
 	}
 
 	public function testHandleOffset(){

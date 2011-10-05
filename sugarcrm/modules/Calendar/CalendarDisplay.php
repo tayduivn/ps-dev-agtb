@@ -27,6 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 class CalendarDisplay {	
 
 	// colors of items on calendar
@@ -115,7 +116,7 @@ class CalendarDisplay {
 		// end details	
 		
 		if($_REQUEST['module'] == "Calendar"){
-			$this->load_settings($ss);
+			$this->load_settings_template($ss);
 			$settings = "custom/modules/Calendar/tpls/settings.tpl";
 			if(!file_exists($settings))
 				$settings = "modules/Calendar/tpls/settings.tpl";
@@ -143,7 +144,7 @@ class CalendarDisplay {
 	/**
 	 * load settings popup template
 	 */	
-	function load_settings(&$ss){	
+	function load_settings_template(&$ss){	
 		
 		list($d_start_hour,$d_start_min) =  explode(":",$this->args['cal']->day_start_time);		
 		list($d_end_hour,$d_end_min) =  explode(":",$this->args['cal']->day_end_time);	
@@ -212,8 +213,7 @@ class CalendarDisplay {
 		for($i = $start_at; $i <= $num_of_hours; $i ++){
 			$i = $i."";
 			if (strlen($i) == 1)
-				$i = "0".$i;
-			
+				$i = "0".$i;			
 			$hours_arr[$i] = $i;
 		}
 		$TIME_START_HOUR_OPTIONS1 = get_select_options_with_id($hours_arr, $d_start_hour);
@@ -232,8 +232,7 @@ class CalendarDisplay {
 		$ss->assign('TIME_START_MINUTES_OPTIONS2',$TIME_START_MINUTES_OPTIONS2);
 		$ss->assign('TIME_MERIDIEM2',$TIME_MERIDIEM2);
 		$ss->assign('show_calls',$this->args['cal']->show_calls);
-		$ss->assign('show_tasks',$this->args['cal']->show_tasks);		
-	
+		$ss->assign('show_tasks',$this->args['cal']->show_tasks);
 	}
 	
 	// returns date info string (legacy of old calendar)
@@ -501,8 +500,7 @@ class CalendarDisplay {
 			</form>			
 			</div>
 			";			
-	}
-	
+	}	
 	
 }
 
