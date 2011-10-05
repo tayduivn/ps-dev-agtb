@@ -26,7 +26,16 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 *}
-<script type="text/javascript" src="{sugar_getjspath file='cache/include/javascript/sugar_grp_yui_widgets.js'}"></script>
+
+<style>
+{literal}
+.moduleTitle h2
+{
+    font-size: 18px;
+}
+{/literal}
+</style>
+<script type="text/javascript" src="{sugar_getjspath file='include/javascript/sugar_grp_yui_widgets.js'}"></script>
 {overlib_includes}
 <div class="dashletPanelMenu">
     <div class="hd">
@@ -39,6 +48,7 @@
         <div class="bd-center">
             <div class="screen">
                 {$MODULE_TITLE}
+                <br>
                 {$CONTENT}
             </div>
         </div>

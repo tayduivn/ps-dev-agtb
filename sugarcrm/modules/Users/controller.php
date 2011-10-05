@@ -109,7 +109,7 @@ class UsersController extends SugarController
 	{
 		$this->view = 'wizard';
 	}
-	
+
 	protected function action_saveuserwizard() 
 	{
 	    global $current_user, $sugar_config;

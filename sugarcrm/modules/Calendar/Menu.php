@@ -44,4 +44,4 @@ if(ACLController::checkAccess('Calendar', 'list', true))$module_menu[]=Array("in
 
 
 
-?>s
+?>

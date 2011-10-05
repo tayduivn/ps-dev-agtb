@@ -61,7 +61,7 @@
     <tr><td>&nbsp;</td></tr>
     <tr>
         <td colspan="3">
-            <input type="button" class="button primary" value="{$MOD.LBL_BTN_SAVE}"  onclick='{literal}if(check_form("editdropdown")){document.editdropdown.submit();}{/literal}'name="{$MOD.LBL_BTN_SAVE}" />
+            <input type="button" class="button primary" value="{$MOD.LBL_BTN_SAVE}"  onclick='validateForm();'name="{$MOD.LBL_BTN_SAVE}" />
             <input type="button" class="button" value="{$MOD.LBL_BTN_CANCEL}"  name="{$MOD.LBL_BTN_CANCEL}" onclick="document.editdropdown.action.value='index'; document.editdropdown.module.value='Administration';document.editdropdown.submit()" />
         </td>
     </tr>
@@ -117,7 +117,7 @@
                     </tr>
                     <tr>
                         <td align="right">{$MOD.LBL_PLURAL}</td>
-                        <td align="left"><input id='slot{$rowCounter}_text' value='' type='text'  onchange='setDropDownValue({$rowCounter}, this.value, true)' ></td>
+                        <td align="left"><input id='slot{$rowCounter}_text' value='{$value.lang}' type='text'  onchange='setDropDownValue({$rowCounter}, this.value, true)' ></td>
                     </tr>
                 </table>
                 <input name='slot_{$rowCounter}' id='slot_{$rowCounter}' value='{$rowCounter}' type = 'hidden'>
@@ -174,6 +174,7 @@
         var foundErrors = false;
         var el1 = document.getElementById("slot" + rowCount + "_text");
         var el2 = document.getElementById("slot" + rowCount + "_stext");
+
         if(el1.value == "")
         {
             add_error_style('editdropdown', el1, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'),true);
@@ -207,7 +208,6 @@
         {
             span.innerHTML  = val;
             textspan.style.display = 'none';
-            text.value = '';
             span.style.display = 'inline';
         }
         lastField = '';
@@ -218,6 +218,24 @@
     var slotCount = {/literal}{$rowCounter}{literal};
     var yahooSlots = [];
 
+    function validateForm()
+    {
+        for(i=0;i<slotCount;i++)
+        {
+            if( checkForErrors(i) )
+            {
+                //Highlight dropdown value if we find an error.
+                prepChangeDropDownValue(i,  document.getElementById("slot"+i+"_value"));
+                return;
+            }
+        }
+
+        if(check_form("editdropdown"))
+        {
+            document.editdropdown.submit();
+        }
+
+    }
 </script>
 {/literal}
 

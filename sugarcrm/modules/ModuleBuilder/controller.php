@@ -376,6 +376,9 @@ class ModuleBuilderController extends SugarController
             if (! empty ( $_REQUEST [ 'view_module' ] ))
             {
                 $module = $_REQUEST [ 'view_module' ] ;
+                if ( $module == 'Employees' ) {
+                    $module = 'Users';
+                }
 
                 $bean = BeanFactory::getBean($module);
                 if(!empty($bean))
@@ -401,6 +404,10 @@ class ModuleBuilderController extends SugarController
                 $mod_strings['LBL_ALL_MODULES'] = 'all_modules';
                 $repair = new RepairAndClear();
 		        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array($class_name), true, false);
+                if ( $module == 'Users' ) {
+                    $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs', 'clearTpls'), array('Employee'), true, false);
+                    
+                }
                 //BEGIN SUGARCRM flav=pro ONLY
                 //Make sure to clear the vardef for related modules as well
                 $relatedMods = array();
@@ -443,6 +450,12 @@ class ModuleBuilderController extends SugarController
         $field->populateFromPost () ;
         require_once ('modules/ModuleBuilder/parsers/StandardField.php') ;
         $module = $_REQUEST [ 'view_module' ] ;
+        
+        // Need to map Employees -> Users
+        if ( $module=='Employees') {
+            $module = 'Users';
+        }
+        
         $df = new StandardField ( $module ) ;
         $mod = BeanFactory::getBean($module);
         $class_name = $GLOBALS [ 'beanList' ] [ $module ] ;
@@ -481,6 +494,9 @@ class ModuleBuilderController extends SugarController
         // now clear the cache so that the results are immediately visible
         include_once ('include/TemplateHandler/TemplateHandler.php') ;
         TemplateHandler::clearCache ( $module ) ;
+        if ( $module == 'Users' ) {
+            TemplateHandler::clearCache('Employees');
+        }
 
         $GLOBALS [ 'mod_strings' ] = $MBmodStrings;
     }
@@ -813,25 +829,27 @@ class ModuleBuilderController extends SugarController
         require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php' ;
         $parser = new SearchViewMetaDataParser ( $_REQUEST [ 'view' ], $_REQUEST [ 'view_module' ], $packageName ) ;
         $parser->handleSave () ;
-        
+
+
         //Repair or create a custom SearchFields.php file as needed
         $module_name = $_REQUEST [ 'view_module' ] ;
         global $beanList;
-        $objectName = $beanList[$module_name];
-            
-        //BEGIN SUGARCRM flav!=sales ONLY
-        if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
-        {        
-        	$objectName = 'Case';
+        if (isset($beanList[$module_name]) && $beanList[$module_name]!="") {
+            $objectName = $beanList[$module_name];
+            //BEGIN SUGARCRM flav!=sales ONLY
+            if($objectName == 'aCase') // Bug 17614 - renamed aCase as Case in vardefs for backwards compatibililty with 451 modules
+            {
+                $objectName = 'Case';
+            }
+            //END SUGARCRM flav!=sales ONLY
+
+            //Load the vardefs for the module to pass to TemplateRange
+            VardefManager::loadVardef($module_name, $objectName, true);
+            global $dictionary;
+            $vardefs = $dictionary[$objectName]['fields'];
+            require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
+            TemplateRange::repairCustomSearchFields($vardefs, $module_name, $packageName);
         }
-        //END SUGARCRM flav!=sales ONLY
-        
-        //Load the vardefs for the module to pass to TemplateRange
-        VardefManager::loadVardef($module_name, $objectName, true); 
-        global $dictionary;      
-        $vardefs = $dictionary[$objectName]['fields'];
-        require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
-        TemplateRange::repairCustomSearchFields($vardefs, $module_name, $packageName);
         $this->view = 'searchView' ;
     }
 
