@@ -627,7 +627,7 @@ class ImportViewStep4 extends SugarView
         )
     {
         return preg_replace_callback( 
-            '|[^A-Za-z0-9\-.]|',
+            '|[^A-Za-z0-9\-\.]|',
             create_function(
             // single quotes are essential here,
             // or alternative escape all $ as \$
