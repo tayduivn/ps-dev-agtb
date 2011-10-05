@@ -40,6 +40,7 @@ class DefineStringExpression extends StringExpression {
                 if ($val->def['type'] == "date")
                 {
                     //Date
+                    $date->setTimezone(new DateTimeZone("UTC"));
                     $retstr = $timedate->asUserDate($date);
                 } else
                 {
