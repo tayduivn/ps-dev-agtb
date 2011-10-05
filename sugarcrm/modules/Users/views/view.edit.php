@@ -20,9 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
 require_once('include/MVC/View/views/view.edit.php');
 require_once('modules/Users/UserViewHelper.php');
+
 
 class UsersViewEdit extends ViewEdit {
 
@@ -138,9 +138,14 @@ class UsersViewEdit extends ViewEdit {
 
         // Build viewable versions of a few fields for non-admins
         if(!empty($this->bean->id)) {
-            $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]);
-            $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
-            $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
+            if( !empty($this->bean->status) ) { 
+                $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]); }
+            if( !empty($this->bean->employee_status) ) {
+                $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
+            }
+            if( !empty($this->bean->reports_to_id) ) {
+                $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
+            }
         }
         
         //BEGIN SUGARCRM flav!=sales ONLY
