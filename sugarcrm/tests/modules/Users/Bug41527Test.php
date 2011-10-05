@@ -71,12 +71,25 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
+    protected function setupMyView() {
+        global $current_user;
+
+        $GLOBALS['module'] = 'Users';
+        $GLOBALS['action'] = 'EditView';
+        $_REQUEST['action'] = $GLOBALS['action'];
+        $view = ViewFactory::loadView('edit', 'Users', $current_user, array('bean'=>$current_user),'');
+
+        $view->preDisplay();
+
+        return $view;
+    }
+
     public function testUsingDefaultMaxTabsForOptionsValues()
     {
         global $current_user, $locale, $sugar_config;
 
-        $_REQUEST['module'] = 'Users';
-        require('modules/Users/EditView.php');
+        $view = $this->setupMyView();
+        $view->display();
         $this->expectOutputRegex('/<select name="user_max_tabs".*<option label="' . $this->_max_tabs_test . '" value="' . $this->_max_tabs_test . '".*>' . $this->_max_tabs_test . '<\/option>.*<\/select>/ms');
     }
 
@@ -89,9 +102,8 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
         $GLOBALS['sugar_config']['default_max_tabs'] = 7;
 
-        $_REQUEST['module'] = 'Users';
-        require('modules/Users/EditView.php');
-
+        $view = $this->setupMyView();
+        $view->display();
         $this->expectOutputRegex('/<select name="user_max_tabs".*<option label="10" value="10".*>10<\/option>.*<\/select>/ms');
     }
 
@@ -104,10 +116,8 @@ class Bug41527Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
         $current_user->setPreference('max_tabs', 3, 0, 'global');
 
-        $_REQUEST['module'] = 'Users';
-        $_REQUEST['record'] = $current_user->id;
-        require('modules/Users/EditView.php');
-
+        $view = $this->setupMyView();
+        $view->display();
         $this->expectOutputRegex('/<select name="user_max_tabs".*<option label="3" value="3" selected="selected">3<\/option>.*<\/select>/ms');
     }
 }

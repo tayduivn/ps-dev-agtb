@@ -584,6 +584,7 @@ $dictionary['User'] = array(
             'options' => 'dom_email_link_type',
             'importable' => false,
             'reportable' => false,
+            'source' => 'non-db',
         ),
         
         'aclroles' => array(
