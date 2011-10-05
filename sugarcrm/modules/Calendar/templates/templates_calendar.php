@@ -422,7 +422,17 @@ function template_cal_tabs($args) {
                 $users = $team->get_team_members(true);
 				$user_ids = array();
 				foreach($users as $user) {
-					$user_ids[$user->id] = $user->user_name;
+					if ($current_user->getPreference('use_real_names'))
+                    {
+ 	                    if ($current_user->showLastNameFirst())
+ 	                     {
+ 	                         $user_ids[$user->id] = trim($user->last_name . ' ' . $user->first_name);
+ 	                     } else {
+ 	                         $user_ids[$user->id] = trim($user->first_name . ' ' . $user->last_name);
+ 	                     }
+ 	                 } else {
+ 	                     $user_ids[$user->id] = $user->user_name;
+ 	                 }
 				}
 				echo get_select_options_with_id($user_ids, $ids);
 			} else
