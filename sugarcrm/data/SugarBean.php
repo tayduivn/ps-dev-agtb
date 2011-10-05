@@ -4326,14 +4326,15 @@ function save_relationship_changes($is_update, $exclude=array())
      * Fill in a link field
      */
 
-    function fill_in_link_field( $linkFieldName )
+    // fguerra@dri and jmorais@dri - fill in link fields not working
+    function fill_in_link_field( $linkFieldName, $fieldName )
     {
         if ($this->load_relationship($linkFieldName))
         {
             $list=$this->$linkFieldName->get();
-            $this->$linkFieldName = '' ; // match up with null value in $this->populateFromRow()
+            $this->$fieldName = '' ; // match up with null value in $this->populateFromRow()
             if (!empty($list))
-                $this->$linkFieldName = $list[0];
+                $this->$fieldName = $list[0];
         }
     }
 
@@ -4358,9 +4359,11 @@ function save_relationship_changes($is_update, $exclude=array())
                     // set the value of this relate field in this bean ($this->$field['name']) to the value of the 'name' field in the related module for the record identified by the value of $this->$field['id_name']
                     $related_module = $field['module'];
                     $id_name = $field['id_name'];
-                    if (empty($this->$id_name)){
-                       $this->fill_in_link_field($id_name);
+                    // fguerra@dri and jmorais@dri - fill in link fields not working
+                    if (empty($this->$id_name) && array_key_exists('link', $field)){
+                        $this->fill_in_link_field($field['link'], $id_name);
                     }
+                    // ~ fguerra@dri and jmorais@dri
                     if(!empty($this->$id_name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
                         if(isset($GLOBALS['beanList'][ $related_module])){
                             $class = $GLOBALS['beanList'][$related_module];
