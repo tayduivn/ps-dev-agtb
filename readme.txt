@@ -1,1 +1,1 @@
-"Cotton Candy" branch is the base branch for 6.3 release.
+"Bazooka" branch is the base branch for 6.4 release.
