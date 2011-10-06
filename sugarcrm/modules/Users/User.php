@@ -420,6 +420,25 @@ class User extends Person {
         return $user->_userPreferenceFocus->getPreference($name, $category);
 	}
 
+	/**
+	 * Get WHERE clause that fetches all users counted for licensing purposes
+	 * @return string
+	 */
+	public static function getLicensedUsersWhere()
+	{
+		//BEGIN SUGARCRM dep=od ONLY
+		return "deleted=0 AND status='Active' AND is_group=0 AND portal_only=0 AND user_name !='' AND user_name IS NOT NULL AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
+		//END SUGARCRM dep=od ONLY
+		//BEGIN SUGARCRM dep=os ONLY
+		return "deleted=0 AND status='Active' AND user_name !='' AND user_name IS NOT NULL AND is_group=0 AND portal_only=0";
+		//END SUGARCRM dep=os ONLY
+	    return "1<>1";
+	}
+
+	/**
+	 * (non-PHPdoc)
+	 * @see Person::save()
+	 */
 	function save($check_notify = false) {
 		$isUpdate = !empty($this->id) && !$this->new_with_id;
 
@@ -428,14 +447,8 @@ class User extends Person {
 		if (isset($_SESSION)) unset($_SESSION['license_seats_needed']);
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM dep=od ONLY
-		$query = "SELECT count(id) as total from users WHERE status='Active' AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
-		//END SUGARCRM dep=od ONLY
-		//BEGIN SUGARCRM dep=os ONLY
-		$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
-		//END SUGARCRM dep=os ONLY
-
 		  //BEGIN SUGARCRM lic=sub ONLY
+		$query = "SELECT count(id) as total from users WHERE ".self::getLicensedUsersWhere();
 
 		global $sugar_flavor;
         $admin = new Administration();
@@ -1529,13 +1542,13 @@ EOQ;
      * @return string
      */
     protected function _fixupModuleForACL($module) {
-        if($module=='ContractTypes') { 
+        if($module=='ContractTypes') {
             $module = 'Contracts';
         }
         if(preg_match('/Product[a-zA-Z]*/',$module)) {
             $module = 'Products';
         }
-        
+
         return $module;
     }
     /**
@@ -1558,9 +1571,9 @@ EOQ;
         // These modules don't take kindly to the studio trying to play about with them.
         static $ignoredModuleList = array('iFrames','Feeds','Home','Dashboard','Calendar','Activities','Reports');
 
-        
+
         $actions = ACLAction::getUserActions($this->id);
-        
+
         foreach ($beanList as $module=>$val) {
             // Remap the module name
             $module = $this->_fixupModuleForACL($module);
@@ -1574,7 +1587,7 @@ EOQ;
             }
 
             $key = 'module';
-            
+
             if (($this->isAdmin() && isset($actions[$module][$key]))
             //BEGIN SUGARCRM flav=pro ONLY
                 || (isset($actions[$module][$key]['admin']['aclaccess']) &&
@@ -1587,7 +1600,7 @@ EOQ;
             }
         }
 
-        return $myModules;        
+        return $myModules;
     }
     /**
      * Is this user a system wide admin
@@ -1639,9 +1652,9 @@ EOQ;
         if ($this->isAdmin()) {
             return true;
         }
-        
+
         $devModules = $this->getDeveloperModules();
-        
+
         $module = $this->_fixupModuleForACL($module);
 
         if (in_array($module,$devModules) ) {
@@ -1671,9 +1684,9 @@ EOQ;
         if ($this->isAdmin()) {
             return true;
         }
-        
+
         $adminModules = $this->getAdminModules();
-        
+
         $module = $this->_fixupModuleForACL($module);
 
         if (in_array($module,$adminModules) ) {
@@ -1797,7 +1810,7 @@ EOQ;
     public function get_first_day_of_week()
     {
         $fdow = $this->getPreference('fdow');
-        if (empty($fdow)) 
+        if (empty($fdow))
         {
             $fdow = 0;
         }
