@@ -88,7 +88,7 @@ class DynamicField {
             return false;
         if($module == '../data')return false;
 
-        // Employees is a fake module that actually loads it's fields from the 
+        // Employees is a fake module that actually loads it's fields from the
         // Users module
         if ($module == 'Employees') {
             $module = 'Users';
@@ -753,7 +753,11 @@ class DynamicField {
            );
 
             $query = $GLOBALS['db']->createTableSQLParams($this->bean->table_name."_cstm", $iddef, $ididx);
-            $indicesArr = $GLOBALS['db']->getConstraintSql($ididx, $this->bean->table_name."_cstm");
+            if(!$GLOBALS['db']->supports("inline_keys")) {
+                $indicesArr = $GLOBALS['db']->getConstraintSql($ididx, $this->bean->table_name."_cstm");
+            } else {
+                $indicesArr = array();
+            }
             if($execute) {
                 $GLOBALS['db']->query($query);
                 if(!empty($indicesArr)) {
