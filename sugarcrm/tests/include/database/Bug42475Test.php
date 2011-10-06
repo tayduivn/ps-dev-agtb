@@ -21,7 +21,6 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once("include/database/DBHelper.php");
 
 /**
  * @ticket 42475
