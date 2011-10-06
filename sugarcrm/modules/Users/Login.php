@@ -115,16 +115,9 @@ if(isset($_REQUEST['loginErrorMessage'])) {
         echo "<p align='center' class='error' > ". $app_strings[$_REQUEST['loginErrorMessage']]. "</p>";
     }
 }
-//BEGIN SUGARCRM dep=od ONLY
-$query = "SELECT count(id) as total from users WHERE status='Active' AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'";
-//END SUGARCRM dep=od ONLY
-//BEGIN SUGARCRM dep=os ONLY
-$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
-//END SUGARCRM dep=os ONLY
-
 
 	//BEGIN SUGARCRM lic=sub ONLY
-
+$query = "SELECT count(id) as total from users WHERE ".User::getLicensedUsersWhere();
 
 // This section of code is a portion of the code referred
 // to as Critical Control Software under the End User
@@ -147,14 +140,13 @@ if((isset($sugar_flavor) && $sugar_flavor != null) &&
 	($sugar_flavor=='CE' || isset($admin->settings['license_enforce_user_limit']) && $admin->settings['license_enforce_user_limit'] == 1)){
 
 	global $db;
-	//$query = "SELECT count(id) as total from users WHERE status='Active' AND deleted=0 AND is_group=0 AND portal_only=0";
 	$result = $db->query($query, true, "Error filling in user array: ");
 	$row = $db->fetchByAssoc($result);
    	$admin = new Administration();
     $admin->retrieveSettings();
     $license_users = $admin->settings['license_users'];
     $license_seats_needed = $row['total'] - $license_users;
-	if( $license_seats_needed > 0 ){
+    if( $license_seats_needed > 0 ){
 		$_SESSION['EXCEEDS_MAX_USERS'] = 1;
 		echo "<p align='center' class='error' > ". $GLOBALS['app_strings']['WARN_LICENSE_SEATS_MAXED']. $GLOBALS['app_strings']['WARN_ONLY_ADMINS']."</p>";
 	}
