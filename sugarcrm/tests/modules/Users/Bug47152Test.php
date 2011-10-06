@@ -66,11 +66,13 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	    $this->admin = new Administration();
 	    $this->admin->retrieveSettings();
 	    unset($_SESSION['license_seats_needed']);
+	    $_SESSION['EXCEEDS_MAX_USERS'] = 0;
 	}
 
 	public function tearDown()
 	{
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($_SESSION['EXCEEDS_MAX_USERS']);
 	}
 
 	protected function checkWarnings($expect)
@@ -83,9 +85,9 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->admin->retrieveSettings();
         include "modules/Users/Login.php";
         if($expect) {
-            $this->expectOutputRegex("/".$GLOBALS['app_strings']['WARN_LICENSE_SEATS_MAXED']."/");
+            $this->assertEquals(1, $_SESSION['EXCEEDS_MAX_USERS']);
         } else {
-            $this->expectOutputNotRegex("/".$GLOBALS['app_strings']['WARN_LICENSE_SEATS_MAXED']."/");
+            $this->assertEquals(0, $_SESSION['EXCEEDS_MAX_USERS']);
         }
 	}
 
