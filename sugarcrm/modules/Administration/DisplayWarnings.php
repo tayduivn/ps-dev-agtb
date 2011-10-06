@@ -180,7 +180,6 @@ if($smtp_error) {
         if( !isset($_SESSION['license_seats_needed']) ){
             $focus = new Administration();
             $focus->retrieveSettings();
-            var_dump($focus);
             $license_users = isset($focus->settings['license_users'])?$focus->settings['license_users']:'';
 
             $_SESSION['license_seats_needed'] = count( get_user_array(false, "", "", false, null, " AND ".User::getLicensedUsersWhere(), false)) - $license_users;
