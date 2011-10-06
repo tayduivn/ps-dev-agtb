@@ -56,6 +56,15 @@ var myConfigs = {sortedBy: {key : pref.key, dir : sortDirection}};
 {/if}
 
 {literal}
+//create sortName function to apply custom sorting for the name column which contains HTML
+var sortName = function(a, b, desc)
+{
+    var comp = YAHOO.util.Sort.compare;
+    var aString = a.getData('name').replace(/<[^>]*>/g, "");
+    var bString = b.getData('name').replace(/<[^>]*>/g, "");
+    return comp(aString, bString, desc);
+};
+
 var editFieldFormatter = function(elCell, oRecord, oColumn, oData)
 {
   var label = /_c$/.test(oData) ? '*' + oData : oData;
@@ -68,7 +77,7 @@ var labelFormatter = function(elCell, oRecord, oColumn, oData)
 };
 
 var myColumnDefs = [
-    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150},
+    {key:"name", label:SUGAR.language.get("ModuleBuilder", "LBL_NAME"),sortable:true, resizeable:true, formatter:"editFieldFormatter", width:150, sortOptions:{sortFunction:sortName}},
     {key:"label", label:SUGAR.language.get("ModuleBuilder", "LBL_DROPDOWN_ITEM_LABEL"),sortable:true, resizeable:true, formatter:"labelFormatter", width:200},
     {key:"type", label:SUGAR.language.get("ModuleBuilder", "LBL_DATA_TYPE"),sortable:true,resizeable:true, width:125}
 ];
