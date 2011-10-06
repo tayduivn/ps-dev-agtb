@@ -1665,6 +1665,9 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 	//for setting null selection values to human readable --None--
 	$pattern = "/'0?'></";
 	$replacement = "''>".$app_strings['LBL_NONE']."<";
+    if($massupdate){
+        $replacement .= "/OPTION>\n<OPTION value='__SugarMassUpdateClearField__'><"; // Giving the user the option to unset a drop down list. I.e. none means that it won't get updated
+    }
 
 	if (empty($key_list)) $key_list = array();
 	//create the type dropdown domain and set the selected value if $opp value already exists
