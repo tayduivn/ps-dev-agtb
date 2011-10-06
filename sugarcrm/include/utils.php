@@ -1665,6 +1665,9 @@ function get_select_options_with_id_separate_key ($label_list, $key_list, $selec
 	//for setting null selection values to human readable --None--
 	$pattern = "/'0?'></";
 	$replacement = "''>".$app_strings['LBL_NONE']."<";
+    if($massupdate){
+        $replacement .= "/OPTION>\n<OPTION value='__SugarMassUpdateClearField__'><"; // Giving the user the option to unset a drop down list. I.e. none means that it won't get updated
+    }
 
 	if (empty($key_list)) $key_list = array();
 	//create the type dropdown domain and set the selected value if $opp value already exists
@@ -3647,6 +3650,22 @@ function getPhpInfo($level=-1) {
  */
 function string_format($format, $args){
 	$result = $format;
+    
+    /** Bug47277 fix.
+     * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
+     * IN () fails and IN ('') works. 
+     */
+    if (count($args) == 1)
+    {
+        reset($args);
+        $singleArgument = current($args);
+        if (empty($singleArgument))
+        {
+            return str_replace("{0}", "''", $result);
+        }
+    }
+    /* End of fix */
+    
 	for($i = 0; $i < count($args); $i++){
 		$result = str_replace('{'.$i.'}', $args[$i], $result);
 	}

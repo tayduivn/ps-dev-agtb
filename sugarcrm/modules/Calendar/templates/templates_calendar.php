@@ -51,7 +51,7 @@ function template_cal_tabs($args) {
 
 	foreach($tabs as $tab) {
 ?>
-<input type="button" <?php if($args['view'] == $tab) {?>selected="selected" <?php } ?> value=" <?php echo $mod_strings["LBL_".$args['calendar']->get_view_name($tab)]; ?> " title="<?php echo $mod_strings["LBL_".$args['calendar']->get_view_name($tab)]; ?>" onclick="window.location.href='index.php?module=Calendar&action=index&view=<?php echo $tab; ?><?php echo $args['calendar']->date_time->get_date_str(); ?>'">&nbsp;
+<input type="button" <?php if($args['view'] == $tab) {?>selected="selected" <?php } ?> value=" <?php echo $mod_strings["LBL_".$args['calendar']->get_view_name($tab)]; ?> " id="<?php echo $tab; ?>_tab_id" title="<?php echo $mod_strings["LBL_".$args['calendar']->get_view_name($tab)]; ?>" onclick="window.location.href='index.php?module=Calendar&action=index&view=<?php echo $tab; ?><?php echo $args['calendar']->date_time->get_date_str(); ?>'">&nbsp;
 <?php } ?>
 </td>
 </tr>
@@ -422,7 +422,17 @@ function template_cal_tabs($args) {
                 $users = $team->get_team_members(true);
 				$user_ids = array();
 				foreach($users as $user) {
-					$user_ids[$user->id] = $user->user_name;
+					if ($current_user->getPreference('use_real_names'))
+                    {
+ 	                    if ($current_user->showLastNameFirst())
+ 	                     {
+ 	                         $user_ids[$user->id] = trim($user->last_name . ' ' . $user->first_name);
+ 	                     } else {
+ 	                         $user_ids[$user->id] = trim($user->first_name . ' ' . $user->last_name);
+ 	                     }
+ 	                 } else {
+ 	                     $user_ids[$user->id] = $user->user_name;
+ 	                 }
 				}
 				echo get_select_options_with_id($user_ids, $ids);
 			} else

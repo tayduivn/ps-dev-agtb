@@ -167,7 +167,10 @@ eoq;
 				 			if(strcmp($value, '2') == 0)$_POST[$post] = 'off';
 				 		}
     			}
-			    if($this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) && strlen($value) == 0){
+
+			    if( ($this->sugarbean->field_defs[$post]['type'] == 'radioenum' && isset($_POST[$post]) && strlen($value) == 0)
+			    || ($this->sugarbean->field_defs[$post]['type'] == 'enum' && $value == '__SugarMassUpdateClearField__') // Set to '' if it's an explicit clear
+			    ){
 				    $_POST[$post] = '';
 			    }
                 if ($this->sugarbean->field_defs[$post]['type'] == 'bool') {
@@ -182,8 +185,8 @@ eoq;
 			    if($this->sugarbean->field_defs[$post]['type'] == 'datetimecombo' && !empty($_POST[$post])){
 			        $_POST[$post] = $timedate->to_db($_POST[$post]);
 			    }
-			}
-		}
+            }
+         }
 
 		//We need to disable_date_format so that date values for the beans remain in database format
 		//notice we make this call after the above section since the calls to TimeDate class there could wind up
@@ -414,10 +417,11 @@ eoq;
 		foreach($this->sugarbean->field_defs as $field)
 		{
 			//BEGIN SUGARCRM flav=pro ONLY
-			   if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, false)  < 2)
-			   {
-			   	  continue;
-			   }
+            // Bug #46952 Fields with rights as "Owner read/write" have to be displayed
+            if(ACLField::hasAccess($field['name'], $this->sugarbean->module_dir, $GLOBALS['current_user']->id, true)  < 2)
+            {
+                continue;
+            }
 			//END SUGARCRM flav=pro ONLY
 			 if(!isset($banned[$field['name']]) && (!isset($field['massupdate']) || !empty($field['massupdate'])))
 			 {
