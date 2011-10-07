@@ -27,7 +27,6 @@ class CalendarViewAjaxReschedule extends SugarView {
 		}
 
 		$bean->date_start = $_REQUEST['datetime'];
-		$bean->date_end = $_REQUEST['date_end'];
 		$bean->save();
 	}	
 

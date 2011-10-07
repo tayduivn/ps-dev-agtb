@@ -2553,7 +2553,7 @@ class InboundEmail extends SugarBean {
 			$i = 0;
 			foreach($raw as $mbox)
 			{
-				$raw[$i] = str_replace($testConnectString, "", mb_convert_encoding($mbox, "UTF8", "UTF7-IMAP" ));
+				$raw[$i] = str_replace($testConnectString, "", $GLOBALS['locale']->translateCharset($mbox, "UTF7-IMAP", "UTF8" ));
 				$i++;
 			} // foreach
 			sort($raw);
@@ -3402,7 +3402,7 @@ class InboundEmail extends SugarBean {
 			}
 			$name = urldecode($name);
 		}
-		return (strtolower($encoding) == 'utf-8') ? $name : mb_convert_encoding($name, 'UTF-8', $encoding);
+		return (strtolower($encoding) == 'utf-8') ? $name : $GLOBALS['locale']->translateCharset($name, $encoding, 'UTF-8');
 	}
 
 	/*

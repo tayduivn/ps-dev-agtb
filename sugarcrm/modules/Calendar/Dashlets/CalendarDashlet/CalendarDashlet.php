@@ -31,7 +31,14 @@ class CalendarDashlet extends Dashlet {
 		
 		if(isset($GLOBALS['cal_strings']))
 			return parent::display() . "Only one Calendar dashlet is allowed.";
-		include("modules/Calendar/initialization.php");
+			
+		require_once('modules/Calendar/Calendar.php');
+		require_once('modules/Calendar/CalendarDisplay.php');
+		require_once("modules/Calendar/CalendarGrid.php");
+		
+		global $cal_strings, $app_strings, $app_list_strings, $current_language, $timedate, $sugarConfig;
+		$cal_strings = return_module_language($current_language, 'Calendar');
+		
 		if(!ACLController::checkAccess('Calendar', 'list', true))
 			ACLController::displayNoAccess(true);
 						
