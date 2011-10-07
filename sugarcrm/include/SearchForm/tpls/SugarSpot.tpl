@@ -15,7 +15,7 @@ white-space: nowrap;
 }
 </style>
 {/literal}
-<div id='SpotResults'>
+<div id="SpotResults">
 {if !empty($displayResults)}
 {foreach from=$displayResults key=module item=data}
 <div>

@@ -84,7 +84,7 @@ if ( empty($hideTeams) ) {
         $SubPanel = new SubPanelViewUsers();
         $SubPanel->setFocus($focus);
         $SubPanel->setTeamsList($focus_list);
-        $SubPanel->ProcessSubPanelListView("modules/Teams/SubPanelViewUsers.html", $mod_strings, $action);
+        $SubPanel->ProcessSubPanelListView("modules/Teams/SubPanelViewUsers.html", $mod_strings, 'DetailView');
     }
 }
 //END SUGARCRM flav=pro ONLY

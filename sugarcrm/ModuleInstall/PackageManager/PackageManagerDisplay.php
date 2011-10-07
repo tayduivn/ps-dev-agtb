@@ -427,6 +427,8 @@ class PackageManagerDisplay{
 		$ss->assign('ML_FILEGRIDINSTALLED_COLUMN',$filegridinstalled_column_ary);
 		//end
 
+		$ss->assign('SHOW_IMG', SugarThemeRegistry::current()->getImage('advanced_search', 'border="0"', 8, 8, '.gif', 'Show'));
+		$ss->assign('HIDE_IMG', SugarThemeRegistry::current()->getImage('basic_search', 'border="0"', 8, 8, '.gif', 'Hide'));
         $str = $ss->fetch('ModuleInstall/PackageManager/tpls/PackageManagerScripts.tpl');
         return $str;
     }

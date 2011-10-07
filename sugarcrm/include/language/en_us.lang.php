@@ -161,7 +161,7 @@ $app_list_strings = array (
     'Leads' => 'Lead',
   //END SUGARCRM flav!=sales ONLY
     //BEGIN SUGARCRM flav=pro ONLY
-
+    'Contracts'=>'Contract',
     'Quotes' => 'Quote',
     'Products' => 'Product',
     'Reports' => 'Report',
@@ -176,7 +176,7 @@ $app_list_strings = array (
     'Feeds' => 'RSS',
     'iFrames'=>'My Sites',
     'TimePeriods'=>'Time Period',
-    'Project'=>'Projects',
+    'Project'=>'Project',
     'ProjectTask'=>'Project Task',
     'Campaigns'=>'Campaign',
     'Documents'=>'Document',
@@ -463,14 +463,14 @@ $app_list_strings = array (
     'P3' => 'Low',
   ),
   //END SUGARCRM flav!=sales ONLY
-  //BEGIN SUGARCRM flav=sales ONLY
   'user_type_dom' =>
   array (
     'RegularUser' => 'Regular User',
+  //BEGIN SUGARCRM flav=sales ONLY
     'UserAdministrator' => 'User Administrator',
+  //END SUGARCRM flav=sales ONLY
     'Administrator' => 'Administrator',
   ),
-  //END SUGARCRM flav=sales ONLY
   'user_status_dom' =>
   array (
     'Active' => 'Active',

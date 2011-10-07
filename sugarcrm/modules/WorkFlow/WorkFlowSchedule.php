@@ -231,7 +231,9 @@ class WorkFlowSchedule extends SugarBean {
             } else {
                 $target_stamp = null;
             }
-            $this->date_expired = get_expiry_date("datetime", $time_array['time_int'], false, $update, $target_stamp);
+
+            // Bug # 46938, cannot call get_expiry_date in action_utils directly
+            $this->date_expired = $this->get_expiry_date($bean_object, $time_array['time_int'], true, $time_array['target_field']);
             //end if update is true, then just update existing expiry
         }
     //end function set_time_interval

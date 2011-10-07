@@ -88,6 +88,12 @@ class DynamicField {
             return false;
         if($module == '../data')return false;
 
+        // Employees is a fake module that actually loads it's fields from the
+        // Users module
+        if ($module == 'Employees') {
+            $module = 'Users';
+        }
+
         static $results = array ( ) ;
 
         $where = '';
@@ -136,6 +142,7 @@ class DynamicField {
                 $this->saveToVardef ( $module, false );
             }
         }
+
         return true;
 
     }
@@ -165,6 +172,7 @@ class DynamicField {
     * @param array $result
     */
     function saveToVardef($module,$result) {
+
 
         global $beanList;
         if (! empty ( $beanList [$module] )) {
@@ -212,6 +220,15 @@ class DynamicField {
             }
             $manager = new VardefManager ( );
             $manager->saveCache ( $this->module, $object );
+            // Everything works off of vardefs, so let's have it save the users vardefs
+            // to the employees module, because they both use the same table behind
+            // the scenes
+            if ( $module == 'Users' ) {
+                $GLOBALS['dictionary']['Employee'] = $GLOBALS['dictionary']['User'];
+                $manager->saveCache('Employee',$object);
+                return;
+            }
+
         }
     }
 
@@ -411,15 +428,17 @@ class DynamicField {
             }
 
             $queryInsert .= " ) VALUES $values )";
+
             if(!$first){
                 if(!$isUpdate){
                     $GLOBALS['db']->query($queryInsert);
                 }else{
                     $checkquery = "SELECT id_c FROM {$this->bean->table_name}_cstm WHERE id_c = '{$this->bean->id}'";
-                    if ( $GLOBALS['db']->getOne($checkquery) )
+                    if ( $GLOBALS['db']->getOne($checkquery) ) {
                         $result = $GLOBALS['db']->query($query);
-                    else
+                    } else {
                         $GLOBALS['db']->query($queryInsert);
+                    }
                 }
             }
         }
@@ -734,7 +753,11 @@ class DynamicField {
            );
 
             $query = $GLOBALS['db']->createTableSQLParams($this->bean->table_name."_cstm", $iddef, $ididx);
-            $indicesArr = $GLOBALS['db']->getConstraintSql($ididx, $this->bean->table_name."_cstm");
+            if(!$GLOBALS['db']->supports("inline_keys")) {
+                $indicesArr = $GLOBALS['db']->getConstraintSql($ididx, $this->bean->table_name."_cstm");
+            } else {
+                $indicesArr = array();
+            }
             if($execute) {
                 $GLOBALS['db']->query($query);
                 if(!empty($indicesArr)) {

@@ -677,7 +677,9 @@ class SugarSNIPClient
         $response = curl_exec($curl);
         if($response === false) {
             $this->last_error = 'ERROR_REQUEST_FAILED';
-            $GLOBALS['log']->debug("SNIP: cURL call failed");
+            $curl_errno = curl_errno($curl);
+            $curl_error = curl_error($curl);
+            $GLOBALS['log']->error("SNIP: cURL call failed: error $curl_errno: $curl_error");
             return false;
         }
         $GLOBALS['log']->debug("SNIP response: $response");

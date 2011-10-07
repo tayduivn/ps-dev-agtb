@@ -53,8 +53,8 @@ if (empty($license)){
 	//BEGIN SUGARCRM lic=sub ONLY
 
 // This section of code is a portion of the code referred
-// to as Critical Control Software under the End User 
-// License Agreement.  Neither the Company nor the Users 
+// to as Critical Control Software under the End User
+// License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
  if( !isset($_SESSION['LICENSE_EXPIRES_IN']) ){
         	checkSystemLicenseStatus();
@@ -81,14 +81,14 @@ if(!empty($_SESSION['HomeOnly'])){
 }
 
 if(isset($license) && !empty($license->settings['license_msg_all'])){
-	displayAdminError(base64_decode($license->settings['license_msg_all']));	
+	displayAdminError(base64_decode($license->settings['license_msg_all']));
 }
 if ( (strpos($_SERVER["SERVER_SOFTWARE"],'Microsoft-IIS') !== false) && (php_sapi_name() == 'cgi-fcgi') && (ini_get('fastcgi.logging') != '0') ) {
     displayAdminError(translate('LBL_FASTCGI_LOGGING', 'Administration'));
 }
 if(is_admin($current_user)){
 if(!empty($_SESSION['COULD_NOT_CONNECT'])){
-	displayAdminError(translate('LBL_COULD_NOT_CONNECT', 'Administration') . ' '. $timedate->to_display_date_time($_SESSION['COULD_NOT_CONNECT']));		
+	displayAdminError(translate('LBL_COULD_NOT_CONNECT', 'Administration') . ' '. $timedate->to_display_date_time($_SESSION['COULD_NOT_CONNECT']));
 }
 if(!empty($_SESSION['EXCEEDING_OC_LICENSES']) && $_SESSION['EXCEEDING_OC_LICENSES'] == true){
     displayAdminError(translate('LBL_EXCEEDING_OC_LICENSES', 'Administration'));
@@ -136,11 +136,11 @@ if($smtp_error) {
 
 
 			//BEGIN SUGARCRM lic=sub ONLY
-       // This section of code is a portion of the code referred
-// to as Critical Control Software under the End User 
-// License Agreement.  Neither the Company nor the Users 
+// This section of code is a portion of the code referred
+// to as Critical Control Software under the End User
+// License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
-       
+
         if(  !ocLicense() && isset($_SESSION['LICENSE_EXPIRES_IN']) && strcmp($_SESSION['LICENSE_EXPIRES_IN'], 'valid') != 0){
         	 if(strcmp($_SESSION['LICENSE_EXPIRES_IN'], 'REQUIRED') == 0){
         	 		setSystemState('LICENSE_KEY');
@@ -151,12 +151,12 @@ if($smtp_error) {
 	         			setSystemState('LICENSE_KEY');
 	         			displayAdminError( translate('FATAL_LICENSE_EXPIRED', 'Administration'). " [". abs($_SESSION['LICENSE_EXPIRES_IN']) . " day(s) ] .<br> ". translate('FATAL_LICENSE_EXPIRED2', 'Administration') );
 	         	}else{
-	         		displayAdminError( translate('ERROR_LICENSE_EXPIRED', 'Administration'). abs($_SESSION['LICENSE_EXPIRES_IN']) . translate('ERROR_LICENSE_EXPIRED2', 'Administration') );	
+	         		displayAdminError( translate('ERROR_LICENSE_EXPIRED', 'Administration'). abs($_SESSION['LICENSE_EXPIRES_IN']) . translate('ERROR_LICENSE_EXPIRED2', 'Administration') );
 	         	}
-	            
+
 	        }
 	        else if( $_SESSION['LICENSE_EXPIRES_IN'] >= 0 ){
-	        	
+
 	           displayAdminError( translate('WARN_LICENSE_EXPIRED', 'Administration'). $_SESSION['LICENSE_EXPIRES_IN'] . translate('WARN_LICENSE_EXPIRED2', 'Administration') );
 	        }
         }elseif(!ocLicense() && strcmp($_SESSION['VALIDATION_EXPIRES_IN'], 'valid') != 0){
@@ -169,7 +169,7 @@ if($smtp_error) {
 	         			setSystemState('LICENSE_KEY');
 	         			displayAdminError( translate('FATAL_VALIDATION_EXPIRED', 'Administration') . " [". abs($_SESSION['VALIDATION_EXPIRES_IN']) . " day(s) ] .<br>   " . translate('FATAL_VALIDATION_EXPIRED2', 'Administration') );
 	         	}else{
-	         		displayAdminError( translate('ERROR_VALIDATION_EXPIRED', 'Administration') . abs($_SESSION['VALIDATION_EXPIRES_IN']) .  translate('ERROR_VALIDATION_EXPIRED2', 'Administration') );	
+	         		displayAdminError( translate('ERROR_VALIDATION_EXPIRED', 'Administration') . abs($_SESSION['VALIDATION_EXPIRES_IN']) .  translate('ERROR_VALIDATION_EXPIRED2', 'Administration') );
 	         	}
 	         }
 	        else if( $_SESSION['VALIDATION_EXPIRES_IN'] >= 0 ){
@@ -182,27 +182,9 @@ if($smtp_error) {
             $focus->retrieveSettings();
             $license_users = isset($focus->settings['license_users'])?$focus->settings['license_users']:'';
 
-			//END SUGARCRM lic=sub ONLY
-
-		
-			//BEGIN SUGARCRM dep=od ONLY
-            $_SESSION['license_seats_needed'] = count( get_user_array(false, "Active", "", false, null, " AND deleted=0 AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser' ", false)) - $license_users;
-			//END SUGARCRM dep=od ONLY
-
-
-		//BEGIN SUGARCRM (flav=pro || flav=sales) && dep=os ONLY
-
-
-            	$_SESSION['license_seats_needed'] = count( get_user_array(false, "Active", "", false, null, " AND deleted=0 AND is_group=0 AND portal_only=0", false)) - $license_users;
-
-		//END SUGARCRM (flav=pro || flav=sales)  && dep=os ONLY
-
-
-
-
-		//BEGIN SUGARCRM lic=sub ONLY
-
+            $_SESSION['license_seats_needed'] = count( get_user_array(false, "", "", false, null, " AND ".User::getLicensedUsersWhere(), false)) - $license_users;
         }
+
         if( $_SESSION['license_seats_needed'] > 0 ){
             displayAdminError( translate('WARN_LICENSE_SEATS', 'Administration'). $_SESSION['license_seats_needed'] . translate('WARN_LICENSE_SEATS2', 'Administration')  );
         }
@@ -215,7 +197,7 @@ if($smtp_error) {
 					displayAdminError(translate('WARN_UPGRADE', 'Administration'). $invalid['name'] .translate('WARN_UPGRADE2', 'Administration'));
 				}
 			}
-		
+
 			if (isset($_SESSION['available_version'])){
 				if($_SESSION['available_version'] != $sugar_version)
 				{

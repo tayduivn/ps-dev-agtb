@@ -22,7 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-
 require_once('include/SugarFields/Fields/Currency/SugarFieldCurrency.php');
 
 class Bug38424CurrencyTest extends Sugar_PHPUnit_Framework_TestCase

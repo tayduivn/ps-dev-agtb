@@ -293,8 +293,9 @@ class SugarTheme
                 if ( isset($caches['templateCache']) )
                     $this->_templateCache = $caches['templateCache'];
             }
-			if($GLOBALS['sugar_config']['use_sprites'] && sugar_is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php')) {
-				$this->_spriteCache = unserialize(sugar_file_get_contents($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php'));
+            $cachedfile = sugar_cached($this->getFilePath().'/spriteCache.php');
+			if(!empty($GLOBALS['sugar_config']['use_sprites']) && sugar_is_file($cachedfile)) {
+				$this->_spriteCache = unserialize(sugar_file_get_contents($cachedfile));
 			}
         }
         $this->_initialCacheSize = array(
@@ -314,16 +315,18 @@ class SugarTheme
     {
         // Bug 28309 - Set the current directory to one which we expect it to be (i.e. the root directory of the install
         set_include_path(realpath(dirname(__FILE__) . '/../..') . PATH_SEPARATOR . get_include_path());
-        chdir(realpath(dirname(__FILE__) . '/../..'));
-
+        $cachedir = sugar_cached($this->getFilePath());
+        if(!file_exists($cachedir)) {
+            sugar_mkdir($cachedir, 0775, true);
+        }
         // clear out the cache on destroy if we are asked to
         if ( $this->_clearCacheOnDestroy ) {
 
-            if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php'))
-                unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/pathCache.php');
-			if (is_file($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php'))
-				unlink($GLOBALS['sugar_config']['cache_dir'].$this->getFilePath().'/spriteCache.php');
-				
+            if (is_file("$cachedir/pathCache.php"))
+                unlink("$cachedir/pathCache.php");
+			if (is_file("$cachedir/spriteCache.php"))
+				unlink("$cachedir/spriteCache.php");
+
         }
         elseif ( !inDeveloperMode() ) {
             // only update the caches if they have been changed in this request
@@ -333,7 +336,7 @@ class SugarTheme
                     || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
                 ) {
                 sugar_file_put_contents(
-                    create_cache_directory($this->getFilePath().'/pathCache.php'),
+                    "$cachedir/pathCache.php",
                     serialize(
                         array(
                             'jsCache'       => $this->_jsCache,
@@ -347,7 +350,7 @@ class SugarTheme
             }
 			if ( count($this->_spriteCache) != $this->_initialCacheSize['spriteCache']) {
 				sugar_file_put_contents(
-					create_cache_directory($this->getFilePath().'/spriteCache.php'),
+					"$cachedir/spriteCache.php",
 					serialize($this->_spriteCache)
 				);
 			}
@@ -637,7 +640,7 @@ EOHTML;
 	 * @param  string $height optional, defaults to the actual image's height
 	 * @param  string $ext optional, image extension (TODO can we depricate this one ?)
      * @param  string $alt optional, only used when image contains something useful, i.e. "Sally's profile pic"
-     * @return string HTML image tag or sprite 
+     * @return string HTML image tag or sprite
      */
     public function getImage(
         $imageName,
@@ -692,14 +695,14 @@ EOHTML;
     }
 
 	/**
-	 * Returns sprite meta data 
-	 * 
+	 * Returns sprite meta data
+	 *
 	 * @param  string $imageName Image filename including extension
 	 * @return array  Sprite meta data
 	 */
 	public function getSpriteMeta($imageName) {
 
-		// return from cache 
+		// return from cache
 		if(isset($this->_spriteCache[$imageName]))
 			return $this->_spriteCache[$imageName];
 
@@ -754,7 +757,7 @@ EOHTML;
 			$attr .= ' class="spr_'.$class.'"';
 		}
 
-		if($title) 
+		if($title)
 			$attr .= ' title="'.$title.'"';
 
 		// use </span> instead of /> to prevent weird UI results
@@ -762,9 +765,9 @@ EOHTML;
 		return "<span {$attr}></span>";
 	}
 
-	/**                                                                                                                                                      
+	/**
 	 * Returns a link HTML tag with or without an embedded image
-	 */                                                                                                                                                      
+	 */
     public function getLink(
 		$url,
 		$title,
@@ -775,9 +778,9 @@ EOHTML;
 		$img_height = null,
 		$img_alt = '',
 		$img_placement = 'imageonly'
-    )                                                                                                                                                        
+    )
     {
-		
+
 		if($img_name) {
 			$img = $this->getImage($img_name, $img_other_attributes, $img_width, $img_height, null, $img_alt);
 			if($img == false) {
