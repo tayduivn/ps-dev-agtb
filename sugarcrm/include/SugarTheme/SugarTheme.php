@@ -540,7 +540,7 @@ class SugarTheme
         $html .= '<link rel="stylesheet" type="text/css" href="'.$this->getCSSURL('style.css').'" />';
 
 		// sprites
-		if($GLOBALS['sugar_config']['use_sprites']) {
+		if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
 
 			// system wide sprites
 			if(file_exists("cache/sprites/default/sprites.css"))
@@ -668,7 +668,7 @@ EOHTML;
 			$GLOBALS['log']->debug("VINK alt attribute detected for $imageName");
 
 		// sprite handler, makes use of own caching mechanism
-		if($GLOBALS['sugar_config']['use_sprites']) {
+		if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
 			// get sprite metadata
 			if($sp = $this->getSpriteMeta($imageName)) {
 				// requested size should match
