@@ -50,8 +50,8 @@ class SugarSpriteBuilder
 	// sprite settings
 	var $pngCompression = 9;
 	var $pngFilter = PNG_NO_FILTER;
-	var $maxWidth = 50; 
-	var $maxHeight = 50;
+	var $maxWidth = 75;
+	var $maxHeight = 75;
 	var $rowCnt = 30;
 
 	// processed image types
@@ -74,7 +74,13 @@ class SugarSpriteBuilder
 		if(function_exists('imagecreatetruecolor'))
         {
 			$this->isAvailable = true;
-			$this->getSupportedTypes();
+            foreach($this->supportedTypeMap as $gd_bit => $imagetype)
+            {
+                if(imagetypes() & $gd_bit) {
+                    // swap gd_bit & imagetype
+                    $this->imageTypes[$imagetype] = $gd_bit;
+                }
+            }
 		}
 
         if(function_exists('logThis') && isset($GLOBALS['path']))
@@ -83,17 +89,14 @@ class SugarSpriteBuilder
         }
 	}
 
-	// load supported image types
-	public function getSupportedTypes() {
-		foreach($this->supportedTypeMap as $gd_bit => $imagetype) {
-			if(imagetypes() & $gd_bit) {
-				// swap gd_bit & imagetype
-				$this->imageTypes[$imagetype] = $gd_bit;
-			}
-		}
-	}
 
-	// populate sprites array
+    /**
+     * addDirectory
+     *
+     * This function is used to create the spriteSrc array
+     * @param $name String value of the sprite name
+     * @param $dir String value of the directory associated with the sprite entry
+     */
 	public function addDirectory($name, $dir) {
 
 		// sprite namespace
@@ -104,10 +107,14 @@ class SugarSpriteBuilder
 
 		// add files from directory
 		$this->spriteSrc[$name][$dir] = $this->getFileList($dir);
-		
 	}
 
-	// process files in a directory and add them to the sprites array 
+	/**
+     * getFileList
+     *
+     * This method processes files in a directory and adds them to the sprites array
+     * @param $dir String value of the directory to scan for image files in
+     */
 	private function getFileList($dir) {
 		$list = array();
 		if(is_dir($dir)) {
@@ -153,7 +160,10 @@ class SugarSpriteBuilder
 									$list[$file] = $info;
                                 }
 							}
-						}
+						} else if(preg_match('/\.(jpg|jpeg|gif|png|bmp|ico)$/i', $file)) {
+                            $GLOBALS['log']->error('Unable to process image file ' . $file);
+                            //$this->logMessage('Unable to process image file ' . $file);
+                        }
 	   	     		}
    		 		}
 			}
@@ -162,7 +172,16 @@ class SugarSpriteBuilder
 		return $list;
 	}
 
-	// load sprites_config
+
+    /**
+     * loadSpritesConfig
+     *
+     * This function is used to load the sprites_config.php file.  The sprites_config.php file may be used to add entries
+     * to the sprites_config member variable which may contain a list of array entries of files/directories to exclude from
+     * being included into the sprites image.
+     *
+     * @param $dir String value of the directory containing the custom sprites_config.php file
+     */
 	private function loadSpritesConfig($dir) {
 		$sprites_config = array();
 		if(file_exists("$dir/sprites_config.php"))
@@ -174,7 +193,15 @@ class SugarSpriteBuilder
 		}
 	}
 
-	// return array of file info if image type is supported
+
+	/**
+     * getFileInfo
+     *
+     * This is a private helper function to return attributes about an image.  If the width, height or type of the
+     * image file cannot be determined, then we do not process the file.
+     *
+     * @return array of file info entries containing file information (x, y, type) if image type is supported
+     */
 	private function getFileInfo($dir, $file) {
 		$result = false;
 		$info = @getimagesize($dir.'/'.$file);
@@ -205,12 +232,23 @@ class SugarSpriteBuilder
 					$result['y'] = $h;
 					$result['type'] = $info[2];
 				}
-			}
+			} else {
+                $msg = "Unsupported image file type ({$info[2]}) for file {$file}";
+                $GLOBALS['log']->error($msg);
+                $this->logMessage($msg);
+            }
 		}
 		return $result;
 	}
 
-	// create sprites
+
+    /**
+     * createSprites
+     *
+     * This is the public function to allow the sprites to be built.
+     *
+     * @return $result boolean value indicating whether or not sprites were created
+     */
 	public function createSprites() {
 
         global $mod_strings;
@@ -406,7 +444,14 @@ background-position: -{$offset_x}px -{$offset_y}px;
 		return true;
 	}
 
-	// initialize sprite image
+
+	/**
+     * initSpriteImg
+     *
+     * @param w int value representing width of sprite
+     * @param h int value representing height of sprite
+     * Private function to initialize creating the sprite canvas image
+     */
 	private function initSpriteImg($w, $h) {
 		$this->spriteImg = imagecreatetruecolor($w,$h);
 		$transparent = imagecolorallocatealpha($this->spriteImg, 0, 0, 0, 127);
@@ -415,7 +460,17 @@ background-position: -{$offset_x}px -{$offset_y}px;
 		imagesavealpha($this->spriteImg, true);
 	} 
 
-	// load image resource
+
+	/**
+     * loadImage
+     *
+     * private function to load image resources
+     *
+     * @param $dir String value of directory where image is located
+     * @param $file String value of file
+     * @param $type String value of the file type (IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG)
+     *
+     */
 	private function loadImage($dir, $file, $type) {
 		$path_file = $dir.'/'.$file;
 		switch($type) {
@@ -430,6 +485,14 @@ background-position: -{$offset_x}px -{$offset_y}px;
 		}
 	}
 
+    /**
+     * private logMessage
+     *
+     * This is a private function used to log messages generated from this class.  Depending on whether or not
+     * silentRun or fromSilentUpgrade is set to true/false then it will either output to screen or write to log file
+     *
+     * @param $msg String value of message to log into file or echo into output buffer depending on the context
+     */
     private function logMessage($msg)
     {
         if(!$this->silentRun && !$this->fromSilentUpgrade)
