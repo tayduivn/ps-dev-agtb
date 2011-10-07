@@ -91,6 +91,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 	}
 	
 	public function testCalendarLoadActivities(){
+        $this->markTestSkipped("Skipping Test");
 		$cal = new Calendar('month');
 		$cal->add_activities($GLOBALS['current_user']);
 		$format = $GLOBALS['current_user']->getUserDateTimePreferences();
