@@ -67,6 +67,7 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	    $this->admin->retrieveSettings();
 	    unset($_SESSION['license_seats_needed']);
 	    $_SESSION['EXCEEDS_MAX_USERS'] = 0;
+	    unset($_SESSION['authenticated_user_id']);
 	}
 
 	public function tearDown()
@@ -83,6 +84,7 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
         global $timedate, $login_error; // cn: bug 13855 - timedate not available to classic views.
         $admin = $this->admin;
         $this->admin->retrieveSettings();
+        include 'sugar_version.php';
         include "modules/Users/Login.php";
         if($expect) {
             $this->assertEquals(1, $_SESSION['EXCEEDS_MAX_USERS']);
