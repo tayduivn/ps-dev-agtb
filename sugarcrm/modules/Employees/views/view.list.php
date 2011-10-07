@@ -48,7 +48,7 @@ class EmployeesViewList extends ViewList
     function prepareSearchForm() {
         parent::prepareSearchForm();
         require_once('modules/Employees/EmployeesSearchForm.php');
-        $newForm = new EmployeeSearchForm($this->searchForm);
+        $newForm = new EmployeesSearchForm($this->searchForm);
         $this->searchForm = $newForm;
     }
 

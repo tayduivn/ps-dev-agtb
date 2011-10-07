@@ -34,13 +34,30 @@ class EmployeesSearchForm extends SearchForm {
      * This builds an EmployeesSearchForm from a classic search form.
      */
     function __construct( SearchForm $oldSearchForm ) {
-        $this->searchForm($oldSearchForm->seed, $oldSearchForm->module, $oldSearchForm->action);
+        parent::SearchForm($oldSearchForm->seed, $oldSearchForm->module, $oldSearchForm->action);
+        $this->setup(
+            // $searchdefs
+            array($oldSearchForm->module => $oldSearchForm->searchdefs),
+            // $searchFields
+            array($oldSearchForm->module => $oldSearchForm->searchFields),
+            // $tpl
+            $oldSearchForm->tpl,
+            // $displayView
+            $oldSearchForm->displayView,
+            // listViewDefs
+            $oldSearchForm->listViewDefs);
+        
+        $this->lv = $oldSearchForm->lv;
+                     
     }
     
     public function generateSearchWhere($add_custom_fields = false, $module = '') {
         $where_clauses = parent::generateSearchWhere($add_custom_fields, $module);
         
         // Add in code to remove portal/group/terminated users
+        $where_clauses[] = "portal_only = 0";
+        $where_clauses[] = "is_group = 0";
+        $where_clauses[] = "status <> 'Reserved'";
         
         return $where_clauses;
     }
