@@ -278,7 +278,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 		img.style.visibility = "";
 	}
 	else if (field.type == "checkbox") {
-		field.checked = value == SUGAR.expressions.Expression.TRUE;
+		field.checked = value == SUGAR.expressions.Expression.TRUE || value === true;
 	}
     else if(value instanceof Date)
     {

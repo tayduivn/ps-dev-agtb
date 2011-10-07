@@ -43,21 +43,32 @@ class RelatedFieldExpression extends GenericExpression
         {
             if (!empty($bean->field_defs[$relfield]) && isset($bean->$relfield))
             {
-                global $timedate;
-                if (!empty($bean->field_defs[$relfield]['type']) && $bean->field_defs[$relfield]['type'] == "date")
+                if (!empty($bean->field_defs[$relfield]['type']))
                 {
-                    $ret = $timedate->fromDbDate($bean->$relfield);
-                    if (!$ret)
-                        $ret = $timedate->fromUserDate($bean->$relfield);
-                    $ret->isDate = true;
-                    return $ret;
-                }
-                if (!empty($bean->field_defs[$relfield]['type']) && $bean->field_defs[$relfield]['type'] == "datetime")
-                {
-                    $ret = $timedate->fromDb($bean->$relfield);
-                    if (!$ret)
-                        $ret = $timedate->fromUser($bean->$relfield);
-                    return $ret;
+                    global $timedate;
+                    if ($bean->field_defs[$relfield]['type'] == "date")
+                    {
+                        $ret = $timedate->fromDbDate($bean->$relfield);
+                        if (!$ret)
+                            $ret = $timedate->fromUserDate($bean->$relfield);
+                        $ret->isDate = true;
+                        return $ret;
+                    }
+                    if ($bean->field_defs[$relfield]['type'] == "datetime")
+                    {
+                        $ret = $timedate->fromDb($bean->$relfield);
+                        if (!$ret)
+                            $ret = $timedate->fromUser($bean->$relfield);
+                        return $ret;
+                    }
+                    if ($bean->field_defs[$relfield]['type'] == "bool")
+                    {
+                        require_once("include/Expressions/Expression/Boolean/BooleanExpression.php");
+                        if ($bean->$relfield)
+                            return BooleanExpression::$TRUE;
+                        else
+                            return BooleanExpression::$FALSE;
+                    }
                 }
                 else {
 					return $bean->$relfield;
