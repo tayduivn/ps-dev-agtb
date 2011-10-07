@@ -480,4 +480,15 @@ class UserPreference extends SugarBean
         unset($newstr);
     }
 
+    /**
+     * Utility method to see if the current user is the $_userFocus Object
+     *
+     * @return bool
+     */
+    protected function isCurrentUser()
+    {
+        global $current_user;
+        
+        return ($this->_userFocus instanceof User && $current_user instanceof User && $this->_userFocus->id == $current_user->id);
+    }
 }

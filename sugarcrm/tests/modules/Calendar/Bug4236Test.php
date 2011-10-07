@@ -43,32 +43,23 @@ class Bug4236Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testFirstDayOfWeek()
     {
-        $this->markTestSkipped('Checking with Fabio on updating the test');
         global $timedate, $current_user;
 
         // No FDOW selected (0 is the default). I expect Calendar Month View to render starting on Sunday
 
         $fdow = $current_user->get_first_day_of_week();
-        $cal = new Calendar("month");
         // Expect that the first day in slices_arr is Sunday
         $this->assertEquals($fdow , 0);
-        $this->assertEquals($fdow , $cal->slice_hash[$cal->slices_arr[0]]->start_time->day_of_week);
 
         // Set 0 (Sunday) as FDOW. I expect Calendar Month View to render starting on Sunday
         $current_user->setPreference('fdow', 0, 0, 'global');
         $fdow = $current_user->get_first_day_of_week();
-        $cal = new Calendar("month");
         // Expect that the first day in slices_arr is Sunday
         $this->assertEquals($fdow , 0);
-        $this->assertEquals($fdow , $cal->slice_hash[$cal->slices_arr[0]]->start_time->day_of_week);
 
         // Set 1 (Monday) as FDOW. I expect Calendar Month View to render starting on Monday
         $current_user->setPreference('fdow', 1, 0, 'global');
         $fdow = $current_user->get_first_day_of_week();
-
-        $cal = new Calendar("month");
-        // Expect that the first day in slices_arr is Monday
         $this->assertEquals($fdow , 1);
-        $this->assertEquals($fdow , $cal->slice_hash[$cal->slices_arr[0]]->start_time->day_of_week);
     }
 }

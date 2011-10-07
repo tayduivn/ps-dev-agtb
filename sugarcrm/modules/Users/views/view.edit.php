@@ -29,11 +29,11 @@ class UsersViewEdit extends ViewEdit {
  	function UsersViewEdit(){
  		parent::ViewEdit();
  	}
-    
+
     function preDisplay() {
         $this->fieldHelper = new UserViewHelper($this->ss, $this->bean, 'EditView');
         $this->fieldHelper->setupAdditionalFields();
-        
+
         parent::preDisplay();
     }
 
@@ -60,7 +60,7 @@ class UsersViewEdit extends ViewEdit {
         }
         return $metadataFile;
     }
-    
+
     function display() {
         global $current_user, $app_list_strings;
 
@@ -89,13 +89,13 @@ class UsersViewEdit extends ViewEdit {
             $this->ss->assign('REASSIGN_JS', "return confirmReassignRecords();");
             //END SUGARCRM flav=pro ONLY
         }
-        
+
         ////	END NEW USER CREATION ONLY
         ///////////////////////////////////////////////////////////////////////////////
 
 
 
-        
+
 	    //BEGIN SUGARCRM lic=sub ONLY
         global $sugar_flavor;
         if((isset($sugar_flavor) && $sugar_flavor != null) &&
@@ -105,17 +105,8 @@ class UsersViewEdit extends ViewEdit {
                 $admin->retrieveSettings();
                 $license_users = $admin->settings['license_users'];
                 if ($license_users != '') {
-        //END SUGARCRM lic=sub ONLY
-		//BEGIN SUGARCRM dep=od ONLY
-
-                    $license_seats_needed = count( get_user_array(false, "Active", "", false, null, " AND is_group=0 AND portal_only=0 AND user_name not like 'SugarCRMSupport' AND user_name not like '%_SupportUser'", false) ) - $license_users;
-		//END SUGARCRM dep=od ONLY
-		//BEGIN SUGARCRM flav=pro  && dep=os ONLY
-                    $license_seats_needed = count( get_user_array(false, "Active", "", false, null, " AND deleted=0 AND is_group=0 AND portal_only=0 ", false) ) - $license_users;
-		//END SUGARCRM flav=pro  && dep=os ONLY
-        //BEGIN SUGARCRM lic=sub ONLY
-                }
-                else {
+                    $license_seats_needed = count( get_user_array(false, "", "", false, null, " AND ".User::getLicensedUsersWhere(), false) ) - $license_users;
+                } else {
                     $license_seats_needed = -1;
                 }
                 if( $license_seats_needed >= 0 ){
@@ -128,7 +119,7 @@ class UsersViewEdit extends ViewEdit {
             }
         }
 	    //END SUGARCRM lic=sub ONLY
-        
+
         // FIXME: Translate error prefix
         if(isset($_REQUEST['error_string'])) $this->ss->assign('ERROR_STRING', '<span class="error">Error: '.$_REQUEST['error_string'].'</span>');
         if(isset($_REQUEST['error_password'])) $this->ss->assign('ERROR_PASSWORD', '<span id="error_pwd" class="error">Error: '.$_REQUEST['error_password'].'</span>');
@@ -138,7 +129,7 @@ class UsersViewEdit extends ViewEdit {
 
         // Build viewable versions of a few fields for non-admins
         if(!empty($this->bean->id)) {
-            if( !empty($this->bean->status) ) { 
+            if( !empty($this->bean->status) ) {
                 $this->ss->assign('STATUS_READONLY',$app_list_strings['user_status_dom'][$this->bean->status]); }
             if( !empty($this->bean->employee_status) ) {
                 $this->ss->assign('EMPLOYEE_STATUS_READONLY', $app_list_strings['employee_status_dom'][$this->bean->employee_status]);
@@ -147,15 +138,15 @@ class UsersViewEdit extends ViewEdit {
                 $this->ss->assign('REPORTS_TO_READONLY', get_assigned_user_name($this->bean->reports_to_id));
             }
         }
-        
+
         //BEGIN SUGARCRM flav!=sales ONLY
-        if ( $this->fieldHelper->usertype == 'GROUP' 
+        if ( $this->fieldHelper->usertype == 'GROUP'
              //BEGIN SUGARCRM flav=ent ONLY
              || $this->fieldHelper->usertype == 'PORTAL_ONLY'
              //END SUGARCRM flav=ent ONLY
             ) {
             $this->ev->formName = 'EditViewGroup';
-            
+
         }
         //END SUGARCRM flav!=sales ONLY
         return parent::display();
