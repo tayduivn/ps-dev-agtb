@@ -1537,7 +1537,14 @@ SE.composeLayout = {
             } else if(SUGAR.email2.userPrefs.signatures.signature_prepend == 'true') {
             	var newHtml = '<br/>' + openTag + newSignature + closeTag + html;
             } else {
-                var newHtml = html + openTag + newSignature + closeTag;
+                var body = html.indexOf('</body>');
+                if (body > -1) {
+                    var part1 = html.substr(0, body);
+                    var part2 = html.substr(body, html.length);
+                    var newHtml = part1 + openTag + newSignature + closeTag + part2;
+                } else {
+                    var newHtml = html + openTag + newSignature + closeTag;
+                }
             }
             //tinyMCE.setContent(newHtml);
             t.setContent(newHtml);
