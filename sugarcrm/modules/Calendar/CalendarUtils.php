@@ -27,6 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 /**
  * Created by JetBrains PhpStorm.
  * User: admin
@@ -38,7 +39,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class CalendarUtils {
 
 	/**
-	 * Returns true if out of working days
+	 * Returns true if out of working day
 	 * @param integer $i hours
 	 * @param integer $j minutes
 	 * @param integer $r_start start of working day in minutes

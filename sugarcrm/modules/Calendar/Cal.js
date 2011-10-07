@@ -53,7 +53,7 @@
 			var duration_text = ActRecord.duration_hours + "h";
 			if(ActRecord.duration_minutes > 0)
 				duration_text += ActRecord.duration_minutes + "m";
-			var startD = new Date((ActRecord.start)*1000);
+			var startD = new Date((ActRecord.timestamp)*1000);
 			
 			var suffix = "";
 			var id_suffix = "";			
@@ -70,7 +70,7 @@
 				
 			var start_text = CAL.get_header_text(ActRecord.type,ActRecord.time_start,ActRecord.status,ActRecord.record);
 			
-			var time_cell = ActRecord.start - ActRecord.start % (CAL.t_step * 60);			
+			var time_cell = ActRecord.timestamp - ActRecord.timestamp % (CAL.t_step * 60);			
 			
 			var duration_coef; 
 			if(ActRecord.module_name == 'Tasks'){
@@ -190,6 +190,11 @@
 					dd.endDrag  = function(x,y){		
 						this.el = document.getElementById(this.id);
 						this.el.style.zIndex = "";
+						
+						var nodes = CAL.query("#cal-grid .slot");
+						CAL.each(nodes,function(i,v){
+							YAHOO.util.Dom.removeClass(nodes[i],"slot_active");
+						});						
 					}
 					
 					dd.onDragDrop = function(e,id){ 
@@ -709,13 +714,13 @@
 				CAL.removeSharedById(res.record);
 				record_id = res.record;
 				//var rec_id_c = res.rec_id_c;
-				var start = res.start;
+				var timestamp = res.timestamp;
 				CAL.each(
 					res.users,
 					function (i,v){						
 						var rec = res;
 						//rec.rec_id_c = rec_id_c;
-						rec.start = start;						
+						rec.timestamp = timestamp;						
 						rec.user_id = v;
 						rec.record = record_id;
 						CAL.AddRecordToPage(rec);
@@ -724,7 +729,7 @@
 							rec.arr_rec,
 							function (j,r){
 								rec.record = r.record;
-								rec.start = r.start;
+								rec.timestamp = r.timestamp;
 								//rec.rec_id_c = record_id;
 								CAL.AddRecordToPage(rec);
 							}				

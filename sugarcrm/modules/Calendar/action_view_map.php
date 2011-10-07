@@ -27,6 +27,7 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 $action_view_map['ajaxsave'] = 'ajaxsave';
 $action_view_map['ajaxreschedule'] = 'ajaxreschedule';
 $action_view_map['ajaxremove'] = 'ajaxremove';

@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
  
 require_once('include/utils/activity_utils.php');
 
@@ -35,52 +36,46 @@ class CalendarActivity {
 	var $end_time;
 
 	function CalendarActivity($args){
-	    // if we've passed in an array, then this is a free/busy slot
-	    // and does not have a sugarbean associated to it
+		// if we've passed in an array, then this is a free/busy slot
+		// and does not have a sugarbean associated to it
 		global $timedate;
 
 		if ( is_array ( $args )){
-		   $this->start_time = clone $args[0];
-		   $this->end_time = clone $args[1];
-		   $this->sugar_bean = null;
-		   $timedate->tzGMT($this->start_time);
-		   $timedate->tzGMT($this->end_time);
-		   return;
+			$this->start_time = clone $args[0];
+			$this->end_time = clone $args[1];
+			$this->sugar_bean = null;
+			$timedate->tzGMT($this->start_time);
+			$timedate->tzGMT($this->end_time);
+			return;
 		}
 
 	    // else do regular constructor..
 
 	    	$sugar_bean = $args;
-			$this->sugar_bean = $sugar_bean;
+		$this->sugar_bean = $sugar_bean;
 
 
-			if ($sugar_bean->object_name == 'Task')
-			{
-			    $this->start_time = $timedate->fromUser($this->sugar_bean->date_due);
-				if ( empty($this->start_time))
-				{
-					return null;
-				}
-
-				$this->end_time = $timedate->fromUser($this->sugar_bean->date_due);
+		if ($sugar_bean->object_name == 'Task'){
+			$this->start_time = $timedate->fromUser($this->sugar_bean->date_due);
+			if ( empty($this->start_time)){
+				return null;
 			}
-			else
-			{
-		    $this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
-				if ( empty($this->start_time))
-				{
-				    return null;
-				}
-				$hours = $this->sugar_bean->duration_hours;
-				if(empty($hours)) {
-				    $hours = 0;
-				}
-				$mins = $this->sugar_bean->duration_minutes;
-				if(empty($mins)) {
-				    $mins = 0;
-				}
-				$this->end_time = $this->start_time->get("+$hours hours $mins minutes");
+			$this->end_time = $timedate->fromUser($this->sugar_bean->date_due);
+		}else{
+			$this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
+			if ( empty($this->start_time)){
+			    return null;
 			}
+			$hours = $this->sugar_bean->duration_hours;
+			if(empty($hours)){
+			    $hours = 0;
+			}
+			$mins = $this->sugar_bean->duration_minutes;
+			if(empty($mins)){
+			    $mins = 0;
+			}
+			$this->end_time = $this->start_time->get("+$hours hours $mins minutes");
+		}
 		// Convert it back to database time so we can properly manage it for getting the proper start and end dates
 		$timedate->tzGMT($this->start_time);
 		$timedate->tzGMT($this->end_time);
@@ -88,19 +83,19 @@ class CalendarActivity {
 
 	function get_occurs_within_where_clause($table_name, $rel_table, $start_ts_obj, $end_ts_obj, $field_name='date_start', $view){
 		global $timedate;
-        // ensure we're working with user TZ
+        	// ensure we're working with user TZ
 		$start_ts_obj = $timedate->tzUser($start_ts_obj);
 		$end_ts_obj = $timedate->tzUser($end_ts_obj);
 		switch ($view) {
 			case 'month':
-                //C.L. For the start date, go back 6 days since 99 hours is the max duration (6 days)
-                $start = $start_ts_obj->get("-6 days")->get_day_begin();
+		        	//C.L. For the start date, go back 6 days since 99 hours is the max duration (6 days)
+		       		$start = $start_ts_obj->get("-6 days")->get_day_begin();
 				$end = $end_ts_obj->get("first day of next month")->get_day_begin();
 				break;
-            case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
-                $start = $start_ts_obj;
-                $end = $end_ts_obj;
-                break;
+		   	case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
+				$start = $start_ts_obj;
+				$end = $end_ts_obj;
+				break;
 			default:
 				// Date for the past 5 days as that is the maximum duration of a single activity
 				$start = $start_ts_obj->get("-5 days")->get_day_begin();
@@ -109,16 +104,16 @@ class CalendarActivity {
 		}
 
 		$field_date = $table_name.'.'.$field_name;
-        $start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
-        $end_day = $GLOBALS['db']->convert("'{$end->asDb()}'",'datetime');
+		$start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
+		$end_day = $GLOBALS['db']->convert("'{$end->asDb()}'",'datetime');
 
 		$where = "($field_date >= $start_day AND $field_date < $end_day";
-        if($rel_table != '') {
-            $where .= " AND $rel_table.accept_status != 'decline'";
-        }
+		if($rel_table != '') {
+		    $where .= " AND $rel_table.accept_status != 'decline'";
+		}
 
-		$where .= ")";
-		return $where;
+			$where .= ")";
+			return $where;
 	}
 
 	function get_freebusy_activities($user_focus, $start_date_time, $end_date_time){
@@ -135,7 +130,6 @@ class CalendarActivity {
 			  $act_list[] = new CalendarActivity($dates_arr);
 			}
 		}
-		usort($act_list,'sort_func_by_act_date');
 		return $act_list;
 	}
 
