@@ -139,7 +139,7 @@ SUGAR.gantt = function() {
 	        /* Add Calendar Dates to Top Row of Gantt Chart */
 	        ganttDates = document.createElement('tr');
 	        ganttDates.setAttribute('bgcolor', bgcolor);
-	        ganttDates.setAttribute('height', '34');
+	        ganttDates.setAttribute('height', '35');
 	        ganttDateEmptyFirstCell = document.createElement('td');
 	        ganttDateEmptyFirstCell.setAttribute('align', 'middle');
 	        ganttDateEmptyFirstCell.setAttribute('width', '5%');
@@ -205,7 +205,7 @@ SUGAR.gantt = function() {
 	        ganttRow = document.createElement('tr');
 	        ganttRow.setAttribute('id', 'header_row');
 	        ganttRow.setAttribute('bgcolor', bgcolor);
-	        ganttRow.setAttribute('height', '14');
+	        ganttRow.setAttribute('height', '15');
 	        ganttEmptyFirstCell = document.createElement('td');
 	        ganttEmptyFirstCell.setAttribute('width', '5%');
 	        ganttEmptyFirstCell.innerHTML = '\u00a0';
@@ -543,7 +543,7 @@ SUGAR.gantt = function() {
 
 	        // insert Left Cell
 	        var cellLeft = row.insertCell(0);
-	        cellLeft.innerHTML = task_num;
+	        cellLeft.innerHTML = '<div class="tasknum">'+task_num+'</div>';
 	        cellLeft.setAttribute('id', 'task_'+SUGAR.grid.getMappedRow(task_num)+'_id');
 
 	        // insert Middle Cell

@@ -27,7 +27,7 @@
  ********************************************************************************/
     #projectTable td, #projectTable th, #gantt td
     {
-        border: 1px outset #808080;
+        border: 1px inset #808080;
     }
     
     #projectTable th, 
@@ -163,14 +163,37 @@
 	    overflow-x:auto;
 	    overflow-y:hidden;
 	}
-	
+
+    #grid_space table  {
+		border-collapse:separate;
+		border: 1px solid gray;
+		border-spacing:0;
+	}
+
+	#grid_space table select, #grid_space table input{
+		border:0;
+		padding:0;
+		margin:0;
+		height:23px;
+	}
+
 	#gantt_area{
 	    margin-left:504px;
 	    margin-right:0px;
 	    height:100%;
 	    overflow:auto;
 	}
-	
+
+	#gantt_area table  {
+		border-collapse:separate;
+		border: 1px solid gray;
+		border-spacing:0;
+	}
+
+	#gantt_area table td div.tasknum {
+		height:23px;
+		vertical-align:middle;
+	}
 	#resizer{
 	    top:0px;
 	    position:absolute;
