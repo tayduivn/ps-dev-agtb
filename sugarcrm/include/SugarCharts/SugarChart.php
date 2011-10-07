@@ -682,7 +682,7 @@ class SugarChart {
 		//BEGIN SUGARCRM flav=int ONLY
 		/*
 		//END SUGARCRM flav=int ONLY
-		$xmlContents = chr(255).chr(254).mb_convert_encoding($xmlContents, 'UTF-16LE', 'UTF-8');
+		$xmlContents = chr(255).chr(254).$GLOBALS['locale']->translateCharset($xmlContents, 'UTF-8', 'UTF-16LE');
 		//BEGIN SUGARCRM flav=int ONLY
 		*/
 		//END SUGARCRM flav=int ONLY
