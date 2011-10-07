@@ -181,7 +181,8 @@ class ImportViewExtStep1 extends ImportViewStep3
 
     private function getMappingFile($source)
     {
-        $classname = 'ImportMap' . ucfirst($source);
+        $classname = 'ImportMap' . ucfirst(strtolower($source));
+
         if ( file_exists("modules/Import/maps/{$classname}.php") )
             require_once("modules/Import/maps/{$classname}.php");
         elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
