@@ -232,9 +232,8 @@ YAHOO.util.Event.onDOMReady(function(){
             //Highlight the first selection by default
             if(externalSourceBttns.length >= 1)
             {
-                selectedExternalSource = externalSourceBttns[0].get("value");
-                externalSourceBttns[0].set("checked", true, true);
-                isExtSourceValid(selectedExternalSource);
+                if(selectedExternalSource == '')
+                    oButtonGroup.check(0);
             }
         }
     }
