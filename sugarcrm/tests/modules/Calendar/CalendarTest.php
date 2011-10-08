@@ -82,12 +82,22 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$cal->acts_arr = array();
 				
 		$this->meeting_id = uniqid();
-		$GLOBALS['db']->query("INSERT INTO meetings (id,date_start,assigned_user_id) VALUES('".$this->meeting_id."','2012-01-02 00:00:00','".$GLOBALS['current_user']->id."')");
-		$GLOBALS['db']->query("INSERT meetings_users (id,meeting_id,user_id) VALUES ('".uniqid()."','".$this->meeting_id."','".$GLOBALS['current_user']->id."')");
+
+        $db = $GLOBALS['db'];
+        $db->query("INSERT INTO meetings (id,date_start,assigned_user_id) VALUES(".
+                                            $db->quoted($this->meeting_id) . ", " .
+                                            $db->convert($db->quoted("2012-01-02 00:00:00"), 'datetime') . ", " .
+                                            $db->quoted($GLOBALS['current_user']->id) .")");
+
+		$db->query("INSERT INTO meetings_users (id,meeting_id,user_id) VALUES (".
+                                                $db->quoted(uniqid()).", ".
+                                                $db->quoted($this->meeting_id).", ".
+                                                $db->quoted($GLOBALS['current_user']->id).")");
+
 		$cal->add_activities($GLOBALS['current_user']);	
 		$count2 = count($cal->acts_arr[$GLOBALS['current_user']->id]);
 		
-		$this->assertTrue($count1 == $count2 - 1, "Count of records should be one more after meeting added");		
+		$this->assertEquals($count1 + 1, $count2, "Count of records should be one more after meeting added");
 	}
 	
 	public function testCalendarLoadActivities(){
