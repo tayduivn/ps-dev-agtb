@@ -52,13 +52,25 @@ class EmployeesSearchForm extends SearchForm {
     }
     
     public function generateSearchWhere($add_custom_fields = false, $module = '') {
+        $onlyActive = false;
+        if (isset($this->searchFields['open_only_active_users']['value'])) {
+            if ( $this->searchFields['open_only_active_users']['value'] == 1) {
+                $onlyActive = true;
+            }
+            unset($this->searchFields['open_only_active_users']['value']);
+        }
         $where_clauses = parent::generateSearchWhere($add_custom_fields, $module);
         
-        // Add in code to remove portal/group/terminated users
+        if ( $onlyActive ) {
+            $where_clauses[] = "employee_status = 'Active'";
+        }
+        
+        // Add in code to remove portal/group/hidden users
         $where_clauses[] = "portal_only = 0";
         $where_clauses[] = "is_group = 0";
+        $where_clauses[] = "show_on_employees = 1";
         $where_clauses[] = "status <> 'Reserved'";
-        
+
         return $where_clauses;
     }
 }

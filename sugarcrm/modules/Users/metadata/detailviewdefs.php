@@ -48,7 +48,7 @@ $viewdefs['Users']['DetailView'] = array(
             array('picture'),
         ),
         'LBL_EMPLOYEE_INFORMATION' => array(
-            array('employee_status',''),
+            array('employee_status','show_on_employees'),
             array('title','phone_work'),
             array('department','phone_mobile'),
             array('reports_to_name','phone_other'),
