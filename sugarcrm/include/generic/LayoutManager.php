@@ -45,7 +45,7 @@ class LayoutManager
 	{
 		// set a sane default for context
 		$this->defs['context'] = 'Detail';
-		$this->DBHelper = $GLOBALS['db']->getHelper();
+		$this->DBHelper = $GLOBALS['db'];//->getHelper();
 	}
 
 	function setAttribute($key,$value)
