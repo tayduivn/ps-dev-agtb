@@ -230,6 +230,11 @@ SUGAR.ajaxUI = {
             SUGAR.EmailAddressWidget.count = {};
         }
         YAHOO.util.Event.removeListener(window, 'resize');
+        //Hide any connector dialogs
+        if(typeof(dialog) != 'undefined'){
+            dialog.destroy();
+            delete dialog;
+        }
 
     },
     firstLoad : function()
