@@ -679,7 +679,7 @@ eoq;
 			field.value = name;
 		}
 
-		setPreview();";
+        ";
 
 		return $ret;
 	}
