@@ -1475,8 +1475,8 @@ SE.composeLayout = {
 
         }
 
-        var openTag = '<div><span><span>';
-        var closeTag = '</span></span></div>';
+        var openTag = '<div class="email_signature">';
+        var closeTag = '</div>';
         var t = tinyMCE.getInstanceById('htmleditor' + idx);
         //IE 6 Hack
         if(typeof(t) != 'undefined')
