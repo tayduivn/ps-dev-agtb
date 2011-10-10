@@ -129,6 +129,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/modules/SugarFavorites'=>1,
 'sugarcrm/themes/default/images/star-sheet.png'=>1,
 
+'sugarcrm/themes/508'=>1,
 'sugarcrm/themes/Amore'=>1,
 'sugarcrm/themes/Green'=>1,
 'sugarcrm/themes/Awesome80s'=>1,
