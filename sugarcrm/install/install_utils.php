@@ -1903,7 +1903,7 @@ function getLicenseContents($filename)
 {
 	$license_file = '';
     if(file_exists($filename) && filesize($filename) >0){
-	    $license_file = file_get_contents($filename);
+	    $license_file = trim(file_get_contents($filename));
     }
     return $license_file;
 }
