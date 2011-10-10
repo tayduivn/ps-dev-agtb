@@ -717,7 +717,9 @@ function handleSugarConfig() {
     $sugar_config['dbconfig']['db_type']            = $_SESSION['setup_db_type'];
     $sugar_config['dbconfig']['db_port']            = $setup_db_port_num;
     $sugar_config['dbconfig']['db_manager']         = $_SESSION['setup_db_manager'];
-    $sugar_config['dbconfigoption']                 = array_merge($sugar_config['dbconfigoption'], $_SESSION['setup_db_options']);
+    if(!empty($_SESSION['setup_db_options'])) {
+        $sugar_config['dbconfigoption']                 = array_merge($sugar_config['dbconfigoption'], $_SESSION['setup_db_options']);
+    }
 
     $sugar_config['cache_dir']                      = $cache_dir;
     $sugar_config['default_charset']                = $mod_strings['DEFAULT_CHARSET'];
