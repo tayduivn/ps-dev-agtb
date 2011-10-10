@@ -539,6 +539,9 @@ function getDbConnection()
     }
 
     $db = getInstallDbInstance();
+    if(!empty($_SESSION['setup_db_options'])) {
+        $db->setOptions($_SESSION['setup_db_options']);
+    }
     $db->connect($dbconfig, true);
     return $db;
 }
@@ -714,6 +717,7 @@ function handleSugarConfig() {
     $sugar_config['dbconfig']['db_type']            = $_SESSION['setup_db_type'];
     $sugar_config['dbconfig']['db_port']            = $setup_db_port_num;
     $sugar_config['dbconfig']['db_manager']         = $_SESSION['setup_db_manager'];
+    $sugar_config['dbconfigoption']                 = array_merge($sugar_config['dbconfigoption'], $_SESSION['setup_db_options']);
 
     $sugar_config['cache_dir']                      = $cache_dir;
     $sugar_config['default_charset']                = $mod_strings['DEFAULT_CHARSET'];
@@ -1442,6 +1446,7 @@ function pullSilentInstallVarsIntoSession() {
         'setup_db_database_name'        => isset($sugar_config['dbconfig']['db_name']) ? $sugar_config['dbconfig']['db_name'] : '',
         'setup_db_type'                 => isset($sugar_config['dbconfig']['db_type']) ? $sugar_config['dbconfig']['db_type'] : '',
         'setup_db_port_num'             => isset($sugar_config['dbconfig']['db_port']) ? $sugar_config['dbconfig']['db_port'] : '',
+        'setup_db_options'			    => !empty($sugar_config['dbconfigoptions']) ? $sugar_config['dbconfigoptions'] : array(),
     );
     // third array of values derived from above values
     $derived = array (
@@ -1467,7 +1472,7 @@ function pullSilentInstallVarsIntoSession() {
                      'default_currency_iso4217', 'default_currency_name', 'default_currency_significant_digits',
                      'default_currency_symbol',  'default_date_format', 'default_time_format', 'default_decimal_seperator',
                      'default_export_charset', 'default_language', 'default_locale_name_format', 'default_number_grouping_seperator',
-                     'export_delimiter', 'cache_dir');
+                     'export_delimiter', 'cache_dir', 'setup_db_options');
     copyFromArray($sugar_config_si, $needles, $derived);
     $all_config_vars = array_merge( $config_subset, $sugar_config_si, $derived );
 

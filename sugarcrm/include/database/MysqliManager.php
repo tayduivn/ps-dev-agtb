@@ -289,6 +289,7 @@ class MysqliManager extends MysqlManager
 				}
 			}
 		}
+
 		if(!empty($configOptions['db_name']) && !@mysqli_select_db($this->database,$configOptions['db_name'])) {
 			$GLOBALS['log']->fatal( "Unable to select database {$configOptions['db_name']}: " . mysqli_connect_error());
 			if($dieOnError) {
@@ -300,11 +301,16 @@ class MysqliManager extends MysqlManager
 			} else {
 				return false;
 			}
-	}
+	    }
 
 		// cn: using direct calls to prevent this from spamming the Logs
-		mysqli_query($this->database,"SET CHARACTER SET utf8"); // no quotes around "[charset]"
-		mysqli_query($this->database,"SET NAMES 'utf8'");
+	    mysqli_query($this->database,"SET CHARACTER SET utf8");
+	    $names = "SET NAMES 'utf8'";
+	    $collation = $this->getOption('collation');
+	    if(!empty($collation)) {
+	        $names .= " COLLATE '$collation'";
+		}
+	    mysqli_query($this->database,$names);
 
 		if($this->checkError('Could Not Connect', $dieOnError))
 			$GLOBALS['log']->info("connected to db");

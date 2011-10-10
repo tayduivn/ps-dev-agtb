@@ -229,6 +229,12 @@ abstract class DBManager
 	 */
 	protected $capabilities = array();
 
+	/**
+	 * Database options
+	 * @var array
+	 */
+	protected $options = array();
+
     /**
      * Create DB Driver
      */
@@ -3294,6 +3300,40 @@ protected function checkQuery($sql, $object_name = false)
 	{
 		// Usually the same name as dbType
 		return $this->dbType;
+	}
+
+	/**
+	 * Set database options
+	 * Options are usually db-dependant and derive from $config['dbconfigoption']
+	 * @param array $options
+	 * @return DBManager
+	 */
+	public function setOptions($options)
+	{
+	    $this->options = $options;
+	    return $this;
+	}
+
+	/**
+	 * Get DB options
+	 * @return array
+	 */
+	public function getOptions()
+	{
+	    return $this->options;
+	}
+
+	/**
+	 * Get DB option by name
+	 * @param string $option Option name
+	 * @return mixed Option value or null if doesn't exist
+	 */
+	public function getOption($option)
+	{
+	    if(isset($this->options[$option])) {
+	        return $this->options[$option];
+	    }
+	    return null;
 	}
 
 	/**

@@ -646,7 +646,7 @@ class OracleManager extends DBManager
         if(!$configOptions)
 			$configOptions = $sugar_config['dbconfig'];
 
-		if($sugar_config['dbconfigoption']['persistent'] == true)
+		if($this->getOption('persistent'))
 		{
             $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
             $err = oci_error();
@@ -673,7 +673,7 @@ class OracleManager extends DBManager
                 	    return false;
                 	}
                 }
-                if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
+                if($this->database && $this->getOption('persistent')){
                     $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your config.php file</B>";
                 }
         }

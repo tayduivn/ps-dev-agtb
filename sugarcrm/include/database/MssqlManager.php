@@ -169,7 +169,7 @@ class MssqlManager extends DBManager
         }
 
         //create persistent connection
-        if ($sugar_config['dbconfigoption']['persistent'] == true) {
+        if ($this->getOption('persistent')) {
             $this->database =@mssql_pconnect(
                 $connect_param ,
                 $configOptions['db_user_name'],
@@ -192,7 +192,7 @@ class MssqlManager extends DBManager
                     return false;
                 }
             }
-            if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
+            if($this->database && $this->getOption('persistent')){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
                     . "config.php file</B>";

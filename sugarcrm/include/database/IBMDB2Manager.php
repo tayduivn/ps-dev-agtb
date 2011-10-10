@@ -535,8 +535,8 @@ class IBMDB2Manager  extends DBManager
 			$configOptions = $sugar_config['dbconfig'];
 
 
-		if(isset($sugar_config['dbconfigoption']) && isset( $sugar_config['dbconfigoption']['persistent']))
-			$persistConnection = $sugar_config['dbconfigoption']['persistent'];
+		if($this->getOption('persistent'))
+			$persistConnection = true;
 		else
 			$persistConnection = false;
 
