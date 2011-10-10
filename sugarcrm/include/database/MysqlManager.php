@@ -133,6 +133,7 @@ class MysqlManager extends DBManager
 		"inline_keys" => true,
 		"create_user" => true,
 		"fulltext" => true,
+	    "collation" => true,
 	);
 
 	/**

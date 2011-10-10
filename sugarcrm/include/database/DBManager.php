@@ -221,6 +221,7 @@ abstract class DBManager
 	 * auto_increment_sequence Autoincrement support implemented as sequence
 	 * limit_subquery   Supports LIMIT clauses in subqueries
 	 * create_user		Can create users for Sugar
+	 * collation		Supports setting collations
 	 *
 	 * @abstract
 	 * Special cases:

@@ -456,6 +456,9 @@ if($next_clicked) {
         case 'siteConfig_a.php':
             if(isset($_REQUEST['setup_site_url'])){$_SESSION['setup_site_url']          = $_REQUEST['setup_site_url'];}
             if(isset($_REQUEST['setup_system_name'])){$_SESSION['setup_system_name']    = $_REQUEST['setup_system_name'];}
+            if(isset($_REQUEST['setup_db_collation'])) {
+                $_SESSION['setup_db_options']['collation'] = $_REQUEST['setup_db_collation'];
+            }
             $_SESSION['setup_site_admin_user_name']             = $_REQUEST['setup_site_admin_user_name'];
             $_SESSION['setup_site_admin_password']              = $_REQUEST['setup_site_admin_password'];
             $_SESSION['setup_site_admin_password_retype']       = $_REQUEST['setup_site_admin_password_retype'];
