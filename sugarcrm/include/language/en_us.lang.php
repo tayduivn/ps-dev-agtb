@@ -2297,6 +2297,7 @@ $app_strings = array (
     //END SUGARCRM flav=ent ONLY
 
     'ERR_AJAX_LOAD'     => 'An error has occured:',
+    'ERR_AJAX_LOAD_FAILURE'     => 'There was an error processing your request, please try again at a later time.',
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
     'ERR_CREATING_TABLE' => 'Error creating table: ',
