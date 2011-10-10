@@ -1,0 +1,35 @@
+body
+{
+	color: #444;
+	background-color: #fff;
+	background-image:none;
+	background-repeat:no-repeat;
+}
+
+
+#welcome {
+	color: #222;
+
+}
+
+#globalLinks span {
+	color: #222;	
+}
+
+
+button, input[type="submit"], input[type="reset"], input[type="button"], .button, .buttons .button, .yui-button button {
+	color: #000000;	
+}
+
+.detail tr td[scope="row"] {
+    color: #222222;
+}
+
+#moduleList.yuimenubar .yuimenuitemlabel.group {
+    color: #666666;
+}
+
+.skipHeader, .pageContent {
+    position: absolute;
+    text-indent: -9999px;	
+}
