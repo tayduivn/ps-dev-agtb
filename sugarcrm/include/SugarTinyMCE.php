@@ -38,7 +38,8 @@ class SugarTinyMCE {
 	);
 	
 	var $pluginsConfig = array(
-	    'email_compose_light' => 'insertdatetime,paste,directionality,safari'         
+	    'email_compose_light' => 'insertdatetime,paste,directionality,safari',
+        'email_compose' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality,fullpage',
 	);
 	
 	var $defaultConfig = array(
@@ -54,7 +55,7 @@ class SugarTinyMCE {
 		'strict_loading_mode'	=> true,
 		'mode'	=> 'exact',
 		'language' => 'en',
-	    'plugins' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality,fullpage',
+	    'plugins' => 'advhr,insertdatetime,table,preview,paste,searchreplace,directionality',
 		'elements'	=> '',
         'extended_valid_elements' => 'style,hr[class|width|size|noshade],@[class|style]',
         'content_css' => 'include/javascript/tiny_mce/themes/advanced/skins/default/content.css',
