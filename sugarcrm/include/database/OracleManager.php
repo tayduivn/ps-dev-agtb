@@ -1733,6 +1733,10 @@ EOQ;
                 "setup_db_host_name" => false,
                 'setup_db_create_sugarsales_user' => false,
             ),
+			'LBL_DBCONFIG_B_MSG1' => array(
+				"setup_db_admin_user_name" => array("label" => 'LBL_DBCONF_DB_ADMIN_USER', "required" => true),
+				"setup_db_admin_password" => array("label" => 'LBL_DBCONF_DB_ADMIN_PASSWORD', "type" => "password"),
+			),
         );
     }
 }
