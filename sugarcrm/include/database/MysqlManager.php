@@ -488,13 +488,13 @@ class MysqlManager extends DBManager
 		}
 
 		// cn: using direct calls to prevent this from spamming the Logs
-	    mysql_query($this->database,"SET CHARACTER SET utf8");
+	    mysql_query("SET CHARACTER SET utf8", $this->database);
 	    $names = "SET NAMES 'utf8'";
 	    $collation = $this->getOption('collation');
 	    if(!empty($collation)) {
 	        $names .= " COLLATE '$collation'";
 		}
-	    mysql_query($this->database,$names);
+	    mysql_query($names, $this->database);
 
 		if(!$this->checkError('Could Not Connect:', $dieOnError))
 			$GLOBALS['log']->info("connected to db");
