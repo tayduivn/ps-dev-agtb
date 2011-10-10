@@ -73,7 +73,7 @@ Calendar.setup = function (params) {
                                   
                 dialog = new YAHOO.widget.SimpleDialog("container_" + showButton, {
                     visible:false,
-                    context:[showButton, "tl", "bl"],
+                    context:[showButton, "tl", "bl", null, [-175,5]],
                     buttons:[],
                     draggable:false,
                     close:true,
