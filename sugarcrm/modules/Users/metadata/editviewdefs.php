@@ -56,7 +56,7 @@ $viewdefs['Users']['EditView'] = array(
                       'name'=>'employee_status',
                       'customCode'=>'{if $IS_ADMIN}@@FIELD@@{else}{$EMPLOYEE_STATUS_READONLY}{/if}',
                   ),
-                  ''),
+                  'show_on_employees'),
             array('title','phone_work'),
             array('department','phone_mobile'),
             array(array(

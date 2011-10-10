@@ -478,6 +478,14 @@ $dictionary['User'] = array(
             //END SUGARCRM flav=sales ONLY
             'default' => '0'
         ) ,
+        'show_on_employees' => array(
+            'name' => 'show_on_employees',
+            'vname' => 'LBL_SHOW_ON_EMPLOYEES',
+            'type' => 'bool',
+            'massupdate' => true,
+            'importable' => true,
+            'default' => true,
+        ) ,
         'employee_status' => array(
             'name' => 'employee_status',
             'vname' => 'LBL_EMPLOYEE_STATUS',
