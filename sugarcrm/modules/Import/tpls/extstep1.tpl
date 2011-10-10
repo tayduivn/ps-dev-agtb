@@ -51,11 +51,22 @@
     {$MOD.LBL_EXTERNAL_MAP_HELP}
     <br/>
     <br/>
-    {$MOD.LBL_EXTERNAL_MAP_NOTE}
-    <br/>
-    <br/>
     {$MOD.LBL_EXTERNAL_MAP_SUB_HELP}
 </p>
+
+<br>
+{if $MOD.LBL_EXTERNAL_MAP_NOTE != ''}
+    <p>
+        <input title="{$MOD.LBL_SHOW_ADVANCED_OPTIONS}" accessKey="" id="toggleNotes" class="button" type="button"
+                       name="button" value="  {$MOD.LBL_SHOW_NOTES}  ">
+        <div id="importNotes" style="display: none;">
+            <ul>
+                <li>{$MOD.LBL_EXTERNAL_MAP_NOTE}</li>
+                <li>{$MOD.LBL_EXTERNAL_MAP_NOTE_SUB}</li>
+            </ul>
+        </div>
+    </p>
+{/if}    
     
 <div align="right">
     <span class="required" align="right">{$APP.LBL_REQUIRED_SYMBOL}</span> {$APP.NTC_REQUIRED}

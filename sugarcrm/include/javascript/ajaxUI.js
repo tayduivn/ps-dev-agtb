@@ -206,7 +206,7 @@ SUGAR.ajaxUI = {
             if(string.length > 200)
             {
                 SUGAR.ajaxUI.showLoadingPanel();
-                form.onsubmit = true;
+                form.onsubmit = function(){ return true; };
                 form.submit();
             } else {
                 con.resetFormState();
@@ -230,6 +230,11 @@ SUGAR.ajaxUI = {
             SUGAR.EmailAddressWidget.count = {};
         }
         YAHOO.util.Event.removeListener(window, 'resize');
+        //Hide any connector dialogs
+        if(typeof(dialog) != 'undefined'){
+            dialog.destroy();
+            delete dialog;
+        }
 
     },
     firstLoad : function()

@@ -63,7 +63,7 @@ class ImportViewExtStep1 extends ImportViewStep3
             $this->_showImportError($mod_strings['ERR_MISSING_MAP_NAME'],$_REQUEST['import_module'],'Step1');
             return;
         }
-        $extSourceToSugarFieldMapping = $mappingFile->getMapping();
+        $extSourceToSugarFieldMapping = $mappingFile->getMapping($importModule);
 
         // get list of required fields
         $required = array();

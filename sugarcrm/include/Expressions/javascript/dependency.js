@@ -278,7 +278,7 @@ SUGAR.forms.AssignmentHandler.assign = function(variable, value, flash)
 		img.style.visibility = "";
 	}
 	else if (field.type == "checkbox") {
-		field.checked = value == SUGAR.expressions.Expression.TRUE;
+		field.checked = value == SUGAR.expressions.Expression.TRUE || value === true;
 	}
     else if(value instanceof Date)
     {
@@ -447,7 +447,7 @@ SUGAR.util.extend(SUGAR.forms.FormExpressionContext, SUGAR.expressions.Expressio
 			else {
 				return toConst('"' + value + '"');
 			}
-		} else if (typeof(value) == "object" && value.getTime) {
+		} else if (typeof(value) == "object" && value != null && value.getTime) {
 			//This is probably a date object that we must convert to an expression
 			var d = new SUGAR.DateExpression("");
 			d.evaluate = function(){return this.value};

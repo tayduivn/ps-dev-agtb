@@ -40,6 +40,7 @@ function checkDBSettings($silent=false) {
             installLog("ERROR::  {$errors['ERR_DB_NAME']}");
         }
 
+
         if (!$db->isDatabaseNameValid($_SESSION['setup_db_database_name'])) {
             $errIdx = 'ERR_DB_' . strtoupper($_SESSION['setup_db_type']) . '_DB_NAME_INVALID';
             $errors[$errIdx] = $mod_strings[$errIdx];
@@ -93,7 +94,6 @@ function checkDBSettings($silent=false) {
             $errors['ERR_DB_MSSQL_DB_NAME'] = $mod_strings['ERR_DB_MSSQL_DB_NAME_INVALID'];
             installLog("ERROR::  {$errors['ERR_DB_MSSQL_DB_NAME']}");
         }
-
 
         // test the account that will talk to the db if we're not creating it
         if( $_SESSION['setup_db_sugarsales_user'] != '' && !$_SESSION['setup_db_create_sugarsales_user'] ){
