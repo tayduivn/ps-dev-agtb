@@ -119,7 +119,8 @@ if(!empty($search_tag_name)){
           
         //next search the parents (root node) of each tag found
         //combine parent child/ren and expand tree
-        foreach($searched_tagIds['id'] as tag_id){
+        foreach($searched_tagIds['id'] as $tag_id)
+        {
                 	
         }
          

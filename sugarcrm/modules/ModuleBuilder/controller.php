@@ -591,6 +591,7 @@ class ModuleBuilderController extends SugarController
                 $relationships = new UndeployedRelationships ( $module->getModuleDir () ) ;
             }
             $relationships->delete ( $_REQUEST [ 'relationship_name' ] ) ;
+
             $relationships->save () ;
             require_once("data/Relationships/RelationshipFactory.php");
             SugarRelationshipFactory::deleteCache();

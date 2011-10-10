@@ -134,7 +134,7 @@ if (isset($_POST['campaign_id']) && !empty($_POST['campaign_id'])) {
 				$get_and_post = array_merge($_GET, $_POST);
 				foreach($get_and_post as $param => $value) {
 
-					if($param == 'redirect_url' || $param == 'submit')
+					if($param == 'redirect_url' && $param == 'submit')
 						continue;
 					
 					if($first_iteration){
@@ -206,4 +206,3 @@ if (!empty($_POST['redirect'])) {
     }
 }
 echo $mod_strings['LBL_SERVER_IS_CURRENTLY_UNAVAILABLE'];
-?>

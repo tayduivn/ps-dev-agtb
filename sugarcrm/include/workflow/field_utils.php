@@ -220,7 +220,8 @@ include_once('include/workflow/expression_utils.php');
 			$field_type =="varchar" ||
 			$field_type =="name" ||
 			$field_type =="phone" ||
-			$field_type =="email"
+			$field_type =="email" || 
+			$field_type =="url"
 			){
 				$output_array['real_type'] = $field_type;
 

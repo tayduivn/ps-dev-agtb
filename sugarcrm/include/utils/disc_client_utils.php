@@ -670,4 +670,3 @@ function disc_client_file_sync( $soapclient, $session, $verbose=false , $attempt
 }
 
 ?>
-

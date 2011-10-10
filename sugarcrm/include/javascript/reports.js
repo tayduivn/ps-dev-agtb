@@ -3081,6 +3081,11 @@ SUGAR.reports = function() {
 			   var count = 0;
 			   value_text = '';
 			   for(i in filter.input_name0) {
+                   // Bug 46256. Function is a bad type for value_text generation
+                   if (typeof filter.input_name0[i] == 'function')
+                   {
+                       continue;
+                   }
 				   value_text += '&id_' + field_id_name + '_collection_' + count + '=' + filter.input_name0[i];
 				   value_text += '&' + field_id_name + '_collection_' + count + '=' + escape(filter.input_name1[i]);
 				   count++;

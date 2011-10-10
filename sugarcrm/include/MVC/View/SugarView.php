@@ -1224,6 +1224,7 @@ EOHTML;
             $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
             $theTitle .= <<<EOHTML
 &nbsp;
+
 <img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'>
 <a href="{$url}" class="utilsLink">
 {$GLOBALS['app_strings']['LNK_CREATE']}

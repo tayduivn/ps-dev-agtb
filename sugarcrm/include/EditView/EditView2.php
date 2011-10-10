@@ -440,7 +440,8 @@ class EditView
                 if (isset($this->fieldDefs[$name]['options']) && isset($app_list_strings[$this->fieldDefs[$name]['options']]))
                 {
                     $this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']];
-                    if(isset($GLOBALS['sugar_config']['enable_autocomplete']) && $GLOBALS['sugar_config']['enable_autocomplete'] == true){
+                    if(isset($GLOBALS['sugar_config']['enable_autocomplete']) && $GLOBALS['sugar_config']['enable_autocomplete'] == true)
+                    {
 						$this->fieldDefs[$name]['autocomplete'] = true;
 	                	$this->fieldDefs[$name]['autocomplete_options'] = $this->fieldDefs[$name]['options']; // we need the name for autocomplete
 					} else {
@@ -505,10 +506,11 @@ class EditView
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
-                if ($this->focus->bean_implements('ACL'))
+                if ($this->focus->bean_implements('ACL')) {
                     $this->fieldDefs[$name]['acl'] =  ACLField::hasAccess($name, $this->focus->module_dir,$GLOBALS['current_user']->id, $is_owner);
-                else
+                } else {
                     $this->fieldDefs[$name]['acl'] = 4;
+                }
                 //END SUGARCRM flav=pro ONLY
 
                 //This code is used for QuickCreates that go to Full Form view.  We want to overwrite the values from the bean
@@ -565,9 +567,11 @@ class EditView
             }
         }
     }
+
+    
     /**
      * display
-     * This method makes the Smarty variable assignments and theautocomplete_ajax'vars the
+     * This method makes the Smarty variable assignments and then displays the
      * generated view.
      * @param $showTitle boolean value indicating whether or not to show a title on the resulting page
      * @param $ajaxSave boolean value indicating whether or not the operation is an Ajax save request
@@ -899,3 +903,4 @@ class EditView
         return '';
     }
 }
+

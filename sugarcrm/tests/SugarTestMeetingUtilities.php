@@ -29,11 +29,11 @@ class SugarTestMeetingUtilities
 
     private function __construct() {}
 
-    public static function createMeeting($id = '') 
+    public static function createMeeting($id = '')
     {
         $time = mt_rand();
-    	$name = 'Meeting';
-    	$meeting = new Meeting();
+        $name = 'Meeting';
+        $meeting = new Meeting();
         $meeting->name = $name . $time;
         if(!empty($id))
         {
@@ -48,14 +48,15 @@ class SugarTestMeetingUtilities
     public static function removeAllCreatedMeetings() 
     {
         $meeting_ids = self::getCreatedMeetingIds();
-        $GLOBALS['db']->query('DELETE FROM meetings WHERE id IN (\'' . implode("', '", $meeting_ids) . '\')');
+        $GLOBALS['db']->query(sprintf("DELETE FROM meetings WHERE id IN ('%s')", implode("', '", $meeting_ids)));
     }
     
-    public static function removeMeetingContacts(){
-    	$meeting_ids = self::getCreatedMeetingIds();
-        $GLOBALS['db']->query('DELETE FROM meetings_contacts WHERE meeting_id IN (\'' . implode("', '", $meeting_ids) . '\')');
+    public static function removeMeetingContacts()
+    {
+        $meeting_ids = self::getCreatedMeetingIds();
+        $GLOBALS['db']->query(sprintf("DELETE FROM meetings_contacts WHERE meeting_id IN ('%s')", implode("', '", $meeting_ids)));
     }
-    
+
     public static function addMeetingLeadRelation($meeting_id, $lead_id) {
         $id = create_guid();
         $GLOBALS['db']->query("INSERT INTO meetings_leads (id, meeting_id, lead_id) values ('{$id}', '{$meeting_id}', '{$lead_id}')");
@@ -66,16 +67,22 @@ class SugarTestMeetingUtilities
         $GLOBALS['db']->query("delete from meetings_leads where id='{$id}'");
     }
 
-
     public static function addMeetingParent($meeting_id, $lead_id) {
         $sql = "update meetings set parent_type='Leads', parent_id='{$lead_id}' where id='{$meeting_id}'";
         $GLOBALS['db']->query($sql);
     }
 
+    public static function removeMeetingUsers()
+    {
+        $meeting_ids = self::getCreatedMeetingIds();
+        $GLOBALS['db']->query(sprintf("DELETE FROM meetings_users WHERE meeting_id IN ('%s')", implode("', '", $meeting_ids)));
+    }
+
     public static function getCreatedMeetingIds()
     {
         $meeting_ids = array();
-        foreach (self::$_createdMeetings as $meeting) {
+        foreach (self::$_createdMeetings as $meeting)
+        {
             $meeting_ids[] = $meeting->id;
         }
         return $meeting_ids;

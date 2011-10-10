@@ -2274,7 +2274,7 @@ function testThis2($dir, $id=0, $hide=false) {
 
 	$doHide = ($hide) ? 'none' : '';
 	$out = "<div id='{$id}' style='display:{$doHide};'>";
-	$out .= "<table cellpadding='1' cellspacing='0' border='0' style='border:0px solid #ccc'>\n";
+	$out .= "<table cellpadding='1' cellspacing='0' style='border:0px solid #ccc'>\n";
 
 	while($file = readdir($dh)) {
 		if($file == '.' || $file == '..' || $file == 'CVS' || $file == '.cvsignore')
@@ -4559,6 +4559,16 @@ function unlinkUpgradeFiles($version)
     //First check if we even have the scripts_for_patch/files_to_remove directory
     require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
+    /*
+    if(empty($_SESSION['unzip_dir']))
+    {
+        global $sugar_config;
+        $base_upgrade_dir		= $sugar_config['upload_dir'] . "/upgrades";
+        $base_tmp_upgrade_dir	= "$base_upgrade_dir/temp";
+        $_SESSION['unzip_dir'] = mk_temp_dir( $base_tmp_upgrade_dir );
+    }
+    */
+
     if(isset($_SESSION['unzip_dir']) && file_exists($_SESSION['unzip_dir'].'/scripts/files_to_remove'))
     {
        $files_to_remove = glob($_SESSION['unzip_dir'].'/scripts/files_to_remove/*.php');
@@ -4724,4 +4734,53 @@ function rebuildSprites($fromUpgrade=true)
     // generate the sprite goodies
     // everything is saved into cache/sprites
     $sb->createSprites();
+}
+
+
+/**
+ * repairSearchFields
+ *
+ * This method goes through the list of SearchFields files based and calls TemplateRange::repairCustomSearchFields
+ * method on the files in an attempt to ensure the range search attributes are properly set in SearchFields.php.
+ *
+ * @param $globString String value used for glob search defaults to searching for all SearchFields.php files in modules directory
+ * @param $path String value used to point to log file should logging be required.  Defaults to empty.
+ *
+ */
+function repairSearchFields($globString='modules/*/metadata/SearchFields.php', $path='')
+{
+	if(!empty($path))
+	{
+		logThis('Begin repairSearchFields', $path);
+	}
+
+	require_once('include/dir_inc.php');
+	require_once('modules/DynamicFields/templates/Fields/TemplateRange.php');
+	require('include/modules.php');
+
+	global $beanList;
+	$searchFieldsFiles = glob($globString);
+
+	foreach($searchFieldsFiles as $file)
+	{
+		if(preg_match('/modules\/(.*?)\/metadata\/SearchFields\.php/', $file, $matches) && isset($beanList[$matches[1]]))
+		{
+			$module = $matches[1];
+			$beanName = $beanList[$module];
+			VardefManager::loadVardef($module, $beanName);
+			if(isset($GLOBALS['dictionary'][$beanName]['fields']))
+			{
+				if(!empty($path))
+				{
+					logThis('Calling TemplateRange::repairCustomSearchFields for module ' . $module, $path);
+				}
+				TemplateRange::repairCustomSearchFields($GLOBALS['dictionary'][$beanName]['fields'], $module);
+			}
+		}
+	}
+
+	if(!empty($path))
+	{
+		logThis('End repairSearchFields', $path);
+	}
 }
