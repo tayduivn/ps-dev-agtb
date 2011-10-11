@@ -166,7 +166,7 @@
 <!-- //BEGIN SUGARCRM flav!=sales ONLY -->
             <td scope="row">{$MOD.LBL_CONFIG_AJAX_DESC}</td>
             <td><a href="./index.php?module=Administration&action=ConfigureAjaxUI" id="configure_ajax">{$MOD.LBL_CONFIG_AJAX}</a></td>
-<!-- //END SUGARCRM flav!!=sales ONLY -->
+<!-- //END SUGARCRM flav!=sales ONLY -->
     </tr>
 </table>
 
