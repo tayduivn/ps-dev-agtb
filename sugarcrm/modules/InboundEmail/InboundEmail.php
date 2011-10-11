@@ -181,7 +181,7 @@ class InboundEmail extends SugarBean {
 
 		$this->smarty = new Sugar_Smarty();
 		$this->overview = new Overview();
-		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
+		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";
 	}
 
 	/**
