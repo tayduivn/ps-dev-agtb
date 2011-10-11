@@ -158,7 +158,7 @@
 		        
 		        if(this.enterPressed || this.tabPressed) {
 		           this.retrieveEmailAddress(e);
-		           if (this.enterPressed);
+		           if (this.enterPressed)
 		               this.freezeEvent(e);
 		        }
 		    }
