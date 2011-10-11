@@ -28,6 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+
 require_once('include/utils/activity_utils.php');
 require_once('modules/Calendar/CalendarUtils.php');
 require_once('modules/Calendar/CalendarActivity.php');
@@ -323,7 +324,7 @@ class Calendar {
 		if($this->view == 'week' || $this->view == 'shared') {
 			$end_date_time = $this->date_time->get("+7 days");
 		}else if($this->view == 'month'){
-			$start_date_time = $this->date_time->get('first day of last month');
+			$start_date_time = $this->date_time->get('-38 days');
 			$end_date_time = $this->date_time->get('first day of next month');
 			$end_date_time = $end_date_time->get("+7 days");
 		}else{
