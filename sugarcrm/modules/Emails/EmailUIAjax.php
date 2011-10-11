@@ -31,6 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
   $showFolders = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
 
+ if (isset($_REQUEST['emailUIAction'])) {
   switch($_REQUEST['emailUIAction']) {
     //BEGIN SUGARCRM flav=pro ONLY
     ///////////////////////////////////////////////////////////////////////////
@@ -1710,7 +1711,8 @@ eoq;
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: default");
         echo "NOOP";
         break;
-  }
+  } // switch
+ } // if
 
 
 
