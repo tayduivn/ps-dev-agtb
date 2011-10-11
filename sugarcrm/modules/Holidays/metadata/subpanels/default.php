@@ -58,11 +58,13 @@ $subpanel_layout = array(
 	),
 );
 
+if ( isset($_REQUEST['record']) ) {
 //remove the administrator edit button holiday for the user admin only
-global $current_user;
-$result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='$_REQUEST[record]'");
-$row = $GLOBALS['db']->fetchByAssoc($result);
-if(!is_admin($current_user)&& $current_user->isAdminForModule('Users')&& $row['is_admin']==1){
-	unset($subpanel_layout['list_fields']['edit_button']);
+        global $current_user;
+        $result = $GLOBALS['db']->query("SELECT is_admin FROM users WHERE id='".$GLOBALS['db']->quote($_REQUEST['record'])."'");
+        $row = $GLOBALS['db']->fetchByAssoc($result);
+        if(!is_admin($current_user)&& $current_user->isAdminForModule('Users')&& $row['is_admin']==1){
+            unset($subpanel_layout['list_fields']['edit_button']);
+        }
 }
 ?>
