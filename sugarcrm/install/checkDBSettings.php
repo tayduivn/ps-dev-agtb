@@ -187,7 +187,7 @@ global $mod_strings;
     if(count($errors) == 0){
         echo 'dbCheckPassed';
         installLog("SUCCESS:: no errors detected!");
-    }else if((count($errors) == 1 && isset($errors["ERR_DB_EXISTS_PROCEED"]))  ||
+    }else if((count($errors) == 1 && (isset($errors["ERR_DB_EXISTS_PROCEED"])||isset($errors["ERR_DB_EXISTS_WITH_CONFIG"])))  ||
     (count($errors) == 2 && isset($errors["ERR_DB_EXISTS_PROCEED"]) && isset($errors["ERR_DB_EXISTS_WITH_CONFIG"])) ){
         ///throw alert asking to overwwrite db
         echo 'preexeest';
