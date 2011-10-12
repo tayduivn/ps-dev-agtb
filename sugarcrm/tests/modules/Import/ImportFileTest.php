@@ -21,11 +21,13 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/Import/sources/ImportFile.php');
 
 class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $unlink = array();
+
 	public function setUp()
 	{
     	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -35,6 +37,9 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestImportUtilities::removeAllCreatedFiles();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        foreach($this->unlink as $file) {
+            @unlink($file);
+        }
         unset($GLOBALS['current_user']);
     }
 
@@ -71,21 +76,20 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $sample_file = 'upload://Bug39494ImportFile.txt';
         copy('tests/modules/Import/Bug39494ImportFile.txt', $sample_file);
+        $this->unlink[] = $sample_file;
         $importFile = new ImportFile($sample_file,"\t",'',false);
         $this->assertTrue($importFile->fileExists());
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('name','city'));
         $row = $importFile->getNextRow();
         $this->assertEquals($row,array('tester1','wuhan'));
-        unset($importFile); // Making sure the file is closed as the unlink will cause an error on Windows otherwise
-        unlink($sample_file);
     }
 
     public function testGetNextRow()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $row = $importFile->getNextRow();
         $this->assertEquals(array("foo00","foo01"),$row);
         $row = $importFile->getNextRow();
@@ -93,7 +97,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $row = $importFile->getNextRow();
         $this->assertEquals(array("foo20","foo21"),$row);
     }
-    
+
     /**
  	 * @ticket 41361
  	 */
@@ -105,11 +109,12 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // both \r\n and \n should be properly replaced with PHP_EOL
         $this->assertEquals(array("start0".PHP_EOL."0".PHP_EOL."end"), $row);
     }
-    
+
     public function testLoadEmptyFile()
     {
         $emptyFile = ImportCacheFiles::getImportDir().'/empty'.date("YmdHis").'.csv';
         file_put_contents($emptyFile,'');
+        $this->unlink[] = $emptyFile;
 
         $importFile = new ImportFile($emptyFile,',','"',false);
 
@@ -118,17 +123,13 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $importFile = new ImportFile($emptyFile,',','',false);
 
         $this->assertFalse($importFile->getNextRow());
-
-        unset($importFile); // Making sure the file is closed as the unlink will cause an error on Windows otherwise
-
-        @unlink($emptyFile);
     }
 
     public function testDeleteFileOnDestroy()
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"',true, FALSE);
-        
+
         unset($importFile);
 
         $this->assertFalse(is_file($file));
@@ -148,7 +149,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"',TRUE, FALSE);
-        
+
         $importFile->getNextRow();
         $this->assertEquals(2,$importFile->getFieldCount());
     }
@@ -157,7 +158,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $row = $importFile->getNextRow();
         $importFile->markRowAsDuplicate();
 
@@ -172,7 +173,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $row = $importFile->getNextRow();
         $importFile->writeError('Some Error','field1','foo');
 
@@ -181,7 +182,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         fclose($fp);
 
         $this->assertEquals(array('Some Error','field1','foo',1),$errorrow);
-        
+
         $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
         $errorrecordrow = fgetcsv($fp);
         fclose($fp);
@@ -193,10 +194,10 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $row = $importFile->getNextRow();
         $importFile->writeErrorRecord();
-        
+
         $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
         $errorrecordrow = fgetcsv($fp);
         fclose($fp);
@@ -208,7 +209,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $importFile->getNextRow();
         $importFile->writeError('Some Error','field1','foo');
         $importFile->getNextRow();
@@ -228,7 +229,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $row = $importFile->getNextRow();
         $importFile->writeError('Some Error','field1','foo');
         $importFile->writeError('Some Error','field1','foo');
@@ -243,7 +244,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         fclose($fp);
 
         $this->assertEquals(array(3,1,0,2,0,$file),$statusrow);
-        
+
         $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
         $errorrecordrow = fgetcsv($fp);
 
@@ -258,7 +259,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $file = SugarTestImportUtilities::createFile(3,2);
         $importFile = new ImportFile($file,',','"', TRUE, FALSE);
-        
+
         $row = $importFile->getNextRow();
         $importFile->markRowAsImported(false);
         $importFile->getNextRow();
@@ -318,15 +319,13 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
+        $this->unlink[] = $sample_file;
 
         // auto detect charset
         $importFile = new ImportFile($sample_file, ",", '', false, false);
         $this->assertTrue($importFile->fileExists());
         $charset = $importFile->autoDetectCharacterSet();
         $this->assertEquals($encoding, $charset, 'detected char encoding is incorrect.');
-
-        // cleanup
-        unlink($sample_file);
     }
 
     public function providerRowCountData()
@@ -345,15 +344,13 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
+        $this->unlink[] = $sample_file;
 
         $importFile = new ImportFile($sample_file, ",", '', false, false);
         $this->assertTrue($importFile->fileExists());
         $importFile->setHeaderRow($hasHeader);
         $c = $importFile->getTotalRecordCount();
         $this->assertEquals($count, $c, 'incorrect row count.');
-
-        // cleanup
-        unlink($sample_file);
     }
 
     public function providerFieldCountData()
@@ -371,15 +368,13 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
+        $this->unlink[] = $sample_file;
 
         $importFile = new ImportFile($sample_file, ",", '"', false, false);
         $this->assertTrue($importFile->fileExists());
         $c = $importFile->getNextRow();
         $c = $importFile->getFieldCount();
         $this->assertEquals($count, $c, 'incorrect row count.');
-
-        // cleanup
-        unlink($sample_file);
     }
 
     public function providerLineCountData()
@@ -397,14 +392,12 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
+        $this->unlink[] = $sample_file;
 
         $importFile = new ImportFile($sample_file, ",", '"', false, false);
         $this->assertTrue($importFile->fileExists());
         $c = $importFile->getNumberOfLinesInfile();
         $this->assertEquals($count, $c, 'incorrect row count.');
-
-        // cleanup
-        unlink($sample_file);
     }
 
     public function providerDateFormatData()
@@ -422,6 +415,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
+        $this->unlink[] = $sample_file;
 
         $importFile = new ImportFile($sample_file, ",", '"', false, false);
         $this->assertTrue($importFile->fileExists());
@@ -429,9 +423,6 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($ret, 'Failed to auto detect properties.');
         $c = $importFile->getDateFormat();
         $this->assertEquals($format, $c, 'incorrect date format.');
-
-        // cleanup
-        unlink($sample_file);
     }
 
     public function providerTimeFormatData()
@@ -449,6 +440,7 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         // create the test file
         $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/'.$file;
         copy('tests/modules/Import/'.$file, $sample_file);
+        $this->unlink[] = $sample_file;
 
         $importFile = new ImportFile($sample_file, ",", '"', false, false);
         $this->assertTrue($importFile->fileExists());
@@ -456,8 +448,5 @@ class ImportFileTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($ret, 'Failed to auto detect properties.');
         $c = $importFile->getTimeFormat();
         $this->assertEquals($format, $c, 'incorrect time format.');
-
-        // cleanup
-        unlink($sample_file);
     }
 }
