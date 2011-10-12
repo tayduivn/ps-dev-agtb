@@ -98,7 +98,7 @@ if(is_file('config.php')) {
 if(is_file('config_override.php')) {
 	require_once('config_override.php');
 }
-if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_host_name']))
+if(empty($GLOBALS['installing']) &&empty($sugar_config['dbconfig']['db_name']))
 {
 	    header('Location: install.php');
 	    exit ();
