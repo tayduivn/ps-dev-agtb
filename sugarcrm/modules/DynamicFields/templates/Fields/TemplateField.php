@@ -469,9 +469,13 @@ class TemplateField{
 
     /**
      * get_field_name
+     * 
+     * This is a helper function to return a field's proper name.  It checks to see if an instance of the module can
+     * be created and then attempts to retrieve the field's name based on the name lookup skey supplied to the method.
      *
      * @param String $module The name of the module
-     * @param String $name The field name
+     * @param String $name The field name key
+     * @return The field name for the module
      */
     protected function get_field_name($module, $name)
     {
@@ -482,10 +486,18 @@ class TemplateField{
        }
 
        $field_defs = $bean->field_defs;
-       $field_name = isset($field_defs[$name]) ? $name : $name . '_c';
-       return $field_name;
+       return isset($field_defs[$name]['name']) ? $field_defs[$name]['name'] : $name;
     }
 
+    /**
+     * save
+     *
+     * This function says the field template by calling the DynamicField addFieldObject function.  It then
+     * checks to see if updates are needed for the SearchFields.php file.  In the event that the unified_search
+     * member variable is set to true, a search field definition is updated/created to the SearchFields.php file.
+     *
+     * @param $df Instance of DynamicField
+     */
 	function save($df){
 		//	    $GLOBALS['log']->debug('saving field: '.print_r($this,true));
 		$df->addFieldObject($this);
