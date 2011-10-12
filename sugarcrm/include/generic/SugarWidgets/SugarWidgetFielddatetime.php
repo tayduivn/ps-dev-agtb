@@ -57,13 +57,11 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	function queryFilterOn($layout_def)
 	{
 		global $timedate;
-
         $begin = $layout_def['input_name0'];
-     	$end = $begin;
         $hasTime = $this->hasTime($begin);
-        if(!$hasTime){
-            $day = $timedate->fromUserDate($begin);
-            return $this->queryDay($layout_def, $day);
+        if(!$hasTime)
+        {
+            return $this->queryDay($layout_def, $timedate->fromDbDate($begin));
         }
         return $this->queryDateOp($this->_get_column_select($layout_def), $begin, '=', "datetime");
 	}
