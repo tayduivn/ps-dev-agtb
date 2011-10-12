@@ -63,7 +63,7 @@ sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 
 sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
 sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
 sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
+SUM(opportunities.amount_usdollar) AS \"Total Revenue\"
 FROM opportunities
  LEFT JOIN accounts_opportunities
 ON opportunities.id=accounts_opportunities.opportunity_id
@@ -79,7 +79,7 @@ sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 
 sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
 sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
 sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
+SUM(opportunities.amount_usdollar) AS \"Total Revenue\"
 FROM opportunities
  LEFT JOIN accounts_opportunities
 ON opportunities.id=accounts_opportunities.opportunity_id
@@ -95,7 +95,7 @@ sum( case when $m_closed = $m_date[2] then opportunities.amount_usdollar else 0 
 sum( case when $m_closed = $m_date[3] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}3\",
 sum( case when $m_closed = $m_date[4] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}4\",
 sum( case when $m_closed = $m_date[5] then opportunities.amount_usdollar else 0 end ) \"{sc}0{sc}5\",
-SUM(opportunities.amount_usdollar) AS 'Total Revenue'
+SUM(opportunities.amount_usdollar) AS \"Total Revenue\"
 FROM opportunities
  LEFT JOIN accounts_opportunities
 ON opportunities.id=accounts_opportunities.opportunity_id

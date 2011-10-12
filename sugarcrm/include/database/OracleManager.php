@@ -1516,8 +1516,8 @@ EOQ;
         $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
         if(!empty($res)) {
             // check that we got good metadata
-            $name = oci_field_name($res, 1);
-            if(empty($name)) {
+            $name = oci_field_name($stmt, 1);
+            if(!empty($name)) {
                 $valid = true;
             }
         }
