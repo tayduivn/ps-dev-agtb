@@ -1724,7 +1724,7 @@ EOQ;
         if(empty($version)) {
             return array('ERR_DB_VERSION_FAILURE');
         }
-        if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $version)) {
+        if(!preg_match("/^(9|10|11)\\./i", $version)) {
             return array('ERR_DB_OCI8_VERSION', $version);
         }
         return true;
