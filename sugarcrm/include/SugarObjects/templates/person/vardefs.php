@@ -126,6 +126,17 @@ $vardefs =array(
 			'comment' => 'Home phone number of the contact',
             'merge_filter' => 'enabled',
 		),
+		'email'=> array(
+			'name' => 'email',
+			'query_type' => 'default',
+			'source' => 'non-db',
+			'operator' => 'subquery',
+			'subquery' => 'SELECT eabr.bean_id FROM email_addr_bean_rel eabr JOIN email_addresses ea ON (ea.id = eabr.email_address_id) WHERE eabr.deleted=0 AND ea.email_address LIKE',
+			'db_field' => array(
+				'id',
+			),
+			'vname' =>'LBL_ANY_EMAIL',
+		),
 	'phone_mobile' =>
 		array (
 			'name' => 'phone_mobile',
@@ -216,6 +227,7 @@ $vardefs =array(
 		    'massupdate' => false,
 			'studio'=>'false',
 		),
+		
 	'primary_address_street' =>
 		array (
 			'name' => 'primary_address_street',
@@ -369,6 +381,7 @@ $vardefs =array(
 			'comment' => 'Phone number of the assistant of the contact',
             'merge_filter' => 'enabled',
 		),
+		
 	'email_addresses_primary' => 
 		array (
             'name' => 'email_addresses_primary',
