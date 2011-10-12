@@ -38,7 +38,7 @@ class CalendarGrid {
 	var $real_today_unix; // timestemp of today
 	var $weekday_names; // string array of names of week days
 	var $startday; // first day of week
-	var $scrollable; // srolling in callendar
+	var $scrollable; // srolling in calendar
 	var $time_step = 30; // time step
 	
 	function __construct(&$args){

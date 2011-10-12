@@ -347,12 +347,14 @@
 			visible : false,
 			modal : true,
 			close : true,
-			zIndex : 10,
+			zIndex : 10
 		});
 		var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.recordDialog.cancel();} } );
 		CAL.recordDialog.cfg.queueProperty("keylisteners", listeners);
 		
-		CAL.recordDialog.cancelEvent.subscribe(function(e, a, o){
+		
+		
+		CAL.recordDialog.cancelEvent.subscribe(function(e, a, o){					
 			CAL.close_record_dialog();
 		});
 		
@@ -1154,10 +1156,6 @@
 			this.setXConstraint(left, right);
 			this.setYConstraint(top, bottom);
 		}
-	});	
+	});
 	
-	
-	var eloaded = document.createElement("span");
-	eloaded.style.display = "none";
-	eloaded.id = "cal_loaded";
-	document.getElementById("content").appendChild(eloaded);
+	var cal_loaded = true;
