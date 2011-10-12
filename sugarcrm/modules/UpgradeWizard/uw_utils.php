@@ -1902,6 +1902,8 @@ function getInstallType($type_string) {
 
 function getImageForType($type) {
     global $image_path;
+    global $mod_strings;
+    
     $icon = "";
     switch($type) {
         case "full":
@@ -2309,6 +2311,7 @@ function testThis3(&$files, $id, $hide, $previousPath = '') {
 
 	$out = '';
 
+    global $mod_strings;
 	// expecting full path here
 	foreach($files as $k => $file) {
 		$file = str_replace(getcwd(), '', $file);
