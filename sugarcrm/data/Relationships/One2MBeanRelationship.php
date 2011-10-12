@@ -108,6 +108,11 @@ class One2MBeanRelationship extends One2MRelationship
     public function remove($lhs, $rhs, $save = true)
     {
         $rhsID = $this->def['rhs_key'];
+
+        //If this relationship has already been removed, we can just return
+        if ($rhs->$rhsID != $lhs->id)
+            return;
+
         $rhs->$rhsID = '';
 
         if ($save && !$rhs->deleted)
@@ -115,9 +120,7 @@ class One2MBeanRelationship extends One2MRelationship
             $rhs->in_relationship_update = TRUE;
             $rhs->save();
         }
-        $rhsID = $this->def['rhs_key'];
-        $rhs->$rhsID = '';
-
+        
         if (empty($_SESSION['disable_workflow']) || $_SESSION['disable_workflow'] != "Yes")
         {
             $this->callAfterDelete($lhs, $rhs);
