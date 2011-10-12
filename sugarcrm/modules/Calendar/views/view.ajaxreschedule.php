@@ -25,8 +25,12 @@ class CalendarViewAjaxReschedule extends SugarView {
 		if(!$bean->ACLAccess('Save')){
 			die;	
 		}
-
-		$bean->date_start = $_REQUEST['datetime'];
+		
+		$field = date_start;
+		if($module == "Tasks")
+			$field = date_due;
+		
+		$bean->$field = $_REQUEST['datetime'];
 		$bean->save();
 	}	
 
