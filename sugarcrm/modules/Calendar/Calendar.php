@@ -215,15 +215,13 @@ class Calendar {
 								}
 							}					
 						}				
-					}								
-
-					$newAct['date_start'] = $act->sugar_bean->date_start;	
-					$timestamp = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->date_start);
-				
-					if($newAct['type'] == 'task'){
-					 	$newAct['date_start'] = $act->sugar_bean->date_due;					 	
-						$timestamp = CalendarUtils::to_timestamp_from_uf($newAct['date_start']);
 					}
+					
+					$date_field = "date_start";								
+					if($newAct['type'] == 'task')
+						$date_field = "date_due";
+																	
+					$timestamp = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->$date_field);				
 								
 					$newAct['timestamp'] = $timestamp;
 					$newAct['time_start'] = CalendarUtils::timestamp_to_string($newAct['timestamp'],$GLOBALS['timedate']->get_time_format());

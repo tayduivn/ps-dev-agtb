@@ -233,7 +233,8 @@
 </script>
 	
 <script type="text/javascript">	
-	{literal}
+{literal}
+YAHOO.util.Event.onDOMReady(function(){	
 	var schedulerLoader = new YAHOO.util.YUILoader({
 		require : ["jsclass_scheduler"],
 		onSuccess: function(){
@@ -249,8 +250,9 @@
 		varName: "global_rpcClient",
 		requires: []
 	});
-	schedulerLoader.insert();	
-	{/literal}
+	schedulerLoader.insert();
+});	
+{/literal}	
 </script>
 	
 {if !$sugar_body_only}

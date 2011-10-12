@@ -154,7 +154,7 @@
 					});
 				}								
 				
-				if(CAL.items_draggable && ActRecord.module_name != 'Tasks' && ActRecord.editview == 1){
+				if(CAL.items_draggable && ActRecord.module_name != "Tasks" && ActRecord.editview == 1){
 
 					var dd = new YAHOO.util.DDCAL(elm_id,"cal",{isTarget: false,cont:'cal-grid'}); 									
 													
