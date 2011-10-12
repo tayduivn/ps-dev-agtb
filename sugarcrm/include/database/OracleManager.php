@@ -901,12 +901,13 @@ class OracleManager extends DBManager
         }
 
         $qval = parent::massageValue($val, $fieldDef);
-        switch($ctype) {
+        switch($type) {
             case 'date':
                 $val = explode(" ", $val); // make sure that we do not pass the time portion
                 $qval = parent::massageValue($val[0], $fieldDef);            // get the date portion
                 return "TO_DATE($qval, 'YYYY-MM-DD')";
             case 'datetime':
+            case 'datetimecombo':
                 return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
             case 'time':
                 return "TO_DATE($qval, 'HH24:MI:SS')";
