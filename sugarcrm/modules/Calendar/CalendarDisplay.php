@@ -28,6 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+
 class CalendarDisplay {	
 
 	// colors of items on calendar
@@ -91,7 +92,7 @@ class CalendarDisplay {
 		}else{			
 			$d_param = strval(intval(60 / $args['cal']->time_step)) . "n";
 			
-			if($args['cal']->view != "week")
+			if($args['cal']->view != "week" && $args['cal']->view != "day")
 				$d_param .= "+1";	
 		}
 		

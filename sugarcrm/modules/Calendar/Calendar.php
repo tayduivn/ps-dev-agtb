@@ -28,6 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+
 require_once('include/utils/activity_utils.php');
 require_once('modules/Calendar/CalendarUtils.php');
 require_once('modules/Calendar/CalendarActivity.php');
@@ -214,15 +215,13 @@ class Calendar {
 								}
 							}					
 						}				
-					}								
-
-					$newAct['date_start'] = $act->sugar_bean->date_start;	
-					$timestamp = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->date_start);
-				
-					if($newAct['type'] == 'task'){
-					 	$newAct['date_start'] = $act->sugar_bean->date_due;					 	
-						$timestamp = CalendarUtils::to_timestamp_from_uf($newAct['date_start']);
 					}
+					
+					$date_field = "date_start";								
+					if($newAct['type'] == 'task')
+						$date_field = "date_due";
+																	
+					$timestamp = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->$date_field);				
 								
 					$newAct['timestamp'] = $timestamp;
 					$newAct['time_start'] = CalendarUtils::timestamp_to_string($newAct['timestamp'],$GLOBALS['timedate']->get_time_format());
@@ -323,7 +322,7 @@ class Calendar {
 		if($this->view == 'week' || $this->view == 'shared') {
 			$end_date_time = $this->date_time->get("+7 days");
 		}else if($this->view == 'month'){
-			$start_date_time = $this->date_time->get('first day of last month');
+			$start_date_time = $this->date_time->get('-38 days');
 			$end_date_time = $this->date_time->get('first day of next month');
 			$end_date_time = $end_date_time->get("+7 days");
 		}else{

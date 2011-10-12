@@ -1,7 +1,18 @@
 <link type="text/css" href="modules/Calendar/Cal.css" rel="stylesheet" />
-	
+<script type="text/javascript" src="modules/Calendar/Cal.js"></script>
 <script type="text/javascript">
-	YAHOO.util.Event.onAvailable('cal_loaded',function(){literal}{{/literal}
+
+	{literal}
+	YAHOO.util.Event.onDOMReady(function(){
+		dom_loaded = true;
+	});
+	
+	function check_cal_loaded(){
+		return (typeof cal_loaded != 'undefined' && cal_loaded == true && typeof dom_loaded != 'undefined' && dom_loaded == true);
+	}
+	{/literal}
+	
+	SUGAR.util.doWhen(check_cal_loaded, function(){literal}{{/literal}
 	
 		CAL.pview = "{$pview}";
 		CAL.t_step = {$t_step};
@@ -183,6 +194,7 @@
 		);
 		{/literal}
 		
+		cal_loaded = null;		
 	});
 </script>
 			
@@ -221,7 +233,8 @@
 </script>
 	
 <script type="text/javascript">	
-	{literal}
+{literal}
+YAHOO.util.Event.onDOMReady(function(){	
 	var schedulerLoader = new YAHOO.util.YUILoader({
 		require : ["jsclass_scheduler"],
 		onSuccess: function(){
@@ -237,15 +250,15 @@
 		varName: "global_rpcClient",
 		requires: []
 	});
-	schedulerLoader.insert();	
-	{/literal}
+	schedulerLoader.insert();
+});	
+{/literal}	
 </script>
 	
 {if !$sugar_body_only}
 <script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
 <script type="text/javascript" src="include/javascript/jsclass_async.js"></script>	
-<script type="text/javascript" src="include/javascript/overlibmws.js"></script>	
-<script type="text/javascript" src="modules/Calendar/Cal.js"></script>
+<script type="text/javascript" src="include/javascript/overlibmws.js"></script>
 {/if}
 	
 {if $hide_whole_day}

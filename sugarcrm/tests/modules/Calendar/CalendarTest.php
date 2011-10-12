@@ -27,6 +27,7 @@
  ********************************************************************************/
 
 
+
 require_once "modules/Calendar/Calendar.php";
 require_once "modules/Calendar/CalendarUtils.php";
 require_once('modules/Meetings/Meeting.php');
@@ -100,8 +101,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 		$this->assertEquals($count1 + 1, $count2, "Count of records should be one more after meeting added");
 	}
 	
-	public function testCalendarLoadActivities(){
-        $this->markTestSkipped("Skipping Test");
+	public function testCalendarLoadActivities(){        
 		$cal = new Calendar('month');
 		$cal->add_activities($GLOBALS['current_user']);
 		$format = $GLOBALS['current_user']->getUserDateTimePreferences();
