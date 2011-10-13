@@ -83,7 +83,7 @@ class SugarRelationshipFactory {
             break;
             case "one-to-many":
                 require_once("data/Relationships/One2MBeanRelationship.php");
-                if (empty($def['true_relationship_type'])){
+                if (empty($def['true_relationship_type']) || empty($def['table']) || empty($def['join_key_rhs'])){
                     return new One2MBeanRelationship($def);
                 }
                 else {
