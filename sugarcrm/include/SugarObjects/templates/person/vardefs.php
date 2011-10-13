@@ -129,7 +129,7 @@ $vardefs =array(
 		//bug 42902
 		'email'=> array(
 			'name' => 'email',
-			 'type' => 'email',
+			'type' => 'email',
 			'query_type' => 'default',
 			'source' => 'non-db',
 			'operator' => 'subquery',

@@ -292,9 +292,9 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			'importable' => 'false',
 		),
 		//bug 42902
-		'any_email'=> array(
-			'name' => 'any_email',
-			 'type' => 'email',
+		'email'=> array(
+			'name' => 'email',
+			'type' => 'email',
 			'query_type' => 'default',
 			'source' => 'non-db',
 			'operator' => 'subquery',
