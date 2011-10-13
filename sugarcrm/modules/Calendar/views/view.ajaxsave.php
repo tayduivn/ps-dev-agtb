@@ -38,13 +38,10 @@ class CalendarViewAjaxSave extends SugarView {
 		require_once('include/formbase.php');
 		
 		$bean = populateFromPost("",$bean);
-			
-
 
 		
 		if(!$_REQUEST['reminder_checked'])
 			$bean->reminder_time = -1;
-
 
 
 		if(empty($_REQUEST['record']) && strpos($_POST['user_invitees'],$bean->assigned_user_id) === false)
@@ -69,7 +66,12 @@ class CalendarViewAjaxSave extends SugarView {
 	
 
 			global $timedate;
-			$timestamp = CalendarUtils::to_timestamp_from_uf($bean->date_start);
+			
+			$date_field = "date_start";
+			if($_REQUEST['current_module'] == "Tasks")
+				$date_field = "date_due";
+			
+			$timestamp = CalendarUtils::to_timestamp_from_uf($bean->$date_field);
 			
 			if($_REQUEST['current_module'] == 'Calls')
 				$users = $bean->get_call_users();
@@ -117,11 +119,9 @@ class CalendarViewAjaxSave extends SugarView {
 		}
 
 		ob_clean();
-		echo json_encode($json_arr);
-		
+		echo json_encode($json_arr);		
 	
 	}
-
 
 	
 	function save_activity(&$bean,$notify = true){	
@@ -312,9 +312,8 @@ class CalendarViewAjaxSave extends SugarView {
 			    			$bean->db->query($qU);
 			    		}
 			    	}
-		}
-	
-		if($_REQUEST['current_module'] == 'Calls'){
+		
+		}else if($_REQUEST['current_module'] == 'Calls'){
 	
 			    	if(!empty($_POST['user_invitees'])) {
 			    		$userInvitees = explode(',', trim($_POST['user_invitees'], ','));
@@ -504,7 +503,13 @@ class CalendarViewAjaxSave extends SugarView {
 			    			$bean->db->query($qU);
 			    		}
 			    	} 
-		}
+			    	
+		}else if($_REQUEST['current_module'] == 'Tasks'){
+			if (!isset($GLOBALS['check_notify'])){
+				$GLOBALS['check_notify'] = false;
+			}
+			$bean->save($GLOBALS['check_notify']);
+		}	
 	}
 	
 

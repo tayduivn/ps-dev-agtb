@@ -110,6 +110,12 @@ class OracleManager extends DBManager
      */
     protected static $sequences = null;
 
+    /**
+     * DB configuration options
+     * @var array
+     */
+    protected $configOptions;
+
     public function repairTableParams($tablename, $fielddefs, $indices, $execute = true, $engine = null)
     {
         //Modules with names close to 30 characters may have index names over 30 characters, we need to clean them
@@ -646,6 +652,7 @@ class OracleManager extends DBManager
         if(!$configOptions)
 			$configOptions = $sugar_config['dbconfig'];
 
+		$this->configOptions = $configOptions;
 		if($this->getOption('persistent'))
 		{
             $this->database = oci_pconnect($configOptions['db_user_name'], $configOptions['db_password'],$configOptions['db_name'], "AL32UTF8");
@@ -894,12 +901,13 @@ class OracleManager extends DBManager
         }
 
         $qval = parent::massageValue($val, $fieldDef);
-        switch($ctype) {
+        switch($type) {
             case 'date':
-                $val = explode(" ", $qval); // make sure that we do not pass the time portion
-                $qval = $val[0];            // get the date portion
+                $val = explode(" ", $val); // make sure that we do not pass the time portion
+                $qval = parent::massageValue($val[0], $fieldDef);            // get the date portion
                 return "TO_DATE($qval, 'YYYY-MM-DD')";
             case 'datetime':
+            case 'datetimecombo':
                 return "TO_DATE($qval, 'YYYY-MM-DD HH24:MI:SS')";
             case 'time':
                 return "TO_DATE($qval, 'HH24:MI:SS')";
@@ -932,7 +940,7 @@ class OracleManager extends DBManager
 	 */
 	protected function _isNullableDb($tableName, $fieldName)
 	{
-		return $this->db->getOne("SELECT nullable FROM user_tab_columns
+		return $this->getOne("SELECT nullable FROM user_tab_columns
 				WHERE TABLE_NAME = '".strtoupper($tableName)."'
 					AND COLUMN_NAME = '".strtoupper($fieldName)."'") == 'Y';
 	}
@@ -1049,7 +1057,7 @@ class OracleManager extends DBManager
                 FROM USER_INDEXES
                 WHERE INDEX_NAME = '$name'
                     OR INDEX_NAME = '".strtoupper($name)."'");
-		$row = $this->db->fetchByAssoc($result);
+		$row = $this->fetchByAssoc($result);
 		return ($row['cnt'] > 1) ? $name . (intval($row['cnt']) + 1) : $name;
     }
 
@@ -1116,7 +1124,7 @@ class OracleManager extends DBManager
     {
     	$sequence_name = $this->_getSequenceName($table, $field_name, true);
     	$result = $this->query("SELECT {$sequence_name}.NEXTVAL currval FROM DUAL");
-    	$row = $this->db->fetchByAssoc($result);
+    	$row = $this->fetchByAssoc($result);
     	$current = $row['currval'];
     	$change = $start_value - $current - 1;
     	$this->query("ALTER SEQUENCE {$sequence_name} INCREMENT BY $change");
@@ -1229,7 +1237,7 @@ EOQ;
             "SELECT * FROM user_tab_columns WHERE TABLE_NAME = '".strtoupper($tablename)."'");
 
         $columns = array();
-        while (($row=$this->db->fetchByAssoc($result)) !=null) {
+        while (($row=$this->fetchByAssoc($result)) !=null) {
             $name = strtolower($row['column_name']);
             $columns[$name]['name']=$name;
             $columns[$name]['type']=strtolower($row['data_type']);
@@ -1270,12 +1278,10 @@ EOQ;
      */
     protected function _findSequence($name)
     {
-        global $sugar_config;
-        $db_user_name = isset($sugar_config['dbconfig']['db_user_name'])?$sugar_config['dbconfig']['db_user_name']:'';
-        $db_user_name = strtoupper($db_user_name);
+        $db_user_name = strtoupper(isset($this->configOptions['db_user_name'])?$this->configOptions['db_user_name']:'');
 
         $uname = strtoupper($name);
-        $row = $this->db->fetchOne(
+        $row = $this->fetchOne(
                 "SELECT SEQUENCE_NAME FROM ALL_SEQUENCES WHERE SEQUENCE_OWNER='$db_user_name' AND SEQUENCE_NAME = '$uname'");
         return !empty($row);
     }
@@ -1507,11 +1513,11 @@ EOQ;
         }
         $valid = false;
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         if(!empty($res)) {
             // check that we got good metadata
-            $name = oci_field_name($res, 1);
-            if(empty($name)) {
+            $name = oci_field_name($stmt, 1);
+            if(!empty($name)) {
                 $valid = true;
             }
         }
@@ -1587,7 +1593,7 @@ EOQ;
             return 'Wrong statement type';
         }
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         // just in case, rollback all changes
         $error = $this->lastError();
         oci_rollback($this->database);
@@ -1719,7 +1725,7 @@ EOQ;
         if(empty($version)) {
             return array('ERR_DB_VERSION_FAILURE');
         }
-        if(!preg_match("/Oracle9i|Oracle Database 10g|11/i", $version)) {
+        if(!preg_match("/^(9|10|11)\\./i", $version)) {
             return array('ERR_DB_OCI8_VERSION', $version);
         }
         return true;

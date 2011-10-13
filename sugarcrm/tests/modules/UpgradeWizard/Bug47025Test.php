@@ -29,6 +29,7 @@ var $user;
 
 public function setUp()
 {
+    $this->markTestIncomplete("This test kills all users on MS-SQL, since deleted in a bit field which only takes 0/1 values");
     //Set all Users to have deleted to 2 so we only test one user
     $GLOBALS['db']->query('UPDATE users SET deleted = 2 WHERE deleted = 0');
     global $current_user;

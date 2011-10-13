@@ -94,7 +94,7 @@
 			var elm_id = ActRecord.record + id_suffix;			
 			
 			var el = document.createElement("div");
-			el.innerHTML = "<div class='head'><div class='adicon' onmouseover='return CAL.show_i(" + '"' + ActRecord.record  + id_suffix + '"'  +  ");' onmouseout='return nd(400);' >&nbsp;&nbsp;</div><div>" + start_text + "</div>" + "" + "</div><div class='contain' "+contain_style+">" + item_text + "</div>"; 
+			el.innerHTML = "<div class='head'><div class='adicon' onmouseover='return CAL.show_additional_details(" + '"' + ActRecord.record  + id_suffix + '"'  +  ");' onmouseout='return nd(400);' >&nbsp;&nbsp;</div><div>" + start_text + "</div>" + "" + "</div><div class='contain' "+contain_style+">" + item_text + "</div>"; 
 			el.className = "act_item" + " " + ActRecord.type+"_item";
 			el.setAttribute("id",elm_id);
 			el.setAttribute("module_name",ActRecord.module_name);
@@ -154,7 +154,7 @@
 					});
 				}								
 				
-				if(CAL.items_draggable && ActRecord.module_name != 'Tasks' && ActRecord.editview == 1){
+				if(CAL.items_draggable && ActRecord.module_name != "Tasks" && ActRecord.editview == 1){
 
 					var dd = new YAHOO.util.DDCAL(elm_id,"cal",{isTarget: false,cont:'cal-grid'}); 									
 													
@@ -347,12 +347,14 @@
 			visible : false,
 			modal : true,
 			close : true,
-			zIndex : 10,
+			zIndex : 10
 		});
 		var listeners = new YAHOO.util.KeyListener(document, { keys : 27 }, {fn: function() { CAL.recordDialog.cancel();} } );
 		CAL.recordDialog.cfg.queueProperty("keylisteners", listeners);
 		
-		CAL.recordDialog.cancelEvent.subscribe(function(e, a, o){
+		
+		
+		CAL.recordDialog.cancelEvent.subscribe(function(e, a, o){					
 			CAL.close_record_dialog();
 		});
 		
@@ -369,8 +371,7 @@
 
 	CAL.open_record_dialog = function (params){	
 											
-						CAL.recordDialog.show();
-		
+						CAL.recordDialog.show();		
 						
 						var nodes = CAL.query("#record_tabs li a");
 						CAL.each(nodes,function(i,v){
@@ -749,7 +750,7 @@
 						CAL.cut_record(box_id);					
 						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('dur'),u.getAttribute('status'),u.getAttribute('record'));
 						u.setAttribute("date_start",s.getAttribute("datetime"));				
-						u.childNodes[0].childNodes[1].childNodes[0].innerHTML = s.getAttribute('dur');
+						u.childNodes[0].childNodes[1].innerHTML = start_text;
 					}
 				}
 	}	
@@ -975,7 +976,7 @@
 									CAL.recordDialog.cancel();	
 	}
 	
-	CAL.show_i = function (d_id){
+	CAL.show_additional_details = function (d_id){
 		var obj = CAL.get(d_id);
 	
 		var record = obj.getAttribute("record");
@@ -1155,10 +1156,6 @@
 			this.setXConstraint(left, right);
 			this.setYConstraint(top, bottom);
 		}
-	});	
+	});
 	
-	
-	var eloaded = document.createElement("span");
-	eloaded.style.display = "none";
-	eloaded.id = "cal_loaded";
-	document.getElementById("content").appendChild(eloaded);
+	var cal_loaded = true;

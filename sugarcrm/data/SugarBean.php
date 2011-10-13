@@ -1144,8 +1144,6 @@ class SugarBean
         {
             if ($this->load_relationship($name))
             {
-                $GLOBALS['log']->fatal("deleting relationship $name where id is $id");
-                $GLOBALS['log']->fatal(get_class($this->$name->getRelationshipObject()));
                 $this->$name->delete($id);
             }
             else
@@ -1708,11 +1706,26 @@ class SugarBean
             $n->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-            $oe = new OutboundEmail();
+           $oe = new OutboundEmail();
             $oe = $oe->getUserMailerSettings($current_user);
             //only send if smtp server is defined
             if($sendEmail){
-                if(empty($oe->mail_smtpserver)){
+                $smtpVerified = false;
+
+                //first check the user settings
+                if(!empty($oe->mail_smtpserver)){
+                    $smtpVerified = true;
+                }
+
+                //if still not verified, check against the system settings
+                if (!$smtpVerified){
+                    $oe = $oe->getSystemMailerSettings();
+                    if(!empty($oe->mail_smtpserver)){
+                        $smtpVerified = true;
+                    }
+                }
+                //if smtp was not verified against user or system, then do not send out email
+                if (!$smtpVerified){
                     $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
                     //break out
                     return;

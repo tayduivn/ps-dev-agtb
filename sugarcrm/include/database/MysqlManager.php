@@ -134,6 +134,7 @@ class MysqlManager extends DBManager
 		"create_user" => true,
 		"fulltext" => true,
 	    "collation" => true,
+	    "create_db" => true,
 	);
 
 	/**

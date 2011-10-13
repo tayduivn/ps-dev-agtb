@@ -92,6 +92,7 @@ class MssqlManager extends DBManager
         'limit_subquery' => true,
         "fix:expandDatabase" => true, // Support expandDatabase fix
         "create_user" => true,
+        "create_db" => true,
     );
 
     /**

@@ -614,8 +614,11 @@ FP;
 post_install_modules();
 
 //Call rebuildSprites
-require_once('modules/UpgradeWizard/uw_utils.php');
-rebuildSprites(true);
+if(function_exists('imagecreatetruecolor'))
+{
+    require_once('modules/UpgradeWizard/uw_utils.php');
+    rebuildSprites(true);
+}
 
 if( count( $bottle ) > 0 ){
     foreach( $bottle as $bottle_message ){
