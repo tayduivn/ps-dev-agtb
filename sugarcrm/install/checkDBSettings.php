@@ -306,9 +306,14 @@ function copyInputsIntoSession(){
             }
             if(isset($_REQUEST['demoData'])){$_SESSION['demoData'] = $_REQUEST['demoData'] ;}
 
-            if(!empty($_SESSION['setup_db_create_database'])) {
+            if($db->supports('create_db')) {
+                if(!empty($_SESSION['setup_db_create_database'])) {
             	// if we're dropping DB, no need to drop tables
-            	$_SESSION['setup_db_drop_tables']  = false;
+                	$_SESSION['setup_db_drop_tables']  = false;
+                }
+            } else {
+                // we can't create DB, so can't drop it
+                $_SESSION['setup_db_create_database'] = false;
             }
 
             if (isset($_REQUEST['goto']) && $_REQUEST['goto'] == 'SilentInstall' && isset($_SESSION['setup_db_drop_tables'])) {
