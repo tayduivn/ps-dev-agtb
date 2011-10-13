@@ -1513,7 +1513,7 @@ EOQ;
         }
         $valid = false;
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         if(!empty($res)) {
             // check that we got good metadata
             $name = oci_field_name($stmt, 1);
@@ -1593,7 +1593,7 @@ EOQ;
             return 'Wrong statement type';
         }
         // try query, but don't generate result set and do not commit
-        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_NO_AUTO_COMMIT);
+        $res = oci_execute($stmt, OCI_DESCRIBE_ONLY|OCI_DEFAULT);
         // just in case, rollback all changes
         $error = $this->lastError();
         oci_rollback($this->database);

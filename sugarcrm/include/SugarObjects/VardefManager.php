@@ -409,10 +409,14 @@ class VardefManager{
     public static function modHasCalcFieldsWithLink($module, $object, $linkName)
     {
         global $dictionary;
+        //One off fix for the inconsistent cases module where object name doesn't match the dictionary entry
+        if ($object == "aCase")
+            $object = "Case";
         if (empty($dictionary[$object]))
             self::loadVardef($module, $object);
-        if (empty($dictionary[$object]))
+        if (empty($dictionary[$object])){
             return false;
+        }
 
         $vardef = $dictionary[$object];
         $hasFieldsWithLink = false;
