@@ -655,6 +655,7 @@ $mod_strings = array (
     'LBL_PHONE_OTHER' => 'Phone Other',
     'LBL_PHONE_FAX' => 'Phone Fax',
     'LBL_PORTAL_ONLY' => 'Portal Only',
+    'LBL_SHOW_ON_EMPLOYEES' => 'Display Employee Record',
     'LBL_IS_GROUP' => 'Is Group',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
 

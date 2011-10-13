@@ -181,7 +181,7 @@ class InboundEmail extends SugarBean {
 
 		$this->smarty = new Sugar_Smarty();
 		$this->overview = new Overview();
-		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}cache/images/";
+		$this->imagePrefix = "{$GLOBALS['sugar_config']['site_url']}/cache/images/";
 	}
 
 	/**
@@ -806,7 +806,7 @@ class InboundEmail extends SugarBean {
 						default:
 							$overview->$colDef['name'] = from_html($overview->$colDef['name']);
 							$overview->$colDef['name'] = $this->cleanContent($overview->$colDef['name']);
-							$values .= $this->db->quote($overview->$colDef['name']);
+							$values .= $this->db->quoted($overview->$colDef['name']);
 						break;
 					}
 				}

@@ -79,6 +79,7 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isValidDBName('sugar.crm', 'mysql'));
     }
 
+
 //BEGIN SUGARCRM flav=ent ONLY
     public function testValidOracleNameReturnsTrue()
     {
@@ -95,6 +96,7 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
     }
 //END SUGARCRM flav=ent ONLY
 
+
     public function testValidMSSQLNameReturnsTrue()
     {
         $this->assertTrue(isValidDBName('sugarCRM', 'mssql'));
@@ -108,5 +110,4 @@ class ValidDBNameTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertFalse(isValidDBName('sugar crm', 'mssql'));
         $this->assertFalse(isValidDBName('#sugarCRM_ver6', 'mssql'));
     }
-
 }

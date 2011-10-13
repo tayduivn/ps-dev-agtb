@@ -122,11 +122,8 @@ class ReportsViewBuildreportmoduletree extends SugarView
     {
         $node = array();
 
-        foreach ($GLOBALS['app_list_strings']['moduleList'] as $mod_name=>$name) {
-            if ($mod_name==$linked_field['label']) {
-                $linked_field['label'] = $name;
-                break;
-            }
+        if (isset($GLOBALS['app_list_strings']['moduleList'][$linked_field['label']])) {
+            $linked_field['label'] = $GLOBALS['app_list_strings']['moduleList'][$linked_field['label']];
         }
 
         $node['text'] = $linked_field['label'];

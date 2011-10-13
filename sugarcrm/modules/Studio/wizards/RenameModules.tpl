@@ -175,12 +175,12 @@
         var el1 = document.getElementById("slot" + rowCount + "_text");
         var el2 = document.getElementById("slot" + rowCount + "_stext");
 
-        if(el1.value == "")
+        if( YAHOO.lang.trim(el1.value) == "")
         {
             add_error_style('editdropdown', el1, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'),true);
             foundErrors = true;
         }
-        if(el2.value == "")
+        if( YAHOO.lang.trim(el2.value) == "")
         {
             add_error_style('editdropdown', el2, SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS'),true);
             foundErrors = true;

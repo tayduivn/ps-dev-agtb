@@ -92,6 +92,7 @@ class MssqlManager extends DBManager
         'limit_subquery' => true,
         "fix:expandDatabase" => true, // Support expandDatabase fix
         "create_user" => true,
+        "create_db" => true,
     );
 
     /**
@@ -169,7 +170,7 @@ class MssqlManager extends DBManager
         }
 
         //create persistent connection
-        if ($sugar_config['dbconfigoption']['persistent'] == true) {
+        if ($this->getOption('persistent')) {
             $this->database =@mssql_pconnect(
                 $connect_param ,
                 $configOptions['db_user_name'],
@@ -192,7 +193,7 @@ class MssqlManager extends DBManager
                     return false;
                 }
             }
-            if($this->database && $sugar_config['dbconfigoption']['persistent'] == true){
+            if($this->database && $this->getOption('persistent')){
                 $_SESSION['administrator_error'] = "<B>Severe Performance Degradation: Persistent Database Connections "
                     . "not working.  Please set \$sugar_config['dbconfigoption']['persistent'] to false in your "
                     . "config.php file</B>";
@@ -830,7 +831,7 @@ class MssqlManager extends DBManager
             $alias_beg_pos = 0;
             if(strpos($psql, " as "))
                 $alias_beg_pos = strpos($psql, " as ");
-               
+
             // Bug # 44923 - This breaks the query and does not properly filter isnull
             // as there are other functions such as ltrim and rtrim.
             /* else if (strncasecmp($psql, 'isnull', 6) != 0)

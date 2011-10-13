@@ -65,7 +65,12 @@ SUGAR.ajaxUI = {
                 }
             }
         } catch (e){
-            if (!SUGAR.ajaxUI.errorPanel) {
+            SUGAR.ajaxUI.showErrorMessage(o.responseText);
+        }
+    },
+    showErrorMessage : function(errorMessage)
+    {
+        if (!SUGAR.ajaxUI.errorPanel) {
                 SUGAR.ajaxUI.errorPanel = new YAHOO.widget.Panel("ajaxUIErrorPanel", {
                     modal: false,
                     visible: true,
@@ -85,16 +90,14 @@ SUGAR.ajaxUI = {
 					var f = document.getElementById("ajaxErrorFrame");
 					return f != null && f.contentWindow != null && f.contentWindow.document != null;
 				}, function(){
-					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = o.responseText;
+					document.getElementById("ajaxErrorFrame").contentWindow.document.body.innerHTML = errorMessage;
 					window.setTimeout('throw "AjaxUI error parsing response"', 300);
 			});
             panel.show();
             panel.center();
 
             throw "AjaxUI error parsing response";
-        }
     },
-
     canAjaxLoadModule : function(module)
     {
         // Return false if ajax ui is completely disabled
@@ -177,7 +180,11 @@ SUGAR.ajaxUI = {
             else {
                 SUGAR.ajaxUI.showLoadingPanel();
                 ui.lastCall = YAHOO.util.Connect.asyncRequest('GET', url + '&ajax_load=1' + loadLanguageJS, {
-                    success: SUGAR.ajaxUI.callback
+                    success: SUGAR.ajaxUI.callback,
+                    failure: function(){
+                        SUGAR.ajaxUI.hideLoadingPanel();
+                        SUGAR.ajaxUI.showErrorMessage(SUGAR.language.get('app_strings','ERR_AJAX_LOAD_FAILURE'));
+                    }
                 });
             }
         }
@@ -206,7 +213,7 @@ SUGAR.ajaxUI = {
             if(string.length > 200)
             {
                 SUGAR.ajaxUI.showLoadingPanel();
-                form.onsubmit = true;
+                form.onsubmit = function(){ return true; };
                 form.submit();
             } else {
                 con.resetFormState();
@@ -230,6 +237,11 @@ SUGAR.ajaxUI = {
             SUGAR.EmailAddressWidget.count = {};
         }
         YAHOO.util.Event.removeListener(window, 'resize');
+        //Hide any connector dialogs
+        if(typeof(dialog) != 'undefined'){
+            dialog.destroy();
+            delete dialog;
+        }
 
     },
     firstLoad : function()

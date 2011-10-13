@@ -227,7 +227,7 @@ function make_sugar_config(&$sugar_config)
 	    'lockoutexpirationlogin' => '',
 		) : $passwordsetting,
 		//END SUGARCRM flav=pro ONLY
-		'use_sprites' => true,
+		'use_sprites' => (false && function_exists('imagecreatetruecolor')),
 	);
 }
 
@@ -428,7 +428,7 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationtype' => '1',
 	    'lockoutexpirationlogin' => '',
 		),
-	'use_sprites' => true,
+	'use_sprites' => (false && function_exists('imagecreatetruecolor')),
 
 	//END SUGARCRM flav=pro ONLY
 	'use_real_names' => true,
@@ -2833,7 +2833,8 @@ function _ppf($bean, $die=false) {
  */
 function _pp($mixed)
 {
-        echo "\n<pre>\n";
+    //BEGIN SUGARCRM flav=int ONLY
+    echo "\n<pre>\n";
 	print_r($mixed);
 
 	echo "";
@@ -2842,6 +2843,7 @@ function _pp($mixed)
 		echo "\n\n _pp caller, file: " . $stack[0]['file']. ' line#: ' .$stack[0]['line'];
 	}
 	echo "\n</pre>\n";
+    //END SUGARCRM flav=int ONLY
 }
 
 /**

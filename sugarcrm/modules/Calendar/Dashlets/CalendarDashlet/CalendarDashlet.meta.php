@@ -10,6 +10,6 @@ $dashletMeta['CalendarDashlet'] = array(
 							'title'       => 'LBL_TITLE', // array index in language pack 
                                    'description' => 'LBL_DESCRIPTION', // array index in language pack 
                                    'icon'        => 'icon_Calendar_32.gif', 
-                                   'category'    => 'Tools',
+                                   'category'    => 'Module Views',
 );
 ?>

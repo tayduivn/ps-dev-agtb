@@ -540,7 +540,7 @@ if(function_exists('unlinkUpgradeFiles'))
 	unlinkUpgradeFiles($origVersion);
 }
 
-if(function_exists('rebuildSprites'))
+if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
 }

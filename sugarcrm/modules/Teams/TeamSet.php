@@ -374,4 +374,3 @@ class TeamSet extends SugarBean{
         return true;
     }
 }
-?>

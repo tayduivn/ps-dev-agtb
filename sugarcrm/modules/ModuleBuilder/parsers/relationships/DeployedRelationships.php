@@ -67,7 +67,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
                 include ('custom/application/Ext/TableDictionary/tabledictionary.ext.php') ;
             }
             
-            $invalidModules = array ( 'Users' ) ;
+            $invalidModules = array();
             //BEGIN SUGARCRM flav=pro ONLY
             $invalidModules [] = 'Teams' ;
             //END SUGARCRM flav=pro ONLY

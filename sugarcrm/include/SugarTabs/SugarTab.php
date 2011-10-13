@@ -67,9 +67,25 @@ class SugarTab{
                                                     'tabs' => array_slice($subTabs, $max_subtabs));
             $otherTabs[$selected_group]['tabs'] = array_slice($subTabs, 0, $max_subtabs);
         }
-        //_pp($otherMoreTabs);
+        //have to JSON encode the list of tabs for subpanelTitles
+        $subpanelTitles = array();
+        if (!empty($otherTabs['All']['tabs']))
+        {
+            foreach($otherTabs['All']['tabs'] as $subtab)
+            {
+                $subpanelTitles[$subtab['key']] = $subtab['label'];
+            }
+        }
+        if (!empty($otherMoreTabs['All']['tabs'])){
+            foreach($otherMoreTabs['All']['tabs'] as $subtab)
+            {
+                $subpanelTitles[$subtab['key']] = $subtab['label'];
+            }
+        }
+
         $GLOBALS['sugar_smarty']->assign('othertabs', $otherTabs);
         $GLOBALS['sugar_smarty']->assign('otherMoreSubMenu', $otherMoreTabs);
+        $GLOBALS['sugar_smarty']->assign('subpanelTitlesJSON', json_encode($subpanelTitles));
         $GLOBALS['sugar_smarty']->assign('startSubPanel', $selected_group);
         if(!empty($mainTabs))
         {

@@ -862,22 +862,29 @@ class SugarBean
                     }
                     else
                     {
-                        //	add Id to the insert statement.
-                        $column_list='id';
-                        $value_list="'".create_guid()."'";
-
-                        //add relationship name to the insert statement.
-                        $column_list .= $delimiter.'relationship_name';
-                        $value_list .= $delimiter."'".$rel_name."'";
-
-                        //todo check whether $rel_def is an array or not.
-                        //for now make that assumption.
-                        //todo specify defaults if meta not defined.
-                        foreach ($rel_def as $def_key=>$value)
+                        $seed = BeanFactory::getBean("Relationships");
+                        $keys = array_keys($seed->field_defs);
+                        $toInsert = array();
+                        foreach($keys as $key)
                         {
-                            $column_list.= $delimiter.$def_key;
-                            $value_list.= $delimiter."'".$value."'";
+                            if ($key == "id")
+                            {
+                                $toInsert[$key] = create_guid();
+                            }
+                            else if ($key == "relationship_name")
+                            {
+                                $toInsert[$key] = $rel_name;
+                            }
+                            else if (isset($rel_def[$key]))
+                            {
+                                $toInsert[$key] = $rel_def[$key];
+                            }
+                            //todo specify defaults if meta not defined.
                         }
+
+
+                        $column_list = implode(",", array_keys($toInsert));
+                        $value_list = "'" . implode("','", array_values($toInsert)) . "'";
 
                         //create the record. todo add error check.
                         $insert_string = "INSERT into relationships (" .$column_list. ") values (".$value_list.")";
@@ -1137,8 +1144,6 @@ class SugarBean
         {
             if ($this->load_relationship($name))
             {
-                $GLOBALS['log']->fatal("deleting relationship $name where id is $id");
-                $GLOBALS['log']->fatal(get_class($this->$name->getRelationshipObject()));
                 $this->$name->delete($id);
             }
             else
@@ -1701,11 +1706,26 @@ class SugarBean
             $n->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-            $oe = new OutboundEmail();
+           $oe = new OutboundEmail();
             $oe = $oe->getUserMailerSettings($current_user);
             //only send if smtp server is defined
             if($sendEmail){
-                if(empty($oe->mail_smtpserver)){
+                $smtpVerified = false;
+
+                //first check the user settings
+                if(!empty($oe->mail_smtpserver)){
+                    $smtpVerified = true;
+                }
+
+                //if still not verified, check against the system settings
+                if (!$smtpVerified){
+                    $oe = $oe->getSystemMailerSettings();
+                    if(!empty($oe->mail_smtpserver)){
+                        $smtpVerified = true;
+                    }
+                }
+                //if smtp was not verified against user or system, then do not send out email
+                if (!$smtpVerified){
                     $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
                     //break out
                     return;
@@ -4430,8 +4450,19 @@ function save_relationship_changes($is_update, $exclude=array())
                     $this->modified_user_id = 1;
                 }
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified', modified_user_id = '$this->modified_user_id' where id='$id'";
-            } else
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
+                }
+                //END SUGARCRM flav=pro ONLY
+            } else {
                 $query = "UPDATE $this->table_name set deleted=1 , date_modified = '$date_modified' where id='$id'";
+                //BEGIN SUGARCRM flav=pro ONLY
+                if ($this->isFavoritesEnabled()) {
+                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
+                }
+                //END SUGARCRM flav=pro ONLY
+            }
             $this->db->query($query, true,"Error marking record deleted: ");
             
             SugarRelationship::resaveRelatedBeans();

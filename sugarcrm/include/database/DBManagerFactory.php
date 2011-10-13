@@ -151,6 +151,9 @@ class DBManagerFactory
             else{
 //END SUGARCRM flav=ent ONLY
                 self::$instances[$instanceName] = self::getTypeInstance($config['db_type'], $config);
+                if(!empty($sugar_config['dbconfigoption'])) {
+                    self::$instances[$instanceName]->setOptions($sugar_config['dbconfigoption']);
+                }
                 self::$instances[$instanceName]->connect($config, true);
                 self::$instances[$instanceName]->count_id = $count;
                 self::$instances[$instanceName]->references = 0;

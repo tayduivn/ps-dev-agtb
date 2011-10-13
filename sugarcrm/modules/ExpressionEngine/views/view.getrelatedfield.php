@@ -45,6 +45,10 @@ class ViewGetRelatedField extends ViewAjax
         {
             echo(json_encode("unknown field"));
         }
+        else if ($focus->field_defs[$field]['type'] == "bool")
+        {
+            echo json_encode($focus->$field ? "true" : "false");
+        }
         //Otherwise, send it to the formula builder to evaluate further
         else
         {

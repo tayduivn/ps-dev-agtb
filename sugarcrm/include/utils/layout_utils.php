@@ -218,6 +218,17 @@ EOHTML;
  *
  * @param $module String value of the module to create the title section for
  * @param $params Array of arguments used to create the title label.  Typically this is just the current language string label for the section
+ * These should be in the form of array('label' => '<THE LABEL>', 'link' => '<HREF TO LINK TO>');
+ * the first breadcrumb should be index at 0, and built from there e.g.
+ * <code>
+ * array(
+ *    '<a href="index.php?module=Contacts&action=index">Contacts</a>',
+ *    '<a href="index.php?module=Contacts&action=DetailView&record=123">John Smith</a>',
+ *    'Edit',
+ *    );
+ * </code>
+ * would display as:
+ * <a href='index.php?module=Contacts&action=index'>Contacts</a> >> <a href='index.php?module=Contacts&action=DetailView&record=123'>John Smith</a> >> Edit
  * @param $show_create boolean flag indicating whether or not to display the create link (defaults to false)
  * @param $index_url_override String value of url to override for module index link (defaults to module's index action if none supplied)
  * @param $create_url_override String value of url to override for module create link (defaults to EditView action if none supplied)

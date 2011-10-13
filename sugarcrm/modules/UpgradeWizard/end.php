@@ -294,8 +294,7 @@ if(function_exists('unlinkUpgradeFiles'))
 	unlinkUpgradeFiles($_SESSION['current_db_version']);
 }
 
-
-if(function_exists('rebuildSprites'))
+if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 {
     rebuildSprites(true);
 }

@@ -155,5 +155,3 @@ function isValidDBName($name, $dbType)
     $db = DBManagerFactory::getTypeInstance($dbType);
     return $db->isDatabaseNameValid($name);
 }
-
-?>

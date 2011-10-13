@@ -124,6 +124,7 @@ function reportCriteriaWithResult(&$reporter,&$args) {
 				$app_strings['LBL_DUPLICATE_BUTTON_LABEL'].SugarThemeRegistry::current()->getImage("more", 'border="0" align="absmiddle"', null, null, ".gif", $mod_strings['LBL_MORE']).'</button>';
 	} 	
 
+    $smarty->assign('duplicateButtons', $duplicateButtons);
 	$smarty->assign('mod_strings', $mod_strings);
 	$smarty->assign('app_strings', $app_strings);
 	$smarty->assign('current_language', $current_language);

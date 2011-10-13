@@ -89,6 +89,7 @@ class SqlsrvManager extends MssqlManager
         'fulltext' => true,
         'limit_subquery' => true,
         'create_user' => true,
+        "create_db" => true,
     );
 
     protected $type_map = array(
