@@ -37,7 +37,6 @@ $SUPPORTED_METHODS = array(
 	'get_user_array',
 	'get_objects_from_module',
 	'email',
-	'get_full_list'
 );
 
 /**
