@@ -1510,13 +1510,15 @@ class SugarBean
 
     function updateDependentField()
     {
-        require_once("include/Expressions/DependencyManager.php");
-        $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
-        foreach($deps as $dep)
-        {
-            if ($dep->getFireOnLoad())
+        if(!isset($GLOBALS['service_object'])) {
+            require_once("include/Expressions/DependencyManager.php");
+            $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
+            foreach($deps as $dep)
             {
-                $dep->fire($this);
+                if ($dep->getFireOnLoad())
+                {
+                    $dep->fire($this);
+                }
             }
         }
     }
@@ -2483,7 +2485,7 @@ function save_relationship_changes($is_update, $exclude=array())
     * Internal function, do not override.
     *
     */
-    function get_list($order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $singleSelect=false)
+    function get_list($order_by = "", $where = "", $row_offset = 0, $limit=-1, $max=-1, $show_deleted = 0, $singleSelect=false, $select_fields = array())
     {
         $GLOBALS['log']->debug("get_list:  order_by = '$order_by' and where = '$where' and limit = '$limit'");
         if(isset($_SESSION['show_deleted']))
@@ -2508,7 +2510,7 @@ function save_relationship_changes($is_update, $exclude=array())
                 }
             }
         }
-        $query = $this->create_new_list_query($order_by, $where,array(),array(), $show_deleted,'',false,null,$singleSelect);
+        $query = $this->create_new_list_query($order_by, $where,$select_fields,array(), $show_deleted,'',false,null,$singleSelect);
         return $this->process_list_query($query, $row_offset, $limit, $max, $where);
     }
 
