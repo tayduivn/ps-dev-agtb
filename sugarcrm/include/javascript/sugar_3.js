@@ -4254,8 +4254,7 @@ SUGAR.util.setEmailPasswordEdit = function(id) {
  */
 SUGAR.util.validateFileExt = function(fileName, allowedTypes) {
     var ext = fileName.split('.').pop();
-    
-    for (var i = allowedTypes.length; i > 0; i--) {
+    for (var i = allowedTypes.length; i >= 0; i--) {
         if (ext === allowedTypes[i]) {
             return true;
         }
