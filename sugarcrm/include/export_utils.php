@@ -304,38 +304,34 @@ function export($type, $records = null, $members = false, $sample=false) {
 				require_once('modules/Teams/TeamSetManager.php');
 				$value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
 			}
-			//END SUGARCRM flav=pro ONLY
-			array_push($new_arr, preg_replace("/\"/","\"\"", $value));
-		}
-		$line = implode("\"".getDelimiter()."\"", $new_arr);
-		$line = "\"" .$line;
-		$line .= "\"\r\n";
 
-               //replace user_name with full name if use_real_name preference setting is enabled
-               //and this is a user name field
-               $useRealNames = $current_user->getPreference('use_real_names');
-               if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
-                  && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
-                  && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
-                  && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
-               ){
-                   global $locale;
-                   $userFocus = new User();
-                   $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
-                   if ( !empty($userFocus->id) ) {
-                       $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
-                   }
+            //replace user_name with full name if use_real_name preference setting is enabled
+            //and this is a user name field
+            $useRealNames = $current_user->getPreference('use_real_names');
+            if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
+               && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
+               && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
+               && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
+            ){
+               global $locale;
+               $userFocus = new User();
+               $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
+               if ( !empty($userFocus->id) ) {
+                   $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
                }
-
-                //END SUGARCRM flav=pro ONLY
-                array_push($new_arr, preg_replace("/\"/","\"\"", $value));
             }
-            $line = implode("\"".getDelimiter()."\"", $new_arr);
-            $line = "\"" .$line;
-            $line .= "\"\r\n";
-            $content .= $line;
+
+            //END SUGARCRM flav=pro ONLY
+            array_push($new_arr, preg_replace("/\"/","\"\"", $value));
         }
 
+        $line = implode("\"".getDelimiter()."\"", $new_arr);
+        $line = "\"" .$line;
+        $line .= "\"\r\n";
+        $content .= $line;
+
+        }
+    }
     return $content;
 }
 
