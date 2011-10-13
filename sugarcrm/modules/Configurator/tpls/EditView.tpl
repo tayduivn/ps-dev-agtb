@@ -163,6 +163,9 @@
     <tr>
             <td scope="row">{$MOD.LBL_LEAD_CONV_OPTION}:&nbsp;{sugar_help text=$MOD.LEAD_CONV_OPT_HELP}</td>
             <td> <select name="lead_conv_activity_opt">{$lead_conv_activities}</select></td>
+<!-- //BEGIN SUGARCRM flav!=sales ONLY -->
+            <td><a href="./index.php?module=Administration&action=ConfigureAjaxUI" id="configure_ajax">{$MOD.LBL_CONFIG_AJAX}</a>:&nbsp;{sugar_help text=$MOD.LBL_CONFIG_AJAX_DESC}</td>
+<!-- //END SUGARCRM flav!=sales ONLY -->
     </tr>
 </table>
 
