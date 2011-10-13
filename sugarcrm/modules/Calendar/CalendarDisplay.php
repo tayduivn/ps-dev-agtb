@@ -239,7 +239,7 @@ class CalendarDisplay {
 	// returns date info string (legacy of old calendar)
 	function get_date_info($view, $date_time){
 		$str = "";
-	
+
 		global $current_user;
 		$dateFormat = $current_user->getUserDateTimePreferences();
 
@@ -256,8 +256,10 @@ class CalendarDisplay {
 			}
 		}else
 			if($view == 'week' || $view == 'shared') {
-				$first_day = $date_time->get_day_by_index_this_week(0);
-				$last_day = $date_time->get_day_by_index_this_week(6);
+				$first_day = $date_time;
+				
+				$first_day = CalendarUtils::get_first_day_of_week($date_time);				
+				$last_day = $first_day->get("+6 days");				
 
 				for($i=0; $i<strlen($dateFormat['date']); $i++) {
 					switch($dateFormat['date']{$i}){
@@ -370,6 +372,7 @@ class CalendarDisplay {
 	
 		$ss->assign('previous',$this->get_previous_calendar());
 		$ss->assign('next',$this->get_next_calendar());
+		
 		$ss->assign('date_info',$this->get_date_info($this->args['view'],$this->args['cal']->date_time));
 		
 		$header = "custom/modules/Calendar/tpls/header.tpl";

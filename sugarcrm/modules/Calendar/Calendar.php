@@ -37,21 +37,18 @@ require_once('modules/Calendar/CalendarActivity.php');
 class Calendar {
 	
 	var $view = 'week'; // current view
-	var $dashlet = false; // whether is displayed in dashlet	
-	var $date_time;
+	var $dashlet = false; // if is displayed in dashlet	
+	var $date_time; // current date
 	
 	var $show_tasks = true;
 	var $show_calls = true;	
 	var $day_start_time; // working day start time in format '11:00'
 	var $day_end_time; // working day end time in format '11:00'
-	
-	var $gmt_today;	// GMT of today
-	var $today_unix; // timestamp of today
+
 	var $time_step = 60; // time step of each slot in minutes
 		
 	var $acts_arr = array(); // Array of activities objects	
 	var $ActRecords = array(); // Array of activities data to be displayed	
-	var $date_arr = array(); // ('year','month','day')
 	var $shared_ids = array(); // ids of users for shared view
 	
 	var $celcount; // working day count of slots 
@@ -59,37 +56,11 @@ class Calendar {
 	var $d_start_minutes; // working day start minutes 
 	var $d_end_minutes; // working day end minutes
 	
-	function __construct($view = "day",$time_arr=array()){
+	function __construct($view = "day", $time_arr = array()){
 		global $current_user, $timedate;	
 		
 		$this->view = $view;		
-		$this->init();	
-		
-		if(empty($time_arr))
-			$time_arr = $this->date_arr;	
 
-		if($current_user->getPreference('time')){
-			$time = $current_user->getPreference('time');
-		}else{
-			$time = $GLOBALS['sugar_config']['default_time_format'];
-		}
-
-		if(!empty($time_arr)){
-			$this->date_time = $timedate->fromTimeArray($time_arr);
-		}else{
-		        $this->date_time = $timedate->getNow();
-		}		
-
-		$timedate->tzUser($this->date_time, $current_user);
-        	$GLOBALS['log']->debug("CALENDATE: ".$this->date_time->format('r'));
-	}
-	
-	/**
-	 * initialize
-	 */
-	function init(){
-		global $current_user,$timedate;
-		
 		if(!in_array($this->view,array('day','week','month','year','shared')))
 			$this->view = 'week';
 		
@@ -133,10 +104,11 @@ class Calendar {
 			      'month' => $matches[2],
 			      'day' => $matches[3],
 			);
-		}		
-		$this->gmt_today = $date_arr['year'] . "-" . str_pad($date_arr['month'],2,"0",STR_PAD_LEFT) . "-" . str_pad($date_arr['day'],2,"0",STR_PAD_LEFT);
-		$this->date_arr = $date_arr;
+		}
 		
+		$current_date_db = $date_arr['year']."-".str_pad($date_arr['month'],2,"0",STR_PAD_LEFT)."-".str_pad($date_arr['day'],2,"0",STR_PAD_LEFT);
+		$this->date_time = SugarDateTime::createFromFormat("Y-m-d",$current_date_db);	
+				
 		$this->show_tasks = $current_user->getPreference('show_tasks');
 		if(is_null($this->show_tasks))
 			$this->show_tasks = SugarConfig::getInstance()->get('calendar.show_tasks_by_default',true);		
@@ -159,10 +131,9 @@ class Calendar {
 			$this->time_step = SugarConfig::getInstance()->get('calendar.month_timestep',60);
 		}else{
 			$this->time_step = 60;
-		}			
+		}
 
-		$this->today_unix = CalendarUtils::to_timestamp($this->gmt_today);
-		$this->calculate_day_range();
+		$this->calculate_day_range();		
 	}
 	
 	/**
@@ -221,10 +192,11 @@ class Calendar {
 					if($newAct['type'] == 'task')
 						$date_field = "date_due";
 																	
-					$timestamp = CalendarUtils::to_timestamp_from_uf($act->sugar_bean->$date_field);				
+				
+					$timestamp = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$act->sugar_bean->$date_field,new DateTimeZone('UTC'))->format('U');				
 								
 					$newAct['timestamp'] = $timestamp;
-					$newAct['time_start'] = CalendarUtils::timestamp_to_string($newAct['timestamp'],$GLOBALS['timedate']->get_time_format());
+					$newAct['time_start'] = $GLOBALS['timedate']->fromTimestamp($newAct['timestamp'])->format($GLOBALS['timedate']->get_time_format());
 
 					if(!isset($newAct['duration_hours']) || empty($newAct['duration_hours']))
 						$newAct['duration_hours'] = 0;
@@ -319,8 +291,9 @@ class Calendar {
 	function add_activities($user,$type='sugar'){
 		global $timedate;
 		$start_date_time = $this->date_time;
-		if($this->view == 'week' || $this->view == 'shared') {
-			$end_date_time = $this->date_time->get("+7 days");
+		if($this->view == 'week' || $this->view == 'shared'){		
+			$start_date_time = CalendarUtils::get_first_day_of_week($this->date_time);
+			$end_date_time = $start_date_time->get("+7 days");
 		}else if($this->view == 'month'){
 			$start_date_time = $this->date_time->get('-38 days');
 			$end_date_time = $this->date_time->get('first day of next month');
@@ -341,16 +314,16 @@ class Calendar {
 				$acts_arr = CalendarActivity::get_activities($user->id, $params, $start_date_time, $end_date_time, $this->view);
 	    	}
 	    	
-	    	$this->acts_arr[$user->id] = $acts_arr;
+	    	$this->acts_arr[$user->id] = $acts_arr;	 
 	}
 
 
 	function get_previous_date_str(){
 		if ($this->view == 'month'){
-		    $day = $this->date_time->get("-1 month")->get_day_begin(1);
+			$day = $this->date_time->get("-1 month")->get_day_begin(1);
 		}else if ($this->view == 'week' || $this->view == 'shared'){
-			// first day last week
-			$day = $this->date_time->get("-7 days")->get_day_by_index_this_week(0)->get_day_begin();
+			$day = CalendarUtils::get_first_day_of_week($this->date_time);
+			$day = $day->get("-7 days");
 		}else if ($this->view == 'day'){
 			$day = $this->date_time->get("yesterday")->get_day_begin();
 		}else if ($this->view == 'year'){
@@ -364,8 +337,9 @@ class Calendar {
 	function get_next_date_str(){
 		if ($this->view == 'month'){
 			$day = $this->date_time->get("+1 month")->get_day_begin(1);
-		}else if ($this->view == 'week' || $this->view == 'shared' ){
-			$day = $this->date_time->get("+7 days")->get_day_by_index_this_week(0)->get_day_begin();
+		}else if ($this->view == 'week' || $this->view == 'shared'){
+			$day = CalendarUtils::get_first_day_of_week($this->date_time);
+			$day = $day->get("+7 days");			
 		}else if ($this->view == 'day'){
 			$day = $this->date_time->get("tomorrow")->get_day_begin();
 		}else if ($this->view == 'year'){
@@ -375,7 +349,6 @@ class Calendar {
 		}
 		return $day->get_date_str();
 	}
-
 
 }
 

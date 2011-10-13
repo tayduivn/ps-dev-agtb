@@ -69,9 +69,9 @@ class CalendarViewAjaxSave extends SugarView {
 			
 			$date_field = "date_start";
 			if($_REQUEST['current_module'] == "Tasks")
-				$date_field = "date_due";
-			
-			$timestamp = CalendarUtils::to_timestamp_from_uf($bean->$date_field);
+				$date_field = "date_due";			
+		
+			$timestamp = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$date_field,new DateTimeZone('UTC'))->format('U');
 			
 			if($_REQUEST['current_module'] == 'Calls')
 				$users = $bean->get_call_users();
@@ -99,7 +99,7 @@ class CalendarViewAjaxSave extends SugarView {
 				'type' => $type,
 				'module_name' => $bean->module_dir,
 				'timestamp' => $timestamp,
-				'time_start' => CalendarUtils::timestamp_to_string($timestamp,$GLOBALS['timedate']->get_time_format()),
+				'time_start' => $GLOBALS['timedate']->fromTimestamp($timestamp)->format($GLOBALS['timedate']->get_time_format()),
 
 				'detailview' => 1,	
 				'editview' => 1,		

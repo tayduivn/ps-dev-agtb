@@ -40,53 +40,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class CalendarUtils {
 
 	/**
-	 * Returns true if out of working day
-	 * @param integer $i hours
-	 * @param integer $j minutes
-	 * @param integer $r_start start of working day in minutes
-	 * @param integer $r_end end of working day in minutes
-	 * @return boolean
+	 * Find first day of week according to user's settings
+	 * @param SugarDateTime $date 
+	 * @return SugarDateTime $date
 	 */
-	static function check_owt($i,$j,$r_start,$r_end){
-		if($i*60+$j < $r_start || $i*60+$j >= $r_end)
-			return true;
-	}	
-	
-	/**
-	 * Convert timestamp to date string using defined format or user's format by default
-	 * @param integer $t timestamp
-	 * @param string $format date format
-	 * @return string
-	 */
-	static function timestamp_to_string($t,$format = false){
-		global $timedate;
-		if($format == false)
-			$f = $timedate->get_date_time_format();
-		else
-			$f = $format;
-		return date($f,$t - date('Z',$t) );
-	}
-	
-	/**
-	 * Convert user formated date to timestamp
-	 * @param string $d date 
-	 * @return integer timestamp
-	 */
-	static function to_timestamp_from_uf($d){
-		$db_d = $GLOBALS['timedate']->swap_formats($d,$GLOBALS['timedate']->get_date_time_format(),'Y-m-d H:i:s');
-		$ts_d = CalendarUtils::to_timestamp($db_d);
-		return $ts_d;
-	}	
-	
-	/**
-	 * Convert Y-m-d to timestamp without any timezone offset
-	 * @param string $db_date 
-	 * @return integer timestamp
-	 */
-	static function to_timestamp($db_date){
-		$date_parsed = date_parse($db_date);
-		$t = gmmktime($date_parsed['hour'],$date_parsed['minute'],$date_parsed['second'],$date_parsed['month'],$date_parsed['day'],$date_parsed['year']);
-		return $t;
+	static function get_first_day_of_week(SugarDateTime $date){
+		$fdow = $GLOBALS['current_user']->get_first_day_of_week();
+		if($date->day_of_week < $fdow)
+				$date = $date->get('-7 days');			
+		return $date->get_day_by_index_this_week($fdow);
 	}
 	
 	

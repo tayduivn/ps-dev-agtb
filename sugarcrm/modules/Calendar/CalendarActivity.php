@@ -86,21 +86,20 @@ class CalendarActivity {
 		global $timedate;
         	// ensure we're working with user TZ
 		$start_ts_obj = $timedate->tzUser($start_ts_obj);
-		$end_ts_obj = $timedate->tzUser($end_ts_obj);
+		$end_ts_obj = $timedate->tzUser($end_ts_obj);		
+		
 		switch ($view) {
 			case 'month':
-		        	//C.L. For the start date, go back 6 days since 99 hours is the max duration (6 days)
-		       		$start = $start_ts_obj->get("-6 days")->get_day_begin();
-				$end = $end_ts_obj->get("first day of next month")->get_day_begin();
+		       		$start = $start_ts_obj;
+				$end = $end_ts_obj;
 				break;
 		   	case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
 				$start = $start_ts_obj;
 				$end = $end_ts_obj;
 				break;
 			default:
-				// Date for the past 5 days as that is the maximum duration of a single activity
-				$start = $start_ts_obj->get("-5 days")->get_day_begin();
-				$end =  $start_ts_obj->get("+5 days")->get_day_end();
+				$start = $start_ts_obj->get("-1 days")->get_day_begin();
+				$end = $end_ts_obj->get("+1 days")->get_day_end();
 				break;
 		}
 
@@ -112,7 +111,7 @@ class CalendarActivity {
 		if($rel_table != '') {
 		    $where .= " AND $rel_table.accept_status != 'decline'";
 		}
-
+	
 			$where .= ")";
 			return $where;
 	}
