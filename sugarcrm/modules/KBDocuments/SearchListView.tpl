@@ -42,6 +42,7 @@
 			</td>
 		{/if}
 		{counter start=0 name="colCounter" print=false assign="colCounter"}
+        {capture assign="other_attributes"}align="absmiddle" border="0"{/capture}
 		{foreach from=$displayColumns key=colHeader item=params}
 			<td scope='col' width='{$params.width}%' >
 				<span sugar="sugar{$colCounter}"><div style='white-space: normal;'width='100%' align='{$params.align|default:'left'}'>
@@ -53,14 +54,14 @@
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-                                {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+                                {sugar_getimage name=$imageName width="$arrowWidth" height="$arrowHeight" alt=$arrowAlt other_attributes="$other_attributes"}
                             {else}
                                 {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-                                {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+                                {sugar_getimage name=$imageName width="$arrowWidth" height="$arrowHeight" alt=$arrowAlt other_attributes="$other_attributes"}
                             {/if}
                         {else}
                             {capture assign="imageName"}arrow.{$arrowExt}{/capture}
-                            {sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" alt=$arrowAlt other_attributes='align="absmiddle" border="0" '}
+                            {sugar_getimage name=$imageName width="$arrowWidth" height="$arrowHeight" alt=$arrowAlt other_attributes="$other_attributes"}
                         {/if}
 						</a>
 					{else}
@@ -72,14 +73,14 @@
 						{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 							{if $pageData.ordering.sortOrder == 'ASC'}
                                 {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-                                {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight alt=$arrowAlt other_attributes='align="absmiddle" border="0"'}
+                                {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight alt=$arrowAlt other_attributes=$other_attributes}
                             {else}
                                 {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-                                {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight alt=$arrowAlt other_attributes='align="absmiddle" border="0"'}
+                                {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight alt=$arrowAlt other_attributes=$other_attributes}
                             {/if}
                         {else}
                             {capture assign="imageName"}arrow.{$arrowExt}{/capture}
-                            {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight alt=$arrowAlt other_attributes='align="absmiddle" border="0"'}
+                            {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight alt=$arrowAlt other_attributes=$other_attributes}
                         {/if}
 						</a>
 				{/if}
