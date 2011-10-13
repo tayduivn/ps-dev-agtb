@@ -497,8 +497,10 @@ class VardefManager{
         $key = "VardefManager.$module.$object";
         
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($params['ignore_rel_calc_fields']) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+        if (empty($params['ignore_rel_calc_fields']) && !empty($GLOBALS['dictionary'][$object]) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+        {
             $refresh = true;
+        }
         //END SUGARCRM flav=pro ONLY
         if(!$refresh)
         {
