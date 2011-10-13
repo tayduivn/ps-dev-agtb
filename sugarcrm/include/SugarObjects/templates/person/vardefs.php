@@ -126,8 +126,10 @@ $vardefs =array(
 			'comment' => 'Home phone number of the contact',
             'merge_filter' => 'enabled',
 		),
+		//bug 42902
 		'email'=> array(
 			'name' => 'email',
+			 'type' => 'email',
 			'query_type' => 'default',
 			'source' => 'non-db',
 			'operator' => 'subquery',
@@ -136,6 +138,7 @@ $vardefs =array(
 				'id',
 			),
 			'vname' =>'LBL_ANY_EMAIL',
+			'studio' => array('visible'=>false, 'searchview'=>true),
 		),
 	'phone_mobile' =>
 		array (

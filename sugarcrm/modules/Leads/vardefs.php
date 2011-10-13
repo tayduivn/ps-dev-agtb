@@ -291,8 +291,10 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 			'options' => 'dom_meeting_accept_status',
 			'importable' => 'false',
 		),
-		'email'=> array(
-			'name' => 'email',
+		//bug 42902
+		'any_email'=> array(
+			'name' => 'any_email',
+			 'type' => 'email',
 			'query_type' => 'default',
 			'source' => 'non-db',
 			'operator' => 'subquery',
@@ -301,6 +303,7 @@ $dictionary['Lead'] = array('table' => 'leads','audited'=>true, 'unified_search'
 				'id',
 			),
 			'vname' =>'LBL_ANY_EMAIL',
+			'studio' => array('visible'=>false, 'searchview'=>true),
 		),
   'webtolead_email1' =>
   array (

@@ -117,8 +117,10 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     'source'=>'non-db',
         'vname'=>'LBL_CASES',
   ),
+  //bug 42902
   'email'=> array(
 			'name' => 'email',
+  			'type' => 'email',
 			'query_type' => 'default',
 			'source' => 'non-db',
 			'operator' => 'subquery',
@@ -127,6 +129,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
 				'id',
 			),
 			'vname' =>'LBL_ANY_EMAIL',
+			'studio' => array('visible'=>false, 'searchview'=>true),
 		),	
 //END SUGARCRM flav!=sales ONLY
   'tasks' =>

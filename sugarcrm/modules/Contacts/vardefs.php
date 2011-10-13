@@ -112,8 +112,10 @@ array (
 			'vname' => 'LBL_OPPORTUNITY_ROLE_ID',
 			'studio' => array('listview' => false),
 		),
+		//bug 42902
 		'email'=> array(
 			'name' => 'email',
+			 'type' => 'email',
 			'query_type' => 'default',
 			'source' => 'non-db',
 			'operator' => 'subquery',
@@ -122,6 +124,7 @@ array (
 				'id',
 			),
 			'vname' =>'LBL_ANY_EMAIL',
+			'studio' => array('visible'=>false, 'searchview'=>true),
 		),	
 	'opportunity_role' =>
 		array(
