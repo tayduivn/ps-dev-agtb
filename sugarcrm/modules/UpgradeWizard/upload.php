@@ -308,10 +308,7 @@ $form3 =<<<eoq2
    		alert('Not a zip file');
    		document.getElementById("upgrade_zip").value='';
    		document.getElementById("upload_button").disabled='disabled';
-   } else{
-       document.getElementById("upload_button").disabled='';
-   }
-   else{
+   } else {
 	//AJAX call for checking the file size and comparing with php.ini settings.
 	var callback = {
 		 success:function(r) {
