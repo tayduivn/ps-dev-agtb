@@ -88,7 +88,7 @@ $emailman = new EmailMan();
         $select_query =" SELECT *";
         $select_query.=" FROM $emailman->table_name";
         $select_query.=" WHERE send_date_time <= ". $db->now();
-        $select_query.=" AND (in_queue ='0' OR OR in_queue IS NULL ( in_queue ='1' AND in_queue_date <= " .$db->convert($db->quoted($timedate->fromString("-1 day")->asDb()),"datetime")."))";
+        $select_query.=" AND (in_queue ='0' OR in_queue IS NULL OR ( in_queue ='1' AND in_queue_date <= " .$db->convert($db->quoted($timedate->fromString("-1 day")->asDb()),"datetime")."))";
 
         if (!empty($campaign_id)) {
             $select_query.=" AND campaign_id='{$campaign_id}'";
