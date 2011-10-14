@@ -29,9 +29,8 @@ var $user;
 
 public function setUp()
 {
-    $this->markTestIncomplete("This test kills all users on MS-SQL, since deleted in a bit field which only takes 0/1 values");
     //Set all Users to have deleted to 2 so we only test one user
-    $GLOBALS['db']->query('UPDATE users SET deleted = 2 WHERE deleted = 0');
+    $GLOBALS['db']->query("UPDATE users SET deleted = 1, messenger_type = 'Bug47025' WHERE deleted = 0");
     global $current_user;
     $current_user = SugarTestUserUtilities::createAnonymousUser();
     $current_user->setPreference('user_theme', 'Green', 0, 'global');
@@ -54,7 +53,7 @@ public function tearDown()
     {
        unset($_SESSION['upgrade_from_flavor']);
     }
-    $GLOBALS['db']->query('UPDATE users SET deleted = 0 WHERE deleted = 2');
+    $GLOBALS['db']->query("UPDATE users SET deleted = 0, messenger_type = NULL WHERE deleted = 1 AND messenger_type = 'Bug47025'");
 }
 
 public function testUpgradeUserPreferencesCeToPro()
