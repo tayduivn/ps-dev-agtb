@@ -120,7 +120,7 @@ $dictionary['EmailMarketing'] = array('table' => 'email_marketing'
 	    'type' => 'varchar',
 	    'len' => '36',
   	),
-  	'date_start_date' =>
+  	'date_start' =>
   	array (
 	    'name' => 'date_start',
     	'vname' => 'LBL_DATE_START',
