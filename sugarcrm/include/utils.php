@@ -723,7 +723,7 @@ function get_user_array($add_blank=true, $status="Active", $assigned_user="", $u
 	if($from_cache)
 		$user_array = get_register_value('user_array', $add_blank. $status . $assigned_user);
 
-	if(!isset($user_array)) {
+	if(empty($user_array)) {
 		$db = DBManagerFactory::getInstance();
 		$temp_result = Array();
 		// Including deleted users for now.
