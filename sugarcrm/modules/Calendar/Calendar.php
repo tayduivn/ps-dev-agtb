@@ -297,7 +297,7 @@ class Calendar {
 		$start_date_time = $this->date_time;
 		if($this->view == 'week' || $this->view == 'shared'){		
 			$start_date_time = CalendarUtils::get_first_day_of_week($this->date_time);
-			$end_date_time = $start_date_time->get("+6 days");
+			$end_date_time = $start_date_time->get("+7 days");
 		}else if($this->view == 'month'){
 			$start_date_time = $this->date_time->get_day_by_index_this_month(0);	
 			$end_date_time = $start_date_time->get("+".$start_date_time->format('t')." days");
