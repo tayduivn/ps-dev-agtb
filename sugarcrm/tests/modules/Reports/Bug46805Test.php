@@ -28,6 +28,7 @@
 
 
 require_once('data/SugarBean.php');
+require_once('include/modules.php');
 require_once('modules/Reports/Report.php');
 
 
