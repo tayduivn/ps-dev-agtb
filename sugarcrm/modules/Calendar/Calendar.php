@@ -137,7 +137,7 @@ class Calendar {
 	}
 	
 	/**
-	 * loads activities data to array
+	 * Loads activities data to array
 	 */		
 	function load_activities(){
 		$field_list = CalendarUtils::get_fields();
@@ -176,8 +176,12 @@ class Calendar {
 							foreach($field_list[$newAct['module_name']] as $field){
 								if(!isset($newAct[$field])){
 									$newAct[$field] = $act->sugar_bean->$field;									
-									if($act->sugar_bean->field_defs[$field]['type'] == 'text'){
-										$t = $newAct[$field];				
+									if($act->sugar_bean->field_defs[$field]['type'] == 'text'){									
+										$t = $newAct[$field];	
+										if(strlen($t) > 300){
+											$t = substr($t, 0, 300);
+											$t .= "...";
+										}			
 										$t = str_replace("\r\n","<br>",$t);
 										$t = str_replace("\r","<br>",$t);
 										$t = str_replace("\n","<br>",$t);
@@ -208,8 +212,8 @@ class Calendar {
 		}
 	}
 	
-	/*
-	 * returns javascript objects of activities to be displayed on calendar
+	/**
+	 * Get javascript objects of activities to be displayed on calendar
 	 * @return string
 	 */
 	function get_activities_js(){	
@@ -262,7 +266,7 @@ class Calendar {
 	}
 	
 	/**
-	 * calculates count of timeslots per visible day, calculates day start and day end in minutes 
+	 * calculatess count of timeslots per visible day, calculates day start and day end in minutes 
 	 */	
 	function calculate_day_range(){	
 		
@@ -293,11 +297,12 @@ class Calendar {
 		$start_date_time = $this->date_time;
 		if($this->view == 'week' || $this->view == 'shared'){		
 			$start_date_time = CalendarUtils::get_first_day_of_week($this->date_time);
-			$end_date_time = $start_date_time->get("+7 days");
+			$end_date_time = $start_date_time->get("+6 days");
 		}else if($this->view == 'month'){
-			$start_date_time = $this->date_time->get('-38 days');
-			$end_date_time = $this->date_time->get('first day of next month');
-			$end_date_time = $end_date_time->get("+7 days");
+			$start_date_time = $this->date_time->get_day_by_index_this_month(0);	
+			$end_date_time = $start_date_time->get("+".$start_date_time->format('t')." days");
+			$start_date_time = CalendarUtils::get_first_day_of_week($start_date_time);
+			$end_date_time = CalendarUtils::get_first_day_of_week($end_date_time)->get("+7 days");
 		}else{
 			$end_date_time = $this->date_time;
 		}
@@ -317,35 +322,28 @@ class Calendar {
 	    	$this->acts_arr[$user->id] = $acts_arr;	 
 	}
 
-
-	function get_previous_date_str(){
-		if ($this->view == 'month'){
-			$day = $this->date_time->get("-1 month")->get_day_begin(1);
-		}else if ($this->view == 'week' || $this->view == 'shared'){
+	/**
+	 * Get date string of next or previous calendar grid
+	 * @param string $direction next or previous
+	 * @return string
+	 */
+	function get_neighbor_date_str($direction){
+		if($direction == "previous")
+			$sign = "-";
+		else 
+			$sign = "+";
+			
+		if($this->view == 'month'){
+			$day = $this->date_time->get($sign."1 month")->get_day_begin(1);
+		}else if($this->view == 'week' || $this->view == 'shared'){
 			$day = CalendarUtils::get_first_day_of_week($this->date_time);
-			$day = $day->get("-7 days");
-		}else if ($this->view == 'day'){
-			$day = $this->date_time->get("yesterday")->get_day_begin();
-		}else if ($this->view == 'year'){
-            		$day = $this->date_time->get("-1 year")->get_day_begin();
+			$day = $day->get($sign."7 days");
+		}else if($this->view == 'day'){
+			$day = $this->date_time->get($sign."1 day")->get_day_begin();
+		}else if($this->view == 'year'){
+            		$day = $this->date_time->get($sign."1 year")->get_day_begin();
 		}else{
-			return "get_previous_date_str: notdefined for this view";
-		}
-		return $day->get_date_str();
-	}
-
-	function get_next_date_str(){
-		if ($this->view == 'month'){
-			$day = $this->date_time->get("+1 month")->get_day_begin(1);
-		}else if ($this->view == 'week' || $this->view == 'shared'){
-			$day = CalendarUtils::get_first_day_of_week($this->date_time);
-			$day = $day->get("+7 days");			
-		}else if ($this->view == 'day'){
-			$day = $this->date_time->get("tomorrow")->get_day_begin();
-		}else if ($this->view == 'year'){
-			$day = $this->date_time->get("+1 year")->get_day_begin();
-		}else{
-			sugar_die("get_next_date_str: not defined for view");
+			return "get_neighbor_date_str: notdefined for this view";
 		}
 		return $day->get_date_str();
 	}

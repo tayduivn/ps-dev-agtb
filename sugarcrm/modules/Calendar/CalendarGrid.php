@@ -35,7 +35,7 @@ global $timedate;
 class CalendarGrid {
 
 	var $args;
-	var $today_ts; // timestemp of today
+	var $today_ts; // timestamp of today
 	var $weekday_names; // string array of names of week days
 	var $startday; // first day of week
 	var $scrollable; // srolling in calendar
@@ -71,7 +71,7 @@ class CalendarGrid {
 	}
 	
 	
-	/** Returns html of calendar grid
+	/** Get html of calendar grid
 	 * @return string
 	 */
 	function display(){
@@ -79,7 +79,7 @@ class CalendarGrid {
 		return $this->$action();
 	}
 	
-	/** Returns html of time column
+	/** Get html of time column
 	 * @param integer $start timestamp	 
 	 * @return string
 	 */
@@ -110,7 +110,8 @@ class CalendarGrid {
 		return $str;
 	}
 	
-	/** Returns html of day slots column
+	/** 
+	 * Get html of day slots column
 	 * @param integer $start timestamp
 	 * @param integer $day number of day in week
 	 * @param string $prefix prefix for id of timeslot used in shared view	 
@@ -133,7 +134,8 @@ class CalendarGrid {
 		return $str;	
 	}
 	
-	/** Returns html of day head
+	/** 
+	 * Get html of day head
 	 * @param integer $start timestamp
 	 * @param integer $day number of day in week 
 	 * @param bulean $force force display header 
@@ -151,7 +153,7 @@ class CalendarGrid {
 	}	
 	
 	/**
-	 * Returns true if out of working day
+	 * Get true if out of working day
 	 * @param integer $i hours
 	 * @param integer $j minutes
 	 * @param integer $r_start start of working day in minutes
@@ -163,6 +165,10 @@ class CalendarGrid {
 			return true;
 	}
 	
+	/** 
+	 * Get html of week calendar grid
+	 * @return string	
+	 */	
 	function display_week(){
 		
 		$current_date = $this->args['cal']->date_time;
@@ -193,8 +199,7 @@ class CalendarGrid {
 					$curr_time = $week_start_ts + $d*86400;				
 					$str .= $this->get_day_column($curr_time);
 				}	
-				$str .= "</div>";
-		
+				$str .= "</div>";		
 			$str .= "</div>";
 				
 		$str .= "</div>";
@@ -202,7 +207,10 @@ class CalendarGrid {
 		return $str;
 	}		
 	
-	
+	/** 
+	 * Get html of day calendar grid
+	 * @return string	
+	 */
 	function display_day(){	
 
 		$current_date = $this->args['cal']->date_time;
@@ -223,7 +231,10 @@ class CalendarGrid {
 		return $str;	
 	}	
 	
-	
+	/** 
+	 * Get html of month calendar grid
+	 * @return string	
+	 */
 	function display_month(){
 			
 		$current_date = $this->args['cal']->date_time;
@@ -254,7 +265,10 @@ class CalendarGrid {
 		return $str;
 	}
 	
-	
+	/** 
+	 * Get html of week shared grid
+	 * @return string	
+	 */
 	function display_shared(){
 	
 		$current_date = $this->args['cal']->date_time;
@@ -290,7 +304,10 @@ class CalendarGrid {
 		return $str;
 	}	
 	
-	
+	/** 
+	 * Get html of year calendar
+	 * @return string	
+	 */
 	function display_year(){	
 
 		$weekEnd1 = 0 - $this->startday; 

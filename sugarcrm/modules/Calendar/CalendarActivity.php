@@ -36,7 +36,7 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
-	function CalendarActivity($args){
+	function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot
 		// and does not have a sugarbean associated to it
 		global $timedate;
@@ -81,39 +81,37 @@ class CalendarActivity {
 		$timedate->tzGMT($this->start_time);
 		$timedate->tzGMT($this->end_time);
 	}
-
+	
+	/**
+	 * Get where clause for fetching entried from DB
+	 * @param string $table_name t
+	 * @param string $rel_table table for accept status, not used in Tasks
+	 * @param SugarDateTime $start_ts_obj start date
+	 * @param SugarDateTime $end_ts_obj end date
+	 * @param string $field_name date field in table
+	 * @param string $view view; not used for now, left for compatibility
+	 * @return string
+	 */	
 	function get_occurs_within_where_clause($table_name, $rel_table, $start_ts_obj, $end_ts_obj, $field_name='date_start', $view){
 		global $timedate;
         	// ensure we're working with user TZ
 		$start_ts_obj = $timedate->tzUser($start_ts_obj);
 		$end_ts_obj = $timedate->tzUser($end_ts_obj);		
-		
-		switch ($view) {
-			case 'month':
-		       		$start = $start_ts_obj;
-				$end = $end_ts_obj;
-				break;
-		   	case 'freebusy':    //bug: 44586, for freebusy, don't modify the start/end dates
-				$start = $start_ts_obj;
-				$end = $end_ts_obj;
-				break;
-			default:
-				$start = $start_ts_obj->get("-1 days")->get_day_begin();
-				$end = $end_ts_obj->get("+1 days")->get_day_end();
-				break;
-		}
+
+		$start = $start_ts_obj->get_day_begin();
+		$end = $end_ts_obj->get_day_end();
 
 		$field_date = $table_name.'.'.$field_name;
 		$start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
 		$end_day = $GLOBALS['db']->convert("'{$end->asDb()}'",'datetime');
 
 		$where = "($field_date >= $start_day AND $field_date < $end_day";
-		if($rel_table != '') {
-		    $where .= " AND $rel_table.accept_status != 'decline'";
+		if($rel_table != ''){
+			$where .= " AND $rel_table.accept_status != 'decline'";
 		}
 	
-			$where .= ")";
-			return $where;
+		$where .= ")";
+		return $where;
 	}
 
 	function get_freebusy_activities($user_focus, $start_date_time, $end_date_time){
@@ -133,6 +131,15 @@ class CalendarActivity {
 		return $act_list;
 	}
 
+	/**
+	 * Get array of activities
+	 * @param string $user_id 
+	 * @param array $params 
+	 * @param SugarDateTime $view_start_time start date 
+	 * @param SugarDateTime $view_end_time end date 
+	 * @param string $view view; not used for now, left for compatibility 
+	 * @return array
+	 */
  	function get_activities($user_id, $params, $view_start_time, $view_end_time, $view){
 		global $current_user;
 		$act_list = array();

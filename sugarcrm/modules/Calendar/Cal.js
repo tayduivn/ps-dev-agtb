@@ -48,7 +48,7 @@
 		}
 	}
 	
-	CAL.AddRecordToPage = function (ActRecord){
+	CAL.add_item_to_grid = function (ActRecord){
 			
 			var duration_text = ActRecord.duration_hours + "h";
 			if(ActRecord.duration_minutes > 0)
@@ -108,6 +108,7 @@
 			el.setAttribute("parent_id",ActRecord.parent_id);
 			el.setAttribute("status",ActRecord.status);
 			el.setAttribute("detailview",ActRecord.detailview);
+			el.setAttribute("editview",ActRecord.editview);
 			el.setAttribute("duration_coef",duration_coef);
 			el.style.backgroundColor = CAL.activity_colors[ActRecord.module_name]['body'];
 			el.style.borderColor = CAL.activity_colors[ActRecord.module_name]['border'];	
@@ -706,10 +707,10 @@
 			CAL.align_divs(cell_id);				
 	}
 			
-	CAL.AddRecords = function (res){
+	CAL.add_items = function (res){
 				
 			if(CAL.pview != 'shared'){
-				CAL.AddRecordToPage(res);								
+				CAL.add_item_to_grid(res);								
 
 			}else{
 				CAL.removeSharedById(res.record);
@@ -724,7 +725,7 @@
 						rec.timestamp = timestamp;						
 						rec.user_id = v;
 						rec.record = record_id;
-						CAL.AddRecordToPage(rec);
+						CAL.add_item_to_grid(rec);
 						
 						CAL.each(
 							rec.arr_rec,
@@ -732,7 +733,7 @@
 								rec.record = r.record;
 								rec.timestamp = r.timestamp;
 								//rec.rec_id_c = record_id;
-								CAL.AddRecordToPage(rec);
+								CAL.add_item_to_grid(rec);
 							}				
 						);																	 						
 					}											 					
@@ -875,7 +876,7 @@
 								success: function(o){
 									res = eval('('+o.responseText+')');	
 									if(res.success == 'yes'){
-										CAL.AddRecords(res);
+										CAL.add_items(res);
 										CAL.recordDialog.cancel();
 										CAL.update_vcal();
 										ajaxStatus.hideStatus();												
@@ -917,7 +918,7 @@
 										CAL.get("record").value = res.record;	
 										//SugarWidgetScheduler.update_time();
 										//CAL.GR_update_focus(CAL.get("current_module").value,res.record);
-										CAL.AddRecords(res);
+										CAL.add_items(res);
 										CAL.update_vcal();											 											 				
 										CAL.get("title-record_dialog").innerHTML = CAL.lbl_edit;
 										if(e = CAL.get("send_invites"))
@@ -987,8 +988,8 @@
 		var date_start = obj.getAttribute("date_start");
 		var duration = obj.getAttribute("dur");	
 		var desc = obj.getAttribute("desc");	
-		var detailview = parseInt(obj.getAttribute("detailview"));	
-			
+		var detailview = parseInt(obj.getAttribute("detailview"));
+		var editview = parseInt(obj.getAttribute("editview"));				
 		
 		var related = "";
 		if(obj.getAttribute("parent_id") != '')
@@ -1008,8 +1009,10 @@
 		}
 
 		var caption = "<div style='float: left;'>"+CAL.lbl_title+"</div><div style='float: right;'>";
-		if(detailview){
+		if(editview){
 			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_EDIT_BUTTON')+"\' href=\'index.php?module="+mod+"&action=EditView&record="+record+"\'><img border=0  src=\'"+CAL.img_edit_inline+"\'></a>";
+		}
+		if(detailview){
 			caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_VIEW_BUTTON')+"\' href=\'index.php?module="+mod+"&action=DetailView&record="+record+"\'><img border=0  style=\'margin-left:2px;\' src=\'"+CAL.img_view_inline+"\'></a>";
 		}
 		caption += "<a title=\'"+SUGAR.language.get('app_strings', 'LBL_ADDITIONAL_DETAILS_CLOSE_TITLE')+"\' href=\'javascript:return cClick();\' onclick=\'javascript:return cClick();\'><img border=0  style=\'margin-left:2px;margin-right:2px;\' src=\'"+CAL.img_close+"\'></a></div>";
