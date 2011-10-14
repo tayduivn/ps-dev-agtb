@@ -316,6 +316,8 @@ class ViewModulefield extends SugarView
 		//END SUGARCRM flav=pro ONLY
 		// end
 
+        //BEGIN SUGARCRM flav=int ONLY
+        /*
         //Determine whether or not to show the Global Search option
         require_once('modules/Home/UnifiedSearchAdvanced.php');
         $usa = new UnifiedSearchAdvanced();
@@ -326,8 +328,10 @@ class ViewModulefield extends SugarView
         {
             $globalSearchEnabled = $unified_search_modules_display[$moduleName]['visible'];
         }
-        
+
         $fv->ss->assign('globalSearchEnabled', $tf->supports_unified_search && $globalSearchEnabled);
+        */
+        //END SUGARCRM flav=int ONLY
 
         $layout = $fv->getLayout($vardef);
 

@@ -52,6 +52,8 @@
 {* //END SUGARCRM flav=pro ONLY*}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_AUDIT"}:</td><td><input type="checkbox" name="audited" value="1" {if !empty($vardef.audited) }CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>{if $hideLevel > 5}<input type="hidden" name="audited" value="{$vardef.audited}">{/if}</td></tr>
 
+{* //BEGIN SUGARCRM flav=int ONLY *}
+{*
 {if $globalSearchEnabled == true}
 <tr>
     <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_GLOBAL_SEARCH"}:</td>
@@ -69,6 +71,8 @@
 </td>
 </tr>
 {/if}
+*}
+{* //END SUGARCRM flav=int ONLY *}
 
 {if !$hideImportable}
 <tr><td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_IMPORTABLE"}:</td><td>
