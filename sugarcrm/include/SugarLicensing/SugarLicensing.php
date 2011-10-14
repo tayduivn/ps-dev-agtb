@@ -22,11 +22,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * @author jwhitcraft
- * @created 7/18/11 11:09 AM
- */
-
 class SugarLicensing
 {
 
@@ -136,6 +131,13 @@ class SugarLicensing
      */
     private function _reqeust()
     {
-        return curl_exec($this->_curl);
+        $results = curl_exec($this->_curl);
+        
+        if($results === FALSE)
+        {
+            $GLOBALS['log']->fatal("Sugar Licensing encountered an error: " . curl_error($this->_curl));
+        }
+
+        return $results;
     }
 }
