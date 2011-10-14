@@ -184,7 +184,7 @@ function SugarRPCClient() {
 /*
  * PUT NEW METHODS IN THIS ARRAY:
  */
-SugarRPCClient.prototype.allowed_methods = ['retrieve','query','save','set_accept_status', 'get_objects_from_module', 'email', 'get_user_array'];
+SugarRPCClient.prototype.allowed_methods = ['retrieve','query','get_objects_from_module'];
 
 SugarRPCClient.prototype.init = function() {
 	this._showError= function (e){
