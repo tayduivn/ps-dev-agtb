@@ -557,16 +557,16 @@ $sugar_smarty = new Sugar_Smarty();
 //BEGIN SUGARCRM flav=pro ONLY
 if(!empty($_REQUEST) && isset($_REQUEST['activeTab']) && strlen($_REQUEST['activeTab']) > 0) {
 	if($_REQUEST['activeTab'] == 'AddTab')  {
-		$activePage = isset($_COOKIE[$current_user->id . '_activePage']) ? $_COOKIE[$current_user->id . '_activePage'] : 0;
+		$activePage = isset($_COOKIE[$current_user->id . '_activePage']) ? intval($_COOKIE[$current_user->id . '_activePage']) : 0;
 		$js = 'YAHOO.util.Event.onAvailable("addPageDialog", function() { SUGAR.mySugar.showAddPageDialog(); })';
         $sugar_smarty->assign('activeTabJavascript', $js);
 	} else {
-		$activePage = !empty($pages[$_REQUEST['activeTab']]) ? $_REQUEST['activeTab'] : 0;
+		$activePage = !empty($pages[$_REQUEST['activeTab']]) ? intval($_REQUEST['activeTab']) : 0;
 		$js = 'YAHOO.util.Event.onAvailable("' . 'pageNum_' . $activePage . '", function() { SUGAR.mySugar.togglePages("' . $activePage . '") })';
         $sugar_smarty->assign('activeTabJavascript', $js);
 	}
 } else if(isset($_COOKIE[$current_user->id . '_activePage']) && $_COOKIE[$current_user->id . '_activePage'] != '' && isset($pages[$_COOKIE[$current_user->id . '_activePage']])) {
-    $activePage = $_COOKIE[$current_user->id . '_activePage'];
+    $activePage = intval($_COOKIE[$current_user->id . '_activePage']);
 } else {
     $_COOKIE[$current_user->id . '_activePage'] = '0';
     setcookie($current_user->id . '_activePage','0',3000);
@@ -645,13 +645,13 @@ foreach($pages[$activePage]['columns'] as $colNum => $column) {
                 }
 
             	array_push($dashletIds, $id);
-            	
+
 		        $dashlets = $current_user->getPreference('dashlets', 'Home'); // Using hardcoded 'Home' because DynamicAction.php $_REQUEST['module'] value is always Home
 		        $lvsParams = array();
 		        if(!empty($dashlets[$id]['sort_options'])){
 		            $lvsParams = $dashlets[$id]['sort_options'];
     	        }
-		        
+
             	$dashlet->process($lvsParams);
             	try {
 	            	$display[$colNum]['dashlets'][$id]['display'] = $dashlet->display();
