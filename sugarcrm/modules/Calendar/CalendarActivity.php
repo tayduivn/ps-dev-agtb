@@ -98,8 +98,8 @@ class CalendarActivity {
 		$start_ts_obj = $timedate->tzUser($start_ts_obj);
 		$end_ts_obj = $timedate->tzUser($end_ts_obj);		
 
-		$start = $start_ts_obj->get_day_begin();
-		$end = $end_ts_obj->get_day_end();
+		$start = $start_ts_obj;//->get_day_begin();
+		$end = $end_ts_obj;//->get_day_end();
 
 		$field_date = $table_name.'.'.$field_name;
 		$start_day = $GLOBALS['db']->convert("'{$start->asDb()}'",'datetime');
