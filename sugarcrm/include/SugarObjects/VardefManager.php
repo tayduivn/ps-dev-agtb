@@ -408,10 +408,14 @@ class VardefManager{
     public static function modHasCalcFieldsWithLink($module, $object, $linkName)
     {
         global $dictionary;
+        //One off fix for the inconsistent cases module where object name doesn't match the dictionary entry
+        if ($object == "aCase")
+            $object = "Case";
         if (empty($dictionary[$object]))
             self::loadVardef($module, $object);
-        if (empty($dictionary[$object]))
+        if (empty($dictionary[$object])){
             return false;
+        }
 
         $vardef = $dictionary[$object];
         $hasFieldsWithLink = false;
@@ -497,8 +501,10 @@ class VardefManager{
         $key = "VardefManager.$module.$object";
         
         //BEGIN SUGARCRM flav=pro ONLY
-        if (empty($params['ignore_rel_calc_fields']) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+        if (empty($params['ignore_rel_calc_fields']) && !empty($GLOBALS['dictionary'][$object]) && !isset($GLOBALS['dictionary'][$object]['related_calc_fields']))
+        {
             $refresh = true;
+        }
         //END SUGARCRM flav=pro ONLY
         if(!$refresh)
         {
