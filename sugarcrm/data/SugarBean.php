@@ -1720,8 +1720,15 @@ class SugarBean
         }
     }
 
+    /**
+     * Run any dependency that fields may have
+     *
+     * @return void
+     */
     function updateDependentField()
     {
+        // this is ignored when coming via a webservice as it's only needed for display and not just raw data
+        // it's a huge performance gain when pulling multiple records vai webservices by not running this
         if(!isset($GLOBALS['service_object'])) {
             require_once("include/Expressions/DependencyManager.php");
             $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
