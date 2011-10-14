@@ -46,7 +46,7 @@
 						{capture assign="other_attributes"}align="absmiddle" border="0"{/capture}
                         {if $pageData.urls.startPage}
                             {assign var="alt_start" value=$navStrings.start}
-							<button type='button' id='listViewStartButton' name='listViewStartButton' title='{$navStrings.start}' class='button' if $prerow}onClick='save_kb_checks(0); SUGAR.kb.paginateList("{$pageData.urls.startPage}", "browse");'{else} onClick='SUGAR.kb.paginateList("{$pageData.urls.startPage}", document.getElementById("mode_b").value);' {/if}>
+							<button type='button' id='listViewStartButton' name='listViewStartButton' title='{$navStrings.start}' class='button' {if $prerow}onClick='save_kb_checks(0); SUGAR.kb.paginateList("{$pageData.urls.startPage}", "browse");'{else} onClick='SUGAR.kb.paginateList("{$pageData.urls.startPage}", document.getElementById("mode_b").value);' {/if}>
                                 {sugar_getimage name="start" ext=".png" alt=$navStrings.start other_attributes=$other_attributes alt="$alt_start"}
 							</button>
 						{else}
