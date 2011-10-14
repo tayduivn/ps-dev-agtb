@@ -69,9 +69,9 @@ class CalendarViewAjaxSave extends SugarView {
 			
 			$date_field = "date_start";
 			if($_REQUEST['current_module'] == "Tasks")
-				$date_field = "date_due";
-			
-			$timestamp = CalendarUtils::to_timestamp_from_uf($bean->$date_field);
+				$date_field = "date_due";			
+		
+			$timestamp = SugarDateTime::createFromFormat($GLOBALS['timedate']->get_date_time_format(),$bean->$date_field,new DateTimeZone('UTC'))->format('U');
 			
 			if($_REQUEST['current_module'] == 'Calls')
 				$users = $bean->get_call_users();
@@ -85,21 +85,26 @@ class CalendarViewAjaxSave extends SugarView {
 			$field_arr = array();
 			foreach($field_list[$_REQUEST['current_module']] as $field){
 				$field_arr[$field] = $bean->$field;
-			}
-	
-			$description = $bean->description;
-			$description = str_replace("\r\n","<br>",$description);
-			$description = str_replace("\r","<br>",$description);
-			$description = str_replace("\n","<br>",$description);
-			$description = html_entity_decode($description,ENT_QUOTES);
-			$field_arr['description'] = $description;
+				if($bean->field_defs[$field]['type'] == 'text'){									
+					$t = $field_arr[$field];	
+					if(strlen($t) > 300){
+						$t = substr($t, 0, 300);
+						$t .= "...";
+					}			
+					$t = str_replace("\r\n","<br>",$t);
+					$t = str_replace("\r","<br>",$t);
+					$t = str_replace("\n","<br>",$t);
+					$t = html_entity_decode($t,ENT_QUOTES);
+					$field_arr[$field] = $t;
+				}
+			}	
 
 			$json_arr = array(
 				'success' => 'yes',
 				'type' => $type,
 				'module_name' => $bean->module_dir,
 				'timestamp' => $timestamp,
-				'time_start' => CalendarUtils::timestamp_to_string($timestamp,$GLOBALS['timedate']->get_time_format()),
+				'time_start' => $GLOBALS['timedate']->fromTimestamp($timestamp)->format($GLOBALS['timedate']->get_time_format()),
 
 				'detailview' => 1,	
 				'editview' => 1,		
