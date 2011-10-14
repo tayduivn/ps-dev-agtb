@@ -27,6 +27,9 @@
  ********************************************************************************/
 *}
 
+{capture name=alt1 assign=alt_selectButton}{sugar_translate label='LBL_SELECT_TEAMS_LABEL'}{/capture}
+{capture name=alt2 assign=alt_removeButton}{sugar_translate label='LBL_ALT_REMOVE_TEAM_ROW'}{/capture}
+{capture name=alt3 assign=alt_addButton}{sugar_translate label='LBL_ALT_ADD_TEAM_ROW'}{/capture}
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Collection/SugarFieldCollection.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Teamset/Teamset.js"}'></script>
 <script type="text/javascript">
@@ -45,9 +48,9 @@
 	    <td colspan='2' nowrap>
 			<span class="id-ff multiple ownline">
             <button title="{$app_strings.LBL_ID_FF_SELECT}" type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}","field_name":"{$vardef.name}",{literal}"field_to_name_array":{"id":"team_id","name":"team_name"}}{/literal}, "MULTISELECT", true); if(collection["{$displayParams.formName}_{$vardef.name}"].more_status)collection["{$displayParams.formName}_{$vardef.name}"].js_more();' name="teamSelect">
-            {sugar_getimage name="id-ff-select.png"}
+            {sugar_getimage name="id-ff-select.png" alt="$alt_selectButton"}
             </button><button title="{$app_strings.LBL_ID_FF_ADD}" type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add(); if(collection['{$displayParams.formName}_{$vardef.name}'].more_status)collection['{$displayParams.formName}_{$vardef.name}'].js_more();"  name="teamAdd">
-            {sugar_getimage name="id-ff-add.png"}</button>
+            {sugar_getimage name="id-ff-add.png" alt="$alt_addButton"}</button>
 			</span>			
 		</td>        
         <td id="lineLabel_{$vardef.name}_primary" {if empty($values.role_field)}style="display:none"{/if}>
@@ -69,7 +72,7 @@
         <td valign="top" nowrap>
             &nbsp;
 			{capture name=tmp assign=attr}id="remove_{$vardef.name}_collection_0" onclick="collection['{$displayParams.formName}_{$vardef.name}'].remove(0);"{/capture}
-            {sugar_getimage name="id-ff-remove.png" attr=$attr}
+            {sugar_getimage name="id-ff-remove.png" attr=$attr alt="$alt_removeButton"}
             {if !empty($displayParams.allowNewValue) }
             <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
             {/if}

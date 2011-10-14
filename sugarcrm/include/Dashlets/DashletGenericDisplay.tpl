@@ -31,6 +31,10 @@
 
 *}
 
+{assign var="alt_start" value=$navStrings.start}
+{assign var="alt_next" value=$navStrings.next}
+{assign var="alt_prev" value=$navStrings.previous}
+{assign var="alt_end" value=$navStrings.end}
 
 <table cellpadding='0' cellspacing='0' width='100%' border='0' class='list view'>
     <tr class="pagination">
@@ -42,7 +46,7 @@
                         {if $pageData.urls.startPage}
                             <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")' >{sugar_getimage name="start" ext=".png" width="14" height="13" alt=$navStrings.start other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.start}</a>&nbsp;-->
 							<button title='{$navStrings.start}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.startPage}")'>
-								{sugar_getimage name="start.png" attr='align="absmiddle" border="0" '}
+								{sugar_getimage name="start.png" attr='align="absmiddle" border="0" ' alt="$alt_start"}
 							</button>
 
                         {else}
@@ -55,7 +59,7 @@
                         {if $pageData.urls.prevPage}
                             <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")' >{sugar_getimage name="previous" ext=".png" width="8" height="13" alt=$navStrings.previous other_attributes='align="absmiddle" border="0" '}&nbsp;{$navStrings.previous}</a>&nbsp;-->
 							<button title='{$navStrings.previous}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.prevPage}")'>
-								{sugar_getimage name="previous.png" attr='align="absmiddle" border="0" '}							
+								{sugar_getimage name="previous.png" attr='align="absmiddle" border="0" ' alt="$alt_prev"}
 							</button>
 
                         {else}
@@ -68,7 +72,7 @@
                         {if $pageData.urls.nextPage}
                             <!--&nbsp;<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.nextPage}")' >{$navStrings.next}&nbsp;{sugar_getimage name="next" ext=".png" width="8" height="13" alt=$navStrings.next other_attributes='align="absmiddle" border="0" '}</a>&nbsp;-->
 							<button title='{$navStrings.next}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.nextPage}")'>
-								{sugar_getimage name="next.png" attr='align="absmiddle" border="0" '}
+								{sugar_getimage name="next.png" attr='align="absmiddle" border="0" ' alt="$alt_next"}
 							</button>
 
                         {else}
@@ -81,7 +85,7 @@
 						{if $pageData.urls.endPage  && $pageData.offsets.total != $pageData.offsets.lastOffsetOnPage}
                             <!--<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")' >{$navStrings.end}&nbsp;{sugar_getimage name="end" ext=".png" width="14" height="13" alt=$navStrings.end other_attributes='align="absmiddle" border="0" '}</a></td>-->
 							<button title='{$navStrings.end}' class='button' onclick='return SUGAR.mySugar.retrieveDashlet("{$dashletId}", "{$pageData.urls.endPage}")'>
-								{sugar_getimage name="end.png" attr='align="absmiddle" border="0" '}							
+								{sugar_getimage name="end.png" attr='align="absmiddle" border="0" ' alt="$alt_end"}							
 							</button>
 
 						{elseif !$pageData.offsets.totalCounted || $pageData.offsets.total == $pageData.offsets.lastOffsetOnPage}
@@ -105,14 +109,17 @@
 	                {if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 	                    {if $pageData.ordering.sortOrder == 'ASC'}
                             {capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-	                        {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" '}
+                            {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT_DESC'}{/capture}
+	                        {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 	                    {else}
                             {capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-	                        {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" '}
+                            {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT_ASC'}{/capture}
+	                        {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 	                    {/if}
 	                {else}
                         {capture assign="imageName"}arrow.{$arrowExt}{/capture}
-	                    {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" '}
+                        {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT'}{/capture}
+	                    {sugar_getimage name=$imageName width=$arrowWidth height=$arrowHeight attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 	                {/if}
 	           {else}
                     {if !isset($params.noHeader) || $params.noHeader == false}
@@ -164,14 +171,16 @@
 			{if !empty($quickViewLinks)}
 			<td width='1%' class='{$_rowColor}S1' bgcolor='{$_bgColor}' nowrap>
 				{if $pageData.access.edit}
+                    {capture name='tmp1' assign='alt_edit'}{sugar_translate label="LNK_EDIT"}{/capture}
+                    {capture name='tmp1' assign='alt_view'}{sugar_translate label="LBL_VIEWINLINE"}{/capture}
 					<a
                         {* //BEGIN SUGARCRM flav=pro ONLY *}
                         class="quickEdit"  data-dashlet-id='{$dashletId}'  data-record='{$rowData.ID}' data-module='{$pageData.bean.moduleDir}'
                         {* //END SUGARCRM flav=pro ONLY *}
-                        title='{$editLinkString}' href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'>{sugar_getimage name="edit_inline.png" attr='border="0" '}</a>
+                        title='{$editLinkString}' href='index.php?action=EditView&module={$pageData.bean.moduleDir}&record={$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index'>{sugar_getimage name="edit_inline.png" attr='border="0" ' alt="$alt_edit"}</a>
 				{/if}
 				{if $pageData.access.view}
-					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index' title="{sugar_translate label="LBL_VIEW_INLINE"}>{sugar_getimage name="view_inline.png" attr='border="0" '}</a>
+					<a title='{$viewLinkString}' href='index.php?action=DetailView&module={$params.module|default:$pageData.bean.moduleDir}&record={$rowData[$params.parent_id]|default:$rowData.ID}&offset={$pageData.offsets.current+$smarty.foreach.rowIteration.iteration}&stamp={$pageData.stamp}&return_module=Home&return_action=index' title="{sugar_translate label="LBL_VIEW_INLINE"}>{sugar_getimage name="view_inline.png" attr='border="0" ' alt="$alt_view"}</a>
 				{/if}
 			</td>
 			{/if}

@@ -536,7 +536,7 @@ class ListViewData {
 
         $extra = "<span id='adspan_" . $id . "' onmouseout=\"return SUGAR.util.clearAdditionalDetailsCall()\" "
                 . "onmouseover=\"lvg_dtails('$id')\" "
-				. "onmouseout=\"return nd(1000);\" style='position: relative;'><!--not_in_theme!--><img vertical-align='middle' class='info' border='0' alt='$jscalendarImage' src='$jscalendarImage'></span>";
+				. "onmouseout=\"return nd(1000);\" style='position: relative;'><!--not_in_theme!--><img vertical-align='middle' class='info' border='0' alt='".$app_strings['LBL_ADDITIONAL_DETAILS']."' src='$jscalendarImage'></span>";
 
         return array('fieldToAddTo' => $this->additionalDetailsFieldToAdd, 'string' => $extra);
 	}

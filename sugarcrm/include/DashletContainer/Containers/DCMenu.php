@@ -92,7 +92,7 @@ EOQ;
 			$class = ' class="none"';
 		}
 
-		$image = SugarThemeRegistry::current()->getLink($url, '', $attr, $iconImage, 'class="dc_notif_icon" border="0"');		
+		$image = SugarThemeRegistry::current()->getLink($url, '', $attr, $iconImage, 'class="dc_notif_icon" border="0" alt="'.$unreadNotifications.' '.$GLOBALS['app_strings']['LBL_PENDING_NOTIFICATIONS'].'"');
 
 		$notificationsHTML = <<<EOQ
 
@@ -200,7 +200,7 @@ EOQ;
 		}
 
 		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"');
+		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', '', "dcMenuSearchBtn.png", 'class="icon" align="top"',null,null,$GLOBALS['app_strings']['LBL_ALT_SPOT_SEARCH']);
 		$html .= <<<EOQ
 		</ul>
 		</div>
