@@ -126,7 +126,7 @@ class CalendarGrid {
 			for($j = 0; $j < 60; $j += $this->time_step){
 				$timestr = $GLOBALS['timedate']->fromTimestamp($curr_time)->format($this->time_format);
 				if($this->scrollable || !$this->check_owt($i,$j,$this->args['cal']->d_start_minutes,$this->args['cal']->d_end_minutes))
-					$str .= "<div id='t_".$curr_time.$prefix."' class='slot' dur='".$timestr."' datetime='".$GLOBALS['timedate']->fromTimestamp($curr_time)->format($this->date_time_format)."'></div>";
+					$str .= "<div id='t_".$curr_time.$prefix."' class='slot' time='".$timestr."' datetime='".$GLOBALS['timedate']->fromTimestamp($curr_time)->format($this->date_time_format)."'></div>";
 				$curr_time += $this->time_step*60;
 			}
 		}

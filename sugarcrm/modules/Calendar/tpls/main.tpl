@@ -113,7 +113,7 @@
 				if(CAL.records_openable)
 					this.style.backgroundColor = "#D1DCFF";							
 				if(!this.childNodes.length)	
-					this.setAttribute("title",this.getAttribute("dur"));
+					this.setAttribute("title",this.getAttribute("time"));
 			});
 			YAHOO.util.Event.on(nodes[i],"mouseout",function(){
 				this.style.backgroundColor = "";

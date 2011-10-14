@@ -258,7 +258,7 @@
 						var slot = document.getElementById(id);
 						if(!YAHOO.util.Dom.hasClass(slot,"slot_active"))
 							YAHOO.util.Dom.addClass(slot,"slot_active");						
-						this.el.childNodes[0].childNodes[1].childNodes[0].innerHTML = slot.getAttribute('dur');											
+						this.el.childNodes[0].childNodes[1].childNodes[0].innerHTML = slot.getAttribute('time');											
 					}
 					
 					dd.onDragOut = function(e,id){
@@ -749,7 +749,7 @@
 						CAL.align_divs(slot_id);
 						CAL.align_divs(ex_slot_id);
 						CAL.cut_record(box_id);					
-						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('dur'),u.getAttribute('status'),u.getAttribute('record'));
+						var start_text = CAL.get_header_text(CAL.act_types[u.getAttribute('module_name')],s.getAttribute('time'),u.getAttribute('status'),u.getAttribute('record'));
 						u.setAttribute("date_start",s.getAttribute("datetime"));				
 						u.childNodes[0].childNodes[1].innerHTML = start_text;
 					}
