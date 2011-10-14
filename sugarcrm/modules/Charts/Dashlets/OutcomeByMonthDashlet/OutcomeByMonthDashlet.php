@@ -118,8 +118,8 @@ class OutcomeByMonthDashlet extends DashletGenericChart
         //BEGIN SUGARCRM flav=pro ONLY
         $this->getSeedBean()->add_team_security_where_clause($query);
         //END SUGARCRM flav=pro ONLY
-        $query .= " WHERE opportunities.date_closed >= ".db_convert("'".$this->obm_date_start."'",'datetime') .
-                        " AND opportunities.date_closed <= ".db_convert("'".$this->obm_date_end."'",'datetime') .
+        $query .= " WHERE opportunities.date_closed >= ".db_convert("'".$this->obm_date_start."'",'date') .
+                        " AND opportunities.date_closed <= ".db_convert("'".$this->obm_date_end."'",'date') .
                         " AND opportunities.deleted=0";
         if (count($this->obm_ids) > 0)
             $query .= " AND opportunities.assigned_user_id IN ('" . implode("','",$this->obm_ids) . "')";
