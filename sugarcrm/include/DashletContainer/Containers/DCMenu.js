@@ -247,6 +247,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 	//BEGIN SUGARCRM flav=pro ONLY
     DCMenu.addToFavorites = function(item, module, record){
 		Y.one(item).replaceClass('off', 'on');
+        Y.one(item).setAttribute("title", SUGAR.language.get('app_strings', 'LBL_REMOVE_FROM_FAVORITES'));
 		item.onclick = function(){
 			DCMenu.removeFromFavorites(this, module, record);
 		}
@@ -255,6 +256,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
 
 	DCMenu.removeFromFavorites = function(item, module, record){
 		Y.one(item).replaceClass('on', 'off');
+        Y.one(item).setAttribute("title", SUGAR.language.get('app_strings', 'LBL_ADD_TO_FAVORITES'));
 		item.onclick = function(){
 			DCMenu.addToFavorites(this, module, record);
 		}

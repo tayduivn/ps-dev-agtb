@@ -26,6 +26,10 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
+{capture name=alt1 assign=alt_selectButton}{sugar_translate label='LBL_SELECT_TEAMS_LABEL'}{/capture}
+{capture name=alt2 assign=alt_removeButton}{sugar_translate label='LBL_ALT_REMOVE_TEAM_ROW'}{/capture}
+{capture name=alt3 assign=alt_addButton}{sugar_translate label='LBL_ALT_ADD_TEAM_ROW'}{/capture}
+
 <link rel="stylesheet" type="text/css" href="include/javascript/yui/build/container/assets/container.css" />
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Collection/SugarFieldCollection.js"}'></script>
 <script type="text/javascript" src='{sugar_getjspath file="include/SugarFields/Fields/Teamset/Teamset.js"}'></script>
@@ -46,7 +50,7 @@
 <table name='{$displayParams.formName}_{$vardef.name}_table' id='{$displayParams.formName}_{$vardef.name}_table' style="border-spacing: 0pt;">
     <tr>
     	<td colspan="2" NOWRAP>
-            {if empty($displayParams.clearOnly) }<button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}" {literal},"field_name":"team_name_advanced","field_to_name_array":{"id":"team_id","name":"team_name_advanced"}}{/literal}, "MULTISELECT", true);' name="teamSelect">{sugar_getimage alt=$app_strings.LBL_ID_FF_SELECT name="id-ff-select" ext=".png" other_attributes=''}</button>{/if}<button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();" name="teamAdd">{sugar_getimage alt=$app_strings.LBL_ID_FF_ADD name="id-ff-add" ext=".png" other_attributes=''}</button>
+            {if empty($displayParams.clearOnly) }<button type="button" class="button firstChild" value="{sugar_translate label='LBL_SELECT_BUTTON_LABEL'}" onclick='javascript:open_popup("Teams", 600, 400, "", true, false, {literal}{"call_back_function":"set_return_teams_for_editview","form_name": {/literal} "{$displayParams.formName}" {literal},"field_name":"team_name_advanced","field_to_name_array":{"id":"team_id","name":"team_name_advanced"}}{/literal}, "MULTISELECT", true);' name="teamSelect">{sugar_getimage alt=$app_strings.LBL_ID_FF_SELECT name="id-ff-select" ext=".png" other_attributes='' alt="$alt_selectButton"}</button>{/if}<button type="button" class="button lastChild" value="{sugar_translate label='LBL_ADD_BUTTON'}" onclick="javascript:collection['{$displayParams.formName}_{$vardef.name}'].add();" name="teamAdd">{sugar_getimage alt=$app_strings.LBL_ID_FF_ADD name="id-ff-add" ext=".png" other_attributes='' alt="$alt_addButton"}</button>
 			</span>
         </td>
         <td id="lineLabel_{$vardef.name}_primary">
@@ -67,7 +71,7 @@
         <td valign='top'>
             &nbsp;
             {capture assign="otherAttributes"}class='id-ff-remove' id='remove_{$vardef.name}_collection_0' onclick='collection["{$displayParams.formName}_{$vardef.name}"].remove(0);'{/capture}
-            {sugar_getimage alt=$app_strings.LBL_ID_FF_REMOVE name="id-ff-remove" ext=".png" other_attributes=$otherAttributes}
+            {sugar_getimage alt=$app_strings.LBL_ID_FF_REMOVE name="id-ff-remove" ext=".png" other_attributes=$otherAttributes alt="$alt_removeButton"}
             {if !empty($displayParams.allowNewValue) }
             <input type="hidden" name="allow_new_value_{$vardef.name}_collection_0" id="allow_new_value_{$vardef.name}_collection_0" value="true">
             {/if}
