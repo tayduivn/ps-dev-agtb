@@ -161,7 +161,7 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
     function setBody(data, depth, parentid,type,title,extraButton){
 			//extraButton can be either a string to append to the content or a set of additional parameters;
             var params = {};
-            if (typeof(extraButton) == "object")
+            if (typeof(extraButton) == "object" && extraButton != null)
             {
                 params = extraButton;
                 extraButton = params.extraButton ? params.extraButton : false;
