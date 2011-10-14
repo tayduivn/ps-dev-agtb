@@ -1594,13 +1594,14 @@ SUGAR.reports = function() {
 		},		
 
 		showWizardStep: function(isPrev, stepName) {
-			if (!SUGAR.reports.saveCurrentStep() && !stepName)			
+            var isValid = SUGAR.reports.saveCurrentStep();
+			if (!isValid && !stepName)
 				return false;
-			if (report_type == 'tabular')
+			if (isValid && report_type == 'tabular')
 				SUGAR.reports.showWizardStepTabular(isPrev, stepName);
-			else if (report_type == 'summation')
+			else if (isValid && report_type == 'summation')
 				SUGAR.reports.showWizardStepSummation(isPrev, stepName);			
-			else if (report_type == 'summation_with_details')
+			else if (isValid && report_type == 'summation_with_details')
 				SUGAR.reports.showWizardStepSummationWithDetails(isPrev, stepName);			
 		},
 		prepareReportForProcessing: function() {
