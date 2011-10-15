@@ -311,6 +311,7 @@ function sugar_is_file($path, $mode='r'){
 
 /**
  * Get filename in cache directory
+ * @api
  * @param string $file
  */
 function sugar_cached($file)
