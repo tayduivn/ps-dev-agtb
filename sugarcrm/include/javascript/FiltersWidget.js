@@ -227,7 +227,7 @@ SUGAR.FiltersWidget = function() {
 			} // if
 			var title = "";
 			if (id == SUGAR.language.get('Reports','LBL_FILTER') + ".1") {
-				title =  "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "</span>"+ "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif'></span>";
+				title =  "<span class='spantitle'>" + SUGAR.language.get('Reports','LBL_DEFINE_FILTERS') + "</span>"+ "<span id='"+id+"_help'><img src='index.php?entryPoint=getImage&themeName=" + SUGAR.themes.theme_name + "&imageName=helpInline.gif' alt='"+SUGAR.language.get("Reports", "LBL_ALT_INFORMATION")+"'></span>";
 			} else {
 				title =  "<span class='spantitle'>" + id + "</span>";
 			} // else

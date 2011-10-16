@@ -586,5 +586,6 @@ $mod_strings = array (
 	'LBL_RIGHT' => 'Right' /*for 508 compliance fix*/,
 	'LBL_DOWN' => 'Down' /*for 508 compliance fix*/,
 	'LBL_UP' => 'Up' /*for 508 compliance fix*/,
+    'LBL_ALT_INFORMATION' => 'Information',
 );
 ?>

@@ -3233,7 +3233,10 @@ $app_strings = array (
     'LBL_ALT_SORT' => 'Sort',
     'LBL_ALT_SHOW_OPTIONS' => 'Show Options',
     'LBL_ALT_HIDE_OPTIONS' => 'Hide Options',
-
+    'LBL_ALT_MOVE_COLUMN_LEFT' => 'Move selected entry to the list on the left',
+    'LBL_ALT_MOVE_COLUMN_RIGHT' => 'Move selected entry to the list on the right',
+    'LBL_ALT_MOVE_COLUMN_UP' =>'Move selected entry up in the displayed list order',
+    'LBL_ALT_MOVE_COLUMN_DOWN' => 'Move selected entry down in the displayed list order',    
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
