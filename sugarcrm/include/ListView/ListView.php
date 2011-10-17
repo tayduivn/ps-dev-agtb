@@ -1656,11 +1656,19 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
         $imgFileParts = pathinfo(SugarThemeRegistry::current()->getImageURL("arrow{$upDown}.gif"));
 
         list($width,$height) = ListView::getArrowUpDownImageSize($upDown);
-        return " width='$width' height='$height' align='absmiddle' alt=".translate('LBL_SORT').">";
+
+        //get the right alt tag for the sort
+        $sortStr = translate('LBL_ALT_SORT');
+        if($upDown == '_down'){
+            $sortStr = translate('LBL_ALT_SORT_DESC');
+        }elseif($upDown == '_up'){
+            $sortStr = translate('LBL_ALT_SORT_ASC');
+        }
+        return " width='$width' height='$height' align='absmiddle' alt='$sortStr'>";
     }
 
 	function getArrowImageSize() {
-	    // just get the non-sort image's size.. the up and down have be the same.
+	    // jbasicChartDashletsExpColust get the non-sort image's size.. the up and down have be the same.
 		$image = SugarThemeRegistry::current()->getImageURL("arrow.gif",false);
 
         $cache_key = 'arrow_size.'.$image;
