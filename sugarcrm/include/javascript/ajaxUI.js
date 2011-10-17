@@ -238,7 +238,7 @@ SUGAR.ajaxUI = {
         }
         YAHOO.util.Event.removeListener(window, 'resize');
         //Hide any connector dialogs
-        if(typeof(dialog) != 'undefined'){
+        if(typeof(dialog) != 'undefined' && typeof(dialog.destroy) == 'function'){
             dialog.destroy();
             delete dialog;
         }
