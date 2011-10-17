@@ -57,19 +57,21 @@ EOQ;
             return;
 		}
 
-		// cn: get a boundary limiter
-        global $db;
+        //Create separate variable to hold timedate value
+        $alertDateTimeNow = $timedate->nowDb();
 
+		// cn: get a boundary limiter
 		$dateTimeMax = $timedate->getNow()->modify("+{$app_list_strings['reminder_max_time']} seconds")->asDb();
 		$dateTimeNow = $timedate->nowDb();
 
-        $dateTimeNow = $db->convert($dateTimeNow, 'datetime');
-        $dateTimeMax = $db->convert($dateTimeMax, 'datetime');
-
+		global $db;
+		$dateTimeNow = $db->convert($db->quoted($dateTimeNow), 'datetime');
+		$dateTimeMax = $db->convert($db->quoted($dateTimeMax), 'datetime');
 		$desc = $db->convert("description", "text2char");
 		if($desc != "description") {
 		    $desc .= " description";
 		}
+
 		// Prep Meetings Query
     	$selectMeetings = "SELECT meetings.id, name,reminder_time, $desc,location, date_start, assigned_user_id
 			FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
@@ -78,8 +80,8 @@ EOQ;
 				AND meetings.reminder_time != -1
 				AND meetings_users.deleted != 1
 				AND meetings.status != 'Held'
-			    AND date_start >= '$dateTimeNow'
-			    AND date_start <= '$dateTimeMax'";
+			    AND date_start >= $dateTimeNow
+			    AND date_start <= $dateTimeMax";
 		$result = $db->query($selectMeetings);
 
 		///////////////////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ EOQ;
 				$app_strings['MSG_JS_ALERT_MTG_REMINDER_LOC'].$row['location'].
 				$description.
 				$instructions,
-				$timeStart - strtotime($dateTimeNow),
+				$timeStart - strtotime($alertDateTimeNow),
 				$url
 			);
 		}
@@ -159,14 +161,12 @@ EOQ;
 				    AND calls.reminder_time != -1
 					AND calls_users.deleted != 1
 					AND calls.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-
+				    AND date_start >= $dateTimeNow
+				    AND date_start <= $dateTimeMax";
 
 		$result = $db->query($selectCalls);
 
-		while($row = $db->fetchByAssoc($result))
-        {
+		while($row = $db->fetchByAssoc($result)){
 			// need to concatenate since GMT times can bridge two local days
 			$timeStart = strtotime($db->fromConvert($row['date_start'], 'datetime'));
 			$timeRemind = $row['reminder_time'];
@@ -182,7 +182,7 @@ EOQ;
 			$n->save(FALSE);
 			//END SUGARCRM flav=notifications ONLY
 
-			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($db->fromConvert($row['date_start'], 'datetime')) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'] , $timeStart - strtotime($dateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
+			$this->addAlert($app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL'], $row['name'], $app_strings['MSG_JS_ALERT_MTG_REMINDER_TIME'].$timedate->to_display_date_time($db->fromConvert($row['date_start'], 'datetime')) , $app_strings['MSG_JS_ALERT_MTG_REMINDER_DESC'].$row['description']. $app_strings['MSG_JS_ALERT_MTG_REMINDER_CALL_MSG'] , $timeStart - strtotime($alertDateTimeNow), 'index.php?action=DetailView&module=Calls&record=' . $row['id']);
 		}
 	}
 
