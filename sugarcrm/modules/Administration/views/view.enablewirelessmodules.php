@@ -22,6 +22,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/SugarLicensing/SugarLicensing.php');
+
 class AdministrationViewEnablewirelessmodules extends SugarView 
 {	
  	/**
@@ -56,6 +58,7 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         global $mod_strings;
         global $app_list_strings;
         global $app_strings;
+        global $license;
         global $current_user;
         global $theme;
         global $currentModule;
@@ -102,6 +105,10 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         {
             $json_disabled[] = array("module" => $mod, 'label' => $label);
         }
+
+        // We need to grab the license key
+        $key = $license->settings["license_key"];
+        $this->ss->assign('url', $this->getMobileEdgeUrl($key));
         
         $this->ss->assign('enabled_modules', json_encode($json_enabled));
         $this->ss->assign('disabled_modules', json_encode($json_disabled));
@@ -118,5 +125,21 @@ class AdministrationViewEnablewirelessmodules extends SugarView
                 false
                 );
         echo $this->ss->fetch('modules/Administration/templates/enableWirelessModules.tpl');
+    }
+
+    /**
+     * Grab the mobile edge server link by polling the licensing server.
+     * @returns string url
+     */
+    protected function getMobileEdgeUrl($license) {
+        $licensing = new SugarLicensing();
+        $result = $licensing->request("/rest/fetch/mobileserver", array('key' => $license));
+        
+        // Check if url exists for the provided key.
+        if (isset($result["mobileserver"]["server"]["url"])) {
+            return $result["mobileserver"]["server"]["url"];
+        } else {
+            return '';
+        }
     }
 }
