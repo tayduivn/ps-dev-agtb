@@ -11,14 +11,18 @@ require_once 'SugarTestContactUtilities.php';
 
 class Bug42279Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $contact;
+    private $contact;	
 
     public function setUp() {
+    	
+    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
+               
     }
 
     public function tearDown() {
         SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**
@@ -33,7 +37,6 @@ class Bug42279Test extends Sugar_PHPUnit_Framework_TestCase
 
         // this should set fetched_row['email1'] to contatc->email1
         $sea->handleLegacyRetrieve($this->contact);
-
-        $this->assertEquals($email1, $this->contact->fetched_row['email1']);
+    	$this->assertEquals($email1, $this->contact->fetched_row['email1']);
     }
 }
