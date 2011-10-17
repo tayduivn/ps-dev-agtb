@@ -79,7 +79,7 @@ class Scheduler extends SugarBean {
             );
             if (false === $adminId) {//retrive another admin
                 $adminId = $this->db->getOne(
-                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status='.$this->db->quote('Active'),
+                    'SELECT id FROM users WHERE is_admin=1 AND deleted=0 AND status=\'Active\'',
                     true, 
                     'Error retrieving Admin account info'
                 );
