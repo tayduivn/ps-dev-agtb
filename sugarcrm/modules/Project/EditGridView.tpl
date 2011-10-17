@@ -120,9 +120,12 @@ var resources = new Array();
 	</span>	
 	
 	<span id = "gantt_buttons_span">
-		<a title="{$MOD.LBL_WEEK_BUTTON}">{sugar_getimage name="ProjectWeek" ext=".gif" other_attributes='onclick="SUGAR.gantt.createTable(\'week\', document.getElementById(\'gantt_chart_start_date\').value, \'{$BG_COLOR}\');" '}</img></a>
-		<a title="{$MOD.LBL_BIWEEK_BUTTON}">{sugar_getimage name="Project2Weeks" ext=".gif" other_attributes='onclick="SUGAR.gantt.createTable(\'biweek\', document.getElementById(\'gantt_chart_start_date\').value, \'{$BG_COLOR}\');" '}</img></a>
-		<a title="{$MOD.LBL_MONTH_BUTTON}">{sugar_getimage name="ProjectMonth" ext=".gif" other_attributes='onclick="SUGAR.gantt.createTable(\'month\', document.getElementById(\'gantt_chart_start_date\').value, \'{$BG_COLOR}\');" '}</img></a>
+        {capture assign="attributes"}onclick="SUGAR.gantt.createTable('week', document.getElementById('gantt_chart_start_date').value, '{$BG_COLOR}');"{/capture}
+		<a title="{$MOD.LBL_WEEK_BUTTON}">{sugar_getimage name="ProjectWeek" ext=".gif" other_attributes="$attributes"}</img></a>
+		{capture assign="attributes"}onclick="SUGAR.gantt.createTable('biweek', document.getElementById('gantt_chart_start_date').value, '{$BG_COLOR}');"{/capture}
+        <a title="{$MOD.LBL_BIWEEK_BUTTON}">{sugar_getimage name="Project2Weeks" ext=".gif" other_attributes="$attributes"}</img></a>
+        {capture assign="attributes"}onclick="SUGAR.gantt.createTable('month', document.getElementById('gantt_chart_start_date').value, '{$BG_COLOR}');"{/capture}
+		<a title="{$MOD.LBL_MONTH_BUTTON}">{sugar_getimage name="ProjectMonth" ext=".gif" other_attributes="$attributes"}</img></a>
 	</span>		
 
 	<input type="hidden" name="selected_view" id="selected_view" value="{$SELECTED_VIEW}" />
