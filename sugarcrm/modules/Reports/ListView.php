@@ -158,7 +158,7 @@ foreach($ACLUnAllowedModules as $module => $class_name) {
 $reportModules = array();
 
 foreach($ACLAllowedModules as $key => $module) {
-    $reportModules[$key] = $app_list_strings['moduleList'][$key];
+    $reportModules[$key] = isset($app_list_strings['moduleList'][$key]) ? $app_list_strings['moduleList'][$key] : $key;
 } 
 
 asort($reportModules);
