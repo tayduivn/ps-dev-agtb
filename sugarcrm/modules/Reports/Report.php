@@ -1767,7 +1767,12 @@ print "<BR>";
                                 if(strpos($oba,'=')){
                                     foreach($order_by as $ob){
                                         if(empty($ASC_DESC)){$ASC_DESC = substr($ob,strrpos($ob," "));}
-                                        if(empty($groupby)){$groupby = substr($ob,0,strrpos($ob,"="));}
+                                        if(empty($groupby))  {
+                                            $groupby = substr($ob,0,strrpos($ob,"="));
+                                            if (substr($groupby,0,1) == '(' && substr($groupby,-1) != ')') {
+                                                $groupby = substr($groupby,1); 
+                                            }
+                                        }
                                         $ob = trim($ob);
                                         $beg_sing_pos = strpos($ob,"'");
                                         if($beg_sing_pos>0){
