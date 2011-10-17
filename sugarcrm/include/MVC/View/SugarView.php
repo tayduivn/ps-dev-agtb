@@ -782,11 +782,10 @@ EOHTML;
             if(!empty($config_js)){
                 echo "<script>\n".implode("\n", $config_js)."</script>\n";
             }
-
             if ( isset($sugar_config['email_sugarclient_listviewmaxselect']) ) {
                 echo "<script>SUGAR.config.email_sugarclient_listviewmaxselect = {$GLOBALS['sugar_config']['email_sugarclient_listviewmaxselect']};</script>";
             }
-
+            
             $image_server = (defined('TEMPLATE_URL'))?TEMPLATE_URL . '/':'';
             echo '<script type="text/javascript">SUGAR.themes.image_server="' . $image_server . '";</script>'; // cn: bug 12274 - create session-stored key to defend against CSRF
             echo '<script type="text/javascript">var name_format = "' . $locale->getLocaleFormatMacro() . '";</script>';
