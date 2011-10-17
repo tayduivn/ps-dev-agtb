@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+//FILE SUGARCRM flav=pro ONLY
+
 require_once('include/workflow/glue.php');
 
 /**
