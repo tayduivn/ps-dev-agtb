@@ -109,6 +109,7 @@ $mod_strings = array (
 	'LIST_ENTRIES_PER_SUBPANEL'=>'Subpanel items per page',
 	//BEGIN SUGARCRM flav=pro ONLY
 	'LBL_WIRELESS_LIST_ENTRIES' => 'Listview items per page',
+    'LBL_WIRELESS_SERVER_URL' => 'Sugar Mobile Edge server',
 	'LBL_WIRELESS_SUBPANEL_LIST_ENTRIES' => 'Subpanel items per page',
 	//END SUGARCRM flav=pro ONLY
 	'LOG_MEMORY_USAGE'=>'Log memory usage',
