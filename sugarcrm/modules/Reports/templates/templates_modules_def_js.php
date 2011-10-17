@@ -317,8 +317,8 @@ module_defs['<?php echo $module_name; ?>'].default_table_columns = default_table
 module_defs['<?php echo $module_name; ?>'].summary_field_defs = new Object();
 module_defs['<?php echo $module_name; ?>'].group_by_field_defs = new Object();
 module_defs['<?php echo $module_name; ?>'].default_summary_columns = default_summary_columns;
-module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes($app_list_strings['moduleList'][$module_name]);?>";
-
+module_defs['<?php echo $module_name; ?>'].label = "<?php echo addslashes(
+    isset($app_list_strings['moduleList'][$module_name]) ? $app_list_strings['moduleList'][$module_name] : $module_name);?>";
 <?php
 	}
 
