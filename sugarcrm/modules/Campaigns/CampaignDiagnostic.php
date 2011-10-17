@@ -243,7 +243,7 @@ if(!isset($_REQUEST['inline']) || $_REQUEST['inline'] != 'inline'){
  * @return string HTML img tag
  */
 function define_image($num, $total)
-{
+{ global $mod_strings;
     //if health number is equal to total number then all checks failed, set red image
     if($num == $total){
         //red
