@@ -50,9 +50,11 @@
 		    <input type="submit" class="button primary" value="{$LBL_SEARCH_BUTTON_LABEL}">&nbsp;
 			<a href="#" onclick="javascript:toggleInlineSearch();" style="font-size:12px; font-weight:bold; text-decoration:none; text-shadow:0 1px #FFFFFF;">{$MOD.LBL_SELECT_MODULES}&nbsp;
             {if $SHOWGSDIV == 'yes'}
-			{sugar_getimage alt=$MOD.LBL_BASIC_SEARCH name="basic_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}
+            {capture assign="alt_hide_show"}{sugar_translate label='LBL_ALT_HIDE_OPTIONS'}{/capture}
+			{sugar_getimage  name="basic_search" ext=".gif" other_attributes='border="0" id="up_down_img" ' alt="$alt_hide_show"}
 			{else}
-			{sugar_getimage alt=$MOD.LBL_ADVANCED_SEARCH name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" '}
+            {capture assign="alt_hide_show"}{sugar_translate label='LBL_ALT_SHOW_OPTIONS'}{/capture}
+			{sugar_getimage  name="advanced_search" ext=".gif" other_attributes='border="0" id="up_down_img" ' alt="$alt_hide_show"}
 			{/if}
 			</a>
 		</td>
@@ -92,12 +94,14 @@ function toggleInlineSearch()
 		SUGAR.globalSearchDisabledTable.render();    
         document.getElementById('showGSDiv').value = 'yes'		
         document.getElementById('inlineGlobalSearch').style.display = '';
-{/literal}	
+{/literal}
         document.getElementById('up_down_img').src='{sugar_getimagepath file="basic_search.gif"}';
+        document.getElementById('up_down_img').setAttribute('alt',"{sugar_translate label='LBL_ALT_HIDE_OPTIONS'}");
 {literal}
     }else{
 {/literal}			
         document.getElementById('up_down_img').src='{sugar_getimagepath file="advanced_search.gif"}';
+        document.getElementById('up_down_img').setAttribute('alt',"{sugar_translate label='LBL_ALT_SHOW_OPTIONS'}");
 {literal}			
         document.getElementById('showGSDiv').value = 'no';		
         document.getElementById('inlineGlobalSearch').style.display = 'none';		

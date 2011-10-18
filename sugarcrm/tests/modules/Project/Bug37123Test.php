@@ -28,6 +28,8 @@ class Bug37123Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         global $current_user, $currentModule ;
+        global $beanList;
+        require('include/modules.php');
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $unid = uniqid();
         $time = date('Y-m-d H:i:s');

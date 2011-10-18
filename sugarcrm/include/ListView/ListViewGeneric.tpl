@@ -80,14 +80,17 @@
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName attr='align="absmiddle" border="0" '}
+                            {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT_DESC'}{/capture}
+							{sugar_getimage name=$imageName attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName attr='align="absmiddle" border="0" '}
+                            {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT_ASC'}{/capture}
+							{sugar_getimage name=$imageName attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						{sugar_getimage name=$imageName attr='align="absmiddle" border="0" '}
+                        {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT'}{/capture}
+						{sugar_getimage name=$imageName attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 					{/if}
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
@@ -137,7 +140,8 @@ data-record='{$rowData.ID}' data-module='{if $params.dynamic_module}{$rowData[$p
  data-list = 'true' class="quickEdit"
 {* //END SUGARCRM flav=pro ONLY *}
                 >
-                {sugar_getimage name="edit_inline.gif" attr='border="0" '}</a>
+                    {capture name='tmp1' assign='alt_edit'}{sugar_translate label="LNK_EDIT"}{/capture}
+                    {sugar_getimage name="edit_inline.gif" attr='border="0" ' alt="$alt_edit"}</a>
                 {/if}
             </td>
 

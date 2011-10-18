@@ -139,6 +139,8 @@ class UsersViewEdit extends ViewEdit {
             }
         }
 
+        $processSpecial = false;
+        $processFormName = '';
         //BEGIN SUGARCRM flav!=sales ONLY
         if ( $this->fieldHelper->usertype == 'GROUP'
              //BEGIN SUGARCRM flav=ent ONLY
@@ -146,10 +148,16 @@ class UsersViewEdit extends ViewEdit {
              //END SUGARCRM flav=ent ONLY
             ) {
             $this->ev->formName = 'EditViewGroup';
-
+            
+            $processSpecial = true;
+            $processFormName = 'EditViewGroup';            
         }
         //END SUGARCRM flav!=sales ONLY
-        return parent::display();
+
+        $this->ev->process($processSpecial,$processFormName);
+
+		echo $this->ev->display($this->showTitle);
+        
     }
 
 }

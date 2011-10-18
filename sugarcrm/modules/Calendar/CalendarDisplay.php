@@ -96,7 +96,10 @@ class CalendarDisplay {
 				$d_param .= "+1";	
 		}
 		
-		$ss->assign('scroll_slot',intval(60 / $args['cal']->time_step) * 5);	
+		$scroll_hour = 5;
+		if($args['cal']->time_step < 30)
+			$scroll_hour = 8;
+		$ss->assign('scroll_slot',intval(60 / $args['cal']->time_step) * $scroll_hour);	
 		
 		$ss->assign('d_param',$d_param);	
 		$ss->assign('editview_width',SugarConfig::getInstance()->get('calendar.editview_width',800));
@@ -239,7 +242,7 @@ class CalendarDisplay {
 	// returns date info string (legacy of old calendar)
 	function get_date_info($view, $date_time){
 		$str = "";
-	
+
 		global $current_user;
 		$dateFormat = $current_user->getUserDateTimePreferences();
 
@@ -256,8 +259,10 @@ class CalendarDisplay {
 			}
 		}else
 			if($view == 'week' || $view == 'shared') {
-				$first_day = $date_time->get_day_by_index_this_week(0);
-				$last_day = $date_time->get_day_by_index_this_week(6);
+				$first_day = $date_time;
+				
+				$first_day = CalendarUtils::get_first_day_of_week($date_time);				
+				$last_day = $first_day->get("+6 days");				
 
 				for($i=0; $i<strlen($dateFormat['date']); $i++) {
 					switch($dateFormat['date']{$i}){
@@ -310,15 +315,15 @@ class CalendarDisplay {
 		return $str;
 	}
 	
-	// returns link to next date range
+	// Get link to next date range
 	function get_next_calendar(){	
 		global $cal_strings,$image_path;
 		$str = "";
 		if($_REQUEST['module'] == "Calendar"){
-			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_next_date_str())."'>";
+			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_neighbor_date_str("next"))."'>";
 
 		}else{
-			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_next_date_str()."&id=".$this->args['dashlet_id']."\")'>";
+			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_neighbor_date_str("next")."&id=".$this->args['dashlet_id']."\")'>";
 		}
 			$str .= $cal_strings["LBL_NEXT_".strtoupper($this->args['cal']->view)]; 
 
@@ -326,14 +331,14 @@ class CalendarDisplay {
 		return $str;
 	}
 	
-	// returns link to previous date range
+	// Get link to previous date range
 	function get_previous_calendar(){
 		global $cal_strings,$image_path;
 		$str = "";
 		if($_REQUEST['module'] == "Calendar"){
-			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_previous_date_str()."")."'>";
+			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_neighbor_date_str("previous")."")."'>";
 		}else{
-			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_previous_date_str()."&id=".$this->args['dashlet_id']."\")'>";
+			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_neighbor_date_str("previous")."&id=".$this->args['dashlet_id']."\")'>";
 		}
 		$str .= SugarThemeRegistry::current()->getImage('calendar_previous','align="absmiddle" border="0"', null, null, '.gif', $cal_strings["LBL_PREVIOUS_".strtoupper($this->args['cal']->view)]);
 		$str .= "&nbsp;&nbsp;".$cal_strings["LBL_PREVIOUS_".strtoupper($this->args['cal']->view)] . "</a>";
@@ -370,6 +375,7 @@ class CalendarDisplay {
 	
 		$ss->assign('previous',$this->get_previous_calendar());
 		$ss->assign('next',$this->get_next_calendar());
+		
 		$ss->assign('date_info',$this->get_date_info($this->args['view'],$this->args['cal']->date_time));
 		
 		$header = "custom/modules/Calendar/tpls/header.tpl";

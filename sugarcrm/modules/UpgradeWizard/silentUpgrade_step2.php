@@ -556,7 +556,7 @@ if($origVersion < '620' && function_exists('repairSearchFields'))
 if(empty($errors)) {
 	set_upgrade_progress('end','in_progress','unlinkingfiles','in_progress');
 	logThis('Taking out the trash, unlinking temp files.', $path);
-	unlinkTempFiles(true);
+	unlinkUWTempFiles();
 	removeSilentUpgradeVarsCache();
 	logThis('Taking out the trash, done.', $path);
 }

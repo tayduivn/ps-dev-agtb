@@ -173,7 +173,7 @@ mySugarLoader.insert();
 			</span>
 			<span id="pageNum_{$pageNum}_link_span" class="tabText">
 			<span id="pageNum_{$pageNum}_title_text" {if !$lock_homepage}ondblclick="SUGAR.mySugar.renamePage('{$pageNum}');"{/if}>{$pageData.pageTitle}</span></span>
-			{capture assign=attr}align="absmiddle" border="0" class="deletePageImg" id="pageNum_{$pageNum}_delete_page_img" style="display: none;" onclick="return SUGAR.mySugar.deletePage()"{/capture}
+			{capture assign=attr}align="absmiddle" border="0" class="deletePageImg" id="pageNum_{$pageNum}_delete_page_img" style="display: none;" onclick="return SUGAR.mySugar.deletePage()"  alt="{$app.LBL_DELETE_PAGE}"{/capture}
 			{sugar_getimage name="info-del.png" attr=$attr}
 		   </a>
 	   </li>
@@ -185,7 +185,7 @@ mySugarLoader.insert();
 <!--//BEGIN SUGARCRM flav=pro ONLY -->
 	<div id="addPage">
 		{capture assign=attr}id="add_page" onclick="return SUGAR.mySugar.showAddPageDialog();"{/capture}
-		{capture assign=img_attr}align="absmiddle" border="0"{/capture}
+		{capture assign=img_attr}align="absmiddle" border="0" alt="{$app.LBL_ADD_PAGE}"{/capture}
 		{sugar_getlink url="javascript:void(0)" title="Add page" attr=$attr img_name="info-add-page.png" img_attr=$img_attr}
 	</div>
 <!--//END SUGARCRM flav=pro ONLY -->
@@ -196,12 +196,12 @@ mySugarLoader.insert();
 <td nowrap id="dashletCtrlsTD">
 	<div id="dashletCtrls">
 			{capture assign=attr}id="add_dashlets" onclick="return SUGAR.mySugar.showDashletsDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0"{/capture}
+			{capture assign=img_attr}align="absmiddle" border="0"  alt="{$mod.LBL_ADD_DASHLETS}"{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$mod.LBL_ADD_DASHLETS attr=$attr 
 					img_name="info-add.png" img_attr=$img_attr img_placement="left"}
 			<!--//BEGIN SUGARCRM flav=pro ONLY -->
 			{capture assign=attr}id="change_layout" onclick="return SUGAR.mySugar.showChangeLayoutDialog();" class="utilsLink"{/capture}
-			{capture assign=img_attr}align="absmiddle" border="0"{/capture}
+			{capture assign=img_attr}align="absmiddle" border="0" alt="{$app.LBL_CHANGE_LAYOUT}"{/capture}
 			{sugar_getlink url="javascript:void(0)" title=$app.LBL_CHANGE_LAYOUT attr=$attr 
 					img_name="info-layout.png" img_attr=$img_attr img_placement="left"}
 			<!--//END SUGARCRM flav=pro ONLY -->

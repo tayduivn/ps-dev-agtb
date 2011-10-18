@@ -296,7 +296,7 @@ $mod_strings = array (
     'LBL_PASSWORD_EXPIRATION_GENERATED' => 'Your password is system-generated',
     'LBL_PASSWORD_EXPIRATION_TIME'      => 'Your password has expired. Please provide a new password.',
 
-	'LBL_PSW_MODIFIED'                  => 'password last changed',
+	'LBL_PSW_MODIFIED'                  => 'Password Last Changed',
     'LBL_PHONE'							=> 'Phone',
 	'LBL_PICK_TZ_WELCOME'				=> 'Welcome to Sugar.',
 	'LBL_PICK_TZ_DESCRIPTION'           => 'Before continuing, please confirm your time zone.  Select the appropriate time zone from the list below, and click Save to continue. The time zone can be changed at any time in your user settings.',
@@ -658,6 +658,12 @@ $mod_strings = array (
     'LBL_SHOW_ON_EMPLOYEES' => 'Display Employee Record',
     'LBL_IS_GROUP' => 'Is Group',
     'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+    
+    'LBL_DATE_MODIFIED' => 'Date Modified',
+    'LBL_DATE_ENTERED' => 'Date Entered',
+    'LBL_DELETED' => 'Deleted',
+    'LBL_HIDEOPTIONS' => 'Hide Options',
+    'LBL_SHOWOPTIONS' => 'Show Options',
 
 ); // END STRINGS DEFS
 

@@ -692,6 +692,7 @@ function upgradeUWFiles($file) {
 		$allFiles[] = "$from_dir/include/utils/sugar_file_utils.php";
 	}
 
+
 	/*
 	 * /home/chris/workspace/maint450/cache/upload/upgrades/temp/DlNnqP/
 	 * SugarEnt-Patch-4.5.0c/modules/Leads/ConvertLead.html
@@ -883,8 +884,8 @@ function updateVersions($version) {
 		return false;
 	}
 
-	$q1 = "DELETE FROM CONFIG WHERE category = 'info' AND name = 'sugar_version'";
-	$q2 = "INSERT INTO CONFIG (category, name, value) VALUES ('info', 'sugar_version', '{$version}')";
+	$q1 = "DELETE FROM config WHERE category = 'info' AND name = 'sugar_version'";
+	$q2 = "INSERT INTO config (category, name, value) VALUES ('info', 'sugar_version', '{$version}')";
 
 	logThis('Deleting old DB version info from config table.', $path);
 	$db->query($q1);

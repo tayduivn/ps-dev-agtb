@@ -662,11 +662,12 @@ class SearchForm {
                             document.getElementById('inlineSavedSearch').style.display = '';
 
                             document.getElementById('up_down_img').src='".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."';
+                            document.getElementById('up_down_img').setAttribute('alt','".$GLOBALS['app_strings']['LBL_ALT_HIDE_OPTIONS']."');
 
                         }else{
 
                             document.getElementById('up_down_img').src='".SugarThemeRegistry::current()->getImageURL('advanced_search.gif')."';
-
+                            document.getElementById('up_down_img').setAttribute('alt','".$GLOBALS['app_strings']['LBL_ALT_SHOW_OPTIONS']."');
                             document.getElementById('showSSDIV').value = 'no';
                             document.getElementById('inlineSavedSearch').style.display = 'none';
                         }

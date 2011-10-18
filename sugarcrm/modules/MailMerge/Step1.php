@@ -235,7 +235,7 @@ function getDocumentRevisions()
 LEFT JOIN documents on documents.id = document_revisions.document_id
 WHERE ((active_date <= $currentDate AND exp_date > $currentDate)
 	OR (active_date is NULL) or (active_date = ".$empty_date.")
-	OR (active_date <= $currentDate AND ((exp_date = $empty_date OR (exp_date is NULL))))
+	OR (active_date <= $currentDate AND ((exp_date = $empty_date OR (exp_date is NULL)))))
 AND is_template = 1 AND template_type = 'mailmerge' AND documents.deleted = 0 ORDER BY document_name";
 
 			$result = $document->db->query($query,true,"Error retrieving $document->object_name list: ");

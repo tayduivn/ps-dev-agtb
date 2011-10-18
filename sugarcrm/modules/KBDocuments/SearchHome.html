@@ -293,9 +293,11 @@
 	        if (document.getElementById('search_tips').style.display == 'none'){
 	            document.getElementById('search_tips').style.display = '';
 	            document.getElementById('up_down_img').src='{/literal}{sugar_getimagepath file="basic_search.gif"}{literal}';
+                document.getElementById('up_down_img').setAttribute('alt',"{sugar_translate label='LBL_ALT_HIDE_OPTIONS'}");
 	        }else{
 	            document.getElementById('up_down_img').src='{/literal}{sugar_getimagepath file="advanced_search.gif"}{literal}';
 	            document.getElementById('search_tips').style.display = 'none';
+                document.getElementById('up_down_img').setAttribute('alt',"{sugar_translate label='LBL_ALT_SHOW_OPTIONS'}");
 	        }
 	    }
 

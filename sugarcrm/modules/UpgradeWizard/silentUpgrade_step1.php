@@ -285,7 +285,7 @@ function addDefaultModuleRoles($defaultRoles = array()) {
 	}
 }
 
-function verifyArguments($argv,$usage_dce,$usage_regular){
+function verifyArguments($argv,$usage_regular){
     $upgradeType = '';
     $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
     if(isset($argv[3])) {
@@ -299,29 +299,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
         }
     }
 
-    //check if this is an instance
-    if(is_file("{$cwd}/ini_setup.php")){
-        // this is an instance
-        $upgradeType = constant('DCE_INSTANCE');
-        //now that this is dce instance we want to make sure that there are
-        // 7 arguments
-        if(count($argv) < 7) {
-            echo "*******************************************************************************\n";
-            echo "*** ERROR: Missing required parameters.  Received ".count($argv)." argument(s), require 7.\n";
-            echo $usage_dce;
-            echo "FAILURE\n";
-            exit(1);
-        }
-        // this is an instance
-        if(!is_dir($argv[1])) { // valid directory . template path?
-            echo "*******************************************************************************\n";
-            echo "*** ERROR: First argument must be a full path to the template. Got [ {$argv[1]} ].\n";
-            echo $usage_dce;
-            echo "FAILURE\n";
-            exit(1);
-        }
-    }
-    else if(is_file("{$cwd}/include/entryPoint.php")) {
+    if(is_file("{$cwd}/include/entryPoint.php")) {
         //this should be a regular sugar install
         $upgradeType = constant('SUGARCRM_INSTALL');
         //check if this is a valid zip file
@@ -339,8 +317,7 @@ function verifyArguments($argv,$usage_dce,$usage_regular){
             echo "FAILURE\n";
             exit(1);
         }
-    }
-    else {
+    } else {
         //this should be a regular sugar install
         echo "*******************************************************************************\n";
         echo "*** ERROR: Tried to execute in a non-SugarCRM root directory.\n";
@@ -411,7 +388,7 @@ define('DCE_INSTANCE', 'DCE_Instance');
 global $cwd;
 $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
 
-$upgradeType = verifyArguments($argv,$usage_dce,$usage_regular);
+$upgradeType = verifyArguments($argv,$usage_regular);
 
 ///////////////////////////////////////////////////////////////////////////////
 //////  Verify that all the arguments are appropriately placed////////////////
@@ -1178,5 +1155,27 @@ function repairTableDictionaryExtFile()
 		} //if
 	}
 }
+
+
+/**
+ * sugar_cached
+ *
+ * Inline this method here since it is not yet defined in utils.php
+ *
+ * @param $file The path to retrieve cache lookup information for
+ * @return string The cached path according to $GLOBALS['sugar_config']['cache_dir'] or just appended with cache if not defined
+ */
+function sugar_cached($file)
+{
+    static $cdir = null;
+    if(empty($cdir) && !empty($GLOBALS['sugar_config']['cache_dir'])) {
+        $cdir = rtrim($GLOBALS['sugar_config']['cache_dir'], '/\\');
+    }
+    if(empty($cdir)) {
+        $cdir = "cache";
+    }
+    return "$cdir/$file";
+}
+
 
 ?>

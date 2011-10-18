@@ -595,6 +595,12 @@ class IBMDB2Manager  extends DBManager
 		return true;
 	}
 
+    protected $date_formats = array(
+        '%Y-%m-%d' => 'YYYY-MM-DD',
+        '%Y-%m' => 'YYYY-MM',
+        '%Y' => 'YYYY',
+    );
+
 
 	/**~
 	* @see DBManager::convert()

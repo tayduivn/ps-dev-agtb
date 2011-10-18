@@ -3223,6 +3223,20 @@ $app_strings = array (
     'LBL_EXPORT_TEAM_SET_ID' => 'Team Set ID',
 
     'LBL_QUICKEDIT_NODEFS_NAVIGATION'=> 'Navigating... ',
+
+    'LBL_PENDING_NOTIFICATIONS' => 'Notifications',
+    'LBL_ALT_ADD_TEAM_ROW' => 'Add new team row',
+    'LBL_ALT_REMOVE_TEAM_ROW' => 'Remove team',
+    'LBL_ALT_SPOT_SEARCH' => 'Spot Search',
+    'LBL_ALT_SORT_DESC' => 'Sorted Descending',
+    'LBL_ALT_SORT_ASC' => 'Sorted Ascending',
+    'LBL_ALT_SORT' => 'Sort',
+    'LBL_ALT_SHOW_OPTIONS' => 'Show Options',
+    'LBL_ALT_HIDE_OPTIONS' => 'Hide Options',
+    'LBL_ALT_MOVE_COLUMN_LEFT' => 'Move selected entry to the list on the left',
+    'LBL_ALT_MOVE_COLUMN_RIGHT' => 'Move selected entry to the list on the right',
+    'LBL_ALT_MOVE_COLUMN_UP' =>'Move selected entry up in the displayed list order',
+    'LBL_ALT_MOVE_COLUMN_DOWN' => 'Move selected entry down in the displayed list order',    
     );
 
 $app_list_strings['moduleList']['Library'] = 'Library';

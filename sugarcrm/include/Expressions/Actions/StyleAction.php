@@ -25,7 +25,11 @@ class StyleAction extends AbstractAction{
 	
 	function StyleAction($params) {
 		$this->targetField = $params['target'];
-		$this->attributes = str_replace("\n", "",$params['attrs']);
+		$this->attributes = array();
+        foreach($params['attrs'] as $prop => $val)
+        {
+            $this->attributes[$prop] = str_replace("\n", "", $val);
+        }
 	}
 	
 	/**
@@ -64,11 +68,7 @@ SUGAR.util.extend(SUGAR.forms.StyleAction, SUGAR.forms.AbstractAction, {
             // evaluate the attrs, if needed
             for (var i in this.attrs)
             {
-                if ( typeof(this.attrs[i]) === 'object' ) {
-                    temp[i] = this.evalExpression(this.attrs[i].evaluate, context);
-                } else {
-                    temp[i] = this.attrs[i];
-                }
+                temp[i] = this.evalExpression(this.attrs[i], context);
             }
             SUGAR.forms.AssignmentHandler.setStyle(this.target, temp);
         } catch (e) {return;}
@@ -82,7 +82,7 @@ SUGAR.util.extend(SUGAR.forms.StyleAction, SUGAR.forms.AbstractAction, {
 	 * @return string javascript.
 	 */
 	function getJavascriptFire() {
-		return  "new SUGAR.forms.SetValueAction('{$this->targetField}','{$this->attributes}')";
+		return  "new SUGAR.forms.StyleAction('{$this->targetField}'," .json_encode($this->attributes) . ")";
 	}
 	
 	

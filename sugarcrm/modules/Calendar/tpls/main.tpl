@@ -48,7 +48,7 @@
 		CAL.img_view_inline = "{$img_view_inline}";
 		CAL.img_close = "{$img_close}";		
 		CAL.scroll_slot = {$scroll_slot};
-
+		
 		CAL.fit_grid();
 		
 		{literal}
@@ -113,7 +113,7 @@
 				if(CAL.records_openable)
 					this.style.backgroundColor = "#D1DCFF";							
 				if(!this.childNodes.length)	
-					this.setAttribute("title",this.getAttribute("dur"));
+					this.setAttribute("title",this.getAttribute("time"));
 			});
 			YAHOO.util.Event.on(nodes[i],"mouseout",function(){
 				this.style.backgroundColor = "";
@@ -189,7 +189,7 @@
 		CAL.each(
 			ActRecords,
 			function(i,v){				
-				CAL.AddRecordToPage(ActRecords[i]);				
+				CAL.add_item_to_grid(ActRecords[i]);				
 			}			
 		);
 		{/literal}

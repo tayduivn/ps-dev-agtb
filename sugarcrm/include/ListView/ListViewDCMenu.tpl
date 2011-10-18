@@ -101,14 +101,17 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" '}
+                            {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT_DESC'}{/capture}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 						{else}
 							{capture assign="imageName"}arrow_up.{$arrowExt}{/capture}
-							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" '}
+                            {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT_ASC'}{/capture}
+							{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 						{/if}
 					{else}
 						{capture assign="imageName"}arrow.{$arrowExt}{/capture}
-						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" '}
+                        {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT'}{/capture}
+						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 					{/if}
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
