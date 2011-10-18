@@ -33,7 +33,6 @@ $global_registry_var_name = 'GLOBAL_REGISTRY';
 $SUPPORTED_METHODS = array(
 	'retrieve',
 	'query',
-	'get_objects_from_module',
 );
 
 /**
@@ -154,60 +153,6 @@ function json_query($request_id, $params) {
     $json_response = $json->encode($response, true);
 	echo $json_response;
 }
-
-function json_get_objects_from_module($request_id, $params) {
-	global $beanList, $beanFiles, $current_user;
-    $json = getJSONobj();
-
-	$module_name = $params[0]['module'];
-	$offset = intval($params[0]['offset']);
-	$where = $params[0]['where'];
-	$max = intval($params[0]['max']);
-	$order_by = preg_replace('/[^\w_.-]+/i', '', $params[0]['order_by']);
-    $using_cp = false;
-
-    if($module_name == 'CampaignProspects'){
-        $module_name = 'Prospects';
-        $using_cp = true;
-    }
-
-	$class_name = $beanList[$module_name];
-	require_once($beanFiles[$class_name]);
-	$seed = new $class_name();
-	if(empty($where)){
-		$where = '';
-	}
-	if($offset < 0){
-		$offset = 0;
-	}
-	if($max <= 0){
-		$max = 10;
-	}
-
-	$deleted = '0';
-     if($using_cp){
-     	$fields = array('id', 'first_name', 'last_name');
-       $response = $seed->retrieveTargetList($where, $fields, $offset,-1,$max,$deleted);
-    }else{
-	  $response = $seed->get_list($order_by, $where, $offset,-1,$max,$deleted);
-    }
-
-	$list = $response['list'];
-	$row_count = $response['row_count'];
-
-	$output_list = array();
-	foreach($list as $value)
-	{
-		$output_list[] = get_return_value($value, $module_name);
-	}
-	$response = array();
-	$response['id'] = $request_id;
-
-	$response['result'] = array('result_count'=>$row_count,'entry_list'=>$output_list);
-	$json_response = $json->encode($response, true);
-	print $json_response;
-}
-
 
 ////	END SUPPORTED METHODS
 ///////////////////////////////////////////////////////////////////////////////
