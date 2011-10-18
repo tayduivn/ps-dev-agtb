@@ -605,7 +605,7 @@ require_once('include/EditView/EditView2.php');
 					if($parms['operator'] == '=')
 					{
 					   $field_type = isset($this->seed->field_name_map[$real_field]['type']) ? $this->seed->field_name_map[$real_field]['type'] : '';					
-					   if($field_type == 'datetimecombo' || $field_type == 'datetime')
+					   if($field_type == 'datetimecombo' || $field_type == 'datetime' || $field_type == 'int')
 					   {
 					   	  $type = $field_type;
 					   }
