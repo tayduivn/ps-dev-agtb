@@ -656,6 +656,12 @@ function upgradeUWFiles($file) {
 
 	$allFiles = array();
 	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
+	
+    // users
+    if(file_exists("$from_dir/modules/Users")) {
+        $allFiles = findAllFiles("$from_dir/modules/Users", $allFiles);
+    }
+
 	// upgradeWizard
 	if(file_exists("$from_dir/modules/UpgradeWizard")) {
 		$allFiles = findAllFiles("$from_dir/modules/UpgradeWizard", $allFiles);
