@@ -35,25 +35,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /**
  * Create HTML to display formatted form title.
- * 
+ *
  * @param  $form_title string to display as the title in the header
  * @param  $other_text string to next to the title.  Typically used for form buttons.
  * @param  $show_help  boolean which determines if the print and help links are shown.
  * @return string HTML
  */
 function get_form_header(
-    $form_title, 
-    $other_text, 
+    $form_title,
+    $other_text,
     $show_help
     )
 {
     global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $current_module, $current_action;
     global $app_strings;
-    
+
     $blankImageURL = SugarThemeRegistry::current()->getImageURL('blank.gif');
     $printImageURL = SugarThemeRegistry::current()->getImageURL("print.gif");
     $helpImageURL  = SugarThemeRegistry::current()->getImageURL("help.gif");
-    
+
     $is_min_max = strpos($other_text,"_search.gif");
     if($is_min_max !== false)
         $form_title = "{$other_text}&nbsp;{$form_title}";
@@ -63,13 +63,13 @@ function get_form_header(
 <tr>
 <td nowrap><h3><span>{$form_title}</span></h3></td>
 EOHTML;
-    
+
     $keywords = array("/class=\"button\"/","/class='button'/","/class=button/","/<\/form>/");
     $match="";
     foreach ($keywords as $left)
         if (preg_match($left,$other_text))
             $match = true;
-    
+
     if ($other_text && $match) {
         $the_form .= <<<EOHTML
 <td colspan='10' width='100%'><IMG height='1' width='1' src='$blankImageURL' alt=''></td>
@@ -103,7 +103,7 @@ EOHTML;
 </td>
 EOHTML;
         }
-    } 
+    }
     else {
         if ($other_text && $is_min_max === false) {
             $the_form .= <<<EOHTML
@@ -116,7 +116,7 @@ EOHTML;
 <td width='100%'><IMG height='1' width='1' src='$blankImageURL' alt=''></td>
 EOHTML;
         }
-    
+
         if ($show_help) {
             $the_form .= "<td align='right' nowrap>";
             if ($_REQUEST['action'] != "EditView") {
@@ -140,18 +140,18 @@ EOHTML;
 EOHTML;
         }
     }
-    
+
     $the_form .= <<<EOHTML
 </tr>
 </table>
 EOHTML;
-    
+
     return $the_form;
 }
 
 /**
  * Wrapper function for the get_module_title function, which is mostly used for pre-MVC modules.
- * 
+ *
  * @deprecated use SugarView::getModuleTitle() for MVC modules, or getClassicModuleTitle() for non-MVC modules
  *
  * @param  $module       string  to next to the title.  Typically used for form buttons.
@@ -160,15 +160,15 @@ EOHTML;
  * @return string HTML
  */
 function get_module_title(
-    $module, 
-    $module_title, 
+    $module,
+    $module_title,
     $show_create,
     $count=0
     )
 {
     global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
     global $app_strings;
-    
+
     $the_title = "<div class='moduleTitle'>\n<h2>";
     $module = preg_replace("/ /","",$module);
     $iconPath = "";
@@ -183,7 +183,7 @@ function get_module_title(
     	if (SugarThemeRegistry::current()->directionality == "ltr") {
 	        $the_title .= "<a href='index.php?module={$module}&action=index'><img src='{$iconPath}' " . "alt='".$module."' title='".$module."' align='absmiddle'></a>";
 	        $the_title .= ($count >= 1) ? SugarView::getBreadCrumbSymbol() : "";
-	        $the_title .=  $module_title;	
+	        $the_title .=  $module_title;
     	} else {
     		$the_title .= $module_title;
     		$the_title .= ($count > 1) ? SugarView::getBreadCrumbSymbol() : "";
@@ -193,7 +193,7 @@ function get_module_title(
 		$the_title .= $module_title;
 	}
     $the_title .= "</h2>\n";
-    
+
     if ($show_create) {
         $the_title .= "<span class='utils'>";
         $createRecordURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
@@ -208,7 +208,7 @@ EOHTML;
 
         $the_title .= '</span>';
     }
-    
+
     $the_title .= "</div>\n";
     return $the_title;
 }
@@ -222,13 +222,13 @@ EOHTML;
  * the first breadcrumb should be index at 0, and built from there e.g.
  * <code>
  * array(
- *    '<a href="index.php?module=Contacts&action=index">Contacts</a>',
- *    '<a href="index.php?module=Contacts&action=DetailView&record=123">John Smith</a>',
+ *    '<a href="index.php?module=Contacts&amp;action=index">Contacts</a>',
+ *    '<a href="index.php?module=Contacts&amp;action=DetailView&amp;record=123">John Smith</a>',
  *    'Edit',
  *    );
  * </code>
  * would display as:
- * <a href='index.php?module=Contacts&action=index'>Contacts</a> >> <a href='index.php?module=Contacts&action=DetailView&record=123'>John Smith</a> >> Edit
+ * <a href='index.php?module=Contacts&amp;action=index'>Contacts</a> >> <a href='index.php?module=Contacts&amp;action=DetailView&amp;record=123'>John Smith</a> >> Edit
  * @param $show_create boolean flag indicating whether or not to display the create link (defaults to false)
  * @param $index_url_override String value of url to override for module index link (defaults to module's index action if none supplied)
  * @param $create_url_override String value of url to override for module create link (defaults to EditView action if none supplied)
@@ -239,7 +239,7 @@ function getClassicModuleTitle($module, $params, $show_create=false, $index_url_
 {
 	global $sugar_version, $sugar_flavor, $server_unique_key, $current_language, $action;
     global $app_strings;
-    
+
 	$module_title = '';
 	$count = count($params);
 	$index = 0;
@@ -259,7 +259,7 @@ function getClassicModuleTitle($module, $params, $show_create=false, $index_url_
     	$url = (!empty($index_url_override)) ? $index_url_override : "index.php?module={$module}&action=index";
     	array_unshift ($params,"<a href='{$url}'><img src='{$iconPath}' ". "alt='".$module."' title='".$module."' align='absmiddle'></a>");
 	}
-	
+
 	$new_params = array();
 	$i = 0;
 	foreach ($params as $value) {
@@ -272,11 +272,11 @@ function getClassicModuleTitle($module, $params, $show_create=false, $index_url_
 	if(SugarThemeRegistry::current()->directionality == "rtl") {
 		$new_params = array_reverse($new_params);
 	}
-	
+
 	$module_title = join(SugarView::getBreadCrumbSymbol(),$new_params);
 
     $the_title .= $module_title."</h2>\n";
-    
+
     if ($show_create) {
         $the_title .= "<span class='utils'>";
         $createRecordImage = SugarThemeRegistry::current()->getImageURL('create-record.gif');
@@ -296,10 +296,10 @@ EOHTML;
 
         $the_title .= '</span>';
     }
-    
+
     $the_title .= "</div>\n";
     return $the_title;
-    
+
 }
 
 /**
@@ -315,10 +315,10 @@ function insert_popup_header(
     )
 {
     global $app_strings, $sugar_config;
-    
-    $charset = isset($app_strings['LBL_CHARSET']) 
+
+    $charset = isset($app_strings['LBL_CHARSET'])
         ? $app_strings['LBL_CHARSET'] : $sugar_config['default_charset'];
-    
+
     $themeCSS = SugarThemeRegistry::current()->getCSS();
 
     $langHeader = get_language_header();
