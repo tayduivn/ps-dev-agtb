@@ -35,8 +35,8 @@ class MailMergeController extends SugarController{
         //set ajax view
         $this->view = 'ajax';
         global $beanList, $beanFiles, $current_user;
-        $module = $_REQUEST['qModule'];
-        $term = $_REQUEST['term'];
+        $module = !empty($_REQUEST['qModule']) ? $_REQUEST['qModule'] : '';
+        $term = !empty($_REQUEST['term']) ? $GLOBALS['db']->quote($_REQUEST['term']) : '';
         $lmodule = strtolower($module);
         $relModule = !empty($_REQUEST['rel_module']) ? $_REQUEST['rel_module'] : null;
         $where = '';
