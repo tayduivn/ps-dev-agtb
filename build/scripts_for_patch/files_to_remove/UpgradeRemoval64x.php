@@ -47,6 +47,12 @@ if($version < '640')
 {
 	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.css';
 	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.js';
+
+    //BEGIN SUGARCRM flav=int ONLY
+    //From https://github.com/sugarcrm/Mango/pull/1337/files
+    //END SUGARCRM flav=int ONLY
+    $files[] = 'modules/Emails/EditView.html';
+    $files[] = 'json.php';
 }
 
 return $files;	
