@@ -34,15 +34,22 @@ class MailMergeController extends SugarController{
     public function action_search(){
         //set ajax view
         $this->view = 'ajax';
-        global $beanList, $beanFiles, $current_user;
+        //get the module
         $module = !empty($_REQUEST['qModule']) ? $_REQUEST['qModule'] : '';
-        $term = !empty($_REQUEST['term']) ? $GLOBALS['db']->quote($_REQUEST['term']) : '';
+        //lowercase module name
         $lmodule = strtolower($module);
+        //get the search term
+        $term = !empty($_REQUEST['term']) ? $GLOBALS['db']->quote($_REQUEST['term']) : '';
+        //in the case of Campaigns we need to use the related module
         $relModule = !empty($_REQUEST['rel_module']) ? $_REQUEST['rel_module'] : null;
+
         $where = '';
-        $order_by = strtolower($module).".name";
+        $offset = 0;
+        $max = 10;
+        $order_by = $lmodule.".name";
         $using_cp = false;
-        if($term != '')
+
+        if(!empty($term))
         {
             if($module == 'Contacts' || $module == 'Leads')
             {
@@ -65,12 +72,9 @@ class MailMergeController extends SugarController{
             }
 	    }
 
-        $offset = 0;
-        $max = 10;
 
-        $class_name = $beanList[$module];
-        require_once($beanFiles[$class_name]);
-        $seed = new $class_name();
+
+        $seed = SugarModule::get($module)->loadBean();
         
         $deleted = '0';
         if($using_cp){
