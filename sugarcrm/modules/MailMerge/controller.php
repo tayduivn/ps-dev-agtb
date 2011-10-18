@@ -42,59 +42,62 @@ class MailMergeController extends SugarController{
         $term = !empty($_REQUEST['term']) ? $GLOBALS['db']->quote($_REQUEST['term']) : '';
         //in the case of Campaigns we need to use the related module
         $relModule = !empty($_REQUEST['rel_module']) ? $_REQUEST['rel_module'] : null;
-
-        $where = '';
-        $offset = 0;
-        $max = 10;
-        $order_by = $lmodule.".name";
-        $using_cp = false;
-
-        if(!empty($term))
-        {
-            if($module == 'Contacts' || $module == 'Leads')
-            {
-                $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
-                $order_by = $lmodule.".last_name";
-            }
-            else if($module == 'CampaignProspects'){
-                $using_cp = true;
-                $lmodule = strtolower($relModule);
-                $campign_where = $_SESSION['MAILMERGE_WHERE'];
-                $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
-                if($campign_where)
-                    $where .= " AND ".$campign_where ;
-                $where .= " AND related_type = #".$lmodule."#";
-                $module = 'Prospects';
-            }
-            else
-            {
-                $where = $lmodule.".name like '".$term."%'";
-            }
-	    }
-
-
-
-        $seed = SugarModule::get($module)->loadBean();
         
-        $deleted = '0';
-        if($using_cp){
-            $fields = array('id', 'first_name', 'last_name');
-           $response = $seed->retrieveTargetList($where, $fields, $offset,-1,$max,$deleted);
-        }else{
-          $response = $seed->get_list($order_by, $where, $offset,-1,$max,$deleted);
-        }
-
-        $list = $response['list'];
-        $row_count = $response['row_count'];
-
-        $output_list = array();
-        foreach($list as $value)
-        {
-            $output_list[] = get_return_value($value, $module);
-        }
         $response = array();
+        
+        if(!empty($module)){
+            $where = '';
+            $offset = 0;
+            $max = 10;
+            $deleted = '0';
+            $order_by = $lmodule.".name";
+            $using_cp = false;
 
-        $response['result'] = array('result_count'=>$row_count,'entry_list'=>$output_list);
+            if(!empty($term))
+            {
+                if($module == 'Contacts' || $module == 'Leads')
+                {
+                    $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
+                    $order_by = $lmodule.".last_name";
+                }
+                else if($module == 'CampaignProspects'){
+                    $using_cp = true;
+                    $lmodule = strtolower($relModule);
+                    $campign_where = $_SESSION['MAILMERGE_WHERE'];
+                    $where = $lmodule.".first_name like '%".$term."%' OR ".$lmodule.".last_name like '%".$term."%'";
+                    if($campign_where)
+                        $where .= " AND ".$campign_where ;
+                    $where .= " AND related_type = #".$lmodule."#";
+                    $module = 'Prospects';
+                }
+                else
+                {
+                    $where = $lmodule.".name like '".$term."%'";
+                }
+            }
+
+            $seed = SugarModule::get($module)->loadBean();
+
+
+            if($using_cp){
+                $fields = array('id', 'first_name', 'last_name');
+               $dataList = $seed->retrieveTargetList($where, $fields, $offset,-1,$max,$deleted);
+            }else{
+              $dataList = $seed->get_list($order_by, $where, $offset,-1,$max,$deleted);
+            }
+
+            $list = $dataList['list'];
+            $row_count = $dataList['row_count'];
+
+            $output_list = array();
+            foreach($list as $value)
+            {
+                $output_list[] = get_return_value($value, $module);
+            }
+
+            $response['result'] = array('result_count'=>$row_count,'entry_list'=>$output_list);
+        }
+        
         $json = getJSONobj();
         $json_response = $json->encode($response, true);
         print $json_response;
