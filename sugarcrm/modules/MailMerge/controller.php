@@ -89,7 +89,6 @@ class MailMergeController extends SugarController{
             $output_list[] = get_return_value($value, $module);
         }
         $response = array();
-        //$response['id'] = $request_id;
 
         $response['result'] = array('result_count'=>$row_count,'entry_list'=>$output_list);
         $json = getJSONobj();
