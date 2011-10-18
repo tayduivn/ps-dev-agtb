@@ -113,9 +113,13 @@ class GroupedTabStructure
                     if(is_string($module) && strcasecmp($subModule, $module) === 0)
                     {
                     	if($labelAsKey){
-                    		$retStruct[$subModules['label']]['modules'][$module] = $app_list_strings['moduleList'][$module];
+                    		if (isset($app_list_strings['moduleList'][$module])) {
+                                $retStruct[$subModules['label']]['modules'][$module] = $app_list_strings['moduleList'][$module];
+                            }
                     	}else{
-                    		$retStruct[$app_strings[$subModules['label']]]['modules'][$module] = $app_list_strings['moduleList'][$module];
+                    		if (isset($app_list_strings['moduleList'][$module])) {
+                                $retStruct[$app_strings[$subModules['label']]]['modules'][$module] = $app_list_strings['moduleList'][$module];
+                            }
                     	}                        
                         $mlhUsed[$module] = true;
                         break;
