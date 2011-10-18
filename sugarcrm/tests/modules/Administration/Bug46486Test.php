@@ -38,7 +38,7 @@ class Bug46486Test extends Sugar_PHPUnit_Framework_TestCase
         if(!isset($admin->settings['license_num_portal_users']))
         {
            $admin->settings['license_num_portal_users'] = 0;
-           $admin->saveSetting('license', 'license_num_portal_users', '0');
+           $admin->saveSetting('license', 'num_portal_users', '0');
         }
 
         $this->sm = new SessionManager();
