@@ -69,11 +69,11 @@ class AdvancedSearchWidgetTest extends Sugar_PHPUnit_Framework_OutputTestCase
 
     public function tearDown()
     {
-        if(!empty($this->_customSugarFieldTeamsetContents))
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    	if(!empty($this->_customSugarFieldTeamsetContents))
         {
             file_put_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php', $this->_customSugarFieldTeamsetContents);
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     protected function checkSearchValues($html)

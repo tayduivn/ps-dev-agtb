@@ -38,7 +38,7 @@ class Bug45969 extends Sugar_PHPUnit_Framework_TestCase
     {
     
         sugar_mkdir("custom/include/SugarFields/Fields/Teamset/",null,true);
-        if (file_exists("custom/include/SugarFields/Fields/Teamset/Teamset.php")) { 
+        if (file_exists("custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php")) { 
             unlink("custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php");
         }
 
@@ -74,7 +74,7 @@ EOQ;
     
     public function tearDown()
     {
-        if (file_exists("custom/include/SugarFields/Fields/Teamset/Teamset.php")) {
+        if (file_exists("custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php")) {
             unlink("custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php");
         }
         
