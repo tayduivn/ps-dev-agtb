@@ -228,7 +228,7 @@ function export($type, $records = null, $members = false) {
                             //if our value is a currency field, then apply the users locale
                             case 'currency':
                                 require_once('modules/Currencies/Currency.php');
-                                $value = currency_format_number($value);
+                                $value = currency_format_number($value, array('currency_symbol' => false));
                                 break;
                             
                             //if our value is a datetime field, then apply the users locale
