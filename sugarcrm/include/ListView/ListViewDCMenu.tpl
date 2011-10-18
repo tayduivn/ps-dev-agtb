@@ -97,7 +97,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
                         {/if}
                     {/if}
                     {sugar_translate label=$params.label module=$pageData.bean.moduleDir}
-					</a>&nbsp;&nbsp;
+					&nbsp;&nbsp;
 					{if $params.orderBy|default:$colHeader|lower == $pageData.ordering.orderBy}
 						{if $pageData.ordering.sortOrder == 'ASC'}
 							{capture assign="imageName"}arrow_down.{$arrowExt}{/capture}
@@ -113,6 +113,7 @@ YAHOO.util.Connect.asyncRequest('POST', 'index.php', callback, "module=Meetings&
                         {capture assign="alt_sort"}{sugar_translate label='LBL_ALT_SORT'}{/capture}
 						{sugar_getimage name=$imageName width="{$arrowWidth}" height="{$arrowHeight}" attr='align="absmiddle" border="0" ' alt="$alt_sort"}
 					{/if}
+                    </a>
 				{else}
                     {if !isset($params.noHeader) || $params.noHeader == false} 
 					  {sugar_translate label=$params.label module=$pageData.bean.moduleDir}

@@ -48,7 +48,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
 		global $app_strings;
 
 		if(empty(self::$edit_icon_html)) {
-		    self::$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif',$app_strings['LNK_EDIT']);
+		    self::$edit_icon_html = SugarThemeRegistry::current()->getImage( 'edit_inline', 'align="absmiddle" border="0"',null,null,'.gif','');//setting alt to blank on purpose on subpanels for 508
 		}
 
         $onclick ='';
