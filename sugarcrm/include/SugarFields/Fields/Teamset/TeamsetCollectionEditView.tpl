@@ -97,8 +97,8 @@
         </td>
 <!-- BEGIN Remove and Radio -->
         <td valign='top' align='left' nowrap>
-			{capture assign="attr"}class="id-ff-remove" id="remove_{$idname}_collection_0" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0);"{/capture}
-            {sugar_getimage name="id-ff-remove.png" attr=$attr alt=$alt_removeButton}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
+			{capture assign="attr"}class="id-ff-remove" name="remove_{$idname}_collection_0" id="remove_{$idname}_collection_0" onclick="collection['{$displayParams.formName}_{$idname}'].remove(0);"{/capture}
+            {sugar_getimage name="id-ff-remove" ext=".png" attr="$attr" alt=$alt_removeButton}{if !empty($displayParams.allowNewValue) }<input type="hidden" name="allow_new_value_{$idname}_collection_0" id="allow_new_value_{$idname}_collection_0" value="true">{/if}
         </td>
         <td valign='top' align='center'>
             <span id='{$displayParams.formName}_{$idname}_radio_div_0'>
