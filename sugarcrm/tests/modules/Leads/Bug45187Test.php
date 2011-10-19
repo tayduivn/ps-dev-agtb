@@ -28,7 +28,9 @@
  ********************************************************************************/
 
 require_once 'modules/Leads/views/view.convertlead.php';
+//BEGIN SUGARCRM flav=pro ONLY
 require_once 'modules/Leads/views/view.editconvert.php';
+//END SUGARCRM flav=pro ONLY
 
 class Bug45187Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
@@ -86,6 +88,7 @@ class Bug45187Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
     * @group bug45187
     */
@@ -113,4 +116,5 @@ class Bug45187Test extends Sugar_PHPUnit_Framework_OutputTestCase
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
     }
+//END SUGARCRM flav=pro ONLY
 }
