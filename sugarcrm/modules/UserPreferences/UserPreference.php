@@ -150,7 +150,7 @@ class UserPreference extends SugarBean
 
         $isCurrentUser = $this->isCurrentUser();
 
-        if(!isset($_SESSION[$user->user_name.'_PREFERENCES'][$category])) {
+        if(!isset($user->user_preferences[$category])) {
             if(!$user->loadPreferences($category)) {
                 if($isCurrentUser) $_SESSION[$user->user_name.'_PREFERENCES'][$category] = array();
                 $user->user_preferences[$category] = array();
