@@ -26,7 +26,7 @@ class DCMenu extends DashletContainer
 	{
 	    $imageURL = SugarThemeRegistry::current()->getImageURL("icon_{$module}_bar_32.png");
 		$imageName = "icon_{$module}_bar_32.png";
-	    if (empty($imageURL)) 
+	    if (empty($imageURL))
 	    	$imageName = "icon_generic_bar_32.png";
 	    $module_mod_strings = return_module_language($GLOBALS['current_language'], $module);
 	    if ( isset($module_mod_strings['LNK_NEW_RECORD']) )
@@ -38,8 +38,9 @@ class DCMenu extends DashletContainer
         else
 	        $createRecordTitle = $GLOBALS['app_strings']['LBL_CREATE_BUTTON_LABEL'].' '.$module_mod_strings['LBL_MODULE_NAME'];
 
+	    $image = SugarThemeRegistry::current()->getImage($imageName, "class='icon' alt='{$createRecordTitle}' title='{$createRecordTitle}' id='dcMenu_{$module}_quick_create_icon'");
 	    return <<<EOQ
-		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle', true);"><img class='icon' src='{$imageURL}' alt='{$createRecordTitle}' title='{$createRecordTitle}' id="dcMenu_{$module}_quick_create_icon" ></a></li>
+		<li><a href="javascript: if ( DCMenu.menu ) DCMenu.menu('$module','$createRecordTitle', true);">{$image}</a></li>
 EOQ;
 	}
 
@@ -160,7 +161,7 @@ EOQ;
 		<div id='dcmenu' class='dcmenu dcmenuFloat'>
 		{$notificationsHTML}
 		<div class="dcmenuDivider" id="notificationsDivider"></div>
-		
+
 		<div id="dcmenuContainer">
 		<ul id="dcmenuitems">
 
@@ -189,12 +190,12 @@ EOQ;
 		if (is_file('custom/' . $dyn_actions_path)) {
 		    include('custom/' . $dyn_actions_path);
 		} else if ( is_file($dyn_actions_path) ) {
-		    include($dyn_actions_path); 
+		    include($dyn_actions_path);
         }
 		if (is_file('custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php')) {
 			include 'custom/application/Ext/DashletContainer/Containers/dynamicdcactions.ext.php';
         }
-		
+
 		foreach($dynamicDCActions as $def){
 			$html .= $this->getDynamicMenuItem($def);
 		}
