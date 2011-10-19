@@ -959,7 +959,7 @@ require_once('include/EditView/EditView2.php');
 								$first_between = false;								
 							}
 								
-							if(!empty($parms['enable_range_search']) && $parms['operator'] == '=' && type != 'int')
+							if(!empty($parms['enable_range_search']) && $parms['operator'] == '=' && $type != 'int')
 							{
 								// Databases can't really search for floating point numbers, because they can't be accurately described in binary,
 								// So we have to fuzz out the math a little bit								
