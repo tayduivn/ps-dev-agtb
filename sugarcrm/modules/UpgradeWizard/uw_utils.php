@@ -656,7 +656,7 @@ function upgradeUWFiles($file) {
 
 	$allFiles = array();
 	$from_dir = "{$cacheUploadUpgradesTemp}/{$manifest['copy_files']['from_dir']}";
-	
+
     // users
     if(file_exists("$from_dir/modules/Users")) {
         $allFiles = findAllFiles("$from_dir/modules/Users", $allFiles);
@@ -1910,7 +1910,7 @@ function getInstallType($type_string) {
 function getImageForType($type) {
     global $image_path;
     global $mod_strings;
-    
+
     $icon = "";
     switch($type) {
         case "full":
@@ -4711,6 +4711,7 @@ function rebuildSprites($fromUpgrade=true)
 {
     require_once('modules/Administration/SugarSpriteBuilder.php');
     $sb = new SugarSpriteBuilder();
+    $sb->cssMinify = true;
     $sb->fromSilentUpgrade = $fromUpgrade;
     $sb->silentRun = $fromUpgrade;
 
