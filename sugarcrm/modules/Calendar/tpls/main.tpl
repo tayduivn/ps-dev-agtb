@@ -255,11 +255,9 @@ YAHOO.util.Event.onDOMReady(function(){
 {/literal}	
 </script>
 	
-{if !$sugar_body_only}
 <script type="text/javascript" src="include/javascript/jsclass_base.js"></script>
 <script type="text/javascript" src="include/javascript/jsclass_async.js"></script>	
 <script type="text/javascript" src="include/javascript/overlibmws.js"></script>
-{/if}
 	
 {if $hide_whole_day}
 <script type="text/javascript">

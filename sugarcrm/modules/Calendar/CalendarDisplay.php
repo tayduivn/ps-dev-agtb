@@ -323,7 +323,7 @@ class CalendarDisplay {
 			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_neighbor_date_str("next"))."'>";
 
 		}else{
-			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_neighbor_date_str("next")."&id=".$this->args['dashlet_id']."\")'>";
+			$str .= "<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_neighbor_date_str("next")."&id=".$this->args['dashlet_id']."\")'>";
 		}
 			$str .= $cal_strings["LBL_NEXT_".strtoupper($this->args['cal']->view)]; 
 
@@ -338,7 +338,7 @@ class CalendarDisplay {
 		if($_REQUEST['module'] == "Calendar"){
 			$str .= "<a href='".ajaxLink("index.php?action=index&module=Calendar&view=".$this->args['cal']->view."&".$this->args['cal']->get_neighbor_date_str("previous")."")."'>";
 		}else{
-			$str .= "<a href='#' onclick='CAL.remove_record_dialog(); return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_neighbor_date_str("previous")."&id=".$this->args['dashlet_id']."\")'>";
+			$str .= "<a href='#' onclick='return SUGAR.mySugar.retrieveDashlet(\"".$this->args['dashlet_id']."\", \"index.php?module=Home&action=DynamicAction&DynamicAction=displayDashlet&sugar_body_only=1&".$this->args['cal']->get_neighbor_date_str("previous")."&id=".$this->args['dashlet_id']."\")'>";
 		}
 		$str .= SugarThemeRegistry::current()->getImage('calendar_previous','align="absmiddle" border="0"', null, null, '.gif', ''); //setting alt tag blank on purpose for 508 compliance
 		$str .= "&nbsp;&nbsp;".$cal_strings["LBL_PREVIOUS_".strtoupper($this->args['cal']->view)] . "</a>";

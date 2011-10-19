@@ -1161,4 +1161,6 @@
 		}
 	});
 	
+	CAL.remove_record_dialog();
+	
 	var cal_loaded = true;
