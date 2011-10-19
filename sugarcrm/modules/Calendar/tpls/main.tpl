@@ -88,11 +88,6 @@
 		var d_param = "{$d_param}";
 		
 		{literal}
-		var nodes = CAL.query("#cal-grid div.left_cell:nth-child("+d_param+"), #cal-grid div.slot:nth-child("+d_param+")");
-		CAL.each(nodes,function(i,v){
-			if(!YAHOO.util.Dom.hasClass(nodes[i],"odd_border"))
-				YAHOO.util.Dom.addClass(nodes[i],"odd_border");
-		});		
 
 		if(CAL.items_draggable){			
 			var target_slots = [];			
@@ -103,9 +98,7 @@
 					target_slots[i] = new YAHOO.util.DDTarget(slots[i].id,"cal"); 
 				}
 			);			
-		}
-		
-			
+		}	
 		
 		var nodes = CAL.query("#cal-grid div.slot");
 		CAL.each(nodes, function(i,v){

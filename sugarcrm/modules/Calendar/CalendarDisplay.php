@@ -86,22 +86,12 @@ class CalendarDisplay {
 			$ss->assign('shared_users_count',count($args['cal']->shared_ids));
 		}				
 		$ss->assign('activity_colors',$this->activity_colors);	
-		$d_param = 0;
-		if($args['cal']->time_step == 60){
-			$d_param = 0;
-		}else{			
-			$d_param = strval(intval(60 / $args['cal']->time_step)) . "n";
-			
-			if($args['cal']->view != "week" && $args['cal']->view != "day")
-				$d_param .= "+1";	
-		}
 		
 		$scroll_hour = 5;
 		if($args['cal']->time_step < 30)
 			$scroll_hour = 8;
 		$ss->assign('scroll_slot',intval(60 / $args['cal']->time_step) * $scroll_hour);	
 		
-		$ss->assign('d_param',$d_param);	
 		$ss->assign('editview_width',SugarConfig::getInstance()->get('calendar.editview_width',800));
 		$ss->assign('editview_height',SugarConfig::getInstance()->get('calendar.editview_height',600));	
 		$ss->assign('a_str',$args['cal']->get_activities_js());
