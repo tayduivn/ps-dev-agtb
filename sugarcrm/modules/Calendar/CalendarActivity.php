@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
- 
+
 require_once('include/utils/activity_utils.php');
 
 class CalendarActivity {
@@ -81,7 +81,7 @@ class CalendarActivity {
 		$timedate->tzGMT($this->start_time);
 		$timedate->tzGMT($this->end_time);
 	}
-	
+
 	/**
 	 * Get where clause for fetching entried from DB
 	 * @param string $table_name t
@@ -91,12 +91,12 @@ class CalendarActivity {
 	 * @param string $field_name date field in table
 	 * @param string $view view; not used for now, left for compatibility
 	 * @return string
-	 */	
+	 */
 	function get_occurs_within_where_clause($table_name, $rel_table, $start_ts_obj, $end_ts_obj, $field_name='date_start', $view){
 		global $timedate;
         	// ensure we're working with user TZ
 		$start_ts_obj = $timedate->tzUser($start_ts_obj);
-		$end_ts_obj = $timedate->tzUser($end_ts_obj);		
+		$end_ts_obj = $timedate->tzUser($end_ts_obj);
 
 		$start = $start_ts_obj;
 		$end = $end_ts_obj;
@@ -109,7 +109,7 @@ class CalendarActivity {
 		if($rel_table != ''){
 			$where .= " AND $rel_table.accept_status != 'decline'";
 		}
-	
+
 		$where .= ")";
 		return $where;
 	}
@@ -133,11 +133,11 @@ class CalendarActivity {
 
 	/**
 	 * Get array of activities
-	 * @param string $user_id 
-	 * @param array $params 
-	 * @param SugarDateTime $view_start_time start date 
-	 * @param SugarDateTime $view_end_time end date 
-	 * @param string $view view; not used for now, left for compatibility 
+	 * @param string $user_id
+	 * @param array $params
+	 * @param SugarDateTime $view_start_time start date
+	 * @param SugarDateTime $view_end_time end date
+	 * @param string $view view; not used for now, left for compatibility
 	 * @return array
 	 */
  	function get_activities($user_id, $params, $view_start_time, $view_end_time, $view){
@@ -169,8 +169,8 @@ class CalendarActivity {
 				}
 			}
 		}
-		
-		if($params['show_calls']){
+
+		if(!empty($params['show_calls'])) {
 			if(ACLController::checkAccess('Calls', 'list',$current_user->id  == $user_id)) {
 				$call = new Call();
 
@@ -196,7 +196,7 @@ class CalendarActivity {
 		}
 
 
-		if($params['show_tasks']){
+		if(!empty($params['show_tasks'])){
 			if(ACLController::checkAccess('Tasks', 'list',$current_user->id == $user_id)) {
 				$task = new Task();
 

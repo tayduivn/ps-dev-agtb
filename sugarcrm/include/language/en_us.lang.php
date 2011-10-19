@@ -410,7 +410,7 @@ $app_list_strings = array (
   'meeting_type_dom' =>
    array (
       'Other' => 'Other',
-      'SugarCRM' => 'SugarCRM',
+      'Sugar' => 'SugarCRM',
    ),
   'call_status_default' => 'Planned',
   'call_status_dom' =>
