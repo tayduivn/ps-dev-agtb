@@ -120,7 +120,7 @@ EOHTML;
 			if(!empty($this->where)){
 			    $this->where .= " AND ";
 			}
-                        $this->where .= "(users.status != 'Reserved' or users.status is null) ";
+            $this->where .= "(users.status <> 'Reserved' or users.status is null) ";
 			//BEGIN SUGARCRM flav=sales ONLY
 			$tplFile = 'include/ListView/ListViewNoMassUpdate.tpl';
 			$this->lv->export = false;
