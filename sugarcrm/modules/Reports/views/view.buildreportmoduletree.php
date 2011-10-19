@@ -101,7 +101,6 @@ class ReportsViewBuildreportmoduletree extends SugarView
 				$linked_field['label'] = translate($custom_subpanel_label, $_REQUEST['report_module']);
             }			
             elseif (! empty($linked_field['vname']))
-            if (! empty($linked_field['vname']))
             {
                 $linked_field['label'] = translate($linked_field['vname'], $_REQUEST['report_module']);
             } else {
