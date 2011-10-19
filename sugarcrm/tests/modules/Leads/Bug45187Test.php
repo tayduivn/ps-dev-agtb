@@ -28,19 +28,19 @@
  ********************************************************************************/
 
 require_once 'modules/Leads/views/view.convertlead.php';
+require_once 'modules/Leads/views/view.editconvert.php';
 
 class Bug45187Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
     
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        //unset($GLOBALS['app_list_strings']);
         unset($GLOBALS['current_user']);
     }
     
@@ -57,7 +57,7 @@ class Bug45187Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $account = SugarTestAccountUtilities::createAccount();
 
         // simulate module renaming
-        $org_name = $app_list_strings['moduleListSingular']['Accounts'];
+        $org_name = $app_list_strings['moduleListSingular']['Contacts'];
         $app_list_strings['moduleListSingular']['Contacts'] = 'People';
 
         // set the request/post parameters before converting the lead
@@ -77,12 +77,40 @@ class Bug45187Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $this->expectOutputRegex('/.*People<\/OPTION>.*/');
 
         // cleanup
-        $app_list_strings['moduleListSingular']['Accounts'] = $org_name;
+        $app_list_strings['moduleListSingular']['Contacts'] = $org_name;
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
         unset($_REQUEST['record']);
         unset($_REQUEST['selectedAccount']);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
+    }
+
+    /**
+    * @group bug45187
+    */
+    public function testStudioModuleLabel()
+    {
+        global $app_list_strings;
+
+        // simulate module renaming
+        $org_name = $app_list_strings['moduleList']['Accounts'];
+        $app_list_strings['moduleList']['Contacts'] = 'PeopleXYZ';
+
+        // set the request/post parameters
+        $_REQUEST['module'] = 'Leads';
+        $_REQUEST['action'] = 'Editconvert';
+
+        // call display to generate output
+        $vc = new ViewEditConvert();
+        $vc->display();
+
+        // ensure the new module name is used
+        $this->expectOutputRegex('/.*PeopleXYZ.*/');
+
+        // cleanup
+        $app_list_strings['moduleList']['Contacts'] = $org_name;
+        unset($_REQUEST['module']);
+        unset($_REQUEST['action']);
     }
 }
