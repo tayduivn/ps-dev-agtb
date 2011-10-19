@@ -563,11 +563,13 @@ class User extends Person {
 		//END SUGARCRM flav=sales ONLY
 
         $this->savePreferencesToDB();
+		//BEGIN SUGARCRM flav=pro ONLY
         if(is_null($oldCheck)) {
             unset($GLOBALS['sugar_config']['disable_team_access_check']);
         } else {
             $GLOBALS['sugar_config']['disable_team_access_check'] = $oldCheck;
         }
+		//END SUGARCRM flav=pro ONLY
         return $this->id;
 	}
 
