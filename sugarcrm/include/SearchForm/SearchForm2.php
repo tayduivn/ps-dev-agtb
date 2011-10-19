@@ -123,7 +123,7 @@ require_once('include/EditView/EditView2.php');
                                 'name'   => 'advanced',
                                 'displayDiv' => 'display:none');
         }
-        if($this->showCustom){
+        if(isset($this->showCustom) && is_array($this->showCustom)){
             foreach($this->showCustom as $v){
                 $this->nbTabs++;
                 $this->tabs[]=array('title'  => $GLOBALS['app_strings']["LNK_" . strtoupper($v)],
