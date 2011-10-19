@@ -84,9 +84,7 @@
 		CAL.act_types['Meetings'] = 'meeting';
 		CAL.act_types['Calls'] = 'call';
 		CAL.act_types['Tasks'] = 'task';
-	
-		var d_param = "{$d_param}";
-		
+
 		{literal}
 
 		if(CAL.items_draggable){			
