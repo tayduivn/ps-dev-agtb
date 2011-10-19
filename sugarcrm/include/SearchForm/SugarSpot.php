@@ -255,7 +255,9 @@ EOHTML;
 								}
 							}
 						}
-						if(!$keep){
+                        # Bug 42961 Spot search for custom fields
+                        if (!$keep && (isset($v['force_unifiedsearch']) == false || $v['force_unifiedsearch'] != true))
+                        {
 							if(strpos($k,'email') === false || !$searchEmail) {
 								unset($searchFields[$moduleName][$k]);
 							}
