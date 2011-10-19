@@ -58,49 +58,28 @@ EOQ;
 		}
 
 		// cn: get a boundary limiter
+        global $db;
+
 		$dateTimeMax = $timedate->getNow()->modify("+{$app_list_strings['reminder_max_time']} seconds")->asDb();
 		$dateTimeNow = $timedate->nowDb();
 
-		global $db;
+        $dateTimeNow = $db->convert($dateTimeNow, 'datetime');
+        $dateTimeMax = $db->convert($dateTimeMax, 'datetime');
+
+		$desc = $db->convert("description", "text2char");
+		if($desc != "description") {
+		    $desc .= " description";
+		}
 		// Prep Meetings Query
-		if ($db->dbType == 'mysql') {
-			$selectMeetings = "
-				SELECT meetings.id, name,reminder_time, description,location, date_start, assigned_user_id
-				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
-				WHERE meetings_users.user_id ='".$current_user->id."'
-					AND meetings_users.accept_status != 'decline'
-					AND meetings.reminder_time != -1
-					AND meetings_users.deleted != 1
-					AND meetings.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-		}
-		elseif ($db->dbType == 'oci8')
-		{
-			//BEGIN SUGARCRM flav=ent ONLY
-			$selectMeetings = "
-				SELECT meetings.id, name,reminder_time, description,location, date_start,  assigned_user_id
-				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
-				WHERE meetings_users.user_id ='".$current_user->id."'
-					AND meetings_users.accept_status != 'decline'
-					AND meetings.reminder_time != -1
-					AND meetings_users.deleted != 1
-					AND meetings.status != 'Held'
-					AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')
-					AND date_start <= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')";
-	       	//END SUGARCRM flav=ent ONLY
-		}elseif($db->dbType == 'mssql') {
-			$selectMeetings = "
-				SELECT meetings.id, name,reminder_time, CAST(description AS varchar(8000)),location, date_start, assigned_user_id
-				FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
-				WHERE meetings_users.user_id ='".$current_user->id."'
-					AND meetings_users.accept_status != 'decline'
-					AND meetings.reminder_time != -1
-					AND meetings_users.deleted != 1
-					AND meetings.status != 'Held'
-				    AND date_start >= '$dateTimeNow'
-				    AND date_start <= '$dateTimeMax'";
-		}
+    	$selectMeetings = "SELECT meetings.id, name,reminder_time, $desc,location, date_start, assigned_user_id
+			FROM meetings LEFT JOIN meetings_users ON meetings.id = meetings_users.meeting_id
+			WHERE meetings_users.user_id ='".$current_user->id."'
+				AND meetings_users.accept_status != 'decline'
+				AND meetings.reminder_time != -1
+				AND meetings_users.deleted != 1
+				AND meetings.status != 'Held'
+			    AND date_start >= '$dateTimeNow'
+			    AND date_start <= '$dateTimeMax'";
 
 		$result = $db->query($selectMeetings);
 
@@ -185,21 +164,6 @@ EOQ;
 					AND calls.status != 'Held'
 				    AND date_start >= '$dateTimeNow'
 				    AND date_start <= '$dateTimeMax'";
-		}elseif ($db->dbType == 'oci8')
-		{
-			//BEGIN SUGARCRM flav=ent ONLY
-			$selectCalls = "
-				SELECT calls.id, name, reminder_time, description, date_start
-				FROM calls LEFT JOIN calls_users ON calls.id = calls_users.call_id
-				WHERE calls_users.user_id ='".$current_user->id."'
-                    AND calls_users.accept_status != 'decline'
-				    AND calls.reminder_time != -1
-					AND calls_users.deleted != 1
-					AND calls.status != 'Held'
-					AND date_start >= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')
-					AND date_start <= to_date('$dateTimeNow','YYYY-MM-DD hh24:mi:ss')";
-			//END SUGARCRM flav=ent ONLY
-		}elseif ($db->dbType == 'mssql') {
 
 			$selectCalls = "
 				SELECT calls.id, name, reminder_time, CAST(description AS varchar(8000)), date_start
@@ -216,7 +180,8 @@ EOQ;
 		global $db;
 		$result = $db->query($selectCalls);
 
-		while($row = $db->fetchByAssoc($result)){
+		while($row = $db->fetchByAssoc($result))
+        {
 			// need to concatenate since GMT times can bridge two local days
 			$timeStart = strtotime($db->fromConvert($row['date_start'], 'datetime'));
 			$timeRemind = $row['reminder_time'];

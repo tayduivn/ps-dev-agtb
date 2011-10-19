@@ -43,13 +43,14 @@ class MailMergeController extends SugarController{
         //in the case of Campaigns we need to use the related module
         $relModule = !empty($_REQUEST['rel_module']) ? $_REQUEST['rel_module'] : null;
         $max = !empty($_REQUEST['max']) ? $_REQUEST['max'] : 10;
+        $order_by = !empty($_REQUEST['order_by']) ? $_REQUEST['order_by'] : $lmodule.".name";
         $response = array();
         
         if(!empty($module)){
             $where = '';
             $offset = 0;
             $deleted = '0';
-            $order_by = $lmodule.".name";
+
             $using_cp = false;
 
             if(!empty($term))
