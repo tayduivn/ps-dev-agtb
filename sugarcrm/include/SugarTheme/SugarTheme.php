@@ -663,7 +663,7 @@ EOHTML;
 
 		// trap alt attributes in other_attributes
 		if(preg_match('/alt=["\']([^\'"]+)["\']/i', $other_attributes))
-			$GLOBALS['log']->debug("VINK alt attribute detected for $imageName");
+			$GLOBALS['log']->debug("Sprites: alt attribute detected for $imageName");
 
 		// sprite handler, makes use of own caching mechanism
 		if(!empty($GLOBALS['sugar_config']['use_sprites']) && $GLOBALS['sugar_config']['use_sprites']) {
@@ -729,7 +729,7 @@ EOHTML;
 			//$this->_spriteCache[$imageName]['imageURL'] = $imageURL;
 		} else {
 			$this->_spriteCache[$imageName] = false;
-			$GLOBALS['log']->debug("VINK sprite miss for $imageURL");
+			$GLOBALS['log']->debug("Sprites: miss for $imageURL");
 		}
 		return $this->_spriteCache[$imageName];
 	}
@@ -759,7 +759,7 @@ EOHTML;
 			$attr .= ' title="'.$title.'"';
 
 		// use </span> instead of /> to prevent weird UI results
-		$GLOBALS['log']->debug("VINK generated sprite -> $attr");
+		$GLOBALS['log']->debug("Sprites: generated sprite -> $attr");
 		return "<span {$attr}></span>";
 	}
 
@@ -782,7 +782,7 @@ EOHTML;
 		if($img_name) {
 			$img = $this->getImage($img_name, $img_other_attributes, $img_width, $img_height, null, $img_alt);
 			if($img == false) {
-				$GLOBALS['log']->debug('VINK unknown image getLink');
+				$GLOBALS['log']->debug('Sprites: unknown image getLink');
 				$img = 'unknown';
 			}
 			switch($img_placement) {
