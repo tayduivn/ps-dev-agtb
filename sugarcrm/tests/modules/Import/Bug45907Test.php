@@ -26,57 +26,55 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
  
-require_once('modules/Emails/Email.php');
+require_once 'modules/Import/CsvAutoDetect.php';
 
-class Bug45960 extends Sugar_PHPUnit_Framework_TestCase
+class Bug45907Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $email_id = null;
-
     public function setUp()
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_account = SugarTestAccountUtilities::createAccount();
+        // if beanList got unset, set it back
+        if (!isset($GLOBALS['beanList'])) {
+            require('include/modules.php');
+            $GLOBALS['beanList'] = $beanList;
+        }
     }
-    
+
     public function tearDown()
     {
-        if ($this->email_id) {
-            $GLOBALS['db']->query("delete from emails where id='{$this->email_id}'");
-        }
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
     }
 
-    public function testSaveNewEmailWithParent()
+    /**
+     * @ticket 45907
+     */
+    public function testCsvWithExtraInfo()
     {
-        $email = new Email();
-        $email->type = 'out';
-        $email->status = 'sent';
-        $email->from_addr_name = $email->cleanEmails("sender@domain.eu");
-        $email->to_addrs_names = $email->cleanEmails("to@domain.eu");
-        $email->cc_addrs_names = $email->cleanEmails("cc@domain.eu");
+        $sample_file = $GLOBALS['sugar_config']['upload_dir'].'/Bug45907Test.csv';
+        $file = 'tests/modules/Import/Bug45907Test.csv';
+        copy($file, $sample_file);
 
-        // set a few parent info to test the scenario
-        $email->parent_type = 'Accounts';
-        $email->parent_id = $this->_account->id;
-        $email->fetched_row['parent_type'] = 'Accounts';
-        $email->fetched_row['parent_id'] = $this->_account->id;
+        $auto = new CsvAutoDetect($file, 4); // parse only the first 4 lines
+        $del = $enc = $hasHeader = false;
 
-        $email->save();
+        // there is extra non csv info at the bottom of the file
+        // but it should still parse ok because we only parse the first 4 lines
+        $ret = $auto->getCsvSettings($del, $enc);
+        $this->assertEquals(true, $ret, 'Failed to parse and get csv properties');
 
-        $this->assertNotNull($email->id, 'Null email id');
-        $this->email_id = $email->id;
+        // delimiter
+        $this->assertEquals(',', $del, 'Incorrect delimiter');
 
-        // ensure record is inserted into emails_beans table
-        $query = "select count(*) as cnt from emails_beans eb WHERE eb.bean_id = '{$this->_account->id}' AND eb.bean_module = 'Accounts' AND eb.email_id = '{$email->id}' AND eb.deleted=0";
-        $result = $GLOBALS['db']->query($query);
-        $count = $GLOBALS['db']->fetchByAssoc($result);
-        $this->assertEquals(1, $count['cnt'], 'Incorrect emails_beans count');
+        // enclosure
+        $this->assertEquals('"', $enc, 'Incorrect enclosure');
+
+        // header
+        $ret = $auto->hasHeader($hasHeader, 'Accounts');
+        $this->assertTrue($ret, 'Failed to detect header');
+        $this->assertTrue($hasHeader, 'Incorrect header');
+
+        // remove temp file
+        unlink($sample_file);
     }
-    
+
 }
-
-
