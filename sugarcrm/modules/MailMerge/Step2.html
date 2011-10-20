@@ -140,13 +140,12 @@ function ajaxSuccess(data)
 	var nextItems= document.getElementById("nextItems");
 	var dispCount = max;
 	var dispMin = mOffset;
-
 	if(result.result_count < max)
 	{
 		dispCount = result.result_count;
 		nextItems_disabled = true;
 	}
-	if(result.result_count <= (mOffset + max))
+	if(result.result_count < (mOffset + max))
 	{
 		nextItems_disabled = true;
 	}
