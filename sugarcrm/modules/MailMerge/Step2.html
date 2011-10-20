@@ -229,7 +229,7 @@ function getObjects()
 	getOrderBy();
 	
 	//rrs
-	var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm,{success: ajaxSuccess, failure: ajaxSuccess}, null);
+	var cObj = YAHOO.util.Connect.asyncRequest('GET', 'index.php?module=MailMerge&action=search&qModule='+module+'&rel_module='+relModule+'&term='+mTerm+'&max='+max+'&order_by='+orderBy,{success: ajaxSuccess, failure: ajaxSuccess}, null);
 
 
 }
