@@ -316,9 +316,7 @@ class SugarTheme
         // Bug 28309 - Set the current directory to one which we expect it to be (i.e. the root directory of the install
         set_include_path(realpath(dirname(__FILE__) . '/../..') . PATH_SEPARATOR . get_include_path());
         $cachedir = sugar_cached($this->getFilePath());
-        if(!file_exists($cachedir)) {
-            sugar_mkdir($cachedir, 0775, true);
-        }
+        
         // clear out the cache on destroy if we are asked to
         if ( $this->_clearCacheOnDestroy ) {
 
